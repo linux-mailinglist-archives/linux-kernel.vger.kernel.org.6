@@ -1,137 +1,120 @@
-Return-Path: <linux-kernel+bounces-251520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD429305C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:50:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A93A9305CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04869282557
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C901C20B1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8982E1386C0;
-	Sat, 13 Jul 2024 13:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7EA13957E;
+	Sat, 13 Jul 2024 13:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="e28820dT"
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oVKD2X0m"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C69D1E86E;
-	Sat, 13 Jul 2024 13:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B71E86E;
+	Sat, 13 Jul 2024 13:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720878636; cv=none; b=cH8lOqHKDeSinCnhn8fHeKxULHa3VZJE7AZTL3H0Z2wjT2C4rY8qktrxTpVchCUWRTQru1q22nYoJy4YthXWMGP4O36I/sIZpF31nnKcVu175FBqU5Ljbj/x2WvvkZMDf/zBlbUoytdf00VxTwFYyEu2ilaL//meBI38g7Bh/Bo=
+	t=1720878652; cv=none; b=BLUd2cWUByp++MlmRMR3DrkFp2YrXI/W0bj0Bk/us/yDa0igQmSv0WFOkTrRcU+3lzj1hkScZ0r8D9jZaQ532gNuIdSpBBl+BCUQLxweiEq6eR0ydmYVX/GgegcjkD+QBL8zzQq7TsliJ4rij842xjfxoOlgAYcZGL1Hx59abuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720878636; c=relaxed/simple;
-	bh=mLcL/SY7UnS6QZM6TjgIX4eKwSIhCBU1rZA0YWc5V/I=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iTYy0VjSEQDqshX04yBfU9EzZRrzZQoOfgqivpmUefvuPNqpYUXIcUcYCGKiNjOHn8mAeDcKvi03aQw8//eYLI91CkU3pfZmQ6vNVeUDMQ94v6CWj3QSODnz53afmnu4G9Q6QTqBWqSbz23ipg5RLZJxUzHjUQRKPu8noPPzfnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=e28820dT; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:3b2:0:640:ff71:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id 53CB15E590;
-	Sat, 13 Jul 2024 16:50:24 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id Loh1uYPOpSw0-voiErDil;
-	Sat, 13 Jul 2024 16:50:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1720878622; bh=uCIOdqunNQD9Vsp9oTkPbArvncSPx+aYWd1537T2OqQ=;
-	h=In-Reply-To:Date:References:To:From:Subject:Message-ID;
-	b=e28820dTD9NpwAcEFmmZSBOnF3Ugl7QlSHoLa1B2Y2xCFniE8J1CyFFm81LuK9NMe
-	 3iMipgkBf8AuyuuGM+J7gBrwg/MKSp3Ae/QiCn+LBtsVppEXW+CVttLL4Cfg2GHETF
-	 oT//EPLc1b78sIkqH3UXrEJb/yquaiEhmrQDFW0g=
-Authentication-Results: mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
-To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
- <yukuai3@huawei.com>
-Date: Sat, 13 Jul 2024 16:50:21 +0300
-In-Reply-To: <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
-	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
-	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
-	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1720878652; c=relaxed/simple;
+	bh=glbXfZ57zeOAVeFcp148EjAAduVLDX1Nm1Qm/7z/xoA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=T21pnGqQ1LgwAXHa60C06jMSVzXyXIOUbXcmL5kgyUK8bqovNlDJUS/AoOk1AIFpTu28CplHpwXHzNkeSEtYPz6Qd0mBDXTkL7llZFQsqr3OIlthRCuAKdEtrVZCclT4hKEfZBYgRrY8qLDKfvsvv7v0AoCSrz62VGfkjY0ykZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oVKD2X0m; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720878625; x=1721483425; i=markus.elfring@web.de;
+	bh=2DkVKMeSZLdTkmkibS3yN5duPZ98hT8azZgpJe/6Ne4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oVKD2X0mTNKOGyW+A2lRub+vSt8nRJ3u1RmIjcfHbrj80xzT/GIjmfEVRRePuCkW
+	 DcbyNcsFnipJ466fmsWjrJYn+LSRTIJcjjcQvF9a+pvEgaP/MXguHgOyCEsW/0MXA
+	 H7sxhs3PK/kDpBkLEdtYdvsXiEzk36OXOGfZsVMTT3UFjqTE4kXzi/wx78rpsG9v5
+	 yHg4PcEljd3xJxpSHUnHgDh7LPMJx9X19NTUlHK1kGgfiMl26+o3HbQgRRTKWSRII
+	 ojciR2Bwc2Z1GxHCuTDxGVZWTWi3DPeLs3JrMEcFaf5yShMlJM1lRvVPDj3KyArzM
+	 qjzmoXcleRC3xt+lZQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1sWWt03lty-00GaSe; Sat, 13
+ Jul 2024 15:50:24 +0200
+Message-ID: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
+Date: Sat, 13 Jul 2024 15:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] nvme-fabrics: Use seq_putc() in __nvmf_concat_opt_tokens()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JdDdT3GUzpkpOCWjWe73M1t1rMwD8wjznYly5YMkYxte7etCvLg
+ cet9s3eO2FDEIbS9AiOD0GrGdcPp13qepmsYUQtb4HxQYWE4F3JMBdNrw2sjPIQYMXO0NYy
+ 1Z8NGLa6i+6afWzt+Bx5gkGFmx5xa+E0xr+AoLgacbxXiqjLWj/8lIIZIq0fjIhSvdh7xl7
+ suiDGhITR/WGZphwVA5mg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uCU1KQ/BpF8=;ODwdkhcsbvCG4oe2kr5D2e7eFzg
+ PMFYW+OgDj873lsKpNxLJwCw7Da8SXNXKwM3QSur9WkmwssCtEwRVrsWl0N+xSS9bi9yhEn10
+ pw0RTuB8Bct1+XgieILC+yBjujpQkLzFoT5fz7AqnPF+bEpU2VbKyNJq+pkF0ZKjr8B+9Z6sb
+ HoNDoC42ZUvYtLi2RuxvQg+3PfQxoCTfpygJZSCnrwFeqCKIjtJCLRJ2Fldx5cDIWl+rUN8AE
+ TRadzXXm8+6y9sjJOhhbjoLpJQfpt5qDRVG7nBuBUTWM9jQ5zPR9UD8MCmhHRFsU83hY2I+6Q
+ jx6ufLSV8n03wNfO/3iDuXg+h7Z6a36HkS1vLNhsIAIqLPXEjOOjOm8eSGo0owjxT4+pQT4vn
+ cYYD8tG/ZPaEFhhKKqVYWz2093Wpe9DKyyu+r2Qolqlcko4NaZ/HoG2Qn09McwL0cis7bQSKi
+ 1rsIUGZ0/+gara7YD8sLoBYLq8q+Y+J/fVV4arustcvVPSXrZSlYq4Il1+yYBLQVUFRG2CAUa
+ Jvv4gT+09xzJeYzKHs6GC7RjUjQalKT8Ryc7aHo4aarf5KyyUHh1hjuT2/ElHfurORKGHP7Lh
+ bI9CzcnWYrQ+R4xzPSlMAEHSBPZaAB1nyBYgzJu8LCxQzet+o3ExuN0tA7J3fzLS97WvWMfSi
+ 5+8uktOBlN57/t8fCSzAiEXghc7PsEcSG1+z6KYr8DMChT9ZKzBuMe75vWR5uSBCFdppbXexQ
+ RgjlQNuG4z4pnh6GGT6B0Gw4h2QP8XwRwGKDgQ1TTVdei8JuiWpMUG8LGYWOYahZ4cujYS5x6
+ hb3oTzfgNxr2neW8JYmpNszQ==
 
-On Sat, 2024-07-13 at 19:06 +0800, Yu Kuai wrote:
-> Hi,
->=20
-> =E5=9C=A8 2024/07/12 20:11, Konstantin Kharlamov =E5=86=99=E9=81=93:
-> > Good news: you diff seems to have fixed the problem! I would have
-> > to
-> > test more extensively in another environment to be completely sure,
-> > but
-> > by following the minimal steps-to-reproduce I can no longer
-> > reproduce
-> > the problem, so it seems to have fixed the problem.
->=20
-> That's good. :)
-> >=20
-> > Bad news: there's a new lockup now =F0=9F=98=84 This one seems to happe=
-n
-> > after
-> > the disk is returned back; unless the action of returning back
-> > matches
-> > accidentally the appearing stacktraces, which still might be
-> > possible
-> > even though I re-tested multiple times. It's because the traces
-> > (below) seems not to always appear. However, even when traces do
-> > not
-> > appear, IO load on the fio that's running in the background drops
-> > to
-> > zero, so something seems definitely wrong.
->=20
-> Ok, I need to investigate more for this. The call stack is not much
-> helpful.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 15:43:17 +0200
 
-Is it not helpful because of missing line numbers or in general? If
-it's the missing line numbers I'll try to fix that. We're using some
-Debian scripts that create deb packages, and well, they don't work well
-with debug information (it's being put to separate package, but even if
-it's installed the kernel traces still don't have line numbers). I
-didn't investigate into it, but I can if that will help.=20
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-> At first, can the problem reporduce with raid1/raid10? If not, this
-> is
-> probably a raid5 bug.
+This issue was transformed by using the Coccinelle software.
 
-This is not reproducible with raid1 (i.e. no lockups for raid1), I
-tested that. I didn't test raid10, if you want I can try (but probably
-only after the weekend, because today I was asked to give the nodes
-away, for the weekend at least, to someone else).
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/nvme/host/fabrics.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> The best will be that if I can reporduce this problem myself.
-> The problem is that I don't understand the step 4: turning off jbod
-> slot's power, is this only possible for a real machine, or can I do
-> this in my VM?
+diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
+index 44e342a46f39..f5f545fa0103 100644
+=2D-- a/drivers/nvme/host/fabrics.c
++++ b/drivers/nvme/host/fabrics.c
+@@ -1403,10 +1403,10 @@ static void __nvmf_concat_opt_tokens(struct seq_fi=
+le *seq_file)
+ 		tok =3D &opt_tokens[idx];
+ 		if (tok->token =3D=3D NVMF_OPT_ERR)
+ 			continue;
+-		seq_puts(seq_file, ",");
++		seq_putc(seq_file, ',');
+ 		seq_puts(seq_file, tok->pattern);
+ 	}
+-	seq_puts(seq_file, "\n");
++	seq_putc(seq_file, '\n');
+ }
 
-Well, let's say that if it is possible, I don't know a way to do that.
-The `sg_ses` commands that I used
+ static int nvmf_dev_show(struct seq_file *seq_file, void *private)
+=2D-
+2.45.2
 
-	sg_ses --dev-slot-num=3D9 --set=3D3:4:1   /dev/sg26 # turning off
-	sg_ses --dev-slot-num=3D9 --clear=3D3:4:1 /dev/sg26 # turning on
-
-=E2=80=A6sets and clears the value of the 3:4:1 bit, where the bit is defin=
-ed
-by the JBOD's manufacturer datasheet. The 3:4:1 specifically is defined
-by "AIC" manufacturer. That means the command as is unlikely to work on
-a different hardware.
-
-Well, while on it, do you have any thoughts why just using a `echo 1 >
-/sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps kernel
-not emulate device disappearance too well?
 
