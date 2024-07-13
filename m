@@ -1,392 +1,182 @@
-Return-Path: <linux-kernel+bounces-251369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB48793041A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:23:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E605993041E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4DD1F22509
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9964B23087
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFCB200A3;
-	Sat, 13 Jul 2024 06:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BBE24B34;
+	Sat, 13 Jul 2024 06:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I2y/24ji"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JLivPKX4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RD+xW6hL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JLivPKX4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RD+xW6hL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147891C28E;
-	Sat, 13 Jul 2024 06:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE43BF9EC;
+	Sat, 13 Jul 2024 06:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720851792; cv=none; b=oCZ//qofZyhD5totkO0HAY7k/WaG6QCpW9Qz/iU+M3IaLs6btTKDv6waRz5pwB1701/Y5NFoXqH/6E8K5qgCFp8QVM2+Gq8hv+NbhLe+q3Q26siv1a/em+KqilWY1UtOkmt4MgtKIwfAQkLe1fjjWWWQ/aNjB2AoFUAddkVqlfQ=
+	t=1720853175; cv=none; b=e07ROU5WIm17D5DSxT2TLCBJMxkpXLmRszYP+5mDefaQI9xUdyLrUwXRPslnzqWpRM/odaNlKN2kvXMHZaUSfHo8PG+YwKQ41k0GSjv2X1FQUBpDf+gYjmCIdv3vbf4K7bW2fzAYzK4NL4mWCdumscqWeYzZKTKXaZBRcflc/r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720851792; c=relaxed/simple;
-	bh=SQU0fop5JqjQ+DY5JA2oRLOa4VhNrfr+HcoADIfcSC4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oZohlUR+Axjj5GC1GMalxitCu5anw11TuNtZi2ykbCyzrt+kKS1DWQtOORxoSKfEDYYYXZxq1j2FsPV7I/Y6qt5qUm25oUX8vSqwqt3X6tiHVIJ+g69AUEw7+FGoZrhiJzjgGt1Pq6Z5550O9bhUiIVsAJs+AVMxYTZXNPsL0/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I2y/24ji; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46D4unkr024792;
-	Sat, 13 Jul 2024 06:22:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:mime-version:subject:from:in-reply-to:date:cc
-	:content-transfer-encoding:message-id:references:to; s=pp1; bh=t
-	2RT+W9nQ0Q1oa8EaJ7uTTnfw1rufRnz5AuueoVcfYk=; b=I2y/24jiKPAJmONWK
-	dVOVuCjtlMfPzVMXnH3WW274vvMSkAccEnuHhYFEra317cPSH6IxS2AVdibCOZbN
-	PFSuJN2AA2nsxudIJO2t1XSvHLClKLX+Cr/shDT1iJMfEYtOY02ej4gN0AMO9WVH
-	44ouTYUSLKwR47scjlTwHFMIcQHi/jfjSxGVHjX9Yl+A3RFAPEh4Ic7uqP7Cpbta
-	jgG7itaCG77D0NK9N0XNdbRJrIgU+j4XsxVx8SCdmJ2JAqx9nDJm8WNMDj7nYz9n
-	7a8xUVfGNEZbhfeaf3l8ieXUL5FxeweB4QIFlE0jyl+PxDuX9lNfbnvkUXL92ONE
-	rZC7A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0bh4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 06:22:55 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46D6MsvO012143;
-	Sat, 13 Jul 2024 06:22:54 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0bh2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 06:22:54 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46D31f9X024600;
-	Sat, 13 Jul 2024 06:22:54 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrna9s8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 06:22:54 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46D6Mmd418219456
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 13 Jul 2024 06:22:50 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0FEAB2004E;
-	Sat, 13 Jul 2024 06:22:48 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEFD720040;
-	Sat, 13 Jul 2024 06:22:43 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.47.252])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 13 Jul 2024 06:22:43 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1720853175; c=relaxed/simple;
+	bh=yY33+5APyjEzae2iAwViq+yRRVuxE+Rb8qhIWwuuLeo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KGPAr8iwDTzk2ev9CTzLsk2mtg63z3TW8CYT84Oai3rqCbTfARTP/vnuq9E6VqfXacLv7mDqZ5lzcnwjGBj4Vk21qOHDxXeEntMABcVBZi68dBEqWJQeq03KLj3NUGVsG0qoIq7/l9rNG43HyhIAQd4Q87kkXBs3G18HEtpumko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JLivPKX4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RD+xW6hL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JLivPKX4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RD+xW6hL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B27481FBCD;
+	Sat, 13 Jul 2024 06:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720853171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bYtwHX31WJYVhnvwXw7XNIn9nZhkjNRMDGCTQUdLam4=;
+	b=JLivPKX4psON5JyiZ6nk6I/Y0uzb16X5RMTp9hp+esYWTKf4LWh1znvgQ7cp6ti5Oc7YCb
+	27kcw+BlR2ucIAGcj5GyQQdosU6TsEFSA/spL3sDJMxpIz0D827hRAnzkKs8zKn9sIaz7L
+	v4CnylJJXlc1axLVZ1F9zcRYurdkfpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720853171;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bYtwHX31WJYVhnvwXw7XNIn9nZhkjNRMDGCTQUdLam4=;
+	b=RD+xW6hLqdCYbQquS1M2tEQuyoiTjocmCo8stvc6uIdiU0RE6cbg+F+15zXxZK9Y1dAF1O
+	3/NwQmOyvv4sYlDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JLivPKX4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RD+xW6hL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720853171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bYtwHX31WJYVhnvwXw7XNIn9nZhkjNRMDGCTQUdLam4=;
+	b=JLivPKX4psON5JyiZ6nk6I/Y0uzb16X5RMTp9hp+esYWTKf4LWh1znvgQ7cp6ti5Oc7YCb
+	27kcw+BlR2ucIAGcj5GyQQdosU6TsEFSA/spL3sDJMxpIz0D827hRAnzkKs8zKn9sIaz7L
+	v4CnylJJXlc1axLVZ1F9zcRYurdkfpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720853171;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bYtwHX31WJYVhnvwXw7XNIn9nZhkjNRMDGCTQUdLam4=;
+	b=RD+xW6hLqdCYbQquS1M2tEQuyoiTjocmCo8stvc6uIdiU0RE6cbg+F+15zXxZK9Y1dAF1O
+	3/NwQmOyvv4sYlDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75D2D134AB;
+	Sat, 13 Jul 2024 06:46:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8ZY8G7MikmYhYwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 13 Jul 2024 06:46:11 +0000
+Date: Sat, 13 Jul 2024 08:46:43 +0200
+Message-ID: <87plrhssa4.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.de>,
+	Takashi Iwai <tiwai@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test names
+In-Reply-To: <31e73e81-e60f-4d0b-b0ac-118f1dc72610@sirena.org.uk>
+References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+	<7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+	<b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+	<877cdrt3zc.wl-tiwai@suse.de>
+	<e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
+	<bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
+	<c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
+	<31e73e81-e60f-4d0b-b0ac-118f1dc72610@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH V6 17/18] tools/perf: Update data_type_cmp and
- sort__typeoff_sort function to include var_name in comparison
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <ZpGfYVc_ewcsQxWL@google.com>
-Date: Sat, 13 Jul 2024 11:52:30 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6733E9A7-1118-46A5-8C17-DC22A9C47207@linux.vnet.ibm.com>
-References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
- <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
- <ZpGfYVc_ewcsQxWL@google.com>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yKQRdhSDi2_DawUQM-7J6uWq869F0nig
-X-Proofpoint-ORIG-GUID: 1_vKXQzd0HBf02d14-9Fk9DRbivNCrSZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-13_02,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 impostorscore=0
- adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407130041
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Level: 
+X-Rspamd-Queue-Id: B27481FBCD
+
+On Fri, 12 Jul 2024 20:19:33 +0200,
+Mark Brown wrote:
+> 
+> On Fri, Jul 12, 2024 at 06:25:21PM +0200, Jaroslav Kysela wrote:
+> > On 12. 07. 24 15:00, Mark Brown wrote:
+> 
+> > > The trouble with the ID field is that it's too short and seems likely to
+> > > create collisions, for example HDA stuff just seems to default to NVidia
+> > > for nVidia cards which seems very likely to create collisions if someone
+> > > has two graphics cards in their system.
+> 
+> > The default IDs are always unique - see snd_card_set_id_no_lock() in
+> > sound/core/init.c . Basically, the suffix will follow the device probe order
+> > in this case.
+> 
+> Sure, but the genesis of this patch is that probe order isn't
+> sufficiently stable and we want to avoid names based on it...  using the
+> ID will be more likely to work out stable than just pure probe order but
+> it's still got the same issue.
+
+Are you trying to solve the issue with two cards of the same driver,
+which are swapped sometimes at the probe time?  Or the mixture of
+different cards that are swapped?
+
+In the latter case, id should work well.  The id is primarily created
+from the (short)name string, and the suffix is added only when
+conflicting.
+
+OTOH, if the former is the problem, using longname won't help,
+either, rather it can be confusing.  I noticed that the test output
+truncates the name string, hence both cards look identical in the
+actual output (except for the card listing at the beginning).
 
 
-
-> On 13 Jul 2024, at 2:55=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> =
-wrote:
->=20
-> On Sun, Jul 07, 2024 at 08:14:18PM +0530, Athira Rajeev wrote:
->> Currently data_type_cmp() only compares size and type name.
->> But in cases where the type name of two data type entries
->> is same, but var_name is different, the comparison can't distinguish
->> two different types.
->>=20
->> Consider there is a "long unsigned int" with var_name as "X" and =
-there
->> is global variable "long unsigned int". Currently since
->> data_type_cmp uses only type_name for comparison ( "long unsigned =
-int"),
->> it won't distinguish these as separate entries. Update the
->=20
-> I'm still not sure if it's ok.  It intentionally merges different
-> instances of the same type together as it's a data 'type' profile.
->=20
->=20
->> functions "data_type_cmp" as well as "sort__typeoff_sort" to
->> compare variable names after type name if it exists.
->>=20
->> Also updated "hist_entry__typeoff_snprintf" to print var_name if
->> it is set. With the changes,
->>=20
->>     11.42%  long unsigned int  long unsigned int +0 =
-(current_stack_pointer)
->>     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
->>     4.57%  struct paca_struct  struct paca_struct +2354 =
-(irq_soft_mask)
->>     2.69%  struct paca_struct  struct paca_struct +2808 (canary)
->>     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
->>     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
->>     1.43%  long unsigned int  long unsigned int +0 (no field)
->=20
-> It seems like an output of `perf report -s type,typeoff`.  But I'm
-> curious how it'd work with -s type only?  I guess it'd have two =
-separate
-> entries for 'long unsigned int'.  Ideally we can have a single entry
-> with two different fields.
->=20
-> For example, `perf report -s type,typeoff -H`:
->=20
->  12.85%     long unsigned int
->     11.42%     long unsigned int +0 (current_stack_pointer)
->      1.43%     long unsigned int +0 (no field)
->  ...
->=20
-
-Hi Namhyung,
-
-Thanks for the comments.
-
-While printing, the check for field is done only in =
-=E2=80=9Csort__typeoff_sort=E2=80=9D.
-To summarise,
-1. While adding the data type in rb node, if the entry has different =
-field, new entry will be added. So we will have different entries in rb =
-node if field differs.
-2. While using sort key to display, for =E2=80=9Ctypeoff=E2=80=9D, we =
-use sort__typeoff_sort . For =E2=80=9Ctype=E2=80=9D, we use =
-=E2=80=9Csort__type_sort=E2=80=9D
-3. In =E2=80=9Csort__type_sort=E2=80=9D type_name is used. Hence result =
-will have only single entry
-4. In =E2=80=9Csort__typeoff_sort=E2=80=9D we added check for =
-=E2=80=9Cvar_name=E2=80=9D too in this patch. So result will have two =
-entries if field differs
-
-Example:
-
-Using -H option,
-
-./perf report -s type,typeoff -H
-
-    17.65%     struct paca_struct
-        4.68%     struct paca_struct +2312 (__current)
-        4.57%     struct paca_struct +2354 (irq_soft_mask)
-        2.69%     struct paca_struct +2808 (canary)
-        2.68%     struct paca_struct +8 (paca_index)
-        2.24%     struct paca_struct +48 (data_offset)
-        0.55%     struct paca_struct +2816 (mmiowb_state.nesting_count)
-        0.18%     struct paca_struct +2818 (mmiowb_state.mmiowb_pending)
-        0.03%     struct paca_struct +2352 (hsrr_valid)
-        0.02%     struct paca_struct +2356 (irq_work_pending)
-        0.00%     struct paca_struct +0 (lppaca_ptr)
-    12.85%     long unsigned int
-       11.42%     long unsigned int +0 (current_stack_pointer)
-        1.43%     long unsigned int +0 (no field)
-
-As you mentioned, we have single entry with two different fields:
-
-12.85%     long unsigned int
-       11.42%     long unsigned int +0 (current_stack_pointer)
-        1.43%     long unsigned int +0 (no field)
-
-With perf report -s type:
-
-    17.65%  struct paca_struct
-    12.85%  long unsigned int
-     1.69%  struct task_struct
-     1.51%  struct rq
-     1.49%  struct pt_regs
-     1.41%  struct vm_fault
-     1.20%  struct inode
-     1.15%  struct file
-     1.08%  struct sd_lb_stats
-     0.90%  struct security_hook_list
-     0.86%  struct seq_file
-     0.79%  struct cfs_rq
-     0.78%  struct irq_desc
-     0.72%  long long unsigned int
-
-
-Where as with perf report -s typeoff:
-
-    11.42%  long unsigned int +0 (current_stack_pointer)
-     4.68%  struct paca_struct +2312 (__current)
-     4.57%  struct paca_struct +2354 (irq_soft_mask)
-     2.69%  struct paca_struct +2808 (canary)
-     2.68%  struct paca_struct +8 (paca_index)
-     2.24%  struct paca_struct +48 (data_offset)
-     1.43%  long unsigned int +0 (no field)
-
-
-Namhyung,
-
-If the above shared result for =E2=80=9Ctype=E2=80=9D and =E2=80=9Ctypeoff=
-=E2=80=9D looks good and other changes are fine, I will post V7 with =
-change for sort cmp to use cmp_null.
-Please share your response.
-
-Thanks
-Athira
-
->>=20
->> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->> ---
->> tools/perf/util/annotate-data.c | 24 ++++++++++++++++++++++--
->> tools/perf/util/sort.c          | 23 +++++++++++++++++++++--
->> 2 files changed, 43 insertions(+), 4 deletions(-)
->>=20
->> diff --git a/tools/perf/util/annotate-data.c =
-b/tools/perf/util/annotate-data.c
->> index 8d05f3dbddf6..759c6a22e719 100644
->> --- a/tools/perf/util/annotate-data.c
->> +++ b/tools/perf/util/annotate-data.c
->> @@ -167,7 +167,7 @@ static void exit_type_state(struct type_state =
-*state)
->> }
->>=20
->> /*
->> - * Compare type name and size to maintain them in a tree.
->> + * Compare type name, var_name  and size to maintain them in a tree.
->>  * I'm not sure if DWARF would have information of a single type in =
-many
->>  * different places (compilation units).  If not, it could compare =
-the
->>  * offset of the type entry in the .debug_info section.
->> @@ -176,12 +176,32 @@ static int data_type_cmp(const void *_key, =
-const struct rb_node *node)
->> {
->> const struct annotated_data_type *key =3D _key;
->> struct annotated_data_type *type;
->> + int64_t ret =3D 0;
->>=20
->> type =3D rb_entry(node, struct annotated_data_type, node);
->>=20
->> if (key->self.size !=3D type->self.size)
->> return key->self.size - type->self.size;
->> - return strcmp(key->self.type_name, type->self.type_name);
->> +
->> + ret =3D strcmp(key->self.type_name, type->self.type_name);
->> + if (ret) {
->> + return ret;
->> + }
->=20
-> No need for the parentheses.
-Sure, will fix it
-
->=20
->> +
->> + /*
->> +  * Compare var_name if it exists for key and type.
->> +  * If both nodes doesn't have var_name, but one of
->> +  * them has, return non-zero. This is to indicate nodes
->> +  * are not the same if one has var_name, but other doesn't.
->> +  */
->> + if (key->self.var_name && type->self.var_name) {
->> + ret =3D strcmp(key->self.var_name, type->self.var_name);
->> + if (ret)
->> + return ret;
->> + } else if (key->self.var_name || type->self.var_name)
->> + return 1;
->=20
-> I think you need to compare the order properly like in cmp_null() in
-> util/sort.c.  Please see below.
->=20
->> +
->> + return ret;
->> }
->>=20
->> static bool data_type_less(struct rb_node *node_a, const struct =
-rb_node *node_b)
->> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
->> index cd39ea972193..c6d885060ee7 100644
->> --- a/tools/perf/util/sort.c
->> +++ b/tools/perf/util/sort.c
->> @@ -2267,9 +2267,25 @@ sort__typeoff_sort(struct hist_entry *left, =
-struct hist_entry *right)
->> right_type =3D right->mem_type;
->> }
->>=20
->> + /*
->> +  * Compare type_name first. Next, ompare var_name if it exists
->> +  * for left and right hist_entry. If both entries doesn't have
->> +  * var_name, but one of them has, return non-zero. This is to
->> +  * indicate entries are not the same if one has var_name, but the
->> +  * other doesn't.
->> +  * If type_name and var_name is same, use mem_type_off field.
->> +  */
->> ret =3D strcmp(left_type->self.type_name, =
-right_type->self.type_name);
->> if (ret)
->> return ret;
->> +
->> + if (left_type->self.var_name && right_type->self.var_name) {
->> + ret =3D strcmp(left_type->self.var_name, =
-right_type->self.var_name);
->> + if (ret)
->> + return ret;
->> + } else if (right_type->self.var_name || left_type->self.var_name)
->> + return 1;
->=20
-> } else if (!left_type->self.var_name !=3D !right_type->self.var_name)
-> return cmp_null(left_type->self.var_name, right_type->self.var_name);
->=20
-> Thanks,
-> Namhyung
->=20
-Sure, will fix this
-
-Thanks
-Athira
-
-
->> +
->> return left->mem_type_off - right->mem_type_off;
->> }
->>=20
->> @@ -2305,9 +2321,12 @@ static int hist_entry__typeoff_snprintf(struct =
-hist_entry *he, char *bf,
->> char buf[4096];
->>=20
->> buf[0] =3D '\0';
->> - if (list_empty(&he_type->self.children))
->> + if (list_empty(&he_type->self.children)) {
->> snprintf(buf, sizeof(buf), "no field");
->> - else
->> + if (he_type->self.var_name)
->> + strcpy(buf, he_type->self.var_name);
->> +
->> + } else
->> fill_member_name(buf, sizeof(buf), &he_type->self,
->>  he->mem_type_off, true);
->> buf[4095] =3D '\0';
->> --=20
->> 2.43.0
-
-
+Takashi
 
