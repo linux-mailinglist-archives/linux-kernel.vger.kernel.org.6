@@ -1,212 +1,167 @@
-Return-Path: <linux-kernel+bounces-251251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574319302A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8560A9302AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC221C20B53
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F316B1F22DF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C68BFF;
-	Sat, 13 Jul 2024 00:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128CE2F23;
+	Sat, 13 Jul 2024 00:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CaEFdFOM"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2048.outbound.protection.outlook.com [40.107.243.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBuujuG8"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60F01849;
-	Sat, 13 Jul 2024 00:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720828921; cv=fail; b=CpevTLrt8tFeoasL73UR70tci2g4zRBG4bDC+uvOn4D45RqhURJj9VddtnIgx0jYmoSv9TLbFmDTV6KFtImW1z6kixft9kDXiXZs4NHtOfBeKbuy29hv+/59wJa8wY/1+oWxIDdR/r4Tq0ghC/CxGRF1ZMB1xZ0Zkl9t0bL/p8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720828921; c=relaxed/simple;
-	bh=wJXWzNqO6SzCgQ0VhpNDyiIa5GL7D969mTpi0FopQ3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jIBLgMhul7/4wquLYUnncQgVAPrCSahFm+J4eBjmvd3aYrmFfRI7aSFCelbzteIYvAF018t+pWZT3B6jCDqQlaFwfjJHnxrdlXd2Dk6ttzQoxY0/tCH+xnh1AOcYLLZwHB1jhTuMZhYy/dHT5i7qtBsJFFB7piSSlgRfC3u+dsE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CaEFdFOM; arc=fail smtp.client-ip=40.107.243.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G2bJqY1HO9VLcoACjQa5rgPayYOu5F/dDW/e7s8VryWWGf+VFSRmOIy772uqdaXhW3wfEFtgHuydbnmLlnq32W32chC+FTntKOnDLBcK4wIa6E8L8U68OgA5GKHJBt01FFzhKACm5+byFt1cg9/63mgrAvpIGVmjwDty7W0iREnZhende+IMP8myrz8JvKV4wjZl/C9jh45sXIs8qGxcbdABgy+n9E1qDS0PyAeSgAAFBhvauReCV7E89W6c/Wm0VWARXRhaoHTpUwtfXXc9Y6uPZfRGYoE2Pne8nuKRZUyyX7zJ6q20RzRpiuNbHUUSkwnrhSkjUnCKZ/TJZS8qhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o1mT6PlMdzu79a8oj2oSMpn7lPddAo5re8ZN7EDToGo=;
- b=GYYbn+GtuAdzr7TircQxe0jjHfh9zylPa4wXhqwYWOfM9HMZeJpV+vVR6XHVqRMVncQlBy7vyERreyV0ZszGpv8djuzH8Y/I3A76+oZFFw3wkxvoYIDZdCcbZERHUptQPX+xeh90eUkwAa0dDMPrrog0ci+sXfcn34mBCVI1RFFb4DL5SKGWkOhQOAh1r1J+VC/VVoa0aAJ0pDWw5VtntE1YCnCemnluP1s0zOLHnpTdrBeTP63/ULBiojV3aDd+k7uczgMnCyNtz2GT5n3m0KptRDkzi1HbpEEwDdm8qrOPjxhNSXea3mbOoUrs8Fky3MeNnrJgIvnv+odSVnzmfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o1mT6PlMdzu79a8oj2oSMpn7lPddAo5re8ZN7EDToGo=;
- b=CaEFdFOMPytTA0r5ZE7f9S4mSLx3DIfitz56IXN/TCBKrHnQdveKiEteZdeSWg67CCljmHDRzRgSEYfKTjcdePwvq2cbDI1zBC1DSR1uNIIF4W/GpQi7mKOHDl+xHsx92zsVrmGzvupFQoV3A9Kzhgy9J3f2Fayqq1b16MSFIfb4qhlKUHL09JQTygPbtrxYSpw7fAX6jic+2yQk1t/rrREj+2natGhmK2u3q5iwqtWz2wCsJnaXpZHM+4fYJnk1ZstewZkPmup9mnIChfBf/wXqZxZSFETuEtinlF9ywzFNPvRQOlv3Wh5mygUwBwedHzLgzd4jsOHBGGJC71Xqjg==
-Received: from BY5PR16CA0021.namprd16.prod.outlook.com (2603:10b6:a03:1a0::34)
- by MW3PR12MB4458.namprd12.prod.outlook.com (2603:10b6:303:5d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.21; Sat, 13 Jul
- 2024 00:01:56 +0000
-Received: from SJ1PEPF000023D7.namprd21.prod.outlook.com
- (2603:10b6:a03:1a0:cafe::55) by BY5PR16CA0021.outlook.office365.com
- (2603:10b6:a03:1a0::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35 via Frontend
- Transport; Sat, 13 Jul 2024 00:01:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D7.mail.protection.outlook.com (10.167.244.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.5 via Frontend Transport; Sat, 13 Jul 2024 00:01:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 12 Jul
- 2024 17:01:40 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 12 Jul
- 2024 17:01:39 -0700
-Message-ID: <682e293b-cc0d-4261-90a8-bc6f16df0992@nvidia.com>
-Date: Fri, 12 Jul 2024 17:01:38 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11A91370;
+	Sat, 13 Jul 2024 00:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720829518; cv=none; b=kwPPGhj4/xvFC9lWVBa1cdLalop5Qf7yaLRdRck4gJkx2wlBYgA84S3mg2kdohu8zaGEsg9wGbpCSETfoOEADlJ+DhspZcAcZWs7E2ueJ0B51TMRSoaZloEk6rmgWnFovg/lFdbznGmj9Q/bql3fUwIY6RoAUsh0fMOnt1z4fqA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720829518; c=relaxed/simple;
+	bh=Phxk21ZRQHBWO8Fk+3b1KHjGX6RECntBicJRnbKr46U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQtGUBKy4GCxuronPYOoKcRE3BwWnCXelGwuDGq5Fz3JI6rGwXD6yFDGyUrTZhvCc7EeEkazJQvQvAYnLfWWkuB5S7uqGESijPZ0mPjFq/OUZW6/IIk/9o5Ejdwd3NI1k3vqrWvu3+QMJhIPHF0AnIoVoIUUaJG4Av3V7Nd9AhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBuujuG8; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fbc09ef46aso21927715ad.3;
+        Fri, 12 Jul 2024 17:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720829515; x=1721434315; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7pphgwh/0pG0XDQwktVo+yWTDf7IpCH6Ju6MKVkTgw=;
+        b=VBuujuG8N1JVnx9IxJ8jlO1Nt/xp90u5pQ8ixkfNck87R0ulFix1sYrGIOe2paJuDa
+         6OcI65ebydYKd8UQo+nBcdT1S3azrlX2N2IQwX2XspT3bfDqlGMGeXIE4oq9gRVPjYlw
+         dhUxbK82VyehrFmdw1m1393/VjbVi4XuBGoR9pvUVVUUtmK7lXSoerbCfKjp/1FL7Ztg
+         afkqJekrmF2CeB+ujIAK5agmyl70DgjgxsFsdfQb0wqBd8mN2T/94ArAAlEm6ubS9Ovn
+         6vZ8GstyymVG5pWDotArReVBhUHWkXqWiA4ORT86btMx4X04htcBwVsMixxPeARzTRdv
+         c/UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720829515; x=1721434315;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q7pphgwh/0pG0XDQwktVo+yWTDf7IpCH6Ju6MKVkTgw=;
+        b=Ue+OnmpIgEsUb1va9GrIZ2MCNmb4Y06OrqbfkjgB1gdkZgb/b8rxaLajZ3q67Nxk43
+         cgHNm1RvGcy3FX2qQnJH2e1kQu1uFh09UzHMHQRfCKcnDr57F1oah26yJyo9OdKDsZMB
+         ugB1uf7tqWOXoQg0f9zFgAp+B77O7R1ornGf46rfsU0aLYfUA1leE9C8nfjbySl0Jekd
+         A4jt5p1zXZ7qKf+UvR4XeroWRtAV00uPU1fxPODyRO6KLFoznydENBrdsurRfOI8071Z
+         c1QLtY1n3wd+SGj0jRwACcuw6YXAPeXC/CFXF2hhMNPlOfOls2cYTNbw7Hx7BuLq8E9I
+         Gv7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUb7zn6WnrISJCPPiA9YRQBld4x1o1HixonsEhMNovr9uCQCxBWp3f2orBuP2BduULDCMO4uOI0lARuQTwzjlqGz7heduTb3mL+ah7oupG99Xs6tGesLD2S45BijH7EPctWfNlbfD54OA=
+X-Gm-Message-State: AOJu0YzzfjHG/+bSt1DC8vqDkvwuCeOsEveuqVDdIfxIwpE4pzNWJKv1
+	EmIHIKi0x4RjvH4J1fngAmm/xckCTfCYbHjK0DP+Qb2SKufvwSt0
+X-Google-Smtp-Source: AGHT+IEjh/xpVfdgoQwIz90ulydeyB6ybkbqta+ytUx2VzxoLaOfYGkrxLhV5izrDYes3VNsqaxoXg==
+X-Received: by 2002:a17:90b:118:b0:2c4:dcf6:2130 with SMTP id 98e67ed59e1d1-2ca35d4b252mr10162252a91.32.1720829515082;
+        Fri, 12 Jul 2024 17:11:55 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:669e:eb9d:e30c:18b4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e386d5437sm20011a12.57.2024.07.12.17.11.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 17:11:54 -0700 (PDT)
+Date: Fri, 12 Jul 2024 17:11:52 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Jacky Bai <ping.bai@nxp.com>, Jason Liu <jason.hui.liu@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] input: bbnsm_pwrkey: Fix missed key press after
+ suspend
+Message-ID: <ZpHGSCzckXncmeRv@google.com>
+References: <20240712224352.82190-1-Frank.Li@nxp.com>
+ <ZpG2fNQ9-inLN8-Q@google.com>
+ <ZpG5d1/EsOU4eJEj@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/net: fix gro.c compilation failure due to
- non-existent opt_ipproto_off
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Shuah Khan <shuah@kernel.org>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>, Pravin B Shelar <pshelar@ovn.org>, "Willem
- de Bruijn" <willemdebruijn.kernel@gmail.com>, Alexander Mikhalitsyn
-	<alexander@mihalicyn.com>, zhujun2 <zhujun2@cmss.chinamobile.com>, "Petr
- Machata" <petrm@nvidia.com>, Ido Schimmel <idosch@nvidia.com>, Hangbin Liu
-	<liuhangbin@gmail.com>, Nikolay Aleksandrov <razor@blackwall.org>, "Benjamin
- Poirier" <bpoirier@nvidia.com>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-actions@lists.infradead.org>, <mptcp@lists.linux.dev>,
-	<dev@openvswitch.org>, <linux-kselftest@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-	<stable@vger.kernel.org>, Ignat Korchagin <ignat@cloudflare.com>
-References: <20240712235150.99175-1-jhubbard@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240712235150.99175-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D7:EE_|MW3PR12MB4458:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1667e350-5152-4741-711a-08dca2cf0244
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXBWV1B4dWExY082ekxQaGRjTWh0UHZwWjI0QTZtNGsveU9PREFaK2N5eWg3?=
- =?utf-8?B?MUI0RXNWVEhXUEZPbURjcVNNdnRNSjllbDIvSjdKTjllaE1MNXhFMktlM3Fa?=
- =?utf-8?B?SERYdVZsODRBUFg2TXk1U0gxSWplWWl1bEU2M2NlMTIrOEx6dVlHb01ORjd1?=
- =?utf-8?B?S2NRRUJqYnFwUU5ObkFvMURobnU4SGNESDlqY05kZksydCtmZ2x1V3lrOXJr?=
- =?utf-8?B?YlZrYzJCNmgzMjNETUZxQ05uenc1aDB0b3Z5cHo2UHlqY0xCaFVCL1FRK3JH?=
- =?utf-8?B?VG85TXgrcjVXWlB6Mk5Ja2RPanNOZ1NCKzRRaytXU3JnNkMrMk93bjdEVE9L?=
- =?utf-8?B?OG1ncm1YMXBuUUpGYmh0Z0FIVkxuK2ZuazFab1dFQzVkMnIvV1MzdWZVcnBE?=
- =?utf-8?B?QkVCb0JaejFUSllWNmp5dy9wc2N1L1M0RkhzTENLZms4YWo0dDVZaGNrR3hH?=
- =?utf-8?B?WUd5RUZOZ3BjUUtNSFRJRHJLZVE2eklUa2VIUk42K1dHRjlIRkxBRWFYc1dT?=
- =?utf-8?B?OExKanIvRkxtRmVzNGY2QVBUZ3UvUlg1K1BHR3ZLdlY0RGk2enQ0SHBiM2tC?=
- =?utf-8?B?aVlwRi8zOGV3RGpEclY2eXoyelRmTm4wT2cwd2lNUEV5blkxMnJNRGUrUnpl?=
- =?utf-8?B?Q3pFaWl1VW5kZW1KNzVPYyt4b2NvTEpKZE1HNmxEdzQwV2wxSGRqZVpTc2xN?=
- =?utf-8?B?QkRKT1FwRW0wK0h0LytsY0xnRDZyb0tqOUgwcVBWM2w3dFBhcENrVlVHYUlk?=
- =?utf-8?B?YXUrMXZMNG11ZDJQMlJJWFJORVFYRGZHT0w3QmRGVXlDdlI1MjhsV2QrbmhL?=
- =?utf-8?B?amZTc2lGbVZFaVJUelhmVzFldzNuR0JDNkQrbHVSU1VWVDBKcjV4cDVpcXAx?=
- =?utf-8?B?VGlIN2hORjJjUlF2elRoMWpySmthMnZNVndiRm5Bc2Z4YkI2NkU2UXhnaTBU?=
- =?utf-8?B?d3cxOG1maDVXeTJrTlVCNWpTWE8rYnQzaVF2M05sRDFiMUNJU09mRW0wcGJO?=
- =?utf-8?B?ZXo2cjh3OEVTcS9IcVZtb3lyUFVBZzlsWDY3N29hTVJTYWVFL1hyZmdCNHB1?=
- =?utf-8?B?SU44a2pTUXVQbmtkbENyT2cyY0NnbmV6V3poTVpFelZWV1VLVUtrMnNmZU1j?=
- =?utf-8?B?QjFTRnNzOHh5aUZvNmFiUkJLdGFnZEQxakJiQ2pLTGNPbmpCNUFRNmlBNWp5?=
- =?utf-8?B?Yk9UWm5zcnd0TmMvWFFySE1zTGNPcFRkQmpzSjFVOVJ6cW5uc1dJVzdzZmho?=
- =?utf-8?B?elJqUkxJWHlyOUVZZGptQU5mdkxpVnVReG1SUVBmNUxkZkRIUStBYUVCaWov?=
- =?utf-8?B?Z1habkFOUGhKSHMwUnNyOXF2QXdKUDVRbEo2eG5OM0tCY2l3cUcrYXdadWxT?=
- =?utf-8?B?U2hOcG1hQ3ZNbTg2aGRFVWk0K0ZYRS90eFluaE81WXFWMEdWVmxaQXhIa1Nn?=
- =?utf-8?B?c0pDMk4rZlVQSkIrdGtjZWxYeHdDUFJYQVh6ZFp4TzFya2N1NkNKVlhaVXRh?=
- =?utf-8?B?bzFPS0U1U3B3eTE4YmQ1TTVtU2VXZUJlQmd0UjYxaXJYYXVFNDlKbDZMdDgv?=
- =?utf-8?B?K29wbzNtU1hINDJTWjFCYzBmNm84ZEtITHZINFFaRXJhMzlpcEd1TG5NSHhN?=
- =?utf-8?B?amROa29meStZZFVxT0V3QmU5NVA2NUp4Z2kwR3F4c2xqK1Rjbjd5YmU3Y2ln?=
- =?utf-8?B?UHYvSS8zc3Rocno0S3kwb0tYc2pXcW5BTWFwamtGNVMxOC9UdUV4eXJRaDNU?=
- =?utf-8?B?U2FKR3ZSbzlhTkRQWGVITFR1UEkrUWkyRnJGUzgrTk1tSUQwcjVBK3FSQWxY?=
- =?utf-8?B?MStoK0YxZEV1eEtZRWNmRHJxQVpOa3pBZE5rVVdXZDVRYnh3UVNTMzgvVTdi?=
- =?utf-8?B?aWhhdEJ1MGpQRkZCVThGZUppVGNKc0Y0Nk85OEZFRitwZFE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2024 00:01:55.9425
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1667e350-5152-4741-711a-08dca2cf0244
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D7.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4458
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpG5d1/EsOU4eJEj@lizhi-Precision-Tower-5810>
 
-On 7/12/24 4:51 PM, John Hubbard wrote:
-> Linux 6.6 does not have an opt_ipproto_off variable in gro.c at all (it
-> was added in later kernel versions), so attempting to initialize one
-> breaks the build.
+On Fri, Jul 12, 2024 at 07:17:11PM -0400, Frank Li wrote:
+> On Fri, Jul 12, 2024 at 04:04:28PM -0700, Dmitry Torokhov wrote:
+> > Hi Frank,
+> > 
+> > On Fri, Jul 12, 2024 at 06:43:51PM -0400, Frank Li wrote:
+> > > From: Jacky Bai <ping.bai@nxp.com>
+> > > 
+> > > Report input event directly on wakeup to ensure no press event is missed
+> > > when resuming from suspend.
+> > > 
+> > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > Acked-by: Jason Liu <jason.hui.liu@nxp.com>
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  drivers/input/misc/nxp-bbnsm-pwrkey.c | 36 +++++++++++++++++++++++++++
+> > >  1 file changed, 36 insertions(+)
+> > > 
+> > > diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > > index 1d99206dd3a8b..9675717ecbdfe 100644
+> > > --- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > > +++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > > @@ -38,6 +38,7 @@ struct bbnsm_pwrkey {
+> > >  	int irq;
+> > >  	int keycode;
+> > >  	int keystate;  /* 1:pressed */
+> > > +	bool suspended;
+> > >  	struct timer_list check_timer;
+> > >  	struct input_dev *input;
+> > >  };
+> > > @@ -70,6 +71,7 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
+> > >  {
+> > >  	struct platform_device *pdev = dev_id;
+> > >  	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
+> > > +	struct input_dev *input = bbnsm->input;
+> > >  	u32 event;
+> > >  
+> > >  	regmap_read(bbnsm->regmap, BBNSM_EVENTS, &event);
+> > > @@ -81,6 +83,16 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
+> > >  	mod_timer(&bbnsm->check_timer,
+> > >  		   jiffies + msecs_to_jiffies(DEBOUNCE_TIME));
+> > >  
+> > > +	/*
+> > > +	 * Directly report key event after resume to make sure key press
+> > > +	 * event is never missed.
+> > > +	 */
+> > 
+> > How do you know that wakeup was caused by the key press on this device?
+> > As far as I can see the driver requests the interrupt as shared, so we
+> > could end up in bbnsm_pwrkey_interrupt() even if button was not pressed.
+> > 
+> 
+> In bbnsm_pwrky_interrupt()
+> {	...
+> 	regmap_read(bbnsm->regmap, BBNSM_EVENTS, &event);                                           
+>         	if (!(event & BBNSM_BTN_OFF))                                                               
+>                 	return IRQ_NONE;
+> 
+> 	...
+> }
+> 
+> If wakeup was not caused by pwr key,  irq will do nothing, code will not
+> reach to here.
 
-This is the first time I've tried to fix something in linux-stable, and
-I'm not sure that I've made it completely clear. This is only for
-linux-6.6.y in linux-stable.
+OK, so the case you are trying to fix is when interrupt is delayed so
+the key is either already released or it will be released by the time
+the normal debouncing interval passes?
 
-thanks,
+I think you want to reset ->suspended in the interrupt handler so that
+this block fires at most once per suspend/resume cycle. And maybe move
+it before calling mod_timer().
+
+Thanks.
+
 -- 
-John Hubbard
-NVIDIA
-
-> 
-> Fixes: c80d53c484e8 ("selftests/net: fix uninitialized variables")
-> Cc: <stable@vger.kernel.org> # 6.6
-> Reported-by: Ignat Korchagin <ignat@cloudflare.com>
-> Closes: https://lore.kernel.org/all/8B1717DB-8C4A-47EE-B28C-170B630C4639@cloudflare.com/#t
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->   tools/testing/selftests/net/gro.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-> index b204df4f3332..30024d0ed373 100644
-> --- a/tools/testing/selftests/net/gro.c
-> +++ b/tools/testing/selftests/net/gro.c
-> @@ -113,9 +113,6 @@ static void setup_sock_filter(int fd)
->   		next_off = offsetof(struct ipv6hdr, nexthdr);
->   	ipproto_off = ETH_HLEN + next_off;
->   
-> -	/* Overridden later if exthdrs are used: */
-> -	opt_ipproto_off = ipproto_off;
-> -
->   	if (strcmp(testname, "ip") == 0) {
->   		if (proto == PF_INET)
->   			optlen = sizeof(struct ip_timestamp);
-> 
-> base-commit: 2ced7518a03d002284999ed8336ffac462a358ec
-
-
+Dmitry
 
