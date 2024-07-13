@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-251398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1F3930467
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3B930469
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184F0B2310D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F77F1C22ECD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911A549635;
-	Sat, 13 Jul 2024 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B42856477;
+	Sat, 13 Jul 2024 08:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="i+O5POC2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="r1bAQ/x4"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="kc0mpBhd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bsRddw7N"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38234655D;
-	Sat, 13 Jul 2024 07:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9656E49649;
+	Sat, 13 Jul 2024 08:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720857597; cv=none; b=D5pCjlYKtommStrX8gzRhPtqf4WOFOuYCgozMnece3EgKEnAj3ndddDeht5CgXkEnZ59BJLhwpR4rQ0P6WtpeWoIW7zuSY0N0w2m+l3d2yjtUkQu0qSQbcFz8MX5NUWEy4qmrGKlJpKTY4HeDPucu8dalsQqb0KsIkiMhOilJF8=
+	t=1720857602; cv=none; b=DGGmS8cUso9HcgJFt6cRFHcuXtI5NxZ6SDKW2YK+B4ChjmewCz2fcUzfghNTCUFqSBFF+9Qo9PjkcoxJKUE8VkHKaIOIv8M28S8Pfv+IhwmzFH3LSBNj/hmunb/m2ZC7p8KNIyjOnqJAqK6lR51LHrniCoIDsrt9fk5flhzAYfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720857597; c=relaxed/simple;
-	bh=ThKHIy6sl1xHMQ3TRJ5X/mJ7vjKsgWXyARuvIZNcWV4=;
+	s=arc-20240116; t=1720857602; c=relaxed/simple;
+	bh=A+UHp366gIVa2FazCrxKWQvKpSLLcVwnaGhWXwZGtFI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NT6iPsv5Gau6ILteBUA2mOxSnDHIRWctX7YRnCaoBEVMFd53jqaDvbq0ktzPEpo5Dqf+2DPMxbDR8cuzwTwrEGwS8zaz+LwdE0pDDmbSNOPdj6nchpvO7MnpnAuyL0qEnscHlrpWbiocxXCDew0mEkF7nhAf+KVxD++jLoEIgEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=i+O5POC2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=r1bAQ/x4; arc=none smtp.client-ip=103.168.172.156
+	 MIME-Version; b=lsUSrnnCaHnjU4DMNQBMxsvIJqRAR4ySFG6zZhuEFVZbg38e2I7wCLDZSt0BqkBVt0QMkbCM1xBpRSZTEy3vjSiTOqFnyNzy8+HuJRw3GWIVjQVd/aNPhMEJnAAYw5uCX56Q/FttwZMtCSjeK3HT2j1PIwQNsfFi9KGBZ0pxtlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=kc0mpBhd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bsRddw7N; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 2E0771141C9F;
-	Sat, 13 Jul 2024 03:59:55 -0400 (EDT)
+	by mailfout.nyi.internal (Postfix) with ESMTP id 8FE4B138882F;
+	Sat, 13 Jul 2024 03:59:59 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 13 Jul 2024 03:59:55 -0400
+  by compute5.internal (MEProxy); Sat, 13 Jul 2024 03:59:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1720857595; x=
-	1720943995; bh=G4WP8JUuAjNEoU/SWJIVBFFXwy/W3zwWEvh2sFlf0F4=; b=i
-	+O5POC2wrR5KDlv6PiezxpgTVxxhnFliMQ5iAMrovQPQl2BBdZIWZkYcZp78ASAZ
-	saBaeq+b9/UdIXxTlBfLcKRbszrA0GdEtJglwKqlX5qi96vOg3iSmCldOTJ/jf2e
-	Rnf02BuNqgTgyVzqZhB/d2anPVAJUIpKLDpokMoosyQuPKwTIW15WDbjLJtvOoM6
-	8plq4+u4UjtkGIZt0q/6Diy4AK4V822JCbJCc41oiCS/DUBhReDoFOcBk0hWXkaz
-	b/vPLRak75V0/3tfZoyaSo4g4Vplz8KXHjlGiYWuB8xFyx6KRyZKCPvx0f8YHdon
-	2uA8LvRDcihG1G7TVWSLQ==
+	:reply-to:subject:subject:to:to; s=fm1; t=1720857599; x=
+	1720943999; bh=6wVqcF+sq6nvP8sf0sSl8W+Zi+HYxu3wkUISmp2SegA=; b=k
+	c0mpBhddanoFMwvoyLEPzUHC32U1l55zdypLjFRmdwj4/kXLGhADTcmPlGEInIXN
+	gyIgKjJlSszeOqkpB/m6jkY4/SncjNvL/hegWKyZD3uX7hSThpteEAKqzpjxCMOx
+	bCHz6GZlhN0n+l4HaOYtXPxsxIRx4vFDF9gOgkmgzmqiyzDZTBkJVLEPDr+nav9O
+	a0Moe2i3qfmb23ZO9RTqvVPsKzSJ3yjlNU/DN+B4yvw0TMhiOXqNvcjqCJD8wE7n
+	K9KtH3IwEQ2BJddnRfEOvxSjrS4qPUYdzZCnPDU7IIDlp7aSEzVN9Xk+8pM2VYuX
+	6ZwwXGdCOf+5X9oSN10ag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720857595; x=
-	1720943995; bh=G4WP8JUuAjNEoU/SWJIVBFFXwy/W3zwWEvh2sFlf0F4=; b=r
-	1bAQ/x4eI7Ea5q7W7ltoq1LKQfqGXSVEGrgtvRWGjmKV9XOYRlRF31hXMojFgY0R
-	gEiWDomfynX74lZrgFwq81MSAili83QCXwVE6F9DDlkzETcjPIn75PbVrjTYiLkR
-	30YdFaw4sWfBAIE30pj7r/NQSATilzsvVhzJTd+fkRF5RukUlq6eCrEVf7Owg3xR
-	R/fMP+E/rFKw138iSLPhIpsLB9S0J1jDGSV9yH9xttQ5PLnWxVmQ79kNIwFS/dGp
-	p/TnPL6jYlHi235nmF4cDjrul7ykZRdEOcmvtv8pthMbNpAINXUN6kBFds5Ma5/B
-	lZpDmn5TTACpvzjYp3iPA==
-X-ME-Sender: <xms:-jOSZkUPcqNXhAREjxZ4RQefqsSkIg1gTY6Yz0VEcRRcERiU1ru5ZQ>
-    <xme:-jOSZoma2kJS1XDPnUl0PePQKz2aXOsSiEdxkGULAzDxQHifes38yVHFc_gu3jJeM
-    CltIPvK5gVjvUe-HjY>
-X-ME-Received: <xmr:-jOSZoY6lxnTwntcqBixqJYFoA3UFyrVRRMW5Sb4yFUqQdHpggXIWXzVDOBW>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720857599; x=
+	1720943999; bh=6wVqcF+sq6nvP8sf0sSl8W+Zi+HYxu3wkUISmp2SegA=; b=b
+	sRddw7NprbZNoGhfIS1AgDdWLup+cg0IynCXDulroMqmC/dN/VwgpA5LdrcFMjBR
+	YMAx8pjMrJeGJhQuhsFS+tX69+I9k4hf219sg9a8jMLCCldg0NVcRQGl1X22GClZ
+	Y3ROKZ/Bkv1gA7DG210bZv5PsvM3txV/aO/EV9KzlMpr16yxFD9c2LubWtOkFk89
+	H8LGxu5JqgVujIuRNyDNLh1CJgq6yXQ1VSQ9PkEoGtEJiOZK+44cPxoMfhYhhMgT
+	5u2lC/zWb5sJ64sXAFzpZnBK4Wx0CBh4cF075dIFGgrdrkFYos5ReLUoTPk9ErFE
+	grfankpn45sg/bVDtwGnQ==
+X-ME-Sender: <xms:_jOSZpimJqmVh6vaG_OjXRgNpv-4trIEWWrcLo1MoN8G8SoOGuLoJQ>
+    <xme:_jOSZuCaN2vNX0i6e7EmliMqKN9vQdgG_8VQfv_GG6lH46qX7Z-Z8m4L3284PYGz1
+    FysKKJyMWvU00__ybU>
+X-ME-Received: <xmr:_jOSZpGJspl5vWcgr-XHw1tDRdmMgoH54W85Abaejuz_bmsxvjdPB2r7199q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeejgdduvdekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
     ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
     jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgeptden
+    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgepuden
     ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:-jOSZjW7YzBVi8fCs-sFqS7hoL-ZO0E-Ph31uzul8ThG6UbOM13T1w>
-    <xmx:-jOSZukXyPvbTSqyvPkow9tJKH1H8HtJJ6grps7B7r_4gihtoZ9DIA>
-    <xmx:-jOSZocgYJNrKtq6w8TEYiRxQvfumfnnTGa8Fz6lu1BdwlxFg3Wh9g>
-    <xmx:-jOSZgG1OJ5cF4RS3hnBK99djAEa7clwGO6wjr9EejeK7Eg2jr5BsA>
-    <xmx:-zOSZltWYdCNSxv7YmTBmNWkSdAOy6zpbmirLw1x7bP_UegpENf3mUtX>
+X-ME-Proxy: <xmx:_jOSZuRELK2jhbEt2AlsopoNL94cwoJMkFHejJy2XLOsvEF2-BEdgQ>
+    <xmx:_jOSZmzxMfheNs1i6VcBU9GtQkfjTHhCoWnTvs6ljmo-ZkwenZ-gSQ>
+    <xmx:_jOSZk5voUTGBKg4VbykfrPyylPUr8Chy5hCgUZiXZKmvmzre3_uDw>
+    <xmx:_jOSZrwJQvXsboEAz9-3bc7ZAXN7TaEfO5a3AGEq3ZicSTs8APwzng>
+    <xmx:_zOSZtrg6QjuGKTXnGBDJ8Sq1gXr3Di8510VGujoxm-LbTiJjix4YJeV>
 Feedback-ID: i5ec1447f:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 13 Jul 2024 03:59:51 -0400 (EDT)
+ 13 Jul 2024 03:59:55 -0400 (EDT)
 From: "Luke D. Jones" <luke@ljones.dev>
 To: platform-driver-x86@vger.kernel.org
 Cc: corentin.chary@gmail.com,
@@ -86,9 +86,9 @@ Cc: corentin.chary@gmail.com,
 	ilpo.jarvinen@linux.intel.com,
 	linux-kernel@vger.kernel.org,
 	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 1/2] platform/x86: asus-wmi: add debug print in more key places
-Date: Sat, 13 Jul 2024 19:59:39 +1200
-Message-ID: <20240713075940.80073-2-luke@ljones.dev>
+Subject: [PATCH 2/2] platform/x86: asus-wmi: don't fail if platform_profile already registered
+Date: Sat, 13 Jul 2024 19:59:40 +1200
+Message-ID: <20240713075940.80073-3-luke@ljones.dev>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240713075940.80073-1-luke@ljones.dev>
 References: <20240713075940.80073-1-luke@ljones.dev>
@@ -100,162 +100,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add more verbose debug print in the WMI method calls. This helps a lot
-with debugging various issues working with regular users as the WMI
-methods can be traced now.
+On some newer laptops it appears that an AMD driver can register a
+platform_profile handler. If this happens then the asus_wmi driver would
+error with -EEXIST when trying to register its own handler leaving the
+user with a possibly unusable system - this is especially true for
+laptops with an MCU that emit a stream of HID packets, some of which can
+be misinterpreted as shutdown signals.
+
+We can safely continue loading the driver instead of bombing out.
 
 Signed-off-by: Luke D. Jones <luke@ljones.dev>
 ---
- drivers/platform/x86/asus-wmi.c | 58 +++++++++++++++++++++++++++------
- 1 file changed, 48 insertions(+), 10 deletions(-)
+ drivers/platform/x86/asus-wmi.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 799d928c7d3d..4c129881ce28 100644
+index 4c129881ce28..7d87ff68f418 100644
 --- a/drivers/platform/x86/asus-wmi.c
 +++ b/drivers/platform/x86/asus-wmi.c
-@@ -334,20 +334,29 @@ static int asus_wmi_evaluate_method3(u32 method_id,
- 	status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID, 0, method_id,
- 				     &input, &output);
+@@ -3836,8 +3836,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
+ 		asus->platform_profile_handler.choices);
  
--	if (ACPI_FAILURE(status))
-+	pr_debug("%s called (0x%08x) with args: 0x%08x, 0x%08x, 0x%08x\n",
-+		__func__, method_id, arg0, arg1, arg2);
-+	if (ACPI_FAILURE(status)) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, -EIO);
- 		return -EIO;
+ 	err = platform_profile_register(&asus->platform_profile_handler);
+-	if (err)
++	if (err == -EEXIST) {
++		pr_warn("%s, a platform_profile handler is already registered\n", __func__);
++		return 0;
++	} else if (err) {
++		pr_err("%s, failed at platform_profile_register: %d\n", __func__, err);
+ 		return err;
 +	}
  
- 	obj = (union acpi_object *)output.pointer;
- 	if (obj && obj->type == ACPI_TYPE_INTEGER)
- 		tmp = (u32) obj->integer.value;
- 
-+	pr_debug("Result: 0x%08x\n", tmp);
- 	if (retval)
- 		*retval = tmp;
- 
- 	kfree(obj);
- 
--	if (tmp == ASUS_WMI_UNSUPPORTED_METHOD)
-+	if (tmp == ASUS_WMI_UNSUPPORTED_METHOD) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, -ENODEV);
- 		return -ENODEV;
-+	}
- 
+ 	asus->platform_profile_support = true;
  	return 0;
- }
-@@ -377,20 +386,29 @@ static int asus_wmi_evaluate_method5(u32 method_id,
- 	status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID, 0, method_id,
- 				     &input, &output);
+@@ -4713,7 +4718,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		throttle_thermal_policy_set_default(asus);
  
--	if (ACPI_FAILURE(status))
-+	pr_debug("%s called (0x%08x) with args: 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x\n",
-+		__func__, method_id, arg0, arg1, arg2, arg3, arg4);
-+	if (ACPI_FAILURE(status)) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, -EIO);
- 		return -EIO;
-+	}
- 
- 	obj = (union acpi_object *)output.pointer;
- 	if (obj && obj->type == ACPI_TYPE_INTEGER)
- 		tmp = (u32) obj->integer.value;
- 
-+	pr_debug("Result: %x\n", tmp);
- 	if (retval)
- 		*retval = tmp;
- 
- 	kfree(obj);
- 
--	if (tmp == ASUS_WMI_UNSUPPORTED_METHOD)
-+	if (tmp == ASUS_WMI_UNSUPPORTED_METHOD) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, -ENODEV);
- 		return -ENODEV;
-+	}
- 
- 	return 0;
- }
-@@ -416,8 +434,13 @@ static int asus_wmi_evaluate_method_buf(u32 method_id,
- 	status = wmi_evaluate_method(ASUS_WMI_MGMT_GUID, 0, method_id,
- 				     &input, &output);
- 
--	if (ACPI_FAILURE(status))
-+	pr_debug("%s called (0x%08x) with args: 0x%08x, 0x%08x\n",
-+		__func__, method_id, arg0, arg1);
-+	if (ACPI_FAILURE(status)) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, -EIO);
- 		return -EIO;
-+	}
- 
- 	obj = (union acpi_object *)output.pointer;
- 
-@@ -453,8 +476,11 @@ static int asus_wmi_evaluate_method_buf(u32 method_id,
- 
- 	kfree(obj);
- 
+ 	err = platform_profile_setup(asus);
 -	if (err)
-+	if (err) {
-+		pr_debug("%s, (0x%08x), arg 0x%08x failed: %d\n",
-+			__func__, method_id, arg0, err);
- 		return err;
-+	}
++	if (err && err != -EEXIST)
+ 		goto fail_platform_profile_setup;
  
- 	return 0;
- }
-@@ -542,6 +568,7 @@ static bool asus_wmi_dev_is_present(struct asus_wmi *asus, u32 dev_id)
- {
- 	u32 retval;
- 	int status = asus_wmi_get_devstate(asus, dev_id, &retval);
-+	pr_debug("%s called (0x%08x), retval: 0x%08x\n", __func__, dev_id, retval);
- 
- 	return status == 0 && (retval & ASUS_WMI_DSTS_PRESENCE_BIT);
- }
-@@ -3559,18 +3586,27 @@ static int asus_wmi_custom_fan_curve_init(struct asus_wmi *asus)
- 
- 	err = fan_curve_check_present(asus, &asus->cpu_fan_curve_available,
- 				      ASUS_WMI_DEVID_CPU_FAN_CURVE);
--	if (err)
-+	if (err) {
-+		pr_err("%s, checked 0x%08x, failed: %d\n",
-+			__func__, ASUS_WMI_DEVID_CPU_FAN_CURVE, err);
- 		return err;
-+	}
- 
- 	err = fan_curve_check_present(asus, &asus->gpu_fan_curve_available,
- 				      ASUS_WMI_DEVID_GPU_FAN_CURVE);
--	if (err)
-+	if (err) {
-+		pr_err("%s, checked 0x%08x, failed: %d\n",
-+			__func__, ASUS_WMI_DEVID_GPU_FAN_CURVE, err);
- 		return err;
-+	}
- 
- 	err = fan_curve_check_present(asus, &asus->mid_fan_curve_available,
- 				      ASUS_WMI_DEVID_MID_FAN_CURVE);
--	if (err)
-+	if (err) {
-+		pr_err("%s, checked 0x%08x, failed: %d\n",
-+			__func__, ASUS_WMI_DEVID_MID_FAN_CURVE, err);
- 		return err;
-+	}
- 
- 	if (!asus->cpu_fan_curve_available
- 		&& !asus->gpu_fan_curve_available
-@@ -4398,8 +4434,10 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 	else if (attr == &dev_attr_available_mini_led_mode.attr)
- 		ok = asus->mini_led_dev_id != 0;
- 
--	if (devid != -1)
-+	if (devid != -1) {
- 		ok = !(asus_wmi_get_devstate_simple(asus, devid) < 0);
-+		pr_debug("%s called 0x%08x, ok: %x\n", __func__, devid, ok);
-+	}
- 
- 	return ok ? attr->mode : 0;
- }
+ 	err = asus_wmi_sysfs_init(asus->platform_device);
 -- 
 2.45.2
 
