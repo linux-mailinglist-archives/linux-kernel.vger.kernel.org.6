@@ -1,199 +1,123 @@
-Return-Path: <linux-kernel+bounces-251408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B9C930497
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5109930499
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74905284051
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6807328416D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20008374F1;
-	Sat, 13 Jul 2024 08:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F76A49628;
+	Sat, 13 Jul 2024 08:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ez1yJJY6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EadJ3o/P"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F86D47A64;
-	Sat, 13 Jul 2024 08:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FB541C79
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 08:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720860678; cv=none; b=pzMpQg1Fmvze+tcd8jCfGjT7cwg0mfLN5/TsPNaoFa8QlQP++HGOmIvZWDcKo11KXMEqCvVb2/7QK7Mr26RRQ2bEwE1euqPNV5Xd5Pu7MLlqN7Z61HeK5F7NsEA9d8XXDxfyiIgQZKz92QUgFDwOzuUhVg/Phup4/p7IbeQZe/8=
+	t=1720860810; cv=none; b=hSkK3em06cyR2hXNBtvqRWY2mX9bHRrTcucNcgFO4H1rGahPNvIzkZ9AhnaO+qsxJ2OzT2NhJ0Nn1W/0+iY6r39zlhhycMd8pyI+ZgHF3LL8FXz8kER8rGRVxGBkNDTX+yO4xeDWrmV6TfKxjARtzo41lV7QI9ijLHFn9Vz4EUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720860678; c=relaxed/simple;
-	bh=1o1g4gZYrN8TVmq5y5JEEypnsywvx7tYdlf5nmnIfdQ=;
+	s=arc-20240116; t=1720860810; c=relaxed/simple;
+	bh=I/5mM7Ozs4rrTgQhd5TfrE9gxxG0RMf13IWKvDKcgyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1XO6HYOpmf8b4yeJgIDZdHlotgC6aOcZmbf68ljRUsdExMN+JujREWk/LkX3zoeyQZHEZbbtjqqVEH3ikKFAWAKfssfsZnDy33kU8EIwNwShdcJOJ7SubwxKJ4Trprq+FCxsh1JMdA3FgjgPj8lb3gHlOUhWBQCgy+ifWDHnfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ez1yJJY6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720860675; x=1752396675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1o1g4gZYrN8TVmq5y5JEEypnsywvx7tYdlf5nmnIfdQ=;
-  b=ez1yJJY6r3E9eHkik4qawvHuKdrImnq15JvY5+ZfwjCIJ4vK7e4KiqXD
-   SO6hKhqMW8liavftGesg5LKq2/6WfaS2GaBC1Ux3ObsgJpZkkz+1+teUj
-   hmX4JKbqDe9Wacci+J+i3jVbBT1bTVKUX1kN6t3pAqZqHDPoFXdiT245n
-   s2Lsq7UnNnlWSbDuw1MFJrFp9NhdZvPobhdE4JzlxsC+kkL3rumRr77eO
-   oxxruVxZTEVFT3cDgjmxlF/ZZj10AZt5L4aOpgJ8CM6TjQbrD77iUntU3
-   Zr6BA5iHUt2p7KufnLtPhTYapnx8/lYBtFW07upLqcEwKRoBNfg8zzBU4
-   g==;
-X-CSE-ConnectionGUID: p/cN65IAT/qedSSZhhAWgA==
-X-CSE-MsgGUID: jazdS+dGTmun/Jnoxmq4Bw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18175588"
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="18175588"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 01:51:14 -0700
-X-CSE-ConnectionGUID: HEQp0rVUQHy31iVMhja4CQ==
-X-CSE-MsgGUID: u7SKODaJRFin95NnL/NO4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="54317316"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 13 Jul 2024 01:51:10 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSYTE-000bte-0o;
-	Sat, 13 Jul 2024 08:51:08 +0000
-Date: Sat, 13 Jul 2024 16:50:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	waqar.hameed@axis.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	wangshuaijie@awinic.com, liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V3 2/2] Add support for Awinic proximity sensor
-Message-ID: <202407131612.g95L1k7k-lkp@intel.com>
-References: <20240712113200.2468249-3-wangshuaijie@awinic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+kYCEq4548xgGwLH4bnWSplAHBAAMIFDMUFEipXIDn/yHLK5tj/PIYbm/mnzov+PLADWJ7ZBFgey86Zy63mj8wFm8WQKa6iT8eAB43wHjODmquFCQUdpB/yJkGWR9zgl559wxbjD7vI3N3h7c6AtqyCcDhtxoIaQyKzA/4+YmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EadJ3o/P; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=oWNe
+	o+Jy+DPDIJgEbohnnyCRuMJO2VEbdD8Sl6rq8DA=; b=EadJ3o/PMVueUQxWzooi
+	71g0pb+M77iLzZWOemPU4g20tOk5I4wuvCrVM7lZyh1saKFq75pdsvlY5/B8sUem
+	JIfBijB/tEH/p02Mw1EZ1N64a3fLZE/hv+RzSU9qL7L9tcESXYozqdDSpnLd5UP8
+	UxwijAyABsrMES9ZYBSPU+/hAeeio0vXcdO4IRhKdNokvFH69253C97Q+/9p0Azk
+	zpdrgxaTCcF+JeI6YwlpHrYSfX/Zna9zbOWWzqPAibfCYCZrSThboNaXw+D7n21D
+	QMADSCJt4uZqztHO8rqqblnluIZ/93eftr8FnNTuj8YMaiCSLPY0tkQrVNz3GXiF
+	uQ==
+Received: (qmail 1384338 invoked from network); 13 Jul 2024 10:53:23 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2024 10:53:23 +0200
+X-UD-Smtp-Session: l3s3148p1@JgXZIB0d8uxehhtW
+Date: Sat, 13 Jul 2024 10:53:22 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.10-rc8
+Message-ID: <ZpJAgnW2E8rE6PxC@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <jxy6dh7o3adkh7bdwakiukrlnb3i3gakl3txx3eijvybdnj2qg@irq36xe2cdwn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="N2QKhrQenIPs6Crb"
+Content-Disposition: inline
+In-Reply-To: <jxy6dh7o3adkh7bdwakiukrlnb3i3gakl3txx3eijvybdnj2qg@irq36xe2cdwn>
+
+
+--N2QKhrQenIPs6Crb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240712113200.2468249-3-wangshuaijie@awinic.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Jul 13, 2024 at 09:38:42AM +0200, Andi Shyti wrote:
+> Hi Wolfram,
+>=20
+> Three fixes from you in this pull request, you definitely don't
+> need an introduction to them :-)
+>=20
+> Thanks,
+> Andi
+>=20
+> The following changes since commit 256abd8e550ce977b728be79a74e1729438b49=
+48:
+>=20
+>   Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-fixes-6.10-rc8
+>=20
+> for you to fetch changes up to ea5ea84c9d3570dc06e8fc5ee2273eaa584aa3ac:
+>=20
+>   i2c: rcar: ensure Gen3+ reset does not disturb local targets (2024-07-1=
+2 01:45:08 +0200)
 
-kernel test robot noticed the following build errors:
+Thanks, pulled!
 
-[auto build test ERROR on 43db1e03c086ed20cc75808d3f45e780ec4ca26e]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-iio-Add-YAML-to-Awinic-proximity-sensor/20240712-194024
-base:   43db1e03c086ed20cc75808d3f45e780ec4ca26e
-patch link:    https://lore.kernel.org/r/20240712113200.2468249-3-wangshuaijie%40awinic.com
-patch subject: [PATCH V3 2/2] Add support for Awinic proximity sensor
-config: um-randconfig-002-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131612.g95L1k7k-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131612.g95L1k7k-lkp@intel.com/reproduce)
+--N2QKhrQenIPs6Crb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407131612.g95L1k7k-lkp@intel.com/
+-----BEGIN PGP SIGNATURE-----
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaSQH4ACgkQFA3kzBSg
+KbbY1A//fW/aHAPQtRSli+e4aaaKm5Y+eqwFbKQOolfZ/4LwGC4D4E/HJmlWDaEj
+4I7Jipw4wu9iRGFh1vLOG50OfNJDFU3UlX+UKcd9xg5pEC37N6C4Ga/4psqOMbFS
+9Ad7A1N1yQkJI7VwsFjBd/bePC1rw2rF0m3CLh0AzTDiNO8KM+IQOrKn0ycAaTws
+xdRPfJlJQbPTiSCMEDIdeoD8xoeZw5XA8vaQrbujvw7Gi8kKwjLXb1p4yBY5UYSQ
+jLjJWl2gn+ZY7wIrzPx9b7VcmsLbrYjd8GQkQH44WqIjUX7LkcxUJ1ZJWvuGp/dQ
+o8bY11hY2Do2lTkXFAlQg7Kb32nFsXauovUd3Cc9jCsoqEO38y6lI3wfjLE08jUh
+WcEypeY07iWSVrF0OZK2MrrABzWkUEJkvZu65IpDJmHp9BBH4cKH3pneoa+4KBup
+pAbarxgPxaGREZ1OCxnmuuj37xFhwAuCtD38QbU1ldASeDcAzisAsQZ7oPgeJEmI
+I7t+bn8Jq9Zi41d//lVrHgmwP4tkF7VWD0mjLjM1ifSXvo0WN9TdoKA9M70tA/85
+HQiw41GHOoHgRnBZv9qTQgon58QtIz3VEp02pPzGSly6f5PiSnpFtzJAMnmesc9O
+emHEUjGzOnTQXkDRlw5ZmsmjC9789ulYvEY157SaG+b+V0Eq5mY=
+=atho
+-----END PGP SIGNATURE-----
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/resource_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/scftorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-5.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-15.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-celtic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-centeuro.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-cyrillic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/rational-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sort.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_keys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_key_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/atomic64_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/asn1_encoder.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/checksum_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_linear_ranges.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/is_signed_type_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/stackinit_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/fortify_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-stub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/ifcvf/ifcvf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/serial_cs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_gsm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-raw-ram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-spmi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-altera-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-fwnode.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/videobuf2/videobuf2-dvb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-alsa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/saa7134/saa7134-dvb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/radio/si470x/radio-si470x-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_dsp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_cif.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_aec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_netx.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
->> ERROR: modpost: "power_supply_unreg_notifier" [drivers/iio/proximity/awinic_sar.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--N2QKhrQenIPs6Crb--
 
