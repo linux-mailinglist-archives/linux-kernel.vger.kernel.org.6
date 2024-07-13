@@ -1,241 +1,168 @@
-Return-Path: <linux-kernel+bounces-251551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4685193062B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A73930632
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E0A1F21CDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980E21C20F2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3558813C68E;
-	Sat, 13 Jul 2024 15:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFDF13B5AD;
+	Sat, 13 Jul 2024 15:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="iYeWP0Of"
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qdxwksn3"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF843D3B3;
-	Sat, 13 Jul 2024 15:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBF8139587
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 15:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720884516; cv=none; b=egFwrO75kDjon7EvPvQs1z3gPu7GNJJgc/5KLb3vlffrkv6yITEdRanFK4/9vxnHN8Sy90+mbaQYma4mNVgdV13CBosz86qDnKqvKOFT0i5LLw0ekwvUqPK9PKPmVrBSBmp9jlwyHY5pQKGw4UPoZVJy9mlpQ7Vws9YJ32toEDg=
+	t=1720885108; cv=none; b=HSpFwrMIOIzWK3Ta+2/I3ZR/FQUyqxAL9MG9362qcavmLwq3U0hXgqUKmCqkVfFYESjxCCXddu0MfdN1Jn1TOs6S0WzTKYRCTJhFy9t627bQsvlvn7ncIyfwFlycFH8a6RjWpry3pIZHLwAuxc1cgFsHFS1Uua7an6gX5EHmdDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720884516; c=relaxed/simple;
-	bh=NHNv5hzxTobQL52F93BEiNiFlkGOz0ZfeaLUaBByllI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zwep8AqOJlEnIS2ta/AcGJD1w2NV5n938WpoJE081nO7DoJt8z5OoxMf8I07KdbXgkDfQZnTXmBujrzdHS7vJnirA1ig66RDDc7lOrfQHbZLRgb2kU9BTBSYR7L7cYrFznfeJ0aRDgVNN0xHOJeq4Tw/HvvKBys7JO0c2lg+db0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=iYeWP0Of; arc=none smtp.client-ip=194.87.146.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id AA48442839;
-	Sat, 13 Jul 2024 20:28:31 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1720884512; bh=NHNv5hzxTobQL52F93BEiNiFlkGOz0ZfeaLUaBByllI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iYeWP0OfkZ0s86TliCz/ylMCJspay2OAhMFq4PuvgldfrgNHviWZFZWzl6dgvKZpJ
-	 WDIW8PWcaNbeHGPM/M9NWQ1ceqQhNydVt/LQ4ZtQby/F5IK2ybbG3LCrS/tPlRijZT
-	 Y3X9qBU0W8N3VEX00nqxMPZTqT1iFBPoa6Uj9/57Xx9DZDAWXnoxn1VhLOVPDONxgN
-	 1e/XCq8MyW+G/Q9ZuH3d3ikOSiGUQQtSb12QSaNbCoqpm/bHtKS9paL4vDo0zi+HpS
-	 6eD1GPqexaGVZ1mtbY7CcCKSz8Ryjy+FWbA4p6/NPiUpoXnGpCbFVq0nJtaqLoKe6V
-	 K0IpjYEYH+rkw==
-From: Nikita Travkin <nikita@trvn.ru>
-Date: Sat, 13 Jul 2024 20:28:09 +0500
-Subject: [PATCH RESEND v4 2/2] input: zinitix: Add touchkey support
+	s=arc-20240116; t=1720885108; c=relaxed/simple;
+	bh=bZjVENWzdO/dM9O6jLuW2OjfM6Jn9UeSxTtq5vBQWFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+I+1UXK2vhZGbLPRAkPAX/GCk1+YeQqqCDa2GHoGE+YLwoRFAWhz9An/miyItW61t9CeTZBf3uPcVRv2tpQqSdMnMQegfk0KDXxv4Lf8eLsM06/oqvwchYDHiCWjm0LFaUWJaIkS1F9DA4s6TUqjWEAb4Dc9UTpQycRJAzBoco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qdxwksn3; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e9944764fso3493907e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 08:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720885105; x=1721489905; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rrw656yPZ58/He6Z0SljV1MTH9DNc6XhfX4EqtbUZcw=;
+        b=qdxwksn3gP/yJP2uhFkMb7k9Z4Nu/LLAm+TCJ3dDNGzfZGo/FH0ULo+4R/rCRpntN3
+         hzZiXIt1HeULmdKTPprhSZv6JvYZ25fMp7hCGlfUntv1MuzE5FBT6K7fQupu4DrTBZl4
+         KS8s3XMBMHWEOKOKl6IKyedxE5ntD+7c4VsQw3h4r5r00sCsF5TTimkX/EXTczwnFYik
+         p1krCQtCHNYor8HdSZM2SkUHypu2RmXaRfzbgWksoi1vbjhHchJOd1dfALXCAbPTOjaF
+         go92qDqZP0KOv0L1iqt4Yd7YMFP+zS+9RVkygSCFtpEQEMMwTHDWeMVg8TCYgUiek5x6
+         Mrhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720885105; x=1721489905;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rrw656yPZ58/He6Z0SljV1MTH9DNc6XhfX4EqtbUZcw=;
+        b=dV6KXsFG2oOJaW/cEKJZqglj21GXSAQJyy0gG025ALX69RYuqUi6Qpr4d5FpzR13Ji
+         SzdR0rHYAV1zKKRWEGTBfeFkpMsZgcsAR6gJ+OHRKidrqCyu3k1KcqTpssZvDmqlPMDl
+         b1IiGGLt0MHD0TRgg8uwCivQcry89xRHHkEo/EJXQfbojAYoTSoGZDLt90xzf+4Oi+eO
+         RuZjJzqr4aApJ5AXrlHKO5M709nV5xzz+xgESqNHkLvsH/sfJ+dsZTlp+Rv+jkoOYKPU
+         I6DQiC+aE6d5tCvVQyLLEwvisa9vtymjIBF7qvut8fCcTz6q+iT2xyA0rZgf8RgNs4wE
+         ByQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSRd5yMIw8PDN2uVVAoIJ3Eq0lBqCDRNKawmzYGKCmE6iIIVDyhHQ4ZUMKucp9X10NG3g89tk7YWlcmq16sYdg5PaZyz+0le2HqT0z
+X-Gm-Message-State: AOJu0YyrQTp3dXHT+UtNm8i+DrQltr9DhWavhAvMOi2P5wzG8pm1fQKn
+	TSBjAQnyrnB1wDkpkZN8FoUNF66Cicu1cAbtRvDuewAOpy1Ws36dKA34Jm60KdM=
+X-Google-Smtp-Source: AGHT+IHd1JycgmrKTAmXhfqJQqu17IdmqopYEnNGA4fjNnAG4okwte5I2bl+t6SJIVoBWEeIA7EZqQ==
+X-Received: by 2002:a05:6512:3e19:b0:52e:93d1:57a6 with SMTP id 2adb3069b0e04-52eb998e483mr10940314e87.6.1720885105051;
+        Sat, 13 Jul 2024 08:38:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d538sm224218e87.141.2024.07.13.08.38.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 08:38:24 -0700 (PDT)
+Date: Sat, 13 Jul 2024 18:38:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Rajesh Yadav <ryadav@codeaurora.org>, 
+	Sravanthi Kollukuduru <skolluku@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jeykumar Sankaran <jsanka@codeaurora.org>
+Subject: Re: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
+Message-ID: <cvizlwetyzmwxwtesd54kgghb4ttnj3kgdnca2ujq6orzntymw@tei6xtsoh3og>
+References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
+ <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
+ <46487222-6818-b0bf-e5cc-2310d62b5fe6@quicinc.com>
+ <CAA8EJpq7Lp-3V_AsLxO9ZOt8ZW1ZZ=FjhXV6R9jvH=sQ8XQE9w@mail.gmail.com>
+ <fb285034-ed4c-4f20-ab80-cf91d36fc67c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240713-zinitix-tkey-v4-2-14b7e2d5ace3@trvn.ru>
-References: <20240713-zinitix-tkey-v4-0-14b7e2d5ace3@trvn.ru>
-In-Reply-To: <20240713-zinitix-tkey-v4-0-14b7e2d5ace3@trvn.ru>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Michael Srba <Michael.Srba@seznam.cz>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
- ~postmarketos/upstreaming@lists.sr.ht
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5056; i=nikita@trvn.ru;
- h=from:subject:message-id; bh=NHNv5hzxTobQL52F93BEiNiFlkGOz0ZfeaLUaBByllI=;
- b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBmkp0diiYmR3YPhA9A3Dz2n2/ulop/yZfDoEDTC
- qhjoWCJ07WJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZpKdHQAKCRBDHOzuKBm/
- dR1/D/9Qgo+t6bewoAG4XmRrNl37+Ps78pUpX1jvpzrL43YSKDQHlTZOhFTCmoib7h0F7uk4LrI
- T8tPLi9RAcFtk22P3nEiV9DBRR6UQ8l2JlziYevmsPHKcBjmU1HxDR9IjQ9L2CJlIWkf5Y8rrzf
- aBwoyfUaoLOKt4QR40IAadLDi+XEZmRYx3+zz1Im2AIfS380cVd5oNsDfp+xJHGEwkq2inymOrI
- 1+vwrqd+UGylaMq9qI36GzxupQUAE6WBgxMxKT9ccELjUl95fyrUQQ8/Yu1dE3k83Q8vbQvagPj
- RVZS5rkvzx/NptCaznqRnS1FwJuPbIUtubmfS9444cQjo/sMkT/JFtkekI9To9YqqZeEJuqfQzw
- uGGyMeKMm1W34Z4jZ9+od0fUY0cDp2qGgj8caIyBpgAcTdaCwKR0lg4uitbgD9NOlmzC44jCaFo
- C5z0HM9nINU3K+Qihn7Y6VuZHOuzDOsg1cl3Z2BWOfVZBZfb8717aGHwY3j8chzLEd1qLkOurf6
- UbwZ2P11nbsrnktr16FNbYVWy1sB251kATn9zNB8svaUdNNwQ0qx93GqADJGYZ4jrRws42G0c1q
- psFzgKAJ6H5092xrK6hujSIfsmc+FOqAGoBIvi9ibtBgOAF2C/enRfcz+eLc0zoTdMsabHE5d+E
- iHkyRvuvB+3LYSQ==
-X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
- fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb285034-ed4c-4f20-ab80-cf91d36fc67c@quicinc.com>
 
-Zinitix touch controllers can use some of the sense lines for virtual
-keys (like those found on many phones). Add support for those keys.
+On Thu, Jul 11, 2024 at 11:03:15AM GMT, Abhinav Kumar wrote:
+> 
+> 
+> On 7/10/2024 12:40 AM, Dmitry Baryshkov wrote:
+> > On Tue, 9 Jul 2024 at 22:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> > > 
+> > > 
+> > > 
+> > > On 7/9/2024 6:48 AM, Dmitry Baryshkov wrote:
+> > > > DPU debugging macros need to be converted to a proper drm_debug_*
+> > > > macros, however this is a going an intrusive patch, not suitable for a
+> > > > fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
+> > > > to make sure that DPU debugging messages always end up in the drm debug
+> > > > messages and are controlled via the usual drm.debug mask.
+> > > > 
+> > > 
+> > > These macros have been deprecated, is this waht you meant by the
+> > > conversion to proper drm_debug_*?
+> > 
+> > Yes. Drop the driver-specific wrappers where they don't make sense.
+> > Use sensible format strings in the cases where it actually does (like
+> > VIDENC or _PLANE)
+> > 
+> 
+> Ack but we need to not just drop the wrappers but drop the usage of these
+> macros as well because it is documented that they are deprecated.
+> 
+> So I assume you want to get this in and do that as a follow up change?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- drivers/input/touchscreen/zinitix.c | 61 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
+Yes, somewhere in the long list of cleanups. I have a similar item
+against DP driver, which uses correct macros, 
 
-diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
-index 1b4807ba4624..75390d67689e 100644
---- a/drivers/input/touchscreen/zinitix.c
-+++ b/drivers/input/touchscreen/zinitix.c
-@@ -119,6 +119,7 @@
- 
- #define DEFAULT_TOUCH_POINT_MODE		2
- #define MAX_SUPPORTED_FINGER_NUM		5
-+#define MAX_SUPPORTED_BUTTON_NUM		8
- 
- #define CHIP_ON_DELAY				15 // ms
- #define FIRMWARE_ON_DELAY			40 // ms
-@@ -146,6 +147,8 @@ struct bt541_ts_data {
- 	struct touchscreen_properties prop;
- 	struct regulator_bulk_data supplies[2];
- 	u32 zinitix_mode;
-+	u32 keycodes[MAX_SUPPORTED_BUTTON_NUM];
-+	int num_keycodes;
- };
- 
- static int zinitix_read_data(struct i2c_client *client,
-@@ -195,6 +198,7 @@ static int zinitix_init_touch(struct bt541_ts_data *bt541)
- 	struct i2c_client *client = bt541->client;
- 	int i;
- 	int error;
-+	u16 int_flags = 0;
- 
- 	error = zinitix_write_cmd(client, ZINITIX_SWRESET_CMD);
- 	if (error) {
-@@ -225,6 +229,11 @@ static int zinitix_init_touch(struct bt541_ts_data *bt541)
- 	if (error)
- 		return error;
- 
-+	error = zinitix_write_u16(client, ZINITIX_BUTTON_SUPPORTED_NUM,
-+				  bt541->num_keycodes);
-+	if (error)
-+		return error;
-+
- 	error = zinitix_write_u16(client, ZINITIX_INITIAL_TOUCH_MODE,
- 				  bt541->zinitix_mode);
- 	if (error)
-@@ -235,9 +244,12 @@ static int zinitix_init_touch(struct bt541_ts_data *bt541)
- 	if (error)
- 		return error;
- 
--	error = zinitix_write_u16(client, ZINITIX_INT_ENABLE_FLAG,
--				  BIT_PT_CNT_CHANGE | BIT_DOWN | BIT_MOVE |
--					BIT_UP);
-+	int_flags = BIT_PT_CNT_CHANGE | BIT_DOWN | BIT_MOVE | BIT_UP;
-+
-+	if (bt541->num_keycodes)
-+		int_flags |= BIT_ICON_EVENT;
-+
-+	error = zinitix_write_u16(client, ZINITIX_INT_ENABLE_FLAG, int_flags);
- 	if (error)
- 		return error;
- 
-@@ -350,6 +362,15 @@ static void zinitix_report_finger(struct bt541_ts_data *bt541, int slot,
- 	}
- }
- 
-+static void zinitix_report_keys(struct bt541_ts_data *bt541, u16 icon_events)
-+{
-+	int i;
-+
-+	for (i = 0; i < bt541->num_keycodes; i++)
-+		input_report_key(bt541->input_dev,
-+				 bt541->keycodes[i], !!(icon_events & BIT(i)));
-+}
-+
- static irqreturn_t zinitix_ts_irq_handler(int irq, void *bt541_handler)
- {
- 	struct bt541_ts_data *bt541 = bt541_handler;
-@@ -358,6 +379,7 @@ static irqreturn_t zinitix_ts_irq_handler(int irq, void *bt541_handler)
- 	unsigned long finger_mask;
- 	int error;
- 	int i;
-+	__le16 icon_events = 0;
- 
- 	memset(&touch_event, 0, sizeof(struct touch_event));
- 
-@@ -368,6 +390,17 @@ static irqreturn_t zinitix_ts_irq_handler(int irq, void *bt541_handler)
- 		goto out;
- 	}
- 
-+	if (le16_to_cpu(touch_event.status) & BIT_ICON_EVENT) {
-+		error = zinitix_read_data(bt541->client, ZINITIX_ICON_STATUS_REG,
-+					  &icon_events, sizeof(icon_events));
-+		if (error) {
-+			dev_err(&client->dev, "Failed to read icon events\n");
-+			goto out;
-+		}
-+
-+		zinitix_report_keys(bt541, le16_to_cpu(icon_events));
-+	}
-+
- 	finger_mask = touch_event.finger_mask;
- 	for_each_set_bit(i, &finger_mask, MAX_SUPPORTED_FINGER_NUM) {
- 		const struct point_coord *p = &touch_event.point_coord[i];
-@@ -453,6 +486,7 @@ static int zinitix_init_input_dev(struct bt541_ts_data *bt541)
- {
- 	struct input_dev *input_dev;
- 	int error;
-+	int i;
- 
- 	input_dev = devm_input_allocate_device(&bt541->client->dev);
- 	if (!input_dev) {
-@@ -470,6 +504,14 @@ static int zinitix_init_input_dev(struct bt541_ts_data *bt541)
- 	input_dev->open = zinitix_input_open;
- 	input_dev->close = zinitix_input_close;
- 
-+	if (bt541->num_keycodes) {
-+		input_dev->keycode = bt541->keycodes;
-+		input_dev->keycodemax = bt541->num_keycodes;
-+		input_dev->keycodesize = sizeof(bt541->keycodes[0]);
-+		for (i = 0; i < bt541->num_keycodes; i++)
-+			input_set_capability(input_dev, EV_KEY, bt541->keycodes[i]);
-+	}
-+
- 	input_set_capability(input_dev, EV_ABS, ABS_MT_POSITION_X);
- 	input_set_capability(input_dev, EV_ABS, ABS_MT_POSITION_Y);
- 	input_set_abs_params(input_dev, ABS_MT_WIDTH_MAJOR, 0, 255, 0, 0);
-@@ -534,6 +576,19 @@ static int zinitix_ts_probe(struct i2c_client *client)
- 		return error;
- 	}
- 
-+	bt541->num_keycodes = of_property_read_variable_u32_array(
-+					client->dev.of_node, "linux,keycodes",
-+					bt541->keycodes, 0,
-+					ARRAY_SIZE(bt541->keycodes));
-+	if (bt541->num_keycodes == -EINVAL) {
-+		bt541->num_keycodes = 0;
-+	} else if (bt541->num_keycodes < 0) {
-+		dev_err(&client->dev,
-+			"Unable to parse \"linux,keycodes\" property: %d\n",
-+			bt541->num_keycodes);
-+		return bt541->num_keycodes;
-+	}
-+
- 	error = zinitix_init_input_dev(bt541);
- 	if (error) {
- 		dev_err(&client->dev,
+> > > /* NOTE: this is deprecated in favor of drm_dbg(NULL, ...). */
+> > > #define DRM_DEBUG_DRIVER(fmt, ...)                                      \
+> > >           __drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+> > > 
+> > > I think all that this macro was doing was to have appropriate DRM_UT_*
+> > > macros enabled before calling the corresponding DRM_DEBUG_* macros. But
+> > > I think what was incorrect here is for DPU_DEBUG, we could have used
+> > > DRM_UT_CORE instead of DRM_UT_KMS.
+> > 
+> > It pretty much tries to overplay the existing drm debugging mechanism
+> > by either sending the messages to the DRM channel or just using
+> > pr_debug. With DYNAMIC_DEBUG being disabled pr_debug is just an empty
+> > macro, so all the messages can end up in /dev/null. We should not be
+> > trying to be too smart, using standard DRM_DEBUG_DRIVER should be
+> > enough. This way all driver-related messages are controlled by
+> > drm.debug including or excluding the 0x02 bit.
+> > 
+> > 
+> > > 
+> > > And DRM_DEBUG_DRIVER should have been used instead of DRM_ERROR.
+> > > 
+> > > Was this causing the issue of the prints not getting enabled?
+> > 
+> > I pretty much think so.
+> > 
+> 
+> Alright, I am okay with the approach, just one minor suggestion, to keep the
+> behavior intact, previously the code wanted DPU_DEBUG to be controlled by
+> DRM_UT_KMS and DPU_DEBUG_DRIVER controlled by DRM_UT_DRIVER.
+> 
+> Keeping that intact, we need to use DRM_DEBUG_KMS for DPU_DEBUG?
+
+I might make that more explicit: I don't think that it is a good idea
+for a generic DPU_DEBUG macro to be tied to DRM_UT_KMS. We are reporting
+a debug message from driver, so by default it should go to the
+DRM_UT_DRIVER channel. While refactoring things we might end up with
+messages going to ATOMIC or KMS, but DRIVER should be the default.
 
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
