@@ -1,113 +1,155 @@
-Return-Path: <linux-kernel+bounces-251484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D17930561
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0431F930567
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D86D1F21C90
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B369028241D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D8212FB2F;
-	Sat, 13 Jul 2024 11:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70C1130487;
+	Sat, 13 Jul 2024 11:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqYaSimS"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYjiP49S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B01130486;
-	Sat, 13 Jul 2024 11:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA6941C77;
+	Sat, 13 Jul 2024 11:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868951; cv=none; b=ItRlNbMWJJE+UuYdQ27in/R7LsSBz3pOlU5hlfoiJ06vwNX8OocU6wZ3qiyZ9OTwNcjshzWfZonS1bVEzQ2iF4C59Duj/+bQ5OEZeqRLhgOtb22IQITfX3BYKXci1D7GxMbvtNSULrGtlMjPnWdq/Vep6co5wlxSG5lW2GMEWdU=
+	t=1720869292; cv=none; b=N5w2yq6BqLqUY+ucXHlSQhm2ohKbPtE21zRF9vyPXZWtGbSbm0CEaF+hPWcn5GK2s82ysOm+cBefUUlIrEb5i0mfBggjAVh7GmmYxYHMs2ot4LTZavx4Slu+SOdQF25QZEKDszi2esfqhZXwgQvk+5prYmlaH/ClkRBDBGIooDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868951; c=relaxed/simple;
-	bh=JtuPboEJSp8eAlkZ3GBvTBrDrdQKWdXvJetgHpGlolU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=La7SaQsRN/S/R6u88+1Lnq6SjHbM65Uzzl4/MJsvWgzXQ5VmuUIzKBt3RV+S+d0+8hWGpLxglpHTjbj+/cpLiaEF6ZK79G88BN7X2oYzxHP6sgKRsWVPZOrFUTj06Q0cT7m9sFeoXCw8hwfETD0q+gHAILImsXs0/ibeB5C4klE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqYaSimS; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70af81e8439so2515529b3a.0;
-        Sat, 13 Jul 2024 04:09:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720868950; x=1721473750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RHpfBVGElYoS1Dl7oK+sXhQ2e4e+IynO1g7uoMNSJmM=;
-        b=KqYaSimSb347kyo+1/+3R/TJpY0GWtE0TKsxD0fAl/kR/7uoR4MfqUWux3Dd2oZAtJ
-         B3QJbVmMHXoj2txa98HBRkDJtTbc6f1h0TKlkuVnmomY7iVni0tavOS8/ieXKiBj8Q4i
-         rZ2qdNAjfpOzb3uYXCp96ujyViTr0n/XCO/Q1RPj2+x39QxvtvPu2pmVSWqWErfDgKZv
-         3xiy2dUbshQHAI8dhGwKR73RAj+ApjKr9AOFucenjV9N76J7Ckn791LYMu/gG8XdK3u1
-         iyR9FmtTVGCGeYdxARhxOavAV5rwrEGgW87udRCzvkigPUc4+CZchFNuh6feYBAIsvkM
-         qTKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720868950; x=1721473750;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RHpfBVGElYoS1Dl7oK+sXhQ2e4e+IynO1g7uoMNSJmM=;
-        b=xGJQVgBzRwUkYO40ty1iKsWLt8lFEbdN7jzSS+mxqPmh0n18wZEilk8B+si5sEPDuV
-         BtlekOfYeWvV3N5NlzFNEL4ZUkScbbV5o35SYLXLd9y7titqaRYoPFAwHP23yZpP+5jk
-         XPPA5HrKOUW5ZH0OxxJbs4e4sbLZBdNHWNq0AqCIjVg2KG3+s70SZi+MauxDps0mNfYQ
-         +GxCoxl8G9xM31K94iW0Ekmzi+06knduALjAjnnWdUpZbK/H6cYbePcxL6NBiFptKNsG
-         1Q2+jXrZyXun0ej4v2PPOrei9s6ge8iFhX3hJMXw6sldoZRD8cXxjbuWClJEuf4pswH7
-         0zdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOWTlb+DwE24ie3PwP2bxYZdmDO07lZOre/rdLIthUYssDby7+kjrxAX/Yx754n7NWPD+tujpLZFvChQdx7VtfhTSGZ1lpiPjT8ZlE
-X-Gm-Message-State: AOJu0Yz/JXulpN+29lVlQE+jCK27ctggLCz6eqSBBDUzMdrxX1aUjJ6X
-	GcCL+x1RkVdihnPOXfjyt+QY6nixfobiTP17BHXG8Yzlm/+C+Pm6
-X-Google-Smtp-Source: AGHT+IGKMdpK3yFlSYDmN4PLipKlMZkexcmwd6X5fMk0JFXvPcE8BigIdm5nkmkymwk1znXoKWon8A==
-X-Received: by 2002:a05:6a00:1955:b0:70a:f576:beeb with SMTP id d2e1a72fcca58-70b43561b8amr15828000b3a.15.1720868949661;
-        Sat, 13 Jul 2024 04:09:09 -0700 (PDT)
-Received: from lenovo.. ([2405:201:e000:8836:366b:5a81:7de6:ee25])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b7ec7d06bsm1014862b3a.114.2024.07.13.04.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 04:09:09 -0700 (PDT)
-From: aditya-chari25 <adi25charis@gmail.com>
-To: laurent.pinchart@ideasonboard.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aditya-chari25 <adi25charis@gmail.com>
-Subject: [PATCH] MEDIA: USB: UVC: Corrected Errors in Macro Definitions
-Date: Sat, 13 Jul 2024 16:38:58 +0530
-Message-Id: <20240713110858.307085-1-adi25charis@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720869292; c=relaxed/simple;
+	bh=AVTWECknh32vjkZvl6c1yiioF+Jv7m0uf7e+eThQ778=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fxkASaFUgAwNJJ6FEGEJWMcSs5w3p0WnRXLCfPrRuOMlZyMwIzpeHdKVE0jf3mcqRBM6tKN/FAwH8O04MRaEulsTfPnwXYFkVOePzPNcokh/yxQw3OcMfnwPPn95HLydkndSlVW3b4J80OhhibVn2/5SH09qha8f1SsrIunMoSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYjiP49S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30ADC32781;
+	Sat, 13 Jul 2024 11:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720869291;
+	bh=AVTWECknh32vjkZvl6c1yiioF+Jv7m0uf7e+eThQ778=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LYjiP49SSjcozMPDbKiuzNGFUJv845ugVw7D7QTvog6QwouHFREDf1+33/2CVKi5U
+	 tXmPMdzKKPdoseJz5FJ/RfkpFBR0QxL0RD8jVQdulVmoAjxM9frqa7B4oq+QD2WwZH
+	 Tj2UuqRIFnNWfxKj3/vqzekMJlxrAYJP+76S7vdJKEz+KtKU444T0Icpuz2dhKCvtL
+	 6Aiietj0t2W+2gT8BDJgcEfDBabkdWlwMeUHdGpwKxW8I4WsKH1tri9YUBffndTfDx
+	 rLh+mABXjqdoD01wfc4yAPqxM1O6XdByXtOyfavnj8AVB3x9boBID0M5AVPUuXTOXB
+	 frO5M7Wk4ikMQ==
+Date: Sat, 13 Jul 2024 12:14:42 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: humidity: add ENS21x sensor
+ family
+Message-ID: <20240713121442.0fa8ed2c@jic23-huawei>
+In-Reply-To: <20240710-ens21x-v3-1-4e3fbcf2a7fb@thegoodpenguin.co.uk>
+References: <20240710-ens21x-v3-0-4e3fbcf2a7fb@thegoodpenguin.co.uk>
+	<20240710-ens21x-v3-1-4e3fbcf2a7fb@thegoodpenguin.co.uk>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-macro definitions had errors since they weren't enclosed in parenthesis
-hence I rectified those errors
+On Wed, 10 Jul 2024 14:24:04 +0100
+Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk> wrote:
 
-Signed-off-by: aditya-chari25 <adi25charis@gmail.com>
----
- drivers/media/usb/uvc/uvc_driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Add device tree documentation for ENS21x family of temperature and
+> humidity sensors
+> 
+> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+> ---
+>  .../bindings/iio/humidity/sciosense,ens21x.yaml    | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
+> new file mode 100644
+> index 000000000000..425d3b57f701
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/humidity/sciosense,ens21x.yaml#
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 8fe24c98087e..6e14b9dc3886 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2424,9 +2424,9 @@ static const struct uvc_device_info uvc_quirk_force_y8 = {
- 	.quirks = UVC_QUIRK_FORCE_Y8,
- };
- 
--#define UVC_INFO_QUIRK(q) (kernel_ulong_t)&(struct uvc_device_info){.quirks = q}
--#define UVC_INFO_META(m) (kernel_ulong_t)&(struct uvc_device_info) \
--	{.meta_format = m}
-+#define UVC_INFO_QUIRK(q) {(kernel_ulong_t)&(struct uvc_device_info){.quirks = q}}
-+#define UVC_INFO_META(m) {(kernel_ulong_t)&(struct uvc_device_info) \
-+	{.meta_format = m}}
- 
- /*
-  * The Logitech cameras listed below have their interface class set to
--- 
-2.34.1
+Normally we don't allow wild cares in binding names, but in this case the
+datasheet uses this wild cards, so I guess we have strong guarantees
+the manufacturer won't slip something else in the gaps.
+
+Even with that in mind I'd rather this was sciosense,ens210.yaml
+
+As much as anything as to not provide more precedence for wild cards in binding
+names that might lead people astray when they don't have such strong guarantees.
+
+Otherwise looks fine to me.
+
+Jonathan
+
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ScioSense ENS21x temperature and humidity sensor
+> +
+> +maintainers:
+> +  - Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+> +
+> +description: |
+> +  Temperature and Humidity sensor.
+> +
+> +  Datasheet:
+> +    https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
+> +    https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - sciosense,ens210a
+> +              - sciosense,ens211
+> +              - sciosense,ens212
+> +              - sciosense,ens213a
+> +              - sciosense,ens215
+> +          - const: sciosense,ens210
+> +      - const: sciosense,ens210
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +       #address-cells = <1>;
+> +       #size-cells = <0>;
+> +
+> +       temperature-sensor@43 {
+> +           compatible = "sciosense,ens210";
+> +           reg = <0x43>;
+> +       };
+> +    };
+> +...
+> +
+> 
 
 
