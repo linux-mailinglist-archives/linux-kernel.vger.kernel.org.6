@@ -1,126 +1,158 @@
-Return-Path: <linux-kernel+bounces-251533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE279305FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:43:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D11DD9305FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E222F1F21CDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E331F21D55
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B367E13A894;
-	Sat, 13 Jul 2024 14:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE9413B2A9;
+	Sat, 13 Jul 2024 14:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vTOC5H6c"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tYzT3Xtb"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6CD13957E;
-	Sat, 13 Jul 2024 14:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F26113A865;
+	Sat, 13 Jul 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720881808; cv=none; b=ZJHh/OXZaAXEy57CTxuUiZVvR5ZP/6y9dZWCnEWeB+G5+ycUAp3lJF63I5G4Fc3xrbvmJQW+PwA2ZaUACQ1gWnyzSIf5A6Jk0KHLVjE4x8IjlEVGod9rSasjrsFH8d+mdszccifYrNq4cQ8HuSw4hXP5tub6ut2DEmiUVqL5gEk=
+	t=1720881912; cv=none; b=GvVDO+PfXwVe5E7RA40DjcJKEHrPsH+KgONTP/3fcgYSJJ+BULjGyDe5tAI6TS7RL2T1h+aq0+D1QYWyaDbKgE2aTeibreXsyYCBJ2LjJDB2yV5QhXypgtHxhloEnC5wnyb4sCNCGpcj4ob0c0/KYmZQgy7LbPwaeqotLUmK+1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720881808; c=relaxed/simple;
-	bh=0IUsix3yW+JZP3A6RF/R61sx0LwAcRmuY1vIpsGlq9Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iZst76TlsD5+l7SC6k/FtMHqdNFu+AQra3HpOaPlwDfs+31ZmBCe0UJemekKTe7RT2xpnvWPFlrgntwaFG8Efmu4LyhlAopulus6ghWJQjztpJU+4XDrXzJ6Foh9hb4QFRDi3JBbHI1S0bLJa2WOUgO3W5zm94+1sbgfj6LvCsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vTOC5H6c; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720881798; x=1721486598; i=markus.elfring@web.de;
-	bh=7fQ9elM2VGZvsrn+aU88EfXnuV3oDFRum+kdAh3DWyU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vTOC5H6c3YIcp+kw+C80ctFZbIszyei6gG2OsPLmyO/2BA1/a6gXs7TBPOZvreeI
-	 pZ0JWCKbYEhy5ze/whGxRVs5oSFtuCautBveADC4vZfRmhXbK4d5MbeqCvH1wOhvj
-	 Gb0PUMMPXK+tD8ezPW/KsrFOaN+WjrHMNPNvCVMd/BIgSpxESaNK3MPx2zXeeVlaH
-	 j0/wWq5lOCn37ZNrzQXwPXSmM0QBrdzEcQvAzzOjT1ldlIdLcwmt92OnhAylfiFu3
-	 zcqDAbzBIGE2UqM5d6GZ16IIi8d9PYn9jowh3iIO419V9CqIXjl4mzSLaLHHSlvgm
-	 rmqjTGqSosXlxrwf4Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2PdU-1sVP7g01bK-008iUe; Sat, 13
- Jul 2024 16:43:18 +0200
-Message-ID: <9142662e-e709-48fa-9ac2-a4fc16e6228c@web.de>
-Date: Sat, 13 Jul 2024 16:43:17 +0200
+	s=arc-20240116; t=1720881912; c=relaxed/simple;
+	bh=/SWgNzbJVBtyti4FfmCayIFeMgb7IKVPsUfN62wmNk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnJ92w9cAg/QS/vLTSuakPyzKgA/gP+sHVRXwQ1kK9Od72sIvFGJ+T5opzUjY2IZVmg2drw3MkbiO4VZsIja5gjS8mtDJl7ePW7l6djzPRaE2pjrE6tYkwcfp7fRJJLiEMDY8BVA8fAsifM+zqwODwSS+65tKgXomPZVBh5MqZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tYzT3Xtb; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=yhF8Omts//IzlZQskbNJ7mjK8Q3NO/lQnbu9ulrQAgE=; b=tY
+	zT3XtbYbLP/jnQz7n9IZHf23hrEHSs7OSHiYTx2M8XbEXuJotOkvUruZhG+VgrwblVJLTFhXuk+DQ
+	BfKt5aiuU+0m+hGuFxWJWB2m2M3JaSpdAhVqVSCKij/KoFc5y4OhNPgnaEb9rU1kp2ER2BAgiMCEk
+	h1OUdp4qfWQOKn8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sSdzX-002SiA-W2; Sat, 13 Jul 2024 16:44:51 +0200
+Date: Sat, 13 Jul 2024 16:44:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sai Krishna Gajula <saikrishnag@marvell.com>
+Cc: MD Danish Anwar <danishanwar@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"srk@ti.com" <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [EXTERNAL] [PATCH net-next v3] net: ti: icssg-prueth: Split out
+ common object into module
+Message-ID: <8ef9cb0a-9e0a-4f2e-8799-546ce2be63a7@lunn.ch>
+References: <20240712120636.814564-1-danishanwar@ti.com>
+ <BY3PR18MB4707DE9F8280CE67EDF3D146A0A72@BY3PR18MB4707.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] regulator: core: Use seq_putc() in
- regulator_summary_show_subtree()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zSnmLgqOq/vavYWScmBThEVNkt31I8NcwGe8bKeYdqulYqGUtiQ
- NgBpMKaMfnlKkUm1EVIrRMzy0ulTzd6zMikubVrEk44FMTSs7FCb8UrTKqjUwqtnUH6Vcg3
- a3owwCJdSJj3KybiPpYRafpBDID+sW7N/oLFTjGX+v+q6JWPfL0ivJTuow1P//bkOGkHKNp
- LwO8t2nD/y87k56LsuFBQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7U1ypnc8ehM=;8DGI+m4Z+kXS3EawXYwvsbLPare
- NFK8rpsbFngwSULrTpYeW04AkgbviPV17JGi2pna8UVYSvH3UVii04Hf9XcIjGfBYJR0gCQz5
- 6RpU3XlcXqGPhS8iJWxC3f/rI7h5Nr+GogEMLyTK0sMEAGhOPKT2B/X2kBYuea7JK+FcCkMQ6
- qWZSavfPCmPxVIob9AzRrhWVprbWNe57MjbYtwYV3qjcOfIXbNjEcN3tV0wPGzGbKzmpQDcqz
- 0BuOnhfCLpLmVx8fmL6mcgY4Ein9HrsQ2/YDGxBAMsOK9c0bQ3LS9X+AhL1LlEIgJ1I9x2cKe
- nEmKFowGpQLjxhgvSrUu0QL4ed8pW+kw+KhYkcyTv6IL/NxMrs0gG/qD2TRTb6oO9dIJ80D29
- 2RFOnc0jAtkiOHgphrQVrUic+FX5L2xBf9VEJI20ARjQfxecKfGG4RCGAeNbmz29PouPePlWW
- DzxIet53U+nKtyAwyqF8at053K40qYD4gbPqrtYaS5HHQodlHZDxP/dm+KU89BIRznnPZtNMC
- 5cv+YXiCUTzIgQQ8fr/bX7g61tXcYVCMKmMQqhoR4zWu/bYHRrFsZZaSnHF4LG7VU8T7IxD02
- YrPxsNR/+VdKHnLf4JgKDiqW/CLju1WeXuSdAMg2cIrDhTp0j2iZ40Q2lp1Gaa86pHtbtJw3S
- ge+jDpYtdBC7vsNpEC6HOVLNKQM6vrNs22trY50fJloZ8kfIOTvN+WaI+72jpOZ1aOa1uc6+6
- Iaws8vr1TN4rjtPpsTDYolBGezJIyae1RvF4MJKpjZERovLL9dnNlPlaxOHkGmoPjc73rLWxx
- 5V3WBIEcpwysVM93atK9EbTQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BY3PR18MB4707DE9F8280CE67EDF3D146A0A72@BY3PR18MB4707.namprd18.prod.outlook.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 16:36:30 +0200
+On Sat, Jul 13, 2024 at 08:33:42AM +0000, Sai Krishna Gajula wrote:
+> > -----Original Message-----
+> > From: MD Danish Anwar <danishanwar@ti.com>
+> > Sent: Friday, July 12, 2024 5:37 PM
+> > To: Heiner Kallweit <hkallweit1@gmail.com>; Simon Horman
+> > <horms@kernel.org>; Dan Carpenter <dan.carpenter@linaro.org>; Jan Kiszka
+> > <jan.kiszka@siemens.com>; Wolfram Sang <wsa+renesas@sang-
+> > engineering.com>; Diogo Ivo <diogo.ivo@siemens.com>; Andrew Lunn
+> > <andrew@lunn.ch>; Roger Quadros <rogerq@kernel.org>; MD Danish Anwar
+> > <danishanwar@ti.com>; Paolo Abeni <pabeni@redhat.com>; Jakub Kicinski
+> > <kuba@kernel.org>; Eric Dumazet <edumazet@google.com>; David S. Miller
+> > <davem@davemloft.net>
+> > Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > netdev@vger.kernel.org; srk@ti.com; Vignesh Raghavendra
+> > <vigneshr@ti.com>; Thorsten Leemhuis <linux@leemhuis.info>
+> > Subject: [EXTERNAL] [PATCH net-next v3] net: ti: icssg-prueth: Split out
+> > common object into module
+> > 
+> > icssg_prueth. c and icssg_prueth_sr1. c drivers use multiple common .c files.
+> > These common objects are getting added to multiple modules. As a result
+> > when both drivers are enabled in .config, below warning is seen.
+> > drivers/net/ethernet/ti/Makefile: 
+> > icssg_prueth.c and icssg_prueth_sr1.c drivers use multiple common .c files.
+> > These common objects are getting added to multiple modules. As a result
+> > when both drivers are enabled in .config, below warning is seen.
+> > 
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_common.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_classifier.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_config.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_mii_cfg.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_stats.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > drivers/net/ethernet/ti/Makefile: icssg/icssg_ethtool.o is added to multiple
+> > modules: icssg-prueth icssg-prueth-sr1
+> > 
+> > Fix this by building a new module (icssg.o) for all the common objects.
+> > Both the driver can then depend on this common module.
+> > 
+> > Some APIs being exported have emac_ as the prefix which may result into
+> > confusion with other existing APIs with emac_ prefix, to avoid confusion,
+> > rename the APIs being exported with emac_ to icssg_ prefix.
+> > 
+> > This also fixes below error seen when both drivers are built.
+> > ERROR: modpost: "icssg_queue_pop"
+> > [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> > ERROR: modpost: "icssg_queue_push"
+> > [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> > 
+> > Reported-and-tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+> > Closes: https://urldefense.proofpoint.com/v2/url?u=https-
+> > 3A__lore.kernel.org_oe-2Dkbuild-2Dall_202405182038.ncf1mL7Z-2Dlkp-
+> > 40intel.com_&d=DwIDAg&c=nKjWec2b6R0mOyPaz7xtfQ&r=c3MsgrR-U-
+> > HFhmFd6R4MWRZG-8QeikJn5PkjqMTpBSg&m=nS910f-bVPllINeciu3zcX-
+> > RmmuaN-hU--Y3YDvgknBD5A8sRk6hE3pZSocV-
+> > 37f&s=sIjxhBrYXEW3mtC1p8o5MaV-xpJ3n16Ct0mRhE52PCQ&e=
+> > Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure
+> > FDB")
+> > Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> > Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> > ---
+> > Cc: Thorsten Leemhuis <linux@leemhuis.info>
 
-Single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+> > base-commit: 2146b7dd354c2a1384381ca3cd5751bfff6137d6
+> > --
+> > 2.34.1
+> > 
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
 
-This issue was transformed by using the Coccinelle software.
+Please trim emails when replying.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/regulator/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If you look what everybody else does with tags like this, they place
+it directly after the Signed-off-by: and delete the actual patch.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 7674b7f2df14..3200bf129fc6 100644
-=2D-- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -6099,7 +6099,7 @@ static void regulator_summary_show_subtree(struct se=
-q_file *s,
- 		}
- 	}
-
--	seq_puts(s, "\n");
-+	seq_putc(s, '\n');
-
- 	list_for_each_entry(consumer, &rdev->consumer_list, list) {
- 		if (consumer->dev && consumer->dev->class =3D=3D &regulator_class)
-@@ -6125,7 +6125,7 @@ static void regulator_summary_show_subtree(struct se=
-q_file *s,
- 			break;
- 		}
-
--		seq_puts(s, "\n");
-+		seq_putc(s, '\n');
- 	}
-
- 	summary_data.s =3D s;
-=2D-
-2.45.2
-
+   Andrew
 
