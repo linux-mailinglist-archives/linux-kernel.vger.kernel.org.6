@@ -1,178 +1,117 @@
-Return-Path: <linux-kernel+bounces-251758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA4393096D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F97A930974
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E581C20B1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF1B1F215D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3600F3A8C0;
-	Sun, 14 Jul 2024 09:06:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD4923BF
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FF14204E;
+	Sun, 14 Jul 2024 09:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Mx59djeT"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD7323B1
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720947963; cv=none; b=oFUS9nSoV+xpD+4ENIHge2PXL12/TQ/b+EYv2TQ3qHVtxBuNFiD5tbBb6nMOLzt/EEMws9zPiRCtjTnnZc3qKhJXUOher/l3z7LW7W1zv1R9Vhu3idOUQ9dUsTwLZevgrB6ER0RNeXDAYdVKtNmGMwnT3hxWuGAqWId1i7BkzFw=
+	t=1720948651; cv=none; b=Bj8kfzUJnHhxmuKYA5tsvinj2qBGdcNYX3jYmk5zO5taizGCQTueDqFI3E/78vQmoeiD/AgOxw34bGFDH5hn5yGrKCM+ygVfBYvP5M+SLfjngdRmGZ66RWJa5FT6qqhDiSqlJwf3BHh/IkvltztFptgrMV84xk/KBDrpaB2m35g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720947963; c=relaxed/simple;
-	bh=gDP7hILhMhp/So2XAjsoMqaM7rJ+yJ4wVTzz9eFShjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AG0OJEPmx9gCtDDnbRfGQoFBG23ry6WVoE3YZKcAb26Xb7UGVSuTvHrpUCSCyjjZhnxN9OkfhTdKr/iXkhrZHDi3gwlTt2XCP+mVLMZLBRzTzfN5+Vq1Mss4oMl088CeSateirlK3BNaLaF+0PMel6AS1goQCyfSfCUgHk4e3Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C41BA1042;
-	Sun, 14 Jul 2024 02:06:25 -0700 (PDT)
-Received: from [10.57.75.41] (unknown [10.57.75.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2915A3F641;
-	Sun, 14 Jul 2024 02:05:59 -0700 (PDT)
-Message-ID: <f21c97ea-426a-46e3-900a-42cc039acc6f@arm.com>
-Date: Sun, 14 Jul 2024 10:05:57 +0100
+	s=arc-20240116; t=1720948651; c=relaxed/simple;
+	bh=rv7LDe3Qo1wUSYX7lQ1p8xwzehFSWgI28QXS5Kkiv2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ce07+EIGwmIWMzM6V0J6Oor9VsoVF/tDm0MTUWQgjkOIx29IWzSwElgEAwmiZJYSBkzsdAUDhG91m32lI+MxwGvhtrzllhtvuED5gOz+5BmDrJkaAfXulXxv3CrXVvJw4DE19XqhDII9dihQRmg6GilOs1us+K1NYU0TX51ES2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Mx59djeT; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE1EA40E0219;
+	Sun, 14 Jul 2024 09:17:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oNHOIViBCzlQ; Sun, 14 Jul 2024 09:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720948636; bh=nScQNm6Vp9EafM+8tULBzPWDbQTx7FrZNyeJtv0vWfU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Mx59djeTRqnvsgOuNTE4bF7OoBQIg5lCvEP3/4KZNaKkisRziZC8c/tbHYYO9sCEa
+	 hydG1fFEGThLjMtN/kD/xFAU7m8AvrohNdzv99awDxJE5JcOlXZrJXxXcr6PaD6DDh
+	 j18TyLmxdOX9Ywl0eQhFTsOfdZUm5P7cvwAg4vk6r4xvr8OgNZI+RNOssbFEaSB8Ou
+	 0bWKUnFPKjuFjkeDtkE5sO7QnrgJ7CTsfofmBxImzkUGSk06JNRM8Mt1lB7YiiW6RU
+	 lcl0C3VKpKWBpaEMtB2QLtAlPaUaIc3I61fOl1Of6+ibGeW9NC6hJkHR3Y4/PCFC9g
+	 /FRf8g1yWL0j3a0CQwlOpv8hBU9475Uw42mAYcVB6uQgryX71jlte/gVxbd3IKd0ub
+	 nVBw208HBJeib+jxbFcSzARUgdFi6cuCiqgO7udxGGtWTQ7jF74B0K7OgXD4V9PMwT
+	 AjehXLGiPpXLWSnzTRsCS3fcfOFaJEjQhB/oKiT0uNpyA1LxKlAsnPx7j7HMPPQsep
+	 DwghNsdnDD4hB0HT3nVulVmaGcUQKZewm4gO/EAS6/XKl8A4U/TG+MyTedoiieEtbm
+	 zYLWrxqG3DbwYdWyg0Wf9SswJ1OHnNbuez1fCEsOY05+z9ZTIRqfwaes35nZMVHmFH
+	 UFkrmrTAPTK121bM/WZec07Y=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C306540E0177;
+	Sun, 14 Jul 2024 09:17:13 +0000 (UTC)
+Date: Sun, 14 Jul 2024 11:17:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.10
+Message-ID: <20240714091706.GAZpOXkrEq7nE6-Tue@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
- <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 13/07/2024 13:54, Baolin Wang wrote:
-> 
-> 
-> On 2024/7/13 19:00, Ryan Roberts wrote:
->> [...]
->>
->>>> +static int thpsize_create(int order, struct kobject *parent)
->>>>    {
->>>>        unsigned long size = (PAGE_SIZE << order) / SZ_1K;
->>>> +    struct thpsize_child *stats;
->>>>        struct thpsize *thpsize;
->>>>        int ret;
->>>>    +    /*
->>>> +     * Each child object (currently only "stats" directory) holds a
->>>> +     * reference to the top-level thpsize object, so we can drop our ref to
->>>> +     * the top-level once stats is setup. Then we just need to drop a
->>>> +     * reference on any children to clean everything up. We can't just use
->>>> +     * the attr group name for the stats subdirectory because there may be
->>>> +     * multiple attribute groups to populate inside stats and overlaying
->>>> +     * using the name property isn't supported in that way; each attr group
->>>> +     * name, if provided, must be unique in the parent directory.
->>>> +     */
->>>> +
->>>>        thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
->>>> -    if (!thpsize)
->>>> -        return ERR_PTR(-ENOMEM);
->>>> +    if (!thpsize) {
->>>> +        ret = -ENOMEM;
->>>> +        goto err;
->>>> +    }
->>>> +    thpsize->order = order;
->>>>          ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
->>>>                       "hugepages-%lukB", size);
->>>>        if (ret) {
->>>>            kfree(thpsize);
->>>> -        return ERR_PTR(ret);
->>>> +        goto err;
->>>>        }
->>>>    -    ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>> -    if (ret) {
->>>> +    stats = kzalloc(sizeof(*stats), GFP_KERNEL);
->>>> +    if (!stats) {
->>>>            kobject_put(&thpsize->kobj);
->>>> -        return ERR_PTR(ret);
->>>> +        ret = -ENOMEM;
->>>> +        goto err;
->>>>        }
->>>>    -    ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
->>>> +    ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
->>>> +                   &thpsize->kobj, "stats");
->>>> +    kobject_put(&thpsize->kobj);
->>>>        if (ret) {
->>>> -        kobject_put(&thpsize->kobj);
->>>> -        return ERR_PTR(ret);
->>>> +        kfree(stats);
->>>> +        goto err;
->>>>        }
->>>>    -    thpsize->order = order;
->>>> -    return thpsize;
->>>> +    if (BIT(order) & THP_ORDERS_ALL_ANON) {
->>>> +        ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>> +        if (ret)
->>>> +            goto err_put;
->>>> +
->>>> +        ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
->>>> +        if (ret)
->>>> +            goto err_put;
->>>> +    }
->>>> +
->>>> +    if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
->>>> +        ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
->>>> +        if (ret)
->>>> +            goto err_put;
->>>> +    }
->>>> +
->>>> +    list_add(&stats->node, &thpsize_child_list);
->>>> +    return 0;
->>>> +err_put:
->>>
->>> IIUC, I think you should call 'sysfs_remove_group' to remove the group before
->>> putting the kobject.
->>
->> Are you sure about that? As I understood it, sysfs_create_group() was
->> conceptually modifying the state of the kobj, so when the kobj gets destroyed,
->> all its state is tidied up. __kobject_del() (called on the last kobject_put())
->> calls sysfs_remove_groups() and tidies up the sysfs state as far as I can see?
-> 
-> IIUC, __kobject_del() only removes the ktype defaut groups by
-> 'sysfs_remove_groups(kobj, ktype->default_groups)', but your created groups are
-> not added into the ktype->default_groups. That means you should mannuly remove
-> them, or am I miss something?
+Hi Linus,
 
-That was also putting doubt in my mind. But the sample at
-samples/kobject/kobject-example.c does not call sysfs_remove_group(). It just
-calls sysfs_create_group() in example_init() and calls kobject_put() in
-example_exit(). So I think that's the correct pattern.
+please pull one final urgent x86 fix for v6.10.
 
-Looking at the code more closely, sysfs_create_group() just creates files for
-each of the attributes in the group. __kobject_del() calls sysfs_remove_dir(),
-who's comment states "we remove any files in the directory before we remove the
-directory" so I'm pretty sure sysfs_remove_group() is not required.
+AFAIK, nothing weird stands out in x86-land - I think we're ready to go.
 
-By the way, if we do choose to only populate stats if that size can be used by
-anon/shmem/file, then I've found sysfs_merge_group() which will simplify adding
-named groups without needing to manually create the stats directory as I am in
-this version of the patch. I'll migrate to using that approach in v2. Of course
-if we decide to take the approach of populating all stats for all sizes, that
-problem goes away anyway.
+Thx.
 
-Thanks,
-Ryan
+---
+
+The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
+
+  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.10
+
+for you to fetch changes up to ac8b270b61d48fcc61f052097777e3b5e11591e0:
+
+  x86/bhi: Avoid warning in #DB handler due to BHI mitigation (2024-07-03 13:26:30 +0200)
+
+----------------------------------------------------------------
+- Make sure TF is cleared before calling other functions (BHI mitigation in
+  this case) in the SYSENTER compat handler, as otherwise it will warn about
+  being in single-step mode
+
+----------------------------------------------------------------
+Alexandre Chartre (1):
+      x86/bhi: Avoid warning in #DB handler due to BHI mitigation
+
+ arch/x86/entry/entry_64_compat.S | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
