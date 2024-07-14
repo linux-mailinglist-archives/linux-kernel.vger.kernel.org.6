@@ -1,288 +1,150 @@
-Return-Path: <linux-kernel+bounces-251727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372AC9308F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578719308F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E831F2166F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 08:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B211F216C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 08:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B11B950;
-	Sun, 14 Jul 2024 08:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D58918C1A;
+	Sun, 14 Jul 2024 08:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WeLwVHnU"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hNx+onJQ"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737CCAD22;
-	Sun, 14 Jul 2024 08:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEA41BF2B
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 08:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720944291; cv=none; b=AV1EA8ua9H8C4flIll2dqEIEHn+nTbsQ2VDhcgIZciK4G4VAdIAY9rCN2MpUHhDSDkJBA0+wMuuF4VYYiZYTVBjL4vLOWsK9cVNrDOo8mruz1lP4r+r5AbOD3UThtskXlBO+bbp3nOi0zB3unC6WRdi4hirwWrplp228W9QagVs=
+	t=1720944559; cv=none; b=uawx4NFRIWZMuSow09GOCvEgXWrajbJrRm8Hg52xBYmAS6O59azaTGgU4r5ZC5HhFLOnzU1rkTiE5+qebXQtvtI/5kxUbjwBwICCrGTXs+p5tR4DYgTcdQz9iAuxjFqOGJdZfl6OKVzWYiSgW2IYqpqAPp4/TdaU4cz0ocVenzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720944291; c=relaxed/simple;
-	bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iufACFVXFp2s/hkN/DarpQ32yB4dmvce2Di9XyIHddO42Ypj3tizKI2Cnjy6j/qvADL1Li+CvML05welLAHsosX4vg89o6B14De66A6UVOD9f4DiRuLytpVKFSktQ4BOUfVpU/6fTCSoe4m3r2nOAEfgkRt5WC5CRwS0m1PWbfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WeLwVHnU; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1720944559; c=relaxed/simple;
+	bh=ZT57NUsMbQIL0mv4825+WOqgDF8OLdepTxJAz+XS4+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg41u4ryU4ehBJ5U337QDoa9dI/62vyy2DXO9E3xPQwa1Ru/OLdWu/7yZyEBLcuuThKPWitQZ9OVOyzb8HUemJYarUJGflp4KXZ6TpTkDQWGRRonzwqj2ofrxQyzSb/s998NAaxeHhggT9jL/lE0IvE4RFPHC5HKxeF0GpMj/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hNx+onJQ; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720944274;
-	bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
-	h=From:Date:Subject:To:Cc:From;
-	b=WeLwVHnUngEASsCqqUqrBRJn3UeRdQJmlf0z5MG18AWOcJa2GYmcvdGjqOLqvVNgQ
-	 bcUUTqL8fKAQ7m8Z/ph+Yf1kqYeTNuXZ/QK9znRBV4hrojqFw7Drd3o4cYXbJGIGyq
-	 nL2nvxTvkxgSNkyPDXZEGLLBeSu94G9ECjFCeN6s=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 14 Jul 2024 10:03:45 +0200
-Subject: [PATCH v5] kbuild: add script and target to generate pacman
- package
+	s=mail; t=1720944553;
+	bh=ZT57NUsMbQIL0mv4825+WOqgDF8OLdepTxJAz+XS4+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hNx+onJQMojiQ9O0M5ExZ8Y7rcqVs3eGXLoHxLQZnSQ+kjfticrEF55tjLA4WVYJK
+	 ZiGjPfsXcDInD7xS9EKtWOQ1Q18A56juVoeFJG3aoB9A+c1GqqFlUzoXMCbh9SLWRB
+	 UdGKr3fvMZLHCimTbJmSO40VS0MOhmqfvDBh3OLE=
+Date: Sun, 14 Jul 2024 10:09:13 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc for 6.11-rc1
+Message-ID: <ee43b1d5-3339-4a1c-9bac-c0d48f22167c@t-8ch.de>
+References: <acffd5b1-36a8-4336-9b94-aec50b3d6e5b@t-8ch.de>
+ <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
+ <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGCGk2YC/23OSw6CMBCA4auQrq1ppy9w5T2Mi7a00qhIqKCGc
- HcLbkjs8p9kvpkJRdcHF9GhmFDvxhDDo00hdgWyjW4vDoc6NQICnEgQ+GqGcKtxp+1dt7i7XrD
- hvlSOVjVhEqW9rnc+vFfzdE7dhPh89J/1xEiX6U9ThGe0kWKKtQUvmRdeK3N8uRBjtM3Q7Fv3R
- As5wpaROQYSIynjAJowrXSWYVumzDEsMWUpas+ssYqTLMM3DCU5hidGEGWMMKoy8P/NPM9fK37
- vHIwBAAA=
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Cc: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720944274; l=7601;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
- b=dTlkX6gmLdOteEV2vHVk+Nr+XrloJwXLJ2X7PweKRHAtLacGpuGAOjDz88cxkR35ocDWXtF8+
- L+3hVuvSZ5lDMU4HtuAkstO3XJubRHPEdKhvW0wW1/ithkQXliswDYx
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
 
-pacman is the package manager used by Arch Linux and its derivates.
-Creating native packages from the kernel tree has multiple advantages:
+On 2024-07-12 20:16:13+0000, Paul E. McKenney wrote:
+> On Sun, Jun 30, 2024 at 09:06:39AM -0700, Paul E. McKenney wrote:
+> > On Sat, Jun 29, 2024 at 01:04:08PM +0200, Thomas Weißschuh wrote:
+> > > Hi Paul,
+> > > 
+> > > The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+> > > 
+> > >   Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+> > > 
+> > > are available in the Git repository at:
+> > > 
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20240629-for-6.11-1
+> > > 
+> > > for you to fetch changes up to 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b:
+> > > 
+> > >   selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
+> > 
+> > Hearing no objections, I have pulled this in so that it will appear
+> > in the next -next.  Here are the test results:
+> > 
+> > make run:
+> > 195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+> > 
+> > make run-user:
+> > 195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+> > 
+> > So looks good to me!
 
-* The package triggers the correct hooks for initramfs generation and
-  bootloader configuration
-* Uninstallation is complete and also invokes the relevant hooks
-* New UAPI headers can be installed without any manual bookkeeping
+For testing you can use "./run-tests.sh -m [user | system]" to run the
+tests on all supported architectures via QEMU.
 
-The PKGBUILD file is a simplified version of the one used for the
-downstream Arch Linux "linux" package.
-Extra steps that should not be necessary for a development kernel have
-been removed and an UAPI header package has been added.
+(On the first run you can use "-p" to download the toolchains)
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
----
-Changes in v5:
-- Rebase onto kbuild/for-next
-- Use new path to build-version script (from kbuild/for-next)
-- Ensure submake jobserver delegation works
-- Simplify $modulesdir/pkgbase file creation
-- Add Reviewed-by from Nicolas
-- Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
+> And please see below for my proposed signed tag.  Please let me know of
+> any needed adjustments.
+> 
+> 							Thanx, Paul
+> 
+> ----------------------------------------------------------------
+> 
+> tag nolibc.2024.07.12a
+> Tagger: Paul E. McKenney <paulmck@kernel.org>
+> Date:   Fri Jul 12 16:56:21 2024 -0700
+> 
+> nolibc updates for v6.11
+> 
+> o	Fix selftest printf format mismatch in expect_str_buf_eq()
 
-Changes in v4:
-- Update MRPROPER_FILES
-- Unify shell variable syntax
-- Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
+Period at the end.
 
-Changes in v3:
-- Enforce matching architectures for installation
-- Add Reviewed-by and Tested-by from Nathan
-- Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
+> 
+> o	Stop using brk() and sbrk() when testing against musl, which
+> 	implements these two functions with ENOMEM.
+> 
+> o	Make tests us -Werror to force failure on compiler warnings.
+> 
+> o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
+> 
+> o	Implement strtol() and friends.
+> 
+> o	Add facility to skip nolibc-specific tests when running against
+> 	non-nolibc libraries.
+> 
+> o	Implement strerror().
+> 
+> o	Use strerror() unconditionally, instead of only when running
+> 	against non-nolibc libraries.
 
-Changes in v2:
-- Replace ${MAKE} with $MAKE for consistency with other variables
-- Use $MAKE for "-s image_name"
-- Avoid permission warnings from build directory
-- Clarify reason for /build symlink removal
-- Install System.map and config
-- Install dtbs where available
-- Allow cross-build through arch=any
-- Sort Contributor/Maintainer chronologically
-- Disable some unneeded makepkg options
-- Use DEPMOD=true for consistency with rpm-package
-- Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
----
- .gitignore               |  6 ++++
- Makefile                 |  2 +-
- scripts/Makefile.package | 16 ++++++++++
- scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 106 insertions(+), 1 deletion(-)
+Maybe mention that this is about kselftest and not nolibc itself.
 
-diff --git a/.gitignore b/.gitignore
-index c59dc60ba62e..7902adf4f7f1 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -92,6 +92,12 @@ modules.order
- #
- /tar-install/
- 
-+#
-+# pacman files (make pacman-pkg)
-+#
-+/PKGBUILD
-+/pacman/
-+
- #
- # We don't want to ignore the following even if they are dot-files
- #
-diff --git a/Makefile b/Makefile
-index c90d408c825e..2c38c5f57135 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1481,7 +1481,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
- # Directories & files removed with 'make mrproper'
- MRPROPER_FILES += include/config include/generated          \
- 		  arch/$(SRCARCH)/include/generated .objdiff \
--		  debian snap tar-install \
-+		  debian snap tar-install PKGBUILD pacman \
- 		  .config .config.old .version \
- 		  Module.symvers \
- 		  certs/signing_key.pem \
-diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-index bf016af8bf8a..920774dd660c 100644
---- a/scripts/Makefile.package
-+++ b/scripts/Makefile.package
-@@ -141,6 +141,21 @@ snap-pkg:
- 	cd $(objtree)/snap && \
- 	snapcraft --target-arch=$(UTS_MACHINE)
- 
-+# pacman-pkg
-+# ---------------------------------------------------------------------------
-+
-+PHONY += pacman-pkg
-+pacman-pkg:
-+	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-+	+cd $(objtree) && \
-+		srctree="$(realpath $(srctree))" \
-+		objtree="$(realpath $(objtree))" \
-+		BUILDDIR="$(realpath $(objtree))/pacman" \
-+		CARCH="$(UTS_MACHINE)" \
-+		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-+		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
-+		makepkg
-+
- # dir-pkg tar*-pkg - tarball targets
- # ---------------------------------------------------------------------------
- 
-@@ -221,6 +236,7 @@ help:
- 	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
- 	@echo '  snap-pkg            - Build only the binary kernel snap package'
- 	@echo '                        (will connect to external hosts)'
-+	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
- 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
- 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
- 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
-diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-new file mode 100644
-index 000000000000..7bce2f01b17d
---- /dev/null
-+++ b/scripts/package/PKGBUILD
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
-+# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-+
-+pkgbase=linux-upstream
-+pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
-+pkgver="${KERNELRELEASE//-/_}"
-+pkgrel="$KBUILD_REVISION"
-+pkgdesc='Linux'
-+url='https://www.kernel.org/'
-+arch=($CARCH)
-+options=(!debug !strip !buildflags !makeflags)
-+license=(GPL-2.0-only)
-+
-+build() {
-+  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
-+  cd "$objtree"
-+
-+  # makepkg does a "chmod a-srw", triggering warnings during kbuild
-+  chmod 0755 "$pkgdirbase" || true
-+
-+  $MAKE -f "$srctree/Makefile"
-+}
-+
-+package_linux-upstream() {
-+  pkgdesc="The $pkgdesc kernel and modules"
-+
-+  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
-+  cd "$objtree"
-+  local modulesdir="$pkgdir/usr/$MODLIB"
-+
-+  echo "Installing boot image..."
-+  # systemd expects to find the kernel here to allow hibernation
-+  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-+  install -Dm644 "$($MAKE -s image_name)" "$modulesdir/vmlinuz"
-+
-+  # Used by mkinitcpio to name the kernel
-+  echo "$pkgbase" > "$modulesdir/pkgbase"
-+
-+  echo "Installing modules..."
-+  $MAKE INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
-+    DEPMOD=true modules_install
-+
-+  if $MAKE run-command KBUILD_RUN_COMMAND='test -d $srctree/arch/$SRCARCH/boot/dts' 2>/dev/null; then
-+    echo "Installing dtbs..."
-+    $MAKE INSTALL_DTBS_PATH="$modulesdir/dtb" dtbs_install
-+  fi
-+
-+  # remove build link, will be part of -headers package
-+  rm -f "$modulesdir/build"
-+}
-+
-+package_linux-upstream-headers() {
-+  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-+
-+  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
-+  cd "$objtree"
-+  local builddir="$pkgdir/usr/$MODLIB/build"
-+
-+  echo "Installing build files..."
-+  "$srctree/scripts/package/install-extmod-build" "$builddir"
-+
-+  echo "Installing System.map and config..."
-+  cp System.map "$builddir/System.map"
-+  cp .config "$builddir/.config"
-+
-+  echo "Adding symlink..."
-+  mkdir -p "$pkgdir/usr/src"
-+  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
-+}
-+
-+package_linux-upstream-api-headers() {
-+  pkgdesc="Kernel headers sanitized for use in userspace"
-+  provides=(linux-api-headers)
-+  conflicts=(linux-api-headers)
-+
-+  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
-+  cd "$objtree"
-+
-+  $MAKE headers_install INSTALL_HDR_PATH="$pkgdir/usr"
-+}
-+
-+# vim:set ts=8 sts=2 sw=2 et:
+Otherwise looks good, thanks!
 
----
-base-commit: cd843d58ee1db0e2cb0d7046aff5cb59e8fcfc2e
-change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+> -----BEGIN PGP SIGNATURE-----
+> 
+> iQJHBAABCgAxFiEEbK7UrM+RBIrCoViJnr8S83LZ+4wFAmaRxC8THHBhdWxtY2tA
+> a2VybmVsLm9yZwAKCRCevxLzctn7jCmDD/9dME6sIhlb7+Bm0V1PXH1YbrqBR8rA
+> FRj620xKl2MMrpxxNDiRtv+5mI28fQklVD1wqZUB7tQV3yq6onFnA2C7QGZLn/kl
+> 9smF6Jxad/ZHYKC4DfuECLLtA/vFutNvpRTrdMUyeTQDaUWZisByzMTSHrvqhHEz
+> K98sL81uWIIovSM5mQA+RxMrmydT0ts683jfqXi56NPPOUaYSlERl8KZhvUaM+Rn
+> gG+vULwS7d32/EOI1FJ5qyPVVTr7wC0sKueyKPmPcjfFTtNsip4EZFLsjS9lqezW
+> m4PM0qCL3XkfgWPek3CIYqd8Y/mjPVYu6m0Mxji3PYboQjZjYON2E8r8EE/fw6Oi
+> VLc0etIrycus7uVyBCw4LxJHhdINdpxnQG6Qji4OVilvbKCU+PA3ecepxUVGtlK+
+> 3ffjanrwv841eGX7/glPElh3Cj9SJackRU5N5hXisJpWc8ode0NxVBI0g7dn6jF5
+> sLtZO/JIEof+W+/Hj++3LMQKGi7OrQy0lBe64ENg+l7qhp6Aq3rxjwvZAnTVFtVq
+> Dh86Wi3JD7Y6wovB1z9hlaAm1xtigxP7j0Gwr6RwSyPTNCrQvUUPOClfonjkqGN/
+> B28gkbOAKBd4gbgt3d8UYGliaeiBuX23KTAR9tU2rnrJOudLeBlewlPyW09jFS98
+> jdz8Ay8fuZp+Qw==
+> =e/Ia
+> -----END PGP SIGNATURE-----
 
