@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-251880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA57930AED
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:21:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D1D930AF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4C91C20F74
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31571F217F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DE913C80A;
-	Sun, 14 Jul 2024 17:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EB213C813;
+	Sun, 14 Jul 2024 17:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kzxOghUJ"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Np/k4ysP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B94D27D;
-	Sun, 14 Jul 2024 17:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677CFD27D;
+	Sun, 14 Jul 2024 17:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720977694; cv=none; b=BavhLtCrcUXL7idEhnno/ejMIfUswGPKwg/LR5ZfML1UFP0KqPDfADNTO7pGSvs2cVvdNzzPMQfz1Kb9icSxQ+hG+VTiehFsESTcrmYQigKbC3mRzgi9axBdEVqerrh7fy+LVngSUS8hHsKoDvsnUNlEo754DL7olMvqV0ZBPVQ=
+	t=1720977773; cv=none; b=CJRTSAc0lgVtgAyIuluVVKSkupvf1b5cgJ6XQ1yYpiZCDjMMLYuRh7ZlrJMljeLeoixBk9621gHzEMMxJ7+1tx3bg0TiAAjMHvZNAdBTbNTHGC0GncBxN2lMtBQ1jFdvEelG8QuG6UoJp149EFtYRiEVspeB4jAekO9a8t58fyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720977694; c=relaxed/simple;
-	bh=J/Qb0gThL4j3Uoyg4Clycpw/2i361PZ/NXwbE5C+AdA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nru13Jj5+94m7o0o+CS8pkPwUqmOYpah63FOGQzZb5GMn/nD3JFUHdFXH/bzeA2wS5tilcCCLXPVsq306sKwn+he/Ms9eT98jJcSMAqXD1lI1MDKP9DQbyTSL5AvhctiQnt60b9fhgc23v8Di9FEe/r2sXN7y1YOk8Qw1rzz3+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kzxOghUJ; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720977679; x=1721582479; i=markus.elfring@web.de;
-	bh=HasxCNi8X2ES8SdbqnOhQdJu4uUx4nqIQPp3FXMVmwM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kzxOghUJjuaMLikY/UBX4DlYWZutn+E5Ay5fPraBklsxx7Amo0SUPhajwPYgupfK
-	 3k3pz+2f2svdgVRsSPp4UOhli4/JAEOloaXJVO/nN0RuSDXaXtfI5jB/e55AB5f5+
-	 yrCU92sbKXOA73uic/ye9D1FoLFalgmmu4R9wtG0Ut5TeMUeSWwtoboZQ5U1rxjk5
-	 amqL2SDI6CGK9vEv1d8EiNj4OvClgXkf0lMHbuIrBQNp8kzOs6YrQ3F2mX8cVfRNf
-	 2k498EqspDbo90tiGAYTPxKVW4ZEyVLcgojNyqWwGpKBBlR/nJFRBoxGRgvWp7PHF
-	 Ai9amYbuAWQQ9z8IHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1JF8-1sVmzt01ne-007Wmj; Sun, 14
- Jul 2024 19:21:19 +0200
-Message-ID: <e7faa2c4-9590-44b4-8669-69ef810277b1@web.de>
-Date: Sun, 14 Jul 2024 19:21:15 +0200
+	s=arc-20240116; t=1720977773; c=relaxed/simple;
+	bh=7xLPqy1jM0O+0195mcRA60FHmWtnGBVHJTGgtTxpOjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=otWPQfpNIY95H74qhw+3RyYJwopaVPqH/SaOk7t6rXyYB4FXiEP2RBrj4sm2hxkXw78rbPC206BwR0HFzL7DImpmURmeLCsULxDbi1OKtQYr9Ev8/O+ch57XAJDGuqHXLV8f+LcycJwkfFtPvg4j0IcWcI7k7jHmdk+do6Jzerg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Np/k4ysP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13315C4AF52;
+	Sun, 14 Jul 2024 17:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720977773;
+	bh=7xLPqy1jM0O+0195mcRA60FHmWtnGBVHJTGgtTxpOjk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Np/k4ysPWfJGh/Vzr2yW3vI4rGlgUmizlgw7EEBEsv9eCLblCHD9MKYn7Y4lK5rKv
+	 CvEpeHnwTHXXi+Fuo0HFdnwjqbaGWT+aPPCN3EMoPB5sY87mXioJBhuOa72Mj/5kS/
+	 tiM1wNQtvLlGLpaAZHmQyE05p4mF6vz3hOrx1mR0+X6M+SiHXePabsj+YaMQ2aYy26
+	 tNwBiyfhN6NjEBsb8ztjJnSDc5vbaa5yvjL4OclQ9xhSb7ayDX8kR7C5k7ySCG1sew
+	 h9HqYsIPLZgLqxPeMPD6DKgywBsVGBMNy8zNezQcOfzlQY7Qxy3yi6Zz9I4ZGAHQW8
+	 i3WCd4ViIlVtQ==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso4683246a12.3;
+        Sun, 14 Jul 2024 10:22:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW2dXsTFHoMn6RZLA6BTuJWg5MRNp4DotqAeCt8znc1YqhONxg+BQis8erVP8VsadEq49xbe894FTYi54a/rBuqJKOEOctEaJmAG5XRBl4uej1pNH9ZR0x8sD2NmkkoAoD1vWkdU5x7eDwSAqlcMSxNkM2jSju6WHia01iuJVFNzqG6iEFiDrOk4y+untSYLTAcRl8tY47ya2lwy0CXztU0hdjPQTQpEPpfWePjFfWrl4yVWFzcnUtJpNRwv3RCjCeuFkARPQhKQ+E1bIh5qYug7hR+FyNkx3uoreweZ99Maqs=
+X-Gm-Message-State: AOJu0Yxn+DBnKxg32HqnNwP3Ju9aNdKimWuw4dQEjAKiFtnyiMvgIkPA
+	AFGoq28Om/vngKUg4xCfIqFZwo5rXviPthhuLWTHTZUBvgbEQOEmPQpyltM5qcJ7tcigZqav+1V
+	NKRthHyE5oRFIHVxHiTjJxqRFqhM=
+X-Google-Smtp-Source: AGHT+IEqlf4co9CQdw2WGl/Xqoo4fkGgeyLA8K1xIwoAlG8h/Wd4OdPV3wQEkk7NltbZTH51erICKgVwW7rB3xSuihg=
+X-Received: by 2002:a17:906:39d6:b0:a72:9963:eb8e with SMTP id
+ a640c23a62f3a-a780b6b307emr939527966b.28.1720977771290; Sun, 14 Jul 2024
+ 10:22:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] closures: Use seq_putc() in debug_show()
-Content-Type: text/plain; charset=UTF-8
+References: <20240704143611.2979589-1-arnd@kernel.org> <20240704143611.2979589-13-arnd@kernel.org>
+ <9b269c2a-c6b5-4fa0-801b-e5e1c3ccb671@app.fastmail.com>
+In-Reply-To: <9b269c2a-c6b5-4fa0-801b-e5e1c3ccb671@app.fastmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 15 Jul 2024 01:22:40 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTDT=DyPs8NWe7gxvuNa0i_X9go2dgcBMGk9eqFdSwLTQ@mail.gmail.com>
+Message-ID: <CAJF2gTTDT=DyPs8NWe7gxvuNa0i_X9go2dgcBMGk9eqFdSwLTQ@mail.gmail.com>
+Subject: Re: [PATCH 12/17] csky: convert to generic syscall table
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Brian Cain <bcain@quicinc.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Christian Brauner <brauner@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, linux-hexagon@vger.kernel.org, 
+	loongarch@lists.linux.dev, 
+	"linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GlPPVpVcPkDvHKYCv9ecKXn3hbWN+tB5jvLUZIDnE10agGYcK78
- WHARB7tDHFffsi9kqmY+ikWnfuymy33IwD7E6O7bY0LgQ3LC+l2DYF2dsIBD2qjV7VUEl9M
- qN29R6gEPXv6w/2ehvX94JU3DmsKCNLrs4fFFR+rN50edNwERtzlGqd4LQaSDpc2uL96Wyh
- ff517mIW3f6VoOg273smA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Jl44Y2fzuiI=;u2+82f0/AgxuwZ3lMVZosGizwns
- oc5BoV2dep02vAKKQqaSJ5SkSsaXjgZ24bXf8X44dRX4frv6CGfEhC0d0Tqw95uPnAAHSAGxo
- inE5ktrZ/O9JMozWg/peiq8Veixgws9qLDJkB+RqHN3uY+bdeVtoSB0BxPFTB0Y1e3gI4JTc3
- II5/R/cn5pfhJmFq3DN8FjPudo5/RawMp0sV7wCE4SSlYZiUmDy+jtIbzybDcm4NbsBvVoQeQ
- Slv4cVg8SF2cnJVWqzBcsk8bfGctrle6hvd8GA83mzv5M+lTnrgsKqOuYqOUXmYGCoDtr3o39
- RuoALiMuxgnCHZFvZTAdWgSi66GOrzTuzv4s77j644/nIhJUpRaJfBvtbH5XMwtzkH3yrDrsO
- TVWLlqS1RG+G8NI+4+iQ1AsUBEYSlRciuYSeogDtsznbhLRvszosdCBkC4fBASixNlelwBhuB
- 4slyudD9/tuuRwfp6iS9AuybnL8GBvJHcihcrkeyvMxqP/Mn86SELNsA2RBQ7sFHgnKDNFEwI
- 1T6v5+X56dgQgaRJLcwc+lm5/MLXmax9pRzrTOJS7kqujKmfMee4PUK90gm5w7l72uoWiK+qD
- B4ffXF5Z2DoauX4gPkFL/Sd6XLHZTSl5C9DWIO8GYWyzQsTyo3Ocpo/ghGWFot2QBHsbdgjOr
- TxnztqHyU22V4afVTnSUbCWyfRiG6AVBovNIN+jZb9RzTTXb3a6uNnaIl4bXfeMEE58BBRcVw
- TT1y4oe3klNO3RgWMO5C7NOx52bHTT8uZ9CcbLxhwaPjR7SqjWGoBr6rxlljoUDCO85asPLIu
- 6zMfyt2rH9h2N4mZyDk8ZOdg==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 19:15:09 +0200
+On Wed, Jul 10, 2024 at 6:27=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Thu, Jul 4, 2024, at 16:36, Arnd Bergmann wrote:
+> > -
+> > -#define __NR_set_thread_area (__NR_arch_specific_syscall + 0)
+> > -__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
+> > -#define __NR_cacheflush              (__NR_arch_specific_syscall + 1)
+> > -__SYSCALL(__NR_cacheflush, sys_cacheflush)
+> > +#include <asm/unistd_32.h>
+> > +#define __NR_sync_file_range2 __NR_sync_file_range
+>
+> A small update: I have folded this fixup into this patch
+> and the hexagon one, to ensure we don't define both
+> __NR_sync_file_range2 and __NR_sync_file_range. I already
+> have patches to clean this up further to avoid both the
+> #undef and #define, but that is part of a larger rework
+> that is not ready before the merge window.
+>
+>      Arnd
+>
+> diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi=
+/asm/unistd.h
+> index 794adbc04e48..44882179a6e1 100644
+> --- a/arch/csky/include/uapi/asm/unistd.h
+> +++ b/arch/csky/include/uapi/asm/unistd.h
+> @@ -1,4 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>
+>  #include <asm/unistd_32.h>
+> -#define __NR_sync_file_range2 __NR_sync_file_range
+> +
+> +#define __NR_sync_file_range2 84
+> +#undef __NR_sync_file_range
+For csky part:
 
-A single line break should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Acked-by: Guo Ren <guoren@kernel.org>
 
-This issue was transformed by using the Coccinelle software.
+> diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/includ=
+e/uapi/asm/unistd.h
+> index 6f670347dd61..a3b0cac25580 100644
+> --- a/arch/hexagon/include/uapi/asm/unistd.h
+> +++ b/arch/hexagon/include/uapi/asm/unistd.h
+> @@ -29,4 +29,5 @@
+>
+>  #include <asm/unistd_32.h>
+>
+> -#define __NR_sync_file_range2 __NR_sync_file_range
+> +#define __NR_sync_file_range2 84
+> +#undef __NR_sync_file_range
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- lib/closure.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/closure.c b/lib/closure.c
-index 116afae2eed9..2bfe7d2a0048 100644
-=2D-- a/lib/closure.c
-+++ b/lib/closure.c
-@@ -278,7 +278,7 @@ static int debug_show(struct seq_file *f, void *data)
- 			seq_printf(f, " W %pS\n",
- 				   (void *) cl->waiting_on);
 
--		seq_puts(f, "\n");
-+		seq_putc(f, '\n');
- 	}
-
- 	spin_unlock_irq(&closure_list_lock);
-=2D-
-2.45.2
-
+--=20
+Best Regards
+ Guo Ren
 
