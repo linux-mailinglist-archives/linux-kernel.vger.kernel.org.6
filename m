@@ -1,201 +1,180 @@
-Return-Path: <linux-kernel+bounces-251902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB957930B5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8218B930B62
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A2D1C20E3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78822818A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A80413CF9E;
-	Sun, 14 Jul 2024 19:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9BD13CA81;
+	Sun, 14 Jul 2024 19:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dT3qRkeK"
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="pBxxOFya"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83D213BAC3
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 19:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0513B294;
+	Sun, 14 Jul 2024 19:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720985667; cv=none; b=TxSeKHNkhayE7NXH8co9EMAFehc8JLDznt5xho5kUC2FZjvm52j4fJR0INfjEAFNR8NJRtUK0bxVuWkXGaqVSV9jc7vS5r6tZ25j4zhjMF4VPvdxJHXcpKUwcpmwaEWBQDMRWdg6kjCOfeF5EHnI14zlH5l2kjpoku4cSUJZ8cc=
+	t=1720986236; cv=none; b=LJW5Myqpyu/ntUNqYZXgwI1u9CGmrA5AaGmxvzGOQiiHdTgsXcGRfH1eXw10wD+cZM0g8L+wF1cuv1pu7+gNa7ci91S7hLSX8yu4n+6wPa0lKei6xmDJrh/vALZP5EaFoCMpkZtFx8XUWbGBFUlnG2RAuFKX1ChhPxrdgyc5RII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720985667; c=relaxed/simple;
-	bh=M87rrktCHY7ghhsSswI4T1DoWNIiUEx81cbb38bY5aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGXTjMrUPKKizVbYgks80Ly9SvxyTi4fMjb3/scdNUqniCD/XN9vgYdpRoHvCyd3IqJAfgYIBeV5PNV2j5msPv10FJHMBpcyxjloxuZRrH2ZezdDtC4Upd/yeNpcZhG5H9hBtLuE4CIpM7b91nSa3UFlniUnG++9ZrIPcglt0hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dT3qRkeK; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WMb9w4V8NzDD7;
-	Sun, 14 Jul 2024 21:34:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720985652;
-	bh=K31st2qlqWJi+cy7FgRVcUlfoX1RhYvk1QYxVEuqOUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dT3qRkeKGq56bt9kV3Qstlrq22PAo5PeK2fYHLXD/IRoR9V0R2eAfUGJZOA3lPoLy
-	 iIYTgtY16vjW+FXeO0NRwEjAhXkUxPeIGhop+M0XpWhOeusW5XKYKlLSG/hb51hJ6O
-	 fTcQJ4HoEwQqXvY6SeqxgjHwMmXuuWFq++s4cBTY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WMb9v1hMczv4r;
-	Sun, 14 Jul 2024 21:34:11 +0200 (CEST)
-Date: Sun, 14 Jul 2024 21:34:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>, 
-	linux-bcachefs@vger.kernel.org
-Cc: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>, 
-	gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path - bcachefs
- bug
-Message-ID: <20240714.iaDuNgieR9Qu@digikod.net>
-References: <000000000000a65b35061cffca61@google.com>
- <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
+	s=arc-20240116; t=1720986236; c=relaxed/simple;
+	bh=nlze4mihTBi3QvTZv100Ldq03xpcQu7wO1aJwJ6arpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fVvAIihNltecbzA15+eU9C/2uJ6iDXdEREnW1768VdJcC3GdemxQ6ZPyArOUmleOcZrhY+dEqsAAbqL6Ky1BMs3eaNKwF8KjTTcjyF6fxT8QOgmdhbsP2CMbIqy3V/VxlWlbpjibjW/9jKuOlgXbEyVft9qcbUiySU79dwJOxGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=pBxxOFya; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id EA6AB6356CC1;
+	Sun, 14 Jul 2024 21:37:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1720985827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OMK9o7IrpO4MqbMGDLfUl1DTeKpqT2I9IzRC/2uuvo4=;
+	b=pBxxOFyaXABu6FFPGNLIf2eONRdauwxAQ3e4zfIvAB8mrsXShi34TWCRe61XoFSWqCJcpN
+	ZnSkg1tm/OrnLavs0KkLkLK8U0BDbL3RriWE2WNiknT4S0bXCXqGItsV9hGshgOmIB5vFp
+	xKBh5bSjG3IGknhBV632vwHuxWQAU5c=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: intel-wired-lan@lists.osuosl.org, Chen Yu <yu.c.chen@intel.com>
+Cc: "Neftin, Sasha" <sasha.neftin@intel.com>, Len Brown <len.brown@intel.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ "Brandt, Todd E" <todd.e.brandt@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>, linux-kernel@vger.kernel.org,
+ Chen Yu <yu.c.chen@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Subject:
+ Re: [PATCH 0/4][RFC] Disable e1000e power management if hardware error is
+ detected
+Date: Sun, 14 Jul 2024 21:36:49 +0200
+Message-ID: <8412242.T7Z3S40VBb@natalenko.name>
+In-Reply-To: <cover.1605073208.git.yu.c.chen@intel.com>
+References: <cover.1605073208.git.yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: multipart/signed; boundary="nextPart10511005.nUPlyArG6x";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Fri, Jul 12, 2024 at 10:55:11AM -0400, Paul Moore wrote:
-> On Thu, Jul 11, 2024 at 5:53 PM syzbot
-> <syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
-> >
-> > bcachefs (loop0): resume_logged_ops... done
-> > bcachefs (loop0): delete_dead_inodes... done
-> > bcachefs (loop0): done starting filesystem
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-> 
-> I'll let Mickaël answer this for certain, but based on a quick look it
-> appears that the fs object being moved has a umode_t that Landlock is
-> not setup to handle?
+--nextPart10511005.nUPlyArG6x
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: intel-wired-lan@lists.osuosl.org, Chen Yu <yu.c.chen@intel.com>
+Date: Sun, 14 Jul 2024 21:36:49 +0200
+Message-ID: <8412242.T7Z3S40VBb@natalenko.name>
+In-Reply-To: <cover.1605073208.git.yu.c.chen@intel.com>
+References: <cover.1605073208.git.yu.c.chen@intel.com>
+MIME-Version: 1.0
 
-syzbot found an issue with bcachefs: in some cases umode_t is invalid (i.e.
-a weird file).
+Hello Yu.
 
-Kend, Brian, you'll find the incorrect filesystem with syzbot's report.
-Could you please investigate the issue?
+On st=C5=99eda 11. listopadu 2020 6:50:35, SEL=C4=8C Chen Yu wrote:
+> This is a trial patchset that aims to cope with an intermittently
+> triggered hardware error during system resume.
+>=20
+> On some platforms the NIC's hardware error was detected during
+> resume from S3, causing the NIC to not fully initialize
+> and remain in unstable state afterwards. As a consequence
+> the system fails to suspend due to incorrect NIC status.
+>=20
+> In theory if the NIC could not be initialized after resumed,
+> it should not do system/runtime suspend/resume afterwards.
+> There are two proposals to deal with this situation:
+>=20
+> Either:
+> 1. Each time before the NIC going to suspend, check the status
+>    of NIC by querying corresponding registers, bypass the suspend
+>    callback on this NIC if it's unstable.
+>=20
+> Or:
+> 2. During NIC resume, if the hardware error was detected, removes
+>    the NIC from power management list entirely.
+>=20
+> Proposal 2 was chosen in this patch set because:
+> 1. Proposal 1 requires that the driver queries the status
+>    of the NIC in e1000e driver. However there seems to be
+>    no specific registers for the e1000e to query the result
+>    of NIC initialization.
+> 2. Proposal 1 just bypass the suspend process but the power management
+>    framework is still aware of this NIC, which might bring potential issue
+>    in race condition.
+> 3. Approach 2 is a clean solution and it is platform independent
+>    that, not only e1000e, but also other drivers could leverage
+>    this generic mechanism in the future.
+>=20
+> Comments appreciated.
+>=20
+> Chen Yu (4):
+>   e1000e: save the return value of e1000e_reset()
+>   PM: sleep: export device_pm_remove() for driver use
+>   e1000e: Introduce workqueue to disable the power management
+>   e1000e: Disable the power management if hardware error detected during
+>     resume
+>=20
+>  drivers/base/power/main.c                  |  1 +
+>  drivers/base/power/power.h                 |  8 -------
+>  drivers/net/ethernet/intel/e1000e/e1000.h  |  1 +
+>  drivers/net/ethernet/intel/e1000e/netdev.c | 27 ++++++++++++++++++----
+>  include/linux/pm.h                         | 12 ++++++++++
+>  5 files changed, 37 insertions(+), 12 deletions(-)
+>=20
+>=20
 
-Here is the content of the file system:
-# losetup --find --show mount_0
-/dev/loop0
-# mount /dev/loop0 /mnt/
-# ls -la /mnt/
-ls: cannot access '/mnt/file2': No such file or directory
-ls: cannot access '/mnt/file3': No such file or directory
-total 24
-drwxr-xr-x 4 root root   0 May  2 20:21 .
-drwxr-xr-x 1 root root 130 Oct 31  2023 ..
-drwxr-xr-x 2 root root   0 May  2 20:21 file0
-?rwxr-xr-x 1 root root  10 May  2 20:21 file1
--????????? ? ?    ?      ?            ? file2
--????????? ? ?    ?      ?            ? file3
--rwxr-xr-x 1 root root 100 May  2 20:21 file.cold
-drwx------ 2 root root   0 May  2 20:21 lost+found
-# stat /mnt/file1
-  File: /mnt/file1
-  Size: 10              Blocks: 8          IO Block: 4096   weird file
-Device: 7,0     Inode: 1073741824  Links: 1
-Access: (0755/?rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-Access: 2024-05-02 20:21:07.747039697 +0000
-Modify: 2024-05-02 20:21:07.747039697 +0000
-Change: 2024-05-02 20:21:07.747039697 +0000
- Birth: 2024-05-02 20:21:07.747039697 +0000
+It seems this submission was stuck at the RFC stage, and I'm not sure you g=
+ot any feedback on it. Sorry for necrobumping this thread, but what is the =
+current state of it?
 
-dmesg:
-bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
-bcachefs (loop0): recovering from clean shutdown, journal seq 7
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay... done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): dirent to missing inode:
-  u64s 7 type dirent 4096:5067489913167654073:U32_MAX len 0 ver 0: file2 -> 4098 type reg
-bcachefs (loop0): inconsistency detected - emergency read only at journal seq 11
-bcachefs (loop0): dirent to missing inode:
-  u64s 7 type dirent 4096:5868742249271439647:U32_MAX len 0 ver 0:
+I can confirm v6.8 is still affected (I've discovered this on T490s), and a=
+s a workaround I just unload e1000e module before doing S3, and load it bac=
+k after resume.
 
-> 
-> > Modules linked in:
-> > CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g8a03d70c27fc #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-> > lr : get_mode_access security/landlock/fs.c:953 [inline]
-> > lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
-> > sp : ffff80009bb47840
-> > x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
-> > x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
-> > x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
-> > x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
-> > x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
-> > x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
-> > x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
-> > x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
-> > x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
-> > x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
-> > Call trace:
-> >  current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-> >  hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
-> >  security_path_rename+0x154/0x1f0 security/security.c:1918
-> >  do_renameat2+0x724/0xe40 fs/namei.c:5031
-> >  __do_sys_renameat2 fs/namei.c:5078 [inline]
-> >  __se_sys_renameat2 fs/namei.c:5075 [inline]
-> >  __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
-> >  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
-> >  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
-> >  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
-> >  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
-> >  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-> >  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-> >  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> > irq event stamp: 67226
-> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-> > hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-> > softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-> > softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> > ---[ end trace 0000000000000000 ]---
-> 
-> -- 
-> paul-moore.com
-> 
+=46or LKML reference, the linked kernel BZ is: https://bugzilla.kernel.org/=
+show_bug.cgi?id=3D205015
+
+Thank you.
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart10511005.nUPlyArG6x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmaUKNEACgkQil/iNcg8
+M0sBig/9GY5XmbywcNYRllfR85OnhiIBkhfL9RW63QuVA/N1+BvHHJDMHZdh+Gs6
+jhF2q29KtliUa+M+r4X1/+CbFeSuEUYsfD2u9qV6oYO5mktVCmkNQoCyx5i9PTw4
+0VLYn26//BVxxGlQhhyrpfcpJ+IelvEwFxXRmiItJRgXFMaN3djOc8pUm0iEL9oc
+zRXAxZx+MyJ9uV84tsO26usfgh8pXcMXusxgRkhVeNx+pwM4UhfEuIxCc//EZ2Z/
+Ol4dEIfYf/3L0f+S21B1V2mGwK7pXdogH7fVaa8JWEgfxpDnZC+FsaJf7Zd8iNJC
+QMDm8EPNfYupInQwq1HYt0voG6USt0d/vDgcj86iAnvvXUmOyyl55zob/GQaVLB9
+juGuiQ0tDSVsnlNupNRwZTh1sLG1xPvKTOFSlahqNW5ZWLWFVr2j3LEbtXICk8/2
+PBWjL3krI8z2epL0Or1qKVPsgtpWdH3Blh6Frqr1VyH88tQ6vOId3foRq+mwtOWq
+kjGOzdF5EFYvoqQn/0puOWPLTosetCFYP/4hDofMRQ9gKlkVxH6d79Misx+HlpTq
+zCwt09FI73nc8p7mWJUILlIUMpZzRSMPIi/JQJcqhN4/En2GZGBS4XDo6JT6/QNW
+R+dc2VBNvIYhpeEb2p3En+ErpUcZbCwHqmdFV6KKtwtK0WnmZpk=
+=W14v
+-----END PGP SIGNATURE-----
+
+--nextPart10511005.nUPlyArG6x--
+
+
+
 
