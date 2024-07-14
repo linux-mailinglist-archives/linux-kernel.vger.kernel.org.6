@@ -1,229 +1,321 @@
-Return-Path: <linux-kernel+bounces-251709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977A5930889
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 06:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECE593088A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 06:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203AE1F21719
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63BD281E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F246F101DB;
-	Sun, 14 Jul 2024 04:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2766AF505;
+	Sun, 14 Jul 2024 04:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWwenD4g"
-Received: from mail-oi1-f196.google.com (mail-oi1-f196.google.com [209.85.167.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="diiILgqR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A313812B87;
-	Sun, 14 Jul 2024 04:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1747EEB3
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 04:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720932746; cv=none; b=Xi5Li0k0f53cZXx2E2LmxO+UC0GkPY8FAVBunGYGprkMh9aR5/AnOjJPpXCptIjMVaJzcefy6WvjbhF+2tddryT0+7QVv/HRoab9LfimBudeXT+KBM2mEeGWwqwS7vChMAsjYcrZXdO1reNQGYHhSMWRqrkag/nBvHyVTXSBP0s=
+	t=1720933082; cv=none; b=gm1ZxIU4Wht7keGtSx04mrz1TTvH9uXjxfz2Ca/agLDuPWXjUh+I7zqrdZ+KL6u+4MQ7jziXYJKGax873UT+YFhvsmnJsNm+WIGOMqmdUEGNJNtIUqIb4Pj5rMT3aIl7d3tPG0jRonkOle17yIVtrzgpEdjcoAd8RnE2/Hj+d5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720932746; c=relaxed/simple;
-	bh=zreJeKJLhmL0JG895SlaLVNVQFOIvr78TW6idthSuro=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VrrRH0D8X3Dn7HA1iVA327QKxBSWYGjgM211dqNMq3qNUnNrb00x5zwbEQvKk5DXafNOj6n5BXG7RWrSFlyB4d+uDag1WOoWyXO3nIitjRNESQDDOPEvtWElermbyPpdaFRIZt84zPea0CVUe9bFaIB8A/7XJewyQTcyXLuJ7DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWwenD4g; arc=none smtp.client-ip=209.85.167.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f196.google.com with SMTP id 5614622812f47-3d96365dc34so2743781b6e.2;
-        Sat, 13 Jul 2024 21:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720932743; x=1721537543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eQpCHDZFDAGZ/nCT7bmpCzurf744d17uzqi+k1JGFEg=;
-        b=FWwenD4geINn3mXME2WbVIKmn89JteuG1eIBEZMhTky9YVT3gCJOxGeGI2qILXzkAB
-         typBiPwD8YZPFr04MnZJQbxmUu4t3mEwuoLvlQxQbjYEfpoLAEibVNfd7j0HZyPeDv28
-         LdYEAokWjC59J9//AAOem+AfkWCaje7zymbovCrDgt6yZAwflL8zVE28sHEpbyoDW9w9
-         SlDTlX053kKiWx+cnO4w0pNEcTPU0lQwjxd21BufkyTEeM0CThr1kTgqG8k/I1v7DrVt
-         BXbVJRbcBVPyXklvARZ+xNhTr3HWyDTKwJARMU8e6VUM/eTjDpievRo1X/jbxnx8jmkn
-         362w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720932743; x=1721537543;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQpCHDZFDAGZ/nCT7bmpCzurf744d17uzqi+k1JGFEg=;
-        b=KbfB1rT7NJvDMtSE2IewgqnpVyCjzMnGOjfpN83ygIafd7hBRH8n1+cElocKFvIxNX
-         2Jg1/sE0e0w96HBPkmtRBQ4Mz3dLMXT8PAiYNSawmvIehurZPEF+Wwj7U+pgyq/xrA5C
-         uK4jy+iZfxWIuLeXdCGnmbRrykKqpvd5M0dIyNzLIKG4dqXfObW+mozT8x8meE6dtgii
-         u2SvWJOrrELXnCu1XiYDBhOXewT8pF6nvQfnmRobEohb97O+EmD3BTgJGb3xVhivbsHL
-         YxMMgayTzZyzRVMYB9I2QBkhO0qyDf/EC6OcZqzh6dDFpgItXkn0qwLeY6TJrsaKBf4m
-         X9jg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7WjIpMtHF8uU/MnsGQD2kQfj48x+4IERQ/OkB/SuzRuiSRFFOQAhxQYfGJsnKaTAohSm0S9O+YmLPpAU1N8b1kQMgjypOrXxcbaIrwe1QTA2ba3/IDGKa0Fshjr4f0jLElZC+
-X-Gm-Message-State: AOJu0Yw7wN6galpIZfwCVGrIyx29W4OmC0N8GrDFQZzXIeJdybqJg7hr
-	0KG3zhAsXSDgjPwFBl929+0X6t0CZ+j7I+KLsbGmwQ971sJ6vVjb
-X-Google-Smtp-Source: AGHT+IGR/MPyvZbmyI9BZCtumU88jtog7daHPZeJeS+yFlVQXisT5Eo9zc7ta78BFo/AWQqtWhSwvA==
-X-Received: by 2002:a05:6808:221a:b0:3d9:2c62:72b4 with SMTP id 5614622812f47-3d93c00bdcbmr18757511b6e.19.1720932743516;
-        Sat, 13 Jul 2024 21:52:23 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:dd5e:dfbe:bb33:8d5? ([2409:8a55:301b:e120:dd5e:dfbe:bb33:8d5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc4e477sm17523645ad.265.2024.07.13.21.52.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jul 2024 21:52:23 -0700 (PDT)
-Message-ID: <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
-Date: Sun, 14 Jul 2024 12:52:18 +0800
+	s=arc-20240116; t=1720933082; c=relaxed/simple;
+	bh=hpF3mZOJtUQ5Q0vPs2o0WtvhMekveTSBOWtp6A0Dcqo=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=PwNpPoNmhwF61p17xAt7fYcBjLHQtOgLt8HdNR2YtV4w2dcTo/XweIs+wJanWPL2XEiX6bZlbBbFurA03+ZJ5u28MMExAmDcVbA2n35E3fIbb4BuEbSnzVUWggXLjRur19j2E+h3IKbjob66EViRgyuPEqFPSq9VF7F5n1MQ3uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=diiILgqR; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720933081; x=1752469081;
+  h=date:from:to:cc:subject:message-id;
+  bh=hpF3mZOJtUQ5Q0vPs2o0WtvhMekveTSBOWtp6A0Dcqo=;
+  b=diiILgqRkZIHNA533s54+DcQp9xxM8mAT9zw8J2NZdMe3Wu7419KOhJD
+   ldVNU3rFRVpvVUex7Z/w0XvtfM23W65WeLkvRA/sLI+oUR02tJKPQNSQV
+   gZpeCav2FtTnFCddJtydjdn9VJ94fkfRi7mwq9OAPKD9trUQS3s1da4Je
+   LhJjQdsD+ihwCwhCcUbH04ICMMv0Ie+tfftis6xJWUf9Dn4PqsDu1qac0
+   SunnBsVatkCy2bBhoyV+GvXVgjnA7lqmeoFb3oUBMnUkssWIDyUtJHgif
+   VI2S0DUQAklWLEGBUbfoguAyGqjqD+GT/gV4A6Wl58VoARMK7KBHLt2nM
+   w==;
+X-CSE-ConnectionGUID: vuOYM6A7TBS3oYkLiWpzMw==
+X-CSE-MsgGUID: +co7kuqQSvCnh9scQkX64A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11132"; a="35764300"
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="35764300"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 21:58:00 -0700
+X-CSE-ConnectionGUID: msHlBRLsRY26mNs3ZowAKg==
+X-CSE-MsgGUID: mOUkO79EQJKIK8tPcPIKEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="54476672"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 13 Jul 2024 21:57:59 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSrJ6-000d4Q-32;
+	Sun, 14 Jul 2024 04:57:56 +0000
+Date: Sun, 14 Jul 2024 12:57:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240710-cbc] BUILD
+ REGRESSION e3597892cb471e5732700d17c2cca098f3148759
+Message-ID: <202407141223.zeFWcpl3-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
- 'size' and 'pfmemalloc'
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-7-linyunsheng@huawei.com>
- <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
- <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com>
- <a026c32218cabc7b6dc579ced1306aefd7029b10.camel@gmail.com>
- <f4ff5a42-9371-bc54-8523-b11d8511c39a@huawei.com>
- <96b04ebb7f46d73482d5f71213bd800c8195f00d.camel@gmail.com>
- <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com>
- <CAKgT0UdJPcnfOJ=-1ZzXbiFiA=8a0z_oVBgQC-itKB1HWBU+yA@mail.gmail.com>
- <df38c0fb-64a9-48da-95d7-d6729cc6cf34@huawei.com>
- <CAKgT0UdSjmJoaQvTOz3STjBi2PazQ=piWY5wqFsYFBFLcPrLjQ@mail.gmail.com>
- <29e8ac53-f7da-4896-8121-2abc25ec2c95@gmail.com>
- <CAKgT0Udmr8q8V7x6ZqHQVxFbCnwB-6Ttybx_PP_3Xr9X-DgjKA@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAKgT0Udmr8q8V7x6ZqHQVxFbCnwB-6Ttybx_PP_3Xr9X-DgjKA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 7/14/2024 12:55 AM, Alexander Duyck wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240710-cbc
+branch HEAD: e3597892cb471e5732700d17c2cca098f3148759  Bluetooth: HCI: Avoid -Wflex-array-member-not-at-end warnings
 
-...
+Error/Warning ids grouped by kconfigs:
 
->>>>
->>>> Perhaps the 'remaining' changing in this patch does seems to make things
->>>> harder to discuss. Anyway, it would be more helpful if there is some pseudo
->>>> code to show the steps of how the above can be done in your mind.
->>>
->>> Basically what you would really need do for all this is:
->>>     remaining = __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
->>>     nc->remaining = remaining + fragsz;
->>>     return encoded_page_address(nc->encoded_va) + size + remaining;
->>
-> 
-> I might have mixed my explanation up a bit. This is assuming remaining
-> is a negative value as I mentioned before.
+recent_errors
+|-- arm-allmodconfig
+|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-crypto-rockchip-rk3288_crypto.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- arm-allyesconfig
+|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-crypto-rockchip-rk3288_crypto.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- i386-allmodconfig
+|   |-- usr-include-linux-ethtool.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   |-- usr-include-linux-ethtool.h:error:unknown-type-name-offsetof
+|   |-- usr-include-linux-usb-video.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   `-- usr-include-linux-usb-video.h:error:unknown-type-name-offsetof
+|-- i386-allyesconfig
+|   |-- usr-include-linux-ethtool.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   |-- usr-include-linux-ethtool.h:error:unknown-type-name-offsetof
+|   |-- usr-include-linux-usb-video.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   `-- usr-include-linux-usb-video.h:error:unknown-type-name-offsetof
+|-- i386-buildonly-randconfig-003-20240713
+|   |-- usr-include-linux-ethtool.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   |-- usr-include-linux-ethtool.h:error:unknown-type-name-offsetof
+|   |-- usr-include-linux-usb-video.h:error:expected-declaration-specifiers-or-...-before-string-constant
+|   `-- usr-include-linux-usb-video.h:error:unknown-type-name-offsetof
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nouveau_svm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-power-supply-cros_charge-control.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- lib-test_hmm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- loongarch-randconfig-002-20240714
+|   `-- drivers-power-supply-cros_charge-control.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- m68k-allmodconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- m68k-allyesconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- microblaze-allmodconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- microblaze-allyesconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- mips-allmodconfig
+|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- mips-allnoconfig
+|   `-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- mips-allyesconfig
+|   |-- arch-mips-include-asm-kvm_host.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- openrisc-allyesconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- parisc-allmodconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- parisc-allyesconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- powerpc-allmodconfig
+|   |-- arch-powerpc-include-asm-hvcall.h:error:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- arch-powerpc-perf-hv-common.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- arch-powerpc-platforms-powermac-nvram.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-crypto-caam-caamalg_qi2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-gpu-drm-nouveau-nouveau_svm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- lib-test_hmm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- powerpc64-randconfig-001-20240714
+|   `-- arch-powerpc-platforms-powermac-nvram.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- powerpc64-randconfig-002-20240714
+|   |-- arch-powerpc-include-asm-hvcall.h:error:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- powerpc64-randconfig-003-20240714
+|   `-- arch-powerpc-perf-hv-common.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- s390-allyesconfig
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-s390-scsi-zfcp_fc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- sh-allmodconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- sh-allyesconfig
+|   `-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|-- sparc-allmodconfig
+|   |-- arch-sparc-kernel-ds.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-leds-leds-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   |-- drivers-scsi-lpfc-lpfc_hw4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+|   `-- net-netfilter-x_tables.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+`-- sparc64-defconfig
+    `-- arch-sparc-kernel-ds.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
 
-Let's be more specific about the options here, what you meant is below,
-right? Let's say it is option 1 as below:
-struct page_frag_cache {
-         /* encoded_va consists of the virtual address, pfmemalloc bit 
-and order
-          * of a page.
-          */
-         unsigned long encoded_va;
+elapsed time: 1451m
 
-#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
-         __s16 remaining;
-         __u16 pagecnt_bias;
-#else
-         __s32 remaining;
-         __u32 pagecnt_bias;
-#endif
-};
+configs tested: 141
+configs skipped: 2
 
-void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
-                                  unsigned int fragsz, gfp_t gfp_mask,
-                                  unsigned int align_mask)
-{
-         unsigned int size = page_frag_cache_page_size(nc->encoded_va);
-         int remaining;
+tested configs:
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                   randconfig-001-20240714   gcc-13.2.0
+arc                   randconfig-002-20240714   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-19
+arm                              allyesconfig   gcc-14.1.0
+arm                         at91_dt_defconfig   clang-19
+arm                            dove_defconfig   gcc-14.1.0
+arm                            hisi_defconfig   gcc-14.1.0
+arm                      jornada720_defconfig   clang-19
+arm                         orion5x_defconfig   clang-19
+arm                   randconfig-001-20240714   clang-19
+arm                   randconfig-002-20240714   clang-15
+arm                   randconfig-003-20240714   clang-17
+arm                   randconfig-004-20240714   clang-15
+arm                        shmobile_defconfig   gcc-14.1.0
+arm64                            allmodconfig   clang-19
+arm64                             allnoconfig   gcc-14.1.0
+arm64                 randconfig-001-20240714   clang-15
+arm64                 randconfig-002-20240714   clang-19
+arm64                 randconfig-003-20240714   clang-19
+arm64                 randconfig-004-20240714   gcc-14.1.0
+csky                              allnoconfig   gcc-14.1.0
+csky                  randconfig-001-20240714   gcc-14.1.0
+csky                  randconfig-002-20240714   gcc-14.1.0
+hexagon                           allnoconfig   clang-19
+hexagon               randconfig-001-20240714   clang-19
+hexagon               randconfig-002-20240714   clang-19
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240713   clang-18
+i386         buildonly-randconfig-002-20240713   clang-18
+i386         buildonly-randconfig-003-20240713   gcc-8
+i386         buildonly-randconfig-004-20240713   clang-18
+i386         buildonly-randconfig-005-20240713   gcc-13
+i386         buildonly-randconfig-006-20240713   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240713   gcc-10
+i386                  randconfig-002-20240713   gcc-13
+i386                  randconfig-003-20240713   gcc-13
+i386                  randconfig-004-20240713   clang-18
+i386                  randconfig-005-20240713   gcc-10
+i386                  randconfig-006-20240713   gcc-12
+i386                  randconfig-011-20240713   clang-18
+i386                  randconfig-012-20240713   gcc-7
+i386                  randconfig-013-20240713   gcc-13
+i386                  randconfig-014-20240713   gcc-13
+i386                  randconfig-015-20240713   gcc-11
+i386                  randconfig-016-20240713   clang-18
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch             randconfig-001-20240714   gcc-14.1.0
+loongarch             randconfig-002-20240714   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                       bvme6000_defconfig   gcc-14.1.0
+m68k                          hp300_defconfig   gcc-14.1.0
+m68k                        m5307c3_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+mips                     cu1830-neo_defconfig   gcc-13.2.0
+mips                      loongson3_defconfig   gcc-13.2.0
+mips                      pic32mzda_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                 randconfig-001-20240714   gcc-14.1.0
+nios2                 randconfig-002-20240714   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240714   gcc-14.1.0
+parisc                randconfig-002-20240714   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-19
+powerpc               randconfig-003-20240714   gcc-14.1.0
+powerpc                     skiroot_defconfig   clang-19
+powerpc                  storcenter_defconfig   gcc-14.1.0
+powerpc64             randconfig-001-20240714   gcc-14.1.0
+powerpc64             randconfig-002-20240714   gcc-14.1.0
+powerpc64             randconfig-003-20240714   gcc-14.1.0
+riscv                            allmodconfig   clang-19
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-19
+riscv                               defconfig   clang-19
+s390                             allmodconfig   clang-19
+s390                              allnoconfig   clang-19
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   clang-19
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                          sdk7786_defconfig   gcc-14.1.0
+sh                           se7724_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+um                                allnoconfig   clang-17
+um                                  defconfig   clang-19
+um                             i386_defconfig   gcc-13
+um                           x86_64_defconfig   clang-15
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240714   clang-18
+x86_64       buildonly-randconfig-002-20240714   gcc-13
+x86_64       buildonly-randconfig-003-20240714   gcc-13
+x86_64       buildonly-randconfig-004-20240714   clang-18
+x86_64       buildonly-randconfig-005-20240714   clang-18
+x86_64       buildonly-randconfig-006-20240714   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240714   gcc-13
+x86_64                randconfig-002-20240714   clang-18
+x86_64                randconfig-003-20240714   gcc-13
+x86_64                randconfig-004-20240714   clang-18
+x86_64                randconfig-005-20240714   gcc-10
+x86_64                randconfig-006-20240714   gcc-10
+x86_64                randconfig-011-20240714   clang-18
+x86_64                randconfig-012-20240714   gcc-7
+x86_64                randconfig-013-20240714   clang-18
+x86_64                randconfig-014-20240714   clang-18
+x86_64                randconfig-015-20240714   gcc-13
+x86_64                randconfig-016-20240714   clang-18
+x86_64                randconfig-071-20240714   clang-18
+x86_64                randconfig-072-20240714   gcc-13
+x86_64                randconfig-073-20240714   clang-18
+x86_64                randconfig-074-20240714   clang-18
+x86_64                randconfig-075-20240714   clang-18
+x86_64                randconfig-076-20240714   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-14.1.0
 
-         remaining = __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
-         if (unlikely(remaining + (int)fragsz > 0)) {
-                 if (!__page_frag_cache_refill(nc, gfp_mask))
-                         return NULL;
-
-                 size = page_frag_cache_page_size(nc->encoded_va);
-
-                 remaining = -size;
-                 if (unlikely(remaining + (int)fragsz > 0))
-                         return NULL;
-         }
-
-         nc->pagecnt_bias--;
-         nc->remaining = remaining + fragsz;
-
-         return encoded_page_address(nc->encoded_va) + size + remaining;
-}
-
-
-And let's say what I am proposing in v10 is option 2 as below:
-struct page_frag_cache {
-         /* encoded_va consists of the virtual address, pfmemalloc bit 
-and order
-          * of a page.
-          */
-         unsigned long encoded_va;
-
-#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
-         __u16 remaining;
-         __u16 pagecnt_bias;
-#else
-         __u32 remaining;
-         __u32 pagecnt_bias;
-#endif
-};
-
-void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
-                                  unsigned int fragsz, gfp_t gfp_mask,
-                                  unsigned int align_mask)
-{
-         unsigned int size = page_frag_cache_page_size(nc->encoded_va);
-         int aligned_remaining = nc->remaining & align_mask;
-         int remaining = aligned_remaining - fragsz;
-
-         if (unlikely(remaining < 0)) {
-                 if (!__page_frag_cache_refill(nc, gfp_mask))
-                         return NULL;
-
-                 size = page_frag_cache_page_size(nc->encoded_va);
-
-                 aligned_remaining = size;
-                 remaining = aligned_remaining - fragsz;
-                 if (unlikely(remaining < 0))
-                         return NULL;
-         }
-
-         nc->pagecnt_bias--;
-         nc->remaining = remaining;
-
-         return encoded_page_address(nc->encoded_va) + (size - 
-aligned_remaining);
-}
-
-If the option 1 is not what you have in mind, it would be better to be 
-more specific about what you have in mind.
-
-If the option 1 is what you have in mind, it seems both option 1 and
-option 2 have the same semantics as my understanding, right? The 
-question here seems to be what is your perfer option and why?
-
-I implemented both of them, and the option 1 seems to have a
-bigger generated asm size as below:
-./scripts/bloat-o-meter vmlinux_non_neg vmlinux
-add/remove: 0/0 grow/shrink: 1/0 up/down: 37/0 (37)
-Function                                     old     new   delta
-__page_frag_alloc_va_align                   414     451     +37
-
-> 
-> Basically the issue is your current code is using nc->remaining to
-> generate the current address and that is bad as it isn't aligned to
-> anything as fragsz was added to it and no alignment check had been
-> done on that value.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
