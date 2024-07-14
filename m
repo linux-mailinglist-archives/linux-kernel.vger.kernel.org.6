@@ -1,174 +1,238 @@
-Return-Path: <linux-kernel+bounces-251795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858849309EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD2930A08
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D341F215FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:37:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71DB1F213EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7584C73469;
-	Sun, 14 Jul 2024 12:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B213210F;
+	Sun, 14 Jul 2024 13:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kJe2AGvZ"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UtDcZzJ2"
+Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14751FDD;
-	Sun, 14 Jul 2024 12:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED1FB656;
+	Sun, 14 Jul 2024 13:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720960614; cv=none; b=Ku/BwfQDmX9WdA5+U5dwq2LKrEY2jUV6bJ5xvx9T3oZQuhAapE6yHpXpblij1lvtOo7WmhO0/XqIzJe2hqpEEPFdodwHd8bbeaUOTuwDiry4y4QWgqgFQ04ljmobQ+sEr1aEojauKtt3jIc2gJm18r5hdQ3AhbE0jS+Ki4gbP88=
+	t=1720962901; cv=none; b=TKnM8mPrV5tlOlv3whAmtPErKbqHZkSYjMxpLWvaaNgtgM2ZWXMjU3eaWDixCLxiFhJ084aeat8hS4YdJ3Eg1tRIq1U2PE6MjAooyZ24vZ1ME00FlVkiUBytVImmCELjtifzkNKZZYFEIhKAyT/vm+rXebnAS01/TyE2L+DaWeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720960614; c=relaxed/simple;
-	bh=MWt6vUSJVirl5baT6jQhbOU2aaQeojysvNYPBOIOdXg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GDoUT7E0Th6Tkq1yowA27MV6MuNJUCNYOUlGffBz50V8a768IKUwX6dZ4qISWJNXG+7NYGp5Cke4d7zoNTx5bUfWwxDPU5zyRaqTEwHY+tmkreCFTrQC9au0GQw1z3wlfLO/kzPJ3ZyAxE461jo8XS4sczVAjj6fRTLKRE9WdGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kJe2AGvZ; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720960574; x=1721565374; i=markus.elfring@web.de;
-	bh=g11cNSzqa/kFL592OZP6SLFSSzberrOpC0FsGs3iDiw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kJe2AGvZNiLqBcS673cI0L6DmNN6enKM/0mpEDhW55yzo9aKwq+R6cMvbuo7SJCo
-	 QihBNJ1IVDHI71fznR8eYSY8HA1a3SQU8GfgQ5/EBrP9PrVRCOWBiqwBDHRYCyF11
-	 W+9enjnw+TCAOHeWRN/jhFJh94syg2/F5+n5qyYKwwn3hnijL07tGfTAHTmxdCmgs
-	 WRZgjXR3bFBBcTsElQ5yRyP70bJYbIlxU4i5pUbqV37yxkO+l+or6dKrEKaNkLzzG
-	 LAxDtL+oi2gfxQXZug4ZxdwyDygFL8yOYyrONNO/TLkHFu7f2qJppgVQbbxIMLkbc
-	 DYU9Xl9NX5tj96k75w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MrOdf-1ryMOH14dz-00jsv3; Sun, 14
- Jul 2024 14:36:14 +0200
-Message-ID: <4b78f586-4c87-433e-a57f-0d8ca151b89c@web.de>
-Date: Sun, 14 Jul 2024 14:36:13 +0200
+	s=arc-20240116; t=1720962901; c=relaxed/simple;
+	bh=W4H2df2R/MdY3nerVtqR2oDHRHIYH4SFPc28EtGqjDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=az23Xp0f6vLHOEkR1uVHlWaplBTWabJtUGDgLzgjF/Ndw0oyP4QNY+Y/Gk5kpQs/+t6Qg4WkOOG6QCLf4+IpXLfqD0CXPH4FaE5zE82FLB8IRbtkWYP7QnqV7Jlj9dr3PNuBtPAWd1z6ANh5u2MDh2KTepzU11iObjEOUt3D3Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UtDcZzJ2; arc=none smtp.client-ip=193.252.23.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id SyWpstpWvBzr3SyWqsrCvk; Sun, 14 Jul 2024 14:40:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720960841;
+	bh=jXEol/M69CDfWHWTuc98TPM6NHwESq7AdpoHFdBAkUw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UtDcZzJ2FilDY0fQzyn23s4ytCUtInKbCYmydlkzBvhN2/NDQ3Lm8LKor9/BcJ+Gl
+	 0cRaxWl/4loYszrBqsoLpz08q+VNKu9GE5fYAmODovgCzZklt12JWjEpgqiZhe35fm
+	 be8oiMQdgZC+UREYuf6e9S19Pttg0K70TjynGdduop3xZbjiEGNx2JQUtR2RUHlR0H
+	 rnlUAknUj4Ic+i/Q5w0kpbx1kthcwSDmLJGAH82Exz1EVRXZ15GeDqdhRlZExhOPaU
+	 D8EHaifpsos+kTH0Q2cRVUSVa7w6sJgEAuzKYcZNyzvVt/F45bDhmeujJ4Oe7LCHo5
+	 QC4u212ytJYVg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Jul 2024 14:40:41 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf/x86/intel/uncore: Constify struct
+Date: Sun, 14 Jul 2024 14:40:28 +0200
+Message-ID: <9dc5e67d1b19e56c952e740371be9d42a5011c2c.1720960818.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Ben Segall <bsegall@google.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] sched: Use seq_putc() in four functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gMNiszC8c3AKpW4omBxYkemCqriXY2qBw76sqmW3rj7MjlkTvWV
- doJq59Z4rjCH6VV5XZmH/thT28Zh0q/vCElK/n4gG6VtVPVyBO79GCBwNesBNDIdUujPSuV
- 9OhKyC1DY7IwjJhmfXfkYiJIbh8tOWZnQb7WMcgrY4e/aFWIAiSUe7aRnt78gmlpvlXyBp0
- oUk8nPJMoiGnwlz6mMrMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oQQbhroLkC4=;E5ej6YQylfDYKLEikd2yAKCiQrA
- n/FJRMwV4W4WRPryjDIQi8ED/3LjWoAVLK4i3LloZdFOpSfHewYGkXvHLivoBEUZ5GP13E0qa
- Q3u7hsYGQGS8nCiZjAu/EhoIhvu19AO03dBcdO/sCEguLfHwiPZIUnGgF5A0MJtnVoFZn+zlp
- 0vdLOsQJxwI1m0Eat9xbuN1hoa10MSC4UVAufkHN2aJH94ADzV0POurgO4Kvzp0ZjsNOMrDrf
- OQltcpGhg891KcG38+UEB4t2D4YmZwFTZYAHXsO73x0NdanHAnI3rthCwtG+jA/nRkuseydwY
- emNFjnOcaaAZQOes84vxB8UCjnaCWHm3xdRh7pyBY5s++i5FBI7GdE1PBjeTr+RInONGYeawC
- 07tYWgzw61wUODpwfca9XgvbSexMBKhI+ICUEBGntQtknqggDfL6nN8PExp86nCYrysLpp63p
- /S+bf+sRvPZLoqoufqktWToQfHYKDigwgeJ8lK0Gq8G8VITACmfb/QY8aAn3WFig3E3rRJa3S
- Gd0MOuQb2cAg1GmsbKhEhGv3vKNVuCzJIxExnIXlOSZ2ntDPQfap2e3HCha8hjn7FEMMUw2N5
- UEPAduiZ8wlpYmIZQQd9Erllr6xSjs66Li52WQsOZfjkp6O2+UL/DCyx8wuVxHQJ05imthGSE
- 6cpTREXNdjmr6OO9kubZjX5PKp50p5GmiiPWooGAbtb84+JGFPWl+AqFT0cACpkcp86akvunF
- 4D40bB1eY8Eoq/OwnOfdeO1pl3grO2LBUsFaTQQTU5tWyE8zGB+eDOLNr3+18q9tII/RRf5nL
- Fb1vKZl/tAckX11hhJQyIRVQ==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 14:25:33 +0200
+'struct freerunning_counters' are not modified in these drivers.
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-This issue was transformed by using the Coccinelle software.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  79637	  71836	     16	 151489	  24fc1	arch/x86/events/intel/uncore_snbep.o
+  24000	  13628	      0	  37628	   92fc	arch/x86/events/intel/uncore_snb.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/sched/cpuacct.c |  4 ++--
- kernel/sched/debug.c   | 14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  80309	  71196	     16	 151521	  24fe1	arch/x86/events/intel/uncore_snbep.o
+  24448	  13180	      0	  37628	   92fc	arch/x86/events/intel/uncore_snb.o
 
-diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
-index 0de9dda09949..0c1ce2e1c89b 100644
-=2D-- a/kernel/sched/cpuacct.c
-+++ b/kernel/sched/cpuacct.c
-@@ -245,14 +245,14 @@ static int cpuacct_all_seq_show(struct seq_file *m, =
-void *V)
- 	seq_puts(m, "cpu");
- 	for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
- 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ arch/x86/events/intel/uncore.h       |  2 +-
+ arch/x86/events/intel/uncore_snb.c   |  8 ++++----
+ arch/x86/events/intel/uncore_snbep.c | 16 ++++++++--------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
- 	for_each_possible_cpu(cpu) {
- 		seq_printf(m, "%d", cpu);
- 		for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
- 			seq_printf(m, " %llu",
- 				   cpuacct_cpuusage_read(ca, cpu, index));
--		seq_puts(m, "\n");
-+		seq_putc(m, '\n');
- 	}
- 	return 0;
- }
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index c057ef46c5f8..ac9d65c5d0b4 100644
-=2D-- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -62,7 +62,7 @@ static int sched_feat_show(struct seq_file *m, void *v)
- 			seq_puts(m, "NO_");
- 		seq_printf(m, "%s ", sched_feat_names[i]);
- 	}
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
-
- 	return 0;
- }
-@@ -251,15 +251,15 @@ static int sched_dynamic_show(struct seq_file *m, vo=
-id *v)
-
- 	for (i =3D 0; i < ARRAY_SIZE(preempt_modes); i++) {
- 		if (preempt_dynamic_mode =3D=3D i)
--			seq_puts(m, "(");
-+			seq_putc(m, '(');
- 		seq_puts(m, preempt_modes[i]);
- 		if (preempt_dynamic_mode =3D=3D i)
--			seq_puts(m, ")");
-+			seq_putc(m, ')');
-
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
-
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
-
-@@ -389,9 +389,9 @@ static int sd_flags_show(struct seq_file *m, void *v)
-
- 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
- 		seq_puts(m, sd_flag_debug[idx].name);
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 	}
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
-
- 	return 0;
- }
-=2D-
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index 027ef292c602..b7cdf9b8e88a 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -80,7 +80,7 @@ struct intel_uncore_type {
+ 	struct intel_uncore_pmu *pmus;
+ 	struct intel_uncore_ops *ops;
+ 	struct uncore_event_desc *event_descs;
+-	struct freerunning_counters *freerunning;
++	const struct freerunning_counters *freerunning;
+ 	const struct attribute_group *attr_groups[4];
+ 	const struct attribute_group **attr_update;
+ 	struct pmu *pmu; /* for custom pmu ops */
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index 9462fd9f3b7a..001ba9230722 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -804,7 +804,7 @@ enum perf_snb_uncore_imc_freerunning_types {
+ 	SNB_PCI_UNCORE_IMC_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters snb_uncore_imc_freerunning[] = {
++static const struct freerunning_counters snb_uncore_imc_freerunning[] = {
+ 	[SNB_PCI_UNCORE_IMC_DATA_READS]		= { SNB_UNCORE_PCI_IMC_DATA_READS_BASE,
+ 							0x0, 0x0, 1, 32 },
+ 	[SNB_PCI_UNCORE_IMC_DATA_WRITES]	= { SNB_UNCORE_PCI_IMC_DATA_WRITES_BASE,
+@@ -1435,13 +1435,13 @@ enum perf_tgl_uncore_imc_freerunning_types {
+ 	TGL_MMIO_UNCORE_IMC_FREERUNNING_TYPE_MAX
+ };
+ 
+-static struct freerunning_counters tgl_l_uncore_imc_freerunning[] = {
++static const struct freerunning_counters tgl_l_uncore_imc_freerunning[] = {
+ 	[TGL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0x5040, 0x0, 0x0, 1, 64 },
+ 	[TGL_MMIO_UNCORE_IMC_DATA_READ]		= { 0x5058, 0x0, 0x0, 1, 64 },
+ 	[TGL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0x50A0, 0x0, 0x0, 1, 64 },
+ };
+ 
+-static struct freerunning_counters tgl_uncore_imc_freerunning[] = {
++static const struct freerunning_counters tgl_uncore_imc_freerunning[] = {
+ 	[TGL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0xd840, 0x0, 0x0, 1, 64 },
+ 	[TGL_MMIO_UNCORE_IMC_DATA_READ]		= { 0xd858, 0x0, 0x0, 1, 64 },
+ 	[TGL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0xd8A0, 0x0, 0x0, 1, 64 },
+@@ -1661,7 +1661,7 @@ enum perf_adl_uncore_imc_freerunning_types {
+ 	ADL_MMIO_UNCORE_IMC_FREERUNNING_TYPE_MAX
+ };
+ 
+-static struct freerunning_counters adl_uncore_imc_freerunning[] = {
++static const struct freerunning_counters adl_uncore_imc_freerunning[] = {
+ 	[ADL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0x40, 0x0, 0x0, 1, 64 },
+ 	[ADL_MMIO_UNCORE_IMC_DATA_READ]		= { 0x58, 0x0, 0x0, 1, 64 },
+ 	[ADL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0xA0, 0x0, 0x0, 1, 64 },
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index ca98744343b8..a88343bbd6a6 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -4042,7 +4042,7 @@ enum perf_uncore_iio_freerunning_type_id {
+ };
+ 
+ 
+-static struct freerunning_counters skx_iio_freerunning[] = {
++static const struct freerunning_counters skx_iio_freerunning[] = {
+ 	[SKX_IIO_MSR_IOCLK]	= { 0xa45, 0x1, 0x20, 1, 36 },
+ 	[SKX_IIO_MSR_BW]	= { 0xb00, 0x1, 0x10, 8, 36 },
+ 	[SKX_IIO_MSR_UTIL]	= { 0xb08, 0x1, 0x10, 8, 36 },
+@@ -4881,7 +4881,7 @@ enum perf_uncore_snr_iio_freerunning_type_id {
+ 	SNR_IIO_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters snr_iio_freerunning[] = {
++static const struct freerunning_counters snr_iio_freerunning[] = {
+ 	[SNR_IIO_MSR_IOCLK]	= { 0x1eac, 0x1, 0x10, 1, 48 },
+ 	[SNR_IIO_MSR_BW_IN]	= { 0x1f00, 0x1, 0x10, 8, 48 },
+ };
+@@ -5238,7 +5238,7 @@ enum perf_uncore_snr_imc_freerunning_type_id {
+ 	SNR_IMC_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters snr_imc_freerunning[] = {
++static const struct freerunning_counters snr_imc_freerunning[] = {
+ 	[SNR_IMC_DCLK]	= { 0x22b0, 0x0, 0, 1, 48 },
+ 	[SNR_IMC_DDR]	= { 0x2290, 0x8, 0, 2, 48 },
+ };
+@@ -5480,7 +5480,7 @@ static unsigned icx_iio_bw_freerunning_box_offsets[] = {
+ 	0x0, 0x10, 0x20, 0x90, 0xa0, 0xb0,
+ };
+ 
+-static struct freerunning_counters icx_iio_freerunning[] = {
++static const struct freerunning_counters icx_iio_freerunning[] = {
+ 	[ICX_IIO_MSR_IOCLK]	= { 0xa55, 0x1, 0x20, 1, 48, icx_iio_clk_freerunning_box_offsets },
+ 	[ICX_IIO_MSR_BW_IN]	= { 0xaa0, 0x1, 0x10, 8, 48, icx_iio_bw_freerunning_box_offsets },
+ };
+@@ -5838,7 +5838,7 @@ enum perf_uncore_icx_imc_freerunning_type_id {
+ 	ICX_IMC_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters icx_imc_freerunning[] = {
++static const struct freerunning_counters icx_imc_freerunning[] = {
+ 	[ICX_IMC_DCLK]	= { 0x22b0, 0x0, 0, 1, 48 },
+ 	[ICX_IMC_DDR]	= { 0x2290, 0x8, 0, 2, 48 },
+ 	[ICX_IMC_DDRT]	= { 0x22a0, 0x8, 0, 2, 48 },
+@@ -6314,7 +6314,7 @@ enum perf_uncore_spr_iio_freerunning_type_id {
+ 	SPR_IIO_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters spr_iio_freerunning[] = {
++static const struct freerunning_counters spr_iio_freerunning[] = {
+ 	[SPR_IIO_MSR_IOCLK]	= { 0x340e, 0x1, 0x10, 1, 48 },
+ 	[SPR_IIO_MSR_BW_IN]	= { 0x3800, 0x1, 0x10, 8, 48 },
+ 	[SPR_IIO_MSR_BW_OUT]	= { 0x3808, 0x1, 0x10, 8, 48 },
+@@ -6393,7 +6393,7 @@ enum perf_uncore_spr_imc_freerunning_type_id {
+ 	SPR_IMC_FREERUNNING_TYPE_MAX,
+ };
+ 
+-static struct freerunning_counters spr_imc_freerunning[] = {
++static const struct freerunning_counters spr_imc_freerunning[] = {
+ 	[SPR_IMC_DCLK]		= { 0x22b0, 0x0, 0, 1, 48 },
+ 	[SPR_IMC_PQ_CYCLES]	= { 0x2318, 0x8, 0, 2, 48 },
+ };
+@@ -6744,7 +6744,7 @@ static struct intel_uncore_type *gnr_uncores[UNCORE_GNR_NUM_UNCORE_TYPES] = {
+ 	NULL,
+ };
+ 
+-static struct freerunning_counters gnr_iio_freerunning[] = {
++static const struct freerunning_counters gnr_iio_freerunning[] = {
+ 	[SPR_IIO_MSR_IOCLK]	= { 0x290e, 0x01, 0x10, 1, 48 },
+ 	[SPR_IIO_MSR_BW_IN]	= { 0x360e, 0x10, 0x80, 8, 48 },
+ 	[SPR_IIO_MSR_BW_OUT]	= { 0x2e0e, 0x10, 0x80, 8, 48 },
+-- 
 2.45.2
 
 
