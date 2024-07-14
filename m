@@ -1,134 +1,210 @@
-Return-Path: <linux-kernel+bounces-251937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289C7930BD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 23:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6375A930BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08DC282465
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:49:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF437B21E02
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC1213C810;
-	Sun, 14 Jul 2024 21:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288E913D53B;
+	Sun, 14 Jul 2024 22:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sxa6Xkia"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxlMnay2"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7CE13BAE4;
-	Sun, 14 Jul 2024 21:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DE22313;
+	Sun, 14 Jul 2024 22:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720993748; cv=none; b=SjJlmewagznRGZ+130s39WNXF2/ATWnWurjJldF9MxrUIewb3ZT0h1DGWuptROCVgc1oO2oRA8YjF2ooxMgYWk7SNeJfc5TTFhfEq9RIPtP2pl6+VbJRDNvnLFdUBBY9YFANVUn6Q+KXSzxca1y3GRjA1h7LADRHcsD7u8CwJdg=
+	t=1720995434; cv=none; b=HN6ZY1dGEwK7l590zYaw0ow8Vmchqe5enU9f2xbA3dndxmzBEoUBuRFWSReN7/vKX37fr/+iCJmnXRylLp0s3qQlqmfoc7xbYVeWwKj5SiM2PxusvR4yLUBhtrV4YbLT8b3vM8fnmiKKDQTvQZvXf6C2i6s9vBRsYxTq1qnpJDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720993748; c=relaxed/simple;
-	bh=lwv27pAvwPUUJPfrguYW1hGBQB80dYmxdRR/+TNUw8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I0gHinpVmnx43K09s4jdAmeKl+wdzX+ezkwLITJZVPRsu/8j/2v160l+znZvDyuX0dYf7dDZ7CyLdzNnZDDXIFSFW+QIYTG1VqKymeUGCXfskqpButDOF2VFGOpgfhgQSLtnFjJLYbFqy1KLhWirB1wlDbsWpIrVrI4MVh4Z2cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sxa6Xkia; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720993741;
-	bh=HZPphXOdO5hAdu9ABGKHr7sBYWhiswN3taVwhKPar3w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sxa6XkiaVuK/x8UBvNTBfk6opgZVBfAD/37/wQYPcN0/USKW0qqeQBgZj0pTVKIb1
-	 L3YbXiWj6ZCgj3H4CiAcx3fyaVolMGp2Rh8Lhf8HcJyQA5XTFjbBMmgY+GzzH8eZd/
-	 RzpZaRgl5ubQiQ/0dFESLQyFKTCT7pDTjdekFeD3SR9D6MGvRCHOJSVF246jJiXl+Y
-	 4aU4F3KNxwkdj9klQw0qk/R+UiYkvMLjP3h0FgbG+Dw6p6U4bh7/VpvIZKEBPCzMgQ
-	 LfGQADVFIh2mvgd4KB39+EJcLgUUGChYObV8ffsRetZITWzZJe21cmdYf4c9ByaO2c
-	 60MoZX7ZWp9wg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMf9S2QK1z4wb2;
-	Mon, 15 Jul 2024 07:48:59 +1000 (AEST)
-Date: Mon, 15 Jul 2024 07:48:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Drew Fustini <drew@pdp7.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley
- <conor@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: Add thead to linux-next
-Message-ID: <20240715074858.5b808ec0@canb.auug.org.au>
-In-Reply-To: <ZpIECMEzy1srRfe1@x1>
-References: <ZpIECMEzy1srRfe1@x1>
+	s=arc-20240116; t=1720995434; c=relaxed/simple;
+	bh=RusYwsh6gr/hm4CtP7HyMGGFL1HPJkLm4O6NWMUILuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkNiet+BANUswnofeHEwswehsJDK13TB3KNOojjHWP2aH9YhoXNoICdhLezvqEahYCo64UiXldGlWB4NSh51hVztdvhWasrwxqBFSqpAGGVrcDnyidSeP3+eQ1d0GY5SY+wxuCrrE6fuqXFsob79zH2LyYg3P0V7VwfDpplv/tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxlMnay2; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b61689d7c9so24228716d6.2;
+        Sun, 14 Jul 2024 15:17:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720995432; x=1721600232; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z9d14tu8UM/7LR69vv692GAIifPe3a2v2W5S5B8IbTY=;
+        b=hxlMnay2i0jZ/VfVpdHqBDbxpHPAYqdZjOVz9gsrYmiVy93fdpRxQuORat/jEOKLgr
+         12ak+70PirPNT/ZuLDytuSm9b7ikTsQyZYdt5l24mnLAOkKLLNPxjVTVnYDEiEeLzv0x
+         FfHvQQCHXMsy2Cf27aA3ECOIdpYNMo384K0oTDxKFzEhi3OpKnPOhS138r5cA6NKJiY7
+         rzUDrXLCnoEeCEEgSRhN+9WdGXlqOl5TfXuuvOBHmeOpKYQJ33ibxLLpsIqnD2inrlqa
+         AW4mvhiI+Tv1XMi2I8KmLuA5LBzUo/abmz7pH5DqgtbQRu3/wQjigQMpRR5zoz1gmBWs
+         H3NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720995432; x=1721600232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z9d14tu8UM/7LR69vv692GAIifPe3a2v2W5S5B8IbTY=;
+        b=ku7kF6Ee0dTz9HrVnb9qpAZXKzJKRJA2lAzooDUh/R9I3ke2RhetX49TqS9qLao3vf
+         ma2o7lJP9zS6UXwPH3f1YWWCjj5sPb96VSLcbBpptG1PektW7+eZx/w4+KPIDB1f0H0W
+         5qJvmH0JOzYk88WSSrWoiO9vtcuBtFwMbRqYv+FRnds6bLJLDYs/IRF4urnFiE0MNW1d
+         m/GlAuiJzfcQ+ceZkW53/1k/ojd/E43a6G7X+kAakyxG8R5PLt+mZ25UF7LI28EHs6HY
+         TFnBJ3X362AcVmadomFW/PVww3bKWz5NZ9eCyPuuTOrEptq2SwBHx3HpkvfbV9EFH8rY
+         Xy4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDlHPmDt3bnxIDa/9yDQrJ+QdKcWUpbov5ck17Vq3n5P67Sswhb+g4SVuLfLIDXdfd1jh0kySGDfNXqGMHvFejwLZpXhwxxNSc2kbyUwGnBRXrbdjBSt1rHX4toq8WmQ/FOg==
+X-Gm-Message-State: AOJu0YyRac0n4ry1skEYmpL0AiFNIowJRIGF6pxSJr37kaiGrkuTK5e2
+	JA1WSmcJIxh7xIDAv8QsLSOLYBqEPOm/vJbV0PKkNyQ7HrRFWzJS
+X-Google-Smtp-Source: AGHT+IHWJrJ+c3zyWwuDtaZs8dw+4awkboFYksDvOYayRTuBAbVk78SuwI78a5BgBeUgrq/Xje/OdQ==
+X-Received: by 2002:a05:6214:5012:b0:6b5:e60c:76dc with SMTP id 6a1803df08f44-6b61bca39d5mr271730846d6.19.1720995431649;
+        Sun, 14 Jul 2024 15:17:11 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76195027asm16106626d6.1.2024.07.14.15.17.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 15:17:09 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 1BFC0120007E;
+	Sun, 14 Jul 2024 18:01:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sun, 14 Jul 2024 18:01:53 -0400
+X-ME-Sender: <xms:z0qUZgV30bmXZmJKwCRwNf6OeK1tQubeaIrrffTBnBlpAg7_djqQBg>
+    <xme:0EqUZklHsKWDSM_-a-oFiBo6d9MG9ihim3j0eqWtd9j8MhY-joUs_wcoHZGO5cGLt
+    hoGgVtQXCa3mjCfsw>
+X-ME-Received: <xmr:0EqUZkZIxug932LYIfQ8gfCWj48vLz6qFHDxW6c8U8a_4hDp4kLkIffPXvk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgedugddtiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhepkeelleffheetudehvdeuteffffeuteefueekhfdtlefhjeehkeetgeduheej
+    feetnecuffhomhgrihhnpeguvghppghmrghprdhnrghmvgenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
+    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:0EqUZvUVx9rmEeXp4-ERkxBUD6mscLMslI2W_wgJ0luS33Cl0KeICg>
+    <xmx:0EqUZqk7nvQkRDh524RSJcXW1PxMxjT6G5hLCH0oGvrDaqUx-pd_qg>
+    <xmx:0EqUZkfZq1-oz2aUY-fdLLfcqf9FosT2ynTIOShhWs_7nYTHqWm8lw>
+    <xmx:0EqUZsHecnM280xgjWpIgIQUSio8aZ11aexMB0VeuZd8qUIc8D63tg>
+    <xmx:0UqUZgkLpxysVR2MYoA4RjN-3Kzm4fni_wzPK5RDPuUdEVXoAPf8oMME>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 14 Jul 2024 18:01:51 -0400 (EDT)
+Date: Sun, 14 Jul 2024 15:00:16 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: botta633 <bottaawesome633@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] ext4: Testing lock class and subclass got the same
+ name pointer
+Message-ID: <ZpRKcHNZfsMuACRG@boqun-archlinux>
+References: <20240714051427.114044-1-bottaawesome633@gmail.com>
+ <20240714051427.114044-2-bottaawesome633@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+b9i.620zwSGUJmt8t9edAt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240714051427.114044-2-bottaawesome633@gmail.com>
 
---Sig_/+b9i.620zwSGUJmt8t9edAt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jul 14, 2024 at 08:14:27AM +0300, botta633 wrote:
 
-Hi Drew,
+First, the subsystem tag also needs to be "locking/lockdep" or
+"lockdep".
 
-On Fri, 12 Jul 2024 21:35:20 -0700 Drew Fustini <drew@pdp7.com> wrote:
->
-> I've taken over the maintainer role for for T-Head SoCs [1] and I've
-> set up a tree that I will being using to send pull requests to Arnd.
->=20
-> Please add these branches to linux-next:
->=20
-> thead-dt-fixes git https://github.com/pdp7/linux.git#thead-dt-fixes
-> thead-dt-for-next git https://github.com/pdp7/linux.git#thead-dt-for-next
->=20
-> Thanks,
-> Drew
->=20
-> [1] https://lore.kernel.org/linux-riscv/20240620162522.386-1-jszhang@kern=
-el.org/
+> Checking if the lockdep_map->name will change when setting the subclass.
+> It shouldn't change so that the lock class and subclass will have the same name
+> 
 
-Added from today.
+Could you make the commit log wrapped at 75 columns?
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+> 
+> Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
+> Fixes: fd5e3f5fe27
+> Cc: <stable@vger.kernel.org>
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Since this is only adding test for a bug fix, you don't need to put
+these tags here.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+> Signed-off-by: botta633 <bottaawesome633@gmail.com>
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Again, could you please put your name here?
 
---=20
-Cheers,
-Stephen Rothwell
+Also seems that you send two patch #2, one is with the proper version
+number "v2", but not in-reply-to the patch #1, the other doesn't have
+the correct version number but has the correct "in-reply-to" field.
+Could you use the correct version number and "in-reply-to" next time?
 
---Sig_/+b9i.620zwSGUJmt8t9edAt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> ---
+>  lib/locking-selftest.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+> index 6f6a5fc85b42..1d7885205f36 100644
+> --- a/lib/locking-selftest.c
+> +++ b/lib/locking-selftest.c
+> @@ -2710,12 +2710,24 @@ static void local_lock_3B(void)
+>  
+>  }
+>  
+> +static void class_subclass_X1_name(void)
+> +{
+> +	const char *name_before_subclass = rwsem_X1.dep_map.name;
+> +	const char *name_after_subclass;
+> +
+> +	WARN_ON(!rwsem_X1.dep_map.name);
+> +	lockdep_set_subclass(&rwsem_X1, 1);
+> +	WARN_ON(name_before_subclass != name_after_subclass);
 
------BEGIN PGP SIGNATURE-----
+Could you add some comments here explaining your test? For example,
+where name_after_subclass gets set?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUR8sACgkQAVBC80lX
-0Gy+Dwf+IUXHZ+B3xYFt8f2FvyR0r7bj/ktt9rARZhFo0XG17XQzRKue781+QZ0u
-1pUEVEUvIL+MLpfLtKgyJ9f4jayBJBeTU5QPy0BePlUEd8Usz7Dp+27Poav7r9X7
-84IdH2vt34BlH11lQeaBltvSW1U0m4/sk1eqJ/JZAlirMD9TK/7GS55cDJpMag6j
-OqSTlYPuVa2UBZbu8JF4+C+C7Of0gdOb3vwBzgBhmV3L2xan5Dq9Q1w9imQfJEkG
-Qd0zU6wqGavdTJIpQIcPk5kOVl+tg1o9bjZ1FI7O6Zy4kIw9m51O4yrQAHjbCzzx
-dHTypUxD1QM+jvHbNHTQ7SmCOsv08A==
-=Bdq3
------END PGP SIGNATURE-----
+> +}
+> +
+>  static void local_lock_tests(void)
+>  {
 
---Sig_/+b9i.620zwSGUJmt8t9edAt--
+Please don't add this test into another test, you could directly call
+your class_subclass_X1_name() (maybe rename it to *_test()) in
+lockding_selftest() function.
+
+Besides, make sure you run the test with and without your modification
+in patch #1, and confirm this is the test that could verify your fix.
+
+Regards,
+Boqun
+
+>  	printk("  --------------------------------------------------------------------------\n");
+>  	printk("  | local_lock tests |\n");
+>  	printk("  ---------------------\n");
+>  
+> +	init_class_X(&lock_X1, &rwlock_X1, &mutex_X1, &rwsem_X1);
+> +
+>  	print_testname("local_lock inversion  2");
+>  	dotest(local_lock_2, SUCCESS, LOCKTYPE_LL);
+>  	pr_cont("\n");
+> @@ -2727,6 +2739,10 @@ static void local_lock_tests(void)
+>  	print_testname("local_lock inversion 3B");
+>  	dotest(local_lock_3B, FAILURE, LOCKTYPE_LL);
+>  	pr_cont("\n");
+> +
+> +	print_testname("Class and subclass");
+> +	dotest(class_subclass_X1_name, SUCCESS, LOCKTYPE_RWSEM);
+> +	pr_cont("\n");
+>  }
+>  
+>  static void hardirq_deadlock_softirq_not_deadlock(void)
+> -- 
+> 2.45.2
+> 
 
