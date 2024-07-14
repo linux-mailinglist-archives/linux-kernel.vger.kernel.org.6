@@ -1,167 +1,134 @@
-Return-Path: <linux-kernel+bounces-251875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E60B930AE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2AE930AE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49EC41C2082A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:02:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C67EEB20A83
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695F413BC02;
-	Sun, 14 Jul 2024 17:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8302413BC3D;
+	Sun, 14 Jul 2024 17:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="e5hZo/k+"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IahU0CBv"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A1F25774;
-	Sun, 14 Jul 2024 17:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA64139CFF;
+	Sun, 14 Jul 2024 17:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720976513; cv=none; b=W+37LimRlrqGA+CETeVfkT10mK3Y6OIL6+VtDvKOZV/A6DqkAB/7dT071NBfhnnGFMabIy+fcWXQZAinOrSgROS4kAlHZMz3HsyEp+hVapskV1SaWODY1MscK+xt1FqD+DapXVpWqQfWtCZpxH7fcyoTJnmriXRNV83i5iJmxco=
+	t=1720976568; cv=none; b=SALIBQ9tUgqeCgCYQGnlouL/ajgvQp4zGt0rPlrjFtYeD8bO97gU4lZeGlfB25vb71NSoWfeScf92DRI9PHJJaADmswGANoDnvTG/7Y/XYZLIQwSSNocXlWMPHIzY/1xAzBgNoe31bkzUwg7+KX4PkHnMd3ekfVIngEE9ip5tnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720976513; c=relaxed/simple;
-	bh=LAQlCeDfq8fHbPbDCTefVFiVRYB03v2eA4XZNZOWH64=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V62T9v2MVKKs9olvkLMqEFpA20VIiEYMEoUl9SLRw2rA5xw/Vh0dr8qaLO8IZPueeP27GKNU5q3rkjUKbqVqcDBX9wfpZYM/VEueEVLBKciPMSGEIQkbDTjjOh0CVtYofUVNFkcdRSCvTvM/nVDl97bAAE9BsndrVWGXbjVOnzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=e5hZo/k+; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1720976495; x=1721235695;
-	bh=Iy7LxC4ozvfJJ8MZmtX1zf1q9Arp2F+7CEBViIXko/E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=e5hZo/k+bJPuqT8dy6uiFqPLbhlIUZS3Vafg2quwPgozdb5lHjtTgbvDxPCKqtlg5
-	 RSHkFI8YeiSqvT0Zhh10L0iYLe+X5s1BR4vXmfw3woAMpO1sp6RdIo/pg/V++LpW2B
-	 g2EOdsRJlRabvVUo+axtxvuA6NmCI/6YNnK8rVwR9+CwWK/lWkN9czAiRSVKiDBWal
-	 AiAUY8I/Lq1fJjh2RWtCAdvUmCEuUtgy6m6eFctnnqVl2lkBpP1X8awHlCeRksrb3U
-	 FSj+FDMP4WVBbNaaS/pMYmwTHR4oj/ukoiV2Z7HMCrAJx2SEVloTYqbmDPdiuUtMrz
-	 wMZPmj1w/d7Sg==
-Date: Sun, 14 Jul 2024 17:01:28 +0000
-To: Michal Rostecki <vadorovsky@gmail.com>
-From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, Valentin Obst <kernel@valentinobst.de>, Laine Taffin Altman <alexanderaltman@me.com>, Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>, Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas <charmitro@posteo.net>,
-	Ben Gooding <ben.gooding.dev@gmail.com>, Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr` implementation
-Message-ID: <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com>
-In-Reply-To: <20240714160238.238708-1-vadorovsky@gmail.com>
-References: <20240714160238.238708-1-vadorovsky@gmail.com>
-Feedback-ID: 27884398:user:proton
-X-Pm-Message-ID: 2f0b1ce70e6ee1f5615738c7436ca0ce654d0f72
+	s=arc-20240116; t=1720976568; c=relaxed/simple;
+	bh=imFGudE0abTwx4msHdDYdZAoZLvRkFY2Ru5F4Y8JOZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XRE/3ZesobcPDcTGaIxvGnMkrRUal7W0KJRAOuOP3I0eUqxAhal6chIgXZtNng3/tcdKWFuNTdI/TRVb6T5zURUPHCHs90Gm3osFI2KwC2i56b9Q4VTed0FH/TAZDGwBj8hcTBmb6112o0GUMDurvz0i+/xPXb6Y8zyuME8rz8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IahU0CBv; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-765590154b4so2030055a12.0;
+        Sun, 14 Jul 2024 10:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720976567; x=1721581367; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V2F80DyFNnpYsHP7zwJV9lSVbXe9QpASbGWUomP7AEo=;
+        b=IahU0CBvoV1sB6ufuN08G61kR7kVHas8tHrgVTC1oGsnBxgo6rDrwHh/sDp95znBhT
+         iIs3e9RA3S6bmyRQruqhfT4WJIZGASpc2utx70gV174HgFneUHcRBUQTOHAcdtDG1pzB
+         feVrJWcefRdYgrj4qcafDAjKQ2buIBbgH58JbOaL/+AJlwDnJLURvmX5uIT/G1gOUD3U
+         oOTphhEjEEUOH4vM16EyfSiRyftDadVv/4bHUdYwpvkIx8IEw3nKKYkRsxPWGKEmqFEB
+         leNCrPZ+adl94pSfakQZTOkr8RD/ayWXl51MoMG9HXarxdvqzo26UI/Ij5EdyrEwCWMW
+         Or8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720976567; x=1721581367;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V2F80DyFNnpYsHP7zwJV9lSVbXe9QpASbGWUomP7AEo=;
+        b=G8vAd2iTh0IFbmHRjFHdt6JTymcLGg2KqW5qYpq19QnFOFmxJ3a8YE7cc8q/N/7Iyr
+         jBoMQmlA/uOLRPwwZf+zcJwcaGTOOyOrskfSz7ULfQ0iw1B6tYkqDsq2T4x43//y1GSd
+         6/bX9zMoNX08xHoVQC0MhljJvCYx2HOMu3OGAjX44qOn7szPa8MwoIDui4IoXn+rQIGn
+         aiJxZEZjaQOUddu4EZL7GuePvaUbB/lXbB0HxtqktqPcLPLj3YJ3Ggvf5qHgFRH/73hf
+         MACbHPZ7rWwDT/cXl1YtnYxwS6RSsZFUxGPMs+mSZP32NDPxNsK829xnOzxh7HwLD9EO
+         SIkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7I4QJ0/qDqFwWkCmTzyFZ3Bjb7AprYz/K7MOCoPnLZhF3gZB6M82poyhMHAjZUn7Ggdw0CR1UdKl1gY40o/vMb2JC/M1bLqjdR5NARFxBtkNuYbCLRsUHIgjk3P6q40ldmaJJYBuW
+X-Gm-Message-State: AOJu0YyhbfJY2txDSpt39b/RZu1wg0NFAVri4RKD1MMugE0mYKPHsML1
+	cj8pB3J2lYdNxs7IDttzXK5B2ZDfPrxMM/Wl17E9J9Mq7m9j/iN7OT5QsOZe12w/2PaJVjpJFrm
+	C8lfbONDVQ3Mp0+S57aBo2WeisJY3jA==
+X-Google-Smtp-Source: AGHT+IGHPlz4JVnrclkH/s8T8rzAqvI6Kcvne8QSso/Zp8ZfFWs0gedBWYKbzhNBAFNfq6Nmba+ZrZyBPvatXfS++P0=
+X-Received: by 2002:a05:6a20:7f87:b0:1c3:b210:418b with SMTP id
+ adf61e73a8af0-1c3b21041f3mr11115631637.52.1720976566543; Sun, 14 Jul 2024
+ 10:02:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240607133347.3291040-1-peng.fan@oss.nxp.com> <20240607133347.3291040-6-peng.fan@oss.nxp.com>
+In-Reply-To: <20240607133347.3291040-6-peng.fan@oss.nxp.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Sun, 14 Jul 2024 12:02:35 -0500
+Message-ID: <CAHCN7x+pzcdwSq19LefsyYAPUp8=kQYJeVbHm9sgSeaKXigMZg@mail.gmail.com>
+Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove sdma root clock
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, imx@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sunday, July 14th, 2024 at 18:02, Michal Rostecki <vadorovsky@gmail.com>=
- wrote:
-
-> `CStr` became a part of `core` library in Rust 1.75, therefore there is
-> no need to keep the custom implementation.
->=20
-> `core::CStr` behaves generally the same as the removed implementation,
-> with the following differences:
->=20
-> - It does not implement `Display` (but implements `Debug`).
-> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
->   - It was used only in `DerefMut` implementation for `CString`. This
->     change replaces it with a manual cast to `&mut CStr`.
->   - Otherwise, having such a method is not really desirable. `CStr` is
->     a reference type
->     or `str` are usually not supposed to be modified.
-> - It has `as_ptr()` method instead of `as_char_ptr()`, which also returns
->   `*const c_char`.
->=20
-> Rust also introduces C literals (`c""`), so the `c_str` macro is removed
-> here as well.
->=20
-> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
+On Fri, Jun 7, 2024 at 8:28=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> There is an issue:
+> SDMA3 can't work without setting AUDIOMIX_CLKEN0[SDMA2] (bit-26) to 1
+>
+> The workaround is:
+> As the reset state of AUDIOMIX_CLKEN0[SDMA2] is enabled,
+> we just need to keep it on as reset state, don't touch it
+> in kernel, then every thing is same as before, if we register
+> the clock in clk-audiomix, then kernel will try to disable
+> it in idle.
+>
+> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
+> Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  rust/kernel/error.rs        |   7 +-
->  rust/kernel/init.rs         |   8 +-
->  rust/kernel/kunit.rs        |  16 +-
->  rust/kernel/net/phy.rs      |   2 +-
->  rust/kernel/prelude.rs      |   4 +-
->  rust/kernel/str.rs          | 490 +-----------------------------------
->  rust/kernel/sync.rs         |  13 +-
->  rust/kernel/sync/condvar.rs |   5 +-
->  rust/kernel/sync/lock.rs    |   6 +-
->  rust/kernel/workqueue.rs    |  10 +-
->  scripts/rustdoc_test_gen.rs |   4 +-
->  11 files changed, 57 insertions(+), 508 deletions(-)
->=20
 
-[snip]
+With this patch,I found it broke the imx8mp-beacon board when running
+audio through a codec connected to sai3.  Reverting this patch made
+the crash go away.  Is there a way to mark the clock as critical so it
+doesn't get idled?
 
-> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-> index 68605b633e73..af0017e56c0e 100644
-> --- a/rust/kernel/init.rs
-> +++ b/rust/kernel/init.rs
-> @@ -46,7 +46,7 @@
->  //! }
->  //!
->  //! let foo =3D pin_init!(Foo {
-> -//!     a <- new_mutex!(42, "Foo::a"),
-> +//!     a <- new_mutex!(42, c"Foo::a"),
-
-That we need a CStr here seems a bit of an internal implementation detail. =
-Maybe
-keep accepting a regular string literal and converting it to a CStr interna=
-lly?
-If others think what you have here is fine, I don't it mind all that much t=
-hough.
-
->  //!     b: 24,
->  //! });
->  //! ```
-
-[snip]
-
-> @@ -840,9 +375,10 @@ fn deref(&self) -> &Self::Target {
->=20
->  impl DerefMut for CString {
->      fn deref_mut(&mut self) -> &mut Self::Target {
-> -        // SAFETY: A `CString` is always NUL-terminated and contains no =
-other
-> -        // NUL bytes.
-> -        unsafe { CStr::from_bytes_with_nul_unchecked_mut(self.buf.as_mut=
-_slice()) }
-> +        debug_assert!(!self.buf.is_empty() && self.buf[self.buf.len() - =
-1] =3D=3D 0);
-> +        // SAFETY: Casting to CStr is safe because its internal represen=
-tation
-> +        // is a [u8] too.
-> +        unsafe { &mut *(self.buf.as_mut_slice() as *mut [u8] as *mut CSt=
-r) }
-
-The documentation of CStr [1] is very clear that the layout of CStr is not =
-guaranteed.
-
-> Note that this structure does not have a guaranteed layout (the repr(tran=
-sparent)
-> notwithstanding) and is not recommended to be placed in the signatures of=
- FFI
-> functions. Instead, safe wrappers of FFI functions may leverage the unsaf=
-e
-> CStr::from_ptr constructor to provide a safe interface to other consumers=
-.
-
-Is there any place where this DerefMut impl is actually used? If not it sho=
-uld probably
-be removed. The liballoc version of CString doesn't have this impl either. =
-(Can we use
-the liballoc version of CString too just like this patch does for CStr?)
-
-[snip]
-
-Link: https://doc.rust-lang.org/stable/std/ffi/struct.CStr.html [1]
+adam
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
+imx8mp-audiomix.c
+> index b381d6f784c8..88d8ba975b5a 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -172,7 +172,6 @@ static struct clk_imx8mp_audiomix_sel sels[] =3D {
+>         CLK_GATE("ocrama", OCRAMA_IPG),
+>         CLK_GATE("aud2htx", AUD2HTX_IPG),
+>         CLK_GATE("earc_phy", EARC_PHY),
+> -       CLK_GATE("sdma2", SDMA2_ROOT),
+>         CLK_GATE("sdma3", SDMA3_ROOT),
+>         CLK_GATE("spba2", SPBA2_ROOT),
+>         CLK_GATE("dsp", DSP_ROOT),
+> --
+> 2.37.1
+>
+>
 
