@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-251790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2255F9309DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:04:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1019309E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB44C1F215CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D449281B8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC01073457;
-	Sun, 14 Jul 2024 12:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C67273463;
+	Sun, 14 Jul 2024 12:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jheh/Nac"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b="YWKv6Mtr"
+Received: from mail.envs.net (mail.envs.net [5.199.136.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D94E21A0B;
-	Sun, 14 Jul 2024 12:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4911D8F5C;
+	Sun, 14 Jul 2024 12:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.199.136.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720958665; cv=none; b=jYKMl7aIFXMhNmhuotU+lyB3PUJgAwZ2T4ZQ2sp2I1LuapgkKbdj1qoS5wyR0Ny18v37SyYeCp4Mv3yPGR6KGqxA3hXFzOCFn1w2cmLIReNyi9GUdKrHuvJWAdtvcrmJyQQnkfkNIXCKvUWlC7VCIcKMHLuoAiGcNs/WAXU2pTw=
+	t=1720959237; cv=none; b=hA8PwBKIT+GlrPXHDHHnYSeywunK/YJXKq+nY37oQm7XkPPcp9yCVg5vFhbY9XuO4Ecx1ZeeoH2/IEVq0SKi1zsCRit8TXDthqkMf0EbQvsvFC2pqyUWd0YugFH3s2hGnJchak3QHs13LaWZlsyMI8eHMnYdVnAqUd3JDRmf29Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720958665; c=relaxed/simple;
-	bh=0UNSlpIkJhLpDLHXYNSh1P1ySY3tU4A2NnQLSN8UsTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nptFy72jQ7akhvFaJ42IeH4tS000n95J81aKAMJ34RDGza6BE23OdmFIQZYqpu/HQP1dur8oY1hLm1N1xTFkFK11Pi48aNOjd91Y1dTRDeArxrbwgpBTUcStq3PjOiYpJPjORV3xqeZok9HhZas71whYWMR5yui5JueQThGTHQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jheh/Nac; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36799a67d9cso2723507f8f.0;
-        Sun, 14 Jul 2024 05:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720958662; x=1721563462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0UNSlpIkJhLpDLHXYNSh1P1ySY3tU4A2NnQLSN8UsTI=;
-        b=jheh/NacOxGXPhnsjxOYBxkA1w3nRfPGUfkCnYE7ri0oRnhXkG3VKCquLzs63Dcan5
-         E6WAJlscRyKU96umilLlkCxYkGMfzuRZA59/Z6GA7JBSqRhtSix0bblk5hSbQJMorjI1
-         pbYHQqYVCWORzMeiHd0mO7w/vRHKII2REOGNw3RhFM3ifuEW6zlU846H38vvgpWLm1Ic
-         X+hyGuAIYRFgdFwDEtqe1HIcyHBxaOD8731SYRx3nxbPglmVErZFvtReWW2X3ko3h2BS
-         bBLBQPAcvrBKeOImv2YoUW43K4kyCz22qqRXagWsVM33Dx9U1YJ7uMEJRwOF/KMZj6kc
-         e2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720958662; x=1721563462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0UNSlpIkJhLpDLHXYNSh1P1ySY3tU4A2NnQLSN8UsTI=;
-        b=DCDzlPN2FJtNLmwuMWt19rhH/N3abc47Yj28oQheFKQ/Z6qMffKiTL6/FcYo2/TixP
-         W/ebBzHoi4p6+7QDoY53SOUkJZud8rQ3HebQkuFB34J+nUVfYrn4toCdganxWZsxqsi7
-         jWiRjgxxhETcegJZc14P2Y0Lk0KeVgj9PmBp5Nz/j9cvBK24fAO5vUWQY3fVnI1dxzdH
-         yZVss6x2fhlB1qd8tBGlggK0HbxmY+1+QsR/UWs8PZpuwQMmVD0KzmS5IrsWRVmzogYJ
-         bvpQ3npmeW+yyaC0be/f12cl3wFiGYwOUTVWmeMJ/WUnzbQBzAeD1ee6DPIAm4nqIgzI
-         /rLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSbj7LWx6JAITrrLYeRVF8iPdlUSjKUnIBnNmoGn3/q4EdeFdXlS0AOGRZvK2D/OaQJVtfxh+dopmyvqQZlilq9JfHY+YxO4lkJ99u
-X-Gm-Message-State: AOJu0YyfwQYnEBnzL4Pb7oQpxzDDPgYlydWH380QOeqE9rquFhm1nXia
-	7MvQ3ifwbm6C/pFkrTdNmc9OJML7iVBh2d56+SNA6N53kl+PrcKNQ6y7RQ==
-X-Google-Smtp-Source: AGHT+IHXvSq8+dvaGcFJfUPSHPep0518YOuR8EkkEiNydebhijVQBRNrFO1KuLgU9169QYUODZyZ3w==
-X-Received: by 2002:a05:6000:d04:b0:367:92c7:3ac0 with SMTP id ffacd0b85a97d-367cea6c063mr13228222f8f.22.1720958661778;
-        Sun, 14 Jul 2024 05:04:21 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafb979sm3691236f8f.75.2024.07.14.05.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 05:04:21 -0700 (PDT)
-Date: Sun, 14 Jul 2024 14:04:19 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: sprd: sc2731: correct interrupt-cells
- value to 2
-Message-ID: <ZpO+w+Jf+Lt+ngqK@standask-GA-A55M-S2HP>
-References: <cover.1720957783.git.stano.jakubek@gmail.com>
- <6ae55300b0915fea4ad6cc533b84815eb3cb8043.1720957783.git.stano.jakubek@gmail.com>
+	s=arc-20240116; t=1720959237; c=relaxed/simple;
+	bh=gAoILYv37xkB5P91uGQmdeyt0K2wQQvTn3nam4BAk54=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TZee5tnZVcGQBDu567kKrw8hPWUqWiRg9C0TC58BV6dY80hqkXMui1974bZMHhpTj+qdyy6wJ6xM/iv8D3uVnOJi/oqMK9ysmT5XXcrnxC+hwF4BC7aADkak2KIkgVeNtTZN51eIRYzMGuJqoUaJfQWKJEMkb4uiIBmXzgHIFLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net; spf=pass smtp.mailfrom=envs.net; dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b=YWKv6Mtr; arc=none smtp.client-ip=5.199.136.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=envs.net
+Received: from localhost (mail.envs.net [127.0.0.1])
+	by mail.envs.net (Postfix) with ESMTP id 42C4038A399D;
+	Sun, 14 Jul 2024 12:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=envs.net; s=modoboa;
+	t=1720959232; bh=gAoILYv37xkB5P91uGQmdeyt0K2wQQvTn3nam4BAk54=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YWKv6Mtr6HpRcKQbX922yleEE6km7IxjhqiYboH8P/kASFz1cXbjvIMTkQbazsWs1
+	 oPM54b8eTIzxvy5NDhiEk33O0ZMKR6KniSSb/knNc4EXongbqa93x1swoaRumYLzrr
+	 t6UUVjWqgkf+A1niskGt6Ms3Vt0ATuZzPM0EItDCttRPj9WGxrbWlpcs07XUBt49Zb
+	 pmze7bJfXINVZmUg56dJB3/bFxtCkp2BS+2hsIvy3T2afItMejuoxLrQ0JhCHahCpq
+	 FdxC/AivuJWLee+JlWphV3lVk0hIsjWtFSYennQtttJd1iUdvc9Mce/hGBf9OQAjTX
+	 xmjOYl6R3knzZeLiUln3zX262S/F2kwVfg4xt034dvoCxsy0F4w2NRMgTxDH1+XdyF
+	 izejiMc1lIxk67tFFsCWL0pe1vMmS2nLmsqFV+PScnCHHc9+ztVj7l4QZYhP60IHQS
+	 1yBHuO1rer+MbOAiaxVQlvvcfH3bpapCMoAJfiNjPBJwUb2WmHPZRkwPLqJJW0vY7a
+	 BS2clvoeza5tH7T8P2RpY4LwzNgWhut4/EhNkB+HD7jSNJvCuQwv/IFYjKDmUgTrG/
+	 LSotwgfKXXMZtTqXh/ygoTpS6lZEEmfLepet0VkHLd8Jtvx37yYfy8Qhb3mkaCFh1Q
+	 vQpBC9nvU7w4xCXZFGpbeuXc=
+X-Virus-Scanned: Debian amavisd-new at mail.envs.net
+Received: from mail.envs.net ([127.0.0.1])
+	by localhost (mail.envs.net [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FBxerkmRPHKp; Sun, 14 Jul 2024 12:13:10 +0000 (UTC)
+Received: from xtex (unknown [120.230.214.120])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.envs.net (Postfix) with ESMTPSA;
+	Sun, 14 Jul 2024 12:13:10 +0000 (UTC)
+From: xtex <xtex@envs.net>
+To: Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: x86@kernel.org, linux-kbuild@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org
+Subject:
+ Re: [PATCH 2/2] kbuild: Create INSTALL_PATH directory if it does not exist
+Date: Sun, 14 Jul 2024 20:12:58 +0800
+Message-ID: <2146419.9o76ZdvQCi@xtex>
+In-Reply-To: <20240714085751.176357-3-xtex@envs.net>
+References:
+ <20240714085751.176357-1-xtex@envs.net>
+ <20240714085751.176357-3-xtex@envs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ae55300b0915fea4ad6cc533b84815eb3cb8043.1720957783.git.stano.jakubek@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi all,
+Reviewed-by: Nicolas Schier <nicolas@jasle.eu>
+Link: https://lore.kernel.org/linux-riscv/Zcfp8fn7o74K08g0@fjasle.eu/
 
-you can most likely disregard this patch, according to [1], the correct
-value is actually 1. I'll fix up the bindings during conversion, which I'll
-be sending soon.
 
-The second patch should be good.
 
-Sorry for the noise,
-Stanislav
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm64/boot/dts/sprd/sc2731.dtsi?h=v6.9&id=5863dbe071caabe752ce6f9f6782fa03914527ab
 
