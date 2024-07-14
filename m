@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-251788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3E99309D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:56:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AEC9309D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FD9AB20A35
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11BE1C20A0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C696F505;
-	Sun, 14 Jul 2024 11:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6407344E;
+	Sun, 14 Jul 2024 11:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKASBc2d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOqDiWJy"
 Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750CA44361;
-	Sun, 14 Jul 2024 11:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A128644361;
+	Sun, 14 Jul 2024 11:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720958199; cv=none; b=bVKA/veRG1SYTtLGosTXhMvk+9cVdYBVUqG/h8t/JO4vCpUfbBXeBPJqK7VM4LrQhP6aKwHyV7mZi6wxgb6HKkhhAw804j0lHaCSQ3uBK32DGp53DQ7AKBAMxwWMmnJV3TUNQM1SfTf8hwQNQMk650yc6NoxwEZXY9jgLX5o+J4=
+	t=1720958226; cv=none; b=SmFDGQnL3ORBdl3hJlOVmcqYOadIcez4f09gNo28x1pQG9XwhpyHJBF43GsCuumz5fWDBds5ofgvhlmVhx2IUGdh12/3fBjR5n63QUyZznpJYR43vTKZNfUr9x1Efe+3+JnUyNJWwDIFrOve58bHCWo0Y4+mXbczayaLihKu7CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720958199; c=relaxed/simple;
-	bh=UJ8/PoSPpKQTDpoTTQhmI63mxCQpnB9XHDm6v6vRtkk=;
+	s=arc-20240116; t=1720958226; c=relaxed/simple;
+	bh=vnMOWr+sg3V7r4lks/vNsJBg4r3vgoqD/LS4j65+Dv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sziseD9fWIxXDh2JdkCxXY77xY9hQ/FDJy9WHyyvz7i2ie9P9ru388URqZn3OQitnyZch28ldkpf/W+jgxrv6AweGBj7Go4LIfkOrMPtwXwlboPyxg9aZTscPBYm700O8s67ugTE1T9C9mCuvQYdmpvWakhT41U3N8dgSvVmkZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKASBc2d; arc=none smtp.client-ip=209.85.128.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=UnhlooI3Fcp6bwbhrPhAYVDwZXMe2+cNQxYgJ2isKj7VnG20rTITlpC8RTtmhfdeYRaZtt9oILv/zxzkxrSpBvLaeIeQcF6NBy685rcDQMWX0lN4T4sWaqUYMuiYM13LZ9QOhuOyIrm6N77fSliPfeVn2saxdum32KHvIACFEtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOqDiWJy; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-426636ef8c9so22721805e9.2;
-        Sun, 14 Jul 2024 04:56:37 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427aeebaecdso533295e9.1;
+        Sun, 14 Jul 2024 04:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720958196; x=1721562996; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720958223; x=1721563023; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLvshrdHcGM5HfCdd7OcKFWvrKVcrEuS2SAZY90FhOc=;
-        b=fKASBc2dcw1R+XXPBVJiT8p+dbsd1luDfUWinNb3EKg0qjcck9ATnHjaNg5+ZvrUr7
-         rVQQ7HELkvthfx9eZfXbSU9yKcCpRQubzzLLF+ee6D+XD17csLtsXDKveMbYvX08tr0m
-         Qdthq+SmHKPAzgQQ4J2hahkxv+MePE2WYH5708pLJttD1qARpHMnij4qgoXnucMMSHtl
-         wiFZ2wH4BhqHXtX58fmmMbO/nG2wD/Kt607GceWsrtHVuWuAP8OjZhoH1lpovyk7NLt9
-         Vh26CDDg2pp8GtANoCsstWPXXm8tRxxZU/NVY1zBi9/UlgG/oPXvDE7wLLIj/dWA5o2B
-         Uhmw==
+        bh=0Ev+3M1KyoZUQSOdLbbDNRbHz25PKSnzPrZasulwQUs=;
+        b=ZOqDiWJySJ4r1aV7uaNdFLykr3zOM9yHoLSizpaJhX8OXjHCoCbHE5LtN30kyThjof
+         04bKTINexmAafzQ69g2qn11h+E7Wiy5iQe+F4T/TCitUx2cppfHnTTGspPsCAtCYyCfV
+         Rszy7dLZ6kCGe9icHXNGAO4I1pFcWoDN4jM+LePsGaZrSAXsIRqSxuHSQ4YBXlMPM87H
+         a+NJkSdeIqEUngj/9K9u/7HR3yZ28GWvTKiHhM09zB7bDshdWFou9PvSt/jOQQHhb6a5
+         HQzcHpXrb+9JUfyB5EMNhzeNSZ7DHyBigs/xHhWPsvz9cUP/cV95g1wWfD8P97+02kxn
+         qk6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720958196; x=1721562996;
+        d=1e100.net; s=20230601; t=1720958223; x=1721563023;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HLvshrdHcGM5HfCdd7OcKFWvrKVcrEuS2SAZY90FhOc=;
-        b=I/QdwFkwZ25TCrgTRmC99U9dAUPNgFY6n4pXcyyn6OLUEWslQVuM02qbl4BXb/xauR
-         IflwlGbj07xFrYJf8P9Z5cGcgj5+fPhZTCwdFDMjrZc69BO04BpV+BrQCVFipW0pU+Kl
-         WdrNiMZ6fOgBMqPCfSjLIJSOKqUuKpD1yt/oQaAlsX98WF9J7ZZBuQR6hcNh7gY5/jIs
-         5BjqLPBn9GFKmP3MDeRgWOHaS5+b9oClT9YsOe+WXzbGia1WYcyyaI5VtEkNGKs+D0ca
-         hnv4EP/5Oy+Nd4CqQulStdBZy2Y2klu3uT7kV7yy8UgrKiGTNjFZxB/4T6Rrnx7+ByLy
-         3YPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUud2afyEWVJUdX9EgLR6A3zOnK4S/P5NFWu9Q0vZNGbH2hQUgXVjMWcHhoqHbueKQVtVoI06PU8T/N9+PUd/CEqfW/hg3ytxc182wF
-X-Gm-Message-State: AOJu0YywsWVHjJoY6FDd2A65+n7k6pB448jAJpAirZaiS7MM1OWwn0rL
-	zBmLj0+y9sxvXU0LXf0d1+RYKXCPIfJ4X/6zpHntCctIq18ZD9wR
-X-Google-Smtp-Source: AGHT+IFU24Tu35lO61ckbE6rlAjnODuccohOJCnpmS+jPtyTV87uwYyzlwauWtBeDPENykVeHhJbuA==
-X-Received: by 2002:a05:600c:6c59:b0:425:7c5f:1bac with SMTP id 5b1f17b1804b1-426707e3295mr116180525e9.21.1720958195676;
-        Sun, 14 Jul 2024 04:56:35 -0700 (PDT)
+        bh=0Ev+3M1KyoZUQSOdLbbDNRbHz25PKSnzPrZasulwQUs=;
+        b=khhEdLTKpGPbuI4AlJMeStFNhXafICe66haeLZ/miDyrM4r1c+l/mlHlg86pj7eZxL
+         ND5XNj4/YJfFbQMOb7sro7og0kD4M/VY3xzk9c0zHu4qTSf+E4pGjm1pmJjIgQ4+Lxso
+         6p8u5zEeSzAqBc2wHqx0hYvoz+yFGSA+YTLN4mJYwV9MNIkhF1H/VOrq71FK6LCfGG4v
+         fFs/9kznbDJY+eQGhVaaKeAmqLvvhalQDN92hT+s6m3AS1buRjwWpVyz/4pEOkLkAQRw
+         9KxGqUc5B57LewehLM54UTMpBRhTd3+W7mn88hqmXdOIqeIA6vzeS/klUH6sduzC6MVg
+         N/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE3caA87zkoLxVgcFZYSHk/PQVhCGK9dknel5PFYOntLebaQqAmFAkcenhNm1ThXv2HOzBw2gKzg6Dv/P+dC7boxiIypQg6bXkGe63
+X-Gm-Message-State: AOJu0YxaSljwxeV9OypB0F1T+4dNa5BNOje5GzJGTD2p0Co7EOcVimxe
+	lZ7iIeJw7kXpZkCIvsmfqhTTuPvZdOgHfvMz6tZGX608+S6OUM7u
+X-Google-Smtp-Source: AGHT+IEtYsC7P4Ws91isMUHy6oUv2VIAuPj7vuP5tk2PAP0VVBeyw8wgsl5gBPEyKo/XzJ19YhUJPw==
+X-Received: by 2002:a05:600c:2184:b0:426:61e8:fb35 with SMTP id 5b1f17b1804b1-426707cc03dmr114510845e9.4.1720958222873;
+        Sun, 14 Jul 2024 04:57:02 -0700 (PDT)
 Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f25b946sm83440505e9.19.2024.07.14.04.56.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f239876sm84675835e9.3.2024.07.14.04.57.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 04:56:35 -0700 (PDT)
-Date: Sun, 14 Jul 2024 13:56:33 +0200
+        Sun, 14 Jul 2024 04:57:02 -0700 (PDT)
+Date: Sun, 14 Jul 2024 13:57:00 +0200
 From: Stanislav Jakubek <stano.jakubek@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -75,9 +75,9 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Chunyan Zhang <zhang.lyra@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: sprd: sc2731: correct interrupt-cells value
- to 2
-Message-ID: <6ae55300b0915fea4ad6cc533b84815eb3cb8043.1720957783.git.stano.jakubek@gmail.com>
+Subject: [PATCH 2/2] arm64: dts: sprd: sc2731: rename fuel gauge node to be
+ generic
+Message-ID: <246c0c7763a432d4bebcb0e99b90dcf4cded333d.1720957783.git.stano.jakubek@gmail.com>
 References: <cover.1720957783.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -89,8 +89,8 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1720957783.git.stano.jakubek@gmail.com>
 
-According to the DT bindings, SC2731's #interrupt-cells should have a
-value of 2. Correct it as such.
+According to DT spec, node names should be generic. Rename the
+sprd,sc2731-fgu node to a more generic "fuel-gauge".
 
 Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
@@ -98,18 +98,18 @@ Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-index e15409f55f43..7e55b2b31c84 100644
+index 7e55b2b31c84..48b681768f6e 100644
 --- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
 +++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-@@ -13,7 +13,7 @@ sc2731_pmic: pmic@0 {
- 		spi-max-frequency = <26000000>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-controller;
--		#interrupt-cells = <1>;
-+		#interrupt-cells = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+@@ -95,7 +95,7 @@ pmic_adc: adc@480 {
+ 			nvmem-cells = <&adc_big_scale>, <&adc_small_scale>;
+ 		};
  
+-		fgu@a00 {
++		fuel-gauge@a00 {
+ 			compatible = "sprd,sc2731-fgu";
+ 			reg = <0xa00>;
+ 			bat-detect-gpio = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
 -- 
 2.34.1
 
