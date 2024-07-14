@@ -1,59 +1,45 @@
-Return-Path: <linux-kernel+bounces-251726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADCE9308ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372AC9308F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080C41C20B72
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 07:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E831F2166F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 08:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765151BDCD;
-	Sun, 14 Jul 2024 07:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B11B950;
+	Sun, 14 Jul 2024 08:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7BWa5he"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WeLwVHnU"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95BB10958;
-	Sun, 14 Jul 2024 07:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737CCAD22;
+	Sun, 14 Jul 2024 08:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720943412; cv=none; b=VC9jgMHODT7DhRwxuGa899liGaS+cE9gUSU3DN/P6l/HW5BWqXFJ6BAStAwDMQ+NnG3brUQyxrLnGlO3EqpP3sEXF/hHRCHhzJT2oUVDFwqFwYnder3WVdia7TUSRdWQc6MYJKipqhowHBb186YjqzMKPwiJ6XR6K5CbZU+rmKo=
+	t=1720944291; cv=none; b=AV1EA8ua9H8C4flIll2dqEIEHn+nTbsQ2VDhcgIZciK4G4VAdIAY9rCN2MpUHhDSDkJBA0+wMuuF4VYYiZYTVBjL4vLOWsK9cVNrDOo8mruz1lP4r+r5AbOD3UThtskXlBO+bbp3nOi0zB3unC6WRdi4hirwWrplp228W9QagVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720943412; c=relaxed/simple;
-	bh=MQSzyGFevqjq2PCHO0abOcJvVZs6qhNS8Fj3CiCcRV8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O4gR8lTH+UCwzdgTxXPECOGdBREeiZITuV7PKH4ld8OrkfTDhdstIE3hszc3kbB9g/jAI2YCB6eRjgEz1v5SIkmzzs3ncEoCY5nEncqp22uDPasUCcR52IAEICKY/dzuLXj7BOV6y94BIF1Mmc6iENeloFHpUwFzkRSYjSozSDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7BWa5he; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72412C116B1;
-	Sun, 14 Jul 2024 07:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720943412;
-	bh=MQSzyGFevqjq2PCHO0abOcJvVZs6qhNS8Fj3CiCcRV8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=W7BWa5heDGdoER1uEw/oUvVfyPulRKzKJ78r8oUqhDjH8FXwqgmdTqn3FB690BINI
-	 z1z/U1kelxtILRoNNcW8eVtydQPBd7NYoUs8xMztqVU4woNE1dFF6P2GX3oZvoaWtD
-	 Cn4c47VlMOGThoA/JIflw8Vkx9pOtH/z7WcUDfTTBUELPM1NEzdtw2tO57GEY6zhpz
-	 z5ihiyx0sEdMNqDH97S4vkRpo6aBkLbvmjKfBmP3DEu8LbHpWyJ3r0db4vTKwNE3UH
-	 22/QJadA85apccdtzwqd2MMwtiTb0d9AwQWocDpmj91go1WGiFeJAvV4yMC1SRXlKZ
-	 7B9LoeuDd90Fw==
-From: Leon Romanovsky <leon@kernel.org>
-To: kotaranov@microsoft.com, pabeni@redhat.com, haiyangz@microsoft.com, 
- kys@microsoft.com, edumazet@google.com, kuba@kernel.org, 
- davem@davemloft.net, decui@microsoft.com, wei.liu@kernel.org, 
- sharmaajay@microsoft.com, longli@microsoft.com, jgg@ziepe.ca, 
- Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org
-In-Reply-To: <1720705077-322-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1720705077-322-1-git-send-email-kotaranov@linux.microsoft.com>
-Subject: Re: [PATCH rdma-next v3 1/1] RDMA/mana_ib: Set correct device into
- ib
-Message-Id: <172094340802.10365.12136288683961207968.b4-ty@kernel.org>
-Date: Sun, 14 Jul 2024 10:50:08 +0300
+	s=arc-20240116; t=1720944291; c=relaxed/simple;
+	bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iufACFVXFp2s/hkN/DarpQ32yB4dmvce2Di9XyIHddO42Ypj3tizKI2Cnjy6j/qvADL1Li+CvML05welLAHsosX4vg89o6B14De66A6UVOD9f4DiRuLytpVKFSktQ4BOUfVpU/6fTCSoe4m3r2nOAEfgkRt5WC5CRwS0m1PWbfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WeLwVHnU; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1720944274;
+	bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WeLwVHnUngEASsCqqUqrBRJn3UeRdQJmlf0z5MG18AWOcJa2GYmcvdGjqOLqvVNgQ
+	 bcUUTqL8fKAQ7m8Z/ph+Yf1kqYeTNuXZ/QK9znRBV4hrojqFw7Drd3o4cYXbJGIGyq
+	 nL2nvxTvkxgSNkyPDXZEGLLBeSu94G9ECjFCeN6s=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 14 Jul 2024 10:03:45 +0200
+Subject: [PATCH v5] kbuild: add script and target to generate pacman
+ package
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,29 +47,242 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-13183
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAGCGk2YC/23OSw6CMBCA4auQrq1ppy9w5T2Mi7a00qhIqKCGc
+ HcLbkjs8p9kvpkJRdcHF9GhmFDvxhDDo00hdgWyjW4vDoc6NQICnEgQ+GqGcKtxp+1dt7i7XrD
+ hvlSOVjVhEqW9rnc+vFfzdE7dhPh89J/1xEiX6U9ThGe0kWKKtQUvmRdeK3N8uRBjtM3Q7Fv3R
+ As5wpaROQYSIynjAJowrXSWYVumzDEsMWUpas+ssYqTLMM3DCU5hidGEGWMMKoy8P/NPM9fK37
+ vHIwBAAA=
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720944274; l=7601;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=x8XXW+gscgcNq3poEZLK+gkugH2nL6K8tBXwx6hkL8g=;
+ b=dTlkX6gmLdOteEV2vHVk+Nr+XrloJwXLJ2X7PweKRHAtLacGpuGAOjDz88cxkR35ocDWXtF8+
+ L+3hVuvSZ5lDMU4HtuAkstO3XJubRHPEdKhvW0wW1/ithkQXliswDYx
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+pacman is the package manager used by Arch Linux and its derivates.
+Creating native packages from the kernel tree has multiple advantages:
 
-On Thu, 11 Jul 2024 06:37:57 -0700, Konstantin Taranov wrote:
-> Add mana_get_primary_netdev_rcu helper to get a primary
-> netdevice for a given port. When mana is used with
-> netvsc, the VF netdev is controlled by an upper netvsc
-> device. In a baremetal case, the VF netdev is the
-> primary device.
-> 
-> Use the mana_get_primary_netdev_rcu() helper in the mana_ib
-> to get the correct device for querying network states.
-> 
-> [...]
+* The package triggers the correct hooks for initramfs generation and
+  bootloader configuration
+* Uninstallation is complete and also invokes the relevant hooks
+* New UAPI headers can be installed without any manual bookkeeping
 
-Applied, thanks!
+The PKGBUILD file is a simplified version of the one used for the
+downstream Arch Linux "linux" package.
+Extra steps that should not be necessary for a development kernel have
+been removed and an UAPI header package has been added.
 
-[1/1] RDMA/mana_ib: Set correct device into ib
-      https://git.kernel.org/rdma/rdma/c/1df03a4b44146c
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+---
+Changes in v5:
+- Rebase onto kbuild/for-next
+- Use new path to build-version script (from kbuild/for-next)
+- Ensure submake jobserver delegation works
+- Simplify $modulesdir/pkgbase file creation
+- Add Reviewed-by from Nicolas
+- Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
+
+Changes in v4:
+- Update MRPROPER_FILES
+- Unify shell variable syntax
+- Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
+
+Changes in v3:
+- Enforce matching architectures for installation
+- Add Reviewed-by and Tested-by from Nathan
+- Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
+
+Changes in v2:
+- Replace ${MAKE} with $MAKE for consistency with other variables
+- Use $MAKE for "-s image_name"
+- Avoid permission warnings from build directory
+- Clarify reason for /build symlink removal
+- Install System.map and config
+- Install dtbs where available
+- Allow cross-build through arch=any
+- Sort Contributor/Maintainer chronologically
+- Disable some unneeded makepkg options
+- Use DEPMOD=true for consistency with rpm-package
+- Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+---
+ .gitignore               |  6 ++++
+ Makefile                 |  2 +-
+ scripts/Makefile.package | 16 ++++++++++
+ scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 106 insertions(+), 1 deletion(-)
+
+diff --git a/.gitignore b/.gitignore
+index c59dc60ba62e..7902adf4f7f1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -92,6 +92,12 @@ modules.order
+ #
+ /tar-install/
+ 
++#
++# pacman files (make pacman-pkg)
++#
++/PKGBUILD
++/pacman/
++
+ #
+ # We don't want to ignore the following even if they are dot-files
+ #
+diff --git a/Makefile b/Makefile
+index c90d408c825e..2c38c5f57135 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1481,7 +1481,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+ # Directories & files removed with 'make mrproper'
+ MRPROPER_FILES += include/config include/generated          \
+ 		  arch/$(SRCARCH)/include/generated .objdiff \
+-		  debian snap tar-install \
++		  debian snap tar-install PKGBUILD pacman \
+ 		  .config .config.old .version \
+ 		  Module.symvers \
+ 		  certs/signing_key.pem \
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index bf016af8bf8a..920774dd660c 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -141,6 +141,21 @@ snap-pkg:
+ 	cd $(objtree)/snap && \
+ 	snapcraft --target-arch=$(UTS_MACHINE)
+ 
++# pacman-pkg
++# ---------------------------------------------------------------------------
++
++PHONY += pacman-pkg
++pacman-pkg:
++	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
++	+cd $(objtree) && \
++		srctree="$(realpath $(srctree))" \
++		objtree="$(realpath $(objtree))" \
++		BUILDDIR="$(realpath $(objtree))/pacman" \
++		CARCH="$(UTS_MACHINE)" \
++		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
++		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
++		makepkg
++
+ # dir-pkg tar*-pkg - tarball targets
+ # ---------------------------------------------------------------------------
+ 
+@@ -221,6 +236,7 @@ help:
+ 	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+ 	@echo '  snap-pkg            - Build only the binary kernel snap package'
+ 	@echo '                        (will connect to external hosts)'
++	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+ 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+ 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+ 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+new file mode 100644
+index 000000000000..7bce2f01b17d
+--- /dev/null
++++ b/scripts/package/PKGBUILD
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: GPL-2.0-only
++# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
++# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
++
++pkgbase=linux-upstream
++pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
++pkgver="${KERNELRELEASE//-/_}"
++pkgrel="$KBUILD_REVISION"
++pkgdesc='Linux'
++url='https://www.kernel.org/'
++arch=($CARCH)
++options=(!debug !strip !buildflags !makeflags)
++license=(GPL-2.0-only)
++
++build() {
++  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
++  cd "$objtree"
++
++  # makepkg does a "chmod a-srw", triggering warnings during kbuild
++  chmod 0755 "$pkgdirbase" || true
++
++  $MAKE -f "$srctree/Makefile"
++}
++
++package_linux-upstream() {
++  pkgdesc="The $pkgdesc kernel and modules"
++
++  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
++  cd "$objtree"
++  local modulesdir="$pkgdir/usr/$MODLIB"
++
++  echo "Installing boot image..."
++  # systemd expects to find the kernel here to allow hibernation
++  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
++  install -Dm644 "$($MAKE -s image_name)" "$modulesdir/vmlinuz"
++
++  # Used by mkinitcpio to name the kernel
++  echo "$pkgbase" > "$modulesdir/pkgbase"
++
++  echo "Installing modules..."
++  $MAKE INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
++    DEPMOD=true modules_install
++
++  if $MAKE run-command KBUILD_RUN_COMMAND='test -d $srctree/arch/$SRCARCH/boot/dts' 2>/dev/null; then
++    echo "Installing dtbs..."
++    $MAKE INSTALL_DTBS_PATH="$modulesdir/dtb" dtbs_install
++  fi
++
++  # remove build link, will be part of -headers package
++  rm -f "$modulesdir/build"
++}
++
++package_linux-upstream-headers() {
++  pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
++
++  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
++  cd "$objtree"
++  local builddir="$pkgdir/usr/$MODLIB/build"
++
++  echo "Installing build files..."
++  "$srctree/scripts/package/install-extmod-build" "$builddir"
++
++  echo "Installing System.map and config..."
++  cp System.map "$builddir/System.map"
++  cp .config "$builddir/.config"
++
++  echo "Adding symlink..."
++  mkdir -p "$pkgdir/usr/src"
++  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
++}
++
++package_linux-upstream-api-headers() {
++  pkgdesc="Kernel headers sanitized for use in userspace"
++  provides=(linux-api-headers)
++  conflicts=(linux-api-headers)
++
++  export MAKEFLAGS="$KBUILD_MAKEFLAGS"
++  cd "$objtree"
++
++  $MAKE headers_install INSTALL_HDR_PATH="$pkgdir/usr"
++}
++
++# vim:set ts=8 sts=2 sw=2 et:
+
+---
+base-commit: cd843d58ee1db0e2cb0d7046aff5cb59e8fcfc2e
+change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
 
 Best regards,
 -- 
-Leon Romanovsky <leon@kernel.org>
+Thomas Weißschuh <linux@weissschuh.net>
 
 
