@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-251879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12426930AEC
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA57930AED
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40ECC1C20F3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4C91C20F74
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF74F13C677;
-	Sun, 14 Jul 2024 17:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DE913C80A;
+	Sun, 14 Jul 2024 17:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcOjqwJb"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kzxOghUJ"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9DD27D;
-	Sun, 14 Jul 2024 17:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B94D27D;
+	Sun, 14 Jul 2024 17:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720977626; cv=none; b=sRtSBCQHhd9+4JJo+nSqSPYoDsZm+kcLrHc3BwOmG/1BvGejkmXEkz6WCUQ0P6JvYr/KniSZQo7Mnfmt+N7fsyNCQUwkK5j3BYZ1Afju64YNEGe3mJd3bHaxpGnWmx5tPdwHixqCi3b3Glsa9rmhJZ0qzX5xQ/S9PtKJVHJsN54=
+	t=1720977694; cv=none; b=BavhLtCrcUXL7idEhnno/ejMIfUswGPKwg/LR5ZfML1UFP0KqPDfADNTO7pGSvs2cVvdNzzPMQfz1Kb9icSxQ+hG+VTiehFsESTcrmYQigKbC3mRzgi9axBdEVqerrh7fy+LVngSUS8hHsKoDvsnUNlEo754DL7olMvqV0ZBPVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720977626; c=relaxed/simple;
-	bh=A5Bcqn8FRqYalb1UZD9jh+58Ex3sAWvAdNFs//hWPBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mhseH9bDzhrHJOEWfG8aJfAY77h5uajGMi/k239SkqqnKuxwLKghkN4s90fHqqfsRQpcdoDy/e9pfOYIzI8YiOZMVSZOxUWqyV17Wdkl1nu3td/0yHWViXILW8utlQXjnOquRWFcsgqRPioWjSNMl86CarQSGwp/iM918rJyTjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcOjqwJb; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3856b7be480so13006075ab.0;
-        Sun, 14 Jul 2024 10:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720977624; x=1721582424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OlQJVnEnvYtG6Urx8xlXkjHKNYwq7RXhH4sQHIkE5Zk=;
-        b=jcOjqwJblIMoQGQKMuYmylbC8vfG/J0fPgVCCm1sisnd6/PRxS0BMrXSpPPVIob4Ef
-         tqf3Q6pBL22a1hk5YlqEffuNxRli3QcfFNW8csaoM8q0JhjKPK4UMhVuI/7QP+z3QBGp
-         uol5rQZrtJRh3SsdN0e/aiO9jVfL6/bYGy0mo0S0JnviYu7nOX82G6yhhAdx2jwE1OmA
-         QvN7+GxIQnGIMsWDuiQghjHZpdVZWhONWDM911o/nS6HHdsq+f8usVDHsgxh+dMoZ9Vs
-         SjB/HBZToWOEq4t7VId1bx9aOj9w0/R+blQyhlduFkcxlwKdp9GmWlP9qXRVpxANzbpL
-         IpXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720977624; x=1721582424;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OlQJVnEnvYtG6Urx8xlXkjHKNYwq7RXhH4sQHIkE5Zk=;
-        b=bg5bap8tVPd6bIfp3hhuuTFi/WEDdj2DmVwN0Do1uJoQyX2dImULJdj0coi92GwHvs
-         q6sGfiXOuWEAzydIc/ROaQ52VmUJvGVIuqKxQtn1LVJRlGYEQ0FQzSVlu620ZZglYBV3
-         njq0Qu4qiqEJmxW+XABLUpErQPqilR51mfGY4awpTy5RSjUxBgqpGG0/xTrD9UAANn8L
-         Fxeyd/4i2T4rGdNTxAt5ho55+4PLAPfj2BBY/BLr01H27NftFQiTfZCMMnKw9Gw3/zFO
-         wekW4lzoNnkcURfkswneg2u0oeEGw4HtGqgd4Z6qoPWLKec2nhgHMccdwEHVko9WtDAv
-         iLlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIFvADAZrTMH+vK0opVQZn1jgx7MEtkyHzcu8Sn41y2Ropq9nTEwOxdLsA9VSxYn1RRky7DF8aYVzBIsD83UHJEMbmin608f5bmlKYSKuWwZl+ROOPuPF0Gn4rd2f3choFbjR1igMR0w==
-X-Gm-Message-State: AOJu0YzYtTbzBPfZ/9eXCsLtGQ4b71tknvXPQLuFO2JcM1ZAZn03D7s8
-	MGLPbpd2Ltcpw/RZDULRLT7/ztanbIflrWSEkZb+IhZ1CakSDKqO
-X-Google-Smtp-Source: AGHT+IF6DTVl/wDe0J/V/t+5rtM8BQuGZZ8qgIqSyMgnG7/Y0BdktL+/90gcxU5w1DRx/MZmfcmztg==
-X-Received: by 2002:a92:c546:0:b0:375:a7ee:dff9 with SMTP id e9e14a558f8ab-38a585825f7mr226453335ab.17.1720977623667;
-        Sun, 14 Jul 2024 10:20:23 -0700 (PDT)
-Received: from aford-System-Version.lan ([2601:447:d002:5be:5d97:4e3d:78d3:be9d])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3900f5280b1sm11357625ab.32.2024.07.14.10.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 10:20:23 -0700 (PDT)
-From: Adam Ford <aford173@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: aford@beaconembedded.com,
-	Adam Ford <aford173@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx8mp-beacon-kit: Fix Stereo Audio on WM8962
-Date: Sun, 14 Jul 2024 12:20:17 -0500
-Message-ID: <20240714172017.422811-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720977694; c=relaxed/simple;
+	bh=J/Qb0gThL4j3Uoyg4Clycpw/2i361PZ/NXwbE5C+AdA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nru13Jj5+94m7o0o+CS8pkPwUqmOYpah63FOGQzZb5GMn/nD3JFUHdFXH/bzeA2wS5tilcCCLXPVsq306sKwn+he/Ms9eT98jJcSMAqXD1lI1MDKP9DQbyTSL5AvhctiQnt60b9fhgc23v8Di9FEe/r2sXN7y1YOk8Qw1rzz3+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kzxOghUJ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720977679; x=1721582479; i=markus.elfring@web.de;
+	bh=HasxCNi8X2ES8SdbqnOhQdJu4uUx4nqIQPp3FXMVmwM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kzxOghUJjuaMLikY/UBX4DlYWZutn+E5Ay5fPraBklsxx7Amo0SUPhajwPYgupfK
+	 3k3pz+2f2svdgVRsSPp4UOhli4/JAEOloaXJVO/nN0RuSDXaXtfI5jB/e55AB5f5+
+	 yrCU92sbKXOA73uic/ye9D1FoLFalgmmu4R9wtG0Ut5TeMUeSWwtoboZQ5U1rxjk5
+	 amqL2SDI6CGK9vEv1d8EiNj4OvClgXkf0lMHbuIrBQNp8kzOs6YrQ3F2mX8cVfRNf
+	 2k498EqspDbo90tiGAYTPxKVW4ZEyVLcgojNyqWwGpKBBlR/nJFRBoxGRgvWp7PHF
+	 Ai9amYbuAWQQ9z8IHw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1JF8-1sVmzt01ne-007Wmj; Sun, 14
+ Jul 2024 19:21:19 +0200
+Message-ID: <e7faa2c4-9590-44b4-8669-69ef810277b1@web.de>
+Date: Sun, 14 Jul 2024 19:21:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-bcachefs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] closures: Use seq_putc() in debug_show()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GlPPVpVcPkDvHKYCv9ecKXn3hbWN+tB5jvLUZIDnE10agGYcK78
+ WHARB7tDHFffsi9kqmY+ikWnfuymy33IwD7E6O7bY0LgQ3LC+l2DYF2dsIBD2qjV7VUEl9M
+ qN29R6gEPXv6w/2ehvX94JU3DmsKCNLrs4fFFR+rN50edNwERtzlGqd4LQaSDpc2uL96Wyh
+ ff517mIW3f6VoOg273smA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Jl44Y2fzuiI=;u2+82f0/AgxuwZ3lMVZosGizwns
+ oc5BoV2dep02vAKKQqaSJ5SkSsaXjgZ24bXf8X44dRX4frv6CGfEhC0d0Tqw95uPnAAHSAGxo
+ inE5ktrZ/O9JMozWg/peiq8Veixgws9qLDJkB+RqHN3uY+bdeVtoSB0BxPFTB0Y1e3gI4JTc3
+ II5/R/cn5pfhJmFq3DN8FjPudo5/RawMp0sV7wCE4SSlYZiUmDy+jtIbzybDcm4NbsBvVoQeQ
+ Slv4cVg8SF2cnJVWqzBcsk8bfGctrle6hvd8GA83mzv5M+lTnrgsKqOuYqOUXmYGCoDtr3o39
+ RuoALiMuxgnCHZFvZTAdWgSi66GOrzTuzv4s77j644/nIhJUpRaJfBvtbH5XMwtzkH3yrDrsO
+ TVWLlqS1RG+G8NI+4+iQ1AsUBEYSlRciuYSeogDtsznbhLRvszosdCBkC4fBASixNlelwBhuB
+ 4slyudD9/tuuRwfp6iS9AuybnL8GBvJHcihcrkeyvMxqP/Mn86SELNsA2RBQ7sFHgnKDNFEwI
+ 1T6v5+X56dgQgaRJLcwc+lm5/MLXmax9pRzrTOJS7kqujKmfMee4PUK90gm5w7l72uoWiK+qD
+ B4ffXF5Z2DoauX4gPkFL/Sd6XLHZTSl5C9DWIO8GYWyzQsTyo3Ocpo/ghGWFot2QBHsbdgjOr
+ TxnztqHyU22V4afVTnSUbCWyfRiG6AVBovNIN+jZb9RzTTXb3a6uNnaIl4bXfeMEE58BBRcVw
+ TT1y4oe3klNO3RgWMO5C7NOx52bHTT8uZ9CcbLxhwaPjR7SqjWGoBr6rxlljoUDCO85asPLIu
+ 6zMfyt2rH9h2N4mZyDk8ZOdg==
 
-The L/R clock needs to be controlled by the SAI3 instead of the
-CODEC to properly achieve stereo sound. Doing this allows removes
-the need for unnecessary clock manipulation to try to get the
-CODEC's clock in sync with the SAI3 clock, since the CODEC can cope
-with a wide variety of clock inputs.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 19:15:09 +0200
 
-Fixes: 161af16c18f3 ("arm64: dts: imx8mp-beacon-kit: Fix audio_pll2 clock")
-Fixes: 69e2f37a6ddc ("arm64: dts: imx8mp-beacon-kit: Enable WM8962 Audio CODEC")
-Signed-off-by: Adam Ford <aford173@gmail.com>
+A single line break should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts b/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
-index 1871c10f5c12..de5b64fa479a 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
-@@ -222,13 +222,12 @@ sound-wm8962 {
- 
- 		simple-audio-card,cpu {
- 			sound-dai = <&sai3>;
-+			frame-master;
-+			bitclock-master;
- 		};
- 
- 		simple-audio-card,codec {
- 			sound-dai = <&wm8962>;
--			clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO1>;
--			frame-master;
--			bitclock-master;
- 		};
- 	};
- };
-@@ -544,10 +543,9 @@ &pcie_phy {
- &sai3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_sai3>;
--	assigned-clocks = <&clk IMX8MP_CLK_SAI3>,
--			  <&clk IMX8MP_AUDIO_PLL2> ;
--	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL2_OUT>;
--	assigned-clock-rates = <12288000>, <361267200>;
-+	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
-+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
-+	assigned-clock-rates = <12288000>;
- 	fsl,sai-mclk-direction-output;
- 	status = "okay";
- };
--- 
-2.43.0
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ lib/closure.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/closure.c b/lib/closure.c
+index 116afae2eed9..2bfe7d2a0048 100644
+=2D-- a/lib/closure.c
++++ b/lib/closure.c
+@@ -278,7 +278,7 @@ static int debug_show(struct seq_file *f, void *data)
+ 			seq_printf(f, " W %pS\n",
+ 				   (void *) cl->waiting_on);
+
+-		seq_puts(f, "\n");
++		seq_putc(f, '\n');
+ 	}
+
+ 	spin_unlock_irq(&closure_list_lock);
+=2D-
+2.45.2
 
 
