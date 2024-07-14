@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-251773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C52930997
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9D0930999
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0081F2155D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F20D1F21541
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C338D4C61B;
-	Sun, 14 Jul 2024 10:58:18 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537664965F;
+	Sun, 14 Jul 2024 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqMARO1b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACF1DF6B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 10:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858EEDF6B;
+	Sun, 14 Jul 2024 10:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720954698; cv=none; b=Kh0cUez5XyCp4iNnVdI1oE/WZmimtjaocbCHEjPboSpUYxI4Daib76xwoZV61FUO3cQDeDGW1Yoaj238sKznFzb6QsfbTS27SvJnHucNZWWYCZFGLqdE7bJ0x6OxE7ID5UM6oqTQfq4ltycZ/pPk47xUgHMYQDqUTamYcX7CWck=
+	t=1720954733; cv=none; b=JWq5GLtoPZllz5V0xkHtfjxafbm4IFYiUS/c0uCMtXrpJnwSFcHL4mq2sdZS3cHGFg6v2TMCw7o97jyNxSQSx1zUFrA+3br1gW9/Fsfe1/mY9IktEomtVLq7coDYbIZ5jHKhRu1p/wiPw7RTBVPhUASwiRdwWWtWrJG+ned3RBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720954698; c=relaxed/simple;
-	bh=PetaYDSuIrDYTPq3mJnlI1K3XFTjKQhWYh7CmPGJluY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n7y6xQ005NPzkuGdkc4Ik6FcgVO+MQZAb2c/l1Bx+9jYoLDw44qMSj9sKvSKbJ5r5t2k20A2ebs+G4dWfZlmEQD17d7lVX6l385aLaZaZ6usp56iM1NWAZHnuTlpmt7kPWSa2XYt4uKK+w5bzocwN1aDetSvdOTs0hqhWhyOOoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4WMMYv3QwYz1sCHB;
-	Sun, 14 Jul 2024 12:50:43 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4WMMYv2qRgz1qqlS;
-	Sun, 14 Jul 2024 12:50:43 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id t6boMA5zjJ1p; Sun, 14 Jul 2024 12:50:42 +0200 (CEST)
-X-Auth-Info: UC7zAheIAG85tfM3kNCjoXJ9PEzwMRmAs5sQILSHzmy+RPQ8VsVVPA6hViO6A91t
-Received: from tiger.home (aftr-82-135-83-79.dynamic.mnet-online.de [82.135.83.79])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Sun, 14 Jul 2024 12:50:42 +0200 (CEST)
-Received: by tiger.home (Postfix, from userid 1000)
-	id D1F002BB8B5; Sun, 14 Jul 2024 12:50:41 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: deb-pkg: fix building with bindeb-pkg
-In-Reply-To: <20240714103438.4146-1-spasswolf@web.de> (Bert Karwatzki's
-	message of "Sun, 14 Jul 2024 12:34:37 +0200")
-References: <20240714103438.4146-1-spasswolf@web.de>
-X-Yow: Send your questions to ``ASK ZIPPY'', Box 40474,
- San Francisco, CA 94140, USA
-Date: Sun, 14 Jul 2024 12:50:41 +0200
-Message-ID: <878qy48cxq.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720954733; c=relaxed/simple;
+	bh=uOJ+OtY00HuTMViIhxCbV5cuxb/lRfWu2i5PHKqD1r0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VJl07TIHfLL0flHZfwcxNukc7AyuYaIFAyTlipR8OwOlMqjU1QJADvrsnfWW/aozsDmjvGvT1gn85YFYVhAfrmLnf1Bi6kRZBugI4By4DZXptdvZd4Qaz97n4hgHsTPL/jNSgl2ls0PraUA9naVm+x1pbf8d01bjZ8AlyeeyUus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqMARO1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC730C116B1;
+	Sun, 14 Jul 2024 10:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720954733;
+	bh=uOJ+OtY00HuTMViIhxCbV5cuxb/lRfWu2i5PHKqD1r0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pqMARO1blzm9SCWaeJfTbrTKImdo2vR7/55V3liFtoM1rXWFaeXGyQkwNVp7M/Q+g
+	 R8h+UR4MhPmSGul2cVPmzkJx4ePBtPpAey5kgk7ftsVWQcrEIcEfkWG74uqR+W3CbU
+	 2n7KPXaAD5L02OQQYlRh4BPhk4z4EkLK4GQ9SurpR4cv0GXj/Szl1pHgaK58B5Egg/
+	 iXEzzvBNRqxIDN7sExl04Y8qS8ykpwpoKnIqyt62ZZaMyEiJpvf3hYHS9LqjAppJd5
+	 BqzkHwkE9Co2gXv1T/vM7NHUoaZm1i2sYEd/70meJ7j1RgcOe6MCu1gOOXE02h3i5r
+	 N/MENjufsidbA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+Date: Sun, 14 Jul 2024 19:58:46 +0900
+Message-ID: <20240714105848.1844400-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Jul 14 2024, Bert Karwatzki wrote:
+The condition 'select HAVE_ARCH_KASAN' is always true because
+there is 'select HAVE_ARCH_KASAN' statement above.
 
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 196b14e8ad47..5eb506573a4d 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -135,7 +135,7 @@ else
->  fi
->  maintainer="${name} <${email}>"
->
-> -if [ "$1" = --need-source ]; then
-> +if [ $# -eq 1 ] [ "$1" = --need-source ]; then
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-[: too many arguments
+ arch/arm64/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index c87d16b12e9b..d37cbfc3031e 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -167,9 +167,9 @@ config ARM64
+ 	select HAVE_ARCH_JUMP_LABEL
+ 	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ 	select HAVE_ARCH_KASAN
+-	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+-	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+-	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
++	select HAVE_ARCH_KASAN_VMALLOC
++	select HAVE_ARCH_KASAN_SW_TAGS
++	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+ 	# Some instrumentation may be unsound, hence EXPERT
+ 	select HAVE_ARCH_KCSAN if EXPERT
+ 	select HAVE_ARCH_KFENCE
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+2.43.0
+
 
