@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-251832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C50930A5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A94930A64
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34AF6281B22
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A8F281B8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F34136E09;
-	Sun, 14 Jul 2024 14:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2FA13957C;
+	Sun, 14 Jul 2024 14:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EucCSd+/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BAD53376;
-	Sun, 14 Jul 2024 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UOxJtaa3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BE426296;
+	Sun, 14 Jul 2024 14:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720967450; cv=none; b=Tl18o/6/n9tjAHI6cFe6VIqFtrPCgeHpCVCnnec2t7wXuhy58Pdb0fkeIMTIbxNqSN5hndY7NDvj+ogk4Mbk/24uarCXa3UxL55mw5wvk2DnFhYulH2oVqui3zqNmsNgHAtXcjOZCohaG7bsZL9jNpUaLrVhoiJEO0il8slezSk=
+	t=1720967640; cv=none; b=uI09LmuitEJgqjaWlMNc8spXgjs/kGXslOUWenEneNxlfRvlpQhmr76LYByhCauh3Cg3xQSSMEK0kUDO/EceVJmg5/qcuGOaawCl8uIfDtq4VmNDi0f2Lx/rque7SF4u0e8tJRAuGinERelHeWcPrdEPIvI+KVB9Mzbml/ywguc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720967450; c=relaxed/simple;
-	bh=gl8S9FjnxRKPrktUFxcD97UhkZMArlO+FxoS7L5UV3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EPbn1NJqco1j+pvZYzzRvf9lP/rVKZveX0CU+MFY7L2OM3n8aDFvr56wZDncHzPrYnH0dP69yxNNZk4u+8WclW0nG3/9VDAhfCc6kjzEzV6ppTFf2q5s6Rnpsb9AKKtZy0FU3GfKDH5AYj3y52yrBb9fLC3ClYMQngbfpqlIJhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EucCSd+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FB1C116B1;
-	Sun, 14 Jul 2024 14:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720967449;
-	bh=gl8S9FjnxRKPrktUFxcD97UhkZMArlO+FxoS7L5UV3g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EucCSd+/8gq5Fmh3ESZSvq/uxlZPp3RVmlNXroU7q1yUZrF6TNEjBHztl3IWTOfrn
-	 w3gz1rP7vK89xXG/wKBG+AwzWPbb1cUe+JivhJFg7/L5OhDaB6O2x0dkk44G7bDTqh
-	 D2J0LITdLJoKvuNLhFExS80zZ0vQvA9E//+0kOsOivXhtcbrP1MbBlwN3zTUmSPFJ5
-	 aGOHSm57Y23/oakJKbqVxAE4BtmUsqGADeYCFgZYPsXlM77RqHbVTD0De/mbH/bHFg
-	 ElOhhB++eCWaDs5mNVW3tvS+TzvTPKhiTz7Jf9MjY1BII3HilyaiYwiFw9W6TFe+AZ
-	 5GeaX+yUfvyxA==
-Date: Sun, 14 Jul 2024 07:30:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, apw@canonical.com, joe@perches.com,
- dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
- akpm@linux-foundation.org, willemb@google.com, edumazet@google.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Wojciech Drewek
- <wojciech.drewek@intel.com>, Simon Horman <horms@kernel.org>
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next v2 6/6] ice: devlink health:
- dump also skb on Tx hang
-Message-ID: <20240714073048.77cd4b3f@kernel.org>
-In-Reply-To: <20240712093251.18683-7-mateusz.polchlopek@intel.com>
-References: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
-	<20240712093251.18683-7-mateusz.polchlopek@intel.com>
+	s=arc-20240116; t=1720967640; c=relaxed/simple;
+	bh=Q0ggrqd6JrWRP4LMNYR10Qj0ncy8JE9oFaflcnlr4K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qt1JeLTty8ycfvIosZxFnPZYqPrPBxj14cekYh46FqoyUTxDCX9+A/7kjgAu1j3te84sNAjey9LYGsiasuFz7u18dtxmreWGm8G5uyMG3p87bXQiavUG7ePFAqCqJJt45h0Lwkx74WpiBjcyf/Iy6lrwOruVNWRuiUWpGI3FpmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UOxJtaa3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7D4E520B7165;
+	Sun, 14 Jul 2024 07:33:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D4E520B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720967632;
+	bh=583exBE87er5wi2OkjlShNrw0hTE/HfFZ3UGUoxDu4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UOxJtaa3GSi5Wqs/8u7Ilei583xycFz8UEAppGArByVT9+2HpOtDEfh15LJpx1nUs
+	 sPjk1HaYUY8zOlHrIIa/YQJskxjgJ3tK1s7qZW7NW3wTaZAztDehV0rp4AKClN2F72
+	 bpgVv8QpuCdmUag7UlxGHNwS+fS6Hrg/vezm2WXw=
+Message-ID: <d85b210a-6388-41a3-9c97-35eee0603c99@linux.microsoft.com>
+Date: Sun, 14 Jul 2024 07:33:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the failed
+ core dumps
+To: Kees Cook <kees@kernel.org>
+Cc: akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
+ bigeasy@linutronix.de, brauner@kernel.org, ebiederm@xmission.com,
+ jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
+ tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
+ apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
+ sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240712215223.605363-1-romank@linux.microsoft.com>
+ <20240712215223.605363-2-romank@linux.microsoft.com>
+ <202407130840.67879B31@keescook>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <202407130840.67879B31@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 12 Jul 2024 05:32:51 -0400 Mateusz Polchlopek wrote:
-> +	buf_pos =3D ice_emit_to_buf(buf, buf_size, buf_pos,
-> +		"skb len=3D%u headroom=3D%u headlen=3D%u tailroom=3D%u\n"
-> +		"mac=3D(%d,%d) net=3D(%d,%d) trans=3D%d\n"
-> +		"shinfo(txflags=3D%u nr_frags=3D%u gso(size=3D%hu type=3D%u segs=3D%hu=
-))\n"
-> +		"csum(0x%x ip_summed=3D%u complete_sw=3D%u valid=3D%u level=3D%u)\n"
-> +		"hash(0x%x sw=3D%u l4=3D%u) proto=3D0x%04x pkttype=3D%u iif=3D%d\n",
-> +		skb->len, headroom, skb_headlen(skb), tailroom,
-> +		has_mac ? skb->mac_header : -1,
-> +		has_mac ? skb_mac_header_len(skb) : -1,
-> +		skb->network_header,
-> +		has_trans ? skb_network_header_len(skb) : -1,
-> +		has_trans ? skb->transport_header : -1,
-> +		sh->tx_flags, sh->nr_frags,
-> +		sh->gso_size, sh->gso_type, sh->gso_segs,
-> +		skb->csum, skb->ip_summed, skb->csum_complete_sw,
-> +		skb->csum_valid, skb->csum_level,
-> +		skb->hash, skb->sw_hash, skb->l4_hash,
-> +		ntohs(skb->protocol), skb->pkt_type, skb->skb_iif);
 
-Make it a generic helper in devlink?
 
-> +	if (dev)
-> +		buf_pos =3D ice_emit_to_buf(buf, buf_size, buf_pos,
-> +					  "dev name=3D%s feat=3D%pNF\n", dev->name,
-> +					  &dev->features);
-> +	if (sk)
-> +		buf_pos =3D ice_emit_to_buf(buf, buf_size, buf_pos,
-> +					  "sk family=3D%hu type=3D%u proto=3D%u\n",
-> +					  sk->sk_family, sk->sk_type,
-> +					  sk->sk_protocol);
-> +
-> +	if (headroom)
-> +		buf_pos =3D ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-> +					      "skb headroom: ", skb->head,
-> +					      headroom);
-> +
-> +	seg_len =3D min_t(int, skb_headlen(skb), len);
-> +	if (seg_len)
-> +		buf_pos =3D ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-> +					      "skb linear:   ", skb->data,
-> +					      seg_len);
-> +	len -=3D seg_len;
-> +
-> +	if (tailroom)
-> +		buf_pos =3D ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-> +					      "skb tailroom: ",
-> +					      skb_tail_pointer(skb), tailroom);
+On 7/13/2024 9:31 AM, Kees Cook wrote:
+> On Fri, Jul 12, 2024 at 02:50:56PM -0700, Roman Kisel wrote:
+>> Missing, failed, or corrupted core dumps might impede crash
+>> investigations. To improve reliability of that process and consequently
+>> the programs themselves, one needs to trace the path from producing
+>> a core dumpfile to analyzing it. That path starts from the core dump file
+>> written to the disk by the kernel or to the standard input of a user
+>> mode helper program to which the kernel streams the coredump contents.
+>> There are cases where the kernel will interrupt writing the core out or
+>> produce a truncated/not-well-formed core dump without leaving a note.
+>>
+>> Add logging for the core dump collection failure paths to be able to reason
+>> what has gone wrong when the core dump is malformed or missing.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   fs/binfmt_elf.c          |  60 ++++++++++++++++-----
+>>   fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
+>>   include/linux/coredump.h |   8 ++-
+>>   kernel/signal.c          |  22 +++++++-
+>>   4 files changed, 165 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>> index a43897b03ce9..cfe84b9436af 100644
+>> --- a/fs/binfmt_elf.c
+>> +++ b/fs/binfmt_elf.c
+>> @@ -1994,8 +1994,11 @@ static int elf_core_dump(struct coredump_params *cprm)
+>>   	 * Collect all the non-memory information about the process for the
+>>   	 * notes.  This also sets up the file header.
+>>   	 */
+>> -	if (!fill_note_info(&elf, e_phnum, &info, cprm))
+>> +	if (!fill_note_info(&elf, e_phnum, &info, cprm)) {
+>> +		pr_err_ratelimited("Error collecting note info, core dump of %s(PID %d) failed\n",
+>> +			current->comm, current->pid);
+> 
+> A couple things come to mind for me as I scanned through this:
+> 
+> - Do we want to report pid or tgid?
+> - Do we want to report the global value or the current pid namespace
+>    mapping?
+> 
+> Because I notice that the existing code:
+> 
+>>   			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
+>>   			       task_tgid_vnr(current), current->comm);
+> 
+> Is reporting tgid for current's pid namespace. We should be consistent.
+> 
+Thanks, will update the code to be consistent with the existing logging.
 
-The printing on tailroom, headroom and frag data seems a bit much.
-I guess you're only printing the head SKB so it may be fine. But
-I don't think it's useful. The device will probably only care about
-the contents of the headers, for other parts only the metadata matters.
-No strong preference tho.
+> I think all of this might need cleaning up first before adding new
+> reports. We should consolidate the reporting into a single function so
+> this is easier to extend in the future. Right now the proposed patch is
+> hand-building the report, and putting pid/comm in different places (at
+> the end, at the beginning, with/without "of", etc), which is really just
+> boilerplate repetition.
+100% agreed.
 
-> +	for (i =3D 0; len && i < skb_shinfo(skb)->nr_frags; i++) {
-> +		skb_frag_t *frag =3D &skb_shinfo(skb)->frags[i];
-> +		u32 p_off, p_len, copied;
-> +		struct page *p;
-> +		u8 *vaddr;
-> +
-> +		skb_frag_foreach_page(frag, skb_frag_off(frag),
-> +				      skb_frag_size(frag), p, p_off, p_len,
-> +				      copied) {
-> +			seg_len =3D min_t(int, p_len, len);
-> +			vaddr =3D kmap_local_page(p);
-> +			buf_pos =3D ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-> +						      "skb frag:     ",
-> +						      vaddr + p_off, seg_len);
-> +			kunmap_local(vaddr);
-> +			len -=3D seg_len;
-> +
-> +			if (!len || buf_pos =3D=3D buf_size)
-> +				break;
-> +		}
-> +	}
-> +
-> +	if (skb_has_frag_list(skb)) {
-> +		buf_pos =3D ice_emit_to_buf(buf, buf_size, buf_pos,
-> +					  "skb fraglist:\n");
-> +		skb_walk_frags(skb, list_skb) {
-> +			buf_pos =3D ice_skb_dump_buf(buf, buf_size, buf_pos,
-> +						   list_skb);
-> +
-> +			if (buf_pos =3D=3D buf_size)
-> +				break;
-> +		}
-> +	}
+> 
+> How about creating:
+> 
+> static void coredump_report_failure(const char *msg)
+> {
+> 	char comm[TASK_COMM_LEN];
+> 
+> 	task_get_comm(current, comm);
+> 
+> 	pr_warn_ratelimited("coredump: %d(%*pE): %s\n",
+> 			    task_tgid_vnr(current), strlen(comm), comm, msg);
+> }
+> 
+> Then in a new first patch, convert all the existing stuff:
+> 
+> 	printk(KERN_WARNING ...)
+> 	pr_info(...)
+> 	etc
+> 
+> Since even the existing warnings are inconsistent and don't escape
+> newlines, etc. :)
+> 
+> Then in patch 2 use this to add the new warnings?
+Absolutely love that! Couldn't possibly appreciate your help more :)
 
-You support transmitting skbs with fraglist? =F0=9F=A4=A8=EF=B8=8F
+> 
+
+-- 
+Thank you,
+Roman
 
