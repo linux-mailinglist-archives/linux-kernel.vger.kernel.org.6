@@ -1,92 +1,120 @@
-Return-Path: <linux-kernel+bounces-251859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA8E930AC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E47930AC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA1F2811AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC706281205
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9837413B586;
-	Sun, 14 Jul 2024 16:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3D013B58A;
+	Sun, 14 Jul 2024 16:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6Cn7zjU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZtjnDX1W"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97617F;
-	Sun, 14 Jul 2024 16:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC2313A3F0
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 16:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720974106; cv=none; b=uBal+RbMcuTPxBIEpGwJ/nZIN/aRFYwASpteXsSkz7PMZ3xEHTa1LD13Oc4Iai+tYSM6yObYNo3ADq1J85V8BbcT2GGRpxLNff3KnP7/46V8Dksme2fEQwhafU2c7xIC9dYScTX55SmEbDNDKpMEpFrlXLmg2D2knpIApRt49hA=
+	t=1720974209; cv=none; b=VeaeHQhk97bBaCuouauZbILl0Law4skZeVivR8xc1PpNS32X6x5hG0lNf5njJ4SWG7FqhitQXetpAtvJ8+kNkfpKCrWpQBwR7Mc2BK+bfO3Wfc+dSRjhr0+cRH6UPvrXOK4nkVG6qONLCJwNcA/iKA2E2kdSb902JIDTiZSorF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720974106; c=relaxed/simple;
-	bh=29KduC3p2qvfFgWlffHXfswu7lsTeUXhlp7NOXxCWEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ugZ8jidY7iUINlUrxXOy2mNqUcmUhC2Ywu85n+YnORt+HmcAbN7t3eWDDzsYNo6k4B5S7eelF21mCI29/cD5iMPDQX55GOzZG7fWztGNP+qIMjDdVf2C8Zdtc9TsEiOMRHmXWjVY2oOYGHAGeuGQlDeGjwtDIbkxy2gZM4fnNNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6Cn7zjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9BDC116B1;
-	Sun, 14 Jul 2024 16:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720974106;
-	bh=29KduC3p2qvfFgWlffHXfswu7lsTeUXhlp7NOXxCWEM=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=p6Cn7zjUGKbw5N2rKCLNxJt6FwTGvrl0iG8uSK5b6SSxAAWYml4SqD6asew949Csu
-	 iHrqNp9XHi4BPYpsy0oZ24IqVVCW/9Wu+AaKrsKvO2qXcIiLr7SC35h5Z5xHmfXIxW
-	 f9f8ej39n1SWYWovjW6fbU64Ii1kg7tYkxrQgZL9xzQQVGxx9iGWfwNU/4AdqQyMzA
-	 i54bgNM8ufl9WPC6jN95QQ0h8w8wzdw+AWTnjNwwwLB8rp+glKv5A2S6Yw7CKJQEvx
-	 FARa6sCUBZI33oSFBg754PWzzPVu0ya7pd8b9UzexV0wlUo/8hpO3b/IWqqIdZG8RE
-	 vf5tWK6G2JRZw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E4AD7CE0B34; Sun, 14 Jul 2024 09:21:45 -0700 (PDT)
-Date: Sun, 14 Jul 2024 09:21:45 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel-team@meta.com,
-	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
-	peterz@infradead.org, arnd@arndb.de, broonie@kernel.org,
-	naresh.kamboju@linaro.org, nathan@kernel.org,
-	linus.walleij@linaro.org, rmk+kernel@armlinux.org.uk, afd@ti.com,
-	eric.devolder@oracle.com, robh@kernel.org, mark.rutland@arm.com
-Subject: [GIT PULL] Emulated one-byte cmpxchg() for ARM
-Message-ID: <52c8725d-7fdd-4fd5-a773-9a347a8837b2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1720974209; c=relaxed/simple;
+	bh=2oc17bxN5yneFOqoMD5SfbFq6+mOSKm3ebyqyV12JkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gMohgPB+cHgzJcYxp7DDhT2p5AuaSlS0ATA+1ugouD4x59xtEH3Ox9l28q8810KNyBHX/L2qwUXJfiCy1mvwjyPnOzdsXcE8L5VpNvWVOqkG4Zk1hcOGEKuET2CUAYNVgQvxBXFWjLjKIQj6CXwdkPnoz7FlW2oAmv99A+oucLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZtjnDX1W; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso4811175e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1720974206; x=1721579006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MFB/7l3RP1NdCHl9DVGleC+3i6+uY6B4g+LS+1Kxs4w=;
+        b=ZtjnDX1Wzf3YfmiGS6rzZxu3drWq/f0gWpW3TTu/54v7YoOt+qB7VNjEmfLRFOfT5x
+         uCST6VAq5AopL7bsgyNJR9uXr5nQAuA12nMg/WjQgKGY8Yv2ovF7EUZrcsXtIwraIgDa
+         o6nuRFUK5q/NjBdnOBlGfA3QqxRXLAX9ewZWY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720974206; x=1721579006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MFB/7l3RP1NdCHl9DVGleC+3i6+uY6B4g+LS+1Kxs4w=;
+        b=HV5/h6uzrKQt+TFwxcFpFj4fE0KIUZo82d1EWUVtZVMGSAs7F4oSk/vk9cfygobznk
+         pKM7s6lw9gTIKAHxAn/SJfBSS3SRLoHgdUd+v5p9mpYrItXBmsnHTLqZjVKI/61hEO88
+         EdAdFK2xaUivwzu18X/J0yinEcpNl4fM344DScaj+FRpeBuMH1ACmO+D8vYNNZx8SrcE
+         CMfoTDkv7MNaFy5utXmfNPLW2gEEpBhlHh8pv1b9SGbqJD31aOCEpP88xwuU8rdQg7pc
+         utfTV8QoYDqUKwzvGatxGUF5hIcFXV5U4AKLuEOwU96iEBoiKmFuriXwcS8Ps1B4FqXO
+         9w+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVMptIMDkrgQ8Gv5F1thrFpPHBBSNYqtGDllbVtmd0YzsVCcI3Qvy2kPQm8UM6Au9IB3KnGNrdWvAjwJRJj2vZFRJBTy0Pw6KKUQ8ES
+X-Gm-Message-State: AOJu0YwLN+aeR6Mj6PkNjm25pXJOPFTikH0AiO3135aZ8ug1R9UlAmkH
+	Zhd5AmJltoM3US1Y/yukc1Ky8tILfcJEkUVWXCwXtbiXqlwcqi7xsxt9MO2WLOdjhKiYGczcIIZ
+	qcEyw6k/Z25eC4cms52iuKyzqqDcb7tzCytNH
+X-Google-Smtp-Source: AGHT+IGGDxdQpMZ3cXJMhqls7l9eRHoLz1SqwrfxhfrJi2Y20XlRfUb3+vsWUPNkvnrnaEgNTKFmsTZfQl6EAlnDcLk=
+X-Received: by 2002:a05:6512:1110:b0:52c:d2ab:693a with SMTP id
+ 2adb3069b0e04-52eb99d28c5mr15290317e87.54.1720974206121; Sun, 14 Jul 2024
+ 09:23:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <1720700179-22839-1-git-send-email-ajay.kaher@broadcom.com>
+ <1720700179-22839-2-git-send-email-ajay.kaher@broadcom.com> <20240711214936.GH27299@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240711214936.GH27299@noisy.programming.kicks-ass.net>
+From: Ajay Kaher <ajay.kaher@broadcom.com>
+Date: Sun, 14 Jul 2024 21:53:10 +0530
+Message-ID: <CAD2QZ9YQ6n_6J+bq+wNxS5bGuAOsLkSiicigan84qaD+xrjS3Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] perf/core: add logic to collect off-cpu sample
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, rostedt@goodmis.org, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, yangjihong1@huawei.com, zegao2021@gmail.com, 
+	leo.yan@linux.dev, asmadeus@codewreck.org, siyanteng@loongson.cn, 
+	sunhaiyong@loongson.cn, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alexey.makhalov@broadcom.com, 
+	vasavi.sirnapalli@broadcom.com, 
+	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>, nadav.amit@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Linux,
+On Fri, Jul 12, 2024 at 3:19=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Thu, Jul 11, 2024 at 05:46:17PM +0530, Ajay Kaher wrote:
+> > following logics has been added to collect the off-cpu sample:
+> >
+> > - 'task_pt_regs(current)' has been used to capture registers
+> >   status off-cpu sample.
+> >
+> > - off-cpu time represent the time period for which the target
+> >   process not occupying the cpu cycles. And calculate as:
+> >
+> >   off-cpu time =3D swap-in time - swap-out time
+> >
+>
+> I have absolutely no idea what you're trying to do :/ The above does not
+> constitute a comprehensible Changelog.
 
-Please pull the following cmpxchg()-related changes:
+Sorry Peter, it=E2=80=99s sched-in/out (not swap-in/out).
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/cmpxchg.2024.07.12a
-  # HEAD: f1b5644862c5b594f48ad01d7880a96b95d83a2f: ARM: Emulate one-byte cmpxchg (2024-07-04 13:32:41 -0700)
+'Perf record' captures on-cpu samples at frequency which is specified by
+the user ( i.e. time period to collect sample is NSEC_PER_SEC / freq).
 
-----------------------------------------------------------------
-ARM: Provide one-byte cmpxchg emulation
+This patch is to collect the off_cpu sample and time period of off_cpu
+sample is calculated based upon the time when target task was sched_out
+to sched_in, as:
 
-This series provides emulated one-byte cmpxchg() support for ARM
-using the cmpxchg_emu_u8() function that uses a four-byte cmpxchg()
-to emulate the one-byte variant.
+ off-cpu time period =3D sched_in time - sched-out time
 
-Similar patches for emulation of one-byte cmpxchg() for arc, sh, and
-xtensa have not yet received maintainer acks, so they are slated for
-the v6.12 merge window.
-
-----------------------------------------------------------------
-Paul E. McKenney (1):
-      ARM: Emulate one-byte cmpxchg
-
- arch/arm/Kconfig               | 1 +
- arch/arm/include/asm/cmpxchg.h | 7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+-Ajay
 
