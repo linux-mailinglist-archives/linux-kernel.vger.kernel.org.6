@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-251791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1019309E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:14:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A329309E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D449281B8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:14:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D90E2818A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C67273463;
-	Sun, 14 Jul 2024 12:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b="YWKv6Mtr"
-Received: from mail.envs.net (mail.envs.net [5.199.136.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6426173458;
+	Sun, 14 Jul 2024 12:21:31 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4911D8F5C;
-	Sun, 14 Jul 2024 12:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.199.136.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100B2AD18;
+	Sun, 14 Jul 2024 12:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720959237; cv=none; b=hA8PwBKIT+GlrPXHDHHnYSeywunK/YJXKq+nY37oQm7XkPPcp9yCVg5vFhbY9XuO4Ecx1ZeeoH2/IEVq0SKi1zsCRit8TXDthqkMf0EbQvsvFC2pqyUWd0YugFH3s2hGnJchak3QHs13LaWZlsyMI8eHMnYdVnAqUd3JDRmf29Y=
+	t=1720959691; cv=none; b=Jwbf/dUwHFi1g5gcsyPQLKHVcvpA0AeBVDbEytHCP2ZmQ0HJ/yq99QqFGXx5wqfyTKPXV161IS/5JB4E17N6ldCD9aNPGxlP0MbtDox26iPA7Nznd0lSvF1RpY/ZrZC6bcWRSTVJWkB02Dso1MliSgvrvQ64y1njjd5V/0i/Qcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720959237; c=relaxed/simple;
-	bh=gAoILYv37xkB5P91uGQmdeyt0K2wQQvTn3nam4BAk54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZee5tnZVcGQBDu567kKrw8hPWUqWiRg9C0TC58BV6dY80hqkXMui1974bZMHhpTj+qdyy6wJ6xM/iv8D3uVnOJi/oqMK9ysmT5XXcrnxC+hwF4BC7aADkak2KIkgVeNtTZN51eIRYzMGuJqoUaJfQWKJEMkb4uiIBmXzgHIFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net; spf=pass smtp.mailfrom=envs.net; dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b=YWKv6Mtr; arc=none smtp.client-ip=5.199.136.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=envs.net
-Received: from localhost (mail.envs.net [127.0.0.1])
-	by mail.envs.net (Postfix) with ESMTP id 42C4038A399D;
-	Sun, 14 Jul 2024 12:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=envs.net; s=modoboa;
-	t=1720959232; bh=gAoILYv37xkB5P91uGQmdeyt0K2wQQvTn3nam4BAk54=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YWKv6Mtr6HpRcKQbX922yleEE6km7IxjhqiYboH8P/kASFz1cXbjvIMTkQbazsWs1
-	 oPM54b8eTIzxvy5NDhiEk33O0ZMKR6KniSSb/knNc4EXongbqa93x1swoaRumYLzrr
-	 t6UUVjWqgkf+A1niskGt6Ms3Vt0ATuZzPM0EItDCttRPj9WGxrbWlpcs07XUBt49Zb
-	 pmze7bJfXINVZmUg56dJB3/bFxtCkp2BS+2hsIvy3T2afItMejuoxLrQ0JhCHahCpq
-	 FdxC/AivuJWLee+JlWphV3lVk0hIsjWtFSYennQtttJd1iUdvc9Mce/hGBf9OQAjTX
-	 xmjOYl6R3knzZeLiUln3zX262S/F2kwVfg4xt034dvoCxsy0F4w2NRMgTxDH1+XdyF
-	 izejiMc1lIxk67tFFsCWL0pe1vMmS2nLmsqFV+PScnCHHc9+ztVj7l4QZYhP60IHQS
-	 1yBHuO1rer+MbOAiaxVQlvvcfH3bpapCMoAJfiNjPBJwUb2WmHPZRkwPLqJJW0vY7a
-	 BS2clvoeza5tH7T8P2RpY4LwzNgWhut4/EhNkB+HD7jSNJvCuQwv/IFYjKDmUgTrG/
-	 LSotwgfKXXMZtTqXh/ygoTpS6lZEEmfLepet0VkHLd8Jtvx37yYfy8Qhb3mkaCFh1Q
-	 vQpBC9nvU7w4xCXZFGpbeuXc=
-X-Virus-Scanned: Debian amavisd-new at mail.envs.net
-Received: from mail.envs.net ([127.0.0.1])
-	by localhost (mail.envs.net [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FBxerkmRPHKp; Sun, 14 Jul 2024 12:13:10 +0000 (UTC)
-Received: from xtex (unknown [120.230.214.120])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.envs.net (Postfix) with ESMTPSA;
-	Sun, 14 Jul 2024 12:13:10 +0000 (UTC)
-From: xtex <xtex@envs.net>
-To: Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Dinh Nguyen <dinguyen@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Cc: x86@kernel.org, linux-kbuild@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- sparclinux@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] kbuild: Create INSTALL_PATH directory if it does not exist
-Date: Sun, 14 Jul 2024 20:12:58 +0800
-Message-ID: <2146419.9o76ZdvQCi@xtex>
-In-Reply-To: <20240714085751.176357-3-xtex@envs.net>
-References:
- <20240714085751.176357-1-xtex@envs.net>
- <20240714085751.176357-3-xtex@envs.net>
+	s=arc-20240116; t=1720959691; c=relaxed/simple;
+	bh=YRHv5fsDJGyctfKksAdnR2UkCnhiBMAz5R3uCj7+QQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FzbOgxDJN79lTLwKt42mVYDxnvYqXtvFcKJ+eHAiUa6+MSR8RGzH9aYAdsmvKSUNiQbdiEse3tK8BvWnc95vTVUy4lu7oGn0ZDfxDN2AbqG+AqJOwDKjhWTAPC55iREspSMkcAJUmvxMUE8KTPsf3en2BrWpWoFFS8UwbSKrrwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowABHaCUOwZNmidK1FQ--.9182S2;
+	Sun, 14 Jul 2024 20:14:15 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: fbarrat@linux.ibm.com,
+	ajd@linux.ibm.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	imunsie@au1.ibm.com,
+	manoj@linux.vnet.ibm.com,
+	mpe@ellerman.id.au,
+	clombard@linux.vnet.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] cxl: Fix possible null pointer dereference in read_handle()
+Date: Sun, 14 Jul 2024 20:14:04 +0800
+Message-Id: <20240714121404.1385892-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABHaCUOwZNmidK1FQ--.9182S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ury7CF4DWFWDGFWDWFWxZwb_yoW8JFyfpr
+	WxJryUCrWDJw4jya1DX3y8AFyY9as5KFWagFy8u34fZws8XF18X345ua40va4qy348tFyS
+	qF4Dtan0gay8A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbHa0DUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Reviewed-by: Nicolas Schier <nicolas@jasle.eu>
-Link: https://lore.kernel.org/linux-riscv/Zcfp8fn7o74K08g0@fjasle.eu/
+In read_handle(), of_get_address() may return NULL which is later
+dereferenced. Fix this by adding NULL check.
 
+Based on our customized static analysis tool, extract vulnerability
+features[1], then match similar vulnerability features in this function.
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit
+/?id=2d9adecc88ab678785b581ab021f039372c324cb
+
+Cc: stable@vger.kernel.org
+Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v3:
+- fixed up the changelog text as suggestions.
+Changes in v2:
+- added an explanation of how the potential vulnerability was discovered,
+but not meet the description specification requirements.
+---
+ drivers/misc/cxl/of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+index bcc005dff1c0..d8dbb3723951 100644
+--- a/drivers/misc/cxl/of.c
++++ b/drivers/misc/cxl/of.c
+@@ -58,7 +58,7 @@ static int read_handle(struct device_node *np, u64 *handle)
+ 
+ 	/* Get address and size of the node */
+ 	prop = of_get_address(np, 0, &size, NULL);
+-	if (size)
++	if (!prop || size)
+ 		return -EINVAL;
+ 
+ 	/* Helper to read a big number; size is in cells (not bytes) */
+-- 
+2.25.1
 
 
