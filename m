@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-251889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E990930B27
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:05:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5CF930B29
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6431F212BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2491C208E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D48C13B7AA;
-	Sun, 14 Jul 2024 18:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431DC13C8E3;
+	Sun, 14 Jul 2024 18:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+bjXC2W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vPPm29IL"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F672E3E4;
-	Sun, 14 Jul 2024 18:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCADF2E3E4;
+	Sun, 14 Jul 2024 18:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720980287; cv=none; b=PllCHtKXm0kf/UFb/TZ1wQNMBsvvuPUL1hKSZNWevlMiFIIBBei9zozPQakJwDQmMShy1dFdJd+aXlN3PClwdNqM48wxforoKDpxinpIYiDn4QcVZIN989cYWEVl7vCL2jjgRDJntbGk9F4OgGMLUqnCABf1RweXXXjBMvBC/nU=
+	t=1720980418; cv=none; b=gUBoVPZ4cLuuPD6RdQLLuSRNvqDOGvZO+t00WDD0TWMV6xyHIewI4gyEW2qOWUIrLnGOgtfyAJBkMOAM/JgdQT5iQBwCJOtOsY00c3aCS3r0Pn/JhfQce0avGLY1rnQnC8EceIBl3oypcLipZ/ojSaTQ4Nbgg/TfCTYrnqfCsx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720980287; c=relaxed/simple;
-	bh=9RxT7dyfYpi2MD4Eb3n7xs8RFGVVX/IklHlE/8jn2qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHO0YXrvXipcyH8ac1akUMpXGEZu0DQsp7p6fWxRPO2TcnuAWFGlQc8fbhb9UAGTGlFIIPi8ly48ZodBQJDjwLwO5PYO9OmBi4nuZ9/qLU806moGnQD9GcCUa72wBYbxRA+W6rzyO/svi4CrkZZwvpj1JqMBErbapNR1fzPUvZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+bjXC2W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36139C116B1;
-	Sun, 14 Jul 2024 18:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720980287;
-	bh=9RxT7dyfYpi2MD4Eb3n7xs8RFGVVX/IklHlE/8jn2qc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K+bjXC2W8h9I0BHHT/jg23pzt0GgLkuXt7bxNa4IVzQ4WGUOqdlGdyYhaiwVcQBWy
-	 7epFXeSpKfcGqF1oOwFy6+gNGnyXg/1gjOsjbRt9WstykdNLG0hA1nQbChUF3Za+YN
-	 e0akTbxyYSwCu/183EzQpCBVxAcq26nFy2fUzhUD6Yx6EPhOvY4wYW7m1/+hIsjtZL
-	 /xd/stE12t4qLG2P61d4zQsXXYZ79WRFEHEVS9ye1arXFkHk/a/GIOxCTVDDE43x+1
-	 WEw4XSsaOQK3CliO9yD8MuRQ95D3dp03pdALqTZ3gqECPuQRqz3ZowTpx0HgJosKt4
-	 wKOZ6t2Aqf/SA==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea2ce7abaso6239497e87.0;
-        Sun, 14 Jul 2024 11:04:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmuxj8jH0CCYTGkDhHOKloTUH74p1m2ETyKLrnRc6p91DR+Vdud00FM7jW7oFkHl4OvehUzVfepMZCCtyrW0bTzazkfEmR9L/IfDfDYHl9PKgDPLFE2QMKsfbAsJbA1gzVcrI2AMz+FjRU
-X-Gm-Message-State: AOJu0YynC9zEUZDyG7GOyjvgRKfOs4/Jxc1jEQypa+kxz+KPwaBXRL1W
-	BKHUcK9vEU/H4WuYUBh+kt5S8/gvG06XryubXN7EjRbrl+t2G3kMoyeU6OSD0Zk8sZovXRAH8xU
-	xWsHkft0kMuPsh5Q4iCdNYUT7srE=
-X-Google-Smtp-Source: AGHT+IHvTIEIq63jIFfaQjh4ZNeh8Ywh37Hyz0Jvf+baBC1/OhklzsOIP/x+7lTgd3q9QrwLEzJ2oHThDSMNYvj80PQ=
-X-Received: by 2002:a05:6512:3190:b0:52e:7542:f469 with SMTP id
- 2adb3069b0e04-52eb9759439mr15190588e87.0.1720980285890; Sun, 14 Jul 2024
- 11:04:45 -0700 (PDT)
+	s=arc-20240116; t=1720980418; c=relaxed/simple;
+	bh=BaIHPdkkfgTH6AbFnNVZncHWlNIRtXr0x9itVWG5GBM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Zyu29MaWse2hzFj+5vI6QZaYhzBLfhSQh5eRKRu8m6K4wIIv3BRWCUzeA2f49XsU4id9DqCfIYk3MbUi/a8cvbjKrLaTSgNy3zVuR6ZdC19f11xnZRs3JBvgGXsLJEKBHNnWqhe45YoKBpCkMKfZaZ1q+a74+ZpBM14F9ZGGVHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vPPm29IL; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720980383; x=1721585183; i=markus.elfring@web.de;
+	bh=IdpJg9NKmezJIapsYz2o+5Fvqpz9qETaAmE4wLDqsiA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vPPm29ILUPuLxEqBV5qC+6pjXBkH02YFzPaFPb17ox5SruYU4GAuZQh2nTn2rTzH
+	 T4XJfhj68TufQFbt7I+VXHzhR/Jcf63vRxW4oTvLJ6p2sObh+j7ZDh81w7JktoFzy
+	 4YKZO8ZwoiwLSwXZCJSx8+vhsoBLKrzd/kv6CD/urnc8Y1VX91ATKN7lbR3aVWg1D
+	 GaM51qHHeuAKeM7QcwJsYI96LB9tLmLu5FR+SCuatIKf/uxuQtoIIwhaWm2TQtegg
+	 raco9ioV4dD+P1lGVxJA+rYeA1Z78MOKc0WGr7Bsfwo13V/Hx//ofAkePpJJsyQj7
+	 1wKgpiRrEM+CNoolRw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3US-1sBfFn3ENE-00sEqx; Sun, 14
+ Jul 2024 20:06:23 +0200
+Message-ID: <13c34802-c4f5-4e21-b675-4422680a7a66@web.de>
+Date: Sun, 14 Jul 2024 20:06:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711164935.1369686-1-jtornosm@redhat.com>
-In-Reply-To: <20240711164935.1369686-1-jtornosm@redhat.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 15 Jul 2024 03:04:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8WS80JmkF5_VhYoq-ENf0sSYx6upKvL4vTfM=u7tSbQ@mail.gmail.com>
-Message-ID: <CAK7LNAQ8WS80JmkF5_VhYoq-ENf0sSYx6upKvL4vTfM=u7tSbQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rpm-pkg: avoid the warnings with dtb's listed twice
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: nathan@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] mm/slub: Use seq_putc() in slab_debugfs_show()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rqcv4mAWZlITSl40Y4+8GTzosv7+akT6BsQ4hgg7M44twu4+W7z
+ ztPo8Sw1KHw8QjsS0z1TrEFaS+oQ9UQa3Knt9m7bOxe4lwR97nslQlXF/rsgGATj8yt0I5D
+ XxK/fmgJw4Kp2r/OrHmTHVRr8HC6pc96EXrXy7UVm6oc1FaEdGjIIvuIxhJS/y+zJhq+rSn
+ ZOvM75SIfJm6k8pn+8urw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/n8ZbvbyyN4=;r8emOt9AUcTNJeXBsRhd/FjVZ3l
+ Fg226Z/bBR3YRHaABAFmTcTUMRgh6g/AQYTKyaYNdMbsOPcAdZ+Zst0jVi5CDPcGzJrPYgpSa
+ N8VyWSwYgCmApRq8COISQJFOdqy9axJo/vUgxBRwsUApp7MC4MIxtBln1rph7jBFQWrhKWe7F
+ a4yR3UInOl6hCEGcUm1mmhrCqmmz8yteBv8Wja3mJGSjuYL3lshcnH7AioZ5QremFkrKmgRbH
+ qGSvnXlSxD4U27zSUltY5lQYOEkgHv+WXNTKsJ6s/gtJ0RfolS+BIsTxC7JzKLdiNWx5Z+rhB
+ LZxsCJQNPirXNy43KGK42dSLsCnLiA/Z8tggqMEOzS27ijseb+gsS7zlfW9H/fqA1lIZ2aF33
+ /di1geNfampkkPubniNmyN8jlVWwsrwN5zP/l8wdauVIH6Ow/gd6Lj/aIFXmKPYFJYpy3Y2kW
+ hmI+ldtOqDP8DXhKV1RBZ2jYlRiwqHQnh9MrAj3CI/1IC/f+oC5XBJAP5TYYMIMeZsZdPlQSJ
+ yqACCmkI+TcgaKblmE7PmwtgkMxFP7cPAiF6IE7MQ9apqD5B2KG944n549QMpslHFrAXjZkja
+ Wxb/miRe2MhLJaDJbQi5tpQAnS6jXa1jaT/q+GrmE4eVFbgPc705wj/pvtmjZrsBMag3DP04Z
+ vZ32HGug2nZx5b2K5tUciqQsR9lSb6V4CQD3PgAdF5B7RQLfvlFVtbPvE6AxsnCF6PDRfzQvO
+ RETmIjibUuXWEDzC0VAPtMWfoxvFxVAi0jsB8i6kZ6LDGqRWjC90e8NctPpb6aSHHLTmfBoqp
+ f15QQQtUzshTIPSrK64pcd8w==
 
-On Fri, Jul 12, 2024 at 1:49=E2=80=AFAM Jose Ignacio Tornos Martinez
-<jtornosm@redhat.com> wrote:
->
-> After 8d1001f7bdd0 (kbuild: rpm-pkg: fix build error with CONFIG_MODULES=
-=3Dn),
-> the following warning "warning: File listed twice: *.dtb" is appearing fo=
-r
-> every dtb file that is included.
-> The reason is that the commented commit already adds the folder
-> /lib/modules/%{KERNELRELEASE} in kernel.list file so the folder
-> /lib/modules/%{KERNELRELEASE}/dtb is no longer necessary, just remove it.
->
-> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 19:55:59 +0200
 
+Single line breaks should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-Applied to linux-kbuild.
-Thanks!
+This issue was transformed by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ mm/slub.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/mm/slub.c b/mm/slub.c
+index 3520acaf9afa..49f567968f81 100644
+=2D-- a/mm/slub.c
++++ b/mm/slub.c
+@@ -7112,13 +7112,13 @@ static int slab_debugfs_show(struct seq_file *seq,=
+ void *v)
+ 			handle =3D READ_ONCE(l->handle);
+ 			if (handle) {
+ 				nr_entries =3D stack_depot_fetch(handle, &entries);
+-				seq_puts(seq, "\n");
++				seq_putc(seq, '\n');
+ 				for (j =3D 0; j < nr_entries; j++)
+ 					seq_printf(seq, "        %pS\n", (void *)entries[j]);
+ 			}
+ 		}
+ #endif
+-		seq_puts(seq, "\n");
++		seq_putc(seq, '\n');
+ 	}
 
+ 	if (!idx && !t->count)
+=2D-
+2.45.2
 
---=20
-Best Regards
-Masahiro Yamada
 
