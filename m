@@ -1,125 +1,193 @@
-Return-Path: <linux-kernel+bounces-251890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5CF930B29
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E1930B2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2491C208E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926191F21306
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431DC13C8E3;
-	Sun, 14 Jul 2024 18:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3CC13C8F9;
+	Sun, 14 Jul 2024 18:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vPPm29IL"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWR3dPH6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCADF2E3E4;
-	Sun, 14 Jul 2024 18:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5A3BB23;
+	Sun, 14 Jul 2024 18:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720980418; cv=none; b=gUBoVPZ4cLuuPD6RdQLLuSRNvqDOGvZO+t00WDD0TWMV6xyHIewI4gyEW2qOWUIrLnGOgtfyAJBkMOAM/JgdQT5iQBwCJOtOsY00c3aCS3r0Pn/JhfQce0avGLY1rnQnC8EceIBl3oypcLipZ/ojSaTQ4Nbgg/TfCTYrnqfCsx0=
+	t=1720980591; cv=none; b=KkGllMG9yc2sLn4QSrQHpdBGWv9AaLFV/7mr+DkvIG2aKJu2tBkYTQ/4csa1ASu3BB3t04D3Sja9TeKw1i/OIuo0iBozBRLIAX+11zxwBmz/6MLEN/6qrgeinWZ1v+iu6Xc5WetnfSXRKe4jJYB9jTGf5CIOXIxBW9wEs2rXNnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720980418; c=relaxed/simple;
-	bh=BaIHPdkkfgTH6AbFnNVZncHWlNIRtXr0x9itVWG5GBM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Zyu29MaWse2hzFj+5vI6QZaYhzBLfhSQh5eRKRu8m6K4wIIv3BRWCUzeA2f49XsU4id9DqCfIYk3MbUi/a8cvbjKrLaTSgNy3zVuR6ZdC19f11xnZRs3JBvgGXsLJEKBHNnWqhe45YoKBpCkMKfZaZ1q+a74+ZpBM14F9ZGGVHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vPPm29IL; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720980383; x=1721585183; i=markus.elfring@web.de;
-	bh=IdpJg9NKmezJIapsYz2o+5Fvqpz9qETaAmE4wLDqsiA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vPPm29ILUPuLxEqBV5qC+6pjXBkH02YFzPaFPb17ox5SruYU4GAuZQh2nTn2rTzH
-	 T4XJfhj68TufQFbt7I+VXHzhR/Jcf63vRxW4oTvLJ6p2sObh+j7ZDh81w7JktoFzy
-	 4YKZO8ZwoiwLSwXZCJSx8+vhsoBLKrzd/kv6CD/urnc8Y1VX91ATKN7lbR3aVWg1D
-	 GaM51qHHeuAKeM7QcwJsYI96LB9tLmLu5FR+SCuatIKf/uxuQtoIIwhaWm2TQtegg
-	 raco9ioV4dD+P1lGVxJA+rYeA1Z78MOKc0WGr7Bsfwo13V/Hx//ofAkePpJJsyQj7
-	 1wKgpiRrEM+CNoolRw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3US-1sBfFn3ENE-00sEqx; Sun, 14
- Jul 2024 20:06:23 +0200
-Message-ID: <13c34802-c4f5-4e21-b675-4422680a7a66@web.de>
-Date: Sun, 14 Jul 2024 20:06:22 +0200
+	s=arc-20240116; t=1720980591; c=relaxed/simple;
+	bh=NG+9SLQB5CUb0d3jWCkQYWSiXW+fCSYfcN1EMvWBUrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tCZA1sLYMLpmamuOcpuhC6CX9qucCvbI9bcGhqkRLGCM2ANf+6VYLPUnZ0Q9poeEzI98c955lo5YuqRZhc5H2aqYJdKAatA3Z4CSQ7x64nxMvvbIl2Gu4A/tyBdj9PDO+VeePObUaE+NBfn9anQU7UD88R+bBf2NXgo6PsasKkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWR3dPH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97EF2C4AF0A;
+	Sun, 14 Jul 2024 18:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720980590;
+	bh=NG+9SLQB5CUb0d3jWCkQYWSiXW+fCSYfcN1EMvWBUrs=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=TWR3dPH6oS3VKac35oI/mmSrQusTrgNuyW6cEQIDwl7AEqt4zW0IlfViT8keRsMgl
+	 FOooC1R8aZ2B0iS0/nJyBPGVxmGuIvs4BF7uxmgcNHzguGQGy3cKEg8/3mrujc8jW6
+	 g7Jg68PAA25/GUj09NortgahSMdfxQSIT7sQ2SFPXv5YObRNtsidgkoKRrTJDV7mkR
+	 V9VoiTAKHzA0l7Ozaqhkryn8QrDld9l8Np7s9BlVlTYOP6qDnAJgfCym6slhQ10Bm5
+	 Rnn9i9iARH4ZvKDITGIDmp2QgsuoylpjpPW56qEtRyHioylzHWGE5rgDGE+i0xQHnC
+	 pfAXPU4wla6rg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eedeca1c79so17306101fa.3;
+        Sun, 14 Jul 2024 11:09:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNRgY33QDerwJ3D6x5azo14SyipJurIGpwlQ78PxTZ3QG9n9UYaCa8hh5eL46m2EHQbw04m7lPrQbIi1C16fTtlxP0lA7oBUHCNqJVQtnrz7BYh/VMZsA6rLqpVi6coD3yXegO7eUUPm6vsyVFqtHnS70g/buS5yOeiKdfKJI+1/eWF05LPg==
+X-Gm-Message-State: AOJu0YzjoK+TVXqf1qlyAt1K4xObeNQRK5ot95rpxt5mkarJCqMMFZOP
+	VxcfQDsvjf8ZNad6xilxw1RkmJAcQqHkPV9NpbVq2S35MW5tDAB3ClwNb2gGWy4UsuZZAQIh6Ns
+	0dHgpNlSAJZ6NBLC+14PK7QvJaak=
+X-Google-Smtp-Source: AGHT+IFFXDuC1PwJBXmFQH3s6fgDJs2b42yBRYfHa3/YS6nIv2xJQGOJLd7uR/2otp56ybbamkaqxaVyWlGuM+dGn3o=
+X-Received: by 2002:a2e:b178:0:b0:2ec:5255:b4d9 with SMTP id
+ 38308e7fff4ca-2eeb30b88acmr130110861fa.7.1720980588944; Sun, 14 Jul 2024
+ 11:09:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>, Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] mm/slub: Use seq_putc() in slab_debugfs_show()
-Content-Type: text/plain; charset=UTF-8
+References: <cover.1720969799.git.daniel@makrotopia.org>
+In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Mon, 15 Jul 2024 02:09:34 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66YespcUHnC3hdhogdutVo_wAX32+cqT3sw3UzkwKBxxQ@mail.gmail.com>
+Message-ID: <CAGb2v66YespcUHnC3hdhogdutVo_wAX32+cqT3sw3UzkwKBxxQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Dragan Simic <dsimic@manjaro.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rqcv4mAWZlITSl40Y4+8GTzosv7+akT6BsQ4hgg7M44twu4+W7z
- ztPo8Sw1KHw8QjsS0z1TrEFaS+oQ9UQa3Knt9m7bOxe4lwR97nslQlXF/rsgGATj8yt0I5D
- XxK/fmgJw4Kp2r/OrHmTHVRr8HC6pc96EXrXy7UVm6oc1FaEdGjIIvuIxhJS/y+zJhq+rSn
- ZOvM75SIfJm6k8pn+8urw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/n8ZbvbyyN4=;r8emOt9AUcTNJeXBsRhd/FjVZ3l
- Fg226Z/bBR3YRHaABAFmTcTUMRgh6g/AQYTKyaYNdMbsOPcAdZ+Zst0jVi5CDPcGzJrPYgpSa
- N8VyWSwYgCmApRq8COISQJFOdqy9axJo/vUgxBRwsUApp7MC4MIxtBln1rph7jBFQWrhKWe7F
- a4yR3UInOl6hCEGcUm1mmhrCqmmz8yteBv8Wja3mJGSjuYL3lshcnH7AioZ5QremFkrKmgRbH
- qGSvnXlSxD4U27zSUltY5lQYOEkgHv+WXNTKsJ6s/gtJ0RfolS+BIsTxC7JzKLdiNWx5Z+rhB
- LZxsCJQNPirXNy43KGK42dSLsCnLiA/Z8tggqMEOzS27ijseb+gsS7zlfW9H/fqA1lIZ2aF33
- /di1geNfampkkPubniNmyN8jlVWwsrwN5zP/l8wdauVIH6Ow/gd6Lj/aIFXmKPYFJYpy3Y2kW
- hmI+ldtOqDP8DXhKV1RBZ2jYlRiwqHQnh9MrAj3CI/1IC/f+oC5XBJAP5TYYMIMeZsZdPlQSJ
- yqACCmkI+TcgaKblmE7PmwtgkMxFP7cPAiF6IE7MQ9apqD5B2KG944n549QMpslHFrAXjZkja
- Wxb/miRe2MhLJaDJbQi5tpQAnS6jXa1jaT/q+GrmE4eVFbgPc705wj/pvtmjZrsBMag3DP04Z
- vZ32HGug2nZx5b2K5tUciqQsR9lSb6V4CQD3PgAdF5B7RQLfvlFVtbPvE6AxsnCF6PDRfzQvO
- RETmIjibUuXWEDzC0VAPtMWfoxvFxVAi0jsB8i6kZ6LDGqRWjC90e8NctPpb6aSHHLTmfBoqp
- f15QQQtUzshTIPSrK64pcd8w==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 19:55:59 +0200
+On Sun, Jul 14, 2024 at 11:16=E2=80=AFPM Daniel Golle <daniel@makrotopia.or=
+g> wrote:
+>
+> Rockchip SoCs used to have a random number generator as part of their
+> crypto device.
+>
+> However newer Rockchip SoCs like the RK3568 have an independent True
+> Random Number Generator device. This patchset adds a driver for it and
+> enables it in the device tree.
+>
+> Tested on FriendlyARM NanoPi R5C.
+>
+> v6 -> v7:
+>  * Patch 1: unchanged
+>
+>  * Patch 2: bring back rk_rng_write_ctl()
+>    - bring back rk_rng_write_ctl() with improved comment to describe
+>      the hardware.
+>
+>  * Patch 3: unchaned
+>
+> v5 -> v6:
+>  * Patch 1: unchanged
+>
+>  * Patch 2: get rid of #ifdef
+>    - use if (IS_ENABLED(...)) { ... }instead of #ifdef inside functions
+>    - use __maybe_unused for functions previously enclosed by #ifdef'ery
+>
+>  * Patch 3: unchanged
+>
+> v4 -> v5:
+>  * Patch 1: always use RK3568 name
+>    - use full RK3568 name in patch description
+>    - add RK3568 to title in binding
+>
+>  * Patch 2: full name and cosmetics
+>    - also always mention RK3568 as there may be other RNG in other
+>      (future) Rockchip SoCs
+>    - remove debug output on successful probe
+>    - use MODULE_AUTHOR several times instead of single comma-separated
+>
+>  * Patch 3: unchanged
+>
+> v3 -> v4:
+>  * Patch 1: minor corrections
+>    - fix Rokchip -> Rockchip typo
+>    - change commit title as requested
+>
+>  * Patch 2: improved error handling and resource management
+>    - Always use writel() instead of writel_relaxed()
+>    - Use pm_runtime_resume_and_get
+>    - Correctly return error code in rk_rng_read()
+>    - Make use of devm_reset_control_array_get_exclusive
+>    - Use devm_pm_runtime_enable and there by get rid of rk_rng_remove()
+>
+>  * Patch 3:
+>    - Move node to conform with ordering by address
+>
+> v2 -> v3: patch adopted by Daniel Golle
+>  * Patch 1: address comments of Krzysztof Kozlowski, add MAINTAINERS
+>    - improved description
+>    - meaningful clock-names
+>    - add entry in MAINTAINERS files
+>
+>  * Patch 2: numerous code-style improvements
+>    - drop misleading rk_rng_write_ctl(), simplify I/O writes
+>    - drop unused TRNG_RNG_DOUT_[1-7] macros
+>    - handle error handling for pm_runtime_get_sync()
+>    - use memcpy_fromio() instead of open coding for-loop
+>    - some minor white-spaces fixes
+>
+>  * Patch 3:
+>    - use clock-names as defined in dt-bindings
+>
+> v1 -> v2:
+>  * Patch 1: fix issues reported by Rob Herring and Krzysztof Kozlowski:
+>    - Rename rockchip-rng.yaml into rockchip,rk3568-rng.yaml
+>    - Fix binding title and description
+>    - Fix compatible property
+>    - Rename clocks and add the corresponding descriptions
+>    - Drop reset-names
+>    - Add a bus definition with #address-cells and #size-cells to the
+>      example.
+>
+>  * Patch 2: fix issue reported by kernel test robot <lkp@intel.com>
+>    - Do not read the random registers as big endian, looking at the
+>      RK3568 TRM this is actually not needed. This fixes a sparse
+>      warning.
+>
+>  * Patch 3: unchanged
+>
+>
+> Aurelien Jarno (3):
+>   dt-bindings: rng: Add Rockchip RK3568 TRNG
+>   hwrng: add hwrng driver for Rockchip RK3568 SoC
+>   arm64: dts: rockchip: add DT entry for RNG to RK356x
 
-Single line breaks should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Tested-by: Chen-Yu Tsai <wens@csie.org>
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- mm/slub.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 3520acaf9afa..49f567968f81 100644
-=2D-- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -7112,13 +7112,13 @@ static int slab_debugfs_show(struct seq_file *seq,=
- void *v)
- 			handle =3D READ_ONCE(l->handle);
- 			if (handle) {
- 				nr_entries =3D stack_depot_fetch(handle, &entries);
--				seq_puts(seq, "\n");
-+				seq_putc(seq, '\n');
- 				for (j =3D 0; j < nr_entries; j++)
- 					seq_printf(seq, "        %pS\n", (void *)entries[j]);
- 			}
- 		}
- #endif
--		seq_puts(seq, "\n");
-+		seq_putc(seq, '\n');
- 	}
-
- 	if (!idx && !t->count)
-=2D-
-2.45.2
-
+>  .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
+>  MAINTAINERS                                   |   7 +
+>  arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
+>  drivers/char/hw_random/Kconfig                |  14 ++
+>  drivers/char/hw_random/Makefile               |   1 +
+>  drivers/char/hw_random/rockchip-rng.c         | 227 ++++++++++++++++++
+>  6 files changed, 319 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568=
+-rng.yaml
+>  create mode 100644 drivers/char/hw_random/rockchip-rng.c
+>
+> --
+> 2.45.2
 
