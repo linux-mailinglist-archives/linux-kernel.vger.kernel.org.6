@@ -1,111 +1,272 @@
-Return-Path: <linux-kernel+bounces-251858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F3A930ABB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:14:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18907930AC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB5AD1C20924
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6400281A49
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7FE13AA2C;
-	Sun, 14 Jul 2024 16:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D813B791;
+	Sun, 14 Jul 2024 16:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZTP9z7u"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GWsjA/f5"
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57BA1E52A
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 16:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C707F;
+	Sun, 14 Jul 2024 16:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720973655; cv=none; b=rln2zmrw0HMwWglIzOCHES8j+YqnJtdJ9LBiP98VoQ8ckiVKpDywW0pQoCZJsPR30AblcV8sJrY5AXkheEWgJmp5ovZnEgYohrq98fRyo3CypO44nRXhFwA6SZCo2HEHryLANIU21HvyFTEXGD53ylz/7P5AKwiWNq5iniQ1+Q8=
+	t=1720974282; cv=none; b=fmXdPgYCZmhu2RSUtUYJjoHxUPCyvfo8eTaan5a7bWh234Zl4LKipj1MU17S1YYlb7pdyZMz/VsUoYFOGuW1JYgX/1pqhWeMGNENOTNbYsqz/7xrahUGS0+K2wnKfNl3oaTAtdPwESRAPB/ftyr/SStCiIIci2wJjAk0colXaAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720973655; c=relaxed/simple;
-	bh=6Yyn4bM42Ap4ZrCijPtVJNkueH9wiTy2GjVXWUySv8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Un1DI+w5FPXo1D4JR5ua57U+KRPDZAFetxuGHWhHdvmAedYLfrWZ99585GWMbP5qWW6SwyQQorInuq86PwlKa5p0LlZXnGDyW8TkI9gfnUvr3PsXtiueNZGCtwM48ObYf2qTXp0B8hlAHPvE368OgPMYdnOpAQOWbnlUtw0P/Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZTP9z7u; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-81021667125so1178033241.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:14:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720973653; x=1721578453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Yyn4bM42Ap4ZrCijPtVJNkueH9wiTy2GjVXWUySv8Q=;
-        b=jZTP9z7uydXo/b004zfe1TgGLrcboiNgzCi2EHJ7JY8J3iRacH0n0j75upaOtDhNif
-         yaz6IOp7+i72NqnpN8gx7fONjeaYZYiinhCaLgRfPy/t/yUij8cxkGCDWm5fmRJfTNBY
-         e7N3ddxL5VkXs3AtlWkUi4MhIHrVJjdjwr0FBgeRLN3saUjGbkbzxE+YpS9dhVFuZfd3
-         NxNQpeNVylSuKkmG0i3LCRv4zuruAnivUCLlJmfN9YnxOufEA44F7tEbqbJcQv9RPtgv
-         ApJL4m2kycSoeiFrKCXiZ5rri8Pjkc0SJhsmZz1mW0YCMrLTubw1IqfGqpFzpiOPybSF
-         tLqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720973653; x=1721578453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Yyn4bM42Ap4ZrCijPtVJNkueH9wiTy2GjVXWUySv8Q=;
-        b=n5k1xZzY0/2015RWXOECeUAO/lf6JS2I64WRm1ZKFWiElqXFrm8gKC7/NHtyZIFIx4
-         uu1e3/Qb/wuhieVRy0XQ5YB4l050VdO+srZgjjcm157PaoS/Wo70RFBNjGHr3/6PnxYe
-         IVR/+a/FnaBowxStXQRc/49uteklu6qqxTQRdVfZOsxHNZMYC+xM1DPMLcpBUds9HzRS
-         j3DvnjrOMurLAuzFz9usI7rZOzfWTUcx42vC3x30vVlq6MV9HhlQeHNMHWYfy3jHWcWj
-         c0uX7Yqua1HZBQh3Qx9isrIoTqnyJbCHcrsfCdoPOZkqy65YdhNWcVGrVavr0gEfjhrI
-         oiLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyNq98nAoarwG6q63FQLy/Z+11OxoHjKEHHjIDbb8cCuOa95Z2nMBLTDVP5Xa02BBipQoM7R4FCY9fJ8T5H21zXUp38cyURQqQ28Fw
-X-Gm-Message-State: AOJu0YyjOXWHVf+s356Va5uwq8beDY9EX+tGxdN2xkWcTpMl8v9QVEDt
-	Y9LWWtWGirHboWY7IZh1L/e458LWHbqOC0BNRXIpGXMQUa8RnBv1zuhK60rCPDooB7SYvmuTYF5
-	JHe+WNt9cKGQnzWVwS8A2KXwJ6vA=
-X-Google-Smtp-Source: AGHT+IGJpHdSKRAkgcgSszPtuJsHHRbse+wAzDBjWHdhQlSC6mBAg6s9Wu/C6A9Crh6oLSWE6phJW+y6tuTOyGtTC6U=
-X-Received: by 2002:a05:6102:32c1:b0:48f:1bea:3c70 with SMTP id
- ada2fe7eead31-49032147ae1mr19644741137.17.1720973652595; Sun, 14 Jul 2024
- 09:14:12 -0700 (PDT)
+	s=arc-20240116; t=1720974282; c=relaxed/simple;
+	bh=FjJUbEgbT6njuYxFEiqNqLxRsMj/drbnkC+PvKhsWUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D0cBV7oYNiTVGnmOYqt16uf+MaBBVcifcceEsy0IviJoNanf8V3VAYiWTX8FXhVGMGWpx3UVyRam2kGn2WzXn/9rFAbNAh2j50Dt1dhiErU7/gnYCbWyOEheCt7IPt435/7jFjoTHMsA5qhPw35/fHKxRxOVomW8ChFUmSdGDcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GWsjA/f5; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id T1sisr9XfKcZaT1sisRKQy; Sun, 14 Jul 2024 18:15:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720973726;
+	bh=X3BjMkIlLlKNDRITAi0sF43nNx7bZHbsFoiwfhlAf7k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=GWsjA/f5s8n6lHS+5b6ZngPEeC/AEXjE5/TISfvAuxgb1IA1/gluGT2mvBGToXe+k
+	 Sg607eCgxufF882GoU+gYrtE7vpgFenVff1SUY4W5Dbhfzlq3QtvbohpuglgUDZRlm
+	 vq/KIgYP+jXOyqiSWMM/HzAoAzDZ5qQOB6fpJ75KoGdbCSJFyrxJY8lKF47Tv2z/z5
+	 D2k4Vy1uiSKwkDiF0Hvx8YV2h9IpOf747+GCpQKIg3NVg+BeL9bO5U3je9ql70WLm1
+	 rUpwmS2qvRcLD37Fyf7lpPxvO0HN1LYI0tm5Qsv4ekqOcxnS/vZwswd4ZdNv9aZ55C
+	 HUQ8PYO8DAQGQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Jul 2024 18:15:26 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH] llc: Constify struct llc_sap_state_trans
+Date: Sun, 14 Jul 2024 18:15:20 +0200
+Message-ID: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
- <20240702215804.2201271-28-jim.cromie@gmail.com> <22bc825c-d726-4a4d-bd3a-508773c04071@collabora.com>
-In-Reply-To: <22bc825c-d726-4a4d-bd3a-508773c04071@collabora.com>
-From: jim.cromie@gmail.com
-Date: Sun, 14 Jul 2024 10:13:46 -0600
-Message-ID: <CAJfuBxzLiWn_t6VDxzYzfjm6GaZcjeASwBX7Nbma6yGBKEtB9A@mail.gmail.com>
-Subject: Re: [PATCH v9 27/52] selftests-dyndbg: check KCONFIG_CONFIG to avoid
- silly fails
-To: Helen Koike <helen.koike@collabora.com>
-Cc: daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
-	jani.nikula@intel.com, ville.syrjala@linux.intel.com, jbaron@akamai.com, 
-	gregkh@linuxfoundation.org, ukaszb@chromium.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	linux@rasmusvillemoes.dk, joe@perches.com, mcgrof@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 10, 2024 at 2:23=E2=80=AFPM Helen Koike <helen.koike@collabora.=
-com> wrote:
->
->
->
-> On 02/07/2024 18:57, Jim Cromie wrote:
-> > Several tests are dependent upon config choices. Lets avoid failing
-> > where that is noise.
-> >
-...
-> >
-> > test_mod_submod() recaps the bug found in DRM-CI where drivers werent
->
-> If this fixes any but listed in drm/ci/xfails folder, please update it to=
-o.
->
-> Regards,
-> Helen
+'struct llc_sap_state_trans' are not modified in this driver.
 
-This looks like a good avenue to follow, thanks for the hint
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
+
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+    339	    456	     24	    819	    333	net/llc/llc_s_st.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+    683	    144	      0	    827	    33b	net/llc/llc_s_st.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ include/net/llc_s_st.h |  4 ++--
+ net/llc/llc_s_st.c     | 26 +++++++++++++-------------
+ net/llc/llc_sap.c      | 12 ++++++------
+ 3 files changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/include/net/llc_s_st.h b/include/net/llc_s_st.h
+index ed5b2fa40d32..fca49d483d20 100644
+--- a/include/net/llc_s_st.h
++++ b/include/net/llc_s_st.h
+@@ -29,8 +29,8 @@ struct llc_sap_state_trans {
+ };
+ 
+ struct llc_sap_state {
+-	u8			   curr_state;
+-	struct llc_sap_state_trans **transitions;
++	u8				 curr_state;
++	const struct llc_sap_state_trans **transitions;
+ };
+ 
+ /* only access to SAP state table */
+diff --git a/net/llc/llc_s_st.c b/net/llc/llc_s_st.c
+index 308c616883a4..acccc827c562 100644
+--- a/net/llc/llc_s_st.c
++++ b/net/llc/llc_s_st.c
+@@ -24,7 +24,7 @@
+  * last entry for this state
+  * all members are zeros, .bss zeroes it
+  */
+-static struct llc_sap_state_trans llc_sap_state_trans_end;
++static const struct llc_sap_state_trans llc_sap_state_trans_end;
+ 
+ /* state LLC_SAP_STATE_INACTIVE transition for
+  * LLC_SAP_EV_ACTIVATION_REQ event
+@@ -34,14 +34,14 @@ static const llc_sap_action_t llc_sap_inactive_state_actions_1[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_inactive_state_trans_1 = {
++static const struct llc_sap_state_trans llc_sap_inactive_state_trans_1 = {
+ 	.ev =		llc_sap_ev_activation_req,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_inactive_state_actions_1,
+ };
+ 
+ /* array of pointers; one to each transition */
+-static struct llc_sap_state_trans *llc_sap_inactive_state_transitions[] = {
++static const struct llc_sap_state_trans *llc_sap_inactive_state_transitions[] = {
+ 	[0] = &llc_sap_inactive_state_trans_1,
+ 	[1] = &llc_sap_state_trans_end,
+ };
+@@ -52,7 +52,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_1[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_1 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_1 = {
+ 	.ev =		llc_sap_ev_rx_ui,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_1,
+@@ -64,7 +64,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_2[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_2 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_2 = {
+ 	.ev =		llc_sap_ev_unitdata_req,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_2,
+@@ -76,7 +76,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_3[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_3 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_3 = {
+ 	.ev =		llc_sap_ev_xid_req,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_3,
+@@ -88,7 +88,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_4[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_4 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_4 = {
+ 	.ev =		llc_sap_ev_rx_xid_c,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_4,
+@@ -100,7 +100,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_5[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_5 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_5 = {
+ 	.ev =		llc_sap_ev_rx_xid_r,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_5,
+@@ -112,7 +112,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_6[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_6 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_6 = {
+ 	.ev =		llc_sap_ev_test_req,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_6,
+@@ -124,7 +124,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_7[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_7 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_7 = {
+ 	.ev =		llc_sap_ev_rx_test_c,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_7
+@@ -136,7 +136,7 @@ static const llc_sap_action_t llc_sap_active_state_actions_8[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_8 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_8 = {
+ 	.ev =		llc_sap_ev_rx_test_r,
+ 	.next_state =	LLC_SAP_STATE_ACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_8,
+@@ -150,14 +150,14 @@ static const llc_sap_action_t llc_sap_active_state_actions_9[] = {
+ 	[1] = NULL,
+ };
+ 
+-static struct llc_sap_state_trans llc_sap_active_state_trans_9 = {
++static const struct llc_sap_state_trans llc_sap_active_state_trans_9 = {
+ 	.ev =		llc_sap_ev_deactivation_req,
+ 	.next_state =	LLC_SAP_STATE_INACTIVE,
+ 	.ev_actions =	llc_sap_active_state_actions_9
+ };
+ 
+ /* array of pointers; one to each transition */
+-static struct llc_sap_state_trans *llc_sap_active_state_transitions[] = {
++static const struct llc_sap_state_trans *llc_sap_active_state_transitions[] = {
+ 	[0] = &llc_sap_active_state_trans_2,
+ 	[1] = &llc_sap_active_state_trans_1,
+ 	[2] = &llc_sap_active_state_trans_3,
+diff --git a/net/llc/llc_sap.c b/net/llc/llc_sap.c
+index 116c0e479183..6cd03c2ae7d5 100644
+--- a/net/llc/llc_sap.c
++++ b/net/llc/llc_sap.c
+@@ -114,12 +114,12 @@ void llc_sap_rtn_pdu(struct llc_sap *sap, struct sk_buff *skb)
+  *	Returns the pointer to found transition on success or %NULL for
+  *	failure.
+  */
+-static struct llc_sap_state_trans *llc_find_sap_trans(struct llc_sap *sap,
+-						      struct sk_buff *skb)
++static const struct llc_sap_state_trans *llc_find_sap_trans(struct llc_sap *sap,
++							    struct sk_buff *skb)
+ {
+ 	int i = 0;
+-	struct llc_sap_state_trans *rc = NULL;
+-	struct llc_sap_state_trans **next_trans;
++	const struct llc_sap_state_trans *rc = NULL;
++	const struct llc_sap_state_trans **next_trans;
+ 	struct llc_sap_state *curr_state = &llc_sap_state_table[sap->state - 1];
+ 	/*
+ 	 * Search thru events for this state until list exhausted or until
+@@ -143,7 +143,7 @@ static struct llc_sap_state_trans *llc_find_sap_trans(struct llc_sap *sap,
+  *	Returns 0 for success and 1 for failure of at least one action.
+  */
+ static int llc_exec_sap_trans_actions(struct llc_sap *sap,
+-				      struct llc_sap_state_trans *trans,
++				      const struct llc_sap_state_trans *trans,
+ 				      struct sk_buff *skb)
+ {
+ 	int rc = 0;
+@@ -166,8 +166,8 @@ static int llc_exec_sap_trans_actions(struct llc_sap *sap,
+  */
+ static int llc_sap_next_state(struct llc_sap *sap, struct sk_buff *skb)
+ {
++	const struct llc_sap_state_trans *trans;
+ 	int rc = 1;
+-	struct llc_sap_state_trans *trans;
+ 
+ 	if (sap->state > LLC_NR_SAP_STATES)
+ 		goto out;
+-- 
+2.45.2
+
 
