@@ -1,180 +1,93 @@
-Return-Path: <linux-kernel+bounces-251905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8218B930B62
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60897930B5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78822818A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91AC31C21010
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9BD13CA81;
-	Sun, 14 Jul 2024 19:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB80213C9B8;
+	Sun, 14 Jul 2024 19:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="pBxxOFya"
-Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dHNtBbIk"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0513B294;
-	Sun, 14 Jul 2024 19:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0E48528F;
+	Sun, 14 Jul 2024 19:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720986236; cv=none; b=LJW5Myqpyu/ntUNqYZXgwI1u9CGmrA5AaGmxvzGOQiiHdTgsXcGRfH1eXw10wD+cZM0g8L+wF1cuv1pu7+gNa7ci91S7hLSX8yu4n+6wPa0lKei6xmDJrh/vALZP5EaFoCMpkZtFx8XUWbGBFUlnG2RAuFKX1ChhPxrdgyc5RII=
+	t=1720985862; cv=none; b=sS5UQzw01zwqdfTpVplwA6+S1vtE5l97/X22kHtupL8D2sFZku933j5tNsN0Tme67ATS4VLKTdrU1sccy5e09JtYCEcqf0Lw5HMoAM1OZHgomQc1UoTcDlB9uMdAJbf62Rfy+GFR6er7hBwHxxYsPVaOUDs9Ffrd6CZZzEwcdTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720986236; c=relaxed/simple;
-	bh=nlze4mihTBi3QvTZv100Ldq03xpcQu7wO1aJwJ6arpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fVvAIihNltecbzA15+eU9C/2uJ6iDXdEREnW1768VdJcC3GdemxQ6ZPyArOUmleOcZrhY+dEqsAAbqL6Ky1BMs3eaNKwF8KjTTcjyF6fxT8QOgmdhbsP2CMbIqy3V/VxlWlbpjibjW/9jKuOlgXbEyVft9qcbUiySU79dwJOxGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=pBxxOFya; arc=none smtp.client-ip=199.247.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
-Received: from spock.localnet (unknown [212.20.115.26])
+	s=arc-20240116; t=1720985862; c=relaxed/simple;
+	bh=4YxiUJOMhtBJ05JJQe+Rd3u0p97d9S9/2Q9OVkKia3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OKIoILsDjXtUfjsXUKVJP3K8y30xm1KJgQt2Gc7//D10ZNhjfNSeHqLgp4uBnYXsIhaREaHQF76OfmxofwIuVXN9hTiikxE5c9cply+IidbPt2i0z8pyqs3u8bg9DtK2mfRF+Xytz6v0nlIIQaGsiyfy8mfcztIB0jCxJnwO2LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dHNtBbIk; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720985853;
+	bh=4YxiUJOMhtBJ05JJQe+Rd3u0p97d9S9/2Q9OVkKia3w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dHNtBbIkwUxlvqu+GGZHlNV7jEqFZXDNcfKEkl8NVHqBwrTMQ9Vjlsw2pXBegtc4+
+	 3owoP7Oxvc9fFAgMQMG2twA5vZ419j3ha799E03IP/qyB8DrC+9GNfdI6WXLnIrwhj
+	 jqTaoSvz0VdU2y/r7fgycm2VyZyjdJwfJdIwnMrqiQ3ds5v/STVwR1FE1QFShlaUOV
+	 tUCnLJrm/oGeAwpFemJCA6sSdgSvznTgrHmDTMqf8WvdcvlHuyU3Td5J4cDJ+/ARqP
+	 GzDMCoyDU7QN2oyyEAUqNriom5ZzMhalcSSBX9ZWKWnrEI8GfZjo6j2WqFrFitcAoQ
+	 fspYlS8olmAlQ==
+Received: from shreeya.shreeya (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by prime.voidband.net (Postfix) with ESMTPSA id EA6AB6356CC1;
-	Sun, 14 Jul 2024 21:37:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-	s=dkim-20170712; t=1720985827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OMK9o7IrpO4MqbMGDLfUl1DTeKpqT2I9IzRC/2uuvo4=;
-	b=pBxxOFyaXABu6FFPGNLIf2eONRdauwxAQ3e4zfIvAB8mrsXShi34TWCRe61XoFSWqCJcpN
-	ZnSkg1tm/OrnLavs0KkLkLK8U0BDbL3RriWE2WNiknT4S0bXCXqGItsV9hGshgOmIB5vFp
-	xKBh5bSjG3IGknhBV632vwHuxWQAU5c=
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: intel-wired-lan@lists.osuosl.org, Chen Yu <yu.c.chen@intel.com>
-Cc: "Neftin, Sasha" <sasha.neftin@intel.com>, Len Brown <len.brown@intel.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- "Brandt, Todd E" <todd.e.brandt@intel.com>, Zhang Rui <rui.zhang@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>, linux-kernel@vger.kernel.org,
- Chen Yu <yu.c.chen@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Subject:
- Re: [PATCH 0/4][RFC] Disable e1000e power management if hardware error is
- detected
-Date: Sun, 14 Jul 2024 21:36:49 +0200
-Message-ID: <8412242.T7Z3S40VBb@natalenko.name>
-In-Reply-To: <cover.1605073208.git.yu.c.chen@intel.com>
-References: <cover.1605073208.git.yu.c.chen@intel.com>
+	(Authenticated sender: shreeya)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 93FAB3781188;
+	Sun, 14 Jul 2024 19:37:31 +0000 (UTC)
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: jic23@kernel.org,
+	lars@metafoo.de
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	Shreeya Patel <shreeya.patel@collabora.com>
+Subject: [PATCH] iio: light: ltrf216a: Document the device name
+Date: Mon, 15 Jul 2024 01:07:09 +0530
+Message-Id: <20240714193709.543509-1-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart10511005.nUPlyArG6x";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 
---nextPart10511005.nUPlyArG6x
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: intel-wired-lan@lists.osuosl.org, Chen Yu <yu.c.chen@intel.com>
-Date: Sun, 14 Jul 2024 21:36:49 +0200
-Message-ID: <8412242.T7Z3S40VBb@natalenko.name>
-In-Reply-To: <cover.1605073208.git.yu.c.chen@intel.com>
-References: <cover.1605073208.git.yu.c.chen@intel.com>
-MIME-Version: 1.0
+Compatible 'ltr,ltrf216a' is used by Valve's Steamdeck device
+via the ACPI + PRP0001 mechanism.
+Document the device name alognside the compatible.
 
-Hello Yu.
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+---
+ drivers/iio/light/ltrf216a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On st=C5=99eda 11. listopadu 2020 6:50:35, SEL=C4=8C Chen Yu wrote:
-> This is a trial patchset that aims to cope with an intermittently
-> triggered hardware error during system resume.
->=20
-> On some platforms the NIC's hardware error was detected during
-> resume from S3, causing the NIC to not fully initialize
-> and remain in unstable state afterwards. As a consequence
-> the system fails to suspend due to incorrect NIC status.
->=20
-> In theory if the NIC could not be initialized after resumed,
-> it should not do system/runtime suspend/resume afterwards.
-> There are two proposals to deal with this situation:
->=20
-> Either:
-> 1. Each time before the NIC going to suspend, check the status
->    of NIC by querying corresponding registers, bypass the suspend
->    callback on this NIC if it's unstable.
->=20
-> Or:
-> 2. During NIC resume, if the hardware error was detected, removes
->    the NIC from power management list entirely.
->=20
-> Proposal 2 was chosen in this patch set because:
-> 1. Proposal 1 requires that the driver queries the status
->    of the NIC in e1000e driver. However there seems to be
->    no specific registers for the e1000e to query the result
->    of NIC initialization.
-> 2. Proposal 1 just bypass the suspend process but the power management
->    framework is still aware of this NIC, which might bring potential issue
->    in race condition.
-> 3. Approach 2 is a clean solution and it is platform independent
->    that, not only e1000e, but also other drivers could leverage
->    this generic mechanism in the future.
->=20
-> Comments appreciated.
->=20
-> Chen Yu (4):
->   e1000e: save the return value of e1000e_reset()
->   PM: sleep: export device_pm_remove() for driver use
->   e1000e: Introduce workqueue to disable the power management
->   e1000e: Disable the power management if hardware error detected during
->     resume
->=20
->  drivers/base/power/main.c                  |  1 +
->  drivers/base/power/power.h                 |  8 -------
->  drivers/net/ethernet/intel/e1000e/e1000.h  |  1 +
->  drivers/net/ethernet/intel/e1000e/netdev.c | 27 ++++++++++++++++++----
->  include/linux/pm.h                         | 12 ++++++++++
->  5 files changed, 37 insertions(+), 12 deletions(-)
->=20
->=20
-
-It seems this submission was stuck at the RFC stage, and I'm not sure you g=
-ot any feedback on it. Sorry for necrobumping this thread, but what is the =
-current state of it?
-
-I can confirm v6.8 is still affected (I've discovered this on T490s), and a=
-s a workaround I just unload e1000e module before doing S3, and load it bac=
-k after resume.
-
-=46or LKML reference, the linked kernel BZ is: https://bugzilla.kernel.org/=
-show_bug.cgi?id=3D205015
-
-Thank you.
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
---nextPart10511005.nUPlyArG6x
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmaUKNEACgkQil/iNcg8
-M0sBig/9GY5XmbywcNYRllfR85OnhiIBkhfL9RW63QuVA/N1+BvHHJDMHZdh+Gs6
-jhF2q29KtliUa+M+r4X1/+CbFeSuEUYsfD2u9qV6oYO5mktVCmkNQoCyx5i9PTw4
-0VLYn26//BVxxGlQhhyrpfcpJ+IelvEwFxXRmiItJRgXFMaN3djOc8pUm0iEL9oc
-zRXAxZx+MyJ9uV84tsO26usfgh8pXcMXusxgRkhVeNx+pwM4UhfEuIxCc//EZ2Z/
-Ol4dEIfYf/3L0f+S21B1V2mGwK7pXdogH7fVaa8JWEgfxpDnZC+FsaJf7Zd8iNJC
-QMDm8EPNfYupInQwq1HYt0voG6USt0d/vDgcj86iAnvvXUmOyyl55zob/GQaVLB9
-juGuiQ0tDSVsnlNupNRwZTh1sLG1xPvKTOFSlahqNW5ZWLWFVr2j3LEbtXICk8/2
-PBWjL3krI8z2epL0Or1qKVPsgtpWdH3Blh6Frqr1VyH88tQ6vOId3foRq+mwtOWq
-kjGOzdF5EFYvoqQn/0puOWPLTosetCFYP/4hDofMRQ9gKlkVxH6d79Misx+HlpTq
-zCwt09FI73nc8p7mWJUILlIUMpZzRSMPIi/JQJcqhN4/En2GZGBS4XDo6JT6/QNW
-R+dc2VBNvIYhpeEb2p3En+ErpUcZbCwHqmdFV6KKtwtK0WnmZpk=
-=W14v
------END PGP SIGNATURE-----
-
---nextPart10511005.nUPlyArG6x--
-
-
+diff --git a/drivers/iio/light/ltrf216a.c b/drivers/iio/light/ltrf216a.c
+index 68dc48420a88..e97ff8f7ecd0 100644
+--- a/drivers/iio/light/ltrf216a.c
++++ b/drivers/iio/light/ltrf216a.c
+@@ -528,7 +528,7 @@ MODULE_DEVICE_TABLE(i2c, ltrf216a_id);
+ 
+ static const struct of_device_id ltrf216a_of_match[] = {
+ 	{ .compatible = "liteon,ltrf216a" },
+-	{ .compatible = "ltr,ltrf216a" },
++	{ .compatible = "ltr,ltrf216a" }, /* For Valve's Steamdeck device */
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, ltrf216a_of_match);
+-- 
+2.39.2
 
 
