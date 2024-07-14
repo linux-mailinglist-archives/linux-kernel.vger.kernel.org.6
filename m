@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-251877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3D7930AE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:08:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12426930AEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4C4CB20F7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40ECC1C20F3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AFC13BC38;
-	Sun, 14 Jul 2024 17:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF74F13C677;
+	Sun, 14 Jul 2024 17:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0qUDM4Y"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcOjqwJb"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A57139CFF
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 17:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9DD27D;
+	Sun, 14 Jul 2024 17:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720976874; cv=none; b=Elc80tBMa2Nyiib/J/PSnHISTF8DOh/urgPEJP7MyVn2VCZ9GGhpQ9L6J9W/45kMRr8CfyQN1F/npZaAvHvk/cIfyUNZBQQ1n/qaOdhVSHru1LGeGoKkGzOSBECbeyJBK8JiVXsEnNH6y+LD84JzHI/B5m6IUXYbH7+S+lFXyNY=
+	t=1720977626; cv=none; b=sRtSBCQHhd9+4JJo+nSqSPYoDsZm+kcLrHc3BwOmG/1BvGejkmXEkz6WCUQ0P6JvYr/KniSZQo7Mnfmt+N7fsyNCQUwkK5j3BYZ1Afju64YNEGe3mJd3bHaxpGnWmx5tPdwHixqCi3b3Glsa9rmhJZ0qzX5xQ/S9PtKJVHJsN54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720976874; c=relaxed/simple;
-	bh=AXwykxJmSeZPwLz8eKff2+kJYYr60n7I+z1kenwyqQA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=SHMvCwS6QWF1Vg8/hZZePjXxyzoxvXwsITqB26dtIsP68sYrLNVeHpjUXsnNYmEr1qOb9BmxQ+/9BCgDx/izL/Qx9vEEqlVJvbZ4MwXMqvY/3ghMvf0cxodo9QAly40FtAfBySPwQYFcfX3ugdBtgFdmjQisAWHnr4GNZtUN9H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0qUDM4Y; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1720977626; c=relaxed/simple;
+	bh=A5Bcqn8FRqYalb1UZD9jh+58Ex3sAWvAdNFs//hWPBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mhseH9bDzhrHJOEWfG8aJfAY77h5uajGMi/k239SkqqnKuxwLKghkN4s90fHqqfsRQpcdoDy/e9pfOYIzI8YiOZMVSZOxUWqyV17Wdkl1nu3td/0yHWViXILW8utlQXjnOquRWFcsgqRPioWjSNMl86CarQSGwp/iM918rJyTjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcOjqwJb; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-661369ff30aso1622137b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 10:07:52 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3856b7be480so13006075ab.0;
+        Sun, 14 Jul 2024 10:20:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720976871; x=1721581671; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YjXmWYDlRcyjDKSQWc44GXI3jtKTGsTtfolqb8Dz5VU=;
-        b=Q0qUDM4Ym+qaA9ousjgPBGMRbVJ1hMp1557QuAaQHf6J2kHLmlmIAHpQfJ1iU4vRKN
-         6mru/3/6VvrPLKHzaNnHmF1FPuGVMylzupJcEs78gAfBrX5UtbXt3Cyn8eWJZj6I10Z5
-         TblBxe9MEDL5T9i2bykwPuplYsmKW9ibrEj8XD6mPnZsLw6K2VbTRUhe2G4k5vY7Wtd9
-         9prVJoDRp2noE0bZKcqkG3fg+BaSpXy4wl5ZQmHFNA8NfwifPs/PejAUwfPColjAO7UP
-         dFLgkNhrE3PKNk8/wusCqkK7VBF3o7nJTIzPIXjX11jqHjC6czjsaYofsSVNyteuotHs
-         Jrcg==
+        d=gmail.com; s=20230601; t=1720977624; x=1721582424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OlQJVnEnvYtG6Urx8xlXkjHKNYwq7RXhH4sQHIkE5Zk=;
+        b=jcOjqwJblIMoQGQKMuYmylbC8vfG/J0fPgVCCm1sisnd6/PRxS0BMrXSpPPVIob4Ef
+         tqf3Q6pBL22a1hk5YlqEffuNxRli3QcfFNW8csaoM8q0JhjKPK4UMhVuI/7QP+z3QBGp
+         uol5rQZrtJRh3SsdN0e/aiO9jVfL6/bYGy0mo0S0JnviYu7nOX82G6yhhAdx2jwE1OmA
+         QvN7+GxIQnGIMsWDuiQghjHZpdVZWhONWDM911o/nS6HHdsq+f8usVDHsgxh+dMoZ9Vs
+         SjB/HBZToWOEq4t7VId1bx9aOj9w0/R+blQyhlduFkcxlwKdp9GmWlP9qXRVpxANzbpL
+         IpXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720976871; x=1721581671;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YjXmWYDlRcyjDKSQWc44GXI3jtKTGsTtfolqb8Dz5VU=;
-        b=gVayt30/GlG4eY1EJqqYObAJbsV4iKUHSj44qmi27GsIQ5964u/eTlTZ9tZEWlatQF
-         gNEhRGofampLvfmHnPyclhDqkYVyW9rtLjaYp1ssLE4yi0Qhgyb/hXQwFp4WjT6rynTy
-         u6MLWGLXoMO70eexHb6h7ZxoyzP+hb0/1b7imrSgR0UqR9sZKtywj2P50QEftE0BTEty
-         dN8gNnCtzIB0mk3A5RpMm+NkoxfZ2Mzz/9Ex9Tfwf8r3XQ7DlI7rnjosa4fZUFtnPjpI
-         9KgVUZqfbBYyDaNQaO4XkPnUa5DTiMiNP519E6Sxc3dDIbZeHGdl45R4FRU0cQxEqpes
-         01cA==
-X-Gm-Message-State: AOJu0Yzw+NVoQ3W3tO2/FcQttVu4dCpgtEkdafLS4l6f6NKPaXnhb2kq
-	0cen7v05QUBt52GHmaWbSBs4qbBhJM4rtMSJwPDUZJsUwevZGd0E4IbsBMiad6hCElulxgiqDZg
-	Z/Fg6j3iuHBc8U/8+JfHxAlnxyp5V0IlR
-X-Google-Smtp-Source: AGHT+IGv/1h5i2TkcHpfrCBIaN0jFaVpHvejrxHpMXDSMK3tuLIpbwm+eUYLaXdpSiTTu8JHh+4CJLAguMPq21QRj2Q=
-X-Received: by 2002:a0d:c006:0:b0:65f:8b0d:f113 with SMTP id
- 00721157ae682-65f8b0df308mr48977957b3.47.1720976871380; Sun, 14 Jul 2024
- 10:07:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720977624; x=1721582424;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OlQJVnEnvYtG6Urx8xlXkjHKNYwq7RXhH4sQHIkE5Zk=;
+        b=bg5bap8tVPd6bIfp3hhuuTFi/WEDdj2DmVwN0Do1uJoQyX2dImULJdj0coi92GwHvs
+         q6sGfiXOuWEAzydIc/ROaQ52VmUJvGVIuqKxQtn1LVJRlGYEQ0FQzSVlu620ZZglYBV3
+         njq0Qu4qiqEJmxW+XABLUpErQPqilR51mfGY4awpTy5RSjUxBgqpGG0/xTrD9UAANn8L
+         Fxeyd/4i2T4rGdNTxAt5ho55+4PLAPfj2BBY/BLr01H27NftFQiTfZCMMnKw9Gw3/zFO
+         wekW4lzoNnkcURfkswneg2u0oeEGw4HtGqgd4Z6qoPWLKec2nhgHMccdwEHVko9WtDAv
+         iLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIFvADAZrTMH+vK0opVQZn1jgx7MEtkyHzcu8Sn41y2Ropq9nTEwOxdLsA9VSxYn1RRky7DF8aYVzBIsD83UHJEMbmin608f5bmlKYSKuWwZl+ROOPuPF0Gn4rd2f3choFbjR1igMR0w==
+X-Gm-Message-State: AOJu0YzYtTbzBPfZ/9eXCsLtGQ4b71tknvXPQLuFO2JcM1ZAZn03D7s8
+	MGLPbpd2Ltcpw/RZDULRLT7/ztanbIflrWSEkZb+IhZ1CakSDKqO
+X-Google-Smtp-Source: AGHT+IF6DTVl/wDe0J/V/t+5rtM8BQuGZZ8qgIqSyMgnG7/Y0BdktL+/90gcxU5w1DRx/MZmfcmztg==
+X-Received: by 2002:a92:c546:0:b0:375:a7ee:dff9 with SMTP id e9e14a558f8ab-38a585825f7mr226453335ab.17.1720977623667;
+        Sun, 14 Jul 2024 10:20:23 -0700 (PDT)
+Received: from aford-System-Version.lan ([2601:447:d002:5be:5d97:4e3d:78d3:be9d])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3900f5280b1sm11357625ab.32.2024.07.14.10.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 10:20:23 -0700 (PDT)
+From: Adam Ford <aford173@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: aford@beaconembedded.com,
+	Adam Ford <aford173@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: imx8mp-beacon-kit: Fix Stereo Audio on WM8962
+Date: Sun, 14 Jul 2024 12:20:17 -0500
+Message-ID: <20240714172017.422811-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?U2hpLVd1LCBMb++8iEdtYWls77yJ?= <shiwulo@gmail.com>
-Date: Mon, 15 Jul 2024 01:07:40 +0800
-Message-ID: <CAOpXEOwh6r0Fo_5hgXET6gGHTUxTdE1aDkp_K0ga8BwGSDMX+A@mail.gmail.com>
-Subject: A new spinlock for multicore (>16) platform
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Dear Linux Contributors,
-I am a Linux enthusiast from Taiwan, and I hope to contribute to the
-Linux kernel. We have developed a new spinlock method that has been
-validated on AMD 64-core and AMD 32-core processors. Compared to
-previous methods, this new method is optimized in the following areas:
+The L/R clock needs to be controlled by the SAI3 instead of the
+CODEC to properly achieve stereo sound. Doing this allows removes
+the need for unnecessary clock manipulation to try to get the
+CODEC's clock in sync with the SAI3 clock, since the CODEC can cope
+with a wide variety of clock inputs.
 
-Motivation and Approaches:
-1. As the number of cores increases, there is a need for more refined
-optimization of the data transmission paths between cores.
-2. Data transmission usually involves lock-unlock wrapping.
-3. Performance improvement can be achieved using a shortest path
-approximation algorithm.
-   A detailed introduction to this method can be found in the following paper:
-https://www.usenix.org/conference/osdi23/presentation/lo
+Fixes: 161af16c18f3 ("arm64: dts: imx8mp-beacon-kit: Fix audio_pll2 clock")
+Fixes: 69e2f37a6ddc ("arm64: dts: imx8mp-beacon-kit: Enable WM8962 Audio CODEC")
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Our laboratory is currently developing a system that can apply the
-same optimization strategy to all multi-core processors. Below is our
-plan.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts b/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
+index 1871c10f5c12..de5b64fa479a 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
+@@ -222,13 +222,12 @@ sound-wm8962 {
+ 
+ 		simple-audio-card,cpu {
+ 			sound-dai = <&sai3>;
++			frame-master;
++			bitclock-master;
+ 		};
+ 
+ 		simple-audio-card,codec {
+ 			sound-dai = <&wm8962>;
+-			clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO1>;
+-			frame-master;
+-			bitclock-master;
+ 		};
+ 	};
+ };
+@@ -544,10 +543,9 @@ &pcie_phy {
+ &sai3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_sai3>;
+-	assigned-clocks = <&clk IMX8MP_CLK_SAI3>,
+-			  <&clk IMX8MP_AUDIO_PLL2> ;
+-	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL2_OUT>;
+-	assigned-clock-rates = <12288000>, <361267200>;
++	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
++	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <12288000>;
+ 	fsl,sai-mclk-direction-output;
+ 	status = "okay";
+ };
+-- 
+2.43.0
 
-The New Method and Its Compatibility with qspinlock:
-1. The default algorithm in the Linux kernel remains qspinlock.
-2. A new file is created in /proc/routing_path, where a shortest path
-can be input, for example:
-sudo echo 1,2,3,4,16,17,18,19,5,6,7,8,11,12,13,14 > /proc/routing_path
-3. After inputting the shortest path, the kernel switches to using the
-RON algorithm.
-
-Expected Outcomes:
-According to our measurements on AMD 32-core and AMD 64-core
-processors, Google LevelDB can achieve a 3-4% speed improvement.
-
-Comparison with Previous NUMA-aware algorithms:
-Compared to NUMA-aware results, since such systems may contain more
-than two processors, the communication cost between processors is much
-higher than the communication cost between cores (within the same
-processor). Our method focuses on multiple cores within a single
-processor, making it multicore-aware. If a NUMA-aware algorithm is
-used in a multicore environment, it is not as effective as a
-multicore-aware algorithm. (Please refer to the paper,
-https://www.usenix.org/conference/osdi23/presentation/lo)
-
-Assistance Needed:
-I would like to understand if the Linux kernel community is interested
-in this new spinlock method. As a teacher, I cannot complete all the
-work by myself. Is anyone willing to collaborate with me on this
-project?
-
-Sorry to bother you:
-I apologize for taking up so much of your time with this letter.
-Although I am quite old, this is the first time I feel that my
-research results are good enough to contribute to the Linux community.
-I have read the relevant documentation, and it made me realize that my
-time and abilities are insufficient to write the high-quality code
-required by the Linux community. Therefore, I ask for your guidance.
-
-All the best to you all
-
-shiwu
 
