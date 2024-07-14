@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-251876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2AE930AE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0B5930AE9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C67EEB20A83
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:02:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2F0CB20EC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8302413BC3D;
-	Sun, 14 Jul 2024 17:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5958613C3D3;
+	Sun, 14 Jul 2024 17:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IahU0CBv"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQoJrb9a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA64139CFF;
-	Sun, 14 Jul 2024 17:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D131E494;
+	Sun, 14 Jul 2024 17:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720976568; cv=none; b=SALIBQ9tUgqeCgCYQGnlouL/ajgvQp4zGt0rPlrjFtYeD8bO97gU4lZeGlfB25vb71NSoWfeScf92DRI9PHJJaADmswGANoDnvTG/7Y/XYZLIQwSSNocXlWMPHIzY/1xAzBgNoe31bkzUwg7+KX4PkHnMd3ekfVIngEE9ip5tnk=
+	t=1720976943; cv=none; b=m5w972iwdKkaoJ/UP/T/oIEWoy+O7QPMWcWlyZvm/jVdR9zsbO1xhCZuu/m4Pq3i9TfqHp8CitKBw/txL5rrgzjOcN2pZDWLGAv3hIVKF2EMl9e+wX8S/2dhGKiSTkANSYkNeHpX8nff1ac3F9G56V86fcZ1kt/9LZPH6RGmmkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720976568; c=relaxed/simple;
-	bh=imFGudE0abTwx4msHdDYdZAoZLvRkFY2Ru5F4Y8JOZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XRE/3ZesobcPDcTGaIxvGnMkrRUal7W0KJRAOuOP3I0eUqxAhal6chIgXZtNng3/tcdKWFuNTdI/TRVb6T5zURUPHCHs90Gm3osFI2KwC2i56b9Q4VTed0FH/TAZDGwBj8hcTBmb6112o0GUMDurvz0i+/xPXb6Y8zyuME8rz8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IahU0CBv; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-765590154b4so2030055a12.0;
-        Sun, 14 Jul 2024 10:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720976567; x=1721581367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V2F80DyFNnpYsHP7zwJV9lSVbXe9QpASbGWUomP7AEo=;
-        b=IahU0CBvoV1sB6ufuN08G61kR7kVHas8tHrgVTC1oGsnBxgo6rDrwHh/sDp95znBhT
-         iIs3e9RA3S6bmyRQruqhfT4WJIZGASpc2utx70gV174HgFneUHcRBUQTOHAcdtDG1pzB
-         feVrJWcefRdYgrj4qcafDAjKQ2buIBbgH58JbOaL/+AJlwDnJLURvmX5uIT/G1gOUD3U
-         oOTphhEjEEUOH4vM16EyfSiRyftDadVv/4bHUdYwpvkIx8IEw3nKKYkRsxPWGKEmqFEB
-         leNCrPZ+adl94pSfakQZTOkr8RD/ayWXl51MoMG9HXarxdvqzo26UI/Ij5EdyrEwCWMW
-         Or8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720976567; x=1721581367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V2F80DyFNnpYsHP7zwJV9lSVbXe9QpASbGWUomP7AEo=;
-        b=G8vAd2iTh0IFbmHRjFHdt6JTymcLGg2KqW5qYpq19QnFOFmxJ3a8YE7cc8q/N/7Iyr
-         jBoMQmlA/uOLRPwwZf+zcJwcaGTOOyOrskfSz7ULfQ0iw1B6tYkqDsq2T4x43//y1GSd
-         6/bX9zMoNX08xHoVQC0MhljJvCYx2HOMu3OGAjX44qOn7szPa8MwoIDui4IoXn+rQIGn
-         aiJxZEZjaQOUddu4EZL7GuePvaUbB/lXbB0HxtqktqPcLPLj3YJ3Ggvf5qHgFRH/73hf
-         MACbHPZ7rWwDT/cXl1YtnYxwS6RSsZFUxGPMs+mSZP32NDPxNsK829xnOzxh7HwLD9EO
-         SIkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7I4QJ0/qDqFwWkCmTzyFZ3Bjb7AprYz/K7MOCoPnLZhF3gZB6M82poyhMHAjZUn7Ggdw0CR1UdKl1gY40o/vMb2JC/M1bLqjdR5NARFxBtkNuYbCLRsUHIgjk3P6q40ldmaJJYBuW
-X-Gm-Message-State: AOJu0YyhbfJY2txDSpt39b/RZu1wg0NFAVri4RKD1MMugE0mYKPHsML1
-	cj8pB3J2lYdNxs7IDttzXK5B2ZDfPrxMM/Wl17E9J9Mq7m9j/iN7OT5QsOZe12w/2PaJVjpJFrm
-	C8lfbONDVQ3Mp0+S57aBo2WeisJY3jA==
-X-Google-Smtp-Source: AGHT+IGHPlz4JVnrclkH/s8T8rzAqvI6Kcvne8QSso/Zp8ZfFWs0gedBWYKbzhNBAFNfq6Nmba+ZrZyBPvatXfS++P0=
-X-Received: by 2002:a05:6a20:7f87:b0:1c3:b210:418b with SMTP id
- adf61e73a8af0-1c3b21041f3mr11115631637.52.1720976566543; Sun, 14 Jul 2024
- 10:02:46 -0700 (PDT)
+	s=arc-20240116; t=1720976943; c=relaxed/simple;
+	bh=MxRLc97aWW1jnO5G6Jndd9uzcfVljas1IZvntva/lCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uK06dQXb2UWPsanhdIaiWW3Nz2JWEmTmrNBsyd3yGFQf//6udvhpNWNUlSKCIPdPksPgHs0S4d0tRk4HW4Pbx6dgrToin0wqYxRHgYdqntJ0686lXF1AGiBpFk7Rdqeqga0x7fq8fUgJ8JFYYyP3pu4KZejjy0qUZsSFayW5J5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQoJrb9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31172C116B1;
+	Sun, 14 Jul 2024 17:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720976943;
+	bh=MxRLc97aWW1jnO5G6Jndd9uzcfVljas1IZvntva/lCs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JQoJrb9atcNILl3gxuE/+a/h+aqRk7cRcQPuS2x294rEZXNGqaEVwMlBFoyVuc9aM
+	 OsJgdz1DgDAmaCfkjGSnxuJXdRE4H6aYI0571cWd5b4EwDDZkPAHQx9leTO0lm2Dqu
+	 n6wi4wwXAbKyxno4h52krvbuXMW94oCxaoktW4c0g29ZQ+7JYQ2Xgxf5VyuRD/vZgS
+	 Tfa0wDk62afOb5725AoLWw+/eP2tJVU0Wb95D5zkTM2hsn4qjmD6DZGxssJ5R1Tg22
+	 obxBPvZ2DzOMkwplGxd/89KnFq4lLIJN7ekDlZenAYAzm6q56RAb4v6t6CdceTui4J
+	 fQKViagwMmGXw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <keescook@chromium.org>,
+	Marco Elver <elver@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] fortify: fix warnings in fortify tests with KASAN
+Date: Mon, 15 Jul 2024 02:04:32 +0900
+Message-ID: <20240714170847.2029108-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607133347.3291040-1-peng.fan@oss.nxp.com> <20240607133347.3291040-6-peng.fan@oss.nxp.com>
-In-Reply-To: <20240607133347.3291040-6-peng.fan@oss.nxp.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Sun, 14 Jul 2024 12:02:35 -0500
-Message-ID: <CAHCN7x+pzcdwSq19LefsyYAPUp8=kQYJeVbHm9sgSeaKXigMZg@mail.gmail.com>
-Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove sdma root clock
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, imx@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 7, 2024 at 8:28=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
-> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> There is an issue:
-> SDMA3 can't work without setting AUDIOMIX_CLKEN0[SDMA2] (bit-26) to 1
->
-> The workaround is:
-> As the reset state of AUDIOMIX_CLKEN0[SDMA2] is enabled,
-> we just need to keep it on as reset state, don't touch it
-> in kernel, then every thing is same as before, if we register
-> the clock in clk-audiomix, then kernel will try to disable
-> it in idle.
->
-> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-> Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+When a software KASAN mode is enabled, the fortify tests emit warnings
+on some architectures.
 
-With this patch,I found it broke the imx8mp-beacon board when running
-audio through a codec connected to sai3.  Reverting this patch made
-the crash go away.  Is there a way to mark the clock as critical so it
-doesn't get idled?
+For example, for ARCH=arm, the combination of CONFIG_FORTIFY_SOURCE=y
+and CONFIG_KASAN=y produces the following warnings:
 
-adam
->  drivers/clk/imx/clk-imx8mp-audiomix.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
-imx8mp-audiomix.c
-> index b381d6f784c8..88d8ba975b5a 100644
-> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> @@ -172,7 +172,6 @@ static struct clk_imx8mp_audiomix_sel sels[] =3D {
->         CLK_GATE("ocrama", OCRAMA_IPG),
->         CLK_GATE("aud2htx", AUD2HTX_IPG),
->         CLK_GATE("earc_phy", EARC_PHY),
-> -       CLK_GATE("sdma2", SDMA2_ROOT),
->         CLK_GATE("sdma3", SDMA3_ROOT),
->         CLK_GATE("spba2", SPBA2_ROOT),
->         CLK_GATE("dsp", DSP_ROOT),
-> --
-> 2.37.1
->
->
+    TEST    lib/test_fortify/read_overflow-memchr.log
+  warning: unsafe memchr() usage lacked '__read_overflow' warning in lib/test_fortify/read_overflow-memchr.c
+    TEST    lib/test_fortify/read_overflow-memchr_inv.log
+  warning: unsafe memchr_inv() usage lacked '__read_overflow' symbol in lib/test_fortify/read_overflow-memchr_inv.c
+    TEST    lib/test_fortify/read_overflow-memcmp.log
+  warning: unsafe memcmp() usage lacked '__read_overflow' warning in lib/test_fortify/read_overflow-memcmp.c
+    TEST    lib/test_fortify/read_overflow-memscan.log
+  warning: unsafe memscan() usage lacked '__read_overflow' symbol in lib/test_fortify/read_overflow-memscan.c
+    TEST    lib/test_fortify/read_overflow2-memcmp.log
+  warning: unsafe memcmp() usage lacked '__read_overflow2' warning in lib/test_fortify/read_overflow2-memcmp.c
+     [ more and more similar warnings... ]
+
+Commit 9c2d1328f88a ("kbuild: provide reasonable defaults for tool
+coverage") removed KASAN flags from non-kernel objects by default.
+It was an intended behavior because lib/test_fortify/*.c are unit
+tests that are not linked to the kernel.
+
+As it turns out, some architectures require -fsanitize=kernel-(hw)address
+to define __SANITIZE_ADDRESS__ for the fortify tests.
+
+Without __SANITIZE_ADDRESS__ defined, arch/arm/include/asm/string.h
+defines __NO_FORTIFY, thus excluding <linux/fortify-string.h>.
+
+This issue does not occur on x86 thanks to commit 4ec4190be4cf
+("kasan, x86: don't rename memintrinsics in uninstrumented files"),
+but there are still some architectures that define __NO_FORTIFY
+in such a situation.
+
+Set KASAN_SANITIZE=y explicitly to the fortify tests.
+
+Fixes: 9c2d1328f88a ("kbuild: provide reasonable defaults for tool coverage")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Closes: https://lore.kernel.org/all/0e8dee26-41cc-41ae-9493-10cd1a8e3268@app.fastmail.com/
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+Kees Cook said "I'll try to figure this out", but I have not seen a patch so far,
+so I decided to do this myself.
+(https://lore.kernel.org/all/202405310908.A5733DF@keescook/)
+
+I will send a pull req with this and some other fixes.
+I need to fix this, as v6.10 will be released soon.
+
+
+
+ lib/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/Makefile b/lib/Makefile
+index 3b1769045651..30337431d10e 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -426,3 +426,7 @@ $(obj)/$(TEST_FORTIFY_LOG): $(addprefix $(obj)/, $(TEST_FORTIFY_LOGS)) FORCE
+ ifeq ($(CONFIG_FORTIFY_SOURCE),y)
+ $(obj)/string.o: $(obj)/$(TEST_FORTIFY_LOG)
+ endif
++
++# Some architectures define __NO_FORTIFY if __SANITIZE_ADDRESS__ is undefined.
++# Pass CFLAGS_KASAN to avoid warnings.
++$(foreach x, $(patsubst %.log,%.o,$(TEST_FORTIFY_LOGS)), $(eval KASAN_SANITIZE_$(x) := y))
+-- 
+2.43.0
+
 
