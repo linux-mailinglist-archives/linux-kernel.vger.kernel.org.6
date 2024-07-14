@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-251796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391C99309F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:47:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721619309FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD566B20EB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EA51C20A6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6478528F;
-	Sun, 14 Jul 2024 12:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9146112FF6A;
+	Sun, 14 Jul 2024 12:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3AREP2A"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvmgEKcP"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0321DF58;
-	Sun, 14 Jul 2024 12:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1BC71750;
+	Sun, 14 Jul 2024 12:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720961253; cv=none; b=OlMlmYjeh4tYrXNkbVEzbfBU/2DIAlIP+3FAtaW2IKYqnN2fQQlN1JPmSDpd7JQKe81CZslAKRsdSRGEwCc0VkPiEkUrf0wS7nPAdEYB8wE61lDzux/fg7vq/+hlz8A1rSCHpqPMn9XH7rraguRH59sHoMyaWBzjpccRgW2oDBU=
+	t=1720961488; cv=none; b=Dj/yHeHUyRzxr/9v0mry+Dh1V9pHzSt1WNkg3vJWcl1KIEKySIgMDSsUJXUwxM5Jzr5+/eEO9wFXjV6lngWr0wvUhbsq5EpEPff/1oxqV3fAQPycLbO96Jsqutle09pzT+UE+5kO/zuUPFPl7GdkmQRtYXuhbD4UeBahzpgVCXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720961253; c=relaxed/simple;
-	bh=hZ7lWekYicc/GQPSBXsMSuOVB+DQDtPdnORXDQb9EL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvoSnIUdZtogy5VhLJ5tsYmcsWJu5og1HjrZstGr2KrnTtGxb6+9xGjSbj43i+tESCP70q0A+IH5Z083M1McQr0ny6kgxB55lAL6Y2BOz34vhNAdSqvZEidj1v8sIQpBjiw+DD+e5GncAah9n9EFiMm/QZBfRAJnWOxBMkfzwU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3AREP2A; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1720961488; c=relaxed/simple;
+	bh=CYg3xNi/ngCDZR29qbDgHwk4RE913gseoNxquV5QE4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ky6ebA0RcMYdAI+gEpLPQy1wpp3zEetKDeF5SUHqB5vtTG9IHX4+q7y9x504gJqi/H+QzVktk8MbveaXlv4oaD7ZoK01+8lvfr9UlIEFzWJ1v/KoDdsdcEU9dI9oABguHraDlhMY1Xstg5A4FdYF5henULk6IxPB7kkX4kXglSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvmgEKcP; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea79e6979so3853729e87.2;
-        Sun, 14 Jul 2024 05:47:31 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a79a7d1a0dbso215898566b.2;
+        Sun, 14 Jul 2024 05:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720961250; x=1721566050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bYeW1aUqkkqQu0pvxg2P+XASuy3RpuxEzFGY7FDRapU=;
-        b=W3AREP2AoLkWnxLFTt5y2uH6zoJ4A7gxESvMZ4Vjg3XFohwwn3pGVPRVwJc26Ovpru
-         WoBVOE2MOa2xYfFtfU4fPN5nhgUSOEFlUUN8GyUGi3xK5hrh1/IoVuHdm6eYoipG9srN
-         0Nofne0KkybdZ4Q1BCy7Hwxw55cR2QqMmkAND+2TDcTPqc5kSnDQyQq/kjk/sh/TGrlv
-         IDkeppcxn0pW3HDkNukj94kLox+tSz2VPDBLlsNg9ZCgyJlwba+MCVm2YjTFaG1lGo7i
-         5B4EdgY0lxtTEXA0nfD/vbcfTz6AV0QyrtzRPbPoP/1inbgLKHWGkmgROlGTkxoE3fEY
-         gO8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720961250; x=1721566050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720961486; x=1721566286; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bYeW1aUqkkqQu0pvxg2P+XASuy3RpuxEzFGY7FDRapU=;
-        b=r4cyouDZpCmMzfM8wKw5WRTEWcLxXhZuvlo2Ep0pG3Y1epsSbb3vD1EIjEAQTGnHym
-         yIKL/fqrBQn1Jz1JzkKHj2gN2xJkLzB+Yfke7leXShcu878aiOU+/9QW2VuDWuxkQeBm
-         qCXf2UO2i6bAxkvcGxZVRHUE9Hryozpx5f3G/tnoa+cjYnCri1YwRMKGoR1WiuEI0Gin
-         iD1w7tpdao72gVxZ17N+3c3fGnx4c6/AxAaY8G37OotwHPG89eT3l/lSjdsCsmAINFyg
-         hncxUxSq2xRyVcfq0SFacjllHe6Ku97lc1bNqvAxWoC3AKlPcwGSUXC16hpnjYHk2JU5
-         CTqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD4CWzbdgxRcWjHuB/DyvBmdd60MNcIGgogJIArzRmnFvAdqE23exrk0VrnU+E+xWhgKVUrFGAlKrrODO6cS1+kN8PaM4GK1vuUxE95XBuXLXwZ0MRM041Kxf+73wawVxnrcZqy7UApgRaSwV+IA7xA4w5MN4QeBJjIcKqg0rBmA==
-X-Gm-Message-State: AOJu0YyvYPoZXbyy1GtY71t+wJFIP1bhJwB2svbrg2NsL1fqDBrVhJLN
-	roXej97lgKMHTF4yuXlEWwxvqVQVNt0A7OQOyt1vL6ejiz+XFhbi
-X-Google-Smtp-Source: AGHT+IExx4Gr8Umbg0gbYQ03/bv/pYqJqX/EK/+AOIRZKuLKmJm7iyM5zUZI7yWzpxPPD+pjOE17rw==
-X-Received: by 2002:a05:6512:3b82:b0:52c:e084:bb1e with SMTP id 2adb3069b0e04-52eb999126bmr11827758e87.13.1720961248544;
-        Sun, 14 Jul 2024 05:47:28 -0700 (PDT)
-Received: from mobilestation (pppoe77-82-205-78.kamchatka.ru. [77.82.205.78])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24f3b90sm451958e87.113.2024.07.14.05.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 05:47:28 -0700 (PDT)
-Date: Sun, 14 Jul 2024 15:46:31 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Drew Fustini <drew@pdp7.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RFC net-next 1/4] dt-bindings: net: snps,dwmac: allow
- dwmac-3.70a to set pbl properties
-Message-ID: <ywwl3eaamj3d7dhwkhcoglxwxqmpwd5dewkq6ldmrfqdfgnlu3@rawh4yhkuh6h>
-References: <20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com>
- <20240713-thead-dwmac-v1-1-81f04480cd31@tenstorrent.com>
+        bh=ZzYpwILPItQvBM9cJl6LLDEF67V7lhOke54GQOremiY=;
+        b=bvmgEKcPZ0l5V+vSAEfmT+h9co9Uep9mubAtX9cuJaQiBSmcjijAXlUnfklfeG+3x1
+         3olpTmMxoAjx4H4bcveZmGPu9zK4k1jFMIWjBo/jXe2MULNP5cuzeJ3ZOeNLZq8jB85q
+         eHGNahGxnFiUPCbuSFy9RWCVW8J/XKjozqGrFHX5KlNd7AEElsfojqk0T+q9ElLtHwSN
+         EizHdstsnrZgtl8+j+wyBSbkpx5B/EbBUK7nWJE6neRwdD/wEIYp7Ach4KeaFtS5/IPo
+         xAyPF9bV/tY28RM8h5HocDJIuX1BLFi7jIhBgUTLVuvdCD/twjAfmc8d6K4c666CiXJ8
+         hGPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720961486; x=1721566286;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZzYpwILPItQvBM9cJl6LLDEF67V7lhOke54GQOremiY=;
+        b=B9bnDstEk+GXBXCTuHMKFeKvaPPtreS4kvgAzmvNdpBUZEsLo6wYgt9Zzd649ywrkt
+         VHYZoFq9h9Fv+pxPedZlUG6mNNcOH4CCsmEELBFUutwHG4kVJAW8b/9pSkIz0qppJfFe
+         vMymSPSMdE8DutR+FDldmZu91eQTo+8bGHY2IqFb/cBWEp1WB2m8ZIimBCcJhr6nwfPG
+         tVseBorK2v2kMq9LfKnymgc2kFMkDkeJJyNyz2R8nXg7hwimaDieQsW0ksBuCMM78+bJ
+         LpgXL3IptedU3wn6L39HiFqRAkiO7DdeSpaUJ1l0NJAedNwVDiIvuG4MDLU8RPkpv2gN
+         YQag==
+X-Forwarded-Encrypted: i=1; AJvYcCXOc+m8CJI/kh/csu2KKUSrTtEM64hYhARHnad+nd6wF5Lfl+hrbE845NUULSVQX0ijzz0Gl0HZZYkM1wzVE+M1RT/9s/AhhjpGktdS9YP2AD9Og62kqN1Xv0/cSIMwx/nF0vUh119TlZq9d1hQHZN137G0XodTyi2KAULLwGsm
+X-Gm-Message-State: AOJu0YzGnZCgHJwvZl9RkAMWd5IZmUG0nj4skipPPWqCGBs6tP3cKGJE
+	4gXZ4k/lZGZjzfDfMuQeh2fv++t+pfE9rjysuoS//P6Q9kYEHpLHj0Wm/6WcI2EpVggabQ99KzO
+	9KSEY2oUMgDgjZkC9FbDW0jm+IrE=
+X-Google-Smtp-Source: AGHT+IFVpepkl9B848UxXyHw2Uxtelx9tIXCYTafa/iSvHcI3yyJX6AAcAeH+03cYXrsW2z1jgaN93A/xdh2qgBVly8=
+X-Received: by 2002:a17:907:bb89:b0:a77:c95e:9b1c with SMTP id
+ a640c23a62f3a-a780b6b18a7mr1063931966b.27.1720961485470; Sun, 14 Jul 2024
+ 05:51:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240713-thead-dwmac-v1-1-81f04480cd31@tenstorrent.com>
+References: <CA+3zgmvct7BWib9A7O1ykUf=0nZpdbdpXBdPWOCqfPuyCT3fug@mail.gmail.com>
+ <2024071447-saddled-backrest-bf16@gregkh>
+In-Reply-To: <2024071447-saddled-backrest-bf16@gregkh>
+From: Tim Lewis <elatllat@gmail.com>
+Date: Sun, 14 Jul 2024 08:51:14 -0400
+Message-ID: <CA+3zgmtP0o4onLaeUhoYoJ2f9J_hSo3NM77jpSQ9N-rTWgG80g@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>, 
+	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 13, 2024 at 03:35:10PM -0700, Drew Fustini wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
-> 
-> snps dwmac 3.70a also supports setting pbl related properties, such as
-> "snps,pbl", "snps,txpbl", "snps,rxpbl" and "snps,no-pbl-x8".
+On Sun, Jul 14, 2024 at 2:30=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+> On Sat, Jul 13, 2024 at 01:52:52PM -0400, Tim Lewis wrote:
+> >     usb: xhci: prevent potential failure in handle_tx_event() for Trans=
+fer events without TRB
+>
+> Ick, is this also a problem with the latest 6.6 and/or the latest 6.9 and=
+/or Linus's tree?
 
-No longer needed due to the recent commit:
-https://git.kernel.org/netdev/net-next/c/d01e0e98de31
-
--Serge(y)
-
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Link: https://lore.kernel.org/r/20230827091710.1483-2-jszhang@kernel.org
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> Signed-off-by: Drew Fustini <drew@pdp7.com>
-> ---
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 21cc27e75f50..0ad3bf5dafa7 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -584,6 +584,7 @@ allOf:
->                - qcom,sa8775p-ethqos
->                - qcom,sc8280xp-ethqos
->                - snps,dwmac-3.50a
-> +              - snps,dwmac-3.70a
->                - snps,dwmac-4.10a
->                - snps,dwmac-4.20a
->                - snps,dwmac-5.20
-> 
-> -- 
-> 2.34.1
-> 
-> 
+The problem did not occur on 6.9.9
+I'll test 6.6.y next.
 
