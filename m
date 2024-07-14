@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-251920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676E5930BA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CCA930BA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98AD11C216D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7FB281F39
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB5313F42A;
-	Sun, 14 Jul 2024 20:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C713D28F;
+	Sun, 14 Jul 2024 20:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N45LsQ0l"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ajTjAryy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iA5BQrFX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3EC13D89B;
-	Sun, 14 Jul 2024 20:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD9818AED
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 20:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720989707; cv=none; b=IDIdgI5be+dNkNCsWLl22S+hEQMctnfZaTHXooAQwP4kJt4LTV6JxtK0uf38vxN8Gkc7eim+rmRPDDbUmlea/Kaqbq0oezf6G0SFnHkv5VdwnYiEjRwEe02BrYk6BPTkn9Bp8uEgmF4EVkF3/lyCpYbXZW8gMd8lqB10ZtPCJOM=
+	t=1720990209; cv=none; b=laQuJe9Ti84/bToynRJHfWafuCHxNvBc7wYBw8mnmUW3YX8puKaF41DcbtGs+rx69l5CDOMA/07A56sWsvR64VO4ZX/s0slJI9WDPJk0usQDDlwBzIKRaKeW/LcnMSV1VYEvh7oVTtxw5PA6ld5mkDc3TSTBx6H4+sA/AHomDbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720989707; c=relaxed/simple;
-	bh=Rbhi9raS35yjLs44ICMqmzwlTLdlFu8DJr1zq7AF6AA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJGmSSNnxhy2gp42LA3ULlZTNSVsdtQIifx+2CTvy9vkWNTcKgE09guGSA4ovzKZIGHeZVbirZHKJrPNEVMwZ6AXu/ViOF/LFlxrTuTIS1q1ubwbri8B5I+VNhf7vLdSyqhbcOyC5cRZK2nvTbFurLd4LAQVOCUQudJddKosXhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N45LsQ0l; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-595850e7e11so4460488a12.1;
-        Sun, 14 Jul 2024 13:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720989704; x=1721594504; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z/cK++aNJsVXbuZ4CO83IGAtI8ojo7ZZbJZliVitl0M=;
-        b=N45LsQ0l2Bvria4dNQMr2t+IdhoiOH2w2MeNq7VDJVGDRIb4RIyrWL3HXdcnVhQtBI
-         DIGTkw34p8Olf+QaOFppnfbzDurVZCmGBH8cd23rryD26bCT0SgXrzv8jF0q7nC/OmEm
-         eFiArPh85U93J0dAcYe3AdABTwsHPOEeCQa/eq7su6bmPdolxraDyMeun4gkMn4MdXML
-         +dJc+VWbpTESj1nRZFdmvzpWA4GaNoUQ1OoF93nEzjmL1yAKg7DMplp5yuLlMClcD/lZ
-         oPLJzJb07fzjRKnulLQ1Cpzh+fosStEDrXg9u3Um4ZeBnnxLE9TpWNRDxZ7E02OciMBV
-         w4Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720989704; x=1721594504;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z/cK++aNJsVXbuZ4CO83IGAtI8ojo7ZZbJZliVitl0M=;
-        b=O8hpcd4DWIeXlGBMCjAkTQCOnXwMOCOy5/cWQqdcGhDY1P4CU07Np63/22TfmRBudd
-         xkCvnSU/q3aFhyp39+Uud9EPKInTd2S39EgMjiPXGZlTyUxEh8Am2qv10tpWwdMZkLHg
-         /LlpZldBAaEKf0wxyTsQu+f58LvjG4VbASE2VFhaDxVhHM7XnlHoU0R23B512lbY818x
-         YAdp93vvUtk+33oHbOGBotyeru5eYYbVuz/23N0N8V6MY/DZwB7ELg7gKupPta2+rURa
-         nmIAjqViSAzXEEAfGQqYf1P6TXvhWg0OeBrpQVDZs4Ro0owg2vrJmPJeout2xb/NyT6R
-         Z24A==
-X-Forwarded-Encrypted: i=1; AJvYcCUSoOWdX52FijYPIfDui55txZ4cAJHHeT3bygoBWk9ICmx0DONhmeVa2QLJ+gNfNTo0wJGo2myTQy/ODX2Coh60MbRyCGKcTfO7eMeyZ5Bxca9fwMDsKkthAnFqFAxAqHKISYlLcThaPikumbEHdtPSq4HPc5z2ZNJzzds3Me3g
-X-Gm-Message-State: AOJu0YxQb1yqwz4lawEe9IlPdMWWgnbHTbVB8oJPFGanNZq3YOLJ8A/M
-	db7ck//g8+QBIb/QogFmEPOsMK/aG2puAotdj6ooB50WorpQU0D1ePCEbOQa9eDkIWEbXNXuGqB
-	hnWmC3Fr2Mo98RKCfLQe8C5jkbnU=
-X-Google-Smtp-Source: AGHT+IFFU4LKVj2rB7Y2ql4XbS+Q0ZtDsClPyxLPu1EwMtucLEgaSQSDlc3rjRfkgzPGNZviraCFeIooj9FdKqL4z9M=
-X-Received: by 2002:a50:ee0b:0:b0:58d:836e:5d83 with SMTP id
- 4fb4d7f45d1cf-594ba59f8eamr10226955a12.22.1720989703622; Sun, 14 Jul 2024
- 13:41:43 -0700 (PDT)
+	s=arc-20240116; t=1720990209; c=relaxed/simple;
+	bh=hwiXlZWx6CN0SQMz8QkESNeIJHVGOjNdpTPujvaKC+I=;
+	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=I0tpXj/KCSA2AKL//eK7XRVE/o1W0gvO2hZgDRpSiY5D2N+85DVi/9eHHESLnmnvaJvxF8g081n+c5nW1SqUorqJohPvgkDo/mYghQ/MWioKbbtZAzGexeM3h+1+orBlfK1ZjwK2rtMolus1k+pLstVi/PXh7BH6Jf0/XDuspK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ajTjAryy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iA5BQrFX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720990205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wjl9tIIspzOSi0BWLjAbBtNsY8Mon818Ft4dB0oSek0=;
+	b=ajTjAryyzdvHuiV6OGFtv/IZ25FN3UuOPxGHkoRYJJMdY7msFfQ10mEIVOvpIkrg2IH85r
+	w8vWzXn9dPALvXtT9FnUMxXtm4ilsFrnWK7EH7hMC5isva3We6fh+JWqA9qtUizMPU4DkL
+	omIqKNUdSVX9jLbBFk+TVW35wHChl1Hq38IXye2gGcD58YAX13AVSXxFuMg5BXG5JukK1C
+	vEPEM9BDOXRCw4zDvAImW+k8DwRykvNbFhwsniAPlgIkQIYT84olTgC1+3Dv2UOrTcPkNP
+	KB8i6QARw7aTxPi968hDghXfR5K4ZKI9KUpQzJceRoRszTufjIxcirroMMTmjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720990205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wjl9tIIspzOSi0BWLjAbBtNsY8Mon818Ft4dB0oSek0=;
+	b=iA5BQrFXlZ/23EYT8kFKixQ0eBPpxv73dt/6LxQ0mdVbnhx9H1G3JaXQig4Jjs1ENa4zzF
+	G9U9GPZRDcMb5PDg==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] core/debugobjects for v6.11-rc1
+Message-ID: <172099001487.1942258.17671805941963584080.tglx@xen13>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
- <20240714173043.668756e4@foxbook> <ZpP3RU-MKb4pMmZH@eldamar.lan>
-In-Reply-To: <ZpP3RU-MKb4pMmZH@eldamar.lan>
-From: Tim Lewis <elatllat@gmail.com>
-Date: Sun, 14 Jul 2024 16:41:31 -0400
-Message-ID: <CA+3zgmtwunPaLbKygi0y+XY7XUd2cBGVP8So8MXxK_1pOX3miQ@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-To: gregkh@linuxfoundation.org
-Cc: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	mathias.nyman@linux.intel.com, niklas.neronin@linux.intel.com, 
-	stable@vger.kernel.org, regressions@lists.linux.dev, 
-	Salvatore Bonaccorso <carnil@debian.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Sun, 14 Jul 2024 22:50:05 +0200 (CEST)
 
-On Sun, Jul 14, 2024 at 11:32=E2=80=AFAM Micha=C5=82 Pecio <michal.pecio@gm=
-ail.com> wrote:
->  see if my suggested solution works.
+Linus,
 
-On Sun, Jul 14, 2024 at 12:05=E2=80=AFPM Salvatore Bonaccorso <carnil@debia=
-n.org> wrote:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D219039
+please pull the latest core/debugobjects branch from:
 
-Not on 6.1.y:
-    drivers/usb/host/xhci-ring.c:2644:31: error: ~@~Xir~@~Y undeclared
-(first use in this fuunction); did you mean ~@~Xidr~@~Y?
-    2644 |                 inc_deq(xhci, ir->event_ring);
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-debugobject=
+s-2024-07-14
 
-On Sun, Jul 14, 2024 at 2:30=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
-> Ick
+up to:  5b5baba62222: debugobjects: Annotate racy debug variables
 
-We now have 3 USB HDD Vendors that are reported to crash the kernel
-because of this patch.  I think it best we take time to sort out the
-long standing minor issue this patch is for, after we quickly revert
-the major issues it is causing. Can we get it removed from 6.6.y and
-older branches for the hopefully soon next release?
+
+A single update for debugobjects to annotate all intentionally racy global
+debug variables so that KCSAN ignores them.
+
+Thanks,
+
+	tglx
+
+------------------>
+Breno Leitao (1):
+      debugobjects: Annotate racy debug variables
+
+
+ lib/debugobjects.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index fb12a9bacd2f..7cea91e193a8 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -78,16 +78,17 @@ static bool			obj_freeing;
+ /* The number of objs on the global free list */
+ static int			obj_nr_tofree;
+=20
+-static int			debug_objects_maxchain __read_mostly;
+-static int __maybe_unused	debug_objects_maxchecked __read_mostly;
+-static int			debug_objects_fixups __read_mostly;
+-static int			debug_objects_warnings __read_mostly;
+-static int			debug_objects_enabled __read_mostly
+-				=3D CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
+-static int			debug_objects_pool_size __read_mostly
+-				=3D ODEBUG_POOL_SIZE;
+-static int			debug_objects_pool_min_level __read_mostly
+-				=3D ODEBUG_POOL_MIN_LEVEL;
++static int __data_racy			debug_objects_maxchain __read_mostly;
++static int __data_racy __maybe_unused	debug_objects_maxchecked __read_mostly;
++static int __data_racy			debug_objects_fixups __read_mostly;
++static int __data_racy			debug_objects_warnings __read_mostly;
++static int __data_racy			debug_objects_enabled __read_mostly
++					=3D CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
++static int __data_racy			debug_objects_pool_size __read_mostly
++					=3D ODEBUG_POOL_SIZE;
++static int __data_racy			debug_objects_pool_min_level __read_mostly
++					=3D ODEBUG_POOL_MIN_LEVEL;
++
+ static const struct debug_obj_descr *descr_test  __read_mostly;
+ static struct kmem_cache	*obj_cache __ro_after_init;
+=20
+
 
