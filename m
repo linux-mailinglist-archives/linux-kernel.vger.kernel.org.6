@@ -1,202 +1,241 @@
-Return-Path: <linux-kernel+bounces-251846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F5D930A93
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8165930A98
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBE3281522
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84581F21444
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A7313A3E3;
-	Sun, 14 Jul 2024 15:34:26 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075AD13A275;
+	Sun, 14 Jul 2024 15:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g73k5O4i"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F2C2F5B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 15:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D0D2F5B;
+	Sun, 14 Jul 2024 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720971265; cv=none; b=Peq06qXhsIpVPXv/+LPo7shIu8LEI0E4TUUhbyR4mH2lsM2nJUbmaMP2N1eKXYn2kaq56UnI+2480wfb7Q3EJMV2twNJLJlbJMD7bpzzmPzZnsxESDBjoiMZrW4hAyZLMYsFoZYIiKTfk7IzU1xst4dsxYS/itpPYv5nDrNwvMA=
+	t=1720971794; cv=none; b=mtnqN36GMlYgOsqYFrV6luQ/ZOQD9JDmx446VXNO6gjotUpVflDf8csaaHKdAz4Gc2DRUyGG2B9GbRDs42S2iwt7M5HKyLe29VPQ5BcqyfN6h6z1ik/iKmlMhb2xXAEoJpo+AgiPDdq40VTJX38l/5jdWit4m7GDQBxDXQtrxrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720971265; c=relaxed/simple;
-	bh=VxH4UksOpkaMl6EV/9swL9EnoM9ryOGtmKZl0FXTSJM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TPg+iMWjSVejQh/sUgsvayivHQCHC3BXJG8Q1A3Uwpm7994BWyf+Lh9pzg34u/L+y3gPzOXG0Ple4Mztnz5bHvZRDPM90c4Nzg5Fsk1D8i4V89WVkimm4zWLYFLHixqPN63XBZMkiKG32JUOIH0KZUezhzjbexwWoHcUJS9pKRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-80502b81995so398129639f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 08:34:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720971263; x=1721576063;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mqBCk+MGR7k+XeGXBmb2zUl3eXxlEyHzV+d8dZCTaFo=;
-        b=FQjmkQ+nvhQAkuqhWGn7p1z7fbYph1bhXLPIY6CR6STwuS+1zmx0s+TfkAdfkEPoQH
-         KiB017bQC8Qa7q0PJRPDe5LbCDGchgIdlxAo7s5Abtg+HADAoRtjX9AucuxUIzPfffFk
-         Ccth4MsF5nOBX/6tHWqujXrzKclWN59UYvrEHFYqRYwi1i/wSKa/2dMwTZB5t2xavByW
-         4EbKYHxQl0QqT7AvdJoty5A8cuVkughewkRXM/l+u4/yfH6RsSNAIsOik9b3CpmJr2l4
-         D22cPRGXE2B5ln1kz9z2sB5/1YhL8oOH4xafdFIi7EqFQjJO/g9L/mPHsr5gz5SLPyLO
-         BTPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkvldX/SdmoIgpWKB61JSjvAUcvNm9MeJm36EOQoh+vdEvMcNvNiZCPXsECN/0pZJQkamegUfRlbD7wF0rjP+/cgqoz5tDvsvnSBmJ
-X-Gm-Message-State: AOJu0YyjJZYL+wCSQ3YEbjCBo0g9uUeadG/SwbMbENh9iwYEqGTwbQgn
-	ubuNVxBWpEYotb6A6mWmM0UxypcrLGcyMn9MVkdowHQ0j3ES91HD/H6slrIlrFmMPSQD9KsvXoC
-	SV3yA1S6+l45UxBSRcsqUP/ygm6FuZVrwSglOBUkfSdCykxf/E+WS57U=
-X-Google-Smtp-Source: AGHT+IF1YXaI2DLY2PZSZMvLQ0FZlApMjvRbGPeG8ZsDwDr9/EMcZ9+nkOePgUSUYejKzHblECrVYhzQHCBRtRcOgtU6muM1Mngg
+	s=arc-20240116; t=1720971794; c=relaxed/simple;
+	bh=SQJW5P0GPkintEkiAMlbC9eV8l5hSl14NQoqc3L53IE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NdBz5Ws8IZTofy0QI9niTz8tBXs42PrTGqqaab467OzhmlUsezyS1VAawqx87KsI7f8OGmRdKUJCehN9ev2WfqzqM4MH+pR8CdJO4r5/oV7iuNQo2TGSCqvCdux0UHjldqyf62KA2DY+bZK/2Utnpd4IEYC6hGxhLZpL4IROGSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g73k5O4i; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46EEMV1X004212;
+	Sun, 14 Jul 2024 15:42:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=pp1; bh=nRgxtlyB9Ner+0S4uTaQj+6xzH0
+	xbYJ6PBZ/6JO7oHs=; b=g73k5O4ifeTkpH6/sdXnRi9Vulp+4nyClzRPXhDaaaI
+	MoRnM9jl5fOL1AagPbHByc0SMD0IYyjzDUWDcQGdbLhxpsDTuwMyBvzikacUgXyO
+	q9jt7R6T3wfrOTKxL35QyP4FX1C/But88/JGHb1tYm1fEcT+MDiku0JHhNkK6O+6
+	4yJ7VCKlOIXnnuUGxIS7y9DRzFwc0aNQ9nYutlzR3UjmTCyeuWgppRKgylQerh9L
+	5MwVSDxIWQLThIDQ9x7nqTxFTEI4Vo5lMBrWTajpnmZ5aURuCNXJGe3K6H7RvvFJ
+	m9BcmAhdvnJY1SGbfSUVgP/or9xXZfz6czvjeDay54Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40caah8hck-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 14 Jul 2024 15:42:39 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46EFgd0U013816;
+	Sun, 14 Jul 2024 15:42:39 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40caah8hcg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 14 Jul 2024 15:42:39 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46EEkAIg030534;
+	Sun, 14 Jul 2024 15:42:38 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40c4a0aru1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 14 Jul 2024 15:42:38 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46EFgYv535324406
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 14 Jul 2024 15:42:36 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2EB7020049;
+	Sun, 14 Jul 2024 15:42:34 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2A97920040;
+	Sun, 14 Jul 2024 15:42:31 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.45.184])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 14 Jul 2024 15:42:30 +0000 (GMT)
+Date: Sun, 14 Jul 2024 21:12:22 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>,
+        zhanchengbin <zhanchengbin1@huawei.com>
+Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
+Message-ID: <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-3-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-3-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0irJqy7XKq69TP_sMbrcHOk-Qk-piu3X
+X-Proofpoint-GUID: 91GdRSqFpBMDlp0UhCOZ9Sl5lWcrWfm7
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f8d:b0:80f:81f5:b484 with SMTP id
- ca18e2360f4ac-80f81f5b905mr21236239f.2.1720971263501; Sun, 14 Jul 2024
- 08:34:23 -0700 (PDT)
-Date: Sun, 14 Jul 2024 08:34:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4795d061d36d825@google.com>
-Subject: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (5)
-From: syzbot <syzbot+d79987254280f6484dd2@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-14_11,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ mlxlogscore=846 clxscore=1011 priorityscore=1501 adultscore=0
+ suspectscore=0 phishscore=0 mlxscore=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407140122
 
-Hello,
+On Wed, Jul 10, 2024 at 12:06:36PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> In ext4_ext_rm_idx() and ext4_ext_correct_indexes(), there is no proper
+> rollback of already executed updates when updating a level of the extents
+> path fails, so we may get an inconsistent extents tree, which may trigger
+> some bad things in errors=continue mode.
+> 
+> Hence clear the verified bit of modified extents buffers if the tree fails
+> to be updated in ext4_ext_rm_idx() or ext4_ext_correct_indexes(), which
+> forces the extents buffers to be checked in ext4_valid_extent_entries(),
+> ensuring that the extents tree is consistent.
+> 
+> Signed-off-by: zhanchengbin <zhanchengbin1@huawei.com>
+> Link: https://lore.kernel.org/r/20230213080514.535568-3-zhanchengbin1@huawei.com/
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/ext4/extents.c | 31 +++++++++++++++++++++++++++----
+>  1 file changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index bff3666c891a..4d589d34b30e 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -1749,12 +1749,23 @@ static int ext4_ext_correct_indexes(handle_t *handle, struct inode *inode,
+>       break;
+>     err = ext4_ext_get_access(handle, inode, path + k);
+>     if (err)
+> -     break;
+> +     goto clean;
+>     path[k].p_idx->ei_block = border;
+>     err = ext4_ext_dirty(handle, inode, path + k);
+>     if (err)
+> -     break;
+> +     goto clean;
+>   }
+> + return 0;
+> +
+> +clean:
+> + /*
+> +  * The path[k].p_bh is either unmodified or with no verified bit
+> +  * set (see ext4_ext_get_access()). So just clear the verified bit
+> +  * of the successfully modified extents buffers, which will force
+> +  * these extents to be checked to avoid using inconsistent data.
+> +  */
+> + while (++k < depth)
+> +   clear_buffer_verified(path[k].p_bh);
+>  
+>   return err;
+>  }
+> @@ -2312,12 +2323,24 @@ static int ext4_ext_rm_idx(handle_t *handle, struct inode *inode,
+>       break;
+>     err = ext4_ext_get_access(handle, inode, path + k);
+>     if (err)
+> -     break;
+> +     goto clean;
+>     path[k].p_idx->ei_block = path[k + 1].p_idx->ei_block;
+>     err = ext4_ext_dirty(handle, inode, path + k);
+>     if (err)
+> -     break;
+> +     goto clean;
+>   }
+> + return 0;
+> +
+> +clean:
+> + /*
+> +  * The path[k].p_bh is either unmodified or with no verified bit
+> +  * set (see ext4_ext_get_access()). So just clear the verified bit
+> +  * of the successfully modified extents buffers, which will force
+> +  * these extents to be checked to avoid using inconsistent data.
+> +  */
+> + while (++k < depth)
+> +   clear_buffer_verified(path[k].p_bh);
+> +
+>   return err;
+>  }
 
-syzbot found the following issue on:
+Hi Baokun,
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a10a61980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d79987254280f6484dd2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fb0f02980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d3d851980000
+So I wanted to understand the extent handling paths for a whil and thought this
+patchset was a good chance to finally take sometime and do that.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c40c1cd990d2/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a2a94050804e/bzImage-2ccbdf43.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/56eac6c758d4/mount_0.gz
+I do have a question based on my understanding of this extent deletion code:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d79987254280f6484dd2@syzkaller.appspotmail.com
+So IIUC, ext4_find_extent() will return a path where buffer of each node is
+verified (via bh = read_extent_tree_block()). So imagine we have the following
+path (d=depth, blk=idx.ei_block, v=verified, nv=not-verified):
 
-BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
-turning off the locking correctness validator.
-CPU: 1 PID: 5233 Comm: kworker/1:1 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- add_chain_cache kernel/locking/lockdep.c:3735 [inline]
- lookup_chain_cache_add kernel/locking/lockdep.c:3816 [inline]
- validate_chain kernel/locking/lockdep.c:3837 [inline]
- __lock_acquire+0x2ea6/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:559
- raw_spin_rq_lock kernel/sched/sched.h:1406 [inline]
- rq_lock kernel/sched/sched.h:1702 [inline]
- ttwu_queue kernel/sched/core.c:4055 [inline]
- try_to_wake_up+0x514/0x13e0 kernel/sched/core.c:4378
- kick_pool+0x2a0/0x7a0 kernel/workqueue.c:1279
- __queue_work+0x94d/0x1020 kernel/workqueue.c:2360
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2410
- queue_work include/linux/workqueue.h:621 [inline]
- __bch2_btree_node_write+0x1fc1/0x2d60 fs/bcachefs/btree_io.c:2232
- bch2_btree_node_write+0x127/0x2f0 fs/bcachefs/btree_io.c:2307
- btree_split+0x1087/0x3010 fs/bcachefs/btree_update_interior.c:1706
- bch2_btree_split_leaf+0x108/0x770 fs/bcachefs/btree_update_interior.c:1857
- bch2_trans_commit_error+0x327/0xd00 fs/bcachefs/btree_trans_commit.c:918
- __bch2_trans_commit+0x4eb1/0x7ad0 fs/bcachefs/btree_trans_commit.c:1138
- bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
- bch2_delete_dead_snapshots+0x1b07/0x4e50 fs/bcachefs/snapshot.c:1617
- bch2_delete_dead_snapshots_work+0x20/0x160 fs/bcachefs/snapshot.c:1690
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting keys from dying snapshots erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting keys from dying snapshots erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting keys from dying snapshots erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting keys from dying snapshots erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error erofs_trans_commit
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error deleting snapshot 4294967295 ENOENT_bkey_type_mismatch
-bcachefs (loop0): bch2_delete_dead_snapshots(): error ENOENT_bkey_type_mismatch
++------+     +------+     +------+     +------+     +------+
+|d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
+|blk=1 | --> |blk=1 | --> |blk=1 | --> |blk=1 | --> |pblk=1|
+|(v)   |     |(v)   |     |(v)   |     |(v)   |     |      |
++------+     +------+     +------+     +------+     +------+
+                                       |d=3   |     +------+
+                                       |blk=2 | --> |      |
+                                       |(v)   |     |pblk=2|
+                                       +------+     |      |
+                                                    +------+
 
+Here, the the last column are the leaf nodes with only 1 extent in them.  Now,
+say we want to punch the leaf having pblk=1. We'll eventually call
+ext4_ext_rm_leaf() -> ext4_ext_rm_idx() to remove the index at depth = 3 and
+try fixin up the indices in path with ei_block = 2
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Suppose we error out at depth == 1. After the cleanup (introduced in this
+patch), we'll mark depth = 1 to 4 as non verified:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
++------+     +------+     +------+     +------+     +------+
+|d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
+|blk=1 | --> |blk=1 | --> |blk=2 | --> |blk=2 | --> |pblk=2|
+|(v)   |     |(nv)  |     |(nv)  |     |(nv)  |     |(nv)  |
++------+     +------+     +------+     +------+     +------+
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+And we return and we won't actually mark the FS corrupt until we try to check
+the bh at depth = 1 above. In this case, the first node is still pointing to
+wrong ei_block but is marked valid. Aren't we silently leaving the tree in an
+inconsistent state which might lead to corrupted lookups until we actually
+touch the affected bh and realise that there's a corruption.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Am I missing some codepath here? Should we maybe try to clear_valid for the
+whole tree?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+(I hope the formatting of diagram comes out correct :) )
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Regards,
+ojaswin
 
-If you want to undo deduplication, reply with:
-#syz undup
+>  
+> -- 
+> 2.39.2
+> 
 
