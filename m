@@ -1,199 +1,369 @@
-Return-Path: <linux-kernel+bounces-251872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638B3930ADB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E88930ADD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC4D3B21044
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19FD51C21072
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3BB13BAC2;
-	Sun, 14 Jul 2024 16:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9136B13B7BC;
+	Sun, 14 Jul 2024 16:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuHROwi0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b="kWyq0aYD"
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [185.244.194.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F36D1755A;
-	Sun, 14 Jul 2024 16:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720975781; cv=fail; b=S1HO7GnJHfLU144KpykrFFQMInchjiXBmRuvGFbylkpnvQGhOCJToNlhinwtxKR6L3UgV466CqdqWxEg9NlsCZGtkOpxd5RaTAurYWg11cZGlvRZr/aBTGeUG9rgJk1Q7K3mg4sH73xW3IMWOj0xaIiIdtorGx1DXO4MeH9XW3Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720975781; c=relaxed/simple;
-	bh=0NrCe2ep3GizlXyaOwwrJk0lXyOfUX2nfGo7VgDyH+I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Apkexq0i57nCtcQem8rwJsIxhishlG09gmvKJyHyz0I0KWyzPOh0uTviGeX9Q8LQ7oog9zozyTKllG+e9LFxc0j8cAxNtwNcmuWuAylznuqxchzS4XsikWmmEUOwZTFIKZfc6ToIvFLbjD2PfYlSY5ep4hgwOZQmpI25LbL2CKE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuHROwi0; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720975780; x=1752511780;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=0NrCe2ep3GizlXyaOwwrJk0lXyOfUX2nfGo7VgDyH+I=;
-  b=RuHROwi0mEHIGpd7A4IPhNzUP6Tk2VZ2WSM5iCzUQFlNHNP5rbcjCmgI
-   vR0l54Vibxk6V7Epi4X8SgUgMY9fyiPxgX1cEcWfh6n4PUBCXMS+7txoF
-   GnHiQkj3Qj2CbANl970UMvjhlGolymDt+SjwRT47hqd/LGimf3bSPiwD9
-   Y/PO1CiIX0mOi7sbmNT3vnqlDXb3cwAiaaqVCbCwynG7UxyF4AzolLtwE
-   pTRb1JiW09r25unCfmD0qtxXOhhi4wFai1SWqgGOEoJM++1xDuywHSWyT
-   Cm3vtt2xoY1HetM4J9S27BBrz6hyTLsbKe6MhpFVxOBTswEP948yN7Fjt
-   A==;
-X-CSE-ConnectionGUID: CjuF1SU8TFSugECQdKYg9g==
-X-CSE-MsgGUID: ElP4r12vR4qpucVp2l+YbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="43767294"
-X-IronPort-AV: E=Sophos;i="6.09,208,1716274800"; 
-   d="scan'208";a="43767294"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2024 09:49:40 -0700
-X-CSE-ConnectionGUID: ykmWolzqSOeJ7fZ8poq83g==
-X-CSE-MsgGUID: ye0z89bKSLSG3mHFpnpT/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,208,1716274800"; 
-   d="scan'208";a="72614666"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Jul 2024 09:49:39 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 14 Jul 2024 09:49:38 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 14 Jul 2024 09:49:38 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 14 Jul 2024 09:49:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CCfCkZiNxTqTjGpybifFl89RXyyEI2JOYqkMWEemK9kgjXe5JuOaG+esTXNT5Hjw1ux4IBRQsw00ZS0rF21SU9csNG75PicFechqlKUfTJ7HdBNNaU4LVQtVopxgu/xNwWRF/G4hhGiq3+tyKaE688gW9qCc+W/p16kICO/xNeoeIGBTVe7SorSTf18JYidqfx87prhzkv8XSDaH81ngr0V6HNKxCj4fxPE13Gx5KLMbQ3GxSEmJpKvmVHwTsq0kD68dnuPts1CVO8J3EGC1VccBfACEVK5DwZkSFkPJuSHuORoGSF8/tCHh8LEjjPER+d1A9uXHux4iNkPJ9rIyzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PEQdY7JLgOM5nbNuPKnQYT7aT3MMHPXSSm58TLbix5k=;
- b=kARFKt+kiklaKeTn2s/uSKI80nyzLQjYjwK7vr3xpYwB5GFaUyhS078GiCHyeIUhzm/deu6gvSSVqoGUaoCPFGZK6CkBZXK5rKGXrKjG9QFq6F94zC6NRmXL61wnnlVXelPjDY1Zq5qLXdRBqDkuugMkfb8cIBu981s4WhP00v0m/X6xs2VGHNG4PwWMpDgm95tiRHCHffKNFTpCwKnqwyLwB694XaWH0TqCC4O2F3Y6QJeoM3sgf1jH+6SfgKa4cN8xWJ4+n5yWSN033TbdQwa1bQO38/Sgo/N6fMKjE++NJuzVqUSC9DIbSZC225chErhy/bgO8ha345StGbtF8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by CH3PR11MB8211.namprd11.prod.outlook.com (2603:10b6:610:15f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.24; Sun, 14 Jul
- 2024 16:49:35 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7762.027; Sun, 14 Jul 2024
- 16:49:34 +0000
-Date: Sun, 14 Jul 2024 09:49:30 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>, Dan Williams
-	<dan.j.williams@intel.com>
-CC: <syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com>, Tetsuo Handa
-	<penguin-kernel@i-love.sakura.ne.jp>, <stable@vger.kernel.org>, "Ashish
- Sangwan" <a.sangwan@samsung.com>, Namjae Jeon <namjae.jeon@samsung.com>,
-	"Dirk Behme" <dirk.behme@de.bosch.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>
-Subject: Re: [PATCH] driver core: Fix uevent_show() vs driver detach race
-Message-ID: <66940199e8592_8f74d294a0@dwillia2-xfh.jf.intel.com.notmuch>
-References: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
- <2024071438-perceive-earache-db11@gregkh>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2024071438-perceive-earache-db11@gregkh>
-X-ClientProxiedBy: MW4PR03CA0318.namprd03.prod.outlook.com
- (2603:10b6:303:dd::23) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1729428;
+	Sun, 14 Jul 2024 16:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.244.194.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720976233; cv=none; b=eGYvlUfGA5U483KDu/VD5EKuCtgfACZOVKDwcTP9z5EfnH1uYGlgdCFlK17ck0Kk9BAYJS5wTrmdLaCcJNUCkGbdZEe+5moL44OZhTEMKeIy8CU1J5V2atP6WAFcvIGNVgMVZ5bMI4LNRpLCVgX0ivDmiqd3uqmAfwqDeI+wO2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720976233; c=relaxed/simple;
+	bh=hYhzJm6uKRvSnZH2YkGhndUBS4BMFTIQ3k0QpkwMutM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/x7n+nWSE5Q50J/zHw5/T3+0ZKgERiUJzoyxd1ySQuBEh8/TysIvcYbazRcPipXzmTFuzAJ0zhDEzYXE3mkLTwN8Ux00tJPcwCy+cscMkRZWtZ++aLPeljqP1j2W2R4IlySgGF2EWQJ/u/xSw4WCYTZYRIgdij8Y1uKeRLrSpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de; spf=pass smtp.mailfrom=matthias-fetzer.de; dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b=kWyq0aYD; arc=none smtp.client-ip=185.244.194.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-fetzer.de
+Received: from relay01-mors.netcup.net (localhost [127.0.0.1])
+	by relay01-mors.netcup.net (Postfix) with ESMTPS id 4WMWZ30YMzz8yCq;
+	Sun, 14 Jul 2024 18:51:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=matthias-fetzer.de;
+	s=key2; t=1720975883;
+	bh=hYhzJm6uKRvSnZH2YkGhndUBS4BMFTIQ3k0QpkwMutM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kWyq0aYDdN5lkRAGakjerqF443j73NPk1ZEGsPuL/bBLWcrSAWq0zbPx+aRULVCFd
+	 n5xKdMJ80uHninJZMk5fTEao6JapCwbC5W6nHUii91wsOpe+GalXNALa3bxqid1xah
+	 jxXbaQs4yseRRNApqy+rfGQBvWVleHwT+Lr1Dm79RVfS6euR32dUcxTKN6pJ4K9YVd
+	 YIgAL4JJksNWpMZNhKUpOqkzs+K8F+Q9N5QKEUI8hnoRVetJrGXGzrlZloM5x4o0Ua
+	 WMwGYDNxkJvd1tbujnFJxqO1jm27AdTSQFPh22yjdSCukQNvAqZfegt9fID+oYp7sw
+	 3Hw+uU8nGwAVg==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by relay01-mors.netcup.net (Postfix) with ESMTPS id 4WMWZ26zY9z7vQ8;
+	Sun, 14 Jul 2024 18:51:22 +0200 (CEST)
+Received: from mxf9a3.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4WMWZ23MxVz8sbD;
+	Sun, 14 Jul 2024 18:51:22 +0200 (CEST)
+Received: from matthias-pc.lan (unknown [IPv6:2001:9e8:1a40:d900:e75f:cd15:1b62:dac9])
+	by mxf9a3.netcup.net (Postfix) with ESMTPSA id 4E98540463;
+	Sun, 14 Jul 2024 18:51:17 +0200 (CEST)
+Authentication-Results: mxf9a3;
+	spf=pass (sender IP is 2001:9e8:1a40:d900:e75f:cd15:1b62:dac9) smtp.mailfrom=kontakt@matthias-fetzer.de smtp.helo=matthias-pc.lan
+Received-SPF: pass (mxf9a3: connection is authenticated)
+From: Matthias Fetzer <kontakt@matthias-fetzer.de>
+To: hmh@hmh.eng.br,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Matthias Fetzer <kontakt@matthias-fetzer.de>
+Subject: [PATCH] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan
+ support
+Date: Sun, 14 Jul 2024 18:50:54 +0200
+Message-ID: <20240714165054.2261305-1-kontakt@matthias-fetzer.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CH3PR11MB8211:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc29cca7-c28e-4c14-0a07-08dca424f062
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5D8HxpbkJWGeoaaJnIiXX6ePOzXs5/osObPGtHOISYMMX7RBc9wimbwikQYZ?=
- =?us-ascii?Q?1mjib59yrhV5VE8ht6KrkiHLzrmma27Ne+FgnVdbiJZL4wzPTBvCZb5foN01?=
- =?us-ascii?Q?oElCpZOpE4QlcOSGiJz7DXYYGwMyBNloaMp7GpbR8S1UvqZQVr/XOEuCHk6c?=
- =?us-ascii?Q?NXu7cKbhYW2JI/s01yd7fe4DDX36luWheagT2Ton5qA+w8EIAkIHFI1TIyUL?=
- =?us-ascii?Q?qhX/V3eF8BLxYebZK8nkUF+V8BcEYeVBaeL7m5+ZcxBVVNTkajeHOszu3CxE?=
- =?us-ascii?Q?DL4pMCkm+iw6sGyQnF+DbdVuL1wwNUVSF9PrKfMQ0R5W/3X0kYYVDjdw0DBi?=
- =?us-ascii?Q?be7HLXDzRvHRBlSg8v8x5F06XB03QgR7Cp9y6uesYJSmCLntHU6SepQ5Y1gD?=
- =?us-ascii?Q?SdjgVpOLQ6vXlVU+/Kr7WU8yjH3r2h5OVfCtl1KHiPfqFWM9A7AaOHApQpfE?=
- =?us-ascii?Q?gyq6DGNDTxIUC4/QLjsq8DCQUEOkvzaQVzy/E8LDAwTytfZc5iyUFrE4GlXS?=
- =?us-ascii?Q?u12j079+G1mF0uXQQ/jR4iSqQQHqQIJF+rSygzfBgExzv2JSxhX5N8MhRDVx?=
- =?us-ascii?Q?+rsdiPkLCik0+HdtfVG3lWodm2PfCQ8VHggl/utDUVbsvvRde2jcYKLsG8Ns?=
- =?us-ascii?Q?lX74WiRhl0BvBRfZFVZm5er6LFxr7E7+i2U3SaRUmh1LXp5gMVviBBuQFgcm?=
- =?us-ascii?Q?skikn9/3o8T0SeuffGo0IHBpKtdojNc0RcNguIucjszEZngu/zBp/ptryUrR?=
- =?us-ascii?Q?EvNgA7PAGeBXn15LkhPxR6iP5uXMhyVHEDRANpFa6mnCgXJL7VdMOoj63TLL?=
- =?us-ascii?Q?jAyCZHZswn4+FiosAu41ZPFmMjk6GnXtH+kDLuNBAmWnQe2gRkT1FVdrGMf8?=
- =?us-ascii?Q?KHJoxZKk0pyxMfVjYZiaSsLqNxspyejbkOBXVR4ML6XgJCx/+PKdIxmIfjZK?=
- =?us-ascii?Q?YPRx3/Cb+8TKk7TPyRhgy6XM038bwpk/y6Kc13jqDLpWXv6yqjLjgM2DaU+q?=
- =?us-ascii?Q?7sxARKFkie9GowFT6oJuVk4slnPCnk9henxiQViqxHEOQwxdQVaXGHVMEctL?=
- =?us-ascii?Q?2CJT20wZA9FZEva12tdILYIfcDpa5ER8udKFGmjst/aXKbH1jC6EoTMKfIeT?=
- =?us-ascii?Q?ZU9BkZUt3JtekGZ4NljK+yxs6eTE5Gmnzmg1f38ro4B8o7FOlt7O1u6YbFlq?=
- =?us-ascii?Q?YFABJOpbBKb93BkKj6oiasaWF7OwJ6ZntAYK8wp3fe6rKssfFLnKt5RRaHh+?=
- =?us-ascii?Q?r4bVWAaXKfQ/hpVA8oSWWuTlwlUeYCX/aF196/2vgxksSOzqFvBdwRfYc9YP?=
- =?us-ascii?Q?y71wOrL0PmiIubWIVtjUH70QOvzqDMVbnLwFP1I05v1JNg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hvGfcxnqLFclbhMTtQEC2/a2MRNVfb2o2pw7c74735zIieRqgUZkX7h0Sxf+?=
- =?us-ascii?Q?kh1Nr2noGfqgNjGsBW+XD1pYj1U+Ucxh+TTkxBXnaysbpejimnLuj91t2Jef?=
- =?us-ascii?Q?Ci/IzmvrK9SNieUE2lCCL+OxI5UgoK2c91HUCTs58CvJ2w6tHKcNc+LqiamP?=
- =?us-ascii?Q?EIY/cenVmrmql/KFVi/8lcNAZOImy5V1O9/LtuN20G6wLTjSTZhtyWS0JSdO?=
- =?us-ascii?Q?qu4EyqHay1SwWM5iWcU4uBEessZd2r/8dXvaKxelCoSxeR25n4kMzu8TW1Hb?=
- =?us-ascii?Q?gnrIE4YjICrBBycc9AkGYxGWXqjUnaLnCSm7nyOBH81qd8mtTfF5yRhpCUfh?=
- =?us-ascii?Q?HH31OYySzXhs4b8IAdeT2JfrzupXSoZ8uXk89kC48lueD4vBmJ6yDCicrZO3?=
- =?us-ascii?Q?Mqar/++yBxaOkWR+IpkTrMfQy/ipYF7aCtY8CU/M/YZDuIJzjftoLzy5PBoO?=
- =?us-ascii?Q?+z4QawKPGhPHsBTBr3IASvbzEKsuAUCx0mK5p6gd4nLMUiWlaRnxQBu/s31o?=
- =?us-ascii?Q?vKqGoV9PWb0o2z78m4ddi4eCBpFfZ537MrSjcACyNxQ08VAi6Iudj03hQS8N?=
- =?us-ascii?Q?stshTRX7IF+YVAUuZ8WZR4TQ5AVX/n6ILM48yu9UcFKqACJde8Xpcjyh7d9S?=
- =?us-ascii?Q?IYT6Fd+9PN1J7HRoeNxrhwqHnEfD22B2izgz2+R7BkVZzoOrVygqslnkXToj?=
- =?us-ascii?Q?0hI+Xe4/t5YtHl1BZ0tiwjA638kX7Lz46pK2qejde2RquhExGiEDnb4VdfiH?=
- =?us-ascii?Q?HhXSaKozCh5wMujGJGlEL7GBBjW5dJJIhlR+WwI4iVnpuOIcPjSIQ8du8+Fb?=
- =?us-ascii?Q?9RxuaT6JDagFCHdzQ3y/0pqRKB9AasHw4A75qa4AAgfQQUUiS5CIX5J24j6k?=
- =?us-ascii?Q?YlfFiRusgs3ghhekfcxKe3oTeL+a3WA/+srsVUR316nFT9Oz+216DfyJC/yC?=
- =?us-ascii?Q?TuPhFZxWu7jlclNtkFS2cLp4M9MOgvCOvlq1HXsM+nJOv5dv2Zh/MBCBzaZy?=
- =?us-ascii?Q?It90QfeOg+3lzEqkJix36LViUkVIT6MISQ+oXVROAh0rgisf/H4YnNed+cQl?=
- =?us-ascii?Q?G32AJanbOJh5ilnK2xaa16+o8ONOESMiX61Nk2TkivDx74oPRdA466bZ2wV+?=
- =?us-ascii?Q?Sf2qpxW9VFXHBocNvUmOTSgxAhRBoDJHF+gUPXfIJD/mYTpfuJut2SNNGGcj?=
- =?us-ascii?Q?dmwD8ocU5p+QTmDjBC23yGnogj+9s/6zzqXs7geKFch1PMahuETMbLj1F/li?=
- =?us-ascii?Q?9P9olEPAex5YygG+zxNCltYlQeVDwb+gNIuLhK5JF0u9d49dDbCOh0YXrJ3h?=
- =?us-ascii?Q?31ZqPV6zyp9UwrIZtGob0D/cb8rvrjld+iv7NG1jRhI1KGj1UdX0tDUY593z?=
- =?us-ascii?Q?MRZo8bwexD6DfibBN9dhl4FyuEH4lCY89vPeVZkKD/0SjwGPAqUvqyp3UQ0x?=
- =?us-ascii?Q?XAZeyQgwvyvti5hEzKk2Cgg7tuPqbLS/bX7FWYf/QvfeBdmzQsiSTo4qug2b?=
- =?us-ascii?Q?L1pPH43fybQN2zM/cHMl/4g46zBPMyr+9iUoE4cCPN1mBVrMbSlyRHLrYrXP?=
- =?us-ascii?Q?zGj6YuRv20zKY5iJ30MNaznO3kgPZQnUHnWMdMVsxQVbbWSOgkelAIcV7ZKp?=
- =?us-ascii?Q?SQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc29cca7-c28e-4c14-0a07-08dca424f062
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2024 16:49:33.9635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fB+AZjSYxLVA5881+9ahqspSZB86tE1TmqdQsPAWb9JZeVvGB8/YNN95kamFMFlMW6hqW4wfMU/apksw3C2aJLwd+SbI7ILyMuzEEmhTXf0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8211
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <172097587786.20568.11031236886820506886@mxf9a3.netcup.net>
+X-Rspamd-Queue-Id: 4E98540463
+X-Rspamd-Server: rspamd-worker-8404
+X-NC-CID: DXC8zojYHA9jZn0f82rxTPh4/onN4rrhob49trG4RPCU4PdK+Pa6T5k4
 
-Greg KH wrote:
-[..]
-> It's a lot of work for a "simple" thing of just "tell userspace what
-> happened" type of thing.  But it makes sense.
-> 
-> I'll queue this up after -rc1 is out, there's no rush before then as
-> it's only lockdep warnings happening now, right?
+Fan control on the E531 is done using the ACPI methods FANG and
+FANW. The correct parameters and register values were found by
+analyzing EC firmware as well as DSDT. This has been tested on
+my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
 
-Right, only theoretical lockup reports so far, no rush that I can see.
+Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 159 +++++++++++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 397b409064c9..a171a2b39ac9 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -7751,6 +7751,28 @@ static struct ibm_struct volume_driver_data = {
+  * 	EC 0x2f (HFSP) might be available *for reading*, but do not use
+  * 	it for writing.
+  *
++ * TPACPI_FAN_RD_ACPI_FANG:
++ * 	ACPI FANG method: returns fan control register
++ *
++ *	Takes one parameter which is 0x8100 plus the offset to EC memory
++ *	address 0xf500 and returns the byte at this address.
++ *
++ *	0xf500:
++ *		When the value is less than 9 automatic mode is enabled
++ *	0xf502:
++ *		Contains the current fan speed from 0-100%
++ *	0xf504:
++ *		Bit 7 has to be set in order to enable manual control by
++ *		writing a value >= 9 to 0xf500
++ *
++ * TPACPI_FAN_WR_ACPI_FANW:
++ * 	ACPI FANG method: sets fan control registers
++ *
++ * 	Takes 0x8100 plus the offset to EC memory address 0xf500 and the
++ * 	value to be written there as parameters.
++ *
++ *	see TPACPI_FAN_RD_ACPI_FANG
++ *
+  * TPACPI_FAN_WR_TPEC:
+  * 	ThinkPad EC register 0x2f (HFSP): fan control loop mode
+  * 	Supported on almost all ThinkPads
+@@ -7884,6 +7906,7 @@ enum {					/* Fan control constants */
+ enum fan_status_access_mode {
+ 	TPACPI_FAN_NONE = 0,		/* No fan status or control */
+ 	TPACPI_FAN_RD_ACPI_GFAN,	/* Use ACPI GFAN */
++	TPACPI_FAN_RD_ACPI_FANG,	/* Use ACPI FANG */
+ 	TPACPI_FAN_RD_TPEC,		/* Use ACPI EC regs 0x2f, 0x84-0x85 */
+ 	TPACPI_FAN_RD_TPEC_NS,		/* Use non-standard ACPI EC regs (eg: L13 Yoga gen2 etc.) */
+ };
+@@ -7891,6 +7914,7 @@ enum fan_status_access_mode {
+ enum fan_control_access_mode {
+ 	TPACPI_FAN_WR_NONE = 0,		/* No fan control */
+ 	TPACPI_FAN_WR_ACPI_SFAN,	/* Use ACPI SFAN */
++	TPACPI_FAN_WR_ACPI_FANW,	/* Use ACPI FANW */
+ 	TPACPI_FAN_WR_TPEC,		/* Use ACPI EC reg 0x2f */
+ 	TPACPI_FAN_WR_ACPI_FANS,	/* Use ACPI FANS and EC reg 0x2f */
+ };
+@@ -7924,9 +7948,13 @@ TPACPI_HANDLE(fans, ec, "FANS");	/* X31, X40, X41 */
+ TPACPI_HANDLE(gfan, ec, "GFAN",	/* 570 */
+ 	   "\\FSPD",		/* 600e/x, 770e, 770x */
+ 	   );			/* all others */
++TPACPI_HANDLE(fang, ec, "FANG",	/* E531 */
++	   );			/* all others */
+ TPACPI_HANDLE(sfan, ec, "SFAN",	/* 570 */
+ 	   "JFNS",		/* 770x-JL */
+ 	   );			/* all others */
++TPACPI_HANDLE(fanw, ec, "FANW",	/* E531 */
++	   );			/* all others */
+ 
+ /*
+  * Unitialized HFSP quirk: ACPI DSDT and EC fail to initialize the
+@@ -8033,6 +8061,23 @@ static int fan_get_status(u8 *status)
+ 
+ 		break;
+ 	}
++	case TPACPI_FAN_RD_ACPI_FANG: {
++		/* E531 */
++		int mode, speed;
++
++		if (unlikely(!acpi_evalf(fang_handle, &mode, NULL, "dd", 0x8100)))
++			return -EIO;
++		if (unlikely(!acpi_evalf(fang_handle, &speed, NULL, "dd", 0x8102)))
++			return -EIO;
++
++		if (likely(status)) {
++			*status = speed * 7 / 100;
++			if (mode < 9)
++				*status |= TP_EC_FAN_AUTO;
++		}
++
++		break;
++	}
+ 	case TPACPI_FAN_RD_TPEC:
+ 		/* all except 570, 600e/x, 770e, 770x */
+ 		if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
+@@ -8147,6 +8192,17 @@ static int fan2_get_speed(unsigned int *speed)
+ 		if (speed)
+ 			*speed = lo ? FAN_RPM_CAL_CONST / lo : 0;
+ 		break;
++	case TPACPI_FAN_RD_ACPI_FANG: {
++		/* E531 */
++		int speed_tmp;
++
++		if (unlikely(!acpi_evalf(fang_handle, &speed_tmp, NULL, "dd", 0x8102)))
++			return -EIO;
++
++		if (likely(speed))
++			*speed =  speed_tmp * 65535 / 100;
++		break;
++	}
+ 
+ 	default:
+ 		return -ENXIO;
+@@ -8157,6 +8213,7 @@ static int fan2_get_speed(unsigned int *speed)
+ 
+ static int fan_set_level(int level)
+ {
++	int rc;
+ 	if (!fan_control_allowed)
+ 		return -EPERM;
+ 
+@@ -8206,6 +8263,36 @@ static int fan_set_level(int level)
+ 			tp_features.fan_ctrl_status_undef = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if ((!(level & TP_EC_FAN_AUTO) &&
++		    ((level < 0) || (level > 7))) ||
++		    (level & TP_EC_FAN_FULLSPEED))
++			return -EINVAL;
++		if (level & TP_EC_FAN_AUTO) {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
++				rc = -EIO;
++				break;
++			}
++		} else {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, level * 100 / 7)) {
++				rc = -EIO;
++				break;
++			}
++		}
++		break;
++
+ 	default:
+ 		return -ENXIO;
+ 	}
+@@ -8284,6 +8371,19 @@ static int fan_set_enable(void)
+ 			rc = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
++			rc = -EIO;
++			break;
++		}
++
++		rc = 0;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8326,6 +8426,22 @@ static int fan_set_disable(void)
+ 			fan_control_desired_level = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, 0x00)) {
++			rc = -EIO;
++			break;
++		}
++		rc = 0;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8359,6 +8475,23 @@ static int fan_set_speed(int speed)
+ 			rc = -EINVAL;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (speed >= 0 && speed <= 65535) {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd",
++					0x8102, speed * 100 / 65535))
++				rc = -EIO;
++		} else
++			rc = -EINVAL;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8701,6 +8834,10 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 		TPACPI_ACPIHANDLE_INIT(gfan);
+ 		TPACPI_ACPIHANDLE_INIT(sfan);
+ 	}
++	if (tpacpi_is_lenovo()) {
++		TPACPI_ACPIHANDLE_INIT(fang);
++		TPACPI_ACPIHANDLE_INIT(fanw);
++	}
+ 
+ 	quirks = tpacpi_check_quirks(fan_quirk_table,
+ 				     ARRAY_SIZE(fan_quirk_table));
+@@ -8720,6 +8857,9 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 	if (gfan_handle) {
+ 		/* 570, 600e/x, 770e, 770x */
+ 		fan_status_access_mode = TPACPI_FAN_RD_ACPI_GFAN;
++	} else if (fang_handle) {
++		/* E531 */
++		fan_status_access_mode = TPACPI_FAN_RD_ACPI_FANG;
+ 	} else {
+ 		/* all other ThinkPads: note that even old-style
+ 		 * ThinkPad ECs supports the fan control register */
+@@ -8766,6 +8906,11 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 		fan_control_access_mode = TPACPI_FAN_WR_ACPI_SFAN;
+ 		fan_control_commands |=
+ 		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_ENABLE;
++	} else if (fanw_handle) {
++		/* E531 */
++		fan_control_access_mode = TPACPI_FAN_WR_ACPI_FANW;
++		fan_control_commands |=
++		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_SPEED | TPACPI_FAN_CMD_ENABLE;
+ 	} else {
+ 		if (!gfan_handle) {
+ 			/* gfan without sfan means no fan control */
+@@ -8915,6 +9060,20 @@ static int fan_read(struct seq_file *m)
+ 			       str_enabled_disabled(status), status);
+ 		break;
+ 
++	case TPACPI_FAN_RD_ACPI_FANG:
++		/* E531 */
++		rc = fan_get_status_safe(&status);
++		if (rc)
++			return rc;
++
++		seq_printf(m, "status:\t\t%s\n", str_enabled_disabled(status));
++
++		rc = fan_get_speed(&speed);
++		if (rc < 0)
++			return rc;
++		seq_printf(m, "speed:\t\t%d\n", speed);
++		break;
++
+ 	case TPACPI_FAN_RD_TPEC_NS:
+ 	case TPACPI_FAN_RD_TPEC:
+ 		/* all except 570, 600e/x, 770e, 770x */
+-- 
+2.45.2
+
 
