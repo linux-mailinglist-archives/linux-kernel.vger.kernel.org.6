@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-251926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED3B930BB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:55:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E34A930BB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1D7280DAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:55:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EEAFB225CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B2413DBB1;
-	Sun, 14 Jul 2024 20:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3841E13D2A4;
+	Sun, 14 Jul 2024 20:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHdGE0Na"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="duDCEIXY"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE96118AED;
-	Sun, 14 Jul 2024 20:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0433C18AED
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 20:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720990500; cv=none; b=I82DWussEbXdmSQ1iqI8Z90OMee+pU2bVPFYHLq91RbHtAoCgWhDAWUUQ/a58UyFeSECa+svXv59cSQCx3uSVvQJp7BbRAOXkwP5snwIhxQTGebBNopBbdpERl7cftSrJJzxrTEwrvpR3mP9ezZyp4CyfD55Ye3sUaWbz7f2chE=
+	t=1720990520; cv=none; b=cQpwaY0ZTP//gr82Xe0ZUE0siq3OxuYBHB7Z7suNnpUB4yBIB8g7h/2kQB2sfCYTXcR8nWTrVdgq7j80TeNk+cy+XS91rRcFgFiyHiuLDqyrYAsRFopaxVT3lBAY87yDK6lph7rFoSndtEt9mjcRbh5M6KGuvJ/i2JOMFHZHYjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720990500; c=relaxed/simple;
-	bh=W1yqfKj+E6sNKafGXp4QFzyomqwKN4BP4CSrNMWT8xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzrF5cIOfmDaObLsobPFjiRchkJePJU5IqGFX0NAutlIDrOOUGkyJJQmqKv52gg2yKsksWVNNRmshT+X34ym5nNA01VOFs4HlchayqRhR0PsxBjEMJ41RAVLFvkAvo5aqf3xPtUBxRCKBv+lS0SPGrjMwMFYIvNGZJkzlcLfMfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bHdGE0Na; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so42383111fa.0;
-        Sun, 14 Jul 2024 13:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720990497; x=1721595297; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4v9yh3TKbyCiRcM0Hm0vfZMcOoFanDFliV++pw3Igk=;
-        b=bHdGE0NaBi/j4iM4lP0AF2ePGdREzPL7i1PuKne6MsS6P37Mt8apM0VMOqyqX1WiAt
-         Qi3ybwIC9MnSwtc7IBStn2d7E+kmFQq0p3VCbWa1G3o+qJOIj4vKwbpJgxd25EJ4oefn
-         y+wS7iHKf3gEkyVFIsv/1vIW5RKrxxt/QCVYhFdKLN34XENk8lHQtZVxSxq0Nq7WHe+S
-         QX2pmIZyuZQddAjxETtJ4Wog2jIR7h6FAoh6Zox7gTeVT8mH5B/9qKXTIc1jz7kGvREN
-         VRkQ0CPT0WXy6vhRBNNkPJ6Jh4PsP6hcTm1M5e/CROlBM04FfUEuMkPVmALCjyVLnRyV
-         0/3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720990497; x=1721595297;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X4v9yh3TKbyCiRcM0Hm0vfZMcOoFanDFliV++pw3Igk=;
-        b=T/EUQUQ/2nfPHPJPP+yxcB7Oa0rKwtZIxdu6LITxqqZCeFa09C4Zg/efI8eX/fclo0
-         kDKEpkuxD/FOHfUUa0I6ndTzcgaGuOfuqtmZl+DlJONfnLm0pX0mIyJWm29HFr1B/FoN
-         hDwl1DCuyNrgKn6RC6vvYgAtxfzU/jwvQuRzW2bO5OYfQxexUKJYaxOgNkIDYX9mcR7/
-         QvvpXFuIq+03JHkp21z7qEsph6lrgLkyGmTt2PkOv6YZzjV/uVvQ0rD/iOR1nc1shFSL
-         +iaRFJ2vRJsSXP/C0SQ7KNHOMGVsG4pqTVveJwojsJMRtTVx+lFCXt/ztUoaZ2qer/lQ
-         JFng==
-X-Forwarded-Encrypted: i=1; AJvYcCXxmrZm37KlriEuh9PshRFuADgF7Y5h5k23Qd+was0/ZdfkFvYtIwmQ/u0dS1jpcsOMKHshklcoRe5wkRqZiVdwrF2nWcViuiGM1mcXuqpDYkJ/c16994NBhtkWdgmsrPxa6SyeaN1QYR2auXiEKju5bTw2HQ3gjMEW6p0vuMfF
-X-Gm-Message-State: AOJu0YyovwyqjyqRetxoeEhX7JCu1jixp0wuegG+vIOO3c6T26maESwa
-	EL6W501tlKg65HleZp6eIzTd6n6+srYfVv5lm5C+e5hiB8RWJDlbXwttA73t
-X-Google-Smtp-Source: AGHT+IE6umD2PQY9dYePZFeiMEylR7CcDejrl5iUvXUweEKTMdaVp6IvP25oegFRXqF9D7PS4vK9PA==
-X-Received: by 2002:a2e:880a:0:b0:2eb:e258:717f with SMTP id 38308e7fff4ca-2eeb318a0ecmr114034771fa.42.1720990496888;
-        Sun, 14 Jul 2024 13:54:56 -0700 (PDT)
-Received: from foxbook (bip217.neoplus.adsl.tpnet.pl. [83.28.131.217])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b24a770cesm2529395a12.19.2024.07.14.13.54.55
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 14 Jul 2024 13:54:56 -0700 (PDT)
-Date: Sun, 14 Jul 2024 22:54:51 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Tim Lewis <elatllat@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@linux.intel.com,
- niklas.neronin@linux.intel.com, stable@vger.kernel.org,
- regressions@lists.linux.dev, Salvatore Bonaccorso <carnil@debian.org>
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-Message-ID: <20240714225451.193914d1@foxbook>
-In-Reply-To: <CA+3zgmtwunPaLbKygi0y+XY7XUd2cBGVP8So8MXxK_1pOX3miQ@mail.gmail.com>
-References: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
-	<20240714173043.668756e4@foxbook>
-	<ZpP3RU-MKb4pMmZH@eldamar.lan>
-	<CA+3zgmtwunPaLbKygi0y+XY7XUd2cBGVP8So8MXxK_1pOX3miQ@mail.gmail.com>
+	s=arc-20240116; t=1720990520; c=relaxed/simple;
+	bh=l4xsjIr2yWIZHysqAEzUVid0VQrRTtDHb+yw12BZMEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E6gFrWybbHARXL6Lh90F6p9HFlpv1qJHpcSfq+xAlCVL716SY7z0HgTmHKrYQe4rAoAOV/AcljpOhRE+utpgRP95DCOGtgE8G2mdQpRPTdFtmXGHs4gVVg7t6rVuMtf1/lI/5+QWSFlQAgio3d9qWhXwRamM1XJKc+UwBv4psLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=duDCEIXY; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720990517;
+	bh=l4xsjIr2yWIZHysqAEzUVid0VQrRTtDHb+yw12BZMEA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=duDCEIXYMlBwWCf8Ry87YZq4udmJPTuQ+8O1DqDCyg7gcD+EfI2PPAgOBEk43cRaE
+	 xHXzF6vKQFz8juQdphgoC/rgMJREzSQmO7tnVNxt2LDQs89mNj0k5zsgb6A0fCnZNZ
+	 4KBOfK0vR9bhpWXjb3GtaLf9yYRQuscfMgutIQy4Kk6Uiwwtps+n8JOjOuSE0JCAL1
+	 l6/FPADPlRD7j1wFBS5GVO6uLKyiD2sBBX8fHWge/6BCTYftZi0nLTWFz1YW5FbVTs
+	 vCnPezkFtvRuaaeZnJ50+vwZi004LAV4KcyXTVMGJbS9IFt66KlojViRkVOgmvQVhh
+	 pIHmjmrlkBq/g==
+Received: from workpc.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dmitry.osipenko)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 81EA337804CF;
+	Sun, 14 Jul 2024 20:55:16 +0000 (UTC)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v1] drm/virtio: Add DRM capset definition
+Date: Sun, 14 Jul 2024 23:55:02 +0300
+Message-ID: <20240714205502.3409718-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> > Not on 6.1.y:
->     drivers/usb/host/xhci-ring.c:2644:31: error: ~@~Xir~@~Y undeclared
-> (first use in this fuunction); did you mean ~@~Xidr~@~Y?
->     2644 |                 inc_deq(xhci, ir->event_ring);
-Sorry, I didn't notice that v6.1 is different. You need this instead:
+Define DRM native context capset in the VirtIO-GPU protocol header.
 
-  inc_deq(xhci, xhci->event_ring);
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ include/uapi/linux/virtio_gpu.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Another refactor interfering with backporting :(
+diff --git a/include/uapi/linux/virtio_gpu.h b/include/uapi/linux/virtio_gpu.h
+index 0e21f3998108..bf2c9cabd207 100644
+--- a/include/uapi/linux/virtio_gpu.h
++++ b/include/uapi/linux/virtio_gpu.h
+@@ -311,6 +311,7 @@ struct virtio_gpu_cmd_submit {
+ #define VIRTIO_GPU_CAPSET_VIRGL2 2
+ /* 3 is reserved for gfxstream */
+ #define VIRTIO_GPU_CAPSET_VENUS 4
++#define VIRTIO_GPU_CAPSET_DRM 6
+ 
+ /* VIRTIO_GPU_CMD_GET_CAPSET_INFO */
+ struct virtio_gpu_get_capset_info {
+-- 
+2.45.2
+
 
