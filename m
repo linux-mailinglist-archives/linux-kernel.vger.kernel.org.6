@@ -1,169 +1,229 @@
-Return-Path: <linux-kernel+bounces-251870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33581930AD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22A2930AD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3DE2B21143
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C1D2819A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8C613B5AD;
-	Sun, 14 Jul 2024 16:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DA813BAC4;
+	Sun, 14 Jul 2024 16:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUPy9xBz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pd56xohr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BED753389;
-	Sun, 14 Jul 2024 16:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B0113B582
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 16:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720975425; cv=none; b=DtRqM5LZc8ciKflgPyFc3aA4vDsmPM2dC3507JwiGZr8t48HHKfnshfOuY6khrCt/Ui5KtjdKkcfPLrAuW3hntQgR/7OCXYmAiKQ3zz67P3mk80xLnq1kkyUqC2QTvqM5taIGQk1V9BKV0wI9pVi3k5FuTGjz2/KtA5dalWlgg8=
+	t=1720975496; cv=none; b=FqcCh1uSglSAuevk60ymCKFYMgWmcBKLRESdbBx85o3Cvl9Cub+k6Fd0f+hH16BmiXFhcOY/6eNeVsmdmFwfmzEw0Vq+q3Calu2Q6E8HLJ+iJxBf3+4C0O/piBB3qigRA32aZLhnZHym6KJh9X01l1K7cP8lPCcFzw4lzRD3JyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720975425; c=relaxed/simple;
-	bh=Bv8Vsfv9FUrCSHbCSe7Yyi93IbUqroEiRbR7NWZY7CA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=amW72n7EQ79fEDxXb3JFpHbAXUAYbiz+kh1ZIAqy1j7jqJy0pCIwf+kuj8sK/FNGq8C5ZGJseItUi5M710uyDXRajDYb97iqPE343pHiJcsH8KfhVpl1i6uK+anoeB1Aspv+N/rn2HIaCUMEKj3YWHemdk8FbWTnvozJw28F2Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUPy9xBz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 141C1C116B1;
-	Sun, 14 Jul 2024 16:43:45 +0000 (UTC)
+	s=arc-20240116; t=1720975496; c=relaxed/simple;
+	bh=ua8KiCGTZHJ9kpXAoFQ6UUJlK/1b7Z/DruvjY+X5LAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OcKISL9RdDouqdCtjjLc9x/k54uGEZEJ5TF7iUsJPmzC0RmwN4qk1imr2jCciCXU9XGhFbUrZUiQXMqjWl5iQh/cni/Fao7C6gg4H4O9V484m9CFk+skATQszZ00u12IAbU3nOmOH+sEQcG/Ig73V0nzQb7zjbz2pUL2CTLBrZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pd56xohr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F86C116B1;
+	Sun, 14 Jul 2024 16:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720975425;
-	bh=Bv8Vsfv9FUrCSHbCSe7Yyi93IbUqroEiRbR7NWZY7CA=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=XUPy9xBz4RuqfpK9bHGSwzOxpZD4uEFogbP7MsPsnhHeMhE4H3jT1uKIYQFdwnGGB
-	 2ZgjmkJJmQlq7BLupn/vDM+8snziRr/G1yC+wTGXBAI2jMPdOPRF00w2VaMmphW6fR
-	 fVOcW4LUTLM1g9oV9Rq7nVST6+vfWnoxr/cS08sM52nHcb8BrHbZKFIxqDm5Q26PeB
-	 0mNsdw2LGaPiYr4C95beG6yXkoUz2cTlFpyoHnvWY5oa/JjtvxAKyrLhTRdO/CBZCe
-	 n+fHLWnT7SCC3PmQgaEBkhCIcKE8Tj4af1ZXizTWnSF8Advs8ppaIZYz6WZ4gpCPZc
-	 iaZkvVawfRWRA==
+	s=k20201202; t=1720975496;
+	bh=ua8KiCGTZHJ9kpXAoFQ6UUJlK/1b7Z/DruvjY+X5LAQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=pd56xohrdgo9j7Pn9U667Dx51ixDx73UcTFh2+oQMHKJ3ZNO0EtXZpAkNEC3nAZxE
+	 ikngFzxOWH+mfdCDCBsjv6O5tF9Dn62rNCwculY4AdCZAw+QRC8YU9W5x/QPyA7lLS
+	 uDhVAS2F6jMykAhlvF8mh7mr0YTmIALnxEJ3SC6J8PF/U38recXau+q6c6A9rprFpH
+	 BCvREFZsjGMTL+iOi5SYDHGQaVoYkzKhQrh3u05Oek2J05nvqih3c5xmrVRmiV4qjH
+	 MA5uwqYZk8DGGSUyKJwM/0UmyE2aumdB3OJD5B4jSqW4vPavQJxmS8kAxXm3qIvW3j
+	 bmKfYbsvfbe/g==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A0177CE0B34; Sun, 14 Jul 2024 09:43:44 -0700 (PDT)
-Date: Sun, 14 Jul 2024 09:43:44 -0700
+	id 990CCCE0B34; Sun, 14 Jul 2024 09:44:55 -0700 (PDT)
+Date: Sun, 14 Jul 2024 09:44:55 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org,
-	tglx@linutronix.de, rcu@vger.kernel.org, joel@joelfernandes.org,
-	oleg@redhat.com, frederic@kernel.org, qiang.zhang1211@gmail.com,
-	quic_jjohnson@quicinc.com
-Subject: [GIT PULL] RCU changes for v6.11
-Message-ID: <22048c72-ae8c-47c0-9cd8-3a64f84fcaea@paulmck-laptop>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc for 6.11-rc1
+Message-ID: <138b249a-8402-4a79-8c08-45bb9d888dc5@paulmck-laptop>
 Reply-To: paulmck@kernel.org
+References: <acffd5b1-36a8-4336-9b94-aec50b3d6e5b@t-8ch.de>
+ <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
+ <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
+ <ee43b1d5-3339-4a1c-9bac-c0d48f22167c@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee43b1d5-3339-4a1c-9bac-c0d48f22167c@t-8ch.de>
 
-Hello, Linus,
+On Sun, Jul 14, 2024 at 10:09:13AM +0200, Thomas Weiﬂschuh wrote:
+> On 2024-07-12 20:16:13+0000, Paul E. McKenney wrote:
+> > On Sun, Jun 30, 2024 at 09:06:39AM -0700, Paul E. McKenney wrote:
+> > > On Sat, Jun 29, 2024 at 01:04:08PM +0200, Thomas Weiﬂschuh wrote:
+> > > > Hi Paul,
+> > > > 
+> > > > The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+> > > > 
+> > > >   Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+> > > > 
+> > > > are available in the Git repository at:
+> > > > 
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20240629-for-6.11-1
+> > > > 
+> > > > for you to fetch changes up to 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b:
+> > > > 
+> > > >   selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
+> > > 
+> > > Hearing no objections, I have pulled this in so that it will appear
+> > > in the next -next.  Here are the test results:
+> > > 
+> > > make run:
+> > > 195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+> > > 
+> > > make run-user:
+> > > 195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+> > > 
+> > > So looks good to me!
+> 
+> For testing you can use "./run-tests.sh -m [user | system]" to run the
+> tests on all supported architectures via QEMU.
+> 
+> (On the first run you can use "-p" to download the toolchains)
 
-When the merge window opens, please pull this RCU update from:
+Thank you for the info!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/rcu.2024.07.12a
-  # HEAD: 02219caa92b5b0ed97f8d8b9cf580f6f34a9be31: Merge branches 'doc.2024.06.06a', 'fixes.2024.07.04a', 'mb.2024.06.28a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a', 'rcutorture.2024.06.06a' and 'srcu.2024.06.18a' into HEAD (2024-07-04 13:54:17 -0700)
+My near-term plan is that I do a smoke test on x86 (or whatever I am
+running), and let you guys cover the various architectures.  Longer
+term, I might get more into cross-architecture work.
 
-----------------------------------------------------------------
-RCU pull request for v6.11
+> > And please see below for my proposed signed tag.  Please let me know of
+> > any needed adjustments.
+> > 
+> > 							Thanx, Paul
+> > 
+> > ----------------------------------------------------------------
+> > 
+> > tag nolibc.2024.07.12a
+> > Tagger: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Fri Jul 12 16:56:21 2024 -0700
+> > 
+> > nolibc updates for v6.11
+> > 
+> > o	Fix selftest printf format mismatch in expect_str_buf_eq()
+> 
+> Period at the end.
 
-doc.2024.06.06a: Update Tasks RCU and Tasks Rude RCU description in
-	Requirements.rst and clarify rcu_assign_pointer() and
-	rcu_dereference() ordering properties.
+Good eyes, thank you, fixed.
 
-fixes.2024.07.04a: Add lockdep assertions for RCU readers, limit inline
-	wakeups for callback-bypass synchronize_rcu(), add an
-	rcutree.nohz_full_patience_delay to reduce nohz_full OS jitter,
-	add Uladzislau Rezki as RCU maintainer, and fix a subtle
-	callback-migration memory-ordering issue.
+> > o	Stop using brk() and sbrk() when testing against musl, which
+> > 	implements these two functions with ENOMEM.
+> > 
+> > o	Make tests us -Werror to force failure on compiler warnings.
+> > 
+> > o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
+> > 
+> > o	Implement strtol() and friends.
+> > 
+> > o	Add facility to skip nolibc-specific tests when running against
+> > 	non-nolibc libraries.
+> > 
+> > o	Implement strerror().
+> > 
+> > o	Use strerror() unconditionally, instead of only when running
+> > 	against non-nolibc libraries.
+> 
+> Maybe mention that this is about kselftest and not nolibc itself.
+> 
+> Otherwise looks good, thanks!
 
-mb.2024.06.28a: Remove a number of redundant memory barriers.
+Thank you for looking this over, and does the updated version below
+cover this?  If I am still off, please suggest updates.
 
-nocb.2024.06.03a: Remove unnecessary bypass-list lock-contention
-	mitigation, use parking API instead of open-coded ad-hoc
-	equivalent, and upgrade obsolete comments.
+						Thanx, Paul
 
-rcu-tasks.2024.06.06a: Revert avoidance of a deadlock that can no
-	longer occur and properly synchronize Tasks Trace RCU checking
-	of runqueues.
+------------------------------------------------------------------------
 
-rcutorture.2024.06.06a: Add tests for handling of double-call_rcu()
-	bug, add missing MODULE_DESCRIPTION, and add a script that
-	histograms the number of calls to RCU updaters.
+tag nolibc.2024.07.14a
+Tagger: Paul E. McKenney <paulmck@kernel.org>
+Date:   Sun Jul 14 09:07:29 2024 -0700
 
-srcu.2024.06.18a: Fill out SRCU polled-grace-period API.
+nolibc updates for v6.11
 
-----------------------------------------------------------------
-Frederic Weisbecker (13):
-      rcu/nocb: Fix segcblist state machine comments about bypass
-      rcu/nocb: Fix segcblist state machine stale comments about timers
-      rcu/nocb: Use kthread parking instead of ad-hoc implementation
-      rcu/nocb: Remove buggy bypass lock contention mitigation
-      Revert "rcu-tasks: Fix synchronize_rcu_tasks() VS zap_pid_ns_processes()"
-      rcu/tasks: Fix stale task snaphot for Tasks Trace
-      rcu: Remove full ordering on second EQS snapshot
-      rcu: Remove superfluous full memory barrier upon first EQS snapshot
-      rcu/exp: Remove superfluous full memory barrier upon first EQS snapshot
-      rcu: Remove full memory barrier on boot time eqs sanity check
-      rcu: Remove full memory barrier on RCU stall printout
-      rcu/exp: Remove redundant full memory barrier at the end of GP
-      rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU invocation
+o	Fix selftest printf format mismatch in expect_str_buf_eq().
 
-Jeff Johnson (1):
-      rcutorture: Add missing MODULE_DESCRIPTION() macros
+o	Stop using brk() and sbrk() when testing against musl, which
+	implements these two functions with ENOMEM.
 
-Joel Fernandes (Google) (1):
-      rcu/tree: Reduce wake up for synchronize_rcu() common case
+o	Make tests use -Werror to force failure on compiler warnings.
 
-Oleg Nesterov (1):
-      rcu: Eliminate lockless accesses to rcu_sync->gp_count
+o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
 
-Paul E. McKenney (13):
-      rcu: Add lockdep_assert_in_rcu_read_lock() and friends
-      doc: Update Tasks RCU and Tasks Rude RCU description in Requirements.rst
-      doc: Clarify rcu_assign_pointer() and rcu_dereference() ordering
-      rcutorture: Fix rcu_torture_fwd_cb_cr() data race
-      tools/rcu: Add rcu-updaters.sh script
-      rcu: Disable interrupts directly in rcu_gp_init()
-      srcu: Disable interrupts directly in srcu_gp_end()
-      srcu: Add NUM_ACTIVE_SRCU_POLL_OLDSTATE
-      srcu: Update cleanup_srcu_struct() comment
-      srcu: Fill out polled grace-period APIs
-      rcu: Add rcutree.nohz_full_patience_delay to reduce nohz_full OS jitter
-      MAINTAINERS: Add Uladzislau Rezki as RCU maintainer
-      Merge branches 'doc.2024.06.06a', 'fixes.2024.07.04a', 'mb.2024.06.28a', 'nocb.2024.06.03a', 'rcu-tasks.2024.06.06a', 'rcutorture.2024.06.06a' and 'srcu.2024.06.18a' into HEAD
+o	Implement strtol() and friends.
 
-Zqiang (1):
-      rcutorture: Make rcutorture support srcu double call test
+o	Add facility to skip nolibc-specific tests when running against
+	non-nolibc libraries.
 
- .../Memory-Ordering/Tree-RCU-Memory-Ordering.rst   |   6 +-
- .../RCU/Design/Requirements/Requirements.rst       |  16 +++
- Documentation/RCU/whatisRCU.rst                    |  30 +++--
- Documentation/admin-guide/kernel-parameters.txt    |   8 ++
- MAINTAINERS                                        |   1 +
- include/linux/rcu_segcblist.h                      |  88 ++++++------
- include/linux/rcupdate.h                           |  62 ++++++++-
- include/linux/srcu.h                               |  35 +++++
- kernel/pid_namespace.c                             |  17 ---
- kernel/rcu/rcuscale.c                              |   1 +
- kernel/rcu/rcutorture.c                            |  49 ++++---
- kernel/rcu/refscale.c                              |   1 +
- kernel/rcu/srcutiny.c                              |   3 +-
- kernel/rcu/srcutree.c                              |  13 +-
- kernel/rcu/sync.c                                  |  12 +-
- kernel/rcu/tasks.h                                 |  26 ++--
- kernel/rcu/tree.c                                  |  92 +++++++++----
- kernel/rcu/tree.h                                  |   2 +-
- kernel/rcu/tree_exp.h                              |  24 +++-
- kernel/rcu/tree_nocb.h                             | 147 ++++++---------------
- kernel/rcu/tree_plugin.h                           |  14 +-
- kernel/rcu/tree_stall.h                            |   4 +-
- kernel/sched/core.c                                |  14 +-
- tools/rcu/rcu-updaters.sh                          |  52 ++++++++
- 24 files changed, 439 insertions(+), 278 deletions(-)
- create mode 100755 tools/rcu/rcu-updaters.sh
+o	Implement strerror().
+
+o	Use strerror() unconditionally, instead of only when running
+	kselftest.
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAABCgAxFiEEbK7UrM+RBIrCoViJnr8S83LZ+4wFAmaT98oTHHBhdWxtY2tA
+a2VybmVsLm9yZwAKCRCevxLzctn7jHc0D/9chhJo+QQ+2V+xQEKT8n1MKiJaf55X
+EUhIlKHoejrF7rZukqv1tcqMNP0wGzwKyttbFkX+72OHrxSuNr0MbvBjQi6cFcFo
+2QNg/ZEVIZKeMJzRXwUOOrg47hwLoGgFrt5cgSCMeYSm0E25oAx752/WbmQgQBlU
+2dOTomrxF7pyDQoJwPU3CNAk/fFZHuBX9Hjp0LPaXmKDq9BLWqUWoJZAOAfcxm2Q
+F8A/HnOTEp5F5qwJLr0GStNxR44xH/GU/3KEdryzllEFj6PTLDAeP4oNdMK30q9F
+YGrcpON3hjw1+XKQBTLJ/UIqQ3EeA/bo2yDOLsFZObU7aKrb7ewtxTq/DWUfoj4x
+jfFCOc6JpsmAAlwm2zXn+MLDLxSF3QhTalpl1o4thrNgxhm/Eou+uz/1k2EREp/r
+4PfHC+i0YjGA9sJ12u1hUoPkxHXY0GKx+gHL9uwB5C2je7HyStzBRvDWEjUJw+uI
+Z9+RkvSQFV82tIvczGzGuLkMM1of+M+VROGeDXyP9tzyjD3GrqDwwdcXFz/dVnhF
+ktFiQeoMlfDcSjbcXztRaD4eRSM/EzK6aNL7eocK+s9EWn10Xvg6c+7IeYxMgy32
+w9Q9WRFN/Gzmeawb0rNNiYdhEq/ufBpfN1+Un4XrpqPukydbv2JpaiG/VZBzldkw
+UMepC/mpRx8HPw==
+=yaww
+-----END PGP SIGNATURE-----
+
+commit 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b
+Author: Thomas Weiﬂschuh <linux@weissschuh.net>
+Date:   Fri Apr 26 13:08:58 2024 +0200
+
+    selftests: kselftest: also use strerror() on nolibc
+    
+    nolibc gained an implementation of strerror() recently.
+    Use it and drop the ifdeffery.
+    
+    Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+    Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+
+diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+index 76c2a6945d3e..b8967b6e29d5 100644
+--- a/tools/testing/selftests/kselftest.h
++++ b/tools/testing/selftests/kselftest.h
+@@ -168,15 +168,7 @@ static inline __printf(1, 2) void ksft_print_msg(const char *msg, ...)
+ 
+ static inline void ksft_perror(const char *msg)
+ {
+-#ifndef NOLIBC
+ 	ksft_print_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
+-#else
+-	/*
+-	 * nolibc doesn't provide strerror() and it seems
+-	 * inappropriate to add one, just print the errno.
+-	 */
+-	ksft_print_msg("%s: %d)\n", msg, errno);
+-#endif
+ }
+ 
+ static inline __printf(1, 2) void ksft_test_result_pass(const char *msg, ...)
 
