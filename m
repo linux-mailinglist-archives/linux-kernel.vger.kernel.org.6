@@ -1,238 +1,137 @@
-Return-Path: <linux-kernel+bounces-251801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD2930A08
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:15:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391C99309F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71DB1F213EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD566B20EB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B213210F;
-	Sun, 14 Jul 2024 13:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6478528F;
+	Sun, 14 Jul 2024 12:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UtDcZzJ2"
-Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3AREP2A"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED1FB656;
-	Sun, 14 Jul 2024 13:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0321DF58;
+	Sun, 14 Jul 2024 12:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720962901; cv=none; b=TKnM8mPrV5tlOlv3whAmtPErKbqHZkSYjMxpLWvaaNgtgM2ZWXMjU3eaWDixCLxiFhJ084aeat8hS4YdJ3Eg1tRIq1U2PE6MjAooyZ24vZ1ME00FlVkiUBytVImmCELjtifzkNKZZYFEIhKAyT/vm+rXebnAS01/TyE2L+DaWeE=
+	t=1720961253; cv=none; b=OlMlmYjeh4tYrXNkbVEzbfBU/2DIAlIP+3FAtaW2IKYqnN2fQQlN1JPmSDpd7JQKe81CZslAKRsdSRGEwCc0VkPiEkUrf0wS7nPAdEYB8wE61lDzux/fg7vq/+hlz8A1rSCHpqPMn9XH7rraguRH59sHoMyaWBzjpccRgW2oDBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720962901; c=relaxed/simple;
-	bh=W4H2df2R/MdY3nerVtqR2oDHRHIYH4SFPc28EtGqjDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=az23Xp0f6vLHOEkR1uVHlWaplBTWabJtUGDgLzgjF/Ndw0oyP4QNY+Y/Gk5kpQs/+t6Qg4WkOOG6QCLf4+IpXLfqD0CXPH4FaE5zE82FLB8IRbtkWYP7QnqV7Jlj9dr3PNuBtPAWd1z6ANh5u2MDh2KTepzU11iObjEOUt3D3Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UtDcZzJ2; arc=none smtp.client-ip=193.252.23.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id SyWpstpWvBzr3SyWqsrCvk; Sun, 14 Jul 2024 14:40:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720960841;
-	bh=jXEol/M69CDfWHWTuc98TPM6NHwESq7AdpoHFdBAkUw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UtDcZzJ2FilDY0fQzyn23s4ytCUtInKbCYmydlkzBvhN2/NDQ3Lm8LKor9/BcJ+Gl
-	 0cRaxWl/4loYszrBqsoLpz08q+VNKu9GE5fYAmODovgCzZklt12JWjEpgqiZhe35fm
-	 be8oiMQdgZC+UREYuf6e9S19Pttg0K70TjynGdduop3xZbjiEGNx2JQUtR2RUHlR0H
-	 rnlUAknUj4Ic+i/Q5w0kpbx1kthcwSDmLJGAH82Exz1EVRXZ15GeDqdhRlZExhOPaU
-	 D8EHaifpsos+kTH0Q2cRVUSVa7w6sJgEAuzKYcZNyzvVt/F45bDhmeujJ4Oe7LCHo5
-	 QC4u212ytJYVg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jul 2024 14:40:41 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf/x86/intel/uncore: Constify struct
-Date: Sun, 14 Jul 2024 14:40:28 +0200
-Message-ID: <9dc5e67d1b19e56c952e740371be9d42a5011c2c.1720960818.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720961253; c=relaxed/simple;
+	bh=hZ7lWekYicc/GQPSBXsMSuOVB+DQDtPdnORXDQb9EL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvoSnIUdZtogy5VhLJ5tsYmcsWJu5og1HjrZstGr2KrnTtGxb6+9xGjSbj43i+tESCP70q0A+IH5Z083M1McQr0ny6kgxB55lAL6Y2BOz34vhNAdSqvZEidj1v8sIQpBjiw+DD+e5GncAah9n9EFiMm/QZBfRAJnWOxBMkfzwU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3AREP2A; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea79e6979so3853729e87.2;
+        Sun, 14 Jul 2024 05:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720961250; x=1721566050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bYeW1aUqkkqQu0pvxg2P+XASuy3RpuxEzFGY7FDRapU=;
+        b=W3AREP2AoLkWnxLFTt5y2uH6zoJ4A7gxESvMZ4Vjg3XFohwwn3pGVPRVwJc26Ovpru
+         WoBVOE2MOa2xYfFtfU4fPN5nhgUSOEFlUUN8GyUGi3xK5hrh1/IoVuHdm6eYoipG9srN
+         0Nofne0KkybdZ4Q1BCy7Hwxw55cR2QqMmkAND+2TDcTPqc5kSnDQyQq/kjk/sh/TGrlv
+         IDkeppcxn0pW3HDkNukj94kLox+tSz2VPDBLlsNg9ZCgyJlwba+MCVm2YjTFaG1lGo7i
+         5B4EdgY0lxtTEXA0nfD/vbcfTz6AV0QyrtzRPbPoP/1inbgLKHWGkmgROlGTkxoE3fEY
+         gO8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720961250; x=1721566050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bYeW1aUqkkqQu0pvxg2P+XASuy3RpuxEzFGY7FDRapU=;
+        b=r4cyouDZpCmMzfM8wKw5WRTEWcLxXhZuvlo2Ep0pG3Y1epsSbb3vD1EIjEAQTGnHym
+         yIKL/fqrBQn1Jz1JzkKHj2gN2xJkLzB+Yfke7leXShcu878aiOU+/9QW2VuDWuxkQeBm
+         qCXf2UO2i6bAxkvcGxZVRHUE9Hryozpx5f3G/tnoa+cjYnCri1YwRMKGoR1WiuEI0Gin
+         iD1w7tpdao72gVxZ17N+3c3fGnx4c6/AxAaY8G37OotwHPG89eT3l/lSjdsCsmAINFyg
+         hncxUxSq2xRyVcfq0SFacjllHe6Ku97lc1bNqvAxWoC3AKlPcwGSUXC16hpnjYHk2JU5
+         CTqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD4CWzbdgxRcWjHuB/DyvBmdd60MNcIGgogJIArzRmnFvAdqE23exrk0VrnU+E+xWhgKVUrFGAlKrrODO6cS1+kN8PaM4GK1vuUxE95XBuXLXwZ0MRM041Kxf+73wawVxnrcZqy7UApgRaSwV+IA7xA4w5MN4QeBJjIcKqg0rBmA==
+X-Gm-Message-State: AOJu0YyvYPoZXbyy1GtY71t+wJFIP1bhJwB2svbrg2NsL1fqDBrVhJLN
+	roXej97lgKMHTF4yuXlEWwxvqVQVNt0A7OQOyt1vL6ejiz+XFhbi
+X-Google-Smtp-Source: AGHT+IExx4Gr8Umbg0gbYQ03/bv/pYqJqX/EK/+AOIRZKuLKmJm7iyM5zUZI7yWzpxPPD+pjOE17rw==
+X-Received: by 2002:a05:6512:3b82:b0:52c:e084:bb1e with SMTP id 2adb3069b0e04-52eb999126bmr11827758e87.13.1720961248544;
+        Sun, 14 Jul 2024 05:47:28 -0700 (PDT)
+Received: from mobilestation (pppoe77-82-205-78.kamchatka.ru. [77.82.205.78])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24f3b90sm451958e87.113.2024.07.14.05.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 05:47:28 -0700 (PDT)
+Date: Sun, 14 Jul 2024 15:46:31 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Drew Fustini <drew@pdp7.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH RFC net-next 1/4] dt-bindings: net: snps,dwmac: allow
+ dwmac-3.70a to set pbl properties
+Message-ID: <ywwl3eaamj3d7dhwkhcoglxwxqmpwd5dewkq6ldmrfqdfgnlu3@rawh4yhkuh6h>
+References: <20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com>
+ <20240713-thead-dwmac-v1-1-81f04480cd31@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240713-thead-dwmac-v1-1-81f04480cd31@tenstorrent.com>
 
-'struct freerunning_counters' are not modified in these drivers.
+On Sat, Jul 13, 2024 at 03:35:10PM -0700, Drew Fustini wrote:
+> From: Jisheng Zhang <jszhang@kernel.org>
+> 
+> snps dwmac 3.70a also supports setting pbl related properties, such as
+> "snps,pbl", "snps,txpbl", "snps,rxpbl" and "snps,no-pbl-x8".
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+No longer needed due to the recent commit:
+https://git.kernel.org/netdev/net-next/c/d01e0e98de31
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  79637	  71836	     16	 151489	  24fc1	arch/x86/events/intel/uncore_snbep.o
-  24000	  13628	      0	  37628	   92fc	arch/x86/events/intel/uncore_snb.o
+-Serge(y)
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  80309	  71196	     16	 151521	  24fe1	arch/x86/events/intel/uncore_snbep.o
-  24448	  13180	      0	  37628	   92fc	arch/x86/events/intel/uncore_snb.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- arch/x86/events/intel/uncore.h       |  2 +-
- arch/x86/events/intel/uncore_snb.c   |  8 ++++----
- arch/x86/events/intel/uncore_snbep.c | 16 ++++++++--------
- 3 files changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index 027ef292c602..b7cdf9b8e88a 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -80,7 +80,7 @@ struct intel_uncore_type {
- 	struct intel_uncore_pmu *pmus;
- 	struct intel_uncore_ops *ops;
- 	struct uncore_event_desc *event_descs;
--	struct freerunning_counters *freerunning;
-+	const struct freerunning_counters *freerunning;
- 	const struct attribute_group *attr_groups[4];
- 	const struct attribute_group **attr_update;
- 	struct pmu *pmu; /* for custom pmu ops */
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 9462fd9f3b7a..001ba9230722 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -804,7 +804,7 @@ enum perf_snb_uncore_imc_freerunning_types {
- 	SNB_PCI_UNCORE_IMC_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters snb_uncore_imc_freerunning[] = {
-+static const struct freerunning_counters snb_uncore_imc_freerunning[] = {
- 	[SNB_PCI_UNCORE_IMC_DATA_READS]		= { SNB_UNCORE_PCI_IMC_DATA_READS_BASE,
- 							0x0, 0x0, 1, 32 },
- 	[SNB_PCI_UNCORE_IMC_DATA_WRITES]	= { SNB_UNCORE_PCI_IMC_DATA_WRITES_BASE,
-@@ -1435,13 +1435,13 @@ enum perf_tgl_uncore_imc_freerunning_types {
- 	TGL_MMIO_UNCORE_IMC_FREERUNNING_TYPE_MAX
- };
- 
--static struct freerunning_counters tgl_l_uncore_imc_freerunning[] = {
-+static const struct freerunning_counters tgl_l_uncore_imc_freerunning[] = {
- 	[TGL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0x5040, 0x0, 0x0, 1, 64 },
- 	[TGL_MMIO_UNCORE_IMC_DATA_READ]		= { 0x5058, 0x0, 0x0, 1, 64 },
- 	[TGL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0x50A0, 0x0, 0x0, 1, 64 },
- };
- 
--static struct freerunning_counters tgl_uncore_imc_freerunning[] = {
-+static const struct freerunning_counters tgl_uncore_imc_freerunning[] = {
- 	[TGL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0xd840, 0x0, 0x0, 1, 64 },
- 	[TGL_MMIO_UNCORE_IMC_DATA_READ]		= { 0xd858, 0x0, 0x0, 1, 64 },
- 	[TGL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0xd8A0, 0x0, 0x0, 1, 64 },
-@@ -1661,7 +1661,7 @@ enum perf_adl_uncore_imc_freerunning_types {
- 	ADL_MMIO_UNCORE_IMC_FREERUNNING_TYPE_MAX
- };
- 
--static struct freerunning_counters adl_uncore_imc_freerunning[] = {
-+static const struct freerunning_counters adl_uncore_imc_freerunning[] = {
- 	[ADL_MMIO_UNCORE_IMC_DATA_TOTAL]	= { 0x40, 0x0, 0x0, 1, 64 },
- 	[ADL_MMIO_UNCORE_IMC_DATA_READ]		= { 0x58, 0x0, 0x0, 1, 64 },
- 	[ADL_MMIO_UNCORE_IMC_DATA_WRITE]	= { 0xA0, 0x0, 0x0, 1, 64 },
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index ca98744343b8..a88343bbd6a6 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -4042,7 +4042,7 @@ enum perf_uncore_iio_freerunning_type_id {
- };
- 
- 
--static struct freerunning_counters skx_iio_freerunning[] = {
-+static const struct freerunning_counters skx_iio_freerunning[] = {
- 	[SKX_IIO_MSR_IOCLK]	= { 0xa45, 0x1, 0x20, 1, 36 },
- 	[SKX_IIO_MSR_BW]	= { 0xb00, 0x1, 0x10, 8, 36 },
- 	[SKX_IIO_MSR_UTIL]	= { 0xb08, 0x1, 0x10, 8, 36 },
-@@ -4881,7 +4881,7 @@ enum perf_uncore_snr_iio_freerunning_type_id {
- 	SNR_IIO_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters snr_iio_freerunning[] = {
-+static const struct freerunning_counters snr_iio_freerunning[] = {
- 	[SNR_IIO_MSR_IOCLK]	= { 0x1eac, 0x1, 0x10, 1, 48 },
- 	[SNR_IIO_MSR_BW_IN]	= { 0x1f00, 0x1, 0x10, 8, 48 },
- };
-@@ -5238,7 +5238,7 @@ enum perf_uncore_snr_imc_freerunning_type_id {
- 	SNR_IMC_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters snr_imc_freerunning[] = {
-+static const struct freerunning_counters snr_imc_freerunning[] = {
- 	[SNR_IMC_DCLK]	= { 0x22b0, 0x0, 0, 1, 48 },
- 	[SNR_IMC_DDR]	= { 0x2290, 0x8, 0, 2, 48 },
- };
-@@ -5480,7 +5480,7 @@ static unsigned icx_iio_bw_freerunning_box_offsets[] = {
- 	0x0, 0x10, 0x20, 0x90, 0xa0, 0xb0,
- };
- 
--static struct freerunning_counters icx_iio_freerunning[] = {
-+static const struct freerunning_counters icx_iio_freerunning[] = {
- 	[ICX_IIO_MSR_IOCLK]	= { 0xa55, 0x1, 0x20, 1, 48, icx_iio_clk_freerunning_box_offsets },
- 	[ICX_IIO_MSR_BW_IN]	= { 0xaa0, 0x1, 0x10, 8, 48, icx_iio_bw_freerunning_box_offsets },
- };
-@@ -5838,7 +5838,7 @@ enum perf_uncore_icx_imc_freerunning_type_id {
- 	ICX_IMC_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters icx_imc_freerunning[] = {
-+static const struct freerunning_counters icx_imc_freerunning[] = {
- 	[ICX_IMC_DCLK]	= { 0x22b0, 0x0, 0, 1, 48 },
- 	[ICX_IMC_DDR]	= { 0x2290, 0x8, 0, 2, 48 },
- 	[ICX_IMC_DDRT]	= { 0x22a0, 0x8, 0, 2, 48 },
-@@ -6314,7 +6314,7 @@ enum perf_uncore_spr_iio_freerunning_type_id {
- 	SPR_IIO_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters spr_iio_freerunning[] = {
-+static const struct freerunning_counters spr_iio_freerunning[] = {
- 	[SPR_IIO_MSR_IOCLK]	= { 0x340e, 0x1, 0x10, 1, 48 },
- 	[SPR_IIO_MSR_BW_IN]	= { 0x3800, 0x1, 0x10, 8, 48 },
- 	[SPR_IIO_MSR_BW_OUT]	= { 0x3808, 0x1, 0x10, 8, 48 },
-@@ -6393,7 +6393,7 @@ enum perf_uncore_spr_imc_freerunning_type_id {
- 	SPR_IMC_FREERUNNING_TYPE_MAX,
- };
- 
--static struct freerunning_counters spr_imc_freerunning[] = {
-+static const struct freerunning_counters spr_imc_freerunning[] = {
- 	[SPR_IMC_DCLK]		= { 0x22b0, 0x0, 0, 1, 48 },
- 	[SPR_IMC_PQ_CYCLES]	= { 0x2318, 0x8, 0, 2, 48 },
- };
-@@ -6744,7 +6744,7 @@ static struct intel_uncore_type *gnr_uncores[UNCORE_GNR_NUM_UNCORE_TYPES] = {
- 	NULL,
- };
- 
--static struct freerunning_counters gnr_iio_freerunning[] = {
-+static const struct freerunning_counters gnr_iio_freerunning[] = {
- 	[SPR_IIO_MSR_IOCLK]	= { 0x290e, 0x01, 0x10, 1, 48 },
- 	[SPR_IIO_MSR_BW_IN]	= { 0x360e, 0x10, 0x80, 8, 48 },
- 	[SPR_IIO_MSR_BW_OUT]	= { 0x2e0e, 0x10, 0x80, 8, 48 },
--- 
-2.45.2
-
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Link: https://lore.kernel.org/r/20230827091710.1483-2-jszhang@kernel.org
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> Signed-off-by: Drew Fustini <drew@pdp7.com>
+> ---
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 21cc27e75f50..0ad3bf5dafa7 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -584,6 +584,7 @@ allOf:
+>                - qcom,sa8775p-ethqos
+>                - qcom,sc8280xp-ethqos
+>                - snps,dwmac-3.50a
+> +              - snps,dwmac-3.70a
+>                - snps,dwmac-4.10a
+>                - snps,dwmac-4.20a
+>                - snps,dwmac-5.20
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
