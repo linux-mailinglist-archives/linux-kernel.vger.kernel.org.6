@@ -1,116 +1,171 @@
-Return-Path: <linux-kernel+bounces-251800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6E5930A06
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:13:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB79930A0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D4CB21318
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:13:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D70E1F21A08
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D688A12FF96;
-	Sun, 14 Jul 2024 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737D11304B7;
+	Sun, 14 Jul 2024 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lt9eMhqC"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLrspywZ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4301B656;
-	Sun, 14 Jul 2024 13:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9F71D559;
+	Sun, 14 Jul 2024 13:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720962783; cv=none; b=YOUQ/vEc5fttQIW3B5fxVP0XLxJx0b5Wp8hq+FlIZdISGoIzKGECBUIGMeTnmYlwdjMex0ytjZT1Kr3EdcX3ITbZxwB/E/i0RrT4Ozc3ZC/A68EtVthXkZ+4VODxTbPv+ERlOft8PRT5bfXSPxLi7FP14tgLabyPtLktZWUENVI=
+	t=1720962933; cv=none; b=H5UVdEgCFmYpXM79GWyyDRWcSlO4p2Hb49j/h4L4Bso2D6XjTrrEvwdQQ704p5qBH5fsPzZ27sUqU9tcR1G38qnw39WMEVYmxNIYpyRiwPSE3bZs3UEl10FNtyhEZvi8+ffsLWpA/jGy+oadP2Atss8C5oUxOGqnjsKNNMy4cac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720962783; c=relaxed/simple;
-	bh=X/wht4a2Q32j75kP6Ucx3nxVTOQw3hxX+8IH2xU2dRg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=E9Ee1ZZNbcgOlO89RXolhP/hh8BYlJmV3QvURbmb2NYO1Ymj3Cvb8KBOO356pkmchLkp1UPsY7v0A+JtCxUUM6rTDol3vJAbLboEvS8A+TMUMA5mV1YlwtOsjNzE0HOxYFOB7FL/64h/mKT2PQCLeFNp03L8t9L/Yd7wzlg71ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lt9eMhqC; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720962769; x=1721567569; i=markus.elfring@web.de;
-	bh=jar1fGm/qjofZUU6lUjEG2U86Ixx1QKmvpwr82lNIlw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lt9eMhqCwsvTwB9VAjcRGPalzGRUoEBdLUYVHlfHsGXyUSPo/W6HEJ0Y065eRAog
-	 Y2iTKg2ZPqfHll2PhMFdB74yYhXkW+nNT8hY2dIDyF/g6T489x9xUrQuJYaBkrW8s
-	 UuC9lbmSUKzy+YG8srgGyKlZGWKrifiNEqfYBm27o7BKWVks4vnNjYJwY+TaLWJEM
-	 sL5qgI3apPDF2p/jkr+YRscH5VByA+NasqkCV8LbBco3eF+q0aq7q68JyCr6W/XFs
-	 2cZe9Tnx/vDmwconTQsOi3eJGVgZbnWfvxlUDx9MDSIY2vmQ74s4WhqO3UEb2s0HT
-	 XZHxs6ROFPOPFA0n4Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2ggd-1sVRbq0JW3-008MFF; Sun, 14
- Jul 2024 15:12:49 +0200
-Message-ID: <28e7c8b8-1b18-4d31-a878-d5846d3115c8@web.de>
-Date: Sun, 14 Jul 2024 15:12:38 +0200
+	s=arc-20240116; t=1720962933; c=relaxed/simple;
+	bh=dcOo8C1pQ+lOmjwN8FP8eDvQ933tkNrSB9sHuhfLNDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XK7X3c2gLdeyeuqgNZNSX7cRnRgaMNm/6UsIqeSVRd8nbMNnU50BKYo4DkhA/PJjYsf52Z9kjj1C9Kc/+h6lW5bynWOEXZHtYQxxN+ZEpcIc7RRJ20EJbs5sYmlQD00QlHlqUhQqH6LdTqpcwNyxaOn9IGeyTOdo8p3q56IvN+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLrspywZ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e9b9fb3dcso4204865e87.1;
+        Sun, 14 Jul 2024 06:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720962930; x=1721567730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KiCM4Oh0wwP2VREwcugnR/BGE8YEV2FgEAMfKAudQZU=;
+        b=cLrspywZoNFITXRfUNokVUiW0rpbVIbrYYpg7k+F0FWPZhe6icj+KFhFi+0+kb6iUP
+         BDRdO1CFhYT8wp2uttRDRvjUiTr4sMKpz5hwg/s1EBTjKWDBH+l6G5KecprKTUViBbnl
+         UNyREx89lksFV2mqhM5nrCwckQFaCd0Uuj4NMnuBZA/zboYb07diYmv0GIPJuvWzMx9S
+         RFGVBbtDsN4pRdI3RwC/eQmn5D0UATwIDgIfOXX0ljMvdb2poJC4bYWot+Yf95ic+UZ+
+         iNDF0doxthir7pnEJDXvTHwHGk5VsKGNh+fz80+feLKaFIKXwSfLzfTQvf9ARmDrJN6r
+         qizQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720962930; x=1721567730;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KiCM4Oh0wwP2VREwcugnR/BGE8YEV2FgEAMfKAudQZU=;
+        b=k60NNgYs+Z4P8/kE4isskXqMGQFuD8jJYd8GuOQqFRVBc/ODW34q5uPW/yUDUxf72l
+         MlU/wmnuJPzikRQtlf1N/pHBarthGDEkhye8yRJyVYNQYB5oZIXbX8Xonw90FvXhRcWE
+         jEaDP+xWr7WQtXQddnn6EBzEcvJbw8WVc4pKeO8Z5yj12DXZSH1ZGU055pPTb8wZmD26
+         jGQYYL2Eoaw9ZrKPr68T4AD+PC2/GiME4WVUxNkY9+fXXCt1D/6sKR5rotrxDhmTHQ46
+         XhhdWiJb9ZIZFZAN+wzje1w6ZGtAP9t3Pb47ZVO/fQJKyhEeJ86iHK7zNbDL+7lA58fE
+         74KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyMl3V0XswoxufQCKB40+GMw8z/JrRkzr+FmZfY51/JQbFwQq6XYhd+PIXqzaiBTmbYkUDf+tj+M9jPOrIXEv9IuY+tayKdZpDaZvHLcjRNJ2ow2fRw+Um0wXXZDgqCKQJqiNCmtUE3pPS0iCjTU/baTU/Qyg+AzVwFRbJCvNsfA==
+X-Gm-Message-State: AOJu0YzIMeDU2JXkF3bFInGq6//jC8psQ6j4q6ZgTof3Xlk6Np1b1Ebx
+	O49Iuno6VkYvPyHL7fEqTX7bF3GqUJhCwJre5wSawX+ZGhQ2UWH5
+X-Google-Smtp-Source: AGHT+IEwsZANI92FHt4sUnfLljzN4WZnd499R+at6I3cz5xxru5RwfBlwsIV4f5R+2ItBy99UrvDKg==
+X-Received: by 2002:ac2:42d8:0:b0:52b:b327:9c1c with SMTP id 2adb3069b0e04-52eb99d59e8mr9045576e87.62.1720962927807;
+        Sun, 14 Jul 2024 06:15:27 -0700 (PDT)
+Received: from mobilestation (pppoe77-82-205-78.kamchatka.ru. [77.82.205.78])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24f38absm467456e87.79.2024.07.14.06.15.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 06:15:27 -0700 (PDT)
+Date: Sun, 14 Jul 2024 16:15:09 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Drew Fustini <drew@pdp7.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH RFC net-next 0/4] Add the dwmac driver support for T-HEAD
+ TH1520 SoC.
+Message-ID: <w3ex6eu3fhv4rmb67hm5ktwkehefw25gmemtqsjjfaa76z7v6t@vmfzungbincv>
+References: <20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Jeff Johnson
- <quic_jjohnson@quicinc.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] time: Use seq_putc() in udelay_test_single()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LgPVlcmNFjfuZXOvHoA6ArSZh7PtdQntif/t/DAqQERHaCuJoeY
- j5vKd7F0j4EojGsIJroMF/Ncg6ibfvwy0mX7Jwgbm683HOstJAmdbpeXltiWUAffPB3OxfE
- SFTYa0ZY/UmtTO8zKGYWo4g3ExtUPblJfLEy8oG51wPhFpTgc7jYOYaWzkN7AGvUVA0B/wo
- N1rPhHD7i2CvKFgJTT3lw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LKn3SorblLs=;93R8VsiioS8BNBP8eiuY2wUqEOY
- 66pa1Ml6myiXkAwy1m0FfGH4OlvG4VXBz44+4O7HoUNCG/5up5f3MGZB4Aa3htyz1oJdpB3sq
- 5GjHsNIPlLjBAfBSpqEDdePa1tjL3i9uD8W5aivjMFzzMSM9exMTgMKSc9ugyfOe4oTm0MJym
- atx8CIv2QtjVEsc68aMP7Kn81fz0SJqUPeLiO+oAtIxuOEXnEY1AC4JILrVANhyuQr2fIfnta
- 6ubAvuS5MaEvkSdwHtZOJJrxNYhpYX/PqtVi+QGCH02lOnYl3qa8LvY4Ny1djz4cXW1qS1kk1
- 3A8dwwQSssEU+LQJ4pbOtOcLaknKV2O7U2G/W7OuhWRePF+75ycWRop3NgR4yf+gsUYfoLHTa
- omx2Rv+LkfFH/6bDWrdLT3xJbB1RatmMukqtfnwBSo0S69Mb6GDWowLw0lJEgpmk7Yx9aAoms
- ne34newmmN8X5loOglQZvHYPQquljGEgu90yFx7v7m1Q3ck1MhJyNb2zFpH1TyKv1kXTyEohi
- +60Zya6qAycv2KzUSWH7BeE9BubbV+2kunzjDpzaNUnKZE6q0lcDA3XgmJYyqVXAkQG0/RnJY
- 1YRqEoNK0e9VbFerUZbWck4LEUVpt1QpCxVWVTwTUOpTbK6dTlPWqgTMIVXNHddBLwmNMOudZ
- RqkRGf3NSYrQS/U/bKV4CJ0Sq6kaalweHeiab/A5+oHQYS2TIAGEly1VYGe6L3bbgpklMgki8
- hmKgkAZQvcjsM/5f8J1GqW4aL27pseoNPP1n6baYmK6fciB09A/CFwvly+CVPpQyMlrDq5wAc
- w1kzrFQv4DcvJUOjZBi4qqpg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 14:50:06 +0200
+Hi Drew
 
-A single line break should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+On Sat, Jul 13, 2024 at 03:35:09PM -0700, Drew Fustini wrote:
+> I am marking this as an RFC since it has been almost a year since the
+> previous series and Jisheng has handed it off to me. There was
+> discussion about the syscon for the APB registers in Jisheng's v2. I've
+> gone a different route and switched to adding a second memory region to
+> the gmac node:
+> 
+>   dwmac: DesignWare GMAC IP core registers
+>     apb: GMAC APB registers
+> 
+> This patch depends my clock controller series:
+> 
+>  [PATCH v3 0/7] clk: thead: Add support for TH1520 AP_SUBSYS clock controller
+>  https://lore.kernel.org/linux-riscv/20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com/
+> 
+> and the pinctrl series from Emil:
+> 
+>  [PATCH v2 0/8] Add T-Head TH1520 SoC pin control
+>  https://lore.kernel.org/linux-riscv/20240103132852.298964-1-emil.renner.berthing@canonical.com
+> 
+> I have a branch with this series and the dependencies on top of 6.10-rc7:
+>  https://github.com/pdp7/linux/tree/b4/thead-dwmac
+> 
+> Changes since Jisheng v2:
+>  - remove thead,gmacapb that references syscon for APB registers
+>  - add a second memory region to gmac nodes for the APB registers
+>  - Link: https://lore.kernel.org/all/20230827091710.1483-1-jszhang@kernel.org/
 
-This issue was transformed by using the Coccinelle software.
+I see the vast majority of the v2 comments left ignored:
+compatible-string, Tx/Rx common clock handle, clock delays, etc.
+Please take a closer look at v2 discussions and make sure the notes
+were implemented or send a reasonable response why it wasn't done.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/time/test_udelay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-Serge(y)
 
-diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
-index 783f2297111b..97c33c8773de 100644
-=2D-- a/kernel/time/test_udelay.c
-+++ b/kernel/time/test_udelay.c
-@@ -59,7 +59,7 @@ static int udelay_test_single(struct seq_file *s, int us=
-ecs, uint32_t iters)
- 			(usecs * 1000) - allowed_error_ns, min, avg, max);
- 	if (fail_count)
- 		seq_printf(s, " FAIL=3D%d", fail_count);
--	seq_puts(s, "\n");
-+	seq_putc(s, '\n');
-
- 	return 0;
- }
-=2D-
-2.45.2
-
+> 
+> Changes since Jisheng v1:
+>  - rebase on the lastest net-next
+>  - collect Reviewed-by tag
+>  - address Krzysztof's comment of the dt binding
+>  - fix "div is not initialised" issue pointed out by Simon
+>  - Link: https://lore.kernel.org/all/20230820120213.2054-1-jszhang@kernel.org/
+> 
+> ---
+> Emil Renner Berthing (1):
+>       riscv: dts: thead: Add TH1520 ethernet nodes
+> 
+> Jisheng Zhang (3):
+>       dt-bindings: net: snps,dwmac: allow dwmac-3.70a to set pbl properties
+>       dt-bindings: net: add T-HEAD dwmac support
+>       net: stmmac: add glue layer for T-HEAD TH1520 SoC
+> 
+>  .../devicetree/bindings/net/snps,dwmac.yaml        |   2 +
+>  .../devicetree/bindings/net/thead,dwmac.yaml       |  81 ++++++
+>  MAINTAINERS                                        |   2 +
+>  arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  89 ++++++
+>  .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 131 +++++++++
+>  arch/riscv/boot/dts/thead/th1520.dtsi              |  55 +++-
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig        |  11 +
+>  drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c  | 300 +++++++++++++++++++++
+>  9 files changed, 670 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 568c4e4b646777f3373f383cc38864a3cd91bbb7
+> change-id: 20240712-thead-dwmac-1d44c472bbd5
+> 
+> Best regards,
+> -- 
+> Drew Fustini <dfustini@tenstorrent.com>
+> 
+> 
 
