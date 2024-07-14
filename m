@@ -1,53 +1,47 @@
-Return-Path: <linux-kernel+bounces-251762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613A2930978
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3870493097A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6221C20C03
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDD41F21734
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47B849635;
-	Sun, 14 Jul 2024 09:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6945F4597A;
+	Sun, 14 Jul 2024 09:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w6wg8hOk"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDyikrxe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629BA3A8C0;
-	Sun, 14 Jul 2024 09:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A022A21A0B
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720949621; cv=none; b=cngzxX/BttfcTeAqgUcxUS2gOMMQtluWd6GERDvds7K6ixKKAu0hQd26HDi0mhQlZaonnDz8TDahyywG9pSTlu8Atd8V85A/oUPsM6lCDYCpgDQ77cbNvjVujT6f0SBn9sgBncTDQaeq/C936NgBtzxgvpgaDz1IZQP3zpL/eWE=
+	t=1720951044; cv=none; b=IsWLjm8jJuANzs2WLihNwXIS7U7DHyCwCWzRpa7sCHUARBNF5xInFTlZuz2H4jNEoqHfk2t/+ARNgD1EM/KhRaAQmcLw71DUcrie0vd0dhGNEqMOo0XbYXeERYZaKiizNMS9M3XvYzZn/KVjkk/4gJj0BCWSAzvMZmrJWEw+GTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720949621; c=relaxed/simple;
-	bh=66W94Qlr5tmW71QHKaOmYeVfbqOJtCFE9dnGo5yItiU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FEl3VLt94026YMEqnC0mrv0sci4U/2Qr8hbe3otZK0+4G8GJy9cJvBt+vPT07tirMzJnk4K8p6uOvKUgQqOt1qLm8QVIm5wcCwGMox00XXYJ2s7J6rh9X7c2oH5sfO6wrKpG0F9Su4LQCUvVuK0ZjmWpC8N+Gq30VUzR48XNFW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w6wg8hOk; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720949599; x=1721554399; i=markus.elfring@web.de;
-	bh=aLeqHr1jvfeI2WXDfAAOXkAuSH/H3gXk27n2+n8sw8I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=w6wg8hOk9zJu/8DkrfZbROy+CIx23ZbUJlGZNaaOkpem0aXZ87rknf7p0DSSEFW4
-	 rKdpEtSYzKx8edp9j6lUHV3fShLfSZSuymtVtqVcJUvVh6h0QGjxEabAraVbLP/vP
-	 UOJoebdB3dhtY2aJHxT2Q9eVrCuPrWgNsHbriFNIiDtG9nLzoYxs/h5olj6iFkAk2
-	 d0WKWKWOUXQ42M2AqYcLV3TIy91uhFb4rNBPrQctzhxKuvo+g8rZ4M7OcGf1Asi1a
-	 ZoEbR2QiS+M8NXJKmh33+1eHnQZa8R4Vfo2Nr7QSkmfZXP5uZvxMjMJImkD6pCE9q
-	 sI2nOn4wIyTUDM29kA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpU1u-1s1J1X2y3Y-00nBP7; Sun, 14
- Jul 2024 11:33:19 +0200
-Message-ID: <8ff2d1aa-4c48-4cb1-b5d5-675adb90ae81@web.de>
-Date: Sun, 14 Jul 2024 11:33:18 +0200
+	s=arc-20240116; t=1720951044; c=relaxed/simple;
+	bh=0WgFHk0X/1atUgT07V0o6fDw7hSKxHr/6vuBGiy55CA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FRDxZM00U5CMNNNeAvYTS9Ah/hB1yYr5E6tisxd5yUmoLNO+/8YwWqp0WNRPZ/7m3YibgenF+msifeLL5tYeNTmN21Oscobrcf/weuV6BfWuf/8ntjiXtR/pQWAD1ivpvbc9V8I7NrmEmTykLVF5NSck3YM14vUgpBXjNM3B3fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDyikrxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63093C116B1;
+	Sun, 14 Jul 2024 09:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720951044;
+	bh=0WgFHk0X/1atUgT07V0o6fDw7hSKxHr/6vuBGiy55CA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GDyikrxeVk9VKhzc2jWGlNXPCNTW3HNUtJAimkgrIrYqWEBJ1uWInNviBurPwt3Cw
+	 5C38h76hou23qQHuiQ2ptXutD6wz+7BR+hwaChJHfPdotMnH3KD38bFgZXjnvHJBNs
+	 CdfRp0QoTkz9h49DnZFSLk60LO+/4PNY/cMnjrG5W9OuAe4PLT+o3O7ScIbcjfgZ19
+	 xfMk0WUy6fwTJcs+eu9JzrTAs8CX1f7A5iC5Ulnm3ZwLpY0CUv6x4+UONqUq2B4dfx
+	 Ybsnfu6dCFuBD3027EEKCWCCBnkBRwex4trbSaE2wv0fMTTTnekbU4s0pusOaegWSK
+	 43gjwKZyrHf8Q==
+Message-ID: <a7c04bce-da47-471c-96c2-c078819df81c@kernel.org>
+Date: Sun, 14 Jul 2024 11:57:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,98 +49,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: cgroups@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] cgroup: Use seq_putc() in three functions
+Subject: Re: [PATCH 1/2] Input: msc5000_ts - remove the driver
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kerne.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240714060029.1528662-1-dmitry.torokhov@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240714060029.1528662-1-dmitry.torokhov@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SSUQHcCcuwZU/1J4YNud6Pf4kHGLlefSxecxEkkCY5lpVB9KFmq
- 3Amb657a1pqI9kpzVknExXSPL0ALVxZhWtO6RHQUFo2DDn9I2lDQPiRI95KXeQis645DQtO
- l7axU9s9p5FKRnyOfNGylG0QL+PKJmLkYA8nZ3Ec59e8yvkG7edWdPivZZAcLd868ImK+QT
- zMdl4i7tEpaZugaWO1akg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LXgjEuqR0JE=;OPOlV7gXFyiLcWBhR4fjoI4CJRO
- CQHTUlH2NZca0iOvJjfoc10tLg1WRaaFIbMCq2HJ9zazGHi8NgeOIVAfgidmNDVXrHMHdmy5A
- YsOHlneGCPcNQhUNsV7QlPS0CFPjmJYNHvZpuCH55XRk9D5bgQI3pICPSFgEsypr8/EmnnmqM
- mEWDclMpIZxm4oHjRpslvDhNotMn9bp6gdsHfknfncqrSnhyxKPiMkaQyTFe7dCF70SoKmKzC
- SNwco9dri5Am88Ks8h9ATSLYjNJuO3mnZjQfj9Lpn2aOVlsyWWJ+gxOGGp7Q5sZCs3RViQRWk
- fr34oCiDVKZv7VZrlnotOtDWrtG1vAtqmb6OE60xyD8QFXZs0BWGuLzGn2GwW6IHM0SDqdKS3
- O1HwoZko7Np+P+0OGuh+LvsR96NTIzMwqxM/TK/M4L6wnaexK0oy5fHwSUoYd8pqBe+VDNEiP
- v30MQcZ5hcE8wYfX5eqnPXg240FL5WWkqXZokdD/gtZIwZw0vjbUPtTzQO52YQnWuOXh+qfgf
- 1z4+UMVhVvZyLAsCwZh/80ZI19veOvmT/a4QyZ55XfNJqIyAMsJy0SbMHoyJLdoU8KErfBe2D
- RPeEqYpgMjeFpt2f+VYydrQy0aPUWhxUOsVpf1LuPxIkrs3fzHY6TKVzT2jAEVE3oF6jBNFJm
- mod/VueRtplTTeGvdINtYWFt8FjsmqhWgZLSDEwprEXoOP8gNZURK9o8FFDBZtYSW8msny2s4
- IT7rSJ38J2kSGMjh8eJNkgi1lc93tMfDtzMCpYR9mqMunCZFuUHi/YBCCRZd2e6miIs2AnIe1
- 7PiDa7UJjcYrCUkY6fWTs05g==
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 11:24:05 +0200
+On 14/07/2024 08:00, Dmitry Torokhov wrote:
+> MCS-5000 belongs to the 1st generation of Melfas chips, manufactured in
+> 2000-2007.
+> 
+> The driver relies on custom platform data (no DT support) and there
+> never were any users of this driver in the mainline kernel. The commit
+> adding the driver mentioned that the driver was tested on S3C6410 NCP
+> board (with Samsung S3C6410 SoC) but the touchscreen device was never
+> added to the board file. This board was removed in v6.3 in commit
+> 743c8fbb90ca ("ARM: s3c: remove most s3c64xx board support").
+> 
+> Remove the driver since there are no users.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-This issue was transformed by using the Coccinelle software.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/cgroup/cgroup.c | 2 +-
- kernel/cgroup/debug.c  | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index c8e4b62b436a..9197f3c591a9 100644
-=2D-- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -6316,7 +6316,7 @@ int proc_cgroup_show(struct seq_file *m, struct pid_=
-namespace *ns,
-
- 			seq_puts(m, buf);
- 		} else {
--			seq_puts(m, "/");
-+			seq_putc(m, '/');
- 		}
-
- 		if (cgroup_on_dfl(cgrp) && cgroup_is_dead(cgrp))
-diff --git a/kernel/cgroup/debug.c b/kernel/cgroup/debug.c
-index 80aa3f027ac3..d18f7dcb4def 100644
-=2D-- a/kernel/cgroup/debug.c
-+++ b/kernel/cgroup/debug.c
-@@ -55,7 +55,7 @@ static int current_css_set_read(struct seq_file *seq, vo=
-id *v)
- 	seq_printf(seq, "css_set %pK %d", cset, refcnt);
- 	if (refcnt > cset->nr_tasks)
- 		seq_printf(seq, " +%d", refcnt - cset->nr_tasks);
--	seq_puts(seq, "\n");
-+	seq_putc(seq, '\n');
-
- 	/*
- 	 * Print the css'es stored in the current css_set.
-@@ -159,7 +159,7 @@ static int cgroup_css_links_read(struct seq_file *seq,=
- void *v)
- 				extra_refs +=3D extra;
- 			}
- 		}
--		seq_puts(seq, "\n");
-+		seq_putc(seq, '\n');
-
- 		list_for_each_entry(task, &cset->tasks, cg_list) {
- 			if (count++ <=3D MAX_TASKS_SHOWN_PER_CSS)
-@@ -189,7 +189,7 @@ static int cgroup_css_links_read(struct seq_file *seq,=
- void *v)
- 	if (!dead_cnt && !extra_refs && !threaded_csets)
- 		return 0;
-
--	seq_puts(seq, "\n");
-+	seq_putc(seq, '\n');
- 	if (threaded_csets)
- 		seq_printf(seq, "threaded css_sets =3D %d\n", threaded_csets);
- 	if (extra_refs)
-=2D-
-2.45.2
+Best regards,
+Krzysztof
 
 
