@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-251763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3870493097A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315D593097B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDD41F21734
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491B71C20B67
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6945F4597A;
-	Sun, 14 Jul 2024 09:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1737149647;
+	Sun, 14 Jul 2024 09:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDyikrxe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTPY7Sn6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A022A21A0B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B92481A5
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720951044; cv=none; b=IsWLjm8jJuANzs2WLihNwXIS7U7DHyCwCWzRpa7sCHUARBNF5xInFTlZuz2H4jNEoqHfk2t/+ARNgD1EM/KhRaAQmcLw71DUcrie0vd0dhGNEqMOo0XbYXeERYZaKiizNMS9M3XvYzZn/KVjkk/4gJj0BCWSAzvMZmrJWEw+GTM=
+	t=1720951062; cv=none; b=HXc46m5jtyvqThTAU8MSispg5Y23A/9rmgSAoJp7XMKdZLV3/RIGWR6QFn91kEG463vXQ3yPG4pzdQbvtNXLr50CYOis29l1O29xo+85HCQllYkv+vwAxZpThzfLWMLW/e79m2xacRsWr/YP+dOpe6FxFE3TUkCXrz5ZKE5o1tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720951044; c=relaxed/simple;
-	bh=0WgFHk0X/1atUgT07V0o6fDw7hSKxHr/6vuBGiy55CA=;
+	s=arc-20240116; t=1720951062; c=relaxed/simple;
+	bh=xkK3IdjxqHSu7ByfsT69dWcJ0dGz0s22/rjz/1xd1Do=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FRDxZM00U5CMNNNeAvYTS9Ah/hB1yYr5E6tisxd5yUmoLNO+/8YwWqp0WNRPZ/7m3YibgenF+msifeLL5tYeNTmN21Oscobrcf/weuV6BfWuf/8ntjiXtR/pQWAD1ivpvbc9V8I7NrmEmTykLVF5NSck3YM14vUgpBXjNM3B3fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDyikrxe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63093C116B1;
-	Sun, 14 Jul 2024 09:57:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kksa86NFpH01EFOWt+e8Bk3xg2r7w5hZKfVA3H8htmyRAW4RIBBGkkFBPnHKG1Do3m/nSdjazebLsKiAZIC/jRMF+gLTH2k43aP1rdCn3f2gCJxh6Ar7gwEQq5duE4+2tpkqQXPO+dorH5rfX14pOLWK31j+N6ibq8/BM7FCdjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTPY7Sn6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE6AC116B1;
+	Sun, 14 Jul 2024 09:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720951044;
-	bh=0WgFHk0X/1atUgT07V0o6fDw7hSKxHr/6vuBGiy55CA=;
+	s=k20201202; t=1720951062;
+	bh=xkK3IdjxqHSu7ByfsT69dWcJ0dGz0s22/rjz/1xd1Do=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GDyikrxeVk9VKhzc2jWGlNXPCNTW3HNUtJAimkgrIrYqWEBJ1uWInNviBurPwt3Cw
-	 5C38h76hou23qQHuiQ2ptXutD6wz+7BR+hwaChJHfPdotMnH3KD38bFgZXjnvHJBNs
-	 CdfRp0QoTkz9h49DnZFSLk60LO+/4PNY/cMnjrG5W9OuAe4PLT+o3O7ScIbcjfgZ19
-	 xfMk0WUy6fwTJcs+eu9JzrTAs8CX1f7A5iC5Ulnm3ZwLpY0CUv6x4+UONqUq2B4dfx
-	 Ybsnfu6dCFuBD3027EEKCWCCBnkBRwex4trbSaE2wv0fMTTTnekbU4s0pusOaegWSK
-	 43gjwKZyrHf8Q==
-Message-ID: <a7c04bce-da47-471c-96c2-c078819df81c@kernel.org>
-Date: Sun, 14 Jul 2024 11:57:19 +0200
+	b=KTPY7Sn6T6Ey9Ssve+2V8OX+dhhWnyZHYRf9SvZEOT9flK9BxOQ3m4zB5yaFmFHhG
+	 nkY+Gh9w1Q9k4MnTfJmeKIHp1VRvlHx9xvdy9fS5AwpYn0GxD5aWTe1VwkXbSJtvh1
+	 1AsbfmzPHMwHRk1n2As878t35FKHGhJ36LTlAM9NamcEL+eaJoFI2qJBnQuNjQPZ1I
+	 IdNlBuLKpQ0N58Gz6YhTNd5BW4NPzqH3FGVQPvThxsh0lqhgwnOvSteDUwMukEst5n
+	 0Yo0N7g29bjZ0PeV8tMwRvDLv/Zbxh5TwMs2Oa2tZhFe04l2g7mBAaE8Rx0/Qw2x1W
+	 0VDFfOblaiC4w==
+Message-ID: <e69940e7-d17b-410a-8e87-2daf1dd8b4fc@kernel.org>
+Date: Sun, 14 Jul 2024 11:57:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,10 +49,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Input: msc5000_ts - remove the driver
+Subject: Re: [PATCH 2/2] Input: msc_touchkey - remove the driver
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kerne.org
 Cc: linux-kernel@vger.kernel.org
 References: <20240714060029.1528662-1-dmitry.torokhov@gmail.com>
+ <20240714060029.1528662-2-dmitry.torokhov@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,18 +99,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240714060029.1528662-1-dmitry.torokhov@gmail.com>
+In-Reply-To: <20240714060029.1528662-2-dmitry.torokhov@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/07/2024 08:00, Dmitry Torokhov wrote:
-> MCS-5000 belongs to the 1st generation of Melfas chips, manufactured in
-> 2000-2007.
+> MCS-5000/5080 chips belong to the 1st generation of Melfas chips,
+> manufactured in 2000-2007.
 > 
 > The driver relies on custom platform data (no DT support) and there
-> never were any users of this driver in the mainline kernel. The commit
-> adding the driver mentioned that the driver was tested on S3C6410 NCP
-> board (with Samsung S3C6410 SoC) but the touchscreen device was never
+> never were any users of this driver in the mainline kernel. It is likely
+> that the driver was (like mcs5000_ts driver) was tested on S3C6410 NCP
+> board (with Samsung S3C6410 SoC), but the touchkey device was never
 > added to the board file. This board was removed in v6.3 in commit
 > 743c8fbb90ca ("ARM: s3c: remove most s3c64xx board support").
 > 
