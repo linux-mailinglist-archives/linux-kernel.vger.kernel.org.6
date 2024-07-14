@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-251756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC8E93096B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 10:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7901B93096C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD00E1C20A97
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 08:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32AAB2816B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A92549635;
-	Sun, 14 Jul 2024 08:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C359433C7;
+	Sun, 14 Jul 2024 09:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b="Yxeb2wDg"
-Received: from mail.envs.net (mail.envs.net [5.199.136.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kiVLUTGY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA894D11B;
-	Sun, 14 Jul 2024 08:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.199.136.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4109319BC6
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720947523; cv=none; b=gO/9fGCsGcHsJrVETSROqjrHINe0hxuoXttom8dNEvVQ1Ho5uYiMPyWgjUyybL3DWorROMfyTfLd2zNb0I3FWON1ZOiWtav/QPRM0TQ8KWMip76Jco51akqOn74uaMTbp3TcWjzR/PdOfjXVr/xO3HRy8o87liMH/4VwZ4z1vOk=
+	t=1720947671; cv=none; b=t4kGAtoi0s8AutoMWiKXqFVtiPB3Ou49sIjafgckCRipK8XVkyxpG5s2MNpFBmWfOWHFqSr3DC2b83zCsz8j/C5MbUkjRQvg7QRiEsYJFqiaM4qpEC+CXhzKf6rqr1LgOWbQGfhxjePDry/aR7sKpW5iLZyTP/tkYdNw1LM2Pu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720947523; c=relaxed/simple;
-	bh=GZiZoI6e3JvsqnLrL5xGsh92gGaBzJaPJ2zt48adfWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C3EaWj4b2/pQsqymsV/BQ+tpDSBuAl2DXMua8pZZjR7TQtTyGgA1NXoCr1EJ7MYT6uU5anIJoW7uTTXShkaJAxxXpU25ld84zhY5aw45phVKJ9YeI7SlmKP5o6uGoVNEzAUbI8LykPt5yKwWVphwkwo2qiqCbW4yiHPnJlu4Gg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net; spf=pass smtp.mailfrom=envs.net; dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b=Yxeb2wDg; arc=none smtp.client-ip=5.199.136.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=envs.net
-Received: from localhost (mail.envs.net [127.0.0.1])
-	by mail.envs.net (Postfix) with ESMTP id 5A89638A39A0;
-	Sun, 14 Jul 2024 08:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=envs.net; s=modoboa;
-	t=1720947518; bh=3RXoGcCjW+CB+wVoqLryQrySRvbelditpYUk0T7yTSY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Yxeb2wDgejzOcVVnBnS/+WSj4hVrhCdfZp86xCr1uxSFHj3oyiRHXJuQZsPOdeFf+
-	 QwsdEM4lYdILp7QQ7+gF4JHJFlZzIkglpVaa9Jth2npuU3GtpUq5C/O8U8PqAK52Xg
-	 oEzKqdmTsD800zMMcQBsuxIcOHgJK67FM9gXEzAQJM3jOBb6rY8BYA9g5+OkIxMGDX
-	 QIv6XcJ6tM0UIt4M1wsqBEgdDPznCePITV6kytVXayXeYGtCChVBzad0OUig9I2LN+
-	 jffwEGwCw61rhGknsDSD4FlbN/fOpM27CaiWF5r0f5GsFGjkDUp7biL9Y44N1fMPoy
-	 3XBEIBpoWSzO4s6XjJDn11MfzinWfrAohQ2m+mplZK0y+MCyeTdCkYUd2rjLn1Z68k
-	 fgp04oFcNAj5XTLrDXxzE222ziQx3tel+Eevr1b2LfjSqZjqzfCutqejV6iG7kQIdv
-	 691slFWz8P/RStIunv7yIp2HQOHn89RZubeDi/LphxRFvKTJvJ29yEcfSsgQKH6vsv
-	 GPgvcZeAE2MByB8W8r0VKw5DJrKcZjAHQoDBUKKd3JVZrW+vMjLB1+y349YKr3jSkt
-	 LdAX4sLLK++K613ZmI/6yp8P+fYm2mLrjNSiIrMcpCKUdQWGevpzh6Iuqpxe87iRws
-	 CP0WcrxYs1ADXePPmP/CoQt8=
-X-Virus-Scanned: Debian amavisd-new at mail.envs.net
-Received: from mail.envs.net ([127.0.0.1])
-	by localhost (mail.envs.net [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id xu_dqvWydv6f; Sun, 14 Jul 2024 08:58:28 +0000 (UTC)
-Received: from xtexx.eu.org (unknown [120.230.214.120])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.envs.net (Postfix) with ESMTPSA;
-	Sun, 14 Jul 2024 08:58:28 +0000 (UTC)
-From: Zhang Bingwu <xtex@envs.net>
-To: Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Zhang Bingwu <xtexchooser@duck.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: x86@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-parisc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org
-Subject: [PATCH 2/2] kbuild: Create INSTALL_PATH directory if it does not exist
-Date: Sun, 14 Jul 2024 16:57:51 +0800
-Message-ID: <20240714085751.176357-3-xtex@envs.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240714085751.176357-1-xtex@envs.net>
-References: <20240714085751.176357-1-xtex@envs.net>
+	s=arc-20240116; t=1720947671; c=relaxed/simple;
+	bh=92Y3V7fwM4zBxyAa9oU0gZDJTo7MajOnuhjTb47y0uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qOm2AornzhgEO/aljHQyrWNPQej7Ik/axGr8FoR5ckiccdNkGrk+SrRfFDFgKgJLmdX06Hw6VWocdalPQ2LdBkeTOKIPw6kInpXuXVYBHmLPK29yj7lpPtGYfAR6ly4NyfMHwPKEb6GWAz0LLYyHs9A7NY8ZAzZpD6UGWBEARfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kiVLUTGY; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720947670; x=1752483670;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=92Y3V7fwM4zBxyAa9oU0gZDJTo7MajOnuhjTb47y0uk=;
+  b=kiVLUTGY3+kPqQlzRQHmV72IdkV+nFqXTM1B749s+X3EF/FTEYi2kyrW
+   CNoGC6v97iUEmLoCh49DLggZ4X51/Jj1mkMBs0vEfrUrOjbq3UlE+Sayp
+   8yA3ZX+uE/NuqFSbcKuq76+ocRa+toAHaQmBNZZt7IxIx9E3T7JHRDiaC
+   z2UWm8mA2mA59p/Nso9hZWKUxFrqrkdxqE6H0oiOeDrxH+mELzUsVIwH6
+   NyxbZUf7Ngn/8u7RbLY8YGX/PuYZ0VVk8gSeuGtrlLrH1kFpaBPc5piFr
+   JKMZT8/OaG4cPAAFu5oY/IZ+wTNODx6LzqxW4XsLS53oiBslP2BwKOeLq
+   A==;
+X-CSE-ConnectionGUID: SxhS3MWdRbmdpm7X+lSa8g==
+X-CSE-MsgGUID: BJLd8zDpQ8aqAtgZbOWeSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11132"; a="18185942"
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="18185942"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2024 02:01:10 -0700
+X-CSE-ConnectionGUID: 1dvZQbTITp2oSKyBsNhW3Q==
+X-CSE-MsgGUID: Yz2fVHMrSte02N6Fj+fmsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="53700863"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 14 Jul 2024 02:01:08 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSv6P-000dHR-2Z;
+	Sun, 14 Jul 2024 09:01:05 +0000
+Date: Sun, 14 Jul 2024 17:00:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Matthew Sakai <msakai@redhat.com>
+Subject: drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
+Message-ID: <202407141607.M3E2XQ0Z-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Zhang Bingwu <xtexchooser@duck.com>
+Hi Mike,
 
-If INSTALL_PATH is not a valid directory, create it, like what
-modules_install and dtbs_install will do in the same situation.
+First bad commit (maybe != root cause):
 
-Signed-off-by: Zhang Bingwu <xtexchooser@duck.com>
----
- scripts/install.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4d145e3f830ba2c2745b42bfba5c2f8fcb8d078a
+commit: f36b1d3ba533d21b5b793623f05761b0297d114e dm vdo: use a proper Makefile for dm-vdo
+date:   5 months ago
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240714/202407141607.M3E2XQ0Z-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240714/202407141607.M3E2XQ0Z-lkp@intel.com/reproduce)
 
-diff --git a/scripts/install.sh b/scripts/install.sh
-index 9bb0fb44f04a..02b845e7ab33 100755
---- a/scripts/install.sh
-+++ b/scripts/install.sh
-@@ -20,6 +20,10 @@ do
- 	fi
- done
- 
-+if [ "${INSTALL_PATH}" != "" ] && ! [ -e "${INSTALL_PATH}" ]; then
-+	mkdir -p "${INSTALL_PATH}"
-+fi
-+
- # User/arch may have a custom install script
- for file in "${HOME}/bin/${INSTALLKERNEL}"		\
- 	    "/sbin/${INSTALLKERNEL}"			\
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407141607.M3E2XQ0Z-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
+   drivers/md/dm-vdo/int-map.c:105: warning: Function parameter or struct member 'bucket_count' not described in 'int_map'
+   drivers/md/dm-vdo/int-map.c:330: warning: Function parameter or struct member '__always_unused' not described in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:330: warning: Excess function parameter 'map' description in 'search_hop_list'
+   drivers/md/dm-vdo/int-map.c:461: warning: Function parameter or struct member '__always_unused' not described in 'move_empty_bucket'
+   drivers/md/dm-vdo/int-map.c:461: warning: Excess function parameter 'map' description in 'move_empty_bucket'
+
+
+vim +87 drivers/md/dm-vdo/int-map.c
+
+cc46b9554b3f6d Matthew Sakai 2023-11-16  66  
+cc46b9554b3f6d Matthew Sakai 2023-11-16  67  /**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  68   * struct bucket - hash bucket
+cc46b9554b3f6d Matthew Sakai 2023-11-16  69   *
+cc46b9554b3f6d Matthew Sakai 2023-11-16  70   * Buckets are packed together to reduce memory usage and improve cache efficiency. It would be
+cc46b9554b3f6d Matthew Sakai 2023-11-16  71   * tempting to encode the hop offsets separately and maintain alignment of key/value pairs, but
+cc46b9554b3f6d Matthew Sakai 2023-11-16  72   * it's crucial to keep the hop fields near the buckets that they use them so they'll tend to share
+cc46b9554b3f6d Matthew Sakai 2023-11-16  73   * cache lines.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  74   */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  75  struct __packed bucket {
+cc46b9554b3f6d Matthew Sakai 2023-11-16  76  	/**
+cc46b9554b3f6d Matthew Sakai 2023-11-16  77  	 * @first_hop: The biased offset of the first entry in the hop list of the neighborhood
+cc46b9554b3f6d Matthew Sakai 2023-11-16  78  	 *             that hashes to this bucket.
+cc46b9554b3f6d Matthew Sakai 2023-11-16  79  	 */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  80  	u8 first_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  81  	/** @next_hop: The biased offset of the next bucket in the hop list. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  82  	u8 next_hop;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  83  	/** @key: The key stored in this bucket. */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  84  	u64 key;
+cc46b9554b3f6d Matthew Sakai 2023-11-16  85  	/** @value: The value stored in this bucket (NULL if empty). */
+cc46b9554b3f6d Matthew Sakai 2023-11-16  86  	void *value;
+cc46b9554b3f6d Matthew Sakai 2023-11-16 @87  };
+cc46b9554b3f6d Matthew Sakai 2023-11-16  88  
+
+:::::: The code at line 87 was first introduced by commit
+:::::: cc46b9554b3f6d2f09b1111386b2706e5b4f56c8 dm vdo: add basic hash map data structures
+
+:::::: TO: Matthew Sakai <msakai@redhat.com>
+:::::: CC: Mike Snitzer <snitzer@kernel.org>
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
