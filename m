@@ -1,210 +1,165 @@
-Return-Path: <linux-kernel+bounces-251940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6375A930BF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:17:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3BA930BEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF437B21E02
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064D1281BEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288E913D53B;
-	Sun, 14 Jul 2024 22:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxlMnay2"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BD213D530;
+	Sun, 14 Jul 2024 22:15:28 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DE22313;
-	Sun, 14 Jul 2024 22:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4EE364BE
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 22:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720995434; cv=none; b=HN6ZY1dGEwK7l590zYaw0ow8Vmchqe5enU9f2xbA3dndxmzBEoUBuRFWSReN7/vKX37fr/+iCJmnXRylLp0s3qQlqmfoc7xbYVeWwKj5SiM2PxusvR4yLUBhtrV4YbLT8b3vM8fnmiKKDQTvQZvXf6C2i6s9vBRsYxTq1qnpJDk=
+	t=1720995327; cv=none; b=GkOcGpC9O22MrjrqTgS82eb1mK0+MyS0k/MizAS9IEFnb3hK7XNeEifN/S8AEJ5gWIRRzcvIrohHZDbrhg8kStIPewW3fjwZk963y3ZKe3y9edbQijWNxuhTHoiFEVZmP752MrlzbLiYvP8Fh0l1xLuAlciAgygfL0v/Ly+uD0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720995434; c=relaxed/simple;
-	bh=RusYwsh6gr/hm4CtP7HyMGGFL1HPJkLm4O6NWMUILuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkNiet+BANUswnofeHEwswehsJDK13TB3KNOojjHWP2aH9YhoXNoICdhLezvqEahYCo64UiXldGlWB4NSh51hVztdvhWasrwxqBFSqpAGGVrcDnyidSeP3+eQ1d0GY5SY+wxuCrrE6fuqXFsob79zH2LyYg3P0V7VwfDpplv/tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxlMnay2; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b61689d7c9so24228716d6.2;
-        Sun, 14 Jul 2024 15:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720995432; x=1721600232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z9d14tu8UM/7LR69vv692GAIifPe3a2v2W5S5B8IbTY=;
-        b=hxlMnay2i0jZ/VfVpdHqBDbxpHPAYqdZjOVz9gsrYmiVy93fdpRxQuORat/jEOKLgr
-         12ak+70PirPNT/ZuLDytuSm9b7ikTsQyZYdt5l24mnLAOkKLLNPxjVTVnYDEiEeLzv0x
-         FfHvQQCHXMsy2Cf27aA3ECOIdpYNMo384K0oTDxKFzEhi3OpKnPOhS138r5cA6NKJiY7
-         rzUDrXLCnoEeCEEgSRhN+9WdGXlqOl5TfXuuvOBHmeOpKYQJ33ibxLLpsIqnD2inrlqa
-         AW4mvhiI+Tv1XMi2I8KmLuA5LBzUo/abmz7pH5DqgtbQRu3/wQjigQMpRR5zoz1gmBWs
-         H3NQ==
+	s=arc-20240116; t=1720995327; c=relaxed/simple;
+	bh=7idKCQDyaVmGGpKerW3fWIteTtJ4r7+0APXynq1GelY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pIEUOt93Z8ymQj2GmMuLbuiBH6VRHOQgea3F7Q8kV6srS4sVSLsir4U+2hr44zoviXo9kDyJgHEyHnCVBcKi4Y5G93HBaA5gb8rdFDoSWoBq04ONjMVizmw/xGTJsp3rl6D/9Nh1AEDd+0TJMmGrxGedMm1vRTS2OZ2KgZN85lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80ba1cbd94eso241062239f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 15:15:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720995432; x=1721600232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z9d14tu8UM/7LR69vv692GAIifPe3a2v2W5S5B8IbTY=;
-        b=ku7kF6Ee0dTz9HrVnb9qpAZXKzJKRJA2lAzooDUh/R9I3ke2RhetX49TqS9qLao3vf
-         ma2o7lJP9zS6UXwPH3f1YWWCjj5sPb96VSLcbBpptG1PektW7+eZx/w4+KPIDB1f0H0W
-         5qJvmH0JOzYk88WSSrWoiO9vtcuBtFwMbRqYv+FRnds6bLJLDYs/IRF4urnFiE0MNW1d
-         m/GlAuiJzfcQ+ceZkW53/1k/ojd/E43a6G7X+kAakyxG8R5PLt+mZ25UF7LI28EHs6HY
-         TFnBJ3X362AcVmadomFW/PVww3bKWz5NZ9eCyPuuTOrEptq2SwBHx3HpkvfbV9EFH8rY
-         Xy4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDlHPmDt3bnxIDa/9yDQrJ+QdKcWUpbov5ck17Vq3n5P67Sswhb+g4SVuLfLIDXdfd1jh0kySGDfNXqGMHvFejwLZpXhwxxNSc2kbyUwGnBRXrbdjBSt1rHX4toq8WmQ/FOg==
-X-Gm-Message-State: AOJu0YyRac0n4ry1skEYmpL0AiFNIowJRIGF6pxSJr37kaiGrkuTK5e2
-	JA1WSmcJIxh7xIDAv8QsLSOLYBqEPOm/vJbV0PKkNyQ7HrRFWzJS
-X-Google-Smtp-Source: AGHT+IHWJrJ+c3zyWwuDtaZs8dw+4awkboFYksDvOYayRTuBAbVk78SuwI78a5BgBeUgrq/Xje/OdQ==
-X-Received: by 2002:a05:6214:5012:b0:6b5:e60c:76dc with SMTP id 6a1803df08f44-6b61bca39d5mr271730846d6.19.1720995431649;
-        Sun, 14 Jul 2024 15:17:11 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76195027asm16106626d6.1.2024.07.14.15.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 15:17:09 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 1BFC0120007E;
-	Sun, 14 Jul 2024 18:01:53 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Sun, 14 Jul 2024 18:01:53 -0400
-X-ME-Sender: <xms:z0qUZgV30bmXZmJKwCRwNf6OeK1tQubeaIrrffTBnBlpAg7_djqQBg>
-    <xme:0EqUZklHsKWDSM_-a-oFiBo6d9MG9ihim3j0eqWtd9j8MhY-joUs_wcoHZGO5cGLt
-    hoGgVtQXCa3mjCfsw>
-X-ME-Received: <xmr:0EqUZkZIxug932LYIfQ8gfCWj48vLz6qFHDxW6c8U8a_4hDp4kLkIffPXvk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgedugddtiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhepkeelleffheetudehvdeuteffffeuteefueekhfdtlefhjeehkeetgeduheej
-    feetnecuffhomhgrihhnpeguvghppghmrghprdhnrghmvgenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
-    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
-    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:0EqUZvUVx9rmEeXp4-ERkxBUD6mscLMslI2W_wgJ0luS33Cl0KeICg>
-    <xmx:0EqUZqk7nvQkRDh524RSJcXW1PxMxjT6G5hLCH0oGvrDaqUx-pd_qg>
-    <xmx:0EqUZkfZq1-oz2aUY-fdLLfcqf9FosT2ynTIOShhWs_7nYTHqWm8lw>
-    <xmx:0EqUZsHecnM280xgjWpIgIQUSio8aZ11aexMB0VeuZd8qUIc8D63tg>
-    <xmx:0UqUZgkLpxysVR2MYoA4RjN-3Kzm4fni_wzPK5RDPuUdEVXoAPf8oMME>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Jul 2024 18:01:51 -0400 (EDT)
-Date: Sun, 14 Jul 2024 15:00:16 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: botta633 <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] ext4: Testing lock class and subclass got the same
- name pointer
-Message-ID: <ZpRKcHNZfsMuACRG@boqun-archlinux>
-References: <20240714051427.114044-1-bottaawesome633@gmail.com>
- <20240714051427.114044-2-bottaawesome633@gmail.com>
+        d=1e100.net; s=20230601; t=1720995325; x=1721600125;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J8sCT2cJV+XOpFgesSioFHlQ/OWh8ETytiWFJgIjX/Q=;
+        b=KrzZYbFwnl+5LbPzVXNdSJnmUG5eKHs9aMbnxv1cKsX4vsEsN3NgjdTU/LR0g5GCG2
+         GO/NeKTc29GgtzRe1Z9XWv93jIYFk5GHdE2xUTOiVmC7u75HvkCfb8p/IHehRLWr+RZb
+         3Q5ZTOmFgv8hLQfGPaxyVN5gI8p8Xl/1fnUHqpxcVqljwg8eRbhDYQhlsWOah09DZjhQ
+         QqjTFi8vj0OljvBlTMNT8TZMwLMal2o6OoSxybXoAQ2aox/xzzw4b+2oraRkeg/eKFtj
+         pgmfIym6EkxoKYusriZvFJhtV/hLR6E4148GXL1VM0YFSrqqRbYuHj+5byrfKOR2TvQk
+         UXNg==
+X-Gm-Message-State: AOJu0YyLfhm0YDpLkj2hxAJh8719vud1O8o3nB8Xk1yRJzIYfLRx/VbR
+	AxDDqi8DdjOa3x/cDlzCIaNe7LUHpXHA9+AaenKfTSeSaMQX0KX3/I2RjGolaMGfugIenic0jPW
+	Ku8Bx1vZGQJUDtZmCwn07Sp6062DXdqquPKmq/MYli0GwQKuFWkWbZ3w=
+X-Google-Smtp-Source: AGHT+IH2Pf3MxqpHgT8sMBN7bPpDIiuAofWil9b7h+GNiZ9dk8JKY8jg+VDIRVbK8n94H71RqdrVCOy+ZhKsIIJaPvIQqodzGxmO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240714051427.114044-2-bottaawesome633@gmail.com>
+X-Received: by 2002:a05:6638:870a:b0:4c0:9a3e:c24b with SMTP id
+ 8926c6da1cb9f-4c0b250a17amr1269033173.0.1720995325591; Sun, 14 Jul 2024
+ 15:15:25 -0700 (PDT)
+Date: Sun, 14 Jul 2024 15:15:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000adac5061d3c7355@google.com>
+Subject: [syzbot] [sound?] [usb?] UBSAN: shift-out-of-bounds in parse_audio_unit
+From: syzbot <syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-usb@vger.kernel.org, perex@perex.cz, syzkaller-bugs@googlegroups.com, 
+	tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jul 14, 2024 at 08:14:27AM +0300, botta633 wrote:
+Hello,
 
-First, the subsystem tag also needs to be "locking/lockdep" or
-"lockdep".
+syzbot found the following issue on:
 
-> Checking if the lockdep_map->name will change when setting the subclass.
-> It shouldn't change so that the lock class and subclass will have the same name
-> 
+HEAD commit:    a19ea421490d Merge tag 'platform-drivers-x86-v6.10-6' of g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=173c2e9e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b63b35269462a0e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=78d5b129a762182225aa
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15773776980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1373427e980000
 
-Could you make the commit log wrapped at 75 columns?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea993841f842/disk-a19ea421.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eef900c478c0/vmlinux-a19ea421.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/deecea0553fd/bzImage-a19ea421.xz
 
-> 
-> Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-> Fixes: fd5e3f5fe27
-> Cc: <stable@vger.kernel.org>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com
 
-Since this is only adding test for a bug fix, you don't need to put
-these tags here.
+usb 1-1: 0:2 : does not exist
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in sound/usb/mixer.c:2057:20
+shift exponent 42 is too large for 32-bit type 'int'
+CPU: 1 PID: 45 Comm: kworker/1:1 Not tainted 6.10.0-rc7-syzkaller-00025-ga19ea421490d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ parse_audio_feature_unit sound/usb/mixer.c:2057 [inline]
+ parse_audio_unit+0x277d/0x3f10 sound/usb/mixer.c:2907
+ snd_usb_mixer_controls sound/usb/mixer.c:3252 [inline]
+ snd_usb_create_mixer+0x1365/0x2fa0 sound/usb/mixer.c:3599
+ usb_audio_probe+0x1688/0x2100 sound/usb/card.c:888
+ usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:656
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
+ __device_attach+0x333/0x520 drivers/base/dd.c:1028
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+ device_add+0x856/0xbf0 drivers/base/core.c:3679
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:656
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
+ __device_attach+0x333/0x520 drivers/base/dd.c:1028
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+ device_add+0x856/0xbf0 drivers/base/core.c:3679
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6a/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+---[ end trace ]---
 
-> Signed-off-by: botta633 <bottaawesome633@gmail.com>
 
-Again, could you please put your name here?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Also seems that you send two patch #2, one is with the proper version
-number "v2", but not in-reply-to the patch #1, the other doesn't have
-the correct version number but has the correct "in-reply-to" field.
-Could you use the correct version number and "in-reply-to" next time?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> ---
->  lib/locking-selftest.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-> index 6f6a5fc85b42..1d7885205f36 100644
-> --- a/lib/locking-selftest.c
-> +++ b/lib/locking-selftest.c
-> @@ -2710,12 +2710,24 @@ static void local_lock_3B(void)
->  
->  }
->  
-> +static void class_subclass_X1_name(void)
-> +{
-> +	const char *name_before_subclass = rwsem_X1.dep_map.name;
-> +	const char *name_after_subclass;
-> +
-> +	WARN_ON(!rwsem_X1.dep_map.name);
-> +	lockdep_set_subclass(&rwsem_X1, 1);
-> +	WARN_ON(name_before_subclass != name_after_subclass);
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Could you add some comments here explaining your test? For example,
-where name_after_subclass gets set?
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> +}
-> +
->  static void local_lock_tests(void)
->  {
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Please don't add this test into another test, you could directly call
-your class_subclass_X1_name() (maybe rename it to *_test()) in
-lockding_selftest() function.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Besides, make sure you run the test with and without your modification
-in patch #1, and confirm this is the test that could verify your fix.
-
-Regards,
-Boqun
-
->  	printk("  --------------------------------------------------------------------------\n");
->  	printk("  | local_lock tests |\n");
->  	printk("  ---------------------\n");
->  
-> +	init_class_X(&lock_X1, &rwlock_X1, &mutex_X1, &rwsem_X1);
-> +
->  	print_testname("local_lock inversion  2");
->  	dotest(local_lock_2, SUCCESS, LOCKTYPE_LL);
->  	pr_cont("\n");
-> @@ -2727,6 +2739,10 @@ static void local_lock_tests(void)
->  	print_testname("local_lock inversion 3B");
->  	dotest(local_lock_3B, FAILURE, LOCKTYPE_LL);
->  	pr_cont("\n");
-> +
-> +	print_testname("Class and subclass");
-> +	dotest(class_subclass_X1_name, SUCCESS, LOCKTYPE_RWSEM);
-> +	pr_cont("\n");
->  }
->  
->  static void hardirq_deadlock_softirq_not_deadlock(void)
-> -- 
-> 2.45.2
-> 
+If you want to undo deduplication, reply with:
+#syz undup
 
