@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-251778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC9F9309AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 698EC9309B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B50281B50
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2732281A6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CAD4D9F6;
-	Sun, 14 Jul 2024 11:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ACD61FE5;
+	Sun, 14 Jul 2024 11:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="JZi8vq7I"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OnIy8aqG"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15691BC4B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 11:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50569F4FB;
+	Sun, 14 Jul 2024 11:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720955654; cv=none; b=ahTyRShzSbHuiMlXBqkEarEQGQLR1jVXmU5tdV0H8VHZi+haz+0MjlWjDukbQsh6VVKEy5bno5bqpod9isI/avSXcMqgk9tIv7e95D3LS5UqowF0TDyzQ/79M5Pm6wYRQ0/tdqsgPYY/QgmxiJbPgFSBGZpM5ljhN4xEyG4mTeY=
+	t=1720955877; cv=none; b=lMV8BwWQsxg6MuKScaoAlePUddfLq/MdOstoLOGd6g1LRNFeAFfFNmuDp92H1QHrOV6IKBN1j2rTV5vChMw+Bqp7aovpT7cbJwaPHbaoevTU5i3QA+tsu0vVjTiuRYxz2xEfrzUKn5IDnCS83QWgmai+mUivew3oYLMUL9rp7Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720955654; c=relaxed/simple;
-	bh=h1xTJ4fP96gHcQuYDPlEsz6mBKT5bjA5Y9eo+Jm4T3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SyGd5owZGbQMNtxgpsdV38NHOTlO42PO2dU/hKi5zdVzgd2a1a+KM5ZePjpHRvI9NAO5hRFoNwEocL2N6mwVa5h3XnjXMBNkD9y9/1zHo933LISsMWesnvucc1T1b/QaXldFY0F6Galg3c3tIQKq3pclcREpw3S3s6yTC231S+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=JZi8vq7I; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1720955877; c=relaxed/simple;
+	bh=lB+D30ieUHrYR/nzmhn2wp3IdbzaoZbtAxkshjUDHbE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Wsknt1Y9RYv/gaTxMQZ+wNOp6diIkDaxJfxjqbgA0kztWCXtrUj+8Kb/K2o2Av6qz/jrAo07CPRh1HMB0ix6sAj01d1KtPmmJocqkspeSwvL81Ng8XSuWbYESY9lpm25kLJw8Blk3T+xqMIGuOJPycN4rcizYmWwMtx8VX+gHQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OnIy8aqG; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720955638; x=1721560438; i=spasswolf@web.de;
-	bh=l4EpXJ8Ja75qWrpYo/fqG+/qJ0Ot5rBUZq+WMCVYMRE=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	s=s29768273; t=1720955863; x=1721560663; i=markus.elfring@web.de;
+	bh=aZKbjgcdoWWnRDIxEAnvTwtYcMVZe5Hxddsqm8NEs2k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=JZi8vq7I1lCujThCcGXYdfr4N2wM2x5YhSV1lryfv5ORy/Dl3MvfPzVIAoih9w6n
-	 TKarMzs2GX5L6/LwNqfNwyBQQtpr5dHVcZ2Q0qw15Lc7Mbvv7RGa9wOpBBkvbz8pS
-	 qj32fc89OjoZNgf9U9BTD80OIIcOZAu3PpnZEXwy6N6w/gWS3VUOtXj/bg+NTIY7q
-	 ieAfhjpjng6kK9rmzxPnyDTHPXJai4OByxqB0dS2nFXy00vcLaejah9Q6tA0SdO5g
-	 xY8M0Cq6dL7sJbyU7NrBcb30tnFLnPEIyxVII7yLeqr5R5irZzLsmX+9b46kRu+T6
-	 ShPhLH5tH98JK96zQQ==
+	b=OnIy8aqGsVlZPcrpdq5QicQaW5/jdFYM3/4j6Oh7NrjqUubk8ax21mb10lP2599A
+	 +KH1q8z9jMOSRF4wIDwlhKNmvq5gD1QW+9GzzOZbIjTwIIImlaGSY9dgl57da2f4Q
+	 cT5+pndb+/vqxfwJpCnAn+q74Z/TZeL0Ol5EBvyav9T3J9a6GdLUCZ1vjD3TSC/WJ
+	 UymVEnu6plSRaRCkKiEhDGTiT9XjKD0AhbHvLLWAuiZ9kaOyIIIziDQbdybPfGFgw
+	 1UAnPVpixoj6fOpQa2jniDGpcVj7JwYpfXynHAJ7TyZD+PNVxn2ToeAC3ChB3y11Y
+	 /xQ59o7PCMmXLCtQrg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1MiuOk-1rqIy22Nka-00acP1; Sun, 14 Jul 2024 13:13:58 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	linux-kernel@vger.kernel.org,
-	Andreas Schwab <schwab@linux-m68k.org>
-Subject: [PATCH v2] kbuild: deb-pkg: fix building with bindeb-pkg
-Date: Sun, 14 Jul 2024 13:13:55 +0200
-Message-ID: <20240714111356.12234-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: 878qy48cxq.fsf@linux-m68k.org
-References: 
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMY1D-1sktiy1gAx-00ILU4; Sun, 14
+ Jul 2024 13:17:43 +0200
+Message-ID: <0750654d-a21f-44b5-bf90-1474ec5f88e1@web.de>
+Date: Sun, 14 Jul 2024 13:17:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-modules@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] module: Use seq_putc() in two functions
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RZBMQMJny+2gDiCb7GZYU6rJnbxJCfP70Xn7hzF+azKC1+qMQ8j
- SxxdyqT2SZmBTwOFzp7/R7zGsgM0yNsdMEQasuixRzJzCrOemeoUb8X68R6zzSmAcYsvHgX
- tgPbXdZP5LavCt7u35DQWgEH+UQ6urJcJYUxUzH3WBDzga7j0sNK+BLWRmLSz+SACEdaioi
- 9RoQ9wxvbNx7YHQUj+fRg==
+X-Provags-ID: V03:K1:t/vPEWGt5TRaJj5GcdxVo7fWeXJXU/h6bhk4OELyZvpUPPKdPJM
+ KDZCNlz+hFd6NHeVHTBiV+Uj98ApFqs5IZagQqKfCM7COs5aZlAoTFmwvOL6zkdPhX8abuc
+ dIerOUXLjXzoX/vmIyN4/FQ2a96mbUoq4brzQo4lyGx/dFhYecSgtrxV1m5UjKI8r/q5DNw
+ 8n6MFGJreQzczKVZ/NTuw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h+qSw5rfUw0=;BlZlHqLgVeiXpdCFEDQdmrhIcCp
- ACXykdWqJ0c3HxNiep6yWW8E8v++T5f2jCDAct1mJ2Nxel0xNL7oEPEUhW2MF/QqEEfzyaYf8
- pLvGt439cXEZgF/s9ea6ilufWRuHVdN72dsJErAwXYfU54Rc8ToGBJhtD0VH2sIpQTnij5o74
- b01tPwNN3TFkyovYlspJJx+kB1JZCjumV1jIY055hKEpg+0LRaqnS9wGbsWHJuJu2o6Vis4/h
- cliXyUDFZEfSp6GN8068AnSJiw9KLP4gHWATBqT2HoNJFvkIVrd/5tOoNWSQIYbPOrLOLv6p9
- gAcUWyvzFWGja/Ub+uMNNUwn1fzKKXKCOx5jfH4q/efO7h443fluRpkEtw5y/b7sORUigJ2Al
- uMzzRJGmWtg+fzkuj3Qz4+OxERs32C0hVjhuyF2R5YEdZzrRzAwkEncxq3KjzIniwvOfSZyLf
- s9uNIkzfKeUu/zrg+C4f1wB/nM6/PyjYlc0NnavO3wcy8X6t6uW1CJhuoX1//AaIiOcDU/9z8
- kh3cFbJlgV1r4mbaVtrERLxB0g9MDd8CXkG5BBeRIKSeKqJjkPQNp37resy+NpNU0VTExD6Ch
- FjvOrEjfieGZyJZ5lu4ZMY+6I6srClxfb5ldj86+iRRsafLIFpCDA2HEAfBZJwwHW9rKI+mCd
- iSwl09qosRkVEWUjiKhOzSkjS1kxM14OtQNh26NkIGQL3PoCWMGuyF80vVVtZmwxmCl6kkMgO
- +/1MTsVOKPu/XYoZZXH8pt6LhCkaSW0tfvJJHBNdiHfe4JGboUvOuwCsUKNZYqFt91P6u5T9W
- haDaQkYHMg+/hopk8cM2FW/g==
+UI-OutboundReport: notjunk:1;M01:P0:bn71XKnmFb4=;4wR7eKLxkpW2dboBU2J/aw8a7Nq
+ wxIITTusNiyX+bpfu08AoRpETV18s6RgFYMnu+dSSlteaq6KKTpLj8LR57eNkVVaq1zAoiJ20
+ D6M9rbKRQ9MwgrieelSotBa56p271QdHMlvjCg3pCGJZ5WLn711sLfraK0ixsQoyS/gx86uoX
+ J0Ktb6FDVvQDqLkwb+qajccjmh816L/1QH+cWGvFvwJKzzLsgDuZ0/Sq2yFijEh1mBYIG5a28
+ eZ596990rp056W+CKyCWso2d7BGOuQIr1GEsH1fOLf3W9K6ECM4EyAcx07B8ADQOzyMJSzd9H
+ LPlb+78OdhHkeek3G8FBtl+dUfNhVPKha8S1u5lHsN6CLslmPM+h5zDl1lU25xpZylQZTccKP
+ yt7cIHoam+UNW1gJ0YBp4mR9lbFul4gHyZRfzRg01TzSuUueYFkPS0x1p2AhL/7D0XPXIZOpp
+ geMiv0JkGdtE767cSoyr9Ef98tSZ4A8s2IJfLT0nQ2Msent+Ma/j+vzgQY1NktqNnrCtLHUus
+ VxNf6Ij9r5jkIp9eCnTByZtYcvhY7rkztBdE5YpLDk2MMWO1VRT0wKm7r/kKpUnpWPsgxoBaJ
+ 0yWvrv83d+Bn4F8K9P6JRmR3oh+ESMfVEjQAHEcyJwkDW+V7nnR/aONsNYufRVksdnK0eIvC5
+ 9QXkLpyf/zOfZgnoew2zCebfaT6lK99asvWIO1PYwbSPvY6E5mwbdo6OoVNbk5n4JTO+2H+FL
+ +wPBp/eqIHm8G9lvzreu5rbJ+hx3ce+pPtM3WN5wRYdOrun1iWm1JXi5tyhWtyt0GDtBlpqwx
+ aE/n9plHNs/rKsqxyvlZW9lw==
 
-Since the introduction of "set -u" into scripts/package/mkdebian running
-the mkdebian scripts fails when it is called with no arguments (which is
-the case when building the kernel with 'make bindeb-pkg'). This patch
-introduces an additional check so mkdebian can be run without arguments.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 13:13:15 +0200
 
-Fixes: 8ef052389f7f ("kbuild: package: add -e and -u options to some shell=
- scripts")
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- scripts/package/mkdebian | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/module/procfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 196b14e8ad47..fbd01175c870 100755
-=2D-- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -135,7 +135,7 @@ else
- fi
- maintainer=3D"${name} <${email}>"
+diff --git a/kernel/module/procfs.c b/kernel/module/procfs.c
+index 0a4841e88adb..dc91d3dba8f3 100644
+=2D-- a/kernel/module/procfs.c
++++ b/kernel/module/procfs.c
+@@ -35,7 +35,7 @@ static inline void print_unload_info(struct seq_file *m,=
+ struct module *mod)
+ 	}
 
--if [ "$1" =3D --need-source ]; then
-+if [ $# -eq 1 ] && [ "$1" =3D --need-source ]; then
- 	gen_source
- fi
+ 	if (!printed_something)
+-		seq_puts(m, "-");
++		seq_putc(m, '-');
+ }
+ #else /* !CONFIG_MODULE_UNLOAD */
+ static inline void print_unload_info(struct seq_file *m, struct module *m=
+od)
+@@ -99,7 +99,7 @@ static int m_show(struct seq_file *m, void *p)
+ 	if (mod->taints)
+ 		seq_printf(m, " %s", module_flags(mod, buf, true));
+
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
 
 =2D-
 2.45.2
-
-Sorry, but the previous patch contained an embarrassing error, here's
-the fixed one.
-
-Bert Karwatzki
 
 
