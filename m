@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-251835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BC3930A69
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:41:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125DC930A6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 16:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD371F2199C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A61C20D2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2BD13A252;
-	Sun, 14 Jul 2024 14:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA925481AB;
+	Sun, 14 Jul 2024 14:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncYYCFT6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG8RzUlD"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E79563C8;
-	Sun, 14 Jul 2024 14:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8EB7F;
+	Sun, 14 Jul 2024 14:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720968096; cv=none; b=k4pXOSNd6AIjjTVIa3A9waK1r8XXQPd76ch03ooqdFoBG5ORhlQJK1CTEFfnnzjX2F/Z4SoZHoh79x4+G2/+VLJpDw1Zv88RmPjsm37vDQPdaRvADmg4XS/iHdnCWetD7fvG0ggsgWCiI+x2u0Bksd9Y3e0hKS+AoLSglXX2Fe0=
+	t=1720968328; cv=none; b=IbJjm+LC+Lo7lY3Mj5yyW8mo8Z/mCTxuWIZm+WaRyEh8r14EYWxVpyrsLwtykyLyzL2s9/EKcoI8mWdxhaf0VMg/qI6CtoDmNiMW0uzHsDx6rKU7FwZ1bfWg04prkj2oFfwf0ya17wL80IPmYTa3vC715AidU2IhTaLLqzsYRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720968096; c=relaxed/simple;
-	bh=AdOhLUrd5pkToxj3RfzJnpWjxeeBOLwo/FGLq0sUyG8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GqSq1VEAUBmlQjMVmGe6QHiJACh36QzPsA19g/YImlJotudCdt8DKTN9UXZjgUhisZMx3mYY7nK5zDEjQoFhzmkObOS4Xjc7+FCe4Dlg6WH99xZYP0/Rdgg+ruBjl8hiJ8Z0vmkN3k5luoSWNx/s4rqqfFdjzYd0TwoICKYA/gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncYYCFT6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E0FDFC4AF0E;
-	Sun, 14 Jul 2024 14:41:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720968096;
-	bh=AdOhLUrd5pkToxj3RfzJnpWjxeeBOLwo/FGLq0sUyG8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ncYYCFT6qWx/eFIq/ISywXR1wri9P9BKhpnEJCwi8EWW08DDgK2wy+eiZBc6Fcav9
-	 CoAnrEt8XjpFwBmsWUARwB+v1lKC0zbpry1Z9YVSvFvLc+KxmANZidgt+BDDwp/JZo
-	 SKXRSVzjouDPDy1EBBKUDoPWBGEtag/OTq3z8893npCEsF4TJ2QqY9TxY60Tm46Kfe
-	 S8jhqQXr1/f1/HtirPAPSh2txQi+kW0yFeGsSkpkWAFg4lSMjrCPnMaFnyWu1q0eAw
-	 n5e/Z1lt7iJtM2C/U6l2Tx+GEVSFETokqidKJ6SElj54l7dQKfA9p4Y2hhZy8k2Klz
-	 b0x6Ozawwi3Gw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C661CDAE940;
-	Sun, 14 Jul 2024 14:41:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720968328; c=relaxed/simple;
+	bh=eTw8I67Ua3yUafmHKKKWhTlCUCO8Cg6SzvM3mwFcJWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XfXfYDPKxqBHNfcAdxCk3NsdD8Hp3H1wkQZKwUBZ6SjCo1JMpDjtLmK6/s0eGJaChSMTmApk259RshZy6InjauVWPY6ebbRjjgGD+mBapzcTXjsNGFuY7Vddo5XoCmj5ala9d5jU+n0GJ37r24KfQQeMzlH03Tp6ZL0OF7WzCps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG8RzUlD; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ee91d9cb71so36327251fa.0;
+        Sun, 14 Jul 2024 07:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720968324; x=1721573124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfoLUS71vnmBVP7Ktm+DIvCGvfeHCWbWiiz7kQUxoVo=;
+        b=ZG8RzUlDsa8u4qMjH3lzhkgKjXcRVOyEsp8bRyzdcNpaHHzix+4N54aMjC8ZIRMlam
+         zdTPKj9FgWbzRwqSEl3q0mG8+s669tUwvQiSeL4BA7AFsMn8jnC/3e2hPMatkEgZWCbL
+         qAYxj1sH9IewpBHHtF2UOGJsA7CA4bCn7v+spVQ6CNeaAYhJCDcBV3AUAahKdBmEQ/VY
+         hoFqsr/UkYPF5Jg566S1d0M+UDn/Lwq1+YkdAOBfwCX4U1iam5q1RcRld1nNQk1us5Yp
+         ceUDaRR6mHrT970BZVQ4/Vup9WxoDanVSR65l79fjmf5MZiGBgTq/gQUvZ5OwULBtyNk
+         CY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720968324; x=1721573124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bfoLUS71vnmBVP7Ktm+DIvCGvfeHCWbWiiz7kQUxoVo=;
+        b=vr97XQluBGrqRcKq3T/NfJtLsvD9zjGthkTXfHdXIyqp98VsD2pCVqW6XSESeBkop7
+         i1RLHlVe2evtcL36SqugPnpDBTqGBe67PD4sPKVc9tEvf/HQd35vpXC3cQbgJCtBnSwU
+         YdFtx9YjRnMltNL3gsW2lq4+d9dHXv5C9glwSuw19GFFSMBd2pkco1DSeSMw28bcOGIP
+         fXLONdDr7nIbiE7kDIo3y+FDycR73OIC1VLuFS20JTpddB4PXBmzhndskvUU3rI6yeU8
+         OEOZ+ga54nNYiOTpvL13Omy/SNDTABs8STZ4RMUHFg5Zx3rv/eiP/MwtINpvC2B4t5f8
+         klkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAAf8nwKEz2y0nKfegPQpgs5+lc9s/UmQQN+n8VX2BGA6eZOQRJmcjRtGfO0gRqY1UCYEX8oyZnETNiafC7/IJn3Dcsb1+s1cBFPCt7WA0GTE9h/AfuKfspkpcj43p6d4SX5uMvk1piPnYq6Qh21pxchoO/TswCXw308RABxu3
+X-Gm-Message-State: AOJu0Yz+lqzStKjfkwwZbg/XUycvwW3GIti/aU1aDEzjDR9tRrQ16trX
+	bDYyDaPp9eBBybFwb9L5Iw/wodZQJ4Pga48uFqtyfEjIC/oJghDUcI090gwdq8jFiOTSALA6BPo
+	4Iw7XaugV7vXHYims8V9WxKgQmGY=
+X-Google-Smtp-Source: AGHT+IESBT7QZuo3mzHJ8MJwVzwOBYsNWEYhAGUxWxrPobNrqv3tPGJnEZdVOOX3BWN8XkoiT4ndMF6LZEoROJongP8=
+X-Received: by 2002:a05:651c:210c:b0:2eb:f31e:9e7b with SMTP id
+ 38308e7fff4ca-2eeb30e5129mr129887491fa.14.1720968324234; Sun, 14 Jul 2024
+ 07:45:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 0/2] net: pse-pd: Fix possible issues with a PSE
- supporting both c33 and PoDL
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172096809580.533.3628542682652839668.git-patchwork-notify@kernel.org>
-Date: Sun, 14 Jul 2024 14:41:35 +0000
-References: <20240711-fix_pse_pd_deref-v3-0-edd78fc4fe42@bootlin.com>
-In-Reply-To: <20240711-fix_pse_pd_deref-v3-0-edd78fc4fe42@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: o.rempel@pengutronix.de, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch, horms@kernel.org,
- thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <CA+3zgmvct7BWib9A7O1ykUf=0nZpdbdpXBdPWOCqfPuyCT3fug@mail.gmail.com>
+ <2024071447-saddled-backrest-bf16@gregkh> <CA+3zgmtP0o4onLaeUhoYoJ2f9J_hSo3NM77jpSQ9N-rTWgG80g@mail.gmail.com>
+In-Reply-To: <CA+3zgmtP0o4onLaeUhoYoJ2f9J_hSo3NM77jpSQ9N-rTWgG80g@mail.gmail.com>
+From: Tim Lewis <elatllat@gmail.com>
+Date: Sun, 14 Jul 2024 10:45:12 -0400
+Message-ID: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>, 
+	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sun, Jul 14, 2024 at 8:51=E2=80=AFAM Tim Lewis <elatllat@gmail.com> wrot=
+e:
+>
+> On Sun, Jul 14, 2024 at 2:30=E2=80=AFAM Greg KH <gregkh@linuxfoundation.o=
+rg> wrote:
+> > On Sat, Jul 13, 2024 at 01:52:52PM -0400, Tim Lewis wrote:
+> > >     usb: xhci: prevent potential failure in handle_tx_event() for Tra=
+nsfer events without TRB
+> >
+> > Ick, is this also a problem with the latest 6.6 and/or the latest 6.9 a=
+nd/or Linus's tree?
+>
+> The problem did not occur on 6.9.9
+> I'll test 6.6.y next.
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 11 Jul 2024 15:55:17 +0200 you wrote:
-> Although PSE controllers supporting both c33 and PoDL are not on the
-> market yet, we want to prevent potential issues from arising in the
-> future. Two possible issues could occur with a PSE supporting both c33
-> and PoDL:
-> 
-> - Setting the config for one type of PSE leaves the other type's config
->   null. In this case, the PSE core would return EOPNOTSUPP, which is not
->   the correct behavior.
-> - Null dereference of Netlink attributes as only one of the Netlink
->   attributes would be specified at a time.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v3,1/2] net: pse-pd: Do not return EOPNOSUPP if config is null
-    https://git.kernel.org/netdev/net/c/93c3a96c301f
-  - [net,v3,2/2] net: ethtool: pse-pd: Fix possible null-deref
-    https://git.kernel.org/netdev/net/c/4cddb0f15ea9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+The problem did occur on 6.6.y
+I'm going to re-test 6.9.y ...
 
