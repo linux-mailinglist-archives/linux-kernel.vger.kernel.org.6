@@ -1,147 +1,283 @@
-Return-Path: <linux-kernel+bounces-251707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6842293087E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 06:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91359930881
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 06:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAB5281CDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82041C20B6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC2AFBFC;
-	Sun, 14 Jul 2024 04:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393E0DF58;
+	Sun, 14 Jul 2024 04:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fg0W/paq"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IOXgAHAI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B6EDF4D;
-	Sun, 14 Jul 2024 04:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B31847
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 04:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720932195; cv=none; b=fXPsp++QCuwI9twMsJvbMbkLFbUYXaoWy3Gp8W0Jev9eD7v+vJ3oP1klHvttbe0QLLpXZ8OSHVVeBkExiGGnSyz/71A3lp4hdtXE7ALpelbHMEwPSd/fUsx4lpqdXrkt+9DAOYXNTeYHC29esRDZhy1D6IfiNNhvPk3B5XU3lq4=
+	t=1720932725; cv=none; b=FIDvOv5rQPdMKYTMwFvUSRmArYRQdVwF+ZT4Z3STIdG6Lx7OUPaLPJhMo7C301B/6s30kCgA9FMjFdk1pC34lxNcFnvj87BtDamgou0eLdNBNS9exmTeVA4AgTcbauYG6pymJ8i+TNDfg8i+Dhiwf6b6nM7x2tdbZqrLEoJGtSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720932195; c=relaxed/simple;
-	bh=aseRciaC/UFHkMfMjIsAPgwhwbsuQ1IeyE9cQiTqS48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J5iudSGWacM9FFHPkxeTq9LXNJkm+4568bYqqY1riwO1sARwLhcAX/0FnL46c8JreD14PS3e9SvhOBUIjNhg1N28+habhe2YlmhDPWMVmAzT+cOG0o5zsWNzpUU6w4MPpzLi9zjjkm8OiSuPVZ0jRknAacaxO7Mw7GuQmfQNk/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fg0W/paq; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ea7d2a039so3389697e87.3;
-        Sat, 13 Jul 2024 21:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720932192; x=1721536992; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lJVLYi+pE04YOrrCFHXVXYXIWButASzCZnzKDh4ZGOU=;
-        b=fg0W/paqTjWmC/z42/c0HJReaJV9Oq838MaxzinuYkm1CgfNTV3j0lqKGFbs37xMKd
-         Km7nVNVjGBBYCGl8HcKuVl1LdRdMNZImsnpvGItpvctcvnH3DWQvjl3PJdpUFXuluu2I
-         COItI78Vbvfo+Dsm6vquEnRW/rC1Kh5VkkoxvrxFC4aFs1ITyPP7HfgMS5qSlDNYB3FC
-         fw1cCLToa27fSi3QKXnjIgRCYiDDy6jQbxrPlGpIjBBTaRjy+rJ3jMwxltlgn6TgZxJt
-         75VPbnAgLOMqYa+CLl/oYF3/klxBh62JZYd0CdLcVqz4Sm23ZvisbizNsctZy9x1rRWr
-         +/6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720932192; x=1721536992;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lJVLYi+pE04YOrrCFHXVXYXIWButASzCZnzKDh4ZGOU=;
-        b=h6eVhGr2tD6dEeBj7wqi9rFuwZP2V4AL0w2jhysTAguwuQwbwTMgIfOvtza3cnUSO3
-         WxbT3eZXh98UBxnR/ISS4v3dMm9XAYTUqdbWQmdtZF2ijwWpDC5Na1mdOt+f0Nfk31yi
-         f0uI9TcUh9iofBjuqCKvFK5xD8wKoQw4I5Ot5c3CC45uxCyiPhSOG1av9k6sJaqPZJ6L
-         LsxBz3p7vvgjwbZrGGe+ZYRA8l3rg1CfzDi2DWhP6R5JrJqUS66J8gKLXci2dvlIxFSo
-         X8CKzNIOkikFO2ooHplpdJdjBzSXYCNdJ09osVn7gKAacbBUWu2A32iKC1y/nDk8kzTx
-         3Xaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9KradyVtUXHDdLk/fHksKfQ6QYviX4KMtKU+usK/fEu+2G2KKeIQ0Fd3PwkNdn4iPBmsdf4yGDxWRru8PflLhmiYY34+xjmnEoZAOxtjmEDTBA5EvKZMei7hiQZvHM1HvwteeSN2QdA==
-X-Gm-Message-State: AOJu0YzPQgkPOz+ZPa/3LQdNR1/UDtw/KhhtQmRaNNFZOuwTFIYoT4LU
-	H2Cnu2Px3BzFzShn6m/6OTiSJNtV5Kue0gWaDWoRxswooRQfQPO8EHrB2Ll5lErHj/QuzQZE66B
-	kosrgDJ+EZXYoEaKZmAIM+bieF6Q=
-X-Google-Smtp-Source: AGHT+IEveCVlfZLVXJBHR90dZnmVx2pwSADMUlIbtkIq79k5uJZENwwhysMVMYxHLsknIe9g0lDKWihmS5z1YbEu5Z4=
-X-Received: by 2002:a05:6512:2810:b0:52c:e326:f4cf with SMTP id
- 2adb3069b0e04-52eb999125amr12348016e87.3.1720932191396; Sat, 13 Jul 2024
- 21:43:11 -0700 (PDT)
+	s=arc-20240116; t=1720932725; c=relaxed/simple;
+	bh=iPRCSkdNzTpUU4Aubi9ItV1fkFhc4mMHvcMXUlm7eaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lbgeLXRxkg5UfifCWBRQ/0MYrM/sOk3nz85TBJ9yEM1FV1bmYtvg/bAG+V4pAX+o55CinEmDCBpj8L5QJ9I9+S7n5I/U3h1KhqTFs7rub9xBtJO3Ea34FJiBCTRwLNo/XHyrWo+YmWWth1v1aPxfMCeO4lX9k+9smOLyWfzKvj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IOXgAHAI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720932722; x=1752468722;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=iPRCSkdNzTpUU4Aubi9ItV1fkFhc4mMHvcMXUlm7eaU=;
+  b=IOXgAHAIWGlaYwmiuszssaH2nvKWjG5tW5Mb8UsDngBJvtiVMgswzjH+
+   7PYuAuRcG2NxhXP4BwAMjxI4PU0c3W1msupTQZZ8GdU1UgBXeyGDYKdts
+   1uYbbd1tR8BhmiirEuRMJL9YIT7U0nOv8g0ZqRms9A6XDKC0SeLQcEpLd
+   RQgOa/vc//HbW0VA0Kn32ob0P2J9LeYVs2QoVJyDEbSHkq/m6LosrnuQJ
+   47kCP4/kupHEvnI+DTeOztbqGgxnHQLCrJQ1hn+zpIMqSm+2DrmcoO2Gn
+   EqQEZCP/LfbMFlsXG79QBAwGFOS40UK30mlo/OUUwoUuaAlsYpzLb+Jh4
+   Q==;
+X-CSE-ConnectionGUID: Q8TFvWDdRO2RrZE7PdEudw==
+X-CSE-MsgGUID: Efs7vleNTjGFXbNK8WsfaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11132"; a="29013109"
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="29013109"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 21:52:02 -0700
+X-CSE-ConnectionGUID: umM+r6wITGuiHk4UuAhW9g==
+X-CSE-MsgGUID: yARMnSkfT2CeZT7Kcxr+CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,207,1716274800"; 
+   d="scan'208";a="50051287"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 13 Jul 2024 21:51:59 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSrDI-000d3y-2O;
+	Sun, 14 Jul 2024 04:51:56 +0000
+Date: Sun, 14 Jul 2024 12:51:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Patricia Alfonso <trishalfonso@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
+	Vincent Whitchurch <vincent.whitchurch@axis.com>,
+	David Gow <davidgow@google.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>
+Subject: mm/kasan/kasan.h:485:2: error: kasan_arch_is_ready only works in
+ KASAN generic outline mode!
+Message-ID: <202407141234.Epqejfn0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621130903.2572986-1-net147@gmail.com> <202406282049.ZRM6qCDn-lkp@intel.com>
-In-Reply-To: <202406282049.ZRM6qCDn-lkp@intel.com>
-From: Jonathan Liu <net147@gmail.com>
-Date: Sun, 14 Jul 2024 14:43:00 +1000
-Message-ID: <CANwerB3oAuTcwmy4FdjmH-XRa5M3raHAt4DKLspThC-ryQmagw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable RK809 audio codec for Radxa
- ROCK 4C+
-To: kernel test robot <lkp@intel.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, FUKAUMI Naoki <naoki@radxa.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4d145e3f830ba2c2745b42bfba5c2f8fcb8d078a
+commit: 5b301409e8bc5d7fad2ee138be44c5c529dd0874 UML: add support for KASAN under x86_64
+date:   2 years ago
+config: um-randconfig-r111-20240713 (https://download.01.org/0day-ci/archive/20240714/202407141234.Epqejfn0-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240714/202407141234.Epqejfn0-lkp@intel.com/reproduce)
 
-On Fri, 28 Jun 2024 at 23:07, kernel test robot <lkp@intel.com> wrote:
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on rockchip/for-next]
-> [also build test WARNING on krzk/for-next krzk-dt/for-next linus/master v6.10-rc5 next-20240627]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Liu/arm64-dts-rockchip-Enable-RK809-audio-codec-for-Radxa-ROCK-4C/20240625-210156
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-> patch link:    https://lore.kernel.org/r/20240621130903.2572986-1-net147%40gmail.com
-> patch subject: [PATCH] arm64: dts: rockchip: Enable RK809 audio codec for Radxa ROCK 4C+
-> config: arm64-randconfig-051-20240628 (https://download.01.org/0day-ci/archive/20240628/202406282049.ZRM6qCDn-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 13.2.0
-> dtschema version: 2024.6.dev3+g650bf2d
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406282049.ZRM6qCDn-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406282049.ZRM6qCDn-lkp@intel.com/
->
-> dtcheck warnings: (new ones prefixed by >>)
->    arch/arm64/boot/dts/rockchip/rk3399.dtsi:566.26-600.4: Warning (unit_address_vs_reg): /usb@fe900000: node has a unit name, but no reg or ranges property
->    arch/arm64/boot/dts/rockchip/rk3399.dtsi:2063.25-2102.4: Warning (avoid_unnecessary_addr_size): /dsi@ff960000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->    arch/arm64/boot/dts/rockchip/rk3399.dtsi:2104.26-2144.4: Warning (avoid_unnecessary_addr_size): /dsi@ff968000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: ethernet@fe300000: Unevaluated properties are not allowed ('snps,txpbl' was unexpected)
->         from schema $id: http://devicetree.org/schemas/net/rockchip-dwmac.yaml#
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: usb@fe800000: 'extcon' does not match any of the regexes: '^usb@', 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/usb/rockchip,rk3399-dwc3.yaml#
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: /dp@fec00000: failed to match any schema with compatible: ['rockchip,rk3399-cdn-dp']
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407141234.Epqejfn0-lkp@intel.com/
 
-> >> arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: pmic@20: '#sound-dai-cells', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+All errors (new ones prefixed by >>):
 
-The new dtcheck warnings are resolved by "dt-bindings: mfd: rk817:
-Merge support for RK809" in linux-next so this patch should be applied
-after that commit.
+   In file included from mm/kasan/common.c:17:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:1728:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/kasan/common.c:17:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/um/include/asm/dma.h:5:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:464:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     464 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:477:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     477 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from mm/kasan/common.c:17:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/um/include/asm/dma.h:5:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     490 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from mm/kasan/common.c:17:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/um/include/asm/dma.h:5:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:501:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     501 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:511:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     511 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:521:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     521 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:609:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     609 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:617:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     617 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:625:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     625 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:634:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     634 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:643:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     643 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:652:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     652 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from mm/kasan/common.c:30:
+>> mm/kasan/kasan.h:485:2: error: kasan_arch_is_ready only works in KASAN generic outline mode!
+     485 | #error kasan_arch_is_ready only works in KASAN generic outline mode!
+         |  ^
+   13 warnings and 1 error generated.
+--
+   In file included from mm/kasan/report.c:13:
+   In file included from include/linux/ftrace.h:10:
+   In file included from include/linux/trace_recursion.h:5:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:464:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     464 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:477:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     477 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from mm/kasan/report.c:13:
+   In file included from include/linux/ftrace.h:10:
+   In file included from include/linux/trace_recursion.h:5:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     490 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from mm/kasan/report.c:13:
+   In file included from include/linux/ftrace.h:10:
+   In file included from include/linux/trace_recursion.h:5:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:501:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     501 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:511:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     511 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:521:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     521 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:609:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     609 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:617:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     617 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:625:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     625 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:634:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     634 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:643:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     643 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:652:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     652 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from mm/kasan/report.c:13:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:1728:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/kasan/report.c:35:
+>> mm/kasan/kasan.h:485:2: error: kasan_arch_is_ready only works in KASAN generic outline mode!
+     485 | #error kasan_arch_is_ready only works in KASAN generic outline mode!
+         |  ^
+   13 warnings and 1 error generated.
+--
+   In file included from mm/kasan/shadow.c:16:
+   In file included from include/linux/kfence.h:12:
+   In file included from include/linux/mm.h:1728:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/kasan/shadow.c:27:
+>> mm/kasan/kasan.h:485:2: error: kasan_arch_is_ready only works in KASAN generic outline mode!
+     485 | #error kasan_arch_is_ready only works in KASAN generic outline mode!
+         |  ^
+   1 warning and 1 error generated.
 
->         from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: regulator@40: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/fcs,fan53555.yaml#
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: regulator@41: Unevaluated properties are not allowed ('regulator-compatible' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/fcs,fan53555.yaml#
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: /syscon@ff770000/phy@f780: failed to match any schema with compatible: ['rockchip,rk3399-emmc-phy']
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: /syscon@ff770000/pcie-phy: failed to match any schema with compatible: ['rockchip,rk3399-pcie-phy']
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: /phy@ff7c0000: failed to match any schema with compatible: ['rockchip,rk3399-typec-phy']
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: /phy@ff800000: failed to match any schema with compatible: ['rockchip,rk3399-typec-phy']
->    arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dtb: pmic: vsel1-gpio: {'rockchip,pins': [[1, 17, 0, 194]], 'phandle': [[138]]} is not of type 'array'
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
 
-Regards,
-Jonathan
+vim +485 mm/kasan/kasan.h
+
+e2db1a9aa38149 Andrey Konovalov 2021-02-25  481  
+af3751f3c2b628 Daniel Axtens    2021-06-28  482  #ifndef kasan_arch_is_ready
+af3751f3c2b628 Daniel Axtens    2021-06-28  483  static inline bool kasan_arch_is_ready(void)	{ return true; }
+af3751f3c2b628 Daniel Axtens    2021-06-28  484  #elif !defined(CONFIG_KASAN_GENERIC) || !defined(CONFIG_KASAN_OUTLINE)
+af3751f3c2b628 Daniel Axtens    2021-06-28 @485  #error kasan_arch_is_ready only works in KASAN generic outline mode!
+af3751f3c2b628 Daniel Axtens    2021-06-28  486  #endif
+af3751f3c2b628 Daniel Axtens    2021-06-28  487  
+
+:::::: The code at line 485 was first introduced by commit
+:::::: af3751f3c2b6282bebcb56c35bbe4c8b671f80aa kasan: allow architectures to provide an outline readiness check
+
+:::::: TO: Daniel Axtens <dja@axtens.net>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
