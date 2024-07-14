@@ -1,198 +1,180 @@
-Return-Path: <linux-kernel+bounces-251906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2491930B64
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94817930B68
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBB12B21476
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170F71F219C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC76F13C810;
-	Sun, 14 Jul 2024 19:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B3113D243;
+	Sun, 14 Jul 2024 19:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FRtQs3CZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MoLc2458";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FRtQs3CZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MoLc2458"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YwR9iHLm"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2689BFC11
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 19:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B21813B5AC;
+	Sun, 14 Jul 2024 19:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720986395; cv=none; b=j5X7TdysTQXfkB9+4tTFaMxHOGEnjse41tJ1G/9rI6YSVWwRLmNObuSZuJbiTOBHAPdptnrkXTGUBgIAnb0YbFqIUtuKZAJNsD73MwPUAQ7dcW5W63o3f19bGBX69pAfsE/ytMLondr6gbEy3r9XVW1GyzflsWKRK1W3DuRPtlA=
+	t=1720986687; cv=none; b=Bo+Lb3f1TX/6S+ykLzGadcMrEKWuYeOPequHI+hcou4TF2FsFV+OZvWyXyKaXjBL9gCVuBOW+GTTijoe/Nb/e07iRsxWGGoQCE9f/NK3eGGVVcLmZoFJ9VwjXZ+Y/5kFhkPJ2DzY0zv3qWmS7yk8i1Y0ODHihdWi4f+Hl2jgsqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720986395; c=relaxed/simple;
-	bh=IgaWGcqMOb9hEeIZtVJyGa7b7L5Uh7ySnsWjHrGMFlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXC991M7YI+uppvjvhOAOPY/YueYrT/Ir5fpnA41kvja0XCpC5RXLn6V4PP0zY0DDEtY8z08HBUD2lu/QcPqgFpHro1B5hU0HchGCzEh9JiCVwGtn57e9BjQHAuW1+ngX2EnpdyNivUDGx81o54PY67r8bA/zewGaHz8hr3e+mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FRtQs3CZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MoLc2458; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FRtQs3CZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MoLc2458; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 259AF1F7E1;
-	Sun, 14 Jul 2024 19:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720986391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1720986687; c=relaxed/simple;
+	bh=qwpVMIGILSjH+S1u8ChqE32H7tIdNnojFSNgHK2/z3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPpMLXSrOWKEAPoxONWlheRpPcmECbbvHa0vUvjX5FO/jg+Nr+nPP4FcnYtOCLtFbBkvXQ9yhqhcw3O8gv1yhvsCBuprLEuJjUMjpygQS3yK6NcSC9q3NIMlTBLDToECttRbgHUO+U7V0s7JF/AQ2his3wnZ/1MXdHHKz97oQQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YwR9iHLm; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: mic@digikod.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720986681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SpTPrcvzLw21CaUEXnRoKLN1V/iiKhIJH6ZOvC0Kgeo=;
-	b=FRtQs3CZsi1ZkiQzCT2ICQTvyuc02MawAVyceD2gLYk4CScYnihGcr6r0rhL91JahcIQuM
-	CWvPpM/M9O9qEL9F/lwWz3S5Vf0oxWQ0IZyr+ZIFwhDZS2HkzMENNOdxIulVDwCJYOVvzv
-	wwbZCDa9YHgmhmuJrbZ6OQoBQn7GT+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720986391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SpTPrcvzLw21CaUEXnRoKLN1V/iiKhIJH6ZOvC0Kgeo=;
-	b=MoLc245889+OUyXKSXgNw4YIsHrTooBjBR52X0NJnOsb02tRtRde2l+yraI0AJ8chn5rCo
-	FHFKmWNP2MluF0BA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FRtQs3CZ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MoLc2458
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720986391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SpTPrcvzLw21CaUEXnRoKLN1V/iiKhIJH6ZOvC0Kgeo=;
-	b=FRtQs3CZsi1ZkiQzCT2ICQTvyuc02MawAVyceD2gLYk4CScYnihGcr6r0rhL91JahcIQuM
-	CWvPpM/M9O9qEL9F/lwWz3S5Vf0oxWQ0IZyr+ZIFwhDZS2HkzMENNOdxIulVDwCJYOVvzv
-	wwbZCDa9YHgmhmuJrbZ6OQoBQn7GT+o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720986391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SpTPrcvzLw21CaUEXnRoKLN1V/iiKhIJH6ZOvC0Kgeo=;
-	b=MoLc245889+OUyXKSXgNw4YIsHrTooBjBR52X0NJnOsb02tRtRde2l+yraI0AJ8chn5rCo
-	FHFKmWNP2MluF0BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 031BD137AC;
-	Sun, 14 Jul 2024 19:46:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A0uZOhYrlGYoQQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Sun, 14 Jul 2024 19:46:30 +0000
-Message-ID: <7ca66c39-cbeb-42c6-bfb4-f381b77cf920@suse.de>
-Date: Sun, 14 Jul 2024 21:46:30 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=2EDnpxVq2n3pmq5E38ZuOeZNSxkw5vwWED2AUGlzvN8=;
+	b=YwR9iHLmEsJ78v5XGzF5O9i+YAqQMx44BGNYQyXxDBPUu164JSClm1VzVEn3fy//mH/2ti
+	dMm1tqiWg10lYsz6Ob1z7edqJzXb1bf+I9cNYmf4aDwNfinh/1feXYbS/Tppue0TcTUOAE
+	vFttLdiIdKptM6YdIJWv07qxYQTtPNI=
+X-Envelope-To: paul@paul-moore.com
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
+X-Envelope-To: gnoack@google.com
+X-Envelope-To: jmorris@namei.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-security-module@vger.kernel.org
+X-Envelope-To: serge@hallyn.com
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-xfs@vger.kernel.org
+Date: Sun, 14 Jul 2024 15:51:17 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, Brian Foster <bfoster@redhat.com>, 
+	linux-bcachefs@vger.kernel.org, syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>, 
+	gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path - bcachefs
+ bug
+Message-ID: <4hohnthh54adx35lnxzedop3oxpntpmtygxso4iraiexfdlt4d@6m7ssepvjyar>
+References: <000000000000a65b35061cffca61@google.com>
+ <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
+ <20240714.iaDuNgieR9Qu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression: firmware/sysfb.c device path
-To: Tj <tj.iam.tj@proton.me>, Marek Olsak <Marek.Olsak@amd.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "1075713@bugs.debian.org" <1075713@bugs.debian.org>
-References: <lLyvPFC_APGHNfyGNHRpQy5izBikkaTPOpHooZIT3fFAoJPquSI31ZMueA99XTdr8ysir3X7O7IMdc6za-0m79vr_claeparHhoRouVgHOI=@proton.me>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <lLyvPFC_APGHNfyGNHRpQy5izBikkaTPOpHooZIT3fFAoJPquSI31ZMueA99XTdr8ysir3X7O7IMdc6za-0m79vr_claeparHhoRouVgHOI=@proton.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-5.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.50
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 259AF1F7E1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240714.iaDuNgieR9Qu@digikod.net>
+X-Migadu-Flow: FLOW_OUT
 
-Marek, could this also be the cause of your reported bug?
+cc'ing linux-xfs, since I'm sure this has come up there and bcachefs and
+xfs verify and fsck are structured similararly at a very high level -
+I'd like to get their input.
 
-Am 13.07.24 um 19:20 schrieb Tj:
-> The recent commits to add the parent device path broke Debian's kvm based QA workers for testing installer ISOs after a kernel upgrade from v6.8.12 to v6.9.7. For the details:
->
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1075713
->
-> It took some time to  track it down since the superficial symptom appeared to involve the QXL driver. It turned out however to be the fbdev driver; specifically the change in the parent device path in sysfs reported between the two kernels:
->
-> 6.8.12:
->
-> /sys/class/graphics/fb0 -> ../../devices/platform/vesa-framebuffer.0/graphics/fb0
->
-> 6.9.7:
->
-> /sys/class/graphics/fb0 -> ../../devices/pci0000:00/0000:00:01.0/vesa-framebuffer.0/graphics/fb0
->
-> This breaks xserver-xorg-core's libfbdevhw.so because it differentiates code-paths based on whether "devices/pci" is matched in the symlink.
->
-> See hw/xfree86/fbdevhw/fbdevhw.c::fbdev_open()
->
-> https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/hw/xfree86/fbdevhw/fbdevhw.c?ref_type=heads#L381
+On Sun, Jul 14, 2024 at 09:34:01PM GMT, Mickaël Salaün wrote:
+> On Fri, Jul 12, 2024 at 10:55:11AM -0400, Paul Moore wrote:
+> > On Thu, Jul 11, 2024 at 5:53 PM syzbot
+> > <syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
+> > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > userspace arch: arm64
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
+> > > mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
+> > >
+> > > bcachefs (loop0): resume_logged_ops... done
+> > > bcachefs (loop0): delete_dead_inodes... done
+> > > bcachefs (loop0): done starting filesystem
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> > 
+> > I'll let Mickaël answer this for certain, but based on a quick look it
+> > appears that the fs object being moved has a umode_t that Landlock is
+> > not setup to handle?
+> 
+> syzbot found an issue with bcachefs: in some cases umode_t is invalid (i.e.
+> a weird file).
+> 
+> Kend, Brian, you'll find the incorrect filesystem with syzbot's report.
+> Could you please investigate the issue?
+> 
+> Here is the content of the file system:
+> # losetup --find --show mount_0
+> /dev/loop0
+> # mount /dev/loop0 /mnt/
+> # ls -la /mnt/
+> ls: cannot access '/mnt/file2': No such file or directory
+> ls: cannot access '/mnt/file3': No such file or directory
+> total 24
+> drwxr-xr-x 4 root root   0 May  2 20:21 .
+> drwxr-xr-x 1 root root 130 Oct 31  2023 ..
+> drwxr-xr-x 2 root root   0 May  2 20:21 file0
+> ?rwxr-xr-x 1 root root  10 May  2 20:21 file1
+> -????????? ? ?    ?      ?            ? file2
+> -????????? ? ?    ?      ?            ? file3
+> -rwxr-xr-x 1 root root 100 May  2 20:21 file.cold
+> drwx------ 2 root root   0 May  2 20:21 lost+found
+> # stat /mnt/file1
+>   File: /mnt/file1
+>   Size: 10              Blocks: 8          IO Block: 4096   weird file
+> Device: 7,0     Inode: 1073741824  Links: 1
+> Access: (0755/?rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+> Access: 2024-05-02 20:21:07.747039697 +0000
+> Modify: 2024-05-02 20:21:07.747039697 +0000
+> Change: 2024-05-02 20:21:07.747039697 +0000
+>  Birth: 2024-05-02 20:21:07.747039697 +0000
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Ok, this is an interesting one.
 
+So we don't seem to be checking for invwalid i_mode at all - that's a bug.
+
+But if we don't want to be exposing invalid i_modes at all, that's
+tricky, since we (currently) can only repair when running fsck. "This is
+invalid and we never want to expose this" checks are done in bkey
+.invalid methods, and those can only cause the key to be deleted - we
+can't run complex repair in e.g. btree node read, and that's what would
+be required here (e.g. checking the extents and dirents btrees to guess
+if this should be a regular file or a directory).
+
+Long term I plan on running our existing fsck checks (including repair)
+in our normal runtime paths - whenever we're looking at one or more keys
+and there's a fsck check we can run, just run it.
+
+I wasn't planning on doing that for awhile, because I'm waiting on
+getting comprehensive filesystem error injection merged so we can make
+sure those repair paths are all well tested before running them
+automatically like that, but if this is a security issue perhaps as a
+special case we should do that now.
+
+Thoughts?
 
