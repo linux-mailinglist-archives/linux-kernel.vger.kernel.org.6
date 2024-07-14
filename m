@@ -1,159 +1,92 @@
-Return-Path: <linux-kernel+bounces-251837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D94930A74
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C687930A77
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487D41F2198F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:08:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048151F21194
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6203D1369B1;
-	Sun, 14 Jul 2024 15:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12B7139CFA;
+	Sun, 14 Jul 2024 15:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="St3OEl4V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="weOEtTC2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="St3OEl4V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="weOEtTC2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/IFeQ5w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61657F;
-	Sun, 14 Jul 2024 15:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D6E7F;
+	Sun, 14 Jul 2024 15:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720969687; cv=none; b=VCqPevWN4h/pcelI91RGFFGpnoPG0bN+WC6AWWxc5Mq+wn8f3OY4XsGMZk/JlGQRuENVDUOamQs4XbrWk/aW6TU2aJVtFkjjvy5+S+9CBWw5Va8C7qY8SEdB0kj0M/Q4U+nAWtLYUYOnzpog8l4QhCnWvGgzew/6Gzg1jH6pOYc=
+	t=1720969833; cv=none; b=B8lAAhSnut8QR+JTU5sktVQhLkfLYFhoE5hRAQj7iFRx9BPu+hDebucwYceDgA+gnR6LwyUcgvKV0OERYNVBGeY0E+vbNO5SrvqNz/gHGoyiBNneM7ZP0JQxCb51LYQAUVy1pDHAP3mCNtDCByE8ndbmI5KYBgIEXGINqX/rVOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720969687; c=relaxed/simple;
-	bh=z4uK2wz50/+ujGk9dJ81N+qx8v2u0ifn7szdlEIhXlo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DZOHJpg4t6ZVKy0yVlhAwF8TwHHztiVGVuNaoSS2jNhcqaqYTxBjDGPOwCvtVZ5IEwOzZ79io5Xvpxo4uSiU2TnmWvCdNIBOlZIhZt59ltSPhtHLaTPjHdCFcFNvKY0Esp3obNKwEVNPlZMOlgypy0I9CzGTo5pCqKghutNZIs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=St3OEl4V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=weOEtTC2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=St3OEl4V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=weOEtTC2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BB04621B5E;
-	Sun, 14 Jul 2024 15:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720969683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYPEFvMyvQnlHJU4/kVrIFPFji0CTb8hIhM4cc7C55I=;
-	b=St3OEl4VAkZQVkqRax03ojQdHs9WU5t4kM0blBL41d8wJLqpJBjv7YE30w5QfWKAc371QC
-	ll9NHjwsBbma3VNAA7bOstDz1Gz291QIvprhCEEEBU2ndL5GPNxTJM0+A1wRkvEERaHq5F
-	9sQJTuPXOHn5LrE5g/wiM+jx0O7R2ZE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720969683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYPEFvMyvQnlHJU4/kVrIFPFji0CTb8hIhM4cc7C55I=;
-	b=weOEtTC2AQBugRRFZOQMc1U71r1qrqH6ZkLcCjSzzCpKwcQFUPJynGzUMpm9t5C8I/i2Lk
-	mqMYgPRCdykKsdDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=St3OEl4V;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=weOEtTC2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720969683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYPEFvMyvQnlHJU4/kVrIFPFji0CTb8hIhM4cc7C55I=;
-	b=St3OEl4VAkZQVkqRax03ojQdHs9WU5t4kM0blBL41d8wJLqpJBjv7YE30w5QfWKAc371QC
-	ll9NHjwsBbma3VNAA7bOstDz1Gz291QIvprhCEEEBU2ndL5GPNxTJM0+A1wRkvEERaHq5F
-	9sQJTuPXOHn5LrE5g/wiM+jx0O7R2ZE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720969683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYPEFvMyvQnlHJU4/kVrIFPFji0CTb8hIhM4cc7C55I=;
-	b=weOEtTC2AQBugRRFZOQMc1U71r1qrqH6ZkLcCjSzzCpKwcQFUPJynGzUMpm9t5C8I/i2Lk
-	mqMYgPRCdykKsdDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 670D21389C;
-	Sun, 14 Jul 2024 15:08:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Hy9oF9Ppk2YQAwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 14 Jul 2024 15:08:03 +0000
-Date: Sun, 14 Jul 2024 17:08:36 +0200
-Message-ID: <87ikx8c8p7.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	sbinding@opensource.cirrus.com,
-	kailang@realtek.com,
-	shenghao-ding@ti.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Enable headset mic on Positivo SU C1400
-In-Reply-To: <20240712180642.22564-1-edson.drosdeck@gmail.com>
-References: <20240712180642.22564-1-edson.drosdeck@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1720969833; c=relaxed/simple;
+	bh=IhcjfhSEmxcqiCXRtARAcBH53uNMgBN3xs0S9hzuHv8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bf1q6PX+9oaHfMa8uggdpu6dHKAbPT7FrgmxdnZHW3o1PJ9bZlV5TuElmAdvV0mCwPbPr38SfvNg7dLVn1NRM2orzftHRoDc8F6VJ8ZMcxbiVhiSVTs4vIsceh/UUfPGUOxS4CupEuQvVRnMHo2BX994uQEHxvMMa6pPSDwgMMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/IFeQ5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 78BF3C4AF09;
+	Sun, 14 Jul 2024 15:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720969832;
+	bh=IhcjfhSEmxcqiCXRtARAcBH53uNMgBN3xs0S9hzuHv8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=u/IFeQ5warCKzMpc86K0DwMHV/BQtL9ljFsYpyOo3kOgN9A8eyvfSHBIvOh8xPdlA
+	 zI44Q+iF5Py1ME/+T+90+OIsfbpnhGLEaUXXQqGbvVu90GNcmk24RzqX7uCdlkPmnu
+	 a52Y4tdwQ6/khAbusgRD4Hw07hX2hG+oF0UCRGtc49x444Xpk2YQwoTzBSjEf2kd1y
+	 3Wx6OMRq5NdwCxc0YB6zQIwl+fzXFhx/M5YcE/oxz4XsCNveciK83cxyYjAvliLM/a
+	 xATQU/SzeZU2TeHQIlJHbDKxyR0FbWfJOiQZWf8lcxEuvQn/NjqsBkLJnM9jZlXLn1
+	 N4z3aU9G1JtFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 588E2C43153;
+	Sun, 14 Jul 2024 15:10:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: BB04621B5E
-X-Spam-Flag: NO
-X-Spam-Score: 1.99
-X-Spam-Level: *
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.99 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spamd-Bar: +
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: netconsole: Disable target before netpoll cleanup
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172096983235.15294.10308314035565228278.git-patchwork-notify@kernel.org>
+Date: Sun, 14 Jul 2024 15:10:32 +0000
+References: <20240712143415.1141039-1-leitao@debian.org>
+In-Reply-To: <20240712143415.1141039-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ kuba@kernel.org, bonbons@linux-vserver.org, mpm@selenic.com,
+ thepacketgeek@gmail.com, riel@surriel.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-On Fri, 12 Jul 2024 20:06:42 +0200,
-Edson Juliano Drosdeck wrote:
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 12 Jul 2024 07:34:15 -0700 you wrote:
+> Currently, netconsole cleans up the netpoll structure before disabling
+> the target. This approach can lead to race conditions, as message
+> senders (write_ext_msg() and write_msg()) check if the target is
+> enabled before using netpoll. The sender can validate that the target is
+> enabled, but, the netpoll might be de-allocated already, causing
+> undesired behaviours.
 > 
-> Positivo SU C1400 is equipped with ALC256, and it needs
-> ALC269_FIXUP_ASPIRE_HEADSET_MIC quirk to make its headset mic work.
-> 
-> Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+> [...]
 
-Thanks, applied now.
+Here is the summary with links:
+  - [net,v2] net: netconsole: Disable target before netpoll cleanup
+    https://git.kernel.org/netdev/net/c/97d9fba9a812
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Takashi
 
