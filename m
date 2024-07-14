@@ -1,188 +1,142 @@
-Return-Path: <linux-kernel+bounces-251723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C6E9308DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:18:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A28E9308E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835471C20B9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 07:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2074281F1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 07:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A1C17BBA;
-	Sun, 14 Jul 2024 07:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F58118C38;
+	Sun, 14 Jul 2024 07:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rJde2r67"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AXRo7NO+"
+Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABB1755B;
-	Sun, 14 Jul 2024 07:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C351BDCD;
+	Sun, 14 Jul 2024 07:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720941470; cv=none; b=pamhzOMdYj3wQyZoVWenq+RPBawUBH6VBIXH85BesT2cqfZjcQ3TmgsudouD8FOoR14KytBEJ9vzNWWLELkq5yIC0lLYt75xXflDBQZ3CkQ8+I/K3mW4gK/ryfXDd59LyNtn3Y/jc7wy/eC/ebGag7NWpKIQtsJaHJedXljt5IE=
+	t=1720942664; cv=none; b=B8jn2Q3G4Kt1rL5N8qfK917HXJtSlyloK7bvaTovwQqti9bRm1cVhIbgeb3jMmCXK9zsiFzBYz9UfFo+VZOqS0fT//RxKq0X21+5Wzej78Iu1lLZ6Q4FyJDUHKQoHDDQZPy3iujbSwklyQuMaRg4RasywCpZ0mEf0jlGVh+fcyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720941470; c=relaxed/simple;
-	bh=ioMRz+Lm4SFBaMuTqAHdAqZFIxJWs68Xh1hJmi0Nstg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U78bZEoE14ApGpq/dSmZWEzgxjK61zdQyjI/TGRCOdk4bs+ERNvAoHupzBUHeRFk44MOoS3DvmoB6jxLW70NnvVTrBX7udFKWR1xccE7bPHftFhGEg/q4Bx7pJafC/iWCke0On+2XbcRCclJhMQC01f0kby3h2R+g9uuLsparVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rJde2r67; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B5EEC116B1;
-	Sun, 14 Jul 2024 07:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720941469;
-	bh=ioMRz+Lm4SFBaMuTqAHdAqZFIxJWs68Xh1hJmi0Nstg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rJde2r67PfeTliz3CEkynFL/EvGmMsig0YSf3jnIdcX3ZsDwxW9BPVwoX7emlaAOI
-	 +dV0ZK8/edPGj8FFOX2SK/7jMBL8SA/6Qoqe6fPv4bwEj0A7JXSKkUUFNAMWR0csAi
-	 p6NLKyo2HV8aXxfpaxC8smGhQN33TrBhOG66THaI=
-Date: Sun, 14 Jul 2024 09:17:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	stable@vger.kernel.org, Ashish Sangwan <a.sangwan@samsung.com>,
-	Namjae Jeon <namjae.jeon@samsung.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH] driver core: Fix uevent_show() vs driver detach race
-Message-ID: <2024071438-perceive-earache-db11@gregkh>
-References: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
+	s=arc-20240116; t=1720942664; c=relaxed/simple;
+	bh=nq37sIkuvaBRK/8tbljabKRjSSyojeugxyXMGAf/aa0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s39m3N7+QFizIiEnUDMc9GG32PKV0usfFGyIDbUj4ju12imO7aUK7xED0pR6dw2LlOWtGqRAoZC5iPQ8t3Gwj4isXgMZut0OHI8B1GfrS6cKowD2BOUvqyuMB57KQimPyuKvpOBvFThLJRLOk51NI3RUpE9NkJX4cGQLFijTIMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AXRo7NO+; arc=none smtp.client-ip=193.252.23.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id StnYsEflQwxoIStnYs4c19; Sun, 14 Jul 2024 09:37:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720942654;
+	bh=JiF6rlqsmKD1wAOp9hDzYCiLWPlf9kUDYQw53qiLvCc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=AXRo7NO+P0TMlGtigGCaWrJERsqN5Bf7rwQAflRz7/nSk8X/PkTiZNjlYXZBh91Bv
+	 jpT1TyRE5U/s7tpIE5H62zQzEQhcdy3htE/keeZEQVgbceWylPmJwWho9DbuuniB3O
+	 MsaDSfc+d46qs+srFaJO8pLwxYJcgr0hZjjIh5pgfitK/xRIeW4Q0RhhNHf1sDe7vm
+	 ZlR50ahvaof+exNxkgGbcU0wTaV5HUfs9G94hkQ9gh0E11/c+LKeYvTnTGKgIDA2XP
+	 NZHp/IdqMDNWnU+XbBUMnX0qfpH3Vj89RzusRSQ7W/wNaLaiUzCSha56/UhkUNYXVs
+	 gwutLJ8PyeTSA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Jul 2024 09:37:34 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] drm/exynos: Constify struct exynos_drm_ipp_funcs
+Date: Sun, 14 Jul 2024 09:37:20 +0200
+Message-ID: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 12:42:09PM -0700, Dan Williams wrote:
-> uevent_show() wants to de-reference dev->driver->name. There is no clean
-> way for a device attribute to de-reference dev->driver unless that
-> attribute is defined via (struct device_driver).dev_groups. Instead, the
-> anti-pattern of taking the device_lock() in the attribute handler risks
-> deadlocks with code paths that remove device attributes while holding
-> the lock.
-> 
-> This deadlock is typically invisible to lockdep given the device_lock()
-> is marked lockdep_set_novalidate_class(), but some subsystems allocate a
-> local lockdep key for @dev->mutex to reveal reports of the form:
-> 
->  ======================================================
->  WARNING: possible circular locking dependency detected
->  6.10.0-rc7+ #275 Tainted: G           OE    N
->  ------------------------------------------------------
->  modprobe/2374 is trying to acquire lock:
->  ffff8c2270070de0 (kn->active#6){++++}-{0:0}, at: __kernfs_remove+0xde/0x220
-> 
->  but task is already holding lock:
->  ffff8c22016e88f8 (&cxl_root_key){+.+.}-{3:3}, at: device_release_driver_internal+0x39/0x210
-> 
->  which lock already depends on the new lock.
-> 
-> 
->  the existing dependency chain (in reverse order) is:
-> 
->  -> #1 (&cxl_root_key){+.+.}-{3:3}:
->         __mutex_lock+0x99/0xc30
->         uevent_show+0xac/0x130
->         dev_attr_show+0x18/0x40
->         sysfs_kf_seq_show+0xac/0xf0
->         seq_read_iter+0x110/0x450
->         vfs_read+0x25b/0x340
->         ksys_read+0x67/0xf0
->         do_syscall_64+0x75/0x190
->         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
->  -> #0 (kn->active#6){++++}-{0:0}:
->         __lock_acquire+0x121a/0x1fa0
->         lock_acquire+0xd6/0x2e0
->         kernfs_drain+0x1e9/0x200
->         __kernfs_remove+0xde/0x220
->         kernfs_remove_by_name_ns+0x5e/0xa0
->         device_del+0x168/0x410
->         device_unregister+0x13/0x60
->         devres_release_all+0xb8/0x110
->         device_unbind_cleanup+0xe/0x70
->         device_release_driver_internal+0x1c7/0x210
->         driver_detach+0x47/0x90
->         bus_remove_driver+0x6c/0xf0
->         cxl_acpi_exit+0xc/0x11 [cxl_acpi]
->         __do_sys_delete_module.isra.0+0x181/0x260
->         do_syscall_64+0x75/0x190
->         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> The observation though is that driver objects are typically much longer
-> lived than device objects. It is reasonable to perform lockless
-> de-reference of a @driver pointer even if it is racing detach from a
-> device. Given the infrequency of driver unregistration, use
-> synchronize_rcu() in module_remove_driver() to close any potential
-> races.  It is potentially overkill to suffer synchronize_rcu() just to
-> handle the rare module removal racing uevent_show() event.
-> 
-> Thanks to Tetsuo Handa for the debug analysis of the syzbot report [1].
-> 
-> Fixes: c0a40097f0bc ("drivers: core: synchronize really_probe() and dev_uevent()")
-> Reported-by: syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com
-> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Closes: http://lore.kernel.org/5aa5558f-90a4-4864-b1b1-5d6784c5607d@I-love.SAKURA.ne.jp [1]
-> Link: http://lore.kernel.org/669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch
-> Cc: stable@vger.kernel.org
-> Cc: Ashish Sangwan <a.sangwan@samsung.com>
-> Cc: Namjae Jeon <namjae.jeon@samsung.com>
-> Cc: Dirk Behme <dirk.behme@de.bosch.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/base/core.c   |   13 ++++++++-----
->  drivers/base/module.c |    4 ++++
->  2 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 2b4c0624b704..b5399262198a 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -25,6 +25,7 @@
->  #include <linux/mutex.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/netdevice.h>
-> +#include <linux/rcupdate.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/mm.h>
->  #include <linux/string_helpers.h>
-> @@ -2640,6 +2641,7 @@ static const char *dev_uevent_name(const struct kobject *kobj)
->  static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->  {
->  	const struct device *dev = kobj_to_dev(kobj);
-> +	struct device_driver *driver;
->  	int retval = 0;
->  
->  	/* add device node properties if present */
-> @@ -2668,8 +2670,12 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->  	if (dev->type && dev->type->name)
->  		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
->  
-> -	if (dev->driver)
-> -		add_uevent_var(env, "DRIVER=%s", dev->driver->name);
-> +	/* Synchronize with module_remove_driver() */
-> +	rcu_read_lock();
-> +	driver = READ_ONCE(dev->driver);
-> +	if (driver)
-> +		add_uevent_var(env, "DRIVER=%s", driver->name);
-> +	rcu_read_unlock();
+'struct exynos_drm_ipp_funcs' are not modified in these drivers.
 
-It's a lot of work for a "simple" thing of just "tell userspace what
-happened" type of thing.  But it makes sense.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-I'll queue this up after -rc1 is out, there's no rush before then as
-it's only lockdep warnings happening now, right?
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  20446	   1746	     16	  22208	   56c0	drivers/gpu/drm/exynos/exynos_drm_fimc.o
 
-thanks,
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  20446	   1714	     16	  22176	   56a0	drivers/gpu/drm/exynos/exynos_drm_fimc.o
 
-greg k-h
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 142184c8c3bc..4d7ea65b7dd8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1125,7 +1125,7 @@ static void fimc_abort(struct exynos_drm_ipp *ipp,
+ 	}
+ }
+ 
+-static struct exynos_drm_ipp_funcs ipp_funcs = {
++static const struct exynos_drm_ipp_funcs ipp_funcs = {
+ 	.commit = fimc_commit,
+ 	.abort = fimc_abort,
+ };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 1b111e2c3347..d80b0d1eb734 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -1162,7 +1162,7 @@ static void gsc_abort(struct exynos_drm_ipp *ipp,
+ 	}
+ }
+ 
+-static struct exynos_drm_ipp_funcs ipp_funcs = {
++static const struct exynos_drm_ipp_funcs ipp_funcs = {
+ 	.commit = gsc_commit,
+ 	.abort = gsc_abort,
+ };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index a9d469896824..2788105ac780 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -403,7 +403,7 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
+ 	return 0;
+ }
+ 
+-static struct exynos_drm_ipp_funcs ipp_funcs = {
++static const struct exynos_drm_ipp_funcs ipp_funcs = {
+ 	.commit = scaler_commit,
+ };
+ 
+-- 
+2.45.2
+
 
