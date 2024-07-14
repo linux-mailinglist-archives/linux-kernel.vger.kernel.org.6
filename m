@@ -1,207 +1,209 @@
-Return-Path: <linux-kernel+bounces-251818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78447930A39
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:40:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EA4930A41
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 15:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DD71F213B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:40:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D7B20B8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E721311B5;
-	Sun, 14 Jul 2024 13:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971E01311B5;
+	Sun, 14 Jul 2024 13:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="CGp6LVzt"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nvp+6l3D"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C67413210A
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 13:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBBE139CEE;
+	Sun, 14 Jul 2024 13:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720964396; cv=none; b=kSCXUNixdrOYFNAHA1mX9IRBzYEmwy/PCwGuHE0jglT6LcaKKWeb+PWRRNoB9adhT186BdHW9kVI6EjGVHOri4vQBPGzVFR3i6+2jg+WNEiXEZkeW9RfT7NPSneXp+h2ir0m64YU6MXUp+hhZ8ZpKRaX6JhZmJPS08KJEmWD0PE=
+	t=1720964474; cv=none; b=WmnGQGgQV70CM+qFbNl5uzwe5qopqWi1QH0dsWDJEPGU5e4gbzXrtpHEIg0qQv5z4k4oqo6FnKLrK4CkkrP46Ue2l2Un8ZsJt3pHrMAfZaCLlTORIdZfYhVN5XALwgPY4aFUzu1h2qJ9mBlTYIlwitLM7aULT2Yf7o0UVilzHq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720964396; c=relaxed/simple;
-	bh=ZRPQcaFMU/qRhT0WKNPSFjrNVmy7iseSYLfohdrjFNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Eh7teczPesLztCmy1RpuN2eoeUxUoWfew/ehGRzNSRQVoA0AZc+dfuW1EoFs53sSDQLSLWY/UYKXrMZR6U8f8Z/dPzAoFqeldlWvgWkn/6Mc////hDyuW36LlrH5Oah4hn3oo/WjNPIAGeL4QXvF0XYv7hVZFNiKsS2PR0lLFVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=CGp6LVzt; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-427aeebaecdso842775e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 06:39:54 -0700 (PDT)
+	s=arc-20240116; t=1720964474; c=relaxed/simple;
+	bh=rB9HB93Rvshe7z6WUpChBtzmZ+pzwvzmTeb5SFGy0zQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MYhT5H3nhOSAHZ0WFkZ20lwsvkBjhPykWKUZoRM22h1YhznHi7l3EIcXOr+B/hTrNQB1WPMtzVQdZBpKhUeI8kcHaUu30lGm/BJUYJoVkhuujg4DFFwrKM02zpDg3KqmQYzNGxgChpwsybDb35/iPP+zTmLgyAdg6TDEYT5TUW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nvp+6l3D; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58ba3e37feeso4183527a12.3;
+        Sun, 14 Jul 2024 06:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720964393; x=1721569193; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hXhsgB5kcttJ8ekP07uZnqVAhfWI+txG6dIDu3n/Ejg=;
-        b=CGp6LVztg9tFNQmfau66cDC6H9WwjiMQBfjBnNJNDA7IDTT1XxVglxVvHTkvvPDbeP
-         2dLdnYuyhdeG31wzzeYSeNvjYdqkgV0kmZICnL182HPE+A/KbCLwd2y/7QeVXC3elVzp
-         GzYGZMH5wovMiscatJZQUg8AbDZsRdGKRGjAOnlOQzVwY3lcLEMIl2JZOecwl9eoQroa
-         cb0DfvuroAlA36Bn3t27purfCXgRI+Sp1StTVu0rfl4ohhTG88o7tVCeuxCWI8sv/Yxe
-         3ZqdIZ0xfTTDnp2hXc+bZZsLeLshA4/aeJdwhaCtvsm7iJ4pc9AJJV+22ZDO53VYolTt
-         MQeg==
+        d=gmail.com; s=20230601; t=1720964471; x=1721569271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+j1wupx7YxD84513AU7BSAsqVvs64S6cEhC9kkPdJM=;
+        b=Nvp+6l3DWpAK42HEUqVgtx4vfA+/4mh8VOkcFTejsviuoLyDzaaHnny/7TD/TS7NCv
+         V+wKULfItrDbfkT3p2dTPvx1YADp+axWWJS9QzsdEhhNk/+kdxMXK6gid8ekLv/hCPTa
+         3qH7wGzzpDBA7/Jip6uUwB0QzazPQY2Qew8S1/Ic3BjXmazuzjtst6FHfrCpnBr6KCge
+         o9Ma+2us5D0dR5lmqo4UOPy6BQ6l4sTfj3ON4h/MLBOVaPtdBzKZ6c6vI7pU6WChdjTc
+         46p16XXy324T/ytLlU3RX68o0OgWExbpaJBWcAl7xdblSfR/aNxuwVYowab3/WvixB2c
+         oIhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720964393; x=1721569193;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXhsgB5kcttJ8ekP07uZnqVAhfWI+txG6dIDu3n/Ejg=;
-        b=lPyvt3QdWJIYB4NNlaNRJwmEn422Xkplitkhj2AJsgtE8/hJbS6uwbzzyxieULGPdd
-         ASiSZT4wNhstJMA7VnCjuPsV/5ySn+QbRJJ6J6GVt1JvqIcSbk85AwMCRI/C+5vpzuRD
-         zy60UOHmOvcYAPiZehRc9YP8iSDa3XPKHnG9MbO9d2GWtslTjUP+xrYdfVRdq2ZkvGMr
-         /jVLsCc8zs7Mxodg21LMx1wC7ImAr1PXVc+tRZDEIBMXkf08tg7hsXx2l8XODC0CqnjC
-         oD6c1s1Nxq1S0SghklzTCABlDyqDzjC4btGmESbB/8lRjI1YyFjZB6BD+v+gR7N7meFb
-         +Wdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDAEcaNCu+xheGCe/0XiQDVgCOhA9JxdDjFZTAeb56517N8EvkEO30UECX+Kq1Sr/Loh1+hCQIM9sMuPJlSkKr1c3wgHYlvgRs0G8j
-X-Gm-Message-State: AOJu0Yz1o8vlAm2QhdbCBxzFJ6mC+y4tq1VTWXVlrWimqRbt8tbjAFVZ
-	SSI0qqKe/vjaGLdKCbjJQA9F9+rjSo7BTaqq3ZXQJrUVm1DGTPq/d4d6wBS9GH0=
-X-Google-Smtp-Source: AGHT+IHZ55PvKzpIXyAWZZwdSfOUuHbPyEFib4pjtaWAvo7Wf8TZY7mQZPs6KJ5I7pPxMEqbAjVjCw==
-X-Received: by 2002:a5d:47a9:0:b0:366:e7e2:13c8 with SMTP id ffacd0b85a97d-367cea46a0bmr13958112f8f.11.1720964392929;
-        Sun, 14 Jul 2024 06:39:52 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafbea9sm3871306f8f.82.2024.07.14.06.39.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Jul 2024 06:39:52 -0700 (PDT)
-Message-ID: <50e216ba-6bb1-4794-806e-75a75d778d4b@tuxon.dev>
-Date: Sun, 14 Jul 2024 16:39:51 +0300
+        d=1e100.net; s=20230601; t=1720964471; x=1721569271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+j1wupx7YxD84513AU7BSAsqVvs64S6cEhC9kkPdJM=;
+        b=eyaw9qwth2gMLoLmci8xt/zLyg056JEJaSAIOcFg6EYV/9aDDldZKnpDs/KmrXFJfv
+         nd3te9U77wJuynnnitqXrnBDOSzLNpn5hcvsFzlTj8BTcS+o9eUkw6uyX4AegvYwfhZ7
+         Xwi2ZluDmqz9RXHC8dslrAMy4l3PN8i63uqfy+7Fn8L1gn99TD7rL2S8Z5fyX7C+VBwc
+         qCXpv735xyWD7L4gnFY69s1QeMS5GyAl2P1nPuxDvLEc6TehrnTC946upp738vbJI18b
+         +srDD25n5JRxYziHp/Qs7rDHfKaiNGbOw5PQ3XS9l5ne9vzhRjRQyUSorUbel+cdaENn
+         xS6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJpRicmKzUfSrZczokWE/Cy7KXTLYhrS68LCTHzZ/i7MrgdSOnCZq/m4ttbnD7PzwTq+4sDFxWQDKbuTfuIBe0mzQtv1QgQVgV78hZndo0C2Jmhi5TTkEHj7goyjBxEQIbmloOuAw6
+X-Gm-Message-State: AOJu0Yxo8DWtZ/72D9c/UyNsxqRIDZC71JHU2j74MUnSjORrjxbFFK58
+	4vwiXGirpxGLbYIEfO7UCSItkPpo019Q+646ymWQ98Z6EflIvjW/hIsf7ZkVESQzKjY+cBGneSX
+	DNDFlZeFSRyoJGizmQcaSWsiNUpdYRrPb
+X-Google-Smtp-Source: AGHT+IGFY5E1w8Bp7j+qOT55kraCMhBsxSoH2P3Rz+jWRhqVeFxU673zE4HJJ9B5eX44chT19InBQUGT6vnjjA0NHWs=
+X-Received: by 2002:a05:6402:2554:b0:58b:d7f2:eef3 with SMTP id
+ 4fb4d7f45d1cf-594baf87f63mr13943531a12.12.1720964470882; Sun, 14 Jul 2024
+ 06:41:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/27] clk: at91: sama7g5: move mux table macros to
- header file
-Content-Language: en-US
-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
- mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
- <20240703102743.195858-1-varshini.rajendran@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240703102743.195858-1-varshini.rajendran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240713140455.4072847-1-carlos.bilbao.osdev@gmail.com> <20240713140455.4072847-2-carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <20240713140455.4072847-2-carlos.bilbao.osdev@gmail.com>
+From: =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>
+Date: Sun, 14 Jul 2024 15:40:35 +0200
+Message-ID: <CAA76j93KgwWSkODWO_hpoiumh2VP_W_DWmdyLBCW3MiL52o2RA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] docs: scheduler: Start documenting the EEVDF scheduler
+To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Cc: corbet@lwn.net, peterz@infradead.org, rdunlap@infradead.org, bilbao@vt.edu, 
+	jembid@ucm.es, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 03.07.2024 13:27, Varshini Rajendran wrote:
-> Move the mux table init and fill macro function definitions from the
-> sama7g5 pmc driver to the pmc.h header file since they will be used
-> by other SoC's pmc drivers as well like sam9x7.
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-
+On Sat, 13 Jul 2024 at 16:05, Carlos Bilbao
+<carlos.bilbao.osdev@gmail.com> wrote:
+>
+> Add some documentation regarding the newly introduced scheduler EEVDF.
+>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 > ---
->  drivers/clk/at91/pmc.h     | 16 ++++++++++++++++
->  drivers/clk/at91/sama7g5.c | 35 ++++++++++-------------------------
->  2 files changed, 26 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index 91d1c6305d95..4fb29ca111f7 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -121,6 +121,22 @@ struct at91_clk_pms {
->  
->  #define ndck(a, s) (a[s - 1].id + 1)
->  #define nck(a) (a[ARRAY_SIZE(a) - 1].id + 1)
+>  Documentation/scheduler/index.rst            |  1 +
+>  Documentation/scheduler/sched-design-CFS.rst | 10 +++--
+>  Documentation/scheduler/sched-eevdf.rst      | 44 ++++++++++++++++++++
+>  3 files changed, 51 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/scheduler/sched-eevdf.rst
+>
+> diff --git a/Documentation/scheduler/index.rst b/Documentation/scheduler/=
+index.rst
+> index 43bd8a145b7a..1f2942c4d14b 100644
+> --- a/Documentation/scheduler/index.rst
+> +++ b/Documentation/scheduler/index.rst
+> @@ -12,6 +12,7 @@ Scheduler
+>      sched-bwc
+>      sched-deadline
+>      sched-design-CFS
+> +    sched-eevdf
+>      sched-domains
+>      sched-capacity
+>      sched-energy
+> diff --git a/Documentation/scheduler/sched-design-CFS.rst b/Documentation=
+/scheduler/sched-design-CFS.rst
+> index bc1e507269c6..b703c6dcb3cd 100644
+> --- a/Documentation/scheduler/sched-design-CFS.rst
+> +++ b/Documentation/scheduler/sched-design-CFS.rst
+> @@ -8,10 +8,12 @@ CFS Scheduler
+>  1.  OVERVIEW
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -CFS stands for "Completely Fair Scheduler," and is the new "desktop" pro=
+cess
+> -scheduler implemented by Ingo Molnar and merged in Linux 2.6.23.  It is =
+the
+> -replacement for the previous vanilla scheduler's SCHED_OTHER interactivi=
+ty
+> -code.
+> +CFS stands for "Completely Fair Scheduler," and is the "desktop" process
+> +scheduler implemented by Ingo Molnar and merged in Linux 2.6.23. When
+> +originally merged, it was the replacement for the previous vanilla
+> +scheduler's SCHED_OTHER interactivity code. Nowadays, CFS is making room
+> +for EEVDF, for which documentation can be found in
+> +:ref:`sched_design_EEVDF`.
+>
+>  80% of CFS's design can be summed up in a single sentence: CFS basically=
+ models
+>  an "ideal, precise multi-tasking CPU" on real hardware.
+> diff --git a/Documentation/scheduler/sched-eevdf.rst b/Documentation/sche=
+duler/sched-eevdf.rst
+> new file mode 100644
+> index 000000000000..019327da333a
+> --- /dev/null
+> +++ b/Documentation/scheduler/sched-eevdf.rst
+> @@ -0,0 +1,44 @@
+> +.. _sched_design_EEVDF:
 > +
-> +#define PMC_INIT_TABLE(_table, _count)			\
-> +	do {						\
-> +		u8 _i;					\
-> +		for (_i = 0; _i < (_count); _i++)	\
-> +			(_table)[_i] = _i;		\
-> +	} while (0)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +EEVDF Scheduler
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +
-> +#define PMC_FILL_TABLE(_to, _from, _count)		\
-> +	do {						\
-> +		u8 _i;					\
-> +		for (_i = 0; _i < (_count); _i++) {	\
-> +			(_to)[_i] = (_from)[_i];	\
-> +		}					\
-> +	} while (0)
+> +The "Earliest Eligible Virtual Deadline First" (EEVDF) was first introdu=
+ced
+> +in a scientific publication in 1995 [1]. The Linux kernel began
+> +transitioning to EEVDF in version 6.6 (as a new option in 2024), moving
+> +away from the earlier Completely Fair Scheduler (CFS) in favor of a vers=
+ion
+> +of EEVDF proposed by Peter Zijlstra in 2023 [2-4]. More information
+> +regarding CFS can be found in :ref:`sched_design_CFS`.
 > +
->  struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
->  				   unsigned int nperiph, unsigned int ngck,
->  				   unsigned int npck);
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index e6eb5afba93d..6706d1305baa 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -16,21 +16,6 @@
->  
->  #include "pmc.h"
->  
-> -#define SAMA7G5_INIT_TABLE(_table, _count)		\
-> -	do {						\
-> -		u8 _i;					\
-> -		for (_i = 0; _i < (_count); _i++)	\
-> -			(_table)[_i] = _i;		\
-> -	} while (0)
-> -
-> -#define SAMA7G5_FILL_TABLE(_to, _from, _count)		\
-> -	do {						\
-> -		u8 _i;					\
-> -		for (_i = 0; _i < (_count); _i++) {	\
-> -			(_to)[_i] = (_from)[_i];	\
-> -		}					\
-> -	} while (0)
-> -
->  static DEFINE_SPINLOCK(pmc_pll_lock);
->  static DEFINE_SPINLOCK(pmc_mck0_lock);
->  static DEFINE_SPINLOCK(pmc_mckX_lock);
-> @@ -1119,17 +1104,17 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->  		if (!mux_table)
->  			goto err_free;
->  
-> -		SAMA7G5_INIT_TABLE(mux_table, 3);
-> -		SAMA7G5_FILL_TABLE(&mux_table[3], sama7g5_mckx[i].ep_mux_table,
-> -				   sama7g5_mckx[i].ep_count);
-> +		PMC_INIT_TABLE(mux_table, 3);
-> +		PMC_FILL_TABLE(&mux_table[3], sama7g5_mckx[i].ep_mux_table,
-> +			       sama7g5_mckx[i].ep_count);
->  		for (j = 0; j < sama7g5_mckx[i].ep_count; j++) {
->  			u8 pll_id = sama7g5_mckx[i].ep[j].pll_id;
->  			u8 pll_compid = sama7g5_mckx[i].ep[j].pll_compid;
->  
->  			tmp_parent_hws[j] = sama7g5_plls[pll_id][pll_compid].hw;
->  		}
-> -		SAMA7G5_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> -				   sama7g5_mckx[i].ep_count);
-> +		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> +			       sama7g5_mckx[i].ep_count);
->  
->  		hw = at91_clk_sama7g5_register_master(regmap, sama7g5_mckx[i].n,
->  				   num_parents, NULL, parent_hws, mux_table,
-> @@ -1215,17 +1200,17 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->  		if (!mux_table)
->  			goto err_free;
->  
-> -		SAMA7G5_INIT_TABLE(mux_table, 3);
-> -		SAMA7G5_FILL_TABLE(&mux_table[3], sama7g5_gck[i].pp_mux_table,
-> -				   sama7g5_gck[i].pp_count);
-> +		PMC_INIT_TABLE(mux_table, 3);
-> +		PMC_FILL_TABLE(&mux_table[3], sama7g5_gck[i].pp_mux_table,
-> +			       sama7g5_gck[i].pp_count);
->  		for (j = 0; j < sama7g5_gck[i].pp_count; j++) {
->  			u8 pll_id = sama7g5_gck[i].pp[j].pll_id;
->  			u8 pll_compid = sama7g5_gck[i].pp[j].pll_compid;
->  
->  			tmp_parent_hws[j] = sama7g5_plls[pll_id][pll_compid].hw;
->  		}
-> -		SAMA7G5_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> -				   sama7g5_gck[i].pp_count);
-> +		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> +			       sama7g5_gck[i].pp_count);
->  
->  		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
->  						 &sama7g5_pcr_layout,
+> +Similarly to CFS, EEVDF aims to distribute CPU time equally among all
+> +runnable tasks with the same priority. To do so, it assigns a virtual ru=
+n
+> +time to each task, creating a "lag" value that can be used to determine
+> +whether a task has received its fair share of CPU time. In this way, a t=
+ask
+> +with a positive lag is owed CPU time, while a negative lag means the tas=
+k
+> +has exceeded its portion. EEVDF picks tasks with lag greater or equal to
+> +zero and calculates a virtual deadline (VD) for each, selecting the task
+> +with the earliest VD to execute next. It's important to note that this
+> +allows latency-sensitive tasks with shorter time slices to be prioritize=
+d,
+> +which helps with their responsiveness.
+> +
+> +There are ongoing discussions on how to manage lag, especially for sleep=
+ing
+> +tasks; but at the time of writing EEVDF uses a "decaying" mechanism base=
+d
+> +on virtual run time (VRT). This prevents tasks from exploiting the syste=
+m
+> +by sleeping briefly to reset their negative lag: when a task sleeps, it
+> +remains on the run queue but marked for "deferred dequeue," allowing its
+> +lag to decay over VRT. Hence, long-sleeping tasks eventually have their =
+lag
+> +reset. Finally, tasks can preempt others if their VD is earlier, and tas=
+ks
+> +can request specific time slices using the new sched_setattr() system ca=
+ll,
+> +which further facilitates the job of latency-sensitive applications.
+> +
+> +REFERENCES
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +[1] https://citeseerx.ist.psu.edu/document?repid=3Drep1&type=3Dpdf&doi=
+=3D805acf7726282721504c8f00575d91ebfd750564
+> +
+> +[2] https://lore.kernel.org/lkml/a79014e6-ea83-b316-1e12-2ae056bda6fa@li=
+nux.vnet.ibm.com/
+> +
+> +[3] https://lwn.net/Articles/969062/
+> +
+> +[4] https://lwn.net/Articles/925371/
+> --
+> 2.43.0
+>
+
+Reviewed-by: Sergio Gonz=C3=A1lez Collado <sergio.collado@gmail.com>
 
