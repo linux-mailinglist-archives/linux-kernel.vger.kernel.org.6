@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-251884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20AE930AFE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469AB930B01
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 19:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7DE1F21543
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019EB28180E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 17:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A0D13C9B9;
-	Sun, 14 Jul 2024 17:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E6513C9A2;
+	Sun, 14 Jul 2024 17:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ansari.sh header.i=@ansari.sh header.b="GD2bDRgp"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=ansari.sh header.i=@ansari.sh header.b="HbVDRnYV"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C15613B5AC
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 17:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A852F13C8E1
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 17:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720978531; cv=none; b=KMVOQBSZYmbgUFw2uIhUWLulXAO9PJDllnXgvbQ6DRVqnkK8IWuNzxM6BuHS6dbibqBOctkDNHjuN8RTZ2nceDwFq3feAE7w2BQcOpyqGKny/rfUHdpJAZztKLMczR1Tu2EN+rO0VgC+psttApea0G2hADOYsDwrKiDqZ656TnQ=
+	t=1720978542; cv=none; b=Ieftu5dgCC2DWNltKAIV6/EwZFzqLA45rlCjQx+MphIUxdktcXAfyUWsjIPmP607whVEFwEzrybv1zURfwNfgCru0bjwEwKIRhmORZBxLVqkY5hp1CBnYRuqbF0v/gpTWPSg5O99z5ZrdrNR4NW9bhXA+BHOka1c3DjSrePQbLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720978531; c=relaxed/simple;
-	bh=UDM/0uo3eDJ3Sv4vtyj8gegmR04jnXRop06JrNPIjW4=;
+	s=arc-20240116; t=1720978542; c=relaxed/simple;
+	bh=3ffxm8F2nNdWFM9u69xqjKBGZVwaGQK7b7vNj9MxvRo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qbLIRzoeZpymAyXGO/pvu6F+mUP/nHmxThCYOgSaPte0p9xRMxXIbpENMZUVW6iGjSwdpMbzgNs1xqL6iwi6P5+0fSynPHScNvgm4/auDpP3mk6/q7wx8eTM+LQduCv0ju0z77WHyTGvG3m8W9QWJmGj8azsPlb1K5o9pH8gbnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ansari.sh; spf=pass smtp.mailfrom=ansari.sh; dkim=pass (1024-bit key) header.d=ansari.sh header.i=@ansari.sh header.b=GD2bDRgp; arc=none smtp.client-ip=91.218.175.178
+	 MIME-Version; b=eYOBWjC1ReRXIdcd+Tjk40YVD3/hXrgV5jy3Nsq7/7c3qNDQSheywV23Ew1tvyji1yFJ2djFQ16W2MzlfK78FPq2nGzxxqei/6mrbmYqNoDOMYF+FRrRh6xOl/AXAnV10xyxeVaM4vL9NizsIBdDYwJBIzBr8u9qkXeOnQpZ6f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ansari.sh; spf=pass smtp.mailfrom=ansari.sh; dkim=pass (1024-bit key) header.d=ansari.sh header.i=@ansari.sh header.b=HbVDRnYV; arc=none smtp.client-ip=91.218.175.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ansari.sh
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ansari.sh
 X-Envelope-To: linux-arm-msm@vger.kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh; s=key1;
-	t=1720978528;
+	t=1720978539;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wbXiZhy0EEDKOfQm0HJWx9D67UmQViKUht9yESI4aFg=;
-	b=GD2bDRgpcs7P1MVj3WCBnHP7/xCJOXZDpKnL8IElVpO/jFKeHxAKR0yj42SFosrFuPEe/j
-	MAAhvd41j6TUdmz32/AhwxJp2pM0FFhcWeJknD4XTZVp43bPCTEL9dRKKocP4KLzY4s/hH
-	pNdcrB9tGkOOfWN2pYExV/j86SA1bmk=
+	bh=qRweSE5UbZigEyZLVlledQrg52BwjBhiCJ+saT8YwRo=;
+	b=HbVDRnYV7g6GXbXRKVQwUTdYtggd2PflHTVa1XFgbiWZc+Z3ex+hR/OX5dtKooMIAWiJob
+	+XEsKD6rKknkgjjOWiHSeVqtT5NWAjDheOLh2pptUa3UucvypRYLDZCuBJojLsHWOStokm
+	dMozbeL/rv42wedrl0EuHQVEyM8UkiA=
 X-Envelope-To: devicetree@vger.kernel.org
 X-Envelope-To: linux-iio@vger.kernel.org
 X-Envelope-To: rayyan@ansari.sh
@@ -76,9 +76,9 @@ Cc: Rayyan Ansari <rayyan@ansari.sh>,
 	Robert Yang <decatf@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Sean Rhodes <sean@starlabs.systems>
-Subject: [PATCH 1/3] dt-bindings: iio: kionix,kxcjk1013: Document KX022-1020
-Date: Sun, 14 Jul 2024 18:33:03 +0100
-Message-ID: <20240714173431.54332-2-rayyan@ansari.sh>
+Subject: [PATCH 2/3] iio: accel: kxcjk-1013: Add support for KX022-1020
+Date: Sun, 14 Jul 2024 18:33:04 +0100
+Message-ID: <20240714173431.54332-3-rayyan@ansari.sh>
 In-Reply-To: <20240714173431.54332-1-rayyan@ansari.sh>
 References: <20240714173431.54332-1-rayyan@ansari.sh>
 Precedence: bulk
@@ -90,26 +90,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Document the KX022-1020 accelerometer, which has the same register
-layout as the KX023-1025 and so can use the same driver.
+Add compatible for the KX022-1020 accelerometer [1] using the
+KX022-1023 [2] register map as both have an identical i2c interface.
+
+[1]: https://kionixfs.azureedge.net/en/datasheet/KX022-1020%20Specifications%20Rev%2012.0.pdf
+[2]: https://kionixfs.azureedge.net/en/datasheet/KX023-1025%20Specifications%20Rev%2012.0.pdf
 
 Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
 ---
- .../devicetree/bindings/iio/accel/kionix,kxcjk1013.yaml          | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/accel/kxcjk-1013.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/accel/kionix,kxcjk1013.yaml b/Documentation/devicetree/bindings/iio/accel/kionix,kxcjk1013.yaml
-index 6ddb03f61bd9..951a3a2ba8fc 100644
---- a/Documentation/devicetree/bindings/iio/accel/kionix,kxcjk1013.yaml
-+++ b/Documentation/devicetree/bindings/iio/accel/kionix,kxcjk1013.yaml
-@@ -16,6 +16,7 @@ properties:
-       - kionix,kxcj91008
-       - kionix,kxtj21009
-       - kionix,kxtf9
-+      - kionix,kx022-1020
-       - kionix,kx023-1025
+diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+index 8280d2bef0a3..b76df8816323 100644
+--- a/drivers/iio/accel/kxcjk-1013.c
++++ b/drivers/iio/accel/kxcjk-1013.c
+@@ -173,6 +173,7 @@ enum kx_chipset {
+ 	KXCJ91008,
+ 	KXTJ21009,
+ 	KXTF9,
++	KX0221020,
+ 	KX0231025,
+ 	KX_MAX_CHIPS /* this must be last */
+ };
+@@ -580,8 +581,8 @@ static int kxcjk1013_chip_init(struct kxcjk1013_data *data)
+ 		return ret;
+ 	}
  
-   reg:
+-	/* On KX023, route all used interrupts to INT1 for now */
+-	if (data->chipset == KX0231025 && data->client->irq > 0) {
++	/* On KX023 and KX022, route all used interrupts to INT1 for now */
++	if ((data->chipset == KX0231025 || data->chipset == KX0221020) && data->client->irq > 0) {
+ 		ret = i2c_smbus_write_byte_data(data->client, KX023_REG_INC4,
+ 						KX023_REG_INC4_DRDY1 |
+ 						KX023_REG_INC4_WUFI1);
+@@ -1507,6 +1508,7 @@ static int kxcjk1013_probe(struct i2c_client *client)
+ 	case KXTF9:
+ 		data->regs = &kxtf9_regs;
+ 		break;
++	case KX0221020:
+ 	case KX0231025:
+ 		data->regs = &kx0231025_regs;
+ 		break;
+@@ -1712,6 +1714,7 @@ static const struct i2c_device_id kxcjk1013_id[] = {
+ 	{"kxcj91008", KXCJ91008},
+ 	{"kxtj21009", KXTJ21009},
+ 	{"kxtf9",     KXTF9},
++	{"kx022-1020", KX0221020},
+ 	{"kx023-1025", KX0231025},
+ 	{"SMO8500",   KXCJ91008},
+ 	{}
+@@ -1724,6 +1727,7 @@ static const struct of_device_id kxcjk1013_of_match[] = {
+ 	{ .compatible = "kionix,kxcj91008", },
+ 	{ .compatible = "kionix,kxtj21009", },
+ 	{ .compatible = "kionix,kxtf9", },
++	{ .compatible = "kionix,kx022-1020", },
+ 	{ .compatible = "kionix,kx023-1025", },
+ 	{ }
+ };
 -- 
 2.45.2
 
