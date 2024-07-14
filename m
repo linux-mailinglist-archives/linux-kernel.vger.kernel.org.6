@@ -1,141 +1,78 @@
-Return-Path: <linux-kernel+bounces-251944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D073930BFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A579930BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB081F21B5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD5E1C20A6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52A413A3F4;
-	Sun, 14 Jul 2024 22:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0E313D53E;
+	Sun, 14 Jul 2024 22:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bAdzB1ao"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrjXpyXy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2932714386B;
-	Sun, 14 Jul 2024 22:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE744AEF6;
+	Sun, 14 Jul 2024 22:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720996986; cv=none; b=jOhiH7exjxpN7c1qyni+kcPY38JR36MYs6mNarBfwRSguPw9G1C9y+8nv7XskkHQgZ9KFcRYs3bDDezCF1jm6Yo81iFhgE12UEmDevSRvbcpzFyKo8OZeRSZMHPaoxGevsYBvoTEeOXtWs5HBkHtWfn5ptrOf0hzBVZZMRyuVBQ=
+	t=1720996964; cv=none; b=PmCEfw9Vb5T2HPo4XP4P9uecZYGElH054Bws3V4N2VtrvwebGpFb1S5OGLSeEBCifj9Hhy12PodmPXUUVijsSptt3/ncSin42r/BBeI6cqkSsfrZzXiJQi/oSMciWPKVomxqIQrGZBR3pi80ihWlczph5XNzYLkLsn14Tbr9iKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720996986; c=relaxed/simple;
-	bh=gt2YEbL0HPVuwF7HgzQz6uVwQgZxohlOAd8A1sF5gPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d8nlAbX/vjh2rJzSmaEon0oJWUOrDNlA11ClFiZ3NrfKw7WiJdsn/9dCePpfGHcKs5rrJJHcwa0Evh+/li5cilme4NlAJMj5IrALGIdX72Us6nim+OYiqzeBMIzP2vKSUFfl3ogI4T5tHvZL/GYlnsOZXFORBJCzlFHXHTKYFM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bAdzB1ao; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720996978;
-	bh=/BlsZzTOjxdQO/NvxfH5GB6oaugSxVJTpOd44b9JnJ0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bAdzB1aoJPjRCXeOqcvi3xiG8t+SCDCNnHcn64J9W+LTVaXWnWvWTCfymPr/46SPv
-	 xUKBw8/h9FJGiBdMd68f6cHaAZZviK4UuBvuPTbRsJ1bmClWooRgcMVds1g1s5ZObt
-	 FoMM61njxu6O7lSviKvGI1rA5XKtW4fz4hwl7rz8IMYcFQtqSgN6e2FKpF08tWJSq9
-	 Y4Tkzoh0C0QVhB0R3YTFKVlklfnY+xw7imBoUXMPBOFKXhFEb83zVZX32ogBGD2aB4
-	 ctdoICrT+sQIK1PAAJtXivfW0updNMLubg41hII2UroJrW63l1eBR1zHYzje6o9kQL
-	 Z6oJjwlHn/puQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMgMk0XDPz4x04;
-	Mon, 15 Jul 2024 08:42:57 +1000 (AEST)
-Date: Mon, 15 Jul 2024 08:42:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Miaohe Lin
- <linmiaohe@huawei.com>
-Subject: linux-next: manual merge of the mm-stable tree with Linus' tree
-Message-ID: <20240715084239.685491ee@canb.auug.org.au>
+	s=arc-20240116; t=1720996964; c=relaxed/simple;
+	bh=doH3fBuI3EolM6RmqV5/npNvdpMQ2zI62eu2B17EcwA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=NYfoEjKFbPssttGWth5q7R2WpJrbJadt4zDmJxfBSRoxMa5ZLaYWiHyox1pMYYr+0ZfWzhn/laLmf/F8TnQy3WlFvzZABqPnVTCeGdV7LfSzyjaWwQMvCDvC/CMbFjODc8yHUN3UBwTv++WBNNyZW0+ws75rvc9/neRjlP87+fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrjXpyXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7ED0CC4AF0E;
+	Sun, 14 Jul 2024 22:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720996964;
+	bh=doH3fBuI3EolM6RmqV5/npNvdpMQ2zI62eu2B17EcwA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QrjXpyXygC0I/HCkZ3FbsnLjbx5y27fFywaHptoe5NsPZ4/5ax1gWQB7J4ED5386f
+	 7zNyxBX6ijvdwrtOSD/2TUnbeLIthAgm+4VBCVT/oU+WRHyAS2r8bNkT+06oCuu3zq
+	 yUUaqZXFuDDG/nz6i569x0GTAep0xTxxlFlzNsgrWL5mf65ZKOA+Hp2GMY43oz+h32
+	 SMn8TWtriLKIf8tbm8XfLGEHSVmrO7Zhevkdw04MvnRtzHkiosZxoEZviofJnQhD24
+	 lSYvlG8G++8MEZwIyLq5DcphM8nREbEl3A4N9FX36dINsyVmHAhv+A7JjcTdnKDGlQ
+	 t1vEeZlQTgm3w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 728E7C43168;
+	Sun, 14 Jul 2024 22:42:44 +0000 (UTC)
+Subject: Re: [GIT PULL] Kbuild fixes for v6.10(-rc8)
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAK7LNARuKOCDqv-V_Y6moUmNVqBmApVJy6yZKosFOp8zW6Vt9w@mail.gmail.com>
+References: <CAK7LNARuKOCDqv-V_Y6moUmNVqBmApVJy6yZKosFOp8zW6Vt9w@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAK7LNARuKOCDqv-V_Y6moUmNVqBmApVJy6yZKosFOp8zW6Vt9w@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.10-4
+X-PR-Tracked-Commit-Id: 84679f04ceafd58d9b35f790203520b2930f1a03
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 882ddcd1bf63c2984221dfa8c435f8eeb3d9b6f7
+Message-Id: <172099696446.4566.15814645761775779608.pr-tracker-bot@kernel.org>
+Date: Sun, 14 Jul 2024 22:42:44 +0000
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//zwZmi9EUczEKzARw/rL4a8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_//zwZmi9EUczEKzARw/rL4a8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Mon, 15 Jul 2024 05:30:42 +0900:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v6.10-4
 
-Today's linux-next merge of the mm-stable tree got a conflict in:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/882ddcd1bf63c2984221dfa8c435f8eeb3d9b6f7
 
-  mm/hugetlb.c
+Thank you!
 
-between commit:
-
-  5596d9e8b553 ("mm/hugetlb: fix potential race in __update_and_free_hugetl=
-b_folio()")
-
-from Linus' tree and commit:
-
-  a81fa1dc5db2 ("mm/hugetlb: fix potential race with try_memory_failure_hug=
-etlb()")
-
-from the mm-stable tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc mm/hugetlb.c
-index 43e1af868cfd,740df0b377aa..000000000000
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@@ -1725,6 -1722,20 +1722,13 @@@ static void __update_and_free_hugetlb_f
-  		return;
-  	}
- =20
-+ 	/*
-+ 	 * If we don't know which subpages are hwpoisoned, we can't free
-+ 	 * the hugepage, so it's leaked intentionally.
-+ 	 */
-+ 	if (folio_test_hugetlb_raw_hwp_unreliable(folio))
-+ 		return;
-+=20
- -	/*
- -	 * Move PageHWPoison flag from head page to the raw error pages,
- -	 * which makes any healthy subpages reusable.
- -	 */
- -	if (unlikely(folio_test_hwpoison(folio)))
- -		folio_clear_hugetlb_hwpoison(folio);
- -
-  	/*
-  	 * If vmemmap pages were allocated above, then we need to clear the
-  	 * hugetlb flag under the hugetlb lock.
-
---Sig_//zwZmi9EUczEKzARw/rL4a8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUVGAACgkQAVBC80lX
-0Gxr0Qf8CTbO61aQHoirS1YI/nelWcVnjtXA+7zmaRsFkBsXLpCwBS3aOWKtbI+x
-uBW1R7D87fxzqjfPnff1v5bP4EgH/ucURw2nKCmCgZQxaKt4JidlrVX2PIqNUs8e
-20ThyvoFHH3VYMHtOB/X03AScByCZXxknX9ZvmntoOCIsLHko7gPGWwXZcSxwfsg
-mfQloG/sWzXx+rOisDxqIQ9jWJmcwwm0qc7/Q5Ju3WrwoJ1tesKjLNkv2KoPVClZ
-C7Fj4M33TZy+INDedHXKBNRYwRguC2f5IkuUIR70v1ZU4++LQuRVuShiTC8tapWA
-KL+i1VOuudfoku4WAr8axRjSM+xxlQ==
-=cOmS
------END PGP SIGNATURE-----
-
---Sig_//zwZmi9EUczEKzARw/rL4a8--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
