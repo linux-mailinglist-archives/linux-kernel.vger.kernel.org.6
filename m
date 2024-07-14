@@ -1,213 +1,123 @@
-Return-Path: <linux-kernel+bounces-251785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BF79309CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 707619309D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492F11C20981
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C33E281AA0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44139130A5C;
-	Sun, 14 Jul 2024 11:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01EF71750;
+	Sun, 14 Jul 2024 11:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfZ7auB8"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Tk2fyNDW"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87D749659;
-	Sun, 14 Jul 2024 11:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F215C0;
+	Sun, 14 Jul 2024 11:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720957398; cv=none; b=Hnrrxi2TnUUH4DIxNvZMFXzKpll/76gth0CJGcgbk0qysIvo2QtYWzzmmWHiX4TdWKPsCzT7kk+pb3wVdIalc1k14ps9rkA5ZIrKphbStRBfVRmQd2kwO+k8Mts5qqnlmrng4oN7JMIe9LMSXZhZlmqCzTwAY7oOCsFLLsFlpSc=
+	t=1720957919; cv=none; b=o4GGJWqYPVvOG9oyYjXHLestTT3kJ3L6W0ZndVyc+mQ44ne5unL2di0/3iItN2kzkfFWHHnRBAfrs8oDIHuLMp+/4nAoqcvCsV29icnVluCaEWALkbNr9VU4VdVi+BzNbHWaerLs8iinasvuWblQoJVbVgAoV13OiPPZqequVUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720957398; c=relaxed/simple;
-	bh=HuwYDUb5SQOgo/cDQX5AI/oFUdtLP4Rc4FBtLd0C2zs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kp635Zdd2HRKXgz2bt2HzHWuFU+UU0vqp4sb3TOOPLKMM0oz1HUWB3wBZprrA4F9NwbUqFk8xygFOsZd1zeKA3lDI2Bz3ibWJTFEOb3D9UkvkrPajVGbus4NeTPZPsN5V03HwgyAdAPU1GjSctS1A1VM1JK9FsNbMwzmyq8+U2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfZ7auB8; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36805befd01so1062300f8f.2;
-        Sun, 14 Jul 2024 04:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720957395; x=1721562195; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=voezqBRIqgR1xMbzJXPZuwUUHTRBRdZ/+JwyhtZNvfc=;
-        b=nfZ7auB8iWwOITJFoU7hhAZqLv9NzZP+oN6qDhUGCKS5cEX6Fb9aordsptq+l9nv8X
-         8Xd/51xcMB6PO3XjxLro2XCbT5BICDLXZo/l0EL1LhqQdXVpVqqgyWOuivb40VjeKeA+
-         aSa9Y5R3HR2ssd2YDhuQ+kYUXLGY7+MFAS9pluu21t1omQz4GFaWoKtVO/JUpKlz0v0c
-         7laY5QUpv4ZJyXppKd3SUqZhuscewm0I6VYmmexm79itmlqeTC+PEgeugBC9Dw2uLCVa
-         op6jIRUv1R+QAiHD0bpcleAml43gXyTZpiDWtwELZPsFj2Ldv6LfI5qVuNN09TurSQpO
-         96lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720957395; x=1721562195;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=voezqBRIqgR1xMbzJXPZuwUUHTRBRdZ/+JwyhtZNvfc=;
-        b=DonLM+EgUrVKJbPASGsApPL/REaeksw7cG3X72sMwLgt/pJfJuOmjO7DNCz2IetZuJ
-         FCK4ulBE5lP6Z0D/8+F5en3EEO0dW6IsI/0L42DrUlyW7wYWuRTOQ9DuxFa+1qbYj5nW
-         OkBsPXYU/R+ezFWnhbSlPpTPTMgpn89W6gMxLETjisNZU6f6Zb+6cRytTAH14WjJnhWx
-         mlywiQ7j52Hg2JHwwGRz7vBRPePNrvJfJludaAZ/uB1W6XeB/VCdQJNen35sZXdXl+kQ
-         GhNhli0mMw+9CLG8WDrurOUs+TKnO2hzbxVbCNWb0sWMX3VAuIwly9xM4gKcHdSOLIPW
-         Jb0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXLSS1OCPj+1zZJcL7OD9dwYHUt4cqk0Nu2CCGvzG6aP5afIn9tLkTx3N2kpIGG+zW38Wo4MJTJOBXME43Qafrf7y2axLDngmsZpVvM87JvsHGckJAYCFQ2eKqfwGs08jlpGz+2NHAbNQ==
-X-Gm-Message-State: AOJu0YzjSYtmAJpAukhEr8cDaDQwp/dLdyQxvEguu8grKgNwBXoeZmm9
-	E/QdzD4egsi0G8BuZra26EG+n8MK8gunAj+GSFEbMp/caoNeViHj
-X-Google-Smtp-Source: AGHT+IHznxvk3jGNuxACzlPePqJZsFU4Gm7h8xaiwzJni80Kfh+rpr363DBOkzF8Q4inWF6XdCSGjw==
-X-Received: by 2002:a05:6000:1814:b0:364:d2b6:4520 with SMTP id ffacd0b85a97d-367ce5df304mr10897937f8f.0.1720957394652;
-        Sun, 14 Jul 2024 04:43:14 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0492asm3624096f8f.103.2024.07.14.04.43.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 04:43:14 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Sun, 14 Jul 2024 13:42:46 +0200
-Subject: [PATCH v3 2/2] thermal: sti: depend on THERMAL_OF subsystem
+	s=arc-20240116; t=1720957919; c=relaxed/simple;
+	bh=mnvBJJl2oILdBmJUSwBnl9m1Qsxmr+kYSIcSPT5WHxU=;
+	h=Message-ID:Date:MIME-Version:Cc:From:Subject:To:Content-Type; b=ZYdpru820KPSEyz75s/43PjpbFJakVgCLYBdSstsHscAFnlYXsaGOHCFekVyQXPzCBIGmRQh7VClJNlcHojKwL0LB+UJEjozHLEm8gdnC7wXlSsrmJH3/+BVgt0Xq+LtSWXKhcssD4yEk2ivZp4+YT4Z9EulpfCKl+FdzTwS8jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Tk2fyNDW; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720957910; x=1721562710; i=markus.elfring@web.de;
+	bh=nDAhleMulhqKEzdv+vsErFaaUrjnXZiCoSZYFMrFO1Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Cc:From:Subject:
+	 To:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Tk2fyNDWONq+xt/WevHyxSlM0KKUJ+Ppp+FgnazhJoe99qdMpjwzR0lt2zQam9g4
+	 wh8ikDMi/BfSPX8JoSQIumm4WATtjX/LNji4cadtlhf2UALGTXndqGnbr3oBx0fUP
+	 A/INzvpUMIveVSvIQaxK1t/CKI6F2Ah/qt2YD3USW/EVAAWmcTUo9Ma6dRKm+Xcs3
+	 0/KEDJu8yL5pXNDqlHWSYpSvE4jlJP4FwIXbzZhRX0xKr74BHFTbsKOzNrzbmEQTn
+	 nL+6b7fxxJtP1hfOKIOn87g85IEIhD72mE+vMB5xDHK/T4THFKJyobeZd+QnoubNY
+	 cHpFfweNZ9hiIwusTw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mtgyp-1sDlIf07FH-00tUeV; Sun, 14
+ Jul 2024 13:51:50 +0200
+Message-ID: <a44f2ae6-0242-40a3-bdfc-b81fe862eec9@web.de>
+Date: Sun, 14 Jul 2024 13:51:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240714-thermal-v3-2-88f2489ef7d5@gmail.com>
-References: <20240714-thermal-v3-0-88f2489ef7d5@gmail.com>
-In-Reply-To: <20240714-thermal-v3-0-88f2489ef7d5@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] module: tracking: Extend format string of a seq_printf() call
+ in unloaded_tainted_modules_seq_show()
+To: linux-modules@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:baZG2ulOL/demBIBwplDbo5i7K6cjtdXWKG2tOGJcEqd8Avh01L
+ QeJ2n17Nfk61Zu0njsW1vRlfAzV5hRW3zV/W1liNy+520VlaQAgqNqIGutTUWACh8rp9Yfq
+ QtJXnHLFnSeziozTufzVelukj4BoyVoC0gomPd1C4swOVj46Cx/oSI9HSCQvCv26S82p8NG
+ i9pHqaRq3PwDSskLB3LOA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TbNRlhVQwjY=;97OViBGYNY0cBMJuxnWdywbqZ+u
+ CW+e4JWXHw0Ix6ePGCAX1Z/2CeNuTYMtoO4asD/VCnrwrUoQeepl7oYQFCenpZzZXcz22Nbnr
+ fiy4xPJok1Ez3FGWYqphNNMAaNHySQ4nUWmBw6Juj+1NexGT5zPjRd1+ARdv23g6OvLGneQiy
+ RPsSiIxy5esJhP3mM3wFIJR0oBojwPdPYcjESLzJLECW/9UdME8w5K5S0Cw0JO1ZPuoI2bZhf
+ iWEUsKAPAfmGVftnSDiaAZ2kzHm3G4Khd2Y+kpK8IpA/+Vpiu1V2aBvkabPa3P6nuSDhQLr5P
+ eTuIMzEhyuVM1Zl/fR0NEBUy7YBPL/P8Zk8uI3onFypgeRQKmgv3E3m1KjukUe7fi6jxXm91F
+ m6LYQkJwjI7HDpE76WjNNQ7o1ajxWEFet9d9TQfc9i30gJXxJtnQo8r83hLT0+vncdj6swj+G
+ i4bH6+IpIW1K18CdTkvmLW4UDlZXhU4J0GfSQDtcE6dfVPKS7yLvkUoCDWYXjyKasrKufs6Q4
+ T6m8sjkFtMd8k9IYz0WAnchwyajHqSp5XdcZQeR3fbOLhscbCCF/aFl30vOy9o0jxqMHaJQtc
+ cPKpBXHSa6tCiR+Tma+Ax4gaBhuCTB+9RSFym2dGBIrMDsqyPAGE2WoAVMHWruqMWujjbw98c
+ IFwszc105k0voOTV7UlfDltau90+dg6HEDPViOF3cBHVlmqaS2xlmvJF6W8Dso+IMrSGZwZtO
+ hnj4L1MiIc/FBaMCnE91yA+8gwplnE9QSdJ9y9KlipFkEjgOT+hb9c6rhisbgS11nNjoxrgqr
+ LSQ143f6OmxGVr3tjLjBSvqA==
 
-Switch to thermal_of_zone to handle thermal-zones. Replace
-thermal_zone_device_register() by devm_thermal_of_zone_register() and
-remove ops st_thermal_get_trip_type, st_thermal_get_trip_temp.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 13:43:06 +0200
+Subject: [PATCH] module: tracking: Extend format string of a seq_printf() =
+call in unloaded_tainted_modules_seq_show()
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
-Changes in v3:
-- Fix unmet dependency when building with ARM64 compiler
-  https://lore.kernel.org/lkml/202406270605.qodaWd4n-lkp@intel.com/
-- Remove no more used polling_delay variable detected by kernel robot
-  https://lore.kernel.org/lkml/202406270530.kN5wIswi-lkp@intel.com/
-Changes in v2:
-- Remove unused struct thermal_trip trip
----
- drivers/thermal/st/Kconfig      |  2 ++
- drivers/thermal/st/st_thermal.c | 28 ++++++++++------------------
- 2 files changed, 12 insertions(+), 18 deletions(-)
+* Move the specification of a single line break from a seq_puts() call
+  into the format string of a previous seq_printf() call.
 
-diff --git a/drivers/thermal/st/Kconfig b/drivers/thermal/st/Kconfig
-index ecbdf4ef00f4..95a634709a99 100644
---- a/drivers/thermal/st/Kconfig
-+++ b/drivers/thermal/st/Kconfig
-@@ -5,12 +5,14 @@
- 
- config ST_THERMAL
- 	tristate "Thermal sensors on STMicroelectronics STi series of SoCs"
-+	depends on THERMAL_OF
- 	help
- 	  Support for thermal sensors on STMicroelectronics STi series of SoCs.
- 
- config ST_THERMAL_MEMMAP
- 	select ST_THERMAL
- 	tristate "STi series memory mapped access based thermal sensors"
-+	depends on THERMAL_OF
- 
- config STM32_THERMAL
- 	tristate "Thermal framework support on STMicroelectronics STM32 series of SoCs"
-diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
-index 5f33543a3a54..23597819ce84 100644
---- a/drivers/thermal/st/st_thermal.c
-+++ b/drivers/thermal/st/st_thermal.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- 
- #include "st_thermal.h"
-+#include "../thermal_hwmon.h"
- 
- /* The Thermal Framework expects millidegrees */
- #define mcelsius(temp)			((temp) * 1000)
-@@ -135,8 +136,6 @@ static struct thermal_zone_device_ops st_tz_ops = {
- 	.get_temp	= st_thermal_get_temp,
- };
- 
--static struct thermal_trip trip;
+* Omit an extra call of the function =E2=80=9Cseq_puts=E2=80=9D
+  because of this refactoring.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/module/tracking.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/module/tracking.c b/kernel/module/tracking.c
+index 16742d1c630c..9f84271c23b3 100644
+=2D-- a/kernel/module/tracking.c
++++ b/kernel/module/tracking.c
+@@ -94,9 +94,7 @@ static int unloaded_tainted_modules_seq_show(struct seq_=
+file *m, void *p)
+ 	l =3D module_flags_taint(mod_taint->taints, buf);
+ 	buf[l++] =3D '\0';
+
+-	seq_printf(m, "%s (%s) %llu", mod_taint->name, buf, mod_taint->count);
+-	seq_puts(m, "\n");
 -
- int st_thermal_register(struct platform_device *pdev,
- 			const struct of_device_id *st_thermal_of_match)
- {
-@@ -145,7 +144,6 @@ int st_thermal_register(struct platform_device *pdev,
- 	struct device_node *np = dev->of_node;
- 	const struct of_device_id *match;
- 
--	int polling_delay;
- 	int ret;
- 
- 	if (!np) {
-@@ -197,29 +195,22 @@ int st_thermal_register(struct platform_device *pdev,
- 	if (ret)
- 		goto sensor_off;
- 
--	polling_delay = sensor->ops->register_enable_irq ? 0 : 1000;
--
--	trip.temperature = sensor->cdata->crit_temp;
--	trip.type = THERMAL_TRIP_CRITICAL;
--
- 	sensor->thermal_dev =
--		thermal_zone_device_register_with_trips(dev_name(dev), &trip, 1, sensor,
--							&st_tz_ops, NULL, 0, polling_delay);
-+		devm_thermal_of_zone_register(dev, 0, sensor, &st_tz_ops);
- 	if (IS_ERR(sensor->thermal_dev)) {
--		dev_err(dev, "failed to register thermal zone device\n");
-+		dev_err(dev, "failed to register thermal of zone\n");
- 		ret = PTR_ERR(sensor->thermal_dev);
- 		goto sensor_off;
- 	}
--	ret = thermal_zone_device_enable(sensor->thermal_dev);
--	if (ret)
--		goto tzd_unregister;
- 
- 	platform_set_drvdata(pdev, sensor);
- 
--	return 0;
-+	/*
-+	 * devm_thermal_of_zone_register() doesn't enable hwmon by default
-+	 * Enable it here
-+	 */
-+	return devm_thermal_add_hwmon_sysfs(dev, sensor->thermal_dev);
- 
--tzd_unregister:
--	thermal_zone_device_unregister(sensor->thermal_dev);
- sensor_off:
- 	st_thermal_sensor_off(sensor);
- 
-@@ -232,7 +223,8 @@ void st_thermal_unregister(struct platform_device *pdev)
- 	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
- 
- 	st_thermal_sensor_off(sensor);
--	thermal_zone_device_unregister(sensor->thermal_dev);
-+	thermal_remove_hwmon_sysfs(sensor->thermal_dev);
-+	devm_thermal_of_zone_unregister(sensor->dev, sensor->thermal_dev);
++	seq_printf(m, "%s (%s) %llu\n", mod_taint->name, buf, mod_taint->count);
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(st_thermal_unregister);
- 
 
--- 
+=2D-
 2.45.2
 
 
