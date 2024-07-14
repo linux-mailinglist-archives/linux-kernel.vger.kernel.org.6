@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-251919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DED4930BA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5FC930B9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 22:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5381C2146C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4238C1F2297F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC1513D2A4;
-	Sun, 14 Jul 2024 20:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011EF13D531;
+	Sun, 14 Jul 2024 20:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="Z98B2pjc"
-Received: from smtp-out.freemail.hu (fmfe34.freemail.hu [46.107.16.239])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSiDqXNe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AA7136E37;
-	Sun, 14 Jul 2024 20:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCE02572;
+	Sun, 14 Jul 2024 20:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720989128; cv=none; b=i8/TSMIS9f4bkj7+dgndzwUnf86K5Cp+Ln0EtoezrU3EM73IEvARhlqDzZCMGI6NcjdjfkI2LajdGRP2Xm0xbeGMTGAVcj4YEJvs08blPQbyf0OoTYYcT7MrlMXyl2I2UQUeEOgkOcXJWEp+D7SnwYWsbP0AIDbTNhH+TF2spD4=
+	t=1720988987; cv=none; b=blUDQvcLq65Zzs+ccxAflV6bW34CXZY7Nk5gNvcz2FHTvOMQBp7EIt3wcUh18hUPHJj/El/k79kktooKAigOPd3r2fT9XXg8vJlAdq5EDvFq5cyYrrQtYkM6c7ZvxfVPn4vetQJuO8sqvuaKFwCGGL8TdTBaOokE7zsd7CU4AWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720989128; c=relaxed/simple;
-	bh=H9kSf8DV4jnoAj+ohO3964PFKoZzX0/9puU9iPCd4Yg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UXKVgeGI22JDnjXhlCsNwKGrfvbSw+CMFJmEkXalHFWOK3xMEtORKM0i1NxBdsaOgU1M1giBuXPlQJXiMvHUiSvtyydA1kkrmXgTFpe5micLNm32hX3BJ78fNwYslc2mz3uh1yY2pPjfJjqu4D9voYzEI/CdWoVCaPFyWw/SJzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=Z98B2pjc reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from localhost.localdomain (catv-188-142-163-175.catv.fixed.vodafone.hu [188.142.163.175])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4WMcGW5qfxz18s;
-	Sun, 14 Jul 2024 22:23:15 +0200 (CEST)
-From: egyszeregy@freemail.hu
-To: broonie@kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
-Subject: [PATCH] spi: spidev: add "generic-spidev" for compatible string
-Date: Sun, 14 Jul 2024 22:23:03 +0200
-Message-ID: <20240714202303.164-1-egyszeregy@freemail.hu>
-X-Mailer: git-send-email 2.45.2.windows.1
+	s=arc-20240116; t=1720988987; c=relaxed/simple;
+	bh=5DVwmaldh9pZpfQf1ibzCyt8OiuavasfVrvgW9AuWuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XbACkG7c0pPsp1qz6p9XVeft8Vrygo2geVg1cd9bNQWl/n97erURBDMBrGl3VnwoLrtPDZahhO1oy1W9aQpw+TVBkfQy51M1mSdz6vxJaW4A23geNu7eAMe9lN2gtMGcfHkgfTweqIT1u8H2WbQKMvPXcmetlytz5rUAIwNzJEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSiDqXNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B079FC116B1;
+	Sun, 14 Jul 2024 20:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720988986;
+	bh=5DVwmaldh9pZpfQf1ibzCyt8OiuavasfVrvgW9AuWuw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VSiDqXNecagrWkU2UYU9HajQJyOrX00qnJps0+mkSc2cZcICgBt9eIwB69ebqz5w3
+	 a7GEYJWtCBWoNir3NSUxG/pHQiu8wtj6/3CYmFZkRKup8G7M6LlzPTa/SaEBGef54D
+	 wAPfF+fy6MrlriZeJ4CEnVFtbdLpMfcurped+DBSOH2g09bWcyhWvv74l3b3tyNjoI
+	 jGvALOskz/iAUIXNv4s0byxMWpQTNKH9X/X2PI47xDlVn3UxcpD+dyUS0LQki1ofNR
+	 CLE/KGWPZKbAGhHZdnZQIEeKGGdq3K43v73sGWw7YuIZw1r6ZngTnse6BLgkGmPqgF
+	 NuLSvFagrVsdw==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea79e6979so4081628e87.2;
+        Sun, 14 Jul 2024 13:29:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5b2rkFbYqpp+1DkqaooP3ynffoLpEVYQ/QvfRshbuI26VLKsLlfc6XH4fxMAPIJU21Z/gVTGp+c2R1zx3asGtlXAfC9UHsP0oWclGyOn0
+X-Gm-Message-State: AOJu0Yyvu56rThvYJ785QYlAm3gkPByYz4Q++Yb6mOWZ64K9IgAoBxc4
+	x4GmwDOOrgsfiKh2VCMkX9Bu71SEr5HAF1+aXin/jLorYnhkTQEn2u4OvcZxkLaclPbL4zHFYq+
+	FJ+xMHr9fOorfYgobOXbkJUS8dFQ=
+X-Google-Smtp-Source: AGHT+IF5y4JeSYqwgybmh/WOWO1ndQ9XLRi2c/vGw5BOoDRt+yZINKcqClyoXMDYVGtfpoJzvhCuPLqvGiUEnZFWxGE=
+X-Received: by 2002:ac2:518f:0:b0:52c:d9c6:68c8 with SMTP id
+ 2adb3069b0e04-52eb99da282mr9809181e87.65.1720988985400; Sun, 14 Jul 2024
+ 13:29:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1720988596;
-	s=20181004; d=freemail.hu;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-	l=1164; bh=2ZkUjinkdLWy9g1nDAJXSJ1zD/vsY2RQAJc6denFkHQ=;
-	b=Z98B2pjc90VXHdz1HwdqNP9OKMCVqvcPfZcW2AOmV1haiOgXh3qIJjg1ql9lOdm4
-	tQrq33KR31KCHpLoXSt0QbfNgR9IN+nZbDKxlHPx6l3Lv0WDMbitJOlIgZvX24/8Z2X
-	Sa1Qa7hNVic4fH8gJimnDTg5b/pEHpPPNpUNDaL0pVnmuPCJXIZrfAf5zbb7x9eAfya
-	MlQluASFEtGCu+riOBkFH0cbqQwVnRKEmdBuhkE3d2WQgVo7WPLYfaZ8OKL6YeD3BWu
-	cu0kuS3gbD7nwzAjhtDdELl79W0qSop1XNPaYpEpyht1Ma6NUXkPmkuxRiW0PYqrE5E
-	7U3UeGKk2A==
+References: <20240714170847.2029108-1-masahiroy@kernel.org>
+In-Reply-To: <20240714170847.2029108-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 15 Jul 2024 05:29:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQFuge+3T7uwNjgg8pnzVr=T0PaJ4LT10-zUdhZ5UZ-EA@mail.gmail.com>
+Message-ID: <CAK7LNAQFuge+3T7uwNjgg8pnzVr=T0PaJ4LT10-zUdhZ5UZ-EA@mail.gmail.com>
+Subject: Re: [PATCH] fortify: fix warnings in fortify tests with KASAN
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Kees Cook <keescook@chromium.org>, Marco Elver <elver@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Benjamin Szőke <egyszeregy@freemail.hu>
+On Mon, Jul 15, 2024 at 2:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> When a software KASAN mode is enabled, the fortify tests emit warnings
+> on some architectures.
+>
+> For example, for ARCH=3Darm, the combination of CONFIG_FORTIFY_SOURCE=3Dy
+> and CONFIG_KASAN=3Dy produces the following warnings:
+>
+>     TEST    lib/test_fortify/read_overflow-memchr.log
+>   warning: unsafe memchr() usage lacked '__read_overflow' warning in lib/=
+test_fortify/read_overflow-memchr.c
+>     TEST    lib/test_fortify/read_overflow-memchr_inv.log
+>   warning: unsafe memchr_inv() usage lacked '__read_overflow' symbol in l=
+ib/test_fortify/read_overflow-memchr_inv.c
+>     TEST    lib/test_fortify/read_overflow-memcmp.log
+>   warning: unsafe memcmp() usage lacked '__read_overflow' warning in lib/=
+test_fortify/read_overflow-memcmp.c
+>     TEST    lib/test_fortify/read_overflow-memscan.log
+>   warning: unsafe memscan() usage lacked '__read_overflow' symbol in lib/=
+test_fortify/read_overflow-memscan.c
+>     TEST    lib/test_fortify/read_overflow2-memcmp.log
+>   warning: unsafe memcmp() usage lacked '__read_overflow2' warning in lib=
+/test_fortify/read_overflow2-memcmp.c
+>      [ more and more similar warnings... ]
+>
+> Commit 9c2d1328f88a ("kbuild: provide reasonable defaults for tool
+> coverage") removed KASAN flags from non-kernel objects by default.
+> It was an intended behavior because lib/test_fortify/*.c are unit
+> tests that are not linked to the kernel.
+>
+> As it turns out, some architectures require -fsanitize=3Dkernel-(hw)addre=
+ss
+> to define __SANITIZE_ADDRESS__ for the fortify tests.
+>
+> Without __SANITIZE_ADDRESS__ defined, arch/arm/include/asm/string.h
+> defines __NO_FORTIFY, thus excluding <linux/fortify-string.h>.
+>
+> This issue does not occur on x86 thanks to commit 4ec4190be4cf
+> ("kasan, x86: don't rename memintrinsics in uninstrumented files"),
+> but there are still some architectures that define __NO_FORTIFY
+> in such a situation.
+>
+> Set KASAN_SANITIZE=3Dy explicitly to the fortify tests.
+>
+> Fixes: 9c2d1328f88a ("kbuild: provide reasonable defaults for tool covera=
+ge")
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Closes: https://lore.kernel.org/all/0e8dee26-41cc-41ae-9493-10cd1a8e3268@=
+app.fastmail.com/
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-Spidev is a not an ASIC, IC or Sensor specific driver.
-It is better to use a simple and generic compatible
-string instead of many dummy vendor/product names
-which are all just fake.
+Applied to linux-kbuild.
 
-Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
----
- drivers/spi/spidev.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 95fb5f1c91c1..bbcc5b4e9c91 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -700,6 +700,7 @@ static const struct class spidev_class = {
- };
- 
- static const struct spi_device_id spidev_spi_ids[] = {
-+	{ .name = "generic-spidev" },
- 	{ .name = "dh2228fv" },
- 	{ .name = "ltc2488" },
- 	{ .name = "sx1301" },
-@@ -728,6 +729,7 @@ static int spidev_of_check(struct device *dev)
- }
- 
- static const struct of_device_id spidev_dt_ids[] = {
-+	{ .compatible = "generic-spidev", .data = &spidev_of_check },
- 	{ .compatible = "cisco,spi-petra", .data = &spidev_of_check },
- 	{ .compatible = "dh,dhcom-board", .data = &spidev_of_check },
- 	{ .compatible = "lineartechnology,ltc2488", .data = &spidev_of_check },
--- 
-2.43.5
 
+--=20
+Best Regards
+Masahiro Yamada
 
