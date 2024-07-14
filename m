@@ -1,193 +1,226 @@
-Return-Path: <linux-kernel+bounces-251891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E1930B2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AC0930B2E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 20:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926191F21306
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588681F2129D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 18:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3CC13C8F9;
-	Sun, 14 Jul 2024 18:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C8C13C8E3;
+	Sun, 14 Jul 2024 18:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWR3dPH6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iE3Misj7"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5A3BB23;
-	Sun, 14 Jul 2024 18:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DE23BB23
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 18:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720980591; cv=none; b=KkGllMG9yc2sLn4QSrQHpdBGWv9AaLFV/7mr+DkvIG2aKJu2tBkYTQ/4csa1ASu3BB3t04D3Sja9TeKw1i/OIuo0iBozBRLIAX+11zxwBmz/6MLEN/6qrgeinWZ1v+iu6Xc5WetnfSXRKe4jJYB9jTGf5CIOXIxBW9wEs2rXNnY=
+	t=1720980845; cv=none; b=dVkuB4vkEN6dcZqiPMFixFza6DpqOyhv/RBLpDQBeSiIBFrcs0y1PXHgk557byn2Kfo+ZlQNhDMqF0aIJL27Sdu3bWiBGzOlQgvUKhh1B4a02f3fDPEYXmAQlkz7C8A7B4+uwAW/e7O5JiAtgyNk6SLLnrIRxfMSkdeMhYoY0W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720980591; c=relaxed/simple;
-	bh=NG+9SLQB5CUb0d3jWCkQYWSiXW+fCSYfcN1EMvWBUrs=;
+	s=arc-20240116; t=1720980845; c=relaxed/simple;
+	bh=dfK/hzKcaxrrTO77sPT1l/DUOBwHoNdWg996wb9Hc70=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCZA1sLYMLpmamuOcpuhC6CX9qucCvbI9bcGhqkRLGCM2ANf+6VYLPUnZ0Q9poeEzI98c955lo5YuqRZhc5H2aqYJdKAatA3Z4CSQ7x64nxMvvbIl2Gu4A/tyBdj9PDO+VeePObUaE+NBfn9anQU7UD88R+bBf2NXgo6PsasKkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWR3dPH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97EF2C4AF0A;
-	Sun, 14 Jul 2024 18:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720980590;
-	bh=NG+9SLQB5CUb0d3jWCkQYWSiXW+fCSYfcN1EMvWBUrs=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=TWR3dPH6oS3VKac35oI/mmSrQusTrgNuyW6cEQIDwl7AEqt4zW0IlfViT8keRsMgl
-	 FOooC1R8aZ2B0iS0/nJyBPGVxmGuIvs4BF7uxmgcNHzguGQGy3cKEg8/3mrujc8jW6
-	 g7Jg68PAA25/GUj09NortgahSMdfxQSIT7sQ2SFPXv5YObRNtsidgkoKRrTJDV7mkR
-	 V9VoiTAKHzA0l7Ozaqhkryn8QrDld9l8Np7s9BlVlTYOP6qDnAJgfCym6slhQ10Bm5
-	 Rnn9i9iARH4ZvKDITGIDmp2QgsuoylpjpPW56qEtRyHioylzHWGE5rgDGE+i0xQHnC
-	 pfAXPU4wla6rg==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eedeca1c79so17306101fa.3;
-        Sun, 14 Jul 2024 11:09:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNRgY33QDerwJ3D6x5azo14SyipJurIGpwlQ78PxTZ3QG9n9UYaCa8hh5eL46m2EHQbw04m7lPrQbIi1C16fTtlxP0lA7oBUHCNqJVQtnrz7BYh/VMZsA6rLqpVi6coD3yXegO7eUUPm6vsyVFqtHnS70g/buS5yOeiKdfKJI+1/eWF05LPg==
-X-Gm-Message-State: AOJu0YzjoK+TVXqf1qlyAt1K4xObeNQRK5ot95rpxt5mkarJCqMMFZOP
-	VxcfQDsvjf8ZNad6xilxw1RkmJAcQqHkPV9NpbVq2S35MW5tDAB3ClwNb2gGWy4UsuZZAQIh6Ns
-	0dHgpNlSAJZ6NBLC+14PK7QvJaak=
-X-Google-Smtp-Source: AGHT+IFFXDuC1PwJBXmFQH3s6fgDJs2b42yBRYfHa3/YS6nIv2xJQGOJLd7uR/2otp56ybbamkaqxaVyWlGuM+dGn3o=
-X-Received: by 2002:a2e:b178:0:b0:2ec:5255:b4d9 with SMTP id
- 38308e7fff4ca-2eeb30b88acmr130110861fa.7.1720980588944; Sun, 14 Jul 2024
- 11:09:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=YzhM+5JJ351DlpyY84ZFg6JgDE8CaaqctetYwC0qurQeAJ3HjVr1pU4Fwp247ub0c0ZGzozDWdmt24Bd8ASWulLDIlcELX00g13CWdoI6sPrPAIyyBo856008bniE4aJoSih6K9dfgp1f5xnzoTwyf3aFfZun5FgQjRn804CgMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iE3Misj7; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-38206c2f5e3so188525ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 11:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720980843; x=1721585643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z1f1qal/kMBnOtnqRMW7oCx8DByn/5i1u7lFfzKpy18=;
+        b=iE3Misj7nCauSuUBEMVCKoI5zJOtpJp2t5OOueKt85BNi/CWWQDd1MXqR0QZppunly
+         X23VlY43NOKb/xpr7ntBkAD8Y5GuQgDkrk+ZcCqAMwFlQRTZ8xDA4bBdcyuBqDyz+zrN
+         0gJC+eZX2Zck9hDJVfUdiqWOlCsFoIueqP/trrJ+e3wlzZU8xsX+7MSz3BCclRY5S4OY
+         klrbwxMCYCNi+BgSnnHTj76MVF5SoduTq3AuBuLPCYOmiwN8QY+OiiMxvvQrwzv4UGUm
+         sEQo1jFtANkmhCYkESECUZCYdHI98KcvMR2DRTIj0mbN3ePbhis75kGTYdgx3tnlV19c
+         6MzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720980843; x=1721585643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z1f1qal/kMBnOtnqRMW7oCx8DByn/5i1u7lFfzKpy18=;
+        b=wqeG1j7eNE5lYq2/DUsV/NuWWqGYJOYNOHtNBuLHHI7swMncLYsSQIBDj6ONvdz5HN
+         QOCzbAaG4Vv+SVuN4jY1UtJjnvmFysunVmpBtuAvdJIlh50020vgYblT6GfgyQW3noyD
+         T8H2ygkl2dwSaELuokPeh6tenwtXO/W4CTFKSeY1U47uNYxWF0sHC9Qoge2bpwY4Rjsj
+         pmx+S/gYQhMbqR9VYi5F9s1Hq3IIrtceZe3A+47V3qRIyEkIaoqQPF/Y4EiUkocoCZ3P
+         r1XVAIuqjxUW51NpTtMxBkQ1QNPM2/NhcsKaQ76wraVo7zt/v7D0JPy7eESnD/TaPl/O
+         sIbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRiZbYht/8s941rBwOvguQEXS4HVXB2G+SCZueKGS3ZNqgn2IxuH1vyFUy7OpzvpQiqKmCGY8llTm+QiIcOS0gERw0vn24A6JWHT1U
+X-Gm-Message-State: AOJu0YzrzfSSFrJvSfLvBDdSop2dUY3MxwjKNATuqSAf3zBw2tVXr5oR
+	P63MVcTtwGSEalk2fKMoO+ZsCW5AgkQbFvPz9lALdZdvFX83m85j9RjJz/Za0JlmkYd+qiMJLUS
+	Fc2e65AKqSq30bHHtjm4yc28/K7s4KgqfIQBr
+X-Google-Smtp-Source: AGHT+IHSqNixZdIxdcHVsTBP6IdQge2e4Z2HbUwnuotevIQTz2Wdyg1CggxxpJwDZVpNg6CxI/UPKorrchram36CsHM=
+X-Received: by 2002:a05:6e02:1a4f:b0:375:eda1:d2ca with SMTP id
+ e9e14a558f8ab-38fcafb0472mr3401005ab.22.1720980842951; Sun, 14 Jul 2024
+ 11:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720969799.git.daniel@makrotopia.org>
-In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 15 Jul 2024 02:09:34 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66YespcUHnC3hdhogdutVo_wAX32+cqT3sw3UzkwKBxxQ@mail.gmail.com>
-Message-ID: <CAGb2v66YespcUHnC3hdhogdutVo_wAX32+cqT3sw3UzkwKBxxQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Dragan Simic <dsimic@manjaro.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240701044236.475098-1-irogers@google.com> <20240701044236.475098-2-irogers@google.com>
+ <ZoTETvgcPdl9EUJV@google.com> <CAP-5=fV4oPEjX2fh3aeBbmBGgYJGCdBnVjTZ2XnCCgnTSa0LTw@mail.gmail.com>
+ <ZpGTHzfIeREt5VUO@google.com> <CAP-5=fXZGTbXZkyW7QLTYU6vZkiiTSvJrBigcN=QYiaP3C9n5A@mail.gmail.com>
+ <ZpKWbtXQTXwzGLw-@google.com>
+In-Reply-To: <ZpKWbtXQTXwzGLw-@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 14 Jul 2024 11:13:51 -0700
+Message-ID: <CAP-5=fUg5hoZF8TLK+ivAVzVLKW0FsGaDWS+TN55m72eHLNUHw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] tools subcmd: Add non-waitpid check_if_command_finished()
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 14, 2024 at 11:16=E2=80=AFPM Daniel Golle <daniel@makrotopia.or=
-g> wrote:
+On Sat, Jul 13, 2024 at 8:00=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> Rockchip SoCs used to have a random number generator as part of their
-> crypto device.
+> On Fri, Jul 12, 2024 at 02:19:58PM -0700, Ian Rogers wrote:
+> > On Fri, Jul 12, 2024 at 1:33=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > Hi Ian,
+> > >
+> > > On Tue, Jul 02, 2024 at 09:24:50PM -0700, Ian Rogers wrote:
+> > > > On Tue, Jul 2, 2024 at 8:24=E2=80=AFPM Namhyung Kim <namhyung@kerne=
+l.org> wrote:
+> > > > >
+> > > > > Hi Ian,
+> > > > >
+> > > > > On Sun, Jun 30, 2024 at 09:42:35PM -0700, Ian Rogers wrote:
+> > > > > > Using waitpid can cause stdout/stderr of the child process to b=
+e
+> > > > > > lost. Use Linux's /prod/<pid>/status file to determine if the p=
+rocess
+> > > > > > has reached the zombie state. Use the 'status' file rather than=
+ 'stat'
+> > > > > > to avoid issues around skipping the process name.
+> > > > > >
+> > > > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > > > ---
+> > > > > >  tools/lib/subcmd/run-command.c | 33 ++++++++++++++++++++++++++=
++++++++
+> > > > > >  1 file changed, 33 insertions(+)
+> > > > > >
+> > > > > > diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/=
+run-command.c
+> > > > > > index 4e3a557a2f37..ec06683e77a0 100644
+> > > > > > --- a/tools/lib/subcmd/run-command.c
+> > > > > > +++ b/tools/lib/subcmd/run-command.c
+> > > > > > @@ -2,6 +2,7 @@
+> > > > > >  #include <unistd.h>
+> > > > > >  #include <sys/types.h>
+> > > > > >  #include <sys/stat.h>
+> > > > > > +#include <ctype.h>
+> > > > > >  #include <fcntl.h>
+> > > > > >  #include <string.h>
+> > > > > >  #include <linux/string.h>
+> > > > > > @@ -217,8 +218,40 @@ static int wait_or_whine(struct child_proc=
+ess *cmd, bool block)
+> > > > > >
+> > > > > >  int check_if_command_finished(struct child_process *cmd)
+> > > > > >  {
+> > > > > > +#ifdef __linux__
+> > > > >
+> > > > > Is this really necessary?  I don't think we plan to support other=
+ OS..
+> > > >
+> > > > I don't think it'd be unreasonable to say run "perf report" on
+> > > > Windows, or using wasm inside a web browser. Part of the reason for
+> > > > doing things this way was to keep the WNOHANG logic although this
+> > > > change no longer uses it for __linux__.
+> > >
+> > > I'm not sure we are ready to run it on other platforms.  So I think
+> > > it's better simply remove it for now.
+> >
+> > So in the office hours there was some discussion with a potential new
+> > contributor whose development platform is OS/X. It's fairly obvious
+> > this code can't work on anything but Linux and using #error feels
+> > annoying. The waitpid code is tested and has a known issue, but I
+> > think it is better than just breaking anyone not on Linux.
 >
-> However newer Rockchip SoCs like the RK3568 have an independent True
-> Random Number Generator device. This patchset adds a driver for it and
-> enables it in the device tree.
->
-> Tested on FriendlyARM NanoPi R5C.
->
-> v6 -> v7:
->  * Patch 1: unchanged
->
->  * Patch 2: bring back rk_rng_write_ctl()
->    - bring back rk_rng_write_ctl() with improved comment to describe
->      the hardware.
->
->  * Patch 3: unchaned
->
-> v5 -> v6:
->  * Patch 1: unchanged
->
->  * Patch 2: get rid of #ifdef
->    - use if (IS_ENABLED(...)) { ... }instead of #ifdef inside functions
->    - use __maybe_unused for functions previously enclosed by #ifdef'ery
->
->  * Patch 3: unchanged
->
-> v4 -> v5:
->  * Patch 1: always use RK3568 name
->    - use full RK3568 name in patch description
->    - add RK3568 to title in binding
->
->  * Patch 2: full name and cosmetics
->    - also always mention RK3568 as there may be other RNG in other
->      (future) Rockchip SoCs
->    - remove debug output on successful probe
->    - use MODULE_AUTHOR several times instead of single comma-separated
->
->  * Patch 3: unchanged
->
-> v3 -> v4:
->  * Patch 1: minor corrections
->    - fix Rokchip -> Rockchip typo
->    - change commit title as requested
->
->  * Patch 2: improved error handling and resource management
->    - Always use writel() instead of writel_relaxed()
->    - Use pm_runtime_resume_and_get
->    - Correctly return error code in rk_rng_read()
->    - Make use of devm_reset_control_array_get_exclusive
->    - Use devm_pm_runtime_enable and there by get rid of rk_rng_remove()
->
->  * Patch 3:
->    - Move node to conform with ordering by address
->
-> v2 -> v3: patch adopted by Daniel Golle
->  * Patch 1: address comments of Krzysztof Kozlowski, add MAINTAINERS
->    - improved description
->    - meaningful clock-names
->    - add entry in MAINTAINERS files
->
->  * Patch 2: numerous code-style improvements
->    - drop misleading rk_rng_write_ctl(), simplify I/O writes
->    - drop unused TRNG_RNG_DOUT_[1-7] macros
->    - handle error handling for pm_runtime_get_sync()
->    - use memcpy_fromio() instead of open coding for-loop
->    - some minor white-spaces fixes
->
->  * Patch 3:
->    - use clock-names as defined in dt-bindings
->
-> v1 -> v2:
->  * Patch 1: fix issues reported by Rob Herring and Krzysztof Kozlowski:
->    - Rename rockchip-rng.yaml into rockchip,rk3568-rng.yaml
->    - Fix binding title and description
->    - Fix compatible property
->    - Rename clocks and add the corresponding descriptions
->    - Drop reset-names
->    - Add a bus definition with #address-cells and #size-cells to the
->      example.
->
->  * Patch 2: fix issue reported by kernel test robot <lkp@intel.com>
->    - Do not read the random registers as big endian, looking at the
->      RK3568 TRM this is actually not needed. This fixes a sparse
->      warning.
->
->  * Patch 3: unchanged
->
->
-> Aurelien Jarno (3):
->   dt-bindings: rng: Add Rockchip RK3568 TRNG
->   hwrng: add hwrng driver for Rockchip RK3568 SoC
->   arm64: dts: rockchip: add DT entry for RNG to RK356x
+> I feel like it's a potential issue and should be handled by the
+> potentiall contributor.  Until that happens, we can assume Linux
+> and keep the code minimal.
 
-Tested-by: Chen-Yu Tsai <wens@csie.org>
+I'm not clear what the issue is. Arnaldo took the WNOHANG waitpid
+contribution but I asked him to drop it due to losing stdout/stderr in
+parallel mode due to the waitpid closing these file descriptors early
+- we're not running in parallel mode by default any more. Reading
+procfs to determine zombie state is clearly a Linux only thing, hence
+the ifdef. I'm keen to keep to any extent possible the perf tool
+running on non-Linux platforms, for example, gathering a data file on
+a server or embedded system then wanting to do perf report on a
+different machine which may not be running Linux. libsubcmd is used
+throughout the tool and we have many subprocesses for pagers, objdump,
+addr2line, etc. I don't agree with making such a core library Linux
+only and there's no obligation for the maintainers to take these
+patches. I disagree with a minimal patch.
 
->  .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
->  MAINTAINERS                                   |   7 +
->  arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
->  drivers/char/hw_random/Kconfig                |  14 ++
->  drivers/char/hw_random/Makefile               |   1 +
->  drivers/char/hw_random/rockchip-rng.c         | 227 ++++++++++++++++++
->  6 files changed, 319 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568=
--rng.yaml
->  create mode 100644 drivers/char/hw_random/rockchip-rng.c
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
 >
-> --
-> 2.45.2
+> > >
+> > > > > > +     char filename[FILENAME_MAX + 12];
+> > > > > > +     char status_line[256];
+> > > > > > +     FILE *status_file;
+> > > > > > +
+> > > > > > +     /*
+> > > > > > +      * Check by reading /proc/<pid>/status as calling waitpid=
+ causes
+> > > > > > +      * stdout/stderr to be closed and data lost.
+> > > > > > +      */
+> > > > > > +     sprintf(filename, "/proc/%d/status", cmd->pid);
+> > > > > > +     status_file =3D fopen(filename, "r");
+> > > > > > +     if (status_file =3D=3D NULL) {
+> > > > > > +             /* Open failed assume finish_command was called. =
+*/
+> > > > > > +             return true;
+> > > > > > +     }
+> > > > > > +     while (fgets(status_line, sizeof(status_line), status_fil=
+e) !=3D NULL) {
+> > > > > > +             char *p;
+> > > > > > +
+> > > > > > +             if (strncmp(status_line, "State:", 6))
+> > > > > > +                     continue;
+> > > > > > +
+> > > > > > +             fclose(status_file);
+> > > > > > +             p =3D status_line + 6;
+> > > > > > +             while (isspace(*p))
+> > > > > > +                     p++;
+> > > > > > +             return *p =3D=3D 'Z';
+> > > > > > +     }
+> > > > > > +     /* Read failed assume finish_command was called. */
+> > > > > > +     fclose(status_file);
+> > > > > > +     return true;
+> > > > > > +#else
+> > > > > >       wait_or_whine(cmd, /*block=3D*/false);
+> > > > > >       return cmd->finished;
+> > > > > > +#endif
+> > > > > >  }
+> > > > > >
+> > > > > >  int finish_command(struct child_process *cmd)
+> > > > > > --
+> > > > > > 2.45.2.803.g4e1b14247a-goog
+> > > > > >
 
