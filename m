@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-251786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707619309D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:52:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5289309D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 13:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C33E281AA0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15220281BAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01EF71750;
-	Sun, 14 Jul 2024 11:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57A56EB55;
+	Sun, 14 Jul 2024 11:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Tk2fyNDW"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYP2EXGp"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F215C0;
-	Sun, 14 Jul 2024 11:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6704F44361;
+	Sun, 14 Jul 2024 11:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720957919; cv=none; b=o4GGJWqYPVvOG9oyYjXHLestTT3kJ3L6W0ZndVyc+mQ44ne5unL2di0/3iItN2kzkfFWHHnRBAfrs8oDIHuLMp+/4nAoqcvCsV29icnVluCaEWALkbNr9VU4VdVi+BzNbHWaerLs8iinasvuWblQoJVbVgAoV13OiPPZqequVUQ=
+	t=1720958161; cv=none; b=YZSgq56P+K8zrMxNj728LJjBBqJetkgFXPc/h7delgH+xWrKcx641aW9GTLnfYNlRy7dkkZudY2I/Owy5YCLCcU4+YrRRdCjyQwJEOZu/7d6PkCDs/9wPrxqZui6SC3A1YA3x/DjbRp4K50fZwXVNrXKsW7AUYzMMpEm1gVNLBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720957919; c=relaxed/simple;
-	bh=mnvBJJl2oILdBmJUSwBnl9m1Qsxmr+kYSIcSPT5WHxU=;
-	h=Message-ID:Date:MIME-Version:Cc:From:Subject:To:Content-Type; b=ZYdpru820KPSEyz75s/43PjpbFJakVgCLYBdSstsHscAFnlYXsaGOHCFekVyQXPzCBIGmRQh7VClJNlcHojKwL0LB+UJEjozHLEm8gdnC7wXlSsrmJH3/+BVgt0Xq+LtSWXKhcssD4yEk2ivZp4+YT4Z9EulpfCKl+FdzTwS8jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Tk2fyNDW; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720957910; x=1721562710; i=markus.elfring@web.de;
-	bh=nDAhleMulhqKEzdv+vsErFaaUrjnXZiCoSZYFMrFO1Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Cc:From:Subject:
-	 To:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Tk2fyNDWONq+xt/WevHyxSlM0KKUJ+Ppp+FgnazhJoe99qdMpjwzR0lt2zQam9g4
-	 wh8ikDMi/BfSPX8JoSQIumm4WATtjX/LNji4cadtlhf2UALGTXndqGnbr3oBx0fUP
-	 A/INzvpUMIveVSvIQaxK1t/CKI6F2Ah/qt2YD3USW/EVAAWmcTUo9Ma6dRKm+Xcs3
-	 0/KEDJu8yL5pXNDqlHWSYpSvE4jlJP4FwIXbzZhRX0xKr74BHFTbsKOzNrzbmEQTn
-	 nL+6b7fxxJtP1hfOKIOn87g85IEIhD72mE+vMB5xDHK/T4THFKJyobeZd+QnoubNY
-	 cHpFfweNZ9hiIwusTw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mtgyp-1sDlIf07FH-00tUeV; Sun, 14
- Jul 2024 13:51:50 +0200
-Message-ID: <a44f2ae6-0242-40a3-bdfc-b81fe862eec9@web.de>
-Date: Sun, 14 Jul 2024 13:51:49 +0200
+	s=arc-20240116; t=1720958161; c=relaxed/simple;
+	bh=kBE2d+T50inc3iRRDa+UrIulKWSgYOIzmujTdDnRtHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=q2VWCZF+ZaNyMqmArqww1gYw7wczSZTfi5Rtgo0R0zMCfnKKbkY01HyO29z3wOn13sDd3JWVM69j8iy/Oa2eCra+8TfkZobyPEZ3wYJGh21IBJW1wNXFiGzVCs2LpuV6tW7yshRnbIO+qrLJBB+7OaKDXMOdqMbrv7s3AA3mVqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYP2EXGp; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso35116741fa.3;
+        Sun, 14 Jul 2024 04:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720958157; x=1721562957; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eVChRf9IHf7yjvnfqhKSBqOA4um7vjTbsZlNcS8UTMk=;
+        b=RYP2EXGphBLyR9ACwTJe3o/aiRC0zXFnj/lJ9pKHTkV4gaWJ+gAdxVi6o+KW43nuUc
+         P8P9IUiOfns8JfdpL9cjXYQT/d/+rctL/KGHOqkfvAOKbLi5kmDGf0MRbe5M7zx2tlcR
+         nBHQzfcT2boTqKScpxM67j0VrXhIaAmN37NrOZlu8EvP1boZ6vSOHGcEuTN1A/anvsCT
+         tBFT8YeIToemDFk2KsPvs/Kbk5MxKM/Y2lT3e3teVoBCbJb3WHRUrKFA9MypTYRchC0L
+         gyLVJikadGDWY3ykfX0L7LiClkmWmwnipb/hveHVPgogdioSIKrfUppxUqN0XO4X7CJK
+         8q+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720958157; x=1721562957;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVChRf9IHf7yjvnfqhKSBqOA4um7vjTbsZlNcS8UTMk=;
+        b=HxUGFMXEFAWCCScpJ/QPev6JEUVYKnTowxtVsNVLPMNtX2n7l96al/St+lGXoUU5cX
+         9o5nLcWltN8jtv+dmCjPeiRdg+qKnxPWxMCjrjOVuk2JgjxrZlaXgxRbLgj9yVz0VCfa
+         B/YgtUMMc9rjFWeyRWf0o/+eYiW7zfNhpkCeNKwE9CDuz6KO+5nZAJGa7IwF55tEtqEG
+         AJMbHZ2GgHFKPkStXiTR+0G4jTeh8s8lMJEQ/FG/pxWta9IrmSe5OZXk/tSPDJeeBYJy
+         zLf5d9qKN3u6j0ITjQMLi0XdhBMUnP5VeyDzxwrS+NfSB6P8J6FA1x0ilZBjeTpkXu/i
+         Mcbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR8M7RWmjBe1Pd9NxHvNWeGqtGIfTGwJl+dXvsUXreKGtV9nOVt4G5+y8fZv24YKlZgPc5wyKojzDWYqnRTkLV8fEFsHdGbhDyCoT+
+X-Gm-Message-State: AOJu0YwuAhBTe8OHJ5+6+8yxLovZTyovAREpCWUy/sHZLA3TP1M5sqyE
+	8ZS3IIK8KpfcEJhioe6M/G0VRLfebff/rBVuo624YN3gnlX43QzN3xatog==
+X-Google-Smtp-Source: AGHT+IHjhf49NvYAnVcHP0VoXvduk5j86Wc+QHnDaGHfzyQ2dVDduu8Pe3En+9+PG1Xpy5EhsuGYOQ==
+X-Received: by 2002:a05:651c:90:b0:2ec:5b89:871 with SMTP id 38308e7fff4ca-2eeb3188df3mr106650161fa.33.1720958155255;
+        Sun, 14 Jul 2024 04:55:55 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e774c9sm49803105e9.6.2024.07.14.04.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 04:55:54 -0700 (PDT)
+Date: Sun, 14 Jul 2024 13:55:52 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Spreadtrum SC2731 MFD cleanups
+Message-ID: <cover.1720957783.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] module: tracking: Extend format string of a seq_printf() call
- in unloaded_tainted_modules_seq_show()
-To: linux-modules@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:baZG2ulOL/demBIBwplDbo5i7K6cjtdXWKG2tOGJcEqd8Avh01L
- QeJ2n17Nfk61Zu0njsW1vRlfAzV5hRW3zV/W1liNy+520VlaQAgqNqIGutTUWACh8rp9Yfq
- QtJXnHLFnSeziozTufzVelukj4BoyVoC0gomPd1C4swOVj46Cx/oSI9HSCQvCv26S82p8NG
- i9pHqaRq3PwDSskLB3LOA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TbNRlhVQwjY=;97OViBGYNY0cBMJuxnWdywbqZ+u
- CW+e4JWXHw0Ix6ePGCAX1Z/2CeNuTYMtoO4asD/VCnrwrUoQeepl7oYQFCenpZzZXcz22Nbnr
- fiy4xPJok1Ez3FGWYqphNNMAaNHySQ4nUWmBw6Juj+1NexGT5zPjRd1+ARdv23g6OvLGneQiy
- RPsSiIxy5esJhP3mM3wFIJR0oBojwPdPYcjESLzJLECW/9UdME8w5K5S0Cw0JO1ZPuoI2bZhf
- iWEUsKAPAfmGVftnSDiaAZ2kzHm3G4Khd2Y+kpK8IpA/+Vpiu1V2aBvkabPa3P6nuSDhQLr5P
- eTuIMzEhyuVM1Zl/fR0NEBUy7YBPL/P8Zk8uI3onFypgeRQKmgv3E3m1KjukUe7fi6jxXm91F
- m6LYQkJwjI7HDpE76WjNNQ7o1ajxWEFet9d9TQfc9i30gJXxJtnQo8r83hLT0+vncdj6swj+G
- i4bH6+IpIW1K18CdTkvmLW4UDlZXhU4J0GfSQDtcE6dfVPKS7yLvkUoCDWYXjyKasrKufs6Q4
- T6m8sjkFtMd8k9IYz0WAnchwyajHqSp5XdcZQeR3fbOLhscbCCF/aFl30vOy9o0jxqMHaJQtc
- cPKpBXHSa6tCiR+Tma+Ax4gaBhuCTB+9RSFym2dGBIrMDsqyPAGE2WoAVMHWruqMWujjbw98c
- IFwszc105k0voOTV7UlfDltau90+dg6HEDPViOF3cBHVlmqaS2xlmvJF6W8Dso+IMrSGZwZtO
- hnj4L1MiIc/FBaMCnE91yA+8gwplnE9QSdJ9y9KlipFkEjgOT+hb9c6rhisbgS11nNjoxrgqr
- LSQ143f6OmxGVr3tjLjBSvqA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 13:43:06 +0200
-Subject: [PATCH] module: tracking: Extend format string of a seq_printf() =
-call in unloaded_tainted_modules_seq_show()
+This series is a preparation for converting the SC27xx PMIC MFD bindings
+to DT schema.
 
-* Move the specification of a single line break from a seq_puts() call
-  into the format string of a previous seq_printf() call.
+Stanislav Jakubek (2):
+  arm64: dts: sprd: sc2731: correct interrupt-cells value to 2
+  arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
 
-* Omit an extra call of the function =E2=80=9Cseq_puts=E2=80=9D
-  because of this refactoring.
+ arch/arm64/boot/dts/sprd/sc2731.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/module/tracking.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/kernel/module/tracking.c b/kernel/module/tracking.c
-index 16742d1c630c..9f84271c23b3 100644
-=2D-- a/kernel/module/tracking.c
-+++ b/kernel/module/tracking.c
-@@ -94,9 +94,7 @@ static int unloaded_tainted_modules_seq_show(struct seq_=
-file *m, void *p)
- 	l =3D module_flags_taint(mod_taint->taints, buf);
- 	buf[l++] =3D '\0';
-
--	seq_printf(m, "%s (%s) %llu", mod_taint->name, buf, mod_taint->count);
--	seq_puts(m, "\n");
--
-+	seq_printf(m, "%s (%s) %llu\n", mod_taint->name, buf, mod_taint->count);
- 	return 0;
- }
-
-=2D-
-2.45.2
+-- 
+2.34.1
 
 
