@@ -1,144 +1,188 @@
-Return-Path: <linux-kernel+bounces-251931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8C4930BC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 23:31:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDEA930BC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 23:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C00281C47
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7461F21ADD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 21:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E07E13CA99;
-	Sun, 14 Jul 2024 21:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E03C13D88E;
+	Sun, 14 Jul 2024 21:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUlJxx1W"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K2S65YHN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4256C14006;
-	Sun, 14 Jul 2024 21:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66D214006
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 21:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720992684; cv=none; b=lZ43qOnpMGLHuwoPMyVqYrr+FTuml338zByO1Nh3ZpCaCZRUVvahlqWiSWDjhq+ijnFk2q7SDKaDOSlgkv6gCcy2p6aDVcmvKv5VREnvJ87qSjIPJzK2+OKdZUSynpR8rWhvg95qIWGkm2C6wiw5alOVnT08CnO/cF1egbuxKQg=
+	t=1720992691; cv=none; b=SQiJkaGYznD0X7j/Z+3o9sBVPq2HgLjr5NEZ3/6U+DaqZUwVxbb8G1ImWQRS2IELNsd4OGva6tvu6j2+jNjlNCPylBaByUR0XMX2B+McJsoKkM71w5hb9wgBItXlINEkuQNDk5/f+9uG+KlH20XxqBCi0+DJVsnCzjIn9dRY52Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720992684; c=relaxed/simple;
-	bh=UoKrjrHvXPwSGJkX8s798cWDHp3QXsXhOzLtMRZDma0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AcByNoVQAUjlaNXAnXY+T5fgMHE5lueHYrBp/A4TqzCHdWMY50yIQ3Vc4ozf8Hp5vicz4nCAfpwLxcmYEB1OV+zNgAF1vPoFDBGuyBSeRaiuoPPkZlR5/ru2/7pSB6q8IHmrpDtCYxfwgpLpyxBgNBNw6KVAmjBhkUneHEt2iAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUlJxx1W; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so50474231fa.3;
-        Sun, 14 Jul 2024 14:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720992681; x=1721597481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v4xkzDWX19N9oFSSTQeCe65G8IASeY++bNpXDyU0BaI=;
-        b=aUlJxx1WD618RadeQfU+5AObp7KizASjDR4Jmphe6sk0Zyak7q05taC97ZRi2KUD5e
-         ysVDmDj/TqvzK4IhWqAa8AEde6N5jGt+Qgv/gVzuiL/R/rCAJzbFFny8MAyVcl+1AK6e
-         KggktccY93sJF72nJgVr5sWnnloFwvVn+fzFOFx8YY6+IGcGGYLNU/Tx/syBpXedsKFr
-         mZiBId350jdTRnTUG6w1oeLl8TS9utwlxii3bEJfLFCv2WI1NAurM/1Vc4NPzYSh+ptg
-         vpLKjuxYwAU205Ds0H34M69RngsCOlqSaeiJI9ibLtsp7uGF9r3j8ranAvykwc9m/m1+
-         u+Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720992681; x=1721597481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v4xkzDWX19N9oFSSTQeCe65G8IASeY++bNpXDyU0BaI=;
-        b=iW8QQOKYdMLxIZz9WxeN0LIEh2zmbYfAFq7dpFV1naCEQOG5Tj3LXMwegfI+1w98dC
-         /1WMPGcM4XudqN1j8H10xOhyNdfAdRThxGW50nb1v2Jg9KyUTghH8s2tm5epiBBvsfWU
-         WsEijRAcTZP0ZSKooU4eIpYNWyXdKxmDYvWLk0Fwq6oigbz2+Nuci22izAiFf9By5mcq
-         gBBM+iTyZbx15c6BibrqQx4xpb4x7tStiIJ9139Ic/Zvk3fMAywkycKc5nwADM+Webdc
-         2wFS8M80LOgU+PjGrwdj5zblQ0aqBDbYo7TGG2QcwJ0KjoEP3ov6Kazm3pQHjHBmJKth
-         HzOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqHVN34gd74mw5FDS+rTEw++X5/wTiKtrqygrInzMvWB3DhxuaUjBIqBdGiRScRFc0o8tvYIyMmZRd7KmsRkoXO3CNacRxcz6fOpLB4Ne2lABaTyG/2DT1d379CqoZn5vWi8OhzjMb/71OpIaZAtAurwlvYQw+Qa2LdrgghQNB8kSqwExCZi7lAw==
-X-Gm-Message-State: AOJu0YzbbKG1vSPjo4xNxKYINQLM/kCMa7yvROXK7yuqoNbjffLcHmGo
-	hXHHiNPnAd7/JHiPf/UoqSwYOwpY4GW/QroHAebK2Thf5IfBluwJkCuY2Eu7LPGjTK9FxmKObZ9
-	GpGTpYUpB5m8pDiqkcVKLF6LqjD8=
-X-Google-Smtp-Source: AGHT+IHZzsUJb+X/1SRiHsZxjcp8GphpXB7juokaQr1xHTkTa0/CX9uDQm+sFRpdXWKF/6b8s8qSfjvWuuxrH2AC3HY=
-X-Received: by 2002:a2e:9d06:0:b0:2ec:5469:9d57 with SMTP id
- 38308e7fff4ca-2eeb318275cmr108695541fa.41.1720992680928; Sun, 14 Jul 2024
- 14:31:20 -0700 (PDT)
+	s=arc-20240116; t=1720992691; c=relaxed/simple;
+	bh=2/IUcE/CbaM1/3rQiemxwHQJB6/uEWCEbZtq2kHAnNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ktllsu3AvSZlI4SJ/AUhWWVyuswBfF30jK/Vr0+I/S+L8tjuk4rQsA+OhfUyXq82fkhrByv6IgYZzES382YLEqovRcXcsaTzcan28uwNS/VKTk1/qpI8X5dZx3qtElRfbMAMrAfeiMxzjjsq0szQI7vwe9Arl7pbBW6B+wMGA4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K2S65YHN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720992688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PajJI1FmeG3mQqOJs0oxZQhueS2YJaoO1QjtHDZ8Om0=;
+	b=K2S65YHNN46Bn+SM4MocBNNfsLQZnMQEaO6Vvu8q/kKI9ELnfa6F2CMWz212395T2H6ABp
+	nVtoz+DSouNsjaSHX2JG/SUEb7poaIqsEvnXoTsLdfbnpKnhGrhZpZ20R0gWmpDkOtN7Aj
+	KSuzRM9BOGZjlG6CPpl8l0ispCYdgHY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-jiYLKS4gPjehBlF5Ad8x5w-1; Sun,
+ 14 Jul 2024 17:31:26 -0400
+X-MC-Unique: jiYLKS4gPjehBlF5Ad8x5w-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35E1F19560B2;
+	Sun, 14 Jul 2024 21:31:25 +0000 (UTC)
+Received: from [10.22.64.27] (unknown [10.22.64.27])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC5391956066;
+	Sun, 14 Jul 2024 21:31:23 +0000 (UTC)
+Message-ID: <975d2b0f-f84c-4c84-adf2-098fef59d90b@redhat.com>
+Date: Sun, 14 Jul 2024 17:31:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
-In-Reply-To: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 14 Jul 2024 16:31:09 -0500
-Message-ID: <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Use seq_putc() in two functions
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: samba-technical@lists.samba.org, linux-cifs@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Bharath SM <bharathsm@microsoft.com>, 
-	Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/lockdep: Use seq_putc() in five functions
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-are there other examples of modules where similar changes have been made?
-
-On Sun, Jul 14, 2024 at 3:35=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
+On 7/14/24 06:25, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 14 Jul 2024 10:23:49 +0200
+> Date: Sun, 14 Jul 2024 12:18:16 +0200
 >
 > Single characters should be put into a sequence.
-> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+> Thus use the corresponding function “seq_putc”.
 >
 > This issue was transformed by using the Coccinelle software.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  fs/smb/client/cifs_swn.c | 2 +-
->  fs/smb/client/cifsfs.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>   kernel/locking/lockdep_proc.c | 24 ++++++++++++------------
+>   1 file changed, 12 insertions(+), 12 deletions(-)
 >
-> diff --git a/fs/smb/client/cifs_swn.c b/fs/smb/client/cifs_swn.c
-> index 7233c6a7e6d7..68998c6ba7a2 100644
-> --- a/fs/smb/client/cifs_swn.c
-> +++ b/fs/smb/client/cifs_swn.c
-> @@ -655,7 +655,7 @@ void cifs_swn_dump(struct seq_file *m)
->                 seq_printf(m, "%s", swnreg->ip_notify ? "(y)" : "(n)");
->         }
->         mutex_unlock(&cifs_swnreg_idr_mutex);
-> -       seq_puts(m, "\n");
-> +       seq_putc(m, '\n');
->  }
+> diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+> index e2bfb1db589d..4612d1c4f45e 100644
+> --- a/kernel/locking/lockdep_proc.c
+> +++ b/kernel/locking/lockdep_proc.c
+> @@ -101,17 +101,17 @@ static int l_show(struct seq_file *m, void *v)
 >
->  void cifs_swn_check(void)
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index 6397fdefd876..ce5cb72bb81f 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -491,7 +491,7 @@ cifs_show_security(struct seq_file *s, struct cifs_se=
-s *ses)
->         }
+>   	seq_printf(m, ": ");
+>   	print_name(m, class);
+> -	seq_puts(m, "\n");
+> +	seq_putc(m, '\n');
 >
->         if (ses->sign)
-> -               seq_puts(s, "i");
-> +               seq_putc(s, 'i');
+>   	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
+>   		list_for_each_entry(entry, &class->locks_after, entry) {
+>   			if (entry->distance == 1) {
+>   				seq_printf(m, " -> [%p] ", entry->class->key);
+>   				print_name(m, entry->class);
+> -				seq_puts(m, "\n");
+> +				seq_putc(m, '\n');
+>   			}
+>   		}
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   	}
 >
->         if (ses->sectype =3D=3D Kerberos)
->                 seq_printf(s, ",cruid=3D%u",
+>   	return 0;
+> @@ -175,9 +175,9 @@ static int lc_show(struct seq_file *m, void *v)
+>
+>   		seq_printf(m, "[%p] ", class->key);
+>   		print_name(m, class);
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   	}
+> -	seq_puts(m, "\n");
+> +	seq_putc(m, '\n');
+>
+>   	return 0;
+>   }
+> @@ -379,7 +379,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+>   	/*
+>   	 * Zapped classes and lockdep data buffers reuse statistics.
+>   	 */
+> -	seq_puts(m, "\n");
+> +	seq_putc(m, '\n');
+>   	seq_printf(m, " zapped classes:                %11lu\n",
+>   			nr_zapped_classes);
+>   #ifdef CONFIG_PROVE_LOCKING
+> @@ -422,10 +422,10 @@ static void seq_line(struct seq_file *m, char c, int offset, int length)
+>   	int i;
+>
+>   	for (i = 0; i < offset; i++)
+> -		seq_puts(m, " ");
+> +		seq_putc(m, ' ');
+>   	for (i = 0; i < length; i++)
+>   		seq_printf(m, "%c", c);
+> -	seq_puts(m, "\n");
+> +	seq_putc(m, '\n');
+>   }
+>
+>   static void snprint_time(char *buf, size_t bufsiz, s64 nr)
+> @@ -512,7 +512,7 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+>   		seq_lock_time(m, &stats->write_waittime);
+>   		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_write]);
+>   		seq_lock_time(m, &stats->write_holdtime);
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   	}
+>
+>   	if (stats->read_holdtime.nr) {
+> @@ -521,7 +521,7 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+>   		seq_lock_time(m, &stats->read_waittime);
+>   		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_read]);
+>   		seq_lock_time(m, &stats->read_holdtime);
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   	}
+>
+>   	if (stats->read_waittime.nr + stats->write_waittime.nr == 0)
+> @@ -561,9 +561,9 @@ static void seq_stats(struct seq_file *m, struct lock_stat_data *data)
+>   			   ip, (void *)class->contending_point[i]);
+>   	}
+>   	if (i) {
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   		seq_line(m, '.', 0, 40 + 1 + 12 * (14 + 1));
+> -		seq_puts(m, "\n");
+> +		seq_putc(m, '\n');
+>   	}
+>   }
+>
 > --
 > 2.45.2
 >
->
+Acked-by: Waiman Long <longman@redhat.com>
 
-
---=20
-Thanks,
-
-Steve
 
