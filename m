@@ -1,148 +1,115 @@
-Return-Path: <linux-kernel+bounces-251696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44746930856
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D0E930873
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 06:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4741F21957
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 02:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98471C20B49
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 04:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7156BBA47;
-	Sun, 14 Jul 2024 02:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB589E54D;
+	Sun, 14 Jul 2024 04:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DibKUocx"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9IXmtWu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B79A92F;
-	Sun, 14 Jul 2024 02:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3F4D51D;
+	Sun, 14 Jul 2024 04:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720924179; cv=none; b=uyZnqb1CLTk6LmwONDW6XwpLXXkh/CJCIhV6SBN+iQCdchQ1PxE2eAvbRvPvlqERPS8bZTWAd2lIIgAqczqDS1Whg5yaGM5E5l4voUrJZs0/Eiji9L84V3KktQWm7sOLVbv54+lJuTpjgmGDre0j4MSfdDfAwNd/ez0lOxR4IAQ=
+	t=1720930152; cv=none; b=q0yMX0ncXciKK+Y4xxAZ3Vy9n71gmMwEC3J8cO+ed2d9OyoCkz3KcPnYBvXIoSejAzTMFEf1Fly8t4cP3q1AxUdwyK3tVbwh3Vf1VabUHxwPRpTib9QoQ2tQ+BuXSBNvGzDIze8bChHsYMKa0M3pR394voKLLoH7duyoJO/8Izk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720924179; c=relaxed/simple;
-	bh=gvaCtxw0JmqX0qKNFkwrK622sEzBsNuUqWwdfi1veZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HO0DL7ly8my0VL9mtNcxnw5Gq6iv8wtyWQ4cEY3yzZC6TvvQr0pgPQwgzwceG/lU73dbxRZt3rC+XcLzu8zPUBfIWYBFzKYjqKjJWYJc1OV5p9pIqjT5dygma+cAyjD7/m6ffu8Jx/NtW0EVHRdD+q38ya8yBoQ0k2dq3Fm27K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DibKUocx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so21336705e9.1;
-        Sat, 13 Jul 2024 19:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720924176; x=1721528976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7uTtxkGrUED0qsLRRVKEM+k/1Ov/NZS6SczaERixb68=;
-        b=DibKUocxo7UdohX02RbknBx06eH0pyD/2/5mUNPnFtd0zNrl9CKFE6YfFBxD7bj5mK
-         V1wMH14gZEOU2J4CAN4Mu/A/y6UMxU+cX0whwp5vVnV9o+huppDUTZyOheFDpuFb8Mtj
-         R0jn23EGrTDFtXOPyBqAHSW8A1iceceot6oH9HPCNyzVGXVoSW1qR+t/xcrOEcAtAfWC
-         zOorDI8yZQyOgm5n2TrpxRZslMEKSyRXOOzs8Vyf14doH74Z+MjdMsbTaFgk51qWqf5c
-         5PYv8ndimPHTiUcWZ3Xhm+wHETcNsLotGBWUef0RmcuVZoBWRZzevrNBjHAcsEP3TFOc
-         mQ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720924176; x=1721528976;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7uTtxkGrUED0qsLRRVKEM+k/1Ov/NZS6SczaERixb68=;
-        b=aktxBxzsx0X3ilArgbvsmeBed8jWfoDk9cF8GLEYuph0iBR1XF9OcLo8KFYsAO+qja
-         tus1FlfB85X1SBzp1x/AZv+mpnNpzfjUMfiQYe2+X910DzhYPDAOEpl136Nk9ISSdsgO
-         adYINAhCbtFEohcmdj+EN46zK/u9HagrUT8MYkwhZPbcxrTxDUzvQjVAqlELXJ5mvjvT
-         9bkWHfj1uAVV1qnjBKc9VZ7psh+K+hey0kPCP1us1Tg8Oz6J0nZUx5GbrLSvQ1dcrmdk
-         LwzTmKrb+AJ8pGAA+29s563TtTdmHMQ/20yrbCfR2H6sSouufTReZu6iCnz4PdmUMAFX
-         5HZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGIDOggGE5caxXlJjN+IrdQ/JHqYYDsqZLgq+xRMcaNrI3FvIGKE5IIADbK/JRD/Ri1wX+v2qYIMxYujRt9Rog66HNLqYUfFJkkf8MMlA+m1zoLbPgGkrCp7u1b6TpTzi2Cg==
-X-Gm-Message-State: AOJu0Yynvt298E0hg3iGvfRI+jtpqvcgDo7/DW3vzw4T0n22Rfx69goV
-	lLuLRn/LzPGms+DYTsNFSHrUPTArwSq8fusmkAzvF4/C+xeAFdJnuJROxQVoFK4=
-X-Google-Smtp-Source: AGHT+IHl8Y8wLqDxJzkDVIy/A1pwLR4+D5zIzHFndDxbJqI0GiE3G+KkSNQb9LjffrW2mOyVJKvV1A==
-X-Received: by 2002:a05:600c:524f:b0:427:9dad:8063 with SMTP id 5b1f17b1804b1-4279dad8478mr44072335e9.12.1720924175722;
-        Sat, 13 Jul 2024 19:29:35 -0700 (PDT)
-Received: from localhost.localdomain ([156.197.1.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2d7955sm72759145e9.47.2024.07.13.19.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 19:29:35 -0700 (PDT)
-From: botta633 <bottaawesome633@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	linux-ext4@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	Ahmed Ehab <bottaawesome633@gmail.com>,
-	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] ext4: Testing lock class and subclass got the same name pointer
-Date: Sun, 14 Jul 2024 08:26:40 +0300
-Message-ID: <20240714052640.115476-1-bottaawesome633@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720930152; c=relaxed/simple;
+	bh=4RSIRByYvOzyuNRQjFNcr9BxvQQaQC7rVLUDeCW4J7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHAL4g0Ea2OcJ4PdRgN1aa8aFLvlfkDOGZZnOh5egqw+nVy4lQ7gPuBAhkmcpSyfL1JeAZ4Q1QX2T4HfoL3uRcm8UH8HKZ5twf0VLX4HHDlUZv9SPFBMxIhZ8rNhKwDk8f6rp5q/G61z2dOUJfW1ER4lxfGNqrhXuaZJh5xbhCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9IXmtWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA17C116B1;
+	Sun, 14 Jul 2024 04:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720930151;
+	bh=4RSIRByYvOzyuNRQjFNcr9BxvQQaQC7rVLUDeCW4J7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P9IXmtWuahNWN2DaXF2GyAYguohByViaJYiTTVBqSCgpAcSstIrHDBOpptA6YzHIz
+	 BpKx32v2ABuPrEwL/uUxqNuPkBstHzATuQUVa2qFP2oMkt0aSj0WPluI1y3uAQEyCw
+	 KolQ16wOjcOUFg5a+hUzB6cj7tMoAUuBAd8w9cpj/FAguZQ3nOVz5CeJfr/jke64L7
+	 McGxXWZ8YzxxduOuqKJmte9VwBBmUksy1O6WNnf2f0C5F71rBvagBec0OvyYDl8p54
+	 uW4vQvI5SjUNE9ojvQo8UN360awXQfDRJ0SPxZA/KB48K6quUMg5EbydHwYUoL8b8a
+	 aRnfasPSlp5aA==
+Date: Sat, 13 Jul 2024 21:09:10 -0700
+From: Kees Cook <kees@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] net/ipv4: Replace tcp_ca_get_name_by_key()'s strncpy()
+ with strscpy()
+Message-ID: <202407132108.1577A694@keescook>
+References: <20240711171652.work.887-kees@kernel.org>
+ <CANn89iKqZD68w1QtM3ztL_X290tj_EGyWRvFrhyAz-=T+GkogQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iKqZD68w1QtM3ztL_X290tj_EGyWRvFrhyAz-=T+GkogQ@mail.gmail.com>
 
-From: Ahmed Ehab <bottaawesome633@gmail.com>
+On Thu, Jul 11, 2024 at 10:38:01AM -0700, Eric Dumazet wrote:
+> On Thu, Jul 11, 2024 at 10:16 AM Kees Cook <kees@kernel.org> wrote:
+> >
+> > Replace the deprecated[1] use of strncpy() in tcp_ca_get_name_by_key().
+> > The only caller passes the results to nla_put_string(), so trailing
+> > padding is not needed.
+> >
+> > Since passing "buffer" decays it to a pointer, the size can't be
+> > trivially determined by the compiler. ca->name is the same length,
+> > so strscpy() won't fail (when ca->name is NUL-terminated). Include the
+> > length explicitly instead of using the 2-argument strscpy().
+> >
+> > Link: https://github.com/KSPP/linux/issues/90 [1]
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Eric Dumazet <edumazet@google.com>
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: David Ahern <dsahern@kernel.org>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: Paolo Abeni <pabeni@redhat.com>
+> > Cc: netdev@vger.kernel.org
+> > ---
+> >  net/ipv4/tcp_cong.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
+> > index 28ffcfbeef14..2a303a7cba59 100644
+> > --- a/net/ipv4/tcp_cong.c
+> > +++ b/net/ipv4/tcp_cong.c
+> > @@ -203,9 +203,10 @@ char *tcp_ca_get_name_by_key(u32 key, char *buffer)
+> >
+> >         rcu_read_lock();
+> >         ca = tcp_ca_find_key(key);
+> > -       if (ca)
+> > -               ret = strncpy(buffer, ca->name,
+> > -                             TCP_CA_NAME_MAX);
+> > +       if (ca) {
+> > +               strscpy(buffer, ca->name, TCP_CA_NAME_MAX);
+> > +               ret = buffer;
+> > +       }
+> >         rcu_read_unlock();
+> >
+> 
+> Ok, but what about tcp_get_default_congestion_control() ?
 
-Checking if the lockdep_map->name will change when setting the subclass.
-It shouldn't change so that the lock class and subclass will have the same name
+Whoops. Yes. I'll do that at the same time. v2 coming...
 
-
-Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-Fixes: fd5e3f5fe27
-Cc: <stable@vger.kernel.org>
-Signed-off-by: botta633 <bottaawesome633@gmail.com>
----
- lib/locking-selftest.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..1d7885205f36 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -2710,12 +2710,24 @@ static void local_lock_3B(void)
- 
- }
- 
-+static void class_subclass_X1_name(void)
-+{
-+	const char *name_before_subclass = rwsem_X1.dep_map.name;
-+	const char *name_after_subclass;
-+
-+	WARN_ON(!rwsem_X1.dep_map.name);
-+	lockdep_set_subclass(&rwsem_X1, 1);
-+	WARN_ON(name_before_subclass != name_after_subclass);
-+}
-+
- static void local_lock_tests(void)
- {
- 	printk("  --------------------------------------------------------------------------\n");
- 	printk("  | local_lock tests |\n");
- 	printk("  ---------------------\n");
- 
-+	init_class_X(&lock_X1, &rwlock_X1, &mutex_X1, &rwsem_X1);
-+
- 	print_testname("local_lock inversion  2");
- 	dotest(local_lock_2, SUCCESS, LOCKTYPE_LL);
- 	pr_cont("\n");
-@@ -2727,6 +2739,10 @@ static void local_lock_tests(void)
- 	print_testname("local_lock inversion 3B");
- 	dotest(local_lock_3B, FAILURE, LOCKTYPE_LL);
- 	pr_cont("\n");
-+
-+	print_testname("Class and subclass");
-+	dotest(class_subclass_X1_name, SUCCESS, LOCKTYPE_RWSEM);
-+	pr_cont("\n");
- }
- 
- static void hardirq_deadlock_softirq_not_deadlock(void)
 -- 
-2.45.2
-
+Kees Cook
 
