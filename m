@@ -1,134 +1,152 @@
-Return-Path: <linux-kernel+bounces-251761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51105930976
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613A2930978
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 11:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BBD4B211FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6221C20C03
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 09:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6604644361;
-	Sun, 14 Jul 2024 09:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47B849635;
+	Sun, 14 Jul 2024 09:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lU5B9bvR"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w6wg8hOk"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC0DB65A
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 09:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629BA3A8C0;
+	Sun, 14 Jul 2024 09:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720949507; cv=none; b=Nnu9cUz4E7Y59VDNVrZ1SKNWavbt0dxvX4US24vUeDhBdHWSuYz5w8uVvcXq+9lh4jE10/05mzE3FCQTQlwZRn+C7Zvij9tZkFLtjlwQFWwl47tmWrlXn2q7hKx70fyIZO2dW9YxW8EAMgqIZl+Lc+TCAGAiMePh+3A8lyKMsZw=
+	t=1720949621; cv=none; b=cngzxX/BttfcTeAqgUcxUS2gOMMQtluWd6GERDvds7K6ixKKAu0hQd26HDi0mhQlZaonnDz8TDahyywG9pSTlu8Atd8V85A/oUPsM6lCDYCpgDQ77cbNvjVujT6f0SBn9sgBncTDQaeq/C936NgBtzxgvpgaDz1IZQP3zpL/eWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720949507; c=relaxed/simple;
-	bh=u2L2bFVF/bUkL0Afb/7SR7DQPMUm+H8EcrPeB1KlHAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s8dMBrcOIY5xdTfZDnKRFD4ZlaHHkPUxU/j6VxsGlAEK8nsEgC/5rqAkEbHY640zfFw4VQhYYNRGD9A5rnrF9GqDyjloC6db72V+7ipwcVxfuaCyr52l/cJEz6q0jm2S72vUgQljSvLj5qvf+K2BSUAImkfXYkokAHyRiWLHZZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lU5B9bvR; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3AF9340E021F;
-	Sun, 14 Jul 2024 09:31:43 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hi5oRY8mcAU9; Sun, 14 Jul 2024 09:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720949500; bh=gmcR1+NELxNM8wxl3bcfi9ydjX+ZK57VZicNoi27lew=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lU5B9bvR5NI/EO+MieT9ZNv5HwZPfdsYMcGfB9PjRBANn+42e3FibXx0cXQY7/kXF
-	 iXF54jO0Qxf4bKyQ0pnoJLQWu/RXndDyxISgTYJHUBTo+WwDcVKtSWe151266T9aCw
-	 e1rVUNFZGw/vm0CInbgx9Qz+lfTzZyIKmtiS5bWZyN420Fn9lbePN9V5N9Zu3SSNcn
-	 yKDPLnZknToDZI8T+aD2MyZ/6U5vOzIcfJVtoL2NUkqaokNzzR6HIm5UOxIFA3DZJW
-	 oWSA2aXrnjfVrKiVVjPaNZRCJ4cXTGWD0vFIhHh42ATj4mbbR80xpy0u38JiBUM35M
-	 fTQIowqkPCJzSpmRpo2iW3iFv4i+wdA30Ra2LJcfhY7/9/Hre8Si2IO7P9wqp489EB
-	 wLw2WhiStw0INUHX30vxuPTCvwyfCTA/Nj3olQn/9lJ7BB2H5UE/BS4BjgmZT/7Xkk
-	 cSxNmI8KfE4BiFux4Ie6bdzWOi0aZ52FDPVDNpZRb01MjNDZ/AKNFCp4bmwbXVFbNZ
-	 l+GiyRHSGJJhO4QGosy6Ai+nVhha7g8m1T3zTw2VwVdIk2GNMxwMoM5aJAaCG2J00o
-	 R1qrTdAdE6GP6NKZVlpZpspDiNCbHq2/ZhMc8CWW820KYTLVYCypmvafIcwbfL9JpC
-	 xFEU+Dn+pDpKfs1w2QQ4IG6o=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 17C8440E0027;
-	Sun, 14 Jul 2024 09:31:37 +0000 (UTC)
-Date: Sun, 14 Jul 2024 11:31:30 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sched/urgent for v6.10
-Message-ID: <20240714093130.GAZpOa8kG3Aq6nfwQi@fat_crate.local>
+	s=arc-20240116; t=1720949621; c=relaxed/simple;
+	bh=66W94Qlr5tmW71QHKaOmYeVfbqOJtCFE9dnGo5yItiU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FEl3VLt94026YMEqnC0mrv0sci4U/2Qr8hbe3otZK0+4G8GJy9cJvBt+vPT07tirMzJnk4K8p6uOvKUgQqOt1qLm8QVIm5wcCwGMox00XXYJ2s7J6rh9X7c2oH5sfO6wrKpG0F9Su4LQCUvVuK0ZjmWpC8N+Gq30VUzR48XNFW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w6wg8hOk; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720949599; x=1721554399; i=markus.elfring@web.de;
+	bh=aLeqHr1jvfeI2WXDfAAOXkAuSH/H3gXk27n2+n8sw8I=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=w6wg8hOk9zJu/8DkrfZbROy+CIx23ZbUJlGZNaaOkpem0aXZ87rknf7p0DSSEFW4
+	 rKdpEtSYzKx8edp9j6lUHV3fShLfSZSuymtVtqVcJUvVh6h0QGjxEabAraVbLP/vP
+	 UOJoebdB3dhtY2aJHxT2Q9eVrCuPrWgNsHbriFNIiDtG9nLzoYxs/h5olj6iFkAk2
+	 d0WKWKWOUXQ42M2AqYcLV3TIy91uhFb4rNBPrQctzhxKuvo+g8rZ4M7OcGf1Asi1a
+	 ZoEbR2QiS+M8NXJKmh33+1eHnQZa8R4Vfo2Nr7QSkmfZXP5uZvxMjMJImkD6pCE9q
+	 sI2nOn4wIyTUDM29kA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpU1u-1s1J1X2y3Y-00nBP7; Sun, 14
+ Jul 2024 11:33:19 +0200
+Message-ID: <8ff2d1aa-4c48-4cb1-b5d5-675adb90ae81@web.de>
+Date: Sun, 14 Jul 2024 11:33:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: cgroups@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] cgroup: Use seq_putc() in three functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SSUQHcCcuwZU/1J4YNud6Pf4kHGLlefSxecxEkkCY5lpVB9KFmq
+ 3Amb657a1pqI9kpzVknExXSPL0ALVxZhWtO6RHQUFo2DDn9I2lDQPiRI95KXeQis645DQtO
+ l7axU9s9p5FKRnyOfNGylG0QL+PKJmLkYA8nZ3Ec59e8yvkG7edWdPivZZAcLd868ImK+QT
+ zMdl4i7tEpaZugaWO1akg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LXgjEuqR0JE=;OPOlV7gXFyiLcWBhR4fjoI4CJRO
+ CQHTUlH2NZca0iOvJjfoc10tLg1WRaaFIbMCq2HJ9zazGHi8NgeOIVAfgidmNDVXrHMHdmy5A
+ YsOHlneGCPcNQhUNsV7QlPS0CFPjmJYNHvZpuCH55XRk9D5bgQI3pICPSFgEsypr8/EmnnmqM
+ mEWDclMpIZxm4oHjRpslvDhNotMn9bp6gdsHfknfncqrSnhyxKPiMkaQyTFe7dCF70SoKmKzC
+ SNwco9dri5Am88Ks8h9ATSLYjNJuO3mnZjQfj9Lpn2aOVlsyWWJ+gxOGGp7Q5sZCs3RViQRWk
+ fr34oCiDVKZv7VZrlnotOtDWrtG1vAtqmb6OE60xyD8QFXZs0BWGuLzGn2GwW6IHM0SDqdKS3
+ O1HwoZko7Np+P+0OGuh+LvsR96NTIzMwqxM/TK/M4L6wnaexK0oy5fHwSUoYd8pqBe+VDNEiP
+ v30MQcZ5hcE8wYfX5eqnPXg240FL5WWkqXZokdD/gtZIwZw0vjbUPtTzQO52YQnWuOXh+qfgf
+ 1z4+UMVhVvZyLAsCwZh/80ZI19veOvmT/a4QyZ55XfNJqIyAMsJy0SbMHoyJLdoU8KErfBe2D
+ RPeEqYpgMjeFpt2f+VYydrQy0aPUWhxUOsVpf1LuPxIkrs3fzHY6TKVzT2jAEVE3oF6jBNFJm
+ mod/VueRtplTTeGvdINtYWFt8FjsmqhWgZLSDEwprEXoOP8gNZURK9o8FFDBZtYSW8msny2s4
+ IT7rSJ38J2kSGMjh8eJNkgi1lc93tMfDtzMCpYR9mqMunCZFuUHi/YBCCRZd2e6miIs2AnIe1
+ 7PiDa7UJjcYrCUkY6fWTs05g==
 
-Hi Linus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 11:24:05 +0200
 
-please pull the last three sched urgent fixes for v6.10.
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-Thx.
+This issue was transformed by using the Coccinelle software.
 
----
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/cgroup/cgroup.c | 2 +-
+ kernel/cgroup/debug.c  | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index c8e4b62b436a..9197f3c591a9 100644
+=2D-- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -6316,7 +6316,7 @@ int proc_cgroup_show(struct seq_file *m, struct pid_=
+namespace *ns,
 
-  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+ 			seq_puts(m, buf);
+ 		} else {
+-			seq_puts(m, "/");
++			seq_putc(m, '/');
+ 		}
 
-are available in the Git repository at:
+ 		if (cgroup_on_dfl(cgrp) && cgroup_is_dead(cgrp))
+diff --git a/kernel/cgroup/debug.c b/kernel/cgroup/debug.c
+index 80aa3f027ac3..d18f7dcb4def 100644
+=2D-- a/kernel/cgroup/debug.c
++++ b/kernel/cgroup/debug.c
+@@ -55,7 +55,7 @@ static int current_css_set_read(struct seq_file *seq, vo=
+id *v)
+ 	seq_printf(seq, "css_set %pK %d", cset, refcnt);
+ 	if (refcnt > cset->nr_tasks)
+ 		seq_printf(seq, " +%d", refcnt - cset->nr_tasks);
+-	seq_puts(seq, "\n");
++	seq_putc(seq, '\n');
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/sched_urgent_for_v6.10
+ 	/*
+ 	 * Print the css'es stored in the current css_set.
+@@ -159,7 +159,7 @@ static int cgroup_css_links_read(struct seq_file *seq,=
+ void *v)
+ 				extra_refs +=3D extra;
+ 			}
+ 		}
+-		seq_puts(seq, "\n");
++		seq_putc(seq, '\n');
 
-for you to fetch changes up to ddae0ca2a8fe12d0e24ab10ba759c3fbd755ada8:
+ 		list_for_each_entry(task, &cset->tasks, cg_list) {
+ 			if (count++ <=3D MAX_TASKS_SHOWN_PER_CSS)
+@@ -189,7 +189,7 @@ static int cgroup_css_links_read(struct seq_file *seq,=
+ void *v)
+ 	if (!dead_cnt && !extra_refs && !threaded_csets)
+ 		return 0;
 
-  sched: Move psi_account_irqtime() out of update_rq_clock_task() hotpath (2024-07-01 13:01:44 +0200)
+-	seq_puts(seq, "\n");
++	seq_putc(seq, '\n');
+ 	if (threaded_csets)
+ 		seq_printf(seq, "threaded css_sets =3D %d\n", threaded_csets);
+ 	if (extra_refs)
+=2D-
+2.45.2
 
-----------------------------------------------------------------
-- Fix a performance regression when measuring the CPU time of a thread
-  (clock_gettime(CLOCK_THREAD_CPUTIME_ID,...)) due to the addition of
-  PSI IRQ time accounting in the hotpath
-
-- Fix a task_struct leak due to missing to decrement the refcount when
-  the task is enqueued before the timer which is supposed to do that,
-  expires
-
-- Revert an attempt to expedite detaching of movable tasks, as finding
-  those could become very costly. Turns out the original issue wasn't
-  even hit by anyone
-
-----------------------------------------------------------------
-John Stultz (1):
-      sched: Move psi_account_irqtime() out of update_rq_clock_task() hotpath
-
-Josh Don (1):
-      Revert "sched/fair: Make sure to try to detach at least one movable task"
-
-Wander Lairson Costa (1):
-      sched/deadline: Fix task_struct reference leak
-
- kernel/sched/core.c     |  7 +++++--
- kernel/sched/deadline.c |  7 ++++++-
- kernel/sched/fair.c     | 12 +++---------
- kernel/sched/psi.c      | 21 ++++++++++++++++-----
- kernel/sched/sched.h    |  1 +
- kernel/sched/stats.h    | 11 ++++++++---
- 6 files changed, 39 insertions(+), 20 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
