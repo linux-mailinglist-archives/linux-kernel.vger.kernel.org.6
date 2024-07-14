@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-251797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721619309FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:51:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C3E9309FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 14:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EA51C20A6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:51:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1941DB21078
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 12:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9146112FF6A;
-	Sun, 14 Jul 2024 12:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACCD84A3B;
+	Sun, 14 Jul 2024 12:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvmgEKcP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="plMF9s5I"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1BC71750;
-	Sun, 14 Jul 2024 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0406B3BB23;
+	Sun, 14 Jul 2024 12:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720961488; cv=none; b=Dj/yHeHUyRzxr/9v0mry+Dh1V9pHzSt1WNkg3vJWcl1KIEKySIgMDSsUJXUwxM5Jzr5+/eEO9wFXjV6lngWr0wvUhbsq5EpEPff/1oxqV3fAQPycLbO96Jsqutle09pzT+UE+5kO/zuUPFPl7GdkmQRtYXuhbD4UeBahzpgVCXg=
+	t=1720961909; cv=none; b=gt1m6JyoRv4ktvRVTcYp/mSyUSGP4A6tc6jNSZjDY+T8n19FFjDrUeKYf+8ZXOBmqOjjoB9EC+lr8nJEnE9wmZMkb1YcAfYu33h/7SWrWJwZw+WUoQsbhdzUywYb5UC/jcyW2D8x1NWWLA9k8kI8TeOSuHRC63HTN5pubfekHeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720961488; c=relaxed/simple;
-	bh=CYg3xNi/ngCDZR29qbDgHwk4RE913gseoNxquV5QE4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ky6ebA0RcMYdAI+gEpLPQy1wpp3zEetKDeF5SUHqB5vtTG9IHX4+q7y9x504gJqi/H+QzVktk8MbveaXlv4oaD7ZoK01+8lvfr9UlIEFzWJ1v/KoDdsdcEU9dI9oABguHraDlhMY1Xstg5A4FdYF5henULk6IxPB7kkX4kXglSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvmgEKcP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a79a7d1a0dbso215898566b.2;
-        Sun, 14 Jul 2024 05:51:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720961486; x=1721566286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZzYpwILPItQvBM9cJl6LLDEF67V7lhOke54GQOremiY=;
-        b=bvmgEKcPZ0l5V+vSAEfmT+h9co9Uep9mubAtX9cuJaQiBSmcjijAXlUnfklfeG+3x1
-         3olpTmMxoAjx4H4bcveZmGPu9zK4k1jFMIWjBo/jXe2MULNP5cuzeJ3ZOeNLZq8jB85q
-         eHGNahGxnFiUPCbuSFy9RWCVW8J/XKjozqGrFHX5KlNd7AEElsfojqk0T+q9ElLtHwSN
-         EizHdstsnrZgtl8+j+wyBSbkpx5B/EbBUK7nWJE6neRwdD/wEIYp7Ach4KeaFtS5/IPo
-         xAyPF9bV/tY28RM8h5HocDJIuX1BLFi7jIhBgUTLVuvdCD/twjAfmc8d6K4c666CiXJ8
-         hGPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720961486; x=1721566286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZzYpwILPItQvBM9cJl6LLDEF67V7lhOke54GQOremiY=;
-        b=B9bnDstEk+GXBXCTuHMKFeKvaPPtreS4kvgAzmvNdpBUZEsLo6wYgt9Zzd649ywrkt
-         VHYZoFq9h9Fv+pxPedZlUG6mNNcOH4CCsmEELBFUutwHG4kVJAW8b/9pSkIz0qppJfFe
-         vMymSPSMdE8DutR+FDldmZu91eQTo+8bGHY2IqFb/cBWEp1WB2m8ZIimBCcJhr6nwfPG
-         tVseBorK2v2kMq9LfKnymgc2kFMkDkeJJyNyz2R8nXg7hwimaDieQsW0ksBuCMM78+bJ
-         LpgXL3IptedU3wn6L39HiFqRAkiO7DdeSpaUJ1l0NJAedNwVDiIvuG4MDLU8RPkpv2gN
-         YQag==
-X-Forwarded-Encrypted: i=1; AJvYcCXOc+m8CJI/kh/csu2KKUSrTtEM64hYhARHnad+nd6wF5Lfl+hrbE845NUULSVQX0ijzz0Gl0HZZYkM1wzVE+M1RT/9s/AhhjpGktdS9YP2AD9Og62kqN1Xv0/cSIMwx/nF0vUh119TlZq9d1hQHZN137G0XodTyi2KAULLwGsm
-X-Gm-Message-State: AOJu0YzGnZCgHJwvZl9RkAMWd5IZmUG0nj4skipPPWqCGBs6tP3cKGJE
-	4gXZ4k/lZGZjzfDfMuQeh2fv++t+pfE9rjysuoS//P6Q9kYEHpLHj0Wm/6WcI2EpVggabQ99KzO
-	9KSEY2oUMgDgjZkC9FbDW0jm+IrE=
-X-Google-Smtp-Source: AGHT+IFVpepkl9B848UxXyHw2Uxtelx9tIXCYTafa/iSvHcI3yyJX6AAcAeH+03cYXrsW2z1jgaN93A/xdh2qgBVly8=
-X-Received: by 2002:a17:907:bb89:b0:a77:c95e:9b1c with SMTP id
- a640c23a62f3a-a780b6b18a7mr1063931966b.27.1720961485470; Sun, 14 Jul 2024
- 05:51:25 -0700 (PDT)
+	s=arc-20240116; t=1720961909; c=relaxed/simple;
+	bh=Ah56fshfOW+guMs7BQPsoc2doCK6l0nxKHQYGdJhLQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HrCot4HGZlQ/rF8jO65+QyMDtB+QkKxxq3Ora+TwW9viiByeXSSMTKb/tCRt1B/YNXz+JZAYXBtAhbmQrCd1t+vvvvOtXOO2c6SYKG6NIs+DFYe4NHvSPtFxPhE4UhhyOCsV1okEIICP86nQzbzCKC9CZ50dKd1g+nMQUBoCx+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=plMF9s5I; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=KLp5o2UecGEjtPu5Gg7n2OPTHRCP0urlfQJP5C8EPyg=; b=plMF9s5I328G7Pg8BUz8hubRj8
+	zApsImh/Bo+FDHGVkfP3wFCOAJUAe2Qm4viu7XVYH4g1xFB54ENvTSxTxGeb4ECQ0Xl6be49iymPE
+	pOXCsDzioXAd9xgx7dHBWRrWqsua2XmCfCfh7Ff5c/d/V+9d7ILvVXULwZNlyHbj/Nam3TVb/46bx
+	UbZjZKGYtw4qesV1U2mqr/dk/hnHRB3ItIfyY+CClAdt+PZZXc55/wFckisnor7Ya2Hs2q2nKJToQ
+	6KnOMloHfRZjmclbRGFOrof5VtSPH5SzsLdpXLVwjHSTlRIkgZGcTCX0q5RHnt4itLUtRIKB7Aj3n
+	gByQ52Vg==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sSyo5-00000004Slk-2q6b;
+	Sun, 14 Jul 2024 12:58:25 +0000
+Message-ID: <535254d9-f9fe-492d-a5ab-33da01106b0e@infradead.org>
+Date: Sun, 14 Jul 2024 05:58:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+3zgmvct7BWib9A7O1ykUf=0nZpdbdpXBdPWOCqfPuyCT3fug@mail.gmail.com>
- <2024071447-saddled-backrest-bf16@gregkh>
-In-Reply-To: <2024071447-saddled-backrest-bf16@gregkh>
-From: Tim Lewis <elatllat@gmail.com>
-Date: Sun, 14 Jul 2024 08:51:14 -0400
-Message-ID: <CA+3zgmtP0o4onLaeUhoYoJ2f9J_hSo3NM77jpSQ9N-rTWgG80g@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Niklas Neronin <niklas.neronin@linux.intel.com>, 
-	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240714105848.1844400-1-masahiroy@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240714105848.1844400-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 14, 2024 at 2:30=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
-> On Sat, Jul 13, 2024 at 01:52:52PM -0400, Tim Lewis wrote:
-> >     usb: xhci: prevent potential failure in handle_tx_event() for Trans=
-fer events without TRB
->
-> Ick, is this also a problem with the latest 6.6 and/or the latest 6.9 and=
-/or Linus's tree?
 
-The problem did not occur on 6.9.9
-I'll test 6.6.y next.
+
+On 7/14/24 3:58 AM, Masahiro Yamada wrote:
+> The condition 'select HAVE_ARCH_KASAN' is always true because
+> there is 'select HAVE_ARCH_KASAN' statement above.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+> 
+>  arch/arm64/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index c87d16b12e9b..d37cbfc3031e 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -167,9 +167,9 @@ config ARM64
+>  	select HAVE_ARCH_JUMP_LABEL
+>  	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+>  	select HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
+> +	select HAVE_ARCH_KASAN_VMALLOC
+> +	select HAVE_ARCH_KASAN_SW_TAGS
+> +	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+>  	# Some instrumentation may be unsound, hence EXPERT
+>  	select HAVE_ARCH_KCSAN if EXPERT
+>  	select HAVE_ARCH_KFENCE
+
+-- 
+~Randy
 
