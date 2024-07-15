@@ -1,307 +1,118 @@
-Return-Path: <linux-kernel+bounces-252520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711F5931477
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:37:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC963931483
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258A32824D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:37:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD8A1C21DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FEF18C336;
-	Mon, 15 Jul 2024 12:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025ED18C330;
+	Mon, 15 Jul 2024 12:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WriNx1Kw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kjCkiobM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B9E18A944;
-	Mon, 15 Jul 2024 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252961891A4;
+	Mon, 15 Jul 2024 12:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721047021; cv=none; b=E3ufxU/m9w23as1Z93B06omEuX7zb3UeuV+N55HsvWGHhKA2J/OrenvWbpq0Nf+u3H9bh0fHkeGLAb6/dL9xueYbwHh8PIcmUCsyq655xbp6eyDolHMERp37gkhNMkj5r5NenISXkLnRHJpddm+psHbAS8QqdDi/qWASGYmyy+I=
+	t=1721047181; cv=none; b=a63nnqjcQML/G17lnECw7em3K3yaczc88H9BULOIZ3GD+lh1yZP7f+TmlSqFwemNCf+Hq8KmId2KCMSR0Pfj+BC1+/MfFzsOgO361tq9Pg72+L0VIGrN2sMJ7cInmy4H8E6HaFgvvKRX5bXXVUwNHubKEAZnrniewoVvYhqGURA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721047021; c=relaxed/simple;
-	bh=lGTgDdw0D3LgnUyX4dXtePNOhp9in10pEAeYuGJ54gU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YAXIT0jDJ206YpV0/dX5DWf+Fv1sWEJF1qKE2cmRW9N7Q0wc7TDg9Mi0jEV6RQGg9tnqorZm6OCCDwnSwGc8ZFoV8hyqdtYKjcbfZSqI/KiNPXs2KqjOM0eodcdbbL2NoUypkNlSOtwZ26QK1i1JdLG/wtacU2yKz5Va9HSmxMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WriNx1Kw; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721047019; x=1752583019;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=lGTgDdw0D3LgnUyX4dXtePNOhp9in10pEAeYuGJ54gU=;
-  b=WriNx1KwLAohhyialObweRLoxZu+zw4ldANGsmbmBqMte76ud3fA8b2s
-   lIfHk5I77lvvxFckk/N6qrX+L1P/L3rm1DJB9XpbkNz/+1AX9tDEqJpUJ
-   r1fqHPA6YNQGhEaOTeLW9mRlDYxuFFl69LtfKO7iBD6kdxupUJt8MYHiM
-   jWF6RITfxK9xqsYTMcXXZaAa4oha2Ol6XZ8oyIO+JeItEl1IuEBhVudfg
-   zaDP9LOGUAgqiEwUGfx52js24pnsFJ8Xznv1Em+rAWd2DQjAWGNb29G7y
-   G8xCwbT9HcwdSpve8N1dJmCTciIrKZHgd49XI5iDWmRbgWIPp9LPj2cfH
-   g==;
-X-CSE-ConnectionGUID: aCJYLc8KRCC6rIXrFJlQVw==
-X-CSE-MsgGUID: vmh8KRdWR/KOE1FSi4iMWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="29012835"
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="29012835"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 05:36:59 -0700
-X-CSE-ConnectionGUID: p79mAvRxS6uC/AWugJ5V4Q==
-X-CSE-MsgGUID: 0bsbbmOVQXK+BgeNncbNrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="49497247"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.131])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 05:36:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 15 Jul 2024 15:36:50 +0300 (EEST)
-To: superm1@kernel.org
-cc: Bjorn Helgaas <bhelgaas@google.com>, 
-    Mathias Nyman <mathias.nyman@intel.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>, 
-    Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v3 1/5] PCI: Use an enum for reset type in
- pci_dev_wait()
-In-Reply-To: <20240712181246.811044-2-superm1@kernel.org>
-Message-ID: <c67b005a-2378-2ce9-e55b-da807fd1811a@linux.intel.com>
-References: <20240712181246.811044-1-superm1@kernel.org> <20240712181246.811044-2-superm1@kernel.org>
+	s=arc-20240116; t=1721047181; c=relaxed/simple;
+	bh=urFsKcjAp6UTHzAfM659oLy3mk1/RPrjyvRtDxyWXyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nllTLPjV290LPv6NWF6f2TCDmQv1EGrDQXM59HXrycQyQIU1J//M2DnnGW1UywkTKx8tgYOeTVtxbFaEFAVgijau76cdV+8pJlJhT4ZMyIKlutt1ZP/KRl4TAsTOhprl/du80S4f8pMZf/LjmrFTn1jaxj/EE4qmZGKqQmk8VwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kjCkiobM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DBFC32782;
+	Mon, 15 Jul 2024 12:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721047180;
+	bh=urFsKcjAp6UTHzAfM659oLy3mk1/RPrjyvRtDxyWXyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kjCkiobMrrmzutk0XWXmPF7ovtLU/HHJrgpvpUKqFctINM57tngfPipyqinp8m/Ig
+	 7jgaGq/w2YHTx32S01/MJVNrM6qiOc03nnM95/fen55w7SiD5TBBu5KQOS4KztaB29
+	 lGjW+F1n8nXHxqQi4m20iXb7VnZnXadIegHb+RZc=
+Date: Mon, 15 Jul 2024 14:39:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
+Message-ID: <2024071508-prison-liftoff-7987@gregkh>
+References: <2024071218-CVE-2024-40938-1619@gregkh>
+ <20240715.aeLiunipi8ia@digikod.net>
+ <2024071553-yippee-broadways-8035@gregkh>
+ <20240715.Eishohd0ehoo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1789045202-1721046575=:1424"
-Content-ID: <798844da-5d0a-555d-6478-d69161bbec3b@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240715.Eishohd0ehoo@digikod.net>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Jul 15, 2024 at 02:20:59PM +0200, Mickaël Salaün wrote:
+> On Mon, Jul 15, 2024 at 01:16:38PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Jul 15, 2024 at 12:37:53PM +0200, Mickaël Salaün wrote:
+> > > Hello,
+> > > 
+> > > AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
+> > > security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
+> > > just a canary, and this case was correctly handled with defensive
+> > > programming and didn't allow to bypass the security policy nor to harm
+> > > the kernel.  However, this fix should indeed be backported.
+> > 
+> > If a WARN_ON() is hit, a machine with panic_on_warn enabled will reboot,
+> > hence if there is any way that userspace can hit this, it needs to be
+> > issued a CVE, sorry.
+> 
+> OK, I didn't know about this panic_on_warn rule for CVE.  Out of
+> curiosity, panic_on_warn is definitely useful for fuzzing and testing,
+> but what is the rational to enable panic_on_warn on production systems?
 
---8323328-1789045202-1721046575=:1424
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <3b6b0dbd-8593-9c57-8b49-00a0de00e557@linux.intel.com>
+People like to have their devices/servers rebooted if _anything_ is seen
+to go wrong.  A few billion phones have this enabled, as do most all
+cloud servers it seems :(
 
-On Fri, 12 Jul 2024, superm1@kernel.org wrote:
+> It literally transforms a warning message into a system DoS (i.e.
+> WARN_ON into BUG_ON).
 
-> From: Mario Limonciello <mario.limonciello@amd.com>
->=20
-> A string is passed to all callers of pci_dev_wait() which is utilized
-> to demonstrate what kind of reset happened when there was a problem.
->=20
-> This doesn't allow making the behavior for different reset types
-> conditional though. Lay some plumbing to allow making comparisons of
-> reset types with integers instead. No functional changes.
->=20
-> Suggested-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/pci/pci-driver.c |  2 +-
->  drivers/pci/pci.c        | 29 +++++++++++++++++++----------
->  drivers/pci/pci.h        | 11 ++++++++++-
->  drivers/pci/pcie/dpc.c   |  2 +-
->  4 files changed, 31 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index af2996d0d17ff..ff97d08741df7 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -572,7 +572,7 @@ static void pci_pm_bridge_power_up_actions(struct pci=
-_dev *pci_dev)
->  {
->  =09int ret;
-> =20
-> -=09ret =3D pci_bridge_wait_for_secondary_bus(pci_dev, "resume");
-> +=09ret =3D pci_bridge_wait_for_secondary_bus(pci_dev, PCI_DEV_WAIT_RESUM=
-E);
->  =09if (ret) {
->  =09=09/*
->  =09=09 * The downstream link failed to come up, so mark the
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 35fb1f17a589c..115361a08d9e3 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -181,6 +181,15 @@ static int __init pcie_port_pm_setup(char *str)
->  }
->  __setup("pcie_port_pm=3D", pcie_port_pm_setup);
-> =20
-> +const char * const pci_reset_types[] =3D {
+Yes :(
 
-Sparse is not happy about this and expects static as it is not defined=20
-by any header (LKP seems to also have caught this).
+> We should explicitly use BUG_ON() if this is a critical unhandled
+> case, right?
 
-> +=09"FLR",
-> +=09"AF_FLR",
-> +=09"PM D3HOT->D0",
-> +=09"bus reset",
-> +=09"resume",
-> +=09"DPC",
+Personally I would use neither, handle the error properly and clean up
+correctly.  Only if the continuing to run would cause unrecoverable harm
+(i.e. data loss or corruption or compromise) would I ever call BUG_ON().
 
-Perhaps the index-based array initialization format would be beneficial=20
-here.
+> > > Could you please Cc me for future CVE related to my changes or to
+> > > Landlock?  For kernel CVEs, I think it would be good to Cc at least
+> > > maintainers, reviewers, authors, and committers for the related commits.
+> > 
+> > I suggest setting up lei to watch the linux-cve-announce mailing list if
+> > you wish to do this (just filter for landlock stuff).  Automatically
+> > mailing cve stuff to maintainers has been deemed too "noisy" which is
+> > why we do not do this by default.
+> 
+> Well, it might be too noisy for some but I guess/hope not for most.
+> Email filtering should be easy for the few receiving too many of these
+> emails though.
 
---=20
- i.
+For now we have decided to not cc: maintainers as these are all sent to
+a public list that can be subscribed to if they wish to.
 
-> +};
-> +
->  /**
->   * pci_bus_max_busnr - returns maximum PCI bus number of given bus' chil=
-dren
->   * @bus: pointer to PCI bus structure to search
-> @@ -1250,7 +1259,7 @@ void pci_resume_bus(struct pci_bus *bus)
->  =09=09pci_walk_bus(bus, pci_resume_one, NULL);
->  }
-> =20
-> -static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeo=
-ut)
-> +static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_t=
-ype, int timeout)
->  {
->  =09int delay =3D 1;
->  =09bool retrain =3D false;
-> @@ -1288,7 +1297,7 @@ static int pci_dev_wait(struct pci_dev *dev, char *=
-reset_type, int timeout)
-> =20
->  =09=09if (delay > timeout) {
->  =09=09=09pci_warn(dev, "not ready %dms after %s; giving up\n",
-> -=09=09=09=09 delay - 1, reset_type);
-> +=09=09=09=09 delay - 1, pci_reset_types[reset_type]);
->  =09=09=09return -ENOTTY;
->  =09=09}
-> =20
-> @@ -1301,7 +1310,7 @@ static int pci_dev_wait(struct pci_dev *dev, char *=
-reset_type, int timeout)
->  =09=09=09=09}
->  =09=09=09}
->  =09=09=09pci_info(dev, "not ready %dms after %s; waiting\n",
-> -=09=09=09=09 delay - 1, reset_type);
-> +=09=09=09=09 delay - 1, pci_reset_types[reset_type]);
->  =09=09}
-> =20
->  =09=09msleep(delay);
-> @@ -1310,10 +1319,10 @@ static int pci_dev_wait(struct pci_dev *dev, char=
- *reset_type, int timeout)
-> =20
->  =09if (delay > PCI_RESET_WAIT)
->  =09=09pci_info(dev, "ready %dms after %s\n", delay - 1,
-> -=09=09=09 reset_type);
-> +=09=09=09 pci_reset_types[reset_type]);
->  =09else
->  =09=09pci_dbg(dev, "ready %dms after %s\n", delay - 1,
-> -=09=09=09reset_type);
-> +=09=09=09pci_reset_types[reset_type]);
-> =20
->  =09return 0;
->  }
-> @@ -4465,7 +4474,7 @@ int pcie_flr(struct pci_dev *dev)
->  =09 */
->  =09msleep(100);
-> =20
-> -=09return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
-> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_FLR, PCIE_RESET_READY_POLL_MS);
->  }
->  EXPORT_SYMBOL_GPL(pcie_flr);
-> =20
-> @@ -4532,7 +4541,7 @@ static int pci_af_flr(struct pci_dev *dev, bool pro=
-be)
->  =09 */
->  =09msleep(100);
-> =20
-> -=09return pci_dev_wait(dev, "AF_FLR", PCIE_RESET_READY_POLL_MS);
-> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_AF_FLR, PCIE_RESET_READY_POLL_M=
-S);
->  }
-> =20
->  /**
-> @@ -4577,7 +4586,7 @@ static int pci_pm_reset(struct pci_dev *dev, bool p=
-robe)
->  =09pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, csr);
->  =09pci_dev_d3_sleep(dev);
-> =20
-> -=09return pci_dev_wait(dev, "PM D3hot->D0", PCIE_RESET_READY_POLL_MS);
-> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_D3HOT_D0, PCIE_RESET_READY_POLL=
-_MS);
->  }
-> =20
->  /**
-> @@ -4751,7 +4760,7 @@ static int pci_bus_max_d3cold_delay(const struct pc=
-i_bus *bus)
->   * Return 0 on success or -ENOTTY if the first device on the secondary b=
-us
->   * failed to become accessible.
->   */
-> -int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_t=
-ype)
-> +int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, enum pci_rese=
-t_type reset_type)
->  {
->  =09struct pci_dev *child;
->  =09int delay;
-> @@ -4885,7 +4894,7 @@ int pci_bridge_secondary_bus_reset(struct pci_dev *=
-dev)
->  {
->  =09pcibios_reset_secondary_bus(dev);
-> =20
-> -=09return pci_bridge_wait_for_secondary_bus(dev, "bus reset");
-> +=09return pci_bridge_wait_for_secondary_bus(dev, PCI_DEV_WAIT_BUS_RESET)=
-;
->  }
->  EXPORT_SYMBOL_GPL(pci_bridge_secondary_bus_reset);
-> =20
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index fd44565c47562..88f54d22118dc 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -4,6 +4,15 @@
-> =20
->  #include <linux/pci.h>
-> =20
-> +enum pci_reset_type {
-> +=09PCI_DEV_WAIT_FLR,
-> +=09PCI_DEV_WAIT_AF_FLR,
-> +=09PCI_DEV_WAIT_D3HOT_D0,
-> +=09PCI_DEV_WAIT_BUS_RESET,
-> +=09PCI_DEV_WAIT_RESUME,
-> +=09PCI_DEV_WAIT_DPC,
-> +};
-> +
->  /* Number of possible devfns: 0.0 to 1f.7 inclusive */
->  #define MAX_NR_DEVFNS 256
-> =20
-> @@ -94,7 +103,7 @@ void pci_msi_init(struct pci_dev *dev);
->  void pci_msix_init(struct pci_dev *dev);
->  bool pci_bridge_d3_possible(struct pci_dev *dev);
->  void pci_bridge_d3_update(struct pci_dev *dev);
-> -int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_t=
-ype);
-> +int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, enum pci_rese=
-t_type reset_type);
-> =20
->  static inline void pci_wakeup_event(struct pci_dev *dev)
->  {
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index a668820696dc0..306efc399e503 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -174,7 +174,7 @@ pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
->  =09pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
->  =09=09=09      PCI_EXP_DPC_STATUS_TRIGGER);
-> =20
-> -=09if (pci_bridge_wait_for_secondary_bus(pdev, "DPC")) {
-> +=09if (pci_bridge_wait_for_secondary_bus(pdev, PCI_DEV_WAIT_DPC)) {
->  =09=09clear_bit(PCI_DPC_RECOVERED, &pdev->priv_flags);
->  =09=09ret =3D PCI_ERS_RESULT_DISCONNECT;
->  =09} else {
->=20
---8323328-1789045202-1721046575=:1424--
+thanks,
+
+greg k-h
 
