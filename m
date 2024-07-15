@@ -1,153 +1,141 @@
-Return-Path: <linux-kernel+bounces-252484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0878F9313AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:11:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948389313B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C14E1F22ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 512A6283256
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30F18C165;
-	Mon, 15 Jul 2024 12:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB1318A94D;
+	Mon, 15 Jul 2024 12:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PM9bN5nW"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="EcJXTAI4"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8CC18A94D;
-	Mon, 15 Jul 2024 12:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583BC18C179;
+	Mon, 15 Jul 2024 12:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045426; cv=none; b=gcC/SnJ24fjxxmP+CWWbHw1/8Mo5QCwHYjyN/I1QShWJLZAcrn50p1kaFvysH003tn1SmAe90JWBD9loEz4Ef84d2cp6xvcDd6jGrTtwe3I7M0x3lKTwHKjnt6lKQp11qAdII/zlDN5KFv6F4GIvr7ZjjVHGoN1pAyvoZTjoTbk=
+	t=1721045450; cv=none; b=ZW8yr5S8f5WdCy3xZVttGTMMnX+fFjh6d3ZHvCi1tnLYO9uR5/mRv8y0jTTGXWxk0EL90b39hwLTu0jvzdQ3NFtBlI92mXrP5JTAq2xDw8wGkN9ulAWr126IGajnyO6Gwlc3ve5iqsWSeUFTMYEKZwttxiAoCS0BROixM+zRp5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045426; c=relaxed/simple;
-	bh=v3553iIgcc42jQYcQ+pstZfsr9CSKDdUoEVW71SEanM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=likf+CGWT/wceqVRp8BAEnsJjRptf8uXumNMnDPQAcoYQKg/K15omHqHuVnZ7eu65SIvSIywdoR7jxammV65znKd7dCa6Wa82cdmMfW0DodnSsD8IPIIaNb5UeT0h5KzGE7Vr2QEm+VbhBiYEk9D4KLYxFTRTJS5Vo2dt7bjnNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PM9bN5nW; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46FC9uJn128448;
-	Mon, 15 Jul 2024 07:09:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721045396;
-	bh=ghvzRkFVMnN78k4235eqbUPodO5QMcK9davRELJsKEI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=PM9bN5nWM5kuQ00txO1vEO1EbCFOBkRJpzS8t31wgjiUhe8H7BbLBK20m8fpFlCKM
-	 VMnubsFt7dLROD+sdZGi5dV/CoXTI7Ob30Eb+rv7dbe6eYHUAm01YNssDSqTlZkLYo
-	 XLk5C1V8fu1OfTS2C8tRu2xcFGfuShDtFzsMwXM8=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46FC9u3X107180
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 15 Jul 2024 07:09:56 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
- Jul 2024 07:09:55 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 15 Jul 2024 07:09:55 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46FC9anY060344;
-	Mon, 15 Jul 2024 07:09:51 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH 3/3] PCI: j721e: Add support for enabling ACSPCIE PAD IO Buffer output
-Date: Mon, 15 Jul 2024 17:39:36 +0530
-Message-ID: <20240715120936.1150314-4-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240715120936.1150314-1-s-vadapalli@ti.com>
-References: <20240715120936.1150314-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1721045450; c=relaxed/simple;
+	bh=5VS9knY6mSAsq6EZrauM5Q+IHj4rwJ2jkjgzDucTy1M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fa7QMdaqbf12MErlns9guCqG25+56+GMkZ89YNLIlleEv2/g1CeNVqz4pePVfluCOJJ6Zr4ZGnHfYzctptU3ZhFJA79RiAnhXBWjIL1Xcr/ekBdlsit+qIworFI7AWNFxU9y5R5F17QJUASwFXVNYuSslNSVp4HcgmQEBYBBtN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=EcJXTAI4; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id E51D8120006;
+	Mon, 15 Jul 2024 15:10:38 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E51D8120006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721045438;
+	bh=fi1IQpHZDvlWQpXfAPzXTTqWvujhfPCIqbFuSJVBLoc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=EcJXTAI4Q5I7lfVV3gaO0aomYs3DIQxEnUyhiLFsGhcf7LZR4D5oVp998E9jCBhqw
+	 7QEXB039VBTJYnbTJ1AZXFuD9lKpajCZ0/aLuDTZ9+KQM4mYumH3NVSiUUHWZysk6u
+	 55P7MnE3/DBu6VjS/B8CH4RAby3vj+DBjNfwkDQF/Hy5SvPOQQji5Hq3yL2FglUJdV
+	 INWixKkCpg/9SYb/IewX+ttgFtvP8CbjaqtV7ZRJEte4TL5fK5uTR26oBVYmmK6cBz
+	 I69UorV4O4Jlbvly9Yb2VdYJPhowHJKH2Uz3NfCIvhrBSWv+RIVzDvms83hp74JpI9
+	 plPr0jJ/QYM2g==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 15 Jul 2024 15:10:38 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 15 Jul
+ 2024 15:10:38 +0300
+Date: Mon, 15 Jul 2024 15:10:37 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Vladimir Zapolskiy
+	<vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Michal Simek <michal.simek@amd.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-sunxi@lists.linux.dev>
+Subject: Re: [DMARC error][DKIM error] [PATCH 02/10] clk: meson: a1: pll:
+ Constify struct regmap_config
+Message-ID: <20240715121037.hekmgg4sxdomi3b7@CAB-WSD-L081021>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+ <20240703-clk-const-regmap-v1-2-7d15a0671d6f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240703-clk-const-regmap-v1-2-7d15a0671d6f@gmail.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186522 [Jul 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;lists.infradead.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/15 09:24:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/15 09:25:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/15 05:41:00 #25996221
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-The ACSPCIE module is capable of driving the reference clock required by
-the PCIe Endpoint device. It is an alternative to on-board and external
-reference clock generators. Enabling the output from the ACSPCIE module's
-PAD IO Buffers requires clearing the "PAD IO disable" bits of the
-ACSPCIE_PROXY_CTRL register in the CTRL_MMR register space.
+On Wed, Jul 03, 2024 at 11:50:15AM +0200, Javier Carrasco wrote:
+> `a1_pll_regmap_cfg` is not modified and can be declared as const to
+>  move its data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
- drivers/pci/controller/cadence/pci-j721e.c | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Reviewed-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 85718246016b..2fa0eff68a8a 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -44,6 +44,7 @@ enum link_status {
- #define J721E_MODE_RC			BIT(7)
- #define LANE_COUNT(n)			((n) << 8)
- 
-+#define ACSPCIE_PAD_ENABLE_MASK		GENMASK(1, 0)
- #define GENERATION_SEL_MASK		GENMASK(1, 0)
- 
- struct j721e_pcie {
-@@ -220,6 +221,30 @@ static int j721e_pcie_set_lane_count(struct j721e_pcie *pcie,
- 	return ret;
- }
- 
-+static int j721e_acspcie_pad_enable(struct j721e_pcie *pcie, struct regmap *syscon)
-+{
-+	struct device *dev = pcie->cdns_pcie->dev;
-+	struct device_node *node = dev->of_node;
-+	u32 mask = ACSPCIE_PAD_ENABLE_MASK;
-+	struct of_phandle_args args;
-+	u32 val;
-+	int ret;
-+
-+	ret = of_parse_phandle_with_fixed_args(node, "ti,syscon-acspcie-proxy-ctrl",
-+					       1, 0, &args);
-+	if (!ret) {
-+		/* PAD Enable Bits have to be cleared to in order to enable output */
-+		val = ~(args.args[0]);
-+		ret = regmap_update_bits(syscon, 0, mask, val);
-+		if (ret)
-+			dev_err(dev, "Enabling ACSPCIE PAD output failed: %d\n", ret);
-+	} else {
-+		dev_err(dev, "ti,syscon-acspcie-proxy-ctrl has invalid parameters\n");
-+	}
-+
-+	return ret;
-+}
-+
- static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- {
- 	struct device *dev = pcie->cdns_pcie->dev;
-@@ -259,6 +284,14 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- 		return ret;
- 	}
- 
-+	/* Enable ACSPCIe PAD IO Buffers if the optional property exists */
-+	syscon = syscon_regmap_lookup_by_phandle_optional(node, "ti,syscon-acspcie-proxy-ctrl");
-+	if (syscon) {
-+		ret = j721e_acspcie_pad_enable(pcie, syscon);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
+> ---
+>  drivers/clk/meson/a1-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> index a16e537d139a..4d0a6305b07f 100644
+> --- a/drivers/clk/meson/a1-pll.c
+> +++ b/drivers/clk/meson/a1-pll.c
+> @@ -295,7 +295,7 @@ static struct clk_regmap *const a1_pll_regmaps[] = {
+>  	&hifi_pll,
+>  };
+>  
+> -static struct regmap_config a1_pll_regmap_cfg = {
+> +static const struct regmap_config a1_pll_regmap_cfg = {
+>  	.reg_bits   = 32,
+>  	.val_bits   = 32,
+>  	.reg_stride = 4,
+> 
+> -- 
+> 2.40.1
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
 -- 
-2.40.1
-
+Thank you,
+Dmitry
 
