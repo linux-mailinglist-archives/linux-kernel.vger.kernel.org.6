@@ -1,140 +1,107 @@
-Return-Path: <linux-kernel+bounces-252353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530CE931209
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9DE93120A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E291F23595
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6601F22EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915DA18734D;
-	Mon, 15 Jul 2024 10:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5030F187556;
+	Mon, 15 Jul 2024 10:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="db8BJ6EA"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AxVRM0UU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A84172BA6;
-	Mon, 15 Jul 2024 10:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B443C172BA6;
+	Mon, 15 Jul 2024 10:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721038350; cv=none; b=euKQhABS1Q2tpGndqU7HZfmEig4n8yP2XKCm35HBFiHbZG12svLDLbC8CBgOR4d27V8sR61jjl0OSIqbZNAcQhZ8ofzfxuFBywvDGd3g0l5h6QDCaJVPnosUmwu5p2w6wp4pibdbXnC7YgW+sWnLyf+EPJxR+3jtaBuSmiOAAyc=
+	t=1721038356; cv=none; b=OrDIuP1DQnrOU5G8aLn7eMmQVaqL//joPc3a99DfgHYDp7Ay3gD00HFu1Q1+d/4OZtQstq/e7U2f1PRRt8QDHR9bt65awY+r3rWmMGzcYSubLAjwATKRFcSzaikyR9YQg4zino0+h9xP16mnGZrkTBLbUWaV123Zg6YyIdPqQSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721038350; c=relaxed/simple;
-	bh=0f6cEROmT1emVtV8ZMI/B4BlRTL4LJhiHSVAx0+Sw8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZxYknScqR3iJ9d3C6EilmHcB9EkJWM+THTgsenBnTZx0WjKb+DHN2pjSbGNLPHxENQFW1ZvctX5p6PJ6UXadZHmnf+f1PMruVfDxJ+CiXb3CILalVcqfSdazw6BwrwIyXdAH/uFsICakNqzdnkl1Uwm/lpFcdj4IxVwRQ1c5B4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=db8BJ6EA; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44931d9eda6so32892811cf.1;
-        Mon, 15 Jul 2024 03:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721038348; x=1721643148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDCoijj8kwySHqrFNdt8AGZ1d9iFth6FIUd56///NCk=;
-        b=db8BJ6EAgCV5+4/CKa69FALA8DT8TtJXVMT62rtGJMw+7HIuTChOR1tgsAl9DQIqP3
-         /ayMzv3QZ3phk/ZpSHpUn7uwP5+eOqZRv5jWecPp2uIF/SZmqLq4Uzm7c7XvEopcNFR6
-         J4pAOyiMhDB8IJc6JYMzcodWu39px5EiY3pBVD4mGA/JNaUeUmUvCHkpZwTeGw7LOC+/
-         2xpgAnjEhAeZ7GKyCIB7++pbiu2X/S/YyDY3AU9IXv5Mt3wID5V3ccRxpo5sURBROLBf
-         Km75kWYVOQBFDCO0/HnV6MKFcCyInySJkx2oh2FuekIhM+/XJijTAbCQtjv8WK8XVge6
-         Sd7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721038348; x=1721643148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CDCoijj8kwySHqrFNdt8AGZ1d9iFth6FIUd56///NCk=;
-        b=CAmOlP4LKl3L+akhS+4hLxs19uBSi/7hu5r+zp3ljqnfCsrBCow+L6H71IRgHUJD+c
-         KdfyFKfcdSoOYj0Xxu7KPD6chqq7E2Kl2MmO7+TDHK3Sw/COGPXQHsoU1MBuQe4Sl140
-         heNXPOmntYRNWOFZ3YUzsvyWxpOKSKUgn8GjSB68Kazm2cbmiXM8uILnHfC1xaIYQXFo
-         sZB6GH+Fif8NlFAYQdgh6EXrvcKpqydQCGevjnGLo76+HZ7Pwn7kMkJ7hT9AoUVw7uRl
-         kDcWn6zxILZeekvL1k/YWoLyXvlvkwL/lCSM838FD78a9UDm6Q2kkoMSIO45vXUmIc7s
-         E92g==
-X-Forwarded-Encrypted: i=1; AJvYcCWIaN26jdyrbiU07mwaTmFvVoyq2J8fOkXMETbZTusA9a7qa4Nv+Zj1NrfZPiQkCUhiQVGQNotZmMVyZm0y6iBMYO2stOGvjV1YOCOzR/TRxCqoeRpHj1q9bRTi7cpihSveLjAjrUc/V00VowCZDpd5+8WP6pb8r17WzOyyDFj5R7TzHuNsgcIg4to=
-X-Gm-Message-State: AOJu0Yx78xlIIhQvYNcFi8YsOh0aPBw/69oLGreijGjYDO+Bka+TXjkN
-	w3DaHBHnKakYo8Q2cYaKf8bZm/SkfJ5fGeEfYX2F57Q4vOYaWfoJFC4padrcESM/mLveHAZXwHw
-	WUyvc2R1ge8N9VqNdm/NBUUdJVJI=
-X-Google-Smtp-Source: AGHT+IGF6iV9jAe6fy1QrrSt/KZAD1SXI9KKYjrwSB0dVaqM/NwGhJANFO9kSLXL+RXuHX3L4ed66xJ2Lqu8tsbefY4=
-X-Received: by 2002:ac8:7f91:0:b0:447:e636:9ea4 with SMTP id
- d75a77b69052e-44e5c1f3efemr163027081cf.8.1721038348292; Mon, 15 Jul 2024
- 03:12:28 -0700 (PDT)
+	s=arc-20240116; t=1721038356; c=relaxed/simple;
+	bh=PWqkqSvJsWDQly1er/ukGoZ+HvhC1DU8BS2SZm/Nxig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZq3YQ9jcaIIWjrbyQL3qh3pXKQEvWf+HQ16s/tn556fWkKIZ5hT00wBSopp3yPq+L4Z7jK+o+2JV6RH2knGNDx6RDM26x0TT0EI57wB2SWthsDkZULPOrzn+HVpHVTuemfbZTH9CVZWNcTlbnjp32hJFpuqUOAPJd3D2hSVvfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AxVRM0UU; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721038354; x=1752574354;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PWqkqSvJsWDQly1er/ukGoZ+HvhC1DU8BS2SZm/Nxig=;
+  b=AxVRM0UUcNXXZ1imf8JYTz0SbyaT+40sHCxD2UJnJ/MBXaxpr3bKXPqc
+   EVMc9CjeRH5MAWGrqU/jpxRcRrJIEt0PnJXXBM037qvWMLWGJwvKHksDP
+   3mLe2hp0N5S4dhsIGpp8qgAl8YE5FYV4IalGAU1Z/I2cyIW/bpwuhahdE
+   2PoeItAnIr+p0/RNZIHRAEVXjQVBuaIdjrI7AzK8WRAOe4HKCUksqqxWo
+   TC9yfv1qz7ejQjtsa6clNv/WbSqSzYOdAI/fxV/5/kcQzxP8yrGGyUcKP
+   eWTtARfPLDHQdKvgKuQZWwbSp07lssvjqk/zXceWnb/mEgbWTFs1hhF12
+   A==;
+X-CSE-ConnectionGUID: elfziXLuTWGUKjzGdQDBdQ==
+X-CSE-MsgGUID: 5OoGPU23QFGZWyr4EvAmXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18023569"
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="18023569"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 03:12:34 -0700
+X-CSE-ConnectionGUID: UzDMctGYQKqiu+R/HyZ4jw==
+X-CSE-MsgGUID: hT6flkEcR4KJ0ix2q6EQjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="53946610"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.34])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 03:12:33 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kai Huang <kai.huang@intel.com>
+Subject: [PATCH] KVM: VMX: Do not account for temporary memory allocation in ECREATE emulation
+Date: Mon, 15 Jul 2024 22:12:24 +1200
+Message-ID: <20240715101224.90958-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 15 Jul 2024 11:10:55 +0100
-Message-ID: <CA+V-a8ujMhi+SCRXh0WgiVZqzO5CyFnoiKgqch9scfd-Eq0WwQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: rzg2l-cpg: Use devres API to register clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+In handle_encls_ecreate(), a page is allocated to store a copy of SECS
+structure used by the ENCLS[ECREATE] leaf from the guest.  This page is
+only used temporarily and is freed after use in handle_encls_ecreate().
 
-Thank you for the review.
+Don't account for the memory allocation of this page per [1].
 
-On Fri, Jul 12, 2024 at 2:55=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > We are using devres APIs for divider, mux and pll5 clocks so for
-> > consistency use the devres APIs for module and PLL clocks.
-> >
-> > While at it switched to clk_hw_register() instead of clk_register()
-> > as this has been marked as deprecated interface.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > @@ -1023,6 +1023,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_=
-clk *core,
-> >         struct clk_init_data init;
-> >         const char *parent_name;
-> >         struct pll_clk *pll_clk;
-> > +       int ret;
-> >
-> >         parent =3D clks[core->parent & 0xffff];
-> >         if (IS_ERR(parent))
-> > @@ -1045,7 +1046,11 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core=
-_clk *core,
-> >         pll_clk->priv =3D priv;
-> >         pll_clk->type =3D core->type;
-> >
-> > -       return clk_register(NULL, &pll_clk->hw);
-> > +       ret =3D devm_clk_hw_register(dev, &pll_clk->hw);
-> > +       if (ret)
-> > +               return NULL;
->
-> rzg2l_cpg_pll_clk_register() can return an ERR_PTR, so please
-> propagate the error code.
->
-Ok, I'll propagate the error.
+Link: https://lore.kernel.org/kvm/b999afeb588eb75d990891855bc6d58861968f23.camel@intel.com/T/#mb81987afc3ab308bbb5861681aa9a20f2aece7fd [1]
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+---
+ arch/x86/kvm/vmx/sgx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Prabhakar
+diff --git a/arch/x86/kvm/vmx/sgx.c b/arch/x86/kvm/vmx/sgx.c
+index 6fef01e0536e..a3c3d2a51f47 100644
+--- a/arch/x86/kvm/vmx/sgx.c
++++ b/arch/x86/kvm/vmx/sgx.c
+@@ -274,7 +274,7 @@ static int handle_encls_ecreate(struct kvm_vcpu *vcpu)
+ 	 * simultaneously set SGX_ATTR_PROVISIONKEY to bypass the check to
+ 	 * enforce restriction of access to the PROVISIONKEY.
+ 	 */
+-	contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL_ACCOUNT);
++	contents = (struct sgx_secs *)__get_free_page(GFP_KERNEL);
+ 	if (!contents)
+ 		return -ENOMEM;
+ 
+
+base-commit: c8b8b8190a80b591aa73c27c70a668799f8db547
+-- 
+2.45.2
+
 
