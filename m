@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-252469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E131931379
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E7A93137D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE4F1C2253B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2800B1F23DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DB018A93A;
-	Mon, 15 Jul 2024 11:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="RvLQkDDu";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="RvLQkDDu"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF5A18C172;
+	Mon, 15 Jul 2024 11:52:27 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08629187868;
-	Mon, 15 Jul 2024 11:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC2018A94D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721044343; cv=none; b=hW4IybHQ7GkkNDqKeXcrzvehEu3arcR4sPQQZkVukiezXcMqzmxRfb8HVggXlxbl5nP+D0pA5KL2aHwvTowoRmzdvldn23ihURZjfBeUhucMm1Qdpyok5tTbjDPe6ttCbDm/yIKt3pmK1BmPu1PexZLLcWqSIGXnT4o6N2tfzX0=
+	t=1721044346; cv=none; b=VUiQ6C6qEl9FxMW6cdT0Rp2sknI7fPMm8Y5q5fuMiT2MsoAFjSqyViLGbX0ecQvqrpIj0U4HIKxNIZu2I4/ChiNLe3JgNh6vkgU9Wwavwxk4nugOFMOj0E3qTDS8rErADHJdDTGt1Y16iaY6IEtZX/jxe1Bx2L3RCFKLk0qLzwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721044343; c=relaxed/simple;
-	bh=PrVrtzXKdJak050dS1hUn835fsKc7EDVplg1jLcrIMo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y7Z5peOUO225qyBxKeve/pKcL3ji02oozj/jQ5xAq626nWZwzE7hC0QOqVn9Sw9lovvuU4menb+pShbD3T4pUmKTIh9vSWQ7QNlegQkatBPLe0iWvDk9I0Vi4NKiUEdyxsMCNNsX5yWIx+S4W6A36joqdPQol7sb8vEGspEtKV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=RvLQkDDu; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=RvLQkDDu; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1721044339;
-	bh=PrVrtzXKdJak050dS1hUn835fsKc7EDVplg1jLcrIMo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=RvLQkDDu2rC3b6CMv9u9LZd/Y2kV0N6fH+9LKUs3DjA3wzzqScr3VmHuCLyBMO53C
-	 ymC48ruJ+0GceKEOMZIOCoRqxJUbDG5rT+BpiSDqottYfCdg+NBONkJ1IYbA/Z3Cyd
-	 /4LYCpIvByAfU4ckxyM2Wvi6+N2xxNqiyfVZvbmg=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C54D91281802;
-	Mon, 15 Jul 2024 07:52:19 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id JkKL_Oj60n8I; Mon, 15 Jul 2024 07:52:19 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1721044339;
-	bh=PrVrtzXKdJak050dS1hUn835fsKc7EDVplg1jLcrIMo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=RvLQkDDu2rC3b6CMv9u9LZd/Y2kV0N6fH+9LKUs3DjA3wzzqScr3VmHuCLyBMO53C
-	 ymC48ruJ+0GceKEOMZIOCoRqxJUbDG5rT+BpiSDqottYfCdg+NBONkJ1IYbA/Z3Cyd
-	 /4LYCpIvByAfU4ckxyM2Wvi6+N2xxNqiyfVZvbmg=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D7B9F1280F4F;
-	Mon, 15 Jul 2024 07:52:18 -0400 (EDT)
-Message-ID: <f6ab30f39a14550b6fc111feb83b2657006b8b8c.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm: Move dereference after NULL check in
- tpm_buf_check_hmac_response
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Hao Ge <hao.ge@linux.dev>, 
-	peterhuewe@gmx.de, jgg@ziepe.ca
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Hao Ge
-	 <gehao@kylinos.cn>
-Date: Mon, 15 Jul 2024 07:52:16 -0400
-In-Reply-To: <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
-References: <20240709023337.102509-1-hao.ge@linux.dev>
-	 <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1721044346; c=relaxed/simple;
+	bh=t4pDWDgmRHlWKFeqXPZa/lEDpSFjluOZxYF9jV+3PgY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PMGpnE0sjPfYmVszqWx5aariUmIBb77N7cIT423Mw/6PSXFkHJWEDgyTfF/TJNsFVsBZPrd9JS+4kNGwHOzFOM81pn8bsC2b5hp2eK5wAQ0H3jAn1cj5MgUxHX9Fi/51VkOU4nc/EUXrTt5I/8r55V/e58sK4OAkr0sRhQumsGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f6218c0d68so509216839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 04:52:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721044344; x=1721649144;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lllYPE4GPyNqsW1MAxUY+CN0ZVo9aIg8GROzQIAinyo=;
+        b=rjDC1H89UOby+M0fuWg1Sl+E+4ODzS48khjPMT32pBa1ipeYLZ3Dgk+n27OK9iH5q8
+         Si0LZhRE+9lpCfIm7mgvKTEzZunaAmVuV5iBWL+nWP2shiv32JbELpxVE6yIAqzU3izU
+         I2zHvK0G8OpVn0uyyxzf5yEgUr3hujrPyb720pv6zuG0XNYvhYBpWoNNBujaspaeY2tX
+         juVT7Wv/YhctnmUEgXxqvEK0JoMDorSDjothL/1EleXlvNTqPlezZ8isrj0lYZp9USyL
+         ogHnB+NVngH0XeRyoj2lC6rD2y0OJQdYJU5WCoJkvtV37cVMeUGny3aHbWhW2z9iGFTc
+         8fUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNhooZP/N4UTZ2m282qpgvQVRw0NbJNQLjops6lQl162Fv98hPAeUNF83BoAQ5Sw6C8sENW1NFlfZtF6cNdBWisZWX57E65wByRcWM
+X-Gm-Message-State: AOJu0YzyEtFZ4GPwrMjnLgWCwRrZP8JsnVykBzEYrmevQbNjXXbQKipq
+	SIftXuXCtkWSue981uomfxCm/GjSBpAoSfOynTkQlIMQ8+hFI2AXhk59DPohMv0lbhjpTE5LKtE
+	7ZA7Vs8kHm0O6m6RVtcUCXCl1eUl8Jl5R/AsiEFaVJTCfJQR1P09WiRo=
+X-Google-Smtp-Source: AGHT+IEEnMX0NPtpIhNWzE9s+ZJMHHn7EnH/1HgY+OJdlyiUh10GvxgRFUmJbKaSturjGICO8+RHPXegNh9XF7g7naGO35FhIhV1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6c09:b0:7f6:2d58:8d5a with SMTP id
+ ca18e2360f4ac-8000621696bmr128825539f.3.1721044344703; Mon, 15 Jul 2024
+ 04:52:24 -0700 (PDT)
+Date: Mon, 15 Jul 2024 04:52:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cf1914061d47dc7a@google.com>
+Subject: [syzbot] Monthly dccp report (Jul 2024)
+From: syzbot <syzbot+listd096a34372f703f89669@syzkaller.appspotmail.com>
+To: dccp@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2024-07-15 at 14:25 +0300, Jarkko Sakkinen wrote:
-> On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
-> > From: Hao Ge <gehao@kylinos.cn>
-> > 
-> > We shouldn't dereference "auth" until after we have checked that it
-> > is
-> > non-NULL.
-> > 
-> > Fixes: 7ca110f2679b ("tpm: Address !chip->auth in
-> > tpm_buf_append_hmac_session*()")
-> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> 
-> Also lacking:
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes:
-> https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/T/#u
-> 
-> What is happening here is that my commit exposed pre-existing bug to
-> static analysis but it did not introduce a new regression.
+Hello dccp maintainers/developers,
 
-Actually, it didn't.  The previous design was sessions were config
-determined and either auth would be non-NULL or attach would fail.  You
-chose with this series to make auth the indicator of whether sessions
-should be used, and before this auth could not be NULL so no bug
-existed.
+This is a 31-day syzbot report for the dccp subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/dccp
 
-Consider also the fidelity of the Fixes tag for stable: this commit
-needs backporting with 7ca110f2679b and Fixes should identify that
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 7 have been fixed so far.
 
-James
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 105     Yes   KASAN: use-after-free Read in ccid2_hc_tx_packet_recv
+                  https://syzkaller.appspot.com/bug?extid=554ccde221001ab5479a
+<2> 57      Yes   BUG: "hc->tx_t_ipi == NUM" holds (exception!) at net/dccp/ccids/ccid3.c:LINE/ccid3_update_send_interval()
+                  https://syzkaller.appspot.com/bug?extid=94641ba6c1d768b1e35e
+<3> 17      Yes   BUG: stored value of X_recv is zero at net/dccp/ccids/ccid3.c:LINE/ccid3_first_li() (3)
+                  https://syzkaller.appspot.com/bug?extid=2ad8ef335371014d4dc7
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
