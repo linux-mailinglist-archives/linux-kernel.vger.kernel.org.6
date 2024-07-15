@@ -1,151 +1,112 @@
-Return-Path: <linux-kernel+bounces-252139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92843930ECE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:32:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CDC930ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E0D28119B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402281C208FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49028185083;
-	Mon, 15 Jul 2024 07:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D62184122;
+	Mon, 15 Jul 2024 07:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Xz3s8Kf+"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="MNMkaaUZ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CF01849CB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C863218309D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721028680; cv=none; b=YAGgpI8fqL38Y/Yuog+N/iSHpSbtQlyV2iSYkWZI/3SYi/bPZs4fa2NShXwX7DdkAGJYa746awgrBx3AJFaukxozgAGrQlJ2veCXpFNopCtsp8JCODG8qWstD7ulmofrnpy3iIhkWsnoGNfw1d3a7k/zrEO7TA2Pc01hg1j5NKc=
+	t=1721028732; cv=none; b=jebAC5Tey/W/+YLdllMNlGVDfzlCPULijipSwUIFqO9CE8TwBTeVOhc/NVs6VGn0/sOLzNNX7SFxtnZWfN4YhzNW9gUs7R4FLnr86TmCq3wIH45j4Uu2cBycuOeVmeojYG93AVzubqFGbcfq8MDTW41++Zv+om9QGD68ZfOHP4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721028680; c=relaxed/simple;
-	bh=msdvHICFqZBk3Qmz2OXLcwYLDlWXsaOJTSf+xIoW5K8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V59RsNtE594b21Xhbg0NudIO6RXx4kFSKoPTp94BW14GPUK2P68oMnzApjzcwMAcbIqWGodcpspvBvgaHBiFdANBvzVscsOdAIjp58CM3t/yppf25Bvl0e0NF0IaryH6HALvOP6qntk97Rw3FbvoAsicnExRmU+guILpFaXebHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Xz3s8Kf+; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so5054893a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 00:31:18 -0700 (PDT)
+	s=arc-20240116; t=1721028732; c=relaxed/simple;
+	bh=N8Um/BZiDpRbAQCGRBIIhgQMzSAwLh2B1/4xdeV/dWw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=QXlwf7uMk+AYUL94BYxR8RioihOZsfHtgGR522Ves6dsKsV6cpJUHQ9XwM5X0Rz1JfLJrEme85wL7nYqc/9hrOEO49hBCvpQBIiaHcaIQfEtgddyqDrjKPJWOGB9NDX3ed+pO2rW/3N5Nns1DDWKeZskyFYpgFkEB008fMVlt/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=MNMkaaUZ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70af3d9169bso2729665b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 00:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1721028677; x=1721633477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1721028730; x=1721633530; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7H+3a2UnmA5NVXZ9zwW5RQvv7oqwdwKXWiUEHwm4fFk=;
-        b=Xz3s8Kf+WTojUkDnICtQoLmdoYQPcZaLg2nE8jhzkxBony45vvT2vWqTqHPHZYOdKB
-         66Y7eViW4jKqCXszu3lY9vpzQoZDZcz40gBbjloVSPg38460pYk3v7DghIJVMtIZhaMy
-         qiGPMYtbQs93uBQAXj6Q5meeRNyV90YDgVjjO/4HHyMfB3/5Ck8UawaRb0E8XQvyrPFi
-         nLQ9SUFOSjnJ2aFb9vtW6FDkIYryhz+6ivqaQ0QORM6hncfJ7D8El/jWCEy6QaXzQuXQ
-         nUYtF6uE+8BcQcqs2fz4lh2Zm4L9umVjhmPpCwpwMSNJTi/3N7Jh6M3rVbok6huCe644
-         sjhw==
+        bh=BU1rxmI86o5sSy9mWgyvdZfBDmEh8iUs62QhEQ70ryU=;
+        b=MNMkaaUZcGqLyIE6jjP+TR5jEdblAApaF9g5wpifNDzDLPrBQLSfUZCkG4ZIVZlxNT
+         1DcCt2K5yJDZTz8Kb2bSyvvaGsVfFTjGja5wp6Q6j43EWl4LPpE2/pJEJ0IHLG4JkGhe
+         GwQuWzH4q0VDIgkiqbkfQQ7pRQlx5fvN3TLSTh80XwpPhmnFZsVY9Q6seJwz3lRybLZP
+         SoTc+I+Fwq8N1nrjcXoQk9t5VRZelJEYPJGKRTPGexNw/rP21GzvyiedG+A/ZTVQ4sDf
+         RtaAm+fxjD0x7S3rMOXPuDOuNCHCa3XEY48gLLeEhnn8+FlkcrVIUJsuZ0kWnbsSVP8i
+         Bq/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721028677; x=1721633477;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721028730; x=1721633530;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7H+3a2UnmA5NVXZ9zwW5RQvv7oqwdwKXWiUEHwm4fFk=;
-        b=hGdnZ4x5xkZmi50vzSGR7/xO4HP116Kr6RTfvxz5BLpiL3S8eNUrIjjqPRVbQxlR7L
-         FreLyU2Rg47sVQ7ot+Wia9mjbbMJW4pQrnmQPhKkgwznQUWqjV2eA9PGo3qqVt8aXDnj
-         S03RAT56PH2Sel60skQYjQL2nj5fkBfGJvYurujHFGhlS9kTBPszuvcZ3FxlgPzBh4zZ
-         mvo8kRpyPHk3SYm7yw67FeE7rTtRBQS9gX8ZawLbvKdpa5QAr0tXWJmKJwEl1N3OGiK4
-         cvuZHekmM8LPwhzZmuUpSOyl+ExvZ7EeIgJprg4FfY3yX/6O1gAlkGfI+HXf5XCEJO4/
-         n6SA==
-X-Gm-Message-State: AOJu0Ywesc55iuLwYz4OuRQG92SzWYCapWotkq7YnBK3THsT97BXF5KO
-	lgPJxCtTyV5zhoVqs863AHG48yPCnBFAkXFOU9kArGZ7WmL58v5hqQSQyw7R5DNinCQMP0ta8x3
-	f
-X-Google-Smtp-Source: AGHT+IHnUUX2ROHLKdUMz/8YZsTBxpX8KbBG7oBgLNCvKmKvPz20CS13QNSFgp78xwmOKgcSET5u1g==
-X-Received: by 2002:a05:6402:2707:b0:57d:10c:6c40 with SMTP id 4fb4d7f45d1cf-594ba98e3c7mr14379033a12.7.1721028676341;
-        Mon, 15 Jul 2024 00:31:16 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59cf7763236sm1274023a12.12.2024.07.15.00.31.15
+        bh=BU1rxmI86o5sSy9mWgyvdZfBDmEh8iUs62QhEQ70ryU=;
+        b=poMzvj0AUi0jXYKJUfmyyl/puueEBD+VRpJu6Hf1nC9/a1l3q7jYgBikhqBbdWFisj
+         WWVroeOYvB6clrTkMf6ChhQZF9KAh5Zqh49dYEYvISoYMH/xTav1iwyPr25qm8l8PBcE
+         X6GA50EL9jhi76sQ93uu0VsfcZlPKWZPks3mDJIssJgpNRDoM1xFHxAx4AkJmK4GUhSJ
+         JLFowYvjVr4MHmIV6sSCquo/v9xkGuyUYNYRsFJCYSR0oHEgTlo0KYXZ6XeAw6vNHAmY
+         AK4HUYAUsBryN442Zy6rr8nYczWjzMWm5CUggKmWQo/7AISTWiG6HrF2uFxlhQPGgTzc
+         wceQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYUsFYyWIqVDg+FwRL3oW6HY3nQIzcqC4dfPRN57zynBEsDHnEjjCbxGHsR/7d5tKT+7IaOKvghrH77kzBabzs6NKQqWfq+8oxubgr
+X-Gm-Message-State: AOJu0YyST6mYAnlZcMe9Y65TRsRXf1cY06j2iglPSwawkOn18RCmO5xZ
+	z7RH4SELLjcHU7CiTg0E7OJ50kkv6iafJltguWL486doXo19Y6JB8zAcr2fUeS4Eu8O3sFj4qgh
+	abMY=
+X-Google-Smtp-Source: AGHT+IFeK1zVSa0EG0mSSa/orniI/Xcso0OuomS0td75qDeaGr6wqFxmGjNYbtPS7w/xWuJR3oCwHA==
+X-Received: by 2002:a05:6a00:4650:b0:706:34d2:62bc with SMTP id d2e1a72fcca58-70b435709d9mr18101468b3a.18.1721028729929;
+        Mon, 15 Jul 2024 00:32:09 -0700 (PDT)
+Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eca75a6sm3654464b3a.164.2024.07.15.00.32.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 00:31:16 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH 5/5] hwmon: pmbus: pli12096bc: Add write delay
-Date: Mon, 15 Jul 2024 09:31:02 +0200
-Message-ID: <20240715073105.594221-5-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240715073105.594221-1-patrick.rudolph@9elements.com>
-References: <20240715073105.594221-1-patrick.rudolph@9elements.com>
+        Mon, 15 Jul 2024 00:32:09 -0700 (PDT)
+From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+To: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	jikos@kernel.org,
+	benjamin.tissoires@redhat.co,
+	linus.walleij@linaro.org,
+	dianders@google.com,
+	hsinyi@google.com
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: [PATCH v2 0/2] HID: i2c-hid: elan: Add elan-ekth6a12nay timing
+Date: Mon, 15 Jul 2024 15:31:57 +0800
+Message-Id: <20240715073159.25064-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Tests on PLI12096bc showed that sometimes a small delay is necessary
-after a write operation before a new operation can be processed.
-If not respected the device will probably NACK the data phase of
-the SMBus transaction. Tests showed that the probability to observe
-transaction errors can be raised by either reading sensor data or
-toggling the regulator enable.
+Elan-ekth6a12nay requires reset to pull down time greater than 10ms,
+so the configuration post_power_delay_ms is 10, and the chipset
+initial time is required to be greater than 300ms,
+so the post_gpio_reset_on_delay_ms is set to 300.
 
-Further tests showed that 250 microseconds, as used previously for
-the CLEAR_FAULTS workaround, is sufficient.
+Changes between V6 and V5:
+- PATCH 1/2: Respin the series on top of v6.10.
+- PATCH 2/2: No changes.
+- Link to v1: https://lore.kernel.org/all/20240704072958.27876-1-lvzhaoxiong@huaqin.corp-partner.google.com/
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- drivers/hwmon/pmbus/pli1209bc.c | 26 +-------------------------
- 1 file changed, 1 insertion(+), 25 deletions(-)
+Zhaoxiong Lv (2):
+  dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
+  HID: i2c-hid: elan: Add elan-ekth6a12nay timing
 
-diff --git a/drivers/hwmon/pmbus/pli1209bc.c b/drivers/hwmon/pmbus/pli1209bc.c
-index 2c6c9ec2a652..178e0cdb7887 100644
---- a/drivers/hwmon/pmbus/pli1209bc.c
-+++ b/drivers/hwmon/pmbus/pli1209bc.c
-@@ -54,30 +54,6 @@ static int pli1209bc_read_word_data(struct i2c_client *client, int page,
- 	}
- }
- 
--static int pli1209bc_write_byte(struct i2c_client *client, int page, u8 reg)
--{
--	int ret;
--
--	switch (reg) {
--	case PMBUS_CLEAR_FAULTS:
--		ret = pmbus_write_byte(client, page, reg);
--		/*
--		 * PLI1209 takes 230 usec to execute the CLEAR_FAULTS command.
--		 * During that time it's busy and NACKs all requests on the
--		 * SMBUS interface. It also NACKs reads on PMBUS_STATUS_BYTE
--		 * making it impossible to poll the BUSY flag.
--		 *
--		 * Just wait for not BUSY unconditionally.
--		 */
--		usleep_range(250, 300);
--		break;
--	default:
--		ret = -ENODATA;
--		break;
--	}
--	return ret;
--}
--
- #if IS_ENABLED(CONFIG_SENSORS_PLI1209BC_REGULATOR)
- static const struct regulator_desc pli1209bc_reg_desc = {
- 	.name = "vout2",
-@@ -127,7 +103,7 @@ static struct pmbus_driver_info pli1209bc_info = {
- 	    | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP
- 	    | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT,
- 	.read_word_data = pli1209bc_read_word_data,
--	.write_byte = pli1209bc_write_byte,
-+	.write_delay = 250,
- #if IS_ENABLED(CONFIG_SENSORS_PLI1209BC_REGULATOR)
- 	.num_regulators = 1,
- 	.reg_desc = &pli1209bc_reg_desc,
+ .../devicetree/bindings/input/elan,ekth6915.yaml          | 1 +
+ drivers/hid/i2c-hid/i2c-hid-of-elan.c                     | 8 ++++++++
+ 2 files changed, 9 insertions(+)
+
 -- 
-2.45.2
+2.17.1
 
 
