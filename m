@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-253105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D0931C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0842E931C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0701C21A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A69D81F22A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75D813CF9C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB4013C906;
 	Mon, 15 Jul 2024 21:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZBKx2m7Q"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4JSaAUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5538013B5B6;
-	Mon, 15 Jul 2024 21:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CA0C15B;
+	Mon, 15 Jul 2024 21:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721077942; cv=none; b=rNBlwA/N0DsG8gmxVyOHNQgMXZLjVGENZbaAfjJeHha8hmELYMpJPZwlxDmNmwxqwPBJxIkoi4dLOP+0XEsvVDjgc2P2lEtfPlAoZ8PR6lhOLTNIuMZFmxXo1BNPpkpOAG1WKfF2s9AgJSQELJiq024/IjztSpnYHqRn/NpUYfw=
+	t=1721077941; cv=none; b=GZ61was1Xvq/bP7dG7S7wtQLnuaA0BqQ/5NGRvMiboL8u8ZmSL0wG8GzGzrmZ6ouYCxfzcAR5q6rAGDDmKLIbtIjQTj66wbAVljlZKpW25NbB42S3bkEXsiLFhi+fBQ2Dzk9Xbk0VzvGhiHzEIH17HKquOOe1LsQIQz5FpQNLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721077942; c=relaxed/simple;
-	bh=zyGFrn/K6g9HJ0UNtwo4DiISe8PYQj+w1yIz1L/7LwM=;
+	s=arc-20240116; t=1721077941; c=relaxed/simple;
+	bh=f9NzP9tjzwXIEUD7yTK7pOIZzQWrs2+SH6OLDjbCgd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPFJwaRH9Ft9dbIWx3r8pRZOW4TqfyAvFAx1PTuPYIx9LHMgULvLW/YudptZlWeD4zPwPDulBXm0Ac0khR5GBqU50mwO0WCnM39/4IkwSY5nzo1Ntsf03ouAbFzOyjrDSacNmj5b1EX5NVFvCJdwALZLQrOr0NdYL0mXW8b2bq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZBKx2m7Q; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 27A70FF803;
-	Mon, 15 Jul 2024 21:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721077937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PrFsaEY3YFVMERSSxHwPf6/7rkdQhgSWQ843FPXb6VM=;
-	b=ZBKx2m7QZN1wibY9E26Du5teUQrGS6KveFuXrHhyhD5Pq/PNKteH13nR6Vm6Zyc0jFXUi1
-	Ac/u8zVk8E7U0h25euNwSPZKva97q6TrnO/87Wp5bxLf1xYuzdNyrvr33Sfrxc0Ua6jInH
-	0W49CA1vq/OeH7PRcgK9U9asubq8oTaq/4naZR/Wk1px6FIZpF+NgESEjCkXjoNeYNlWnA
-	ZsnAZMEVSk0dOo3YTq2qDPWrzaI9vXy0nS+2JAZUzUscTH8ZbXJ9HBC6ZK84xi+WoHHqxt
-	WQb4Lc2807kqw4QBnUD8jcD2x2VL2jBI/SPYMaC4kDA495T6XqUeuoxI4nsTmA==
-Date: Mon, 15 Jul 2024 23:12:16 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Valentin Caron <valentin.caron@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>
-Subject: Re: [PATCH 0/4] rtc: stm32: add pinctrl interface to handle RTC outs
-Message-ID: <2024071521121650db391a@mail.local>
-References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J93J+BVVtyLlKF6KLwleGym+T6dtDaYLS4wIOrODew5crefDAAntK4svFM0Uw+HPSy9ReIolg39X5UICAKD+mrNTo9kIETG3STPG7YjQ3RJ03SCWYV1bM2+v9mdcMY/D+bon1cX+ynYfkc8yN2ihYeT3aW7Wy3vwbjdIkSwgjHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4JSaAUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 046E9C4AF0B;
+	Mon, 15 Jul 2024 21:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721077941;
+	bh=f9NzP9tjzwXIEUD7yTK7pOIZzQWrs2+SH6OLDjbCgd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P4JSaAUmTsLTf25ljtv8Ais+sInxqugqQFf7D8hpvJgIvWBtFTxonXTSTR6JPUWqc
+	 Gkfvoc5nTWCZKFl9WCKUXmrZZlQJ3hCYs9W4OurMAGTTz66Xb7P0iV9tmMqA2H2etI
+	 on6C+haJKncbdWpZEshsOvMKg39IGVdvgCkLf3Qw5jy+cpw94GKPh+9ObAAvoc/rEz
+	 XF9qMoqwd6Kxx0FW8lhm6X+Fo7ASjEUeyUJIRzoM+Zwep+ZQAS7laP6Gn1wCg2M5Zv
+	 X20VT8viojGoUqTcXR9WF7EyOwJdQay3K2STevnaKijkZS76zR1kcYZJyU+BgB3tF8
+	 nQbrn3fnqW3Tg==
+Date: Mon, 15 Jul 2024 14:12:19 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Stefan Lippers-Hollmann <s.l-h@gmx.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+Message-ID: <20240715211219.GA1178@sol.localdomain>
+References: <6064157.lOV4Wx5bFT@rjwysocki.net>
+ <20240715044527.GA1544@sol.localdomain>
+ <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
+ <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
+ <20240715145426.199c31d0@mir>
+ <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240711140843.3201530-1-valentin.caron@foss.st.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
 
-Hello,
+On Mon, Jul 15, 2024 at 04:48:20PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Jul 15, 2024 at 2:54 PM Stefan Lippers-Hollmann <s.l-h@gmx.de> wrote:
+> >
+> > Hi
+> >
+> > On 2024-07-15, Rafael J. Wysocki wrote:
+> > > On Mon, Jul 15, 2024 at 11:09 AM Daniel Lezcano
+> > > <daniel.lezcano@linaro.org> wrote:
+> > > > On 15/07/2024 06:45, Eric Biggers wrote:
+> > > > > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
+> > > > >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >>
+> > > > >> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+> > [...]
+> > > > Does the following change fixes the messages  ?
+> > > >
+> > > > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > > > b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > > > index 61a4638d1be2..b519db76d402 100644
+> > > > --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > > > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > > > @@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct
+> > > > thermal_zone_device *device,
+> > > >
+> > > >         if (!iwl_mvm_firmware_running(mvm) ||
+> > > >             mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+> > > > -               ret = -ENODATA;
+> > > > +               ret = -EAGAIN;
+> > > >                 goto out;
+> > > >         }
+> > > >
+> > > >
+> > > > --
+> > >
+> > > It would make the message go away, but it wouldn't stop the useless
+> > > polling of the dead thermal zone.
+> >
+> > Silencing the warnings is already a big improvement - and that patch
+> > works to this extent for me with an ax200, thanks.
+> 
+> So attached is a patch that should avoid enabling the thermal zone
+> when it is not ready for use in the first place, so it should address
+> both the message and the useless polling.
+> 
+> I would appreciate giving it a go (please note that it hasn't received
+> much testing so far, though).
 
-On 11/07/2024 16:08:39+0200, Valentin Caron wrote:
-> This series adds a pinctrl/pinmux interface to control STM32 RTC outputs.
-> 
-> Theses two signals output are possible:
->  - LSCO (Low Speed Clock Output) that allow to output LSE clock on a pin.
->    On STM32MPU Discovery boards, this feature is used to generate a clock
->    to Wifi/Bluetooth module.
->  - Alarm out that allow to send a pulse on a pin when alarm A of the RTC
->    expires.
-> 
-> First attempt [1] was based on 'st,' vendor properties, this one is based
-> on pinctrl and pinmux framework.
-> 
-> As device-trees will be upstreamed separately, here is an example:
-> 
-> stm32-pinctrl {
->     rtc_rsvd_pins_a: rtc-rsvd-0 {
->         pins {
->             pinmux = <STM32_PINMUX('B', 2, AF1)>, /* OUT2 */
->                      <STM32_PINMUX('I', 8, ANALOG)>; /* OUT2_RMP */
->         };
->     };
-> };
-> 
-> stm32-rtc {
->     pinctrl-0 = <&rtc_rsvd_pins_a &rtc_alarma_pins_a>;
-> 
->     /* Enable by foo-device */
->     rtc_lsco_pins_a: rtc-lsco-0 {
->         pins = "out2_rmp";
->         function = "lsco";
->     };
-> 
->     /* Enable by stm32-rtc hog */
->     rtc_alarma_pins_a: rtc-alarma-0 {
->         pins = "out2";
->         function = "alarm-a";
->     };
-> };
-> 
-> foo-device {
->     pinctrl-0 = <&rtc_lsco_pins_a>;
-> };
-> 
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/fw.c  |    1 
+>  drivers/net/wireless/intel/iwlwifi/mvm/mvm.h |    1 
+>  drivers/net/wireless/intel/iwlwifi/mvm/tt.c  |   55 ++++++++++++++++++++++-----
+>  drivers/thermal/thermal_core.c               |   46 ++++++++++++++++++++++
+>  include/linux/thermal.h                      |    1 
+>  5 files changed, 95 insertions(+), 9 deletions(-)
 
-This all seems good to me, I let you fix the various issues that have
-been reported. I was just wondering whether the LSCO clock was registered
-early enough to be used but I guess you tested that.
+I'm still getting the warning messages with this patch applied.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+- Eric
 
