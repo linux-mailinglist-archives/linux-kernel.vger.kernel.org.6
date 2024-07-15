@@ -1,183 +1,196 @@
-Return-Path: <linux-kernel+bounces-252731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFA993176C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A54B593176D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9215D1F22643
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:17:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262631F226F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611BA18733D;
-	Mon, 15 Jul 2024 15:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F86C18EA6F;
+	Mon, 15 Jul 2024 15:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GigUuN3t"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="gkd7vXQQ"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010049.outbound.protection.outlook.com [52.101.69.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0814D5258
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721056619; cv=none; b=V87ogwha60JyFBXhCIArMunmraZkD7RgzxGDhpeOvqV44fA4rYUoPh+AwqR1uD5FIqfWPcbAB+DxZQvA4chbTcs3/IhYHs45MT2PvCpKlcGLe6+gUT/qQecMwQ5aJcSkmIpDzLfVfXIFmm1kJEqDdVl4LQie0JdLfd295B3ChR0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721056619; c=relaxed/simple;
-	bh=WpNVOzh8WbA6AOhGN4gtNNfbRJ7ysNepFFUTVIwugHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KD6UfmsxgxNvkCcEmJVBP3kwLD51SQmtYzrbcWUWogK9sKpBDLbte3mwwp+TYr0J0KMvTTpH+aVkHU3Sj3AyIgx8UqyKf/EFXm0RZkFz9njExf/1YjRNZ+bMm3QzbqZw0vknQSl6IVsFM57rSKaOEcEExtBoTkHiRL5WnL1Zck4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GigUuN3t; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso30262595e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721056616; x=1721661416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b1CAVNEyp708piBojRejIUPpryPK1bcTc+oCowoUiFI=;
-        b=GigUuN3tnZyV28JS5KRxV3MRXtn2lxdXTwyqsCdFsofJP3YiKjGgk6TR37l1VdkRaf
-         8+IZyoSqa72OuJe4m8zeUa48wdKISGRIFZHCQ1fc4PrHYMRJMmHp+O0WJ/+gmuKPj7X3
-         UHezoanAGuDhK1gJIu5kR4pwiHe6UqvjwS4QCyIhJy2JwPP8/cKkXlBkeweZ/ACUg/x+
-         eY8lgkIuYSAzBiHUkpL/gUJQ4kFiw0fL57OtGBhZTkEVJhPJae23Jqe/2DkfSpQBVKT2
-         WpojCmCk+g48oIxAn2GJwah1NEy4P4dPUBD2xwWD5eq7Vvf95UInJxSRJXMeQAtGKSZo
-         ENcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721056616; x=1721661416;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b1CAVNEyp708piBojRejIUPpryPK1bcTc+oCowoUiFI=;
-        b=S9SYsJm6HbYkV8Ku7EV8mwsHbwDNduJdyFHF/3/GTH5blV4QbKG06WnWeK8XdZ9elf
-         T8WZ5bodq18Unt+/XhTvOqznDLD0n2blYmJPy5+FVf2wMs/lfe9EQ0DJ7GAnBsYS4KUm
-         C6dAVbiBWb4GnUsLCikQrCl2iJ+b8cDdl6F2mMHDO3F6GpNZC4/vdjx3b9JjcREmJ2AT
-         1PMzV0NYCqHeT0BbSIn5M9SgycS2cva3+SMtqfOaSAl5/aiT6noV03ef0/to4b5Njzqf
-         d5fZUOBqVMAZCBQrEbBAYvesydKrSKdpU8G+hxY/xk26gHka+OG5zkIB+3ujLAuHa1sg
-         sA+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXj+ONbowjtcqjxL2KOFJsWMM258R2+xZS/OVAx1ILzJF/Y2m2Y5ZDsn07z240G/cY35aVTLCcLAKTAgYeRuJskShlBEEb3/PoKRxhp
-X-Gm-Message-State: AOJu0Ywg7YJGIp1RFcvGW5ZfAwTEbqWfGuYKFr9yhgu+0uJJDbj0g56l
-	E9UIri4G0vDnuqd67JhBLu02xD5A/y64l/VOQKpqFI8OY0HlLWe6
-X-Google-Smtp-Source: AGHT+IE6oyJsVTFtqaV2gPzN+u1hsmchNLkDokd4ODWbDPstYtty4GVvCL/XAkJKsqO+gZ8MF3CXbg==
-X-Received: by 2002:a05:600c:5129:b0:426:62c5:473e with SMTP id 5b1f17b1804b1-426707f7db0mr128603205e9.26.1721056616120;
-        Mon, 15 Jul 2024 08:16:56 -0700 (PDT)
-Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc42esm125799335e9.32.2024.07.15.08.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 08:16:55 -0700 (PDT)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: rodrigosiqueiramelo@gmail.com
-Cc: melissa.srw@gmail.com,
-	mairacanal@riseup.net,
-	hamohammed.sa@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7F46FC2;
+	Mon, 15 Jul 2024 15:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721056633; cv=fail; b=dEgjp+Vb/9VC1WZOMlDiT6c3CaWA4gJSzm2vVRG1VBmzyynlSYbuK/hj5KZiXY8djJ3noDD5sZ+fiJsD1+DxHVVODEWHLecTFIIc5EVpttb+F591iBgInoD/AvshmPLOS5pp2jwoheQacHtU+Q7fC24uBxeYWC0o3m3oSIWsO90=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721056633; c=relaxed/simple;
+	bh=1ctZabOv651M87hFUc9K/2sYy2lUmoJ0sdxLi8cTLxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gAMup+eZ4FwbbvDP2FlND2iOmu9Vr2OBlrwbyMW3LVTwUhrqUpRr98UHgjF+/o5N/1mkrMgwyUQBNigv7VSY3QiiYdZpC4KgbF11T0G3HLFxrRENaA4kPuWoFLkXJdug/LSLFs+Mh+ruP8DCVNWMAJY7ZMHKJXP5Iv40MsBwxmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=gkd7vXQQ; arc=fail smtp.client-ip=52.101.69.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=umZqUKeMuWSmZaH5Llab1b7BoD3pk5jAn+i7fV8BrJEGUqorqwRgHZm91inX/sz3XXlW+aOTnP3ZHFscjeqt3NGEaVwi0vNE7bHajQfFhgi74uIUI30sFyxGKmRx2Lsrb0BB+UiyS9tjEZgVG+NGiM1/8M4rQaKZlo182yQBO5gbYbxELX7VvdyMzKuuQxoirm+3HkfBWrU1LQswV4V9R5Ju7y7l2rCrh1m9707rHfdiEF42BV9/wWYGuczU6YHkZopkLPNWKQ/nP9vZoO8voKW4p1UIg3+cV3miBHLS/zeqWi9ankT5ss3daPK5RJKz6gnde+ALI+SqHxfibS3SfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c8M7BLAK+icICZg8KxC8P5n2ynFP5r7MLcgcjoN8eb4=;
+ b=qlRLCQIO67QkLWs4hxYY44UqwDKLJSH0AFyHqO6Dz81slbqtcbubI58Hgj1LpgDoDaU+y2eyQ74dYXzy8QzaYw9tbligF6d6YD7rceYjtFE/zFPWiHHy9jNTfCpZmInbr6MuLQY0gYcC1Ly2ba4fhwhaWRPN+eHzm4aiOB+SEpjHdyn7x+8OvoRel88v2BafAesz/wMwPxpF7uOHQunoTLxm0QmBO+rzCLtWYvBsByfTP9GWQ0bKbQxPGdPeS71o+yFxcz73g0FyMCU+0+FZ6mkSK9IubFe9/Cc/TV04IQxUEOST3OENUMqt85QcvCkmx9bTyoWQhcrOM2Ni2GL51Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c8M7BLAK+icICZg8KxC8P5n2ynFP5r7MLcgcjoN8eb4=;
+ b=gkd7vXQQ7Som6BjcKojuXEBSck4pHK5vpgJ6GGGutosRsg9SGv8VnkcA9PdiVLS5mYUv9Wmz0iHGwfBKdNUENVbu729vavgk9OdoUyVX72tMsVW6VZrhYEHT4KLTWRa9HDcpJXehq+roVe6NFOQc6+1DRJ4soTdi9eTKo2QAcrA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
+ by DBBPR04MB7785.eurprd04.prod.outlook.com (2603:10a6:10:1e7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
+ 2024 15:17:07 +0000
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 15:17:07 +0000
+From: "Daniel Baluta (OSS)" <daniel.baluta@oss.nxp.com>
+To: linux-sound@vger.kernel.org,
+	broonie@kernel.org
+Cc: lgirdwood@gmail.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	daniel.baluta@gmail.com,
+	kernel@pengutronix.de,
+	iuliana.prodan@nxp.com,
+	shengjiu.wang@nxp.com,
+	laurentiu.mihalcea@nxp.com,
+	imx@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	louis.chauvet@bootlin.com,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v2] drm/vkms: Fix cpu_to_le16()/le16_to_cpu() warnings
-Date: Mon, 15 Jul 2024 17:16:26 +0200
-Message-ID: <20240715151625.6968-2-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH] ASoC: SOF: imx8m: Fix DSP control regmap retrieval
+Date: Mon, 15 Jul 2024 18:16:53 +0300
+Message-Id: <20240715151653.114751-1-daniel.baluta@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P250CA0007.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5df::11) To AS8PR04MB8247.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3f2::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|DBBPR04MB7785:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2dcde96-4bc1-4918-ce45-08dca4e130a9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jEq6ky1yQQwXs1Mg8IGnIKp1mplFRsFv0h8iBOP1Rv4sG+qsiMuW11p/xNBm?=
+ =?us-ascii?Q?V33mpzf5NAhjY6Xv1P0CnxNp77SBIk1UI46Y89lgvF8My48PKvflf+apZICk?=
+ =?us-ascii?Q?V741zeU3QqYJZznC19dJQkyQJRbYIU11DIJY8Rzlh/IyBvId0troncNFlmyc?=
+ =?us-ascii?Q?zkdfoGFOmTAIIk7zHkeeitvcFiIEOT4JbC+SlUmAK1GwLRJ8tL5aWxI9ruqE?=
+ =?us-ascii?Q?3T/NKr0MF+5P52zKzOzFWRmizlt+GN7mi9Qfarn35d+bFNxiS4IzXqp2psoJ?=
+ =?us-ascii?Q?GcFW7rGpVlLM1cyeDDRMuHEQ0leH/+88NPqsjtl7Co05nWyzwKnpDBbQJRM3?=
+ =?us-ascii?Q?mY3K4h+l+/kcKBPjeuIzDSBJlMfOeFYVx4rdL4k3r7zNGir+7vaGTk2vaEeN?=
+ =?us-ascii?Q?plkpGeBqqLd6TQSJxBvRacHdGQttZTqbMbIl5G5Ww6otV4qqjZedTg6HYEih?=
+ =?us-ascii?Q?JXq2LAH9A6/V0zReigb1JP6vRJ8Uav9++7/aSzVoTWbbCylAk6aG76IGcaz1?=
+ =?us-ascii?Q?9mwxSVN+5XnfCV7iu4kD2wBJd1h1d2IFazHEM22/klSkxKmc7gt4fwmToDo1?=
+ =?us-ascii?Q?QcLS3EZBXaUw5pmI17Mo6MeJXLd34qXMuk98f7eJPFYLMWIuJuXryOjBiGb3?=
+ =?us-ascii?Q?JdxkMRrzh8OJkXnxP72GF/K0W6TXsJ/n0q4HLERy6XG7QbkoXQKLiZTULnG/?=
+ =?us-ascii?Q?JTciA4nxJOdEwwcsxheXpv7H99JXUstlJ4mLOp5mXoO7vUqF1xjERZx7UgRc?=
+ =?us-ascii?Q?ufcrnuiaTm4YzfHCUf8ML33HEf9W26pjtPfDbhuJDjMdSxX10n/2HtwE9yRU?=
+ =?us-ascii?Q?K0YMpRCpmuC82VIugsoiCzpN1yARMQyJnxPx9ZvfQicEYi2T2cFxHlm7rrfL?=
+ =?us-ascii?Q?8rjfHncsybw0kpzzRqGiN00V18bk2EshykvnVS2fuCxQU7qgsAxnHi/EdvzU?=
+ =?us-ascii?Q?Kg9w8fzvqxY0uqFgksYTlvS8wM4cCFRFZO5idh5Trhkv6vUsfGHaHwBYf7yE?=
+ =?us-ascii?Q?faYslfs9LeNoaQJrHINub9e9hvhpthuamw1E8FgMTBMqyoOETuZzK6t6hr0s?=
+ =?us-ascii?Q?XbRxryB171qwd3pie/C/cEQkLmsIgsneKaXWTsGh3VW58NcYARGwMRn0WUHF?=
+ =?us-ascii?Q?IV6eS3ym5XdVpi6PtCirfjmrP2KWTcvjf5qL/ThINfECPDJxzCqsHUSuuEJX?=
+ =?us-ascii?Q?WmJqYu+eNNTLthgUI/vBXg5zkg4jJv76FV/L4p128dZp0+u9rHmFmklqwS/3?=
+ =?us-ascii?Q?g/Z7GoMi27WgKtvAK/FU5ir1BUezbMD1cXG2WwF5u+G5vqGbmiTJdaeZOzaS?=
+ =?us-ascii?Q?oaMMzgTxZKva4CNQo1XkqmpfPp7XvwTarvsyJrTC+BiqrPl7cGSnYsTJ37hS?=
+ =?us-ascii?Q?lVl9TLkLekBBIPTChFUjryQbilLywZBGHwZMVMDcBaSMYn1ZWQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?k6GDDr3JGW0ywTSXkGleHK6GEBQdP67hU9YmQB/re/t5f7cboIHrSvEJafgj?=
+ =?us-ascii?Q?b6i7oPXOPP0nWSC0jn7UGnWZxNxZMRqrz3Q4jhL1x3T0SC/gxWOMOnliP099?=
+ =?us-ascii?Q?mj1ZpoLMwL2COTH5I9kOFJ/BGpkFwqiOFgcnXrwycDP/RJKqb1AmcccYQgwR?=
+ =?us-ascii?Q?Xb8+32pWVAzZk7hAuBvUgP8EMnqq8sSTEMDu/2g0k3h9YGBrMlrZtXiDKoxg?=
+ =?us-ascii?Q?4k9vFRsFxNvMFtaIwigcps5drBXnxYM/eCJcAMPjFim/V3ULnz24GWhy8sZo?=
+ =?us-ascii?Q?dvvh4xSGkg3KxTo4XeTNZoQprH8wajoI+OsCECvAaZMQb9mvuBbuEWCkjhxa?=
+ =?us-ascii?Q?Dgf7SEv0hgIAYZemu7VIQeH7I8OwWg8J5u/C32L60s4j3OpQjR3yYVsqaj99?=
+ =?us-ascii?Q?s93dxWwDNplP/rsedoZitzpky52MtP4wQsMeZgSB4VcJvuroU7L2frY0Fzmp?=
+ =?us-ascii?Q?WxpMEXEpxVQN3Vy0/heaPDEWPZ3IXHBt71J3+0bdEFyNjiKUteDNPlGDhTCI?=
+ =?us-ascii?Q?tK/GlEoDPfTZXARBmqeUwTih9NlJpHgtZTmY8hCAqvk7sB6uuOYAbJMWLjoN?=
+ =?us-ascii?Q?RC9IRjDp1JsldB75J1R+3BLx03aHSTeLNL7jfiMQ/K6qq6ao3kiQLMfyaIqe?=
+ =?us-ascii?Q?FLuliHQRjIUXPXNUl5MAAmfHNPHOlZEXz322ZDrsc7VreAPLH5SdT5B4Idxg?=
+ =?us-ascii?Q?Cp3TtUHLPpXAYSVtcz4QsNbKwT0o61gXnreZBkYVYurhqwg5YyDdw7/e0Tje?=
+ =?us-ascii?Q?HyAKVsfPFBlxiiBnx1MNNzwOar9JWYiMh+IWTpb27zwA5J/4P1kQspwM59YQ?=
+ =?us-ascii?Q?ImNyr5hsR8oqiiBbxzz3nFoGlgdzJGROO11iFTL+JxFgX6/MgLCFqd9EVyK9?=
+ =?us-ascii?Q?3mo/31Neb9Q5idDAijOsqS0Bu7ixavCXjpKHaLx6BZbXyKYH73RP7YN+INqU?=
+ =?us-ascii?Q?IG96mmKYPtatRjk7hN+Fplsu8lbwnW0IUrcql2no8baX28WtUoOWo4y9+eIs?=
+ =?us-ascii?Q?j8jAh7SG8QumpHtHS0uHnmf4AM1Zo7e/0MpIIF/K/u3Y1Lpx3mkQ2wKrMvMd?=
+ =?us-ascii?Q?CqjmqBhS8bmI4NzTi3yySJTkGcaUN+Wy8DI8Yt2UmoML53CoxP6X5IReEeLl?=
+ =?us-ascii?Q?cSJM5eYq7N6coqs2IEmrG/PJChygSDwv0hQ1CISFfNJy09+XUX1hJCCMcA5j?=
+ =?us-ascii?Q?FLnLGi/q+BEsdfxk889W/92oIxrXL0SMF1ddeLOCD5cCuM3cocwmzfF3u/3z?=
+ =?us-ascii?Q?OKw5XpX2mpw4AkpgiedDf+BQyqIWj7fovyyqCWVr1qajGEOZ7WUI9GgPTkLp?=
+ =?us-ascii?Q?bizQCagmRokZbWW4O1cCvaccXaBSCija5+mBqow4uAksQG9s5k/GssbTz+/d?=
+ =?us-ascii?Q?APHRSFbIlE9jT0UEfPKTCWZbwoRgZy3/MTk8STIVhgT+ZjiFDlGzEHk1c3RY?=
+ =?us-ascii?Q?SbnTsLyukhalYzA9KwUKojO7D9nASieyLfUIVyA+mUZMHbCUxz4nTp+AbpcZ?=
+ =?us-ascii?Q?oGfSCgXgjrKQlJ6je6gALvL1hPn5+UuCDQh9yZZ/7AnJs0dUs3DxeluRR+S1?=
+ =?us-ascii?Q?3VGaPYTfhntuYh/+OQ3OUWiosamhrrd2Gg6nCIje?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2dcde96-4bc1-4918-ce45-08dca4e130a9
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 15:17:07.4409
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QbtfYtIVt1/SNIG/nwli1br/DMJgJ7iuRGnb3DcEaaxuGh6UsEwSoVUlLzApmVDkoelKONzN0NeBz3kfVF9lXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7785
 
-Building with Sparse enabled prints this warning for cpu_to_le16()
-calls:
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-    warning: incorrect type in assignment (different base types)
-        expected unsigned short [usertype]
-        got restricted __le16 [usertype]
+According to Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+fsl,dsp-ctrl is a phandle to syscon block so we need to use correct
+function to retrieve it.
 
-And this warning for le16_to_cpu() calls:
+Currently there is no SOF DSP DTS merged into mainline so there is no
+need to support the old way of retrieving the dsp control node.
 
-    warning: cast to restricted __le16
-
-Declare the target buffer as __le16 to fix both warnings.
-
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-
+Fixes: 9ba23717b292 ("ASoC: SOF: imx8m: Implement DSP start")
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
+ sound/soc/sof/imx/imx8m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v1 -> v2: https://lore.kernel.org/dri-devel/20240712161656.7480-1-jose.exposito89@gmail.com/T/
-
- - Thomas Zimmermann: Declare "pixels" cariable as __le16 instead of
-   multiple casting.
----
- drivers/gpu/drm/vkms/vkms_formats.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 36046b12f296..1ff535222bd4 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -75,7 +75,7 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
+diff --git a/sound/soc/sof/imx/imx8m.c b/sound/soc/sof/imx/imx8m.c
+index 1c7019c3cbd38..cdd1e79ef9f6a 100644
+--- a/sound/soc/sof/imx/imx8m.c
++++ b/sound/soc/sof/imx/imx8m.c
+@@ -234,7 +234,7 @@ static int imx8m_probe(struct snd_sof_dev *sdev)
+ 	/* set default mailbox offset for FW ready message */
+ 	sdev->dsp_box.offset = MBOX_OFFSET;
  
- static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
- {
--	u16 *pixels = (u16 *)src_pixels;
-+	__le16 *pixels = (__force __le16 *)src_pixels;
- 
- 	out_pixel->a = le16_to_cpu(pixels[3]);
- 	out_pixel->r = le16_to_cpu(pixels[2]);
-@@ -85,7 +85,7 @@ static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
- 
- static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
- {
--	u16 *pixels = (u16 *)src_pixels;
-+	__le16 *pixels = (__force __le16 *)src_pixels;
- 
- 	out_pixel->a = (u16)0xffff;
- 	out_pixel->r = le16_to_cpu(pixels[2]);
-@@ -95,7 +95,7 @@ static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
- 
- static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
- {
--	u16 *pixels = (u16 *)src_pixels;
-+	__le16 *pixels = (__force __le16 *)src_pixels;
- 
- 	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
- 	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
-@@ -178,7 +178,7 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
- 
- static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
- {
--	u16 *pixels = (u16 *)dst_pixels;
-+	__le16 *pixels = (__force __le16 *)dst_pixels;
- 
- 	pixels[3] = cpu_to_le16(in_pixel->a);
- 	pixels[2] = cpu_to_le16(in_pixel->r);
-@@ -188,9 +188,9 @@ static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
- 
- static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
- {
--	u16 *pixels = (u16 *)dst_pixels;
-+	__le16 *pixels = (__force __le16 *)dst_pixels;
- 
--	pixels[3] = 0xffff;
-+	pixels[3] = (__force __le16)0xffff;
- 	pixels[2] = cpu_to_le16(in_pixel->r);
- 	pixels[1] = cpu_to_le16(in_pixel->g);
- 	pixels[0] = cpu_to_le16(in_pixel->b);
-@@ -198,7 +198,7 @@ static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
- 
- static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
- {
--	u16 *pixels = (u16 *)dst_pixels;
-+	__le16 *pixels = (__force __le16 *)dst_pixels;
- 
- 	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
- 	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+-	priv->regmap = syscon_regmap_lookup_by_compatible("fsl,dsp-ctrl");
++	priv->regmap = syscon_regmap_lookup_by_phandle(np, "fsl,dsp-ctrl");
+ 	if (IS_ERR(priv->regmap)) {
+ 		dev_err(sdev->dev, "cannot find dsp-ctrl registers");
+ 		ret = PTR_ERR(priv->regmap);
 -- 
-2.45.2
+2.25.1
 
 
