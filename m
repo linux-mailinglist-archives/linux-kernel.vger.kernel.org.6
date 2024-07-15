@@ -1,253 +1,121 @@
-Return-Path: <linux-kernel+bounces-252020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD9C930D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:01:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6962930CF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0651F2129D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F1C1C20E21
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5066718309B;
-	Mon, 15 Jul 2024 04:01:05 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C371A2D;
-	Mon, 15 Jul 2024 04:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBF2176FC5;
+	Mon, 15 Jul 2024 03:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5tjvXXF"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08254176AB1;
+	Mon, 15 Jul 2024 03:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721016064; cv=none; b=FGgAeT9jtojMdaCcDHQZM7JcjtRUzB2UdKZrdy+q+eFcKHIHTI4ES3j9SZMUIDDFAW1BC5zq/FPcoM9LIe0BBi7jSIpd9Tnh5VCl6PzH3PMhv84FF6uM8S++GAjF3V7YQncoNHInJkO5NKIfRyikhvJTHTCplnyIUAWfcmiXRuE=
+	t=1721014226; cv=none; b=DAZez2yMztdSRBrX8vg4bJvvuirRQBVhigZgoBImTZ+nItYIIJkfQZdq6Ggs29NWT/NVc/QZ70XUUjg0xTioCcny6ttV4MeKWllQ9ZSgeCMdszysTx7otnzroa8ry4q6nlEiMWH8e9HowJDCWkT0sSzafbeomHARU8VmZgBjuNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721016064; c=relaxed/simple;
-	bh=Y36iKDFghyfh/pTNpcEkPX0rKqj4MzQJFHwvYvmnBaQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=L0IxPf0XEN88ClXNdHJAsGgv479TJczwkttvto1eooSKC2dsKy6i6GbIB7/wnZ0Ntv240sPTxLLMdjpT8CQgA0HfeORqm+2APXl7oR2SFwl8dHrlYS8kFQN/Iv9j1R0CaI+0Kc3c7BOY5hXMWUptFrY1dnq1/LdB0shT9EIJBvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxDOv7npRmNXgEAA--.11868S3;
-	Mon, 15 Jul 2024 12:00:59 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bxnsf3npRmAEVJAA--.34933S3;
-	Mon, 15 Jul 2024 12:00:57 +0800 (CST)
-Subject: Re: [PATCH 07/11] LoongArch: KVM: Add EXTIOI user mode read and write
- functions
-To: Xianglai Li <lixianglai@loongson.cn>, linux-kernel@vger.kernel.org
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, Min Zhou <zhoumin@loongson.cn>,
- Paolo Bonzini <pbonzini@redhat.com>, WANG Xuerui <kernel@xen0n.name>
-References: <20240705023854.1005258-1-lixianglai@loongson.cn>
- <20240705023854.1005258-8-lixianglai@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <51594e6c-6ab0-4476-3623-1fa2fd3db654@loongson.cn>
-Date: Mon, 15 Jul 2024 12:00:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1721014226; c=relaxed/simple;
+	bh=cJRpNo/iI7BuI5w3pjrX7vr/qCEOdaeQjJjGilw2xA4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VkBlIAOf5pIjpSWi/1ijl49oM8WbaVvEV6KrhdTggB+NsqRnTC6qxPSkXlgdChNIVafImDu9UYnh7w+Jow5ozIKGvFs1ekXlvohR20AgkF6m57iGMukk6/GC61crJ2sl53o+v9FzeNy/1uqqtZ0R8wtQOdNlhMPjoNlHiC8QI1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5tjvXXF; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so25929465e9.2;
+        Sun, 14 Jul 2024 20:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721014222; x=1721619022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gd89MrgNcMORm5VAgplz/lj1KoWR6pPa+D0jHSmlnRY=;
+        b=W5tjvXXF0OiJmJZbhaNFQboKOh4M/xZkC7mibSXhkziOvKhKR4RXJCEOu01mfwHrap
+         67q14hoGEJIUV7g6I8e0c0UAWcw81W/SQz+G85FamOVvZ6FbbhiqewqTm6e9OVXsdq3z
+         AFCiud/Siuf/Gab7sFaBG1XiClFnRa58bi0XdHTu6UCQAfiH0HuuHIW/6277Pu6C3HnH
+         imuxP41TENjV1xD18am61OgW857ZIYGh1NKEtyLoN6FyxW5jmRCVh2mx+t8BL17qWKG9
+         gBl2G9ZqP7sapjfZ5UYMmHc50NKnVPeiX439Ho2y+iuxtGlmLgX39HYiXOK2OQV9K8Ky
+         lPWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721014222; x=1721619022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gd89MrgNcMORm5VAgplz/lj1KoWR6pPa+D0jHSmlnRY=;
+        b=AjfGAwy/vUNGi4cXlsnXfU7d9gG8V5QPOb+4OuZtG3W4yRGhdsQ82moqgtVQhC3sJ9
+         GGizjsJAA+iQ+3DP1mp7F6nm5OpENwM8yp8vCjCE/FsRG3UHleX/T3B6MJogOWvrAkPe
+         GYEe0ZYJWRXl21pdpPxAGuVqPh9QUJhrjEBYwVGnrwdJKuI79xRFOrDq6IhKJSfr7EB5
+         IOVBM6SddCbMLKg6ZXlHG1HwBDgF0JRLcqn1j7/pgkyTP4umMwfPIShNXOLphexVw7Zg
+         3d9zm7O03G6x1e7k5iH+WBXq0EzuEfGmaYgRbMb6VwZtTk5OBgiOQUQ/Xa3IHe6Js1HS
+         itnA==
+X-Forwarded-Encrypted: i=1; AJvYcCV55PdxrdoW+7QKYMV+RFGvUmSQdNXkMWy+B7oVH+UT5GtiCl3sHYjtIITONClhG0wlW2uHyofy/VYJqJmMqAdLDtUOjrYEweb2w7dV+FgCWxtMrALk1fH6v7D2hoVrwOtpjQ==
+X-Gm-Message-State: AOJu0YzRNXSGaua3bQ6ve0h8Uu9nRt7FKXEbDajuYde5SXF9fmWeeyjI
+	QKX96Lbjd0fk4OUFUo7KNtApu24LfTg5dB00EFthev5hp4BD8e9DOgJRtxOPrOM=
+X-Google-Smtp-Source: AGHT+IEJHTUDhkpWC4FUHsV9d5ygPc+ar72qJsf69EryJll+78vWGb6OWByA8KSGbXIPbu7rk4Fx8g==
+X-Received: by 2002:a05:600c:2248:b0:426:641f:25e2 with SMTP id 5b1f17b1804b1-426708f14d7mr128152005e9.25.1721014221730;
+        Sun, 14 Jul 2024 20:30:21 -0700 (PDT)
+Received: from localhost.localdomain ([197.35.224.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f25a962sm102645215e9.12.2024.07.14.20.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 20:30:21 -0700 (PDT)
+From: botta633 <bottaawesome633@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-ext4@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	Ahmed Ehab <bottaawesome633@gmail.com>,
+	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/2] locking/lockdep: Forcing subclasses to have same
+Date: Mon, 15 Jul 2024 09:27:38 +0300
+Message-ID: <20240715062739.388591-1-bottaawesome633@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240705023854.1005258-8-lixianglai@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Bxnsf3npRmAEVJAA--.34933S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Wr4fJF4fJw4fArWrCFyfuFX_yoW7Ww4UpF
-	WUCa4fCr48Gr17GryDta4Dury7Jrsagr12vFyaqa4fCr1q9ryrGrykKr9FvFyYk34kG3Wv
-	qFn3t3WY9F4qyrXCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzZ2-
-	UUUUU
 
+From: Ahmed Ehab <bottaawesome633@gmail.com>
 
+Preventing lockdep_set_subclass from creating a new instance of the
+string literal. Hence, we will always have the same class->name among
+parent and subclasses. This prevents kernel panics when looking up a
+lock class while comparing class locks and class names.
 
-On 2024/7/5 上午10:38, Xianglai Li wrote:
-> Implements the communication interface between the user mode
-> program and the kernel in EXTIOI interrupt control simulation,
-> which is used to obtain or send the simulation data of the
-> interrupt controller in the user mode process, and is used
-> in VM migration or VM saving and restoration.
-> 
-> Signed-off-by: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-> ---
-> Cc: Bibo Mao <maobibo@loongson.cn>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: kvm@vger.kernel.org
-> Cc: loongarch@lists.linux.dev
-> Cc: Min Zhou <zhoumin@loongson.cn>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Xianglai li <lixianglai@loongson.cn>
-> 
->   arch/loongarch/include/uapi/asm/kvm.h |   2 +
->   arch/loongarch/kvm/intc/extioi.c      | 103 +++++++++++++++++++++++++-
->   2 files changed, 103 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-> index ec39a3cd4f22..9cdcb5e2a731 100644
-> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> @@ -110,4 +110,6 @@ struct kvm_iocsr_entry {
->   
->   #define KVM_DEV_LOONGARCH_IPI_GRP_REGS		1
->   
-> +#define KVM_DEV_LOONGARCH_EXTIOI_GRP_REGS	1
-> +
->   #endif /* __UAPI_ASM_LOONGARCH_KVM_H */
-> diff --git a/arch/loongarch/kvm/intc/extioi.c b/arch/loongarch/kvm/intc/extioi.c
-> index dd18b7a7599a..48141823aaa3 100644
-> --- a/arch/loongarch/kvm/intc/extioi.c
-> +++ b/arch/loongarch/kvm/intc/extioi.c
-> @@ -47,6 +47,26 @@ static void extioi_update_irq(struct loongarch_extioi *s, int irq, int level)
->   	kvm_vcpu_ioctl_interrupt(vcpu, &vcpu_irq);
->   }
->   
-> +static void extioi_set_sw_coreisr(struct loongarch_extioi *s)
-> +{
-> +	int ipnum, cpu, irq_index, irq_mask, irq;
-> +
-> +	for (irq = 0; irq < EXTIOI_IRQS; irq++) {
-> +		ipnum = s->ipmap.reg_u8[irq / 32];
-> +		ipnum = count_trailing_zeros(ipnum);
-> +		ipnum = (ipnum >= 0 && ipnum < 4) ? ipnum : 0;
-> +		irq_index = irq / 32;
-> +		/* length of accessing core isr is 4 bytes */
-> +		irq_mask = 1 << (irq & 0x1f);
-> +
-> +		cpu = s->coremap.reg_u8[irq];
-> +		if (!!(s->coreisr.reg_u32[cpu][irq_index] & irq_mask))
-> +			set_bit(irq, s->sw_coreisr[cpu][ipnum]);
-> +		else
-> +			clear_bit(irq, s->sw_coreisr[cpu][ipnum]);
-> +	}
-> +}
-> +
->   void extioi_set_irq(struct loongarch_extioi *s, int irq, int level)
->   {
->   	unsigned long *isr = (unsigned long *)s->isr.reg_u8;
-> @@ -599,16 +619,95 @@ static const struct kvm_io_device_ops kvm_loongarch_extioi_ops = {
->   	.write	= kvm_loongarch_extioi_write,
->   };
->   
-> +static int kvm_loongarch_extioi_regs_access(struct kvm_device *dev,
-> +					struct kvm_device_attr *attr,
-> +					bool is_write)
-> +{
-> +	int len, addr;
-> +	void __user *data;
-> +	void *p = NULL;
-> +	struct loongarch_extioi *s;
-> +	unsigned long flags;
-> +
-> +	s = dev->kvm->arch.extioi;
-> +	addr = attr->attr;
-> +	data = (void __user *)attr->addr;
-> +
-> +	loongarch_ext_irq_lock(s, flags);
-What does it protect about 
-loongarch_ext_irq_lock/loongarch_ext_irq_unlock here?
-> +	switch (addr) {
-> +	case EXTIOI_NODETYPE_START:
-> +		p = s->nodetype.reg_u8;
-> +		len = sizeof(s->nodetype);
-> +		break;
-> +	case EXTIOI_IPMAP_START:
-> +		p = s->ipmap.reg_u8;
-> +		len = sizeof(s->ipmap);
-> +		break;
-> +	case EXTIOI_ENABLE_START:
-> +		p = s->enable.reg_u8;
-> +		len = sizeof(s->enable);
-> +		break;
-> +	case EXTIOI_BOUNCE_START:
-> +		p = s->bounce.reg_u8;
-> +		len = sizeof(s->bounce);
-> +		break;
-> +	case EXTIOI_ISR_START:
-> +		p = s->isr.reg_u8;
-> +		len = sizeof(s->isr);
-> +		break;
-> +	case EXTIOI_COREISR_START:
-> +		p = s->coreisr.reg_u8;
-> +		len = sizeof(s->coreisr); > +		break;
-> +	case EXTIOI_COREMAP_START:
-> +		p = s->coremap.reg_u8;
-> +		len = sizeof(s->coremap);
-> +		break;
-> +	case EXTIOI_SW_COREMAP_FLAG:
-> +		p = s->sw_coremap;
-> +		len = sizeof(s->sw_coremap);
-> +		break;
-Do we need save/restore SW_COREMAP ? It should be parsed from 
-EXTIOI_COREMAP like sw_coreisr.
+Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
+Fixes: de8f5e4f2dc1f ("lockdep: Introduce wait-type checks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
+---
+ include/linux/lockdep.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-Bibo Mao
-> +	default:
-> +		loongarch_ext_irq_unlock(s, flags);
-> +		kvm_err("%s: unknown extioi register, addr = %d\n", __func__, addr);
-> +		return -EINVAL;
-> +	}
-> +
-> +	loongarch_ext_irq_unlock(s, flags);
-> +
-> +	if (is_write) {
-> +		if (copy_from_user(p, data, len))
-> +			return -EFAULT;
-> +	} else {
-> +		if (copy_to_user(data, p, len))
-> +			return -EFAULT;
-> +	}
-> +
-> +	if ((addr == EXTIOI_COREISR_START) && is_write) {
-> +		loongarch_ext_irq_lock(s, flags);
-> +		extioi_set_sw_coreisr(s);
-> +		loongarch_ext_irq_unlock(s, flags);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int kvm_loongarch_extioi_get_attr(struct kvm_device *dev,
->   				struct kvm_device_attr *attr)
->   {
-> -	return 0;
-> +	if (attr->group == KVM_DEV_LOONGARCH_EXTIOI_GRP_REGS)
-> +		return kvm_loongarch_extioi_regs_access(dev, attr, false);
-> +
-> +	return -EINVAL;
->   }
->   
->   static int kvm_loongarch_extioi_set_attr(struct kvm_device *dev,
->   				struct kvm_device_attr *attr)
->   {
-> -	return 0;
-> +	if (attr->group == KVM_DEV_LOONGARCH_EXTIOI_GRP_REGS)
-> +		return kvm_loongarch_extioi_regs_access(dev, attr, true);
-> +
-> +	return -EINVAL;
->   }
->   
->   static void kvm_loongarch_extioi_destroy(struct kvm_device *dev)
-> 
-
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 08b0d1d9d78b..df8fa5929de7 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -173,7 +173,7 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
+ 			      (lock)->dep_map.lock_type)
+ 
+ #define lockdep_set_subclass(lock, sub)					\
+-	lockdep_init_map_type(&(lock)->dep_map, #lock, (lock)->dep_map.key, sub,\
++	lockdep_init_map_type(&(lock)->dep_map, (lock)->dep_map.name, (lock)->dep_map.key, sub,\
+ 			      (lock)->dep_map.wait_type_inner,		\
+ 			      (lock)->dep_map.wait_type_outer,		\
+ 			      (lock)->dep_map.lock_type)
+-- 
+2.45.2
 
