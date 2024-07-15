@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-251993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CE7930CCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B3F930CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF68B20D10
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC465281007
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5B8F47;
-	Mon, 15 Jul 2024 02:41:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38F64A35;
-	Mon, 15 Jul 2024 02:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95042BE71;
+	Mon, 15 Jul 2024 02:52:23 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375E979C4;
+	Mon, 15 Jul 2024 02:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721011278; cv=none; b=TTBYWyVahOXbRm3VBYtWaeWpY2mGbBQp4OoHXXy9rrzWMwcFjnlacpI8sDbFzSyrKTFaeAwrv6wlTJR08+VCQVc5Bt3+Y45uyfklX/5WJWStHBGSxZY6R3Jp5YiT4vsH5ZeEnB0XQ585maURpmUiPjk7lRtREI1FLUxtF0fmPQg=
+	t=1721011943; cv=none; b=RkeN/4uUxzjVKGq4L7KZQBeiiEDfkbFKWZIvfTwY93eyYz19e6RrGQJZ5db8CV3JQkDC96apra8Yfo1ZG4VfbtX0Nczz/au7Sw7eMCR/fkDIO0cGTmy9lNWkdAOQEXlV64hkYqg1d04HY3KWQDpu4YQLaOHIO5wBTyQhJ5jm4j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721011278; c=relaxed/simple;
-	bh=CcuJ6zalw48fPT60jgM+/sKMTg6u/KrFTffpyNv1ZbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X1WWbIpoAhFqkbgEiA7Ad74qVZTXVqZ7HW7CJ3RIZO6FzGTKdVm2R0I5CLvVKxHLzRyy0Y3Pwvu1L3EYFK/Gx2HVnCiTUTCgxPsl9sPXUtmtc1BgS1vd1Mx4pdJRBQJESAhbtuSHipo0R5oTyIRbr2UTFmx1rY0N9xqu0tZReg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06D84FEC;
-	Sun, 14 Jul 2024 19:41:39 -0700 (PDT)
-Received: from [10.162.16.42] (unknown [10.162.16.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D30CF3F762;
-	Sun, 14 Jul 2024 19:41:11 -0700 (PDT)
-Message-ID: <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com>
-Date: Mon, 15 Jul 2024 08:11:08 +0530
+	s=arc-20240116; t=1721011943; c=relaxed/simple;
+	bh=X4Zat/Y0hsdoDe5Svj/icJkSVmFXQVcN6YIDamtiEFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WUuddLUNsxrzlKt2nfbAgXfo2fDEcu85UHniCu2ZacIviBgjFfDRbQhUNBaHoCnoinY46ZsEIBvKidW3BeBEmGVR2+2kqTDLIj5yyyTjUCKAQprvc9muG0BN66DWTW2JJaJIt0q3QrMBVp5FexmSq9Odg/8LgF+OxEqkZzeTZ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAD3_1vRjpRm23TOFQ--.12132S2;
+	Mon, 15 Jul 2024 10:52:01 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: roopa@nvidia.com,
+	razor@blackwall.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] net: bridge: remove unnecessary cast from netdev_priv()
+Date: Mon, 15 Jul 2024 10:44:57 +0800
+Message-Id: <20240715024457.3743560-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240714105848.1844400-1-masahiroy@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240714105848.1844400-1-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3_1vRjpRm23TOFQ--.12132S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr13ZryDWF1UXF4fCryxuFg_yoW8JFWfpa
+	4UGan3AF47Xw1Ygw48ZFWUAry3tFn5KrW3Gr12y34Fvrn3tFy0kFWktryUCr1rAF4Dur13
+	Jr12gF1Syw1DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VU1UGYJUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 7/14/24 16:28, Masahiro Yamada wrote:
-> The condition 'select HAVE_ARCH_KASAN' is always true because
-> there is 'select HAVE_ARCH_KASAN' statement above.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  arch/arm64/Kconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index c87d16b12e9b..d37cbfc3031e 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -167,9 +167,9 @@ config ARM64
->  	select HAVE_ARCH_JUMP_LABEL
->  	select HAVE_ARCH_JUMP_LABEL_RELATIVE
->  	select HAVE_ARCH_KASAN
-> -	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
-> -	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
-> -	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
-> +	select HAVE_ARCH_KASAN_VMALLOC
-> +	select HAVE_ARCH_KASAN_SW_TAGS
-> +	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
->  	# Some instrumentation may be unsound, hence EXPERT
->  	select HAVE_ARCH_KCSAN if EXPERT
->  	select HAVE_ARCH_KFENCE
+Remove unnecessary cast of void * returned by netdev_priv().
 
-There is another similar instance with HAVE_FUNCTION_GRAPH_TRACER as well.
-Just wondering if the following change should be folded in here ?
+Fixes: 928990631327 ("net: bridge: add notifications for the bridge dev on vlan change")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ net/bridge/br_netlink.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -210,8 +210,8 @@ config ARM64
-        select HAVE_FTRACE_MCOUNT_RECORD
-        select HAVE_FUNCTION_TRACER
-        select HAVE_FUNCTION_ERROR_INJECTION
--       select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
-        select HAVE_FUNCTION_GRAPH_TRACER
-+       select HAVE_FUNCTION_GRAPH_RETVAL
-        select HAVE_GCC_PLUGINS
-        select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
-                HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
+diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
+index f17dbac7d828..d02cc1497281 100644
+--- a/net/bridge/br_netlink.c
++++ b/net/bridge/br_netlink.c
+@@ -1085,7 +1085,7 @@ static int br_setport(struct net_bridge_port *p, struct nlattr *tb[],
+ int br_setlink(struct net_device *dev, struct nlmsghdr *nlh, u16 flags,
+ 	       struct netlink_ext_ack *extack)
+ {
+-	struct net_bridge *br = (struct net_bridge *)netdev_priv(dev);
++	struct net_bridge *br = netdev_priv(dev);
+ 	struct nlattr *tb[IFLA_BRPORT_MAX + 1];
+ 	struct net_bridge_port *p;
+ 	struct nlattr *protinfo;
+@@ -1143,7 +1143,7 @@ int br_setlink(struct net_device *dev, struct nlmsghdr *nlh, u16 flags,
+ /* Delete port information */
+ int br_dellink(struct net_device *dev, struct nlmsghdr *nlh, u16 flags)
+ {
+-	struct net_bridge *br = (struct net_bridge *)netdev_priv(dev);
++	struct net_bridge *br = netdev_priv(dev);
+ 	struct net_bridge_port *p;
+ 	struct nlattr *afspec;
+ 	bool changed = false;
+-- 
+2.25.1
+
 
