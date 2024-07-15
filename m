@@ -1,175 +1,107 @@
-Return-Path: <linux-kernel+bounces-252882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7BE931959
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:31:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494AA93195B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65AFE2832E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:31:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC87B1F228C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5D95FBB7;
-	Mon, 15 Jul 2024 17:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489C481D5;
+	Mon, 15 Jul 2024 17:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXYbxkif"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avYrIYQM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D8E224EF;
-	Mon, 15 Jul 2024 17:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8EC200A0;
+	Mon, 15 Jul 2024 17:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721064662; cv=none; b=RVr8szsIcZMA3QQX+uE/R96vlbQgvTAPWA3PJqERPImT4xjIGZTnhfWc5qw7wxOpLTY4V21q9QKEfeMoCTapcG4AkHboRBBiRJi0Xl9tSw0R7Koh8CMrG02f77cqysTLVIn70hnUoup1KAn1GWMbeuZ2wOp3b+hr6V1yHbZTV6s=
+	t=1721064719; cv=none; b=HVG506FinwqSAUsk5Te1j6r2gAnhHUyho/KA0eNl1x7fQs9I/d4u6Ja5K6g6G2Tq8nqocfSWEAWqBiK+AP9zdm504ISDnsVrTL0c1I32j4cR7+Lr77mR22bX/pQPiTsgmOPWbvQVz91d+8+1dzp2hawRrMu5eh1XxUFtDiRlKKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721064662; c=relaxed/simple;
-	bh=1o+44RtxCfSb7GucrEuzGXESuNxJ1wwd1GELlyBYmkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CLwLJtiK3jMtrL28pEhsFlT6z53iUep4O63ZCC311xIBLEMW6bAyZD7ocilJwucoIwfDpcyCc+RzWc8JQRjmMHVQAs6KDrZSsv+/K3lmLtKygxSuR6p03cspqV675lM5rD4Ixa5CInGnN7bRzfMABOsyAssEOlZLpzmrcN84wYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXYbxkif; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c98b22638bso3190293a91.1;
-        Mon, 15 Jul 2024 10:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721064660; x=1721669460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EtP4aeSPEGk7iVglJ/94ERRThNBcFKWdiy/YtRf+yZM=;
-        b=QXYbxkifJCr0TYEKeKEq69qd3C7cVxB/t2U0XuMArfydkjk9XgZoVoGfIvFGIqgh0M
-         0FYP9QFP5Q5A+Lt8i/9nlBZK83Soht2oHELvzsFDrzcvsVQSlvbc/lVaXUCuI2M3EaGF
-         Ijf640/m7YO6xrqNjV5hjdSOpS7TJCNXQvKFQ/GvRP3yT1t4MQjcfJOh4NJlUdUYy2pF
-         DgX/l0rKe0X5NuSEK3qgXiwixx84AmgswA6Z+BXyoC14T3Pon8PkS6/zmWBGnfAlL8zj
-         5l/yZ1G7WMJYih3H314Yv243qkxQ834IuRAga4nmiN3U4F8h0WAltT/AAvw/ZmDouofJ
-         nTGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721064660; x=1721669460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EtP4aeSPEGk7iVglJ/94ERRThNBcFKWdiy/YtRf+yZM=;
-        b=ik5CZArEyMggBXL5yEjSCAHHS2r975ef1+gNtFwUVsGKy7DjEB0BBWt1c006v3iDAg
-         fwcBAOWwaLURrbZ3RXWhWyNjx9SICucG6wZPgwBKqDzoOyG3yZXfvEvV1dfDRFZcgfMX
-         zijTCqoikmsUleDnCAuysMPt4e+vNeQjjf5qYtK+xxiZh6roX3U+cgn91XH4OEw/NBDy
-         yJVlbpRnhrlcf8pGC7h/yjMp4bLp2gFrl68KSg7hxDdCTOvz357JDPuUBsdx3Do0ikBo
-         Nxup5JJiB6Y3NgW+0VcHPixAQrfYKSmpboromhmPsDI5duUqiTbZhbLmI1CRaRpBOibW
-         DtNA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1MJEUFsVH6ynJoYEd3KPol44uc3OdqHr+F3TFXmPm3assAUDXa53ql0GgjRSOApJfYkuvzDohQgBgng6QMUACZM0fqUvW6o7X04++fJv7pICUaoDVTUflB2CEuJgTxTJn2DLNKnaRpHZNj2KLbP+vV7moZlzq5gduZ9YMaD9e5zxr0I5y
-X-Gm-Message-State: AOJu0YyQKIFW4L2IFSNYlf8BCTW77yXpzkbWuVEJzKB2iQcT6IzwEIoQ
-	eXaC08GPpYaGNUZJo2VYCPHb+WGh/1DuiyDxbCbJnnot7dON4f3Q/xkTmHythhuA7rhZYyN2Ty+
-	ajvujfaRFd1PPoVVQnEovjaIok+M=
-X-Google-Smtp-Source: AGHT+IFIeeEF/sf4vDvJPuTRza3pKxrgkearLeh+rBXCaIF+tOEZNqXuxDQl3W6w/fPyfpxxFyDYTxYQylolnEycNv8=
-X-Received: by 2002:a17:90b:906:b0:2c8:5055:e24f with SMTP id
- 98e67ed59e1d1-2cb33726539mr819687a91.2.1721064659641; Mon, 15 Jul 2024
- 10:30:59 -0700 (PDT)
+	s=arc-20240116; t=1721064719; c=relaxed/simple;
+	bh=XG51VbTGnXobugGg42fOiPH80u+dQNhw+bmbq0lXs8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dK3HPy7PnedCRhe3Qx+jxqD6SIXLTukb6oJUxqkDeIfczcGX8LOq7NH/7xGJanwgAMcq9p92ETlEJ8uJc6mtHCscxVRDORY5dqHsNpxZZTKxKYZ9woB3bTiqVZyPhZgSt/+2SlndTf3GVIkKfbuUs4K9w49og534aWzSHCKlCEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avYrIYQM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CACC32782;
+	Mon, 15 Jul 2024 17:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721064719;
+	bh=XG51VbTGnXobugGg42fOiPH80u+dQNhw+bmbq0lXs8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=avYrIYQM38xoD2zvibsQyafPiceelCz20ZZpCeA3H7XmRoKOrFaO7+lpx8kCaynRh
+	 RSdKle0+CM+UvRtu5wv7NMGlzlcMfFi7ff0JFIaHPesEq1E6qdMq1+9Jq4HOoPyeoZ
+	 JooTy0j/iVIHtX30ZCcZLsRijSmpnSjY6s2o+qsfx0h/vPHWrWoohqLpl+BHldKqgy
+	 hX/VF6B1aA+39aq4nsSwhAqfNV452THwMCod5OS8RvCBbuhf3Zv2E7rjdniHt/oBs2
+	 yyuXh5FPyewRCgO/EgeWoWHuFdAWaKqFGHL9UzPiK1uQHZ0/DzVenCBgBG5VBHO0fp
+	 XbkuV9GaY4cXg==
+Date: Mon, 15 Jul 2024 18:31:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Shuah Khan <shuah@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
+Message-ID: <0e566b45-784c-48df-bddf-8293a17e814a@sirena.org.uk>
+References: <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+ <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+ <877cdrt3zc.wl-tiwai@suse.de>
+ <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
+ <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
+ <c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
+ <31e73e81-e60f-4d0b-b0ac-118f1dc72610@sirena.org.uk>
+ <87plrhssa4.wl-tiwai@suse.de>
+ <652d6fef-9e63-4c3c-b61b-8a47d6eadaf1@sirena.org.uk>
+ <87le2223hv.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <20240711110400.880800153@infradead.org>
- <CAEf4BzZUVe-dQNcb1VQbEcN4kBFOYrFOB537q4Vhtpm_ebL9aQ@mail.gmail.com> <20240715112504.GD14400@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240715112504.GD14400@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 15 Jul 2024 10:30:47 -0700
-Message-ID: <CAEf4BzZ9z+J2TMNRGyE9idw2T+zZRe7YU8JzgsoihCLogW4_UA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/11] perf/uprobe: SRCU-ify uprobe->consumer list
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3qxdjPKLh7T4RPzM"
+Content-Disposition: inline
+In-Reply-To: <87le2223hv.wl-tiwai@suse.de>
+X-Cookie: You'll be sorry...
 
-On Mon, Jul 15, 2024 at 4:25=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Fri, Jul 12, 2024 at 02:06:08PM -0700, Andrii Nakryiko wrote:
-> > + bpf@vger, please cc bpf ML for the next revision, these changes are
-> > very relevant there as well, thanks
-> >
-> > On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > With handle_swbp() hitting concurrently on (all) CPUs the
-> > > uprobe->register_rwsem can get very contended. Add an SRCU instance t=
-o
-> > > cover the consumer list and consumer lifetime.
-> > >
-> > > Since the consumer are externally embedded structures, unregister wil=
-l
-> > > have to suffer a synchronize_srcu().
-> > >
-> > > A notably complication is the UPROBE_HANDLER_REMOVE logic which can
-> > > race against uprobe_register() such that it might want to remove a
-> > > freshly installer handler that didn't get called. In order to close
-> > > this hole, a seqcount is added. With that, the removal path can tell
-> > > if anything changed and bail out of the removal.
-> > >
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  kernel/events/uprobes.c |   60 +++++++++++++++++++++++++++++++++++++=
-+++--------
-> > >  1 file changed, 50 insertions(+), 10 deletions(-)
-> > >
-> >
-> > [...]
-> >
-> > > @@ -800,7 +808,7 @@ static bool consumer_del(struct uprobe *
-> > >         down_write(&uprobe->consumer_rwsem);
-> > >         for (con =3D &uprobe->consumers; *con; con =3D &(*con)->next)=
- {
-> > >                 if (*con =3D=3D uc) {
-> > > -                       *con =3D uc->next;
-> > > +                       WRITE_ONCE(*con, uc->next);
-> >
-> > I have a dumb and mechanical question.
-> >
-> > Above in consumer_add() you are doing WRITE_ONCE() for uc->next
-> > assignment, but rcu_assign_pointer() for uprobe->consumers. Here, you
-> > are doing WRITE_ONCE() for the same operation, if it so happens that
-> > uc =3D=3D *con =3D=3D uprobe->consumers. So is rcu_assign_pointer() nec=
-essary
-> > in consumer_addr()? If yes, we should have it here as well, no? And if
-> > not, why bother with it in consumer_add()?
->
-> add is a publish and needs to ensure all stores to the object are
-> ordered before the object is linked in. Note that rcu_assign_pointer()
-> is basically a fancy way of writing smp_store_release().
->
-> del otoh does not publish, it removes and doesn't need ordering.
->
-> It does however need to ensure the pointer write itself isn't torn. That
-> is, without the WRITE_ONCE() the compiler is free to do byte stores in
-> order to update the 8 byte pointer value (assuming 64bit). This is
-> pretty dumb, but very much permitted by C and also utterly fatal in the
-> case where an RCU iteration comes by and reads a half-half pointer
-> value.
->
 
-Thanks for elaborating, very helpful! It's basically the same idea as
-with rb_find_add_rcu(), got it.
+--3qxdjPKLh7T4RPzM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > >                         ret =3D true;
-> > >                         break;
-> > >                 }
-> > > @@ -1139,9 +1147,13 @@ void uprobe_unregister(struct inode *ino
-> > >                 return;
-> > >
-> > >         down_write(&uprobe->register_rwsem);
-> > > +       raw_write_seqcount_begin(&uprobe->register_seq);
-> > >         __uprobe_unregister(uprobe, uc);
-> > > +       raw_write_seqcount_end(&uprobe->register_seq);
-> > >         up_write(&uprobe->register_rwsem);
-> > >         put_uprobe(uprobe);
-> > > +
-> > > +       synchronize_srcu(&uprobes_srcu);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(uprobe_unregister);
-> >
-> > [...]
+On Mon, Jul 15, 2024 at 03:23:24PM +0200, Takashi Iwai wrote:
+> Mark Brown wrote:
+
+> > Interesting - I was mainly developing on a system with multiple HDA
+> > cards and was getting fairly clearly unique names.
+
+> An AMD system usually has two HD-audio entries, and both are "HD-audio
+> Generic".
+
+Right, that won't do.  My legacy system here is getting the addresses in
+there so deduplicates successfully.
+
+--3qxdjPKLh7T4RPzM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaVXQkACgkQJNaLcl1U
+h9CxNgf/Y+BxDjPCZdghC10RUW2q+AFR/vUdAvfJQsu2BP3UDFrdUVv8N1HIuwlA
+EeUpYI0ErLMmL9JxgTkMVdQ8h0STA1Qmd6oCGfOzznDe/cuuO8Nvjk1m0uFdW74D
+VDluaVFTUtJlP/U9UGE+M/Rpl90gQ5RzsE7hhrj1s8hOezOExPwQcTsoSHaE+l2/
+i0wxO6EC2FjlgqP4HhKJVjk+gSiHw58XGcwOikyfaGdKd6s3BLP8Svrleb0/z1U0
+g2VOhIAE8mHJQqPUKb2B6vmuT8FlIZChJMpnkj6byrflnp0t7yfAPjr0eMVQMyuG
+LvBzTAPYJCL31a9nl22n6G86HarLww==
+=I1/c
+-----END PGP SIGNATURE-----
+
+--3qxdjPKLh7T4RPzM--
 
