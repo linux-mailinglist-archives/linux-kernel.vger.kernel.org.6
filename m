@@ -1,100 +1,206 @@
-Return-Path: <linux-kernel+bounces-251987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C768930C98
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:21:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6CA930C9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C625F1F21101
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90FE3B20D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6196AC0;
-	Mon, 15 Jul 2024 02:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4217483;
+	Mon, 15 Jul 2024 02:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bmnb+5TB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KbvUCyIT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA15629CA;
-	Mon, 15 Jul 2024 02:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C974C9D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721010067; cv=none; b=dNpUKOn0dPSVneMOxvfbMnPbpMRQHS3b6EsvWF9A+8TbPtu3M8WoO6TZlIYkztAlNBJ44n21Z8UNvInAdRt4nQiM5YwkOezzCAofG5nB+4g03t2I0c1dA3O9CLXonFo5F4QvIcVRAONIidhGVIozlzhZaEFKx7jrKbJX0/wfmC4=
+	t=1721010393; cv=none; b=RkpdbpbSKJIX2C3Dv5QKaOK6RwuJ5GLUgbRbwWJBLjuJ9+FQ+Pb7d9oYwZbZgMa/FmTlb1N8ldjhvisfqcwn/+HCvZV/rf4cVT5+FeFCsgFXM7bzABoK8Ah+14Atpn/pl2jY6OnvtemnWOcjzWNOwA8FHS37YEflREsVPuXOQTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721010067; c=relaxed/simple;
-	bh=rcefzzYqvfPvMclZvpRsAmAmLokPfoE0S8KCmyX6qDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IHymupz166UvOUjn8YXiydZSYf+lvRaP5t6Api2B7UNxEHmOyMdDv1jH2yPtQQdl92MXt+dUGmF9P2tLUkoZ6z6k3xYJ+msV4VdIH7CvuGg79z4GwNA3n62tB9GdateXkr3JG1jVAjap4rG6ScfyoYrf//ewLTJxtG0io64Cdfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Bmnb+5TB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721010061;
-	bh=wvT0CJPB0yLw+hllkbYKOiDylZDMHD9c1R7qQnPpDdw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Bmnb+5TBm9bK4bihiRA8l8LCf3Sbz6qmGqsWCNMHY0U+ve1PQ5+4O5eo9FVed5ACU
-	 AicIpnnp5kUw4jdIy8VUh42fvvXbo0xIzSWvKyGpHcyaLbcALMe435I3oC77bMbOhr
-	 gog4DiGa0EfjDwby8Wp4ZaC/shkIdRl5CkzXshO2BlB8YMCzQK1EQCWz1e7LjL7Brx
-	 acgFQAiS+RBe/3Tf9RBLULPVWbs3SnOzhX2gHSi6BKlSIe+BkmFaD2fR4apKtIqnsv
-	 uoAEXF4JdFPd6tNIyIeEtTly1zTSxR2N1X3W7XeHgI4PmqprpkqHcQzD5RTfwxGRhi
-	 HIX1uOu/1pVBw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMmCK37H7z4wbh;
-	Mon, 15 Jul 2024 12:21:01 +1000 (AEST)
-Date: Mon, 15 Jul 2024 12:21:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
- <johan.hedberg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the bluetooth tree
-Message-ID: <20240715122100.1defde20@canb.auug.org.au>
+	s=arc-20240116; t=1721010393; c=relaxed/simple;
+	bh=SGA3prCIJJ3llNRdzo4QP/2bUfApjHDjg1r3KYXgOC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NFxYNaUazhlSi64wfaqQnOGhiSDbx+zk05sBWMDfooS4Z/UTD4ABwagENhvxRS+y1c6Jgg+5FEE/+Argxxk3qg52ZM06dY/RGWySTVKzXNFeU9HQ+a2N+bjqMpnhPeyW5Ylg+4mMAWCNsGyIW6im0Fo2BVxNZPrCKzVgpmNNEhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KbvUCyIT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721010389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sGz2AvnYlX/OuYWFp42oY62WHdDe8oCr+x16py/fxm0=;
+	b=KbvUCyITUT0o81rgAaOmAgsSe3TfRvcm4y66vmDFenDHWuz7kJRn4gwoK0mrAlqzHSSC4x
+	t0V79wjY9tmY5NBLaB2gQnwe+K6QVGDOXrHUPczOR4CPouw/Ng41nXUelr/imevpJf3H0L
+	u58dfbE3h7DRQh9eAOnyYCk+Wu9EYjM=
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
+ [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-rBF7rWt2NkGq4K5WN0zUFg-1; Sun, 14 Jul 2024 22:26:25 -0400
+X-MC-Unique: rBF7rWt2NkGq4K5WN0zUFg-1
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5c65e857b43so3320036eaf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 19:26:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721010385; x=1721615185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sGz2AvnYlX/OuYWFp42oY62WHdDe8oCr+x16py/fxm0=;
+        b=w5zG3MPD5Xh7eq2+2sCRbaQTXx5LccRuU3zTc0ocKSZJeA3zpN9q/dA7WL7iqLlknm
+         yu1kcUo8A545EKWq3NltYYscj70wee3KngFWfdXZg/4CcI2ZC76CYcySdJIvN82B9cWT
+         k5MMzPEZiESgavYUSfHVc2PDGgAhRYoigUprIOF5UV457rGC6LFJRFcxoDqyEqFbuUdr
+         obTGIXmfr1+4EIVoZtNBGO5N7mKrZusMkd5AMwwGfPiKdK6ijafWTUmAjOh5XFjfB9T3
+         grhV4WdO5bSQ61a2FVuzftbMvRqL0Fgyw9ebOXO1jNapnYPrOW0+Mez54zWSl7onhDx3
+         iexw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGo1bpdbrCriiFR4sTHTbTzP8AN2G/GDGp5pLwAcpja/QOLXxevrsquTJvmbT/ilbc3onWuetHPZQ59d+G/bLPLqHDJsT1qLlzOsRc
+X-Gm-Message-State: AOJu0YxodVuXprN3R8R/JJBmbwkZuqojnhS1OOHjgU4XIuJy9aiydbRL
+	0xaQnVvJC3MxNLfLefcPEcLvmY5+kKAVh+9lvM4fXM1bID7B0RpYY7s4dMlhhZrshgnso1I40Kt
+	JXJvsIDFhq2s/kY1aIKlLGicprbBhDnJIVw2Bo6tSrZQvBB0Oz36vzfogs0o3164zbESFlTVHL9
+	wWRpHpJIbJSAAj1lEmioBicoG2OH+6Q4/8oNUc
+X-Received: by 2002:a05:6358:71c8:b0:19f:1644:d45e with SMTP id e5c5f4694b2df-1aade0a6299mr1900876955d.8.1721010384908;
+        Sun, 14 Jul 2024 19:26:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrFW06pmuoNN0Sc+c5vkbGajGRrCBhFYgVDbJHm25Mox95wsQfYrdPmBV25g65b3NPEHi7agQZ/xuwxNOAtfk=
+X-Received: by 2002:a05:6358:71c8:b0:19f:1644:d45e with SMTP id
+ e5c5f4694b2df-1aade0a6299mr1900875355d.8.1721010384479; Sun, 14 Jul 2024
+ 19:26:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3usN7rIjpT2jFBmL7STcsJQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/3usN7rIjpT2jFBmL7STcsJQ
-Content-Type: text/plain; charset=US-ASCII
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com> <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
+In-Reply-To: <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 15 Jul 2024 10:26:13 +0800
+Message-ID: <CACGkMEu0sNx=saZOaVRbuV7Gz7+_GD-v42i+Bdk-NCp6syABbw@mail.gmail.com>
+Subject: Re: [PATCH V2 3/7] vhost-vdpa: VHOST_NEW_OWNER
+To: Steve Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@oracl=
+e.com> wrote:
+>
+> Add an ioctl to transfer file descriptor ownership and pinned memory
+> accounting from one process to another.
+>
+> This is more efficient than VHOST_RESET_OWNER followed by VHOST_SET_OWNER=
+,
+> as that would unpin all physical pages, requiring them to be repinned in
+> the new process.  That would cost multiple seconds for large memories, an=
+d
+> be incurred during a virtual machine's pause time during live update.
+>
+> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> ---
+>  drivers/vhost/vdpa.c       | 41 ++++++++++++++++++++++++++++++++++++++
+>  drivers/vhost/vhost.c      | 15 ++++++++++++++
+>  drivers/vhost/vhost.h      |  1 +
+>  include/uapi/linux/vhost.h | 10 ++++++++++
+>  4 files changed, 67 insertions(+)
+>
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index b49e5831b3f0..5cf55ca4ec02 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -632,6 +632,44 @@ static long vhost_vdpa_resume(struct vhost_vdpa *v)
+>         return ret;
+>  }
+>
+> +static long vhost_vdpa_new_owner(struct vhost_vdpa *v)
+> +{
+> +       int r;
+> +       struct vhost_dev *vdev =3D &v->vdev;
+> +       struct mm_struct *mm_old =3D vdev->mm;
+> +       struct mm_struct *mm_new =3D current->mm;
+> +       long pinned_vm =3D v->pinned_vm;
+> +       unsigned long lock_limit =3D PFN_DOWN(rlimit(RLIMIT_MEMLOCK));
+> +
+> +       if (!mm_old)
+> +               return -EINVAL;
+> +       mmgrab(mm_old);
+> +
+> +       if (!v->vdpa->use_va &&
+> +           pinned_vm + atomic64_read(&mm_new->pinned_vm) > lock_limit) {
+> +               r =3D -ENOMEM;
+> +               goto out;
+> +       }
 
-Commits
+So this seems to allow an arbitrary process to execute this. Seems to be un=
+safe.
 
-  ead30f3a1bae ("power: pwrseq: add a driver for the PMU module on the QCom=
- WCN chipsets")
-  e6491bb4ba98 ("power: sequencing: implement the pwrseq core")
+I wonder if we need to add some checks here, maybe PID or other stuff
+to only allow the owner process to do this.
 
-are missing a Signed-off-by from their committers.
+> +       r =3D vhost_vdpa_bind_mm(v, mm_new);
+> +       if (r)
+> +               goto out;
+> +
+> +       r =3D vhost_dev_new_owner(vdev);
+> +       if (r) {
+> +               vhost_vdpa_bind_mm(v, mm_old);
+> +               goto out;
+> +       }
+> +
+> +       if (!v->vdpa->use_va) {
+> +               atomic64_sub(pinned_vm, &mm_old->pinned_vm);
+> +               atomic64_add(pinned_vm, &mm_new->pinned_vm);
+> +       }
+> +
+> +out:
+> +       mmdrop(mm_old);
+> +       return r;
+> +}
+> +
+>  static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cm=
+d,
+>                                    void __user *argp)
+>  {
+> @@ -876,6 +914,9 @@ static long vhost_vdpa_unlocked_ioctl(struct file *fi=
+lep,
+>         case VHOST_VDPA_RESUME:
+>                 r =3D vhost_vdpa_resume(v);
+>                 break;
+> +       case VHOST_NEW_OWNER:
+> +               r =3D vhost_vdpa_new_owner(v);
+> +               break;
+>         default:
+>                 r =3D vhost_dev_ioctl(&v->vdev, cmd, argp);
+>                 if (r =3D=3D -ENOIOCTLCMD)
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index b60955682474..ab40ae50552f 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -963,6 +963,21 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_dev_set_owner);
+>
+> +/* Caller should have device mutex */
+> +long vhost_dev_new_owner(struct vhost_dev *dev)
+> +{
+> +       if (dev->mm =3D=3D current->mm)
+> +               return -EBUSY;
+> +
+> +       if (!vhost_dev_has_owner(dev))
+> +               return -EINVAL;
+> +
+> +       vhost_detach_mm(dev);
+> +       vhost_attach_mm(dev);
 
---=20
-Cheers,
-Stephen Rothwell
+This seems to do nothing unless I miss something.
 
---Sig_/3usN7rIjpT2jFBmL7STcsJQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUh4wACgkQAVBC80lX
-0Gx42wf9Fd7ugz0rdBU8NwGx2fGS5cjDzpOtJuAigo5np1nS8JI7FXYV6w4lGAS+
-No5rPMfm5LK6wPMgnwsKWnQ9fNyRpiCLtSdOVUmFx1OhM/C4cYOXUmiwawQcMO8/
-T77BOGYCw74tG1qSPr8+iuj51h1pyibvbio9P1Q+FeBB3W2cCpflsdwAiepjiYaY
-qSyUX5MaMZISPQfLXwktazYI0nxEPOHWlb2QXNTjgxFHoTVq7/AslOU/PzqKgw15
-k+i6D+TdRMv2a/6FzD37cT18d3Hr+CHrPvSS5wQ6gZ9OPaNYxOvgyB95Rb8cJTW/
-3h3RXvownnEfftQNTylUWPgd2L+9BA==
-=rWEZ
------END PGP SIGNATURE-----
-
---Sig_/3usN7rIjpT2jFBmL7STcsJQ--
 
