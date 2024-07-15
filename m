@@ -1,287 +1,274 @@
-Return-Path: <linux-kernel+bounces-252941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF25931A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:21:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A91E931A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2368D280F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1831C21DAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D76BFC0;
-	Mon, 15 Jul 2024 18:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F2961FCA;
+	Mon, 15 Jul 2024 18:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jOo/G2O8"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="5oPhD3da"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022089.outbound.protection.outlook.com [52.101.43.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3314482EF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721067661; cv=none; b=n7YyG0TXNrQSbKnB8d57gAPAW/U22PMPGed1LIcPONVEVp2jvwP5pM+ZZTp6pmaeLvAOZt3+wfa0OAD7zBEdsRuejKcaoFw1Stb66tpyfBkLnU+0qRIp1R3rnuTkSQ2CCwlpLeK1dgxUb+VTB+7JmXB1bU0Gtun9sGtmG5Sm63k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721067661; c=relaxed/simple;
-	bh=WfQsMUPUxNqmyKbdc8guK35tYRdh9MATkdmcQik/CyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hFBvwbU4/UShGSponzDxSiBpVCYNVie/nk0KEcvTvPePP8H6CntcnQ07zYYBzJSMfx96exwGXTd2jl3/8682nwexAsHqWlQuP1SeK/WU92Ssuvw4L2MBGb7NHu/3VpHyx3Vjljj7Wpi4rNhm7gfl3swGDRwkiiPsQX4j4Lg3MDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jOo/G2O8; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C2E7340E021B;
-	Mon, 15 Jul 2024 18:20:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1Zn--4UE4qQR; Mon, 15 Jul 2024 18:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721067651; bh=IDnhFbzitxBabwE8kf7KZ1P8Dv0BK91BJm0w98xykRI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jOo/G2O8CqjDOowyuT3zBalCe0usRurcGmx/moefr+v0hjXDM3Ttt7yaydQtFz+5q
-	 nYX83nWKPjWXeq8HlLTT6m2wNxq3qJ1CzK8MA4mYfTkwhhKlrkS9MqZq4xmq0lyyFq
-	 2K35Q0a+M8ZHgC6ROMV+L9OicOqtpKuDboUrgbWg8YJMSegt9ooMhYZ2jvgS55qQd3
-	 l2q+Yq6vC+vT+sLM/AkheIRuFAF0icmE6PyC6kvud5MOpEbaonz4IzOOQmuOxKCeLS
-	 oxtR6krUqyN+TSFLS6pKCPYOzfh1ymGibsAbEwt0NhkWLHWaBg7PqiI5euwcb3mZZo
-	 +MULoYg8Vt1J1zPXJIoW9oZ1an9g6iBCPOV2Bh4LAK8l5mURgC/u96iGdrYLphLYrs
-	 ufij7+xCh78+BXkzKx1H1b1Ih/i0wWBEp5qCwfWXiN47fkMrDJA/6gizmpTZM37rD4
-	 ADTEKoijYA53Cf6dy3GFSypFtRUnQRs8GSN/7/OOI3WYHIYpClSQHolvS/DHdRHPVz
-	 /OBq4IrMs3NU/w4RAPYautybdLqpon6Fn8uhg93+ZQ/zyBzg0aldMlTVsznNrCbc2S
-	 RoXioJsGfgqZUPDR590tG0c3OZME4jGvIXfm+NoMVuGR73Y3zt8/3zjc5b5eMNon8J
-	 tW13sujK3R9+AcoQVoosczYk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2D32D40E019C;
-	Mon, 15 Jul 2024 18:20:48 +0000 (UTC)
-Date: Mon, 15 Jul 2024 20:20:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cpu for v6.11-rc1
-Message-ID: <20240715182042.GAZpVoenFmK87PlcjT@fat_crate.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF20461FF0;
+	Mon, 15 Jul 2024 18:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721067679; cv=fail; b=hFwGHkkCqohYE3kSVehUqDWIBy0yXb+nyaDiNAKFvyArKCtCH9sNxTgIatv8u/+Ytj9dq9ui786JQerWCS/qyKzKlZABlBhir6+PaERc/kWes4w+AxTjEEYD2tMt32LnoGmnUeabh/C7TTvJhpPpAeLxYQZq7ANCEcwPe9VJzLI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721067679; c=relaxed/simple;
+	bh=T/Uo+fO2Vt2HDWI6smmZ3tCgkeyV324iGcLW7niMs/8=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fXlOr4BKYH2xdr3sxzupRVzFv2trkzxfyHS8a6PpGaSc2q4CkaQH4xZ0+HbeStVHvTuHXOgcZmK1qZ0niy8j6x1fBMl1nvnwL/dgX8zSofGC+3/JGzDvi/Z4MgT6d7KoPJreEN4VfNnKg+PPD9jMNtr58RQSVoMyGmgQ8zzDrI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=5oPhD3da reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.43.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TN5BZ3eVQjIdrR/afPVfhVVTFVqd2RUFhPuclX/qlGXfY4Flt7TrWiYFpbNGWpGk1mf2aVwNFCv8JYFg5SbonWZ87t0NIIop3GNNAKwQntDdpCYYbPo38QR3myBSxs15r8DcrBnpcgZ1tWrz2UP4Fdq9I7dNKLBI/R3ENadeaXMZjchVLa1dMiLWqU+Z1BGWph9gw4kv5/OwjMNl2tSoWb06D47IGjlvP0tbKgVtntItKmrCks9DDOBng4HZ/bsKQxPv2I5JtvtaXoJIJeVYwiZt7Tm3l/ilbtX+1MW6ibYbyrNzpvze43hP3SQ8v7sKzByzQlhkULdO/hKGcDCaMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hmZDqsumfXMA60bGoMldp9rasvO7xevEjpV4KyxeIIE=;
+ b=G/jAQTFMjDdK7N+qzAYsJSJ8omWXLuF6UB77ycoJSkmZIX9WPnoJ7GsHkOZ0/h7NQXZjeK7ZHOirxpIlBjUITyiNGzB5uCYUuMKGApLTdcXqzOz6bR+BhD/4FeB9GhPxrE0/jjhOBZMBdjS/z6I/K7tbFnEq0hZ4WBaSf+7baNMcNnyMNqYpAvApB5Dxl0h3YqOB0qEZQkeiQ3dbzcO8lfpV/79e1xxTbqeUxnzBMXaHytYY4VreQfzsrdJxBE2LV6gQWaXuR0SY9VnK1BNLgYChZd708/lezbySZ7GpSYEHojHU3nVkcj4h6BVSguAYOEOG6TpHJvmVTTuGhsJl1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hmZDqsumfXMA60bGoMldp9rasvO7xevEjpV4KyxeIIE=;
+ b=5oPhD3da/FcJc944dwMYP17PNmhImcTbG//EP9IdLUJ7kbyDNz/70d3vIepg4gMl7S+jQnDd/ZBGI7BHIQbTrMUqA29uyg5g+UgvDBB5oNVzMJTn5av0VHMLGfdXrMPe7A7pRWfWQ3EmAwXu+frJ62+upUCioLR2lrwk0KYknZI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ SA6PR01MB9093.prod.exchangelabs.com (2603:10b6:806:432::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.27; Mon, 15 Jul 2024 18:21:15 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%5]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 18:21:15 +0000
+Message-ID: <3ad21332-c58a-46bb-8d3b-8b3d1cd8cb75@amperemail.onmicrosoft.com>
+Date: Mon, 15 Jul 2024 14:21:11 -0400
+User-Agent: Mozilla Thunderbird
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+Subject: Re: [PATCH v4 0/3] MCTP over PCC
+To: Dan Williams <dan.j.williams@intel.com>, admiyo@os.amperecomputing.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jeremy Kerr <jk@codeconstruct.com.au>,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Huisong Li <lihuisong@huawei.com>
+References: <20240702225845.322234-1-admiyo@os.amperecomputing.com>
+ <66900ef8e7c79_1a77429414@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+In-Reply-To: <66900ef8e7c79_1a77429414@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CY5PR22CA0100.namprd22.prod.outlook.com
+ (2603:10b6:930:65::28) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|SA6PR01MB9093:EE_
+X-MS-Office365-Filtering-Correlation-Id: b72fe0d1-7658-4739-6911-08dca4fae9ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cURRdmRVOFVod0lvbE0zVHlybUpLMG1UUnJCdndCWGpnSVp2WGJwb2J5QzQr?=
+ =?utf-8?B?TEM3bjNKS0lqSEVDWTFMMEZuS25HN3JPdGhITURBaXFRK0hVNGdNUFRCZ0ZH?=
+ =?utf-8?B?ZnN2VC9mOU1iZXE4azZNL1M2VzhjaitIYlFoR2k1bGg0bktWSy83R3JwNkZn?=
+ =?utf-8?B?VlYyd3ZhOGEvb0gyRzhXTVpBUUNUN3lJNGFYcm1OLzlXb3JtNlFyZ2Z3UnNk?=
+ =?utf-8?B?T0RqTytRVW5oYXRWWUNGNzZNb0p6VExTWHVzelM3WEZzcWJyZFluR3c4MzFI?=
+ =?utf-8?B?YkhOOGlRaFNSQlpMQm50T3YweXVISGJWR0thMGR2VXBPOGEzZnQ1LzdtQmNv?=
+ =?utf-8?B?RU53bHc0VzdIem02d1drS2tlS1gxUjV4Q1pQajVtTzdZVk5uRkhjQ2E3ZzJo?=
+ =?utf-8?B?dEFLcGVkZnZ2dDNXYkRFM1RFRU0zS05CdXVpaUxMNzJYalF5NUxQcUxOQkhj?=
+ =?utf-8?B?OW4zSjN3cExnMGNZaTRVVnVHNm5vWWsxWnRicjdzSFUrS01ZS0dpS1FHVkpR?=
+ =?utf-8?B?Z1crN2RFR2tXc0poZ05UTW5CdEMzNlNPeERoa2pwWVRjb2gvclBGNmh6a3Fl?=
+ =?utf-8?B?cmg2ZUVqMktQTzZweFRyaVpEQkVtWXlJQ21BaktzYllvK1M4QU1XcE42R3dV?=
+ =?utf-8?B?MHFsQ1AyNmZwNGhBSHd2ZUxyRFM4WWhNNDVRZGdHY21MMTlnSHlTZnNiM1JI?=
+ =?utf-8?B?SE8zWk1tdGlOYkFTTys3SUpuMk9JczFJWWw2SjkvNW5YUGNIL3BzVG5yTFdm?=
+ =?utf-8?B?VDN0bmZFcHVxS0tSOSttOTRoUjVQRkJSQk45cXFRMTB2S0xSakxHS3BUZnR6?=
+ =?utf-8?B?ek94M2NZVW9Dd05GaGVYNWN6YTdES2pibmtkSEtTQ1lYR3BWNFhoNDZKMUJo?=
+ =?utf-8?B?YlV2UXZ2YmprSTZFV2pMTFJRNVc3UnpPTkRoV2t6RmtQOHRLbll2V2U1S2xr?=
+ =?utf-8?B?TE1ac1ZHenQ3Y0lmc1lJck85YnYreEZPMGd0QStKQVpyeU5ZRXJaNUdEamlR?=
+ =?utf-8?B?MlBXcnJ6ZWp3bTRGTlprZVlsZ3czOThONmoxbnZHQUFSWVpsc2xPWVZoZGtl?=
+ =?utf-8?B?N0p3VzhTeWlHb3ZkRVFEc29iNVRXdFNFeGlaRzZZeURiL1N1ZWsxK250S3RO?=
+ =?utf-8?B?a21DSUpobzkrSWp6Y29ZbUxVVVRSM1lvbXJKZDYzVXRMeE96M2dMeEdySnVU?=
+ =?utf-8?B?Q0lQY2x6Q0JFcUhYaE5LZG1UWGFuUEMwUUN5OUFTUUU3N0U0N2RGSXM2WXR3?=
+ =?utf-8?B?czAzTENPSDdOQ0l3ZCtEZERuVndhYUhsaVgxSzgzYjFadUpsdmI4amRDL2Y2?=
+ =?utf-8?B?bzNxMzRFWklRQTc3QkZFMFA0d1g1ZGFwNUp6anExL2JkWUV0aFpvdWExZlp4?=
+ =?utf-8?B?Z2VRODlqdVR6cGY0MXdXSnF0Wkcwb3FkTzFtR01uellZVTAvaTJJRVMyeld1?=
+ =?utf-8?B?d2pvUXQyWUxzNjNGTldzRE1RLzlxZnBrRTNwUmRqZ2JGOVBrayt0Szc4VFVz?=
+ =?utf-8?B?K3JMbisrOFZDMFM5dGovdTRiUDQzUEY4dWpmeDJYS2xWOGVzMFZIODZ1R2tX?=
+ =?utf-8?B?aE9uUXZURElFN2dpMDkyYnFUN0FmTUlMam9IaTg2dXFKdEs0Vzg4NGs5WFNu?=
+ =?utf-8?B?S2tuZFEyM29mamtLazVBTFNRK216TENMNVFJcWJKSmVrYTRyamhnWUhPUE1k?=
+ =?utf-8?B?QmJEZmJ1SC9Gc2ZqazNYa1hyRjVhS0E3Z2E4bWVDRFBHUXREYTRoQVlSRGRI?=
+ =?utf-8?Q?XbquzeqLwB/Ivl+hPo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q1pRbitsRDBOSzYzKzhodTFJd2x0QkNscHZ4U1VtQ0Nod05jS2Y0U2lFaFJo?=
+ =?utf-8?B?VFp5N1NURWQ2U01qNlF3S3hJVHVyZzNDWktScWRNZ0hsMVdVdXlXb0U5Z29H?=
+ =?utf-8?B?N1NRRVZJTzVSd2w4Vi9PNDJJMmxWR1hjajAzdmZBN1lNYUpVeC9sYU42RHNm?=
+ =?utf-8?B?UXU3NWtVTmdwd05iVHRQZ29peEFIZVNaZG1UNVJWSDlnOG1XdzUzWEVuZ1RC?=
+ =?utf-8?B?cFdBKzhBNGhlVk8wQWdNR2NMZWRNQTIwTkk0VzhDN1JRK2ZDYmdoSnlPT3Fi?=
+ =?utf-8?B?d21wNVVvZEtrZm5vOVhyK2ZSckRVWXJIdUdqWVpISmhISndKOHJuVFdpSkhH?=
+ =?utf-8?B?T3F4aVVweHVnMmF5NUJxVnJmQmlJVklhNDdRaHNjQy8yd1ZhOHRVdFVVeTdk?=
+ =?utf-8?B?VWZTYVdVNG5KME14NWhnTXNTd2dtejd4Rk5lalg1aGROanhWdTdsSTZ6UHdq?=
+ =?utf-8?B?M1hYU281RVdQV0xpMW02Wms3ankzRzR0K3YxMU80Q1gxZzBDZnF3dzJFUy9o?=
+ =?utf-8?B?VFJxRGdld0oyZThUK1FCVG51Vy9xeXpjMTg4Y2F2VG5oUm5pSlNYd2ltVkxm?=
+ =?utf-8?B?Vi94M2I2MVVjU0NYeEVleEZsa05PelhTN0o5T2pyRGszQkpqWTU5TGpmRFBR?=
+ =?utf-8?B?N3ZKd0F6OFJkYTJRK2JDT3VCUVkzbWpsSVJIT3FiVnRpRHNMaVo5Zk1tK0FI?=
+ =?utf-8?B?c25nb0RTQnBrcUgza05GZFI2TllKMHN2UFhMZlhVRkxRVmt4c3Uvd2pJRHUz?=
+ =?utf-8?B?Mlc2dWdzajRQdEtMdW9NQ09GaTQxOTZ5MjZYUXgrYXdNc0p5R2FTQmtueEVG?=
+ =?utf-8?B?eU15UStvK1EyeUVpL0tqWmwxUlRLY0V1UkdpYWltV1JWWUgvaVVjd2ZBSTVl?=
+ =?utf-8?B?V3RRNFN6RVdCc2w0Um55a2ltc0Z5RTdGUnBGbjVxVlBsK0VqUmZKcEt3Njlu?=
+ =?utf-8?B?V3R5N0V4U2xEeHkrRzJKYWxuS09uSXd4SXRVSUVMaFhNS3A3TGJHRG5tcGRi?=
+ =?utf-8?B?TC81dTQ4K3IzejdwYUQwU2hZVHlKaGVxUDlRMmg1S1VVcmd1b3l3YnBnUkcr?=
+ =?utf-8?B?djcyVnd1U2ZyQWp4cjhzV2M3dU0xOFEwams4K0xScy81OTJzaElQRmVpMWhS?=
+ =?utf-8?B?V3NrVnF3UFVHWm9qTHB3WndDMWp5MzBOcFhTdVZueEpBNFZIM21nclEzc01F?=
+ =?utf-8?B?VXVsRUZPdEdCMjFCMWpCS01hZE9Dc3V3RFdEV3VTekRNVlo5Uyt5MTBYUW9J?=
+ =?utf-8?B?VWx2RjRUcVJVOGZmM21BWmVabHgxbHVCMXFoclB1c3NwY3d4NDdacTg3U21Y?=
+ =?utf-8?B?UmlRTXI1TktzZENaUlh5TXQxdGQ3TEZPbSt0MGRTeUp0WWtPVWxMRStJM3lv?=
+ =?utf-8?B?U1M1eG9ma1dTUGRLQ1gycllNSHZiZzBzN3dLRTVnRXcrMUV5SGgzQzVNOXhJ?=
+ =?utf-8?B?U2dzTEdEcjdEUjFnWHNXYTVUOTZxNm9Ld0JIOVZjTXFGVElMejNjVnBHdWZX?=
+ =?utf-8?B?SUEwQnJpUmFvd2VyTzBRbTVOSFhuNTZRdEhhNm15V3Q2VS9OYzlPeUhzWklO?=
+ =?utf-8?B?U3h5T0hLMTVIUmQ3R3l3TFdMRjc4YzdzV3ZYNjhtSTVoM1EyVHhPby9YdVRP?=
+ =?utf-8?B?eE1pTkVRWW1Dakdtbll1WmRtQ1VGQjFQWGtwekVSRUdjdG0waDhLbExBNzdE?=
+ =?utf-8?B?c2QxcStXRjlDNWVTcU4wa3d1alV0TFduNUZMb3IzQVFsMGdYODlvRVBldmMr?=
+ =?utf-8?B?SVNXWFlZbUM0SkN3V1dmUlRMNG15NHJYNE10ZGZ5YXVrZHVwNllESWxOMGF6?=
+ =?utf-8?B?QkNLRGhHL0dMSThwc0dtcDhoK2gxK2FWV2UzYWwvN2ZLZFpYZGVabDhLbXFq?=
+ =?utf-8?B?NHMxQ2lWVXV6LzErTit3V3VBVWM2UVhTcStoK29PY0VsVmJkWHp0UWVUcmdr?=
+ =?utf-8?B?N3llQlMwV0x6OUlSUytTZVhQUGtxYTdrUHl0OVlGdWg1Y3Zhb01TNytJdmxp?=
+ =?utf-8?B?aEZvKzFFSHlGeGNicU1CdWNiVXdnaGtDRVdyM3JpNnRiMHYrR2FCTjNHOHdq?=
+ =?utf-8?B?T2d4dzRtY2RwV2VCN2xyTFZPdUx0Vkd5cWU5ZGRKcVZmWlJhb0VZN2VFdUpX?=
+ =?utf-8?B?bUJJVGNGSUN3UWlPK3I0QUNkUkg4V2ZJQkhRblRWWWNickQyNEd6MjdaaStD?=
+ =?utf-8?B?bW80WjBvdFZOY2dVWngzaEZ1V2Q4YkxEZWU0SVBFdU90aUI4QVdwWnZvN2RK?=
+ =?utf-8?Q?i866pHq7ry0K3MldnBN0CXrAeW3tWOWpy1S9ArTJ4I=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b72fe0d1-7658-4739-6911-08dca4fae9ac
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 18:21:15.0357
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JrHekc9nqedkvVOoidameU+7++UHGDCGsxgUgr2lpEJXN9GNLOEsf6CW3WICn+7EWZpwqx/KBiVVOJKfTu/qoOYod0f0GIlcVdqOYqX57XZeJOMZaqtZjcnd3DP6cJJT
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR01MB9093
 
-Hi Linus,
+Apologies for not addressing these concerns before updating.  If there 
+is a V6 (am sure there will be) I will update the cover.
 
-please pull the x86/cpu lineup for v6.11-rc1.
+MCTP is a general purpose  protocol so  it would  be impossible to 
+enumerate all the use cases, but some of the ones that are most topical 
+are attestation and RAS support.  There are a handful of protocols built 
+on top of MCTP, to include PLDM and SPDM, both specified by the DMTF.
 
-If you encounter a merge conflict - likely - I've added the resolve we've been
-using in linux-next at the end of that mail if you'd like to compare notes.
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0240_1.0.0.pdf
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pd
 
-Thx.
+SPDM entails various usages, including device identity collection, 
+device authentication, measurement collection, and device secure session 
+establishment.
 
----
+PLDM is more likely to be used  for hardware support: temperature, 
+voltage, or fan sensor control.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+At least two companies have devices that can make use of the mechanism. 
+One is Ampere Computing, my employer.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+The mechanism it uses is called Platform Communication Channels is part 
+of the ACPI spec: 
+https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/14_Platform_Communications_Channel/Platform_Comm_Channel.html
 
-are available in the Git repository at:
+Since it is a socket interface, the system administrator also has  the 
+ability to ignore an MCTP link that they do not want to enable.  This 
+link would be exposed to the end user, but would not be usable.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cpu_for_v6.11_rc1
+If MCTP support is disabled  in the Kernel, this driver would also be 
+disabled.
 
-for you to fetch changes up to 34b3fc558b537bdf99644dcde539e151716f6331:
+PCC is based on a shared buffer and a set of I/O mapped memory locations 
+that the Spec calls registers.  This mechanism exists regardless of the 
+existence of the driver. Thus, if the user has the ability to map these  
+physical location to virtual locations, they have the ability to drive 
+the hardware.  Thus, there is a security aspect to this mechanism that 
+extends beyond the responsibilities of the operating system.
 
-  x86/cpu/intel: Drop stray FAM6 check with new Intel CPU model defines (2024-06-29 16:10:37 +0200)
+If the hardware does not expose the PCC in the ACPI table, this device 
+will never be enabled.  Thus it is only an issue on hard that does 
+support PCC.  In that case, it is up to the remote controller to 
+sanitize communication; MCTP will be exposed as a socket interface, and 
+userland can send any crafted packet it wants.  It would thus also be 
+incumbent on the hardware manufacturer to allow the end user to disable 
+MCTP over PCC communication if they did not want to expose it.
 
-----------------------------------------------------------------
-- Flip the logic to add feature names to /proc/cpuinfo to having to
-  explicitly specify the flag if there's a valid reason to show it in
-  /proc/cpuinfo
-
-- Switch a bunch of Intel x86 model checking code to the new CPU model
-  defines
-
-- Fixes and cleanups
-
-----------------------------------------------------------------
-Alison Schofield (2):
-      x86/cpu: Remove useless work in detect_tme_early()
-      x86/pconfig: Remove unused MKTME pconfig code
-
-Andrew Cooper (1):
-      x86/cpu/intel: Drop stray FAM6 check with new Intel CPU model defines
-
-Borislav Petkov (AMD) (1):
-      x86/cpufeatures: Flip the /proc/cpuinfo appearance logic
-
-Jeff Johnson (1):
-      x86/mce/inject: Add missing MODULE_DESCRIPTION() line
-
-Mateusz Guzik (1):
-      x86/CPU/AMD: Always inline amd_clear_divider()
-
-Tony Luck (8):
-      x86/platform/intel-mid: Switch to new Intel CPU model defines
-      x86/cpu/intel: Switch to new Intel CPU model defines
-      x86/PCI: Switch to new Intel CPU model defines
-      x86/virt/tdx: Switch to new Intel CPU model defines
-      perf/x86/intel: Switch to new Intel CPU model defines
-      x86/cpu: Switch to new Intel CPU model defines
-      x86/boot: Switch to new Intel CPU model defines
-      perf/x86/rapl: Switch to new Intel CPU model defines
-
- arch/x86/boot/cpucheck.c                |   2 +-
- arch/x86/events/intel/core.c            | 212 ++++-----
- arch/x86/events/rapl.c                  |  90 ++--
- arch/x86/include/asm/cpu_device_id.h    |   8 +-
- arch/x86/include/asm/cpufeatures.h      | 800 ++++++++++++++++----------------
- arch/x86/include/asm/intel_pconfig.h    |  65 ---
- arch/x86/include/asm/processor.h        |  12 +-
- arch/x86/include/asm/vmxfeatures.h      | 110 ++---
- arch/x86/kernel/cpu/Makefile            |   2 +-
- arch/x86/kernel/cpu/amd.c               |  11 -
- arch/x86/kernel/cpu/intel.c             | 188 +++-----
- arch/x86/kernel/cpu/intel_pconfig.c     |  84 ----
- arch/x86/kernel/cpu/mce/inject.c        |   1 +
- arch/x86/kernel/cpu/mkcapflags.sh       |   3 +-
- arch/x86/pci/intel_mid_pci.c            |   4 +-
- arch/x86/platform/intel-mid/intel-mid.c |   6 +-
- arch/x86/virt/vmx/tdx/tdx.c             |   8 +-
- 17 files changed, 701 insertions(+), 905 deletions(-)
- delete mode 100644 arch/x86/include/asm/intel_pconfig.h
- delete mode 100644 arch/x86/kernel/cpu/intel_pconfig.c
-
----
-
-diff --cc arch/x86/include/asm/vmxfeatures.h
-index 695f36664889,fe42067cd6d8..09b1d7e607c1
---- a/arch/x86/include/asm/vmxfeatures.h
-+++ b/arch/x86/include/asm/vmxfeatures.h
-@@@ -70,24 -70,24 +70,24 @@@
-  #define VMX_FEATURE_APIC_REGISTER_VIRT	( 2*32+  8) /* "vapic_reg" Hardware emulation of reads to the virtual-APIC */
-  #define VMX_FEATURE_VIRT_INTR_DELIVERY	( 2*32+  9) /* "vid" Evaluation and delivery of pending virtual interrupts */
-  #define VMX_FEATURE_PAUSE_LOOP_EXITING	( 2*32+ 10) /* "ple" Conditionally VM-Exit on PAUSE at CPL0 */
-- #define VMX_FEATURE_RDRAND_EXITING	( 2*32+ 11) /* "" VM-Exit on RDRAND*/
-- #define VMX_FEATURE_INVPCID		( 2*32+ 12) /* "" Enable INVPCID in guest */
-- #define VMX_FEATURE_VMFUNC		( 2*32+ 13) /* "" Enable VM-Functions (leaf dependent) */
-- #define VMX_FEATURE_SHADOW_VMCS		( 2*32+ 14) /* VMREAD/VMWRITE in guest can access shadow VMCS */
-- #define VMX_FEATURE_ENCLS_EXITING	( 2*32+ 15) /* "" VM-Exit on ENCLS (leaf dependent) */
-- #define VMX_FEATURE_RDSEED_EXITING	( 2*32+ 16) /* "" VM-Exit on RDSEED */
-+ #define VMX_FEATURE_RDRAND_EXITING	( 2*32+ 11) /* VM-Exit on RDRAND*/
-+ #define VMX_FEATURE_INVPCID		( 2*32+ 12) /* Enable INVPCID in guest */
-+ #define VMX_FEATURE_VMFUNC		( 2*32+ 13) /* Enable VM-Functions (leaf dependent) */
-+ #define VMX_FEATURE_SHADOW_VMCS		( 2*32+ 14) /* "shadow_vmcs" VMREAD/VMWRITE in guest can access shadow VMCS */
-+ #define VMX_FEATURE_ENCLS_EXITING	( 2*32+ 15) /* VM-Exit on ENCLS (leaf dependent) */
-+ #define VMX_FEATURE_RDSEED_EXITING	( 2*32+ 16) /* VM-Exit on RDSEED */
-  #define VMX_FEATURE_PAGE_MOD_LOGGING	( 2*32+ 17) /* "pml" Log dirty pages into buffer */
---#define VMX_FEATURE_EPT_VIOLATION_VE	( 2*32+ 18) /* Conditionally reflect EPT violations as #VE exceptions */
-- #define VMX_FEATURE_PT_CONCEAL_VMX	( 2*32+ 19) /* "" Suppress VMX indicators in Processor Trace */
-- #define VMX_FEATURE_XSAVES		( 2*32+ 20) /* "" Enable XSAVES and XRSTORS in guest */
-++#define VMX_FEATURE_EPT_VIOLATION_VE	( 2*32+ 18) /* "ept_violation_ve" Conditionally reflect EPT violations as #VE exceptions */
-+ #define VMX_FEATURE_PT_CONCEAL_VMX	( 2*32+ 19) /* Suppress VMX indicators in Processor Trace */
-+ #define VMX_FEATURE_XSAVES		( 2*32+ 20) /* Enable XSAVES and XRSTORS in guest */
-  #define VMX_FEATURE_MODE_BASED_EPT_EXEC	( 2*32+ 22) /* "ept_mode_based_exec" Enable separate EPT EXEC bits for supervisor vs. user */
-- #define VMX_FEATURE_PT_USE_GPA		( 2*32+ 24) /* "" Processor Trace logs GPAs */
-- #define VMX_FEATURE_TSC_SCALING		( 2*32+ 25) /* Scale hardware TSC when read in guest */
-- #define VMX_FEATURE_USR_WAIT_PAUSE	( 2*32+ 26) /* Enable TPAUSE, UMONITOR, UMWAIT in guest */
-- #define VMX_FEATURE_ENCLV_EXITING	( 2*32+ 28) /* "" VM-Exit on ENCLV (leaf dependent) */
-- #define VMX_FEATURE_BUS_LOCK_DETECTION	( 2*32+ 30) /* "" VM-Exit when bus lock caused */
-- #define VMX_FEATURE_NOTIFY_VM_EXITING	( 2*32+ 31) /* VM-Exit when no event windows after notify window */
-+ #define VMX_FEATURE_PT_USE_GPA		( 2*32+ 24) /* Processor Trace logs GPAs */
-+ #define VMX_FEATURE_TSC_SCALING		( 2*32+ 25) /* "tsc_scaling" Scale hardware TSC when read in guest */
-+ #define VMX_FEATURE_USR_WAIT_PAUSE	( 2*32+ 26) /* "usr_wait_pause" Enable TPAUSE, UMONITOR, UMWAIT in guest */
-+ #define VMX_FEATURE_ENCLV_EXITING	( 2*32+ 28) /* VM-Exit on ENCLV (leaf dependent) */
-+ #define VMX_FEATURE_BUS_LOCK_DETECTION	( 2*32+ 30) /* VM-Exit when bus lock caused */
-+ #define VMX_FEATURE_NOTIFY_VM_EXITING	( 2*32+ 31) /* "notify_vm_exiting" VM-Exit when no event windows after notify window */
-  
-  /* Tertiary Processor-Based VM-Execution Controls, word 3 */
-- #define VMX_FEATURE_IPI_VIRT		( 3*32+  4) /* Enable IPI virtualization */
-+ #define VMX_FEATURE_IPI_VIRT		( 3*32+  4) /* "ipi_virt" Enable IPI virtualization */
-  #endif /* _ASM_X86_VMXFEATURES_H */
-diff --cc arch/x86/kernel/cpu/intel.c
-index fdf3489d92a4,a9ea0dba6f0c..08b95a35b5cb
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@@ -230,61 -201,23 +201,39 @@@ static void detect_tme_early(struct cpu
-  		clear_cpu_cap(c, X86_FEATURE_TME);
-  		return;
-  	}
-- 
-- 	if (mktme_status != MKTME_UNINITIALIZED)
-- 		goto detect_keyid_bits;
-- 
-- 	pr_info("x86/tme: enabled by BIOS\n");
-- 
-- 	tme_policy = TME_ACTIVATE_POLICY(tme_activate);
-- 	if (tme_policy != TME_ACTIVATE_POLICY_AES_XTS_128)
-- 		pr_warn("x86/tme: Unknown policy is active: %#llx\n", tme_policy);
-- 
-- 	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
-- 	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS_128)) {
-- 		pr_err("x86/mktme: No known encryption algorithm is supported: %#llx\n",
-- 				tme_crypto_algs);
-- 		mktme_status = MKTME_DISABLED;
-- 	}
-- detect_keyid_bits:
-+ 	pr_info_once("x86/tme: enabled by BIOS\n");
-  	keyid_bits = TME_ACTIVATE_KEYID_BITS(tme_activate);
-- 	nr_keyids = (1UL << keyid_bits) - 1;
-- 	if (nr_keyids) {
-- 		pr_info_once("x86/mktme: enabled by BIOS\n");
-- 		pr_info_once("x86/mktme: %d KeyIDs available\n", nr_keyids);
-- 	} else {
-- 		pr_info_once("x86/mktme: disabled by BIOS\n");
-- 	}
-- 
-- 	if (mktme_status == MKTME_UNINITIALIZED) {
-- 		/* MKTME is usable */
-- 		mktme_status = MKTME_ENABLED;
-- 	}
-+ 	if (!keyid_bits)
-+ 		return;
-  
-  	/*
-- 	 * KeyID bits effectively lower the number of physical address
-- 	 * bits.  Update cpuinfo_x86::x86_phys_bits accordingly.
-+ 	 * KeyID bits are set by BIOS and can be present regardless
-+ 	 * of whether the kernel is using them. They effectively lower
-+ 	 * the number of physical address bits.
-+ 	 *
-+ 	 * Update cpuinfo_x86::x86_phys_bits accordingly.
-  	 */
-  	c->x86_phys_bits -= keyid_bits;
-+ 	pr_info_once("x86/mktme: BIOS enabled: x86_phys_bits reduced by %d\n",
-+ 		     keyid_bits);
-  }
-  
- +void intel_unlock_cpuid_leafs(struct cpuinfo_x86 *c)
- +{
- +	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
- +		return;
- +
- +	if (c->x86 < 6 || (c->x86 == 6 && c->x86_model < 0xd))
- +		return;
- +
- +	/*
- +	 * The BIOS can have limited CPUID to leaf 2, which breaks feature
- +	 * enumeration. Unlock it and update the maximum leaf info.
- +	 */
- +	if (msr_clear_bit(MSR_IA32_MISC_ENABLE, MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) > 0)
- +		c->cpuid_level = cpuid_eax(0);
- +}
- +
-  static void early_init_intel(struct cpuinfo_x86 *c)
-  {
-  	u64 misc_enable;
+Does this cover you concerns?
 
 
--- 
-Regards/Gruss,
-    Boris.
+On 7/11/24 12:57, Dan Williams wrote:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> admiyo@ wrote:
+>> From: Adam Young<admiyo@os.amperecomputing.com>
+>>
+>> This series adds support for the Management Control Transport Protocol (MCTP)
+>> over the Platform Communication Channel (PCC) mechanism.
+>>
+>> MCTP defines a communication model intended to
+>> facilitate communication between Management controllers
+>> and other management controllers, and between Management
+>> controllers and management devices
+>>
+>> PCC is a mechanism for communication between components within
+>> the  Platform.  It is a composed of shared memory regions,
+>> interrupt registers, and status registers.
+>>
+>> The MCTP over PCC driver makes use of two PCC channels. For
+>> sending messages, it uses a Type 3 channel, and for receiving
+>> messages it uses the paired Type 4 channel.  The device
+>> and corresponding channels are specified via ACPI.
+>>
+>> The first patch in the series implements a mechanism to allow the driver
+>> to indicate whether an ACK should be sent back to the caller
+>> after processing the interrupt.  This is an optional feature in
+>> the PCC code, but has been made explicitly required in another driver.
+>> The implementation here maintains the backwards compatibility of that
+>> driver.
+>>
+>> The second patch in the series is the required change from ACPICA
+>> code that will be imported into the Linux kernel when synchronized
+>> with the ACPICA repository. It ahs already merged there and will
+>> be merged in as is.  It is included here so that the patch series
+>> can run and be tested prior to that merge.
+> This cover letter looks woefully insufficient.
+>
+> What is the end user visible effect of merging these patches, or not
+> merging these patches?  I.e. what does Linux gain by merging them, what
+> pressing end user need goes unsatisfied if these are not merged? What is
+> the security model for these commands, i.e. how does a distro judge
+> whether this facility allows bypass of Kernel Lockdown protections?
+>
+> The Kconfig does not help either. All this patch says is "communication
+> path exists, plumb it direct to userspace", with no discussion of
+> intended use cases, assumptions, or tradeoffs.
 
