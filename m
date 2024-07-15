@@ -1,97 +1,151 @@
-Return-Path: <linux-kernel+bounces-252192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05331930FC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70826930F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B151F21DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF492813FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035CD1850B1;
-	Mon, 15 Jul 2024 08:29:30 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F60913B2B0;
+	Mon, 15 Jul 2024 08:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nk1OY536"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9461849E8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A924B5B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032169; cv=none; b=nqZ1KEOd0tn04diK5AJ82iDqn1e46meMGyaqlWtiJzsd9rQZJrP8LT9uMCkM/ldDAPPNc3uuZUYtLk5lxP9+xF3xTvMQL02jTsDnkGrH0oNASRqNFoOjHI/yP524crtTH1Bf0Nr5+AE8naTvyhzSMbm4HD9R/J/AxLlo4Hg5qVY=
+	t=1721031770; cv=none; b=DYA+LTU2eopypiXH3kPBV668v4dbKxS+6DaK23ilkmt0bIFiZCd7FZNoHW0H597AIGSHX0bJWCG1RjRcs79l25/87wtK2TiJ/jYu/KpU2Rro/4xm4zpHAvHwCeVO1j2GibqRyLALFeNnmMbvVnvwK6ipc5d/VTNwB1LIPJqQDLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032169; c=relaxed/simple;
-	bh=nECqzgQeJCUkIbhKy2dALBkVbJRmMcagzco/i7WPIuU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Tnb4JjyjjR270nfaSJ/QV6CIdERGhR6nlNPXIZ8DyMldIppCkiP64ceDRZ9D415j7wHFSHaMOBtfI3M4FGelzZyB5IruQR0QaRTxsmzx7b1xCIkHqHnoitICvAEXEOEZvUehbcihtfO9zGXF58MEjtiVArdJO4GdyK5HCwkFo6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-401-__Fg5qv0Ne-51TWVsBpF6A-1; Mon, 15 Jul 2024 09:23:05 +0100
-X-MC-Unique: __Fg5qv0Ne-51TWVsBpF6A-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 15 Jul
- 2024 09:22:19 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 15 Jul 2024 09:22:19 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Leon Romanovsky' <leon@kernel.org>
-CC: Anand Khoje <anand.a.khoje@oracle.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "saeedm@mellanox.com" <saeedm@mellanox.com>,
-	"tariqt@nvidia.com" <tariqt@nvidia.com>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "davem@davemloft.net"
-	<davem@davemloft.net>
-Subject: RE: [PATCH v4] net/mlx5: Reclaim max 50K pages at once
-Thread-Topic: [PATCH v4] net/mlx5: Reclaim max 50K pages at once
-Thread-Index: AQHaxhzvGGuhtyfXHkeZpMTT2X9CjbHdTe4QgARuooCAFdXiMA==
-Date: Mon, 15 Jul 2024 08:22:19 +0000
-Message-ID: <c702670609914da89e934879b5c89de7@AcuMS.aculab.com>
-References: <20240619132827.51306-1-anand.a.khoje@oracle.com>
- <20240624095757.GD29266@unreal>
- <3d5b16d332914d4f810bc0ce48fd8772@AcuMS.aculab.com>
- <20240701114949.GB13195@unreal>
-In-Reply-To: <20240701114949.GB13195@unreal>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721031770; c=relaxed/simple;
+	bh=L36mM9kQrS9p/p4Y6qIxqqLG5IWaYsdwHYYb7f0HXRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NjWYLCtMIvbhjighhD7lmmjC5EylZQOvHG7Ua9Np6YhLX/QNHu8QuuzjqLn4gLJrz7nulhsFy39YDbijaDYI7SeZYtkl1wakb98WuTLoJPWVYAiuJCOeawvqudYWewaKkFR7t2PwieLjGNeE+rPbVxtl1mRcvFMwyXisNWDv7O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nk1OY536; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77e7420697so520215066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721031767; x=1721636567; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UxvuVs2RYdJvTG90vVQNL3KW5LdM1oQjpCuXib7OYPg=;
+        b=nk1OY536eQZe0iJ01Z1MpR0ZMF0uTG/YPkX7yboukd+EAapdja/zxtHslTIehXEoKD
+         95FNiz+WctiazXvuzzF73WXFELYS8zdXCQndnsqKcmxcPtRXfN89wgBwOBlsFaJ4ApO7
+         CbFtrfssCM0mE+1/QoxXzAP/tLYJ42q0Xmya0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721031767; x=1721636567;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UxvuVs2RYdJvTG90vVQNL3KW5LdM1oQjpCuXib7OYPg=;
+        b=t2QLsaC1DSGo+23JPvZ3hORZ1Y4JLSKrUzxjo8C5Z79nZXjPDJSexZmtRGMN4r1cBN
+         Zut6do2EhEwyb8LX/GtgoAdQk78H7T6O4LvDL11ztDEXE8U4YQgRCGg3iYdgU8dPIX9b
+         X1HnfsBAut6juxsdYaHkThm06OPGKPq/siGxPQnhzeO4CPEaXwYqoUNJ+LMr9Qplo9CF
+         2zh27JcbRItENO5/fL/wFLBELXZncuiN9SdJZCG2CrIJI0H8RxH4ww/tuWLKmR2HHDW5
+         egN2G/AfauDKtDvlXoY/WUTRsMMzKJu2uOSTZQCtDq3U3iSWEWDS99Idz2kgVl63QTmf
+         jD5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWarIORbrRXbVbmaJ02qqvbmLgMqjCP5p5T4duwpsPXxLDdCGPSIrKkauEBB1peU1gpXh+TTUZlyF6rIa25q7C3G1gUrrnxyKTrsPhE
+X-Gm-Message-State: AOJu0Yw2xtmfMnMnldSChAc5RiWFg7jFgrW7ayBZYeu+XxdakpigG3GI
+	H/l4qh11Pn6OxAK8fDdJZ/iixPrxV47Z6mesCl3qUKkSWEi60tP7kiBJ5yID2GYrAuWIizJAnvB
+	GAw==
+X-Google-Smtp-Source: AGHT+IFb3HY7wUTNlqqLZUIYOatDaxS8nKDPA71Y9CIQa4BEIoVIdwFIuZAIDjnJxPddbaKRQ6ETZg==
+X-Received: by 2002:a17:906:30d2:b0:a77:d7f1:42ea with SMTP id a640c23a62f3a-a780b70541fmr1212378266b.45.1721031767320;
+        Mon, 15 Jul 2024 01:22:47 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff81esm191317466b.157.2024.07.15.01.22.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:22:46 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso4536159a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:22:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgI5xCl0Du6vtk0J7cn4aydjMbjzmkWowfqFPu8ykm6UT2LiwRpXMxXk5h9gonRlbM53phvo00+OGVu0jfCxKyvGhbFDcLnocaQwu/
+X-Received: by 2002:a17:906:46c9:b0:a77:e2b2:8ec with SMTP id
+ a640c23a62f3a-a780b68899dmr1183961966b.3.1721031766301; Mon, 15 Jul 2024
+ 01:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20240628-gcc5-v1-1-7cd56f04a6a8@chromium.org> <7dbda1952c9e873823d4e6d2a9534f1b3b945c4a.camel@pengutronix.de>
+In-Reply-To: <7dbda1952c9e873823d4e6d2a9534f1b3b945c4a.camel@pengutronix.de>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 15 Jul 2024 10:22:34 +0200
+X-Gmail-Original-Message-ID: <CANiDSCvfamZjwOohT8ZFOr-m2SB=r-MCsrXGHtkfEkeYyEo2Nw@mail.gmail.com>
+Message-ID: <CANiDSCvfamZjwOohT8ZFOr-m2SB=r-MCsrXGHtkfEkeYyEo2Nw@mail.gmail.com>
+Subject: Re: [PATCH] media: imx-pxp: Rewrite coeff expression
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
 
-RnJvbTogTGVvbiBSb21hbm92c2t5DQo+IFNlbnQ6IDAxIEp1bHkgMjAyNCAxMjo1MA0KPiBUbzog
-RGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAQUNVTEFCLkNPTT4NCi4uLg0KPiA+ID4gQlRXLCB0
-aGlzIGNhbiBiZSB3cml0dGVuIGFzOg0KPiA+ID4gCXJlcS0+bnBhZ2VzID0gbWF4X3QoczMyLCBu
-cGFnZXMsIE1BWF9SRUNMQUlNX05QQUdFUyk7DQo+ID4NCj4gPiBUaGF0IHNob3VsZG4ndCBuZWVk
-IGFsbCB0aGUgKHMzMikgY2FzdHMuDQo+IA0KPiAjZGVmaW5lIGRvZXNuJ3QgaGF2ZSBhIHR5cGUs
-IHNvIGl0IGlzIGJldHRlciB0byBiZSBleHBsaWNpdCBoZXJlLg0KDQpUaGUgY29uc3RhbnQgaGFz
-IGEgdHlwZSwgdGhlIGNhc3QganVzdCBoaWRlcyBhbnkgY2hlY2tpbmcgdGhhdCBtaWdodCBiZSBk
-b25lLg0KV291bGQgeW91IHJlYWxseSB3cml0ZToNCglpZiAoKHMzMilucGFnZXMgPiAoczMyKS01
-MDAwMCkNCgkJLi4uDQpCZWNhdXNlIHRoYXQgaXMgd2hhdCB5b3UgYXJlIGdlbmVyYXRpbmcuDQoN
-CkhlcmUgaXQgcHJvYmFibHkgZG9lc24ndCBtYXR0ZXIsIGJ1dCBpdCBpcyByZWFsbHkgYmFkIHBy
-YWN0aXNlLg0KSWYsIGZvciBleGFtcGxlLCAnbnBhZ2VzJyBpcyA2NCBiaXQgdGhhbiB0aGUgY2Fz
-dCBjYW4gY2hhbmdlIHRoZSB2YWx1ZS4NCg0KVGhlcmUgYXJlIHBsYWNlcyB3aGVyZSB0aGUgdHlw
-ZSBvZiB0aGUgcmVzdWx0IGhhcyBiZWVuIHVzZWQgYW5kIGNhdXNlZA0KYnVncyBiZWNhdXNlIGEg
-dmFsdWUgZ290IG1hc2tlZCB0byAxNiBiaXRzLg0KDQpJbiByZWFsaXR5IHRoZXJlIHNob3VsZCBi
-ZSBhIGJpZyB0cmF3bCB0aHJvdWdoIHRoZSBjb2RlIHRvIHRyeSB0bw0KcmVtb3ZlIGFsbCB0aGUg
-J3BvaW50bGVzcycgbWluX3QoKSBhbmQgbWF4X3QoKS4NCkFkZGluZyBuZXcgb25lcyBqdXN0IG1h
-a2VzIGl0IHdvcnNlLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Hi Philipp
 
+
+On Mon, 1 Jul 2024 at 11:30, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>
+> On Fr, 2024-06-28 at 15:11 +0000, Ricardo Ribalda wrote:
+> > GCC5 cannot figure out that the expressions are constant, and that
+> > triggers a build failure. Rewrite the expressions.
+> >
+> > The following gcc5 error is workaround:
+> >
+> >  #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
+> >                                       ^
+> >     BM_PXP_CSC1_COEF0_YCBCR_MODE |
+> >     ^
+> >  #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
+> >                                       ^
+> >
+> > drivers/media/platform/nxp/imx-pxp.c: In function 'pxp_setup_csc':
+> > drivers/media/platform/nxp/imx-pxp.h:582:38: error: initializer element is not constant
+> > drivers/media/platform/nxp/imx-pxp.c:374:4: note: in expansion of macro 'BM_PXP_CSC1_COEF0_YCBCR_MODE'
+> > drivers/media/platform/nxp/imx-pxp.h:582:38: note: (near initialization for 'csc1_coef_bt601_lim[0]')
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>
+> Can you elaborate on how this is triggered?
+
+Building the driver with
+https://cdn.kernel.org/pub/tools/crosstool/files/bin/x86_64/5.5.0/
+
+It might be easier to repro with:
+
+ribalda@denia:~/work/linux$ podman run --pids-limit=-1 --rm -it -v
+.:/workdir  registry.freedesktop.org/linux-media/media-ci/build-ancient
+# cd /workdir
+# CROSS_COMPILE=x86_64-linux- make allyesconfig
+# scripts/config -d MITIGATION_RETPOLINE
+# CROSS_COMPILE=x86_64-linux- make olddefconfig
+# CROSS_COMPILE=x86_64-linux- make drivers/media/platform/nxp/
+
+
+>
+> At least I couldn't reproduce this by just copy & pasting the
+> csc1_coef_bt601_lim initializer and the required macros into gcc 5.4 on
+> godbolt.
+>
+> Can this be fixed by using GENMASK / FIELD_PREP instead?
+
+I was looking to make the change as simple as possible :)
+
+>
+> regards
+> Philipp
+
+
+
+-- 
+Ricardo Ribalda
 
