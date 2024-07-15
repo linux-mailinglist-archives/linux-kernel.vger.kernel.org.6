@@ -1,204 +1,98 @@
-Return-Path: <linux-kernel+bounces-252566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1352793154E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:02:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B2B931553
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D52B21D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0CD1F21BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8298B18C33A;
-	Mon, 15 Jul 2024 13:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBjUMt6K"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6018C34B;
+	Mon, 15 Jul 2024 13:07:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35E4172BA6
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D00172BA6
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048522; cv=none; b=sNFAz1iYQy5Ntc/WBcwxt8BmofH9mjlvTcEIQv/tqa1o5Nw3o3eHDGx3nPn7rXoyWf3PbN/8Gohjfitbft3OoFxWX+ioO7Tkzww/So28qr4T0S3J3B7oNNubdVeeQJjnpw/LvR37PRQRvdeUIKhAZN35TuXoXlzGCmgwkeXdpnM=
+	t=1721048872; cv=none; b=FPeFGrMa/nJc5GaAxm0xD9gjvvTcNJKc6YJ8npXnqN+BerjwRC86gGNiU95SsGVkUPLhwXWjCogXMxVOoEVGagR/IFmQos3v6a1QZn/0AamTJ/Pa5gO8VvdCu+dmY22OUqBCr4tbmgj6lXHzvV336dM2cBhTJ9VRNvJLccexg1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048522; c=relaxed/simple;
-	bh=vuEK/YXbfD7q80x82cWalZ5+kfSToUf5IA4mSEXYqEw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h6taLHtRS5w/L+nHeT9pFg8AAQP8jLV8W72XkI9NRLVdKBdoc3hwwUs0+UIl5cX85Nh8Op4HIbvHlYez9xKQDH5Ms7m8/MqFuvdmzM2Xjqc9ogfWAY1WpvmTPEjUoi9WCVPPnbOW2ALscViQtbES7mpyYysdK0ViqwP8aH2Fcuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBjUMt6K; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-367940c57ddso2658346f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:02:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721048519; x=1721653319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h0LlF0jvPcioawKxnI/v8jmryUdPpTWQ5f+aNVMOx1M=;
-        b=JBjUMt6KNW8UehZlr5BomtOOCg4trxHhz+uFfxyBGnkUEzvnK0WrulgNINLqejxF5z
-         3wkSIss60xN30SnWgvR+it8ILkg4W831utZrEHtlOmGv3YiooEjlE5RcFOBJwnQ37/pO
-         JYTfwzxhXT4e7qzIr8ZsdvWuPN1nJ0FyZSDYBvvW35weUD/RC+/jo94Nvz6bJ0quC0hA
-         6MOVz195TSvFQIBnrzd56Er/DbyS2fPQ24fpIL0ZY/5+d4uMfgDk4VbMUWf63RNADSOf
-         v7QzzLy/hi0jdj1VYRIvSSz5EPr3LtYhxb4TrLoIyd2RlK7rL7UZrzqwU4cqzfwOsx2H
-         mUZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721048519; x=1721653319;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h0LlF0jvPcioawKxnI/v8jmryUdPpTWQ5f+aNVMOx1M=;
-        b=Tv/or2gtAIQH656iA4qYLaRfjmN3vUlIRVWK+NMpoOZGntsOzWd8D1lcP5O9xBRSt7
-         4uP4jU89h+hqB53WPBVG2Hz53aYqn9aj1yqtUna3hV/1H80+//hJJGWhvs6RptfjFUv5
-         3ArpJkF2gLLOTgrb7U1kwZVOAJiFN9JriKw+3MgDvNe2kCpLXMAttO+cGxp4aVBb+1/X
-         IZzkWXOFYzrlRH9CzC6rt3qdmXIJkNlRTub6lZ65QhLj285wrmA2Sr5VXVz5tA08/boP
-         2ApqYlVjHERb+1AtmKHYxrCV5DpkjqheljrC38ttnyjzpSB+kwKDjeSf/Oe8K0cQ4fet
-         9jxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXM4r3y/jYYJf2xW/p8GqUjRfpK+v5pejwkURWs7lIAj3r/vzk6cUsM8vgw03n4Ji43vZV8aKmtYh+gyS3+BhXDT1Jjdn/3snog9oE+
-X-Gm-Message-State: AOJu0YyP7jdJemAXFmtpC4gFLaHoWlQzbT2FFGVb0xMGVZwhL7k5JU2L
-	J7uKkolRVVVD+jKFD2TAtef7r1VSbFDqtNsEZ6Rex23RqW3ceMMiaKRsIiZ9x/c=
-X-Google-Smtp-Source: AGHT+IEDCShUNSMDpb8ubvYx9FNbleT++Anmmj4DRHcb11LRI9IkeO1lUMjxu9JiIw8MJ5eeP5Xkrw==
-X-Received: by 2002:a5d:64a6:0:b0:367:8a68:e746 with SMTP id ffacd0b85a97d-367cea466aemr17051400f8f.6.1721048518903;
-        Mon, 15 Jul 2024 06:01:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4? ([2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3c2dsm6438123f8f.1.2024.07.15.06.01.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 06:01:58 -0700 (PDT)
-Message-ID: <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
-Date: Mon, 15 Jul 2024 15:01:57 +0200
+	s=arc-20240116; t=1721048872; c=relaxed/simple;
+	bh=Rpi2uKJGEh2jtap9wfy0OTiptc9JmpOfQc2Ntp9cUxM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fkU7kwz24r6CtoVvpfhCuVPGZZsgS9VZO94QZEYs7Q6j8ez9Mz4Jxx0dgXDUksw0gfQFvD6o7NcsVPWpuZHzm065nx0XwGC+iZyHXTIuryskFz0IgdVQNNpCPEWcpOLB3f+bbF3WywX52sTc1M04rE2kcuRbHJMn8l1H8+0Gcfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WN2YR5dWGz4f3kkB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id ACC641A0170
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:47 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP4 (Coremail) with SMTP id gCh0CgBHKzkhH5VmjCPSAA--.61776S2;
+	Mon, 15 Jul 2024 21:07:47 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: jack@suse.com
+Cc: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	hughd@google.com,
+	akpm@linux-foundation.org,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/4] Fix and cleanups to quota
+Date: Mon, 15 Jul 2024 21:05:30 +0800
+Message-Id: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
- <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org>
- <ZpUcI3KkIa58zC55@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <ZpUcI3KkIa58zC55@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHKzkhH5VmjCPSAA--.61776S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtFy3ZF4fZr4UCFWDZw1xAFb_yoWxAFc_Ga
+	yxGayjvr1UXrZxuF1UKry5tFW5urWF9r15Kr1ktF45Jry2grn5Jw1vvrsavr17Xr4ftrZ8
+	Zr1qyry8AF1fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On 15/07/2024 14:54, Stephan Gerhold wrote:
-> On Mon, Jul 15, 2024 at 02:42:12PM +0200, Neil Armstrong wrote:
->> On 15/07/2024 14:15, Stephan Gerhold wrote:
->>> This reverts commit 8ebb1fc2e69ab8b89a425e402c7bd85e053b7b01.
->>>
->>> The panel should be handled through the samsung-atna33xc20 driver for
->>> correct power up timings. Otherwise the backlight does not work correctly.
->>>
->>> We have existing users of this panel through the generic "edp-panel"
->>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
->>> partially in that configuration: It works after boot but once the screen
->>> gets disabled it does not turn on again until after reboot. It behaves the
->>> same way with the default "conservative" timings, so we might as well drop
->>> the configuration from the panel-edp driver. That way, users with old DTBs
->>> will get a warning and can move to the new driver.
->>>
->>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>> ---
->>>    drivers/gpu/drm/panel/panel-edp.c | 2 --
->>>    1 file changed, 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
->>> index 3a574a9b46e7..d2d682385e89 100644
->>> --- a/drivers/gpu/drm/panel/panel-edp.c
->>> +++ b/drivers/gpu/drm/panel/panel-edp.c
->>> @@ -1960,8 +1960,6 @@ static const struct edp_panel_entry edp_panels[] = {
->>>    	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, "Unknown"),
->>>    	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, "Unknown"),
->>> -	EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
->>> -
->>>    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
->>>    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
->>>    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
->>>
->>
->> How will we handle current/old crd DT with new kernels ?
->>
-> 
-> I think this is answered in the commit message:
-> 
->>> We have existing users of this panel through the generic "edp-panel"
->>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
->>> partially in that configuration: It works after boot but once the screen
->>> gets disabled it does not turn on again until after reboot. It behaves the
->>> same way with the default "conservative" timings, so we might as well drop
->>> the configuration from the panel-edp driver. That way, users with old DTBs
->>> will get a warning and can move to the new driver.
-> 
-> Basically with the entry removed, the panel-edp driver will fallback to
-> default "conservative" timings when using old DTBs. There will be a
-> warning in dmesg, but otherwise the panel will somewhat work just as
-> before. I think this is a good way to remind users to upgrade.
+This series contains some random fix and cleanups to fs quota. Please
+check respective patches for more detail. Thanks!
 
-I consider this as a regression
+Kemeng Shi (4):
+  quota: avoid missing put_quota_format when DQUOT_SUSPENDED is passed
+  quota: remove unneeded return value of register_quota_format
+  quota: remove redundant return at end of void function
+  quota: remove unnecessary error code translation in dquot_quota_enable
 
-> 
->> Same question for patch 3, thie serie introduces a bindings that won't be valid
->> if we backport patch 3. I don't think patch should be backported, and this patch
->> should be dropped.
-> 
-> There would be a dtbs_check warning, yeah. Functionally, it would work
-> just fine. Is that reason enough to keep display partially broken for
-> 6.11? We could also apply the minor binding change for 6.11 if needed.
+ fs/ocfs2/super.c      |  6 ++----
+ fs/quota/dquot.c      | 14 +++++---------
+ fs/quota/quota_v1.c   |  3 ++-
+ fs/quota/quota_v2.c   |  9 +++------
+ include/linux/quota.h |  2 +-
+ mm/shmem.c            |  7 +------
+ 6 files changed, 14 insertions(+), 27 deletions(-)
 
-I don't know how to answer this, I'll let the DT maintainer comment this.
-
-The problem is I do not think we can pass the whole patchset as fixes
-for v6.11, patches 2 & 3 could, patches 1 & 4 definitely can't.
-
-Neil
-
-> 
-> I'm also fine if this just goes into 6.12 though.
-> 
-> Thanks,
-> Stephan
+-- 
+2.30.0
 
 
