@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-252257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240059310A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9003C9310A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85AC8B2330C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19BE1B227A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5B185093;
-	Mon, 15 Jul 2024 08:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D6E185094;
+	Mon, 15 Jul 2024 08:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j3d140dF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V9Ljm2kD"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47644CDEC
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2C713A889
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033560; cv=none; b=V6GRHsNrErPcQPLPT/9nABKqIoFOgcLnNhGncC+c0e852ihCpRjVP0EYTIOs8+oPLVX7ez+JTHc/U9zNDNGzU2+84Wh3lUtctaPRsUEGLLjts589yE1S0v9aqZJaMxA61dmV6QEsqP0CzItLOs8wmrCzzg5ULIZAd2klnn4xf+M=
+	t=1721033599; cv=none; b=M+tjuFmS1l7hlaH8N8k3c4UB2OjlI4olQIjqeCf9/XMAQnbFfwXB7fRE7Kg1S63GIERKPY93ShTmYTVoap75bo2PnSvoIHoEtHdYPxFxhzvA4hFojQZW5okPGcHsdicllJ1U8WOYuWHL08rrnn+z/g1amKuR6M4iSmhd+s9sfbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033560; c=relaxed/simple;
-	bh=l4FdFEWG4RNG+NPOkvNxdL+rwE31rUQQHAk9mqAM9Q8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=p/DSzaNmToaZ3Rz0rQBYvqb3qwOL0JbrZqGD5m+Hx2yHpODPj2opbofyq8KNjotx4zcRgxr8e6HhmpwcEuxOf6BNttltYiYnQHC3bPhzPePGAQ4qdUK5RmBNlIAKi3Q/w0//Crb8ac4XXDyOhRBhMj2CNMrGcG/X4zU5e0bUTdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j3d140dF; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721033559; x=1752569559;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=l4FdFEWG4RNG+NPOkvNxdL+rwE31rUQQHAk9mqAM9Q8=;
-  b=j3d140dF810F94p2EpFkhKcegOhjOEC7BxtKUOJUWeaUj+DZYrhHJzwt
-   G8y0+e6tbkOn3Xh1039CcUa0CrWh6P1yTF4ANlT+MJ9n8iFIvK8iCQHcW
-   kPQFstd8SRHIqpcbbjBsmLtmJY9Q8IppP4SE7+idNBvrgjDfgyhBuQjhJ
-   SsFnQd4xG9ScIt8vTGIlJNyG4+5NonWGYY7XvMMK46GYbNQw31coi0f5v
-   O7gBnCGuSet2/FLwTDXbxpynnCy8YjnLDBpoIOLHawmURxutNUf8bunNt
-   oRwLjp5eeDrVnv2zUjiPr656RywWmkKJ4HwY2hbO+u8K2Kd+eJsyWSw40
-   g==;
-X-CSE-ConnectionGUID: 1B8eEEm/QqSLNqN9UEerEQ==
-X-CSE-MsgGUID: w1WvIMt8R5+0+WFizzLr6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18597598"
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="18597598"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 01:52:37 -0700
-X-CSE-ConnectionGUID: 4qvkgtWIQ1O4yX1BjGm7kA==
-X-CSE-MsgGUID: nbMlS/uLQti9hpgO7w39Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="50194907"
-Received: from jlawryno-mobl.ger.corp.intel.com (HELO [10.246.3.118]) ([10.246.3.118])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 01:52:35 -0700
-Message-ID: <117fa0e0-5945-44e2-910b-6fd478b32968@linux.intel.com>
-Date: Mon, 15 Jul 2024 10:52:32 +0200
+	s=arc-20240116; t=1721033599; c=relaxed/simple;
+	bh=PvIHSvHDyCqHlg4FzdOm/9JZDBPadb9yALdKopHDcRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HA3lb0u/xkcUqQL2ZAgoEGOjjW0hvPqnA1ZBBlQNimXNeHIbeYh6AoD/6VqJHCW4S2xOC/uOcU8emnyZ3LMFDKD4tkcTXXnQLXOnNoHHefGUuyGdaPjYUSYbAjwEMn/JoBHgR9hjxTnd+Uf51cLZ2vJ1ryJuR9mYIZLQVI5g2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V9Ljm2kD; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36805befd01so1396137f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721033596; x=1721638396; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3odnsVgnGxuOUiR7+Vp9cvYXGHiYs1cqaY5JH4bJ45g=;
+        b=V9Ljm2kDw/zAUJGXF8rLKqiaVpnAMnK1S5YusyH/MXXGNxwgfUgbkMAznvJR640L5l
+         Ap3exzR8BEUsU1JiGBnHfWieq8Nd1K2G3sk+rZu8WyKugnlfRyqvDZyWm874gYcFxj39
+         DQYvhl/YKu7j0FgHBnUOvwEfbDeHZfwgINojF1A8dKdtwvxDL0x06n3Q72lPmn1+trmX
+         cQgqEJn/TmANEEl77LHuUJ0TBqdSMbe0yImTeUfyo//d5pMuRyDQLon+33FBObZjNi8p
+         Dx6QEmq3QkV1+v/TOKrbmEdxVMiwkpZv63/x81D4PUxtigvT0AvadXbT14LvmgZkvgSV
+         PLJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721033596; x=1721638396;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3odnsVgnGxuOUiR7+Vp9cvYXGHiYs1cqaY5JH4bJ45g=;
+        b=t8EMCXZRzLAbVXmBVnlcOic8kdNWhTBNkOMhlTzFwvQxD7g4kL+F92ZAn5ab3Ai80B
+         KGyFnuNvI+VdW1MVaTNqIOAsKNLYaUUJDq8RFOpXDvprihOp5KhdspCOj5aLYd/e1AAV
+         0TwJS6/ehMNlMWBpYrDbOh3ycubTJhUHC3xKCUaX4JOGzBVwhKMnX9AdhIBprA5cUtsI
+         hlRzmCHgY3dHo4UKiOH7aW5I89r0uativwEv+T60YpjyHmb1H9CLyQlndTlUrJyLFwyK
+         K3SvsP0l6PfGbhv9iIBQM5RfGW6VIWLN5ytfk9nWXjN0InCmYRbiJAUX7FD/v1NTfIiv
+         dLjw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+25KqPHPLfhnZm/e4tLy0QfSLSMwUmXPkTpR6uEHq0E09WiDUIVYVq74ol3Ljj9+zwKPExod9yFDkPZTLqw7PQ+2/PBKRz+0rDb1O
+X-Gm-Message-State: AOJu0Yy5i8WXdqZaNV3j6MKL5gKJntq65C70e/pPVxLk14GYXKVfPcdn
+	rS28rwlf+5pCG0/ZFiji83uwIYvwVm58H2JRN0y1dZEejpEu61ks2j7BS8lv3YQ=
+X-Google-Smtp-Source: AGHT+IGcbA7Mwq7h0WiIhyo8KuepT/D1REFUiK2c6xTrJurCwDRfFLaG/d2cskZbQnaFqO6Qk3d9sw==
+X-Received: by 2002:adf:fb0e:0:b0:367:9387:fb14 with SMTP id ffacd0b85a97d-367cea735a4mr12099028f8f.27.1721033595554;
+        Mon, 15 Jul 2024 01:53:15 -0700 (PDT)
+Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db047c4sm5711198f8f.108.2024.07.15.01.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:53:15 -0700 (PDT)
+Message-ID: <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
+Date: Mon, 15 Jul 2024 10:53:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,85 +75,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] accel/ivpu: Add missing MODULE_FIRMWARE metadata
-To: "Alexander F. Lent" <lx@xanderlent.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- Oded Gabbay <ogabbay@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
- Krystian Pradzynski <krystian.pradzynski@linux.intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240709-fix-ivpu-firmware-metadata-v3-1-55f70bba055b@xanderlent.com>
- <35a7963e-e92b-4c73-b03d-a846e93adf5a@linux.intel.com>
- <ZpTgnNxSNbbeEWQ8@phenom.ffwll.local>
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+To: Alan Stern <stern@rowland.harvard.edu>, Oliver Neukum <oneukum@suse.com>
+Cc: Hongyu Xie <xiehongyu1@kylinos.cn>, gregkh@linuxfoundation.org,
+ brauner@kernel.org, jlayton@kernel.org, jack@suse.cz,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
 Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <ZpTgnNxSNbbeEWQ8@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On 15.07.2024 10:41, Daniel Vetter wrote:
-> On Wed, Jul 10, 2024 at 12:23:06PM +0200, Jacek Lawrynowicz wrote:
->> Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+
+On 11.07.24 16:41, Alan Stern wrote:
+> On Thu, Jul 11, 2024 at 10:59:56AM +0200, Oliver Neukum wrote:
+
+>> I am sorry, but this implementation has some fundamental issues.
 > 
-> I'm assuming you'll also apply this one?
-> -Sima
+> Agreed, but the solution is pretty simple.  Because the device was
+> suspended, the userspace driver must have enabled suspend via the
+> USBDEVFS_ALLOW_SUSPEND ioctl.
 
-Sure
+The whole system could have been suspended, in particularly to S4.
 
->> On 09.07.2024 13:54, Alexander F. Lent wrote:
->>> Modules that load firmware from various paths at runtime must declare
->>> those paths at compile time, via the MODULE_FIRMWARE macro, so that the
->>> firmware paths are included in the module's metadata.
->>>
->>> The accel/ivpu driver loads firmware but lacks this metadata,
->>> preventing dracut from correctly locating firmware files. Fix it.
->>>
->>> Fixes: 9ab43e95f922 ("accel/ivpu: Switch to generation based FW names")
->>> Fixes: 02d5b0aacd05 ("accel/ivpu: Implement firmware parsing and booting")
->>> Signed-off-by: Alexander F. Lent <lx@xanderlent.com>
->>> ---
->>> Hi Jacek,
->>>
->>> Thanks for catching the error, and for the more succinct comment.
->>> Please find v3 attached.
->>> ---
->>> Changes in v3:
->>> - Simplify comment, per review.
->>> - Fix typo in 40xx firmware path, per review.
->>> - Link to v2: https://lore.kernel.org/r/20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com
->>>
->>> Changes in v2:
->>> - Only annotate the module with the production firmware paths, per review.
->>> - Drop macros for de-duping firmware fileames, just use string literals, per review.
->>> - Link to v1: https://lore.kernel.org/r/20240705-fix-ivpu-firmware-metadata-v1-1-704b73852d92@xanderlent.com
->>> ---
->>>  drivers/accel/ivpu/ivpu_fw.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/drivers/accel/ivpu/ivpu_fw.c b/drivers/accel/ivpu/ivpu_fw.c
->>> index 1457300828bf..ef717802a3c8 100644
->>> --- a/drivers/accel/ivpu/ivpu_fw.c
->>> +++ b/drivers/accel/ivpu/ivpu_fw.c
->>> @@ -58,6 +58,10 @@ static struct {
->>>  	{ IVPU_HW_40XX, "intel/vpu/vpu_40xx_v0.0.bin" },
->>>  };
->>>  
->>> +/* Production fw_names from the table above */
->>> +MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
->>> +MODULE_FIRMWARE("intel/vpu/vpu_40xx_v0.0.bin");
->>> +
->>>  static int ivpu_fw_request(struct ivpu_device *vdev)
->>>  {
->>>  	int ret = -ENOENT;
->>>
->>> ---
->>> base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
->>> change-id: 20240704-fix-ivpu-firmware-metadata-3d02bd60768d
->>>
->>> Best regards,
-> 
+	Regards
+		Oliver
+
 
