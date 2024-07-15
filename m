@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-252980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD17931AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722F2931AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93195B21DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CEDA28508E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4AB12D214;
-	Mon, 15 Jul 2024 19:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6439113BC3A;
+	Mon, 15 Jul 2024 19:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hXKiCgr4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PPn1g5NK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F8613A86C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE4913AA5F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071320; cv=none; b=LGfAX/1txIMZGsExBSSq7uTEgCEw908MG2pgsj7/xccJPM37+Arn8fhP3UF1yQ4nAdNFC8u/ASWn4d4P6XLKsyMJhgYsCYhSYCTtnEloh5M1T8y1iwFRJaSURDRLgtnYHKt2pAjY+J4bzTreg3UkLBt3vMxkJiaxCrZZCdSzz/w=
+	t=1721071321; cv=none; b=gOhP2sTNL/FPiuVnnONkOjGLmwkgLGJwHYJqtrAuC0jnHzddTKOTHiYrslCmEf5Nc5qiNf0Y1uuaNdnIive9Z5JHSxki51HcxlvSC6Goh4yxpAEtP/4IuvKEgSDg2zjyOh/hNBk3C5D+QKcoqlyB+MWzYcfcavxe6+WtTtTg0xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071320; c=relaxed/simple;
-	bh=lGBhFBkbaz7EzTpAgSm8PUxosOm03SfTjgCaLHkY1V8=;
+	s=arc-20240116; t=1721071321; c=relaxed/simple;
+	bh=HvLeVYUQ3g1BzJ0yN4wtIuLe5eY6YeKrJD1Hba3arrQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pj1HpbZo4S9sx5piB07xLBNv4aKVAys0/Whlzi0Sb78poNYwAsqfXUklPOw87XAmczl08qwyHFnVZEM/704d3sa5T0Gh1gY37Qt4lYAK42sCCS9eJlD6XbJXvujqqwgRaYbp5Gs4p2QBD0/H8mQImHyH5DX3m0LCEIf5x+EMXQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hXKiCgr4; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=khngBQOFmUdjTfDQRtjEB3rr5k7GYrHS8R4nipuVCaLGWDqkO8KTjR52ZL/jNUwSj96sn43NHc0aZVghwCFrmhB3TING0qXwWh6/XM5nA/TBeWKwL/61swGhOQc3v3sSxyvRSfoXpulDDyLmQTtC6pJhyixSz5UsOc7EWBImGEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PPn1g5NK; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721071317;
+	s=mimecast20190719; t=1721071319;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DPSgdrK+/9txvlBVeWURx0wHDXuvLt3nB8aMlUhEkV8=;
-	b=hXKiCgr45oTKVwaLOhic2Z1cvFe9Ut6FYnRutv9nP6gX3GGCSYEGOsfODQQM8Z+e6KIjRg
-	DaAHFJ4X3LBuI5YS9S5VXJuiKqlmrZMPMGUcWgE1i3j/PdyEqRlJmjFSTVKLnTs+VOaChv
-	znb3w6vEJ1NQXFjMKyLD6l8XwDrQ5QE=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=TFEuzrgphkpyKgRaMn/StFmQ1IWZKcW4qj9eIjoToHw=;
+	b=PPn1g5NKBF6lvrQGMlHOWelZ0uJ/O94Nry5RLzJsxZDYlgLFZmFNUO2wXqe2fTnFIrNmT3
+	nVWSAubG2Yzxpf7uAGJJa/DH6qTXN5A/s4MaS9IlogZDcFAZT7t0iOXWam2R/nGUPaMOHl
+	WbXtZYp3bV/lXZKsKaGjeDQ1igZ47co=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-288-lkjX_x3-NSW2kAhShxOsPg-1; Mon, 15 Jul 2024 15:21:55 -0400
-X-MC-Unique: lkjX_x3-NSW2kAhShxOsPg-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b60afbf5d1so14885416d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:21:55 -0700 (PDT)
+ us-mta-341-9oZnw7d3OIKqNFwAATir1g-1; Mon, 15 Jul 2024 15:21:57 -0400
+X-MC-Unique: 9oZnw7d3OIKqNFwAATir1g-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5cea2c45403so518968eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:21:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721071315; x=1721676115;
+        d=1e100.net; s=20230601; t=1721071317; x=1721676117;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DPSgdrK+/9txvlBVeWURx0wHDXuvLt3nB8aMlUhEkV8=;
-        b=bmEXw7a57/q6vE63Z9f5HBxNoo+AMTHdGD0xwluGzv4ynBxaSEePo+4BClabMIO9iE
-         6sguXXJdfv7MjosZF4D5o+OU8j9ChdW64wLEbg1fByK2yeg3bLxOuWURk8tAuRrbrYsD
-         nTdgjeOcq1RPN2J7ZtMOnDS/jF2jsA2CAjtRpWGMhObnLakZhGriNBMA8UOo1FXKNW95
-         tFkofdgrSMTV2jAR8XBckfC7Vq70bpuWsg54r3JJHo1nEqY+FtFlQmUzC7KEiiWMzXaU
-         Gwl7Kqn/0AgWOK2ul92PR/IXACUvvRtzKO9GLNfycE7TXeU52Uah+9Y9917M/HA2zlVH
-         lthA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrF8p/VjbFIcYJPAwglb5nfsrywj7afgrVBk/+mVuAdIrseyfkyxx1i8vMzQnRDKu6cnRbZsLKGXcgztDWeke1l23yJ67mvgrIFwt
-X-Gm-Message-State: AOJu0YwJSWg+lRIYiqpvJSun7lLaqWB1W6PUkA2oGhzMgwgBDxd2Vcc/
-	pnRdMbSTEO5Q0B3D2wZngiBscQwpXlCoEECRTrV/d2fZDgIskpr2yuCg3Qv7ha8l1GdP/Mzi93n
-	5AhePjImjLfAoieSevpSfZ8MztG2auUfV3nHe+lc8Tcnr4LbDZfBgoDZBwOAtSA==
-X-Received: by 2002:a05:6214:2dc1:b0:6b5:90eb:370f with SMTP id 6a1803df08f44-6b77de8150amr4905696d6.2.1721071314997;
-        Mon, 15 Jul 2024 12:21:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFc1iq6cjowggxR08A9jWNh2nLNKZtlnYVNF070vv7/tCRn3zBtJYgG+pCX+rmBsWl/qf7Fw==
-X-Received: by 2002:a05:6214:2dc1:b0:6b5:90eb:370f with SMTP id 6a1803df08f44-6b77de8150amr4905476d6.2.1721071314625;
-        Mon, 15 Jul 2024 12:21:54 -0700 (PDT)
+        bh=TFEuzrgphkpyKgRaMn/StFmQ1IWZKcW4qj9eIjoToHw=;
+        b=N4K6e84wvAPjB2Z0cbph8bewvvVv9YWH7C54wzDeMtpYHjJ0zWC7sYLuhNi1c8dNqe
+         qXnZVsNJifcKC/1gBkB6i4bdX7R317gqTM0u+B7VVHRokTi7yVSlfc9iKvGsToDzkqUU
+         3/ytHq2/yRu4QLYLX2rkhFpeDlnpUAiHsRuaJCnE+b7Kt5huwMjaYXBrMPvlfyScIs/y
+         mLTib2bTMfw8z2HMw4pdJUWf/oB9Pz7KZrY7467z64wE5jsOZ99oj51X1kPyqpj7+crE
+         baWD0iqrJ9oiZekqTk+yyXOOF3PuJgDvBSslAOzF8zQKy9Ca/w29AKx92sx2l6EZiAWs
+         jedQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmFYBwCPISa80TWo3JxIVAdAi40LiydODTphIpSXC9zFj2dHiykResX02isM+5KnJs9jNjhiP7Q1BWiLk1IltcJYPqWfmbuxu9gBrR
+X-Gm-Message-State: AOJu0YxglCvG2TSJPKTPLDVuskxOUtoLjwoGnv4F1/GI+eM94guit081
+	A5yfZEuC5tENRmhVC7Erbcm0kXHq4zg0CNVlWSN9zjVrYB97CdN7db7zOi1umdzbQ+FNK2OyXZQ
+	oTA6Gs5JQiwAYn9wQfmORHcTPmqZBig3y0XwtN+T+XcJb6ytRiy44VunGDchLSQ==
+X-Received: by 2002:a4a:4308:0:b0:5c7:aeba:77a0 with SMTP id 006d021491bc7-5d25035be58mr500664eaf.0.1721071317070;
+        Mon, 15 Jul 2024 12:21:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHclECHVFRdVYbFwnrtKH3lJcHIiAHM9jyDo1qTRx8+nslWI3GA72lYOtCld/HD9tYeAzQ33w==
+X-Received: by 2002:a4a:4308:0:b0:5c7:aeba:77a0 with SMTP id 006d021491bc7-5d25035be58mr500637eaf.0.1721071316695;
+        Mon, 15 Jul 2024 12:21:56 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b761978d30sm24039356d6.31.2024.07.15.12.21.52
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b761978d30sm24039356d6.31.2024.07.15.12.21.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 12:21:54 -0700 (PDT)
+        Mon, 15 Jul 2024 12:21:56 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -98,9 +98,9 @@ Cc: Dave Jiang <dave.jiang@intel.com>,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v3 4/8] mm/powerpc: Add missing pud helpers
-Date: Mon, 15 Jul 2024 15:21:38 -0400
-Message-ID: <20240715192142.3241557-5-peterx@redhat.com>
+Subject: [PATCH v3 5/8] mm/x86: Make pud_leaf() only cares about PSE bit
+Date: Mon, 15 Jul 2024 15:21:39 -0400
+Message-ID: <20240715192142.3241557-6-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240715192142.3241557-1-peterx@redhat.com>
 References: <20240715192142.3241557-1-peterx@redhat.com>
@@ -112,82 +112,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These new helpers will be needed for pud entry updates soon.  Introduce
-them by referencing the pmd ones.  Namely:
+An entry should be reported as PUD leaf even if it's PROT_NONE, in which
+case PRESENT bit isn't there. I hit bad pud without this when testing dax
+1G on zapping a PROT_NONE PUD.
 
-- pudp_invalidate()
-- pud_modify()
-
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h |  3 +++
- arch/powerpc/mm/book3s64/pgtable.c           | 20 ++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ arch/x86/include/asm/pgtable.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 519b1743a0f4..5da92ba68a45 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -1124,6 +1124,7 @@ extern pmd_t pfn_pmd(unsigned long pfn, pgprot_t pgprot);
- extern pud_t pfn_pud(unsigned long pfn, pgprot_t pgprot);
- extern pmd_t mk_pmd(struct page *page, pgprot_t pgprot);
- extern pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot);
-+extern pud_t pud_modify(pud_t pud, pgprot_t newprot);
- extern void set_pmd_at(struct mm_struct *mm, unsigned long addr,
- 		       pmd_t *pmdp, pmd_t pmd);
- extern void set_pud_at(struct mm_struct *mm, unsigned long addr,
-@@ -1384,6 +1385,8 @@ static inline pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm,
- #define __HAVE_ARCH_PMDP_INVALIDATE
- extern pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 			     pmd_t *pmdp);
-+extern pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
-+			     pud_t *pudp);
- 
- #define pmd_move_must_withdraw pmd_move_must_withdraw
- struct spinlock;
-diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
-index f4d8d3c40e5c..5a4a75369043 100644
---- a/arch/powerpc/mm/book3s64/pgtable.c
-+++ b/arch/powerpc/mm/book3s64/pgtable.c
-@@ -176,6 +176,17 @@ pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 	return __pmd(old_pmd);
- }
- 
-+pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
-+		      pud_t *pudp)
-+{
-+	unsigned long old_pud;
-+
-+	VM_WARN_ON_ONCE(!pud_present(*pudp));
-+	old_pud = pud_hugepage_update(vma->vm_mm, address, pudp, _PAGE_PRESENT, _PAGE_INVALID);
-+	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
-+	return __pud(old_pud);
-+}
-+
- pmd_t pmdp_huge_get_and_clear_full(struct vm_area_struct *vma,
- 				   unsigned long addr, pmd_t *pmdp, int full)
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 65b8e5bb902c..25fc6d809572 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1073,8 +1073,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
+ #define pud_leaf pud_leaf
+ static inline bool pud_leaf(pud_t pud)
  {
-@@ -259,6 +270,15 @@ pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
- 	pmdv &= _HPAGE_CHG_MASK;
- 	return pmd_set_protbits(__pmd(pmdv), newprot);
+-	return (pud_val(pud) & (_PAGE_PSE | _PAGE_PRESENT)) ==
+-		(_PAGE_PSE | _PAGE_PRESENT);
++	return pud_val(pud) & _PAGE_PSE;
  }
-+
-+pud_t pud_modify(pud_t pud, pgprot_t newprot)
-+{
-+	unsigned long pudv;
-+
-+	pudv = pud_val(pud);
-+	pudv &= _HPAGE_CHG_MASK;
-+	return pud_set_protbits(__pud(pudv), newprot);
-+}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
  
- /* For use by kexec, called with MMU off */
+ static inline int pud_bad(pud_t pud)
 -- 
 2.45.0
 
