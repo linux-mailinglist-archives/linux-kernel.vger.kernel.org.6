@@ -1,207 +1,122 @@
-Return-Path: <linux-kernel+bounces-252337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7CA9311CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:57:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A060F9311C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9020FB2292F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:57:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDDDB20D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECD318733E;
-	Mon, 15 Jul 2024 09:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXRxAfda"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6851862AB;
-	Mon, 15 Jul 2024 09:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6030E187335;
+	Mon, 15 Jul 2024 09:56:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68ABE1862AB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721037435; cv=none; b=HaLZa50YZdsAYwp0TpAHosZitulKgJTZUJn3lw2bORyMvLSBxp0PLU5aSog0AzZcqUH0il9Oy51e56gfJhi8i3Xyhl8R+Oz6eV/rrNoZCiwRhwb7iqERsOIJQOGgBbYKcT2gRgSp65STWIavK2HmuL37n3g+Y9SJ9ZOrmp0cVoA=
+	t=1721037372; cv=none; b=od0bNvCaMyzgB3Th5si4vAVNhy+pkUH42O8dWgE+V5vlmCcRmrc2mtSpP2wN5SjXrmNUQwxiqXRv8oFEaUXQora0DZ9wfiE9gmMh8Bqb5bDKZC0h7/b4dMAulp4kXmJviJrWbvVqE1ATalfXq1401F5NdlyJVBGWVyhKXEfZ2EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721037435; c=relaxed/simple;
-	bh=irhb5eWja6bscc28xc60+rtffvcagtPOF1GgORiL3MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Au+qNGT8xyi+QwSgdJT0zgMj8VfQfarfnKgcR2EXvJjHcL/VkLrHoqIHhQPWjaIR/IDJxRDlwj+saIphsOdyVXbSf8YEVN5F4fvAOb6OXprVxvTAHbljNVMypcpr36KP/SQ24mzc3XrgBrAo1Cmk16NqlQ2Cl8CeKE5XzBaL2lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXRxAfda; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f2e2795350so2557380e0c.0;
-        Mon, 15 Jul 2024 02:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721037433; x=1721642233; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y4HcfYt34Nur1uUMiCTLC+8U0g2McWEpTlrr98WYo9c=;
-        b=ZXRxAfdauuQCSvhJtKiuSu1X6z8EDHsXCQ6l5Nhu7DWc9thKFu96nvR9ueeYaHLgN5
-         +H4NviRUAJr+bx65I+MLyh1FF1NctLCo/1INrP+9eLSWq7NMbaGqQ6AwV9fwKTJhVz4l
-         xyzyd+RdwxBCPyUW+UBIDeVYJO6CQUIJg6MO3ASgPI8VKnVeGOfOKVjx3Hji7FoAVLoC
-         5LsYfnX6MXIykYII0FFAvvI3h9ElBUdGZ7xvzoik2HjHmNSvheTXEcfpUo+f/J6HQcIr
-         uaqHJiUR7SNRVfcr5LwZv4zNGknJw9RZEvZ6onFk96B3uZIG74mKYCQxCC9HaqZAfx8Y
-         nq4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721037433; x=1721642233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y4HcfYt34Nur1uUMiCTLC+8U0g2McWEpTlrr98WYo9c=;
-        b=ZBWb4/5nBlfgUywHh+R0EGXJrQa4GlA3xFeAExUxxJA52KAs+O5LHYmu4uzM7svQQF
-         GCWFDKFXHz07wlSlP23Cl5klwkhwOgPvJKceST/a6E/P0jPyfY/Cw7WfOpCUHJKfEIEn
-         bw9yOZKMDpFw3HUiAqIFVfCLCDXSgegqA/Ri6bdWBH9VZFjLABKKdWxVUcRCZkyxkPdQ
-         3hvJSTkA16tjQjFVTM5lkks8WjgpeCvXAfOEYp34upfI2SXF3TuIFyWwOwz8FiCMtkfL
-         qGiixba7FJ4Vf67SRKbVAm9ItPnw2cNaMKQTvgxZN5RZBKZUOpLyY/SUIE/t5fUqQefY
-         Nu5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdVPhZV8eB9uoyBHgd4WgefkFYH6sbPgnTRgbo9Is5tSUzlTbCBWi6fOHXyOypgcPA5aEr64De4YKSaX6sVjx/A8INUvDFiYkvsoA4QScsiD0PVW1GU2ZBXOK6XfxAzllmnOLVN9Aei9TkUVE9WmbwF2abLcSWe2/4tW0FLH4IEuLWLZ2P2lRgaZ172VjtQkHJgxE0xI38Oj/CBtCIjIvav/7fwfzW
-X-Gm-Message-State: AOJu0YzXXWEjVALOSAch/LbRBYxycMwIWpT44afUjVXp7FuvN+7E64I/
-	ZD29C6FJ1b6On1P1WOE5Oadp/rXJuaJJeWRrM7muwStqGJodTdI0y8/OzHVWY8oeVaBfWztrOyk
-	M3CzpRVtsVUh0I654Akvq2A57s9Q=
-X-Google-Smtp-Source: AGHT+IF9qJ3I9cQbClau4ryfzJ2v6Cd0e9wLqks28UFrpUdTaALNqbrszSxGIYmVCmyL9Bp/t+i70wjPT7RYiiJAW6A=
-X-Received: by 2002:a05:6122:3bc8:b0:4b9:e8bd:3b2 with SMTP id
- 71dfb90a1353d-4f49262b02cmr5758474e0c.2.1721037432991; Mon, 15 Jul 2024
- 02:57:12 -0700 (PDT)
+	s=arc-20240116; t=1721037372; c=relaxed/simple;
+	bh=1LT6bGdap7nmLMQbwo1fJ5WrO61MDan0T38QyFzr18E=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UWP0qz+wgqcTqZf/2fQ8nP2MdY3ocPzNalOpK8UW+NZ9WCDcxn1xp5E1exB+PAEgM3I4FmFvXYhaj/XHrNX7GZino+tKo0g58dtInu6bQ3JfEolbDrRPK7Q9yhZJVcSaQDqo3rM/p7ucFh8sRGxnUbgGyceGXxFLb2967u/gEeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxrfA38pRmMpAEAA--.12035S3;
+	Mon, 15 Jul 2024 17:56:07 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx08Q18pRmP6dJAA--.24803S3;
+	Mon, 15 Jul 2024 17:56:05 +0800 (CST)
+Subject: Re: [RFC PATCH 0/4] Add jump table support for objtool on LoongArch
+To: Jinyang He <hejinyang@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
+References: <20240712091506.28140-1-yangtiezhu@loongson.cn>
+ <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
+Cc: Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <bad4a7fd-e487-498d-f6ab-b9a17e049dd7@loongson.cn>
+Date: Mon, 15 Jul 2024 17:56:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
- <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com>
- <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
- <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
- <CAMuHMdVyqBmipMLeYd0nw3kEHwc=RvWJvrD8EYKVt+36E7oS+A@mail.gmail.com>
- <CA+V-a8u_oMxG8QmmK=_y8z6O_H-22SyCkje-VrQVqHn4H=5oow@mail.gmail.com> <CAMuHMdX0XRC_gRW6qQEhW09zX+sv_njAznGN0i7UVgsy6gj_yw@mail.gmail.com>
-In-Reply-To: <CAMuHMdX0XRC_gRW6qQEhW09zX+sv_njAznGN0i7UVgsy6gj_yw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 15 Jul 2024 10:55:40 +0100
-Message-ID: <CA+V-a8tpCURbrGAG6NwD5WMz8NH3BfGvQXUj=Ooef2SsbPbnJA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8Bx08Q18pRmP6dJAA--.24803S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KFyDAw17Jr1kZr45WrWfZwc_yoW8Kry8pF
+	WUu34ftFs8JanagwnrXr129ay3CayDG3yDtr45G348uw4aqr1IvF4vkF9IvanrArs3ZrWa
+	vF17K3srKa1vyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07je0PfUUUUU=
 
-Hi Geert,
+On 07/12/2024 06:19 PM, Jinyang He wrote:
+> Are we always avoid our problems?
+>
+> 1, When text section not support "R_LARCH_32_PCREL", update compiler
+>    to add AS_HAS_THIN_ADD_SUB.
+> 2, When not support jump-table, use "-fno-jump-tables" to avoid it,
+>    (and now update compiler to add CC_HAS_ANNOTATE_TABLEJUMP).
+> 3, When not support relax, use "-mno-relax" to avoid it.
+> 4, When some where in asm can be backtraced but generate warning,
+>    use STACK_FRAME_NON_STANDARD to avoid it.
+> 5, When the goto-table cannot be handled (I guess the Ruoyao's
+>    patch cannot handle goto table), use CONFIG_BPF_JIT_ALWAYS_ON
+>    to avoid compile ___bpf_prog_run.
+> 6, And other $fp warnings not be solved in clang. Do we only care gcc?
+>
+> So how to do in the future if compilers have other changed? Do we
+> need update compilers (both gcc and clang) again and again? Why
+> not just update objtool codes to solves these problems? As many
+> RISC arch not support directly find jump table, can we support
+> more generic ways to find it?
 
-On Mon, Jul 15, 2024 at 10:42=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, Jul 15, 2024 at 10:44=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Fri, Jul 12, 2024 at 6:11=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Fri, Jul 12, 2024 at 5:29=E2=80=AFPM Lad, Prabhakar
-> > > <prabhakar.csengg@gmail.com> wrote:
-<snip>
-> > /**
-> >  * struct rzv2h_reset - Reset definitions
-> >  *
-> >  * @reset_index: reset register index
-> >  * @reset_bit: reset bit
-> >  * @mon_index: monitor register index
-> >  * @mon_bit: monitor bit
-> >  */
-> > struct rzv2h_reset {
-> >     u8 reset_index;
-> >     u8 reset_bit;
-> >     u8 mon_index;
-> >     u8 mon_bit;
-> > };
-> >
-> > #define DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit)    \
-> >     { \
-> >         .reset_index =3D (_resindex), \
-> >         .reset_bit =3D (_resbit), \
-> >         .mon_index =3D (_monindex), \
-> >         .mon_bit =3D (_monbit), \
-> >     }
-> >
-> > #define DEF_RST(_resindex, _resbit, _monindex, _monbit)    \
-> >     DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit)
-> >
-> >
-> > in rzv2h_cpg_probe() (.num_resets =3D ARRAY_SIZE(r9a09g057_resets))
-> >
-> >     resets =3D devm_kmalloc_array(dev, info->num_resets, sizeof(struct
-> > rzv2h_reset), GFP_KERNEL);
-> >     if (!resets)
-> >         return -ENOMEM;
-> >
-> >     for (i =3D 0; i < priv->num_resets; i++)
-> >         memcpy(&resets[i], &info->resets[i], sizeof(struct rzv2h_reset)=
-);
->
-> You can combine both using devm_kmemdup().
->
-Thanks for the pointer.
+This is a choose and balance. In principle, I want to make the kernel
+code clear and simple to enhance the readability and maintainability,
+I do not want to modify too much architecture independent code of the
+objtool framework, I just want to implement the architecture specific
+function.
 
-> > And have the below xlate function that will convert id into index ie
-> > index into rests array.
-> >
-> > static int rzv2h_get_reset_index(struct rzv2h_cpg_priv *priv,
-> >                  unsigned long id)
-> > {
-> >     u8 reset_index =3D id / 16;
-> >     u8 reset_bit =3D id % 16;
-> >     unsigned int i;
-> >
-> >     for (i =3D 0; i < priv->num_resets; i++) {
-> >         if (priv->resets[i].reset_index =3D=3D reset_index &&
-> >             priv->resets[i].reset_bit =3D=3D reset_bit)
-> >             return i;
-> >     }
-> >
-> >     return -EINVAL;
-> > }
-> >
-> > static int rzv2h_cpg_reset_xlate(struct reset_controller_dev *rcdev,
-> >                  const struct of_phandle_args *reset_spec)
-> > {
-> >     struct rzv2h_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> >     unsigned int id =3D reset_spec->args[0];
-> >     int index =3D rzv2h_get_reset_index(priv, id);
-> >
-> >     if (index < 0) {
-> >         dev_err(rcdev->dev, "Invalid reset index %u\n", id);
-> >         return -EINVAL;
-> >     }
-> >
-> >     return index;
-> > }
-> >
-> >
-> > rzv2h_cpg_assert() and rzv2h_cpg_deassert() which will use an id that
-> > can directly index into resets[] array.
-> >
-> > Please let me know if this is OK.
->
-> That would work, too, at the expense of needing a loop for look-up
-> (traditional trade-off between memory and time ;-)
-> But look-up is only done once (per device), so that should be fine.
->
-> It all depends on how many resets you will end up using...
-> Memory allocation also has a granularity, so once you have more
-> than a specific number of resets, you better use a sparse array,
-> and simple indexing.
->
-Ok got you, I'll update it and send a new version.
+As the gcc patch "LoongArch: Add support to annotate tablejump" said,
+the objtool program needs to analysis the control flow of each .o file
+generated by compiler toolchain, if a jump table is used, objtool has
+to correlate the jump instruction with the table, on x86 it's simple:
+a relocation entry natrually correlates them because one instruction is
+used for table-based jump, but on an RISC machine objtool would have to
+reconstruct the data flow if it must find out the correlation on its own,
+so emit an additional section to store the correlation info as pairs of
+addresses, each pair contains the address of a jump instruction (jr) and
+the address of the jump table. This is very trivial to implement in GCC.
 
-Cheers,
-Prabhakar
+For jump table support of objtool on LoongArch, it makes life much easier
+with the gcc changes. As far as I can see, the remain issues (goto table
+in ___bpf_prog_run() and jump table in assemble code) are only related
+with kernel and can be solved with kernel changes.
+
+Thanks,
+Tiezhu
+
 
