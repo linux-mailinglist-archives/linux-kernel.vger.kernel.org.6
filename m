@@ -1,121 +1,429 @@
-Return-Path: <linux-kernel+bounces-252814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD0D93185F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 306CB931863
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 896CF1C20DE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5457C1C214B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB16F1C6B4;
-	Mon, 15 Jul 2024 16:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348631CA85;
+	Mon, 15 Jul 2024 16:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDtR7xjO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3At6vbjR"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F21C687;
-	Mon, 15 Jul 2024 16:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721060386; cv=none; b=ONZkBLrxTq33x3+USCT5xSa4OM2NRE+iDGoV2KVe29sZmlNxyS6HnWQc/EJtAzh76dcHgSf8HB7lIqj79T+gdx584DlBv/4UsE2FHDHgNB6eTQtY3zAZR5F6o9Gh96LcFIg1qFT2YTQpthhe4YsFy3nZABSI6P51ZZQ18teN6no=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721060386; c=relaxed/simple;
-	bh=Goo+c+1HMiEd01oz9jbdIxsNRW/Oq9AF9KfWhZwUinU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXTZ8ZXP4+rV96UeebWN2mm6Tgwz+Qb1H6pKc375EPg6nEyKnWRM8CakT2333Qt3CjjSLLTITEprv8/wTBiy9DptikojoqT4RwoXZb1a2AzOyde7odVWcduLqvlIjGdb80IRGGqPgUeTV9c/3ULA9yVSM1Tn0soYQWFfzDbaF+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDtR7xjO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DE7C32782;
-	Mon, 15 Jul 2024 16:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721060385;
-	bh=Goo+c+1HMiEd01oz9jbdIxsNRW/Oq9AF9KfWhZwUinU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WDtR7xjOkBvSk59arTVWal5G6fNiHbghNkJiV9/d4KJIorUe6krL0w2w+9AZheTNN
-	 Lydkb7lFflqjxF6/5NJNoPodiKOjnk7N1owu//MFT/NtWNEpmrguksbX7BdgPU5qZj
-	 KUL4tlZaJVV9kwOhYCqvBNq9/j6m28cUXiQuwwBZ/Z78lDpU5ByNTRNjHof+iQ9amG
-	 YN1+IQBvOxuYrOojLlGaD0XHyWR3e3TAL3ZWrqZ40LW0us6UQnoga3VhLHddFQ756r
-	 dqao25HojMdlHc2B5ITD3M5pxzxefRxQtRgeclw9dN65hISko7AniFkWtp5Oc7w2Y3
-	 JT38PH2C0w6tA==
-Date: Mon, 15 Jul 2024 17:19:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pincfg-node: Add "input-schmitt" property
-Message-ID: <20240715-strainer-creamlike-b1ff49b25c1f@spud>
-References: <IA1PR20MB4953BB6E71CA3216E652E8B8BBA02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <e74d1c2f-576d-4d97-89d2-5bdabe00fb58@kernel.org>
- <IA1PR20MB495302FAFD2003B831342CF4BBA12@IA1PR20MB4953.namprd20.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7078210FB;
+	Mon, 15 Jul 2024 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721060413; cv=fail; b=N/fYEKYp9k9hLR9pVyVRhDHGlER9S+fk4g/rIjUX6flTqW6sGsQN3d0aQ2WRdeNfQcbpbWP5sjomkNZn9IHuOO/ooSYCrTQVvUcu4+ea5jqNufnYlZ8zTZKw0od+9/jdQE7tSK4klUUxEQo4Ai2+OXl22wBU/pNG0N6IRuTG3Is=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721060413; c=relaxed/simple;
+	bh=kgO79gmiRGbyWr+WcNPfCZB29JxlRFlAH5KYRA9HdBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VGC8AzP8eLPc0AITjq6DEpwj7X2E7LVcL7d6ltAFKolxQlo5HbluSkHVZ8i5AhjIW13HjTs0vKwtaGYioJrocpj/qdrwtzadHgtdjgkF+2Zwox6mMOAlOtbw1+A8WMnzYDR9YFch928M3i2nE55SsASkdyPgKvjaJXNgwedjyaY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3At6vbjR; arc=fail smtp.client-ip=40.107.244.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=io2pRyaUZ1hHk99Pfz8Kd/froHqRtoN18wuD8wAiqX6gJes4ZZAmByr4pszGOqxbcNjYcSc+M/AX992BBNb/zRLxflNtrNgSGF63iCeK38RankAOGaN5H3eB6xYZMk2dBtS/DZ/Vn41AHHldG3OdZ0Oo+b8fuh9rG4sZlyHF6zdMjXgS/yS+cQ0+B1DPR+G7Z36iKuUf0xaCvNsUZhggHwXot4fZKSb40WH8uJIJtB6Z6h4N19daHkidxKi3pMiMeD2QpOa5sYOxtVzZ+HqntFx5WsU5nG19SQpD0BD+WB4StCLNRWO/r2XJpej6bRUVL2rh/bD7+QElgzF3WgkVhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=053l8PAKCnnQpmN1qy0wYiYG5v3/QvExPVrZVhtEc8k=;
+ b=ZAA7T8PtfoUZtVbwbgWXxgJ2OmUGuV/5r7S5eqn9xodmihX7KcHRCcAWCIeOw/AxZ0BgifsWLE4YqK6zkwqn06YzJRvKhiqCTARO7e6cV7K4n0p9tTMMUegX2IXP8bZhzQIPMdRMA3FC7lsbJOhxV1DLxCzfeB4F753AUxoMIjX4ufV9/x5ezLJSMLhrjmYsRuPGnLi3cHm0HKejyDpYMkrobfvRlZFNM2/KUKshcb4bSrnCfEtaRRwJ/o6FvMP6lwkmuIUp2Imj1i4rBhuvND8L/0WkgMzvAZrCaFoDujnXZWCQfjAMTy4DZrl8WQpeEYWasobwBFuqypkulH2yVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=053l8PAKCnnQpmN1qy0wYiYG5v3/QvExPVrZVhtEc8k=;
+ b=3At6vbjRC146cQ7UsPe+wemPm0hj2WJx/K+Is+fa97kp/7vAc01w8d84mVSPM7KfpTueZPtcno4BHOuVZibIg6dRJ6N8GB+NhJ5YUbhlgJT7Woz1aOj5b3rROVv+MsM0v5hgnp3zDiI/rFFvGfhGu0HHPVyIOKWEdhoZWA29TzA=
+Received: from SJ0PR05CA0114.namprd05.prod.outlook.com (2603:10b6:a03:334::29)
+ by PH7PR12MB9176.namprd12.prod.outlook.com (2603:10b6:510:2e9::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
+ 2024 16:20:09 +0000
+Received: from SJ1PEPF0000231B.namprd03.prod.outlook.com
+ (2603:10b6:a03:334:cafe::4a) by SJ0PR05CA0114.outlook.office365.com
+ (2603:10b6:a03:334::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.13 via Frontend
+ Transport; Mon, 15 Jul 2024 16:20:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF0000231B.mail.protection.outlook.com (10.167.242.232) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Mon, 15 Jul 2024 16:20:08 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 15 Jul
+ 2024 11:20:08 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 15 Jul
+ 2024 11:20:07 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 15 Jul 2024 11:20:06 -0500
+Message-ID: <87d645e3-69ac-170d-bdc2-26bc3c03b890@amd.com>
+Date: Mon, 15 Jul 2024 09:20:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2LVcyejoJGAiq11e"
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB495302FAFD2003B831342CF4BBA12@IA1PR20MB4953.namprd20.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+Content-Language: en-US
+To: Amit Machhiwal <amachhiw@linux.ibm.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linuxppc-dev@lists.ozlabs.org>, <kvm-ppc@vger.kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Saravana Kannan
+	<saravanak@google.com>, Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin
+	<npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, "Vaidyanathan
+ Srinivasan" <svaidy@linux.ibm.com>, Kowshik Jois B S
+	<kowsjois@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>
+References: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231B:EE_|PH7PR12MB9176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b703277-ff3e-4bb9-c01c-08dca4e9fef8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?blQweDZuUE5SaWlEV2hkZzR2bkVUV2ovY0QzV203b0p3N3AxT2JkeGdNc3lr?=
+ =?utf-8?B?TUJSOGdlWXRYdGZPNnJTdVNmbjhKQ1FIeTBLamlKNlBhY2xUaTM1SnlwWGpZ?=
+ =?utf-8?B?Yy81dFVhczU2dVpKaTNwbHZJQzNOcVdYdmpjRWREU2dNblNqM2IzRGtPN2RK?=
+ =?utf-8?B?dnRvaHlwekRuYWxDOTFacEkrZTN0ZEhJVFBwdW5TZm9HWUQ5N0p2WE1jSSt5?=
+ =?utf-8?B?WHZWOVpsVFc5d1pIOWM5VkRNU1RQUlR4RFdIaThGUWJhcWxsQk1qM3haL0ZL?=
+ =?utf-8?B?amhzRHFnbHlHektRczdWV1lGSFcrZUVhdGVCakJRREx0RWRXWml5QkJ4bFVJ?=
+ =?utf-8?B?NGpYMm13WnA4UnJrT0ViMlUzTUdxL3hleGo0clVPR05qOVp4M0IvVlppTm9U?=
+ =?utf-8?B?V3ZPblFmSkM5MWNXTzYvcUJWQnQ0NmN6S3dJMkVjTjR1TGxSYXlLWXV5ZEJW?=
+ =?utf-8?B?V0dncUhHNUl5dFc2M3JTdlNoWWwva0pMdGNWRVpPVjJMb3c2amZYZkY3SXEz?=
+ =?utf-8?B?UzlwV1pPTk14d1FJYlZKWkw4QmZPR1g4V0c3TE1JL0hGTkJXZ29Db0J4UGVO?=
+ =?utf-8?B?M0hLV3p1aDM2bFdHemVpM2VSQUNSNkl0SzBxSkxqNmZ1UEpwVm10Z2tsemxT?=
+ =?utf-8?B?bHdUdzNFRE9MT2VxZk1sYmtXT1puUFVZTmdYWUc2ekloQzM2YWRnVVhiZjZu?=
+ =?utf-8?B?NnJ6Uys3VnRac25OdFc4SDVDSlF1WmxaM25xK2VzN2Q5THFrOEsvc2VpVlZQ?=
+ =?utf-8?B?T1JKU3BhL0Ivb3E1eWU0eitiTzBsSW9hWE9jRnJmeVhaWWE2QVNxN2ZhM2Jn?=
+ =?utf-8?B?aUgwaVZ6K0xsWkxZZ1VrQzQvSWp2Wjc5UGprNFlEWFFCSnlpTm5nc3pvNG1U?=
+ =?utf-8?B?OTltc3EvZm4yV1lmdFpWQlhjbWoyOUc0SHh2Zzl0QWswSjBJQmNTOU10enJ2?=
+ =?utf-8?B?cXRrY1l6VjNKVlp0dEZZVXZ0Yi9HbnBsUnlEZXRxWjdHSndtaGJrNjhFZlpq?=
+ =?utf-8?B?QzN2NXNMZzgyWWNvaS9BWUFCdjhmNGVtZkdQZzk2MFFUM2xlMnpla2JLVElZ?=
+ =?utf-8?B?a2N2d1V2eHlqK0MwVkRHQ2ZEQmQ1bXZFWjgyZ1U4dUdWbVkrc04vM01rS0M5?=
+ =?utf-8?B?VHN1K1NTb2lxNUFVRHVLQXdBSzVseGVxWVpoTUlJUDFjcDFuZHdaR25PNHVo?=
+ =?utf-8?B?ZlgrclhNbXhHVjUrekdIYjFYODU3Qm54aEljK0pITE0rMFBUUVlVUWlEeXg0?=
+ =?utf-8?B?dkNUV3pvakRqeGRKc2xVanJUT0lGc2lUNUpYY2FNdkxwd3dzTGdPWE1ZTWtw?=
+ =?utf-8?B?OVdWckFzZEwybkVVWnB5d3VBMmtTcnRaYUdBVkduazdJRVlxNk9GZlJ0QUt1?=
+ =?utf-8?B?NVBORkE5cFlFelVncFYvMEpTOWwvUFh3emJQWFpYN0ZEZDRpUjNHcnpEUzFZ?=
+ =?utf-8?B?WEs2d3J1RlI1TFR0b25iZlMvSXgrNVArL3dvY0hWWm84R0JhQ1o5Rk02eVBK?=
+ =?utf-8?B?WEw2Q1lTUCtPYnkrb3NRdEtxUHQ0bVN1Wnpoa3U1MVEzU2JaRVVvaVIrc2Fi?=
+ =?utf-8?B?TzdVSEk4c0dIY0hOT0FBdHVnRjk1cFhDNVlwZHoxbGNCcWVNcFhqdXR2L2RK?=
+ =?utf-8?B?bE53M1ZiVXRBcXNuTXA2ellqa3dJdHJmbk1UWi9KbitFbFl2S1dVVU83c0xo?=
+ =?utf-8?B?ZW5pTXk5QUhhUFZscDlzR012eUJXUTA4RWxFWWYxc0J1VHN2QklhVmoyYW8y?=
+ =?utf-8?B?eCtzeldmaEcyTnhySlBwclU2U3IxY1NTZmczUm52WDlSNlQ5MVZsQTdNdEJ4?=
+ =?utf-8?B?MXl3elV1OHoxR0FuMDE4TkJLOEdSUjBvK0dlMWp5RGVnMS9iVGs3NzNHUlFu?=
+ =?utf-8?B?WndIa1hnVkxlTUFxOUhnQ21VMU5lcU13N2FhWWtvTXd2RGc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 16:20:08.9474
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b703277-ff3e-4bb9-c01c-08dca4e9fef8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231B.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9176
 
 
---2LVcyejoJGAiq11e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/15/24 01:07, Amit Machhiwal wrote:
+> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+> of a PCI device attached to a PCI-bridge causes following kernel Oops on
+> a pseries KVM guest:
+>
+>   RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+>   Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
+>   BUG: Unable to handle kernel data access on read at 0x10ec00000048
+>   Faulting instruction address: 0xc0000000012d8728
+>   Oops: Kernel access of bad area, sig: 11 [#1]
+>   LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
+> <snip>
+>   NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
+>   LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
+>   Call Trace:
+>   [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
+>   [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
+>   [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
+>   [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
+>   [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
+>   [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
+>   [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
+>   [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
+>   [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
+>   [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
+>   [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
+>   [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> <snip>
+>
+> A git bisect pointed this regression to be introduced via [1] that added
+> a mechanism to create device tree nodes for parent PCI bridges when a
+> PCI device is hot-plugged.
+>
+> The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
+> device-tree node associated with the pci_dev that was earlier
+> hot-plugged and was attached under a pci-bridge. The PCI dev header
+> `dev->hdr_type` being 0, results a conditional check done with
+> `pci_is_bridge()` into false. Consequently, a call to
+> `of_pci_make_dev_node()` to create a device node is never made. When at
+> a later point in time, in the device node removal path, a memcpy is
+> attempted in `__of_changeset_entry_invert()`; since the device node was
+> never created, results in an Oops due to kernel read access to a bad
+> address.
+>
+> To fix this issue, the patch updates `of_changeset_create_node()` to
+> allocate a new node only when the device node doesn't exist and init it
+> in case it does already. Also, introduce `of_pci_free_node()` to be
+> called to only revert and destroy the changeset device node that was
+> created via a call to `of_changeset_create_node()`.
+>
+> [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
+>
+> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> ---
+> Changes since v1:
+>      * Included Lizhi's suggested changes on V1
+>      * Fixed below two warnings from Lizhi's changes and rearranged the cleanup
+>        part a bit in `of_pci_make_dev_node`
+> 	drivers/pci/of.c:611:6: warning: no previous prototype for ‘of_pci_free_node’ [-Wmissing-prototypes]
+> 	  611 | void of_pci_free_node(struct device_node *np)
+> 	      |      ^~~~~~~~~~~~~~~~
+> 	drivers/pci/of.c: In function ‘of_pci_make_dev_node’:
+> 	drivers/pci/of.c:696:1: warning: label ‘out_destroy_cset’ defined but not used [-Wunused-label]
+> 	  696 | out_destroy_cset:
+> 	      | ^~~~~~~~~~~~~~~~
+>      * V1: https://lore.kernel.org/all/20240703141634.2974589-1-amachhiw@linux.ibm.com/
+>
+>   drivers/of/dynamic.c  | 16 ++++++++++++----
+>   drivers/of/unittest.c |  2 +-
+>   drivers/pci/bus.c     |  3 +--
+>   drivers/pci/of.c      | 39 ++++++++++++++++++++++++++-------------
+>   drivers/pci/pci.h     |  2 ++
+>   include/linux/of.h    |  1 +
+>   6 files changed, 43 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index dda6092e6d3a..9bba5e82a384 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -492,21 +492,29 @@ struct device_node *__of_node_dup(const struct device_node *np,
+>    * a given changeset.
+>    *
+>    * @ocs: Pointer to changeset
+> + * @np: Pointer to device node. If null, allocate a new node. If not, init an
+> + *	existing one.
+>    * @parent: Pointer to parent device node
+>    * @full_name: Node full name
+>    *
+>    * Return: Pointer to the created device node or NULL in case of an error.
+>    */
+>   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> +					     struct device_node *np,
+>   					     struct device_node *parent,
+>   					     const char *full_name)
+>   {
+> -	struct device_node *np;
+>   	int ret;
+>   
+> -	np = __of_node_dup(NULL, full_name);
+> -	if (!np)
+> -		return NULL;
+> +	if (!np) {
+> +		np = __of_node_dup(NULL, full_name);
+> +		if (!np)
+> +			return NULL;
+> +	} else {
+> +		of_node_set_flag(np, OF_DYNAMIC);
+> +		of_node_set_flag(np, OF_DETACHED);
+> +	}
+> +
+>   	np->parent = parent;
+>   
+>   	ret = of_changeset_attach_node(ocs, np);
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index 445ad13dab98..b1bcc9ed40a6 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -871,7 +871,7 @@ static void __init of_unittest_changeset(void)
+>   	unittest(!of_changeset_add_property(&chgset, parent, ppadd), "fail add prop prop-add\n");
+>   	unittest(!of_changeset_update_property(&chgset, parent, ppupdate), "fail update prop\n");
+>   	unittest(!of_changeset_remove_property(&chgset, parent, ppremove), "fail remove prop\n");
+> -	n22 = of_changeset_create_node(&chgset, n2, "n22");
+> +	n22 = of_changeset_create_node(&chgset, NULL,  n2, "n22");
+>   	unittest(n22, "fail create n22\n");
+>   	unittest(!of_changeset_add_prop_string(&chgset, n22, "prop-str", "abcd"),
+>   		 "fail add prop prop-str");
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 826b5016a101..d7ca20cb146a 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -342,8 +342,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>   	 */
+>   	pcibios_bus_add_device(dev);
+>   	pci_fixup_device(pci_fixup_final, dev);
+> -	if (pci_is_bridge(dev))
+> -		of_pci_make_dev_node(dev);
+> +	of_pci_make_dev_node(dev);
 
-On Mon, Jul 15, 2024 at 05:55:28PM +0800, Inochi Amaoto wrote:
-> On Mon, Jul 15, 2024 at 11:21:25AM GMT, Krzysztof Kozlowski wrote:
-> > On 14/07/2024 13:28, Inochi Amaoto wrote:
-> > > On Sophgo CV18XX platform, threshold strength of schmitt trigger can
-> > > be configured. As this standard property is already supported by the
-> > > common pinconf code. Add "input-schmitt" property in pincfg-node.yaml
-> > > so that other platforms requiring such feature can make use of this
-> > > property.
-> > >=20
-> > > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.ya=
-ml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > index d0af21a564b4..e838fcac7f2a 100644
-> > > --- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > @@ -88,6 +88,10 @@ properties:
-> > >      description: disable input on pin (no effect on output, such as
-> > >        disabling an input buffer)
-> > >=20
-> > > +  input-schmitt:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    description: threshold strength for schmitt-trigger
-> >=20
-> > Strength in which units? This should have proper property name suffix.
-> >=20
->=20
-> I think it should be mV. Using voltage may leads to decimal.
+Please undo this change. It should only create the device node for 
+bridges and the pci endpoints listed in quirks for now.
 
-The standard suffix for voltage is "-microvolts", so no issues with
-decimals :) And with a standard suffix, the $ref can be dropped.
 
---2LVcyejoJGAiq11e
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
+Lizhi
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVMHQAKCRB4tDGHoIJi
-0ja0AQCZqLnQcGwiuqZl9Wl01OzS7MJeTSb10oFq99YFhdEHBAD/TthuyCPq5qa9
-QNTpI62Qei1oN1LCLqbTiEv8v0EDQgM=
-=fLLi
------END PGP SIGNATURE-----
-
---2LVcyejoJGAiq11e--
+>   	pci_create_sysfs_dev_files(dev);
+>   	pci_proc_attach_device(dev);
+>   	pci_bridge_d3_update(dev);
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index 51e3dd0ea5ab..883bf15211a5 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -608,18 +608,28 @@ int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
+>   
+>   #ifdef CONFIG_PCI_DYNAMIC_OF_NODES
+>   
+> +void of_pci_free_node(struct device_node *np)
+> +{
+> +	struct of_changeset *cset;
+> +
+> +	cset = (struct of_changeset *)(np + 1);
+> +
+> +	np->data = NULL;
+> +	of_changeset_revert(cset);
+> +	of_changeset_destroy(cset);
+> +	of_node_put(np);
+> +}
+> +
+>   void of_pci_remove_node(struct pci_dev *pdev)
+>   {
+>   	struct device_node *np;
+>   
+>   	np = pci_device_to_OF_node(pdev);
+> -	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+> +	if (!np || np->data != of_pci_free_node)
+>   		return;
+>   	pdev->dev.of_node = NULL;
+>   
+> -	of_changeset_revert(np->data);
+> -	of_changeset_destroy(np->data);
+> -	of_node_put(np);
+> +	of_pci_free_node(np);
+>   }
+>   
+>   void of_pci_make_dev_node(struct pci_dev *pdev)
+> @@ -655,14 +665,18 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+>   	if (!name)
+>   		return;
+>   
+> -	cset = kmalloc(sizeof(*cset), GFP_KERNEL);
+> -	if (!cset)
+> +	np = kzalloc(sizeof(*np) + sizeof(*cset), GFP_KERNEL);
+> +	if (!np)
+>   		goto out_free_name;
+> +	np->full_name = name;
+> +	of_node_init(np);
+> +
+> +	cset = (struct of_changeset *)(np + 1);
+>   	of_changeset_init(cset);
+>   
+> -	np = of_changeset_create_node(cset, ppnode, name);
+> +	np = of_changeset_create_node(cset, np, ppnode, NULL);
+>   	if (!np)
+> -		goto out_destroy_cset;
+> +		goto out_free_node;
+>   
+>   	ret = of_pci_add_properties(pdev, cset, np);
+>   	if (ret)
+> @@ -670,19 +684,18 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+>   
+>   	ret = of_changeset_apply(cset);
+>   	if (ret)
+> -		goto out_free_node;
+> +		goto out_destroy_cset;
+>   
+> -	np->data = cset;
+> +	np->data = of_pci_free_node;
+>   	pdev->dev.of_node = np;
+> -	kfree(name);
+>   
+>   	return;
+>   
+> -out_free_node:
+> -	of_node_put(np);
+>   out_destroy_cset:
+>   	of_changeset_destroy(cset);
+>   	kfree(cset);
+> +out_free_node:
+> +	of_node_put(np);
+>   out_free_name:
+>   	kfree(name);
+>   }
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index fd44565c4756..7b1a455306b8 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -702,11 +702,13 @@ struct of_changeset;
+>   
+>   #ifdef CONFIG_PCI_DYNAMIC_OF_NODES
+>   void of_pci_make_dev_node(struct pci_dev *pdev);
+> +void of_pci_free_node(struct device_node *np);
+>   void of_pci_remove_node(struct pci_dev *pdev);
+>   int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
+>   			  struct device_node *np);
+>   #else
+>   static inline void of_pci_make_dev_node(struct pci_dev *pdev) { }
+> +static inline void of_pci_free_node(struct device_node *np) { }
+>   static inline void of_pci_remove_node(struct pci_dev *pdev) { }
+>   #endif
+>   
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index a0bedd038a05..f774459d0d84 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -1631,6 +1631,7 @@ static inline int of_changeset_update_property(struct of_changeset *ocs,
+>   }
+>   
+>   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> +					     struct device_node *np,
+>   					     struct device_node *parent,
+>   					     const char *full_name);
+>   int of_changeset_add_prop_string(struct of_changeset *ocs,
+>
+> base-commit: 43db1e03c086ed20cc75808d3f45e780ec4ca26e
 
