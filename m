@@ -1,240 +1,169 @@
-Return-Path: <linux-kernel+bounces-252640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215B6931636
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D644931640
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964D41F2256B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:57:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3DA1F222AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA2E18E776;
-	Mon, 15 Jul 2024 13:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA618E76E;
+	Mon, 15 Jul 2024 13:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFVoXb5v"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCumHgbk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18AC18E75C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7571741CF;
+	Mon, 15 Jul 2024 13:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051855; cv=none; b=koCiPReU3F6uKpIRykMsvsBfvWGtiTP6uXo1Hl+nDGtUNsStnTWJ1SccFvccUT3cqVpdBuvSKOD+/lXwoETZ/y+qBs6SPqYLNiw8cAygznqc7qUTBW0FTKoKWc0RPDf3AdBU4RcVhrGXs6k7jwe769+5xxg9s1W3BJBYPNWnrek=
+	t=1721051995; cv=none; b=kKNOjcRuXUqIi6omSsDK7zSJK8jqs3ewu3TVrP3zn3wwbS9ctzT08JndZGrFFQhazUS+8lH4vjpNBp2jfi71AKkVN+TJHfytPgYWQJAGVts4dLxbKGK0OmuYBtG6nHsll/lj+9SgIZZOM4eTxtJa7FG7r9O6wAzKbAv7lDKIF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051855; c=relaxed/simple;
-	bh=G69dhMihKqI1y+QAIGiAVO8xqyX8K+W8TI3IssZ/CJw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nYamIjgGOuvxOKGNg0Ob1NXh2x5nhPjDGgAVqW0sb7ByghL1mWICvsE37aJVdWbD5+PthQ2zWAc7baHgHIiM9OZy3UIW6F7hAMwdp9pqP81FJMW+Kf2mpkePnB3jIfXFNem4GDOgaTC2S+rxtyL1eHgglHih/fybRp7zbPsCn5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EFVoXb5v; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-367993463b8so2456990f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:57:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721051852; x=1721656652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jqmSoh9JB/3hZYySxLznUyX+qQFd5aQoYQGKXDyQDDs=;
-        b=EFVoXb5v5qIVoHkTQJ+kM7zaFC5dx/Jl5CNlTq9OgdrWLq3ClBRxlXVrRdhSM+cz4m
-         7qf7HIPvuX81IUFSJyVni5YCkJs+YkCzqLvDTzP9I/6YhOt+lhklxOGizraxAnirLN75
-         sCxyOBgw4FQK1bEhu7f2+9KwUYz2TqNyr2qjethR+HWqLDcRMu6I0L27Oc+yg/E8M70S
-         v8a4iMGgp/tM70XK8eWi78Nosf8ioQSU3UCCvabWtDluu9nrzTwf+/8AHCdTet2z3UG1
-         ejk3+7rkjfaGERNEG9GFQOJFGCSQWzkPfvabc1GXtKRQFjZftm7T8YOWLpDW7gDYFWKA
-         heEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721051852; x=1721656652;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jqmSoh9JB/3hZYySxLznUyX+qQFd5aQoYQGKXDyQDDs=;
-        b=CqDmAiV1uv+t9ochNSwhNPbcidlSi/s8wWr+EiiSsCdVLnnvEz1e1x+v1UAqSRIDC4
-         dVJiwgUl9jV9JHF48eSJ8Pdhpgpyljt9el5P6wLyZB6qD6XEpHc4rMy+HviP+GABLXOT
-         4O9rH+hDkIHW5lpUrfGXJwPQdjZrqnQAlT3KzZypzwBYW9TgcU7QHun+yKejnr97GVuA
-         YFahPkhoHEsEaQvULPq1eiKvsuPbZoU3IATzJO5weTKrzKTIdgepkzo9xyVaXg74Qx+d
-         NyEwAgl0cRlgXx0zaKyv6SLtJ64lgtR7WmqM5mPsOMn/EG1shrdn3TuHqh1GDKtYskzc
-         c9Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEw/8uU2NIEDdjAk2VVnWkFUod+kSab2wv167T83cpv1EdJM0d7C/jGWI156u7fi/Z7lFir4owHiZJXxA2aijUr++2aV48XyKS4uQb
-X-Gm-Message-State: AOJu0Yw2WZx6CIfeRQsGYy5fbmYjXn4XzfZdXh0BKzkLTXRHxx7AOXE4
-	IdNUxHJJTSioqxjA1IKApCXO0vW3MrgeZpDjKonVAxJnpF/bcb+rjHbbHyU5tHQ=
-X-Google-Smtp-Source: AGHT+IE2nTXTaioYsA/A41U6llM/pzKPMBmM0saB2C1f2cgdXkuwmS9mdBqiFzKuIMT0ybz0qZzRhA==
-X-Received: by 2002:adf:ed91:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-367cea96629mr13090106f8f.41.1721051851633;
-        Mon, 15 Jul 2024 06:57:31 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4? ([2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db038dbsm6413873f8f.95.2024.07.15.06.57.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 06:57:31 -0700 (PDT)
-Message-ID: <6f8f902b-8192-492a-8354-18590c6c2c06@linaro.org>
-Date: Mon, 15 Jul 2024 15:57:30 +0200
+	s=arc-20240116; t=1721051995; c=relaxed/simple;
+	bh=lnUbh0906J979Z5Q7efi25eR78VP0Dl8hKI4KVfbbUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ssQ7F9xCDW+ZN/iASR9PFI/li+UgmDVcfEupLYp672YNFzPvlN4+Ou8CTdSaJkU01OR8YZ5rJV+KxKCDVWuDWVnmbtQkBeb6Qmls0xUOW9BzB4L1udzqxCZh1BXkqDyoSBJBxpUi3xmSVysPOP2SrpvC21DJlHRKbEUdlLKTVHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCumHgbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5966C4AF0D;
+	Mon, 15 Jul 2024 13:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721051994;
+	bh=lnUbh0906J979Z5Q7efi25eR78VP0Dl8hKI4KVfbbUs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cCumHgbkoC5amDcVIZcR/XyQHgWNlhYdkjDZwyPr2R8wA4+tw8yzSMtuNHXzr6qhk
+	 iDW36FEyHKWRZ0tlx+AX+7s8lq6QgU9dxCc7feu29o9r8VU0FYFzxTboX7K1geMkWY
+	 7nfbYdtLIwi5P1Ue2cV1yFgWKYmKrlrC8aAy0vW2DSNOdRlQsTzjx0nu4zib70Qazg
+	 BVZC7y9mVVA7YXtwUmsZA8epkGJwqr93qBMO3GZUHaaNDCG0bFd28N9gTVfx9i51eD
+	 UfuaaXMCS98MjUC11J+CNjnbIni1ohVT10Nyq3/PvnzdDjhWpkIlKWBQWxY0Tt/JMu
+	 AaC/iqNA8ZF+A==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52eafa1717bso4557670e87.2;
+        Mon, 15 Jul 2024 06:59:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7lL0lCBLQikNFwXK8GjkMaZ/uZWKG5bHXErTvW1PZR9yrb+qwPmDcOiF1KYS/iybkea7YLrBN0QroOtg1b2xTiOlo5I/yxJXNBJwDGxjKyl+nnpZ4JNEVzep+0CcSZGPx3e3mDT+n10sU
+X-Gm-Message-State: AOJu0YyKS9Lu0bitzKt7n8hNJAoOgXRK7bXysgF2/cYh+c2KdCUEonSQ
+	ewGhUi869abVfn93nITqgyLdhnUag+OosPrq2BRbkyzeIhNZUJ2dOPDeV/dJMiGXnHUtX92HdEv
+	gg+8m9jLQhwG5bYHjvgIzd93GTb0=
+X-Google-Smtp-Source: AGHT+IGaFyh90uplXRgB/hY8U3HSUQG4Qe5ZCmxPfDj6eYceYcjixf7NM9x/SbwzSyC5SHMKUBqVPkfdOhTAd6GCCP0=
+X-Received: by 2002:a05:6512:3d01:b0:52b:88c3:b2bc with SMTP id
+ 2adb3069b0e04-52eb99d151bmr14820662e87.48.1721051993556; Mon, 15 Jul 2024
+ 06:59:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
-To: Doug Anderson <dianders@chromium.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan@kernel.org>
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
- <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org>
- <ZpUcI3KkIa58zC55@linaro.org>
- <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
- <CAD=FV=WimxYmDrkfn0+E3MbXp8kS9TicN2kT3AM4eM+SAwYsOg@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAD=FV=WimxYmDrkfn0+E3MbXp8kS9TicN2kT3AM4eM+SAwYsOg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240714105848.1844400-1-masahiroy@kernel.org>
+ <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com> <ZpUnnYTRX-OkEPHh@J2N7QTR9R3>
+In-Reply-To: <ZpUnnYTRX-OkEPHh@J2N7QTR9R3>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 15 Jul 2024 22:59:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQyAYahxRakc6tivsxqVOVhXkyCweM8VDKZhP7vWPJpJw@mail.gmail.com>
+Message-ID: <CAK7LNAQyAYahxRakc6tivsxqVOVhXkyCweM8VDKZhP7vWPJpJw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-kbuild@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2024 15:51, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Jul 15, 2024 at 6:02 AM Neil Armstrong
-> <neil.armstrong@linaro.org> wrote:
->>
->> On 15/07/2024 14:54, Stephan Gerhold wrote:
->>> On Mon, Jul 15, 2024 at 02:42:12PM +0200, Neil Armstrong wrote:
->>>> On 15/07/2024 14:15, Stephan Gerhold wrote:
->>>>> This reverts commit 8ebb1fc2e69ab8b89a425e402c7bd85e053b7b01.
->>>>>
->>>>> The panel should be handled through the samsung-atna33xc20 driver for
->>>>> correct power up timings. Otherwise the backlight does not work correctly.
->>>>>
->>>>> We have existing users of this panel through the generic "edp-panel"
->>>>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
->>>>> partially in that configuration: It works after boot but once the screen
->>>>> gets disabled it does not turn on again until after reboot. It behaves the
->>>>> same way with the default "conservative" timings, so we might as well drop
->>>>> the configuration from the panel-edp driver. That way, users with old DTBs
->>>>> will get a warning and can move to the new driver.
->>>>>
->>>>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->>>>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>>>> ---
->>>>>     drivers/gpu/drm/panel/panel-edp.c | 2 --
->>>>>     1 file changed, 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
->>>>> index 3a574a9b46e7..d2d682385e89 100644
->>>>> --- a/drivers/gpu/drm/panel/panel-edp.c
->>>>> +++ b/drivers/gpu/drm/panel/panel-edp.c
->>>>> @@ -1960,8 +1960,6 @@ static const struct edp_panel_entry edp_panels[] = {
->>>>>      EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, "Unknown"),
->>>>>      EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, "Unknown"),
->>>>> -   EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
->>>>> -
->>>>>      EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
->>>>>      EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
->>>>>      EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
->>>>>
->>>>
->>>> How will we handle current/old crd DT with new kernels ?
->>>>
->>>
->>> I think this is answered in the commit message:
->>>
->>>>> We have existing users of this panel through the generic "edp-panel"
->>>>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
->>>>> partially in that configuration: It works after boot but once the screen
->>>>> gets disabled it does not turn on again until after reboot. It behaves the
->>>>> same way with the default "conservative" timings, so we might as well drop
->>>>> the configuration from the panel-edp driver. That way, users with old DTBs
->>>>> will get a warning and can move to the new driver.
->>>
->>> Basically with the entry removed, the panel-edp driver will fallback to
->>> default "conservative" timings when using old DTBs. There will be a
->>> warning in dmesg, but otherwise the panel will somewhat work just as
->>> before. I think this is a good way to remind users to upgrade.
->>
->> I consider this as a regression
->>
->>>
->>>> Same question for patch 3, thie serie introduces a bindings that won't be valid
->>>> if we backport patch 3. I don't think patch should be backported, and this patch
->>>> should be dropped.
->>>
->>> There would be a dtbs_check warning, yeah. Functionally, it would work
->>> just fine. Is that reason enough to keep display partially broken for
->>> 6.11? We could also apply the minor binding change for 6.11 if needed.
->>
->> I don't know how to answer this, I'll let the DT maintainer comment this.
->>
->> The problem is I do not think we can pass the whole patchset as fixes
->> for v6.11, patches 2 & 3 could, patches 1 & 4 definitely can't.
->>
->> Neil
-> 
-> IMO: patch #3 (dts) and #4 (CONFIG) go through the Qualcomm tree
-> whenever those folks agree to it. If we're worried about the
-> dtbs_check breakage I personally wouldn't mind "Ack"ing patch #1 to go
-> through the Qualcomm tree as long as it made it into 6.11-rc1. I have
-> a hunch that there are going to be more Samsung OLED panels in the
-> future that will need to touch the same file, but if the change is in
-> -rc1 it should make it back into drm-misc quickly, right?
+On Mon, Jul 15, 2024 at 10:44=E2=80=AFPM Mark Rutland <mark.rutland@arm.com=
+> wrote:
+>
+> On Mon, Jul 15, 2024 at 08:11:08AM +0530, Anshuman Khandual wrote:
+> > On 7/14/24 16:28, Masahiro Yamada wrote:
+> > > The condition 'select HAVE_ARCH_KASAN' is always true because
+> > > there is 'select HAVE_ARCH_KASAN' statement above.
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > ---
+> > >
+> > >  arch/arm64/Kconfig | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > index c87d16b12e9b..d37cbfc3031e 100644
+> > > --- a/arch/arm64/Kconfig
+> > > +++ b/arch/arm64/Kconfig
+> > > @@ -167,9 +167,9 @@ config ARM64
+> > >     select HAVE_ARCH_JUMP_LABEL
+> > >     select HAVE_ARCH_JUMP_LABEL_RELATIVE
+> > >     select HAVE_ARCH_KASAN
+> > > -   select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+> > > -   select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+> > > -   select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
+> > > +   select HAVE_ARCH_KASAN_VMALLOC
+> > > +   select HAVE_ARCH_KASAN_SW_TAGS
+> > > +   select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+> > >     # Some instrumentation may be unsound, hence EXPERT
+> > >     select HAVE_ARCH_KCSAN if EXPERT
+> > >     select HAVE_ARCH_KFENCE
+> >
+> > There is another similar instance with HAVE_FUNCTION_GRAPH_TRACER as we=
+ll.
+> > Just wondering if the following change should be folded in here ?
+> >
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -210,8 +210,8 @@ config ARM64
+> >         select HAVE_FTRACE_MCOUNT_RECORD
+> >         select HAVE_FUNCTION_TRACER
+> >         select HAVE_FUNCTION_ERROR_INJECTION
+> > -       select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
+> >         select HAVE_FUNCTION_GRAPH_TRACER
+> > +       select HAVE_FUNCTION_GRAPH_RETVAL
+> >         select HAVE_GCC_PLUGINS
+> >         select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
+> >                 HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
+>
+> That looks like a sensible cleanup, but I think it'd be better as a
+> separate patch.
+>
+> It looks like that has always been redundant since it was introduced in
+> commit
+>
+>   3646970322464c21 ("arm64: ftrace: Enable HAVE_FUNCTION_GRAPH_RETVAL")
+>
+> ... would you mind spinning a patch?
+>
+> Mark.
 
-Not sure the Soc maintainer would accept any patches for -rc1 at this
-point, but Bjorn can try to push both #3 and #4 as fixes for -rc2.
 
-Not sure #1 would be accepted as fix via any tree, but having a bindings
-error for a kernel release is not a big deal if in-fine the bindings change
-has been reviewed and queued for next version.
+Agree.
 
-Basically when the -rc is tagged it gets backmerged into drm-misc-next,
-so we can backmerge any -rc we want.
+We can have a separate patch.
 
-> 
-> Personally I think patch #2 could go in anytime since, as people have
-> said, things are pretty broken today and the worst that happens is
-> that someone gets an extra warning. That would be my preference. That
-> being said, we could also snooze that patch for a month or two and
-> land it later. There's no real hurry.
 
-We can push it now to drm-misc-next so it gets naturally delayed until v6.12
+I can see more redundant 'if' and 'depends on'.
 
-Neil
 
-> 
-> -Doug
-> 
+For example, KERNEL_MODE_NEON is always 'y'.
 
+config KERNEL_MODE_NEON
+     def_bool y
+
+
+
+So, I can see redundancy in
+
+
+     select ARCH_HAS_KERNEL_FPU_SUPPORT if KERNEL_MODE_NEON
+
+and
+
+     config EFI
+          bool "UEFI runtime support"
+          depends on OF && !CPU_BIG_ENDIAN
+          depends on KERNEL_MODE_NEON
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
