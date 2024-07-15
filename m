@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-252909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80FB9319C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDB89319CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F88B22B67
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040D4282EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905550284;
-	Mon, 15 Jul 2024 17:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0C261FFA;
+	Mon, 15 Jul 2024 17:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="S0xBnOYH"
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="HfftTcbS"
 Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021080.outbound.protection.outlook.com [52.101.70.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB7F22318;
-	Mon, 15 Jul 2024 17:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8AA4D599;
+	Mon, 15 Jul 2024 17:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721065660; cv=fail; b=ZjbDd2EUKyGlY4H/E8nHUjle4DrxcalfMtsH23UqogJ3dh1B9TbuivXBseGzWZ13BP+LkbMLAihngJuee54RG/lV9iEN++Iipt6DvOGZKkHPFwlU0BSiTUqHYtniY2ADeyKf0zVvsU3rY2uB8dxAhV/Z+JQv7l3s/MFjMd28bLs=
+	t=1721065662; cv=fail; b=PZrZERdmXS22R06ERbN4bVbOFK/SIN2zPzRUvb6Nbs7LKrkwsnQ9SbXPZKWRHyCqGYavELTW/Fdtccxfvv4u7HaTnVqXRDB/F6USV/bReG+/WLMk7UCPaebUEZu4xUzx8M9K+Mwlhd88/ymOGM0F5yxBAqdo0QEbD1zINlFb0iE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721065660; c=relaxed/simple;
-	bh=mzmg0Q2JZfQUMAgaLrVRFPHZcA4tE2dOG0Obbg9JJss=;
-	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=eE7rQJSD90jmJ0KLv31My6jTSrczLz7iDYGUsQhLc2Rh/245KVWcLdyNRSs9psgHAmWctApS4XrFyqksIQO6PWaO4+pGik35qus46WEW62NfpEGCIhVHijD36CuCFVZl8SNHPpfo3eEgybfckEXmTW6zrejawrS3t0HaMfYsdB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=S0xBnOYH; arc=fail smtp.client-ip=52.101.70.80
+	s=arc-20240116; t=1721065662; c=relaxed/simple;
+	bh=HMcqV+r4P48ON39sVzUXftJ/O96WADhBL3E+gIL0ovQ=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=k85nwJ7le+QtPoNzDYg/c23zp+q3Ca2uV7LkfYBmfWNuARN4Mo2BT+zN9jyPCrvCbiR22vweqoxIlVHESSlYmnb2XdfHcDmXKsizC7lJxx8uz3pGszjL2hGGd3FmVQA7QM6h1J4hY1vCX99dhoUP/Z2A/ELQb5y/q07aaEas/wk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=HfftTcbS; arc=fail smtp.client-ip=52.101.70.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a60oB/xb0aoM135ntUyLMIfsfbtmjyaOA/LBQWrBVVGUpP42KgRQSyGJZa/KTBAJtY7OeJMBiecUYiaANd2GAEbzfGKLvEeLz5+B5AeOYlSjYkyVc1uNwRLuJ2CMj2MbGD4uVCec9bp+8K/gQ9OWhVUIFVr11h35zffxTg8wW/xQWf2oXkjuHUZKdL6pINZGKEpydkL3Xd+P7fJpfZrqEqFe0YF4GHZhkL+BxDfe3AoHrzkw7oxqqOVqfJE4LLpVkjZKMore5CBmgtJdRUOSaTtZNYnwu90n2fm2KS0GblUA29mx5yHQ8+4kXnoFNcbXspUyFJrjJBHJ0RzE4ou2Rw==
+ b=g0cyqRohSVSPrCHXpXO1F8dtcHJnGe7eneW6VhHAeu5PVMjxDAzrUo3WAgZctJlmmNNMctPTJcpnrHK0ntv2eyzep9UcuxKt4D9NhTvhnBWeWsATgo8OZP1In+KbnaJqLLq0jsOoEdVZ0FQFLgozxCRTqmM+8qOEdiY5UYSG8ZOKA6z0sy8OSIkYhXxnHXegnaz1ChZ09+tlVwZrybDG5Y8+7GrQvtesvVUznlALJ8B00hOEHm1oiyokOSUCH5yqbBw8iy+J+kB/BbARon3fTU2qG17AXdFXrgJmzGwr3iZwdmU/mfpQNGDq5PjsuMNK2z7lGdRgeHrhW6aynlmOww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n8ltleC3tcxghjXdochRLzUvVnTWi7IsSSyrdIN/Y/Q=;
- b=wSwc31jUrt4OBz284lLIh9YvyvNQaJg/h+QL8p4K69vpRFX2WO0Z0vfIN73rNFUgYy0NVMGjoCAixweaOui13MmiwqNfMOQ4qWgqWxlN+ZWagVp2wvv5altFiXKVbIVlwg9RMipFbhotnumhlDwwrDBALw1lEl4Fy71AweF+5Tf1XdyC+u1Wd2XdBrZ5KN4Cl7aYIgzC9BcAAVvvzvKU5S1xb+rrg4uRVpSjpJlsWCm8GDHv677wdQjrBFQQl2g0LlSbtShdQyvq6kYGmU0jTTTpFSw74AsVecG/Zh6T+vzb8SFjsEE8zBr79ia1WYt02P6NS8V6S1uU9zRw+t8A0A==
+ bh=mpdXz/bNsDro2f1pk2K50xMI39UVVP7u0DZ5T93NaqE=;
+ b=APaK1UxAajvqXMFdIOoCA4CWZO5P6V4v3hqwS2VHstLoJtPEI6rYddmi1BDIPj6mgJz9K4KPaCiuBFrUsoZGlNp+jrsOryq/l0iazNiA6w4yDgnxjzWEzoKwgoGHrkrLYlAcjDf3AH9FQzAKYKNoImF6aYoUXsjiv7S9kkjKhH2wKG/CSBOUselETqHGkbSMPVr+p0DAM4Q3uZI+PVE6Z1XYDPCf0UhaKLMZQQnMCD+DUIK49WKLb/beROZEsOzAYEbebREHnAQAKyzAcqYikXCGIHeGHYZrmoG5wcKS5sNdRcy9IpY5OM3WS778QxeOfhVe3nBipp5I5SxlgNUgng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=solid-run.com; dmarc=pass action=none
  header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n8ltleC3tcxghjXdochRLzUvVnTWi7IsSSyrdIN/Y/Q=;
- b=S0xBnOYH4Q/cXSVC/y1gpDukC7VPa9FoZp6r3CnOajONPhVJL1Lei3LExxV4gvvvqa8SIETJm/RoPZGmiU4lLrjzo7yjnunKmvqS812uFXj9Kd9jSDQMxKMIQWsBurcPt3ao5yGO0fD57aAnXFFOPVBDCk1qvVvo+NBgL369Qrc=
+ bh=mpdXz/bNsDro2f1pk2K50xMI39UVVP7u0DZ5T93NaqE=;
+ b=HfftTcbSYAzxMDwtsek8o4D+Ptkm+D90QmX0fbTnfcPNXrbZUAMBwMBAFvEfh76R81fGRGpums8W7tkKK0YYSKXaOzgH5JQd/l/Z7F5hvUYPjV4+jEOJF6Fq9S+JBoUxgzUo/7kISkMd7A+OOvFV3W1ki1baqMaDEfpYi9VY+ck=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=solid-run.com;
 Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
  by PA4PR04MB9271.eurprd04.prod.outlook.com (2603:10a6:102:2a6::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
- 2024 17:47:35 +0000
+ 2024 17:47:36 +0000
 Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
  ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
  ([fe80::c04e:8a97:516c:5529%3]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
- 17:47:35 +0000
+ 17:47:36 +0000
 From: Josua Mayer <josua@solid-run.com>
-Subject: [PATCH RFC 0/2] phy: mvebu-cp110-utmi: add support for armada-380
+Date: Mon, 15 Jul 2024 19:47:29 +0200
+Subject: [PATCH RFC 1/2] phy: mvebu-cp110-utmi: add support for armada-380
  utmi phys
-Date: Mon, 15 Jul 2024 19:47:28 +0200
-Message-Id: <20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALBglWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0NT3URjiwrd0pLcTN2CjEpdA6NUCwNTy8S0VGNTJaCegqLUtMwKsHn
- RSkFuzkqxtbUAwsJFx2QAAAA=
+Message-Id: <20240715-a38x-utmi-phy-v1-1-d57250f53cf2@solid-run.com>
+References: <20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com>
+In-Reply-To: <20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com>
 To: Vinod Koul <vkoul@kernel.org>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
  Gregory Clement <gregory.clement@bootlin.com>, 
@@ -87,115 +87,346 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM9PR04MB7586:EE_|PA4PR04MB9271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e4c96bf-c60a-415f-2fdd-08dca4f635af
+X-MS-Office365-Filtering-Correlation-Id: d24115b5-f2af-428c-3c60-08dca4f63603
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|52116014|1800799024|7416014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T2NKYUtSUTY3cEdNVisyMEIvOGNQenJQbWNmS3pyMUtwdWxWekFIQTJGSEpI?=
- =?utf-8?B?M1MyNjNPZjBTakJsQlVqbktOelZrUTVwNmFyYWh1bzE0Q2loSU41V3JaRFd0?=
- =?utf-8?B?NVhrZnNlVlJDK2Zpd2VMRzR6eUZnQ2R2VmRMVGhRSytRa1VZZUlGdTllQ2Qx?=
- =?utf-8?B?QTc1SE5qRStNQ09FS1pVUEx0Q2xhM2Q0cGk5dE5HcW9wcE1OcjVSWWxlZURE?=
- =?utf-8?B?T1ZaQTA3OE51NUhNSEhkVi9aakFHb25GUE9mYW9qZjVaM3Nrb0hLTm44d3Nu?=
- =?utf-8?B?Ny82Ulh0cENPVmswYzJPTEt1WTZodkVtMGFVSHZscVRNa3IrczE5dHpmYUh4?=
- =?utf-8?B?SElMYno1RE5HSTVxeFRhWlJkQlhjUm5rRldJUzlRb2RmQXJqbWxBTUlDYnRo?=
- =?utf-8?B?RWc1V1ZVenUwc0NlSEJaaVp6TWhyTk5IMVNudGpPWmNmWnJ3YTU0dFpWYllR?=
- =?utf-8?B?dE80aFpkVlRTelhYSzQ4V0ZtenhUZ3g5NUthTFhtMDR3TWdlVnlhaStKVGc3?=
- =?utf-8?B?dytFVUVVdVZiT3lOZHgzdjFtVzEwZ3g0NTcraHlwSFhrelFYYU9pRHpNY3dO?=
- =?utf-8?B?aXNGMStnekxzL0ZoRnR5Zm5wazVaQ2E1OVo2b2dCNHJOZ1BDZjVmazFWcDR0?=
- =?utf-8?B?WFZEY051QWdqUklwcjArMUhoTXUwaldGZUVVT2phZFdDTC9kWG45dmpaRXg1?=
- =?utf-8?B?U3FLVkFlUkI1QU44cEZKS2JEVU1OUk5UU3p4d0s0c1VUZXFCalJ5TDZhVW1h?=
- =?utf-8?B?bys5R2U4ejBmUXgvY2FUaUNBWDJjZjdwbDJ3MGlzaUR6cHowSStrRWNLMi9B?=
- =?utf-8?B?YlVjMVY2cEZZV3g1Sng1ZEhGMFpZeHBLRmp2b1JyK1pvQ1p6WHZEN0Qrajg3?=
- =?utf-8?B?OVpwOGZ2YitXODZ3bE5jTmhkenV4Zmdzb3Z0MEhxTnZnMGViQWRzcG51ODhr?=
- =?utf-8?B?Qmt0RytxdmdRT1hoWjNzbnNTNGc5dHduRVFGdE1pL2hVYnBScFVZbGpuMnA0?=
- =?utf-8?B?emhkTE1ISXUvZ1BVTDVZRmNDL0lya0dDdkV5T2hUTWFnbXZGcXVNTEl6YmFS?=
- =?utf-8?B?SnZQWGpqSzAvZDQ1aGhhbFAvN1doTDN3S29wV0RZUHRjSVNNYjhscldFOTZ5?=
- =?utf-8?B?T1FncmhJaUpvWVlqRHZIMC8xVW1yU0NkN3c4c05GbzZoU3MvbEh2WTZjMHRm?=
- =?utf-8?B?M1o2Q2src0RTN3dRQzd3Smg3aGx4QkNIbllNMkhZMGdMa2FoSlhHbERsRkc0?=
- =?utf-8?B?TEFFZEFzTURPaWgxcGdMYWZ5NldiK0xhWUd1ajVqWmVBMXFqRW9melAydGZq?=
- =?utf-8?B?RVJ3dmdmRmhad0NUTzk1WFptUWdka0tFZENNbitYUGt3TEEvVVZtTG9oOVRi?=
- =?utf-8?B?ekN4R1ZxWGpGU293RXBjczNjK0NZUm1rUGROdjJOT1pHdVpZZ0paQ3lDUFE0?=
- =?utf-8?B?T3JQNyt0UW5kTldnL1AyVEwvNTVDTXAzUW5ieGYwTXlsdkdSRlhKTnJtVUVN?=
- =?utf-8?B?WW1FL2k1TDRUMVA5bTBwUTFwVi9YMDhQbnZ0WVpQcHA0dzhPOTRyd0E4TXVU?=
- =?utf-8?B?MEN1b1ZUbm9DSUN6R3d4UlhWY1NSWk4zbmwvTFFWaFNUZ2kvUkZ5djZSeWEv?=
- =?utf-8?B?bG9xYXNKL0owVWRNSml5TE5wS2hqZ3hTcU9UUUo0N2dVU1NDM2hHQTRSUmRr?=
- =?utf-8?B?Q0p4SktmN2Z0NjhRcWlFblduMm1Tdk5ERjg5OVdjdHhwd1dWbVR4a05xdGth?=
- =?utf-8?B?dlRqVFNiejFZM1JhaHhGaG5JYm5tSUZDbGFDVFBjdEpEUU8va21VcVRKZVh6?=
- =?utf-8?B?azFWUDYwMlJsK3BwenVLbXJuY00yZnl6NEc0RUZSUVZrQW0vZkl3ZExRMTQ0?=
- =?utf-8?B?NXh2QlpwbkthdXpCUysyVy92RHgxL0VPVnVtNktLNllqanc9PQ==?=
+	=?utf-8?B?cStZTXZtR0xpNHdRSzQ3U2E3ZzNKMHBkU0tOTkhLZFFnZ2FndmE2d0hDMFlK?=
+ =?utf-8?B?bG9Bd0o0NlJrdWhrYURmLy90NzVybnF6Tzgwb0U5S2dIcTRFK1ZPbVk4Rnhl?=
+ =?utf-8?B?RHNPSEpPREpQOHFpb3lNSDVHVTVCa3Y4WnZQYWhYNlVPUXJaVENic0hDZStm?=
+ =?utf-8?B?ZUVVSWNVdGE2WmZ1SHF6ZjZSU0dLZEpqMDY5dEdLTmV2a3lVQVYyb0sxeXdU?=
+ =?utf-8?B?eFUyVVhCWmJaUVByY3VMNWQ0TVdhUnpyMEVYZUZBOERlc1puQUx0dUJqbHZk?=
+ =?utf-8?B?Z0dBVElkbG1OZncyMFJuQ1RxOHpJMTVxVHZOejVxY29TSjVQZ1lGM05NbjdN?=
+ =?utf-8?B?enpFWmszSnFuOWdtQTVVcVp0Yi92Q0cyamxPNENZempVOEcveGdYYUE0RWh6?=
+ =?utf-8?B?c1o5Tkl6V3lKQXVVNFlVRDNqM1paU1ZpRENwcmFpaEx1OVdQL2l4RENCelpM?=
+ =?utf-8?B?b0VQVkxiR1UrWlk4OHlMTGZwbFRMWk0xUm1KN1dRUGRQUHExWlpsYjRtOW45?=
+ =?utf-8?B?UXhiK0MzUjh5cksxaW5TbFc1ZGJ0cXRMUUF6OXkzQ2pDWWFQUnJuRzBrTjJL?=
+ =?utf-8?B?UnBxcGZ3V0Y1YnIrYkpQcWZ2cGI2V2F4ZXE3dDczWXpjSllNVlZkbnVFUTJt?=
+ =?utf-8?B?MStMTkJUQnRWVHFFbHJUbm9QS2E5dERyZ3lBVEY1dE9CUWJHc3kxUmhzNmd5?=
+ =?utf-8?B?TWNSYVVXRVBoK1RrbkxJQldMaFJOYjl4NmVETjU2c1ZWS2RaNjBGV2JCbC9W?=
+ =?utf-8?B?WGFpWmd3ZjVJYjJVL2pnOC9Lcm1rQnFMRlFidlBlOUFudExONHpoZm1ieng2?=
+ =?utf-8?B?WFdPcGQxdldKMEpNcWNJbGl6N3pqSVBRTlNvOThIbHZPQldoQWt0WUVhV0J2?=
+ =?utf-8?B?YWlyTStaK3psVzhPejNFcTNkM2JNK2llRUJ1V2Z0RHJLb3Fqa0VQeWIxMU1h?=
+ =?utf-8?B?cDFvaFV0ZE02dmpUREhhZS9yNjRHOEo2SGZwcE9lS0QwZENDUUlORFQxUzUz?=
+ =?utf-8?B?a3NHNmJtZ0QvR3BTYXRsNnA4aTdmTjIyS0hPQ1RjSmhUMjh5SENGaVZNZ0lj?=
+ =?utf-8?B?MzBPd1lldTMraVp5UUEySmdHUUx0Tkc1eWVXZWUyQTF4Z291QmQ1QUtWRERD?=
+ =?utf-8?B?cDNpZVRYbE5TTFl2eW5LUEN3Ujg0VlgvRXpHRDJjNmFkZXJLa0tWQ2VVQkhB?=
+ =?utf-8?B?dlVaTU45L05TaTh1WEZiNEpYZkFiNjMxTi9OdWMvNVZyZG1MQzBnV1dHVTJE?=
+ =?utf-8?B?ZUtWMHJLQTdmRFUxYThJYmRaKzRCVjN4UVE0TUtMLzc0STlLd0ZXZk9QZUxC?=
+ =?utf-8?B?SUNXV1FoTHRkUkNuYm1xd0NpZWxzVkVSQTJLaU8yQWxCQVhiNUtnbDdzbXFj?=
+ =?utf-8?B?Mlc2dU5KNFY4RUhyOUZremdSNXJIanZHcjltMXh1OUNMeEVackw3YUVwWjdH?=
+ =?utf-8?B?bnBjU2d1ekRkNmI3VHFuMUJQdjNDRVpwdW11U2lobDAyemx3ZlRFS2lGb1F3?=
+ =?utf-8?B?WWxxSTZ3dHJGZ1F1Q2NkYmxYRU9CZGtYVkp5cUFSZWhOdTBLQi9zR0Q3T2ZJ?=
+ =?utf-8?B?T3A3b0JxalFRYVF6YlhlZDFnU3dmaFNEcVpHdlhjZHo0Tk1hcnVFU1M5YnNW?=
+ =?utf-8?B?WTM3K2ZKU0FkTk5GY011TGdsM0wvdFpzMFBrUG5FZThOeE5NRWFWeTBVZURB?=
+ =?utf-8?B?THVMTFJ0NzViYTVHWk0vczBwbXRxREwzSnNRQ28xNWFLQkZIMmFWRWN2dGRW?=
+ =?utf-8?B?UFlRTFlhNmNCSzB3MW1QSlE3S3JSR3BTT0l4Q1MwTjhUSWpLRlJBK3JiSHNB?=
+ =?utf-8?B?ZERrMis3clBpcWNienYzQzdWRHZ1QkpqSENEZFcxYnBzREd0bUliZWN4Zlll?=
+ =?utf-8?B?aTNpd3FGV1l6N1kxZ1Z3NHBDUUhsRnZHblhjWjRkTE1OOGc9PQ==?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bnVsMzF6d1kyRkRyNGVVSjIxanZQb1p6L1ZKK0Y3L1RuSzJkU1ZsUGdTZU8y?=
- =?utf-8?B?RnRGT3dkWEgxMFJyWm9qQVJydTlkbTBTVXRKdzFDQmd0ays5ekJWTHVXZjhh?=
- =?utf-8?B?UUNYY1Jqcm51YThKTm1yUGV1RU9LSC9saDBnYjlWV2tPelhkbENsZkMyY0lF?=
- =?utf-8?B?QjB5Uk9mWTBYMStIbTRaR1cvNGZHdWwxV0VvbmRXeHBXMmVhRmptSmthRXph?=
- =?utf-8?B?WVdLb3dOVzd4R1VDVHlEZURkalRiNG1ZdTNDR0YyN2xJQXo1Q1ZqNmY1YlRx?=
- =?utf-8?B?U3laSnpHZU9hSDVpdFBEVXNiL1NVQmdtMlJnYUZaTFFDQys0QllUaWwxQjFn?=
- =?utf-8?B?c1BUZTUzVjlyQi9tbW56SzJGMXhyZkpqWHBvcWxib2ZzVjV0bzFHZG9CSWpp?=
- =?utf-8?B?ZG5FYXZMc0pldHc1VnVxOGZGZkZSMHZRUE0rcXlCODhpdjNtUjg5WjZvNGMz?=
- =?utf-8?B?WkdjSE8wMnRla1JldlUwTmJ1dGpGQkprRmJ2bHpHQ3FuVFp1Ui9BRkRIYk1P?=
- =?utf-8?B?UkFZZzUrR25EUzltK29wUWJGWkxuMWkwK2hINmloWk9OTkVyR21pN2dhMkZh?=
- =?utf-8?B?b1hORlR2YVg3VU4zVDlIUUYySEY4Yk9yQ093VG1iSGpvSm1KdndrRzFtUkJM?=
- =?utf-8?B?dDV3STVGMVdFUTZCU2lkVUZFWnBLbmFsV3JYZ2twanlkckhjd2RQdHMveSt3?=
- =?utf-8?B?VnFCbjFlNk1NWnZJa3MrYUQyYWRIYVN0S3J2NWM5Tnpubm03ODdlMTU4YS9M?=
- =?utf-8?B?dHVlb1E1UDl4QUdmYXNlMGptUW1KLzdTeVlQVWRuQUtBdDlNWVQ0eWkvZGMr?=
- =?utf-8?B?SWp3ME9CaW5BczZOTHh6NGlVWXJhVW5ZVGZndDdicitCVGo0aGh3a1BEYisr?=
- =?utf-8?B?UjNBS3ovV1hTb2RYYTR1MDEvekx5RnEvZkxxTGVINHFHOXovbWFCb3AxNGI0?=
- =?utf-8?B?VkF5bHBWRVdQcTJQYXBITFR2a1RlN0NRNEhGTzNzQUdDOWpHVjRFVG4xQjd6?=
- =?utf-8?B?czBEL0JTd25Ccjlrc1pTUTVoWU5QcnJyeWczeXhrcnNxUE1TeC9TK2FFVnJV?=
- =?utf-8?B?YjJxU0VyRTZodnFQajNnbmtMR29ZQm50eTdBRXdVb3NTQ0pDLyswanlQUmtO?=
- =?utf-8?B?U2pEcTczbEN1WlBEdDFldnNwYUJDNnlLaG0zL3Q5Wkp5TG5TY0l0MDdyT0Fr?=
- =?utf-8?B?cXFLZWFzYlhBakk5a1RWazRGMFA4UG1RTWxmVTF4ZFFmMUZDQXhpVzF0NytG?=
- =?utf-8?B?Y2pKMnFZY1k5aStKRHBOdlcrWXllbTJxUm45WkJyVFduL3ppdyt1MVRMcito?=
- =?utf-8?B?ek5QK2IwNi9IdS9QVE8vQnJJQytzTnJFTUovMitYbmRYTHlnalJmTzV4am1y?=
- =?utf-8?B?RVhWMEEvNDhNS0s1SVhBeTZHTm9SQ2xiemhMTE1IcUJuM05PSEs5ODNuT2dX?=
- =?utf-8?B?a2hOc3dFOXFTUHhCbG5STzFYQ29uRldNZ3E5eGVuejloblRaMHdLaWEyYks2?=
- =?utf-8?B?NkZMSno5SEpsd05jck54Y1BxeEVaaHZYUCtjWXpacUhqeU1lNEt6TWRUc1FG?=
- =?utf-8?B?S3RZZ1JRbE1DZ2VvSVNRc3ZneGpmaXdRZ1pQdkFPVy9CWGMrSWFMUk5COHYv?=
- =?utf-8?B?TlRRTDFBM1Z0TmNBSDZtMVF5UERjNnljWElTQlRHU2NQcmVqOFBpN2lmSlNh?=
- =?utf-8?B?WEVaZnltSzB5Rkdpa0RlWmpNRXFGWVUwUi92Q3pRSzZsQ3BDcGl0QUZZVzVq?=
- =?utf-8?B?MFdLZ3pQbDJuMDA1NXRKaFpuUVdpeVIraXpzMXd2RE5tcHJ6U2R3eVB4Y1R0?=
- =?utf-8?B?WGhtNzFDcXlrZ29mdVc4VEZPOCtmTncyeEhMbXk3RXE0RU90NUlVMjVFZnds?=
- =?utf-8?B?WmoxY3VKNVFSR0lXM2QrSnBSbCtiSHlRMVdXZXpCSlN4TnhDWFdlazgvdnpG?=
- =?utf-8?B?WC9uUGcyUUlVSGpMdWg2YUpsa3cxZzUyUWdoRHRXcUdOVVRZdkFQVXNicEpF?=
- =?utf-8?B?WkY2cWJoUWpsaFc3Y2JvcWJzMG1kUno3U0FZK25yazlDMG1GQnhDdGRqSE5R?=
- =?utf-8?B?TEVEbmtDeEVXTis5TWFIZzNSd2RxN2dmbWJ3Y1dmZkZVRENWYzh0SlNUQTNE?=
- =?utf-8?Q?pYoSS0WmGsXSQ51glIfizspV5?=
+	=?utf-8?B?QnMvbTloVzhlZU5semtiQ3JxSURzVEtPaDV5T2ZsWUJuUUcyNXA2S3U3YkZR?=
+ =?utf-8?B?Mmg1RFVqemZMQ2RnU1dpNkY3eXVMRVlRYTREczdCZGx6cDd1THo3M014U01O?=
+ =?utf-8?B?Q2orWnBpemNRT3Q0ZWFmYXIxSCthZnp6dTU0QVZhWENqam9jMlhuNE80OTIx?=
+ =?utf-8?B?U2dCaFlnWG5wSXd3eXF6bGErZ0FDaTRkeE4yYjhRd09WOVA5TlRtdGd5RmtO?=
+ =?utf-8?B?Q2g2bW1oQzJhc0tKclFSMU4zY0xZSEVvVTd3M1YwMzh5ZUhZVElHbHp0Z0FG?=
+ =?utf-8?B?YWoxN2ptZWFyMGl2Y3MvRkVCNjV6QStrZEJsSTErdk1WQnRYTXA5RDBrc2V1?=
+ =?utf-8?B?NXdhbWZCS043UlpoMld4RDFoK3FhQkZpNGNuVFRiZFNEYkJZeUNzZ1dmajVS?=
+ =?utf-8?B?T0ZtZ1Voamt6cDd1ZzlQd0tFRTc1d1NLWTMwS3dCcStBV0g0L3hqSWU5YXpp?=
+ =?utf-8?B?YW1qaFM2cnordXNld29uSVIrSEgzL1ZQMWRscjRiaFo4NkduN1FXS25IY0lm?=
+ =?utf-8?B?QUlUbHlyUWJ2ek1ZNkIrQ05MdUtpQUpMLy9nME5Jcjdza01pQ05CTGs3OGFD?=
+ =?utf-8?B?VEVKK3JyTHJkUlRqbEVUZHNmTnhLbmgwa2lHMEJxVy8xSHpQL1ZjT3JmUSsv?=
+ =?utf-8?B?emV0cTdUeWd3OFpFTW1UNUMyV2E2aG03aHg1d1NQeXVhWFhzZ0tFaG9BSTJM?=
+ =?utf-8?B?MC9VU0FDc25VUi9PVVU1Zk1TV0ZxQXVOQmJYdGt6MHp1TWdUM0V4eEpiRnAw?=
+ =?utf-8?B?ZEJWdnVtTk4xQzJuM0lva2phLzdUWDRWT2NZV2JEV0hwQ1l2MXE4Um5UWVFN?=
+ =?utf-8?B?UmE3K2E5aGtxR2Y3V0RiS2NFNmk2T3FwTGJEV1NkenFnUno4VU9ocWlzNnZ3?=
+ =?utf-8?B?S1p3Q2VmVWJQZnNlSndMZ1FYVUh6dVFNdDFvdG43ZWhFMmppZGI4dkR3L2N6?=
+ =?utf-8?B?UllwRng2RUU1U0ZQelg1a3g2TUNGTHNLKzdXRjZGY1FCVVV3QTNUa1lIdis0?=
+ =?utf-8?B?ZnZOdGpaZkJBSXZ6WWtJdGtRSDRpZHdTQ2hFZUdUTnliZzV4MHNiblNmU25o?=
+ =?utf-8?B?dkJHaXFnS0RZWFJscm8vZDNQNkdENmxyclhoYWIwVFZxNEpMemcvU1phZmV6?=
+ =?utf-8?B?OTQ1bUkxK1ZZRzlNM2srbE5Bdkl6MnJ5YnBIczRUekFlY0oyaUtFVklsbFN3?=
+ =?utf-8?B?M2NvSDBuUUdSSUFzRmN3dDdOL3F6ZloyMVg3MEhCTDBTMWxQUjJuUTlEZW0w?=
+ =?utf-8?B?SDIvbGwxQUZjNCtwclFQMlAxQzJQRVFldm05L3ZEQjlSZDFTTFVCUHZIaUdw?=
+ =?utf-8?B?RHl2U0Z0Vy8xVUh4R3hnZ28yUGt0cUR0WjBENGl0SU9adXUrc3VPdzVnSkVZ?=
+ =?utf-8?B?N0xzcFdyZXJMZ3p6NWVhbTBuQjVVckEySmxvcWd2T3N2Z0VXS0RST0RIMGhu?=
+ =?utf-8?B?SEdQSytOOC8yZkgxR1Bya2V1SnZMWm1CRlN2cHQvcWYwNkxsSTFVd21VQ08w?=
+ =?utf-8?B?T3RHOWIxeDkxVDREOGdaUHVFakM2eG9TYVdpbE1hSElteCs0S2x2MnRIMFJJ?=
+ =?utf-8?B?blNxS0R2MzdnVVN4S01rcDVsbElHaEw2emtNeHlsRmpXNkltM3E5aHFpdkVN?=
+ =?utf-8?B?OXkydjNRZXpIVnlNZ2VFM3ZUcmtCbExVRFVVQzFhUmU2Y3dVbHp4R3RMaFdH?=
+ =?utf-8?B?TEJlUm13V2dlc3F3RjRveWJoRGtjRVdXNzNhNGJZdmxMYTlLeEJ1a1piaUxT?=
+ =?utf-8?B?SExVL094Vk04RGk1Wk4vWkh6aVpzUkcxdmhiY21NN2N2V0xOcjJMT2ZmbmpR?=
+ =?utf-8?B?dGRaeGxlbzJPTnc0ajQrQ0RnU2dzRzllUUNtaUlQWWlsNFNoZzBKdzduWS9t?=
+ =?utf-8?B?eUhpZHJFUXRLLzRpemN0RHhlTHR1NkMyTnZhQzdLMjBTZkY2a0l0OWlMZXNP?=
+ =?utf-8?B?ZXhyUDBiZnhJbmF1b0E2dk1SVnUrQXpKY1g0VHZmdW4yNVNRd2NyUStFSWly?=
+ =?utf-8?B?azlDUXpwRHo5M3Yzb25rUVh3WE5ZcTdjSmRFNnFMR1ZocWFYT1dOSS9Vbjgz?=
+ =?utf-8?B?eURQUHlzK0x6SUs5QXRJRTcyNzhJRG9QWVk3bXlkajUzbU5laS9lcXNLT1Ra?=
+ =?utf-8?Q?m2o9g5JyAsZWl8KV/5yT+434W?=
 X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e4c96bf-c60a-415f-2fdd-08dca4f635af
+X-MS-Exchange-CrossTenant-Network-Message-Id: d24115b5-f2af-428c-3c60-08dca4f63603
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 17:47:35.0680
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 17:47:35.6099
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xWC44JRJUWiQU+rS1YlDacNbH+aRn8G7ieSF2FYCilH0os9ABtCTytopMFENLdJSu3W74fLz+9c3VDzX1LyzJQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: yw38KF7g1MtahuqzQ3zJ+4SQlF93U3yXTW8Sv1PLcpvE0/xPHhoFCsnUFaFbn4r1Ajq/t7Do6EsaWgHgPmvEYA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9271
 
-Armada 380 has smilar USB-2.0 PHYs as CP-110 (Armada 8K).
-    
-Add support for Armada 380 to cp110 utmi phy driver.
+Armada 380 has smilar USB-2.0 PHYs as CP-110. The differences are:
+- register base addresses
+- gap between port registers
+- number of ports: 388 has three, cp110 two
+- device-mode mux has bit refers to different ports
+- syscon register's base address (offsets identical)
+
+Differentiation uses of_match_data with distinct compatible strings.
+
+Add support for Armada 380 PHYs by introducing a per-port regs pointer,
+and add extra logic mapping port id to device-mode mux register value.
+
+This driver is not immediately usable on Armada 38x as it relies on
+syscon framework for access to shared registers.
+While all CP110 based designs declare a syscon node in device-tree,
+Armada 38x has various drivers claiming parts of the respective area.
 
 Signed-off-by: Josua Mayer <josua@solid-run.com>
 ---
-Josua Mayer (2):
-      phy: mvebu-cp110-utmi: add support for armada-380 utmi phys
-      arm: dts: marvell: armada-38x: add description for usb phys
-
- arch/arm/boot/dts/marvell/armada-38x.dtsi  | 30 +++++++++
  drivers/phy/marvell/phy-mvebu-cp110-utmi.c | 97 +++++++++++++++++++++++-------
- 2 files changed, 105 insertions(+), 22 deletions(-)
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240715-a38x-utmi-phy-02e8059afe35
+ 1 file changed, 75 insertions(+), 22 deletions(-)
 
-Sincerely,
+diff --git a/drivers/phy/marvell/phy-mvebu-cp110-utmi.c b/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
+index 4922a5f3327d..29ee73b6d8b5 100644
+--- a/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
++++ b/drivers/phy/marvell/phy-mvebu-cp110-utmi.c
+@@ -76,7 +76,11 @@
+ #define PLL_LOCK_DELAY_US			10000
+ #define PLL_LOCK_TIMEOUT_US			1000000
+ 
+-#define PORT_REGS(p)				((p)->priv->regs + (p)->id * 0x1000)
++enum mvebu_cp110_utmi_type {
++	/* 0 is reserved to avoid clashing with NULL */
++	A380_UTMI = 1,
++	CP110_UTMI = 2,
++};
+ 
+ /**
+  * struct mvebu_cp110_utmi - PHY driver data
+@@ -104,6 +108,7 @@ struct mvebu_cp110_utmi_port {
+ 	struct mvebu_cp110_utmi *priv;
+ 	u32 id;
+ 	enum usb_dr_mode dr_mode;
++	void __iomem *regs;
+ };
+ 
+ static void mvebu_cp110_utmi_port_setup(struct mvebu_cp110_utmi_port *port)
+@@ -118,47 +123,47 @@ static void mvebu_cp110_utmi_port_setup(struct mvebu_cp110_utmi_port *port)
+ 	 * The crystal used for all platform boards is now 25MHz.
+ 	 * See the functional specification for details.
+ 	 */
+-	reg = readl(PORT_REGS(port) + UTMI_PLL_CTRL_REG);
++	reg = readl(port->regs + UTMI_PLL_CTRL_REG);
+ 	reg &= ~(PLL_REFDIV_MASK | PLL_FBDIV_MASK | PLL_SEL_LPFR_MASK);
+ 	reg |= (PLL_REFDIV_VAL << PLL_REFDIV_OFFSET) |
+ 	       (PLL_FBDIV_VAL << PLL_FBDIV_OFFSET);
+-	writel(reg, PORT_REGS(port) + UTMI_PLL_CTRL_REG);
++	writel(reg, port->regs + UTMI_PLL_CTRL_REG);
+ 
+ 	/* Impedance Calibration Threshold Setting */
+-	reg = readl(PORT_REGS(port) + UTMI_CAL_CTRL_REG);
++	reg = readl(port->regs + UTMI_CAL_CTRL_REG);
+ 	reg &= ~IMPCAL_VTH_MASK;
+ 	reg |= IMPCAL_VTH_VAL << IMPCAL_VTH_OFFSET;
+-	writel(reg, PORT_REGS(port) + UTMI_CAL_CTRL_REG);
++	writel(reg, port->regs + UTMI_CAL_CTRL_REG);
+ 
+ 	/* Set LS TX driver strength coarse control */
+-	reg = readl(PORT_REGS(port) + UTMI_TX_CH_CTRL_REG);
++	reg = readl(port->regs + UTMI_TX_CH_CTRL_REG);
+ 	reg &= ~TX_AMP_MASK;
+ 	reg |= TX_AMP_VAL << TX_AMP_OFFSET;
+-	writel(reg, PORT_REGS(port) + UTMI_TX_CH_CTRL_REG);
++	writel(reg, port->regs + UTMI_TX_CH_CTRL_REG);
+ 
+ 	/* Disable SQ and enable analog squelch detect */
+-	reg = readl(PORT_REGS(port) + UTMI_RX_CH_CTRL0_REG);
++	reg = readl(port->regs + UTMI_RX_CH_CTRL0_REG);
+ 	reg &= ~SQ_DET_EN;
+ 	reg |= SQ_ANA_DTC_SEL;
+-	writel(reg, PORT_REGS(port) + UTMI_RX_CH_CTRL0_REG);
++	writel(reg, port->regs + UTMI_RX_CH_CTRL0_REG);
+ 
+ 	/*
+ 	 * Set External squelch calibration number and
+ 	 * enable the External squelch calibration
+ 	 */
+-	reg = readl(PORT_REGS(port) + UTMI_RX_CH_CTRL1_REG);
++	reg = readl(port->regs + UTMI_RX_CH_CTRL1_REG);
+ 	reg &= ~SQ_AMP_CAL_MASK;
+ 	reg |= (SQ_AMP_CAL_VAL << SQ_AMP_CAL_OFFSET) | SQ_AMP_CAL_EN;
+-	writel(reg, PORT_REGS(port) + UTMI_RX_CH_CTRL1_REG);
++	writel(reg, port->regs + UTMI_RX_CH_CTRL1_REG);
+ 
+ 	/*
+ 	 * Set Control VDAT Reference Voltage - 0.325V and
+ 	 * Control VSRC Reference Voltage - 0.6V
+ 	 */
+-	reg = readl(PORT_REGS(port) + UTMI_CHGDTC_CTRL_REG);
++	reg = readl(port->regs + UTMI_CHGDTC_CTRL_REG);
+ 	reg &= ~(VDAT_MASK | VSRC_MASK);
+ 	reg |= (VDAT_VAL << VDAT_OFFSET) | (VSRC_VAL << VSRC_OFFSET);
+-	writel(reg, PORT_REGS(port) + UTMI_CHGDTC_CTRL_REG);
++	writel(reg, port->regs + UTMI_CHGDTC_CTRL_REG);
+ }
+ 
+ static int mvebu_cp110_utmi_phy_power_off(struct phy *phy)
+@@ -191,8 +196,15 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+ 	struct mvebu_cp110_utmi_port *port = phy_get_drvdata(phy);
+ 	struct mvebu_cp110_utmi *utmi = port->priv;
+ 	struct device *dev = &phy->dev;
++	const void *match;
++	enum mvebu_cp110_utmi_type type;
+ 	int ret;
+ 	u32 reg;
++	u32 sel;
++
++	match = of_device_get_match_data(dev);
++	if (match)
++		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
+ 
+ 	/* It is necessary to power off UTMI before configuration */
+ 	ret = mvebu_cp110_utmi_phy_power_off(phy);
+@@ -208,16 +220,38 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+ 	 * to UTMI0 or to UTMI1 PHY port, but not to both.
+ 	 */
+ 	if (port->dr_mode == USB_DR_MODE_PERIPHERAL) {
++		switch (type) {
++		case A380_UTMI:
++			/*
++			 * A380 muxes between ports 0/2:
++			 * - 0: Device mode on Port 2
++			 * - 1: Device mode on Port 0
++			 */
++			if (port->id == 1)
++				return -EINVAL;
++			sel = !!(port->id == 0);
++			break;
++		case CP110_UTMI:
++			/*
++			 * CP110 muxes between ports 0/1:
++			 * - 0: Device mode on Port 0
++			 * - 1: Device mode on Port 1
++			 */
++			sel = port->id;
++			break;
++		default:
++			return -EINVAL;
++		}
+ 		regmap_update_bits(utmi->syscon, SYSCON_USB_CFG_REG,
+ 				   USB_CFG_DEVICE_EN_MASK | USB_CFG_DEVICE_MUX_MASK,
+ 				   USB_CFG_DEVICE_EN_MASK |
+-				   (port->id << USB_CFG_DEVICE_MUX_OFFSET));
++				   (sel << USB_CFG_DEVICE_MUX_OFFSET));
+ 	}
+ 
+ 	/* Set Test suspendm mode and enable Test UTMI select */
+-	reg = readl(PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
++	reg = readl(port->regs + UTMI_CTRL_STATUS0_REG);
+ 	reg |= SUSPENDM | TEST_SEL;
+-	writel(reg, PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
++	writel(reg, port->regs + UTMI_CTRL_STATUS0_REG);
+ 
+ 	/* Wait for UTMI power down */
+ 	mdelay(1);
+@@ -230,12 +264,12 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+ 			UTMI_PHY_CFG_PU_MASK);
+ 
+ 	/* Disable Test UTMI select */
+-	reg = readl(PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
++	reg = readl(port->regs + UTMI_CTRL_STATUS0_REG);
+ 	reg &= ~TEST_SEL;
+-	writel(reg, PORT_REGS(port) + UTMI_CTRL_STATUS0_REG);
++	writel(reg, port->regs + UTMI_CTRL_STATUS0_REG);
+ 
+ 	/* Wait for impedance calibration */
+-	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_CAL_CTRL_REG, reg,
++	ret = readl_poll_timeout(port->regs + UTMI_CAL_CTRL_REG, reg,
+ 				 reg & IMPCAL_DONE,
+ 				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+ 	if (ret) {
+@@ -244,7 +278,7 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+ 	}
+ 
+ 	/* Wait for PLL calibration */
+-	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_CAL_CTRL_REG, reg,
++	ret = readl_poll_timeout(port->regs + UTMI_CAL_CTRL_REG, reg,
+ 				 reg & PLLCAL_DONE,
+ 				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+ 	if (ret) {
+@@ -253,7 +287,7 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
+ 	}
+ 
+ 	/* Wait for PLL ready */
+-	ret = readl_poll_timeout(PORT_REGS(port) + UTMI_PLL_CTRL_REG, reg,
++	ret = readl_poll_timeout(port->regs + UTMI_PLL_CTRL_REG, reg,
+ 				 reg & PLL_RDY,
+ 				 PLL_LOCK_DELAY_US, PLL_LOCK_TIMEOUT_US);
+ 	if (ret) {
+@@ -274,7 +308,8 @@ static const struct phy_ops mvebu_cp110_utmi_phy_ops = {
+ };
+ 
+ static const struct of_device_id mvebu_cp110_utmi_of_match[] = {
+-	{ .compatible = "marvell,cp110-utmi-phy" },
++	{ .compatible = "marvell,armada-380-utmi-phy", .data = (void *)A380_UTMI },
++	{ .compatible = "marvell,cp110-utmi-phy", .data = (void *)CP110_UTMI },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mvebu_cp110_utmi_of_match);
+@@ -285,6 +320,8 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+ 	struct mvebu_cp110_utmi *utmi;
+ 	struct phy_provider *provider;
+ 	struct device_node *child;
++	const void *match;
++	enum mvebu_cp110_utmi_type type;
+ 	u32 usb_devices = 0;
+ 
+ 	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
+@@ -293,6 +330,10 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+ 
+ 	utmi->dev = dev;
+ 
++	match = of_device_get_match_data(dev);
++	if (match)
++		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
++
+ 	/* Get system controller region */
+ 	utmi->syscon = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 						       "marvell,system-controller");
+@@ -326,6 +367,18 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
+ 		}
+ 
++		/* Get port memory region */
++		switch (type) {
++		case A380_UTMI:
++			port->regs = utmi->regs + port_id * 0x1000;
++			break;
++		case CP110_UTMI:
++			port->regs = utmi->regs + port_id * 0x2000;
++			break;
++		default:
++			return -EINVAL;
++		}
++
+ 		port->dr_mode = of_usb_get_dr_mode_by_phy(child, -1);
+ 		if ((port->dr_mode != USB_DR_MODE_HOST) &&
+ 		    (port->dr_mode != USB_DR_MODE_PERIPHERAL)) {
+
 -- 
-Josua Mayer <josua@solid-run.com>
+2.35.3
 
 
