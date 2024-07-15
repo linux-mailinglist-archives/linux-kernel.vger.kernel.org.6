@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-252429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3BD9312F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:19:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3AB9312F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36E6B232B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:19:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2657F1C217EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4E3188CDB;
-	Mon, 15 Jul 2024 11:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0FC1891A5;
+	Mon, 15 Jul 2024 11:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/VLy25s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+hffJTs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA6A27442;
-	Mon, 15 Jul 2024 11:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4343227442;
+	Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042331; cv=none; b=AXp1B8R3WmmrynrJNjKEJ04lFNIom2it0sLsYH7aDOInf7/QJXrEHGw73/ZqocoN2Vylav0cWuA0xDmWKBgm/fvgZN53OW/WwSLTyesLMVAqaUG9y8q81FieRS4veGnBiQEpcjSFWN68svq7SdNYTvGuJNUjzlGsmP2wUf7YwIg=
+	t=1721042483; cv=none; b=tHJbQU7Eo2jIoGCiVnKj6CLP5W1vaAD14dRdGOkunzDyGRFpi0wDlelFj69JmYHubjoMZ5r7ghApfn0SIw2rsomltiJL14duiuAr+3buhO6QIx9/xlinushfyVOBomaoZr/Glpw93WfzhENdCQWa1uXHV0m6xwdXTUY9WjrPjLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042331; c=relaxed/simple;
-	bh=gM6v1f3MVNVjpe3F220a7SyLMJ+XXmEPJpYxkhnosME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbjYjQvln/8DwD12UD5ruLDkK76/l8C+ApkOfytQf06KF3+fllhfEf5II3KoFoC21aDNVM/uW6d0G/feuMpv+rmjHf9AoVokBmShMM2TzdM6Q1vRDI04tGg91tdcoBBCkp50MvkDaEEsyoYIc6hlTX7U+7i/RkguD/MQ5AIlFMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/VLy25s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EEDDC4AF0B;
-	Mon, 15 Jul 2024 11:18:51 +0000 (UTC)
+	s=arc-20240116; t=1721042483; c=relaxed/simple;
+	bh=xSPxuQs3YCL7Fk/LevmqfVSN52LSdVUw1qan0QLmPco=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MTEqC7eCPyfXkuK7W12CXLT3eQIE+vu28UrXC+Rb84fbwNnhAOsNL0pGZuI9rHPwnOhZtTau1AlBahKaqTb9VTspThtqaAMNu/8rgkCr6l9nBxExBdtfBM28IqpYH2GtDygujscE7suNAV55TfRQbaOePlTJb2bajbKg8bksLos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+hffJTs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FF3C4AF0F;
+	Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721042331;
-	bh=gM6v1f3MVNVjpe3F220a7SyLMJ+XXmEPJpYxkhnosME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/VLy25siMjF9WNsZvykAgzkawWpLkykU0qPvr4qwLqfxqcb+E8ZrCOHtxOHZ9y4m
-	 qlzjqFN0aN0p3NdZL0fS+6SRGayKo6Lm/9rl4wtpczRSaLBJKOCs4pwWIMSLBxY4CB
-	 7l/kQ0jTb77F7GTiVyqqbzA8jA0PywZKwQDDaN09q02Akv68nqm9qMw3GkCjRI3FAY
-	 ToXDBqLwr7xiC1l69s9zH7FaQgoJz+5PxBBB8NRZVx4+H8QabdIva7Yldqp8uG9Lt7
-	 JP8Un09W6bvsuFlrn5Ih8tpnmU6483NPvtrYaMSZhSHm6eWEfr4js3wZJxqsN6iVot
-	 5FkdSmBFh4pIg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sTJjD-000000005Ns-2vD8;
-	Mon, 15 Jul 2024 13:18:48 +0200
-Date: Mon, 15 Jul 2024 13:18:47 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
-	rdunlap@infradead.org, vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
-	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
-	andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
-	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
-	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
-	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
-	andersson@kernel.org, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
- per device MSI domains
-Message-ID: <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
+	s=k20201202; t=1721042483;
+	bh=xSPxuQs3YCL7Fk/LevmqfVSN52LSdVUw1qan0QLmPco=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K+hffJTsUblKYtgrbnQGoRm7fycgwx9x8tdnufv0A2AnHO29o7ltvA+nyqrXV4yEV
+	 wcs0mIEjXApwBbEcSdg4ee90U5CLe+UnAR0parU5PXa/Ae2/fxPm4DnXgO39lDuByc
+	 8dYlofq/Hb9vWkGMswmEkizzYtvNXnXpP8QKB9zcgseKEnH5Jinn2xP+AMmxQ5He6f
+	 1rWYwGMqqW+cluGVgDZyeyrYPLSsoYmgnwBTjBqHkVN/gtLWt4Kzgc8TSv1zAWw7Zz
+	 DtTvjh1sG44jyVPJaMDqzPfbgAkT3LNyuD6AqkUH52kkAHZattmsNwFVsDxuU+3oxZ
+	 /xYaFoJwi5hAw==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d9dd8bc70dso396895b6e.2;
+        Mon, 15 Jul 2024 04:21:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaWizu1jQlA/qgO6cU70KbeIIWkzSpQn8AEI7VCgKS6BgO/xq+YSnd4FoqH+zKFJ64R1SKvAjXvUPigsMr3rD4VHxfcEgDL8A9IjeP6JtrUV9qE/sGLHqKxUYJlDqAefrwvKDxJ2E=
+X-Gm-Message-State: AOJu0YxEzv2ZLhdNH/pT/MYie4kevrFRJEM6ZDMb3naqzlLXlYbsSxlY
+	E6HPtAT5Ex22yahX8gMiFEl29Eus16hAsWq6WpcdykSkeglLXm2JGqtluI4y2VeQd+aUJiGAgOe
+	H2iXMR8Jctd4LqsSqBnc4LUiHI5k=
+X-Google-Smtp-Source: AGHT+IGGFyx0gkRYa/1bS2DCMCLQn+4THVLOBxOkP1F1xPABGb6t61BRJGSdhtuHZO9jXlany+YE8DBzGpoMUpyvWy0=
+X-Received: by 2002:a05:6871:5d1:b0:259:f03c:4e90 with SMTP id
+ 586e51a60fabf-25eaec7b6a5mr17293569fac.4.1721042482401; Mon, 15 Jul 2024
+ 04:21:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623142137.448898081@linutronix.de>
+References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
+ <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
+In-Reply-To: <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Jul 2024 13:21:06 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
+Message-ID: <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
-> This is version 4 of the series to convert ARM MSI handling over to
-> per device MSI domains.
+On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 15/07/2024 06:45, Eric Biggers wrote:
+> > Hello,
+> >
+> > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
+> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>
+> >> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+> >> if zone temperature is invalid") caused __thermal_zone_device_update()
+> >> to return early if the current thermal zone temperature was invalid.
+> >>
+> >> This was done to avoid running handle_thermal_trip() and governor
+> >> callbacks in that case which led to confusion.  However, it went too
+> >> far because monitor_thermal_zone() still needs to be called even when
+> >> the zone temperature is invalid to ensure that it will be updated
+> >> eventually in case thermal polling is enabled and the driver has no
+> >> other means to notify the core of zone temperature changes (for exampl=
+e,
+> >> it does not register an interrupt handler or ACPI notifier).
+> >>
+> >> Also if the .set_trips() zone callback is expected to set up monitorin=
+g
+> >> interrupts for a thermal zone, it needs to be provided with valid
+> >> boundaries and that can only be done if the zone temperature is known.
+> >>
+> >> Accordingly, to ensure that __thermal_zone_device_update() will
+> >> run again after a failing zone temperature check, make it call
+> >> monitor_thermal_zone() regardless of whether or not the zone
+> >> temperature is valid and make the latter schedule a thermal zone
+> >> temperature update if the zone temperature is invalid even if
+> >> polling is not enabled for the thermal zone (however, if this
+> >> continues to fail, give up after some time).
+> >>
+> >> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()=
+ if zone temperature is invalid")
+> >> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033=
+fca16@linaro.org
+> >> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.ne=
+t
+> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > On v6.10 I'm seeing the following messages spammed to the kernel log en=
+dlessly,
+> > and reverting this commit fixes it.
+> >
+> >      [  156.410567] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  156.666583] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  156.922598] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  157.178613] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  157.434636] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  157.690774] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  157.946659] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  158.202717] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >      [  158.458697] thermal thermal_zone0: failed to read out thermal z=
+one (-61)
+> >
+> > /sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
+>
+> Does the following change fixes the messages  ?
+>
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> index 61a4638d1be2..b519db76d402 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> @@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct
+> thermal_zone_device *device,
+>
+>         if (!iwl_mvm_firmware_running(mvm) ||
+>             mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
+> -               ret =3D -ENODATA;
+> +               ret =3D -EAGAIN;
+>                 goto out;
+>         }
+>
+>
+> --
 
-> The conversion aims to replace the existing platform MSI mechanism and
-> enables ARM to support the future PCI/IMS mechanism.
+It would make the message go away, but it wouldn't stop the useless
+polling of the dead thermal zone.
 
-> The series is only lightly tested due to lack of hardware, so we rely on
-> the people who have access to affected machines to help with testing.
-> 
-> If there are no major objections raised or testing fallout reported, I'm
-> aiming this series for the next merge window.
+I think that two things need to be done:
 
-This series only showed up in linux-next last Friday and broke interrupt
-handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-and x1e80100 that use the GIC ITS for PCIe MSIs.
-
-I've applied the series (21 commits from linux-next) on top of 6.10 and
-can confirm that the breakage is caused by commits:
-
-	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-
-Applying the series up until the change before 3d1c927c08fc unbreaks the
-wifi on one machine:
-
-	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
-
-and backing up until the commit before 233db05bc37f makes the NVMe come
-up again during boot on another.
-
-I have not tried to debug this further.
-
-Johan
+(1) Add backoff to the thermal core as proposed previously.
+(2) Make iwlwifi enable the thermal zone only if the firmware is running.
 
