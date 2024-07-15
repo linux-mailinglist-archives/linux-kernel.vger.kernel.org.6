@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-253155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13308931D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073B2931D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B864F1F2272B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06C3281F7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28537143738;
-	Mon, 15 Jul 2024 23:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C3B142659;
+	Mon, 15 Jul 2024 23:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0LDvVCLs"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOe2yyUG"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEA213B5BB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 23:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DA622626;
+	Mon, 15 Jul 2024 23:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721085346; cv=none; b=bCNaImXbN2JsbEkXU3YqUPVM52d1JSCa1yVhR43r6idh6k0HhK26Ue9O9rMUcGaeTbAT1jf/iEaez+q0jZtz693lkQLqFFHpXM5wvCsr1APJHg4AnXqIQ/81LH3LlJo/GLuq+SyoOIwZT41NCys0lCIY42XNuCOrRU/uINYXH2g=
+	t=1721085568; cv=none; b=rHzydMxm+pmhm1qfmqakeC+bTDd8px2QrxqoMUuDetVdtznevrqIGXdQcFxKs3cZG+BBrzYVwWnYP2Is0fwS2Bp85jxT8sqIZ9nnGbGpoYyuOoj9MSeT1Rfupi2tty8yyZvWSRbsisutYe0nn2hV7eiXHRTbOwbyKHQKvvJxSC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721085346; c=relaxed/simple;
-	bh=Q98GzkXhuy8Mqk8ABLLqoDEDauT65uD8JlHGR1iepyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PV1mx/LbQ4RC4ewR027N1B1xfBwheqbTUJoXwHrC/GobCSiKTvc94RzEhtflVkaQXSfK8iZfZUVYCKu//HoWY0akeSixm9SdPl1nrTFH4mg3neTJ7yPhHmlphKOqQ/3yz7vlUvW3LX5bO/YqiEZDtaaWONbbgFRWxMHdxmdBzLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0LDvVCLs; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fb2936c4ccso88125ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:15:44 -0700 (PDT)
+	s=arc-20240116; t=1721085568; c=relaxed/simple;
+	bh=WgRWYlMAiazzRfYsvU+qoobGVpdNYHrfBmXP1jZZfFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Gc2Q0ELV4yVtNVPnENZNbaEStRUldCK68Ko8Bj4NSibFJeadzX4ErXe5qYHI/P84wb1NuvcqFA45noaNIXDuwZcDVeGBF62Gawo2pq3CY6QL2TlC+L4Le1mahh62ryPJ4Fo/tBR2kXVvYi5ffEtK0Bf040w1dSkorvg1kYOU6zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOe2yyUG; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d853e31de8so2796704b6e.2;
+        Mon, 15 Jul 2024 16:19:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721085344; x=1721690144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=exEH9iPNcIg3KpVyQ+q3mCt+4C/Fcr8/ESkE/4SO1o8=;
-        b=0LDvVCLsRRWkXspdoczva2BMbEromBfdpIAsheczfEtZoJKvkQbEpyZpn3Im1wfF5W
-         UZcacuZtGj9elg8sx7Oh82BwhQwLniqwV5wUgMkcibw1GoNLDlnFpGRh09sscubHGCY0
-         omhPBnTmQAn0SW3uD8x9gEzhT8KXhvXayTCyhmT2kVbOj5wI5FqxTvds00KAQrq23OZW
-         rXGxttPZXx9Gj5mSxRFa99vT1pxaZtaqd7cZR1VJcWyV03MKdajBZj9hMdchlpuaxTSE
-         UX7FN0Vmd1kGB8uPXdukWL7gSjvQIZP4U9T7QXx025JZLj9w4mLChmvqKZKrinJ5l+dC
-         CQLA==
+        d=gmail.com; s=20230601; t=1721085566; x=1721690366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1Qh2Gh0eRUqnXUoQU2z1hxdkdPwhK18g3R02BveegPk=;
+        b=dOe2yyUGpOhW0wn/3wIZi/uIRYGgZnCu+I1YiN7+t+sRmQjUTjSJ+yx/QK46lmsgG+
+         q8M4BWofO0K6lNR1AkJZrCOVvFgIErPYfOcLI4Q48OutaJJG3cniy0hB3hrLVIRfENON
+         ODD19o2LY+Dib1Ja2kJBGQ1SoUlwE98Y5cfp3V/sO32f+u8yJmF69b1bAnn7UQlximEK
+         gfSZRXmOVPF4or6YKg5cZh8wu3qi08VtRBdcGCqmJI/DXyMQjIeBDifRXYSyetqT8uLt
+         7Cvnv8XFTkmzBeQjACMI6JCP3pkA0/u0bbMGMmnVZSccXHsXwDFovMVUA3c2l8wBFUSF
+         5ChA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721085344; x=1721690144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=exEH9iPNcIg3KpVyQ+q3mCt+4C/Fcr8/ESkE/4SO1o8=;
-        b=hGrFeV8ik4+0wV2wIpR7vD4t5MqOPH3M1Kooa1T6VkYr8N4Hp1aMpOX9pJnDf0+Jpq
-         dehfZ2S0QwEwrdFHaGYDqKoJNicIXO6qNkGxqvSCvRgJbIXNKi4iyLIVBWJEXq+BBEtG
-         dIb5TY8x1CBZAuXHRGHJWEXEW8KnVhx6FpC6UF/5uGMwL0y/DzDwx6JNU1ToDq3i2+PQ
-         PiFhITtqH2rRGOcaBZqD7eShRYwSXcxY/PQSYuWBXszjB8/8V6n7q9oZaiwKv2Ud2kU+
-         W2/SnC1jbBYJX72TyybNkMLqNLUW8pFHT5m320tnVkx7zp/YqJd+94dm40k8eT8eQygV
-         Jd6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUpsPVbwehCV6gGfn6ENPl90C7eUPw+VOHe7wm45QaiLPKJZ+b8yb+Y9p+3NMC6KwmuFUPRYjDaSNUZSqtZjA2q00JlDmQBS1ynTR4X
-X-Gm-Message-State: AOJu0YxzlDApRwy8NELGWEvmEjJSpLVvmRpX7J+9zgTWSAbbYeNSjmMT
-	G7atQnSyD8faAle3TUbN+WiL8ONKSCPLXM2tG3/jfbwCMc6FnG5ngd1Q4VpHQ6+96jkN2HDKEM7
-	3c+1gIA3EBFeCJCbqr6/H1E4fBiq0nVstudpd
-X-Google-Smtp-Source: AGHT+IF37bptgINSCLE9dDjInkdJLhm19J5sk44W8p8j4cV76p1iCJXBcZEjJTiahXiPn4ncuCw2O5xLUjXDk1VNB9o=
-X-Received: by 2002:a17:902:f688:b0:1fb:2924:5c7e with SMTP id
- d9443c01a7336-1fc3d7698a7mr591975ad.11.1721085344002; Mon, 15 Jul 2024
- 16:15:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721085566; x=1721690366;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Qh2Gh0eRUqnXUoQU2z1hxdkdPwhK18g3R02BveegPk=;
+        b=woKICfKbY+7wDd0ycCmJokBQXq/yjafsaQl1Nn3Z95JuySx5TOZ7viJsMs9XuFo2kY
+         yWfV44b4DlJ0CgfwEwgTKNTWoiC/UbA+XeEwlU1t0m4KrA77Tmzm4FUPpbcQBX89ivfT
+         H5fgO/aKtrzW2Sl4MkwryP9zjYr6bd+JSFjAQ/hhXQ1dbZgc6gtH/5vsIohk86hgxG84
+         A9P+kHbsM25GYuMVUnPhCfX1d1F9NSejR8dcJoK/3Y4YM/irfPM25R8S4wrdFl4fKeCQ
+         4RkXg1lOPKXFYCiRSbYhPX3z5xazzEPPzmicOtKzcBQqVMJA30qHGbSTavYO8byezsQf
+         8JXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeNNGthA2MUX0u0M/jujdOVH/j3VP9DBo092fbxlzgMbtS0fXMTglHZ3GMnwLogkxkOSspk5lE+FzvZItI0uMgVp3aGpb8aTUnBqdKYq3BEW8B37U47DDRD38FEJBy8rLIirdIlhtunw==
+X-Gm-Message-State: AOJu0YzqVieYsEYRf3I2P/s1JsoMPepxHcESb74+qPD8VIYpQi5jScVl
+	CLv1ng56kds3ZgNPxeCEbc1f7zSAzVhmWH2p9xP8pQsBJGRHxRtOjWWMjQ==
+X-Google-Smtp-Source: AGHT+IEzjAcIhmBBg6RPiEqq69prSZnrqcrDvu2ja9NmiSv6qWkuD6aDU7NWoePCqpNFH8JhRtAfRA==
+X-Received: by 2002:a05:6808:3088:b0:3da:82e9:ea9b with SMTP id 5614622812f47-3dac7c12e9bmr717175b6e.43.1721085565717;
+        Mon, 15 Jul 2024 16:19:25 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a160c6382esm240979985a.87.2024.07.15.16.19.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 16:19:25 -0700 (PDT)
+Message-ID: <f178aa92-d91c-406d-9fea-1021bfb99f55@gmail.com>
+Date: Mon, 15 Jul 2024 16:19:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
- <ZmxsCwu4uP1lGsWz@google.com> <CADrL8HVDZ+m_-jUCaXf_DWJ92N30oqS=_9wNZwRvoSp5fo7asg@mail.gmail.com>
- <ZmzPoW7K5GIitQ8B@google.com> <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
- <ZnCCZ5gQnA3zMQtv@google.com> <CADrL8HW=kCLoWBwoiSOCd8WHFvBdWaguZ2ureo4eFy9D67+owg@mail.gmail.com>
- <CADrL8HUv6T4baOi=VTFV6ZA=Oyn3dEc6Hp9rXXH0imeYkwUhew@mail.gmail.com>
- <Zo137P7BFSxAutL2@google.com> <CADrL8HW4PLTeC9Gq3Fd43-idjzOw8mXOzzG_RP1TYVoGp1_g+g@mail.gmail.com>
- <ZpFGYvCAQWhldWJZ@google.com>
-In-Reply-To: <ZpFGYvCAQWhldWJZ@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 15 Jul 2024 16:15:06 -0700
-Message-ID: <CADrL8HXLGj-V0Qd8U3xRXnJeMTKOJqB-TsyLTOo8j0sGo2byBw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: bcm283x: Fix hdmi hpd-gpio pin
+To: Florian Klink <flokli@flokli.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
+References: <20240715230311.685641-1-flokli@flokli.de>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240715230311.685641-1-flokli@flokli.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 8:06=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Wed, Jul 10, 2024, James Houghton wrote:
-> > 1. Drop the WAS_FAST complexity.
-> > 2. Add a function like mm_has_fast_aging_notifiers(), use that to
-> > determine if we should be doing look-around.
->
-> I would prefer a flag over a function.  Long-term, if my pseudo-lockless =
-rmap
-> idea pans out, KVM can set the flag during VM creation.  Until then, KVM =
-can set
-> the flag during creation and then toggle it in (un)account_shadowed().  R=
-aces
-> will be possible, but they should be extremely rare and quite benign, all=
- things
-> considered.
++Stefan,
 
-So I think you're talking about .has_fast_aging bool on struct
-mmu_notifier, and we would do look-around if that is set, right? So
-we'd need to have something like mm_has_fast_aging_notifiers() to
-check if any of the subscribed mmu notifiers have .has_fast_aging.
+On 7/15/24 16:03, Florian Klink wrote:
+> HDMI_HPD_N_1V8 is connected to GPIO pin 0, not 1.
+> 
+> This fixes HDMI hotplug/output detection.
+> 
+> See https://datasheets.raspberrypi.com/cm/cm3-schematics.pdf
+> 
+> Signed-off-by: Florian Klink <flokli@flokli.de>
 
-We could toggle it in (un)account_shadowed(), but I think I'd need to
-demonstrate some performance win to justify it.
+Assuming Stefan is OK wit the change, I will apply this along with a:
+
+Fixes: a54fe8a6cf66 ("ARM: dts: add Raspberry Pi Compute Module 3 and IO 
+board")
+
+> ---
+>   arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts b/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
+> index 72d26d130efa..85f54fa595aa 100644
+> --- a/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
+> +++ b/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
+> @@ -77,7 +77,7 @@ &gpio {
+>   };
+>   
+>   &hdmi {
+> -	hpd-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
+> +	hpd-gpios = <&expgpio 0 GPIO_ACTIVE_LOW>;
+>   	power-domains = <&power RPI_POWER_DOMAIN_HDMI>;
+>   	status = "okay";
+>   };
+
+-- 
+Florian
+
 
