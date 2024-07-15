@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-252517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9439F931464
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:35:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A396C931466
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1209CB2266B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:35:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312E1B217DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473E418C331;
-	Mon, 15 Jul 2024 12:35:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7530F18C359;
+	Mon, 15 Jul 2024 12:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bdz5R4gx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A46188CDE;
-	Mon, 15 Jul 2024 12:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343D188CDE;
+	Mon, 15 Jul 2024 12:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721046938; cv=none; b=u+YI94+OrDZaYUdILFbOifzIQjR3nooEBhatytDi6FhlhID1SeKd97dVC49MgTl9A1L9eW6z0t83FTImq9J5Vwz8YlNEbvBqgJTCw+0r4LSspPaIRDTpvMZ/JvAfctlY1q5ZX17iM6/KXS9fL/gTa6SPfOuZwpHcKzNEK2mLaLk=
+	t=1721046943; cv=none; b=ZGRiY4tTdltebefmaOj7/MoQt3WmrQXal8T6Uhc+sETmkwy7zcpHqD7F3XMyfKi0x5jrrbBqn+Juxq0PEEybqXdTdlSWyIULVCF/uI6GoxbAYIQGB2HL9hnzLjn4FuMZBa/5DqOro9AY6auL8BqXGe9nQqBNtoSFB7Cw60whlvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721046938; c=relaxed/simple;
-	bh=f/IoyPJRtU8HcxhEgeP6DA0rm03S9PM75FzmRXAvQug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XreBfRn5/xK6bwltMXNz6x5Fm2L1lp4OW4/RcoFs7ZzDZYceObwXRSCcAx1wQ/oiEkMrikyW9L+RQua8OF3/adUfezHGxYZg25FJSwtBcrKZ0efMu134yBncht/S9pidwLFawdqvYpHd6eP3xGBY9VsbKeYb1xxiQKSLNCDdkV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WN1kp4GZNzxStB;
-	Mon, 15 Jul 2024 20:30:42 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 057D11800A0;
-	Mon, 15 Jul 2024 20:35:32 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 15 Jul 2024 20:35:31 +0800
-Message-ID: <57994fe4-edd0-bc28-c134-83f72579c6c8@huawei.com>
-Date: Mon, 15 Jul 2024 20:35:30 +0800
+	s=arc-20240116; t=1721046943; c=relaxed/simple;
+	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHdeKgawSgZD9fVoJI4tsLHtV4G44pRt4qNsz98rOLYLNBGrNETsTOEmwWXj/aphM216Dbo9h4isNoQhUjiacQ/xfmQVZmIwG97FpnlLTkG4XedoSn7oP5/X3F7v/dEL2LFpfBdSW5icvppeHBKpMRyAx5v0yzpAqK+fuDzo+rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bdz5R4gx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384D5C4AF0B;
+	Mon, 15 Jul 2024 12:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721046943;
+	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bdz5R4gxJ6Ql8J56U35nW3YJFoCxycQ3kqm/w93AMzJBgOYYgAskgX3gPKobqBgaW
+	 InVTSK9IwUIDsyF7+2dIofE/S5K3eMrZYhEtRi/iUuyRnHxq41nErZ0quiloXbumOT
+	 A2o3t2Hfyv3s7gNESOzpEHSOxPrKWfOu454PL5baht1XXtIJWzSCfrltGPBy1D6WHG
+	 HMBOgdAMgaeKZFg2UkNBQffvbtt0tkttLQ2lrb6TN511Zw2BiAr4PZqcvC75ODb0XP
+	 XcuIxMH/E0TtKJ2AVmYwlgWsLO0lh4hdKY3147sfGPaFc2XeHELvyGr4xTjtuqZiZA
+	 FminSopmobn3w==
+Date: Mon, 15 Jul 2024 14:35:39 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dhowells@redhat.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] vfs: ensure mount source is set to "none" if empty
+ string specified
+Message-ID: <20240715-abgibt-akkreditieren-7ac23ec2413c@brauner>
+References: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH -next] blk-cgroup: move congestion_count to struct blkcg
-Content-Language: en-US
-To: Tejun Heo <tj@kernel.org>
-CC: <josef@toxicpanda.com>, <axboe@kernel.dk>, <lizefan.x@bytedance.com>,
-	<hannes@cmpxchg.org>, <cgroups@vger.kernel.org>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240712085141.3288708-1-xiujianfeng@huawei.com>
- <ZpK8Nup6_sOvSZ7E@slm.duckdns.org>
-From: xiujianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <ZpK8Nup6_sOvSZ7E@slm.duckdns.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
 
+> The issue can be easily reproduced.
+>  #mount -t tmpfs "" /tmp/tdir
+>  #grep "/tmp/tdir" /proc/$$/mountinfo
 
+The kernel has accepted "" before the new mount api was introduced. So
+the regression was showing "none" when userspace requested "" which got
+fixed. The patch proposed right here would reintroduce the regression:
 
-On 2024/7/14 1:41, Tejun Heo wrote:
-> Hello,
-> 
-> Sorry about the previous reply. I completely misread the patch.
-> 
-> On Fri, Jul 12, 2024 at 08:51:41AM +0000, Xiu Jianfeng wrote:
-> ...
->> only compiling tested
-> 
-> It'd be better if there's a bit more verification.
-> 
->> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
->> index 37e6cc91d576..01d3408c2fc6 100644
->> --- a/block/blk-cgroup.c
->> +++ b/block/blk-cgroup.c
->> @@ -2183,11 +2183,13 @@ void blk_cgroup_bio_start(struct bio *bio)
->>  bool blk_cgroup_congested(void)
->>  {
->>  	struct cgroup_subsys_state *css;
->> +	struct blkcg *blkcg;
-> 
-> It'd be better to define this within the loop.
-> 
->>  	bool ret = false;
->>  
->>  	rcu_read_lock();
->>  	for (css = blkcg_css(); css; css = css->parent) {
-> 
-> Also, if we're now dealing with blkcg's, there's no reason to go blkcg ->
-> css -> blkcg again. It'd be better to get the initial blkcg and then walk up
-> using blkcg_parent().
+(1) 4.15
+    root@b1:~# cat /proc/self/mountinfo | grep mnt
+    386 28 0:52 / /mnt rw,relatime shared:223 - tmpfs  rw
 
-Thanks, will do in v2.
+(2) 5.4
+    root@f1:~# cat /proc/self/mountinfo | grep mnt
+    584 31 0:55 / /mnt rw,relatime shared:336 - tmpfs none rw
 
-
-> 
->> @@ -95,6 +95,8 @@ struct blkcg {
->>  	struct cgroup_subsys_state	css;
->>  	spinlock_t			lock;
->>  	refcount_t			online_pin;
->> +	/* If there is block congestion on this cgroup. */
->> +	atomic_t congestion_count;
-> 
-> Can you please match the indentation?
-
-Sure, I copied it from the original place, will do in v2
-
-> 
-> Thanks.
-> 
+(3) 6.10-rc6
+    root@localhost:~# cat /proc/self/mountinfo | grep mnt
+    62 130 0:60 / /mnt rw,relatime shared:135 - tmpfs  rw,inode64
 
