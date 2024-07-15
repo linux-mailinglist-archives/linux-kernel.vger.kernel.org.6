@@ -1,129 +1,212 @@
-Return-Path: <linux-kernel+bounces-252583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C13C93158A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:19:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BA09315A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69CA1F22124
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:19:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC5B280CDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C9E18D4CD;
-	Mon, 15 Jul 2024 13:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE9918EA9D;
+	Mon, 15 Jul 2024 13:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qG+JJCdr"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GALUEUW9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80AA189F59;
-	Mon, 15 Jul 2024 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E1818E754;
+	Mon, 15 Jul 2024 13:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049578; cv=none; b=iT6wSWQoLwMrZIXjiMhJMx7RW6gXXKGNSTanqjkW2oQoXwlVkYg/Gr65PBaPeVI1YQh17vpuQnq8jtWShZZeDa7BtcXaGaa44o+5ccHIxq9wI84/OrrNkNUghlive8Dq/FrJk1+j+N6Kogyf3dmyqxdSDeRu9YHYTsQCN2qqjWM=
+	t=1721049642; cv=none; b=g5wpNR7YOoxFBDx+vNvoOFCvqK+WCM7Idmf2J6LoINC9V05FDBs003yoNAOiwFWOTcFyL2MkrLsg2x/pyjExStvR22yNWYBup6wioj5P1sM3dMSvFtKeOrBSrj45HKjlIhH0Q6rakiSGxcKnEhsx1+S++MCJ/p2DSVAexnC8jvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049578; c=relaxed/simple;
-	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=dv5Y2bLFLkrvN0+hlv7DybIE8V/mS2qzl0l+unuujZsQM+ac7TPVvgaFMAj04PgFeK7hfGFmvYxXCN+mdvc/j/gJDvZuE480QUQSHuhx2qTEOleT4wVTPMHhTSjh153QSknvDyIv++5sFYRjXU2aJ0e12vIvVHuGcALst52I2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qG+JJCdr; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721049540; x=1721654340; i=markus.elfring@web.de;
-	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qG+JJCdrVFKUMJy5ceJT8hntkrkhkXkHlZ6hlrGWBwS2fyMgXfdUJqnU33WrLFTB
-	 t50JYaF5OFIKjzhs14wJIHHw+IsL/DwBR9d0oCjuxzq/CTlPIE1uKdkpXdUzO6ZEK
-	 sOKT3hRskQNqSsxKmTroR1UNBdvgUnDTQ4AqSC1Wa/kg+CAEeGI/bpdn/fY4Ah9O5
-	 4AqO6kMoT2l2RHrdfLIiSw4OM2I6iw5BzoydhAqSkDJyrImZ79Jf7BYHMPZcHf0fm
-	 bQn8WnlYPtNrLMAOetuIP6iAj4jtGZ9j9YDGQIx0bIZyUfQxmOQyjg9W3zkpLkLoK
-	 z7l6LtplhOMGpbzbgA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1s6kgV12v9-00xrqD; Mon, 15
- Jul 2024 15:19:00 +0200
-Message-ID: <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
-Date: Mon, 15 Jul 2024 15:18:56 +0200
+	s=arc-20240116; t=1721049642; c=relaxed/simple;
+	bh=6hyYPxFUhD7I6zyQtASLR4ctfHmneimEK/DsS+cEBs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=khyBbkPPmeDIL79az5hcZzAIjurhZ95VHCNZeviSpPI92BntbFrZt65NAERNJJpaMd9A1/bIYlDyof+OtkH3oN6kwNL4d2+m8QFHWqSU72d16z5a3NXhTPaIDpkX2riYtIuJhu8CYsPcBqUnI/YYpbiMlum3BlPGf4BKzYrYVKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GALUEUW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C7BC4AF11;
+	Mon, 15 Jul 2024 13:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721049641;
+	bh=6hyYPxFUhD7I6zyQtASLR4ctfHmneimEK/DsS+cEBs4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GALUEUW9q9h+1ku9gbbMW+doZdhUY9GOL+DpYN4PwJ4TKXQf5LLhmEneF4bWyVOrt
+	 4FLBDslEtrroUTihxtg+J26UIU31sa2JHiU7psQFHJQFa5tfAybhQ16WLSWqJt7dlG
+	 Yu5PkMZRnEwAlnoBBHtRgkbvEpXMST6vL7REsBbKwXmqhYIx9dHiITzx/gcbHln0P8
+	 rRPwiz/dGC1MsUvMbs58OP9fUqHqdxTRj/NwP5PDWfcndlAPJcQ/k0h/e6q8znZm1d
+	 ZzYM2pqE7d+pjeiHc4iyTD7EWGdJ+7yScf1cYQfef1gdbHJQtKxXaz1rgz2wWj9Oe5
+	 Qdq/MxDICgWPQ==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77c349bb81so448332166b.3;
+        Mon, 15 Jul 2024 06:20:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCValzjXn7mTu4vanF4ZB9UctW7UkIhAP7lFPt2vaB++swSskMvoTwSNJ+eOAKdwz53/nww3yxgzGguguRY5u8FZvifwdoQMJDQWUSFpD8QAf8bjcqUBBISNrvoymUb7GQ3PH1MkVbTJ3qc=
+X-Gm-Message-State: AOJu0YzrtTLQZIWBUro3qaOayLswkzjpea7Qe3Jk/X5fbb6oAJBTlTyS
+	BACy/tGOLihddalz8JhxTA0DKuqE3+stHL3rwXhlOqcg/x21qcsomKxjmxwb5xVvJ0cTlP+Ig5W
+	HpLnz8rWaBw4gVll7rKc5Ze1xPwA=
+X-Google-Smtp-Source: AGHT+IH0RwYYQ+jpcfsnA7c4Vaum6zxOH6AHJKMaCHlFjwIJd3yCpDozCc5M9HIOZ/aL63Lwu2h/NaZVXFYOrnCiTqk=
+X-Received: by 2002:a17:907:7255:b0:a77:c080:1200 with SMTP id
+ a640c23a62f3a-a780b6b3a91mr1441622666b.31.1721049640276; Mon, 15 Jul 2024
+ 06:20:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
- Arnd Bergmann <arnd@arndb.de>, Frederic Barrat <fbarrat@linux.ibm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ian Munsie <imunsie@au1.ibm.com>, Maxime Ripard <mripard@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Shuah Khan <shuah@kernel.org>,
- Wei Liu <wei.liu@kernel.org>
-References: <20240715025442.3229209-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
- read_handle()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240715025442.3229209-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+References: <20240715130820.19907-1-jth@kernel.org>
+In-Reply-To: <20240715130820.19907-1-jth@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Mon, 15 Jul 2024 14:20:03 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H7Lhym2F82Fu=VDoD1uvvVFW2q9WVx_pM0jVf+VS=ji8A@mail.gmail.com>
+Message-ID: <CAL3q7H7Lhym2F82Fu=VDoD1uvvVFW2q9WVx_pM0jVf+VS=ji8A@mail.gmail.com>
+Subject: Re: [PATCH v4] btrfs: don't hold dev_replace rwsem over whole of btrfs_map_block
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, 
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:60AT5T8BRZHQ6Gfv9u427isOzaT1ol9JQSTUXVRY8R+RWiR+wlg
- uOOY0ka3OvtSIcX6lXp4OgDSPrJFLe03Ofze5Hs3wM9Z9IePcr3uBn+DZP1YpGcBh3A49id
- zatBnGaU1zQtqqXMksLXbjlMe4ZRKgt2qtbHowpg44jp0okSPQESB/hzUIbO43MhyUft7NK
- S3n1WF9VfhlErESXakadA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:viLqW/CObXo=;0l1lBepkdtz8vogJ+28NR/ACuF1
- orJWguKXGfvjM4ndYEQhEBoyIbZYVTbZH4X1Cqxb/x01Utdj3CvDfE5wT2jmbFKkCWdblPM8a
- cjAmiD+2zhYJvPABeiLM7gy/DtyL3PmpuOxIFV/zozqKwTpNwQx2pMRhGkllRwoM/Nps+La8W
- cjAjmITuRSge2ykwpRHJ+7+cPiIKkvKtUvuDp7GJYlL3jMwMMgpxLyTjgcUIDx3peD5lU463P
- JOdpKWLzZ+WuQKI2BYPFXPrxRO3quZqrrhx5EWXsmUQdVM0t8DsliOp4NnCQdMbUinmUi5QUN
- ZY9ZvajK6GAUozrTrAtQ5l0ULyYjHMCDqYrQ2vtFkL5T6hWhyuESPpg+tRSNnnfWWze1gQS6f
- mi5dLB+sZugZ6K1zTYXaq1me90EBn3G6KmNbw/IAr7XI0Vf0aqmGVDOQ0Rxr7X10ICsAuGTDo
- 4sUlUiiGNv43NEP25qFrZktinKTimy6tMFm/rlc0ki/nP5uvCQ8R0Pcuhs607n1fOunsrkzxh
- A3KkhwczFYgOqLoHJBMpw6l+5P5p3bcVIR0AgqqIdzt7m+TGZH8MJyc85CJRZMGXkwoS6o5mG
- BqS3stnqgZc5iX9g6xBU0n7NaF8qwr+NirvNsgimUQMesbMValrBB1HYRg7UsvNKKDkzpteAV
- WGUSDaLt72FP+m5Pdap3cf0cX+XpeVz7dSILoZRZ2NnUoIWiry9bED1b8qLQLsgRUKWYheKlH
- 2wMek/9d295pYAzNuUYG0oDUE/g9ThlXKOO2E/FzceIJxXZxk5Mc7o0UFt9KreO9u7XX3NVp/
- 0KkwSfS6nZJ0c3pc6uu8Ldig==
 
-> In read_handle(), of_get_address() may return NULL if getting address an=
-d
-> size of the node failed. When of_read_number() uses prop to handle
-> conversions between different byte orders, it could lead to a null point=
-er
-> dereference. Add NULL check to fix potential issue.
+On Mon, Jul 15, 2024 at 2:13=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
+ wrote:
 >
-> Found by static analysis.
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >
-> Cc: stable@vger.kernel.org
-> Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Don't hold the dev_replace rwsem for the entirety of btrfs_map_block().
+>
+> It is only needed to protect
+> a) calls to find_live_mirror() and
+> b) calling into handle_ops_on_dev_replace().
+>
+> But there is no need to hold the rwsem for any kind of set_io_stripe()
+> calls.
+>
+> So relax taking the dev_replace rwsem to only protect both cases and chec=
+k
+> if the device replace status has changed in the meantime, for which we ha=
+ve
+> to re-do the find_live_mirror() calls.
+>
+> This fixes a deadlock on raid-stripe-tree where device replace performs a
+> scrub operation, which in turn calls into btrfs_map_block() to find the
+> physical location of the block.
+>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
+>
+> ---
+> Cc: Filipe Manana <fdmanana@suse.com>
+>
+> Changes in v4:
+> - Free bioc in case we need to redo the mapping
+> Link to v3:
+> https://lore.kernel.org/linux-btrfs/20240712-b4-rst-updates-v3-1-5cf27dac=
+98a7@kernel.org
 
-How will interests evolve for caring more according to known research
-and development processes?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
+Looks good now, thanks.
 
 > ---
-> Changes in v4:
-> - modified vulnerability description according to suggestions, making th=
-e
-> process of static analysis of vulnerabilities clearer. No active researc=
-h
-> on developer behavior.
-=E2=80=A6
-
-Does such information indicate any communication difficulties?
-
-Regards,
-Markus
+>  fs/btrfs/volumes.c | 29 ++++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index fcedc43ef291..9437e779d020 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6650,14 +6650,9 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
+ enum btrfs_map_op op,
+>         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
+>         *length =3D min_t(u64, map->chunk_len - map_offset, max_len);
+>
+> +again:
+>         down_read(&dev_replace->rwsem);
+>         dev_replace_is_ongoing =3D btrfs_dev_replace_is_ongoing(dev_repla=
+ce);
+> -       /*
+> -        * Hold the semaphore for read during the whole operation, write =
+is
+> -        * requested at commit time but must wait.
+> -        */
+> -       if (!dev_replace_is_ongoing)
+> -               up_read(&dev_replace->rwsem);
+>
+>         switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
+>         case BTRFS_BLOCK_GROUP_RAID0:
+> @@ -6695,6 +6690,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>                            "stripe index math went horribly wrong, got st=
+ripe_index=3D%u, num_stripes=3D%u",
+>                            io_geom.stripe_index, map->num_stripes);
+>                 ret =3D -EINVAL;
+> +               up_read(&dev_replace->rwsem);
+>                 goto out;
+>         }
+>
+> @@ -6710,6 +6706,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>                  */
+>                 num_alloc_stripes +=3D 2;
+>
+> +       up_read(&dev_replace->rwsem);
+> +
+>         /*
+>          * If this I/O maps to a single device, try to return the device =
+and
+>          * physical block information on the stack instead of allocating =
+an
+> @@ -6782,6 +6780,19 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
+ enum btrfs_map_op op,
+>                 goto out;
+>         }
+>
+> +       /*
+> +        * Check if something changed the dev_replace state since
+> +        * we've checked it for the last time and if redo the whole
+> +        * mapping operation.
+> +        */
+> +       down_read(&dev_replace->rwsem);
+> +       if (dev_replace_is_ongoing !=3D
+> +           btrfs_dev_replace_is_ongoing(dev_replace)) {
+> +               btrfs_put_bioc(bioc);
+> +               up_read(&dev_replace->rwsem);
+> +               goto again;
+> +       }
+> +
+>         if (op !=3D BTRFS_MAP_READ)
+>                 io_geom.max_errors =3D btrfs_chunk_max_errors(map);
+>
+> @@ -6789,6 +6800,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>             op !=3D BTRFS_MAP_READ) {
+>                 handle_ops_on_dev_replace(bioc, dev_replace, logical, &io=
+_geom);
+>         }
+> +       up_read(&dev_replace->rwsem);
+>
+>         *bioc_ret =3D bioc;
+>         bioc->num_stripes =3D io_geom.num_stripes;
+> @@ -6796,11 +6808,6 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info,=
+ enum btrfs_map_op op,
+>         bioc->mirror_num =3D io_geom.mirror_num;
+>
+>  out:
+> -       if (dev_replace_is_ongoing) {
+> -               lockdep_assert_held(&dev_replace->rwsem);
+> -               /* Unlock and let waiting writers proceed */
+> -               up_read(&dev_replace->rwsem);
+> -       }
+>         btrfs_free_chunk_map(map);
+>         return ret;
+>  }
+> --
+> 2.43.0
+>
+>
 
