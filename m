@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-253089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93999931C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:00:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCFB931C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D9E1F22D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:00:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A02BB21419
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E9B13C673;
-	Mon, 15 Jul 2024 21:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1297313C67B;
+	Mon, 15 Jul 2024 20:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0xALRDM"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VHd/xE/7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jbNIKKe2"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78450C15B;
-	Mon, 15 Jul 2024 21:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EBE13A3E8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721077226; cv=none; b=Eh7cmOrQZqkGjAHQK/lUc/ySZGI7xPyKhWpR2EcBNUM8BkE+lQxSvCwk885wH4/dRqVaoxj8twSDGb4segmZEOHoKrRTa3eum28cO1tkCN0iHK4xdYXX+VMiBFeV7qxzXTMrzQCjV6eDAHSxAKhYsC4F36qW9WtciLLhEUFsfDA=
+	t=1721077001; cv=none; b=DefXHY81i2N7gpn8Hu2y4+jpggO5d94nR/yndHo2/nH/5dCg+MIOaJkPhWWPimYFm+jo0wo2JB9QsR4+OSRYmkruJHJS06hSuQQpE9kjRixCKY0MPS9Oets/7MIa9InTH3+Dxs0I8qxMP0LKe7TPYMfZcLsvn/VQlpzHABWd7BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721077226; c=relaxed/simple;
-	bh=AXs4n5DwZIYUmFhnZGwSKgSgTVqJW8zbrkX+BrFGJBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mGXgyV7usGkuGkahVoPOIdTpo3kSuFYMld9ydUE0DGsiHuj2MLtOVm0aWnRr8pv60BPy65YOmNSKqqY5d5wKp1LyNoy15C19g+rqtzivS1sGQH2AqjTpqnWLgj8VKzqevKQLWG+qwHsxeGbycT5cTclB2HRN5vfJrNWL1loG5fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0xALRDM; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58d24201934so1013130a12.0;
-        Mon, 15 Jul 2024 14:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721077223; x=1721682023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENhBd/giIBmvRGbAMxmpkg4562kxij7xYuSKRQdtVwY=;
-        b=Y0xALRDMRvHcVK7b4HPwdUHuYBaCj1X8fZKHm2RNsakkQy6Bzpbxkhp5kG63XV8/Ru
-         cv/fkcpJM3KtJEOh5ThHKV+GW11dcE5inFq//ES1nd2R6r5ZYNUyyAEQo77Q3OxuJjXz
-         X4zQzgFqRlIVWx1/Gr9HLmj7vP1R5vDSz9xiiNBmyVP9d9nhXbZXjstGIdlHPk9aaf+D
-         zgq6So3XhtCDRk7hyOm+XVKy7SuuqLqOTJ5/UVjKG2BuBdQUkaUUFB8TL0oBB8fUdQKz
-         eLMYV02gzzpnuGiMLoFCsp1qVYfI1P2H9gCngqCVVUUsrSoy8/3UdCFIRnviUcrfH1mb
-         MHIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721077223; x=1721682023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ENhBd/giIBmvRGbAMxmpkg4562kxij7xYuSKRQdtVwY=;
-        b=INPs8SK01VSbU63oEJDJL1aZloDMFqqAnHlFzvimUf7cUZl84Ah8Mybjjy1+plauhX
-         V2XPltFCB6ZyisAw2YBJa71yTTjc97TTiUKwY002gZjO+g4VcJ+x39vHJqxX3fUecy5Y
-         8Gv9hrvN94EvufYxV9RfO411aO8M5/rc6usMs2ZUF8KNo7vpu+AykNQFueRIiA8ebXQ0
-         YKmVTc7JSGz2zgyyk9xVpUyL0XAYn/23UomuX4MSLhY9KmS1eCw+E8gcPioI9+9ysHZK
-         xKkBAAp2kJHShlTo2+u0KgnNUJMHVaxmkt4mo1AEtjfud0rV7tmzfI4ieCCz8lj9ZGFK
-         EPdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9b2RvPMiocac7HuvLO10EkACVZjoB0O+T4rsvg/bSaD8lcg/InweEsZFIw8KunCiwCErGmrvSKAl0LkjiUo6MkW7/GAzgV4tGGbp1n7eBGNkx4gkKspOydYIYwl7ZazuiZCCr18xmzfIpvw==
-X-Gm-Message-State: AOJu0YyViM99UWFY2phvLb9KlBFO7FX2brlsOE68VNp24fVmfqxZuaBp
-	7lYsbb38Z69gpvZTkDwdRuMf+KCq45XavpOLbdjj7vmBpkn/nBZPN/biemSQjZSo0+e+x/lvMnd
-	4EJ9xj+XyTfBnbNrVsL3+yUxRCU4=
-X-Google-Smtp-Source: AGHT+IELtIRuj2IFPS5Auby4HYA8C0n5FWUVbyyAlN9va4Y+v2PBAGvwaktfslNPDacTrYXKOEvXvFlTGlHsl4ysZ4c=
-X-Received: by 2002:a50:a6c3:0:b0:58c:10fd:5082 with SMTP id
- 4fb4d7f45d1cf-59eefbabcadmr72316a12.10.1721077222774; Mon, 15 Jul 2024
- 14:00:22 -0700 (PDT)
+	s=arc-20240116; t=1721077001; c=relaxed/simple;
+	bh=rDISxh/ZqH6TJg3U9p6YS5eMepg7UsC9ssTOrfpCai0=;
+	h=MIME-Version:Message-Id:Date:From:To:Cc:Subject:Content-Type; b=KK2ze1OIfBEYLztiXNCVVnPDkHRQ5rrFJF63/umgIWPZOskEdLDtnZh+TEfSurW59EHrCTqfCPYA3kKnULrZ9UQJVDeNflig7TWfBeGZwLCtiQ+S1fi5TYtYkJbNPmq4joxMDHs4BMPv4L9mFZohUbVZsZN0ZJ5NRoCaog1YX0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VHd/xE/7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jbNIKKe2; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id A6FC01388B1F;
+	Mon, 15 Jul 2024 16:56:38 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 15 Jul 2024 16:56:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1721076998; x=1721163398; bh=89
+	e6/j8ZWiMcFYzt0hDXdGvhC/f0P0quEQtnmbKN1SU=; b=VHd/xE/7XDJL+WZraK
+	BlGrie+Q5pOErxp9Cyk0gAmjTo9a2e20yG5u4Tz40yLfOYT5jzVP1ynodLpmbj8R
+	rDeBzHwD/qNqqizfUr/qiPkfcw22Fe5nZwUJ+jD5/PjN9490WhqPzbsl50Adpg4m
+	V+jfgKQK+wNrshvh0tgQao2ipKXjQ8+lN+F4PYc38eCNLSPYIUp/dVYtJZQ1fvXP
+	4CqLFPRBZD20gv5p0khNue/3fN4SJUfEF7ZWhbfDAwQktJfv6CH24HQ8xEAlhWLB
+	6COFPkg5hwLYM3IIIRB50NqyFN7vVJ8BxNeYEjLdv7IODcKU2gGDMoPX3TfnvH+y
+	DQcg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1721076998; x=1721163398; bh=89e6/j8ZWiMcF
+	Yzt0hDXdGvhC/f0P0quEQtnmbKN1SU=; b=jbNIKKe2ttFWlIg5CPZFnAfGh/Z+s
+	slsTle/8bODtK/qH3F1OyJIcAPy9hmrqbzbcZaQb1RFoS8frEvW6OV9uzArNpHGF
+	WUvnJT2cLB5NS0Ds0hq+jaK0LR5RV4WK2+FnlJsps8lb2YowbgV5h1kIT+jCBd46
+	vZBQ+mz/nLNPxCFYWi7ZqJrqBK/PFfihgzCq1dP9ybP6PA2w4yPWuGrx/3LtrKLv
+	OJ1GxyzxTr20UuTtEWrs0Dln8YsvXllvptRxmw5D5lspvP3DdN9HUHiOCRQAGiYj
+	vDGDlkY0gyeJj+sVlRbr+tLAPmT/vGPdSWlKUaFe+WENzoMUdUZi+7EGw==
+X-ME-Sender: <xms:BY2VZrpD_i7M7UmOM-SU2GKU2efYcaKIdBeRAkZLOwQsGZh2N5_C1Q>
+    <xme:BY2VZloOinY_xJKpBm3pvtCm-ZddAFoWRzDojAUjXwEqKwGU9Dn4vDZIHsRsCYSSd
+    o7M9HDunIQCXafVZQc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgedvgdduheegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkfffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeefheelfeetheelvdeiieeffeethfekvdehheduleetveeikeehhfeghfevkeff
+    ueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:BY2VZoNQBcCoa6zuHjY_uN0jHn1UcGF97MyoLAVRIzMdshFLZ23XvA>
+    <xmx:BY2VZu5lQKDU2dnaGfdHWphGLYDSa0uw3Q1tHVRkTk5j5xL8PNv8Cw>
+    <xmx:BY2VZq7-qq7ehDsR67VsafggBsc3k_-2EQbCAVBfyIDcxzQjpGV3NA>
+    <xmx:BY2VZmhg7Szkf9xl49sJ41VK93wZkX9OFeLBc1a8n4B4rSbbpkPlcw>
+    <xmx:Bo2VZglrKqbc2nXoHBBHzs_OiYX4HPS7zkwTmA_87MVW2JFnYbYdh6eU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6039FB6008D; Mon, 15 Jul 2024 16:56:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711100038.268803-1-vladimir.lypak@gmail.com> <20240711100038.268803-2-vladimir.lypak@gmail.com>
-In-Reply-To: <20240711100038.268803-2-vladimir.lypak@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 15 Jul 2024 14:00:10 -0700
-Message-ID: <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/msm/a5xx: disable preemption in submits by default
-To: Vladimir Lypak <vladimir.lypak@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <fe3126a0-7c32-426a-9997-77d76ade5179@app.fastmail.com>
+Date: Mon, 15 Jul 2024 23:03:57 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ soc@kernel.org
+Subject: [GIT PULL 0/4] soc tree for 6.11
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 3:02=E2=80=AFAM Vladimir Lypak <vladimir.lypak@gmai=
-l.com> wrote:
->
-> Fine grain preemption (switching from/to points within submits)
-> requires extra handling in command stream of those submits, especially
-> when rendering with tiling (using GMEM). However this handling is
-> missing at this point in mesa (and always was). For this reason we get
-> random GPU faults and hangs if more than one priority level is used
-> because local preemption is enabled prior to executing command stream
-> from submit.
-> With that said it was ahead of time to enable local preemption by
-> default considering the fact that even on downstream kernel it is only
-> enabled if requested via UAPI.
->
-> Fixes: a7a4c19c36de ("drm/msm/a5xx: fix setting of the CP_PREEMPT_ENABLE_=
-LOCAL register")
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a5xx_gpu.c
-> index c0b5373e90d7..6c80d3003966 100644
-> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> @@ -150,9 +150,13 @@ static void a5xx_submit(struct msm_gpu *gpu, struct =
-msm_gem_submit *submit)
->         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
->         OUT_RING(ring, 1);
->
-> -       /* Enable local preemption for finegrain preemption */
-> +       /*
-> +        * Disable local preemption by default because it requires
-> +        * user-space to be aware of it and provide additional handling
-> +        * to restore rendering state or do various flushes on switch.
-> +        */
->         OUT_PKT7(ring, CP_PREEMPT_ENABLE_LOCAL, 1);
-> -       OUT_RING(ring, 0x1);
-> +       OUT_RING(ring, 0x0);
+Hi Linus,
 
-From a quick look at the a530 pfp fw, it looks like
-CP_PREEMPT_ENABLE_LOCAL is allowed in IB1/IB2 (ie. not restricted to
-kernel RB).  So we should just disable it in the kernel, and let
-userspace send a CP_PREEMPT_ENABLE_LOCAL to enable local preemption.
+Here are the four pull requests for the soc tree.=20
 
-BR,
--R
+We have again just over 1000 non-merge changesets in the SoC tree, from
+62 pull requests plus some individual patches. About 80% of this is arm6=
+4,
+the rest is arm32 and riscv.=20
 
->         /* Allow CP_CONTEXT_SWITCH_YIELD packets in the IB2 */
->         OUT_PKT7(ring, CP_YIELD_ENABLE, 1);
-> --
-> 2.45.2
->
+Not much sticks out in the contents, there are three new SoCs and a
+fairly large number of new machines, but it's spread out over a lot
+of platforms, with rockchip and ti having more than usual.
+
+The overall diffstat is
+   0.4% Documentation/devicetree/bindings/arm/
+   0.9% Documentation/devicetree/bindings/
+   0.2% Documentation/
+   0.4% arch/arm/boot/dts/arm/
+   0.4% arch/arm/boot/dts/marvell/
+   0.4% arch/arm/boot/dts/nxp/imx/
+   2.1% arch/arm/boot/dts/qcom/
+   2.1% arch/arm/boot/dts/st/
+   0.5% arch/arm/boot/dts/
+   0.6% arch/arm/mach-pxa/
+   0.3% arch/arm/mach-versatile/
+   0.3% arch/arm64/boot/dts/allwinner/
+   1.4% arch/arm64/boot/dts/amlogic/
+  14.0% arch/arm64/boot/dts/freescale/
+   2.9% arch/arm64/boot/dts/marvell/
+   4.9% arch/arm64/boot/dts/mediatek/
+  21.9% arch/arm64/boot/dts/qcom/
+   1.1% arch/arm64/boot/dts/renesas/
+  16.5% arch/arm64/boot/dts/rockchip/
+   0.7% arch/arm64/boot/dts/st/
+   9.5% arch/arm64/boot/dts/ti/
+   0.3% arch/arm64/boot/dts/xilinx/
+   0.5% arch/arm64/boot/dts/
+   0.3% arch/riscv/boot/dts/allwinner/
+   0.3% arch/riscv/boot/dts/microchip/
+   0.3% arch/riscv/boot/dts/starfive/
+   0.2% arch/riscv/boot/dts/
+   0.2% drivers/cache/
+   5.2% drivers/clk/qcom/
+   0.2% drivers/firmware/microchip/
+   1.3% drivers/firmware/qcom/
+   0.3% drivers/firmware/
+   3.1% drivers/platform/cznic/
+   0.2% drivers/reset/
+   2.2% drivers/soc/qcom/
+   0.2% drivers/soc/xilinx/
+   0.2% drivers/
+   0.4% include/dt-bindings/clock/
+   0.2% include/dt-bindings/
+   0.7% include/linux/
+ 958 files changed, 66982 insertions(+), 11316 deletions(-)
+
+There are 232 individual contributors for this tree, the most active
+ones are
+
+     67 Dmitry Baryshkov
+     61 Krzysztof Kozlowski
+     52 Konrad Dybcio
+     42 Frank Li
+     37 Luca Weiss
+     26 Neil Armstrong
+     22 Bartosz Golaszewski
+     22 AngeloGioacchino Del Regno
+     18 Marek Beh=C3=BAn
+     17 Michael Walle
+     16 Siddharth Vadapalli
+     16 Rafa=C5=82 Mi=C5=82ecki
+     16 Jonas Karlman
+     16 Geert Uytterhoeven
+     12 Tengfei Fan
+     12 Alexander Stein
+     12 Abel Vesa
+     11 Marek Vasut
+     10 Nathan Morrisson
+     10 Krishna Kurapati
+     10 Dmitry Torokhov
+     10 Andrew Davis
+
+        Arnd
 
