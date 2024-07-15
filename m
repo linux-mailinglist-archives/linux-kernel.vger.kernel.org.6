@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-253031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAF2931B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:10:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749DF931B94
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BB0B22209
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D1D1F22781
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A586613A894;
-	Mon, 15 Jul 2024 20:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EEF13C83D;
+	Mon, 15 Jul 2024 20:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J9JEdHoU"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZMB/0K5k"
 Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C422633C5;
-	Mon, 15 Jul 2024 20:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECCA13C690;
+	Mon, 15 Jul 2024 20:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721074220; cv=none; b=WIfEu3p3cwprVX1bDayWbC7ehF22+YRk7TP8Ltgijs+KW8/JyDiuxRh7IzCYbJYLzC7LV3h/Do/Cgv5Unup9PKrxKtNwJYqA7gmHEp467/KYoAWmUDsmmWeoZdpAOXKtSNiWaBNdgAxSVOH5fJMtzVm4XzVGKIPeDcYNusWdeR4=
+	t=1721074233; cv=none; b=C3scWKK9EplmgBi27hK2ivtM7Lmz8QgAJk6kry/q6mtYs7u9KS2yT6e0LWWJb+6m+vV8TA3b2w2aiqq7wH07pQQjvEKElbf1dH2bHF6eLfrMyj1br7BguWlqNjE3hPWqGCsp9RFABmFK2Tj9WEAhLpa5MqGSgCVA2Gm8e7alS8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721074220; c=relaxed/simple;
-	bh=xVNu4zWneEsPLdnPvnguNPqROE2/mxFmEYDWFYEt+wc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bwqW+84QOJFWwLGTo5Sc8t/ghqygliIeNDDcuSYebif7LgU1nuwPEIiOiqqgdGN+pVLz4VoFztPtHIt64SoUor/Tad2nbsOwi7C7yvG+6cRzhRCAm/BAe4zSTbcSuhV5E/e/w06VrWOBQ6v8eDpbaxjaRflY6J4AhlpA1QXVpgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J9JEdHoU; arc=none smtp.client-ip=198.47.23.248
+	s=arc-20240116; t=1721074233; c=relaxed/simple;
+	bh=Uw/F0DbEZSqJmWYuXKrW6Ozq6TNy0tQgMaER1kemwMQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CcIwEt9Lw+GOyH4+2sXV1ncSzZ3oqMBRBbz8fxjRBsxJ6eXKlx88irxR3KfgLbUYIDIsyL0SHrh3daBV1EayNhqaCNR+ChWeXNVUW3AM5rrHhisFFHj8lb3huJS3XDjFQPinrH3I7ghBEEs/9/ysn3OpAQYcyLShuwCUh2SlU0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZMB/0K5k; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46FK9t4L114559;
-	Mon, 15 Jul 2024 15:09:55 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46FK9uBq114567;
+	Mon, 15 Jul 2024 15:09:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721074195;
-	bh=x/TlRiRVkz1QcFt7ENHJpbmMYNakrvYSD5IjuiQmOmg=;
-	h=From:To:CC:Subject:Date;
-	b=J9JEdHoU7w3cQ9vFq8b0GKiyAS4EM0vokswunGTynK1SGqVnI9MWGaGUoxlg7jkwS
-	 amGbQednQoO8LYpghxNWiMe5tLg/u5yVVsmcr3sUFhF7ZUo5EF1DIQ0XsTVF5D+VrR
-	 +Rs7MtWqy2d5ZTdiPs5baOxXZbvfJiFibCNeCgIw=
+	s=ti-com-17Q1; t=1721074196;
+	bh=X/II/tDwcqDm+ACxmq420acPWMQXXwNmqt5JFPW4HUk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ZMB/0K5khzZZ/z6QCls7EaSmwbKqMb7lMwmQGwQ3fqiqqWNC8Hjqd/H7vSG6TP6ga
+	 bQFAg+QWTXiv6VwdsUnlRcdsfwRTSdRtGrihx85kAwnLKyND3vyQVgLpDd+ogU8Jr/
+	 Z0+c7UcbkJTYPqCcSe76bFKVObpmXf0iseK6hq+o=
 Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46FK9tal073568
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46FK9uFP119940
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 15 Jul 2024 15:09:55 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
+	Mon, 15 Jul 2024 15:09:56 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
  (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
- Jul 2024 15:09:54 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2024 15:09:56 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 15 Jul 2024 15:09:54 -0500
+ Frontend Transport; Mon, 15 Jul 2024 15:09:56 -0500
 Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46FK9raE047153;
-	Mon, 15 Jul 2024 15:09:54 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46FK9tFx047182;
+	Mon, 15 Jul 2024 15:09:55 -0500
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
         Jyri Sarha
@@ -86,10 +87,12 @@ CC: DRI Development List <dri-devel@lists.freedesktop.org>,
         Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
 	<j-luthra@ti.com>,
         Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH v2 0/4] drm/tidss: Add OLDI bridge support
-Date: Tue, 16 Jul 2024 01:39:49 +0530
-Message-ID: <20240715200953.1213284-1-a-bhatia1@ti.com>
+Subject: [PATCH v2 1/4] dt-bindings: display: ti,am65x-dss: Re-indent the example
+Date: Tue, 16 Jul 2024 01:39:50 +0530
+Message-ID: <20240715200953.1213284-2-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240715200953.1213284-1-a-bhatia1@ti.com>
+References: <20240715200953.1213284-1-a-bhatia1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,147 +103,81 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello all,
+Reduce tab size from 8 spaces to 4 spaces to make the bindings
+consistent, and easy to expand.
 
-This patch series add support for the dual OLDI TXes supported in Texas
-Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support
-single-lvds, lvds-clone, and dual-lvds modes. These have now been
-represented through DRM bridges within TI-DSS.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+---
+ .../bindings/display/ti/ti,am65x-dss.yaml     | 54 +++++++++----------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
- - Some history and hardware description for this patch series.
-
-This patch series is a complete re-vamp from the previously posted
-series[1] and hence, the version index has been reset to v1. The OLDI
-support from that series was dropped and only the base support for AM62x
-DSS was kept (and eventually merged)[2].
-
-The OLDI display that the tidss driver today supports, could not be
-extended for the newer SoCs. The OLDI display in tidss is modelled after
-the DSS and OLDI hardware in the AM65x SoC. The DSS in AM65x SoC, has
-two video-ports. Both these video-ports (VP) output DPI video signals.
-One of the DPI output (from VP1) from the DSS connects to a singular
-OLDI TX present inside the SoC. There is no other way for the DPI from
-VP1 to be taken out of the SoC. The other DPI output however - the one
-from VP2 - is taken out of the SoC as is. Hence we have an OLDI bus
-output and a DPI bus output from the SoC. Since the VP1 and OLDI are
-tightly coupled, the tidss driver considers them as a single entity.
-That is why, any OLDI sink connects directly to the DSS ports in the
-OF graphs.
-
-The newer SoCs have varying situations.
-
-The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals which
-are taken out of the SoC - similar to the AM65x above. For the VP1,
-there are 2 OLDI TXes. These OLDI TXes can only receive DPI signals from
-VP1, and don't connect to VP2 at all.
-
-The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC
-also has 2 separate DSSes. The 2 OLDI TXes can now be shared between the
-2 VPs of the 2 DSSes.
-
-The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need
-for some major changes for a full feature experience.
-
-1. The OF graph needs to be updated to accurately show the data flow.
-2. The tidss and OLDI drivers now need to support the dual-link and the
-   cloned single-link OLDI video signals.
-3. The drivers also need to support the case where 2 OLDI TXes are
-   connected to 2 different VPs - thereby creating 2 independent streams
-   of single-link OLDI outputs.
-
-Note that the OLDI does not have registers of its own. Its still
-dependent on the parent VP. The VP that provides the DPI video signals
-to the OLDI TXes, also gives the OLDI TXes all the config data. That is
-to say, the hardware doesn't sit on the data bus directly - but does so
-via DSS.
-
-In light of all of these hardware variations, it was decided to have
-a separate OLDI driver (unlike AM65x) but not entirely separate so as to
-be a platform device. The OLDI TXes are now being represented as DRM
-bridges under the tidss.
-
-Also, since the DRM framework only really supports a linear
-encoder-bridge chain, the OLDI driver creates a DRM bridge ONLY for the
-primary OLDI TX in cases of dual-link or cloned single-link OLDI modes.
-That bridge then attaches to the tidss's display core - which consists
-of a CRTC, an Encoder (dummy) and a bridge (dummy). On the other end,
-it attaches to OLDI sinks (panels or other bridges).
-
-Since the OLDI TX have a hardware dependency with the VP, the OLDI
-configuration needs to happen before that VP is enabled for streaming.
-VP stream enable takes place in tidss_crtc_atomic_enable hook. I have
-posted a patch allowing DRM bridges to get pre-enabled before the CRTC
-of that bridge is enabled[0]. Without that patch, some warnings or
-glitches can be seen.
-
-These patches have been tested on AM625 based platforms, SK-AM625 EVM
-with a Microptis dual-lvds panel (SK-LCD1), and Beagleplay with a
-Lincolntech dual-lvds panel (LCD-185T). The patches with complete
-support including the expected devicetree configuration of the OLDI TXes
-can be found in the "next_oldi-v2-tests" branch of my github fork[3].
-
-Thanks,
-Aradhya
-
-
-Change Log:
-V2:
-  - Add all the R-b and A-b tags from Laurent Pinchart, Rob Herring, and
-    Tomi Valkeinen.
-  - Reword the subject for patch 1/4.
-  - Drop the change in schema reference for port@0 in patch 3/4.
-  - Lots of improvements for patch 4/4.
-    * Refactor OLDI selection logic in tidss_oldi_tx_power().
-    * Add "companion_instance" support to identify the OLDI index in
-      dual-link or cloned sinle-link modes.
-    * De-initialize tidss_oldi during tidss removal.
-    * Use dev_err_probe() instead of dev_err().
-    * Drop OLDI(n) macro.
-    * Move OLDI Config register bits to tidss_dispc_regs.h.
-    * Drop oldi bridge atomic_check().
-    * s/%d/%u for all print instances of "oldi_instance".
-    * Move OLDI init after DISPC init in tidss_probe.
-    * Use devm_drm_of_get_bridge() instead of
-      drm_of_find_panel_or_bridge() to find the next bridge and drop all
-      the drm_panel support from tidss_oldi.
-
-[0]: Dependency Patch: 
-("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
-https://lore.kernel.org/all/20240622110929.3115714-11-a-bhatia1@ti.com/
-
-[1]: AM62 OLDI Series - v7
-https://lore.kernel.org/all/20230125113529.13952-1-a-bhatia1@ti.com/
-
-[2]: AM62 DSS Series - v9
-https://lore.kernel.org/all/20230616150900.6617-1-a-bhatia1@ti.com/
-
-[3]: GitHub Fork for OLDI tests
-https://github.com/aradhya07/linux-ab/tree/next_oldi-v2-tests/
-
-Aradhya Bhatia (4):
-  dt-bindings: display: ti,am65x-dss: Re-indent the example
-  dt-bindings: display: ti: Add schema for AM625 OLDI Transmitter
-  dt-bindings: display: ti,am65x-dss: Add OLDI properties for AM625 DSS
-  drm/tidss: Add OLDI bridge support
-
- .../bindings/display/ti/ti,am625-oldi.yaml    | 153 +++++
- .../bindings/display/ti/ti,am65x-dss.yaml     | 176 +++++-
- MAINTAINERS                                   |   1 +
- drivers/gpu/drm/tidss/Makefile                |   3 +-
- drivers/gpu/drm/tidss/tidss_dispc.c           |  20 +-
- drivers/gpu/drm/tidss/tidss_dispc.h           |   4 +
- drivers/gpu/drm/tidss/tidss_dispc_regs.h      |  14 +
- drivers/gpu/drm/tidss/tidss_drv.c             |   9 +
- drivers/gpu/drm/tidss/tidss_drv.h             |   5 +
- drivers/gpu/drm/tidss/tidss_oldi.c            | 537 ++++++++++++++++++
- drivers/gpu/drm/tidss/tidss_oldi.h            |  51 ++
- 11 files changed, 950 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
- create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
- create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
-
-
-base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+index 55e3e490d0e6..399d68986326 100644
+--- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
++++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+@@ -142,32 +142,32 @@ examples:
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+     dss: dss@4a00000 {
+-            compatible = "ti,am65x-dss";
+-            reg =   <0x04a00000 0x1000>, /* common */
+-                    <0x04a02000 0x1000>, /* vidl1 */
+-                    <0x04a06000 0x1000>, /* vid */
+-                    <0x04a07000 0x1000>, /* ovr1 */
+-                    <0x04a08000 0x1000>, /* ovr2 */
+-                    <0x04a0a000 0x1000>, /* vp1 */
+-                    <0x04a0b000 0x1000>, /* vp2 */
+-                    <0x04a01000 0x1000>; /* common1 */
+-            reg-names = "common", "vidl1", "vid",
+-                    "ovr1", "ovr2", "vp1", "vp2", "common1";
+-            ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
+-            power-domains = <&k3_pds 67 TI_SCI_PD_EXCLUSIVE>;
+-            clocks =        <&k3_clks 67 1>,
+-                            <&k3_clks 216 1>,
+-                            <&k3_clks 67 2>;
+-            clock-names = "fck", "vp1", "vp2";
+-            interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
+-            ports {
+-                    #address-cells = <1>;
+-                    #size-cells = <0>;
+-                    port@0 {
+-                            reg = <0>;
+-                            oldi_out0: endpoint {
+-                                    remote-endpoint = <&lcd_in0>;
+-                            };
+-                    };
++        compatible = "ti,am65x-dss";
++        reg = <0x04a00000 0x1000>, /* common */
++              <0x04a02000 0x1000>, /* vidl1 */
++              <0x04a06000 0x1000>, /* vid */
++              <0x04a07000 0x1000>, /* ovr1 */
++              <0x04a08000 0x1000>, /* ovr2 */
++              <0x04a0a000 0x1000>, /* vp1 */
++              <0x04a0b000 0x1000>, /* vp2 */
++              <0x04a01000 0x1000>; /* common1 */
++        reg-names = "common", "vidl1", "vid",
++                "ovr1", "ovr2", "vp1", "vp2", "common1";
++        ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
++        power-domains = <&k3_pds 67 TI_SCI_PD_EXCLUSIVE>;
++        clocks =        <&k3_clks 67 1>,
++                        <&k3_clks 216 1>,
++                        <&k3_clks 67 2>;
++        clock-names = "fck", "vp1", "vp2";
++        interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            port@0 {
++                reg = <0>;
++                oldi_out0: endpoint {
++                    remote-endpoint = <&lcd_in0>;
++                };
+             };
++        };
+     };
 -- 
 2.34.1
 
