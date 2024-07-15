@@ -1,203 +1,225 @@
-Return-Path: <linux-kernel+bounces-252916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2D89319D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1226A9319E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0012282A73
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909981F2212E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97274535A3;
-	Mon, 15 Jul 2024 17:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC35C6A325;
+	Mon, 15 Jul 2024 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQF3kN89"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRMRGJ1I"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99D22318;
-	Mon, 15 Jul 2024 17:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7D254670;
+	Mon, 15 Jul 2024 17:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721065964; cv=none; b=De5t0VxAeEzPOVDBJMLn7gwNSOwVZF8cRuIW5sac16vgCPc4XXpjSwAE4VGS3u1J7lmkd+5cCqGqYnGxixpIKvemESy/SXSiUlNj21iRrTu/TwIC1hePiTRh6IP8thkSpqSO7xDaHf07SbSLsenY5xIjlzwIiBQxJa1QLx6Os6U=
+	t=1721066181; cv=none; b=M70k6WFnrrw5tokeQVU+sKBngDdfMvM1aphq5kKX/aMamZF8sAEROLbmhm4LG7QMZ+LAhU+hioav5YaW/bEbj0WWRvSAcKR6qR9o/Czw4EFubUtzoYNC6ZWB+yEUW7lGkmE01vXPio0jpTvLNL4nJSVFmZc66DDR5Opz8MU7raM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721065964; c=relaxed/simple;
-	bh=Aj6nh5mGAl+teHdD050cfcGPMAEinYG2c8dUe3wwZ/Q=;
-	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J42lfVZPhl+v5QCWTrPsxNMRqhsSygcsKGtdTx7aekb5L3qDN8L7La5lTy47InS1YdwzuRtuWZFFezuV/A/RSFq1JQ2pKGC4FlsUbUSUeccZFkS14zmb/qPotpwrYM/LckcnKeSMYWTNwq2t/X6UbdTLKqg+w2tMdzXW1A5ie2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQF3kN89; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1721066181; c=relaxed/simple;
+	bh=BxGAdGTiJgz8Q5D2uHQ78tpjZdOMaIkZr5f589j4CL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZCC4B5gj1EBa/UZWeBthCUolrFNoacJTaJ62XtHhhPv2J9H7jJnK4HDZB8cYjs9f9VYbGiAfebacKpeRrQrRiWr+yJxIgmIPXF+DaXtm51h+72B+gpP3j+FYp93wDRa0HPAjRmo9giUmt07RdKqCBozhb0bgioxIPELEoJYm3mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRMRGJ1I; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e036d1ce4f7so3601613276.0;
-        Mon, 15 Jul 2024 10:52:43 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so31909775e9.2;
+        Mon, 15 Jul 2024 10:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721065962; x=1721670762; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKR/ODC5NWkjfKlAhKkUtVQjminwT/CBUyLSJA+//MI=;
-        b=iQF3kN89ZdM4BMZqQ0vZFLRgB04MOqkP0XifZ1IbhMNI2X/ef+mKAV34Klw8SoUO4B
-         Jy2wx93aduawaVbqOG1cBgnWgQBHKvwkDWRSLhUHJc2+P8NhvXkOKjkqAwWDnB1jLNJK
-         RxrogGwHOGBhitI4tTHuMIiw//k8YTrWZydGnKRioGgmYXPHL5Pu9QAxAyXWugKlA+Tp
-         MiQ97rVlBy9YMZPpnJY0laz/M0ulBvaTnFS+JeZEva4bmYFzj5gndFVdo0tp88I+4ppX
-         GCQUXQMIYiDn1YEXS+ZOIuumwjP2YafgrLT/PEzY+X4irlHOz+mJ3T6tsXDMZw8dYsdr
-         hD5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721065962; x=1721670762;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721066178; x=1721670978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iKR/ODC5NWkjfKlAhKkUtVQjminwT/CBUyLSJA+//MI=;
-        b=mrFX7RCGYu401iJRyYr6wR/MZuSZxsDiliSdQc+H3qB5NJ1mprGZl99XhK8DBj+Ypc
-         t4D2moKx/+RjhpaYtgAcy4XZebtvbZfuqkdtot/1IWRjGaIPKY6mrRHMphmSh6I4Op7N
-         /eUoGpAgfWUo6F/vvqNITZISM9o97ia9VCAU9nZxvrTapFtAJ3bLerdfPhdvB01ce5Zr
-         DvjrY8ax7jDC0eEcykLoSrZkaCeYy6s7Uar85bSce3b9cHuZK/A4awi8JhmxEeS1cXT9
-         hlVbqJiXs7Rgj5PREB9zk/gOYUTjyJWjZifzsDXSDPX07HLnCDqFxYQ1NILuSW4gyQfa
-         tmjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG3H+aoo0/LfqAYVORzcWobNQ1eUbyj3jUpm64YJqN0zuc6eCcePzsOvBuNhk/lGgM1YT5PIH4qslHXr/DiaYkbsS21FGqqd9NKH2CtrjWLhfF2QozwE7F2xfwTWFZHaKDB92fO3pm
-X-Gm-Message-State: AOJu0YyaWdKVFabw0NBb4KiUcH663QUHT1McLtPdSLqWcjicenJIJQS4
-	INpPiKkCYR2XaYqetN1Le9ppLe50ojpcAkMhVGM+34AjujVIsA7M
-X-Google-Smtp-Source: AGHT+IGxaJl8NKgJ/K8f0rzvjF1kPYVZnnnSxHse3dQIG1/xpw7+Uff4gsI6SioFX/QU4LDqYnGomw==
-X-Received: by 2002:a05:6902:e08:b0:e03:5e56:9827 with SMTP id 3f1490d57ef6-e05d272d00emr815016276.27.1721065962284;
-        Mon, 15 Jul 2024 10:52:42 -0700 (PDT)
-Received: from gpd. ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05a4617285sm934658276.24.2024.07.15.10.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 10:52:42 -0700 (PDT)
-Message-ID: <669561ea.050a0220.948fd.3f0d@mx.google.com>
-X-Google-Original-Message-ID: <ZpVhae8OtL6qwQ1m@gpd.>
-From: nifan.cxl@gmail.com
-X-Google-Original-From: fan@gpd.
-Date: Mon, 15 Jul 2024 10:50:33 -0700
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dan.j.williams@intel.com, ira.weiny@intel.com, dave@stgolabs.net,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	ming4.li@intel.com, vishal.l.verma@intel.com,
-	jim.harris@samsung.com, ilpo.jarvinen@linux.intel.com,
-	ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yazen.Ghannam@amd.com, Robert.Richter@amd.com
-Subject: Re: [RFC PATCH 5/9] cxl/pci: Update RAS handler interfaces to
- support CXL PCIe ports
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
- <20240617200411.1426554-6-terry.bowman@amd.com>
+        bh=/W0anjTUFyhsTzhkYxeiTEp5MjzFJ0+hG8HP5QZjcBU=;
+        b=kRMRGJ1IM+agNKLWItmr0z0JV/CVgL7R1uCKrbVogG8icNpj3qoQFq508ctKVNrWnn
+         G4qQOPSPOCZInulK1ZHNulRl4LI4tOz5deAxdnvpybsD+Gb/WRr9JRM8M50rkLXkH7ub
+         IzDNL40RrkcCTHrCi1ebZ6WUk8FLyWjfQr3cqiqMlwovdZU/WZKoXUwrusiybRtGnvze
+         zPVFEIJ7yzFaFkEU60YL3on67Fd97KYvdH5F9LsT7BAaliPB/AV2zahFXPVKEPN/znz9
+         F8533pU20BQ31JvOIQyI41Ndg92zM9Ny8eqPTmaIhL1Xzybrm3vIH3RKaF18vOoARk+f
+         mhuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721066178; x=1721670978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/W0anjTUFyhsTzhkYxeiTEp5MjzFJ0+hG8HP5QZjcBU=;
+        b=wdTs/MxktGA6Sgepi+HfrBlW8IhzYt2DqfY0eEOK9WIpD7KNLlDxQlJkURF7kqAHoR
+         jDP66A6SACQT0krmnH15irHIXEhQbFcd/x2nUOTgseqsqPMhzIOort8Q4aw5b0rTGr0N
+         lPI0kpxPWB6CMgVmHaRb1mRgZaIX/fzggJgkoY4rRkAWgxgrgCCIYopF77hraIQHgukT
+         vW5YSVWRhB5pZQu17qBPRZKA7FL4X3fGJ5oO4jW2l2qvHVBc09ZbZnqnUhjusRU4ZEBs
+         wn8Q6S725AF3978KvWIElnttuYw2ssBGGg5oJ/keQ9osM1RL4Cm3Pt/Ixif1m1gNUZW5
+         kIAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXDgrMxsRNrIdEnEpqs3wekrVPTOnMIEu5YnuUym1tOKr1DSC5XLRF4IyTpA3fac3XxaBe4ERsWa7mMKZwFyJ8WXubDa2VD22IoVSZr2UDdrm10cES45BzW3RpFyjh8KKWUPJ9
+X-Gm-Message-State: AOJu0YypxGD6I138GE1Bl5sHmSnDdiCEFhAeAIQVNUteKpsTRMsxiehA
+	WRJRk0cBt6Ka7CsSCmMJfF4voLXffXNk56K1iggGV+4iDW7ECsylxn3RZpG1gDTN5gMITKq2WBO
+	6+R150Tpd2j+EFtuySy7kq/p8f1Uh9w==
+X-Google-Smtp-Source: AGHT+IFk6VNFCK/xpbOPqFvPPxvE/7ruwrAkwWPKtUxFlAOsZs2IddEppQ2kmqqdXUJPhQwn2bActSLmPnZWrlu9U2Y=
+X-Received: by 2002:adf:f707:0:b0:367:988d:fb99 with SMTP id
+ ffacd0b85a97d-3682407cfe9mr347686f8f.8.1721066178313; Mon, 15 Jul 2024
+ 10:56:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617200411.1426554-6-terry.bowman@amd.com>
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+ <20240625135216.47007-7-linyunsheng@huawei.com> <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
+ <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com> <a026c32218cabc7b6dc579ced1306aefd7029b10.camel@gmail.com>
+ <f4ff5a42-9371-bc54-8523-b11d8511c39a@huawei.com> <96b04ebb7f46d73482d5f71213bd800c8195f00d.camel@gmail.com>
+ <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com> <CAKgT0UdJPcnfOJ=-1ZzXbiFiA=8a0z_oVBgQC-itKB1HWBU+yA@mail.gmail.com>
+ <df38c0fb-64a9-48da-95d7-d6729cc6cf34@huawei.com> <CAKgT0UdSjmJoaQvTOz3STjBi2PazQ=piWY5wqFsYFBFLcPrLjQ@mail.gmail.com>
+ <29e8ac53-f7da-4896-8121-2abc25ec2c95@gmail.com> <CAKgT0Udmr8q8V7x6ZqHQVxFbCnwB-6Ttybx_PP_3Xr9X-DgjKA@mail.gmail.com>
+ <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
+In-Reply-To: <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 15 Jul 2024 10:55:42 -0700
+Message-ID: <CAKgT0Uea-BrGRy-gfjdLWxp=0aQKQZa3dZW4euq5oGr1pTQVAA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
+ 'size' and 'pfmemalloc'
+To: Yunsheng Lin <yunshenglin0825@gmail.com>
+Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 03:04:07PM -0500, Terry Bowman wrote:
-> CXL RAS error handling includes support for endpoints and RCH downstream
-> ports. The same support is missing for CXL root ports, CXL downstream
-> switch ports, and CXL upstream switch ports. This patch is in preparation
-> for adding CXL ports' RAS handling.
-> 
-> The cxl_pci driver's RAS support functions use the 'struct cxl_dev_state'
-> type parameter that is not available in CXL port devices. The same CXL
-> RAS capability structure is required for most CXL components/devices
-> and should have common handling where possible.[1]
-> 
-> Update __cxl_handle_cor_ras() and __cxl_handle_ras() to use 'struct
-> device' instead of 'struct cxl_dev_state'. Add function call to translate
-> device to CXL device state where needed.
-> 
-> [1] CXL3.1 - 8.2.4 CXL.cache and CXL.mem Registers
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->  drivers/cxl/core/pci.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index e6c91b3dfccf..59a317ab84bb 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -686,9 +686,10 @@ void read_cdat_data(struct cxl_port *port)
->  }
->  EXPORT_SYMBOL_NS_GPL(read_cdat_data, CXL);
->  
-> -static void __cxl_handle_cor_ras(struct cxl_dev_state *cxlds,
-> +static void __cxl_handle_cor_ras(struct device *dev,
->  				 void __iomem *ras_base)
->  {
-> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
->  	void __iomem *addr;
->  	u32 status;
->  
-> @@ -699,13 +700,13 @@ static void __cxl_handle_cor_ras(struct cxl_dev_state *cxlds,
->  	status = readl(addr);
->  	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
->  		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
-> -		trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
-> +		trace_cxl_aer_correctable_error(cxlmd, status);
->  	}
->  }
->  
->  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
->  {
-> -	return __cxl_handle_cor_ras(cxlds, cxlds->regs.ras);
-> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
->  }
->  
->  /* CXL spec rev3.0 8.2.4.16.1 */
-> @@ -729,9 +730,10 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
->   * Log the state of the RAS status registers and prepare them to log the
->   * next error status. Return 1 if reset needed.
->   */
-> -static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
-> -				  void __iomem *ras_base)
-> +static bool __cxl_handle_ras(struct device *dev,
-> +			     void __iomem *ras_base)
->  {
-> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
->  	u32 hl[CXL_HEADERLOG_SIZE_U32];
->  	void __iomem *addr;
->  	u32 status;
-> @@ -757,7 +759,7 @@ static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
->  	}
->  
->  	header_log_copy(ras_base, hl);
-> -	trace_cxl_aer_uncorrectable_error(cxlds->cxlmd, status, fe, hl);
-> +	trace_cxl_aer_uncorrectable_error(cxlmd, status, fe, hl);
->  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
->  
->  	return true;
-> @@ -765,7 +767,7 @@ static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
->  
->  static bool cxl_handle_endpoint_ras(struct cxl_dev_state *cxlds)
->  {
-> -	return __cxl_handle_ras(cxlds, cxlds->regs.ras);
-> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
->  }
->  
->  #ifdef CONFIG_PCIEAER_CXL
-> @@ -871,13 +873,13 @@ EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_dport, CXL);
->  static void cxl_handle_rdport_cor_ras(struct cxl_dev_state *cxlds,
->  					  struct cxl_dport *dport)
->  {
-> -	return __cxl_handle_cor_ras(cxlds, dport->regs.ras);
-> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, dport->regs.ras);
->  }
->  
->  static bool cxl_handle_rdport_ras(struct cxl_dev_state *cxlds,
->  				       struct cxl_dport *dport)
->  {
-> -	return __cxl_handle_ras(cxlds, dport->regs.ras);
-> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, dport->regs.ras);
->  }
->  
->  /*
-> -- 
-> 2.34.1
-> 
+On Sat, Jul 13, 2024 at 9:52=E2=80=AFPM Yunsheng Lin <yunshenglin0825@gmail=
+.com> wrote:
+>
+> On 7/14/2024 12:55 AM, Alexander Duyck wrote:
+>
+> ...
+>
+> >>>>
+> >>>> Perhaps the 'remaining' changing in this patch does seems to make th=
+ings
+> >>>> harder to discuss. Anyway, it would be more helpful if there is some=
+ pseudo
+> >>>> code to show the steps of how the above can be done in your mind.
+> >>>
+> >>> Basically what you would really need do for all this is:
+> >>>     remaining =3D __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
+> >>>     nc->remaining =3D remaining + fragsz;
+> >>>     return encoded_page_address(nc->encoded_va) + size + remaining;
+> >>
+> >
+> > I might have mixed my explanation up a bit. This is assuming remaining
+> > is a negative value as I mentioned before.
+>
+> Let's be more specific about the options here, what you meant is below,
+> right? Let's say it is option 1 as below:
+> struct page_frag_cache {
+>          /* encoded_va consists of the virtual address, pfmemalloc bit
+> and order
+>           * of a page.
+>           */
+>          unsigned long encoded_va;
+>
+> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
+>          __s16 remaining;
+>          __u16 pagecnt_bias;
+> #else
+>          __s32 remaining;
+>          __u32 pagecnt_bias;
+> #endif
+> };
+>
+> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
+>                                   unsigned int fragsz, gfp_t gfp_mask,
+>                                   unsigned int align_mask)
+> {
+>          unsigned int size =3D page_frag_cache_page_size(nc->encoded_va);
+>          int remaining;
+>
+>          remaining =3D __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
+>          if (unlikely(remaining + (int)fragsz > 0)) {
+>                  if (!__page_frag_cache_refill(nc, gfp_mask))
+>                          return NULL;
+>
+>                  size =3D page_frag_cache_page_size(nc->encoded_va);
+>
+>                  remaining =3D -size;
+>                  if (unlikely(remaining + (int)fragsz > 0))
+>                          return NULL;
+>          }
+>
+>          nc->pagecnt_bias--;
+>          nc->remaining =3D remaining + fragsz;
+>
+>          return encoded_page_address(nc->encoded_va) + size + remaining;
+> }
+>
+>
+> And let's say what I am proposing in v10 is option 2 as below:
+> struct page_frag_cache {
+>          /* encoded_va consists of the virtual address, pfmemalloc bit
+> and order
+>           * of a page.
+>           */
+>          unsigned long encoded_va;
+>
+> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
+>          __u16 remaining;
+>          __u16 pagecnt_bias;
+> #else
+>          __u32 remaining;
+>          __u32 pagecnt_bias;
+> #endif
+> };
+>
+> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
+>                                   unsigned int fragsz, gfp_t gfp_mask,
+>                                   unsigned int align_mask)
+> {
+>          unsigned int size =3D page_frag_cache_page_size(nc->encoded_va);
+>          int aligned_remaining =3D nc->remaining & align_mask;
+>          int remaining =3D aligned_remaining - fragsz;
+>
+>          if (unlikely(remaining < 0)) {
+>                  if (!__page_frag_cache_refill(nc, gfp_mask))
+>                          return NULL;
+>
+>                  size =3D page_frag_cache_page_size(nc->encoded_va);
+>
+>                  aligned_remaining =3D size;
+>                  remaining =3D aligned_remaining - fragsz;
+>                  if (unlikely(remaining < 0))
+>                          return NULL;
+>          }
+>
+>          nc->pagecnt_bias--;
+>          nc->remaining =3D remaining;
+>
+>          return encoded_page_address(nc->encoded_va) + (size -
+> aligned_remaining);
+> }
+>
+> If the option 1 is not what you have in mind, it would be better to be
+> more specific about what you have in mind.
 
-Looks good to me.
+Option 1 was more or less what I had in mind.
 
-Fan
+> If the option 1 is what you have in mind, it seems both option 1 and
+> option 2 have the same semantics as my understanding, right? The
+> question here seems to be what is your perfer option and why?
+>
+> I implemented both of them, and the option 1 seems to have a
+> bigger generated asm size as below:
+> ./scripts/bloat-o-meter vmlinux_non_neg vmlinux
+> add/remove: 0/0 grow/shrink: 1/0 up/down: 37/0 (37)
+> Function                                     old     new   delta
+> __page_frag_alloc_va_align                   414     451     +37
+
+My big complaint is that it seems option 2 is harder for people to
+understand and more likely to not be done correctly. In some cases if
+the performance difference is negligible it is better to go with the
+more maintainable solution.
 
