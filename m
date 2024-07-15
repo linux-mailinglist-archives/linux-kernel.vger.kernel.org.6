@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-252042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F46D930D72
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B91F2930D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6761C20F5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:16:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7871C20F0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A901836CE;
-	Mon, 15 Jul 2024 05:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F7C13B7AE;
+	Mon, 15 Jul 2024 05:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="IJufC1hE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pT3pfWb5"
-Received: from flow1-smtp.messagingengine.com (flow1-smtp.messagingengine.com [103.168.172.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Jc6qTn8B"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1D13AA39;
-	Mon, 15 Jul 2024 05:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9983132494;
+	Mon, 15 Jul 2024 05:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721020542; cv=none; b=jxnIqugBc/+Iz6e6qa+4Mh0UjWhRGcvxPfhEGxSzbRd18slvtSXh6faeQ2+kPn/NnLpWwtphgm+zV1989MyUz6Z5vSsb7SrIJncKXl3EF1oBxoK22+cd+4pH6FqU10leCbvGbJm5ruc0RO7Y8mDvgeSlSS0sxV0OReNAwr5H7IA=
+	t=1721020575; cv=none; b=GhYtVmQYXZBbsmdnThp7WAY+BXb0eSgZ/3BUD+ibpg2OtchRLmhg+5PSkNOZ9LCYTwsvGeGobFJKoogMcZj+pdFeeE7wUxHcWNi1ecQcs96ebSQwHXnBvbc/iKIIlfhTo1qTapo32aTxrf40tBAmmED5/44OZ92B9FBa8Bj1CLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721020542; c=relaxed/simple;
-	bh=XBsZbKGiVtTrKlyP1R6GYcTiqxjh19bGVWk3vIktpF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cq2ZRIjlIPRKZNZp1P098D6Ojp0gM3qK6yLdal2DQNwqcxi+dYMdwRzIm02/xTmjqgsHtBWoxc6t7W4mW5ii240yvp24IXn3Z3mjRcrp3FtTts5tHjZfm4J22QQIvAyKELRTpIvAl2CN0NAJPS6MTefai7OMnzJVFEQnbmcyMkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=IJufC1hE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pT3pfWb5; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 0AC5620054E;
-	Mon, 15 Jul 2024 01:15:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Mon, 15 Jul 2024 01:15:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721020539; x=1721027739; bh=1ACFvhP62g
-	scbHqyYeARu0YHLy0C0ta9v4Ydldd1YuU=; b=IJufC1hEunLX8ShlvfQOj3gHeZ
-	tuMhkLLiuonq83SQrIF7ocSp5I/XfR4t5AK74YQMcasmzenZxy2vn07UYZGwlbBp
-	5XrDmdrJ9tOHHVzR1IAFcV4nNe0AOpST5V0I1N9u9sdJ1EsHeGqdDLvSkYB20JPS
-	uElbGdqdcJlKyp3kMaw/BCKPX5LS87KK+zjHXCmRG/JcMnGTx9d/H1ois9+fsOgo
-	x4ieMhf0wv+UKthJ4/yBtMelhIxmM8DMdIDipHoA7IJF2Y1AfQYULW/BzFM3ttL6
-	mBIeKVb+QA0TkVEJhg9ubHsgUZDX+XE0ruoC3O216horTNs8O4rhrxsUBWuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721020539; x=1721027739; bh=1ACFvhP62gscbHqyYeARu0YHLy0C
-	0ta9v4Ydldd1YuU=; b=pT3pfWb5lhsvBc8ig/lReN6EuBpyTD1rNcNe/NzywA9D
-	yawjrBoUcciq8rkL8OxRTRpFyqhrVD29c+lf09n/k3eaWu4ls2pMkweyk1A9xser
-	KMWpESlhTJhGAFriiRKML1MSyQ7+dTnTdw8ZKMWS8ejvZPDR/NdkGvTepDgB9lW3
-	UQwRsOCNQhwytpMy+wIL4wr/wx52By0Q76qMfaGFR0IHDdmD2ROCREmPMBfCD2c+
-	DKkHh14CBnwp1MQKQ3/7ESotzUombvXa7etBzE1R3sW9YXB9qQxAz8kus1XVy8Rg
-	LX+JvZ2z8AtI76ncd6BItzdupvQEcWz6lNtrHkHW4w==
-X-ME-Sender: <xms:ebCUZt-D3rte0sCxnqARy97iKOLUloqvW3f5OBOvgg8jU2T6wlqY5g>
-    <xme:ebCUZhucwiOaq8xm2Gc6rJl8nJOu2JOlyWDIHGLmsKgne9cAfrwhb8GiG5iRk6o5l
-    TqnU6fBYsP7Ew>
-X-ME-Received: <xmr:ebCUZrARYVzvRpECQ7CxQ5fJV5VXC-09THSqIrnJAL7T4-_gGO8356d0dBlHmput4TfzC-w3efnzNel_Pel8Fc05pCz8Jk9f5PcJHA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgedugdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
-    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomh
-X-ME-Proxy: <xmx:ebCUZhcUXL5iJ2IWw0WVuf_06XNPLWQTwYVu-_o_jNoHRtBosdYQ_Q>
-    <xmx:ebCUZiP8uHq0tA0-Pp2gGhumc43M4oi7ezbmMzxUlHV6InnFrdJI0w>
-    <xmx:ebCUZjlpdb41GrQU-mJnPzZEsO5V462CluKCQKOgKgzgvbmYye0grw>
-    <xmx:ebCUZsuUsHXNnnWFstQk9UcG5D7rUp4LYxGzEomfcGarQlnxCW5hdQ>
-    <xmx:erCUZrz7kLiuR7vYXy6YusCZveJodqhFSp9ZR7LUIASnPv7fRsWlVtvD>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Jul 2024 01:15:36 -0400 (EDT)
-Date: Mon, 15 Jul 2024 07:15:34 +0200
-From: Greg KH <greg@kroah.com>
-To: botta633 <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	linux-ext4@vger.kernel.org, syzkaller@googlegroups.com,
-	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] locking/lockdep: Forcing subclasses to have same
- name pointer as their parent class
-Message-ID: <2024071514-gift-bride-a420@gregkh>
-References: <20240715063447.391668-1-bottaawesome633@gmail.com>
+	s=arc-20240116; t=1721020575; c=relaxed/simple;
+	bh=H7td3Dce0rAX95cXB5akm7kbg0HhCqLJzc2P/PJx7+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ST6WihG/5CSdFdTW/H195LaBaDY3LXh1pBAZsVdVz2jL7gHYsbMMFJ5FHcOA2TXfBl07jmueyDsi6CzRufOmszuBYVW7edW6XOeH5Lkof58K6RlH3ZbuT4K4A88vUyetxmc8a8nht36nLx/85688vwRhrosdWeuTLNPbf089AKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Jc6qTn8B; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id TE4GsSV2FfWRDTE4GsBrgL; Mon, 15 Jul 2024 07:16:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721020569;
+	bh=gSwMxZeFjDC2ILoXLC8sLrbsj9KggkWq4IEEp6f4Z9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Jc6qTn8BEBthins0EW/NsGgud48BUZe5oCEoDyLJuUY0iCVUeB+dp3+UWSCkuyPTJ
+	 VlWsJ95tQ39dqWTg2Y2wSR7D+FqHuLfcpcjchox7SohNz7N9YHm2vUoKquXbnPqVEt
+	 MgKmqWUPpL3r/YKdrq3rbVJ9XPOiEUQt+W6X4wygWShaoQStsU/BQXXh72/AxUHmFX
+	 +4bPc8hYfdB1kvU+R3nxLDGbiqiRXyVu1uW+YvegLmU+jEKKaJX0UdPqnswM24a7Df
+	 LuZwDRfOGj/kP7BOt8pg5H9PSYExGt8iKMnfwPEoBhxFSHgueS6QNCZeTMxzl+zIcg
+	 7C3A+xHyWWF1w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 15 Jul 2024 07:16:09 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <1ce85d09-4d44-4bd4-96b5-fbe86d23a386@wanadoo.fr>
+Date: Mon, 15 Jul 2024 07:16:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715063447.391668-1-bottaawesome633@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cifs: Use seq_putc() in two functions
+To: Steve French <smfrench@gmail.com>
+Cc: samba-technical@lists.samba.org, linux-cifs@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>,
+ Markus Elfring <Markus.Elfring@web.de>
+References: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
+ <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 15, 2024 at 09:34:46AM +0300, botta633 wrote:
-> From: Ahmed Ehab <bottaawesome633@gmail.com>
+Le 14/07/2024 à 23:31, Steve French a écrit :
+> are there other examples of modules where similar changes have been made?
 > 
-> Preventing lockdep_set_subclass from creating a new instance of the
-> string literal. Hence, we will always have the same class->name among
-> parent and subclasses. This prevents kernel panics when looking up a
-> lock class while comparing class locks and class names.
+
+Hi Steve,
+
+Most of the time, this kind of modification is useless because it is 
+already done by the compiler, see [1].
+
+CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/seq_file.h#L123
+
+> On Sun, Jul 14, 2024 at 3:35 AM Markus Elfring <Markus.Elfring@web.de> wrote:
+>>
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sun, 14 Jul 2024 10:23:49 +0200
+>>
+>> Single characters should be put into a sequence.
+>> Thus use the corresponding function “seq_putc”.
+>>
+>> This issue was transformed by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>   fs/smb/client/cifs_swn.c | 2 +-
+>>   fs/smb/client/cifsfs.c   | 2 +-
+>>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/smb/client/cifs_swn.c b/fs/smb/client/cifs_swn.c
+>> index 7233c6a7e6d7..68998c6ba7a2 100644
+>> --- a/fs/smb/client/cifs_swn.c
+>> +++ b/fs/smb/client/cifs_swn.c
+>> @@ -655,7 +655,7 @@ void cifs_swn_dump(struct seq_file *m)
+>>                  seq_printf(m, "%s", swnreg->ip_notify ? "(y)" : "(n)");
+>>          }
+>>          mutex_unlock(&cifs_swnreg_idr_mutex);
+>> -       seq_puts(m, "\n");
+>> +       seq_putc(m, '\n');
+>>   }
+>>
+>>   void cifs_swn_check(void)
+>> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+>> index 6397fdefd876..ce5cb72bb81f 100644
+>> --- a/fs/smb/client/cifsfs.c
+>> +++ b/fs/smb/client/cifsfs.c
+>> @@ -491,7 +491,7 @@ cifs_show_security(struct seq_file *s, struct cifs_ses *ses)
+>>          }
+>>
+>>          if (ses->sign)
+>> -               seq_puts(s, "i");
+>> +               seq_putc(s, 'i');
+>>
+>>          if (ses->sectype == Kerberos)
+>>                  seq_printf(s, ",cruid=%u",
+>> --
+>> 2.45.2
+>>
+>>
 > 
-> Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-> Fixes: de8f5e4f2dc1f ("lockdep: Introduce wait-type checks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
-> ---
->  include/linux/lockdep.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
