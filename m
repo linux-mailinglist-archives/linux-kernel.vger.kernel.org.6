@@ -1,204 +1,76 @@
-Return-Path: <linux-kernel+bounces-252634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A24931622
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75B9931624
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF38281612
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83260280EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6062D18E75E;
-	Mon, 15 Jul 2024 13:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE3E18E768;
+	Mon, 15 Jul 2024 13:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VM9r4AcB"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2076.outbound.protection.outlook.com [40.107.244.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9RH77PG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C891741CF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051621; cv=fail; b=F7CRMFyAbQTw7zjtO2Vf7BA2ggDIVHcO2BgU5MtJKaGH1Pe+RGqR8qZ/bO+nCeBVt9x0Z+X7I9hqtsAAKuo1LGTyENS0OBaaXJUMuZAGzQ6vPaiXG+evL69lIcEIPtSaEp0ESmS3pfknkAXc2/D849Fq0m4p5su8R6vCJEy5kYM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051621; c=relaxed/simple;
-	bh=WCXr5Go4xbeqXVBCzas+yduPZQxyEz2Tiq96xIy3emU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UO43N4hF2TkFC+BWJCEw2hGQWO7XgCh/fFJ7h8XdsBlJ4kETA+Nlktci4eAp1N08OqjEOVWcIzSrgmk6w+1LEU0AbskFaGcvWMeGJWv4/9ZuRgCck9FIeYaetwtDc6C9XVm3x7w++Sz/beSzsOobMJDIr6Ud2GBW3U993EDt9Zo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VM9r4AcB; arc=fail smtp.client-ip=40.107.244.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HtePl1PIuQ+msio+4nEOld3ko8g97VI5bEwuBtUKMy6bYkD1n8kSeVqGz4O9pIbtLupvTbju9sxkZJgU9UX1GI+FcvNYlXSQoIDIYZwmgrkID/4yZUbkaxjPsKJfWcjewohXkNAh+zlkSN9U4YlZZwMWevqjUNMXe9DvvOWCqsDzM9LczXOqIZ/ovGs+HeKYyqQ2m8pNf6aqcRd/6/exiwnEXBzj/6l7KSQHl3lXO89SgBSgkXhBrM1QxAJJNb1G+mt3U3KUpG4o89fY27SSQCldn1zh0+Z9rVcnxXBJNJuhl3xKlTROSjnf7VxP2S8eIwILWqZ3x/Q8R6v6LXM2uA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P0MJ0rwMboiI1Oos/4IkvoF1DRUwG6i4z8V423F1l/c=;
- b=fM2j6UwqAt+mgVCquYzwTc84aujSdmV1C7zaSb9+mcqIX/INQVUzNnGStkGttVnLBEoEq11mXOuJLVM3nb/m4lgDfuzrr/4NLh6EQfV0hJvEIxC+BRFPlSDKXn2kFUBmaWAkekMkJowjob7YoDWUdwdg8u/XFRE1VKMzfJQLMilJY+5gKo9RkZ6c44A33r7I6HM6zCILW0Y3hUJ1dPbCjkz8fFmjGQlcSCWb6d94+S/wWngysMHMRNAcsNugwOAWaDA+NRnOwQF106w7PB5JIVThaB+nIVZyg8H03vfvOCL3XvRBmeCnj4PupTHONj4eT7gbFqNPx5DKiqZWNXd6zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P0MJ0rwMboiI1Oos/4IkvoF1DRUwG6i4z8V423F1l/c=;
- b=VM9r4AcB8t8ghWrC+yWfLz8yhw3u9kSZeDv3u871KGuNgVt2HqEek5RVJcWsgjIKIjnfAgUThMUdP0fTTv5SMjSxNHLliN5bn35tjl5ykJQFxZlkxS/8+CKr79hYvRazXBIn9/aRkwJVb1jzZ0CLoN0HXsm4yvsur3MN5vkymLc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
- 2024 13:53:37 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
- 13:53:37 +0000
-Message-ID: <340d00f1-45bb-47c9-ac22-086391efe229@amd.com>
-Date: Mon, 15 Jul 2024 15:53:30 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/gpuvm: fix missing dependency to DRM_EXEC
-To: Danilo Krummrich <dakr@redhat.com>, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-References: <20240715135158.133287-1-dakr@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20240715135158.133287-1-dakr@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0264.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::18) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13211741CF;
+	Mon, 15 Jul 2024 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721051668; cv=none; b=jh049CGPckjJIOSLYik5+hF38ECFBSIi7q32mCegit7T5ie9u2/Sy920vfxcK6HsOMDJNHPfPRzG6uigleMaeysEPRVz8M5o6Rzl2e2loGJQIB1YWJ+wn8u78LoKjyX2SBxyIbrfQIBQ8sbL4B+hq9CTogo1XyTYLqGHf4p4Gs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721051668; c=relaxed/simple;
+	bh=415wrRTitLWxP9fLYBiNFhpeTuL+LCKkhB/1YonXHQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BCbUuqMdv/vXVfR8SxRtchhvFEBXPMUldYgMwKN+pcYPkRV5U6xwJmms/lKEmGePslRP2nZ0Qe7EUWwaC458NAkWIKl4Idgxn92YvQlVitbdg5GsdrHRXZe7D/Hpq4cpcFNps1BPBvmT+cFHXAW/rLtcMCOFqD5YIyhjI7QjOWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9RH77PG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED29C32782;
+	Mon, 15 Jul 2024 13:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721051667;
+	bh=415wrRTitLWxP9fLYBiNFhpeTuL+LCKkhB/1YonXHQg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r9RH77PG2p1/wSJaMTEWJhlDxwKmBYSbuDXgbQsLvua3sdDZwD1yHCKFQUaAd7TSh
+	 I2ynLR1MFi4+8FgSMFnygtSyfGhGJOSD3r0NV8R5oS8LqTLkDvzkav1ofu7nlDxFhA
+	 3h/WFWMQmt0GCKdHOWyPSP+GNt0jByu98u2dhI4Vb5CPjUYMmwUBLoRI3wc5eNUsCJ
+	 9iONTOZMsZJJOq1TO2q50xvYPEZdyWmi5qkZWIpSebqjKTLS28NlVxrDe9Yh5b3G43
+	 7uCyiF+XNo/eU+ZgVp5i8SuOVxUrZ+zGZEybo2jBd82aY1/74e9X+SLFW3E/IAPs/y
+	 KXmNX9Js5v9GA==
+Date: Mon, 15 Jul 2024 06:54:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: kvalo@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, guanwentao@uniontech.com,
+ sergio.it.consultant@gmail.com, nbd@nbd.name, lorenzo@kernel.org,
+ shayne.chen@mediatek.com, deren.wu@mediatek.com,
+ mingyen.hsieh@mediatek.com, chui-hao.chiu@mediatek.com,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [RESEND. PATCH] drivers/mediatek: Fix some mt7601u vendor could
+ not connect
+Message-ID: <20240715065426.73ba0869@kernel.org>
+In-Reply-To: <A9442D62405552CE+20240715094714.1553336-1-wangyuli@uniontech.com>
+References: <A9442D62405552CE+20240715094714.1553336-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY5PR12MB6526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a790cf8-5f79-4f26-37d9-08dca4d5867c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUNMR1N1OGJNOVgyN3IwZG1hTG5SWjF1U29Nd28wNGhMZlJLRHFScktKdE96?=
- =?utf-8?B?U1VtTlorUkEwcnR3QzFZZGM5bGNITjFkY0xOTVpIM0F2Z3diVG1sNzB2VFdy?=
- =?utf-8?B?ZDFabFdYL3laVjdpemdST2NJS3RkbEpFbEJMZjVHbmRlbS96TnFKRWdsR3Ix?=
- =?utf-8?B?Tk4xaGw4MVBPWVRZZzRLOWZXMmZ0dGlBbXh0eXVINmRUcTNaNHU3UXdxNTVv?=
- =?utf-8?B?UTFkRk1vclU2MzlPV3VuOFNrcXpSVHgvTEdCMWJQVWIyMnhlUm11ZGFaR1Ba?=
- =?utf-8?B?OG1uRjFUUzQyWGM2elZQUXNmSUNYMFhQdnRUYzB4U0lDTHhOZ0t4d3dWN3dX?=
- =?utf-8?B?WWcrTm5meGZ3bTJQU1pQUUN6MWJTOVVDS0NiMkpxYWJqRWpEbG10d3g5aWpk?=
- =?utf-8?B?MWc3MlMzWS91eTBTdmJrek9TUkpraWNCd2VIUVNpZkxOdFJRbFJMWTVVT0Er?=
- =?utf-8?B?eHZ6OHdmSkltZkRvNFhNaUJIV1NZNUhNNGd6WFQ0WVpHUmdVUVhBZkp4T20v?=
- =?utf-8?B?U1hKL056MHJCeWlGWXRLdWV2c1ZtNVUxWDh5VWQzSklXTkpBS2RKTStnMVdl?=
- =?utf-8?B?VFUxYm0zQ2I3YmJuK3pjampmbDBmQkt4NUsvVG0wbFFvZ0FDUFo5d0kzUlNY?=
- =?utf-8?B?RS9HbkpYaW9DU1BSQittR0dWNHgzNDhYQWVENm1tUXQzWjJXeHQ5aFphY21m?=
- =?utf-8?B?ZDFDOE0xTnliOHVlYUZzSk9qbjJuYldKVzRjVVY3RUt4N1NVVVNZR2kyM2hX?=
- =?utf-8?B?aVc3VzUyaEJWeDViUWlVS28zeEt6K1MvQUxRZkVqKzFGQUpIeVh2cWMyUStq?=
- =?utf-8?B?MlRWdXNBZzQ3OTBxOXFrd1B4T3JiWlhQZGo5Vmc3UStTY1luZ0ZzdVJzaC9u?=
- =?utf-8?B?MjQrcTFFY1hRaUxYeUNONm5ORllzdisxS1d6dkh6NFBhUy90OGc1S3FHVVl1?=
- =?utf-8?B?cUhwUFg3TTRYc1FkNW9BK3hMdVBTbUZVTDZWWGs0cXRvREN4YzlQTVlrdjIv?=
- =?utf-8?B?d2hQbS9hUXMzemJsamlOVFdBMnlneWdFZ2FlSnFYUHFyVmhNU1dyOGZkUWRz?=
- =?utf-8?B?THdUbXo3eHRZRzFvUGFRS3dJRUpJNzZ1Y2NiOStEZnVHK045SjdVbXlsL0dq?=
- =?utf-8?B?RGNwa0h6OXF4UFlxam5vd1k1b1hZVWxPbkZKdUREUGpLanR3dHdyMStjeGVx?=
- =?utf-8?B?bzNFZXJKdDRXSjBOY1ZEckpyNHl0Q0Q3WkR5a1NpK1dHTStFMC9jZVVlVVRR?=
- =?utf-8?B?VVdaQm8yZUw1Y3VUdWNvbFVaMVorc0tnZGxyREt2SDBiM0RxS290dTUyeGh1?=
- =?utf-8?B?dzdoU21CZWpEc1VydTBPZ3IrQWpUa04xajg0Vmd3SVlmM01uang5U1BzU081?=
- =?utf-8?B?WUlTTS9USXgrNnYwdzd3NlE0NjRoWU1lbkEzRlMrM3BRRzY4VlBEaVRETUtX?=
- =?utf-8?B?TFNGTmpmYllQQWl2TGlGQTE3bGVGSklKMGVXVWI5NlFOckNObWg2UUZzYnI5?=
- =?utf-8?B?ODRmSHVPWmZ4bFJwN1dMOFFOODFxTCt2aElrOS9acGN2bE83d1Z5V0lZem9n?=
- =?utf-8?B?d1VzZkUzSFY0S3BFcndCYVpBRFJUQyt6clgvcXBxNGZwRUtLYjhJa0U3aGxC?=
- =?utf-8?B?b0J0aDJORVV3dWJCM2gxdEcrUHQzS1RRTG5rOS9SWFhsR1phR3RCYTZCZ3dF?=
- =?utf-8?B?Y2RoMjhjVjNKeWcyUEtQdDFWMDRqZFJaMm1yQUthT2N4dSt4U04vVE1wVU8z?=
- =?utf-8?B?NkxGZnJLc2gwZURicUN4Zzh5UGI3b3JrbGUwTzVoWU9pdjd6WGVVd2RTc1lp?=
- =?utf-8?B?UnRLZUJ6Y2h5czJHaS93Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T2hUOFBZcXZXTHN0bzVzTWhXQUtlT2p2Q1VVMnJFRU14MU55b0RFZHJxOHZG?=
- =?utf-8?B?by9tV2pndjJmT2xUc3RXM1l3dWFPbXUyQVdpY1VxWHhWdkxJOTE2WHZVVGNj?=
- =?utf-8?B?UXA3bDUxbmF3WCtMV1VzZGl6WlFZZ3IzL1BOTE1WYzR0NnhlUVhHT0o1V2hZ?=
- =?utf-8?B?SFl5eVcvV3BwTzROc0RJbzdyNVRWT2VtelNpT1RMWHhKNEFkR3ZJYk5kVDFZ?=
- =?utf-8?B?VkpWS0hVMzczU0hvekUyMVBNNitzYUVFMVV3U2tQU0dGMmlSMSsyTkVYa3Qz?=
- =?utf-8?B?eHdwNWJMUmFpZXlqaVcwbUs4am9XdzEvVkFvNGJ3WDZZWloxT1V4U0VHOHNG?=
- =?utf-8?B?WTlzR2M3Vlp6TklzalU0NGwzVUdwUjdtWmtsLys1WmJibUFsWWswY2Vpa0ty?=
- =?utf-8?B?UUpFREs0SWVVTmtRakJzOHBIWS83bGRHdnFKNjVaS2JBay94RXdKczNCemdu?=
- =?utf-8?B?VWh0aFkvbTRQODVEYThwZStwd2kzL05xVXllR0xSOHVkMHcyaHdNanQ2WUZY?=
- =?utf-8?B?MElFTFZkcVBzeFI4U2N4SEp0VW11SlcvdFhEVEk5My8rNVhEOURPTE9yNklR?=
- =?utf-8?B?am1paUpKQnhIcG9oL2Mzd2MyNGVEaGoyQmdoSDgvQWRlMkliQUdmeW1GUlBT?=
- =?utf-8?B?TVA5MkhTbm1MOEJEV2ZjTEsxdnRvTFU4dEQybmhvL1dKU1NwVU9TUmUvRW1C?=
- =?utf-8?B?NW5VVGdqTDZCV2dicDRmdStWTk0wSVFKOVpkb1lPY1lXWGhDZGxaUlBZeUdI?=
- =?utf-8?B?Q3lBNWRMaG01bFdNL3dhM01xM3Mza3ZnS2hNN3BzNnl4UytaSWpwZ01uRGpH?=
- =?utf-8?B?ZWtHTko1bENyaTI4YXFWOXA1dTlzTTVCT29uVXJMemczeEtseUE3VHowVVBh?=
- =?utf-8?B?R205WFQ1b2FTUzJ2cUlSK1daUS9hRGlkVWJHU3F0b3dpRDdOTTQ5WXlyWkJD?=
- =?utf-8?B?SlBZWWhoWjNnWXhoYzhBeDgwb0U3Ujg3elUzNHNRQjdsQkpjU3FvcCt5UzdP?=
- =?utf-8?B?ajN4WDB3eWpLdmpnMzVIOUJkbEQ4ckVJcTdIQ1h2TmRrSW9rRzIxL1ZnQW5o?=
- =?utf-8?B?bGwyZ2FTOTdta2RYTkcvSEkrM1h5TVNSczFoNHZ0eFFkbjlWRjJhWllGb0RY?=
- =?utf-8?B?REdEbnRsMVJZZXlNVGNzN25LSVhzdzFMaUtKMlVnWERzb1hnM0pEQ2kyeVlj?=
- =?utf-8?B?aUd1K29MRDl6c0RJUllraUJJeFVVeUlmYy92WUd2cXhVczBwZEhtSEdZalJj?=
- =?utf-8?B?cEdHenowbUxneXA1SkF5aThFQmV0c0xmckRpSFZFeENneWpybkNjakRKU080?=
- =?utf-8?B?TFVvbXdxc3I1U0phQWVTL1dEQ1ZsTTFLZ0hMbTJDcE84RkZUbTlXNWQ3RUxm?=
- =?utf-8?B?ZGZESy96Zk9VWGJ3b1pyeW1uR0RVakxoK3RKdU8xZ294QmxoZ3VIOE9hOW82?=
- =?utf-8?B?VFFhTjhWOFZiRTJjWWU1TVpWMHp1QkM1cFQydFc1cnlIeWNkNkZjakZjUEJh?=
- =?utf-8?B?dllUWmFUKzZHZGp4ZG9rcTNxZmY0TXpsN1hIZ3FBUElWUGFPSFJFVWNQZDdm?=
- =?utf-8?B?YVF5NkNBbEVnSXR0bUVucnllTEpTL2ZTWUtCdlpWeFp5MVZTZ3FpbGRid0E1?=
- =?utf-8?B?cW5vSk5QZ1NsYkd0QS9zcDZxL012RDdaQWtsdWRXKzVFSmZhUENTQmhKODht?=
- =?utf-8?B?L1B3elpwUkNwR2dGQmN5bCtEL0E2YnRnN2YwdkJPZ1ViaFJMNmJ6RVlxaEVq?=
- =?utf-8?B?R0VLcnNrMkpXZFpoLzBaQUJBUVFvK2oyNXlJWmdZVHFhZ1VLWTRPUURxZVV3?=
- =?utf-8?B?clZlTHE3aFo5UlJpeTJINEVuQjJVRHI4cEQwTU5CdGRxd2cvTThJcXY0VzU5?=
- =?utf-8?B?TVNrdURBWWVpNjFtblFFNng3dXlaZXlia25qeHlkVURsbEZvRWRZZ2VJR2N5?=
- =?utf-8?B?VDUzUVhTaUxBREFlcThWRlZyTmt4SElUUnI3YnBzZlczVGNxZE52bE1reEtM?=
- =?utf-8?B?Rm51NmlibXpScnBBc3FtTk9PL0NFV3BwS1BhMmNERC9NL3Y4UmJpcVQxY0Qz?=
- =?utf-8?B?R2JLd3E3SE1Lc0twNUNsaVVMUm9zREJpVkRuMXl3aUQ1bmc4S1J5UmJ2S2xE?=
- =?utf-8?Q?P0xfRFLbgaRoq8qRJ8atvV2hN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a790cf8-5f79-4f26-37d9-08dca4d5867c
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 13:53:37.3815
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dv5PCAywbcEisdg/N7Z24CHRuF8iUz6MD+oRAuBSSpB/Dg8VWpmCZuFD+kp2ozpj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6526
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am 15.07.24 um 15:51 schrieb Danilo Krummrich:
-> In commit 50c1a36f594b ("drm/gpuvm: track/lock/validate external/evicted
-> objects") we started using drm_exec, but did not select DRM_EXEC in the
-> Kconfig for DRM_GPUVM, fix this.
->
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: Boris Brezillon <boris.brezillon@collabora.com>
-> Cc: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-> Fixes: 50c1a36f594b ("drm/gpuvm: track/lock/validate external/evicted objects")
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+On Mon, 15 Jul 2024 17:47:14 +0800 WangYuli wrote:
+> Some mt7601 devices cannot establish a connection properly.
+> This patch fixes the issue.
+> We do not know why, but it just works.
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
-
-> ---
->   drivers/gpu/drm/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index d0aa277fc3bf..d08d79bbb0f6 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -254,6 +254,7 @@ config DRM_EXEC
->   config DRM_GPUVM
->   	tristate
->   	depends on DRM
-> +	select DRM_EXEC
->   	help
->   	  GPU-VM representation providing helpers to manage a GPUs virtual
->   	  address space
->
-> base-commit: 833cd3e9ad8360785b6c23c82dd3856df00732d9
-
+Any chance we can gate this on the version of EEPROM or chip or
+something else? It'd be good to avoid regressions on older devices.
+Or possibly - could we issue the MCU command as a test and disable
+the calibration if it fails?
 
