@@ -1,141 +1,152 @@
-Return-Path: <linux-kernel+bounces-252382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010CD93126C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:38:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9FA931272
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C70CB22094
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F82C1C21BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878581891AA;
-	Mon, 15 Jul 2024 10:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCF4188CBC;
+	Mon, 15 Jul 2024 10:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="s2+zFhHA"
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCV/9iMS"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AC0188CDE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077A188CAE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721039890; cv=none; b=iy3hrF7OSD1LTi7fCSDWCZcjIOgOx8Wf5Q584Ld9leUvqC0Q4eD/OAIrIaoYtQuvXRrlLJM6bPKvq/h2y2WBCg0YsmiOa9S3hFrpni5Z6Yg/u1GPQAEe8kQFHboPYBcDMgIGCv72bbJvauMkgSwLDdLA4A8bbnPIDPdoJepJ0ag=
+	t=1721039947; cv=none; b=dOnoMgDdqRkgGUnJgr6U5x42LvLk5qistX7LB8egE0VP/e+m/bmn+pKrUz2MT57x96EDT9mFpAxOuShW6Um9QSzaN3p7wCKVssCbJ5I2dPcXlawd4wtcaCbF3dE55VJeD9Z0/lWCszm2lrMLhfk2ax+MYjev32G/iQTJZoRM5VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721039890; c=relaxed/simple;
-	bh=lE7FrfdkLBlUpifxmV9zzJ79DyhZz5RPYEjWLn8zz3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgcP/1Z8kTYfcexKekk6xyAfwub/HasF4EQCzV8fFjmHrXMo6XC+70U40XOW290eGdjbtKOD5laZG6+Bv45ySKvPctLgUdg3SruqrBOpbMAWcaI+Xwrx3cRm7lDYRbO8jOdV7QMonVrAljnwRjKy/3d0qtNpq5KT+Sx5OB4wHT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=s2+zFhHA; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WMzDj193wzC4M;
-	Mon, 15 Jul 2024 12:37:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721039877;
-	bh=KuHNObI2LzO0QtwTAS849qPCxUo8g2dKwL8aDC0U+Uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s2+zFhHAbXAXy3xNyWk6oTsZl9y3ELVIB8o/ZVGkHnD21c6y73sdx52PZ6bVpZJSG
-	 rCFSW21qrninMnI29pajBICHfwBshsKnKaBDwGM2ngfVsfFcSMiwCN+pGp9/0LU0Nl
-	 m8glSxH2+/ty8C+x14dJ6j3+o9E1/Y18d9FAW6aU=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WMzDh4zfPzKfn;
-	Mon, 15 Jul 2024 12:37:56 +0200 (CEST)
-Date: Mon, 15 Jul 2024 12:37:53 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
-Message-ID: <20240715.aeLiunipi8ia@digikod.net>
-References: <2024071218-CVE-2024-40938-1619@gregkh>
+	s=arc-20240116; t=1721039947; c=relaxed/simple;
+	bh=JyeGYP/ZqmeeeWwzcT3g655wsRPG9J7YFW5ADKHPBXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bha5aSoRwOJfmIS+HvTGlRGFlB2NJkCDUPoqkQsgvJFO53uXk5dff3oJKkh8GcdncqiVt+zfTt9ZrGOCoIrfvLZvcoAn22LTivQXeJYLWANcGm7XL2iGwZDcRayeRCMCDSNYZyUAntgX6PWvrAldSpJ/gE6/hJbZymuzOgqdh3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PCV/9iMS; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-64b417e1511so39193827b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721039945; x=1721644745; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=INSejsyLjcpJev/T6jffsbe2dFNdxfyo5iJxSvSQsa8=;
+        b=PCV/9iMS5T7MYDiCb0gW7J+jvq57dWn67M+QP6D6qW+pDsn6y4qO2LLDQUZvZIXCq3
+         +r0N7Ix9IGo/oCvQmXZhDY19fI7qoTzj/kwEivhZHysKZQO+KhF+SBXQuyJOlwX9ktmi
+         8S5cN4oPxUDcUNZyt1u89iE694XlaTwjDZRxIG3atSFByk/ETHyCMA4Tb04oDau9m4XA
+         uFtBGoOPxb2a8igYPchVRW59bfXzexO+DVNbu0zSYJms9SAJdmAMyCWyipeSDYgLXH8w
+         JAJEyqxQf2T1EB0ByozBA1qdwz+CG7/LS0R1JXCmqmYehgovCx3H3IAT8a2APDcfmHbh
+         +Luw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721039945; x=1721644745;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=INSejsyLjcpJev/T6jffsbe2dFNdxfyo5iJxSvSQsa8=;
+        b=M3eDwlf+QpQ8AOP/zR/Oy3RXIrZviohiGvasxLiJrvfc48vn7PP8YegtuWcDmYS+lS
+         /gP6I9XYB2b+19N3x/W2yehjWBzQAWuScSVtahzWJP6QYszNta9j2esoVbI99xBBJ1DN
+         3+fjJarVNUvwcJAgeCr6SeTqcZsPtMi5Dz4R2/vWo1x/R87W+KenS8TnDN8dwNUIFyfv
+         qmHpsg7Sb6NOctPW5V12rMcxR7GA5PQixjn3BOfKzP3xuIk7GAAw5gXr/+ruo5kjeVLR
+         8YKjmGMnaXznBZbpcNl7j0dEWv1yzk+53+vQVu6JY9lsnjw8V02b0x2Lo+MPj1pc13BD
+         yIGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFgVFd5/njex5kP16+7idyFfX6VlR7WGqur25XICrRZ6ETxlbMRO/VuSPi6n5OMkGQJBpm8zc7f9N6NaJImDIEU7675zaGCL88iAGe
+X-Gm-Message-State: AOJu0YxjKFTlL7Jb7R5iQdbvju6d6Gxx3clKe7CPHOp4Livz/Cag6ITK
+	AeFzCrldQSKwa/7Ghl/SwsUgkhNikN65xVF9x1IvPMu1jYMPZqfE6Lvmddj0dB5F+VMcvVD+J1U
+	Wr0IDdC4WWl2tmgR5nHqea+JuvmLngBUauYsuzQ==
+X-Google-Smtp-Source: AGHT+IGOwT+AJq8LsaDGCWG5Q4MU9/IwYMNPN0Zgh+Q4OFSYBHhvH+Ltseygw8r5Q9tSpvN0xXJHRjC6YpdwCplZ/aM=
+X-Received: by 2002:a05:690c:7442:b0:64b:9f5f:67b2 with SMTP id
+ 00721157ae682-658ef24c009mr224085457b3.31.1721039944774; Mon, 15 Jul 2024
+ 03:39:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024071218-CVE-2024-40938-1619@gregkh>
-X-Infomaniak-Routing: alpha
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com> <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+In-Reply-To: <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 15 Jul 2024 13:38:53 +0300
+Message-ID: <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for SM8150
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 15 Jul 2024 at 13:23, Satya Priya Kakitapalli (Temp)
+<quic_skakitap@quicinc.com> wrote:
+>
+>
+> On 7/11/2024 3:40 AM, Dmitry Baryshkov wrote:
+> > On Tue, 9 Jul 2024 at 13:53, Satya Priya Kakitapalli (Temp)
+> > <quic_skakitap@quicinc.com>  wrote:
+> >> On 7/3/2024 3:50 PM, Dmitry Baryshkov wrote:
+> >>> On Tue, Jul 02, 2024 at 09:20:43PM GMT, Satya Priya Kakitapalli wrote:
+> >>>> Add support for the camera clock controller for camera clients
+> >>>> to be able to request for camcc clocks on SM8150 platform.
+> >>>>
+> >>>> Reviewed-by: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
+> >>>> Signed-off-by: Satya Priya Kakitapalli<quic_skakitap@quicinc.com>
+> >>>> ---
+> >>>>    drivers/clk/qcom/Kconfig        |    9 +
+> >>>>    drivers/clk/qcom/Makefile       |    1 +
+> >>>>    drivers/clk/qcom/camcc-sm8150.c | 2159 +++++++++++++++++++++++++++++++++++++++
+> >>>>    3 files changed, 2169 insertions(+)
+> >>> The patch mostly LGTM, several quesitons:
+> >>>
+> >>> - There are no cam_cc_sleep_clk and no cam_cc_xo_clk_src. Why?
+> >> These are not required for camcc sm8150 hence not modelled.
+> >>
+> >>
+> >>> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
+> >> This clock is kept enabled from probe, hence not required to be modelled
+> >> explicitly.
+> > Yes, I'm asking why it's kept up enabled from probe rather than via
+> > clock framework?
+>
+>
+> >>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+> >>>     using simple rcg2 ops, could you please clarify that?
+> >> As per the HW design recommendation, RCG needs to be parked at a safe
+> >> clock source(XO) in the disable path, shared_ops is used to achieve the
+> >> same.
+> > Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+>
+>
+> Yes, it applies to SM8150.
 
-AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
-security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
-just a canary, and this case was correctly handled with defensive
-programming and didn't allow to bypass the security policy nor to harm
-the kernel.  However, this fix should indeed be backported.
+Should the same logic be applied to other chipsets supported upstream?
+If this is the case, which chipsets?
 
-Could you please Cc me for future CVE related to my changes or to
-Landlock?  For kernel CVEs, I think it would be good to Cc at least
-maintainers, reviewers, authors, and committers for the related commits.
+> >>> - RETAIN_FF_ENABLE has been used for GDSCs for sc7280, sc8280xp, sm8550,
+> >>>     sm8650 and x1e8 platforms. Should it really be set for sm8150? If so,
+> >>>     should it also be added to other camcc drivers (if so, for which
+> >>>     platforms)?
+> >> I have rechecked this in downstream and seems it is not really needed
+> >> for sm8150, I'll drop in next post.
+> >>
 
-Regards,
- Mickaël
 
-On Fri, Jul 12, 2024 at 02:27:36PM +0200, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> landlock: Fix d_parent walk
-> 
-> The WARN_ON_ONCE() in collect_domain_accesses() can be triggered when
-> trying to link a root mount point.  This cannot work in practice because
-> this directory is mounted, but the VFS check is done after the call to
-> security_path_link().
-> 
-> Do not use source directory's d_parent when the source directory is the
-> mount point.
-> 
-> [mic: Fix commit message]
-> 
-> The Linux kernel CVE team has assigned CVE-2024-40938 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.1.95 with commit b6e5e6964358
-> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.6.35 with commit cc30d05b34f9
-> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.9.6 with commit c7618c7b0b8c
-> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.10-rc2 with commit 88da52ccd66e
-> 
-> Please see https://www.kernel.org for a full list of currently supported
-> kernel versions by the kernel community.
-> 
-> Unaffected versions might change over time as fixes are backported to
-> older supported kernel versions.  The official CVE entry at
-> 	https://cve.org/CVERecord/?id=CVE-2024-40938
-> will be updated if fixes are backported, please check that for the most
-> up to date information about this issue.
-> 
-> 
-> Affected files
-> ==============
-> 
-> The file(s) affected by this issue are:
-> 	security/landlock/fs.c
-> 
-> 
-> Mitigation
-> ==========
-> 
-> The Linux kernel CVE team recommends that you update to the latest
-> stable kernel version for this, and many other bugfixes.  Individual
-> changes are never tested alone, but rather are part of a larger kernel
-> release.  Cherry-picking individual commits is not recommended or
-> supported by the Linux kernel community at all.  If however, updating to
-> the latest release is impossible, the individual changes to resolve this
-> issue can be found at these commits:
-> 	https://git.kernel.org/stable/c/b6e5e696435832b33e40775f060ef5c95f4fda1f
-> 	https://git.kernel.org/stable/c/cc30d05b34f9a087a6928d09b131f7b491e9ab11
-> 	https://git.kernel.org/stable/c/c7618c7b0b8c45bcef34410cc1d1e953eb17f8f6
-> 	https://git.kernel.org/stable/c/88da52ccd66e65f2e63a6c35c9dff55d448ef4dc
+
+-- 
+With best wishes
+Dmitry
 
