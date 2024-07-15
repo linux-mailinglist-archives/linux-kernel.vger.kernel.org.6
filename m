@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-252764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4603E9317DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 712E19317EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00152283B4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EE2281B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0003DF5B;
-	Mon, 15 Jul 2024 15:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F961171C;
+	Mon, 15 Jul 2024 15:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eiHrgqHk"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="MP3Pulc3"
+Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C60BA4D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756E4D53C;
+	Mon, 15 Jul 2024 15:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721058616; cv=none; b=mnEvHe5gEtcv7sO/2n7K2XrzlBg0oRRD6bLCLHVGRWQIRJQdVMMBu8cGqPPeyauS2R2blAnQJfSPHgxXzX8cQoRhD1LVwig20RpK6x313ivcsIRqYED34/PJJhqbTSbqyoghx/iPw7Wt5XTgNI5pdg0RsX0n9uUi5P9MgQXRPe4=
+	t=1721059015; cv=none; b=ufds+YyEikJxOZ88IIaUBmrh3E/Zxc06M6HSW+18e89lCSun4LLT1WqENbSAC5YLTlaKnluO9T4dcfyv53Wxp51ckXcv6kT1zyVilpPPgDN5wmGtCX4N54hNQW0PscD77GPoEO9moo3K33aSVNnxd3T21C1G4EZj4QSaZblBVpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721058616; c=relaxed/simple;
-	bh=D+WM+Q2pslyNhAZlHLHHJb3Kl8DybRlsl8NJ4ZQOPaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyYIdKw9adiSxSpJy7ytJwkjWZ5lleWp//dY8EGXFzvVMmGnVJG2hxXZACbdQY7TyaxtffKtcN5dezVkk5KRc2lm5GVPkpAnmGPsZUyYLOoBZESf/mfENrREVrlDQn0aM5Q6nDH5BDoxy/q0to9sQK5dQelB99n+Mz1PJH17ALU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eiHrgqHk; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-375f6841f01so2104665ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1721058614; x=1721663414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E0nad82qrN1uDDEOfj5+pku7SPG9T4YbXiguvPskHZI=;
-        b=eiHrgqHk4SeJnMo4gIXeuekjgD9DnLDOQC6XiE0URrYfus8ieVusZYY3u6ZfraWKYU
-         4T9pAzI3o+Pn61xPC6ncMj2c5JvbIK6w3t/9/Emu6No2vgknnM1RpgIOvfs/WGEfIEBX
-         8Qof7gK3AvXKuSn+bNCDdWFvE0zyx28TheWFk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721058614; x=1721663414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E0nad82qrN1uDDEOfj5+pku7SPG9T4YbXiguvPskHZI=;
-        b=ZV8lN0X4wnvrzsaQTFRuopDVyC9rIYho/k8JarYWL2M9bODC0YAfMrIVkYIXGNp0ie
-         30X0b04TlmrbXngNppEGsM6MKSSsD0SmSUs9NzhZxolmYfoHId7sh/fALvCdTkPAVzTm
-         WTKBnWQpsN8UJJS7aExr3lQyioFwcy+d3FxGgFnk0fsclW6BouY63w9HjmpAiS3HV+F1
-         P3GQuYALy1wr9I055Pgj1h1Kqx5dPZi6RtT1TV46ECAzSBsD1MgO5ANOmQQXj9y9e0Pz
-         A5N6L9mMo5hZJD3k6t7C10dxoaorvmOfv+fKSw22eWRHcGY0E+Y8R+POj4VgVuccsap+
-         P/UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV//59J7bWBDl5cXgSGw3HguLGhB3/8nOaAxzxIVYkE7t+yD+3k2qirUAEwi/ZOAbVchvv9oIIO8KxHzrSihSPanDlxEvT3zAW5kRuV
-X-Gm-Message-State: AOJu0YyHASRfZj9YNPUC9D2l25GFKilhz6m/y8mRjvqGAigG/yg/5m9+
-	z1RZZQTdxq88hxJIa6im95rifrUoUWxmKOotfTwSTa2dJrPuoH6/Rpnm9RUe/CiRCik2Bq6eU5U
-	t
-X-Google-Smtp-Source: AGHT+IE8y9fEAKQk4PXP47LGeWaQE3wKutcs9bw3I1NKfhhWAjDib0QSph6K7btIEPgaaDI+GoiNiA==
-X-Received: by 2002:a5d:9905:0:b0:7f9:3fd9:cbd with SMTP id ca18e2360f4ac-81541b0f8a9mr10482239f.0.1721058613916;
-        Mon, 15 Jul 2024 08:50:13 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c1e1c2fa36sm1247434173.150.2024.07.15.08.50.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 08:50:13 -0700 (PDT)
-Message-ID: <5cccbde4-b296-4759-9ae4-bf1b65f24c5b@linuxfoundation.org>
-Date: Mon, 15 Jul 2024 09:50:12 -0600
+	s=arc-20240116; t=1721059015; c=relaxed/simple;
+	bh=n2yLQUwt6s0OAtUfcYSQI9h6EpwTHBoPl8UvFbLKLxU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oiREFRicBihvOkOK31lHf3kmQz2Ri1bVbW19qg1mvGwQBy/VXsFKhZmoLTUEroRhHqWtytlCveS/h4FD3vXbEGmaCiXRngpgjQ3oKbIDFAf63IAAEj1yMivTcODhKxoitBK0sB0O0JGX/+i06qYbSV+4vhUuA4MaXUJLLlPFvs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=MP3Pulc3; arc=none smtp.client-ip=185.70.43.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1721059006; x=1721318206;
+	bh=0X2OwfENCQ/M/pnkr0i+ZvgaNKd3AS7YhCHGsueDZJI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MP3Pulc3tWE2RK/Y87KVMcpoTd9k7A88xsAzdxuFvwuLeDiwocQczv0thIwsZM9wM
+	 8zSNMEQhHqkLT40Vd60mnEKaOc8sMme8VhVij/mFXsPDC6hP8JcA/HGM2MLasZxCsB
+	 4QjAOb00/s6eh/F2VAKhO0NtmRfavb1gOuW7wsAffebM65/otAVnP6jcTnSgLEFPGD
+	 9CaBur2unZZerj3XJYcCSocz/m1qIodCuIECaqgB+9k7iEQYRL3OXbfhORj/jFKcUN
+	 cfD7DvRd/9vioU+aMXTwT8Nhro6WcehXBLhe6UPuLkUqCy2TMlxlICKah6954wX/6S
+	 5KdXrbY3O0zaA==
+Date: Mon, 15 Jul 2024 15:56:39 +0000
+To: Michal Rostecki <vadorovsky@gmail.com>
+From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, Valentin Obst <kernel@valentinobst.de>, Laine Taffin Altman <alexanderaltman@me.com>, Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>, Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas <charmitro@posteo.net>,
+	Ben Gooding <ben.gooding.dev@gmail.com>, Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr` implementation
+Message-ID: <T4cW5BFYytkMlTR5e2C2FfFJ5Z8P5XPw5dEsTQ2V-hoAo5yZkeYLSU3GvVCTH1Ga3f-mbPvEKZxOEWT7E1-xWu4EDE6-jCoQj3If-qCKCHA=@protonmail.com>
+In-Reply-To: <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
+References: <20240714160238.238708-1-vadorovsky@gmail.com> <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com> <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
+Feedback-ID: 27884398:user:proton
+X-Pm-Message-ID: 95e82dd63daf75c00a972e8d3703e1d61f419209
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] nolibc for 6.11-rc1
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Willy Tarreau <w@1wt.eu>, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <acffd5b1-36a8-4336-9b94-aec50b3d6e5b@t-8ch.de>
- <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
- <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
- <ee43b1d5-3339-4a1c-9bac-c0d48f22167c@t-8ch.de>
- <138b249a-8402-4a79-8c08-45bb9d888dc5@paulmck-laptop>
- <fdf4c2b8-dab7-40f0-a595-fd4f2108964e@t-8ch.de>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <fdf4c2b8-dab7-40f0-a595-fd4f2108964e@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/15/24 01:00, Thomas Weißschuh wrote:
-> On 2024-07-14 09:44:55+0000, Paul E. McKenney wrote:
->> On Sun, Jul 14, 2024 at 10:09:13AM +0200, Thomas Weißschuh wrote:
->>> On 2024-07-12 20:16:13+0000, Paul E. McKenney wrote:
->>>> On Sun, Jun 30, 2024 at 09:06:39AM -0700, Paul E. McKenney wrote:
->>>>> On Sat, Jun 29, 2024 at 01:04:08PM +0200, Thomas Weißschuh wrote:
->>>>>> Hi Paul,
->>>>>>
->>>>>> The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
->>>>>>
->>>>>>    Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
->>>>>>
->>>>>> are available in the Git repository at:
->>>>>>
->>>>>>    https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20240629-for-6.11-1
->>>>>>
->>>>>> for you to fetch changes up to 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b:
->>>>>>
->>>>>>    selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
->>>>>
->>>>> Hearing no objections, I have pulled this in so that it will appear
->>>>> in the next -next.  Here are the test results:
->>>>>
->>>>> make run:
->>>>> 195 test(s): 195 passed,   0 skipped,   0 failed => status: success
->>>>>
->>>>> make run-user:
->>>>> 195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
->>>>>
->>>>> So looks good to me!
->>>
->>> For testing you can use "./run-tests.sh -m [user | system]" to run the
->>> tests on all supported architectures via QEMU.
->>>
->>> (On the first run you can use "-p" to download the toolchains)
->>
->> Thank you for the info!
->>
->> My near-term plan is that I do a smoke test on x86 (or whatever I am
->> running), and let you guys cover the various architectures.  Longer
->> term, I might get more into cross-architecture work.
-> 
+On Monday, July 15th, 2024 at 17:46, Michal Rostecki <vadorovsky@gmail.com>=
+ wrote:
 
-Thank for fielding this time. Next one in on me.
+> On 14.07.24 19:01, Bj=C3=B6rn Roy Baron wrote:
+> > On Sunday, July 14th, 2024 at 18:02, Michal Rostecki <vadorovsky@gmail.=
+com> wrote:
+> >
+> >> `CStr` became a part of `core` library in Rust 1.75, therefore there i=
+s
+> >> no need to keep the custom implementation.
+> >>
+> >> `core::CStr` behaves generally the same as the removed implementation,
+> >> with the following differences:
+> >>
+> >> - It does not implement `Display` (but implements `Debug`).
+> >> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
+> >>    - It was used only in `DerefMut` implementation for `CString`. This
+> >>      change replaces it with a manual cast to `&mut CStr`.
+> >>    - Otherwise, having such a method is not really desirable. `CStr` i=
+s
+> >>      a reference type
+> >>      or `str` are usually not supposed to be modified.
+> >> - It has `as_ptr()` method instead of `as_char_ptr()`, which also retu=
+rns
+> >>    `*const c_char`.
+> >>
+> >> Rust also introduces C literals (`c""`), so the `c_str` macro is remov=
+ed
+> >> here as well.
+> >>
+> >> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
+> >> ---
+> >>   rust/kernel/error.rs        |   7 +-
+> >>   rust/kernel/init.rs         |   8 +-
+> >>   rust/kernel/kunit.rs        |  16 +-
+> >>   rust/kernel/net/phy.rs      |   2 +-
+> >>   rust/kernel/prelude.rs      |   4 +-
+> >>   rust/kernel/str.rs          | 490 +---------------------------------=
+--
+> >>   rust/kernel/sync.rs         |  13 +-
+> >>   rust/kernel/sync/condvar.rs |   5 +-
+> >>   rust/kernel/sync/lock.rs    |   6 +-
+> >>   rust/kernel/workqueue.rs    |  10 +-
+> >>   scripts/rustdoc_test_gen.rs |   4 +-
+> >>   11 files changed, 57 insertions(+), 508 deletions(-)
+> >>
+> >
+> > [snip]
+> >
+> >> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+> >> index 68605b633e73..af0017e56c0e 100644
+> >> --- a/rust/kernel/init.rs
+> >> +++ b/rust/kernel/init.rs
+> >> @@ -46,7 +46,7 @@
+> >>   //! }
+> >>   //!
+> >>   //! let foo =3D pin_init!(Foo {
+> >> -//!     a <- new_mutex!(42, "Foo::a"),
+> >> +//!     a <- new_mutex!(42, c"Foo::a"),
+> >
+> > That we need a CStr here seems a bit of an internal implementation deta=
+il. Maybe
+> > keep accepting a regular string literal and converting it to a CStr int=
+ernally?
+> > If others think what you have here is fine, I don't it mind all that mu=
+ch though.
+> >
+>=20
+> The names passed to `new_mutex`, `new_condvar`, `new_spinlock` etc. are
+> immediately passed in the FFI calls (`__mutex_init`,
+> `__init_waitqueue_head`, `__spin_lock_init`) [0][1][2]. In fact, I don't
+> see any internal usage, where using Rust &str would be beneficial. Am I
+> missing something?
+>=20
+> Converting a &str to &CStr inside `Mutex::new` or `CondVar::new` would
+> require allocating a new buffer, larger by 1, to include the nul byte.
+> Doing that for every new mutex or condvar seems a bit wasteful to me.
 
-> I'll try to remember to add the full testreport for future
-> pullrequests, too.
-> 
+The names passed to `new_mutex!` and such are literals known at
+compile time. This means we can keep adding the nul terminator at
+compile time without allocating any extra buffer. Basically just
+adapting the current implementation of `optional_name!` to produce an
+`core::ffi::&CStr` rather than a `kernel::str::CStr` from a regular
+string literal is enough to avoid having to explicitly use C string
+literals in those macro invocations. This way users don't need to
+know that internally an `&CStr` is used.
 
-Thanks - that will be great.
+>=20
+> [0]
+> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
+1465becb45b0/rust/kernel/sync/lock/mutex.rs#L104
+> [1]
+> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
+1465becb45b0/rust/kernel/sync/condvar.rs#L111
+> [2]
+> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
+1465becb45b0/rust/kernel/sync/lock/spinlock.rs#L103
 
-I run the nolibc tests before I send PR - I also compare to see if my
-results match with yours.
-
-thanks,
--- Shuah
-
-
-
+[snip]
 
