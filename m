@@ -1,325 +1,220 @@
-Return-Path: <linux-kernel+bounces-252722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C291493174F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F057E931750
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7768B1F21A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36252818BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12618EFE8;
-	Mon, 15 Jul 2024 15:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B93618F2C5;
+	Mon, 15 Jul 2024 15:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o6x/5RXu"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i8/ZZjN3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4486A3A1A0
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C493A1A0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055780; cv=none; b=ZITd0zV7j8eo/Gvbn6R/hdegFKWGyRw5/f2ywf0r8lmtcFNJPUn2QGuWlnpflTAb/er/ybdAKAHCAXMaoAu/Uibtq/breFty7Hg4Ug3rtMk7KEE1NXjalb+m9zyv5IXXilYsL992uUfLV+TZF7ZO9bm0m+n+mqnDbvkKjq26CW4=
+	t=1721055794; cv=none; b=KpbHl13aDHKRTzWPt0VicP/aB+1g0faogBht19AcwESxWGs9jHUskPAsYnSsh88rCe6BracRdWk5uzekIRIKxWgAYFWE5dNyxk7BZ++tjRQc/vNtbN2uzqJzYsFW+alzwKOhv1Y9KbvyINbGOORfXUwaq/SdqRJQG2aE4XkfVOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055780; c=relaxed/simple;
-	bh=BVp8/vLYgin82ZhjajWKsO46wXqB030JTOQyJwmasUM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SjOvD3F41iGhtZfyZvmHut8200o10g8AFQH9/744GKe6ZdiDvBG8m7DvbCzqZmPHQ1BUmokEH5Pxs8uZ28hiEJ1j20nUOdikhVxPzLEhYAZ992fFGH/ADDjrggECq8tsYX6OTONyJMmxNpWSRZSNCm9oudh95eVIi5DSvot4M+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o6x/5RXu; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: ebiederm@xmission.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721055775;
+	s=arc-20240116; t=1721055794; c=relaxed/simple;
+	bh=owC7FJjs1l9pLWV6rfVljc4xZ1WBLyzhuHQ/uLBqJj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJ8uRHDHKio2uu14039qTKVvG7sTA6drtiZhhQpGmzhxWHtFd5T7jnBMkuC8hnW2BXjUxGXkGmI+ZAamy4fyJlE1PcyGZPrz/CK4XaDYbg6sJizXHs2TVSO7L/F8gFdkzKKyGDhTnV+GoYgl9H8Fq/ountiRncCnZ2Jfu4z/THY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i8/ZZjN3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721055792;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/Bx+gGuyNyRPLgNDsnj1ZJCJdVf1Ptadvr7DRfDMYOk=;
-	b=o6x/5RXuBV05qJmx2HqbQk3KO7utVbOvX/XPWxNM+2VlXzvDzFZkB3Ebnj8Nw2hkZ8rbD6
-	p4BmcVn4e47drr+XM3IV384BQ9se95FyVJE6+P93qgJSt0omKfC981Ju0zUmj4okEUSw4n
-	qzJqjyLs425n/6iFIaXLlD75ntVAMV0=
-X-Envelope-To: mcgrof@kernel.org
-X-Envelope-To: keescook@chromium.org
-X-Envelope-To: j.granados@samsung.com
-X-Envelope-To: brauner@kernel.org
-X-Envelope-To: wen.yang@linux.dev
-X-Envelope-To: dyoung@redhat.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-To: "Eric W . Biederman" <ebiederm@xmission.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Wen Yang <wen.yang@linux.dev>,
-	Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sysctl: simplify the min/max boundary check
-Date: Mon, 15 Jul 2024 23:02:23 +0800
-Message-Id: <20240715150223.54707-1-wen.yang@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2yTZb7+mQJZXBK7qYXVgXHJq3MdxWsgEZ9xe9sXqDfQ=;
+	b=i8/ZZjN3V50/qZ7Of0umagYSWvtNTsbTJ1iDLLCY0KMcqer4OSk/tBXlWmDQTpY0/+Gh8Y
+	9NX5ccEbzK5vBDSkbhoxJWNY17jxdvksnD+F7+yGjndgN7akhviCDXKEipplwl4ja+HWG0
+	D+19tHlPwgh5hDBTx7SVSHdctIBm8Mk=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-498-Zwa92RyZNaubslNeYj3vRQ-1; Mon, 15 Jul 2024 11:03:10 -0400
+X-MC-Unique: Zwa92RyZNaubslNeYj3vRQ-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-447dfad3387so11125811cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:03:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721055790; x=1721660590;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2yTZb7+mQJZXBK7qYXVgXHJq3MdxWsgEZ9xe9sXqDfQ=;
+        b=DtXyHyxxPubgiJTIndeu3RYLuRVNdpACK92MfufN2P5CMoSVOfGkhxq8yDo299u5yR
+         plqZZwdLWZOozw7oKgChjQ02pW69NOsExDzJpWQB914zG2YBebi0LWOTVhKZHB1GS03a
+         HeIk04OzeTCW3KYexGIlqKTw5YfZ9KsgY3XF6guNpLWr9ReNHt2ih4WcMyMFEDSTY9Wy
+         WLvJ300U3DvA4HufdfIZujWQR1G/BqOCsV+CusaUWomzPeyj1EVozgBxpbeIXhWustSC
+         eaY9prm8/plViIqjz94TWV+j++0XGJad8AHJgS3UO0WG+KsHHCCXbSJuYTK6bSIOO6g0
+         QYHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUj+fkwWSaNTxbEjb4/hVXDU/iK0I5xMXaR03tuLlK6i5xYAUxqJRt3XovLaWuTWtSvbYgiwh2YS7nAk8VoMRoBYvDxv9YMcvEgtoY/
+X-Gm-Message-State: AOJu0YxPPu4m1DAu30aZL6UfhUrF8cWsD/QKFJ3wz8jB6sWmjFTelaX3
+	qpnwUcZOp1125zJsD0dq2o9B87Y+Nscq/vbDx3f+m1tzGDEhbQppCbpLskW3t+uAFEqxOpym+2Q
+	ua+88MHRhUrrGVmFW/b/rTQeKgGeOpH3YQwNCUJBQY29kYVKRxV9rsgSpxMpi7w==
+X-Received: by 2002:a05:622a:15c4:b0:44e:cff7:3742 with SMTP id d75a77b69052e-44f792aaa18mr14911cf.8.1721055789774;
+        Mon, 15 Jul 2024 08:03:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcMbJqOp8VyQ0MieqpADYPl+M4EHhZD2Cg/JwSuiTWevBLnSOp3kocJixEawjgtgw4Glmx1w==
+X-Received: by 2002:a05:622a:15c4:b0:44e:cff7:3742 with SMTP id d75a77b69052e-44f792aaa18mr14551cf.8.1721055789286;
+        Mon, 15 Jul 2024 08:03:09 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b7c4108sm25210541cf.9.2024.07.15.08.03.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 08:03:08 -0700 (PDT)
+Date: Mon, 15 Jul 2024 11:03:06 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: David Wang <00107082@163.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Pei Li <peili.dev@gmail.com>, Bert Karwatzki <spasswolf@web.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
+Message-ID: <ZpU6KsKuhzPqUpFF@x1n>
+References: <20240712144244.3090089-1-peterx@redhat.com>
+ <1182a459.1e35.190b0e61754.Coremail.00107082@163.com>
+ <8da2b3bf-b9bf-44e3-88ff-750dc91c2388@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8da2b3bf-b9bf-44e3-88ff-750dc91c2388@redhat.com>
 
-The do_proc_dointvec_minmax_conv_param structure provides the minimum and
-maximum values for doing range checking for the proc_dointvec_minmax()
-handler, while the do_proc_douintvec_minmax_conv_param structure also
-provides the minimum and maximum values for doing range checking for the
-proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
+On Sun, Jul 14, 2024 at 08:27:25PM +0200, David Hildenbrand wrote:
+> On 14.07.24 12:59, David Wang wrote:
+> > 
+> > At 2024-07-12 22:42:44, "Peter Xu" <peterx@redhat.com> wrote:
+> > > NOTE: I massaged the commit message comparing to the rfc post [1], the
+> > > patch itself is untouched.  Also removed rfc tag, and added more people
+> > > into the loop. Please kindly help test this patch if you have a reproducer,
+> > > as I can't reproduce it myself even with the syzbot reproducer on top of
+> > > mm-unstable.  Instead of further check on the reproducer, I decided to send
+> > > this out first as we have a bunch of reproducers on the list now..
+> > > ---
+> > > mm/memory.c | 5 ++---
+> > > 1 file changed, 2 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/mm/memory.c b/mm/memory.c
+> > > index 4bcd79619574..f57cc304b318 100644
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@ -1827,9 +1827,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
+> > > 	if (vma->vm_file)
+> > > 		uprobe_munmap(vma, start, end);
+> > > 
+> > > -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > > -		untrack_pfn(vma, 0, 0, mm_wr_locked);
+> > > -
+> > > 	if (start != end) {
+> > > 		if (unlikely(is_vm_hugetlb_page(vma))) {
+> > > 			/*
+> > > @@ -1894,6 +1891,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+> > > 		unsigned long start = start_addr;
+> > > 		unsigned long end = end_addr;
+> > > 		hugetlb_zap_begin(vma, &start, &end);
+> > > +		if (unlikely(vma->vm_flags & VM_PFNMAP))
+> > > +			untrack_pfn(vma, 0, 0, mm_wr_locked);
+> > > 		unmap_single_vma(tlb, vma, start, end, &details,
+> > > 				 mm_wr_locked);
+> > > 		hugetlb_zap_end(vma, &details);
+> > > -- 
+> > > 2.45.0
+> > 
+> > Hi,
+> > 
+> > Today, I notice a kernel warning with this patch.
+> > 
+> > 
+> > [Sun Jul 14 16:51:38 2024] OOM killer enabled.
+> > [Sun Jul 14 16:51:38 2024] Restarting tasks ... done.
+> > [Sun Jul 14 16:51:38 2024] random: crng reseeded on system resumption
+> > [Sun Jul 14 16:51:38 2024] PM: suspend exit
+> > [Sun Jul 14 16:51:38 2024] ------------[ cut here ]------------
+> > [Sun Jul 14 16:51:38 2024] WARNING: CPU: 1 PID: 2484 at arch/x86/mm/pat/memtype.c:1002 untrack_pfn+0x10c/0x120
+> 
+> We fail to find what we need in the page tables, indicating that the page
+> tables might have been modified / torn down in the meantime.
+> 
+> Likely we have a previous call to unmap_single_vma() that modifies the page
+> tables, and unmaps present PFNs.
+> 
+> PAT is incompatible to that, it relies on information from the page tables
+> to know what it has to undo during munmap(), or what it has to do during
+> fork().
+> 
+> The splat from the previous discussion [1]:
+> 
+>   follow_phys arch/x86/mm/pat/memtype.c:957 [inline]
+>   get_pat_info+0xf2/0x510 arch/x86/mm/pat/memtype.c:991
+>   untrack_pfn+0xf7/0x4d0 arch/x86/mm/pat/memtype.c:1104
+>   unmap_single_vma+0x1bd/0x2b0 mm/memory.c:1819
+>   zap_page_range_single+0x326/0x560 mm/memory.c:1920
+>   unmap_mapping_range_vma mm/memory.c:3684 [inline]
+>   unmap_mapping_range_tree mm/memory.c:3701 [inline]
+>   unmap_mapping_pages mm/memory.c:3767 [inline]
+>   unmap_mapping_range+0x1ee/0x280 mm/memory.c:3804
+>   truncate_pagecache+0x53/0x90 mm/truncate.c:731
+>   simple_setattr+0xf2/0x120 fs/libfs.c:886
+>   notify_change+0xec6/0x11f0 fs/attr.c:499
+>   do_truncate+0x15c/0x220 fs/open.c:65
+>   handle_truncate fs/namei.c:3308 [inline]
+> 
+> indicates that file truncation seems to end up messing with a PFNMAP mapping
+> that has PAT set. That is ... weird. I would have thought that PFNMAP would
+> never really happen with file truncation.
+> 
+> Does this only happen with an OOT driver, that seems to do weird truncate
+> stuff on files that have a PFNMAP mapping?
+> 
+> [1]
+> https://lore.kernel.org/all/3879ee72-84de-4d2a-93a8-c0b3dc3f0a4c@redhat.com/
 
-To avoid duplicate code, a new do_proc_minmax_conv_param structure has been
-introduced to replace both do_proc_dointvec_minmax_conv_param and
-do_proc_douintvec_minmax_conv_param mentioned above.
+Ohhh.. I guess this will also stop working in VFIO, but I think it's fine
+for now because as Yan pointed out VFIO PCI doesn't register those regions
+now so VM_PAT is not yet set..
 
-This also prepares for the removal of sysctl_vals and sysctl_long_vals.
+And one thing I said wrong in the previous reply to Yan is, obviously
+memtype_check_insert() can work with >1 owners as long as the memtype
+matches.. and that's how fork() works where VM_PAT needs to be duplicated.
+But this whole thing is a bit confusing to me..  As I think it also means
+when fork the track_pfn_copy() will call memtype_kernel_map_sync one more
+time even if we're 100% sure the pgprot will be the same for the kernel
+mappings..
 
-Signed-off-by: Wen Yang <wen.yang@linux.dev>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Joel Granados <j.granados@samsung.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: linux-kernel@vger.kernel.org
----
- kernel/sysctl.c | 107 ++++++++++++++++++++++++++----------------------
- 1 file changed, 57 insertions(+), 50 deletions(-)
+I wonder whether there's some way that untrack pfn framework doesn't need
+to rely on the pgtable to fetch the pfn, because VFIO MMIO region
+protection will also do that in the near future, AFAICT.  The pgprot part
+should be easy there to fetch: get_pat_info() should fallback to vma's
+pgprot if no mapping found; the only outlier should be CoW pages in
+reality.  The pfn is the real issue so far, so that either track_pfn_copy()
+or untrack_pfn() may need to know the pfn to untrack, even if it only has
+the vma information.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e4421594fc25..bc784d726e09 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -809,17 +809,18 @@ static int proc_taint(struct ctl_table *table, int write,
- }
- 
- /**
-- * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
-- * @min: pointer to minimum allowable value
-- * @max: pointer to maximum allowable value
-+ * struct do_proc_minmax_conv_param - proc_dointvec_minmax() range checking structure
-+ * @min: the minimum allowable value
-+ * @max: the maximum allowable value
-  *
-- * The do_proc_dointvec_minmax_conv_param structure provides the
-+ * The do_proc_minmax_conv_param structure provides the
-  * minimum and maximum values for doing range checking for those sysctl
-- * parameters that use the proc_dointvec_minmax() handler.
-+ * parameters that use the proc_dointvec_minmax(), proc_douintvec_minmax(),
-+ * proc_dou8vec_minmax() and so on.
-  */
--struct do_proc_dointvec_minmax_conv_param {
--	int *min;
--	int *max;
-+struct do_proc_minmax_conv_param {
-+	long min;
-+	long max;
- };
- 
- static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
-@@ -827,7 +828,7 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
- 					int write, void *data)
- {
- 	int tmp, ret;
--	struct do_proc_dointvec_minmax_conv_param *param = data;
-+	struct do_proc_minmax_conv_param *param = data;
- 	/*
- 	 * If writing, first do so via a temporary local int so we can
- 	 * bounds-check it before touching *valp.
-@@ -839,8 +840,7 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
- 		return ret;
- 
- 	if (write) {
--		if ((param->min && *param->min > tmp) ||
--		    (param->max && *param->max < tmp))
-+		if ((param->min > tmp) || (param->max < tmp))
- 			return -EINVAL;
- 		WRITE_ONCE(*valp, tmp);
- 	}
-@@ -867,35 +867,27 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
- int proc_dointvec_minmax(struct ctl_table *table, int write,
- 		  void *buffer, size_t *lenp, loff_t *ppos)
- {
--	struct do_proc_dointvec_minmax_conv_param param = {
--		.min = (int *) table->extra1,
--		.max = (int *) table->extra2,
-+	struct do_proc_minmax_conv_param param = {
-+		.min = INT_MIN,
-+		.max = INT_MAX,
- 	};
-+
-+	if (table->extra1)
-+		param.min = *(int *) table->extra1;
-+	if (table->extra2)
-+		param.max = *(int *) table->extra2;
-+
- 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
- 				do_proc_dointvec_minmax_conv, &param);
- }
- 
--/**
-- * struct do_proc_douintvec_minmax_conv_param - proc_douintvec_minmax() range checking structure
-- * @min: pointer to minimum allowable value
-- * @max: pointer to maximum allowable value
-- *
-- * The do_proc_douintvec_minmax_conv_param structure provides the
-- * minimum and maximum values for doing range checking for those sysctl
-- * parameters that use the proc_douintvec_minmax() handler.
-- */
--struct do_proc_douintvec_minmax_conv_param {
--	unsigned int *min;
--	unsigned int *max;
--};
--
- static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
- 					 unsigned int *valp,
- 					 int write, void *data)
- {
- 	int ret;
- 	unsigned int tmp;
--	struct do_proc_douintvec_minmax_conv_param *param = data;
-+	struct do_proc_minmax_conv_param *param = data;
- 	/* write via temporary local uint for bounds-checking */
- 	unsigned int *up = write ? &tmp : valp;
- 
-@@ -904,8 +896,7 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
- 		return ret;
- 
- 	if (write) {
--		if ((param->min && *param->min > tmp) ||
--		    (param->max && *param->max < tmp))
-+		if ((param->min > tmp) || (param->max < tmp))
- 			return -ERANGE;
- 
- 		WRITE_ONCE(*valp, tmp);
-@@ -936,10 +927,16 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
- int proc_douintvec_minmax(struct ctl_table *table, int write,
- 			  void *buffer, size_t *lenp, loff_t *ppos)
- {
--	struct do_proc_douintvec_minmax_conv_param param = {
--		.min = (unsigned int *) table->extra1,
--		.max = (unsigned int *) table->extra2,
-+	struct do_proc_minmax_conv_param param = {
-+		.min = 0,
-+		.max = UINT_MAX,
- 	};
-+
-+	if (table->extra1)
-+		param.min = *(unsigned int *) table->extra1;
-+	if (table->extra2)
-+		param.max = *(unsigned int *) table->extra2;
-+
- 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
- 				 do_proc_douintvec_minmax_conv, &param);
- }
-@@ -965,11 +962,11 @@ int proc_dou8vec_minmax(struct ctl_table *table, int write,
- 			void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	struct ctl_table tmp;
--	unsigned int min = 0, max = 255U, val;
-+	unsigned int val;
- 	u8 *data = table->data;
--	struct do_proc_douintvec_minmax_conv_param param = {
--		.min = &min,
--		.max = &max,
-+	struct do_proc_minmax_conv_param param = {
-+		.min = 0,
-+		.max = 255U,
- 	};
- 	int res;
- 
-@@ -978,9 +975,9 @@ int proc_dou8vec_minmax(struct ctl_table *table, int write,
- 		return -EINVAL;
- 
- 	if (table->extra1)
--		min = *(unsigned int *) table->extra1;
-+		param.min = *(unsigned int *) table->extra1;
- 	if (table->extra2)
--		max = *(unsigned int *) table->extra2;
-+		param.max = *(unsigned int *) table->extra2;
- 
- 	tmp = *table;
- 
-@@ -1022,7 +1019,8 @@ static int __do_proc_doulongvec_minmax(void *data,
- 		void *buffer, size_t *lenp, loff_t *ppos,
- 		unsigned long convmul, unsigned long convdiv)
- {
--	unsigned long *i, *min, *max;
-+	unsigned long min = 0, max = ULONG_MAX;
-+	unsigned long *i;
- 	int vleft, first = 1, err = 0;
- 	size_t left;
- 	char *p;
-@@ -1033,8 +1031,12 @@ static int __do_proc_doulongvec_minmax(void *data,
- 	}
- 
- 	i = data;
--	min = table->extra1;
--	max = table->extra2;
-+
-+	if (table->extra1)
-+		min = *(unsigned long *) table->extra1;
-+	if (table->extra2)
-+		max = *(unsigned long *) table->extra2;
-+
- 	vleft = table->maxlen / sizeof(unsigned long);
- 	left = *lenp;
- 
-@@ -1066,7 +1068,7 @@ static int __do_proc_doulongvec_minmax(void *data,
- 			}
- 
- 			val = convmul * val / convdiv;
--			if ((min && val < *min) || (max && val > *max)) {
-+			if ((val < min) || (val > max)) {
- 				err = -EINVAL;
- 				break;
- 			}
-@@ -1224,7 +1226,7 @@ static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *lv
- 						int *valp, int write, void *data)
- {
- 	int tmp, ret;
--	struct do_proc_dointvec_minmax_conv_param *param = data;
-+	struct do_proc_minmax_conv_param *param = data;
- 	/*
- 	 * If writing, first do so via a temporary local int so we can
- 	 * bounds-check it before touching *valp.
-@@ -1236,8 +1238,7 @@ static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *lv
- 		return ret;
- 
- 	if (write) {
--		if ((param->min && *param->min > tmp) ||
--				(param->max && *param->max < tmp))
-+		if ((param->min > tmp) || (param->max < tmp))
- 			return -EINVAL;
- 		*valp = tmp;
- 	}
-@@ -1269,10 +1270,16 @@ int proc_dointvec_jiffies(struct ctl_table *table, int write,
- int proc_dointvec_ms_jiffies_minmax(struct ctl_table *table, int write,
- 			  void *buffer, size_t *lenp, loff_t *ppos)
- {
--	struct do_proc_dointvec_minmax_conv_param param = {
--		.min = (int *) table->extra1,
--		.max = (int *) table->extra2,
-+	struct do_proc_minmax_conv_param param = {
-+		.min = INT_MIN,
-+		.max = INT_MAX,
- 	};
-+
-+	if (table->extra1)
-+		param.min = *(int *) table->extra1;
-+	if (table->extra2)
-+		param.max = *(int *) table->extra2;
-+
- 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
- 			do_proc_dointvec_ms_jiffies_minmax_conv, &param);
- }
+Thanks,
+
 -- 
-2.25.1
+Peter Xu
 
 
