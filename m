@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-252863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55033931914
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:17:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36096931919
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805CB282172
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01411F21F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E108481D5;
-	Mon, 15 Jul 2024 17:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E27146522;
+	Mon, 15 Jul 2024 17:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbeV1cf9"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mG55TXvq"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB1D1CAB8;
-	Mon, 15 Jul 2024 17:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AF2446AF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721063863; cv=none; b=KL+t/zQTByrxoaDUY7RU95NSZp4+3JLJ7beBJgzOte5UAe0UZH4uambYwVHLV1vbR/EeQtc0baI0gQpnzYmZuatjvAVv1ZxD5cLXpmJ4FeN96RqOzodnNCt1K9qXoxymrV2hXWakKWnuF9KFke4fgS5NErpFbXAFsX0TiKMNXQM=
+	t=1721063895; cv=none; b=b04qI5HIsTFdKlry4Fp3Ua8fzo4C7VlOBkmF5DCT8pwPfNL4ngWYAOliCKkRc8OQe+yAbe06ExHLgmL+aoRXe0QGmW8C/v46/URKZM/KXOTYFC6jbzhW46IJF8O/ikCnGHutkTH7KuhbMCADxgRQy5UpfZAYT0BBe65s94jCayc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721063863; c=relaxed/simple;
-	bh=CP6B4FU5BGjNfFAyX0bA+ci8+6cdVqSIN9JoOei1234=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gffu+fYqGhIFbrsBt9fq4On5YtHaSD0nCqX/zJ2nCiAzpwmrTUpRXkbAASXqn1eE9MoDGygHTGOJgp5FXglBaEKtjXdU5jywnTB6bgsuDDvb6gUh14OM0nrCG2ERo4jmm1DKkImXU2YMiIMud1aeAcz7N9DyAnMiYLPDSMFyt9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbeV1cf9; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-426717a2d12so27319395e9.0;
-        Mon, 15 Jul 2024 10:17:42 -0700 (PDT)
+	s=arc-20240116; t=1721063895; c=relaxed/simple;
+	bh=sGPIgRMwOQgcxTqDzLkA2Xc8d8mFrxEg2vsRuPNY3Mw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MJVZMfSSpXb69wXQW4AySBDde2SDTLFjy6D0u6eFQ6hqsC/1UPMWqlYVj1g4W3medohm47iYf5ZFobqagME7TRHLGldk9q/vQE0yb9xZlPgF0YsxAetdRJsAnI3x5wqe9mH/5Ua0uPJMEaGNHf0OJ+yCCjvmaPnu3v+Iqd6bRgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mG55TXvq; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2661717a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721063860; x=1721668660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MjxPI2IrTb4z07FeQySRDzHxyzHoRNB1TeL6fAKGl10=;
-        b=VbeV1cf9gAavSn8Hw3+D5gStKa9lZRF2NO+fQtfAkQ9DWbj8RmTaMEQXqTLu0Tj2hW
-         RCf+MOLm4rJDHtYjKC0NY0cP7joKsqeueYvtsWOlU5RfofoQ3eivwznmVWTHebZfI/ex
-         A7ngFf0Kryuo9ibPWrwLT160bU27ZiBuiQP92ZFoi19n64+OauSo7Yo/8VkR6Y17UlBz
-         Nt7R+UcYy9trMooeDqdjDsRcR5TxOldSzqRfhUyLHVhHP8M8ZIoqtW5qeXTmFAxSoXtr
-         5MQE/2bjNkuVw5CcTLdev9wireuSwol+50E4dmwncgOd1gfJ8roKZUTFo2eDyIOMAVl8
-         O9ZA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721063893; x=1721668693; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YtGnG3lGdf/hkcfvEvKJE092rxHnVgPs69DM8LjlVo4=;
+        b=mG55TXvq0O/N1NzBVF6Wns3pj4tXvxgTY1xZPstntxqv4zf99lndhHSHOuRKQ1TbhL
+         1qPHRF0xhkFmexghKHz3xLaTk0TfAry2mtGSNsjCgrGfwarcaz+yWIK4z4gL6Wi73bcN
+         ePWrw5u5yUwIyaf83qTLvimfW69RswXl7mJBYY0dYDvonJQUoWsfYOAI95Mwdushobg6
+         MXP1QcmMblps8PPWQfdwa3mBm/U6W/KNgCzbH96hBPA2iDs72Iefqxr5yju+u3kxjToe
+         gemFjQuh58pqMW2J26ztHNURQ5/q5cWgGVW2PLIt9D81oQyIQ3JyIDpGA6YO/1PRs2Mh
+         DYLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721063860; x=1721668660;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjxPI2IrTb4z07FeQySRDzHxyzHoRNB1TeL6fAKGl10=;
-        b=aJwc8NJQFXjreu4f6FJ+GFSQTPIMOJeX1aT6XmZaue33IBZ8MzZqdp10wYZs0hYg2z
-         3zK3a/Dz6n7TjsvPvuN4T4wD1sCJtf1inTO0YOHhzZXx4iiF1RznddesyG0Tg6nl6roW
-         nWJhV/kPjHImqcHy6SqP9W/FGXcisNhusrvB4bL/nWidTBqBX9t18WyLoMdVD+BaT5Cc
-         RdykACXSWUbQkU1bN3HRsU81WggtCciYwB1gr6VjM4DGu92aa99t8GZ87cTtGKk65A/6
-         7qY9GxbeK3SHaEwJgbsrmglOGyeCFJ9RwYecnk/w9oOvXFsMphV5NDjWaARELPvYdmk3
-         NJig==
-X-Forwarded-Encrypted: i=1; AJvYcCW6MZDB9plyQiRnWZ4XWdRE9ABgrIS9OI6pYMtIkqnPLAU+Zr4Y/rbcDCbdGCdSFb++cmy9d/n7cPCY+UsKtN+1JSV00wxtpMCMdg57Io00rc1wkNIJWyrIgAXv0fJ7O4z0Oa2Dz2D/n/IEpZXO64RYEbS8px87xA46JVC2qOWUmv5qfw==
-X-Gm-Message-State: AOJu0Yy2NjVly1krxyGgfuEzl2Pjycm0XyowfHzU7GMf5fLMxSQL8aD9
-	tzzZ7iPWtSI0NDqYs2Ji+hC1ZJIrOa9fE3hKpcOcbKRg1N1MwM6i
-X-Google-Smtp-Source: AGHT+IFqEW/LLAqwLYOFV74GlOVCXhMKMLkfWBKyKAWoVPNP3SV07U+FqTRK+n4nkLwdD9DzGgf5+Q==
-X-Received: by 2002:a05:600c:4f93:b0:426:5fa7:b495 with SMTP id 5b1f17b1804b1-427b8681f44mr5676885e9.15.1721063860347;
-        Mon, 15 Jul 2024 10:17:40 -0700 (PDT)
-Received: from [10.100.30.87] ([37.110.219.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427b6133e73sm23604075e9.48.2024.07.15.10.17.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 10:17:40 -0700 (PDT)
-Message-ID: <68a25946-247d-4351-b847-35605220b16f@gmail.com>
-Date: Mon, 15 Jul 2024 18:17:38 +0100
+        d=1e100.net; s=20230601; t=1721063893; x=1721668693;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YtGnG3lGdf/hkcfvEvKJE092rxHnVgPs69DM8LjlVo4=;
+        b=Hs5Uwd1pIixZQ5E+ErWQbrtVHyDesaL1KxyFCOMZm0pNUiJqW5taNDAZnkDqMRzmNZ
+         4qMSonLuOOza+NY0shzViBvPe9UWZ4QWvTBlARCGxW5If0iuSvpRvr9UH47dZUOCnKiA
+         wPT0zI6NhNoiv1utEITFZ3+ZCBsxoGqIVK5UFBGINllBItEB9hsPTMyauhIE18rnDar0
+         49WSomrZTVI422Mt54jbGYdsMZD7hxdRxxr1s4V1h7n5c05lXse/jr6jkj8ezyqITX/P
+         2V7NV5VgBV36BrfXBuScfUwgMUkz36P6vpdZ14udH80r9qk3yXvrwSSf3yjnCe/yYYju
+         j7JQ==
+X-Gm-Message-State: AOJu0Yx0rmimEX8eRnTfM0n3wgfZj+o5EDZncRjhzRvYPVi6SitO6OmS
+	MtlWsoWaKipiWWnHQdhbB9C6oPj78u+3WBA74SHPv5ZfPe/T9f93p3PKIBBSv/I=
+X-Google-Smtp-Source: AGHT+IFkOvHGd/UM3S2hiTAQyUuVpiY253uZl4jwquwLi7WE1eLM3bsAejx6xdhGzui9w1giQpsydw==
+X-Received: by 2002:a05:6a20:9146:b0:1c0:f315:ec7e with SMTP id adf61e73a8af0-1c3ee98f09dmr622567637.28.1721063893162;
+        Mon, 15 Jul 2024 10:18:13 -0700 (PDT)
+Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc516dasm43405355ad.288.2024.07.15.10.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 10:18:12 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: update omap branches for linux-next
+Date: Mon, 15 Jul 2024 10:18:12 -0700
+Message-ID: <7h5xt67ewb.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 9/9] iio: adc: ad7173: Add support for AD411x devices
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
- <20240607-ad4111-v7-9-97e3855900a0@analog.com>
- <e48b2dee-11d2-4dbc-868d-10870e3c07dd@linaro.org>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <e48b2dee-11d2-4dbc-868d-10870e3c07dd@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 13/07/2024 11:12, Krzysztof Kozlowski wrote:
-> On 07/06/2024 16:53, Dumitru Ceclan via B4 Relay wrote:
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
->>
->> The AD411X family encompasses a series of low power, low noise, 24-bit,
->> sigma-delta analog-to-digital converters that offer a versatile range of
->> specifications.
->>
->> This family of ADCs integrates an analog front end suitable for processing
->> both fully differential and single-ended, bipolar voltage inputs
->> addressing a wide array of industrial and instrumentation requirements.
->>
->> - All ADCs have inputs with a precision voltage divider with a division
->>   ratio of 10.
->> - AD4116 has 5 low level inputs without a voltage divider.
->> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
->>   shunt resistor.
-> 
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
-> 
-> Best regards,
-> Krzysztof
-> 
+Hi Stephen,
 
-I do not get any warnings, only checks
+I'll be taking over from Tony on maintaining the omap trees for
+linux-next.
 
-If you meant the checks:
-- for the alignment check, i would only argue for struct_group(config_props that looks good
-- for unnecessary parentheses the compiler warning appears without the parentheses:
-      warning: suggest parentheses around comparison in operand of ‘!=’ [-Wparentheses]
+Could you please update the omap entries for the trees/branches pulled
+into linux-next?  Patch below against next-20240715.
+
+Thanks,
+Kevin
+
+
+diff --git a/Next/Trees b/Next/Trees
+index 13308bb5322b..22b02f8c81ba 100644
+--- a/Next/Trees
++++ b/Next/Trees
+@@ -63,7 +63,7 @@ v4l-dvb-fixes	git	https://git.linuxtv.org/media_stage.git#fixes
+ reset-fixes	git	https://git.pengutronix.de/git/pza/linux#reset/fixes
+ mips-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git#mips-fixes
+ at91-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git#at91-fixes
+-omap-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git#fixes
++omap-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap.git#fixes
+ kvm-fixes	git	git://git.kernel.org/pub/scm/virt/kvm/kvm.git#master
+ kvms390-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git#master
+ hwmon-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git#hwmon
+@@ -134,7 +134,7 @@ drivers-memory	git	https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-me
+ imx-mxs		git	git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git#for-next
+ mediatek	git	git://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux.git#for-next
+ mvebu		git	git://git.kernel.org/pub/scm/linux/kernel/git/gclement/mvebu.git#for-next
+-omap		git	git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git#for-next
++omap		git	git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap.git#for-next
+ qcom		git	git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git#for-next
+ renesas		git	git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git#next
+ reset		git	https://git.pengutronix.de/git/pza/linux#reset/next
 
