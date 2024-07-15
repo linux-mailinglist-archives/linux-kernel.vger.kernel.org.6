@@ -1,220 +1,121 @@
-Return-Path: <linux-kernel+bounces-253010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BDD931B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C803A931B34
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53CA1C21C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 023FD1C21AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD9513A3F7;
-	Mon, 15 Jul 2024 19:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC2313A3E8;
+	Mon, 15 Jul 2024 19:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djAFJ9xZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UXOIM1Ta"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62BF137930;
-	Mon, 15 Jul 2024 19:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E7013959D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721072685; cv=none; b=tgxbSLcEfKKbSY01AvU1/YJqEYsqi7IbZS6po7k3QvjX6XeVWNZ191wvqxREpT9WbsrJJxzQdGGCXx4kQgYYbusRRRY2B2emOb1MfcKE8VGR7Y2I8DeQxXsRQDwSFdPD23RlNaKHZ2fAT2q5YVZnXsK7GldESS1stqjkNAH0QpY=
+	t=1721072700; cv=none; b=Wt4kSuoohgCKx2XvbD333qK1sjXB7IXzDMvxeZUl/31aW194Tg8vM/1iFFOnrpd1ZJdacrLfaPkWtV8016TcZFt2+PJhK03D3oBZ0EsQ7alCB1DzV1lT1Qfhv2JuzgpEoTFvtLk8QckUE+fgyz4mPxuKCzMz4mKjxERSLzCV1TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721072685; c=relaxed/simple;
-	bh=09tIpSCUoyvI4+y9Yb5wCfNrTwUwNt31dEg9O12cLao=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tsKtzuhfl9T/B/Fu0T92pKXysEcfCjvcIgu5FVctXEukWZUL0pJWyqLb6GUm6qiysRGwlidWokq/zP5ml0Tc6DZkEB+ADtNWD63HGo7OrVzcbXvlj8xnANS7YAwjCm0lFDeG2XQYbEqvi14E6fmuwM44ro+WoK6yqciRU8xKlj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djAFJ9xZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F90C32782;
-	Mon, 15 Jul 2024 19:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721072685;
-	bh=09tIpSCUoyvI4+y9Yb5wCfNrTwUwNt31dEg9O12cLao=;
-	h=From:Date:Subject:To:Cc:From;
-	b=djAFJ9xZevJrWgFAyPK2lktJZKoqSxCYdiZPf34kah2vaDWF1PSxURlAG7cS0UABB
-	 Vsc00wHgJG56PZrJDPNAVY+4y4/9VB03Mitbu2Ikv9VxkFOl2A9KNdydfUlRVo54C+
-	 t0SLilwt+qtaP96DrMz3rblDbfKfWtq1BrPzGloFnkQSBFu2f88p99Scx5rzLmcjYR
-	 /faK+9G/axGfoDKs+wZBwBzGD9yWbzIJwM2PYFDb0ULDbrzUmL6Rso+d3KXCEj4nCo
-	 B95eHb0EgaCUs71fFDwlW2Wv7+0EabuOfCpJNNMuLMwbGxkDpenN55I/CNh+0c41e/
-	 3wqJeInfLJGfA==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-25e55d0f551so512181fac.0;
-        Mon, 15 Jul 2024 12:44:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVh8OjRGfXePOAo4xCw7JTa2SZVkR/ilegJi97NIWSzFQNzmt4z2/tVovOqPGw6fceAXa8QDsL45Nif33EXVhcdPrAWOfDbId4GfFhpLxG7OQIA1AOXiBGWFHgw6oOCiLN9caWSa40=
-X-Gm-Message-State: AOJu0YwYRKqkLZwNMmkVgBj0XHvfiGgNm6WlZyVDZHQl2MR3GGwFdS2a
-	l3YmIlhEq1FaGGvzYEU/p2wGv/N5VkcQ7DvoU68+QtprIcm/HaT6kFNlKAnZzQf9uMi4jqfYz5G
-	rGJqpaLBGxDTWov8ySHuOCUY4xm0=
-X-Google-Smtp-Source: AGHT+IFdIhzpgKkUMCjoh8gI5MBHJP2G7iuYSazD2Fp6Iml/DUP8CiBuNRK0lKCnTGMMg6TYcUY+d+sfQbSH0SlI8/Y=
-X-Received: by 2002:a05:6871:e2d1:b0:254:a7df:721b with SMTP id
- 586e51a60fabf-260b8d512cdmr365105fac.5.1721072684522; Mon, 15 Jul 2024
- 12:44:44 -0700 (PDT)
+	s=arc-20240116; t=1721072700; c=relaxed/simple;
+	bh=nGUwBIX4yxw7k/f7GbN0ZTgpL1uP9fGjMbhZIFFzJZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SaBuqBjLoqTQtrL1M9x6ZQQDrFeWxvAuWn05KT5xrFYNn+8M096g2NdfPPKJCpvklMDNPATX/7vZsiyoJp3tWaeSrgmMoGgZusutN2AvteAQ1qDT6A3iWF7QvJJyTkdd3uz1z0hBJx+ARcOWvk6pWr1nvNPQFmJMXPKZo+yKT7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UXOIM1Ta; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc312a36f9so44635ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721072698; x=1721677498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+hvk/EPFM/vKFN4nzaGg15TTdVUT+jO3pRUPZO+dik=;
+        b=UXOIM1Ta+hZWZNgd7kWQcj+fjrhOR7A1fSIdFjQdrxssIV2QHKhjRHi8F4O15dkwvJ
+         GOC653d2bJ4dLPBuSJhqCWR1oY4o4NCZKgITXYkAQk2xmt97myY3JyJC3vRuuL8miQhy
+         QuFnpiv2/VOvl3u/EA4dxlUfuoTfKE0iQfnJFo+FzihdRmjnNUnDUOAY5U44QJsV1MMB
+         X6DVolYGCPUFLpvmIyMVXJI2OdhqoXIOX0XOVbI6qxjJfPcrrrKnJU2WOT0uwP/5mrmo
+         8/+NUQqaGT9cUiiEFpuKFqzR6CZoEiKIy6nTJ0IOv9xywqbLbjph0O1zyjCSYOYHfwf0
+         nisQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721072698; x=1721677498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s+hvk/EPFM/vKFN4nzaGg15TTdVUT+jO3pRUPZO+dik=;
+        b=eSZS1osq4xjs0F1C4ITpzFdyUPiHhwbpJo+5Ndg+fP4hp/dsBBRrCrGdS2Vi8o+u79
+         1ALX+f5onRXUfDqOlIvV2ZgQR61cUL4BojXjaQb3xuYk8gQc7rDmxUmhJe8Q6NCRvPun
+         C5VPKP+x4/LRZyS8k5is6Rv8Eoh5jYNDEaz99TNSeor5hLC54z/cX41ybeE/mtjrFcv3
+         1VgVz+m3F5EdU1rOKYX+XbGn2VsazBz9sKkzOq/RHrfnDWB8CMsb08HU1Yn8WbImHlZJ
+         crJ2I2k4+mIoH32cj0MhiI43t9LuMacZZ8X87o0hRZWMic/s9wblpsX4OpW2NYGJVqYJ
+         J90w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhuxBYC9wkJ7TkBc5nad3mQ3te94grKEkDsgRtPPFMD7Abe3F05TFsJpFLY/RN5wtVz6V7GQmNnGmJX7QTA3NVhKOAvoq+6EfE9nU/
+X-Gm-Message-State: AOJu0YxT1rI9j7NsV9MkcSrREJQLNuIFZg6zg0Y6Cv9eVQKLrc8JI6zT
+	ZOPqaUbGCn8a+w8O9RFQN0hl0hcUKDOpK9L+bWs6qhBFr0CuqPxgdj9edUxLzRBrx62k6F1UX4m
+	CT+DWE8Ndkk0KYrPGyUdQpMJG1cDaYT2CM3YW
+X-Google-Smtp-Source: AGHT+IE4EB9vKEq94MiOkEyx5kP827nITZnnvUgEfHJR69nSKAKd/6X97tBIk/65VNSmjHDCgSqJW+VQza2dJRIthyg=
+X-Received: by 2002:a17:903:182:b0:1eb:3f4f:6f02 with SMTP id
+ d9443c01a7336-1fc3c75117amr624705ad.12.1721072697879; Mon, 15 Jul 2024
+ 12:44:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 15 Jul 2024 21:44:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jtWq5kTmM_DRPwFZZCziqY11TMP8rYtj8UQHHfRKX6tg@mail.gmail.com>
-Message-ID: <CAJZ5v0jtWq5kTmM_DRPwFZZCziqY11TMP8rYtj8UQHHfRKX6tg@mail.gmail.com>
-Subject: [GIT PULL] ACPI updates for v6.11-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240715143342.52236-1-leo.yan@arm.com> <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
+ <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
+In-Reply-To: <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 15 Jul 2024 12:44:46 -0700
+Message-ID: <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Jul 15, 2024 at 12:31=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
+>
+>
+> Hi Ian,
+>
+> On 7/15/24 18:17, Ian Rogers wrote:
+> > On Mon, Jul 15, 2024 at 7:34=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote=
+:
+> > [snip]
+> >> +Android NDK compilation is deprecated and no longer supported.
+> >
+> > I think this is objectively worse than just removing the file. It is
+> > likely the perf tool can build with clang/LLVM, I do it every day
+>
+> Just curious, are you using LLVM/clang for cross building (e.g. build
+> aarch64 target on x86_64 host) or just native building?
+>
+> Clang/LLVM is a natively cross-compiler [1], I installed Clang-15 in the
+> offical package on Ubuntu, but I failed to do cross compilation with it:
+>
+>    make ARCH=3Darm64 LLVM=3D-15 VF=3D1 DEBUG=3D1 -C tools/perf
 
-Please pull from the tag
+So we're cross-compiling in bazel, so it is a different set up than
+the makefiles - I'm happy to work to share the bazel set up if other
+people care. I'm having a play to see if I can get the Makefile
+working, my first attempts are clearly mixing x86 code into the
+supposedly arm64 build, which would appear to be more of a build
+system rather than code problem.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.11-rc1
-
-with top-most commit b77b0bc85b117119764107f3ee76e8877bf826ab
-
- Merge branch 'acpi-misc'
-
-on top of commit 233323f9b9f828cd7cd5145ad811c1990b692542
-
- ACPI: processor_idle: Fix invalid comparison with insertion sort for laten=
-cy
-
-to receive ACPI updates for 6.11-rc1.
-
-The only kind of new feature added by these is the hwmon interface
-support in the ACPI fan driver.  Apart from that, they mostly address
-issues and clean up code.
-
-Specifics:
-
- - Switch the ACPI x86 utility code and the ACPI LPSS driver to new
-   Intel CPU model defines (Tony Luck).
-
- - Add hwmon interface support to the ACPI fan driver (Armin Wolf).
-
- - Add sysfs entry for guaranteed performance to the ACPI CPPC library
-   and replace a ternary operator with umax() in it (Petr Tesa=C5=99=C3=ADk=
-,
-   Prabhakar Pujeri).
-
- - Clean up the ACPI PMIC driver in multiple ways (Andy Shevchenko,
-   Christophe JAILLET).
-
- - Add support for charge limiting state to the ACPI battery driver
-   and update _OSC to indicate support for it (Armin Wolf).
-
- - Clean up the sysfs interface in the ACPI battery, SBS (smart battery
-   subsystem) and AC drivers (Thomas Wei=C3=9Fschuh).
-
- - Coordinate header includes in the ACPI NUMA code and make it use
-   ACCESS_COORDINATE_CPU when appropriate (Huang Ying, Thorsten Blum).
-
- - Downgrade Intel _OSC and _PDC messages in the ACPI processor driver
-   to debug to reduce log noise (Mario Limonciello).
-
- - Still evaluate _OST when _PUR evaluation fails in the ACPI PAD
-   (processor aggregator) driver as per the spec (Armin Wolf).
-
- - Skip ACPI IRQ override on Asus Vivobook Pro N6506MJ and N6506MU
-   platforms (Tamim Khan).
-
- - Force native mode on some T2 macbooks in the ACPI backlight driver
-   and replace strcpy() with strscpy() in it (Orlando Chamberlain,
-   Muhammad Qasim Abdul Majeed).
-
- - Add missing MODULE_DESCRIPTION() macros in two places (Jeff Johnson).
-
-Thanks!
-
-
----------------
-
-Andy Shevchenko (3):
-      ACPI: PMIC: Use sizeof() instead of hard coded value
-      ACPI: PMIC: Convert pr_*() to dev_*() printing macros
-      ACPI: PMIC: Replace open coded be16_to_cpu()
-
-Armin Wolf (4):
-      ACPI: fan: Add hwmon support
-      ACPI: acpi_pad: Still evaluate _OST when _PUR evaluation fails
-      ACPI: battery: Add support for charge limiting state
-      ACPI: bus: Indicate support for battery charge limiting thru _OSC
-
-Christophe JAILLET (1):
-      ACPI: PMIC: Constify struct pmic_table
-
-Huang Ying (1):
-      ACPI: HMAT: Use ACCESS_COORDINATE_CPU when appropriate
-
-Jeff Johnson (1):
-      ACPI: add missing MODULE_DESCRIPTION() macros
-
-Mario Limonciello (1):
-      ACPI: processor: Downgrade Intel _OSC and _PDC messages to debug
-
-Muhammad Qasim Abdul Majeed (1):
-      ACPI: video: Use strscpy() instead of strcpy()
-
-Orlando Chamberlain (1):
-      ACPI: video: force native for some T2 macbooks
-
-Petr Tesa=C5=99=C3=ADk (1):
-      ACPI: CPPC: add sysfs entry for guaranteed performance
-
-Prabhakar Pujeri (1):
-      ACPI: CPPC: Replace ternary operator with umax()
-
-Tamim Khan (2):
-      ACPI: resource: Skip IRQ override on Asus Vivobook Pro N6506MU
-      ACPI: resource: Skip IRQ override on Asus Vivobook Pro N6506MJ
-
-Thomas Wei=C3=9Fschuh (6):
-      ACPI: AC: constify powersupply properties
-      ACPI: SBS: constify powersupply properties
-      ACPI: battery: constify powersupply properties
-      ACPI: battery: use sysfs_emit over sprintf
-      ACPI: battery: create alarm sysfs attribute atomically
-      ACPI: SBS: manage alarm sysfs attribute through psy core
-
-Thorsten Blum (1):
-      ACPI: NUMA: Consolidate header includes
-
-Tony Luck (2):
-      ACPI: LPSS: Switch to new Intel CPU model defines
-      ACPI: x86: Switch to new Intel CPU model defines
-
----------------
-
- drivers/acpi/Makefile                   |   1 +
- drivers/acpi/ac.c                       |   2 +-
- drivers/acpi/acpi_pad.c                 |  19 +++-
- drivers/acpi/acpi_processor.c           |   4 +-
- drivers/acpi/acpi_tad.c                 |   1 +
- drivers/acpi/acpi_video.c               |   8 +-
- drivers/acpi/battery.c                  |  37 ++++---
- drivers/acpi/bus.c                      |   2 +
- drivers/acpi/cppc_acpi.c                |   4 +-
- drivers/acpi/fan.h                      |   9 ++
- drivers/acpi/fan_core.c                 |   4 +
- drivers/acpi/fan_hwmon.c                | 170 ++++++++++++++++++++++++++++=
-++++
- drivers/acpi/numa/hmat.c                |   6 +-
- drivers/acpi/platform_profile.c         |   1 +
- drivers/acpi/pmic/intel_pmic.c          |   2 +-
- drivers/acpi/pmic/intel_pmic.h          |   4 +-
- drivers/acpi/pmic/intel_pmic_bxtwc.c    |   4 +-
- drivers/acpi/pmic/intel_pmic_bytcrc.c   |   4 +-
- drivers/acpi/pmic/intel_pmic_chtdc_ti.c |  17 ++--
- drivers/acpi/pmic/intel_pmic_chtwc.c    |   7 +-
- drivers/acpi/pmic/intel_pmic_xpower.c   |  11 ++-
- drivers/acpi/resource.c                 |  14 +++
- drivers/acpi/sbs.c                      |  29 +++---
- drivers/acpi/video_detect.c             |  16 +++
- drivers/acpi/x86/lpss.c                 |   4 +-
- drivers/acpi/x86/utils.c                |  44 ++++-----
- include/linux/acpi.h                    |   5 +-
- 27 files changed, 338 insertions(+), 91 deletions(-)
+Thanks,
+Ian
 
