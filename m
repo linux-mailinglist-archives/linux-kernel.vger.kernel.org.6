@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-252717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B28393173E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:59:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD66931743
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08AEF1F20FE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792BD28359B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF00C18F2D0;
-	Mon, 15 Jul 2024 14:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EFC18EFFB;
+	Mon, 15 Jul 2024 14:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OElLUgnL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nF3Yowwb"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BBE4C62;
-	Mon, 15 Jul 2024 14:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBED18EFF4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055569; cv=none; b=hCwJJ4ZUyWqYkxYQfSw684sH+YSsrFH3+hWvR585S3DqUAs8izVM+dm4Yzc+ugtxzF/bu0G+FATeewiIzq0v8v04tSyfMXl8YDyoZFamJ1MkCZVRj1wRm9uJCaNWRymMyk+uPT4tBcfZ+YuNPcNKwz6+23v/hW+BPOaw1PpFU8c=
+	t=1721055588; cv=none; b=B3+jac6DPhOdaiWRa2MzN0EUzEgkLXamuLYRSIBLqqVOWkpgyQUMZoScG0w188hV+x+eDrd2Gqc0EfT1uQoEn2wQDiq3NkFnMrZtCEr4TwpOT7AOWEoY+RdbZGxMnSwVQHyRmQP1Vib/u7xXv141RCgB/5g3LUKsVJnHj2A51+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055569; c=relaxed/simple;
-	bh=Czc/8/j1UJ3uadHtlcCbqCzh/BKvAh+WALaaInDEGXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ec518dhYxFSE4jjUilijYZdhtbFtewqAdFtIaqGmOE7xiCCa2dKl2eegn2otcddwDW2w5ExgRypyxHQaTd83Bu+uF34yUHvch48bYInicAKiFqzr1NBn/GyE+kMMiYVksJsgEN8KFbliJhaHrlsX7AkjD/ELEV9Q2FsSoR8imNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OElLUgnL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F5CC32782;
-	Mon, 15 Jul 2024 14:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721055568;
-	bh=Czc/8/j1UJ3uadHtlcCbqCzh/BKvAh+WALaaInDEGXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OElLUgnLsRq0inC4mUNDR8o/kzoSy4XbVw14Cl5B7g69gp8OV4U3zpNLSBr46nEQe
-	 PaiPFWqZ43OQ/YHPXYUd76MGawWnwFPHfz522XqJoASVZ1HxUZ/3Qf6bGjZC+ESXSi
-	 EkTd2ApSD9mNLweuV2Y1pvgPOXUxlW764zizHd6TgDfNNXH9KVWdUghsU5FJ/OeKL3
-	 dB2uQ1w8Lwe1DfJ8g4BLoC6GrjhVt6FBhicdhy/YZhlguR4yYFaiBpi08GUZgJqnnu
-	 AxCBVi1DTkCtUlwp0QEFAwNkamVFBhSCMyGHrm391x0qBOI2lO4DgyOQaMIS5c3D4y
-	 s+2EvuEyiNj9g==
-Date: Mon, 15 Jul 2024 07:59:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
-Subject: Re: [PATCH net-next v17 13/14] net: ethtool: Add support for
- tsconfig command to get/set hwtstamp config
-Message-ID: <20240715075926.7f3e368c@kernel.org>
-In-Reply-To: <20240709-feature_ptp_netnext-v17-13-b5317f50df2a@bootlin.com>
-References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
-	<20240709-feature_ptp_netnext-v17-13-b5317f50df2a@bootlin.com>
+	s=arc-20240116; t=1721055588; c=relaxed/simple;
+	bh=rzHANoUqXG82QQNq7zWwsJk3/CBVzuayepJXbnfYmTg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XbNBD7X3AAmY9wUQHIHZel8jG63YtphCHx2I9df0w34tyKiFI0Pc55YLzt50Qw5jA9kRlyUgKP6ImuDO1WO1G5YhXS/NzHJ2oFAzEPNWes3i/2npcZvgmrQGox9R2p0t/msCaJlm8HUNp214c3wh0R3BxEyi3NjOgnjnKke8JaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nF3Yowwb; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367a183df54so2977283f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721055584; x=1721660384; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C12lGQoC4O6dCA83BitIObz0vvscmP1VuajGEBqvvq0=;
+        b=nF3YowwbFlQoo78IH2LtbW0vYNg/QcsJ1ZdwEFchlq9+Xt/0TScrbRIdT/b3vnoH3V
+         toj10IQK0xVWqtalCLq6lBCTKSPp93Jn0KR0RyAY2BXCOzGjEjAmteUjEIyWXHUUCP9t
+         lg3GqYBCf7mtwQEL5nfaIC3jL+4+BTb8vu5fEZUboHOeJNrnxjMAp5sAc/R6shxwQiGr
+         DdecaQyxE3SjG4hdb1cgeTiSthePvvDsXec22nQ48IwQr4IcR/leQRmoCMZsCK8r2vnl
+         it6rWDLYVtdbGtQ+Y3B9IK6TbjPviIK8v2n+sJYH6DliAUdrA8sW7xm2J3tiOAU9MuAR
+         Irsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721055584; x=1721660384;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C12lGQoC4O6dCA83BitIObz0vvscmP1VuajGEBqvvq0=;
+        b=pXxLx4EHk0Ky/mofIvbf7L/ilmJdm3TsbHOuzkuS5jOgGmTINhdaSjTvS5nieOl/AR
+         RG0hOAPagsxzt0XgyrqcLdJZlL7ZsEM6N2Le4+3vkOTMUySJJSGZ8woH03KdpY6nMi1O
+         VCGuy/+axRV5ltiKWcKw3aFIWHrXhT9ERwrs+BHbhRNNqNRSalgY1gzVRUv0vKmQ13HH
+         t61JF77DH8HiVjCmrOUEfUdXJNNpJXpYy0xaDDtfCBv8FqeIrUNhJ+ZR7wYJ/SRexRNu
+         80miGu6McYFaCxsshYRYqqBkyU8UdGUV+fT3X5IUxUyHr1mzoR4LHS+1fG0tbvsyXQ37
+         YmRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNTxjcVb7IucixyppUOV/BGNGR/d5OQMa1CPy/n0av5Y73bJaow88pQkwsPNUlXxboAILNdW4zwyhyu1v5ZIQorWFb8TQiWV0SDRkD
+X-Gm-Message-State: AOJu0YxJZ498e4AVxEKVKG3k7/NWzRiUnGsgCz66F8RfshCSgnGOJl/H
+	vTlCSfWZyokebO2HgFQc5dGL7+T78TsuBjt4+ZQiyXsxTXTD8h+4dUYKGllsquw=
+X-Google-Smtp-Source: AGHT+IE5W5I4LS+aadPJhSFJp7ycTKcKABcEYy6T4uVw5x69VrvDLqCqxJv/YubQ0h6t6A8Gr3Gw8A==
+X-Received: by 2002:adf:ae59:0:b0:366:f994:33c with SMTP id ffacd0b85a97d-367ceacb515mr14464668f8f.56.1721055584197;
+        Mon, 15 Jul 2024 07:59:44 -0700 (PDT)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368155f7891sm4373260f8f.52.2024.07.15.07.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 07:59:43 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Mon, 15 Jul 2024 15:59:55 +0100
+Subject: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGo5lWYC/x3M0QrCMAxA0V8ZeTbQZNVOf2X40MVMA1pHq1IY+
+ /cVHw8X7gpFs2mBS7dC1p8Ve6cGOnQgj5juinZrBnbsXaAjPi19KyatH2SPLiD1WGTgwdUFJb5
+ EcLaqBTn4mWjqz6co0HZL1n9ot/G6bTsVVZQKegAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: dmitry.baryshkov@linaro.org, quic_skakitap@quicinc.com, 
+ stable@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev-13183
 
-On Tue, 09 Jul 2024 15:53:45 +0200 Kory Maincent wrote:
-> +	/* Get the hwtstamp config from netlink */
-> +	if (tb[ETHTOOL_A_TSCONFIG_TX_TYPES]) {
-> +		ret = ethnl_parse_bitset(&req_tx_type, &mask,
-> +					 __HWTSTAMP_TX_CNT,
-> +					 tb[ETHTOOL_A_TSCONFIG_TX_TYPES],
-> +					 ts_tx_type_names, info->extack);
-> +		if (ret < 0)
-> +			goto err_clock_put;
-> +
-> +		/* Select only one tx type at a time */
-> +		if (ffs(req_tx_type) != fls(req_tx_type)) {
-> +			ret = -EINVAL;
-> +			goto err_clock_put;
-> +		}
-> +
-> +		hwtst_config.tx_type = ffs(req_tx_type) - 1;
-> +	}
-> +	if (tb[ETHTOOL_A_TSCONFIG_RX_FILTERS]) {
-> +		ret = ethnl_parse_bitset(&req_rx_filter, &mask,
-> +					 __HWTSTAMP_FILTER_CNT,
-> +					 tb[ETHTOOL_A_TSCONFIG_RX_FILTERS],
-> +					 ts_rx_filter_names, info->extack);
-> +		if (ret < 0)
-> +			goto err_clock_put;
-> +
-> +		/* Select only one rx filter at a time */
-> +		if (ffs(req_rx_filter) != fls(req_rx_filter)) {
-> +			ret = -EINVAL;
-> +			goto err_clock_put;
-> +		}
-> +
-> +		hwtst_config.rx_filter = ffs(req_rx_filter) - 1;
-> +	}
-> +	if (tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS]) {
-> +		ret = nla_get_u32(tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS]);
-> +		if (ret < 0)
-> +			goto err_clock_put;
-> +		hwtst_config.flags = ret;
-> +	}
+We have both shared_ops for the Titan Top GDSC and a hard-coded always on
+whack the register and forget about it in probe().
 
-We should be tracking mod on these, too. Separately from the provider
-mod bit, let's not call the driver and send notification if nothing
-changed.
+@static struct clk_branch camcc_gdsc_clk = {}
 
-> +	ret = net_hwtstamp_validate(&hwtst_config);
-> +	if (ret)
-> +		goto err_clock_put;
-> +
-> +	/* Disable current time stamping if we try to enable another one */
-> +	if (mod && (hwtst_config.tx_type || hwtst_config.rx_filter)) {
-> +		struct kernel_hwtstamp_config zero_config = {0};
-> +
-> +		ret = dev_set_hwtstamp_phylib(dev, &zero_config, info->extack);
-> +		if (ret < 0)
-> +			goto err_clock_put;
-> +	}
-> +
-> +	/* Changed the selected hwtstamp source if needed */
-> +	if (mod) {
-> +		struct hwtstamp_provider *__hwtstamp;
-> +
-> +		__hwtstamp = rcu_replace_pointer_rtnl(dev->hwtstamp, hwtstamp);
-> +		if (__hwtstamp)
-> +			call_rcu(&__hwtstamp->rcu_head,
-> +				 remove_hwtstamp_provider);
-> +	}
-> +
-> +	ret = dev_set_hwtstamp_phylib(dev, &hwtst_config, info->extack);
-> +	if (ret < 0)
-> +		return ret;
+Only one representation of the Top GDSC is required. Use the CCF
+representation not the hard-coded register write.
 
-We can't unwind to old state here?
+Fixes: ff93872a9c61 ("clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC")
+Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # Lenovo X13s
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/clk/qcom/camcc-sc8280xp.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> +	return 1;
+diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
+index 479964f91608..f99cd968459c 100644
+--- a/drivers/clk/qcom/camcc-sc8280xp.c
++++ b/drivers/clk/qcom/camcc-sc8280xp.c
+@@ -3031,19 +3031,14 @@ static int camcc_sc8280xp_probe(struct platform_device *pdev)
+ 	clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
+ 	clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
+ 
+-	/* Keep some clocks always-on */
+-	qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
+-
+ 	ret = qcom_cc_really_probe(&pdev->dev, &camcc_sc8280xp_desc, regmap);
+ 	if (ret)
+-		goto err_disable;
++		goto err_put_rpm;
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 
+ 	return 0;
+ 
+-err_disable:
+-	regmap_update_bits(regmap, 0xc1e4, BIT(0), 0);
+ err_put_rpm:
+ 	pm_runtime_put_sync(&pdev->dev);
+ 
 
-Driver can change hwtst_config right? "upgrade" the rx_filter 
-to a broader one, IIRC. Shouldn't we reply to the set command with 
-the resulting configuration, in case it changed? Basically provide 
-the same info as the notification would.
+---
+base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+change-id: 20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-274f11b396ac
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
