@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-252825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E55A931881
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:33:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E39931888
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8044EB22998
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AF52830AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94101C6A3;
-	Mon, 15 Jul 2024 16:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B21C6B2;
+	Mon, 15 Jul 2024 16:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJi9qQNO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Javxz1Mm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139221799D;
-	Mon, 15 Jul 2024 16:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3A41B7E9
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721061215; cv=none; b=bLQWH5qsdQgdwmje4428aqdgWEeOpyRDfeb2mfVs9q1ffctSQlSc5OMGaVIq8RKY0VpmLnREjzEBtxvzT+eVHaMYnf3Q4/mdf9KN+KkBRv2mBdmmF+pGdYy6DiwHjvG9DH+hQ21sfgFmTVYaufTce/ojC2OSjlninwB3/toqssQ=
+	t=1721061289; cv=none; b=XHjsZQf+lTGE/ECTeQl1hxssESiGjm9+AGt6Uf+S8XHYNdxVxJQ2PGGTV6US6TbIlcAr5ivMcg1o+iY4og4s8xhFmJhL4SmejaCOtX8gvoOvv4RCm9nr28fUWJATI3GLMj2rG1DYkCrV/E5Ie4Fj+yjaJBlacwVzuiyXXgYpn1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721061215; c=relaxed/simple;
-	bh=YsIOJcIzCtgQUy6fe55s8xuVMYV7qKmns+jvyZ6BX98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXrzfi5lV7AVDzvtnXtAfJwXvJrlAMXJNomsyCJLDNqj9FvNi9C3Whn2vSp+RyInDAvwhRvlUULjjK+8fLg66CuMi4vYjDfan0LJiieKDCQc4XZAn1i82JrNbpeSPV86Rkc5ZQmmBn6VRE+zQiAKVIXTWRFYngCRCbtwirrOLDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJi9qQNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45A3C32782;
-	Mon, 15 Jul 2024 16:33:34 +0000 (UTC)
+	s=arc-20240116; t=1721061289; c=relaxed/simple;
+	bh=AGHSgENar+lXClT369caPNG8CCiiDlCOOhhMXrfjcE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WYeFeKTWpCydWrmUYSBugegbq03Kf5MLXZxergJtAbnWWUMxbJkdzCXuKOsBJ/03+Mzlxttb1ON5u7vzNAmJszUOFgnuf/fyCmDaxgDq7V69iMURlCS6/WHyYB7sfhPhXzp8tbpzcibZqe+26+VFAHgT1UAgNgqtYAYkyLaG9BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Javxz1Mm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354D0C32782;
+	Mon, 15 Jul 2024 16:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721061214;
-	bh=YsIOJcIzCtgQUy6fe55s8xuVMYV7qKmns+jvyZ6BX98=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eJi9qQNOYkDbOnnDyFX3LlRWuUQr2Z9DtaHKPd+qfxqY5BKRTr9DSoQD8E5BwBjYW
-	 oYsX5GhHmeTPpctFgu9RCef+kycfZMySnfoTcOiUXTdegme/0cWjU4MQIfyAHNuefR
-	 QawZxNJfjiEZ1Azk2MxqtEuYeOzRIQH1+3L9vgrmU6H8EVUZiGLFX3PzUDAvPzlrCI
-	 b+yhS2KA/TVmnM1HXY6bSCrzQ7yGiZnSI5awLI9sYjXDptAfLBpp6Qit+t3zwsI0o1
-	 2hIySplPkKaZRYd1rhzwkExp+It9vE8H9wB1ycocBDPoXTi824UGGjY3vVNAHnLfda
-	 DWXqitPhX6uog==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso6307316e87.2;
-        Mon, 15 Jul 2024 09:33:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVzwTcpeww1DMCZa7WG7c/GcZhz0K7sAs7G6V9wI7CWSxwkE35eeYRyKnB8CSCZLzgxTPEkt9R961slOSneiX7yw976fjDtIFWD/g4i
-X-Gm-Message-State: AOJu0YziyX1t7JlJurUgGUyIMvagKEl/cpa7HpPBk4yGsV3HJlzEc65/
-	jswHXW5CPkpMqHuXVkuS3lqETU0iknYG70yYvtjSf4HT84mj5+ePCBEJXAvBL/s699Wc6Wb9zDK
-	6uqjTDbLL11UZpFmwpU8RaUaDlXE=
-X-Google-Smtp-Source: AGHT+IFFyBH1ytHJ6hQjzAIUeC/mABTAKPhjNDEzrbj9W7OXNTVhs7juvEl1JOmDtjaVH3rE9cK9osEdLrjN7lLc5lE=
-X-Received: by 2002:a05:6512:130a:b0:52e:932d:88ab with SMTP id
- 2adb3069b0e04-52ede1a5643mr49993e87.23.1721061213250; Mon, 15 Jul 2024
- 09:33:33 -0700 (PDT)
+	s=k20201202; t=1721061289;
+	bh=AGHSgENar+lXClT369caPNG8CCiiDlCOOhhMXrfjcE4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Javxz1MmfZFpXBjo2p+4HOUiONWkg7OPU56IUwbB5CqubFVwOlEjHj6zfKJAmGAfx
+	 m1D5QpUMUe6a8FTuVxfYTSlQgXRlk9cZi/8I8wRQYM9fiHRW2uiZMIZtxKG8PULsMS
+	 2C2i91Sk7v2OLwaxt7bAPSbyB/cQfHPiL0LcpPtcJpjd09H84P40NYZp2v3cWhUQZ+
+	 b4/LBVaRgx73S8nYPgy459YECpzePZidAnNDSfDEV2GPiZU1n8GDjDohGAJZJAZp0H
+	 oSgsAYmMKj1eOSLOfOkpPaYgmUDynrFn+4f8jGZEIUSKue6+d1q3+aDQlkGs96e7I7
+	 Uoac1d0/tV9Yg==
+Date: Mon, 15 Jul 2024 09:34:47 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Yanjun Yang <yangyj.ee@gmail.com>,
+	Yuntao Liu <liuyuntao12@huawei.com>
+Subject: [GIT PULL] hardening updates for v6.11-rc1
+Message-ID: <202407150933.E1871BE@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNASzX29R38ApwByCO3kpiY6-L5UqHnP1Vs2WRBQM8z+kQw@mail.gmail.com>
- <20240706164423.1934390-1-aquini@redhat.com>
-In-Reply-To: <20240706164423.1934390-1-aquini@redhat.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 16 Jul 2024 01:32:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARATMy4hJ=Jp0fLd=JyD_SRC5ok8CFmLwHPv7kam4Eq1g@mail.gmail.com>
-Message-ID: <CAK7LNARATMy4hJ=Jp0fLd=JyD_SRC5ok8CFmLwHPv7kam4Eq1g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kbuild: rpm-pkg: introduce a simple changelog
- section for kernel.spec
-To: Rafael Aquini <aquini@redhat.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, Jul 7, 2024 at 1:45=E2=80=AFAM Rafael Aquini <aquini@redhat.com> wr=
-ote:
->
-> Fix the following rpmbuild warning:
->
->   $ make srcrpm-pkg
->   ...
->   RPM build warnings:
->       source_date_epoch_from_changelog set but %changelog is missing
->
-> Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> ---
->  scripts/package/mkspec | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-> index ce201bfa8377..e45fdb12fbc7 100755
-> --- a/scripts/package/mkspec
-> +++ b/scripts/package/mkspec
-> @@ -28,3 +28,26 @@ cat<<EOF
->  EOF
->
->  cat "${srctree}/scripts/package/kernel.spec"
-> +
-> +# collect the user's name and email address for the changelog entry
-> +if [ "$(command -v git)" ]; then
-> +       name=3D$(git config user.name) || true
-> +       email=3D$(git config user.email) || true
-> +fi
-> +
-> +if [ ! "${name:+set}" ]; then
-> +       name=3D${KBUILD_BUILD_USER:-$(id -nu)}
-> +fi
-> +
-> +if [ ! "${email:+set}" ]; then
-> +       buildhost=3D${KBUILD_BUILD_HOST:-$(hostname -f 2>/dev/null || hos=
-tname)}
-> +       builduser=3D${KBUILD_BUILD_USER:-$(id -nu)}
-> +       email=3D"${builduser}@${buildhost}"
-> +fi
-> +
-> +cat << EOF
-> +
-> +%changelog
-> +* $(LC_ALL=3DC; date +'%a %b %d %Y') ${name} <${email}> - ${KERNELRELEAS=
-E}
+Hi Linus,
 
+Please pull these hardening updates for v6.11-rc1.
 
-I am not sure whether the version is required or not.
+Thanks!
 
-In the following guide, not all entries have the version.
+-Kees
 
-  https://jfearn.fedorapeople.org/en-US/RPM/4/html/RPM_Guide/ch09s06.html
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 
-If you want to add the version, perhaps is it better to
-follow the fedora convention?
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.11-rc1
 
-The spec file of Fedora looks as follows.
-The version is enclosed in the square brackets.
+for you to fetch changes up to 872bb37f6829d4f7f3ed5afe2786add3d4384b4b:
 
-%changelog
-* Wed Dec 13 2023 Augusto Caringi <acaringi@redhat.com> [6.6.7-0]
-- Add rhbz#2253632 rhbz#2253633 to BugsFixed (Justin M. Forbes)
-- Turn on DRM_ACCEL drivers for Fedora (Justin M. Forbes)
-- Linux v6.6.7
+  randomize_kstack: Improve stack alignment codegen (2024-07-13 21:36:36 -0700)
 
+----------------------------------------------------------------
+hardening updates for v6.11-rc1
 
+- lkdtm/bugs: add test for hung smp_call_function_single() (Mark Rutland)
 
+- gcc-plugins: Remove duplicate included header file stringpool.h
+  (Thorsten Blum)
 
-Or, is this not important because there is no strict format?
+- ARM: Remove address checking for MMUless devices (Yanjun Yang)
 
+- randomize_kstack: Clean up per-arch entropy and codegen
 
+- KCFI: Make FineIBT mode Kconfig selectable
 
-> +- Custom built Linux kernel.
-> +EOF
-> --
-> 2.45.1
->
->
+- fortify: Do not special-case 0-sized destinations
 
+----------------------------------------------------------------
+Kees Cook (4):
+      x86/alternatives: Make FineIBT mode Kconfig selectable
+      fortify: Do not special-case 0-sized destinations
+      randomize_kstack: Remove non-functional per-arch entropy filtering
+      randomize_kstack: Improve stack alignment codegen
 
---=20
-Best Regards
-Masahiro Yamada
+Mark Rutland (1):
+      lkdtm/bugs: add test for hung smp_call_function_single()
+
+Thorsten Blum (1):
+      gcc-plugins: Remove duplicate included header file stringpool.h
+
+Yanjun Yang (1):
+      ARM: Remove address checking for MMUless devices
+
+ arch/arm/mm/fault.c                     |  4 ++--
+ arch/arm64/kernel/syscall.c             | 16 +++++++---------
+ arch/s390/include/asm/entry-common.h    |  2 +-
+ arch/x86/Kconfig                        |  9 +++++++++
+ arch/x86/include/asm/cfi.h              |  2 +-
+ arch/x86/include/asm/entry-common.h     | 15 ++++++---------
+ arch/x86/kernel/alternative.c           |  8 ++++----
+ drivers/misc/lkdtm/bugs.c               | 30 ++++++++++++++++++++++++++++++
+ include/linux/fortify-string.h          |  8 ++------
+ include/linux/randomize_kstack.h        | 18 ++++++++++++------
+ lib/fortify_kunit.c                     |  3 +--
+ scripts/gcc-plugins/gcc-common.h        |  5 -----
+ tools/testing/selftests/lkdtm/tests.txt |  1 +
+ 13 files changed, 76 insertions(+), 45 deletions(-)
+
+-- 
+Kees Cook
 
