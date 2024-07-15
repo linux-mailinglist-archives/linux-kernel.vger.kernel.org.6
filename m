@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-252099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7271930E69
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:02:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC642930E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4AD1F2161B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB642816E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156E618309A;
-	Mon, 15 Jul 2024 07:02:36 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE221836D1;
+	Mon, 15 Jul 2024 07:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U/hasQGb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1A94C9A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D58B4C9A;
+	Mon, 15 Jul 2024 07:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721026955; cv=none; b=UAjCkHnE1OLjAyrzh8cQT8LBj5SBVF1PCg9J2aHnPVHjCW+EHkywPrORSneS9GI117ywlwA2koVi68nZXYojfjod3NbmnJtJMsC/0qmc2r/KjNgQZY/FRWjODvfh2wWUTlYBpfOgPNN+uyJNj7ewCqQEkRv0GkSJhjIRr7q4zd8=
+	t=1721026997; cv=none; b=hbWk7YN2ws+jSU2MENejXbYaP17400RBGRGV2Kg/uN9Ky4+C7pXW6Dw4Q90qyHvr9d1T0pEl18XRKb4qyXdTxKrIFJMWpNmSlmdfu0bwXqzkKVFSoXCKcTM+Zrna20iqjV9lRNH/lh/fo9zi7FCTuc4aY/TC4ksQwMhSjaiDSdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721026955; c=relaxed/simple;
-	bh=tJy9xtAm63dF5nXD3QRH/UIwYufvHPdhRunAQqauj94=;
-	h=Message-ID:Date:MIME-Version:From:To:CC:Subject:Content-Type; b=b0yzlACutkLdwgYV78AvY51toBwlV05ejWGvqmmf/sIgp0cyoUZ8B/s5YPuXUNeo5NbwlSjH4MDMJhqkrs7zyDyWRgm2czY4bvVfByVQOfxqNsWTwdkJNiU7VEsaGI81TQjBwhNsi+dcj5SIqs1ShrpsIKNMdnbI/Pq7bfu2psI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WMtMS1smCzQldV;
-	Mon, 15 Jul 2024 14:58:28 +0800 (CST)
-Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
-	by mail.maildlp.com (Postfix) with ESMTPS id 657391800A1;
-	Mon, 15 Jul 2024 15:02:29 +0800 (CST)
-Received: from [10.174.177.173] (10.174.177.173) by
- dggpeml500003.china.huawei.com (7.185.36.200) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 15 Jul 2024 15:02:28 +0800
-Message-ID: <3e66f3b9-668e-06bd-6088-43de9667fce9@huawei.com>
-Date: Mon, 15 Jul 2024 15:02:28 +0800
+	s=arc-20240116; t=1721026997; c=relaxed/simple;
+	bh=KiJ0PQk2Kiwops9BcEqG1Vdq7eiCWMbjOH+siiqF7A0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qdOvwalrlS7EPBphhPNNht/Sm6RTqB86r1PBUekhHKq7ih2XX8jLjkMQ4ibQ7rp23ANeKCCPt9zcg0riQzMmWY2LIvitAc0gctIywlGk4f4kVKYHTlakD8tIpxdBEfTdJwej8i/GiOkJAluJEpSUXu8JpxDMeCwaecPRpS/XJIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=U/hasQGb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721026990;
+	bh=/wfDyRO+UtrSRuL0l6escmQClj3slsCAAteOJ1i+fAs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=U/hasQGbmhLiiPPCduKSnxbui2PuB7z9cIej0oBLD9e2Qx8kYRMWjAn63oz6dRaPl
+	 smOyJFy6YEm8pSH5DchIcXq7l8Jw5CFAGaae02O3fEvG42CVGiYRvxDHERvtuxNEtg
+	 fgBp+ot8yAqwDnJvHBnAw5swweJA2OLMl4B325Z/EKw66/IHYXkRPMho798jecs+Rc
+	 JCTM2qCtBy/m9cvOTsfnsd682gCGJRjBkq905V3i3SEZ9gAIzeqev6EM116uCIzg9P
+	 klUqgfmle5H8Elc12YXVbwtUjNmHOJffHlNT2i8Ig2EXzNYfjpSpuYZ1X9KYJ8onEg
+	 Vd3uAF7it34nw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMtSs3ztFz4wb2;
+	Mon, 15 Jul 2024 17:03:09 +1000 (AEST)
+Date: Mon, 15 Jul 2024 17:03:08 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Patil
+ Rajesh Reddy <Patil.Reddy@amd.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the drivers-x86 tree
+Message-ID: <20240715170308.029c367f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Content-Language: en-US
-From: Yu Liao <liaoyu15@huawei.com>
-To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<liwei391@huawei.com>
-Subject: [bug report] drm/vblank: Hard lockup in __disable_vblank()
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500003.china.huawei.com (7.185.36.200)
+Content-Type: multipart/signed; boundary="Sig_/HHhhpusmJX7vbbU+/2tvGt2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/HHhhpusmJX7vbbU+/2tvGt2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-A hard lockup is happened when I do fuzz test with syzkaller.
+Hi all,
 
-Kernel panic - not syncing: Hard LOCKUP
-CPU: 3 PID: 0 Comm: swapper/3 Not tainted 6.6.0+ #21
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <IRQ>
- hrtimer_cancel+0x52/0x70 kernel/time/hrtimer.c:1449
- __disable_vblank drivers/gpu/drm/drm_vblank.c:434 [inline]
- drm_vblank_disable_and_save+0x27f/0x3c0 drivers/gpu/drm/drm_vblank.c:478
- vblank_disable_fn+0x15d/0x1b0 drivers/gpu/drm/drm_vblank.c:495
- call_timer_fn+0x39/0x280 kernel/time/timer.c:1700
- expire_timers+0x22d/0x3c0 kernel/time/timer.c:1751
- __run_timers kernel/time/timer.c:2022 [inline]
- run_timer_softirq+0x315/0x8a0 kernel/time/timer.c:2035
- handle_softirqs+0x195/0x580 kernel/softirq.c:553
- __do_softirq kernel/softirq.c:587 [inline]
- </IRQ>
+After merging the drivers-x86 tree, today's linux-next build (htmldocs)
+produced this warning:
 
-This is a deadlock issue as follows:
+Documentation/admin-guide/index.rst:75: WARNING: toctree contains reference=
+ to nonexisting document 'admin-guide/pmf'
 
-    CPU3				CPU 7
+Introduced by commit
 
-vblank_disable_fn()
-  drm_vblank_disable_and_save()
-  spin_lock(vblank_time_lock)
-				hrtimer_interrupt()
-				  vkms_vblank_simulate()
-				    drm_handle_vblank()
-				      //wait for CPU3 to release vblank_time_lock
-				      spin_lock(vblank_time_lock)
-    vkms_disable_vblank()
-      //wait for vblank_hrtimer on CPU7 to finish
-      hrtimer_cancel(vblank_hrtimer)
+  2fd66f7d3b0d ("platform/x86/amd/pmf: Remove update system state document")
 
-The call of hrtimer_cancel() should not hold locks which would prevent
-completion of the hrtimer's callback function.
+--=20
+Cheers,
+Stephen Rothwell
 
-Best regards,
-Yu
+--Sig_/HHhhpusmJX7vbbU+/2tvGt2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUyawACgkQAVBC80lX
+0GzGjQgAgEIjAeIVD/png8GaVUCo5to+TC5rMkksVKwS+Z5hakYdldahjSPIlA69
+TFOL8Mx6RffGFZY7HNPPhQ/zP0nju+wguYBzz2Vdgn2j5SaeyK7LVahfaPHX7/uL
+gYsRiGZiZahF6tcvLnn8c+YIHPwnlNNgiWArhC5ugXno7kpCS59qyr97Wqu9ZSBr
+2e3S1CwFDIb5ITU1g5YDxwAACAg3CIY8dcLZ9H5lkGhKGBRM3Rp7bKCTzVaO8v69
+9gl+OkNu7q1FKOBZw80lu2e0M6Q1ir6ef8T1wH/4RE6XQXlsdfLt7YOyJqq2tIMx
+8IpaWb1XRHjQmNE+qF47sHgaVaYAvw==
+=xbOw
+-----END PGP SIGNATURE-----
+
+--Sig_/HHhhpusmJX7vbbU+/2tvGt2--
 
