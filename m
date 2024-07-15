@@ -1,151 +1,95 @@
-Return-Path: <linux-kernel+bounces-252448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87066931337
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:38:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F78931339
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5C1EB23609
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85AD71C215AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222F418A92D;
-	Mon, 15 Jul 2024 11:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8BE18A93B;
+	Mon, 15 Jul 2024 11:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8IP+JyD"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcZkYR+y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294018C16F;
-	Mon, 15 Jul 2024 11:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E1188CAB;
+	Mon, 15 Jul 2024 11:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721043440; cv=none; b=S362yTkKHz6+OyLHhx9fNnewnVu7MMlyaDH3dInPsQSVtpeWjU7llxginWCCwfZHZKvAp1+dLZ5uP46dFzLBksBeG9tL9LejD3c8jBflY6JE7FWzvrDJJzEKOhXmdcHXLeO2O75VsJkDIYtmGy+7Elr5GE0J5d/EnKRDa0UYGTw=
+	t=1721043457; cv=none; b=AzkwJEjco/UqnuI45egMW9UZRd25TUEO1XizqAByQR+9+Gk14OhhlERQP4avjkC6vnhf5/o8eLO8usgvL88WqgIPvlm5tF0bp+54wL7vCNQm0SukIYB9PAqr1+NJS9UWr9t/Fizj27HzP7AHZ0dZn5ghu/nBNp76+WHjszB1y4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721043440; c=relaxed/simple;
-	bh=o/a/Ba7rsdITDgqm6HVWWmOT55dq8eAXkBjCNAe4fRY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WoXOnANGrGVZwmpfuhIn0CY1+QKtFK4b6kH0f47iqX6/TVjHiaBKdjs8FPh9CxMJqopZmJNxiuyjITohEve4KNFjJZSf9v5kVvw222hOT2fOFwQDflFP+QNA7T1h9scqkMj+/63+uLNUHaV0nrbeOR2lHwSG3+g/l6Ggf6bAQYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8IP+JyD; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2392027a12.1;
-        Mon, 15 Jul 2024 04:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721043438; x=1721648238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lONwT0616zEWl9r58neBroQQGwP8PqCEA9oNIHLUavQ=;
-        b=S8IP+JyDL15WoycWGivoQLqyOq0veM03pkWf1hT80nNs4xOcRHiZgW5Df9cBJC3BiY
-         19rFhOAdQpBeMAT/b3hfh5Mh7yah30Mdcsrk3IDJOAy5gmzqCjsynzSv19tGl7l5zz/j
-         HFlvodLWw6mN+KOZm6xQu2JEv2ja1UGXjGqZJkQc0oTtPorXFNR8L1NcpT7YtNnMkaJa
-         4pzlY9u96aqZ5+vFGX1I6Y0IWB2tProet0eb7PYo43Gvh+59CQN9CYafn7j7OSjE9LH9
-         LFHS9A7Mp0LJwymu2koLW0Y96W6bNNjeX1DPbGvlH6z1nhtnbioXy0ngnWJ7cZ1h+Qy4
-         q0IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721043438; x=1721648238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lONwT0616zEWl9r58neBroQQGwP8PqCEA9oNIHLUavQ=;
-        b=Ll8RZQQZ5pTlbXjEzlr+Kj74CqX/6Gp0UPdul+Sqo+ZLcVKIgJ0ww5VW4M76Ai3e3t
-         1OMym6L/Ks2DfzUYiMNT9hi1qijFDg9L8O1F9sAhA497Son9aS0IAdk5BNO38TjccX3e
-         5nJqI8fzhfzqvneszTTEDcJpREvnuayITiYtwzusRxpyBNAGrKUjx+0NKJeRPoYsP4hA
-         3eXC5DoppHttrqgREd0USQElmgZwEnlQ8bv4VmSLBW5kZUH2Jk6mQjRtjmgN4YOpkgIo
-         kk1AuPCNloaPMxAJq+R7wtKk8K6PU2TOE2komdRn/b9IWxBXDaVLp6Hg7YNHYIa8+OTJ
-         Ro7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX1gIfixh+DzUu+yu2sC85TQCZtkYzJpVQFD9W6tdf6on/W24IxQ7qGpTydahL3nJaOIDdlhlK/M/27b5YYPt06+3ghOF8+6AUzGHKpkq16Tc8MNWU5P7Jf1BbK4/qxEMqB
-X-Gm-Message-State: AOJu0YxK1XiHEeQRhEyRX6skx5KH99KEvT+sFp3eBUx6cqVVBjVQg0bo
-	Syhpcm8muVDIDYlBLUaQ4CLSKs7UPqh1IVerEfkMyPt6jYA8vt3ILubgz2EgE+U=
-X-Google-Smtp-Source: AGHT+IH1+D8DGIRAl5UGSJFZW8yfU32kY9CstdGZGksq3G5+Uhc9zJoAgHARABp5lIDmfm0RAxodEg==
-X-Received: by 2002:a05:6a20:9191:b0:1bd:207a:da31 with SMTP id adf61e73a8af0-1c2982285femr19750597637.23.1721043438069;
-        Mon, 15 Jul 2024 04:37:18 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc5f7c0sm38877995ad.307.2024.07.15.04.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 04:37:17 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	chen.dylane@gmail.com
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH bpf-next 3/3] bpftool: add document for net attach/detach on tcx subcommand
-Date: Mon, 15 Jul 2024 19:37:04 +0800
-Message-Id: <20240715113704.1279881-4-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240715113704.1279881-1-chen.dylane@gmail.com>
-References: <20240715113704.1279881-1-chen.dylane@gmail.com>
+	s=arc-20240116; t=1721043457; c=relaxed/simple;
+	bh=tyAZldTH+5oVW2/oSVpXIdVNSmITgWx1TexxtmkV0jA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bW7P30hjzbAkPLczKG2E0GaccZ7V84wTZLomtrmVxTnDDkG6n3Splg/+7JxcwlvRkHpnBRmjwrJIWr43xCMlZqCXV6R9BUT/oq5Uyf2BLWB9vkgITmnFO9RuK99KQ3OJyOBkg1qaJYZPUj3Vw4Z4xcKF+PpUG/DHJVa8OvRjZ0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcZkYR+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E99C4AF0E;
+	Mon, 15 Jul 2024 11:37:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721043456;
+	bh=tyAZldTH+5oVW2/oSVpXIdVNSmITgWx1TexxtmkV0jA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DcZkYR+yzZz/NcsML+/wHVznbzfBhksyG6VzyAUY0SLfqleTyS+qS2rTVa47BRzS1
+	 ZqWijtCLx7mxZJvVmH/Bkpx79KOtqfAw89jm78+l6g6L77NmepgqOXspeuFCoHBNXJ
+	 PBU1QtCbCJqh53UpYNVKsS49GjZiFIqY/Rs/f0R6xwYDXkU9PAQi9XwKofghZ9uVP5
+	 St0cbQPCa73XiLl5d/27zbJYenIDr8muZxFVjytyYDaWU6lbSpO1NIjRgMcXzXxlsr
+	 Gs3mtgXlGS15Vt3ioW8OqIpGZMAkQpHHMFAq2eIutrLAzx+dkJSh9llEfGstnH3OEf
+	 zoit4S0HeSlJg==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	bharata@amd.com
+Subject: Re: [PATCH] vfs: use RCU in ilookup
+Date: Mon, 15 Jul 2024 13:37:14 +0200
+Message-ID: <20240715-bundesweit-eckwerte-e5ddcae12fbc@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240715071324.265879-1-mjguzik@gmail.com>
+References: <20240715071324.265879-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1183; i=brauner@kernel.org; h=from:subject:message-id; bh=tyAZldTH+5oVW2/oSVpXIdVNSmITgWx1TexxtmkV0jA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRN5Xx7Q/HRoh/yxf83JrT/FopyEb25d6PrNkHbtTOXi eq37N0xs6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiyQcZ/rsuWhbo+fLc/6/M k1wnRWz8LuM2fd03Cw5HDZf+i1UPRLQYGa7nfmw8Ep0yRWvx5IdORlamO+5e2RqUpHnwbuLNVx9 PyfABAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-This commit adds sample output for net attach/detach on
-tcx subcommand.
+On Mon, 15 Jul 2024 09:13:24 +0200, Mateusz Guzik wrote:
+> A soft lockup in ilookup was reported when stress-testing a 512-way
+> system [1] (see [2] for full context) and it was verified that not
+> taking the lock shifts issues back to mm.
+> 
+> [1] https://lore.kernel.org/linux-mm/56865e57-c250-44da-9713-cf1404595bcc@amd.com/
+> [2] https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
+> 
+> [...]
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- .../bpf/bpftool/Documentation/bpftool-net.rst | 22 ++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+Applied to the vfs.inode.rcu branch of the vfs/vfs.git tree.
+Patches in the vfs.inode.rcu branch should appear in linux-next soon.
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-net.rst b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-index 348812881297..64de7a33f176 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-net.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-net.rst
-@@ -29,7 +29,7 @@ NET COMMANDS
- | **bpftool** **net help**
- |
- | *PROG* := { **id** *PROG_ID* | **pinned** *FILE* | **tag** *PROG_TAG* | **name** *PROG_NAME* }
--| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** }
-+| *ATTACH_TYPE* := { **xdp** | **xdpgeneric** | **xdpdrv** | **xdpoffload** | **tcxingress** | **tcxegress** }
- 
- DESCRIPTION
- ===========
-@@ -69,6 +69,8 @@ bpftool net attach *ATTACH_TYPE* *PROG* dev *NAME* [ overwrite ]
-     **xdpgeneric** - Generic XDP. runs at generic XDP hook when packet already enters receive path as skb;
-     **xdpdrv** - Native XDP. runs earliest point in driver's receive path;
-     **xdpoffload** - Offload XDP. runs directly on NIC on each packet reception;
-+    **tcxingress** - Ingress TC. runs on ingress net traffic;
-+    **tcxegress** - Egress TC. runs on egress net traffic;
- 
- bpftool net detach *ATTACH_TYPE* dev *NAME*
-     Detach bpf program attached to network interface *NAME* with type specified
-@@ -178,3 +180,21 @@ EXAMPLES
- ::
- 
-       xdp:
-+
-+|
-+| **# bpf net attach tcxingress name tc_prog dev lo**
-+| **# bpf net**
-+|
-+
-+::
-+      tc:
-+      lo(1) tcx/ingress tc_prog prog_id 29
-+
-+|
-+| **# bpf net attach tcxingress name tc_prog dev lo**
-+| **# bpf net detach tcxingress dev lo**
-+| **# bpf net**
-+|
-+
-+::
-+      tc:
--- 
-2.34.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.inode.rcu
+
+[1/1] vfs: use RCU in ilookup
+      https://git.kernel.org/vfs/vfs/c/2eae762dece6
 
