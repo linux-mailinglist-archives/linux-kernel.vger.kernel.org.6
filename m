@@ -1,95 +1,146 @@
-Return-Path: <linux-kernel+bounces-252797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7206F931836
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276B093183A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B10F282B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FB2282C77
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1518B168DA;
-	Mon, 15 Jul 2024 16:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521F51C6A3;
+	Mon, 15 Jul 2024 16:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVycYxkf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AExAI/Pt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449E8225DA;
-	Mon, 15 Jul 2024 16:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8FD17C67;
+	Mon, 15 Jul 2024 16:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059830; cv=none; b=WaVllX5zmtJC4kWQIJoFc89GkriuiG0eJg2Vam1Q/ucB9cmeWklf+GM+YeaXZJVi+moRZdVUrJy5S3cd+2OvRHh0PxKpZj7PCowEha+O/FWdUindBOrQ2UYChp/P1oFd69KbvyTVD8zDXSKe0kLVoDSP3jtvzQYxwjXUUChIHJs=
+	t=1721059852; cv=none; b=RuEe+JkVDQkmR78bUO2mBdFwRaV9VbXZ2WH886Xc+nLqJiwfJJ7oHCv4Dzyjrh6B6Rgd0MeC3E8vrb1xPmbCbPcEXmOlFQTzUrHGdWvv4Ljjz4IPon/Xtxj7iLZ7d+XWJBzBbojza8EPNfKcmwnpRPm6Xj/Mv3m/6hRvHSkTpXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059830; c=relaxed/simple;
-	bh=LyNXYzNr6Q8Th5sTEyTcyTqmDktxjmjEskFBkjyywCo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m/mv3Yct2Q7GxKj8n8vvPG+swnfjt/VZom1K4ukkCYwszW/rBI6f753YgFu4ko/QzaEiTmLsq7CXovnyiD84lg/m4Vupa6MEr8hFzfoANeBqyTiYqjt0XiVjqpvZseWIu5qtjBp9TuSBSuD64pL0xGhrRZ4QJh4zG2MmeCU26QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVycYxkf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DE782C4AF0E;
-	Mon, 15 Jul 2024 16:10:29 +0000 (UTC)
+	s=arc-20240116; t=1721059852; c=relaxed/simple;
+	bh=PAt/9RGpGz5K/aBEqlPzaGzWnvBVjbcdM/9lPF7RxC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRlzXwcipFnVkGclDj3zXZNw1qzoaBkRIRNIDgpb5XgDV056+HEPNsk29isyiBxV6qQlmkZcsggKyh2Qzdwl0cU7XDyBChSRBzVtPnqe6O4c9ts3800mjM5BI9j/8Ch6AW6OpFTBYgA8UxF4FtWIxSeQGtni7njfarNg0SapSko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AExAI/Pt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7987C32782;
+	Mon, 15 Jul 2024 16:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721059829;
-	bh=LyNXYzNr6Q8Th5sTEyTcyTqmDktxjmjEskFBkjyywCo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HVycYxkfsr8UHToYentAq/TRX+vihZM/Be/pA3uj6K26lFACboq7VVERfSx5jVREW
-	 hADNXsOTUAPZO9FoHzo+r8A4AtftDl/yU7g5dsE1+6W8gqqK6RY6TX19aBauHnV3UN
-	 4sLk+fOMJXOKP+rHZfJeIhTUhrdrzvXOyl86iyyiYoBLc8iDmx4dMiKYg6ulgoGUr+
-	 i1SJB/dZ4c9d6F2mKNBQZW5qX2O8YevFXMks0pMyfc1MQ9QH5F2oz4DVb0Gi6Lm27F
-	 Xhya1fQ444qDpstdRJcaA3biKe5h+AvIOpblFXL7oOsbuKKDRY/BCCOheUllzrzCWq
-	 ce72ilwpyDlXg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C3C25C433E9;
-	Mon, 15 Jul 2024 16:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721059852;
+	bh=PAt/9RGpGz5K/aBEqlPzaGzWnvBVjbcdM/9lPF7RxC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AExAI/PtfzbH4lbUzmoVjy0AU2GYM2r1404RPLKoEC5mPRh9jid8V7JQUUI2hoxkM
+	 Ia6ddKvr0D/1cV10wLLRzctyqxaiiUIdoaNQP83NcphzbPklIBE90UmyrNNWltgzlN
+	 nfB8+hdryeYovM8egb0Mcb+Hye0DK1KbFGd4uy4FugVEaAQ6RxEAmJP55nYgKTf+W9
+	 9otnzy8AbpaScv6WUCnSEKANE4AbqeadWUVbjgpkFUnDeC1TunFmP1oZOnd7oCS+fS
+	 ac/+LbBL3DWgVQ5x6tXBzyMG/ERm0CUjjdaHnnTOLulneGFvNzCWaMj8qErEIQoe0Z
+	 jK75/9WsvmwGg==
+Date: Mon, 15 Jul 2024 17:10:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: xianwei.zhao@amlogic.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm: amlogic: meson-gx-ao-secure:
+ support more SoCs.
+Message-ID: <20240715-override-blustery-e6763fddf3c4@spud>
+References: <20240715-soc_info-v2-0-3836c8cc27a5@amlogic.com>
+ <20240715-soc_info-v2-1-3836c8cc27a5@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] llc: Constify struct llc_sap_state_trans
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172105982979.6134.15213982854904740211.git-patchwork-notify@kernel.org>
-Date: Mon, 15 Jul 2024 16:10:29 +0000
-References: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 14 Jul 2024 18:15:20 +0200 you wrote:
-> 'struct llc_sap_state_trans' are not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->     339	    456	     24	    819	    333	net/llc/llc_s_st.o
-> 
-> [...]
-
-Here is the summary with links:
-  - llc: Constify struct llc_sap_state_trans
-    https://git.kernel.org/netdev/net-next/c/0970bf676f86
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2RXs66YUzlqAnmaH"
+Content-Disposition: inline
+In-Reply-To: <20240715-soc_info-v2-1-3836c8cc27a5@amlogic.com>
 
 
+--2RXs66YUzlqAnmaH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 15, 2024 at 04:59:19PM +0800, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>=20
+> Add dt-binding document for ao-secure of Amlogic SoCs(S4,C3,T7,A4).
+
+That's not really accurate - no document is added here.
+Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+cheers,
+Conor.
+
+>=20
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml | 16 ++++++++++=
+++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-=
+gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,m=
+eson-gx-ao-secure.yaml
+> index 7dff32f373cb..b4f6695a6015 100644
+> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
+ecure.yaml
+> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
+ecure.yaml
+> @@ -25,10 +25,18 @@ select:
+> =20
+>  properties:
+>    compatible:
+> -    items:
+> -      - const: amlogic,meson-gx-ao-secure
+> -      - const: syscon
+> -
+> +    oneOf:
+> +      - items:
+> +          - const: amlogic,meson-gx-ao-secure
+> +          - const: syscon
+> +      - items:
+> +          - enum:
+> +              - amlogic,a4-ao-secure
+> +              - amlogic,c3-ao-secure
+> +              - amlogic,s4-ao-secure
+> +              - amlogic,t7-ao-secure
+> +          - const: amlogic,meson-gx-ao-secure
+> +          - const: syscon
+>    reg:
+>      maxItems: 1
+> =20
+>=20
+> --=20
+> 2.37.1
+>=20
+>=20
+
+--2RXs66YUzlqAnmaH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVKBwAKCRB4tDGHoIJi
+0uO/AP962MqOigrXH0P1+IKy+IgUZlDyAU/Muhh+aiiFTfnLUAEApruA3hfW1ktM
+vBVcabNKjmHd1AIJnBXisYtn45QqJQU=
+=KCrM
+-----END PGP SIGNATURE-----
+
+--2RXs66YUzlqAnmaH--
 
