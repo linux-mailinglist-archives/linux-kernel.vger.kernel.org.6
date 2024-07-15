@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-252919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC949319E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74CB9319E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C750F282E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:58:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D421C21D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A9A56440;
-	Mon, 15 Jul 2024 17:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FC06F06B;
+	Mon, 15 Jul 2024 17:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X4p6krJH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ajra8A6Z"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6DD4E1C8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36445EE97
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066290; cv=none; b=iZwOc9ywJKlRIvX6qowMjxoKEgQ33jCY3QIsvBnXsPXWQeBOVD2kF+6cXJMAXtbOTbGWLMCJIJTFJ6IHa/VuqdVCsb39zqVGKYwmEnnnu0MwPYbN6Uch5jNGzURbInCJGscBOXEltgnlytvW2e1nOcouE9zz3lbi5+NObBz//5g=
+	t=1721066300; cv=none; b=g5vUgObMBaALLVzWqZLXZ6OcgQIaPWgoVUiT1fBtcEsTP0nCZLGzVIXNZY64cpuB6a0Mfhi0cuf7qg9EK6mAIWdxm9L1XSSpeBvKrehVEC9s/R5N8GPt8hoMIiCWZRkJK5Ayg4a0quMFoCyvnan4OGJHfzazeud7BvEOBFefbmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066290; c=relaxed/simple;
-	bh=Ain5nSPiw7lNbJABKbWUNj9bz6NYPkehR1zADRdCQoU=;
+	s=arc-20240116; t=1721066300; c=relaxed/simple;
+	bh=AvF80KexMQDpk2JmVtnfZ8FRWCV5QwoiXFtn4yq56xw=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Wr2/0zoNW2KRcc2ckXhZScYYSmlKZo2uBwrZb101FImWpo1xrMkzI2UnUI01bO1hreYTV3xRwuJH/XsbbIjOQjP0ViUjlr1V8P6mVsqK7cyVFqVm/BvCN3GF93ycp15Qfb+eoQcg1xuaopyA6IRRTpZWNjgFeGhJ8a5hExrboug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X4p6krJH; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=EygXOgabe205vEz0m5wxUWXe1kK+Qo6jg4+LJcsZxWxJRd14I6VaLy2qjtF5ibBPBDEX+KGo0fH/QnrwJCVDw1HFTWK65+kWu9PZ6DTErSop1aO3u97evm510A+1U0m9m6wZVZvh6n2Y2ayj4QdvSePqWHMwaM0gA9+tI1p0dOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ajra8A6Z; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721066288;
+	s=mimecast20190719; t=1721066297;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NyVNluZIssgAn1o8oMq9PDVu4RkJuOP1nUmOEKmGOcU=;
-	b=X4p6krJHPw4PmKJBcgzP6cZwrv3Be7aYOfQGEYFwyeSSauEj3Xd0S4DHrcC8ZSgwNngwjy
-	9MnL1R2sntO/kxfozU0a+z/8Bff8deKwKEY4dV971CxmQOexNL8h/afZ6H27hhhZCySuia
-	MYcrsXxva7+9w5hjq+YvUkoyrXaw5kk=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=m56+rxvwF7PS34zi6GKHWHULJ2zyJfG14sY0J2ksKZc=;
+	b=Ajra8A6Zw53RZ+aoMPrDYvxInD4MrPQ8vZo4r/5E7s1SEpwSZKFcy9/Ak+27ElTVRPJ+05
+	92jIYSdjw+JoSw2/tdc7pl1E0XmrNs6hX5khlemORoXrYzNv9kYRMxCmr9xx/5Y9GWsTJD
+	npKITkjUBbhAC132Q2NY6MoZM3b4ros=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-161-QWrKbE7-M1aqRANSWKc4Mg-1; Mon, 15 Jul 2024 13:58:06 -0400
-X-MC-Unique: QWrKbE7-M1aqRANSWKc4Mg-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d9de099758so3963354b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:58:06 -0700 (PDT)
+ us-mta-317-SDdxwzY2Nu2D0Fhxao2sng-1; Mon, 15 Jul 2024 13:58:16 -0400
+X-MC-Unique: SDdxwzY2Nu2D0Fhxao2sng-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5c41e975e5aso3078237eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:58:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721066286; x=1721671086;
+        d=1e100.net; s=20230601; t=1721066295; x=1721671095;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NyVNluZIssgAn1o8oMq9PDVu4RkJuOP1nUmOEKmGOcU=;
-        b=oYd7I21Mm5ZmUOkqGiigAgJYvWCdw8Y5GZIBNC7QmJqIbeVgX5qe4E8FLY7VQJ4+rd
-         LzyAdng7GWgV815zIMLezAjUTy3EhHKEf1Aa6ntAIPtAb4Ohstvf3A9ZLDaALvGDQW0U
-         fo+uxtfdhVXCQ88OVQx3YjAtgszL6gjoif8pQjF7InyoYzMtAEiJLWJdfdk81bX8J27g
-         0HLgFHkTYE5n1vA4TjYSkzNAMOAODx/r6ZFfbTTiYi/Y1Kf6I/lZxE7p9YAc/HzLseNe
-         ZIsfO5+x+UaC5b1DbGvQJz36e0iaJspA2mo8IIizdJhp7qxZOnFV4Bc+2Mq1ibve/g7J
-         rOQA==
-X-Gm-Message-State: AOJu0YyVTqHbSNwfMdjG7xmzNZ2btoxogXqMdi8gy+88i2sNbos11+xn
-	3aLpuAuYEwYC2QYe8erXCrh0z1IMSeWI3ucdYoix1+4sLbfJlAtrtoalXHnRWcEXkaowHJzzg2K
-	+zBmtVXq7IST3D4nIUOLdjpWxbZGF5/sclQWZ2rKKtOuUY6TPe4zYoBKTJoayCw==
-X-Received: by 2002:a05:6808:2225:b0:3d9:3e48:8b13 with SMTP id 5614622812f47-3dac632346cmr362249b6e.10.1721066286028;
-        Mon, 15 Jul 2024 10:58:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVCU8MN7DhrLsiuwZc963RljtvATaJVy4fNJFEYXFUGjmBmJoDfzyTAMTP0WdwPNOir3nLCg==
-X-Received: by 2002:a05:6808:2225:b0:3d9:3e48:8b13 with SMTP id 5614622812f47-3dac632346cmr362221b6e.10.1721066285770;
-        Mon, 15 Jul 2024 10:58:05 -0700 (PDT)
+        bh=m56+rxvwF7PS34zi6GKHWHULJ2zyJfG14sY0J2ksKZc=;
+        b=egLo9u7mNDypA5NNJ9gp38/5EPjzx4Pm6o7zc8zcDkkhFQXHJBHBJ2hz/3s1eqhl8M
+         mJZ3LWrht3h0fZFgH/w6Z2AXeh425rVX7VRNIjuGh6xGfQ46xhzca2VTxFSRWaK1ShiR
+         yC0oZ/MiqlUIKlzrQDE2IMLZd568ir54hBZOBNCqcYKeXmAVC2FJ/DRwnes/u9PswT5X
+         6Jv6AgFRsAE3a0xsLdY2LqHdzegDf8Kb4deVv0sAOPlheOeJ/saOXQU3UX1n0aBELPwH
+         8oA+WtoY/7WuAzlt2bMpG6poaFLXb28Ff+Q5qK0iDZGbdUNHuCBlt2heU+G8N75WEhsZ
+         M7PA==
+X-Gm-Message-State: AOJu0YyEOqglv5H1w/KRZR/OthbFRyZetS5sX/Kc25809hVz71ZYjMbA
+	XnTCevTtRO52aNvGVX6pHtGpXGX9dFAavYwPTC8P4qjW6ulz6kDDe21zVqTGV944ARdlLJNVC5Z
+	VhSd5bf8ZkT2a6MDmfy2g23rdkHevW4HS8Q1tpcf8soobJC4B8f7jcJNf1gWgAw==
+X-Received: by 2002:a05:6820:1f04:b0:5ba:f20c:3629 with SMTP id 006d021491bc7-5d2550e856dmr375045eaf.4.1721066295738;
+        Mon, 15 Jul 2024 10:58:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEG5CzS5J/7JXwEverR0AO7CeHZPjLkM66rbdlkFDHt3Eox0nNIENp/ISPHEY2JS1AuyliWBQ==
+X-Received: by 2002:a05:6820:1f04:b0:5ba:f20c:3629 with SMTP id 006d021491bc7-5d2550e856dmr375021eaf.4.1721066295343;
+        Mon, 15 Jul 2024 10:58:15 -0700 (PDT)
 Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160b908c3sm221471585a.25.2024.07.15.10.58.00
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b761a53ffdsm23438616d6.119.2024.07.15.10.58.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 10:58:04 -0700 (PDT)
+        Mon, 15 Jul 2024 10:58:13 -0700 (PDT)
 From: Valentin Schneider <vschneid@redhat.com>
 To: Peter Zijlstra <peterz@infradead.org>
 Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Ingo Molnar
@@ -87,14 +87,13 @@ Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Ingo Molnar
  Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>, Palmer Dabbelt
  <palmer@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, Oleg
  Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 03/10] task_work, sched: Add a _locked variant to
- task_work_cancel()
-In-Reply-To: <20240712152021.GR27299@noisy.programming.kicks-ass.net>
+Subject: Re: [RFC PATCH v3 04/10] sched/fair: Introduce sched_throttle_work
+In-Reply-To: <20240712152158.GS27299@noisy.programming.kicks-ass.net>
 References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-4-vschneid@redhat.com>
- <20240712152021.GR27299@noisy.programming.kicks-ass.net>
-Date: Mon, 15 Jul 2024 19:57:59 +0200
-Message-ID: <xhsmhle221qs8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20240711130004.2157737-5-vschneid@redhat.com>
+ <20240712152158.GS27299@noisy.programming.kicks-ass.net>
+Date: Mon, 15 Jul 2024 19:58:08 +0200
+Message-ID: <xhsmhjzhm1qrz.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,60 +102,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On 12/07/24 17:20, Peter Zijlstra wrote:
-> On Thu, Jul 11, 2024 at 02:59:57PM +0200, Valentin Schneider wrote:
->> Later commits will need to issue a task_work_cancel() from within the
->> scheduler with the task's ->pi_lock held.
->> 
->> Add a _locked variant that expects p->pi_lock to be held. Expose it in a
->> separate scheduler header file, as this really is a scheduler-only
->> interface.
->> 
->> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
->> ---
->>  kernel/sched/task_work_sched.h | 14 +++++++
->>  kernel/task_work.c             | 67 ++++++++++++++++++++++++++--------
->>  2 files changed, 66 insertions(+), 15 deletions(-)
->>  create mode 100644 kernel/sched/task_work_sched.h
->> 
->> diff --git a/kernel/sched/task_work_sched.h b/kernel/sched/task_work_sched.h
->> new file mode 100644
->> index 0000000000000..e235da456427f
->> --- /dev/null
->> +++ b/kernel/sched/task_work_sched.h
->> @@ -0,0 +1,14 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Scheduler internal task_work methods
->> + */
->> +#ifndef _KERNEL_TASK_WORK_SCHED_H
->> +#define _KERNEL_TASK_WORK_SCHED_H
->> +
->> +#include <linux/task_work.h>
->> +#include <linux/sched.h>
->> +
->> +struct callback_head *
->> +task_work_cancel_locked(struct task_struct *task, task_work_func_t func);
->> +
->> +#endif
+On 12/07/24 17:21, Peter Zijlstra wrote:
+> On Thu, Jul 11, 2024 at 02:59:58PM +0200, Valentin Schneider wrote:
 >
->
-> Do we really need that exposed? Can't we squirrel that way in
-> kernel/sched/sched.h and forget about it?
->
-
-Nah that's not required, I thought a clean cut header would be neater but
-given its single user, tossing that to sched.h looks better.
-
->> +struct callback_head *
->> +task_work_cancel_locked(struct task_struct *task, task_work_func_t func)
+>> +void init_cfs_throttle_work(struct task_struct *p)
 >> +{
->> +	lockdep_assert_held(&task->pi_lock);
+>> +	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
+>> +	p->sched_throttle_work.next = &p->sched_throttle_work;
+>> +	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
 >
-> I'm thinking that lockde_assert wants to live in your _locked function
-> above.
+> Yes, init_task_work() does not write .next, but can we please flip these
+> two statements and avoid me having to double check that every time I
+> seem them? :-)
 >
 
-Quite so!
+Easy enough :)
+
+>> +}
 
 
