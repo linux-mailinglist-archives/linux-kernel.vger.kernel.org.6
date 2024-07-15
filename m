@@ -1,81 +1,106 @@
-Return-Path: <linux-kernel+bounces-252518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A396C931466
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD2093146C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312E1B217DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356261F22C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7530F18C359;
-	Mon, 15 Jul 2024 12:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753CD18C332;
+	Mon, 15 Jul 2024 12:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bdz5R4gx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diP0rJ8c"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343D188CDE;
-	Mon, 15 Jul 2024 12:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECE54C66;
+	Mon, 15 Jul 2024 12:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721046943; cv=none; b=ZGRiY4tTdltebefmaOj7/MoQt3WmrQXal8T6Uhc+sETmkwy7zcpHqD7F3XMyfKi0x5jrrbBqn+Juxq0PEEybqXdTdlSWyIULVCF/uI6GoxbAYIQGB2HL9hnzLjn4FuMZBa/5DqOro9AY6auL8BqXGe9nQqBNtoSFB7Cw60whlvk=
+	t=1721046988; cv=none; b=I5+gTyrc/BXIiu3HN+NaBaMjDS/rD1vH6IevHM94Ty5zEZ4/HLnkQwG9Gg9V9lADU898Iqnps9urYjddx1BwyPh8zfS5O9tamqZvuB9g5xwvX9Uz8HV5r7MO6+hbJ2SQRXY8NdjmTqezz9RP0htV54uQI7ZGs1AjhPdZQv4KH4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721046943; c=relaxed/simple;
-	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
+	s=arc-20240116; t=1721046988; c=relaxed/simple;
+	bh=OCLY/jJSo4MO9ry1TAWphgYOa0L1YgPDk0Dml1xnlEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHdeKgawSgZD9fVoJI4tsLHtV4G44pRt4qNsz98rOLYLNBGrNETsTOEmwWXj/aphM216Dbo9h4isNoQhUjiacQ/xfmQVZmIwG97FpnlLTkG4XedoSn7oP5/X3F7v/dEL2LFpfBdSW5icvppeHBKpMRyAx5v0yzpAqK+fuDzo+rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bdz5R4gx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384D5C4AF0B;
-	Mon, 15 Jul 2024 12:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721046943;
-	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bdz5R4gxJ6Ql8J56U35nW3YJFoCxycQ3kqm/w93AMzJBgOYYgAskgX3gPKobqBgaW
-	 InVTSK9IwUIDsyF7+2dIofE/S5K3eMrZYhEtRi/iUuyRnHxq41nErZ0quiloXbumOT
-	 A2o3t2Hfyv3s7gNESOzpEHSOxPrKWfOu454PL5baht1XXtIJWzSCfrltGPBy1D6WHG
-	 HMBOgdAMgaeKZFg2UkNBQffvbtt0tkttLQ2lrb6TN511Zw2BiAr4PZqcvC75ODb0XP
-	 XcuIxMH/E0TtKJ2AVmYwlgWsLO0lh4hdKY3147sfGPaFc2XeHELvyGr4xTjtuqZiZA
-	 FminSopmobn3w==
-Date: Mon, 15 Jul 2024 14:35:39 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dhowells@redhat.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] vfs: ensure mount source is set to "none" if empty
- string specified
-Message-ID: <20240715-abgibt-akkreditieren-7ac23ec2413c@brauner>
-References: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLOCWGrNS6pqfyeUKPObt0qYzU41hZVT07PryyxIKazHh8Ma0+5z7MgA16E+RbyfZ/qH65BJEJq9qjPNMqSg+k/3i0baI/rOe4Bnk7YjpVkn31Z7T7EpJ7/gVvP7dNCMsel5Fd/ZvJXRB31QmoPc6opfp2+wtzrxhxxwHOlGx9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diP0rJ8c; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-426636ef8c9so28351745e9.2;
+        Mon, 15 Jul 2024 05:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721046985; x=1721651785; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mt7ZxLBac9YIKiH2x8RSDRfj7SUv5FljeiparI/YinU=;
+        b=diP0rJ8cpEsxmnSNVTdKuQuK4xTV/z38iWlZBnLxaMdIJhY/EZgQ+ujoK7zYyM6BGy
+         TE2GSPbb9pFjFJ/OhVyF3bqo5EANm/CXwQ8f217wg8TDFUL/qjrFFwqZ6XzQT9hyxccd
+         yaz/oGDkiJcLmwDb1J5u1r/hk88ghRgtfgn3BZrFt0Rz/L+/Oxiigp11F+0YwhZz0YqZ
+         A7K1koZnRHzKbyvyrwQqyDwT6y4eOAsVbgCjwNXCm75Zk/jqMGkUOVEFnVWvsIoJYN2o
+         9bdbcVw9v7f4VkbOA+uH5zfbDjLbvqiDrV75kWQiMFLNVcx1tCa2TXLOB7/65qiigTtW
+         C1tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721046985; x=1721651785;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mt7ZxLBac9YIKiH2x8RSDRfj7SUv5FljeiparI/YinU=;
+        b=RI+40UvRSx8LZFVrhaCzSji9y1TFegWiQYO5oI/GXEH0PaGyb3PnfDbGCoMnlzKqai
+         cb4e59u8b0yjANu256FLg6cKaPDniM3uYue8lorqP2jJ7QDVpC4bFSGPjTmTZaB/H79Q
+         XEw0WTz/mwTCb3z2Z/l1iietETjwFkj5kfOGi0YbXNGj2etiVnljBu3m41ZGpuYHvdAW
+         Js9CkgrcwJdupqUvfrKaFk4CpKpyYWgrV/apKdeJ4hgHKPgDrZpnU42I1XrFBuiAs/6x
+         Yd+1BjoaVE32iB3492NMyeGaDMeT37mGNUuB1mNYTuo0xZar6mWI8wNcJs4dB1zx+WpV
+         FT/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNfusO7wni35Op8WqqBeGIXd4sy8mC56UBc+RwKTkuqVc3R11K8trt4qRHJbKZhNe2tA6TYpKX9qQ4Kw9+vkHXWgkggjq0ywU1NoeheGz29neORS3HkIVdRjQj050YZIa4XCKX
+X-Gm-Message-State: AOJu0Yz6ezoNcaJTFQr6oay5ZtY/Vf3YghrqH7W5MjekA0IX3vnltxCb
+	nqstIKaAXxcMQXIvtTnVzjH1kLqFVXrsidI7nQX+lW4RmqHJ+ufu
+X-Google-Smtp-Source: AGHT+IFObgaoMCVQ/7Rh8cF8m1esPsmMeRw5gzaOD+nzocKyphjJOBG5NBKaJox5FN9hDrA3hRg65A==
+X-Received: by 2002:a5d:50ca:0:b0:367:926a:7413 with SMTP id ffacd0b85a97d-367ceadad63mr13076108f8f.63.1721046985221;
+        Mon, 15 Jul 2024 05:36:25 -0700 (PDT)
+Received: from skbuf ([188.25.49.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccac2sm6257558f8f.56.2024.07.15.05.36.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 05:36:24 -0700 (PDT)
+Date: Mon, 15 Jul 2024 15:36:21 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Eggers <ceggers@arri.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Juergen Beisert <jbe@pengutronix.de>, Stefan Roese <sr@denx.de>,
+	Juergen Borleis <kernel@pengutronix.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] dsa: lan9303: consistent naming for PHY address
+ parameter
+Message-ID: <20240715123621.hkb7ntjcigxdkehn@skbuf>
+References: <20240715123050.21202-1-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
+In-Reply-To: <20240715123050.21202-1-ceggers@arri.de>
 
-> The issue can be easily reproduced.
->  #mount -t tmpfs "" /tmp/tdir
->  #grep "/tmp/tdir" /proc/$$/mountinfo
+Hi Christian,
 
-The kernel has accepted "" before the new mount api was introduced. So
-the regression was showing "none" when userspace requested "" which got
-fixed. The patch proposed right here would reintroduce the regression:
+On Mon, Jul 15, 2024 at 02:30:50PM +0200, Christian Eggers wrote:
+> Name it 'addr' instead of 'port' or 'phy'.
+> 
+> Signed-off-by: Christian Eggers <ceggers@arri.de>
+> ---
 
-(1) 4.15
-    root@b1:~# cat /proc/self/mountinfo | grep mnt
-    386 28 0:52 / /mnt rw,relatime shared:223 - tmpfs  rw
+There was a small time window in which you should have sent the patch,
+after the 'net' -> 'net-next' merge, but before the 'net-next' closure.
+https://lore.kernel.org/netdev/20240714204612.738afb58@kernel.org/
 
-(2) 5.4
-    root@f1:~# cat /proc/self/mountinfo | grep mnt
-    584 31 0:55 / /mnt rw,relatime shared:336 - tmpfs none rw
-
-(3) 6.10-rc6
-    root@localhost:~# cat /proc/self/mountinfo | grep mnt
-    62 130 0:60 / /mnt rw,relatime shared:135 - tmpfs  rw,inode64
+You missed it, and so, you now need to wait, according to Jakub, until
+July 28 and resend then.
 
