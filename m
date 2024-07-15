@@ -1,179 +1,162 @@
-Return-Path: <linux-kernel+bounces-252360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CBA93122B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:22:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9522931233
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BC6C283D3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CAF1F237A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F20187542;
-	Mon, 15 Jul 2024 10:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DF9187560;
+	Mon, 15 Jul 2024 10:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DXN7941F"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Re/uVVtL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41819187358;
-	Mon, 15 Jul 2024 10:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9B818735C;
+	Mon, 15 Jul 2024 10:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721038922; cv=none; b=pfIY8sSWPa8PgknQJ89JwiDTJ/YWV6QjMab6505g5jUR8zA+9okd84FpQ8y0yo8tKNWTZETIIXtnh1kFrIOL6WXNTDf+offazd4rD9Y6MaH8WBOKolmC8bZi+nON0GY9GKWoC7c7s1yM7avg/jCuyBIBxa9tt5mkszcTjGjzjAM=
+	t=1721039019; cv=none; b=awGOA650xB44e68o73cJyZVFCAxMglAdy/PGJvqFnglXS//dT0gjkI/1G64ov1MAkpYMKsYYxmVTpC4nBLktO1F8raEodWfcgqaahcFVhNV3qaD7pfdEmuadne2SgiN5S7uqv6WB4Ar4h/CO2u6gAFS8mDqK2CtHYm7VWolw6l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721038922; c=relaxed/simple;
-	bh=burazMDZpi6NKYAgTXiPXsvahmz8bfe7vpPA0eHJ5k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ieXv2Q3TaG1ISnNgR/FWWLjJ1Pk76AYrSqYB452P2Mmj7AozLVIBrjr2s6G+Oauk532xpefDK40/Z5Uf2ZU71iJaXR2PGB8LQiyRaqZIs0L7qHtNA2sAGFghbmXipUBviXd7ia29VxnstOtSTeBd/74A+hGlvTdnPg9Z8965F6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DXN7941F; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EED9E40E021B;
-	Mon, 15 Jul 2024 10:21:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 60r5F6tyxjpH; Mon, 15 Jul 2024 10:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721038905; bh=fD61eYPQ6WA4OFAfZ7JgMOmG8QVQWZ3mqWe4mDajDxc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DXN7941FwDIO1oJF+EeWErcwEp9pDCx8AqpaF1eneFnLpSkSe6reUN4UjlU9eraID
-	 u8V1p8rIhRYUHPwI7CIWUWAVsQR5nA2AV9x6O3bkY5hyF83ylg14I+7R/dp/eOGeCp
-	 F3FCsE0whHBVpxqOCXa/7A4FS9oZ2Pve+hwyOaAuxuTOeUWC2dxw0TWZEalMO3q37m
-	 /Mof+VB88vi0VjmwADnzkGaUePZZUxO0MQJ2wJGfzyk/KBdVVtcVWbnmvKNOQPmvL5
-	 /fVkri16J7eA/iRF4eh8DbFFW77zQAlqkWXCahpEq1VoTxPd6iQce5SVTpETiKzYa8
-	 Fg1Q3nc1nZgaJ2a68bTPDBz/hvC0gsd4tvNwGjN6E/EmLy4SyyPfLZzcBLxa/i0n+r
-	 JxEHdyDaVjmEidortZMAgRZ9pDVgWEgPCLwYjLKDb6MYWr6h2k10Xd7icaU04si7a2
-	 9TjgiCqoq+gwrN3MvdRRgS/T3ywIOYhOYYnSeqYEOg8Ch7g1Eomtm/2o5Hr8J7IEmb
-	 hKl3P3IAZ2NuRbaLabEBJJdQfMvmIQmUeynVryidTC2Jgi6egBPU3DEXKToLKa8Hp3
-	 Tjzr5awPG6tAMdV7Puu6SprKvcgMUDMZ/0VMzSiZL9vCqaOryUGf1m6VPcxSUE7DXm
-	 /FD/4bTsdhUGMfgi+GpmHm6M=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BDA9F40E019C;
-	Mon, 15 Jul 2024 10:21:42 +0000 (UTC)
-Date: Mon, 15 Jul 2024 12:21:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC updates for v6.11
-Message-ID: <20240715102134.GAZpT4LmsnVCrZsmt5@fat_crate.local>
+	s=arc-20240116; t=1721039019; c=relaxed/simple;
+	bh=qQQW60sjapLz/YaRqlnPupUF8fBVH0c+3KCxXriXV6s=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=d13EdaeKA6I3ncWiKYirUOwjK8RyVdTXsuvsDlxrGCL5FcVD3o3QjYmKE6uXaV23jo1cWJ3eeTuuxVIDWUgf9couKOSMT4tJu1IwNdFyzrxfzBTFqxhi8+vE5eiEUXsGOTLTpEgNZ1jI10djGVbxXr4dCu+JV1qKaNdocYbQBu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Re/uVVtL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dErR003170;
+	Mon, 15 Jul 2024 10:23:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/EKdWAxwi8X/z7x3RZyNHctleqpG36KK6n8CH6XjAKc=; b=Re/uVVtLEZrCqBfd
+	6tL8Lk0uLS9hrPxAy2Gohtby0Pmy9+HOR5uNCOT7mPQOX8Sy9scP5UTbl65lde9p
+	o1t7JgkTqEhD/nQRlm01+VVB9KfsMmw2CEW2fi4ygY4yIdHoJJzor/r8eEBoJ/5V
+	qT9Grjj7TBY26dNj6kEUgXNQzKcfIRXHbrwTOaQPBQd35FprzQKdJz+bW94bEkUd
+	gYeWUi8sS0v3HRisUZ/T3mhkDJTmtq50yYOdZsmnCe6wtdIwX1iZ4IkIoqCyWnqP
+	vMeIlo0hKz6s34dEaYIcrpaY8KIesq3j/AfEoanx2lyp9PQb9IqEFzA2H/IGO86r
+	0cbcxQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bhy6un3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 10:23:05 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FAN4tH010797
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 10:23:04 GMT
+Received: from [10.216.4.154] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
+ 2024 03:22:57 -0700
+Message-ID: <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+Date: Mon, 15 Jul 2024 15:52:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Linus,
-
-please pull the EDAC updates for v6.11.
-
-Thx.
-
----
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.11
-
-for you to fetch changes up to 03a9b67087ba071f69b12d730b36aa7c2d3dbf21:
-
-  Merge remote-tracking branches 'ras/edac-amd-atl' and 'ras/edac-misc' into edac-updates (2024-07-15 11:59:10 +0200)
-
-----------------------------------------------------------------
-- The AMD memory controllers data fabric version 4.5 supports
-  non-power-of-2 denormalization in the sense that certain bits of the
-  system physical address cannot be reconstructed from the normalized
-  address reported by the RAS hardware. Add support for handling such
-  addresses
-
-- Switch the EDAC drivers to the new Intel CPU model defines
-
-- The usual fixes and cleanups all over the place
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      EDAC, i10nm: make skx_common.o a separate module
-
-Borislav Petkov (AMD) (1):
-      Merge remote-tracking branches 'ras/edac-amd-atl' and 'ras/edac-misc' into edac-updates
-
-Dr. David Alan Gilbert (1):
-      EDAC/thunderx: Remove unused struct error_syndrome
-
-Jai Arora (1):
-      EDAC/dmc520: Use devm_platform_ioremap_resource()
-
-Jeff Johnson (2):
-      RAS/AMD/ATL: Add a missing module description
-      EDAC: Add missing MODULE_DESCRIPTION() macros
-
-John Allen (6):
-      RAS/AMD/ATL: Add amd_atl pr_fmt() prefix
-      RAS/AMD/ATL: Read DRAM hole base early
-      RAS/AMD/ATL: Expand helpers for adding and removing base and hole
-      RAS/AMD/ATL: Validate address map when information is gathered
-      RAS/AMD/ATL: Implement DF 4.5 NP2 denormalization
-      RAS/AMD/FMPM: Use atl internal.h for INVALID_SPA
-
-Qiuxu Zhuo (1):
-      EDAC/igen6: Add Intel Arrow Lake-U/H SoCs support
-
-Tony Luck (4):
-      EDAC/i10nm: Switch to new Intel CPU model defines
-      EDAC, pnd2: Switch to new Intel CPU model defines
-      EDAC/sb_edac: Switch to new Intel CPU model defines
-      EDAC/skx: Switch to new Intel CPU model defines
-
-Vasyl Gomonovych (2):
-      RAS/AMD/ATL: Add missing newline to pr_info() statement
-      EDAC/ghes: Add missing newline to pr_info() statement
-
- drivers/edac/Makefile             |  10 +-
- drivers/edac/dmc520_edac.c        |   4 +-
- drivers/edac/ghes_edac.c          |   2 +-
- drivers/edac/i10nm_base.c         |  20 +-
- drivers/edac/igen6_edac.c         |   8 +
- drivers/edac/layerscape_edac.c    |   1 +
- drivers/edac/mpc85xx_edac.c       |   1 +
- drivers/edac/octeon_edac-l2c.c    |   1 +
- drivers/edac/octeon_edac-lmc.c    |   1 +
- drivers/edac/octeon_edac-pc.c     |   1 +
- drivers/edac/octeon_edac-pci.c    |   1 +
- drivers/edac/pnd2_edac.c          |   4 +-
- drivers/edac/sb_edac.c            |  14 +-
- drivers/edac/skx_base.c           |   2 +-
- drivers/edac/skx_common.c         |  21 +-
- drivers/edac/skx_common.h         |   4 +-
- drivers/edac/thunderx_edac.c      |   6 -
- drivers/ras/amd/atl/core.c        |  52 ++--
- drivers/ras/amd/atl/dehash.c      |  43 ---
- drivers/ras/amd/atl/denormalize.c | 561 ++++++++++++++++++++++++++++++++++++++
- drivers/ras/amd/atl/internal.h    |  48 ++++
- drivers/ras/amd/atl/map.c         |  97 +++++++
- drivers/ras/amd/atl/system.c      |  21 +-
- drivers/ras/amd/fmpm.c            |   4 +-
- 24 files changed, 819 insertions(+), 108 deletions(-)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+ <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PIfqfjWbiZmZWdZfWtX92pJi-W229tWh
+X-Proofpoint-ORIG-GUID: PIfqfjWbiZmZWdZfWtX92pJi-W229tWh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407150081
 
 
--- 
-Regards/Gruss,
-    Boris.
+On 7/11/2024 3:40 AM, Dmitry Baryshkov wrote:
+> On Tue, 9 Jul 2024 at 13:53, Satya Priya Kakitapalli (Temp)
+> <quic_skakitap@quicinc.com>  wrote:
+>> On 7/3/2024 3:50 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Jul 02, 2024 at 09:20:43PM GMT, Satya Priya Kakitapalli wrote:
+>>>> Add support for the camera clock controller for camera clients
+>>>> to be able to request for camcc clocks on SM8150 platform.
+>>>>
+>>>> Reviewed-by: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
+>>>> Signed-off-by: Satya Priya Kakitapalli<quic_skakitap@quicinc.com>
+>>>> ---
+>>>>    drivers/clk/qcom/Kconfig        |    9 +
+>>>>    drivers/clk/qcom/Makefile       |    1 +
+>>>>    drivers/clk/qcom/camcc-sm8150.c | 2159 +++++++++++++++++++++++++++++++++++++++
+>>>>    3 files changed, 2169 insertions(+)
+>>> The patch mostly LGTM, several quesitons:
+>>>
+>>> - There are no cam_cc_sleep_clk and no cam_cc_xo_clk_src. Why?
+>> These are not required for camcc sm8150 hence not modelled.
+>>
+>>
+>>> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
+>> This clock is kept enabled from probe, hence not required to be modelled
+>> explicitly.
+> Yes, I'm asking why it's kept up enabled from probe rather than via
+> clock framework?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+>>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+>>>     using simple rcg2 ops, could you please clarify that?
+>> As per the HW design recommendation, RCG needs to be parked at a safe
+>> clock source(XO) in the disable path, shared_ops is used to achieve the
+>> same.
+> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+
+
+Yes, it applies to SM8150.
+
+
+>>> - RETAIN_FF_ENABLE has been used for GDSCs for sc7280, sc8280xp, sm8550,
+>>>     sm8650 and x1e8 platforms. Should it really be set for sm8150? If so,
+>>>     should it also be added to other camcc drivers (if so, for which
+>>>     platforms)?
+>> I have rechecked this in downstream and seems it is not really needed
+>> for sm8150, I'll drop in next post.
+>>
 
