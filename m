@@ -1,133 +1,93 @@
-Return-Path: <linux-kernel+bounces-252356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D389A93120E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:14:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4279311F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC8D283C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:14:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B32B21ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAE2187546;
-	Mon, 15 Jul 2024 10:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92943187336;
+	Mon, 15 Jul 2024 10:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZGv4bg7J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mI0GT16x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007E718733D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D4223BF;
+	Mon, 15 Jul 2024 10:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721038465; cv=none; b=uAo98wmkWf8RZW1S61AjV4vfZNFtg00f7ZUDAmfaugH/Vwjl4azvzqJhxyYasVaUPyHaac8ws6oma83kaXx4i8pV/8aW2/zKxDTMEUeoyy8KP0swwIbepzKmTFajMive0VbBiNQXsSQ8NnOAqm/KnPa/4THW4cxqSm6Wewk21/s=
+	t=1721037869; cv=none; b=WircJ9X15Q3IH1oxuWYvPvGon+BiKh+W8W8qcVbVA2frfNMJcTPVsGMQOACsdHpYE8Rkpvo82TqJYleS5lva2wBn5EUTEw+CRl51zd/X5YdnEBsaOXJxZSUsNd6HGlEAj0LGnm5UZphzcEbjNGbdC0DkxQtrPU40hp8YCFKv21k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721038465; c=relaxed/simple;
-	bh=L1bddvNpW2JSZGxsWMXxNwVCNw6Mlro5NMh+sB6z/Z4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RO/t4l33egENPdcwhDmg4aowHFJ6TmB4HtfD0epnZBkmaXXekY/1TU0mzsEkD6AZ/9bnrxStTMDldJbxg68krLTky8W38JzuAVbXedCqthz7u3DTwQFfRrJ5a59bn1BECuVjoGdFRTW90DK7ucFeLQVG5ayF6zd0Rg8Wn2olFfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZGv4bg7J; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721038464; x=1752574464;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=L1bddvNpW2JSZGxsWMXxNwVCNw6Mlro5NMh+sB6z/Z4=;
-  b=ZGv4bg7JCWT8qzsPQJzgs7Sya0IbX8r9UcD09lYLH5gU6JM30sqERUQM
-   reJSWT2PmTfgeP4lSdYFukwPU0yFpl02c37H9lq01oQM9oXjKx2vwcZY5
-   PUVK5PPkSd4TN6ol8UBoqTr1i9Zp1oEp3Mb+qSQAv8Bn4CZ+Z04wDOuJx
-   UAlbXMrh/WLvYWMFXFURcNV5Wy90P6FDlp/QV/7OjkS2XcnLgSXfIlIIv
-   kHdZ3aUJ2c1A2RHwpvxgi6P4BfH5ZxJS5TCXTjFcbX2qwoovUv7uNn5w0
-   nhaETfhktX5jeub4plJNGD/5oBIDWuiejcjQWkk/OJwL2rqUd49Kmh3AC
-   g==;
-X-CSE-ConnectionGUID: wmGkYB/xTCCkzr9lXf+RGA==
-X-CSE-MsgGUID: KfZuXCEOR8WfKJ8bkBAVyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="35950259"
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="35950259"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 03:14:24 -0700
-X-CSE-ConnectionGUID: 5/dgto6aSs2Kmkae56FYHw==
-X-CSE-MsgGUID: sHt4WkWgROqcSe9Ym6+ndA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="49455954"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.246.147]) ([10.245.246.147])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 03:14:21 -0700
-Message-ID: <5a39e413-a17e-413b-9bd2-f8e0b0d0e86b@linux.intel.com>
-Date: Mon, 15 Jul 2024 11:24:38 +0200
+	s=arc-20240116; t=1721037869; c=relaxed/simple;
+	bh=FnXs1BF0qgDlNDE0EfkuvP0ybwPWpLm6dtpBtM0spJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMnsjNmeICDAxPl4oM0ATKF15pOrav8jXMpFJwP0yLl7VICkzYwulvNh+7RjSwrKKn7wyuorh+ZeDuy2VcinmILhSDdrPbaAhPZx9cfx/8jm+6+rnIbDOa+gIqIsRg9TxoUi1Qp4urA5gnjUb8EgSQH4RgwrFVuUBn7O4U/lvag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mI0GT16x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E9EC32782;
+	Mon, 15 Jul 2024 10:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721037869;
+	bh=FnXs1BF0qgDlNDE0EfkuvP0ybwPWpLm6dtpBtM0spJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mI0GT16xxn2yVBlI4jmI4k4eCFsQ4rT+k5EfKaanMgJzOL5GCT4nzDhst81QXaVXQ
+	 wtFuf8pmmh1CxyGuFfzSiuvP4HkJDmb55L81e0iFzhnWbV99yS+K8ZF7xe5K+02e/v
+	 0Ll2VU1/Cwg6Tyf9X/DsQ9Mb/jCXwM9FXXNkLjQN7Em9WZoAYySxG0BgDfVTY7/p2b
+	 IO9fXUMQQocZr+KEm0HNRU78FK3tPykdQhwNQqsu6HT1v1DTIsgUdDo/TB9NSR2y5q
+	 B3GdxS2bvb3ME2a9ztN9fGSe5DDaI3QItxRoKqIby6VlLhIKJF7KAXmDPigsV2FnAc
+	 wi+tBXcICyNfA==
+Date: Mon, 15 Jul 2024 11:04:24 +0100
+From: Will Deacon <will@kernel.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	Jack D <wm2vdghq@duck.com>
+Subject: Re: Boot error since 6.9: Initramfs unpacking failed: invalid magic
+ at start of compressed archive
+Message-ID: <20240715100424.GA18686@willie-the-truck>
+References: <1a61d10f-7974-4fb5-ada6-f2c40c55f2f7@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] soundwire: bus: drop unused driver name field
-To: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org
-References: <20240712140801.24267-1-johan+linaro@kernel.org>
- <20240712140801.24267-3-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240712140801.24267-3-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a61d10f-7974-4fb5-ada6-f2c40c55f2f7@leemhuis.info>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-
-On 7/12/24 16:08, Johan Hovold wrote:
-> The soundwire driver name field is not currently used by any driver (and
-> even appears to never have been used) so drop it.
+On Mon, Jul 15, 2024 at 08:24:04AM +0200, Thorsten Leemhuis wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
 > 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-> ---
->  drivers/soundwire/bus_type.c  | 9 ++-------
->  include/linux/soundwire/sdw.h | 2 --
->  2 files changed, 2 insertions(+), 9 deletions(-)
+> I noticed a report about a regression in bugzilla.kernel.org that a user
+> bisected to the main ARM64 merge commit from the 6.9 cycle. So the real
+> issue might be somewhere else, but some help would be appreciated. To
+> quote from https://bugzilla.kernel.org/show_bug.cgi?id=219014 :
 > 
-> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-> index 85fa5970d98a..3979be0f8b65 100644
-> --- a/drivers/soundwire/bus_type.c
-> +++ b/drivers/soundwire/bus_type.c
-> @@ -198,16 +198,11 @@ static void sdw_drv_shutdown(struct device *dev)
->   */
->  int __sdw_register_driver(struct sdw_driver *drv, struct module *owner)
->  {
-> -	const char *name;
-> -
->  	drv->driver.bus = &sdw_bus_type;
->  
->  	if (!drv->probe) {
-> -		name = drv->name;
-> -		if (!name)
-> -			name = drv->driver.name;
-> -
-> -		pr_err("driver %s didn't provide SDW probe routine\n", name);
-> +		pr_err("driver %s didn't provide SDW probe routine\n",
-> +				drv->driver.name);
->  		return -EINVAL;
->  	}
->  
-> diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-> index 13e96d8b7423..5e133dfec8f2 100644
-> --- a/include/linux/soundwire/sdw.h
-> +++ b/include/linux/soundwire/sdw.h
-> @@ -704,8 +704,6 @@ struct sdw_master_device {
->  	container_of(d, struct sdw_master_device, dev)
->  
->  struct sdw_driver {
-> -	const char *name;
-> -
->  	int (*probe)(struct sdw_slave *sdw,
->  			const struct sdw_device_id *id);
->  	int (*remove)(struct sdw_slave *sdw);
+> > Hi.
+> > 
+> > I'm marking as arm64 since git bisect identifies the first problematic commit as:
+> >   6d75c6f40a03c97e1ecd683ae54e249abb9d922b
+> > 
+> > git bisect log is attached.
+> > 
+> > Any kernel tagged v6.9x and later fails to boot with the following error:
+> > 
+> > [    0.420154] Initramfs unpacking failed: invalid magic at start of compressed archive
+
+^^^
+
+My guess (based on times I've seen this sort of thing in the past) is
+that the kernel binary grew in size and the broken bootloader is loading
+the kernel over the initramfs instead of parsing the 'image_size' field
+in the boot header.
+
+Will
 
