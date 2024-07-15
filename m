@@ -1,184 +1,188 @@
-Return-Path: <linux-kernel+bounces-252170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2CA930F71
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:19:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FDE930F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA5EB21285
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:19:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E925F1C2111B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE354171645;
-	Mon, 15 Jul 2024 08:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F07B172BA6;
+	Mon, 15 Jul 2024 08:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TiMryFWY"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx+HK5bS"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81AD4C66
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044B524B5B;
+	Mon, 15 Jul 2024 08:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721031588; cv=none; b=pDtRpZ3fefx3guBHdxjpM7MYYX6PGoTPlbSEp2hd9OfrFruIMsgT3Prcv53k9oQpkZD7z9by+cA39LhcRqeqe+vK4NCbZRBwspM3LIwMZdN7kPz9kDLNIe7Cq1ETLB22vSjaIgvE6A8+H4/fwsNhr9zja3Kg1kZc9r9zOsdWtBY=
+	t=1721031619; cv=none; b=XreGhJ6+032OOLurrPWKQtFy5qYHfYMp8kN/azvuka22iA9u0eRjH7HaWvncUWWvpmOKWkmFridXtqCHmhMVyVfRhuw7IdmDpXAsF955hHjB/t4utGQnWQCzyXBZPIwlqJih76J9U8TpM+tM5Z/rmt38ysgYqlpZYK6ZhBX4Ai8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721031588; c=relaxed/simple;
-	bh=AxcHVjXcWz+f2jTuc9Dzf58zKPdt9EW330ehtbZST7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQmcfc5KOS6LONkaIbqAUWguOBLDjhQYZWvnah7Cp5QwcH/GX39T798xZKYeGRjLdmlxoGq03CiC1JcDvIZevuboa7DggQBVFtP7hI2kctBqUL5IgIvU1zbC46wWPqT8//QyXz6nUzUaD+Pg4oGG1xJ+WbNUcGVRLjnf7MBq6HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TiMryFWY; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77c1658c68so439552866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:19:45 -0700 (PDT)
+	s=arc-20240116; t=1721031619; c=relaxed/simple;
+	bh=w32Lnn89aqttGf8i+OlyMuDjy+X6udKgPOF42Cmtux8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qru+ERhWerZN51i0vLu9cPzWChh47+y7YxACR67p6ttUeIsjvgxF2hCgTalzWYDOwpB8ZSR0APh+SES+jJNHxIzptWUbCYKzeWddBdG/8q0xmHU2XmlxQBm+xDByK9n8mtfUjxzAJlIkGOOVisvaE5592bz1AABUV7gWx9ICQWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx+HK5bS; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03618fc78bso3545449276.2;
+        Mon, 15 Jul 2024 01:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721031584; x=1721636384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BzuOERVB8BYXcS6jzRnPjykns7akEqZft0CH0SokcpA=;
-        b=TiMryFWYtmBuvDCqZIqkoPUeuF+Cl8RnWd/Mnj78mM3vRlnvD2LX5mMjgvNCZ5l2b7
-         D3xjQecwjSvEWXpKPHbIzcZv1pXWRbMmP4M+y8oM4R/wJ+x0H6aYxV9Vm7A4v2Z3KM8I
-         fChxseHgjFAJ+y5kcl/dyx8jq0NJOkDHSlJTHtSfhBMtnFC+HUDReotX22mv4zzGswgD
-         +rYY62nCpaV1bPidtm3UHpjmMe7D1W6s8DhFyIiTddJJ10fGc0hXqySVscWEtOoohYqC
-         o015JJUnVL0WGABANG9KuoLD7JIly1Ov53XecdnW5qmJDoiBMPrV+A3Bv2QrZiDe5ywQ
-         yHmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721031584; x=1721636384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721031617; x=1721636417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BzuOERVB8BYXcS6jzRnPjykns7akEqZft0CH0SokcpA=;
-        b=d1LS9e9I9VfgGkBa4au6qhoaXqchcjMakkOyxLyC0afX2u49Y7lAwokeIa6PMlNDMN
-         9nm0W4+458agrN37/AlQmacazVKbFgRalsproYrIrdE9MgC2Av/VvViwp12Rd5vaiNcQ
-         UEEtCVKSodKRcw416YdPa7fC5GLm/CpZhI2iy4eZddb9x1HV6MhgpQ6VwdIsWXPDP36r
-         dWC6zEoHMDG3xcJvBCdDA2Ge1G+5P0YAbVodDYE03x+fyM9uHopps0e7c7AEmK5vb7No
-         5X+EKNNV0Y70rnMlbsO7TjQEjcJyeY5JXaHenidA0U5Rug++wvbHUvkATt3nSuMP6g2N
-         N3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXYMhdut+27Gl1YlX7aGmdVJlojCRKisTgNliNooFW537IDhn7yyp20aIUNlnzooCTlQmSGhdVbM+/jnaqhuSR+Z1yvt575JTRbH6Em
-X-Gm-Message-State: AOJu0YwFn9uuW/kbRrhjmSkN6tgcWZ/cDJ8u8L2uOHxkbbhzOfoU4Bld
-	AMXjwOrERPw/bdGlsuX/ahE5cyCom7vCmZwiXO03xzknUavmi8JwaphF3d6MekZWOgU5FRNN4UZ
-	f
-X-Google-Smtp-Source: AGHT+IFDnYLOn5oKibGY3IW1WB4tX5z1g4icCI1F/jsVTt3hrAU7A9vAG7HpYO0pa9HXpkwRm5mVtw==
-X-Received: by 2002:a17:907:7da8:b0:a6f:e456:4207 with SMTP id a640c23a62f3a-a780b88498fmr1522974366b.61.1721031584079;
-        Mon, 15 Jul 2024 01:19:44 -0700 (PDT)
-Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a359asm195317966b.19.2024.07.15.01.19.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 01:19:43 -0700 (PDT)
-Date: Mon, 15 Jul 2024 10:19:43 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [bug report] mm: memcg: move charge migration code to
- memcontrol-v1.c
-Message-ID: <ZpTbn_pEd1XsvOD1@tiehlicka>
-References: <cf6a89aa-449b-4dad-a1a4-40c56a40d258@stanley.mountain>
- <ZpF8Q9zBsIY7d2P9@google.com>
+        bh=w32Lnn89aqttGf8i+OlyMuDjy+X6udKgPOF42Cmtux8=;
+        b=Jx+HK5bSLI3iSTGwwn5mNAW+lSbkS/Fuj021hynoOGZ9rGcRZrk2CASMWvcroiYNl9
+         kShiDtb2eS3TyKcNMsmNIsx9lX5qsnnhi6s55v1k2Xk05IC1uMRHQ3Tu0Co8XdK1LlY5
+         7nBrnuU51lWq5yOFluYddYidKynVMKhUrPAaQ6I83/8qkMd6WVAdHmnEDWcXT9Kx+3zK
+         BWrHiR3zkhyKjWAMrFh06bc3y4M6wjKS0Z9CEQR/yIAHJoXuJaBOX83WPbeGE4xIm4kM
+         Ro68n/n5FKQL9Chk70TkJ1Ss0Qa9uDXv87k4+eSn5CiCj1iKPxHDJemG4z5k2CCsmC42
+         cbIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721031617; x=1721636417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w32Lnn89aqttGf8i+OlyMuDjy+X6udKgPOF42Cmtux8=;
+        b=b7afVlnPO8tYef+jpPtX6PYbGfOInysLDqYPYbY/DJDO2RcB2FZobtHjDwUweihFAK
+         zf+btdw0tx6YCT/IDi+O0ygOnnq46A1yI2kbe1ZzqvwhBLnwlfXkiMxXu/0CtZdfWCJB
+         BQrkLPxSD86sYrzQ5jhXc3spDwirisbFsR6xNz9EqUM+tu9ZAcbePUBBnNNGFuB55vqZ
+         C/otJ3pz9yhkh22mUFvMlDigNxYwCKZw+9LDylToiHftpfO3yC4nIoQl4rVFd9vFhAyK
+         anCMLXb7mTNg17BY+l9PK4kHwJRDF/5hYIJSA/8DzxLcTDvbxcaWni9uueivo8DGpZJy
+         IR0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWxZV5BaLSJASLNf9u+0owaACXQRTw5kMgAsHI6uBcYjhXhCfxfk3gM9R7eo2Mc8DAsHJldGsig/jv944WeLjyG+3EBsYO8YaN4sIUG3afHoa4DZPAq4N/Z4S99cAWCrHXgEgAkRIBo
+X-Gm-Message-State: AOJu0YwxsGhyKqlSu3xq6kXXwAy4x/H9wFO5lsYsjg2x2bXZObJO/B32
+	X5nEyf8jfue7Hc5uWDmGac3QRifupfBMw0a6ZBYRL8L433CpqTczA3PVmrH1hcfKWsQHdvnXf7Z
+	7sq/E8mS6/ONEUACmtW/0GXDaqhI=
+X-Google-Smtp-Source: AGHT+IHqF0bzN3oaeHLdU3o7OVMKaBGJVKKiVAcQw8uaPEHiVkAtxgzLjYUDhiSGbPFDUHm2O/xsWwoFjm8CO/6yiXw=
+X-Received: by 2002:a05:6902:50d:b0:e03:580a:da43 with SMTP id
+ 3f1490d57ef6-e041b05cac1mr20842473276.22.1721031616930; Mon, 15 Jul 2024
+ 01:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpF8Q9zBsIY7d2P9@google.com>
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
+ <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com> <CAKEwX=MFdjryQRDm9b-Oxquhw954HUipCCpABSLwH9mrV4D3WA@mail.gmail.com>
+In-Reply-To: <CAKEwX=MFdjryQRDm9b-Oxquhw954HUipCCpABSLwH9mrV4D3WA@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Mon, 15 Jul 2024 17:20:06 +0900
+Message-ID: <CAPpoddfNfrGjhHzQ4KURv2y_z-iyY8cTzG+7d2ooQFU5NcU80w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 12-07-24 18:56:03, Roman Gushchin wrote:
-> On Fri, Jul 12, 2024 at 09:07:45AM -0500, Dan Carpenter wrote:
-> > Hello Roman Gushchin,
-> > 
-> > Commit e548ad4a7cbf ("mm: memcg: move charge migration code to
-> > memcontrol-v1.c") from Jun 24, 2024 (linux-next), leads to the
-> > following Smatch static checker warning:
-> > 
-> > 	mm/memcontrol-v1.c:609 mem_cgroup_move_charge_write()
-> > 	warn: was expecting a 64 bit value instead of '~(1 | 2)'
-> > 
-> > mm/memcontrol-v1.c
-> >     599 #ifdef CONFIG_MMU
-> >     600 static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
-> >     601                                  struct cftype *cft, u64 val)
-> >     602 {
-> >     603         struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-> >     604 
-> >     605         pr_warn_once("Cgroup memory moving (move_charge_at_immigrate) is deprecated. "
-> >     606                      "Please report your usecase to linux-mm@kvack.org if you "
-> >     607                      "depend on this functionality.\n");
-> >     608 
-> > --> 609         if (val & ~MOVE_MASK)
-> > 
-> > val is a u64 and MOVE_MASK is a u32.  This only checks if something in the low
-> > 32 bits is set and it ignores the high 32 bits.
-> 
-> Hi Dan,
-> 
-> thank you for the report!
-> 
-> The mentioned commit just moved to code from memcontrol.c to memcontrol-v1.c,
-> so the bug is actually much much older. Anyway, the fix is attached below.
-> 
-> Andrew, can you please pick it up?
-> 
-> I don't think the problem and the fix deserve a stable backport.
+2024=E5=B9=B47=E6=9C=8813=E6=97=A5(=E5=9C=9F) 8:02 Nhat Pham <nphamcs@gmail=
+.com>:
 
-Agreed!
+> >
+> > I agree this does not follow LRU, but I think the LRU priority
+> > inversion is unavoidable once the pool limit is hit.
+> > The accept_thr_percent should be lowered to reduce the probability of
+> > LRU inversion if it matters. (it is why I implemented proactive
+> > shrinker.)
+>
+> And yet, in your own benchmark it fails to prevent that, no? I think
+> you lower it all the way down to 50%.
+>
+> >
+> > When the writeback throughput is slower than memory usage grows,
+> > zswap_store() will have to reject pages sooner or later.
+> > If we evict the oldest stored pages synchronously before rejecting a
+> > new page (rotating pool to keep LRU), it will affect latency depending
+> > how much writeback is required to store the new page. If the oldest
+> > pages were compressed well, we would have to evict too many pages to
+> > store a warmer page, which blocks the reclaim progress. Fragmentation
+> > in the zspool may also increase the required writeback amount.
+> > We cannot accomplish both maintaining LRU priority and maintaining
+> > pageout latency.
+>
+> Hmm yeah, I guess this is fair. Looks like there is not a lot of
+> choice, if you want to maintain decent pageout latency...
+>
+> I could suggest that you have a budgeted zswap writeback on zswap
+> store - i.e if the pool is full, then try to zswap writeback until we
+> have enough space or if the budget is reached. But that feels like
+> even more engineering - the IO priority approach might even be easier
+> at that point LOL.
+>
+> Oh well, global shrinker delay it is :)
+>
+> >
+> > Additionally, zswap_writeback_entry() is slower than direct pageout. I
+> > assume this is because shrinker performs 4KB IO synchronously. I am
+> > seeing shrinking throughput is limited by disk IOPS * 4KB while much
+> > higher throughput can be achieved by disabling zswap. direct pageout
+> > can be faster than zswap writeback, possibly because of bio
+> > optimization or sequential allocation of swap.
+>
+> Hah, this is interesting!
+>
+> I wonder though, if the solution here is to perform some sort of
+> batching for zswap writeback.
+>
+> BTW, what is the type of the storage device you are using for swap? Is
+> it SSD or HDD etc?
+>
 
-> Thank you!
-> 
-> --
-> 
-> >From 8b3d1ebb8d99cd9d3ab331f69ba9170f09a5c9b6 Mon Sep 17 00:00:00 2001
-> From: Roman Gushchin <roman.gushchin@linux.dev>
-> Date: Fri, 12 Jul 2024 18:35:14 +0000
-> Subject: [PATCH] mm: memcg1: convert charge move flags to unsigned long long
-> 
-> Currently MOVE_ANON and MOVE_FILE flags are defined as integers
-> and it leads to the following Smatch static checker warning:
->     mm/memcontrol-v1.c:609 mem_cgroup_move_charge_write()
->     warn: was expecting a 64 bit value instead of '~(1 | 2)'
-> 
-> Fix this be redefining them as unsigned long long.
-> 
-> Even though the issue allows to set high 32 bits of mc.flags
-> to an arbitrary number, these bits are never used, so it doesn't
-> have any significant consequences.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+It was tested on an Azure VM with SSD-backed storage. The total IOPS
+was capped at 4K IOPS by the VM host. The max throughput of the global
+shrinker was around 16 MB/s. Proactive shrinking cannot prevent
+pool_limit_hit since memory allocation can be on the order of GB/s.
+(The benchmark script allocates 2 GB sequentially, which was
+compressed to 1.3 GB, while the zswap pool was limited to 200 MB.)
 
-Acked-by: Michal Hocko <mhocko@suse.com>
 
-Thanks!
-
-> ---
->  mm/memcontrol-v1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> index 6b3e56e88a8a..2aeea4d8bf8e 100644
-> --- a/mm/memcontrol-v1.c
-> +++ b/mm/memcontrol-v1.c
-> @@ -44,8 +44,8 @@ static struct mem_cgroup_tree soft_limit_tree __read_mostly;
->  /*
->   * Types of charges to be moved.
->   */
-> -#define MOVE_ANON	0x1U
-> -#define MOVE_FILE	0x2U
-> +#define MOVE_ANON	0x1ULL
-> +#define MOVE_FILE	0x2ULL
->  #define MOVE_MASK	(MOVE_ANON | MOVE_FILE)
->  
->  /* "mc" and its members are protected by cgroup_mutex */
-> -- 
-> 2.45.2.993.g49e7a77208-goog
-
--- 
-Michal Hocko
-SUSE Labs
+> >
+> >
+> > > Have you experimented with synchronous reclaim in the case the pool i=
+s
+> > > full? All the way to the acceptance threshold is too aggressive of
+> > > course - you might need to find something in between :)
+> > >
+> >
+> > I don't get what the expected situation is.
+> > The benchmark of patch 6 is performing synchronous reclaim in the case
+> > the pool is full, since bulk memory allocation (write to mmapped
+> > space) is much faster than writeback throughput. The zswap pool is
+> > filled instantly at the beginning of benchmark runs. The
+> > accept_thr_percent is not significant for the benchmark, I think.
+>
+> No. I meant synchronous reclaim as in triggering zswap writeback
+> within the zswap store path, to make space for the incoming new zswap
+> pages. But you already addressed it above :)
+>
+>
+> >
+> >
+> > >
+> > > I wonder if this contention would show up in PSI metrics
+> > > (/proc/pressure/io, or the cgroup variants if you use them ). Maybe
+> > > correlate reclaim counters (pgscan, zswpout, pswpout, zswpwb etc.)
+> > > with IO pressure to show the pattern, i.e the contention problem was
+> > > there before, and is now resolved? :)
+> >
+> > Unfortunately, I could not find a reliable metric other than elapsed
+> > time. It seems PSI does not distinguish stalls for rejected pageout
+> > from stalls for shrinker writeback.
+> > For counters, this issue affects latency but does not increase the
+> > number of pagein/out. Is there any better way to observe the origin of
+> > contention?
+> >
+> > Thanks.
 
