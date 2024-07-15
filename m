@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-252437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A48931309
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A477F93130B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407C11F23C87
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7AD284216
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0951891B7;
-	Mon, 15 Jul 2024 11:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225F1891A5;
+	Mon, 15 Jul 2024 11:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvdfMZWL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJj0xdYx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1E187868;
-	Mon, 15 Jul 2024 11:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CB0446DB;
+	Mon, 15 Jul 2024 11:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042719; cv=none; b=dWdpK9xpaAwttewMHdQHMyEOMaDh/qvhoBXMkIQJ8JrBE5Kh23fwTuDPjFJjojZl7iYs4q+abcnxilebtH+sRCqlrdRypJ4aLZ2TdenvhteaGvbRvPf2JkVsy0VXxRs1gNaEWI5ebrXRM0xLdSbmBZ+6ZEQ7hnTzXFzH9JALqNo=
+	t=1721042770; cv=none; b=e8vpFCIvmOIhZ0c/Ue6o1DG/tNRp7Oq8L1YaNUOGfxvHK2Fs063+KdlKa4wy7kobBlrRhX/C0IKKQ0ILxZrn3RocqYmgDbo/ogFLh5hHijws5mu13K8DKQw1ENODeY2dQ2unzFxlUbONOqllRs9hn2ykXKv4pdUC1HW0pBnADGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042719; c=relaxed/simple;
-	bh=KC0jcakKkauqSbjVB4rvDkrK1IwXEPbpjatq47Q8YLg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=KDbwpCsjmOHumebYZfZlhthsn3zDdzun2iGBfyAcYSe3vbPH2d/AsDu1S4EOH9pFwpM+D2d0MtGepW7f15EsOB0wV8uqjwdYYHK3gjorTar61eWQ609CAjRZ8xHb+U+fA8RmXjcO0UG8z8FohdlfRPM+E+p0ZICK/JPFx2LYfsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvdfMZWL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95FEC32782;
-	Mon, 15 Jul 2024 11:25:17 +0000 (UTC)
+	s=arc-20240116; t=1721042770; c=relaxed/simple;
+	bh=QM1uBAPF2108gHk50qZVBd1zgDVHl1QsHEWx7znti1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sn1S4eaH3h2ihaklq0eY0Udu7dfIEenTdUN/kotEbLdyeyS7Vel8hc3AxI0Wi1RqOSLy1WVbJICojTPoqSzMLaBcBk2w86vBhsXrarUnFbMFAhmrVvLERiD8bij1LuTM2qbJ4OnDEfXv2PIeNgEtYgwfn3C1pM5WB7rhV8BgjYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJj0xdYx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13038C32782;
+	Mon, 15 Jul 2024 11:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721042718;
-	bh=KC0jcakKkauqSbjVB4rvDkrK1IwXEPbpjatq47Q8YLg=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=GvdfMZWLK+QQB0Loqm/2bafYkFbrdwFHsb60HINhZmkOX5GLfIAe7TilDJ89IE0vM
-	 nQLxk/HV9nDrSNVsyD7OOTJ5YJRVZFTQ7QOikfyspol/GTVOn+hKVQxP16MjzXgB40
-	 3j4lQPzcAP38iN4CnbgPlHtWWSlvo+FjhesaswIyTIwqSjnthkOlIb0TpmHeNGVJPp
-	 meSz5XfkWOb/grCWOeRQvfv37w1IDGMNt06MWHsAhNfOQK9tHHt9V9CfjVzBckMf9k
-	 71l1Vm62vhAhQZhSW3W/nmeYBJLWimt04kINAxqGgDDL6iLtBQNJQmKgMKVkYfFvS9
-	 a0jNGrx196aRQ==
+	s=k20201202; t=1721042770;
+	bh=QM1uBAPF2108gHk50qZVBd1zgDVHl1QsHEWx7znti1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJj0xdYxkgEIT5/4cc53FrhzNHUTX12qA9VdQtGzy3xByuaSz7VS4aEI3Xb7p19EE
+	 tFY1r5EjQvwfkcuTdLFUrmcTFkkXTyCMgh/kJQ9/nbr5a9ICpEOnJloZS4zoaW8uj2
+	 yRXZyJe+1vZJHDJchmKmnqBfZ2UamUGeDLb5rq94lTvSYzH4fv0JfrkU0Q5Co8rCcy
+	 BC0pFfd2VbqW/wm5VWuy07oawklnAogC3n/qtYRCTIrs/Fx4qA9nllzQxvI94DC+5H
+	 dOJDEZXJSEd+hTqDpUz0hIU5n0eAFTOSTZLEX9FIdVdTdpT8ZK+I5S4eTuej+NXQoH
+	 /xQZzJns0fvBQ==
+Date: Mon, 15 Jul 2024 05:26:09 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>, devicetree@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Baolin Wang <baolin.wang7@gmail.com>
+Subject: Re: [PATCH] dt-bindings: timer: sprd-timer: convert to YAML
+Message-ID: <172104276748.3594257.7060683721858153378.robh@kernel.org>
+References: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 15 Jul 2024 14:25:15 +0300
-Message-Id: <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
-To: "Hao Ge" <hao.ge@linux.dev>, <peterhuewe@gmx.de>, <jgg@ziepe.ca>
-Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Hao
- Ge" <gehao@kylinos.cn>
-Subject: Re: [PATCH] tpm: Move dereference after NULL check in
- tpm_buf_check_hmac_response
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240709023337.102509-1-hao.ge@linux.dev>
-In-Reply-To: <20240709023337.102509-1-hao.ge@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoU95lBgoyF/8Md3@standask-GA-A55M-S2HP>
 
-On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
-> From: Hao Ge <gehao@kylinos.cn>
->
-> We shouldn't dereference "auth" until after we have checked that it is
-> non-NULL.
->
-> Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_ses=
-sion*()")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-Also lacking:
+On Wed, 03 Jul 2024 14:02:46 +0200, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 timer bindings to DT schema.
+> 
+> Changes during conversion:
+>   - rename file to match compatible
+>   - add sprd,sc9860-suspend-timer which was previously undocumented
+>   - minor grammar fix in description
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+>  .../bindings/timer/sprd,sc9860-timer.yaml     | 68 +++++++++++++++++++
+>  .../bindings/timer/spreadtrum,sprd-timer.txt  | 20 ------
+>  2 files changed, 68 insertions(+), 20 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/timer/sprd,sc9860-timer.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/timer/spreadtrum,sprd-timer.txt
+> 
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2=
-fe4e13ec2@stanley.mountain/T/#u
+Applied, thanks!
 
-What is happening here is that my commit exposed pre-existing bug to
-static analysis but it did not introduce a new regression. I missed
-from your patch how did you ended up to your conclusions.
-
-Please *do not* ignore the sources next time. Either explain how the bug
-was found or provide the reporting source. You are essentially taking
-credit and also blame from the work that you did not accomplish
-yourself, which is both wrong and dishonest.
-
-BR, Jarkko
 
