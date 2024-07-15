@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-252636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FB7931625
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:56:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB14F931639
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85948B211B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541F11F225EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F3818E763;
-	Mon, 15 Jul 2024 13:55:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C231741CF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A2318E752;
+	Mon, 15 Jul 2024 13:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BnhQUJyj"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0735C1741CF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051755; cv=none; b=bViqSrhg+kXKaxc2TBGZWm0UrQ8pkhExGatk4m4bIg2GMe7xQLsINDVTngyX2a68cxMpaFPvFukiudaAldF3G/QQix1YByTDSoKp/EgmtbPZwtXD8aWhTtDjIPKFE2rbFQ6nJsZb5lDswhdWf1KDpG3QGyT17u8fiUV0oQb0p7E=
+	t=1721051864; cv=none; b=JQY1R63uvi8rzgaWUtSFWjnkaX1HmMYT/cW3RTvhFBV6if0JBIpvojJ9CNaK5uauslhKdNE2tTjXJeW3/WRwki/A4r3nFXiW29BuIglRmh/SaJBbXsC6mQ8R++xxgDq292sK8++Dmqb0rxEoZORBRTgf+S1wwpe8GA/JXy7mvUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051755; c=relaxed/simple;
-	bh=o7SPAJO8iOMaSTIdeOb07rqXUTWi+XHsVu4Xl9ncQP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PFxp+lJYX5q8xYhmF4l/YduvzHifhrKUvDHyS6yMXHn1af+qw5ckExICQMAugxRZXxp0zL7hI5WY5fbnu/HdPbi+ycuB30CSTy67rJJYz9nQ5ivhq9Hnd+zex529lRFA34zhMI61HkxXK0KRN1ynTAOPzN+i2La38UB2hhDdXS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DEC2DA7;
-	Mon, 15 Jul 2024 06:56:18 -0700 (PDT)
-Received: from [10.57.77.136] (unknown [10.57.77.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 116DD3F766;
-	Mon, 15 Jul 2024 06:55:50 -0700 (PDT)
-Message-ID: <aab4c18a-a30e-482d-9c4b-9ae04840881a@arm.com>
-Date: Mon, 15 Jul 2024 14:55:49 +0100
+	s=arc-20240116; t=1721051864; c=relaxed/simple;
+	bh=LeSbYsChuw2CItwmR6vaX8jj0UmWfZW+UKjzYxTCTew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rzlC1Y0ET/+QM7HIsjBAjyLHzcNW78Uudj8BGSw3o7QIlFOFFjTWnhB216sU08s/Aov9/GH4X460ZMgEkwiLrktNHCf6mv6apmaGdSu326xrQKRnBbAgTw630qH7VW7XMMkZkc8k683c7kAdVoHPjfsknjAlS5VC7VK/VLb0yDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BnhQUJyj; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-447f8aa87bfso588721cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721051862; x=1721656662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S1IdPkkbzvH/BAaWYOMPmxaCglX4fyw6oCXKUAhpCY8=;
+        b=BnhQUJyjHg/mYl489BH9KNKNsbXAda1BG8p6E6XfM96Janb1aMHbKwgSMvR621fev1
+         NC2FN7NszGV2gzjGZndq5lId/77iVUBeucwb2srWMFml8biV6KpHFDfp1v933eM9JKQb
+         Z2I5Ile0iWnq2whEBrFrLbaDFwH5QPKTKYvU1L0mW8EJjMB0UxskFupnlezXi+22+K6G
+         Ho0SvL/j0XqnPVLgYp3JXq9aL3bD7JLB2/IGDZCKDw6/n9MwtJt5qf1+qHQXKJwEzetG
+         V0Akp5icvAnqFf4DYqlCImzTSFnbsqWfTIJccpblK1Tr038+q+roX1kB1XAd6g3MnutX
+         pTZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721051862; x=1721656662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S1IdPkkbzvH/BAaWYOMPmxaCglX4fyw6oCXKUAhpCY8=;
+        b=d//2+VQBGSHLgMVDSKa7z2sjUDLb5LmOnDXIrCD/Krp8y1TDn+R5mVjxghCSmKAuyI
+         V8NJqBwNbz+9Z5Ohh7qna5ruKInAcF4aPRrCKcBeGjOeC49zBBcwGHf8H0FpL4cDru77
+         AKjmBoXi1qVGd7QEOHbaA11QMbG+9VtAnsa4LQ01H9tJw4YdzRoTZJC2nxlo6XTkWTwt
+         o2zajLgK2/LrYFfWCW76tZKVb2LA3xzXvqu1BPIvu/w0suNHtDrC0do55KQlN53n5u6Q
+         YscB1q9zSGzbr4b2nSE7n4waVpkQRozdhpAF9On6Sl8EkY6eytZF55ieDVKrpXwTUwn9
+         fYyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBrq1Frn0LK+0foVYayDanGfOj7IkSQ7doLnuDD1iR0iVAZzMfQOg6B1cIaBQYfjhwfehFUjlfBVgkT/aB+ufqHs6kxWLR7ofT8hv5
+X-Gm-Message-State: AOJu0YyTiqwhwQBuSHwFbEti0/Pp/q4qgxgxDSEZO51nFeijHfZ02JNx
+	KGBZqeMkPhMqnsfY2cTRmZ6IPBtv3PDU1sf0edeyVFfa2k0KMHcxZh5oXxaceYJQzLHeYmrJYGv
+	C34fn1fuevjL3h9Nnt63ZOZJP06H1LAeLsJs3
+X-Google-Smtp-Source: AGHT+IGLMm++Rq6uGcsEbcNXyU9MTIXd9G9Ph8BD4BbCN85VisAAtiYu9NsxCDZ5vogpBxxIaa7coN2dNIuSqgYEpqU=
+X-Received: by 2002:a05:622a:298e:b0:444:fd8a:f1a0 with SMTP id
+ d75a77b69052e-44f5acc840amr5520031cf.25.1721051861734; Mon, 15 Jul 2024
+ 06:57:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: kernel test robot <lkp@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: oe-kbuild-all@lists.linux.dev,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-kernel@vger.kernel.org
-References: <20240711072929.3590000-3-ryan.roberts@arm.com>
- <202407130620.DbyYULnj-lkp@intel.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <202407130620.DbyYULnj-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240715031845.6687-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+In-Reply-To: <20240715031845.6687-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@google.com>
+Date: Mon, 15 Jul 2024 06:57:30 -0700
+Message-ID: <CAD=FV=XzWvvwsRrXDCdx_fLZkTLc=CCREDYt1gSmrOtN-EBBUQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/1] Fix the way to get porch parameters
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, airlied@gmail.com, 
+	mripard@kernel.org, hsinyi@google.com, awarnecke002@hotmail.com, 
+	quic_jesszhan@quicinc.com, dmitry.baryshkov@linaro.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/07/2024 23:44, kernel test robot wrote:
-> Hi Ryan,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on akpm-mm/mm-everything]
-> [also build test ERROR on next-20240712]
-> [cannot apply to linus/master v6.10-rc7]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Roberts/mm-Cleanup-count_mthp_stat-definition/20240711-154455
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20240711072929.3590000-3-ryan.roberts%40arm.com
-> patch subject: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-> config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240713/202407130620.DbyYULnj-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407130620.DbyYULnj-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407130620.DbyYULnj-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
+Hi,
 
-[...]
+On Sun, Jul 14, 2024 at 8:18=E2=80=AFPM Zhaoxiong Lv
+<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+>
+> The current driver can only obtain the porch parameters
+> of boe-th101mb31ig002. Modify it to obtain the porch
+> parameters of the panel currently being used.
+>
+> Zhaoxiong Lv (1):
+>   drm/panel: boe-th101mb31ig002 : Fix the way to get porch parameters
+>
+>  drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
->>> ERROR: modpost: "mthp_stats" [fs/btrfs/btrfs.ko] undefined!
+For future reference, if you're only posting one patch, there's no
+need to send a cover letter (AKA patch #0).
 
-I'm assuming this last line is the problem one? I can't reproduce this following
-your instructions and I can't see any issue based on inspection. Is it possible
-this is a false positive?
-
-Thanks,
-Ryan
-
+-Doug
 
