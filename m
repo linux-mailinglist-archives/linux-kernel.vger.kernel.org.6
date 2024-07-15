@@ -1,144 +1,151 @@
-Return-Path: <linux-kernel+bounces-252005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3869C930CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:03:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F267930CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 696221C20B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08BE1C20CC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CDBC8E9;
-	Mon, 15 Jul 2024 03:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4049474;
+	Mon, 15 Jul 2024 02:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t8Al8rEU"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FM754vbh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AFC947E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4100128F0;
+	Mon, 15 Jul 2024 02:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721012617; cv=none; b=pHLVASFMdjWiNWV2Nt8LHHNTX83EKaaqq5reaDxbZA2YAtQP5HTWxzTJkV5WZQbiywnlkQersMyRpwYB4y7k+iv4VTmZDq9WKZw6HIsWMAr6lZ6tV/o/PzMKdv0dDg5KXY7PBYSZbj8Q2QyekLukh+WaBJgWdOYRqPlx3pSBico=
+	t=1721011248; cv=none; b=jXWewpWXrJaG+PHM2+99Ggxw07IwPmAgz0BQ/VXxI2uqV11UvWjS01Knz1gFu4Mkiwbk9bl5YgAyqFAUK5jqo0rJLjLAjOVscOnIGUvlM5jZmbJlS4Sw5fUcIGzdzTi4TGeYL7gDX0dEV66BNMmd7p4QGBWwcP9Da7H0Hs8MkN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721012617; c=relaxed/simple;
-	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gD1LSN/6vMgtoWP5en83eF+k7OZ+b6T1/dzIi2uSf86m8V0gnelVjnLNxHL7C5tFCcZlQkqCmJfvgdUDyl6XD8TU9tMSaPskofvjatxbH+3fwPw34Bgl4gsKTjUZIyQSN+em0Rbq4kg2viqWIxyN1EYNqCvVFQLWw1sOUH+Y4zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t8Al8rEU; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240715030326epoutp03e8f9d2239192537f0a6d6cc0766a6d7e~iQ9jqs6oD3080830808epoutp03P
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240715030326epoutp03e8f9d2239192537f0a6d6cc0766a6d7e~iQ9jqs6oD3080830808epoutp03P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721012606;
-	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t8Al8rEUOKzHb/DfRQA9di8sx0A7QOTqx+7eaMQbg5QcesHHhwXcmk3qzmtRNrXts
-	 gNEJCAKsXXqhlpoO8+RU3w9tyM7RumgMLT7hCpT0xHeI1UwFOQ7UHEeiMk2keRs8kF
-	 l5YEhiA5v1ZFQIXs0XAS/WByALrg12mNbqHcQ0K4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240715030326epcas5p3b2cd769c2922a05bc94ecb95e97330cd~iQ9jaqWIa0512305123epcas5p3P;
-	Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WMn8D57qKz4x9Pt; Mon, 15 Jul
-	2024 03:03:24 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	05.E1.07307.67194966; Mon, 15 Jul 2024 12:03:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04~iQoVnRHJ62003220032epcas5p1d;
-	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240715023908epsmtrp2e9a0f21ebec19b8850d1b801685c4bae~iQoVmYJj21973619736epsmtrp25;
-	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
-X-AuditID: b6c32a44-18dff70000011c8b-36-6694917692c7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	77.7C.19057.CCB84966; Mon, 15 Jul 2024 11:39:08 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240715023907epsmtip2f6218aa8eecc031fb29114da76ad582c~iQoUlIdhE0963209632epsmtip2h;
-	Mon, 15 Jul 2024 02:39:07 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v2] io_uring: Avoid polling configuration errors
-Date: Mon, 15 Jul 2024 10:39:02 +0800
-Message-Id: <20240715023902.1105124-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
+	s=arc-20240116; t=1721011248; c=relaxed/simple;
+	bh=Tu3x/Z7VTub/wLyKTzuR2TkjZXRA3Ve/wgNA8e/tQVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i1e45cWzoFGQ2pCuiRd0nbu723h1QGnuEApYEIUqVTFkM+EBjLeoABLtMQFBTCOBVPZr3+48fyB6uArf3jRvuy9RG3bM7R8aM+xZWOUQxUaHnRm8cxMxtr9C8nepwlvHCHxUgFaCdzqiOKzRZoGXWdFhmbCp6Cwl3ScY96tR3m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FM754vbh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dQ48000566;
+	Mon, 15 Jul 2024 02:40:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aofU5TUVZ+fTctCVlBueSj88U+Uu6XtYPTxrv7Klaos=; b=FM754vbhKJiPrQFn
+	96TZAKXbma12imSBidaWav4QpR+J37vmyfcLbDq3TkwAWEt7B6WLYUMYrF5zrnqx
+	Qj/qNRS4V5FSEdTu+QsCmICYNjBKlGjekKEkQKI5fvcD2csz6xCjpepN2lTEuGT4
+	BCfAoKxg5D2mL3woQTQ0fV66VLHYpJffKSaTn05XGcXTR17IJemq4oqjifECtSUz
+	MNUzz3IpsLNAvUI563pQteIhftke12+Uu+zTbSud87tPXvtNyQvcJCEcapY5R7ds
+	TgFNT0iGiYWJ7bjSFOMZhrfyIdOqb6elHv2QP87iI2skaFujmsThtjQPY1tWMzqc
+	owAjUA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bht2jjy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 02:40:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46F2eZIi032216
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 02:40:35 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 14 Jul
+ 2024 19:40:30 -0700
+Message-ID: <c7a7eb9d-b6fa-4145-b444-2f10ead48e62@quicinc.com>
+Date: Mon, 15 Jul 2024 10:40:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTXbds4pQ0gwVPZC3mrNrGaLH6bj+b
-	xekJi5gs3rWeY7H41X2X0eLyrjlsFmcnfGB1YPfYOesuu8fmFVoel8+WevRtWcXo8XmTXABr
-	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
-	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCkwK94sTc4tK8dL281BIrQwMDI1OgwoTs
-	jLfTPjIV3GKt+HjpLVMD416WLkZODgkBE4mJ008ydzFycQgJ7GaU2HnkLRuE84lRYsmJGUwQ
-	zjdGiYXvbrHCtPSdfgSV2MsocWbZVnYI5wejxKEXc9lAqtgElCT2b/nACGKLCAhL7O9oBVrI
-	wcEskC7R9sILJCws4CEx4d1qsDtYBFQltq9ZxAxi8wpYS5xresMEsUxe4mbXfrA4p4CtxPpD
-	TWwQNYISJ2c+AetlBqpp3job7AcJgXvsEu/bDjBCNLtIzGm7xwZhC0u8Or6FHcKWkvj8bi9U
-	PF9i8vf1UPU1Eus2v4MGjLXEvyt7oG7WlFi/Sx8iLCsx9dQ6Joi9fBK9v59A3ckrsWMejK0k
-	seTICqiREhK/JyyCBpyHxP3js1kgYTWBUWLOq40sExgVZiH5ZxaSf2YhrF7AyLyKUTK1oDg3
-	PTXZtMAwL7UcHsvJ+bmbGMEJU8tlB+ON+f/0DjEycTAeYpTgYFYS4V3JMjFNiDclsbIqtSg/
-	vqg0J7X4EKMpMMAnMkuJJucDU3ZeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWp
-	RTB9TBycUg1MwbtWcU89+WFZ49XQX0aTrW5dNTjgGHGsmPnZllOfVmp1S71z+++x/tM/95Ob
-	wqcfEKoxEtMPjpDZVx60f7fpHRmu/gO/PztlH+4VDjp365PTLXmxd4UzHFSrflfwGudKF/Xk
-	fTYWse2/6PizQ+b+pcoEH/4W96u5qs+lld7tnbKx60tESlR45K2lz2cbafwJ8/5xrOZtpcX/
-	6vz6FaXdF41j4n708W7d0JUmL1xkVjNdWHzqEjHBY3V2FnseFr0zyc6etc++V0vZ8fjshZ8T
-	Yr7VXdfacv7MSYu5C33eG/l37RGvWPTlqfDyXVzWSc/PvRf8FVwlfG7T68/qyy5lmZvblmS3
-	8xjdd+Zy7rZQYinOSDTUYi4qTgQA3d6YtSEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsWy7bCSvO6Z7ilpBi8W8VvMWbWN0WL13X42
-	i9MTFjFZvGs9x2Lxq/suo8XlXXPYLM5O+MDqwO6xc9Zddo/NK7Q8Lp8t9ejbsorR4/MmuQDW
-	KC6blNSczLLUIn27BK6Mt9M+MhXcYq34eOktUwPjXpYuRk4OCQETib7Tj5i6GLk4hAR2M0oc
-	mruGESIhIbHj0R9WCFtYYuW/5+wQRd8YJVb9vAqWYBNQkti/5QNYgwhQ0f6OVrCpzALZEntn
-	XQOrERbwkJjwbjVYnEVAVWL7mkXMIDavgLXEuaY3TBAL5CVudu0Hi3MK2EqsP9TE1sXIAbTM
-	RmLRAgGIckGJkzOfQI2Xl2jeOpt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YW
-	l+al6yXn525iBAe0ltYOxj2rPugdYmTiYDzEKMHBrCTCu5JlYpoQb0piZVVqUX58UWlOavEh
-	RmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTJJbpDwCj+zcbn847fqVz6+en/jaLbew
-	pmVRubdXi47Uqc49Mk8Mivl+ivvL9Jy3OFvMu2Ky21nGVes8dnQlCxc5JSy/9OC5XuROMZHP
-	ExzLnV+W2BtX7/F4/jnCW6lFRaaoNKnr5ScjJ/X44nvXV+6webXTdltrnE/eKfak8AlmzEoX
-	F3rkC1Vz3FdZqyykVJR7zOvRlIerj7Q09wf/CyzZqcY18/a82L2KU1z3TCtiPZVv/V/OwtU2
-	yI+H/0gyT9tU/S/33d9J1//3E97zMPzq1n9fuZJX5edp7jqR9fOtmNDC7GnBq/33b2XvmLH4
-	w1PVvJfJWs/vFKZHVLz+kMl6vUfa1PabWH7TI113JZbijERDLeai4kQA1U54GdcCAAA=
-X-CMS-MailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
-References: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
-	<CGME20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04@epcas5p1.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: arm-smmu: Document QCS9100 SMMU
+To: Will Deacon <will@kernel.org>
+CC: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>, <kernel@quicinc.com>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_smmu_compatible-v2-1-599161b7d5c8@quicinc.com>
+ <20240711105450.GA15335@willie-the-truck>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240711105450.GA15335@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2K__6S-3yHCN32DSlCRMg8vTl65wjv9y
+X-Proofpoint-ORIG-GUID: 2K__6S-3yHCN32DSlCRMg8vTl65wjv9y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-14_19,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=996 phishscore=0 adultscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407150020
 
->My stance is still the same - why add all of this junk just to detect a
->misuse of polled IO? It doesn't make sense to me, it's the very
->definition of "doctor it hurts when I do this" - don't do it.
 
->So unless this has _zero_ overhead or extra code, which obviously isn't
->possible, or extraordinary arguments exists for why this should be
->added, I don't see this going anywhere.
 
-Actually, I just want users to know why they got wrong data, just a warning of an error,
-like doctor tell you why you do this will hurt. I think it's helpful for users to use tools
-accurately.
-and yes, this should be as simple as possible, I'll working on it. I'm not sure if I made
-myself clear and make sense to you?
+On 7/11/2024 6:54 PM, Will Deacon wrote:
+> On Tue, Jul 09, 2024 at 09:39:29PM +0800, Tengfei Fan wrote:
+>> Document the SMMU on the QCS9100 platform.
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,qcs9100-smmu-500" to describe
+>> non-SCMI based SMMU.
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+>> While the QCS9100 platform is still in the early design stage, the
+>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+>> mounts the QCS9100 SoC instead of the SA8775p SoC.
+>>
+>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+>> The QCS9100 device tree patches will be pushed after all the device tree
+>> bindings and device driver patches are reviewed.
+>>
+>> The final dtsi will like:
+>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+>>
+>> The detailed cover letter reference:
+>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>> ---
+>> Changes in v2:
+>>    - Split huge patch series into different patch series according to
+>>      subsytems
+>>    - Update patch commit message
+>>
+>> prevous disscussion here:
+>> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>> ---
+>>   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+> 
+> Sorry, but this doesn't apply against my bindings branch:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/bindings
+> 
+> Will
 
---
-hexue
+Sorry, I think there is something wrong with sending this patch through 
+b4 tool. I will correct this issue in the next version patch series.
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
