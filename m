@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-252820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F166C931870
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:24:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB65C931877
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDDB281938
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C9D1C20F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47751C687;
-	Mon, 15 Jul 2024 16:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E7C1C6A3;
+	Mon, 15 Jul 2024 16:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5NLxTUi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2Bj91dm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6F5E556
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F280EE556;
+	Mon, 15 Jul 2024 16:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721060636; cv=none; b=ZnL6iuC0YYdaRlGZF2WgDIhA0T23cdiYVkpZJjxe6ACr10zu35kpUaYzgPmpXLrS/y6VHsgYOIr49joBBsF/9VqsMM9VDzyAL1KYDFoPBJTYBxNDwtplrQHIU11RunCu5a3S4qdd3/4S6mCKwk95XEoIbqs+rRyzpmj39Ezwrjc=
+	t=1721060970; cv=none; b=W2kmnCe2z46ufZkBx+9QJw+n4Y390xdY1ixUT1SS3kteYaIHxPobcdBAt9ahaAuMYdec/OK8YP108YUoQaBfc731KZ7WLxa54UwUiwMX6s5EZfaSOA4G7g9sNpQG23Fhax/nnRC6JIXi/JvYbxDJS0MyG9yRbx/HkTdbhthVDLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721060636; c=relaxed/simple;
-	bh=oU+dePIc4bD2w4dmTJjBNZQcz797MNwXxYk6btnTiXk=;
+	s=arc-20240116; t=1721060970; c=relaxed/simple;
+	bh=0N+P82yqYjWbLZ2KQ2zdMBpb6KwkUYvEOy7t4Lb/v7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d/enwlxdKMgNtQJZT97CdH2xJ4hHNdzNqI0gcyPoTEQmua7XAEZ+LWwAWmm31pSSZDp+fxk6a1oTjLzLTDXYZlzxrcF1H4XBuTBGExMiOhz4XGTPzWM03JpW0GsKZwsBhXiE/ZIF0HJzVBFJU1jDrAk2Q/TEuS9aLn8b/meT5aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5NLxTUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE29C32782;
-	Mon, 15 Jul 2024 16:23:55 +0000 (UTC)
+	 Content-Disposition; b=FUxArqar745SDXUAUm5yr09Lkfv/zmWpgwWOBmWfxCR++orcSvsbZoGTk/OiPPdCMs3EbGZnvrbxLY5zh/0/ede8Xv50APIax1k9Fl3vRd/4ztImB6Xm4rJ7quWj31BY21soIUlHwNEitnkCcZqIQY5zgLi6Ls6pgEhqRMS373I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2Bj91dm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774E6C32782;
+	Mon, 15 Jul 2024 16:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721060635;
-	bh=oU+dePIc4bD2w4dmTJjBNZQcz797MNwXxYk6btnTiXk=;
+	s=k20201202; t=1721060969;
+	bh=0N+P82yqYjWbLZ2KQ2zdMBpb6KwkUYvEOy7t4Lb/v7I=;
 	h=Date:From:To:Cc:Subject:From;
-	b=e5NLxTUizcRtR0/fVrbijlI/b23nlaGypiE/sPhbxpDls3SLtXceXMh+SBzQ0nFDp
-	 FLD09+u/fZ+ge+4rMtD9DcV04Tq3jefcccHNbOdM3Kpj2L/JTUwRkyH5ZdT8WXdTco
-	 d/3b3pi6WxUvYTOFeLjL6Fnz64wR42zou6nhyopKs54jMRl+ObqHuTBAhzCoS3WSg7
-	 EK690vsYnE0PXzan8qmvpRSt21BECy99otnLDOk/ZysZefAQ90aqqjJStaj+imR2vb
-	 ByTDZloz8s3vkScBq3upql4zwlAf8eG+X4HcHnmcIcSeHvVmUQW96hYEg8gkZtpnZW
-	 Yx4EcOz7PDZrA==
-Date: Mon, 15 Jul 2024 09:23:54 -0700
+	b=Y2Bj91dm7cFOEsoaBw+8Ueq12KR3gls2RNCuxmuvp16F2lUSTS+QW/sxKOGpI3cuY
+	 6L1sj4bh0noyooV57ErEWpOn8OLiVlfdVMBj1GRXoPTAXfF+LUWQ+tMzfIFE9x0+/o
+	 +CJtWljSD8nqVvfKg07peSRF1Ucn+PkKV+Oe1JRx9ygxMiEXOlAnQPBj/uPPDDQOsE
+	 /XuJwusYM5txCiFGmSG+rENa5MSOKjOnknCN9dx8XyH/c8Zfjw2cIq4KARQT5Kca88
+	 YNCn0U+NZtuVIiLZV1k2tpOodsaW3yP8HRVvq+slCuwSYeNxM/KbJDMG1u+sPIyY1i
+	 tvNf55BOxB4IQ==
+Date: Mon, 15 Jul 2024 09:29:29 -0700
 From: Kees Cook <kees@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Andrei Vagin <avagin@google.com>,
-	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: [GIT PULL] seccomp updates for v6.11-rc1
-Message-ID: <202407150923.7A3B3FD@keescook>
+Cc: linux-kernel@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>, Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [GIT PULL] pstore updates for v6.11-rc1
+Message-ID: <202407150926.4864BCABD8@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,42 +60,43 @@ Content-Disposition: inline
 
 Hi Linus,
 
-Please pull this seccomp update for v6.11-rc1.
+Please pull these small pstore updates for v6.11-rc1. (Note that since there
+were no pstore updates for v6.10, this is based on v6.9-rc2. I forgot
+to do my traditional merge-on-rc2 for this tree when v6.10-rc2 happened.)
 
 Thanks!
 
 -Kees
 
-The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
 
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+  Linux 6.9-rc2 (2024-03-31 14:32:39 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-v6.11-rc1
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v6.11-rc1
 
-for you to fetch changes up to f0c508faea645da58d6ae6b644a1b68020d5a9d2:
+for you to fetch changes up to 9b3c13c9ea4ecb2b95948f666560b8df8f358b40:
 
-  selftests/seccomp: check that a zombie leader doesn't affect others (2024-06-28 09:37:11 -0700)
-
-----------------------------------------------------------------
-seccomp updates for v6.11-rc1
-
-- interrupt SECCOMP_IOCTL_NOTIF_RECV when all users exit (Andrei Vagin)
-
-- Update selftests to check for expected NOTIF_RECV exits (Andrei Vagin)
+  pstore: platform: add missing MODULE_DESCRIPTION() macro (2024-06-17 11:56:12 -0700)
 
 ----------------------------------------------------------------
-Andrei Vagin (4):
-      seccomp: interrupt SECCOMP_IOCTL_NOTIF_RECV when all users have exited
-      seccomp: release task filters when the task exits
-      selftests/seccomp: add test for NOTIF_RECV and unused filters
-      selftests/seccomp: check that a zombie leader doesn't affect others
+pstore updates for v6.11-rc1
 
- kernel/exit.c                                 |   3 +-
- kernel/seccomp.c                              |  30 ++++--
- tools/testing/selftests/seccomp/seccomp_bpf.c | 131 ++++++++++++++++++++++++++
- 3 files changed, 157 insertions(+), 7 deletions(-)
+- Add missing MODULE_DESCRIPTION() macro (Jeff Johnson)
+
+- Replace deprecated strncpy() with strscpy() (Justin Stitt)
+
+----------------------------------------------------------------
+Jeff Johnson (1):
+      pstore: platform: add missing MODULE_DESCRIPTION() macro
+
+Justin Stitt (1):
+      pstore/blk: replace deprecated strncpy with strscpy
+
+ fs/pstore/blk.c      | 2 +-
+ fs/pstore/platform.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 -- 
 Kees Cook
