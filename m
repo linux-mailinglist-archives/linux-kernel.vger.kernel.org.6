@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-252620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB159315FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:43:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE5A931602
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1541C21A51
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E2728314F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FD818D4DC;
-	Mon, 15 Jul 2024 13:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8901B18E767;
+	Mon, 15 Jul 2024 13:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bmpFt9Bs"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="emzY4IRu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E9B18C169
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F2B18D4CE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051002; cv=none; b=dLpzGzA1BhZJAF4LpVQcJCeZmVRCBHOl/MUqELxO5Ut98rHl6UNtB79kOu770urWWqEo1CHNUhANLWSKv23TIjATNmMOVrkJ1DjmNNq/s39t71RvBNvIo3/EWG39c+0eVlHjYL8xrdqqOC6S0jOC3kV2Hany1udKVL73H1xy2cM=
+	t=1721051043; cv=none; b=L4cJY1wqoZw75cdzOaXJeQsc5QDPUJJFj6JaaDrEcpDsPVkta2jPJJjgI1N5WDnG7v91E1RTspguWwbXVKl+PgGm1e7a06bpYezgpcloYCorsxYAEGHYS7kVf/jzC+NwHBHMbke7NexVyvRFlCt4xPzO6zJGIC3AMqBaT/0q95A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051002; c=relaxed/simple;
-	bh=M8zigsqNJE+phkpqp1gyoQZJLxt+QNapc75xhNmetU4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m292VMK04+0+B8qH8raQWlf4/geHBvJ6nQnYby9Y7OEyYraeJ86S7dKUPGpxNt4dz1FRaPy5/2xGbpRLrFZW+Ji0W/zRTBVtJdjC4xHQL51Z7aWlMhPnfsrsH9hN/RTxqdi0ZMkGL8GuQXZg2ZLLFoT6u9Am0CrY3FRXy/3owWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bmpFt9Bs; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3cabac56b38so2891519b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721051000; x=1721655800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aeGvR/8lk6Nll/J3UVT9i6hjcln5jvzV7Bpthcn/O4s=;
-        b=bmpFt9BstdyV4kcpMMeKdFxVkI/eFpmI0e1bKI8XxPmOtzoUa/Y/+PFgt07aEyqviV
-         mlsTbDYj4uuye+0m5PuaGSjHuKuSrZRTEpC48/xhdxYOHePZLPQE/VmhmC9m5ialI5/q
-         uflaPJGV0R2Kz4Lst07abcv0C8Nmfazrd5QKI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721051000; x=1721655800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aeGvR/8lk6Nll/J3UVT9i6hjcln5jvzV7Bpthcn/O4s=;
-        b=BigFONFN042/Qmc8HmB8ot/1DRUYc4mYRo4ZVbd18JikF+8Q+j/KvFRpwSpliI4vuo
-         JANUWGP9uAq70PEeXm+3Wrervo6K3Q7fDVhDSa3OwfFa9AdPClj2Y4Wcf8HMMVOVXslP
-         sHKQEo3Z3uqoAcmohTzSTyaLaJ2VDsz/zoxS7TwWouqF3jQHpsDAxeKW1bw0M29KgGD9
-         P9TjeAb8Nfo/AVAGxXIGuz4Ruv51v1L9Xrz/i4YKWlc4EiEOhCYZYn2JctST6nIsOl1O
-         MtcafQtzYkvr6Ts5/acXPaH3MCOQ+vPpyIQ7ORQkZcIixEeVRjQxcOsOG4frmvFjS7A4
-         s2Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXuUvPPrsYpHK0rYaqhTdWv3pjBhlXbUHp6lHF4G1q5ccFUgGG610EAp7AIgQKPrPrtUkQ/QhLEHIFHqlx+uSDvCDqtBW/S+k+N3b4
-X-Gm-Message-State: AOJu0YykqvfVD59KW+LZ62pICVyA8oQjJ+yVC++DOHWY2E31SDhcbUFG
-	MPkjps4jbAi+9BB+3Hv7IDSjSTgOsEg33AbRpioc0EwPeC/Kc78tGxy3KA2svzXrP0xKwPrExeQ
-	=
-X-Google-Smtp-Source: AGHT+IENQDmSrTPkLdtpIhfrWC0qGbNJwLTI/NpHfzpM0XrIRYrU+lcgIxr2BlTeuj1gKhUaeArxaw==
-X-Received: by 2002:a05:6808:308c:b0:3d9:fab2:d767 with SMTP id 5614622812f47-3d9fab2d836mr16259824b6e.20.1721050996891;
-        Mon, 15 Jul 2024 06:43:16 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160b9087asm201727585a.16.2024.07.15.06.43.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 06:43:16 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447df43324fso489501cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:43:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXKU4u/CDRnlkJOTaTCKYuK2qrLAIhDIi/0GVkfocaFqcB36gfPBBv4DV04DyQb6VDzwlvyqjAlo0qL01Vv+bpPxNMnaE1ggXMFofFM
-X-Received: by 2002:a05:622a:2446:b0:446:64ad:ee91 with SMTP id
- d75a77b69052e-44f5a31ec80mr5833341cf.20.1721050996122; Mon, 15 Jul 2024
- 06:43:16 -0700 (PDT)
+	s=arc-20240116; t=1721051043; c=relaxed/simple;
+	bh=kI8z31pvmkACsoY4R6xD2r4WjAcXm/QhY0zJzKqHpRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vn8P+q65x6fYpnJPsORkPtu6sWZ7+4KYbb59W6kiJwkklOCJBQiWWbyVZj6qqkaHKcj7ERcriexqcZafiUYAazX0BtqcUvHqxWEx9C16PtCoGK8HV5KGi1YURnVv5az6B/WA/LqWcaYEamifAZwOPDWmh2ZcUGUvWDRIDuL7ZhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=emzY4IRu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8671040E0192;
+	Mon, 15 Jul 2024 13:43:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id vn5LfA3idBTd; Mon, 15 Jul 2024 13:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721051035; bh=E+7GeEIa7s6ZzFSriewwh96Qj6j59sXyizWzr/1bfmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=emzY4IRu49NieNZq8jabnJ/O2KblA6d0LcncapU3uS7udK1x1zu9MdEh5hU4ZUFGF
+	 WVlkAceEEeD7tOLVG/uhOubtnvRHalRQDFwpuYDqol2Du5c6WfnDabLPYDCRqMaU+H
+	 hWKXjf+KXOFlyZ3yTH6hDonHrmz+RQDRnunRrismGyLrbvGcUohoyRnV7iodEGeg/c
+	 0g5f/oj1OwTJRNsBWSsJFPTt7F/mlYu+rv0l0JBtMAeUkKYk7feMHgH6v1G5sSZ15g
+	 sn8RaCZZp3vJtqT1dxiMoVW187/6ugnf11bEfF5qHbH3QFSA2hyQZP7ScRS7FIecit
+	 KQJ4rvNlVPUZ7HSyyYW41clZwVJeHaDmvTQqmn3VfdaT/o3hyOc3MbFa3Z+r84z1lV
+	 I3X6hUKlCuXFehl4OoUe4cFrMRLSD0OLalk+DXPOSz2oR0N+zapubSjHi72lPEYoMP
+	 qootPe88ICt8kWQBFFgX1gPxpvnkOWL63oqgGGccm0z3tdeM4g5kYg9l8mKoYMqJk1
+	 uhx2AqujOLSon+zXERG/madyHeqrwozq1o7TEwiDLFNfJHfK/+alkQLD1rkehXmovz
+	 TZp278L3DO2aWG/AzoR8YjsHVN0w+d1XCzpDfUu51FLEMXRjMncK4naUC/shT6cFOV
+	 QIDQ+t03VAPuesbyNUmkWRls=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D6B7640E021B;
+	Mon, 15 Jul 2024 13:43:43 +0000 (UTC)
+Date: Mon, 15 Jul 2024 15:43:37 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
+Message-ID: <20240715134337.GBZpUnibQhORw-MpSR@fat_crate.local>
+References: <20240422165830.2142904-1-leitao@debian.org>
+ <20240422165830.2142904-2-leitao@debian.org>
+ <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
+ <ZpUSvl5eKgkLeJrg@gmail.com>
+ <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
+ <ZpUlmf/iVgo78h4J@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org> <20240715-x1e80100-crd-backlight-v2-4-31b7f2f658a3@linaro.org>
-In-Reply-To: <20240715-x1e80100-crd-backlight-v2-4-31b7f2f658a3@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 15 Jul 2024 06:43:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WLFohKUUFqsPrpRGCer_TPugoM8_Du6=7YcDywFfUkVg@mail.gmail.com>
-Message-ID: <CAD=FV=WLFohKUUFqsPrpRGCer_TPugoM8_Du6=7YcDywFfUkVg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: defconfig: Add CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZpUlmf/iVgo78h4J@gmail.com>
 
-Hi,
+On Mon, Jul 15, 2024 at 06:35:21AM -0700, Breno Leitao wrote:
+> Regarding this patchset itself, what is the patch forward?
 
-On Mon, Jul 15, 2024 at 5:16=E2=80=AFAM Stephan Gerhold
-<stephan.gerhold@linaro.org> wrote:
->
-> This is needed for the display panel to work on the Qualcomm
-> sc7180-trogdor-homestar and x1e80100-crd.
->
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+The path forward is for you to wait until I've gone through them all. We have
+merge window now so not in the next two weeks.
 
-I'd assume that this will go through the Qualcomm tree.
+Thx.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
