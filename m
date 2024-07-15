@@ -1,164 +1,104 @@
-Return-Path: <linux-kernel+bounces-252563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D54931541
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B99D931546
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FA71C21EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA971C21A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8943418D4A8;
-	Mon, 15 Jul 2024 12:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJ0uShy+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA9322EE4;
-	Mon, 15 Jul 2024 12:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4143518D4DE;
+	Mon, 15 Jul 2024 12:59:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D95918C341;
+	Mon, 15 Jul 2024 12:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048325; cv=none; b=sbAkKHUAxmlD4mSAMz8hXG/qJpf6rKRQ6+25W4gBRV0dbFs4quQNwkS0s6CvgErAFnjZB5vr16MgfFJNfOU833F50qdkRh0P7fHPyoOJo7QSQXXzHdZxbYJqccqFpDHq+hRM/17CMIoaeD+YC1ad99Xn8/Ij3oZOi1ZZXycETtU=
+	t=1721048378; cv=none; b=Fzh/PGSa4BEe/Z9DWDUyLZzNtBSxgdDNLM3ihFoK+wTVAbhJBf+JFtE2d9DrkcY1ORh/sjih1z0Yv8c05YVa2oqbUnl5ZhQBb43Y4iD9P9UmoJhBz0k0xR+OAPvarQ8528Bd2Edt+LnjocVaDltV8bm8TSkVABqiFYAAs+6kq0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048325; c=relaxed/simple;
-	bh=938N090mX21Ue6dt/U1tChZbGlOk3IFslj5zQ0oos3I=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bP+CzFfOrpX1D8ZDQ6NxFYuiqfgd7+wAkZK7XZFpvLHq/zmbn6vYsxC9BqB1KdK+HLzY6RxJSK75MNMmnhtARnTNMxBfPfgo0pSdeenXKdgbSJBxdZZnhx5DvVWNk24lVnFoFe752un0vTr5WoMHLgQxznjMrqjz3QJGHeYJlqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJ0uShy+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEE6C32782;
-	Mon, 15 Jul 2024 12:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721048325;
-	bh=938N090mX21Ue6dt/U1tChZbGlOk3IFslj5zQ0oos3I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kJ0uShy+5FUGoMfUDinFemfd8tFcTtSn+1daGiXEJyXYP7Rwq/7pgJlOAZHxf2luj
-	 VGE0rvqj85rwDKtLX8bSMddybJiPcKCYX8zBxzcxA6oR56P6uEQRjWCMrVjpkhTPqq
-	 NbP/4sfoRcCG3Tb3SBuWuMRu1QQBgMhu2gyBlGst/r5DASbLkr/eXXJv1AdgKYcsA2
-	 DnvnNQZAqZM+9JDyKENoNnmlgPhInGTCPX2de6LdPkbrM6DTQD80JK52V/jFTVdxnE
-	 MfqBQqh6Lp1OWGj6xt/hiXyu/t3L8yCb2EqE4q7czpv2gWWQei5ZN2OhASQZDNcr6z
-	 t9m9zbS+sLJiA==
-Received: from [185.201.63.251] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sTLHu-00CVgq-CV;
-	Mon, 15 Jul 2024 13:58:42 +0100
-Date: Mon, 15 Jul 2024 13:58:13 +0100
-Message-ID: <878qy26cd6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
-In-Reply-To: <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
-	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1721048378; c=relaxed/simple;
+	bh=tCAUoz16SFgMtRJJXCi3TzLWuHeXMPwnhI3T1kOUIJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpH3daOH9B+Ik8dwKzoXl799EkgbPHc+XsLSDZCsHeHefsnn8/k0gTtgeEiHGL+AlZvI8ZUC169kWABZ3fIkZ/C2YFyFIG/rhgu0TyslMr2gaXgOAP2FsmKO6MQTIyypyigdUXiKwWmDWrylXo48pJCcJploJNElNtygkOttVps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC521DA7;
+	Mon, 15 Jul 2024 06:00:00 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11C1A3F73F;
+	Mon, 15 Jul 2024 05:59:32 -0700 (PDT)
+Date: Mon, 15 Jul 2024 13:59:30 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP i.MX95
+ SCMI documentation
+Message-ID: <ZpUdMmvucei9lLPI@bogus>
+References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+ <20240621-imx95-bbm-misc-v2-v5-1-b85a6bf778cb@nxp.com>
+ <Zo_bFnjWixZF6seV@pluto>
+ <DB9PR04MB8461684315E753DAFDDBACA788A12@DB9PR04MB8461.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.201.63.251
-X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB8461684315E753DAFDDBACA788A12@DB9PR04MB8461.eurprd04.prod.outlook.com>
 
-On Mon, 15 Jul 2024 12:18:47 +0100,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
-> > This is version 4 of the series to convert ARM MSI handling over to
-> > per device MSI domains.
-> 
-> > The conversion aims to replace the existing platform MSI mechanism and
-> > enables ARM to support the future PCI/IMS mechanism.
-> 
-> > The series is only lightly tested due to lack of hardware, so we rely on
-> > the people who have access to affected machines to help with testing.
+On Mon, Jul 15, 2024 at 11:47:56AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP
+> > i.MX95 SCMI documentation
 > > 
-> > If there are no major objections raised or testing fallout reported, I'm
-> > aiming this series for the next merge window.
+> > On Fri, Jun 21, 2024 at 03:04:36PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Add NXP i.MX95 System Control Management Interface(SCMI)
+> > vendor
+> > > extensions protocol documentation.
+> > >
+> > 
+> > Hi,
+> > 
+> > beside the final location of this file in the tree, and a few nitpicks down
+> > below.
 > 
-> This series only showed up in linux-next last Friday and broke interrupt
-> handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-> and x1e80100 that use the GIC ITS for PCIe MSIs.
+> Thanks for reviewing the patches. Except Documentation/firmware-guide,
+> I not have good idea where to put the API doc.
 > 
-> I've applied the series (21 commits from linux-next) on top of 6.10 and
-> can confirm that the breakage is caused by commits:
-> 
-> 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-> 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> 
-> Applying the series up until the change before 3d1c927c08fc unbreaks the
-> wifi on one machine:
-> 
-> 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-> 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
+> Sudeep,
+>   Do you have any suggestions?
 >
-> and backing up until the commit before 233db05bc37f makes the NVMe come
-> up again during boot on another.
-> 
-> I have not tried to debug this further.
 
-I need a few things from you though, because you're not giving much to
-help you (and I'm travelling, which doesn't help).
+Not really. But I am OK to keep it under drivers/firmware/arm_scmi/vendor/docs
+or something similar.
 
-Can you at least investigate what in ath11k_pci_alloc_msi() causes the
-wifi driver to be upset? Does it normally use a single MSI vector or
-MSI-X? How about your nVME device?
-
-It would also help if you could define the DEBUG symbol at the very
-top of irq-gic-v3-its.c and report the debug information that the ITS
-driver dumps.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+--
+Regards,
+Sudeep
 
