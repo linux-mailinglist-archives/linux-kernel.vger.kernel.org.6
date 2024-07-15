@@ -1,86 +1,127 @@
-Return-Path: <linux-kernel+bounces-253085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7988931C4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0684931C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E890F1C21A65
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7971C282151
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5333113C904;
-	Mon, 15 Jul 2024 20:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D06113C67B;
+	Mon, 15 Jul 2024 20:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="smNskPC6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="g2ELljR3"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5351369B1;
-	Mon, 15 Jul 2024 20:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41CB6F099
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721076867; cv=none; b=IGWh1Py9CjZ86ce35plIxE2RUyEbUgDZjGeFgraeJcrpdXwD6VrtdN5RU/49y5UI6U841/Gm680MlKebapLas62mic+PbCd8uQQdqYR5SV7l93nltH8hs/0tWIkQM0JguAS6GfmdmZWN+gdDhuudubXmr4BrE/nnzytt8wpl3y8=
+	t=1721077104; cv=none; b=qMAM5YUSMm5Um1JVDdzgcgGxnigeAVxBXqDQ8An1nn/NJc9KLOmmuaoC+mKphf3Z2D0Pvle6SNGrF8uYS1iYhik3cm/GkVe7P4v6+oXQqZXUdYNilcskFFEfUPW6NgLpnKw35Sr9iRP6TjKVu3bma5VrZFhvoRIgGUmygWNbBRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721076867; c=relaxed/simple;
-	bh=GbO9ojADkbrwzmTzCfqcY+cM9/cRstS0/OS061RqHgU=;
+	s=arc-20240116; t=1721077104; c=relaxed/simple;
+	bh=tBfLRwUKojVWwnqq++F5SNw6DeFH1PgqRMLYEUmhsMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwqij86vyQnkRYZJNRML3MPJOLk+CXCw0UUn4c8fGXfJi79fOF1lxhAV8afED3vu4R4BjF47mdOjJA5EKI6NNU5EWwFB5ISIsGkQqCyueUnO2fzJFtx6bwIHjVhTCXnuZN2OeJ/z/9uUyLa43X2nH0YpZ0kb0JvTa+rwVT6jv0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=smNskPC6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2XX97vPnUkvDBngxR1OH9w6lkOMKVHi62djdg7AIKK0=; b=smNskPC6zoeOkYOZngxYspN1+8
-	RG1oaSAfmLWXW1IS/hFVpFbd6pTH5aRKQJdgRC7H5G4d2AAn8cBPzYeIgcYcmdx8wJs6ewRYgg1cL
-	6k3i/z2JYcymTz00SgTqKNDE59sIPZepdS0nR6u41uuJaah5NgXGOjWllb5qDSR/a77E=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sTSiB-002bCE-05; Mon, 15 Jul 2024 22:54:19 +0200
-Date: Mon, 15 Jul 2024 22:54:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Patrick Wildt <patrick@blueri.se>
-Cc: Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Andy Gross <agross@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Steev Klimaszewski <steev@kali.org>, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: net: wireless: add ath12k pcie bindings
-Message-ID: <d921bf20-1d83-492f-ab88-0f23de26a649@lunn.ch>
-References: <ZpV6o8JUJWg9lZFE@windev.fritz.box>
- <ZpV7B9uGVpeTSCzp@windev.fritz.box>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQsDD2ThGtIFA7wtBKhUdrbGsyrMhR19Og230S/TTJ3YbjN9yYs7mQyhMpxYQck//CT4E8yp5NxEVDH8ASD/Tlk9t/RB7cn2EVECqYaLKWiYR2Yxo4ZA2JqYohqV8zTg1Q+YfZNHBjP//4PRsw22efo7q+pKg5sgaJE5VHAXbJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=g2ELljR3; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1721077090;
+	bh=tBfLRwUKojVWwnqq++F5SNw6DeFH1PgqRMLYEUmhsMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g2ELljR3kyZcaRIzErFtJtRVf3jJxJ2CtWNDhIvhzpo3FP70YT3fKXUWeuXf5wUQr
+	 xTtHFWbbbddCgyA9Nzuay3giiIabcrDRZt1iEsqVeE3d/y2Fsdnu+/x01PiJw6aHj6
+	 XJ2YTGncT9sGbV0MDWbeG9XdNnu8qO7W1QwhvGXk=
+Date: Mon, 15 Jul 2024 22:58:10 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
+References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
+ <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+ <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZpV7B9uGVpeTSCzp@windev.fritz.box>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
 
-On Mon, Jul 15, 2024 at 09:39:51PM +0200, Patrick Wildt wrote:
-> Add devicetree bindings for Qualcomm ath12k PCIe devices such as WCN7850
-> for which the calibration data variant may need to be described.
+On 2024-07-15 22:23:19+0000, Joel Granados wrote:
+> On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weißschuh wrote:
+> > Adapt the proc_hander function signature to make it clear that handlers
+> > are not supposed to modify their ctl_table argument.
+> > 
+> > This is also a prerequisite to moving the static ctl_table structs into
+> > read-only data.
+> > 
+> > The patch was mostly generated by coccinelle with the following script:
+> > 
+> >     @@
+> >     identifier func, ctl, write, buffer, lenp, ppos;
+> >     @@
+> > 
+> >     int func(
+> >     - struct ctl_table *ctl,
+> >     + const struct ctl_table *ctl,
+> >       int write, void *buffer, size_t *lenp, loff_t *ppos)
+> >     { ... }
+> > 
+> > In addition to the scripted changes some other changes are done:
+> > 
+> > * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
+> >   the "const ctl_table".
+> > 
+> > * The prototypes of non-static handlers in header-files are adapted
+> >   to match the changes of their respective definitions.
+> > 
+> > * kernel/watchdog.c: proc_watchdog_common()
+> >   This is called from a proc_handler itself and is als calling back
+> >   into another proc_handler, making it necessary to change it as part
+> >   of the proc_handler migration.
+> > 
+> > No functional change.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> 
+> The merge window is now open. I want to send this patch on the Wednesday
+> of next week (jul 24).
 
-Hi Patrick
+Sounds good.
 
-General, the device tree binding and the needed changes to the driver
-to implement the binding are in the same patchset. I don't see
-anything implementing qcom,ath12k-calibration-variant here? Does the
-driver already support this, and you are just fixing up missing
-documentation?
+> @Thomas: Some questions
+> 
+> 1. Are there any updates?
 
-	Andrew
+No.
+
+> 2. Does it still apply cleanly against the latest master branch?
+
+Not against mainline master, but against next-20240715.
+To apply cleanly (and compile) on mainline master it still requires the
+net/ and sysctl trees to be merged.
+Otherwise some modified functions are missing, leading to (trivial) merge
+conflicts or the preparation commits are missing, leading to compilation
+errors.
+
+> 3. Are you able to do the last update at the beginning of next week (Jul
+>    22)?
+
+Sure.
+
+
+Thomas
 
