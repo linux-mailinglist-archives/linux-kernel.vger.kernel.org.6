@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-252478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8FF931396
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:06:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA408931397
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCB61C22B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF412815EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FEE18A949;
-	Mon, 15 Jul 2024 12:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E7218A94A;
+	Mon, 15 Jul 2024 12:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Lhy4SEBL"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VD2/umn1";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VD2/umn1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3968189F5E;
-	Mon, 15 Jul 2024 12:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379891E51D;
+	Mon, 15 Jul 2024 12:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045158; cv=none; b=WI1+TGp0gsXFOt5qg411M9tS3hr19dIcW3bdHViXiQK+j24OFINYegMKbuovIGx0hlGT4npxabwoz3vj8KMcZviKDgMXU4Mnw3v9kzcftzAi/1RXvZNPlja8qAIvrvvtwiF4nPEdW961EWpRKSTqaUJiOhd0rbGudyrN27wXFts=
+	t=1721045296; cv=none; b=DyBwas2oPShwSk0xtV/uzjTcNcD99oXQdxuXFXU0/O/QaYKkEv+q3kRUVh+Uv4Vycq/MQrcp03aP9GWJLrLLkZNuhbSkNYsKbQZ3OiEOzomId5orTGrzLvSVMkn7McSNDdp5oIwJWlNzaHM/h33crzoqdfVjgY2JQBivmJ8+yFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045158; c=relaxed/simple;
-	bh=ajfiIwgDbyeUkjhHbM8uaKnyLPFSikOKpQ9Fr/QLc9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GKI3JstuStlmvsb/WbDvoQsjJn886Zx2YhvpJ/PySX825t6HMI16mU1FfgYTwhNwBNFlJX4Jsxu3iOTQuzJRLwekYJnTxTY9+aMhmi3kSGmA7cjHdoEeXztchybnqR2RGOSlntxBoXAQB4O8PrFHZ1xT4OF52tjxIcwvd2EOs6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Lhy4SEBL; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F7KiGN018841;
-	Mon, 15 Jul 2024 14:05:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	NUrMaVQn6CtWJA/+Bg8Ut5g/xwCeF9VDjIao3Eq05ss=; b=Lhy4SEBL5/E6CsI+
-	MrQvVgdMl+2xsKfsTLsby1FxY+LFEEb6piKHcdC994A/pHnyaB5QbL1S6LEwvfwQ
-	wNNDFnI9cdd1/7FEouV0X9G3WeiW2U8OS7IuE4c2k7MDBSu2qaI4a2dzum2t4xHc
-	aGGxXwlGsrwpGj12LjZ53oc5Ll5eZEVCJIm12qoz5QlfTnpv8oLJnvJf7lCs5J29
-	Kw8Nheua67/UdIUdcFCFl0OV2DTuRgPiGbNiCgqvh/csfznZM1TXOIxENtaAUBv0
-	f9PA2W+S2kyD1jyWccUIIo25Q75IuvyDfUG1F68Rk86ek1VNjgAQokg/CsESMdKx
-	zF1d5A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40bgfdef4v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 14:05:29 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F349A40044;
-	Mon, 15 Jul 2024 14:05:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8132E223F2F;
-	Mon, 15 Jul 2024 14:04:46 +0200 (CEST)
-Received: from [10.48.86.111] (10.48.86.111) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 15 Jul
- 2024 14:04:45 +0200
-Message-ID: <f6485370-b5cc-4774-aac0-6141fcca4c00@foss.st.com>
-Date: Mon, 15 Jul 2024 14:04:38 +0200
+	s=arc-20240116; t=1721045296; c=relaxed/simple;
+	bh=+24K5iZcsujaxjjrIUAmidftw7jLqEiRN1XT9yzX20U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JpP+EyUDb+CziO2DOT+C10qeneJYKNbP0ebrH2VPe+LMnkEdGPIEiseSKXgHW0koEyQWfdoRKTt2DEWEAjvNXcBqdf733e3km12qJI1bLDBaaWkT6i+YDob8W4UXuMCZ8l4KW3FgmCXCFpo+QTl4/SDPOM4115wMeukxD1Tl79M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VD2/umn1; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VD2/umn1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2709021962;
+	Mon, 15 Jul 2024 12:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1721045291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=iM7h0ngJnCCzaco1I/l6pMGsHYRhbItHxFWUVJNby7U=;
+	b=VD2/umn1I/S5m1nuFEYSVGXvPaod30Fpckt0Sy8TjVkY+vjFQYAB6kDf+iz9nGVCsMvwMP
+	rjZeKYTiLw2Y5NLprYpqZH6C0h9z10CbpU7fi0Kw53cfbvBpBe1WMCm9DppEtp9zQeAPYq
+	FVHFHe1UD6vfrtiOx5YFhO0mm2O9P2Y=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b="VD2/umn1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1721045291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=iM7h0ngJnCCzaco1I/l6pMGsHYRhbItHxFWUVJNby7U=;
+	b=VD2/umn1I/S5m1nuFEYSVGXvPaod30Fpckt0Sy8TjVkY+vjFQYAB6kDf+iz9nGVCsMvwMP
+	rjZeKYTiLw2Y5NLprYpqZH6C0h9z10CbpU7fi0Kw53cfbvBpBe1WMCm9DppEtp9zQeAPYq
+	FVHFHe1UD6vfrtiOx5YFhO0mm2O9P2Y=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15A31137EB;
+	Mon, 15 Jul 2024 12:08:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VWE/BSsRlWbpPQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Mon, 15 Jul 2024 12:08:11 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] AFFS updates for 6.11
+Date: Mon, 15 Jul 2024 14:08:02 +0200
+Message-ID: <cover.1721044972.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: rtc: stm32: describe pinmux nodes
-To: Rob Herring <robh@kernel.org>
-CC: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Valentin Caron
-	<valentin.caron@foss.st.com>
-References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
- <20240711140843.3201530-2-valentin.caron@foss.st.com>
- <20240711225646.GA3270567-robh@kernel.org>
-Content-Language: en-US
-From: Valentin CARON <valentin.caron@foss.st.com>
-In-Reply-To: <20240711225646.GA3270567-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 2709021962
 
+Hi,
 
+please pull the following conversions of the one-element to flexible
+arrays. Thanks.
 
-On 7/12/24 00:56, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 04:08:40PM +0200, Valentin Caron wrote:
->> STM32 RTC is capable to handle 3 specific pins of the soc (out1, out2,
->> out2_rmp) and to outputs 2 signals (LSCO, alarm-a).
->>
->> This feature is configured thanks to pinmux nodes and pinctrl framework.
->> This feature is available with compatible st,stm32mp1-rtc and
->> st,stm32mp25-rtc only.
->>
->> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
->> ---
->>   .../devicetree/bindings/rtc/st,stm32-rtc.yaml | 28 +++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
->> index 7a0fab721cf1..09221c2f8a0c 100644
->> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
->> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
->> @@ -53,6 +53,28 @@ properties:
->>         override default rtc_ck parent clock phandle of the new parent clock of rtc_ck
->>       maxItems: 1
->>   
->> +patternProperties:
->> +  "^rtc-[a-z]*-[0-9]+$":
-> 
-> rtc--123 is valid? "*" should be "+"
-> 
-> Otherwise,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+----------------------------------------------------------------
+The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
 
-Yes, it should be. I will add this in the next version.
+  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
 
-Thanks,
-Valentin
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/affs-6.11-tag
+
+for you to fetch changes up to 0aef1d41c61b52b21e1750e7b53447126ff257de:
+
+  affs: struct slink_front: Replace 1-element array with flexible array (2024-07-11 16:14:26 +0200)
+
+----------------------------------------------------------------
+Kees Cook (3):
+      affs: struct affs_head: Replace 1-element array with flexible array
+      affs: struct affs_data_head: Replace 1-element array with flexible array
+      affs: struct slink_front: Replace 1-element array with flexible array
+
+ fs/affs/amigaffs.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
