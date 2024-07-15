@@ -1,150 +1,163 @@
-Return-Path: <linux-kernel+bounces-252924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1D39319F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF2E9319F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2891C21CB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F0B1F22E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A925589A;
-	Mon, 15 Jul 2024 18:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E2D5589A;
+	Mon, 15 Jul 2024 18:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="UbThJeP6"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewYoJ+fh"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894E373446;
-	Mon, 15 Jul 2024 18:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEC733987;
+	Mon, 15 Jul 2024 18:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066502; cv=none; b=MahowsCBu7R1DWSG5jvAADPMOVrEttUylG6FffrSma1ukqwjbt0JdTsIUUK9BC5vGPLF4B/uQQibFP8dJ/GkAWf9ZuF2XutpzV7+6ZHosktHrOjqt3Vw579FqCTjipPMzDtd9l+H/TLxcJfVCMyvll/BD853eCurA7UMNTMwpA4=
+	t=1721066521; cv=none; b=XDHHuRC7bacpY19PZ9BIXBg6hHm+Vx05nLgi5WarTeAiW4y4NiNvFGsJQ8UQh8iz1UhVZrGsiGgn7ptLowDF0IsiFsTIQWcP5c8D7h0xnGpRz+BWnTvlMA5MxWDVwhP0Wbka7HrfCiV2MmuJcafCqRHJraL5PFrHR+i2y0CvQRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066502; c=relaxed/simple;
-	bh=2y6Jp1rPf53DtC9wIknG4Z2HVl5H2BvZkwIS+gTvprI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=h1/RtQTzwXJ9waNzPWoMr2Z8eQju19RbTAGMB/HP8spPWbv1PQgDubdmTlyM/XQi23Ff9urhVGuJF5zN2xZrIFSD+9Txy8+1VlQ85SEJdXNziy2rPtFGRSjGOdjwG+okfDYOoq22R0jzFuYtQ63un2IcPXWQfQreoHr2z/0Yvas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=UbThJeP6; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721066521; c=relaxed/simple;
+	bh=JwPBxHAWtoQoxygEw6krFcHWhPS6KH1JtDf73X5Skck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fE6Sg4CNhA+V78h7t2Y+rQYl6sfmNOWzH8/GmcCJfN4ioIrTUgovdeiDTKOoQUqo1rXrqUaYkmelW35B+cq7qCHz+PGbmzJQg42g8DZZp5bU58sXMVvPWwOKOpn6jiEXPCXlIK+TgvIwXk+GZXGIor+KVhIcnbgmzF4A4QrxMxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewYoJ+fh; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b0e7f6f8bso4018795b3a.3;
+        Mon, 15 Jul 2024 11:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721066520; x=1721671320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=vUWbQ2KlyuBvi5SiVJnONpg4b1PJ1YqEC0tuFG5cYeQ=;
+        b=ewYoJ+fhOX8dZ/3T/7rjzHomZcR22q8M3i0/YNa/e6X9JspYyjIBFCrwV/ASXcDAeI
+         FlpAZM+UU24gGrewpc8DnaxKuppxvHotWb2NpoBu4xRtwx1rzsZNSoXQhedjKa77qTfW
+         tr4AYa5Np18IV1i6/+ZZryqHz1B/Ezp+HlcsmCT+Bwb7nOWoy4xu2C+SJqJmKzNi5rgv
+         Md1KdIYB+trX9llPvBN9AMtidY1c0bx6aorD26VMFNuXAs32JE81giqfI49a6gleTeCQ
+         O1J8LjAY6ML06ZDEEp55TlQAn/jjODwDpF+6BUwt/0oLmnF2KHEBA5Lix6RsVZdQqzOq
+         Y9qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721066520; x=1721671320;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vUWbQ2KlyuBvi5SiVJnONpg4b1PJ1YqEC0tuFG5cYeQ=;
+        b=D4NfZ78ISwWPpeXkJvqckS060p3h2QsFmr2F55XKf3REtxpPIk7jt1F58euQUrA33t
+         65m+RtwzxetDoENwMhDDxBKo0CcROyvbcgdmyWzQ8XNKEqee/1xrh/6z5+fIFG7MLe98
+         Xy7PWjwME+WuKcTCASvaq715Ma8rkb44G5yGVKTonG8dnOan63fVAtM76VSfRd73xrpC
+         F+XgBOgIJ04oRnxJw63iAq+5BVX2fK0qPQuMkHfTJTm3FYyiFN7Q56/0Z2D2ePh9CvW3
+         rT5jCgMOK6jBzs17Z5Mf/F0WsXwDhWFsGTwrohLkx1p1BnShqho2ZNs3j4tLiVV3hJxr
+         TBRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgnA5AoxTfJdUrZUqilFVD3edvVtm+BSmbesmLYGd6NMlBTVNblJpAwifrZ2PHPnZvy/b6m/jSdTE8nDGhGlXaEteqxd4IPsiTbqqJbxsCvEEAoq3dL3r+irkzPC6QPGSaXjAp0ICSR6S2k7E=
+X-Gm-Message-State: AOJu0Yw2oAl04TvTKpXbpGneekS0kV3uDF4Hiy+iyt1mAKeD7hzaOVEb
+	pWnSChfFCE+Vxy/bjiC3BXtLNfLHCqubK0pmKgJOcz1epGlxWPinxb8MSQ==
+X-Google-Smtp-Source: AGHT+IGJg88rQeW+DWBrT1E/rwGH/TnMyrRf/QhqqmTcdnNjL2JUOZMHA0cQaD/ZdXIvBV+FziWFbw==
+X-Received: by 2002:a05:6a20:9145:b0:1c0:f23b:d35a with SMTP id adf61e73a8af0-1c3ee4903a3mr770780637.5.1721066519581;
+        Mon, 15 Jul 2024 11:01:59 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eccc19asm4649745b3a.200.2024.07.15.11.01.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 11:01:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <57b1d9da-ea7a-4df8-bc02-a3c9db4f28da@roeck-us.net>
+Date: Mon, 15 Jul 2024 11:01:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721066495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yeO8aJl/IzUQi8xRcxq4p918nJT45vn5xNQbkPy3aAY=;
-	b=UbThJeP6VidW1MFNuqSAV0zqSYP2j81Zj8faTffFzPVYMWh92MH0YsqWXggiXNaovhU7Ck
-	8XNRTUywPPp6shDoExSB/o0OYowSbwYCu0laFqHnnnhcgTDEg3ZjVKlmxRPkGcrcrlNMQA
-	ejnu8WA2fp5ZAorGvARIqlKiKNya1oqsRYeHSEo3xBGSTqPif22YWr8GrDug2MCMOTJCgf
-	zlhtLEP7ylC7HdCofQntvYqSn6WYHT6svy1DZEs/GSo3xJa570SPrn7FclnS7fc2BdZIrB
-	BSZ6SLJB8FIk/3EZVOGMN0q55vEnWc0MAzUGSkGZ+R6HrkIRDF00xv/lwRUHCA==
-Date: Mon, 15 Jul 2024 20:01:35 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-In-Reply-To: <2832997.XrmoMso0CX@diego>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <ec84dc37e2c421ee6d31294e08392d57@manjaro.org> <2832997.XrmoMso0CX@diego>
-Message-ID: <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into
+ struct imx_wdt_hw_feature
+To: Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
+Cc: alice.guo@nxp.com, imx@lists.linux.dev, kernel@pengutronix.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ wim@linux-watchdog.org, ye.li@nxp.com
+References: <20240715170717.2490688-1-Frank.Li@nxp.com>
+ <CAOMZO5AqX25zduLXfXq6zU4SLRC_zs6ZU_D7ouA70iCdp-bt_g@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAOMZO5AqX25zduLXfXq6zU4SLRC_zs6ZU_D7ouA70iCdp-bt_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 2024-07-15 19:46, Heiko Stübner wrote:
-> Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
->> On 2024-07-15 13:02, Heiko Stuebner wrote:
->> > In contrast to fixed clocks that are described as ungateable, boards
->> > sometimes use additional oscillators for things like PCIe reference
->> > clocks, that need actual supplies to get enabled and enable-gpios to be
->> > toggled for them to work.
->> >
->> > This adds a binding for such oscillators that are not configurable
->> > themself, but need to handle supplies for them to work.
->> >
->> > In schematics they often can be seen as
->> >
->> >          ----------------
->> > Enable - | 100MHz,3.3V, | - VDD
->> >          |    3225      |
->> >    GND - |              | - OUT
->> >          ----------------
->> >
->> > or similar. The enable pin might be separate but can also just be tied
->> > to the vdd supply, hence it is optional in the binding.
->> >
->> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> > ---
->> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
->> >  1 file changed, 49 insertions(+)
->> >  create mode 100644
->> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >
->> > diff --git
->> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > new file mode 100644
->> > index 0000000000000..8bff6b0fd582e
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > @@ -0,0 +1,49 @@
->> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> > +%YAML 1.2
->> > +---
->> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
->> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> > +
->> > +title: Voltage controlled oscillator
->> 
->> Frankly, I find the "voltage-oscillator" and "voltage controlled
->> oscillator" names awkward.  In general, "clock" is used throughout
->> the entire kernel, when it comes to naming files and defining
->> "compatible" strings.  Thus, I'd suggest that "clock" is used here
->> instead of "oscillator", because it's consistent and shorter.
->> 
->> How about using "gated-clock" for the "compatible" string, and
->> "Simple gated clock generator" instead of "voltage controlled
->> oscillator"?  Besides sounding awkward, "voltage controlled
->> oscillator" may suggest that the clock generator can be adjusted
->> or programmed somehow by applying the voltage, while it can only
->> be enabled or disabled that way, which is by definition clock
->> gating.  Thus, "gated-clock" and "Simple gated clock generator"
->> would fit very well.
+On 7/15/24 10:16, Fabio Estevam wrote:
+> Hi Frank,
 > 
-> The naming came from Stephen - one of the clock maintainers ;-)
-> See discussion in v1. Who also described these things as
-> "voltage-controlled-oscillators".
+> On Mon, Jul 15, 2024 at 2:07 PM Frank Li <Frank.Li@nxp.com> wrote:
+>>
+>> Move post_rcs_wait into struct imx_wdt_hw_feature to simplify code logic
+>> for different compatible strings
+>>
+>> i.MX93 and i.MX8ULP watchdog do not need to wait 2.5 clocks after RCS is
+>> done. Set post_rcs_wait to false explicitly to maintain code consistency.
+>>
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: Alice Guo <alice.guo@nxp.com>
+>> Reviewed-by: Ye Li <ye.li@nxp.com>
+>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > 
-> And from that discussion I also got the impression we should aim for
-> more specific naming - especially when talking about dt-bindings, for 
-> this
-> "usage in the Linux kernel" actually isn't a suitable metric and
-> "gated-clock" is probably way too generic I think.
+> It looks better now, thanks:
+> 
 
-I see, thanks for the clarification.  Though, the generic nature of
-"gated-clock" as the name may actually make this driver a bit more
-future-proof, by allowing some other features to be added to it at
-some point in the future, avoiding that way the need for yet another
-kernel driver.
+Not in my opinion. As requested in my other e-mail, please drop my Reviewed-by: tag.
 
-> Though I'm not attached to any specific naming, so we'll simply
-> wait for the clock- and dt-maintainers to weigh in ;-)
+Guenter
+
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+
 
