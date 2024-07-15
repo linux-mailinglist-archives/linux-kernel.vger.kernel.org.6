@@ -1,267 +1,239 @@
-Return-Path: <linux-kernel+bounces-252922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932389319EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD139319EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D97F1F21DF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674F91F22A4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03CC4D8D1;
-	Mon, 15 Jul 2024 18:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA11E4EB37;
+	Mon, 15 Jul 2024 18:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GC8T8bbH"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6QgUGDE"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B9717588
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FB933987;
+	Mon, 15 Jul 2024 18:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066459; cv=none; b=PdJZAO5otp6lWk9P2qq4u+fuWYte1DuFkY2gTYkotZQ/RXXftYt7vVLST3/+eNVYNKQRx1WcTMcTfz139LcxXjfYV4DZSesQx3xzBxS8a/tb6M+nRTmKlO9yGI5YJyjPWIDZIoIbm6GXr28IaRJiGRavnknOpW3yC910VH2878E=
+	t=1721066470; cv=none; b=Rmf7STuGcLE3cr1t6o3xrmfTfwnss+6dOVQzQ+NLPEhABykk6eDAHLstuIhr96UeN41T7oiBtsW7DlMS2bGFDkFD6Fh0Q4VnJ1M3BSWIgmP9L10FSRsXvRbMbXPOX4WuHMC6Bt5LpNTOfkKWzxz6N6IkQ/EUQ6bkaiymk6qopeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066459; c=relaxed/simple;
-	bh=PlAEYRVc7WLtCF4aYjTpwzOUgmLnUl2NYhuzgT7jbCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2WyeDUOgbTq+hEFeRcOzd74QgKPyVV8eGYX1gu/KG8k14wF6B7lQ1X9MXFmC2KrYQvIyewau9XbCjrVIZgf5ykTFtGJcJ+MSh/6ey2XF2l/B8rofUtdFdSMlbolDWrdGyYaqHOeTulp0cCkJ+53peWI4fFW9UeRY+qJSdgeVR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GC8T8bbH; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1721066470; c=relaxed/simple;
+	bh=BcyPQ0Hj8u9GJvpamxo1r3Jm4m2qApmFxC5M2AK53WU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MNQ3rNR4CQjhzbAcRZUf8E41CPDS7zLJO6gpCLWbzlR+VadQ07TsUAowtLXv9E5tFd9O7QOOBVqO3b7lX6d0Hibs4eoljGGqyCeOXAG4cRtCTS7idkV8z/VSU/8fxsn2iSrRyG4FImgXsyCitxuzWwwgs54XdI1KtUNT/BGibQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6QgUGDE; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8111f946f04so68070339f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:00:58 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70aec66c936so3345873b3a.0;
+        Mon, 15 Jul 2024 11:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721066457; x=1721671257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOYbwMrV/O4jAT8P0a8rUtJkT/tF7xf5ebflegYxDG4=;
-        b=GC8T8bbHUQ0BQSuCwhoamyp9RoP/6sLkL6OTfoMNPDs9PS67wuA7t49AvEBFJ+Ge/N
-         LRocKr3KiGn5Btp/X5XPrj+ZJJZCThJnIsPOkblq/DxnPhh0zOgG8lYCMurXmFjn5/CM
-         OtyjNmk/X9j2dVAnpsjXgZaHOEUZO7za+w77cwkskNXvZYRw26BpELpAFTFB/nfQgmRy
-         uBkphKGcp1uQ27xaIpL+om5BnVH1Nyn1U4NzfODzkNA++BVdaTvgOj9HRk2TCAyF1fo6
-         L5ikPfkdKVXFSuJCQjDXEyFNfonPcmYeQNwsEI1FriQ46bXizVpbHY0KZQ4z0Pi72hJh
-         EcPA==
+        d=gmail.com; s=20230601; t=1721066467; x=1721671267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=+h7WH+E6mlrKsMBP9aO9Jw1AWxzVauLZHBjsy6ZfU0w=;
+        b=P6QgUGDEyw7FP0zVGCdyI6VimD0oAq6d/WU4j33shu5cD6qM827jPhXOePAfao1Bid
+         IX404O6DBBCbKxlN+SSqAXE7hFLLRr8CKj/81yOJV50Emxzr8ZiY0holzWymcafHnvBh
+         aoUz61l0Y7Bv+mZtHE8+5R9NE1MV9p8puWogKmIuIYhyy7xyKTJtx/HGadkUg0yWIQ0S
+         O1YSlu3zNk3OxPZiQYoSVJw9ilJKIdeDtuinZz8GYmmZh4RR2OQSjhLErJgyMvD73Ccw
+         JEak01q1GQRajz6plfAWBM6tqrj95et5qyWvIvfe+zcP42TxgUQ+HjvuW+dGw/O0bY1D
+         zREg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721066457; x=1721671257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oOYbwMrV/O4jAT8P0a8rUtJkT/tF7xf5ebflegYxDG4=;
-        b=pqKWaCP1ZBunsxYNJF9gESXrMwDzMy430lIIUvbNMMiD++WhJIGSzBoB/wh0aGgtMp
-         c49+bCjnfoXSQdF5TsHznX0zf6uJzy0temXIRGa07HGCAGcoy+SAid1fAsm5QRd4u3td
-         37eONCZUgE4H92xNu8BUwya5iGlVaMCH1/gqOCjjoV6/Or2yPzjfPcJEChE9SE4VpghK
-         /248ykqhZB+m4fxk6nAvuxcwNi76ED9Fuv0OFInqPbXW/MKUkEfMV0GXCqeiCjkRDeFD
-         1GPRH0GmRw/GbF9fUZukgBnB7cOMFwyjt57GgQqR+V+yPOK56qs6O8c1DGZFtxNIwXvs
-         r4Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFUvNZ0yUTV1+M+UZkDBDB+MhkmbEmF6eUy8PMJG2/+PXrKZOjkbiwCbrNYcZfkreU+L9ZNkxrbf9eaaYiE8xDKnLOtGktUP/3h0RE
-X-Gm-Message-State: AOJu0YwyvD7MOrVddMqxNxeM13V9g/Wjw7hvtOWTGg7Txqzb4LdvMMRX
-	q1Z/+jz3BVG+LOyMqxcEYc/G46X4fSNbm0k29zHLH08DNpwpUbvTLCv7w+nDkDQnasJu+35TLoM
-	f1ZLZJpdjp2p+gILLt87KJPdSde4=
-X-Google-Smtp-Source: AGHT+IFcGuXfUh6AFDn0k76fOiyVn1OhhrJ6yvUnZlqakwLRz4tCX/opcDQa3egBWhhCntMh2a6NU9aloRgRPANMli4=
-X-Received: by 2002:a6b:440b:0:b0:807:4efc:9a64 with SMTP id
- ca18e2360f4ac-81546fc1d08mr43403739f.19.1721066456938; Mon, 15 Jul 2024
- 11:00:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721066467; x=1721671267;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+h7WH+E6mlrKsMBP9aO9Jw1AWxzVauLZHBjsy6ZfU0w=;
+        b=OlpXuYcFD5hTKZWFzthemIQAuo+xoMhGYLT+WOVM5BTdoYlN7dMxkaOU9J8FKkpNdX
+         jzX9NCpuXC3LXR7YEwMmgRapoMfJMayRjdySREOKdlCpY07/NopO+0yyC3UcBGvNFUJh
+         RHfkNYKhaTykgwHF04tRRj5MQxkEOyGw7X267ihpdaSxwxPCfizyHd73LJNRRcdqZiyd
+         rI57VT6NM4cLkvRuMXYR9pkitN9kfiP/8VxXYCg1sRY7kmfLfjDfB2lLEF1JihT7UxWI
+         +UrGeshL5KxwBrH5q52YABOX8TY4B19jOvGWxCfsl8xBOQgTaMM8XFsRA+FeBf6KS53m
+         loZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIMtJ+8cF9u01zcUpzRifmkRvlzU2zx8ALnTT9iRzPmyTIQRxVWh4Wv3MvEMg8A/+jzl1DysmDjOW3mpX5LWgYXi/vCkScovndoye1Tuu+vfCQRU6lwKG9SYhwxwT8sh0/aHjuXbNETj0lWtk=
+X-Gm-Message-State: AOJu0YwdGwlitAjiOzoVr7GWuyKR48rmnr4Zwd8435RnHHY+U8UDMQdt
+	MwwjPbDQCDJPHxirRlTo2DOXeBQ7tyBZMjDO9GDwPW1XfRcEJ5Wd
+X-Google-Smtp-Source: AGHT+IHC5bMiW2MzoXPLdvYkW+PZnFqyLJJu7/s2px3zxWmln+cxA3JommrImWXDVcepOSrqpEBa6w==
+X-Received: by 2002:a05:6a00:4b04:b0:70b:8190:d555 with SMTP id d2e1a72fcca58-70ba4925d8bmr488476b3a.32.1721066467301;
+        Mon, 15 Jul 2024 11:01:07 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ecc988dsm4690746b3a.198.2024.07.15.11.01.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 11:01:06 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3ae98ea1-23a4-4e0f-9a1c-62eed84b42ef@roeck-us.net>
+Date: Mon, 15 Jul 2024 11:01:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
- <ZoR40nWmpEV2Ly_6@bombadil.infradead.org> <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
- <CALwA+NbUCfEj_DzT5eMQ7_pSNpyp-zBe6PEL2XnMZrb303J4_Q@mail.gmail.com>
- <CAJfuBxzeYWWV1ikYagFpyFHdAQU4ReYPirksQFHbEzDxhXCfHA@mail.gmail.com> <CALwA+Naec_YHxHoKu8Ba_Bnuq2L3VXw1cT3=Tx3qC3mE5_BG1g@mail.gmail.com>
-In-Reply-To: <CALwA+Naec_YHxHoKu8Ba_Bnuq2L3VXw1cT3=Tx3qC3mE5_BG1g@mail.gmail.com>
-From: jim.cromie@gmail.com
-Date: Mon, 15 Jul 2024 12:00:30 -0600
-Message-ID: <CAJfuBxxnTyqeGtS1mPBFqX2MYs7kgK49ZUQeR1oTe4UMC4ct5A@mail.gmail.com>
-Subject: Re: [PATCH v9 00/53] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
-To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, linux@rasmusvillemoes.dk, joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into
+ struct imx_wdt_hw_feature
+To: Frank Li <Frank.Li@nxp.com>
+Cc: alice.guo@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
+ kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org, wim@linux-watchdog.org,
+ ye.li@nxp.com
+References: <20240715170717.2490688-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240715170717.2490688-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 15, 2024 at 4:05=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chromi=
-um.org> wrote:
->
-> On Sat, Jul 13, 2024 at 11:45=E2=80=AFPM <jim.cromie@gmail.com> wrote:
-> >
-> > On Fri, Jul 12, 2024 at 9:44=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@ch=
-romium.org> wrote:
-> > >
-> > > On Wed, Jul 3, 2024 at 12:14=E2=80=AFAM <jim.cromie@gmail.com> wrote:
-> > > >
-> > > > On Tue, Jul 2, 2024 at 4:01=E2=80=AFPM Luis Chamberlain <mcgrof@ker=
-nel.org> wrote:
-> > > > >
-> > > > > On Tue, Jul 02, 2024 at 03:56:50PM -0600, Jim Cromie wrote:
-> > > > > > This fixes dynamic-debug support for DRM.debug, added via class=
-maps.
-> > > > > > commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
-> > > > > >
-> > > > > > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because drm.=
-debug=3Dval
-> > > > > > was applied when drm.ko was modprobed; too early for the yet-to=
--load
-> > > > > > drivers, which thus missed the enablement.  My testing with
-> > > > > > /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycmd =
-options
-> > > > > > obscured this omission.
-> > > > > >
-> > > > > > The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP wi=
-th
-> > > > > > DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for dr=
-ivers.
-> > > > > > The distinction allows dyndbg to also handle the users properly=
-.
-> > > > > >
-> > > > > > DRM is the only current classmaps user, and is not really using=
- it,
-> > > > > > so if you think DRM could benefit from zero-off-cost debugs bas=
-ed on
-> > > > > > static-keys, please test.
-> > > > > >
-> > > > > > HISTORY
-> > > > > >
-> > > > > > 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 dy=
-ndbg parts
-> > > > > > 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 dr=
-m parts
-> > > > > >
-> > > > > > https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
-> > > > > > greg k-h says:
-> > > > > > This should go through the drm tree now.  The rest probably sho=
-uld also
-> > > > > > go that way and not through my tree as well.
-> > > > >
-> > > > > Can't this just be defined as a coccinelle smpl patch? Must easie=
-r
-> > > > > to read than 53 patches?
-> > > > >
-> > > >
-> > > > perhaps it could - Im not sure that would be easier to review
-> > > > than a file-scoped struct declaration or reference per driver
-> > > >
-> > > > Also, I did it hoping to solicit more Tested-by:s with drm.debug=3D=
-0x1ff
-> > > >
-> > > > Jim
-> > > >
-> > >
-> > > Jim,
-> > >
-> > > When testing different combinations of Y/M for TEST_DYNAMIC_DEBUG and
-> > > TEST_DYNAMIC_DEBUG_SUBMOD in virtme-ng I spotted test failures:
-> > >
-> > > When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > > BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
-> > > TEST_MOD_SUBMOD selftests passed
-> > > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > > BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-> > > TEST_PERCENT_SPLITTING selftest fails with ": ./dyndbg_selftest.sh:27=
-0
-> > > check failed expected 1 on =3Dpf, got 0"
-> > > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
-> > > BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-> > > TEST_PERCENT_SPLITTING selftest fails also with ":
-> > > ./dyndbg_selftest.sh:270 check failed expected 1 on =3Dpf, got 0"
-> > >
-> > > Have I missed something ?
-> > >
-> >
-> > I am not seeing those 2 failures on those 2 configs.
-> >
-> > most of my recent testing has been on x86-defconfig + minimals,
-> > built and run using/inside virtme-ng
-> >
-> > the last kernel I installed on this hw was june 16, I will repeat that,
-> > and report soon if I see the failure outside the vm
-> >
-> > I'll also send you my script, to maybe speed isolation of the differenc=
-es.
-> >
->
-> Jim,
->
-> I know why I saw these failures.
-> I ran dyndbg_selftest.sh directly in thw directory
-> tools/testing/selftests/dynamic_debug/.
+On 7/15/24 10:07, Frank Li wrote:
+> Move post_rcs_wait into struct imx_wdt_hw_feature to simplify code logic
+> for different compatible strings
+> 
+> i.MX93 and i.MX8ULP watchdog do not need to wait 2.5 clocks after RCS is
+> done. Set post_rcs_wait to false explicitly to maintain code consistency.
+> 
 
-thats odd.
-I mostly run it from src-root,
-also whereever make selftest target is/works (I forgot)
+Why ? That is not necessary and typically frowned upon for static variables.
 
-I went into that subdir and ran it there
-I got no test differences / failures.
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-IIRC, the failure was on line 270, just after a modprobe.
-can you further isolate it ?
+Please drop. I did not approve this change.
 
-> All works as expected when I run it from the top kernel directory.
-> Here are the results:
->
-> When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
-> TEST_MOD_SUBMOD selftests passed
->
-> When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-> TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were
-> skipped
->
-> When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
-> BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-> TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were
-> skipped
+Guenter
 
+> Signed-off-by: Alice Guo <alice.guo@nxp.com>
+> Reviewed-by: Ye Li <ye.li@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v2 to v3
+> - Set post_rcs_wait to false explicitly to maintain code consistency
+> - Add Guenter review tag.
+> Change from v1 to v2
+> - Combine to one patch
+> ---
+>   drivers/watchdog/imx7ulp_wdt.c | 23 +++++++++++------------
+>   1 file changed, 11 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+> index 94914a22daff7..a4aa02f388b15 100644
+> --- a/drivers/watchdog/imx7ulp_wdt.c
+> +++ b/drivers/watchdog/imx7ulp_wdt.c
+> @@ -55,6 +55,7 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>   
+>   struct imx_wdt_hw_feature {
+>   	bool prescaler_enable;
+> +	bool post_rcs_wait;
+>   	u32 wdog_clock_rate;
+>   };
+>   
+> @@ -62,7 +63,6 @@ struct imx7ulp_wdt_device {
+>   	struct watchdog_device wdd;
+>   	void __iomem *base;
+>   	struct clk *clk;
+> -	bool post_rcs_wait;
+>   	bool ext_reset;
+>   	const struct imx_wdt_hw_feature *hw;
+>   };
+> @@ -95,7 +95,7 @@ static int imx7ulp_wdt_wait_rcs(struct imx7ulp_wdt_device *wdt)
+>   		ret = -ETIMEDOUT;
+>   
+>   	/* Wait 2.5 clocks after RCS done */
+> -	if (wdt->post_rcs_wait)
+> +	if (wdt->hw->post_rcs_wait)
+>   		usleep_range(wait_min, wait_min + 2000);
+>   
+>   	return ret;
+> @@ -334,15 +334,6 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
+>   	/* The WDOG may need to do external reset through dedicated pin */
+>   	imx7ulp_wdt->ext_reset = of_property_read_bool(dev->of_node, "fsl,ext-reset-output");
+>   
+> -	imx7ulp_wdt->post_rcs_wait = true;
+> -	if (of_device_is_compatible(dev->of_node,
+> -				    "fsl,imx8ulp-wdt")) {
+> -		dev_info(dev, "imx8ulp wdt probe\n");
+> -		imx7ulp_wdt->post_rcs_wait = false;
+> -	} else {
+> -		dev_info(dev, "imx7ulp wdt probe\n");
+> -	}
+> -
+>   	wdog = &imx7ulp_wdt->wdd;
+>   	wdog->info = &imx7ulp_wdt_info;
+>   	wdog->ops = &imx7ulp_wdt_ops;
+> @@ -402,16 +393,24 @@ static const struct dev_pm_ops imx7ulp_wdt_pm_ops = {
+>   
+>   static const struct imx_wdt_hw_feature imx7ulp_wdt_hw = {
+>   	.prescaler_enable = false,
+> +	.post_rcs_wait = true,
+> +	.wdog_clock_rate = 1000,
+> +};
+> +
+> +static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
+> +	.prescaler_enable = false,
+> +	.post_rcs_wait = false,
+>   	.wdog_clock_rate = 1000,
+>   };
+>   
+>   static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+>   	.prescaler_enable = true,
+> +	.post_rcs_wait = false,
+>   	.wdog_clock_rate = 125,
+>   };
+>   
+>   static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
+> -	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx7ulp_wdt_hw, },
+> +	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx8ulp_wdt_hw, },
+>   	{ .compatible = "fsl,imx7ulp-wdt", .data = &imx7ulp_wdt_hw, },
+>   	{ .compatible = "fsl,imx93-wdt", .data = &imx93_wdt_hw, },
+>   	{ /* sentinel */ }
 
-thank you for running these config-combo tests.
-
-are you doing these in a VM ?
-and since Im asking, Ive done these combos on virtme-ng builds,
-also installed & running on 2 x86 boxen.
-
-could you add DRM=3Dm and a driver too,
-and boot with drm.debug=3D0x1ff, dynamic_debug.verbose=3D3
-the debug output should show all the class-work on modprobe,
-for your easy inspection/grading ;-)
-
->
-> Based on that maybe it would be worth it for the script to fail when
-> it doesn't find a .config with an error message something like this:
-
-if no config - they get to see more errors now.
-if the solution isnt obvious to them, we can find out more ?
-
-> "Kernel .config not found. Are you running the script from the
-> kernel's top directory?"
->
-> What do you think ?
-
-the -rc0 window is open, Id rather not fiddle with this now.
-
-Im gonna rebase onto 6.10, resend,
-copy and rebase onto drm-mumble-next
-then try to get into the DRM-CI river, see where that takes me.
-
-thanks Lukas,
-Jim
-
->
-> Thanks,
-> Lukasz
->
-> > > Thanks,
-> > > Lukasz
-> > >
-> > > > >   Luis
-> > > > >
 
