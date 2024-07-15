@@ -1,316 +1,390 @@
-Return-Path: <linux-kernel+bounces-252251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03B8931094
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AD1931096
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48E71C21AD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34131F2272D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14E8188CDC;
-	Mon, 15 Jul 2024 08:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCEE184108;
+	Mon, 15 Jul 2024 08:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F1U7nYh4"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpNH40Pt"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF843188CCE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8988A13B5B2;
+	Mon, 15 Jul 2024 08:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033249; cv=none; b=ByYUXAEPunMzbYf2ja+6c61OVoWp2aa3rCb33bAi3xpAkUE5iWYw+q0VKMQPi9hU0z2p6/wcEXQkHfQhB0ypi0lhXgLP+QRLfBuFEiMFhhVaNEgz+h+z1sjItgIa57KmPSCqiOFYDqoaLLLGSusqcEHcjZZ/WdohlmdfZXnxZNs=
+	t=1721033447; cv=none; b=Sm1UpUp6vFhR13e22Obzcb45Ml3qgKOOEZnbx9EzOHEiWRGZ+RMvlck6vBSWa+PJV3RBIqRmL41JO/u48TfZC8kXQdQoqLfZbCWAUg9uzrxNiQh5cWHpZgtlHibF3mlawoL0a+5CPAIdyS6emNcLTo/luGT8MoWxPCwrYjvo+qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033249; c=relaxed/simple;
-	bh=lQ6KxyCDmU/ai58B4TFYfDagIegmWEfOGaHQRQIc2CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p2KD+Rq+EwUWTx51zS2zRpVl+wv0Nn09dG7wbwfIIIs8AdsziJ++jQss/RolpJsWhhImIbC7Tab/bZY5KUBUKv96s9aDRov+snUEcliLvTvZbBT7XX9c9PsWn87DWuIGL6mNZwzR7Yrzr/BHqN4pQgMc2PnhpOTEMxKQ/ZVGRM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F1U7nYh4; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52e976208f8so4442406e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:47:25 -0700 (PDT)
+	s=arc-20240116; t=1721033447; c=relaxed/simple;
+	bh=N144p+CRK7LlNYh39IOquizeMKhCeis0o27lG12p3kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwvP6DMeOT12zOsDvqJe49vMnK7yfNzu1WWJydrEM1SEqv3m8/mUwznMdAcyuIqVbTUh1RlsRdk5sMHBfMAMFpSQygWi0ngwzf+ymh64DYX0wt8X/DLW5RDBTjhBtEm5DC3YqQCeLKNN25SOvx/BEtrLhccGigMPjaOhyEORmnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HpNH40Pt; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso445869566b.0;
+        Mon, 15 Jul 2024 01:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721033244; x=1721638044; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Eb5BVX4zk5gTSRKhMYvaco55k80785UV3Z/D7oflCg=;
-        b=F1U7nYh4fz1F1xky3Nm6rxZoTduFCw3CO4QtdqKvZq6Tn0iLgjZYmqRd+mv5k62y03
-         nz1sKQTgW61czKBjz8C9pn0tFZTJXBHUBd3lXlSY6b0Zz7yWxrjnabHAJ9Qk4dRZHi9I
-         jbehoCVTcorrX8m3oxiKzpIFFisSrfJWVKTac53akbQWa4744uT5ehn2svEELQVHh9PK
-         ws/flDhvyepvMpPFpKYxvV8Jvgvhsv86gxyXJCPXkENktX2hJzHp2ysmWHJv0uizlH8b
-         snVDV9/fvyolBCH+skMnAsFaCY30nR6XL56fnBGIFh3P0/i3p0KE2UvyBl///6BSJIHT
-         noZQ==
+        d=gmail.com; s=20230601; t=1721033444; x=1721638244; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IHFekXz0LKUP3ZAY4L5Tc6nZRqf9KisCvufCjCWSjSQ=;
+        b=HpNH40PtQClxWZqZrY/6EMS0curFeqidd6PC3/QXTPaZusn6xXRciCTaYcESBjJRDn
+         hXCfeJmpBnOY5lUt9xVuzxTo2CYpNidpS/re+UYBS6dhF5UzsAYkPUQ3bQkeeDiGyrcW
+         JHcmg68PvqGzYojN0FCQ5zy14OKxEujn47LgPIFKHX8LYH69D+ETTEoflnJjBE6q5XzW
+         1+QCplfHVM3QEcoPds1q87yoPJY5sRxPZFptvILIpN2M/jPOCjUr+BJvP5uiZUmxadF6
+         jOG/rVw7dAQvP+VKJ+bF2z6ZFPP7mYu2aOj6HAmNa9fIjo4gKFrLnoWbEnwo/gWSk380
+         vtuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721033244; x=1721638044;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Eb5BVX4zk5gTSRKhMYvaco55k80785UV3Z/D7oflCg=;
-        b=cLTL8VI/LOFzP7j97BT3U9AWAjww2c/jGKp7ja5m3hyCtrOqU/pPxG1DQ5q5DOdFBK
-         KELji7ExEGN983BVGiva+hUuJRf8WVGlkXIR+OCZRkLgloFN5+BLKHDFs8F4pQ9Y/EJg
-         VdKYknnAbRtDWJ/AW1cBeooRW3JHPKELTztkGfNnY6g39ktclrOXTyRDmaL15IB4Qh00
-         16fK39iSrgC43Ef5seKgEUo5eDQUC0utXcv82BQIrxPvmoJXFrswTKuQ0vkT3FfkwoIt
-         iZEvBY87vdXMca13G4yzmgSmkwN2R3UoUseUMTTyASzsccEUcSnIIyigGj38H+cAiqvo
-         OLsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWcTuXImfczd02mT4O1YTLF3lJ1tC3F6A1+JdX+zV0V9nSCrsXHqw6WC4ENwLjGVtWB56xwsLXTl6rvF8JxRsGXr2vO29f7dRTSUM
-X-Gm-Message-State: AOJu0Yzt+cZf5qghHYmWrKUhVrJ+8gs+mMMGlCzoYZelOH+cd1+u7Zfa
-	jJFNv1Iw//gCdq9aCC6SHSKhBu7S3E5YTO5ELP8Swyib59umThUspARlHJYOGzY=
-X-Google-Smtp-Source: AGHT+IGVokpbix8pAlplY8JkgGzC3xDQw+5+lcQXtZnUUEHop6EIS0U3DKMCsKAhgVSQJBAXSss8CQ==
-X-Received: by 2002:a05:6512:2117:b0:52c:e03d:dfd7 with SMTP id 2adb3069b0e04-52eb99a19c3mr11053601e87.39.1721033243817;
-        Mon, 15 Jul 2024 01:47:23 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:884f:7d23:2bfd:c44f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc244sm111069425e9.37.2024.07.15.01.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 01:47:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio updates for v6.11-rc1
-Date: Mon, 15 Jul 2024 10:47:10 +0200
-Message-ID: <20240715084712.17680-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1721033444; x=1721638244;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IHFekXz0LKUP3ZAY4L5Tc6nZRqf9KisCvufCjCWSjSQ=;
+        b=H+PPUYuJa9pyd7AErsGPSfHOOhpEktoyxFAvhMkrJkzIfUyJgWBxrg4khWcdcC5EgH
+         tuEUckd0GnceBFibEOeb3/7qHAJFp1wZmpiG/jS0LSxSmM5FpjG5m8Yrr9wzKTH2L5je
+         k91YUQkq2uPXWZVxxNt21v5I4HyJN9u/h+WXABPSuQBCA+vxEk8N6idspCYNGDVd/WyS
+         TbfmNcm1fmsexz/YqHFn+xZfwi2yVZL3hXjAgJaFwQPqEtYT7UwxLRXp1xHRECa0oZwq
+         LV6aljQvcbUUpHDSESX6rPxdwdJvWn16z+h7eB5KVHY6cFnzNy3AwTdZ8HEwgEr6512N
+         jwFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq/sRu3OqUUwMC/fl30erM50JYn0dNOUiSu6k+B76MnIwDBsfeFmepUYgU1aBLMpw7ly7nxx7yLvhZISNkveZdeW48QYqewkDjbXd1inZL8ac914t1WBIaBFyT43OB9xuO
+X-Gm-Message-State: AOJu0Yyg+vBMWXxPURGiStoC72TAgLuCGIw9Z75RvTDqZWIR2ECfjHLm
+	mx6rQ99csEAuiFMgzguULy00V1zeNiNQSaaBdRZGAJdiLJAIyCPmy7B73L6ZuEapEKjGBUnaD70
+	PCg9MJ+H745Qdxt7LNO6X7m9EeK4=
+X-Google-Smtp-Source: AGHT+IHDjUezjtQiG8H0knVP7lV/zQ0Vw9GTuraO94xZ26J8uDRGku2yp0oH2AGnGSvJW9b4zHYj+z25Zw0d9+3ha+w=
+X-Received: by 2002:a17:906:4e98:b0:a77:cc6f:e792 with SMTP id
+ a640c23a62f3a-a780b8802f0mr1118280266b.51.1721033443494; Mon, 15 Jul 2024
+ 01:50:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240710044542.444-1-qiang.zhang1211@gmail.com> <CALm+0cUEqgDY_-4OjNYrWhzgP1YB79pP3SdjN2wgoMs65QwP6Q@mail.gmail.com>
+In-Reply-To: <CALm+0cUEqgDY_-4OjNYrWhzgP1YB79pP3SdjN2wgoMs65QwP6Q@mail.gmail.com>
+From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Date: Mon, 15 Jul 2024 14:20:30 +0530
+Message-ID: <CAFwiDX8hXS72j9m894hSd_hrAvSZ2DZMBu1sncygQNaupx1w8g@mail.gmail.com>
+Subject: Re: [PATCH v3] rcu-tasks: Fix access non-existent percpu rtpcp
+ variable in rcu_tasks_need_gpcb()
+To: Z qiang <qiang.zhang1211@gmail.com>
+Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
+	joel@joelfernandes.org, urezki@gmail.com, boqun.feng@gmail.com, 
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Jul 15, 2024 at 1:40=E2=80=AFPM Z qiang <qiang.zhang1211@gmail.com>=
+ wrote:
+>
+> >
+> > For kernels built with CONFIG_FORCE_NR_CPUS=3Dy, the nr_cpu_ids is
+> > defined as NR_CPUS instead of the number of possible cpus, this
+> > will cause the following system panic:
+> >
+> > smpboot: Allowing 4 CPUs, 0 hotplug CPUs
+> > ...
+> > setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:512 nr_node_id=
+s:1
+> > ...
+> > BUG: unable to handle page fault for address: ffffffff9911c8c8
+> > #PF: supervisor read access in kernel mode
+> > #PF: error_code(0x0000) - not-present page
+> > Oops: 0000 [#1] PREEMPT SMP PTI
+> > CPU: 0 PID: 15 Comm: rcu_tasks_trace Tainted: G W
+> > 6.6.21 #1 5dc7acf91a5e8e9ac9dcfc35bee0245691283ea6
+> > RIP: 0010:rcu_tasks_need_gpcb+0x25d/0x2c0
+> > RSP: 0018:ffffa371c00a3e60 EFLAGS: 00010082
+> > CR2: ffffffff9911c8c8 CR3: 000000040fa20005 CR4: 00000000001706f0
+> > Call Trace:
+> > <TASK>
+> > ? __die+0x23/0x80
+> > ? page_fault_oops+0xa4/0x180
+> > ? exc_page_fault+0x152/0x180
+> > ? asm_exc_page_fault+0x26/0x40
+> > ? rcu_tasks_need_gpcb+0x25d/0x2c0
+> > ? __pfx_rcu_tasks_kthread+0x40/0x40
+> > rcu_tasks_one_gp+0x69/0x180
+> > rcu_tasks_kthread+0x94/0xc0
+> > kthread+0xe8/0x140
+> > ? __pfx_kthread+0x40/0x40
+> > ret_from_fork+0x34/0x80
+> > ? __pfx_kthread+0x40/0x40
+> > ret_from_fork_asm+0x1b/0x80
+> > </TASK>
+> >
+> > Considering that there may be holes in the CPU numbers, use the
+> > maximum possible cpu number, instead of nr_cpu_ids, for configuring
+> > enqueue and dequeue limits.
+> >
+> > Closes: https://lore.kernel.org/linux-input/CALMA0xaTSMN+p4xUXkzrtR5r6k=
+7hgoswcaXx7baR_z9r5jjskw@mail.gmail.com/T/#u
+> > Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
+> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > ---
+> >  kernel/rcu/tasks.h | 80 +++++++++++++++++++++++++++++-----------------
+> >  1 file changed, 51 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+> > index 2b1d6abf3ba3..12d63ce84cc9 100644
+> > --- a/kernel/rcu/tasks.h
+> > +++ b/kernel/rcu/tasks.h
+> > @@ -49,6 +49,7 @@ struct rcu_tasks_percpu {
+> >         struct list_head rtp_blkd_tasks;
+> >         struct list_head rtp_exit_list;
+> >         int cpu;
+> > +       int index;
+> >         struct rcu_tasks *rtpp;
+> >  };
+> >
+> > @@ -110,6 +111,7 @@ struct rcu_tasks {
+> >         call_rcu_func_t call_func;
+> >         unsigned int wait_state;
+> >         struct rcu_tasks_percpu __percpu *rtpcpu;
+> > +       struct rcu_tasks_percpu **rtpcp_array;
+> >         int percpu_enqueue_shift;
+> >         int percpu_enqueue_lim;
+> >         int percpu_dequeue_lim;
+> > @@ -182,6 +184,8 @@ module_param(rcu_task_collapse_lim, int, 0444);
+> >  static int rcu_task_lazy_lim __read_mostly =3D 32;
+> >  module_param(rcu_task_lazy_lim, int, 0444);
+> >
+> > +static int rcu_task_cpu_ids;
+> > +
+> >  /* RCU tasks grace-period state for debugging. */
+> >  #define RTGS_INIT               0
+> >  #define RTGS_WAIT_WAIT_CBS      1
+> > @@ -245,6 +249,8 @@ static void cblist_init_generic(struct rcu_tasks *r=
+tp)
+> >         int cpu;
+> >         int lim;
+> >         int shift;
+> > +       int maxcpu;
+> > +       int index =3D 0;
+> >
+> >         if (rcu_task_enqueue_lim < 0) {
+> >                 rcu_task_enqueue_lim =3D 1;
+> > @@ -254,14 +260,9 @@ static void cblist_init_generic(struct rcu_tasks *=
+rtp)
+> >         }
+> >         lim =3D rcu_task_enqueue_lim;
+> >
+> > -       if (lim > nr_cpu_ids)
+> > -               lim =3D nr_cpu_ids;
+> > -       shift =3D ilog2(nr_cpu_ids / lim);
+> > -       if (((nr_cpu_ids - 1) >> shift) >=3D lim)
+> > -               shift++;
+> > -       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
+> > -       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
+> > -       smp_store_release(&rtp->percpu_enqueue_lim, lim);
+> > +       rtp->rtpcp_array =3D kcalloc(num_possible_cpus(), sizeof(struct=
+ rcu_tasks_percpu *), GFP_KERNEL);
+> > +       BUG_ON(!rtp->rtpcp_array);
+> > +
+> >         for_each_possible_cpu(cpu) {
+> >                 struct rcu_tasks_percpu *rtpcp =3D per_cpu_ptr(rtp->rtp=
+cpu, cpu);
+> >
+> > @@ -273,14 +274,29 @@ static void cblist_init_generic(struct rcu_tasks =
+*rtp)
+> >                 INIT_WORK(&rtpcp->rtp_work, rcu_tasks_invoke_cbs_wq);
+> >                 rtpcp->cpu =3D cpu;
+> >                 rtpcp->rtpp =3D rtp;
+> > +               rtpcp->index =3D index;
+> > +               rtp->rtpcp_array[index] =3D rtpcp;
+> > +               index++;
+> >                 if (!rtpcp->rtp_blkd_tasks.next)
+> >                         INIT_LIST_HEAD(&rtpcp->rtp_blkd_tasks);
+> >                 if (!rtpcp->rtp_exit_list.next)
+> >                         INIT_LIST_HEAD(&rtpcp->rtp_exit_list);
+> > +               maxcpu =3D cpu;
+> >         }
+> >
+> > -       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adju=
+st=3D%d.\n", rtp->name,
+> > -                       data_race(rtp->percpu_enqueue_shift), data_race=
+(rtp->percpu_enqueue_lim), rcu_task_cb_adjust);
+> > +       rcu_task_cpu_ids =3D maxcpu + 1;
+> > +       if (lim > rcu_task_cpu_ids)
+> > +               lim =3D rcu_task_cpu_ids;
+> > +       shift =3D ilog2(rcu_task_cpu_ids / lim);
+> > +       if (((rcu_task_cpu_ids - 1) >> shift) >=3D lim)
+> > +               shift++;
+> > +       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
+> > +       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
+> > +       smp_store_release(&rtp->percpu_enqueue_lim, lim);
+>
+> It seems that smp_store_release does not need,  the
+> WRITE_ONCE(rtp->percpu_enqueue_lim, lim)
+> is enough, cblist_init_generic() is invoke in early boot, at this
+> time,  no other tasks access these
+> percpu_*lim.
+>
 
-Linus,
+Yes, it makes sense to me. Also, the corresponding acquire has moved to
+->percpu_dequeue_lim. So, this is something which can be done and
+evaluated as a separate change.
 
-Here's the pull-request from the GPIO tree for this merge window. The majority
-of added lines are two new modules: the GPIO virtual consumer module that
-improves our ability to add automated tests for the kernel API and the "sloppy"
-logic analyzer module that uses the GPIO API to implement a coarse-grained
-debugging tool for useful for remote development.
 
-Other than that we have the usual assortment of various driver extensions,
-improvements to the core GPIO code, DT-bindings and other documentation
-updates as well as an extension to the interrupt simulator.
+- Neeraj
 
-Details are in the signed tag. Please pull for rc1.
-
-Best Regards,
-Bartosz Golaszewski
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.11-rc1
-
-for you to fetch changes up to dfda97e37de4c2fa4a079ae77737c6b9ed021f79:
-
-  gpio: mc33880: Convert comma to semicolon (2024-07-10 14:30:27 +0200)
-
-----------------------------------------------------------------
-gpio updates for v6.11-rc1
-
-GPIOLIB core:
-- rework kfifo handling rework in the character device code
-- improve the labeling of GPIOs requested as interrupts and show more info
-  on interrupt-only GPIOs in debugfs
-- remove unused APIs
-- unexport interfaces that are only used from the core GPIO code
-- drop the return value from gpiochip_set_desc_names() as it cannot fail
-- move a string array definition out of a header and into a specific
-  compilation unit
-- convert the last user of gpiochip_get_desc() other than GPIO core to using
-  a safer alternative
-- use array_index_nospec() where applicable
-
-New drivers:
-- add a "virtual GPIO consumer" module that allows requesting GPIOs from actual
-  hardware and driving tests of the in-kernel GPIO API from user-space over
-  debugfs
-- add a GPIO-based "sloppy" logic analyzer module useful for "first glance"
-  debugging on remote boards
-
-Driver improvements:
-- add support for a new model to gpio-pca953x
-- lock GPIOs as interrupts in gpio-sim when the lines are requested as irqs
-  via the simulator domain + some other minor improvements
-- improve error reporting in gpio-syscon
-- convert gpio-ath79 to using dynamic GPIO base and range
-- use pcibios_err_to_errno() for converting PCIBIOS error codes to errno
-  vaues in gpio-amd8111 and gpio-rdc321x
-- allow building gpio-brcmstb for the BCM2835 architecture
-
-DT bindings:
-- convert DT bindings for lsi,zevio, mpc8xxx, and atmel to DT schema
-- document new properties for aspeed,gpio, fsl,qoriq-gpio and gpio-vf610
-- document new compatibles for pca953x and fsl,qoriq-gpio
-
-Documentation:
-- document stricter behavior of the GPIO character device uAPI with regards to
-  reconfiguring requested line without direction set
-- clarify the effect of the active-low flag on line values and edges
-- remove documentation for the legacy GPIO API in order to stop tempting
-  people to use it
-- document the preference for using pread() for reading edge events in the
-  sysfs API
-
-Other:
-- add an extended initializer to the interrupt simulator allowing to specify
-  a number of callbacks callers can use to be notified about irqs being
-  requested and released
-
-----------------------------------------------------------------
-Andrew Davis (1):
-      gpiolib: Remove data-less gpiochip_add() function
-
-Andrew Jeffery (2):
-      dt-bindings: gpio: aspeed,sgpio: Specify gpio-line-names
-      dt-bindings: gpio: aspeed,sgpio: Specify #interrupt-cells
-
-Andy Shevchenko (3):
-      gpio: Remove legacy API documentation
-      gpiolib: Return label, if set, for IRQ only line
-      gpiolib: Show more info for interrupt only lines in debugfs
-
-Bartosz Golaszewski (11):
-      gpiolib: make gpiochip_set_desc_names() return void
-      gpio: sim: use device_match_name() instead of strcmp(dev_name(...
-      gpio: sim: drop kernel.h include
-      gpio: sim: use devm_mutex_init()
-      gpiolib: put gpio_suffixes in a single compilation unit
-      pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
-      gpiolib: unexport gpiochip_get_desc()
-      genirq/irq_sim: add an extended irq_sim initializer
-      gpio: sim: lock GPIOs as interrupts when they are requested
-      gpio: virtuser: new virtual testing driver for the GPIO API
-      gpio: virtuser: actually use the "trimmed" local variable
-
-Chen Ni (1):
-      gpio: mc33880: Convert comma to semicolon
-
-Etienne Buira (1):
-      gpio: syscon: do not report bogus error
-
-Fabio Estevam (2):
-      gpio: pca953x: Add support for TI TCA9535 variant
-      dt-bindings: gpio: pca95xx: Document the TI TCA9535 variant
-
-Frank Li (3):
-      dt-bindings: gpio: mpc8xxx: Convert to yaml format
-      dt-bindings: gpio: fsl,qoriq-gpio: add common property gpio-line-names
-      dt-bindings: gpio: fsl,qoriq-gpio: Add compatible string fsl,ls1046a-gpio
-
-Frieder Schrempf (1):
-      dt-bindings: gpio: vf610: Allow gpio-line-names to be set
-
-Hagar Hemdan (1):
-      gpio: prevent potential speculation leaks in gpio_device_get_desc()
-
-Huichun Feng (1):
-      docs: gpio: prefer pread(2) for interrupt reading
-
-Ilpo Järvinen (2):
-      gpio: amd8111: Convert PCIBIOS_* return codes to errnos
-      gpio: rdc321x: Convert PCIBIOS_* return codes to errnos
-
-Kent Gibson (7):
-      gpiolib: cdev: Add INIT_KFIFO() for linereq events
-      gpiolib: cdev: Refactor allocation of linereq events kfifo
-      gpiolib: cdev: Cleanup kfifo_out() error handling
-      Documentation: gpio: Clarify effect of active low flag on line values
-      Documentation: gpio: Clarify effect of active low flag on line edges
-      Documentation: gpio: Reconfiguration with unset direction (uAPI v1)
-      Documentation: gpio: Reconfiguration with unset direction (uAPI v2)
-
-Manikandan Muralidharan (1):
-      dt-bindings: gpio: convert Atmel GPIO to json-schema
-
-Peter Robinson (1):
-      gpio: brcmstb: Allow building driver for ARCH_BCM2835
-
-Pratik Farkase (1):
-      dt-bindings: gpio: lsi,zevio-gpio: convert to dtschema
-
-Shiji Yang (1):
-      gpio: ath79: convert to dynamic GPIO base allocation
-
-Wolfram Sang (1):
-      gpio: add sloppy logic analyzer using polling
-
- Documentation/admin-guide/gpio/gpio-virtuser.rst   |  177 ++
- Documentation/admin-guide/gpio/index.rst           |    1 +
- .../dev-tools/gpio-sloppy-logic-analyzer.rst       |   93 +
- Documentation/dev-tools/index.rst                  |    1 +
- .../devicetree/bindings/gpio/aspeed,sgpio.yaml     |   10 +
- .../bindings/gpio/atmel,at91rm9200-gpio.yaml       |   81 +
- .../devicetree/bindings/gpio/fsl,qoriq-gpio.yaml   |   87 +
- .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      |   53 -
- .../devicetree/bindings/gpio/gpio-pca95xx.yaml     |    1 +
- .../devicetree/bindings/gpio/gpio-vf610.yaml       |    4 +
- .../devicetree/bindings/gpio/gpio-zevio.txt        |   16 -
- .../devicetree/bindings/gpio/gpio_atmel.txt        |   31 -
- .../devicetree/bindings/gpio/lsi,zevio-gpio.yaml   |   43 +
- Documentation/driver-api/gpio/board.rst            |    6 -
- Documentation/driver-api/gpio/consumer.rst         |    4 +-
- Documentation/driver-api/gpio/driver.rst           |    5 +-
- Documentation/driver-api/gpio/index.rst            |    1 -
- Documentation/driver-api/gpio/intro.rst            |   12 -
- Documentation/driver-api/gpio/legacy.rst           |  679 --------
- .../translations/zh_CN/driver-api/gpio/index.rst   |    2 -
- .../translations/zh_CN/driver-api/gpio/legacy.rst  |  618 -------
- Documentation/translations/zh_TW/gpio.txt          |  574 -------
- .../gpio/gpio-handle-get-line-values-ioctl.rst     |    7 +
- .../gpio/gpio-handle-set-config-ioctl.rst          |    5 +-
- .../gpio/gpio-handle-set-line-values-ioctl.rst     |    7 +
- .../gpio/gpio-lineevent-data-read.rst              |    5 +
- .../userspace-api/gpio/gpio-v2-line-event-read.rst |    5 +
- .../gpio/gpio-v2-line-get-values-ioctl.rst         |    7 +
- .../gpio/gpio-v2-line-set-config-ioctl.rst         |    7 +-
- .../gpio/gpio-v2-line-set-values-ioctl.rst         |    7 +
- Documentation/userspace-api/gpio/sysfs.rst         |    7 +-
- drivers/gpio/Kconfig                               |   33 +-
- drivers/gpio/Makefile                              |    2 +
- drivers/gpio/gpio-amd8111.c                        |    4 +-
- drivers/gpio/gpio-ath79.c                          |    2 -
- drivers/gpio/gpio-mc33880.c                        |    2 +-
- drivers/gpio/gpio-pca953x.c                        |    1 +
- drivers/gpio/gpio-rdc321x.c                        |    6 +-
- drivers/gpio/gpio-sim.c                            |   60 +-
- drivers/gpio/gpio-sloppy-logic-analyzer.c          |  344 ++++
- drivers/gpio/gpio-syscon.c                         |   27 +-
- drivers/gpio/gpio-virtuser.c                       | 1807 ++++++++++++++++++++
- drivers/gpio/gpiolib-acpi.c                        |    4 +-
- drivers/gpio/gpiolib-cdev.c                        |   80 +-
- drivers/gpio/gpiolib-of.c                          |    4 +-
- drivers/gpio/gpiolib.c                             |   36 +-
- drivers/gpio/gpiolib.h                             |    4 +-
- drivers/pinctrl/pinctrl-da9062.c                   |    2 +-
- drivers/staging/greybus/gpio.c                     |    2 +-
- include/linux/gpio.h                               |    6 +-
- include/linux/gpio/driver.h                        |    5 -
- include/linux/irq_sim.h                            |   17 +
- kernel/irq/irq_sim.c                               |   60 +-
- tools/gpio/gpio-sloppy-logic-analyzer.sh           |  246 +++
- 54 files changed, 3187 insertions(+), 2123 deletions(-)
- create mode 100644 Documentation/admin-guide/gpio/gpio-virtuser.rst
- create mode 100644 Documentation/dev-tools/gpio-sloppy-logic-analyzer.rst
- create mode 100644 Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
- create mode 100644 Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_atmel.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
- delete mode 100644 Documentation/driver-api/gpio/legacy.rst
- delete mode 100644 Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
- delete mode 100644 Documentation/translations/zh_TW/gpio.txt
- create mode 100644 drivers/gpio/gpio-sloppy-logic-analyzer.c
- create mode 100644 drivers/gpio/gpio-virtuser.c
- create mode 100755 tools/gpio/gpio-sloppy-logic-analyzer.sh
+> Thanks
+> Zqiang
+>
+>
+> > +
+> > +       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adju=
+st=3D%d rcu_task_cpu_ids=3D%d.\n",
+> > +                       rtp->name, data_race(rtp->percpu_enqueue_shift)=
+, data_race(rtp->percpu_enqueue_lim),
+> > +                       rcu_task_cb_adjust, rcu_task_cpu_ids);
+> >  }
+> >
+> >  // Compute wakeup time for lazy callback timer.
+> > @@ -348,7 +364,7 @@ static void call_rcu_tasks_generic(struct rcu_head =
+*rhp, rcu_callback_t func,
+> >                         rtpcp->rtp_n_lock_retries =3D 0;
+> >                 }
+> >                 if (rcu_task_cb_adjust && ++rtpcp->rtp_n_lock_retries >=
+ rcu_task_contend_lim &&
+> > -                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D nr_cpu_ids)
+> > +                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D rcu_task_cp=
+u_ids)
+> >                         needadjust =3D true;  // Defer adjustment to av=
+oid deadlock.
+> >         }
+> >         // Queuing callbacks before initialization not yet supported.
+> > @@ -368,10 +384,10 @@ static void call_rcu_tasks_generic(struct rcu_hea=
+d *rhp, rcu_callback_t func,
+> >         raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
+> >         if (unlikely(needadjust)) {
+> >                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+> > -               if (rtp->percpu_enqueue_lim !=3D nr_cpu_ids) {
+> > +               if (rtp->percpu_enqueue_lim !=3D rcu_task_cpu_ids) {
+> >                         WRITE_ONCE(rtp->percpu_enqueue_shift, 0);
+> > -                       WRITE_ONCE(rtp->percpu_dequeue_lim, nr_cpu_ids)=
+;
+> > -                       smp_store_release(&rtp->percpu_enqueue_lim, nr_=
+cpu_ids);
+> > +                       WRITE_ONCE(rtp->percpu_dequeue_lim, rcu_task_cp=
+u_ids);
+> > +                       smp_store_release(&rtp->percpu_enqueue_lim, rcu=
+_task_cpu_ids);
+> >                         pr_info("Switching %s to per-CPU callback queui=
+ng.\n", rtp->name);
+> >                 }
+> >                 raw_spin_unlock_irqrestore(&rtp->cbs_gbl_lock, flags);
+> > @@ -444,6 +460,8 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
+p)
+> >
+> >         dequeue_limit =3D smp_load_acquire(&rtp->percpu_dequeue_lim);
+> >         for (cpu =3D 0; cpu < dequeue_limit; cpu++) {
+> > +               if (!cpu_possible(cpu))
+> > +                       continue;
+> >                 struct rcu_tasks_percpu *rtpcp =3D per_cpu_ptr(rtp->rtp=
+cpu, cpu);
+> >
+> >                 /* Advance and accelerate any new callbacks. */
+> > @@ -481,7 +499,7 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
+p)
+> >         if (rcu_task_cb_adjust && ncbs <=3D rcu_task_collapse_lim) {
+> >                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+> >                 if (rtp->percpu_enqueue_lim > 1) {
+> > -                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_bas=
+e_2(nr_cpu_ids));
+> > +                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_bas=
+e_2(rcu_task_cpu_ids));
+> >                         smp_store_release(&rtp->percpu_enqueue_lim, 1);
+> >                         rtp->percpu_dequeue_gpseq =3D get_state_synchro=
+nize_rcu();
+> >                         gpdone =3D false;
+> > @@ -496,7 +514,9 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
+p)
+> >                         pr_info("Completing switch %s to CPU-0 callback=
+ queuing.\n", rtp->name);
+> >                 }
+> >                 if (rtp->percpu_dequeue_lim =3D=3D 1) {
+> > -                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < nr_=
+cpu_ids; cpu++) {
+> > +                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < rcu=
+_task_cpu_ids; cpu++) {
+> > +                               if (!cpu_possible(cpu))
+> > +                                       continue;
+> >                                 struct rcu_tasks_percpu *rtpcp =3D per_=
+cpu_ptr(rtp->rtpcpu, cpu);
+> >
+> >                                 WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp=
+->cblist));
+> > @@ -511,30 +531,32 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *=
+rtp)
+> >  // Advance callbacks and invoke any that are ready.
+> >  static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tas=
+ks_percpu *rtpcp)
+> >  {
+> > -       int cpu;
+> > -       int cpunext;
+> >         int cpuwq;
+> >         unsigned long flags;
+> >         int len;
+> > +       int index;
+> >         struct rcu_head *rhp;
+> >         struct rcu_cblist rcl =3D RCU_CBLIST_INITIALIZER(rcl);
+> >         struct rcu_tasks_percpu *rtpcp_next;
+> >
+> > -       cpu =3D rtpcp->cpu;
+> > -       cpunext =3D cpu * 2 + 1;
+> > -       if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+> > -               rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext);
+> > -               cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cpunext : =
+WORK_CPU_UNBOUND;
+> > -               queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+> > -               cpunext++;
+> > -               if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim=
+)) {
+> > -                       rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext=
+);
+> > -                       cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cp=
+unext : WORK_CPU_UNBOUND;
+> > +       index =3D rtpcp->index * 2 + 1;
+> > +       if (index < num_possible_cpus()) {
+> > +               rtpcp_next =3D rtp->rtpcp_array[index];
+> > +               if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_deq=
+ueue_lim)) {
+> > +                       cpuwq =3D rcu_cpu_beenfullyonline(rtpcp_next->c=
+pu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+> >                         queue_work_on(cpuwq, system_wq, &rtpcp_next->rt=
+p_work);
+> > +                       index++;
+> > +                       if (index < num_possible_cpus()) {
+> > +                               rtpcp_next =3D rtp->rtpcp_array[index];
+> > +                               if (rtpcp_next->cpu < smp_load_acquire(=
+&rtp->percpu_dequeue_lim)) {
+> > +                                       cpuwq =3D rcu_cpu_beenfullyonli=
+ne(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+> > +                                       queue_work_on(cpuwq, system_wq,=
+ &rtpcp_next->rtp_work);
+> > +                               }
+> > +                       }
+> >                 }
+> >         }
+> >
+> > -       if (rcu_segcblist_empty(&rtpcp->cblist) || !cpu_possible(cpu))
+> > +       if (rcu_segcblist_empty(&rtpcp->cblist))
+> >                 return;
+> >         raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
+> >         rcu_segcblist_advance(&rtpcp->cblist, rcu_seq_current(&rtp->tas=
+ks_gp_seq));
+> > --
+> > 2.17.1
+> >
 
