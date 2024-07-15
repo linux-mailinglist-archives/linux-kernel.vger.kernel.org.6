@@ -1,126 +1,163 @@
-Return-Path: <linux-kernel+bounces-252243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4415B93107D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CDB93107F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79ECB229C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E638E1F22286
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20582185E66;
-	Mon, 15 Jul 2024 08:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C316186296;
+	Mon, 15 Jul 2024 08:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S5Bpm5kz"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gEkwye/B"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52549185E52
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF0C185E52
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032850; cv=none; b=onn/REvYmbhroq2iPzdStyacCGJe4rbNeKxxpC1d9R2FTYKRmZtBgt1lP/J6CtGz42bZM6qhLHsnK1NvJa8/9pWeNxqaBvvgX6PSzrIQleSfwZ/jfK7daNA9TDbtcdip/gXsXxP4a7x2cmEeP84ahkBGaV1Cn9LRnB7BUW/sd0Q=
+	t=1721032866; cv=none; b=NzU255kBbDzlsXfKiKMuCqVEDHfFWs89tR4Fo5z8E+uZhAwfv+T6HOp5AefqvJir4cvXFCnfweLyyiz6vns6zTW0aEqonEjBFGE8JorOAD9RFFySoTSmB1s3w6DIMwvSCJSOfYrN+IOlE43RewYSeBGWBc0bsboJiJOwNrvkk/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032850; c=relaxed/simple;
-	bh=6GvFMbwUATk1sUXZPl4JjNM3bArP2OemPHis6rIs1Wo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GgYN8LR9y+Je2BK8aKouxeK+j3so7BGGpdohrNHIcnshUKGV86wvX8C65Oh2TjkPd2vMx7p9Nc39Qtz0EB1PNURqXAH6rNmgbN9rQ96kCj8BiQME8SFZAPNOkFpkJDsLSNBWJTOCNiPJ9Wbybl7UL0m85a9MfTbcnqpesg+AfJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S5Bpm5kz; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso29123945e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:40:48 -0700 (PDT)
+	s=arc-20240116; t=1721032866; c=relaxed/simple;
+	bh=RUbOu802FObA7IIjMs25LzRHhyMkjLGv4VUMVW8rvAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JP4pwEGmiKNQr8/y5HWiNpA7xS8SyC6xwIawST7hk9LSmwE1qsBhYrWTm7c6K1bJzzO78RVpDyF8Y2gF/h5LsKmRJ+rWSgfwwoujP+jVjbEB74tssEMwdhoTJRA6oQOib1zafbhc3j7i8hvIw75TljiNrgcLIYcYNOUTrwbYfd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=gEkwye/B; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367ad05c7c7so303423f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721032846; x=1721637646; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eHmMsEVmf8JfSBcSjUAB0cZkcplmejuDCV0HeNhunZE=;
-        b=S5Bpm5kztS/wQxSqEXxgUitFkdfMIFaoaefj1gFwhr0WZvh4H8Q0a8qtu1p4bGUwra
-         K1Eqa5Tl9g2lb0Fw/Ya1t0t8DBsJfUB4R8bXv7StqUdKf+wiIfW/KF4fSyC0UmMwcd8a
-         bTeHUpxZ6DEVD0MZZyDikR9HCsfUSEi4RYj3Um1NEoVuESM2YBJroVYGocjIpcBLUXIe
-         oeNA512SQQ+xeYFx1Moan013s7CXXDJCY5zvJiTrGdIPUD9a8ysX5uxSz2in2dwrw38R
-         TxkdBWW0SfwOMk/bWPS9toX3LhoAPCQ8q2aZR5fBNTlhNyitvbikEIPljTayRpftpZRW
-         lEtQ==
+        d=ffwll.ch; s=google; t=1721032863; x=1721637663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0wE9o0AoaxkCNt6yWEqEM1FfzrCaKVi8ZoRBGSgkms4=;
+        b=gEkwye/BvrHnFakG4gXUwazfOgSPGzRS65eoVNdDD0ubZ+elGfzyH5rGip8pGGUKdc
+         4S9Y2K7jdUjP+AZ3qslm2ePmguyDwHvwMc4JapDRKBlG105YUE5uisig6oQSiBziZKvZ
+         gSDy5c/qQsGTPLn1cenyOvrcpRcNM5M1g+j7I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721032846; x=1721637646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721032863; x=1721637663;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eHmMsEVmf8JfSBcSjUAB0cZkcplmejuDCV0HeNhunZE=;
-        b=Dv+SnKGxGbiIPksC85E9vZ92ZZHKomTBTWEkK5CfmlPagzkjaYFS2t3qGCYOX9toId
-         ysSFXclGDXgymch/sE5ZN1XY0Kdb6CKRaDy84UpWlWUEqCB+e++NlzYRkIyQOpHlolkZ
-         pzVFs/5O/4uj+knev9S5ZUfxIoM12zdr2SzS8V7yhDV3gtohkiDTeLIyCxAzIytfeimc
-         fm3x1mMIQ+Gs18Sj0Tu/LulcMxdt6VFxdP2ksY9oHS4M9Y5gSmQmLrP1PVGnJ2zZv+lf
-         IW08Tb4ZUaH8FnnQrF0O7Nm9yhPQ4h1W8bOxI6Ginwvko9mDpxjD0kK9AYhEUcONwtc9
-         0gvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbFGixO6X69dKZbdW4ZKALftEOWE65Yjb5rYklclNlPTsr2ofmeaCS3kAcgvh8LTU8EghdBgITEhXj9d9ebJRij+Gnrcvh7xe8lObw
-X-Gm-Message-State: AOJu0YyUB6FNJNufcW5rnXHpfplmfMeTfhKOYph163P2EzmTSb6YJtlW
-	HGzCqMDPClrC1UAaMT3HXZ8CMMyVKpLwykLUgO39Y6Or4+ApoDkjcdpbqclnFtY=
-X-Google-Smtp-Source: AGHT+IEq9NHTu5d9NOH12PpLGxN0a5a7Quiyv4R9B8DpiRqNRjUD8dabhuJrMp+F5YO9PhasKO+KNw==
-X-Received: by 2002:a05:600c:5125:b0:427:985b:178b with SMTP id 5b1f17b1804b1-427985b188emr84919855e9.16.1721032846220;
-        Mon, 15 Jul 2024 01:40:46 -0700 (PDT)
-Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc2efsm113024225e9.36.2024.07.15.01.40.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 01:40:46 -0700 (PDT)
-Message-ID: <4b7888b7-8848-4374-b532-f65cefd40e56@suse.com>
-Date: Mon, 15 Jul 2024 10:40:44 +0200
+        bh=0wE9o0AoaxkCNt6yWEqEM1FfzrCaKVi8ZoRBGSgkms4=;
+        b=ecVgmj55LQ4YrnQ+d7rvAQ4eb/cMzVquowibCDfXu5iYSGb6SEv+6YJjP28XiPWGQl
+         5P0MbmoA6mryAAgdh9tdSz5fS7DDTJ/KcAzxRQLl07ceYqhvXvjsEvgWzAjMJJp+LD09
+         bxcU5138gUZ11rn6gPWCtrSvizoYn8/BYtVWOd8PBhwfyvQ35pRemSHgcjpZWvBl9kdt
+         gdJw8NNHEeFw7UxMWZpKQjDILj7E57DvSxC2mdHW5XmPnNsOHXBFr6hqGjOJc2Xab73/
+         AYluEJc9vtNPLxjlHQGattSinrkIy/VR++I1bt52R4OaruvdYXWnf1X0MxDc04nBi/OG
+         KfIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh8P89X1KKrtC5uHlN5zC2CTrX+rQflgvWEbhdBPmWlKG1Xnm/WiCfoaFhhPi09PkOvTdCzifw7f/hISET2aBYe4YQWjV+xjXQFTII
+X-Gm-Message-State: AOJu0YzLSLpvOKIBGsjvUz8pLOQzWXAndYDaCcxnqUb9MoMD6mazbSCA
+	Vgi5xAKGAbR8NMqtj6V0FT9iMtGCDo0QfbfHS0C6BkS+f5LJBnuTRCDZ+nsXHPY=
+X-Google-Smtp-Source: AGHT+IEnN6FOav9A3AKqXktLUvs+7f+spQpY4HMaSuJJNHw/kLWQn/dIV7dG+F9Zkj8/H4T8tKXNZA==
+X-Received: by 2002:a05:600c:3b86:b0:426:5dd5:f245 with SMTP id 5b1f17b1804b1-426708f1979mr107374755e9.2.1721032862752;
+        Mon, 15 Jul 2024 01:41:02 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc229sm112008435e9.38.2024.07.15.01.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 01:41:02 -0700 (PDT)
+Date: Mon, 15 Jul 2024 10:41:00 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Cc: "Alexander F. Lent" <lx@xanderlent.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
+	Krystian Pradzynski <krystian.pradzynski@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] accel/ivpu: Add missing MODULE_FIRMWARE metadata
+Message-ID: <ZpTgnNxSNbbeEWQ8@phenom.ffwll.local>
+Mail-Followup-To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	"Alexander F. Lent" <lx@xanderlent.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
+	Krystian Pradzynski <krystian.pradzynski@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240709-fix-ivpu-firmware-metadata-v3-1-55f70bba055b@xanderlent.com>
+ <35a7963e-e92b-4c73-b03d-a846e93adf5a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
-To: Hongyu Xie <xy521521@gmail.com>, stern@rowland.harvard.edu
-Cc: gregkh@linuxfoundation.org, oneukum@suse.com, brauner@kernel.org,
- jlayton@kernel.org, jack@suse.cz, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, xiehongyu1@kylinos.cn
-References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
- <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
- <a782c5bc-fc8b-43ad-9c6e-1e6799243364@kylinos.cn>
- <8a16e1c2-fd59-4279-8b36-806a214385b6@rowland.harvard.edu>
- <b15d0ba0-e133-4df7-8371-a701ec5005fb@kylinos.cn>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <b15d0ba0-e133-4df7-8371-a701ec5005fb@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35a7963e-e92b-4c73-b03d-a846e93adf5a@linux.intel.com>
+X-Operating-System: Linux phenom 6.9.7-amd64 
 
-On 15.07.24 03:13, Hongyu Xie wrote:
-> From: Hongyu Xie <xiehongyu1@kylinos.cn>
+On Wed, Jul 10, 2024 at 12:23:06PM +0200, Jacek Lawrynowicz wrote:
+> Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
 
->>> When will "a reset user space has not requested" happen if there is a
->>> reset_resume in usbfs?
+I'm assuming you'll also apply this one?
+-Sima
 
-The literal answer to your question is: during resumption
-of the device or when power was restored to it.
-Before reset_resume() is called.
+> 
+> On 09.07.2024 13:54, Alexander F. Lent wrote:
+> > Modules that load firmware from various paths at runtime must declare
+> > those paths at compile time, via the MODULE_FIRMWARE macro, so that the
+> > firmware paths are included in the module's metadata.
+> > 
+> > The accel/ivpu driver loads firmware but lacks this metadata,
+> > preventing dracut from correctly locating firmware files. Fix it.
+> > 
+> > Fixes: 9ab43e95f922 ("accel/ivpu: Switch to generation based FW names")
+> > Fixes: 02d5b0aacd05 ("accel/ivpu: Implement firmware parsing and booting")
+> > Signed-off-by: Alexander F. Lent <lx@xanderlent.com>
+> > ---
+> > Hi Jacek,
+> > 
+> > Thanks for catching the error, and for the more succinct comment.
+> > Please find v3 attached.
+> > ---
+> > Changes in v3:
+> > - Simplify comment, per review.
+> > - Fix typo in 40xx firmware path, per review.
+> > - Link to v2: https://lore.kernel.org/r/20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com
+> > 
+> > Changes in v2:
+> > - Only annotate the module with the production firmware paths, per review.
+> > - Drop macros for de-duping firmware fileames, just use string literals, per review.
+> > - Link to v1: https://lore.kernel.org/r/20240705-fix-ivpu-firmware-metadata-v1-1-704b73852d92@xanderlent.com
+> > ---
+> >  drivers/accel/ivpu/ivpu_fw.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/accel/ivpu/ivpu_fw.c b/drivers/accel/ivpu/ivpu_fw.c
+> > index 1457300828bf..ef717802a3c8 100644
+> > --- a/drivers/accel/ivpu/ivpu_fw.c
+> > +++ b/drivers/accel/ivpu/ivpu_fw.c
+> > @@ -58,6 +58,10 @@ static struct {
+> >  	{ IVPU_HW_40XX, "intel/vpu/vpu_40xx_v0.0.bin" },
+> >  };
+> >  
+> > +/* Production fw_names from the table above */
+> > +MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
+> > +MODULE_FIRMWARE("intel/vpu/vpu_40xx_v0.0.bin");
+> > +
+> >  static int ivpu_fw_request(struct ivpu_device *vdev)
+> >  {
+> >  	int ret = -ENOENT;
+> > 
+> > ---
+> > base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+> > change-id: 20240704-fix-ivpu-firmware-metadata-3d02bd60768d
+> > 
+> > Best regards,
 
->> That's what a reset-resume is: a reset that occurs when the device is
->> resumed, rather than when the driver has requested a reset.
-> Right now this reset_resume did nothing, it's just an empty function to prevent rebind after resume.
-> Maybe I should filter out usbfs in usb_resume_interface when setting needs_binding to 1?
-
-Strictly speaking this is true. But it overlooks that at that
-point something has already been done to the device. Either it has
-literally been reset by instructing the hub it is connected to
-to reset a port or by interrupting the power supply.
-
-The important point in terms of semantics is that the device state
-has been lost. And it has been potentially lost within user space
-knowing about it.
-There is an inevitable race between a suspend/resume cycle and the
-next usbfs operation. Therefore After a suspend()/reset_resume()
-cycle the next usbfs operation must not be executed and an error
-returned to user space.
-
-At present that error is ENODEV.
-
-	Regards
-		Oliver
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
