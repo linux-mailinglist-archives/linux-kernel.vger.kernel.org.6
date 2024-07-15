@@ -1,119 +1,253 @@
-Return-Path: <linux-kernel+bounces-253116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73BD931CAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C13C931CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BF9282F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE331F21F4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3EA13CF86;
-	Mon, 15 Jul 2024 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B9713C9D9;
+	Mon, 15 Jul 2024 21:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gt7UYiuZ"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fF4JVtLW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C3F2837F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FCE3BBC2;
+	Mon, 15 Jul 2024 21:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721079480; cv=none; b=RUJIm3PaNzzukJeLXLfVQu/ibAnRY6I2wsGEHpFFMI1nPi+0cgP43qkCiBPzNwevxrWb1k1nNZ9KDuOTKEwJNRHnNZk0Ng/bhYQdouGVOavjykq7HTGTVNHGj/iA5C9UViMzSafFYFHtALnMuNQOIKQNKcw++ZkfJki8ceXAjhU=
+	t=1721079666; cv=none; b=YWzzBi0zKbI+hbST9Qs6Oyp3zYRtiHhnLoufmfKdBViB1pjDeUisQ01LadgmV4IpazNlzcw+PtviaZjQ530gMhgacvXMbjcExRoWH3RUnnhn1zKTYckjThHZMW3heyYiPmOr72dPRF3klpekTQEqmzMAtXrFf8W6NgtNX+QXrlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721079480; c=relaxed/simple;
-	bh=XdO7wIyX46Gc6A4zpOoYKHrIE5C8ZCiQW+adQqLkIOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IfSlyGj2KuZmnzKny1jrKF61AH7tI/oZrFHPN3WAzwZWZ/JMRInCS9QH4Uw4i12CZIu8L8xh8gORUIMU0axkkSx2mb3+xYFiiI+zUe+LJFSwAvf7SNNsqvzl1Msc1iGYXNUttbjKsrRu38O6YQYxuu6z9sRgfoENnFW8y5h4OWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gt7UYiuZ; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d9400a1ad9so2787927b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721079478; x=1721684278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tYT7RZte+jpSY6YDB1OuEYOLCT1GQosdmk1JeVvIqQo=;
-        b=Gt7UYiuZMpSUFOAnI2A2VIqiLf3ai6Ckptsck00+Y7szPSRsJC9D5MxdZP3ttNTWmf
-         8ULv4xWypebnfH1Vvci17QIHiAL0Fr7HrWie0erviyGsyhiR/LgtVtWG+PCJNfP6ZsbC
-         W3Trv4vA6mByS2pI9aUpQv5Fj6bMUv/3JQuIqpE8BZh5bAs58kvCMh935p233MsS3lWZ
-         76lTjTJwEXWlf34RRjn0DLOJVmB0skICLhe4hsnl2PffhANYFKxpy7E2QeUD2QddKmLb
-         QAnmLWjWRx0ZaEZ924rxXx8hiw6PBdbSUj2WMQDbs5ToPxEGP4ZPofV3g/gxUIK8gIQW
-         nlPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721079478; x=1721684278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tYT7RZte+jpSY6YDB1OuEYOLCT1GQosdmk1JeVvIqQo=;
-        b=YjBWzxXH3pYBaHRjuZstSBwLV1AIxN8SUD6ZgK0axA+9jMHAXMIHFLPpZparl5Kpex
-         1j6p2Ug4naZtDLP5jH3L/+Wd6oqtxmljsaYDOWwgzVPm2PTOwOzcwiNG6dNSW3ad3ZOY
-         fabESouezYECBRx/wYKMmDF39kNb77Mu/feyItsLD4fqH9rHUJGCIIa29RGLDcBst5Jj
-         TsuHxIiagiwHr9lQg7dWrTSoW4WW5GeRzIaeJU3Mhy4tqrLOk4mXAcDXu04Wj2LZ1+Iw
-         ENGoHTeD2jIV6wjoXsikscKMgOGPNuC8/yOQYYMrdMFUssscDgzHq5TBJeELQhC9fcoW
-         0zuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVovzA4F0jD+iIS6LWiDl4AAoOx4RUc7ErEHswJL3SijQfrzLMuoZHwJcO/BvSAGXw/7GeK9qTQvqvnIUznHVjn5W/PYwYjI+kA9+A
-X-Gm-Message-State: AOJu0YzSpZHoGK1bqe6Ix7WQrA/f/ASiyofmWZ7smpi30/irORR8TWgs
-	6T5ti/xrrCz6wjXituth5zt0SBMSWLZ4SI7gEDi/R2pz/3jN34tfAyU3Tri7Co6kmvosZ/X1hAC
-	sONa4ScDmsXdif6fjDrouGK3m9v++QJR0pxzc
-X-Google-Smtp-Source: AGHT+IFo5Jg9Iet8BbL/iNTVTBM9bSolkTbUgSvwA/5qBUXi+M06ocwSdrUcSEL7avW0kur1t8VRn6Y+Ut7Wj828r/M=
-X-Received: by 2002:a05:6870:390a:b0:25e:bdf7:2883 with SMTP id
- 586e51a60fabf-260bde68931mr39462fac.25.1721079478153; Mon, 15 Jul 2024
- 14:37:58 -0700 (PDT)
+	s=arc-20240116; t=1721079666; c=relaxed/simple;
+	bh=PwA2652JlJnz5K9p0q2tEwhs5eV6Sq/FtsBPNbPwZsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ktra/K/82M5SNQI+LMRmutgLyycIbfZEIg2zgQwk9UzVO50Okq+XwGHWOn1zXOuHsroWyIoiOP0QAj1ePQ2/IfQdM9tHp35YH6xHSswg6D+ObCiIXpF67ILdllzEb6Q5O4dePgrn8qNYCXlGcDVg7eO5OHJKixV/4dbyEsqSYNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fF4JVtLW; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721079664; x=1752615664;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PwA2652JlJnz5K9p0q2tEwhs5eV6Sq/FtsBPNbPwZsg=;
+  b=fF4JVtLW+nJvSxrBhs4mP/EhP2xBxx1/pL6c5gP7v5gM/vF6GiN9rRZK
+   V+3koFRS91edwUStJOhCpHYG/henqVMYy/rHq1gZiLQkNcZoBU8a2UStu
+   NtBvPzjH7MvefnUCYj35bSPy5fZ9ypzGQZbUFwUNmg4VJV5dFnErabHKe
+   rh7CeIJmhurvmxrBg0PSFK5LpwogEf8M9cJmPCMaInVeFlvve/DwFFeUH
+   2rSbEl7rIK6oT/9gnLipz8sI1cl+obH2LWkCrWmvXskQVP6RVt+jTopCZ
+   +Fy2ftRBFxEOIpCk9stlUMn6A2xwR/atcxiH1Yfoc9Auv6WdJL689/TI2
+   Q==;
+X-CSE-ConnectionGUID: rAUt6OylQximujQbqXMXGQ==
+X-CSE-MsgGUID: sfiyiyHMT4e7JgEzonkVYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="41013559"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="41013559"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 14:41:04 -0700
+X-CSE-ConnectionGUID: J5GnYYHxT9eDvwEtB5ny5w==
+X-CSE-MsgGUID: cca2o6NZTNWyZG47SSGLiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="54683053"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 14:41:04 -0700
+Received: from [10.212.96.36] (kliang2-mobl1.ccr.corp.intel.com [10.212.96.36])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 6F39420B8CD6;
+	Mon, 15 Jul 2024 14:41:02 -0700 (PDT)
+Message-ID: <48b4bfb0-d0c7-4d1f-9e52-06e873646366@linux.intel.com>
+Date: Mon, 15 Jul 2024 17:41:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com> <20240710234222.2333120-3-jthoughton@google.com>
-In-Reply-To: <20240710234222.2333120-3-jthoughton@google.com>
-From: Anish Moorthy <amoorthy@google.com>
-Date: Mon, 15 Jul 2024 14:37:22 -0700
-Message-ID: <CAF7b7moeOeJEv+zPQ-VQrP8M+O7r8Ru3GZjfrAKj25Hc0pQGnw@mail.gmail.com>
-Subject: Re: [RFC PATCH 02/18] KVM: Add KVM_CAP_USERFAULT and KVM_MEMORY_ATTRIBUTE_USERFAULT
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [perf vendor events] e2641db83f:
+ perf-sanity-tests.perf_all_PMU_test.fail
+To: Ian Rogers <irogers@google.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
+ Namhyung Kim <namhyung@kernel.org>, Weilin Wang <weilin.wang@intel.com>,
+ Caleb Biggers <caleb.biggers@intel.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202407101021.2c8baddb-oliver.sang@intel.com>
+ <ec744c86-b73e-417a-8e3a-c07142bf37d1@linux.intel.com>
+ <CAP-5=fUqGcnGvB71jHHTecLqcky6+TrFo+hWb=eBxZjxfe_m-g@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fUqGcnGvB71jHHTecLqcky6+TrFo+hWb=eBxZjxfe_m-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Not to nitpick an RFC, but since the stuff in this patch seems less
-likely to change I think you should avoid using #ifdefs
 
-For instance
 
-On Wed, Jul 10, 2024 at 4:43=E2=80=AFPM James Houghton <jthoughton@google.c=
-om> wrote:
-> +static inline bool kvm_userfault_enabled(struct kvm *kvm)
-> +{
-> +#ifdef CONFIG_KVM_USERFAULT
-> +       return !!rcu_access_pointer(kvm->userfault_ctx);
-> +#else
-> +       return false;
-> +#endif
-> +}
+On 2024-07-15 4:11 p.m., Ian Rogers wrote:
+> On Mon, Jul 15, 2024 at 1:05 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>> Hi Ian,
+>>
+>> On 2024-07-10 12:59 a.m., kernel test robot wrote:
+>>>
+>>>
+>>> Hello,
+>>>
+>>> kernel test robot noticed "perf-sanity-tests.perf_all_PMU_test.fail" on:
+>>>
+>>> commit: e2641db83f18782f57a0e107c50d2d1731960fb8 ("perf vendor events: Add/update skylake events/metrics")
+>>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>>>
+>>> [test failed on linux-next/master 82d01fe6ee52086035b201cfa1410a3b04384257]
+>>>
+>>> in testcase: perf-sanity-tests
+>>> version:
+>>> with following parameters:
+>>>
+>>>       perf_compiler: gcc
+>>>
+>>>
+>>>
+>>> compiler: gcc-13
+>>> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz (Coffee Lake) with 32G memory
+>>>
+>>> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>>>
+>>>
+>>> we also observed two cases which also failed on parent can pass on this commit.
+>>> FYI.
+>>>
+>>>
+>>> caccae3ce7b988b6 e2641db83f18782f57a0e107c50
+>>> ---------------- ---------------------------
+>>>        fail:runs  %reproduction    fail:runs
+>>>            |             |             |
+>>>            :6          100%           6:6     perf-sanity-tests.perf_all_PMU_test.fail
+>>>            :6          100%           6:6     perf-sanity-tests.perf_all_metricgroups_test.pass
+>>>            :6          100%           6:6     perf-sanity-tests.perf_all_metrics_test.pass
+>>>
+>>>
+>>>
+>>>
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <oliver.sang@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-lkp/202407101021.2c8baddb-oliver.sang@intel.com
+>>>
+>>>
+>>>
+>>> 2024-07-09 07:09:53 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 105
+>>> 105: perf all metricgroups test                                      : Ok
+>>> 2024-07-09 07:10:11 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 106
+>>> 106: perf all metrics test                                           : Ok
+>>> 2024-07-09 07:10:23 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 107
+>>> 107: perf all libpfm4 events test                                    : Ok
+>>> 2024-07-09 07:10:47 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 108
+>>> 108: perf all PMU test                                               : FAILED!
+>>>
+>>
+>> The failure is caused by the below change in the e2641db83f18.
+>>
+>> +    {
+>> +        "BriefDescription": "This 48-bit fixed counter counts the UCLK
+>> cycles",
+>> +        "Counter": "FIXED",
+>> +        "EventCode": "0xff",
+>> +        "EventName": "UNC_CLOCK.SOCKET",
+>> +        "PerPkg": "1",
+>> +        "PublicDescription": "This 48-bit fixed counter counts the UCLK
+>> cycles.",
+>> +        "Unit": "cbox_0"
+>>      }
+>>
+>> The other cbox events have the unit name "CBOX", while the fixed counter
+>> has a unit name "cbox_0". So the events_table will maintain separate
+>> entries for cbox and cbox_0.
+>>
+>> The perf_pmus__print_pmu_events() calculate the total number of events,
+>> allocate an aliases buffer, store all the events into the buffer, sort,
+>> and print all the aliases one by one.
+>>
+>> The problem is that the calculated total number of events doesn't match
+>> the stored events on the SKL machine.
+>>
+>> The perf_pmu__num_events() is used to calculate the number of events. It
+>> invokes the pmu_events_table__num_events() to go through the entire
+>> events_table to find all events. Because of the
+>> pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. So
+>> the events for cbox and cbox_0 are all counted.
+>>
+>> When storing events into the aliases buffer, the
+>> perf_pmu__for_each_event() only process the events for cbox.
+>>
+>> Since a bigger buffer was allocated, the last entry are all 0.
+>> When printing all the aliases, null will be outputed.
+>>
+>> $ perf list pmu
+>>
+>> List of pre-defined events (to be used in -e or -M):
+>>
+>>   (null)                                             [Kernel PMU event]
+>>   branch-instructions OR cpu/branch-instructions/    [Kernel PMU event]
+>>   branch-misses OR cpu/branch-misses/                [Kernel PMU event]
+>>
+>>
+>> I'm thinking of two ways to address it.
+>> One is to only print all the stored events. The below patch can fix it.
+>>
+>> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+>> index 3fcabfd8fca1..2b2f5117ff84 100644
+>> --- a/tools/perf/util/pmus.c
+>> +++ b/tools/perf/util/pmus.c
+>> @@ -485,6 +485,7 @@ void perf_pmus__print_pmu_events(const struct
+>> print_callbacks *print_cb, void *p
+>>                 perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
+>>                                         perf_pmus__print_pmu_events__callback);
+>>         }
+>> +       len = state.index;
+>>         qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
+>>         for (int j = 0; j < len; j++) {
+>>                 /* Skip duplicates */
+>>
+>> The only drawback is that perf list will not show the new cbox_0 event.
+>> (But the event name still works. Users can still apply perf stat -e
+>> unc_clock.socket.)
+>>
+>> Since the cbox_0 event is only available on old machines (SKL and
+>> earlier), people should already use the equivalent kernel event. It
+>> doesn't sounds a big issue for me. I prefer this simple fix.
+>>
+>> I think the other way would be to modify the perf_pmu__for_each_event()
+>> to go through all the possible PMUs.
+>> It seems complicated and may impact others ARCHs (e.g., S390). I haven't
+>> tried it yet.
+>>
+>> What do you think?
+>> Do you see any other ways to address the issue?
+> 
+> Ugh. It seems the sizing and then iterating approach is just prone to
+> keep breaking. Perhaps we can switch to realloc-ed arrays to avoid the
+> need for perf_pmu__num_events, which seems to be the source of the
+> problems.
+> 
 
-can be
+I think a realloc-ed array should have the same drawback as the first
+way, but bad performance.
+Because the pmu_add_cpu_aliases() in the perf_pmu__for_each_event() only
+add the events from the first matched PMU. If we don't fix it, the
+UNC_CLOCK.SOCKET of cbox_0 will never be displayed.
 
-> +static inline bool kvm_userfault_enabled(struct kvm *kvm)
-> +{
-> +    if (IS_ENABLED(CONFIG_KVM_USERFAULT)) {
-> +       return !!rcu_access_pointer(kvm->userfault_ctx);
-> +    } else {
-> +       return false;
-> +   }
-> +}
-
-(however kernel style tells you to write that :), the cap-supported
-check can be moved into kvm_vm_ioctl_enable_userfault(), etc
+Thanks,
+Kan
 
