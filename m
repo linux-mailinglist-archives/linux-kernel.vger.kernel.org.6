@@ -1,183 +1,137 @@
-Return-Path: <linux-kernel+bounces-252245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E35F931083
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFA9931085
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1945428276F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E871F22511
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF15E186E44;
-	Mon, 15 Jul 2024 08:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8EF187327;
+	Mon, 15 Jul 2024 08:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/SerU87"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="I8MmniB7"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402E81849ED
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5807186E50
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033030; cv=none; b=ex7gBUjBOfizQgZB+P2LGjzUxqlsdcndvQtmTT0JRmwjIXWV8QmlNraW+sEnVIDhhEl1KPqLIXWP8hq3lJfiZybbqKBtuVYkzaf3hd3qs+e0isqaUnLeysFkungd7fXRCgA6xM7pd/Zst50td7N53PmlchSQ0kRvQ4SPajg6rnk=
+	t=1721033061; cv=none; b=MXIc6EZ3iV7FvNu6NqgTgSTNPhoGoq5aBnsMXFiLXCPDzZBaFZhBqnclKncoQrFRVtML6wIQgQV76rlkGCppnuenXCpVyE/WT8sfeJb5Y+xCcRzBso2SL5BqMqC/0/3AIaBZ/ASwQCelbsG7+A0vj6OZkgZ+2l7GOkEgNQJ2PEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033030; c=relaxed/simple;
-	bh=S6vkVSNbhG89L370XvJhZTmegxYe3oPBTnuAUQ0eJrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mH8iU7IGLM+UKuJ8lF7QQJF1OhtqIlDxIHeweznHH0K6MqWAxE7vUx5JcMZDP8wJ2Bmzv0a3aMc7lXhs+LEcdvTtNJUmS2BY/60JQrxkQWUfG+BYHLk5iu0OJkRysxvRqRdfk34KG256xbwBiXKM6XN66Wv1O8TXjcnFTJUTehU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/SerU87; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9c6b5a62so4178240e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:43:49 -0700 (PDT)
+	s=arc-20240116; t=1721033061; c=relaxed/simple;
+	bh=ioJwmCwEIVCH6O2g8AfPZFZgHDKJSuHyo52Rd8aRs8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rZkONJ5N6qCOc4cwH25HLmFQpH3LplGy7WMFy0YMxR5YNIETOfj7YCuf1Wte+b80i6/hAddnmUkPTrLwMP2g5uWiA/7pAfDO7WirwLNPALyIl1DBYB1klgSN932DcCKsd7+NAIFH1uqjpyc6o45c6LWWBXUlff9Nctb78bfhzR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=I8MmniB7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so27205155e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721033027; x=1721637827; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsdzpTRLXnS6olUqpcfoyueExAl5OEraVlLDAUpRwyY=;
-        b=B/SerU870wcbZokm85hUBUHwM+9z6ZL7qOIDyFTS43Wc3xw5Id9ydGmQ99eJkCkep5
-         iO9NtuD9iTSNFJENzvyIwv+69hz8JjbPLH35lqpPuyHKlRZxInOTM9gsCAbocD9rKvvl
-         2gikCfDvdnWfwfBWC/PumTOelhnXcxkos0rZuS5xehTl8477ogd3CGJ6nQHy6iUCbg05
-         WAsDRspgyn8oKdhrLgaN7XI3bwohymNQ5udHvNQWjqeXUd9GQQAUw5padNCk6kCZk+iS
-         eszqwMJu35bf/qM0XsimphjUKzHQBEeB6tJU8mal9YyCZm7hZf2J/SL5eSsGjaI5wGrn
-         Oshg==
+        d=tuxon.dev; s=google; t=1721033058; x=1721637858; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WM0yZ3dZzzFTTxe4hgvAgtIJwKRKDgqcOStwGt2gSJ8=;
+        b=I8MmniB7fY2847u0qQ9SZWsxuSmKXRVsE8GPOfKyqbP7kzRdHSQRiZNnQkBkjohpo7
+         68Q2+x3aAenv8AKAFERkm0B0LVu5asZlYWz5LpE/Q05K2pB4hSMpy2TJxPVCvA9wucpb
+         h3NPHu06GXrbqc9vUcnqUKqkRPoA5iwQ22yJDFi1mVskLrfqRLgoy2KcGIWjVdkC0j8q
+         1iaFPyUzzEQB7gA89uBGv0ZscpzDA859QMBOdcS6czkih71ZjIdBP3eOcVqosEObj/Gy
+         vviB8NCzqh8n4XgXP4iTI0xkL2nS9vkmtv0Gyp+Gnfa+ToHRtZ/Rd18utXNA5spoGqrR
+         Ns5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721033027; x=1721637827;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EsdzpTRLXnS6olUqpcfoyueExAl5OEraVlLDAUpRwyY=;
-        b=USAYA2i8/GNYjwNMmZoioL484QKUmOyOM5t58FY7DCpzerEINLvqwsRmpcMDmWMnXx
-         TRo+byrostww01NFZxWtxqNkAXZHFfPqY5TDBcqSDJRjNQ0k05bIlnkPNqGky7S7p3qV
-         1YifvrKo1hLTXlQkC9VYfvXRz73WvLsNko+oLoPpuZLE8mXTXWTZtYqiKytXOQK2zKgE
-         BVnO1Vtk1mBF8CvKo2ojZH/nLbsDLIlQ0a+sboHFPIFAiNpalrup7fjjVmR5MK2OD6ph
-         eLKXgnEANS3CMwJ+RfdV6lXsrQ/XDD+4D3VtbjJaK5MLUiRhtL+Kvx5/rdbXig+9aFiK
-         fAEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwBAhD8Fjt+h3drtOXEhlaq7mSBiAu5b0p/a3eOabnoajHb+MJuDC+0S4KCc0rKNE1OIKAhqhy/3Kkschf7rLwExAFiSFEVTefcYKv
-X-Gm-Message-State: AOJu0YzeysDLaM0/rW7Rcwwx2jWVKHfDvoZbRNFGZfK8PlBRTP5PJArl
-	aSZ4N0p9xvVaKRRotUiqDITbyoZQQHINyQfwEZL4s+edWhm1B9veMhA9iLrF3Es=
-X-Google-Smtp-Source: AGHT+IFZ06GISOlCShv8E0xL7DUeyBRRoifs+3mdHj6HmVdE1N6FRa5TrRxeP5KnzTakGhRCH+kIzw==
-X-Received: by 2002:a05:6512:3f0c:b0:52c:de00:9c04 with SMTP id 2adb3069b0e04-52eb99d338amr14103866e87.48.1721033027358;
-        Mon, 15 Jul 2024 01:43:47 -0700 (PDT)
-Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb489sm77226925e9.37.2024.07.15.01.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 01:43:46 -0700 (PDT)
-From: Rayyan Ansari <rayyan.ansari@linaro.org>
-To: devicetree@vger.kernel.org
-Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: qcom,turingcc: convert to dtschema
-Date: Mon, 15 Jul 2024 09:43:10 +0100
-Message-ID: <20240715084313.14098-1-rayyan.ansari@linaro.org>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721033058; x=1721637858;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WM0yZ3dZzzFTTxe4hgvAgtIJwKRKDgqcOStwGt2gSJ8=;
+        b=YJnfqaDzdX2gMZ14UdIKWzkBWsueWFxPaMvQXeTn9mJZZjFWjpnuvh6O6/eXrWtP8L
+         2xVCEQvLUuVFPwQze+obY0OfL71W5+laXqUnbFjxoolnpSEAv5r+FWFQEYkhSAb0O/2J
+         GUFRisC2k6ZZrmZ958NgVXp/cyEtEywrdQgXqj22FBY6iNBdV55KZLH3y/iiv2xPo7Mb
+         yPSpQ9UVte3sbLLL5MoX36jpShYRs5aUGbieSJFn/300uAcn1Mv2mWRaHMtFYEqayL4i
+         3M04RZSYN818vCK7dxPI5Pbfvx4b+OBxGkNsJkhRJqymJEvkB7CcgW7OYFhA8FGq4Kgl
+         pKSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdb1CZypPbwfsBxKv2i5EqfhO+qYp2xvN1pJUtfDeDkC0jJhHZ1N+wMIz8w5BQ5EBo2L+Leii+XY2hxztfR6x2wv16Be87oPrHd/ey
+X-Gm-Message-State: AOJu0YysBAO0bdiP/D/Pk5j5CiES2gPUeZeC3/uMltjC/v4m8cxX6mjg
+	S9MGJRKJwm38JGqVRXGm2JFurzU2AS6aSEgGDVN6EtPNRwcAdqZV0lwIeWUVwx0=
+X-Google-Smtp-Source: AGHT+IGi4ZuAQ/yriu2Z9Cdv2XEyhj7rSOXhNHCWeEiNJIx9fF5ukvI9h0+hmRATjeo6CGGYegYPkw==
+X-Received: by 2002:a05:600c:a:b0:426:63b8:2cce with SMTP id 5b1f17b1804b1-426707cc06emr117802385e9.7.1721033058270;
+        Mon, 15 Jul 2024 01:44:18 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf20dsm5717442f8f.38.2024.07.15.01.44.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:44:17 -0700 (PDT)
+Message-ID: <0ff64285-8a88-421c-96c3-aa10decc8d05@tuxon.dev>
+Date: Mon, 15 Jul 2024 11:44:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 13/27] clk: at91: sam9x7: add sam9x7 pmc driver
+Content-Language: en-US
+To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
+ sboyd@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+ <20240703102800.195957-1-varshini.rajendran@microchip.com>
+ <ac4fbdb2-013f-40d8-9f92-1b489f172a60@tuxon.dev>
+ <ddefd4e4-b719-464b-b8bc-d4d69fa07cf1@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <ddefd4e4-b719-464b-b8bc-d4d69fa07cf1@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the bindings for the Turing Clock Controller, currently only
-used for QCS404, from the old text format to yaml.
+Hi, Varshini,
 
-Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
----
- .../bindings/clock/qcom,turingcc.txt          | 19 --------
- .../bindings/clock/qcom,turingcc.yaml         | 47 +++++++++++++++++++
- 2 files changed, 47 insertions(+), 19 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
+On 15.07.2024 09:46, Varshini.Rajendran@microchip.com wrote:
+> Hi Claudiu,
+> 
+> On 14/07/24 7:25 pm, claudiu beznea wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> Hi, Varshini,
+>>
+>> On 03.07.2024 13:28, Varshini Rajendran wrote:
+>>> Add a driver for the PMC clocks of sam9x7 Soc family.
+>>>
+>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+>>> ---
+>>>   drivers/clk/at91/Makefile |   1 +
+>>>   drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 947 insertions(+)
+>>>   create mode 100644 drivers/clk/at91/sam9x7.c
+>>>
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt b/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
-deleted file mode 100644
-index 126517de5f9a..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
-+++ /dev/null
-@@ -1,19 +0,0 @@
--Qualcomm Turing Clock & Reset Controller Binding
--------------------------------------------------
--
--Required properties :
--- compatible: shall contain "qcom,qcs404-turingcc".
--- reg: shall contain base register location and length.
--- clocks: ahb clock for the TuringCC
--- #clock-cells: from common clock binding, shall contain 1.
--- #reset-cells: from common reset binding, shall contain 1.
--
--Example:
--	turingcc: clock-controller@800000 {
--		compatible = "qcom,qcs404-turingcc";
--		reg = <0x00800000 0x30000>;
--		clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
--
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
-new file mode 100644
-index 000000000000..0a57e42fb4d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,turingcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Turing Clock & Reset Controller
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+
-+properties:
-+  compatible:
-+    const: qcom,qcs404-turingcc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
-+    turingcc: clock-controller@800000 {
-+        compatible = "qcom,qcs404-turingcc";
-+        reg = <0x00800000 0x30000>;
-+        clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
-+
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
--- 
-2.45.2
+...
 
+>>> +     for (i = 0; i < PLL_ID_MAX; i++) {
+>>> +             for (j = 0; j < 3; j++) {
+>>
+>> I now realize that we are alocating more than needed memory for each PLL in
+>> sam9x7_plls[][]. The number of columns for the 2d array is PLL_ID_MAX and
+>> it should be 3. I can adjust it when applying but I need you to run a
+>> simple boot test with it.
+>>
+> Yes. It boots and works perfectly with the change suggested. I am 
+> pasting the snippet below just to be on the same page.
+> 
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -198,7 +198,7 @@ static const struct {
+>          const struct clk_pll_characteristics *c;
+>          unsigned long f;
+>          u8 eid;
+> -} sam9x7_plls[][PLL_ID_MAX] = {
+> +} sam9x7_plls[][3] = {
+
+Great! Thank you!
 
