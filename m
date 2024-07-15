@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-252358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B575931213
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DC293120F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3693D2846BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B3B02843F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C6A18735B;
-	Mon, 15 Jul 2024 10:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuYE3Ukg"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E50818734C;
+	Mon, 15 Jul 2024 10:14:32 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A14187351;
-	Mon, 15 Jul 2024 10:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C2A18755E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721038479; cv=none; b=I4gJ0Ew6J1u244EnXjTbq1YxyYQJme5EiB9kawUYMD5wfmfEj4egvYddwS+LlcE85Oo7lo7CBJQIZzPHbRiSIM3VxyPIgkhfjdhZAzzNJ9KmLuSTXo00j3Che3Zz1ARMOkvrpc2r0KIRhsbBhLpZZsAH8z6l+rz6QUqHhgkvhU8=
+	t=1721038472; cv=none; b=oibLTWZFbFcexjBB74E44rzKnF4Fn2SOC4ygbGJUs46+hOr+fZXplIRj0/x9nLiqzllGDAOzqjsqb46zqeUHAyEPlfwpk+W81ecn33PvibsUhTqze/XTQgBpbZ8Ju8A8Ngp/m7GrkS+RBlZEq2z7DZP3bc6ApVioT1TiLD2IKPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721038479; c=relaxed/simple;
-	bh=cvtskF5eoAnrtbj2ZcVFAWrLxHptMH+5TmjsHrO9TmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pVPw2HKqSQO4DLJ1kfLxa1nxCOGGGJqOC8EvFX3ndlLtLIvK8wsZxSYLA2GKYZLKNw8HqdN/hs5U4YbLStWU8pbb9/77zRL/+N6jJNQUX77FDZARBj7oX57uvBYLYGmzHTrkpCkV5IHxtClBmC8USEKUwj80Db7PjTrYvd05Fxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuYE3Ukg; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48fe86bfde6so1360943137.2;
-        Mon, 15 Jul 2024 03:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721038476; x=1721643276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KlSTp+gpajOC7P7qdRROMLoOJOppx3av3sxHUMORs44=;
-        b=HuYE3UkgegT1s9O3jz2HB4M5v6RwRvnpr6wp2xMv5fiSBiu2NdOE2srp/fRYE6mgrc
-         RQ/aZ+fMu3d5n8C6PrSAgH+l/1iiMA4fiYkY/GjAL+fnUGe71jVKj7eT8vecCrmkUzV/
-         /XKORNVVAxZjAdGWOmkwdnEiTvKG6g0Ptz5cnsRij+SVbqmmD0NLGthxCZuGXtjOxUAp
-         /6Za6WIyMmx/YafVP4QSjIU+SySaEXWy+zMex8RZUFsWlR+UiasF/JrjggvXZRAdXEOi
-         nYHRngg/vkgh8k+I7kAKoumd4gWTLW/l2R/+RlaOEb00zZAnyPjTfQIW+yJlrHuNIA5I
-         gznA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721038476; x=1721643276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KlSTp+gpajOC7P7qdRROMLoOJOppx3av3sxHUMORs44=;
-        b=OKzmPtaL5TKyPEdZLcHeEjnBpiUq3oqcNDmMEWBmAKbPAmiHM909GVfHQKNJ1uEiM5
-         Tm9PQTfY/LLT+/Z+1JROeBgVDkecA7jeHh5ubLZiR2Vn7pR1Vp4gfQ5Y7/MErAI5CoLj
-         AiRa28PAodH9DnhGgNCR91sU6eJXnX4FetKNlnoCOgjuDgeMLzhNfLoEwjAq0nv8G1XI
-         ektTE4nv8zOY0RCvc/ycmpiYGE6lqA5f2hW7+Lq+IzBenEStBT4RAozIBw0X3b2kFtKe
-         8la0+zaS2wfEAq1f8jz0ZgsbgLpple7IQkrn6RNSP+3kowQyl3aLGmR7lLm6oL9mucGT
-         7ZDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0XE0oXgRIXDq75D/GIDjJXgK287kOCbbkS2EdRU34+o74Dg0iZ3hmI21Jg2a9lnJVIQ5S/tSGnzscvGHM3H1vsSE/aeOJLQ9pjgx1GEJxikgE4xW6tkb3KReKvrTCbhwsX6cNcmeLspTr+V9B6eNy0gAUJ6uuXJpVbIL2ZcY+NMNP9fSXVWZasFY=
-X-Gm-Message-State: AOJu0YyNVTyMO5G9/Ehwp4nzm+CyPE+fDM2IFD/4ExDf7V4u4rRgQLf6
-	i1drH4kJniRLkMUcPXeqdCJ6cmV4m5iEzuDOyYp8gJE5ssElbpz0g2vhtYOnKJyoh+RPVB/aSN3
-	g60SiyPKOdNRCLW1Unz/q8ENeia0=
-X-Google-Smtp-Source: AGHT+IG0U9QLP8qK1rfdDJ5nW9FNycPToMaosftpnLhD7NRXfuZKhlNwxlpZ43ZpbXXclARwQLeYaQSZt3tWOCX/4CY=
-X-Received: by 2002:a05:6102:3e84:b0:491:110e:cb03 with SMTP id
- ada2fe7eead31-491110ece05mr15481875137.32.1721038476497; Mon, 15 Jul 2024
- 03:14:36 -0700 (PDT)
+	s=arc-20240116; t=1721038472; c=relaxed/simple;
+	bh=2FrgoAReGtAU9NNfzP2Swd2Ae/oac1vx9uDc8XDbZ4I=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=XTwzuw3CscOEPjH077TsGICLm9WS2im8+GfKpQMnEhzotDhM1Li8zTF2vCFcP8Vn0QsjAKxTUUQQCqTdIFrpzLxH2h1sDaW6YFQ4AcEuoO7x56f4nLUhooZSAXy1JxVrYPywssfFMkvgsj0EyponWtiYkT2fkJfMiwywgfzvW5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubuntu-2204-dev.. (unknown [180.110.112.93])
+	by APP-05 (Coremail) with SMTP id zQCowACHjeVp9pRmxFxsAw--.40406S2;
+	Mon, 15 Jul 2024 18:14:02 +0800 (CST)
+From: Zhu Hengbo <zhuhengbo@iscas.ac.cn>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Zhu Hengbo <zhuhengbo@iscas.ac.cn>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: add tracepoints for page fault
+Date: Mon, 15 Jul 2024 10:13:55 +0000
+Message-Id: <20240715101400.39103-1-zhuhengbo@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240628131021.177866-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdW-NUdK23h7_tLe5nfgXHzFmJySFNCNTciZmJeHcxNSKw@mail.gmail.com>
-In-Reply-To: <CAMuHMdW-NUdK23h7_tLe5nfgXHzFmJySFNCNTciZmJeHcxNSKw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 15 Jul 2024 11:13:03 +0100
-Message-ID: <CA+V-a8tQcO-EK=eHgujaVQ2=ri00JK9d2rde5HZYxc5SSvpASg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: rzg2l-cpg: Refactor to use priv for
- clks and base in clock register functions
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHjeVp9pRmxFxsAw--.40406S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF45Gr18ZrWrKw1rtw17trb_yoWrZr4rpF
+	nFkF95Gr47Xwsa93yxuw1qyF15AanYyayjgry7Gw4Yvw4IqryUAws2vrWDtryxGr1kGFyI
+	9F4Yyrya9w15u3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUwr
+	WFUUUUU
+X-CM-SenderInfo: x2kxxvpqje0q5lvft2wodfhubq/
 
-Hi Geert,
+Introduce page_fault_user and page_fault_kernel for riscv page fault.
+Help to get more detail information when page fault happen.
 
-Thank you for the review.
+---
+Simple test go below:
 
-On Fri, Jul 12, 2024 at 3:08=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Simplify the `rzg2l-cpg` driver by removing explicit passing of `clks` =
-and
-> > `base` parameters in various clock registration functions. These values
-> > are now accessed directly from the `priv` structure.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > @@ -400,10 +400,10 @@ rzg3s_cpg_div_clk_register(const struct cpg_core_=
-clk *core, struct rzg2l_cpg_pri
-> >
-> >  static struct clk * __init
-> >  rzg2l_cpg_div_clk_register(const struct cpg_core_clk *core,
-> > -                          struct clk **clks,
-> > -                          void __iomem *base,
-> >                            struct rzg2l_cpg_priv *priv)
-> >  {
-> > +       void __iomem *base =3D priv->base;
-> > +       struct clk **clks =3D priv->clks;
->
-> If "clks" is used only once in a function, then please use priv->clks[...=
-]
-> directly instead of adding another local variable.
-> This applies to other functions in this patch.
->
-Ok, I'll update it.
+root@riscv-ubuntu2204 ~ # bin/perf list | grep exceptions
+  exceptions:page_fault_kernel                       [Tracepoint event]
+  exceptions:page_fault_user                         [Tracepoint event]
 
-> BTW, why did you decide to have separate patch [2/4], [3/4],  and [4/4]?
-> They all follow the same pattern.
->
-I split them up for easier review. But I'll squash them now.
+root@riscv-ubuntu2204 ~ # bin/perf record -e exceptions:page_fault_kernel -e exceptions:page_fault_user
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.091 MB perf.data (19 samples) ]
 
-Cheers,
-Prabhakar
+perf report tracepoint:
+
+perf     826 [007]   894.795520:   exceptions:page_fault_user: user page fault, address=0x7fff95af4400 cause=0xd
+perf     826 [007]   894.795970:   exceptions:page_fault_user: user page fault, address=0x7fff95a73400 cause=0xd
+perf     826 [007]   894.796738:   exceptions:page_fault_user: user page fault, address=0x7fff959f2400 cause=0xd
+perf     826 [007]   894.797088:   exceptions:page_fault_user: user page fault, address=0x7fff95971400 cause=0xd
+perf     826 [007]   894.797273:   exceptions:page_fault_user: user page fault, address=0x7fff958f0400 cause=0xd
+perf     826 [007]   894.797445:   exceptions:page_fault_user: user page fault, address=0x7fff9586f400 cause=0xd
+perf     826 [007]   894.797998: exceptions:page_fault_kernel: kernel page fault, address=0x7fff95870000 cause=0xd
+
+Signed-off-by: Zhu Hengbo <zhuhengbo@iscas.ac.cn>
+---
+ arch/riscv/include/asm/trace/exceptions.h | 60 +++++++++++++++++++++++
+ arch/riscv/mm/fault.c                     | 15 ++++++
+ 2 files changed, 75 insertions(+)
+ create mode 100644 arch/riscv/include/asm/trace/exceptions.h
+
+diff --git a/arch/riscv/include/asm/trace/exceptions.h b/arch/riscv/include/asm/trace/exceptions.h
+new file mode 100644
+index 000000000000..a9a68d471703
+--- /dev/null
++++ b/arch/riscv/include/asm/trace/exceptions.h
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Tracepoints for RISC-V exceptions
++ *
++ * Copyright (C) 2024 ISCAS. All rights reserved
++ *
++ */
++
++#if !defined(_TRACE_PAGE_FAULT_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PAGE_FAULT_H
++
++#include <linux/tracepoint.h>
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM exceptions
++
++TRACE_EVENT(page_fault_user,
++	TP_PROTO(struct pt_regs *regs),
++	TP_ARGS(regs),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, address)
++		__field(unsigned long, cause)
++	),
++
++	TP_fast_assign(
++		__entry->address	= regs->badaddr;
++		__entry->cause		= regs->cause;
++	),
++
++	TP_printk("user page fault, address=%ps cause=0x%lx",
++		  (void *)__entry->address, __entry->cause)
++);
++
++TRACE_EVENT(page_fault_kernel,
++	TP_PROTO(struct pt_regs *regs),
++	TP_ARGS(regs),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, address)
++		__field(unsigned long, cause)
++	),
++
++	TP_fast_assign(
++		__entry->address	= regs->badaddr;
++		__entry->cause		= regs->cause;
++	),
++
++	TP_printk("kernel page fault, address=%ps cause=0x%lx",
++		  (void *)__entry->address, __entry->cause)
++);
++
++#undef TRACE_INCLUDE_PATH
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_PATH asm/trace/
++#define TRACE_INCLUDE_FILE exceptions
++#endif /*  _TRACE_PAGE_FAULT_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 5224f3733802..22874074c5bc 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -22,6 +22,10 @@
+ 
+ #include "../kernel/head.h"
+ 
++
++#define CREATE_TRACE_POINTS
++#include <asm/trace/exceptions.h>
++
+ static void die_kernel_fault(const char *msg, unsigned long addr,
+ 		struct pt_regs *regs)
+ {
+@@ -215,6 +219,15 @@ static inline bool access_error(unsigned long cause, struct vm_area_struct *vma)
+ 	return false;
+ }
+ 
++
++static inline void trace_page_fault(struct pt_regs *regs)
++{
++	if (user_mode(regs))
++		trace_page_fault_user(regs);
++	else
++		trace_page_fault_kernel(regs);
++}
++
+ /*
+  * This routine handles page faults.  It determines the address and the
+  * problem, and then passes it off to one of the appropriate routines.
+@@ -235,6 +248,8 @@ void handle_page_fault(struct pt_regs *regs)
+ 	tsk = current;
+ 	mm = tsk->mm;
+ 
++	trace_page_fault(regs);
++
+ 	if (kprobe_page_fault(regs, cause))
+ 		return;
+ 
+-- 
+2.34.1
+
 
