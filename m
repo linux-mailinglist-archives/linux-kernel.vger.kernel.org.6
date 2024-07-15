@@ -1,232 +1,133 @@
-Return-Path: <linux-kernel+bounces-252431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1A09312F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:21:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0FF9312FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EBB51F210C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFF828255A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5D31891D6;
-	Mon, 15 Jul 2024 11:21:28 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBC31891AB;
+	Mon, 15 Jul 2024 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W++4PKdL"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5200D1891BF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541CD188CBA;
+	Mon, 15 Jul 2024 11:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042488; cv=none; b=CCaGvWZmgPhxNd3kHkgxOKQR2Ngsseh8O5iMOxhvFyocr7JvQXlMM7lK8Ag4i9bdjTse2eCUEN5nF/CVzbXMIIbNwQXWNURyxlZnwikTkjuC/AdGaeM53MIf7tRwXNcEtvqiA//0idtdPDbf0/zzoVYsSJkvg61h4wne9CrFuJc=
+	t=1721042504; cv=none; b=uMwN0KXDA8cEM6eJavW36lKrdFmD2HYXoPODYEQwY6pNjI+ZYMniiXIT8yybyEbWNy9W5vk32VT29uedrZ/6wGT8gpNMzC4Gqq9ldZzT8whlfZ7xNJcqdPxlN/YjHAQSF3udtSnxEPzbtKJbn/ZaYZ37xyGa2PG97MaAGlPyKi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042488; c=relaxed/simple;
-	bh=l2yMsUc/L6fiq3OcerytTMkejC1ARfeLHWVsLeNRdVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bKatiPZCYtsx71zx6a4qDLDzS+nlHhDIlvW/FYPKq/M8Wn0NXWuocMil/GBboVui6owSaQ9AfQbaPXKTReJc6lU55F2jvT5/aL0rPbLC0Q76O1QETRT34C0c9ycOuXord8y04eqKVGaEzndfAzTsuGlzkq1DKJYt0r8m3xZG3fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3AFA760003;
-	Mon, 15 Jul 2024 11:21:11 +0000 (UTC)
-Message-ID: <9bf70f7c-5deb-4fce-b7c1-ec70d78cb5db@ghiti.fr>
-Date: Mon, 15 Jul 2024 13:21:11 +0200
+	s=arc-20240116; t=1721042504; c=relaxed/simple;
+	bh=IRk0/vec0R6/LUwHcrjmzx7PwuTA8FNwI/8qVGudhI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMAqh+wdAwpl8t1IQj3U6ItBq/d0h/koFsG3R4Dmsq5qXvDsfhA9RKPlDdNGrRPwRKmHWkh4cRpzEMV0OIEwhmfP81M4SAx7Anr+AkdZAI/5/pXTZDG1TkToinXKaUtgEEKLlLIBoYKiHH1cYgdRVIPgP7UWToEx53Q0WWvGOEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W++4PKdL; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=KGSli2k8D5lO4ssOru+T2Av2OcO4/APPe8SHWw2Rq3A=; b=W++4PKdL6juWh+VjK3PU6RZGF3
+	330o5A75NocrRoG7ewhRwDfasWb4UF//QYzv8QEzOiER3CvDjPBBYHuTKE+cEzX1u/Kp6cPF8SP4C
+	yNg+0VECSbGzZmnY+58hCsYpi9KIeAce46HI6dYE7dSYyXb8RjetQ9enehFmoVg+RYOSAg++rsGP3
+	b3f3GxjKOY+efnpTByOfoCW9qFFzoS48OxDsyIGMLOkFz4GQq0IFW1Kk79mYEglHtRO0B5EehOj5F
+	sXPgl5dOAKHmivhn5XveDsc3c/qmbMf15NnqgttLOsbXBEEGwWZRuE7fftrLXrrsgLuolnFNS9UUH
+	Y+e54Atw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTJlv-00000001mQX-2j7B;
+	Mon, 15 Jul 2024 11:21:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 437A23003FF; Mon, 15 Jul 2024 13:21:35 +0200 (CEST)
+Date: Mon, 15 Jul 2024 13:21:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH v2 03/11] rbtree: Provide rb_find_rcu() /
+ rb_find_add_rcu()
+Message-ID: <20240715112135.GC14400@noisy.programming.kicks-ass.net>
+References: <20240711110235.098009979@infradead.org>
+ <20240711110400.529465037@infradead.org>
+ <CAEf4BzZLW+Dez6-WOe1jtCEjC8n6vUqcewWAYViquT4Cc6AA0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv/mm: Add soft-dirty page tracking support
-Content-Language: en-US
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZLW+Dez6-WOe1jtCEjC8n6vUqcewWAYViquT4Cc6AA0Q@mail.gmail.com>
 
-Hi Chunyan,
+On Fri, Jul 12, 2024 at 01:23:43PM -0700, Andrii Nakryiko wrote:
+> On Thu, Jul 11, 2024 at 4:07 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Much like latch_tree, add two RCU methods for the regular RB-tree,
+> > which can be used in conjunction with a seqcount to provide lockless
+> > lookups.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  include/linux/rbtree.h |   67 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 67 insertions(+)
+> >
+> > --- a/include/linux/rbtree.h
+> > +++ b/include/linux/rbtree.h
+> > @@ -245,6 +245,42 @@ rb_find_add(struct rb_node *node, struct
+> >  }
+> >
+> >  /**
+> > + * rb_find_add_rcu() - find equivalent @node in @tree, or add @node
+> > + * @node: node to look-for / insert
+> > + * @tree: tree to search / modify
+> > + * @cmp: operator defining the node order
+> > + *
+> > + * Adds a Store-Release for link_node.
+> > + *
+> > + * Returns the rb_node matching @node, or NULL when no match is found and @node
+> > + * is inserted.
+> > + */
+> > +static __always_inline struct rb_node *
+> > +rb_find_add_rcu(struct rb_node *node, struct rb_root *tree,
+> > +               int (*cmp)(struct rb_node *, const struct rb_node *))
+> 
+> I don't get the point of the RCU version of rb_find_add as RCU itself
+> doesn't provide enough protection for modification of the tree, right?
+> So in uprobes code you do rb_find_add_rcu() under uprobes_treelock +
+> uprobes_seqcount locks. Wouldn't it be just as fine to do plain
+> non-RCU rb_find_add() in that case? After all, you do plain rb_erase
+> under the same set of locks.
+> 
+> So what's the point of this one?
 
-On 10/07/2024 05:30, Chunyan Zhang wrote:
-> The PTE bit (9) is reserved for software, so we can use it for
-> soft-dirty tracking. This patch adds its standard handlers for
-> PTE, PMD, and swap entry.
+The store-release when adding it to the tree. Without that it becomes
+possible to find the entry while the entry itself is incomplete.
+
+Eg. something like:
+
+ entry.foo = A
+ rb_find_add(&entry->node, &my_tree, my_cmp);
+
+vs
+
+ rcu_read_lock();
+ entry = rb_find_rcu(...);
+ assert(entry->foo == A);
+
+might fail. Because there is nothing ordering the foo store and the
+rb-node add.
 
 
-Unfortunately, ZONE_DEVICE has just used this last bit and should be 
-merged in 6.11.
-
-I'm currently discussing internally how we can get 2 other PTE bits from 
-RVI in order to have the same number of available bits as x86 and arm64. 
-I guess that for now, if we really have a usecase for softdirty (and I 
-think we do with CRIU), we'll have to make ZONE_DEVICE and softdirty 
-mutually exclusive.
-
-
->
-> To add swap PTE soft-dirty tracking, we borrow bit (4) which is
-> available for swap PTEs on RISC-V systems.
->
-> This patch has been tested with the kselftest mm suite in which
-> soft-dirty and madv_populate run and pass, and no regressions
-> are observed in any of the other tests.
-
-
-Did you give CRIU a try?
-
-Thanks,
-
-Alex
-
-
->
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   arch/riscv/Kconfig                    |  1 +
->   arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
->   arch/riscv/include/asm/pgtable.h      | 65 ++++++++++++++++++++++++++-
->   3 files changed, 78 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index b94176e25be1..2e3ad2925a6b 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -118,6 +118,7 @@ config RISCV
->   	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->   	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
->   	select HAVE_ARCH_SECCOMP_FILTER
-> +	select HAVE_ARCH_SOFT_DIRTY
->   	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->   	select HAVE_ARCH_TRACEHOOK
->   	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
-> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-> index 179bd4afece4..bab48f5fd1e2 100644
-> --- a/arch/riscv/include/asm/pgtable-bits.h
-> +++ b/arch/riscv/include/asm/pgtable-bits.h
-> @@ -19,6 +19,19 @@
->   #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
->   
->   #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
-> +
-> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> +#define _PAGE_SOFT_DIRTY	(1 << 9)    /* RSW: 0x2 for software dirty tracking */
-> +/*
-> + * BIT 4 is not involved into swap entry computation, so we
-> + * can borrow it for swap page soft-dirty tracking.
-> + */
-> +#define _PAGE_SWP_SOFT_DIRTY	_PAGE_USER
-> +#else
-> +#define _PAGE_SOFT_DIRTY	0
-> +#define _PAGE_SWP_SOFT_DIRTY	0
-> +#endif /* CONFIG_MEM_SOFT_DIRTY */
-> +
->   #define _PAGE_TABLE     _PAGE_PRESENT
->   
->   /*
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index aad8b8ca51f1..46f512f52580 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -408,7 +408,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
->   
->   static inline pte_t pte_mkdirty(pte_t pte)
->   {
-> -	return __pte(pte_val(pte) | _PAGE_DIRTY);
-> +	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
->   }
->   
->   static inline pte_t pte_mkclean(pte_t pte)
-> @@ -436,6 +436,36 @@ static inline pte_t pte_mkhuge(pte_t pte)
->   	return pte;
->   }
->   
-> +static inline int pte_soft_dirty(pte_t pte)
-> +{
-> +	return pte_val(pte) & _PAGE_SOFT_DIRTY;
-> +}
-> +
-> +static inline pte_t pte_mksoft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
-> +}
-> +
-> +static inline int pte_swp_soft_dirty(pte_t pte)
-> +{
-> +	return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
-> +}
-> +
-> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
-> +}
-> +
->   #ifdef CONFIG_RISCV_ISA_SVNAPOT
->   #define pte_leaf_size(pte)	(pte_napot(pte) ?				\
->   					napot_cont_size(napot_cont_order(pte)) :\
-> @@ -721,6 +751,38 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
->   	return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
->   }
->   
-> +static inline int pmd_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_soft_dirty(pmd_pte(pmd));
-> +}
-> +
-> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> +static inline int pmd_swp_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_swp_soft_dirty(pmd_pte(pmd));
-> +}
-> +
-> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
-> +}
-> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> +
->   static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
->   				pmd_t *pmdp, pmd_t pmd)
->   {
-> @@ -811,6 +873,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
->    * Format of swap PTE:
->    *	bit            0:	_PAGE_PRESENT (zero)
->    *	bit       1 to 3:       _PAGE_LEAF (zero)
-> + *	bit            4:	_PAGE_SWP_SOFT_DIRTY
->    *	bit            5:	_PAGE_PROT_NONE (zero)
->    *	bit            6:	exclusive marker
->    *	bits      7 to 11:	swap type
 
