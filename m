@@ -1,113 +1,194 @@
-Return-Path: <linux-kernel+bounces-251972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D0A930C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:44:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9128D930C69
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF1E1F213F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0662814C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365B24C9A;
-	Mon, 15 Jul 2024 01:44:42 +0000 (UTC)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E385B5672;
+	Mon, 15 Jul 2024 01:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Kl6xOXQQ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88443290F;
-	Mon, 15 Jul 2024 01:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E3B4C6D;
+	Mon, 15 Jul 2024 01:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721007881; cv=none; b=C9vgKqndzB12d30EUGVoHiICT3Uiqem8FlVROziOANemY+cN/kBDfdNtOVV237SCu3I2rRyHfFbURZKfCEtUP2LUsnYg13dtYKq0oRLKa10L8sApZ9JX7Nb5F78OxjsTCOP7qvN3PNdLSS4s5GHiowiQJXHp1RbwAwDQQve3gpk=
+	t=1721008090; cv=none; b=N8cHXZnQfD8L9aotWN87nFLOsqVx8ld+1RnCrO2PFB68wkLL7umyVjuRNd4Lw52UIVP2yJ9DgBxaMU+18JzqaCZorZUwvUzbr1DW5dZyJVd1LYnmQ2MAVrdeRZAJ5e/5icf/cmn/xZ9i2WLo1wRewCsifixFeINl59y7akWkfsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721007881; c=relaxed/simple;
-	bh=V62w8GmPEyje0BfH2PKxWDXBgc8ScthNi/hzQ10jYOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rKxmGNw95KnZhzPDMNyIGiJfmwKubqChjhqFmWCf1mjcYkl1jvRg5dDcOxIHqxyGtwaeeYcZb6zSGx8fpJ/av3uN0V+yUIL+sU/KVlhZQixrVh15HoO/6ihg7tdGsQNopvCnk41daGAlfYiGLR8CHhvSg2ioh2DU36XUY7iOl8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtp88t1721007824tvqed058
-X-QQ-Originating-IP: Gpw8fkTxvPMza9jqqXkPs1WFicvFvYzz2LygZIJ7LEs=
-Received: from localhost.localdomain ( [61.183.83.60])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 15 Jul 2024 09:43:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14221635385899329361
-From: Canfeng Guo <guocanfeng@uniontech.com>
-To: paul@paul-moore.com
-Cc: stephen.smalley.work@gmail.com,
-	omosnace@redhat.com,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Canfeng Guo <guocanfeng@uniontech.com>
-Subject: [RPC] Topic: Issues and Testing Regarding SELinx AVC Cache Modification
-Date: Mon, 15 Jul 2024 09:43:37 +0800
-Message-Id: <20240715014337.11625-1-guocanfeng@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1721008090; c=relaxed/simple;
+	bh=6NBogB+15y8/cr5/SGFVD66tjydLDWAtv8bQFiwBn3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MHmJPCopfGrKjsRVKvVU7CFoxx0adjlqHfkQRO/YYmp13uZ7LEOjhs3yEl7j4GQo+/Tm6gS5iQ/+ahBlkiSuMF4+BLZmMMAlrR6Sf2i52QTfEn+6uLiZkFPXvSISiyBcWZ11/2wGLoJ0pzYtIwZejCdvXaTKCugLegYCG1Iduas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Kl6xOXQQ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721008081;
+	bh=BPaM86IV8DbjzzQhxMJepkxYYERbWk091giJrL2Zc9I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kl6xOXQQU1NVZYq/orjR4IVXpmayif5cjiNsqPXSTYQZcnUe5EsLYBNVBXPB8oLPe
+	 dR7wmLECPPfX6gm2jrPI0V12Xr7bjdlbQD8vZo22YN4P2+yTawmJjZIGpn9aDHr+Ra
+	 DR6h43t0FUnrwAJvc2i/Mllb17IZ8TK3HhJix3WqJP6uCbDNj6R1zqrTT4dsNDTIrM
+	 UzoKHZs5hlbbJFiHiQFnHuYf3OcGhGuWEQY9nQvY6LF6rhUP4Vo3fC2SqWzg6HSehw
+	 tQOoKV8gi0lv3eLVvVqTlbmAhiAAcoIzV2IVvKugWnueO5R/Of6xYMP03WUdLdxHET
+	 HYVS7aVtuYuAQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMlTF0cHNz4wbh;
+	Mon, 15 Jul 2024 11:48:00 +1000 (AEST)
+Date: Mon, 15 Jul 2024 11:47:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust
+ <trondmy@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Kairui Song <kasong@tencent.com>, NFS
+ Mailing List <linux-nfs@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the nfs-anna tree with the
+ mm-stable tree
+Message-ID: <20240715114759.16a86e78@canb.auug.org.au>
+In-Reply-To: <20240715105836.6d6e6e50@canb.auug.org.au>
+References: <20240715105836.6d6e6e50@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: multipart/signed; boundary="Sig_/gb.QN8J2+=7iLZbOJIgbFxI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When calling avc_insert to add nodes to the avc cache, they are inserted into
-the head of the hash chain. Similarly, avc_calim_node removes nodes from
-the head of the same chain. so, SElinux will delete the latest added cache
-infromation.
+--Sig_/gb.QN8J2+=7iLZbOJIgbFxI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I question whether the deletion logic proposed in the patch is more appropriate
-than the current implementation, or whether alternative mechanisms such as
-LRU caching are beneficial.
+Hi all,
 
-In my testing environment, I applied the above patch when avc_cache.solt and
-cache_threshold were both set to 512 by default. I only have over 280 nodes
-in my cache, and the longest observation length of the AVC cache linked list
-is only 7 entries. Considering this small size, the cost of traversing the
-list is minimal, and such modifications may not incur additional costs.
+On Mon, 15 Jul 2024 10:58:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the fs-next tree got conflicts in:
+>=20
+>   fs/nfs/nfstrace.h
+>   fs/nfs/write.c
+>=20
+> between commit:
+>=20
+>   237d29075ca7 ("nfs: drop usage of folio_file_pos")
+>=20
+> from the mm-stable tree and commit:
+>=20
+>   64568b27b2d2 ("nfs: pass explicit offset/count to trace events")
+>=20
+> from the nfs-anna tree.
+>=20
+> I fixed it up (for the nfstrace.h file I just used the latter, and see
+> below) and can carry the fix as necessary. This is now fixed as far as
+> linux-next is concerned, but any non trivial conflicts should be mentioned
+> to your upstream maintainer when your tree is submitted for merging.
+> You may also want to consider cooperating with the maintainer of the
+> conflicting tree to minimise any particularly complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/nfs/write.c
+> index 3573cdc4b28f,680505d664f0..000000000000
+> --- a/fs/nfs/write.c
+> +++ b/fs/nfs/write.c
+> @@@ -279,9 -180,9 +180,9 @@@ static void nfs_grow_file(struct folio=20
+>   	spin_lock(&inode->i_lock);
+>   	i_size =3D i_size_read(inode);
+>   	end_index =3D ((i_size - 1) >> folio_shift(folio)) << folio_order(foli=
+o);
+> - 	if (i_size > 0 && folio_index(folio) < end_index)
+> + 	if (i_size > 0 && folio->index < end_index)
+>   		goto out;
+>  -	end =3D folio_file_pos(folio) + (loff_t)offset + (loff_t)count;
+>  +	end =3D folio_pos(folio) + (loff_t)offset + (loff_t)count;
+>   	if (i_size >=3D end)
+>   		goto out;
+>   	trace_nfs_size_grow(inode, end);
+> @@@ -2073,8 -2062,8 +2062,8 @@@ int nfs_wb_folio_cancel(struct inode *i
+>    */
+>   int nfs_wb_folio(struct inode *inode, struct folio *folio)
+>   {
+>  -	loff_t range_start =3D folio_file_pos(folio);
+>  +	loff_t range_start =3D folio_pos(folio);
+> - 	loff_t range_end =3D range_start + (loff_t)folio_size(folio) - 1;
+> + 	size_t len =3D folio_size(folio);
+>   	struct writeback_control wbc =3D {
+>   		.sync_mode =3D WB_SYNC_ALL,
+>   		.nr_to_write =3D 0,
 
-However, I don't know how to design a test case to verify its cost.
-And I cannot prove that this patch is beneficial.
+Due to commit
 
-I attempted to simulate a more demanding scenario by increasing the cache_threshold
-to 2048 in order to establish a longer linked list of AVC caches, but
-I was unable to generate more than 2048 AVC records, possibly due to the need
-for a highly complex environment with numerous different SID interactions.
+  564a2ee9f9f6 ("mm: remove page_file_offset and folio_file_pos")
 
-Therefore, I have two questions:
-The necessity of modification:
-     Considering its potential impact on the cache performance of SELinx AVC,
-     is it worth investing effort into this modification?, i think that in most cases,
-     this modification is not necessart.
-Verification method:
-     If making such modifications is reasonable, how can I effectively
-     measure its impact on system performance?
+in the mm-stable tree, this also required the following merge fix patch:
 
-Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 15 Jul 2024 11:23:30 +1000
+Subject: [PATCH] fixup for "nfs: pass explicit offset/count to trace events"
+
+interacting with commit
+
+  564a2ee9f9f6 ("mm: remove page_file_offset and folio_file_pos")
+
+from the mm-stable tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- security/selinux/avc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/nfs/read.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 32eb67fb3e42..9999028660c9 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -477,6 +477,9 @@ static inline int avc_reclaim_node(void)
- 
- 		rcu_read_lock();
- 		hlist_for_each_entry(node, head, list) {
-+			while(node->next){
-+				node = node->next;
-+			}
- 			avc_node_delete(node);
- 			avc_cache_stats_incr(reclaims);
- 			ecx++;
--- 
-2.20.1
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 6355a777e428..a6103333b666 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -367,7 +367,7 @@ static int nfs_do_read_folio(struct file *file, struct =
+folio *folio)
+ int nfs_read_folio(struct file *file, struct folio *folio)
+ {
+ 	struct inode *inode =3D file_inode(file);
+-	loff_t pos =3D folio_file_pos(folio);
++	loff_t pos =3D folio_pos(folio);
+ 	size_t len =3D folio_size(folio);
+ 	int ret;
+=20
+--=20
+2.43.0
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gb.QN8J2+=7iLZbOJIgbFxI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUf88ACgkQAVBC80lX
+0GwkUQf9E6IG7ZpMGdegQzcym8LVON/5In03s4669LGHAG0PkVnWmdFF7Lfrduwv
+dFjIeUyeodVDCgGSxPGT/vaWgpu0zyj9h7vkPfw3g7PGH6ddmf5/cFgQiSqmUEsv
+ZFCPdL3HJxa5uJ1K6Ec00xgiXxH7i437U5PKi1g3caJk2OZfbQFti5Z6HrXPSggK
+8/ltBwKkz+SmiKDQ7RPl3Z4EoaynRdPdE13CxbamzUc6IjxsAezoXzzBCLy1HzOz
+wTz7yu0O5YZab8IOmUWhHgyKsoxKF/yAnzj7/AleUOP+o5HbKdR7LApeEuJsSHQN
+fG1Nwo+HZAKg1xYd72NLZCkiOMcHjQ==
+=pZGy
+-----END PGP SIGNATURE-----
+
+--Sig_/gb.QN8J2+=7iLZbOJIgbFxI--
 
