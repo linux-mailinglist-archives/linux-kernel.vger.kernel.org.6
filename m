@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-253080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2270C931C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA214931C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9C1281188
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6611F282415
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6754E13AD33;
-	Mon, 15 Jul 2024 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7871513C661;
+	Mon, 15 Jul 2024 20:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="caqq3xJt"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHa5vIWE"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A9D481D5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC1EAE7;
+	Mon, 15 Jul 2024 20:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721076248; cv=none; b=iR2krG5nnu4MeOZqZjnJy8Fyl/IymY7gNipkM8c3LWXzvCBEzyY7zXy4ktiC1kUyerOSIEGlGXwD3YrXg+Dq7UojHyYGt5dcM2UYY4v6s93zSqq8oQjtwL9vv8RcBDTXpu1r/xzSg6wGOJyrjGT3NcjJ6TUU3g0UcvvxYFztKoI=
+	t=1721076365; cv=none; b=h5v9cHEEX37flV2iRMF0mWFC2/qiNWp8EP4i9guNqy6OMU89jW2yGOumWR3OD/Nz8D2qaIKd6+aBQrpnpq474Y5JT1ldoUe0/QAVKZxbDN1/nvbcfTzEzNqrb+wLot2oARJIHkwosRrdqdI9D00TFkFrWtZVsxo0yaB4RLfbquE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721076248; c=relaxed/simple;
-	bh=rGBskOZO+a8j3UbGA9lhaMgrvVJ0iVhdxMZpKep7/F8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWaOVY0HGIKmMS+zI15/TkCR6MhHLnbS+ajBSB+UFIDL7uZF/w/ip7SRtzTlmYKBnsuLqn5BP3zd5XKPHIdsFX4EXWLpLrKUqffRGr843nbxxa/pRHY6GaQ8YCeKqAO1/rC1cpc4Niw2OHmqaVxCulO3p29vyUuzLNPtRjh1SKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=caqq3xJt; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721076239;
-	bh=rGBskOZO+a8j3UbGA9lhaMgrvVJ0iVhdxMZpKep7/F8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=caqq3xJttnkhGiaCc/OTEsbX3BglAA9d0zPTPA18xII3qvEh2Ph+Lch1XTl80/Wo0
-	 L7Opsq1ozXa4mKDSDhVxL4yuMyH24a5SCircU+Bgb0NYwckXsNQw69DiOlmtrDXv5g
-	 NGrIWXhd5LsHGi2rM6bqIMieRbJpX3i+zto6kTSjWQt3Lhr0UPKE87vcZN+J+wpB0q
-	 cMcu/cN/KoknIx6SYjI16jbHsbfbMsf3U9N/1DTVnoIO6s9NHtLk/5HLIXKBLFM40Z
-	 X6+465KjBSzATxbkWLkCvtsC7SbZ9BCMANzQ0WMstiG+6OCzJ4FhJiQvbYqw/jiWIU
-	 1+ShuDuWtmMjw==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: alarumbe)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CE6923782063;
-	Mon, 15 Jul 2024 20:43:58 +0000 (UTC)
-Date: Mon, 15 Jul 2024 21:43:58 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] Support fdinfo runtime and memory stats on Panthor
-Message-ID: <dqhnxhgho6spfh7xhw6yvs2iiqeqzeg63e6jqqpw2g7gkrfphn@dojsixyl4esv>
-References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
- <ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
+	s=arc-20240116; t=1721076365; c=relaxed/simple;
+	bh=pyID40vVKswGidkaN4WhWHKgSgKubU8Ytrc3zgyQIzA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b+xGZLW1nLRyppQT2B46yP+WvImzzRJmVOXTGZytcuym8DVwcVYqI7o/P3rEt7O3GDFBeZg5esJxZ6RZtz9F2yes4S02qWexitfEi0wA8ywEo/BOt90g8tVI6lGajAM1YIQ8jRE159vWcswtL1VTpd+fz3eVfJzGpFh4TBuaeqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHa5vIWE; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b447c513aso5254040a12.2;
+        Mon, 15 Jul 2024 13:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721076362; x=1721681162; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pyID40vVKswGidkaN4WhWHKgSgKubU8Ytrc3zgyQIzA=;
+        b=OHa5vIWEXxzyHXKqqoP9PYQGzYD1ecRI/3e3snuws82NE5UQ79FDYiB/pOHuiFPryN
+         MJYQYmy3Fh10xZDsajNlYCb4uFRq+/ufS8OoqSCBSVEpjhWGmWsfp54l/NkeQOnUs0I1
+         ShtJjTZEkLzihUVDf002/0WL9hMbECeuQumMgP69HCs8XvgmZyHO66k8TQHTxkj5yIFN
+         PTynY1OR4ZDo5NmLEqoxL65LdFXubh1mI1MreZxz/N0bvxnLCeL6MQ7U8lcmwpv8Og+k
+         5cYokb2ui3eOAxRfp3zq3TfbVFthC/El3qfCBZ436XLoGhJZWLpGpmymw8BxBYalKnoV
+         C+3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721076362; x=1721681162;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pyID40vVKswGidkaN4WhWHKgSgKubU8Ytrc3zgyQIzA=;
+        b=BJTkvlJfhF5RoHAzc0IN07daqmw6waORavq/QAIuxHJAWEwm4ZZGT+mAAMo/lnuN9W
+         6WAWpNWgDySogFKpUn4tEs/z0sSIAwYlm9Jmjn9ltDUX6+njQF3eYks5ESD+p1vVicw1
+         DkKTY6rumpF6BUIqk2Icv+Dyia1foggmiV4YMSrJ9BgFY8y56t5K3mNNo4NuK6p3Ibiu
+         zUGNCgJlubuE98LStBpR9XHzBTgOWoGPxZZm3vRADpznOekTd7YY35f0vWrxnXi2fCbJ
+         Fy2n57VBU5IE1LMAupL1dPgg0Yu5iw1M9DI9A2KvQ8ZuY2uCYufcqEZ00P8fKFrRbe+y
+         IXwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURrBDqXuvgwdXyss97WSuG+2fN/jyDhB1oz554i1TvIpKykLIGO6JWaAI5JLW/EpOg8rd+itZCraMb/qQEtOLBXmUSgipXmY8XpZZoF9DuCUWqpRIKMs0H49zH1UQ5f3+c1f0V+EwT1Ux0xGCy++1SNo1PH4/1ojXqvmGGN8EXv824dvsYnB72I5EHt57qKU6czdBF9FucP80r9k6s4HgliJxmkJvtyy+Jp79D4Qevcak/w/lB5ltsm/eG7cVYe9tEmvadZkzNuaQJjV4M7Hs0Q7VsMRn11dFOv4prJ32iNpb/8FXu7LVXfKt0gRICRLM0qbLK/lXritMwxEdXnLWEK37bHNiVjbs/Hh14g+s/crg1LA==
+X-Gm-Message-State: AOJu0YwiKRFm/IaULVCU9XP7Xe/x3ucRvUmIXSbh73mZKkpgml0E8NeR
+	V9BOe5HiGLPVvOPydB8aWyo3LBES7z9b72TjC/5Z3Tm/4Y1WWUuu
+X-Google-Smtp-Source: AGHT+IHZpaZWcXFCjRZBArLC0Q4QIJCZB151JdU+pruJeqzfFvKL2FYuoiEW53znBItBXa8q8c0m1w==
+X-Received: by 2002:a05:6402:270b:b0:59a:aa54:4e23 with SMTP id 4fb4d7f45d1cf-59eee833f0amr46280a12.3.1721076362036;
+        Mon, 15 Jul 2024 13:46:02 -0700 (PDT)
+Received: from giga-mm.home ([2a02:1210:860a:c700:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b24a770dbsm3829880a12.4.2024.07.15.13.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 13:46:01 -0700 (PDT)
+Message-ID: <f68b628c3978a4fb0e5989e3b6918c756da1fefb.camel@gmail.com>
+Subject: Re: [PATCH v11 00/38] ep93xx device tree conversion
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>, Nikita Shubin
+	 <nikita.shubin@maquefel.me>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry
+ Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-pwm@vger.kernel.org, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Ralf Baechle <ralf@linux-mips.org>, 
+ Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>,  linux-ide@vger.kernel.org, Stephen
+ Boyd <sboyd@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, linux-spi@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown
+ <broonie@kernel.org>,  Hartley Sweeten <hsweeten@visionengravers.com>,
+ linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,  Andrew Lunn
+ <andrew@lunn.ch>, Richard Weinberger <richard@nod.at>, Eric Dumazet
+ <edumazet@google.com>,  linux-sound@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>,  linux-input@vger.kernel.org, Jaroslav Kysela
+ <perex@perex.cz>, Sergey Shtylyov <s.shtylyov@omp.ru>, Lukasz Majewski
+ <lukma@denx.de>
+Date: Mon, 15 Jul 2024 22:46:01 +0200
+In-Reply-To: <172104541245.3725513.13547524352291855487.robh@kernel.org>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+	 <172104541245.3725513.13547524352291855487.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
 
-Hi Steven, thanks for the review.
+Hi Rob,
 
-On 13.06.2024 16:28, Steven Price wrote:
-> On 06/06/2024 01:49, Adrián Larumbe wrote:
-> > This patch series enables userspace utilities like gputop and nvtop to
-> > query a render context's fdinfo file and figure out rates of engine
-> > and memory utilisation.
-> > 
-> > Previous discussion can be found at
-> > https://lore.kernel.org/dri-devel/20240423213240.91412-1-adrian.larumbe@collabora.com/
-> > 
-> > Changelog:
-> > v3:
-> >  - Fixed some nits and removed useless bounds check in panthor_sched.c
-> >  - Added support for sysfs profiling knob and optional job accounting
-> >  - Added new patches for calculating size of internal BO's
-> > v2:
-> >  - Split original first patch in two, one for FW CS cycle and timestamp
-> >  calculations and job accounting memory management, and a second one
-> >  that enables fdinfo.
-> >  - Moved NUM_INSTRS_PER_SLOT to the file prelude
-> >  - Removed nelem variable from the group's struct definition.
-> >  - Precompute size of group's syncobj BO to avoid code duplication.
-> >  - Some minor nits.
-> > 
-> > 
-> > Adrián Larumbe (7):
-> >   drm/panthor: introduce job cycle and timestamp accounting
-> >   drm/panthor: add DRM fdinfo support
-> >   drm/panthor: enable fdinfo for memory stats
-> >   drm/panthor: add sysfs knob for enabling job profiling
-> >   drm/panthor: support job accounting
-> >   drm/drm_file: add display of driver's internal memory size
-> >   drm/panthor: register size of internal objects through fdinfo
-> 
-> The general shape of what you end up with looks correct, but these
-> patches are now in a bit of a mess. It's confusing to review when the
-> accounting is added unconditionally and then a sysfs knob is added which
-> changes it all to be conditional. Equally that last patch (register size
-> of internal objects through fdinfo) includes a massive amount of churn
-> moving everything into an 'fdinfo' struct which really should be in a
-> separate patch.
-> 
-> Ideally this needs to be reworked into a logical series of patches with
-> knowledge of what's coming next. E.g. the first patch could introduce
-> the code for cycle/timestamp accounting but leave it disabled to be then
-> enabled by the sysfs knob patch.
-> 
-> One thing I did notice though is that I wasn't seeing the GPU frequency
-> change, looking more closely at this it seems like there's something
-> dodgy going on with the devfreq code. From what I can make out I often
-> end up in a situation where all contexts are idle every time tick_work()
-> is called - I think this is simply because tick_work() is scheduled with
-> a delay and by the time the delay has hit the work is complete. Nothing
-> to do with this series, but something that needs looking into. I'm on
-> holiday for a week but I'll try to look at this when I'm back.
+On Mon, 2024-07-15 at 06:12 -0600, Rob Herring (Arm) wrote:
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>=20
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>=20
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>=20
+> =C2=A0 pip3 install dtschema --upgrade
+>=20
+>=20
+> New warnings running 'make CHECK_DTBS=3Dy cirrus/ep93xx-bk3.dtb cirrus/ep=
+93xx-edb9302.dtb cirrus/ep93xx-ts7250.dtb' for 20240715-ep93xx-v11-0-4e924e=
+fda795@maquefel.me:
+>=20
+> arch/arm/boot/dts/cirrus/ep93xx-edb9302.dtb: /soc/spi@808a0000/codec@0: f=
+ailed to match any schema with compatible: ['cirrus,cs4271']
 
-I've found why the current frequency value wasn't updating when manually
-adjusting the device's devfreq governor. Fix will be part of the next patch
-series revision.
+well, this seems to come from the fact is still documented in a .txt file
+(Documentation/devicetree/bindings/sound/cs4271.txt), which is not really
+the scope of this series. Hope it's OK to ignore it for the series.
 
-Adrian
-
-> Steve
-> 
-> >  Documentation/gpu/drm-usage-stats.rst     |   4 +
-> >  drivers/gpu/drm/drm_file.c                |   9 +-
-> >  drivers/gpu/drm/msm/msm_drv.c             |   2 +-
-> >  drivers/gpu/drm/panfrost/panfrost_drv.c   |   2 +-
-> >  drivers/gpu/drm/panthor/panthor_devfreq.c |  10 +
-> >  drivers/gpu/drm/panthor/panthor_device.c  |   2 +
-> >  drivers/gpu/drm/panthor/panthor_device.h  |  21 ++
-> >  drivers/gpu/drm/panthor/panthor_drv.c     |  83 +++++-
-> >  drivers/gpu/drm/panthor/panthor_fw.c      |  16 +-
-> >  drivers/gpu/drm/panthor/panthor_fw.h      |   5 +-
-> >  drivers/gpu/drm/panthor/panthor_gem.c     |  67 ++++-
-> >  drivers/gpu/drm/panthor/panthor_gem.h     |  16 +-
-> >  drivers/gpu/drm/panthor/panthor_heap.c    |  23 +-
-> >  drivers/gpu/drm/panthor/panthor_heap.h    |   6 +-
-> >  drivers/gpu/drm/panthor/panthor_mmu.c     |   8 +-
-> >  drivers/gpu/drm/panthor/panthor_mmu.h     |   3 +-
-> >  drivers/gpu/drm/panthor/panthor_sched.c   | 304 +++++++++++++++++++---
-> >  include/drm/drm_file.h                    |   7 +-
-> >  18 files changed, 522 insertions(+), 66 deletions(-)
-> > 
-> > 
-> > base-commit: 310ec03841a36e3f45fb528f0dfdfe5b9e84b037
+--=20
+Alexander Sverdlin.
 
 
