@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-252613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC239315E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BCC9315E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EAF01C21A9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2198D1F225C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4242218E75B;
-	Mon, 15 Jul 2024 13:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA49618E77B;
+	Mon, 15 Jul 2024 13:38:09 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351518C180;
-	Mon, 15 Jul 2024 13:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204B418E76C;
+	Mon, 15 Jul 2024 13:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050686; cv=none; b=LV6oxz9gMkkyDkmo6KRUPRzNl3v5mfhn4dHpCMtQSNwTn0sHMDyw6gB/SderuMYFPaZoZBE/yovBz7of9qaeqpolK4/530TQxTGqRO8qD464+wTDWNfMd4zrl2Z5wwzv14zfiZYx3H9cvT8tihQeSDwgh4JeyJcgXyslYB8NrHI=
+	t=1721050689; cv=none; b=TLuYFPWBy0YXfZglP5Jsvdp4tYcu+Wc/JA6kVJ3Yl4mYbjm1ZuVQgYNz8o3XWnzW3biGldnjA/0MNBmPyML5aXSYF0llW7oDw8EUBXW+orERNtmoVQgCtdnyBnqYZ2BFD9fBsSAL+ijiRP9TT/e7VtxZzNtYsx+HbCpw39B4eVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050686; c=relaxed/simple;
-	bh=lcxcZWyLm/91dxaFT0lTwPZ6IbZKcEviGnNfpG0ef4E=;
+	s=arc-20240116; t=1721050689; c=relaxed/simple;
+	bh=R71Ts9/VVk5ak3RZO/9IUeDblNdq16YOqaZOiN45D6g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MXOZK6jctWrb6Ynd+p6rn6nMNzJtgal34pXkmZqYE/a8f2HPlFHXkZk/e72xM2G//MRflRpeOzOLSomh6GAM6sLbYLXdLewlsiCOfbm4cTBAwuAUaxdOz4hBZeL8lm5mo5x85Qge2JEDxmh023U3KuWAEUYw7SwSQnNvMxVdJEg=
+	 MIME-Version; b=PBQysigiA+AV3eFD4XkQer1hgEwVXOTidIBMcNZiVorYXaqqwIVjGiir1IQm9+FIipdlFQyvRPl5F/slzSpLoGyVE2sf6vhdZK8KsuCgthWgZ1VJ1eOo6odjum+mYgnUy2U5DN+i0BXGSlnnXiQ08qlFtQfgeID00QZHS/qXKrw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CB90DA7;
-	Mon, 15 Jul 2024 06:38:30 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C897EDA7;
+	Mon, 15 Jul 2024 06:38:32 -0700 (PDT)
 Received: from thinkcentre-m93p.cambridge.arm.com (thinkcentre-m93p.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BE643F73F;
-	Mon, 15 Jul 2024 06:38:03 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DE7F3F73F;
+	Mon, 15 Jul 2024 06:38:06 -0700 (PDT)
 From: Luke Parkin <luke.parkin@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -39,9 +39,9 @@ To: linux-kernel@vger.kernel.org,
 Cc: sudeep.holla@arm.com,
 	cristian.marussi@arm.com,
 	Luke Parkin <luke.parkin@arm.com>
-Subject: [PATCH v3 1/5] firmware: arm_scmi: Remove superfluous handle_to_scmi_info
-Date: Mon, 15 Jul 2024 14:37:47 +0100
-Message-Id: <20240715133751.2877197-2-luke.parkin@arm.com>
+Subject: [PATCH v3 2/5] firmware: arm_scmi: Add support for tracking statistics
+Date: Mon, 15 Jul 2024 14:37:48 +0100
+Message-Id: <20240715133751.2877197-3-luke.parkin@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240715133751.2877197-1-luke.parkin@arm.com>
 References: <20240715133751.2877197-1-luke.parkin@arm.com>
@@ -53,28 +53,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove duplicate handle_to_scmi_info
+Add a new config option for statistic tracking in SCMI subsystem
+Add an array and enum for tracking statistics
+Add scmi_log_stats op/no-op function for incrementing statistics
 
 Signed-off-by: Luke Parkin <luke.parkin@arm.com>
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
- drivers/firmware/arm_scmi/driver.c | 3 ---
- 1 file changed, 3 deletions(-)
+v2->v3
+Switch to an enum & array method of storing statistics
+v1->v2
+Config option now depends on DEBUG_FS
+Add scmi_log_stats rather than if(IS_ENABLED)
+Move location of scmi_debug_stats in the scmi_info struct
+---
+ drivers/firmware/arm_scmi/Kconfig  | 11 +++++++++++
+ drivers/firmware/arm_scmi/common.h |  9 +++++++++
+ drivers/firmware/arm_scmi/driver.c |  6 ++++++
+ 3 files changed, 26 insertions(+)
 
+diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+index aa5842be19b2..45e8e7df927e 100644
+--- a/drivers/firmware/arm_scmi/Kconfig
++++ b/drivers/firmware/arm_scmi/Kconfig
+@@ -55,6 +55,17 @@ config ARM_SCMI_RAW_MODE_SUPPORT_COEX
+ 	  operate normally, thing which could make an SCMI test suite using the
+ 	  SCMI Raw mode support unreliable. If unsure, say N.
+ 
++config ARM_SCMI_DEBUG_STATISTICS
++	bool "Enable SCMI Raw mode statistic tracking"
++	select ARM_SCMI_NEED_DEBUGFS
++	depends on DEBUG_FS
++	help
++	  Enables statistic tracking for the SCMI subsystem.
++
++	  Enable this option to create a new debugfs directory which contains
++	  several useful statistics on various SCMI features. This can be useful
++	  for debugging and SCMI monitoring. If unsure, say N.
++
+ config ARM_SCMI_HAVE_TRANSPORT
+ 	bool
+ 	help
+diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+index b5ac25dbc1ca..157df695aeb1 100644
+--- a/drivers/firmware/arm_scmi/common.h
++++ b/drivers/firmware/arm_scmi/common.h
+@@ -301,6 +301,15 @@ extern const struct scmi_desc scmi_optee_desc;
+ 
+ void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr, void *priv);
+ 
++#ifdef CONFIG_ARM_SCMI_DEBUG_STATISTICS
++static inline void scmi_log_stats(atomic_t *arr, int stat)
++{
++	atomic_inc(&arr[stat]);
++}
++#else
++static inline void scmi_log_stats(atomic_t *arr, int stat) {}
++#endif
++
+ enum scmi_bad_msg {
+ 	MSG_UNEXPECTED = -1,
+ 	MSG_INVALID = -2,
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 6b6957f4743f..56a93d20bf23 100644
+index 56a93d20bf23..6edec6ec912d 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -1261,9 +1261,6 @@ static int scmi_wait_for_reply(struct device *dev, const struct scmi_desc *desc,
- 					    xfer->rx.buf, xfer->rx.len);
+@@ -125,6 +125,10 @@ struct scmi_debug_info {
+ 	bool is_atomic;
+ };
  
- 			if (IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT)) {
--				struct scmi_info *info =
--					handle_to_scmi_info(cinfo->handle);
--
- 				scmi_raw_message_report(info->raw, xfer,
- 							SCMI_RAW_REPLY_QUEUE,
- 							cinfo->id);
++enum debug_stat_counters {
++	LAST
++};
++
+ /**
+  * struct scmi_info - Structure representing a SCMI instance
+  *
+@@ -161,6 +165,7 @@ struct scmi_debug_info {
+  *		bus
+  * @devreq_mtx: A mutex to serialize device creation for this SCMI instance
+  * @dbg: A pointer to debugfs related data (if any)
++ * @dbg_stats: An array of atomic_c's used for tracking statistics (if enabled)
+  * @raw: An opaque reference handle used by SCMI Raw mode.
+  */
+ struct scmi_info {
+@@ -187,6 +192,7 @@ struct scmi_info {
+ 	/* Serialize device creation process for this instance */
+ 	struct mutex devreq_mtx;
+ 	struct scmi_debug_info *dbg;
++	atomic_t dbg_stats[LAST];
+ 	void *raw;
+ };
+ 
 -- 
 2.34.1
 
