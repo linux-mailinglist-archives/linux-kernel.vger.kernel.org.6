@@ -1,170 +1,113 @@
-Return-Path: <linux-kernel+bounces-251971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75187930C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:33:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D0A930C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C88E281429
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF1E1F213F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520064C70;
-	Mon, 15 Jul 2024 01:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bC1O/S4u"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365B24C9A;
+	Mon, 15 Jul 2024 01:44:42 +0000 (UTC)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377FA4C62
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88443290F;
+	Mon, 15 Jul 2024 01:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721007193; cv=none; b=DN22ZoJNxTnZSc00raZw63krtmE7gMbuB6bvFSyB6rSakaPcnq+UM9LM51mGTf/AkzlnVFfbmcDTwgQ9RcMqBqZd6Dc958CDrQeDMR7pwiUxpTMh/IEYRdMs966ilpPZcFKjy7AvRC4cj3FFTuNcOfdsPxOvY6udG/HrnCct/QE=
+	t=1721007881; cv=none; b=C9vgKqndzB12d30EUGVoHiICT3Uiqem8FlVROziOANemY+cN/kBDfdNtOVV237SCu3I2rRyHfFbURZKfCEtUP2LUsnYg13dtYKq0oRLKa10L8sApZ9JX7Nb5F78OxjsTCOP7qvN3PNdLSS4s5GHiowiQJXHp1RbwAwDQQve3gpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721007193; c=relaxed/simple;
-	bh=y11oxM6FZQKiL8Gp0mXqb0AnYG5gpI1YHPDuHVBqbCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dHaJv4sQXcj0IGhXxm+if7Ww+Kqsdb2BHtjM5d3vzw377XwqvxKD3VXQ4P+KURupHvKAYS6Mw8JFc1wwzpEdgy+WR73DWAVRJINy0hdzjgauAg0ydCBiL128+5h6f/ppbfqZzJHU4m7Iz9f2v971i0INVMUG7RNPLUocgsJSNKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bC1O/S4u; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fb1c918860so33443125ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 18:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721007191; x=1721611991; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sQwnzP38ldU+pzsKvRMORy4OwiKshmlc+I/N7QR8eVw=;
-        b=bC1O/S4up+BQp+qgOrXXAhMnlRAs6p22zEnG2jaVPLs5rI4N13r/fYRniXQpVw7kka
-         NOohHQ7K/mYpcI9WhwILQkrsc2Xjez0PRmMyfVx+67XMJVeIraNJU7j2sJQtIVHjLIzU
-         TgYjfFMfHM1ZEVUSVLt11DxPU4n3ERrktDK/zzd+t+X9iUe8VJVUyLPF3hMTG6UyMHTL
-         G/rj8f2AgI05aEvdljF02Diih7WANfvZgGRLlFc5/vVIMJjNL1F/3RkfcpV6m+ibfwIL
-         O8M/GJCu8a1/bIaQ7/KruMQBNGpBAzhEBocQ2Lir6nfeKj5pvKBTnXnWkuIUH0ThqhIm
-         daXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721007191; x=1721611991;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQwnzP38ldU+pzsKvRMORy4OwiKshmlc+I/N7QR8eVw=;
-        b=Dvw2TcjgbPcfr0p2VmIAWxq8l4nj3TvXEDqiD/sfmQVQj0BOxRkprrixf5DoCR8DL3
-         08FQiH9no4k6NtS5mG45ND1QxxlaRee05pbSCyaPM3shC6Rx6dtgBoqefCOyxC7o03H4
-         176RpnWghNV3ublD9ZHYr61OZMEYS+719owPH3ciJhT97nTck2uxQRln4BNMxY1P9GrZ
-         HfEeki75n7otwcQRE1Xyz2bczk2DZ+meLHl0q6Xew10GHwVKwxUYmmwLtuf0S2tkJQuu
-         vi4SwoeOJ8VRo9jabmKZD2/A1CibtvtS1PzQ8IAa4D/6E8WRlO5pJbEy9R8tbkyb1jOP
-         HoJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEafh8+btQqJ9rIgCsFvkPIZWVAdIwAsp+G9RFhukan/NDoIsol2x7MsiUwRzl59RCEi7e8ZwUYjhPTe6cOlE1jRVPfw4VzveiNV4
-X-Gm-Message-State: AOJu0YzOZjPG+8FGz7KiMGBrcRswB8tHqDW4ImrCtqfjYuh42YNkOlUr
-	Ud1NGpESiiZapilBMFdRPcppwqp74lEoHOW64WYl2NQWJXqcdwZJ
-X-Google-Smtp-Source: AGHT+IGQSf1sujxfjmUCB8gGxHXz6zSqCUQIGVvQrI5FsxLcbrEG9wdkFJLYTUrk7aJFkwqLluXs5Q==
-X-Received: by 2002:a17:903:234e:b0:1f9:fe14:592f with SMTP id d9443c01a7336-1fbefb911f8mr148908895ad.17.1721007191302;
-        Sun, 14 Jul 2024 18:33:11 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.24])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc2888csm29954665ad.146.2024.07.14.18.33.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Jul 2024 18:33:10 -0700 (PDT)
-Message-ID: <8007538a-5680-4e43-b204-21ce62943eee@gmail.com>
-Date: Mon, 15 Jul 2024 09:33:06 +0800
+	s=arc-20240116; t=1721007881; c=relaxed/simple;
+	bh=V62w8GmPEyje0BfH2PKxWDXBgc8ScthNi/hzQ10jYOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rKxmGNw95KnZhzPDMNyIGiJfmwKubqChjhqFmWCf1mjcYkl1jvRg5dDcOxIHqxyGtwaeeYcZb6zSGx8fpJ/av3uN0V+yUIL+sU/KVlhZQixrVh15HoO/6ihg7tdGsQNopvCnk41daGAlfYiGLR8CHhvSg2ioh2DU36XUY7iOl8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtp88t1721007824tvqed058
+X-QQ-Originating-IP: Gpw8fkTxvPMza9jqqXkPs1WFicvFvYzz2LygZIJ7LEs=
+Received: from localhost.localdomain ( [61.183.83.60])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 15 Jul 2024 09:43:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14221635385899329361
+From: Canfeng Guo <guocanfeng@uniontech.com>
+To: paul@paul-moore.com
+Cc: stephen.smalley.work@gmail.com,
+	omosnace@redhat.com,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Canfeng Guo <guocanfeng@uniontech.com>
+Subject: [RPC] Topic: Issues and Testing Regarding SELinx AVC Cache Modification
+Date: Mon, 15 Jul 2024 09:43:37 +0800
+Message-Id: <20240715014337.11625-1-guocanfeng@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/20] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-To: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org,
- senozhatsky@chromium.org, david@redhat.com, 42.hyeyoo@gmail.com,
- Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
-References: <20240708063344.1096626-1-alexs@kernel.org>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240708063344.1096626-1-alexs@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
+When calling avc_insert to add nodes to the avc cache, they are inserted into
+the head of the hash chain. Similarly, avc_calim_node removes nodes from
+the head of the same chain. so, SElinux will delete the latest added cache
+infromation.
 
+I question whether the deletion logic proposed in the patch is more appropriate
+than the current implementation, or whether alternative mechanisms such as
+LRU caching are beneficial.
 
-On 7/8/24 2:33 PM, alexs@kernel.org wrote:
-> From: Alex Shi (Tencent) <alexs@kernel.org>
-> 
-> According to Metthew's plan, the page descriptor will be replace by a 8
-> bytes mem_desc on destination purpose.
-> https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
-> 
-> Here is a implement on zsmalloc to replace page descriptor by 'zpdesc',
-> which is still overlay on struct page now. but it's a step move forward
-> above destination.
-> 
-> To name the struct zpdesc instead of zsdesc, since there are still 3
-> zpools under zswap: zbud, z3fold, zsmalloc for now(z3fold maybe removed
-> soon), and we could easyly extend it to other zswap.zpool in needs.
-> 
-> For all zswap.zpools, they are all using single page since often used
-> under memory pressure. So the conversion via folio series helper is
-> better than page's for compound_head check saving.
-> 
-> For now, all zpools are using some page struct members, like page.flags
-> for PG_private/PG_locked. and list_head lru, page.mapping for page migration.
-> 
-> This patachset does not increase the descriptor size nor introduce any
-> functional changes, and could save about 122Kbytes zsmalloc.o size.
-> 
-> Thanks
-> Alex
-> 
+In my testing environment, I applied the above patch when avc_cache.solt and
+cache_threshold were both set to 512 by default. I only have over 280 nodes
+in my cache, and the longest observation length of the AVC cache linked list
+is only 7 entries. Considering this small size, the cost of traversing the
+list is minimal, and such modifications may not incur additional costs.
 
-Any comments for this patchset?
+However, I don't know how to design a test case to verify its cost.
+And I cannot prove that this patch is beneficial.
 
-Thanks
-Alex
+I attempted to simulate a more demanding scenario by increasing the cache_threshold
+to 2048 in order to establish a longer linked list of AVC caches, but
+I was unable to generate more than 2048 AVC records, possibly due to the need
+for a highly complex environment with numerous different SID interactions.
 
-> ---
-> v3->v2:
-> - Fix LKP reported build issue
-> - Update the Usage of struct zpdesc fields.
-> - Rebase onto latest mm-unstable commit 2073cda629a4
-> 
-> v1->v2: 
-> - Take Yosry and Yoo's suggestion to add more members in zpdesc,
-> - Rebase on latest mm-unstable commit 31334cf98dbd
-> ---
-> 
-> Alex Shi (Tencent) (9):
->   mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
->   mm/zsmalloc: use zpdesc in trylock_zspage/lock_zspage
->   mm/zsmalloc: convert create_page_chain() and its users to use zpdesc
->   mm/zsmalloc: rename reset_page to reset_zpdesc and use zpdesc in it
->   mm/zsmalloc: convert SetZsPageMovable and remove unused funcs
->   mm/zsmalloc: convert get/set_first_obj_offset() to take zpdesc
->   mm/zsmalloc: introduce __zpdesc_clear_movable
->   mm/zsmalloc: introduce __zpdesc_clear_zsmalloc
->   mm/zsmalloc: introduce __zpdesc_set_zsmalloc()
-> 
-> Hyeonggon Yoo (11):
->   mm/zsmalloc: convert __zs_map_object/__zs_unmap_object to use zpdesc
->   mm/zsmalloc: add and use pfn/zpdesc seeking funcs
->   mm/zsmalloc: convert obj_malloc() to use zpdesc
->   mm/zsmalloc: convert obj_allocated() and related helpers to use zpdesc
->   mm/zsmalloc: convert init_zspage() to use zpdesc
->   mm/zsmalloc: convert obj_to_page() and zs_free() to use zpdesc
->   mm/zsmalloc: add zpdesc_is_isolated/zpdesc_zone helper for
->     zs_page_migrate
->   mm/zsmalloc: convert __free_zspage() to use zdsesc
->   mm/zsmalloc: convert location_to_obj() to take zpdesc
->   mm/zsmalloc: convert migrate_zspage() to use zpdesc
->   mm/zsmalloc: convert get_zspage() to take zpdesc
-> 
->  mm/zpdesc.h   | 146 ++++++++++++++++
->  mm/zsmalloc.c | 460 +++++++++++++++++++++++++++-----------------------
->  2 files changed, 398 insertions(+), 208 deletions(-)
->  create mode 100644 mm/zpdesc.h
-> 
+Therefore, I have two questions:
+The necessity of modification:
+     Considering its potential impact on the cache performance of SELinx AVC,
+     is it worth investing effort into this modification?, i think that in most cases,
+     this modification is not necessart.
+Verification method:
+     If making such modifications is reasonable, how can I effectively
+     measure its impact on system performance?
+
+Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
+---
+ security/selinux/avc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 32eb67fb3e42..9999028660c9 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -477,6 +477,9 @@ static inline int avc_reclaim_node(void)
+ 
+ 		rcu_read_lock();
+ 		hlist_for_each_entry(node, head, list) {
++			while(node->next){
++				node = node->next;
++			}
+ 			avc_node_delete(node);
+ 			avc_cache_stats_incr(reclaims);
+ 			ecx++;
+-- 
+2.20.1
+
 
