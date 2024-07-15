@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-252793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9F493182C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:11:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E64E93182E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70ED91F2207F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE9C28100A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102A84317C;
-	Mon, 15 Jul 2024 16:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D051CD3C;
+	Mon, 15 Jul 2024 16:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WwpMhYzZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHbuhEK9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CC71CAB9
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301FF1CAB9;
+	Mon, 15 Jul 2024 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059749; cv=none; b=cfD8SzVXKPoyHLgJv9j3QS5O+8InzMJNPSVnI+JcAAwzi3INMvqHxhWYT2CRDznVgcnhFYtJ+xBL3d3JcL9VZWbYpSf9oeccY7/VC/f3KJgDY4afBlXTkme8gY2rSHIydMp/ZL1DRWiNewCM16ixid4dL9Zv6TMwW5gn9zSV1PE=
+	t=1721059771; cv=none; b=ADnSQvmahc7fUlVSM5f/HHIlXWfVP7dOLncQrYMm2esFkaepIkIliPUTZhY2MohcQG6Z+unxVrSQ/UtnzziLOlx4H4K5CycZhmCr0d46bdCxiSgDLVWPaP5DH6/DPIsIIALeeqqqyXl9+lHwrFJMP2BNM24wTcuta3OiWVTqZ4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059749; c=relaxed/simple;
-	bh=pns6oBjdeKTxUi/oyky+qxEK+jXJ62xk1tKqw+8NpnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNjxRWb5NVQeA3zc2zVs6PtmHtLO9oYSHBqGlwsixaesmRxTMxN6Qhm5yRyvIoBvEFgYjN74c5qBpDpno93Bh09MPF7KGVwVOoowFMiDDFywbo0y5maMkh/gPVQ2UMjLzpPrAJHoR+NeofkjOUetBESfoAImNStim4nOxb08e8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WwpMhYzZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721059746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Abk3xY8p1XoS3Otzd65O+1Rdw5yUxySHu+Mh0abIVgI=;
-	b=WwpMhYzZUh0IIxU0/L1gyTNBxDb77SDV7HHVRf7CZxtL8aifIZULLgKYA/hnETV3HS+F4T
-	UhgZJwX9PublxmBoI9UrWj89xwoNPlkkgJeaarMgyNRDZHhSseAcSUPSh7DDgpE/uDDd0K
-	5LvnkYhjJEFqGQeAvbtDvQc+LXL3QME=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-KQseAc8gOHmW4VodxyuRvg-1; Mon, 15 Jul 2024 12:09:05 -0400
-X-MC-Unique: KQseAc8gOHmW4VodxyuRvg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-367990a5796so2745615f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721059744; x=1721664544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Abk3xY8p1XoS3Otzd65O+1Rdw5yUxySHu+Mh0abIVgI=;
-        b=bPF9eb8jBN1xBxvUH1YETNVGuo7fPnJJQ/Ysn+iluV7nn55jbqYmBxPm1BFgmAA3OI
-         oCQZt3CqnmN8SPn/ynbGemql+co+s8lL4Bxn3fyUzAIHVBC1ZGNJhlJbadX+1IqpJ1KL
-         2srZfSjZ2DW+oBcWHAX1fcOOXl/eYgb35aPssytRDHSXkpvXyqxSPxCTYUnypwVhnCFl
-         AhRNqhxManQNyYuOmwFUzQfpNL6YCvEq8FYJQ7KdG5accXvTEXTMP4Vbe3UhedDC3iRW
-         LrhxhWxhNckqqhqhw/jhk4d7cNQEg+QqaGzG4qvr+1K6QskEHJi7/a+VqNinuu7rRldc
-         lQFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc+9eoRnw7ZLb8zidU6ccpZhOxWgpXpaFF3RSrG+5a2BsgayCpqVYxxy8iF7URJdDix+VFQ4exEjkhzGeJY9BFOeBb9NxqgmmiWwPD
-X-Gm-Message-State: AOJu0YyFHjtxAZp7e1Ipf4A9s3bBrPOQLi0wD40rCEy3VLFj/8oPCgFY
-	oEy9EmBTYnj7FxTvY3GwsKTvqJ1CxwAh5YJiMtQ2PxbcSIVxqRoDBPonWQhd3nGXBNmAx5RCKOu
-	LZwi7zzp3EBIYthWIb6ubFuQ2hzYrFIZ9hSMciypxnIi2CKF6NxjzcWg1O+xB0HIN63lkAUa6rf
-	TkKSt/vm5GRjSoStZSDx89jUtmST1wjxDjje20
-X-Received: by 2002:adf:fd05:0:b0:35f:122e:bd8c with SMTP id ffacd0b85a97d-36824088d3dmr156185f8f.17.1721059743876;
-        Mon, 15 Jul 2024 09:09:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEog5YOTIjhOUFctCGyLRn+0RvpSTee0pbP4aam/coKAqEKJDiarFwJ23vF333z/XezLnfn1KfwXp0w7OUlVPw=
-X-Received: by 2002:adf:fd05:0:b0:35f:122e:bd8c with SMTP id
- ffacd0b85a97d-36824088d3dmr156168f8f.17.1721059743518; Mon, 15 Jul 2024
- 09:09:03 -0700 (PDT)
+	s=arc-20240116; t=1721059771; c=relaxed/simple;
+	bh=mZvCojP8oJ4JhW6pFDzplfbDNtPCohsUZ4sNPPz9XVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPCZMR2zSxFxFxxtk1LQg9d4/QT2M4Bgted+9cbHvp0bBSxorF+NqLLjRfJPiENfQxtpKfDMAz4WsddM8PvULllhIaybTBAC4lohTy8UEY5WpvP/aOHVS/jMzofAfDQmTUnkXeXS1htdYBtPDpL4SvAvZwKTszeBZgyUp+BuaCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHbuhEK9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66AF1C32782;
+	Mon, 15 Jul 2024 16:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721059770;
+	bh=mZvCojP8oJ4JhW6pFDzplfbDNtPCohsUZ4sNPPz9XVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JHbuhEK9hbzLOYDlRBVabugewcucVIukRV3QMube4oVXCn64OuALIlG8nvGxtrx2Q
+	 pblrKcdTCqr268kAvy/t1e2dVI2SNgDuNY4exuMzRwtAbfzZSX7/i3NJqvBD+pwIm2
+	 3N0qrHY8HDIIojdgzBWVju38dAMyalkOI05ngssn30R09ehQyEtDSqbcWjx5ihK1tq
+	 dmjU0zincZh31591UkAa6fqWr+KQ9wUwiOT4D8GWHnvLzlXW79cWDXOo9Vr+tnG47k
+	 BHuIHs/vA6VX94PCOGSuo8HaRy6iQ9c4lwX4Zwwr3IS7LfZLN8jTxBJzGdncMJ8KYo
+	 U+RturPsBB6/g==
+Date: Mon, 15 Jul 2024 17:09:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux@armlinux.org.uk,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, Jason@zx2c4.com,
+	rdunlap@infradead.org, akpm@linux-foundation.org,
+	geert+renesas@glider.be, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Hari.PrasathGE@microchip.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: bridge: add
+ sam9x75-mipi-dsi binding
+Message-ID: <20240715-washable-keenly-a76abaa59f60@spud>
+References: <20240715095736.618246-1-manikandan.m@microchip.com>
+ <20240715095736.618246-2-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711222755.57476-1-pbonzini@redhat.com> <20240711222755.57476-10-pbonzini@redhat.com>
- <73c62e76d83fe4e5990b640582da933ff3862cb1.camel@intel.com>
- <CABgObfbhTYDcVWwB5G=aYpFhAW1FZ5i665VFbbGC0UC=4GgEqQ@mail.gmail.com>
- <97796c0b86db5d98e03c119032f5b173f0f5de14.camel@intel.com> <n2nmszmuok75wzylgcqy2dz4lbrvfavewuxas56angjrkp3sl3@k4pj5k7uosfe>
-In-Reply-To: <n2nmszmuok75wzylgcqy2dz4lbrvfavewuxas56angjrkp3sl3@k4pj5k7uosfe>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 15 Jul 2024 18:08:51 +0200
-Message-ID: <CABgObfa=a3cKcKJHQRrCs-3Ty8ppSRou=dhi6Q+KdZnom0Zegw@mail.gmail.com>
-Subject: Re: [PATCH 09/12] KVM: guest_memfd: move check for already-populated
- page to common code
-To: Michael Roth <michael.roth@amd.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rtMNhwSapse+vIdd"
+Content-Disposition: inline
+In-Reply-To: <20240715095736.618246-2-manikandan.m@microchip.com>
 
-On Sun, Jul 14, 2024 at 7:33=E2=80=AFAM Michael Roth <michael.roth@amd.com>=
- wrote:
-> > I guess this series is trying to help userspace not mess up the order o=
-f things
-> > for SEV, where as TDX's design was to let userspace hold the pieces fro=
-m the
-> > beginning. As in, needing to match up the KVM_PRE_FAULT_MEMORY and
-> > KVM_TDX_INIT_MEM_REGION calls, mysteriously return errors in later IOCT=
-Ls if
-> > something was missed, etc.
->
-> If SNP were to try to call KVM_PRE_FAULT_MEMORY before SNP_LAUNCH_UPDATE
-> (rough equivalent to KVM_TDX_INIT_MEM_REGION), I think the same issue
-> would arise, and in that case the uptodate flag you prototyped would
-> wouldn't be enough to address it because SNP_LAUNCH_UPDATE would end up
-> failing because the gmem_prepare hook previously triggered by
-> KVM_PRE_FAULT_MEMORY would have put the corresponding RMP entries into
-> an unexpected state (guest-owned/private).
 
-Indeed, and I'd love for that to be the case for both TDX and SNP.
+--rtMNhwSapse+vIdd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> So for SNP, KVM_PRE_FAULT_MEMORY/SNP_LAUNCH_UPDATE are mutually
-> exclusive on what GPA ranges they can prep before finalizing launch state=
-.
+On Mon, Jul 15, 2024 at 03:27:33PM +0530, Manikandan Muralidharan wrote:
+> +  clocks:
+> +    items:
+> +      - description:
+> +          Peripheral clock for the hardware block functionality
+> +      - description:
+> +          Generic clock to drive the D-PHY PLL block
 
-Not a problem; is KVM_PRE_FAULT_MEMORY before finalization the same as
-zeroing memory?
+What is "generic" about this clock?
 
-> I realize that is awkward for TDX, where the KVM_PRE_FAULT_MEMORY is
-> required to create the sEPT mapping before encrypting, but maybe it
-> would be possible for TDX to just do that implicitly within
-> KVM_TDX_INIT_MEM_REGION?
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pclk
+> +      - const: refclk
 
-Yes, and it's what the TDX API used to be like a while ago.
-Locking-wise, Rick confirmed offlist that there's no problem in
-calling kvm_arch_vcpu_pre_fault_memory() from tdx_gmem_post_populate()
-(my fault that it went offlist - email from the phone is hard...).
+nit: clk is redundant here, they're all clocks :)
 
-To be clear, I have no problem at all reusing the prefaulting code,
-that's better than TDX having to do its own thing.  But forcing
-userspace to do two passes is not great (it's already not great that
-it has to be TDX_INIT_MEM_REGION has to be a VCPU operation, but
-that's unfortunately unavoidable ).
+--rtMNhwSapse+vIdd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Paolo
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVJswAKCRB4tDGHoIJi
+0q2RAQD8xX97GhfraF1NjbALVGWRMAFNTzFTnzurzE9Q3k80dAEA/np8raSeahoP
+MDtmFTYmVvQEWF6ifUxJrGmaQHcEzAg=
+=a1J+
+-----END PGP SIGNATURE-----
+
+--rtMNhwSapse+vIdd--
 
