@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-252762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E129317D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:46:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD05C9317DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C041C208BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD75E1C21791
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6E3FC18;
-	Mon, 15 Jul 2024 15:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85CBEAE7;
+	Mon, 15 Jul 2024 15:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFrX5Mmj"
-Received: from mail-qt1-f195.google.com (mail-qt1-f195.google.com [209.85.160.195])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u52xaHKN"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C93620EB;
-	Mon, 15 Jul 2024 15:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940F179F3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721058382; cv=none; b=gu31YFV2bmFZQOF2ntHcAFVM+vjvyQ/c8Gm21oNOToiF8XW7P+Yzoazbaanepkqy8rp8m+xigO4jkCDd/YpQoGAJnL9q7cAtSS1Yd1AJCRJ/m0kZJSAOuHtzHhnfLQLKHxWWpZc6Xz27x0uL6JJvGIew2KlMhMntQczDSlAp8B0=
+	t=1721058588; cv=none; b=WYF8Lq/4kIYXG4kQcCgsNCvGTfj8/xTDjF635UAvkENIo2nRSKD/7GWv6euEGhfwuiZp+5X6U5hSB1MH7D7LkoWayugc3yUS566yVfHzATC43OTBp9e1JFH96lf1vENg5HaDuAxE5bEmDm1Gyl2jZiLlKcUcqZDotuid2tYmtqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721058382; c=relaxed/simple;
-	bh=oLiaQ1klWwSQIumg3AhxoPfNz0aYuW3gA3TqWpED+g0=;
+	s=arc-20240116; t=1721058588; c=relaxed/simple;
+	bh=ZaFQZFttFDwrsd8OeBciR/rDxUgJCJNMqjiSCcqygvs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E6ygxA8egmwchsJ9y4kaTAwzxwgxK5YjnkzvoveMJP3ofTBN/uoOkGiQfZqLFRZJ9PPcKb0gijCNEvrzG7AcbydMSIxp5LjzgmmvMQ8YB/sakrW/JolSLKpHpP6vW16wX2NLl+hjJo1wzJ/0RY4SAK05gWf70xON+VHKyWe6CMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFrX5Mmj; arc=none smtp.client-ip=209.85.160.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f195.google.com with SMTP id d75a77b69052e-44d5f487556so24083561cf.3;
-        Mon, 15 Jul 2024 08:46:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=sk6X/boZSAsORtALWILICbfSSOizqqw3gmyB/An/qMWqUvUN3tUdk5IaRZKlhw1nHBdqgtK+BNsYKyIratTabLR0/8iSxNuRpBi0bK6qeC+jBVpTqYl8NXo8DVSx7Ivoadw7q627OKU4zXlxO3V1ybEUvpb9YJBJXfPYVSBSSO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u52xaHKN; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3678fbf4a91so2329120f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721058380; x=1721663180; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=L02Bv3qTm0KPSZYoQ77x+hSiHLw/7P4AfHH/o8NuIjE=;
-        b=bFrX5MmjvQBT+EUhWzr5/H8TJKnAl9+LG7g8uohqDNQBBDe0kS58GszelJJ1fK8WFA
-         WDxVnmOMivMyqiUiQM0V7K1zXbZP+divlIVt4t86dX3torag5dGmuH+kyb0nP2K4rr/r
-         nzlknQVqaI6wlPj4asp8gCz+LeAIyK2bdGiGZR+shTSFV3yz1s13C2z49j3Kz0arxntT
-         IMY8evhi2EHJxRthDHePJ72Dh3Y+WLnxmPbNhtjUvzUaLpI68eF+rKJkY74xvqVxtAop
-         1HfUdv6qYJpkJpTLIabnb/Zkt8HIspD51U3mfPqf9IGVwJ7SA6W1wxJNxvCVhBXvCjnI
-         Tv0Q==
+        d=linaro.org; s=google; t=1721058584; x=1721663384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jaApz169RURb1RxMR+re6wckrPfxu6OPfzUK9YZPizQ=;
+        b=u52xaHKNQ60i2QwQbI+2367fNkErZZNQ4GI84u2X9d/WIsHOhfqLGqa71/ZZO++qXi
+         WS+uz0hNjP0qHJWycoLG/yTubXwKpc9zPmDyAB4TBMDs+EllXNBMg197AVhWvrayPzm9
+         65dsoxkd27iFBmj9vCiY2P2TDvpQBf5udvULFzD9MovymXXer88dvqYH0E8uimZqZJMs
+         dpTjQhhVK77mS+KAPGOD6Ce6pkFVpL0jm/sHh2Dkclk60M+C2nORCO7vbyhHl1taWzxC
+         /TL3tpVLK+4+UnLkvu/adOwdb0YS6GxOH3NgsbGQErIshcnoeR/CQ2y6/RSrRVdAVpqe
+         KqiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721058380; x=1721663180;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L02Bv3qTm0KPSZYoQ77x+hSiHLw/7P4AfHH/o8NuIjE=;
-        b=Tz9NpzFdoScgfoCQ6CKOdB8he6pxNxAljllmt3bG/nD8pl9cDN1ctd08MnLYSXYtPf
-         yC3tZ6jMnj55ZUG6HEbeGZSBGT5Jznq3VRh1Gvosv4LojxQKG9IBnL9EPqZ9V/MjPbXI
-         cB0mzzg1EFP84yskj5T5ZY+49e2ijctg73RAZqCiAr6UUrx6w5Lfp91dqvy/lYMly2yX
-         k0WP4WauAW9AXRpF3TmQOsdEcHrTZd4H7SpgyFfZMkrYCDDAo70x6RINFsZaUQwEeP2E
-         IyaLdgo/buMwKw5Y4A12vnJws48/H7wniKNdxRR/La7xssZLVPl8vIuznkn7W8/xgHzu
-         bclQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWNgiQ4Xss6MZL+7eTlxz3snRVsOKivlyDCWfcjEL739fsCCieVYJCVJxafyUe4RXzygpuIbosaFFkV2YL781SSZbwNuRrJDgrYkAdIim87qomSf7lSn6rA3wP7gH67zUg3u1OOMUxe8K3Y1Ao7uGq4i2NRfBY3cM5ZWYPkiGyMLRGXEZeCTNKvu/l8e0TQFxaGue8/L2tu1jIbtQJGGff0Y4HbtM=
-X-Gm-Message-State: AOJu0YxQpAQ8j3lRo+ZfExNCQaeYxL3258UVNY/BSd9agv5NGBkfO0aX
-	Gq6g1+D3gc+tPdMCjnpDPc3zJzfczURcBy482/D6IwCyije4xdzI
-X-Google-Smtp-Source: AGHT+IGVHJOL20G58t7+WWacMZ8rb/Ay90S6Qtca9nWqRmAF8WjfdCNlo9MnaJe+xxHT3FB1TPsI7A==
-X-Received: by 2002:a05:6214:226b:b0:6b5:4288:7e94 with SMTP id 6a1803df08f44-6b77de52af9mr980926d6.8.1721058379788;
-        Mon, 15 Jul 2024 08:46:19 -0700 (PDT)
-Received: from [192.168.158.7] ([207.35.255.94])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76197c6e4sm22487286d6.39.2024.07.15.08.46.18
+        d=1e100.net; s=20230601; t=1721058584; x=1721663384;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jaApz169RURb1RxMR+re6wckrPfxu6OPfzUK9YZPizQ=;
+        b=cRvkf4NP3SMTbR4sDujcsxciyk5elbBwyzYh9t1UbtIkcbq1+GcHSNrwSxf6BG19Q5
+         +KBfuX5fcsvaWDdBe88kproD/qqIjh1wydPxWssTkxParQ7k8A1g5GDYLYg8hX4lZHab
+         NhbSjV8JTWsrfUc8X2JEcqbWnStETXGcEOCNkX4jR9b5kXG7HgO9ah9O+ZcudJpXIynG
+         yw39ZAY6LXKqNPTXURh9caD0BOx8wS9hK/Qujd5uRcd6LH6qN+B1dbuOndAgSBubl5Ln
+         4x8y3F1aUhxH+mqJm2mzRdLQfX0mpNy9bxCs4O8ash1ApLkjEk1wG4osBispQjnzTAgD
+         a3nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjDABR0sYvJMhMTvQRuzp2edYrQUfY2L9MMMb/D6aGcSlRHD7jbkCgIZU9PWXNLc2Vfc4YdtmjvDxj9gx0/jw9ScQXFOyiGVcAmvzs
+X-Gm-Message-State: AOJu0YyRQq+miYzvLvbrIeQ5ElvWctg8svJdnFLjEq/+7kq20h3JP3c2
+	nJRgEPzb2qPXaA/XB7OVUsoX5suJwtbGcc0exTqXJbpz6ZoD1IaPxYmyndY+6KY=
+X-Google-Smtp-Source: AGHT+IFB0dPZFK6xvhuclL821zkqHmzN964Nu0dakLK4KZmb7UlPqH3RtFB5drMiVCh6GA7Y1d92jQ==
+X-Received: by 2002:adf:9591:0:b0:367:9718:5792 with SMTP id ffacd0b85a97d-3682408d058mr110312f8f.18.1721058583887;
+        Mon, 15 Jul 2024 08:49:43 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf416sm6705296f8f.45.2024.07.15.08.49.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 08:46:19 -0700 (PDT)
-Message-ID: <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
-Date: Mon, 15 Jul 2024 17:46:16 +0200
+        Mon, 15 Jul 2024 08:49:43 -0700 (PDT)
+Message-ID: <06199dfd-cf3f-4035-838e-cda7f9064af6@linaro.org>
+Date: Mon, 15 Jul 2024 17:49:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,168 +76,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr`
- implementation
-To: =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross
- <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Finn Behrens
- <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>,
- Valentin Obst <kernel@valentinobst.de>,
- Laine Taffin Altman <alexanderaltman@me.com>,
- Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>,
- Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas
- <charmitro@posteo.net>, Ben Gooding <ben.gooding.dev@gmail.com>,
- Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
-References: <20240714160238.238708-1-vadorovsky@gmail.com>
- <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com>
+Subject: Re: [PATCH v6 2/3] dt-bindings: input: atmel,maxtouch: add
+ poweroff-sleep property
+To: Stefan Eichenberger <eichest@gmail.com>, nick@shmanahar.org,
+ dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+ linus.walleij@linaro.org, francesco.dolcini@toradex.com,
+ joao.goncalves@toradex.com
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>
+References: <20240715153330.91979-1-eichest@gmail.com>
+ <20240715153330.91979-3-eichest@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Michal Rostecki <vadorovsky@gmail.com>
-Autocrypt: addr=vadorovsky@gmail.com; keydata=
- xsBNBGYJcUEBCAD3ciAzHQ8NElYQtsiPZ9NjsR7ttfihe0FM+PDT+6cChjFLQ8qO/1zEL5mh
- YaLbkjitrIYARhmo3lRDq3+G4L5+gRVExm9Rd98PcQy2P9F8shxI/msC50i1Fb9N4D0pP8Hx
- hhZ/or+2mbokZh8Qc9RdjynXRXAezhOFN4+0L2jkN7fjTO1IArl+TirXx+cvhQUbwKyyJlGL
- Kldvue2EqU4maZ+KIUs5di3kZgDPLILzvBqX9TLtwEMAkNY1uMCKK+C2aihap19OjoK0qOYj
- IahVHjqGL+Mb/Ga7jxMGr2TFeQEcwIgvdRiVVLtu+uiaRKqULGokBL3l9gprtBZWdLq7ABEB
- AAHNJk1pY2hhbCBSb3N0ZWNraSA8dmFkb3JvdnNreUBnbWFpbC5jb20+wsCXBBMBCABBFiEE
- 3RZt3oLrB5kpFLy14qU49yah1xEFAmYJdCQCGwMFCQHhM4AFCwkIBwICIgIGFQoJCAsCBBYC
- AwECHgcCF4AACgkQ4qU49yah1xFuDQf+NE2Oy6zF+uVh3vtidkfacCSMnu1QxojJHB8C1/Ep
- g4JU5hPcG9hC+HrMs5/Hqs7DOike9bZjhpEmnW4DIeI7Wy3t1Qf7A8EOzS0nrMgbX8TnkEon
- zMBBqiNp3VVVcltRJtc58xMP8K3yu6Ty2Q8e6GWdL5bqDr9gshb+vWu8inh5CullsGRJFJl0
- BfSdDKAbpH3NdEoWnL4JvFphpouh2vhd/ScvfNAQcuyBn3cbCyQdjNTgRVBkBNDEYCaWLVqP
- r4IU0JNjgk+cTLbyFmgn2++bWoIICGrAeWGruSpl7UGJ2PdJokWI9zp5UqSCezejDS53yhkU
- GsCrF7LrTceB6c7ATQRmCXFBAQgA2yrqjTKvL7VJKi/NNcpQ7EvAEm6omO+O4wQltdpybaxe
- mbLT0vZTH6rjZba28ixZmFHtwOjzNNtabmb4uK+nxs0BkVBpRvJNJ0LM1ydGYZQ46Sbvr1dE
- 7yWDkkG1CjmXYGd5I2iqx+ATbdrtzDGWLsvDXd/yEaO9dxAR+LqGOg1HdgE9Hhmuv8BRYSCL
- vnXaMA7Orq9oAmu+Q5q9TT3aZGMdBFdcoUNSVPX82uIYXjDaXj0Del8tluAHLf3oV7ZXEgOx
- c6OpRY3+8Pr9//UtfoaHNOjoKFNyPaIUf5U1+E9J0UoDm8m1usrwnghg6yRyPhczhCOvbYNL
- hQ6TiImvowARAQABwsB8BBgBCAAmFiEE3RZt3oLrB5kpFLy14qU49yah1xEFAmYJcUECGwwF
- CQHhM4AACgkQ4qU49yah1xHetgf9FpI4Y+okwFRIqRa6WJ8jhz6us+oYKedftr313NwerUB5
- 8nnhK0YWkZWZMuu5B4LCMiv71Ugqlc7ahBy5sQx/acRPe+NiYpwiN/pWrv7njaA6evDieXL8
- jc3j+xy4fsi861BWJXaurWQtLMXyHBUmdJ+StU7tscYTPe4fN1fdkBh0SreZxLfvp/+SMRQk
- g9PmXb1BMZdw8gWghPAbYg5bfCzXF9iZp4bmjuCENfwG4zmnYJzR6uTI0reqECo6Ee7NjOQ7
- qKy29wW+kVnEjX481iCEUmqKHEaQB08Ueb45If09fThw1baHLAk6bFk5cabMtD3JbWEifa6M
- RS+eXZNwwQ==
-In-Reply-To: <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240715153330.91979-3-eichest@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 14.07.24 19:01, Björn Roy Baron wrote:
-> On Sunday, July 14th, 2024 at 18:02, Michal Rostecki <vadorovsky@gmail.com> wrote:
+On 15/07/2024 17:31, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 > 
->> `CStr` became a part of `core` library in Rust 1.75, therefore there is
->> no need to keep the custom implementation.
->>
->> `core::CStr` behaves generally the same as the removed implementation,
->> with the following differences:
->>
->> - It does not implement `Display` (but implements `Debug`).
->> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
->>    - It was used only in `DerefMut` implementation for `CString`. This
->>      change replaces it with a manual cast to `&mut CStr`.
->>    - Otherwise, having such a method is not really desirable. `CStr` is
->>      a reference type
->>      or `str` are usually not supposed to be modified.
->> - It has `as_ptr()` method instead of `as_char_ptr()`, which also returns
->>    `*const c_char`.
->>
->> Rust also introduces C literals (`c""`), so the `c_str` macro is removed
->> here as well.
->>
->> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
->> ---
->>   rust/kernel/error.rs        |   7 +-
->>   rust/kernel/init.rs         |   8 +-
->>   rust/kernel/kunit.rs        |  16 +-
->>   rust/kernel/net/phy.rs      |   2 +-
->>   rust/kernel/prelude.rs      |   4 +-
->>   rust/kernel/str.rs          | 490 +-----------------------------------
->>   rust/kernel/sync.rs         |  13 +-
->>   rust/kernel/sync/condvar.rs |   5 +-
->>   rust/kernel/sync/lock.rs    |   6 +-
->>   rust/kernel/workqueue.rs    |  10 +-
->>   scripts/rustdoc_test_gen.rs |   4 +-
->>   11 files changed, 57 insertions(+), 508 deletions(-)
->>
+> Add a new property to indicate that the device should power off rather
+> than use deep sleep. Deep sleep is a feature of the controller that
+> expects the controller to remain powered in suspend. However, if a
+> display shares its regulator with the touch controller, we may want to
+> do a power off so that the display and touch controller do not use any
+> power.
 > 
-> [snip]
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Joao Paulo Goncalves <joao.goncalves@toradex.com>
+> ---
+>  Documentation/devicetree/bindings/input/atmel,maxtouch.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
->> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
->> index 68605b633e73..af0017e56c0e 100644
->> --- a/rust/kernel/init.rs
->> +++ b/rust/kernel/init.rs
->> @@ -46,7 +46,7 @@
->>   //! }
->>   //!
->>   //! let foo = pin_init!(Foo {
->> -//!     a <- new_mutex!(42, "Foo::a"),
->> +//!     a <- new_mutex!(42, c"Foo::a"),
-> 
-> That we need a CStr here seems a bit of an internal implementation detail. Maybe
-> keep accepting a regular string literal and converting it to a CStr internally?
-> If others think what you have here is fine, I don't it mind all that much though.
-> 
+> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> index c40799355ed75..8de5f539b30e3 100644
+> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> @@ -87,6 +87,12 @@ properties:
+>        - 2 # ATMEL_MXT_WAKEUP_GPIO
+>      default: 0
+>  
+> +  atmel,poweroff-sleep:
+> +    description: |
 
-The names passed to `new_mutex`, `new_condvar`, `new_spinlock` etc. are 
-immediately passed in the FFI calls (`__mutex_init`, 
-`__init_waitqueue_head`, `__spin_lock_init`) [0][1][2]. In fact, I don't 
-see any internal usage, where using Rust &str would be beneficial. Am I 
-missing something?
+Since you keep sending new versions (fourth? fifth?):
+Do not need '|' unless you need to preserve formatting.
 
-Converting a &str to &CStr inside `Mutex::new` or `CondVar::new` would 
-require allocating a new buffer, larger by 1, to include the nul byte. 
-Doing that for every new mutex or condvar seems a bit wasteful to me.
+Best regards,
+Krzysztof
 
-[0] 
-https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/lock/mutex.rs#L104
-[1] 
-https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/condvar.rs#L111
-[2] 
-https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/lock/spinlock.rs#L103
-
->>   //!     b: 24,
->>   //! });
->>   //! ```
-> 
-> [snip]
-> 
->> @@ -840,9 +375,10 @@ fn deref(&self) -> &Self::Target {
->>
->>   impl DerefMut for CString {
->>       fn deref_mut(&mut self) -> &mut Self::Target {
->> -        // SAFETY: A `CString` is always NUL-terminated and contains no other
->> -        // NUL bytes.
->> -        unsafe { CStr::from_bytes_with_nul_unchecked_mut(self.buf.as_mut_slice()) }
->> +        debug_assert!(!self.buf.is_empty() && self.buf[self.buf.len() - 1] == 0);
->> +        // SAFETY: Casting to CStr is safe because its internal representation
->> +        // is a [u8] too.
->> +        unsafe { &mut *(self.buf.as_mut_slice() as *mut [u8] as *mut CStr) }
-> 
-> The documentation of CStr [1] is very clear that the layout of CStr is not guaranteed.
-> 
->> Note that this structure does not have a guaranteed layout (the repr(transparent)
->> notwithstanding) and is not recommended to be placed in the signatures of FFI
->> functions. Instead, safe wrappers of FFI functions may leverage the unsafe
->> CStr::from_ptr constructor to provide a safe interface to other consumers.
-> 
-> Is there any place where this DerefMut impl is actually used? If not it should probably
-> be removed. The liballoc version of CString doesn't have this impl either. (Can we use
-> the liballoc version of CString too just like this patch does for CStr?)
-> 
-> [snip]
-> 
-> Link: https://doc.rust-lang.org/stable/std/ffi/struct.CStr.html [1]
-
-Good call. The `DerefMut` was not used anywhere, removing it works.
 
