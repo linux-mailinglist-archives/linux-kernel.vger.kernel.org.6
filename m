@@ -1,179 +1,91 @@
-Return-Path: <linux-kernel+bounces-252994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1983931AF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:27:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65210931B00
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D386E1C21821
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:27:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973F21C2199A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BC7139D00;
-	Mon, 15 Jul 2024 19:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608F11369B1;
+	Mon, 15 Jul 2024 19:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m5F9/jQi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJUUsQRX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56905131E38;
-	Mon, 15 Jul 2024 19:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4326481D5
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071638; cv=none; b=UrSYMO17EOmlty6T+V6uyJ9yqGIxf4SBDRtVKrPs6P7GjH8/jNZyOzAqry7KPbtVdYhhCGoR3hYe/WdWfOFI6j7mM2oy1qZjle3sW09FlUeF0RKdR0YQqHqcGIR5LJNCLat1I2mTgy6VyjRPDpfk4Wj9wlfogmtoOQwCuSzUbDY=
+	t=1721071684; cv=none; b=gIx47zsR+qX4tgV+ks3eYHTVE577YFEuk9UBQqWbeXlbiabTjYiGPxSJRFVADbrJVRbQGysJAKyRu9skZTIcUvAjrxVjil18Kz4glGOQleCYJ58wv2uT9eNdvzdt2ZNYmt4pD7kre1HGf8F2jaoLpDjqmdRI2rYR/r3dh3xNDuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071638; c=relaxed/simple;
-	bh=Od/7R+7To3lklhe3axz55KltSN7STkLUfBM0lBheQFA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=aBEE11NI/vRpwPbey+dmfmEr6GiKDcwDbHBvrkmGPUlkho3Uc9JIg+TDKcs0y0aOa6W+8SBLZdg23SVwzkUKZg49AV5nCT7J5ClSKba2BhbBhhny5bXVrc9Ouk0O6q01cGTRYoXWWLV8vUMb9FKZEwRCow5755Yy/yP7Cdo+m08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m5F9/jQi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8uNa009494;
-	Mon, 15 Jul 2024 19:27:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=wG9JuMtMhBj5ZcDWoeNk/P
-	F8owwW+73HInnokRoUMoc=; b=m5F9/jQiXRF8RxsAe4S5Xe4cjV5QA4+LIJIgPZ
-	mciIXnEtZjQUwZSK7XSzRoq0vmHv8N1fEX8IWRparCatrXfa/t9o8eCAMZzgp5tJ
-	FVK3vxzhVPSm8sKl7nC9RQ/2TLL2hkEsWn9SWeu5aWoun9tCtno2pGlEfJYDqWYm
-	9ibviJ1rkGWQPGh3tUMu4gMhq+Q7ghslmzp4MXBjZnWJtNkMOzKrod9XmaMx7S03
-	/gVsjiyFaYlHwP+It8IwcqMsNM0P4Hp2Y97BywVAfhnJHuS+/zqip7XCwx0BEHVi
-	/1cJt0RA+X1H8Bw/rZGna6UQn7jKZbO3QOcD6qHJGZDHREYQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bexndc47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:27:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FJRB3O009629
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:27:11 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 12:27:11 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 15 Jul 2024 12:27:09 -0700
-Subject: [PATCH v2] vfio-mdev: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1721071684; c=relaxed/simple;
+	bh=+cAcwfu1XFM2Re2QY6QGILP5HW9nUKA+nnTHqTtfNcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UzFVWF3ASPJoMzwQpeVZYxOCe47b8+i8gK4wftKxyJN9MpcvktSrc4GKpXm5oFgmbTo/OsXMfhjtPg1Z5e8ZsDtVdZGeNLmabDdg+7QCFPJDLgncUxqhAKJuosgHW7LULi4vW61CKnxOhL6jJQeJ7b5MdQgvUNSV3EW/d62eMuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJUUsQRX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C3FC32782;
+	Mon, 15 Jul 2024 19:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721071684;
+	bh=+cAcwfu1XFM2Re2QY6QGILP5HW9nUKA+nnTHqTtfNcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PJUUsQRXHSsJv9XuuUyu68lhpJdLcMM9EwiLUFnu40Lj82cnZLZ3FFz0cAZV8CYss
+	 SguMWl3A1+eaB5te3/RJJlW7YB4xB71OULE4oC1pgC5YEztzYFH2nUGoo3ic+JObye
+	 MfPFHYOHNMj7+nD8UmSgP+f7nL4YNYtUjplJuUuCYu7GIh3jqPbwqMLRlcsH1UfVUY
+	 JL/XMG3c74UVRGKJuKfnQf2Rr6Ah7RtTEi85kGapE5jsS7rMKpG0ltOW3LBOs0kFwZ
+	 4F1WGp3y+YfYNRCB0XuYWQB8ROV11JmA35I97GuIHZBhgFmysSR2qxSh/jfLektMv/
+	 27iZgkeVwMryg==
+Date: Mon, 15 Jul 2024 21:28:00 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] timers/migration: Read childmask and parent
+ pointer in a single place
+Message-ID: <ZpV4QLnktCXcuNqG@pavilion.home>
+References: <20240701-tmigr-fixes-v3-0-25cd5de318fb@linutronix.de>
+ <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240715-md-vfio-mdev-v2-1-59a4c5e924bc@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAx4lWYC/3WNyw6DIBREf8Ww7m0EfKWr/kfjAvBSb1KhBSU2x
- n8vuu9qcpI5MxuLGAgjuxUbC5gokncZxKVgZlTuiUBDZiZKUZW1kDANkCz5nJhAdty2lbZdazn
- LyjugpfWce/SZtYoIOihnxmPkRW5ZYVJxxnDUR4qzD9/zPPFD+vOTOHComrYxQy2F5uX9s5AhZ
- 67GT6zf9/0HHJUUyskAAAA=
-To: Kirti Wankhede <kwankhede@nvidia.com>,
-        Alex Williamson
-	<alex.williamson@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XAz8szs6q0CFL25pzXQQq0k63H2VYoRv
-X-Proofpoint-GUID: XAz8szs6q0CFL25pzXQQq0k63H2VYoRv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150150
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
 
-Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-description is missing"), a module without a MODULE_DESCRIPTION() will
-result in a warning with make W=1. The following warnings are being
-observed in samples/vfio-mdev:
+Le Mon, Jul 01, 2024 at 12:18:41PM +0200, Anna-Maria Behnsen a écrit :
+> Reading the childmask and parent pointer is required when propagating
+> changes through the hierarchy. At the moment this reads are spread all over
+> the place which makes it harder to follow.
+> 
+> Move those reads to a single place to keep code clean.
+> 
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+>  kernel/time/timer_migration.c | 20 +++++---------------
+>  1 file changed, 5 insertions(+), 15 deletions(-)
+> 
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index b4391abfb4a9..a681cf89910e 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -535,6 +535,7 @@ static void __walk_groups(up_f up, struct tmigr_walk *data,
+>  
+>  		child = group;
+>  		group = group->parent;
+> +		data->childmask = group->childmask;
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mtty.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy-fb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mbochs.o
+Should be "data->childmask = child->childmask;" ?
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro to these
-modules. And in the case of mtty.c, remove the now redundant instance
-of the MODULE_INFO() macro.
+>  	} while (group);
+>  }
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Of the almost 300 patches I've submitted tree-wide to fix these
-issues, this is one of the 13 remaining. Hopefully this can make it
-via your tree into the 6.11 merge window. If not, Greg KH has
-indicated he'll take this as an -rc instead of waiting for 6.12.
----
-Changes in v2:
-- Updated the commit text to more fully describe the problem and solution.
-- Removed the MODULE_INFO() from mtty.c
-- Note I did not carry forward Kirti's Reviewed-by: due to this removal,
-  please re-review
-- Link to v1: https://lore.kernel.org/r/20240523-md-vfio-mdev-v1-1-4676cd532b10@quicinc.com
----
- samples/vfio-mdev/mbochs.c  | 1 +
- samples/vfio-mdev/mdpy-fb.c | 1 +
- samples/vfio-mdev/mdpy.c    | 1 +
- samples/vfio-mdev/mtty.c    | 2 +-
- 4 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-index 9062598ea03d..836456837997 100644
---- a/samples/vfio-mdev/mbochs.c
-+++ b/samples/vfio-mdev/mbochs.c
-@@ -88,6 +88,7 @@
- #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
- 
- 
-+MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
- MODULE_LICENSE("GPL v2");
- 
- static int max_mbytes = 256;
-diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
-index 4598bc28acd9..149af7f598f8 100644
---- a/samples/vfio-mdev/mdpy-fb.c
-+++ b/samples/vfio-mdev/mdpy-fb.c
-@@ -229,4 +229,5 @@ static int __init mdpy_fb_init(void)
- module_init(mdpy_fb_init);
- 
- MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
-+MODULE_DESCRIPTION("Framebuffer driver for mdpy (mediated virtual pci display device)");
- MODULE_LICENSE("GPL v2");
-diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-index 27795501de6e..8104831ae125 100644
---- a/samples/vfio-mdev/mdpy.c
-+++ b/samples/vfio-mdev/mdpy.c
-@@ -40,6 +40,7 @@
- #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
- 
- 
-+MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
- MODULE_LICENSE("GPL v2");
- 
- #define MDPY_TYPE_1 "vga"
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 2284b3751240..b382c696c877 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -2058,6 +2058,6 @@ module_init(mtty_dev_init)
- module_exit(mtty_dev_exit)
- 
- MODULE_LICENSE("GPL v2");
--MODULE_INFO(supported, "Test driver that simulate serial port over PCI");
-+MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
- MODULE_VERSION(VERSION_STRING);
- MODULE_AUTHOR(DRIVER_AUTHOR);
-
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240523-md-vfio-mdev-381f74bf87f1
-
+Thanks.
 
