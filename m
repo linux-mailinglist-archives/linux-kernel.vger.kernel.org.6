@@ -1,172 +1,171 @@
-Return-Path: <linux-kernel+bounces-252280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC35D9310E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:10:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FB39310E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7677B1F221DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C4E8B22DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE44186E2C;
-	Mon, 15 Jul 2024 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8730186287;
+	Mon, 15 Jul 2024 09:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f0Yb9hnN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcnYtGy4"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46815223;
-	Mon, 15 Jul 2024 09:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AE55223
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721034595; cv=none; b=FukMA+Oj0C82+1CSKSXQwSuc3KcyRAslnzKJatslscdn8BNWzunLYFHFMu2xZewqwA+CA1ZdizBmP2mu/UrBKsPbohBnhe2lWlXYtPuEjx6pGxSLMnrKsu+UYNsAE0an6Ezg2lchc1v6OnlDfmxUrttJ1ccHwA0kMQFVGqhAv6I=
+	t=1721034589; cv=none; b=hgb2W7QHaEHEugsLuJpOd+STEq+Mb0D801L9JWtsyW8rkPhYvTVQobYGcitJbXOL4Y1/Pd6EVYNwKWCymvc/LKj27QT1zBYUTsOK4ek1bg/CVH3YUco/Lvc43FCjZ2c6SdkUAUDZPUUrNasRj2vhNXICJybWVL4/8Gbppn21yh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721034595; c=relaxed/simple;
-	bh=9VQl3YvtCVqzJrmMa8ve+rPTBLk5zbjsSx4SZChw0R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwauPVTWQwX5PsmQi8S9EoSvuj9yye1t5UKXTNW+hUaVQjUDu07PrOlOSY+A4APT4xlEFfBB6YYQd0N7FSJIibGaeQu3/jC8Vml4V6KlklW9i06UjkT60ymyQNhYwjrasx4BUJoLKI3H90uM126ADMglR89XiSBLtyqbqepPhno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f0Yb9hnN; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721034594; x=1752570594;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9VQl3YvtCVqzJrmMa8ve+rPTBLk5zbjsSx4SZChw0R4=;
-  b=f0Yb9hnNyw5FNPbJSkIpG7lfRAu/5B5zosvv7pUdUokCh0ePxv1BYGQp
-   THL6NYY8awWR+DJMwmMZVHvYMIyjBE+pf+mTttRc7uGBxUZRyvNh3Ad8j
-   yiYZRyL8I/KYBirUbLft1R0Kfykf8XNPLBUpPC1ecZVfX6vYUrc0jBY/Z
-   GXnlu/PHk0uahUJIjyodv2+1miA2yqj58BAA2ZFDZDg78X8TNNPr/vvUt
-   EZGktfZddG1EQ+IPL2Ja/k7IOfj9BxzBXpQE80Rq4dE6NPVGaz29JVrH2
-   ZHUmW1StinxuWY9+wkdBBuO6nCuElYn5C8t/pCuDQ9fTGJ9m1POwhYbPw
-   w==;
-X-CSE-ConnectionGUID: lwTH6wp0ROGnKMuPiQbwlA==
-X-CSE-MsgGUID: 4ehZKwiNSIaMDbfeJkkCQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18247913"
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="18247913"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:09:54 -0700
-X-CSE-ConnectionGUID: rFW3txrQRs+va6vRHZPgIg==
-X-CSE-MsgGUID: S8ahSpr1RMy1P74Ohlqc1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="54738169"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 15 Jul 2024 02:09:50 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sTHiN-000eAQ-2x;
-	Mon, 15 Jul 2024 09:09:47 +0000
-Date: Mon, 15 Jul 2024 17:09:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuntao Dai <d1581209858@live.com>, jassisinghbrar@gmail.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	unicorn_wang@outlook.com, inochiama@outlook.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Yuntao Dai <d1581209858@live.com>
-Subject: Re: [PATCH v2 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
-Message-ID: <202407151649.ExTr3xXL-lkp@intel.com>
-References: <SYBP282MB2238F93565D20F0A5F3EEB6BC4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1721034589; c=relaxed/simple;
+	bh=u+Gaa0hibGb8iA3gN6UB9Fck2zCztXz6k5FGOnbEuUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qkHXq1V16RKkfPA+VRCbQoWPK56Af0bTQOc401EZeK9/a7RK+fcUgXWkHUI0icBOs2bPxnBYCr93Li5O2FQ9jKYlbEw/Gc9Op+iPXpbeSZZPVd7NRHFaae8mAG4ZrmSiBLQ24JC++ib1fVXq5shRxr2hpZOlH35zpEeSQ1ws+0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcnYtGy4; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427adb1cf75so5308755e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721034584; x=1721639384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+3B6jB8UMroqJ2Yc/1gLAFE4gd/G0YdH5HhxS6qLOew=;
+        b=xcnYtGy472lUiPqLeQZaIqzpvnyS9w9FgeUvynpJcLdf7GPgzJjwFUfZAWbtGhJBbm
+         QOoGLCijVZkAzobxwoJ3kb0QBb0xxWloUaEbVYki2HFL5LD1Iy/0G2J8FstygyvpC29J
+         zHOcEHL8UFIkrYud8K2aqEAIS/wWLASfrvBYXOln7p6HeK0igSg+T+Uno0RJnoSHBIql
+         dilDAkE6N0BM510SWTO6XCIvmoORlzCFTXSm0L/zYY1vH9y1vlQWjT8mi1gXyjAryXxv
+         9q+BPGtuzP6A8XMOyO6CZimXQwEQM/D9F797ay86cspL3HKK07894mwmTJxwNAgBt/AN
+         NQ2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721034584; x=1721639384;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3B6jB8UMroqJ2Yc/1gLAFE4gd/G0YdH5HhxS6qLOew=;
+        b=D7rap5wT15ccvDkBSOppws+i2miLKJmVvL0vQ8SF3k7M+SWwJZLB80oSjWpzHMWEcm
+         THaKWdaKqvLxi8J796d8fRtUAJ2Pn8KGxt0hKyZJQvw2XXxo3fQqQQQ/8TJtf3uqDEmk
+         zaBuMvSmTARXsumHr93yhlvW/Gx3zuT28lSPvr9CIBEUlDkVsfNeihzk4bMs8Q9BT1VC
+         LwIXRDgyCtJ8SurPvrj2ZUT50pMbYwnS3hPnmgK1n3kWC2h00dg0z8OB0iD3e/q0MOzo
+         tcYVG7E43JDx+mewyqkJQODKokBSKx3QF6nSUt0RXMExTnDR/NiB1Ruz/1v3wl5vO/lb
+         4YWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsBgwq5GCTLCSmkluMCNdAlISHrb3gS7UX7hMV/ujtGMxhPny4KPSDeBzYhVMBC40LxuB4Ayg5n5xetP4PM6oGM/IDNKWqlBHP+X60
+X-Gm-Message-State: AOJu0YzfyyvNYPB/+YkRZ/TI+PNrE0txe4CZxGffyud7ucgaTJL+81Mz
+	THAGdOmB7l/T5pQEc3n4RXIW7buvKkZ8aTXk0xjwSH1soxxu97znjPGl4AscHdu8PIHKKjToOhs
+	8
+X-Google-Smtp-Source: AGHT+IHoknIsEXpesRP/qX2XWO81Tb0GhanCjhRsodiU3YItQHNxx21jIEKs66uJTiHHN8J6aJ56mg==
+X-Received: by 2002:a7b:cd98:0:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-426708f1d94mr128457725e9.26.1721034584503;
+        Mon, 15 Jul 2024 02:09:44 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:e709:abf9:48b3:5079? ([2a05:6e02:1041:c10:e709:abf9:48b3:5079])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-427a5edb489sm77959745e9.37.2024.07.15.02.09.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 02:09:44 -0700 (PDT)
+Message-ID: <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
+Date: Mon, 15 Jul 2024 11:09:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SYBP282MB2238F93565D20F0A5F3EEB6BC4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki"
+ <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>
+References: <6064157.lOV4Wx5bFT@rjwysocki.net>
+ <20240715044527.GA1544@sol.localdomain>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240715044527.GA1544@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Yuntao,
+On 15/07/2024 06:45, Eric Biggers wrote:
+> Hello,
+> 
+> On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+>> if zone temperature is invalid") caused __thermal_zone_device_update()
+>> to return early if the current thermal zone temperature was invalid.
+>>
+>> This was done to avoid running handle_thermal_trip() and governor
+>> callbacks in that case which led to confusion.  However, it went too
+>> far because monitor_thermal_zone() still needs to be called even when
+>> the zone temperature is invalid to ensure that it will be updated
+>> eventually in case thermal polling is enabled and the driver has no
+>> other means to notify the core of zone temperature changes (for example,
+>> it does not register an interrupt handler or ACPI notifier).
+>>
+>> Also if the .set_trips() zone callback is expected to set up monitoring
+>> interrupts for a thermal zone, it needs to be provided with valid
+>> boundaries and that can only be done if the zone temperature is known.
+>>
+>> Accordingly, to ensure that __thermal_zone_device_update() will
+>> run again after a failing zone temperature check, make it call
+>> monitor_thermal_zone() regardless of whether or not the zone
+>> temperature is valid and make the latter schedule a thermal zone
+>> temperature update if the zone temperature is invalid even if
+>> polling is not enabled for the thermal zone (however, if this
+>> continues to fail, give up after some time).
+>>
+>> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
+>> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033fca16@linaro.org
+>> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> On v6.10 I'm seeing the following messages spammed to the kernel log endlessly,
+> and reverting this commit fixes it.
+> 
+>      [  156.410567] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  156.666583] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  156.922598] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  157.178613] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  157.434636] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  157.690774] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  157.946659] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  158.202717] thermal thermal_zone0: failed to read out thermal zone (-61)
+>      [  158.458697] thermal thermal_zone0: failed to read out thermal zone (-61)
+> 
+> /sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
 
-kernel test robot noticed the following build warnings:
+Does the following change fixes the messages  ?
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.10 next-20240715]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c 
+b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 61a4638d1be2..b519db76d402 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct 
+thermal_zone_device *device,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuntao-Dai/dt-bindings-mailbox-add-Sophgo-cv18x-SoCs-mailbox/20240715-003952
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/SYBP282MB2238F93565D20F0A5F3EEB6BC4A02%40SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
-patch subject: [PATCH v2 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
-config: powerpc-randconfig-r113-20240715 (https://download.01.org/0day-ci/archive/20240715/202407151649.ExTr3xXL-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240715/202407151649.ExTr3xXL-lkp@intel.com/reproduce)
+  	if (!iwl_mvm_firmware_running(mvm) ||
+  	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+-		ret = -ENODATA;
++		ret = -EAGAIN;
+  		goto out;
+  	}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407151649.ExTr3xXL-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/mailbox/cv1800-mailbox.c:56:62: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *data @@     got unsigned long long [noderef] [usertype] __iomem * @@
-   drivers/mailbox/cv1800-mailbox.c:56:62: sparse:     expected void *data
-   drivers/mailbox/cv1800-mailbox.c:56:62: sparse:     got unsigned long long [noderef] [usertype] __iomem *
->> drivers/mailbox/cv1800-mailbox.c:78:25: sparse: sparse: cast removes address space '__iomem' of expression
->> drivers/mailbox/cv1800-mailbox.c:78:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [noderef] [usertype] __iomem *addr @@     got unsigned long long [usertype] * @@
-   drivers/mailbox/cv1800-mailbox.c:78:22: sparse:     expected unsigned long long [noderef] [usertype] __iomem *addr
-   drivers/mailbox/cv1800-mailbox.c:78:22: sparse:     got unsigned long long [usertype] *
-   drivers/mailbox/cv1800-mailbox.c:102:17: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/mailbox/cv1800-mailbox.c:102:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [noderef] [usertype] __iomem *addr @@     got unsigned long long [usertype] * @@
-   drivers/mailbox/cv1800-mailbox.c:102:14: sparse:     expected unsigned long long [noderef] [usertype] __iomem *addr
-   drivers/mailbox/cv1800-mailbox.c:102:14: sparse:     got unsigned long long [usertype] *
-
-vim +56 drivers/mailbox/cv1800-mailbox.c
-
-    47	
-    48	static irqreturn_t cv1800_mbox_isr(int irq, void *dev_id)
-    49	{
-    50		struct cv1800_mbox *mbox = (struct cv1800_mbox *)dev_id;
-    51		size_t i;
-    52	
-    53		for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-    54			if (mbox->content[i] && mbox->chans[i].cl) {
-    55				mbox_chan_received_data(&mbox->chans[i],
-  > 56							mbox->content[i]);
-    57				mbox->content[i] = NULL;
-    58				return IRQ_HANDLED;
-    59			}
-    60		}
-    61		return IRQ_NONE;
-    62	}
-    63	
-    64	static irqreturn_t cv1800_mbox_irq(int irq, void *dev_id)
-    65	{
-    66		struct cv1800_mbox *mbox = (struct cv1800_mbox *)dev_id;
-    67		u64 __iomem *addr;
-    68		u8 set, valid;
-    69		size_t i;
-    70	
-    71		set = readb(mbox->mbox_base + MBOX_SET_INT_REG(RECV_CPU));
-    72	
-    73		if (!set)
-    74			return IRQ_NONE;
-    75	
-    76		for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-    77			valid = set & (1 << i);
-  > 78			addr = (u64 *)(mbox->mbox_base + MAILBOX_CONTEXT_OFFSET) + i;
-    79			if (valid) {
-    80				mbox->content[i] = addr;
-    81				writeb(valid,
-    82				       mbox->mbox_base + MBOX_SET_CLR_REG(RECV_CPU));
-    83				writeb(~valid, mbox->mbox_base + MBOX_EN_REG(RECV_CPU));
-    84				return IRQ_WAKE_THREAD;
-    85			}
-    86		}
-    87	
-    88		return IRQ_NONE;
-    89	}
-    90	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
