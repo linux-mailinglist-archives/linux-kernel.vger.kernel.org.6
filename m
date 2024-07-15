@@ -1,339 +1,278 @@
-Return-Path: <linux-kernel+bounces-253158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB96B931D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:28:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A49E931D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A27D1F226DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8971C21563
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724C6142659;
-	Mon, 15 Jul 2024 23:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7F9143866;
+	Mon, 15 Jul 2024 23:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DgvvtGvw"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2086.outbound.protection.outlook.com [40.107.101.86])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fLa5N2Mo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF5722626;
-	Mon, 15 Jul 2024 23:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35765433CB;
+	Mon, 15 Jul 2024 23:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721086104; cv=fail; b=pwBLIzFfO1Uzo75ooGVMnpeEuPkOvUOFdJ4yBgLfGxnF1QhJVGHzKk8//uFWD8fcS5+HXwUUPhGg72MkWkyKjbuY+G3wQRgrGK3CuDHmnJaJRTP4gPnvQv0chJ03AjCd/y3ZUrDZwMcyGgzlHdyk9PW7oRiRVZcT2j3WCK5iQE0=
+	t=1721086126; cv=fail; b=pZoROktW/Zwu/8vBDSW+gCi/VxUk1SNCGlxQkVjbrSx041n1FRULTCq2yTJ/7m26o98enOjQpCEd1m9g5NKFxN+WAoDjwMGbsQdZOSxdybUcJ65AcVIN6+njLLZ9ZOS+GH7tBpDaAH5nt/L1l2KYgpJZsnM7Hxtek1+zZHOfP5Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721086104; c=relaxed/simple;
-	bh=WxIjAqWrRmP+XI3KaFEAvsYI4JtKhTYMDTZcSAfDkOQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hfX9RXDqM0Auk4QAdBZPjKxBgPzBqi1YQBlT271YN3I3LtkUnhGmaA4z1WJD0SWZNb7MhJHjBs6mgbiD3NuzlfDuAP//eRt/3FD4/t2XqIu31YmyVIcGlHUIl+oX0xLz/shLtOOZp7ft+LUeqK1srl1aLEUZHgHuizEopgI1rSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DgvvtGvw; arc=fail smtp.client-ip=40.107.101.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1721086126; c=relaxed/simple;
+	bh=TNY39L8mFJpMPlgpx7iYEKaQ0SS1R0AbmJPnosxy/58=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p+PcL2ExiTvGYw0dQCHa5H5svb4OiGHbUA3Otm2b/XvZzRJC19ZDK/GuBrtuV4FsLx5q8e7QndSLq8/IlFyupAwty9JCjqE+Vw9XCwvOf3L8kbZOQJUKZ71Vv1wizW3JFttPlU4kNIQOv8AhbL45LrdymnBSUKoUbxFVSzIY7S4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fLa5N2Mo; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721086124; x=1752622124;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=TNY39L8mFJpMPlgpx7iYEKaQ0SS1R0AbmJPnosxy/58=;
+  b=fLa5N2MoPZJPQe2H68jPoHh5MzCIMG9GSJYK/Ynxf+s9tpdQTFO8GMxO
+   YaTpp08l5oZj+oDfrEoHIeQ4tH24amgZJ0VNVHmCGwdGUtKdixY63jZQx
+   3HNsu55bPY1b4ZtlTmOLscRCCxF0W0KMACrB31hAE7ikZSSHw54eFaewo
+   KzQLli4h2y3d6MUXp3OTHGf4H/Tc8nI97/mBohI5YxxpArmPIA2dBaViM
+   BCDriR0zQqQlF+rpHJAizWIkNVemDjVK+UIWbZWbs0wtM97LqF9q1WDdA
+   mO1CcI/F4nnnk5lpUlPsNg+3q2ow5ESx0kMV3eVZVFWPCk2bsc/2PKdpf
+   Q==;
+X-CSE-ConnectionGUID: vcEyjTBUSvePzhpwD+5Taw==
+X-CSE-MsgGUID: cnXl4/58TZKtncz6fP1CBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18633199"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="18633199"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 16:28:43 -0700
+X-CSE-ConnectionGUID: uW3vQFodTNKqkLH8yawiXw==
+X-CSE-MsgGUID: cG0XaUfFTju0xjSy1pfqzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="80870875"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Jul 2024 16:28:43 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 15 Jul 2024 16:28:42 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 15 Jul 2024 16:28:42 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 15 Jul 2024 16:28:42 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v0klml68nutOm3OAympOX3dBbYw0ht8o4vzYtrFLmt+iWmrH1XJIV2fJKLKPqO5hLGRu/PqTh7sY1aFCGOVSncQTqPYlB6/vgK+QaabOLZAgsvLRVBD2KzTIqaOBR2j+yyMhNdznkq1XLKDFHtcq3HZBbor9DSu7ELHi7Ae7OpuipPPwIqnWseeTQznvRHE0DXIOON8qJaXbQNZcaaXFkHOdDVD2bgCLjzzCTlq8VEv9j9GBAfk/o0K5JAM90keQw4Ep9fXmOfN2xHWFN3wCZ0Mgn9VhngzkmZTTpteg4PlDhY71zriznmQSd2rXaxuo9MRafq4RWaxP5yVifX6pUQ==
+ b=SrDmIhBD4FZWoWt3nLh4dzukjkc2Nj5D7xlHakJGd2QojRHaN+zU9xl4OIQDIYgrk28E1ValP7ZD5ryRCb7xmPsMilQHZBZSRtFmg7qR8J+cxSPH/rsof6BPm4smqb2/KFM06abWzBwJ8JApn+tS8q7YWO5PdxAmgwxUzYj63kVTdBRFiHg0HKAbH8L8j5UDPMDhz1PcwrpXDZuB8MppcOZibwXa1yqnh8BpHc/bxcMKbqElzx85L1UmrfVyB3qVOFpd3tymA8TAhiPUVWra/vQf3G2a81C+BdVraxeZ1NQD/+9IhECmhGRe3AIKL3SCXLBldqgvdkzcF05FB55zAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e8UGyw62SwqqmQXqIQvE3gumqzGkSpCCBHKCy85H+MY=;
- b=j7fjdS10wvKQVBdWuH5f0qU/wx4DTNoyF182CHcTXbbTAahkcWzngWe5Ua8xfJmqn50FG8hPJDuUI4+TRXpzWiFQnYDvT+oiai4riBpHun6mmdxF4WznYMqDfTl8yJXCJ0gpjCfEsiEruh99f1PSY6bixphLkdIBqPrtdqI2AG61b8XnJ3ETDtY7XWriUxK+flhyGioP6Kh5zfjSqP9gCc/uNYMZNfTKb2hMpeXasanw9dP7j27YneFv8hgODpQHnX7DU0qOANEe/2olXIGhQgvGgpQki93x//ZbPdjqqeF2mjF9tcwKc8FXyujXucYO0XdSAJLU8nH1i16tukF/5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e8UGyw62SwqqmQXqIQvE3gumqzGkSpCCBHKCy85H+MY=;
- b=DgvvtGvw/wT/piNUyTMlzP77BJcD9wiiYEXvxgoE2kVrJa0WwjrIcEXtj6Q9QRrDE2Ibw/Zl2orHzMve+a3HGOeKv2dXzIaKT49eKwycGUkKSvujIRmkLyBqZCrOMSZaOebdWRK6qoo93VKSvxz4zK5S3nUlHFEhTOyisBXIf/c=
-Received: from SA9P223CA0018.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::23)
- by PH7PR12MB8793.namprd12.prod.outlook.com (2603:10b6:510:27a::22) with
+ bh=eBFwHm6noJ/Q20b6UkU83ep45WGpT95KVQI7ERyh58E=;
+ b=IKz0gAVNwq9SKRpt0iuWHJ4nJO1JCKPXvRLQppNIuIkguvfGX5S9ur91wFDYYz08Chob4hwHuEGOaQPI5NTbiMtkLdqM9RQ2Q6Q54nABAob3r7dbzNcNTgeHCPeru4qqiJC6ItyyvBt2Zd88HvAv8dQFxLYT8wGoU71v72iKjED2FjjGSdbryW64fwd+NW0acAfqK4igxTYyPJIlz+FbprHXKwxxQev20RjdTm1Inzo0wZr11b1MH2E6I+Gd3xYVQGjEnW7FdoKon1eJa5T7ckM7po+xgZiff63ldl97doHMNyP8q3pML/CWYg87YBoEneJaCXZnFhF5P8ugJN1F9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by DM4PR11MB6359.namprd11.prod.outlook.com (2603:10b6:8:b9::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 15 Jul
- 2024 23:28:19 +0000
-Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
- (2603:10b6:806:26:cafe::62) by SA9P223CA0018.outlook.office365.com
- (2603:10b6:806:26::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29 via Frontend
- Transport; Mon, 15 Jul 2024 23:28:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Mon, 15 Jul 2024 23:28:19 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 15 Jul
- 2024 18:28:18 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 15 Jul 2024 18:28:18 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH] remoteproc: xlnx: add sram support
-Date: Mon, 15 Jul 2024 16:24:33 -0700
-Message-ID: <20240715232432.1694673-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 15 Jul
+ 2024 23:28:39 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 23:28:39 +0000
+Message-ID: <015a85bb-b775-4752-89d2-459ea6818701@intel.com>
+Date: Mon, 15 Jul 2024 16:28:36 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v17 01/14] net_tstamp: Add TIMESTAMPING SOFTWARE
+ and HARDWARE mask
+To: Kory Maincent <kory.maincent@bootlin.com>, Florian Fainelli
+	<florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
+	"Heiner Kallweit" <hkallweit1@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu
+ Pirea <radu-nicolae.pirea@oss.nxp.com>, "Jay Vosburgh"
+	<j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+	<corbet@lwn.net>, "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, "Simon Horman" <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, <donald.hunter@gmail.com>,
+	<danieller@nvidia.com>, <ecree.xilinx@gmail.com>
+CC: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Willem de Bruijn <willemb@google.com>, Shannon Nelson
+	<shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
+References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
+ <20240709-feature_ptp_netnext-v17-1-b5317f50df2a@bootlin.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <20240709-feature_ptp_netnext-v17-1-b5317f50df2a@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR03CA0029.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::39) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|PH7PR12MB8793:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1b51174-94aa-44fd-0c0d-08dca525cf61
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DM4PR11MB6359:EE_
+X-MS-Office365-Filtering-Correlation-Id: 728d2a07-17fb-4f81-2a4e-08dca525db7e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2P7aljDPKa2CnzvNJG0BkAfessZQpsDwXxjt2rxlJwzO9JAQfywVpnbu2aA2?=
- =?us-ascii?Q?6UwD0shsCTDYGPPr6gIrr8dLElE9caOI3k4eqpoos2xi+Oe2yne1PBPAE5Qp?=
- =?us-ascii?Q?lDnRxbfF+jXgVdRPRgekxIDsEPrtoK+YhVW3fGh7vpeLCeNMqpstFTHx1jN8?=
- =?us-ascii?Q?u+nPE/mriHCSNMH7bHakxuhU6lki0/JHQXFnQmOltN2BQGmuoE9EZ3fMACZq?=
- =?us-ascii?Q?yGovlxuMniFAAfKARnVfDOcb5ISrrQfzFmxGufg5HxGX/9pzB3Fz+fov6uFs?=
- =?us-ascii?Q?buD3UlZ9p7QxzkflTadOZSvXvXagazmzkfsM0/CCOEb/OeF2GDKAEvc63rz7?=
- =?us-ascii?Q?5ZUGlqYUqRz2LOFciffaoNdS1B/EZ8nedEVGaRICRPyDmp1kqNsZjM78FgO3?=
- =?us-ascii?Q?M7thAyEjOKjOnkUQBJl12MnQ6N54pytEhfLFWmQz23SzRLu1lRqZbbpvK6XP?=
- =?us-ascii?Q?o8j7gxZubEOJGRWU6D/KmFXfG2H11vYhtNW+33e2tX2gkl34qV5km4b+FjJe?=
- =?us-ascii?Q?EJG93EbJzYldRcnZeOm600AfeUcbDtu3tXL7aIopMZsxa/JqksFR56s/g30f?=
- =?us-ascii?Q?R4CMXtSeGwMqeMmHp/7JeHk6LCvQk5qAfFkebeHM7gmidnr4mU0LIXZQZJkx?=
- =?us-ascii?Q?klYRwx9ezjqfj1xVzPIhDxo6Tr2YRUCeFdAptvVuGPzkQUH/Q1ZeaoB3aYJH?=
- =?us-ascii?Q?A8chS8y3DYs/UtfzZSWSk4VYQOA1vt44sc1tbuv8Y34Ik1M466mxSxehIGDO?=
- =?us-ascii?Q?mD0HOoBJ9gFtfZP5VRDZyQ72yBsHFYMjjSwG3iHNhKG3U3jOL406/I3n25L9?=
- =?us-ascii?Q?R1He1I9TRj9Lo0qEBKl+QDO8OoP7W4FtKQEEgYro+Xbj35QPZbHQD1xBzpa5?=
- =?us-ascii?Q?s0YmTIRcuRZ91FQF17u5bIYFoLK8x85z4Yoa/dEQUOd+my89GgF09/CLJxnG?=
- =?us-ascii?Q?J2syrkKgvZATSe3kduK0BmO4vA2sMReH15k48xT5sZD0YNvHqL5m4En5JEoY?=
- =?us-ascii?Q?q63+ggP9jrtxAy/7X5UjOJKmswNK1gtQvFB6C4s0ag3Cyz7/ZPYGiYCPVI5o?=
- =?us-ascii?Q?TAkt3ZCpnNEePJXDpqZKpGrc8VqY4ilfMMT/NGnqQGUFEhntYT4JZrUxuInG?=
- =?us-ascii?Q?G1qMjqq7H6Rpejzjb7KVm0j7y1knuAa8CbHKYTuV536XM7DBE/6I/YY82/qY?=
- =?us-ascii?Q?m8ZqMzdY2uEjWyYBF9biZvlnv/pS9Fxhdtca83GXSiNLRB/+3sAMyOWde0So?=
- =?us-ascii?Q?AAe0q09dBmsPP3pz/VDQIOww7P4ypViK31LqmA92FSF0Rmfnxaty6jc4BZh7?=
- =?us-ascii?Q?ofLOJIz4t/DmycZqGf5x+HJRj52OE71fT3TCXBC4yOA7Jv7zhqyPkfhO+6VE?=
- =?us-ascii?Q?+US91ahMmEdNtQnRwIPSZQq5AUeVxK97dHyY1m0/FuITiPgrZak1BSk8JGnz?=
- =?us-ascii?Q?ggPlFnsjNDCkUmVyz7i7vDHRUlLCV45A?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 23:28:19.0603
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?V0QrcDgzbUlxMlhYa2d3T1I2LzkyOU14ekxnOStMSkw4R3lOL2hoMUJQNGI5?=
+ =?utf-8?B?N2hiSWQrWFBockZQZVJMejlDZnNTcGc5dXFRcjNyWDhrSmdYWGhCNzJJUFk2?=
+ =?utf-8?B?SHNwcnVveUFDYkF3U093MU93Y2EwWVliSFRTek1URU10T0hhUjdsNzdJM1BN?=
+ =?utf-8?B?bU1XMU1wQmRBdEdDSEp2YmFUQVRncWpYVTlXNTk3UndJVXdWZlBvSHBmOU5a?=
+ =?utf-8?B?dzM0a1h3M0xKd0liQk9JUCszWDBzYjhiNWJpRzhtL0FJckQxUThJQzUwR3Qv?=
+ =?utf-8?B?WVJoaGhVTDRVWVJ4WlpiSi9kNnpya1JjUUJPQkh5NmxQMGNIV052cENUdElw?=
+ =?utf-8?B?ZTRBUUN4cXliT3JMSVU1SmprM0dyaWxPUDlkcDI3WFNEWFZzRWMrY3hkYnRZ?=
+ =?utf-8?B?T2F5a1k2dElCQkdUbTIyNFlCY3RjUVlSaEliMTNMaFVOd3AxUWxMNHJibE1o?=
+ =?utf-8?B?cDBQc0RIWm8reFRqY2FDUDA2dCtLT0JBKzNSWDVhRVlIZDJrWlZoeFhsNWY0?=
+ =?utf-8?B?MmNxV0hnbGlFLzZpYTE2MWxyYUNnU0RQYkRVbW15S1lpLzhyM1d3VU4vb2NZ?=
+ =?utf-8?B?Q0ZmUFlYYWRBbFQ4QzJiU0N0bGFDZXI4allETWZpUHFEUmhXd2RoWlF0K0Ja?=
+ =?utf-8?B?Q3h6K2VrMm1jcUxUR29DVmtmUDgvQ0k1VHB5ZHFVRUliTTBUZHk3cGhNSmtP?=
+ =?utf-8?B?SFZWZytYaXZGVlNzWE9IajIvdUFIaGRCM3RvbTJjV0d4UkJEejRFcEhiTytV?=
+ =?utf-8?B?OTlYWVNCVUR1OTFnTkdDQlkwa3hjQ1dIVlEvQU5KcmZNU3RSVlgyd3ltMTRS?=
+ =?utf-8?B?aEtiMXZxeVlYRmdEa29aanVRVVMrNDZZTXJlY053VmFaL3ZKSk5JR1BWTVhP?=
+ =?utf-8?B?c3d3Zk1sOWJJT08yZnQ1Z21ZWE54RElCRjB3cC95azJxM3ZVWFBRc2M0MzJP?=
+ =?utf-8?B?V3J4TURWWlFvVWU3c0RpN2F5RXhFYkZBNTV3SGMyU3h6WWpMdDhkWlBqZEM0?=
+ =?utf-8?B?UjdudGJPMFNZSURHMmI2VVVkSVI5TE03TFFmQWlrWXJFMFo1ZWt1Zk1TeEl1?=
+ =?utf-8?B?ZXBhZjJGTEtMTTBrMG9XQkJaL29oQU1Oc25lK2o2ZWFKWlZkbEd3eHNoYUVX?=
+ =?utf-8?B?UDliWnNIeFcvOVVDMzd3ekpySmtjSnJHOHU0Sldya1dUQ2wvUlphbDZpSzVw?=
+ =?utf-8?B?K1laVFlncU8zYllJMjRiSzVDMmFXeW9rRWg2UGwrY2pDYVFBaXg5WklPdWJl?=
+ =?utf-8?B?QmR3RTVNaS9zY3JxWEY1bzUvdHhUekNTUXQ1MFdLVlBkZ20xU2QrZ0h5LytE?=
+ =?utf-8?B?VysrSmRWNGx0L21PeXFWOGZtRjRvczFUVDh0UjdRZkFHTXFFdXJYQ3EvK2lV?=
+ =?utf-8?B?Tk96RW1VL1BuNFl2b1prc1NYUlo5Z1NlTUR6akNhZ0JQZG0wN2dUalYxTnpz?=
+ =?utf-8?B?dE5TNHBYM1dHZnlzTkROc2RYNjlhZTRMb2tMQmRZd3RUTFRXcEZDZldwYmlG?=
+ =?utf-8?B?Ynl6U05jdGovSXhpdVFCS1p4eWJnMklTWHI2ZCtibndtTTRYMVZlaFlBRmd0?=
+ =?utf-8?B?YW5rMTJtTUdiS3pGZHpWa2wyaExManVSZ2lOMGdrOGtiYU9qSzllaG9qZVQ1?=
+ =?utf-8?B?dWg1SmpVejkyS3NCMFVpSjA4NndJMW82c1J5cWNRNVFnbVZzVEhKNzdLMjRy?=
+ =?utf-8?B?QVlubjFUSEwxc3Fydm1zVzhVNlVsY3ZDcmQxYTBNbHJiaHMvcllKOG96Q09v?=
+ =?utf-8?B?bDRLeEIwVzI0UUZsTzBMM2Rab2pKU05MTVFSQkhDWGxIa1V2NHhGd3dhTHFZ?=
+ =?utf-8?B?ZHUvU1Q5Vzc4bnNXK2gxYUEvNTFaNHlGL2V3QWZlL3lYdDRVR1NVRXlCZ09E?=
+ =?utf-8?Q?xsqHJAqoDXCu8?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R3RnREF5WWpLNGJqbW84SzJPR2M2VWRZNFRjUmxpRXBTRU1QbWd3bFgvS2dV?=
+ =?utf-8?B?WVpVK3MrM0hUbUFNRmpuVHdhTm53RTMrMDQycm5jOE5KTXp4N0plVUtXQ2Ny?=
+ =?utf-8?B?alMrTmg5Nzc0WkpTdm8rSVE0cyt5ZDZZYjhxcWliaERqcHBabm1DSUc1NTlx?=
+ =?utf-8?B?L3hvU0ZNSllxS1F2eXA3RnVSeGdLWVI0WU9yZEFaMWhKeTJ1SXZva25BeGRs?=
+ =?utf-8?B?emhCTk03NzljaDJCR1VIRVZHNjY3WDJIT3FBYTlPSERlODhUM1pkU0RtRmlZ?=
+ =?utf-8?B?cXBiTCtnek9wWDlDbEpBSFZ3S0ZNSGtwZS91MjVOeVA4czA1MStmNllvSW5z?=
+ =?utf-8?B?ajhYOTA4SGc3d0g1enJOeWRSeWlaOFpYanVkZU9pNy9BTGhrbjJaTVgwcGFS?=
+ =?utf-8?B?WDlDZ0lsaC9aSTJGYzBHQ2l6WkQ4N3dKYjVNKzNzMzFlbk1iY0xtdEFLTmVm?=
+ =?utf-8?B?RmFhUXU5aXRCUG1oUGhVUTZlOGMxaTJLQkJXY2hmY3JWa2wxTVFxNnRTWWc3?=
+ =?utf-8?B?N1NRbHdNUFhxWGtveFBVd1Arb0s5cVJvcEd5UnBrazBHSTYrenlSUkJFM2Zn?=
+ =?utf-8?B?NTRqUnNDaU9UbDRGN0F3K3NlL2libzJKQnhwR1dUR0w5SURsdlFlNGF6WFdn?=
+ =?utf-8?B?am0xaldZY3djdU1Xdm1tRk01RDdwcjlmL3o0SzRiVm1VTnBrNyt3NlAvZXRw?=
+ =?utf-8?B?ZWJsdE1panN4UDA2Q0tYUVJNTms0YUgxa2lDNWszMW5GQlBsT0pPdTkxOXg5?=
+ =?utf-8?B?NVllRHBuem5KWTU0bERwZjd2d2dqeWFTZkNUQzVFcXpoTkNtMDNJZTM5dmlC?=
+ =?utf-8?B?QnpnODBmZDJPNUllekpqZDJvMWJMWmdWMHpndEJUSkNHWDhSY2JFM1NKc2ZN?=
+ =?utf-8?B?WUN2RlFRSytWMDUzQUlWWlJNTHVIS0ZodnVVZ1E4SkEweXBCd29PVmg4VFk0?=
+ =?utf-8?B?dkRRQWh0WFAwUVYyUjlMU0x0c1YrTmVSSmphRU8vMmdobXBSY09XOEg3ZzB3?=
+ =?utf-8?B?WmRMY0p4dzNyOWxjNHlzMmtNT3hxSzVsQUJkTHZkVDMxbVVVeEZpcjFxeXow?=
+ =?utf-8?B?OUowbjFDQmJQd3lPY3NJNUVxZGRXc0htUjlLai9NeUJrRnZma2RhSjJrM3BD?=
+ =?utf-8?B?aXg2YlhHUFNRdmVpaTN5dGNpVzJtcnc2RHJoZlAzQmw4U3Q4UkZzUFNCVFYv?=
+ =?utf-8?B?WTBPSUsvMW1abG9RaE81bW9PU1RXSUVhRndlSXNzRzM3aWY1aVcxN2V4cTI3?=
+ =?utf-8?B?TXhPZTdid05Ta1dZRzZ0ZFF6VGVVK0hLbWRLRXhaczR1REk5czIxWDc0L0ZJ?=
+ =?utf-8?B?dnNIT0tzblVMU3dnZ3RwQWl6bWptVUhEcGFJYVlydXJFREpCOEZEZkhuWXN4?=
+ =?utf-8?B?Z2pOZHVyaC9ZeDZPMys3OUIvZk8yZWtlTFoyNTNCanp1NjhaWnVXY0RBWE1r?=
+ =?utf-8?B?eU1acXlFamJPQUtXWEtDNE5HZEJIZFpYeCszK3ZzU1dqZWhTQ1diUXJ5ckoz?=
+ =?utf-8?B?TVdVRDJvQ203SzR1Mnk0TDZqdSs0ZDV1SUdoYi9zVUFxZHBHRTBxR2lMTUNY?=
+ =?utf-8?B?Z0s4VlozcHlpbytVQ1FQVkVJL0FKRVN5Mk5XQWVJekZ2QXNtMG92U1RCc0Qr?=
+ =?utf-8?B?ZHl2Qm1LMlY1VVYxK0xUZm9NSGsySHBGZ3Rwcy9MeVJnYldhaExWeDFnZ2Y5?=
+ =?utf-8?B?S2Q4OUNXcGpCQXpMcHM4TmZhOS9MMk9uVUFHUlQ3dHAvUHhMYXROajJ3aDRw?=
+ =?utf-8?B?ZEgwWXNmS01adlNlL0tIdEZoaXhHWHFwTmlwbWFnTmZ6bmF0MFJYOWh4d1J4?=
+ =?utf-8?B?dkg4dG5EVzVha0pYaFh3YndtVGlTZCtpaXczUTY2OUNOcFFPYWQxb05peGtB?=
+ =?utf-8?B?Skx6aHMwNkd2NW5aL3dGSTlTREs5OXNHZXBoVUI4bEEvRk4vOVJGZXE2RGxU?=
+ =?utf-8?B?UngwTFJvZ0xRZWJHbG1ZMnNvUGgvazQ2SHZ4V3o3V0JJcm1aYUJDMVM4VE03?=
+ =?utf-8?B?dUpnRTdNdjBaRXRYRzZLMUNDanJ3VS95RFk5amxPbXJsL2VBZ0U4YXJkY3c4?=
+ =?utf-8?B?bjhucm9lRnlCaVZCSmo3dG9uRjlzZHRQMTIvemVzaTB6MHZ1dVNGSVZiTDFv?=
+ =?utf-8?B?bWd6VmVIbUdNM04xTEJjYVpQd3VORFNicmt3QUtLSDJSbE45QlJPQ2FPUncr?=
+ =?utf-8?B?dXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 728d2a07-17fb-4f81-2a4e-08dca525db7e
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 23:28:39.5944
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1b51174-94aa-44fd-0c0d-08dca525cf61
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8793
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mIQqqaTLojzYuoYETrwakdBSeFEdowODy8++7cR8LECSXP4qso9+3QvF074gyxgczL0k50vm+8FGMYB74RKz4p46MzmrkxRXEbGKim8UMA4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6359
+X-OriginatorOrg: intel.com
 
-AMD-Xilinx zynqmp platform contains on-chip sram memory (OCM).
-R5 cores can access OCM and access is faster than DDR memory but slower
-than TCM memories available. Sram region can have optional multiple
-power-domains.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
- drivers/remoteproc/xlnx_r5_remoteproc.c | 131 ++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 596f3ffb8935..52ddd42b09e0 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -56,6 +56,17 @@ struct mem_bank_data {
- 	char *bank_name;
- };
- 
-+/**
-+ * struct zynqmp_sram_bank - sram bank description
-+ *
-+ * @sram_res: sram address region information
-+ * @da: device address of sram
-+ */
-+struct zynqmp_sram_bank {
-+	struct resource sram_res;
-+	u32 da;
-+};
-+
- /**
-  * struct mbox_info
-  *
-@@ -120,6 +131,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  * struct zynqmp_r5_core
-  *
-  * @rsc_tbl_va: resource table virtual address
-+ * @sram: Array of sram memories assigned to this core
-+ * @num_sram: number of sram for this core
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-@@ -131,6 +144,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  */
- struct zynqmp_r5_core {
- 	void __iomem *rsc_tbl_va;
-+	struct zynqmp_sram_bank **sram;
-+	int num_sram;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
-@@ -494,6 +509,40 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int add_sram_carveouts(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct rproc_mem_entry *rproc_mem;
-+	struct zynqmp_sram_bank *sram;
-+	dma_addr_t dma_addr;
-+	size_t len;
-+	int da, i;
-+
-+	for (i = 0; i < r5_core->num_sram; i++) {
-+		sram = r5_core->sram[i];
-+
-+		dma_addr = (dma_addr_t)sram->sram_res.start;
-+		len = resource_size(&sram->sram_res);
-+		da = sram->da;
-+
-+		/* Register associated reserved memory regions */
-+		rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-+						 (dma_addr_t)dma_addr,
-+						 len, da,
-+						 zynqmp_r5_mem_region_map,
-+						 zynqmp_r5_mem_region_unmap,
-+						 sram->sram_res.name);
-+
-+		rproc_add_carveout(rproc, rproc_mem);
-+		rproc_coredump_add_segment(rproc, da, len);
-+
-+		dev_dbg(&rproc->dev, "sram carveout %s addr=%llx, da=0x%x, size=0x%lx",
-+			sram->sram_res.name, dma_addr, da, len);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * tcm_mem_unmap()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -669,6 +718,12 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
- 
-+	ret = add_sram_carveouts(rproc);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to get sram carveout %d\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -881,6 +936,78 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	return ERR_PTR(ret);
- }
- 
-+static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
-+{
-+	struct zynqmp_sram_bank **sram, *sram_data;
-+	struct device_node *np = r5_core->np;
-+	struct device *dev = r5_core->dev;
-+	struct device_node *sram_np;
-+	int num_sram, i, ret;
-+	u64 abs_addr, size;
-+
-+	/* "sram" is optional proprty. Do not fail, if unavailable. */
-+	if (!of_find_property(r5_core->np, "sram", NULL))
-+		return 0;
-+
-+	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
-+	if (num_sram <= 0) {
-+		dev_err(dev, "Invalid sram property, ret = %d\n",
-+			num_sram);
-+		return -EINVAL;
-+	}
-+
-+	sram = devm_kcalloc(dev, num_sram,
-+			    sizeof(struct zynqmp_sram_bank *), GFP_KERNEL);
-+	if (!sram)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_sram; i++) {
-+		sram_data = devm_kzalloc(dev, sizeof(struct zynqmp_sram_bank),
-+					 GFP_KERNEL);
-+		if (!sram_data)
-+			return -ENOMEM;
-+
-+		sram_np = of_parse_phandle(np, "sram", i);
-+		if (!sram_np) {
-+			dev_err(dev, "failed to get sram %d phandle\n", i);
-+			return -EINVAL;
-+		}
-+
-+		if (!of_device_is_available(sram_np)) {
-+			of_node_put(sram_np);
-+			dev_err(dev, "sram device not available\n");
-+			return -EINVAL;
-+		}
-+
-+		ret = of_address_to_resource(sram_np, 0, &sram_data->sram_res);
-+		of_node_put(sram_np);
-+		if (ret) {
-+			dev_err(dev, "addr to res failed\n");
-+			return ret;
-+		}
-+
-+		/* Get SRAM device address */
-+		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
-+		if (ret) {
-+			dev_err(dev, "failed to get reg property\n");
-+			return ret;
-+		}
-+
-+		sram_data->da = (u32)abs_addr;
-+
-+		sram[i] = sram_data;
-+
-+		dev_dbg(dev, "sram %d: name=%s, addr=0x%llx, da=0x%x, size=0x%llx\n",
-+			i, sram[i]->sram_res.name, sram[i]->sram_res.start,
-+			sram[i]->da, resource_size(&sram[i]->sram_res));
-+	}
-+
-+	r5_core->sram = sram;
-+	r5_core->num_sram = num_sram;
-+
-+	return 0;
-+}
-+
- static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
- {
- 	int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
-@@ -1095,6 +1222,10 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 				return ret;
- 			}
- 		}
-+
-+		ret = zynqmp_r5_get_sram_banks(r5_core);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return 0;
+On 7/9/2024 6:53 AM, Kory Maincent wrote:
+> Timestamping software or hardware flags are often used as a group,
+> therefore adding these masks will ease future use.
+> 
+> I did not use SOF_TIMESTAMPING_SYS_HARDWARE flag as it is deprecated and
+> not used at all.
 
-base-commit: d87dbfd31796f810ed777aee4919f211b4a6c7fb
--- 
-2.25.1
++1. Is there any hope of completely removing it? I'm not certain if this
+is part of uAPI or not. Even so, we could make it more clear with
+deprecation naming or similar.
 
+> 
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
+> 
+> Changes in v7:
+> - Move the masks out of uapi to include/linux/net_tstamp.h
+> 
+> Changes in v9:
+> - Fix commit message typos
+> ---
+>  include/linux/net_tstamp.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/include/linux/net_tstamp.h b/include/linux/net_tstamp.h
+> index eb01c37e71e0..3799c79b6c83 100644
+> --- a/include/linux/net_tstamp.h
+> +++ b/include/linux/net_tstamp.h
+> @@ -5,6 +5,14 @@
+>  
+>  #include <uapi/linux/net_tstamp.h>
+>  
+> +#define SOF_TIMESTAMPING_SOFTWARE_MASK	(SOF_TIMESTAMPING_RX_SOFTWARE | \
+> +					 SOF_TIMESTAMPING_TX_SOFTWARE | \
+> +					 SOF_TIMESTAMPING_SOFTWARE)
+> +
+> +#define SOF_TIMESTAMPING_HARDWARE_MASK	(SOF_TIMESTAMPING_RX_HARDWARE | \
+> +					 SOF_TIMESTAMPING_TX_HARDWARE | \
+> +					 SOF_TIMESTAMPING_RAW_HARDWARE)
+> +
+
+We can't drop _MASK because there already is SOF_TIMESTAMPING_SOFTWARE.
+Makes sense.
+
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+
+>  enum hwtstamp_source {
+>  	HWTSTAMP_SOURCE_NETDEV,
+>  	HWTSTAMP_SOURCE_PHYLIB,
+> 
 
