@@ -1,193 +1,204 @@
-Return-Path: <linux-kernel+bounces-252878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAF193193A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:26:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC76D931954
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EF42810E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7352C1F228E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371524655F;
-	Mon, 15 Jul 2024 17:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FCA481A3;
+	Mon, 15 Jul 2024 17:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqF2HgsW"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vI5Qr8WJ"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040974D8A7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721064407; cv=none; b=TI/PaHkxRCsqL14KakS/VfoXlCR61QBd2mpjFMTGyGpx6c5f4c0iI3UF+2pXIHIakHy2TuDaU/A37UFAb41NZX54jq9AEcU2lsSKV6fsGHduE1peZPKfo3TuHboOQqA13PKv46w12ljZ5dJalViatSY01LvbnegH7XtGro4Tg9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721064407; c=relaxed/simple;
-	bh=NKxhwcfKDV25J44ZjKN7Tw5TRTnUWcgDczWR7UFp7x0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TgAxMcsBU3HJGpHNgVglF/2NuZFgtIXUkaHQq9HLtJycIiAzn5yaxQuWNlihZdQvqMJemVGSBBbMCEd4VIigDvt4M+6Jq3vGcUZGWrwJPz+VENCIFDjvI4RrcZ1OfUfQI4Xt1X4tXoROljjNxyKcalTzG4xBliUqGX79LaItEdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqF2HgsW; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b04cb28acso3608683b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721064405; x=1721669205; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V1EnqQQEEDfCVcyM5SF8HmtSrMGhEDyTnp8EsRJkHyA=;
-        b=TqF2HgsW9Q9fFUe39KpxsHX0yUagqR4AGqELrmMftkl1uNuRc5nSTsKJ4LR7xoccJX
-         UUnFUDW2Ue92QUavvaNw7OwQ16cYjhBdhp1eZLb2E94BSUIhp7uiBmviY1XqqnEYrGqn
-         U7Tw/mO/bsvzCom2fE4ncE2hzAzfcYMS/uyNMJpuD+woGmvsMJTP52yvWV2QGcsJyRXi
-         aQv8EBYdIOxAhCiuhX5Ocgou4BIW+qwglsHS8UfvqnSqMDrBHWZyX4/wiLgw7GcAWgg4
-         dtX3IhV2qdkFprcBTt62ZoaOC3vVnBkAxh9Y9y+FoO/Fy2xjXB5u5oKdA5wjg+hf8Yu+
-         nxvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721064405; x=1721669205;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V1EnqQQEEDfCVcyM5SF8HmtSrMGhEDyTnp8EsRJkHyA=;
-        b=slNQF1e87gMs8F71mK9KAMfB/cMNHr1tKMnm/SXrG2BMX846DXMycDd2vsUJMQctvw
-         uTp7Jhi653Sm9xzl1QbF5GZXsqyyd4nw656xM+N0SSrhLkfLVQsSC49ioQDKazLejISA
-         iYl8iHKzsuvCZrA+hrEuOUaH9r158GJRDfP15Cr7F0AZsgr2y1EMMsf2eSIz8Hs4KRIN
-         2/4Pga3TwJLWxvuwfqlapYr5mAKde1z0vx5J9SWtJgZi7A+dsDCcSXr5xyXSIFXfCYt5
-         0Wy2/VxivnIlqLen/6QyI/AJt1gdOEDfSMRbOGCR7ox8SodgGvJM75it6YwioVrTHtam
-         csmQ==
-X-Gm-Message-State: AOJu0YwuA1zBmWbCuGJBZe8G8lfmtcfRfcCmiUX1+FwJ5HiWjjf3l4+V
-	k/rDT23giYBKLHeh1GprvSsDmuwrQyjcg23VXJ1ivzYk3DgGNTYm+83pWg==
-X-Google-Smtp-Source: AGHT+IHCB9TJ+QUMrd1iZYojPPMgLhcDXl4AohOnA6YUFX4i9YhE7XQzXA17MREZ/k1DPYE3ODpmVw==
-X-Received: by 2002:a05:6a00:6904:b0:70a:fa24:65ed with SMTP id d2e1a72fcca58-70b6c883445mr12973477b3a.4.1721064404707;
-        Mon, 15 Jul 2024 10:26:44 -0700 (PDT)
-Received: from localhost ([198.11.178.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6ad3sm4627002b3a.63.2024.07.15.10.26.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2024 10:26:44 -0700 (PDT)
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	kernel test robot <oliver.sang@intel.com>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] workqueue: Remove unneeded lockdep_assert_cpus_held()
-Date: Tue, 16 Jul 2024 01:29:31 +0800
-Message-Id: <20240715172931.2260-1-jiangshanlai@gmail.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457AF1C698;
+	Mon, 15 Jul 2024 17:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721064648; cv=fail; b=oZTOHDmhLpWjnlHA1rWS2XZR+D4L0btGzZRAOPV3gRHF+1/XH+Z/tPu4AFliA/uifY07jv1iYHkC+roKQGDkj74IMmBps2YJFw6uKd7umSaukL9r5u4+Af9/TQxhCW2PDLbTudKJ5ZV3V+1vuOliL5/K7v4hiTISSyTkzMvJcFY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721064648; c=relaxed/simple;
+	bh=uvOxxkZ9/7OpgzhSdkRX4A8zdIoOI7mEGx8UAAOi+xk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c3jXOL4ZjWuxPenH3iNl30ng4qeNVUBuBafaXDnCVG82MajU/aKCGprmd/fhD/rQk6KGOVCKv7aa/PqslrURmLVjOhdkuCdcA/swe+1kwtgRt4cnT3odU2SVh33ok9e60n/CQNl+SFgoVBAQjDnVsRkjY+/tNFF9gbjj8NUX6NU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vI5Qr8WJ; arc=fail smtp.client-ip=40.107.92.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hyFsCM88U768xDnW+64nOrkKFEr7pWIm8UKUMdBbnbMcUyL6Ub/pYl9qb2sEZd5WrP6+Vn/02Pky6aV0zoJTJBrXFaxtoDs1rnBKCg1PbLfo0gQaYQC4+6nwFPPLIjAe3PI/+G4rzzugOF1QUEaEKN9uNqvsBsswtm3B5VCnOqUPS6318D1IcLbkVaWjUc8PB/7bV+HddvZnaZW2rrMJMi0M5gCyz2RKEbQMLZadt5CxVGO6CmOh7rSUQ8ycsYnVxd1eVNdki4MK0qupDqEKMc4vQ/ocXDMN0RhCSoMBfR3fdqpAvYvvkl26RZ5T58rUevsRCwZJGzFXx8Ls8F04fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c+zdZx6amfXkDbzMfawUM1FMoJe7Vq5mwPNO/M30W40=;
+ b=uAt10YDmmeKsYdoZ7c6xtLPAcyaYsLkbjLoYIsBYVm286vWtH2rGSKJaPmfHhiZ8oBpY6jmVMbCYFEd6ENWHXoKS2Og2ebnYK6GEdQJRE05brUppwrDPnh+d0GuANY7M7MRoapew0itdRgyiUzqU5+xhEdBZDiXKhzFsdSWGFWInZqlEvguh2KxDqF7cBsRoTuLHZ84zLyydsSRKMr9PC7fh/c1jZddZenCzEfyLDCk6o8be3+GPClNpb9kLYKUQMyyl3sS+UHPQ6LRkxkYaW9yW9ArklbGUnp6uOxYLi51VruebwS9E8ZY2BX9TOnwHJ0lYaHpJQ5HEN7wqz1XKXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c+zdZx6amfXkDbzMfawUM1FMoJe7Vq5mwPNO/M30W40=;
+ b=vI5Qr8WJ+Q6arPDY/d2xb0JjYBqdSXbqbk20XUc0CWgxRdRqysTC4Gc/wN2yXeNuIWljBIVsY4/NR9iVDUgAqVC1ooYXj2xF5v8vGNDQM4QXhxpxqOPxPSYSBK6x3RiKbsufCMFuzGV4KKEK6l1CJQkvpmMwC5rWcFwqvuBN7Pc=
+Received: from DM6PR05CA0048.namprd05.prod.outlook.com (2603:10b6:5:335::17)
+ by IA1PR12MB6211.namprd12.prod.outlook.com (2603:10b6:208:3e5::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.25; Mon, 15 Jul
+ 2024 17:30:44 +0000
+Received: from DS2PEPF0000343B.namprd02.prod.outlook.com
+ (2603:10b6:5:335:cafe::48) by DM6PR05CA0048.outlook.office365.com
+ (2603:10b6:5:335::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.13 via Frontend
+ Transport; Mon, 15 Jul 2024 17:30:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF0000343B.mail.protection.outlook.com (10.167.18.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Mon, 15 Jul 2024 17:30:42 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 15 Jul
+ 2024 12:30:38 -0500
+Received: from [172.25.198.154] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 15 Jul 2024 12:30:37 -0500
+Message-ID: <6adb0f7c-1b1b-4384-b9af-7c3c50e16147@amd.com>
+Date: Mon, 15 Jul 2024 13:30:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/6] x86: PCI: preserve IORESOURCE_STARTALIGN
+ alignment
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	<x86@kernel.org>, <linux-pci@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>
+References: <20240709133610.1089420-1-stewart.hildebrand@amd.com>
+ <20240709133610.1089420-5-stewart.hildebrand@amd.com>
+ <22e339c1-0ada-0824-cd34-d5779328b522@linux.intel.com>
+Content-Language: en-US
+From: Stewart Hildebrand <stewart.hildebrand@amd.com>
+In-Reply-To: <22e339c1-0ada-0824-cd34-d5779328b522@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: stewart.hildebrand@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343B:EE_|IA1PR12MB6211:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96c26fe3-f603-4a8c-2ab3-08dca4f3da8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1hEQmdxK2dCRE9jbFR3R25HaUNNMG5uNVQ3SGcxU1U5NjRyazlOS3BQOVRO?=
+ =?utf-8?B?OWhmcnFUclY3ZW9xTmpTMlNMTFdXRnFYenNJV1ozNHFwbGJ5ZUxKOXBOZnJM?=
+ =?utf-8?B?ZWp4NlZmOGxMbWpoWlV3RURuaXVOMVIrQS8yVmgwTXpvN2VOUElCeDJUaExa?=
+ =?utf-8?B?TU5rUkh6eEFEdFpJdmhWYVdQMnNobVo5bVpjMjBVVDZZQzlYTmp3Z1V3YkZX?=
+ =?utf-8?B?VUZZZVBna3pBeXhieUZoeFhyeXFISzkwMTF3elgvenl2S3BremM4VEJLTTJQ?=
+ =?utf-8?B?NFQ2alJVTHFIVnpOWUJmeUZFMG9VNGFiNnllaWljUlp3QlFtcDdUOEVmVlc2?=
+ =?utf-8?B?ZDA3L0VzbllzRTJYSlFCeE1vVmQvNXp1eEFnWkpxWUk1TThPODVBa0JEQmhJ?=
+ =?utf-8?B?YndaQldlM2hXYTBiMjV1OHU1N3kvTjd0TGJCY2dpdy9MVXN4ckwydDJ0eUdl?=
+ =?utf-8?B?dW94elRjTnV4dXRNUmJkUWFNYnMvSUZOQTFPbTBRYWw1T1FaaVJiMWxaWHFx?=
+ =?utf-8?B?dktDSUJNMlptNHZmMTZYZXdHSkd2b0xIVnk0aHJhVzBXdXV5aDF0ZitneHZr?=
+ =?utf-8?B?YXVsYWZ3akV4VFZ6VTVYcVN4UVA4K0QwcjVXODdLTlRmMlZNK0tqNnFuSm1Z?=
+ =?utf-8?B?OHpVQmdhVXFXZWRVbkFzak9SOGpvTVFKcElCcUl5T2YzMWhVMmdtcHB2cEdS?=
+ =?utf-8?B?eUUxY2ZTbGRraitVU2RSTkJ2N2NYQlpEOUxMei84QklSOTBFU0lZMGRQWnJx?=
+ =?utf-8?B?NVRiRlIzVndvWXlXMzM4Vnd0TWVwZnJZcU9WZmxtbmxwaXlhNkR3UkxLUXE1?=
+ =?utf-8?B?QkNneThYYTZKcEtiTDRURGNkVUNBTTBDYTR1bUZCR24wZ21oS1A1Vi9GcUsz?=
+ =?utf-8?B?OTYwL1hiaG5tajlVVVlpQUhoOWV2cURxOEsybzhUSjgzRVc0TC9NbTVmaXdm?=
+ =?utf-8?B?alB2dWdGTG1sMm81Ty81cnhnZlBKSnBaM2ZGUDc1anlkMFp5SDFFSUZWOWxB?=
+ =?utf-8?B?QytsMERUYm5xcm8vUVpoNmFQb3RWbW92c0tIcDJuemt6b25PZFNEWjBpakZn?=
+ =?utf-8?B?bnhGRzlNWDRqSmwrd0FHNEFnUDlMN2lLZkxjdmxGL2QwZlJYUFlRVE16dVU0?=
+ =?utf-8?B?MjNyRGdUT2pBdzBYbmR5cm9tMDh0YzJqRGNkRHVYQ1NEVXN2TjhYd0E5K3lH?=
+ =?utf-8?B?RDhmbDBMZzNyQkN4aDV0TXNqQVd0M1JFZGlwLytrWko3RWdpdmFBcllCdDUy?=
+ =?utf-8?B?cENuY3ZMRjkzUjZSZ3NqbngrRDJDRUwxc3htSmtTZVIxSWhOYTdPZU9zTFhr?=
+ =?utf-8?B?SURKdnFnUCtJa29tU3Z6TStUajcwZ0JTNTZYQXN1YjlRLzJBcWY5ejhmYitF?=
+ =?utf-8?B?YVdBcmNEQyt6cno3ek11N1d1VGtMS2RzbTJwdE9iYjhPSUJFVUUvNmtmR3hS?=
+ =?utf-8?B?Y0dNeXk2SFI0KzdGVnlRTlVNUXhPb2NPMmxLZGZXbVY3dlMrdmttRUl6MVUx?=
+ =?utf-8?B?elh0MnN3QUoyazEzRWpFNmdBa3VKdlhTLzBncDNnaWRnTktUekF1aWtwVlg5?=
+ =?utf-8?B?c3J1L1pnVUdVSXJxSk5ramh5VkFaMlBWMGRjSjR3ZVpwNUhXTVRWYWxFaUg0?=
+ =?utf-8?B?djhmcktTY3Y1OVIzNklKaURKWU03RkliaHllQjVqQ1F0MDJjMlZnRzhYYW1r?=
+ =?utf-8?B?ZlhUekl0V3BXNWJCcnNvTkRkSkxETDZUdGFBNGxOOXp1c0wxOFhnc2NUV0ls?=
+ =?utf-8?B?N0t2KzFzSUhTeFFPM2tqaEkydVg1eDNieDlOcEZmSVdEUU1adjRFTktwT3BC?=
+ =?utf-8?B?Mi9CcGRvcFhZZzMzc0ZWd2crdjFUWmlCSHZrV0owSWhmbUNURFY5ZHcxQTda?=
+ =?utf-8?B?aUltaWF5QmhNSElVQlV3Ky9OaGJNWmtvb3pCTG5ZRkNvT2hqSGNBOWgvSW5s?=
+ =?utf-8?Q?lvpzEcHeesWQP/v4clhn1iFw3BhoEnja?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 17:30:42.9523
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96c26fe3-f603-4a8c-2ab3-08dca4f3da8d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6211
 
-From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+On 7/10/24 10:05, Ilpo Järvinen wrote:
+> On Tue, 9 Jul 2024, Stewart Hildebrand wrote:
+> 
+>> Currently, it's not possible to use the IORESOURCE_STARTALIGN flag on
+>> x86 due to the alignment being overwritten in
+>> pcibios_allocate_dev_resources(). Make one small change in arch/x86 to
+>> make it work on x86.
+>>
+>> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+>> ---
+>> RFC: We don't have enough info in this function to re-calculate the
+>>      alignment value in case of IORESOURCE_STARTALIGN. Luckily our
+>>      alignment value seems to be intact, so just don't touch it...
+>>      Alternatively, we could call pci_reassigndev_resource_alignment()
+>>      after the loop. Would that be preferable?
+>> ---
+>>  arch/x86/pci/i386.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+>> index f2f4a5d50b27..ff6e61389ec7 100644
+>> --- a/arch/x86/pci/i386.c
+>> +++ b/arch/x86/pci/i386.c
+>> @@ -283,8 +283,11 @@ static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass)
+>>  						/* We'll assign a new address later */
+>>  						pcibios_save_fw_addr(dev,
+>>  								idx, r->start);
+>> -						r->end -= r->start;
+>> -						r->start = 0;
+>> +						if (!(r->flags &
+>> +						      IORESOURCE_STARTALIGN)) {
+>> +							r->end -= r->start;
+>> +							r->start = 0;
+>> +						}
+>>  					}
+>>  				}
+>>  			}
+>>
+> 
+> As a general comment to that loop in pcibios_allocate_dev_resources() 
+> function, it would be nice to reverse some of the logic in the if 
+> conditions and use continue to limit the runaway indentation level.
 
-The commit 19af45757383 ("workqueue: Remove cpus_read_lock() from
-apply_wqattrs_lock()") removes the unneed cpus_read_lock() after the pwq
-creations and installations have been reworked based on wq_online_cpumask
-rather than cpu_online_mask making cpus_read_lock() is unneeded during
-wqattrs changes.
-
-But it desn't remove the lockdep_assert_cpus_held() checks during wqattrs
-changes, which leads to complaints from lockdep reported by kernel test
-robot:
-
-[   15.726567][  T131] ------------[ cut here ]------------
-[ 15.728117][ T131] WARNING: CPU: 1 PID: 131 at kernel/cpu.c:525 lockdep_assert_cpus_held (kernel/cpu.c:525)
-[   15.731191][  T131] Modules linked in: floppy(+) parport_pc(+) parport qemu_fw_cfg rtc_cmos
-[   15.733423][  T131] CPU: 1 PID: 131 Comm: systemd-udevd Tainted: G                T  6.10.0-rc2-00254-g19af45757383 #1 df6f039f42e8818bf9a534449362ebad1aad32e2
-[   15.737011][  T131] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 15.739760][ T131] EIP: lockdep_assert_cpus_held (kernel/cpu.c:525)
-[ 15.741326][ T131] Code: 97 c2 03 72 20 83 3d f4 73 97 c2 00 74 17 55 89 e5 b8 fc bd 4d c2 ba ff ff ff ff e8 e4 57 d1 00 85 c0 74 06 5d 31 c0 31 d2 c3 <0f> 0b eb f6 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 89 e5 b8
-
-Fix it by removing the unneeded lockdep_assert_cpus_held().
-Also remove the unneed cpus_read_lock() from wq_affn_dfl_set().
-
-Cc: kernel test robot <oliver.sang@intel.com>
-Fixes: 19af45757383("workqueue: Remove cpus_read_lock() from apply_wqattrs_lock()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407141846.665c0446-lkp@intel.com
-Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
----
- kernel/workqueue.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index cd6f2950ef6c..177b09ba61e2 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5332,8 +5332,6 @@ static int apply_workqueue_attrs_locked(struct workqueue_struct *wq,
-  *
-  * Performs GFP_KERNEL allocations.
-  *
-- * Assumes caller has CPU hotplug read exclusion, i.e. cpus_read_lock().
-- *
-  * Return: 0 on success and -errno on failure.
-  */
- int apply_workqueue_attrs(struct workqueue_struct *wq,
-@@ -5341,8 +5339,6 @@ int apply_workqueue_attrs(struct workqueue_struct *wq,
- {
- 	int ret;
- 
--	lockdep_assert_cpus_held();
--
- 	mutex_lock(&wq_pool_mutex);
- 	ret = apply_workqueue_attrs_locked(wq, attrs);
- 	mutex_unlock(&wq_pool_mutex);
-@@ -5424,7 +5420,6 @@ static int alloc_and_link_pwqs(struct workqueue_struct *wq)
- 	bool highpri = wq->flags & WQ_HIGHPRI;
- 	int cpu, ret;
- 
--	lockdep_assert_cpus_held();
- 	lockdep_assert_held(&wq_pool_mutex);
- 
- 	wq->cpu_pwq = alloc_percpu(struct pool_workqueue *);
-@@ -5681,8 +5676,7 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
- 
- 	/*
- 	 * wq_pool_mutex protects the workqueues list, allocations of PWQs,
--	 * and the global freeze state.  alloc_and_link_pwqs() also requires
--	 * cpus_read_lock() for PWQs' affinities.
-+	 * and the global freeze state.
- 	 */
- 	apply_wqattrs_lock();
- 
-@@ -6850,8 +6844,7 @@ static int workqueue_apply_unbound_cpumask(const cpumask_var_t unbound_cpumask)
-  * @exclude_cpumask: the cpumask to be excluded from wq_unbound_cpumask
-  *
-  * This function can be called from cpuset code to provide a set of isolated
-- * CPUs that should be excluded from wq_unbound_cpumask. The caller must hold
-- * either cpus_read_lock or cpus_write_lock.
-+ * CPUs that should be excluded from wq_unbound_cpumask.
-  */
- int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
- {
-@@ -6861,7 +6854,6 @@ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
- 	if (!zalloc_cpumask_var(&cpumask, GFP_KERNEL))
- 		return -ENOMEM;
- 
--	lockdep_assert_cpus_held();
- 	mutex_lock(&wq_pool_mutex);
- 
- 	/*
-@@ -6906,7 +6898,6 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
- 	if (affn == WQ_AFFN_DFL)
- 		return -EINVAL;
- 
--	cpus_read_lock();
- 	mutex_lock(&wq_pool_mutex);
- 
- 	wq_affn_dfl = affn;
-@@ -6917,7 +6908,6 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
- 	}
- 
- 	mutex_unlock(&wq_pool_mutex);
--	cpus_read_unlock();
- 
- 	return 0;
- }
--- 
-2.19.1.6.gb485710b
-
+The similar function pcibios_allocate_resources() in
+arch/powerpc/kernel/pci-common.c has moved some of the logic out into a
+separate function. I'll do the same here.
 
