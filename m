@@ -1,242 +1,203 @@
-Return-Path: <linux-kernel+bounces-252915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3539319D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2D89319D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FA31F21B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0012282A73
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BE055896;
-	Mon, 15 Jul 2024 17:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97274535A3;
+	Mon, 15 Jul 2024 17:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPf3uUwk"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQF3kN89"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64B22318;
-	Mon, 15 Jul 2024 17:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F99D22318;
+	Mon, 15 Jul 2024 17:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721065821; cv=none; b=JfRrp6nTF4a/KIm7669BE0/AbRZagrgm3qNNW7XfwyyrrlE+tZR9Q9IWBVOpGqvZaNG9jaC7B5IO1oYZhQ17tqaehJVQjEaBxCdT6gdz3pC7M1dazlmqDxyNFJ6uV63GwS13DY0gwYrJS7YAYKF9eve0syFMj7Y/+eJxGNjliP4=
+	t=1721065964; cv=none; b=De5t0VxAeEzPOVDBJMLn7gwNSOwVZF8cRuIW5sac16vgCPc4XXpjSwAE4VGS3u1J7lmkd+5cCqGqYnGxixpIKvemESy/SXSiUlNj21iRrTu/TwIC1hePiTRh6IP8thkSpqSO7xDaHf07SbSLsenY5xIjlzwIiBQxJa1QLx6Os6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721065821; c=relaxed/simple;
-	bh=4+i1UsL97O1JksI3ZE8/xZjUcQ+JJkVk0QoBSx0+CDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=diM0HTuVpubLEeGCPE7xSBzUjClDiLnh9e0f7PuJ9hKqXqJ++2aoRGahkPG70MFrukzHI/X3WeSgVr3Msg2rp4jLlZutGPlHXnxG9lqszVCnjZ5+VVJLvb7aKdHkB+jWpXrlDX+lV4e2kLmsUC+/S18bBZPVhcYPiNpP1Yu7wbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPf3uUwk; arc=none smtp.client-ip=209.85.222.51
+	s=arc-20240116; t=1721065964; c=relaxed/simple;
+	bh=Aj6nh5mGAl+teHdD050cfcGPMAEinYG2c8dUe3wwZ/Q=;
+	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J42lfVZPhl+v5QCWTrPsxNMRqhsSygcsKGtdTx7aekb5L3qDN8L7La5lTy47InS1YdwzuRtuWZFFezuV/A/RSFq1JQ2pKGC4FlsUbUSUeccZFkS14zmb/qPotpwrYM/LckcnKeSMYWTNwq2t/X6UbdTLKqg+w2tMdzXW1A5ie2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQF3kN89; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8100eb38a99so1267323241.2;
-        Mon, 15 Jul 2024 10:50:19 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e036d1ce4f7so3601613276.0;
+        Mon, 15 Jul 2024 10:52:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721065818; x=1721670618; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ERxQCYashp1sXDomDBYo1CjjiKALhd05RJix5zIQ6dQ=;
-        b=nPf3uUwkHT76rwxMGL1dpUirip6Ua/Bsy9F4r3ADXyUSqm+Euoa1qzGWelg4itgU7o
-         1JCUa1/fAzgYihModhQDaWk8iOhcsvJtMQz9pdgeT4KZxWGUx7gYQpVAwyC1ERQf7roH
-         773RTCCr1SayqCipWg1UQZubslzFVAKygOs81IqUIcD+fSpVMGgshrlgKsKwnfmMOYlA
-         i3BVLIQLRFx2IpTGXZW9G1PIU3di0zfP/0eclZs8SOPnvEpXh9D9dMxfzIwAT4Qje9pV
-         8UNcxKtRXcLpL0oka7pUsigNvvpzNidTleqL2QPihV6kiqrqnRGj9QcyEvJcIloLStsE
-         /j8Q==
+        d=gmail.com; s=20230601; t=1721065962; x=1721670762; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKR/ODC5NWkjfKlAhKkUtVQjminwT/CBUyLSJA+//MI=;
+        b=iQF3kN89ZdM4BMZqQ0vZFLRgB04MOqkP0XifZ1IbhMNI2X/ef+mKAV34Klw8SoUO4B
+         Jy2wx93aduawaVbqOG1cBgnWgQBHKvwkDWRSLhUHJc2+P8NhvXkOKjkqAwWDnB1jLNJK
+         RxrogGwHOGBhitI4tTHuMIiw//k8YTrWZydGnKRioGgmYXPHL5Pu9QAxAyXWugKlA+Tp
+         MiQ97rVlBy9YMZPpnJY0laz/M0ulBvaTnFS+JeZEva4bmYFzj5gndFVdo0tp88I+4ppX
+         GCQUXQMIYiDn1YEXS+ZOIuumwjP2YafgrLT/PEzY+X4irlHOz+mJ3T6tsXDMZw8dYsdr
+         hD5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721065818; x=1721670618;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ERxQCYashp1sXDomDBYo1CjjiKALhd05RJix5zIQ6dQ=;
-        b=Zc8uuZd7e8K3Tj9bL0UYjnnnkK+kx+aX0Lw45y0IZ7H3klS99j9KlkS7cYyUb2/lHi
-         x+C9ZADd+RmgAPHmJDdr8P+1SIsLy48eGH/qQAZYMLAlcukXpBP149ZoEvudbIQlzfDN
-         Gf1nBbe9EZLvviIQqUQh0iAVSFm+XbLo5MncPC2jAsmwrgURitchoyEDQLSFYcLkRKU+
-         BPiKC6GFn4iMMhg5wMdqAe38fSvNMIygKQxk6nkh+/OqlyKMcALFyNOgwsLuJoCR2Xl5
-         +ej/yBPWPARLyOuhPSaB9ppELzNm05qFGPfG9OTJg/srmTjW5ERqh/6Q5K6ycGfLBU9Z
-         m8dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRneKzmhM0t3W09fqhs57qZqh2g5iEZaCn5UvBTZVSTJ5Pn4Ejf8cNSn8HFfQZ6a7FkJBeNfjtba8bEYlvr0qC+/oHC/EnVIgDg10lFOE3pGd1Gptyywh9ejfV11G8FDRvws8rl34iZYi7vyq/E6kvGZI4ZPwITMcTrhMZiQDFGw==
-X-Gm-Message-State: AOJu0YwkqTwgUQrXn8g/S1QwlnDK1ESqsbWdWBTpSNc+Cx35UI29PeY9
-	LQRrHCNJkR0biUDCa33RiqPwObXxDdNrI5NsBi2ueyw6GSGmWsObcZSQEx1L2qj58+KgNEoDY08
-	4waYU0KklTtkaIJSc4p4sWtdyBl8=
-X-Google-Smtp-Source: AGHT+IHKfckH9egHQidXByx58hTCytqVIN7acGBSHE2qTxXBij6F29KNRiJ+g4pQoQbZW58b4wWt7Ews7b39sGYS90c=
-X-Received: by 2002:a05:6122:3127:b0:4ec:f6f2:f1cd with SMTP id
- 71dfb90a1353d-4f4cd2c2e14mr813292e0c.9.1721065818535; Mon, 15 Jul 2024
- 10:50:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721065962; x=1721670762;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iKR/ODC5NWkjfKlAhKkUtVQjminwT/CBUyLSJA+//MI=;
+        b=mrFX7RCGYu401iJRyYr6wR/MZuSZxsDiliSdQc+H3qB5NJ1mprGZl99XhK8DBj+Ypc
+         t4D2moKx/+RjhpaYtgAcy4XZebtvbZfuqkdtot/1IWRjGaIPKY6mrRHMphmSh6I4Op7N
+         /eUoGpAgfWUo6F/vvqNITZISM9o97ia9VCAU9nZxvrTapFtAJ3bLerdfPhdvB01ce5Zr
+         DvjrY8ax7jDC0eEcykLoSrZkaCeYy6s7Uar85bSce3b9cHuZK/A4awi8JhmxEeS1cXT9
+         hlVbqJiXs7Rgj5PREB9zk/gOYUTjyJWjZifzsDXSDPX07HLnCDqFxYQ1NILuSW4gyQfa
+         tmjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG3H+aoo0/LfqAYVORzcWobNQ1eUbyj3jUpm64YJqN0zuc6eCcePzsOvBuNhk/lGgM1YT5PIH4qslHXr/DiaYkbsS21FGqqd9NKH2CtrjWLhfF2QozwE7F2xfwTWFZHaKDB92fO3pm
+X-Gm-Message-State: AOJu0YyaWdKVFabw0NBb4KiUcH663QUHT1McLtPdSLqWcjicenJIJQS4
+	INpPiKkCYR2XaYqetN1Le9ppLe50ojpcAkMhVGM+34AjujVIsA7M
+X-Google-Smtp-Source: AGHT+IGxaJl8NKgJ/K8f0rzvjF1kPYVZnnnSxHse3dQIG1/xpw7+Uff4gsI6SioFX/QU4LDqYnGomw==
+X-Received: by 2002:a05:6902:e08:b0:e03:5e56:9827 with SMTP id 3f1490d57ef6-e05d272d00emr815016276.27.1721065962284;
+        Mon, 15 Jul 2024 10:52:42 -0700 (PDT)
+Received: from gpd. ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05a4617285sm934658276.24.2024.07.15.10.52.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 10:52:42 -0700 (PDT)
+Message-ID: <669561ea.050a0220.948fd.3f0d@mx.google.com>
+X-Google-Original-Message-ID: <ZpVhae8OtL6qwQ1m@gpd.>
+From: nifan.cxl@gmail.com
+X-Google-Original-From: fan@gpd.
+Date: Mon, 15 Jul 2024 10:50:33 -0700
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: dan.j.williams@intel.com, ira.weiny@intel.com, dave@stgolabs.net,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	ming4.li@intel.com, vishal.l.verma@intel.com,
+	jim.harris@samsung.com, ilpo.jarvinen@linux.intel.com,
+	ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yazen.Ghannam@amd.com, Robert.Richter@amd.com
+Subject: Re: [RFC PATCH 5/9] cxl/pci: Update RAS handler interfaces to
+ support CXL PCIe ports
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-6-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621050525.3720069-1-allen.lkml@gmail.com>
- <20240621050525.3720069-14-allen.lkml@gmail.com> <ba3b8f5907c071e40be68758f2a11662008713e8.camel@redhat.com>
- <CAOMdWSKKyqaJB2Psgcy9piUv3LTDBHhbo_g404fSmqQrVSyr7Q@mail.gmail.com> <7348f2c9f594dd494732c481c0e35638ae064988.camel@redhat.com>
-In-Reply-To: <7348f2c9f594dd494732c481c0e35638ae064988.camel@redhat.com>
-From: Allen <allen.lkml@gmail.com>
-Date: Mon, 15 Jul 2024 10:50:06 -0700
-Message-ID: <CAOMdWSKU_Ezk-15whDnNQKK_is2UtBOY59_4fPfKZE0-K+cB6w@mail.gmail.com>
-Subject: Re: [PATCH 13/15] net: jme: Convert tasklet API to new bottom half
- workqueue mechanism
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: kuba@kernel.org, Guo-Fu Tseng <cooldavid@cooldavid.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, jes@trained-monkey.org, 
-	kda@linux-powerpc.org, cai.huoqing@linux.dev, dougmill@linux.ibm.com, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
-	marcin.s.wojtas@gmail.com, mlindner@marvell.com, stephen@networkplumber.org, 
-	nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, 
-	lorenzo@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
-	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
-	louis.peens@corigine.com, richardcochran@gmail.com, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617200411.1426554-6-terry.bowman@amd.com>
 
-> > > > @@ -1326,22 +1326,22 @@ static void jme_link_change_work(struct work_struct *work)
-> > > >               jme_start_shutdown_timer(jme);
-> > > >       }
-> > > >
-> > > > -     goto out_enable_tasklet;
-> > > > +     goto out_enable_bh_work;
-> > > >
-> > > >  err_out_free_rx_resources:
-> > > >       jme_free_rx_resources(jme);
-> > > > -out_enable_tasklet:
-> > > > -     tasklet_enable(&jme->txclean_task);
-> > > > -     tasklet_enable(&jme->rxclean_task);
-> > > > -     tasklet_enable(&jme->rxempty_task);
-> > > > +out_enable_bh_work:
-> > > > +     enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
-> > > > +     enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
-> > > > +     enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
-> > >
-> > > This will unconditionally schedule the rxempty_bh_work and is AFAICS a
-> > > different behavior WRT prior this patch.
-> > >
-> > > In turn the rxempty_bh_work() will emit (almost unconditionally) the
-> > > 'RX Queue Full!' message, so the change should be visibile to the user.
-> > >
-> > > I think you should queue the work only if it was queued at cancel time.
-> > > You likely need additional status to do that.
-> > >
-> >
-> >  Thank you for taking the time out to review. Now that it's been a week, I was
-> > preparing to send out version 3. Before I do that, I want to make sure if this
-> > the below approach is acceptable.
->
-> I _think_ the following does not track the  rxempty_bh_work 'queued'
-> status fully/correctly.
->
-> > @@ -1282,9 +1282,9 @@ static void jme_link_change_work(struct work_struct *work)
-> >                 jme_stop_shutdown_timer(jme);
-> >
-> >         jme_stop_pcc_timer(jme);
-> > -       tasklet_disable(&jme->txclean_task);
-> > -       tasklet_disable(&jme->rxclean_task);
-> > -       tasklet_disable(&jme->rxempty_task);
-> > +       disable_work_sync(&jme->txclean_bh_work);
-> > +       disable_work_sync(&jme->rxclean_bh_work);
-> > +       disable_work_sync(&jme->rxempty_bh_work);
->
-> I think the above should be:
->
->           jme->rxempty_bh_work_queued = disable_work_sync(&jme->rxempty_bh_work);
->
-> [...]
-> > @@ -1326,22 +1326,23 @@ static void jme_link_change_work(struct
-> > work_struct *work)
-> >                 jme_start_shutdown_timer(jme);
-> >         }
-> >
-> > -       goto out_enable_tasklet;
-> > +       goto out_enable_bh_work;
-> >
-> >  err_out_free_rx_resources:
-> >         jme_free_rx_resources(jme);
-> > -out_enable_tasklet:
-> > -       tasklet_enable(&jme->txclean_task);
-> > -       tasklet_enable(&jme->rxclean_task);
-> > -       tasklet_enable(&jme->rxempty_task);
-> > +out_enable_bh_work:
-> > +       enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
-> > +       enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
-> > +       if (jme->rxempty_bh_work_queued)
-> > +               enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
->
-> Missing:
->
->           else
->                 enable_work(system_bh_wq, &jme->rxempty_bh_work);
->
-> [...]
-> > @@ -3180,9 +3182,9 @@ jme_suspend(struct device *dev)
-> >         netif_stop_queue(netdev);
-> >         jme_stop_irq(jme);
-> >
-> > -       tasklet_disable(&jme->txclean_task);
-> > -       tasklet_disable(&jme->rxclean_task);
-> > -       tasklet_disable(&jme->rxempty_task);
-> > +       disable_work_sync(&jme->txclean_bh_work);
-> > +       disable_work_sync(&jme->rxclean_bh_work);
-> > +       disable_work_sync(&jme->rxempty_bh_work);
->
-> should be:
->
->           jme->rxempty_bh_work_queued = disable_work_sync(&jme->rxempty_bh_work);
->
->
-> >
-> > @@ -3198,9 +3200,10 @@ jme_suspend(struct device *dev)
-> >                 jme->phylink = 0;
-> >         }
-> >
-> > -       tasklet_enable(&jme->txclean_task);
-> > -       tasklet_enable(&jme->rxclean_task);
-> > -       tasklet_enable(&jme->rxempty_task);
-> > +       enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
-> > +       enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
-> > +       jme->rxempty_bh_work_queued = true;
-> > +       enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
->
-> should be:
->
->         if (jme->rxempty_bh_work_queued)
->                 enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
->         else
->                 enable_work(system_bh_wq, &jme->rxempty_bh_work);
->
-> I think the above ones are the only places where you need to touch
-> 'rxempty_bh_work_queued'.
->
->
-> [...]
-> >   Do we need a flag for rxclean and txclean too?
->
-> Functionally speaking I don't think it will be necessary, as
-> rxclean_bh_work() and txclean_bh_work() don't emit warnings on spurious
-> invocation.
->
-> Thanks,
->
-> Paolo
->
+On Mon, Jun 17, 2024 at 03:04:07PM -0500, Terry Bowman wrote:
+> CXL RAS error handling includes support for endpoints and RCH downstream
+> ports. The same support is missing for CXL root ports, CXL downstream
+> switch ports, and CXL upstream switch ports. This patch is in preparation
+> for adding CXL ports' RAS handling.
+> 
+> The cxl_pci driver's RAS support functions use the 'struct cxl_dev_state'
+> type parameter that is not available in CXL port devices. The same CXL
+> RAS capability structure is required for most CXL components/devices
+> and should have common handling where possible.[1]
+> 
+> Update __cxl_handle_cor_ras() and __cxl_handle_ras() to use 'struct
+> device' instead of 'struct cxl_dev_state'. Add function call to translate
+> device to CXL device state where needed.
+> 
+> [1] CXL3.1 - 8.2.4 CXL.cache and CXL.mem Registers
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  drivers/cxl/core/pci.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index e6c91b3dfccf..59a317ab84bb 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -686,9 +686,10 @@ void read_cdat_data(struct cxl_port *port)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(read_cdat_data, CXL);
+>  
+> -static void __cxl_handle_cor_ras(struct cxl_dev_state *cxlds,
+> +static void __cxl_handle_cor_ras(struct device *dev,
+>  				 void __iomem *ras_base)
+>  {
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
+>  	void __iomem *addr;
+>  	u32 status;
+>  
+> @@ -699,13 +700,13 @@ static void __cxl_handle_cor_ras(struct cxl_dev_state *cxlds,
+>  	status = readl(addr);
+>  	if (status & CXL_RAS_CORRECTABLE_STATUS_MASK) {
+>  		writel(status & CXL_RAS_CORRECTABLE_STATUS_MASK, addr);
+> -		trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
+> +		trace_cxl_aer_correctable_error(cxlmd, status);
+>  	}
+>  }
+>  
+>  static void cxl_handle_endpoint_cor_ras(struct cxl_dev_state *cxlds)
+>  {
+> -	return __cxl_handle_cor_ras(cxlds, cxlds->regs.ras);
+> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
+>  }
+>  
+>  /* CXL spec rev3.0 8.2.4.16.1 */
+> @@ -729,9 +730,10 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
+>   * Log the state of the RAS status registers and prepare them to log the
+>   * next error status. Return 1 if reset needed.
+>   */
+> -static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
+> -				  void __iomem *ras_base)
+> +static bool __cxl_handle_ras(struct device *dev,
+> +			     void __iomem *ras_base)
+>  {
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
+>  	u32 hl[CXL_HEADERLOG_SIZE_U32];
+>  	void __iomem *addr;
+>  	u32 status;
+> @@ -757,7 +759,7 @@ static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
+>  	}
+>  
+>  	header_log_copy(ras_base, hl);
+> -	trace_cxl_aer_uncorrectable_error(cxlds->cxlmd, status, fe, hl);
+> +	trace_cxl_aer_uncorrectable_error(cxlmd, status, fe, hl);
+>  	writel(status & CXL_RAS_UNCORRECTABLE_STATUS_MASK, addr);
+>  
+>  	return true;
+> @@ -765,7 +767,7 @@ static bool __cxl_handle_ras(struct cxl_dev_state *cxlds,
+>  
+>  static bool cxl_handle_endpoint_ras(struct cxl_dev_state *cxlds)
+>  {
+> -	return __cxl_handle_ras(cxlds, cxlds->regs.ras);
+> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->regs.ras);
+>  }
+>  
+>  #ifdef CONFIG_PCIEAER_CXL
+> @@ -871,13 +873,13 @@ EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_dport, CXL);
+>  static void cxl_handle_rdport_cor_ras(struct cxl_dev_state *cxlds,
+>  					  struct cxl_dport *dport)
+>  {
+> -	return __cxl_handle_cor_ras(cxlds, dport->regs.ras);
+> +	return __cxl_handle_cor_ras(&cxlds->cxlmd->dev, dport->regs.ras);
+>  }
+>  
+>  static bool cxl_handle_rdport_ras(struct cxl_dev_state *cxlds,
+>  				       struct cxl_dport *dport)
+>  {
+> -	return __cxl_handle_ras(cxlds, dport->regs.ras);
+> +	return __cxl_handle_ras(&cxlds->cxlmd->dev, dport->regs.ras);
+>  }
+>  
+>  /*
+> -- 
+> 2.34.1
+> 
 
-Thank you very much. Will send out v3 later today with these changes.
-Note, it will be as follows, enable_work() does not have workqueue type.
+Looks good to me.
 
-+  if (jme->rxempty_bh_work_queued)
-+                 enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
-+         else
--                 enable_work(system_bh_wq, &jme->rxempty_bh_work);
-+                enable_work(&jme->rxempty_bh_work);
-
-Thanks,
-Allen
->
-
-
--- 
-       - Allen
+Fan
 
