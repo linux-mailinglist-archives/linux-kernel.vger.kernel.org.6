@@ -1,310 +1,134 @@
-Return-Path: <linux-kernel+bounces-252713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E5F931731
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797A3931733
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C7E2B21106
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241971F224A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454B118EFE9;
-	Mon, 15 Jul 2024 14:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5105618F2C1;
+	Mon, 15 Jul 2024 14:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MMcJVOWy"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="aeTQOly2"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E777418EFC8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A13418EFDA;
+	Mon, 15 Jul 2024 14:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055120; cv=none; b=H3rn4wYxDDYn/lTGX/4Q99pz1rD3xuFEQhvXcB6zB6nVu1p6N5oHzDzTahO5agaSB7iuWAJByzDnc+E6tIg4iLV4mAGuF0YcuXHKfjtKxxP4652TieMvowFXGrB8P49GUuNx4S5AH+IKVd2sAomUbPa/p5blFRvjsEpkkOiI2/s=
+	t=1721055322; cv=none; b=XoC9HAYvBzEEyfZDPwnuh/PUdmTyPEANHwMfvdQhFO5aGvUZrXQhxPmDVizJcLRu1wYFVkYb2gFDcyTwHCD3K1cKUACxlWpXdbPeeCyfVoS+FCjHBNPNfscVu7+TP48lEnce/cXtEQhNPRGh2oQbM+wk6PdPPywH2Bqoz/cXhgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055120; c=relaxed/simple;
-	bh=J8l0wP4BnfrdZTLWDHq86XF+PB3QA71i17rBDw6pylU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k8ubErg/u/XzJSm6ET/IAIa29QMw6u7IX7LXSSNgEPlllEjFKEmL9pUcZcreF8ZBJvNg30thICnCMx/6z8/PEPFeOsKQ2hjW6kLPptI7rsz8c5yPTL8iR9hKhqZKFsUgbugI7MTFiPFbozSytymndDzi1jgnOKrk3GcGH1cdOgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MMcJVOWy; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77e7a6cfa7so489223766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721055115; x=1721659915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ilFSuVZTecDsHcBBf+ONYgrWs/OAGdBRwqSmint0NfM=;
-        b=MMcJVOWyPzwccgg2h9KAQAwtB61xFebIM/L5hlA/4RlMxoJ7ToY+mDAj1awjaMS/cc
-         KfcZCqxm5NDx6CmYjlC94hLBpqCdN8F5I/Jw0jwzm3zK+Q84BZC6XDND52op+x0TxnF5
-         GuNwWjaPiZoTiYy8FRWco0Pnf0boOchB2ZiaNxri2sHw+hmu4vSPXzpdI1JWpdSV++3M
-         1bpU3VIF9BHiw+C5ffzCnSweBFbiFHtUrzFJeydXVwdIZ3d1dXxNtX9Bi7fn+jgisqyv
-         hBwKHM/32WMrwGHn2K8+wp48W22E3T4M5NrXmTuO+BI/M8mFhnz5y5CT2j+L9+n+yu19
-         dpmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721055115; x=1721659915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ilFSuVZTecDsHcBBf+ONYgrWs/OAGdBRwqSmint0NfM=;
-        b=h1waGqz/fSfQV+qlaT7BExbLusXZm0+dCPCTpIZFABZfco8Pp4mEy05LiW9LlEwLmq
-         fNqktziCRrLpyJCXc65f82vvFPpoQbpatO9Pk/CS/MwKHukaQrIcZVb9CaBySSe8+EiB
-         hElOo7g/COGtB51HIAZfcygWsHhtA9XeANEhAdUtb0K8WVoru8Se2qxw33Rv40adZCKp
-         oHLJncdvlYRK2O847aoYIoBj6gBiwcKcYpZwhtZ4IQO0D5N1UYKCMoFojX8ThDNLXg3S
-         +8XvyREjEj1KWnqcjG47fHjz36ifvHOwFJYA+hFl7dY1NN6X1/ThEAH7OIWFVNTckudT
-         IEvw==
-X-Gm-Message-State: AOJu0YzCYZbKyXFQ3hIZZRQl5NxlB/ZLFTalgt1+VKJ7nWUz075xpyhb
-	IWlL20K8+Rj39oI9ya20xnIviziZAz6R4ETDi+8nYOUT/4CUh3OMqYgdfc+XzAe3HN/XfuqNCIH
-	s
-X-Google-Smtp-Source: AGHT+IE4O23K8LzXqLXfJ5IOhP+xv2qIqjo42LPTe9LE9LGgOJczppbjUFEjN0mbvGBMJ0IUV50euA==
-X-Received: by 2002:a17:907:e90:b0:a6e:d339:c095 with SMTP id a640c23a62f3a-a780b884b3amr1473799966b.47.1721055115180;
-        Mon, 15 Jul 2024 07:51:55 -0700 (PDT)
-Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff84bsm218972166b.148.2024.07.15.07.51.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 07:51:54 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH v3] ring-buffer: Limit time with disabled interrupts in rb_check_pages()
-Date: Mon, 15 Jul 2024 16:51:41 +0200
-Message-Id: <20240715145141.5528-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1721055322; c=relaxed/simple;
+	bh=R6GVR5nbrPK1ArJAmwv4TPVLMOMH4rsaJWjUIBHDlCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJj7n4a4codUSVCewHZ5fLZ/j6i3Izw3qHMoxZUMUt0soFlk/cG6mbt9VjXBqWBAVHpdFdIUUAa5j8oEW3zerFBNdmRw1fA/XtlKwknd6JyhX80hR74anh3+l3vH8yhHY3nBmFt4rgzApVSL3B745S3GFoMky4ZOoCGQPDgLKDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=aeTQOly2; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id D94131FBDC;
+	Mon, 15 Jul 2024 16:55:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1721055308;
+	bh=pDawVp5+7gMn51Cqr/yBhI3wgxySaQrWuVDy9+iNnbA=; h=From:To:Subject;
+	b=aeTQOly2Z1GJ/aATB0SCPcHrVc3vCd2vPVsd56W25IQIAczovmm7917P45/L184vt
+	 S3z6rTvO0t2cVb8X34mKvcRP40QyJl/Uo8PJ7xSDasm8KxxuXYaLYs8X16x0KWLTBd
+	 SwLjz3pdnsZ+W8Iey0rrKBoIVVv7IiiRAvzUfQQJLOG32LQT76+hSjbbRAybjEG7VU
+	 Dgltqv6GyGZDU9hxp7P08pfn0YYD4NU5OMBVIBpPjT/aB6OyM//lFxICaomBO3Sr1I
+	 uQuHqF0FBH9A0BhkVThU+cBauvTs5rxTGE/sAQ+PKmi4XZOfVKhuiktpxcihAZCpyB
+	 Di4w2/EZflwuQ==
+Date: Mon, 15 Jul 2024 16:55:03 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Logan Bristol <l-bristol@ti.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Bryan Brattlof <bb@ti.com>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] arm64: dts: ti: introduce a minimal am642 device tree
+Message-ID: <20240715145503.GA32273@francesco-nb>
+References: <20220321155417.13267-1-bb@ti.com>
+ <55e161d1-face-6958-1d86-8a85b82e8485@kernel.org>
+ <766dceb1-222a-401b-95e3-69b7fb331411@ti.com>
+ <20240710073811.GA4855@francesco-nb>
+ <458e6141-abed-4301-ae76-c242c903ef61@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <458e6141-abed-4301-ae76-c242c903ef61@ti.com>
 
-The function rb_check_pages() validates the integrity of a specified
-per-CPU tracing ring buffer. It does so by traversing the underlying
-linked list and checking its next and prev links.
+On Mon, Jul 15, 2024 at 09:02:38AM -0500, Logan Bristol wrote:
+> 
+> Hello Francesco,
+> 
+> On 7/10/24 02:38, Francesco Dolcini wrote:
+> > Hello Logan
+> > 
+> > On Tue, Jul 09, 2024 at 11:20:24AM -0500, Logan Bristol wrote:
+> >> On 3/22/22 13:14, Krzysztof Kozlowski wrote:
+> >>> On 21/03/2022 16:54, Bryan Brattlof wrote:
+> >>>> Texas Instrument's am642 is one of many k3 based, low cost, low power,
+> >>>> chips designed to work in a wide range of applications spanning an even
+> >>>> wider range of industries that TI is actively developing
+> >>>>
+> >>>> With its pin-mux and peripheral rich designs, these chips will likely
+> >>>> have a multitude of custom device trees that range wildly from one
+> >>>> another and (hopefully) guarantee an influx of variants into the kernel
+> >>>> in the coming years
+> >>>>
+> >>>> With overlays no longer a thing, I wanted to ask for opinions on how
+> >>>> we can best help integrate these dt files as they begin to be developed
+> >>>>
+> >>>> I also wanted to introduce a skeletonized (nothing but uart) device tree
+> >>>> to give others a good starting point while developing their projects.
+> >>>
+> >>> Real hardware as DTS please. There is no need to add some skeleton for
+> >>> specific SoC. What if every SoC goes that way?
+> >>>
+> >>> Feel free to create re-usable components in DTSI ways, still reflecting
+> >>> some hardware parts.
+> >>>
+> >>
+> >> I am working on a project for the AM62 and came across this email thread.
+> >>
+> >> Following Krzysztof's direction, I am wanting to submit a DTSI to serve
+> >> as a minimal configuration for the existing boards based on the AM62
+> >> SoC, which are currently defined by bloated DTS files.
+> >>
+> >> This DTSI file can be consumed by other board DTS files to reduce the
+> >> configuration. Krzysztof, could this be merged upstream?
+> > 
+> > Can you elaborate a little bit what you meant as bloated dts file? Why
+> > would you need different DTSI files compared to the existing one?
+> > Which problem are you trying to solve (make some example, be specific
+> > please).
+> > 
+> > My experience with verdin am62 (k3-am62-verdin*dts*) was pretty smooth,
+> > I was just able to use the SOC dtsi file and use it to define my own
+> > board (and I had the same good experience with other SOC/Vendors).
+> > 
+> 
+> The resulting DTB after compiling AM62 SoC DTSI files initializes a
+> large number of devices.
 
-To guarantee that the list isn't modified during the check, a caller
-typically needs to take cpu_buffer->reader_lock. This prevents the check
-from running concurrently, for example, with a potential reader which
-can make the list temporarily inconsistent when swapping its old reader
-page into the buffer.
+I do not understand the issue. The SOC dtsi enables (or should enable) only
+IP that are self contained within the SOC, everything else is disabled.
 
-A problem with this approach is that the time when interrupts are
-disabled is non-deterministic, dependent on the ring buffer size. This
-particularly affects PREEMPT_RT because the reader_lock is a raw
-spinlock which doesn't become sleepable on PREEMPT_RT kernels.
+If you need something like that it means you are debugging the silicon,
+am I wrong?
 
-Modify the check so it still attempts to traverse the entire list, but
-gives up the reader_lock between checking individual pages. Introduce
-for this purpose a new variable ring_buffer_per_cpu.cnt which is bumped
-any time the list is modified. The value is used by rb_check_pages() to
-detect such a change and restart the check.
-
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
-
-This is a follow-up to the discussion about improving this check [1].
-
-Changes since v2 [2]:
-* Call the new generation variable as ring_buffer_per_cpu.cnt.
-
-Changes since v1 [3]:
-* Correct the case when rb_check_pages() is invoked concurrently with
-  the resize code which modifies the list. Introduce
-  ring_buffer_per_cpu.pages_era for this purpose.
-
-[1] https://lore.kernel.org/linux-trace-kernel/20240517134008.24529-1-petr.pavlu@suse.com/
-[2] https://lore.kernel.org/linux-trace-kernel/20240703075314.23511-1-petr.pavlu@suse.com/
-[2] https://lore.kernel.org/linux-trace-kernel/20240621150956.24814-1-petr.pavlu@suse.com/
-
- kernel/trace/ring_buffer.c | 98 ++++++++++++++++++++++++++++----------
- 1 file changed, 72 insertions(+), 26 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 28853966aa9a..0279b4ee0b03 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -462,6 +462,8 @@ struct ring_buffer_per_cpu {
- 	unsigned long			nr_pages;
- 	unsigned int			current_context;
- 	struct list_head		*pages;
-+	/* pages generation counter, incremented when the list changes */
-+	unsigned long			cnt;
- 	struct buffer_page		*head_page;	/* read from head */
- 	struct buffer_page		*tail_page;	/* write to tail */
- 	struct buffer_page		*commit_page;	/* committed pages */
-@@ -1454,40 +1456,87 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
- 	RB_WARN_ON(cpu_buffer, val & RB_FLAG_MASK);
- }
- 
-+static bool rb_check_links(struct ring_buffer_per_cpu *cpu_buffer,
-+			   struct list_head *list)
-+{
-+	if (RB_WARN_ON(cpu_buffer,
-+		       rb_list_head(rb_list_head(list->next)->prev) != list))
-+		return false;
-+
-+	if (RB_WARN_ON(cpu_buffer,
-+		       rb_list_head(rb_list_head(list->prev)->next) != list))
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * rb_check_pages - integrity check of buffer pages
-  * @cpu_buffer: CPU buffer with pages to test
-  *
-  * As a safety measure we check to make sure the data pages have not
-  * been corrupted.
-- *
-- * Callers of this function need to guarantee that the list of pages doesn't get
-- * modified during the check. In particular, if it's possible that the function
-- * is invoked with concurrent readers which can swap in a new reader page then
-- * the caller should take cpu_buffer->reader_lock.
-  */
- static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
- {
--	struct list_head *head = rb_list_head(cpu_buffer->pages);
--	struct list_head *tmp;
-+	struct list_head *head, *tmp;
-+	unsigned long buffer_cnt;
-+	unsigned long flags;
-+	int nr_loops = 0;
- 
--	if (RB_WARN_ON(cpu_buffer,
--			rb_list_head(rb_list_head(head->next)->prev) != head))
-+	/*
-+	 * Walk the linked list underpinning the ring buffer and validate all
-+	 * its next and prev links.
-+	 *
-+	 * The check acquires the reader_lock to avoid concurrent processing
-+	 * with code that could be modifying the list. However, the lock cannot
-+	 * be held for the entire duration of the walk, as this would make the
-+	 * time when interrupts are disabled non-deterministic, dependent on the
-+	 * ring buffer size. Therefore, the code releases and re-acquires the
-+	 * lock after checking each page. The ring_buffer_per_cpu.cnt variable
-+	 * is then used to detect if the list was modified while the lock was
-+	 * not held, in which case the check needs to be restarted.
-+	 *
-+	 * The code attempts to perform the check at most three times before
-+	 * giving up. This is acceptable because this is only a self-validation
-+	 * to detect problems early on. In practice, the list modification
-+	 * operations are fairly spaced, and so this check typically succeeds at
-+	 * most on the second try.
-+	 */
-+again:
-+	if (++nr_loops > 3)
- 		return;
- 
--	if (RB_WARN_ON(cpu_buffer,
--			rb_list_head(rb_list_head(head->prev)->next) != head))
--		return;
-+	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+	head = rb_list_head(cpu_buffer->pages);
-+	if (!rb_check_links(cpu_buffer, head))
-+		goto out_locked;
-+	buffer_cnt = cpu_buffer->cnt;
-+	tmp = head;
-+	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 
--	for (tmp = rb_list_head(head->next); tmp != head; tmp = rb_list_head(tmp->next)) {
--		if (RB_WARN_ON(cpu_buffer,
--				rb_list_head(rb_list_head(tmp->next)->prev) != tmp))
--			return;
-+	while (true) {
-+		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 
--		if (RB_WARN_ON(cpu_buffer,
--				rb_list_head(rb_list_head(tmp->prev)->next) != tmp))
--			return;
-+		if (buffer_cnt != cpu_buffer->cnt) {
-+			/* The list was updated, try again. */
-+			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-+			goto again;
-+		}
-+
-+		tmp = rb_list_head(tmp->next);
-+		if (tmp == head)
-+			/* The iteration circled back, all is done. */
-+			goto out_locked;
-+
-+		if (!rb_check_links(cpu_buffer, tmp))
-+			goto out_locked;
-+
-+		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 	}
-+
-+out_locked:
-+	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- }
- 
- static int __rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
-@@ -1874,6 +1923,7 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
- 
- 	/* make sure pages points to a valid page in the ring buffer */
- 	cpu_buffer->pages = next_page;
-+	cpu_buffer->cnt++;
- 
- 	/* update head page */
- 	if (head_bit)
-@@ -1980,6 +2030,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer)
- 			 * pointer to point to end of list
- 			 */
- 			head_page->prev = last_page;
-+			cpu_buffer->cnt++;
- 			success = true;
- 			break;
- 		}
-@@ -2215,12 +2266,8 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 		 */
- 		synchronize_rcu();
- 		for_each_buffer_cpu(buffer, cpu) {
--			unsigned long flags;
--
- 			cpu_buffer = buffer->buffers[cpu];
--			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 			rb_check_pages(cpu_buffer);
--			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 		}
- 		atomic_dec(&buffer->record_disabled);
- 	}
-@@ -4611,6 +4658,7 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
- 	rb_inc_page(&cpu_buffer->head_page);
- 
-+	cpu_buffer->cnt++;
- 	local_inc(&cpu_buffer->pages_read);
- 
- 	/* Finally update the reader page to the new head */
-@@ -5150,12 +5198,9 @@ void
- ring_buffer_read_finish(struct ring_buffer_iter *iter)
- {
- 	struct ring_buffer_per_cpu *cpu_buffer = iter->cpu_buffer;
--	unsigned long flags;
- 
- 	/* Use this opportunity to check the integrity of the ring buffer. */
--	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 	rb_check_pages(cpu_buffer);
--	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 
- 	atomic_dec(&cpu_buffer->resize_disabled);
- 	kfree(iter->event);
-@@ -6050,6 +6095,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 		cpu_buffer->pages = cpu_buffer->new_pages.next;
- 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
- 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
-+		cpu_buffer->cnt++;
- 
- 		/* Clear the new_pages list */
- 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
-
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
--- 
-2.35.3
+Francesco
 
 
