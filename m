@@ -1,101 +1,107 @@
-Return-Path: <linux-kernel+bounces-252800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C4093183C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADE6931842
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966C52832A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671722834D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC21CAB8;
-	Mon, 15 Jul 2024 16:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DF0482F6;
+	Mon, 15 Jul 2024 16:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKMHV9Ch"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ez/TFzue"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F102A43158;
-	Mon, 15 Jul 2024 16:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B92244C7B;
+	Mon, 15 Jul 2024 16:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059896; cv=none; b=Q7EkbfjewXzAv6pgifm3w4RYEZuwLq8rb/pd0FV0XLH8NyaX7tAJW09YdCYPoqJn3Aj2nfqD5bmFBhne+WZaHUAxR5o7CzvSX1kbH7e1KVTy57JmJsiuoPUB+KkW5RVBlwsw4zpKuPiNb54xss45kF3H9CXycY9MVCplmTBfmaY=
+	t=1721059917; cv=none; b=sfXQomfBYCm+5/tKAmTM4JQGT1GG8Gi2ehXsdQIj9ItU+P5o6zoX63GcZ/V9anWqyXgTJS47vI/oRxYMjVuMrH85FeFm/S0jWr0jjqAvgfVTLM1fGo7TRdZ6sGssQ/kuhCe1adLgcvlvLxpuP/E33apAXJ9kPxm2KQfQD7BfGk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059896; c=relaxed/simple;
-	bh=ZNODHTsIH1tP4zxTnnkfGFtWwx4Cm7pw0WpB7OJ/SS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/zOC5EOUiTJbBr9uVSKpm+ORFlX71Gfc2gZlx/zx8O9A9Yq+MuFN7Nvn7WI5wXdeoGMIirkXE/coCCtXP4U8YpPlwP6sOVlcbNn+1ijkJazEGBds/hBiU29MevLVN7cXdFVT2Xen+KkDVirVJG3AK2cCgdTAHD0R88bsjKWV7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKMHV9Ch; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98252C4AF0A;
-	Mon, 15 Jul 2024 16:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721059895;
-	bh=ZNODHTsIH1tP4zxTnnkfGFtWwx4Cm7pw0WpB7OJ/SS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TKMHV9ChaoZwtbci9kK4FxHs8MW3hsObwXCnlCHL6oUrYWbxWMWxIT6zv99L23XDs
-	 hZib5BUW2Jf1E0lAPr70zt/p8iJCNTxIYBmJJne90sJpjXgpEEt9jNGm/HxG2/hJut
-	 VZrxgOBnNasUJIF5P5J1vg5dov1tbQex4R4TokkrkbT7U/okPM3b32WzZTVaKBK0Do
-	 QmA5RcLGqnP/ZO8H1LFNfCaOhq5TKJq3GCMM2Ig8SZD6ffdHFvDClnqmx6sZWbSgH0
-	 kAHKlEPxQVRZJAgedW/0N3KX7htIZFbXVFoE1kU9JscQzCKx9IZxbmgsqFXDe9B3Qp
-	 MLO84fYULHVdw==
-Date: Mon, 15 Jul 2024 09:11:35 -0700
-From: Kees Cook <kees@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
-Message-ID: <202407150908.34E00AAD1@keescook>
-References: <2024071218-CVE-2024-40938-1619@gregkh>
- <20240715.aeLiunipi8ia@digikod.net>
- <2024071553-yippee-broadways-8035@gregkh>
- <20240715.Eishohd0ehoo@digikod.net>
+	s=arc-20240116; t=1721059917; c=relaxed/simple;
+	bh=lZyyMvIUs7/HjbhCjJZz0kSyihW8Dlkez71/TFQFgMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IJ5PDaWoSvLsNxjf9aKAyU1loe9I20qbvfZ5E9s3IzcT2TcEbuVNJsxN/WuCwLWGaIs4jBfpbfVCjfbA6NW1N3Ui0NLm8uiS18keEn9GZKqA7ckOU9u6Siqq72+2KEjisPGUEVJNj96XETl0dTRRD2/iRSlKAz5yA1uY+pnu424=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ez/TFzue; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FBSm1c020977;
+	Mon, 15 Jul 2024 16:11:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lZyyMvIUs7/HjbhCjJZz0kSyihW8Dlkez71/TFQFgMc=; b=ez/TFzueq+G9FXoo
+	EmcfqXge4FdmPyAKDGL1wGUtgCwl3QL5nsuJIyPK9m5rribGm2OJSMEWzS0udgo9
+	H6P1ZSAu0zyjlK7Zm9Qmbxy0BYMbIyI/bVutNm+5IbxIAaXVHPJ7SvZabSgeZeuW
+	RloMdNraYw5QBsKYLsp2Tn2npGEMIsKd5QaLvwA2K1BRu/SrViMfBmwwPXEmsAKl
+	bX+MCGCa2Sv+WYLAzKLQ6Ou/ZHt21y7TbLxLcocxhq+W8sXqtXN2oYHPQxYExVDm
+	rsn5AzCs7yYgZPykqPtFxNHMya+34wPuF+ix1+H0h3scW+pKJ4WHzC3nLFK/xIFa
+	eQCzwg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bgwg4qyr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 16:11:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FGBktK029643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 16:11:46 GMT
+Received: from [10.48.247.129] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
+ 2024 09:11:45 -0700
+Message-ID: <e02cd4c2-cee5-4f6f-8d20-6ceaa8336a84@quicinc.com>
+Date: Mon, 15 Jul 2024 09:11:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715.Eishohd0ehoo@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+CC: wuqiang.matt <wuqiang.matt@bytedance.com>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>
+References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+ <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+ <20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
+ <3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+ <20240715181206.f0b6c9e6bfc548c2b729b76b@kernel.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240715181206.f0b6c9e6bfc548c2b729b76b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: O7b3mUmt5zRBPOXsfWTxH5hznJPPip-T
+X-Proofpoint-ORIG-GUID: O7b3mUmt5zRBPOXsfWTxH5hznJPPip-T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_10,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ mlxlogscore=238 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407150127
 
-On Mon, Jul 15, 2024 at 02:20:59PM +0200, Mickaël Salaün wrote:
-> On Mon, Jul 15, 2024 at 01:16:38PM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Jul 15, 2024 at 12:37:53PM +0200, Mickaël Salaün wrote:
-> > > Hello,
-> > > 
-> > > AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
-> > > security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
-> > > just a canary, and this case was correctly handled with defensive
-> > > programming and didn't allow to bypass the security policy nor to harm
-> > > the kernel.  However, this fix should indeed be backported.
-> > 
-> > If a WARN_ON() is hit, a machine with panic_on_warn enabled will reboot,
-> > hence if there is any way that userspace can hit this, it needs to be
-> > issued a CVE, sorry.
-> 
-> OK, I didn't know about this panic_on_warn rule for CVE.  Out of
-> curiosity, panic_on_warn is definitely useful for fuzzing and testing,
-> but what is the rational to enable panic_on_warn on production systems?
-> It literally transforms a warning message into a system DoS (i.e.
-> WARN_ON into BUG_ON).  We should explicitly use BUG_ON() if this is a
-> critical unhandled case, right?
+BTW I have another patch in arch/arm/probes/kprobes/test-kprobes.c
 
-We need a way to raise WARN to panic for deployments that have tested
-their workloads and want FORTIFY_SOURCE and UBSAN_BOUNDS to actually
-perform mitigations instead of just warning. Linus rejected all prior
-knobs for this and panic_on_warn (or better yet, kernel.warn_limit
-syscall) is used for this purpose.
+Is that one you should handle?
 
-Userspace actions must never be able to reach a WARN or BUG state:
-https://docs.kernel.org/process/deprecated.html#bug-and-bug-on
+https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
 
--- 
-Kees Cook
+/jeff
+
 
