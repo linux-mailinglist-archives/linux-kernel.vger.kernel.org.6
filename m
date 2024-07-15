@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-252936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF27931A11
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B563931A22
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6564A283399
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD2B1C21634
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9586E5FD;
-	Mon, 15 Jul 2024 18:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A057274070;
+	Mon, 15 Jul 2024 18:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V0oLfcub"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEwxHEHZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87A953364
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80CD12AAFD
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721067280; cv=none; b=GTqgErJRUG3qd8WtSr7abrL0O7j6Zudmeehw5AUrpPMEi5hMipiuPGXlP6fCV/rXA0eCHROKHZ28GnB6rLjwDy/hfbWnDtaBQtYFWs4pTYQFRl2K9j4PiLp6R/Hrh6isfoaUcpxHGeeiXX4nfpP9Jvx11Grn8rRn0EPldcb45Zs=
+	t=1721067297; cv=none; b=usjBQO3ZgTrgyRnqoacmqR/ljAL6E69v3TrzRL6nuIuB5uuU2/MVnzR9evBqr/UPwMYR+SPKSmX0gZinKmOhMvu5DIBumrDH5dWXwkmrOg5EZYfPkGSDVi3D3PiHQMSMJ4ZBoYHoUGQB3DYOZ3FoKQ6v5sKldhRmBISe5+TLdAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721067280; c=relaxed/simple;
-	bh=kOPIQAFY0C9jKf9GWSFbVnvhzxm8W7Mj1wAmn5+Ju2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oet8UA/nAVKUH/Zx2aj59z2yijr+EeLriWq4wg0brh0z3SAe86Hkt8c2r88w3P2w1lzXSlEHpd+O29W4MajcNkXj4aR6qxb41DqLhV98s09lOhJKV/THJw9Cj2KLVVMOnmZaOPPbf1EZhf+VZepT/gsGie2YM5jzc8x1J8v3rzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V0oLfcub; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721067277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h65hcyq2faj4hpcGQ58xMuNAhidSbVZfT6CrANnVJxc=;
-	b=V0oLfcubL8+zXpCUJzWzXlL6mnOLYB/JQPhIagl4KFSHAe8idQVDGQrxaqk+Rcmoyzr7yu
-	gppBMrWoUNn3LX1Ns1Pyvs/PFDW2MAHUtepgN1gCEgdEc37K1lzZ85OI4up45z9LdZZMA1
-	RpjSPwM5VdrPQhfU0XrTz8iJNfS/xH8=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-127-WXLncDz6M1SEWzyqSeWj9g-1; Mon, 15 Jul 2024 14:14:36 -0400
-X-MC-Unique: WXLncDz6M1SEWzyqSeWj9g-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a16375187aso290804385a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:14:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721067275; x=1721672075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h65hcyq2faj4hpcGQ58xMuNAhidSbVZfT6CrANnVJxc=;
-        b=SoFua+rLz+dLSGcd1TCZICHl7QFGdUpVS6/VL1wcw351K/9sKxdSb0vmhsG1BUKG4k
-         S0YuiXj6xGPNoF1QFgmHS2VteCvqGMpbUlfQF9shffE0+MRmSJ7ZvDC9OVwsHD/p+bnN
-         /wN3Zeh2W3MZZ5n/1dgl/AIMGZOBfmFBg16OP2ClAUIZKDW2Cp8EQjq5u0fjXW5L7NBj
-         FTXmVdfQRH3ZSjxCJG3Ia+czKqYY5fZo7wYbRvMp3+3rHOcjhKsr2RXPHKL7BHszh3el
-         6/j3Lm/I5Ogo2BjLQCyAaB4S/IWMvT1lWu5A4COeNYOHw5En+hZs6dysxTYYYku7PJJw
-         5X/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUwbI6kG/NlccYxRneHC7wmarwH56FgnEtQY2x0MyhKHMSAvV3c9/LCfA9l8zhFoYsjlTqvM9xd5C59WprH4N+JVsbVEHtAyFnOLXmA
-X-Gm-Message-State: AOJu0Yz2RFqL6a6a0AjA2X5GzHxrjxlYQ1LSH2OlflkEmqlVI1Rzyxbd
-	c9Ep7dE1wGplp4gxfEY5d2Ft/Px8f0BuyZiDycKgUVDj1RXG0z/hW/P9IAb2e3vTJgElRoWRX3I
-	xg0uSyD8XUGODmndBH5Yu/TK5YOidFYKEioNxcLjfk4HUrmD+tR5TJFuXsCPywA==
-X-Received: by 2002:a05:620a:4724:b0:7a1:456b:fd43 with SMTP id af79cd13be357-7a179f424b7mr61726685a.37.1721067275555;
-        Mon, 15 Jul 2024 11:14:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsG+WJZFOfNJsOhrGBT5TVXdo70BHb+PnBtQCyI63G5MKuUpxlC51GnL/HJ/4WDSEQ3Myk0w==
-X-Received: by 2002:a05:620a:4724:b0:7a1:456b:fd43 with SMTP id af79cd13be357-7a179f424b7mr61724885a.37.1721067275255;
-        Mon, 15 Jul 2024 11:14:35 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160bbe7f9sm222498485a.43.2024.07.15.11.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 11:14:34 -0700 (PDT)
-Date: Mon, 15 Jul 2024 13:14:32 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Qingqing Zhou <quic_qqzhou@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: Mark APPS and PCIE SMMUs as
- DMA coherent
-Message-ID: <nulprwjd52j2iq7cpx5nq733cbi6ccdpemq6a7ocglv4ep5jmh@jvs6zof5u535>
-References: <20240715071649.25738-1-quic_qqzhou@quicinc.com>
+	s=arc-20240116; t=1721067297; c=relaxed/simple;
+	bh=pkG7Cs9FXIoXw0oST5k8OaEYVti3bYwd5melFbuPCFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XaxDPHQTJOVQqfnSvjMd/s7Tx/t74RRRHJUT/jIkmWTgvEz4dxwG8/0vqkvUj381/Na0pdpFhRGg46O8m6ZsCA6ExLLg9q4xfh/3q8aMQvnbrAVUqOVWR2w5C1Aul3NAPb27dNBYdafdyF8sFXgkOLIMNL+UC0tAG0ND6ghJ/HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEwxHEHZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811C5C4AF0A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721067297;
+	bh=pkG7Cs9FXIoXw0oST5k8OaEYVti3bYwd5melFbuPCFY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sEwxHEHZno6EWtsRypvMBn9TitxsBAigzrfFrFmmIjEadcW4OBnqJMlzFCkY8g/L6
+	 n5glmxExyaYc9P4zJ43Zj2c+RruuAvOvA34tNG7TVwioZDuucWlQiiff5+eUBi4FgT
+	 CmY1k6PIqYIcbtH3X8yGQxCm3prdKg///4GEGPyXmLVR6jf3eSMjrp93lokyhLRdjT
+	 kkQCco0qP1/H+FkA30beIkVA4uelF5rSgFgsbTh47UEsWNNnlJVRRMX5nPLCI1q5og
+	 xgIBieb751oPpjx+aMvf79DKmWLzx820HyQs7nGWu9pgp32GWr3q9v6BYPOjj0YlFJ
+	 5E9GzNcakiN4Q==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-65f9708c50dso20506217b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:14:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXX9l3/TT+djx8puei7qf7ytnNkIj5+7TPPcxlAKwo/nOvSHfQ8ZMRr8gb+lbat71vOsXwUtlgPgfaDfqUr4Fnx+dxPHTrdOibuUfvk
+X-Gm-Message-State: AOJu0YwDcbzN79luFIFhDv47+pW71j34Sqfs88FV8r1JFHeYGwraOq2F
+	8dNaX1nELHtPQMIHG56wN+YZ78zx00uCjxZK0Gw3yPOes48niYfN+lEgMMmny3cqvbaDxuUEweR
+	2jf2BVv/qB9SWDGwGfJys78WXES3e4VBRsc40pA==
+X-Google-Smtp-Source: AGHT+IHN6aB8kpFHIkwT0wmPtPe+KZzaSCHN5poijt1JLe0tZYufOAZaDskX/p7CIDQSZEPTg9FznNilUurHC4QVIN8=
+X-Received: by 2002:a81:c248:0:b0:644:2639:8645 with SMTP id
+ 00721157ae682-6635497ab0fmr3301967b3.26.1721067296826; Mon, 15 Jul 2024
+ 11:14:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715071649.25738-1-quic_qqzhou@quicinc.com>
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
+ <ae6b4885-0590-4585-a1fd-39b64df2f902@arm.com> <CACePvbX99r8BNZTkax=KGBx-XYP6WLxZKez3qsi+FfreC2TwGg@mail.gmail.com>
+ <96965a23-49ea-41f5-a4b0-9b5296dafe00@arm.com>
+In-Reply-To: <96965a23-49ea-41f5-a4b0-9b5296dafe00@arm.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 15 Jul 2024 11:14:45 -0700
+X-Gmail-Original-Message-ID: <CACePvbVufm1=hwZx=is7XxrpVvJnYES4QPWvrsRZM-Ci7kDPNQ@mail.gmail.com>
+Message-ID: <CACePvbVufm1=hwZx=is7XxrpVvJnYES4QPWvrsRZM-Ci7kDPNQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] mm: swap: mTHP swap allocator base on swap cluster order
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Hugh Dickins <hughd@google.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 12:46:49PM GMT, Qingqing Zhou wrote:
-> The SMMUs on sa8775p are cache-coherent. GPU SMMU is marked as such,
-> mark the APPS and PCIE ones as well.
-> 
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+On Mon, Jul 15, 2024 at 7:10=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 11/07/2024 15:08, Chris Li wrote:
+> > On Thu, Jul 11, 2024 at 3:02=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.=
+com> wrote:
+> >>
+> >>> Kernel compile under tmpfs with cgroup memory.max =3D 2G.
+> >>> 12 core 24 hyperthreading, 32 jobs.
+> >>>
+> >>> HDD swap 3 runs average, 20G swap file:
+> >>>
+> >>> Without:
+> >>> user  4186.290
+> >>> system        421.743
+> >>> real  597.317
+> >>>
+> >>> With:
+> >>> user  4113.897
+> >>> system        413.123
+> >>> real  659.543
+> >>
+> >> If I've understood this correctly, this test is taking~10% longer in w=
+all time?
+> >
+> > Most likely due to the high variance in measurement and fewer
+> > measuring samples 3 vs 10. Most of that wall time is waiting for IO.
+> > It is likely just noise.
+>
+> OK, that certainly makes sense, as long as you're sure its noise. The oth=
+er
+> (unlikely) possibility is that somehow the HDD placement descisions are
+> changing, which increases waiting due to increased seek times.
 
-I think this deserves a Fixes tag as well, not treating it as
-dma-coherent is a bug and can lead to difficult to debug errors based on
-a quick search through lkml.
+I sure did not change the HDD placement, if the HDD allocation is
+different from the previous code, that should be a bug.
+I mostly remove the cluster code path in HDD swap entry allocation.
 
-Thanks,
-Andrew
+I did the HDD run mostly to make sure the HDD can still take some
+stress test on the swapping without crashing.
 
+Chris
 
