@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-252499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98DC9313F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3001E9313F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EF0CB23A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2D61F21F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B19318C33C;
-	Mon, 15 Jul 2024 12:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651B318C169;
+	Mon, 15 Jul 2024 12:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nC97rCNm"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RJuG2H3y"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C0B13B295;
-	Mon, 15 Jul 2024 12:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E51E18C170
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045840; cv=none; b=DrhOheXdkS9gHb5bWbC6sbhDIS05W/jGcGfp80cnzTdeprVe1wW+5xqlZcjpO4lpTEko5+QqwdCli0YWkVCAv75ut4GVSA/DLVPYsaIqfgfBScbLlMWp40Wr5pFHUFhbMv3xOKkxPYK/tM6wi5+9kF0EGiK1+mB2VSUvIvssLqs=
+	t=1721045852; cv=none; b=k4r4EkZKcgkeIf5wD5j1Oja3YxgPCLu6r98ixI+7Ni+ssu0JcxU3a8CyAtkf5qsYkX48fKVRl78YLFxORyM9A9mGAwn3TagTNr3TnyquFIrme0cDsxEgqIJCoXNf48yIGoc00Dav0jBbXmpHa3+4W19sGUhPvuVT/IK92O+N3FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045840; c=relaxed/simple;
-	bh=IeyCAkzcfaio2u0NT/1xcLRfdWbeJnZKH5vasv/8NBA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rg0pKX9jHne7mJdRrmCtlO7wfXiONyM67CHxFhQi6I5v73X1sic/kXHsJRKW98QSlezdNKd1bqVLBx1IDzo7DC0JgDwAHt9AK/Cnusm2hlaqW/CPACEPArJe/P1jP8HTnpU+0DsGdcDzxTVMn/GtZWf72EijvRyxvgq0oABJuBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nC97rCNm; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721045818; x=1721650618; i=markus.elfring@web.de;
-	bh=NB32WoDd06M/wpmpaHBsHqbVrbOZIfeBxzfCKnzXGoM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nC97rCNmJQqt85Z8n/lOr7jK4XS6BQ/ervO+pv3uLg0ZwzNARDMs1Vbb0/xTX9HI
-	 sjs4xWU63k9LVCiTo039kYZEJgt/zabgBK0aCmdJi2C5HUVqR7Gf+D8g2GD7HDgeR
-	 m5kw2uUQp8SBsvd2aKtiBLn4ruwiwefBvjNex884546qWA1NgNFm/fQyaZAY+YlAi
-	 89m04zFNDcuJkg5HRhxuU9s1wbzUm9WZ66tiYtHJXKLk+KHQelnYjlpwSi0MuGyAW
-	 aBlHDDPyNj74tSmeRQEk7UXNHjmwRVEJ7AtUQH5p/uZJvpL/zfzIFBRV5lvpTRix8
-	 Suc0BS3ZrnVFJwKbbw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MK56y-1smf0G2LKo-00HcGU; Mon, 15
- Jul 2024 14:16:58 +0200
-Message-ID: <38ae4f27-177d-40c3-a16f-c8bd286df13d@web.de>
-Date: Mon, 15 Jul 2024 14:16:57 +0200
+	s=arc-20240116; t=1721045852; c=relaxed/simple;
+	bh=42W8b2dBPueTWFZdOdOwfS1/BzZPdpyWZRA0qbwDSKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfkfAMcXdFOwtSQlmW8uPGVkcVTVxzkau7A4QBN+VFgxlS2zVu9ntT2N9qhKbPkLxkRxi2Eg3jpkVjl+r041VFbBjf/y0xhtcFRMU00QJlDYZ+4Wo0dZNo7aqOGv4HmQx1TASf6kDI21lS9em6j2hLoFQk9YcLi2cwllQ+UwdMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RJuG2H3y; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 49D1A40E0027;
+	Mon, 15 Jul 2024 12:17:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8Vtsc0DUDhAl; Mon, 15 Jul 2024 12:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721045841; bh=+YWvB3+WTpnDtMqqGNaMhXgj0kOHzjlz8VXcq8FE3aw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RJuG2H3y7PA2XfdYWg3onv85NW6uz3qlYRSOVE0DOjjKRPyq7x+cF08H8sNdvbEfE
+	 QUoX0yTPqrtHqOCVXr/n9rqJlR6YPp+LeoRlltVaYJiANSRsFxfKPduzBLx2vI8rJu
+	 RM9YVLWkRz5tuA3XA58VODQ+hsDVUaIP5MhTEXl5DWsAZPriHkJpzdRR3lUvBkh8hi
+	 fD2bsynGkhKJbZLgKdHRyfQLwgg2496EUbSIz3IEdbX9+mDYH43CMR+WdGUM0WioTN
+	 jmU1g1frmzTeFcAh4pHTOKfN2Osyr7pfLlUnzLtuSW1MlsXcQPt7rhefso+UOPoeqO
+	 wcXCvFSHxqOr4K8txBwDfbU3g1pPI69EWi5V69j1k8R8vIXiLQ1rE/G/ZjRPojgmNo
+	 9Bmzj8WT8H4mI9mFrl7RT0yZL1UeGzVLHpvAFcrzM6iMCFHcaVM55BICLrkzD+uMaj
+	 tdj9YGdkEye/nqJ+ZeSP2FCfXFbkN924dSIzqSmSN2HXbzvXnBddYlsdbCCacwLLig
+	 nhNEV218xEDfUDd5u5kzaKRpASCFRNjCPVWqpeVHAPxGOltNEY2sQgjo8XwoJ+jQkG
+	 O5BaZ6tAYCAwojFgmSpdQ+AwNWiqUpddVprR4OZenecMr4MbOX8BQkadfSyWAQZKq5
+	 7/uQZ/6klHuyfNgvn8ojoLv0=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AA9240E021F;
+	Mon, 15 Jul 2024 12:17:10 +0000 (UTC)
+Date: Mon, 15 Jul 2024 14:17:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
+Message-ID: <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
+References: <20240422165830.2142904-1-leitao@debian.org>
+ <20240422165830.2142904-2-leitao@debian.org>
+ <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
+ <ZpUSvl5eKgkLeJrg@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Kalle Valo <kvalo@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] wil6210: Replace 8 seq_printf() calls by seq_putc() calls
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:d0P9VkzMqi303zPg4KqBnTOMTfZU6XOfZr0Uhm6l9Le72R9I+b7
- ZE98vRqFPZ1jhzWvOchmqVvQ8HK3supTkIwoDPgGOZa0RHPI7y5b34FtYTRzZeBzi4SCWX1
- Ky0K1Uw50EdPj8TrKo3Bo+twHR/945QMDigBMlkwdAtT8peOOxh71uQ3byCu4MJ3wshBaax
- cgx1nC07Y1+kedGkwUILQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3xfTRa3X/ro=;3Sdtj9hz+pKZlMo5rKwRr/7NN+v
- ulBZqRorGvJOAqHAkSGZ64EYBcGOnDvNlY329L9gAGqvmnPpe67Pu5DPI20Fp2gze0zwJ+s3T
- rc0kQSeYO0DRSYp9Zw8AcluddH3SSlRZTxSjzTx9HRrE0eDm4UVXSCw5N4jtaI30A3K4vAOIN
- 9WPEtzwI7wH7edX9zksQtBvGADGg+w+TeX2NnT08y2W+hXRcb3rAygyQKD+Q6ZX0UfoZ0NEH5
- vpXKjGhz9adxHGwxrd3ZO2i5F0qIPFlqViGGunvp2ldf21ghcF/ufftFVIYkNeVn2FjhdQCqU
- vmVOrR6u5wn/4PzCmwcqtRfyJb/sfaZz/vYT12SSpQw0Ccq4l9fzsU7hqBRH9fPiBUWjSxY4G
- qFZrBGlEKGepyJ4INIAHWiwcGXCLeGSc2VDlSszEgDZ7mBupRbyXPerpJFfxBxUxJ+DQD4x+Y
- U/fj2swvtiwgVvJKa60WZk6B9a6Aotn8p1rjGsasBuSvycMu/1XS57O6HpCXjeOlG0joN0Ih2
- 21edYIPhadBqGZQIMz1InnD6qGOFlnYPfQZCYNNjhA2XRJ+8VJtgAjYDPc24QH3J+tFJhtHOc
- gwYrFyQH2b4CQLf9Ty0Jd3kgZdBUymO27CQ1ydWMgSlbcdkGqpG1mmzmyc0Ch8Lgc8VeJhvr8
- 842tx91X4+xT53QKXpmTlU53iO32CB9R/22mUds8PHAi0X07lifBQcwQZeIYtxUHhfulwkNDf
- C9iSTRgS7PJc/GNNT48LJXAUa5D4ChHixTl2A2YzggE7jCJ0Pj4Jf8jiOrjK5khOZl8U4dW+M
- 1tNbpNpzAS5BPrJs8HiFu2jg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZpUSvl5eKgkLeJrg@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jul 2024 14:09:01 +0200
+On Mon, Jul 15, 2024 at 05:14:54AM -0700, Breno Leitao wrote:
+> Sure, I will send a v4 and get rid of GDS_FORCE_MITIGATION completely.
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for eight s=
-elected calls.
+I'm actually waiting on the people on Cc to chime in whether we really need
+it. The three distro configs we checked, don't set it.
 
-This issue was transformed by using the Coccinelle software.
+-- 
+Regards/Gruss,
+    Boris.
 
-Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/wireless/ath/wil6210/debugfs.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c b/drivers/net/wire=
-less/ath/wil6210/debugfs.c
-index c021ebcddee7..6e16936631d5 100644
-=2D-- a/drivers/net/wireless/ath/wil6210/debugfs.c
-+++ b/drivers/net/wireless/ath/wil6210/debugfs.c
-@@ -55,7 +55,7 @@ static void wil_print_desc_edma(struct seq_file *s, stru=
-ct wil6210_priv *wil,
- 		if (wil->rx_buff_mgmt.buff_arr &&
- 		    wil_val_in_range(buff_id, 0, wil->rx_buff_mgmt.size))
- 			has_skb =3D wil->rx_buff_mgmt.buff_arr[buff_id].skb;
--		seq_printf(s, "%c", (has_skb) ? _h : _s);
-+		seq_putc(s, (has_skb) ? _h : _s);
- 	} else {
- 		struct wil_tx_enhanced_desc *d =3D
- 			(struct wil_tx_enhanced_desc *)
-@@ -64,10 +64,10 @@ static void wil_print_desc_edma(struct seq_file *s, st=
-ruct wil6210_priv *wil,
- 		num_of_descs =3D (u8)d->mac.d[2];
- 		has_skb =3D ring->ctx && ring->ctx[idx].skb;
- 		if (num_of_descs >=3D 1)
--			seq_printf(s, "%c", has_skb ? _h : _s);
-+			seq_putc(s, has_skb ? _h : _s);
- 		else
- 			/* num_of_descs =3D=3D 0, it's a frag in a list of descs */
--			seq_printf(s, "%c", has_skb ? 'h' : _s);
-+			seq_putc(s, has_skb ? 'h' : _s);
- 	}
- }
-
-@@ -120,7 +120,7 @@ static void wil_print_ring(struct seq_file *s, struct =
-wil6210_priv *wil,
- 			} else {
- 				volatile struct vring_tx_desc *d =3D
- 					&ring->va[i].tx.legacy;
--				seq_printf(s, "%c", (d->dma.status & BIT(0)) ?
-+				seq_putc(s, (d->dma.status & BIT(0)) ?
- 					   _s : (ring->ctx[i].skb ? _h : 'h'));
- 			}
- 		}
-@@ -237,10 +237,10 @@ static void wil_print_sring(struct seq_file *s, stru=
-ct wil6210_priv *wil,
- 			if ((i % 128) =3D=3D 0 && i !=3D 0)
- 				seq_puts(s, "\n");
- 			if (i =3D=3D sring->swhead)
--				seq_printf(s, "%c", (*sdword_0 & BIT(31)) ?
-+				seq_putc(s, (*sdword_0 & BIT(31)) ?
- 					   'X' : 'x');
- 			else
--				seq_printf(s, "%c", (*sdword_0 & BIT(31)) ?
-+				seq_putc(s, (*sdword_0 & BIT(31)) ?
- 					   '1' : '0');
- 		}
- 		seq_puts(s, "\n");
-@@ -1556,9 +1556,9 @@ static void wil_print_rxtid(struct seq_file *s, stru=
-ct wil_tid_ampdu_rx *r)
- 	seq_printf(s, "([%2d]) 0x%03x [", r->buf_size, r->head_seq_num);
- 	for (i =3D 0; i < r->buf_size; i++) {
- 		if (i =3D=3D index)
--			seq_printf(s, "%c", r->reorder_buf[i] ? 'O' : '|');
-+			seq_putc(s, r->reorder_buf[i] ? 'O' : '|');
- 		else
--			seq_printf(s, "%c", r->reorder_buf[i] ? '*' : '_');
-+			seq_putc(s, r->reorder_buf[i] ? '*' : '_');
- 	}
- 	seq_printf(s,
- 		   "] total %llu drop %llu (dup %llu + old %llu + dup mcast %llu) last =
-0x%03x\n",
-=2D-
-2.45.2
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
