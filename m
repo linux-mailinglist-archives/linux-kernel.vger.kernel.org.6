@@ -1,110 +1,214 @@
-Return-Path: <linux-kernel+bounces-252085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73505930E2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:37:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E540930E31
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED45B20D7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8011F21820
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8811836D1;
-	Mon, 15 Jul 2024 06:37:13 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F081836D6;
+	Mon, 15 Jul 2024 06:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grH9VhVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75244C62;
-	Mon, 15 Jul 2024 06:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789013A89C;
+	Mon, 15 Jul 2024 06:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721025432; cv=none; b=jlfhl8DdVhHFlFNsmDgNCCIckki/tC9QrikeLwrM7q28QxpN6ac+15pPL7TdmJETmylQLBEjcI5MEr4puVGZqoBsOdWH28nOYTqwjdXb67Fje6UQcUMQTUoidiuD+cAUki16LslKXMuyBoNDNJxqdh0sTyV1SRQJnI/Um+XZEHE=
+	t=1721025564; cv=none; b=DJ5VIH6Wg/2V6m4rOwyyaVDPSDpuCa1g9UGpXfAm3hKf0TnfVr6hGWTey4srdHZZcRBtL+y1OzltkT3asTAqj1k+jxY6iylJjIa/hhli7p9+8Zgt262ZAONrflSk1QtbZm0ViMXr+JY1TiIzn7FVHWutZSiH4NxFQ/b7n1DrgPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721025432; c=relaxed/simple;
-	bh=POZE4bREBlZoPXxt7YmW4lVrRdTHkPM6h2GrqX6vGB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hA2a2mPbiA8x1LhgN+st3KUJqH0gYw/tZFsItLt2b7gmqn7Ge65sq2cspWYMjrqestsb9TeH3pJey7fGd0CuAXztZQ1A8iQQYDSfUucU6avLkDsyox9+XvrKzhSRiP71z4QR0zLGRUQd0sS+BhjccmGdnR9q3WmirctvPVh6Lu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WMstl0Wtcz9sSK;
-	Mon, 15 Jul 2024 08:37:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id oazn0T8e1H3x; Mon, 15 Jul 2024 08:37:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WMstk6rR7z9sSH;
-	Mon, 15 Jul 2024 08:37:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DABB08B76C;
-	Mon, 15 Jul 2024 08:37:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id pOSQDiM8HNmP; Mon, 15 Jul 2024 08:37:02 +0200 (CEST)
-Received: from [192.168.233.202] (unknown [192.168.233.202])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5EA3A8B763;
-	Mon, 15 Jul 2024 08:37:02 +0200 (CEST)
-Message-ID: <4cad3dc8-f7b8-4771-ad04-f3524bc03340@csgroup.eu>
-Date: Mon, 15 Jul 2024 08:37:01 +0200
+	s=arc-20240116; t=1721025564; c=relaxed/simple;
+	bh=ue63PD+WH1lgrlPIZa8Y+VSW6ci4bkPtwOr0znH5a1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ogkVc5g9FDVbgTCAsdBCf+MSh95zIVdA80gZAe3ERqex/2fODuvnWBY2aaPAmbMioVZH00nRhwEKLd8RmcpVwCDy2RTa8ZMQtNO7sJ25b9N24foft86GEenRWS/uO6dprBc3Ol/XnJi6QnExrvNe2DdfaTjtdOG4pLkRTAU7Uc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grH9VhVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE17C4AF0F;
+	Mon, 15 Jul 2024 06:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721025563;
+	bh=ue63PD+WH1lgrlPIZa8Y+VSW6ci4bkPtwOr0znH5a1w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=grH9VhVER5hrr8fRYCZnWSIpyKuyTe+5J5UcDUFHtd4gf1jOpsHvqDP8HV3B/8pWZ
+	 c/g7SEDgEFWj2KkflFfT+19mCRVWt0OZ4lbqmuAfZj0gaoPuPW8Fxp2PraXh4y2wwy
+	 cv1HO0XVw/vwkTGHYuJlU2m+DO0nGUORL0EVT4hknl7DwX+h0AnjYSr9djRACCBvtF
+	 b2iz0s5YUJcJYW+/RcCwG7wpipAuQ6Lmm+k+o1qoNA/pl2zkAB11g4IXmTK0uuoyrc
+	 E1VsiQmozrPrMjLw1r9QiYKf5XxsFaUCe45qDm1cGv9J/CGbSjDNlNv5MfKXt+M1KD
+	 sYchGa6RVi+Pg==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7979c3ffb1so232033666b.2;
+        Sun, 14 Jul 2024 23:39:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSn1OjLxdaBLcEl82hApysSbKM1dAPPm28SOhP1v6b1FIj8iic8z2oO71GouXZVBH1kQbySbFToHUJ4BPCakhKTL42mD84JpAneFcit1fwke7YwSeCTM+vfAzllMBtc51fARZs7fPhiTsgv/H7sdulzrfVfFQ2r+TKiC4QuO+LLccfl2huD2gPNFQGObK0Y9SsAwNyW0LNvQTX7tD0LwU=
+X-Gm-Message-State: AOJu0Yyp69yBNEQNdcMnbeZI+nndarfeyPZW93Jy6HQdkIT1s40W0VKT
+	aDBqujV3CVXqqTFlaurK2ImSnYrdT+bGXoA+OPT6h8DcmzwHXydFtpyDuIchFZZAGN2ujYvN5bz
+	90tBOkyIEo14VKdPD40zKvobxHZU=
+X-Google-Smtp-Source: AGHT+IH2afvBMorpe8R4SLEsYoeUFbK9UHI5/G4ctIqHVHC1u91eh0R/gjYIBZbJ9cXDaFCVPedBryinNyCj8beDIjk=
+X-Received: by 2002:a05:6402:2684:b0:58b:b617:eee6 with SMTP id
+ 4fb4d7f45d1cf-594bcba83e2mr17226269a12.36.1721025561941; Sun, 14 Jul 2024
+ 23:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] MAINTAINERS: Update powerpc BPF JIT maintainers
-To: Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bpf@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Hari Bathini <hbathini@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Masami Hiramatsu <mhiramat@kernel.org>
-References: <fb6ef126771c70538067709af69d960da3560ce7.1720944897.git.naveen@kernel.org>
- <24fea21d9d4458973aadd6a02bb1bf558b8bd0b2.1720944897.git.naveen@kernel.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <24fea21d9d4458973aadd6a02bb1bf558b8bd0b2.1720944897.git.naveen@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
+ <CAAhV-H5OOXguNTvywykyJk3_ydyDiSnpc-kvERRiYggBt441tw@mail.gmail.com> <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
+In-Reply-To: <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 15 Jul 2024 14:39:09 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com>
+Message-ID: <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 0/2] Add support for Loongson1 APB DMA
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 12, 2024 at 2:23=E2=80=AFPM Keguang Zhang <keguang.zhang@gmail.=
+com> wrote:
+>
+> On Fri, Jul 12, 2024 at 12:22=E2=80=AFPM Huacai Chen <chenhuacai@kernel.o=
+rg> wrote:
+> >
+> > Hi, Keguang,
+> >
+> > I accept your suggestion about the cpufreq driver naming, and now it
+> > is upstream:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git/commit/?=
+h=3Dcpufreq/arm/linux-next&id=3Dccf51454145bffd98e31cdbe54a4262473c609e2
+> >
+> > I still hope you can accept my suggestion about the dma driver naming.
+> >
+> > I know you hope me rename LS2X_APB_DMA to LOONGSON2_APB_DMA, but as I
+> > said before, renaming an existing Kconfig option will break config
+> > files.
+> >
+> > See an example:
+> > Commit a50a3f4b6a313dc76912bd4ad3b8b4f4b4 introduce PREEMPT_RT and
+> > rename PREEMPT to PREEMPT_LL, but then commit
+> > b8d3349803ba34afda429e87a837fd95a9 rename it back because of config
+> > files broken.
+> >
+> Hi Huacai,
+> I understand the breaking issue of the Kconfig option, so you can keep
+> LS2X_APB_DMA.
+LS2X_APB_DMA with loongson2-apb-dma.c? Even if I accept this, can you
+accept LS1X_APB_DMA with loongson1-apb-dma.c?
+
+> You said that you've accepted my suggestion, which means you recognize
+> 'loongson' as the better name for the drivers.
+No, I don't think so, this is just a compromise to keep consistency.
 
 
 
-Le 14/07/2024 à 10:34, Naveen N Rao a écrit :
-> Hari Bathini has been updating and maintaining the powerpc BPF JIT since
-> a while now. Christophe Leroy has been doing the same for 32-bit
-> powerpc. Add them as maintainers for the powerpc BPF JIT.
-> 
-> I am no longer actively looking into the powerpc BPF JIT. Change my role
-> to that of a reviewer so that I can help with the odd query.
-> 
-> Signed-off-by: Naveen N Rao <naveen@kernel.org>
+Huacai
 
-Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   MAINTAINERS | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 05f14b67cd74..c7a931ee7a2e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3878,8 +3878,10 @@ S:	Odd Fixes
->   F:	drivers/net/ethernet/netronome/nfp/bpf/
->   
->   BPF JIT for POWERPC (32-BIT AND 64-BIT)
-> -M:	Naveen N Rao <naveen@kernel.org>
->   M:	Michael Ellerman <mpe@ellerman.id.au>
-> +M:	Hari Bathini <hbathini@linux.ibm.com>
-> +M:	Christophe Leroy <christophe.leroy@csgroup.eu>
-> +R:	Naveen N Rao <naveen@kernel.org>
->   L:	bpf@vger.kernel.org
->   S:	Supported
->   F:	arch/powerpc/net/
+> Moreover, Loongson1 and Loongson2 belong to different SoC series.
+> To be honest, I can't see why Loongson1 APB DMA should give up this
+> intuitive and comprehensible naming.
+> Thanks for your review!
+> >
+> > Huacai
+> >
+> > On Thu, Jul 11, 2024 at 6:57=E2=80=AFPM Keguang Zhang via B4 Relay
+> > <devnull+keguang.zhang.gmail.com@kernel.org> wrote:
+> > >
+> > > Add the driver and dt-binding document for Loongson1 APB DMA.
+> > >
+> > > ---
+> > > Changes in v9:
+> > > - Fix all the errors and warnings when building with W=3D1 and C=3D1
+> > > - Link to v8: https://lore.kernel.org/r/20240607-loongson1-dma-v8-0-f=
+9992d257250@gmail.com
+> > >
+> > > Changes in v8:
+> > > - Change 'interrupts' property to an items list
+> > > - Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-3=
+7db58608de5@gmail.com
+> > >
+> > > Changes in v7:
+> > > - Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai=
+ Chen)
+> > > - Update the title and description part accordingly
+> > > - Rename the file to loongson,ls1b-apbdma.yaml
+> > > - Add a compatible string for LS1A
+> > > - Delete minItems of 'interrupts'
+> > > - Change patterns of 'interrupt-names' to const
+> > > - Rename the file to loongson1-apb-dma.c to keep the consistency
+> > > - Update Kconfig and Makefile accordingly
+> > > - Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-9=
+0de2c3cc928@gmail.com
+> > >
+> > > Changes in v6:
+> > > - Change the compatible to the fallback
+> > > - Implement .device_prep_dma_cyclic for Loongson1 sound driver,
+> > > - as well as .device_pause and .device_resume.
+> > > - Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
+> > > - into one page to save memory
+> > > - Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
+> > > - Drop dma_slave_config structure
+> > > - Use .remove_new instead of .remove
+> > > - Use KBUILD_MODNAME for the driver name
+> > > - Improve the debug information
+> > > - Some minor fixes
+> > >
+> > > Changes in v5:
+> > > - Add the dt-binding document
+> > > - Add DT support
+> > > - Use DT information instead of platform data
+> > > - Use chan_id of struct dma_chan instead of own id
+> > > - Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
+> > > - Update the author information to my official name
+> > >
+> > > Changes in v4:
+> > > - Use dma_slave_map to find the proper channel.
+> > > - Explicitly call devm_request_irq() and tasklet_kill().
+> > > - Fix namespace issue.
+> > > - Some minor fixes and cleanups.
+> > >
+> > > Changes in v3:
+> > > - Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+> > >
+> > > Changes in v2:
+> > > - Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
+> > > - and rearrange it in alphabetical order in Kconfig and Makefile.
+> > > - Fix comment style.
+> > >
+> > > ---
+> > > Keguang Zhang (2):
+> > >       dt-bindings: dma: Add Loongson-1 APB DMA
+> > >       dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+> > >
+> > >  .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
+> > >  drivers/dma/Kconfig                                |   9 +
+> > >  drivers/dma/Makefile                               |   1 +
+> > >  drivers/dma/loongson1-apb-dma.c                    | 665 +++++++++++=
+++++++++++
+> > >  4 files changed, 742 insertions(+)
+> > > ---
+> > > base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> > > change-id: 20231120-loongson1-dma-163afe5708b9
+> > >
+> > > Best regards,
+> > > --
+> > > Keguang Zhang <keguang.zhang@gmail.com>
+> > >
+> > >
+> > >
+>
+>
+>
+> --
+> Best regards,
+>
+> Keguang Zhang
 
