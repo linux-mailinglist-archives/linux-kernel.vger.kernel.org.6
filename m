@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-252851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B159318E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784E69318E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17B11C211F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225DE1F224BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F804595D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659E94643B;
 	Mon, 15 Jul 2024 17:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QtANOSOt"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA/D+vVD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A40DDAD;
-	Mon, 15 Jul 2024 17:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C491CAA1;
+	Mon, 15 Jul 2024 17:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721062917; cv=none; b=Csf2g3il3/2e0lMQVHSrhws1a5E4Sgl6qYfGpRithF0u5wWa1j84+/1I5w4T9jB7Z3R/rAFxkYaxjo8sIyy9cAh7ifhpI1jNdbs57t1mG1vnllxDXfcvSzAe8Vx6qBroktPWI2sdD6TUHqCWJAsX+I1x+yMURyRREvO+ZweZevI=
+	t=1721062917; cv=none; b=jCbP+qNtP21E06rmufGzB4nP1Gxt5/L12Xg6MXslFeYwpon4YVLlIZ1kE4LwowwqL0MDIKadLNdVc8HgPG049QafSx+QgNJGoign0G6/Wuto7Jj8aZyrAXkcWzwM5i4UpUynCm/dsGCxqhCg83TxZzVzR+Dlb1P9+PemfuwhP6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721062917; c=relaxed/simple;
-	bh=u3OchkAmeGt+76z+GAeKhgdYSEsrTgpleGbH1qwhMfI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AE/LB4yZ1D5wfJt9aicpTODAGbFIFPRtrJ0hOZmfjT7pSAEfR5VossmFSCNFUcrE5m+pGBFs/RlAp7X6tXJlMFKu4/tErUBIFOB89M7m+cB5GKCoUhEH7CSrRytPjq66rQHefVFnM+yxrrKoYpOPEvACtpIUL2emb4vO0VjLRz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QtANOSOt; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721062914;
-	bh=u3OchkAmeGt+76z+GAeKhgdYSEsrTgpleGbH1qwhMfI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=QtANOSOtuP9Cr3FesfSqzx0ICjN3DrvxMoU6LpBvZHbGrFnMdEWWYjCdQ7pYdcCOp
-	 zxXVpcAkNyUEhab9uP0ZuJgnQqlOproJ9+bdj4khwgItD584BnLg8TOXORJKSboijm
-	 U59yajjcrZHv6BZNaJcAQVUGvYGUA0RVNzG5r4DncRYjhQGG5vAHlJI3vPtpExtnsF
-	 Hu8a3+O1ElZ8fM565sZy98vgwf+qPDXUQxbl14KRMUvbaIGunVn3pbXAGP7ZAXiZu7
-	 72hUYP9AA7lHcKxp4dp3A/iAU4PktgkZf2VRNgJ3jzzr6LAUtbYTdGRmbb7xDGVGa1
-	 hS2ZuqW++DDHQ==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3F6913780C13;
-	Mon, 15 Jul 2024 17:01:52 +0000 (UTC)
-Message-ID: <b2f5c00d5567a37129f691a89063c6196fbb142a.camel@collabora.com>
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
- runtime suspend/resume
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Devarsh Thakkar <devarsht@ti.com>, "jackson.lee"
-	 <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
- "sebastian.fricke@collabora.com"
-	 <sebastian.fricke@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
- <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
- "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
- Vibhore <vibhore@ti.com>,  Dhruva Gole <d-gole@ti.com>, Aradhya
- <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-Date: Mon, 15 Jul 2024 13:01:49 -0400
-In-Reply-To: <147fddd4-0f73-0546-b73e-d8e2326bfb2a@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
-	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
-	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
-	 <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
-	 <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
-	 <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
-	 <147fddd4-0f73-0546-b73e-d8e2326bfb2a@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	bh=YfAErmDFuTuGgAAA5BBqIA3z3wpqh2qk+SRl1hShE0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1LMSwk9u0Okgcw6BDtJRS9OUzROiQrv0tt+NjYxoJd3M1EOZJb+bwFlNPrZhQaWdl3nM2hHmOlcPDcgjH7kQr4B9Gc21eBpH/BR/cqfWHswqSs5ehDqk74sY9+mvYR20QMhwFSp1ywZ0OklhM4kwU//672j/g7/tSEp4pWHB0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FA/D+vVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FA72C4AF0D;
+	Mon, 15 Jul 2024 17:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721062917;
+	bh=YfAErmDFuTuGgAAA5BBqIA3z3wpqh2qk+SRl1hShE0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FA/D+vVDeqwU92wURKsxE+FPSR5D+TT7bVdiQ5atMRceoq5JbhYljtitkxQc3woGY
+	 raxOHm/+gNqdUw1O9mFfAPKZoO73t4WWlLQIS2GC5rDZjHoB0rNUdn0rzIO2N0xs5U
+	 dm3ae8h9Az5KxPoC0k3Y9oJRDlzDT6VfStZYBnefRXr5+GiGj9r62d5nEO7J3wO4iF
+	 fG9REMg1s9bmwea3WJZU4dGAd5TOVBEx8sLFOJWLYVWdGc7ALwYLH9GjbP7/YJZCP8
+	 4ZoM6PtkTHlRFaWD43T+Apg9z9ldBEAsIiP0IRaIKphJaX4ghUJFnDqGlwdRAO3hKh
+	 rEn6Hlu5AAI3A==
+Date: Mon, 15 Jul 2024 10:01:56 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+Message-ID: <202407150947.92A48C959@keescook>
+References: <20240708202202.work.477-kees@kernel.org>
+ <20240711214450.GG27299@noisy.programming.kicks-ass.net>
+ <202407111500.B86485B3@keescook>
+ <20240712090008.GA19796@noisy.programming.kicks-ass.net>
+ <202407121008.EDAD65A33@keescook>
+ <20240715083713.GX27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715083713.GX27299@noisy.programming.kicks-ass.net>
 
-Hi,
+On Mon, Jul 15, 2024 at 10:37:13AM +0200, Peter Zijlstra wrote:
+> Yeah, arguing a committee is mostly a waste of time, also, they
+> typically listen a lot more when you say, here these two compilers have
+> implemented it and this Linux thing uses it.
 
-Le vendredi 21 juin 2024 =C3=A0 18:01 +0530, Devarsh Thakkar a =C3=A9crit=
-=C2=A0:
-> Hi Nicolas,
->=20
-> On 20/06/24 23:02, Nicolas Dufresne wrote:
-> > Le jeudi 20 juin 2024 =C3=A0 19:50 +0530, Devarsh Thakkar a =C3=A9crit=
-=C2=A0:
-> [..]
->  > Imagine that userspace is going gapless playback, if you have a lets s=
-ay
-> 30ms on
-> > forced suspend cycle due to close/open of the decoder instance, it won'=
-t
-> > actually endup gapless. The delay will ensure that we only suspend when=
- needed.
-> >=20
->=20
-> Shouldn't the applications doing gapless playback avoid frequent open/clo=
-se of
-> the decoder instance too as it will add up re-instantiation (initializing=
- hw,
-> allocating buffers) and cleanup (de-initialization and freeing up of buff=
-ers)
-> delay for each open/close respectively ? Even in case of scenario where
-> resolution of next stream is different than previous, I guess the applica=
-tion
-> can still hold up the file handle and do the necessary setup (stream
-> off/stream on/REQBUFS etc) required for re-initialization ?
+Precisely.
 
-I don't have a very strong opinion here, I usually try to avoid optimizing =
-for
-what userspace should do. Best would be to build your opinion on your own
-testing of existing userspace (perhaps not just GStreamer).
+> So yeah, language extensions are it.
 
-I think if you have good reason to force suspend when the last instance is
-destroyed, please do so (e.g. stability issue, race conditions etc). So far=
-, I
-don't personally know what is the issue with leaving a small delay in order=
- to
-avoid a suspend / resume cycle if one quickly close the last instance and o=
-pen
-the next one immediately. A comment would be nice, so no one fall in such a=
- trap
-later.
+The one I may try to point out to the committee is flexible arrays in
+unions. "array[1]" and "array[0]" are allowed in unions, but "array[]"
+wasn't. This totally wrecks attempts to modernize a codebase that
+depends on such union uses. We worked around it but finally got the
+language extension, er, extended, recently:
 
-Nicolas
+https://github.com/llvm/llvm-project/commit/14ba782a87e16e9e15460a51f50e67e2744c26d9
+https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=adb1c8a0f167c3a1f7593d75f5a10eb07a5d741a
+
+> Yeah, not just Linux I imagine. The rules are so insane it's near
+> useless. I'd say press onwards with the language extension, it's not
+> like Linux kernel is written in ANSI/ISO C anyway :-)
+
+Yup. Between the above flex arrays in unions fix and -fstrict-flex-arrays=3,
+a C codebase can actually get unambiguous array bounds handling. And now
+with the "counted_by" attribute, we can cover _dynamic_ arrays too.
+
+> > struct_group() helper. It's internally ugly, but it works.
+> 
+> That macro is fairly trivial, nowhere near as ugly as struct_size() :-)
+> But urgh... can't we do something like:
+> 
+> void *memcpy_off(void *dst, const void *src, size_t off, size_t n)
+> {
+> 	memcpu(dst, src+off, n);
+> 	return dst;
+> }
+> 
+> And then you can write:
+> 
+>   memcpy_off(args, regs, offsetof(*regs, bx), 6);
+> 
+> I mean, that sucks, but possilby less than struct_group() does.
+> 
+> [ also, we should probably do:
+>   #defime offsetof(t, m) __builtin_offsetof(typeof(t), m) ]
+
+Yeah, that would be possible, but I wanted something that the compiler
+could reason about for a given identifier since it's not just fortify
+that cares about object bounds. Being able to declare the layouts so
+that the bounds sanitizer instrumentation wouldn't get confused was
+important too. That is more related to arrays than integral members, but
+separating those quickly became confusing to declare easily/correctly. So
+struct_group() ended up being the best direction in the general case.
+
+> In this case I would just make all of pt_regs a union with one giant
+> array (much like some archs already have IIRC).
+
+Yup, that works too. (Though pt_regs is relatively unique in this "the
+whole thing is expected to be an array" characteristic.)
+
+-Kees
+
+-- 
+Kees Cook
 
