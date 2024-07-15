@@ -1,174 +1,321 @@
-Return-Path: <linux-kernel+bounces-252871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03714931929
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4134D93192E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C6D2824E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6341D1C21929
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90034D8A3;
-	Mon, 15 Jul 2024 17:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2443C481A3;
+	Mon, 15 Jul 2024 17:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="h8boxVwV"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYJdY5gh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EA5446D1
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0734AED7;
+	Mon, 15 Jul 2024 17:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721064182; cv=none; b=rc7ZyI/2fhrupbHgeQSuBDD02oETCTYdIgwfcdj8jlGr/jcxWALdoPAWGkMLi3kO9HxFo6jXPja3B6fQ+Bfb0PJAH8qUzfWHA0wUlmDWx/Blv4H99E3kZE6B+/YmUXudZdM35i6P0YBCcStQPtL2NVx6m5O9qKx6QntFCnuvFME=
+	t=1721064235; cv=none; b=DuruGw+tbtuIdzm+vVQX5YSTq35448hLzG1hj2Hr/0Mo2Lgz0+/KADx/jwFTw2vi5Cm7C1qppzvTWC1RXnLCkcnhG9Y05SOPiMU2Huz1XoUJZOk71mKBbf6/ZEUme4uerJR2xCo6PsUkdWnJsmaHTAWLsAKMD+JEduYVJbv/aws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721064182; c=relaxed/simple;
-	bh=J67CIHRUbdGmnrl2ITF7KM9nbk16I0qPrrmM1VDeTB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V566Ekz323ttN/DDUWgiDR4bdckg4I0180yN6f3vu6HD7H1GBAymMocbR3Dczk1k24VUUDPC7Qw8N1FMhdMRW3LxdWkdUf3pVLAKIsKYRwRKwqb78vS/kfIkJ/wxlBsg5EUF1wVS7mP7U/aiGcpvMYYdyhkB6rHcnLPNvkn6qNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=h8boxVwV; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b5e760eb36so27371256d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1721064177; x=1721668977; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+LS+Pt/xtcW0R8fRx1VsexXvG+4qSHFVI3AS2OkJyMY=;
-        b=h8boxVwVszPgvAy2Pz9wr2EtA4dvTht84DNysl8x4DX0e6r/WQYo8rXRPEPrUycRi2
-         nxOh+IWdZpwfm2OemdTrkM08qY9Orzwf8qaoEM4lw+qfwVa0G4kjE9yt5sCSdnfv/Jib
-         POxpd6S+XywCoOoCjcHU7aqiEaN1X5pRkWv2CsiLpdbKRjalfyAov7x8MwqWAxuyPtmZ
-         lxkhFEaQrLuD7WJjZxon6Tok2I6AQ8ucXwVqWVbnD8HU7Xla7iq4ITQZUlaRgwARgkIP
-         sTKI/pYfauyDqJLOPRmS/R2/c4FFLcYQRQcd4NvO9yLKo6mgqs8SKjRQxvLWvCrjdUn0
-         foXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721064177; x=1721668977;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LS+Pt/xtcW0R8fRx1VsexXvG+4qSHFVI3AS2OkJyMY=;
-        b=OcT4A2G2IVbZCTCrt2wkviW3PjMykffYp4PXLvDL33wbxeTvQF1Rz7G1ruQYEM+OoO
-         QpGUa3wYySSPXL39/4u8JIhT3nYUfuv7V1zxnkmiz4k1xyPQdQ5EslqR9oaMMG9J02k+
-         B8y24FMu3RZzDYfn1hv4Qb6OgfaDy9hQSNoXRWCwtr2HYez76lwJSJuAQ8Fr4KHsVeTX
-         I8PtdpNu8FxML5cLbX1gcUgf7W2MkUOO19225/ussdZAGodLEMEb0yzsQJDQ2Npk11ua
-         wFogXzXXldtjek3sFeZUe2UDD8Q6kgC6CGWAyh/mSTGxnvqpjHfGvz29AZPwQYBnh6Il
-         J6hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTJxt2jKhdfh3hRkwxVGJA82Xp4F5BV0WHu67bv6U0kOneS4ij4p3/gvi93Yj4/LqE/ewU02lvMtwTm7lgwV+15r7Pgk3MUIxYV5oG
-X-Gm-Message-State: AOJu0YwFhQJmERrCZrD161bcZlQQV6seNBEEUqJEdkyfvo3X21egM8I4
-	8GPmNDpvikGIrsVo5IVU2xZXeKDN9jagstSiOcza+enAPB8leJlHQirAAcD+McU=
-X-Google-Smtp-Source: AGHT+IHfPdDjkIPhp1T/zEM1IxAuupFbb40dXjl3O3lyXkmAszC9Y7O4atftQvaNDw/ztZPARS2yJw==
-X-Received: by 2002:a05:6214:4018:b0:6b0:6dba:c947 with SMTP id 6a1803df08f44-6b77de71b14mr4032816d6.18.1721064177246;
-        Mon, 15 Jul 2024 10:22:57 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7619a7218sm23200826d6.73.2024.07.15.10.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 10:22:56 -0700 (PDT)
-Date: Mon, 15 Jul 2024 13:22:55 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH-cgroup v7] cgroup: Show # of subsystem CSSes in
- cgroup.stat
-Message-ID: <20240715172255.GB1321673@cmpxchg.org>
-References: <20240715150034.2583772-1-longman@redhat.com>
+	s=arc-20240116; t=1721064235; c=relaxed/simple;
+	bh=3QmAXx2e4bOyJ2G+afG35LYnFILceBE5kmjrVO7hR/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Q2ArImwWREpotHJcvbJ31ICq0DBNyLh8UsOTwrRQSJbJDsG1b3SWmnQWKeRtm3aP4x5APwb2pgRqjWCT2mnKIxAL6hUeBk+RgmxFqBIlPq8r6lgTyCGXi/m0XtS9mIHySKajiMU/pg6rm/Fz1q6wIMhCrJdnXCUVIIIJjgD51AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYJdY5gh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C64C32782;
+	Mon, 15 Jul 2024 17:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721064234;
+	bh=3QmAXx2e4bOyJ2G+afG35LYnFILceBE5kmjrVO7hR/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fYJdY5ghdBmaAAkOm81y+sfsv41P/MaKQHgT2a0SUz5Ca+YWAzQigODFx5ClmGLQv
+	 dwOa+n7hFy9PIeK6Qp509UzbIQ6FWBgo//G0Bmo2Hf2hEVMNOKseGW7ASgFbVpZ+tf
+	 N8BhK4Ne9A6EMjEcQhcisIgCZz9nrAIMpgSErKoW+nJRspWHYdcdajERu9YI3aQqee
+	 I/bXZuRrJPPdEwnb3CbZidTLde4fL2D7TTynn7gXG+Kms8VwxHTwo8ZtEiM80WyUU7
+	 uvhfLT6Zq0goxcM+DVRd1k8OyKS34S3KOg9nvHmyS67fbyYmqPV/jftRJAfs1jVM9w
+	 PH9NLTSovHVGA==
+Date: Mon, 15 Jul 2024 12:23:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lizhi Hou <lizhi.hou@amd.com>
+Cc: Amit Machhiwal <amachhiw@linux.ibm.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Vaibhav Jain <vaibhav@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+	Kowshik Jois B S <kowsjois@linux.ibm.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+Message-ID: <20240715172351.GA434759@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240715150034.2583772-1-longman@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87d645e3-69ac-170d-bdc2-26bc3c03b890@amd.com>
 
-On Mon, Jul 15, 2024 at 11:00:34AM -0400, Waiman Long wrote:
-> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-> help manage different structures in various cgroup subsystems by being
-> an embedded element inside a larger structure like cpuset or mem_cgroup.
+On Mon, Jul 15, 2024 at 09:20:01AM -0700, Lizhi Hou wrote:
+> On 7/15/24 01:07, Amit Machhiwal wrote:
+> > With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+> > of a PCI device attached to a PCI-bridge causes following kernel Oops on
+> > a pseries KVM guest:
+> > 
+> >   RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+> >   Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
+> >   BUG: Unable to handle kernel data access on read at 0x10ec00000048
+> >   Faulting instruction address: 0xc0000000012d8728
+> >   Oops: Kernel access of bad area, sig: 11 [#1]
+> >   LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
+> > <snip>
+> >   NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
+> >   LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
+> >   Call Trace:
+> >   [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
+> >   [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
+> >   [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
+> >   [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
+> >   [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
+> >   [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
+> >   [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
+> >   [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
+> >   [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
+> >   [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
+> >   [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
+> >   [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> > <snip>
+> > 
+> > A git bisect pointed this regression to be introduced via [1] that added
+> > a mechanism to create device tree nodes for parent PCI bridges when a
+> > PCI device is hot-plugged.
+> > 
+> > The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
+> > device-tree node associated with the pci_dev that was earlier
+> > hot-plugged and was attached under a pci-bridge. The PCI dev header
+> > `dev->hdr_type` being 0, results a conditional check done with
+> > `pci_is_bridge()` into false. Consequently, a call to
+> > `of_pci_make_dev_node()` to create a device node is never made. When at
+> > a later point in time, in the device node removal path, a memcpy is
+> > attempted in `__of_changeset_entry_invert()`; since the device node was
+> > never created, results in an Oops due to kernel read access to a bad
+> > address.
+> > 
+> > To fix this issue, the patch updates `of_changeset_create_node()` to
+> > allocate a new node only when the device node doesn't exist and init it
+> > in case it does already. Also, introduce `of_pci_free_node()` to be
+> > called to only revert and destroy the changeset device node that was
+> > created via a call to `of_changeset_create_node()`.
+> > 
+> > [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
+> > 
+> > Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> > Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+> > Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> > Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> > ---
+> > Changes since v1:
+> >      * Included Lizhi's suggested changes on V1
+> >      * Fixed below two warnings from Lizhi's changes and rearranged the cleanup
+> >        part a bit in `of_pci_make_dev_node`
+> > 	drivers/pci/of.c:611:6: warning: no previous prototype for ‘of_pci_free_node’ [-Wmissing-prototypes]
+> > 	  611 | void of_pci_free_node(struct device_node *np)
+> > 	      |      ^~~~~~~~~~~~~~~~
+> > 	drivers/pci/of.c: In function ‘of_pci_make_dev_node’:
+> > 	drivers/pci/of.c:696:1: warning: label ‘out_destroy_cset’ defined but not used [-Wunused-label]
+> > 	  696 | out_destroy_cset:
+> > 	      | ^~~~~~~~~~~~~~~~
+> >      * V1: https://lore.kernel.org/all/20240703141634.2974589-1-amachhiw@linux.ibm.com/
+> > 
+> >   drivers/of/dynamic.c  | 16 ++++++++++++----
+> >   drivers/of/unittest.c |  2 +-
+> >   drivers/pci/bus.c     |  3 +--
+> >   drivers/pci/of.c      | 39 ++++++++++++++++++++++++++-------------
+> >   drivers/pci/pci.h     |  2 ++
+> >   include/linux/of.h    |  1 +
+> >   6 files changed, 43 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> > index dda6092e6d3a..9bba5e82a384 100644
+> > --- a/drivers/of/dynamic.c
+> > +++ b/drivers/of/dynamic.c
+> > @@ -492,21 +492,29 @@ struct device_node *__of_node_dup(const struct device_node *np,
+> >    * a given changeset.
+> >    *
+> >    * @ocs: Pointer to changeset
+> > + * @np: Pointer to device node. If null, allocate a new node. If not, init an
+> > + *	existing one.
+> >    * @parent: Pointer to parent device node
+> >    * @full_name: Node full name
+> >    *
+> >    * Return: Pointer to the created device node or NULL in case of an error.
+> >    */
+> >   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> > +					     struct device_node *np,
+> >   					     struct device_node *parent,
+> >   					     const char *full_name)
+> >   {
+> > -	struct device_node *np;
+> >   	int ret;
+> > -	np = __of_node_dup(NULL, full_name);
+> > -	if (!np)
+> > -		return NULL;
+> > +	if (!np) {
+> > +		np = __of_node_dup(NULL, full_name);
+> > +		if (!np)
+> > +			return NULL;
+> > +	} else {
+> > +		of_node_set_flag(np, OF_DYNAMIC);
+> > +		of_node_set_flag(np, OF_DETACHED);
+> > +	}
+> > +
+> >   	np->parent = parent;
+> >   	ret = of_changeset_attach_node(ocs, np);
+> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> > index 445ad13dab98..b1bcc9ed40a6 100644
+> > --- a/drivers/of/unittest.c
+> > +++ b/drivers/of/unittest.c
+> > @@ -871,7 +871,7 @@ static void __init of_unittest_changeset(void)
+> >   	unittest(!of_changeset_add_property(&chgset, parent, ppadd), "fail add prop prop-add\n");
+> >   	unittest(!of_changeset_update_property(&chgset, parent, ppupdate), "fail update prop\n");
+> >   	unittest(!of_changeset_remove_property(&chgset, parent, ppremove), "fail remove prop\n");
+> > -	n22 = of_changeset_create_node(&chgset, n2, "n22");
+> > +	n22 = of_changeset_create_node(&chgset, NULL,  n2, "n22");
+> >   	unittest(n22, "fail create n22\n");
+> >   	unittest(!of_changeset_add_prop_string(&chgset, n22, "prop-str", "abcd"),
+> >   		 "fail add prop prop-str");
+> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> > index 826b5016a101..d7ca20cb146a 100644
+> > --- a/drivers/pci/bus.c
+> > +++ b/drivers/pci/bus.c
+> > @@ -342,8 +342,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+> >   	 */
+> >   	pcibios_bus_add_device(dev);
+> >   	pci_fixup_device(pci_fixup_final, dev);
+> > -	if (pci_is_bridge(dev))
+> > -		of_pci_make_dev_node(dev);
+> > +	of_pci_make_dev_node(dev);
 > 
-> The /proc/cgroups file shows the number of cgroups for each of the
-> subsystems.  With cgroup v1, the number of CSSes is the same as the
-> number of cgroups.  That is not the case anymore with cgroup v2. The
-> /proc/cgroups file cannot show the actual number of CSSes for the
-> subsystems that are bound to cgroup v2.
-> 
-> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-> we can't tell by looking at /proc/cgroups which cgroup subsystems may
-> be responsible.
-> 
-> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-> cgroup.stat file is now being extended to show the number of live and
-> dying CSSes associated with all the non-inhibited cgroup subsystems that
-> have been bound to cgroup v2. The number includes CSSes in the current
-> cgroup as well as in all the descendants underneath it.  This will help
-> us pinpoint which subsystems are responsible for the increasing number
-> of dying (nr_dying_descendants) cgroups.
-> 
-> The CSSes dying counts are stored in the cgroup structure itself
-> instead of inside the CSS as suggested by Johannes. This will allow
-> us to accurately track dying counts of cgroup subsystems that have
-> recently been disabled in a cgroup. It is now possible that a zero
-> subsystem number is coupled with a non-zero dying subsystem number.
-> 
-> The cgroup-v2.rst file is updated to discuss this new behavior.
-> 
-> With this patch applied, a sample output from root cgroup.stat file
-> was shown below.
-> 
-> 	nr_descendants 56
-> 	nr_subsys_cpuset 1
-> 	nr_subsys_cpu 43
-> 	nr_subsys_io 43
-> 	nr_subsys_memory 56
-> 	nr_subsys_perf_event 57
-> 	nr_subsys_hugetlb 1
-> 	nr_subsys_pids 56
-> 	nr_subsys_rdma 1
-> 	nr_subsys_misc 1
-> 	nr_dying_descendants 30
-> 	nr_dying_subsys_cpuset 0
-> 	nr_dying_subsys_cpu 0
-> 	nr_dying_subsys_io 0
-> 	nr_dying_subsys_memory 30
-> 	nr_dying_subsys_perf_event 0
-> 	nr_dying_subsys_hugetlb 0
-> 	nr_dying_subsys_pids 0
-> 	nr_dying_subsys_rdma 0
-> 	nr_dying_subsys_misc 0
-> 
-> Another sample output from system.slice/cgroup.stat was:
-> 
-> 	nr_descendants 34
-> 	nr_subsys_cpuset 0
-> 	nr_subsys_cpu 32
-> 	nr_subsys_io 32
-> 	nr_subsys_memory 34
-> 	nr_subsys_perf_event 35
-> 	nr_subsys_hugetlb 0
-> 	nr_subsys_pids 34
-> 	nr_subsys_rdma 0
-> 	nr_subsys_misc 0
-> 	nr_dying_descendants 30
-> 	nr_dying_subsys_cpuset 0
-> 	nr_dying_subsys_cpu 0
-> 	nr_dying_subsys_io 0
-> 	nr_dying_subsys_memory 30
-> 	nr_dying_subsys_perf_event 0
-> 	nr_dying_subsys_hugetlb 0
-> 	nr_dying_subsys_pids 0
-> 	nr_dying_subsys_rdma 0
-> 	nr_dying_subsys_misc 0
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Please undo this change. It should only create the device node for bridges
+> and the pci endpoints listed in quirks for now.
 
-Looks good to me!
+IIUC, you want Amit to post a v3 of this patch that omits this
+specific pci_bus_add_device() change?
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> >   	pci_create_sysfs_dev_files(dev);
+> >   	pci_proc_attach_device(dev);
+> >   	pci_bridge_d3_update(dev);
+> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> > index 51e3dd0ea5ab..883bf15211a5 100644
+> > --- a/drivers/pci/of.c
+> > +++ b/drivers/pci/of.c
+> > @@ -608,18 +608,28 @@ int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
+> >   #ifdef CONFIG_PCI_DYNAMIC_OF_NODES
+> > +void of_pci_free_node(struct device_node *np)
+> > +{
+> > +	struct of_changeset *cset;
+> > +
+> > +	cset = (struct of_changeset *)(np + 1);
+> > +
+> > +	np->data = NULL;
+> > +	of_changeset_revert(cset);
+> > +	of_changeset_destroy(cset);
+> > +	of_node_put(np);
+> > +}
+> > +
+> >   void of_pci_remove_node(struct pci_dev *pdev)
+> >   {
+> >   	struct device_node *np;
+> >   	np = pci_device_to_OF_node(pdev);
+> > -	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+> > +	if (!np || np->data != of_pci_free_node)
+> >   		return;
+> >   	pdev->dev.of_node = NULL;
+> > -	of_changeset_revert(np->data);
+> > -	of_changeset_destroy(np->data);
+> > -	of_node_put(np);
+> > +	of_pci_free_node(np);
+> >   }
+> >   void of_pci_make_dev_node(struct pci_dev *pdev)
+> > @@ -655,14 +665,18 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+> >   	if (!name)
+> >   		return;
+> > -	cset = kmalloc(sizeof(*cset), GFP_KERNEL);
+> > -	if (!cset)
+> > +	np = kzalloc(sizeof(*np) + sizeof(*cset), GFP_KERNEL);
+> > +	if (!np)
+> >   		goto out_free_name;
+> > +	np->full_name = name;
+> > +	of_node_init(np);
+> > +
+> > +	cset = (struct of_changeset *)(np + 1);
+> >   	of_changeset_init(cset);
+> > -	np = of_changeset_create_node(cset, ppnode, name);
+> > +	np = of_changeset_create_node(cset, np, ppnode, NULL);
+> >   	if (!np)
+> > -		goto out_destroy_cset;
+> > +		goto out_free_node;
+> >   	ret = of_pci_add_properties(pdev, cset, np);
+> >   	if (ret)
+> > @@ -670,19 +684,18 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+> >   	ret = of_changeset_apply(cset);
+> >   	if (ret)
+> > -		goto out_free_node;
+> > +		goto out_destroy_cset;
+> > -	np->data = cset;
+> > +	np->data = of_pci_free_node;
+> >   	pdev->dev.of_node = np;
+> > -	kfree(name);
+> >   	return;
+> > -out_free_node:
+> > -	of_node_put(np);
+> >   out_destroy_cset:
+> >   	of_changeset_destroy(cset);
+> >   	kfree(cset);
+> > +out_free_node:
+> > +	of_node_put(np);
+> >   out_free_name:
+> >   	kfree(name);
+> >   }
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index fd44565c4756..7b1a455306b8 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -702,11 +702,13 @@ struct of_changeset;
+> >   #ifdef CONFIG_PCI_DYNAMIC_OF_NODES
+> >   void of_pci_make_dev_node(struct pci_dev *pdev);
+> > +void of_pci_free_node(struct device_node *np);
+> >   void of_pci_remove_node(struct pci_dev *pdev);
+> >   int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
+> >   			  struct device_node *np);
+> >   #else
+> >   static inline void of_pci_make_dev_node(struct pci_dev *pdev) { }
+> > +static inline void of_pci_free_node(struct device_node *np) { }
+> >   static inline void of_pci_remove_node(struct pci_dev *pdev) { }
+> >   #endif
+> > diff --git a/include/linux/of.h b/include/linux/of.h
+> > index a0bedd038a05..f774459d0d84 100644
+> > --- a/include/linux/of.h
+> > +++ b/include/linux/of.h
+> > @@ -1631,6 +1631,7 @@ static inline int of_changeset_update_property(struct of_changeset *ocs,
+> >   }
+> >   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> > +					     struct device_node *np,
+> >   					     struct device_node *parent,
+> >   					     const char *full_name);
+> >   int of_changeset_add_prop_string(struct of_changeset *ocs,
+> > 
+> > base-commit: 43db1e03c086ed20cc75808d3f45e780ec4ca26e
 
