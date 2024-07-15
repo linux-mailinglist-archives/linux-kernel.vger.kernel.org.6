@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-252118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68108930E97
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A66E930EA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99EF91C21202
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:17:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B103F1C21409
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F23A1836FB;
-	Mon, 15 Jul 2024 07:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E6M4ePK0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0564427457;
-	Mon, 15 Jul 2024 07:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F3184102;
+	Mon, 15 Jul 2024 07:20:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162241836E5;
+	Mon, 15 Jul 2024 07:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721027859; cv=none; b=JhDUyxaKeumQtYgg1NMMaoPFsVsnhJYvD6tfHtE6o0O0Se5VegUfw9ygL+d78vFsrsgL+XI/OM3yIij6CQhuOkZmLAhkqN45Nz/g/MzfavbgGrUBxHFUoebTmhwBsorOsIcNx8IZrjFd9/JPquzBQ/VxFOODwV2/nAtQDCFU1VE=
+	t=1721028038; cv=none; b=IYjHIK4KXzfcEff3KhlZF6vwaiUNpNx1btcHeWJnzL+KMvV7vdvIUGyisABU54hG+CDpq5Mo+UQw+2btsjLWm3LmxPLoYsgjysTCiLzJDzSZgPPtz02iUczHZZb3g5hBiPk2MM6GzU/Ac3J5kVo1JH/6ufMuH5tMccDb14qKwFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721027859; c=relaxed/simple;
-	bh=Bxp9IMyGYGDGdHKEfA+1Lk9Ybg6XYNQ8q3jGmPRkd/A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pRNJcVfDAnFZIBjcrHtS3rlabDjUrCxY1FHFR/9mZhBnOVKBxGJBwEaaX8ArX/X5gUnZIOyBNj8qMZk1RSvPi3FmSXmh2nKIJmXlfzDpOvADNrdBhR9FeUe2hInwsGCvRf5FZq8Ra8Y3/pwPoCkKWRyKIefYZescOh/K8mZlRuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E6M4ePK0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dlrl006971;
-	Mon, 15 Jul 2024 07:17:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=TGRUcTQFlSCFp7gXD1gdVP7a5Gg2uvMxLrmkPcmGLEY=; b=E6
-	M4ePK0YvBt6tBSq4hD54XHfJvpy2iB8mU9bwhq7XYPWCLsdhKG0u/lfaLu8SH/m8
-	xPP520QjxDdoFQpRL0lIrULMhWbGut1K8+SJgwoGdABXh+liH3kuZTxPEHtGgQgo
-	/HLql3TUSrovCpjeNu42y5FgcSyQ54Zy3cCGea6sb3teVf9g3LiaVrbOGUv+rHeM
-	65awc00JZywAWYAl7Hcfw732VxZUSCz/aOgclf9ChKzwkN+8jo3hWcEBloBTTsl7
-	UxIjFRJCxDooNn7j8uoZEyP2oQBqqi/l/JnnIXJ4jRjaO6xWymo3LWWzLgyglC8Y
-	gZdlYIn6yzeqQDgDNKfQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bjbh2yxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 07:17:34 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46F7HXK4027713
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 07:17:33 GMT
-Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 15 Jul 2024 00:17:31 -0700
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Qingqing Zhou <quic_qqzhou@quicinc.com>
-Subject: [PATCH] arm64: dts: qcom: sa8775p: Mark APPS and PCIE SMMUs as DMA coherent
-Date: Mon, 15 Jul 2024 12:46:49 +0530
-Message-ID: <20240715071649.25738-1-quic_qqzhou@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1721028038; c=relaxed/simple;
+	bh=a/WIuqv1tl1tle3ziL/NH5UYypFiStw8mDYKOrs/UzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qdgsHlOoSvtl8NqiWJMVKULDfjL6qlgZU5E6vzWsOFEGoBakRm76cGnGkb6soZwDtR5iR7u8Fn9vMYrGAPmm7lrkp4Q3RF31tce31gwYmjRHwQQYT1FXRFibfuF9WrDmue/nbjafZT5m5zOulSwCJKatRBY00FYAQ67FZ1BKuBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46645DA7;
+	Mon, 15 Jul 2024 00:21:00 -0700 (PDT)
+Received: from entos-yitian-01.shanghai.arm.com (entos-yitian-01.shanghai.arm.com [10.169.206.96])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DF92C3F762;
+	Mon, 15 Jul 2024 00:20:31 -0700 (PDT)
+From: Jia He <justin.he@arm.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-crypto@vger.kernel.org
+Cc: Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jia He <justin.he@arm.com>
+Subject: [PATCH] crypto: arm64/poly1305 - move data to rodata section
+Date: Mon, 15 Jul 2024 07:20:23 +0000
+Message-Id: <20240715072023.61032-1-justin.he@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: t5W0pldcinqwz-LJAcOrBkcf9kyj14Kc
-X-Proofpoint-GUID: t5W0pldcinqwz-LJAcOrBkcf9kyj14Kc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_03,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- clxscore=1011 spamscore=0 mlxlogscore=636 mlxscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150056
+Content-Transfer-Encoding: 8bit
 
-The SMMUs on sa8775p are cache-coherent. GPU SMMU is marked as such,
-mark the APPS and PCIE ones as well.
+When objtool gains support for ARM in the future, it may encounter issues
+disassembling the following data in the .text section: 
+> .Lzeros:
+> .long   0,0,0,0,0,0,0,0
+> .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+> .align  2
 
-Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+Move it to .rodata which is a more appropriate section for read-only data.
+
+Signed-off-by: Jia He <justin.he@arm.com>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Inspired by commit 1253cab8a352, although currently objtool hasn't been
+supported on Arm, we should do some preparation(this patch) firstly.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..95691ab58a23 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -3070,6 +3070,7 @@
- 			reg = <0x0 0x15000000 0x0 0x100000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <2>;
-+			dma-coherent;
+ arch/arm64/crypto/poly1305-armv8.pl | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/crypto/poly1305-armv8.pl b/arch/arm64/crypto/poly1305-armv8.pl
+index cbc980fb02e3..bcb70c9541e9 100644
+--- a/arch/arm64/crypto/poly1305-armv8.pl
++++ b/arch/arm64/crypto/poly1305-armv8.pl
+@@ -885,10 +885,13 @@ poly1305_blocks_neon:
+ 	ret
+ .size	poly1305_blocks_neon,.-poly1305_blocks_neon
  
- 			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-@@ -3208,6 +3209,7 @@
- 			reg = <0x0 0x15200000 0x0 0x80000>;
- 			#iommu-cells = <2>;
- 			#global-interrupts = <2>;
-+			dma-coherent;
- 
- 			interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
++.pushsection .rodata
+ .align	5
+ .Lzeros:
+ .long	0,0,0,0,0,0,0,0
+ .asciz	"Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
++.popsection
++
+ .align	2
+ #if !defined(__KERNEL__) && !defined(_WIN64)
+ .comm	OPENSSL_armcap_P,4,4
 -- 
-2.17.1
+2.34.1
 
 
