@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-252999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A55931B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E8B931B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F15CB218CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFDC21F22CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9638E1369A3;
-	Mon, 15 Jul 2024 19:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pfe/nlZ8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4F612B143
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C6131E38;
+	Mon, 15 Jul 2024 19:31:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B97BF9EC;
+	Mon, 15 Jul 2024 19:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071841; cv=none; b=ptV2UFxlItLEaIcCH8drITTKoVvQHSSeGDvrx1zhr92x3Zew/3yvzfAemurV1qWXQvoVe+BXDOhvGmgklxQEoCkfZ6CyTzWD+Vo73mTrxgXc/hzScQhBTxVxP1Riw3TM6JNQsFQA3CSGKgUacpgwkizBK8uSUKeUm2OQTfSNu/c=
+	t=1721071916; cv=none; b=seUh2eGXpEjpdl+KA0PCewpXfwv7MtuoKLySXV90pLPOIwcqnvbj4ZTiRq+dOwVPVBWjzmsxibtPpGLWcpYkmyUYuG8kAM+7ao3xufNP0I0IHQUyC/B4ZO/5eKVPv0KqpI2Cl+54B7C3rPUoo97wzPiZ0jl5D/d01QfJuWp+Clg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071841; c=relaxed/simple;
-	bh=lgxQTsjT/Zs3WcDsQRcmnmx5cmihBb5Fc0pIMC0leDw=;
+	s=arc-20240116; t=1721071916; c=relaxed/simple;
+	bh=H/LlZMv0vkZe4USaGdJRqblruNiOzAe5CBF5AZINWhY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nou8cfSJeZsFMdlQIRwisn5z7DG4f3Zt40DhAPU0NfSsiEmH0661Dt8Di8/y/8MwnV55FY2Uot6CsrLcQSpG44X9e97s/yfxq42qOmlIVxMkiodZWMb3RvV+qiWKhkm5kmhNAX1hYC+yBs3NHEU7xFYXxQ14/u35OVlfq2vHhLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pfe/nlZ8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721071839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v9Zo9CyMJSxsrZ+IkEYrIUXBuAiAj8cTbqlht6M8S8U=;
-	b=Pfe/nlZ8CU5LSol9FpBR0hTAAj1JPNxHZaIBYb/OTbs17KH/QxViWozafcGCJwF0JG3X/L
-	bPihaF8bFPysnCKL9I+4k2DpaWyhhSQL84d5zy5lJlrTxsrFhRKJFXDhzn5lb218s7N8hZ
-	wnSLRa/RC79usId7fBQikXF2x+LdyUQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-505-ai8VoDUqNFqiyVr_TYnlpA-1; Mon,
- 15 Jul 2024 15:30:35 -0400
-X-MC-Unique: ai8VoDUqNFqiyVr_TYnlpA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 257771955D4D;
-	Mon, 15 Jul 2024 19:30:32 +0000 (UTC)
-Received: from [10.22.9.29] (unknown [10.22.9.29])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 88CCE1955F40;
-	Mon, 15 Jul 2024 19:30:27 +0000 (UTC)
-Message-ID: <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
-Date: Mon, 15 Jul 2024 15:30:25 -0400
+	 In-Reply-To:Content-Type; b=HOHWOi/BchI+kD2HVJ4I15+9ZhlCE4jcZH2hz546m3pY3NSkuNm/cx1AV+MWrlkFkSr3ToPMq282PLX1Pjw+qxp98Y8ULc00upicuJzmVUEiEbwO4eC0zmfinYGu5Uk19zJeb74Swyjpaqfuqq9ZOtP2MLgTDueFWnTT6FCtnuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1EF6FEC;
+	Mon, 15 Jul 2024 12:32:17 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C1403F766;
+	Mon, 15 Jul 2024 12:31:50 -0700 (PDT)
+Message-ID: <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
+Date: Mon, 15 Jul 2024 20:31:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +41,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha
- extension
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Guo Ren <guoren@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-11-alexghiti@rivosinc.com>
- <CAJF2gTSG7HzV7mgZpkWLbSBNn2dRv_NaSmCimd+kRdU=EZrmmg@mail.gmail.com>
- <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com>
+Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240715143342.52236-1-leo.yan@arm.com>
+ <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com>
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 7/15/24 03:27, Alexandre Ghiti wrote:
-> Hi Guo,
->
-> On Sun, Jul 7, 2024 at 4:20 AM Guo Ren <guoren@kernel.org> wrote:
->> On Wed, Jun 26, 2024 at 9:14 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->>> In order to produce a generic kernel, a user can select
->>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
->>> spinlock implementation if Zabha is not present.
->>>
->>> Note that we can't use alternatives here because the discovery of
->>> extensions is done too late and we need to start with the qspinlock
->> That's not true; we treat spinlock as qspinlock at first.
-> That's what I said: we have to use the qspinlock implementation at
-> first *because* we can't discover the extensions soon enough to use
-> the right spinlock implementation before the kernel uses a spinlock.
-> And since the spinlocks are used *before* the discovery of the
-> extensions, we cannot use the current alternative mechanism or we'd
-> need to extend it to add an "initial" value which does not depend on
-> the available extensions.
 
-With qspinlock, the lock remains zero after a lock/unlock sequence. That 
-is not the case with ticket lock. Assuming that all the discovery will 
-be done before SMP boot, the qspinlock slowpath won't be activated and 
-so we don't need the presence of any extension. I believe that is the 
-main reason why qspinlock is used as the initial default and not ticket 
-lock.
+Hi Ian,
 
-Cheers,
-Longman
+On 7/15/24 18:17, Ian Rogers wrote:
+> On Mon, Jul 15, 2024 at 7:34 AM Leo Yan <leo.yan@arm.com> wrote:
+> [snip]
+>> +Android NDK compilation is deprecated and no longer supported.
+> 
+> I think this is objectively worse than just removing the file. It is
+> likely the perf tool can build with clang/LLVM, I do it every day
 
+Just curious, are you using LLVM/clang for cross building (e.g. build
+aarch64 target on x86_64 host) or just native building?
+
+Clang/LLVM is a natively cross-compiler [1], I installed Clang-15 in the
+offical package on Ubuntu, but I failed to do cross compilation with it:
+
+   make ARCH=arm64 LLVM=-15 VF=1 DEBUG=1 -C tools/perf
+
+> and the special case for Android is likely more about the libc (aka
+> bionic) which gradually over time has been becoming more full fat -
+> perhaps we need to carry somethings in tools/include for missing
+> definitions, but we build with musl and that's a PITA in this regard,
+> we've also been reducing the tools/include dependencies for perf trace
+> beauty support. We don't use ifuncs in the perf tool (Android's
+> linker/loader historically hasn't supported these) and the weak symbol
+> games should be okay and something I aspire to make less in the perf
+> tool over time. As Android uses Linux then it should work and should
+> be supported.
+
+Let us drop this patch.
+
+Thanks,
+Leo
+
+[1] https://clang.llvm.org/docs/CrossCompilation.html
 
