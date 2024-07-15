@@ -1,243 +1,103 @@
-Return-Path: <linux-kernel+bounces-252513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F7F931454
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E43C931459
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AAFB22F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A4091C214C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8B318C32F;
-	Mon, 15 Jul 2024 12:33:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91F818C32C;
+	Mon, 15 Jul 2024 12:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQO/vgss"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267BA13BAC2;
-	Mon, 15 Jul 2024 12:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727D18C18D;
+	Mon, 15 Jul 2024 12:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721046819; cv=none; b=oq1N4/qj/4T/mbAEN56R6i/gNEvjtKydj/FRw1Lwl9e9ASVwfW73nGZU4P9h2qJlGsWkMwQyooHfvEJefu3WRMOM74uSLLc0Dx6xXfA6MtlMShmM2+abM22P/hxqYZE/CXmleu594QnagBVBcHyUYNiYVbR9De3tApPW0cyuYkY=
+	t=1721046841; cv=none; b=qVJZyY5LNVPV4YTGKd/oMzONCEGezlLtlbhw15cnnc5zrXoQgZmRtlhN/gVFZ12bqwVFdnw3tx30L6N18xOdh6zi98PLppftDWtPd05GFpSoo9nIp40Ar0KFutAFUJ6oeb2iqQ5bfA65H3pidFY0v3qju4H1XgiPoniOQ+SyyRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721046819; c=relaxed/simple;
-	bh=pP6FPHjwBqkW3b6x322CUQERo2dxfvmbsq+dd+YcB8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dJ3m6+yA0doIjSje5zXT35oxKkPYuzCoF2SNpU/LRUHAs9wfQVKdPFSDZtxFTw1tGOQ8QwvoAT2AdDnmPofNgbzdk8VXlwaPmFrtTFkzskb/NcZc8VCV7HnIFXJJKDbVj08UiWHPsftJMshug185DXg2bCeQLRiOEtnAy9CNffU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WN1nr0w1sz4f3n5g;
-	Mon, 15 Jul 2024 20:33:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3DD031A058E;
-	Mon, 15 Jul 2024 20:33:33 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgDXuTcXF5VmE+HPAA--.40070S3;
-	Mon, 15 Jul 2024 20:33:31 +0800 (CST)
-Message-ID: <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
-Date: Mon, 15 Jul 2024 20:33:27 +0800
+	s=arc-20240116; t=1721046841; c=relaxed/simple;
+	bh=kyfiwzoOkf5rEaYCmxUuypkvZ9dgsE17Q+IbBZDwcG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4NTVg71ydV/GcY+vJ90gKW0v8Cpj4ucJIvsCNgdQCDQnfC3Gr4l2Uwcw09iHsvw3/yhEK4Y8pgNXs+I28ntsdYtGdW8D2VamZw0r7GctJ3YKfSZttrSjHAGHh06b3EWTN8qLwgXsXeHwt/HF+RX7f74AOnKEvYFBWQDDnYOTRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQO/vgss; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754F1C32782;
+	Mon, 15 Jul 2024 12:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721046840;
+	bh=kyfiwzoOkf5rEaYCmxUuypkvZ9dgsE17Q+IbBZDwcG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GQO/vgsseRuBpH9eZBnORw/lW+hVW0n5669ElLZfyhsu5uiNWZ2+cB/0+vbnw61A+
+	 wcPzqSSuPJ68fWKdLcfbpxa58laQ4P6zeTyyzNFBE7QeB0RhCQqfIdgf5py9VgRtzo
+	 zPHkZ5/vz4DiGnhqzMR6VHfQy/Ku+ym3tx8tMEV12PgDz1/0vPBMS3lfZ9Cb5Ksims
+	 qz1jMCmpbgLsJOXthBtjPjTKDzO5xzRhjkY65YyQuwvhkJRsIO2z6W60lBUIRiD4TU
+	 G8CR5/B7zdfFmbdVsbpnpNP0GJUuCJjOBeIHTvx55axOyRlSsVqlNBgtbpUDoSWoh3
+	 GhGfkI0kTFb4A==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sTKty-000000000OY-2J5a;
+	Mon, 15 Jul 2024 14:33:58 +0200
+Date: Mon, 15 Jul 2024 14:33:58 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: x1e80100-crd: Fix backlight
+Message-ID: <ZpUXNmrs2nfViUeP@hovoldconsulting.com>
+References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
+ <20240715-x1e80100-crd-backlight-v2-3-31b7f2f658a3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
- zhanchengbin <zhanchengbin1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-3-libaokun@huaweicloud.com>
- <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDXuTcXF5VmE+HPAA--.40070S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKrWUAF4rGrykWF1ruFyfJFb_yoW7tw1fpr
-	9akrnxCr4jg3W3uFZrtF4UJry2k3WrJ3yxtrZ2kryfXFy5ZrySqryxK3WrCF95ArWkWayY
-	qrW8tw1DKr1DKFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAFBWaU3hQTkQABs5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715-x1e80100-crd-backlight-v2-3-31b7f2f658a3@linaro.org>
 
-Hi Ojaswin!
+On Mon, Jul 15, 2024 at 02:15:39PM +0200, Stephan Gerhold wrote:
+> The backlight does not work correctly with the current display panel
+> configuration: It works after boot, but once the display gets disabled it
+> is not possible to get it back on. It turns out that the ATNA45AF01 panel
+> needs exactly the same non-standard power sequence as implemented by the
+> panel-samsung-atna33xc20 driver for sc7180-trogdor-homestar.
+> 
+> Switch the panel in the DT to the new compatible and make two more changes
+> to make it work correctly:
+> 
+>  1. Add the missing GPIO for the panel EL_ON3 line (EDP_BL_EN on CRD and
+>     enable-gpios in the DT).
+>  2. Drop the regulator-always-on for the panel regulator. The panel does
+>     not seem to power off properly if the regulator stays on.
+> 
+> Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+> This can be applied as fix for 6.11 since the driver works as-is with the
+> fallback compatible. If so, the defconfig patch should ideally also go
+> there to ensure people actually have the driver enabled.
 
-On 2024/7/14 23:42, Ojaswin Mujoo wrote:
-> On Wed, Jul 10, 2024 at 12:06:36PM +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> In ext4_ext_rm_idx() and ext4_ext_correct_indexes(), there is no proper
->> rollback of already executed updates when updating a level of the extents
->> path fails, so we may get an inconsistent extents tree, which may trigger
->> some bad things in errors=continue mode.
->>
->> Hence clear the verified bit of modified extents buffers if the tree fails
->> to be updated in ext4_ext_rm_idx() or ext4_ext_correct_indexes(), which
->> forces the extents buffers to be checked in ext4_valid_extent_entries(),
->> ensuring that the extents tree is consistent.
->>
->> Signed-off-by: zhanchengbin <zhanchengbin1@huawei.com>
->> Link: https://lore.kernel.org/r/20230213080514.535568-3-zhanchengbin1@huawei.com/
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   fs/ext4/extents.c | 31 +++++++++++++++++++++++++++----
->>   1 file changed, 27 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index bff3666c891a..4d589d34b30e 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
->> @@ -1749,12 +1749,23 @@ static int ext4_ext_correct_indexes(handle_t *handle, struct inode *inode,
->>        break;
->>      err = ext4_ext_get_access(handle, inode, path + k);
->>      if (err)
->> -     break;
->> +     goto clean;
->>      path[k].p_idx->ei_block = border;
->>      err = ext4_ext_dirty(handle, inode, path + k);
->>      if (err)
->> -     break;
->> +     goto clean;
->>    }
->> + return 0;
->> +
->> +clean:
->> + /*
->> +  * The path[k].p_bh is either unmodified or with no verified bit
->> +  * set (see ext4_ext_get_access()). So just clear the verified bit
->> +  * of the successfully modified extents buffers, which will force
->> +  * these extents to be checked to avoid using inconsistent data.
->> +  */
->> + while (++k < depth)
->> +   clear_buffer_verified(path[k].p_bh);
->>   
->>    return err;
->>   }
->> @@ -2312,12 +2323,24 @@ static int ext4_ext_rm_idx(handle_t *handle, struct inode *inode,
->>        break;
->>      err = ext4_ext_get_access(handle, inode, path + k);
->>      if (err)
->> -     break;
->> +     goto clean;
->>      path[k].p_idx->ei_block = path[k + 1].p_idx->ei_block;
->>      err = ext4_ext_dirty(handle, inode, path + k);
->>      if (err)
->> -     break;
->> +     goto clean;
->>    }
->> + return 0;
->> +
->> +clean:
->> + /*
->> +  * The path[k].p_bh is either unmodified or with no verified bit
->> +  * set (see ext4_ext_get_access()). So just clear the verified bit
->> +  * of the successfully modified extents buffers, which will force
->> +  * these extents to be checked to avoid using inconsistent data.
->> +  */
->> + while (++k < depth)
->> +   clear_buffer_verified(path[k].p_bh);
->> +
->>    return err;
->>   }
-> Hi Baokun,
->
-> So I wanted to understand the extent handling paths for a whil and thought this
-> patchset was a good chance to finally take sometime and do that.
->
-> I do have a question based on my understanding of this extent deletion code:
->
-> So IIUC, ext4_find_extent() will return a path where buffer of each node is
-> verified (via bh = read_extent_tree_block()). So imagine we have the following
-> path (d=depth, blk=idx.ei_block, v=verified, nv=not-verified):
->
-> +------+     +------+     +------+     +------+     +------+
-> |d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
-> |blk=1 | --> |blk=1 | --> |blk=1 | --> |blk=1 | --> |pblk=1|
-> |(v)   |     |(v)   |     |(v)   |     |(v)   |     |      |
-> +------+     +------+     +------+     +------+     +------+
->                                         |d=3   |     +------+
->                                         |blk=2 | --> |      |
->                                         |(v)   |     |pblk=2|
->                                         +------+     |      |
->                                                      +------+
->
-> Here, the the last column are the leaf nodes with only 1 extent in them.  Now,
-> say we want to punch the leaf having pblk=1. We'll eventually call
-> ext4_ext_rm_leaf() -> ext4_ext_rm_idx() to remove the index at depth = 3 and
-> try fixin up the indices in path with ei_block = 2
->
-> Suppose we error out at depth == 1. After the cleanup (introduced in this
-> patch), we'll mark depth = 1 to 4 as non verified:
->
-> +------+     +------+     +------+     +------+     +------+
-> |d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
-> |blk=1 | --> |blk=1 | --> |blk=2 | --> |blk=2 | --> |pblk=2|
-> |(v)   |     |(nv)  |     |(nv)  |     |(nv)  |     |(nv)  |
-> +------+     +------+     +------+     +------+     +------+
-Exactly right!
->
-> And we return and we won't actually mark the FS corrupt until we try to check
-> the bh at depth = 1 above. In this case, the first node is still pointing to
-> wrong ei_block but is marked valid. Aren't we silently leaving the tree in an
-> inconsistent state which might lead to corrupted lookups until we actually
-> touch the affected bh and realise that there's a corruption.
->
-> Am I missing some codepath here? Should we maybe try to clear_valid for the
-> whole tree?
->
-> (I hope the formatting of diagram comes out correct :) )
->
-> Regards,
-> ojaswin
-But the journal will ensure the consistency of the extents path after
-this patch.
+Verified that I can change the brightness setting and that the backlight
+comes on again after being turned off (e.g. at suspend):
 
-When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
-ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
-the extents tree to be inconsistent. But the inconsistency just
-exists in memory and doesn't land on disk.
-
-For ext4_ext_get_access(), the handle must have been aborted
-when it returned an error, as follows:
-
-ext4_ext_get_access
-ext4_journal_get_write_access
-__ext4_journal_get_write_access
-err = jbd2_journal_get_write_access
-if (err)
-ext4_journal_abort_handle
-
-For ext4_ext_dirty(), since path->p_bh must not be null and handle
-must be valid, handle is aborted anyway when an error is returned:
-
-ext4_ext_dirty __ext4_ext_dirty if (path->p_bh) 
-__ext4_handle_dirty_metadata if (ext4_handle_valid(handle)) err = 
-jbd2_journal_dirty_metadata if (!is_handle_aborted(handle) && 
-WARN_ON_ONCE(err)) ext4_journal_abort_handle
-Thus the extents tree will only be inconsistent in memory, so only
-the verified bit of the modified buffer needs to be cleared to avoid
-these inconsistent data being used in memory.
-
-Regards,
-Baokun
-
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
