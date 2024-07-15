@@ -1,95 +1,124 @@
-Return-Path: <linux-kernel+bounces-252466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E2D931373
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:49:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CC8931374
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9F41C21F29
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4181F23D8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AA218C193;
-	Mon, 15 Jul 2024 11:49:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44BA18A94D;
-	Mon, 15 Jul 2024 11:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E992B18A939;
+	Mon, 15 Jul 2024 11:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jbSed8z8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA727187868;
+	Mon, 15 Jul 2024 11:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721044160; cv=none; b=TWJVQiQT0Qcsfa+G2TLviM980CXgQXVoJAnCVuav3zuR8YO3E6TY2t5hGiwqRgDPHw7mIhxodf/B5M5Blrw9k+m3NkS2MGzO5o0ScN5kiiliPf5BN7QR0N6lRAHsqKhDbrOSRjKKO9mZODyyLZ1I0giKJwo6xJN/fjNfrCusksc=
+	t=1721044232; cv=none; b=EmQ48Gd9zqpAHUwqRROk7v8tlFAPUNHtgXnTlhtO2CEksSKf3EdAjzIedn7CdKnTaFqYEQrKUhMyaIWgaYE2817NZ1ljtsgXbYb8ZSR622W61opuAgcJzq65Heh/lL65Kvjw//YwTUxzU5uq2fVKUew1zgFjNJreNrdJdXqq578=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721044160; c=relaxed/simple;
-	bh=qJmsjRPoW+mkle8LhHZWhPZerwr2E1RtVJexJlKpSzc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sHff+hDbjCpVMzVFHv6Insl++/VOoys6SP7Ki1Ug/Tg3FjwbwajLw+PTyWV8aoANF4CwDfxHBd8uZkfJyoVXQCX2rrqnJGTVKt1c18lshN6pFsR7dlMBCwiM94F7tI/kXRRQk0R5t41PKmM8yKPILrkV68Eme7JIJ04M0jkDDe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85034DA7;
-	Mon, 15 Jul 2024 04:49:36 -0700 (PDT)
-Received: from [10.162.42.47] (e116581.arm.com [10.162.42.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECFE03F766;
-	Mon, 15 Jul 2024 04:49:06 -0700 (PDT)
-Message-ID: <09370b2d-2b52-4133-8e0d-83e66b801ff8@arm.com>
-Date: Mon, 15 Jul 2024 17:19:03 +0530
+	s=arc-20240116; t=1721044232; c=relaxed/simple;
+	bh=6HktQveZYZY8xj7VM6lTXVzRe46Y/bY66m6VrxTkVvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HdPstFJo+5vOj4+9Os7v2uAOCttn3XuDV6LVs7XnK49IbeYLuZZi9Gyr3Na0faQpFc/eLw96OT+VKXI9VjJrMbhRcCGqAS9r99KeXXgNIt23X6gUeABPeStuE6zg6VJ9g7EW5Pp4l110aN739/GU5cettBHaWpPhEgiVLZt0R74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jbSed8z8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IgLqbIYYbf5VaLN+RYs8iTvm9G3RYQZaYHEJtEaSwz4=; b=jbSed8z8U4eNPiMh9yUAukoX7C
+	DvNVRfih/B79WBFOmvJxls1k8PXK+W8t6VZyqisRVTvici/2kL0dXupXMP/xInR8lq6zYpEJVx8jG
+	YHiagrxD5YdqY6EjBJpr/qGgEdtKcPoqTmrGnif5iQqqXAVmbPXLMK0UQSyszkE3E0b/qhXYFupzs
+	3ITb74NDInqIsN47QSEYGwGcmvmaXy5I1tzM7vkEI0559MGHOI/FtUEAplUJCdP+SQPwNSPcVdA+s
+	zbz8yPU9LE7ZaKIw6CqtzDzzfzocLRdRsObZujhu4ilzoCUvw+xyn+13+HKisiqJfJ5b7vgf+ltDu
+	67MPOu/Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTKDr-0000000FkoJ-2Fm1;
+	Mon, 15 Jul 2024 11:50:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 322553003FF; Mon, 15 Jul 2024 13:50:27 +0200 (CEST)
+Date: Mon, 15 Jul 2024 13:50:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jiri Olsa <olsajiri@gmail.com>, mingo@kernel.org, andrii@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add uprobes entry
+Message-ID: <20240715115027.GG14400@noisy.programming.kicks-ass.net>
+References: <172074397710.247544.17045299807723238107.stgit@devnote2>
+ <20240715181417.6421de1e1a18a39685533115@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH v4 2/2] selftests: Add a test mangling with uc_sigmask
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: shuah@kernel.org, mingo@kernel.org, tglx@linutronix.de,
- mark.rutland@arm.com, ryan.roberts@arm.com, broonie@kernel.org,
- suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
- DeepakKumar.Mishra@arm.com, aneesh.kumar@kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240627035215.1527279-1-dev.jain@arm.com>
- <20240627035215.1527279-3-dev.jain@arm.com>
- <20240630151808.GA13321@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20240630151808.GA13321@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715181417.6421de1e1a18a39685533115@kernel.org>
 
+On Mon, Jul 15, 2024 at 06:14:17PM +0900, Masami Hiramatsu wrote:
+> Hi Peter, Oleg,
+> 
+> If this is OK for you, please give your Ack.
 
-On 6/30/24 20:48, Oleg Nesterov wrote:
-> I see nothing wrong, but perhaps this test can be simplified?
-> Feel free to ignore.
->
-> Say,
->
-> On 06/27, Dev Jain wrote:
->> +void handler_usr(int signo, siginfo_t *info, void *uc)
->> +{
->> +	int ret;
->> +
->> +	/*
->> +	 * Break out of infinite recursion caused by raise(SIGUSR1) invoked
->> +	 * from inside the handler
->> +	 */
->> +	++cnt;
->> +	if (cnt > 1)
->> +		return;
->> +
->> +	ksft_print_msg("In handler_usr\n");
->> +
->> +	/* SEGV blocked during handler execution, delivered on return */
->> +	if (raise(SIGSEGV))
->> +		ksft_exit_fail_perror("raise");
->> +
->> +	ksft_print_msg("SEGV bypassed successfully\n");
-> You could simply do sigprocmask(SIG_SETMASK, NULL, &oldset) and check if
-> SIGSEGV is blocked in oldset. SIG_SETMASK has no effect if newset == NULL.
->
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-IMHO, isn't raising the signal, and the process not terminating, a 
-stricter test? I have already included your described approach in
-the last testcase; so, the test includes both ways: raising the
-signal -> process not terminating, and checking blockage with sigprocmask().
+Please also collect Oleg's ack.
+
+> 
+> Thank you,
+> 
+> On Fri, 12 Jul 2024 09:26:17 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Add uprobes entry to MAINTAINERS to clarify the maintainers.
+> > 
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  MAINTAINERS |   13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index da5352dbd4f3..ae731fa2328c 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -23105,6 +23105,19 @@ F:	drivers/mtd/ubi/
+> >  F:	include/linux/mtd/ubi.h
+> >  F:	include/uapi/mtd/ubi-user.h
+> >  
+> > +UPROBES
+> > +M:	Masami Hiramatsu <mhiramat@kernel.org>
+> > +M:	Oleg Nesterov <oleg@redhat.com>
+> > +M:	Peter Zijlstra <peterz@infradead.org>
+> > +L:	linux-kernel@vger.kernel.org
+> > +L:	linux-trace-kernel@vger.kernel.org
+> > +S:	Maintained
+> > +F:	arch/*/include/asm/uprobes.h
+> > +F:	arch/*/kernel/probes/uprobes.c
+> > +F:	arch/*/kernel/uprobes.c
+> > +F:	include/linux/uprobes.h
+> > +F:	kernel/events/uprobes.c
+> > +
+> >  USB "USBNET" DRIVER FRAMEWORK
+> >  M:	Oliver Neukum <oneukum@suse.com>
+> >  L:	netdev@vger.kernel.org
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
