@@ -1,290 +1,234 @@
-Return-Path: <linux-kernel+bounces-253026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD64931B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E80931B7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4EE28299A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100DA2829DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB6313BADF;
-	Mon, 15 Jul 2024 20:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7317313A86C;
+	Mon, 15 Jul 2024 20:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QBJ4LOgs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RurrY/Ry"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C6013AD3D;
-	Mon, 15 Jul 2024 20:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85C633C5;
+	Mon, 15 Jul 2024 20:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721073883; cv=none; b=LwgP7J7oz4/xUzWb7oCSAy270rMG5ShhHpqwPTxCFJgwky3lMdcSjeQTBYIYIG3U6Tf7oIoOcf9P3PA39UlTySCjqmVcz89DS3crzy89T1eNoB+ZyHaIyWRHh9X+WRFuPxYG8mZII9W9OIG3Eipez2c4dL9zBzW4TjPWaroE2Vo=
+	t=1721073933; cv=none; b=hC2NeEBowJFXwkYKasUEfnM9cFHY+bNYJGV+EAoZjMlaRL0EWLxK19IvPK1P65kUah12hd4vzV2/jl0qGSY7ZXrokvFq8F4BFndrwmyxG5u5zDbrgp2iHLDqClnz81ptBZk2oyuR+ibzXCv4c/5hKMdLvKpMQl5H4c90DxIMt8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721073883; c=relaxed/simple;
-	bh=ZLlB2DB3vdtMN7zCCHuoJegLf5V2awwX0vQH/01u3V0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oo+rJcVzmg3tBc6PdCFJoOJ1wTG8y3lATttbttcQW6f392ExPVagGAiqStnMiJP0GDqDOqKuURNFkO9eG6Pvz/o9FwSEb5KKl7zzygFby57YBtudr2sddqTI/jaSKrKWjFGJSbmsQt6lf6C4G5Ddkoq8uQqhdkPppck6O8G27ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QBJ4LOgs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8gc1002589;
-	Mon, 15 Jul 2024 20:04:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=w43u+d5ZRqcJtwr32+UuS6yJ
-	rT6RMoBwvxj8K+NlUkY=; b=QBJ4LOgs3NVryRbDzdsUTgXZ9SX5Ub0zK2eLcklq
-	h8Vj2mbT2PcazrFGTHGsPJQ9WmFOHwCvGB7e4qoSeZExHsHVsK5a+QmeBA/ROoYw
-	Oo04ny9G185HtmE8aTqyQEumQZ/22wibRTysOwgmy5a5sIePux5kZz4y1V4ZsR/l
-	xIfReuRXCIOhABfqQbS5ncSMwi4qRX8Rl/Lp2Js7meTsrLRM0s6g56ImXy2DaQ/i
-	OuQF9seChc4GmFo10/w9WtgHxANRc1aEMLNQ1BR8gCzp+uCtQFm4Xfb/iuWaYXIH
-	2PjMQXL5pRahYSrzcnBu6g2rahuid/0sDg5B8P6AgBxKbQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bhy6w7k1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 20:04:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FK4TXh011653
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 20:04:29 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 15 Jul 2024 13:04:23 -0700
-Date: Tue, 16 Jul 2024 01:34:19 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 1/5] drm/msm/adreno: Implement SMEM-based speed bin
-Message-ID: <20240715200419.l47ng6efa25in6sg@hu-akhilpo-hyd.qualcomm.com>
-References: <20240709-topic-smem_speedbin-v5-0-e2146be0c96f@linaro.org>
- <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
+	s=arc-20240116; t=1721073933; c=relaxed/simple;
+	bh=/DOi2ls71ic2OyuxBaWpZlE+L/2u4kMQ6x6k0YhB6TY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MboqXMSa1tXrvxXBpfPz4uXaC8olsWp12gpG/idNDHxOBe5/QoB0GQMNO2Qz8ZYkfNlaTqaKRhlJzrQJBlsN2VreQ2Lisw4HXUHR+5L+BKiRSsVIYX5OnJyeXnDIPy1HcxigX5NE0K6/sfbm2PNeo826gSVXs86InJz6XbNlL7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RurrY/Ry; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721073931; x=1752609931;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/DOi2ls71ic2OyuxBaWpZlE+L/2u4kMQ6x6k0YhB6TY=;
+  b=RurrY/RyQjpsBhmmn2MhWHuDywQxYNcJ7WWaywEo2iA1TE2uhgO5p87u
+   Ji0u0sz5cHByD02GbmJsH3W2t2B8A2HX56IumxMJLU9XAwnj00ho31/ZS
+   xIoHND8jaGv8ClIOqE4Ynq6wg7aZGU+9NZhJu3dA8YVhtsag4I37fJPo0
+   4uHLTmr45KiuvTcMyeE7GoKBo9IpmqPNKEwFszOQiH8rc17od7U2v1e4A
+   B2D86lcKKpItQVFwz7PHOtRJxGI00AQtAg0dnY01OocJBHmJKXQ/IMlLO
+   B9xFFxToZrvWuXG/P9qwiB9sshi9u7OkOeX6VOwA5VDM6eHIPqNp8GfwE
+   w==;
+X-CSE-ConnectionGUID: vuawb8eESxO7Tllhwb6WlQ==
+X-CSE-MsgGUID: dfxWTIX6SPejopNN2lmKBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18615566"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="18615566"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 13:05:31 -0700
+X-CSE-ConnectionGUID: wFLa480YSAa2EZOT+0vNKw==
+X-CSE-MsgGUID: y16IyOeCRt2hKFkEqfJpxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="49591891"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 13:05:31 -0700
+Received: from [10.212.96.36] (kliang2-mobl1.ccr.corp.intel.com [10.212.96.36])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id ED7D620B8CD6;
+	Mon, 15 Jul 2024 13:05:28 -0700 (PDT)
+Message-ID: <ec744c86-b73e-417a-8e3a-c07142bf37d1@linux.intel.com>
+Date: Mon, 15 Jul 2024 16:05:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -ruorJXBnZMlFD003J-lc9Lc7a_z2JHf
-X-Proofpoint-ORIG-GUID: -ruorJXBnZMlFD003J-lc9Lc7a_z2JHf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_14,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150156
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [perf vendor events] e2641db83f:
+ perf-sanity-tests.perf_all_PMU_test.fail
+To: kernel test robot <oliver.sang@intel.com>, Ian Rogers <irogers@google.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Namhyung Kim <namhyung@kernel.org>, Weilin Wang <weilin.wang@intel.com>,
+ Caleb Biggers <caleb.biggers@intel.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202407101021.2c8baddb-oliver.sang@intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <202407101021.2c8baddb-oliver.sang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 12:45:29PM +0200, Konrad Dybcio wrote:
-> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
-> abstracted through SMEM, instead of being directly available in a fuse.
+Hi Ian,
+
+On 2024-07-10 12:59 a.m., kernel test robot wrote:
 > 
-> Add support for SMEM-based speed binning, which includes getting
-> "feature code" and "product code" from said source and parsing them
-> to form something that lets us match OPPs against.
 > 
-> Due to the product code being ignored in the context of Adreno on
-> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
+> Hello,
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 14 +++++-----
->  drivers/gpu/drm/msm/adreno/adreno_device.c |  2 ++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c    | 42 +++++++++++++++++++++++++++---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  7 ++++-
->  4 files changed, 54 insertions(+), 11 deletions(-)
+> kernel test robot noticed "perf-sanity-tests.perf_all_PMU_test.fail" on:
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index bcaec86ac67a..0d8682c28ba4 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -2117,18 +2117,20 @@ static u32 fuse_to_supp_hw(const struct adreno_info *info, u32 fuse)
->  	return UINT_MAX;
->  }
->  
-> -static int a6xx_set_supported_hw(struct device *dev, const struct adreno_info *info)
-> +static int a6xx_set_supported_hw(struct adreno_gpu *adreno_gpu,
-> +				 struct device *dev,
-> +				 const struct adreno_info *info)
->  {
->  	u32 supp_hw;
->  	u32 speedbin;
->  	int ret;
->  
-> -	ret = adreno_read_speedbin(dev, &speedbin);
-> +	ret = adreno_read_speedbin(adreno_gpu, dev, &speedbin);
->  	/*
-> -	 * -ENOENT means that the platform doesn't support speedbin which is
-> -	 * fine
-> +	 * -ENOENT/EOPNOTSUPP means that the platform doesn't support speedbin
-> +	 * which is fine
->  	 */
-> -	if (ret == -ENOENT) {
-> +	if (ret == -ENOENT || ret == -EOPNOTSUPP) {
->  		return 0;
->  	} else if (ret) {
->  		dev_err_probe(dev, ret,
-> @@ -2283,7 +2285,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
->  
->  	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
->  
-> -	ret = a6xx_set_supported_hw(&pdev->dev, config->info);
-> +	ret = a6xx_set_supported_hw(adreno_gpu, &pdev->dev, config->info);
->  	if (ret) {
->  		a6xx_llc_slices_destroy(a6xx_gpu);
->  		kfree(a6xx_gpu);
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> index cfc74a9e2646..0842ea76e616 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> @@ -6,6 +6,8 @@
->   * Copyright (c) 2014,2017 The Linux Foundation. All rights reserved.
->   */
->  
-> +#include <linux/soc/qcom/socinfo.h>
-> +
->  #include "adreno_gpu.h"
->  
->  bool hang_debug = false;
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index 1c6626747b98..cf6652c4439d 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -21,6 +21,9 @@
->  #include "msm_gem.h"
->  #include "msm_mmu.h"
->  
-> +#include <linux/soc/qcom/smem.h>
-> +#include <linux/soc/qcom/socinfo.h>
-> +
->  static u64 address_space_size = 0;
->  MODULE_PARM_DESC(address_space_size, "Override for size of processes private GPU address space");
->  module_param(address_space_size, ullong, 0600);
-> @@ -1061,9 +1064,40 @@ void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *adreno_ocmem)
->  			   adreno_ocmem->hdl);
->  }
->  
-> -int adreno_read_speedbin(struct device *dev, u32 *speedbin)
-> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
-> +			 struct device *dev, u32 *fuse)
->  {
-> -	return nvmem_cell_read_variable_le_u32(dev, "speed_bin", speedbin);
-> +	int ret;
-> +
-> +	/*
-> +	 * Try reading the speedbin via a nvmem cell first
-> +	 * -ENOENT means "no nvmem-cells" and essentially means "old DT" or
-> +	 * "nvmem fuse is irrelevant", simply assume it's fine.
-> +	 */
-> +	ret = nvmem_cell_read_variable_le_u32(dev, "speed_bin", fuse);
-> +	if (!ret)
-> +		return 0;
-> +	else if (ret != -ENOENT)
-> +		return dev_err_probe(dev, ret, "Couldn't read the speed bin fuse value\n");
-> +
-> +#ifdef CONFIG_QCOM_SMEM
-> +	u32 fcode;
-> +
-> +	/*
-> +	 * Only check the feature code - the product code only matters for
-> +	 * proto SoCs unavailable outside Qualcomm labs, as far as GPU bin
-> +	 * matching is concerned.
-> +	 *
-> +	 * Ignore EOPNOTSUPP, as not all SoCs expose this info through SMEM.
-> +	 */
-> +	ret = qcom_smem_get_feature_code(&fcode);
-> +	if (!ret)
-> +		*fuse = ADRENO_SKU_ID(fcode);
-> +	else if (ret != -EOPNOTSUPP)
-> +		return dev_err_probe(dev, ret, "Couldn't get feature code from SMEM\n");
-> +#endif
-> +
-> +	return ret;
->  }
->  
->  int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
-> @@ -1102,9 +1136,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
->  			devm_pm_opp_set_clkname(dev, "core");
->  	}
->  
-> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
-> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
->  		speedbin = 0xffff;
-> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
-> +	adreno_gpu->speedbin = speedbin;
-
-There are some chipsets which uses both Speedbin and Socinfo data for
-SKU detection [1]. We don't need to worry about that logic for now. But
-I am worried about mixing Speedbin and SKU_ID in the UABI with this patch.
-It will be difficult when we have to expose both to userspace.
-
-I think we can use a separate bitfield to expose FCODE/PCODE. Currently,
-the lower 32 bit is reserved for chipid and 33-48 is reserved for speedbin,
-so I think we can use the rest of the 16 bits for SKU_ID. And within that
-16bits, 12 bits should be sufficient for FCODE and the rest 8 bits
-reserved for future PCODE.
-
-[1] https://git.codelinaro.org/clo/la/platform/vendor/qcom/opensource/graphics-kernel/-/commit/ab8015dec341d85cd1c97aa7eb5a903527496102
-
--Akhil
-
-
->  
->  	gpu_name = devm_kasprintf(dev, GFP_KERNEL, "%"ADRENO_CHIPID_FMT,
->  			ADRENO_CHIPID_ARGS(config->chip_id));
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> index 1ab523a163a0..0d629343ebb4 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -79,6 +79,10 @@ struct adreno_reglist {
->  
->  struct adreno_speedbin {
->  	uint16_t fuse;
-> +/* As of SM8650, PCODE on production SoCs is meaningless wrt the GPU bin */
-> +#define ADRENO_SKU_ID_FCODE		GENMASK(15, 0)
-> +#define ADRENO_SKU_ID(fcode)	(fcode)
-> +
->  	uint16_t speedbin;
->  };
->  
-> @@ -555,7 +559,8 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
->  			 struct adreno_smmu_fault_info *info, const char *block,
->  			 u32 scratch[4]);
->  
-> -int adreno_read_speedbin(struct device *dev, u32 *speedbin);
-> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
-> +			 struct device *dev, u32 *speedbin);
->  
->  /*
->   * For a5xx and a6xx targets load the zap shader that is used to pull the GPU
+> commit: e2641db83f18782f57a0e107c50d2d1731960fb8 ("perf vendor events: Add/update skylake events/metrics")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 > 
-> -- 
-> 2.45.2
+> [test failed on linux-next/master 82d01fe6ee52086035b201cfa1410a3b04384257]
 > 
+> in testcase: perf-sanity-tests
+> version: 
+> with following parameters:
+> 
+> 	perf_compiler: gcc
+> 
+> 
+> 
+> compiler: gcc-13
+> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz (Coffee Lake) with 32G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> we also observed two cases which also failed on parent can pass on this commit.
+> FYI.
+> 
+> 
+> caccae3ce7b988b6 e2641db83f18782f57a0e107c50
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :6          100%           6:6     perf-sanity-tests.perf_all_PMU_test.fail
+>            :6          100%           6:6     perf-sanity-tests.perf_all_metricgroups_test.pass
+>            :6          100%           6:6     perf-sanity-tests.perf_all_metrics_test.pass
+> 
+> 
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202407101021.2c8baddb-oliver.sang@intel.com
+> 
+> 
+> 
+> 2024-07-09 07:09:53 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 105
+> 105: perf all metricgroups test                                      : Ok
+> 2024-07-09 07:10:11 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 106
+> 106: perf all metrics test                                           : Ok
+> 2024-07-09 07:10:23 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 107
+> 107: perf all libpfm4 events test                                    : Ok
+> 2024-07-09 07:10:47 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 108
+> 108: perf all PMU test                                               : FAILED!
+>
+
+The failure is caused by the below change in the e2641db83f18.
+
++    {
++        "BriefDescription": "This 48-bit fixed counter counts the UCLK
+cycles",
++        "Counter": "FIXED",
++        "EventCode": "0xff",
++        "EventName": "UNC_CLOCK.SOCKET",
++        "PerPkg": "1",
++        "PublicDescription": "This 48-bit fixed counter counts the UCLK
+cycles.",
++        "Unit": "cbox_0"
+     }
+
+The other cbox events have the unit name "CBOX", while the fixed counter
+has a unit name "cbox_0". So the events_table will maintain separate
+entries for cbox and cbox_0.
+
+The perf_pmus__print_pmu_events() calculate the total number of events,
+allocate an aliases buffer, store all the events into the buffer, sort,
+and print all the aliases one by one.
+
+The problem is that the calculated total number of events doesn't match
+the stored events on the SKL machine.
+
+The perf_pmu__num_events() is used to calculate the number of events. It
+invokes the pmu_events_table__num_events() to go through the entire
+events_table to find all events. Because of the
+pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. So
+the events for cbox and cbox_0 are all counted.
+
+When storing events into the aliases buffer, the
+perf_pmu__for_each_event() only process the events for cbox.
+
+Since a bigger buffer was allocated, the last entry are all 0.
+When printing all the aliases, null will be outputed.
+
+$ perf list pmu
+
+List of pre-defined events (to be used in -e or -M):
+
+  (null)                                             [Kernel PMU event]
+  branch-instructions OR cpu/branch-instructions/    [Kernel PMU event]
+  branch-misses OR cpu/branch-misses/                [Kernel PMU event]
+
+
+I'm thinking of two ways to address it.
+One is to only print all the stored events. The below patch can fix it.
+
+diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+index 3fcabfd8fca1..2b2f5117ff84 100644
+--- a/tools/perf/util/pmus.c
++++ b/tools/perf/util/pmus.c
+@@ -485,6 +485,7 @@ void perf_pmus__print_pmu_events(const struct
+print_callbacks *print_cb, void *p
+ 		perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
+ 					perf_pmus__print_pmu_events__callback);
+ 	}
++	len = state.index;
+ 	qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
+ 	for (int j = 0; j < len; j++) {
+ 		/* Skip duplicates */
+
+The only drawback is that perf list will not show the new cbox_0 event.
+(But the event name still works. Users can still apply perf stat -e
+unc_clock.socket.)
+
+Since the cbox_0 event is only available on old machines (SKL and
+earlier), people should already use the equivalent kernel event. It
+doesn't sounds a big issue for me. I prefer this simple fix.
+
+I think the other way would be to modify the perf_pmu__for_each_event()
+to go through all the possible PMUs.
+It seems complicated and may impact others ARCHs (e.g., S390). I haven't
+tried it yet.
+
+What do you think?
+Do you see any other ways to address the issue?
+
+Thanks,
+Kan
 
