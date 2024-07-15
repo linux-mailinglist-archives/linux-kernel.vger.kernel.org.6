@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-252194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525B5930FCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D5930FD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCEAB20AC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F5281B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159D7185E59;
-	Mon, 15 Jul 2024 08:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D30185094;
+	Mon, 15 Jul 2024 08:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OSxyOhru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kOsYXowy"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419DA1849E8;
-	Mon, 15 Jul 2024 08:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC82185084
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032177; cv=none; b=cie2Y+BjYeVT9y0UjG1ycyWK+8x2uqS8jPWuqNTu33tYVgfN/5bTMyn5+mucyQYQ8KvM/5ZxuUJIxKwjANwpez3y6knCdts2NK2BYdWKgj9xrnR5eCnVZmPobL8tbNkKxUJmMXbdM7cSHIfoJmbnxsxpaz6w0FoHgoZmAimT/Rc=
+	t=1721032196; cv=none; b=rOPxjl4OmPMUT+VGsduV0Ykd/Pf7myDvoQiEKJZtomh2NXd/qdpCKQyeBzTaMFNoenCstslL4gN1XX1yv3Q/JzuQ9swl+ClZ3QoxemfWaQcxV2YA9SyKrr9XZP+ee4Y3/yIHRz0FyJfP39yM4Q8TfYMq4bZ70kr8+hHPZTwUXXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032177; c=relaxed/simple;
-	bh=wiTo8uBl8LYt418qIZjGZMOgjUMZtIisDShPynw5eOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tIH+nHLUdzD0cwxSIg8sRa8deiGPW9qKRnQnMxM4pFOqBNJ/w9b2/4YpOZ1ian2zJ277K8AwJAYmC1MSIYJ8YRrdRdj7MTu6m/jP4JGZ67Yod7W0eMIvrdmnkmoxJ1FdhYVfxWRjwdNqWtHVtuGHGUbGezqEWCjV7lX+QCJNDI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OSxyOhru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582D7C4AF0B;
-	Mon, 15 Jul 2024 08:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721032176;
-	bh=wiTo8uBl8LYt418qIZjGZMOgjUMZtIisDShPynw5eOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OSxyOhruJLRr7Wo0Q5xnXFqG94BSlCOaeiCveX1PJmeA+5RqytgkkTW7hDFKDGFuz
-	 v9t/7p1pU7EG9BtMn1IXRA8Gjh5JMfW+s926C3TUjiwr/pG/4DQEu8Y8iJ/bLLi5L0
-	 SupB/ic8cW/DOdfx7F0DwhjzLcaMkOGoiDN2vops=
-Date: Mon, 15 Jul 2024 10:29:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>,
-	elatllat@gmail.com, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, mathias.nyman@linux.intel.com,
-	niklas.neronin@linux.intel.com, stable@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-Message-ID: <2024071556-perceive-zit-6a0c@gregkh>
-References: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
- <20240714173043.668756e4@foxbook>
- <ZpP3RU-MKb4pMmZH@eldamar.lan>
- <2024071540-commute-curler-26d3@gregkh>
+	s=arc-20240116; t=1721032196; c=relaxed/simple;
+	bh=NOnnq+61CxDOWMILVOgzIwIKxbt7n9msZtGOaXKmv1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HX9Mj90xcztVFbsIq2urekGdsHggwn44FPAJGFx01VFl5vIlSumvRWVg7IE4Xh4MiEU+nHRCCx7eNXIwohYWzYYLBVII/r13QvRHqeYPXs2Jx61g1H1xFSEAjxqxbuSUejyt018DxmD8Qn7poEJKdfSiRTlyTTob9CIPw4WReKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kOsYXowy; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jarkko@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721032192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gI+AO5s/O2pz6h4ONw/V+YoYvCERCtp3v+pVErREphU=;
+	b=kOsYXowyPGspLPXF9SVdQZ0V5kNNsx8jS+NossoDwzgm+9GnG5rp4hnx2YF7ZJMUQsOgNC
+	DFYpI9vsuUaijnzyHEPdtU5ajiFxYXmUTNfAX1ISYjfx7HDHPU+Qx18emGGLzLaOA5pOTV
+	3t18lqbK7SQndlhCGfvzKdPz0DqNkIc=
+X-Envelope-To: peterhuewe@gmx.de
+X-Envelope-To: jgg@ziepe.ca
+X-Envelope-To: linux-integrity@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: gehao@kylinos.cn
+Message-ID: <b69b55e8-eba8-3f3f-e65f-cc5e6cf3eb84@linux.dev>
+Date: Mon, 15 Jul 2024 16:29:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024071540-commute-curler-26d3@gregkh>
+Subject: Re: [PATCH] tpm: Move dereference after NULL check in
+ tpm_buf_check_hmac_response
+To: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de, jgg@ziepe.ca
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hao Ge <gehao@kylinos.cn>
+References: <20240709023337.102509-1-hao.ge@linux.dev>
+ <D2PDLHX51C3K.16A4U6XFXRE29@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <D2PDLHX51C3K.16A4U6XFXRE29@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 15, 2024 at 07:45:07AM +0200, Greg KH wrote:
-> On Sun, Jul 14, 2024 at 06:05:25PM +0200, Salvatore Bonaccorso wrote:
-> > Hi,
-> > 
-> > On Sun, Jul 14, 2024 at 05:32:39PM +0200, Michał Pecio wrote:
-> > > This looks like bug 219039, please see if my suggested solution works.
-> > > 
-> > > The upstream commit is correct, because the call to inc_deq() has been
-> > > moved outside handle_tx_event() so there is no longer this critical
-> > > difference between doing 'goto cleanup' and 'return 0'. The intended
-> > > change of this commit also makes sense to me.
-> > > 
-> > > This refactor is already present in v6.9 so I don't think the commit
-> > > will have any effect besides fixing the isochronous bug which it is
-> > > meant to fix.
-> > > 
-> > > But it is not present in v6.6 and v6.1, so they break/crash/hang/etc.
-> > > Symptoms may vary, but I believe the root cause is the same because the
-> > > code is visibly wrong.
-> > > 
-> > > 
-> > > I would like to use this opportunity to point out that the xhci driver
-> > > is currenty undergoing (much needed IMO) cleanups and refactors and
-> > > this is not the first time when a naive, verbatim backport is attempted
-> > > of a patch which works fine on upstream, but causes problems on earlier
-> > > kernels. These things need special scrutiny, beyond just "CC:stable".
-> > 
-> > For tracking I guess this should go as well to the regressions list?
-> > 
-> > #regzbot introduced: 948554f1bb16e15b90006c109c3a558c66d4c4ac
-> > #regzbot title: freezes on plugging USB connector due to 948554f1bb16 ("usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB")
-> > #regzbot monitor: https://bugzilla.kernel.org/show_bug.cgi?id=219039
-> > 
-> > Thorsten I hope I got the most bits correctly, how would one inform
-> > regzbot about the regresssion for 6.1.98 and 6.6.39 but not happening
-> > in the upper versions?
-> 
-> I'll handle this and go release new kernels with just this reverted in
-> it.  Let my morning coffee kick in first...
+Hi Jarkko
 
-Should all now be fixed in the 6.6.40 and 6.1.99 releases.  If not,
-please let me know.
+On 7/14/24 23:43, Jarkko Sakkinen wrote:
+> On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> We shouldn't dereference "auth" until after we have checked that it is
+>> non-NULL.
+> Sorry for some latency in responses. I'm on holiday up until week 31 and
+> only look at emerging issues but not every day.
+Understand,I hope you enjoy your holiday.
+> I do agree with the code change but the description contains no information
+> of the bug and how the fix resolves it. Could you please rewrite the
+> description?
+>
+> I can only think this realizing with tpm_ibmvtpm and TCG_TPM2_HMAC
+> enabled because it was according to recent learnings a platform which
+> does not end up calling tpm2_sessions_init().
+>
+> Since you bug report contains no bug report, I need to ask that did you
+> realize a regression in some platform? Fix will get eventually accepted
+> even if the bug was found by "looking at code" but the gist here is that
+> your bug description contains no description how you found the bug,
+> which it should.
+Actually It's reported by smatch and Dan Carpenter also noticed this 
+warning.
 
-thanks,
+This is the email he sent
 
-greg k-h
+https://lore.kernel.org/all/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/ 
+
+> When TCG_TPM2_HMAC is disable it should be safe because we have:
+>
+> static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
+> 					      struct tpm_buf *buf,
+> 					      int rc)
+> {
+> 	return rc;
+> }
+>
+> I also noticed that your fixes tag is incorrect as that null dereference
+> pre-existed on tpm_ibmvtpm before my fixes. It is not a new regression
+> introduced by my patches. So use git blame and check which commit
+> introduced that one.
+I'm a bit confused about fixes tag. Sometimes tool often fail to truly 
+understand the context.
+
+Form the logical perspective of the code,null deference indeed existed 
+before your fixes.
+
+But for smatch, It simply conducted a static code analysis and flagged a 
+line with a warnning.
+
+Its warning seems to be related to Commit 7ca110f2679b("tpm: Address 
+!chip->auth in tpm_buf_append_hmac_session*()")
+
+That's why I used the 'fixes' tag for Commit 7ca110f2679b.(Please 
+forgive me for not being clear earlier. I discovered it through smatch.)
+
+So, should I use the fix tag for Commit 7ca110f2679b ('tpm: Address 
+!chip->auth in tpm_buf_append_hmac_session*()') or for Commit 
+1085b8276bb4 ('tpm: Add the rest of the session HMAC API')?
+
+Even though I have already send V2 which fixes tag using Commit 
+1085b8276bb4 ('tpm: Add the rest of the session HMAC API'),
+
+I still want to gain knowledge in this area so that I can more 
+accurately use fxies tag and send patches in the future.
+>
+> Address these issues and send v2. Thank you!
+>
+> BR, Jarkko
+
+Thanks
+
+BR
+
+Hao
+
 
