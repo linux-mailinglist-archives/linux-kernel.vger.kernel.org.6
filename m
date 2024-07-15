@@ -1,247 +1,254 @@
-Return-Path: <linux-kernel+bounces-252388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DE193127B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A7A93127E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A22FB22713
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:42:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C6D0B22917
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F413188CBB;
-	Mon, 15 Jul 2024 10:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E46B188CC3;
+	Mon, 15 Jul 2024 10:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rNDXX7vt"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gLXeLnOL"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C127A16CD36
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F48188CAA
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721040134; cv=none; b=NQ4UIielRoowgX62denWIYGgE1oIQ3Bm0tR6qnWXzTAYNfbea1CC2rLO70J/jJMSKbl0pJyFjEUgXec8FNotHCxJ37twx0VrB6+VigQMiPmo6pqn9uuA76NsnHnYjeVJj9zr2pN6gk5gjfEU9RrDMmr2KrGNMNFyZepAZZGw7+g=
+	t=1721040201; cv=none; b=RPs9WncGKdA9+9Uri7RC+3SmcfOmwVAtK11ahaZwF9jlBAYBgOBWKSPgZN/LG/zhjzHEfTmu7OstPHAE5ow05Do0kTUFnQ0tE4DvePI9orXBrVbNOwxbJk+ilLKKpqbwYjGUf8qcH0cX2wlASA3+9Oj0XJn7a85OVNmGOEjhvKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721040134; c=relaxed/simple;
-	bh=bUUlr5c2Y/b9ETzfRJTM3uGHLh+IJTm19dqPlt8KFAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lWR6LbqhMwAeksqDk+tXogiuBEmcQWRNUYtVeR6J7tYf1P3O7QX6XXFgIObqGoqwQnuFz0wBSWcaVxstKCrr+qjjnfGB0NSBFPhUmy+dwlCh6WnwO15/lRq+jqD2Wq4MQX6hVilYtyzNdvCOv4rvNBevwucb+52emGg4Uhyaa/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rNDXX7vt; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1721040201; c=relaxed/simple;
+	bh=0K4pca2vEBWU5NYBgV2Z87t7JJCI7Bs/YEhYZaDDJv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TijoAEvCauqqz6x/9q7WYhf25787H+r5vhB91MEUVefYXCfYcmNZ9XwRxy73vJRqhUyFJEPI/nJUyJD9EdtVudCs4804cYtmFMiJWG+gcLLu7mWRVZUIMuAHsCPTcle6aF63Cwk5gbMptOoz9WwHCu/B5vocx3yCENkd345Mf0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gLXeLnOL; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so54264301fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:42:12 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so4211167276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721040131; x=1721644931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yDBDdSaTsIScMjDczsi/TPg8Dl1/nhZKeEyHmoSCz7k=;
-        b=rNDXX7vtYOa8jIMJcWx8YFHEmshQkSJSc6J6HZXXcEGKLEL9u4QoaGJSq6bTCffyLW
-         /PYuqIDCg8YA8mJ40+yC22UHYh9T2oUpySn8ITZqfjhMLjF9O7RefidHxJ89NGdFx3dP
-         W33Amf9QdLIfFg+uOVfgrb4M22MUgekHo11ConkbE7yNpYC/E7uZFMLp1qi9sdfdrf4O
-         Tngsa67VUSIA1NDzI6yrCP5zj3PaaTf172AElWHYSGJ2+MdKAss3QGOENDd0+9+tffQS
-         lPsehCQWaDJTfhGkaL9h1ID5IHL7VHYBr7lt1b9R0qpzk44RO/v6GdDfhQylGcxwO+U3
-         G8UA==
+        d=linaro.org; s=google; t=1721040198; x=1721644998; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aMIZ4x5GWNB/IuXvoPEkpFndIdHvoqjyuE6tlVNLnc8=;
+        b=gLXeLnOLaOXFsWY9avX6P9S9zZrzdKkfrUb0nWUN8rqy5drcoVus6kXglfyAmI77qU
+         AynI1cv2g3XDUcStuiYu1M1auSk9t5OpxnYfFdgJUfQXt6JalrZxY7lbvYiaEowStaLT
+         w4RPuF9Pq47ToLVZ96ptiBmvZKS5JmAcbC5bSL1DTvZk0OKMUCZ9XJeP336a0zWbnBWO
+         8WF0RrBdw8xZgeXj7wzg4s1Kt2hj3L0wC5eR2zim1OGROVsbf5hzW84wJdGHZg/Orqsp
+         XjsOcooDvdrki/o5ZXxnUu7Kd1b+kuHgkwUjWWkaJmFmZiFxoGVzGbDg8y2mbL+XB632
+         chjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721040131; x=1721644931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721040198; x=1721644998;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yDBDdSaTsIScMjDczsi/TPg8Dl1/nhZKeEyHmoSCz7k=;
-        b=oOiNhWp95sNy/iqGAdcBFi9l1naq+qmXl0j6N5oOyB1blDu4vE9hBxaW6axMvxOkLY
-         UWfyxauKoftHiTM1GVETAseF+cqgfssvUMHit3sIj2mET2fU7bC4XEUsTd7gNJMBlvcU
-         3XdkiDHULB+6eAkqLmKQ/7cEXcRG4COogV8NRiN+ya8viB0B1muaqadUFe+MybfzuiyG
-         LnpgXwfy8s+XqsEuumNtfKs2XOOstlfxfbvwOKIb+Ct3wgmMjOqPblwtQFSIwC8NkpSD
-         9JEoXIxxZO+zZiGENnjE+Xd/tW4z18CKYfW4N7nytQBdNof1vU8yiUF8Jby8M4TIS/Pf
-         YDrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUitGZSGWY9aV+PsmTCrgPvaM8cqQj+lv/tei44/lvMvxM7tH/qmtroWGubTCMl0d9Xf0Qcal2YHBr5J2O2ts6TtnJsry34l5f6//ik
-X-Gm-Message-State: AOJu0YyY/VL71HmFKl4STa26Wo22z6OfV0PEuty8t+iLf2jUz9TQsjnQ
-	TwD8nP1i3wsy5Q1J17VoIILut9bzpCw2hbOyamJvXoXMeXiim23v0SfHmvKv2sg=
-X-Google-Smtp-Source: AGHT+IEl8e4sHhD2Ze4AU3LrChP1A0SLmG+ooB5oN5pZc9KeFQr0EPcLXb2erYuWFIJ8V7w/XkyQdg==
-X-Received: by 2002:a2e:980b:0:b0:2ee:8749:d4a1 with SMTP id 38308e7fff4ca-2eeb30b9b69mr122007621fa.10.1721040130871;
-        Mon, 15 Jul 2024 03:42:10 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee18bed4bsm7715921fa.69.2024.07.15.03.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 03:42:10 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC and MEMSTICK updates for v6.11
-Date: Mon, 15 Jul 2024 12:42:09 +0200
-Message-Id: <20240715104209.177921-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        bh=aMIZ4x5GWNB/IuXvoPEkpFndIdHvoqjyuE6tlVNLnc8=;
+        b=WQznM7NBXPEAn2xo4iolhklxLlH48AXNfsDBBRlMhXb2bHxODT7pwbD5g91hQO+Sbk
+         QSM3sAJo8rv8BFIbR/E6CulmhLZcEOZzqnN+j+gmWMi+VMmXX2Lk2J81GpwPh8uGeCIv
+         jj4yBM79XO9HnFBV+tPcIXJT529YwDvVIEoeM0SZ9USNunP/SXCEtW0T7wi+3Nrm1arR
+         kBdTzgjJGqVDMb2Swxs6lr874KqevAKjkVdgs7fBnkqZdWlDoe82MAk10OC7qh6S8Vqo
+         sEl6MrjnT872CKlIBt2z8+6IFYNDU/HRbR3AFP/wNEQem/gWmZUBUFTNC7Kejn3Xq1kL
+         d/Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7LLzOREYFfp5Hdf4DPf+iD9edJG2jtiLGlerHOEV3FpIh+9QmpZ5uO8+RARvYW54eVQNZBj4iJ9TEY1+Ra8KcrmcQNN3zbqqJErog
+X-Gm-Message-State: AOJu0YxXr3W9QqDxsdq1D5IGVCCMDeu1NfDqbCm9dHEv9Uc1KsJSkh/A
+	Pi0vUALDCN7YJ/NAOSwdZgDEvEDWM1Z5cP6hJpEXiYg55zeltFnjEDn9UlRTtB/9n7/GdnZo06M
+	twEaByIRhwEQgnM3gL53vIhZ7jjE5twq9CY34Hw==
+X-Google-Smtp-Source: AGHT+IEdJmxITor4+DP0cXXm+G3r7fPKDye0hwA/RbHrnncDjlEqNpYlw08Ebcg/221VFbFOphKo44hUUhrhArDY/qc=
+X-Received: by 2002:a25:84c7:0:b0:dff:1b37:8215 with SMTP id
+ 3f1490d57ef6-e041b07a0dbmr20274956276.36.1721040198288; Mon, 15 Jul 2024
+ 03:43:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240709015818.110384-1-slark_xiao@163.com> <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
+ <17f0f426.4faf.190b4edaadd.Coremail.slark_xiao@163.com> <CAA8EJpoiOLYMhxyJbdrgnMVfVggL9cOWtX8L__YKd=RPQWOcSg@mail.gmail.com>
+ <7036d57d.5904.190b512d00b.Coremail.slark_xiao@163.com>
+In-Reply-To: <7036d57d.5904.190b512d00b.Coremail.slark_xiao@163.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 15 Jul 2024 13:43:07 +0300
+Message-ID: <CAA8EJprd8pqnw_jVd2u_Sdf1L=SPY3tYojHtN_de672F0vN7UQ@mail.gmail.com>
+Subject: Re: Re: Re: [PATCH] bus: mhi: host: Add firehose support for Foxconn SDX24/SDX55/SDX65
+To: Slark Xiao <slark_xiao@163.com>
+Cc: manivannan.sadhasivam@linaro.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Mon, 15 Jul 2024 at 09:27, Slark Xiao <slark_xiao@163.com> wrote:
+>
+>
+> At 2024-07-15 14:16:57, "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org> wrote:
+> >On Mon, 15 Jul 2024 at 08:46, Slark Xiao <slark_xiao@163.com> wrote:
+> >>
+> >>
+> >> At 2024-07-13 23:09:47, "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org> wrote:
+> >> >On Tue, Jul 09, 2024 at 09:58:18AM GMT, Slark Xiao wrote:
+> >> >> Since we implement the FIREHOSE channel support in foxconn mhi
+> >> >> channels, that means each product which use this channel config
+> >> >> would support FIREHOSE. But according to the trigger_edl feature,
+> >> >> we need to enable it by adding '.edl_trigger = true' in device
+> >> >> info struct.
+> >> >> Also, we update all edl image path from 'qcom' to 'fox' in case of
+> >> >> conflicting with other vendors.
+> >> >
+> >> >Separate patches please. Also don't use "we", just an imerative style:
+> >> >do this and that.
+> >> >
+> >>
+> >> Do you mean use 2 patches (1 for enabling trigger edl and 1 for
+> >> modifying path)? Though these changes are aimed to make
+> >> firehose download successfully.
+> >
+> >Yes. "Do this. Also do that" is usually a sign that the patch should be split.
+>
+> Will do a update in next version.
+>
+> >
+> >>
+> >> >>
+> >> >> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >> >> ---
+> >> >>  drivers/bus/mhi/host/pci_generic.c | 20 ++++++++++++++------
+> >> >>  1 file changed, 14 insertions(+), 6 deletions(-)
+> >> >>
+> >> >> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> >> >> index 14a11880bcea..440609b81e57 100644
+> >> >> --- a/drivers/bus/mhi/host/pci_generic.c
+> >> >> +++ b/drivers/bus/mhi/host/pci_generic.c
+> >> >> @@ -433,8 +433,8 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+> >> >>      .name = "foxconn-sdx55",
+> >> >> -    .fw = "qcom/sdx55m/sbl1.mbn",
+> >> >> -    .edl = "qcom/sdx55m/edl.mbn",
+> >> >> +    .edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
+> >> >
+> >> >qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn
+> >>
+> >> what's your opinion?Mani
+> >>
+> >> >
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -444,8 +444,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+> >> >>      .name = "foxconn-t99w175",
+> >> >> -    .fw = "qcom/sdx55m/sbl1.mbn",
+> >> >> -    .edl = "qcom/sdx55m/edl.mbn",
+> >> >> +    .edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
+> >> >
+> >> >Is it the same file as the one mentioned in the previous chunk or is it
+> >> >different?
+> >> >
+> >>
+> >> They are same for same chip, though we have some variants.
+> >
+> >Please excuse me, I can't fully understand. So are the files the same or not?
+> >
+> >There is a simple mental experiment regarding the file names: you
+> >should be able to have a single host rootfs, which supports working
+> >with all of your modems at the same time, without modifications.
+> >So if modem A and modem B might use file foo.bar and the file is the
+> >same for all SDX55 modems, it's fine to have it in qcom/sdx55m/ or in
+> >qcom/sdx55m/foxconn. If it is different depending on the end-device,
+> >it should go to the qcom/sdx55m/foxconn/devname/ .
+> >
+> For all Foxconn devices designed based on same chip, they can use same
+> edl file. This EDL file is a common image of whole FIREHOSE image package
+> of difference variants. The difference of Foxconn SDX55 modem A and
+> Foxconn SDX55 modem B is APPS image and Modem image. The EDL
+> image is a file for putting device into EDL mode.
+> So I prefer to use "qcom/sdx55m/foxconn" since Foxconn's device are
+> different with other vendors which provide sdx55 devices as well.
 
-Here's the pull-request for MMC and MEMSTICK for v6.11. Details about the
-highlights are as usual found in the signed tag.
+If it's common, sounds good to me.
 
-Please pull this in!
+>
+> >>
+> >> >If they are different, then, please,
+> >> >
+> >> >qcom/sdx55m/foxconn/t99w175/prog_firehose_sdx55.mbn
+> >> >
+> >> >
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -455,8 +455,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+> >> >>      .name = "foxconn-dw5930e",
+> >> >> -    .fw = "qcom/sdx55m/sbl1.mbn",
+> >> >> -    .edl = "qcom/sdx55m/edl.mbn",
+> >> >> +    .edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -466,6 +466,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
+> >> >>      .name = "foxconn-t99w368",
+> >> >> +    .edl = "fox/sdx65m/prog_firehose_lite.elf",
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -475,6 +477,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
+> >> >>      .name = "foxconn-t99w373",
+> >> >> +    .edl = "fox/sdx65m/prog_firehose_lite.elf",
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -484,6 +488,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
+> >> >>      .name = "foxconn-t99w510",
+> >> >> +    .edl = "fox/sdx24m/prog_firehose_sdx24.mbn",
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> @@ -493,6 +499,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
+> >> >>
+> >> >>  static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+> >> >>      .name = "foxconn-dw5932e",
+> >> >> +    .edl = "fox/sdx65m/prog_firehose_lite.elf",
+> >> >> +    .edl_trigger = true,
+> >> >>      .config = &modem_foxconn_sdx55_config,
+> >> >>      .bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> >> >>      .dma_data_width = 32,
+> >> >> --
+> >> >> 2.25.1
+> >> >>
+> >> >
+> >> >--
+> >> >With best wishes
+> >> >Dmitry
+> >
+> >
+> >
+> >--
+> >With best wishes
+> >Dmitry
 
-Kind regards
-Ulf Hansson
 
 
-The following changes since commit 16198eef11c1929374381d7f6271b4bf6aa44615:
-
-  mmc: davinci_mmc: Prevent transmitted data size from exceeding sgm's length (2024-07-11 17:48:54 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.11
-
-for you to fetch changes up to b85e021853976aaebd3788e7e721020570754199:
-
-  MAINTAINERS: add 's32@nxp.com' as relevant mailing list for 'sdhci-esdhc-imx' driver (2024-07-12 11:07:54 +0200)
-
-----------------------------------------------------------------
-MMC host:
- - Convert from using tasklet to the BH workqueue
- - dw_mmc-bluefield: Add support for eMMC HW reset
- - mmc_spi: Allow spi controllers incapable of lower than 400kHz
- - sdhci: Rework code to eliminate SDHCI_QUIRK_UNSTABLE_RO_DETECT
- - sdhci-brcmstb: Add support for the BCM2712 variant
- - sdhci-esdhc-imx: Disable card-detect as system wakeup on S32G platforms
- - sdhci-msm: Add support for the SDX75 variant
- - sdhci-of-dwcmshc: Enable CQE support for some Rockchip variants
- - sdhci-of-esdhc: Convert DT-bindings to yaml
- - sdhci-sprd: Convert DT-bindings to yaml
-
-MEMSTICK:
- - rtsx_pci_ms: Remove the unused Realtek PCI memstick driver
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      mmc: sdhci: Eliminate SDHCI_QUIRK_UNSTABLE_RO_DETECT
-
-Allen Pais (2):
-      mmc: sdhi: Convert from tasklet to BH workqueue
-      mmc: Convert from tasklet to BH workqueue
-
-Andrea della Porta (3):
-      dt-bindings: arm: bcm: Add BCM2712 SoC support
-      dt-bindings: mmc: Add support for BCM2712 SD host controller
-      mmc: sdhci-brcmstb: Add BCM2712 support
-
-Bastien Curutchet (1):
-      mmc: davinci_mmc: report all possible bus widths
-
-Ciprian Costea (3):
-      mmc: sdhci-esdhc-imx: disable card detect wake for S32G based platforms
-      mmc: sdhci-esdhc-imx: obtain the 'per' clock rate after its enablement
-      MAINTAINERS: add 's32@nxp.com' as relevant mailing list for 'sdhci-esdhc-imx' driver
-
-Conor Dooley (1):
-      mmc: mmc_spi: allow for spi controllers incapable of getting as low as 400k
-
-Frank Li (2):
-      dt-bindings: mmc: mmc-spi-slot: Change voltage-ranges to uint32-matrix
-      dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
-
-Geert Uytterhoeven (2):
-      mfd: tmio: Remove obsolete .set_clk_div() callback
-      mmc: tmio: Remove obsolete .set_pwr() callback()
-
-Heiko Stuebner (1):
-      mmc: sdhci-of-dwcmshc: set CQE irq-handler for rockchip variants
-
-Javier Carrasco (1):
-      mmc: sdhci_am654: Constify struct regmap_config
-
-Jeff Johnson (1):
-      mmc: add missing MODULE_DESCRIPTION() macros
-
-Kai-Heng Feng (1):
-      memstick: rtsx_pci_ms: Remove Realtek PCI memstick driver
-
-Liming Sun (2):
-      mmc: dw_mmc: Add support for platform specific eMMC HW reset
-      mmc: dw_mmc-bluefield: Add support for eMMC HW reset
-
-Naina Mehta (1):
-      dt-bindings: mmc: sdhci-msm: Document the SDX75 compatible
-
-Neil Armstrong (1):
-      dt-bindings: mmc: meson-gx: add optional power-domains
-
-Peter Robinson (1):
-      mmc: sdhci-brcmstb: Add ARCH_BCM2835 option
-
-Stanislav Jakubek (1):
-      dt-bindings: mmc: sdhci-sprd: convert to YAML
-
-Ulf Hansson (3):
-      mmc: Merge branch fixes into next
-      mmc: Merge branch fixes into next
-      mmc: Merge branch fixes into next
-
-Wolfram Sang (1):
-      MAINTAINERS: drop entry for VIA SD/MMC controller
-
- .../devicetree/bindings/arm/bcm/bcm2835.yaml       |   6 +
- .../bindings/mmc/amlogic,meson-gx-mmc.yaml         |   3 +
- .../bindings/mmc/brcm,sdhci-brcmstb.yaml           |   1 +
- .../devicetree/bindings/mmc/fsl,esdhc.yaml         | 105 ++++
- .../devicetree/bindings/mmc/fsl-esdhc.txt          |  52 --
- .../devicetree/bindings/mmc/mmc-spi-slot.yaml      |  16 +-
- .../devicetree/bindings/mmc/sdhci-msm.yaml         |   1 +
- .../devicetree/bindings/mmc/sdhci-sprd.txt         |  67 ---
- .../devicetree/bindings/mmc/sprd,sdhci-r11.yaml    | 112 ++++
- MAINTAINERS                                        |   7 +-
- drivers/memstick/host/Kconfig                      |  10 -
- drivers/memstick/host/Makefile                     |   1 -
- drivers/memstick/host/rtsx_pci_ms.c                | 638 ---------------------
- drivers/mmc/core/core.c                            |   1 +
- drivers/mmc/core/pwrseq_emmc.c                     |   1 +
- drivers/mmc/core/pwrseq_sd8787.c                   |   1 +
- drivers/mmc/core/pwrseq_simple.c                   |   1 +
- drivers/mmc/core/sdio_uart.c                       |   1 +
- drivers/mmc/host/Kconfig                           |   2 +-
- drivers/mmc/host/atmel-mci.c                       |  35 +-
- drivers/mmc/host/au1xmmc.c                         |  37 +-
- drivers/mmc/host/cb710-mmc.c                       |  14 +-
- drivers/mmc/host/cb710-mmc.h                       |   3 +-
- drivers/mmc/host/davinci_mmc.c                     |  11 +-
- drivers/mmc/host/dw_mmc-bluefield.c                |  18 +-
- drivers/mmc/host/dw_mmc.c                          |  30 +-
- drivers/mmc/host/dw_mmc.h                          |  11 +-
- drivers/mmc/host/mmc_spi.c                         |   5 +-
- drivers/mmc/host/of_mmc_spi.c                      |   1 +
- drivers/mmc/host/omap.c                            |  17 +-
- drivers/mmc/host/renesas_sdhi.h                    |   4 +-
- drivers/mmc/host/renesas_sdhi_core.c               |   3 +
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  26 +-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |   9 +-
- drivers/mmc/host/sdhci-bcm-kona.c                  |   2 +-
- drivers/mmc/host/sdhci-brcmstb.c                   |  60 ++
- drivers/mmc/host/sdhci-esdhc-imx.c                 |  16 +-
- drivers/mmc/host/sdhci-of-dwcmshc.c                |   1 +
- drivers/mmc/host/sdhci-pci-core.c                  |  27 +-
- drivers/mmc/host/sdhci.c                           |  31 +-
- drivers/mmc/host/sdhci.h                           |   3 +-
- drivers/mmc/host/sdhci_am654.c                     |   2 +-
- drivers/mmc/host/tifm_sd.c                         |  15 +-
- drivers/mmc/host/tmio_mmc.h                        |   6 +-
- drivers/mmc/host/tmio_mmc_core.c                   |  13 +-
- drivers/mmc/host/uniphier-sd.c                     |  12 +-
- drivers/mmc/host/via-sdmmc.c                       |  25 +-
- drivers/mmc/host/wbsd.c                            |  74 +--
- drivers/mmc/host/wbsd.h                            |  10 +-
- include/linux/mfd/tmio.h                           |   2 -
- 50 files changed, 556 insertions(+), 993 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/fsl,esdhc.yaml
- delete mode 100644 Documentation/devicetree/bindings/mmc/fsl-esdhc.txt
- delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
- create mode 100644 Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
- delete mode 100644 drivers/memstick/host/rtsx_pci_ms.c
+-- 
+With best wishes
+Dmitry
 
