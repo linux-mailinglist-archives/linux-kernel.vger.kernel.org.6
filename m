@@ -1,164 +1,257 @@
-Return-Path: <linux-kernel+bounces-252766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712E19317EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F32D9317F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EE2281B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:57:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60F1B2237D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F961171C;
-	Mon, 15 Jul 2024 15:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3052D134D1;
+	Mon, 15 Jul 2024 15:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="MP3Pulc3"
-Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iB4wS/sz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756E4D53C;
-	Mon, 15 Jul 2024 15:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9336E1171C;
+	Mon, 15 Jul 2024 15:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059015; cv=none; b=ufds+YyEikJxOZ88IIaUBmrh3E/Zxc06M6HSW+18e89lCSun4LLT1WqENbSAC5YLTlaKnluO9T4dcfyv53Wxp51ckXcv6kT1zyVilpPPgDN5wmGtCX4N54hNQW0PscD77GPoEO9moo3K33aSVNnxd3T21C1G4EZj4QSaZblBVpc=
+	t=1721059042; cv=none; b=VqsR3k1SFAODrul+bhCjVaEtOIVYAglm8uL3SGDi4xtflBKxGxcBBaq/ktHdrGFnCx/ERsS0Ch282g+7fbf/E3rnH9JB+BBcQSHSH8mjhblA+WaH8lmcZwptbTyTiEj07rzBnsYZ2BI81lHwFCpz1a6z7E8E1+zmqwlAfpO0nr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059015; c=relaxed/simple;
-	bh=n2yLQUwt6s0OAtUfcYSQI9h6EpwTHBoPl8UvFbLKLxU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oiREFRicBihvOkOK31lHf3kmQz2Ri1bVbW19qg1mvGwQBy/VXsFKhZmoLTUEroRhHqWtytlCveS/h4FD3vXbEGmaCiXRngpgjQ3oKbIDFAf63IAAEj1yMivTcODhKxoitBK0sB0O0JGX/+i06qYbSV+4vhUuA4MaXUJLLlPFvs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=MP3Pulc3; arc=none smtp.client-ip=185.70.43.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1721059006; x=1721318206;
-	bh=0X2OwfENCQ/M/pnkr0i+ZvgaNKd3AS7YhCHGsueDZJI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=MP3Pulc3tWE2RK/Y87KVMcpoTd9k7A88xsAzdxuFvwuLeDiwocQczv0thIwsZM9wM
-	 8zSNMEQhHqkLT40Vd60mnEKaOc8sMme8VhVij/mFXsPDC6hP8JcA/HGM2MLasZxCsB
-	 4QjAOb00/s6eh/F2VAKhO0NtmRfavb1gOuW7wsAffebM65/otAVnP6jcTnSgLEFPGD
-	 9CaBur2unZZerj3XJYcCSocz/m1qIodCuIECaqgB+9k7iEQYRL3OXbfhORj/jFKcUN
-	 cfD7DvRd/9vioU+aMXTwT8Nhro6WcehXBLhe6UPuLkUqCy2TMlxlICKah6954wX/6S
-	 5KdXrbY3O0zaA==
-Date: Mon, 15 Jul 2024 15:56:39 +0000
-To: Michal Rostecki <vadorovsky@gmail.com>
-From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, Valentin Obst <kernel@valentinobst.de>, Laine Taffin Altman <alexanderaltman@me.com>, Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>, Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas <charmitro@posteo.net>,
-	Ben Gooding <ben.gooding.dev@gmail.com>, Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr` implementation
-Message-ID: <T4cW5BFYytkMlTR5e2C2FfFJ5Z8P5XPw5dEsTQ2V-hoAo5yZkeYLSU3GvVCTH1Ga3f-mbPvEKZxOEWT7E1-xWu4EDE6-jCoQj3If-qCKCHA=@protonmail.com>
-In-Reply-To: <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
-References: <20240714160238.238708-1-vadorovsky@gmail.com> <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com> <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
-Feedback-ID: 27884398:user:proton
-X-Pm-Message-ID: 95e82dd63daf75c00a972e8d3703e1d61f419209
+	s=arc-20240116; t=1721059042; c=relaxed/simple;
+	bh=ccuuPWS/kHndTJIROlan9HdA8UeYyOHGtUAvlJbG/iQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BkTdMs8a0l20nQbt7abltS5/TViXpyy733xxScy9bavp9tp6fEv2X8V5EBwxsiNHz8MRY3WjG4PTUFlp6h+LMzMiP+mAkY/0gsJpVwEaC0QjZq5e1eTsVZPdpNuUohOsRHl+E+MjfeDiDl0f1XA5ZNVNAnXk49Gcs3O3KZB3lxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iB4wS/sz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FAQlhN003863;
+	Mon, 15 Jul 2024 15:57:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gCiFNnIZr3eKo25BFHugoK
+	CzKuqWtkarMsaqT4Ce42U=; b=iB4wS/szosA7HlubTRbQLC7ivjO1HK/aBiUd1n
+	ABDywGoWwA4IW3mXGy5IFj81fDmHFg+1M6XDgijhsh80WqwAeqnKyiu4yGg3E2Cf
+	3Memq506gAKiXR8C3+52r8HoqWcFywja1fjnY9i6afXBcadIH+boxQaMovVnQISp
+	zyaYQfwilaqlyb14oZ6AwI2gru84kzGv0y8+KFRs+b6Uzrcpf0EZUS/kRvsVU2uq
+	MzCwbQk/OqUVvqZl1GEEPAMBkk9Ve9KjJM58jyoMU7zewhn3/Ym0VqXLGiH/yfzK
+	E7K5Z+OoOJeItMbfXv1atcsm24oPhjrIra3sFsEMWq4T/RZQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bf9ecveg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 15:57:16 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FFvFoV019912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 15:57:16 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 15 Jul 2024 08:57:13 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Mukesh
+ Ojha" <quic_mojha@quicinc.com>
+Subject: [PATCH v8 1/2] Firmware: qcom_scm: Refactor code to support multiple dload mode
+Date: Mon, 15 Jul 2024 21:26:54 +0530
+Message-ID: <20240715155655.1811178-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: R3Myj2LezusXOa1AWCXS4XsT1hUeXVLa
+X-Proofpoint-GUID: R3Myj2LezusXOa1AWCXS4XsT1hUeXVLa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_10,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2407150126
 
-On Monday, July 15th, 2024 at 17:46, Michal Rostecki <vadorovsky@gmail.com>=
- wrote:
+Currently on Qualcomm SoC, download_mode is enabled if
+CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is selected or
+passed a boolean value from command line.
 
-> On 14.07.24 19:01, Bj=C3=B6rn Roy Baron wrote:
-> > On Sunday, July 14th, 2024 at 18:02, Michal Rostecki <vadorovsky@gmail.=
-com> wrote:
-> >
-> >> `CStr` became a part of `core` library in Rust 1.75, therefore there i=
-s
-> >> no need to keep the custom implementation.
-> >>
-> >> `core::CStr` behaves generally the same as the removed implementation,
-> >> with the following differences:
-> >>
-> >> - It does not implement `Display` (but implements `Debug`).
-> >> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
-> >>    - It was used only in `DerefMut` implementation for `CString`. This
-> >>      change replaces it with a manual cast to `&mut CStr`.
-> >>    - Otherwise, having such a method is not really desirable. `CStr` i=
-s
-> >>      a reference type
-> >>      or `str` are usually not supposed to be modified.
-> >> - It has `as_ptr()` method instead of `as_char_ptr()`, which also retu=
-rns
-> >>    `*const c_char`.
-> >>
-> >> Rust also introduces C literals (`c""`), so the `c_str` macro is remov=
-ed
-> >> here as well.
-> >>
-> >> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
-> >> ---
-> >>   rust/kernel/error.rs        |   7 +-
-> >>   rust/kernel/init.rs         |   8 +-
-> >>   rust/kernel/kunit.rs        |  16 +-
-> >>   rust/kernel/net/phy.rs      |   2 +-
-> >>   rust/kernel/prelude.rs      |   4 +-
-> >>   rust/kernel/str.rs          | 490 +---------------------------------=
---
-> >>   rust/kernel/sync.rs         |  13 +-
-> >>   rust/kernel/sync/condvar.rs |   5 +-
-> >>   rust/kernel/sync/lock.rs    |   6 +-
-> >>   rust/kernel/workqueue.rs    |  10 +-
-> >>   scripts/rustdoc_test_gen.rs |   4 +-
-> >>   11 files changed, 57 insertions(+), 508 deletions(-)
-> >>
-> >
-> > [snip]
-> >
-> >> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-> >> index 68605b633e73..af0017e56c0e 100644
-> >> --- a/rust/kernel/init.rs
-> >> +++ b/rust/kernel/init.rs
-> >> @@ -46,7 +46,7 @@
-> >>   //! }
-> >>   //!
-> >>   //! let foo =3D pin_init!(Foo {
-> >> -//!     a <- new_mutex!(42, "Foo::a"),
-> >> +//!     a <- new_mutex!(42, c"Foo::a"),
-> >
-> > That we need a CStr here seems a bit of an internal implementation deta=
-il. Maybe
-> > keep accepting a regular string literal and converting it to a CStr int=
-ernally?
-> > If others think what you have here is fine, I don't it mind all that mu=
-ch though.
-> >
->=20
-> The names passed to `new_mutex`, `new_condvar`, `new_spinlock` etc. are
-> immediately passed in the FFI calls (`__mutex_init`,
-> `__init_waitqueue_head`, `__spin_lock_init`) [0][1][2]. In fact, I don't
-> see any internal usage, where using Rust &str would be beneficial. Am I
-> missing something?
->=20
-> Converting a &str to &CStr inside `Mutex::new` or `CondVar::new` would
-> require allocating a new buffer, larger by 1, to include the nul byte.
-> Doing that for every new mutex or condvar seems a bit wasteful to me.
+Refactor the code such that it supports multiple download
+modes and drop CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT config
+instead, give interface to set the download mode from
+module parameter while being backword compatible at the
+same time.
 
-The names passed to `new_mutex!` and such are literals known at
-compile time. This means we can keep adding the nul terminator at
-compile time without allocating any extra buffer. Basically just
-adapting the current implementation of `optional_name!` to produce an
-`core::ffi::&CStr` rather than a `kernel::str::CStr` from a regular
-string literal is enough to avoid having to explicitly use C string
-literals in those macro invocations. This way users don't need to
-know that internally an `&CStr` is used.
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Change in v8: https://lore.kernel.org/lkml/20240109153200.12848-12-quic_mojha@quicinc.com/
+ - Rebased it on top of https://lore.kernel.org/lkml/20240708155332.4056479-1-quic_mojha@quicinc.com/
+ - Sending them separately as they are not dependent on
+   kernel minidump driver as minidump as a download mode
+   exists even without kernel driver and it can be enabled
+   via SCM driver to collect firmware minidump.
+   
 
->=20
-> [0]
-> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
-1465becb45b0/rust/kernel/sync/lock/mutex.rs#L104
-> [1]
-> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
-1465becb45b0/rust/kernel/sync/condvar.rs#L111
-> [2]
-> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af72872859=
-1465becb45b0/rust/kernel/sync/lock/spinlock.rs#L103
+ drivers/firmware/qcom/Kconfig    | 11 ------
+ drivers/firmware/qcom/qcom_scm.c | 60 +++++++++++++++++++++++++++-----
+ 2 files changed, 52 insertions(+), 19 deletions(-)
 
-[snip]
+diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+index 7f6eb4174734..33b282aaec01 100644
+--- a/drivers/firmware/qcom/Kconfig
++++ b/drivers/firmware/qcom/Kconfig
+@@ -40,17 +40,6 @@ config QCOM_TZMEM_MODE_SHMBRIDGE
+ 
+ endchoice
+ 
+-config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
+-	bool "Qualcomm download mode enabled by default"
+-	depends on QCOM_SCM
+-	help
+-	  A device with "download mode" enabled will upon an unexpected
+-	  warm-restart enter a special debug mode that allows the user to
+-	  "download" memory content over USB for offline postmortem analysis.
+-	  The feature can be enabled/disabled on the kernel command line.
+-
+-	  Say Y here to enable "download mode" by default.
+-
+ config QCOM_QSEECOM
+ 	bool "Qualcomm QSEECOM interface driver"
+ 	depends on QCOM_SCM=y
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 0f5ac346bda4..55955f675cd0 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -18,6 +18,7 @@
+ #include <linux/init.h>
+ #include <linux/interconnect.h>
+ #include <linux/interrupt.h>
++#include <linux/kstrtox.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -32,8 +33,7 @@
+ #include "qcom_scm.h"
+ #include "qcom_tzmem.h"
+ 
+-static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+-module_param(download_mode, bool, 0);
++static u32 download_mode;
+ 
+ struct qcom_scm {
+ 	struct device *dev;
+@@ -134,6 +134,11 @@ static const char * const qcom_scm_convention_names[] = {
+ 	[SMC_CONVENTION_LEGACY] = "smc legacy",
+ };
+ 
++static const char * const download_mode_name[] = {
++	[QCOM_DLOAD_NODUMP]	= "off",
++	[QCOM_DLOAD_FULLDUMP]	= "full",
++};
++
+ static struct qcom_scm *__scm;
+ 
+ static int qcom_scm_clk_enable(void)
+@@ -526,17 +531,16 @@ static int qcom_scm_io_rmw(phys_addr_t addr, unsigned int mask, unsigned int val
+ 	return qcom_scm_io_writel(addr, new);
+ }
+ 
+-static void qcom_scm_set_download_mode(bool enable)
++static void qcom_scm_set_download_mode(u32 dload_mode)
+ {
+-	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
+ 	int ret = 0;
+ 
+ 	if (__scm->dload_mode_addr) {
+ 		ret = qcom_scm_io_rmw(__scm->dload_mode_addr, QCOM_DLOAD_MASK,
+-				      FIELD_PREP(QCOM_DLOAD_MASK, val));
++				      FIELD_PREP(QCOM_DLOAD_MASK, dload_mode));
+ 	} else if (__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_BOOT,
+ 						QCOM_SCM_BOOT_SET_DLOAD_MODE)) {
+-		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
++		ret = __qcom_scm_set_dload_mode(__scm->dev, !!dload_mode);
+ 	} else {
+ 		dev_err(__scm->dev,
+ 			"No available mechanism for setting download mode\n");
+@@ -1886,6 +1890,46 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int get_download_mode(char *buffer, const struct kernel_param *kp)
++{
++	if (download_mode >= ARRAY_SIZE(download_mode_name))
++		return sysfs_emit(buffer, "unknown mode\n");
++
++	return sysfs_emit(buffer, "%s\n", download_mode_name[download_mode]);
++}
++
++static int set_download_mode(const char *val, const struct kernel_param *kp)
++{
++	bool tmp;
++	int ret;
++
++	ret = sysfs_match_string(download_mode_name, val);
++	if (ret < 0) {
++		ret = kstrtobool(val, &tmp);
++		if (ret < 0) {
++			pr_err("qcom_scm: err: %d\n", ret);
++			return ret;
++		}
++
++		ret = tmp ? 1 : 0;
++	}
++
++	download_mode = ret;
++	if (__scm)
++		qcom_scm_set_download_mode(download_mode);
++
++	return 0;
++}
++
++static const struct kernel_param_ops download_mode_param_ops = {
++	.get = get_download_mode,
++	.set = set_download_mode,
++};
++
++module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
++MODULE_PARM_DESC(download_mode,
++		"download mode: off/0/N for no dump mode, full/on/1/Y for full dump mode");
++
+ static int qcom_scm_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_tzmem_pool_config pool_config;
+@@ -1950,7 +1994,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	__get_convention();
+ 
+ 	/*
+-	 * If requested enable "download mode", from this point on warmboot
++	 * If "download mode" is requested, from this point on warmboot
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+@@ -2001,7 +2045,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ static void qcom_scm_shutdown(struct platform_device *pdev)
+ {
+ 	/* Clean shutdown, disable download mode to allow normal restart */
+-	qcom_scm_set_download_mode(false);
++	qcom_scm_set_download_mode(QCOM_DLOAD_NODUMP);
+ }
+ 
+ static const struct of_device_id qcom_scm_dt_match[] = {
+-- 
+2.34.1
+
 
