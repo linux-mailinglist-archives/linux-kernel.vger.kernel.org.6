@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-252998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1500E931B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:30:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A55931B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37651F22C81
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:30:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F15CB218CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDA371B52;
-	Mon, 15 Jul 2024 19:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9638E1369A3;
+	Mon, 15 Jul 2024 19:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vERtmmL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pfe/nlZ8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA626AB8;
-	Mon, 15 Jul 2024 19:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4F612B143
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071824; cv=none; b=aBhfZ3O6D3WA+J8ZDHbBUqmBMrhn8IMl7IrDypbUPZxkEx8poXezl0zz/Li+aWlfA99WGtnB56JL8lcjOmMf/DKnF0V6/BQMV2BnsPBsxOGJV+SUvvc/by0uNjRUwo7COgZfyiowVO4O98rCWFGwFyhNvnTGV8pfGjkemtY797M=
+	t=1721071841; cv=none; b=ptV2UFxlItLEaIcCH8drITTKoVvQHSSeGDvrx1zhr92x3Zew/3yvzfAemurV1qWXQvoVe+BXDOhvGmgklxQEoCkfZ6CyTzWD+Vo73mTrxgXc/hzScQhBTxVxP1Riw3TM6JNQsFQA3CSGKgUacpgwkizBK8uSUKeUm2OQTfSNu/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071824; c=relaxed/simple;
-	bh=tGsUF26rthjSBOBNFtY5VI/KJK9SJct6xyHxzeNGIcE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mzseMHk6Fm5WiB98vOs5SzuW1Baxeia23Yb4E3rATIyIi6YQTc0VhowC/NsnWieHvDATeQ6diRSgF0eVo52EiGd7053+Y/Lcw12IQ8u3zgFTC16bYm4YIQ1jZRgSVV/98RpHSE7ksdA4zTrGDWoNqF1bQ2oqiPisiBodAiyBQls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vERtmmL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AEEC4AF0A;
-	Mon, 15 Jul 2024 19:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721071823;
-	bh=tGsUF26rthjSBOBNFtY5VI/KJK9SJct6xyHxzeNGIcE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=vERtmmL1W5S/u1Jf/veSawCHamOAtTMmNGMq1V1sKzAqWs3SE+8G7gPVxQkKheRLX
-	 MJDS+voZwuGaRu4KMYt36b8VCdF3j9V2RSxY7ZN0KEW4+QYDWKI9N58rnaulSrNyoZ
-	 r6tdoyTR6sM84yArcvrbwRQ9JC2GnG9bEqDvkEZSb0qOGEQo9T59bxxVHLZLYvhsMA
-	 kWh07SW1LzwKCS9TQwqRZHBVckNPGaainWN59/4mHIEb1mOfLHVSLAakB4RmLtNppd
-	 epWZmJEru0uTD7FKwuz2Rn7B6hnk/h3v/VX7XmLRmgdFJHqYZfGuwOGC1Jn3+L7ZXb
-	 GwUVZjy8yFocA==
-Message-ID: <7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1721071841; c=relaxed/simple;
+	bh=lgxQTsjT/Zs3WcDsQRcmnmx5cmihBb5Fc0pIMC0leDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nou8cfSJeZsFMdlQIRwisn5z7DG4f3Zt40DhAPU0NfSsiEmH0661Dt8Di8/y/8MwnV55FY2Uot6CsrLcQSpG44X9e97s/yfxq42qOmlIVxMkiodZWMb3RvV+qiWKhkm5kmhNAX1hYC+yBs3NHEU7xFYXxQ14/u35OVlfq2vHhLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pfe/nlZ8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721071839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9Zo9CyMJSxsrZ+IkEYrIUXBuAiAj8cTbqlht6M8S8U=;
+	b=Pfe/nlZ8CU5LSol9FpBR0hTAAj1JPNxHZaIBYb/OTbs17KH/QxViWozafcGCJwF0JG3X/L
+	bPihaF8bFPysnCKL9I+4k2DpaWyhhSQL84d5zy5lJlrTxsrFhRKJFXDhzn5lb218s7N8hZ
+	wnSLRa/RC79usId7fBQikXF2x+LdyUQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-505-ai8VoDUqNFqiyVr_TYnlpA-1; Mon,
+ 15 Jul 2024 15:30:35 -0400
+X-MC-Unique: ai8VoDUqNFqiyVr_TYnlpA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 257771955D4D;
+	Mon, 15 Jul 2024 19:30:32 +0000 (UTC)
+Received: from [10.22.9.29] (unknown [10.22.9.29])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 88CCE1955F40;
+	Mon, 15 Jul 2024 19:30:27 +0000 (UTC)
+Message-ID: <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
+Date: Mon, 15 Jul 2024 15:30:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com> <20240710162526.2341399-8-jbrunet@baylibre.com> <88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org> <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jan Dakinevich <jan.dakinevich@salutedevices.com>, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 15 Jul 2024 12:30:21 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha
+ extension
+To: Alexandre Ghiti <alexghiti@rivosinc.com>, Guo Ren <guoren@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-11-alexghiti@rivosinc.com>
+ <CAJF2gTSG7HzV7mgZpkWLbSBNn2dRv_NaSmCimd+kRdU=EZrmmg@mail.gmail.com>
+ <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Quoting Jerome Brunet (2024-07-11 02:01:16)
-> On Wed 10 Jul 2024 at 15:49, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > Quoting Jerome Brunet (2024-07-10 09:25:16)
-> >> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> >> index e34a10b15593..5cc767d50e8f 100644
-> >> --- a/drivers/reset/reset-meson.c
-> >> +++ b/drivers/reset/reset-meson.c
-> > [...]
-> >> +
-> >> +int devm_meson_rst_aux_register(struct device *dev,
-> >> +                               struct regmap *map,
-> >> +                               const char *adev_name)
-> >> +{
-> >> +       struct meson_reset_adev *raux;
-> >> +       struct auxiliary_device *adev;
-> >> +       int ret;
-> >> +
-> >> +       raux =3D kzalloc(sizeof(*raux), GFP_KERNEL);
-> >> +       if (!raux)
-> >> +               return -ENOMEM;
-> >> +
-> >> +       ret =3D ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
-> >
-> > Do we expect more than one device with the same name? I wonder if the
-> > IDA can be skipped.
->=20
-> I've wondered about that too.
->=20
-> I don't think it is the case right now but I'm not 100% sure.
-> Since I spent time thinking about it, I thought it would just be safer (a=
-nd
-> relatively cheap) to put in and enough annoying debugging the
-> expectation does not hold true.
->=20
-> I don't have a strong opinion on this. What do you prefer ?
+On 7/15/24 03:27, Alexandre Ghiti wrote:
+> Hi Guo,
+>
+> On Sun, Jul 7, 2024 at 4:20 AM Guo Ren <guoren@kernel.org> wrote:
+>> On Wed, Jun 26, 2024 at 9:14 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>>> In order to produce a generic kernel, a user can select
+>>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+>>> spinlock implementation if Zabha is not present.
+>>>
+>>> Note that we can't use alternatives here because the discovery of
+>>> extensions is done too late and we need to start with the qspinlock
+>> That's not true; we treat spinlock as qspinlock at first.
+> That's what I said: we have to use the qspinlock implementation at
+> first *because* we can't discover the extensions soon enough to use
+> the right spinlock implementation before the kernel uses a spinlock.
+> And since the spinlocks are used *before* the discovery of the
+> extensions, we cannot use the current alternative mechanism or we'd
+> need to extend it to add an "initial" value which does not depend on
+> the available extensions.
 
-I don't have a strong opinion either so it's fine to leave it there.
+With qspinlock, the lock remains zero after a lock/unlock sequence. That 
+is not the case with ticket lock. Assuming that all the discovery will 
+be done before SMP boot, the qspinlock slowpath won't be activated and 
+so we don't need the presence of any extension. I believe that is the 
+main reason why qspinlock is used as the initial default and not ticket 
+lock.
 
-> >> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc=
-/amlogic/meson-auxiliary-reset.h
-> >> new file mode 100644
-> >> index 000000000000..8fdb02b18d8c
-> >> --- /dev/null
-> >> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
-> >> @@ -0,0 +1,23 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
-> >> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
-> >> +
-> >> +#include <linux/err.h>
-> >> +
-> >> +struct device;
-> >> +struct regmap;
-> >> +
-> >> +#ifdef CONFIG_RESET_MESON
-> >> +int devm_meson_rst_aux_register(struct device *dev,
-> >> +                               struct regmap *map,
-> >> +                               const char *adev_name);
-> >> +#else
-> >> +static inline int devm_meson_rst_aux_register(struct device *dev,
-> >> +                                             struct regmap *map,
-> >> +                                             const char *adev_name)
-> >> +{
-> >> +       return -EOPNOTSUPP;
-> >
-> > Shouldn't this be 'return 0' so that the clk driver doesn't have to care
-> > about the config?
->=20
-> I don't think the system (in general) would be able function without the =
-reset
-> driver, so the question is rather phylosophical.
->=20
-> Let's say it could, if this returns 0, consumers of the reset controller
-> will defer indefinitely ... which is always a bit more difficult to sort
-> out.
->=20
-> If it returns an error, the problem is pretty obvious, helping people
-> solve it quickly.
->=20
-> Also the actual device we trying to register provides clocks and reset.
-> It is not like the reset is an optional part we don't care about.
->=20
-> On this instance it starts from clock, but it could have been the other
-> way around. Both are equally important.
->=20
-> I'd prefer if it returns an error when the registration can't even start.
->=20
+Cheers,
+Longman
 
-Ok. Fair enough.
 
