@@ -1,162 +1,152 @@
-Return-Path: <linux-kernel+bounces-251999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE5A930CDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45385930CDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431531C20925
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768771C20D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05048BA4D;
-	Mon, 15 Jul 2024 02:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A065C15B;
+	Mon, 15 Jul 2024 02:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aDL5FTnb"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2049.outbound.protection.outlook.com [40.92.41.49])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HiQl0XKB"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282385234;
-	Mon, 15 Jul 2024 02:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721012023; cv=fail; b=Hj039DaRJfw0raXKrrWJozVWTsTjUHYGOxvw9chx3U9723UTLDtCxNzFtSDqWIqbwi94iMVaP5VFXewwkNoXBYOpmh7AkaEYyj9ABlUX5ug40wseN7DccyoFA/Ke1Y4FBCztXQfzPvkHjtW9hDydRu6kqvqoxhGJXset5Zd1N7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721012023; c=relaxed/simple;
-	bh=ZxYTT6pkk0UTMLKEiAXaa77DHMWi5mZmE8c1hQOgOT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WU6Fnh0MRh6sRSQCZQ8RWV9JClIdyFlDRVEVeYsXnV92pyDyt+9rIWWirhfkFhdBzVs82/mBE+a4g1to820wTm4NPA3GAITaFRKkk2S2dn+3ueGJjIJPNTeD5ugWDX1gxLmtEOI1oi/fgGZgqNQOmIKZNJVkRbRP1cXQEi0W9o0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aDL5FTnb; arc=fail smtp.client-ip=40.92.41.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ckSALFit7FRIxdw+z6V1ueNgmKrh/U1j7NpJ6GVJQxldkEG/S9FcZObQET5WCoTpfoQx7n1Ur+Wpl+n+eml4Xh8OHAyeY/DRZZe9p/vf1kARPP4+mpAfkWZ0CBOmdlUMoKRnTJjTfnl7XkVNyD66CdqnsjkRtW28DJzktT9QRAtFqj7NCJBAOngGWAFCIFxP1s1Lcq/y5Wt6WhwJ8dhdNHwzIPbRQcYpXdf+uq3aDKYYFN6X513dR1Uua2xenx/frqAuMOWjP5XoPBO9DDcmxIBlKcOvGG5D2YzE4zuY1ddGIvtVPYPUAhehVwEEMcziYwl9QqgsN1vve0Ga8sLCrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=voGH9Q93LnT6wC3l/YJUvLhD2BkD43YgE1EttNhZzt4=;
- b=OuRe8xVhwgtsF08Z1R2AAJAhzZeeTNa0APrJ1EHDvY/HB17iSyM+dQdJyinpLIe/W+Bm/Q6YiGxkEoWK/4KnPPX3787poNjOzEwxmvjkNQ4iEtaRgtUNI8JU55SnC/4J7Gjj6rivknkaLUocUklKQGibkpzWfyTMOkruY8SwEZLATULc3ERka6RB3+osOHoK1FmL8uVkuKQ8ivrW0kbbto7vskNRntF18Xl6WFHmOQjufNhqOja8ZhawhZq00b3Z0oa3g5biJ+K1gZY5ba3ss2o48chrFtX7LHzjd26OBJihCtZrgVzrQud4yMrn+AVlnrekJqfFqRomXIjNVtN7/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=voGH9Q93LnT6wC3l/YJUvLhD2BkD43YgE1EttNhZzt4=;
- b=aDL5FTnbgosxYzqSCuNqfIDs6CBas+Slhe6ALCGKyzmky9QVwzv3KyEv/ZMQFOPdDPuAfbe44PFQXzner4bri5QPu0dSRkXWiZMFvb++sVwOwwSIBPG4C/ZDZd8D87Etg4rckZprTIHkfPXRqix+PjSnvyAcTyKi+e1a+SGAFMteaxMOSNhPFdAhSXaOkOTVH9hWbJVeCDx+PoK7u+yQqYZH9RO2I34Zqx463+T05ycaFW51b4r7PivGl3B+fFhsAE2R0xlMxtuAFwhaQ6Nym8F1uK0I/yAsGzUG2rjCTPuq8dDUrJvYvZOgzgZMBgCvgtsyCJDvd6SrKNR6J2Wglw==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by BY1PR20MB7331.namprd20.prod.outlook.com (2603:10b6:a03:4aa::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Mon, 15 Jul
- 2024 02:53:38 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
- 02:53:38 +0000
-Date: Mon, 15 Jul 2024 10:53:29 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Yuntao Dai <d1581209858@live.com>, jassisinghbrar@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	unicorn_wang@outlook.com, inochiama@outlook.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/3]  riscv: dts: add mailbox for Sophgo cv18x SoCs
-Message-ID:
- <IA1PR20MB4953A004BE0E8A08DA19F3D5BBA12@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <SYBP282MB223825D5903777B937A8A377C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
- <SYBP282MB2238CE3A016F21B632E61219C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SYBP282MB2238CE3A016F21B632E61219C4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
-X-TMN: [pqc0rj24XLurjgaDBj/2JRFEWmm7i0otZw9NNyBemKo=]
-X-ClientProxiedBy: TYCP286CA0204.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385::8) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <lz2njdjvrr6nlwzdxknljkeokpz63czb4yg2db4jw3j3d3v5dn@wyamwlq6txy5>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49CFEAD5;
+	Mon, 15 Jul 2024 02:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721012037; cv=none; b=OZQ/v+iL2kfkG8UqvkGQ6GWibERfhRUnKKQpOsGTWocbLX103ZYnX2kNL6s3fP47uvOr0B/wvVaFgFTiG5ork8shXGLinkw2dHXJ1MNUXFvuNizmPq/KieUTjmU/JjwdIpw+YtAJ8rdtdIPH7hnAAbkJb51PYPqUbji2ViAsJLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721012037; c=relaxed/simple;
+	bh=aQiqzrVZ3PHS2MYW5gjFRHJupDz2inDkWvjjBjUDgog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecKk63+d0IVSB+q7wtLnlla+3WorNLXqKYl0nkK2fPQtCC7RBD2gdggmnXkc1FdKEoimY17t1TI74qjUccto0vx/nmaCIG3T16IvcbumHbokB3bMocyyAMtgFb12hk9gnYnMmA/90ePHwkxofPIzv6++EgcN+rjfKgeRVRlQKME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HiQl0XKB; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1721012026; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=HVInFwlXXhbbzZQjxVtud9mzYHkhIRQyqI9B0uOtKBg=;
+	b=HiQl0XKBeqWk/yz3cbs+xXXMqKDBA9eNUrYa/DQmwTorDxRibhuLm5KnnYnJz1NhClNamakLV4YMSI4QdOVoyQKrxT44Stzo2XTmDaQsgGI/QaTkp4lVwV7YizidN/OJdGpYlabpQWWaRxwUYzzdkAJ0LRHgxxOISM/izb80ONM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WAUsDnm_1721012024;
+Received: from 30.221.101.244(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WAUsDnm_1721012024)
+          by smtp.aliyun-inc.com;
+          Mon, 15 Jul 2024 10:53:45 +0800
+Message-ID: <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+Date: Mon, 15 Jul 2024 10:53:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|BY1PR20MB7331:EE_
-X-MS-Office365-Filtering-Correlation-Id: 314936db-3d22-499d-e70e-08dca47953bc
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|461199028|19110799003|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	gv3+InkOPpsOwHAOIOH2iisvDIjacfMwNGutMR4puBMVQ1uYPOWxbVG99x4c/r4s1qfQlEZbi9NJ42bYh5coqUMUVYrrJP8FXR1Od0j2U/OfLOEWYpjR3RX1782sRK+SRM6DGFbmGvKCniJ12yep1HMBmkeNAZm0MnMzTOB//9C5TeSE21BU67kYnOQzJABimrs/KQrsJ5Qln+78Tq7oFmsTjxV3K1kkbZmQxThrZHKS/mPJQLMw70pUKBJpuzA2JTLCSI0z7PVkPhhs+Vqe/dAw+Ji+cLXQyD+AufutcpTQ+gtrXrkMXPFZkV99zuXjKunwFsWdn2aWhsG+oLuYcvG6iLqfyyILim7JyqYMNs1yxXLZDyh8xfdpjQrBXyezLx+59sYsJHscYZ9z3H7s+jFgfpktx6ebqmgOhDAGlSYCSAoyKHy7bFa/p21Fhniftt6HEtUahnILijhVc9kjiqudGltoDOF2RD1VFLkLYted0CdqRnIi1oL7KwJ6h+Np2MEqEGEDWt28M01KXXYTpOcAc8HCK/dvpAV22UKZXR1a3eUpeHxyAKl19t8uInjs6+uVBQ/HjLc2n52Ps9tC3QzXX1Hkj9Q9p0xYcSVeymSwwnSvKhvungDGpbla0tOoW31B6IxI98Py/poqu6LgRHzNcke9qnp5muJRU95MtCU3HnmhkiKbYDk/zKLjRi48
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MFywK72yOjBUwQcBjfvP0MGSWDW2PKK6dUkr5Xy0DNtxj8rWtLvG7Dqegp//?=
- =?us-ascii?Q?7HLj26MBpIJaaGlGA4gZ/eIPBh5+6SRHSBOnwDzMQWhLxBoalRTvsRw3T/9l?=
- =?us-ascii?Q?whoF9372VDAYknBJGsYkbH1NdE/gDVWrNG85yNbgUaHi+Axqm0am+dLctCdv?=
- =?us-ascii?Q?6Ar4RHSGeIWSqnux8CWUgG/6PlmCTHqg3ezJ2K6GGqpwD2BZ3JAbbhEtMOWs?=
- =?us-ascii?Q?l8AwNJYZUjzBk40Lqp7hwZK3rKaECzvW9d9qnvGv0qVHASyZR0V5rW//gPI+?=
- =?us-ascii?Q?dnUPDoSGnNkJidvbkBZVioUI6nL5VaPMINaZvUDTke5eboPdMAFbLwGWO7EN?=
- =?us-ascii?Q?XypxLh9UQ5N3zqbx8qnDgI4iCDKsADB965sTApaHhDgfLOd00HHdoDjb4R5W?=
- =?us-ascii?Q?uyomsH00y2KiD793xB/tFwdyK9L7iyZWDyjrGk4M2PG9Uxlsvo12NNNQpI3r?=
- =?us-ascii?Q?Na05+nTIQXmpStej02Ydps51a2eQ8DoTNucfxSJ1thct2iahrkEtGcVG/UBG?=
- =?us-ascii?Q?e8euSJD0cJRVMPAnt3/op2hPDIqe3rnYSgfCv/r3ZsTQRmzpOBTq3QCbjt7X?=
- =?us-ascii?Q?qZGHbFpy0Anz/v3OUCbiCDvBO1wa6DJiHTyvAWPUf+Jiqc8mWrtvTnlTq+5L?=
- =?us-ascii?Q?hg26c6XG7gX71fEBTtKAiiCCxi0QE8qclz24skENJMPnUAnQu/q1IILV9xFX?=
- =?us-ascii?Q?GtY0ExCm9/Lo7I4HBckT6rEJJ3pfodXEU4jL/k0JCYLNLlIU90SO73SKpHVB?=
- =?us-ascii?Q?mnT6PweK/82B8AzzKKjp8SRk6tkMKN96E5kgMalgp0Rzvxesxokv/4rSmKlM?=
- =?us-ascii?Q?/PwTDTw9aLbmVz5xlPHcyC9SSZP3upOPwWYTgVRj5Llu+XNxxH7h6CG72J/p?=
- =?us-ascii?Q?/V8hzJCI+XhkWimx4dyoebzLT+8KSu+jyePwuLRyhJdL4HBHVBbqOw7snTBN?=
- =?us-ascii?Q?vuzFy293RKLzHIVv2ou023ofN8tFpzYLWYmnrZmTslH9PiYXWBasSr4/XVV+?=
- =?us-ascii?Q?wNADvW9Me9ecDy3KATmn8CS05uuC7v/C7T2W5l2nEi8bflf6cO8i0B0daKQv?=
- =?us-ascii?Q?eW6WtTiRJRhVH6/8hwoGEW6/HOtJ3L9VGVA02uM/vyuljtxFKGl5fhHuy0fZ?=
- =?us-ascii?Q?wAtvLnlp15Fd5kQGmoeUHVwf61rBw0YL7WGwWqGnib/feiyQ2n6VuEc7NbLY?=
- =?us-ascii?Q?ajWhfWEK+BtaIhOt0wjGIlM0BB2/NkugOaDSVRZb4MM6I/vBDwA9rLzZl260?=
- =?us-ascii?Q?LODmhKWm43GFhGBwD10X?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 314936db-3d22-499d-e70e-08dca47953bc
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 02:53:38.4485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR20MB7331
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
+To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+ <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+Content-Language: en-US
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 15, 2024 at 12:36:46AM GMT, Yuntao Dai wrote:
-> Add mailbox node for Sophgo cv18x SoCs
+
+
+On 2024/7/11 23:57, Wenjia Zhang wrote:
 > 
-> Signed-off-by: Yuntao Dai <d1581209858@live.com>
-> ---
->  arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
 > 
-> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> index 891932ae4..1c7035737 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> @@ -310,5 +310,14 @@
->  			reg = <0x74000000 0x10000>;
->  			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
->  		};
-> +
-> +		mailbox: mailbox@1900000 {
-> +			compatible = "sophgo,cv1800-mailbox";
-> +			reg = <0x01900000 0x1000>;
-> +			interrupts = <101 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "mailbox";
-
-> +			interrupt-parent = <&plic>;
-
-interrupt-parent is not needed, which is already set globally.
-
-> +			#mbox-cells = <2>;
-> +		};
->  	};
->  };
-> -- 
-> 2.17.1
+> On 09.07.24 18:05, Guangguan Wang wrote:
+>> When sending large size data in TCP, the data will be split into
+>> several segments(packets) to transfer due to MTU config. And in
+>> the receive side, application can be woken up to recv data every
+>> packet arrived, the data transmission and data recv copy are
+>> pipelined.
+>>
+>> But for SMC-R, it will transmit as many data as possible in one
+>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+>> size, the application only be woken up to recv data when all RDMA
+>> WRITE data and the followed CDC msg arrived. The data transmission
+>> and data recv copy are sequential.
+>>
+>> This patch introduce autosplit for SMC, which can automatic split
+>> data into several segments and every segment transmitted by one RDMA
+>> WRITE when sending large size data in SMC. Because of the split, the
+>> data transmission and data send copy can be pipelined in the send side,
+>> and the data transmission and data recv copy can be pipelined in the
+>> receive side. Thus autosplit helps improving latency performance when
+>> sending large size data. The autosplit also works for SMC-D.
+>>
+>> This patch also introduce a sysctl names autosplit_size for configure
+>> the max size of the split segment, whose default value is 128KiB
+>> (128KiB perform best in my environment).
+>>
+>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+>> for SMC-D with smc-loopback.
+>>
+>> Test command:
+>> sockperf sr --tcp -m 1048575
+>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+>>
+>> Test config:
+>> sysctl -w net.smc.wmem=524288
+>> sysctl -w net.smc.rmem=524288
+>>
+>> Test results:
+>> SMC-R
+>> msgsize   noautosplit    autosplit
+>> 128KB       55.546 us     55.763 us
+>> 256KB       83.537 us     69.743 us (17% improve)
+>> 512KB      138.306 us    100.313 us (28% improve)
+>> 1MB        273.702 us    197.222 us (28% improve)
+>>
+>> SMC-D with smc-loopback
+>> msgsize   noautosplit    autosplit
+>> 128KB       14.672 us     14.690 us
+>> 256KB       28.277 us     23.958 us (15% improve)
+>> 512KB       63.047 us     45.339 us (28% improve)
+>> 1MB        129.306 us     87.278 us (32% improve)
+>>
+>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>> ---
+>>   Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+>>   include/net/netns/smc.h                 |  1 +
+>>   net/smc/smc_sysctl.c                    | 12 ++++++++++++
+>>   net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+>>   4 files changed, 42 insertions(+), 1 deletion(-)
+>>
 > 
+> Hi Guangguan,
+> 
+> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
+> 
+
+Did you mean too many partial stores will result in some issue? What's the issue?
+
+
+> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
+
+Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
+For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
+
+Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
+
+Thanks,
+Guangguan Wang
+
+> 
+> Thanks,
+> Wenjia
 
