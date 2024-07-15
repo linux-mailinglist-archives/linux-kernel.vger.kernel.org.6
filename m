@@ -1,329 +1,156 @@
-Return-Path: <linux-kernel+bounces-252719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AE5931747
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:01:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A304593174A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01B291C21818
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:01:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD88B2269D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8078F18F2C5;
-	Mon, 15 Jul 2024 15:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAECD18EFCE;
+	Mon, 15 Jul 2024 15:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fiIqvQe7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OQGasQv2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968E02AD31
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF79186E5A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055654; cv=none; b=U2Gu2TsXonrjLrsoqfUuCkrQf0gIwWEimIf1ZS+YdW0GeANrxY89ZEzDv4CbxZMIZShajhlYbJG0Xl62p9+Aa+1iJdEf01ufzBhpkLa84tTbz3IJUwpBDOznPNEOhbOSVbTgwIWBEYhoaHeR6dQ7AwOQuBZdSV+lhJxQahOyOb4=
+	t=1721055676; cv=none; b=h/zRRuQ2bYG5KXj7j5T6c3QCiOY5uXC0wYqevdqljsYSAJTqXTKEOpIW9DrXZ/o+J/4+b1nZ0QTMkzmKl/zuhbaIqkXwYKHM+ZeGx8RBtPK0ADgjuBR/jmoSkrnGX5thX3K4BVAmrVZXNKc4yTAmhiUETt1LY4dS7Fv3aw0vYG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055654; c=relaxed/simple;
-	bh=j325IHElo6ZuouPg44z5dlzCsgdNWRS3ROXO9BZUDDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=swIE13EkkMyXsWF+MpewaFX4rAkzyykl0n+yUe/3XyAF8+gG1uX80nj2lOZpnJ4Ufjs64Z5ajVCvby2rBv3ud6t0XkjYOlX+JizZY2nPGmXEmvzAYn+ARoMH9xBocsTgrtfb/gh6MURW88bLnbBy2ibAk+cMSFLDm/vZxMxdVJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fiIqvQe7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721055651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tb4l87oDxCeQh2eMPiDUUXOzH1cMP9tAKpWCk95Hjis=;
-	b=fiIqvQe7aH7hwsRzqRPbd5JVdmcuZfLkrE+JrLP8g/ZnkqvZDhXpIW66WOSib+IhZyUP7k
-	5izWeUmldbzK62KZ9XeVSFW3ARJnytSHgMnQ9FP0qCdd06yxPP60OgoqsomyK/kYVwXUgs
-	PvLNBSMjKTtVaJGJ7l9JMYLxv/iQyKA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-dNr3_IDpMXi3AMx9JZ2hiA-1; Mon,
- 15 Jul 2024 11:00:48 -0400
-X-MC-Unique: dNr3_IDpMXi3AMx9JZ2hiA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	s=arc-20240116; t=1721055676; c=relaxed/simple;
+	bh=PAJw2z/rBfFVTIAYPdyTmcMPTASE55qK5YWq0VRv6Z0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=biQGqmdzaiG/jG9ZL5JVtkE3vJFGPkL+hygt5/pmLAMCSibomb6BhbncT3cePSkvgh7heiJ54CvWvuaulSgs77AECW9/mVp7+SOxl6pcyOOHW783zSNf08jLe1Nx/dTDLIwzaAnqIGsuMayBLyoeOwU3G9DVIPjP3Jp+agIEBik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OQGasQv2 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7FBCE40E021B;
+	Mon, 15 Jul 2024 15:01:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qiuTeiOhTSNK; Mon, 15 Jul 2024 15:01:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721055664; bh=NzCEpxhvXrtGwt9mvTVYL1yK9Edo2I3lN8omoaYbn6c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OQGasQv2+a+gv2V2jv5BjnxhyU0cl6VinVM4g8Djlq+51esgzYlgl4u3TT7dgZ7uV
+	 ECIhNl1ITbpUVMvUj1vUFlPcXoZFY/LHTA8Uaf6mAixGg890SgaHrVBluaunTqABJN
+	 TFghDo3TU5BXNo0XnD1zHECR8oVeilHuh2ADvreyGq13c1z7mtGs1kRF82anoL+7Qz
+	 NUzKDS5zCcbjzwA8XUkZJwVciPaPv/uMzgoBPOD+GGbXPuR4xcilGNOI6qZNqDVaLa
+	 XoQ2nI8kOxCymfql3JjE/9A7GwxHTnUm0V18HLlB72LjuRbWJcLV8n1IhDWwIsBkkH
+	 Yumdn6+JB6N1DN5wbW5IdY+L3e1fdorFvr3SSrVvuPBwMZes3ohDVN60UZTsXhhAYS
+	 McLofKHD1gHMoTVLjo59Hl3zM3hMYHmm2KM4UIZ3ZE/skbeT9/DtsgpEXl2SxQbJhn
+	 96jdUwAl9SnasbzxuZjfCz1HD6bG8escfHtIxktx5pJDxiw7lbJuS16hFJ7vadUCC9
+	 9aZnzYpuWgrt1qasi9x/vMISAQnuqR7WQWuNrDEA9TxY2mQdnIK4CcvGHHbtzfA/Fl
+	 VJyMHiedShf7QnhAqqL87TaAn/4q9haFqGbf/9W3LC9Yr0qplaOByoi8DKmZd309+x
+	 8plACWOEIpRrMzAx4uUTBWes=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83E751955F43;
-	Mon, 15 Jul 2024 15:00:44 +0000 (UTC)
-Received: from llong.com (unknown [10.22.9.29])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B268A1955D42;
-	Mon, 15 Jul 2024 15:00:41 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH-cgroup v7] cgroup: Show # of subsystem CSSes in cgroup.stat
-Date: Mon, 15 Jul 2024 11:00:34 -0400
-Message-Id: <20240715150034.2583772-1-longman@redhat.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 47C1440E0192;
+	Mon, 15 Jul 2024 15:01:01 +0000 (UTC)
+Date: Mon, 15 Jul 2024 17:00:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/misc for v6.11-rc1
+Message-ID: <20240715150055.GAZpU5p9TOAJSyW3gQ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-help manage different structures in various cgroup subsystems by being
-an embedded element inside a larger structure like cpuset or mem_cgroup.
+Hi Linus,
 
-The /proc/cgroups file shows the number of cgroups for each of the
-subsystems.  With cgroup v1, the number of CSSes is the same as the
-number of cgroups.  That is not the case anymore with cgroup v2. The
-/proc/cgroups file cannot show the actual number of CSSes for the
-subsystems that are bound to cgroup v2.
+please pull the x86/misc lineup for v6.11-rc1.
 
-So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-we can't tell by looking at /proc/cgroups which cgroup subsystems may
-be responsible.
+Thx.
 
-As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-cgroup.stat file is now being extended to show the number of live and
-dying CSSes associated with all the non-inhibited cgroup subsystems that
-have been bound to cgroup v2. The number includes CSSes in the current
-cgroup as well as in all the descendants underneath it.  This will help
-us pinpoint which subsystems are responsible for the increasing number
-of dying (nr_dying_descendants) cgroups.
-
-The CSSes dying counts are stored in the cgroup structure itself
-instead of inside the CSS as suggested by Johannes. This will allow
-us to accurately track dying counts of cgroup subsystems that have
-recently been disabled in a cgroup. It is now possible that a zero
-subsystem number is coupled with a non-zero dying subsystem number.
-
-The cgroup-v2.rst file is updated to discuss this new behavior.
-
-With this patch applied, a sample output from root cgroup.stat file
-was shown below.
-
-	nr_descendants 56
-	nr_subsys_cpuset 1
-	nr_subsys_cpu 43
-	nr_subsys_io 43
-	nr_subsys_memory 56
-	nr_subsys_perf_event 57
-	nr_subsys_hugetlb 1
-	nr_subsys_pids 56
-	nr_subsys_rdma 1
-	nr_subsys_misc 1
-	nr_dying_descendants 30
-	nr_dying_subsys_cpuset 0
-	nr_dying_subsys_cpu 0
-	nr_dying_subsys_io 0
-	nr_dying_subsys_memory 30
-	nr_dying_subsys_perf_event 0
-	nr_dying_subsys_hugetlb 0
-	nr_dying_subsys_pids 0
-	nr_dying_subsys_rdma 0
-	nr_dying_subsys_misc 0
-
-Another sample output from system.slice/cgroup.stat was:
-
-	nr_descendants 34
-	nr_subsys_cpuset 0
-	nr_subsys_cpu 32
-	nr_subsys_io 32
-	nr_subsys_memory 34
-	nr_subsys_perf_event 35
-	nr_subsys_hugetlb 0
-	nr_subsys_pids 34
-	nr_subsys_rdma 0
-	nr_subsys_misc 0
-	nr_dying_descendants 30
-	nr_dying_subsys_cpuset 0
-	nr_dying_subsys_cpu 0
-	nr_dying_subsys_io 0
-	nr_dying_subsys_memory 30
-	nr_dying_subsys_perf_event 0
-	nr_dying_subsys_hugetlb 0
-	nr_dying_subsys_pids 0
-	nr_dying_subsys_rdma 0
-	nr_dying_subsys_misc 0
-
-Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 12 +++++-
- include/linux/cgroup-defs.h             | 14 +++++++
- kernel/cgroup/cgroup.c                  | 55 ++++++++++++++++++++++++-
- 3 files changed, 77 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 52763d6b2919..abf3adad04bd 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -981,6 +981,14 @@ All cgroup core files are prefixed with "cgroup."
- 		A dying cgroup can consume system resources not exceeding
- 		limits, which were active at the moment of cgroup deletion.
- 
-+	  nr_subsys_<cgroup_subsys>
-+		Total number of live cgroup subsystems (e.g memory
-+		cgroup) at and beneath the current cgroup.
-+
-+	  nr_dying_subsys_<cgroup_subsys>
-+		Total number of dying cgroup subsystems (e.g. memory
-+		cgroup) at and beneath the current cgroup.
-+
-   cgroup.freeze
- 	A read-write single value file which exists on non-root cgroups.
- 	Allowed values are "0" and "1". The default is "0".
-@@ -2930,8 +2938,8 @@ Deprecated v1 Core Features
- 
- - "cgroup.clone_children" is removed.
- 
--- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
--  at the root instead.
-+- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
-+  "cgroup.stat" files at the root instead.
- 
- 
- Issues with v1 and Rationales for v2
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index b36690ca0d3f..3cb049f104f6 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -210,6 +210,14 @@ struct cgroup_subsys_state {
- 	 * fields of the containing structure.
- 	 */
- 	struct cgroup_subsys_state *parent;
-+
-+	/*
-+	 * Keep track of total numbers of visible descendant CSSes.
-+	 * The total number of dying CSSes is tracked in
-+	 * css->cgroup->nr_dying_subsys[ssid].
-+	 * Protected by cgroup_mutex.
-+	 */
-+	int nr_descendants;
- };
- 
- /*
-@@ -470,6 +478,12 @@ struct cgroup {
- 	/* Private pointers for each registered subsystem */
- 	struct cgroup_subsys_state __rcu *subsys[CGROUP_SUBSYS_COUNT];
- 
-+	/*
-+	 * Keep track of total number of dying CSSes at and below this cgroup.
-+	 * Protected by cgroup_mutex.
-+	 */
-+	int nr_dying_subsys[CGROUP_SUBSYS_COUNT];
-+
- 	struct cgroup_root *root;
- 
- 	/*
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index c8e4b62b436a..601600afdd20 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3669,12 +3669,40 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
- static int cgroup_stat_show(struct seq_file *seq, void *v)
- {
- 	struct cgroup *cgroup = seq_css(seq)->cgroup;
-+	struct cgroup_subsys_state *css;
-+	int dying_cnt[CGROUP_SUBSYS_COUNT];
-+	int ssid;
- 
- 	seq_printf(seq, "nr_descendants %d\n",
- 		   cgroup->nr_descendants);
-+
-+	/*
-+	 * Show the number of live and dying csses associated with each of
-+	 * non-inhibited cgroup subsystems that is bound to cgroup v2.
-+	 *
-+	 * Without proper lock protection, racing is possible. So the
-+	 * numbers may not be consistent when that happens.
-+	 */
-+	rcu_read_lock();
-+	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
-+		dying_cnt[ssid] = -1;
-+		if ((BIT(ssid) & cgrp_dfl_inhibit_ss_mask) ||
-+		    (cgroup_subsys[ssid]->root !=  &cgrp_dfl_root))
-+			continue;
-+		css = rcu_dereference_raw(cgroup->subsys[ssid]);
-+		dying_cnt[ssid] = cgroup->nr_dying_subsys[ssid];
-+		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
-+			   css ? (css->nr_descendants + 1) : 0);
-+	}
-+
- 	seq_printf(seq, "nr_dying_descendants %d\n",
- 		   cgroup->nr_dying_descendants);
--
-+	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
-+		if (dying_cnt[ssid] >= 0)
-+			seq_printf(seq, "nr_dying_subsys_%s %d\n",
-+				   cgroup_subsys[ssid]->name, dying_cnt[ssid]);
-+	}
-+	rcu_read_unlock();
- 	return 0;
- }
- 
-@@ -5424,6 +5452,8 @@ static void css_release_work_fn(struct work_struct *work)
- 	list_del_rcu(&css->sibling);
- 
- 	if (ss) {
-+		struct cgroup *parent_cgrp;
-+
- 		/* css release path */
- 		if (!list_empty(&css->rstat_css_node)) {
- 			cgroup_rstat_flush(cgrp);
-@@ -5433,6 +5463,14 @@ static void css_release_work_fn(struct work_struct *work)
- 		cgroup_idr_replace(&ss->css_idr, NULL, css->id);
- 		if (ss->css_released)
- 			ss->css_released(css);
-+
-+		cgrp->nr_dying_subsys[ss->id]--;
-+		WARN_ON_ONCE(css->nr_descendants || cgrp->nr_dying_subsys[ss->id]);
-+		parent_cgrp = cgroup_parent(cgrp);
-+		while (parent_cgrp) {
-+			parent_cgrp->nr_dying_subsys[ss->id]--;
-+			parent_cgrp = cgroup_parent(parent_cgrp);
-+		}
- 	} else {
- 		struct cgroup *tcgrp;
- 
-@@ -5517,8 +5555,11 @@ static int online_css(struct cgroup_subsys_state *css)
- 		rcu_assign_pointer(css->cgroup->subsys[ss->id], css);
- 
- 		atomic_inc(&css->online_cnt);
--		if (css->parent)
-+		if (css->parent) {
- 			atomic_inc(&css->parent->online_cnt);
-+			while ((css = css->parent))
-+				css->nr_descendants++;
-+		}
- 	}
- 	return ret;
- }
-@@ -5540,6 +5581,16 @@ static void offline_css(struct cgroup_subsys_state *css)
- 	RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
- 
- 	wake_up_all(&css->cgroup->offline_waitq);
-+
-+	css->cgroup->nr_dying_subsys[ss->id]++;
-+	/*
-+	 * Parent css and cgroup cannot be freed until after the freeing
-+	 * of child css, see css_free_rwork_fn().
-+	 */
-+	while ((css = css->parent)) {
-+		css->nr_descendants--;
-+		css->cgroup->nr_dying_subsys[ss->id]++;
-+	}
- }
- 
- /**
--- 
-2.39.3
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa6=
+70:
 
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_misc_for=
+_v6.11_rc1
+
+for you to fetch changes up to bf6ab33d8487f5e2a0998ce75286eae65bb0a6d6:
+
+  x86/kmsan: Fix hook for unaligned accesses (2024-06-25 11:37:21 +0200)
+
+----------------------------------------------------------------
+ - Make error checking of AMD SMN accesses more robust in the callers as
+   they're the only ones who can interpret the results properly
+
+ - The usual cleanups and fixes, left and right
+
+----------------------------------------------------------------
+Brian Johannesmeyer (1):
+      x86/kmsan: Fix hook for unaligned accesses
+
+Christian Heusel (1):
+      tools/x86/kcpuid: Add missing dir via Makefile
+
+Ilpo J=C3=A4rvinen (4):
+      x86/of: Return consistent error type from x86_of_pci_irq_enable()
+      x86/pci/intel_mid_pci: Fix PCIBIOS_* return code handling
+      x86/pci/xen: Fix PCIBIOS_* return code handling
+      x86/platform/iosf_mbi: Convert PCIBIOS_* return codes to errnos
+
+Marcin Juszkiewicz (1):
+      x86, arm: Add missing license tag to syscall tables files
+
+Yazen Ghannam (8):
+      EDAC/amd64: Remove unused register accesses
+      EDAC/amd64: Check return value of amd_smn_read()
+      hwmon: (k10temp) Check return value of amd_smn_read()
+      x86/amd_nb: Enhance SMN access error checking
+      hwmon: (k10temp) Define a helper function to read CCD temperature
+      hwmon: (k10temp) Reduce k10temp_get_ccd_support() parameters
+      hwmon: (k10temp) Remove unused HAVE_TDIE() macro
+      hwmon: (k10temp) Rename _data variable
+
+ arch/arm/tools/syscall.tbl             |  1 +
+ arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ arch/x86/include/asm/amd_nb.h          |  4 +-
+ arch/x86/kernel/amd_nb.c               | 44 +++++++++++++++++++---
+ arch/x86/kernel/devicetree.c           |  2 +-
+ arch/x86/lib/iomem.c                   |  5 ++-
+ arch/x86/pci/intel_mid_pci.c           |  4 +-
+ arch/x86/pci/xen.c                     |  4 +-
+ arch/x86/platform/intel/iosf_mbi.c     |  4 +-
+ drivers/edac/amd64_edac.c              | 69 +++++++++++++++++++---------=
+------
+ drivers/edac/amd64_edac.h              |  4 --
+ drivers/hwmon/k10temp.c                | 62 +++++++++++++++++++---------=
+--
+ tools/arch/x86/kcpuid/Makefile         |  4 +-
+ 14 files changed, 136 insertions(+), 73 deletions(-)
+
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
