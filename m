@@ -1,253 +1,118 @@
-Return-Path: <linux-kernel+bounces-252643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A443931646
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0B9931649
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8A92824DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77DB1F22604
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2938B18E774;
-	Mon, 15 Jul 2024 14:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7290F18EA7E;
+	Mon, 15 Jul 2024 14:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QICMrA05"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frlfZ05W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E3C18C35B
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518918EA67;
+	Mon, 15 Jul 2024 14:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721052031; cv=none; b=tiSxSaOkG0he7HkNH2qsZgY0Ynx1LHFHLoZXu2sxFdigYDPZ/X3Y5p1VQNskgdZIqKDLFvrlIrEs6aNKkSLFqII8VYFbX7Nzkd8Wif6+rdRbpoXPYFA0G5x6D6xnxfVJcJmtIxh01UF/SktTj64EII2ggT6L+eV2UQxOUzakhcg=
+	t=1721052033; cv=none; b=Xz/ebqMZcDcckXPscM7trLzDXHXgSYLXouJ04rwffe3cuFl0CqzuaP6/bEJ5op9dzKOkQxUA2idsqRP6JWjB3Klm0dw36OXIGHuM7YGKvHWNf0sv5Yro24Xhoc2YZDgV1d3tgnfM7ZA9R5iST+4MLmN7jnKspUTcEqI5XnEVPY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721052031; c=relaxed/simple;
-	bh=RgfB9i51/BJ2f/wvWX+DMEe+gK+qdqWx8xFVzEBeYjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N4RIjTaQqLC/yEgngr3iE/9f+l0XThvRuC8EX8rsuzzhcw89GP3ScCJUowRXEBDn/pfQA22JFKCzWJJXyOhoJbHsr0xGn2+iuw+FNZJKNlCc6J1ZCZrfJYwF7d4AOB7ctUC3h48HsbxU+KnZz/2EDzsaxYgpJTofuDhaosIwoYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QICMrA05; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721052027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GVYJ4ne2AQmg1BRrD/nHV6rBCTnsNSLJ9SYDD3aJK7U=;
-	b=QICMrA05TpCZe6gvwiCOj2GZnAkpeG0JTtIyx2hOyAKJ1uN4HZ4w/aSEmzPkxVdFjgbm1u
-	2qFxRYQP1LZxhFdYgYLW9V73jsK/gdmrhgtry75mWgboHehXgz3zOet+Tz1clZsvkLeMAR
-	RTQtvZ6Coh6NfPvWZXO/xYOiBvvKeb8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-3-mbyqor8aNMOa0P2D-TnHjQ-1; Mon,
- 15 Jul 2024 10:00:23 -0400
-X-MC-Unique: mbyqor8aNMOa0P2D-TnHjQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75D031955D4C;
-	Mon, 15 Jul 2024 14:00:20 +0000 (UTC)
-Received: from [10.22.9.29] (unknown [10.22.9.29])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 078DA1955D42;
-	Mon, 15 Jul 2024 14:00:17 +0000 (UTC)
-Message-ID: <3061f280-5a4a-4ff6-8b90-ab667a7e8e48@redhat.com>
-Date: Mon, 15 Jul 2024 10:00:17 -0400
+	s=arc-20240116; t=1721052033; c=relaxed/simple;
+	bh=UUQEoGL74YEYHEghcUe6a7oFl/lf5mys5Ep/k71xbzU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rOaV07waQvn+OwRAYkamo7eydWqeaPSK1G1gGCCSFEZr4JGe+Ull/412u5fj+aHm3leodiIDSYwto5LO3/2K3s5i4IQoylU1N+U+hP2P9yiEqlkv3ESrek5McAhgQTHNHoZza+WMYyS4lHfzmaG/a4w+Sx9nX2QZ9YXSLyxe9i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frlfZ05W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44855C4AF10;
+	Mon, 15 Jul 2024 14:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721052033;
+	bh=UUQEoGL74YEYHEghcUe6a7oFl/lf5mys5Ep/k71xbzU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=frlfZ05WqE+IUYKNlDgc46bj8zeCEt7Awni0a+iEIZmdlMWR3DRNdBwyHNhPSVOHc
+	 m4HFQITj9rnSEUMqDb5OpK6tnRkntiAy05bo160IBoSaeEg9x9V9H0KJMg0veA235u
+	 4CRqdmgCxd0E0pPvtG3vbW4Pl7sWlALz1UyYXoft5IuPmiOTZtYwOF18Slr3my43uf
+	 PyblnFF/ibKiIiufeWekeFTbJ4IbIckhTox1PAdcHkQACnV7HYB8QOxI3wwmRrPmgc
+	 OJd+/SzTbBk8rmUKN/o0UGCxAxePaaEIF/Xtes6NOKou+Ev0N0zQYl0VxJYoVgKrny
+	 nf+YMpwdST60g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 302E3C4332C;
+	Mon, 15 Jul 2024 14:00:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-patch v6] cgroup: Show # of subsystem CSSes in cgroup.stat
-To: Kamalesh Babulal <kamalesh.babulal@oracle.com>, Tejun Heo
- <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
-References: <20240712232959.2494935-1-longman@redhat.com>
- <8481d9d6-04dd-4c33-ad38-fc8ca1667d16@oracle.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <8481d9d6-04dd-4c33-ad38-fc8ca1667d16@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v4 00/12] net: dsa: vsc73xx: Implement VLAN
+ operations
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172105203319.25785.8590538549374697996.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 14:00:33 +0000
+References: <20240713211620.1125910-1-paweldembicki@gmail.com>
+In-Reply-To: <20240713211620.1125910-1-paweldembicki@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, pabeni@redhat.com, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, claudiu.manoil@nxp.com,
+ alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+ linux@armlinux.org.uk, linux-kernel@vger.kernel.org
 
-On 7/13/24 11:50, Kamalesh Babulal wrote:
-> On 7/13/24 4:59 AM, Waiman Long wrote:
->> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
->> help manage different structures in various cgroup subsystems by being
->> an embedded element inside a larger structure like cpuset or mem_cgroup.
->>
->> The /proc/cgroups file shows the number of cgroups for each of the
->> subsystems.  With cgroup v1, the number of CSSes is the same as the
->> number of cgroups.  That is not the case anymore with cgroup v2. The
->> /proc/cgroups file cannot show the actual number of CSSes for the
->> subsystems that are bound to cgroup v2.
->>
->> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
->> we can't tell by looking at /proc/cgroups which cgroup subsystems may
->> be responsible.
->>
->> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
->> cgroup.stat file is now being extended to show the number of live and
->> dying CSSes associated with all the non-inhibited cgroup subsystems
->> that have been bound to cgroup v2 as long as they are not both zero.
->> The number includes CSSes in the current cgroup as well as in all the
->> descendants underneath it.  This will help us pinpoint which subsystems
->> are responsible for the increasing number of dying (nr_dying_descendants)
->> cgroups.
->>
->> The CSSes dying counts are stored in the cgroup structure itself
->> instead of inside the CSS as suggested by Johannes. This will allow
->> us to accurately track dying counts of cgroup subsystems that have
->> recently been disabled in a cgroup. It is now possible that a zero
->> subsystem number is coupled with a non-zero dying subsystem number.
->>
->> The cgroup-v2.rst file is updated to discuss this new behavior.
->>
->> With this patch applied, a sample output from root cgroup.stat file
->> was shown below.
->>
->> 	nr_descendants 56
->> 	nr_subsys_cpuset 1
->> 	nr_subsys_cpu 43
->> 	nr_subsys_io 43
->> 	nr_subsys_memory 56
->> 	nr_subsys_perf_event 57
->> 	nr_subsys_hugetlb 1
->> 	nr_subsys_pids 56
->> 	nr_subsys_rdma 1
->> 	nr_subsys_misc 1
->> 	nr_dying_descendants 30
->> 	nr_dying_subsys_cpuset 0
->> 	nr_dying_subsys_cpu 0
->> 	nr_dying_subsys_io 0
->> 	nr_dying_subsys_memory 30
->> 	nr_dying_subsys_perf_event 0
->> 	nr_dying_subsys_hugetlb 0
->> 	nr_dying_subsys_pids 0
->> 	nr_dying_subsys_rdma 0
->> 	nr_dying_subsys_misc 0
->>
->> Another sample output from system.slice/cgroup.stat was:
->>
->> 	nr_descendants 32
->> 	nr_subsys_cpu 30
->> 	nr_subsys_io 30
->> 	nr_subsys_memory 32
->> 	nr_subsys_perf_event 33
->> 	nr_subsys_pids 32
->> 	nr_dying_descendants 32
->> 	nr_dying_subsys_cpu 0
->> 	nr_dying_subsys_io 0
->> 	nr_dying_subsys_memory 32
->> 	nr_dying_subsys_perf_event 0
->> 	nr_dying_subsys_pids 0
->>
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sat, 13 Jul 2024 23:16:06 +0200 you wrote:
+> This patch series is a result of splitting a larger patch series [0],
+> where some parts was merged before.
+> 
+> The first patch implements port state configuration, which is required
+> for bridge functionality. STP frames are not forwarded at this moment.
+> BPDU frames are only forwarded from/to the PI/SI interface.
+> For more information, see chapter 2.7.1 (CPU Forwarding) in the
+> datasheet.
+> 
 > [...]
->
->> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
->> index c8e4b62b436a..73774c841100 100644
->> --- a/kernel/cgroup/cgroup.c
->> +++ b/kernel/cgroup/cgroup.c
->> @@ -3669,12 +3669,43 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
->>   static int cgroup_stat_show(struct seq_file *seq, void *v)
->>   {
->>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
->> +	struct cgroup_subsys_state *css;
->> +	int dying_cnt[CGROUP_SUBSYS_COUNT];
->> +	int ssid;
->>   
->>   	seq_printf(seq, "nr_descendants %d\n",
->>   		   cgroup->nr_descendants);
->> +
->> +	/*
->> +	 * Show the number of live and dying csses associated with each of
->> +	 * non-inhibited cgroup subsystems that is either enabled in current
->> +	 * cgroup or has non-zero dying count.
->> +	 *
->> +	 * Without proper lock protection, racing is possible. So the
->> +	 * numbers may not be consistent when that happens.
->> +	 */
->> +	rcu_read_lock();
->> +	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
->> +		dying_cnt[ssid] = -1;
->> +		if (BIT(ssid) & cgrp_dfl_inhibit_ss_mask)
->> +			continue;
->> +		css = rcu_dereference_raw(cgroup->subsys[ssid]);
->> +		if (!css && !cgroup->nr_dying_subsys[ssid])
->> +			continue;
-> Sorry, If I have misread the discussion from the other thread about displaying
-> nr_descendants and nr_dying_subsys_<subsys>. I believe the idea was to print
-> them for enabled and disabled cgroup controllers, so the output stays consistent
-> and does not vary depending on the enabled controllers or previously enabled
-> controller with nr_dying_subsys > 0.
->
-> For example, on a rebooted vm:
->
-> # cd /sys/fs/cgroup/
-> # cat cgroup.subtree_control
-> cpu memory pids
->
-> # mkdir foo
-> # cat foo/cgroup.stat
-> nr_descendants 0
-> nr_subsys_cpu 1
-> nr_subsys_memory 1
-> nr_subsys_perf_event 1
-> nr_subsys_pids 1
-> nr_dying_descendants 0
-> nr_dying_subsys_cpu 0
-> nr_dying_subsys_memory 0
-> nr_dying_subsys_perf_event 0
-> nr_dying_subsys_pids 0
->
-> # echo '+cpuset' > cgroup.subtree_control
->
-> # cat foo/cgroup.stat
-> nr_descendants 0
-> nr_subsys_cpuset 1
-> nr_subsys_cpu 1
-> nr_subsys_memory 1
-> nr_subsys_perf_event 1
-> nr_subsys_pids 1
-> nr_dying_descendants 0
-> nr_dying_subsys_cpuset 0
-> nr_dying_subsys_cpu 0
-> nr_dying_subsys_memory 0
-> nr_dying_subsys_perf_event 0
-> nr_dying_subsys_pids 0
 
-I am fine with fine with that. I will update the patch as suggested.
+Here is the summary with links:
+  - [net-next,v4,01/12] net: dsa: vsc73xx: add port_stp_state_set function
+    https://git.kernel.org/netdev/net-next/c/1e5b23e50ffb
+  - [net-next,v4,02/12] net: dsa: vsc73xx: Add vlan filtering
+    https://git.kernel.org/netdev/net-next/c/6b783ded364a
+  - [net-next,v4,03/12] net: dsa: tag_sja1105: absorb logic for not overwriting precise info into dsa_8021q_rcv()
+    https://git.kernel.org/netdev/net-next/c/dcfe7673787b
+  - [net-next,v4,04/12] net: dsa: tag_sja1105: absorb entire sja1105_vlan_rcv() into dsa_8021q_rcv()
+    https://git.kernel.org/netdev/net-next/c/0064b863abdc
+  - [net-next,v4,05/12] net: dsa: tag_sja1105: prefer precise source port info on SJA1110 too
+    https://git.kernel.org/netdev/net-next/c/823e5cc141c6
+  - [net-next,v4,06/12] net: dsa: tag_sja1105: refactor skb->dev assignment to dsa_tag_8021q_find_user()
+    https://git.kernel.org/netdev/net-next/c/d124cf54df6f
+  - [net-next,v4,07/12] net: dsa: vsc73xx: introduce tag 8021q for vsc73xx
+    https://git.kernel.org/netdev/net-next/c/6c87e1a47928
+  - [net-next,v4,08/12] net: dsa: vsc73xx: Implement the tag_8021q VLAN operations
+    https://git.kernel.org/netdev/net-next/c/e3386ec4ec90
+  - [net-next,v4,09/12] net: dsa: Define max num of bridges in tag8021q implementation
+    https://git.kernel.org/netdev/net-next/c/ce20fdd670ac
+  - [net-next,v4,10/12] net: dsa: prepare 'dsa_tag_8021q_bridge_join' for standalone use
+    https://git.kernel.org/netdev/net-next/c/85aabd1fe9d6
+  - [net-next,v4,11/12] net: dsa: vsc73xx: Add bridge support
+    https://git.kernel.org/netdev/net-next/c/6dfaaa276337
+  - [net-next,v4,12/12] net: dsa: vsc73xx: start treating the BR_LEARNING flag
+    https://git.kernel.org/netdev/net-next/c/259a7061c2f1
 
-Thanks,
-Longman
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
->> +
->> +		dying_cnt[ssid] = cgroup->nr_dying_subsys[ssid];
->> +		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
->> +			   css ? (css->nr_descendants + 1) : 0);
->> +	}
->> +
->>   	seq_printf(seq, "nr_dying_descendants %d\n",
->>   		   cgroup->nr_dying_descendants);
->> -
->> +	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
->> +		if (dying_cnt[ssid] >= 0)
->> +			seq_printf(seq, "nr_dying_subsys_%s %d\n",
->> +				   cgroup_subsys[ssid]->name, dying_cnt[ssid]);
->> +	}
->> +	rcu_read_unlock();
->>   	return 0;
->>   }
->>   
 
 
