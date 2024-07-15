@@ -1,126 +1,366 @@
-Return-Path: <linux-kernel+bounces-252685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C49316C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31809316C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A05F1F22706
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575991F21B10
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713B91922C0;
-	Mon, 15 Jul 2024 14:29:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DA1191F6F;
-	Mon, 15 Jul 2024 14:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053789; cv=none; b=M3OmI+x0yi1RIgX1bPy2nBGS6AA4Vv8RmOaaPPoYeZGcb/6uaCIaSF/UoafoeskNtS4Cv6klrMuzRPRVwgL8FxsDTteDHVE/jgA0QiLxrb5BEHoVHIqFV1uRp+XVBzdkZk5lWYavmLobPMdzxZqGEOjlWOfyFvw2wtR1JqregMM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053789; c=relaxed/simple;
-	bh=THN5rLNVvIjNeAoyxyQQ+pJ8hTn9svBd8fM+nE5JKas=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iRgzgmfpnDpVI6+wXW+IEHcorgWx6S2hAinnRICUJgwUbKZLXJikHrg4lX2CM8sQlVBqNLnBgQuARqEmY+eXb5cT8WDvB+lMR09KMwPVxC/kSY6U3dbqmzTK+zdzvoTAnFxsOVPum3q2sI8lyIbHMaN/COiEVsqcb32ncfoBd94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D683DA7;
-	Mon, 15 Jul 2024 07:30:12 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 53E143F766;
-	Mon, 15 Jul 2024 07:29:45 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Nick Terrell <terrelln@fb.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	amadio@gentoo.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>,
-	James Clark <james.clark@arm.com>
-Subject: [PATCH v4 6/6] perf docs: Document cross compilation
-Date: Mon, 15 Jul 2024 15:29:21 +0100
-Message-Id: <20240715142921.51881-7-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240715142921.51881-1-leo.yan@arm.com>
-References: <20240715142921.51881-1-leo.yan@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0786818FDD9;
+	Mon, 15 Jul 2024 14:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JbUp6qSw";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="h42l2kPH"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0DE18F2DE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721053783; cv=fail; b=hvE12z/o22IZDUwtCMPZXvteMOJN9Ocd4eOiny/TfOO7vY7JeYaSVEK2skg6Da2F/4K9Oyej2Mhh4LMEzwaz8vrbRAwfUbbKtc/4WHs6nXKyP5a4uWsbv+X4FeJFrxK8/N2/D09M6pkFCz4RqHzyPRhu1C8swTcnfQLzwQeH4Yk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721053783; c=relaxed/simple;
+	bh=Wvh5RwMR4Q41b+TJgzvLppzzVg/J/dqNsPkLRinI9FM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZBWadRQFJpI8OrXgtaSB/eYLcFtCYMT1wfd9B2Adv0tqjqlRRscM6zEre8BOwzOgpmpPfnL6C3wAMxNXE6G48PfbAGpvTJkvY2TJoc/WuXVBv0hh3eanI3qzcfbzO+tUEP0eb7omt0xjWHv2ULQ/5BHFepsbAYE5Zua5b5f1Cuc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JbUp6qSw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=h42l2kPH; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FENdi6002335;
+	Mon, 15 Jul 2024 14:29:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=XYiRB5+WTeiHSbzrOZtZ/9128hlHXJPhUY9ycDAY2kQ=; b=
+	JbUp6qSwnRkpC+n3go1PlsGZ6rezn11YaYpkti3dIusDa6nyKM5D9TS9CombGFer
+	pGYDvApFC7WpLUX2QdYA796OaAqzGWrBzfnSVtzlmhsOW9N0gXIYP1hFX4uvHqOQ
+	J/jJp1Zsl1X3XV33oLPxwe3NlX5q7lTkTSyUWKPgBBOCgS98dtO4PfLz0AfvEOch
+	bW+czX/DMw89SebXhntQwFzAdSqFIZr+EPhh0S1MgOBdUqpKwP1y7KUq2aRh95lx
+	Y736TOnPpYGPlTTjPYnVlbhwnk9U234kFriYzQIIs9h96W2cVjOzI+MPMdqnyWz6
+	jPpAx0vUC2tlxcdn06wyLw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40bg0ckk3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Jul 2024 14:29:33 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46FDQDs9002694;
+	Mon, 15 Jul 2024 14:29:32 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40bg1dsshc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Jul 2024 14:29:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p05wxSZjKYSYcehbWFEX1SnqwD+kF2mma+rCddLwbSS/xLotlcPItTszEKkM28mdVtTIS6dR7x3gzn3I7gPbVFT/qsGu9dcOreuSpZ364Sd/Dy/yzWYHzH5/FjTQWXUaHeGP3EwjEGWYuNKUmsCDmPBWBOlPI4rKr8vMoWjtYooBNvPRg6t4WGZizJ2jEtRNIaxPE+eO1f3cu9Qj34jjJDhFuoOW24odD1wTTzCE7C/LG5zw3MBlAbG6pp04saG6K2oTnxf49JF6s3beE0vI8BvasgGk19G5H7RNc0zxNlrR5yxfNrszdlPwngeHCwxKEdosIMEXfeA+uU5VodleeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XYiRB5+WTeiHSbzrOZtZ/9128hlHXJPhUY9ycDAY2kQ=;
+ b=BtGDrWXs67oqQJmZSajnoE7NnYz2XKqHoxtfIKGoMKUId3mJxlaW0o3tK/rEtcxVs9VN4UnOAj1gUzUyjVa9vk/hHaZ6zPKXs2YPyLqjnG23bdimBDFanLhDERYgmV8YsKa5YTaUoiETBCDjsQOYiqP7eb5u8TS6Prs48qDztVuxx6INJbPwrVMKgX+pjKSJ6k3OZn0NBrT9HFbJa/HcMtLbNcbT9dOfEUHmies0RWihwZdD4EH4pr3q6EqXdpzc7qLqA8kLF+NI3YAa8XNh/+p7/y4M5dv81iF3Bl9DgJZddzKoIt8UkaIlHdZXbrpZiYZaeJUeqvZN1mbg9JMTHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XYiRB5+WTeiHSbzrOZtZ/9128hlHXJPhUY9ycDAY2kQ=;
+ b=h42l2kPHlCBjhBfJ8AN4OrXOurQ5mGSXJj3BmI5T4udk7+JVqvOGhfWV4ZG3HuUZzlwtHG0sZZLcGeq88sLj8LixxjdYb6byJhYxvOg+P8PFzeJCg/VChgVPju8LMMrckbzsyRKafgPDHNFrIfLx5i/0cqBsLj4sAdC4QqpNc/Q=
+Received: from IA1PR10MB7447.namprd10.prod.outlook.com (2603:10b6:208:44c::10)
+ by CO1PR10MB4545.namprd10.prod.outlook.com (2603:10b6:303:9a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
+ 2024 14:29:28 +0000
+Received: from IA1PR10MB7447.namprd10.prod.outlook.com
+ ([fe80::f2fe:d6c6:70c4:4572]) by IA1PR10MB7447.namprd10.prod.outlook.com
+ ([fe80::f2fe:d6c6:70c4:4572%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 14:29:28 +0000
+Message-ID: <d414f28e-8887-418f-963a-bb986dbdcaea@oracle.com>
+Date: Mon, 15 Jul 2024 10:29:26 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/7] vhost-vdpa: VHOST_NEW_OWNER
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>,
+        Eugenio Perez Martin <eperezma@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Dragos Tatulea <dtatulea@nvidia.com>
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
+ <20240715050637-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240715050637-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL6PEPF0001640C.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1004:0:13) To IA1PR10MB7447.namprd10.prod.outlook.com
+ (2603:10b6:208:44c::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR10MB7447:EE_|CO1PR10MB4545:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb91db67-8eb2-4ae2-f183-08dca4da888f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?Z2pyTkNPYXpFeG5RWElOVExsTHc3dEI3ejJlNDIzMU85eGZzTG5TWTcvME8w?=
+ =?utf-8?B?aXoyb2JldmNHQ3R5WUQ5UVlyY0NMeFJ0MXk2OWVxUFdPYzFBblQ0NzFheGFy?=
+ =?utf-8?B?azJUaXhTZkFYeTBJYnl1aUNNOXpkajMvWHVzTE9NWW1PRksyckpHR2NsVk5t?=
+ =?utf-8?B?NHYweCs3eXhFeWNSMGdsRG1lR0N3TWk0MnRNOTVKTjJNWnlqdkZsbnVUa0Zs?=
+ =?utf-8?B?N0JCSlByU0tQcWJ0YkZtYUNBUnFISW52Zjd0Q2owbFF0ZW9Za0Vqb24renY4?=
+ =?utf-8?B?WjlFaTV1Wk4vR3A5LzVrelhqeGduSnlyejFDcE1IbFJJUlgxcGhjcE1GRUNE?=
+ =?utf-8?B?K2tnMGw0TnNLZ1JNWFh5ZUF6ZzRXZ3JOWFNvOHowNWtyU0VyN3k2U0JSaTF4?=
+ =?utf-8?B?SHpORWZlK21RSnBmdjJvSGRqNjdMMWo1cEU2RE5RZkowWVFQM3NEWW12cXp4?=
+ =?utf-8?B?cjlGaEJGWU1aQmo1Y1NrZnEyMFUxU0lpWllhNHovNEIvNEZtUGpKSXdRUHpW?=
+ =?utf-8?B?MEhueGdxREFiWUJrNEVxa1FPdmRWK1JuOGNXbDJJRTVSeUZoT3BsaEFVeDNn?=
+ =?utf-8?B?WmZFZTZ1TWhySDk5UEEzTUxBWENkaTE0cUk5NDVpZ0JRaUdYVDlLUVNjSXJS?=
+ =?utf-8?B?UTRHbnRwakFkZmtWaHFxNCsxVndOL0dFY05GanRBRGtJRzdHYy91VnVNaXpz?=
+ =?utf-8?B?OVp0ckZuUzFWRXRkS0VtQi9lc1B6SFNGdExKME80YjdyWHFmbjF6cEcrck42?=
+ =?utf-8?B?WHdiQ21KMzFoU2tmZm8yU0NwdEY3dVU2Rm5icHplMi9SOXg3bFRic3Ayak9w?=
+ =?utf-8?B?NG1ITTgrTythRjM2OHRacWVHNk1wZGtydVJHQ1loT0xjdU8way9QNnFsQXBM?=
+ =?utf-8?B?ZGpCbDNVeVVDSTI0V1Z0djViN1pvU1poRFRGd2hEeDBGLzBFNkd6TUMvZEtG?=
+ =?utf-8?B?OFhWc3hzZWtqRWVtczg2SzB1Wit4QTlvMS9yYW5jWGJOVTRzZHc3SHVXZFFp?=
+ =?utf-8?B?MGRPZ3BRWURIcFNiTitkTzcxbEJKd2dJQ1VtVGhOWU52Q3V6blJaK2FCTk9S?=
+ =?utf-8?B?RGZCZlBFVERjcmNYb2w3VnVBa1JzTDdobzE3Ym9Na2NlUDNQRVRJYlJiYlp3?=
+ =?utf-8?B?bkl1eWdJWWhSR1lHcjNmVFZCam12RjZKVWk1L3prTW9VU1dFNUJpM25UVEJY?=
+ =?utf-8?B?dEJRQTFFbEZkV3l6UStMTDhKYkJOcUdiNFp0NVpNaGN5d3V6STZKV25ka0Rx?=
+ =?utf-8?B?TCt1Qkp4aS9OanZZZDBFdm9IU2dUajZwM3JtaEQzK2dSVjNGUitOcHViZXdQ?=
+ =?utf-8?B?RmZnMGZWeERaN09uc3BiL1ZRUkVIaTZVMFk3OWdlZkpXSzhUeTRZMGtFUDBY?=
+ =?utf-8?B?Q3Z5M1ZxanJvOEhJL3BnRG9XMFJsb09SRjdWdFdzSWJ4Ym90ZUhUeFlQV2Nz?=
+ =?utf-8?B?MFo0YU9zQXFqOGJLWFRWU3VEMHFoOUdOdHBicVRaYmV5WVBxeUowZm9tZ05P?=
+ =?utf-8?B?ZjVud3FYUGw4MnhhM3ZLYm9Ha05JUUxHZmZtVjVXUUEwTjM3aWkxY2lsYUZj?=
+ =?utf-8?B?RVVaRmh0WDUzZytTNUN3WFRqbUlCd01kVWF0RFNOZDF5UG0xbXI3OTNOVG01?=
+ =?utf-8?B?U0gwTFZHSHViQW1PRG1SVjFJTk5kQXNnRjRXLzViWndIOUVBUTF5VUkwMk5x?=
+ =?utf-8?B?YzNOajVaenlPa05Gc2pRSGdYTVFvbjNtT0pmemhWVi9oUXZZOXViYk9reHlt?=
+ =?utf-8?B?R05NWXhsRHNlUk92NW5XbnVjcVFnNVBnelJjenlVMThzZm9vWmFRSkY2QzZx?=
+ =?utf-8?B?Qnd4SEZsdXFFdHdxV0Iwdz09?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR10MB7447.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?WThPY2lac2tSQ3JEbW55MFY5TFYxTEJ1SHYwdGYxYzJ1TVBhSUFpeG84QklM?=
+ =?utf-8?B?N245bVJKSjV2Z0s5a1N1LzhnQlRpTlRReVU2cXJzTUhRaHYxR3V5a0ZkZ3hL?=
+ =?utf-8?B?RVU0eTY1VnN2aFh6RUhmNVZhd0paNE1pT3pOTytIRUI3K1hmaklTVW5xd0d3?=
+ =?utf-8?B?MkxWdU1xYkFyUExIR1BYeStKNDJjY3pJQUU2MTltTVlpRkdvZm5KWXg5dFJr?=
+ =?utf-8?B?N3krcEVFdkI3aWp1VU16aTZxVzdITjNyKzNyZ3R0cm12YjJDTHB2NEplT24z?=
+ =?utf-8?B?R0NNeDlQR204cWpIbk05TWdPZWFjd0xETTVHS2JnZWlXY0kwZE50YmdhOEda?=
+ =?utf-8?B?MWtWdFExUFZPN0NSUjMwL0FpSjBZcU81YUFhMjNHeWRZZCs1aEZNbTBjS0VG?=
+ =?utf-8?B?djRjcnlaUXpCQmlRY2oySTZLeVB4M2pyZWZ6bU1Ra2xZY1pNUE1PdUZtZFFD?=
+ =?utf-8?B?KzJpM2w1YWVwNjNseTJiZjkzRUxHV045QTltZlhjYXVmQVFDK3cxbDEyQmtO?=
+ =?utf-8?B?c2dMMjhNSlBxaTM3QVc4UzZOREZPalNqSGREUmlkSU5zSUwzTTRYQnprT1I5?=
+ =?utf-8?B?VERWZjEwM3hqRzIvbTBFWTFPV25rREJ3Slo4bWh6c0xNODIyNTlGU2pJb2FF?=
+ =?utf-8?B?UmJ2YXJUS2NZMDZWLytuamRlenJDK0RmVlpINy9WR0JSblNjM09WS3c2dEJI?=
+ =?utf-8?B?UDZ4VEFucjFwbkJPSmEvZjNNeFBSOExubWZrSmxQNGpBOEtzcWVYdkh2WTV0?=
+ =?utf-8?B?RXBpZXZmbW1qUnZSVTYweHpTOHdqM3dwcG9oc1JVRmk3c1R5K0s2b0d5QkZG?=
+ =?utf-8?B?OWhEY01ES20yWW1NWXBuQjRGbFVqbmhVZ0hDNVdMaTA0WjVlWGRiZVlGcHdZ?=
+ =?utf-8?B?SUtNTkVCeWZoWDZEdHM2Mmd5eU1rd2NQVDI1L2VNVjZFSC9QQndsSVB4MmtN?=
+ =?utf-8?B?Q3o5N3d6dXFIUFBEMkZ6VU9FL2d4N2ZreWE5cm1zdTlrZlNhLzZmc3VacTBk?=
+ =?utf-8?B?b20zdEVRZGJ1RFhOTElEaHNuNHBGUmg2QXZlRVRJRXhIOXR4R3FkTnlOSlRV?=
+ =?utf-8?B?UlIwRFVteUJkallZOVVSTXZPVS9qNnRzTXdVWXZEdTYrZlBoZmZuQVczQWZ6?=
+ =?utf-8?B?OVROb3QrSUtjZHpBcFJ0RVV0eGVCQ2xHbVNGR0owVlRQZ2lwa3ZBejcwUW9r?=
+ =?utf-8?B?N2UxMkNaUFJESmRLQ2kwWWJNOTlyNnBsVU5jbnorbm0vZGtvK0xDdkdhRHV2?=
+ =?utf-8?B?S0lvZ1gybHZDdXhPdHpIdGc3T1RTSHpHRHZDOUFQSWd2UitUU29PK3JFTjll?=
+ =?utf-8?B?NlVwL3pXeDZWTUNsaVQwajdZaUNxT2tJajlhZkV5NjZKUndaTk81WldPZmkz?=
+ =?utf-8?B?dFVYeThnVGsxQmRTdnlKOWxrKytud3AwWjhMajZ3KzhsL0hkOFBmdWNBWTFK?=
+ =?utf-8?B?TEJ5bms0cVlhb21xdU9lTzc3Vk95K04rYmQzWVl3clJWazBZdEE2MzR6cFVI?=
+ =?utf-8?B?enB2a0YrSnp4bFNEdjRkYld4OUFGUG9kVHBKanpMZlMzOG9JMDlEc0IwM0F6?=
+ =?utf-8?B?dlZZVWV6cWZYSHRWTEN2eWJmQVZQQzk5RjdyTHFmRWtSQzNMc09hNjgrOUl1?=
+ =?utf-8?B?cGtZK1ExT01HeUhwV3J4dHlKK1B5endzbXc1U0lDYzBrVXBWc0VVTzhCcmYy?=
+ =?utf-8?B?WFZuSHo1TUQ0akhQZHo1ZnoyVzcyS1JWbTB1YitZZFJGME5rRTdxUGhOOGZ2?=
+ =?utf-8?B?YVp0ckVEQTZvUTlpT3NWOTNVdHd2aCttVVZHbldRc3p2NVZuVnZ3ZEVleXBF?=
+ =?utf-8?B?RGo1WC9mVTdoWHJHSjdRSkl5YUxwWXV1OVc4Z3JzODUzVEZkQWxTak5mYm1n?=
+ =?utf-8?B?QlNDMUo0Q0dGVGRZOUhOZHZSRjNkUWk5b1dRZ2tNcENSNXJVbG5PdzJHVzN4?=
+ =?utf-8?B?QmkwTHowTUFXLzFlbmQ4MkEyaGVJSk9ScWJRZktJVVVTSm5TT2pkVkYwRGtl?=
+ =?utf-8?B?ejkxblBva3phWlZIZitXQ0RMeHgzZlZWUFJDVEZwV044VDhmRHBTQVY4YU0x?=
+ =?utf-8?B?aFZxbGJ0bzFzdWxKMDlKUExGUXdVMWplcXNYbWlYVW9oRTV6TGlSNHFwSHlE?=
+ =?utf-8?B?dmpHemgxUGxRODgwbEkyWHVFK2ovRnEwczVOZWpldWJXdFUzNXAwdVd0ZXoz?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	3rzCCadXu+RuJ85hUKe2NREahNBQ+fqM+aZywJ0h5vky4ig1xSXk//rdusnlSCNDZELGQjtUhgmWmfnNit1GjwUL1H3CHTeBnG0c+9+/6mYX8cTivEzsIhCPNGDFh969pqpzoAvFfCQzITtI4HEcFTkgiPQE7EaPkMr9+YrZUpOlGNpRwr96Ysr+G91G9/B3SAldXDwpAAhGCDvLNTTi0BDpdE0rsvylWz1554yuXhZ1swqgpYBvM8+M+u1tPt3brMFez+nlu9bJyfri6G0MgR8SVh6li7IoqnwKicxQA89pAeb23ReSvZ6wW0EkH1Q1hEzZ9geCzAT5dwU2rnEod09+jzoK0SGlnQIMkOQkEESnqzK8HpvimwzUSMoP+Jn/6RzQfRgA5OzosfkdH1bJsADwiiuosL5DoqiuFFf9opdWtsbCt39fVg96Xh2A4JCAmrho4dEWdw3yK5WEMlBdEn60ePbqFwB5ZKGVVxzAfc5XCPqZqBkvPTwoYeKOkLEKBTifjQ8oU5BTwfloBYBrT+rkYxE4J+tVgH0srahg/FmdJrR95+voR8E9m5eQSRzZdBby1MDvj46P4HNVuS8eM9Aqspkml1L/kAH/dYTnnxw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb91db67-8eb2-4ae2-f183-08dca4da888f
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR10MB7447.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 14:29:28.1661
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wVNtATxw/UiIh46eGEc9nxjfX7OYXuetq4yGfTRQu20BuGQYiNqVqtPHCzgLgsDpp+mkV7uu2r+h+vQqsfQP6r9s3XZ7wU9CG1x0OfDXwyU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4545
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_09,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407150114
+X-Proofpoint-GUID: zLh_jZD_Rr7st7QvYV0qJV2amMtWcrzl
+X-Proofpoint-ORIG-GUID: zLh_jZD_Rr7st7QvYV0qJV2amMtWcrzl
 
-Records the commands for cross compilation with two methods.
+On 7/15/2024 5:07 AM, Michael S. Tsirkin wrote:
+> On Fri, Jul 12, 2024 at 06:18:49AM -0700, Steve Sistare wrote:
+>> Add an ioctl to transfer file descriptor ownership and pinned memory
+>> accounting from one process to another.
+>>
+>> This is more efficient than VHOST_RESET_OWNER followed by VHOST_SET_OWNER,
+>> as that would unpin all physical pages, requiring them to be repinned in
+>> the new process.  That would cost multiple seconds for large memories, and
+>> be incurred during a virtual machine's pause time during live update.
+>>
+>> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> 
+> Please, we just need to switch to use iommufd for pinning.
+> Piling up all these hacks gets us nowhere.
 
-The first method relies on Multiarch. The second approach is to explicitly
-specify the PKG_CONFIG variables, which is widely used in build system
-(like Buildroot, Yocto, etc).
+I am working on iommufd kernel interfaces and QEMU changes.  But who is working
+on iommufd support for vdpa? If no one, or not for years, then adding these
+small interfaces to vdpa plugs a signficant gap in live update coverage.
 
-Co-developed-by: James Clark <james.clark@arm.com>
-Signed-off-by: James Clark <james.clark@arm.com>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/Documentation/Build.txt | 37 ++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+FWIW, the iommufd interfaces for live update will look much the same: change owner
+and pinned memory accounting, and update virtual addresses.  So adding that to vdpa
+will not make it look like an odd duck.
 
-diff --git a/tools/perf/Documentation/Build.txt b/tools/perf/Documentation/Build.txt
-index 3766886c4bca..2237ceee74ba 100644
---- a/tools/perf/Documentation/Build.txt
-+++ b/tools/perf/Documentation/Build.txt
-@@ -71,3 +71,40 @@ supported by GCC. UBSan detects undefined behaviors of programs at runtime.
-   $ UBSAN_OPTIONS=print_stacktrace=1 ./perf record -a
- 
- If UBSan detects any problem at runtime, it outputs a “runtime error:” message.
-+
-+4) Cross compilation
-+====================
-+The perf tool can be cross compiled in below methods.
-+
-+As Multiarch is commonly supported in Linux distributions, we can install
-+libraries for multiple architectures on the same system and then cross-compile
-+Linux perf. For example, Aarch64 libraries and toolchains can be installed on
-+an x86_64 machine, allowing us to compile perf for an Aarch64 target.
-+
-+Below is the command for building perf with dynamic linking:
-+As Multiarch is commonly supported in Linux distros, therefore, we can
-+install multiple architectures libs in the same system and then cross compile
-+the Linux perf. For example, the Aarch64 libraries and toolchain can be
-+installed on the x86_64 machine, based on it we can compile the perf for
-+Aarch64 target.
-+
-+Below is the command for building the perf with dynamic linking.
-+
-+  $ cd /path/to/Linux
-+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C tools/perf
-+
-+For static linking, the option `LDFLAGS="-static"` is required.
-+
-+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
-+    LDFLAGS="-static" -C tools/perf
-+
-+In the embedded system world, a use case is to explicitly specify the package
-+configuration paths for cross building:
-+
-+  $ PKG_CONFIG_SYSROOT_DIR="/path/to/cross/build/sysroot" \
-+    PKG_CONFIG_LIBDIR="/usr/lib/:/usr/local/lib" \
-+    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C tools/perf
-+
-+In this case, the variable PKG_CONFIG_SYSROOT_DIR can be used alongside the
-+variable PKG_CONFIG_LIBDIR or PKG_CONFIG_PATH to prepend the sysroot path to
-+the library paths for cross compilation.
--- 
-2.34.1
+- Steve
 
+>> ---
+>>   drivers/vhost/vdpa.c       | 41 ++++++++++++++++++++++++++++++++++++++
+>>   drivers/vhost/vhost.c      | 15 ++++++++++++++
+>>   drivers/vhost/vhost.h      |  1 +
+>>   include/uapi/linux/vhost.h | 10 ++++++++++
+>>   4 files changed, 67 insertions(+)
+>>
+>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+>> index b49e5831b3f0..5cf55ca4ec02 100644
+>> --- a/drivers/vhost/vdpa.c
+>> +++ b/drivers/vhost/vdpa.c
+>> @@ -632,6 +632,44 @@ static long vhost_vdpa_resume(struct vhost_vdpa *v)
+>>   	return ret;
+>>   }
+>>   
+>> +static long vhost_vdpa_new_owner(struct vhost_vdpa *v)
+>> +{
+>> +	int r;
+>> +	struct vhost_dev *vdev = &v->vdev;
+>> +	struct mm_struct *mm_old = vdev->mm;
+>> +	struct mm_struct *mm_new = current->mm;
+>> +	long pinned_vm = v->pinned_vm;
+>> +	unsigned long lock_limit = PFN_DOWN(rlimit(RLIMIT_MEMLOCK));
+>> +
+>> +	if (!mm_old)
+>> +		return -EINVAL;
+>> +	mmgrab(mm_old);
+>> +
+>> +	if (!v->vdpa->use_va &&
+>> +	    pinned_vm + atomic64_read(&mm_new->pinned_vm) > lock_limit) {
+>> +		r = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +	r = vhost_vdpa_bind_mm(v, mm_new);
+>> +	if (r)
+>> +		goto out;
+>> +
+>> +	r = vhost_dev_new_owner(vdev);
+>> +	if (r) {
+>> +		vhost_vdpa_bind_mm(v, mm_old);
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (!v->vdpa->use_va) {
+>> +		atomic64_sub(pinned_vm, &mm_old->pinned_vm);
+>> +		atomic64_add(pinned_vm, &mm_new->pinned_vm);
+>> +	}
+>> +
+>> +out:
+>> +	mmdrop(mm_old);
+>> +	return r;
+>> +}
+>> +
+>>   static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+>>   				   void __user *argp)
+>>   {
+>> @@ -876,6 +914,9 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+>>   	case VHOST_VDPA_RESUME:
+>>   		r = vhost_vdpa_resume(v);
+>>   		break;
+>> +	case VHOST_NEW_OWNER:
+>> +		r = vhost_vdpa_new_owner(v);
+>> +		break;
+>>   	default:
+>>   		r = vhost_dev_ioctl(&v->vdev, cmd, argp);
+>>   		if (r == -ENOIOCTLCMD)
+>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>> index b60955682474..ab40ae50552f 100644
+>> --- a/drivers/vhost/vhost.c
+>> +++ b/drivers/vhost/vhost.c
+>> @@ -963,6 +963,21 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(vhost_dev_set_owner);
+>>   
+>> +/* Caller should have device mutex */
+>> +long vhost_dev_new_owner(struct vhost_dev *dev)
+>> +{
+>> +	if (dev->mm == current->mm)
+>> +		return -EBUSY;
+>> +
+>> +	if (!vhost_dev_has_owner(dev))
+>> +		return -EINVAL;
+>> +
+>> +	vhost_detach_mm(dev);
+>> +	vhost_attach_mm(dev);
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(vhost_dev_new_owner);
+>> +
+>>   static struct vhost_iotlb *iotlb_alloc(void)
+>>   {
+>>   	return vhost_iotlb_alloc(max_iotlb_entries,
+>> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+>> index bb75a292d50c..8b2018bb02b1 100644
+>> --- a/drivers/vhost/vhost.h
+>> +++ b/drivers/vhost/vhost.h
+>> @@ -187,6 +187,7 @@ void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
+>>   		    int (*msg_handler)(struct vhost_dev *dev, u32 asid,
+>>   				       struct vhost_iotlb_msg *msg));
+>>   long vhost_dev_set_owner(struct vhost_dev *dev);
+>> +long vhost_dev_new_owner(struct vhost_dev *dev);
+>>   bool vhost_dev_has_owner(struct vhost_dev *dev);
+>>   long vhost_dev_check_owner(struct vhost_dev *);
+>>   struct vhost_iotlb *vhost_dev_reset_owner_prepare(void);
+>> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+>> index b95dd84eef2d..543d0e3434c3 100644
+>> --- a/include/uapi/linux/vhost.h
+>> +++ b/include/uapi/linux/vhost.h
+>> @@ -123,6 +123,16 @@
+>>   #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+>>   #define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
+>>   
+>> +/* Set current process as the new owner of this file descriptor.  The fd must
+>> + * already be owned, via a prior call to VHOST_SET_OWNER.  The pinned memory
+>> + * count is transferred from the previous to the new owner.
+>> + * Errors:
+>> + *   EINVAL: not owned
+>> + *   EBUSY:  caller is already the owner
+>> + *   ENOMEM: RLIMIT_MEMLOCK exceeded
+>> + */
+>> +#define VHOST_NEW_OWNER _IO(VHOST_VIRTIO, 0x27)
+>> +
+>>   /* VHOST_NET specific defines */
+>>   
+>>   /* Attach virtio net ring to a raw socket, or tap device.
+>> -- 
+>> 2.39.3
+> 
 
