@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-252706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366AD931720
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:46:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A2F931721
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CA9B21FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4935D1F21FFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9164D18FDCA;
-	Mon, 15 Jul 2024 14:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B4E190064;
+	Mon, 15 Jul 2024 14:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL+S6mpJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TLvFXNCi"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C765918FC8E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76CF18C16B;
 	Mon, 15 Jul 2024 14:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721054742; cv=none; b=bqbSSt2d7KRFCuJA+1XrUNJ7TA8+Hxba9hBz9JvvY8LjpKr34joZbZBoJhmu8onoTwkadiipirPPIu4O2IglDENnbmu1u8XVatVmwn2wVdMEnUksan89j0b70A3VQETWrplOHTBo+6iMafibh2KokrOQeF5QbWI6TXEcgxY8nb4=
+	t=1721054744; cv=none; b=tBJFVcwhR/nFc4+jfMiaMZFvmxEBy381pmjzYd6PsNrJfm/kDrWWpeq5HKLc6arzTsjMbFfC4n1f+65a1rEX3uEp0X3bpbZVHMtPBFcUDD+DNTwOpFQGXOxlzDVy2cnUkf5yr/+puORAZLvBRq5PgC999LJJMKzyIlARheff6Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721054742; c=relaxed/simple;
-	bh=CY/27VOkhPKonvdN87CUpf65BRX4NvWvGVsHrmGrR7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IKvb7mCiHBukTci5TF3ednNBcOw6a9/051AXkrnD1jjJWdXYta4CuwM/EQcV/egIk1Nahoc2QQzvpVP6X9XIj4ZkvhN9nfbyGH22cZa1p/Ixikd9uaXk0V/jxDxoNkt8QO19t2OUlJ+qp4xprpIynSplfsZ1OIZS/R5Pg4cKhOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL+S6mpJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61273C4AF0A;
-	Mon, 15 Jul 2024 14:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721054742;
-	bh=CY/27VOkhPKonvdN87CUpf65BRX4NvWvGVsHrmGrR7U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hL+S6mpJlqpHSlAk8N9n2p+oaka/wLkFCLC1f/8YbfbkzgI/poBj1+zIKB9MT2eYi
-	 M5RDvGZ9T7D9uPxOH/7ohJeLj/is6yWbPhKd4bFDLb/QuDHg+ODaWN4sa1ncPXthey
-	 SGlbOBW9NJmtslb30QKgoFySd9aAaNtd1Ehb6/EsobFPSEowkBP2OWVXwM0iX+sKtf
-	 SdQErmaPCnY1ke+s/Oz6Z4ObuYAmFrgyGxPmCDYEA1FF6GNf/WYNjcDSB/Ql4WpHjF
-	 ROK2FPpTK+IqpKYKW3mwmQRZtTXDMsG18KojZS2KDhMxTnnO7W5rJ3EdhBgCJYHd5c
-	 fvn5fAXCEXTDw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 3/3] fortify: move test_fortify.sh to lib/test_fortify/
-Date: Mon, 15 Jul 2024 23:45:25 +0900
-Message-ID: <20240715144529.101634-4-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240715144529.101634-1-masahiroy@kernel.org>
-References: <20240715144529.101634-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1721054744; c=relaxed/simple;
+	bh=XmhCps4yzO//fsjGo1NlfXN4ZiHdGW2EBPxLS3Y6mF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0ql743ClBN+/Zd2KyEUw1m66EE/yeSu/7JqeOqYTPobIjwgkOZ0IBMy6bbgfir+Y27eucbG0K7Ri+J0AjySJg+aXsSrvJwjIygTLumgWuKKVf+s5HCEAbwg5hS/T0LRmUSwCawGirUqUdGs82ZNJQd8/RY3d+V970Eggbfdqec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TLvFXNCi; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XmhCps4yzO//fsjGo1NlfXN4ZiHdGW2EBPxLS3Y6mF0=; b=TLvFXNCiwj1COYjynS52a+ahkZ
+	0FbQTITL6lyKZdSWhXJvIKBWjaSTqP1UfyqDsxeVH9ZzmFrMOPiHeAVF819AVdHdP9SxiQWDhjIyS
+	Txd/nzAbftN/4ulpJqqIauFBKCGSoL7LCADHqFEhK6QPNeUj9z/BjomA6u23wM1fkyaKG+woqI8n1
+	Q9xanNwvrgcypT2fcRFEegYNNLMZSD4x1qa8OAoBW0ofs+9h0LxplSonu/gB8jS7LvnqeBLuHVOm4
+	zQid8EahouBK4xfoW8NqS8J8xpzLe88cELYAQpUghm3WFpMSotnFuI4LXMaTxghMXwxv81H6LRvCS
+	p1FoVYwg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTMxO-00000001o9R-289x;
+	Mon, 15 Jul 2024 14:45:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5B12C3003FF; Mon, 15 Jul 2024 16:45:36 +0200 (CEST)
+Date: Mon, 15 Jul 2024 16:45:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: oleg@redhat.com, mingo@kernel.org, andrii@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH v2 00/11] perf/uprobe: Optimize uprobes
+Message-ID: <20240715144536.GI14400@noisy.programming.kicks-ass.net>
+References: <20240711110235.098009979@infradead.org>
+ <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
 
-This script is only used in lib/test_fortify/.
+On Thu, Jul 11, 2024 at 09:57:44PM -0700, Andrii Nakryiko wrote:
 
-There is no reason to keep it in scripts/.
+> But then I also ran it on Linux built from perf/uprobes branch (these
+> patches), and after a few seconds I see that there is no more
+> attachment/detachment happening. Eventually I got splats, which you
+> can see in [1]. I used `sudo ./uprobe-stress -a10 -t5 -m5 -f3` command
+> to run it inside my QEMU image.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+So them git voodoo incantations did work and I got it built. I'm running
+that exact same line above (minus the sudo, because test box only has a
+root account I think) on real hardware.
 
- MAINTAINERS                                   | 1 -
- lib/test_fortify/Makefile                     | 4 ++--
- {scripts => lib/test_fortify}/test_fortify.sh | 0
- 3 files changed, 2 insertions(+), 3 deletions(-)
- rename {scripts => lib/test_fortify}/test_fortify.sh (100%)
+I'm now ~100 periods in and wondering what 'eventually' means...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 958e935449e5..b68386515067 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8598,7 +8598,6 @@ F:	include/linux/fortify-string.h
- F:	lib/fortify_kunit.c
- F:	lib/memcpy_kunit.c
- F:	lib/test_fortify/*
--F:	scripts/test_fortify.sh
- K:	\b__NO_FORTIFY\b
- 
- FPGA DFL DRIVERS
-diff --git a/lib/test_fortify/Makefile b/lib/test_fortify/Makefile
-index 8c5bee33ee36..399cae880e1d 100644
---- a/lib/test_fortify/Makefile
-+++ b/lib/test_fortify/Makefile
-@@ -3,10 +3,10 @@
- ccflags-y := $(call cc-disable-warning,fortify-source)
- 
- quiet_cmd_test_fortify = TEST    $@
--      cmd_test_fortify = $(CONFIG_SHELL) $(srctree)/scripts/test_fortify.sh \
-+      cmd_test_fortify = $(CONFIG_SHELL) $(src)/test_fortify.sh \
- 			$< $@ "$(NM)" $(CC) $(c_flags) -DKBUILD_EXTRA_WARN1
- 
--$(obj)/%.log: $(src)/%.c $(srctree)/scripts/test_fortify.sh FORCE
-+$(obj)/%.log: $(src)/%.c $(src)/test_fortify.sh FORCE
- 	$(call if_changed_dep,test_fortify)
- 
- logs = $(patsubst $(src)/%.c, %.log, $(wildcard $(src)/*-*.c))
-diff --git a/scripts/test_fortify.sh b/lib/test_fortify/test_fortify.sh
-similarity index 100%
-rename from scripts/test_fortify.sh
-rename to lib/test_fortify/test_fortify.sh
--- 
-2.43.0
-
+Also, this is a 2 socket, 10 core per socket, 2 threads per core
+ivybridge thing, are those parameters sufficient?
 
