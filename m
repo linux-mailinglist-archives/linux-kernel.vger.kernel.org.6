@@ -1,90 +1,65 @@
-Return-Path: <linux-kernel+bounces-252474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B101593138A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE23993138D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 679771F22D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE721284143
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2590118A950;
-	Mon, 15 Jul 2024 12:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B5MvMV75"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C99446DB;
-	Mon, 15 Jul 2024 11:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE6718A93E;
+	Mon, 15 Jul 2024 12:02:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065DE446DB;
+	Mon, 15 Jul 2024 12:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721044801; cv=none; b=XukYFi0vZePAPHOWP2u2LltuYJJ9l+w9VPDmekzuc8chnWDsQkZQlCn6nYAdU+Bk8gv+NfJLGcG4XSnLnV0f3Xv22/GWPPr96+P+t8rgyiJhpOJANfoHGQm85b4fDjON2oj4b+EyOEpjPLfF14YB0K/XP1IuYQ+NxM6YkUIIoao=
+	t=1721044976; cv=none; b=cpEAqpcTIza89CukLTVnUdVE80+tRxLrJXxIdJLAXgCoPTIHIO754m+DRAb/ONZ9XskpDDq2ia7glWKw8ws4RGpBgDS2ylUHDpzCYJlYZVdNM4VJHf1lrqjiAbcRF6IYZ7Df022dbP8p3UXFWfD0NAXcihKPJoLsA7OArvfc+jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721044801; c=relaxed/simple;
-	bh=DpjUBrT659OvV7F4JubP2IsJgz38DBW2Ty8RgX0FSA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTEfxJ5FNWqSYAARAw5P3KxrGmJNU4LHJC0xLTMd9U+7dqs1NKRKtU3eqoT8g9OcfRIbzwjJEesAi8yvr6bRVmqNJuENQrAPSm7uLrTTmtixRznWHCd3tmxfiALMQDgfAc6saVZibi+sWVqzFgjIG5Lcofu3u70HF1q056v7wn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B5MvMV75; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FzVAGPWzIcjmOl5/kaUv3UbG8zfj+jsoUZvJXnkQAls=; b=B5MvMV75Ikl3htMoYx2wveDRi3
-	07ApNyCcJygDHt47avviNr53SEqHxL37PVn9K/N4bG7MYknwNgBNnTZyL0JaYoD6/sGozbtoQtIpB
-	9H0vrtFSlfRoOqMi3oz1uav9R5W3k7PGKP7rKhktr4756etLFG5J/N0vAD2ckY9wo0Sp2dSLXpJwP
-	CwBQqKnmZWswMg0MPQ0AFkWG125as0nGZbR8ABDlPUBeqvsCCWig68IZjyFQurIcdo4+bz8nKlzfx
-	87iE6BF4zMtk4UjULPH4qweJ7yRhowkFr08OoivqOVtGbwyJ8gUMtr/DZOfQ0mv78U6jD37M4uO0W
-	UgASZ2Hg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sTKN0-0000000FlDY-2MWh;
-	Mon, 15 Jul 2024 11:59:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 36BCB3003FF; Mon, 15 Jul 2024 13:59:54 +0200 (CEST)
-Date: Mon, 15 Jul 2024 13:59:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
-	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH v2 10/11] perf/uprobe: Convert single-step and uretprobe
- to SRCU
-Message-ID: <20240715115954.GH14400@noisy.programming.kicks-ass.net>
-References: <20240711110235.098009979@infradead.org>
- <20240711110401.311168524@infradead.org>
- <CAEf4BzZW56pgTqy4POud8P3t5gtdg53BX83VbieixtS1T-mg2w@mail.gmail.com>
+	s=arc-20240116; t=1721044976; c=relaxed/simple;
+	bh=hQ4tXwoe7PZNQk873EVMFSH0aat0uH01m7R15qpqRe0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UIwu4QgQ/gzYP1lM/kiRBbZQk4qbJcRJOpypwHcjNgISLBYDVv6Mn2Ahd6jef8kAnSEb3byQDbSPFPg2NCdlBDaB1QJYfZw8j6z2iSip1jz7AvgaEdumCTgdCLBPdldDZk9kcI2iixmCFJv2/HZBhe0966Br4a6sZapJ/sDkBjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2143FEC;
+	Mon, 15 Jul 2024 05:03:18 -0700 (PDT)
+Received: from [10.162.42.47] (e116581.arm.com [10.162.42.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7C893F73F;
+	Mon, 15 Jul 2024 05:02:50 -0700 (PDT)
+Message-ID: <cde5f188-9b7d-4a7e-9d13-d431b54ed7a4@arm.com>
+Date: Mon, 15 Jul 2024 17:32:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZW56pgTqy4POud8P3t5gtdg53BX83VbieixtS1T-mg2w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kselftest: missing arg in ptrace.c
+To: Remington Brasga <rbrasga@uci.edu>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240712231730.2794-1-rbrasga@uci.edu>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20240712231730.2794-1-rbrasga@uci.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 02:28:13PM -0700, Andrii Nakryiko wrote:
 
-> > @@ -1814,7 +1822,7 @@ static int dup_utask(struct task_struct
-> >                         return -ENOMEM;
-> >
-> >                 *n = *o;
-> > -               get_uprobe(n->uprobe);
-> > +               __srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
-> 
-> do we need to add this __srcu_clone_read_lock hack just to avoid
-> taking a refcount in dup_utask (i.e., on process fork)? This is not
-> that frequent and performance-sensitive case, so it seems like it
-> should be fine to take refcount and avoid doing srcu_read_unlock() in
-> a new process. Just like the case with long-running uretprobes where
-> you convert SRCU lock into refcount.
+On 7/13/24 04:47, Remington Brasga wrote:
+> The string passed to ksft_test_result_skip is missing the `type_name`
+>
+> Signed-off-by: Remington Brasga <rbrasga@uci.edu>
 
-Yes, I suppose that is now possible too. But it makes the patches harder
-to split. Let me ponder that after I get it to pass your stress thing.
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+
 
