@@ -1,323 +1,505 @@
-Return-Path: <linux-kernel+bounces-252652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19DA931660
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:06:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE12931665
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EFE1F223AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:06:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7251C21335
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6EC18E775;
-	Mon, 15 Jul 2024 14:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9612D18E777;
+	Mon, 15 Jul 2024 14:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CmU0VpFA";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fk7VoQrr"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7FyWfrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B13D433B3;
-	Mon, 15 Jul 2024 14:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721052388; cv=fail; b=NXIqP3CY1s0z0fSoZPEfeR9KMeP/WmkiYrin1jYrLdsbscKMz4chJ5tsZCnj0dIXcMDmCUtMhZDsR/DJh1UnahzKyMdBqKnj2As6qQq5AMfNmQQkP8GM6XWvB55ekB1y5vQaGWgwlWPKqMmtDqCmmMTj9fDnoLVUeMtcrgjHuF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721052388; c=relaxed/simple;
-	bh=9XsVL047+Uixo5L8ti5o2gmwouL7MExckVn8cOx5z+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rwGiy6d0sDQN4p7YfyICiwVupx2WpWwAQnSHkUob8pVfcngCAzZjkNxDPkIuk5aEwo+K307E/GsENxqjSMpVJIuIsSG3F7AuOFQ8liVSxjJy7G2HmDdcJZ6act3ZAkGc30wvFxEpew7Xkpac8v1xs1DgqAr201F3UBUQmDgsvaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CmU0VpFA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fk7VoQrr; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FCtUnQ006418;
-	Mon, 15 Jul 2024 14:06:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=847ia16E14Q1PEr
-	keCXVMwODeE4slE6utr+oV4CY5dg=; b=CmU0VpFAqJvWp72uHg8gSosMVe8ldeV
-	yHFm8zNB/Pq55tVeVTB7HKRajiESalbB074UQEMhMbVEgg//z+NGR/V3KQ17GiQF
-	nGs/Ikt0T4ue11TV1bsva+Q0ED4ah8kl3ICpo6Duk4HXUMXJatylGwI2I1Amrq8O
-	EVQL4Ac7gUkUKd67NCGEKZcAoXXxffcfhiIaUWUFmqX6gyDeV+dAAS4hQuyAkw7u
-	dwjyzWmPrHFne7cClRt+hBveVEWhM5IX+GtWEw4on34POqxfc0y8Alv/vVubnwBa
-	ilAzQcXRSO4WAUQkyILEqQ88LoGP/0rZUFNR1N49A/Br9/icnd+2NMg==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40bh6sudjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Jul 2024 14:06:14 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46FDP6vv010570;
-	Mon, 15 Jul 2024 14:06:13 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40bg17p742-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Jul 2024 14:06:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZnfT3kMxRcHWAoo9l84C3ylwhJ7Y0paQK63iCE+ZE+CGXs457hw2nJQO36wRW5Uu1ZfeIMv7Px3b5v1lS5Bb2YTlgVmHuaW2xW56ay3YCCPUhTxYVCUH2EQ9mIjoU6o/8QvVN3cace89v1edR6GaqCtCZ/8Nw9pGvvOblJfnxVlWR4t4oXXVncDTxi6JMAJllA4iv2I9o8x+ZQyNHrc/XxMgRJOeXQTMy1mwqpRWKMejtwkcQmhPUXlyoce3T029YLQA6y79Wx4fYWUfObpEJdQbLxtUZASh4Z+9/P7oz3icZL8nuBD/7wsuoraFz9IaZU4eDIFcT9T/ljMKrOdOWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=847ia16E14Q1PErkeCXVMwODeE4slE6utr+oV4CY5dg=;
- b=pZGzok4D3ylno7VFWWaPmHnTOam3We9hrdopS30xBN0F1DIlgqFfvRE4IhHgmsU9sMcS8UxAk8Ntl5EgB1sdWRyA4MS9Z/dMiINHuoftxk4KEtepAaJP7ojoiWA08fgcY0Gvyke64OtCOQwj5WZ0d7hekiJh1e3WayVkyqmkH4IMKwQzsblRkWLEdkfU0ieqji57RcLujpbQnGmuJADmA9K09r78gMJP0XZ/R4zGSNUdBaBqkV6k/uCb+IYVt83fISeRMmpaAVK1FFSB9tlC079quwCMKGg7rObPCqApD5j8wvg06LLvSqzzISAvv2FVDXP03wjpb6oKmxzQZSQ/jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=847ia16E14Q1PErkeCXVMwODeE4slE6utr+oV4CY5dg=;
- b=fk7VoQrr3klRMvc+zk9xU05O1OTIexuolIXfzVdZnYK+V4nzawn2+my6bFBK+UXHlCmowgIZlc8pOFjioed9AKGdXn0SjJQ6wUR2rM87/DoNkP/82ISpb+K8LRGgPboky/BlQ8jSxW4uxClvf+9kGKI1D6iNI01flTZRVid7K+I=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by SA1PR10MB7555.namprd10.prod.outlook.com (2603:10b6:806:378::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 15 Jul
- 2024 14:06:10 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
- 14:06:10 +0000
-Date: Mon, 15 Jul 2024 10:06:07 -0400
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Youzhong Yang <youzhong@gmail.com>
-Subject: Re: [PATCH] nfsd: remove unneeded EEXIST error check in
- nfsd_do_file_acquire
-Message-ID: <ZpUsz61KzRosNNtm@tissot.1015granger.net>
-References: <20240711-nfsd-next-v1-1-f9f944500503@kernel.org>
- <172100324023.15471.746980048334211968@noble.neil.brown.name>
- <85dcb63bd31b962039269bef6e3791c82cef9ecb.camel@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85dcb63bd31b962039269bef6e3791c82cef9ecb.camel@kernel.org>
-X-ClientProxiedBy: CH0PR04CA0060.namprd04.prod.outlook.com
- (2603:10b6:610:77::35) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163072AD18;
+	Mon, 15 Jul 2024 14:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721052605; cv=none; b=W04wqkoapac+bfrlwleHzP01Af2M7gQVp3DptOjJQw0s13xPt0ih8WFBHk6VMnhaLvOXkHTuQHkL1CH4Mxk6fIIgmPfMYfaQ6C8PAGkFZvxSyxt/93WJ28ZcE5kevqBX15quuWVsIwITH4KlT4G0lXjE9Z6FzmdRlN5Dtp/VV4c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721052605; c=relaxed/simple;
+	bh=Pk57MI3jO4xSkQSW4nKl0SGTDju4WXj/DgLsoV/xxLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g/bxh9GbGN19+qwBLm1J53vigrljfI1R99GYh+QVm3/o8IpwFIuPRNQsYR4ULVrd7p+gOFGxR1cs5t0VUU9sv4XOiU8417RlkIedjAC7CObAB3+e5lJPNPo4cfoYVA2AoR8wZHFCR8Bfj5oxdgZnytPC9uwhnMt8MYahOFXNygA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7FyWfrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B08C32782;
+	Mon, 15 Jul 2024 14:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721052604;
+	bh=Pk57MI3jO4xSkQSW4nKl0SGTDju4WXj/DgLsoV/xxLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a7FyWfrRhDhl4DFutpfyHL6+1J4TPwh9ni4iJdOdko32R4inVB7hEr0+iFNvTK6nI
+	 DYqrelA+s8hCshp3QqueSh0I/9LEvh0kk/VnV0N/k2zvl7yZLOf1mok9uF8D7/8slM
+	 h04xm2MhFnHik3NEL8smEGGScubS7IMBV42WMAZZofUIdMkOVHRltzRRmCFJms2Nvd
+	 O3EWE4loQ6SX+EcvnnhFlp1PW09r7oepU5WwGV5TYT5+CWoTawLuYzP3waKxaDk3CL
+	 2EMGMd2wCrT6fqEai9EwmnRszi4c/TPp2YXTKkvl7qYvC+5BpYQNb4lFCPa8pc6S5E
+	 9RqlvTX+e19AA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sTMOv-000000007zU-1GHx;
+	Mon, 15 Jul 2024 16:10:01 +0200
+Date: Mon, 15 Jul 2024 16:10:01 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+	rdunlap@infradead.org, vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
+	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
+	andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
+	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+	andersson@kernel.org, mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
+ per device MSI domains
+Message-ID: <ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
+References: <20240623142137.448898081@linutronix.de>
+ <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+ <878qy26cd6.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SA1PR10MB7555:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ef261ed-fc43-4d8f-437c-08dca4d74781
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?AxlOy2iLVPu7Au3Jslhw3+xTXNyHq0wwFgV0vCkGcs879aIrPwIqRpJzA9zJ?=
- =?us-ascii?Q?9gO0PStdGZ71mqnSX7AZFsXv6/RPBJtW+QqvKcJ4vch6bfbJ0wivqtnARgSS?=
- =?us-ascii?Q?9xjqo+DuPfNBpz/cCZ9run8OQJeuKzObKwohAFIHt/9RXMBg6z7jb5ZyovOT?=
- =?us-ascii?Q?CZ8vyqzfgOCTzdQH4xFr27IFQEKg/qQi5essIou5skyVtSmps3x2RoqbLZhA?=
- =?us-ascii?Q?KQvxhs0bDdsQ5rycAihJBEeCiXTbTEVsPY4O2NctLAFjXaiBoK8Lhripqh5n?=
- =?us-ascii?Q?7u/mupStkv2gdEAiDiCfq7Q2d9KGMNINXP1z/YLIP1btUY/SxqwSRnSZZh8C?=
- =?us-ascii?Q?uBCtKp5AfYD9ZFTdzwP0xzvldsbSG90w3rhwko5dFJnLmOQEzBTEOHkq9d+q?=
- =?us-ascii?Q?dHT6+NgWXl2ZuDGVdynvzqQXkaqOkr2qW4ar+a3AYzMqJ68d9e9BcVY7dz93?=
- =?us-ascii?Q?Kggd5DrCRd47qgF9TQ5b1NMdipf5zhuHZPmhyuxxtkR7shXs/pHFj3FqZDWr?=
- =?us-ascii?Q?kzVGXcHb58Flr9g9pGuAmxgHwZ0g5M2fyLtMbPkMeBppeBBWTEm/lNCLnPch?=
- =?us-ascii?Q?wHUsNUR1CCH3R6Y+TXV3UUL+y6JEyb3c4pkOgmvDVV8PoW8j0+bq9Ug38VaZ?=
- =?us-ascii?Q?okalqWaaRScEriF+BCMnDSPdWbmT5iAc35FZhssyDxHaJU142ea71POTQb8Z?=
- =?us-ascii?Q?MgHEo4jdCwTcnopwaIBJ2VeH9kuUaXOCScEYbpXxPZRqEtVtm6+DX59v1QDI?=
- =?us-ascii?Q?O+6Ff0ibG9xXCQ6HMxI03PRYegyYKkm1HGDhUb9tc7d3vI/L97NVTDAcBa7d?=
- =?us-ascii?Q?4pwplUnxlMIzIGWn9J/aRtWg/mFOuT0wRoJwKy7HjG9Anp0nJ7rIjb2YFjvE?=
- =?us-ascii?Q?MIUULZK4WgJxvRGJo+UkRpuqhRPjYJCmebuttEcyBMgcSbF2UKaGMUolv0xm?=
- =?us-ascii?Q?A6WPX6rpIHutmVahRiVjlTVuxc9xrZTAjKXaxfnlZ0G/JE3zl0XLIsrNiLRz?=
- =?us-ascii?Q?KRG19JG4PwSqc3ulBs2l7rBdmUt7Z+X7NM8ZzuNexTK6pBs5cwsmIh7lKRt6?=
- =?us-ascii?Q?0UYVsD5tyNS20XX37hj20VvwzphtXm5wec25AgVuxboDwN8vV+PI5DYm3YEJ?=
- =?us-ascii?Q?NWxPtJy5lxTpP2cLdJQO5vVGFog5Ujy3SahWvas84oUwsjljW8kinVev1XMO?=
- =?us-ascii?Q?q5KZ9ab3viqjEnUFJmBVWYiUTFevEkzVG/d/3Oiqxf01O4DFE84ELXDTXh3I?=
- =?us-ascii?Q?e/C/CML1H8y3r+ATimt7yMu5kgiGKfrjJ/DOifDdHy1YTcSiQyIqxKxDKSAx?=
- =?us-ascii?Q?zkfUmAAxIzM6HcPdQlmfbVHyladKdv+mZND0+nkQQ7wkWg=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?YgS3DfhYjnXrMxgDVKHk/3FV4NJABWxcxiDcvr4MT/EgNEHRES4623mqRiNX?=
- =?us-ascii?Q?8gbXBQKNlmQu7wOG/QrRWDBbomt5OX6Xd9AdPmq4ZBGZPs5JufBDIcTW8/nq?=
- =?us-ascii?Q?pIIm1Jeyi6AncdlPLJ8MZ5IBYu/4kNJFqlbq5ZnufYvzlf39e7J2UKjzOYY6?=
- =?us-ascii?Q?KWHM5jnLJv06b0QUySoqZnnh0JY9nD0aEKr8aaEGDwwcU6A7Acn7lTSoTlfX?=
- =?us-ascii?Q?hKVIvIbNL0L9uJ0uJ1VlZ+/CSdXS5zNrHS2YfOsfAbXmcrMu+y6qQdhkoCNY?=
- =?us-ascii?Q?AJFxPBnQh/igBHSK87gShSxv2Lacd7xur2zWtHl+V6yOy7v+OfWWpp1glRP7?=
- =?us-ascii?Q?9CalpTHISeN/VDXZNNlFtD4KlRXs+hOUFXvC5T94Xn5zD+n2aiYnlf+5enl/?=
- =?us-ascii?Q?41lxRAHgag5O5FjbtgTYm9gJhmtGnFQllQ21ujzO+xAKgDaqaq6MKGt+PyOy?=
- =?us-ascii?Q?WtkoH74HB2MEUXdjf75wf1abQzvNBr2j3S3cJpriFr2oDTR+TJ1fqgheuV+a?=
- =?us-ascii?Q?hqaKF0n9BuLGil1jJS8+fro4EVQGZfQ+eOYt7VMypv5wEacmDeO9FnWjp8uc?=
- =?us-ascii?Q?zu52TNXnaZJGvKW/TzyvmYel70RXQfdGmvlYPD5cHaGQnXGIwGRgk1RhAckK?=
- =?us-ascii?Q?PXz53gSSk4OMbp4/yj3IKRTzkQ7rFFQbcJoOQD9JldYm6fB6IsX5GKVTKAWM?=
- =?us-ascii?Q?yk8Q0SeJ4YIAZ+46AaDYy0VolmHLHjUfog5nCE9EmrhFW5UcmKhFh3OlMSfb?=
- =?us-ascii?Q?Rc825iU3/enfybVi+x7Bza9Bd5Cs55ZGBglaSlSIMfq9SJUS2iU6+z3ajxh4?=
- =?us-ascii?Q?4tcs1mwYmzq/95/nqCV3o6tyNaSBz/be6OZd8spRzCVjDgVVV0xcVRXnf3C8?=
- =?us-ascii?Q?xrVtHgQl3zayb/kZ5MMznNtt7ul9XS/TL/8PZG3ha8Vb7a+VqgF8bdtKCKLF?=
- =?us-ascii?Q?JkqBYq3UBDx6YV1Jb39btwc0tyDWWcDSP76k3XmQW5HQKbakdjIeypLCoLyv?=
- =?us-ascii?Q?DSbnUkIsMw++FfQZnUOIEmtDFV4JZFk89q0b/qPVyx7A6dS7Ma22JMVqdujk?=
- =?us-ascii?Q?HAbYF1Bk3qtlBWEd9A7C/Y/RrHJz4BnrPxggkHFq8e+90Pj4QrCMVjHBH7Gi?=
- =?us-ascii?Q?RIECHFprmLQOEZSlJoZXEIsQPtzls+huweMyfm553wyIPj/05ONWvN6KJ6Ls?=
- =?us-ascii?Q?R0i3Hf2TOJ7B+19dyM+Hm6CWw5APvCv3zK0K0Qj9q8fpSuXxFlqykw3/NNOt?=
- =?us-ascii?Q?WqQ/2ftp5ZxD+4q7d+QHIjwmS7YSno1u6+cKWZ/eJB29lAheopF4Pq3HIiDb?=
- =?us-ascii?Q?8Cmk3m8q/9NOJkeaPgnYZ9U6uOFQHMqtypKJWdaBfYeNXdEytEWxbKejApVa?=
- =?us-ascii?Q?edqrkGH4xTaKiU6DV3y5CLdJs/xVd57z3CPskSEWmF1tZ1mnBNifmueRcuHo?=
- =?us-ascii?Q?UoxBU+sapLy5H5bjYriorrEvFEANmJgCnPQLzVz4TI96uHTzXe8ECBhuxs+P?=
- =?us-ascii?Q?0HLDCw5yoa9HjVT5ORNh5A0ZZG94mG6V6q500sWe5kTVvxnqFrzCooAHWRhP?=
- =?us-ascii?Q?VOgLFqq7Cy7YG76h+WDdRNniWjMVx7bFzW+JyD2x?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	6aa0lX36F60+/6XiYc1YnoRUGUSpsCTd5NcYLPUcFfL6i/K1mX8tvMqbyNbGEr6eyt71FY3/Sg19gSRF6CzLyoezJHm+qf36gd2ZLJZC7JWctSbxqEa49JO7lRKARIikWdfQ5BlOoxKe/0CsMv1qgoMhtaR+Jinv7Y3t0YJlVxajE6vy6cQ9Nnm008cOlJoRAafYvq2aIVrys72LD7hgWeCrHgQhsfh+PMGGO8FXOraCIrWUR+8X5SuUgptxHvxqXlmzH2U6/6DlQNGfjKw16o7tWsy1l34MMkh67panj49HqQvyv1ZChiaSqD8v3X+o1EeXmvbD49xsAqSVLR6e6T/pPltOGGX5eNhTCZTCWZ3LfVGbuvEENwzcwjy2p2LuV/LHnPHcGJItcwCC+K8sp7t//5lG/tAVH2/wYfdf0fJPGT07PTGpmdRgnmoBvW0B9y5oISlIwwSHY86LR6/Hd9O4VQI2h64BTf1V2KZIfc409/X/H4m069Ott9JFhswxgO9RDzslwPrpclZRjj8TdvRkC72a5aWsSNPpbAtOO3CRB/wjI8jFoQ8gofNMSC9wmfmHT5QSpLDlGyrS1ym+6X4CFFMMvDSXjvF+C8BUp1M=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ef261ed-fc43-4d8f-437c-08dca4d74781
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 14:06:10.6351
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x4rKQutxDYM8IVlqz6E9B0q+rlVW5sA0QDAoKUmIwUe9rv/Q8FHBeVdMo/5uvKir8iHkQArumjz5idjRkoAwCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7555
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_08,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- malwarescore=0 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2406180000 definitions=main-2407150111
-X-Proofpoint-GUID: 5LAkYxth0eFpmM1hQ9Oa_Jo9iMcXYh4n
-X-Proofpoint-ORIG-GUID: 5LAkYxth0eFpmM1hQ9Oa_Jo9iMcXYh4n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qy26cd6.wl-maz@kernel.org>
 
-On Mon, Jul 15, 2024 at 08:25:53AM -0400, Jeff Layton wrote:
-> On Mon, 2024-07-15 at 10:27 +1000, NeilBrown wrote:
-> > On Fri, 12 Jul 2024, Jeff Layton wrote:
-> > > Given that we do the search and insertion while holding the i_lock, I
-> > > don't think it's possible for us to get EEXIST here. Remove this case.
+On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
+> On Mon, 15 Jul 2024 12:18:47 +0100,
+> Johan Hovold <johan@kernel.org> wrote:
+> > On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
+> > > This is version 4 of the series to convert ARM MSI handling over to
+> > > per device MSI domains.
+
+> > This series only showed up in linux-next last Friday and broke interrupt
+> > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
+> > and x1e80100 that use the GIC ITS for PCIe MSIs.
 > > 
-> > I was going to comment that as rhltable_insert() cannot return -EEXIST
-> > that is an extra reason to discard the check.  But then I looked at the
-> > code an I cannot convince myself that it cannot.
-> > If __rhashtable_insert_fast() finds that tbl->future_tbl is not NULL it
-> > calls rhashtable_insert_slow(), and that seems to fail if the key
-> > already exists.  But it shouldn't for an rhltable, it should just add
-> > the new item to the linked list for that key.
+> > I've applied the series (21 commits from linux-next) on top of 6.10 and
+> > can confirm that the breakage is caused by commits:
 > > 
-> > It looks like this has always been broken: adding to an rhltable during
-> > a resize event can cause EEXIST....
+> > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
 > > 
-> > Would anyone like to check my work?  I'm surprise that hasn't been
-> > noticed if it is really the case.
+> > Applying the series up until the change before 3d1c927c08fc unbreaks the
+> > wifi on one machine:
 > > 
+> > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
+> > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
+> >
+> > and backing up until the commit before 233db05bc37f makes the NVMe come
+> > up again during boot on another.
 > > 
+> > I have not tried to debug this further.
 > 
-> I don't know this code well at all, but it looks correct to me:
-> 
-> static void *rhashtable_try_insert(struct rhashtable *ht, const void *key,
->                                    struct rhash_head *obj)
-> {
->         struct bucket_table *new_tbl;
->         struct bucket_table *tbl;
->         struct rhash_lock_head __rcu **bkt;
->         unsigned long flags;
->         unsigned int hash;
->         void *data;
-> 
->         new_tbl = rcu_dereference(ht->tbl);
-> 
->         do {
->                 tbl = new_tbl;
->                 hash = rht_head_hashfn(ht, tbl, obj, ht->p);
->                 if (rcu_access_pointer(tbl->future_tbl))
->                         /* Failure is OK */
->                         bkt = rht_bucket_var(tbl, hash);
->                 else
->                         bkt = rht_bucket_insert(ht, tbl, hash);
->                 if (bkt == NULL) {
->                         new_tbl = rht_dereference_rcu(tbl->future_tbl, ht);
->                         data = ERR_PTR(-EAGAIN);
->                 } else {
->                         flags = rht_lock(tbl, bkt);
->                         data = rhashtable_lookup_one(ht, bkt, tbl,
->                                                      hash, key, obj);
->                         new_tbl = rhashtable_insert_one(ht, bkt, tbl,
->                                                         hash, obj, data);
->                         if (PTR_ERR(new_tbl) != -EEXIST)
->                                 data = ERR_CAST(new_tbl);
-> 
->                         rht_unlock(tbl, bkt, flags);
->                 }
->         } while (!IS_ERR_OR_NULL(new_tbl));
-> 
->         if (PTR_ERR(data) == -EAGAIN)
->                 data = ERR_PTR(rhashtable_insert_rehash(ht, tbl) ?:
->                                -EAGAIN);
-> 
->         return data;
-> }
-> 
-> I'm assuming the part we need to worry about is where
-> rhashtable_insert_one returns -EEXIST.
-> 
-> It holds the rht_lock across the lookup and insert though. So if
-> rhashtable_insert_one returns -EEXIST, then "data" must be something
-> valid. In that case, "data" won't be overwritten and it will fall
-> through and return the pointer to the entry already there.
-> 
-> That said, this logic is really convoluted, so I may have missed
-> something too.
+> I need a few things from you though, because you're not giving much to
+> help you (and I'm travelling, which doesn't help).
 
-This is the issue I was concerned about after my review: it's
-obvious that the rhtable API can return -EEXIST, but it's just
-really hard to tell whether the rh/l/table API will ever return
--EEXIST.
+Yeah, this was just an early heads up.
 
-As Neil says, the rhtable "hash table full" case should not happen
-with rhltable. But can we prove that?
+> Can you at least investigate what in ath11k_pci_alloc_msi() causes the
+> wifi driver to be upset? Does it normally use a single MSI vector or
+> MSI-X? How about your nVME device?
 
-If we are not yet confident, then maybe PATCH 1/3 should replace
-the "if (ret == -EEXIST)" with "WARN_ON(ret == -EEXIST)"...? It's
-also possible to ask the human(s) who constructed the rhltable
-code. :-)
+It uses multiple vectors, but now it falls back to trying to allocate a
+single one and even that fails with -ENOSPC:
 
+	ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
 
-> > > Cc: Youzhong Yang <youzhong@gmail.com>
-> > > Fixes: c6593366c0bf ("nfsd: don't kill nfsd_files because of lease break error")
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > > This is replacement for PATCH 1/3 in the series I sent yesterday. I
-> > > think it makes sense to just eliminate this case.
-> > > ---
-> > >  fs/nfsd/filecache.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> > > index f84913691b78..b9dc7c22242c 100644
-> > > --- a/fs/nfsd/filecache.c
-> > > +++ b/fs/nfsd/filecache.c
-> > > @@ -1038,8 +1038,6 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
-> > >  	if (likely(ret == 0))
-> > >  		goto open_file;
-> > >  
-> > > -	if (ret == -EEXIST)
-> > > -		goto retry;
-> > >  	trace_nfsd_file_insert_err(rqstp, inode, may_flags, ret);
-> > >  	status = nfserr_jukebox;
-> > >  	goto construction_err;
-> > > 
-> > > ---
-> > > base-commit: ec1772c39fa8dd85340b1a02040806377ffbff27
-> > > change-id: 20240711-nfsd-next-c9d17f66e2bd
-> > > 
-> > > Best regards,
-> > > -- 
-> > > Jeff Layton <jlayton@kernel.org>
-> > > 
-> > > 
-> > 
-> 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+Similar for the NVMe, it uses multiple vectors normally, but now only
+the AER interrupts appears to be allocated for each controller and there
+is a GICv3 interrupt for the NVMe:
 
--- 
-Chuck Lever
+208:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
+212:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
+214:        161          0          0          0          0          0          0          0     GICv3 562 Level     nvme0q0, nvme0q1
+215:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
+
+Next boot, after disabling PCIe controller async probing, it's an MSI-X?!:
+
+201:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
+203:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
+205:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
+206:          0          0          0          0          0          0          0          0  ITS-PCI-MSIX-0002:01:00.0   0 Edge      nvme0q0
+
+This time ath11k vector allocation succeeded, but the driver times out
+eventually:
+
+[    8.984619] ath11k_pci 0006:01:00.0: MSI vectors: 32
+[   29.690841] ath11k_pci 0006:01:00.0: failed to power up mhi: -110
+[   29.697136] ath11k_pci 0006:01:00.0: failed to start mhi: -110
+[   29.703153] ath11k_pci 0006:01:00.0: failed to power up :-110
+[   29.732144] ath11k_pci 0006:01:00.0: failed to create soc core: -110
+[   29.738694] ath11k_pci 0006:01:00.0: failed to init core: -110
+[   32.841758] ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -110
+
+> It would also help if you could define the DEBUG symbol at the very
+> top of irq-gic-v3-its.c and report the debug information that the ITS
+> driver dumps.
+
+See below (with synchronous probing of the pcie controllers).
+
+Johan
+
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] GICv3: 960 SPIs implemented
+[    0.000000] GICv3: 0 Extended SPIs implemented
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] GICv3: GICv3 features: 16 PPIs
+[    0.000000] GICv3: CPU0: found redistributor 0 region 0:0x0000000017a60000
+[    0.000000] ITS [mem 0x17a40000-0x17a5ffff]
+[    0.000000] ITS@0x0000000017a40000: allocated 8192 Devices @100100000 (indirect, esz 8, psz 64K, shr 1)
+[    0.000000] ITS@0x0000000017a40000: allocated 32768 Interrupt Collections @100110000 (flat, esz 2, psz 64K, shr 1)
+[    0.000000] GICv3: using LPI property table @0x0000000100120000
+[    0.000000] ITS: Allocator initialized for 57344 LPIs
+[    0.000000] GICv3: CPU0: using allocated LPI pending table @0x0000000100130000
+
+[    0.010428] GICv3: CPU1: found redistributor 100 region 0:0x0000000017a80000
+[    0.010438] GICv3: CPU1: using allocated LPI pending table @0x0000000100140000
+[    0.010477] CPU1: Booted secondary processor 0x0000000100 [0x410fd4b0]
+[    0.011496] Detected PIPT I-cache on CPU2
+[    0.011535] GICv3: CPU2: found redistributor 200 region 0:0x0000000017aa0000
+[    0.011545] GICv3: CPU2: using allocated LPI pending table @0x0000000100150000
+[    0.011576] CPU2: Booted secondary processor 0x0000000200 [0x410fd4b0]
+[    0.012593] Detected PIPT I-cache on CPU3
+[    0.012631] GICv3: CPU3: found redistributor 300 region 0:0x0000000017ac0000
+[    0.012641] GICv3: CPU3: using allocated LPI pending table @0x0000000100160000
+[    0.012671] CPU3: Booted secondary processor 0x0000000300 [0x410fd4b0]
+[    0.015590] Detected PIPT I-cache on CPU4
+[    0.015637] GICv3: CPU4: found redistributor 400 region 0:0x0000000017ae0000
+[    0.015647] GICv3: CPU4: using allocated LPI pending table @0x0000000100170000
+[    0.015675] CPU4: Booted secondary processor 0x0000000400 [0x410fd4c0]
+[    0.016698] Detected PIPT I-cache on CPU5
+[    0.016733] GICv3: CPU5: found redistributor 500 region 0:0x0000000017b00000
+[    0.016742] GICv3: CPU5: using allocated LPI pending table @0x0000000100180000
+[    0.016772] CPU5: Booted secondary processor 0x0000000500 [0x410fd4c0]
+[    0.020807] Detected PIPT I-cache on CPU6
+[    0.020841] GICv3: CPU6: found redistributor 600 region 0:0x0000000017b20000
+[    0.020851] GICv3: CPU6: using allocated LPI pending table @0x0000000100190000
+[    0.020879] CPU6: Booted secondary processor 0x0000000600 [0x410fd4c0]
+[    0.021878] Detected PIPT I-cache on CPU7
+[    0.021914] GICv3: CPU7: found redistributor 700 region 0:0x0000000017b40000
+[    0.021922] GICv3: CPU7: using allocated LPI pending table @0x00000001001a0000
+[    0.021952] CPU7: Booted secondary processor 0x0000000700 [0x410fd4c0]
+
+[    8.358586] qcom-pcie 1c00000.pcie: host bridge /soc@0/pcie@1c00000 ranges:
+[    8.365787] qcom-pcie 1c00000.pcie:       IO 0x0030200000..0x00302fffff -> 0x0000000000
+[    8.381670] qcom-pcie 1c00000.pcie:      MEM 0x0030300000..0x0031ffffff -> 0x0030300000
+[    8.507519] qcom-pcie 1c00000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
+[    8.603797] qcom-pcie 1c00000.pcie: PCIe Gen.2 x1 link up
+[    8.610023] qcom-pcie 1c00000.pcie: PCI host bridge to bus 0006:00
+[    8.616805] pci_bus 0006:00: root bus resource [bus 00-ff]
+[    8.622872] pci_bus 0006:00: root bus resource [io  0x0000-0xfffff]
+[    8.629844] pci_bus 0006:00: root bus resource [mem 0x30300000-0x31ffffff]
+[    8.636981] pci 0006:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
+[    8.655493] pci 0006:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+[    8.672909] pci 0006:00:00.0: PCI bridge to [bus 01-ff]
+[    8.688721] pci 0006:00:00.0:   bridge window [io  0x0000-0x0fff]
+[    8.703805] pci 0006:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[    8.719789] pci 0006:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[    8.736680] pci 0006:00:00.0: PME# supported from D0 D3hot D3cold
+[    8.745548] pci 0006:01:00.0: [17cb:1103] type 00 class 0x028000 PCIe Endpoint
+[    8.745646] pci 0006:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
+[    8.746274] pci 0006:01:00.0: PME# supported from D0 D3hot D3cold
+[    8.746442] pci 0006:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 5.0 GT/s PCIe x1 link at 0006:00:00.0 (capable of 7.876 Gb/s with 8.0 GT/s PCIe x1 link)
+[    8.836195] pci 0006:00:00.0: bridge window [mem 0x30400000-0x305fffff]: assigned
+[    8.853287] pci 0006:00:00.0: BAR 0 [mem 0x30300000-0x30300fff]: assigned
+[    8.870163] pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
+[    8.887617] pci 0006:00:00.0: PCI bridge to [bus 01-ff]
+[    8.902850] pci 0006:00:00.0:   bridge window [mem 0x30400000-0x305fffff]
+[    8.933586] ITS: alloc 8192:32
+[    8.933599] ITT 32 entries, 5 bits
+[    8.951573] ID:0 pID:8192 vID:201
+[    8.951585] ID:1 pID:8193 vID:202
+[    8.951591] ID:2 pID:8194 vID:203
+[    8.951597] ID:3 pID:8195 vID:204
+[    8.951603] ID:4 pID:8196 vID:205
+[    8.951609] ID:5 pID:8197 vID:206
+[    8.951615] ID:6 pID:8198 vID:207
+[    8.951621] ID:7 pID:8199 vID:208
+[    8.951627] ID:8 pID:8200 vID:209
+[    8.951633] ID:9 pID:8201 vID:210
+[    8.951639] ID:10 pID:8202 vID:211
+[    8.951645] ID:11 pID:8203 vID:212
+[    8.951650] ID:12 pID:8204 vID:213
+[    8.951656] ID:13 pID:8205 vID:214
+[    8.951662] ID:14 pID:8206 vID:215
+[    8.951667] ID:15 pID:8207 vID:216
+[    8.951673] ID:16 pID:8208 vID:217
+[    8.951679] ID:17 pID:8209 vID:218
+[    8.951685] ID:18 pID:8210 vID:219
+[    8.951691] ID:19 pID:8211 vID:220
+[    8.951696] ID:20 pID:8212 vID:221
+[    8.951702] ID:21 pID:8213 vID:222
+[    8.951708] ID:22 pID:8214 vID:223
+[    8.951714] ID:23 pID:8215 vID:224
+[    8.951720] ID:24 pID:8216 vID:225
+[    8.951725] ID:25 pID:8217 vID:226
+[    8.951772] ID:26 pID:8218 vID:227
+[    8.951778] ID:27 pID:8219 vID:228
+[    8.951784] ID:28 pID:8220 vID:229
+[    8.951790] ID:29 pID:8221 vID:230
+[    8.951796] ID:30 pID:8222 vID:231
+[    8.951802] ID:31 pID:8223 vID:232
+[    8.951919] IRQ201 -> 0-7 CPU0
+[    8.951940] IRQ202 -> 0-7 CPU1
+[    8.951952] IRQ203 -> 0-7 CPU2
+[    8.951963] IRQ204 -> 0-7 CPU3
+[    8.951975] IRQ205 -> 0-7 CPU4
+[    8.951987] IRQ206 -> 0-7 CPU5
+[    8.951998] IRQ207 -> 0-7 CPU6
+[    8.952010] IRQ208 -> 0-7 CPU7
+[    8.952022] IRQ209 -> 0-7 CPU0
+[    8.952033] IRQ210 -> 0-7 CPU1
+[    8.952045] IRQ211 -> 0-7 CPU2
+[    8.952056] IRQ212 -> 0-7 CPU3
+[    8.952068] IRQ213 -> 0-7 CPU4
+[    8.952079] IRQ214 -> 0-7 CPU5
+[    8.952091] IRQ215 -> 0-7 CPU6
+[    8.952103] IRQ216 -> 0-7 CPU7
+[    8.952115] IRQ217 -> 0-7 CPU0
+[    8.952126] IRQ218 -> 0-7 CPU1
+[    8.952138] IRQ219 -> 0-7 CPU2
+[    8.952150] IRQ220 -> 0-7 CPU3
+[    8.952162] IRQ221 -> 0-7 CPU4
+[    8.952174] IRQ222 -> 0-7 CPU5
+[    8.952185] IRQ223 -> 0-7 CPU6
+[    8.952197] IRQ224 -> 0-7 CPU7
+[    8.952209] IRQ225 -> 0-7 CPU0
+[    8.952220] IRQ226 -> 0-7 CPU1
+[    8.952232] IRQ227 -> 0-7 CPU2
+[    8.952244] IRQ228 -> 0-7 CPU3
+[    8.952255] IRQ229 -> 0-7 CPU4
+[    8.952267] IRQ230 -> 0-7 CPU5
+[    8.952278] IRQ231 -> 0-7 CPU6
+[    8.952290] IRQ232 -> 0-7 CPU7
+[    8.954072] ITS: alloc 8192:32
+[    8.954081] ITT 32 entries, 5 bits
+[    8.954128] ID:0 pID:8192 vID:201
+[    8.954137] IRQ201 -> 0-7 CPU0
+[    8.954328] IRQ201 -> 0-7 CPU0
+[    8.954357] pcieport 0006:00:00.0: PME: Signaling with IRQ 201
+[    8.960980] pcieport 0006:00:00.0: AER: enabled with IRQ 201
+[    8.967607] ath11k_pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
+[    8.976146] ath11k_pci 0006:01:00.0: enabling device (0000 -> 0002)
+[    8.983071] ITS: alloc 8224:32
+[    8.983080] ITT 32 entries, 5 bits
+[    8.983842] ID:0 pID:8224 vID:202
+[    8.983849] ID:1 pID:8225 vID:203
+[    8.983855] ID:2 pID:8226 vID:204
+[    8.983861] ID:3 pID:8227 vID:205
+[    8.983867] ID:4 pID:8228 vID:206
+[    8.983873] ID:5 pID:8229 vID:207
+[    8.983878] ID:6 pID:8230 vID:208
+[    8.983884] ID:7 pID:8231 vID:209
+[    8.983890] ID:8 pID:8232 vID:210
+[    8.983895] ID:9 pID:8233 vID:211
+[    8.983901] ID:10 pID:8234 vID:212
+[    8.983907] ID:11 pID:8235 vID:213
+[    8.983913] ID:12 pID:8236 vID:214
+[    8.983919] ID:13 pID:8237 vID:215
+[    8.983925] ID:14 pID:8238 vID:216
+[    8.983931] ID:15 pID:8239 vID:217
+[    8.983937] ID:16 pID:8240 vID:218
+[    8.983942] ID:17 pID:8241 vID:219
+[    8.983948] ID:18 pID:8242 vID:220
+[    8.983954] ID:19 pID:8243 vID:221
+[    8.983960] ID:20 pID:8244 vID:222
+[    8.983965] ID:21 pID:8245 vID:223
+[    8.983971] ID:22 pID:8246 vID:224
+[    8.983977] ID:23 pID:8247 vID:225
+[    8.983983] ID:24 pID:8248 vID:226
+[    8.983989] ID:25 pID:8249 vID:227
+[    8.983995] ID:26 pID:8250 vID:228
+[    8.984000] ID:27 pID:8251 vID:229
+[    8.984006] ID:28 pID:8252 vID:230
+[    8.984012] ID:29 pID:8253 vID:231
+[    8.984018] ID:30 pID:8254 vID:232
+[    8.984024] ID:31 pID:8255 vID:233
+[    8.984102] IRQ202 -> 0-7 CPU1
+[    8.984148] IRQ203 -> 0-7 CPU2
+[    8.984160] IRQ204 -> 0-7 CPU3
+[    8.984172] IRQ205 -> 0-7 CPU4
+[    8.984184] IRQ206 -> 0-7 CPU5
+[    8.984196] IRQ207 -> 0-7 CPU6
+[    8.984208] IRQ208 -> 0-7 CPU7
+[    8.984220] IRQ209 -> 0-7 CPU0
+[    8.984231] IRQ210 -> 0-7 CPU1
+[    8.984243] IRQ211 -> 0-7 CPU2
+[    8.984255] IRQ212 -> 0-7 CPU3
+[    8.984267] IRQ213 -> 0-7 CPU4
+[    8.984279] IRQ214 -> 0-7 CPU5
+[    8.984291] IRQ215 -> 0-7 CPU6
+[    8.984303] IRQ216 -> 0-7 CPU7
+[    8.984315] IRQ217 -> 0-7 CPU0
+[    8.984326] IRQ218 -> 0-7 CPU1
+[    8.984338] IRQ219 -> 0-7 CPU2
+[    8.984350] IRQ220 -> 0-7 CPU3
+[    8.984362] IRQ221 -> 0-7 CPU4
+[    8.984373] IRQ222 -> 0-7 CPU5
+[    8.984385] IRQ223 -> 0-7 CPU6
+[    8.984398] IRQ224 -> 0-7 CPU7
+[    8.984409] IRQ225 -> 0-7 CPU0
+[    8.984422] IRQ226 -> 0-7 CPU1
+[    8.984434] IRQ227 -> 0-7 CPU2
+[    8.984445] IRQ228 -> 0-7 CPU3
+[    8.984457] IRQ229 -> 0-7 CPU4
+[    8.984469] IRQ230 -> 0-7 CPU5
+[    8.984481] IRQ231 -> 0-7 CPU6
+[    8.984492] IRQ232 -> 0-7 CPU7
+[    8.984504] IRQ233 -> 0-7 CPU0
+[    8.984619] ath11k_pci 0006:01:00.0: MSI vectors: 32
+[    8.990070] ath11k_pci 0006:01:00.0: wcn6855 hw2.0
+[    8.998289] IRQ202 -> 0-7 CPU1
+[    8.998348] IRQ203 -> 0-7 CPU2
+[    8.998376] IRQ204 -> 0-7 CPU3
+[    9.001890] IRQ205 -> 0-7 CPU4
+[    9.001923] IRQ206 -> 0-7 CPU5
+[    9.001953] IRQ207 -> 0-7 CPU6
+[    9.001977] IRQ208 -> 0-7 CPU7
+[    9.002003] IRQ209 -> 0-7 CPU0
+[    9.002031] IRQ210 -> 0-7 CPU1
+[    9.002055] IRQ211 -> 0-7 CPU2
+[    9.002117] IRQ216 -> 0-7 CPU7
+[    9.002168] IRQ217 -> 0-7 CPU0
+[    9.002210] IRQ218 -> 0-7 CPU1
+[    9.002257] IRQ220 -> 0-7 CPU3
+[    9.002296] IRQ221 -> 0-7 CPU4
+[    9.002337] IRQ222 -> 0-7 CPU5
+[    9.002381] IRQ223 -> 0-7 CPU6
+[    9.002421] IRQ224 -> 0-7 CPU7
+[    9.002460] IRQ225 -> 0-7 CPU0
+[    9.002499] IRQ226 -> 0-7 CPU1
+[    9.162382] mhi mhi0: Requested to power ON
+[    9.167114] mhi mhi0: Power on setup success
+
+[   29.680356] mhi mhi0: Device link is not accessible
+[   29.685437] mhi mhi0: MHI did not enter READY state
+[   29.690841] ath11k_pci 0006:01:00.0: failed to power up mhi: -110
+[   29.697136] ath11k_pci 0006:01:00.0: failed to start mhi: -110
+[   29.703153] ath11k_pci 0006:01:00.0: failed to power up :-110
+[   29.732144] ath11k_pci 0006:01:00.0: failed to create soc core: -110
+[   29.738694] ath11k_pci 0006:01:00.0: failed to init core: -110
+[   32.841758] ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -110
+[   32.852799] qcom-pcie 1c10000.pcie: supply vdda not found, using dummy regulator
+[   32.860924] qcom-pcie 1c10000.pcie: host bridge /soc@0/pcie@1c10000 ranges:
+[   32.868157] qcom-pcie 1c10000.pcie:       IO 0x0034200000..0x00342fffff -> 0x0000000000
+[   32.876428] qcom-pcie 1c10000.pcie:      MEM 0x0034300000..0x0035ffffff -> 0x0034300000
+[   33.001705] qcom-pcie 1c10000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
+[   33.111456] qcom-pcie 1c10000.pcie: PCIe Gen.3 x2 link up
+[   33.117554] qcom-pcie 1c10000.pcie: PCI host bridge to bus 0004:00
+[   33.124000] pci_bus 0004:00: root bus resource [bus 00-ff]
+[   33.129745] pci_bus 0004:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
+[   33.139324] pci_bus 0004:00: root bus resource [mem 0x34300000-0x35ffffff]
+[   33.146525] pci 0004:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
+[   33.154167] pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+[   33.160373] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+[   33.165804] pci 0004:00:00.0:   bridge window [io  0x100000-0x100fff]
+[   33.172482] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[   33.179515] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[   33.187622] pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
+[   33.195555] pci 0004:01:00.0: [17cb:0306] type 00 class 0xff0000 PCIe Endpoint
+[   33.203462] pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[   33.210163] pci 0004:01:00.0: BAR 2 [mem 0x00000000-0x00000fff 64bit]
+[   33.217379] pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
+[   33.223825] pci 0004:01:00.0: 15.752 Gb/s available PCIe bandwidth, limited by 8.0 GT/s PCIe x2 link at 0004:00:00.0 (capable of 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+[   33.251876] pci 0004:00:00.0: bridge window [mem 0x34300000-0x343fffff]: assigned
+[   33.259599] pci 0004:00:00.0: BAR 0 [mem 0x34400000-0x34400fff]: assigned
+[   33.266621] pci 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
+[   33.274186] pci 0004:01:00.0: BAR 2 [mem 0x34301000-0x34301fff 64bit]: assigned
+[   33.281748] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+[   33.287133] pci 0004:00:00.0:   bridge window [mem 0x34300000-0x343fffff]
+[   33.294322] Reusing ITT for devID 0
+[   33.296005] Reusing ITT for devID 0
+[   33.296053] ID:1 pID:8193 vID:203
+[   33.296066] IRQ203 -> 0-7 CPU1
+[   33.296176] IRQ203 -> 0-7 CPU1
+[   33.296240] pcieport 0004:00:00.0: PME: Signaling with IRQ 203
+[   33.302538] pcieport 0004:00:00.0: AER: enabled with IRQ 203
+[   33.308587] mhi-pci-generic 0004:01:00.0: MHI PCI device found: foxconn-sdx55
+[   33.315945] mhi-pci-generic 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
+[   33.324583] mhi-pci-generic 0004:01:00.0: enabling device (0000 -> 0002)
+[   33.331610] ITS: alloc 8224:8
+[   33.331619] ITT 8 entries, 3 bits
+[   33.331750] ID:0 pID:8224 vID:204
+[   33.331756] ID:1 pID:8225 vID:205
+[   33.331762] ID:2 pID:8226 vID:206
+[   33.331769] ID:3 pID:8227 vID:207
+[   33.331774] ID:4 pID:8228 vID:208
+[   33.331791] IRQ204 -> 0-7 CPU2
+[   33.331837] IRQ205 -> 0-7 CPU3
+[   33.331848] IRQ206 -> 0-7 CPU4
+[   33.331860] IRQ207 -> 0-7 CPU5
+[   33.331872] IRQ208 -> 0-7 CPU6
+[   33.332711] IRQ204 -> 0-7 CPU2
+[   33.333016] IRQ205 -> 0-7 CPU3
+[   33.333042] IRQ206 -> 0-7 CPU4
+[   33.333066] IRQ207 -> 0-7 CPU5
+[   33.333090] IRQ208 -> 0-7 CPU6
+[   33.335976] mhi mhi0: Requested to power ON
+[   33.340327] mhi mhi0: Power on setup success
+[   54.242353] mhi-pci-generic 0004:01:00.0: failed to power up MHI controller
+[   54.251547] mhi-pci-generic 0004:01:00.0: probe with driver mhi-pci-generic failed with error -110
+[   54.262662] qcom-pcie 1c20000.pcie: supply vdda not found, using dummy regulator
+[   54.270794] qcom-pcie 1c20000.pcie: host bridge /soc@0/pcie@1c20000 ranges:
+[   54.278042] qcom-pcie 1c20000.pcie:       IO 0x003c200000..0x003c2fffff -> 0x0000000000
+[   54.286340] qcom-pcie 1c20000.pcie:      MEM 0x003c300000..0x003dffffff -> 0x003c300000
+[   54.409356] qcom-pcie 1c20000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
+[   54.519604] qcom-pcie 1c20000.pcie: PCIe Gen.3 x4 link up
+[   54.525609] qcom-pcie 1c20000.pcie: PCI host bridge to bus 0002:00
+[   54.532017] pci_bus 0002:00: root bus resource [bus 00-ff]
+[   54.537732] pci_bus 0002:00: root bus resource [io  0x200000-0x2fffff] (bus address [0x0000-0xfffff])
+[   54.547830] pci_bus 0002:00: root bus resource [mem 0x3c300000-0x3dffffff]
+[   54.555523] pci 0002:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
+[   54.563629] pci 0002:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
+[   54.570244] pci 0002:00:00.0: PCI bridge to [bus 01-ff]
+[   54.576099] pci 0002:00:00.0:   bridge window [io  0x200000-0x200fff]
+[   54.583121] pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+[   54.590473] pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[   54.598841] pci 0002:00:00.0: PME# supported from D0 D3hot D3cold
+[   54.606657] pci 0002:01:00.0: [1e0f:0001] type 00 class 0x010802 PCIe Endpoint
+[   54.614458] pci 0002:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
+[   54.621900] pci 0002:01:00.0: PME# supported from D0 D3hot
+[   54.635232] sd 0:0:0:0: [sda] Starting disk
+[   54.641117] pci 0002:00:00.0: bridge window [mem 0x3c300000-0x3c3fffff]: assigned
+[   54.649086] pci 0002:00:00.0: BAR 0 [mem 0x3c400000-0x3c400fff]: assigned
+[   54.656299] pci 0002:01:00.0: BAR 0 [mem 0x3c300000-0x3c303fff 64bit]: assigned
+[   54.664083] pci 0002:00:00.0: PCI bridge to [bus 01-ff]
+[   54.669688] pci 0002:00:00.0:   bridge window [mem 0x3c300000-0x3c3fffff]
+[   54.677113] Reusing ITT for devID 0
+[   54.678960] Reusing ITT for devID 0
+[   54.678994] ID:2 pID:8194 vID:205
+[   54.679005] IRQ205 -> 0-7 CPU2
+[   54.679103] IRQ205 -> 0-7 CPU2
+[   54.679123] pcieport 0002:00:00.0: PME: Signaling with IRQ 205
+[   54.685994] pcieport 0002:00:00.0: AER: enabled with IRQ 205
+[   54.693042] nvme nvme0: pci function 0002:01:00.0
+[   54.698150] nvme 0002:01:00.0: enabling device (0000 -> 0002)
+[   54.704457] Reusing ITT for devID 100
+[   54.704500] ID:0 pID:8224 vID:206
+[   54.704509] IRQ206 -> 0-7 CPU3
+[   54.706919] IRQ206 -> 0-7 CPU3
+
+[  115.695904] nvme nvme0: I/O tag 0 (1000) QID 0 timeout, completion polled
+[  177.135829] nvme nvme0: I/O tag 1 (1001) QID 0 timeout, completion polled
+[  238.575830] nvme nvme0: I/O tag 2 (1002) QID 0 timeout, completion polled
+[  300.023834] nvme nvme0: I/O tag 3 (1003) QID 0 timeout, completion polled
+[  300.055992] nvme nvme0: allocated 61 MiB host memory buffer.
 
