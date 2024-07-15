@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-252336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A060F9311C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFDE9311CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDDDB20D5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:56:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BCAB229AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6030E187335;
-	Mon, 15 Jul 2024 09:56:12 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68ABE1862AB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96BA18733D;
+	Mon, 15 Jul 2024 09:57:27 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B9E1862AB;
+	Mon, 15 Jul 2024 09:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721037372; cv=none; b=od0bNvCaMyzgB3Th5si4vAVNhy+pkUH42O8dWgE+V5vlmCcRmrc2mtSpP2wN5SjXrmNUQwxiqXRv8oFEaUXQora0DZ9wfiE9gmMh8Bqb5bDKZC0h7/b4dMAulp4kXmJviJrWbvVqE1ATalfXq1401F5NdlyJVBGWVyhKXEfZ2EA=
+	t=1721037447; cv=none; b=J+7twE0JTUeRSa15Kbwy8tVkaNtQBxtHl2cxZevGKDLJyrLe/pp5RKMYr/p2E3p6t/LKR0gKlW1KOqFUAYwW6oX9yJCBs7FFMv1A4y89F/0qKP2rnrUOifmpO+jyM0xsgwPj2s8DKuO/aQvwfYbck04RJXmU2zIvZutgblPfEI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721037372; c=relaxed/simple;
-	bh=1LT6bGdap7nmLMQbwo1fJ5WrO61MDan0T38QyFzr18E=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UWP0qz+wgqcTqZf/2fQ8nP2MdY3ocPzNalOpK8UW+NZ9WCDcxn1xp5E1exB+PAEgM3I4FmFvXYhaj/XHrNX7GZino+tKo0g58dtInu6bQ3JfEolbDrRPK7Q9yhZJVcSaQDqo3rM/p7ucFh8sRGxnUbgGyceGXxFLb2967u/gEeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxrfA38pRmMpAEAA--.12035S3;
-	Mon, 15 Jul 2024 17:56:07 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx08Q18pRmP6dJAA--.24803S3;
-	Mon, 15 Jul 2024 17:56:05 +0800 (CST)
-Subject: Re: [RFC PATCH 0/4] Add jump table support for objtool on LoongArch
-To: Jinyang He <hejinyang@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
-References: <20240712091506.28140-1-yangtiezhu@loongson.cn>
- <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
-Cc: Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <bad4a7fd-e487-498d-f6ab-b9a17e049dd7@loongson.cn>
-Date: Mon, 15 Jul 2024 17:56:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1721037447; c=relaxed/simple;
+	bh=wj+1a6WKtsaJE7FJoENh/Oxzux7Kwyys96yvSwp5vX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DiOukfp6+QSSPtdEka+tBa33UXEum3KQpi8qKg5vAvo7weHME5I0/V6TSH7UMChy/VdI0XoLoLyAyexv/5BR8LmO5MGMr7ElrA46ZQgmRCgOe2YSS60K2e4L5+Sv7NAuA3RoebnD6pTPuMTMaDr1MZZTJh64F2Wrq7Y2fGGIKAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65f9e25fffaso16696427b3.3;
+        Mon, 15 Jul 2024 02:57:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721037443; x=1721642243;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Qqy5cIX9PhtoM3TjYnJhIKyX/+ffYHuIFVo0LyE7OQ=;
+        b=dM9XppUuSrs44lJC7pBxDun442v6VHwbN+lIKW+ciJFIzdBKzEKQ0xqWC/mqi1oqq0
+         /PnuyWiCiU3kpL/OeOcUxDkTigBoGpH0xRe7UhthynGszXHAQLkVXNZltxb595VHUVb8
+         jQ/KYDtwFeqkjNDzrS8FdxpVQ9rnyCsbedyJr8oL5mOiBkJWJ9r0vAjjEapbk9vKRCST
+         rlDTpYcdFNnloMJdNFzvo0eqw6NO7ZjaboOiGTFOi/tmxv/kLOcZtXa7H23mqwavdTX4
+         2h+2vLDqsthXNrZPMBp+CdWzOFAxcmlxfLin73M+MHAfK1aik4c2CrfxHxAFoiDs4VCB
+         5Aeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUf/PnCCCTsURdcyD16jWkEVsQKSrJZTvUW4PB+HtJ+Huw2A2kVdTHrsQHhOMuC6zzIshbOH7LwK1jGflbpbdTyvj6TqKR7JhWqUzb1aeYc1KE9FdXzq9M1/TQmu7M2Q2hYncI60O2u3w==
+X-Gm-Message-State: AOJu0Yymk8fCZbUtQk0+xPWydWZrS0sw36DeQgpJepAdaRoht17MvNn+
+	i+yLDenLGW9OLI19hCUfwOWV7ok/Oc3hRCigI+6YuS+Xl4BDKfmUA1w5y5bI
+X-Google-Smtp-Source: AGHT+IGXo8OChVetEwglrdPuKmDdFj3wiSDQvoUAfUrkctEwJkUPY9SlOimXp2x4N9Fr51LTgDmmdg==
+X-Received: by 2002:a05:690c:3385:b0:62f:2553:d3b3 with SMTP id 00721157ae682-658ef3414eemr252515777b3.29.1721037443194;
+        Mon, 15 Jul 2024 02:57:23 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-65fc29fa091sm7351877b3.54.2024.07.15.02.57.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 02:57:23 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-66108213e88so9154847b3.1;
+        Mon, 15 Jul 2024 02:57:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU38JNtt845rBTRaDetr/dEx/zYvmI7HbhGZcA3hrGFlI5q39QUUGJ4hTJTzsAJ16pJRf19L0pYDFroFEc1gE9vdCaE3xH/DtKMeVFiVLUBfgt7DNXKMDCNIJ7d44OnhIa4/PAwEkMPoQ==
+X-Received: by 2002:a0d:f0c6:0:b0:65f:77c3:63a0 with SMTP id
+ 00721157ae682-65f77c36408mr73368237b3.7.1721037442731; Mon, 15 Jul 2024
+ 02:57:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:AQAAf8Bx08Q18pRmP6dJAA--.24803S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFyDAw17Jr1kZr45WrWfZwc_yoW8Kry8pF
-	WUu34ftFs8JanagwnrXr129ay3CayDG3yDtr45G348uw4aqr1IvF4vkF9IvanrArs3ZrWa
-	vF17K3srKa1vyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07je0PfUUUUU=
+References: <20240711085930.26252-1-krzysztof.kozlowski@linaro.org>
+ <CAL_Jsq+WdctoTMNoakiY5kh4nDoNx5h522s76LoHyD_yKYvvSg@mail.gmail.com> <73038a80-ce58-4967-a258-d6befe23c777@linaro.org>
+In-Reply-To: <73038a80-ce58-4967-a258-d6befe23c777@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Jul 2024 11:57:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWkGD1gcwrLhd_fSdJLV2SzCVJ=yo+ekhOAfjUp=5Hh3A@mail.gmail.com>
+Message-ID: <CAMuHMdWkGD1gcwrLhd_fSdJLV2SzCVJ=yo+ekhOAfjUp=5Hh3A@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: incomplete-devices: document devices
+ without bindings
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>, 
+	Jonathan Cameron <jic23@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/12/2024 06:19 PM, Jinyang He wrote:
-> Are we always avoid our problems?
+Hi Krzysztof,
+
+Sorry for being late to the party, as v2 was sent, and applied ;-)
+
+On Fri, Jul 12, 2024 at 11:41=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 11/07/2024 15:01, Rob Herring wrote:
+> >> +      - description: Incorrect compatibles used on other PowerPC devi=
+ces
+> >> +        enum:
+> >> +          - 1682m-rng
+> >> +          - IBM,lhca
+> >> +          - IBM,lhea
+> >> +          - IBM,lhea-ethernet
+> >
+> >> +          - mpc5200b-fec-phy
+> >> +          - mpc5200-serial
+> >> +          - mpc5200-sram
+> >
+> > Tell Grant he needs to document these. ;) JK
+> >
+> >> +          - ohci-bigendian
+> >> +          - ohci-le
+> >> +          - ohci-littledian
+> >
+> > Given the typo, I think we can just drop this one from the driver.
 >
-> 1, When text section not support "R_LARCH_32_PCREL", update compiler
->    to add AS_HAS_THIN_ADD_SUB.
-> 2, When not support jump-table, use "-fno-jump-tables" to avoid it,
->    (and now update compiler to add CC_HAS_ANNOTATE_TABLEJUMP).
-> 3, When not support relax, use "-mno-relax" to avoid it.
-> 4, When some where in asm can be backtraced but generate warning,
->    use STACK_FRAME_NON_STANDARD to avoid it.
-> 5, When the goto-table cannot be handled (I guess the Ruoyao's
->    patch cannot handle goto table), use CONFIG_BPF_JIT_ALWAYS_ON
->    to avoid compile ___bpf_prog_run.
-> 6, And other $fp warnings not be solved in clang. Do we only care gcc?
->
-> So how to do in the future if compilers have other changed? Do we
-> need update compilers (both gcc and clang) again and again? Why
-> not just update objtool codes to solves these problems? As many
-> RISC arch not support directly find jump table, can we support
-> more generic ways to find it?
+> Sure, I'll send a patch. It could affect some ancient user, though...
+> Although I really wonder if any of these PowerPC boxes are still alive.
 
-This is a choose and balance. In principle, I want to make the kernel
-code clear and simple to enhance the readability and maintainability,
-I do not want to modify too much architecture independent code of the
-objtool framework, I just want to implement the architecture specific
-function.
+Looks like you forgot various "chrp,*" and "pnpPNP,*" ;-)
 
-As the gcc patch "LoongArch: Add support to annotate tablejump" said,
-the objtool program needs to analysis the control flow of each .o file
-generated by compiler toolchain, if a jump table is used, objtool has
-to correlate the jump instruction with the table, on x86 it's simple:
-a relocation entry natrually correlates them because one instruction is
-used for table-based jump, but on an RISC machine objtool would have to
-reconstruct the data flow if it must find out the correlation on its own,
-so emit an additional section to store the correlation info as pairs of
-addresses, each pair contains the address of a jump instruction (jr) and
-the address of the jump table. This is very trivial to implement in GCC.
+You can scavenge a few from my old LongTrail DTS
+http://g33rt.be/migrated/Linux/PPC/DeviceTree.html
+Note that my actual machine died 20 years ago...
 
-For jump table support of objtool on LoongArch, it makes life much easier
-with the gcc changes. As far as I can see, the remain issues (goto table
-in ___bpf_prog_run() and jump table in assemble code) are only related
-with kernel and can be solved with kernel changes.
+Gr{oetje,eeting}s,
 
-Thanks,
-Tiezhu
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
