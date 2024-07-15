@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-252246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFA9931085
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B78C493108C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E871F22511
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6302B1F224E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8EF187327;
-	Mon, 15 Jul 2024 08:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17163AC0F;
+	Mon, 15 Jul 2024 08:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="I8MmniB7"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RcF7yDKe"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5807186E50
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68090184102
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033061; cv=none; b=MXIc6EZ3iV7FvNu6NqgTgSTNPhoGoq5aBnsMXFiLXCPDzZBaFZhBqnclKncoQrFRVtML6wIQgQV76rlkGCppnuenXCpVyE/WT8sfeJb5Y+xCcRzBso2SL5BqMqC/0/3AIaBZ/ASwQCelbsG7+A0vj6OZkgZ+2l7GOkEgNQJ2PEg=
+	t=1721033113; cv=none; b=Rgx43kJdgTQSKDeO3mTguve61CH0skKdhIf0pn7Z2JHIRwEON2aK/ba9EV5HcZskg3zPOMva9Us8wGyZ2rJbQmiMTUCOL9EF6l731K+giOAQHN/g+6g52afO3rwHqF6Q5b+B3GpeAPIqw/ucSY2D9feF60aoA8mjmoSBW9/SXtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033061; c=relaxed/simple;
-	bh=ioJwmCwEIVCH6O2g8AfPZFZgHDKJSuHyo52Rd8aRs8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rZkONJ5N6qCOc4cwH25HLmFQpH3LplGy7WMFy0YMxR5YNIETOfj7YCuf1Wte+b80i6/hAddnmUkPTrLwMP2g5uWiA/7pAfDO7WirwLNPALyIl1DBYB1klgSN932DcCKsd7+NAIFH1uqjpyc6o45c6LWWBXUlff9Nctb78bfhzR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=I8MmniB7; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so27205155e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:44:19 -0700 (PDT)
+	s=arc-20240116; t=1721033113; c=relaxed/simple;
+	bh=KbdlWQKJn0hza2m6K2BTUfffnTnvoHZmFO0gSi7vJwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oiX+4z0/5i0bY46wOP/WbwKDzLES1dzoyCTKI4TGsIKIy1WN3NJY1mx/dY47rOp3atRvmS4+U239t1TthlSZ8WNP54iH0lSFnTNiUgXDAHmZB5QKbiPI/iIVo2NJeNMAuXRFGMsANLEzd4dBvUNmUe9p4uDk7Uf3kdF72rgXLy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=RcF7yDKe; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42666a5d33dso3207875e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721033058; x=1721637858; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WM0yZ3dZzzFTTxe4hgvAgtIJwKRKDgqcOStwGt2gSJ8=;
-        b=I8MmniB7fY2847u0qQ9SZWsxuSmKXRVsE8GPOfKyqbP7kzRdHSQRiZNnQkBkjohpo7
-         68Q2+x3aAenv8AKAFERkm0B0LVu5asZlYWz5LpE/Q05K2pB4hSMpy2TJxPVCvA9wucpb
-         h3NPHu06GXrbqc9vUcnqUKqkRPoA5iwQ22yJDFi1mVskLrfqRLgoy2KcGIWjVdkC0j8q
-         1iaFPyUzzEQB7gA89uBGv0ZscpzDA859QMBOdcS6czkih71ZjIdBP3eOcVqosEObj/Gy
-         vviB8NCzqh8n4XgXP4iTI0xkL2nS9vkmtv0Gyp+Gnfa+ToHRtZ/Rd18utXNA5spoGqrR
-         Ns5w==
+        d=ffwll.ch; s=google; t=1721033110; x=1721637910; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mPt43vWv7W7uWoCMBzaMsxBX+ZmRLoqnMa3kAMiQQGg=;
+        b=RcF7yDKer3QecybgNFRAoXitisxR93dnEqr03XAm9ERhXF+nkF+Dehg4hTmVXPqwLc
+         ZhLMjFyWfSlG1r+CSIhM+gZO6gcoyU31fsAg9lBWCUObW/E6IRxV7+JiMZjK7WGurxUg
+         xVeT5JMD6d/bylHVnPeS1X/jcHkVlgk0f1HU8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721033058; x=1721637858;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721033110; x=1721637910;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WM0yZ3dZzzFTTxe4hgvAgtIJwKRKDgqcOStwGt2gSJ8=;
-        b=YJnfqaDzdX2gMZ14UdIKWzkBWsueWFxPaMvQXeTn9mJZZjFWjpnuvh6O6/eXrWtP8L
-         2xVCEQvLUuVFPwQze+obY0OfL71W5+laXqUnbFjxoolnpSEAv5r+FWFQEYkhSAb0O/2J
-         GUFRisC2k6ZZrmZ958NgVXp/cyEtEywrdQgXqj22FBY6iNBdV55KZLH3y/iiv2xPo7Mb
-         yPSpQ9UVte3sbLLL5MoX36jpShYRs5aUGbieSJFn/300uAcn1Mv2mWRaHMtFYEqayL4i
-         3M04RZSYN818vCK7dxPI5Pbfvx4b+OBxGkNsJkhRJqymJEvkB7CcgW7OYFhA8FGq4Kgl
-         pKSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdb1CZypPbwfsBxKv2i5EqfhO+qYp2xvN1pJUtfDeDkC0jJhHZ1N+wMIz8w5BQ5EBo2L+Leii+XY2hxztfR6x2wv16Be87oPrHd/ey
-X-Gm-Message-State: AOJu0YysBAO0bdiP/D/Pk5j5CiES2gPUeZeC3/uMltjC/v4m8cxX6mjg
-	S9MGJRKJwm38JGqVRXGm2JFurzU2AS6aSEgGDVN6EtPNRwcAdqZV0lwIeWUVwx0=
-X-Google-Smtp-Source: AGHT+IGi4ZuAQ/yriu2Z9Cdv2XEyhj7rSOXhNHCWeEiNJIx9fF5ukvI9h0+hmRATjeo6CGGYegYPkw==
-X-Received: by 2002:a05:600c:a:b0:426:63b8:2cce with SMTP id 5b1f17b1804b1-426707cc06emr117802385e9.7.1721033058270;
-        Mon, 15 Jul 2024 01:44:18 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf20dsm5717442f8f.38.2024.07.15.01.44.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 01:44:17 -0700 (PDT)
-Message-ID: <0ff64285-8a88-421c-96c3-aa10decc8d05@tuxon.dev>
-Date: Mon, 15 Jul 2024 11:44:16 +0300
+        bh=mPt43vWv7W7uWoCMBzaMsxBX+ZmRLoqnMa3kAMiQQGg=;
+        b=A94zC0yd5dL3L5wDS4TTMvqAcw6V8sSKeeOnupHQnN8eF4vN4r762lPRvJUlnoyZqa
+         iQiiiYHJHXM203F6RSjJfaKg08NpkNMdMbbv/BbM3Lr6RPNEQeN2cFWBUsDFtujcKH4d
+         MTZ/4QRAUlYw5M1oZ/yZAYneT7x6prXnnvP2XTTweTfjLxJDGzYwI9L47eAZr7+2Qu/r
+         zZhhgJQOWlixhwm/1O/U9TK8LiPc1MjLxzdNddVt6oQ7Xz6GXmPmg+hdTj5qV0z5g4hC
+         +OFRFnLdQYwFLenXCI/rNH/8bZHOXj0aePmx57dHgMBquVxLbFuTP6TpD7MiievL00M2
+         ar/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVT0+FNBt0mWwET52HzjQWHn/fEQhIEyR5uZNOnI/pyqL/RaafXOfZ4t/ViWhmJC9a62h6poX65dw8OQHb7q+O2tlOFR4O1xEbxJIoP
+X-Gm-Message-State: AOJu0Yxp6raVKTx8eVoe0HNELBJH16F2MfzZ/Zz5/hEQvfbjIslq8J9e
+	ZwykxLEglBg0nWF9IA917kjdL+0OUUzcheu+aNRshcuWS/XegE/xdkeBdQNKdXg=
+X-Google-Smtp-Source: AGHT+IHkDheiQWPRAvAOHQTkNQHOAUKicTVB0J2JBhxVC1tcwLKXg6dTru289RnVzPDELy4A5wdRbw==
+X-Received: by 2002:a05:6000:2a4:b0:360:872b:7e03 with SMTP id ffacd0b85a97d-367f05439c1mr7021710f8f.0.1721033110619;
+        Mon, 15 Jul 2024 01:45:10 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccbd2sm5664721f8f.49.2024.07.15.01.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 01:45:10 -0700 (PDT)
+Date: Mon, 15 Jul 2024 10:45:08 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+	syzbot+6cebc1af246fe020a2f0@syzkaller.appspotmail.com,
+	Daniel Vetter <daniel.vetter@intel.com>, stable@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] bcachefs: no console_lock in bch2_print_string_as_lines
+Message-ID: <ZpThlAGUsPXZArvk@phenom.ffwll.local>
+Mail-Followup-To: John Ogness <john.ogness@linutronix.de>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+	syzbot+6cebc1af246fe020a2f0@syzkaller.appspotmail.com,
+	Daniel Vetter <daniel.vetter@intel.com>, stable@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20240710093120.732208-2-daniel.vetter@ffwll.ch>
+ <20240710130335.765885-1-daniel.vetter@ffwll.ch>
+ <87jzhtcp26.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/27] clk: at91: sam9x7: add sam9x7 pmc driver
-Content-Language: en-US
-To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
- sboyd@kernel.org, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
- <20240703102800.195957-1-varshini.rajendran@microchip.com>
- <ac4fbdb2-013f-40d8-9f92-1b489f172a60@tuxon.dev>
- <ddefd4e4-b719-464b-b8bc-d4d69fa07cf1@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ddefd4e4-b719-464b-b8bc-d4d69fa07cf1@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzhtcp26.fsf@jogness.linutronix.de>
+X-Operating-System: Linux phenom 6.9.7-amd64 
 
-Hi, Varshini,
-
-On 15.07.2024 09:46, Varshini.Rajendran@microchip.com wrote:
-> Hi Claudiu,
+On Wed, Jul 10, 2024 at 04:19:53PM +0206, John Ogness wrote:
+> On 2024-07-10, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > console_lock is the outermost subsystem lock for a lot of subsystems,
+> > which means get/put_user must nest within. Which means it cannot be
+> > acquired somewhere deeply nested in other locks, and most definitely
+> > not while holding fs locks potentially needed to resolve faults.
+> >
+> > console_trylock is the best we can do here. But John pointed out on a
+> > previous version that this is futile:
+> >
+> > "Using the console lock here at all is wrong. The console lock does not
+> > prevent other CPUs from calling printk() and inserting lines in between.
+> >
+> > "There is no way to guarantee a contiguous ringbuffer block using
+> > multiple printk() calls.
+> >
+> > "The console_lock usage should be removed."
+> >
+> > https://lore.kernel.org/lkml/87frsh33xp.fsf@jogness.linutronix.de/
+> >
+> > Do that.
 > 
-> On 14/07/24 7:25 pm, claudiu beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> Hi, Varshini,
->>
->> On 03.07.2024 13:28, Varshini Rajendran wrote:
->>> Add a driver for the PMC clocks of sam9x7 Soc family.
->>>
->>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->>> ---
->>>   drivers/clk/at91/Makefile |   1 +
->>>   drivers/clk/at91/sam9x7.c | 946 ++++++++++++++++++++++++++++++++++++++
->>>   2 files changed, 947 insertions(+)
->>>   create mode 100644 drivers/clk/at91/sam9x7.c
->>>
-
-...
-
->>> +     for (i = 0; i < PLL_ID_MAX; i++) {
->>> +             for (j = 0; j < 3; j++) {
->>
->> I now realize that we are alocating more than needed memory for each PLL in
->> sam9x7_plls[][]. The number of columns for the 2d array is PLL_ID_MAX and
->> it should be 3. I can adjust it when applying but I need you to run a
->> simple boot test with it.
->>
-> Yes. It boots and works perfectly with the change suggested. I am 
-> pasting the snippet below just to be on the same page.
+> Note that there is more of this incorrect usage of console lock in:
 > 
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -198,7 +198,7 @@ static const struct {
->          const struct clk_pll_characteristics *c;
->          unsigned long f;
->          u8 eid;
-> -} sam9x7_plls[][PLL_ID_MAX] = {
-> +} sam9x7_plls[][3] = {
+> fs/bcachefs/debug.c:bch2_btree_verify_replica()
+> 
+> fs/bcachefs/bset.c:bch2_dump_btree_node()
+> 
+> from commit 1c6fdbd8f246("bcachefs: Initial commit")
+> 
+> ... and its parent bcache:
+> 
+> drivers/md/bcache/debug.c:bch_btree_verify()
+> 
+> drivers/md/bcache/bset.c:bch_dump_bucket()
+> 
+> from commit cafe56359144("bcache: A block layer cache")
+> 
+> These should also be removed. Although Kent should verify that the
+> console lock is not providing some sort of necessary side-effect
+> synchronization.
 
-Great! Thank you!
+I'll take a look, at least some of them seem doable to audit without deep
+bcachefs understanding. Thanks for pointing them out, I should have looked
+a bit more at git grep ...
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
