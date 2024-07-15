@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-252695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DA69316F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:40:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA999316FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5340B1C214AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:40:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E8B21ED5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D718EA9D;
-	Mon, 15 Jul 2024 14:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE35018EFCD;
+	Mon, 15 Jul 2024 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQMK0Q75"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jj3Vlgh6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06FA13D531;
-	Mon, 15 Jul 2024 14:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D52313D531
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721054415; cv=none; b=rJNI96P1/+/ysQlatwrD8B5DKpel/R+pRswL+RsDeqUS0GGR6uAErDb6YBAwNPuA+xqf1EzPp3MJoINO8wj/+Es6d9IW462KEGZemfH0IW+sK/obcjQxlaPpHM0/+z5FWrCDmtcPndyuxJoj8fpBtRgrr00M4OMIiZDOoy2E8Fw=
+	t=1721054432; cv=none; b=s877DMmGGnH1uwVWUvibPVewX4nF+jB4uKoRFBALtqkLUiHVCmXkq5IlMpjK39WaDJSjgUqF8/0SPwOYeCLmlJzKhx4xu0YtI8TjY35QEXmo6/ku9U4uHSgRGmFKoE3oOhEhZXcx26qpSJZTEG6wUpWbAxjyVEgD2rFZThSfnXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721054415; c=relaxed/simple;
-	bh=gw2ndcYzWrXcWwfMvNwsIdrsWIYeYw1572YOxUCWSHc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F40gqLYG4DnlDzKOMctKPYIfA8xa7RmcneO07YISTt0Qsrx8/+VaZE+HRLvBxyeR1+g1oP5/lTdzqJWmktYZWA/Ad2wUYs2ZX+ivNuXO5YJgk1UjwYHLVy0rTycOULhPJvzKFVD6lWNPNawEyw2OLkazA003DrSVdHXBIzJCXyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQMK0Q75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6686CC32782;
-	Mon, 15 Jul 2024 14:40:15 +0000 (UTC)
+	s=arc-20240116; t=1721054432; c=relaxed/simple;
+	bh=nLTjZ4iku7w3CDYmTvYQeTxA3KeLggHY3Bv8PHGatPI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=q77kwRiF+ZgU9Dnc0lKAX6Im5ZixONTMzzI16fuqF4pXBZl2wZ+EH1iZZEfsgZNNzGgqxNw+wOMpnjoIvAjzDqS1RdhFOTYY6NujM/Bxm31blXm9KgV75SCdUFjcbroqBrZxiwx4dRxQc7WjL/RfgpJd4kGK8CwTOH9UvjUDP4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jj3Vlgh6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D3A3DC4AF0D;
+	Mon, 15 Jul 2024 14:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721054415;
-	bh=gw2ndcYzWrXcWwfMvNwsIdrsWIYeYw1572YOxUCWSHc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OQMK0Q757KBbSEG6i8nNQN1Jc32yl0zvJ0OnXj446cwAZatYwfT+TICs9NGttRj2n
-	 mCYfSBrmIvm3h30AasxhFILcwx+n8hffsjhuiV62hYTHWsr6K+D7wBZyw4JNtPko0p
-	 tRvAjs151m7ke0WhKGsx0reosTqNL+Bb0WbYJ3lvB996YCPUHSBvMY3nfM6bje5/nB
-	 3UBVzLqo/ZNNVKTTqTFQ/usp6Aty+lw5oJXRLPs72+LaTCrT4ZRkh8juIilcyLUH+3
-	 eiTsYLXgavQ11tYofAQsd9RuuR//KxLoWCDtfVzNC0dwCFUgVNUc31sY2+b3fgNBZU
-	 dJhoDI9jWuY6A==
-Received: from 82-132-225-32.dab.02.net ([82.132.225.32] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sTMs9-00CXag-1d;
-	Mon, 15 Jul 2024 15:40:13 +0100
-Date: Mon, 15 Jul 2024 15:40:10 +0100
-Message-ID: <875xt667n9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 1/3] KVM: arm64: fix override-init warnings in W=1 builds
-In-Reply-To: <3b882ac0-fd2c-35df-38d7-b89cf073bcc3@redhat.com>
-References: <20240712110332.10970-1-sebott@redhat.com>
-	<20240712110332.10970-2-sebott@redhat.com>
-	<8734oep96j.wl-maz@kernel.org>
-	<3b882ac0-fd2c-35df-38d7-b89cf073bcc3@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1721054431;
+	bh=nLTjZ4iku7w3CDYmTvYQeTxA3KeLggHY3Bv8PHGatPI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jj3Vlgh6ccvAGi1tcuZ/LYM6s18skXDN0AlW+zr8PGhDNu6MxlRWAsTGTo2C5b3TP
+	 sb+opPLh74dPKuwLBGTQHfUvK1cngwS9KFi8ypazvbnITevIx1hE7Cqqs82FB2JBg/
+	 oATQRT0dSGmBlGCAqSRLdng14UpGEhyFydstClJaWDcOq4+T/QxJ6ojKNmdjkCezu2
+	 fh3hAkG/r/VhI2rtZxGTLwfxJpaJGPKW+3wTmmImmQgPHUnf9JWax/pE+tVyy2bEkj
+	 CO2ZKkoOkXWMXgOdRV4I5+lNzs3i9QMNZ5gfsj9m5HKLlZy+DQi7fZNw4HlJxYARQp
+	 gRYBiwjjD++5Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1352C433E9;
+	Mon, 15 Jul 2024 14:40:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.225.32
-X-SA-Exim-Rcpt-To: sebott@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: only fragment segment in the same
+ section
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <172105443178.17443.14567102589970622555.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 14:40:31 +0000
+References: <20240710012659.3415856-1-shengyong@oppo.com>
+In-Reply-To: <20240710012659.3415856-1-shengyong@oppo.com>
+To: Sheng Yong <shengyong@oppo.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, daehojeong@google.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, 15 Jul 2024 11:28:06 +0100,
-Sebastian Ott <sebott@redhat.com> wrote:
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Wed, 10 Jul 2024 09:26:59 +0800 you wrote:
+> When new_curseg() is allocating a new segment, if mode=fragment:xxx is
+> switched on in large section scenario, __get_next_segno() will select
+> the next segno randomly in the range of [0, maxsegno] in order to
+> fragment segments.
 > 
-> On Fri, 12 Jul 2024, Marc Zyngier wrote:
-> > On Fri, 12 Jul 2024 12:03:30 +0100,
-> > Sebastian Ott <sebott@redhat.com> wrote:
-> >> 
-> >> -static const exit_handler_fn hyp_exit_handlers[] = {
-> >> -	[0 ... ESR_ELx_EC_MAX]		= NULL,
-> >> +static const exit_handler_fn hyp_exit_handlers[ESR_ELx_EC_MAX + 1] = {
-> > 
-> > Is this really any better? I don't think so. It makes the intent
-> > disappear instead of making it explicit. Intent matters *a lot*.
+> If the candidate segno is free, get_new_segment() will use it directly
+> as the new segment.
 > 
-> I'm not claiming that it's an improvement to the code.
+> [...]
 
-<rant>
-Silencing pointless warnings should never have priority over keeping
-the code maintainable and understandable. I hope we can agree we are
-not in the business of making the kernel *worse* than it already is on
-that front, right?
-</rant>
+Here is the summary with links:
+  - [f2fs-dev,v3] f2fs: only fragment segment in the same section
+    https://git.kernel.org/jaegeuk/f2fs/c/e3a19972a49f
 
-I like good tooling as much as the next kernel tinkerer. But W=1 is,
-in its current form, quite the opposite. Mark posted a link to a 5
-year old thread, showing a number of ways compilers could use extra
-annotation to lift the multiple initialisation ambiguity. This
-approach has seen no traction, which is a bit sad.
-
-> But yea, I see your point. How about disabling that flag in the
-> makefile?
-
-Yes, that'd be a reasonable workaround until someone fixes the
-toolchains. I see that Loongarch is already doing it for the exact
-same purpose.
-
-Thanks,
-
-	M.
-
+You are awesome, thank you!
 -- 
-Without deviation from the norm, progress is not possible.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
