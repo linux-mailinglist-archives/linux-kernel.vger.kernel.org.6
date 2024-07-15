@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-252080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D9A930E11
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0A5930E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDDFB20E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B211C21013
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05178184106;
-	Mon, 15 Jul 2024 06:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F8B1836D0;
+	Mon, 15 Jul 2024 06:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSmvU2fG"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PDo5cQfW"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2389F28371
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF851836D6
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721025199; cv=none; b=MnQzP2VEpgf/xqTRjAibveOWCvo3SLK8hSWop0lhoU6VKbMZc5tKG1W2sQOe/8NC3erYaUZdK1v/n97RKzkG/3wCr5FQDfKuiFjT/diHqFrLp0BBnJKnQmJ1xzeJhT4Os/pr76OqH4AjI/+JJ2L5zMmPWQZ/Sa8zBNqRsO+/+1g=
+	t=1721025199; cv=none; b=j3v7jIRYMF6opEcGJKkKItjYVjDM4xNuqe1d6PGxatqiWc6DOD266Gq4QKMcPamj1VNPkvToGZ9DwhzY41Zr4hA6iny8ONm5cf2CWt5/U+Xj7OEKvyL8QCsZjVVlZYftjjdwBTXrB52xsa01v5WbN3lkLCDGJqcsLp3oUFp0DV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721025199; c=relaxed/simple;
-	bh=eQJ3hRch4PVpnxcgcIs2vVrHHBN8kCt55Lg1+zlGYoo=;
+	bh=ElUTEfRFQUeTMBsWyzbhEyDMF5jl1RThHLUf4PWNs3U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d2p8mNCC+slaGk6nPiiFvRV4EqonTux1p0qoB4ukiQ9RDRZXKkuU47xigBZdpDZZ3WS/YmskIttW1f/HDUCtw4kMyFBKSFiGLwojtAhPbHdlEhkLVClc0J7IiIh50bJPLmSSCnmxSPFV/RGADVwvFaqGKZ091JM3BeLwjOweTSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSmvU2fG; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:To:Cc; b=dM3WohMzbYC7DhriZYZrmktgTSZX+kJwxJ791b/dCa6hDa/nFBYHTl26qLkf7TCQptqQ1gfHi8JRy1Cb3Dsaiz37tbu7xqFCFze2bD730kAAxnTwMYEDjc7BpT6/bbZU1nMekMaahVKStuiui/c1yGM1cM0zC73ARlwvTu2AK8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PDo5cQfW; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea2ce7abaso6773626e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 23:33:16 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea79e689eso5467521e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 23:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721025195; x=1721629995; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721025196; x=1721629996; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zW4Dkbs/DpuJ5jOJGFiWuBbUi352hxlJAviTa72dXa8=;
-        b=sSmvU2fGovHWpRBTxXACCoYBikjEHP9MSyyV1OY3mqC2n5YQ/fbPs5pYkDza+79WN9
-         dpPDkUs7sVSJ1ryPHafi1BdnocDZyYUFmrqSCFEF5QfC6l+TV8KdMQSsNvT3hMoThEyt
-         z/WuP2fww+nmIDevqTqCH6ait2hDbA0LooOy+CbAeH/HbW0ovBgZsntP/km3E0QcRioR
-         97xbR75TZiNVtDJeUgdXH1R6kUgj0lhnZteJ9CaM9CLHAxTTehUONMiRbhZNREppwfrm
-         DL+mdpFzd8czrM1ELTQysaMx4tY5GM6YG682e0Nbju856xPlJkRlqQ5xk67GAefknddd
-         lTBg==
+        bh=7hD96SukkfsNyjNTVedgkKQiaViidlloIggj4cO+Fh4=;
+        b=PDo5cQfWkWdbEUjAPGvxBFP4niuEFSCyI2REVrudOO5Xg6sTDyTbwc9j0l0phPVIT3
+         6lSMOXv9GR4Zue9M1yy7/WQPM6Vb0n3wvRMW/TEE5iNZIEZuUm+hLz0xI/1oKapckcUt
+         AtHWr8cbnLOycmKs3WZi3S4AMsBqc1JGSUsE5TCSZWeo8BAL7HQzSFoZRM2jss0Gl/ih
+         lu65E9Cg7RK79sjiVb9YfLbBEO/Xq/jOm4h63Q4efFYRMtNd53jJPhsjTiGOvTrfvyD7
+         4bViJIjRgRcR8Qi0ju9I7SWkBLls2nErtjRGnTLruHxoiUqncGCwFJxfkwkwQZxoATsF
+         V7wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721025195; x=1721629995;
+        d=1e100.net; s=20230601; t=1721025196; x=1721629996;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zW4Dkbs/DpuJ5jOJGFiWuBbUi352hxlJAviTa72dXa8=;
-        b=oyuyqUTyTzXyHyb8cKfqBQtQbNlIE7LLea/K46U+HZdoPzJt4wOrxRGyAkV0ojLLxO
-         Ss+0IYuaoriUx+pY3NdD+n+WInXfkkFcqtQhXBf5ZE992hhGpvYB+AsYi2Xes1HVW4/v
-         2uhOkuCC9FmbhAcTPGXvU9EUpMrbHdJRjwYlTdDogjf/aBJ4Egz6waU4TcsLAAKxvddW
-         iPLQl/0tpPpJ8oziGxLFWk/O2Em/hax9Pj2uCP28t3aSzof2ElsNHLTFuWujvoqYy9xb
-         c+HM/3V2RqU0DOVEvk39wrlKBwT3ZyIDrK/eGfmdXOanpgUxelJHj5yDJFzLKlYfefRM
-         KscQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwnqMxhSgpkDYGTgMxxibmzlAxEWNUaVy/3u4fq/vnsTl4kJcpgY7Vi8crZitVOmMhukYtidgmOxY5bXS8elWNzya3x0skUVoyd0N7
-X-Gm-Message-State: AOJu0Yyx2WSNfg6/mLZlwviwmelelx0PdbdWVwoNx8yU8uJ5rKT9Dnm3
-	3D+ZGngmGo+LAF29IM+KTQ6Pp+mvDrMgQK0r5mQDtwMJ1Lz3yJl+HGNVPhIFQCk=
-X-Google-Smtp-Source: AGHT+IHT4xz2WdhLKgSzBOFGajWmbSWMHs5k5m2atVJlXqSvlJsy3hyS+kPlM6QSPNXfSrtWv1LNGg==
-X-Received: by 2002:ac2:41da:0:b0:52c:90b6:170f with SMTP id 2adb3069b0e04-52eb99a0e7emr11020892e87.29.1721025195187;
-        Sun, 14 Jul 2024 23:33:15 -0700 (PDT)
+        bh=7hD96SukkfsNyjNTVedgkKQiaViidlloIggj4cO+Fh4=;
+        b=dxabUdHH32P4OOvOe76fb/qiQPWzaDOR6ZTH7y4mSC4USviGefP+O+xttOPCm76VHj
+         y7SWw7nzM9mF/pi/Z/jb1hQ7rnksr92wVFITpNIiMX20c61HyAyiQxZKqZCt7q8ujlpe
+         o70JQcW0L4oeBxFD4BaKCYv/7iUfhqBA1lH88j0cA6jEnlnyWW87D5lKIMbcbBUV913B
+         HyQWawuZW2tSkmo3r62K4KUEnwWVE+aJdEeRFYCIzfBzUiO3wZNnsXFqa79YsD3l3b3/
+         KnWDmhDSiTFHNZYJXixE9Uv5r1usE9lQa+ww3RLry7BVJ5OHowYLodauKDXFzoCsn298
+         P2Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbEhXjjtfIwa2nSVZqmhvEC/vvX1x5yK1nZ07VGVPoxAwkDwbhiIcabqbH3t6vy2N81KSgH8nGgW3xMqJwgTgAH+6oc1LdlDCU+SYH
+X-Gm-Message-State: AOJu0YwoWh7QBwytSOigYIDTMxxtbg08MtmMBODpBLgzh5cIURj76vQz
+	yyOgEdT9NqKSRwddh3S0/Y+sGwRbRjosK0Iq3yLlqzjOQP3doQfv7iDcYImDYUk=
+X-Google-Smtp-Source: AGHT+IFX0QH8GNKb6vSmUPAoENVWks4aXQTHoSfQhbwYfR/OvyXjXMYla/ZB9rPLdfgjOmPqGKpO/g==
+X-Received: by 2002:ac2:5544:0:b0:52e:751a:a172 with SMTP id 2adb3069b0e04-52eb99d288dmr13038205e87.49.1721025196342;
+        Sun, 14 Jul 2024 23:33:16 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e188esm743543e87.47.2024.07.14.23.33.14
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e188esm743543e87.47.2024.07.14.23.33.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 23:33:14 -0700 (PDT)
+        Sun, 14 Jul 2024 23:33:15 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 15 Jul 2024 09:33:01 +0300
-Subject: [PATCH v4 1/5] drm/display: stop depending on DRM_DISPLAY_HELPER
+Date: Mon, 15 Jul 2024 09:33:02 +0300
+Subject: [PATCH v4 2/5] drm/drm_property: require DRM_MODE_PROP_IMMUTABLE
+ for single-value props
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-1-61e6417cfd99@linaro.org>
+Message-Id: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
 References: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
 In-Reply-To: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -123,110 +124,44 @@ Cc: Rob Clark <robdclark@gmail.com>,
  linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
  linux-tegra@vger.kernel.org
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2696;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1070;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=eQJ3hRch4PVpnxcgcIs2vVrHHBN8kCt55Lg1+zlGYoo=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmlMKouj4z7T/shiz6BaAt6p7GIaGUsCT7QSQ3+
- htjgKfZW+aJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZpTCqAAKCRCLPIo+Aiko
- 1fbaB/9HucxwZ9XXPDZRoDro66r9wo860mrSEB1fXkutEFrGC+zz13rgdDbGHIAnd9uv8iJQ+eZ
- FnHusEklODaV6JVOBxry88xtNubs2YKCDCryw4tsCNUJYHXtqBVrqFKiiEgV1fVPr24ZnOES7Px
- Ef31DsPrCnhXzvJAcgn+EE6UnjT0qx1Dz+nQGStxm+6YqKFaq65IMQDATwngmZiTJO6wMQzT85Y
- E0pyIkvXXAP2khDqrLtpUkroiEy+rITOfqGW43AggLIZgaaB3hI8mzpqjQor1sFYzMyqCtn11OD
- 0TKL0KUECMJb2hfkYtMQg3IX8xjnSc79S3gqxbWQwws7xLIS
+ bh=ElUTEfRFQUeTMBsWyzbhEyDMF5jl1RThHLUf4PWNs3U=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmlMKovm5l+7A24sivlmJ0R0FXE9iAwNjDSrOKP
+ WDSbfR6q0WJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZpTCqAAKCRCLPIo+Aiko
+ 1e+8CACEJovL304bl9alKdbKAOnfEF/R08MCNCfeoeQl2+qtgfzhmRdNpjupcxELHKcsWM+QIMF
+ y5SHMmA5MDdtTOnk1pk9JWqRfeB2hUSWYs3LYMmYEQy7Tz+BYPrK4ScYeUHR6+qj0oCHUZHBpWe
+ jB29sogURM+xEeh1n0770SS5O7ZxzrOm+Hxi3UAo62YKLxcXGsWm6Lyx/3MtlyAPTJKZzM3T3ko
+ biVZKcN3GeHZhA4YojTOl5G8riLQxBO1BmRwBev3679IUvrG/ciHfbmLdysd4FqK1H0pZF5YX4Y
+ mYOPUHKTFUgJ8Z2ftC0dD6tj00ePMiHdUlm/pBEnIMFwUVaU
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Kconfig symbols should not declare dependency on DRM_DISPLAY_HELPER.
-Move all parts of DRM_DISPLAY_HELPER to an if DRM_DISPLAY_HELPER block.
+Document that DRM_MODE_PROP_IMMUTABLE must be set for the properties
+that are immutable by definition - e.g. ranges with min == max or enums
+with a single value. This matches the behaviour of the IGT tests, see
+kms_properties.c / validate_range_prop(), validate_enum_prop(),
+validate_bitmask_prop().
 
-It is not possible to make those symbols select DRM_DISPLAY_HELPER
-because of the link issues when a part of the helper is selected to be
-built-in, while other part is selected to be as module. In such a case
-the modular part doesn't get built at all, leading to undefined symbols.
-
-The only viable alternative is to split drm_display_helper.ko into
-several small modules, each of them having their own dependencies.
-
-Suggested-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/display/Kconfig | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ include/drm/drm_property.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kconfig
-index a2e42014ffe0..9c2da1e48b75 100644
---- a/drivers/gpu/drm/display/Kconfig
-+++ b/drivers/gpu/drm/display/Kconfig
-@@ -1,19 +1,20 @@
- # SPDX-License-Identifier: MIT
+diff --git a/include/drm/drm_property.h b/include/drm/drm_property.h
+index 082f29156b3e..d78ec42de42f 100644
+--- a/include/drm/drm_property.h
++++ b/include/drm/drm_property.h
+@@ -162,6 +162,9 @@ struct drm_property {
+ 	 *     userspace, e.g. the EDID, or the connector path property on DP
+ 	 *     MST sinks. Kernel can update the value of an immutable property
+ 	 *     by calling drm_object_property_set_value().
++	 *     This flag MUST be set for all properties that have only a
++	 *     single value (e.g. min == max or if enum has only a single
++	 *     value).
+ 	 */
+ 	uint32_t flags;
  
-+config DRM_DISPLAY_DP_AUX_BUS
-+	tristate
-+	depends on DRM
-+	depends on OF || COMPILE_TEST
-+
- config DRM_DISPLAY_HELPER
- 	tristate
- 	depends on DRM
- 	help
- 	  DRM helpers for display adapters.
- 
--config DRM_DISPLAY_DP_AUX_BUS
--	tristate
--	depends on DRM
--	depends on OF || COMPILE_TEST
-+if DRM_DISPLAY_HELPER
- 
- config DRM_DISPLAY_DP_AUX_CEC
- 	bool "Enable DisplayPort CEC-Tunneling-over-AUX HDMI support"
--	depends on DRM && DRM_DISPLAY_HELPER
- 	select DRM_DISPLAY_DP_HELPER
- 	select CEC_CORE
- 	help
-@@ -25,7 +26,6 @@ config DRM_DISPLAY_DP_AUX_CEC
- 
- config DRM_DISPLAY_DP_AUX_CHARDEV
- 	bool "DRM DP AUX Interface"
--	depends on DRM && DRM_DISPLAY_HELPER
- 	select DRM_DISPLAY_DP_HELPER
- 	help
- 	  Choose this option to enable a /dev/drm_dp_auxN node that allows to
-@@ -34,7 +34,6 @@ config DRM_DISPLAY_DP_AUX_CHARDEV
- 
- config DRM_DISPLAY_DP_HELPER
- 	bool
--	depends on DRM_DISPLAY_HELPER
- 	help
- 	  DRM display helpers for DisplayPort.
- 
-@@ -61,25 +60,23 @@ config DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
- 
- config DRM_DISPLAY_DSC_HELPER
- 	bool
--	depends on DRM_DISPLAY_HELPER
- 	help
- 	  DRM display helpers for VESA DSC (used by DSI and DisplayPort).
- 
- config DRM_DISPLAY_HDCP_HELPER
- 	bool
--	depends on DRM_DISPLAY_HELPER
- 	help
- 	  DRM display helpers for HDCP.
- 
- config DRM_DISPLAY_HDMI_HELPER
- 	bool
--	depends on DRM_DISPLAY_HELPER
- 	help
- 	  DRM display helpers for HDMI.
- 
- config DRM_DISPLAY_HDMI_STATE_HELPER
- 	bool
--	depends on DRM_DISPLAY_HELPER
- 	select DRM_DISPLAY_HDMI_HELPER
- 	help
- 	  DRM KMS state helpers for HDMI.
-+
-+endif # DRM_DISPLAY_HELPER
 
 -- 
 2.39.2
