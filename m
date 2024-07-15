@@ -1,225 +1,137 @@
-Return-Path: <linux-kernel+bounces-252917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1226A9319E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B869319E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909981F2212E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FEE1F2212E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC35C6A325;
-	Mon, 15 Jul 2024 17:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ADB56440;
+	Mon, 15 Jul 2024 17:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRMRGJ1I"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aA6Bv/RM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7D254670;
-	Mon, 15 Jul 2024 17:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B24E4D8AE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066181; cv=none; b=M70k6WFnrrw5tokeQVU+sKBngDdfMvM1aphq5kKX/aMamZF8sAEROLbmhm4LG7QMZ+LAhU+hioav5YaW/bEbj0WWRvSAcKR6qR9o/Czw4EFubUtzoYNC6ZWB+yEUW7lGkmE01vXPio0jpTvLNL4nJSVFmZc66DDR5Opz8MU7raM=
+	t=1721066237; cv=none; b=SK/HUpSF50Ze1SUlR9Fk6LLRzuJEE1HkohSXl5Q7IZ87fgw0i8HqijJYnyD9XjskPZ+qIxkXy6WiP29xPNxVuV74BUHZWtEzolyOQ+ZQatU1vQMprLgO9a8m9Plv++NROilPe8TctE98NGNtbsjdEsHAz21SJk52MsWj2X8QKHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066181; c=relaxed/simple;
-	bh=BxGAdGTiJgz8Q5D2uHQ78tpjZdOMaIkZr5f589j4CL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZCC4B5gj1EBa/UZWeBthCUolrFNoacJTaJ62XtHhhPv2J9H7jJnK4HDZB8cYjs9f9VYbGiAfebacKpeRrQrRiWr+yJxIgmIPXF+DaXtm51h+72B+gpP3j+FYp93wDRa0HPAjRmo9giUmt07RdKqCBozhb0bgioxIPELEoJYm3mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRMRGJ1I; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so31909775e9.2;
-        Mon, 15 Jul 2024 10:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721066178; x=1721670978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/W0anjTUFyhsTzhkYxeiTEp5MjzFJ0+hG8HP5QZjcBU=;
-        b=kRMRGJ1IM+agNKLWItmr0z0JV/CVgL7R1uCKrbVogG8icNpj3qoQFq508ctKVNrWnn
-         G4qQOPSPOCZInulK1ZHNulRl4LI4tOz5deAxdnvpybsD+Gb/WRr9JRM8M50rkLXkH7ub
-         IzDNL40RrkcCTHrCi1ebZ6WUk8FLyWjfQr3cqiqMlwovdZU/WZKoXUwrusiybRtGnvze
-         zPVFEIJ7yzFaFkEU60YL3on67Fd97KYvdH5F9LsT7BAaliPB/AV2zahFXPVKEPN/znz9
-         F8533pU20BQ31JvOIQyI41Ndg92zM9Ny8eqPTmaIhL1Xzybrm3vIH3RKaF18vOoARk+f
-         mhuA==
+	s=arc-20240116; t=1721066237; c=relaxed/simple;
+	bh=ryADqVEKJ5LrZggMqQrQAklaSbHdf0etkTj2L7lfQtI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WigHD2P3/3UDrWXILby1EU9IItFdFLTGSmgI7UgsVGGmkxeVaSO81knNqlZDetbXLx4/t0p2V8JS5NHWAURIujbshRsxNK8Z9caNWzCEPCaBR/n1/NsVx6XCRgg2Yl2NKkT2nOHf97OL2GzZSMtULBg1088FqF939icVk2x5R3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aA6Bv/RM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721066235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fi//A5tT5b/KGkVcXcH6Q4HMgHLicOcp8QtJZcCZxww=;
+	b=aA6Bv/RM6r8YPqMJEc0ESS1RQaU4zqeootQHAdJLFuCAsfa/M3ikrDOrQYMDR6ln9DoOE8
+	y7Xi/pavOBkwJrfnoeXguz5TVOaXtzfAqqxP3cCSlzvYsyqkoRLoU8suUICwM9iuEpIF5P
+	hbLYTstF8XWJrs3mXiJgBU0/1AAsTj4=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-326-CCI7In15M_OG_i9FM4zfqw-1; Mon, 15 Jul 2024 13:57:13 -0400
+X-MC-Unique: CCI7In15M_OG_i9FM4zfqw-1
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-447dbe5672cso87919731cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:57:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721066178; x=1721670978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/W0anjTUFyhsTzhkYxeiTEp5MjzFJ0+hG8HP5QZjcBU=;
-        b=wdTs/MxktGA6Sgepi+HfrBlW8IhzYt2DqfY0eEOK9WIpD7KNLlDxQlJkURF7kqAHoR
-         jDP66A6SACQT0krmnH15irHIXEhQbFcd/x2nUOTgseqsqPMhzIOort8Q4aw5b0rTGr0N
-         lPI0kpxPWB6CMgVmHaRb1mRgZaIX/fzggJgkoY4rRkAWgxgrgCCIYopF77hraIQHgukT
-         vW5YSVWRhB5pZQu17qBPRZKA7FL4X3fGJ5oO4jW2l2qvHVBc09ZbZnqnUhjusRU4ZEBs
-         wn8Q6S725AF3978KvWIElnttuYw2ssBGGg5oJ/keQ9osM1RL4Cm3Pt/Ixif1m1gNUZW5
-         kIAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDgrMxsRNrIdEnEpqs3wekrVPTOnMIEu5YnuUym1tOKr1DSC5XLRF4IyTpA3fac3XxaBe4ERsWa7mMKZwFyJ8WXubDa2VD22IoVSZr2UDdrm10cES45BzW3RpFyjh8KKWUPJ9
-X-Gm-Message-State: AOJu0YypxGD6I138GE1Bl5sHmSnDdiCEFhAeAIQVNUteKpsTRMsxiehA
-	WRJRk0cBt6Ka7CsSCmMJfF4voLXffXNk56K1iggGV+4iDW7ECsylxn3RZpG1gDTN5gMITKq2WBO
-	6+R150Tpd2j+EFtuySy7kq/p8f1Uh9w==
-X-Google-Smtp-Source: AGHT+IFk6VNFCK/xpbOPqFvPPxvE/7ruwrAkwWPKtUxFlAOsZs2IddEppQ2kmqqdXUJPhQwn2bActSLmPnZWrlu9U2Y=
-X-Received: by 2002:adf:f707:0:b0:367:988d:fb99 with SMTP id
- ffacd0b85a97d-3682407cfe9mr347686f8f.8.1721066178313; Mon, 15 Jul 2024
- 10:56:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721066233; x=1721671033;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fi//A5tT5b/KGkVcXcH6Q4HMgHLicOcp8QtJZcCZxww=;
+        b=llF3fxmJ9Gn0T6fv9VsNUTLhzmVl1A3zLuPkOuZiJMHoticGiYq11S6E0yY/OOFPwN
+         o+Kt8Ny9x7Cti4aFZClSbzrG/wGVjimX5omKdXEQ073RsmL7hGNevrKfOLw4pQ31DCYe
+         /h13+BS7R+bd1bvJsYGjpG4acI6B33G56HMLyG5imo+bBclJHqLDZ+/cM/OuvwuFWyzm
+         4ygVKhjasG3a/D/vgCmLEp/+3Ye0ntQlIMUKLKpo/kGvMZ1IQ5QY8Bv1IriLjnDMJ9bz
+         ectnPxM/G8qdz5x+sfnj79MXDZ+UtnIaOWuZD1p1WlavlsXoWsbV1N0V8i4ZkYL+ewXv
+         o45A==
+X-Gm-Message-State: AOJu0YyDRp1yi9gVKb0Rfq/D9DAKfU0lYxEVgSkqh8C2B6UxzOzqMr7k
+	Jy8mzxvyiivJevP00VRlYuKBgmAV4sxjnB1lprGAxwYe51MgY162oAEmWs6EuWK87347TL/q9ex
+	i+SqBdZi7mwe6ke7p2AkJqVww8oi40XsMpphq0qprCotuKmUjvnK689klh5dBBw==
+X-Received: by 2002:ac8:5783:0:b0:447:dd66:8004 with SMTP id d75a77b69052e-44f78baa465mr7495531cf.27.1721066233190;
+        Mon, 15 Jul 2024 10:57:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCOt8I0Cmlmhi/T8HwXWf9ta6rZvJj0E1YC1lGNYwYFllGk62SlYpkHNxQVya2Z0VyX86MIw==
+X-Received: by 2002:ac8:5783:0:b0:447:dd66:8004 with SMTP id d75a77b69052e-44f78baa465mr7495171cf.27.1721066232823;
+        Mon, 15 Jul 2024 10:57:12 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b7f8f02sm26970871cf.52.2024.07.15.10.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 10:57:10 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Phil Auld <pauld@redhat.com>, Clark Williams
+ <williams@redhat.com>, Tomas Glozar <tglozar@redhat.com>, "Paul E.
+ McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes
+ <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Catalin Marinas <catalin.marinas@arm.com>, Arnd
+ Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>, Palmer Dabbelt
+ <palmer@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, Oleg
+ Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC PATCH v3 01/10] rcuwait: Split type definition to its own
+ header
+In-Reply-To: <20240712151547.GP27299@noisy.programming.kicks-ass.net>
+References: <20240711130004.2157737-1-vschneid@redhat.com>
+ <20240711130004.2157737-2-vschneid@redhat.com>
+ <20240712151547.GP27299@noisy.programming.kicks-ass.net>
+Date: Mon, 15 Jul 2024 19:57:04 +0200
+Message-ID: <xhsmhmsmi1qtr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-7-linyunsheng@huawei.com> <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
- <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com> <a026c32218cabc7b6dc579ced1306aefd7029b10.camel@gmail.com>
- <f4ff5a42-9371-bc54-8523-b11d8511c39a@huawei.com> <96b04ebb7f46d73482d5f71213bd800c8195f00d.camel@gmail.com>
- <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com> <CAKgT0UdJPcnfOJ=-1ZzXbiFiA=8a0z_oVBgQC-itKB1HWBU+yA@mail.gmail.com>
- <df38c0fb-64a9-48da-95d7-d6729cc6cf34@huawei.com> <CAKgT0UdSjmJoaQvTOz3STjBi2PazQ=piWY5wqFsYFBFLcPrLjQ@mail.gmail.com>
- <29e8ac53-f7da-4896-8121-2abc25ec2c95@gmail.com> <CAKgT0Udmr8q8V7x6ZqHQVxFbCnwB-6Ttybx_PP_3Xr9X-DgjKA@mail.gmail.com>
- <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
-In-Reply-To: <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Mon, 15 Jul 2024 10:55:42 -0700
-Message-ID: <CAKgT0Uea-BrGRy-gfjdLWxp=0aQKQZa3dZW4euq5oGr1pTQVAA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
- 'size' and 'pfmemalloc'
-To: Yunsheng Lin <yunshenglin0825@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sat, Jul 13, 2024 at 9:52=E2=80=AFPM Yunsheng Lin <yunshenglin0825@gmail=
-.com> wrote:
+On 12/07/24 17:15, Peter Zijlstra wrote:
+> On Thu, Jul 11, 2024 at 02:59:55PM +0200, Valentin Schneider wrote:
+>> diff --git a/include/linux/rcuwait_types.h b/include/linux/rcuwait_types.h
+>> new file mode 100644
+>> index 0000000000000..60a4385a2c368
+>> --- /dev/null
+>> +++ b/include/linux/rcuwait_types.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _LINUX_RCUWAIT_TYPES_H_
+>> +#define _LINUX_RCUWAIT_TYPES_H_
+>> +
+>> +#include <linux/sched.h>
+>> +
+>> +/*
+>> + * The only time @task is non-nil is when a user is blocked (or
+>> + * checking if it needs to) on a condition, and reset as soon as we
+>> + * know that the condition has succeeded and are awoken.
+>> + */
+>> +struct rcuwait {
+>> +	struct task_struct __rcu *task;
+>> +};
+>> +
+>> +#endif
 >
-> On 7/14/2024 12:55 AM, Alexander Duyck wrote:
->
-> ...
->
-> >>>>
-> >>>> Perhaps the 'remaining' changing in this patch does seems to make th=
-ings
-> >>>> harder to discuss. Anyway, it would be more helpful if there is some=
- pseudo
-> >>>> code to show the steps of how the above can be done in your mind.
-> >>>
-> >>> Basically what you would really need do for all this is:
-> >>>     remaining =3D __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
-> >>>     nc->remaining =3D remaining + fragsz;
-> >>>     return encoded_page_address(nc->encoded_va) + size + remaining;
-> >>
-> >
-> > I might have mixed my explanation up a bit. This is assuming remaining
-> > is a negative value as I mentioned before.
->
-> Let's be more specific about the options here, what you meant is below,
-> right? Let's say it is option 1 as below:
-> struct page_frag_cache {
->          /* encoded_va consists of the virtual address, pfmemalloc bit
-> and order
->           * of a page.
->           */
->          unsigned long encoded_va;
->
-> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
->          __s16 remaining;
->          __u16 pagecnt_bias;
-> #else
->          __s32 remaining;
->          __u32 pagecnt_bias;
-> #endif
-> };
->
-> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->                                   unsigned int fragsz, gfp_t gfp_mask,
->                                   unsigned int align_mask)
-> {
->          unsigned int size =3D page_frag_cache_page_size(nc->encoded_va);
->          int remaining;
->
->          remaining =3D __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
->          if (unlikely(remaining + (int)fragsz > 0)) {
->                  if (!__page_frag_cache_refill(nc, gfp_mask))
->                          return NULL;
->
->                  size =3D page_frag_cache_page_size(nc->encoded_va);
->
->                  remaining =3D -size;
->                  if (unlikely(remaining + (int)fragsz > 0))
->                          return NULL;
->          }
->
->          nc->pagecnt_bias--;
->          nc->remaining =3D remaining + fragsz;
->
->          return encoded_page_address(nc->encoded_va) + size + remaining;
-> }
->
->
-> And let's say what I am proposing in v10 is option 2 as below:
-> struct page_frag_cache {
->          /* encoded_va consists of the virtual address, pfmemalloc bit
-> and order
->           * of a page.
->           */
->          unsigned long encoded_va;
->
-> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
->          __u16 remaining;
->          __u16 pagecnt_bias;
-> #else
->          __u32 remaining;
->          __u32 pagecnt_bias;
-> #endif
-> };
->
-> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->                                   unsigned int fragsz, gfp_t gfp_mask,
->                                   unsigned int align_mask)
-> {
->          unsigned int size =3D page_frag_cache_page_size(nc->encoded_va);
->          int aligned_remaining =3D nc->remaining & align_mask;
->          int remaining =3D aligned_remaining - fragsz;
->
->          if (unlikely(remaining < 0)) {
->                  if (!__page_frag_cache_refill(nc, gfp_mask))
->                          return NULL;
->
->                  size =3D page_frag_cache_page_size(nc->encoded_va);
->
->                  aligned_remaining =3D size;
->                  remaining =3D aligned_remaining - fragsz;
->                  if (unlikely(remaining < 0))
->                          return NULL;
->          }
->
->          nc->pagecnt_bias--;
->          nc->remaining =3D remaining;
->
->          return encoded_page_address(nc->encoded_va) + (size -
-> aligned_remaining);
-> }
->
-> If the option 1 is not what you have in mind, it would be better to be
-> more specific about what you have in mind.
+> Can't we simplu stick this in include/linux/types.h ?
 
-Option 1 was more or less what I had in mind.
+Huh, we can indeed. Silly me didn't realize that since all that struct
+contains is a pointer, we don't need the embedded type definition for it to
+be a complete type.
 
-> If the option 1 is what you have in mind, it seems both option 1 and
-> option 2 have the same semantics as my understanding, right? The
-> question here seems to be what is your perfer option and why?
->
-> I implemented both of them, and the option 1 seems to have a
-> bigger generated asm size as below:
-> ./scripts/bloat-o-meter vmlinux_non_neg vmlinux
-> add/remove: 0/0 grow/shrink: 1/0 up/down: 37/0 (37)
-> Function                                     old     new   delta
-> __page_frag_alloc_va_align                   414     451     +37
-
-My big complaint is that it seems option 2 is harder for people to
-understand and more likely to not be done correctly. In some cases if
-the performance difference is negligible it is better to go with the
-more maintainable solution.
 
