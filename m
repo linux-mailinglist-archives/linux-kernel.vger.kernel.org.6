@@ -1,225 +1,255 @@
-Return-Path: <linux-kernel+bounces-252854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706149318EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:06:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D179318F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB4C1F224EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:06:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19941B225F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719934317C;
-	Mon, 15 Jul 2024 17:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D854AED7;
+	Mon, 15 Jul 2024 17:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GBcGkr0Z"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UXu8Q+FN"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011047.outbound.protection.outlook.com [52.101.70.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C11DDAD;
-	Mon, 15 Jul 2024 17:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721063165; cv=none; b=bowfIwEVaspCdj9ECm44qjYhszN4T9wQ/U50HtLolnPV+r8CXQUmC7klJaG3yLZ18A5K29kSICr7q0FmzPy+Ga+jbmnInrmrMytLYH3IY1thW1V9NC5afSqm1sPvHKCP8IPM/3zxbLWUIO6t68y9iMzfXX/CS/Gdvp+kWa7G+xk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721063165; c=relaxed/simple;
-	bh=UqvMPjs469cGfsajHjeqleYIK9wUwiE14NCA7Sf0gk4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TkGtDluFYDJXdOR68sRbkZ0YWATBXmV/wuI/AGcvqo0DDigfc145Y28BoennVztA1Gz0egU2EV5ZeTMH5WBI3nxFGJaILMKBDmj+X1mFfpWkeRkntJFPsYyCq213uUBPYoWGIIsNzlX+W05tjD1+v0LPPheASEjglCAaW/4geYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GBcGkr0Z; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721063162;
-	bh=UqvMPjs469cGfsajHjeqleYIK9wUwiE14NCA7Sf0gk4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=GBcGkr0ZPG0FrhQp1h5aq2BgeGDCnR2HLELicqx9XJxXm1D81CLTR5nzjrgrrrNR8
-	 KxaLatUev8PPkISF0O36bXhnGOsoK/WtBnJN6Lo5TAjndndd9wYX8sjOtSZBfevYmH
-	 ut+tPxnqTDwXHjC9gZIiT0tye0LFvNjVdovf39pumM2o+N+647gI6v8bww3nyVq1FN
-	 RNPLJrTqOe0icacXi6armUn9cwundLzGi6/VPJSlbItt5zRTeww2ocbFDcP9jX+las
-	 JOzJgnDPx3sHmWCHiFwJCpG7M9oxxT6SF2QE+VRM05jJHgrp6gljBUyzhmP8BMxDXN
-	 vzf+23Z4dTTlQ==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0B2593780C13;
-	Mon, 15 Jul 2024 17:05:59 +0000 (UTC)
-Message-ID: <58ed6e3b06e6f156af9820b29d78cbd79d8e719f.camel@collabora.com>
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
- runtime suspend/resume
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "jackson.lee" <jackson.lee@chipsnmedia.com>, Devarsh Thakkar
-	 <devarsht@ti.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
- "sebastian.fricke@collabora.com"
-	 <sebastian.fricke@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
- <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
- "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
- Vibhore <vibhore@ti.com>,  Dhruva Gole <d-gole@ti.com>, Aradhya
- <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-Date: Mon, 15 Jul 2024 13:05:57 -0400
-In-Reply-To: <SE1P216MB130382E16D0CCD27341D535DEDA62@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
-	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
-	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
-	 <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
-	 <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
-	 <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
-	 <SE1P216MB130382E16D0CCD27341D535DEDA62@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBD8481D5;
+	Mon, 15 Jul 2024 17:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721063259; cv=fail; b=Rves91uicl9dotOB2gYJ/g6STRxqoJm4kjp29+RcMkFo+Lv2YC4Nc4VtlaYFX142o9bE/9gLclG7nJKVkEgonLpj2D8M8lhIuOWJBK8j4tsUBCLPseZgijfJCaMacBgcbxmgd25QUL35Lyinn/vAlPGha9ZyEVBqrpBYWIVkacY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721063259; c=relaxed/simple;
+	bh=q93P879H3QqIZQaVGpdoSJXX7TzJukxIO3aSV/NfQv4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ybxhdmes3lmDzAqL9SEWgqDqnLyF7vD66NlVHzt80RgEqQkf51QObXEqbEvD5sOmNDkFKVntsnu1Ewyl+F95rkGoIiQswx1FevzNzIv0+UaOzOGyOjyVGKDFLL52IFT/2CcNUgohqeZXo32DXrKFP8chww3UKwiRucxBjNDtMpQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=UXu8Q+FN; arc=fail smtp.client-ip=52.101.70.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ksd0XNNjujoen9IMzAzfxtRAOAEKnn30K/BwAU36+XUeaW74sfcPhizK0Mou3Tk8ADz//c8xm3aNsTeB0k3c0bjqPwk8RcJQXeOdmDEDcmfG4L+fM5F8zajYVR0dctsinkaONp559Yh3q+gbxuAe/i7TqTL6UU5BUm12hsnL4xnFrlAUZsP9sNxX8vqoLDCKTjW6zlWvHy09Kdqg0fmdXaq9S/qCjZ/QryKAX3eUsk/fmo9XiIec931Wsf3fSqX3WqQe+E/TXnRCVvkzFlhdXJuZN4rSPnZg3Aq1Fjn8abBGeDNt/GLLgpsrraACpo+HUyrCpQ8AVdFODM/Av+s7WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IrEoMJJve6wI+fUv21eSJCWBRFRgYgWHvklS1wN4yUA=;
+ b=jCzrSMeYGUXXSJ/S5olzr0ifqD2dDPccs7YH/JO3968NKsLDaPn9xjukFwX4b/7uPqK2MvMkie+b67qIc4oTRAk/A/OcisQKoUoTF0dvF7FsnWzuQNuSsHdCnxzSzeCD2agT5udlO7v6po9iT3Q/3aH2xihZFfjsGHUw64rgTjkE16XMKnsYWpzd7iBfgrqtqY7zrmScI4p/qQXklNjggDLEVBbluvA8t0CxfXaDzjE21snJaVilk1ffQTY6Trj92zUpMVKH8DnFYN0yf5medoyEDQ1e96Fu65KVVOptDMKc3TYQQ+4fnrRe2QdO2IUfY3tA8gav82BpiHsznq/F0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IrEoMJJve6wI+fUv21eSJCWBRFRgYgWHvklS1wN4yUA=;
+ b=UXu8Q+FNoahSgV1BXZn4okg6LjEjGb20ce/JeKlYef5jKesnF9CUtgjck6tlgS59UiUnzuKgHA9QtMCKdaWHMvRmF/KBT6hKFcydw1oUzrux8mcPusWcEC4GgBh1ROS6JjjHXs4GqTjnNPLA3bbRrqih4bnqQ1ZYNNALkxy0bIA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM8PR04MB7956.eurprd04.prod.outlook.com (2603:10a6:20b:241::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
+ 2024 17:07:34 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 17:07:34 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: linux@roeck-us.net
+Cc: Frank.Li@nxp.com,
+	alice.guo@nxp.com,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	s.hauer@pengutronix.de,
+	shawnguo@kernel.org,
+	wim@linux-watchdog.org,
+	ye.li@nxp.com
+Subject: [PATCH v3 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into struct imx_wdt_hw_feature
+Date: Mon, 15 Jul 2024 13:07:17 -0400
+Message-Id: <20240715170717.2490688-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0002.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7956:EE_
+X-MS-Office365-Filtering-Correlation-Id: 206ca358-0958-4e59-ef7e-08dca4f09f01
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IUq7e/4wwa/Fy/vYI8aGCpnkxrLCakmTTIZ7oNbUjf4JeZ9TrfH1/98Q+fAJ?=
+ =?us-ascii?Q?x0ARnbBnmOTD555ecY1PQ+xpwI/N1wk/1cjRyfvqyf9fIH6CqDx/76tFHelq?=
+ =?us-ascii?Q?BBwTAbILLidLuL9hgGZZjS7eHzeqy5ys3nVw9p160UF2hnBUE12K3KoIMEE1?=
+ =?us-ascii?Q?vSTMeNDXiWl5pAXvG2xI5ET/EnNvro6gWk1lG6j5GsUSLnlS+XuXagB8KLmD?=
+ =?us-ascii?Q?JCc3n2h6OI3oz0FGPuEs2OnxHgGiHdoFPMQvZh3A89Ejx9B1wgQxHC6hLCAA?=
+ =?us-ascii?Q?jEJ47Cnx9mVeOPzCSb69t0YC/Mm9EZwD0NwknLPMRyVCtva5o5OUyDhf8gIf?=
+ =?us-ascii?Q?Q+N0ryOjucEdfIb3rPO/h5DlIsu8UZ71Kfqo4a4M8ET+w17lvDU/cQeJgVjn?=
+ =?us-ascii?Q?JVd16oEyQRm5KROVQx4ydlIR0c+CtayVfIiVChwJ9SS28HZM7xcuvtL1nvRH?=
+ =?us-ascii?Q?nKISfiFJ0lbtbxFK/WbkqF3YBAt8oYRpaDb50hUBRwT1rLccUqc2N+gQzStQ?=
+ =?us-ascii?Q?3Za1a7Tug7HveRJEP1m1GAFfY+OY+I/Cc/f1USQJFpx1PNV2YPC+vXx33yWF?=
+ =?us-ascii?Q?ppkn0rMhOrWRURaQpcJb4gdAQ3q0QZbtnXXspxb28NcRZKQKSdktE786jPUf?=
+ =?us-ascii?Q?mnHOyhe6iCIwsBW9S0iLQG251K5wUzWVtw3yZ72IE3qw8Ntqx7yzWRYP+mUV?=
+ =?us-ascii?Q?9Qeu9nF+HZL3OtNpixrot/Zh+pHrI0SxLOXxCLsab3cqBgXJ0wBPxoKXZfPT?=
+ =?us-ascii?Q?ABwkWWokkQS0CJXbs36ZWVOZN6WR/4YtwSV/4EG4rgLGBs1DoE9+ay4hNfzf?=
+ =?us-ascii?Q?5l17feeerBo7M7rKn0CjjEwcbeauxrevN3EhKbCIN+amceR4WileJsxrFW2V?=
+ =?us-ascii?Q?7+1b67ciqm2rbuITTBvTw2JBmog4X5U1xSYkOcN2hmWDx20sUZZzEvtojWKI?=
+ =?us-ascii?Q?jwGEBI+GNxEP58PZ1X31E6cpw+Xiv6xePc8ah1bIdcv/R+LhdnAVTtRoNxqV?=
+ =?us-ascii?Q?S9qa/DfubPuiG7Dyd2fVEQlotkr3cy+A6LTvHW2jarYEihsSDjeL52Y1mhpH?=
+ =?us-ascii?Q?S1ksMjh0qY23OnIx4lQhUsahaQQU55Tymx+BOHCsmH7taCIOYeD4lwTNIq7d?=
+ =?us-ascii?Q?erncXF5yBXMusA6nyHF8raQi8OXrWeIfWNYwQbmPpeMEeQ78m5iIfhjYNht1?=
+ =?us-ascii?Q?1LTqoLGvC5eSkC5jA7QtTjbfLT2VtHIgHgxICMn8yStG6SR1Kle/DY6X1z40?=
+ =?us-ascii?Q?tRENCQ0HaXw5zWTndIe0aB55WWkW2bxQPDWn48HrezP0F9Yjjpy2NxnQaIAU?=
+ =?us-ascii?Q?28+Ez8t76oc+jaqVeyGYoxZY+ogVy58xZRr4PirbgBKzzyVR70kia+DohBHf?=
+ =?us-ascii?Q?iCmhgW5J5ThlA2XZrGRkBYK8ZxqlIMuM6I9qvsnHzRMSmOJgtw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9tEAacI3nc13l017T22D+pAJc+FMp2iY5EbgQUka5NVYsFKmMwLlqbkhTgOm?=
+ =?us-ascii?Q?y3dnxud0rb+mGGFxXTWndHAHcDBZg5wP9fKKo5svhM/5VmGpkrs0aMIVHIrS?=
+ =?us-ascii?Q?A8mKKr8K35qQxcM7+asH7oUippOk2uvEz567J6nxm6G9QoyAnxAAf+PuRSFe?=
+ =?us-ascii?Q?cNgQotZLEfclF6LY/PPOnyH/RX71s9EEBCxMsGuI5JWmm3/M+H4dtI39xiQX?=
+ =?us-ascii?Q?sXvQ32KWKDmd44HFEDRW1qb4OZ/6ZFUn4AoM8Zwyy5yGNyTx2TZUxoCSOqnO?=
+ =?us-ascii?Q?lgVuLnk0C/16WP1WqRp3o0rmYk7uU7AeTbkEhQ294Qzs2egD8+cS0s6aCb1V?=
+ =?us-ascii?Q?jAVF7wwwD8zVyrFzoytPvMD+7nnc+RwcETQmhpqRIXfw4wr/YQyVtdjRCfeH?=
+ =?us-ascii?Q?sTtiCWUlZljT239JOcdhbPz7v3NkSC1aXHw/bSOJ9LrpD7tZPyDMWAjfBL+U?=
+ =?us-ascii?Q?5DsazrPZV5spQ6sEBJudMTPDp5DlWdS5qwDmqlHYme3CwCw2IjoD2/DwkXVL?=
+ =?us-ascii?Q?vNy7pkcSvS+gBSoxnzF5nzFKL1k4HpT710ykqD4GB7W7JPHU9ysaKaBb7zUH?=
+ =?us-ascii?Q?0+kRkWvrJCw3k2DRSqCBoSR1SsPcfavsAdQPWjUEvV4OM3QRo8G7UashoyEb?=
+ =?us-ascii?Q?iKgYEGEtoniCHxqAAj+85HCEuIh6T1FeMgP+6YaJ5G+k5fpdjVFU135D9XI1?=
+ =?us-ascii?Q?KLDJ9e8nRoZ7jBpE8AHKgabT9I/H/j6CQdF/7IDMfdBdtwbzVQOOwhXdwjX+?=
+ =?us-ascii?Q?97p+zby082b2cJQbGQLtUbQqvBLZApRIZ7K0bJdfz5oV58Pci5qddVILzcob?=
+ =?us-ascii?Q?3OH164XdG07k3uRDj4pmeMaQrGcEZMQ8TONK5AapFujB5doJ4QXsWtOf5wRp?=
+ =?us-ascii?Q?8LOho8lwHFKPbHlRUoEodGpSpp8t7hw4wXAp/gZe1fxIGZYdkfsd44H1Z8rr?=
+ =?us-ascii?Q?Y92Qks+Yhg1J2kjMiCQhkLN1h1RpMaG0vtCEMgSY/pTovmsya6Ijawpe4Yez?=
+ =?us-ascii?Q?/zw/nSiGSsxVANjYuXTrXzzsEVBXzUHqPTwyCs18bHEk35yAnqxiJ3vvq+cM?=
+ =?us-ascii?Q?x5dASA/L4jAWRVynlIrMAkc5ZAdgsYyvL0kDbOrjW9DD6/lv9g9er59T4HUJ?=
+ =?us-ascii?Q?GUNVaYTxPwh1pqPNYWKQH5Wu8strg1vxDwdEIsoFIPc75t0eLBPXjId4r+AZ?=
+ =?us-ascii?Q?tdfmQAZfkhCwOTdAoMn3YopjrihWTZvY6KblrZzy2W3eRRiXJfpbyIXME9tZ?=
+ =?us-ascii?Q?7JehGw8kwgAwWdKN4x/P/SZhWT0gm82uho2mIkg3nIPgjIIGzL3y/ekik1ot?=
+ =?us-ascii?Q?y5oo0UPjdiGLdd9hYKCpslLWPNOhw9wnquR2uHYX4IcEeAM2KU4/Z3m5EohB?=
+ =?us-ascii?Q?4ao+Dphp8Kk7OJOXjrx/uQvzspNiMT4+++IGtyw2tpDJhaUwZ+Bw0IaoIvm8?=
+ =?us-ascii?Q?lsgD8d6fP+TDdWrJcwBbfOkM337lhTIEjdr1ziTT6ywm+EaOblqUYZ4NU/bm?=
+ =?us-ascii?Q?DCneb27sdR5E7Aj9+dPXpMW4Yq0giIogb5B0xcLOqDhES+6upLm/b18Y4mpA?=
+ =?us-ascii?Q?s2Qy/KpGq3UWotyg+cdIJF720L/7G9ehpKKud3zp?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 206ca358-0958-4e59-ef7e-08dca4f09f01
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 17:07:34.7796
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8Zehx4j5XcceZDIrvcF14I298umdqQWSnjx+HwJvziMlCmpP1AafNHMkTM0MDpWpk2vIS2O+rjcY6nzMKksnEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7956
 
-Hi Jackson,
+Move post_rcs_wait into struct imx_wdt_hw_feature to simplify code logic
+for different compatible strings
 
-Le vendredi 12 juillet 2024 =C3=A0 06:10 +0000, jackson.lee a =C3=A9crit=C2=
-=A0:
-> Hi Nicolas
->=20
-> > -----Original Message-----
-> > From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> > Sent: Friday, June 21, 2024 2:33 AM
-> > To: Devarsh Thakkar <devarsht@ti.com>; jackson.lee
-> > <jackson.lee@chipsnmedia.com>; mchehab@kernel.org;
-> > sebastian.fricke@collabora.com
-> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > hverkuil@xs4all.nl; Nas Chung <nas.chung@chipsnmedia.com>; lafley.kim
-> > <lafley.kim@chipsnmedia.com>; b-brnich@ti.com; Luthra, Jai <j-luthra@ti=
-.com>;
-> > Vibhore <vibhore@ti.com>; Dhruva Gole <d-gole@ti.com>; Aradhya <a-
-> > bhatia1@ti.com>; Raghavendra, Vignesh <vigneshr@ti.com>
-> > Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support r=
-untime
-> > suspend/resume
-> >=20
-> > Le jeudi 20 juin 2024 =C3=A0 19:50 +0530, Devarsh Thakkar a =C3=A9crit=
-=C2=A0:
-> > > Hi Nicolas,
-> > >=20
-> > > On 20/06/24 19:35, Nicolas Dufresne wrote:
-> > > > Hi Devarsh,
-> > > >=20
-> > > > Le jeudi 20 juin 2024 =C3=A0 15:05 +0530, Devarsh Thakkar a =C3=A9c=
-rit=C2=A0:
-> > > > > In my view the delayed suspend functionality is generally helpful
-> > > > > for devices where resume latencies are higher for e.g. this light
-> > > > > sensor driver [2] uses it because it takes 250ms to stabilize
-> > > > > after resumption and I don't see this being used in codec drivers
-> > > > > generally since there is no such large resume latency. Please let
-> > > > > me know if I am missing something or there is a strong reason to =
-have
-> > delayed suspend for wave5.
-> > > >=20
-> > > > It sounds like you did proper scientific testing of the suspend
-> > > > results calls, mind sharing the actual data ?
-> > >=20
-> > > Nopes, I did not do that but yes I agree it is good to profile and
-> > > evaluate the trade-off but I am not expecting 250ms kind of latency. =
-I
-> > > would suggest Jackson to do the profiling for the resume latencies.
-> >=20
-> > I'd clearly like to see numbers before we proceed.
-> >=20
->=20
-> I measured latency for the resume and suspend of our hw block.
->=20
-> Resume : 124 microsecond
-> Suspend : 355 microsecond
->=20
-> I think if the delay is 100ms, it is enough.
-> How about this ?
+i.MX93 and i.MX8ULP watchdog do not need to wait 2.5 clocks after RCS is
+done. Set post_rcs_wait to false explicitly to maintain code consistency.
 
-Seem very fast operation indeed, so a very small delay seems logical. I bel=
-ieve
-this is similar to what other drivers uses, so sounds good to me.=20
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Alice Guo <alice.guo@nxp.com>
+Reviewed-by: Ye Li <ye.li@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v2 to v3
+- Set post_rcs_wait to false explicitly to maintain code consistency
+- Add Guenter review tag.
+Change from v1 to v2
+- Combine to one patch
+---
+ drivers/watchdog/imx7ulp_wdt.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-**If** we decide to go lower or drop the delay, then I'd like see someones
-benchmark that show that doing suspend during playback does improve power
-efficiently without reducing throughput.
-
-Nicolas
-
->=20
-> > >=20
-> > > But perhaps a separate issue, I did notice that intention of the
-> > > patchset was to suspend without waiting for the timeout if there is n=
-o
-> > > application having a handle to the wave5 device but even if I close
-> > > the last instance I still see the IP stays on for 5seconds as seen in
-> > > this logs [1] and this perhaps could be because extra pm counter refe=
-rences
-> > being hold.
-> >=20
-> > Not sure where this comes from, I'm not aware of drivers doing that wit=
-h M2M
-> > instances. Only
-> >=20
-> > >=20
-> > > [2024-06-20 12:32:50] Freeing pipeline ...
-> > >=20
-> > > and after 5 seconds..
-> > >=20
-> > > [2024-06-20 12:32:55] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_=
-ON |
-> > > [2024-06-20 12:32:56] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_=
-OFF
-> > >=20
-> > > [1]: https://gist.github.com/devarsht/009075d8706001f447733ed859152d9=
-0
-> >=20
-> > Appart from the 5s being too long, that is expected. If it fails after =
-that,
-> > this is a bug, we we should hold on merging this until the problem has =
-been
-> > resolved.
-> >=20
->=20
-> After 5sec, the hw goes to suspend. So there is no bug in the current pat=
-ch-set.
->=20
->=20
-> Thanks
->=20
->=20
-> > Imagine that userspace is going gapless playback, if you have a lets sa=
-y 30ms
-> > on forced suspend cycle due to close/open of the decoder instance, it w=
-on't
-> > actually endup gapless. The delay will ensure that we only suspend when
-> > needed.
-> >=20
-> > There is other changes I have asked in this series, since we always hav=
-e the
-> > case where userspace just pause on streaming, and we want that prolonge=
-d
-> > paused lead to suspend. Hopefully this has been strongly tested and is =
-not
-> > just added for "completeness".
-> >=20
-> > Its important to note that has a reviewer only, my time is limited, and=
- I
-> > completely rely on the author judgment of delay tuning and actual testi=
-ng.
-> >=20
-> > Nicolas
-> >=20
-> > >=20
-> > > Regards
-> > > Devarsh
->=20
+diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+index 94914a22daff7..a4aa02f388b15 100644
+--- a/drivers/watchdog/imx7ulp_wdt.c
++++ b/drivers/watchdog/imx7ulp_wdt.c
+@@ -55,6 +55,7 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 
+ struct imx_wdt_hw_feature {
+ 	bool prescaler_enable;
++	bool post_rcs_wait;
+ 	u32 wdog_clock_rate;
+ };
+ 
+@@ -62,7 +63,6 @@ struct imx7ulp_wdt_device {
+ 	struct watchdog_device wdd;
+ 	void __iomem *base;
+ 	struct clk *clk;
+-	bool post_rcs_wait;
+ 	bool ext_reset;
+ 	const struct imx_wdt_hw_feature *hw;
+ };
+@@ -95,7 +95,7 @@ static int imx7ulp_wdt_wait_rcs(struct imx7ulp_wdt_device *wdt)
+ 		ret = -ETIMEDOUT;
+ 
+ 	/* Wait 2.5 clocks after RCS done */
+-	if (wdt->post_rcs_wait)
++	if (wdt->hw->post_rcs_wait)
+ 		usleep_range(wait_min, wait_min + 2000);
+ 
+ 	return ret;
+@@ -334,15 +334,6 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
+ 	/* The WDOG may need to do external reset through dedicated pin */
+ 	imx7ulp_wdt->ext_reset = of_property_read_bool(dev->of_node, "fsl,ext-reset-output");
+ 
+-	imx7ulp_wdt->post_rcs_wait = true;
+-	if (of_device_is_compatible(dev->of_node,
+-				    "fsl,imx8ulp-wdt")) {
+-		dev_info(dev, "imx8ulp wdt probe\n");
+-		imx7ulp_wdt->post_rcs_wait = false;
+-	} else {
+-		dev_info(dev, "imx7ulp wdt probe\n");
+-	}
+-
+ 	wdog = &imx7ulp_wdt->wdd;
+ 	wdog->info = &imx7ulp_wdt_info;
+ 	wdog->ops = &imx7ulp_wdt_ops;
+@@ -402,16 +393,24 @@ static const struct dev_pm_ops imx7ulp_wdt_pm_ops = {
+ 
+ static const struct imx_wdt_hw_feature imx7ulp_wdt_hw = {
+ 	.prescaler_enable = false,
++	.post_rcs_wait = true,
++	.wdog_clock_rate = 1000,
++};
++
++static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
++	.prescaler_enable = false,
++	.post_rcs_wait = false,
+ 	.wdog_clock_rate = 1000,
+ };
+ 
+ static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+ 	.prescaler_enable = true,
++	.post_rcs_wait = false,
+ 	.wdog_clock_rate = 125,
+ };
+ 
+ static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
+-	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx7ulp_wdt_hw, },
++	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx8ulp_wdt_hw, },
+ 	{ .compatible = "fsl,imx7ulp-wdt", .data = &imx7ulp_wdt_hw, },
+ 	{ .compatible = "fsl,imx93-wdt", .data = &imx93_wdt_hw, },
+ 	{ /* sentinel */ }
+-- 
+2.34.1
 
 
