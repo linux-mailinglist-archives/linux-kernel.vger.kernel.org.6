@@ -1,106 +1,147 @@
-Return-Path: <linux-kernel+bounces-252057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86DF930DAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:45:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D0B930DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9111F21533
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:45:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602F81F215F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4547717571;
-	Mon, 15 Jul 2024 05:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5620313BAC2;
+	Mon, 15 Jul 2024 05:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S09H0GWD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5EA1F94C;
-	Mon, 15 Jul 2024 05:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="bcUXfvox"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BC613A889;
+	Mon, 15 Jul 2024 05:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721022311; cv=none; b=Ev9m11kRnfjT/Dmk8gsCAhf3XMUAmH3lg0AiyjzX7TGn9I59TrY4+GtmvtiMwfkxpPuBVxK3Fmo4IDbLM6v3uLahbODtKKe4jI9J/rIs4uJSSQi6MOBNEnEWxcs3uZFYgqmNd9SnIORZz3ouWWpLa3UanpQxDsuXlbeyKBT+TsI=
+	t=1721022435; cv=none; b=ED8f0o20XELgzABKssuq0QLvwi4gC1JN+l4MV+ANJN92R6ZbEGVZkuyd0dLI3FM8G8Ife+5tim+0X7Y53fhOxIOnLavkJ37ZL8ieCI44rXQFg0eaA6GWMFTlMqjtPrGQnGpufgchk2YZGYawtrlF4iq88KdCbTru9H6ld1mzmlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721022311; c=relaxed/simple;
-	bh=NBoxsThlV5YMJKSVODJO9PEIu4bUXR+/jBPgTxeHo2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvdnGFNB/ofmjgik4foCYk9erjrUgQLYuPbV2lqfQHRCtKdiktp1W/iGwKSgRG7eWqhhBNHUDh3waGJhj0hYDbHCBRia9dJVF8ArRaWQER21own9SaqKZy0GMynXmzElzVyItkKR1I3DKGBZnrV0AsfIQyBJS+UfESFZ/d8ycyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S09H0GWD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BFDC4AF0A;
-	Mon, 15 Jul 2024 05:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721022310;
-	bh=NBoxsThlV5YMJKSVODJO9PEIu4bUXR+/jBPgTxeHo2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S09H0GWDhJjfmBpx+yEvnmibPChqCIv3Wy2DZWKcR+LC3m1lbTB3GQ1WMgy/Q0swj
-	 cN34ZtXoFEs4oCT//jhjw68LjZmfG4ixHXVc5t4iqCAHbgEh0r0wzV9IKU4banQnwS
-	 qyleiUgWxoS4jKQteTJ9yPhkyOK2i1e9+oKyZO5c=
-Date: Mon, 15 Jul 2024 07:45:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>,
-	elatllat@gmail.com, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, mathias.nyman@linux.intel.com,
-	niklas.neronin@linux.intel.com, stable@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-Message-ID: <2024071540-commute-curler-26d3@gregkh>
-References: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
- <20240714173043.668756e4@foxbook>
- <ZpP3RU-MKb4pMmZH@eldamar.lan>
+	s=arc-20240116; t=1721022435; c=relaxed/simple;
+	bh=7h+IIN4RhMATRucL6/sc8yErNOmIbJl0gG66C4964zg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=enfbU08ras+opi7iADhoV17XoVGz2xgB5wdIwXoboVynr98dkfF2uIPujvlHjYlJ0KwbAQC//RnLXN1D5AyS8TkYtAcpdsFr7PnkBXTRIo5o5yh0K8ihrVtqwk/ZwGJi9xtQUttKcNJ5olqsD03JoM61Kj+vaQIiovLrzZp2skI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=bcUXfvox reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=xC9hds4K/XnuBjMOc+sj6rV5El2d94HBHRJ+teZwXzk=; b=b
+	cUXfvox8ExB64FKWcRIaqU5AVhXsFxT40I+xvrF6yfGke59T4Crp9MZ9Q+V7WrBN
+	2Wz0Cf5cGOnuKu01/o8CHoxMRURDTqCpQ24nNnyhmLhFpHB0PW/Z6+RlkmiILnar
+	tksVwHga2ITzPAu+r/zilFPmqhP36yEj2+kurNoC6g=
+Received: from slark_xiao$163.com ( [223.104.68.157] ) by
+ ajax-webmail-wmsvr-40-149 (Coremail) ; Mon, 15 Jul 2024 13:46:33 +0800
+ (CST)
+Date: Mon, 15 Jul 2024 13:46:33 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Cc: manivannan.sadhasivam@linaro.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH] bus: mhi: host: Add firehose support for Foxconn
+ SDX24/SDX55/SDX65
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
+References: <20240709015818.110384-1-slark_xiao@163.com>
+ <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
+X-NTES-SC: AL_Qu2ZA/yZvUsi5SCcYOkfmk8Sg+84W8K3v/0v1YVQOpF8jCLr2QImXmJeNFbf3s6gBSypgAWKdgpM2ORoVIdhYqENqOmfsEs9BGL+OezJPvHT6w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZpP3RU-MKb4pMmZH@eldamar.lan>
+Message-ID: <17f0f426.4faf.190b4edaadd.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD337i5t5RmWd8+AA--.4308W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQYbZGV4IlXbrAALsa
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sun, Jul 14, 2024 at 06:05:25PM +0200, Salvatore Bonaccorso wrote:
-> Hi,
-> 
-> On Sun, Jul 14, 2024 at 05:32:39PM +0200, Michał Pecio wrote:
-> > This looks like bug 219039, please see if my suggested solution works.
-> > 
-> > The upstream commit is correct, because the call to inc_deq() has been
-> > moved outside handle_tx_event() so there is no longer this critical
-> > difference between doing 'goto cleanup' and 'return 0'. The intended
-> > change of this commit also makes sense to me.
-> > 
-> > This refactor is already present in v6.9 so I don't think the commit
-> > will have any effect besides fixing the isochronous bug which it is
-> > meant to fix.
-> > 
-> > But it is not present in v6.6 and v6.1, so they break/crash/hang/etc.
-> > Symptoms may vary, but I believe the root cause is the same because the
-> > code is visibly wrong.
-> > 
-> > 
-> > I would like to use this opportunity to point out that the xhci driver
-> > is currenty undergoing (much needed IMO) cleanups and refactors and
-> > this is not the first time when a naive, verbatim backport is attempted
-> > of a patch which works fine on upstream, but causes problems on earlier
-> > kernels. These things need special scrutiny, beyond just "CC:stable".
-> 
-> For tracking I guess this should go as well to the regressions list?
-> 
-> #regzbot introduced: 948554f1bb16e15b90006c109c3a558c66d4c4ac
-> #regzbot title: freezes on plugging USB connector due to 948554f1bb16 ("usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB")
-> #regzbot monitor: https://bugzilla.kernel.org/show_bug.cgi?id=219039
-> 
-> Thorsten I hope I got the most bits correctly, how would one inform
-> regzbot about the regresssion for 6.1.98 and 6.6.39 but not happening
-> in the upper versions?
-
-I'll handle this and go release new kernels with just this reverted in
-it.  Let my morning coffee kick in first...
-
-thanks,
-
-greg k-h
+CkF0IDIwMjQtMDctMTMgMjM6MDk6NDcsICJEbWl0cnkgQmFyeXNoa292IiA8ZG1pdHJ5LmJhcnlz
+aGtvdkBsaW5hcm8ub3JnPiB3cm90ZToKPk9uIFR1ZSwgSnVsIDA5LCAyMDI0IGF0IDA5OjU4OjE4
+QU0gR01ULCBTbGFyayBYaWFvIHdyb3RlOgo+PiBTaW5jZSB3ZSBpbXBsZW1lbnQgdGhlIEZJUkVI
+T1NFIGNoYW5uZWwgc3VwcG9ydCBpbiBmb3hjb25uIG1oaQo+PiBjaGFubmVscywgdGhhdCBtZWFu
+cyBlYWNoIHByb2R1Y3Qgd2hpY2ggdXNlIHRoaXMgY2hhbm5lbCBjb25maWcKPj4gd291bGQgc3Vw
+cG9ydCBGSVJFSE9TRS4gQnV0IGFjY29yZGluZyB0byB0aGUgdHJpZ2dlcl9lZGwgZmVhdHVyZSwK
+Pj4gd2UgbmVlZCB0byBlbmFibGUgaXQgYnkgYWRkaW5nICcuZWRsX3RyaWdnZXIgPSB0cnVlJyBp
+biBkZXZpY2UKPj4gaW5mbyBzdHJ1Y3QuCj4+IEFsc28sIHdlIHVwZGF0ZSBhbGwgZWRsIGltYWdl
+IHBhdGggZnJvbSAncWNvbScgdG8gJ2ZveCcgaW4gY2FzZSBvZgo+PiBjb25mbGljdGluZyB3aXRo
+IG90aGVyIHZlbmRvcnMuCj4KPlNlcGFyYXRlIHBhdGNoZXMgcGxlYXNlLiBBbHNvIGRvbid0IHVz
+ZSAid2UiLCBqdXN0IGFuIGltZXJhdGl2ZSBzdHlsZToKPmRvIHRoaXMgYW5kIHRoYXQuCj4KCkRv
+IHlvdSBtZWFuIHVzZSAyIHBhdGNoZXMgKDEgZm9yIGVuYWJsaW5nIHRyaWdnZXIgZWRsIGFuZCAx
+IGZvciAKbW9kaWZ5aW5nIHBhdGgpPyBUaG91Z2ggdGhlc2UgY2hhbmdlcyBhcmUgYWltZWQgdG8g
+bWFrZQpmaXJlaG9zZSBkb3dubG9hZCBzdWNjZXNzZnVsbHkuCgo+PiAKPj4gU2lnbmVkLW9mZi1i
+eTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0AxNjMuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvYnVz
+L21oaS9ob3N0L3BjaV9nZW5lcmljLmMgfCAyMCArKysrKysrKysrKysrKy0tLS0tLQo+PiAgMSBm
+aWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZlcnMvYnVz
+L21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gaW5kZXggMTRhMTE4ODBiY2VhLi40NDA2MDliODFl
+NTcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4g
+KysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiBAQCAtNDMzLDggKzQz
+Myw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NvbnRyb2xsZXJfY29uZmlnIG1vZGVtX2Zv
+eGNvbm5fc2R4NzJfY29uZmlnID0gewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9w
+Y2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NTVfaW5mbyA9IHsKPj4gIAkubmFtZSA9ICJmb3hj
+b25uLXNkeDU1IiwKPj4gLQkuZncgPSAicWNvbS9zZHg1NW0vc2JsMS5tYm4iLAo+PiAtCS5lZGwg
+PSAicWNvbS9zZHg1NW0vZWRsLm1ibiIsCj4+ICsJLmVkbCA9ICJmb3gvc2R4NTVtL3Byb2dfZmly
+ZWhvc2Vfc2R4NTUubWJuIiwKPgo+cWNvbS9zZHg1NW0vZm94Y29ubi9wcm9nX2ZpcmVob3NlX3Nk
+eDU1Lm1ibgoKd2hhdCdzIHlvdXIgb3Bpbmlvbj9NYW5pCgo+Cj4+ICsJLmVkbF90cmlnZ2VyID0g
+dHJ1ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+PiAgCS5i
+YXJfbnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRtYV9kYXRhX3dpZHRoID0g
+MzIsCj4+IEBAIC00NDQsOCArNDQ0LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rl
+dl9pbmZvIG1oaV9mb3hjb25uX3NkeDU1X2luZm8gPSB7Cj4+ICAKPj4gIHN0YXRpYyBjb25zdCBz
+dHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3MTc1X2luZm8gPSB7Cj4+ICAJ
+Lm5hbWUgPSAiZm94Y29ubi10OTl3MTc1IiwKPj4gLQkuZncgPSAicWNvbS9zZHg1NW0vc2JsMS5t
+Ym4iLAo+PiAtCS5lZGwgPSAicWNvbS9zZHg1NW0vZWRsLm1ibiIsCj4+ICsJLmVkbCA9ICJmb3gv
+c2R4NTVtL3Byb2dfZmlyZWhvc2Vfc2R4NTUubWJuIiwKPgo+SXMgaXQgdGhlIHNhbWUgZmlsZSBh
+cyB0aGUgb25lIG1lbnRpb25lZCBpbiB0aGUgcHJldmlvdXMgY2h1bmsgb3IgaXMgaXQKPmRpZmZl
+cmVudD8KPgoKVGhleSBhcmUgc2FtZSBmb3Igc2FtZSBjaGlwLCB0aG91Z2ggd2UgaGF2ZSBzb21l
+IHZhcmlhbnRzLgoKPklmIHRoZXkgYXJlIGRpZmZlcmVudCwgdGhlbiwgcGxlYXNlLAo+Cj5xY29t
+L3NkeDU1bS9mb3hjb25uL3Q5OXcxNzUvcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4KPgo+Cj4+ICsJ
+LmVkbF90cmlnZ2VyID0gdHJ1ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVf
+Y29uZmlnLAo+PiAgCS5iYXJfbnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRt
+YV9kYXRhX3dpZHRoID0gMzIsCj4+IEBAIC00NTUsOCArNDU1LDggQEAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXcxNzVfaW5mbyA9IHsKPj4gIAo+
+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX2R3NTkz
+MGVfaW5mbyA9IHsKPj4gIAkubmFtZSA9ICJmb3hjb25uLWR3NTkzMGUiLAo+PiAtCS5mdyA9ICJx
+Y29tL3NkeDU1bS9zYmwxLm1ibiIsCj4+IC0JLmVkbCA9ICJxY29tL3NkeDU1bS9lZGwubWJuIiwK
+Pj4gKwkuZWRsID0gImZveC9zZHg1NW0vcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4iLAo+PiArCS5l
+ZGxfdHJpZ2dlciA9IHRydWUsCj4+ICAJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2Nv
+bmZpZywKPj4gIAkuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiAgCS5kbWFf
+ZGF0YV93aWR0aCA9IDMyLAo+PiBAQCAtNDY2LDYgKzQ2Niw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1
+Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9kdzU5MzBlX2luZm8gPSB7Cj4+ICAKPj4g
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3MzY4
+X2luZm8gPSB7Cj4+ICAJLm5hbWUgPSAiZm94Y29ubi10OTl3MzY4IiwKPj4gKwkuZWRsID0gImZv
+eC9zZHg2NW0vcHJvZ19maXJlaG9zZV9saXRlLmVsZiIsCj4+ICsJLmVkbF90cmlnZ2VyID0gdHJ1
+ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+PiAgCS5iYXJf
+bnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRtYV9kYXRhX3dpZHRoID0gMzIs
+Cj4+IEBAIC00NzUsNiArNDc3LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9p
+bmZvIG1oaV9mb3hjb25uX3Q5OXczNjhfaW5mbyA9IHsKPj4gIAo+PiAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXczNzNfaW5mbyA9IHsKPj4gIAku
+bmFtZSA9ICJmb3hjb25uLXQ5OXczNzMiLAo+PiArCS5lZGwgPSAiZm94L3NkeDY1bS9wcm9nX2Zp
+cmVob3NlX2xpdGUuZWxmIiwKPj4gKwkuZWRsX3RyaWdnZXIgPSB0cnVlLAo+PiAgCS5jb25maWcg
+PSAmbW9kZW1fZm94Y29ubl9zZHg1NV9jb25maWcsCj4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RF
+RkFVTFRfQkFSX05VTSwKPj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gQEAgLTQ4NCw2ICs0
+ODgsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5f
+dDk5dzM3M19pbmZvID0gewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2
+X2luZm8gbWhpX2ZveGNvbm5fdDk5dzUxMF9pbmZvID0gewo+PiAgCS5uYW1lID0gImZveGNvbm4t
+dDk5dzUxMCIsCj4+ICsJLmVkbCA9ICJmb3gvc2R4MjRtL3Byb2dfZmlyZWhvc2Vfc2R4MjQubWJu
+IiwKPj4gKwkuZWRsX3RyaWdnZXIgPSB0cnVlLAo+PiAgCS5jb25maWcgPSAmbW9kZW1fZm94Y29u
+bl9zZHg1NV9jb25maWcsCj4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwK
+Pj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gQEAgLTQ5Myw2ICs0OTksOCBAQCBzdGF0aWMg
+Y29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fdDk5dzUxMF9pbmZvID0g
+ewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNv
+bm5fZHc1OTMyZV9pbmZvID0gewo+PiAgCS5uYW1lID0gImZveGNvbm4tZHc1OTMyZSIsCj4+ICsJ
+LmVkbCA9ICJmb3gvc2R4NjVtL3Byb2dfZmlyZWhvc2VfbGl0ZS5lbGYiLAo+PiArCS5lZGxfdHJp
+Z2dlciA9IHRydWUsCj4+ICAJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2NvbmZpZywK
+Pj4gIAkuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiAgCS5kbWFfZGF0YV93
+aWR0aCA9IDMyLAo+PiAtLSAKPj4gMi4yNS4xCj4+IAo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMK
+PkRtaXRyeQo=
 
