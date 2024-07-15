@@ -1,85 +1,54 @@
-Return-Path: <linux-kernel+bounces-252934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A110931A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:14:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CC8931A0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC422822C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8345A1C21FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8111C6F068;
-	Mon, 15 Jul 2024 18:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524576A33A;
+	Mon, 15 Jul 2024 18:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="BRdh+pa0"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0DC53364
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JG39VngA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D5954670;
+	Mon, 15 Jul 2024 18:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721067235; cv=none; b=Xl3vCu1pKB84XFW4ESUvUZ4UVw8BI8VN+fmu3v9EhO7B5ymEE9PZplYZeInTgSspw+AMWoFphv0lK+3bUEJaXIkz9B3fhmU+5j2x05+fVKDjegLQTM6WxDBYuDwoxow0mKEwyU+mOJrKkDbaK+FJDISO8MX/9tPYqTGu6Q80Bd4=
+	t=1721067270; cv=none; b=rt/osF3CNhRYmEMfYV3MC0s333lK6ZFw523ylWnvPBnUngh08KzAvCOeZGwhhv1MFtuVYL/Ll0I3PjRuB+575U+g8jc8m1fXO+xE1ez9Fy/ObUIAQcEnnQSh/dzvByGZ27I+zAHALIk4YNqG8DEkcEkaGzIOWpbWJyfX1rw+xXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721067235; c=relaxed/simple;
-	bh=OyQaX13g6fZ3FDV981yg9TF3NDb99brhg0jmaNA/pjY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OMiOlbiGVg0Y//64M+1j4upeYJnGimMn/5wAM4VpjPwYLCWyouNYaJF6GSlAjo+vn3CQ92VU5fg4zE8hXdb/UqtXMFPcMLXMloCTBezWDGziTfKkdf2I6R/W7oy2oB2o0ebi6QoSiyhtcmBfD6uFtVhVilqUHlU0oAI81pUgy68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=BRdh+pa0; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e96d4986bso4639258e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1721067232; x=1721672032; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OyQaX13g6fZ3FDV981yg9TF3NDb99brhg0jmaNA/pjY=;
-        b=BRdh+pa0OsyE2yBtoBIidRTp2QIbcoO19nmriZMFiRTrpf4s1YZ6GJVTC1h8rqN6lG
-         w3uTNFkNxyNxuG8d6uKUci1LB+sKrxQsDY0x6LG0874EDgEwbIffSSWVLikK5vsF0eRW
-         xi03xJlZYN6FH/3D2QSU9gKOl/BTrV4MuIdXyCLJpqth2lfTQhuDr8N/tFyR9Orc86Wo
-         PUqlU1Aa/7bPlH/f+bCUPa6eTx7sbPpraUgR6E7i9N7kFzON/v4aaCGC8Lj1tLAnJi5B
-         lhtMzlkC7DWgAjiEoeUSHyMkJIA5gZDYuuSGVzSojyWbGx1mYUgW108qjv0VkbVOb+jA
-         bN6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721067232; x=1721672032;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OyQaX13g6fZ3FDV981yg9TF3NDb99brhg0jmaNA/pjY=;
-        b=JLZxvxoPIq5pJrHpUYwItJeChIMz8uk34yomtiVnoTyz0XWDUQW3U18A+87464hdNm
-         EAOd6IRivC2kOu1AxmwQ7VV7F9Uu8zQ/7ddoyCwGjWktx8JfnHEonodl1knhf6hkBvD+
-         1mc8/BsDwMtWJJHt4KODA2XIW36Yi8w6+XQszA9wPVrl1amMSw+FIjcCVFU4/xFq+4Vo
-         V62Wj0ncfUFtInFm0jnslAu6GvDyeRZxAT8epljM/s/Zwptlk1GfIWCAlJr3OLqtay9F
-         QM2Z3MteeQlU9+ynPvot5mHxjURLglqQGB73fZEGt1Oa42XbpIRqzRX11pB59wth63qH
-         ze9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWe+f9JQLmMH/Te+aH+83Sm9sjCnbMbWdRL2o0d6ANp0F5zdU3u0+CuQ0rWIW5o6F22GjpKVeV75ZOSbu6lnJv1P+DNx03CcQ8bJYqv
-X-Gm-Message-State: AOJu0YwwuC+BBPwo4Ioem7aWEa4Xj9KRcLWTQSknxqr7k89/jSMFvBp2
-	SKqyqzBcUFbXvWqM2jJ2Tm2/yVvDDbGGnzx9CQqsTvWqn8g0eerRdln7OlPm0S4=
-X-Google-Smtp-Source: AGHT+IE1MCT5csLVEkXxcIBInrcBdilpkD9uUM3tli3sVFKAV0RAXWlmm+TCms6tyOMqacFDj1F5vw==
-X-Received: by 2002:a05:6512:400d:b0:52c:9421:2739 with SMTP id 2adb3069b0e04-52ede1a2ecamr225521e87.9.1721067231626;
-        Mon, 15 Jul 2024 11:13:51 -0700 (PDT)
-Received: from michal-Latitude-5420.. ([178.217.115.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b255253b6sm3660649a12.41.2024.07.15.11.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 11:13:51 -0700 (PDT)
-From: Michal Switala <michal.switala@infogain.com>
-To: alexei.starovoitov@gmail.com
-Cc: bpf@vger.kernel.org,
+	s=arc-20240116; t=1721067270; c=relaxed/simple;
+	bh=Vst/VQ3nh42dO0+xMguh5P+lia20vLXcic79o+sw9M0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JfV73kMeqriy6+EIBtvJzhrg5rnHxSR9hcyQwxuHlgCtNJ4/iVKuJjaUwHIK6lzlEU0uriX5Opvvu+XKlQJ7/ZNMOdHSMkm5M23Rgm0hcdhcqqq5QPcyk1ubOBlCP/fKdXV6ev4laBkTDntHoq4x/evSLhIACxa0akQGkyjzU0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JG39VngA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from CPC-beaub-VBQ1L.redmond.corp.microsoft.com (unknown [4.155.48.126])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 58B8620B7177;
+	Mon, 15 Jul 2024 11:14:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 58B8620B7177
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721067263;
+	bh=cn0VFPnkmYUn1zOQLdurhEoYBVivIcxYhlAZ1gbroHA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JG39VngAye0J7UD0qu40eimfKRgTREWqIKntTvLhpgaHub8usVRbYtcqnTwiPzO45
+	 zaKTzmYrOV+H1eWL1AHVo2nooVUXCj/gPe7jp256Lfxzt74GsbQSs/jjFB6nFNDvoe
+	 i1ZUV0K7a9lgFexjGCX6/Hn+wvTj8pejWh0ZdUdg=
+From: Beau Belgrave <beaub@linux.microsoft.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	corbet@lwn.net
+Cc: linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	michal.switala@infogain.com,
-	netdev@vger.kernel.org,
-	revest@google.com,
-	syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bpf: Ensure BPF programs testing skb context initialization
-Date: Mon, 15 Jul 2024 20:13:39 +0200
-Message-ID: <20240715181339.2489649-1-michal.switala@infogain.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAADnVQJPzya3VkAajv02yMEnQLWtXKsHuzjZ1vQ6R19N_BZkTQ@mail.gmail.com>
-References: <CAADnVQJPzya3VkAajv02yMEnQLWtXKsHuzjZ1vQ6R19N_BZkTQ@mail.gmail.com>
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2] Documentation: Document user_events ioctl code
+Date: Mon, 15 Jul 2024 18:14:13 +0000
+Message-Id: <20240715181413.1157-1-beaub@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,16 +57,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+The user events trace subsystem uses the 0x2A/'*' code for ioctls. These
+are published via the uapi/linux/user_events.h header file.
 
-The reproducer calls the methods bpf_prog_test_run_xdp and
-bpf_prog_test_run_skb. Both lead to the invocation of dev_map_enqueue, in the
-case of the former, the backtrace is recorded in its entirety, whereas for the
-latter it is not. I think the bug might be incorrectly reported on syzkaller, as
-during GDB debugging, the problem occurred in functions called from
-bpf_prog_test_run_skb. I also ran testing of my patch on syzkaller and the tests
-passed.
+Add a line indicating user events as the owner of the 0x2A/'*' code and
+reserve the first 32 sequence numbers.
 
-Regards
-Michal
+Signed-off-by: Beau Belgrave <beaub@linux.microsoft.com>
+---
+ V2 Changes: Reserved first 32 sequence numbers for growth.
+
+ Documentation/userspace-api/ioctl/ioctl-number.rst | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index a141e8e65c5d..d953549f0b2b 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -97,6 +97,8 @@ Code  Seq#    Include File                                           Comments
+ '%'   00-0F  include/uapi/linux/stm.h                                System Trace Module subsystem
+                                                                      <mailto:alexander.shishkin@linux.intel.com>
+ '&'   00-07  drivers/firewire/nosy-user.h
++'*'   00-1F  uapi/linux/user_events.h                                User Events Subsystem
++                                                                     <mailto:linux-trace-kernel@vger.kernel.org>
+ '1'   00-1F  linux/timepps.h                                         PPS kit from Ulrich Windl
+                                                                      <ftp://ftp.de.kernel.org/pub/linux/daemons/ntp/PPS/>
+ '2'   01-04  linux/i2o.h
+-- 
+2.34.1
+
 
