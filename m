@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-252804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31972931849
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C23593184B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 608341C210E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63551F21C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD865336B;
-	Mon, 15 Jul 2024 16:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FBC1C6B4;
+	Mon, 15 Jul 2024 16:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4gr0mOd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVe+PWq1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A217753;
-	Mon, 15 Jul 2024 16:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196791C687;
+	Mon, 15 Jul 2024 16:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059956; cv=none; b=GMNjQ9tooo6IkQ08g25Li5ePcH7MRldI/vIORrR4wMKE7UtaLcDXPE10KVV+8unmNvG2I03ZW5S9zDedIWRMk3WmH2csgILvNFCjOq7rqKSuxzbSstW7rtc0odYGNSYEuIgLtaP1m+MnFPpWdyR67l/+9g79ywRTCyx1IyyrczM=
+	t=1721060005; cv=none; b=F5yqkq7jMW+EXMVmDSUdsGR8ipA9O9vmIDWiE4lScxGK9ayk0zi+LUVmRD2z+LZMhy/B80mW+h4IEm86hrzCokv/I3iRGWs3BUTvOemRcmjy40/9rFLI+grDd49U2cPkjt510QlMM1JeoMEjOT0vo4kyMDCkKoOplkq0MARrMl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059956; c=relaxed/simple;
-	bh=wAfjnWEEmCh2B/ZHrv1VgTzWA3cAe3VidYlKsp5DMxU=;
+	s=arc-20240116; t=1721060005; c=relaxed/simple;
+	bh=dvBwbe6MPDMfh5k2bT4Qej0uPTJ6wp7QSXUAmI42I0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bq0VV+GYhLpI2WAFXiCCcJAqQL7Jj41ZCfQdYejrBklpxXEHstStUqeQhJ4lzdCxy4wX/mX2URv4Do/hE2gt9YVNg//8F6NxNt51hRW0fQUDghcf3cmspiu1X1S+3p57Lq65sdHIgGroSQfFWlgCAvmsmFI537leA7ILT8B4tco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4gr0mOd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49BBC32782;
-	Mon, 15 Jul 2024 16:12:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsRJAJ/Lj8P1fRZmYUqZjv9BS0JJ3Ac8Y8fQpZ9IM0LYu9xa6VB2IjDCnv00JfrBPtV6qfGDJZ2BD1MmyvHCPwbDMHs4u+58RwELpWAO2iWK19WOjMaL0CSwdH6vfJQgHNf4qk969nyTAkYTEwM84SM4T+Lg1hqkij5IDXytIgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVe+PWq1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C188C32782;
+	Mon, 15 Jul 2024 16:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721059956;
-	bh=wAfjnWEEmCh2B/ZHrv1VgTzWA3cAe3VidYlKsp5DMxU=;
+	s=k20201202; t=1721060004;
+	bh=dvBwbe6MPDMfh5k2bT4Qej0uPTJ6wp7QSXUAmI42I0c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4gr0mOdRYDg+eCHiPcFR0fOgQ7VpmYuHbda7gEimyuGVFGqeoYOEkMWXK5ZlTa+Z
-	 sqv1R4TzhWrneEIRODX7BI01lqcR+fWewyPe7rG55thcqKDUJOekjgzKk++YOJ05XY
-	 U0Ze66wlFIympcm32HZboIqxc3DBQlnG5eiDRi4pG9mFEZHYS+Tk1U9S1TIasn3Oxl
-	 wdXNLFlU07LvJ5rDTLSYHcdq212p6f3Z8y3bZrYQDAQsIV7kf9zPeCUNHpNijHICSS
-	 k6tjTxGEBz5hiZU/4tItDE6wkItObTUnTI72MsDsk6m3t4kAowNF3RuCgR3iWQKvsA
-	 fb5wYzsT4w5ug==
-Date: Mon, 15 Jul 2024 17:12:31 +0100
+	b=RVe+PWq1Kci1ereIuw3C41BQcjO20zKmJiiWg0e7V8bKmSs3gs5rX/tLjaNiiVB9v
+	 OzF7d2Kry7BnebXfPwPg+J1RGr88zE/XqJPPkQSy1uXKy7I51ZFPrRxCsL8MkFIITt
+	 lFzLZHeswYY3TvPUXvULIkh0VixoSjWuznH2nfFf4wBK2KFvPEu8OHpv+j0rGQ3n4C
+	 Nrz372qZzP23knwGGPWXu7Tct/hT4uDMiSk424TThdQfuFd0XHNt/twNAYEPjvca0S
+	 NuyT2Cmn6YhOCqN/6rtkEWvi7MLBjiYI07YmWG03fifLP45NsbdZPFaiRSMN9Be7Ht
+	 g8rFYrW0thk4Q==
+Date: Mon, 15 Jul 2024 17:13:20 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+To: zelong dong <zelong.dong@amlogic.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom,turingcc: convert to dtschema
-Message-ID: <20240715-colony-hacksaw-6729fca296c6@spud>
-References: <20240715084313.14098-1-rayyan.ansari@linaro.org>
- <20240715-spoiled-corroding-4e288446829d@spud>
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	kelvin.zhang@amlogic.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: reset: Add compatible for Amlogic
+ A4/A5 Reset Controller
+Message-ID: <20240715-crucial-disarm-8907b896dddc@spud>
+References: <20240715051217.5286-1-zelong.dong@amlogic.com>
+ <20240715051217.5286-2-zelong.dong@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,103 +64,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CpDw71ypzQz04pYh"
+	protocol="application/pgp-signature"; boundary="W6+4hMDlu8VoAtzt"
 Content-Disposition: inline
-In-Reply-To: <20240715-spoiled-corroding-4e288446829d@spud>
+In-Reply-To: <20240715051217.5286-2-zelong.dong@amlogic.com>
 
 
---CpDw71ypzQz04pYh
+--W6+4hMDlu8VoAtzt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 05:11:49PM +0100, Conor Dooley wrote:
-> On Mon, Jul 15, 2024 at 09:43:10AM +0100, Rayyan Ansari wrote:
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
-> > new file mode 100644
-> > index 000000000000..0a57e42fb4d9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
+On Mon, Jul 15, 2024 at 01:12:15PM +0800, zelong dong wrote:
+> From: Zelong Dong <zelong.dong@amlogic.com>
 >=20
-> filename should match the compatible in the binding.
+> Add new compatible for Amlogic A4/A5 Reset Controller
 >=20
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,turingcc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Turing Clock & Reset Controller
-> > +
-> > +maintainers:
-> > +  - Bjorn Andersson <andersson@kernel.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qcom,qcs404-turingcc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - '#clock-cells'
-> > +  - '#reset-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
-> > +    turingcc: clock-controller@800000 {
->=20
-> nit: drop the label
->=20
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
 
-gah, I forgot to say that ack was conditional on the filename being
-changed.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
->=20
-> Cheers,
-> Conor.
->=20
-> > +        compatible =3D "qcom,qcs404-turingcc";
-> > +        reg =3D <0x00800000 0x30000>;
-> > +        clocks =3D <&gcc GCC_CDSP_CFG_AHB_CLK>;
-> > +
-> > +        #clock-cells =3D <1>;
-> > +        #reset-cells =3D <1>;
-> > +    };
-> > --=20
-> > 2.45.2
-> >=20
-
-
-
---CpDw71ypzQz04pYh
+--W6+4hMDlu8VoAtzt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVKbwAKCRB4tDGHoIJi
-0oYqAQCq5QbMDxbFh98PlEamJoy1CtzqagK7h6bREOwldxnPqgD9FEElV1dyyDNe
-31pyQVtw8iQHP6r0N0v/LZ1ACQVUsgE=
-=RLns
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVKnwAKCRB4tDGHoIJi
+0q9jAPsEXScXXZVCt1gtEui9+60JKkeZKU7UR7A5D6k4BBB6LQD/dGcKkYIYmwCq
+ZAP/73A1jA3CD5a4CXj4knZapruK7wA=
+=Uoh7
 -----END PGP SIGNATURE-----
 
---CpDw71ypzQz04pYh--
+--W6+4hMDlu8VoAtzt--
 
