@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-252210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6C8931030
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED3B931032
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35002B215FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20CB1C201EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9092A187359;
-	Mon, 15 Jul 2024 08:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98717188CA8;
+	Mon, 15 Jul 2024 08:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fficSF8k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNPo2OH6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E25185094;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FDD1850AD;
 	Mon, 15 Jul 2024 08:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032803; cv=none; b=DBl6WT8gG01G0jdBfRivplcGgSTsyKLejsZwx/vRRuyj8ibKh4w1I2DnbiN8PQDI59cae32x4kjWLf/WuVyWohybamvdZPzadSfY6DLNXBazkhDvvFXfPdN8161EduxuhwJ/2e93mQ2SWKrVpHmXr4+B6pn7iX4XZFXFrG56jI4=
+	t=1721032803; cv=none; b=GUe+d/iKLq6RGiD6yzUrc81+9uFCNuBWKR1Egx72yU/pTbMyQMoc/kjuiIsias1WzDLgBkmV4OGTd3EgrF0WsT0YQGPztDJYaWgfNWqa5DBolpH5f94GAG6/EJL6o3E8aeiJfB1ittJSGbJmfkM4QEohpgTyJdRUXp0ZUKg5O/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721032803; c=relaxed/simple;
-	bh=3Z6dox2Fymi1+aRMhQdQKH5Qtaviq6Z/6WvzB3kGW4E=;
+	bh=zv3gOiLnT6e7x2kyU/07S/W45M5GmXrbiqEXY9uKY5s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fdbiQhrn666lBaeX7BF/VMDdvGpaPUq26gxGS/emkhJuWkibN05eIY+F+ABnTZMY6P+nf0NuyMp/IRQgBrQJmryLsfqFIT4vGO84ciOu1rUZRFoW01BeAZDr4po36+iKHM/9NV8HZR44E6wE4zt2TbRj0qhLIXkJXDYbhzFl9Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fficSF8k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E86F0C4AF48;
-	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=T/I2cGOTJDL9DFQkj9otjBVfH+7ezk+wa2cKdUZGn/K6x6yMXHal9ykDHc60AmjpLe8SCpairFUC2qTbNkI0K3XZQjX8YxI1LcgdQfy0lOWKWcFIp1oJAFlrLaLmr8O8/lH8E4ms7vTaXqIzXMOkCj7s25MzCO20ySfrPO7F+eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNPo2OH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 061A9C4AF49;
+	Mon, 15 Jul 2024 08:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721032802;
-	bh=3Z6dox2Fymi1+aRMhQdQKH5Qtaviq6Z/6WvzB3kGW4E=;
+	s=k20201202; t=1721032803;
+	bh=zv3gOiLnT6e7x2kyU/07S/W45M5GmXrbiqEXY9uKY5s=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fficSF8kVbC2Hz4Q6VK9Sh5a4gCTYY17X91V6yE1jCv8/MrgkzHvWkGPkNVJQSP1B
-	 qXZFjtW0bJ83WmR1XgK+gM4RROGkc5uH5ag/JUrQCMhtZf8f/HYTNgMIaFA2Agnohs
-	 0oEDEWLBPH8lQUxNGyRPbksRFh91yq7iNNxzn0UZ8qTQAVwkpg8H9ewvNoIZqHJa2/
-	 JXDB1CsiGK+Y/Tf4KYlMiuiygvvlMe36JepxVoHLXknZjI1Np9LhrItCXUh8T8mB7d
-	 dxcgweUVueRzTOJwBTa/FEVBCRhjeUFaMtgXcrTh9rAdphOPmDeNRupDIcJvkKk65w
-	 V0ZKeqEqQQTMQ==
+	b=XNPo2OH6aQKZPbS4uuXZiP4lgjImuZAsAUrj1jRFIJLDxv78N6Gs+smXRQhm8IufI
+	 UzmgNIrruKPLTpVjuDG8n+hGjVFq9qe7BFDek+rNNHjJzN3vGPS577zCwVSJ4zdR4/
+	 9FuG4avKEOa+pE+hXY+aaBT+nFLomdcc3pIMIQ5RHYd+RXIL/n/ebYJGPPxOja3Jkm
+	 HGyJ704IBSbh2PyJyfDc3oBt8Ysj17W+HrAp13MCFTiZKku6hidUT+4FqUmkfemved
+	 h4claUqf++JlBBvZJCP2AwRJP4NbXbXxzRlti2Zu/PzXAKcv3BSW2Z281asHy3AyQS
+	 dtMOoGZXwTTmQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC86BC3DA50;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE298C2BD09;
 	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 15 Jul 2024 11:38:09 +0300
-Subject: [PATCH v11 05/38] power: reset: Add a driver for the ep93xx reset
+Date: Mon, 15 Jul 2024 11:38:10 +0300
+Subject: [PATCH v11 06/38] dt-bindings: soc: Add Cirrus EP93xx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,17 +54,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-ep93xx-v11-5-4e924efda795@maquefel.me>
+Message-Id: <20240715-ep93xx-v11-6-4e924efda795@maquefel.me>
 References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
 In-Reply-To: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032799; l=4433;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032799; l=6134;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=onC/yUOhswI9EYOcxGSoR30thUvusn3WXoEialTiwl4=;
- b=dZEYfMdHs1rJy9XoKOuEB/r5os+D/nGwnOMro6xuqDTvbQ+n2p7eXbtFRJiF4eXhINbPTQVFP/Lk
- kbJtlupLBepFPmps1n+6T4r5MhD0TDpEC/ADdR3I4qQj99fF6/QB
+ bh=3qRH8iBzDzq1XDMd29PQTUf0/U/lo+zRZQ47DrczBzM=;
+ b=RjB/JAhhA5VLyteob8W1OGdQSth/21/AC5heCSD9XABCeWwEMZ2c87T2qh+0OAau9NDoPS6aoWnt
+ fxIRFa6sBqN4xhpZ5Qe6RGrRkbPnVIBV6jjaoVrVMgyHo9QbP5G6
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -74,142 +80,213 @@ Reply-To: nikita.shubin@maquefel.me
 
 From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Implement the reset behaviour of the various EP93xx SoCS
-in drivers/power/reset.
-
-It used to be located in arch/arm/mach-ep93xx.
+Add device tree bindings for the Cirrus Logic EP93xx SoC.
 
 Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Acked-by: Sebastian Reichel <sre@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/power/reset/Kconfig          | 10 +++++
- drivers/power/reset/Makefile         |  1 +
- drivers/power/reset/ep93xx-restart.c | 84 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
+ .../bindings/arm/cirrus/cirrus,ep9301.yaml         | 38 +++++++++
+ .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  | 94 ++++++++++++++++++++++
+ include/dt-bindings/clock/cirrus,ep9301-syscon.h   | 46 +++++++++++
+ 3 files changed, 178 insertions(+)
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index fece990af4a7..389d5a193e5d 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -75,6 +75,16 @@ config POWER_RESET_BRCMSTB
- 	  Say Y here if you have a Broadcom STB board and you wish
- 	  to have restart support.
- 
-+config POWER_RESET_EP93XX
-+	bool "Cirrus EP93XX reset driver" if COMPILE_TEST
-+	depends on MFD_SYSCON
-+	default ARCH_EP93XX
-+	help
-+	  This driver provides restart support for Cirrus EP93XX SoC.
-+
-+	  Say Y here if you have a Cirrus EP93XX SoC and you wish
-+	  to have restart support.
-+
- config POWER_RESET_GEMINI_POWEROFF
- 	bool "Cortina Gemini power-off driver"
- 	depends on ARCH_GEMINI || COMPILE_TEST
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index a95d1bd275d1..10782d32e1da 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_POWER_RESET_ATC260X) += atc260x-poweroff.o
- obj-$(CONFIG_POWER_RESET_AXXIA) += axxia-reset.o
- obj-$(CONFIG_POWER_RESET_BRCMKONA) += brcm-kona-reset.o
- obj-$(CONFIG_POWER_RESET_BRCMSTB) += brcmstb-reboot.o
-+obj-$(CONFIG_POWER_RESET_EP93XX) += ep93xx-restart.o
- obj-$(CONFIG_POWER_RESET_GEMINI_POWEROFF) += gemini-poweroff.o
- obj-$(CONFIG_POWER_RESET_GPIO) += gpio-poweroff.o
- obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
-diff --git a/drivers/power/reset/ep93xx-restart.c b/drivers/power/reset/ep93xx-restart.c
+diff --git a/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
 new file mode 100644
-index 000000000000..57cfb8620faf
+index 000000000000..170aad5dd7ed
 --- /dev/null
-+++ b/drivers/power/reset/ep93xx-restart.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Cirrus EP93xx SoC reset driver
-+ *
-+ * Copyright (C) 2021 Nikita Shubin <nikita.shubin@maquefel.me>
-+ */
++++ b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/cirrus/cirrus,ep9301.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/bits.h>
-+#include <linux/container_of.h>
-+#include <linux/delay.h>
-+#include <linux/errno.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
-+#include <linux/slab.h>
++title: Cirrus Logic EP93xx platforms
 +
-+#include <linux/soc/cirrus/ep93xx.h>
++description:
++  The EP93xx SoC is a ARMv4T-based with 200 MHz ARM9 CPU.
 +
-+#define EP93XX_SYSCON_DEVCFG		0x80
-+#define EP93XX_SYSCON_DEVCFG_SWRST	BIT(31)
++maintainers:
++  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
++  - Nikita Shubin <nikita.shubin@maquefel.me>
 +
-+struct ep93xx_restart {
-+	struct ep93xx_regmap_adev *aux_dev;
-+	struct notifier_block restart_handler;
-+};
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: The TS-7250 is a compact, full-featured Single Board
++          Computer (SBC) based upon the Cirrus EP9302 ARM9 CPU
++        items:
++          - const: technologic,ts7250
++          - const: cirrus,ep9301
 +
-+static int ep93xx_restart_handle(struct notifier_block *this,
-+				 unsigned long mode, void *cmd)
-+{
-+	struct ep93xx_restart *priv =
-+		container_of(this, struct ep93xx_restart, restart_handler);
-+	struct ep93xx_regmap_adev *aux = priv->aux_dev;
++      - description: The Liebherr BK3 is a derivate from ts7250 board
++        items:
++          - const: liebherr,bk3
++          - const: cirrus,ep9301
 +
-+	/* Issue the reboot */
-+	aux->update_bits(aux->map, aux->lock, EP93XX_SYSCON_DEVCFG,
-+			 EP93XX_SYSCON_DEVCFG_SWRST, EP93XX_SYSCON_DEVCFG_SWRST);
-+	aux->update_bits(aux->map, aux->lock, EP93XX_SYSCON_DEVCFG,
-+			 EP93XX_SYSCON_DEVCFG_SWRST, 0);
++      - description: EDB302 is an evaluation board by Cirrus Logic,
++          based on a Cirrus Logic EP9302 CPU
++        items:
++          - const: cirrus,edb9302
++          - const: cirrus,ep9301
 +
-+	return NOTIFY_DONE;
-+}
++additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
+new file mode 100644
+index 000000000000..7cb1b4114985
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
+@@ -0,0 +1,94 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/cirrus/cirrus,ep9301-syscon.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static int ep93xx_reboot_probe(struct auxiliary_device *adev,
-+			       const struct auxiliary_device_id *id)
-+{
-+	struct ep93xx_regmap_adev *rdev = to_ep93xx_regmap_adev(adev);
-+	struct device *dev = &adev->dev;
-+	struct ep93xx_restart *priv;
-+	int err;
++title: Cirrus Logic EP93xx Platforms System Controller
 +
-+	if (!rdev->update_bits)
-+		return -ENODEV;
++maintainers:
++  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
++  - Nikita Shubin <nikita.shubin@maquefel.me>
 +
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
++description: |
++  Central resources are controlled by a set of software-locked registers,
++  which can be used to prevent accidental accesses. Syscon generates
++  the various bus and peripheral clocks and controls the system startup
++  configuration.
 +
-+	priv->aux_dev = rdev;
++  The System Controller (Syscon) provides:
++  - Clock control
++  - Power management
++  - System configuration management
 +
-+	priv->restart_handler.notifier_call = ep93xx_restart_handle;
-+	priv->restart_handler.priority = 128;
++  Syscon registers are common for all EP93xx SoC's, through some actual peripheral
++  may be missing depending on actual SoC model.
 +
-+	err = register_restart_handler(&priv->restart_handler);
-+	if (err)
-+		return dev_err_probe(dev, err, "can't register restart notifier\n");
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - cirrus,ep9302-syscon
++              - cirrus,ep9307-syscon
++              - cirrus,ep9312-syscon
++              - cirrus,ep9315-syscon
++          - const: cirrus,ep9301-syscon
++          - const: syscon
++      - items:
++          - const: cirrus,ep9301-syscon
++          - const: syscon
 +
-+	return 0;
-+}
++  reg:
++    maxItems: 1
 +
-+static const struct auxiliary_device_id ep93xx_reboot_ids[] = {
-+	{
-+		.name = "soc_ep93xx.reset-ep93xx",
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, ep93xx_reboot_ids);
++  "#clock-cells":
++    const: 1
 +
-+static struct auxiliary_driver ep93xx_reboot_driver = {
-+	.probe		= ep93xx_reboot_probe,
-+	.id_table	= ep93xx_reboot_ids,
-+};
-+module_auxiliary_driver(ep93xx_reboot_driver);
++  clocks:
++    items:
++      - description: reference clock
++
++patternProperties:
++  '^pins-':
++    type: object
++    description: pin node
++    $ref: /schemas/pinctrl/pinmux-node.yaml
++
++    properties:
++      function:
++        enum: [ spi, ac97, i2s, pwm, keypad, pata, lcd, gpio ]
++
++      groups:
++        enum: [ ssp, ac97, i2s_on_ssp, i2s_on_ac97, pwm1, gpio1agrp,
++                gpio2agrp, gpio3agrp, gpio4agrp, gpio6agrp, gpio7agrp,
++                rasteronsdram0grp, rasteronsdram3grp, keypadgrp, idegrp ]
++
++    required:
++      - function
++      - groups
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    syscon@80930000 {
++      compatible = "cirrus,ep9301-syscon", "syscon";
++      reg = <0x80930000 0x1000>;
++
++      #clock-cells = <1>;
++      clocks = <&xtali>;
++
++      spi_default_pins: pins-spi {
++        function = "spi";
++        groups = "ssp";
++      };
++    };
+diff --git a/include/dt-bindings/clock/cirrus,ep9301-syscon.h b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
+new file mode 100644
+index 000000000000..6bb8f532e7d0
+--- /dev/null
++++ b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++#ifndef DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
++#define DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
++
++#define EP93XX_CLK_PLL1		0
++#define EP93XX_CLK_PLL2		1
++
++#define EP93XX_CLK_FCLK		2
++#define EP93XX_CLK_HCLK		3
++#define EP93XX_CLK_PCLK		4
++
++#define EP93XX_CLK_UART		5
++#define EP93XX_CLK_SPI		6
++#define EP93XX_CLK_PWM		7
++#define EP93XX_CLK_USB		8
++
++#define EP93XX_CLK_M2M0		9
++#define EP93XX_CLK_M2M1		10
++
++#define EP93XX_CLK_M2P0		11
++#define EP93XX_CLK_M2P1		12
++#define EP93XX_CLK_M2P2		13
++#define EP93XX_CLK_M2P3		14
++#define EP93XX_CLK_M2P4		15
++#define EP93XX_CLK_M2P5		16
++#define EP93XX_CLK_M2P6		17
++#define EP93XX_CLK_M2P7		18
++#define EP93XX_CLK_M2P8		19
++#define EP93XX_CLK_M2P9		20
++
++#define EP93XX_CLK_UART1	21
++#define EP93XX_CLK_UART2	22
++#define EP93XX_CLK_UART3	23
++
++#define EP93XX_CLK_ADC		24
++#define EP93XX_CLK_ADC_EN	25
++
++#define EP93XX_CLK_KEYPAD	26
++
++#define EP93XX_CLK_VIDEO	27
++
++#define EP93XX_CLK_I2S_MCLK	28
++#define EP93XX_CLK_I2S_SCLK	29
++#define EP93XX_CLK_I2S_LRCLK	30
++
++#endif /* DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H */
 
 -- 
 2.43.2
