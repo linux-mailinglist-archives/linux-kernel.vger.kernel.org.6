@@ -1,213 +1,127 @@
-Return-Path: <linux-kernel+bounces-252631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6696D93161A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C19CB93161D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88281F22349
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F341F22184
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B1A18E75D;
-	Mon, 15 Jul 2024 13:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BAD18E75D;
+	Mon, 15 Jul 2024 13:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lU2o1Srk"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ufxi0dwY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D5618A95C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B8E1741CF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051510; cv=none; b=mIVPwYF5+DtuKtFAQG+bL05rQzQ6ew2yh3KvX1D7hR+ULo/4MFu+/3h5JFdCtWSi9sFcr+084dRh8UuKqw/nOssekgUZWiHQ6UrfP5I1B3aTgDKYrBafY07LsWVLzvsDf6N3hDhoQxtfnHr1QdLMOA3zaLRU66xZ2OGqIttbFlI=
+	t=1721051547; cv=none; b=AbGWI4B/zTo5Riryqv9dlAUVgSM3hyUOeEPxDsyQ2Hq5nnVaMqbqBEMDhSYpPQfulehAq3giQgcTzDnBOjvoJqVIXgqxMBF6m6L1vWlZV1XK+ubXaRXeUM0iLVXdC19P8ZekEy7LaK87/ABR58eIlXrEKzp52RQmr5xn5TUwgPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051510; c=relaxed/simple;
-	bh=ra2iu8Gz+ImwqgdjtFBQAdcGSDiM4U9XizTOJ8q2aDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=thBy6/ugO67CrAMvju2U4RKatBbiewCiHGE9OFBGBYWVCy3yjLIzS2+IYOHy0mtlIk0o9JOJis95G7dLTMFWKNtbS7PUFjoLFwDDngiVy3gPhTYzew61i+qlKuwI04dj13GwSkOdXEwbLt6c3zEtVTfgAj/2XBz7YwfspGJfAWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lU2o1Srk; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79efbc9328bso314252685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721051506; x=1721656306; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SxXwbEHWXO/2KvCuP3hi693DOR1kiAPLV7jI7n5DAfw=;
-        b=lU2o1SrklGN1ASW7Bo61bQT9M+6hqpOjHpD+q1EsWLz7GNiYkwUWlKdBoaspm1+ZE9
-         N/aU1tjKH+NbtoWmWfIn0gNGH5WA6sodKjBwSl8xBoydA3QJp4fIU8SlQxZtf22pH2kG
-         3+WpRHcnX1u9STITeVqUKFvKL7+UkXui2lrzs=
+	s=arc-20240116; t=1721051547; c=relaxed/simple;
+	bh=iYjP3Qa8Si+xq4gyqb551hIpGdJk0F1N8bfgGruW33c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hmKfnWB6dOvhHKNZO+ZLa1gyqi+QGy7w32A/dWAgmvBW71zA3KebGGyDmT/qRwDfZ8qdDPvvXYv1tUCVR5sqUQg3bBHAwSHNmZ43j72aNSEhekAWmHB8V3zL0K4zfX9Hpet7jziiS+nhNUd+u4CWY5Tz9uRSeJmsESxVrRNK94U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ufxi0dwY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721051544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CMRK0FAuRn48/f8vk7h8IrU23AJ1MPeYBe5TQ+OfZZ8=;
+	b=Ufxi0dwYXcyrXZCwd0MGkuqurUM2NC5TBZsd247pBdXR2Lwg3oypEdrLEKpxgN5K2GLZ7B
+	Re0cEeu5ZOMVWd4BKMb4mKf61ZbdseVYX9HG5CQFPYn4xFbrPy7sJhPCpG8EWqvETMrnTL
+	0hQtdTtVUZeTdB3SOJeZbzodr6eoyEI=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-SUrlEBWGPuabFZdtWV9kBQ-1; Mon, 15 Jul 2024 09:52:23 -0400
+X-MC-Unique: SUrlEBWGPuabFZdtWV9kBQ-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77dbdc2cf6so346500866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:52:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721051506; x=1721656306;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SxXwbEHWXO/2KvCuP3hi693DOR1kiAPLV7jI7n5DAfw=;
-        b=B4xM5YqfbVUnJAuXxCivLALuuQ1CxNoLDnhXvHoSUN2k8RQPuValkQ2HK09PeYDtMk
-         4R+3glRNh9gCYBpq5tPz7aAZMiO0ww7i9FpeDJP+uQwMaFLZ2HB6+86XwuA27MdtK2Z7
-         cQac3pqFd6/UlfypFD4XPuA/6+Nc5TZw3pDDFI4CGW/ss2dMzMfXT8KnOY99rc4+9Gtq
-         I/EmvLdZYzo98vlT8Fg/4p4M7NGJhu1smzONt1yKV+GF+YmHgV6b6HbEgcn2nzIFZ5Lq
-         R009xvPwJsdBtewCsbw5SbQTKPxSnsCz45Wd98CO7ov9s/nFTIElygfShzTkoGf4Yapa
-         bdWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbICt9Mkrib4uzJNZ4/io9ORkis/W7rP2jAavJlgW3kjHAcw2Fu66Q5xf1AZ+82VwVjYnf53p07hTkiUJ51nj3GQb1rafrI9ZODBKn
-X-Gm-Message-State: AOJu0YwV8QTLTgWQsgpNj3uukz/1R0IDDaNFfzz70RMFHfbjNN7fpSSp
-	EVUDACfquWe6HT8729KdvgWvxjsTW86hXdVEnbgZSBKv2OfF+IvK7nYBuY6ybyrrQ1OeHds8r30
-	=
-X-Google-Smtp-Source: AGHT+IEM28/9arer4efbUz27EC7wuJEk3/SnUP1N3sC6qYT2mhtWNBxDuBxhaYwK+CTORnZCVoSv9Q==
-X-Received: by 2002:a05:620a:470b:b0:79f:1559:272e with SMTP id af79cd13be357-79f19ae387dmr2606702285a.61.1721051506504;
-        Mon, 15 Jul 2024 06:51:46 -0700 (PDT)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160ba4e00sm201189585a.2.2024.07.15.06.51.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 06:51:37 -0700 (PDT)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44a8b140a1bso532591cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:51:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQyYerj94BfDkFi5E7Ki2OhIUQ6ofL5/kVlq0ugRc+mtgle+6vOuPh+aPaUJmXiE+C+CDn1poiNl0yu5YxL7pt+6eQJPDJH5u7ZNwj
-X-Received: by 2002:a05:622a:124b:b0:447:e728:d9b with SMTP id
- d75a77b69052e-44f5a31e028mr6194241cf.26.1721051494780; Mon, 15 Jul 2024
- 06:51:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721051542; x=1721656342;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CMRK0FAuRn48/f8vk7h8IrU23AJ1MPeYBe5TQ+OfZZ8=;
+        b=GnSfvqDQWxevBZg8849v8DJPFFA90N0cshuKdeJiMw/ZV8jy93SVOrG+vYhPATekw4
+         nSKZRrxLHKRegepiSqdtb33xX9SqZCV8S7dcx9WtopPrvG3CoFCxkmIPb35WMvHhAmae
+         cu3t8g3i0Fqz3zZSgo/dgeSAjXgUjaFkIysTbPkWnP0IhgXj/b1Fyy71Vk02AcX78Abr
+         fyhrV6QGd/bPMSNrWrzs1Rh8eyR/SBdVNUNcrGHjr2ygk74E3M9H5kPk/xV1RtaEHINh
+         lxBZF6+774Lx574XqePK8GIMhMcEAvx9E3D7E1ym4cuIXQKFSAWvkcdnT10Mn7mGIS3R
+         GfZQ==
+X-Gm-Message-State: AOJu0YyCeqKLrGdyBABqQfvFzb0xzqPJQWgiWNefUsEoIT39hX8gcUtj
+	ipGX/4jIQBnJtYGR4Zw4HnpRZctstqV9sKkFzpixz8kjthCdKtJ19Xu4/mqSzgU8g05fsD4ECIf
+	psJO3ESqLcTviDXFw7MWN2EqD67rTluzJ6htU+n+CJ8jKhmyBRwYvEcEljXvKkw==
+X-Received: by 2002:a17:907:9711:b0:a72:6ff6:b932 with SMTP id a640c23a62f3a-a780b8844a1mr1653845766b.51.1721051541849;
+        Mon, 15 Jul 2024 06:52:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHwjV8KRnnz7iEjDpqsJ3D7PuPRD+rt8CqWAu8VqRYuDBEHehNYKk7YfxnNje69qgJqdGDIw==
+X-Received: by 2002:a17:907:9711:b0:a72:6ff6:b932 with SMTP id a640c23a62f3a-a780b8844a1mr1653844866b.51.1721051541493;
+        Mon, 15 Jul 2024 06:52:21 -0700 (PDT)
+Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:a4d3:4896:56d4:f050])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b48dbsm212469066b.57.2024.07.15.06.52.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 06:52:20 -0700 (PDT)
+From: Danilo Krummrich <dakr@redhat.com>
+To: airlied@gmail.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Danilo Krummrich <dakr@redhat.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Subject: [PATCH] drm/gpuvm: fix missing dependency to DRM_EXEC
+Date: Mon, 15 Jul 2024 15:51:33 +0200
+Message-ID: <20240715135158.133287-1-dakr@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
- <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org> <ZpUcI3KkIa58zC55@linaro.org>
- <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
-In-Reply-To: <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 15 Jul 2024 06:51:18 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WimxYmDrkfn0+E3MbXp8kS9TicN2kT3AM4eM+SAwYsOg@mail.gmail.com>
-Message-ID: <CAD=FV=WimxYmDrkfn0+E3MbXp8kS9TicN2kT3AM4eM+SAwYsOg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
-To: neil.armstrong@linaro.org
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In commit 50c1a36f594b ("drm/gpuvm: track/lock/validate external/evicted
+objects") we started using drm_exec, but did not select DRM_EXEC in the
+Kconfig for DRM_GPUVM, fix this.
 
-On Mon, Jul 15, 2024 at 6:02=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
->
-> On 15/07/2024 14:54, Stephan Gerhold wrote:
-> > On Mon, Jul 15, 2024 at 02:42:12PM +0200, Neil Armstrong wrote:
-> >> On 15/07/2024 14:15, Stephan Gerhold wrote:
-> >>> This reverts commit 8ebb1fc2e69ab8b89a425e402c7bd85e053b7b01.
-> >>>
-> >>> The panel should be handled through the samsung-atna33xc20 driver for
-> >>> correct power up timings. Otherwise the backlight does not work corre=
-ctly.
-> >>>
-> >>> We have existing users of this panel through the generic "edp-panel"
-> >>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works onl=
-y
-> >>> partially in that configuration: It works after boot but once the scr=
-een
-> >>> gets disabled it does not turn on again until after reboot. It behave=
-s the
-> >>> same way with the default "conservative" timings, so we might as well=
- drop
-> >>> the configuration from the panel-edp driver. That way, users with old=
- DTBs
-> >>> will get a warning and can move to the new driver.
-> >>>
-> >>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> >>> ---
-> >>>    drivers/gpu/drm/panel/panel-edp.c | 2 --
-> >>>    1 file changed, 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/pane=
-l/panel-edp.c
-> >>> index 3a574a9b46e7..d2d682385e89 100644
-> >>> --- a/drivers/gpu/drm/panel/panel-edp.c
-> >>> +++ b/drivers/gpu/drm/panel/panel-edp.c
-> >>> @@ -1960,8 +1960,6 @@ static const struct edp_panel_entry edp_panels[=
-] =3D {
-> >>>     EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, =
-"Unknown"),
-> >>>     EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, =
-"Unknown"),
-> >>> -   EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA=
-45AF01"),
-> >>> -
-> >>>     EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140=
-M1JW48"),
-> >>>     EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M=
-1JW46"),
-> >>>     EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140=
-T1JH01"),
-> >>>
-> >>
-> >> How will we handle current/old crd DT with new kernels ?
-> >>
-> >
-> > I think this is answered in the commit message:
-> >
-> >>> We have existing users of this panel through the generic "edp-panel"
-> >>> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works onl=
-y
-> >>> partially in that configuration: It works after boot but once the scr=
-een
-> >>> gets disabled it does not turn on again until after reboot. It behave=
-s the
-> >>> same way with the default "conservative" timings, so we might as well=
- drop
-> >>> the configuration from the panel-edp driver. That way, users with old=
- DTBs
-> >>> will get a warning and can move to the new driver.
-> >
-> > Basically with the entry removed, the panel-edp driver will fallback to
-> > default "conservative" timings when using old DTBs. There will be a
-> > warning in dmesg, but otherwise the panel will somewhat work just as
-> > before. I think this is a good way to remind users to upgrade.
->
-> I consider this as a regression
->
-> >
-> >> Same question for patch 3, thie serie introduces a bindings that won't=
- be valid
-> >> if we backport patch 3. I don't think patch should be backported, and =
-this patch
-> >> should be dropped.
-> >
-> > There would be a dtbs_check warning, yeah. Functionally, it would work
-> > just fine. Is that reason enough to keep display partially broken for
-> > 6.11? We could also apply the minor binding change for 6.11 if needed.
->
-> I don't know how to answer this, I'll let the DT maintainer comment this.
->
-> The problem is I do not think we can pass the whole patchset as fixes
-> for v6.11, patches 2 & 3 could, patches 1 & 4 definitely can't.
->
-> Neil
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+Fixes: 50c1a36f594b ("drm/gpuvm: track/lock/validate external/evicted objects")
+Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+---
+ drivers/gpu/drm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-IMO: patch #3 (dts) and #4 (CONFIG) go through the Qualcomm tree
-whenever those folks agree to it. If we're worried about the
-dtbs_check breakage I personally wouldn't mind "Ack"ing patch #1 to go
-through the Qualcomm tree as long as it made it into 6.11-rc1. I have
-a hunch that there are going to be more Samsung OLED panels in the
-future that will need to touch the same file, but if the change is in
--rc1 it should make it back into drm-misc quickly, right?
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index d0aa277fc3bf..d08d79bbb0f6 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -254,6 +254,7 @@ config DRM_EXEC
+ config DRM_GPUVM
+ 	tristate
+ 	depends on DRM
++	select DRM_EXEC
+ 	help
+ 	  GPU-VM representation providing helpers to manage a GPUs virtual
+ 	  address space
 
-Personally I think patch #2 could go in anytime since, as people have
-said, things are pretty broken today and the worst that happens is
-that someone gets an extra warning. That would be my preference. That
-being said, we could also snooze that patch for a month or two and
-land it later. There's no real hurry.
+base-commit: 833cd3e9ad8360785b6c23c82dd3856df00732d9
+-- 
+2.45.2
 
--Doug
 
