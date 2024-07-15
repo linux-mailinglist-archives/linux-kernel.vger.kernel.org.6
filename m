@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-252297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E995B931125
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:25:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 436B793112A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0861F2134A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F297F2839B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44963186E3C;
-	Mon, 15 Jul 2024 09:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8016186E35;
+	Mon, 15 Jul 2024 09:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RWhxIZLv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEnL1L1l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE476AC0;
-	Mon, 15 Jul 2024 09:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C866AC0;
+	Mon, 15 Jul 2024 09:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721035531; cv=none; b=ugW+r8MZDhahCahPKz3bNYeVojgjZUcMqd77s4QYwJWIe80FN49VtqJscIzTK78rZyiSvQ0bwLgWV1qbmM6KP9rCHn7d58U8gOMe9AjcD4ie7U9rPpQpp/qkjG2IU7Ncp0ioDAhWahTy1N4oAjc3N6rCJf0njSRbkZAVv6IqJTc=
+	t=1721035676; cv=none; b=Y1a68euJF18/xC0oodU5AmiIH2I3tEiQT+XQZ5kAdWNmt/JqkAkF8ZWaBMHvRUy31cGyPzHXaVkz7W8wZEwINjfnzWml0fZ0p3nW+QmelYzZEmv29fjk4+0qhstDxlRWluaTDAZAjP7Wmo3OLewMyNitfqzqhXfMmrKWkfc62PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721035531; c=relaxed/simple;
-	bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
+	s=arc-20240116; t=1721035676; c=relaxed/simple;
+	bh=4HrD0MVt1a5kb0h8Uz1TwttE8DDSwiBNZBqPaE2aJCo=;
 	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eKN7XGzknlAd5tKnvIGcljGXzkV/mpZ64EQ2tZyVPETRR/dEp/YCN5jEqribYjI2gCBm1NuI8h2kH9XXAgFhekYICMv0NZauUZmacUBhDT9aRA/QOOjWghXFa2l1wqO3Oca7QNwsZArTOYbPtzyVI9Vn5602ZrxpqMWlSjq0M/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RWhxIZLv; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version:Content-Type; b=BROed/wZt8QA71s1vYybAz/ptLiKsnn7Gs8R/TQtrTxg5nOp3fE74WIvL9QDRjZ5H5fYc6UBGGZKGBqXUrl8zWbGpd1gOf6eg4PWwyJiyMU+1bRDANRhra8w5bEw3HLMXyxQj8MQFPrCKwvnnRS2QfZ+H66d+3RY4XDvi9DIDuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEnL1L1l; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721035530; x=1752571530;
+  t=1721035675; x=1752571675;
   h=from:date:to:cc:subject:in-reply-to:message-id:
    references:mime-version;
-  bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
-  b=RWhxIZLvYaSrklPEHquhdNyvF6eQuuWolqJu8eryC8ecwvhOFv1gOvWT
-   pboZM5ntAUxNR3Ldm4dJthhGzCVzBTiEsBzL3ypidqT2GOtEZbOM3M8Ta
-   InGtKpeafJmcghKNsj/5BMlOgFey9EJKlinA3ditTPoyCDgkiTSWrZm3s
-   TuNhzZmQO3kuW3qmpNWhKGgSIekNK/eC3nRQcBrkTxsWZ0TQJUhsT9CMU
-   MvzTeXI4UIUtfaPDcC3cZQAaz64+RAiF1QsnBE9twmKHuWQCTK1M87H/g
-   eeVTZy0Kso4nju/zNIXzEH6kTZBMLASI8n/k68UBKY6lNhx8M7+2tfkjI
-   g==;
-X-CSE-ConnectionGUID: t6jxPYV0TpmURPOOR1oBVw==
-X-CSE-MsgGUID: AfSDEliuTmKemZ+riDtiWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18116965"
+  bh=4HrD0MVt1a5kb0h8Uz1TwttE8DDSwiBNZBqPaE2aJCo=;
+  b=AEnL1L1lZdEsfuS1QcaC2I4DQ6EscVDgcHHM4KBRkUT13p+4bXPaUqRk
+   13nvE5ztOkM3n9e+vm+jsz08DvuVg4TAtUoauNpQJJ54DYvc9bT5ayNbo
+   LZG0eDZ2wZ+FVerX9XLAABN2HCdd+MKrSSqBcmLEHrwWXC9P6XPGoUDlR
+   8wpwMj+sf883qwCNnfDxw9rPR8MnIlWv802aSfE5gbkoOkNIDx2xhtB/G
+   OTb4tNBXXRyIEb9rnwCIrO11ffbE9ocB9mkEYGYcrugbIJAxPaIBvQ7Xt
+   bulxwXz4i787SwR3K0LIeE/x5Xmk/F2l/RzCfZluFMAeel8DSD/QBEndn
+   Q==;
+X-CSE-ConnectionGUID: B6+hFjzrSPCENimVtXw3uw==
+X-CSE-MsgGUID: 8m0Hg2SRQgqGhsfzXuNMzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="35833910"
 X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="18116965"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:29 -0700
-X-CSE-ConnectionGUID: w4YbGjS4QT2Flzwk22vxNg==
-X-CSE-MsgGUID: c3bSWFr6SD+oPLkg4naVsg==
+   d="scan'208";a="35833910"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:27:53 -0700
+X-CSE-ConnectionGUID: LU6z5m6xT2q9aX/CBGdoAA==
+X-CSE-MsgGUID: T/i+Ufc8Q9Go39EbnR+W7Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="49444312"
-Received: from unknown (HELO localhost) ([10.245.247.131])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:26 -0700
+   d="scan'208";a="54389077"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.131])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:27:50 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 15 Jul 2024 12:25:21 +0300 (EEST)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Tero Kristo <tero.kristo@linux.intel.com>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/x86/intel/tpmi/plr: Uninitialized variable in
- plr_print_bits()
-In-Reply-To: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
-Message-ID: <1467f140-c035-cb2a-20d9-b5910971cb56@linux.intel.com>
-References: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
+Date: Mon, 15 Jul 2024 12:27:45 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: platform-driver-x86@vger.kernel.org, corentin.chary@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH] Fixes: ae834a549ec1 ("platform/x86: asus-wmi: add support
+ variant of TUF RGB")
+In-Reply-To: <20240713074005.66254-1-luke@ljones.dev>
+Message-ID: <5c4ef8d8-2806-5bb6-2946-368cf1ebbac6@linux.intel.com>
+References: <20240713074005.66254-1-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,40 +76,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 12 Jul 2024, Dan Carpenter wrote:
+On Sat, 13 Jul 2024, Luke D. Jones wrote:
 
-> Initialize the "str" pointer to NULL.  There is a test later for if "str"
-> is NULL but in the original code it was either valid or uninitialized.
+> In kbd_rgb_mode_store the dev_get_drvdata() call was assuming the device
+> data was asus_wmi when it was actually led_classdev.
 > 
-> Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Almost everyone automatically initializes stack variables to zero these days so
-> bugs like this don't show up in testing and we disabled GCC's uninitialized
-> variable warning so it's easy to miss.
+> This patch corrects this by making the correct chain of calls to get the
+> asus_wmi driver data.
 > 
->  drivers/platform/x86/intel/intel_plr_tpmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
-> index c1aa52c23d25..2725a1ddba92 100644
-> --- a/drivers/platform/x86/intel/intel_plr_tpmi.c
-> +++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
-> @@ -162,7 +162,7 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
->  static void plr_print_bits(struct seq_file *s, u64 val, int bits)
->  {
->  	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
-> -	const char *str;
-> +	const char *str = NULL;
->  	int bit, index;
->  
->  	for_each_set_bit(bit, mask, bits) {
+> Tested-by: Denis Benato <benato.denis96@gmail.com>
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
 
-This fix looks slightly incorrect. It silences warning but for logic 
-correctness, the NULL assignment seems to belong inside the for loop so 
-it's done for each bit.
+Your tags seem messed up, Fixes is in Subject in place of shortlog that is 
+completely missing.
+
+Could you please correct these issues and resubmit, thank you.
+
 
 -- 
  i.
 
+> ---
+>  drivers/platform/x86/asus-wmi.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 799d928c7d3d..2935af013535 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -879,10 +879,14 @@ static ssize_t kbd_rgb_mode_store(struct device *dev,
+>  				 struct device_attribute *attr,
+>  				 const char *buf, size_t count)
+>  {
+> -	struct asus_wmi *asus = dev_get_drvdata(dev);
+>  	u32 cmd, mode, r, g, b, speed;
+> +	struct led_classdev *led;
+> +	struct asus_wmi *asus;
+>  	int err;
+>  
+> +	led = dev_get_drvdata(dev);
+> +	asus = container_of(led, struct asus_wmi, kbd_led);
+> +
+>  	if (sscanf(buf, "%d %d %d %d %d %d", &cmd, &mode, &r, &g, &b, &speed) != 6)
+>  		return -EINVAL;
+>  
+> 
 
