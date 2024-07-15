@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-252568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B2B931553
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 283A3931556
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0CD1F21BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28A71F21BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6018C34B;
-	Mon, 15 Jul 2024 13:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBB318D4C2;
+	Mon, 15 Jul 2024 13:07:54 +0000 (UTC)
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D00172BA6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D4B18A926
 	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048872; cv=none; b=FPeFGrMa/nJc5GaAxm0xD9gjvvTcNJKc6YJ8npXnqN+BerjwRC86gGNiU95SsGVkUPLhwXWjCogXMxVOoEVGagR/IFmQos3v6a1QZn/0AamTJ/Pa5gO8VvdCu+dmY22OUqBCr4tbmgj6lXHzvV336dM2cBhTJ9VRNvJLccexg1g=
+	t=1721048873; cv=none; b=MzXOQgID61H5u3fIz6AcddaCUkfZBk95OxwPbjrZS2EfjzWIOZHva+N0em4BIaVdJo6hMypQm6GloraWnzCE5BYM5DACMrktP5J3oVzaRHKvvCNCUhwKI1G/+mg4IQ0GgyZCnr4WFAh6JFaHGOhTsb9MySnsuFVwdHGtXdRqNps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048872; c=relaxed/simple;
-	bh=Rpi2uKJGEh2jtap9wfy0OTiptc9JmpOfQc2Ntp9cUxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fkU7kwz24r6CtoVvpfhCuVPGZZsgS9VZO94QZEYs7Q6j8ez9Mz4Jxx0dgXDUksw0gfQFvD6o7NcsVPWpuZHzm065nx0XwGC+iZyHXTIuryskFz0IgdVQNNpCPEWcpOLB3f+bbF3WywX52sTc1M04rE2kcuRbHJMn8l1H8+0Gcfc=
+	s=arc-20240116; t=1721048873; c=relaxed/simple;
+	bh=scmUIrpt556yK+4eOEfui3X5RWBuHqjT5k4U/JnHPdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GNf4Yn1ESTfdnMblhBiT95hI24fKbppq4TuqgDKHPLVt/qvZGGIFCfqqlCxc+WQJWM+EtnikfJe9yxHtB/Zxp2ryhYXGbYiNl/Aci8Y/1HqEbsu9DWl2CpO3Ig5vJ8AnjbqwI84QORalfXvW0i5SktgCvVJvPk+uy0ziGe21Hgw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WN2YR5dWGz4f3kkB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:39 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WN2YS1kvTz4f3kkD
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:40 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id ACC641A0170
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:47 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 2583A1A0568
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:07:48 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP4 (Coremail) with SMTP id gCh0CgBHKzkhH5VmjCPSAA--.61776S2;
+	by APP4 (Coremail) with SMTP id gCh0CgBHKzkhH5VmjCPSAA--.61776S3;
 	Mon, 15 Jul 2024 21:07:47 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: jack@suse.com
@@ -46,10 +47,12 @@ Cc: mark@fasheh.com,
 	ocfs2-devel@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 0/4] Fix and cleanups to quota
-Date: Mon, 15 Jul 2024 21:05:30 +0800
-Message-Id: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
+Subject: [PATCH 1/4] quota: avoid missing put_quota_format when DQUOT_SUSPENDED is passed
+Date: Mon, 15 Jul 2024 21:05:31 +0800
+Message-Id: <20240715130534.2112678-2-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
+References: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +60,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHKzkhH5VmjCPSAA--.61776S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFy3ZF4fZr4UCFWDZw1xAFb_yoWxAFc_Ga
-	yxGayjvr1UXrZxuF1UKry5tFW5urWF9r15Kr1ktF45Jry2grn5Jw1vvrsavr17Xr4ftrZ8
-	Zr1qyry8AF1fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-TRANSID:gCh0CgBHKzkhH5VmjCPSAA--.61776S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF45GFyDAryfWFW3XF1rXrb_yoWDWrg_K3
+	4Ik3y8ZFWxXF9ag3WqgrWfWrZ09ayrGws3WF4jyrnrJryDGr45ZF4vqF9xAa4kZ3y7t398
+	Zas2yry7KFWrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M2
+	8IrcIa0xkI8VCY1x0267AKxVWUCVW8JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
+	021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F
+	4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7V
+	C0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j
+	6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1_cTDUUUUU==
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-This series contains some random fix and cleanups to fs quota. Please
-check respective patches for more detail. Thanks!
+Avoid missing put_quota_format when DQUOT_SUSPENDED is passed to
+dquot_load_quota_sb.
 
-Kemeng Shi (4):
-  quota: avoid missing put_quota_format when DQUOT_SUSPENDED is passed
-  quota: remove unneeded return value of register_quota_format
-  quota: remove redundant return at end of void function
-  quota: remove unnecessary error code translation in dquot_quota_enable
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+---
+ fs/quota/dquot.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- fs/ocfs2/super.c      |  6 ++----
- fs/quota/dquot.c      | 14 +++++---------
- fs/quota/quota_v1.c   |  3 ++-
- fs/quota/quota_v2.c   |  9 +++------
- include/linux/quota.h |  2 +-
- mm/shmem.c            |  7 +------
- 6 files changed, 14 insertions(+), 27 deletions(-)
-
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 627eb2f72ef3..23fcf9e9d6c5 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2408,7 +2408,7 @@ static int vfs_setup_quota_inode(struct inode *inode, int type)
+ int dquot_load_quota_sb(struct super_block *sb, int type, int format_id,
+ 	unsigned int flags)
+ {
+-	struct quota_format_type *fmt = find_quota_format(format_id);
++	struct quota_format_type *fmt;
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int error;
+ 
+@@ -2418,6 +2418,7 @@ int dquot_load_quota_sb(struct super_block *sb, int type, int format_id,
+ 	if (WARN_ON_ONCE(flags & DQUOT_SUSPENDED))
+ 		return -EINVAL;
+ 
++	fmt = find_quota_format(format_id);
+ 	if (!fmt)
+ 		return -ESRCH;
+ 	if (!sb->dq_op || !sb->s_qcop ||
 -- 
 2.30.0
 
