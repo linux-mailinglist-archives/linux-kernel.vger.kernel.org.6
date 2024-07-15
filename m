@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-252410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950119312B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:02:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D7B9312BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16671C214C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261531F211AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6E8188CDD;
-	Mon, 15 Jul 2024 11:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h9BqrVBY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8427A1891AA;
+	Mon, 15 Jul 2024 11:04:16 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187B9143878;
-	Mon, 15 Jul 2024 11:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B639D18411C;
+	Mon, 15 Jul 2024 11:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041314; cv=none; b=BgDOguw8lt4RNYoD1vcqDckFhz5bdOh/ZBpe9vI1O1d2Xg62jBcOBxfVIkl6+mdBspoAxKCGf9/7eoPZBpNMz2Rx/mH5Hb4DHBko3dCOb+MbzR0fwvU4zcORk0waKF1QzxG7UEhQedARq9o8wsHf9Q1cas1nUeuADRpldz0X9BA=
+	t=1721041456; cv=none; b=Rjbkx0M/4id7eBYb5YWYbd5Ba3wiVFKA7Yi/f/9sHGD0pJzXu2nVSDBKhcxMQTWg4GQ4GBJLyHlXS5lplUtWesCD84pOp/3RkSqWHfuHk1r+PzDH0Nn7A6GN4sqH1qMf5vUPyBrFY/531qbRCUVhA3lRzJm0qynAlvxPHHW4pPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041314; c=relaxed/simple;
-	bh=w71v9eUAwKNQ3+lXcaYdwENnHGYbeDhpjJ8OM7l0qkc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=B9QXfLH7yRVI5qBhFBXi+mHWZ1PMTyMxhGTyoUe7a9YM9ZHJRSM+xtTvEvKuYpGkgiTgx7YWMR6EMEZa1v9ijlIJxyN9WXigWAz0c0pAxIcgb68Vlen+HH2746ONtHvCIs/kRH3W+yieM/HbQ2kQ3MY7Z7SbWD4hIgh6TEO9w8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h9BqrVBY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dGv7020893;
-	Mon, 15 Jul 2024 11:01:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QCrrWxnCjXzDt5WJOpBQLe6l1iaKJ7QPrwp9hS6WCJo=; b=h9BqrVBYKZ3sksFA
-	LF11nKeJjlqzGcos7tlxTlODyBYuWQa+/be+KP7KLV2jggnidVs1VxWDL9kuVTCA
-	JuOds3BvCJ982nIOHYt8XmP2Qdhd8IE6hP13AE4IFXsReeNX7ahesCmVz2a5qLlJ
-	d72jaR2pPKQxfyoI5WXLtuek5xfyUvjWxi2YN0b+AGKIf8Eq4v4AWFJdcp9mlQYM
-	7VM7ivbQtZLRx8lK4T9c06thBoM/XBrmCXi2TrLkTDrQQkI/346cUzjHc3Fe7cus
-	Dd/17yC6/ahEel2y29CQ1OaIUJmXccg/LCGe1Blg8DNPTHrTPizyqPWcAbT8w7eH
-	a4TWvg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bgwg3q8q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 11:01:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FB1aR6003290
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 11:01:36 GMT
-Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 04:01:31 -0700
-Message-ID: <bc2d6a8e-4446-4311-8745-4a4fdb8bca3f@quicinc.com>
-Date: Mon, 15 Jul 2024 16:31:28 +0530
+	s=arc-20240116; t=1721041456; c=relaxed/simple;
+	bh=zERXhxbSPdCtg8ibfjvU/5ep9gYQ55E1S2QB8wtLjTw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UQhzk5+VOm0sgneqX6LgDwqtOTbcCfC3pvp1bQ4Xj1KtKBpGWHlzb26qAqYUdNBG80SXmC/6M+wz/0bql/iJPhnQgvx65giEdBvZvgxczf8wI60JfQQp1UPOsRusXGnP1I+Bxf1/2o6B3OoymHUFeoYkgzG/SC9PpeBnFaN5sgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sTJV3-0006GM-3Z; Mon, 15 Jul 2024 13:04:09 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 0/3] Binding and driver for voltage controlled oscillators
+Date: Mon, 15 Jul 2024 13:02:48 +0200
+Message-Id: <20240715110251.261844-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Subject: Re: [PATCH v13 6/6] iommu/arm-smmu: add support for PRR bit setup
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Clark <robdclark@gmail.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@chromium.org>
-References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
- <20240628140435.1652374-7-quic_bibekkum@quicinc.com>
- <CAF6AEGvroi8rJimFv95tkWmRFa5_aTpBJ7GFcRAuZpLGdSyEYQ@mail.gmail.com>
- <0650ba0a-4453-4e2d-8a76-0f396ac1999c@quicinc.com>
- <CAF6AEGv_9e-TDW1r0N4-db6pY_aV_EZFqrpNbATVS5Vy6+fs1g@mail.gmail.com>
- <4a5f54c7-120e-427d-8a0a-9fb83e13a72e@quicinc.com>
- <CAF6AEGtrtFNxDWtuADA4oOHhZJ=dJZcGaJ1XLFJt4fe4Xp=pTA@mail.gmail.com>
- <3b7c05b1-8f36-4c81-a55c-dbb467314099@quicinc.com>
- <CAF6AEGuRKU+DkL0-b3xdR1R45_MiiKQYRRXEXYz-xohu8rUaEQ@mail.gmail.com>
- <CAF6AEGtbw06-gOSvX9gAbi=SA801gmD3_8c5xkOU-G9g2qKptQ@mail.gmail.com>
- <9509f256-04a4-4907-98fc-148c5087d74d@quicinc.com>
- <CAF6AEGuLwZ0yFGWMKX-O1VjQB2M57K+CsyJ=7PCKXE=b=VsSNg@mail.gmail.com>
- <f4994451-9dc4-4d25-b544-49531709e76d@linaro.org>
-Content-Language: en-US
-In-Reply-To: <f4994451-9dc4-4d25-b544-49531709e76d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6tTKYRcgEHgo2Djr44KDs0v1tnx68jY5
-X-Proofpoint-ORIG-GUID: 6tTKYRcgEHgo2Djr44KDs0v1tnx68jY5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 clxscore=1015 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150087
+
+Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) have
+external oscillators on the board to generate the needed 100MHz reference
+clock the PCIe3 controller needs.
+
+Often these clock generators need supplies to be enabled to run.
+
+Modelling this clock has taken a number of shapes:
+- The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" [0]
+  &pcie30phy {
+  	phy-supply = <&vcc3v3_pi6c_03>;
+  	status = "okay";
+  };
+  which is of course not part of the binding
+
+- On the Rock-5-ITX the supply of the clock generator is controlled by
+  the same gpio as the regulator supplying the the port connected to the
+  pcie30x4 controller, so if this controller probes first, both
+  controllers will just run. But if the pcie30x2 controller probes first
+  (which has a different supply), the controller will stall at the first
+  dbi read.
+
+There are other types too, where an 25MHz oscillator supplies a PLL
+chip like the diodes,pi6c557 used on Theobroma Jaguar and Tiger boards.
+
+As we established in v1 [1], these are essentially different types, so
+this series attempts to solve the first case of "voltage controlled
+oscillators" as Stephen called them.
+
+changes in v2:
+- drop the Diodes PLLs for now, to get the first variant right
+- rename stuff to voltage-oscillator / clk_vco as suggested by Stephen
+- require vdd-supply in the binding
+- enable-gpios stays optional, as they often are tied to vdd-supply
+- drop deprecated elements that were left in from the fixed clock binding
 
 
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts#n605
+[1] https://lore.kernel.org/linux-clk/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
 
-On 7/11/2024 3:31 AM, Konrad Dybcio wrote:
-> On 10.07.2024 7:01 PM, Rob Clark wrote:
->> On Tue, Jul 9, 2024 at 12:43 PM Bibek Kumar Patro
->> <quic_bibekkum@quicinc.com> wrote:
-> 
-> [...]
-> 
->> If there is a clean break, such as all smmu-500 have PRR and all
->> smmu-v2 do not, then it would be reasonable to use the compat strings.
->> If not, I think we need a different way.
-> 
-> if (a reserved-memory region is passed in dt) {
-> 	init_prr()
-> }
-> 
+Heiko Stuebner (3):
+  dt-bindings: clocks: add binding for voltage-controlled-oscillators
+  clk: add driver for voltage controlled oscillators
+  arm64: dts: rockchip: fix the pcie refclock oscillator on Rock 5 ITX
 
-This would have been a straight forward way to pass as a check for PRR
-support, but as I mentioned in the above thread reserved-memory region 
-is not required if gfx/drm allocates the page.
-So I think compatible string would be more approachable way?
+ .../bindings/clock/voltage-oscillator.yaml    |  49 +++++++
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   |  38 ++++-
+ drivers/clk/Kconfig                           |  10 ++
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-vco.c                         | 133 ++++++++++++++++++
+ 5 files changed, 229 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+ create mode 100644 drivers/clk/clk-vco.c
 
-Thanks & regards,
-Bibek
+-- 
+2.39.2
 
-> Konrad
 
