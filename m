@@ -1,231 +1,105 @@
-Return-Path: <linux-kernel+bounces-252098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BECA930E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7271930E69
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB1E1C21064
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4AD1F2161B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AE51836D1;
-	Mon, 15 Jul 2024 07:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Z0ThQ+uZ"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156E618309A;
+	Mon, 15 Jul 2024 07:02:36 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DE71836EB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1A94C9A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721026865; cv=none; b=IXs0vtjpF5BtLrOYNxLHppPHDPaNxBolVyqB511VHOfGzuUF++uqdB0eMoZSY9UQpoJ/FDWrwZQnwJOqW3zZUFHT501Kb9wA+xn/Fr+mcjj8stSaXo7XhsVqiKKHVIlDDFT+bkC8vsXliMPJ671KBvUJ/rgQUxIEz3hdPhTCAQA=
+	t=1721026955; cv=none; b=UAjCkHnE1OLjAyrzh8cQT8LBj5SBVF1PCg9J2aHnPVHjCW+EHkywPrORSneS9GI117ywlwA2koVi68nZXYojfjod3NbmnJtJMsC/0qmc2r/KjNgQZY/FRWjODvfh2wWUTlYBpfOgPNN+uyJNj7ewCqQEkRv0GkSJhjIRr7q4zd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721026865; c=relaxed/simple;
-	bh=c8Qt1JWg/dj2IaGzz6MKryfRjCME66RMRhy11apq6gE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZEtlnwWAQeeYiNbIvkajQK3G4dB3HsMvCcOTOfICfZZI37vuoH5W7As100UAWIDTB1I4q3JWpmkjDGums3JFRCjiDx9mSgvssREHYHjsuxDSxQNDnT43zCPm+r/M7HT2/nVK2cLor4DXMMurd+6AFoPI3NCqDQi0UUd6cF6d6k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Z0ThQ+uZ; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1721026856;
-	bh=c8Qt1JWg/dj2IaGzz6MKryfRjCME66RMRhy11apq6gE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0ThQ+uZVkSzfWi7GjINPNGQLtqtruGgKHxqR/XtrRSXWgR1BiMBFWfKLKGf3GZ4b
-	 6ILDhmd5aOsOuy57mx7Ru8B9ji8l7uZBCUW8TCY3lMnHj7JgkXZviUooOdRs+G5o3U
-	 POcj+JS9z+khmrQSSd9U3yW+lHDStaVcQ4MlMtEU=
-Date: Mon, 15 Jul 2024 09:00:55 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.11-rc1
-Message-ID: <fdf4c2b8-dab7-40f0-a595-fd4f2108964e@t-8ch.de>
-References: <acffd5b1-36a8-4336-9b94-aec50b3d6e5b@t-8ch.de>
- <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
- <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
- <ee43b1d5-3339-4a1c-9bac-c0d48f22167c@t-8ch.de>
- <138b249a-8402-4a79-8c08-45bb9d888dc5@paulmck-laptop>
+	s=arc-20240116; t=1721026955; c=relaxed/simple;
+	bh=tJy9xtAm63dF5nXD3QRH/UIwYufvHPdhRunAQqauj94=;
+	h=Message-ID:Date:MIME-Version:From:To:CC:Subject:Content-Type; b=b0yzlACutkLdwgYV78AvY51toBwlV05ejWGvqmmf/sIgp0cyoUZ8B/s5YPuXUNeo5NbwlSjH4MDMJhqkrs7zyDyWRgm2czY4bvVfByVQOfxqNsWTwdkJNiU7VEsaGI81TQjBwhNsi+dcj5SIqs1ShrpsIKNMdnbI/Pq7bfu2psI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WMtMS1smCzQldV;
+	Mon, 15 Jul 2024 14:58:28 +0800 (CST)
+Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
+	by mail.maildlp.com (Postfix) with ESMTPS id 657391800A1;
+	Mon, 15 Jul 2024 15:02:29 +0800 (CST)
+Received: from [10.174.177.173] (10.174.177.173) by
+ dggpeml500003.china.huawei.com (7.185.36.200) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 15 Jul 2024 15:02:28 +0800
+Message-ID: <3e66f3b9-668e-06bd-6088-43de9667fce9@huawei.com>
+Date: Mon, 15 Jul 2024 15:02:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <138b249a-8402-4a79-8c08-45bb9d888dc5@paulmck-laptop>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Content-Language: en-US
+From: Yu Liao <liaoyu15@huawei.com>
+To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<liwei391@huawei.com>
+Subject: [bug report] drm/vblank: Hard lockup in __disable_vblank()
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500003.china.huawei.com (7.185.36.200)
 
-On 2024-07-14 09:44:55+0000, Paul E. McKenney wrote:
-> On Sun, Jul 14, 2024 at 10:09:13AM +0200, Thomas Weißschuh wrote:
-> > On 2024-07-12 20:16:13+0000, Paul E. McKenney wrote:
-> > > On Sun, Jun 30, 2024 at 09:06:39AM -0700, Paul E. McKenney wrote:
-> > > > On Sat, Jun 29, 2024 at 01:04:08PM +0200, Thomas Weißschuh wrote:
-> > > > > Hi Paul,
-> > > > > 
-> > > > > The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
-> > > > > 
-> > > > >   Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
-> > > > > 
-> > > > > are available in the Git repository at:
-> > > > > 
-> > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20240629-for-6.11-1
-> > > > > 
-> > > > > for you to fetch changes up to 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b:
-> > > > > 
-> > > > >   selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
-> > > > 
-> > > > Hearing no objections, I have pulled this in so that it will appear
-> > > > in the next -next.  Here are the test results:
-> > > > 
-> > > > make run:
-> > > > 195 test(s): 195 passed,   0 skipped,   0 failed => status: success
-> > > > 
-> > > > make run-user:
-> > > > 195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-> > > > 
-> > > > So looks good to me!
-> > 
-> > For testing you can use "./run-tests.sh -m [user | system]" to run the
-> > tests on all supported architectures via QEMU.
-> > 
-> > (On the first run you can use "-p" to download the toolchains)
-> 
-> Thank you for the info!
-> 
-> My near-term plan is that I do a smoke test on x86 (or whatever I am
-> running), and let you guys cover the various architectures.  Longer
-> term, I might get more into cross-architecture work.
+Hi,
 
-I'll try to remember to add the full testreport for future
-pullrequests, too.
+A hard lockup is happened when I do fuzz test with syzkaller.
 
-> > > And please see below for my proposed signed tag.  Please let me know of
-> > > any needed adjustments.
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > ----------------------------------------------------------------
-> > > 
-> > > tag nolibc.2024.07.12a
-> > > Tagger: Paul E. McKenney <paulmck@kernel.org>
-> > > Date:   Fri Jul 12 16:56:21 2024 -0700
-> > > 
-> > > nolibc updates for v6.11
-> > > 
-> > > o	Fix selftest printf format mismatch in expect_str_buf_eq()
-> > 
-> > Period at the end.
-> 
-> Good eyes, thank you, fixed.
-> 
-> > > o	Stop using brk() and sbrk() when testing against musl, which
-> > > 	implements these two functions with ENOMEM.
-> > > 
-> > > o	Make tests us -Werror to force failure on compiler warnings.
-> > > 
-> > > o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
-> > > 
-> > > o	Implement strtol() and friends.
-> > > 
-> > > o	Add facility to skip nolibc-specific tests when running against
-> > > 	non-nolibc libraries.
-> > > 
-> > > o	Implement strerror().
-> > > 
-> > > o	Use strerror() unconditionally, instead of only when running
-> > > 	against non-nolibc libraries.
-> > 
-> > Maybe mention that this is about kselftest and not nolibc itself.
-> > 
-> > Otherwise looks good, thanks!
-> 
-> Thank you for looking this over, and does the updated version below
-> cover this?  If I am still off, please suggest updates.
-> 
-> 						Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> tag nolibc.2024.07.14a
-> Tagger: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Sun Jul 14 09:07:29 2024 -0700
-> 
-> nolibc updates for v6.11
-> 
-> o	Fix selftest printf format mismatch in expect_str_buf_eq().
-> 
-> o	Stop using brk() and sbrk() when testing against musl, which
-> 	implements these two functions with ENOMEM.
-> 
-> o	Make tests use -Werror to force failure on compiler warnings.
-> 
-> o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
-> 
-> o	Implement strtol() and friends.
-> 
-> o	Add facility to skip nolibc-specific tests when running against
-> 	non-nolibc libraries.
-> 
-> o	Implement strerror().
-> 
-> o	Use strerror() unconditionally, instead of only when running
-> 	kselftest.
+Kernel panic - not syncing: Hard LOCKUP
+CPU: 3 PID: 0 Comm: swapper/3 Not tainted 6.6.0+ #21
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ <IRQ>
+ hrtimer_cancel+0x52/0x70 kernel/time/hrtimer.c:1449
+ __disable_vblank drivers/gpu/drm/drm_vblank.c:434 [inline]
+ drm_vblank_disable_and_save+0x27f/0x3c0 drivers/gpu/drm/drm_vblank.c:478
+ vblank_disable_fn+0x15d/0x1b0 drivers/gpu/drm/drm_vblank.c:495
+ call_timer_fn+0x39/0x280 kernel/time/timer.c:1700
+ expire_timers+0x22d/0x3c0 kernel/time/timer.c:1751
+ __run_timers kernel/time/timer.c:2022 [inline]
+ run_timer_softirq+0x315/0x8a0 kernel/time/timer.c:2035
+ handle_softirqs+0x195/0x580 kernel/softirq.c:553
+ __do_softirq kernel/softirq.c:587 [inline]
+ </IRQ>
 
-"Also use strerror() on nolibc when running kselftests."
+This is a deadlock issue as follows:
 
-> -----BEGIN PGP SIGNATURE-----
-> 
-> iQJHBAABCgAxFiEEbK7UrM+RBIrCoViJnr8S83LZ+4wFAmaT98oTHHBhdWxtY2tA
-> a2VybmVsLm9yZwAKCRCevxLzctn7jHc0D/9chhJo+QQ+2V+xQEKT8n1MKiJaf55X
-> EUhIlKHoejrF7rZukqv1tcqMNP0wGzwKyttbFkX+72OHrxSuNr0MbvBjQi6cFcFo
-> 2QNg/ZEVIZKeMJzRXwUOOrg47hwLoGgFrt5cgSCMeYSm0E25oAx752/WbmQgQBlU
-> 2dOTomrxF7pyDQoJwPU3CNAk/fFZHuBX9Hjp0LPaXmKDq9BLWqUWoJZAOAfcxm2Q
-> F8A/HnOTEp5F5qwJLr0GStNxR44xH/GU/3KEdryzllEFj6PTLDAeP4oNdMK30q9F
-> YGrcpON3hjw1+XKQBTLJ/UIqQ3EeA/bo2yDOLsFZObU7aKrb7ewtxTq/DWUfoj4x
-> jfFCOc6JpsmAAlwm2zXn+MLDLxSF3QhTalpl1o4thrNgxhm/Eou+uz/1k2EREp/r
-> 4PfHC+i0YjGA9sJ12u1hUoPkxHXY0GKx+gHL9uwB5C2je7HyStzBRvDWEjUJw+uI
-> Z9+RkvSQFV82tIvczGzGuLkMM1of+M+VROGeDXyP9tzyjD3GrqDwwdcXFz/dVnhF
-> ktFiQeoMlfDcSjbcXztRaD4eRSM/EzK6aNL7eocK+s9EWn10Xvg6c+7IeYxMgy32
-> w9Q9WRFN/Gzmeawb0rNNiYdhEq/ufBpfN1+Un4XrpqPukydbv2JpaiG/VZBzldkw
-> UMepC/mpRx8HPw==
-> =yaww
-> -----END PGP SIGNATURE-----
-> 
-> commit 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b
-> Author: Thomas Weißschuh <linux@weissschuh.net>
-> Date:   Fri Apr 26 13:08:58 2024 +0200
-> 
->     selftests: kselftest: also use strerror() on nolibc
->     
->     nolibc gained an implementation of strerror() recently.
->     Use it and drop the ifdeffery.
->     
->     Acked-by: Shuah Khan <skhan@linuxfoundation.org>
->     Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> 
-> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-> index 76c2a6945d3e..b8967b6e29d5 100644
-> --- a/tools/testing/selftests/kselftest.h
-> +++ b/tools/testing/selftests/kselftest.h
-> @@ -168,15 +168,7 @@ static inline __printf(1, 2) void ksft_print_msg(const char *msg, ...)
->  
->  static inline void ksft_perror(const char *msg)
->  {
-> -#ifndef NOLIBC
->  	ksft_print_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
-> -#else
-> -	/*
-> -	 * nolibc doesn't provide strerror() and it seems
-> -	 * inappropriate to add one, just print the errno.
-> -	 */
-> -	ksft_print_msg("%s: %d)\n", msg, errno);
-> -#endif
->  }
->  
->  static inline __printf(1, 2) void ksft_test_result_pass(const char *msg, ...)
+    CPU3				CPU 7
+
+vblank_disable_fn()
+  drm_vblank_disable_and_save()
+  spin_lock(vblank_time_lock)
+				hrtimer_interrupt()
+				  vkms_vblank_simulate()
+				    drm_handle_vblank()
+				      //wait for CPU3 to release vblank_time_lock
+				      spin_lock(vblank_time_lock)
+    vkms_disable_vblank()
+      //wait for vblank_hrtimer on CPU7 to finish
+      hrtimer_cancel(vblank_hrtimer)
+
+The call of hrtimer_cancel() should not hold locks which would prevent
+completion of the hrtimer's callback function.
+
+Best regards,
+Yu
 
