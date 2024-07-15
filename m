@@ -1,74 +1,80 @@
-Return-Path: <linux-kernel+bounces-252808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CF5931852
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6263C931854
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7041C21230
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55FF1F21D75
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5BF20DF4;
-	Mon, 15 Jul 2024 16:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB4F1BF2B;
+	Mon, 15 Jul 2024 16:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL3c5aee"
-Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xg5aeBjY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04721CD3F;
-	Mon, 15 Jul 2024 16:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B10F18AED
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721060134; cv=none; b=iFPZHZP9CMqcxysObzatxvMi6uRbzLL+BlmWxdIAzbO3v3ZeWtEtBzbpmoO1OcXC7angdk0iddVPS6PnL49cvml0RJT3RMXx0YsjBq3wJazTkVqzUKn9awT3r9BKL4SRtMDNOVrRxtL6qjC4yyKBQVAeACmD9hucVjBXCNA8fJI=
+	t=1721060217; cv=none; b=KIm767QV/mRyVwpM86ig51d/Fc941PC8tRXX0cmLvrueoRDqFB+oy6Smy3/TEEJVYdUulPtSEnKsEC101y+MRDZZWsKZ5/2jobnyY418hFVCyD0uMOEdepWm7Gmut4CeO/t9P8kFHcYv8CQ6BIOvdMtAuw1o4g5T3oFVE9GPoBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721060134; c=relaxed/simple;
-	bh=MNcH4FQYV6xUFbte1qhFhl/P8o5Nh+WNSfGIeuyORq8=;
+	s=arc-20240116; t=1721060217; c=relaxed/simple;
+	bh=a5cE94DcW8+NpA4DWGv3Ebd47fgr4MIWneWlA2OvOC0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pkj3fEtoGexUhVKPtggR5WPM5wKPq68MhGVPgXFOOtC4OzfaU4vIKuacnR1jtnT6hsl4cY+i31PJeaTh1xmUyqWmKFtK6yDGJMgAr77lIaybCxBbV3Y65eC7VtQH4ibtjye+EBNIugHSvuyUGixPuCrDsS6VPq8dGppLuPqAr5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eL3c5aee; arc=none smtp.client-ip=209.85.219.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-6b5def3916bso26929446d6.3;
-        Mon, 15 Jul 2024 09:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721060131; x=1721664931; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=B86oylWeQ/+rBCNttrbAo/LkztHTkh3FQpXO6sNcI50=;
-        b=eL3c5aeeoIMeXrahv3kWnG6Naa8F53YPMXaZklAhS7Dxmh1vYGvGsvBLdho8SotvTx
-         ytFPDiFmedUGmFx7ijTbg15GVvXKK5UgkQi6AOjdiga6DCZ5kfkCkK1QgawNqjBhPTo9
-         b+y+USuQNp/tRs6Mxu7wvnq77Nby3az1zg3mlARdfr9vi2UGSm43QCfxG4zbkbeklSqB
-         /zqBDlqA4oNJiakSTs2YGdSoGVZ19CAnCgtBxA2pYUICOrK1of7wxgXmXJGmTWHSDnpy
-         zP8Y+Se3ovU42xB+UIHwU1jfIGTN5PB2hMF7EUFX1K3Oaw3jwvSfHeaG2vTDRUC3YfcR
-         f1Xw==
+	 In-Reply-To:Content-Type; b=dQ1TF+F0UVb470ZqCKFMWkecYpDHIFxv5Uy+OP802d80/Nnzkk6Oskzohw1j3h/zhA+Eba2JW7IY56dBVtc2urhQIdiEhlDy6gyGbPRTK2wxk9NMg7/PMnoG+saIbGuAAiZJNVR0s0Vofs9NnriwgqO6LnbQrbESkXyBb5H/4A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xg5aeBjY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721060215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RwT1XCePnknn2SJRSalM6n3EFBsovjpiTSjFrY2yQCg=;
+	b=Xg5aeBjY/wH+Yonb0gk3TK7JTLONiSlMyo5Bf/39593A4VtPkeba/Ps0JzkQGYlbsf4MaV
+	NDuAFmhNak6r1YWLJJ4aeOLPYu0yE4qrIkafNrwLlhg6x6SCD5PrUfvNJr0LvipScUFqs3
+	x3UGZxe8G6w8+wGMLDUUBwUcYi1HOFs=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-541-Lfvoqua8PG-dZXF9xsIOcA-1; Mon, 15 Jul 2024 12:16:53 -0400
+X-MC-Unique: Lfvoqua8PG-dZXF9xsIOcA-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52ea96517a6so5526199e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:16:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721060131; x=1721664931;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B86oylWeQ/+rBCNttrbAo/LkztHTkh3FQpXO6sNcI50=;
-        b=Qmz6V/bY88mzgnrGEkwyF5H3BtSoA0LRaX7Q0KQ3kQUfrXijIN/PoXEVqzTBlmc1c3
-         cjU/F68y7ud5xOCgdJTkwNJ2FBydjfg2Md/wJDhhIsEwmd12srz7vYiFcBsYGowilBmm
-         +hu4XERHoRlx/AffFXzHP593EWkROxZb9ZZ3/YcvPc6AgaZz3v39K+ecPi/oChSjz+GV
-         jwBpSCeYurDDiO4qXTBG8ghZmxazYiewOjF0ebnrpsboVDhSWX0bBTp39sRHtnVo8x8/
-         gNzwVbMXzJzVvFNIjSMWPGdhrwa/H/Sn2s1h8DL5l8YtcWwoZQw5ea4Vw10KeiCeoqkb
-         BZog==
-X-Forwarded-Encrypted: i=1; AJvYcCVc31DpVziF1UWUtchpj0f2ADw9GyqBB6xgeuzZ+hpKdVEOJYj7z/fV//Pbc76bndVUN/zWOd/8T1U3y+mXi9tVjg2hrG0LFiV8P1mf/38k+ximde+RKixgDemQsjZN4TgXEKQat+062ZwzEGwwZPKrFD7spBu3tJ13EhddIdw4yzn256/CcYvxClb/PKe+EBggnkxm9Kw2jyLuCw5KxLKlGGXWSOM=
-X-Gm-Message-State: AOJu0YyRBU2F+1j8LM9WPtrvTZrtUBixPrVUEyfKKUUq8aW+xEvQZnzs
-	CbLuEApH3qXaLQQ5vZUKiJsN20ZPXuKeMXwfne9/NVto2UOyck8w
-X-Google-Smtp-Source: AGHT+IHT78LgI19wps2RLAxgCax2XEyj6SW9H06cyh7CoTL43upSi0hM42iNIXeFEbo/SBCPg4jFxg==
-X-Received: by 2002:a05:6214:29e1:b0:6b0:8e1d:f720 with SMTP id 6a1803df08f44-6b77df2b7ddmr1305126d6.59.1721060130683;
-        Mon, 15 Jul 2024 09:15:30 -0700 (PDT)
-Received: from [192.168.158.7] ([207.35.255.94])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7733ee169sm11594636d6.26.2024.07.15.09.15.28
+        d=1e100.net; s=20230601; t=1721060212; x=1721665012;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RwT1XCePnknn2SJRSalM6n3EFBsovjpiTSjFrY2yQCg=;
+        b=Lq+Xb3CeJ9+k65SS6jH/XY2yhul4fn3Dcq0jGNI+biNKsLCbOQY3/8Y1rDTgO6T1CO
+         7yZS+KEOWELU2V+czoNW8Ta5f+eAptc2ZxP9t/A3MbhknqEaQvec4ze8w+3gelkJ+5bt
+         15JCTwaZg28Bu352adE8J/MXzTwtySR/QeczKRjzrFNVsvzhfiE8T4HySspPSCeqDKbi
+         W0FT4vD7q1xmZybvf42UkvEQ7dtXsxTbsom4R26zCDV6Iyz4bi3xP8TgaGQ+5QAmIFnX
+         5oeWFKnIZbyNnhOx086y9v8WNXak+nxmi2nDBpaUaoEJ4HzE3f3rrte2vi/jb4SSmCsi
+         cFCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNlEr8BFc5ksoS2TfyTPpzGiyDg0cyXadHY7c2+xPLTNz7Nd/Nca4NB4zCyIXQOg9L/i1VvxEFIHsF/pJLxGAdi6CncGidn66DqDfX
+X-Gm-Message-State: AOJu0YxAVcblbSlRHt91jtYq2QZqSrFWgk2FDEhe8x0N1s387SDacim7
+	qK28JNrG+FllCunQd69pIcug+sfLYCuwHoOTZTsSgR+LB0LsbroH1Ky2XUlGT9yJeZ9GeMJJiRc
+	IwAEX4JG90+nb64YzVQdN/+fQQnvo8MVtbFdHOZ5TORZ/mvyhoazuFnEr5qaoYw==
+X-Received: by 2002:a05:6512:1247:b0:52c:cca8:a9fb with SMTP id 2adb3069b0e04-52eb99d15f8mr13268809e87.42.1721060211824;
+        Mon, 15 Jul 2024 09:16:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfxL6VscH0c/dqwPYP58kGUKcKe3BcLlRb8W2n/xnk+oGqsSOc+qOSgbwI2RaVyr3uNGJ8Bg==
+X-Received: by 2002:a05:6512:1247:b0:52c:cca8:a9fb with SMTP id 2adb3069b0e04-52eb99d15f8mr13268791e87.42.1721060211426;
+        Mon, 15 Jul 2024 09:16:51 -0700 (PDT)
+Received: from [10.0.229.2] (ip-037-024-227-121.um08.pools.vodafone-ip.de. [37.24.227.121])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426740d88bcsm174293385e9.1.2024.07.15.09.16.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 09:15:30 -0700 (PDT)
-Message-ID: <be2586e2-8d85-426e-975d-6f57da4ccf75@gmail.com>
-Date: Mon, 15 Jul 2024 18:15:28 +0200
+        Mon, 15 Jul 2024 09:16:51 -0700 (PDT)
+Message-ID: <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
+Date: Mon, 15 Jul 2024 18:16:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,153 +82,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr`
- implementation
-To: =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross
- <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Finn Behrens
- <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>,
- Valentin Obst <kernel@valentinobst.de>,
- Laine Taffin Altman <alexanderaltman@me.com>,
- Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>,
- Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas
- <charmitro@posteo.net>, Ben Gooding <ben.gooding.dev@gmail.com>,
- Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
-References: <20240714160238.238708-1-vadorovsky@gmail.com>
- <S-L4QE4MFYzY1ba0fdkJYuAVIkZHxxYB6Jk9XPFuo3ZdbvNxtfN_mCFc5oNPfTu2X17vvyPUStAviAUAzeKlCGxwRM-VbC4aPUGBGtDQCcU=@protonmail.com>
- <df092baf-03a5-4b4a-ab8b-ee7a5677c172@gmail.com>
- <T4cW5BFYytkMlTR5e2C2FfFJ5Z8P5XPw5dEsTQ2V-hoAo5yZkeYLSU3GvVCTH1Ga3f-mbPvEKZxOEWT7E1-xWu4EDE6-jCoQj3If-qCKCHA=@protonmail.com>
+Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
+ when unpoison memory
+To: Miaohe Lin <linmiaohe@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: nao.horiguchi@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240712064249.3882707-1-linmiaohe@huawei.com>
+ <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+ <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Michal Rostecki <vadorovsky@gmail.com>
-Autocrypt: addr=vadorovsky@gmail.com; keydata=
- xsBNBGYJcUEBCAD3ciAzHQ8NElYQtsiPZ9NjsR7ttfihe0FM+PDT+6cChjFLQ8qO/1zEL5mh
- YaLbkjitrIYARhmo3lRDq3+G4L5+gRVExm9Rd98PcQy2P9F8shxI/msC50i1Fb9N4D0pP8Hx
- hhZ/or+2mbokZh8Qc9RdjynXRXAezhOFN4+0L2jkN7fjTO1IArl+TirXx+cvhQUbwKyyJlGL
- Kldvue2EqU4maZ+KIUs5di3kZgDPLILzvBqX9TLtwEMAkNY1uMCKK+C2aihap19OjoK0qOYj
- IahVHjqGL+Mb/Ga7jxMGr2TFeQEcwIgvdRiVVLtu+uiaRKqULGokBL3l9gprtBZWdLq7ABEB
- AAHNJk1pY2hhbCBSb3N0ZWNraSA8dmFkb3JvdnNreUBnbWFpbC5jb20+wsCXBBMBCABBFiEE
- 3RZt3oLrB5kpFLy14qU49yah1xEFAmYJdCQCGwMFCQHhM4AFCwkIBwICIgIGFQoJCAsCBBYC
- AwECHgcCF4AACgkQ4qU49yah1xFuDQf+NE2Oy6zF+uVh3vtidkfacCSMnu1QxojJHB8C1/Ep
- g4JU5hPcG9hC+HrMs5/Hqs7DOike9bZjhpEmnW4DIeI7Wy3t1Qf7A8EOzS0nrMgbX8TnkEon
- zMBBqiNp3VVVcltRJtc58xMP8K3yu6Ty2Q8e6GWdL5bqDr9gshb+vWu8inh5CullsGRJFJl0
- BfSdDKAbpH3NdEoWnL4JvFphpouh2vhd/ScvfNAQcuyBn3cbCyQdjNTgRVBkBNDEYCaWLVqP
- r4IU0JNjgk+cTLbyFmgn2++bWoIICGrAeWGruSpl7UGJ2PdJokWI9zp5UqSCezejDS53yhkU
- GsCrF7LrTceB6c7ATQRmCXFBAQgA2yrqjTKvL7VJKi/NNcpQ7EvAEm6omO+O4wQltdpybaxe
- mbLT0vZTH6rjZba28ixZmFHtwOjzNNtabmb4uK+nxs0BkVBpRvJNJ0LM1ydGYZQ46Sbvr1dE
- 7yWDkkG1CjmXYGd5I2iqx+ATbdrtzDGWLsvDXd/yEaO9dxAR+LqGOg1HdgE9Hhmuv8BRYSCL
- vnXaMA7Orq9oAmu+Q5q9TT3aZGMdBFdcoUNSVPX82uIYXjDaXj0Del8tluAHLf3oV7ZXEgOx
- c6OpRY3+8Pr9//UtfoaHNOjoKFNyPaIUf5U1+E9J0UoDm8m1usrwnghg6yRyPhczhCOvbYNL
- hQ6TiImvowARAQABwsB8BBgBCAAmFiEE3RZt3oLrB5kpFLy14qU49yah1xEFAmYJcUECGwwF
- CQHhM4AACgkQ4qU49yah1xHetgf9FpI4Y+okwFRIqRa6WJ8jhz6us+oYKedftr313NwerUB5
- 8nnhK0YWkZWZMuu5B4LCMiv71Ugqlc7ahBy5sQx/acRPe+NiYpwiN/pWrv7njaA6evDieXL8
- jc3j+xy4fsi861BWJXaurWQtLMXyHBUmdJ+StU7tscYTPe4fN1fdkBh0SreZxLfvp/+SMRQk
- g9PmXb1BMZdw8gWghPAbYg5bfCzXF9iZp4bmjuCENfwG4zmnYJzR6uTI0reqECo6Ee7NjOQ7
- qKy29wW+kVnEjX481iCEUmqKHEaQB08Ueb45If09fThw1baHLAk6bFk5cabMtD3JbWEifa6M
- RS+eXZNwwQ==
-In-Reply-To: <T4cW5BFYytkMlTR5e2C2FfFJ5Z8P5XPw5dEsTQ2V-hoAo5yZkeYLSU3GvVCTH1Ga3f-mbPvEKZxOEWT7E1-xWu4EDE6-jCoQj3If-qCKCHA=@protonmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15.07.24 17:56, Björn Roy Baron wrote:
-> On Monday, July 15th, 2024 at 17:46, Michal Rostecki <vadorovsky@gmail.com> wrote:
-> 
->> On 14.07.24 19:01, Björn Roy Baron wrote:
->>> On Sunday, July 14th, 2024 at 18:02, Michal Rostecki <vadorovsky@gmail.com> wrote:
->>>
->>>> `CStr` became a part of `core` library in Rust 1.75, therefore there is
->>>> no need to keep the custom implementation.
->>>>
->>>> `core::CStr` behaves generally the same as the removed implementation,
->>>> with the following differences:
->>>>
->>>> - It does not implement `Display` (but implements `Debug`).
->>>> - It does not provide `from_bytes_with_nul_unchecked_mut` method.
->>>>     - It was used only in `DerefMut` implementation for `CString`. This
->>>>       change replaces it with a manual cast to `&mut CStr`.
->>>>     - Otherwise, having such a method is not really desirable. `CStr` is
->>>>       a reference type
->>>>       or `str` are usually not supposed to be modified.
->>>> - It has `as_ptr()` method instead of `as_char_ptr()`, which also returns
->>>>     `*const c_char`.
->>>>
->>>> Rust also introduces C literals (`c""`), so the `c_str` macro is removed
->>>> here as well.
->>>>
->>>> Signed-off-by: Michal Rostecki <vadorovsky@gmail.com>
->>>> ---
->>>>    rust/kernel/error.rs        |   7 +-
->>>>    rust/kernel/init.rs         |   8 +-
->>>>    rust/kernel/kunit.rs        |  16 +-
->>>>    rust/kernel/net/phy.rs      |   2 +-
->>>>    rust/kernel/prelude.rs      |   4 +-
->>>>    rust/kernel/str.rs          | 490 +-----------------------------------
->>>>    rust/kernel/sync.rs         |  13 +-
->>>>    rust/kernel/sync/condvar.rs |   5 +-
->>>>    rust/kernel/sync/lock.rs    |   6 +-
->>>>    rust/kernel/workqueue.rs    |  10 +-
->>>>    scripts/rustdoc_test_gen.rs |   4 +-
->>>>    11 files changed, 57 insertions(+), 508 deletions(-)
->>>>
->>>
->>> [snip]
->>>
->>>> diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
->>>> index 68605b633e73..af0017e56c0e 100644
->>>> --- a/rust/kernel/init.rs
->>>> +++ b/rust/kernel/init.rs
->>>> @@ -46,7 +46,7 @@
->>>>    //! }
->>>>    //!
->>>>    //! let foo = pin_init!(Foo {
->>>> -//!     a <- new_mutex!(42, "Foo::a"),
->>>> +//!     a <- new_mutex!(42, c"Foo::a"),
->>>
->>> That we need a CStr here seems a bit of an internal implementation detail. Maybe
->>> keep accepting a regular string literal and converting it to a CStr internally?
->>> If others think what you have here is fine, I don't it mind all that much though.
->>>
+On 15.07.24 08:23, Miaohe Lin wrote:
+> On 2024/7/13 5:09, Andrew Morton wrote:
+>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
 >>
->> The names passed to `new_mutex`, `new_condvar`, `new_spinlock` etc. are
->> immediately passed in the FFI calls (`__mutex_init`,
->> `__init_waitqueue_head`, `__spin_lock_init`) [0][1][2]. In fact, I don't
->> see any internal usage, where using Rust &str would be beneficial. Am I
->> missing something?
+>>> When I did memory failure tests recently, below panic occurs:
+>>>
+>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+>>> kernel BUG at include/linux/page-flags.h:616!
+>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>> Call Trace:
+>>>   <TASK>
+>>>   unpoison_memory+0x2f3/0x590
+>>>   simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>>>   debugfs_attr_write+0x42/0x60
+>>>   full_proxy_write+0x5b/0x80
+>>>   vfs_write+0xd5/0x540
+>>>   ksys_write+0x64/0xe0
+>>>   do_syscall_64+0xb9/0x1d0
+>>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>> RIP: 0033:0x7f08f0314887
+>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>>>   </TASK>
+>>> Modules linked in: hwpoison_inject
+>>> ---[ end trace 0000000000000000 ]---
+>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>> Kernel panic - not syncing: Fatal exception
+>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
+>>>
+>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+>>> triggered.
 >>
->> Converting a &str to &CStr inside `Mutex::new` or `CondVar::new` would
->> require allocating a new buffer, larger by 1, to include the nul byte.
->> Doing that for every new mutex or condvar seems a bit wasteful to me.
+>> I'm not seeing the call path.  Is this BUG happening via
+>>
+>> static __always_inline void __ClearPage##uname(struct page *page)	\
+>> {									\
+>> 	VM_BUG_ON_PAGE(!Page##uname(page), page);			\
+>> 	page->page_type |= PG_##lname;					\
+>> }
+>>
+>> ?
+>>
+>> If so, where's the callsite?
 > 
-> The names passed to `new_mutex!` and such are literals known at
-> compile time. This means we can keep adding the nul terminator at
-> compile time without allocating any extra buffer. Basically just
-> adapting the current implementation of `optional_name!` to produce an
-> `core::ffi::&CStr` rather than a `kernel::str::CStr` from a regular
-> string literal is enough to avoid having to explicitly use C string
-> literals in those macro invocations. This way users don't need to
-> know that internally an `&CStr` is used.
+> It is BUG on PF_ANY():
 > 
+> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+> 
+> #define PF_ANY(page, enforce)	PF_POISONED_CHECK(page)
+> 
+> #define PF_POISONED_CHECK(page) ({					\
+> 	VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);		\
+> 	page; })
+> 
+> #define	PAGE_POISON_PATTERN	-1l
+> static inline int PagePoisoned(const struct page *page)
+> {
+> 	return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
+> }
+> 
+> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
+> 
+> offline_pages
+>    remove_pfn_range_from_zone
+>      page_init_poison
+>        memset(page, PAGE_POISON_PATTERN, size);
 
-OK, good point, I can indeed handle that in `optional_name!`.
+Worth noting that this happens after __offline_isolated_pages() marked 
+the covering sections as offline.
 
->>
->> [0]
->> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/lock/mutex.rs#L104
->> [1]
->> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/condvar.rs#L111
->> [2]
->> https://github.com/Rust-for-Linux/linux/blob/b1263411112305acf2af728728591465becb45b0/rust/kernel/sync/lock/spinlock.rs#L103
-> 
-> [snip]
+Are we missing a pfn_to_online_page() check somewhere, or are we racing 
+with offlining code that marks the section offline?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
