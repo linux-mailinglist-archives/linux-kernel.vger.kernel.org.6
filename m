@@ -1,160 +1,165 @@
-Return-Path: <linux-kernel+bounces-252451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FCD93133C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3D593133F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB4D1C2188B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7609B1F22945
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1239A18A921;
-	Mon, 15 Jul 2024 11:39:06 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5928018A925;
+	Mon, 15 Jul 2024 11:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ctwKmMfN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B070B189F58;
-	Mon, 15 Jul 2024 11:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA172572;
+	Mon, 15 Jul 2024 11:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721043545; cv=none; b=qgScwSYus3enzNmzYnrToBMBng+v0AgWy/+CF3GRG2sdtWm6ysdBLXELwCfw1fxtMmQiqyCH96c9c2bZZkswaplV962EPI+rt4gaWluG8/p/C30u9ZxUPJeiELHRgn9vWrhKETQgBz36mcB5/tm9J+MUqC2n6nkBWajpPlvn/vg=
+	t=1721043675; cv=none; b=kB8Yz06qndFya+8HXADFzGSiYsqZuPySSDg3bH2FqIecIuab58FcS8pu2+YgaJnfVUl35kffYIGdp7vN7JCbuBlIbmYXXmADN1nK6ywjQEcObYXgzddhjXmZEx5IwliSGjN6gc4uXJ6vKuq82MMC/x+0xf/Q0pnZwM+HsNAORi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721043545; c=relaxed/simple;
-	bh=lCeC4gmfTQRuoltTtc3HF5WSdisu5ByxU/qRss5sHQI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Axf+OLEYDTenioz6Z6F+8Fffg2XAdoBavXe0EL9d8bLDGoY8fnwWAheoY75gtMIdK9tzjLlboyN5dqp+8Rgvw9gATHp68dipuvGE/lqBs56WZoiirCwvRgg9Ktc17HBtKR6OxmDBMfRPE9P/Vb7KzthMwRUi2cG/+cERbpbQSAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WN0Y76Sd8zdhQg;
-	Mon, 15 Jul 2024 19:37:15 +0800 (CST)
-Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF525180064;
-	Mon, 15 Jul 2024 19:38:58 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 15 Jul 2024 19:38:58 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Mon, 15 Jul 2024 19:38:58 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: duchangbin <changbin.du@huawei.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>, Nick Desaulniers
-	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
-	<justinstitt@google.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "Wanghui (OS Kernel Lab, Beijing)"
-	<hw.huiwang@huawei.com>
-Subject: Re: [PATCH v5 0/8] perf: support specify vdso path in cmdline
-Thread-Topic: [PATCH v5 0/8] perf: support specify vdso path in cmdline
-Thread-Index: AQHazDbzI6rzmwQCM0CRTliZqIB/KrH3vp4A
-Date: Mon, 15 Jul 2024 11:38:58 +0000
-Message-ID: <5b4a83c1a1614e23985a10e669d78eda@huawei.com>
-References: <20240702041837.5306-1-changbin.du@huawei.com>
-In-Reply-To: <20240702041837.5306-1-changbin.du@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9F3DD7C628C5C24AA96E5083F621F819@huawei.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1721043675; c=relaxed/simple;
+	bh=OXHU1MHxbj793Mtok78Gc21X5UrdTvA60vYMWvz7U+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kge2vGnK1Jf/PZ+KN+6bzX7XJE58cp4zXX08wYLwTztWIOPV3ySQXa+cLc/MjiDBgCUqJwfLubOhnWUQRQPlvGG1WsPwk82sKsTu/mXceHXXmFpso2XY/mGCndNymY+9wAeuEthQdlFlVF8WNayebBJEd0rnmhGs8t3eUtVm8OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ctwKmMfN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=y5Q7Vcvg0k0Ths9BKndB5/gtpLO3ynMN1NfxgNm2faI=; b=ctwKmMfNK/BqpHr7ftrEWvIBBR
+	bbsbK+lDxtD0xVDj1JytO98GqK+F1TB3L/yDWVAatHptf+NujI8dP8O1r+nXwaB40s2gsvtaqfoZU
+	HKs7Xg/ZsEfJ3B7KZBzdBIilKTYQrDaRKTXYholmM82iiaZWUYobEUPZ/LKvcYic//DGwTMsAZ2n6
+	w5XIo43thOCEpKGAL3d71s4kcSLdW7SoNJDwOH5Ki9ojbkcmN4k1tfyTRKTCNhGz/AR1VY1PH9ewF
+	WnnlHpk7Quk8YOMOPkkh459oVm8h/4fxgyUUgAWJTcEbrdc103EHpuJjt1xfAqMv1e+FiWSXIEqay
+	R1/2ki7Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTK4q-0000000FkFX-0D7n;
+	Mon, 15 Jul 2024 11:41:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8AD433003FF; Mon, 15 Jul 2024 13:41:07 +0200 (CEST)
+Date: Mon, 15 Jul 2024 13:41:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
+Message-ID: <20240715114107.GE14400@noisy.programming.kicks-ass.net>
+References: <20240711110235.098009979@infradead.org>
+ <20240711110401.412779774@infradead.org>
+ <CAEf4BzZCzqOsk55E0b8i9y5zFuf8t=zwrjORnVaLGK0ZVgJTFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZCzqOsk55E0b8i9y5zFuf8t=zwrjORnVaLGK0ZVgJTFg@mail.gmail.com>
 
-SGVsbG8sIGFyZSB0aGVyZSBhbnkgbW9yZSBjb21tZW50cyBhYm91dCB0aGlzIHJldmlzaW9uPw0K
-DQpPbiBUdWUsIEp1bCAwMiwgMjAyNCBhdCAxMjoxODoyOVBNICswODAwLCBDaGFuZ2JpbiBEdSB3
-cm90ZToNCj4gVGhlIHZkc28gZHVtcGVkIGZyb20gcHJvY2VzcyBtZW1vcnkgKGluIGJ1aWxkaWQt
-Y2FjaGUpIGxhY2tzIGRlYnVnZ2luZw0KPiBpbmZvLiBUbyBhbm5vdGF0ZSB2ZHNvIHN5bWJvbHMg
-d2l0aCBzb3VyY2UgbGluZXMgd2UgbmVlZCBhIGRlYnVnZ2luZw0KPiB2ZXJzaW9uLg0KPiANCj4g
-Rm9yIHg4Niwgd2UgY2FuIGZpbmQgdGhlbSBmcm9tIHlvdXIgbG9jYWwgYnVpbGQgYXMNCj4gJ2Fy
-Y2gveDg2L2VudHJ5L3Zkc28vdmRzb3szMiw2NH0uc28uZGJnJy4gT3IgdGhleSBtYXkgcmVzaWRl
-cyBpbg0KPiAnL2xpYi9tb2R1bGVzLzx2ZXJzaW9uPi92ZHNvL3Zkc297MzIsNjR9LnNvJyBvbiBV
-YnVudHUuIEJ1dCBub3RpY2UgdGhhdCB0aGUNCj4gYnVpbGlkIGhhcyB0byBtYXRjaC4gDQo+IA0K
-PiBJZiB1c2VyIGRvZXNuJ3Qgc3BlY2lmeSB0aGUgcGF0aCwgcGVyZiB3aWxsIHNlYXJjaCB0aGVt
-IGludGVybmFsbHkgYXMgbG9uZw0KPiBhcyB2bWxpbnV4IHdoZW4gcmVjb3JkaW5nIHNhbXBsZXMu
-IFRoZSBzZWFyY2hlZCBkZWJ1Z2dpbmcgdmRzbyB3aWxsIGFkZCB0bw0KPiBidWlsZGlkIGNhY2hl
-Lg0KPiANCj4gQmVsb3cgc2FtcGxlcyBhcmUgY2FwdHVyZWQgb24gbXkgbG9jYWwgYnVpbGQga2Vy
-bmVsLiBwZXJmIHN1Y2Nlc2Z1bGx5DQo+IGZpbmQgZGVidWdnaW5nIHZlcnNpb24gdmRzbyBhbmQg
-d2UgY2FuIGFubm90YXRlIHdpdGggc291cmNlIHdpdGhvdXQNCj4gc3BlY2lmeWluZyB2ZHNvIHBh
-dGguDQo+IA0KPiAkIHN1ZG8gcGVyZiByZWNvcmQgLWENCj4gJCBzdWRvIHBlcmYgcmVwb3J0IC0t
-b2JqZHVtcD1sbHZtLW9iamR1bXANCj4gDQo+IFNhbXBsZXM6IDE3SyBvZiBldmVudCAnY3ljbGVz
-OlAnLCA0MDAwIEh6LCBFdmVudCBjb3VudCAoYXBwcm94Lik6IDE3NjANCj4gX192ZHNvX2Nsb2Nr
-X2dldHRpbWUgIC93b3JrL2xpbnV4LWhvc3QvYXJjaC94ODYvZW50cnkvdmRzby92ZHNvNjQuc28u
-ZA0KPiBQZXJjZW504pSCICAgICAgIG1vdnEgICAgLTQ4KCVyYnApLCVyc2kNCj4gICAgICAgIOKU
-giAgICAgICB0ZXN0cSAgICVyYXgsJXJheA0KPiAgICAgICAg4pSCICAgICA7ICAgICAgICAgICAg
-ICAgcmV0dXJuIHZyZWFkX2h2Y2xvY2soKTsNCj4gICAgICAgIOKUgiAgICAgICBtb3ZxICAgICVy
-YXgsJXJkeA0KPiAgICAgICAg4pSCICAgICA7ICAgICAgICAgICAgICAgaWYgKHVubGlrZWx5KCF2
-ZHNvX2N5Y2xlc19vayhjeWNsZXMpKSkNCj4gICAgICAgIOKUgiAgICAg4oaRIGpzICAgICAgZWIN
-Cj4gICAgICAgIOKUgiAgICAg4oaRIGptcCAgICAgNzQNCj4gICAgICAgIOKUgiAgICAgOyAgICAg
-ICAgICAgICAgIHRzLT50dl9zZWMgPSB2ZHNvX3RzLT5zZWM7DQo+ICAgMC4wMiDilIIxNDc6ICAg
-bGVhcSAgICAyKCVyYngpLCVyYXgNCj4gICAgICAgIOKUgiAgICAgICBzaGxxICAgICQ0LCAlcmF4
-DQo+ICAgICAgICDilIIgICAgICAgYWRkcSAgICAlcjEwLCVyYXgNCj4gICAgICAgIOKUgiAgICAg
-OyAgICAgICAgICAgICAgIHdoaWxlICgoc2VxID0gUkVBRF9PTkNFKHZkLT5zZXEpKSAmIDEpIHsN
-Cj4gICA5LjM4IOKUgjE1MjogICBtb3ZsICAgICglcjEwKSwlZWN4DQo+IA0KPiBXaGVuIGRvaW5n
-IGNyb3NzIHBsYXRmb3JtIGFuYWx5c2lzLCB3ZSBuZWVkIHRvIHNwZWNpZnkgdGhlIHZkc28gcGF0
-aCBpZg0KPiB3ZSBhcmUgaW50ZXJlc3RlZCBpbiBpdHMgc3ltYm9scy4gQXQgbW9zdCB0d28gdmRz
-byBjYW4gYmUgZ2l2ZW4uIEFsc28geW91DQo+IGNhbiBwYWNrIHlvdXIgYnVpbGRpZCBjYWNoZSB3
-aXRoIHBlcmYtYXJjaGl2ZSBpZiB0aGUgZGVidWdnaW5nIHZkc28gY2FuIGJlDQo+IGZvdW5kIG9u
-IHRoZSBzYW1wbGVkIG1hY2hpbmUuDQo+IA0KPiAkIHN1ZG8gcGVyZiByZXBvcnQgLS1vYmpkdW1w
-PWxsdm0tb2JqZHVtcCBcDQo+ICAgICAgIC0tdmRzbyBhcmNoL3g4Ni9lbnRyeS92ZHNvL3Zkc282
-NC5zby5kYmcsYXJjaC94ODYvZW50cnkvdmRzby92ZHNvMzIuc28uZGJnDQo+IA0KPiBJIGFsc28g
-aW1wcm92ZWQgcGVyZi1idWlsZGlkLWNhY2hlIGNvbW1hbmQgcmVjb2duaXplIHZkc28gd2hlbiBh
-ZGRpbmcgZmlsZXMsIHRoZW4NCj4gcGxhY2UgaXQgYXQgY29ycmVjdCBwbGFjZS4NCj4gDQo+IHY1
-Og0KPiAgIC0gU2VhcmNoaW5nIHRoZSB2ZHNvIGluIHJlY29yZCBzdGFnZSBpbnN0ZWFkIG9mIHJl
-cG9ydC4gU28gdGhlIGRlYnVnZ2luZw0KPiAgICAgdmRzbyB3aWxsIGJlIGluIGJ1aWxkLWlkIGNh
-Y2hlLiBUaGlzIGlzIGZyaWVuZGx5IGZvciBjcm9zcy1tYWNoaW5lIGFuYWx5c2lzLg0KPiAgIC0g
-SW1wcm92ZSBwZXJmLWJ1aWxkaWQtY2FjaGUgY29tbWFuZCByZWNvZ25pemUgdmRzbyB3aGVuIGFk
-ZGluZyBmaWxlcw0KPiB2NDoNCj4gICAtIHNwbGl0IHRoZSByZWZhY3RvcmluZyBmcm9tIHRoZSBh
-Y3R1YWwgY2hhbmdlLg0KPiB2MzoNCj4gICAtIHVwZGF0ZSBkb2N1bWVudGF0aW9uLg0KPiB2MjoN
-Cj4gICAtIG5vdyBzZWFyY2ggdmRzbyBhdXRvbWF0aWNhbGx5IGFzIGxvbmcgYXMgdm1saW51eCwg
-YXMgc3VnZ2VzdGVkIGJ5IEFkcmlhbi4NCj4gICAtIHJlbW92ZSBjaGFuZ2UgJ3ByZWZlciBzeW1z
-cmNfZmlsZW5hbWUgZm9yIGZpbGVuYW1lJy4NCj4gDQo+IA0KPiBDaGFuZ2JpbiBEdSAoOCk6DQo+
-ICAgcGVyZjogc3VwcG9ydCBzcGVjaWZ5IHZkc28gcGF0aCBpbiBjbWRsaW5lDQo+ICAgcGVyZjog
-ZGlzYXNtOiByZWZhY3RvciBmdW5jdGlvbiBkc29fX2Rpc2Fzc2VtYmxlX2ZpbGVuYW1lDQo+ICAg
-cGVyZjogZGlzYXNtOiB1c2UgYnVpbGRfaWRfcGF0aCBpZiBmYWxsYmFjayBmYWlsZWQNCj4gICBw
-ZXJmOiBidWlsZC1pZDogbmFtZSBkZWJ1Z2dpbmcgdmRzbyBhcyAiZGVidWciDQo+ICAgcGVyZjog
-c3ltYm9sOiBnZW5lcmFsaXplIHZtbGludXggcGF0aCBzZWFyY2hpbmcNCj4gICBwZXJmOiBidWls
-ZC1pZDogdHJ5IHRvIHNlYXJjaCBkZWJ1Z2dpbmcgdmRzbyBhbmQgYWRkIHRvIGNhY2hlDQo+ICAg
-cGVyZjogZGlzYXNtOiBwcmVmZXIgZGVidWdnaW5nIGZpbGVzIGluIGJ1aWxkLWlkIGNhY2hlDQo+
-ICAgcGVyZiBidWlsZGlkLWNhY2hlOiByZWNvZ25pemUgdmRzbyB3aGVuIGFkZGluZyBmaWxlcw0K
-PiANCj4gIHRvb2xzL3BlcmYvRG9jdW1lbnRhdGlvbi9wZXJmLWFubm90YXRlLnR4dCB8ICAgMyAr
-DQo+ICB0b29scy9wZXJmL0RvY3VtZW50YXRpb24vcGVyZi1jMmMudHh0ICAgICAgfCAgIDMgKw0K
-PiAgdG9vbHMvcGVyZi9Eb2N1bWVudGF0aW9uL3BlcmYtaW5qZWN0LnR4dCAgIHwgICAzICsNCj4g
-IHRvb2xzL3BlcmYvRG9jdW1lbnRhdGlvbi9wZXJmLXJlcG9ydC50eHQgICB8ICAgMyArDQo+ICB0
-b29scy9wZXJmL0RvY3VtZW50YXRpb24vcGVyZi1zY3JpcHQudHh0ICAgfCAgIDMgKw0KPiAgdG9v
-bHMvcGVyZi9Eb2N1bWVudGF0aW9uL3BlcmYtdG9wLnR4dCAgICAgIHwgICAzICsNCj4gIHRvb2xz
-L3BlcmYvYnVpbHRpbi1hbm5vdGF0ZS5jICAgICAgICAgICAgICB8ICAgMiArDQo+ICB0b29scy9w
-ZXJmL2J1aWx0aW4tYnVpbGRpZC1jYWNoZS5jICAgICAgICAgfCAgMjYgKystDQo+ICB0b29scy9w
-ZXJmL2J1aWx0aW4tYzJjLmMgICAgICAgICAgICAgICAgICAgfCAgIDIgKw0KPiAgdG9vbHMvcGVy
-Zi9idWlsdGluLWluamVjdC5jICAgICAgICAgICAgICAgIHwgICAyICsNCj4gIHRvb2xzL3BlcmYv
-YnVpbHRpbi1yZXBvcnQuYyAgICAgICAgICAgICAgICB8ICAgMiArDQo+ICB0b29scy9wZXJmL2J1
-aWx0aW4tc2NyaXB0LmMgICAgICAgICAgICAgICAgfCAgIDIgKw0KPiAgdG9vbHMvcGVyZi9idWls
-dGluLXRvcC5jICAgICAgICAgICAgICAgICAgIHwgICAyICsNCj4gIHRvb2xzL3BlcmYvdXRpbC9i
-dWlsZC1pZC5jICAgICAgICAgICAgICAgICB8ICA1NyArKysrKy0NCj4gIHRvb2xzL3BlcmYvdXRp
-bC9kaXNhc20uYyAgICAgICAgICAgICAgICAgICB8IDEzMSArKysrKysrKy0tLS0tDQo+ICB0b29s
-cy9wZXJmL3V0aWwvbWFjaGluZS5jICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCj4gIHRvb2xz
-L3BlcmYvdXRpbC9zeW1ib2wuYyAgICAgICAgICAgICAgICAgICB8IDIwOSArKysrKysrKysrKysr
-KysrLS0tLS0NCj4gIHRvb2xzL3BlcmYvdXRpbC9zeW1ib2wuaCAgICAgICAgICAgICAgICAgICB8
-ICAgOSArLQ0KPiAgdG9vbHMvcGVyZi91dGlsL3N5bWJvbF9jb25mLmggICAgICAgICAgICAgIHwg
-ICA1ICsNCj4gIDE5IGZpbGVzIGNoYW5nZWQsIDM1OSBpbnNlcnRpb25zKCspLCAxMTIgZGVsZXRp
-b25zKC0pDQo+IA0KPiAtLSANCj4gMi4zNC4xDQo+IA0KDQotLSANCkNoZWVycywNCkNoYW5nYmlu
-IER1DQo=
+On Fri, Jul 12, 2024 at 02:43:52PM -0700, Andrii Nakryiko wrote:
+> + bpf
+> 
+> On Thu, Jul 11, 2024 at 4:07 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > In order to put a bound on the uretprobe_srcu critical section, add a
+> > timer to uprobe_task. Upon every RI added or removed the timer is
+> > pushed forward to now + 1s. If the timer were ever to fire, it would
+> > convert the SRCU 'reference' to a refcount reference if possible.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  include/linux/uprobes.h |    8 +++++
+> >  kernel/events/uprobes.c |   67 ++++++++++++++++++++++++++++++++++++++++++++----
+> >  2 files changed, 69 insertions(+), 6 deletions(-)
+> >
+> > --- a/include/linux/uprobes.h
+> > +++ b/include/linux/uprobes.h
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/rbtree.h>
+> >  #include <linux/types.h>
+> >  #include <linux/wait.h>
+> > +#include <linux/timer.h>
+> >
+> >  struct vm_area_struct;
+> >  struct mm_struct;
+> > @@ -79,6 +80,10 @@ struct uprobe_task {
+> >         struct return_instance          *return_instances;
+> >         unsigned int                    depth;
+> >         unsigned int                    active_srcu_idx;
+> > +
+> > +       struct timer_list               ri_timer;
+> > +       struct callback_head            ri_task_work;
+> > +       struct task_struct              *task;
+> >  };
+> >
+> >  struct return_instance {
+> > @@ -86,7 +91,8 @@ struct return_instance {
+> >         unsigned long           func;
+> >         unsigned long           stack;          /* stack pointer */
+> >         unsigned long           orig_ret_vaddr; /* original return address */
+> > -       bool                    chained;        /* true, if instance is nested */
+> > +       u8                      chained;        /* true, if instance is nested */
+> > +       u8                      has_ref;
+> 
+> Why bool -> u8 switch? You don't touch chained, so why change its
+> type? And for has_ref you interchangeably use 0 and true for the same
+> field. Let's stick to bool as there is nothing wrong with it?
+
+sizeof(_Bool) is implementation defined. It is 1 for x86_64, but there
+are platforms where it ends up begin 4 (some PowerPC ABIs among others.
+I didn't want to grow this structure for no reason.
+
+> >         int                     srcu_idx;
+> >
+> >         struct return_instance  *next;          /* keep as stack */
+> 
+> [...]
+> 
+> > @@ -1822,13 +1864,20 @@ static int dup_utask(struct task_struct
+> >                         return -ENOMEM;
+> >
+> >                 *n = *o;
+> > -               __srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
+> > +               if (n->uprobe) {
+> > +                       if (n->has_ref)
+> > +                               get_uprobe(n->uprobe);
+> > +                       else
+> > +                               __srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
+> > +               }
+> >                 n->next = NULL;
+> >
+> >                 *p = n;
+> >                 p = &n->next;
+> >                 n_utask->depth++;
+> >         }
+> > +       if (n_utask->return_instances)
+> > +               mod_timer(&n_utask->ri_timer, jiffies + HZ);
+> 
+> let's add #define for HZ, so it's adjusted in just one place (instead
+> of 3 as it is right now)
+
+Can do I suppose.
+
+> Also, we can have up to 64 levels of uretprobe nesting, so,
+> technically, the user can cause a delay of 64 seconds in total. Maybe
+> let's use something smaller than a full second? After all, if the
+> user-space function has high latency, then this refcount congestion is
+> much less of a problem. I'd set it to something like 50-100 ms for
+> starters.
+
+Before you know it we'll have a sysctl :/ But sure, we can do something
+shorter.
 
