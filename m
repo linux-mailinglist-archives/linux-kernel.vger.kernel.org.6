@@ -1,81 +1,98 @@
-Return-Path: <linux-kernel+bounces-252688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C169316CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4E99316D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794C41C21384
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25FB1C21DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AD118F2E4;
-	Mon, 15 Jul 2024 14:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E572918EA84;
+	Mon, 15 Jul 2024 14:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PImOXatr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jf4XEXHR"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF71318EA85;
-	Mon, 15 Jul 2024 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B578713B295
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053883; cv=none; b=vF4WB37O0CiBBmc4TU3KR57R5To2QJLSa5Y49g/3/c9E0RVG79yt6+uCblnJuWbtvLB19QTj3OKtQFPWCBu76U0+fxlSZjj5V3cKIO5M4VJb8fK1HKlybmNDhxoee1A22N7CQNPoOHH31ZZxVN+Jlbjq7JuY8XMsS7FHee5Q8v0=
+	t=1721053958; cv=none; b=kTaRdCz1tMN+LDaGSZOmo7VEqFRWrXTvNDCxtswVvVQHYusECiFFAb19CACQnZjhw0hiAiDfWITAfo5FWE65/sQ+45a8kb1q1GlcrucKPtsdHUbvURR9aOwqnihtMqjxePMtNdhPCWfUg+yFyh5l8/b3Gb9hDf6x8YG8BWsUpuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053883; c=relaxed/simple;
-	bh=11zvZR4eorSWA2S4sGXe06K5qrHou5RJw9h8ZIDvnt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7SuXJaf/PJcToEa43BisFagZuPrMa5UbO+u98jUBVKbBrJmO50AaGQra1fssDAwX3CPiXRRgjivgdJQFJVy7U3zlL5wju74ZX2ZRygqt1ZGUd6y6K7XGJsiAcRIDmGraFKqL/jIRBBxkXkPdehR2OFI8UEeHJh53Drn9WbOILs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PImOXatr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AC1C32782;
-	Mon, 15 Jul 2024 14:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721053883;
-	bh=11zvZR4eorSWA2S4sGXe06K5qrHou5RJw9h8ZIDvnt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PImOXatrwKBgthehOT9gAHPf9j0Ax1+ns4EqUztwLT4DimJaqsvHI+bpEfvGoxVj6
-	 k6i42LEiDGx/wMRXMIWOFrCHpIXda9Qrn/Mm7Sn/EkNxxIytV9gOiqQAK/9oX5DBUK
-	 vaL72EL4hxJB36kyDX5xUOkjret0ZwtEyAKp3eP2HucZ+VR5rccMB4AfEPNZAcGeOb
-	 V6ilnFgZRZGxxGj1TSRtkKo8NqRY/YCiv3rBPAE2av4+0x8RLmO2FuNwG5GhrBfPO4
-	 yi/pd9CmNVN0x9I6mYqOAZzWQw/+8pbpej9qRssmspzvD0vaozkze6U2btG1HI39x5
-	 A6N/IgqQF15EQ==
-Date: Mon, 15 Jul 2024 15:31:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Doug Anderson <dianders@google.com>
-Cc: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
-	dmitry.torokhov@gmail.com, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	jikos@kernel.org, benjamin.tissoires@redhat.co,
-	linus.walleij@linaro.org, hsinyi@google.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan
- ekth6a12nay
-Message-ID: <20240715-bunkhouse-freeness-c4367d3c298d@spud>
-References: <20240715073159.25064-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240715073159.25064-2-lvzhaoxiong@huaqin.corp-partner.google.com>
- <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
+	s=arc-20240116; t=1721053958; c=relaxed/simple;
+	bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bx/jvb1Mo0yMLgVk3sR7oVBUugeya7jzXamicglS71riPmUPN3DjdkO3jpbvI/sv+j1/WzX4jEMU4GJX1+ooFGApMTYEa5IqJgQv2sEpJLQGsfHyhAD+Gs5nldb4/0I/TuJVkMj/cH2jrms4S+C0XqFOu217eLwaocdwR5y2FPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jf4XEXHR; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44e534a1fbeso481791cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721053956; x=1721658756; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
+        b=jf4XEXHRPU2bJGciHZqTxv5st3dWzommrRdrqtFzWPTZ5cHOd0vjot4YsnseQL4gwj
+         Zay2hziIweYML9+Xcp324LHdB0y+uxlw8C5QsIGlYPbcaG1vDhU82RyZTAGKk8rblOju
+         vVmr4EYPKGSbDTqmtGKEQ/kp9kxMbFjnixu3LxpjKfmgHK/xDdvwbgyVnQqzmV7BI7tQ
+         vNIDaiRmO1TXFMCE1wHPCrPKUN4f7PUxvK3EV3T42QUUoetHNShZMqMndfHKeu0D6Fi3
+         gyKYukOd3WVPH6OXNYKDwa7G6hsZDXAvtFr48z32iMtPrlgKbAMznooiK4TsV7vEoGjK
+         ykeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721053956; x=1721658756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
+        b=gfSGB4mduGEBjpnLqmuz5r0lEytI+JlJHU0NWmZQW/SVzkx6eanu2Ok8Swts+sALPV
+         wamrNqcvHGLOjoQa6e0Itw7YfHtLOVhN7uNrNNzWZTrV8WuB2vp8mI1UZyyGP+FrDDLv
+         bLMiQS+1TuHvzZQsBOUgFNm0Qp1lMiBSxoj5RlpAjtjeyHuNlQWddS69BifkXL2LL/EN
+         0D8RuoPe2Q4IaOLML43FMHbRQU6oO3nB+lyOZfPTAVvFvJVkK17dbyzzZybHxAra1hal
+         wO6AO3rOWH7LTobUp/Jp+hMaofwqicCxcNKJOIKF3CBw0UsbZc9/mhbv/ipROW9g7bOj
+         ExLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjr6aosb+3QaQ79xeQX2gL6rtJ+boIrz2RpQWetmzq8Xu2vXbYeYZxjOunxzkAYAsjV9hrIuHFOO+1ffLOOY6PNOJNQmEitSbH+J65
+X-Gm-Message-State: AOJu0YwiFZ/d2vPn4Rjk/x9cOmKKXpXjlm+ULxsBcm0K7umg/DQt3Bne
+	ohxRFQUyaYUJYiEG+8zeQrdYuJxSeHGX9WNde7cxvpbVlG0rBtHulSdwzl2yJWOHgcYkM1vGoeB
+	qDKYEbWrlfxqjt7rNQBOkMGlQRF8GQs2pVRxE
+X-Google-Smtp-Source: AGHT+IEdAV3zlBSromK7kgwqxRwwFx8kbs+vC0rwqlISqNmCiF0y0Gbsp63IltCUJUrV6HyA2qxarg6CDSl8HaBAXE8=
+X-Received: by 2002:a05:622a:298e:b0:444:fd8a:f1a0 with SMTP id
+ d75a77b69052e-44f5acc840amr5659871cf.25.1721053955348; Mon, 15 Jul 2024
+ 07:32:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="08zt4+beBDwHYsDl"
-Content-Disposition: inline
+References: <20240715073159.25064-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240715073159.25064-2-lvzhaoxiong@huaqin.corp-partner.google.com> <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
 In-Reply-To: <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
-
-
---08zt4+beBDwHYsDl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+From: Doug Anderson <dianders@google.com>
+Date: Mon, 15 Jul 2024 07:32:24 -0700
+Message-ID: <CAD=FV=X3rQC0URNWGxPrvCF=RNsTFiFPfotBrC7v76Cam4kbxg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	linus.walleij@linaro.org, hsinyi@google.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Benjamin Tissoires <bentiss@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 07:22:30AM -0700, Doug Anderson wrote:
+Hi,
+
+On Mon, Jul 15, 2024 at 7:22=E2=80=AFAM Doug Anderson <dianders@google.com>=
+ wrote:
+>
 > Hi,
->=20
+>
 > On Mon, Jul 15, 2024 at 12:32=E2=80=AFAM Zhaoxiong Lv
 > <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
 > >
@@ -83,43 +100,52 @@ On Mon, Jul 15, 2024 at 07:22:30AM -0700, Doug Anderson wrote:
 > > has a reset gpio. The difference is that they have different
 > > post_power_delay_ms.
 > >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
+>
 > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
+>
 > FWIW things have changed enough between V1 and V2 that you probably
 > should have removed Conor's "Acked-by" tag here and waited for him to
 > re-add it.
-
-Yeah, good spot. I wouldn't have acked this version would asking
-questions - in v1 it made sense not to have a fallback when "they have a
-different post power delay ms", but now there is a fallback. Is the
-fallback actually suitable here, or might it be a naive rebase? Does the
-ekth6a12nay work with the ekth6915's reset timing?
-
-Thanks,
-Conor.
-
->=20
+>
 > I'd also note that when posting a patch your Signed-off-by should
 > always be at the bottom of any collected tags. For reference [1].
->=20
+>
 > [1] https://lore.kernel.org/tools/20221031165842.vxr4kp6h7qnkc53l@meerkat=
-=2Elocal/
->=20
+.local/
+>
 > That being said, the new binding seems OK to me.
->=20
+>
 > Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
---08zt4+beBDwHYsDl
-Content-Type: application/pgp-signature; name="signature.asc"
+...also, all of your patches seem to have the wrong address for
+Benjamin Tissoires. Can you fix that? I keep getting:
 
------BEGIN PGP SIGNATURE-----
+Message not delivered
+Your message couldn't be delivered to benjamin.tissoires@redhat.co
+because the remote server is misconfigured. See technical details
+below for more information.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpUytgAKCRB4tDGHoIJi
-0muqAPwO+LmBqGC0F7cwqQrirPYzWXD7X1Z9XL51rsb8ll4Y5QEAh5NNAFUOafyJ
-77wn9KdmuxUL0ecyzMeTAif3F69GjgU=
-=m7q2
------END PGP SIGNATURE-----
+...because you have ".co" instead of ".com".
 
---08zt4+beBDwHYsDl--
+Having the wrong email address for the maintainer is a good way for
+your patch not to get picked up. :-P
+
+I would further note that Benjamin seems to have moved from using his
+"redhat.com" address to his "kernel.org" address. See commit
+139b4c37e9cb ("MAINTAINERS: update Benjamin's email address").
+
+One last note is that get_maintainers should have suggested you email
+my @chromium.org address rather than my @google.com address. It's not
+a huge deal since they both come to the same place, but some
+maintainer tools will refuse to accept the "Reviewed-by" that I post
+with my @chromium.org address because my mail program will notice you
+sent to my @google.com address and send my reply from there.
+
+Probably you should be using a tool like "b4" or "patman" to help you
+send your patches out [1].
+
+[1] https://youtu.be/7B3nKmBoFoQ
+
+-Doug
 
