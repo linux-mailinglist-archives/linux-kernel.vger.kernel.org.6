@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-252578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F16931569
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FB993156B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9501F21BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC901F2230E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723DC18C35B;
-	Mon, 15 Jul 2024 13:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0661118C358;
+	Mon, 15 Jul 2024 13:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5g220E2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WSq8aOIB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yzoQ0Bha"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4A7172BA6;
-	Mon, 15 Jul 2024 13:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF843172BA6;
+	Mon, 15 Jul 2024 13:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049037; cv=none; b=ivnE6DXnIVWnPsF8BpTMKwT+vdNfbKBkadxz1D7iDOWn5ldVOg4snEUsuVxgvajyL3c3f08M+5xYLvVJgMGsFQWF4rbKwB8xDtKj4geT/Ab3QPynp6qgVozvd4KMfK9GRQelnfVkuCGcceDctULZjWJvHX24nIVNKxDRLPOQF10=
+	t=1721049047; cv=none; b=GW/JTReyHS5hbwpcvHjpLBvrke520AIN3KtNlcC9JAuCQ7QaqmYEo8Mf3vIL6klj/g6+GCKK/lB34vexC4bBAIhhxP+eB6p87dbBIFO7ZRN2kKbGDFfs5gZx40wkOWeuo70D3SylJP+ibsRVmbiJe/e68T2J7aRxF5Kqapsg22s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049037; c=relaxed/simple;
-	bh=oZ7yq0qh7vuJ0B7mSghU33Yp+qarQERf6HfWn5bKrl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tljW+RRma2ZqSCXh+7EE+Ll5GY3GDnxq6dqVhNgNP65vgdNRO/+Px/4H9uLfzMH2chClvWcbr/m4rtctaxga6qZgjeigIO8Mzg0ONljwb42s/MEyB1yYJpxtu/6mKs9TTGMfvyPdRvoJv9f0D8nakex0PdTUD6KJOD8LppBl1/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5g220E2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37555C32782;
-	Mon, 15 Jul 2024 13:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721049037;
-	bh=oZ7yq0qh7vuJ0B7mSghU33Yp+qarQERf6HfWn5bKrl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F5g220E2tY/zMdt2XZGDCjRSpBFRfMuqu/8qXp/uJMyGhkhURLOwn3MaYaqS+hstK
-	 ToPZBiUQrwGyPrSEpGy0Jb+4N9u/KUdLRfUYKizJPxsUScXsgivodER7liFIMnojiY
-	 jEjK5qZCpssP9aOboi4666Cs/nmdVSSygwGuRRowAxv7wSg2KG1O+GnzSjNHKouZWL
-	 lDo5KFa270CCyxXcGYLTsh7+u1KuYXp8npW4cQhY3iQ0YflM/CVWiAxh/IeZMpvMi9
-	 0wzcEFlDYbYzkynKdSLAmStD1MzjZceJsR/kXNApHtk4Ow01JXj8fmvTVaik1C2KX3
-	 vsOMNPrNDfsnQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sTLTP-000000001Hm-1sax;
-	Mon, 15 Jul 2024 15:10:35 +0200
-Date: Mon, 15 Jul 2024 15:10:35 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
-Message-ID: <ZpUfy9YiZSRva-g3@hovoldconsulting.com>
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
- <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org>
- <ZpUcI3KkIa58zC55@linaro.org>
+	s=arc-20240116; t=1721049047; c=relaxed/simple;
+	bh=UmP/6oGPkxLmRM9fmFAuSNEiJfqgkcYp6Uf+h9C9IDo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DL7QGEX+TRZ86Q8AblFm/mc0gur2zJwPZVXIVfYHVFNfFZb5UXp3unr7JlWOxLnP7CP7klPX3jF6Uce70K4pyF9zZzkBwja2xUAjRPc/yBNuwh48H5bPgVkuBuBcmELcN/z5k8ieNnlM6yj0agGn9h/5Zl7Fjm5j/3cE0XsBn9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WSq8aOIB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yzoQ0Bha; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721049044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29gLTnxJJfibIOg6sYyZHGrlffN7zx2NoIm/VXWxOs=;
+	b=WSq8aOIBTY/u9yizAu721UO4ktbPNfB87XJEcYJjkeuwQrv8OrqeYyHoF7PKTj9YUDFzcJ
+	WJEB+eWywZTwelC9/kdSgXrGQRYvzGMNQkjuxRVUr4l15ex8ENv+p0vBLvYbBoIg8ozv3y
+	VCsX5iR8B/lvwDlManIz40nRfoyKtjHe7ryG1fNx5cu8TXScqSAn/flnqgkNBaM+ov7z89
+	IWTdh9XC4Kp+T11PdRdKPZ4awU8+PSr9Q9S+aBmfU2s3QXQnmZsqfFT4jOEb+AMnbrTzSZ
+	C7BU/g+wcPcjfAyH20MwyOix65BzjAp2lu2ikncyiRH3i1evcZQqZKjusHy6VQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721049044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z29gLTnxJJfibIOg6sYyZHGrlffN7zx2NoIm/VXWxOs=;
+	b=yzoQ0Bhar0E6eApzJz7QjACBdC4qXe+LMP+xeVBkrOzD92HCtl3GOdQtwxCK6VQNiR4pQz
+	kWWnQw8x6p3ZhfBw==
+To: Johan Hovold <johan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+ rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
+ apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
+ den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+ rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+ lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
+ robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+ vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+ andersson@kernel.org, mark.rutland@arm.com,
+ shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+ shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
+ per device MSI domains
+In-Reply-To: <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+References: <20240623142137.448898081@linutronix.de>
+ <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+Date: Mon, 15 Jul 2024 15:10:43 +0200
+Message-ID: <87le22reb0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpUcI3KkIa58zC55@linaro.org>
+Content-Type: text/plain
 
-On Mon, Jul 15, 2024 at 02:54:59PM +0200, Stephan Gerhold wrote:
-> On Mon, Jul 15, 2024 at 02:42:12PM +0200, Neil Armstrong wrote:
+On Mon, Jul 15 2024 at 13:18, Johan Hovold wrote:
+> I've applied the series (21 commits from linux-next) on top of 6.10 and
+> can confirm that the breakage is caused by commits:
+>
+> 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
+>
+> Applying the series up until the change before 3d1c927c08fc unbreaks the
+> wifi on one machine:
+>
+> 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
+> 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
 
-> > How will we handle current/old crd DT with new kernels ?
-> 
-> I think this is answered in the commit message:
-> 
-> > > We have existing users of this panel through the generic "edp-panel"
-> > > compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
-> > > partially in that configuration: It works after boot but once the screen
-> > > gets disabled it does not turn on again until after reboot. It behaves the
-> > > same way with the default "conservative" timings, so we might as well drop
-> > > the configuration from the panel-edp driver. That way, users with old DTBs
-> > > will get a warning and can move to the new driver.
-> 
-> Basically with the entry removed, the panel-edp driver will fallback to
-> default "conservative" timings when using old DTBs. There will be a
-> warning in dmesg, but otherwise the panel will somewhat work just as
-> before. I think this is a good way to remind users to upgrade.
-> 
-> > Same question for patch 3, thie serie introduces a bindings that won't be valid
-> > if we backport patch 3. I don't think patch should be backported, and this patch
-> > should be dropped.
-> 
-> There would be a dtbs_check warning, yeah. Functionally, it would work
-> just fine. Is that reason enough to keep display partially broken for
-> 6.11? We could also apply the minor binding change for 6.11 if needed.
-> 
-> I'm also fine if this just goes into 6.12 though.
+3d1c927c08fc converts the platform MSI stuff over which is unrelated to
+PCI/MSI. I'm confused how this affects PCI/MSI of the WIFI card.
 
-No, we should definitely fix this for 6.11. This machine is not very
-useable without it. Whether to backport is a separate question, but note
-that patch 3 is not even marked for backport currently.
+> and backing up until the commit before 233db05bc37f makes the NVMe come
+> up again during boot on another.
 
-Fixing the backlight at the cost of a dtb checker warning should not be
-an issue, but backporting would break existing setups unless people have
-the new panel driver enabled and this may be a valid concern. On the
-other hand, support for this platform is in a bit of flux already and it
-looks like most fixes aren't even tagged for stable (presumably for that
-reason).
+So that undoes the PCI/MSI change. Hrm.
 
-Johan
+> I have not tried to debug this further.
+
+Any hint would be appreciated.
+
+Thanks,
+
+        tglx
 
