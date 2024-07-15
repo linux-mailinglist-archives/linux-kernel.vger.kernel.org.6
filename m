@@ -1,148 +1,240 @@
-Return-Path: <linux-kernel+bounces-252275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F139310D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:07:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2819310DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CBC2830BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633A11C21F70
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251D218629E;
-	Mon, 15 Jul 2024 09:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EBE186E50;
+	Mon, 15 Jul 2024 09:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EelWWvlC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ze3eCgGF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0D0185E57;
-	Mon, 15 Jul 2024 09:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD51185E53
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721034452; cv=none; b=rblRkc3zFzyCt9BwudQR1OT+697kaNTAOzEmUHVrKzXD/M88ZIFH1R/ayPSgRp/W1exho7PWkyq2ExRgpuiQ4yZqphoM97V4pwYVgM/xBjmr9qQQkZB2ktXp1yzYeSMFnQcgBrywASw8CADubCtsrPV2RIUmvYeAfRms+E2mgq4=
+	t=1721034463; cv=none; b=EJ8Yhzzp157RtDObxJ3612fJWtLqPSFy11AELIiW0eG5n08/5iDnwUE3MKOfsrEdT9l25l4NEbe5vo5D0VJ4EgIC8dLCDBJ26x9osw+Ob+iVFhmqibzntK7PnLfqPwEsxh6o1sA9n/GB0u69+f8EAHmbo/vZaoRlv2AeVuS8xjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721034452; c=relaxed/simple;
-	bh=0HFCwZt7C8k2qyxkILy1fA1A4/qXLb8dyXMJYP/qx8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ovKs0pBQYzP31HHm8oZFupVIxJ4eUp2N5dLVlCDoRihLurtxXqk/SwKLyAsJiynWJsVkVjABmpDyXhyaY6Mx//AwbEobbkNSs4uA1dOza0M2U2+E7arU/FyOSL/xTbafeL3Ng3xY5TwaCNhMAKKZ3lsfeBQS8nUaBUpasq4ghqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EelWWvlC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B069C4AF0A;
-	Mon, 15 Jul 2024 09:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721034451;
-	bh=0HFCwZt7C8k2qyxkILy1fA1A4/qXLb8dyXMJYP/qx8A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EelWWvlC+Rg0xnY/NNWoHkOnZEauXQJqxXHwsAuxz/EkouLVOxwO+wGwMnrr4bWHV
-	 PmMgtpKWPE1Ve6APJwUABp8P9VbHni8hmDQL5oaayjB/ntGjbBs1ViVtsq3EKZAI+5
-	 VMXaI+lIh2IfUEqNu2Kk5TmR1w0pGG5wS8Ooaeff2UZvsz11cEgb2efxo4QT2I4jAC
-	 4miT40bh61ID+WSNR/LOCIlL7gZuL05OPJxdLubHIyeMM8VYajs7P+SGQLy4ZtYcOu
-	 NZMAVqpV7ba6iIwi3qoblKwiK1s9/pcl2yWWZVSbgvvedmcbHpa98qE1DLlWnd4359
-	 pFS/8c/ErfzVQ==
-Message-ID: <7a1fea0c-1389-4867-aaec-0c0db01cb6c0@kernel.org>
-Date: Mon, 15 Jul 2024 11:07:26 +0200
+	s=arc-20240116; t=1721034463; c=relaxed/simple;
+	bh=SaagXfvjOJrqhWp5wq/kmkkFgsOqTCTh0w/zLSlrF+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8WqS6xfGneiR8wzdlTGXOTIJ1KT0FJxPrtdW9yDbL5tKInuznNzwvEMEmgdTdz0YMQLLpLxcQ4FYwwTuRytJ9WNoZwMC5Cv7BuBEWxpWuD+tyNDHeTI0wLiSAoK/Jv39gHK3CUsbacyWQ6a8wl6HDIDYj85pxSRnXEO9ZgRv0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ze3eCgGF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721034460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eH72eS6Nfsd8BGGyd0s/cB539dWJLqVScR1RR0nuva0=;
+	b=Ze3eCgGFvQiAi1cm7zqSbCtp3ud6dHThrTvizkVO49K00zHw3n3sO4Ia32dy2TA4WOfaAf
+	i8/KU4j85/irCZzvO4SOv4oS5NagpqSH/GGh51FxXPvH9i9G8yT2Of7G/MOStRX7I/lWAm
+	003AngH3UuLIEVh8XUwOg8bV3nKcA30=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-4aoKucdDPP-WzUPniAmKww-1; Mon, 15 Jul 2024 05:07:36 -0400
+X-MC-Unique: 4aoKucdDPP-WzUPniAmKww-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52e96ca162dso3996433e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:07:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721034455; x=1721639255;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eH72eS6Nfsd8BGGyd0s/cB539dWJLqVScR1RR0nuva0=;
+        b=eg0DQEMAwiAON3qs/YdfZ2gLtOwFeSR5ejaY8CBMKc9RnnmpXi4ENkoYimpEbTML0W
+         fcNfnAqDbCJNqrdpbmuE7psR3b0Vx6u0KUbV+B8GUKMgWvtB5+Sm8JdXxac4Vgpr03ag
+         xOVIGk8XcBxs0dNz6x5XFV3t/X1JIVT72K/ioeRqVsH5Jjh6vx0Nsngt/3yzYBWlqc7I
+         QSug02JpbzVrjQ90xaghkaPMayxMf3wkCO55KgJkxt7zp9X5kydzX7Vsi9aWP0AVF1L0
+         kdG3SxeQEy69zDgSRZXb4DQKLj3MCcYiEYU7Eri7Iwgu7N7NaHZKOT7GVkHDrsgJGx+I
+         NwTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVwDldAoExtphcdQRapUUfsWnYjfC/wyIAnObluYqNpXURDf4JOOcfAXfrwipBoDyGsvTpi0C0VGaMqmjFTw6hA3GTBWXrqs9sEexp
+X-Gm-Message-State: AOJu0YwZcc6oWka3BtV/h7UqTwu/soxFYNiDPPfho+n2jff1tsNgB5je
+	cQxL+QN3pDxtNdjXIaSNRBvkxv2xlSWHEcz+srdyzDeej4+2c8nkjywi2uVu6N8UL2U7ULrdtba
+	OBC7vTHaapqREWX1bvtCQxBptyyOkFnsLdk77w82scJn24p+sCZPCgR54IS32rg==
+X-Received: by 2002:a05:6512:214e:b0:52c:8920:875 with SMTP id 2adb3069b0e04-52eb9994aecmr8544218e87.20.1721034455156;
+        Mon, 15 Jul 2024 02:07:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFhfLgY+bn99BkvxgIHF9fTJuKWkSpE3lF6FxeMKlgnydVdlFufzTjpZYisBAUDPH3nAsusA==
+X-Received: by 2002:a05:6512:214e:b0:52c:8920:875 with SMTP id 2adb3069b0e04-52eb9994aecmr8544197e87.20.1721034454471;
+        Mon, 15 Jul 2024 02:07:34 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:240:5146:27c:20a3:47d4:904])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f25942csm111837255e9.15.2024.07.15.02.07.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 02:07:33 -0700 (PDT)
+Date: Mon, 15 Jul 2024 05:07:30 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Steve Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>,
+	Si-Wei Liu <si-wei.liu@oracle.com>,
+	Eugenio Perez Martin <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>
+Subject: Re: [PATCH V2 3/7] vhost-vdpa: VHOST_NEW_OWNER
+Message-ID: <20240715050637-mutt-send-email-mst@kernel.org>
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next] selftests: mptcp: lib: fix shellcheck errors
-Content-Language: en-GB
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-v1-1-1cb7180db40a@kernel.org>
- <20240713154614.653f30ce@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20240713154614.653f30ce@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
 
-Hi Jakub,
-
-On 14/07/2024 00:46, Jakub Kicinski wrote:
-> On Fri, 12 Jul 2024 12:00:15 +0200 Matthieu Baerts (NGI0) wrote:
->> It looks like we missed these two errors recently:
->>
->>   - SC2068: Double quote array expansions to avoid re-splitting elements.
->>   - SC2145: Argument mixes string and array. Use * or separate argument.
->>
->> Two simple fixes, it is not supposed to change the behaviour as the
->> variable names should not have any spaces in their names. Still, better
->> to fix them to easily spot new issues.
->>
->> Fixes: f265d3119a29 ("selftests: mptcp: lib: use setup/cleanup_ns helpers")
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+On Fri, Jul 12, 2024 at 06:18:49AM -0700, Steve Sistare wrote:
+> Add an ioctl to transfer file descriptor ownership and pinned memory
+> accounting from one process to another.
 > 
-> Speaking of MPTCP tests - I added the connect test to ignored today.
-> Too many failures :(
+> This is more efficient than VHOST_RESET_OWNER followed by VHOST_SET_OWNER,
+> as that would unpin all physical pages, requiring them to be repinned in
+> the new process.  That would cost multiple seconds for large memories, and
+> be incurred during a virtual machine's pause time during live update.
+> 
+> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 
-Sorry for that, and thank you for having ignore it for the 'dbg' runner.
+Please, we just need to switch to use iommufd for pinning.
+Piling up all these hacks gets us nowhere.
 
-This sudden regression looks strange. Our CI didn't catch this issue so
-far. It is only happening with the debug kernel config.
 
-Do you know if anything has changed recently -- around the 11th of July
--- on NIPA's config side that is not documented? e.g. more jobs in
-parallel, new kernel config? I didn't see anything that could cause the
-new issues when looking at NIPA's git log and the CI change log sheet.
-
-I will try to reproduce the issue locally, maybe it is caused by a patch
-that is in patchwork, but not in net or net-next yet.
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+> ---
+>  drivers/vhost/vdpa.c       | 41 ++++++++++++++++++++++++++++++++++++++
+>  drivers/vhost/vhost.c      | 15 ++++++++++++++
+>  drivers/vhost/vhost.h      |  1 +
+>  include/uapi/linux/vhost.h | 10 ++++++++++
+>  4 files changed, 67 insertions(+)
+> 
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index b49e5831b3f0..5cf55ca4ec02 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -632,6 +632,44 @@ static long vhost_vdpa_resume(struct vhost_vdpa *v)
+>  	return ret;
+>  }
+>  
+> +static long vhost_vdpa_new_owner(struct vhost_vdpa *v)
+> +{
+> +	int r;
+> +	struct vhost_dev *vdev = &v->vdev;
+> +	struct mm_struct *mm_old = vdev->mm;
+> +	struct mm_struct *mm_new = current->mm;
+> +	long pinned_vm = v->pinned_vm;
+> +	unsigned long lock_limit = PFN_DOWN(rlimit(RLIMIT_MEMLOCK));
+> +
+> +	if (!mm_old)
+> +		return -EINVAL;
+> +	mmgrab(mm_old);
+> +
+> +	if (!v->vdpa->use_va &&
+> +	    pinned_vm + atomic64_read(&mm_new->pinned_vm) > lock_limit) {
+> +		r = -ENOMEM;
+> +		goto out;
+> +	}
+> +	r = vhost_vdpa_bind_mm(v, mm_new);
+> +	if (r)
+> +		goto out;
+> +
+> +	r = vhost_dev_new_owner(vdev);
+> +	if (r) {
+> +		vhost_vdpa_bind_mm(v, mm_old);
+> +		goto out;
+> +	}
+> +
+> +	if (!v->vdpa->use_va) {
+> +		atomic64_sub(pinned_vm, &mm_old->pinned_vm);
+> +		atomic64_add(pinned_vm, &mm_new->pinned_vm);
+> +	}
+> +
+> +out:
+> +	mmdrop(mm_old);
+> +	return r;
+> +}
+> +
+>  static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+>  				   void __user *argp)
+>  {
+> @@ -876,6 +914,9 @@ static long vhost_vdpa_unlocked_ioctl(struct file *filep,
+>  	case VHOST_VDPA_RESUME:
+>  		r = vhost_vdpa_resume(v);
+>  		break;
+> +	case VHOST_NEW_OWNER:
+> +		r = vhost_vdpa_new_owner(v);
+> +		break;
+>  	default:
+>  		r = vhost_dev_ioctl(&v->vdev, cmd, argp);
+>  		if (r == -ENOIOCTLCMD)
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index b60955682474..ab40ae50552f 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -963,6 +963,21 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_dev_set_owner);
+>  
+> +/* Caller should have device mutex */
+> +long vhost_dev_new_owner(struct vhost_dev *dev)
+> +{
+> +	if (dev->mm == current->mm)
+> +		return -EBUSY;
+> +
+> +	if (!vhost_dev_has_owner(dev))
+> +		return -EINVAL;
+> +
+> +	vhost_detach_mm(dev);
+> +	vhost_attach_mm(dev);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(vhost_dev_new_owner);
+> +
+>  static struct vhost_iotlb *iotlb_alloc(void)
+>  {
+>  	return vhost_iotlb_alloc(max_iotlb_entries,
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index bb75a292d50c..8b2018bb02b1 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -187,6 +187,7 @@ void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
+>  		    int (*msg_handler)(struct vhost_dev *dev, u32 asid,
+>  				       struct vhost_iotlb_msg *msg));
+>  long vhost_dev_set_owner(struct vhost_dev *dev);
+> +long vhost_dev_new_owner(struct vhost_dev *dev);
+>  bool vhost_dev_has_owner(struct vhost_dev *dev);
+>  long vhost_dev_check_owner(struct vhost_dev *);
+>  struct vhost_iotlb *vhost_dev_reset_owner_prepare(void);
+> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> index b95dd84eef2d..543d0e3434c3 100644
+> --- a/include/uapi/linux/vhost.h
+> +++ b/include/uapi/linux/vhost.h
+> @@ -123,6 +123,16 @@
+>  #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+>  #define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
+>  
+> +/* Set current process as the new owner of this file descriptor.  The fd must
+> + * already be owned, via a prior call to VHOST_SET_OWNER.  The pinned memory
+> + * count is transferred from the previous to the new owner.
+> + * Errors:
+> + *   EINVAL: not owned
+> + *   EBUSY:  caller is already the owner
+> + *   ENOMEM: RLIMIT_MEMLOCK exceeded
+> + */
+> +#define VHOST_NEW_OWNER _IO(VHOST_VIRTIO, 0x27)
+> +
+>  /* VHOST_NET specific defines */
+>  
+>  /* Attach virtio net ring to a raw socket, or tap device.
+> -- 
+> 2.39.3
 
 
