@@ -1,173 +1,232 @@
-Return-Path: <linux-kernel+bounces-252430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3AB9312F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1A09312F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2657F1C217EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EBB51F210C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0FC1891A5;
-	Mon, 15 Jul 2024 11:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+hffJTs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5D31891D6;
+	Mon, 15 Jul 2024 11:21:28 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4343227442;
-	Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5200D1891BF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042483; cv=none; b=tHJbQU7Eo2jIoGCiVnKj6CLP5W1vaAD14dRdGOkunzDyGRFpi0wDlelFj69JmYHubjoMZ5r7ghApfn0SIw2rsomltiJL14duiuAr+3buhO6QIx9/xlinushfyVOBomaoZr/Glpw93WfzhENdCQWa1uXHV0m6xwdXTUY9WjrPjLE=
+	t=1721042488; cv=none; b=CCaGvWZmgPhxNd3kHkgxOKQR2Ngsseh8O5iMOxhvFyocr7JvQXlMM7lK8Ag4i9bdjTse2eCUEN5nF/CVzbXMIIbNwQXWNURyxlZnwikTkjuC/AdGaeM53MIf7tRwXNcEtvqiA//0idtdPDbf0/zzoVYsSJkvg61h4wne9CrFuJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042483; c=relaxed/simple;
-	bh=xSPxuQs3YCL7Fk/LevmqfVSN52LSdVUw1qan0QLmPco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MTEqC7eCPyfXkuK7W12CXLT3eQIE+vu28UrXC+Rb84fbwNnhAOsNL0pGZuI9rHPwnOhZtTau1AlBahKaqTb9VTspThtqaAMNu/8rgkCr6l9nBxExBdtfBM28IqpYH2GtDygujscE7suNAV55TfRQbaOePlTJb2bajbKg8bksLos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+hffJTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FF3C4AF0F;
-	Mon, 15 Jul 2024 11:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721042483;
-	bh=xSPxuQs3YCL7Fk/LevmqfVSN52LSdVUw1qan0QLmPco=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K+hffJTsUblKYtgrbnQGoRm7fycgwx9x8tdnufv0A2AnHO29o7ltvA+nyqrXV4yEV
-	 wcs0mIEjXApwBbEcSdg4ee90U5CLe+UnAR0parU5PXa/Ae2/fxPm4DnXgO39lDuByc
-	 8dYlofq/Hb9vWkGMswmEkizzYtvNXnXpP8QKB9zcgseKEnH5Jinn2xP+AMmxQ5He6f
-	 1rWYwGMqqW+cluGVgDZyeyrYPLSsoYmgnwBTjBqHkVN/gtLWt4Kzgc8TSv1zAWw7Zz
-	 DtTvjh1sG44jyVPJaMDqzPfbgAkT3LNyuD6AqkUH52kkAHZattmsNwFVsDxuU+3oxZ
-	 /xYaFoJwi5hAw==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d9dd8bc70dso396895b6e.2;
-        Mon, 15 Jul 2024 04:21:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaWizu1jQlA/qgO6cU70KbeIIWkzSpQn8AEI7VCgKS6BgO/xq+YSnd4FoqH+zKFJ64R1SKvAjXvUPigsMr3rD4VHxfcEgDL8A9IjeP6JtrUV9qE/sGLHqKxUYJlDqAefrwvKDxJ2E=
-X-Gm-Message-State: AOJu0YxEzv2ZLhdNH/pT/MYie4kevrFRJEM6ZDMb3naqzlLXlYbsSxlY
-	E6HPtAT5Ex22yahX8gMiFEl29Eus16hAsWq6WpcdykSkeglLXm2JGqtluI4y2VeQd+aUJiGAgOe
-	H2iXMR8Jctd4LqsSqBnc4LUiHI5k=
-X-Google-Smtp-Source: AGHT+IGGFyx0gkRYa/1bS2DCMCLQn+4THVLOBxOkP1F1xPABGb6t61BRJGSdhtuHZO9jXlany+YE8DBzGpoMUpyvWy0=
-X-Received: by 2002:a05:6871:5d1:b0:259:f03c:4e90 with SMTP id
- 586e51a60fabf-25eaec7b6a5mr17293569fac.4.1721042482401; Mon, 15 Jul 2024
- 04:21:22 -0700 (PDT)
+	s=arc-20240116; t=1721042488; c=relaxed/simple;
+	bh=l2yMsUc/L6fiq3OcerytTMkejC1ARfeLHWVsLeNRdVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bKatiPZCYtsx71zx6a4qDLDzS+nlHhDIlvW/FYPKq/M8Wn0NXWuocMil/GBboVui6owSaQ9AfQbaPXKTReJc6lU55F2jvT5/aL0rPbLC0Q76O1QETRT34C0c9ycOuXord8y04eqKVGaEzndfAzTsuGlzkq1DKJYt0r8m3xZG3fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3AFA760003;
+	Mon, 15 Jul 2024 11:21:11 +0000 (UTC)
+Message-ID: <9bf70f7c-5deb-4fce-b7c1-ec70d78cb5db@ghiti.fr>
+Date: Mon, 15 Jul 2024 13:21:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
- <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
-In-Reply-To: <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 15 Jul 2024 13:21:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
-Message-ID: <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv/mm: Add soft-dirty page tracking support
+Content-Language: en-US
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+References: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 15/07/2024 06:45, Eric Biggers wrote:
-> > Hello,
-> >
-> > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
-> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>
-> >> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
-> >> if zone temperature is invalid") caused __thermal_zone_device_update()
-> >> to return early if the current thermal zone temperature was invalid.
-> >>
-> >> This was done to avoid running handle_thermal_trip() and governor
-> >> callbacks in that case which led to confusion.  However, it went too
-> >> far because monitor_thermal_zone() still needs to be called even when
-> >> the zone temperature is invalid to ensure that it will be updated
-> >> eventually in case thermal polling is enabled and the driver has no
-> >> other means to notify the core of zone temperature changes (for exampl=
-e,
-> >> it does not register an interrupt handler or ACPI notifier).
-> >>
-> >> Also if the .set_trips() zone callback is expected to set up monitorin=
-g
-> >> interrupts for a thermal zone, it needs to be provided with valid
-> >> boundaries and that can only be done if the zone temperature is known.
-> >>
-> >> Accordingly, to ensure that __thermal_zone_device_update() will
-> >> run again after a failing zone temperature check, make it call
-> >> monitor_thermal_zone() regardless of whether or not the zone
-> >> temperature is valid and make the latter schedule a thermal zone
-> >> temperature update if the zone temperature is invalid even if
-> >> polling is not enabled for the thermal zone (however, if this
-> >> continues to fail, give up after some time).
-> >>
-> >> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()=
- if zone temperature is invalid")
-> >> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033=
-fca16@linaro.org
-> >> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.ne=
-t
-> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > On v6.10 I'm seeing the following messages spammed to the kernel log en=
-dlessly,
-> > and reverting this commit fixes it.
-> >
-> >      [  156.410567] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  156.666583] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  156.922598] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  157.178613] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  157.434636] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  157.690774] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  157.946659] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  158.202717] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >      [  158.458697] thermal thermal_zone0: failed to read out thermal z=
-one (-61)
-> >
-> > /sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
->
-> Does the following change fixes the messages  ?
->
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> index 61a4638d1be2..b519db76d402 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> @@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct
-> thermal_zone_device *device,
->
->         if (!iwl_mvm_firmware_running(mvm) ||
->             mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
-> -               ret =3D -ENODATA;
-> +               ret =3D -EAGAIN;
->                 goto out;
->         }
->
->
-> --
+Hi Chunyan,
 
-It would make the message go away, but it wouldn't stop the useless
-polling of the dead thermal zone.
+On 10/07/2024 05:30, Chunyan Zhang wrote:
+> The PTE bit (9) is reserved for software, so we can use it for
+> soft-dirty tracking. This patch adds its standard handlers for
+> PTE, PMD, and swap entry.
 
-I think that two things need to be done:
 
-(1) Add backoff to the thermal core as proposed previously.
-(2) Make iwlwifi enable the thermal zone only if the firmware is running.
+Unfortunately, ZONE_DEVICE has just used this last bit and should be 
+merged in 6.11.
+
+I'm currently discussing internally how we can get 2 other PTE bits from 
+RVI in order to have the same number of available bits as x86 and arm64. 
+I guess that for now, if we really have a usecase for softdirty (and I 
+think we do with CRIU), we'll have to make ZONE_DEVICE and softdirty 
+mutually exclusive.
+
+
+>
+> To add swap PTE soft-dirty tracking, we borrow bit (4) which is
+> available for swap PTEs on RISC-V systems.
+>
+> This patch has been tested with the kselftest mm suite in which
+> soft-dirty and madv_populate run and pass, and no regressions
+> are observed in any of the other tests.
+
+
+Did you give CRIU a try?
+
+Thanks,
+
+Alex
+
+
+>
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> ---
+>   arch/riscv/Kconfig                    |  1 +
+>   arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
+>   arch/riscv/include/asm/pgtable.h      | 65 ++++++++++++++++++++++++++-
+>   3 files changed, 78 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index b94176e25be1..2e3ad2925a6b 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -118,6 +118,7 @@ config RISCV
+>   	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>   	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+>   	select HAVE_ARCH_SECCOMP_FILTER
+> +	select HAVE_ARCH_SOFT_DIRTY
+>   	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>   	select HAVE_ARCH_TRACEHOOK
+>   	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
+> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+> index 179bd4afece4..bab48f5fd1e2 100644
+> --- a/arch/riscv/include/asm/pgtable-bits.h
+> +++ b/arch/riscv/include/asm/pgtable-bits.h
+> @@ -19,6 +19,19 @@
+>   #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
+>   
+>   #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
+> +
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> +#define _PAGE_SOFT_DIRTY	(1 << 9)    /* RSW: 0x2 for software dirty tracking */
+> +/*
+> + * BIT 4 is not involved into swap entry computation, so we
+> + * can borrow it for swap page soft-dirty tracking.
+> + */
+> +#define _PAGE_SWP_SOFT_DIRTY	_PAGE_USER
+> +#else
+> +#define _PAGE_SOFT_DIRTY	0
+> +#define _PAGE_SWP_SOFT_DIRTY	0
+> +#endif /* CONFIG_MEM_SOFT_DIRTY */
+> +
+>   #define _PAGE_TABLE     _PAGE_PRESENT
+>   
+>   /*
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index aad8b8ca51f1..46f512f52580 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -408,7 +408,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
+>   
+>   static inline pte_t pte_mkdirty(pte_t pte)
+>   {
+> -	return __pte(pte_val(pte) | _PAGE_DIRTY);
+> +	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+>   }
+>   
+>   static inline pte_t pte_mkclean(pte_t pte)
+> @@ -436,6 +436,36 @@ static inline pte_t pte_mkhuge(pte_t pte)
+>   	return pte;
+>   }
+>   
+> +static inline int pte_soft_dirty(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_SOFT_DIRTY;
+> +}
+> +
+> +static inline pte_t pte_mksoft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
+> +}
+> +
+> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
+> +}
+> +
+> +static inline int pte_swp_soft_dirty(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
+> +}
+> +
+> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
+> +}
+> +
+> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
+> +}
+> +
+>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+>   #define pte_leaf_size(pte)	(pte_napot(pte) ?				\
+>   					napot_cont_size(napot_cont_order(pte)) :\
+> @@ -721,6 +751,38 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
+>   	return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
+>   }
+>   
+> +static inline int pmd_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_soft_dirty(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> +static inline int pmd_swp_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_swp_soft_dirty(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
+> +}
+> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +
+>   static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+>   				pmd_t *pmdp, pmd_t pmd)
+>   {
+> @@ -811,6 +873,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+>    * Format of swap PTE:
+>    *	bit            0:	_PAGE_PRESENT (zero)
+>    *	bit       1 to 3:       _PAGE_LEAF (zero)
+> + *	bit            4:	_PAGE_SWP_SOFT_DIRTY
+>    *	bit            5:	_PAGE_PROT_NONE (zero)
+>    *	bit            6:	exclusive marker
+>    *	bits      7 to 11:	swap type
 
