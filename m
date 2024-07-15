@@ -1,104 +1,99 @@
-Return-Path: <linux-kernel+bounces-252564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B99D931546
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:00:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD6D931548
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA971C21A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:00:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B069B249AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4143518D4DE;
-	Mon, 15 Jul 2024 12:59:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D95918C341;
-	Mon, 15 Jul 2024 12:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375EE18C344;
+	Mon, 15 Jul 2024 13:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoQL4ffM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756A0172BA6;
+	Mon, 15 Jul 2024 13:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048378; cv=none; b=Fzh/PGSa4BEe/Z9DWDUyLZzNtBSxgdDNLM3ihFoK+wTVAbhJBf+JFtE2d9DrkcY1ORh/sjih1z0Yv8c05YVa2oqbUnl5ZhQBb43Y4iD9P9UmoJhBz0k0xR+OAPvarQ8528Bd2Edt+LnjocVaDltV8bm8TSkVABqiFYAAs+6kq0o=
+	t=1721048433; cv=none; b=gmthYUYx/Fm3CMkd6lKsF+BV89NcQ54tRIfbRgdjBfraO+7tcukpj/asVEXSStcHceAnmvnc74UUCNLdYiynEMDh6XVuc3Wp6nMrrRl7Q85mCM5W7A4D2ThA6N3N7mBW1/pmsyXVm2mR2clGdZre5URDnJm0p9v7yP6vbrQu7V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048378; c=relaxed/simple;
-	bh=tCAUoz16SFgMtRJJXCi3TzLWuHeXMPwnhI3T1kOUIJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpH3daOH9B+Ik8dwKzoXl799EkgbPHc+XsLSDZCsHeHefsnn8/k0gTtgeEiHGL+AlZvI8ZUC169kWABZ3fIkZ/C2YFyFIG/rhgu0TyslMr2gaXgOAP2FsmKO6MQTIyypyigdUXiKwWmDWrylXo48pJCcJploJNElNtygkOttVps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC521DA7;
-	Mon, 15 Jul 2024 06:00:00 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11C1A3F73F;
-	Mon, 15 Jul 2024 05:59:32 -0700 (PDT)
-Date: Mon, 15 Jul 2024 13:59:30 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP i.MX95
- SCMI documentation
-Message-ID: <ZpUdMmvucei9lLPI@bogus>
-References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
- <20240621-imx95-bbm-misc-v2-v5-1-b85a6bf778cb@nxp.com>
- <Zo_bFnjWixZF6seV@pluto>
- <DB9PR04MB8461684315E753DAFDDBACA788A12@DB9PR04MB8461.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1721048433; c=relaxed/simple;
+	bh=xBp6wVPgvsV2DDw1J9KEqgZp6b7FI6NgpSBWW1KGY5s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=J4NFE5gt2SdamGYWjW+k9PxAejjOrxtrDZyQUQY3C8wsKx55I3OV+IypK5BTosN7ff+OKzG55oD8LT4XfCN7Qjx/ACz2WlGfO/FYctSFMaTfCNkqHgyX1FjDOU/rsxUI/wn+V3D6TRXgIqadVNDoeFLGmY+ix1Bz6zgOP9FLbIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoQL4ffM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E5541C4AF0A;
+	Mon, 15 Jul 2024 13:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721048433;
+	bh=xBp6wVPgvsV2DDw1J9KEqgZp6b7FI6NgpSBWW1KGY5s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=UoQL4ffMw4JVCnc0lByBfRXvY0EG5mldxmXxgUWA49Wmx04yllSIo+UEo2aZbND+i
+	 +xiSh8FloNN5cwdVwRhuGvYEbdvbAnrgviQFl5N+68U1IBEZgBgh12iMpxuZoAi4K0
+	 3kydD34vRYNgGXOI0scKSsCTpsix/X+E5eVjwZKhLUzZfzLp3qAdFeeqlG2b+gkRNM
+	 +cM/5slN3cCCD/cMhOGO3cpd0Bv10lsloGfpfEJgkLhjg+caLWGsaU0EibnFmVmw3W
+	 oQh9HHpxJCZ1cSJot+iMocAtWSXf6DbktKlX12rijjCoR7l/BUO8b0OSYCMO7YJDbf
+	 dSiEQnEC0gPGQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D4C93C43443;
+	Mon, 15 Jul 2024 13:00:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB9PR04MB8461684315E753DAFDDBACA788A12@DB9PR04MB8461.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] net: ti: icssg-prueth: Split out common object
+ into module
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172104843286.23241.15744127998585161383.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 13:00:32 +0000
+References: <20240712120636.814564-1-danishanwar@ti.com>
+In-Reply-To: <20240712120636.814564-1-danishanwar@ti.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: hkallweit1@gmail.com, horms@kernel.org, dan.carpenter@linaro.org,
+ jan.kiszka@siemens.com, wsa+renesas@sang-engineering.com,
+ diogo.ivo@siemens.com, andrew@lunn.ch, rogerq@kernel.org, pabeni@redhat.com,
+ kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, srk@ti.com, vigneshr@ti.com, linux@leemhuis.info
 
-On Mon, Jul 15, 2024 at 11:47:56AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP
-> > i.MX95 SCMI documentation
-> > 
-> > On Fri, Jun 21, 2024 at 03:04:36PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Add NXP i.MX95 System Control Management Interface(SCMI)
-> > vendor
-> > > extensions protocol documentation.
-> > >
-> > 
-> > Hi,
-> > 
-> > beside the final location of this file in the tree, and a few nitpicks down
-> > below.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Fri, 12 Jul 2024 17:36:36 +0530 you wrote:
+> icssg_prueth.c and icssg_prueth_sr1.c drivers use multiple common .c
+> files. These common objects are getting added to multiple modules. As a
+> result when both drivers are enabled in .config, below warning is seen.
 > 
-> Thanks for reviewing the patches. Except Documentation/firmware-guide,
-> I not have good idea where to put the API doc.
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_common.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_classifier.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_config.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_mii_cfg.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_stats.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_ethtool.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
 > 
-> Sudeep,
->   Do you have any suggestions?
->
+> [...]
 
-Not really. But I am OK to keep it under drivers/firmware/arm_scmi/vendor/docs
-or something similar.
+Here is the summary with links:
+  - [net-next,v3] net: ti: icssg-prueth: Split out common object into module
+    https://git.kernel.org/netdev/net-next/c/a8ea8d531d1e
 
---
-Regards,
-Sudeep
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
