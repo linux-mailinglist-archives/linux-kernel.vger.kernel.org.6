@@ -1,367 +1,235 @@
-Return-Path: <linux-kernel+bounces-252676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EB69316B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:29:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5E9316B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E42241C21AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:29:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12745281369
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F6D18EA7E;
-	Mon, 15 Jul 2024 14:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FfKiRt14";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JRhTyJ6r"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA0018EFF3;
+	Mon, 15 Jul 2024 14:28:29 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8663218EFC8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053725; cv=fail; b=Qx+9QJSY5HESyFVKBp27zjsnqdTVyc/jhCq0QRwVjpUSQVnYz9Gqj9G7ecDuaKd70KPVFgnPG/VrZsGbyLU5VEIr3gUF0xQsnYz41/EqkLnbVkJo6LF8chapwEIpPDXvw1hNRpU3SermXpCl5F/PVHiXK4rnicjQ60t3kpacRz4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053725; c=relaxed/simple;
-	bh=MBXEYoNbU6FZmq1IIFQ2TJJffGUeFL5/rcazCEB1Rc4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Om3a4Gb4JtiCH840F8X32kn9BUgkF+ltP7cc54iKLpBOGv4/iko/uM+2EJ+dbNr31j28KVVJ3Pp5qa5t21J6qyaatFsZIm9i6DqxXKbzs7x27S7aL6d72tbY5+QvKl2H4EkdiJo0yo2DyxEocr55U0AuZi8GDOje3LtKBL7U6Bg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FfKiRt14; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JRhTyJ6r; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FENdWV014688;
-	Mon, 15 Jul 2024 14:28:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=fpu7xguasNTblSP2IbMFRbVjrOlZvcTaqMh6EHG8BHw=; b=
-	FfKiRt14HhL+4GzWf3BoihNWr2mL9WdNcGRm2qgf+wtjZLroaEBgvNc4xZ+O5w6I
-	hD3FEvrUvtNx3cGFPIe1oS+mtZWtSi7syaz425nI4iLpa+ba4ZMuxBD/kspaK9dU
-	aGouQYOaRWJ/6PvNzhTarcg4CT66JFaSGZN6KLYYl67mczkJ1T+Jop9S3xTcMO2T
-	q6YnhYnLWnuACWbJiLGsBQa8senPHhs0DLdzobsSJl5MEethizuUhfJShlzBiJ8T
-	GfIEqnkqhFjKc2gvuMgL7oKG9CGy1+395M/pFirRMLStrRSfwGkGaa8c9eSo+WF8
-	Jzml1aO0psj0aW1q33fc1Q==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40bg613gbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Jul 2024 14:28:33 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46FDSNcW040644;
-	Mon, 15 Jul 2024 14:28:32 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40bg17hq2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Jul 2024 14:28:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ozuiq9dK8tYD6coyPhBuK2DXafJxhiwhhIJoujDVZYsSvPs8VbFWWaSatc7gB+JPmQkyFG+wsAjAhb7p+6kau08w+5pmyUxeanMF3UxNzeSE8Yqa9/U+64Nnr4M1CiPhbBFgQg0VyEz0eg21xPzAKx4uthBe2WYTLOmFII1FaB8CBF3XnmA2szVjQsB43i/GCK8mipVXGFx51ZZ8cvUaxOVcX9mPyChwJ6NjTKHTzHYvVMw3SHUYTNQrkhaETFVReRQWGbI0d/NETRZKnXevepk55TT9e9H4UPfns+X3gw3imSTz6HkzwF0cAsNj2JBORarcgMakJQ5+3cWw6wgsxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fpu7xguasNTblSP2IbMFRbVjrOlZvcTaqMh6EHG8BHw=;
- b=B7gIDKMRu34x8JrL1jkA28IHK2gyuBX1pREJMvbAYtUWBDPl/rRYo9K059dOIaOiv6O9pFeK6lFYsi5pp0CbO5GwVDkHQ5h8zXosbbRMqglvuBAp2iOF8Sh+o8jBKPoz0s4VHxDlRCvhV4w7i9gvaRRl1HgXSSEderB62ZjbDbqfhLwkBvjloLl4rhhCsGtfIJ0TPcZ1wr+F8REshcZXqI2vBYyn3+5pyb4dmCAFJBxO53bExml5EyBKP5X2jQmLB0njH6JrtFocEXQ3hFITiHYwXZKfPot5uMvtE4NRWlMT8tJajAP7EXWK28t7bCDXdy7OcAhOINUxhR5GEmjchg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fpu7xguasNTblSP2IbMFRbVjrOlZvcTaqMh6EHG8BHw=;
- b=JRhTyJ6r7edmL7QatWujB/ktWdIVceVU9uX7caTQBsYtfPeO25NTcHhUCMLE7WvQsBqpB0Phbtw7qnktVN1iXbT2BGnBXJ2NUKF+DLJwI30SVhs16cYCeGN6LnB3IqlDzORedFKrMniGogCpTeLroox+4CWRDpu0d62zytzKF4Y=
-Received: from IA1PR10MB7447.namprd10.prod.outlook.com (2603:10b6:208:44c::10)
- by CO1PR10MB4545.namprd10.prod.outlook.com (2603:10b6:303:9a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 15 Jul
- 2024 14:28:12 +0000
-Received: from IA1PR10MB7447.namprd10.prod.outlook.com
- ([fe80::f2fe:d6c6:70c4:4572]) by IA1PR10MB7447.namprd10.prod.outlook.com
- ([fe80::f2fe:d6c6:70c4:4572%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
- 14:28:11 +0000
-Message-ID: <d738a0e2-5a17-4323-9c86-b5a806066292@oracle.com>
-Date: Mon, 15 Jul 2024 10:28:06 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 5/7] vhost-vdpa: VHOST_IOTLB_REMAP
-To: Jason Wang <jasowang@redhat.com>
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Si-Wei Liu <si-wei.liu@oracle.com>,
-        Eugenio Perez Martin <eperezma@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Dragos Tatulea <dtatulea@nvidia.com>
-References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
- <1720790333-456232-6-git-send-email-steven.sistare@oracle.com>
- <CACGkMEurG88fXiThyainxbuzpgBUzzGkmvyQB5vuXsU7_6XBBw@mail.gmail.com>
-Content-Language: en-US
-From: Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <CACGkMEurG88fXiThyainxbuzpgBUzzGkmvyQB5vuXsU7_6XBBw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0379.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::24) To IA1PR10MB7447.namprd10.prod.outlook.com
- (2603:10b6:208:44c::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D6C18EA90
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721053709; cv=none; b=ftF+FnOZ6Of/AWuE0Sn9n3agzwpv+HxYzxa4iD8eolA+iOno0C9J/bXUyWfVmx5OEBSczcyo5cpVZpYXfM/Aw6TnCSODR1wrX2zpC1hj+G7arf1bTJwJJN9KfX4tUPQOiTTqd5hCxdQFvITFoZ32lwJKNOImMY2NoyJKxB9iEz4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721053709; c=relaxed/simple;
+	bh=Nz5E4d8xdCYlAzvXJoX1t5TkTVnajK8GmE4FzW/DTJk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cD3TnVNNiK4iRIXfWYUtXGoMk20XARR6NV90B7iti7DvFXfE++A6Ys5tUn7i1NFkaXMEnrXZ1r9M6QcL5qUR7hT1zmdwRRphUbPegN9yoYYDQoWGtV4N7Mk+gNp3TK9DobZ0vvXMFLc/VkBDECc59DQSVlmkrfAwXwV+a+NxEHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-804825a316bso494658939f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:28:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721053706; x=1721658506;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IR0zuY3FALGpcWvHyYpjsZ+HMUPt8PRIglRtf9AhPso=;
+        b=otrp9C+W+9ENkIuCnIvpbR+5tb5SW5Jj1WPh1knFlaOS9HtWwbMOIBqTBVO3UYO0cQ
+         2CtR/TOo/esAFPpwSScmBkZjnfUAClPcjdkW5fiGEjL2pZTJ4PqYrwYWAz+I9HwafOP3
+         ZcXlwgFBkNXGNXK/XMGB2qau0E1ZubzfKXmUBMp11sQ02NLKFcCOYjwy2wmlldSXdPbT
+         nXZbk2EDqMfJzIcenjSpsla6/hvCKwNihzDJOQf4JfAgHnTGMICun8F82wFRE9k9/vFm
+         DTHsVQwnEbF8gGjnf9wcm+3B31lJKdQvcUfCHlp7ctta07UteM+Xqpq7o6M+J0MVgfYr
+         R8zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkpyPrTTdAZ40mXAjqe+8St2T3WefY5LXVPFoWccPumpJJhFdYS+ROQdp/l92BhdG/8NqfxSQlHpysqD/aCJ4jjwgOSQYUMwBjW3f/
+X-Gm-Message-State: AOJu0YxUuMDOUx6Gpgq4HlsPrc1oq0jrfdfUcolhXfX9E7tzawCkDA0d
+	AlHvMJyPVYRsALiuy2GmbUuMkZbsX8yXI9jerJYzQnTyko/4NVgBjNQ3TtMA2VVzKHHkXmSNnvv
+	gUKtO+gzDKTc/lFyRm921mVqbNq3YD4GFEHUVWsTuxnhihCBhvsGr7Yc=
+X-Google-Smtp-Source: AGHT+IGeec/8lJVCadA9XLMLVNYgpfoMlE9cCTA5P2vddsZilbVjfk5WlJbB4KJ0I2Lf+Za7HdlZR10jdW0jx7pbwIaoB9pZkwCk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR10MB7447:EE_|CO1PR10MB4545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d29071e-8f82-4199-c2f0-08dca4da5ad5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?ZDJVdVZqbmZieVF6RzdqekYwTWRZSGhhTTZDZ1RIM3RmaHYyaUhXZE1TY2Zt?=
- =?utf-8?B?K2hwbEFDd3F5TUVoQmRqSnk0RTZHWTFzUHh4KzhWbkNvc2tOUnRNcWNpT3Zt?=
- =?utf-8?B?TzFrcXE1ZlQ2WUQwKzhqTjRGam8zbFZqK0QyalRDRG8rWFNUZVBwTDJBWFFn?=
- =?utf-8?B?eUM2cVJENENCejdBMTR4QnZ2Q2dZYy9ROFBCT1R3Q0ZzUGFRMVZ4WlVSNTFl?=
- =?utf-8?B?bkQwbkNSNURxYjc4ZlNScDhTL3FJZmM4bU1rZGxRMTVQWVJsWXFRUXN1cVB5?=
- =?utf-8?B?Q0ZVSUJMWHBpZDc2TitEY090OXJ5Z2hMVVMxRGM2MzNLYTRXK0J6OGZyREZN?=
- =?utf-8?B?U0xpOEVyeE14Ylpoem1UNktxdWRDNlgwYWNlQld1dlpwU3lNYTJQZ2o3Q0Qv?=
- =?utf-8?B?azRMOFVHYTlrYy9WZVRWeG5XWVJJSW5qM1MvY1NNS0lDNGdLNlM4MFBzcWxF?=
- =?utf-8?B?NHZSczJrQnA2bUVOVXY0VTZ3aEhCK3ZXZERNZGpjRml3NmViaFFva3JBMVUv?=
- =?utf-8?B?ejczd2hzWFFMaUE0MHdGbDRpaVd2QlJwNmVkTEZ5L1g2TzFSZWdKQ0JmWUZi?=
- =?utf-8?B?T3pyZlE3Rk9mWCtnbmx2endVQTJGdTR0OVFmdUZEVFFXZHZCVG5DbVdNYnR5?=
- =?utf-8?B?TUl0RytTNGJPUVpIb3VaVW9MaWpSeHptbjI1bVRSZEtUNmF5VDdDeHRaVWY1?=
- =?utf-8?B?M1RJdmxLcjNydkpRTkIxYk5NUDdBTGxQNWxUQUlTR1puSnN3NjVlWkxFc1JK?=
- =?utf-8?B?RUZidWlMNnpXb1RCNXhKZG9rWDA3WEVZWVZmVDQxRFUwbzNKTGowK1ZSZkV2?=
- =?utf-8?B?bS93OHg2MUNRODl6UmcyVU1Ob0NlQ0hVSUdPTkdBSzdadEgvQTZjN3REYlJG?=
- =?utf-8?B?MlJ0dUtMd2NSRFVrZnpjQ3lNU09hcEJUTHlaOVJTWlVFMDE3c2tQa0llOXVS?=
- =?utf-8?B?a0JJRFVydjN3U1lseWdqT1VQMDdITDdQVWExeDl0aHM0N2lrY1dqRFArN2dr?=
- =?utf-8?B?WDVoYklnaDhVRmJRV3lScUJIelI3WGxDUUxWZFUyUVp3aTNXUmNkVFd6QXdE?=
- =?utf-8?B?cWs4NnNkbWJLUkF0L0hOR2MvbkhhSmtvbjBiSHRqc3hwTlcwNGtjcHNnSzd0?=
- =?utf-8?B?UU5GaTJESENvSTFMKzhwRVZaWDJZdEhoR2w3azZJcUxqQUI5NGVEOUhsa0VQ?=
- =?utf-8?B?RmZSU1NrZGlaQXpSK0hNcGY3MlpPK0h4Q2ZNekx2YnhzZVZvUUVId1VaWFN4?=
- =?utf-8?B?REcvTUdFczZLd3oyMlA2OXZJOUcwenFGRFk0VXRLc0tSOVFOa09Yek4veFY0?=
- =?utf-8?B?dG9maStMU1Q3QzlOTllWQ0RrMzZOM2d0Q1JYV0xJd1dhamlwQTFWaEtnV0xZ?=
- =?utf-8?B?eXg4RVUwT2t4QjV0V2NrK2ZFUFN5T2lZaHRBbENJdU9nc3kyUGU2dTcvRjJa?=
- =?utf-8?B?RjJubEQzTEJFL25RTnlwK2J6dmpHR2hUSjFhZElEL1JsUlNvMmFSc0thWVdJ?=
- =?utf-8?B?OGVOalZwWlFRMSs2OUpYOC9ranFqdUJCMm55MWo1Vkl5cVBFVC9wK1QzMncv?=
- =?utf-8?B?K1MzWlN1a3ljYUNIZ0R1NjZHUnlKUmpqb3B0OEllaGw1MmlrWGhYempuZkVw?=
- =?utf-8?B?a1dhaEpYQUZJQ0xwSCt3OXExYnVCOG0rN0NnT2N2VFZscTQxRjVqellka2dM?=
- =?utf-8?B?aFFzUDhEZjROY3AvQVRXUWE2aU82aUtMbmpYYmZWZHhmSlh0UDlkZjVWNmNT?=
- =?utf-8?B?di84WU1kSEh6NXd3bHJuRnBhZGFBK1ZIa1F6d1h0QjVhY3FFcTg5R05BZDdM?=
- =?utf-8?B?QTFxYXZXdG0rTS9RYkY1QT09?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR10MB7447.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?NlJRRWZhQWpWQzl5eTZ4TWQ5Ri9WOGVOeFE0OTZLS2xCbTdMcGtKdXVFU2dn?=
- =?utf-8?B?N1RER21mUWxkNlpERXBPdm5DeENjakRhYVhqUEVqc2dZc0d1UmF4V1JvTm1T?=
- =?utf-8?B?YUJYZnV4cC9aNEVSeXc2L3FQSk1STTBHRm90bjBER3BTMC9tMUtrWFo1VzdE?=
- =?utf-8?B?N1lWcEp0SlJZR3VLRjhYZnJLZ3h4WE9WL2hYdnh5UDRxWE9JZ0ZvL2tyZmJM?=
- =?utf-8?B?MWhvY0MwMFpKbHMxS1E5dWRRWHkrT2t1Vkl4YmlzaWVHakoxRjg2NUtqSnlh?=
- =?utf-8?B?bUhiOFFGeTlzS3ZobHNlZmJkcjNnTDdoUGZ2R0FzRW1uQ2R6bUdWb2xnUXBE?=
- =?utf-8?B?Y3U0djkvY0llaWprVkpyYm9KYms1NXYxbzVWL2ZUTC9GSmFHWDFnNS9YMjdh?=
- =?utf-8?B?eHZ2a0EyUzVYNE9iSEExVkZQdU1DL201VmZqa0hucmUzeS9hTXJ4MlYxaHFJ?=
- =?utf-8?B?OVRWbEpOVVlRUkFiSHZsUlNDdlZlV2VjTjNQdnVJS0JCOTlJd2huYWNtcHEx?=
- =?utf-8?B?ay85NStNZ2xuUk1QTXVFMlEvcXFzYTRSb0d2aHg1OGJpVHlWMkM0U0JRY1dI?=
- =?utf-8?B?N25vZk5Kc0FPQU8zNUk4V2hpM1NuNUJDcStFWWkwY25NOXdUdTJZRVo5VzNs?=
- =?utf-8?B?bTNLdTNtL0VLQlgrU04yT2VveWh3aDdwOHNtT00xWlM0bSt4WHo0K1ZXczZi?=
- =?utf-8?B?ZVN2NHFDN0I4QzZmbVdqME54K25sZVV0b2htOFVON2gwSDRVbUdpb1B3RFIx?=
- =?utf-8?B?VE1lK1JBQm45c0x0RWZvVGROeDFsWWV1UkVSeWtYYzFNcTV3S1dvN0Q5RE5w?=
- =?utf-8?B?SnFBVmt4d3F2NU5jOGxoWGNIdDIxM05GUE9vR0xqMkRHRVpOU0o0MTM5REZa?=
- =?utf-8?B?dFk2c1g2bE1QMUZ6VzBvdWtxU3J3d0dDNjFoVU8zZEZ5SWY2UWZLUGo4NUFG?=
- =?utf-8?B?WTZsSSszMS9Hck9GMS9hZzl3UVYycWYzZ2pjWVNtUVBrUWZhYzZKUWlFU245?=
- =?utf-8?B?WXB0ZUVnRzhNWmJUaldjNlVBeHdMeG84Q052Sm5jV1BHb0RTZFlKTnhhSmRw?=
- =?utf-8?B?cDBmZXlSd1ZLU1VJNEJkLzMrYTZ4L0tlN1hETndWVDJ2czRVdkM1bTduc3pp?=
- =?utf-8?B?b2FnQ1RHU2hCdjJKVUVTbzdqbWtWY045NytJVGxkN0IrbzZ1RncwTFYvTndz?=
- =?utf-8?B?b01NckZtcExiNjJNNGpFV2JXZTZObFlYZHptS3JkRU5QaEhDS0FpeTdLNEZJ?=
- =?utf-8?B?UGw4cHBhb1F0ZVFwU3lnbXl1Z29oSmFlc3U4eno1aE9CVjI1MmE5b0pzcXVz?=
- =?utf-8?B?LzFWMFlMcTJBc0RQM24rc2lZOUdtM1F1MmJvOGI3TUo4NjFYdldwMDJqT2FG?=
- =?utf-8?B?TFdNV1BwanRicDZveFRGeklVR2lUeHpWQitETEZGUW5mNHM4akpGNUZvdldQ?=
- =?utf-8?B?d2lrVHQ2bklYY0NhYWtPSzF0dGFwR1dNdkthOEpKdEhXd2tLZUZhdDlvN051?=
- =?utf-8?B?S1NHc1ZCR0VvOVdHRVcrdUNXR0kxcjk3YkcvTm5UVHlnOXJ3MnhWSmxndmJM?=
- =?utf-8?B?ZldHQndpVHJsclRDazhXTUJVdFNiM0JPSDJRTm1yVlY1a3N1dVovaVhydlVI?=
- =?utf-8?B?OFl1NC9DOHlnSmROOGo2TEd6K0pwR01oL2xLdjFuTzFGTHlrVGdDL3RDcUZl?=
- =?utf-8?B?eEZnZ1dRTzQyWlQ3TDFITnFEVmRzMUFwSzJvWHRRalhyT0M5ejhoWHRLQnVo?=
- =?utf-8?B?U0k5eUxZRWNjNDlLaGY5SFNqNzBaNWgwN3hkUzhRM0pHYjNUOUgrUlE5N1lO?=
- =?utf-8?B?THIrZG93ekFnaS9xUk96N1ZGZ1BrUkdwYjQwZCtweTlja3JRK1B0WGhQdzk5?=
- =?utf-8?B?bzRPY0cyWEdwdzZmT015Q2VITHJKTmozcUtTc25ZK3ZwM1RCSEU3dTlCM2xs?=
- =?utf-8?B?Z3NRZEwxRjliZG1HZlFONUZudnk0TmxXcWlkWktjSmZPUDAwallGUVhENENS?=
- =?utf-8?B?akpVUGk2b1pCQ2dnWWp1UThidEI1N2NFSnNiSWhNOWFmTFY2K2lLYTkza1V3?=
- =?utf-8?B?OWhoajJLNXNWS1hzanluNlBHRnBIUjVscXJMcXVWZEFlSVdVZWRPNE42RGlL?=
- =?utf-8?B?UmVDOXNjUTBjcnZGcGhRQUlVdzZhMnhzTkVFbS9COXJBNzZBUXpXWlplaFFY?=
- =?utf-8?B?Smc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	53N9/cIICtrkaY+g4k786kiE/Z3EKe/ThArZOpITUlQrtEKgaRDCnKy4n1psiE9mDa4OotWupMVQ8RxJbO9Ke5f6RWFD9FUvdzcZhyoxNiWQUJyhctl4wjAgbfhNqaEZyuXlMQZUk1aXbITcmwdj63K6TymLJ4MYXU9a9uu74rAfPEpYMrk0avga59xngNu4ybeaPo+23y5bx8GQbiaRlxl9x/EGvBjcfWQSq1jBw2Oox3VKiwnLEkM2fg5ilFzM1yPvNAET+485lU2Cqk0IeowhWPx8ZuRIN85olmde5DV0X7I3mumX/0/KmL4UKLtjY/3zlVRViB/cYnwRXixZDnQjUkK8XOZ7TyV3AuwEqw8Di4haQ7T9AZtnOOsPurRCe2bURNoGkS43a/s3u4sW7f/obe1BR/qawOpWp79wJ/Xdc0o7K6WER1gPzmLR8TQwq5IeMCSa2KzHTTen8nwsWwvwqyejfvoKDn62Vo/qhV7DeUIgdkuUmz45pZQGEDhdS/iZIKT48aWrMIW8VdQPSy9wLrD9RY4uwwtw9aTiN6AJhnLuKGNwHB9LfuOZddntaAlHNechgWvOdBY6owQft2r6uxwP4YnyKzzltAPWvGA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d29071e-8f82-4199-c2f0-08dca4da5ad5
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR10MB7447.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 14:28:11.5051
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gRsEJRJz6jFXdWWvxp8OtBYi8bVw9B9GIOWyeaD+vVJ1Wg5K64mJzcX85b5aRZdYspMWYrnoNktQ0suvOvvrGIZi5u7xA7qf5TKpwboR8zI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4545
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_09,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
- phishscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
- definitions=main-2407150114
-X-Proofpoint-GUID: XRxJ1-bBGWGw5IjY9yZwtfg8IpT-dNXg
-X-Proofpoint-ORIG-GUID: XRxJ1-bBGWGw5IjY9yZwtfg8IpT-dNXg
+X-Received: by 2002:a05:6602:6403:b0:7f8:c159:fec2 with SMTP id
+ ca18e2360f4ac-800050cc601mr122279339f.4.1721053706570; Mon, 15 Jul 2024
+ 07:28:26 -0700 (PDT)
+Date: Mon, 15 Jul 2024 07:28:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d1dd99061d4a0af4@google.com>
+Subject: [syzbot] [mptcp?] WARNING in __mptcp_move_skbs_from_subflow
+From: syzbot <syzbot+d1bff73460e33101f0e7@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org, 
+	matttbe@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/14/2024 10:34 PM, Jason Wang wrote:
-> On Fri, Jul 12, 2024 at 9:19 PM Steve Sistare <steven.sistare@oracle.com> wrote:
->>
->> When device ownership is passed to a new process via VHOST_NEW_OWNER,
->> some devices need to know the new userland addresses of the dma mappings.
->> Define the new iotlb message type VHOST_IOTLB_REMAP to update the uaddr
->> of a mapping.  The new uaddr must address the same memory object as
->> originally mapped.
->>
->> The user must suspend the device before the old address is invalidated,
->> and cannot resume it until after VHOST_IOTLB_REMAP is called, but this
->> requirement is not enforced by the API.
->>
->> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
->> ---
->>   drivers/vhost/vdpa.c             | 58 ++++++++++++++++++++++++++++++++
->>   include/uapi/linux/vhost_types.h | 11 +++++-
->>   2 files changed, 68 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
->> index 4396fe1a90c4..51f71c45c4a9 100644
->> --- a/drivers/vhost/vdpa.c
->> +++ b/drivers/vhost/vdpa.c
->> @@ -1257,6 +1257,61 @@ static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
->>
->>   }
->>
->> +static int vhost_vdpa_process_iotlb_remap(struct vhost_vdpa *v,
->> +                                         struct vhost_iotlb *iotlb,
->> +                                         struct vhost_iotlb_msg *msg)
->> +{
->> +       struct vdpa_device *vdpa = v->vdpa;
->> +       const struct vdpa_config_ops *ops = vdpa->config;
->> +       u32 asid = iotlb_to_asid(iotlb);
->> +       u64 start = msg->iova;
->> +       u64 last = start + msg->size - 1;
->> +       struct vhost_iotlb_map *map;
->> +       int r = 0;
->> +
->> +       if (msg->perm || !msg->size)
->> +               return -EINVAL;
->> +
->> +       map = vhost_iotlb_itree_first(iotlb, start, last);
->> +       if (!map)
->> +               return -ENOENT;
->> +
->> +       if (map->start != start || map->last != last)
->> +               return -EINVAL;
-> 
-> I had a question here, if a buggy user space that:
-> 
-> 1) forget to update some of the mappings
-> 2) address is wrong
-> 3) other cases.
-> 
-> Does this mean the device can DMA to the previous owner?
+Hello,
 
-Yes, but only to the mappings which were already pinned for DMA for this
-device, and the old owner is giving the new owner permission to DMA to that
-memory even without bugs.
+syzbot found the following issue on:
 
-> If yes, does
-> this have security implications?
+HEAD commit:    d0d0cd380055 Merge tag '6.10-rc7-smb3-client-fix' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1320b879980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84344463c2ebf8a1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1bff73460e33101f0e7
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-No.  The previous owner has given the new owner permission to take over.  They
-trust each other completely. In the live update case, they are the same; the new
-owner is the old owner reincarnated.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-- Steve
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d0d0cd38.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/501bce8ef014/vmlinux-d0d0cd38.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8cca4ce21aed/bzImage-d0d0cd38.xz
 
->> +
->> +       /*
->> +        * The current implementation does not support the platform iommu
->> +        * with use_va.  And if !use_va, remap is not necessary.
->> +        */
->> +       if (!ops->set_map && !ops->dma_map)
->> +               return -EINVAL;
->> +
->> +       /*
->> +        * The current implementation supports set_map but not dma_map.
->> +        */
->> +       if (!ops->set_map)
->> +               return -EINVAL;
->> +
->> +       /*
->> +        * Do not verify that the new size@uaddr points to the same physical
->> +        * pages as the old size@uaddr, because that would take time O(npages),
->> +        * and would increase guest down time during live update.  If the app
->> +        * is buggy and they differ, then the app may corrupt its own memory,
->> +        * but no one else's.
->> +        */
->> +
->> +       /*
->> +        * Batch will finish later in BATCH_END by calling set_map for the new
->> +        * addresses collected here.  Non-batch must do it now.
->> +        */
->> +       if (!v->in_batch)
->> +               r = ops->set_map(vdpa, asid, iotlb);
->> +       if (!r)
->> +               map->addr = msg->uaddr;
->> +
->> +       return r;
->> +}
->> +
->>   static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
->>                                             struct vhost_iotlb *iotlb,
->>                                             struct vhost_iotlb_msg *msg)
->> @@ -1336,6 +1391,9 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
->>                          ops->set_map(vdpa, asid, iotlb);
->>                  v->in_batch = false;
->>                  break;
->> +       case VHOST_IOTLB_REMAP:
->> +               r = vhost_vdpa_process_iotlb_remap(v, iotlb, msg);
->> +               break;
->>          default:
->>                  r = -EINVAL;
->>                  break;
->> diff --git a/include/uapi/linux/vhost_types.h b/include/uapi/linux/vhost_types.h
->> index 9177843951e9..35908315ff55 100644
->> --- a/include/uapi/linux/vhost_types.h
->> +++ b/include/uapi/linux/vhost_types.h
->> @@ -79,7 +79,7 @@ struct vhost_iotlb_msg {
->>   /*
->>    * VHOST_IOTLB_BATCH_BEGIN and VHOST_IOTLB_BATCH_END allow modifying
->>    * multiple mappings in one go: beginning with
->> - * VHOST_IOTLB_BATCH_BEGIN, followed by any number of
->> + * VHOST_IOTLB_BATCH_BEGIN, followed by any number of VHOST_IOTLB_REMAP or
->>    * VHOST_IOTLB_UPDATE messages, and ending with VHOST_IOTLB_BATCH_END.
->>    * When one of these two values is used as the message type, the rest
->>    * of the fields in the message are ignored. There's no guarantee that
->> @@ -87,6 +87,15 @@ struct vhost_iotlb_msg {
->>    */
->>   #define VHOST_IOTLB_BATCH_BEGIN    5
->>   #define VHOST_IOTLB_BATCH_END      6
->> +
->> +/*
->> + * VHOST_IOTLB_REMAP registers a new uaddr for the existing mapping at iova.
->> + * The new uaddr must address the same memory object as originally mapped.
->> + * Failure to do so will result in user memory corruption and/or device
->> + * misbehavior.  iova and size must match the arguments used to create the
->> + * an existing mapping.  Protection is not changed, and perm must be 0.
->> + */
->> +#define VHOST_IOTLB_REMAP          7
->>          __u8 type;
->>   };
-> 
-> Thanks
-> 
->>
->> --
->> 2.39.3
->>
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1bff73460e33101f0e7@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 20604 at net/mptcp/protocol.c:693 __mptcp_move_skbs_from_subflow+0x1677/0x2500 net/mptcp/protocol.c:693
+Modules linked in:
+CPU: 0 PID: 20604 Comm: syz.3.4228 Not tainted 6.10.0-rc7-syzkaller-00256-gd0d0cd380055 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__mptcp_move_skbs_from_subflow+0x1677/0x2500 net/mptcp/protocol.c:693
+Code: 85 04 0e 00 00 c6 43 7f 00 e9 fd ef ff ff e8 b0 e4 d0 f6 90 0f 0b 90 e9 d0 f0 ff ff 4c 8b ac 24 90 00 00 00 e8 9a e4 d0 f6 90 <0f> 0b 90 e9 ae f2 ff ff e8 8c e4 d0 f6 90 0f 0b 90 e9 28 eb ff ff
+RSP: 0018:ffffc90000007498 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000081e5 RCX: ffffffff8abd9c87
+RDX: ffff88801ed74880 RSI: ffffffff8abdaa86 RDI: 0000000000000004
+RBP: 00000000000055f0 R08: 0000000000000004 R09: 00000000000081e5
+R10: 00000000000055f0 R11: 0000000000000007 R12: ffff88805b1ce2e8
+R13: ffffc900000075c0 R14: ffff88805b1ce200 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f5d5fb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020287000 CR3: 000000001c02c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ move_skbs_to_msk net/mptcp/protocol.c:809 [inline]
+ mptcp_data_ready+0x2c5/0x960 net/mptcp/protocol.c:854
+ subflow_data_ready+0x51d/0x7d0 net/mptcp/subflow.c:1465
+ tcp_data_ready+0x146/0x5b0 net/ipv4/tcp_input.c:5177
+ tcp_data_queue+0x1a6f/0x5270 net/ipv4/tcp_input.c:5267
+ tcp_rcv_established+0x8e9/0x21b0 net/ipv4/tcp_input.c:6210
+ tcp_v4_do_rcv+0x707/0xab0 net/ipv4/tcp_ipv4.c:1909
+ tcp_v4_rcv+0x2eb4/0x3c00 net/ipv4/tcp_ipv4.c:2345
+ ip_protocol_deliver_rcu+0xba/0x4e0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_rcv+0x2c5/0x5d0 net/ipv4/ip_input.c:569
+ __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5625
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:5739
+ process_backlog+0x133/0x760 net/core/dev.c:6068
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6722
+ napi_poll net/core/dev.c:6791 [inline]
+ net_rx_action+0x9b6/0xf10 net/core/dev.c:6907
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:851 [inline]
+ __dev_queue_xmit+0x872/0x4130 net/core/dev.c:4420
+ dev_queue_xmit include/linux/netdevice.h:3095 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0x16bf/0x2590 net/ipv4/ip_output.c:235
+ __ip_finish_output net/ipv4/ip_output.c:313 [inline]
+ __ip_finish_output+0x49e/0x950 net/ipv4/ip_output.c:295
+ ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
+ dst_output include/net/dst.h:450 [inline]
+ ip_local_out+0x33e/0x4a0 net/ipv4/ip_output.c:129
+ __ip_queue_xmit+0x747/0x1940 net/ipv4/ip_output.c:535
+ __tcp_transmit_skb+0x29c1/0x3da0 net/ipv4/tcp_output.c:1466
+ tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
+ tcp_mtu_probe net/ipv4/tcp_output.c:2546 [inline]
+ tcp_write_xmit+0x83f4/0x87e0 net/ipv4/tcp_output.c:2751
+ __tcp_push_pending_frames+0xaf/0x390 net/ipv4/tcp_output.c:3014
+ tcp_push_pending_frames include/net/tcp.h:2102 [inline]
+ tcp_data_snd_check net/ipv4/tcp_input.c:5693 [inline]
+ tcp_rcv_established+0x972/0x21b0 net/ipv4/tcp_input.c:6212
+ tcp_v4_do_rcv+0x707/0xab0 net/ipv4/tcp_ipv4.c:1909
+ sk_backlog_rcv include/net/sock.h:1106 [inline]
+ __release_sock+0x31b/0x400 net/core/sock.c:2983
+ release_sock+0x5a/0x220 net/core/sock.c:3549
+ __mptcp_push_pending+0x400/0x560 net/mptcp/protocol.c:1623
+ mptcp_sendmsg+0xce5/0x1f20 net/mptcp/protocol.c:1901
+ inet_sendmsg+0x119/0x140 net/ipv4/af_inet.c:853
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ __sys_sendto+0x42c/0x4e0 net/socket.c:2192
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __ia32_sys_sendto+0xdd/0x1b0 net/socket.c:2200
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7447579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5d5f57c EFLAGS: 00000292 ORIG_RAX: 0000000000000171
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000200000c0
+RDX: 00000000fffffe44 RSI: 0000000004000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
