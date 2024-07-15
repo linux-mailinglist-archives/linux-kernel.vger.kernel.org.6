@@ -1,150 +1,273 @@
-Return-Path: <linux-kernel+bounces-253021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7DF931B62
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:03:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCD7931B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5286C1F21EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EEB81F21DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CF881727;
-	Mon, 15 Jul 2024 20:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C171E13BC38;
+	Mon, 15 Jul 2024 20:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bfhINMyY"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRzfJmjH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2933C5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB536137930;
+	Mon, 15 Jul 2024 20:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721073797; cv=none; b=KWGZQdGS7NbQTd74NqdEeMA35tkEeSjrgjtiPxwPqj8dvqPr232Qy6KdcfFTZZ89K89st28DXVcR9j7r9xLxZL1UFjyxU6/zm+rlpfTAbQ1xxTEI4vPQ9g/fkT0w7m6wOGTMBdbL8bTDboVC8+UrD9Gq82ZLpVlL40uZOZGTqPQ=
+	t=1721073806; cv=none; b=JpXaWKKLcwGRTMNhdLVI5VDEVGqc51HhuidWlfuvyKx3CTQFEUq/U2MC57xUahhTFqfknRj8ZYI7+30jUSar6V5LsE442O1w+LILTirTS6HRBtlN5kdfOCModf8+6E/hiG+YlYDIxvJbj/qO6donRJ8lA7S4LLB6Oy7Iahu1m0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721073797; c=relaxed/simple;
-	bh=LuIdkoxmTfRitlVr1Qw1AVF0/G4HTS61UzqwWPujSIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOVIygLrW4aOHPpgluHWe6JV9IHscmmBRozk/+0vli7UTLQqG+/Zqi3czE8fqBjWlvUnLVbxP3IQm5vNGziQkIyz8DVVg9PjRozKGAWOzHL6StCCEXQhtzxpLOi9RHiIaQuK05PId+gixn/3XHud8dVKCJt6fb9smuWQp/rcyko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bfhINMyY; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so6495847a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721073795; x=1721678595; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5hNjlbyDfPn6VY6NE2rBEAs6qfsoUKB4wcgCFIdG00=;
-        b=bfhINMyYeSsDh4F3gtz78c/nXcCl/0KnhbNjIJE08AQ4qtlR5H0AhHk5JL1etPMkYR
-         wCeur8rNpaxqFjMC8g92SYPFQT0fZwwnbUVLbb+y9uiXUYBcS0x6LIxoqEnIzX8l9WuA
-         VdeKOR9vjKxrfwT3afT23GOT3yMVQ+OyalVmRQNtYeDpKevoZ9ldH7LDSSZThAM9rpYp
-         N2/FG9mcpTigI6GWsjxa2Oa77k/fZ8mVKP07cioHpFEATnR4Q1HDBcJxzlzbvfCa5/lK
-         E8PMZz4HwsExFsFIcCjsGHjPjujModdkEk+7IsTnOPGvQlgQDtZATuZfhMt0AglrS8ym
-         yGYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721073795; x=1721678595;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z5hNjlbyDfPn6VY6NE2rBEAs6qfsoUKB4wcgCFIdG00=;
-        b=tGy9tTu4dtRAYtVpa0FKU9KLGYn5BYzrNvaxMXyu9L9ksdI9UOF1QT9gLOiJ1sIpX8
-         40kHhh9O2sZUlWPFEIE8wRJL3KhpkZuVYlHRioCQEvwyFJMHLXNk9CQDbceA3xA+9wGH
-         Sp8jI3Vt40eZthvDQpk3pa8RxqrGC0DxhtDyxv4f9HqkYdaLUlbmugdk8AFamo6mxrcm
-         pDsnx/aduZAAIpBcEvQi3atDfM+Z8hnSZT6rZ2FrwG4Oxjsc7h4/e8nW3gmFddwQ2SXU
-         cSKPYBm6NHpEakNJS9EDpqFlRwr5sr5nFxem9n3WdY3JQOAgWZUDEBD+N7Zcycn0q7SW
-         YcNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs+E5nPSuodAV8DQmvrBVvdpPbhdfSmLZI23NQT+l+mLNeEpWcm5hFQGUb7fK+96RfSzSIr7h6fGmn5AUonMp4sSYY0AF599V6nTZd
-X-Gm-Message-State: AOJu0YzeDOnlsBs4HHy+1l/WWZGW36+KeYib6nTDIWAe+iGtuuP53qWn
-	+B3MH9F+asPTkkYeBfTzoSHq11RL1n8d9vfBS3q3IidPRmXAqmwk/VcN/Z1+tc4=
-X-Google-Smtp-Source: AGHT+IFgfYSA6W4vSXp4JpYnaHy86o2g6R9hvIHamRK4mxIKICrzlB04dOs2ge06euGsX7P5f5Suig==
-X-Received: by 2002:a05:6402:3490:b0:57d:4ca4:61ba with SMTP id 4fb4d7f45d1cf-59e9705fb64mr640665a12.10.1721073794497;
-        Mon, 15 Jul 2024 13:03:14 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b268a276bsm3748256a12.62.2024.07.15.13.03.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 13:03:14 -0700 (PDT)
-Message-ID: <16e51c3a-f36e-46ef-b658-decebcb7f428@linaro.org>
-Date: Mon, 15 Jul 2024 22:03:12 +0200
+	s=arc-20240116; t=1721073806; c=relaxed/simple;
+	bh=/Zg0yBVbRvz4OSY+5LyFA6p9wzvvYuCeQk25LMcp3jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qr2c9I1m1D3IdWJrU1KaUZ94eoISoBSpjkhVE0CttSStZtlofmD1E+G/dwuSvmwlNag5TV0V330Jy6oG8f4azFCEMypZAHD5Ft0FjACzDfhizrIwwa58xa1xNlpahgXVbpZvrWHgnNeFCPjhs57yjuFdF90FzCAQ6lrOnyElXiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRzfJmjH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F086C32782;
+	Mon, 15 Jul 2024 20:03:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721073804;
+	bh=/Zg0yBVbRvz4OSY+5LyFA6p9wzvvYuCeQk25LMcp3jM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aRzfJmjHdW6qNA3cyoNXUTnfj2hs34xZMKKVQRqAffGztJrQz3hrZJVcIoixD2v0/
+	 DeIUro2JZTHRlqZ1+/vX9EWgh0gPSNHomHXtt3Ywkx3rjes1cifADjfr55jctIeEO8
+	 9stXoG1gYIKekPuFgjTbYS1Q7j2/sI1Ed3ZJ36JJLtIqH0vHCa6XYT42TXUyJXY9yb
+	 pPAGa4KVCTFJMlgdfmPypPI+cNat7X5DJS4TyMDXQUg1DE2NKeCxKeYMgD4UhM+mkW
+	 75PGYES16ARrDrvIGTr4cp2Syxyd0adIbc9lG17rdW30cG9zazH70KDxdDYKnqsrCZ
+	 YRpXUX8GBGcsw==
+Date: Mon, 15 Jul 2024 13:03:23 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 3/9] fs: add percpu counters for significant
+ multigrain timestamp events
+Message-ID: <20240715200323.GA103010@frogsfrogsfrogs>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+ <20240715-mgtime-v6-3-48e5d34bd2ba@kernel.org>
+ <20240715183211.GD103014@frogsfrogsfrogs>
+ <7bb897f31fded59aae8d62a6796dd21feebd0642.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] ARM: dts: qcom: sdx55: Add 'linux,pci-domain' to
- PCIe EP controller node
-To: manivannan.sadhasivam@linaro.org,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240715-pci-qcom-hotplug-v1-0-5f3765cc873a@linaro.org>
- <20240715-pci-qcom-hotplug-v1-8-5f3765cc873a@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240715-pci-qcom-hotplug-v1-8-5f3765cc873a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7bb897f31fded59aae8d62a6796dd21feebd0642.camel@kernel.org>
 
-On 15.07.2024 7:33 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Mon, Jul 15, 2024 at 03:53:42PM -0400, Jeff Layton wrote:
+> On Mon, 2024-07-15 at 11:32 -0700, Darrick J. Wong wrote:
+> > On Mon, Jul 15, 2024 at 08:48:54AM -0400, Jeff Layton wrote:
+> > > Four percpu counters for counting various stats around mgtimes, and
+> > > a
+> > > new debugfs file for displaying them:
+> > > 
+> > > - number of attempted ctime updates
+> > > - number of successful i_ctime_nsec swaps
+> > > - number of fine-grained timestamp fetches
+> > > - number of floor value swaps
+> > > 
+> > > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/inode.c | 70
+> > > +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 69 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index 869994285e87..fff844345c35 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -21,6 +21,8 @@
+> > >  #include <linux/list_lru.h>
+> > >  #include <linux/iversion.h>
+> > >  #include <linux/rw_hint.h>
+> > > +#include <linux/seq_file.h>
+> > > +#include <linux/debugfs.h>
+> > >  #include <trace/events/writeback.h>
+> > >  #define CREATE_TRACE_POINTS
+> > >  #include <trace/events/timestamp.h>
+> > > @@ -80,6 +82,10 @@ EXPORT_SYMBOL(empty_aops);
+> > >  
+> > >  static DEFINE_PER_CPU(unsigned long, nr_inodes);
+> > >  static DEFINE_PER_CPU(unsigned long, nr_unused);
+> > > +static DEFINE_PER_CPU(unsigned long, mg_ctime_updates);
+> > > +static DEFINE_PER_CPU(unsigned long, mg_fine_stamps);
+> > > +static DEFINE_PER_CPU(unsigned long, mg_floor_swaps);
+> > > +static DEFINE_PER_CPU(unsigned long, mg_ctime_swaps);
+> > 
+> > Should this all get switched off if CONFIG_DEBUG_FS=n?
+> > 
+> > --D
+> > 
 > 
-> 'linux,pci-domain' property provides the PCI domain number for the PCI
-> endpoint controllers in a SoC. If this property is not present, then an
-> unstable (across boots) unique number will be assigned.
+> Sure, why not. That's simple enough to do.
 > 
-> Use this property to specify the domain number based on the actual hardware
-> instance of the PCI endpoint controllers in SDX55 SoC.
+> I pushed an updated mgtime branch to my git tree. Here's the updated
+> patch that's the only difference:
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+>     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/commit/?h=mgtime&id=ee7fe6e9c0598754861c8620230f15f3de538ca5
+> 
+> Seems to build OK both with and without CONFIG_DEBUG_FS.
 
+LGTM,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Thank you for your work on all this multigrain stuff. :)
 
-Konrad
+--D
+
+>  
+> > >  
+> > >  static struct kmem_cache *inode_cachep __ro_after_init;
+> > >  
+> > > @@ -101,6 +107,42 @@ static inline long get_nr_inodes_unused(void)
+> > >  	return sum < 0 ? 0 : sum;
+> > >  }
+> > >  
+> > > +static long get_mg_ctime_updates(void)
+> > > +{
+> > > +	int i;
+> > > +	long sum = 0;
+> > > +	for_each_possible_cpu(i)
+> > > +		sum += per_cpu(mg_ctime_updates, i);
+> > > +	return sum < 0 ? 0 : sum;
+> > > +}
+> > > +
+> > > +static long get_mg_fine_stamps(void)
+> > > +{
+> > > +	int i;
+> > > +	long sum = 0;
+> > > +	for_each_possible_cpu(i)
+> > > +		sum += per_cpu(mg_fine_stamps, i);
+> > > +	return sum < 0 ? 0 : sum;
+> > > +}
+> > > +
+> > > +static long get_mg_floor_swaps(void)
+> > > +{
+> > > +	int i;
+> > > +	long sum = 0;
+> > > +	for_each_possible_cpu(i)
+> > > +		sum += per_cpu(mg_floor_swaps, i);
+> > > +	return sum < 0 ? 0 : sum;
+> > > +}
+> > > +
+> > > +static long get_mg_ctime_swaps(void)
+> > > +{
+> > > +	int i;
+> > > +	long sum = 0;
+> > > +	for_each_possible_cpu(i)
+> > > +		sum += per_cpu(mg_ctime_swaps, i);
+> > > +	return sum < 0 ? 0 : sum;
+> > > +}
+> > > +
+> > >  long get_nr_dirty_inodes(void)
+> > >  {
+> > >  	/* not actually dirty inodes, but a wild approximation */
+> > > @@ -2655,6 +2697,7 @@ struct timespec64
+> > > inode_set_ctime_current(struct inode *inode)
+> > >  
+> > >  			/* Get a fine-grained time */
+> > >  			fine = ktime_get();
+> > > +			this_cpu_inc(mg_fine_stamps);
+> > >  
+> > >  			/*
+> > >  			 * If the cmpxchg works, we take the new
+> > > floor value. If
+> > > @@ -2663,11 +2706,14 @@ struct timespec64
+> > > inode_set_ctime_current(struct inode *inode)
+> > >  			 * as good, so keep it.
+> > >  			 */
+> > >  			old = floor;
+> > > -			if (!atomic64_try_cmpxchg(&ctime_floor,
+> > > &old, fine))
+> > > +			if (atomic64_try_cmpxchg(&ctime_floor,
+> > > &old, fine))
+> > > +				this_cpu_inc(mg_floor_swaps);
+> > > +			else
+> > >  				fine = old;
+> > >  			now = ktime_mono_to_real(fine);
+> > >  		}
+> > >  	}
+> > > +	this_cpu_inc(mg_ctime_updates);
+> > >  	now_ts = timestamp_truncate(ktime_to_timespec64(now),
+> > > inode);
+> > >  	cur = cns;
+> > >  
+> > > @@ -2682,6 +2728,7 @@ struct timespec64
+> > > inode_set_ctime_current(struct inode *inode)
+> > >  		/* If swap occurred, then we're (mostly) done */
+> > >  		inode->i_ctime_sec = now_ts.tv_sec;
+> > >  		trace_ctime_ns_xchg(inode, cns, now_ts.tv_nsec,
+> > > cur);
+> > > +		this_cpu_inc(mg_ctime_swaps);
+> > >  	} else {
+> > >  		/*
+> > >  		 * Was the change due to someone marking the old
+> > > ctime QUERIED?
+> > > @@ -2751,3 +2798,24 @@ umode_t mode_strip_sgid(struct mnt_idmap
+> > > *idmap,
+> > >  	return mode & ~S_ISGID;
+> > >  }
+> > >  EXPORT_SYMBOL(mode_strip_sgid);
+> > > +
+> > > +static int mgts_show(struct seq_file *s, void *p)
+> > > +{
+> > > +	long ctime_updates = get_mg_ctime_updates();
+> > > +	long ctime_swaps = get_mg_ctime_swaps();
+> > > +	long fine_stamps = get_mg_fine_stamps();
+> > > +	long floor_swaps = get_mg_floor_swaps();
+> > > +
+> > > +	seq_printf(s, "%lu %lu %lu %lu\n",
+> > > +		   ctime_updates, ctime_swaps, fine_stamps,
+> > > floor_swaps);
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +DEFINE_SHOW_ATTRIBUTE(mgts);
+> > > +
+> > > +static int __init mg_debugfs_init(void)
+> > > +{
+> > > +	debugfs_create_file("multigrain_timestamps", S_IFREG |
+> > > S_IRUGO, NULL, NULL, &mgts_fops);
+> > > +	return 0;
+> > > +}
+> > > +late_initcall(mg_debugfs_init);
+> > > 
+> > > -- 
+> > > 2.45.2
+> > > 
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 
