@@ -1,83 +1,59 @@
-Return-Path: <linux-kernel+bounces-252033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA00B930D5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:43:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831A8930D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E001C20EBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF891F2141C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77771750;
-	Mon, 15 Jul 2024 04:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985B613A3E0;
+	Mon, 15 Jul 2024 04:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3rcfS8q"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L74PKLs+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931BE1F61C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 04:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D738D28FA;
+	Mon, 15 Jul 2024 04:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721018604; cv=none; b=sDFJZ1CDJtaXMwULg7El9+IegtKblY2MCdiO8Six+J+8gsKEeyNRg1pXJelt39dMCxf2W+2zLisucdLHCweDLs7qzpMzp1VcjwdoQSHIJNQBQMXdwZCBwcQ+3Vjw1sdtccitKdYtJtKX00lqNomVq0FbV08Sguxk3KlLzNTSzO0=
+	t=1721018729; cv=none; b=bTWlKjB3NREWma4f4gOePc3JYsJIZ9nW7yLwe+G+H3KLqrJ/RSHb1GCSA6PbBt10ul4/CSK5l5nBxM97q3JdRw5LpPcUEH309d0pTAGtf53PEtYyu+H1+GtF2a+6GQE8b66omY1a14tXOsRZr0pIZNBtVGwAzw4UNiRImqvJmCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721018604; c=relaxed/simple;
-	bh=HyxKInobQkvcNIpBi/OdYTvyaV9Mbx2ujjrH7lDcBkc=;
+	s=arc-20240116; t=1721018729; c=relaxed/simple;
+	bh=dmwckEozZOxfYWPsH5K7q9jjZbrRCrhk5aZ3XiX2IEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rW71kVYbnhHFt6oQMAHizVr5WwSITmeuVWEONhPZcPXyAN5uNEX0Vh1/F7C0HffAIVnk9JRuEsbdd6rOFkJml886nOkZOSwAhw+qb7HiUZgRFIyXMmWIUX57nHKn67WYGFzYSS1Hw95aM6UgRL3KsgEo1m0j/5RD+kQFvj9iMQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3rcfS8q; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-75c5bdab7faso1934946a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 21:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721018602; x=1721623402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5IrtwSpcBigLnBZEejCtmXghrUya8pHN9ukA0tWh9Ic=;
-        b=S3rcfS8qRduxEkW3EkNyUJTowInNrSxTBFj0v2mkl8/jkWhu6C0qq+2Uzu9vBIeGcm
-         5tDTYwJa3t0dmNFgLN3SyXV8UUtNPl4ickqItdXSiHXhJL3Lk97X0mnND84BLK3iR6Dj
-         aQTp4OAI0tdqWT+DjafECOa1Dbx8FOSq3daA8SiEjRjrEw7r5FiB0zlUybHmfk/NWR8v
-         aQmETZbnSTQ62cJPL9jBZ5+JflvrPY8gLqtuEICG2ibm2T961Kc63qTjjdYdTuOUNc5/
-         ixSED8gsZYjF1eEouSn2JQqhPlH8rl363XxCjR7Zzn6v4e1AT85Ph/luden2q9ScFA/d
-         c2Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721018602; x=1721623402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5IrtwSpcBigLnBZEejCtmXghrUya8pHN9ukA0tWh9Ic=;
-        b=tnKUAWlH8yT3Q/LNY+7TINX3VUXpOa/QykGcGlngJxUc2Ni/LZLZVTF7sFgy5SrAuX
-         y0kDlmzCbgp69LoVu8A6ek20XoxjBsDs1psntdaeR7+036bovUxs7V4SMrWDj+oyg/iR
-         JZaa7NF2kAQVXj/iOuSWneMisIL4pFyJL7TuFbE2Ivrv8SNS1uwLjt2JHvN3MofNbtG+
-         eICYryx9dQ3mcW/MTuZ1pVMEqie6sxqRgrZYmpb3hmbYhl1WW802MFOv8ZWq3nMSI92e
-         gbMMsMcPHZ1VXI1aJ0jy2fZVq2KjUfh3SUZPxv8qbcvSD9QQZ/6eooLm2K79e4Xpkn9e
-         OCEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIeRm1voFtV3NkHJeQpP8B8+do9ccuZjEXItwyM6fvXTK0DuRpM3EGGEy2/QsKdGOQkag+d4OUbjcE8ja/bTdLAOV5/YYNkobWbmAt
-X-Gm-Message-State: AOJu0YznHh71SH3JmgSbQVMqSQixaDaJYmsGOyxp/9ytZLmCxvctTaC3
-	xOMAIO9ZeJ8qLFt1zs3ZWBFKOmdi1K4vly8W/dlbr+TOFflEEbkN
-X-Google-Smtp-Source: AGHT+IHVK/YIo7jAWdYY/xQaNPzbmnoIW5SH50SlKXAPvV4qcLxYIw8BSR9N6GXz1USZS4tfQy4IFA==
-X-Received: by 2002:a05:6a20:e18a:b0:1c3:b263:d992 with SMTP id adf61e73a8af0-1c3b263da2bmr10835988637.5.1721018601625;
-        Sun, 14 Jul 2024 21:43:21 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc52568sm30837085ad.290.2024.07.14.21.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 21:43:21 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sun, 14 Jul 2024 18:43:20 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] sched_ext: Fixes incorrect type in bpf_scx_init()
-Message-ID: <ZpSo6CrDiQZ40Ysm@slm.duckdns.org>
-References: <20240715021027.77700-1-jiapeng.chong@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXkhMuNLeQ73BWXnjteu+faiFTWZlSU+6U37n+5rmhT+uJFAfCqr3pR+0W6kcHlOcsIUIyGP62m32hG59LxhH2L4EQJuHdmKw//HvOIwqX+P3uzo4iFPzOrCxQVzDs0ZOOc110lO6L1d07gVE/2LI7YX5qw6UZY8azeaLRP29ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L74PKLs+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E15AC4AF0A;
+	Mon, 15 Jul 2024 04:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721018729;
+	bh=dmwckEozZOxfYWPsH5K7q9jjZbrRCrhk5aZ3XiX2IEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L74PKLs+13hB9RUudNATkLyXhvd4KYwevczb3NDG0Q1O8NIRFlWZ68xTN+Xraaopi
+	 MuGwV0QqOjMoWnwuYwuaJ04B/69+gb/8R8GDZUJG1v16s1CnjlvuPwEEjXGXpKO7nt
+	 REMaA0drEFIEiu8FauRxrqzzsAX7PrRe+037b0sNeyUKBoZkkw9VtRrHQFi1WnLCZl
+	 OFsoIsmReeugvrdHHb1Ks3prllMxY9gn1FHUXMw3z79XYo3t4ntYmL0jYF+Mkb64Cj
+	 rnl71tun9pA0+nsmtrKhOTf2Qj8sP3zD6f8W+PMblZ2JPMgzEi1d4sWn0WltnwA/Yf
+	 5SLtnJpoFo7vA==
+Date: Sun, 14 Jul 2024 21:45:27 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+Message-ID: <20240715044527.GA1544@sol.localdomain>
+References: <6064157.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,22 +62,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715021027.77700-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <6064157.lOV4Wx5bFT@rjwysocki.net>
 
-On Mon, Jul 15, 2024 at 10:10:26AM +0800, Jiapeng Chong wrote:
-> The type_id is defined as u32type, if(type_id<0) is invalid, hence
-> modified its type to s32.
+Hello,
+
+On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> ./kernel/sched/ext.c:4958:5-12: WARNING: Unsigned expression compared with zero: type_id < 0.
+> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+> if zone temperature is invalid") caused __thermal_zone_device_update()
+> to return early if the current thermal zone temperature was invalid.
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9523
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> This was done to avoid running handle_thermal_trip() and governor
+> callbacks in that case which led to confusion.  However, it went too
+> far because monitor_thermal_zone() still needs to be called even when
+> the zone temperature is invalid to ensure that it will be updated
+> eventually in case thermal polling is enabled and the driver has no
+> other means to notify the core of zone temperature changes (for example,
+> it does not register an interrupt handler or ACPI notifier).
+> 
+> Also if the .set_trips() zone callback is expected to set up monitoring
+> interrupts for a thermal zone, it needs to be provided with valid
+> boundaries and that can only be done if the zone temperature is known.
+> 
+> Accordingly, to ensure that __thermal_zone_device_update() will
+> run again after a failing zone temperature check, make it call
+> monitor_thermal_zone() regardless of whether or not the zone
+> temperature is valid and make the latter schedule a thermal zone
+> temperature update if the zone temperature is invalid even if
+> polling is not enabled for the thermal zone (however, if this
+> continues to fail, give up after some time).
+> 
+> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
+> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033fca16@linaro.org
+> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Applied to sched_ext/for-6.11.
+On v6.10 I'm seeing the following messages spammed to the kernel log endlessly,
+and reverting this commit fixes it.
 
-Thanks.
+    [  156.410567] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  156.666583] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  156.922598] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  157.178613] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  157.434636] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  157.690774] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  157.946659] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  158.202717] thermal thermal_zone0: failed to read out thermal zone (-61)
+    [  158.458697] thermal thermal_zone0: failed to read out thermal zone (-61)
 
--- 
-tejun
+/sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
+
+- Eric
 
