@@ -1,234 +1,118 @@
-Return-Path: <linux-kernel+bounces-253107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA46931C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2073C931C86
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFE581C21AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C743A1F224D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A50313C9C4;
-	Mon, 15 Jul 2024 21:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9272C13C9A2;
+	Mon, 15 Jul 2024 21:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M9T1kRNq"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="aVVAMbjT"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11A573477
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3231804F;
+	Mon, 15 Jul 2024 21:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721078532; cv=none; b=STvJr6wXTMlWSx0vncjypQuk7U4QcHLyYaL6cJwAhM+oirp21up1C5cdYSBejfeEbpKwK/oe0UmwP/PeDclPZwQ8x9BR9kbv11w6XBLPQyhlpLvUMIVIvg4pRP8qwLNPO/dJlvYVBURLMXWKWN4BZAIOx4/AtWaqOdKx4xOxpWs=
+	t=1721078703; cv=none; b=VM/R780TAnhqrTrGMo5kDaW9hrdY074voaP565mSPKAb/YWKsANRWcXmZM678LU269Z1XHr/esdiKgm9bfniltRVSVx+ElkSV/7qN5Rnlxiiz4ngRECXeTw5xf9ZAPRiGLE7G40HIoCWMscTKmf/hyfDT26mDR26cQDrBZEQPV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721078532; c=relaxed/simple;
-	bh=+znBDLWti/kGJuT7jIDxa1fCKXjDkR7CRkAvMMjBnV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rhhpibq+FwnETXLqItBzoYVGzZEbL07RagFBd+yyL6vGz7jNyIM6zKv5FrewS5Thp2YEwUvpU+Yl8zhnLE1VekWX1iDieZLIMOhKWZJh3obCHEjMZ0mWKm7gyJtcgnK0+WQpGSACl2scN1OUpDRF5E4UNhCBWUQhHok7D0IMuq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M9T1kRNq; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447df43324fso39461cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721078529; x=1721683329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l4Nm3+ofBqebN7d/pyhZLsk5L485DH/suo9KLxMPv8I=;
-        b=M9T1kRNqsMcqG9JZ+qi0yMTmdU9hoWkztLXzsBWdicDM79yXP2wXFHn2DkafDdgJ/2
-         2MfC/ZQsVbt5YpmCYvxAdQjPFne6+i6pI4Xm1k61QVXz6pflXrLpECovr+Fn9tJnNRXG
-         XNHT3mzRpJXuXZJPM9EmjFefoCLARvhbP3JoQaVLyjrLrSOGAPdQvxbuNKfuoO8NDep8
-         qKP5BlsB8Y5Y1Y3tdsrO7CYkPxLfQPXfFs3CsDJB33gavlkfhXUMCFzPylDWZHqReBB/
-         xVY4hCs8cqfjarrjl7odNM+eeN9d4J6vB/JX+gIDVByvhbmwbJrfLj8S8K5J6AtDjYqL
-         1HMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721078529; x=1721683329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l4Nm3+ofBqebN7d/pyhZLsk5L485DH/suo9KLxMPv8I=;
-        b=HWVQd7/oLtwD1MmTNUP2rsl0ueJX0uORUrxup14ann8OfaiuKUrMxS1Rm5jmAssPsp
-         EG6Wm8AqLAHJ0Jlu6gG/47sKr8GgIMKiIumGKX49Nt/46IWCsCbV97Upt0kBwqe98Uli
-         lpGb4v6VdGP21tyon7ez3W8P0M3rbpW1/HBvzVTdGVqQW381q6EBva4eNKilpgFuPRJs
-         kTafhesB3ehga8IiqeOqeDLoJrrrIDBdMB7N5k3SnqnCf/z57bilSSWi/JDY1ExopmJq
-         ehLAxsFa4QHBYRslQ80ajPuwJP/zzrWGfs0TJo4J5t7beXaVqOj2oT4ZpZrDh9kJkHzD
-         ypzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIFS65xu+pj4G49qgfrdZki651gOAy85ChOZsYKubRW9HDtjSpJ1RszVZ+AsVX31rsLcitSrOgnfe5F+wnJBMX6OLZILAJsq+HZI9X
-X-Gm-Message-State: AOJu0Yx2lYoIV2ne1HYAJNt3XMJh60dANqvddzHrwB/+ymYl+I2yYJZ5
-	RTs7nmUWbMdKWp1KfWhPGQEi0/JY3BjQiEk+c/u38wUpVH2vonze+OHPYmaR5SRaMTqR7IJ1z0o
-	1ETlLld/DX/tp520wXq2VrT68r1w3+l2xp1DY
-X-Google-Smtp-Source: AGHT+IGRBg1MEx2t5L1qt0HNnd12qrvNuy1HoT/abY82f5acAhSwMp5kv9wh/3u3A5l72tu4b5WBSmrcFCmo5Xpm8vc=
-X-Received: by 2002:a05:622a:4885:b0:447:f108:f80e with SMTP id
- d75a77b69052e-44f7a6706e1mr1039841cf.16.1721078529421; Mon, 15 Jul 2024
- 14:22:09 -0700 (PDT)
+	s=arc-20240116; t=1721078703; c=relaxed/simple;
+	bh=EOR6hLpb2QL0HN/C/iiaOi7zohEItObVsEXC/2N1c/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DNT2QEO3TRTjfvXM7qoHdARIaXDJ9v2CQWliUzEOdtQiPt+TUDDaXx520P4IG8J/RH6XVkcU1Xh0zAK6cs2DavRQzFfGJDg34TEjpYUgIul1qBwnIVWGbNnP607yNc0pYMaUkeoMRhStWlX20Oi63o9so0ACNf/27+sX8cqmNeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=aVVAMbjT; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355088.ppops.net [127.0.0.1])
+	by m0355088.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 46FJCCRi020132;
+	Mon, 15 Jul 2024 21:24:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=DKIM202306; bh=BjZA6cqy2VyDO6Dw9aWlEv2
+	X8FH5oILJsXW/xzu0lXA=; b=aVVAMbjTlYzZiDF044tztmfGh60RuiitddUwRXH
+	bvsb4ZFu3HiZRKRpYRw1fhR/ZVEskDPvx0JmPXAgI0fiyTGF0lPIm+EaS/+iAuHw
+	SvYbBBzSqZpuGJ6Tb0a7WPkAhF2mISBMItic3KpGNxxDiT8Xrzm727cS4XOG8QCc
+	uBAkKT+M3DJNyYJF+lj859upgPCaQbkgimV17bF4Max5q5PZOpEFeC5jP3Y9TXa9
+	Lr67ptiICvTYzeixY0pwN4UFvrzPJUFR2Ov/5KeZkDE7AitQrJKdTN2aZyS3AWiS
+	8Pu+raFmacmd4CSET2suMXJ/CTPr1ONyQjp0ZIidq4aZNTg==
+Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
+	by m0355088.ppops.net (PPS) with ESMTPS id 40c6rt313e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 21:24:28 +0000 (GMT)
+Received: from va32lmmrp02.lenovo.com (va32lmmrp02.mot.com [10.62.176.191])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4WNFZg5VHXzfBb1;
+	Mon, 15 Jul 2024 21:24:27 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp02.lenovo.com (Postfix) with ESMTPSA id 4WNFZg3Gbfz2XqJt;
+	Mon, 15 Jul 2024 21:24:27 +0000 (UTC)
+Date: Mon, 15 Jul 2024 16:24:26 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-mm@kvack.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Maxwell Bland <mbland@motorola.com>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oliver.sang@intel.com
+Subject: Re: [PATCH v5 1/6] mm: add ARCH_SUPPORTS_NON_LEAF_PTDUMP
+Message-ID: <z5rp6yyr6ofr7fgiyt2nxwqszls4otirx6eohq6d3qozxtujzq@72talp4b36tc>
+References: <yrgrhwfbl7rnmgekiolmojutaqf24x5zphyrwijakzma5pjhre@3yncjv5tqvar>
+ <202407051002.96bf438-oliver.sang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715143342.52236-1-leo.yan@arm.com> <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
- <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com> <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
- <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com> <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com>
-In-Reply-To: <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 15 Jul 2024 14:21:57 -0700
-Message-ID: <CAP-5=fU=LguHNi861L4gmgZWXrrgZtG1w5cdw7hXDxnfWyJyMQ@mail.gmail.com>
-Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407051002.96bf438-oliver.sang@intel.com>
+X-Proofpoint-ORIG-GUID: zDZ_79cIOTAZBVzo0qy3rebeIdidkjtE
+X-Proofpoint-GUID: zDZ_79cIOTAZBVzo0qy3rebeIdidkjtE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_15,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 clxscore=1011 adultscore=0 mlxlogscore=960
+ suspectscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407150167
 
-On Mon, Jul 15, 2024 at 1:36=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> On 7/15/2024 9:06 PM, Ian Rogers wrote:
->
-> [...]
->
-> > So if I add (somewhat taken from tools/testing/selftests/lib.mk):
-> > ```
-> > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > index 5271a4c1d2b3..9edf5f41d6e4 100644
-> > --- a/tools/perf/Makefile.config
-> > +++ b/tools/perf/Makefile.config
-> > @@ -19,6 +19,35 @@ detected_var =3D $(shell echo "$(1)=3D$($(1))" >>
-> > $(OUTPUT).config-detected)
-> > CFLAGS :=3D $(EXTRA_CFLAGS) $(filter-out -Wnested-externs,$(EXTRA_WARNI=
-NGS))
-> > HOSTCFLAGS :=3D $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
-> >
-> > +CLANG :=3D clang
-> > +
-> > +CLANG_TARGET_FLAGS_arm          :=3D arm-linux-gnueabi
-> > +CLANG_TARGET_FLAGS_arm64        :=3D aarch64-linux-gnu
-> > +CLANG_TARGET_FLAGS_hexagon      :=3D hexagon-linux-musl
-> > +CLANG_TARGET_FLAGS_i386         :=3D i386-linux-gnu
-> > +CLANG_TARGET_FLAGS_m68k         :=3D m68k-linux-gnu
-> > +CLANG_TARGET_FLAGS_mips         :=3D mipsel-linux-gnu
-> > +CLANG_TARGET_FLAGS_powerpc      :=3D powerpc64le-linux-gnu
-> > +CLANG_TARGET_FLAGS_riscv        :=3D riscv64-linux-gnu
-> > +CLANG_TARGET_FLAGS_s390         :=3D s390x-linux-gnu
-> > +CLANG_TARGET_FLAGS_x86          :=3D x86_64-linux-gnu
-> > +CLANG_TARGET_FLAGS_x86_64       :=3D x86_64-linux-gnu
-> > +
-> > +# Default to host architecture if ARCH is not explicitly given.
-> > +ifeq ($(ARCH),)
-> > +CLANG_TARGET_FLAGS :=3D $(shell $(CLANG) -print-target-triple)
-> > +else
-> > +CLANG_TARGET_FLAGS :=3D $(CLANG_TARGET_FLAGS_$(ARCH))
-> > +endif
-> > +
-> > +ifeq ($(CLANG_TARGET_FLAGS),)
-> > +$(error Specify CROSS_COMPILE or add '--target=3D' option to lib.mk)
-> > +else
-> > +CLANG_FLAGS     +=3D --target=3D$(CLANG_TARGET_FLAGS)
-> > +endif # CLANG_TARGET_FLAGS
-> > +
-> > +CC :=3D $(CLANG) $(CLANG_FLAGS) -fintegrated-as
-> > +
-> > # Enabled Wthread-safety analysis for clang builds.
-> > ifeq ($(CC_NO_CLANG), 0)
-> >   CFLAGS +=3D -Wthread-safety
-> > ```
-> > I was able to build with:
-> > $ make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -C tools/perf
-> > O=3D/tmp/perf NO_LIBELF=3D1 NO_LIBTRACEEVENT=3D1 NO_LIBPYTHON=3D1 CC=3D=
-clang
-> > CXX=3Dclang++
->
-> This command doesn't work for me.
->
-> Built with 'CROSS_COMPILE=3Daarch64-linux-gnu-' option, the perf tool is =
-still
-> built with GCC:
->
->   $ strings perf | grep GCC
->   GCC: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
->
-> After removing the option 'CROSS_COMPILE=3Daarch64-linux-gnu-', still fai=
-led
-> building.
->
-> Anyway, thanks a lot for sharing.
+On Fri, Jul 05, 2024 at 10:52:26AM GMT, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "WARNING:at_arch/x86/mm/dump_pagetables.c:#note_page" on:
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240705/202407051002.96bf438-oliver.sang@intel.com
+> 
 
-Hmm.. I can repro but I don't see where the string comes from and my
-build is definitely using clang:
-```
-$ make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -C tools/perf
-O=3D/tmp/perf NO_LIBELF=3D1 NO_LIBTRACEEVENT=3D1 NO_LIBPYTHON=3D1 CC=3Dclan=
-g
-CXX=3Dclang++ V=3D1
-...
-clang --target=3Daarch64-linux-gnu -fintegrated-as  -Wbad-function-cast
--Wdeclaration-after-statement -Wformat-security -Wformat-y2k
--Winit-self -Wmissing-declarations -Wmissing-prototypes
--Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls
--Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef
--Wwrite-strings -Wformat -Wno-type-limits -Wshadow -Wthread-safety
--DHAVE_SYSCALL_TABLE_SUPPORT -I/tmp/perf/arch/arm64/include/generated
--DHAVE_ARCH_REGS_QUERY_REGISTER_OFFSET -Werror -DNDEBUG=3D1 -O3
--fno-omit-frame-pointer -Wall -Wextra -std=3Dgnu11 -fstack-protector-all
--U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3D2 -D_LARGEFILE64_SOURCE
--D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE -I~/src/tools/perf/util/include
--I~/src/tools/perf/arch/arm64/include -I~/src/tools/include/
--I~/src/tools/arch/arm64/include/uapi -I~/src/tools/include/uapi
--I~/src/tools/arch/arm64/include/ -I~/src/tools/arch/arm64/
--I/tmp/perf//util -I/tmp/perf/ -I~/src/tools/perf/util
--I~/src/tools/perf -DHAVE_PTHREAD_ATTR_SETAFFINITY_NP
--DHAVE_PTHREAD_BARRIER -DHAVE_EVENTFD_SUPPORT
--DHAVE_GET_CURRENT_DIR_NAME -DHAVE_GETTID -DHAVE_FILE_HANDLE
--DHAVE_AIO_SUPPORT -DHAVE_SCANDIRAT_SUPPORT
--DHAVE_SCHED_GETCPU_SUPPORT -DHAVE_SETNS_SUPPORT -DNO_LIBPERL
--DHAVE_TIMERFD_SUPPORT -DNO_LIBPYTHON -DHAVE_BACKTRACE_SUPPORT
--DHAVE_KVM_STAT_SUPPORT -DHAVE_AUXTRACE_SUPPORT
--I/tmp/perf/libapi/include -I/tmp/perf/libsubcmd/include
--I/tmp/perf/libsymbol/include -I/tmp/perf/libperf/include -I/tmp/perf/
--Wl,-z,noexecstack \
-        /tmp/perf/perf-in.o -Wl,--whole-archive
-/tmp/perf/libapi/libapi.a /tmp/perf/libperf/libperf.a
-/tmp/perf/libsubcmd/libsubcmd.a /tmp/perf/libsymbol/libsymbol.a
-/tmp/perf/libperf-bench.a /tmp/perf/libperf-test.a
-/tmp/perf/libperf-ui.a /tmp/perf/libperf-util.a
-/tmp/perf/libpmu-events.a  -Wl,--no-whole-archive -Wl,--start-group
--lpthread -lrt -lm -ldl -Wl,--end-group -o /tmp/perf/perf
-$ strings /tmp/perf/perf|grep GCC
-GCC: (Debian 13.2.0-13) 13.2.0
-$ find /tmp/perf -name '*.[oa]' -exec sh -c "strings {} | grep GCC" \; -pri=
-nt
-GCC: (Debian 13.2.0-13) 13.2.0
-/tmp/perf/fixdep.o
-GCC: (Debian 13.2.0-13) 13.2.0
-/tmp/perf/fixdep-in.o
-```
-fixdep is being compiled with HOSTCC which isn't clang. Some more digging:
-```
-$ aarch64-linux-gnu-readelf -p .comment /tmp/perf/perf
+Note this config has CONFIG_ARCH_SUPPORTS_NON_LEAF_PTDUMP=y, added by
+this patchset, but x86 does not yet support non-leaf ptdump semantics.
 
-String dump of section '.comment':
- [     0]  GCC: (Debian 13.2.0-13) 13.2.0
- [    1f]  Debian clang version 16.0.6 (20+build1)
-```
-So I suspect that the GCC is coming from crt0.o and that the binary
-was built with clang.
+x86 support is on my TODOs, but I am caught up in other work (a LSM
+and/or *.ko preventing dynamically-allocated datastructure write
+gadgets! (-: ).
 
-Thanks,
-Ian
-
-> Leo
->
-> > Obviously not a complete fix as it is unconditionally forcing CC to
-> > clang, but I don't think we're too far from having a clang/llvm cross
-> > compile build that can work.
-> >
-> > Thanks,
-> > Ian
+Regards,
+Maxwell Bland
 
