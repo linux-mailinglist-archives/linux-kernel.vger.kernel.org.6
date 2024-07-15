@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-253087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0684931C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93999931C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7971C282151
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D9E1F22D52
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D06113C67B;
-	Mon, 15 Jul 2024 20:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E9B13C673;
+	Mon, 15 Jul 2024 21:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="g2ELljR3"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0xALRDM"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41CB6F099
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78450C15B;
+	Mon, 15 Jul 2024 21:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721077104; cv=none; b=qMAM5YUSMm5Um1JVDdzgcgGxnigeAVxBXqDQ8An1nn/NJc9KLOmmuaoC+mKphf3Z2D0Pvle6SNGrF8uYS1iYhik3cm/GkVe7P4v6+oXQqZXUdYNilcskFFEfUPW6NgLpnKw35Sr9iRP6TjKVu3bma5VrZFhvoRIgGUmygWNbBRc=
+	t=1721077226; cv=none; b=Eh7cmOrQZqkGjAHQK/lUc/ySZGI7xPyKhWpR2EcBNUM8BkE+lQxSvCwk885wH4/dRqVaoxj8twSDGb4segmZEOHoKrRTa3eum28cO1tkCN0iHK4xdYXX+VMiBFeV7qxzXTMrzQCjV6eDAHSxAKhYsC4F36qW9WtciLLhEUFsfDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721077104; c=relaxed/simple;
-	bh=tBfLRwUKojVWwnqq++F5SNw6DeFH1PgqRMLYEUmhsMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQsDD2ThGtIFA7wtBKhUdrbGsyrMhR19Og230S/TTJ3YbjN9yYs7mQyhMpxYQck//CT4E8yp5NxEVDH8ASD/Tlk9t/RB7cn2EVECqYaLKWiYR2Yxo4ZA2JqYohqV8zTg1Q+YfZNHBjP//4PRsw22efo7q+pKg5sgaJE5VHAXbJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=g2ELljR3; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1721077090;
-	bh=tBfLRwUKojVWwnqq++F5SNw6DeFH1PgqRMLYEUmhsMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g2ELljR3kyZcaRIzErFtJtRVf3jJxJ2CtWNDhIvhzpo3FP70YT3fKXUWeuXf5wUQr
-	 xTtHFWbbbddCgyA9Nzuay3giiIabcrDRZt1iEsqVeE3d/y2Fsdnu+/x01PiJw6aHj6
-	 XJ2YTGncT9sGbV0MDWbeG9XdNnu8qO7W1QwhvGXk=
-Date: Mon, 15 Jul 2024 22:58:10 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
-References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
- <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
- <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
+	s=arc-20240116; t=1721077226; c=relaxed/simple;
+	bh=AXs4n5DwZIYUmFhnZGwSKgSgTVqJW8zbrkX+BrFGJBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mGXgyV7usGkuGkahVoPOIdTpo3kSuFYMld9ydUE0DGsiHuj2MLtOVm0aWnRr8pv60BPy65YOmNSKqqY5d5wKp1LyNoy15C19g+rqtzivS1sGQH2AqjTpqnWLgj8VKzqevKQLWG+qwHsxeGbycT5cTclB2HRN5vfJrNWL1loG5fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0xALRDM; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58d24201934so1013130a12.0;
+        Mon, 15 Jul 2024 14:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721077223; x=1721682023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ENhBd/giIBmvRGbAMxmpkg4562kxij7xYuSKRQdtVwY=;
+        b=Y0xALRDMRvHcVK7b4HPwdUHuYBaCj1X8fZKHm2RNsakkQy6Bzpbxkhp5kG63XV8/Ru
+         cv/fkcpJM3KtJEOh5ThHKV+GW11dcE5inFq//ES1nd2R6r5ZYNUyyAEQo77Q3OxuJjXz
+         X4zQzgFqRlIVWx1/Gr9HLmj7vP1R5vDSz9xiiNBmyVP9d9nhXbZXjstGIdlHPk9aaf+D
+         zgq6So3XhtCDRk7hyOm+XVKy7SuuqLqOTJ5/UVjKG2BuBdQUkaUUFB8TL0oBB8fUdQKz
+         eLMYV02gzzpnuGiMLoFCsp1qVYfI1P2H9gCngqCVVUUsrSoy8/3UdCFIRnviUcrfH1mb
+         MHIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721077223; x=1721682023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ENhBd/giIBmvRGbAMxmpkg4562kxij7xYuSKRQdtVwY=;
+        b=INPs8SK01VSbU63oEJDJL1aZloDMFqqAnHlFzvimUf7cUZl84Ah8Mybjjy1+plauhX
+         V2XPltFCB6ZyisAw2YBJa71yTTjc97TTiUKwY002gZjO+g4VcJ+x39vHJqxX3fUecy5Y
+         8Gv9hrvN94EvufYxV9RfO411aO8M5/rc6usMs2ZUF8KNo7vpu+AykNQFueRIiA8ebXQ0
+         YKmVTc7JSGz2zgyyk9xVpUyL0XAYn/23UomuX4MSLhY9KmS1eCw+E8gcPioI9+9ysHZK
+         xKkBAAp2kJHShlTo2+u0KgnNUJMHVaxmkt4mo1AEtjfud0rV7tmzfI4ieCCz8lj9ZGFK
+         EPdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9b2RvPMiocac7HuvLO10EkACVZjoB0O+T4rsvg/bSaD8lcg/InweEsZFIw8KunCiwCErGmrvSKAl0LkjiUo6MkW7/GAzgV4tGGbp1n7eBGNkx4gkKspOydYIYwl7ZazuiZCCr18xmzfIpvw==
+X-Gm-Message-State: AOJu0YyViM99UWFY2phvLb9KlBFO7FX2brlsOE68VNp24fVmfqxZuaBp
+	7lYsbb38Z69gpvZTkDwdRuMf+KCq45XavpOLbdjj7vmBpkn/nBZPN/biemSQjZSo0+e+x/lvMnd
+	4EJ9xj+XyTfBnbNrVsL3+yUxRCU4=
+X-Google-Smtp-Source: AGHT+IELtIRuj2IFPS5Auby4HYA8C0n5FWUVbyyAlN9va4Y+v2PBAGvwaktfslNPDacTrYXKOEvXvFlTGlHsl4ysZ4c=
+X-Received: by 2002:a50:a6c3:0:b0:58c:10fd:5082 with SMTP id
+ 4fb4d7f45d1cf-59eefbabcadmr72316a12.10.1721077222774; Mon, 15 Jul 2024
+ 14:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com> <20240711100038.268803-2-vladimir.lypak@gmail.com>
+In-Reply-To: <20240711100038.268803-2-vladimir.lypak@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 15 Jul 2024 14:00:10 -0700
+Message-ID: <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] drm/msm/a5xx: disable preemption in submits by default
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-15 22:23:19+0000, Joel Granados wrote:
-> On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weißschuh wrote:
-> > Adapt the proc_hander function signature to make it clear that handlers
-> > are not supposed to modify their ctl_table argument.
-> > 
-> > This is also a prerequisite to moving the static ctl_table structs into
-> > read-only data.
-> > 
-> > The patch was mostly generated by coccinelle with the following script:
-> > 
-> >     @@
-> >     identifier func, ctl, write, buffer, lenp, ppos;
-> >     @@
-> > 
-> >     int func(
-> >     - struct ctl_table *ctl,
-> >     + const struct ctl_table *ctl,
-> >       int write, void *buffer, size_t *lenp, loff_t *ppos)
-> >     { ... }
-> > 
-> > In addition to the scripted changes some other changes are done:
-> > 
-> > * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
-> >   the "const ctl_table".
-> > 
-> > * The prototypes of non-static handlers in header-files are adapted
-> >   to match the changes of their respective definitions.
-> > 
-> > * kernel/watchdog.c: proc_watchdog_common()
-> >   This is called from a proc_handler itself and is als calling back
-> >   into another proc_handler, making it necessary to change it as part
-> >   of the proc_handler migration.
-> > 
-> > No functional change.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> 
-> The merge window is now open. I want to send this patch on the Wednesday
-> of next week (jul 24).
+On Thu, Jul 11, 2024 at 3:02=E2=80=AFAM Vladimir Lypak <vladimir.lypak@gmai=
+l.com> wrote:
+>
+> Fine grain preemption (switching from/to points within submits)
+> requires extra handling in command stream of those submits, especially
+> when rendering with tiling (using GMEM). However this handling is
+> missing at this point in mesa (and always was). For this reason we get
+> random GPU faults and hangs if more than one priority level is used
+> because local preemption is enabled prior to executing command stream
+> from submit.
+> With that said it was ahead of time to enable local preemption by
+> default considering the fact that even on downstream kernel it is only
+> enabled if requested via UAPI.
+>
+> Fixes: a7a4c19c36de ("drm/msm/a5xx: fix setting of the CP_PREEMPT_ENABLE_=
+LOCAL register")
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a5xx_gpu.c
+> index c0b5373e90d7..6c80d3003966 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> @@ -150,9 +150,13 @@ static void a5xx_submit(struct msm_gpu *gpu, struct =
+msm_gem_submit *submit)
+>         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
+>         OUT_RING(ring, 1);
+>
+> -       /* Enable local preemption for finegrain preemption */
+> +       /*
+> +        * Disable local preemption by default because it requires
+> +        * user-space to be aware of it and provide additional handling
+> +        * to restore rendering state or do various flushes on switch.
+> +        */
+>         OUT_PKT7(ring, CP_PREEMPT_ENABLE_LOCAL, 1);
+> -       OUT_RING(ring, 0x1);
+> +       OUT_RING(ring, 0x0);
 
-Sounds good.
+From a quick look at the a530 pfp fw, it looks like
+CP_PREEMPT_ENABLE_LOCAL is allowed in IB1/IB2 (ie. not restricted to
+kernel RB).  So we should just disable it in the kernel, and let
+userspace send a CP_PREEMPT_ENABLE_LOCAL to enable local preemption.
 
-> @Thomas: Some questions
-> 
-> 1. Are there any updates?
+BR,
+-R
 
-No.
-
-> 2. Does it still apply cleanly against the latest master branch?
-
-Not against mainline master, but against next-20240715.
-To apply cleanly (and compile) on mainline master it still requires the
-net/ and sysctl trees to be merged.
-Otherwise some modified functions are missing, leading to (trivial) merge
-conflicts or the preparation commits are missing, leading to compilation
-errors.
-
-> 3. Are you able to do the last update at the beginning of next week (Jul
->    22)?
-
-Sure.
-
-
-Thomas
+>         /* Allow CP_CONTEXT_SWITCH_YIELD packets in the IB2 */
+>         OUT_PKT7(ring, CP_YIELD_ENABLE, 1);
+> --
+> 2.45.2
+>
 
