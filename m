@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-252434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B499312FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAF3931304
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BD82825FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6691F22D5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D3188CBA;
-	Mon, 15 Jul 2024 11:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBE1891BA;
+	Mon, 15 Jul 2024 11:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TnxjyKLD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pkDMsIrS"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468E316CD36
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5230218732B;
+	Mon, 15 Jul 2024 11:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042626; cv=none; b=lXzT0z9hq3KrZI0bckSdblDAS07LBGzbzyw61uPRQcUtN9p30yRlogMcKFppDba4QpbGR9DChlmJbskJ6rDHMLtaZE0VZvKcgkEzOsNRDqfKtO9DplB7sORrcplBHQgDswvrFL3XzUV56zIc2qYD2SVgH7lQR+bbxXogYF6zbT4=
+	t=1721042710; cv=none; b=rNDHl6hsTubtKgS5bzWs+KTpvIe1b+EN8+RvniEXHmZiWSmx8eIiiLHiZUTCH7EciAPhbL8THNER+mFxvzxTWwddHy4jbLVQC0almV+b8Bo7Dx+wy1JzYbO0KJt1ZtK6w8jP2KWPms9hw3qWzFmkr6Xavm7kQXmdCtox/kPXuo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042626; c=relaxed/simple;
-	bh=OQtKlEM90EGGXqPFr7eTy5TGYT9QG36bLVo6XMtrfXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WhpamKyVfugOI73qNBapvtICIKHCS+Zs8/Va6MhW4jg/8PlEQ0IXAUEqAJJ0XybGY7+Om+HOKGp5tqHJARr+7xbqPDGhmheL2Q6jEdcefUxVbf0EFU7+K0pPH+q0Duf0gBVN84jatlx7KC2403cIHd4Py/epbphe7ma+Rzo+BNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TnxjyKLD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 607F940E019C;
-	Mon, 15 Jul 2024 11:23:42 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kmRqgXZyKDmj; Mon, 15 Jul 2024 11:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721042619; bh=MP1CrB4sQJUWjZBO3Jfu7c26FIeYv3oaH9Eqc+I4mlI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TnxjyKLDkVuopm8xQpRLERXc44buppVNclDDmWMnAb4ByIbjY0KQ2+Cf8Uombi9LX
-	 VvEK6/NXc4brWTwM84G/XIEVhOTMeXRqsG1OBJmZ6XE3U69UbvQc8n1IhFUUhnRwhD
-	 HNZZyhhGny6q3g7sDzi2GPjqI+0sl41qLOuOU3r5jKiF3768DR/HhXLAqpeQSC2qSt
-	 /GQQyTge4kBHIoPQAUF4XAnHFkzbBSBKJOiMEFYvFR3hM4JJPjErmVQnYQd/ogGUBp
-	 vINdE9ic0ZPpThIwjdGwZARgoz5Igh7FsGTSkygK7zKSt+q8ENY1LF9GMSFAoQSirl
-	 GXMzh/8EXUmnLDgFPADbYK4eQ9NkrO6TH0f1g+6BIrTVjUXZwEHtyTLFf8cnJJH403
-	 TaBtc2n3Xcbe56QJp8sovnyiwtbKhro4PJfSKjdrSZw+G4OxVKf4zTTuY81VA6JXXc
-	 kQ6hhvYtTBJyrMf4fh9bwtHDG/fVAQXxzwghMlzXamhAGhrfo9FJeoPOfbDPoF+xFn
-	 qW4pbRqP8yMgWoVQnxAmUDUAnRlUmX1pvZaPZ2wFgcGkGToBThUbcW/yU66qeEIDKy
-	 C4PsbbvjClOJB1ULqqntOfJ9yJaVkhgd4kD6rcmqtXPOeaXaj6woeD3X//lTsWy6QE
-	 0+nI7CMegxrtwILU+Cn/WxZg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6486440E0027;
-	Mon, 15 Jul 2024 11:23:36 +0000 (UTC)
-Date: Mon, 15 Jul 2024 13:23:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cleanups for v6.11-rc1
-Message-ID: <20240715112329.GAZpUGseCodLDRBpET@fat_crate.local>
+	s=arc-20240116; t=1721042710; c=relaxed/simple;
+	bh=PU6heb083DO9pyHUxuV6z2+EoTfM9IExe2kcCIHR/yQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5WxoS/dHGetSlWL8XZ8IZhyWXoV8lKW0dtoLUTajhIr4l738FC2ua0ImfRwcv0hRg2IzDc/CYK8lvJV320jVW3KURFMmNhmeMjbm7GNESQZOXFlS8koPwp8t1l3d3ifcMom4FHudRyt52XBr/ZA6b36v2bBgGFD8N/8BqUw+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pkDMsIrS; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=w8PXDLltAFjw5n3aoL+clMKuIuqFeLfWcdi6geM4hp0=; b=pkDMsIrS5KJZN65XUaAW8DE0aS
+	u+YFD0M12x9ASk62JkDdGAtKBUcEaCCtbWAiLrn+ljHUQMm5jM6ZhZWDa4HI3O1N/Hu9NZ1rmjXe7
+	ssm5zVKgF8OK+qzqEWYBB4QfXDzq2hQ2uJA/qtsjgsGBpdXdHolEv2C3UQ5wPXDvaubpfb6kXFFD5
+	Xz+SZNSBBelhkvR/BfE0z1+ZSKdsw4wskOKiOqQuyjteC7sFH/Q/Yr4bUxFc4ih6+3YbC3u6VZMdM
+	OHjhVBPMkCGPaRDvHMRJVTabdSBCM1NQ/rqyk+0Yj98piwHp0nQfxNi4NWE7pmxpIvdW6lR1PqRLV
+	9M7jqpzQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTJpI-00000001mRi-30pu;
+	Mon, 15 Jul 2024 11:25:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5BC3C3003FF; Mon, 15 Jul 2024 13:25:04 +0200 (CEST)
+Date: Mon, 15 Jul 2024 13:25:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 06/11] perf/uprobe: SRCU-ify uprobe->consumer list
+Message-ID: <20240715112504.GD14400@noisy.programming.kicks-ass.net>
+References: <20240711110235.098009979@infradead.org>
+ <20240711110400.880800153@infradead.org>
+ <CAEf4BzZUVe-dQNcb1VQbEcN4kBFOYrFOB537q4Vhtpm_ebL9aQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +66,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZUVe-dQNcb1VQbEcN4kBFOYrFOB537q4Vhtpm_ebL9aQ@mail.gmail.com>
 
-Hi Linus,
+On Fri, Jul 12, 2024 at 02:06:08PM -0700, Andrii Nakryiko wrote:
+> + bpf@vger, please cc bpf ML for the next revision, these changes are
+> very relevant there as well, thanks
+> 
+> On Thu, Jul 11, 2024 at 4:07 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > With handle_swbp() hitting concurrently on (all) CPUs the
+> > uprobe->register_rwsem can get very contended. Add an SRCU instance to
+> > cover the consumer list and consumer lifetime.
+> >
+> > Since the consumer are externally embedded structures, unregister will
+> > have to suffer a synchronize_srcu().
+> >
+> > A notably complication is the UPROBE_HANDLER_REMOVE logic which can
+> > race against uprobe_register() such that it might want to remove a
+> > freshly installer handler that didn't get called. In order to close
+> > this hole, a seqcount is added. With that, the removal path can tell
+> > if anything changed and bail out of the removal.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  kernel/events/uprobes.c |   60 ++++++++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 50 insertions(+), 10 deletions(-)
+> >
+> 
+> [...]
+> 
+> > @@ -800,7 +808,7 @@ static bool consumer_del(struct uprobe *
+> >         down_write(&uprobe->consumer_rwsem);
+> >         for (con = &uprobe->consumers; *con; con = &(*con)->next) {
+> >                 if (*con == uc) {
+> > -                       *con = uc->next;
+> > +                       WRITE_ONCE(*con, uc->next);
+> 
+> I have a dumb and mechanical question.
+> 
+> Above in consumer_add() you are doing WRITE_ONCE() for uc->next
+> assignment, but rcu_assign_pointer() for uprobe->consumers. Here, you
+> are doing WRITE_ONCE() for the same operation, if it so happens that
+> uc == *con == uprobe->consumers. So is rcu_assign_pointer() necessary
+> in consumer_addr()? If yes, we should have it here as well, no? And if
+> not, why bother with it in consumer_add()?
 
-please pull the x86/cleanups lineup for v6.11-rc1.
+add is a publish and needs to ensure all stores to the object are
+ordered before the object is linked in. Note that rcu_assign_pointer()
+is basically a fancy way of writing smp_store_release().
 
-Thx.
+del otoh does not publish, it removes and doesn't need ordering.
 
----
+It does however need to ensure the pointer write itself isn't torn. That
+is, without the WRITE_ONCE() the compiler is free to do byte stores in
+order to update the 8 byte pointer value (assuming 64bit). This is
+pretty dumb, but very much permitted by C and also utterly fatal in the
+case where an RCU iteration comes by and reads a half-half pointer
+value.
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
-
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_cleanups_for_v6.11_rc1
-
-for you to fetch changes up to 71315037cb7d40cdb2f4fbefad31927f6e6caba5:
-
-  x86/boot: Remove unused function __fortify_panic() (2024-06-14 18:08:45 +0200)
-
-----------------------------------------------------------------
- - Remove an unused function and the documentation of an already removed
-   cmdline parameter
-
-----------------------------------------------------------------
-Nikolay Borisov (1):
-      x86/boot: Remove unused function __fortify_panic()
-
-Thomas Huth (1):
-      Documentation: Remove "mfgpt_irq=" from the kernel-parameters.txt file
-
- Documentation/admin-guide/kernel-parameters.txt | 4 ----
- arch/x86/boot/compressed/misc.c                 | 5 -----
- 2 files changed, 9 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> >                         ret = true;
+> >                         break;
+> >                 }
+> > @@ -1139,9 +1147,13 @@ void uprobe_unregister(struct inode *ino
+> >                 return;
+> >
+> >         down_write(&uprobe->register_rwsem);
+> > +       raw_write_seqcount_begin(&uprobe->register_seq);
+> >         __uprobe_unregister(uprobe, uc);
+> > +       raw_write_seqcount_end(&uprobe->register_seq);
+> >         up_write(&uprobe->register_rwsem);
+> >         put_uprobe(uprobe);
+> > +
+> > +       synchronize_srcu(&uprobes_srcu);
+> >  }
+> >  EXPORT_SYMBOL_GPL(uprobe_unregister);
+> 
+> [...]
 
