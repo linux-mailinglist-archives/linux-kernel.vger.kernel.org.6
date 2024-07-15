@@ -1,146 +1,153 @@
-Return-Path: <linux-kernel+bounces-252618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FCD9315EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3E09315FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D80EB21F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:39:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D76DB21763
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F303B18E753;
-	Mon, 15 Jul 2024 13:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3C718C180;
+	Mon, 15 Jul 2024 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="DDYoZV1T"
-Received: from mr85p00im-ztdg06021101.me.com (mr85p00im-ztdg06021101.me.com [17.58.23.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ViF5AEij"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0901618D4CE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5681E18C169
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050781; cv=none; b=ViCCLpuMIM+csqRG3ee8Jhrtsyt1NQbUMI/sEa1r+UBKaNd7g0tMaDxsqwQFNwvJL2PMqoMXF62nEvuVqVX70M/6AGPrZOXmBuFl4BGceJks2YaMcEmEfXem0nLQzOcgd980sqC7/xsZ42JQWvkdlp18dIady1jP914GQIryQJU=
+	t=1721050960; cv=none; b=KBvBkIoLnefFSUyFL/59Vqh5fikZ6TPlYJf+uC4gOXZ1IEKCQDWqKyq69mq14QtOYso4cCrPYN7ad7XDVxigWj0xPNH/IxzWVIDRFE/WiUW7jYrDfxuql4ML7Yhq0+Ve85sKeHA0il6TJJRtiuNZSmtTRFQ/B2ugc4oZwIAt/qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050781; c=relaxed/simple;
-	bh=d5rRAftrCLl1mUZDOS2Tnb6S+czH5FxVJuKEEqQoHNM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ld464aJVGnEKCdiG6eeurjKqzrZyaebiEpc96xigcW/bjdIQ8TANqot2/v433UNXp3Eh1enqxHRJQ0vN5fEtXwdEzPtXJgQcFe9gqulM9YMZ6XhLLSSuO4CJ0Gu/A9oyVqlq3EHJNplydhMjd0OfxrpUVjBS9cuhNZ92jk92J2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=DDYoZV1T; arc=none smtp.client-ip=17.58.23.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1721050779;
-	bh=3Wx+ye09OH2qUovDpgdt/TWExmZv8ijCOyu8ixZ3Bcs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=DDYoZV1TOwWV0l67M2FcZyu3qUVZ2Dg8fIEDuvZpd/X2pQOOOm3XNWUG19BcSDm8X
-	 jdAJj3u1A9hJUDUQyz5YUOydSGjqgR7EUDNhMrE0rgX2l/ipXrSSohQ1O4AFmc1DCP
-	 HHjIKHmXg/+GixuFsJ4Qs3IdrRfyPhkkknuoK0QyHorbkcW99lC1oQfQSnerSXa/vC
-	 00I20eP7SctBgF6IuKUueqt5kguXzzDwXJlSkBUlC6J7SV/fUw0agcFCPTqJieSsQ3
-	 vRFiundeiqmaG8URgJLswAe2bhe1YB9/9ePokaRtB5zoQ0aLFwTDQq43cFR9GU+2bN
-	 pxHK9QPzQ3xeQ==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06021101.me.com (Postfix) with ESMTPSA id ACD5280140;
-	Mon, 15 Jul 2024 13:39:34 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 15 Jul 2024 21:39:19 +0800
-Subject: [PATCH] wifi: rfkill: Correct parameter type for
- rfkill_set_hw_state_reason()
+	s=arc-20240116; t=1721050960; c=relaxed/simple;
+	bh=HzMPkWVhLvPMul5I88EaLUU/F4JRic0tMeYJg3OIcjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Njc+496LGdbspxcHougeiavIsswCjnr7sQdlGRPrpsmhvjgSmfu4rUQyx7FznDxd/7fyx0DB5IQH+C0fD6OJSLXpDhO/ytBkcR4OwfPw7PbLk06jFYWbFD2cGy/qKVYmiylC2DbA/PNdjzcqdcD+Vq1srocxhg8/jEmwjPtcrYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ViF5AEij; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-79ef7ecc7d4so271491985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721050956; x=1721655756; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yiHzmxhXegf8gKt2fPo1cHqasKjx8M8WTgWEINZ3dns=;
+        b=ViF5AEijNNjO3OSZJtSd8ZVMS/AJ3+jv5BtwthuwUe/EEqsji6I9FpsJNSNUPGH+QW
+         cd7D0vSKp/oXzmdD2JmuODjLrjHHlRsItDq0AABx3ncP5/S2J1rKHB6J6jSzFX8kDD7p
+         714eRpO1f5Px+C+kX0fK1DC5oGG8TuG68vduY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721050956; x=1721655756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yiHzmxhXegf8gKt2fPo1cHqasKjx8M8WTgWEINZ3dns=;
+        b=ATTk3oORkjL+Uoebd3zYN6kasgJPsHyo+ELLbMTcQz8LZWfPw0ksJv66ahzj8ULJxt
+         IBOSmBeCtnmAGxDTki4k7sPf/LehdfBTVS+3MgSvYeoqi/AVF8F0PIiwiVFnZumb6WWR
+         ihirh2HMtbJkiOwig5+4xX69sQc/rc222omqfrw0jkj9jhYoy9T6T/qjSP8ZCqK+LGZP
+         edtqJV8UmCGKMQFgqHdxDyvEU2/OG+a+kQMnZ16oqN7pZzfz4CUJgXIgNDFT/EhFKPjF
+         JzGJzup1Pks82lXracXUaFuxh8QI3xT7AuXwWdoQzEFhNJhWQeALhL2pXo6pq3B6AQF9
+         K7Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkzADkjdxIfUUNt+JeXOrkK5l4FKpEzbKTfYXO7LrL9DEgYDnuwDgcV3iqZdwpRNblDDDzkqaQitsyRVlYebj42rHtmDV9hcy+2bR1
+X-Gm-Message-State: AOJu0YwL3ytH6kyMtner71+scQBgl02J6BiUDPdYC8o8jXdjV6Iwzba9
+	S1okZ/35eHUGKDrI2LQNq7Qr+HzpMoIij+0qiguKYUAuGCreJTMA5EI0eCfxBM539uuCpzINGZI
+	=
+X-Google-Smtp-Source: AGHT+IFrjhQ7XbPt+gLftjtsPYH4J2UfZP+IAWdHSgrgOqaDUq6P15CiX63SAEfpPVLkRZ/QpLTK5A==
+X-Received: by 2002:a05:620a:410a:b0:79d:6d4a:a958 with SMTP id af79cd13be357-79f19a9c7b4mr2549612385a.53.1721050956362;
+        Mon, 15 Jul 2024 06:42:36 -0700 (PDT)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160be3fc6sm201545885a.67.2024.07.15.06.42.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 06:42:35 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44e534a1fbeso462721cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:42:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpLBDkhOL05LD6VbLtLzN4Ki7S/v4/6+iGLEWA2R/9JlCcctGC9LsiLgukqtGOtv/945MI4afojWITh3omr7qsuS6LmuYDcrWiGZGP
+X-Received: by 2002:a05:622a:5a11:b0:447:daca:4b25 with SMTP id
+ d75a77b69052e-44f5a2f9b4emr5548211cf.28.1721050954554; Mon, 15 Jul 2024
+ 06:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-rfkill_fix-v1-1-a9f2d56b4716@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIYmlWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0NT3aK07MycnPi0zApdY2PTxLREo1QLi+REJaCGgqJUoDDYsOjY2lo
- AcQsEhVwAAAA=
-To: Johannes Berg <johannes@sipsolutions.net>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-wireless@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.0
-X-Proofpoint-ORIG-GUID: Fe6RiO1nDP25ClQiAdC6fIWWPu91dHoP
-X-Proofpoint-GUID: Fe6RiO1nDP25ClQiAdC6fIWWPu91dHoP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_08,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=868 suspectscore=0
- malwarescore=0 spamscore=0 phishscore=0 adultscore=0 bulkscore=0
- clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2407150108
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org> <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
+In-Reply-To: <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 15 Jul 2024 06:42:18 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VG3zNVKp75r2zsKzmjC0WfZqY1xrffSQ+jcuAJm7FaQw@mail.gmail.com>
+Message-ID: <CAD=FV=VG3zNVKp75r2zsKzmjC0WfZqY1xrffSQ+jcuAJm7FaQw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
+ Document ATNA45AF01
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hi,
 
-Change type of parameter @reason to enum rfkill_hard_block_reasons for
-API rfkill_set_hw_state_reason() according to its comments.
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- include/linux/rfkill.h | 5 ++---
- net/rfkill/core.c      | 7 +------
- 2 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
-index 373003ace639..4f7558267541 100644
---- a/include/linux/rfkill.h
-+++ b/include/linux/rfkill.h
-@@ -147,7 +147,7 @@ void rfkill_destroy(struct rfkill *rfkill);
-  * Prefer to use rfkill_set_hw_state if you don't need any special reason.
-  */
- bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
--				bool blocked, unsigned long reason);
-+		bool blocked, enum rfkill_hard_block_reasons reason);
- /**
-  * rfkill_set_hw_state - Set the internal rfkill hardware block state
-  * @rfkill: pointer to the rfkill class to modify.
-@@ -279,8 +279,7 @@ static inline void rfkill_destroy(struct rfkill *rfkill)
- }
- 
- static inline bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
--					      bool blocked,
--					      unsigned long reason)
-+		bool blocked, enum rfkill_hard_block_reasons reason)
- {
- 	return blocked;
- }
-diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-index 7a5367628c05..f8ed6431b2f5 100644
---- a/net/rfkill/core.c
-+++ b/net/rfkill/core.c
-@@ -539,18 +539,13 @@ bool rfkill_get_global_sw_state(const enum rfkill_type type)
- #endif
- 
- bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
--				bool blocked, unsigned long reason)
-+		bool blocked, enum rfkill_hard_block_reasons reason)
- {
- 	unsigned long flags;
- 	bool ret, prev;
- 
- 	BUG_ON(!rfkill);
- 
--	if (WARN(reason & ~(RFKILL_HARD_BLOCK_SIGNAL |
--			    RFKILL_HARD_BLOCK_NOT_OWNER),
--		 "hw_state reason not supported: 0x%lx", reason))
--		return rfkill_blocked(rfkill);
--
- 	spin_lock_irqsave(&rfkill->lock, flags);
- 	prev = !!(rfkill->hard_block_reasons & reason);
- 	if (blocked) {
-
----
-base-commit: 338a93cf4a18c2036b567e9f613367f7a52f2511
-change-id: 20240715-rfkill_fix-335afa2e88ca
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+On Mon, Jul 15, 2024 at 5:16=E2=80=AFAM Stephan Gerhold
+<stephan.gerhold@linaro.org> wrote:
+>
+> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backlight
+> control over the DP AUX channel. While it works almost correctly with the
+> generic "edp-panel" compatible, the backlight needs special handling to
+> work correctly. It is similar to the existing ATNA33XC20 panel, just with
+> a larger resolution and size.
+>
+> Add a new "samsung,atna45af01" compatible to describe this panel in the D=
+T.
+> Use the existing "samsung,atna33xc20" as fallback compatible since existi=
+ng
+> drivers should work as-is, given that resolution and size are discoverabl=
+e
+> through the eDP link.
+>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml     | 8 ++=
++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna=
+33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna3=
+3xc20.yaml
+> index 765ca155c83a..5192c93fbd67 100644
+> --- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
+yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
+yaml
+> @@ -14,7 +14,13 @@ allOf:
+>
+>  properties:
+>    compatible:
+> -    const: samsung,atna33xc20
+> +    oneOf:
+> +      # Samsung 13.3" FHD (1920x1080 pixels) eDP AMOLED panel
+> +      - const: samsung,atna33xc20
+> +      # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
+> +      - items:
+> +          - const: samsung,atna45af01
+> +          - const: samsung,atna33xc20
+>
+>    enable-gpios: true
+>    port: true
+>
+> --
+> 2.44.1
+>
 
