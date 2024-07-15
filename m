@@ -1,154 +1,134 @@
-Return-Path: <linux-kernel+bounces-252374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE55A931257
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8FF931396
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABCFF1C21C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCB61C22B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF69C188CB8;
-	Mon, 15 Jul 2024 10:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FEE18A949;
+	Mon, 15 Jul 2024 12:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOyjFO2j"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Lhy4SEBL"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62D6186E3C;
-	Mon, 15 Jul 2024 10:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3968189F5E;
+	Mon, 15 Jul 2024 12:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721039697; cv=none; b=UGFt5i4P60lgEHa5WdLy7BuhUZEEJf770sTjoiHdu8+aaPDJBjTJ4BT5A2eWR+DIR+I6ZibeZ1jFIP4TY6AJm+PMtF9lQ9EBvE2kVji009EuOCGkKbi3qL7Erj6apmb+upDSRVknq1RekuHO8W4iJbvWVDdCHsRDiHF4rx3zHeI=
+	t=1721045158; cv=none; b=WI1+TGp0gsXFOt5qg411M9tS3hr19dIcW3bdHViXiQK+j24OFINYegMKbuovIGx0hlGT4npxabwoz3vj8KMcZviKDgMXU4Mnw3v9kzcftzAi/1RXvZNPlja8qAIvrvvtwiF4nPEdW961EWpRKSTqaUJiOhd0rbGudyrN27wXFts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721039697; c=relaxed/simple;
-	bh=z67cwuXCyLiAJN3piPdcSSVvfm1vvJ6uWmtFWPvPkVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CyWuObka890z4/B9kfCl7fRrl9gAVrksOe2L4ov8V3xd1zucJExz3J7yMki6T2KvYMGTePeycuNRnTarXbOf4wpKa+LWgXu2OWqMOugo8niHOzx5+4iR6iWOXmy9g7zrLS3YqmocRvPfLvfoJVZ1dGk/5PREGNLE//t5bRwAZzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOyjFO2j; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42795086628so27862035e9.3;
-        Mon, 15 Jul 2024 03:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721039693; x=1721644493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dffq/wFS7ipPDTEeMPaMdYsEzjLjNSdN/3BeGkOPcP0=;
-        b=dOyjFO2jC7lHogNBLM8StPpGyN1uw8iMQDRDFKIW0UsDksnYrUmhu6v81GkaiKY6pR
-         g5UHvLpBO4K7jk9Y0dP4L9x/ep/UowvtccDhyOvcjPxPuHY52L+YhNW+vPHjj3De4QoM
-         2EapKJb7tB8W5+pQUnr/ZcvUtTTJ3EISKNx9milXM8hQlZu8iJdaa+a8GQpbUT6ZWVcp
-         5Mbo62U3wNrYxIIgIMJOHCZx5a3/wigp+zRimQQcjpsub4aFoNyTYFw883jzZ50i65NV
-         Gs98vZ9ZocswhixzQUcmFWIq9xc5isdONC++EweUnXCKU9mEjqo3WV+Nig76Arve7is0
-         XR1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721039693; x=1721644493;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dffq/wFS7ipPDTEeMPaMdYsEzjLjNSdN/3BeGkOPcP0=;
-        b=L9QvZ2hjjTVv4Re6+CDxUlCUQmF2ZE5fntTfB9baN08YKu0TLsFppx0NkYonvC3JjE
-         SEjgHxnkVZsLQfzmc/uBkgZE8CP2leCF1mnrxHUwA+NNMzVtF23d1dCVc7zzyp7ORxOF
-         KTz38ew2Xt1OK1hqMmzJ+8iIzLacJDcCMKPguRK9RT2+aYlDGLwvv7Qnqp9DySylMLr5
-         avfcAOF71dEmsBhAX2KRFjqV0Hnet60NJTTU4j0aCoAYpxpwkXUZWEN4xSTD/ynZ3MSD
-         77W/NfQDUHcmrJgAZIq7gDr0STDbskxD5uv5A1UnWvgWOxpJmoCNORGjKwknInN7ouU/
-         lygA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkpuPIhqmn2dBDTU85mOXWy9xFNaoAFr1Llo9rbxTUATNBESQH0kGl51ahJBnhEbOXiYdNRRZwe98sJGHVXQO8E/JEyU/dtvGeu9PrpyCEPhLKVQL/0Ul6AfwLdQjUuzDUpA==
-X-Gm-Message-State: AOJu0YyVAZpXj8VPbwxgBW7s1NcrWu3awQtWPLRLjJA4y8gEiy5MDilO
-	uxJMMeCacbPPxcddIymTczGWAfmmSq1wmkSm4H3c2Wuw3DOrvv6JXtJT95fAKn4=
-X-Google-Smtp-Source: AGHT+IFgbSwxsLnVD4xGnLJHLaWJpwMzFdvR7ziL66wXY2Nvt+hNP/YMHt2EaDX5P4VtWqKCjcfqYg==
-X-Received: by 2002:a05:600c:63c4:b0:426:5e8e:410a with SMTP id 5b1f17b1804b1-426707e31aemr119937755e9.24.1721039693133;
-        Mon, 15 Jul 2024 03:34:53 -0700 (PDT)
-Received: from localhost.localdomain ([156.197.57.143])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f239883sm116126895e9.10.2024.07.15.03.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 03:34:52 -0700 (PDT)
-From: botta633 <bottaawesome633@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	linux-ext4@vger.kernel.org,
-	syzkaller@googlegroups.com,
-	Ahmed Ehab <bottaawesome633@gmail.com>,
-	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v4 2/2] locking/lockdep: Testing lock class and subclass got the same name pointer
-Date: Mon, 15 Jul 2024 16:26:38 +0300
-Message-ID: <20240715132638.3141-2-bottaawesome633@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240715132638.3141-1-bottaawesome633@gmail.com>
-References: <20240715132638.3141-1-bottaawesome633@gmail.com>
+	s=arc-20240116; t=1721045158; c=relaxed/simple;
+	bh=ajfiIwgDbyeUkjhHbM8uaKnyLPFSikOKpQ9Fr/QLc9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GKI3JstuStlmvsb/WbDvoQsjJn886Zx2YhvpJ/PySX825t6HMI16mU1FfgYTwhNwBNFlJX4Jsxu3iOTQuzJRLwekYJnTxTY9+aMhmi3kSGmA7cjHdoEeXztchybnqR2RGOSlntxBoXAQB4O8PrFHZ1xT4OF52tjxIcwvd2EOs6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Lhy4SEBL; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F7KiGN018841;
+	Mon, 15 Jul 2024 14:05:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NUrMaVQn6CtWJA/+Bg8Ut5g/xwCeF9VDjIao3Eq05ss=; b=Lhy4SEBL5/E6CsI+
+	MrQvVgdMl+2xsKfsTLsby1FxY+LFEEb6piKHcdC994A/pHnyaB5QbL1S6LEwvfwQ
+	wNNDFnI9cdd1/7FEouV0X9G3WeiW2U8OS7IuE4c2k7MDBSu2qaI4a2dzum2t4xHc
+	aGGxXwlGsrwpGj12LjZ53oc5Ll5eZEVCJIm12qoz5QlfTnpv8oLJnvJf7lCs5J29
+	Kw8Nheua67/UdIUdcFCFl0OV2DTuRgPiGbNiCgqvh/csfznZM1TXOIxENtaAUBv0
+	f9PA2W+S2kyD1jyWccUIIo25Q75IuvyDfUG1F68Rk86ek1VNjgAQokg/CsESMdKx
+	zF1d5A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40bgfdef4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 14:05:29 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F349A40044;
+	Mon, 15 Jul 2024 14:05:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8132E223F2F;
+	Mon, 15 Jul 2024 14:04:46 +0200 (CEST)
+Received: from [10.48.86.111] (10.48.86.111) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 15 Jul
+ 2024 14:04:45 +0200
+Message-ID: <f6485370-b5cc-4774-aac0-6141fcca4c00@foss.st.com>
+Date: Mon, 15 Jul 2024 14:04:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: rtc: stm32: describe pinmux nodes
+To: Rob Herring <robh@kernel.org>
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Valentin Caron
+	<valentin.caron@foss.st.com>
+References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
+ <20240711140843.3201530-2-valentin.caron@foss.st.com>
+ <20240711225646.GA3270567-robh@kernel.org>
+Content-Language: en-US
+From: Valentin CARON <valentin.caron@foss.st.com>
+In-Reply-To: <20240711225646.GA3270567-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
 
-From: Ahmed Ehab <bottaawesome633@gmail.com>
 
-Checking if the lockdep_map->name will change when setting the subclass.
-It shouldn't change so that the lock class and subclass will have the same
-name
 
-Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-Fixes: de8f5e4f2dc1f ("lockdep: Introduce wait-type checks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
----
-v3->v4:
-    - Fixed subject line truncation.
+On 7/12/24 00:56, Rob Herring wrote:
+> On Thu, Jul 11, 2024 at 04:08:40PM +0200, Valentin Caron wrote:
+>> STM32 RTC is capable to handle 3 specific pins of the soc (out1, out2,
+>> out2_rmp) and to outputs 2 signals (LSCO, alarm-a).
+>>
+>> This feature is configured thanks to pinmux nodes and pinctrl framework.
+>> This feature is available with compatible st,stm32mp1-rtc and
+>> st,stm32mp25-rtc only.
+>>
+>> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
+>> ---
+>>   .../devicetree/bindings/rtc/st,stm32-rtc.yaml | 28 +++++++++++++++++++
+>>   1 file changed, 28 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
+>> index 7a0fab721cf1..09221c2f8a0c 100644
+>> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
+>> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
+>> @@ -53,6 +53,28 @@ properties:
+>>         override default rtc_ck parent clock phandle of the new parent clock of rtc_ck
+>>       maxItems: 1
+>>   
+>> +patternProperties:
+>> +  "^rtc-[a-z]*-[0-9]+$":
+> 
+> rtc--123 is valid? "*" should be "+"
+> 
+> Otherwise,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
- lib/locking-selftest.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Yes, it should be. I will add this in the next version.
 
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..aeed613799ca 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -2710,6 +2710,25 @@ static void local_lock_3B(void)
- 
- }
- 
-+ /** 
-+  * after setting the subclass the lockdep_map.name changes
-+  * if we initialize a new string literal for the subclass
-+  * we will have a new name pointer
-+  */
-+static void class_subclass_X1_name_test(void)
-+{
-+	printk("  --------------------------------------------------------------------------\n");
-+	printk("  | class and subclass name test|\n");
-+	printk("  ---------------------\n");
-+	const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
-+	const char *name_after_setting_subclass;
-+
-+	WARN_ON(!rwsem_X1.dep_map.name);
-+	lockdep_set_subclass(&rwsem_X1, 1);
-+	name_after_setting_subclass = rwsem_X1.dep_map.name;
-+	WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
-+}
-+
- static void local_lock_tests(void)
- {
- 	printk("  --------------------------------------------------------------------------\n");
-@@ -2916,6 +2935,8 @@ void locking_selftest(void)
- 
- 	local_lock_tests();
- 
-+	class_subclass_X1_name_test();
-+
- 	print_testname("hardirq_unsafe_softirq_safe");
- 	dotest(hardirq_deadlock_softirq_not_deadlock, FAILURE, LOCKTYPE_SPECIAL);
- 	pr_cont("\n");
--- 
-2.45.2
-
+Thanks,
+Valentin
 
