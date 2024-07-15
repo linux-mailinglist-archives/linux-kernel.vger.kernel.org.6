@@ -1,135 +1,266 @@
-Return-Path: <linux-kernel+bounces-252525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881F193148D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EE6931490
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EE12824E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B542839C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A13918C333;
-	Mon, 15 Jul 2024 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2gwLK9nm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="12BWbWm4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t7QtKJIg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MaVYswIl"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9685E18C335;
+	Mon, 15 Jul 2024 12:42:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290F91891A4;
-	Mon, 15 Jul 2024 12:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBA918C199;
+	Mon, 15 Jul 2024 12:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721047296; cv=none; b=g38v6Fy1vejNfyq/fJol6pmC3jax4LXKbkxJwom7ZHPEzkl93zyanZmXP9KGi3ljuABQWcW4BBZ//xESEvWyimTLIqm7GfM4cr7KAbU93X6VKHpusr8VOsdnup0UxCyHHZAcwsVlyBzKQXiesgygbBiiC1jZtjvLmK5EuCRh6wU=
+	t=1721047325; cv=none; b=B3uLfEVuaMBRmzQlB+5p43SGd2ovQ+p5JHYPkjlnwD02iXe1quRK3HX5sXOIDtwoF9Mo294mBNgwAPx4Y5Nbmy/PcW1Bi8z+y3TlGQImsih2d4VaIvYCY2QLuN+KIQEFBhyoWPIDhwEyUoY5Hqchzq7BMMigLqVGj/OIV2LukWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721047296; c=relaxed/simple;
-	bh=Kd1x5n31KGsvig77meoWgElqlhgAGmXe/dsL1Y6/vbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAT0ODaXrQ2VlKBafqTn/ZOBvNEI6tOhXQZ+UfdSxhsmKaPY1sAokmOHSwbKgPpwdLKyp4YeiHQER1ue1YENZO1T8TohHpnb5QgyjCM85x1z0Adf6HecvWHc7buKMUpSzD3BCxuusnFT+1fzC0iI7dsnSplldDS5/nK7dNBajzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2gwLK9nm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=12BWbWm4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t7QtKJIg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MaVYswIl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3511F21BAA;
-	Mon, 15 Jul 2024 12:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721047293;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kd1x5n31KGsvig77meoWgElqlhgAGmXe/dsL1Y6/vbE=;
-	b=2gwLK9nm19dwNB5Q1x4JW3UghvAJQYBWvZgU+D3xYtjklg//3D6xfLrRj4HVPY8hY1VZ9l
-	p4bTdMV5SedJfD/+JBEFeY/zixAiLxZYZs5X6zbE6n7feG+WQEQKSoqoGNLZ7M5TqYhHMk
-	6dAjggDJK+OYx4b/7+0JPoDxMU7BOSg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721047293;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kd1x5n31KGsvig77meoWgElqlhgAGmXe/dsL1Y6/vbE=;
-	b=12BWbWm4ROd7ik9vkrPggnPmANRKQMoeif/IB0m8gbThXo7rz5Aw6mN2BcqmlxKdzcHRo5
-	Ycbf0uyAdX8w+sDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721047291;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kd1x5n31KGsvig77meoWgElqlhgAGmXe/dsL1Y6/vbE=;
-	b=t7QtKJIgFQlL5BffnoA7VvCAb8FuGN3m4TPtihBXrL1FX4bNpSsD3fecp/DKVEPTjx5VGy
-	pkM+fl/pueYISEVQd7B5rJhhqNSl/o25pDauhsR23niEPIypxNZo3q6euz9pcBRehfMGvJ
-	dXsdfh3ZGkOKokw+fAwm9y39TdxzxrQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721047291;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kd1x5n31KGsvig77meoWgElqlhgAGmXe/dsL1Y6/vbE=;
-	b=MaVYswIlqnQ02IOYljC3PNz9vGmq+T/CJrLjrMBZfzdamly+gtYQgpdgpl4gYdB2JMx0Z9
-	3+jxdem3dae+0JDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A87F137EB;
-	Mon, 15 Jul 2024 12:41:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6jc/BvsYlWZqRwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 15 Jul 2024 12:41:31 +0000
-Date: Mon, 15 Jul 2024 14:41:29 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Qu Wenru <wqu@suse.com>,
-	Filipe Manana <fdmanana@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v3 0/3] btrfs: more RAID stripe tree updates
-Message-ID: <20240715124129.GE8022@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240712-b4-rst-updates-v3-0-5cf27dac98a7@kernel.org>
+	s=arc-20240116; t=1721047325; c=relaxed/simple;
+	bh=RymC3KXofy0N4SRL7i6l50KYjj5iqOuKS3ZHuEBMQA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d0naAVD2gMc/aY0E2YLMAcVgN4lg+3gz/X4mPrw5YxT28Hm3m409BEg87LI5iubqX1zOZrAJlLlfadpv8Oiy+rR6JCBlNr7TEqBM7O3li2X0UZZoD15RwKOR+f50VNHUwtIYFfOULDG2CFdlAqhcD9Ccp9iVoIR0ONJ1+rV6Ogo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WN1zY5Tp6z4f3m7B;
+	Mon, 15 Jul 2024 20:41:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D9E891A0181;
+	Mon, 15 Jul 2024 20:41:58 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgC3mjgTGZVm3G7QAA--.42161S3;
+	Mon, 15 Jul 2024 20:41:58 +0800 (CST)
+Message-ID: <d33cfec3-4d72-41dc-b020-f17f726ba719@huaweicloud.com>
+Date: Mon, 15 Jul 2024 20:41:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712-b4-rst-updates-v3-0-5cf27dac98a7@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: 0.00
-X-Spamd-Result: default: False [0.00 / 50.00];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto]
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ zhanchengbin <zhanchengbin1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-3-libaokun@huaweicloud.com>
+ <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC3mjgTGZVm3G7QAA--.42161S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3XrW8GF48JrW8WrykXry3XFb_yoW3XFyxpr
+	nayF1UGrWUWwn5Wry7GF1UJryUAw18Jw17JrWrGFy8JFWUAr1aqr10qF109F1DJrZ7Ja15
+	tryUXrnrur1UJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAFBWaU3XsUgAABsA
 
-On Fri, Jul 12, 2024 at 09:48:35AM +0200, Johannes Thumshirn wrote:
-> Three further RST updates targeted for 6.11 (hopefully).
+On 2024/7/15 20:33, Baokun Li wrote:
+> Hi Ojaswin!
+>
+> On 2024/7/14 23:42, Ojaswin Mujoo wrote:
+>> On Wed, Jul 10, 2024 at 12:06:36PM +0800, libaokun@huaweicloud.com 
+>> wrote:
+>>> From: Baokun Li <libaokun1@huawei.com>
+>>>
+>>> In ext4_ext_rm_idx() and ext4_ext_correct_indexes(), there is no proper
+>>> rollback of already executed updates when updating a level of the 
+>>> extents
+>>> path fails, so we may get an inconsistent extents tree, which may 
+>>> trigger
+>>> some bad things in errors=continue mode.
+>>>
+>>> Hence clear the verified bit of modified extents buffers if the tree 
+>>> fails
+>>> to be updated in ext4_ext_rm_idx() or ext4_ext_correct_indexes(), which
+>>> forces the extents buffers to be checked in 
+>>> ext4_valid_extent_entries(),
+>>> ensuring that the extents tree is consistent.
+>>>
+>>> Signed-off-by: zhanchengbin <zhanchengbin1@huawei.com>
+>>> Link: 
+>>> https://lore.kernel.org/r/20230213080514.535568-3-zhanchengbin1@huawei.com/
+>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>> ---
+>>>   fs/ext4/extents.c | 31 +++++++++++++++++++++++++++----
+>>>   1 file changed, 27 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>>> index bff3666c891a..4d589d34b30e 100644
+>>> --- a/fs/ext4/extents.c
+>>> +++ b/fs/ext4/extents.c
+>>> @@ -1749,12 +1749,23 @@ static int ext4_ext_correct_indexes(handle_t 
+>>> *handle, struct inode *inode,
+>>>        break;
+>>>      err = ext4_ext_get_access(handle, inode, path + k);
+>>>      if (err)
+>>> -     break;
+>>> +     goto clean;
+>>>      path[k].p_idx->ei_block = border;
+>>>      err = ext4_ext_dirty(handle, inode, path + k);
+>>>      if (err)
+>>> -     break;
+>>> +     goto clean;
+>>>    }
+>>> + return 0;
+>>> +
+>>> +clean:
+>>> + /*
+>>> +  * The path[k].p_bh is either unmodified or with no verified bit
+>>> +  * set (see ext4_ext_get_access()). So just clear the verified bit
+>>> +  * of the successfully modified extents buffers, which will force
+>>> +  * these extents to be checked to avoid using inconsistent data.
+>>> +  */
+>>> + while (++k < depth)
+>>> +   clear_buffer_verified(path[k].p_bh);
+>>>      return err;
+>>>   }
+>>> @@ -2312,12 +2323,24 @@ static int ext4_ext_rm_idx(handle_t *handle, 
+>>> struct inode *inode,
+>>>        break;
+>>>      err = ext4_ext_get_access(handle, inode, path + k);
+>>>      if (err)
+>>> -     break;
+>>> +     goto clean;
+>>>      path[k].p_idx->ei_block = path[k + 1].p_idx->ei_block;
+>>>      err = ext4_ext_dirty(handle, inode, path + k);
+>>>      if (err)
+>>> -     break;
+>>> +     goto clean;
+>>>    }
+>>> + return 0;
+>>> +
+>>> +clean:
+>>> + /*
+>>> +  * The path[k].p_bh is either unmodified or with no verified bit
+>>> +  * set (see ext4_ext_get_access()). So just clear the verified bit
+>>> +  * of the successfully modified extents buffers, which will force
+>>> +  * these extents to be checked to avoid using inconsistent data.
+>>> +  */
+>>> + while (++k < depth)
+>>> +   clear_buffer_verified(path[k].p_bh);
+>>> +
+>>>    return err;
+>>>   }
+>> Hi Baokun,
+>>
+>> So I wanted to understand the extent handling paths for a whil and 
+>> thought this
+>> patchset was a good chance to finally take sometime and do that.
+>>
+>> I do have a question based on my understanding of this extent 
+>> deletion code:
+>>
+>> So IIUC, ext4_find_extent() will return a path where buffer of each 
+>> node is
+>> verified (via bh = read_extent_tree_block()). So imagine we have the 
+>> following
+>> path (d=depth, blk=idx.ei_block, v=verified, nv=not-verified):
+>>
+>> +------+     +------+     +------+     +------+     +------+
+>> |d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
+>> |blk=1 | --> |blk=1 | --> |blk=1 | --> |blk=1 | --> |pblk=1|
+>> |(v)   |     |(v)   |     |(v)   |     |(v)   |     |      |
+>> +------+     +------+     +------+     +------+     +------+
+>>                                         |d=3   |     +------+
+>>                                         |blk=2 | --> |      |
+>>                                         |(v)   |     |pblk=2|
+>>                                         +------+     |      |
+>>                                                      +------+
+>>
+>> Here, the the last column are the leaf nodes with only 1 extent in 
+>> them.  Now,
+>> say we want to punch the leaf having pblk=1. We'll eventually call
+>> ext4_ext_rm_leaf() -> ext4_ext_rm_idx() to remove the index at depth 
+>> = 3 and
+>> try fixin up the indices in path with ei_block = 2
+>>
+>> Suppose we error out at depth == 1. After the cleanup (introduced in 
+>> this
+>> patch), we'll mark depth = 1 to 4 as non verified:
+>>
+>> +------+     +------+     +------+     +------+     +------+
+>> |d=0   |     |d=1   |     |d=2   |     |d=3   |     |      |
+>> |blk=1 | --> |blk=1 | --> |blk=2 | --> |blk=2 | --> |pblk=2|
+>> |(v)   |     |(nv)  |     |(nv)  |     |(nv)  |     |(nv)  |
+>> +------+     +------+     +------+     +------+     +------+
+> Exactly right!
+>>
+>> And we return and we won't actually mark the FS corrupt until we try 
+>> to check
+>> the bh at depth = 1 above. In this case, the first node is still 
+>> pointing to
+>> wrong ei_block but is marked valid. Aren't we silently leaving the 
+>> tree in an
+>> inconsistent state which might lead to corrupted lookups until we 
+>> actually
+>> touch the affected bh and realise that there's a corruption.
+>>
+>> Am I missing some codepath here? Should we maybe try to clear_valid 
+>> for the
+>> whole tree?
+>>
+>> (I hope the formatting of diagram comes out correct :) )
+Uh, I'm sorry, my diagram is disordered. 😅
+>>
+>> Regards,
+>> ojaswin
+> But the journal will ensure the consistency of the extents path after
+> this patch.
+>
+> When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
+> ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
+> the extents tree to be inconsistent. But the inconsistency just
+> exists in memory and doesn't land on disk.
+>
+> For ext4_ext_get_access(), the handle must have been aborted
+> when it returned an error, as follows:
+ext4_ext_get_access
+  ext4_journal_get_write_access
+   __ext4_journal_get_write_access
+    err = jbd2_journal_get_write_access
+    if (err)
+      ext4_journal_abort_handle
+> For ext4_ext_dirty(), since path->p_bh must not be null and handle
+> must be valid, handle is aborted anyway when an error is returned:
+ext4_ext_dirty
+  __ext4_ext_dirty
+   if (path->p_bh)
+     __ext4_handle_dirty_metadata
+      if (ext4_handle_valid(handle))
+        err = jbd2_journal_dirty_metadata
+         if (!is_handle_aborted(handle) && WARN_ON_ONCE(err))
+           ext4_journal_abort_handle
+> Thus the extents tree will only be inconsistent in memory, so only
+> the verified bit of the modified buffer needs to be cleared to avoid
+> these inconsistent data being used in memory.
+>
+Regards,
+Baokun
 
-6.11 is doable, all are fixes.
 
