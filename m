@@ -1,169 +1,253 @@
-Return-Path: <linux-kernel+bounces-252642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D644931640
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A443931646
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3DA1F222AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8A92824DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EA618E76E;
-	Mon, 15 Jul 2024 13:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2938B18E774;
+	Mon, 15 Jul 2024 14:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCumHgbk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QICMrA05"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7571741CF;
-	Mon, 15 Jul 2024 13:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E3C18C35B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051995; cv=none; b=kKNOjcRuXUqIi6omSsDK7zSJK8jqs3ewu3TVrP3zn3wwbS9ctzT08JndZGrFFQhazUS+8lH4vjpNBp2jfi71AKkVN+TJHfytPgYWQJAGVts4dLxbKGK0OmuYBtG6nHsll/lj+9SgIZZOM4eTxtJa7FG7r9O6wAzKbAv7lDKIF9I=
+	t=1721052031; cv=none; b=tiSxSaOkG0he7HkNH2qsZgY0Ynx1LHFHLoZXu2sxFdigYDPZ/X3Y5p1VQNskgdZIqKDLFvrlIrEs6aNKkSLFqII8VYFbX7Nzkd8Wif6+rdRbpoXPYFA0G5x6D6xnxfVJcJmtIxh01UF/SktTj64EII2ggT6L+eV2UQxOUzakhcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051995; c=relaxed/simple;
-	bh=lnUbh0906J979Z5Q7efi25eR78VP0Dl8hKI4KVfbbUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ssQ7F9xCDW+ZN/iASR9PFI/li+UgmDVcfEupLYp672YNFzPvlN4+Ou8CTdSaJkU01OR8YZ5rJV+KxKCDVWuDWVnmbtQkBeb6Qmls0xUOW9BzB4L1udzqxCZh1BXkqDyoSBJBxpUi3xmSVysPOP2SrpvC21DJlHRKbEUdlLKTVHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCumHgbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5966C4AF0D;
-	Mon, 15 Jul 2024 13:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721051994;
-	bh=lnUbh0906J979Z5Q7efi25eR78VP0Dl8hKI4KVfbbUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cCumHgbkoC5amDcVIZcR/XyQHgWNlhYdkjDZwyPr2R8wA4+tw8yzSMtuNHXzr6qhk
-	 iDW36FEyHKWRZ0tlx+AX+7s8lq6QgU9dxCc7feu29o9r8VU0FYFzxTboX7K1geMkWY
-	 7nfbYdtLIwi5P1Ue2cV1yFgWKYmKrlrC8aAy0vW2DSNOdRlQsTzjx0nu4zib70Qazg
-	 BVZC7y9mVVA7YXtwUmsZA8epkGJwqr93qBMO3GZUHaaNDCG0bFd28N9gTVfx9i51eD
-	 UfuaaXMCS98MjUC11J+CNjnbIni1ohVT10Nyq3/PvnzdDjhWpkIlKWBQWxY0Tt/JMu
-	 AaC/iqNA8ZF+A==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52eafa1717bso4557670e87.2;
-        Mon, 15 Jul 2024 06:59:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7lL0lCBLQikNFwXK8GjkMaZ/uZWKG5bHXErTvW1PZR9yrb+qwPmDcOiF1KYS/iybkea7YLrBN0QroOtg1b2xTiOlo5I/yxJXNBJwDGxjKyl+nnpZ4JNEVzep+0CcSZGPx3e3mDT+n10sU
-X-Gm-Message-State: AOJu0YyKS9Lu0bitzKt7n8hNJAoOgXRK7bXysgF2/cYh+c2KdCUEonSQ
-	ewGhUi869abVfn93nITqgyLdhnUag+OosPrq2BRbkyzeIhNZUJ2dOPDeV/dJMiGXnHUtX92HdEv
-	gg+8m9jLQhwG5bYHjvgIzd93GTb0=
-X-Google-Smtp-Source: AGHT+IGaFyh90uplXRgB/hY8U3HSUQG4Qe5ZCmxPfDj6eYceYcjixf7NM9x/SbwzSyC5SHMKUBqVPkfdOhTAd6GCCP0=
-X-Received: by 2002:a05:6512:3d01:b0:52b:88c3:b2bc with SMTP id
- 2adb3069b0e04-52eb99d151bmr14820662e87.48.1721051993556; Mon, 15 Jul 2024
- 06:59:53 -0700 (PDT)
+	s=arc-20240116; t=1721052031; c=relaxed/simple;
+	bh=RgfB9i51/BJ2f/wvWX+DMEe+gK+qdqWx8xFVzEBeYjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N4RIjTaQqLC/yEgngr3iE/9f+l0XThvRuC8EX8rsuzzhcw89GP3ScCJUowRXEBDn/pfQA22JFKCzWJJXyOhoJbHsr0xGn2+iuw+FNZJKNlCc6J1ZCZrfJYwF7d4AOB7ctUC3h48HsbxU+KnZz/2EDzsaxYgpJTofuDhaosIwoYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QICMrA05; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721052027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GVYJ4ne2AQmg1BRrD/nHV6rBCTnsNSLJ9SYDD3aJK7U=;
+	b=QICMrA05TpCZe6gvwiCOj2GZnAkpeG0JTtIyx2hOyAKJ1uN4HZ4w/aSEmzPkxVdFjgbm1u
+	2qFxRYQP1LZxhFdYgYLW9V73jsK/gdmrhgtry75mWgboHehXgz3zOet+Tz1clZsvkLeMAR
+	RTQtvZ6Coh6NfPvWZXO/xYOiBvvKeb8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-3-mbyqor8aNMOa0P2D-TnHjQ-1; Mon,
+ 15 Jul 2024 10:00:23 -0400
+X-MC-Unique: mbyqor8aNMOa0P2D-TnHjQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75D031955D4C;
+	Mon, 15 Jul 2024 14:00:20 +0000 (UTC)
+Received: from [10.22.9.29] (unknown [10.22.9.29])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 078DA1955D42;
+	Mon, 15 Jul 2024 14:00:17 +0000 (UTC)
+Message-ID: <3061f280-5a4a-4ff6-8b90-ab667a7e8e48@redhat.com>
+Date: Mon, 15 Jul 2024 10:00:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240714105848.1844400-1-masahiroy@kernel.org>
- <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com> <ZpUnnYTRX-OkEPHh@J2N7QTR9R3>
-In-Reply-To: <ZpUnnYTRX-OkEPHh@J2N7QTR9R3>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 15 Jul 2024 22:59:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQyAYahxRakc6tivsxqVOVhXkyCweM8VDKZhP7vWPJpJw@mail.gmail.com>
-Message-ID: <CAK7LNAQyAYahxRakc6tivsxqVOVhXkyCweM8VDKZhP7vWPJpJw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-kbuild@vger.kernel.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-patch v6] cgroup: Show # of subsystem CSSes in cgroup.stat
+To: Kamalesh Babulal <kamalesh.babulal@oracle.com>, Tejun Heo
+ <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240712232959.2494935-1-longman@redhat.com>
+ <8481d9d6-04dd-4c33-ad38-fc8ca1667d16@oracle.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <8481d9d6-04dd-4c33-ad38-fc8ca1667d16@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Jul 15, 2024 at 10:44=E2=80=AFPM Mark Rutland <mark.rutland@arm.com=
-> wrote:
+On 7/13/24 11:50, Kamalesh Babulal wrote:
+> On 7/13/24 4:59 AM, Waiman Long wrote:
+>> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
+>> help manage different structures in various cgroup subsystems by being
+>> an embedded element inside a larger structure like cpuset or mem_cgroup.
+>>
+>> The /proc/cgroups file shows the number of cgroups for each of the
+>> subsystems.  With cgroup v1, the number of CSSes is the same as the
+>> number of cgroups.  That is not the case anymore with cgroup v2. The
+>> /proc/cgroups file cannot show the actual number of CSSes for the
+>> subsystems that are bound to cgroup v2.
+>>
+>> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+>> we can't tell by looking at /proc/cgroups which cgroup subsystems may
+>> be responsible.
+>>
+>> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
+>> cgroup.stat file is now being extended to show the number of live and
+>> dying CSSes associated with all the non-inhibited cgroup subsystems
+>> that have been bound to cgroup v2 as long as they are not both zero.
+>> The number includes CSSes in the current cgroup as well as in all the
+>> descendants underneath it.  This will help us pinpoint which subsystems
+>> are responsible for the increasing number of dying (nr_dying_descendants)
+>> cgroups.
+>>
+>> The CSSes dying counts are stored in the cgroup structure itself
+>> instead of inside the CSS as suggested by Johannes. This will allow
+>> us to accurately track dying counts of cgroup subsystems that have
+>> recently been disabled in a cgroup. It is now possible that a zero
+>> subsystem number is coupled with a non-zero dying subsystem number.
+>>
+>> The cgroup-v2.rst file is updated to discuss this new behavior.
+>>
+>> With this patch applied, a sample output from root cgroup.stat file
+>> was shown below.
+>>
+>> 	nr_descendants 56
+>> 	nr_subsys_cpuset 1
+>> 	nr_subsys_cpu 43
+>> 	nr_subsys_io 43
+>> 	nr_subsys_memory 56
+>> 	nr_subsys_perf_event 57
+>> 	nr_subsys_hugetlb 1
+>> 	nr_subsys_pids 56
+>> 	nr_subsys_rdma 1
+>> 	nr_subsys_misc 1
+>> 	nr_dying_descendants 30
+>> 	nr_dying_subsys_cpuset 0
+>> 	nr_dying_subsys_cpu 0
+>> 	nr_dying_subsys_io 0
+>> 	nr_dying_subsys_memory 30
+>> 	nr_dying_subsys_perf_event 0
+>> 	nr_dying_subsys_hugetlb 0
+>> 	nr_dying_subsys_pids 0
+>> 	nr_dying_subsys_rdma 0
+>> 	nr_dying_subsys_misc 0
+>>
+>> Another sample output from system.slice/cgroup.stat was:
+>>
+>> 	nr_descendants 32
+>> 	nr_subsys_cpu 30
+>> 	nr_subsys_io 30
+>> 	nr_subsys_memory 32
+>> 	nr_subsys_perf_event 33
+>> 	nr_subsys_pids 32
+>> 	nr_dying_descendants 32
+>> 	nr_dying_subsys_cpu 0
+>> 	nr_dying_subsys_io 0
+>> 	nr_dying_subsys_memory 32
+>> 	nr_dying_subsys_perf_event 0
+>> 	nr_dying_subsys_pids 0
+>>
+> [...]
 >
-> On Mon, Jul 15, 2024 at 08:11:08AM +0530, Anshuman Khandual wrote:
-> > On 7/14/24 16:28, Masahiro Yamada wrote:
-> > > The condition 'select HAVE_ARCH_KASAN' is always true because
-> > > there is 'select HAVE_ARCH_KASAN' statement above.
-> > >
-> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > ---
-> > >
-> > >  arch/arm64/Kconfig | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index c87d16b12e9b..d37cbfc3031e 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -167,9 +167,9 @@ config ARM64
-> > >     select HAVE_ARCH_JUMP_LABEL
-> > >     select HAVE_ARCH_JUMP_LABEL_RELATIVE
-> > >     select HAVE_ARCH_KASAN
-> > > -   select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
-> > > -   select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
-> > > -   select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
-> > > +   select HAVE_ARCH_KASAN_VMALLOC
-> > > +   select HAVE_ARCH_KASAN_SW_TAGS
-> > > +   select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
-> > >     # Some instrumentation may be unsound, hence EXPERT
-> > >     select HAVE_ARCH_KCSAN if EXPERT
-> > >     select HAVE_ARCH_KFENCE
-> >
-> > There is another similar instance with HAVE_FUNCTION_GRAPH_TRACER as we=
-ll.
-> > Just wondering if the following change should be folded in here ?
-> >
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -210,8 +210,8 @@ config ARM64
-> >         select HAVE_FTRACE_MCOUNT_RECORD
-> >         select HAVE_FUNCTION_TRACER
-> >         select HAVE_FUNCTION_ERROR_INJECTION
-> > -       select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
-> >         select HAVE_FUNCTION_GRAPH_TRACER
-> > +       select HAVE_FUNCTION_GRAPH_RETVAL
-> >         select HAVE_GCC_PLUGINS
-> >         select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
-> >                 HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
+>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>> index c8e4b62b436a..73774c841100 100644
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -3669,12 +3669,43 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+>>   static int cgroup_stat_show(struct seq_file *seq, void *v)
+>>   {
+>>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
+>> +	struct cgroup_subsys_state *css;
+>> +	int dying_cnt[CGROUP_SUBSYS_COUNT];
+>> +	int ssid;
+>>   
+>>   	seq_printf(seq, "nr_descendants %d\n",
+>>   		   cgroup->nr_descendants);
+>> +
+>> +	/*
+>> +	 * Show the number of live and dying csses associated with each of
+>> +	 * non-inhibited cgroup subsystems that is either enabled in current
+>> +	 * cgroup or has non-zero dying count.
+>> +	 *
+>> +	 * Without proper lock protection, racing is possible. So the
+>> +	 * numbers may not be consistent when that happens.
+>> +	 */
+>> +	rcu_read_lock();
+>> +	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
+>> +		dying_cnt[ssid] = -1;
+>> +		if (BIT(ssid) & cgrp_dfl_inhibit_ss_mask)
+>> +			continue;
+>> +		css = rcu_dereference_raw(cgroup->subsys[ssid]);
+>> +		if (!css && !cgroup->nr_dying_subsys[ssid])
+>> +			continue;
+> Sorry, If I have misread the discussion from the other thread about displaying
+> nr_descendants and nr_dying_subsys_<subsys>. I believe the idea was to print
+> them for enabled and disabled cgroup controllers, so the output stays consistent
+> and does not vary depending on the enabled controllers or previously enabled
+> controller with nr_dying_subsys > 0.
 >
-> That looks like a sensible cleanup, but I think it'd be better as a
-> separate patch.
+> For example, on a rebooted vm:
 >
-> It looks like that has always been redundant since it was introduced in
-> commit
+> # cd /sys/fs/cgroup/
+> # cat cgroup.subtree_control
+> cpu memory pids
 >
->   3646970322464c21 ("arm64: ftrace: Enable HAVE_FUNCTION_GRAPH_RETVAL")
+> # mkdir foo
+> # cat foo/cgroup.stat
+> nr_descendants 0
+> nr_subsys_cpu 1
+> nr_subsys_memory 1
+> nr_subsys_perf_event 1
+> nr_subsys_pids 1
+> nr_dying_descendants 0
+> nr_dying_subsys_cpu 0
+> nr_dying_subsys_memory 0
+> nr_dying_subsys_perf_event 0
+> nr_dying_subsys_pids 0
 >
-> ... would you mind spinning a patch?
+> # echo '+cpuset' > cgroup.subtree_control
 >
-> Mark.
+> # cat foo/cgroup.stat
+> nr_descendants 0
+> nr_subsys_cpuset 1
+> nr_subsys_cpu 1
+> nr_subsys_memory 1
+> nr_subsys_perf_event 1
+> nr_subsys_pids 1
+> nr_dying_descendants 0
+> nr_dying_subsys_cpuset 0
+> nr_dying_subsys_cpu 0
+> nr_dying_subsys_memory 0
+> nr_dying_subsys_perf_event 0
+> nr_dying_subsys_pids 0
 
+I am fine with fine with that. I will update the patch as suggested.
 
-Agree.
+Thanks,
+Longman
 
-We can have a separate patch.
+>> +
+>> +		dying_cnt[ssid] = cgroup->nr_dying_subsys[ssid];
+>> +		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
+>> +			   css ? (css->nr_descendants + 1) : 0);
+>> +	}
+>> +
+>>   	seq_printf(seq, "nr_dying_descendants %d\n",
+>>   		   cgroup->nr_dying_descendants);
+>> -
+>> +	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
+>> +		if (dying_cnt[ssid] >= 0)
+>> +			seq_printf(seq, "nr_dying_subsys_%s %d\n",
+>> +				   cgroup_subsys[ssid]->name, dying_cnt[ssid]);
+>> +	}
+>> +	rcu_read_unlock();
+>>   	return 0;
+>>   }
+>>   
 
-
-I can see more redundant 'if' and 'depends on'.
-
-
-For example, KERNEL_MODE_NEON is always 'y'.
-
-config KERNEL_MODE_NEON
-     def_bool y
-
-
-
-So, I can see redundancy in
-
-
-     select ARCH_HAS_KERNEL_FPU_SUPPORT if KERNEL_MODE_NEON
-
-and
-
-     config EFI
-          bool "UEFI runtime support"
-          depends on OF && !CPU_BIG_ENDIAN
-          depends on KERNEL_MODE_NEON
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
