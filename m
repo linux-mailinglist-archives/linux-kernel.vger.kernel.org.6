@@ -1,54 +1,76 @@
-Return-Path: <linux-kernel+bounces-252821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB65C931877
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D678931878
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C9D1C20F0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33777280E5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E7C1C6A3;
-	Mon, 15 Jul 2024 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FA11CA9E;
+	Mon, 15 Jul 2024 16:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2Bj91dm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C2/pkzq9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F280EE556;
-	Mon, 15 Jul 2024 16:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E5B14295;
+	Mon, 15 Jul 2024 16:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721060970; cv=none; b=W2kmnCe2z46ufZkBx+9QJw+n4Y390xdY1ixUT1SS3kteYaIHxPobcdBAt9ahaAuMYdec/OK8YP108YUoQaBfc731KZ7WLxa54UwUiwMX6s5EZfaSOA4G7g9sNpQG23Fhax/nnRC6JIXi/JvYbxDJS0MyG9yRbx/HkTdbhthVDLM=
+	t=1721061019; cv=none; b=VDFNVFICJjyrY76NqEJUr25e3K3qcE2GlgDd0OOXbP9TbnjHRcK/ISqwYLAFL3Xrnr9xLAhIX7HLi9MqSb45oEGuzbwLQ3WzQjjh3HYUZg4EZfs18VPCddt3/X4aZD1jLE9CEeggOXKwCWH0gcSO1lNA+JiwvOGbCasSEd4Sy+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721060970; c=relaxed/simple;
-	bh=0N+P82yqYjWbLZ2KQ2zdMBpb6KwkUYvEOy7t4Lb/v7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FUxArqar745SDXUAUm5yr09Lkfv/zmWpgwWOBmWfxCR++orcSvsbZoGTk/OiPPdCMs3EbGZnvrbxLY5zh/0/ede8Xv50APIax1k9Fl3vRd/4ztImB6Xm4rJ7quWj31BY21soIUlHwNEitnkCcZqIQY5zgLi6Ls6pgEhqRMS373I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2Bj91dm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774E6C32782;
-	Mon, 15 Jul 2024 16:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721060969;
-	bh=0N+P82yqYjWbLZ2KQ2zdMBpb6KwkUYvEOy7t4Lb/v7I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Y2Bj91dm7cFOEsoaBw+8Ueq12KR3gls2RNCuxmuvp16F2lUSTS+QW/sxKOGpI3cuY
-	 6L1sj4bh0noyooV57ErEWpOn8OLiVlfdVMBj1GRXoPTAXfF+LUWQ+tMzfIFE9x0+/o
-	 +CJtWljSD8nqVvfKg07peSRF1Ucn+PkKV+Oe1JRx9ygxMiEXOlAnQPBj/uPPDDQOsE
-	 /XuJwusYM5txCiFGmSG+rENa5MSOKjOnknCN9dx8XyH/c8Zfjw2cIq4KARQT5Kca88
-	 YNCn0U+NZtuVIiLZV1k2tpOodsaW3yP8HRVvq+slCuwSYeNxM/KbJDMG1u+sPIyY1i
-	 tvNf55BOxB4IQ==
-Date: Mon, 15 Jul 2024 09:29:29 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Kees Cook <keescook@chromium.org>, Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [GIT PULL] pstore updates for v6.11-rc1
-Message-ID: <202407150926.4864BCABD8@keescook>
+	s=arc-20240116; t=1721061019; c=relaxed/simple;
+	bh=kfktuDARrpRgAbO8NSRW1XuQuWx2B9PGzM3Bx/I+ifs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6v/R8JRXLZc5JbLEROHWuwVCez9B4D7TUl7lSUqlAQ+Kxd6Kx3Z5BwT1JEgKolI9pbfeSJBiJ1eAaVOwlmrsXTnMXOS9nI7gEo6LBepO9BwiNkrwZKAepLWFvSenLR+h5N17xk2MAzWYKIprnmykltEBX+TynEP30OOUxP2UUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C2/pkzq9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kfktuDARrpRgAbO8NSRW1XuQuWx2B9PGzM3Bx/I+ifs=; b=C2/pkzq9BaANLiUP+HbfJ+P8Sa
+	fPeSPnViefj7/HsTK0AVSF5ys61S1vbFgbM0p1l1nNrrqo6EluViOcxAkaFQS25IfNAkYKf+3/CwQ
+	qRL+lJqG/iqsbUGoxP/oWGxsO1wSBcm5QU+6+NRdPpHY5rTxA9iDrNVi0UO/Mh304BUGPp1aZtYB2
+	Tjuk4axLNSjnlikwGQJjudap/ERCXhJNy/wP1zTq6cVEEJ3ZsPrYamZlYj/qjDpIr6Qzx+Fur0dxN
+	yTM++UudH6k4r4ez06MLIxAcQ4E8bEXhZ/wqHKe7HTBtsCa1yLX0uHuig0zIv14/SwftPD9IO/jPC
+	DGofXkQw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTOaS-00000001p9D-0eQq;
+	Mon, 15 Jul 2024 16:30:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 809A53003FF; Mon, 15 Jul 2024 18:30:03 +0200 (CEST)
+Date: Mon, 15 Jul 2024 18:30:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kyle Huey <me@kylehuey.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, khuey@kylehuey.com,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing
+ events
+Message-ID: <20240715163003.GK14400@noisy.programming.kicks-ass.net>
+References: <20240713044645.10840-1-khuey@kylehuey.com>
+ <ZpLkR2qOo0wTyfqB@krava>
+ <20240715111208.GB14400@noisy.programming.kicks-ass.net>
+ <CAP045ArBNZ559RFrvDTsHj42S4W+BuReHe+XV2tBPSeoHOMMpA@mail.gmail.com>
+ <20240715150410.GJ14400@noisy.programming.kicks-ass.net>
+ <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,47 +79,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
 
-Hi Linus,
+On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote:
 
-Please pull these small pstore updates for v6.11-rc1. (Note that since there
-were no pstore updates for v6.10, this is based on v6.9-rc2. I forgot
-to do my traditional merge-on-rc2 for this tree when v6.10-rc2 happened.)
+> I think this would probably work but stealing the bit seems far more
+> complicated than just gating on perf_event_is_tracing().
 
-Thanks!
+perf_event_is_tracing() is something like 3 branches. It is not a simple
+conditional. Combined with that re-load and the wrong return value, this
+all wants a cleanup.
 
--Kees
+Using that LSB works, it's just that the code aint pretty.
 
-The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
 
-  Linux 6.9-rc2 (2024-03-31 14:32:39 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v6.11-rc1
-
-for you to fetch changes up to 9b3c13c9ea4ecb2b95948f666560b8df8f358b40:
-
-  pstore: platform: add missing MODULE_DESCRIPTION() macro (2024-06-17 11:56:12 -0700)
-
-----------------------------------------------------------------
-pstore updates for v6.11-rc1
-
-- Add missing MODULE_DESCRIPTION() macro (Jeff Johnson)
-
-- Replace deprecated strncpy() with strscpy() (Justin Stitt)
-
-----------------------------------------------------------------
-Jeff Johnson (1):
-      pstore: platform: add missing MODULE_DESCRIPTION() macro
-
-Justin Stitt (1):
-      pstore/blk: replace deprecated strncpy with strscpy
-
- fs/pstore/blk.c      | 2 +-
- fs/pstore/platform.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
--- 
-Kees Cook
 
