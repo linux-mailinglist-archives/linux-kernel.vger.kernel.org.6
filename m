@@ -1,68 +1,46 @@
-Return-Path: <linux-kernel+bounces-252597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1FA9315B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:29:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7454D9315C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BB91F2209A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1CA3B21DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3BB18D4DA;
-	Mon, 15 Jul 2024 13:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHzXoOTV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8241850B4;
-	Mon, 15 Jul 2024 13:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0118E753;
+	Mon, 15 Jul 2024 13:29:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F1518D4BD;
+	Mon, 15 Jul 2024 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050128; cv=none; b=j1Jgt5sZPkqBKH2n6jjQ3INJp1adrw1TD57J0Q1bUKzWfTNJ9E4PfsTMQ2dLNZFWxfUdnqMzu8Yg0vsKux3eYCoazrDyK5Z0IVf6G1qKfq1df1bbnvzKNZxmtT2MzV6uwsMsd8gJ+znocGrTecquy95NOghlveh6hz+1ACr+Q/w=
+	t=1721050199; cv=none; b=H9o7BJ9d5lv7XI5ZSPhkGuei+ZaP80VQRwgqo7w7yAAO4OnB0l+KETkulefsJr6krKTeK7uwD0tNMBj2Xn1ZG0tBNIertJqQbFeb4uOWVwPfEF7n7KBNY2oGfEYsyOJAjYjiBaYCobALyJqOXTlMVpJAAZrGqWC0WTSUKQUYJH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050128; c=relaxed/simple;
-	bh=9NPVsR5qF98OX4W3Rn+cf8O6kvRmw1U+OlTkFbsCNBk=;
+	s=arc-20240116; t=1721050199; c=relaxed/simple;
+	bh=LdfFp9Oev6TICDgd3+9casnTksNS7wRLmKcfH5O2KAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BgE4D2CfGKEIfVXvcVSKpk322D3U0CGSvlUVCAWnVUsWS1dDcfogn6vKwNyxtUi63f2KAoBaG5qM+dmJvvGtwYA9AkCcr8klvEon3BbM9Lr015fCknQJ2vYjhcv1bP5H/5lqJBLA9UKW94LycfL/G7Ry9LvcLC7bNCAv4VZsRFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHzXoOTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAF5C32782;
-	Mon, 15 Jul 2024 13:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721050128;
-	bh=9NPVsR5qF98OX4W3Rn+cf8O6kvRmw1U+OlTkFbsCNBk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oHzXoOTVOKcEsPc1WEoh/AFThHux2OTJGaNexQJANwjAMCWyikuOdlE6QyIKasB/l
-	 q4BG30mI64ZXRPBHlrQ9QcwQlLqi3WmIxqgdH1KHWx7NrkvyVj/+AJdn0BoDzJEhnH
-	 aiojMvB0aB3Mj0Qyho1LyQrIA7Gx6wag6+MtwT0m9pFZeIoWboscVhfUCIygIgdz9Z
-	 wW0JAylf0jOM5EsLR0LZ3u0Nrs387DyUPanj+p1TVXtpEKPwqTwUnDPoolO9sRF5U0
-	 Kd4iuYiBUpDW00AxJ2Gvv6HwHHdFysGjue9gt3palot2fhKPwwm59PWtwqZjv0Mtvu
-	 prF4NpSM1LLKw==
-Date: Mon, 15 Jul 2024 14:28:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Ajay Sharma <sharmaajay@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>
-Subject: Re: [PATCH net-next] net: mana: Implement
- get_ringparam/set_ringparam for mana
-Message-ID: <20240715132842.GF45692@kernel.org>
-References: <1721014820-2507-1-git-send-email-shradhagupta@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUPSV9F0mRb2AB4xBG8QkUzumwzpDphMi3STkdrv556W1ghH/E66XeilNG1JM98vVZFFy6BIIqETvdokwhnS198kTOS4quoEjSk5xO42C72Ft6s1OJVvyZ6oZ5U1NvWerEgnBjPvH/c4ithrFFKjtBmrPrE79zuRyL963SdDmgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB8D9DA7;
+	Mon, 15 Jul 2024 06:30:21 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EAF03F73F;
+	Mon, 15 Jul 2024 06:29:55 -0700 (PDT)
+Date: Mon, 15 Jul 2024 14:29:49 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+Message-ID: <ZpUkTZYt5DSHP5aP@J2N7QTR9R3>
+References: <20240714105848.1844400-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,55 +49,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1721014820-2507-1-git-send-email-shradhagupta@linux.microsoft.com>
+In-Reply-To: <20240714105848.1844400-1-masahiroy@kernel.org>
 
-On Sun, Jul 14, 2024 at 08:40:20PM -0700, Shradha Gupta wrote:
-> Currently the values of WQs for RX and TX queues for MANA devices
-> are hardcoded to default sizes.
-> Allow configuring these values for MANA devices as ringparam
-> configuration(get/set) through ethtool_ops.
+On Sun, Jul 14, 2024 at 07:58:46PM +0900, Masahiro Yamada wrote:
+> The condition 'select HAVE_ARCH_KASAN' is always true because
+> there is 'select HAVE_ARCH_KASAN' statement above.
 > 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Reviewed-by: Long Li <longli@microsoft.com>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-...
+Looks like we forgot to simplify this in commit:
 
-> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-> index e39b8676fe54..3e27ca5155aa 100644
-> --- a/include/net/mana/mana.h
-> +++ b/include/net/mana/mana.h
-> @@ -38,9 +38,21 @@ enum TRI_STATE {
->  
->  #define COMP_ENTRY_SIZE 64
->  
-> -#define RX_BUFFERS_PER_QUEUE 512
-> +/* This Max value for RX buffers is derived from __alloc_page()'s max page
-> + * allocation calculation. It allows maximum 2^(MAX_ORDER -1) pages. RX buffer
-> + * size beyond this value gets rejected by __alloc_page() call.
-> + */
-> +#define MAX_RX_BUFFERS_PER_QUEUE 8192
-> +#define DEF_RX_BUFFERS_PER_QUEUE 512
-> +#define MIN_RX_BUFFERS_PER_QUEUE 128
->  
-> -#define MAX_SEND_BUFFERS_PER_QUEUE 256
-> +/* This max value for TX buffers is dervied as the maximum allocatable
+  0383808e4d99ac31 ("arm64: kasan: Reduce minimum shadow alignment and enable 5 level paging")
 
-nit: derived
+... where we began selecting HAVE_ARCH_KASAN unconditionally.
 
-     Flagged by checkpatch --codespell
+FWIW:
 
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
+Mark.
 
-> + * pages supported on host per guest through testing. TX buffer size beyond
-> + * this value is rejected by the hardware.
-> + */
-> +#define MAX_TX_BUFFERS_PER_QUEUE 16384
-> +#define DEF_TX_BUFFERS_PER_QUEUE 256
-> +#define MIN_TX_BUFFERS_PER_QUEUE 128
->  
->  #define EQ_SIZE (8 * MANA_PAGE_SIZE)
->  
-
-...
+> ---
+> 
+>  arch/arm64/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index c87d16b12e9b..d37cbfc3031e 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -167,9 +167,9 @@ config ARM64
+>  	select HAVE_ARCH_JUMP_LABEL
+>  	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+>  	select HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
+> +	select HAVE_ARCH_KASAN_VMALLOC
+> +	select HAVE_ARCH_KASAN_SW_TAGS
+> +	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+>  	# Some instrumentation may be unsound, hence EXPERT
+>  	select HAVE_ARCH_KCSAN if EXPERT
+>  	select HAVE_ARCH_KFENCE
+> -- 
+> 2.43.0
+> 
+> 
 
