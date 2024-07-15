@@ -1,85 +1,56 @@
-Return-Path: <linux-kernel+bounces-253003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77E9931B0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A55931A6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F5D1C21BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F401C214AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F1A1292CE;
-	Mon, 15 Jul 2024 19:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE40F74BED;
+	Mon, 15 Jul 2024 18:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIBOO7qd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4r54cAh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7C215491
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FED18B1A;
+	Mon, 15 Jul 2024 18:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721072073; cv=none; b=g14Jg0zL8Rf59381jVAPNay2NJVJJzJ7VR80srURgOBclp9gB7OXwgQBix1BERZReS3RdNGJrI4qn0hVLgLkU7v4vjXb6M9Kj2tlUJDfL4Dfz7wCv+O6s+W8sEtokubYUX0Nls05h/KLPWs4maThirvWBqY7Vd1YRRwIUoyJF2M=
+	t=1721068767; cv=none; b=pCgU/lerbTX3OqrRsOstAZkVdpzfa4lDVFTCHMsF10iX0VAwkPH0yYxSGh7sbuYjChKri+RwUlHHdVSqlldrL+Uz84IQQ4v0PQoruGd3nKA+i44QY81097yAgAA/MLCId0PtUyFQDcZDvW9ouFHZxZi8xgx54tyTs5dacQxaIDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721072073; c=relaxed/simple;
-	bh=C8RUPX9LfEut7+xmVjhiOqGNaYtXmgw8P+dKtJhZm8c=;
+	s=arc-20240116; t=1721068767; c=relaxed/simple;
+	bh=1cjxxXmWx1kVKV08hjeEzZPWLZBDKu/qdcCDr9soM7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ho/5yG6E7TiD5BBMLOp2hIg+MpM/biPxtC+BY9YKD8VNAWkdW/4MvP6/vJsDmg+JtjoMS1tDjKPVsPDyFgMlNbGtta3aso8JnJXTz7swwcjOCCu9PTU4v+KHPoBThBydbaCIn6WeTP3ahiGBjJbU+xjC17Z8VJkM1TikRq7xBZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FIBOO7qd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721072069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1KX7IEr2zKnMtYo6NKNA4TARkllCcLg1jqXMkrl6O60=;
-	b=FIBOO7qdp/UjZ6RE7sec3/RAaKqOMkrC08yqoaGysp/dXk1RnY0T5hM+sz2WMSNPdzEY4Y
-	qMalH0H9NUZBJwhPOum5I0PDL02k3jGAMaEJpgDg72PVFgJ2sWklRX1W0O57FCrKqBIfEP
-	15O48wdBbnV8VOgk92ZgMJ78Jnosh60=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-497-seHeETyFOkWXnSB293hp-Q-1; Mon,
- 15 Jul 2024 15:34:28 -0400
-X-MC-Unique: seHeETyFOkWXnSB293hp-Q-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C62E11955D44;
-	Mon, 15 Jul 2024 19:34:24 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.7])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 184B73000190;
-	Mon, 15 Jul 2024 19:34:22 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id E7095400EC901; Mon, 15 Jul 2024 15:38:27 -0300 (-03)
-Date: Mon, 15 Jul 2024 15:38:27 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Vlastimil Babka <vbabka@suse.cz>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
-Message-ID: <ZpVsow629seGUXRz@tpad>
-References: <20240622035815.569665-1-leobras@redhat.com>
- <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsz1YHAbCUbNpYY+fCnYYeudvYrTc0qjKe64z0sUuWRF1gTB+ryLTDd742pUJYc6fYR60KPHUlgzB1Ccj1br/RavICaEpPpf+n6agDqZK567CRJS9Qh/aq3Ez76E4BR7cr5BSvDTi7FqrhtDBvX3ego7TRy0kMcSb1IY8FQG3Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4r54cAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CCDC4AF0D;
+	Mon, 15 Jul 2024 18:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721068766;
+	bh=1cjxxXmWx1kVKV08hjeEzZPWLZBDKu/qdcCDr9soM7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j4r54cAhTdjc26P34/QXDj/bCJDUthDIDjG3rUA7TdlnhChgz566iGZMosvvzWBlJ
+	 noms/2AvrMr63mmF7+bUtKiMtRasaxopEyAPzJF7jj9KELNzQnDsS7T2ByzzOpLmyx
+	 +K2YH0p4GM8GHj/pmZtrTiTQk2sjUg3LCZGi8E7fh+ZFJ/Y/Ab82u3bmLucA4GHBGT
+	 maWxQGnSsn84O79LiiK24mAYswQNcPFyPR22x2ooAN3nFGvu+yXKHM4KWnaK/FQkNQ
+	 fcUa2rnTbdMxEKh6OstkQ/JJ395/trccPszmbY60EXQQoE/gsZyzVwvqODVieVhZg5
+	 rZaBm4OFuXhLg==
+Date: Mon, 15 Jul 2024 19:39:22 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, marcin.s.wojtas@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: mvpp2: Improve data types and use min()
+Message-ID: <20240715183922.GA263242@kernel.org>
+References: <20240711154741.174745-1-thorsten.blum@toblux.com>
+ <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,43 +59,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
 
-On Mon, Jun 24, 2024 at 09:31:51AM +0200, Vlastimil Babka wrote:
-> Hi,
-> 
-> you've included tglx, which is great, but there's also LOCKING PRIMITIVES
-> section in MAINTAINERS so I've added folks from there in my reply.
-> Link to full series:
-> https://lore.kernel.org/all/20240622035815.569665-1-leobras@redhat.com/
-> 
-> On 6/22/24 5:58 AM, Leonardo Bras wrote:
-> > The problem:
-> > Some places in the kernel implement a parallel programming strategy
-> > consisting on local_locks() for most of the work, and some rare remote
-> > operations are scheduled on target cpu. This keeps cache bouncing low since
-> > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> > kernels, even though the very few remote operations will be expensive due
-> > to scheduling overhead.
+On Mon, Jul 15, 2024 at 04:44:01PM +0100, Russell King (Oracle) wrote:
+> On Thu, Jul 11, 2024 at 05:47:43PM +0200, Thorsten Blum wrote:
+> > Change the data type of the variable freq in mvpp2_rx_time_coal_set()
+> > and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
+> > the data type u32.
 > > 
-> > On the other hand, for RT workloads this can represent a problem: getting
-> > an important workload scheduled out to deal with remote requests is
-> > sure to introduce unexpected deadline misses.
+> > Change the data type of the function parameter clk_hz in
+> > mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
+> > and remove the following Coccinelle/coccicheck warning reported by
+> > do_div.cocci:
 > > 
-> > The idea:
-> > Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
-> > In this case, instead of scheduling work on a remote cpu, it should
-> > be safe to grab that remote cpu's per-cpu spinlock and run the required
-> > work locally. Tha major cost, which is un/locking in every local function,
-> > already happens in PREEMPT_RT.
+> >   WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
+> > 
+> > Use min() to simplify the code and improve its readability.
+> > 
+> > Compile-tested only.
+> > 
+> > Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 > 
-> I've also noticed this a while ago (likely in the context of rewriting SLUB
-> to use local_lock) and asked about it on IRC, and IIRC tglx wasn't fond of
-> the idea. But I forgot the details about why, so I'll let the the locking
-> experts reply...
+> I'm still on holiday, but it's a wet day today. Don't expect replies
+> from me to be regular.
+> 
+> I don't think this is a good idea.
+> 
+> priv->tclk comes from clk_get_rate() which returns an unsigned long.
+> tclk should _also_ be an unsigned long, not a u32, so that the range
+> of values clk_get_rate() returns can be represented without being
+> truncted.
+> 
+> Thus the use of unsigned long elsewhere where tclk is passed into is
+> actually correct.
+> 
+> If we need to limit tclk to values that u32 can represent, then that
+> needs to be done here:
+> 
+>                 priv->tclk = clk_get_rate(priv->pp_clk);
+> 
+> by assigning the return value to an unsigned long local variable,
+> then checking its upper liit before assigning it to priv->tclk.
 
-Thomas?
-
-
+Sorry, I thought that I had checked the types.
+But clearly I wasn't nearly careful enough.
 
