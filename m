@@ -1,156 +1,193 @@
-Return-Path: <linux-kernel+bounces-252912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECB89319CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E399319D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF761C21DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5F91F21E09
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3E54907;
-	Mon, 15 Jul 2024 17:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEE7502BE;
+	Mon, 15 Jul 2024 17:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHa6CApy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RF7ieBKb"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521DB502BE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AE842A9D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721065687; cv=none; b=ejBnp/SsSiFQ4VTjdeVq2L+vSPi7T0l2NHY1d3svEZG0VGj6wtA9YxjLQmfmtj5tIVPsySX26n87WVACpBnkaVW2m8zliXRpUzzfCi8bxgF9PMY+CMh1nqYmt+uwwqqhVzcjTwEQSd5ImPKHDkq8gVYRr9keFBAZbNk/8PuQrww=
+	t=1721065766; cv=none; b=Vkq9Jpo05auWULMjOCmCuW/8TVSwz5epfBH7OJCyA+nhGas4jcE3w0jKRLKfdpP2V/TcIAK3s/QGfZ8xzVtA0Rl+dHwJCUCfyWZ2xJ0KfUFO/2XjFef+hg/ZINXuO1tPkPfRTl5hglSCmh2NvRRDeDQMHasnrDdH0CldeojTA4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721065687; c=relaxed/simple;
-	bh=2MgBjh60/jTcVqxJi9DAm7CzsRRTTWx9s2Rl9CdWtlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gugSLhfj3YqhKHkeWQ5iFLU+2eqyk5RxfWJhERMvMSqCcrH857lgcmGW+hW1BYwX9/YhFsyYZKzyTt4IMbe1Ngug2rWU4o53Qnw8nQPv57TfWO6+x8sbss+DBxod7VQEWQWR3EWPr3m0x7jQthT4nSUUJ8Syb4gtEO9p2RUq6NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHa6CApy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721065684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BGRZkrAJfPSnfkrlnJKN+UoV9mMX8K/tZ5mnh589us4=;
-	b=PHa6CApyQyAz34PQC6ioQFeJvOwb4Zf0GHLLzeSh6bo19xzWYHwF38MNSULuIuez7+V/Bt
-	ioxUgZEu4N82fpW+D6qtijqcpfGaZvWOlVv/j8cwDhRXwFYl/08hYSUN3Z8h4STP79xgol
-	LrPtFVy5+9Y6pA6FmYE+fu6xLOrZdS0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655--_PPnhrWPxaswyjCTJowiQ-1; Mon,
- 15 Jul 2024 13:48:02 -0400
-X-MC-Unique: -_PPnhrWPxaswyjCTJowiQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C7641955D45;
-	Mon, 15 Jul 2024 17:48:01 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.226.43])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 587CF1955F66;
-	Mon, 15 Jul 2024 17:47:59 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] gfs2 changes
-Date: Mon, 15 Jul 2024 19:47:56 +0200
-Message-ID: <20240715174757.876203-1-agruenba@redhat.com>
+	s=arc-20240116; t=1721065766; c=relaxed/simple;
+	bh=IF2yrLjoxT0h6e+1eVvUPCO0jY/8dmFWBEa0TyqEXhg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=KK0moBgDVExXOFroXTzdaLTKKUa5zaHyrwnnBElWyQwOd2CASixeuI0wWIKeg51hDOjcw5QWcU7qfn+jlhOeyp+nIbCaBwRvNzy6b0dLO5J98earlNpcm3RdvUc3ao7aGwWzLhDZlhA6OUHuPf+mFr7dFgz+ZC/+nUcTPF0Nbtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RF7ieBKb; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f2e2795350so2748416e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721065763; x=1721670563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2TCN+mtAfqSFvf2FCnrFAIjr/fY03vnJ5dZhsJkvwYQ=;
+        b=RF7ieBKbq4dY75FdnVNl9QxdIF8f8yOWP4ioox+XUbyuF3xOT2y3HcIm0nASV3zTfB
+         kMYPvghZwV0UN8KAvL3oCctVuKH7j7SXrALn2/9KdUgyDBcZHPO0S2rGft5GUbfDN7AA
+         pth3PGA3Kr6lY3L4Bmtx9mCXuUrUn1fUFGohGrjtQrnJ3XLQNoHYWMEhZ9OsOIarNNHW
+         y7zCXfk02auh20ZpMlW8W2++DpCF+Uairz/ZVPBmMyc/EwXf3hWQuQMBO5RbPFZc39GV
+         XLLwJIZeaT7VZjXLWQItlL5TTq+OYGuWWPFA92M9SgiIyBtyHvaN5wKsVlVGIqz9xA+7
+         iyiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721065763; x=1721670563;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2TCN+mtAfqSFvf2FCnrFAIjr/fY03vnJ5dZhsJkvwYQ=;
+        b=SlTSB5QpKmdIDHNbZ/ikcv9icG/nroU8cn+mvoAHiGeMnJV3d8ymqbxMj4kt85HaNQ
+         IsPREA9i773mYqSNbPZH69lgFQnOWtJ5O3TVIAdmsWPUaVbqg7W6RSJx+lQE8dD7UfHG
+         VNiDU9F1ldTNdwtU/xp/aVL81pvQ60u8SaBkC1eCBpyQCig2uCAPw/7wSCV/klP13RTP
+         Uc/t2FQizCpBIaSFbemp4lCniZ6n/u0LZWcMW4noZZBBggE8LydSZ6bRzH/8sCNTHFlb
+         B+hhzNaYxFLSxnN1vTukznCLrYVJNOJlUlFF9AdDBs4x5ubmnJLSOu8NY2+PicVanHqr
+         uTpA==
+X-Gm-Message-State: AOJu0YyaMPQ5XgOT4Af/b7Aavk4b9lqB+07qcKeWbmx6qkyG0BlJxkeV
+	5ChVLXJEWx6HPktyyawYVRsQZzEnhgILiN9iFmo0J7PD01vtFsdzhD55fUBTfGUvClHgX6RJqtd
+	1cAd1BASKu/ITDED6t2LAuV/J7SoHAI+dlcKQllvg3OBRN36KRYN6+Q==
+X-Google-Smtp-Source: AGHT+IHmQdZH1T6f8//lyjnZOeWGMzQnj/b4V5M1kqpMLo1UsssriZE2N9YRNkxSh8XT0qhPeiQCYIl7EHJDHzWBFbU=
+X-Received: by 2002:a05:6122:1796:b0:4b9:e8bd:3b2 with SMTP id
+ 71dfb90a1353d-4f4cd294049mr977929e0c.2.1721065763380; Mon, 15 Jul 2024
+ 10:49:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 15 Jul 2024 23:19:11 +0530
+Message-ID: <CA+G9fYtg6tjSpVSN+OJRrSFhKcH5NkXVH7ccZMkXDpKjV5TYmA@mail.gmail.com>
+Subject: next-20240715: WARNING: at kernel/cpu.c:527 lockdep_assert_cpus_held
+ (kernel/cpu.c:527 (discriminator 7) kernel/cpu.c:516 (discriminator 7))
+To: open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Tejun Heo <tj@kernel.org>, 
+	void@manifault.com, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Dear Linus,
+The following kernel warnings are noticed on today's Linux next-20240715 tag
+on the arm64 Raspberry Pi 4 Model B and x86_64 devices while booting.
 
-please consider pulling the following gfs2 fixes and cleanups:
+This is always reproducible: yes.
 
-* The first 15 of these patches rework the glock refcounting and LRU list
-  handling to be more sensible.
+  GOOD: next-20240712
+  BAD:  next-20240715
 
-* The following 13 patches clean up the quota code, add some missing locking,
-  and work around the on-disk corruption that the reverted patch "gfs2: ignore
-  negated quota changes" causes.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-* The final patch cleans up the glock demote logic in glock_work_func().
+Warning log:
+----
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd083]
+[    0.000000] Linux version 6.10.0-next-20240715 (tuxmake@tuxmake)
+(aarch64-linux-gnu-gcc (Debian 13.2.0-12) 13.2.0, GNU ld (GNU Binutils
+for Debian) 2.42) #1 SMP PREEMPT @1721032044
+[    0.000000] KASLR disabled due to lack of seed
+[    0.000000] Machine model: Raspberry Pi 4 Model B
+...
+[   33.796467] ------------[ cut here ]------------
+[   33.801373] WARNING: CPU: 2 PID: 134 at kernel/cpu.c:527
+lockdep_assert_cpus_held (kernel/cpu.c:527 (discriminator 7)
+kernel/cpu.c:516 (discriminator 7))
+[   33.801410] Modules linked in: dm_mod(+)
+[   33.801428] CPU: 2 UID: 0 PID: 134 Comm: modprobe Not tainted
+6.10.0-next-20240715 #1
+[   33.801445] Hardware name: Raspberry Pi 4 Model B (DT)
+[   33.801452] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   33.801465] pc : lockdep_assert_cpus_held (kernel/cpu.c:527
+(discriminator 7) kernel/cpu.c:516 (discriminator 7))
+[   33.801479] lr : lockdep_assert_cpus_held (kernel/cpu.c:527
+(discriminator 1))
+[   33.801491] sp : ffff800087583560
+[   33.801497] x29: ffff800087583560 x28: 0000000000000000 x27: 0000000000000000
+[   33.801515] x26: ffff000046714c10 x25: ffff800084edb000 x24: 0000000000000008
+[   33.801532] x23: ffff800082d10740 x22: ffff800084f12128 x21: ffff8000857a9a38
+[   33.801547] x20: ffff000046714c00 x19: 0000000000020002 x18: 0000000000000000
+[   33.801562] x17: ffff800080205c24 x16: ffff8000802058c4 x15: ffff800080204170
+[   33.801577] x14: ffff8000800152dc x13: ffff800080011550 x12: ffff800081d31448
+[   33.801592] x11: 000000000000002c x10: 000000000000002c x9 : ffff800080101d4c
+[   33.801608] x8 : 00000000ffffffff x7 : 00000000000b663d x6 : ffff8000857afdd0
+[   33.801623] x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000732be000
+[   33.801638] x2 : 0000000000000000 x1 : 00000000000000c0 x0 : 0000000000000000
+[   33.801652] Call trace:
+[   33.801658] lockdep_assert_cpus_held (kernel/cpu.c:527
+(discriminator 7) kernel/cpu.c:516 (discriminator 7))
+[   33.801671] alloc_and_link_pwqs (kernel/workqueue.c:5438)
+[   33.801682] alloc_workqueue (kernel/workqueue.c:5703 (discriminator 1))
+[   33.801692] local_init+0x34/0xc0 dm_mod
+[   33.801805] dm_init+0x54/0xf8 dm_mod
+[   33.801900] do_one_initcall (init/main.c:1267)
+[   33.801916] do_init_module (kernel/module/main.c:2543)
+[   33.801930] load_module (kernel/module/main.c:3009)
+[   33.801942] init_module_from_file (kernel/module/main.c:3177)
+[   33.801955] idempotent_init_module (kernel/module/main.c:3193)
+[   33.801968] __arm64_sys_finit_module (kernel/module/main.c:3214
+kernel/module/main.c:3197 kernel/module/main.c:3197)
+[   33.801980] invoke_syscall (arch/arm64/include/asm/current.h:19
+arch/arm64/kernel/syscall.c:54)
+[   33.801990] el0_svc_common (include/linux/thread_info.h:127
+(discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2))
+[   33.801999] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+[   33.802008] el0_svc (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+arch/arm64/kernel/entry-common.c:165 (discriminator 1)
+arch/arm64/kernel/entry-common.c:178 (discriminator 1)
+arch/arm64/kernel/entry-common.c:713 (discriminator 1))
+[   33.802020] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:731)
+[   33.802032] el0t_64_sync (arch/arm64/kernel/entry.S:598)
+[   33.802042] irq event stamp: 35480
+[   33.802046] hardirqs last enabled at (35479):
+_raw_spin_unlock_irqrestore (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+include/linux/spinlock_api_smp.h:151 (discriminator 1)
+kernel/locking/spinlock.c:194 (discriminator 1))
+[   33.802064] hardirqs last disabled at (35480): el1_dbg
+(arch/arm64/kernel/entry-common.c:371 (discriminator 1)
+arch/arm64/kernel/entry-common.c:471 (discriminator 1))
+[   33.802077] softirqs last enabled at (35456): handle_softirqs
+(arch/arm64/include/asm/current.h:19
+arch/arm64/include/asm/preempt.h:13 kernel/softirq.c:401
+kernel/softirq.c:582)
+[   33.802096] softirqs last disabled at (35389): __do_softirq
+(kernel/softirq.c:589)
+[   33.802107] ---[ end trace 0000000000000000 ]---
 
-Thanks,
-Andreas
 
+metadata:
+------
+  git_ref: master
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 91e3b24eb7d297d9d99030800ed96944b8652eaf
+  git_describe: next-20240715
+  kernel_version: 6.10.0
+  kernel-config:
+    https://storage.tuxsuite.com/public/linaro/lkft/builds/2jH6dXP5XS72ybkPa57keKJ7q3z/config
+  artifact-location:
+    https://storage.tuxsuite.com/public/linaro/lkft/builds/2jH6dXP5XS72ybkPa57keKJ7q3z/
+  toolchain: gcc-13
+  build_name: gcc-13-lkftconfig-kselftest
+  arch: arm64 and x86_64
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Kernel boot log links:
+-------
+ [1] https://lkft.validation.linaro.org/scheduler/job/7729587#L844
+ [2] https://lkft.validation.linaro.org/scheduler/job/7728947#L1742
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-v6.10-rc1-fixes
-
-for you to fetch changes up to f75efefb6db305b5b5c56a9b9ae2d72b54f20780:
-
-  gfs2: Clean up glock demote logic (2024-07-09 10:40:03 +0200)
-
-----------------------------------------------------------------
-gfs2 fixes and cleanups
-
-- Revise the glock reference counting model
-
-- Several quota related fixes
-
-- Clean up the glock demote logic
-
-----------------------------------------------------------------
-Andreas Gruenbacher (29):
-      gfs2: Remove unnecessary function prototype
-      gfs2: Remove useless return statement in run_queue
-      gfs2: Rename GLF_FREEING to GLF_UNLOCKED
-      gfs2: Rename GLF_REPLY_PENDING to GLF_HAVE_REPLY
-      gfs2: Rename GLF_FROZEN to GLF_HAVE_FROZEN_REPLY
-      gfs2: Rename handle_callback to request_demote
-      gfs2: Update glocks documentation
-      gfs2: Remove outdated comment in glock_work_func
-      gfs2: Invert the GLF_INITIAL flag
-      gfs2: gfs2_glock_get cleanup
-      gfs2: Report when glocks cannot be freed for a long time
-      gfs2: Switch to a per-filesystem glock workqueue
-      gfs2: Revise glock reference counting model
-      Revert "GFS2: Don't add all glocks to the lru"
-      gfs2: Get rid of demote_ok checks
-      gfs2: Minor gfs2_quota_init error path cleanup
-      gfs2: Check quota consistency on mount
-      gfs2: Revert "introduce qd_bh_get_or_undo"
-      gfs2: qd_check_sync cleanups
-      gfs2: Revert "ignore negated quota changes"
-      gfs2: Revert "Add quota_change type"
-      gfs2: Fix and clean up function do_qc
-      gfs2: quota need_sync cleanup
-      gfs2: Fold qd_fish into gfs2_quota_sync
-      gfs2: Add some missing quota locking
-      gfs2: Get rid of some unnecessary quota locking
-      gfs2: Be more careful with the quota sync generation
-      gfs2: Revert "check for no eligible quota changes"
-      gfs2: Clean up glock demote logic
-
- Documentation/filesystems/gfs2-glocks.rst |  55 ++---
- fs/gfs2/glock.c                           | 227 ++++++++---------
- fs/gfs2/glock.h                           |   1 -
- fs/gfs2/glops.c                           |  42 +---
- fs/gfs2/incore.h                          |  12 +-
- fs/gfs2/lock_dlm.c                        |  28 ++-
- fs/gfs2/ops_fstype.c                      |  13 +-
- fs/gfs2/quota.c                           | 388 +++++++++++++++---------------
- fs/gfs2/super.c                           |   1 -
- fs/gfs2/trace_gfs2.h                      |   6 +-
- fs/gfs2/util.c                            |  12 +-
- 11 files changed, 380 insertions(+), 405 deletions(-)
-
+--
+Linaro LKFT
+https://lkft.linaro.org
 
