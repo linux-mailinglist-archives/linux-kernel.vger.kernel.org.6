@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-252059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D0B930DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:47:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6AE930DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602F81F215F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:47:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D764A2811C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5620313BAC2;
-	Mon, 15 Jul 2024 05:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3267613BC38;
+	Mon, 15 Jul 2024 05:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="bcUXfvox"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BC613A889;
-	Mon, 15 Jul 2024 05:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i48NpiMO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D52D2EE;
+	Mon, 15 Jul 2024 05:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721022435; cv=none; b=ED8f0o20XELgzABKssuq0QLvwi4gC1JN+l4MV+ANJN92R6ZbEGVZkuyd0dLI3FM8G8Ife+5tim+0X7Y53fhOxIOnLavkJ37ZL8ieCI44rXQFg0eaA6GWMFTlMqjtPrGQnGpufgchk2YZGYawtrlF4iq88KdCbTru9H6ld1mzmlY=
+	t=1721022419; cv=none; b=KmyXOAnLhBHCp5wGL7KTl4SZz2uBLB1NexCv+LTri5l/4hfg8GmsznUVWT0lmZTqMybtwWFCnbONzD4yvgGADEKKZbYAzwgQoCIFfwmvzIn7A7x7YlgAnx7hrLOyFGgXeuuL7QEtV9OV0L07pOGmx9GuzmVUgspHDC3+ONzXoXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721022435; c=relaxed/simple;
-	bh=7h+IIN4RhMATRucL6/sc8yErNOmIbJl0gG66C4964zg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=enfbU08ras+opi7iADhoV17XoVGz2xgB5wdIwXoboVynr98dkfF2uIPujvlHjYlJ0KwbAQC//RnLXN1D5AyS8TkYtAcpdsFr7PnkBXTRIo5o5yh0K8ihrVtqwk/ZwGJi9xtQUttKcNJ5olqsD03JoM61Kj+vaQIiovLrzZp2skI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=bcUXfvox reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=xC9hds4K/XnuBjMOc+sj6rV5El2d94HBHRJ+teZwXzk=; b=b
-	cUXfvox8ExB64FKWcRIaqU5AVhXsFxT40I+xvrF6yfGke59T4Crp9MZ9Q+V7WrBN
-	2Wz0Cf5cGOnuKu01/o8CHoxMRURDTqCpQ24nNnyhmLhFpHB0PW/Z6+RlkmiILnar
-	tksVwHga2ITzPAu+r/zilFPmqhP36yEj2+kurNoC6g=
-Received: from slark_xiao$163.com ( [223.104.68.157] ) by
- ajax-webmail-wmsvr-40-149 (Coremail) ; Mon, 15 Jul 2024 13:46:33 +0800
- (CST)
-Date: Mon, 15 Jul 2024 13:46:33 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Cc: manivannan.sadhasivam@linaro.org, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH] bus: mhi: host: Add firehose support for Foxconn
- SDX24/SDX55/SDX65
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
-References: <20240709015818.110384-1-slark_xiao@163.com>
- <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
-X-NTES-SC: AL_Qu2ZA/yZvUsi5SCcYOkfmk8Sg+84W8K3v/0v1YVQOpF8jCLr2QImXmJeNFbf3s6gBSypgAWKdgpM2ORoVIdhYqENqOmfsEs9BGL+OezJPvHT6w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1721022419; c=relaxed/simple;
+	bh=v2vMWYHn7MG7zOqKves+1/98n0hJ9KsdGPe/87XOnKg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Ujtksl0KHPR/b8QkdbqQSj4J337oGMZDdxFqFoSDFTXH+C8Jq6hNffsRhLqr2Y+DIU+Z7uEZRf6HTS8qqWnJpojTi5CMtvlKapHThkqko4QWwPLkKaZyzyzjE/6HTiUupEC0aoV+tn44vEOhCj+r5mznJFGZjitu/Q8MfJQyBIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i48NpiMO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A120C4AF0A;
+	Mon, 15 Jul 2024 05:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721022418;
+	bh=v2vMWYHn7MG7zOqKves+1/98n0hJ9KsdGPe/87XOnKg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i48NpiMOjZ559FSxGxl2x6GcUiuHGIcQSbvRu+ZQLYrFHcH0qAnTmu3AMP3K83V+n
+	 257PEY2PUqkkFzCgc9qIcsvF7KpmmE2FpIoOvqpr6FUKFthe6E2rFXDssDBTuN4pJD
+	 G0xf0eZyT3c08c3p+eGMMrZ5aN5ocZYWjO3Iqsb8OXBwuBCNj7eCS449LwhxO/H5ra
+	 zcFqdxR8pSizeWez4F3LXs82jrRIcsriyCxLdPek9juRLnh69SOYV8aTuCRRFIZRoI
+	 HZ6Xw8fUlJlizkw9znO8NDJh9RBaIraIO3bx3DNr8uLbtZIVNQM5H2PdzyNbPhbmX5
+	 8QSrX2DaHM9fg==
+Date: Mon, 15 Jul 2024 14:46:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+ x86@kernel.org, bpf@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, Deepak Gupta <debug@rivosinc.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 2/2] selftests/bpf: Change uretprobe syscall number in
+ uprobe_syscall test
+Message-Id: <20240715144651.98ef93f04a96a7aa9109d55e@kernel.org>
+In-Reply-To: <CAEf4BzY3Xo-g02r9TY9tHq49JLrrYoUNoXN=WXhJ02q4xUbGbA@mail.gmail.com>
+References: <20240712135228.1619332-1-jolsa@kernel.org>
+	<20240712135228.1619332-3-jolsa@kernel.org>
+	<CAEf4BzY3Xo-g02r9TY9tHq49JLrrYoUNoXN=WXhJ02q4xUbGbA@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <17f0f426.4faf.190b4edaadd.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD337i5t5RmWd8+AA--.4308W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQYbZGV4IlXbrAALsa
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjQtMDctMTMgMjM6MDk6NDcsICJEbWl0cnkgQmFyeXNoa292IiA8ZG1pdHJ5LmJhcnlz
-aGtvdkBsaW5hcm8ub3JnPiB3cm90ZToKPk9uIFR1ZSwgSnVsIDA5LCAyMDI0IGF0IDA5OjU4OjE4
-QU0gR01ULCBTbGFyayBYaWFvIHdyb3RlOgo+PiBTaW5jZSB3ZSBpbXBsZW1lbnQgdGhlIEZJUkVI
-T1NFIGNoYW5uZWwgc3VwcG9ydCBpbiBmb3hjb25uIG1oaQo+PiBjaGFubmVscywgdGhhdCBtZWFu
-cyBlYWNoIHByb2R1Y3Qgd2hpY2ggdXNlIHRoaXMgY2hhbm5lbCBjb25maWcKPj4gd291bGQgc3Vw
-cG9ydCBGSVJFSE9TRS4gQnV0IGFjY29yZGluZyB0byB0aGUgdHJpZ2dlcl9lZGwgZmVhdHVyZSwK
-Pj4gd2UgbmVlZCB0byBlbmFibGUgaXQgYnkgYWRkaW5nICcuZWRsX3RyaWdnZXIgPSB0cnVlJyBp
-biBkZXZpY2UKPj4gaW5mbyBzdHJ1Y3QuCj4+IEFsc28sIHdlIHVwZGF0ZSBhbGwgZWRsIGltYWdl
-IHBhdGggZnJvbSAncWNvbScgdG8gJ2ZveCcgaW4gY2FzZSBvZgo+PiBjb25mbGljdGluZyB3aXRo
-IG90aGVyIHZlbmRvcnMuCj4KPlNlcGFyYXRlIHBhdGNoZXMgcGxlYXNlLiBBbHNvIGRvbid0IHVz
-ZSAid2UiLCBqdXN0IGFuIGltZXJhdGl2ZSBzdHlsZToKPmRvIHRoaXMgYW5kIHRoYXQuCj4KCkRv
-IHlvdSBtZWFuIHVzZSAyIHBhdGNoZXMgKDEgZm9yIGVuYWJsaW5nIHRyaWdnZXIgZWRsIGFuZCAx
-IGZvciAKbW9kaWZ5aW5nIHBhdGgpPyBUaG91Z2ggdGhlc2UgY2hhbmdlcyBhcmUgYWltZWQgdG8g
-bWFrZQpmaXJlaG9zZSBkb3dubG9hZCBzdWNjZXNzZnVsbHkuCgo+PiAKPj4gU2lnbmVkLW9mZi1i
-eTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0AxNjMuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvYnVz
-L21oaS9ob3N0L3BjaV9nZW5lcmljLmMgfCAyMCArKysrKysrKysrKysrKy0tLS0tLQo+PiAgMSBm
-aWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyBiL2RyaXZlcnMvYnVz
-L21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4gaW5kZXggMTRhMTE4ODBiY2VhLi40NDA2MDliODFl
-NTcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4g
-KysrIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiBAQCAtNDMzLDggKzQz
-Myw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NvbnRyb2xsZXJfY29uZmlnIG1vZGVtX2Zv
-eGNvbm5fc2R4NzJfY29uZmlnID0gewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9w
-Y2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fc2R4NTVfaW5mbyA9IHsKPj4gIAkubmFtZSA9ICJmb3hj
-b25uLXNkeDU1IiwKPj4gLQkuZncgPSAicWNvbS9zZHg1NW0vc2JsMS5tYm4iLAo+PiAtCS5lZGwg
-PSAicWNvbS9zZHg1NW0vZWRsLm1ibiIsCj4+ICsJLmVkbCA9ICJmb3gvc2R4NTVtL3Byb2dfZmly
-ZWhvc2Vfc2R4NTUubWJuIiwKPgo+cWNvbS9zZHg1NW0vZm94Y29ubi9wcm9nX2ZpcmVob3NlX3Nk
-eDU1Lm1ibgoKd2hhdCdzIHlvdXIgb3Bpbmlvbj9NYW5pCgo+Cj4+ICsJLmVkbF90cmlnZ2VyID0g
-dHJ1ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+PiAgCS5i
-YXJfbnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRtYV9kYXRhX3dpZHRoID0g
-MzIsCj4+IEBAIC00NDQsOCArNDQ0LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rl
-dl9pbmZvIG1oaV9mb3hjb25uX3NkeDU1X2luZm8gPSB7Cj4+ICAKPj4gIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3MTc1X2luZm8gPSB7Cj4+ICAJ
-Lm5hbWUgPSAiZm94Y29ubi10OTl3MTc1IiwKPj4gLQkuZncgPSAicWNvbS9zZHg1NW0vc2JsMS5t
-Ym4iLAo+PiAtCS5lZGwgPSAicWNvbS9zZHg1NW0vZWRsLm1ibiIsCj4+ICsJLmVkbCA9ICJmb3gv
-c2R4NTVtL3Byb2dfZmlyZWhvc2Vfc2R4NTUubWJuIiwKPgo+SXMgaXQgdGhlIHNhbWUgZmlsZSBh
-cyB0aGUgb25lIG1lbnRpb25lZCBpbiB0aGUgcHJldmlvdXMgY2h1bmsgb3IgaXMgaXQKPmRpZmZl
-cmVudD8KPgoKVGhleSBhcmUgc2FtZSBmb3Igc2FtZSBjaGlwLCB0aG91Z2ggd2UgaGF2ZSBzb21l
-IHZhcmlhbnRzLgoKPklmIHRoZXkgYXJlIGRpZmZlcmVudCwgdGhlbiwgcGxlYXNlLAo+Cj5xY29t
-L3NkeDU1bS9mb3hjb25uL3Q5OXcxNzUvcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4KPgo+Cj4+ICsJ
-LmVkbF90cmlnZ2VyID0gdHJ1ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVf
-Y29uZmlnLAo+PiAgCS5iYXJfbnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRt
-YV9kYXRhX3dpZHRoID0gMzIsCj4+IEBAIC00NTUsOCArNDU1LDggQEAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXcxNzVfaW5mbyA9IHsKPj4gIAo+
-PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX2R3NTkz
-MGVfaW5mbyA9IHsKPj4gIAkubmFtZSA9ICJmb3hjb25uLWR3NTkzMGUiLAo+PiAtCS5mdyA9ICJx
-Y29tL3NkeDU1bS9zYmwxLm1ibiIsCj4+IC0JLmVkbCA9ICJxY29tL3NkeDU1bS9lZGwubWJuIiwK
-Pj4gKwkuZWRsID0gImZveC9zZHg1NW0vcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4iLAo+PiArCS5l
-ZGxfdHJpZ2dlciA9IHRydWUsCj4+ICAJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2Nv
-bmZpZywKPj4gIAkuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiAgCS5kbWFf
-ZGF0YV93aWR0aCA9IDMyLAo+PiBAQCAtNDY2LDYgKzQ2Niw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9kdzU5MzBlX2luZm8gPSB7Cj4+ICAKPj4g
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3MzY4
-X2luZm8gPSB7Cj4+ICAJLm5hbWUgPSAiZm94Y29ubi10OTl3MzY4IiwKPj4gKwkuZWRsID0gImZv
-eC9zZHg2NW0vcHJvZ19maXJlaG9zZV9saXRlLmVsZiIsCj4+ICsJLmVkbF90cmlnZ2VyID0gdHJ1
-ZSwKPj4gIAkuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+PiAgCS5iYXJf
-bnVtID0gTUhJX1BDSV9ERUZBVUxUX0JBUl9OVU0sCj4+ICAJLmRtYV9kYXRhX3dpZHRoID0gMzIs
-Cj4+IEBAIC00NzUsNiArNDc3LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9p
-bmZvIG1oaV9mb3hjb25uX3Q5OXczNjhfaW5mbyA9IHsKPj4gIAo+PiAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXczNzNfaW5mbyA9IHsKPj4gIAku
-bmFtZSA9ICJmb3hjb25uLXQ5OXczNzMiLAo+PiArCS5lZGwgPSAiZm94L3NkeDY1bS9wcm9nX2Zp
-cmVob3NlX2xpdGUuZWxmIiwKPj4gKwkuZWRsX3RyaWdnZXIgPSB0cnVlLAo+PiAgCS5jb25maWcg
-PSAmbW9kZW1fZm94Y29ubl9zZHg1NV9jb25maWcsCj4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RF
-RkFVTFRfQkFSX05VTSwKPj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gQEAgLTQ4NCw2ICs0
-ODgsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5f
-dDk5dzM3M19pbmZvID0gewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2
-X2luZm8gbWhpX2ZveGNvbm5fdDk5dzUxMF9pbmZvID0gewo+PiAgCS5uYW1lID0gImZveGNvbm4t
-dDk5dzUxMCIsCj4+ICsJLmVkbCA9ICJmb3gvc2R4MjRtL3Byb2dfZmlyZWhvc2Vfc2R4MjQubWJu
-IiwKPj4gKwkuZWRsX3RyaWdnZXIgPSB0cnVlLAo+PiAgCS5jb25maWcgPSAmbW9kZW1fZm94Y29u
-bl9zZHg1NV9jb25maWcsCj4+ICAJLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwK
-Pj4gIAkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gQEAgLTQ5Myw2ICs0OTksOCBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fdDk5dzUxMF9pbmZvID0g
-ewo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNv
-bm5fZHc1OTMyZV9pbmZvID0gewo+PiAgCS5uYW1lID0gImZveGNvbm4tZHc1OTMyZSIsCj4+ICsJ
-LmVkbCA9ICJmb3gvc2R4NjVtL3Byb2dfZmlyZWhvc2VfbGl0ZS5lbGYiLAo+PiArCS5lZGxfdHJp
-Z2dlciA9IHRydWUsCj4+ICAJLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2NvbmZpZywK
-Pj4gIAkuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+PiAgCS5kbWFfZGF0YV93
-aWR0aCA9IDMyLAo+PiAtLSAKPj4gMi4yNS4xCj4+IAo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMK
-PkRtaXRyeQo=
+On Fri, 12 Jul 2024 11:27:30 -0700
+Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+
+> On Fri, Jul 12, 2024 at 6:53 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > Fixing the syscall number value.
+> >
+> > Fixes: 9e7f74e64ae5 ("selftests/bpf: Add uretprobe syscall call from user space test")
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> 
+> is this selftest in probes/for-next already? If yes, I'd combine these
+> two patches to avoid any bisection problems
+> 
+> but either way
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+Thanks, let me pick it to for-next branch.
+
+Thank you,
+
+> 
+> 
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > index c8517c8f5313..bd8c75b620c2 100644
+> > --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > @@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
+> >  }
+> >
+> >  #ifndef __NR_uretprobe
+> > -#define __NR_uretprobe 463
+> > +#define __NR_uretprobe 467
+> >  #endif
+> >
+> >  __naked unsigned long uretprobe_syscall_call_1(void)
+> > --
+> > 2.45.2
+> >
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
