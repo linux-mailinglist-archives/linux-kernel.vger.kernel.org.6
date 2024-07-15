@@ -1,68 +1,73 @@
-Return-Path: <linux-kernel+bounces-252203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643F5930FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:35:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA51930FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED159282021
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F57C28201F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41311849F3;
-	Mon, 15 Jul 2024 08:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADED61849E8;
+	Mon, 15 Jul 2024 08:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaCwJOua"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MAvEBGFk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106FE13AD16;
-	Mon, 15 Jul 2024 08:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC88413BAC4;
+	Mon, 15 Jul 2024 08:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032529; cv=none; b=KrKUj2T0EwbLs9WGNfRDxMiBjitpKfH8fJetAqk4yCVqzDIZxjLX6U8A67fIzv+s6RfoPJzP5qcaMto9gLnw8+FLvpjqmZ6iXv8LiT+c5le8/JupBZf8ioBJs6QCBzfSPU5k+K08sHfD1jBPlz5mQBtAOnujEtFsWrmTyksQJ/g=
+	t=1721032655; cv=none; b=b3bbt68hyOw6Tr1PUykmGAEWCuuO1RWhmNAWGS0wJF2v0fnE+L3S+snfEdt7OfO15SWmZIVJhOKCtONo3YJDd7RZT9UHDQcV0PKkr7SAgcHVJZOhqTLEFGMcKopKyyoWavO826VZ1OubDwGbTVF4tCvsyNxklnUeIrL1qN2APII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032529; c=relaxed/simple;
-	bh=jAlufq6YBFy5pNLAiRTrVpUAjA/a0pbhT3MiEyZ9Cs0=;
+	s=arc-20240116; t=1721032655; c=relaxed/simple;
+	bh=6a47WPAIRfycPuOXAWxzW6xF3377lHud2VcJBGbtAZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=py4ZJ9gxnLEPpncYdKrnJK9bJUPws0nrFG+B91L0s6+iPIAMf/2kyQK2xT/iEF/9FEwIlPP6ePsC1lPzetO4OH3AB7i460tUqJgnrevGEuSY5nMWyQupgaRgagMcC2rQIiMx+rMLrtMSZBRvlCAmicH8iHNMOZp1Ie1btXq2y48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaCwJOua; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A2B8C32782;
-	Mon, 15 Jul 2024 08:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721032528;
-	bh=jAlufq6YBFy5pNLAiRTrVpUAjA/a0pbhT3MiEyZ9Cs0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MaCwJOuankTwhH0HxrC61CUi9I6lDhu8TCEAtSr/qk22KpFWVEXu1cPR/7/3f568J
-	 UBNhMLmVpWNRpDaEJJ6r48nWP/ItjyHd3AADPsvHstVL1lJS/2IdVD9mythJJriWnk
-	 q4GG3h7hgJfPRbFE+5eDjjH4/v8u62aEc4tUYSrYYxbasMlu7uyfTInmF5mwuBUw6h
-	 UacxO25eIYtR3ApDWkiPHsOVr43JGf9p5EminJTTQUqcYySqziUKCWjrGRx8Vu09f2
-	 YbxSCpTs1is1LCZyGXLUrQQSFfAeQEyTZ7NC1oQK54cAUnf/BhPB1TzTx+VBkltRoW
-	 vT6c2e99o7LPQ==
-Date: Mon, 15 Jul 2024 10:35:26 +0200
-From: Amit Shah <amit@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: David Kaplan <David.Kaplan@amd.com>, Jim Mattson <jmattson@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB
- filling is required
-Message-ID: <ZpTeuJHgwz9u8d_k@t470s.drde.home.arpa>
-References: <20240626073719.5246-1-amit@kernel.org>
- <Zn7gK9KZKxBwgVc_@google.com>
- <CALMp9eSfZsGTngMSaWbFrdvMoWHyVK_SWf9W1Ps4BFdwAzae_g@mail.gmail.com>
- <52d965101127167388565ed1520e1f06d8492d3b.camel@kernel.org>
- <DS7PR12MB57665C3E8A7F0AF59E034B3C94D32@DS7PR12MB5766.namprd12.prod.outlook.com>
- <Zow3IddrQoCTgzVS@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ipUQUmkgwDq9LpFtKtghTfh4mhLO1Kki1kb+/PBxa+YnzP7nYroARyt2AWK2efS59w3r7LwBnb/LMUdXTCpzSIKlY77tikGf+2MSwyz2Kr6GBR+DxdwB/PMcDmsb81/f/FE1mn3QK/foONfLPe63zRamjBCRC3FhV9VNi7AyFWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MAvEBGFk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=P3XQdNXvKucQfzbIesbDHM6Ks3Dxta1uhheNQVnB0gk=; b=MAvEBGFkB2t3GlMRTwZWFx5kWi
+	TuAbQxtjubFI2vJbTagxDOaCQHc4ocf9RSMnlO6a9uo0oA1y4TpZ03G2HiWtyRdtLnsODJLEVij2J
+	eMztHpz7GkpTvku8+GxHopbarVGApOC/QUGy41kSH5u91GLCAimg6LAQPX1okHTOjdXfNUmyG7nrG
+	YWM5+xegfAjiyvfp0fkKl2MMtGaKUvP64rnizJwF07zHyXAA+BvUdTRMwNLSIHI99mm8HMzEzvv+Q
+	3djM7Zuxs/c0juhXRtrE80+5QrlDc4mjX+YUWlDb7HV0n4z8sKusUMfjMffR/ON5Pn5u4+6RkSXmg
+	QYa01LFg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTHCt-0000000FZm3-1McC;
+	Mon, 15 Jul 2024 08:37:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 283BD3003FF; Mon, 15 Jul 2024 10:37:13 +0200 (CEST)
+Date: Mon, 15 Jul 2024 10:37:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+Message-ID: <20240715083713.GX27299@noisy.programming.kicks-ass.net>
+References: <20240708202202.work.477-kees@kernel.org>
+ <20240711214450.GG27299@noisy.programming.kicks-ass.net>
+ <202407111500.B86485B3@keescook>
+ <20240712090008.GA19796@noisy.programming.kicks-ass.net>
+ <202407121008.EDAD65A33@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,74 +76,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zow3IddrQoCTgzVS@google.com>
+In-Reply-To: <202407121008.EDAD65A33@keescook>
 
-On (Mon) 08 Jul 2024 [11:59:45], Sean Christopherson wrote:
-> On Mon, Jul 01, 2024, David Kaplan wrote:
-> > > > >        /*
-> > > > >         * AMD's AutoIBRS is equivalent to Intel's eIBRS - use the
-> > > > > Intel feature
-> > > > >         * flag and protect from vendor-specific bugs via the
-> > > > > whitelist.
-> > > > >         *
-> > > > >         * Don't use AutoIBRS when SNP is enabled because it degrades
-> > > > > host
-> > > > >         * userspace indirect branch performance.
-> > > > >         */
-> > > > >        if ((x86_arch_cap_msr & ARCH_CAP_IBRS_ALL) ||
-> > > > >            (cpu_has(c, X86_FEATURE_AUTOIBRS) &&
-> > > > >             !cpu_feature_enabled(X86_FEATURE_SEV_SNP))) {
-> > > > >                setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
-> > > > >                if (!cpu_matches(cpu_vuln_whitelist, NO_EIBRS_PBRSB)
-> > > > > &&
-> > > > >                    !(x86_arch_cap_msr & ARCH_CAP_PBRSB_NO))
-> > > > >                        setup_force_cpu_bug(X86_BUG_EIBRS_PBRSB);
-> > > > >        }
-> > > >
-> > > > Families 0FH through 12H don't have EIBRS or AutoIBRS, so there's no
-> > > > cpu_vuln_whitelist[] lookup. Hence, no need to set the NO_EIBRS_PBRSB
-> > > > bit, even if it is accurate.
-> > >
-> > > The commit that adds the RSB_VMEXIT_LITE feature flag does describe the
-> > > bug in a good amount of detail:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?i
-> > > d=2b1299322016731d56807aa49254a5ea3080b6b3
-> > >
-> > > I've not seen any indication this is required for AMD CPUs.
-> > >
-> > > David, do you agree we don't need this?
-> > >
-> > 
-> > It's not required, as AMD CPUs don't have the PBRSB issue with AutoIBRS.
-> > Although I think Sean was talking about being extra paranoid
+On Fri, Jul 12, 2024 at 10:55:16AM -0700, Kees Cook wrote:
+
+> > What will actually break if you 'fix' this? Given that inlining (see
+> > below) changes the rules willy nilly, I feel we can (and should!) just
+> > fix this.
 > 
-> Ya.  I'm asking if there's a reason not to tack on X86_FEATURE_RSB_VMEXIT_LITE,
-> beyond it effectively being dead code.  There's no runtime cost, and so assuming
-> it doesn't get spuriously enabled, I don't see a downside.
+> I'm not sure -- I have kind of given up on "standard" C helping with any
+> of this. I look to consistent language extensions now, and where there
+> isn't any, we've been trying to create them. :P 
 
-Ah - I get it now.  You want to add this code for parity with
-vmenter.S so that a future bug like this doesn't happen.
+Yeah, arguing a committee is mostly a waste of time, also, they
+typically listen a lot more when you say, here these two compilers have
+implemented it and this Linux thing uses it.
 
-I disagree, though.  It's not really dead code - it does get patched
-at runtime.  If a future AMD CPU has a bug that Intel doesn't, we'll
-have to introduce a new ALTERNATIVE just for that condition - leading
-to more complexity than is actually required.
+So yeah, language extensions are it.
 
-Also - reviewers of code will get confused, wondering why this code
-for AMD exists when the CPU vuln does not.
+> And we're not alone:
+> Apple's -fbounds-safety stuff[1] looks good too, and overlaps with what
+> we were already designing with the "counted_by" attribute:
+> https://discourse.llvm.org/t/rfc-enforcing-bounds-safety-in-c-fbounds-safety/
+> (We borrowed the "counted_by" name, which is better than what we were
+> calling it: "element_count".)
 
-I get that we want to write defensive code, but this was a very
-special condition that is unlikely to happen in this part of the code,
-and also this was missed by the devs and the reviewers.
+Yep, I read that a while back. I think you referenced it in one of them
+other threads where we disagreed over struct_size() :-)
 
-The good thing here is that missing this only leads to suboptimal
-code, not a security bug.  So given all this, I vote for the
-simplicity of code, rather than tacking on something.
+> > > Does report the expected things for _bdos internally (48), but not for
+> > > sizeof (8) nor _bos (SIZE_MAX). Of course if we inline it, _bos starts
+> > > working and, along with _bdos, realizes it was lied to, and reports
+> > > 32 again.
+> > 
+> > WTF ?!?! How can all this be so inconsistent and why are people okay
+> > with that?
+> 
+> This. A thousands times, this. I'm really not okay with it, and we've
+> been working to get rid of every ambiguity we trip over. It's made sane
+> bounds checking in Linux extremely hard to get right.
 
-Sound OK?
+Yeah, not just Linux I imagine. The rules are so insane it's near
+useless. I'd say press onwards with the language extension, it's not
+like Linux kernel is written in ANSI/ISO C anyway :-)
 
+> For more fun with array bounds, the one that absolutely floored me was
+> the exception over trailing arrays:
+> 
+> struct middle_t {
+> 	u8 array[6];
+> 	int foo;
+> } *middle;
+> 
+> __builtin_object_size(middle->array, 1)  ==  6
+> 
+> struct trailing_t {
+> 	int foo;
+> 	u8 array[6];
+> } *trailing;
+> 
+> __builtin_object_size(trailing->array, 1)  ==  SIZE_MAX ("unknown")
 
-		Amit
--- 
+WTF :-)
+
+> > So I'm not entirely sure I agree with that argument. Yes, &regs->bx is
+> > 'unsigned long *' and sizeof(unsigned long) is 8 (if we assume 64bit).
+> > However, you can also read it as the point of pt_regs where bx sits --
+> > which is a far more sensible interpretation IMO.
+> > 
+> > Because then we're looking at struct pt_regs and an offset therein.
+> 
+> Right -- the way to make this unambiguous has been to make sure there
+> is an addressable object which contains the elements in question. For
+> the least disruption, the best we were able to do is introduce the
+> struct_group() helper. It's internally ugly, but it works.
+
+That macro is fairly trivial, nowhere near as ugly as struct_size() :-)
+But urgh... can't we do something like:
+
+void *memcpy_off(void *dst, const void *src, size_t off, size_t n)
+{
+	memcpu(dst, src+off, n);
+	return dst;
+}
+
+And then you can write:
+
+  memcpy_off(args, regs, offsetof(*regs, bx), 6);
+
+I mean, that sucks, but possilby less than struct_group() does.
+
+[ also, we should probably do:
+  #defime offsetof(t, m) __builtin_offsetof(typeof(t), m) ]
+
+> > So really pt_regs *is* an array of unsigned long, and I feel it is
+> > really unfortunate we cannot express this in a way that is more concise.
+> 
+> A way to do this would be:
+> 
+> struct pt_regs {
+> 	union {
+> 		struct {
+> 			unsigned long bx;
+> 			unsigned long cx;
+> 			unsigned long dx;
+> 			unsigned long si;
+> 			unsigned long di;
+> 			unsigned long bp;
+> 		};
+> 		unsigned long syscall_regs[6];
+> 	};
+> 	unsigned long ax;
+> 	...
+> };
+> 
+> Now regs->syscall_regs is addressable, sized, etc. "bx" means just bx,
+> and "syscall_regs" means all 6.
+
+In this case I would just make all of pt_regs a union with one giant
+array (much like some archs already have IIRC).
+
+> I wrote up a bunch of notes about much of this horror last year here:
+> https://people.kernel.org/kees/bounded-flexible-arrays-in-c
+
+Oh, yeah, I think I saw that fly by on hackernews a while ago.
+
 
