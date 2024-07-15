@@ -1,120 +1,89 @@
-Return-Path: <linux-kernel+bounces-252436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383CC931307
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:25:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A48931309
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBDAEB23489
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:25:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407C11F23C87
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B50189F28;
-	Mon, 15 Jul 2024 11:25:13 +0000 (UTC)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0951891B7;
+	Mon, 15 Jul 2024 11:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvdfMZWL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8021891B7;
-	Mon, 15 Jul 2024 11:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1E187868;
+	Mon, 15 Jul 2024 11:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042712; cv=none; b=lDG+f86oGwLSt8zJANefU/H+KbE+D1lE95E/8k9ad+NeWH8xFwj3XD5S4Jml490n406qHp2D7Wk1jVMSFe+nu7R/bkv82aC/p/Ie8GFpKWm9ZDskaPJM8Px8GXgr6joHwU3m62C/iWCVD9iu1r0AjvZ8GSh/Oa/eMkzM8CHdCtA=
+	t=1721042719; cv=none; b=dWdpK9xpaAwttewMHdQHMyEOMaDh/qvhoBXMkIQJ8JrBE5Kh23fwTuDPjFJjojZl7iYs4q+abcnxilebtH+sRCqlrdRypJ4aLZ2TdenvhteaGvbRvPf2JkVsy0VXxRs1gNaEWI5ebrXRM0xLdSbmBZ+6ZEQ7hnTzXFzH9JALqNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042712; c=relaxed/simple;
-	bh=ty+USuCasgyD0q5WV6y+xqpiIL59dUuUhJrHdOnICuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LM4x19/myLF5avv/x5Hw6d4OwNJ4svedEygwIZ6K1KmNwnsUhj7rb+SJxn6edqeSK5OB2xyRzzQsG0P6mO4yXNqdURimcP4pIXYc9NVAZVzYUiR1FuRNqY6Ehv7tDGC6m0od4AZWwfU3AjKAZpVNBsku+RdiOmbiRwijL/YPD+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so57432761fa.3;
-        Mon, 15 Jul 2024 04:25:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721042709; x=1721647509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nIjlZKoODIvZ5ta3ient2GVc/jl/vGg+wUu4XZXyR/w=;
-        b=WVjtXsBESy0UEByyNgjK1qOlaEcvzaBP1YlHvA5aq7wiRLSYGDe7cTJiWUWob+6rJV
-         Ylrilhdy9zz8pUeeL7gR+doPO8R0eFId8zX18p8uawgUw8Tf2lIEgoUYYlVbrRQM5pB9
-         PqpuBeLEqqVBhlNheu19a/4GyzHp/BcmKc0BGrrIMZK3umIwfZQB6Med6pNAeDp+LtsZ
-         os4fPl4dJjc57PakK7a7XJpVrq5FYLGczkOaLvahHi2eMxGgZTGtMv/rvSbCi617iKDV
-         Hzdw4t/utcspr88Azu1KsZ42k4PFlOOakxWItID38ycN4wWQGPuoW6p6dHSIPY74u9cs
-         J0ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVezM+NC3Qp+U008rQDOvt8awahf01jYx6g2EEuYoMx2y0pezkf0PLSuP4Is31d2AoWXBgNjySawpwet0rZQF+qa5Ur688RhjOfI2S9WtYfQCZLRJELK9JSspPlp85+qL+E/aEE
-X-Gm-Message-State: AOJu0YyL0sHbB6Og6AZkpU5XAMZPZpG/+RfJtx69VffZe0QGarLFHHW4
-	TzY66IUffVCOD9QXK8Jchnb2v5GIXxsJ1ZjEZ5iAd3b2KPliyzHNgQ44Jg==
-X-Google-Smtp-Source: AGHT+IG78sUAzx9I4a7vE8/3T/SQW4az1utlpNNwNzPZzbTFoS9BD8x4sD9BV4nV2NExq/Pw+CcMGQ==
-X-Received: by 2002:a05:6512:36d3:b0:52c:daa4:2f6a with SMTP id 2adb3069b0e04-52eb99d670dmr12258120e87.64.1721042709246;
-        Mon, 15 Jul 2024 04:25:09 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc820fb5sm204451066b.212.2024.07.15.04.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 04:25:08 -0700 (PDT)
-Date: Mon, 15 Jul 2024 04:25:06 -0700
-From: Breno Leitao <leitao@debian.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	rbc@meta.com, horms@kernel.org,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
-Message-ID: <ZpUHEszCj16rNoGy@gmail.com>
-References: <20240712115325.54175-1-leitao@debian.org>
- <20240714033803-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1721042719; c=relaxed/simple;
+	bh=KC0jcakKkauqSbjVB4rvDkrK1IwXEPbpjatq47Q8YLg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=KDbwpCsjmOHumebYZfZlhthsn3zDdzun2iGBfyAcYSe3vbPH2d/AsDu1S4EOH9pFwpM+D2d0MtGepW7f15EsOB0wV8uqjwdYYHK3gjorTar61eWQ609CAjRZ8xHb+U+fA8RmXjcO0UG8z8FohdlfRPM+E+p0ZICK/JPFx2LYfsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvdfMZWL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95FEC32782;
+	Mon, 15 Jul 2024 11:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721042718;
+	bh=KC0jcakKkauqSbjVB4rvDkrK1IwXEPbpjatq47Q8YLg=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=GvdfMZWLK+QQB0Loqm/2bafYkFbrdwFHsb60HINhZmkOX5GLfIAe7TilDJ89IE0vM
+	 nQLxk/HV9nDrSNVsyD7OOTJ5YJRVZFTQ7QOikfyspol/GTVOn+hKVQxP16MjzXgB40
+	 3j4lQPzcAP38iN4CnbgPlHtWWSlvo+FjhesaswIyTIwqSjnthkOlIb0TpmHeNGVJPp
+	 meSz5XfkWOb/grCWOeRQvfv37w1IDGMNt06MWHsAhNfOQK9tHHt9V9CfjVzBckMf9k
+	 71l1Vm62vhAhQZhSW3W/nmeYBJLWimt04kINAxqGgDDL6iLtBQNJQmKgMKVkYfFvS9
+	 a0jNGrx196aRQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240714033803-mutt-send-email-mst@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 15 Jul 2024 14:25:15 +0300
+Message-Id: <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
+To: "Hao Ge" <hao.ge@linux.dev>, <peterhuewe@gmx.de>, <jgg@ziepe.ca>
+Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Hao
+ Ge" <gehao@kylinos.cn>
+Subject: Re: [PATCH] tpm: Move dereference after NULL check in
+ tpm_buf_check_hmac_response
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240709023337.102509-1-hao.ge@linux.dev>
+In-Reply-To: <20240709023337.102509-1-hao.ge@linux.dev>
 
-Hello Michael,
+On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+>
+> We shouldn't dereference "auth" until after we have checked that it is
+> non-NULL.
+>
+> Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_ses=
+sion*()")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-On Sun, Jul 14, 2024 at 03:38:42AM -0400, Michael S. Tsirkin wrote:
-> On Fri, Jul 12, 2024 at 04:53:25AM -0700, Breno Leitao wrote:
-> > After the commit bdacf3e34945 ("net: Use nested-BH locking for
-> > napi_alloc_cache.") was merged, the following warning began to appear:
-> > 
-> > 	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
-> > 
-> > 	  __warn+0x12f/0x340
-> > 	  napi_skb_cache_put+0x82/0x4b0
-> > 	  napi_skb_cache_put+0x82/0x4b0
-> > 	  report_bug+0x165/0x370
-> > 	  handle_bug+0x3d/0x80
-> > 	  exc_invalid_op+0x1a/0x50
-> > 	  asm_exc_invalid_op+0x1a/0x20
-> > 	  __free_old_xmit+0x1c8/0x510
-> > 	  napi_skb_cache_put+0x82/0x4b0
-> > 	  __free_old_xmit+0x1c8/0x510
-> > 	  __free_old_xmit+0x1c8/0x510
-> > 	  __pfx___free_old_xmit+0x10/0x10
-> > 
-> > The issue arises because virtio is assuming it's running in NAPI context
-> > even when it's not, such as in the netpoll case.
-> > 
-> > To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
-> > is available. Same for virtnet_poll_cleantx(), which always assumed that
-> > it was in a NAPI context.
-> > 
-> > Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
-> > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> though I'm not sure I understand the connection with bdacf3e34945.
+Also lacking:
 
-The warning above appeared after bdacf3e34945 landed.
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2=
+fe4e13ec2@stanley.mountain/T/#u
+
+What is happening here is that my commit exposed pre-existing bug to
+static analysis but it did not introduce a new regression. I missed
+from your patch how did you ended up to your conclusions.
+
+Please *do not* ignore the sources next time. Either explain how the bug
+was found or provide the reporting source. You are essentially taking
+credit and also blame from the work that you did not accomplish
+yourself, which is both wrong and dishonest.
+
+BR, Jarkko
 
