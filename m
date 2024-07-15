@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-252030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87B3930D57
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:41:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2BD930D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B207B20D4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995F01C20DC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39446184111;
-	Mon, 15 Jul 2024 04:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9CA1836FC;
+	Mon, 15 Jul 2024 04:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXTbyfUg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUoRr9gH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8DF1836E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A4E1836D8;
 	Mon, 15 Jul 2024 04:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721018433; cv=none; b=hzwPzVi7xk1Kwt07YhTL4GIQaqqQ/aZVYAkRpB4ajqaBfIPd90MF6sAOl8vPC5wPpj5Z7H0wVu3IjNIHK1BuONAkJGPlyOzVZxV+eNGSnE/YPuK7fb++rhUajC0o31UuixguhtRmO4AUhLZc/0Djg6gYla/laCmJAgXvnSiZwZI=
+	t=1721018433; cv=none; b=OYi/2/aJsqTIrNdWLZFcpgekIZryWBvI3osEmTDPF7j6x9EHgZnmEKC3lgoucJurnw+WBburHeHQBUE6zz7VOG6C07pABRkrk5ouAK2ywbMmZaxlhlMxHGI2lP0BPkNr/QPHD266iKwR7fLRPQnH2nIxFtP/eOJLOIABqec0QmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721018433; c=relaxed/simple;
-	bh=dmcHE9ndX1XQrW6dt+HNV+1FYdKq3zZBQZjHINuynL8=;
+	bh=/vzwV7HRYHzys+EVj+QnBgpvcTGEB5OGpRN370BoHOM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=f5zRbAQrvX2we7JGSMPcee68MJG989h689AZyovzh2fj9i7g+oe1qfyzJ/HPXKBAoinKTgXC0DaVBGU+XwTgjbeu0nXmNNUzF1fS+uDok1h68RyL/L0Ok7OBONkXLPdu05AaXoH1IiJ8GYwLvk2VMd7+A1dKkdQekQre6AU3D3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXTbyfUg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D73EBC4AF10;
+	 In-Reply-To:To:Cc; b=jo2gMwhne0SNpXu2WlzmtRqoiQXscVd9AzVcfn6H9kN4t9/xd/77yhgBmXvB52dRWtR7HL+6B8Qlt64hwqDlXE6sX3Xcmx8kZFh8WdoPxvDm6kq86bbzVDqTT7qwd6FN0KcLBJ6UqP+765O9aMoiBLPSbc18XjjFcK9aj/2fc6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUoRr9gH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DEFD7C4AF0F;
 	Mon, 15 Jul 2024 04:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721018432;
-	bh=dmcHE9ndX1XQrW6dt+HNV+1FYdKq3zZBQZjHINuynL8=;
+	bh=/vzwV7HRYHzys+EVj+QnBgpvcTGEB5OGpRN370BoHOM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VXTbyfUgG4R8faRY7I2wOZZqEYVcAyWZ7ANXZ+xn4+nowoEfw2DQLLzjN8IzmDoq1
-	 FP2PsduKzqOyybX84a6kdLvZ5mdfRxwX6vIPjRmz2RaJ5Yf+pnfgDNVbeTtGCm0c52
-	 9YnbANeYnpBX9Aev2/A4a9BoQrmvSF6jNbRZ/wkZ/kdVxhK/BzgWXdOSRXFVar1+xB
-	 R05g03qHn1WNLQS3lXrsIPl6zqkjlrEJUOEEVoDrAC7nc7t/ANUajwfT9+fq190fUI
-	 7zdl5YnU4v4h1mNX0PYdu+h1lWXPD1x6sYkEOQeLiE4yaHytyJKwy7aCaob4EiJ0Zy
-	 z5B5CFukaiBLw==
+	b=iUoRr9gHdsUG87iRlVGiMS0N4NzXJ8d6SDmd+/UcptvUOhuiK+tp1guHXsgZtPHIm
+	 BJpSvCrJ+b3bFvacmQtRg5cqOcwuducfGE1jbCTwb1Eaw/h0xHZ1KY8QtxFmg30FrW
+	 0PnnO+VrFLSTsO+VQxpkNWbsC87dGCTZHmPljok2rGXCIiR919CISZTtlr2Ld+C9qB
+	 8WQBIhult8yVnOgKoTqwLUDdwZwMZzq/MhlTcUWkBFdojlys0I9ycv9r7hh+0q57/z
+	 rVXro1BSIhDfKhLxxVT8MiPXIljwCqEQEdWVKRJbwR6Q8MsRVaWe9a6thYkH4FxKmz
+	 eGSsXh2unuREg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C9E34C43612;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D6A45C43614;
 	Mon, 15 Jul 2024 04:40:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,45 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v12 0/4] net: phy: bcm5481x: add support for BroadR-Reach mode
+Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172101843281.2749.5906999097887026804.git-patchwork-notify@kernel.org>
+ <172101843287.2749.15465946602900508880.git-patchwork-notify@kernel.org>
 Date: Mon, 15 Jul 2024 04:40:32 +0000
-References: <20240712150709.3134474-1-kamilh@axis.com>
-In-Reply-To: <20240712150709.3134474-1-kamilh@axis.com>
-To: =?utf-8?b?S2FtaWwgSG9yw6FrICgyTikgPGthbWlsaEBheGlzLmNvbT4=?=@codeaurora.org
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- f.fainelli@gmail.com, kory.maincent@bootlin.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240712115325.54175-1-leitao@debian.org>
+In-Reply-To: <20240712115325.54175-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ eperezma@redhat.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, rbc@meta.com, horms@kernel.org,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 12 Jul 2024 17:07:05 +0200 you wrote:
-> PATCH 1 - Add the 10baseT1BRR_Full link mode
+On Fri, 12 Jul 2024 04:53:25 -0700 you wrote:
+> After the commit bdacf3e34945 ("net: Use nested-BH locking for
+> napi_alloc_cache.") was merged, the following warning began to appear:
 > 
-> PATCH 2 - Add the definitions of LRE registers, necessary to use
->    BroadR-Reach modes on the BCM5481x PHY
+> 	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
 > 
-> PATCH 3 - Add brr-mode flag to switch between IEEE802.3 and BroadR-Reach
+> 	  __warn+0x12f/0x340
+> 	  napi_skb_cache_put+0x82/0x4b0
+> 	  napi_skb_cache_put+0x82/0x4b0
+> 	  report_bug+0x165/0x370
+> 	  handle_bug+0x3d/0x80
+> 	  exc_invalid_op+0x1a/0x50
+> 	  asm_exc_invalid_op+0x1a/0x20
+> 	  __free_old_xmit+0x1c8/0x510
+> 	  napi_skb_cache_put+0x82/0x4b0
+> 	  __free_old_xmit+0x1c8/0x510
+> 	  __free_old_xmit+0x1c8/0x510
+> 	  __pfx___free_old_xmit+0x10/0x10
 > 
 > [...]
 
 Here is the summary with links:
-  - [v12,1/4] net: phy: bcm54811: New link mode for BroadR-Reach
-    https://git.kernel.org/netdev/net-next/c/2c1583290b08
-  - [v12,2/4] net: phy: bcm54811: Add LRE registers definitions
-    https://git.kernel.org/netdev/net-next/c/ff253875ff3b
-  - [v12,3/4] dt-bindings: ethernet-phy: add optional brr-mode flag
-    https://git.kernel.org/netdev/net-next/c/775631d7845b
-  - [v12,4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
-    https://git.kernel.org/netdev/net-next/c/03ab6c244bb0
+  - [net-next] virtio_net: Fix napi_skb_cache_put warning
+    https://git.kernel.org/netdev/net-next/c/f8321fa75102
 
 You are awesome, thank you!
 -- 
