@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-252381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0A793126A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:38:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010CD93126C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863DC1F21A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:38:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C70CB22094
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5A1188CCE;
-	Mon, 15 Jul 2024 10:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878581891AA;
+	Mon, 15 Jul 2024 10:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="phkSwNQq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="s2+zFhHA"
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530DC188CA4;
-	Mon, 15 Jul 2024 10:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AC0188CDE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721039863; cv=none; b=gkQquvVM9JGCFgDMohxD3qeiJKV/xuHh+PkWfJQ3/nq9b9JzLS4cSP7fHeCi9WVnpXw8oXLUu6+OBNWeBkaKh94EmO9iNHzW5JObeYIvcOjRAHUDQsYB3wVB/cLPCBFg5YB0uBT1R1dSU6uet8DDKg+1URiZ+f6XgMrOGWZaccQ=
+	t=1721039890; cv=none; b=iy3hrF7OSD1LTi7fCSDWCZcjIOgOx8Wf5Q584Ld9leUvqC0Q4eD/OAIrIaoYtQuvXRrlLJM6bPKvq/h2y2WBCg0YsmiOa9S3hFrpni5Z6Yg/u1GPQAEe8kQFHboPYBcDMgIGCv72bbJvauMkgSwLDdLA4A8bbnPIDPdoJepJ0ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721039863; c=relaxed/simple;
-	bh=OLSQHqvZeV4R8tIhm0fu9Y+vzMgcFVohlkyzO1puMD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CQWmRsgmv+2qm/pG6V+xc9NioB5BhL5FExmQmGo32XXfgRrUPmt8c3EOPE9ifZsIxqZ3tkdwdCP+kXsyBNbUdPu4aHGUHHSQHDWVGnb0sGat8UJ3NpWapJKgmKVUKZo94trZT5XbZfHCTsV1A26v+IvmLI7fNo5HG6fjn3WDP7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=phkSwNQq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FA6TcG004051;
-	Mon, 15 Jul 2024 10:37:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eUI3A/c5DggFY7R2xMmygOfupjBAxIV01/Lk3i6oUPU=; b=phkSwNQqany2JeAW
-	aZ+RZy79YR9aniyRRqtue/z+xGnGRRo0ziOQPIl7c/44gTC2u8GzIg+CawOQi4Tl
-	HSypZp7f/JIG6S6kElPR/1cvt0Hb7COTdFt3vL67+agATYKBzK0C+SPsgwFfpFDO
-	dK32mu6mIvJcJcRDyBPDqQvngOxkUzvrqnnALbpzcmbvl9xfWsx2cqM8iQxrs/pE
-	c1xdu6acGusnh3roDffNh1ncRa0pAHrnml8PBXA4e6LMbDL10Ou9fJMVa4PnLnec
-	DOjseFSB4kKry8kmgBEINKfytnrdVUxyMMo2o6pTUxDJnNwdtshNgbWfykLfJcnY
-	wOAVbw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bghrkqkd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 10:37:10 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FAb9pT031246
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 10:37:09 GMT
-Received: from [10.216.4.154] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 03:37:02 -0700
-Message-ID: <6124f9e9-3fdf-29b1-128f-c58f5ebe1424@quicinc.com>
-Date: Mon, 15 Jul 2024 16:06:59 +0530
+	s=arc-20240116; t=1721039890; c=relaxed/simple;
+	bh=lE7FrfdkLBlUpifxmV9zzJ79DyhZz5RPYEjWLn8zz3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgcP/1Z8kTYfcexKekk6xyAfwub/HasF4EQCzV8fFjmHrXMo6XC+70U40XOW290eGdjbtKOD5laZG6+Bv45ySKvPctLgUdg3SruqrBOpbMAWcaI+Xwrx3cRm7lDYRbO8jOdV7QMonVrAljnwRjKy/3d0qtNpq5KT+Sx5OB4wHT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=s2+zFhHA; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WMzDj193wzC4M;
+	Mon, 15 Jul 2024 12:37:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721039877;
+	bh=KuHNObI2LzO0QtwTAS849qPCxUo8g2dKwL8aDC0U+Uk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s2+zFhHAbXAXy3xNyWk6oTsZl9y3ELVIB8o/ZVGkHnD21c6y73sdx52PZ6bVpZJSG
+	 rCFSW21qrninMnI29pajBICHfwBshsKnKaBDwGM2ngfVsfFcSMiwCN+pGp9/0LU0Nl
+	 m8glSxH2+/ty8C+x14dJ6j3+o9E1/Y18d9FAW6aU=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WMzDh4zfPzKfn;
+	Mon, 15 Jul 2024 12:37:56 +0200 (CEST)
+Date: Mon, 15 Jul 2024 12:37:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-cve-announce@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
+Message-ID: <20240715.aeLiunipi8ia@digikod.net>
+References: <2024071218-CVE-2024-40938-1619@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <f4072105-e0e2-46c8-82ed-92105b43a345@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <f4072105-e0e2-46c8-82ed-92105b43a345@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FfaGW4rugQZQSdXkagZQb-Uthemh45ry
-X-Proofpoint-ORIG-GUID: FfaGW4rugQZQSdXkagZQb-Uthemh45ry
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407150083
+In-Reply-To: <2024071218-CVE-2024-40938-1619@gregkh>
+X-Infomaniak-Routing: alpha
 
+Hello,
 
-On 7/11/2024 3:21 PM, Bryan O'Donoghue wrote:
-> On 10/07/2024 23:10, Dmitry Baryshkov wrote:
->>>> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
->>>
->>> This clock is kept enabled from probe, hence not required to be 
->>> modelled
->>> explicitly.
->> Yes, I'm asking why it's kept up enabled from probe rather than via
->> clock framework?
->
-> FWIW my preference is to do it as Dmitry is suggesting here.
->
-> I'm not a big fan of hitting the register and leaving it as-is, would 
-> much prefer to move to the model of having the CCF do it - so that for 
-> example the clock appears in the /sys clock summary.
->
+AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
+security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
+just a canary, and this case was correctly handled with defensive
+programming and didn't allow to bypass the security policy nor to harm
+the kernel.  However, this fix should indeed be backported.
 
-This clock is PoR ON clock and expected to be always enabled from HW 
-perspective, we are just re-ensuring it is ON from probe. Modelling this 
-clock is unnecessary, and we have been following this approach for  gdsc 
-clock in all the recent chipsets, like for example sm8550 camcc.
+Could you please Cc me for future CVE related to my changes or to
+Landlock?  For kernel CVEs, I think it would be good to Cc at least
+maintainers, reviewers, authors, and committers for the related commits.
 
+Regards,
+ Mickaël
 
-> ---
-> bod
+On Fri, Jul 12, 2024 at 02:27:36PM +0200, Greg Kroah-Hartman wrote:
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> landlock: Fix d_parent walk
+> 
+> The WARN_ON_ONCE() in collect_domain_accesses() can be triggered when
+> trying to link a root mount point.  This cannot work in practice because
+> this directory is mounted, but the VFS check is done after the call to
+> security_path_link().
+> 
+> Do not use source directory's d_parent when the source directory is the
+> mount point.
+> 
+> [mic: Fix commit message]
+> 
+> The Linux kernel CVE team has assigned CVE-2024-40938 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.1.95 with commit b6e5e6964358
+> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.6.35 with commit cc30d05b34f9
+> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.9.6 with commit c7618c7b0b8c
+> 	Issue introduced in 5.19 with commit b91c3e4ea756 and fixed in 6.10-rc2 with commit 88da52ccd66e
+> 
+> Please see https://www.kernel.org for a full list of currently supported
+> kernel versions by the kernel community.
+> 
+> Unaffected versions might change over time as fixes are backported to
+> older supported kernel versions.  The official CVE entry at
+> 	https://cve.org/CVERecord/?id=CVE-2024-40938
+> will be updated if fixes are backported, please check that for the most
+> up to date information about this issue.
+> 
+> 
+> Affected files
+> ==============
+> 
+> The file(s) affected by this issue are:
+> 	security/landlock/fs.c
+> 
+> 
+> Mitigation
+> ==========
+> 
+> The Linux kernel CVE team recommends that you update to the latest
+> stable kernel version for this, and many other bugfixes.  Individual
+> changes are never tested alone, but rather are part of a larger kernel
+> release.  Cherry-picking individual commits is not recommended or
+> supported by the Linux kernel community at all.  If however, updating to
+> the latest release is impossible, the individual changes to resolve this
+> issue can be found at these commits:
+> 	https://git.kernel.org/stable/c/b6e5e696435832b33e40775f060ef5c95f4fda1f
+> 	https://git.kernel.org/stable/c/cc30d05b34f9a087a6928d09b131f7b491e9ab11
+> 	https://git.kernel.org/stable/c/c7618c7b0b8c45bcef34410cc1d1e953eb17f8f6
+> 	https://git.kernel.org/stable/c/88da52ccd66e65f2e63a6c35c9dff55d448ef4dc
 
