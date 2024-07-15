@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-253115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F64931CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:35:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B73BD931CAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C4A1C21E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BF9282F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E3513E41A;
-	Mon, 15 Jul 2024 21:35:21 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3EA13CF86;
+	Mon, 15 Jul 2024 21:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gt7UYiuZ"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6F413CFA3;
-	Mon, 15 Jul 2024 21:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C3F2837F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721079321; cv=none; b=GbLFdFOjOwHmuGkQWiVlQTE4Jfny0HsqnUaYADH90Mw2krOO+BHDv+XhOuxybQ+ulNM/BCovGejaid8DTwqQfib+qxXn4C4naq0xpkidlaNAqssy3krT4b3LnHPYBrncgav7N6mc5g6XhS9IxiqffbfPLrYzCTe2cWAUxnKpeBw=
+	t=1721079480; cv=none; b=RUJIm3PaNzzukJeLXLfVQu/ibAnRY6I2wsGEHpFFMI1nPi+0cgP43qkCiBPzNwevxrWb1k1nNZ9KDuOTKEwJNRHnNZk0Ng/bhYQdouGVOavjykq7HTGTVNHGj/iA5C9UViMzSafFYFHtALnMuNQOIKQNKcw++ZkfJki8ceXAjhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721079321; c=relaxed/simple;
-	bh=32qYmHyIp8QMfc6ddW2c9iP5wrq8oLvXg0tbcevTzEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5NJbTc4bFt2GZrJainA9V2ajrSdL7OyhEVjS+M8hyDHgk4UEQ+CCatpAzPetsk3euVvbWdOCs6FDacSKmTKUdVQCGfC8+XadW7LNxxMLV0/Gvl+TsabKCsPjh2gauEF/49aBHebVbXZBJVR8QKEwWQgT8JPPVY3I8Yl9QkwBtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fb53bfb6easo31444385ad.2;
-        Mon, 15 Jul 2024 14:35:19 -0700 (PDT)
+	s=arc-20240116; t=1721079480; c=relaxed/simple;
+	bh=XdO7wIyX46Gc6A4zpOoYKHrIE5C8ZCiQW+adQqLkIOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IfSlyGj2KuZmnzKny1jrKF61AH7tI/oZrFHPN3WAzwZWZ/JMRInCS9QH4Uw4i12CZIu8L8xh8gORUIMU0axkkSx2mb3+xYFiiI+zUe+LJFSwAvf7SNNsqvzl1Msc1iGYXNUttbjKsrRu38O6YQYxuu6z9sRgfoENnFW8y5h4OWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gt7UYiuZ; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d9400a1ad9so2787927b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:37:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721079478; x=1721684278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tYT7RZte+jpSY6YDB1OuEYOLCT1GQosdmk1JeVvIqQo=;
+        b=Gt7UYiuZMpSUFOAnI2A2VIqiLf3ai6Ckptsck00+Y7szPSRsJC9D5MxdZP3ttNTWmf
+         8ULv4xWypebnfH1Vvci17QIHiAL0Fr7HrWie0erviyGsyhiR/LgtVtWG+PCJNfP6ZsbC
+         W3Trv4vA6mByS2pI9aUpQv5Fj6bMUv/3JQuIqpE8BZh5bAs58kvCMh935p233MsS3lWZ
+         76lTjTJwEXWlf34RRjn0DLOJVmB0skICLhe4hsnl2PffhANYFKxpy7E2QeUD2QddKmLb
+         QAnmLWjWRx0ZaEZ924rxXx8hiw6PBdbSUj2WMQDbs5ToPxEGP4ZPofV3g/gxUIK8gIQW
+         nlPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721079319; x=1721684119;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OotDTj0wsG1E/E62Kwi88XqlpHF3B7vjq5oagD+5Vbw=;
-        b=VEuZ1S0tWvJiIMki9uXRYIII/DCFkSK2ND0uoIhd+KIPFisaejeRkUZ5J0OmLVUCqF
-         kXo5D5D3VV4YUrduTHFYczUFn/uwz/0SPUc6KqFbiWKcLW1zoT2DEsnXZaJ6L0cZrVB8
-         NfQsHhCcDCm5vGtFkvzNDDSvOf+CSO0IdSsIfym+3D9l9QCwXEFh0OM0UI+bA2P8NKQO
-         O2ZUsmGUPUmJQ0gepqeyhv5kIQbA9mNRW5Y4WNKn6w2wyx7lHJrAGamDNqUoj0KGc5Yt
-         77pBP8IWw3btgDL0iudOOxG2RAhnMDF4YVy2pEAnzlXxRttSotl+hYL4UHJb9yFxt4wd
-         2dEw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0o3rZX62IgqMP1ST6KWrBA/JDgaJXkGDSQ+eNwwTq+lJ0gvL7UtRcBhlb5iWYqI9CrapzvwXsnAlCyIIBY2cGiiyF4XIeHbqXNXJ3QHz5cOYUpuU2Rv00z5Efl5h4HUHNVP2UHpN6/IKNV186tvhfNPIiVHOPeSVefMlnbRWVKH1m3mWRQQHH9LoevUFFuYgge1XIRKIgRoQn
-X-Gm-Message-State: AOJu0YzRM1t7Z+2gEit6YvtaemSnjFklvtF6pX15MYhiIN2faXFYzh3Q
-	oWg3hDBdzX32Iv+pVZEj0cH4bYwzv793tTzPXTklo3oO9A9KyDE=
-X-Google-Smtp-Source: AGHT+IHXzF2zbiCUWAgw/G+9Ak+eoVe7Pz3FnXphvUuu/6dG1mUgnDx9+AqzCGAnSEgP9t5S5HAZYQ==
-X-Received: by 2002:a17:903:1c5:b0:1fb:7c7f:6458 with SMTP id d9443c01a7336-1fc3cb5bcc4mr4142335ad.32.1721079318849;
-        Mon, 15 Jul 2024 14:35:18 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc5cd92sm45538395ad.302.2024.07.15.14.35.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 14:35:18 -0700 (PDT)
-Date: Mon, 15 Jul 2024 14:35:17 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
-	netdev@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 0/2] selftests/bpf: convert test_xdp_veth to
- test_progs framework
-Message-ID: <ZpWWFRsB4tRBP0mD@mini-arch>
-References: <20240715-convert_test_xdp_veth-v2-0-46290b82f6d2@bootlin.com>
+        d=1e100.net; s=20230601; t=1721079478; x=1721684278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tYT7RZte+jpSY6YDB1OuEYOLCT1GQosdmk1JeVvIqQo=;
+        b=YjBWzxXH3pYBaHRjuZstSBwLV1AIxN8SUD6ZgK0axA+9jMHAXMIHFLPpZparl5Kpex
+         1j6p2Ug4naZtDLP5jH3L/+Wd6oqtxmljsaYDOWwgzVPm2PTOwOzcwiNG6dNSW3ad3ZOY
+         fabESouezYECBRx/wYKMmDF39kNb77Mu/feyItsLD4fqH9rHUJGCIIa29RGLDcBst5Jj
+         TsuHxIiagiwHr9lQg7dWrTSoW4WW5GeRzIaeJU3Mhy4tqrLOk4mXAcDXu04Wj2LZ1+Iw
+         ENGoHTeD2jIV6wjoXsikscKMgOGPNuC8/yOQYYMrdMFUssscDgzHq5TBJeELQhC9fcoW
+         0zuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVovzA4F0jD+iIS6LWiDl4AAoOx4RUc7ErEHswJL3SijQfrzLMuoZHwJcO/BvSAGXw/7GeK9qTQvqvnIUznHVjn5W/PYwYjI+kA9+A
+X-Gm-Message-State: AOJu0YzSpZHoGK1bqe6Ix7WQrA/f/ASiyofmWZ7smpi30/irORR8TWgs
+	6T5ti/xrrCz6wjXituth5zt0SBMSWLZ4SI7gEDi/R2pz/3jN34tfAyU3Tri7Co6kmvosZ/X1hAC
+	sONa4ScDmsXdif6fjDrouGK3m9v++QJR0pxzc
+X-Google-Smtp-Source: AGHT+IFo5Jg9Iet8BbL/iNTVTBM9bSolkTbUgSvwA/5qBUXi+M06ocwSdrUcSEL7avW0kur1t8VRn6Y+Ut7Wj828r/M=
+X-Received: by 2002:a05:6870:390a:b0:25e:bdf7:2883 with SMTP id
+ 586e51a60fabf-260bde68931mr39462fac.25.1721079478153; Mon, 15 Jul 2024
+ 14:37:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715-convert_test_xdp_veth-v2-0-46290b82f6d2@bootlin.com>
+References: <20240710234222.2333120-1-jthoughton@google.com> <20240710234222.2333120-3-jthoughton@google.com>
+In-Reply-To: <20240710234222.2333120-3-jthoughton@google.com>
+From: Anish Moorthy <amoorthy@google.com>
+Date: Mon, 15 Jul 2024 14:37:22 -0700
+Message-ID: <CAF7b7moeOeJEv+zPQ-VQrP8M+O7r8Ru3GZjfrAKj25Hc0pQGnw@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/18] KVM: Add KVM_CAP_USERFAULT and KVM_MEMORY_ATTRIBUTE_USERFAULT
+To: James Houghton <jthoughton@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/15, Alexis Lothoré (eBPF Foundation) wrote:
-> Hello everyone,
-> 
-> this small series is a first step in a larger effort aiming to help improve
-> eBPF selftests and the testing coverage in CI. It focuses for now on
-> test_xdp_veth.sh, a small test which is not integrated yet in test_progs.
-> The series is mostly about a rewrite of test_xdp_veth.sh to make it able to
-> run under test_progs, relying on libbpf to manipulate bpf programs involved
-> in the test.
-> 
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
-> ---
-> Changes in v2:
-> - fix many formatting issues raised by checkpatch
-> - use static namespaces instead of random ones
-> - use SYS_NOFAIL instead of snprintf() + system ()
-> - squashed the new test addition patch and the old test removal patch
-> - Link to v1: https://lore.kernel.org/r/20240711-convert_test_xdp_veth-v1-0-868accb0a727@bootlin.com
+Not to nitpick an RFC, but since the stuff in this patch seems less
+likely to change I think you should avoid using #ifdefs
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+For instance
+
+On Wed, Jul 10, 2024 at 4:43=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
+> +static inline bool kvm_userfault_enabled(struct kvm *kvm)
+> +{
+> +#ifdef CONFIG_KVM_USERFAULT
+> +       return !!rcu_access_pointer(kvm->userfault_ctx);
+> +#else
+> +       return false;
+> +#endif
+> +}
+
+can be
+
+> +static inline bool kvm_userfault_enabled(struct kvm *kvm)
+> +{
+> +    if (IS_ENABLED(CONFIG_KVM_USERFAULT)) {
+> +       return !!rcu_access_pointer(kvm->userfault_ctx);
+> +    } else {
+> +       return false;
+> +   }
+> +}
+
+(however kernel style tells you to write that :), the cap-supported
+check can be moved into kvm_vm_ioctl_enable_userfault(), etc
 
