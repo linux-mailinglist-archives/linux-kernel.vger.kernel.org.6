@@ -1,221 +1,160 @@
-Return-Path: <linux-kernel+bounces-252755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95D89317B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E143D9317BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE47C1C21E26
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E831F22728
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27CE18FC81;
-	Mon, 15 Jul 2024 15:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A5518F2F3;
+	Mon, 15 Jul 2024 15:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="tBMksm9R"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ztf7ba2X"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9DE18FA33
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017ABF9EC;
+	Mon, 15 Jul 2024 15:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721057631; cv=none; b=SlyentnruQBNm3erhHn3U8tuY5HoVUJ8d/MXNNcytxDo6nmgqxWuHZv+4JNB+TVTXdZCfa37rzyTG7nQadiyv9SDwqAbh9NQVx752l3T5cOIiV6x8LL+ZqGGRrSNL3f8OlBWb55sOYyJgwnM0I49gWgBnP5sm+qZ6I2Bde8FCMY=
+	t=1721057831; cv=none; b=MkIzp0vehXvTb/t++1xZT4F2m/4LgLBYKYL/XLYG7bE89SLtMJY4Nq9flvPqOsk1SlAIy7EL63UpV+kHGhEV3gVziG02+VuZ4tdUjblmKIcIOqpsKGe04ZVH/Q5X34EatijGp+vvfyHPjoGozNHT8i81OSxbn6sQI3iTxkcMZug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721057631; c=relaxed/simple;
-	bh=O17oVYZHosGaaJhlD2MlU5PTYcT36bEOgqEoMy9Lp+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jlRa+dduZsrcvw/gUC+6tQ0l8KiNJfTcZtfxYdFnGf2hi/WnHS+QKZ7N//3fyW6S7ylv50eSr/xhvuB5Jy5oph9sgti1o1V4qWG5++kYXFskM7tikI18gdDl4ennrJmez4GXEL3tBAxW4jhFz+ntOF5ph2eTjGCSuU6JzSRt4s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=tBMksm9R; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fb0c2c672dso2421515ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:33:49 -0700 (PDT)
+	s=arc-20240116; t=1721057831; c=relaxed/simple;
+	bh=Ue9shyEccR0D4NLMAteVg9HVOTZiJlHb7sLKGHu5KGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mRKbVjGYFF2yHl3hyT26j+JRyX3sTVB9JY8vIVJrdmqMaw4+z0J4B091JVsFkGhDVih4LGlTzIfzrqi1EupR4AU9jS/8pe8u6X0H1bxuBK5jRR2jSGR26+0r09LLNn2oKZL0mlBkuFBDo8MN7sp9aFvF0VfhqdkSsxgvg6IKwiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ztf7ba2X; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4f2ee3be492so1291525e0c.0;
+        Mon, 15 Jul 2024 08:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721057628; x=1721662428; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nNrBKwYTcdYHsoBHljeLphuQCOZ/YFIVZ+KLTOSWsAs=;
-        b=tBMksm9R3VMCr1eWe6f7oerChBH24oyqE9gpHbGX/GDHSPyFQePYwlAtESFSc6725L
-         6eXjTemeaVyZXWnBLOvxWBIbS5g5CvdnCAH9HXExZT/OP2Ti2q7bAtpDqvB869Ao6VOI
-         ArEc7DhfdpWpajlxLy5P5wxbTWc7h6K2FpQ110bJnAgHhBiFiEeJeusPu2b7dHbvSw+I
-         KPLeC58Ndrbozl5DpsSr4Ud1ppFywpjmiYBrLWkfPevgF4Z2IgTrFm+wgb91GzV/y2+6
-         TKGNCY5jUZqfDUgIs6iW7ZRz7DN0XPu6lLt48f1e7ofj641YxMR9N5v2Vgtz2Ga/u70p
-         wDtw==
+        d=gmail.com; s=20230601; t=1721057829; x=1721662629; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ArOIKD7pHlC5ql37eKTHjT262T0caK8pKp7AZIE6P2g=;
+        b=Ztf7ba2Xa/FK+qWMv6wu1YIK0zc8DwOCLymPkwyN7xk/xkRB/Y8zm/XHdgnYGeusnr
+         JP0ARP8LWOUJftYcu8Z4F6S4WyDISoPggY2gobvdVnV6ndbFOG5sWfjn3u7EO7Qe1iai
+         K2eTDcGcJf0x3rHplWeuvDxeY6aU1f/1LjhINi0aJpmWSIpx6ty0q5Hr2VFR2aqPS4b6
+         CZQnp3Hp9U7I94SbyhGki7KcSZJ6e+yypU/4boigwUFMJHBMVosl1ZOxBZ0cRxDi/kAO
+         l+nuGwIkRjRl9IcmaWXNMR4lBYGVU28rkSunp/Xa2Wugshd5jjG2/oK9yaSacHo2RdiL
+         gvfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721057628; x=1721662428;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nNrBKwYTcdYHsoBHljeLphuQCOZ/YFIVZ+KLTOSWsAs=;
-        b=luciiA86qOM4yQj9x45OqSnkFVSNeXD4HdBVJFu8Y78SA0vjgt9WzJt571IDkH4xmt
-         DJ7ntLJ27eIvLDi3GiFIGQ69kFRfSZpcZs2DNlbDJPWB0ardF8HT5yQbTrzDEBSCd/3e
-         lGq5kvfYpQOOtnjuJYMJBmkrHlhgovFOSB4V55YEFqMjV3iBc+S0x4VDI/a8wMQzZW2I
-         TRDCfXn2LxWMHqg3XcVECezkGmrDQEuycTyfv5Ome2qGt9fxHsYpqbOimm9Q/HXBe/Ro
-         sn95zsm/aPFTaKBGdepGinUPJgJEE3HOKAF3m+aRZ6eVdzsACmEEiH5tmpRjX/hCooBV
-         wexw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/WS0mCq6qxc08H9ZO3eSu9aK4Sm4LMsRFQ01uP8XTXJqrljd0aLw2oZNIOsI68cC45tDrzRtYOujxmASHDNQW82rQx993pUGq3xyD
-X-Gm-Message-State: AOJu0YxysJkKbD0F8AonmTSpeJq/o2TTyu0aYoRTxwSixVWaCqa+2M7A
-	wAOPv3kMUTJ54FGKvdBrnRh0dIWjIYg6pn39DJQtxxTttgwkiEEg3JJunUGzIHg=
-X-Google-Smtp-Source: AGHT+IFBGQtaMboH87ZiITDVDC8NxVYCRbzN4TT71saPPYRoOL+WvGv7Cmx1qWcc0JUtTQaQgm2X2w==
-X-Received: by 2002:a17:903:2348:b0:1fb:3c1:cb26 with SMTP id d9443c01a7336-1fbdc45a9a0mr120691815ad.1.1721057628613;
-        Mon, 15 Jul 2024 08:33:48 -0700 (PDT)
-Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc2736dsm42303825ad.159.2024.07.15.08.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 08:33:47 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Robert Moore <robert.moore@intel.com>
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: [PATCH] ACPI: CPPC: Fix MASK_VAL() usage
-Date: Mon, 15 Jul 2024 17:33:35 +0200
-Message-ID: <20240715153336.3720653-1-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721057829; x=1721662629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ArOIKD7pHlC5ql37eKTHjT262T0caK8pKp7AZIE6P2g=;
+        b=eq3rFMzeFldCiWKzePCnM0Nn1bSqqqUwGAhb8zaAJMuvWq4UDqssBVMJY8aieDJYs+
+         hZpAdjp7UWCQnuZY3ZPLEgv/cDqn/zg1VPwVFxvT2NFdCqfGlsp646ET/3pyM8LuTIAt
+         PjDn6k7Cba4hO8r/j22k2NdjhvhQJADtDOpIJqDKWeetmnrHIzqKd1VmoAp8OBzit/Tx
+         aT8jLpmy/cdvfBVuiOPq7mzes9w6vorE0XF5Q3eDjUSXsK7ZCO5LyU7NvQf9E2/qJHQK
+         V84w7LnhVIT6Ykw+I+1wCr1ITMHuIdTS/whBxN/Tho8gdvaipW4SRQCIAkTLiuWI2Wq7
+         ISmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKL2GYp5qfOoXJM+5sTZ7lTKMnQ0vsQthExxrRttFw7w1uZNO8RDC2jO9tdqmhSH/Z9dmdnc3hp4K9aVRDXhfSqMXoENmR7aHon/XUx2aQwKSIEwz4Y4IVV6KKo32+lIFOn3lDqemM
+X-Gm-Message-State: AOJu0YyhE2f5jSlEJIg/FxJQnTHhTpLVVaXOXdQM6hQItFC6v450txTm
+	eWEU7RwxuASGCKp9sQV7wihpzxPP+0ZNQ4OnHEUO2gWS1ekezfNJ5I9SybnGJrIgw/HuOW/MqTk
+	Q0TF4VTLsJkS2gATd8NXkwKrwTK0=
+X-Google-Smtp-Source: AGHT+IHynsSEDIWYpIz5Okhvtk+ZuNA2LvL6tTH2oOnecRTIUi1tcEAmS92HFnG2upt9gnk9ocH1U1yxsKLLzscsTiM=
+X-Received: by 2002:a05:6122:3d15:b0:4f3:799:8b91 with SMTP id
+ 71dfb90a1353d-4f4cd37d756mr273119e0c.9.1721057827233; Mon, 15 Jul 2024
+ 08:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240710231606.3029-1-ryanzhou54@gmail.com> <f0c789d8-8ae0-4a46-a5b3-aa9a5a758915@rowland.harvard.edu>
+ <2024071104-rental-bleak-b273@gregkh>
+In-Reply-To: <2024071104-rental-bleak-b273@gregkh>
+From: ryan zhou <ryanzhou54@gmail.com>
+Date: Mon, 15 Jul 2024 23:36:57 +0800
+Message-ID: <CAPwe5ROTfQVQ2fF3ab05E51X+_5zFpSNK-qrEh-ev-WWBzY+DA@mail.gmail.com>
+Subject: Re: [PATCH] hid: usbhid: Enable remote wake-up based on device configuration
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, jikos@kernel.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MASK_VAL() was added a way to handle bit_offset and bit_width for
-registers located in system memory address space. However, while suited
-for reading, it does not work for writing and result in corrupted
-registers when writing values with bit_offset > 0. Moreover, when a
-register is collocated with another one at the same address but with a
-different mask, the current code results in the other registers being
-overwritten with 0s. The write procedure for SYSTEM_MEMORY registers
-should actually read the value, mask it, update it and write it with the
-updated value. Moreover, since registers can be located in the same
-word, we must take care of locking the access before doing it. We should
-potentially use a global lock since we don't know in if register
-addresses aren't shared with another _CPC package but better not
-encourage vendors to do so. Assume that registers can use the same word
-inside a _CPC package and thus, use a per _CPC package lock.
+On Thu, Jul 11, 2024 at 3:41=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Jul 10, 2024 at 09:47:39PM -0400, Alan Stern wrote:
+> > On Thu, Jul 11, 2024 at 07:16:06AM +0800, ryan wrote:
+> > > According to the USB protocol, the host should automatically
+> > > adapt the remote wake-up function based on the configuration
+> > > descriptor reported by the device, rather than only the default
+> > > keyboard support. Therefore, it's necessary to support other hid
+> > > devices, such as digital headsets,mice,etc.
+> >
+> > It's true that the host shouldn't try to enable remote wakeup if the
+> > configuration descriptor shows that the device doesn't support it.
+> >
+> > However, it's not true that the host should try to enable remote wakeup
+> > for devices other than keyboards with boot-protocol support.  History
+> > has shown that quite a few HID devices don't handle remote wakeup
+> > properly; the decision about whether to enable it should be left to the
+> > user.
+>
+> I agree, this patch isn't acceptable.  Ryan, why do you want this
+> applied?  What userspace control is missing to allow you to do this
+> today on your systems with no kernel changes for devices that you know
+> will work properly?
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: 2f4a4d63a193 ("ACPI: CPPC: Use access_width over bit_width for system memory accesses")
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
 
----
- drivers/acpi/cppc_acpi.c | 44 ++++++++++++++++++++++++++++++++++++----
- include/acpi/cppc_acpi.h |  2 ++
- 2 files changed, 42 insertions(+), 4 deletions(-)
+Many thanks to Greg KH and Alan Stern for reviewing the patch and
+replying to me.
+I'd like to start by asking Greg KH's question.
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index 1d857978f5f4..2e99cf1842ee 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -170,8 +170,11 @@ show_cppc_data(cppc_get_perf_ctrs, cppc_perf_fb_ctrs, wraparound_time);
- #define GET_BIT_WIDTH(reg) ((reg)->access_width ? (8 << ((reg)->access_width - 1)) : (reg)->bit_width)
- 
- /* Shift and apply the mask for CPC reads/writes */
--#define MASK_VAL(reg, val) (((val) >> (reg)->bit_offset) & 			\
-+#define MASK_VAL_READ(reg, val) (((val) >> (reg)->bit_offset) &				\
- 					GENMASK(((reg)->bit_width) - 1, 0))
-+#define MASK_VAL_WRITE(reg, prev_val, val)						\
-+	((((val) & GENMASK(((reg)->bit_width) - 1, 0)) << (reg)->bit_offset) |		\
-+	((prev_val) & ~(GENMASK(((reg)->bit_width) - 1, 0) << (reg)->bit_offset)))	\
- 
- static ssize_t show_feedback_ctrs(struct kobject *kobj,
- 		struct kobj_attribute *attr, char *buf)
-@@ -857,6 +860,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
- 
- 	/* Store CPU Logical ID */
- 	cpc_ptr->cpu_id = pr->id;
-+	spin_lock_init(&cpc_ptr->rmw_lock);
- 
- 	/* Parse PSD data for this CPU */
- 	ret = acpi_get_psd(cpc_ptr, handle);
-@@ -1062,7 +1066,7 @@ static int cpc_read(int cpu, struct cpc_register_resource *reg_res, u64 *val)
- 	}
- 
- 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
--		*val = MASK_VAL(reg, *val);
-+		*val = MASK_VAL_READ(reg, *val);
- 
- 	return 0;
- }
-@@ -1071,9 +1075,11 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
- {
- 	int ret_val = 0;
- 	int size;
-+	u64 prev_val;
- 	void __iomem *vaddr = NULL;
- 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
- 	struct cpc_reg *reg = &reg_res->cpc_entry.reg;
-+	struct cpc_desc *cpc_desc;
- 
- 	size = GET_BIT_WIDTH(reg);
- 
-@@ -1106,8 +1112,34 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
- 		return acpi_os_write_memory((acpi_physical_address)reg->address,
- 				val, size);
- 
--	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
--		val = MASK_VAL(reg, val);
-+	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
-+		cpc_desc = per_cpu(cpc_desc_ptr, cpu);
-+		if (!cpc_desc) {
-+			pr_debug("No CPC descriptor for CPU:%d\n", cpu);
-+			return -ENODEV;
-+		}
-+
-+		spin_lock(&cpc_desc->rmw_lock);
-+		switch (size) {
-+		case 8:
-+			prev_val = readb_relaxed(vaddr);
-+			break;
-+		case 16:
-+			prev_val = readw_relaxed(vaddr);
-+			break;
-+		case 32:
-+			prev_val = readl_relaxed(vaddr);
-+			break;
-+		case 64:
-+			prev_val = readq_relaxed(vaddr);
-+			break;
-+		default:
-+			ret_val = -EFAULT;
-+			goto out_unlock;
-+		};
-+		val = MASK_VAL_WRITE(reg, prev_val, val);
-+		val |= prev_val;
-+	}
- 
- 	switch (size) {
- 	case 8:
-@@ -1134,6 +1166,10 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
- 		break;
- 	}
- 
-+out_unlock:
-+	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
-+		spin_unlock(&cpc_desc->rmw_lock);
-+
- 	return ret_val;
- }
- 
-diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-index 930b6afba6f4..e1720d930666 100644
---- a/include/acpi/cppc_acpi.h
-+++ b/include/acpi/cppc_acpi.h
-@@ -64,6 +64,8 @@ struct cpc_desc {
- 	int cpu_id;
- 	int write_cmd_status;
- 	int write_cmd_id;
-+	/* Lock used for RMW operations in cpc_write() */
-+	spinlock_t rmw_lock;
- 	struct cpc_register_resource cpc_regs[MAX_CPC_REG_ENT];
- 	struct acpi_psd_package domain_info;
- 	struct kobject kobj;
--- 
-2.45.2
+A1:This patch is expected to be applied to the USB digital headset,
+mouse, and keyboard,
+and we expect to wake up the system by operating them when the system
+has suspended.
 
+A2:I've verified that user-space control does the trick, but
+Personally speaking, it's not a good solution.
+For each device plugged into the host, the user space needs to check whethe=
+r
+it is one of the three and to enable wakeup.It may be better to enable
+wakeup when loading
+a HID class drivers, from my perspective. Could you please give me
+some advice if possible.
+
+I have spent some time studying your responses, and learned a lot. I
+absolutely agree with many
+of your points, but still have some doubts.
+
+Q1 for Alan Stern: Boot device includes a boot mouse and boot keyboard,
+why the patch(3d61510f4ecac) only enables boot keyboard by default,
+and in addation boot
+protocol is used in BIOS,why is it used as a wakeup judgment condition
+in the OS?
+
+Q2: for Alan Stern:  As you comment 'History has shown that quite a
+few HID devices don't
+handle remote wakeup properly'  I consulted the USB20 Spec in Chapter
+9.2.5.2 and it has
+this description:'If a device supports remote wakeup, it must also
+allow the capability to be
+enabled and disabled using the standard USB request'  So these devices
+that you're talking about
+are not compliant with the USB20 protocol specification to my mind. If
+so, shouldn't we
+support these non-standard devices.
+
+
+Thanks
+
+ryan
 
