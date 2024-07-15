@@ -1,245 +1,144 @@
-Return-Path: <linux-kernel+bounces-251991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CE3930CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:35:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3869C930CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9B51C20C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 696221C20B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EB26FC2;
-	Mon, 15 Jul 2024 02:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CDBC8E9;
+	Mon, 15 Jul 2024 03:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LqYOOEAH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t8Al8rEU"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7D0848D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AFC947E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721010910; cv=none; b=ZZG7tE6qDsV63gGM0eYbeuKrr2yVTfhm/ODVgkbIinHcUC5uMI7FGsnQ8JwGGdiDEu6m48cRRy7OqaPzWHdWJUlif58Xc7uBhA32mkazMrAJTUvCVxvdOuzDYGH5GHCOQ2frSVFP1+0FFuO5o9k7LrA7csAJpzcaZ7LzZ4sqnOc=
+	t=1721012617; cv=none; b=pHLVASFMdjWiNWV2Nt8LHHNTX83EKaaqq5reaDxbZA2YAtQP5HTWxzTJkV5WZQbiywnlkQersMyRpwYB4y7k+iv4VTmZDq9WKZw6HIsWMAr6lZ6tV/o/PzMKdv0dDg5KXY7PBYSZbj8Q2QyekLukh+WaBJgWdOYRqPlx3pSBico=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721010910; c=relaxed/simple;
-	bh=kB41NnpfhwQpkmS6Ee8KfAI26ATy3gY4gwt3M1klEsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBLL4YbjeUGObwqPPZHoEEHexa9t3eu/eXAvwoTAXcMBG21KqRxgH7DeNILteJHEopjCYtWr0sxp1/nVrZT521rMMCOWSKYtIWy1eb+q5MuYnf7DvPKkWoH1eXplkzyw3DpRKjOoa8jkWysFME5DN9jO3ZTTEr8p8RkxZCTZMq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LqYOOEAH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721010907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=55lW7NJ8ejky4hgV7bfotKSxsKudqxlk6ZTrH104m/o=;
-	b=LqYOOEAH5UPICbHgdkJdIt+ii7KUaV/sJhwCgIj3HtyFrCy6hJEU2cEjjjtXpxvmHiKI5i
-	v1OxYOXSmZTlD7G+/RP5q8vs2zYvHnxJhy5/jmc5N5fOKqpqV838CrCFFBH51gvSuTTUAy
-	TFVx/0KrlYlIYn6dXVuhxE27zPdj+vs=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-RCknSYe_POafvZuA1JUMkA-1; Sun, 14 Jul 2024 22:35:05 -0400
-X-MC-Unique: RCknSYe_POafvZuA1JUMkA-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5c68745de0dso3060769eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 19:35:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721010902; x=1721615702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=55lW7NJ8ejky4hgV7bfotKSxsKudqxlk6ZTrH104m/o=;
-        b=GF8rrwe9j8P0VS2svLkhozsg3X9Z3Gj7lh6hsjiceThDmOz3bVMrRrUzi/eJk1q7OG
-         gvXr5fKjA6TjRhK1SLNi6pPyVnfFy+23RSVhbxAlpr8hfbAFbn3WDlEkF+Am3o96AY5b
-         qO4sjktlLhUTMVcUseXwjkL4Nvnm6N7DT32ZcrjszSnGdYWxqNZdCOzZbzyupjd5sSo+
-         pqLC7fewYBuVllEBDk+f2LpDsGZYhthxZUvliN7VqCA8d+UmMfop6JocVjQDviQ//byh
-         ACEGWB+85/gNX+GJbCeYnUYBuGFv1FDkh30oHFi8he4OmtGSZphhvhiNzTesSTrThM6X
-         GAWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVM2IjKEtqCRZWPTzw4SEgsfBU8w9Vvo7xZoOraAYm5i/1037K07wA5WyxlCONgt2JocB9VC0ePR7WYbg4Ca509QjRh7sEUjMy96GZR
-X-Gm-Message-State: AOJu0YyTiImYboKhz7GgWTtrujKl7TQheUzOHrVEd58KdzizjdyLZchP
-	yIp4A8Wrc2tTrctLkQ4mDUcvSl4xbeZfyh3ga/ntSORskl0/8Tg8ZLoHIfBK6bYRTgcGtBc5WHZ
-	ubW+9U5SiIomm32DISV5iJ4hWr3SmtTEDFHgrfjERXEUptF7wxnHxtNdRrfvJZWav0kfCGvCD9R
-	eI/ixjlJ7NUZk/C0Ttr7MRysTXEPBz602bfVD7D4QPbX/j
-X-Received: by 2002:a05:6358:c3a2:b0:1aa:a47a:e377 with SMTP id e5c5f4694b2df-1aade12371emr1339237655d.26.1721010902409;
-        Sun, 14 Jul 2024 19:35:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG96a3p14oLy4GL8DbB6MuIRFczhmVFQ6RSraL00N0CU6BYVS+mlAiqGbLqvzwybXhZhjedSoJCg6BC+9j2eT4=
-X-Received: by 2002:a05:6358:c3a2:b0:1aa:a47a:e377 with SMTP id
- e5c5f4694b2df-1aade12371emr1339236155d.26.1721010901998; Sun, 14 Jul 2024
- 19:35:01 -0700 (PDT)
+	s=arc-20240116; t=1721012617; c=relaxed/simple;
+	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=gD1LSN/6vMgtoWP5en83eF+k7OZ+b6T1/dzIi2uSf86m8V0gnelVjnLNxHL7C5tFCcZlQkqCmJfvgdUDyl6XD8TU9tMSaPskofvjatxbH+3fwPw34Bgl4gsKTjUZIyQSN+em0Rbq4kg2viqWIxyN1EYNqCvVFQLWw1sOUH+Y4zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t8Al8rEU; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240715030326epoutp03e8f9d2239192537f0a6d6cc0766a6d7e~iQ9jqs6oD3080830808epoutp03P
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240715030326epoutp03e8f9d2239192537f0a6d6cc0766a6d7e~iQ9jqs6oD3080830808epoutp03P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721012606;
+	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t8Al8rEUOKzHb/DfRQA9di8sx0A7QOTqx+7eaMQbg5QcesHHhwXcmk3qzmtRNrXts
+	 gNEJCAKsXXqhlpoO8+RU3w9tyM7RumgMLT7hCpT0xHeI1UwFOQ7UHEeiMk2keRs8kF
+	 l5YEhiA5v1ZFQIXs0XAS/WByALrg12mNbqHcQ0K4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240715030326epcas5p3b2cd769c2922a05bc94ecb95e97330cd~iQ9jaqWIa0512305123epcas5p3P;
+	Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WMn8D57qKz4x9Pt; Mon, 15 Jul
+	2024 03:03:24 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.E1.07307.67194966; Mon, 15 Jul 2024 12:03:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04~iQoVnRHJ62003220032epcas5p1d;
+	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240715023908epsmtrp2e9a0f21ebec19b8850d1b801685c4bae~iQoVmYJj21973619736epsmtrp25;
+	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
+X-AuditID: b6c32a44-18dff70000011c8b-36-6694917692c7
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	77.7C.19057.CCB84966; Mon, 15 Jul 2024 11:39:08 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240715023907epsmtip2f6218aa8eecc031fb29114da76ad582c~iQoUlIdhE0963209632epsmtip2h;
+	Mon, 15 Jul 2024 02:39:07 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v2] io_uring: Avoid polling configuration errors
+Date: Mon, 15 Jul 2024 10:39:02 +0800
+Message-Id: <20240715023902.1105124-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com> <1720790333-456232-6-git-send-email-steven.sistare@oracle.com>
-In-Reply-To: <1720790333-456232-6-git-send-email-steven.sistare@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 15 Jul 2024 10:34:51 +0800
-Message-ID: <CACGkMEurG88fXiThyainxbuzpgBUzzGkmvyQB5vuXsU7_6XBBw@mail.gmail.com>
-Subject: Re: [PATCH V2 5/7] vhost-vdpa: VHOST_IOTLB_REMAP
-To: Steve Sistare <steven.sistare@oracle.com>
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Dragos Tatulea <dtatulea@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTXbds4pQ0gwVPZC3mrNrGaLH6bj+b
+	xekJi5gs3rWeY7H41X2X0eLyrjlsFmcnfGB1YPfYOesuu8fmFVoel8+WevRtWcXo8XmTXABr
+	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
+	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCkwK94sTc4tK8dL281BIrQwMDI1OgwoTs
+	jLfTPjIV3GKt+HjpLVMD416WLkZODgkBE4mJ008ydzFycQgJ7GaU2HnkLRuE84lRYsmJGUwQ
+	zjdGiYXvbrHCtPSdfgSV2MsocWbZVnYI5wejxKEXc9lAqtgElCT2b/nACGKLCAhL7O9oBVrI
+	wcEskC7R9sILJCws4CEx4d1qsDtYBFQltq9ZxAxi8wpYS5xresMEsUxe4mbXfrA4p4CtxPpD
+	TWwQNYISJ2c+AetlBqpp3job7AcJgXvsEu/bDjBCNLtIzGm7xwZhC0u8Or6FHcKWkvj8bi9U
+	PF9i8vf1UPU1Eus2v4MGjLXEvyt7oG7WlFi/Sx8iLCsx9dQ6Joi9fBK9v59A3ckrsWMejK0k
+	seTICqiREhK/JyyCBpyHxP3js1kgYTWBUWLOq40sExgVZiH5ZxaSf2YhrF7AyLyKUTK1oDg3
+	PTXZtMAwL7UcHsvJ+bmbGMEJU8tlB+ON+f/0DjEycTAeYpTgYFYS4V3JMjFNiDclsbIqtSg/
+	vqg0J7X4EKMpMMAnMkuJJucDU3ZeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWp
+	RTB9TBycUg1MwbtWcU89+WFZ49XQX0aTrW5dNTjgGHGsmPnZllOfVmp1S71z+++x/tM/95Ob
+	wqcfEKoxEtMPjpDZVx60f7fpHRmu/gO/PztlH+4VDjp365PTLXmxd4UzHFSrflfwGudKF/Xk
+	fTYWse2/6PizQ+b+pcoEH/4W96u5qs+lld7tnbKx60tESlR45K2lz2cbafwJ8/5xrOZtpcX/
+	6vz6FaXdF41j4n708W7d0JUmL1xkVjNdWHzqEjHBY3V2FnseFr0zyc6etc++V0vZ8fjshZ8T
+	Yr7VXdfacv7MSYu5C33eG/l37RGvWPTlqfDyXVzWSc/PvRf8FVwlfG7T68/qyy5lmZvblmS3
+	8xjdd+Zy7rZQYinOSDTUYi4qTgQA3d6YtSEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsWy7bCSvO6Z7ilpBi8W8VvMWbWN0WL13X42
+	i9MTFjFZvGs9x2Lxq/suo8XlXXPYLM5O+MDqwO6xc9Zddo/NK7Q8Lp8t9ejbsorR4/MmuQDW
+	KC6blNSczLLUIn27BK6Mt9M+MhXcYq34eOktUwPjXpYuRk4OCQETib7Tj5i6GLk4hAR2M0oc
+	mruGESIhIbHj0R9WCFtYYuW/5+wQRd8YJVb9vAqWYBNQkti/5QNYgwhQ0f6OVrCpzALZEntn
+	XQOrERbwkJjwbjVYnEVAVWL7mkXMIDavgLXEuaY3TBAL5CVudu0Hi3MK2EqsP9TE1sXIAbTM
+	RmLRAgGIckGJkzOfQI2Xl2jeOpt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YW
+	l+al6yXn525iBAe0ltYOxj2rPugdYmTiYDzEKMHBrCTCu5JlYpoQb0piZVVqUX58UWlOavEh
+	RmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTJJbpDwCj+zcbn847fqVz6+en/jaLbew
+	pmVRubdXi47Uqc49Mk8Mivl+ivvL9Jy3OFvMu2Ky21nGVes8dnQlCxc5JSy/9OC5XuROMZHP
+	ExzLnV+W2BtX7/F4/jnCW6lFRaaoNKnr5ScjJ/X44nvXV+6webXTdltrnE/eKfak8AlmzEoX
+	F3rkC1Vz3FdZqyykVJR7zOvRlIerj7Q09wf/CyzZqcY18/a82L2KU1z3TCtiPZVv/V/OwtU2
+	yI+H/0gyT9tU/S/33d9J1//3E97zMPzq1n9fuZJX5edp7jqR9fOtmNDC7GnBq/33b2XvmLH4
+	w1PVvJfJWs/vFKZHVLz+kMl6vUfa1PabWH7TI113JZbijERDLeai4kQA1U54GdcCAAA=
+X-CMS-MailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
+References: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
+	<CGME20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04@epcas5p1.samsung.com>
 
-On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@oracl=
-e.com> wrote:
->
-> When device ownership is passed to a new process via VHOST_NEW_OWNER,
-> some devices need to know the new userland addresses of the dma mappings.
-> Define the new iotlb message type VHOST_IOTLB_REMAP to update the uaddr
-> of a mapping.  The new uaddr must address the same memory object as
-> originally mapped.
->
-> The user must suspend the device before the old address is invalidated,
-> and cannot resume it until after VHOST_IOTLB_REMAP is called, but this
-> requirement is not enforced by the API.
->
-> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
-> ---
->  drivers/vhost/vdpa.c             | 58 ++++++++++++++++++++++++++++++++
->  include/uapi/linux/vhost_types.h | 11 +++++-
->  2 files changed, 68 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index 4396fe1a90c4..51f71c45c4a9 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -1257,6 +1257,61 @@ static int vhost_vdpa_pa_map(struct vhost_vdpa *v,
->
->  }
->
-> +static int vhost_vdpa_process_iotlb_remap(struct vhost_vdpa *v,
-> +                                         struct vhost_iotlb *iotlb,
-> +                                         struct vhost_iotlb_msg *msg)
-> +{
-> +       struct vdpa_device *vdpa =3D v->vdpa;
-> +       const struct vdpa_config_ops *ops =3D vdpa->config;
-> +       u32 asid =3D iotlb_to_asid(iotlb);
-> +       u64 start =3D msg->iova;
-> +       u64 last =3D start + msg->size - 1;
-> +       struct vhost_iotlb_map *map;
-> +       int r =3D 0;
-> +
-> +       if (msg->perm || !msg->size)
-> +               return -EINVAL;
-> +
-> +       map =3D vhost_iotlb_itree_first(iotlb, start, last);
-> +       if (!map)
-> +               return -ENOENT;
-> +
-> +       if (map->start !=3D start || map->last !=3D last)
-> +               return -EINVAL;
+>My stance is still the same - why add all of this junk just to detect a
+>misuse of polled IO? It doesn't make sense to me, it's the very
+>definition of "doctor it hurts when I do this" - don't do it.
 
-I had a question here, if a buggy user space that:
+>So unless this has _zero_ overhead or extra code, which obviously isn't
+>possible, or extraordinary arguments exists for why this should be
+>added, I don't see this going anywhere.
 
-1) forget to update some of the mappings
-2) address is wrong
-3) other cases.
+Actually, I just want users to know why they got wrong data, just a warning of an error,
+like doctor tell you why you do this will hurt. I think it's helpful for users to use tools
+accurately.
+and yes, this should be as simple as possible, I'll working on it. I'm not sure if I made
+myself clear and make sense to you?
 
-Does this mean the device can DMA to the previous owner? If yes, does
-this have security implications?
-
-> +
-> +       /*
-> +        * The current implementation does not support the platform iommu
-> +        * with use_va.  And if !use_va, remap is not necessary.
-> +        */
-> +       if (!ops->set_map && !ops->dma_map)
-> +               return -EINVAL;
-> +
-> +       /*
-> +        * The current implementation supports set_map but not dma_map.
-> +        */
-> +       if (!ops->set_map)
-> +               return -EINVAL;
-> +
-> +       /*
-> +        * Do not verify that the new size@uaddr points to the same physi=
-cal
-> +        * pages as the old size@uaddr, because that would take time O(np=
-ages),
-> +        * and would increase guest down time during live update.  If the=
- app
-> +        * is buggy and they differ, then the app may corrupt its own mem=
-ory,
-> +        * but no one else's.
-> +        */
-> +
-> +       /*
-> +        * Batch will finish later in BATCH_END by calling set_map for th=
-e new
-> +        * addresses collected here.  Non-batch must do it now.
-> +        */
-> +       if (!v->in_batch)
-> +               r =3D ops->set_map(vdpa, asid, iotlb);
-> +       if (!r)
-> +               map->addr =3D msg->uaddr;
-> +
-> +       return r;
-> +}
-> +
->  static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
->                                            struct vhost_iotlb *iotlb,
->                                            struct vhost_iotlb_msg *msg)
-> @@ -1336,6 +1391,9 @@ static int vhost_vdpa_process_iotlb_msg(struct vhos=
-t_dev *dev, u32 asid,
->                         ops->set_map(vdpa, asid, iotlb);
->                 v->in_batch =3D false;
->                 break;
-> +       case VHOST_IOTLB_REMAP:
-> +               r =3D vhost_vdpa_process_iotlb_remap(v, iotlb, msg);
-> +               break;
->         default:
->                 r =3D -EINVAL;
->                 break;
-> diff --git a/include/uapi/linux/vhost_types.h b/include/uapi/linux/vhost_=
-types.h
-> index 9177843951e9..35908315ff55 100644
-> --- a/include/uapi/linux/vhost_types.h
-> +++ b/include/uapi/linux/vhost_types.h
-> @@ -79,7 +79,7 @@ struct vhost_iotlb_msg {
->  /*
->   * VHOST_IOTLB_BATCH_BEGIN and VHOST_IOTLB_BATCH_END allow modifying
->   * multiple mappings in one go: beginning with
-> - * VHOST_IOTLB_BATCH_BEGIN, followed by any number of
-> + * VHOST_IOTLB_BATCH_BEGIN, followed by any number of VHOST_IOTLB_REMAP =
-or
->   * VHOST_IOTLB_UPDATE messages, and ending with VHOST_IOTLB_BATCH_END.
->   * When one of these two values is used as the message type, the rest
->   * of the fields in the message are ignored. There's no guarantee that
-> @@ -87,6 +87,15 @@ struct vhost_iotlb_msg {
->   */
->  #define VHOST_IOTLB_BATCH_BEGIN    5
->  #define VHOST_IOTLB_BATCH_END      6
-> +
-> +/*
-> + * VHOST_IOTLB_REMAP registers a new uaddr for the existing mapping at i=
-ova.
-> + * The new uaddr must address the same memory object as originally mappe=
-d.
-> + * Failure to do so will result in user memory corruption and/or device
-> + * misbehavior.  iova and size must match the arguments used to create t=
-he
-> + * an existing mapping.  Protection is not changed, and perm must be 0.
-> + */
-> +#define VHOST_IOTLB_REMAP          7
->         __u8 type;
->  };
-
-Thanks
-
->
-> --
-> 2.39.3
->
-
+--
+hexue
 
