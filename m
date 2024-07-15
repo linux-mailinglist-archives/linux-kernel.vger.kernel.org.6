@@ -1,233 +1,147 @@
-Return-Path: <linux-kernel+bounces-252067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0711930DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:11:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1659E930DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C111F2174D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C93281474
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2658B157A42;
-	Mon, 15 Jul 2024 06:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F0618309A;
+	Mon, 15 Jul 2024 06:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dvVLzaDA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PmQd+Edh"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4046D25779
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45AD5223;
+	Mon, 15 Jul 2024 06:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721023908; cv=none; b=kdb7EnrFJ55H8NiRXtZw87DO7o5acHmpIHdszZHNa+wEMWiIuqFwVm3ft1x7pmHMP3smMSh7NXon7pCVhGlS5nNlTTt/U/5CpFn2li67cInr4WcKc4ClMdaozK6wzJ9ccwVlmyjCr5IkidtOXLdXkBsuX9w39fXs2SlINxDXCU8=
+	t=1721024128; cv=none; b=IteYOo0O/iMCdE5nIr6kP8kTDA5qzawpIaqw322D9Mw2R2O54owKBFWzieH/kbEfIifg71gHaHuDlzoxlT6CNr0nJ1T4jVpJjoqgoc6UZn6PkM6W1Tywh15nw/yJ+/px0+9legovELJSu61MPhhTp6y+Fk5CLGn31C86J9wTtgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721023908; c=relaxed/simple;
-	bh=dJ+PUgEOnFhNx0JOAp/DQ0wm3SdgJzoZ3TRVWaFcA8c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=qCgNvW47KE59zJQZQfRrT0NRDV5Ltm4Co2J34blpri7qxdIQqYO9fVBG5cHXhT9CCAew5rIu5175Ht4HCEqmnv73ybs41d5PWnI7YfF9OssPoJbTqDAs8Y55pESElfsZjjE+k7KF2NAlUw38E0WDWQm39WG09F090x+10zlkjJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dvVLzaDA; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721023906; x=1752559906;
-  h=date:from:to:cc:subject:message-id;
-  bh=dJ+PUgEOnFhNx0JOAp/DQ0wm3SdgJzoZ3TRVWaFcA8c=;
-  b=dvVLzaDAENL/vZfbhoKGo9NcdYaB9/blBwmoB++sLDdtS8C7NZxujRAV
-   MWhptgRhqhZy9TuO7V8V9hzO+M9QWTbY+mCYnNbZMIikuA8LDrS83YHm0
-   yas+gJL5dkPB+y740nFUZxfHMBefit7XEz7HBhxGSgexIVvfBLtb+aSqx
-   r6dZd3tLblRx1+nr/r1VSL59bYculQpB92wK60feRDfqkiQ9Bb5iF5haG
-   PleWheq6vniNk2fV72Nszc5jJ0bFzBCmccYGqjYCS+zjU54ZG6UrQzu5c
-   8N0Tn43cpyFikBPRg5UKKGxffFlWy2hDcILsEYsZg4kix2no8LhXsQDPo
-   A==;
-X-CSE-ConnectionGUID: thVdK2zrQxu5J7W98dxWvQ==
-X-CSE-MsgGUID: 5vgGRDHnQTm4RKfba8U1ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18535999"
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="18535999"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2024 23:11:42 -0700
-X-CSE-ConnectionGUID: jVkTe+rHRTuSVNZyZ8zp0g==
-X-CSE-MsgGUID: 2fzYd0LgRyq+fLab9ptB/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
-   d="scan'208";a="87019015"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 14 Jul 2024 23:11:42 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sTEvy-000e3V-2d;
-	Mon, 15 Jul 2024 06:11:38 +0000
-Date: Mon, 15 Jul 2024 14:10:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- faf243d11659b1f712fcf981957aea28118df6d6
-Message-ID: <202407151456.xw4CQiNn-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1721024128; c=relaxed/simple;
+	bh=507SCGFbdnm/Rlv3NXpfLBmN5Z2YmD2xCdNCfQdtI80=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Csr3Z7am9kWH1+GZrzYDzkqC33eMDwi9Y8vokKPkrZxZIIUqAky2GkCn7qvMsHqcZOo+PlOKnGyQK3kHyoBjFW664opRj0ok7h8tZ0CCG4DMcGK3CjYz+xOAKu8P+mPdl4rsVe09oTkXLkDbmoG5rbEFlVMbcy2hvxSNVXRn21w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PmQd+Edh; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 990c69ba427111ef87684b57767b52b1-20240715
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=NybS3GI2fkgyaEqHCyMXFIXa++CdDGFK10W+qUdoNio=;
+	b=PmQd+Edh0fgAwx+24lKiryYiWzpHnmlziXKj/gkVHt6FxGQdOcLtu31jnBniRR7RfIIAPVkoV0kqP0t+YXPgQTMOyL5mQ+TUH5WSe6rEyH6VlPmx0Z8IRXeSBUo62Dzmd3yEIctpT0uuZbnGHcYWgdrjiO0ykvPVgdN84w4ckpg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:7810d0dd-15b0-4e06-9b6f-7ba9878b068f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:4cc74d45-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 990c69ba427111ef87684b57767b52b1-20240715
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <jiande.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1601733318; Mon, 15 Jul 2024 14:15:13 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 15 Jul 2024 14:15:09 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 15 Jul 2024 14:15:09 +0800
+From: Jiande Lu <jiande.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, Steve
+ Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
+Subject: [PATCH 1/2] Bluetooth: btusb: Add new VID/PID 0489/e139 for MT7925
+Date: Mon, 15 Jul 2024 14:15:07 +0800
+Message-ID: <20240715061508.14077-1-jiande.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: faf243d11659b1f712fcf981957aea28118df6d6  Merge branch 'irq/msi' into irq/core
+Add VID 0489 & PID e139 for Mediatek MT7925 USB Bluetooth chip.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below
 
-elapsed time: 725m
+T:  Bus=07 Lev=01 Prnt=01 Port=10 Cnt=02 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e139 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
-configs tested: 141
-configs skipped: 3
+Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240715   gcc-13.2.0
-arc                   randconfig-002-20240715   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-19
-arm                              allyesconfig   gcc-14.1.0
-arm                         bcm2835_defconfig   clang-19
-arm                                 defconfig   clang-14
-arm                       imx_v4_v5_defconfig   clang-16
-arm                            mps2_defconfig   clang-19
-arm                   randconfig-001-20240715   gcc-14.1.0
-arm                   randconfig-002-20240715   gcc-14.1.0
-arm                   randconfig-003-20240715   gcc-14.1.0
-arm                   randconfig-004-20240715   clang-19
-arm64                            allmodconfig   clang-19
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240715   clang-19
-arm64                 randconfig-002-20240715   clang-19
-arm64                 randconfig-003-20240715   clang-19
-arm64                 randconfig-004-20240715   clang-19
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240715   gcc-14.1.0
-csky                  randconfig-002-20240715   gcc-14.1.0
-hexagon                          allmodconfig   clang-19
-hexagon                           allnoconfig   clang-19
-hexagon                          allyesconfig   clang-19
-hexagon                             defconfig   clang-19
-hexagon               randconfig-001-20240715   clang-19
-hexagon               randconfig-002-20240715   clang-19
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386                                defconfig   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240715   gcc-14.1.0
-loongarch             randconfig-002-20240715   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          atari_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                          multi_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                            gpr_defconfig   clang-19
-mips                      maltasmvp_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240715   gcc-14.1.0
-nios2                 randconfig-002-20240715   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240715   gcc-14.1.0
-parisc                randconfig-002-20240715   gcc-14.1.0
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-19
-powerpc                       holly_defconfig   clang-19
-powerpc                      ppc44x_defconfig   clang-16
-powerpc               randconfig-001-20240715   clang-17
-powerpc               randconfig-002-20240715   clang-19
-powerpc               randconfig-003-20240715   gcc-14.1.0
-powerpc                     redwood_defconfig   clang-19
-powerpc                     tqm8555_defconfig   clang-19
-powerpc64             randconfig-001-20240715   clang-14
-powerpc64             randconfig-002-20240715   gcc-14.1.0
-powerpc64             randconfig-003-20240715   gcc-14.1.0
-riscv                            allmodconfig   clang-19
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-19
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240715   gcc-14.1.0
-riscv                 randconfig-002-20240715   gcc-14.1.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240715   gcc-14.1.0
-s390                  randconfig-002-20240715   gcc-14.1.0
-s390                       zfcpdump_defconfig   clang-19
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                        edosk7760_defconfig   gcc-14.1.0
-sh                          landisk_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240715   gcc-14.1.0
-sh                    randconfig-002-20240715   gcc-14.1.0
-sh                           se7619_defconfig   gcc-14.1.0
-sh                           se7712_defconfig   gcc-14.1.0
-sh                          urquell_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240715   clang-18
-x86_64       buildonly-randconfig-002-20240715   gcc-13
-x86_64       buildonly-randconfig-003-20240715   clang-18
-x86_64       buildonly-randconfig-004-20240715   gcc-13
-x86_64       buildonly-randconfig-005-20240715   gcc-13
-x86_64       buildonly-randconfig-006-20240715   gcc-8
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240715   gcc-9
-x86_64                randconfig-002-20240715   gcc-7
-x86_64                randconfig-003-20240715   clang-18
-x86_64                randconfig-004-20240715   clang-18
-x86_64                randconfig-005-20240715   gcc-11
-x86_64                randconfig-006-20240715   clang-18
-x86_64                randconfig-011-20240715   gcc-12
-x86_64                randconfig-012-20240715   clang-18
-x86_64                randconfig-013-20240715   clang-18
-x86_64                randconfig-014-20240715   gcc-12
-x86_64                randconfig-015-20240715   gcc-10
-x86_64                randconfig-016-20240715   gcc-10
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index acdba5d77694..2339ca629a83 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -690,6 +690,9 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x0489, 0xe113), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.18.0
+
 
