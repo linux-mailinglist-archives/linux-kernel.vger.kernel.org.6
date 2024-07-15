@@ -1,54 +1,44 @@
-Return-Path: <linux-kernel+bounces-252627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14F993160E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:47:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED53A931610
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790CF2829F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297B01C21F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D140318E761;
-	Mon, 15 Jul 2024 13:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZFM+KFx3"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B705118E75B;
+	Mon, 15 Jul 2024 13:47:54 +0000 (UTC)
+Received: from relay161.nicmail.ru (relay161.nicmail.ru [91.189.117.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E941836D4;
-	Mon, 15 Jul 2024 13:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4771836D4;
+	Mon, 15 Jul 2024 13:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051245; cv=none; b=P2CnZ9UypmbNh1DGJSdC02TR0mq+PIAnnEQGdK7VyCXF5mGVd59Umiuu9miJmtoT93FUHHLRC9dbPLHzwRvL1ywzSbIvMPhhn8/1ATnUiTGA8C3w6GSpHWkAU21MMXP5JXh2SDAXvtKRCsdmm+7buMopL3rm/MXapNhoHefGZuc=
+	t=1721051274; cv=none; b=jrHiFA13jGADpyL8caV9lN1UE7/9LNYss1csPhDOoJrOeJ3ERh3dml9v6fIn6fxgNQfP4nGP4tnmAA6hfxjE3EBsbRKRpwXzAfeyWsdF1GRhCg9hRfMiTRkAeD6F/4fAzOolCA+QRyoOJtv5UYQl8jyo937oBzZmiymMDDyPQ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051245; c=relaxed/simple;
-	bh=c7s+f//9pbPhx4k/JU7M0nOXGQsrHNBRz+g/+/DWWaw=;
+	s=arc-20240116; t=1721051274; c=relaxed/simple;
+	bh=+NsQiMYq9GRvA+On801DWzAYhvm1mpdnwfnWkou0+qg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bd2WTHdIdq4FwG3RUnN1+aDYSckrfyQwnN80T0NUzJCMLFk9O81/kFbzSqe68F8Env07/5E4UNf/17GTPV/xPa8AxKpqXoOrGyJm6y6briO8a/iZz2w0e2li677WtT4YL4Xb5F/W589/uxyarv3rkvQo9LPKv43hccQqObA/5UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZFM+KFx3; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721051240;
-	bh=c7s+f//9pbPhx4k/JU7M0nOXGQsrHNBRz+g/+/DWWaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZFM+KFx3ADS5/aqDJG53XgAtzdwaTqA+aN2HK81zrGvogc14xm/NAVXunsOb5iU7M
-	 9vl16bd7OisaBfArOVBTMWvD3d+tGLdHPtLA0MmjsuhxluL/ENrY2jw9vpxqjYB1SR
-	 4LrtkfNtOZBh537xvykFM2N8x5N3f8FHz4usrf9JeyQNGBmx08NpDsWNSQkk2q5oxJ
-	 E4Y06EkXvhi8i6oI3LWaP3kFXHw4g0juyUXVPzv09UkYetN7i6/AiBkZMELpTRnZzp
-	 detdvNn3ArojK1KhM1GQWKKjrHLNXywTK/RVXH5gMKz919z0+6w5KORkXJLl+4oU1g
-	 vR5/epsGiQAag==
-Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AC11B3782101;
-	Mon, 15 Jul 2024 13:47:19 +0000 (UTC)
-Message-ID: <ce4472dc-e414-404d-b3a5-1f736a01504a@collabora.com>
-Date: Mon, 15 Jul 2024 15:47:19 +0200
+	 In-Reply-To:Content-Type; b=kQwoDSpYV/Hns7p41zRO0pMlRzLS80Oz6EGtQTXMQ1kzmq8vkJmJlCauwikFnBH/6hILxb2asdJ7/NArLg05FB5ztnmmglU1T18wV4AY2FrzWotmeTAlCo6JFJYMW1iy+ofyJGlrpZE1qOFCBjQI0OPm2gGSaW9hElwwzcTucHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
+Received: from [10.28.138.152] (port=27728 helo=[192.168.95.111])
+	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
+	(envelope-from <kiryushin@ancud.ru>)
+	id 1sTM3G-00050O-6D;
+	Mon, 15 Jul 2024 16:47:39 +0300
+Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO [192.168.95.111])
+	by incarp1104.mail.hosting.nic.ru (Exim 5.55)
+	with id 1sTM3G-008vcH-2j;
+	Mon, 15 Jul 2024 16:47:38 +0300
+Message-ID: <98c01cc6-dcee-46d0-bdc8-0e35165ec68b@ancud.ru>
+Date: Mon, 15 Jul 2024 16:47:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,176 +46,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] media: videodev2: Add flags to unconditionnaly
- enumerate pixels formats
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
- hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-References: <20240712103000.16655-1-benjamin.gaignard@collabora.com>
- <20240712103000.16655-2-benjamin.gaignard@collabora.com>
- <a4jvi5wg7ag6apodn4hkdr556r6dq6vknjzrqpti6mlsq56cpf@ygh6edcz5nci>
- <bc239839-bef4-486e-a636-0afab6723718@collabora.com>
- <xz3nq5hbdd24irfx2ip6t7ita4fitsc3f7azqzkuqlzbapwini@qt7gp4baf7rn>
+Subject: Re: [PATCH] tracing: remove unreachable trace_array_put
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20240712201258.99070-1-kiryushin@ancud.ru>
+ <20240712193306.3174c85e@gandalf.local.home>
 Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <xz3nq5hbdd24irfx2ip6t7ita4fitsc3f7azqzkuqlzbapwini@qt7gp4baf7rn>
+From: Nikita Kiryushin <kiryushin@ancud.ru>
+In-Reply-To: <20240712193306.3174c85e@gandalf.local.home>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MS-Exchange-Organization-SCL: -1
 
+As nonseekable_open() documentation states:
+"The function is not supposed to ever fail, the only
+reason it returns an 'int' and not 'void' is so that it can be plugged
+directly into file_operations structure."
 
-Le 15/07/2024 à 15:37, Jacopo Mondi a écrit :
-> Hi Benjamin
+So it seems, that it will not fail anytime as it is not meant to? Otherwise,
+there will be a huge problem with leaks in many other parts of code, as
+there are plenty of places, where nonseekable_open() is not checked after
+resource allocations.
+
+On 7/13/24 02:33, Steven Rostedt wrote:
+> Then why does it return a value?
 >
-> On Mon, Jul 15, 2024 at 08:09:55AM GMT, Benjamin Gaignard wrote:
->> Le 12/07/2024 à 18:31, Jacopo Mondi a écrit :
->>> Hi Benjamin
->>>
->>> On Fri, Jul 12, 2024 at 12:29:59PM GMT, Benjamin Gaignard wrote:
->>>> Add new flags to enumerate all pixels formats when calling VIDIOC_ENUM_FMT ioctl.
->>>> When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
->>>> ignore the configuration and return the hardware supported pixel
->>>> formats for the specified queue.
->>>> To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_FORMATS
->>>> flag must be set by the drivers to highlight support of this feature
->>>> to user space applications.
->>>> This will permit to discover which pixel formats are supported
->>>> without setting codec-specific information so userland can more easily
->>>> know if the driver suits its needs well.
->>>> The main target are stateless decoders so update the documentation
->>>> about how to use this flag.
->>>>
->>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>>> ---
->>>> changes in version 3:
->>>> - Add a flag to inform userspace application that driver
->>>>     as take care of the flag.
->>>>
->>>>    .../userspace-api/media/v4l/dev-stateless-decoder.rst    | 6 ++++++
->>>>    .../userspace-api/media/v4l/vidioc-enum-fmt.rst          | 9 +++++++++
->>>>    .../userspace-api/media/videodev2.h.rst.exceptions       | 2 ++
->>>>    drivers/media/v4l2-core/v4l2-ioctl.c                     | 3 +++
->>>>    include/uapi/linux/videodev2.h                           | 2 ++
->>>>    5 files changed, 22 insertions(+)
->>>>
->>>> diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->>>> index 35ed05f2695e..b0b657de910d 100644
->>>> --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->>>> +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->>>> @@ -58,6 +58,12 @@ Querying capabilities
->>>>         default values for these controls being used, and a returned set of formats
->>>>         that may not be usable for the media the client is trying to decode.
->>>>
->>>> +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
->>>> +     all the supported formats without taking care of codec-dependent controls
->>>> +     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
->>>> +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
->>>> +     enumerating.
->>>> +
->>>>    3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
->>>>       resolutions for a given format, passing desired pixel format in
->>>>       :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
->>>> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>>> index 3adb3d205531..0399e0fc09b3 100644
->>>> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>>> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>>> @@ -234,6 +234,15 @@ the ``mbus_code`` field is handled differently:
->>>>    	valid. The buffer consists of ``height`` lines, each having ``width``
->>>>    	Data Units of data and the offset (in bytes) between the beginning of
->>>>    	each two consecutive lines is ``bytesperline``.
->>>> +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
->>>> +      - 0x0400
->>>> +      - Set by userland applications to enumerate all possible pixel formats
->>>> +        without taking care of any OUTPUT or CAPTURE queue configuration.
->>> This seems to be only relevant for codecs and m2m devices.
->>>
->>> For 'regular' capture (and I presume output) devices isn't the default
->>> behaviour to enumerate all pixel formats, and userspace can decide to
->>> restrict them by providing a media bus code (if the device reports the
->>> V4L2_CAP_IO_MC capability)
->> Yes is targeting codecs because they have two queues.
-> Well, m2m devices in general then
+> If someday it can return a failure, this would then cause a leak. It
+> doesn't hurt to leave it in.
 >
->> When device have only one queue, like 'regular' capture devices,
->> pixel enumeration doesn't have to take care of the other queue
->> configuration because it doesn't exist.
->>
-> This probably needs to be captured in the description here ?
-> We already have flags which apply only to some device types, and
-> that's specified in the flag description
+> So NACK.
 >
->      * - ``V4L2_FMT_FLAG_CSC_QUANTIZATION``
->        - 0x0100
->        - The driver allows the application to try to change the default
-> 	quantization. This flag is relevant only for capture devices.
-
-That makes sense I will update the flags description in the next version.
-
-Thanks,
-Benjamin
-
+> -- Steve
 >
->>>
->>>> +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
->>>> +      - 0x0800
->>>> +      - Set by the driver to indicated that format have been enumerated because
->>>> +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-set-csc>` has
->>>> +        been set by the userland application.
->>>>
->>>>    Return Value
->>>>    ============
->>>> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>>> index bdc628e8c1d6..7a3a1e9dc055 100644
->>>> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>>> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>>> @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->>>>    replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->>>>    replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->>>>    replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
->>>> +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
->>>> +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
->>>>
->>>>    # V4L2 timecode types
->>>>    replace define V4L2_TC_TYPE_24FPS timecode-type
->>>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->>>> index 4c76d17b4629..5785a98b6ba2 100644
->>>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->>>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->>>> @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->>>>    	int ret = check_fmt(file, p->type);
->>>>    	u32 mbus_code;
->>>>    	u32 cap_mask;
->>>> +	u32 flags;
->>>>
->>>>    	if (ret)
->>>>    		return ret;
->>>> @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
->>>>    		p->mbus_code = 0;
->>>>
->>>>    	mbus_code = p->mbus_code;
->>>> +	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
->>>>    	memset_after(p, 0, type);
->>>>    	p->mbus_code = mbus_code;
->>>> +	p->flags = flags;
->>>>
->>>>    	switch (p->type) {
->>>>    	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
->>>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->>>> index fe6b67e83751..b6a5da79ba21 100644
->>>> --- a/include/uapi/linux/videodev2.h
->>>> +++ b/include/uapi/linux/videodev2.h
->>>> @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
->>>>    #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
->>>>    #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->>>>    #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->>>> +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
->>>> +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
->>>>
->>>>    	/* Frame Size and frame rate enumeration */
->>>>    /*
->>>> --
->>>> 2.43.0
->>>>
->>>>
+
 
