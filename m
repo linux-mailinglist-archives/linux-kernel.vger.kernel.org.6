@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-252582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53452931585
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:19:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C13C93158A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBDC6B2178B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:18:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69CA1F22124
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A922218D4B9;
-	Mon, 15 Jul 2024 13:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C9E18D4CD;
+	Mon, 15 Jul 2024 13:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPjIYudq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qG+JJCdr"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36DA189F59;
-	Mon, 15 Jul 2024 13:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80AA189F59;
+	Mon, 15 Jul 2024 13:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049530; cv=none; b=leHcVZKM2d9WhxUluwzTTVgQE8+EoAM8eb7dZEu5qwguqYbQJpBXedHEmh4rv076O8Lw8Cy00x4cVyBlVqbzW08P4r0b/0T/iST1nd9EbGwmw9jAMdpBtyvNk9W1dc8fNacD05qDXmpgZc25CxqY7rgLb7ppI/cKHaT9lKRWsPw=
+	t=1721049578; cv=none; b=iT6wSWQoLwMrZIXjiMhJMx7RW6gXXKGNSTanqjkW2oQoXwlVkYg/Gr65PBaPeVI1YQh17vpuQnq8jtWShZZeDa7BtcXaGaa44o+5ccHIxq9wI84/OrrNkNUghlive8Dq/FrJk1+j+N6Kogyf3dmyqxdSDeRu9YHYTsQCN2qqjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049530; c=relaxed/simple;
-	bh=ixZV+2ApSfi0Qt1a6E91BrmEdKnPzSgIHP2rtlQgCtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z19YTiW6eMeu9Lql9fE22FTaYAfkrcjnv8af1Vkvi+RjaYwq2HvzOk3ApnsAa7qhGKoqhSyX/bfokgosVgKfN60XUulShS+G0FQPSst/qASNM9e/b1nRJqPTEAWL8FUGLM81pFlbd+Kh5mUds3wGlWTxDnBpYQTRrfoIw2hxBnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPjIYudq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B13C32782;
-	Mon, 15 Jul 2024 13:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721049529;
-	bh=ixZV+2ApSfi0Qt1a6E91BrmEdKnPzSgIHP2rtlQgCtQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lPjIYudqUcR1vXo+cJRaLVgtOPefovG5Y1Hf5NwAgvvhHZERpZUTx1Mg/3cg4Xp6k
-	 nZxUOQBg3lJapM2IwVFsCeQn1O4SM6qRV++uHngWGX/3PzGxiplVFvj2CK0NMHFHk6
-	 X5THhQ8GhIF+skJwx+jk0mFh1BjLTYGgdBZDCJhXqgHnj/g5JgDmvMntTaZDiKD9or
-	 xS1ZqvfaIHPtN2qg5TNfgJ9OLgU9SRgCBk5DT27G54uz/MEOWInMuGNCZu2ilKpxAl
-	 t2Ms+wvYOYKUbO7n0+79BEMKO7R6Au7Kxsk0xnLUIo14BsTyzR6lDrNY671yd/XaJv
-	 cRu3wYdrfmF4g==
-Date: Mon, 15 Jul 2024 14:18:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shuah Khan <shuah@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
- names
-Message-ID: <652d6fef-9e63-4c3c-b61b-8a47d6eadaf1@sirena.org.uk>
-References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
- <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
- <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
- <877cdrt3zc.wl-tiwai@suse.de>
- <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
- <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
- <c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
- <31e73e81-e60f-4d0b-b0ac-118f1dc72610@sirena.org.uk>
- <87plrhssa4.wl-tiwai@suse.de>
+	s=arc-20240116; t=1721049578; c=relaxed/simple;
+	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dv5Y2bLFLkrvN0+hlv7DybIE8V/mS2qzl0l+unuujZsQM+ac7TPVvgaFMAj04PgFeK7hfGFmvYxXCN+mdvc/j/gJDvZuE480QUQSHuhx2qTEOleT4wVTPMHhTSjh153QSknvDyIv++5sFYRjXU2aJ0e12vIvVHuGcALst52I2/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qG+JJCdr; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721049540; x=1721654340; i=markus.elfring@web.de;
+	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qG+JJCdrVFKUMJy5ceJT8hntkrkhkXkHlZ6hlrGWBwS2fyMgXfdUJqnU33WrLFTB
+	 t50JYaF5OFIKjzhs14wJIHHw+IsL/DwBR9d0oCjuxzq/CTlPIE1uKdkpXdUzO6ZEK
+	 sOKT3hRskQNqSsxKmTroR1UNBdvgUnDTQ4AqSC1Wa/kg+CAEeGI/bpdn/fY4Ah9O5
+	 4AqO6kMoT2l2RHrdfLIiSw4OM2I6iw5BzoydhAqSkDJyrImZ79Jf7BYHMPZcHf0fm
+	 bQn8WnlYPtNrLMAOetuIP6iAj4jtGZ9j9YDGQIx0bIZyUfQxmOQyjg9W3zkpLkLoK
+	 z7l6LtplhOMGpbzbgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1s6kgV12v9-00xrqD; Mon, 15
+ Jul 2024 15:19:00 +0200
+Message-ID: <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
+Date: Mon, 15 Jul 2024 15:18:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pcf5+ogDXnD1HO4r"
-Content-Disposition: inline
-In-Reply-To: <87plrhssa4.wl-tiwai@suse.de>
-X-Cookie: You'll be sorry...
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
+ Arnd Bergmann <arnd@arndb.de>, Frederic Barrat <fbarrat@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ian Munsie <imunsie@au1.ibm.com>, Maxime Ripard <mripard@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Shuah Khan <shuah@kernel.org>,
+ Wei Liu <wei.liu@kernel.org>
+References: <20240715025442.3229209-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
+ read_handle()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240715025442.3229209-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:60AT5T8BRZHQ6Gfv9u427isOzaT1ol9JQSTUXVRY8R+RWiR+wlg
+ uOOY0ka3OvtSIcX6lXp4OgDSPrJFLe03Ofze5Hs3wM9Z9IePcr3uBn+DZP1YpGcBh3A49id
+ zatBnGaU1zQtqqXMksLXbjlMe4ZRKgt2qtbHowpg44jp0okSPQESB/hzUIbO43MhyUft7NK
+ S3n1WF9VfhlErESXakadA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:viLqW/CObXo=;0l1lBepkdtz8vogJ+28NR/ACuF1
+ orJWguKXGfvjM4ndYEQhEBoyIbZYVTbZH4X1Cqxb/x01Utdj3CvDfE5wT2jmbFKkCWdblPM8a
+ cjAmiD+2zhYJvPABeiLM7gy/DtyL3PmpuOxIFV/zozqKwTpNwQx2pMRhGkllRwoM/Nps+La8W
+ cjAjmITuRSge2ykwpRHJ+7+cPiIKkvKtUvuDp7GJYlL3jMwMMgpxLyTjgcUIDx3peD5lU463P
+ JOdpKWLzZ+WuQKI2BYPFXPrxRO3quZqrrhx5EWXsmUQdVM0t8DsliOp4NnCQdMbUinmUi5QUN
+ ZY9ZvajK6GAUozrTrAtQ5l0ULyYjHMCDqYrQ2vtFkL5T6hWhyuESPpg+tRSNnnfWWze1gQS6f
+ mi5dLB+sZugZ6K1zTYXaq1me90EBn3G6KmNbw/IAr7XI0Vf0aqmGVDOQ0Rxr7X10ICsAuGTDo
+ 4sUlUiiGNv43NEP25qFrZktinKTimy6tMFm/rlc0ki/nP5uvCQ8R0Pcuhs607n1fOunsrkzxh
+ A3KkhwczFYgOqLoHJBMpw6l+5P5p3bcVIR0AgqqIdzt7m+TGZH8MJyc85CJRZMGXkwoS6o5mG
+ BqS3stnqgZc5iX9g6xBU0n7NaF8qwr+NirvNsgimUQMesbMValrBB1HYRg7UsvNKKDkzpteAV
+ WGUSDaLt72FP+m5Pdap3cf0cX+XpeVz7dSILoZRZ2NnUoIWiry9bED1b8qLQLsgRUKWYheKlH
+ 2wMek/9d295pYAzNuUYG0oDUE/g9ThlXKOO2E/FzceIJxXZxk5Mc7o0UFt9KreO9u7XX3NVp/
+ 0KkwSfS6nZJ0c3pc6uu8Ldig==
+
+> In read_handle(), of_get_address() may return NULL if getting address an=
+d
+> size of the node failed. When of_read_number() uses prop to handle
+> conversions between different byte orders, it could lead to a null point=
+er
+> dereference. Add NULL check to fix potential issue.
+>
+> Found by static analysis.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+
+How will interests evolve for caring more according to known research
+and development processes?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
 
 
---pcf5+ogDXnD1HO4r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> ---
+> Changes in v4:
+> - modified vulnerability description according to suggestions, making th=
+e
+> process of static analysis of vulnerabilities clearer. No active researc=
+h
+> on developer behavior.
+=E2=80=A6
 
-On Sat, Jul 13, 2024 at 08:46:43AM +0200, Takashi Iwai wrote:
-> Mark Brown wrote:
+Does such information indicate any communication difficulties?
 
-> > Sure, but the genesis of this patch is that probe order isn't
-> > sufficiently stable and we want to avoid names based on it...  using the
-> > ID will be more likely to work out stable than just pure probe order but
-> > it's still got the same issue.
-
-> Are you trying to solve the issue with two cards of the same driver,
-> which are swapped sometimes at the probe time?  Or the mixture of
-> different cards that are swapped?
-
-The one I'm running into personally is due to the load order of the
-sound card drivers themselves, but it seems good to try to address the
-issue in general especially with ASoC where you're waiting for multiple
-drivers for individual components in the card.  That means that even for
-a single driver the ordering might not be stable.
-
-> In the latter case, id should work well.  The id is primarily created
-> from the (short)name string, and the suffix is added only when
-> conflicting.
-
-Yeah, it's more stable but there's still a potential issue.
-
-> OTOH, if the former is the problem, using longname won't help,
-> either, rather it can be confusing.  I noticed that the test output
-> truncates the name string, hence both cards look identical in the
-> actual output (except for the card listing at the beginning).
-
-Interesting - I was mainly developing on a system with multiple HDA
-cards and was getting fairly clearly unique names.
-
---pcf5+ogDXnD1HO4r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaVIbQACgkQJNaLcl1U
-h9D/SQf7B6L3K9ySU/Pt7rCsrL47juqKartR7TU57qKWjQ7cOb8+sLbpOBy/qv2C
-gvqQNK2z8OZ9/c3/1bsNxMDCFbF8gQCasBrr0Bwtwax62lQWXaKKFbY6zwryvOCK
-GQ5vy2GajBk4Hb1Wsw46f0iDshrVUv8SBqIpLn6tfOloiKDvg3BdDZNxKlhMYej4
-UcqZseDVteqJ3z05u/c2amxaGSLGSW4iYe46iJyXBdGxFyQogfzJNudMdfWmEAxo
-YuQNRRz9FzOekMPFgPpGJ8TUJz2yTk6O784nH+/2qBLJ8mzbcKHRn1OgA973/KlQ
-YDK0VuynCVIg9mW8hKHSaim9UITSCA==
-=ctoL
------END PGP SIGNATURE-----
-
---pcf5+ogDXnD1HO4r--
+Regards,
+Markus
 
