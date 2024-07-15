@@ -1,236 +1,193 @@
-Return-Path: <linux-kernel+bounces-252879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBF493193F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAF193193A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA251C216D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EF42810E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59265481CE;
-	Mon, 15 Jul 2024 17:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371524655F;
+	Mon, 15 Jul 2024 17:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wApx5kF9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2PrUPEFk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wApx5kF9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2PrUPEFk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqF2HgsW"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443A61F608;
-	Mon, 15 Jul 2024 17:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040974D8A7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721064515; cv=none; b=SJjRWR4dad6tW3gZBKIkDOH3P7pEQzhyPIaUkrjhy+MsagzyLEvxLKyHAaP4OJUS7bR6R4lHMKfqWp1C1QebnjcXNldqzHVtFJ6CrldYNozldz03CtFliMbkRJFufJBK1B+7B3IfbSZF5DNVmtCQQ1qrIcfXSRWahqKMyELco38=
+	t=1721064407; cv=none; b=TI/PaHkxRCsqL14KakS/VfoXlCR61QBd2mpjFMTGyGpx6c5f4c0iI3UF+2pXIHIakHy2TuDaU/A37UFAb41NZX54jq9AEcU2lsSKV6fsGHduE1peZPKfo3TuHboOQqA13PKv46w12ljZ5dJalViatSY01LvbnegH7XtGro4Tg9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721064515; c=relaxed/simple;
-	bh=en56rL31hNrBz6sueLWaYdSu+EOnZCtZ4gVHtOV8ozk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olJKfbqypDLwdT1xu3VIx+17MPQL3ZxoiWVC8nkHdE5qS5uf3w94Gkg05e7vKsXPsQOAZA4c4Cg7BUNu6PYXb4pM0LFRth8UO1FLeuhvl1SjBLhluQijRwzcKmlrjQAfQx8IqqSrVDr9j/J7sWZ7iPSnd5/R0AW8dtzqbR6bzKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wApx5kF9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2PrUPEFk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wApx5kF9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2PrUPEFk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ED1761F834;
-	Mon, 15 Jul 2024 17:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721064507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLWK/+ZweC1RPWOJUKrtuGtw4FuFYwUr9MpJlADus=;
-	b=wApx5kF9KFajFTZklo5MjBA45SaVS7s6o3fDnrqE+1cbS5lbUFCyh/GGDWLeZp4SEIeLqo
-	WweiZUkVhE2o23sdczErBk5tdRrxK0yBlBCnf2lcTY6m2/3pfrJEQVpAWvQm3HxBE1GBIl
-	hDcjqblcFdInajITFIfWwT2wBFyqads=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721064507;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLWK/+ZweC1RPWOJUKrtuGtw4FuFYwUr9MpJlADus=;
-	b=2PrUPEFkSMan/ZIAvdQRvWmWwkhUXb4stjLuQ7TBDyI1kQrZW9FaWmc95fVlYzgL0Hv16A
-	8x2Ll/jXu9g5wQAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wApx5kF9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2PrUPEFk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721064507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLWK/+ZweC1RPWOJUKrtuGtw4FuFYwUr9MpJlADus=;
-	b=wApx5kF9KFajFTZklo5MjBA45SaVS7s6o3fDnrqE+1cbS5lbUFCyh/GGDWLeZp4SEIeLqo
-	WweiZUkVhE2o23sdczErBk5tdRrxK0yBlBCnf2lcTY6m2/3pfrJEQVpAWvQm3HxBE1GBIl
-	hDcjqblcFdInajITFIfWwT2wBFyqads=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721064507;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIgLWK/+ZweC1RPWOJUKrtuGtw4FuFYwUr9MpJlADus=;
-	b=2PrUPEFkSMan/ZIAvdQRvWmWwkhUXb4stjLuQ7TBDyI1kQrZW9FaWmc95fVlYzgL0Hv16A
-	8x2Ll/jXu9g5wQAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E13EF134AB;
-	Mon, 15 Jul 2024 17:28:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Zo/2NjpclWYQJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Jul 2024 17:28:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 85E11A0987; Mon, 15 Jul 2024 19:28:26 +0200 (CEST)
-Date: Mon, 15 Jul 2024 19:28:26 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
-	reiserfs-devel@vger.kernel.org
-Subject: Re: [PROBLEM linux-next] =?utf-8?Q?fs=2Freiserfs=2Fdo=5Fbalan=2Ec?=
- =?utf-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p?=
- =?utf-8?B?4oCZ?= set but not used [-Werror=unused-but-set-variable]
-Message-ID: <20240715172826.wbmlg52ckdxze7sg@quack3>
-References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
+	s=arc-20240116; t=1721064407; c=relaxed/simple;
+	bh=NKxhwcfKDV25J44ZjKN7Tw5TRTnUWcgDczWR7UFp7x0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TgAxMcsBU3HJGpHNgVglF/2NuZFgtIXUkaHQq9HLtJycIiAzn5yaxQuWNlihZdQvqMJemVGSBBbMCEd4VIigDvt4M+6Jq3vGcUZGWrwJPz+VENCIFDjvI4RrcZ1OfUfQI4Xt1X4tXoROljjNxyKcalTzG4xBliUqGX79LaItEdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqF2HgsW; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b04cb28acso3608683b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721064405; x=1721669205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V1EnqQQEEDfCVcyM5SF8HmtSrMGhEDyTnp8EsRJkHyA=;
+        b=TqF2HgsW9Q9fFUe39KpxsHX0yUagqR4AGqELrmMftkl1uNuRc5nSTsKJ4LR7xoccJX
+         UUnFUDW2Ue92QUavvaNw7OwQ16cYjhBdhp1eZLb2E94BSUIhp7uiBmviY1XqqnEYrGqn
+         U7Tw/mO/bsvzCom2fE4ncE2hzAzfcYMS/uyNMJpuD+woGmvsMJTP52yvWV2QGcsJyRXi
+         aQv8EBYdIOxAhCiuhX5Ocgou4BIW+qwglsHS8UfvqnSqMDrBHWZyX4/wiLgw7GcAWgg4
+         dtX3IhV2qdkFprcBTt62ZoaOC3vVnBkAxh9Y9y+FoO/Fy2xjXB5u5oKdA5wjg+hf8Yu+
+         nxvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721064405; x=1721669205;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V1EnqQQEEDfCVcyM5SF8HmtSrMGhEDyTnp8EsRJkHyA=;
+        b=slNQF1e87gMs8F71mK9KAMfB/cMNHr1tKMnm/SXrG2BMX846DXMycDd2vsUJMQctvw
+         uTp7Jhi653Sm9xzl1QbF5GZXsqyyd4nw656xM+N0SSrhLkfLVQsSC49ioQDKazLejISA
+         iYl8iHKzsuvCZrA+hrEuOUaH9r158GJRDfP15Cr7F0AZsgr2y1EMMsf2eSIz8Hs4KRIN
+         2/4Pga3TwJLWxvuwfqlapYr5mAKde1z0vx5J9SWtJgZi7A+dsDCcSXr5xyXSIFXfCYt5
+         0Wy2/VxivnIlqLen/6QyI/AJt1gdOEDfSMRbOGCR7ox8SodgGvJM75it6YwioVrTHtam
+         csmQ==
+X-Gm-Message-State: AOJu0YwuA1zBmWbCuGJBZe8G8lfmtcfRfcCmiUX1+FwJ5HiWjjf3l4+V
+	k/rDT23giYBKLHeh1GprvSsDmuwrQyjcg23VXJ1ivzYk3DgGNTYm+83pWg==
+X-Google-Smtp-Source: AGHT+IHCB9TJ+QUMrd1iZYojPPMgLhcDXl4AohOnA6YUFX4i9YhE7XQzXA17MREZ/k1DPYE3ODpmVw==
+X-Received: by 2002:a05:6a00:6904:b0:70a:fa24:65ed with SMTP id d2e1a72fcca58-70b6c883445mr12973477b3a.4.1721064404707;
+        Mon, 15 Jul 2024 10:26:44 -0700 (PDT)
+Received: from localhost ([198.11.178.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6ad3sm4627002b3a.63.2024.07.15.10.26.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2024 10:26:44 -0700 (PDT)
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH] workqueue: Remove unneeded lockdep_assert_cpus_held()
+Date: Tue, 16 Jul 2024 01:29:31 +0800
+Message-Id: <20240715172931.2260-1-jiangshanlai@gmail.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
-X-Rspamd-Queue-Id: ED1761F834
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_THREE(0.00)[3];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spamd-Bar: /
 
-Hello Mirsad!
+From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
-> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
-> which was known from before to trigger various errors in compile and build process.
-> 
-> Though this might seem as contributing to channel noise, Linux refuses to build this config,
-> treating warnings as errors, using this build line:
-> 
-> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
-> 
-> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
-> left, there seems to be more tedious work ahead to make the compilers happy.
-> 
-> The compiler output is:
-> 
-> ---------------------------------------------------------------------------------------------------------
-> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
-> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
->  1147 |         int leaf_mi;
->       |             ^~~~~~~
+The commit 19af45757383 ("workqueue: Remove cpus_read_lock() from
+apply_wqattrs_lock()") removes the unneed cpus_read_lock() after the pwq
+creations and installations have been reworked based on wq_online_cpumask
+rather than cpu_online_mask making cpus_read_lock() is unneeded during
+wqattrs changes.
 
-Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
-the code is going to get removed in two releases, so I guess we can live
-with these warnings for a few more months...
+But it desn't remove the lockdep_assert_cpus_held() checks during wqattrs
+changes, which leads to complaints from lockdep reported by kernel test
+robot:
 
-								Honza
+[   15.726567][  T131] ------------[ cut here ]------------
+[ 15.728117][ T131] WARNING: CPU: 1 PID: 131 at kernel/cpu.c:525 lockdep_assert_cpus_held (kernel/cpu.c:525)
+[   15.731191][  T131] Modules linked in: floppy(+) parport_pc(+) parport qemu_fw_cfg rtc_cmos
+[   15.733423][  T131] CPU: 1 PID: 131 Comm: systemd-udevd Tainted: G                T  6.10.0-rc2-00254-g19af45757383 #1 df6f039f42e8818bf9a534449362ebad1aad32e2
+[   15.737011][  T131] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[ 15.739760][ T131] EIP: lockdep_assert_cpus_held (kernel/cpu.c:525)
+[ 15.741326][ T131] Code: 97 c2 03 72 20 83 3d f4 73 97 c2 00 74 17 55 89 e5 b8 fc bd 4d c2 ba ff ff ff ff e8 e4 57 d1 00 85 c0 74 06 5d 31 c0 31 d2 c3 <0f> 0b eb f6 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 89 e5 b8
 
+Fix it by removing the unneeded lockdep_assert_cpus_held().
+Also remove the unneed cpus_read_lock() from wq_affn_dfl_set().
 
->   CC      fs/reiserfs/lbalance.o
-> fs/reiserfs/fix_node.c: In function ‘dc_check_balance_leaf’:
-> fs/reiserfs/fix_node.c:1938:13: error: variable ‘maxsize’ set but not used [-Werror=unused-but-set-variable]
->  1938 |         int maxsize, ret;
->       |             ^~~~~~~
-> fs/reiserfs/fix_node.c:1935:13: error: variable ‘levbytes’ set but not used [-Werror=unused-but-set-variable]
->  1935 |         int levbytes;
->       |             ^~~~~~~~
-> fs/reiserfs/prints.c: In function ‘prepare_error_buf’:
-> fs/reiserfs/prints.c:221:17: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->   221 |                 p += vscnprintf(p, end - p, fmt1, args);
->       |                 ^
-> fs/reiserfs/prints.c:260:9: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->   260 |         p += vscnprintf(p, end - p, fmt1, args);
->       |         ^
-> make[4]: Target 'arch/x86/kernel/' not remade because of errors.
-> make[3]: *** [scripts/Makefile.build:485: arch/x86/kernel] Error 2
-> make[3]: Target 'arch/x86/' not remade because of errors.
-> make[2]: *** [scripts/Makefile.build:485: arch/x86] Error 2
-> fs/reiserfs/lbalance.c: In function ‘leaf_copy_items’:
-> fs/reiserfs/lbalance.c:524:29: error: variable ‘dest’ set but not used [-Werror=unused-but-set-variable]
->   524 |         struct buffer_head *dest;
->       |                             ^~~~
-> cc1: all warnings being treated as errors
-> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
-> cc1: all warnings being treated as errors
-> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/prints.o] Error 1
-> cc1: all warnings being treated as errors
-> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/fix_node.o] Error 1
-> ---------------------------------------------------------------------------------------------------------
-> 
-> In fs/reiserfs/fix_node.c:1938:13, fs/reiserfs/fix_node.c:1935:13, and fs/reiserfs/lbalance.c:524:29,
-> the problem seem to lie within the construct RFALSE(), like
-> 
->  521 static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
->  522                            int last_first, int cpy_num, int cpy_bytes)
->  523 {
->  524         struct buffer_head *dest;
->  525         int pos, i, src_nr_item, bytes;
->  526 
->  527         dest = dest_bi->bi_bh;
->  528         RFALSE(!dest || !src, "vs-10210: !dest || !src");
->  529         RFALSE(last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST,
->  530                "vs-10220:last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST");
->  531         RFALSE(B_NR_ITEMS(src) < cpy_num,
->  532                "vs-10230: No enough items: %d, req. %d", B_NR_ITEMS(src),
->  533                cpy_num);
->  534         RFALSE(cpy_num < 0, "vs-10240: cpy_num < 0 (%d)", cpy_num);
-> 
-> Hope this helps.
-> 
-> Best regards,
-> Mirsad Todorovac
-> 
+Cc: kernel test robot <oliver.sang@intel.com>
+Fixes: 19af45757383("workqueue: Remove cpus_read_lock() from apply_wqattrs_lock()")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202407141846.665c0446-lkp@intel.com
+Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+---
+ kernel/workqueue.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index cd6f2950ef6c..177b09ba61e2 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5332,8 +5332,6 @@ static int apply_workqueue_attrs_locked(struct workqueue_struct *wq,
+  *
+  * Performs GFP_KERNEL allocations.
+  *
+- * Assumes caller has CPU hotplug read exclusion, i.e. cpus_read_lock().
+- *
+  * Return: 0 on success and -errno on failure.
+  */
+ int apply_workqueue_attrs(struct workqueue_struct *wq,
+@@ -5341,8 +5339,6 @@ int apply_workqueue_attrs(struct workqueue_struct *wq,
+ {
+ 	int ret;
+ 
+-	lockdep_assert_cpus_held();
+-
+ 	mutex_lock(&wq_pool_mutex);
+ 	ret = apply_workqueue_attrs_locked(wq, attrs);
+ 	mutex_unlock(&wq_pool_mutex);
+@@ -5424,7 +5420,6 @@ static int alloc_and_link_pwqs(struct workqueue_struct *wq)
+ 	bool highpri = wq->flags & WQ_HIGHPRI;
+ 	int cpu, ret;
+ 
+-	lockdep_assert_cpus_held();
+ 	lockdep_assert_held(&wq_pool_mutex);
+ 
+ 	wq->cpu_pwq = alloc_percpu(struct pool_workqueue *);
+@@ -5681,8 +5676,7 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 
+ 	/*
+ 	 * wq_pool_mutex protects the workqueues list, allocations of PWQs,
+-	 * and the global freeze state.  alloc_and_link_pwqs() also requires
+-	 * cpus_read_lock() for PWQs' affinities.
++	 * and the global freeze state.
+ 	 */
+ 	apply_wqattrs_lock();
+ 
+@@ -6850,8 +6844,7 @@ static int workqueue_apply_unbound_cpumask(const cpumask_var_t unbound_cpumask)
+  * @exclude_cpumask: the cpumask to be excluded from wq_unbound_cpumask
+  *
+  * This function can be called from cpuset code to provide a set of isolated
+- * CPUs that should be excluded from wq_unbound_cpumask. The caller must hold
+- * either cpus_read_lock or cpus_write_lock.
++ * CPUs that should be excluded from wq_unbound_cpumask.
+  */
+ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
+ {
+@@ -6861,7 +6854,6 @@ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
+ 	if (!zalloc_cpumask_var(&cpumask, GFP_KERNEL))
+ 		return -ENOMEM;
+ 
+-	lockdep_assert_cpus_held();
+ 	mutex_lock(&wq_pool_mutex);
+ 
+ 	/*
+@@ -6906,7 +6898,6 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
+ 	if (affn == WQ_AFFN_DFL)
+ 		return -EINVAL;
+ 
+-	cpus_read_lock();
+ 	mutex_lock(&wq_pool_mutex);
+ 
+ 	wq_affn_dfl = affn;
+@@ -6917,7 +6908,6 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
+ 	}
+ 
+ 	mutex_unlock(&wq_pool_mutex);
+-	cpus_read_unlock();
+ 
+ 	return 0;
+ }
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.19.1.6.gb485710b
+
 
