@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-252200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DE3930FDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA7B930FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0041C214E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD57A1C216E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF241849FB;
-	Mon, 15 Jul 2024 08:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422921849E9;
+	Mon, 15 Jul 2024 08:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b="hnS8YKHT"
-Received: from mail.envs.net (mail.envs.net [5.199.136.28])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SagcaH2C"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B671184100;
-	Mon, 15 Jul 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.199.136.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936B9184100
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032423; cv=none; b=JL9fBkB43caH507vNYXHFFMNwK0g7HDIRESKDF3GUteK6NG4vVEC8aBL2/ydD0ggq784X7RAvzh5kl3DSkG8aclr/h2RG6NfxDcbhrhMoX8NDvzV0GMFt+bxS9+5RqqDNYIezYVBWmmoZ0vSp+ZEWIOfzrjPcFKA1l1hkkPqze0=
+	t=1721032506; cv=none; b=iV/PU5+vSzreiQRGyNMvYGDLyUgK2Y99eRMLR5rPaLR8EtbT1soLSXrdRTyj3oybHmX4OSpXQeNfrVAS7MzyRBux5i1aGmuFjkCeYICXzeakxAE6HKYjxd041NgCOaKR8zidlb+pQiTZ6npBcah6y/zrmOyEyNT6m2TURDSc9y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032423; c=relaxed/simple;
-	bh=GOFHld7N2DnMubu4a676OGIxZoC5c9W/WFt4GLcbc6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IVvWHkA263IBzXYt7bH/f5tug1JHxHAuw1kTCetz2g/3nVKmBw8F8ZHJeIuOWJtMNDKW3SfIf3wjHTsNnNErioWfOcL4voutieuxFYZ7/56447ya7w63RybpSVMCOD7Xj8nGccjWrXq/JvVtaJWkMJllDAR0hHRH/Nl6o6+9Lic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net; spf=pass smtp.mailfrom=envs.net; dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b=hnS8YKHT; arc=none smtp.client-ip=5.199.136.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=envs.net
-Received: from localhost (mail.envs.net [127.0.0.1])
-	by mail.envs.net (Postfix) with ESMTP id 497D638A399E;
-	Mon, 15 Jul 2024 08:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=envs.net; s=modoboa;
-	t=1721032414; bh=I2caou9mvPwzmKsHqGYo0NPtkkydAHfAzkWxXhdErY0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hnS8YKHTdaYeZ5jMZmM41XHTenW66/lRFCzh0TU18lhdSm+rkoSqGhEBCuXLdFoBq
-	 xUqgyn9xuTC3hDiVkbnZrcl105teQRrtVf6KUlgKJ5G8qlTBq7/+Q9/iYctpD2z4gQ
-	 CFaEyJGElpI5Q0rY1vWLmBQHJk0ZUKm9QtCAh6vZ8eSjTQLRtzbTYVGpuJx4XlvQ2T
-	 G43RVt/lgkopExjovyb9cxQSeXBhYrieeXs4NLbH776iJJc4NBo1GuTfPdB1wz6qFC
-	 US8F7etxQozB6EojjRJ7siPifUH3rvMl+WHe99xxXZgXB2GOfjiH56ttiLC3MI4MU4
-	 +0JpqB/fNd4S52UuFdLJfF14t/zSe4AkvjKNqvPnDWUxg8Lg9RhFug1y6v3guKvzn9
-	 0TL1B1H3i7DJU+OcsHoSVk7pidSDawpR/maBDASC3f/nXwoePvtBqrcmr4ltklJ6Gz
-	 F5cR334V+/fJLi0rZ198p8rAypZpM2Ky7Fy+2j4c9arwwYTLFReWvDn4VWyV7Ce9tr
-	 JPMWLSFan/TkzANu9NSmQUt1G/z1mvoLFQFs9ER6xlGg7OwzlDtnxDpptdP7omu9rW
-	 +bmGu5ynJchDXln4UuR1ce6YaVyuo6noaEScEPikY0O1Abm75qqi2GZJWwTZaseKXp
-	 WZxL9epY4LCP+OT305roHY3I=
-X-Virus-Scanned: Debian amavisd-new at mail.envs.net
-Received: from mail.envs.net ([127.0.0.1])
-	by localhost (mail.envs.net [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Ach_p67wPtD6; Mon, 15 Jul 2024 08:33:28 +0000 (UTC)
-Received: from xtexx.eu.org (unknown [120.230.214.120])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.envs.net (Postfix) with ESMTPSA;
-	Mon, 15 Jul 2024 08:33:28 +0000 (UTC)
-From: Bingwu Zhang <xtex@envs.net>
-To: Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Bingwu Zhang <xtexchooser@duck.com>,
-	Rong Zhang <i@rong.moe>,
-	Daniele Debernardi <drebrez@gmail.com>,
-	Luca Weiss <luca@z3ntu.xyz>,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	~xtex/staging@lists.sr.ht
-Subject: [PATCH] ARM: dts: qcom: msm8974pro-samsung-klte: Add pstore node
-Date: Mon, 15 Jul 2024 16:32:40 +0800
-Message-ID: <20240715083245.80169-2-xtex@envs.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721032506; c=relaxed/simple;
+	bh=JW1v9I2QQq6tb8htzQlK+uUAsMhkhshbWkdi6NH34IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iPyOrVYsJaQb+UmNtNv7C1haDxGvXaQZgVSwmJA4FYrSBcSI1EB+ZS+3nbCDUMp4bQAgeUlmwaqYhAHSmJITiiTRNfdmBygFGEgzuek+ZOBZu8p8eRyz2i403OTLRQvKSc4g1z3lMzy7BcRWkrfP6OlonWPYsudoEN7oocfxxPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SagcaH2C; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F7qhhC029356;
+	Mon, 15 Jul 2024 10:34:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	JW1v9I2QQq6tb8htzQlK+uUAsMhkhshbWkdi6NH34IU=; b=SagcaH2C4xzMgF4c
+	c+Ga/kBrOnnKUsu2zRE7GEw8U5aWpvcVCLf9wq356oesQ+SNw/88kxPaD2ApXpnp
+	TRfutITol0CmXQp+n63b4/IYUXT9vHrcfESb/TYdkBR4cp3rBrD/ZBZ1dms0OpdP
+	x7YoEi3JrrQnlf9TgPORH8JpT07O5PSZMZ74QOAc3UnSKN/ahTkFJk7U/biHSDBN
+	/Vn+XKXVr29RoKPsMdNJsdZkql3Up6hd/ciM0zSNI9Y91mSsF58y4sb2HxcPYdxa
+	cuQNy8JyBXoGkWVvTUfAIyN2n3VjUOdb6iuiwOeH880mS3AHOQngboI7Wu4+J//q
+	mbcvGA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40bgwx5sj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 10:34:36 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B799940045;
+	Mon, 15 Jul 2024 10:34:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 447DE20E037;
+	Mon, 15 Jul 2024 10:33:57 +0200 (CEST)
+Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 15 Jul
+ 2024 10:33:54 +0200
+Message-ID: <ddc81a62-08d5-4f23-b86c-10754fb3e717@foss.st.com>
+Date: Mon, 15 Jul 2024 10:33:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1147; i=xtexchooser@duck.com; h=from:subject; bh=pZ8z0gqdS1fPPC5alHLTORsjbM2aO189atg8HOE/k+c=; b=owGbwMvMwCW2U4Ij7wZL9ETG02pJDGlT7q2t+SVnKJhjzTtP5arNflEvT7WVvfNnK+76efXMc +cLbrM+d5SyMIhxMciKKbIUGTZ4s+qk84suK5eFmcPKBDKEgYtTACbir8/wm6WNoa1vbcL3e6J7 Z5VZzjW8FPmaoenTNa9El8U+RkoCcxn+WVg8c561+fImlsBfF5WvuX1OML6gOt2m+pHcF8N6E/H vvAA=
-X-Developer-Key: i=xtexchooser@duck.com; a=openpgp; fpr=7231804B052C670F15A6771DB918086ED8045B91
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/stm: ltdc: check memory returned by devm_kzalloc()
+To: Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <yannick.fertre@foss.st.com>, <philippe.cornu@foss.st.com>,
+        <airlied@gmail.com>, <daniel@ffwll.ch>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>
+CC: <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20230531072854.142629-1-claudiu.beznea@microchip.com>
+Content-Language: en-US
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20230531072854.142629-1-claudiu.beznea@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_03,2024-07-11_01,2024-05-17_01
 
-From: Bingwu Zhang <xtexchooser@duck.com>
 
-Add pstore node to allow for retrieving crash logs.
+On 5/31/23 09:28, Claudiu Beznea wrote:
+> devm_kzalloc() can fail and return NULL pointer. Check its return status.
+> Identified with Coccinelle (kmerr.cocci script).
+>
+> Fixes: 484e72d3146b ("drm/stm: ltdc: add support of ycbcr pixel formats")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>
+> Hi,
+>
+> This has been addressed using kmerr.cocci script proposed for update
+> at [1].
+>
+> Thank you,
+> Claudiu Beznea
+>
+> [1] https://lore.kernel.org/all/20230530074044.1603426-1-claudiu.beznea@microchip.com/
+>
+Hi Claudiu,
 
-Tested-by: Bingwu Zhang <xtexchooser@duck.com> # on SM-G9008W (samsung-kltechn)
-Signed-off-by: Bingwu Zhang <xtexchooser@duck.com>
----
- .../qcom-msm8974pro-samsung-klte-common.dtsi    | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+After some delay: applied on drm-misc-next.
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-samsung-klte-common.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8974pro-samsung-klte-common.dtsi
-index b5443fd5b425..ff98b9362b0d 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-samsung-klte-common.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-samsung-klte-common.dtsi
-@@ -126,6 +126,23 @@ led@3 {
- 		};
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@3e8e0000 {
-+			compatible = "ramoops";
-+			reg = <0x3e8e0000 0x200000>;
-+
-+			console-size = <0x100000>;
-+			record-size = <0x10000>;
-+			ftrace-size = <0x10000>;
-+			pmsg-size = <0x80000>;
-+			ecc-size = <8>;
-+		};
-+	};
-+
- 	vreg_wlan: wlan-regulator {
- 		compatible = "regulator-fixed";
- 
-
-base-commit: 6fd4da15c334831a865d4700ceb3ff5a917163e3
--- 
-2.45.2
+Thank,
+Raphaël
 
 
