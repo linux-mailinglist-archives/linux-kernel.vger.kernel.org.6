@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-252418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5069312CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEA59312D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A14B211B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD3F284B11
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0F21891AD;
-	Mon, 15 Jul 2024 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA4C1891AA;
+	Mon, 15 Jul 2024 11:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jHzUjlbr"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rZCQIu2Y"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07B51465B8;
-	Mon, 15 Jul 2024 11:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBE013D8B1;
+	Mon, 15 Jul 2024 11:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041944; cv=none; b=tGTC3qebjM29+a24oLo/FDuJdPI6i2/U2MbWvh+RwtKuKpFp/6B/iPIv71XKU+PF6yinida2Ls96k0j+MD5fNmwiOyVdwEtIq+hXp3lh2y6du0WvmD1FMwxwvyBoEnL+4b4Mlb73ncV5xeN9ZabOO+7V4Rc8QpTkHgrzM/UiiqY=
+	t=1721042088; cv=none; b=YQEmvTGHuV2rq93x828oi69cS4vhbDs01RYBp5yH3M/QutXEmbBXtbOaXaSE1K1DkEwDvaFgCkg0QKL0dhM5YhgAnNUG673Ocz7y34Qw1z6OXXEh6P/0anQIhGcbnAJ26exX2tM0v8GV4HUT7jY9pCloz3Y5ofJK1V20lVP/8mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041944; c=relaxed/simple;
-	bh=boD6DHuvEEwyMx5kkUoGvLV6Bx4Xtb7GPr27RAXcqzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upVzGYQr0tBxzOFx2MKuUOxsUtjrQdc7IDLm5DZbbMSvvQkTuD0i42RszoPlXXonG/25YVWv21vbnOd6X1YF3AoJNKk2ZYgyau7Oq9hRFjUWzNEc/b+1fdiX/uoiWWTeJpyeLe2pl2pr6KAT3vs8p7mnERpzBiey/pZim3RcG/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jHzUjlbr; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/9kN955l3tWnzwnWGkkfTtGN6nU/GmY6pzkTmB5KXRk=; b=jHzUjlbrIrnnOUwFV+BCvO56Dv
-	NuAcHwv16kTWcBlBb8f89hGPKIaQ8ReRV7N94Qts3WgqSzGEn2eTSFEqHk6HlCfh/lstTlvl9ZTAN
-	xwrbHrLIPtsDkeXhhCu/wk1/a2RhDsZKuL5/EWfjsz+GKhckuw3kc++7I2QlHk5RW63WEQuhc85od
-	LAwEXxYgJCDaUvhZHO+kjmh4YNmxsIi8Uomqoj5uFW1Qh/BWbhydeaOzDFBxXy/0d1d9DZO1A+WXK
-	kJ3J9hy2ebPebZgFT1Uj0W3IUC8VWEuIWMI092iwsdRYSd5HD2v96Q9FydIYwVB2HqcadVchjq+94
-	Jk5kBmDQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sTJco-00000001mO2-2bNi;
-	Mon, 15 Jul 2024 11:12:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 704D33003FF; Mon, 15 Jul 2024 13:12:08 +0200 (CEST)
-Date: Mon, 15 Jul 2024 13:12:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Kyle Huey <me@kylehuey.com>, khuey@kylehuey.com,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing
- events
-Message-ID: <20240715111208.GB14400@noisy.programming.kicks-ass.net>
-References: <20240713044645.10840-1-khuey@kylehuey.com>
- <ZpLkR2qOo0wTyfqB@krava>
+	s=arc-20240116; t=1721042088; c=relaxed/simple;
+	bh=Gp+2UHDwqlcu36GwJc/06OLXeLVdP9lzbpNxtv4G8No=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jSc8YGkmuyxpmfi84cg3vJzr9yFHB8yaO+PocO+np+j9g5xNkrjS7k2zyUrmTp5RzAsJ+Di+qpAJmXtc0at/CSJIhozV7i5QNOsWkFr2H3/rQNUePsHun/VqYKbSM5Joad6j50TKSFV0ZbVmwwHhU9OJHTALgEoJxSJGhunZC9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rZCQIu2Y; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721042086; x=1752578086;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Gp+2UHDwqlcu36GwJc/06OLXeLVdP9lzbpNxtv4G8No=;
+  b=rZCQIu2YIo7o+LyDvz+LnvqmSuZQLfF0j8bIaH1zz+c8b9VzJ68mdwwT
+   U+v1HoZan8lnUqMRWM+6ZgI/Y0j3oxwgXib/+DQ9ZK9wjZYMh7TLaizmj
+   jnnW37u0VijQRx7XHFoa85X3DpeiLbGY69MJQwxu75yUdOvbT3PqC5E4/
+   sjM+8QUjtUYEllUpyxYXjBnhzuRr6qihITzMEw9T1pSx3D096szSFdGJ0
+   vFVEiFF1cboDE25oMxo7cgIpRZI8Gj0aPyOYkF+ihfwKuUQyCwjZOmM/q
+   bakXG7uglZkfqPEnfjecmcQRpyi5y103R/IkJOKNBc8m7be7qKltUPc05
+   w==;
+X-CSE-ConnectionGUID: M47IHorFQcORQBAq4muecw==
+X-CSE-MsgGUID: /InWMObERHevghgSCmH3UA==
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="196643516"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Jul 2024 04:14:45 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 15 Jul 2024 04:14:27 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 15 Jul 2024 04:14:26 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <linux-spi@vger.kernel.org>
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Steve Wilkins
+	<steve.wilkins@raymarine.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Mark Brown <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/6] spi-microchip-core fixes & variable word size support
+Date: Mon, 15 Jul 2024 12:13:51 +0100
+Message-ID: <20240715-retail-magnolia-bbd49a657a89@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpLkR2qOo0wTyfqB@krava>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1657; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=Gp+2UHDwqlcu36GwJc/06OLXeLVdP9lzbpNxtv4G8No=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlTWQq4jcVivK74uu5RPH73+bGonctYKye+nnXp11Z9w1ee 03c5dZSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAixlUMv9mNmTNsMqSl7a+lL/JVPZ T1wdzTtq1Of/Lak0wCgYt4HzIyXNWxeSvQnPFKTuP/hOOe1yzip1y/d8hLQNd1n26ZpZw8FwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Sat, Jul 13, 2024 at 10:32:07PM +0200, Jiri Olsa wrote:
-> On Fri, Jul 12, 2024 at 09:46:45PM -0700, Kyle Huey wrote:
-> > The regressing commit is new in 6.10. It assumed that anytime event->prog
-> > is set bpf_overflow_handler() should be invoked to execute the attached bpf
-> > program. This assumption is false for tracing events, and as a result the
-> > regressing commit broke bpftrace by invoking the bpf handler with garbage
-> > inputs on overflow.
-> > 
-> > Prior to the regression the overflow handlers formed a chain (of length 0,
-> > 1, or 2) and perf_event_set_bpf_handler() (the !tracing case) added
-> > bpf_overflow_handler() to that chain, while perf_event_attach_bpf_prog()
-> > (the tracing case) did not. Both set event->prog. The chain of overflow
-> > handlers was replaced by a single overflow handler slot and a fixed call to
-> > bpf_overflow_handler() when appropriate. This modifies the condition there
-> > to include !perf_event_is_tracing(), restoring the previous behavior and
-> > fixing bpftrace.
-> > 
-> > Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-> > Reported-by: Joe Damato <jdamato@fastly.com>
-> > Fixes: f11f10bfa1ca ("perf/bpf: Call BPF handler directly, not through overflow machinery")
-> > Tested-by: Joe Damato <jdamato@fastly.com> # bpftrace
-> > Tested-by: Kyle Huey <khuey@kylehuey.com> # bpf overflow handlers
-> > ---
-> >  kernel/events/core.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 8f908f077935..f0d7119585dc 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -9666,6 +9666,8 @@ static inline void perf_event_free_bpf_handler(struct perf_event *event)
-> >   * Generic event overflow handling, sampling.
-> >   */
-> >  
-> > +static bool perf_event_is_tracing(struct perf_event *event);
-> > +
-> >  static int __perf_event_overflow(struct perf_event *event,
-> >  				 int throttle, struct perf_sample_data *data,
-> >  				 struct pt_regs *regs)
-> > @@ -9682,7 +9684,9 @@ static int __perf_event_overflow(struct perf_event *event,
-> >  
-> >  	ret = __perf_event_account_interrupt(event, throttle);
-> >  
-> > -	if (event->prog && !bpf_overflow_handler(event, data, regs))
-> > +	if (event->prog &&
-> > +	    !perf_event_is_tracing(event) &&
-> > +	    !bpf_overflow_handler(event, data, regs))
-> >  		return ret;
-> 
-> ok makes sense, it's better to follow the perf_event_set_bpf_prog condition
-> 
-> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Hey Mark,
 
-Urgh, so wth does event_is_tracing do with event->prog? And can't we
-clean this up?
+Got some fixes here for the spi-microchip-core driver, that I am passing
+on.. The author of the first patch is no longer at Microchip, so there's
+probably gonna be some bounces on the series. The remainder of the
+patches got sent in by a user, and, other than one patch, I just wrote
+commit messages for those that were missing them and rebased the series
+on top of mainline.
 
-That whole perf_event_is_tracing() is a pretty gross function.
+There was one other patch in the series submitted by the user to us, that
+I opted to drop, adding locking around accesses to tx FIFO in the
+interrupt handler and in the transfer_one implementation. I think that
+patch is not needed after the first patch in this series since there'll
+be no contention any more.
 
-Also, I think the default return value of bpf_overflow_handler() is
-wrong -- note how if !event->prog we won't call bpf_overflow_handler(),
-but if we do call it, but then have !event->prog on the re-read, we
-still return 0.
+Cheers,
+Conor.
 
+CC: Steve Wilkins <steve.wilkins@raymarine.com>
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Mark Brown <broonie@kernel.org>
+CC: linux-spi@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Naga Sureshkumar Relli (1):
+  spi: microchip-core: fix the issues in the isr
+
+Steve Wilkins (5):
+  spi: microchip-core: defer asserting chip select until just before
+    write to TX FIFO
+  spi: microchip-core: only disable SPI controller when register value
+    change requires it
+  spi: microchip-core: fix init function not setting the master and
+    motorola modes
+  spi: microchip-core: ensure TX and RX FIFOs are empty at start of a
+    transfer
+  spi: microchip-core: add support for word sizes of 1 to 32 bits
+
+ drivers/spi/spi-microchip-core.c | 190 ++++++++++++++++++-------------
+ 1 file changed, 110 insertions(+), 80 deletions(-)
+
+-- 
+2.43.2
 
 
