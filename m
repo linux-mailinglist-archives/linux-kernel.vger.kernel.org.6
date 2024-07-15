@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-252580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073E793156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:11:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2C993157C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD2E283907
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EAE11C219EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8FC18D4A4;
-	Mon, 15 Jul 2024 13:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gByfCWMu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB21118D4B3;
+	Mon, 15 Jul 2024 13:15:24 +0000 (UTC)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40318C33F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0B81850B4;
+	Mon, 15 Jul 2024 13:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049064; cv=none; b=uwIybvqZsX3zLehECE7wddDSUdcvddX3qGBfmvx37Ywy9gDpavJrChMYfDQrSxn8QfejbubhrrrAGIkfgD60bAWWHZu8SMvZkiFnrZI3gKUCgrGLZkFqN17QMUwo6Aa3s7jZTM6lySEa8Iw1IKj8H9yLnXpDALiy+YalnCSkQHc=
+	t=1721049324; cv=none; b=LRWCJLJNtH1Yk2KZ4s/kC6TrVwjtG1CAFdUfzZA2Qc6g2+I32Rvp3X0Hxr5oycdZQ0jC6no8eGcj3XkUKB2RkWjyDSVV1Gk4sQeAV3O3Ub6+baPDfHvkmwHEcDfgXIVSFRaCL3cPQMk02lJCNeLtxrVPKzImM9XhaGGB2g3dwmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049064; c=relaxed/simple;
-	bh=QOmrlh86HNBabKQAYhgfGUKbP84IU6qGzPgWb0wPX64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgcIqH1BhOwdjJT7G4BqYbWcYZrVUk6D1wN0vSsxamKhTIcGjPGuQ+n9q0xhgbFjUupUwEP0Ov6R+DFIjU3HVVBofQLSqQHcAmOHLGbNwO7h894BZD0uKEJXOLNGZ/atLEcxtaQ/EJtsuM+2R/s1kWgtAQUyveYCiiI6huLJ31Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gByfCWMu; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266ed6c691so26897665e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721049061; x=1721653861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CccdwCAsE/kNApiEDZLKr3tDI54YdE2r4/ctaUuOXYQ=;
-        b=gByfCWMuLwR6mgICy24frGgBfMsWvmvLjlYw3UNzi4uZx0XktLiSqPRMQzJ8DKtgb3
-         TF78+1bIDXH6Ms/8HcK+rUWG6GwgsqE29SvJvvg6BpAxyZ/YIUP4bCWPRL5oPwCydFSf
-         bKruXNrvsLDfFt0prsmX9lHNNwYLGW8kDsjPUVvOz3m4F/j+3HFMskI8j6GML2FFoUTk
-         yT78ibJkGIUiX97sZOGgxL1eFDoPf7bshYLQzze3xTx3fE3I3PpPbeYlXxoOSpxXOZX2
-         ESdHgGIAfrdGPotEqtIwWL21wg7GMyuqLzj9Ue6kIbWtTOTX0tSJNFvHT9AdqUm/IXJG
-         f7NQ==
+	s=arc-20240116; t=1721049324; c=relaxed/simple;
+	bh=NDiGhLikZFXheoCYWgdbBv8oB2Fs1Q0tUVp2bO4OnJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tNESuLMa7C0A0GtXB1IaCsViaCkLOlM8PSFSHZq1rX/In/I4JvErLgaFEOyw5l6L73TYW2DhmCINlcZ/vgwvwecGf9nT8gUayxUA4LXv0ZolexiBd+xnMW8lRMMBx/iMdHCxL2+VNkQ/G4fcqaftLm2x6ctQxA3DkXa337EDq3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70448cae1e0so2424641a34.3;
+        Mon, 15 Jul 2024 06:15:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721049061; x=1721653861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CccdwCAsE/kNApiEDZLKr3tDI54YdE2r4/ctaUuOXYQ=;
-        b=AY3U+8VkfewyLx4DRLC2stMQTMA5GsvRiN/lBsKPxWV6XQkJQpi/0EiHDiKvlWTar0
-         zt70QFRk8hoqJZQ2NxyhfIPWJU1TARridN3UqIURZAb8UTk1rZX1iKF5t8njxc5EWRRQ
-         DwIje+qjZ1KdVxg3K7r05hHuB3AIu39rQuf3Y0QpqB7mJoAocNV+tsJ3QmgyGPkSbu49
-         ub4N1qliDMnhJa5ORgjd89w8nZLbauEVVVylR0DBojZVuuRkEfPg+DRqJPkHeWGGnrMl
-         85Zvp3PshcMMXrU5WDuAMUzQ3FVEeZp6lozIjkDpOr8BgnETMjYM2CbU7mec6NfbedIJ
-         7w7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSRUEgrsqniOHC103B7G4W+MVvRpQJEV1aEDGCr0gGAM3z/xkvvRvz3/JA/C2DAO6SoaTQE8OtL9Bd/nbwdwg+K98aASDfIBklUiFE
-X-Gm-Message-State: AOJu0Yw5Cfi5ZDiBcDTBEkizHwIoJwlaW4iwYf+4TC+ULP6SH6ewZaDE
-	ktXAmNP/XAKAzAW9ui1HqUTIGX8HyrL54CQOln7IfXZBVeQy6fsWVsHMyhKnGko=
-X-Google-Smtp-Source: AGHT+IHxl518O6ITVCk9V/YPVUHaWCVxMHpCeykVBPqlp1eRMIDm6iZ4oNUH532REJXAAfP1dtKMXw==
-X-Received: by 2002:a05:6000:50b:b0:367:980a:6aa with SMTP id ffacd0b85a97d-367ceaca978mr11732523f8f.54.1721049060962;
-        Mon, 15 Jul 2024 06:11:00 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff1f:b280:82fb:4328:f644:289a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafbec3sm6389737f8f.85.2024.07.15.06.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 06:11:00 -0700 (PDT)
-Date: Mon, 15 Jul 2024 15:10:54 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
-Message-ID: <ZpUf3sUz8zWWHhPI@linaro.org>
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
- <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org>
- <ZpUcI3KkIa58zC55@linaro.org>
- <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
+        d=1e100.net; s=20230601; t=1721049322; x=1721654122;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tNR0w8f7DgNm43Yovgh09Jc86fgc4MgJXWKIFtreEko=;
+        b=T9J9ELjdDTPeuQ/BbqM6+N9M7+Fpvoo0BdzBjghN8WjNRG5Kdwn80ojG0zi5PWQOPU
+         u+qD6DodVvZcTO1BF/Kx5QZsheUa2uW1I0Pn7rIj0aCCyoiRDcLAzrogp8Y/CugeTfWF
+         G0R/m0XVV7lZ2eSpw1CKiWd/V111G9nvtjrrBYBGBtARuv7AvdanF53bw9elbJ7m+mwo
+         D9hOPvuZAqDXylcKlQm56awR6ObxT1KzBn7uyNIfaBgDYQ8olF29WyJ2rwpT4BDiha1f
+         K/f5+RwYYUTjF1Smi8j01kkrihtPaBZzeDVp3g9EB2LUj6oBhOwoZBUodVw/OlNk9Vf5
+         M6tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHAtoGI/E1U5CcoN6NkveBimGSIOieq/sMZ1E0oZsB+qXtsJUJEzpINRoSkfYwl7VMwURaSnkYL52tHziZorol6uCb9MrR4+aAoLmAHyz/Q4tI/zN+9m1a7nSo64Z/9nsMxU7OxZYRSBI53OeF
+X-Gm-Message-State: AOJu0YynQqKCniBd7r1I3ItMPqJyzVDcR53BNlwVhEAhJtaoYeA+545o
+	TUsvnXR1lNl7WUAqqWrg45xtr1Mge5FzRVCWt59dOyE7bFShpq0FkyNV71WUUrFcJsWLq55JYvb
+	SfCc6SAZO6sZLZs7YU6hCHFVKyHI=
+X-Google-Smtp-Source: AGHT+IHaZDYvxo07Vr9ALMufUbtJ9JDhOtTtJyaDYEF5Vq40o/q+4REDZmuFRwQEdwuzWOGgEhtlipHg6B79axpNsBo=
+X-Received: by 2002:a05:6830:4117:b0:703:6e87:a7d4 with SMTP id
+ 46e09a7af769-70375a1f418mr26514909a34.19.1721049321887; Mon, 15 Jul 2024
+ 06:15:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1603248-afe8-4594-9e2e-81ba208dff00@linaro.org>
+References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
+In-Reply-To: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Date: Mon, 15 Jul 2024 09:15:10 -0400
+Message-ID: <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in nouveau_debugfs_vbios_image()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, 
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Daniel Vetter <daniel@ffwll.ch>, 
+	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>, 
+	Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 03:01:57PM +0200, Neil Armstrong wrote:
-> On 15/07/2024 14:54, Stephan Gerhold wrote:
-> > On Mon, Jul 15, 2024 at 02:42:12PM +0200, Neil Armstrong wrote:
-> > > On 15/07/2024 14:15, Stephan Gerhold wrote:
-> > > > This reverts commit 8ebb1fc2e69ab8b89a425e402c7bd85e053b7b01.
-> > > > 
-> > > > The panel should be handled through the samsung-atna33xc20 driver for
-> > > > correct power up timings. Otherwise the backlight does not work correctly.
-> > > > 
-> > > > We have existing users of this panel through the generic "edp-panel"
-> > > > compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
-> > > > partially in that configuration: It works after boot but once the screen
-> > > > gets disabled it does not turn on again until after reboot. It behaves the
-> > > > same way with the default "conservative" timings, so we might as well drop
-> > > > the configuration from the panel-edp driver. That way, users with old DTBs
-> > > > will get a warning and can move to the new driver.
-> > > > 
-> > > > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> > > > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > > > ---
-> > > >    drivers/gpu/drm/panel/panel-edp.c | 2 --
-> > > >    1 file changed, 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-> > > > index 3a574a9b46e7..d2d682385e89 100644
-> > > > --- a/drivers/gpu/drm/panel/panel-edp.c
-> > > > +++ b/drivers/gpu/drm/panel/panel-edp.c
-> > > > @@ -1960,8 +1960,6 @@ static const struct edp_panel_entry edp_panels[] = {
-> > > >    	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, "Unknown"),
-> > > >    	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, "Unknown"),
-> > > > -	EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
-> > > > -
-> > > >    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
-> > > >    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
-> > > >    	EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
-> > > > 
-> > > 
-> > > How will we handle current/old crd DT with new kernels ?
-> > > 
-> > 
-> > I think this is answered in the commit message:
-> > 
-> > > > We have existing users of this panel through the generic "edp-panel"
-> > > > compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
-> > > > partially in that configuration: It works after boot but once the screen
-> > > > gets disabled it does not turn on again until after reboot. It behaves the
-> > > > same way with the default "conservative" timings, so we might as well drop
-> > > > the configuration from the panel-edp driver. That way, users with old DTBs
-> > > > will get a warning and can move to the new driver.
-> > 
-> > Basically with the entry removed, the panel-edp driver will fallback to
-> > default "conservative" timings when using old DTBs. There will be a
-> > warning in dmesg, but otherwise the panel will somewhat work just as
-> > before. I think this is a good way to remind users to upgrade.
-> 
-> I consider this as a regression
-> 
+On Mon, Jul 15, 2024 at 7:49=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 15 Jul 2024 13:36:54 +0200
+>
+> Single characters should be put into a sequence.
+> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one se=
+lected call.
+>
+> This issue was transformed by using the Coccinelle software.
+>
+> Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/=
+nouveau/nouveau_debugfs.c
+> index e83db051e851..931b62097366 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> @@ -42,7 +42,7 @@ nouveau_debugfs_vbios_image(struct seq_file *m, void *d=
+ata)
+>         int i;
+>
+>         for (i =3D 0; i < drm->vbios.length; i++)
+> -               seq_printf(m, "%c", drm->vbios.data[i]);
+> +               seq_putc(m, drm->vbios.data[i]);
 
-Personally, I don't think we can regress something that was already
-broken. There is no point in continuing to use the broken state - it is
-rather frustrating if your display goes off for power saving or suspend
-and you cannot get it back on until you reboot.
+Is there some reason this whole thing isn't just
 
-> > 
-> > > Same question for patch 3, thie serie introduces a bindings that won't be valid
-> > > if we backport patch 3. I don't think patch should be backported, and this patch
-> > > should be dropped.
-> > 
-> > There would be a dtbs_check warning, yeah. Functionally, it would work
-> > just fine. Is that reason enough to keep display partially broken for
-> > 6.11? We could also apply the minor binding change for 6.11 if needed.
-> 
-> I don't know how to answer this, I'll let the DT maintainer comment this.
-> 
-> The problem is I do not think we can pass the whole patchset as fixes
-> for v6.11, patches 2 & 3 could, patches 1 & 4 definitely can't.
-> 
+seq_write(m, drm->vbios.data, drm->vbios.length)
 
-Fair enough, I'm also fine if these patches go just into 6.12. I think
-there are no changes in the patches needed for that, the Fixes tag is
-still appropriate and I intentionally omitted the Cc stable tag.
-
-Thanks,
-Stephan
+>         return 0;
+>  }
+>
+> --
+> 2.45.2
+>
 
