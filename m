@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-252195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D5930FD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B89930FD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F5281B38
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A87281601
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D30185094;
-	Mon, 15 Jul 2024 08:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F67185631;
+	Mon, 15 Jul 2024 08:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kOsYXowy"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJ+GBtbJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC82185084
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C713B5B2;
+	Mon, 15 Jul 2024 08:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032196; cv=none; b=rOPxjl4OmPMUT+VGsduV0Ykd/Pf7myDvoQiEKJZtomh2NXd/qdpCKQyeBzTaMFNoenCstslL4gN1XX1yv3Q/JzuQ9swl+ClZ3QoxemfWaQcxV2YA9SyKrr9XZP+ee4Y3/yIHRz0FyJfP39yM4Q8TfYMq4bZ70kr8+hHPZTwUXXc=
+	t=1721032225; cv=none; b=lL3GExVZTXHGT+Gm3AkVyUVQPsB30gsehMW4w80KQnf+KfF3YO+qjLEK+zunDw3E41uqgUEW7jVGPRhScmqz+U/bhoPYUXiLxG9dGGkcFTCnjELPA09mYjjnXZDjhBq9yrfs0kvg3+wWItGamt8axpykYsqGc6WgLuKDpmWs3V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032196; c=relaxed/simple;
-	bh=NOnnq+61CxDOWMILVOgzIwIKxbt7n9msZtGOaXKmv1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HX9Mj90xcztVFbsIq2urekGdsHggwn44FPAJGFx01VFl5vIlSumvRWVg7IE4Xh4MiEU+nHRCCx7eNXIwohYWzYYLBVII/r13QvRHqeYPXs2Jx61g1H1xFSEAjxqxbuSUejyt018DxmD8Qn7poEJKdfSiRTlyTTob9CIPw4WReKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kOsYXowy; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jarkko@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721032192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gI+AO5s/O2pz6h4ONw/V+YoYvCERCtp3v+pVErREphU=;
-	b=kOsYXowyPGspLPXF9SVdQZ0V5kNNsx8jS+NossoDwzgm+9GnG5rp4hnx2YF7ZJMUQsOgNC
-	DFYpI9vsuUaijnzyHEPdtU5ajiFxYXmUTNfAX1ISYjfx7HDHPU+Qx18emGGLzLaOA5pOTV
-	3t18lqbK7SQndlhCGfvzKdPz0DqNkIc=
-X-Envelope-To: peterhuewe@gmx.de
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: linux-integrity@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: gehao@kylinos.cn
-Message-ID: <b69b55e8-eba8-3f3f-e65f-cc5e6cf3eb84@linux.dev>
-Date: Mon, 15 Jul 2024 16:29:42 +0800
+	s=arc-20240116; t=1721032225; c=relaxed/simple;
+	bh=cnnjx6vN6SkcRwmo0gZuagUL8/r39lmyNh61FPnqguw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LnCp+JlL8GwiwObguRG7xDRzBBUuDfZgqeiGQWU0pBxrIfX2P142nyXkKIOWDIB1hzzcKsoJq9odBHhoSMD9weh4WsJtd8gcNrxv5dn1LKbWPUi/EN6aGjXQ8dY2IK7o2Dqj4z5RBMNLqP/d3cu0piO1nTLC7jWnjhs9zXOJo9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJ+GBtbJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94FAC32782;
+	Mon, 15 Jul 2024 08:30:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721032223;
+	bh=cnnjx6vN6SkcRwmo0gZuagUL8/r39lmyNh61FPnqguw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FJ+GBtbJX952GMve1l54H8b42/5kTc+0uO7eCtQjBidtFsdTBsV0dgxCLPZJq82If
+	 uU46t+HAwaiEu04a443yVFwd3ojZP1MXsdHsJqmooYZMhP58TFYvrp7g02KYzNXH2S
+	 /XGWTbhXiIAZKJdeinQIIIPDCCKIY4OLYE3hlylEBXRLnc/bDN3GNQgI+wu8RBfrob
+	 yL/LahS7ggKYwZJyZpfdX18HBr67Wrke4ogfop62DVDgq3bB3GlfSFnKgoABvdmIFe
+	 6rvE0ngwH3+Xqdj4tTHQm9un9fYYcPCW4NVKkLYYxDSzVjEAyF20+ISw1DhMF6ZDvX
+	 d7h+Fx71UiwQg==
+Date: Mon, 15 Jul 2024 17:30:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: wuqiang.matt <wuqiang.matt@bytedance.com>, Andrew Morton
+ <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION()
+ macro
+Message-Id: <20240715173019.ebe734f2c8182ca0f13b7c7a@kernel.org>
+In-Reply-To: <3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+	<7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+	<20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
+	<3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] tpm: Move dereference after NULL check in
- tpm_buf_check_hmac_response
-To: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de, jgg@ziepe.ca
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hao Ge <gehao@kylinos.cn>
-References: <20240709023337.102509-1-hao.ge@linux.dev>
- <D2PDLHX51C3K.16A4U6XFXRE29@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <D2PDLHX51C3K.16A4U6XFXRE29@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi Jarkko
+On Thu, 11 Jul 2024 11:14:20 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-On 7/14/24 23:43, Jarkko Sakkinen wrote:
-> On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
->> From: Hao Ge <gehao@kylinos.cn>
->>
->> We shouldn't dereference "auth" until after we have checked that it is
->> non-NULL.
-> Sorry for some latency in responses. I'm on holiday up until week 31 and
-> only look at emerging issues but not every day.
-Understand,I hope you enjoy your holiday.
-> I do agree with the code change but the description contains no information
-> of the bug and how the fix resolves it. Could you please rewrite the
-> description?
->
-> I can only think this realizing with tpm_ibmvtpm and TCG_TPM2_HMAC
-> enabled because it was according to recent learnings a platform which
-> does not end up calling tpm2_sessions_init().
->
-> Since you bug report contains no bug report, I need to ask that did you
-> realize a regression in some platform? Fix will get eventually accepted
-> even if the bug was found by "looking at code" but the gist here is that
-> your bug description contains no description how you found the bug,
-> which it should.
-Actually It's reported by smatch and Dan Carpenter also noticed this 
-warning.
+> On 6/2/24 23:45, Masami Hiramatsu (Google) wrote:
+> > On Mon, 3 Jun 2024 11:25:59 +0800
+> > "wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
+> > 
+> >> On 2024/6/1 08:31, Jeff Johnson wrote:
+> >>> make allmodconfig && make W=1 C=1 reports:
+> >>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+> >>>
+> >>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> >>>
+> >>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> >>> ---
+> >>>    lib/test_objpool.c | 3 ++-
+> >>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
+> >>> index bfdb81599832..5a3f6961a70f 100644
+> >>> --- a/lib/test_objpool.c
+> >>> +++ b/lib/test_objpool.c
+> >>> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
+> >>>    module_init(ot_mod_init);
+> >>>    module_exit(ot_mod_exit);
+> >>>    
+> >>> -MODULE_LICENSE("GPL");
+> >>> \ No newline at end of file
+> >>> +MODULE_DESCRIPTION("Test module for lockless object pool");
+> >>> +MODULE_LICENSE("GPL");
+> >>>
+> >>> ---
+> >>> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> >>> change-id: 20240531-md-lib-test_objpool-338d937f8666
+> >>>
+> >>
+> >> Looks good to me. Thanks for the update.
+> >>
+> >> I added Masami Hiramatsu and linux-trace in the loop.
+> >>
+> >> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
+> > 
+> > Thanks, let me pick this to probes/for-next branch.
+> Following up since I don't see this in linux-next.
+> I'm hoping to have these warnings fixed tree-wide in 6.11.
 
-This is the email he sent
+Oops, sorry, I missed this. Let me try.
 
-https://lore.kernel.org/all/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/ 
+Thank you,
 
-> When TCG_TPM2_HMAC is disable it should be safe because we have:
->
-> static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
-> 					      struct tpm_buf *buf,
-> 					      int rc)
-> {
-> 	return rc;
-> }
->
-> I also noticed that your fixes tag is incorrect as that null dereference
-> pre-existed on tpm_ibmvtpm before my fixes. It is not a new regression
-> introduced by my patches. So use git blame and check which commit
-> introduced that one.
-I'm a bit confused about fixes tag. Sometimes tool often fail to truly 
-understand the context.
+> 
+> /jeff
+> 
 
-Form the logical perspective of the code,null deference indeed existed 
-before your fixes.
 
-But for smatch, It simply conducted a static code analysis and flagged a 
-line with a warnning.
-
-Its warning seems to be related to Commit 7ca110f2679b("tpm: Address 
-!chip->auth in tpm_buf_append_hmac_session*()")
-
-That's why I used the 'fixes' tag for Commit 7ca110f2679b.(Please 
-forgive me for not being clear earlier. I discovered it through smatch.)
-
-So, should I use the fix tag for Commit 7ca110f2679b ('tpm: Address 
-!chip->auth in tpm_buf_append_hmac_session*()') or for Commit 
-1085b8276bb4 ('tpm: Add the rest of the session HMAC API')?
-
-Even though I have already send V2 which fixes tag using Commit 
-1085b8276bb4 ('tpm: Add the rest of the session HMAC API'),
-
-I still want to gain knowledge in this area so that I can more 
-accurately use fxies tag and send patches in the future.
->
-> Address these issues and send v2. Thank you!
->
-> BR, Jarkko
-
-Thanks
-
-BR
-
-Hao
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
