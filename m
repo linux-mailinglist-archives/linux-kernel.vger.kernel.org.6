@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-252602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB0A9315D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37A59315DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25D0282589
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63031F22232
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CF518D4DC;
-	Mon, 15 Jul 2024 13:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KrZNjzK5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C883118D4D3;
+	Mon, 15 Jul 2024 13:35:15 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983811836D4;
-	Mon, 15 Jul 2024 13:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0065C18D4CE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050366; cv=none; b=FrWvBz2W02ZsMLalq/V+S36DlB54LOedey28VA+KI2IlvSb9EqJrUgRM7NWDouxBBe7yIpVdECPm4fBsvoQgx8DonBjPeBUlZGIMJrJXO3oaDUpBuX/xDGGtCCi5Iqm8URtm2QJgGlnRBmgrhxIbMW27wokrPA/sUTkNrdWe+xk=
+	t=1721050515; cv=none; b=eYySza0Kf4BS9bwOAEQ8KTLCy6ckMNKTtwOWPUXXWACmgRUtt43hXWwUf56dCWtlz1q9rg6Gm3gmt35oR60jwVRFSMI88yiJIIcmNraSsZs3UzvwGVs4DL2aLYyMhJphcKEYCUQeg9lH+j6W6D18/VI18+OjSPPILyYZdccHO18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050366; c=relaxed/simple;
-	bh=1VQXo3PQ5bUOEU7LlOYBCGdHR6/CQC2eaEBkjR0wsG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwpGraOHRhl4Q39V9CO+PjfNl4mR76K1kH4v+PKR+ceNT+qNDbyEEHQtksb3nUsNnmD77RFUgIsK8mGM2u4CaFMJu6AcepKNFfXaN4J1doaL9XnVWyBK5S77S2KbG1wbmQpvvEggUBuL5wi76NAAmzbNI1wU2kBKsdsOtGvx1qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KrZNjzK5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BD2C4AF0A;
-	Mon, 15 Jul 2024 13:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721050366;
-	bh=1VQXo3PQ5bUOEU7LlOYBCGdHR6/CQC2eaEBkjR0wsG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KrZNjzK51rTtDoDFiImif0pGXpQ4jdnFE9ZsBtq2XyEkzAm2mgk5ffOEmJ+6xjaBF
-	 64Fz5YaYTnW4qHWMgTc+R6rjAmHBilPRr+ChmGXlCXyLHGXUUHs1k/77XiXRJUGkaq
-	 RAyDpAoHDsFDIXYnUjrUmV2KQ5VkbaAWrTWZ8EaY=
-Date: Mon, 15 Jul 2024 15:32:43 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
-	kernel-janitors@vger.kernel.org, stable@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Aleksandr Mishin <amishin@t-argos.ru>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Ian Munsie <imunsie@au1.ibm.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Shuah Khan <shuah@kernel.org>, Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
- read_handle()
-Message-ID: <2024071537-schematic-envoy-4272@gregkh>
-References: <20240715025442.3229209-1-make24@iscas.ac.cn>
- <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
+	s=arc-20240116; t=1721050515; c=relaxed/simple;
+	bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lNpTEbnUbGwwtMGeM4Sv8rhgo8GruLOFok8s4HNVPq4GsCaDKWZ1V24gBDcWkHp4FghzuNZk1A0R0RIqWWwy3s57Q6F+gplAGydYoaoB4xOT0gKwR9/NUQ3EyKDR0dxnvM+Z8/Z8DcCF1hDcO5/u8lsoJ3wQJAHp2yaOJ8OqCH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81258697716so138087239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:35:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721050513; x=1721655313;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
+        b=RkBqzeaISZldip+O8IXJmW23RcJsRQPRSk3+/77htSFL+TOX0aUl90WsIc72/uu/LR
+         +3EHjzrOTEMbgdCsshuMfpUhIvwceoTAsNyEWV1pEugwZFgjJEzfOb1cXCekrSTP5lYD
+         x1XX1ADqlnmmlwMPc7Em0D677SME7zw1U5DfABT4+JTqLrSLbuZSrw3GkA4V9eHExIPW
+         0u/rvYY+cLJJhmupXA9uM3Gp6DUTToCxkC7z0I2EZEWoYIUrxWo89ltnY0NRJoENl686
+         0Ko9jum3Yple+dfMvG5oIJeSA06Zt8J8x1muOpRTs9cV4hX0xFG9khfgwJGHXf0iTluo
+         DPtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXuaAuZ+fZ90x+wbVaqDcTYOvt1Ob0I3M3YyPyCs6aVMWaHZc4I/VzAIIfeZZ1o2Idv2T/+knlgYd+tSds5WN1tAZE6sE9n2BNT6ZX
+X-Gm-Message-State: AOJu0YwEyGD3DCSyjbMZ4d7DqTMkbi8UyS4lYr3oN0g5jr4qVJyJ2RSs
+	6B8LhP3YCTSQe+FAa8IksyEQeZHn8cv4/eBN37T21UbmUZmqw7Sxn4MDpLcnDStw2JYVxxdOVzP
+	yPUi2sjlLQjZMT9zAgtBl/AdCw/G0Ba/DMayCezyAze2YkfOqJZSezBY=
+X-Google-Smtp-Source: AGHT+IFmEwFa8QVudIOKZB44YDeGzyQqXKQu1ZCtMx0xufwxuTjSSMz3U+JqyKtujTaD3RE1VNySe/i4DVhEpP7MyYmJ+sd8WhOg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
+X-Received: by 2002:a05:6638:24c7:b0:4c0:838e:9fd1 with SMTP id
+ 8926c6da1cb9f-4c0b2b7ed9fmr2683778173.5.1721050513228; Mon, 15 Jul 2024
+ 06:35:13 -0700 (PDT)
+Date: Mon, 15 Jul 2024 06:35:13 -0700
+In-Reply-To: <0000000000007de0cf06140124c0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007b55ab061d494ced@google.com>
+Subject: Re: [syzbot] WARNING in unmap_page_range (3)
+From: syzbot <syzbot+e145145f0c83d4deb8fa@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lstoakes@gmail.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 15, 2024 at 03:18:56PM +0200, Markus Elfring wrote:
-> > In read_handle(), of_get_address() may return NULL if getting address and
-> > size of the node failed. When of_read_number() uses prop to handle
-> > conversions between different byte orders, it could lead to a null pointer
-> > dereference. Add NULL check to fix potential issue.
-> >
-> > Found by static analysis.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> 
-> How will interests evolve for caring more according to known research
-> and development processes?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10#n398
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/researcher-guidelines.rst?h=v6.10#n5
-> 
-> 
-> > ---
-> > Changes in v4:
-> > - modified vulnerability description according to suggestions, making the
-> > process of static analysis of vulnerabilities clearer. No active research
-> > on developer behavior.
-> …
-> 
-> Does such information indicate any communication difficulties?
+This bug is marked as fixed by commit:
+mm/memory: Fix missing pte marker for !page on pte zaps
 
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-Hi,
+#syz fix: exact-commit-title
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=e145145f0c83d4deb8fa
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+---
+[1] I expect the commit to be present in:
 
-thanks,
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
 
-greg k-h's patch email bot
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 10 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
