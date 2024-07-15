@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-252603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37A59315DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680EC9315DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63031F22232
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 246AD2829FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C883118D4D3;
-	Mon, 15 Jul 2024 13:35:15 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4CF18D4D3;
+	Mon, 15 Jul 2024 13:35:28 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0065C18D4CE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8753318D4B8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050515; cv=none; b=eYySza0Kf4BS9bwOAEQ8KTLCy6ckMNKTtwOWPUXXWACmgRUtt43hXWwUf56dCWtlz1q9rg6Gm3gmt35oR60jwVRFSMI88yiJIIcmNraSsZs3UzvwGVs4DL2aLYyMhJphcKEYCUQeg9lH+j6W6D18/VI18+OjSPPILyYZdccHO18=
+	t=1721050528; cv=none; b=gHZ7CCGJGxiVfibU2MQrg4iYGyCaX4BxRLGFlZyjUWmdesdcRi6hkC46lfngpsfDgBrvK4XNgTDWByOCM7JIxZYcYFBq5K+ajh2tXxkl6fY1gxx53qJddKbVEcKD4+jcUmLivH06kztj6B9/Q7GpSm+WmTK1J93uPHOv+TEx/44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050515; c=relaxed/simple;
-	bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lNpTEbnUbGwwtMGeM4Sv8rhgo8GruLOFok8s4HNVPq4GsCaDKWZ1V24gBDcWkHp4FghzuNZk1A0R0RIqWWwy3s57Q6F+gplAGydYoaoB4xOT0gKwR9/NUQ3EyKDR0dxnvM+Z8/Z8DcCF1hDcO5/u8lsoJ3wQJAHp2yaOJ8OqCH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81258697716so138087239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:35:13 -0700 (PDT)
+	s=arc-20240116; t=1721050528; c=relaxed/simple;
+	bh=NmRmO5cCpt/NqOU+S6GEDKoM92dAvUm1T13N5aoJDDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WkjntOjunOVE98QbOkSkmJbozKu+b2HPR4+YtlsU4DgVmpvwbY5PRtcGmXCsvutPjXr/zyeE9DVIOUeRr88Yz0vj1lS8of89FO8oSjQmKU6DF8U/Cy13oC2XFgvqOohgu46XlbiihebULA407Dhg5H6rz1SROS1B9/C9pkKQuN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77b60cafecso518571566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:35:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721050513; x=1721655313;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SmyG6Eoc//AkzX1uumr7PmduUREuFi7OxTGIbkmXVBY=;
-        b=RkBqzeaISZldip+O8IXJmW23RcJsRQPRSk3+/77htSFL+TOX0aUl90WsIc72/uu/LR
-         +3EHjzrOTEMbgdCsshuMfpUhIvwceoTAsNyEWV1pEugwZFgjJEzfOb1cXCekrSTP5lYD
-         x1XX1ADqlnmmlwMPc7Em0D677SME7zw1U5DfABT4+JTqLrSLbuZSrw3GkA4V9eHExIPW
-         0u/rvYY+cLJJhmupXA9uM3Gp6DUTToCxkC7z0I2EZEWoYIUrxWo89ltnY0NRJoENl686
-         0Ko9jum3Yple+dfMvG5oIJeSA06Zt8J8x1muOpRTs9cV4hX0xFG9khfgwJGHXf0iTluo
-         DPtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXuaAuZ+fZ90x+wbVaqDcTYOvt1Ob0I3M3YyPyCs6aVMWaHZc4I/VzAIIfeZZ1o2Idv2T/+knlgYd+tSds5WN1tAZE6sE9n2BNT6ZX
-X-Gm-Message-State: AOJu0YwEyGD3DCSyjbMZ4d7DqTMkbi8UyS4lYr3oN0g5jr4qVJyJ2RSs
-	6B8LhP3YCTSQe+FAa8IksyEQeZHn8cv4/eBN37T21UbmUZmqw7Sxn4MDpLcnDStw2JYVxxdOVzP
-	yPUi2sjlLQjZMT9zAgtBl/AdCw/G0Ba/DMayCezyAze2YkfOqJZSezBY=
-X-Google-Smtp-Source: AGHT+IFmEwFa8QVudIOKZB44YDeGzyQqXKQu1ZCtMx0xufwxuTjSSMz3U+JqyKtujTaD3RE1VNySe/i4DVhEpP7MyYmJ+sd8WhOg
+        d=1e100.net; s=20230601; t=1721050525; x=1721655325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItPvfp+uUGeSw8Sm9Xj1mwQZhjmPO8lhUi+rDHym+Ig=;
+        b=w26Z/WKWNi+Ui5vtVHZhIz1l3EK2/oo2sEB/ZJem1ism7DPC3rSQyH1dpXDyKB5U4k
+         kxN31OnAOA45jyEvBbq8K1FjT9HXiUBYmUmv/CD+b6duR1ieBGSnyZuvOEZK3b5q9102
+         Lc62XCj8urJmUy84aPimIkP+kjyKsjd+d4UuzUxID26IgKO0OxxlvJKVWX/IJSuZoXQW
+         9TjqiVgBj3Y2bMz6csju9A4ikY55A76D4lwp6SxFe2IWygQGxV5yLuyt3AfkY+6jMsOf
+         0sfXeQtuqUTTNOXUhddK0M+MP3FWDezz5Gs0H8bEwI0xgATr1qadSN2o6DLOECu0+3Pr
+         Sgsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSZGlCTJyqcXVoX47pihIeceaI0VTAzUQJdjhWt4duVIuICfs05l65/zdDx3yOAuE9B9DzZXTvw59ov5oU1A+ROrq2awg29Busr9fv
+X-Gm-Message-State: AOJu0YzOxuowJDZbiA0hpNwdapcRw4SW8d4UJzqg8keRdEPOmaaoMt4L
+	guA/3pYMd68YmsYAPvmEDHhJnRPxvttOVZ+swf5L/tdJCU+XxBjM
+X-Google-Smtp-Source: AGHT+IFfJfBfBkP6G9uo2lTDF5n6Jmsys5rQHLWsbjlQugTB4TeoNZei2nvjijQBxrvsDn0iNKmnGQ==
+X-Received: by 2002:a17:906:278b:b0:a77:d52c:c431 with SMTP id a640c23a62f3a-a780b6b1789mr1169727566b.22.1721050524479;
+        Mon, 15 Jul 2024 06:35:24 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff8a9sm210458966b.163.2024.07.15.06.35.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 06:35:24 -0700 (PDT)
+Date: Mon, 15 Jul 2024 06:35:21 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
+Message-ID: <ZpUlmf/iVgo78h4J@gmail.com>
+References: <20240422165830.2142904-1-leitao@debian.org>
+ <20240422165830.2142904-2-leitao@debian.org>
+ <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
+ <ZpUSvl5eKgkLeJrg@gmail.com>
+ <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:24c7:b0:4c0:838e:9fd1 with SMTP id
- 8926c6da1cb9f-4c0b2b7ed9fmr2683778173.5.1721050513228; Mon, 15 Jul 2024
- 06:35:13 -0700 (PDT)
-Date: Mon, 15 Jul 2024 06:35:13 -0700
-In-Reply-To: <0000000000007de0cf06140124c0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007b55ab061d494ced@google.com>
-Subject: Re: [syzbot] WARNING in unmap_page_range (3)
-From: syzbot <syzbot+e145145f0c83d4deb8fa@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
-	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lstoakes@gmail.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
 
-This bug is marked as fixed by commit:
-mm/memory: Fix missing pte marker for !page on pte zaps
+On Mon, Jul 15, 2024 at 02:17:03PM +0200, Borislav Petkov wrote:
+> On Mon, Jul 15, 2024 at 05:14:54AM -0700, Breno Leitao wrote:
+> > Sure, I will send a v4 and get rid of GDS_FORCE_MITIGATION completely.
+> 
+> I'm actually waiting on the people on Cc to chime in whether we really need
+> it. The three distro configs we checked, don't set it.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Makes sense, thanks.
 
-#syz fix: exact-commit-title
+Regarding this patchset itself, what is the patch forward?
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
+Should I send a rebased version?
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=e145145f0c83d4deb8fa
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+Thanks
+--breno
 
