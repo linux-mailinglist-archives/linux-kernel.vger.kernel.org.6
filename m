@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-252545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2533A9314F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B574893152C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38731F21988
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E131B211C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E51118C16F;
-	Mon, 15 Jul 2024 12:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C0818C34F;
+	Mon, 15 Jul 2024 12:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=s.l-h@gmx.de header.b="AxPkirED"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVr2nrDj"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A31018732C;
-	Mon, 15 Jul 2024 12:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B30518D4B9;
+	Mon, 15 Jul 2024 12:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048088; cv=none; b=aIDNNx5a1DpX+3K7twPez3ANDlNx1vPsd5lN5AAQGPgFr5nfPQvfpUSkDtZ3c+L/ftGLaQpjWMrV3MZroEnSteNAtWYi2Fp6EyktmdtBfenAqmTCvsWplswIH1U4UAN0ORy/Mrt9LPOg5+XlHLqCoVaA/D2wu2sab8UVPBldcSk=
+	t=1721048162; cv=none; b=q+YHF+x8t7oEuW6zR6JIox9UTPH1uqL2cWUxhbcJOL4gKi9JQmxXcjpWC7kv8SH6dm/gFQGc5IiP9Pb1aO/RVh4tzqbOP9EK1vp8fU2seC60+K55mcJfR8lSpQ9iMZjxBVjHTFaUGEyeyF66S4Ix+DEPUgCDB8vdwOeutciHp/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048088; c=relaxed/simple;
-	bh=X35c0J75N6VMsyWa7OmyBbJkqHT7XYO5W8q1PqTyygk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ARPLgViwOMfLIbmr8BKnRiM/hKxhHdwfDEYv1FlBxhmz2RdW9U0Lmz4DLVC/36gn8b7M82H+ucoz4l/CeJZ8AYOE3r3SJ4tmDr6XXH44NCr3n0r/agztBcIyHqs9e3SQayMvBR33bWRlE38zt6yxrZE2Sk4RL8xZmtVyh1GfCbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=s.l-h@gmx.de header.b=AxPkirED; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1721048070; x=1721652870; i=s.l-h@gmx.de;
-	bh=EOVWSVyeKd4gJsRQExx0kzHP/0gq1uu28A/ey4WtF3w=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AxPkirEDMWoD/K5EJX1OPdpCss2dEjb0VcicW8SdnosZQgF5hAG83J6YbW9lXVGj
-	 BYN+8bGM34+dUEMGRfPN6UO2L5MMGwOi7RgQeNwVF8R1JbNezFIh5TPL88sDE1g8C
-	 BYjve2hJf5HuwqAVhhAwW74HfJ/OEiT/UTYOm6cWVXVbtxYK0/3MG4A11pCfnN6lh
-	 KCjOmAnnNDp2ppfoVc/jRmIqinI5yh1Qear5g2lTf5zwW9fqblCCxzF+qzUIhzhGK
-	 M4D/0vGeRM8JXCo2F5UyWh+5eCLzcw18PjCYZpxO7P8edcvFjbPs7rgPd1lc/1tBH
-	 ov7vgps5ObAZmTC3JA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mir ([94.31.83.155]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N4QwW-1sKEOu3Ki6-016f5q; Mon, 15
- Jul 2024 14:54:30 +0200
-Date: Mon, 15 Jul 2024 14:54:26 +0200
-From: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Eric Biggers
- <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
- <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Lukasz
- Luba <lukasz.luba@arm.com>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-Message-ID: <20240715145426.199c31d0@mir>
-In-Reply-To: <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
-References: <6064157.lOV4Wx5bFT@rjwysocki.net>
-	<20240715044527.GA1544@sol.localdomain>
-	<4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
-	<CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721048162; c=relaxed/simple;
+	bh=PT2giZVeyMwG7Ia77KJkmK48CNCreprqxcNF/DRxLzo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hW6oOsfjXK5yrvqnGjhHCHIckQgKHscGer99gBMrlxGUOKo0GEn6ejCMN30iKFTyBoI9luJO0radhAi6ud7JdBo0UH3k8OS3MjHyfbuMJNzY0DB10gE6IDxpxV7s8thOE28mHLW7CP1RGVT6o/0wNsAz9JDmgvf31UcCvSWVNoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVr2nrDj; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eea8ea8c06so61696951fa.2;
+        Mon, 15 Jul 2024 05:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721048159; x=1721652959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bq5WlkKjBpLTTy056SbzimB2Bvvk4nkUO1ENR4jivK4=;
+        b=eVr2nrDjrL4ekR75m8Cz9eqb74Q35JjEuNx5dFrlw4tg+nqc3CVpBBab55FBXGY12C
+         d9WAb69NhFNOC1cv6SxussR8S4F5kAMNBXeD8HqeUaxyXoqondvW0K7BkmY6JRoz8WlG
+         CvQTc3ilZnVJaelr2+0cuSU5aJpoocWh+WlQrFlDfg/30GzWGtYXBKCWEsNIcMXAhJQB
+         IOn66CIAVlwkHhYCHBNLqoFpkIyLpeUW42Qd3R6/ZVPjB4uEhrb8A/hO58YfBFTz6Uke
+         7QHsbLV+yFtXw24XUUSfJjuYsC5VGH1/HQf1+9z027ZXdB0WfNohMdWPMMeaFQyBivhv
+         Sd8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721048159; x=1721652959;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bq5WlkKjBpLTTy056SbzimB2Bvvk4nkUO1ENR4jivK4=;
+        b=cLt6xuxAQDVZfJVhcRnUBRhq5jcz2Xo5tCCp0ArDK0TZhZ9hOMpSlNVcC0HogXMfZ/
+         7RorFHrJa3MNxCwK4Zv1CtrGcBDtXWTX5vSu7UpzpBtuBfzOnOC/Qu+Szh+snyc6h5KH
+         A6IwpR0/SHPMqyYssJ/Fnp+19BxEh9cmUDlzAG7eAZjPvWOHxeveMc3v56d2hzOKCbNR
+         9UYYyANWKbZLDxmLnEBBqsRZclvYQcOcITarW7P+9VFUyKzi3wOeObMKQgzhWvdx3wpH
+         uSiEhhKP7HHx8T/0U+tR+MEnsFWPoQSNW//9EWe3pTSD7RZ+7enzYxBbQXEF97r8wlO7
+         el+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRy+Co+Yi+WDliFRYqe0f1olNAsQcLalwvK2RM/fZucizLTCmZJjt/J4VX+DSeH2YkhyguRacYil7Qi0wG4B58b6gtS1uW/c4Y+olaxdNjN++7iPN5j38vzLu6iG5LkQ470HcRl6Gx1gdbE9OGCOHdaojn3IoZQg80e4u/oUjtZvGdEzkyFBM++vM=
+X-Gm-Message-State: AOJu0YwmVh6GzlG9W7Jm7O/gjNkEXyvjTqmmUwYjiS8SzSdOtpWqmoBM
+	7eOobVMRPxVZN+4ps/LXLApFd+7D72McJmC4QNekrHqH27kQpMp1
+X-Google-Smtp-Source: AGHT+IFYYNFw/3hdL1b9TERxylHLD8pPw7jmsMNBsvv1dhqw1hdTfDWlSpVD3+/nF/2mtIa/qo/ymg==
+X-Received: by 2002:a2e:9892:0:b0:2ec:1810:e50a with SMTP id 38308e7fff4ca-2eeb3188dcdmr125720911fa.32.1721048156335;
+        Mon, 15 Jul 2024 05:55:56 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e81f0dsm86091355e9.12.2024.07.15.05.55.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 05:55:55 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/3] Add CPG support for RZ/V2H(P) SoC
+Date: Mon, 15 Jul 2024 13:54:35 +0100
+Message-Id: <20240715125438.553688-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CPoKV8zwtWwHtmBQX4uQnsR/WhOigdwjt40qTzm6fWJBZugB1x3
- MXMpg71iN2u6Vz4rzKu2GF6TvoEC5WNDvS+0iMdBoZ+o7D63jNP+YIEqoGaU1JX4kNFeSvV
- 6mjv31HsGG04cysp1Pk6sAtSOHuq2OQKf+Lj60DEmhanuxhBORuHRJ/oSYrIIGZYHC73a2S
- dG1U8j62gxk1f+V9TL91Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wbI78QXFeSo=;2RXZrQffbAexL/lg+k/6/7G0z2m
- nbILtXZJm79wy5pgfN4rYDPGuFDkPWWWua7wkzJWPhNBdj2ijZ7jzoCXpPb5OL2mKjtb/Z1yP
- FpaSjxnnStvWt0/kG5AzTXM2MhVdF5y9AQM5g0s8KfzTbbXwj+LDH+DotqtOtqk6cJ8uzQBT8
- ey6aslfhQzCeNaE7ouoXS1bk586GlfdZLqG3k4MZN2PPm6VOctjMmq9zVKIiuiJHn8dDYGDhE
- sWBrFqsN04E2IsXJgB7SgkVggHrc6BDwhtlcNl7BZWPycxpYFDSZq/FSJs+WZpYazye8fSrYV
- /ask4kQYQ7HJV9bGwZ7kFwqiEpjYmrCY+zxTI49MURvlDCB+2rfI8OLKzEZn0e9aHxnAizll7
- EqxE1asme1fCitx2cSsJ0N91V3JPfWfsVPGVpyrrFbfn4Nhzz8uSBTJZHAsDHu4gWCiUybpIQ
- UqoQIJvTLO7Q3Iv6LB1RFRwtdFQjJR5ysnUs+NX8plwV+2GVkoSEb9cosUjLMf2CbRxisJa8X
- dzrDiANB9nXUlIdLobwEfbd5ZM627jbtIpqStVFezTk4LNE5o3e3oODY0pNc9+8hgsj9O15Gu
- YBDq6qZCpDst9JQTZ8nCJEC5nT+ylbG3VUKdRBtlkhUhNp7iilVvArH+UilrkdpPj5yH4DXLv
- xaSNLvM0WRkNX3pZCUQI7a2ELtS88zNjXuZAN0Qwto5LkZ2trEY3DwsxKfSvLA6Tnl8CVZMd3
- iRLmir3Irt1qITKzq8I6rfjEDPtYmyPrYkNhn0AKFiQ99BpMyQwMbPDZYwJ6SrOnDeB5DNarP
- /DbqJPIKURAXPv9kjq8D80gw==
+Content-Transfer-Encoding: 8bit
 
-Hi
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 2024-07-15, Rafael J. Wysocki wrote:
-> On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> > On 15/07/2024 06:45, Eric Biggers wrote:
-> > > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
-> > >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >>
-> > >> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_tri=
-p()
-[...]
-> > Does the following change fixes the messages  ?
-> >
-> > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > index 61a4638d1be2..b519db76d402 100644
-> > --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > @@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct
-> > thermal_zone_device *device,
-> >
-> >         if (!iwl_mvm_firmware_running(mvm) ||
-> >             mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
-> > -               ret =3D -ENODATA;
-> > +               ret =3D -EAGAIN;
-> >                 goto out;
-> >         }
-> >
-> >
-> > --
->
-> It would make the message go away, but it wouldn't stop the useless
-> polling of the dead thermal zone.
+Hi All,
 
-Silencing the warnings is already a big improvement - and that patch
-works to this extent for me with an ax200, thanks.
+This patch series aims to add the CPG support for the Renesas
+RZ/V2H(P) SoC.
 
-> I think that two things need to be done:
->
-> (1) Add backoff to the thermal core as proposed previously.
-> (2) Make iwlwifi enable the thermal zone only if the firmware is running=
-.
+v3 -> v4
+- Included RB tag form Krzysztof for patch 1/3
+- Changed reset and clock values to hex
+- Renamed __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ to
+  __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__
+- Dropped masking of parent clks with 0xffff
+- Dropped storing mod clk id and now calculating it
+  based on index and bit.
+- Made parent to u16 in struct rzv2h_mod_clk
+- Made a copy of resets array in struct rzv2h_cpg_priv
+- Added a comment for core clocks in patch 3/3
+- Made r9a09g057_mod_clks as __initconst
+- Made r9a09g057_resets as __initconst
+- Made r9a09g057_cpg_info as __initconst
 
-Regards
-	Stefan Lippers-Hollmann
+v2 -> v3
+- Dropped '|' for CPG description
+- Dropped description for '#power-domain-cells' property
+- Added 3 clock inputs for CPG
+- Dropped label in example node
+- Used 4 spaces for example node
+- Renamed r9a09g057-cpg.h -> renesas,r9a09g057-cpg.h
+- Merged adding renesas,r9a09g057-cpg.h in DT binding patch
+- Updated commit message for patch 1/3
+- Dropped num_hw_resets from struct rzv2h_cpg_priv
+- Dropped range_check for module clocks
+- Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+- Added support for critical module clocks with DEF_MOD_CRITICAL
+- Added check for mon_index in rzv2h_mod_clock_endisable and
+  rzv2h_mod_clock_is_enabled()
+- Added CLK_PLLDTY
+- Added core clocks sys_0_pclk and iotop_0_shclk
+- Dropped r9a09g057_crit_mod_clks
+
+v1 -> v2
+- Updated commit message
+- Updated description for binding as suggested by Geert
+- Updated descriptions for clocks and resets property
+- Renamed extal->qextal
+- Updated '#power-domain-cells' value
+- Dropped the module clocks and just added the core clocks
+- Introduced family specific config option
+- Now using register indexes for CLKON/CLKMON/RST/RSTMON
+- Introduced PLL_CONF macro
+- Dropped function pointer to get PLL_CLK1/2 offsets
+- Added range check for core clks
+- Dropped NULLified clocks check
+- Dropped pll_clk1/clk2_offset
+- Made r9a09g057_mod_clks/r9a09g057_resets as static const
+
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG
+  clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+  clk: renesas: Add RZ/V2H(P) CPG driver
+
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  80 ++
+ drivers/clk/renesas/Kconfig                   |   9 +
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c           |  80 ++
+ drivers/clk/renesas/rzv2h-cpg.c               | 685 ++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 153 ++++
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  21 +
+ 7 files changed, 1030 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+
+-- 
+2.34.1
+
 
