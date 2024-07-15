@@ -1,182 +1,138 @@
-Return-Path: <linux-kernel+bounces-252187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D23930FB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:27:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C1B930FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95DFD1C214D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:27:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD82B20D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614EF49659;
-	Mon, 15 Jul 2024 08:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AC61849EB;
+	Mon, 15 Jul 2024 08:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J6Juv3uR"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtsiajxF"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07301849E8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEAB49659;
+	Mon, 15 Jul 2024 08:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032047; cv=none; b=uQmaFEwvYVHkXZ1DT0+lJPAHupF52IAXpEq2syfedNmqmk8ew3hL4frUzUY1vDjy+PDJjOeDy/7qj84hT6M9wlpu69P1ty5WGP928lkdesf8nPg9qwZCYc6a6J78ldOHa+rzN+nhbLyI5dp9iP8W3xloMdF2S5EgbScccZUgEvY=
+	t=1721032065; cv=none; b=Sf8LyEGRPLBPYueRdmC1Wtc3B5i2tSK4YBfgIvtram+t40ytfIGxoXZW++7Ul2t+PdftMsTJhYM605InoNU0Qu7A60j/rbEfA/dK65mwXzs+b1ggwJ0620AOvIiBwRDEse7phDiyQXmLbdzf2/pUs2Twp5G/uwP66Ttl4xhKOUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032047; c=relaxed/simple;
-	bh=xPt1Z4/QrPj45lHHQ+z1yKk6szG6GZLaSvg2pK6D0+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jqFGgOF8aZAP4xfn/iWbQcPxtqu3UnvSiZ6qu6+9X9isUmhUMLl63j9NlYQblaTGhTxMpeOLRfn3TaGZHtDjtSjwTd9STAJk0sVztqvwCft9medGfUTIA9DyMtPJx/nkL0sWCL9lPCeWh3C6AbuB40cRDjURldYLcuNT5f/B/vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J6Juv3uR; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so4647839a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:27:23 -0700 (PDT)
+	s=arc-20240116; t=1721032065; c=relaxed/simple;
+	bh=oX3nbkgDPK6ubobNu6nSiR2qOQhSYSnYP2i+a6Mok1U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ge5iD4gB+b4Vu/uzWkZH/WOkWZomR1FAxedcwF9P2vdiEqyLp+7cIQw6LEIBIUzO88ZUmwXavdXPsg6blZU+Gi0mdQy1DaawoB8HnIG0MeI/tJtbUe3L+OenO2zT33T4c99zHga9ZaLojWUP+e8Xz3rScBvVX0tz3kC68ximyZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtsiajxF; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c98a97d1ccso3512184a91.0;
+        Mon, 15 Jul 2024 01:27:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721032042; x=1721636842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vH42OgTir5lpTjIEL32sZU+fMD4smaCACyobL2oetIk=;
-        b=J6Juv3uRs3cmZ5cPGpgLQ35ghpJ0w2EAweglXwnNQwZuxregz16f6a/oo63oejul8f
-         AymlE72zyP8J1tvZcxi8YkzOe6Q39PDSQgFroGEt1C7thfTPvZct9bKYbHRJhNq2ugdx
-         LRjI+A8CzsdA9r3udHzxXpB9sddaxgHGrt3kKNMYS3rQHC4bbh8LixQ/bKTgRFQt/kmP
-         EUpazk0yYa6jWcalrpysIUVBKHokHx31ptS2a2+/vxA3Sa/RCnJ9YYi5Oc0EUTcqTYkV
-         kHnfgN4J3/FMJSEfo11aJA2kvUVD6jlKR/AgXLgs8k5nJtTEYprmc0WpOqD2CCAPsRdj
-         MopA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721032042; x=1721636842;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721032063; x=1721636863; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vH42OgTir5lpTjIEL32sZU+fMD4smaCACyobL2oetIk=;
-        b=iaE09mLSxoZV7iQcZAJkJUIeFQzM8tuB/9KJw6Cd8MaM8xSU4raJKRfBniq+qYBUAs
-         uo1h/ZiSJ9tz//94K9Pu5flQl+lVZp26h6b7adCjRGinCXFAwuRFCgnL1hmnrP8wxjtS
-         7358XOQuYUdwjZs9Gs0IvVS54HzT8KfFVlsgTVhE6HBP74Ra13pq2vUcJ+R6gHteyabu
-         EmAOzpAXTy4lYoFusZ17H7eMCkjX/MpXNQ2F0lyX4OCA9LI1oUC9+Q6umgFkGUxMjeio
-         O3KRw2CmQQRTkiKk4Q1QLCgQcImVm8DjMeQsJq5ePfjloG/voHIuj1rYXaF78RSj8pb2
-         sBrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUBJf4sutzQf5S6ApGjX+G+qYQmO/RzbpY7h46KGS0xGPb+oIVLaqs6oHWlLmMu8bRseaZlCAjuQ8th2Z/A8vdzqXya1r6asoV0QcB
-X-Gm-Message-State: AOJu0YxmD5Q0yKcZjc5Rl9Jg3j1Git7Bih6XzvnimjRHr7apBAfbJs1K
-	pfFo7yiVqQ+CqwxBANRmJBn5dDkRdB3jniUMRiKrfWofoXsVM/EVadcNdz/t0eQ=
-X-Google-Smtp-Source: AGHT+IFzdvl3B9AxqHjWluHugFbIxtu9xYFJDlTlYL0FpBWNc4yVnBvcybVukz4DV/+ZODXebMPUKA==
-X-Received: by 2002:a05:6402:3551:b0:58f:748f:9dca with SMTP id 4fb4d7f45d1cf-594ba98f21cmr13543634a12.1.1721032042079;
-        Mon, 15 Jul 2024 01:27:22 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59e2b7c7d75sm92623a12.29.2024.07.15.01.27.19
+        bh=9wkUY0TLiU0e6n58LpHN87VKdeUeX7NPc3fuLII6KMA=;
+        b=UtsiajxFgP5xKdGw5P5RGsDggmYVFzMSItGxJxv1Rksd4WAnFAnf0X1jrY5KNoQEe6
+         0FAMMSBXrdF7VVHHIBLPadbRdEXYXfNWh9we/e2P3oXHr/rFw0KW3h/1KSy7H72OcCMz
+         sSs9ncH+ySj0pGo00WatZeb6yTY8+KL7bo0ND3JEPMEA86KmVtnPx3GAg6SPycetD6jS
+         owZnLb8DxKxX4jpZiBuyzzPILAeg9RvSihIRInzBo9UNZJBPO8YpGYRm0Qq7ErJ1fhIH
+         d2+OwEZj6fHAu+EHqXX36lzoERt6JKBsFo3ihfp44AUyOPCwv3Y3+sWvWgCWOI9nA8Sg
+         IfFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721032063; x=1721636863;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9wkUY0TLiU0e6n58LpHN87VKdeUeX7NPc3fuLII6KMA=;
+        b=JK+gJ0ldf1VLkHta5Flb6Xh3YyNg6IFRzpfQFZPsKIL/1wvo1zVfb9KCTkg99+BPMG
+         kiLybpksxuFd7AavUNSXbrLobWGCXHc8FYVsHDA19z8ncbDXdXOZZ4TLQvo17oXGZyJ7
+         qtwhxK8NqC4t1k4kVudRLgUyFufXkE16/P/XyrBeCYNaONe8MmUL0X35YtoHs9rf7T4e
+         UKnIbm9CzvprfoF/hLYJO7UKG8fxk+HDqHAy/a11L9MONWnzMDA4vjuvB3cYskEq6fBd
+         sPsEoOuPuAkRjykrH2U1pCF0oxNoUa4YT0By1UBL57HdhU6ci+JmTq4qVRgVgUn/Sa5J
+         ofnw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7MIjn7z23Bpa4a1QHsI97i5DmrZ8huay5NxwTSCB+1WSS2tbciPSqMu7box148Sb7+hiROci2KMz0iL0zhKPGBk2qJEY8XvBFDAJkPlL8mF4JXcet5Z4pXVYwlgXZdBP9czujW/QNvouA3NU4l4rmabNUDZ6GWkhLIkt9eU3xZk8NX174uPpuNIjw9FsFGONFdppyjBrWcAfnDPhjGquKZyDG
+X-Gm-Message-State: AOJu0Yxy2DU4hJt4rdsZAo4Ph3DSsD8ZTOxKJWUTiB8m1Xbahaklk5bn
+	ehieWQe6f6y2nPS76vNbaLCY5fMwOLLves7/mT7IzLaT/2zhsaoJ
+X-Google-Smtp-Source: AGHT+IHwqr+RXaxTe3zvOZmmoOk7k5D4/ZZfHGZDbpE+MX+vxW1lQni5wQo11I/QfXXSlIqhThZ8MA==
+X-Received: by 2002:a17:90a:fe05:b0:2c9:648f:f0ef with SMTP id 98e67ed59e1d1-2cac4ce5611mr14582715a91.9.1721032063467;
+        Mon, 15 Jul 2024 01:27:43 -0700 (PDT)
+Received: from localhost ([1.146.120.6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedc1709esm3724475a91.34.2024.07.15.01.27.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 01:27:21 -0700 (PDT)
-Message-ID: <bfb9b823-0414-400d-87ec-c2eb588f61f5@linaro.org>
-Date: Mon, 15 Jul 2024 10:27:19 +0200
+        Mon, 15 Jul 2024 01:27:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: msm8916-samsung-grandmax: Add
- touchscreen
-To: "Lin, Meng-Bo" <linmengbo06890@proton.me>, linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20240713172724.34658-1-linmengbo06890@proton.me>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240713172724.34658-1-linmengbo06890@proton.me>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 15 Jul 2024 18:27:33 +1000
+Message-Id: <D2PYY2N7SOGR.1KKNYAQTUWL89@gmail.com>
+Cc: "Michael Ellerman" <mpe@ellerman.id.au>, "Christophe Leroy"
+ <christophe.leroy@csgroup.eu>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, "Hari Bathini"
+ <hbathini@linux.ibm.com>, "Mahesh Salgaonkar" <mahesh@linux.ibm.com>,
+ "Vishal Chourasia" <vishalc@linux.ibm.com>
+Subject: Re: [RFC PATCH v4 13/17] powerpc64/ftrace: Support .text larger
+ than 32MB with out-of-line stubs
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Naveen N Rao" <naveen@kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+ <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <cover.1720942106.git.naveen@kernel.org>
+ <f4faee243f85eec691f2d72133fcb8e4aa9912d0.1720942106.git.naveen@kernel.org>
+In-Reply-To: <f4faee243f85eec691f2d72133fcb8e4aa9912d0.1720942106.git.naveen@kernel.org>
 
-On 13.07.2024 7:27 PM, Lin, Meng-Bo wrote:
-> Grand Max uses an Imagis IST3038 touchscreen that is connected to
-> blsp_i2c5. Add it to the device tree.
-> 
-> Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
-> ---
->  .../dts/qcom/msm8916-samsung-grandmax.dts     | 24 ++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts b/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
-> index 135df1739dbd..5806a28b7bec 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
-> +++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
-> @@ -47,12 +47,34 @@ &battery {
->  	constant-charge-voltage-max-microvolt = <4400000>;
->  };
->  
-> +&blsp_i2c5 {
-> +	status = "okay";
-> +
-> +	touchscreen@50 {
-> +		compatible = "imagis,ist3038";
-> +		reg = <0x50>;
-> +
-> +		interrupts-extended = <&tlmm 13 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		touchscreen-size-x = <720>;
-> +		touchscreen-size-y = <1280>;
-> +
-> +		vdd-supply = <&reg_vdd_tsp_a>;
-> +		vddio-supply = <&pm8916_l6>;
-> +
-> +		pinctrl-0 = <&ts_int_default>;
-> +		pinctrl-names = "default";
-> +
-> +		linux,keycodes = <KEY_APPSELECT KEY_BACK>;
-> +	};
-> +};
-> +
->  &reg_motor_vdd {
->  	gpio = <&tlmm 72 GPIO_ACTIVE_HIGH>;
->  };
->  
->  &reg_touch_key {
-> -	status = "disabled";
-> +	status = "disabled"; /* Using Imagis touch key*/
+On Sun Jul 14, 2024 at 6:27 PM AEST, Naveen N Rao wrote:
+> We are restricted to a .text size of ~32MB when using out-of-line
+> function profile sequence. Allow this to be extended up to the previous
+> limit of ~64MB by reserving space in the middle of .text.
+>
+> A new config option CONFIG_PPC_FTRACE_OUT_OF_LINE_NUM_RESERVE is
+> introduced to specify the number of function stubs that are reserved in
+> .text. On boot, ftrace utilizes stubs from this area first before using
+> the stub area at the end of .text.
 
-key */
+[snip]
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> diff --git a/arch/powerpc/kernel/trace/ftrace_entry.S b/arch/powerpc/kern=
+el/trace/ftrace_entry.S
+> index 71f6a63cd861..86dbaa87532a 100644
+> --- a/arch/powerpc/kernel/trace/ftrace_entry.S
+> +++ b/arch/powerpc/kernel/trace/ftrace_entry.S
+> @@ -374,6 +374,14 @@ _GLOBAL(return_to_handler)
+>  	blr
+>  #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+> =20
+> +#ifdef CONFIG_PPC_FTRACE_OUT_OF_LINE
+> +SYM_DATA(ftrace_ool_stub_text_count, .long CONFIG_PPC_FTRACE_OUT_OF_LINE=
+_NUM_RESERVE)
+> +
+> +SYM_CODE_START(ftrace_ool_stub_text)
+> +	.space CONFIG_PPC_FTRACE_OUT_OF_LINE_NUM_RESERVE * FTRACE_OOL_STUB_SIZE
+> +SYM_CODE_END(ftrace_ool_stub_text)
+> +#endif
+> +
+>  .pushsection ".tramp.ftrace.text","aw",@progbits;
+>  .globl ftrace_tramp_text
+>  ftrace_tramp_text:
 
-Konrad
+How are you ensuring these new stubs get to the middle of kernel text? I
+guess you just put it in regular .text and hope the linker puts it
+in a good place?
+
+Thanks,
+Nick
 
