@@ -1,106 +1,177 @@
-Return-Path: <linux-kernel+bounces-251989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC1D930CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:32:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDD5930CC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B28D1F212C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:32:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C111C20D8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94D613D;
-	Mon, 15 Jul 2024 02:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B80FDDA6;
+	Mon, 15 Jul 2024 02:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YkCaHly+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PfYmxYM4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE07D2CAB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA6D2EE;
+	Mon, 15 Jul 2024 02:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721010721; cv=none; b=pBz3z6GM7Skklkl+cZXKdUMcrwslVLZUxWWJ3zhBaivolA9sTDxCjdfyvwFFEM/ynX2KU8D/3ONvvBbdpVsWEb6mQnlWU0HYk/8FRUzzdJ2xYkFhYSCNoR3Oqr5wEb2R2qU0vGpaa885DP6YRFWQ1DMHDxEOEKTgVQVYBrYDhYA=
+	t=1721010730; cv=none; b=m6TeRX5iOU5tamE5yP183QelSaGqEyma5iz+rY8AfiZtPtu+KcG2qwT+B/nvr9d8vF5BTOxPfROVkL9O8XeK49bL+LzMpl/WY3TRMELw3VacqciKcwOByf71W36hIW3l0WSjvZaQhOisZaW6fDNs6aWa7h7qSZC6IMgSctG915U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721010721; c=relaxed/simple;
-	bh=jnOm0UWKGCVA2ZOxXTFxnrXlHHcrHT2itOGyOeQT8XQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W1nlfjKGm3vmlq/RVQToLFcq+Yo4BFsPDW1tuwlDkXPDnV12eiovNV96NzFq4wi1c5roVE+fMeeS3+cR/5jel8psaIaYaCaIQWXYg+A0piQGttJKmngyPYqzHjWBFNqA109h6EhHXFH3ZM81H1VuDs30MCDTOdkz2dPQhGtFZ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YkCaHly+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721010718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jnOm0UWKGCVA2ZOxXTFxnrXlHHcrHT2itOGyOeQT8XQ=;
-	b=YkCaHly+6FcZlCvqAKqOlfoFIZFBOX6tv4gVNM+hIh+Z4aAbEsPTk6yOb/A3tFE4ubdAUm
-	GFyVTD7LtQ9pDeB7hDT0Y/Idjuq7fVV8nA0P3o7DrBqT9qX2iTW8UtOlcF1cNkM82XI5fD
-	zr/zbbn842/sokGeG5IROev9s3oPdV0=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-VddNJHwnNuO_c18n1hemAg-1; Sun, 14 Jul 2024 22:31:57 -0400
-X-MC-Unique: VddNJHwnNuO_c18n1hemAg-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c95f737113so4185064a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 19:31:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721010716; x=1721615516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jnOm0UWKGCVA2ZOxXTFxnrXlHHcrHT2itOGyOeQT8XQ=;
-        b=sJ8Nqq36dT7JLhw5zIL+sRZq/sobfDOjbZlwGrrl3csE7bgsh9OHovFdknCrdmqnty
-         IAlzr6hhzAD1YyiT90QxHBYnU3o67oo0UQmzf9WR35iu9ET4fiFx064JhTAHsrVT8eDW
-         DTj/R/7wwWoheJa5tYB42jpEhFp2sXJbo4zO784HVGBVtrWmi51hhZ3VAlOouzlF9nS6
-         CwMOTkgrOoIKoQI58sN5v9CqYfFqyo1ar8G8cJ1maZDTbFrGt3LNbz9bRoU8Dt20aINx
-         oQQt0MIhCD4rVkXz6bVeGTMiFfEmR50xpI717TjnlARKPf+CeRgIR7D06viZgARZj6L/
-         Jx6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXY5HLOlKUC1jQfr0usXHNZNzFp5nM+mKaPzHGZC0+rdHZ+YBpj91Npw/6D4HHf7ZmaOXIVRCPg8iVv83MVR+TqK3H/WPlT0ko4P6qE
-X-Gm-Message-State: AOJu0YxMEdDqiwwcydTJa32pu0OTxKdGN60SNBAWfiURnsWFILkP4ZqA
-	HrIvMr8bnswPkovJ0RZMs7RHdX8lgLCK8ESs3oUWepPLtif+cwou1z7SyNta/9ZQlUOzbmwjqil
-	ZM0d6XTxKaQKC3CJvxOdsMBw/s1uUFRqW7nUl3FQpGyBC+p1JNTdn4U9t0My0p2IDhBLnq/FVXR
-	Uc/K6qFUU+Ml0biq+IBHeGDPofDLpF5YiDlE18
-X-Received: by 2002:a17:90a:d796:b0:2c9:75fe:d18c with SMTP id 98e67ed59e1d1-2ca35d86f43mr13938055a91.46.1721010716672;
-        Sun, 14 Jul 2024 19:31:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGL/z8uwuzjQl7CgsPLS13e/2gJz2vcQIvI3U6hogJmhxKgUDG7AL9z1TKJA+tQ5UBM5/OMww+Ori1wyw9Q0W8=
-X-Received: by 2002:a17:90a:d796:b0:2c9:75fe:d18c with SMTP id
- 98e67ed59e1d1-2ca35d86f43mr13938047a91.46.1721010716313; Sun, 14 Jul 2024
- 19:31:56 -0700 (PDT)
+	s=arc-20240116; t=1721010730; c=relaxed/simple;
+	bh=fzR/p95q2086VGkqYnPwCfEzaAzY++RI2K823kku07U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=h9djFgqibZStMy0K/v+7bpOnew2zbjBnaAIjhuPsV6axKuorFM7buDzOpsTfEc2AKjuxS7FeYu7Dr4cg42y413uadqXHEbZL6YI75Yd53R2nYkZGRwzHzdS9GTVNVJO5gkw8xce2CwQR1rN5VnIwwWK8GxmwpqkmFimW7L1d5YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PfYmxYM4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721010726;
+	bh=KAPolTv3Xg1geLGQx/RurTDhQBE7h29WNswPdwJUBBI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PfYmxYM4bvVIzILFo0hzTJ3A3dzYFRn4ZfPPuEFtHBXWoYWXEyHL4QfwVr/1QUSxK
+	 xGx1nOg7nL/bLZ0AYiXvWuL4iNgGbIg1NLhq3Vg5PcEOStkyUi1NNF8sG6mgsv2Ss5
+	 SrfZd7AyVPLEBZzZlDWcppJtuT5rN2+rwKKPG1dg9DyjQGQ8Yvv0qPKIjHKijXvFI5
+	 SKVIVb334NNaTQJ8tDCQyUaqetwonRrme+sWabQ/SHScEvF3kvt+joTuUddtEcbrTm
+	 K6LjvJM4CtSFsAKuVhtmZ4NnvRk5k7gbI+pl/fRX4f6YfhYC/cI7M2Vem46l+2pbKl
+	 fB0BwfRBysvNg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMmS53GPYz4w2R;
+	Mon, 15 Jul 2024 12:32:04 +1000 (AEST)
+Date: Mon, 15 Jul 2024 12:32:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, "Kory Maincent (Dent Project)"
+ <kory.maincent@bootlin.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20240715123204.623520bb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com> <1720790333-456232-5-git-send-email-steven.sistare@oracle.com>
-In-Reply-To: <1720790333-456232-5-git-send-email-steven.sistare@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 15 Jul 2024 10:31:45 +0800
-Message-ID: <CACGkMEucbri21SeE0q848O--yMVCtuT9ZMKUYgd6hLEqLGN7Tg@mail.gmail.com>
-Subject: Re: [PATCH V2 4/7] vhost-vdpa: VHOST_BACKEND_F_NEW_OWNER
-To: Steve Sistare <steven.sistare@oracle.com>
-Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Dragos Tatulea <dtatulea@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/q.5VMWPI.Hy2VZwII.5Qerr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/q.5VMWPI.Hy2VZwII.5Qerr
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@oracl=
-e.com> wrote:
->
-> Add the VHOST_BACKEND_F_NEW_OWNER backend capability, which indicates tha=
-t
-> VHOST_NEW_OWNER is supported.
->
-> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+Hi all,
 
-Doesn't harm but should this be part of the previous patch?
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Thanks
+  net/ethtool/pse-pd.c
 
+between commits:
+
+  93c3a96c301f ("net: pse-pd: Do not return EOPNOSUPP if config is null")
+  4cddb0f15ea9 ("net: ethtool: pse-pd: Fix possible null-deref")
+
+from the net tree and commit:
+
+  30d7b6727724 ("net: ethtool: Add new power limit get and set features")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ethtool/pse-pd.c
+index 776ac96cdadc,ba46c9c8b12d..000000000000
+--- a/net/ethtool/pse-pd.c
++++ b/net/ethtool/pse-pd.c
+@@@ -172,21 -256,39 +256,39 @@@ static in
+  ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
+  {
+  	struct net_device *dev =3D req_info->dev;
+- 	struct pse_control_config config =3D {};
+  	struct nlattr **tb =3D info->attrs;
+  	struct phy_device *phydev;
++ 	int ret =3D 0;
+ =20
+  	phydev =3D dev->phydev;
+- 	/* These values are already validated by the ethnl_pse_set_policy */
+- 	if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
+- 		config.podl_admin_control =3D nla_get_u32(tb[ETHTOOL_A_PODL_PSE_ADMIN_C=
+ONTROL]);
+- 	if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
+- 		config.c33_admin_control =3D nla_get_u32(tb[ETHTOOL_A_C33_PSE_ADMIN_CON=
+TROL]);
+ =20
+- 	/* Return errno directly - PSE has no notification
+- 	 * pse_ethtool_set_config() will do nothing if the config is null
+- 	 */
+- 	return pse_ethtool_set_config(phydev->psec, info->extack, &config);
++ 	if (tb[ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT]) {
++ 		unsigned int pw_limit;
++=20
++ 		pw_limit =3D nla_get_u32(tb[ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT]);
++ 		ret =3D pse_ethtool_set_pw_limit(phydev->psec, info->extack,
++ 					       pw_limit);
++ 		if (ret)
++ 			return ret;
++ 	}
++=20
++ 	/* These values are already validated by the ethnl_pse_set_policy */
++ 	if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL] ||
++ 	    tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL]) {
++ 		struct pse_control_config config =3D {};
++=20
+ -		if (pse_has_podl(phydev->psec))
+++		if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
++ 			config.podl_admin_control =3D nla_get_u32(tb[ETHTOOL_A_PODL_PSE_ADMIN_=
+CONTROL]);
+ -		if (pse_has_c33(phydev->psec))
+++		if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
++ 			config.c33_admin_control =3D nla_get_u32(tb[ETHTOOL_A_C33_PSE_ADMIN_CO=
+NTROL]);
++=20
++ 		ret =3D pse_ethtool_set_config(phydev->psec, info->extack,
++ 					     &config);
++ 		if (ret)
++ 			return ret;
++ 	}
++=20
++ 	return ret;
+  }
+ =20
+  const struct ethnl_request_ops ethnl_pse_request_ops =3D {
+
+--Sig_/q.5VMWPI.Hy2VZwII.5Qerr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUiiQACgkQAVBC80lX
+0GxNRAf/d6V6b1DZWRxA6myvC+YUaSJUhf/Tjg5UZ1eE76/DNiWb6LrXpmt16A+x
+wERDIg5ObaKmyaDz/peUSzZYjJmWtaMZdUNGXV8tCrggpmfPi98BmJYluvq5r97H
+jDDR2DLCGOo3XhMU4hC7F0bK5VH7+xVYZpUlBZN7D0QGrjcBHCPQKd8h9AO7NWDX
+h8a6bXdUvYJrNBbirfCbSbac1q92rddyIXTzVico+D5+dYGa9YkkZhU11peE+lqW
+ap+6HteVPElsL7PCLOJ38WtLwkukNv/2fyAk5Ch0H1dYTJKBORzI8QhzY/RN4EB9
+MStWyaxAncHQrAnU8knTocsRkCOkFQ==
+=NlhN
+-----END PGP SIGNATURE-----
+
+--Sig_/q.5VMWPI.Hy2VZwII.5Qerr--
 
