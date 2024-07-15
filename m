@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-251995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B8F930CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:45:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7810930CD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8BE1B20C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144E21C20E36
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C3DBA4D;
-	Mon, 15 Jul 2024 02:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461209474;
+	Mon, 15 Jul 2024 02:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pbZAsAVi"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4OQvHbm"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1730A847A;
-	Mon, 15 Jul 2024 02:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DBA522A;
+	Mon, 15 Jul 2024 02:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721011541; cv=none; b=raeBY6qUEx8FlappKze1DoRb4yLHvl2pOzwBfqKllZgA6Se0z7ASwbbLU+SD4FnOog4/EgMXOCFZdz2c+1B8ahEJEKKcp5+JRvl+7mFTCUPPT8Xv/G89JqJHnWs4RJnWebpAkMN5VXGQ7uGK3HdIzIGoLE0zaV5naXk91pSQNOI=
+	t=1721011734; cv=none; b=mGfYCzZzQvmgqOzFTKqKA6yty5ZiPD/UeE7T5uADsq8WaiXuTySrtFvgCiEr3X6luhnF99sO8OZ5WHtSaLZLCnyUM549oMxUOydoVRVYMcyBXJ4FxJZYLTSaDtwhO7Y0OB1b5+lG2cqTM399p8J8Ox54+p4wDMNcaB7gnBawwWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721011541; c=relaxed/simple;
-	bh=ctGWsdO0ej5tPQjRZHOPvi6pJHzhlFIKiR3w9xWi2hM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X3xNwIEcOX7A8UGqtac2tddU8bj6ZD7gYTggmk6Nerqlix0pCBVs+ZaocfKDB1ci8qkSl/ksL3eurT7uscF/ZvT1Ctm+vrnrI2rghHuNejU3BMDXZb2me/3oa9q6xm+7PmyA/Mm3X0No1JSo8MCo6ZFVlBIkiLd8DGd32CQpa+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pbZAsAVi; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721011528; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aFJAiJacnHMlZNMvKXDirjWe+OPAnESCR9uHIfCE5gE=;
-	b=pbZAsAViEERhM5NVqoAQ8zgwkUQm0rB1wWYNplh50ruEo2jQ8bIylVA4yUg2kcutwZPqkJOHEuGsoJPitOKJyN1UJNxs/Un9gjLfHOqWtlxmy68eC0zAdeO1+cciiEPtz2hLYKRFsl7B8xf37xpw0QnXaoN8CkVFaVPIaRkxSiw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0WAUnIPg_1721011527;
-Received: from 30.221.148.126(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0WAUnIPg_1721011527)
-          by smtp.aliyun-inc.com;
-          Mon, 15 Jul 2024 10:45:27 +0800
-Message-ID: <dfd6b17e-ada5-41ce-8922-d97dd192ddb3@linux.alibaba.com>
-Date: Mon, 15 Jul 2024 10:45:24 +0800
+	s=arc-20240116; t=1721011734; c=relaxed/simple;
+	bh=3VMn7KNU9t9U5oHz5NIQ/pNKKbsqsEVKy0kEzoZ2ktY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TtrANFOF42OcIDzOticvj3/NAnZJi8LkW0L9K3p4iz9U4soD962n+ntOWn0NMEf2bFXFbS8cD8gWLX1EqpfYQmWTUvlDUgtJGyYcQ2C4EsnwEu9K7zSxUs/nEpyQdrnFN4xQncfs5jH3i6eLZFQ9qB1fufsRmPggK2QgZiu6P9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4OQvHbm; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee817dac89so41624211fa.1;
+        Sun, 14 Jul 2024 19:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721011731; x=1721616531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FXuYBiez26x1ajGukik7Y7EeBlbVWI8dh4JIM/OTmFU=;
+        b=h4OQvHbmE7TQEidQmGu8rMMfXwBR1aLyjPfWweoEMcTPH4ftC4U3ETmuTBOgkuOsiQ
+         YN5J+zjQULF9FL1uhJbwNGUWBvWDCDGsC9AnNS8YfJjoskpeEB+6ROGQil14wMLKhgBG
+         hTGIJ57eWB6HC6PktMYJ5WWVhpqIBkNPky1VE4YJOLlziDunst14PJK2m+Rd4ndmqHG/
+         FCFUFzTVI2RxaIHytJnczC0fk9Ub/Xpoc7ALjF/2du2d6JMcUJhBB/rTfKX0rUbj1KEx
+         eDGd6KIhrN3E5KT4Qr4iQS0u5e9VE17cH+tcY7tkgj6/N1BuLFXepMcGX7Ab89qGID39
+         CbEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721011731; x=1721616531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FXuYBiez26x1ajGukik7Y7EeBlbVWI8dh4JIM/OTmFU=;
+        b=isrkyw2GzK79ylbShX+PJZTPGlTGrsc4I7htsr4n4MTVU/QLo/KqZhC1Ih3OClQh+I
+         dsNuu6mAb7vW8J7upKVdPJxZGdSGHqTkqczqyrFfGCSnT78STb4uQmiNmUnWmPeI4ajN
+         b24bdVuF6liQ/457pCSUUe8sutXD9XkgXYbv+fWczW3/r5RcU8vYVWpyKMg6RzVKfH/C
+         1Gf00NpWR5vPXJVGyLqYOl5KqbiaqqSJ9fpDRkwwsi44rmWOoHhy+nGzFEcOLMOggfwX
+         MjKk3Ic4/1fMb767HESmdd6zKZmZ1fpCzjSkl/gwKLKoC9Df3wWzdwUC2FL+qe0NfW6h
+         viiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuEWLHkoo6WkBxhENkVdb65b/5sm67OmqGFLNRRhObeuMlG7s9+HNYUbUZgiHKbDH1HlAaCVkYcZQ7nqO/UqnnooHS/dPEpHs8dRAgLM8C382U0N5yZCCWJFtvKsVwacMfHXnNsAGP0g==
+X-Gm-Message-State: AOJu0YwrtAMsGNN5j3tP8iqLE+amJwunsG2N7Q66I0SYTqaAh37ci7MM
+	pHIiGeYbj26mZNWAZIS+5Y8qkpW6mFgXVd15gCasMAHPZnuUGpUs00ATc7AlmCBajjcBhgUPKZx
+	TSj5gTtiHPpRvxm062RqfkVTTrGs=
+X-Google-Smtp-Source: AGHT+IH5/srDok0ljnUWVKRsq4N6U5cWzAUt60FZfvQ3GxmUQG75RfKL2U6CqKEBmRndVb46BEz+I14+JeGHVl6Zi30=
+X-Received: by 2002:a2e:870e:0:b0:2ee:98c4:c301 with SMTP id
+ 38308e7fff4ca-2eed576e405mr21873821fa.6.1721011730362; Sun, 14 Jul 2024
+ 19:48:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
-To: Breno Leitao <leitao@debian.org>
-Cc: rbc@meta.com, horms@kernel.org,
- "open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, "Michael S. Tsirkin"
- <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-References: <20240712115325.54175-1-leitao@debian.org>
-From: Heng Qi <hengqi@linux.alibaba.com>
-In-Reply-To: <20240712115325.54175-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240715101551.29fd8268@canb.auug.org.au>
+In-Reply-To: <20240715101551.29fd8268@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 14 Jul 2024 21:48:39 -0500
+Message-ID: <CAH2r5mvvSQZJssVdXsYwOTCG9g_zVwHAz4fdDLqiMP6Lrn9a9w@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the ksmbd tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, Steve French <stfrench@microsoft.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+have now updated ksmbd-for-next with the change to address this
 
-在 2024/7/12 下午7:53, Breno Leitao 写道:
-> After the commit bdacf3e34945 ("net: Use nested-BH locking for
-> napi_alloc_cache.") was merged, the following warning began to appear:
+On Sun, Jul 14, 2024 at 7:15=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
 >
-> 	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
+> Hi all,
 >
-> 	  __warn+0x12f/0x340
-> 	  napi_skb_cache_put+0x82/0x4b0
-> 	  napi_skb_cache_put+0x82/0x4b0
-> 	  report_bug+0x165/0x370
-> 	  handle_bug+0x3d/0x80
-> 	  exc_invalid_op+0x1a/0x50
-> 	  asm_exc_invalid_op+0x1a/0x20
-> 	  __free_old_xmit+0x1c8/0x510
-> 	  napi_skb_cache_put+0x82/0x4b0
-> 	  __free_old_xmit+0x1c8/0x510
-> 	  __free_old_xmit+0x1c8/0x510
-> 	  __pfx___free_old_xmit+0x10/0x10
+> After merging the ksmbd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> The issue arises because virtio is assuming it's running in NAPI context
-> even when it's not, such as in the netpoll case.
+> fs/smb/server/vfs_cache.c:39:27: error: 'dh_task' defined but not used [-=
+Werror=3Dunused-variable]
+>    39 | static struct task_struc *dh_task;
+>       |                           ^~~~~~~
+> cc1: all warnings being treated as errors
 >
-> To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
-> is available. Same for virtnet_poll_cleantx(), which always assumed that
-> it was in a NAPI context.
+> Caused by commit
 >
-> Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+>   e70f0abc77e8 ("ksmbd: add durable scavenger timer")
+>
+> I have applied the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 15 Jul 2024 09:55:23 +1000
+> Subject: [PATCH] fixup for "ksmbd: add durable scavenger timer"
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->   drivers/net/virtio_net.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-
-Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
-
+>  fs/smb/server/vfs_cache.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 0b4747e81464..fb1331827308 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -2341,7 +2341,7 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
->   	return packets;
->   }
->   
-> -static void virtnet_poll_cleantx(struct receive_queue *rq)
-> +static void virtnet_poll_cleantx(struct receive_queue *rq, int budget)
->   {
->   	struct virtnet_info *vi = rq->vq->vdev->priv;
->   	unsigned int index = vq2rxq(rq->vq);
-> @@ -2359,7 +2359,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
->   
->   		do {
->   			virtqueue_disable_cb(sq->vq);
-> -			free_old_xmit(sq, txq, true);
-> +			free_old_xmit(sq, txq, !!budget);
->   		} while (unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
->   
->   		if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS) {
-> @@ -2404,7 +2404,7 @@ static int virtnet_poll(struct napi_struct *napi, int budget)
->   	unsigned int xdp_xmit = 0;
->   	bool napi_complete;
->   
-> -	virtnet_poll_cleantx(rq);
-> +	virtnet_poll_cleantx(rq, budget);
->   
->   	received = virtnet_receive(rq, budget, &xdp_xmit);
->   	rq->packets_in_napi += received;
-> @@ -2526,7 +2526,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
->   	txq = netdev_get_tx_queue(vi->dev, index);
->   	__netif_tx_lock(txq, raw_smp_processor_id());
->   	virtqueue_disable_cb(sq->vq);
-> -	free_old_xmit(sq, txq, true);
-> +	free_old_xmit(sq, txq, !!budget);
->   
->   	if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS) {
->   		if (netif_tx_queue_stopped(txq)) {
+> diff --git a/fs/smb/server/vfs_cache.c b/fs/smb/server/vfs_cache.c
+> index 2b1a5a3ebf42..4d4ee696e37c 100644
+> --- a/fs/smb/server/vfs_cache.c
+> +++ b/fs/smb/server/vfs_cache.c
+> @@ -36,7 +36,6 @@ static struct kmem_cache *filp_cache;
+>
+>  static bool durable_scavenger_running;
+>  static DEFINE_MUTEX(durable_scavenger_lock);
+> -static struct task_struc *dh_task;
+>  static wait_queue_head_t dh_wq;
+>
+>  void ksmbd_set_fd_limit(unsigned long limit)
+> --
+> 2.43.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+--=20
+Thanks,
+
+Steve
 
