@@ -1,83 +1,106 @@
-Return-Path: <linux-kernel+bounces-252063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393FC930DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86DF930DAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B87E1C20F75
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9111F21533
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899AD13BAEE;
-	Mon, 15 Jul 2024 05:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4547717571;
+	Mon, 15 Jul 2024 05:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Thr0n7VF"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560BB291E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 05:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S09H0GWD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5EA1F94C;
+	Mon, 15 Jul 2024 05:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721023151; cv=none; b=H18NuK1sn+jWte8OEcC05y3z2h536rUkRbyZpzEcL3So5sIy6KOOQuzNl+uK/fuNaKZORkOo9zw8pqwh+jmGROAIF43NAA2777COdqI75aeh1aw3Xb7bygO8Z5tHnZCm+KvzPEpSLI/1bUiyYDdxOYz7hWmgs9KaEMd/+x1CpNw=
+	t=1721022311; cv=none; b=Ev9m11kRnfjT/Dmk8gsCAhf3XMUAmH3lg0AiyjzX7TGn9I59TrY4+GtmvtiMwfkxpPuBVxK3Fmo4IDbLM6v3uLahbODtKKe4jI9J/rIs4uJSSQi6MOBNEnEWxcs3uZFYgqmNd9SnIORZz3ouWWpLa3UanpQxDsuXlbeyKBT+TsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721023151; c=relaxed/simple;
-	bh=juFR0EYmwIBdOQzNi6lGCppgoAcFrFOOslvOhAh2zmU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=M1aN+ajQX2o0J2U0zSQl1VDVW4f+kvNoGeJDF9ZQ2JDU6GDBJxvKEqVocu1oCTWTRjKJdsTmXN7tCuom/Io6GDRrdJFzTXYKz8QWoWZ7PETMy9IQ2lBbZJnxqUT5uYy9ckNN+7mMq36D1Ed/r2ziOZWBn3ojpW1ptwHk+uXtZUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Thr0n7VF reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=uJSzFegmGeysIOt5nBiYlkAzmXFoo/+umpO1rSDbX4k=; b=T
-	hr0n7VFCQWwsHuUnYx8zGRDpW+A+XR0SFazUjfP5g5RIOhwj5OYXoo/aoEevwCV6
-	Yu3t+KzbSuU6pQKR8axnXnLof5ikyteaZJ/n+K6cGc73eAZDULrgRJWPEOxzCadP
-	hCRTDlZzxRKhusKMXq06Q2W6jiPkE3ClEj14SYELlA=
-Received: from gaoshanliukou$163.com ( [123.150.8.43] ) by
- ajax-webmail-wmsvr-40-131 (Coremail) ; Mon, 15 Jul 2024 13:42:16 +0800
- (CST)
-Date: Mon, 15 Jul 2024 13:42:16 +0800 (CST)
-From: "yang.zhang" <gaoshanliukou@163.com>
-To: patchwork-bot+linux-riscv@kernel.org
-Cc: linux-riscv@lists.infradead.org, alexghiti@rivosinc.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	linux-kernel@vger.kernel.org, yang.zhang@hexintek.com
-Subject: Re:Re: [PATCH V3] riscv: set trap vector earlier
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <172098903367.7439.15717595350937923936.git-patchwork-notify@kernel.org>
-References: <20240508022445.6131-1-gaoshanliukou@163.com>
- <172098903367.7439.15717595350937923936.git-patchwork-notify@kernel.org>
-X-NTES-SC: AL_Qu2ZA/yZvUko4CWdYekfmk0bhe05W8a2svgk3YJSP514jA/owAw4dnlnBWvE3/uyMS6cnDyzbRF3ztVBRahlWK4LNXZFKo6r5xdVvznU89w9tA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1721022311; c=relaxed/simple;
+	bh=NBoxsThlV5YMJKSVODJO9PEIu4bUXR+/jBPgTxeHo2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvdnGFNB/ofmjgik4foCYk9erjrUgQLYuPbV2lqfQHRCtKdiktp1W/iGwKSgRG7eWqhhBNHUDh3waGJhj0hYDbHCBRia9dJVF8ArRaWQER21own9SaqKZy0GMynXmzElzVyItkKR1I3DKGBZnrV0AsfIQyBJS+UfESFZ/d8ycyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S09H0GWD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BFDC4AF0A;
+	Mon, 15 Jul 2024 05:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721022310;
+	bh=NBoxsThlV5YMJKSVODJO9PEIu4bUXR+/jBPgTxeHo2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S09H0GWDhJjfmBpx+yEvnmibPChqCIv3Wy2DZWKcR+LC3m1lbTB3GQ1WMgy/Q0swj
+	 cN34ZtXoFEs4oCT//jhjw68LjZmfG4ixHXVc5t4iqCAHbgEh0r0wzV9IKU4banQnwS
+	 qyleiUgWxoS4jKQteTJ9yPhkyOK2i1e9+oKyZO5c=
+Date: Mon, 15 Jul 2024 07:45:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>,
+	elatllat@gmail.com, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, mathias.nyman@linux.intel.com,
+	niklas.neronin@linux.intel.com, stable@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+Message-ID: <2024071540-commute-curler-26d3@gregkh>
+References: <CA+3zgmsCgQs_LVV6fOwu3v2t_Vd=C3Wrv9QrbNpsmMq4RD=ZoQ@mail.gmail.com>
+ <20240714173043.668756e4@foxbook>
+ <ZpP3RU-MKb4pMmZH@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4d0ea144.51f5.190b4e9c0f6.Coremail.gaoshanliukou@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD33wW4tpRmgJ8uAA--.12011W
-X-CM-SenderInfo: pjdr2x5dqox3xnrxqiywtou0bp/1tbiJxEc8mXAmwBdTwABs1
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZpP3RU-MKb4pMmZH@eldamar.lan>
 
-CgpoaToKWWVhaCwgdGhhbmtzLgoKCgoKCgoKCgoKCgoKQXQgMjAyNC0wNy0xNSAwNDozMDozMywg
-cGF0Y2h3b3JrLWJvdCtsaW51eC1yaXNjdkBrZXJuZWwub3JnIHdyb3RlOgo+SGVsbG86Cj4KPlRo
-aXMgcGF0Y2ggd2FzIGFwcGxpZWQgdG8gcmlzY3YvbGludXguZ2l0IChmb3ItbmV4dCkKPmJ5IFBh
-bG1lciBEYWJiZWx0IDxwYWxtZXJAcml2b3NpbmMuY29tPjoKPgo+T24gV2VkLCAgOCBNYXkgMjAy
-NCAxMDoyNDo0NSArMDgwMCB5b3Ugd3JvdGU6Cj4+IEZyb206ICJ5YW5nLnpoYW5nIiA8eWFuZy56
-aGFuZ0BoZXhpbnRlay5jb20+Cj4+IAo+PiBUaGUgZXhjZXB0aW9uIHZlY3RvciBvZiB0aGUgYm9v
-dGluZyBoYXJ0IGlzIG5vdCBzZXQgYmVmb3JlIGVuYWJsaW5nCj4+IHRoZSBtbXUgYW5kIHRoZW4g
-c3RpbGwgcG9pbnRzIHRvIHRoZSB2YWx1ZSBvZiB0aGUgcHJldmlvdXMgZmlybXdhcmUsCj4+IHR5
-cGljYWxseSBfc3RhcnQuIFRoYXQgbWFrZXMgaXQgaGFyZCB0byBkZWJ1ZyBzZXR1cF92bSgpIHdo
-ZW4gYmFkCj4+IHRoaW5ncyBoYXBwZW4uIFNvIGZpeCB0aGF0IGJ5IHNldHRpbmcgdGhlIGV4Y2Vw
-dGlvbiB2ZWN0b3IgZWFybGllci4KPj4gCj4+IFsuLi5dCj4KPkhlcmUgaXMgdGhlIHN1bW1hcnkg
-d2l0aCBsaW5rczoKPiAgLSBbVjNdIHJpc2N2OiBzZXQgdHJhcCB2ZWN0b3IgZWFybGllcgo+ICAg
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcmlzY3YvYy82YWQ4NzM1OTk0YjgKPgo+WW91IGFyZSBh
-d2Vzb21lLCB0aGFuayB5b3UhCj4tLSAKPkRlZXQtZG9vdC1kb3QsIEkgYW0gYSBib3QuCj5odHRw
-czovL2tvcmcuZG9jcy5rZXJuZWwub3JnL3BhdGNod29yay9wd2JvdC5odG1sCj4K
+On Sun, Jul 14, 2024 at 06:05:25PM +0200, Salvatore Bonaccorso wrote:
+> Hi,
+> 
+> On Sun, Jul 14, 2024 at 05:32:39PM +0200, Michał Pecio wrote:
+> > This looks like bug 219039, please see if my suggested solution works.
+> > 
+> > The upstream commit is correct, because the call to inc_deq() has been
+> > moved outside handle_tx_event() so there is no longer this critical
+> > difference between doing 'goto cleanup' and 'return 0'. The intended
+> > change of this commit also makes sense to me.
+> > 
+> > This refactor is already present in v6.9 so I don't think the commit
+> > will have any effect besides fixing the isochronous bug which it is
+> > meant to fix.
+> > 
+> > But it is not present in v6.6 and v6.1, so they break/crash/hang/etc.
+> > Symptoms may vary, but I believe the root cause is the same because the
+> > code is visibly wrong.
+> > 
+> > 
+> > I would like to use this opportunity to point out that the xhci driver
+> > is currenty undergoing (much needed IMO) cleanups and refactors and
+> > this is not the first time when a naive, verbatim backport is attempted
+> > of a patch which works fine on upstream, but causes problems on earlier
+> > kernels. These things need special scrutiny, beyond just "CC:stable".
+> 
+> For tracking I guess this should go as well to the regressions list?
+> 
+> #regzbot introduced: 948554f1bb16e15b90006c109c3a558c66d4c4ac
+> #regzbot title: freezes on plugging USB connector due to 948554f1bb16 ("usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB")
+> #regzbot monitor: https://bugzilla.kernel.org/show_bug.cgi?id=219039
+> 
+> Thorsten I hope I got the most bits correctly, how would one inform
+> regzbot about the regresssion for 6.1.98 and 6.6.39 but not happening
+> in the upper versions?
+
+I'll handle this and go release new kernels with just this reverted in
+it.  Let my morning coffee kick in first...
+
+thanks,
+
+greg k-h
 
