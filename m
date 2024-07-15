@@ -1,251 +1,310 @@
-Return-Path: <linux-kernel+bounces-252711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182D893172C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:48:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E5F931731
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B85D1C21944
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C7E2B21106
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D42F18C16B;
-	Mon, 15 Jul 2024 14:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454B118EFE9;
+	Mon, 15 Jul 2024 14:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuLmpcXn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MMcJVOWy"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E964318EA71;
-	Mon, 15 Jul 2024 14:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E777418EFC8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721054913; cv=none; b=aH9v1BKa0MlVi9CtzoIFAwfTpmz0vXyCVKVe258bY6XDkli/MXxM5BOoX1RiVE9WIY2dcF+WtwVBEElQg7lm4TibWOb9xEjclwaM1ty3UnUC8qxCUsdtdwsD7Oy9R4M5/sgoZzSfjBuBHt9AySLjZOkdNaXPuLpdc5HAAdtOaZA=
+	t=1721055120; cv=none; b=H3rn4wYxDDYn/lTGX/4Q99pz1rD3xuFEQhvXcB6zB6nVu1p6N5oHzDzTahO5agaSB7iuWAJByzDnc+E6tIg4iLV4mAGuF0YcuXHKfjtKxxP4652TieMvowFXGrB8P49GUuNx4S5AH+IKVd2sAomUbPa/p5blFRvjsEpkkOiI2/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721054913; c=relaxed/simple;
-	bh=pyLnaIhd0fXf/UCYMJynz2U9MpH89pmUOfH2FVN9Srw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OiNOIcGVyo1B+CfiMg4nAqd89lKUF7w04sHnsxNgDWRKlU3zVs1zay1JsHs64rOh2tdMdQy/d2hUzRxmUhglSEQkcULA4VXm5112CA1Naov75ioKBqg4B2JBR3Rg6icKK2C0MUBKjyDiQ/t6gsTc1phs54+VQXhBg7wCMoJPM1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuLmpcXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB54C4AF11;
-	Mon, 15 Jul 2024 14:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721054912;
-	bh=pyLnaIhd0fXf/UCYMJynz2U9MpH89pmUOfH2FVN9Srw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OuLmpcXnSRNsqNDoHRZE9CGfdWMU1c2SpVINd03yjpUINNYH8EV42YVl/72aQDr4D
-	 avD6mOQIu8SD1+2h/vKmcuGJqcv3KispeGMW5TaOPb2SESsDXytYyPV7Gbq8x+4nfQ
-	 AmE69xnltgEb+wBG4Ri7ZjRJNznLV9X4tT0qjrHI9UZNc8TG7gV0+osHp4vuS1Kj9A
-	 kIp687XvbZR/1yYX5wHH5T6wcl1heF4VcCzV3CPOwSKsUiK10GEADrZZy69mKkvI7b
-	 Loh7yLTCmK1R+15iue8e+4xd3RDAmf8cV/U6IHPiAQ3ZjHNZmjvn11MK0DCS+lyQ2O
-	 dfyTVMVir5udA==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c5ec50da1so656507fac.3;
-        Mon, 15 Jul 2024 07:48:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEzWFBF3e+/0x3HTOsVbxFWkYsBvijKN5DRwEH7Uz7NRNJWoNJ/rWBOaosRmAQZ63nTniZNRfqeOyDs98PXVsw6QQwTtPH325WdxnFWc5Ub7QuVL2ELvQW8lIVIixidi7+jIOx+6I=
-X-Gm-Message-State: AOJu0Yzi9wSAQKYKGLgaLE+2yccxAKoZQmQNp/MjZG1tUZ+In0hvT+kn
-	pZnhV0WTBbr8ZnBWO5D4vV5vSUAgYl9kSoBP62VPFa1izgKJ+GddpFCOD8Bd8M+lsgFi9WAcAKD
-	d8ApUiz5ptCKDhohFvkz9Ik4MMk8=
-X-Google-Smtp-Source: AGHT+IEG4n6o4zPg9wlGizi/Dot1V31Uxmrcd0XWu4wS2dYxfddsSkVaNzr1A1fFFbAVX8+tBMnOqj1c/BM0QuSD7sU=
-X-Received: by 2002:a4a:d6cd:0:b0:5c6:6029:1568 with SMTP id
- 006d021491bc7-5cabf08b42amr10526570eaf.0.1721054911662; Mon, 15 Jul 2024
- 07:48:31 -0700 (PDT)
+	s=arc-20240116; t=1721055120; c=relaxed/simple;
+	bh=J8l0wP4BnfrdZTLWDHq86XF+PB3QA71i17rBDw6pylU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k8ubErg/u/XzJSm6ET/IAIa29QMw6u7IX7LXSSNgEPlllEjFKEmL9pUcZcreF8ZBJvNg30thICnCMx/6z8/PEPFeOsKQ2hjW6kLPptI7rsz8c5yPTL8iR9hKhqZKFsUgbugI7MTFiPFbozSytymndDzi1jgnOKrk3GcGH1cdOgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MMcJVOWy; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77e7a6cfa7so489223766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721055115; x=1721659915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ilFSuVZTecDsHcBBf+ONYgrWs/OAGdBRwqSmint0NfM=;
+        b=MMcJVOWyPzwccgg2h9KAQAwtB61xFebIM/L5hlA/4RlMxoJ7ToY+mDAj1awjaMS/cc
+         KfcZCqxm5NDx6CmYjlC94hLBpqCdN8F5I/Jw0jwzm3zK+Q84BZC6XDND52op+x0TxnF5
+         GuNwWjaPiZoTiYy8FRWco0Pnf0boOchB2ZiaNxri2sHw+hmu4vSPXzpdI1JWpdSV++3M
+         1bpU3VIF9BHiw+C5ffzCnSweBFbiFHtUrzFJeydXVwdIZ3d1dXxNtX9Bi7fn+jgisqyv
+         hBwKHM/32WMrwGHn2K8+wp48W22E3T4M5NrXmTuO+BI/M8mFhnz5y5CT2j+L9+n+yu19
+         dpmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721055115; x=1721659915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ilFSuVZTecDsHcBBf+ONYgrWs/OAGdBRwqSmint0NfM=;
+        b=h1waGqz/fSfQV+qlaT7BExbLusXZm0+dCPCTpIZFABZfco8Pp4mEy05LiW9LlEwLmq
+         fNqktziCRrLpyJCXc65f82vvFPpoQbpatO9Pk/CS/MwKHukaQrIcZVb9CaBySSe8+EiB
+         hElOo7g/COGtB51HIAZfcygWsHhtA9XeANEhAdUtb0K8WVoru8Se2qxw33Rv40adZCKp
+         oHLJncdvlYRK2O847aoYIoBj6gBiwcKcYpZwhtZ4IQO0D5N1UYKCMoFojX8ThDNLXg3S
+         +8XvyREjEj1KWnqcjG47fHjz36ifvHOwFJYA+hFl7dY1NN6X1/ThEAH7OIWFVNTckudT
+         IEvw==
+X-Gm-Message-State: AOJu0YzCYZbKyXFQ3hIZZRQl5NxlB/ZLFTalgt1+VKJ7nWUz075xpyhb
+	IWlL20K8+Rj39oI9ya20xnIviziZAz6R4ETDi+8nYOUT/4CUh3OMqYgdfc+XzAe3HN/XfuqNCIH
+	s
+X-Google-Smtp-Source: AGHT+IE4O23K8LzXqLXfJ5IOhP+xv2qIqjo42LPTe9LE9LGgOJczppbjUFEjN0mbvGBMJ0IUV50euA==
+X-Received: by 2002:a17:907:e90:b0:a6e:d339:c095 with SMTP id a640c23a62f3a-a780b884b3amr1473799966b.47.1721055115180;
+        Mon, 15 Jul 2024 07:51:55 -0700 (PDT)
+Received: from dhcp161.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff84bsm218972166b.148.2024.07.15.07.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 07:51:54 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH v3] ring-buffer: Limit time with disabled interrupts in rb_check_pages()
+Date: Mon, 15 Jul 2024 16:51:41 +0200
+Message-Id: <20240715145141.5528-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
- <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org> <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
- <20240715145426.199c31d0@mir>
-In-Reply-To: <20240715145426.199c31d0@mir>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 15 Jul 2024 16:48:20 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
-Message-ID: <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: multipart/mixed; boundary="000000000000a63df1061d4a5224"
+Content-Transfer-Encoding: 8bit
 
---000000000000a63df1061d4a5224
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The function rb_check_pages() validates the integrity of a specified
+per-CPU tracing ring buffer. It does so by traversing the underlying
+linked list and checking its next and prev links.
 
-On Mon, Jul 15, 2024 at 2:54=E2=80=AFPM Stefan Lippers-Hollmann <s.l-h@gmx.=
-de> wrote:
->
-> Hi
->
-> On 2024-07-15, Rafael J. Wysocki wrote:
-> > On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> > > On 15/07/2024 06:45, Eric Biggers wrote:
-> > > > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
-> > > >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >>
-> > > >> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_tr=
-ip()
-> [...]
-> > > Does the following change fixes the messages  ?
-> > >
-> > > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > > b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > > index 61a4638d1be2..b519db76d402 100644
-> > > --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > > @@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct
-> > > thermal_zone_device *device,
-> > >
-> > >         if (!iwl_mvm_firmware_running(mvm) ||
-> > >             mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
-> > > -               ret =3D -ENODATA;
-> > > +               ret =3D -EAGAIN;
-> > >                 goto out;
-> > >         }
-> > >
-> > >
-> > > --
-> >
-> > It would make the message go away, but it wouldn't stop the useless
-> > polling of the dead thermal zone.
->
-> Silencing the warnings is already a big improvement - and that patch
-> works to this extent for me with an ax200, thanks.
+To guarantee that the list isn't modified during the check, a caller
+typically needs to take cpu_buffer->reader_lock. This prevents the check
+from running concurrently, for example, with a potential reader which
+can make the list temporarily inconsistent when swapping its old reader
+page into the buffer.
 
-So attached is a patch that should avoid enabling the thermal zone
-when it is not ready for use in the first place, so it should address
-both the message and the useless polling.
+A problem with this approach is that the time when interrupts are
+disabled is non-deterministic, dependent on the ring buffer size. This
+particularly affects PREEMPT_RT because the reader_lock is a raw
+spinlock which doesn't become sleepable on PREEMPT_RT kernels.
 
-I would appreciate giving it a go (please note that it hasn't received
-much testing so far, though).
+Modify the check so it still attempts to traverse the entire list, but
+gives up the reader_lock between checking individual pages. Introduce
+for this purpose a new variable ring_buffer_per_cpu.cnt which is bumped
+any time the list is modified. The value is used by rb_check_pages() to
+detect such a change and restart the check.
 
---000000000000a63df1061d4a5224
-Content-Type: text/x-patch; charset="US-ASCII"; name="iwlwifi-mvm-zone-enabling.patch"
-Content-Disposition: attachment; filename="iwlwifi-mvm-zone-enabling.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyn3llhq0>
-X-Attachment-Id: f_lyn3llhq0
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
 
-LS0tCiBkcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS9mdy5jICB8ICAgIDEg
-CiBkcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS9tdm0uaCB8ICAgIDEgCiBk
-cml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS90dC5jICB8ICAgNTUgKysrKysr
-KysrKysrKysrKysrKysrKy0tLS0tCiBkcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3JlLmMgICAg
-ICAgICAgICAgICB8ICAgNDYgKysrKysrKysrKysrKysrKysrKysrKwogaW5jbHVkZS9saW51eC90
-aGVybWFsLmggICAgICAgICAgICAgICAgICAgICAgfCAgICAxIAogNSBmaWxlcyBjaGFuZ2VkLCA5
-NSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKSW5kZXg6IGxpbnV4LXBtL2RyaXZlcnMv
-bmV0L3dpcmVsZXNzL2ludGVsL2l3bHdpZmkvbXZtL3R0LmMKPT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQotLS0gbGludXgt
-cG0ub3JpZy9kcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS90dC5jCisrKyBs
-aW51eC1wbS9kcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS90dC5jCkBAIC02
-NzEsNiArNjcxLDcgQEAgc3RhdGljIHZvaWQgaXdsX212bV90aGVybWFsX3pvbmVfcmVnaXN0ZQog
-ewogCWludCBpLCByZXQ7CiAJY2hhciBuYW1lWzE2XTsKKwlzdHJ1Y3QgdGhlcm1hbF96b25lX2Rl
-dmljZSAqdHpvbmU7CiAJc3RhdGljIGF0b21pY190IGNvdW50ZXIgPSBBVE9NSUNfSU5JVCgwKTsK
-IAogCWlmICghaXdsX212bV9pc190dF9pbl9mdyhtdm0pKSB7CkBAIC02OTEsMjMgKzY5Miw0MCBA
-QCBzdGF0aWMgdm9pZCBpd2xfbXZtX3RoZXJtYWxfem9uZV9yZWdpc3RlCiAJCW12bS0+dHpfZGV2
-aWNlLnRyaXBzW2ldLnR5cGUgPSBUSEVSTUFMX1RSSVBfUEFTU0lWRTsKIAkJbXZtLT50el9kZXZp
-Y2UudHJpcHNbaV0uZmxhZ3MgPSBUSEVSTUFMX1RSSVBfRkxBR19SV19URU1QOwogCX0KLQltdm0t
-PnR6X2RldmljZS50em9uZSA9IHRoZXJtYWxfem9uZV9kZXZpY2VfcmVnaXN0ZXJfd2l0aF90cmlw
-cyhuYW1lLAorCisJdHpvbmUgPSB0aGVybWFsX3pvbmVfZGV2aWNlX3JlZ2lzdGVyX3dpdGhfdHJp
-cHMobmFtZSwKIAkJCQkJCQltdm0tPnR6X2RldmljZS50cmlwcywKIAkJCQkJCQlJV0xfTUFYX0RU
-U19UUklQUywKIAkJCQkJCQltdm0sICZ0em9uZV9vcHMsCiAJCQkJCQkJTlVMTCwgMCwgMCk7Ci0J
-aWYgKElTX0VSUihtdm0tPnR6X2RldmljZS50em9uZSkpIHsKKwlpZiAoSVNfRVJSKHR6b25lKSkg
-ewogCQlJV0xfREVCVUdfVEVNUChtdm0sCiAJCQkgICAgICAgIkZhaWxlZCB0byByZWdpc3RlciB0
-byB0aGVybWFsIHpvbmUgKGVyciA9ICVsZClcbiIsCi0JCQkgICAgICAgUFRSX0VSUihtdm0tPnR6
-X2RldmljZS50em9uZSkpOwotCQltdm0tPnR6X2RldmljZS50em9uZSA9IE5VTEw7CisJCQkgICAg
-ICAgUFRSX0VSUih0em9uZSkpOwogCQlyZXR1cm47CiAJfQogCi0JcmV0ID0gdGhlcm1hbF96b25l
-X2RldmljZV9lbmFibGUobXZtLT50el9kZXZpY2UudHpvbmUpOworCW11dGV4X2xvY2soJm12bS0+
-bXV0ZXgpOworCisJbXZtLT50el9kZXZpY2UudHpvbmUgPSB0em9uZTsKKworCW11dGV4X3VubG9j
-aygmbXZtLT5tdXRleCk7CisKKwlpZiAoIWl3bF9tdm1fZmlybXdhcmVfcnVubmluZyhtdm0pKSB7
-CisJCUlXTF9ERUJVR19URU1QKG12bSwgIlRoZXJtYWwgem9uZSBub3QgcmVhZHlcbiIpOworCQly
-ZXR1cm47CisJfQorCXJldCA9IHRoZXJtYWxfem9uZV9kZXZpY2VfZW5hYmxlKHR6b25lKTsKIAlp
-ZiAocmV0KSB7CiAJCUlXTF9ERUJVR19URU1QKG12bSwgIkZhaWxlZCB0byBlbmFibGUgdGhlcm1h
-bCB6b25lXG4iKTsKLQkJdGhlcm1hbF96b25lX2RldmljZV91bnJlZ2lzdGVyKG12bS0+dHpfZGV2
-aWNlLnR6b25lKTsKKworCQltdXRleF9sb2NrKCZtdm0tPm11dGV4KTsKKworCQltdm0tPnR6X2Rl
-dmljZS50em9uZSA9IE5VTEw7CisKKwkJbXV0ZXhfdW5sb2NrKCZtdm0tPm11dGV4KTsKKworCQl0
-aGVybWFsX3pvbmVfZGV2aWNlX3VucmVnaXN0ZXIodHpvbmUpOwogCX0KIH0KIApAQCAtNzg3LDE0
-ICs4MDUsMjYgQEAgc3RhdGljIHZvaWQgaXdsX212bV9jb29saW5nX2RldmljZV9yZWdpcwogCiBz
-dGF0aWMgdm9pZCBpd2xfbXZtX3RoZXJtYWxfem9uZV91bnJlZ2lzdGVyKHN0cnVjdCBpd2xfbXZt
-ICptdm0pCiB7CisJc3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6b25lOworCiAJaWYgKCFp
-d2xfbXZtX2lzX3R0X2luX2Z3KG12bSkgfHwgIW12bS0+dHpfZGV2aWNlLnR6b25lKQogCQlyZXR1
-cm47CiAKIAlJV0xfREVCVUdfVEVNUChtdm0sICJUaGVybWFsIHpvbmUgZGV2aWNlIHVucmVnaXN0
-ZXJcbiIpOwotCWlmIChtdm0tPnR6X2RldmljZS50em9uZSkgewotCQl0aGVybWFsX3pvbmVfZGV2
-aWNlX3VucmVnaXN0ZXIobXZtLT50el9kZXZpY2UudHpvbmUpOwotCQltdm0tPnR6X2RldmljZS50
-em9uZSA9IE5VTEw7CisKKwltdXRleF9sb2NrKCZtdm0tPm11dGV4KTsKKworCXR6b25lID0gbXZt
-LT50el9kZXZpY2UudHpvbmU7CisJaWYgKCF0em9uZSkgeworCQltdXRleF91bmxvY2soJm12bS0+
-bXV0ZXgpOworCisJCXJldHVybjsKIAl9CisJbXZtLT50el9kZXZpY2UudHpvbmUgPSBOVUxMOwor
-CisJbXV0ZXhfdW5sb2NrKCZtdm0tPm11dGV4KTsKKworCXRoZXJtYWxfem9uZV9kZXZpY2VfdW5y
-ZWdpc3Rlcih0em9uZSk7CiB9CiAKIHN0YXRpYyB2b2lkIGl3bF9tdm1fY29vbGluZ19kZXZpY2Vf
-dW5yZWdpc3RlcihzdHJ1Y3QgaXdsX212bSAqbXZtKQpAQCAtODQ3LDMgKzg3NywxMCBAQCB2b2lk
-IGl3bF9tdm1fdGhlcm1hbF9leGl0KHN0cnVjdCBpd2xfbXZtCiAjZW5kaWYKIAltdm0tPmluaXRf
-c3RhdHVzICY9IH5JV0xfTVZNX0lOSVRfU1RBVFVTX1RIRVJNQUxfSU5JVF9DT01QTEVURTsKIH0K
-Kwordm9pZCBpd2xfbXZtX3RoZXJtYWxfdHpvbmVfZW5hYmxlKHN0cnVjdCBpd2xfbXZtICptdm0p
-Cit7CisjaWZkZWYgQ09ORklHX1RIRVJNQUwKKwl0aGVybWFsX3pvbmVfc2NoZWR1bGVfZGV2aWNl
-X2VuYWJsZShtdm0tPnR6X2RldmljZS50em9uZSk7CisjZW5kaWYKK30KSW5kZXg6IGxpbnV4LXBt
-L2RyaXZlcnMvbmV0L3dpcmVsZXNzL2ludGVsL2l3bHdpZmkvbXZtL2Z3LmMKPT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQot
-LS0gbGludXgtcG0ub3JpZy9kcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS9m
-dy5jCisrKyBsaW51eC1wbS9kcml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS9m
-dy5jCkBAIC00NTgsNiArNDU4LDcgQEAgc3RhdGljIGludCBpd2xfbXZtX2xvYWRfdWNvZGVfd2Fp
-dF9hbGl2ZQogI2lmZGVmIENPTkZJR19JV0xXSUZJX0RFQlVHRlMKIAlpd2xfZndfc2V0X2RiZ19y
-ZWNfb24oJm12bS0+ZndydCk7CiAjZW5kaWYKKwlpd2xfbXZtX3RoZXJtYWxfdHpvbmVfZW5hYmxl
-KG12bSk7CiAKIAkvKgogCSAqIEFsbCB0aGUgQlNTZXMgaW4gdGhlIEJTUyB0YWJsZSBpbmNsdWRl
-IHRoZSBHUDIgaW4gdGhlIHN5c3RlbQpJbmRleDogbGludXgtcG0vZHJpdmVycy9uZXQvd2lyZWxl
-c3MvaW50ZWwvaXdsd2lmaS9tdm0vbXZtLmgKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQotLS0gbGludXgtcG0ub3JpZy9k
-cml2ZXJzL25ldC93aXJlbGVzcy9pbnRlbC9pd2x3aWZpL212bS9tdm0uaAorKysgbGludXgtcG0v
-ZHJpdmVycy9uZXQvd2lyZWxlc3MvaW50ZWwvaXdsd2lmaS9tdm0vbXZtLmgKQEAgLTIzOTAsNiAr
-MjM5MCw3IEBAIHZvaWQgaXdsX212bV90ZW1wX25vdGlmKHN0cnVjdCBpd2xfbXZtICoKIHZvaWQg
-aXdsX212bV90dF9oYW5kbGVyKHN0cnVjdCBpd2xfbXZtICptdm0pOwogdm9pZCBpd2xfbXZtX3Ro
-ZXJtYWxfaW5pdGlhbGl6ZShzdHJ1Y3QgaXdsX212bSAqbXZtLCB1MzIgbWluX2JhY2tvZmYpOwog
-dm9pZCBpd2xfbXZtX3RoZXJtYWxfZXhpdChzdHJ1Y3QgaXdsX212bSAqbXZtKTsKK3ZvaWQgaXds
-X212bV90aGVybWFsX3R6b25lX2VuYWJsZShzdHJ1Y3QgaXdsX212bSAqbXZtKTsKIHZvaWQgaXds
-X212bV9zZXRfaHdfY3RraWxsX3N0YXRlKHN0cnVjdCBpd2xfbXZtICptdm0sIGJvb2wgc3RhdGUp
-OwogaW50IGl3bF9tdm1fZ2V0X3RlbXAoc3RydWN0IGl3bF9tdm0gKm12bSwgczMyICp0ZW1wKTsK
-IHZvaWQgaXdsX212bV9jdF9raWxsX25vdGlmKHN0cnVjdCBpd2xfbXZtICptdm0sIHN0cnVjdCBp
-d2xfcnhfY21kX2J1ZmZlciAqcnhiKTsKSW5kZXg6IGxpbnV4LXBtL2RyaXZlcnMvdGhlcm1hbC90
-aGVybWFsX2NvcmUuYwo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09Ci0tLSBsaW51eC1wbS5vcmlnL2RyaXZlcnMvdGhlcm1h
-bC90aGVybWFsX2NvcmUuYworKysgbGludXgtcG0vZHJpdmVycy90aGVybWFsL3RoZXJtYWxfY29y
-ZS5jCkBAIC02MDYsNiArNjA2LDUyIEBAIGludCB0aGVybWFsX3pvbmVfZGV2aWNlX2VuYWJsZShz
-dHJ1Y3QgdGgKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKHRoZXJtYWxfem9uZV9kZXZpY2VfZW5hYmxl
-KTsKIAorc3RydWN0IHR6X2VuYWJsZV93b3JrIHsKKwlzdHJ1Y3Qgd29ya19zdHJ1Y3Qgd29yazsK
-KwlzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHo7Cit9OworCitzdGF0aWMgdm9pZCB0aGVy
-bWFsX3pvbmVfZW5hYmxlX3dvcmtfZm4oc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQoreworCXN0
-cnVjdCB0el9lbmFibGVfd29yayAqZXcgPSBjb250YWluZXJfb2Yod29yaywgc3RydWN0IHR6X2Vu
-YWJsZV93b3JrLCB3b3JrKTsKKwlzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHogPSBldy0+
-dHo7CisKKwlrZnJlZShldyk7CisKKwl0aGVybWFsX3pvbmVfZGV2aWNlX2VuYWJsZSh0eik7CisK
-KwlwdXRfZGV2aWNlKCZ0ei0+ZGV2aWNlKTsKK30KKworLyoqCisgKiB0aGVybWFsX3pvbmVfc2No
-ZWR1bGVfZGV2aWNlX2VuYWJsZSAtIEVuYWJsZSB0aGVybWFsIHpvbmUgYXN5bmNocm9ub3VzbHkK
-KyAqIEB0ejogVGhlcm1hbCB6b25lIHRvIGVuYWJsZS4KKyAqCisgKiBFbmFibGUgYSB0aGVybWFs
-IHpvbmUgaW4gYSB3b3JrZXIgdGhyZWFkLgorICoKKyAqIFRoZSBjYWxsZXIgbXVzdCBlbnN1cmUg
-dGhhdCBAdHogd2lsbCBub3QgY2hhbmdlIHdoaWxlIHRoaXMgZnVuY3Rpb24KKyAqIGlzIHJ1bm5p
-bmcuCisgKi8KK2ludCB0aGVybWFsX3pvbmVfc2NoZWR1bGVfZGV2aWNlX2VuYWJsZShzdHJ1Y3Qg
-dGhlcm1hbF96b25lX2RldmljZSAqdHopCit7CisJc3RydWN0IHR6X2VuYWJsZV93b3JrICpldzsK
-KworCWlmICghdHopCisJCXJldHVybiAwOworCisJZXcgPSBremFsbG9jKHNpemVvZigqZXcpLCBH
-RlBfS0VSTkVMKTsKKwlpZiAoIWV3KQorCQlyZXR1cm4gLUVOT01FTTsKKworCUlOSVRfV09SSygm
-ZXctPndvcmssIHRoZXJtYWxfem9uZV9lbmFibGVfd29ya19mbik7CisJZ2V0X2RldmljZSgmdHot
-PmRldmljZSk7CisJZXctPnR6ID0gdHo7CisJc2NoZWR1bGVfd29yaygmZXctPndvcmspOworCisJ
-cmV0dXJuIDA7Cit9CitFWFBPUlRfU1lNQk9MX0dQTCh0aGVybWFsX3pvbmVfc2NoZWR1bGVfZGV2
-aWNlX2VuYWJsZSk7CisKIGludCB0aGVybWFsX3pvbmVfZGV2aWNlX2Rpc2FibGUoc3RydWN0IHRo
-ZXJtYWxfem9uZV9kZXZpY2UgKnR6KQogewogCXJldHVybiB0aGVybWFsX3pvbmVfZGV2aWNlX3Nl
-dF9tb2RlKHR6LCBUSEVSTUFMX0RFVklDRV9ESVNBQkxFRCk7CkluZGV4OiBsaW51eC1wbS9pbmNs
-dWRlL2xpbnV4L3RoZXJtYWwuaAo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci0tLSBsaW51eC1wbS5vcmlnL2luY2x1ZGUv
-bGludXgvdGhlcm1hbC5oCisrKyBsaW51eC1wbS9pbmNsdWRlL2xpbnV4L3RoZXJtYWwuaApAQCAt
-Mjc1LDYgKzI3NSw3IEBAIGJvb2wgdGhlcm1hbF90cmlwX2lzX2JvdW5kX3RvX2NkZXYoc3RydWMK
-IAkJCQkgICBzdHJ1Y3QgdGhlcm1hbF9jb29saW5nX2RldmljZSAqY2Rldik7CiAKIGludCB0aGVy
-bWFsX3pvbmVfZGV2aWNlX2VuYWJsZShzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHopOwor
-aW50IHRoZXJtYWxfem9uZV9zY2hlZHVsZV9kZXZpY2VfZW5hYmxlKHN0cnVjdCB0aGVybWFsX3pv
-bmVfZGV2aWNlICp0eik7CiBpbnQgdGhlcm1hbF96b25lX2RldmljZV9kaXNhYmxlKHN0cnVjdCB0
-aGVybWFsX3pvbmVfZGV2aWNlICp0eik7CiB2b2lkIHRoZXJtYWxfem9uZV9kZXZpY2VfY3JpdGlj
-YWwoc3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6KTsKICNlbHNlCg==
---000000000000a63df1061d4a5224--
+This is a follow-up to the discussion about improving this check [1].
+
+Changes since v2 [2]:
+* Call the new generation variable as ring_buffer_per_cpu.cnt.
+
+Changes since v1 [3]:
+* Correct the case when rb_check_pages() is invoked concurrently with
+  the resize code which modifies the list. Introduce
+  ring_buffer_per_cpu.pages_era for this purpose.
+
+[1] https://lore.kernel.org/linux-trace-kernel/20240517134008.24529-1-petr.pavlu@suse.com/
+[2] https://lore.kernel.org/linux-trace-kernel/20240703075314.23511-1-petr.pavlu@suse.com/
+[2] https://lore.kernel.org/linux-trace-kernel/20240621150956.24814-1-petr.pavlu@suse.com/
+
+ kernel/trace/ring_buffer.c | 98 ++++++++++++++++++++++++++++----------
+ 1 file changed, 72 insertions(+), 26 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 28853966aa9a..0279b4ee0b03 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -462,6 +462,8 @@ struct ring_buffer_per_cpu {
+ 	unsigned long			nr_pages;
+ 	unsigned int			current_context;
+ 	struct list_head		*pages;
++	/* pages generation counter, incremented when the list changes */
++	unsigned long			cnt;
+ 	struct buffer_page		*head_page;	/* read from head */
+ 	struct buffer_page		*tail_page;	/* write to tail */
+ 	struct buffer_page		*commit_page;	/* committed pages */
+@@ -1454,40 +1456,87 @@ static void rb_check_bpage(struct ring_buffer_per_cpu *cpu_buffer,
+ 	RB_WARN_ON(cpu_buffer, val & RB_FLAG_MASK);
+ }
+ 
++static bool rb_check_links(struct ring_buffer_per_cpu *cpu_buffer,
++			   struct list_head *list)
++{
++	if (RB_WARN_ON(cpu_buffer,
++		       rb_list_head(rb_list_head(list->next)->prev) != list))
++		return false;
++
++	if (RB_WARN_ON(cpu_buffer,
++		       rb_list_head(rb_list_head(list->prev)->next) != list))
++		return false;
++
++	return true;
++}
++
+ /**
+  * rb_check_pages - integrity check of buffer pages
+  * @cpu_buffer: CPU buffer with pages to test
+  *
+  * As a safety measure we check to make sure the data pages have not
+  * been corrupted.
+- *
+- * Callers of this function need to guarantee that the list of pages doesn't get
+- * modified during the check. In particular, if it's possible that the function
+- * is invoked with concurrent readers which can swap in a new reader page then
+- * the caller should take cpu_buffer->reader_lock.
+  */
+ static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ {
+-	struct list_head *head = rb_list_head(cpu_buffer->pages);
+-	struct list_head *tmp;
++	struct list_head *head, *tmp;
++	unsigned long buffer_cnt;
++	unsigned long flags;
++	int nr_loops = 0;
+ 
+-	if (RB_WARN_ON(cpu_buffer,
+-			rb_list_head(rb_list_head(head->next)->prev) != head))
++	/*
++	 * Walk the linked list underpinning the ring buffer and validate all
++	 * its next and prev links.
++	 *
++	 * The check acquires the reader_lock to avoid concurrent processing
++	 * with code that could be modifying the list. However, the lock cannot
++	 * be held for the entire duration of the walk, as this would make the
++	 * time when interrupts are disabled non-deterministic, dependent on the
++	 * ring buffer size. Therefore, the code releases and re-acquires the
++	 * lock after checking each page. The ring_buffer_per_cpu.cnt variable
++	 * is then used to detect if the list was modified while the lock was
++	 * not held, in which case the check needs to be restarted.
++	 *
++	 * The code attempts to perform the check at most three times before
++	 * giving up. This is acceptable because this is only a self-validation
++	 * to detect problems early on. In practice, the list modification
++	 * operations are fairly spaced, and so this check typically succeeds at
++	 * most on the second try.
++	 */
++again:
++	if (++nr_loops > 3)
+ 		return;
+ 
+-	if (RB_WARN_ON(cpu_buffer,
+-			rb_list_head(rb_list_head(head->prev)->next) != head))
+-		return;
++	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
++	head = rb_list_head(cpu_buffer->pages);
++	if (!rb_check_links(cpu_buffer, head))
++		goto out_locked;
++	buffer_cnt = cpu_buffer->cnt;
++	tmp = head;
++	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 
+-	for (tmp = rb_list_head(head->next); tmp != head; tmp = rb_list_head(tmp->next)) {
+-		if (RB_WARN_ON(cpu_buffer,
+-				rb_list_head(rb_list_head(tmp->next)->prev) != tmp))
+-			return;
++	while (true) {
++		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+ 
+-		if (RB_WARN_ON(cpu_buffer,
+-				rb_list_head(rb_list_head(tmp->prev)->next) != tmp))
+-			return;
++		if (buffer_cnt != cpu_buffer->cnt) {
++			/* The list was updated, try again. */
++			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
++			goto again;
++		}
++
++		tmp = rb_list_head(tmp->next);
++		if (tmp == head)
++			/* The iteration circled back, all is done. */
++			goto out_locked;
++
++		if (!rb_check_links(cpu_buffer, tmp))
++			goto out_locked;
++
++		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 	}
++
++out_locked:
++	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ }
+ 
+ static int __rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
+@@ -1874,6 +1923,7 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
+ 
+ 	/* make sure pages points to a valid page in the ring buffer */
+ 	cpu_buffer->pages = next_page;
++	cpu_buffer->cnt++;
+ 
+ 	/* update head page */
+ 	if (head_bit)
+@@ -1980,6 +2030,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ 			 * pointer to point to end of list
+ 			 */
+ 			head_page->prev = last_page;
++			cpu_buffer->cnt++;
+ 			success = true;
+ 			break;
+ 		}
+@@ -2215,12 +2266,8 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 		 */
+ 		synchronize_rcu();
+ 		for_each_buffer_cpu(buffer, cpu) {
+-			unsigned long flags;
+-
+ 			cpu_buffer = buffer->buffers[cpu];
+-			raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+ 			rb_check_pages(cpu_buffer);
+-			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 		}
+ 		atomic_dec(&buffer->record_disabled);
+ 	}
+@@ -4611,6 +4658,7 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
+ 	rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
+ 	rb_inc_page(&cpu_buffer->head_page);
+ 
++	cpu_buffer->cnt++;
+ 	local_inc(&cpu_buffer->pages_read);
+ 
+ 	/* Finally update the reader page to the new head */
+@@ -5150,12 +5198,9 @@ void
+ ring_buffer_read_finish(struct ring_buffer_iter *iter)
+ {
+ 	struct ring_buffer_per_cpu *cpu_buffer = iter->cpu_buffer;
+-	unsigned long flags;
+ 
+ 	/* Use this opportunity to check the integrity of the ring buffer. */
+-	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+ 	rb_check_pages(cpu_buffer);
+-	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 
+ 	atomic_dec(&cpu_buffer->resize_disabled);
+ 	kfree(iter->event);
+@@ -6050,6 +6095,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
+ 		cpu_buffer->pages = cpu_buffer->new_pages.next;
+ 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
+ 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
++		cpu_buffer->cnt++;
+ 
+ 		/* Clear the new_pages list */
+ 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
+
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+-- 
+2.35.3
+
 
