@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-252622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE5A931602
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC3931601
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E2728314F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A3B1F22537
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8901B18E767;
-	Mon, 15 Jul 2024 13:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="emzY4IRu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F2B18D4CE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB7618E744;
+	Mon, 15 Jul 2024 13:44:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C65618C180;
+	Mon, 15 Jul 2024 13:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721051043; cv=none; b=L4cJY1wqoZw75cdzOaXJeQsc5QDPUJJFj6JaaDrEcpDsPVkta2jPJJjgI1N5WDnG7v91E1RTspguWwbXVKl+PgGm1e7a06bpYezgpcloYCorsxYAEGHYS7kVf/jzC+NwHBHMbke7NexVyvRFlCt4xPzO6zJGIC3AMqBaT/0q95A=
+	t=1721051042; cv=none; b=aMRhX+ZfeplQuvqTFrBoAazMtYNY08TFDxOdlXnF1pSeO6PJRoTOyS7mhit3noFh1fyEO+vhFe4s4oGBzfqG6L0Trq+JKSI6weS5WqzKyCRtVwYHxIzn6ljHRKUVkvPYHiX5HLwqlotVhu2cvtb7yDOZb++GKy5rA8cg8rdsKxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721051043; c=relaxed/simple;
-	bh=kI8z31pvmkACsoY4R6xD2r4WjAcXm/QhY0zJzKqHpRc=;
+	s=arc-20240116; t=1721051042; c=relaxed/simple;
+	bh=RbNyzPfrBDMS6Wa60MAPH9Oe7T+hXrhb1KM4uwLs0H8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vn8P+q65x6fYpnJPsORkPtu6sWZ7+4KYbb59W6kiJwkklOCJBQiWWbyVZj6qqkaHKcj7ERcriexqcZafiUYAazX0BtqcUvHqxWEx9C16PtCoGK8HV5KGi1YURnVv5az6B/WA/LqWcaYEamifAZwOPDWmh2ZcUGUvWDRIDuL7ZhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=emzY4IRu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8671040E0192;
-	Mon, 15 Jul 2024 13:43:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vn5LfA3idBTd; Mon, 15 Jul 2024 13:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721051035; bh=E+7GeEIa7s6ZzFSriewwh96Qj6j59sXyizWzr/1bfmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=emzY4IRu49NieNZq8jabnJ/O2KblA6d0LcncapU3uS7udK1x1zu9MdEh5hU4ZUFGF
-	 WVlkAceEEeD7tOLVG/uhOubtnvRHalRQDFwpuYDqol2Du5c6WfnDabLPYDCRqMaU+H
-	 hWKXjf+KXOFlyZ3yTH6hDonHrmz+RQDRnunRrismGyLrbvGcUohoyRnV7iodEGeg/c
-	 0g5f/oj1OwTJRNsBWSsJFPTt7F/mlYu+rv0l0JBtMAeUkKYk7feMHgH6v1G5sSZ15g
-	 sn8RaCZZp3vJtqT1dxiMoVW187/6ugnf11bEfF5qHbH3QFSA2hyQZP7ScRS7FIecit
-	 KQJ4rvNlVPUZ7HSyyYW41clZwVJeHaDmvTQqmn3VfdaT/o3hyOc3MbFa3Z+r84z1lV
-	 I3X6hUKlCuXFehl4OoUe4cFrMRLSD0OLalk+DXPOSz2oR0N+zapubSjHi72lPEYoMP
-	 qootPe88ICt8kWQBFFgX1gPxpvnkOWL63oqgGGccm0z3tdeM4g5kYg9l8mKoYMqJk1
-	 uhx2AqujOLSon+zXERG/madyHeqrwozq1o7TEwiDLFNfJHfK/+alkQLD1rkehXmovz
-	 TZp278L3DO2aWG/AzoR8YjsHVN0w+d1XCzpDfUu51FLEMXRjMncK4naUC/shT6cFOV
-	 QIDQ+t03VAPuesbyNUmkWRls=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D6B7640E021B;
-	Mon, 15 Jul 2024 13:43:43 +0000 (UTC)
-Date: Mon, 15 Jul 2024 15:43:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZ+cQQiOmw9n2l7czVOz2eVwU5X/hOo88/Fvue3HQxa+z6Z6N+LSqDPHG4sHNo6liKKk4qEvmGejdsfyT35BtEBTFo9WLZrZA1buL+34xooE5l3tnY3tI8l3uvhvoPfPhgq4Ge6nRqw2XdqSCAWMlnZdwFEGttYnUtBqUiFPP3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E77E6DA7;
+	Mon, 15 Jul 2024 06:44:25 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77A0A3F73F;
+	Mon, 15 Jul 2024 06:43:59 -0700 (PDT)
+Date: Mon, 15 Jul 2024 14:43:57 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
-Message-ID: <20240715134337.GBZpUnibQhORw-MpSR@fat_crate.local>
-References: <20240422165830.2142904-1-leitao@debian.org>
- <20240422165830.2142904-2-leitao@debian.org>
- <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
- <ZpUSvl5eKgkLeJrg@gmail.com>
- <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
- <ZpUlmf/iVgo78h4J@gmail.com>
+Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+Message-ID: <ZpUnnYTRX-OkEPHh@J2N7QTR9R3>
+References: <20240714105848.1844400-1-masahiroy@kernel.org>
+ <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpUlmf/iVgo78h4J@gmail.com>
+In-Reply-To: <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com>
 
-On Mon, Jul 15, 2024 at 06:35:21AM -0700, Breno Leitao wrote:
-> Regarding this patchset itself, what is the patch forward?
+On Mon, Jul 15, 2024 at 08:11:08AM +0530, Anshuman Khandual wrote:
+> On 7/14/24 16:28, Masahiro Yamada wrote:
+> > The condition 'select HAVE_ARCH_KASAN' is always true because
+> > there is 'select HAVE_ARCH_KASAN' statement above.
+> > 
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> > 
+> >  arch/arm64/Kconfig | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index c87d16b12e9b..d37cbfc3031e 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -167,9 +167,9 @@ config ARM64
+> >  	select HAVE_ARCH_JUMP_LABEL
+> >  	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+> >  	select HAVE_ARCH_KASAN
+> > -	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+> > -	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+> > -	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
+> > +	select HAVE_ARCH_KASAN_VMALLOC
+> > +	select HAVE_ARCH_KASAN_SW_TAGS
+> > +	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+> >  	# Some instrumentation may be unsound, hence EXPERT
+> >  	select HAVE_ARCH_KCSAN if EXPERT
+> >  	select HAVE_ARCH_KFENCE
+> 
+> There is another similar instance with HAVE_FUNCTION_GRAPH_TRACER as well.
+> Just wondering if the following change should be folded in here ?
+> 
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -210,8 +210,8 @@ config ARM64
+>         select HAVE_FTRACE_MCOUNT_RECORD
+>         select HAVE_FUNCTION_TRACER
+>         select HAVE_FUNCTION_ERROR_INJECTION
+> -       select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
+>         select HAVE_FUNCTION_GRAPH_TRACER
+> +       select HAVE_FUNCTION_GRAPH_RETVAL
+>         select HAVE_GCC_PLUGINS
+>         select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
+>                 HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
 
-The path forward is for you to wait until I've gone through them all. We have
-merge window now so not in the next two weeks.
+That looks like a sensible cleanup, but I think it'd be better as a
+separate patch.
 
-Thx.
+It looks like that has always been redundant since it was introduced in
+commit
 
--- 
-Regards/Gruss,
-    Boris.
+  3646970322464c21 ("arm64: ftrace: Enable HAVE_FUNCTION_GRAPH_RETVAL")
 
-https://people.kernel.org/tglx/notes-about-netiquette
+... would you mind spinning a patch?
+
+Mark.
 
