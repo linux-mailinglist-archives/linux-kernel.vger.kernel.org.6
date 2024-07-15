@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-252254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BBF93109D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D809310A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6965E1F226FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440B12829FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BF6185081;
-	Mon, 15 Jul 2024 08:52:01 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE461850B3;
+	Mon, 15 Jul 2024 08:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ropr15gH"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C247D1E890;
-	Mon, 15 Jul 2024 08:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF81E890;
+	Mon, 15 Jul 2024 08:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033520; cv=none; b=tqmrX/2wrnaExa38LEySHf2VHuLTekJTVCJEGvqm6w/48L4nz5ef1Q2cKXuiwqyABDHOOMtBvvpFrRJPnrnERCci3qjsuHnRumzYymmFPJeyNA6n/suwpO+tUdmSv8D9OONA4SlPTW2jB0SKLRHzwMBw3UZetl9Y8jYtYfc+z/8=
+	t=1721033534; cv=none; b=e42biGHdKxwWYyx0Tlvrb4WbpVkCMohUxPFa9SmZcbzRt4SkRApxZWa11cK+EOlSpfGYtG6yE6+Y+SwKzFmo3Wb4cT4PWE3WicFtmtXcZuD1SyIGLur7WEHG6nJpsa2soOIg7W1iZfp1m3m/UvqBYhSZtAVKnuFlq7vto2x5eW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033520; c=relaxed/simple;
-	bh=MULiLWRxGosoInm+lDZuYZy61OJ+nSPylNPCR/kM1aI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IT5CJ2yWcRJnY9Fz6ThTPN6IUGqQDxSNWHx2KQKTe00hPIhpXaAgn8ZLyx6UUYhZ807FYmX+pDlVmvGfPtqMCD7XhP59PApDD7qha3pSwP9i8wMeGX/vshVaApTODOiJkbVswUM+4ZK+q+jiP9Hc8WBHmIRZAbDRoHZTXZkQiUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 46F8pKfF064264;
-	Mon, 15 Jul 2024 16:51:20 +0800 (+08)
-	(envelope-from Dongliang.Cui@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WMwlW3Zmyz2LKZqD;
-	Mon, 15 Jul 2024 16:45:59 +0800 (CST)
-Received: from BJMBX02.spreadtrum.com (10.0.64.8) by BJMBX01.spreadtrum.com
- (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Mon, 15 Jul
- 2024 16:51:18 +0800
-Received: from BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb]) by
- BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb%19]) with mapi id
- 15.00.1497.023; Mon, 15 Jul 2024 16:51:17 +0800
-From: =?utf-8?B?5bSU5Lic5LquIChEb25nbGlhbmcgQ3VpKQ==?=
-	<Dongliang.Cui@unisoc.com>
-To: Sungjong Seo <sj1557.seo@samsung.com>,
-        "linkinjeon@kernel.org"
-	<linkinjeon@kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "niuzhiguo84@gmail.com" <niuzhiguo84@gmail.com>,
-        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?= <Hao_hao.Wang@unisoc.com>,
-        =?utf-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?= <Zhiguo.Niu@unisoc.com>,
-        "cuidongliang390@gmail.com" <cuidongliang390@gmail.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGV4ZmF0OiBjaGVjayBkaXNrIHN0YXR1cyBkdXJp?=
- =?utf-8?Q?ng_buffer_write?=
-Thread-Topic: [PATCH] exfat: check disk status during buffer write
-Thread-Index: AQHazrN5wdl9vyZZ60iQ5gkqO2k6u7HwvA0AgAbHZNA=
-Date: Mon, 15 Jul 2024 08:51:17 +0000
-Message-ID: <da2c0cd06c4a4dfa86f0ea2dbc3e1435@BJMBX02.spreadtrum.com>
-References: <CGME20240705081528epcas1p32c38cfb39dae65109bbfbd405a9852b2@epcas1p3.samsung.com>
-	<20240705081514.1901580-1-dongliang.cui@unisoc.com>
- <459601dad36f$c913a770$5b3af650$@samsung.com>
-In-Reply-To: <459601dad36f$c913a770$5b3af650$@samsung.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1721033534; c=relaxed/simple;
+	bh=lPPSCe+ov7UF3C243GO/UqavibELTq39WhED1+GwWNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=McNBUa9SQ0+SuC/ksiTXoCL7f2ZTRVvkkCMcWds7DJgrlG8anpeJRiNMO1sBkTIMRQmM14VWG6wWs0gP2OnMfIpY9JEUbz8qJvMcr9IPpI/3fpWl4pLdgt5Eck4ijKe5aqf6DNHwijl1CJCceMm/yHAQpasCSd1nzkA7k1ygAa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ropr15gH; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721033505; x=1721638305; i=markus.elfring@web.de;
+	bh=A2wbh4kaLbKzhVBmO3dybv3YRMmrGDYw8khYFcvl2GU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ropr15gHStMe+xMOdO6KXrdQglh4Z6C7wg0izTlVeN2C6hjFqOEudBkLxeQTiyUN
+	 vLFodoSwJIdKUwHMgAOzWbbmlia+vYSeaQmsutyUUx3LwXYpJr3opQKMQOnAuMGQT
+	 x5dHaIkrU84aRPKyYa3rQVUsWHromqU9COEoIVQNrQMpHGuzyzJfLjZWFIxKfr3OO
+	 m7Yuo+qYiA9RLHVQJKXBMFCe5/8swO4XwzouHxq8ZyWESlHvngJiMoJB8aRFhgUBd
+	 PYKvIT5qeyWs2QneetTedM/rviY1kNpZS4vKAMNzjrzF8ysh1ElgOC2mYIESKcdWY
+	 /oNLcKlK5XQXa6LNlA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0qv3-1s6GuK2ShB-00vErd; Mon, 15
+ Jul 2024 10:51:45 +0200
+Message-ID: <e346d688-7b01-462f-867c-ba52b7790d19@web.de>
+Date: Mon, 15 Jul 2024 10:51:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:SHSQR01.spreadtrum.com 46F8pKfF064264
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] locking/lockdep: Simplify character output in seq_line()
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ kernel-janitors@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
+ <975d2b0f-f84c-4c84-adf2-098fef59d90b@redhat.com>
+ <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/Mg74PvR7pnkoPncBRx+bICjO9uS+vtQ9nUJkqfaLTg3WCI0b5L
+ WXkFcUBppVWx1KqkBIazziPqLCdD+S6YHf8wO+ncPHhd24HruhXzvr5tdlaCKQv0LRb1xId
+ Jhw4/5SUNKx0VHY8f089LZONyCJFapw9wiHGz3eVZU24JDuaul7xMHdoNaHo7Xo/h3dSU1y
+ V1tsEX4GS4SnTn6+u+chw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:b3IYyir/BDs=;sfFrpKiVnLUrcW0KrKt+NKgLWHh
+ RqrTlGtXmH2pu5IQEEIDVz/eAkPZzC4r0r58mKSji8NhFEPmO/Q+krO6Q5A0Jd2ftN1MlD+2E
+ SNucwaOMWPID2JBU5QRp8OFO5bSDF8rR7/oyObDPQvmZ92bnrPNgfWCSYEA/CkUiosD3lPjNs
+ 8XFMXVIzt7QvMCmDSE63Dbb7u5tUmuYUNrdbJg95bLkTbwQsGgT8iutMgnG80MMh6r6ZYYJHB
+ 90rrykTn0JRVf0+yfz8e3YThflN7dmnMHFGF1yc6BxhGMEfNo5pIVF7VPm0TCiVaTHBIWOOyb
+ ggjQ3PR7M1mTTkrQJNWnuS4fFDyi3fS5ABgHQki2lsq4Xu3UYCs45fCLqUnRGMVkVuwKwdGEy
+ YpBK483D0dL2DsO0I++ZNNhhOixMTqV+QVZKADW860CJAZ12bvO2C/MAhQYjQ5ie9BK7mIHdP
+ SYb7brxZ75rTeFamVm6EZdZMH4tz/a3rH0VOmfSUSEQJT+ByvawfK1jzjXAvWtA+pMJzXVT1d
+ xX7S7Nj3JMCW7Tjgk96rNXkWkiGQDviT/RsL6mmNk1uvn1KdRKTvCWhu7qJeNRMUP+TIFWZYv
+ GDXaBDkfjl8nAUlm96z3pwllGe0MQUiwLTWV9QoQ05ed7kDwVS0L1Z/K/9wLqmtjXcI5p/JZi
+ iAmJGnmmmcpVCAYnMvH7QEPqMfuucWtNEAywSex27mHnngCeHxXMDgBX9nCVc/8ouZVwgL7AB
+ BCuq6znZFyxWmaPkDcD5g/kTegqatUOg/81afLMmNrX1Q80vozTh3xHRKs2ZD6oA+pm8BhybB
+ VPrh0Pq1cMUH7hd9RYm48qcw==
 
-PiBXZSBmb3VuZCB0aGF0IHdoZW4gd3JpdGluZyBhIGxhcmdlIGZpbGUgdGhyb3VnaCBidWZmZXIg
-d3JpdGUsIGlmIHRoZSANCj4gZGlzayBpcyBpbmFjY2Vzc2libGUsIGV4RkFUIGRvZXMgbm90IHJl
-dHVybiBhbiBlcnJvciBub3JtYWxseSwgd2hpY2ggDQo+IGxlYWRzIHRvIHRoZSB3cml0aW5nIHBy
-b2Nlc3Mgbm90IHN0b3BwaW5nIHByb3Blcmx5Lg0KPg0KPiBUbyBlYXNpbHkgcmVwcm9kdWNlIHRo
-aXMgaXNzdWUsIHlvdSBjYW4gZm9sbG93IHRoZSBzdGVwcyBiZWxvdzoNCj4NCj4gMS4gZm9ybWF0
-IGEgZGV2aWNlIHRvIGV4RkFUIGFuZCB0aGVuIG1vdW50ICh3aXRoIGEgZnVsbCBkaXNrIGVyYXNl
-KSAyLiANCj4gZGQgaWY9L2Rldi96ZXJvIG9mPS9leGZhdF9tb3VudC90ZXN0LmltZyBicz0xTSBj
-b3VudD04MTkyIDMuIGVqZWN0IHRoZSANCj4gZGV2aWNlDQo+DQo+IFlvdSBtYXkgZmluZCB0aGF0
-IHRoZSBkZCBwcm9jZXNzIGRvZXMgbm90IHN0b3AgaW1tZWRpYXRlbHkgYW5kIG1heSANCj4gY29u
-dGludWUgZm9yIGEgbG9uZyB0aW1lLg0KPg0KPiBXZSBjb21wYXJlZCBpdCB3aXRoIHRoZSBGQVQs
-IHdoZXJlIEZBVCB3b3VsZCBwcm9tcHQgYW4gRUlPIGVycm9yIGFuZCANCj4gaW1tZWRpYXRlbHkg
-c3RvcCB0aGUgZGQgb3BlcmF0aW9uLg0KPg0KPiBUaGUgcm9vdCBjYXVzZSBvZiB0aGlzIGlzc3Vl
-IGlzIHRoYXQgd2hlbiB0aGUgZXhmYXRfaW5vZGUgY29udGFpbnMgdGhlIA0KPiBBTExPQ19OT19G
-QVRfQ0hBSU4gZmxhZywgZXhGQVQgZG9lcyBub3QgbmVlZCB0byBhY2Nlc3MgdGhlIGRpc2sgdG8g
-DQo+IGxvb2sgdXAgZGlyZWN0b3J5IGVudHJpZXMgb3IgdGhlIEZBVCB0YWJsZSAod2hlcmVhcyBG
-QVQgd291bGQgZG8pIA0KPiBldmVyeSB0aW1lIGRhdGEgaXMgd3JpdHRlbi4gSW5zdGVhZCwgZXhG
-QVQgc2ltcGx5IG1hcmtzIHRoZSBidWZmZXIgYXMgDQo+IGRpcnR5IGFuZCByZXR1cm5zLCBkZWxl
-Z2F0aW5nIHRoZSB3cml0ZWJhY2sgb3BlcmF0aW9uIHRvIHRoZSB3cml0ZWJhY2sgDQo+IHByb2Nl
-c3MuDQo+DQo+IElmIHRoZSBkaXNrIGNhbm5vdCBiZSBhY2Nlc3NlZCBhdCB0aGlzIHRpbWUsIHRo
-ZSBlcnJvciB3aWxsIG9ubHkgYmUgDQo+IHJldHVybmVkIHRvIHRoZSB3cml0ZWJhY2sgcHJvY2Vz
-cywgYW5kIHRoZSBvcmlnaW5hbCBwcm9jZXNzIHdpbGwgbm90IA0KPiByZWNlaXZlIHRoZSBlcnJv
-ciwgc28gaXQgY2Fubm90IGJlIHJldHVybmVkIHRvIHRoZSB1c2VyIHNpZGUuDQo+DQo+IFRoZXJl
-Zm9yZSwgd2UgdGhpbmsgdGhhdCB3aGVuIHdyaXRpbmcgZmlsZXMgd2l0aCBBTExPQ19OT19GQVRf
-Q0hBSU4sIA0KPiBpdCBpcyBuZWNlc3NhcnkgdG8gY29udGludW91c2x5IGNoZWNrIHRoZSBzdGF0
-dXMgb2YgdGhlIGRpc2suDQo+DQo+IFdoZW4gdGhlIGRpc2sgY2Fubm90IGJlIGFjY2Vzc2VkIG5v
-cm1hbGx5LCBhbiBlcnJvciBzaG91bGQgYmUgcmV0dXJuZWQgDQo+IHRvIHN0b3AgdGhlIHdyaXRp
-bmcgcHJvY2Vzcy4NCj4NCj4gU2lnbmVkLW9mZi1ieTogRG9uZ2xpYW5nIEN1aSA8ZG9uZ2xpYW5n
-LmN1aUB1bmlzb2MuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBaaGlndW8gTml1IDx6aGlndW8ubml1
-QHVuaXNvYy5jb20+DQo+IC0tLQ0KPiAgZnMvZXhmYXQvZXhmYXRfZnMuaCB8IDUgKysrKysNCj4g
-IGZzL2V4ZmF0L2lub2RlLmMgICAgfCA1ICsrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDEwIGlu
-c2VydGlvbnMoKykNCj4NCj4gZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmggYi9mcy9l
-eGZhdC9leGZhdF9mcy5oIGluZGV4IA0KPiBlY2M1ZGI5NTJkZWIuLmM1ZjVhN2E4YjY3MiAxMDA2
-NDQNCj4gLS0tIGEvZnMvZXhmYXQvZXhmYXRfZnMuaA0KPiArKysgYi9mcy9leGZhdC9leGZhdF9m
-cy5oDQo+IEBAIC00MTEsNiArNDExLDExIEBAIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgaW50IA0K
-PiBleGZhdF9zZWN0b3JfdG9fY2x1c3RlcihzdHJ1Y3QgZXhmYXRfc2JfaW5mbyAqc2JpLA0KPiAg
-ICAgICAgICAgICAgIEVYRkFUX1JFU0VSVkVEX0NMVVNURVJTOyAgfQ0KPg0KPiArc3RhdGljIGlu
-bGluZSBib29sIGV4ZmF0X2NoZWNrX2Rpc2tfZXJyb3Ioc3RydWN0IGJsb2NrX2RldmljZSAqYmRl
-dikgDQo+ICt7DQo+ICsgICAgIHJldHVybiBibGtfcXVldWVfZHlpbmcoYmRldl9nZXRfcXVldWUo
-YmRldikpOw0KV2h5IGRvbid0IHlvdSBjaGVjayBpdCBsaWtlIGV4dDQ/DQoNCnN0YXRpYyBpbnQg
-YmxvY2tfZGV2aWNlX2VqZWN0ZWQoc3RydWN0IHN1cGVyX2Jsb2NrICpzYikgew0KICAgICAgIHN0
-cnVjdCBpbm9kZSAqYmRfaW5vZGUgPSBzYi0+c19iZGV2LT5iZF9pbm9kZTsNCiAgICAgICBzdHJ1
-Y3QgYmFja2luZ19kZXZfaW5mbyAqYmRpID0gaW5vZGVfdG9fYmRpKGJkX2lub2RlKTsNCg0KICAg
-ICAgIHJldHVybiBiZGktPmRldiA9PSBOVUxMOw0KfQ0KDQpUaGUgYmxvY2tfZGV2aWNlLT5iZF9p
-bm9kZSBoYXMgYmVlbiByZW1vdmVkIGluIHRoZSBsYXRlc3QgY29kZS4NCldlIG1pZ2h0IGJlIGFi
-bGUgdG8gdXNlIHN1cGVyX2Jsb2NrLT5zX2JkaS0+ZGV2IGZvciB0aGUganVkZ21lbnQsDQpvciBw
-ZXJoYXBzIHVzZSBibGtfcXVldWVfZHlpbmc/DQoNCj4gK30NCj4gKw0KPiAgc3RhdGljIGlubGlu
-ZSBib29sIGlzX3ZhbGlkX2NsdXN0ZXIoc3RydWN0IGV4ZmF0X3NiX2luZm8gKnNiaSwNCj4gICAg
-ICAgICAgICAgICB1bnNpZ25lZCBpbnQgY2x1cykNCj4gIHsNCj4gZGlmZiAtLWdpdCBhL2ZzL2V4
-ZmF0L2lub2RlLmMgYi9mcy9leGZhdC9pbm9kZS5jIGluZGV4IA0KPiBkZDg5NGU1NThjOTEuLmVm
-ZDAyYzFjODNhNiAxMDA2NDQNCj4gLS0tIGEvZnMvZXhmYXQvaW5vZGUuYw0KPiArKysgYi9mcy9l
-eGZhdC9pbm9kZS5jDQo+IEBAIC0xNDcsNiArMTQ3LDExIEBAIHN0YXRpYyBpbnQgZXhmYXRfbWFw
-X2NsdXN0ZXIoc3RydWN0IGlub2RlICppbm9kZSwgDQo+IHVuc2lnbmVkIGludCBjbHVfb2Zmc2V0
-LA0KPiAgICAgICAqY2x1ID0gbGFzdF9jbHUgPSBlaS0+c3RhcnRfY2x1Ow0KPg0KPiAgICAgICBp
-ZiAoZWktPmZsYWdzID09IEFMTE9DX05PX0ZBVF9DSEFJTikgew0KPiArICAgICAgICAgICAgIGlm
-IChleGZhdF9jaGVja19kaXNrX2Vycm9yKHNiLT5zX2JkZXYpKSB7DQo+ICsgICAgICAgICAgICAg
-ICAgICAgICBleGZhdF9mc19lcnJvcihzYiwgImRldmljZSBpbmFjY2Vzc2lhYmxlIVxuIik7DQo+
-ICsgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTzsNClRoaXMgcGF0Y2ggbG9va3MgdXNl
-ZnVsIHdoZW4gdXNpbmcgcmVtb3ZhYmxlIHN0b3JhZ2UgZGV2aWNlcy4NCkJUVywgaW4gY2FzZSBv
-ZiAiZWktPmZsYWdzICE9IEFMTE9DX05PX0ZBVF9DSEFJTiIsIFRoZXJlIGNvdWxkIGJlIHRoZSBz
-YW1lIHByb2JsZW0gaWYgaXQgY2FuIGJlIGZvdW5kIGZyb20gbHJ1X2NhY2hlLiBTbywgaXQgd291
-bGQgYmUgbmljZSB0byBjaGVjayBkaXNrX2Vycm9yIHJlZ2FyZGxlc3MgZWktPmZsYWdzLiBBbHNv
-LCBDYWxsaW5nIGV4ZmF0X2ZzX2Vycm9yKCkgc2VlbXMgdW5uZWNlc3NhcnkuIEluc3RlYWQsIGxl
-dCdzIHJldHVybiAtRU5PREVWIGluc3RlYWQgb2YgLUVJTy4NCkkgYmVsaWV2ZSB0aGF0IHRoZXNl
-IGVycm9ycyB3aWxsIGJlIGhhbmRsZWQgb24gZXhmYXRfZ2V0X2Jsb2NrKCkNCg0KDQpUaGFua3Mu
-DQo+ICsgICAgICAgICAgICAgfQ0KPiArDQo+ICAgICAgICAgICAgICAgaWYgKGNsdV9vZmZzZXQg
-PiAwICYmICpjbHUgIT0gRVhGQVRfRU9GX0NMVVNURVIpIHsNCj4gICAgICAgICAgICAgICAgICAg
-ICAgIGxhc3RfY2x1ICs9IGNsdV9vZmZzZXQgLSAxOw0KPg0KPiAtLQ0KPiAyLjI1LjENCg0KDQo=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jul 2024 10:42:17 +0200
+
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one sel=
+ected call.
+
+This issue was transformed by using the Coccinelle software.
+
+Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/locking/lockdep_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index e2bfb1db589d..6db0f43fc4df 100644
+=2D-- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -424,7 +424,7 @@ static void seq_line(struct seq_file *m, char c, int o=
+ffset, int length)
+ 	for (i =3D 0; i < offset; i++)
+ 		seq_puts(m, " ");
+ 	for (i =3D 0; i < length; i++)
+-		seq_printf(m, "%c", c);
++		seq_putc(m, c);
+ 	seq_puts(m, "\n");
+ }
+
+=2D-
+2.45.2
+
 
