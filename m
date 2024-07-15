@@ -1,200 +1,145 @@
-Return-Path: <linux-kernel+bounces-252052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168D5930D9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:28:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC271930D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE2E1F20DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:28:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B990B20DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 05:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFA018411B;
-	Mon, 15 Jul 2024 05:27:43 +0000 (UTC)
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E7513B2B0;
+	Mon, 15 Jul 2024 05:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V1GdjuzB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA571836F7;
-	Mon, 15 Jul 2024 05:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D30A219E0;
+	Mon, 15 Jul 2024 05:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721021263; cv=none; b=E7CIvVOUsSlihqjUMb55s+oYUzjORaArCfV+dZD+rGXQ+A7Z3/kS2mRujKkit4pRMu/vVFQ3LyDcr3TTpDAz9/I9xk+aWjX1/o16kkB7jJukfOUsoyfcNcciFcSPbxq45+9FXq88nUrbBoJwUh98fgIxkiMy/COJyRbxsDWmx6I=
+	t=1721020351; cv=none; b=pB21t6Yj8W09kbdJTEgDYQuPgI9DKlPYOlPnZJhfQoYVVS7dRpEOQ6t/0+h8CgqQMkyf+fJF6s6+g5nBZyPvILgenkwHZ1oMm5AJaLR58WXF6ZOtzhhI5vbMTf02XhlbAXiGjVnd17WgSAld0JMt/aHbPSOcJ4igfubFmoRoC8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721021263; c=relaxed/simple;
-	bh=CgdgrjImSEMreUF0Fb3iM3gecQOjj46AxAKBEmAKajE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AxTUFlo8xh8HPfO3Q+UOdqGi6i5AvAUCqwksNaYwEq8gs9WUlh7RJQsvoEFCy5YHl02qPEKIt6Ba7MrllQGV3jln/EA3jNVsLC99IL9wvGV+fc7cHNUMpL+ZUPV1zYmh+jOL7yjUni6HZygOy9EZSnNv4a/gpzmOy6sRWk4Ouzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from droid10-sz.amlogic.com (10.28.11.69) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Mon, 15 Jul 2024
- 13:12:23 +0800
-From: zelong dong <zelong.dong@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, Rob Herring
-	<robh@kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<kelvin.zhang@amlogic.com>, Zelong Dong <zelong.dong@amlogic.com>
-Subject: [PATCH v2 3/3] arm64: dts: amlogic: Add Amlogic A5 reset controller
-Date: Mon, 15 Jul 2024 13:12:17 +0800
-Message-ID: <20240715051217.5286-4-zelong.dong@amlogic.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240715051217.5286-1-zelong.dong@amlogic.com>
-References: <20240715051217.5286-1-zelong.dong@amlogic.com>
+	s=arc-20240116; t=1721020351; c=relaxed/simple;
+	bh=s4smvUtfjge8MiG+WBcMp7zbES6h+Q60YGHe3IhFZyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iip9ISiDRzarmU1Bnorb3sfs/RQJ+P1oMssNJjevV0u2yES2jbmcRrUPmgCFhQZ0mvHPzh6baqU2BBacKtKZnLQLaVyzPBPUWELpBuG58yWDcN0iV8vIHvhxtbBjMOkLNqiF8L/JwE1Qp1kY/VNUgLXS/N8/ZkcRlx+7Og5y8B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V1GdjuzB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721020344;
+	bh=+dnRGsvrizd4gNnE0mwBEQyLtJcJvW4ANThyhxWhe3Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V1GdjuzBshnDbVFb2jeFM8v7C5+eVjAAfiy7zOzOiZ4ar4jqn5woI9m2Yzr8pumzH
+	 /m/EtIF1i8Dvupg7OrxBVvoUHy321sRC1qHd8Fds52EeJfmeKP3LHAYm/heGSlBvJq
+	 PFnBqO3KGe07v+Yok7BVKNXpHN3Qf/uO6L60y5YnwRiFub9upqtBKoBf/u3JFaYRhK
+	 BWNR84dvV1yCgJldokmeTOqCPHUTn4k9fTWeDSpfZVOeKMjQc/zmAZvgVBwMmIJ9mz
+	 PADIhc83Eer+6mkQrm7H8cRw5i80F4Tf16tOnYkphr1W3VvOdm4O7kWn5S+kpkoyNu
+	 St1ImlWijFCbQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMr14098Lz4x04;
+	Mon, 15 Jul 2024 15:12:23 +1000 (AEST)
+Date: Mon, 15 Jul 2024 15:12:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, David Miller <davem@davemloft.net>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: linux-next: manual merge of the phy-next tree with the net-next
+ tree
+Message-ID: <20240715151222.5131118f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/EpXU1WFtm6i3v9buMom2pnc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Zelong Dong <zelong.dong@amlogic.com>
+--Sig_/EpXU1WFtm6i3v9buMom2pnc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Add the device node and related header file for Amlogic
-A5 reset controller. The count and offset for A5 Soc
-RESET registers are same as S4 Soc.
+Hi all,
 
-Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
----
- .../arm64/boot/dts/amlogic/amlogic-a5-reset.h | 95 +++++++++++++++++++
- arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi   | 10 ++
- 2 files changed, 105 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
+Today's linux-next merge of the phy-next tree got a conflict in:
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h b/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
-new file mode 100644
-index 000000000000..cdf0f5159620
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
-@@ -0,0 +1,95 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __DTS_AMLOGIC_A5_RESET_H
-+#define __DTS_AMLOGIC_A5_RESET_H
-+
-+/* RESET0 */
-+/*						0-3 */
-+#define RESET_USB				4
-+/*						5-7 */
-+#define RESET_USBPHY20				8
-+/*						9 */
-+#define RESET_USB2DRD				10
-+/*						11-31 */
-+
-+/* RESET1 */
-+#define RESET_AUDIO				32
-+#define RESET_AUDIO_VAD				33
-+/*                                              34 */
-+#define RESET_DDR_APB				35
-+#define RESET_DDR				36
-+/*						37-40 */
-+#define RESET_DSPA_DEBUG			41
-+/*                                              42 */
-+#define RESET_DSPA				43
-+/*						44-46 */
-+#define RESET_NNA				47
-+#define RESET_ETHERNET				48
-+/*						49-63 */
-+
-+/* RESET2 */
-+#define RESET_ABUS_ARB				64
-+#define RESET_IRCTRL				65
-+/*						66 */
-+#define RESET_TS_PLL				67
-+/*						68-72 */
-+#define RESET_SPICC_0				73
-+#define RESET_SPICC_1				74
-+#define RESET_RSA				75
-+
-+/*						76-79 */
-+#define RESET_MSR_CLK				80
-+#define RESET_SPIFC				81
-+#define RESET_SAR_ADC				82
-+/*						83-90 */
-+#define RESET_WATCHDOG				91
-+/*						92-95 */
-+
-+/* RESET3 */
-+/*						96-127 */
-+
-+/* RESET4 */
-+#define RESET_RTC				128
-+/*						129-131 */
-+#define RESET_PWM_AB				132
-+#define RESET_PWM_CD				133
-+#define RESET_PWM_EF				134
-+#define RESET_PWM_GH				135
-+/*						104-105 */
-+#define RESET_UART_A				138
-+#define RESET_UART_B				139
-+#define RESET_UART_C				140
-+#define RESET_UART_D				141
-+#define RESET_UART_E				142
-+/*						143*/
-+#define RESET_I2C_S_A				144
-+#define RESET_I2C_M_A				145
-+#define RESET_I2C_M_B				146
-+#define RESET_I2C_M_C				147
-+#define RESET_I2C_M_D				148
-+/*						149-151 */
-+#define RESET_SDEMMC_A				152
-+/*						153 */
-+#define RESET_SDEMMC_C				154
-+/*						155-159*/
-+
-+/* RESET5 */
-+/*						160-175 */
-+#define RESET_BRG_AO_NIC_SYS			176
-+#define RESET_BRG_AO_NIC_DSPA			177
-+#define RESET_BRG_AO_NIC_MAIN			178
-+#define RESET_BRG_AO_NIC_AUDIO			179
-+/*						180-183 */
-+#define RESET_BRG_AO_NIC_ALL			184
-+#define RESET_BRG_NIC_NNA			185
-+#define RESET_BRG_NIC_SDIO			186
-+#define RESET_BRG_NIC_EMMC			187
-+#define RESET_BRG_NIC_DSU			188
-+#define RESET_BRG_NIC_SYSCLK			189
-+#define RESET_BRG_NIC_MAIN			190
-+#define RESET_BRG_NIC_ALL			191
-+
-+#endif
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-index 43f68a7da2f7..aa035c5c63af 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include "amlogic-a4-common.dtsi"
-+#include "amlogic-a5-reset.h"
- / {
- 	cpus {
- 		#address-cells = <2>;
-@@ -38,3 +39,12 @@ cpu3: cpu@300 {
- 		};
- 	};
- };
-+
-+&apb {
-+	reset: reset-controller@2000 {
-+		compatible = "amlogic,a5-reset",
-+			     "amlogic,meson-s4-reset";
-+		reg = <0x0 0x2000 0x0 0x98>;
-+		#reset-cells = <1>;
-+	};
-+};
--- 
-2.35.1
+  MAINTAINERS
 
+between commit:
+
+  23020f049327 ("net: airoha: Introduce ethernet support for EN7581 SoC")
+
+from the net-next tree and commit:
+
+  d7d2818b9383 ("phy: airoha: Add PCIe PHY driver for EN7581 SoC.")
+
+from the phy-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index d739d07fb234,269c2144bedb..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -693,15 -682,14 +693,23 @@@ S:	Supporte
+  F:	fs/aio.c
+  F:	include/linux/*aio*.h
+ =20
+ +AIROHA ETHERNET DRIVER
+ +M:	Lorenzo Bianconi <lorenzo@kernel.org>
+ +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ +L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ +L:	netdev@vger.kernel.org
+ +S:	Maintained
+ +F:	Documentation/devicetree/bindings/net/airoha,en7581-eth.yaml
+ +F:	drivers/net/ethernet/mediatek/airoha_eth.c
+ +
++ AIROHA PCIE PHY DRIVER
++ M:	Lorenzo Bianconi <lorenzo@kernel.org>
++ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++ S:	Maintained
++ F:	Documentation/devicetree/bindings/phy/airoha,en7581-pcie-phy.yaml
++ F:	drivers/phy/phy-airoha-pcie-regs.h
++ F:	drivers/phy/phy-airoha-pcie.c
++=20
+  AIROHA SPI SNFI DRIVER
+  M:	Lorenzo Bianconi <lorenzo@kernel.org>
+  M:	Ray Liu <ray.liu@airoha.com>
+
+--Sig_/EpXU1WFtm6i3v9buMom2pnc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUr7YACgkQAVBC80lX
+0GyOiAgAlx0bJv0NrcG57WqQx55lbwgRIy9J1QY2SbLVkdPtaL2Vm5+dudF0d0xG
+gsRt7emKr/awlcCYHO65dffD9TKJbgo8x/Xh0eA2ef0eW9K291k2LTq3I1fahUvS
+47tt1Qpb3gIkR6tJyTlpVDwsEMRG6Qcww/nuioXTV7R9aElY1nBNQCNNumXmpswW
+IJQ4yvU58eqyINgxoGOvK07H4CKQO9zTAz7p1m09yeK+TR+ovMAg5BRKH6BMDjFO
++IAClnS9iLsAmQR9ktwmAvFVKULNDeUQtDIdtgO/UutGizIyKA7to6Vs/h5Zmf9+
+QdOyW6clEyUnyBPV8d0s5aQ1ooWFXw==
+=KOWB
+-----END PGP SIGNATURE-----
+
+--Sig_/EpXU1WFtm6i3v9buMom2pnc--
 
