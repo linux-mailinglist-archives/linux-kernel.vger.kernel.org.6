@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-252905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0CD9319B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:42:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0081B9319BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA0B1C21D87
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA141F22AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F9F548E0;
-	Mon, 15 Jul 2024 17:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEB14F881;
+	Mon, 15 Jul 2024 17:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMZaXl0d"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FwZZid3J"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F74364D6;
-	Mon, 15 Jul 2024 17:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407F42A9D;
+	Mon, 15 Jul 2024 17:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721065314; cv=none; b=YmlXDbNjZodKXWqrMS6/r6xkPg0shopPBlkVwNGH0OsL8lll/YfwJjeiabbKrdGbK++7YcbefaHexS89DI5d/iEA2Y2AlKi0TbnPPxSBmSppXg3wABK5a70b7S9wiDJYnYurJQlb8VzOl9X8d28PL3IVK+Ni/FCS8vae6NZVQmY=
+	t=1721065477; cv=none; b=aHUifel7w/jFjbMyVsAvyIRrUwsTnDgEDAak8oah3ujnSt+iaLcxEhzAIwn8WVqq3QS3uxLT2jbMKGS0IQ50qKJjgdyIoIb+NGs8YGZma7S+Vq9iXhpVqihwuS17ttbFis6lh7H4g7YUdWt6elaWJTUBaiWO578h7zDmd19/O/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721065314; c=relaxed/simple;
-	bh=b42JSvuywZe+7wglo+K7VO6xLJINq/9FZ8Q+hh/Syfw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rLB8xHymDizbyBYx8lqxKrLMECvDwMnzEaQvl2T6WEYiRx0fG7b9ZcSyfgQEvuF7FzEfvCxAT6Pc7CZE2OwBddulgjTLb2HdmLAqnRtjE0++Bm9sYd+2p4iUzGBD/TW8PX2ioZtx6TMzO2Glc7tEuiI30twU/bs74BJqoJ/GQhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YMZaXl0d; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e04196b7603so4633048276.0;
-        Mon, 15 Jul 2024 10:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721065311; x=1721670111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xEV5pedtY2Y2FeTPODdvM+/ZX+4nHrD94jMR2RlwhT4=;
-        b=YMZaXl0dP4AHdLxHhS8hluEiCfkZ/a9t9Zw6eN6kNG4YoMz/njoeJW6X6jau9yGeFj
-         ypjOOMS2OixEIFNUqqYeFFxd52KntJWDfoBSJFg7ii+6Ts9jgUo9O1guIVGvU2sT+3dD
-         jrsMwuKDdY90BowjBlltmx/CBFi3uxr76VF8RjKt7GJ1y94NCfArnv65awV27ZstDrgE
-         qfb4vF4EfeU9xu0xRpCXacSevydh7SzQn/1N82qMRROJPQVyZPUEhOskXpn3LyedMJ6d
-         /wxnd8/tiJYoLKnIGgMhy/3rWYeR1U8HxSuDlBYvRbE9JNA1NbbpHiomLSPVRJz0KAbt
-         ImFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721065311; x=1721670111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xEV5pedtY2Y2FeTPODdvM+/ZX+4nHrD94jMR2RlwhT4=;
-        b=MPach5nFH8Ra8LlXSiafe/FHydsHLOSmBNAfaLcoavHWB6Ev+U8bTX+0Z8trE+Wcdu
-         dQ7Iceak0idJkX6YqX2rvYsP5Mh1Ae1pRbN+EkkEawFYBcVYSWgbdcQSXt4vnIdPDpTe
-         dgT6/gLKUFm+3rm1lj1Oprk77B0G9lahN65mCK0Scw7zptizd0ADKxq6Ev/ga2v3QK3a
-         4tJK6Rz9UIhstwaXu5ASMWV6Ii6Bnly7p7EwkKkSRkTINQigriNQKQZqn+/hs7Wlgqm/
-         PlDyJq/twzWVmE7IJDvVkZjyn7SFco6SyLqy4ErsuqIL3ixX3k/GCEEB4OM38HEYIpG7
-         a7bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoh8jh6pncCfudksKsVPVD5ZaylurJ67ym19B/fUN8fsja1KG2AkScx2agseP5a6VX6rXJTMzge78CFFQSBqxdpgFPbM21QX7/6ctVar+qVcb1oqhVXrlra6kMHMidkGosxIPL+1xsFRi/qgmZ6k2NOa095j+9+hc9lXa2moOmEjy6FYIw59Vj5d/N+VvnL7H3J01bFErWXJEYQK55fNgcDnaBMwUPStrQ+qZA
-X-Gm-Message-State: AOJu0YyCfVrfAfSbqAibVEnEXdg2+Cac3n7HapZcWZ+aMxmwXt4epPBj
-	242saFqI5Jh7Sr2uxoA9CE9EBN/Q0l9G91Mq/RuZS2NFOKRkJXpPeosrlN1l42uSCtexhPviiaL
-	a1c1kIGOwsmKmoRtudCAJpNmFJ5k=
-X-Google-Smtp-Source: AGHT+IHIN6/eBpniYpqerz8db8xwfOTyovfSRjDMk7JvYfmegjzpFKzgDJtBVYAnhNHbomijkTgVUKTNkbIU54dFkr4=
-X-Received: by 2002:a05:6902:702:b0:dca:c369:fac2 with SMTP id
- 3f1490d57ef6-e05d3aae365mr381626276.3.1721065311277; Mon, 15 Jul 2024
- 10:41:51 -0700 (PDT)
+	s=arc-20240116; t=1721065477; c=relaxed/simple;
+	bh=6oEcIzNrJLGplEzk+O9YUcaAYKIf7bLEjwJ8P8rl+B4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Iws08+EogQfvrxvCJLGPZ4B3QAlc86UG44sb8jm8s4jXvvDMu1P4UTggq3e2se9PUCmJvMCWGumV+lYESwCwkwIPHteL+X5QY/fNmXdt/wc4uC+ix8hVx5hP8ZxSaLX3IEh/bSHhod9uUhABN0d5uY8SfDvr9CKJ6KlG+f7qnWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FwZZid3J; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721065466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rsp+zu6VTR0uQWABL0q35jy6aykcocqveLCren7cMYA=;
+	b=FwZZid3JjKaP54tZbdVdmLh0cavtpEDtRK9YHJ/8kO2mlLu+Rw0KsF4Em/JGktrGK2OBs0
+	CwYCVkCZ2qUweZIJPbVcmMXWLHRqNIPqC4UmGS4XrtfkQtvL6UW0y50XOKiwZNvcJkoJmb
+	cdasfkCdWorCihO51aA3vX/iXcQMJmQlEUVI5/Ew3aCXKunpBM7Ex9XoMjvY3b6Jb2OPfn
+	YTmoZtmf3ThMV0K5x1vQZQMk/CDxFurLoHJPWG32klZwMFQjufEUET9oWfni3fEvLRhAMf
+	mn6LZyKMSpK9nt83n5tyDKaxTosuAv/rjMFwN9iKywBGLu+cXclXqv15BuQiJg==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Marek Kraus <gamiee@pine64.org>
+Subject: [PATCH] arm64: dts: rockchip: Correct the Pinebook Pro battery design capacity
+Date: Mon, 15 Jul 2024 19:44:20 +0200
+Message-Id: <731f8ef9b1a867bcc730d19ed277c8c0534c0842.1721065172.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-4-amery.hung@bytedance.com> <85d64656-d8ff-1133-175f-b12f4913fccf@salutedevices.com>
-In-Reply-To: <85d64656-d8ff-1133-175f-b12f4913fccf@salutedevices.com>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Mon, 15 Jul 2024 10:41:40 -0700
-Message-ID: <CAMB2axN5jJ_uabb-rd=wdcbX9DQYvENxQjK_7ZWhM60+5fVLKA@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 03/14] af_vsock: support multi-transport datagrams
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: stefanha@redhat.com, sgarzare@redhat.com, mst@redhat.com, 
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, kys@microsoft.com, 
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com, 
-	bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
-	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, bpf@vger.kernel.org, 
-	bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com, 
-	kernel <kernel@sberdevices.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Jul 15, 2024 at 1:25=E2=80=AFAM Arseniy Krasnov
-<avkrasnov@salutedevices.com> wrote:
->
-> Hi! Sorry, i was not in cc, so I'll reply in this way :)
+All batches of the Pine64 Pinebook Pro, except the latest batch (as of 2024)
+whose hardware design was revised due to the component shortage, use a 1S
+lithium battery whose nominal/design capacity is 10,000 mAh, according to the
+battery datasheet. [1][2]  Let's correct the design full-charge value in the
+Pinebook Pro board dts, to improve the accuracy of the hardware description,
+and to hopefully improve the accuracy of the fuel gauge a bit on all units
+that don't belong to the latest batch.
 
-Ope. I will copy you in the next version.
+The above-mentioned latest batch uses a different 1S lithium battery with
+a slightly lower capacity, more precisely 9,600 mAh.  To make the fuel gauge
+work reliably on the latest batch, a sample battery would need to be sent to
+CellWise, to obtain its proprietary battery profile, whose data goes into
+"cellwise,battery-profile" in the Pinebook Pro board dts.  Without that data,
+the fuel gauge reportedly works unreliably, so changing the design capacity
+won't have any negative effects on the already unreliable operation of the
+fuel gauge in the Pinebook Pros that belong to the latest batch.
 
->
-> +static const struct vsock_transport *
-> +vsock_dgram_lookup_transport(unsigned int cid, __u8 flags)
-> +{
-> +       const struct vsock_transport *transport;
-> +
-> +       transport =3D vsock_connectible_lookup_transport(cid, flags);
-> +       if (transport)
-> +               return transport;
-> +
-> +       return transport_dgram_fallback;
-> +}
-> +
-> ^^^
->
-> I guess this must be under EXPORT_SYMBOL, because it is called from
-> virtio_transport_common.c, so module build fails.
->
-> Thanks
+According to the battery datasheet, its voltage can go as low as 2.75 V while
+discharging, but it's better to leave the current 3.0 V value in the dts file,
+because of the associated Pinebook Pro's voltage regulation issues.
 
-Right. I will fix it by exporting vsock_dgram_lookup_transport() in patch 7=
-.
+[1] https://wiki.pine64.org/index.php/Pinebook_Pro#Battery
+[2] https://files.pine64.org/doc/datasheet/pinebook/40110175P%203.8V%2010000mAh%E8%A7%84%E6%A0%BC%E4%B9%A6-14.pdf
 
-Thanks!
-Amery
+Fixes: c7c4d698cd28 ("arm64: dts: rockchip: add fuel gauge to Pinebook Pro dts")
+Cc: stable@vger.kernel.org
+Cc: Marek Kraus <gamiee@pine64.org>
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+index 294eb2de263d..c918968714e4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+@@ -37,7 +37,7 @@ backlight: edp-backlight {
+ 
+ 	bat: battery {
+ 		compatible = "simple-battery";
+-		charge-full-design-microamp-hours = <9800000>;
++		charge-full-design-microamp-hours = <10000000>;
+ 		voltage-max-design-microvolt = <4350000>;
+ 		voltage-min-design-microvolt = <3000000>;
+ 	};
 
