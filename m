@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-253099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41270931C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E01931C6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 23:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726941C20E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7FF9284856
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CE13C807;
-	Mon, 15 Jul 2024 21:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8321113CA93;
+	Mon, 15 Jul 2024 21:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/LigJcr"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=patrick-wildt-de.20230601.gappssmtp.com header.i=@patrick-wildt-de.20230601.gappssmtp.com header.b="QP+tZhWN"
+Received: from mail-lj1-f227.google.com (mail-lj1-f227.google.com [209.85.208.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D48513B5B6;
-	Mon, 15 Jul 2024 21:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCAA13C67E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721077788; cv=none; b=uU4RONrrrSh/2ogQHbNjQTxeJ/9Lu9a5QU5Q8ZF0ZsUvMnjBW8bpp8sGos7y2eqF6QuKEwFUQ5hS6F14AJ3BBZC4Fz9G47PNFmgPc8vCFLKJQx5zDNJxddleOjRVaCCopY0QQmVQ28Yg/ycoMvs7eewNc+ybjCxczqervFaMNjw=
+	t=1721077806; cv=none; b=hPS7MUVbfwHYS9c3s8nU2FdMam/5vHJY0ozQMnZGtd1vso9CJtXTC7/L+KlAC6I/3tq4s5pt1em779XSMHDjyvOnzCAWzLSfktVZLZp16WGz3nF1KpO+cNv7ww3x2hALST+KP/tzVmYnuQ1a2krVnhNeohL+iO0GiW2szGQkAEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721077788; c=relaxed/simple;
-	bh=MbZ1dCHqJ/442s6cosB+tD5mGa46VywcXhS+EVwsdz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sbfqiBASNaOEd1/lEWC9GDO0fO13NVku+bD3jTEWhxC5VO/jL9j50AQDPbU9Lq1qQcM7XCCKCQQYcufJPIG7Hmmh3F6tB4tkg+CCUKl5g/u8SQ94Lef9er+oMbbTTe/5Hv6oXO12ZZY9msLaVL4+88IdAxiiEnyglzUJGgL/M2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/LigJcr; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44926081beaso28849661cf.3;
-        Mon, 15 Jul 2024 14:09:47 -0700 (PDT)
+	s=arc-20240116; t=1721077806; c=relaxed/simple;
+	bh=u1w1RSPyvouaCu29N86pT19j/1+b1aqhYphRKX0gLXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqnkWBFSRYdrReUGM2WmgUa6XyeOD564WRwiqhlUibIY9l2N0gjZV13gxh+ysKUDAZ5UusB2ae7TDE8KVEUR0tx4RWWB9cLFl5haMK2DNsv9DNB5rUUupqA5rsFipbZDAh4wmpDWqJQS40cHaTeRQMkmAeZveMouOeTOErO7mlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blueri.se; spf=pass smtp.mailfrom=blueri.se; dkim=pass (2048-bit key) header.d=patrick-wildt-de.20230601.gappssmtp.com header.i=@patrick-wildt-de.20230601.gappssmtp.com header.b=QP+tZhWN; arc=none smtp.client-ip=209.85.208.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blueri.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blueri.se
+Received: by mail-lj1-f227.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so63735381fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721077786; x=1721682586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y93QuD4cfjTuXNEsj0RS5pHXYmn6UrX+LGa4LQTALQo=;
-        b=O/LigJcrLBjtUIbfE50ovshX24XJX+iOvoudV3jv593MLYTBuUgEbj8mniILvRwRTC
-         0IHETdJ5+tVANWjGavq8qc3YPRRYdxu7FCZAp3XFWBpEPjn7QBMsf2+JttANCOjxKX1A
-         gc5xRpL5q5Lv4Q41h1rYHP8Wi8CMC/ZYF/TWvJLWaxxyA+7NMiP32shVn7YWUzxkne0Z
-         UJzxK+I99zIc0dMfKA9OJSokXvkf/7UKaCE0N5938BYsK5RpQ7BksWN9+fp6a1NTSDS+
-         QVomMOLWOIBawML0RhfWXBsFnD2KaWaMQ0bA2Frmx6WiBshSEbquRBX3FeXWhXm24dj8
-         l3Nw==
+        d=patrick-wildt-de.20230601.gappssmtp.com; s=20230601; t=1721077803; x=1721682603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1E/MglafaC0iSeZ1zI5mAhmpx2DB0Xx9LGnb5AqC2Qc=;
+        b=QP+tZhWNjGDLUFuG4YLCpr7Gj9qUvZTfWrNMuG8d/a4/KNXqUp7FZy4Xo4Kn+n1Gv8
+         FCfNODVhT6q9Tz882QKaQr/wwpI+Uj+g1r/HxwG1kx5rZdAJgxp8FMrvSu97nyhK87UZ
+         FjOCoXNqkP1WevFrlIP+ClFzpphf6qsiplOOTEPnTBT5PcgqcpvFq35Ob+5AINN54uN7
+         klTlOsV48zBjSguple5zG5Q3buGUTwEudoOxlFn+fxB5wJ4Yy4qpbJ8MxIJM5i4vjfTS
+         eJmJ1q4lmr790ewLCda1LHVh8WS0rl55gVNehcg4G/+q/V8BVRo1Q8mCSuxLhPl/wxJz
+         AcMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721077786; x=1721682586;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y93QuD4cfjTuXNEsj0RS5pHXYmn6UrX+LGa4LQTALQo=;
-        b=BUrx2PbrCfxMLkug1skniCQoKFx/xfRoPM3rC02To4tG2dJlapHYT4Iv34l4Ie/eaE
-         0AgN2wal+N04BwCpfhrQtSTBIWtYFCFrc8xX4p4i8Q+7oHeaxFOfTZZWM81xZlg2WhEY
-         GUkWfSp6oe4hCxpxc7oM3wyOsTD2mxIsZV1CjGwemXVHxyfgsgYp3CIkcRdqNsuNkNb/
-         YVpl+V1G09tl6NeNdnlrR8MN8gOmGRA4JBGI3FEXwdXiuuRhRj2rsVTnn2blRdF1Xh93
-         2OSr17r1s+rWpdpbo21MG4spv1Hui61u0YDxAZ/J5JsnF1b9Wpzc1A5MgGlLao6ddYtJ
-         nQDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgn/iDTYK/BRUjApLLUNWMLcDUsR9cRnq/Y9W9yQWLrHlhun636hFIAoIfukB2TaKymrzWAFY8dUJHgLA45TCbT7xpyUDt2goG7lmKp+hp+c9jxA55JDoacXT4rJrZjSsgOGJiOmhS
-X-Gm-Message-State: AOJu0Yx+gTxq/aHhseHYqu+0JtxnnNiPiu+cuDkvNw1uSr81Qb2a2nyx
-	7XsCGyAea2cn81rz9hOMN4NesRZ8YUBZfuqZ/sOjKQU6s3eFQRIL
-X-Google-Smtp-Source: AGHT+IHJ+lIQSzH6maVbFUR9tEYSEk3oFiFHq6QFidXyxSrVvtZ3MjuCbSb2P7DfDLDMt6JTBzQnPA==
-X-Received: by 2002:a05:6214:2585:b0:6b5:e44a:6b30 with SMTP id 6a1803df08f44-6b77f54fc4dmr4989216d6.47.1721077786228;
-        Mon, 15 Jul 2024 14:09:46 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b76194fe1bsm24807846d6.11.2024.07.15.14.09.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 14:09:44 -0700 (PDT)
-Message-ID: <d8a3787c-d45c-4cf7-816e-6b59bd8cf3aa@gmail.com>
-Date: Mon, 15 Jul 2024 14:09:41 -0700
+        d=1e100.net; s=20230601; t=1721077803; x=1721682603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1E/MglafaC0iSeZ1zI5mAhmpx2DB0Xx9LGnb5AqC2Qc=;
+        b=uTPxOrGrWVIk5cRjCrh9SpbgvLZ/NmhGXZ2NWKEP9Rtd0FnsCl7cHFozcXfJSS5fL2
+         81vixXHOy/Oc0nRl09SrIgEAvNktA0u9qDng/kdsjv2wmFY788jLmUpRSmta9jpw/9kW
+         e8LzcyBmXUvDygBRir6Hbcka5Jkfh2RuV8jPxpXd8emowh9K2U3PXBa6qSwxcOzqCxEZ
+         6EsmT2uK6rE/iIvCgb7yJ7smAyOSObbJ9Chy5HOtyajXrYwwoBtWvCfGJOI47apbCmaX
+         +nVKgkHAHicDQNkpaReprOwQSrTZFzxtoO2LYbZKjInEiHKOxYB2sJBSgotosy5gXcWg
+         VCFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJNa0b02i+n24MnWgKG7DpwL60Ht3S7uohprcrRsy42y8wdc/XD1OHCJxo7xdd2E3sWNmEfk3vTah3PJgOXW4aq8HMwzPyeSVC6ZNo
+X-Gm-Message-State: AOJu0Yxuw+HQoDAsLagLr56J4B5MCg7U2HGcpvAVrQd9HmsZ2XAMSr/r
+	k3Aw1REKfgGEw6p6eL5DRxLIByV/qJQFGQqUhH13TijSO2D06QQ8MBpalFR2V+9B45E9vGBTljf
+	KHDEpP3Injpk5SVc7Lq9paJrpoARLilEFtWE9CYpzwssauppU
+X-Google-Smtp-Source: AGHT+IGr0eKJQDn+miWwt865fhI8Jw3s3SNaJU/TIdLiI/YGgzmQ4yRL/+c6jpc+YHdFr7Ga15A3MjTH5DRE
+X-Received: by 2002:a2e:bc23:0:b0:2ec:617b:4757 with SMTP id 38308e7fff4ca-2eef418bf09mr2322601fa.13.1721077803054;
+        Mon, 15 Jul 2024 14:10:03 -0700 (PDT)
+Received: from mone.local (p200300c1c7288900101feb289c80409b.dip0.t-ipconnect.de. [2003:c1:c728:8900:101f:eb28:9c80:409b])
+        by smtp-relay.gmail.com with ESMTPS id 5b1f17b1804b1-4279f23edafsm2961325e9.7.2024.07.15.14.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 14:10:03 -0700 (PDT)
+X-Relaying-Domain: blueri.se
+Date: Mon, 15 Jul 2024 23:10:00 +0200
+From: Patrick Wildt <patrick@blueri.se>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Steev Klimaszewski <steev@kali.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: wireless: add ath12k pcie bindings
+Message-ID: <ZpWQKMX9jhb-nNlh@mone.local>
+References: <ZpV6o8JUJWg9lZFE@windev.fritz.box>
+ <ZpV7B9uGVpeTSCzp@windev.fritz.box>
+ <d921bf20-1d83-492f-ab88-0f23de26a649@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/12] PCI: brcmstb: Use swinit reset if available
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240710221630.29561-1-james.quinlan@broadcom.com>
- <20240710221630.29561-6-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240710221630.29561-6-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d921bf20-1d83-492f-ab88-0f23de26a649@lunn.ch>
 
-On 7/10/24 15:16, Jim Quinlan wrote:
-> The 7712 SOC adds a software init reset device for the PCIe HW.
-> If found in the DT node, use it.
+Am Mon, Jul 15, 2024 at 10:54:18PM +0200 schrieb Andrew Lunn:
+> On Mon, Jul 15, 2024 at 09:39:51PM +0200, Patrick Wildt wrote:
+> > Add devicetree bindings for Qualcomm ath12k PCIe devices such as WCN7850
+> > for which the calibration data variant may need to be described.
 > 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Hi Patrick
+> 
+> General, the device tree binding and the needed changes to the driver
+> to implement the binding are in the same patchset. I don't see
+> anything implementing qcom,ath12k-calibration-variant here? Does the
+> driver already support this, and you are just fixing up missing
+> documentation?
+> 
+> 	Andrew
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Hi there,
 
+technically I could try and make that change, but I don't actually run
+this driver or Linux at all; this change is for running OpenBSD on that
+machine with a correctly defined device tree.
+
+The realities of Linux being the de facto upstream for device tree
+bindings force me to submit changes here so they end up being usable
+for other operating systems as well.
+
+I would assume that eventually someone that runs Linux will adjust the
+ath12k driver as well, because this kind of binding has been used for
+both ath10k and ath11k and this is just a copy with a name change for
+ath12k.
+
+Cheers,
+Patrick
 
