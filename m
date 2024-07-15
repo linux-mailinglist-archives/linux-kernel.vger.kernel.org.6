@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-251965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD320930C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:58:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEE930C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFF5281426
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 00:58:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75EEFB20DFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCAA4C70;
-	Mon, 15 Jul 2024 00:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B885E3D68;
+	Mon, 15 Jul 2024 01:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kmaqEs65"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JP4TaZFO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEAA4A18;
-	Mon, 15 Jul 2024 00:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568905C99
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721005123; cv=none; b=m4vzyaCsPYrxArma33y9hsSOU6HPFV3fcLaCDRhQmT10CPYo1FCwbTLulw7NE/e3lsMlq5gwxQbUhOCUGO6BGI1/NDflHdVIwuKk1HSHlZMl0u7JPiddFc2GY1WTIvbmNvvyaQP2g/JrirebCL2C0NmJpjnx1f28BXUmjnMiX+g=
+	t=1721005726; cv=none; b=ZBGmyLDkxJDtRo49r11h0Fg56WhthFVMoh+Q6goa4lBrPpmmUbGG099IRfwaQ+CXTCm94TCrMsEQcPGwiW1XTsXLWg14vH9DyCgF/1kFjasrw29lV5h1JaYexhaIGONd4u4H3ICgsURRku4zdb4Vjz3rWB+ubU1YdO3B31Tb49g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721005123; c=relaxed/simple;
-	bh=Bm+eXTVkAB7kqv/OKXbzXBjknfigS9qxCazq3JRqfCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dWwkoP8rRAUgSRsuULOUpYmXtcH5T+uwgFP94y88Ts/bNldMr+u73p9ZJszeRzUhXKgld/8yPjvf4BX+KSZm5+lxu1qgkJJP31h0Wzk2+64N0DLFh7mJraMeGRAMf5ooDXlDK9YKvYwwQALw0mjGaxy7s+abAnlZhSTcVBpLK2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kmaqEs65; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721005118;
-	bh=NGmOeTs8rbCRo+Lfmub4TgfphZcHrV4Vg4NavsxUQ7s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kmaqEs65BlZWsm01CEoDB0kvl+/aQVIG4iUP8JQL5X4SFgmEzoSbdbTlY3YFGery2
-	 d3OTWqGy8E3aZFi4SkgTsNTXO4TNq9h4ST05aY2cRpR/oCkmK/W1G9Q5ebeHAPlzAB
-	 qpjVOC0sLloy2Dwaif0uCOdRUljPoq47+q4Yvxcb3OJv8GJ+Ld8+YWT2Jn0SlWLdyc
-	 FsZQyWB7mg6RNfJjhWtuIfx3tnBCCXp1s1sWYPgCSzF85v1YfBzTQQ/VvQy77qB4iQ
-	 azI0euXWIz+mtna8Flc3HxuuV7ZEtHw6GedbM24BZQxgfd/llDpUciAE+PsXEzoDmA
-	 PVQOcjbFqsjEg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WMkNF2z2kz4wcl;
-	Mon, 15 Jul 2024 10:58:37 +1000 (AEST)
-Date: Mon, 15 Jul 2024 10:58:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust
- <trondmy@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Kairui Song <kasong@tencent.com>, NFS
- Mailing List <linux-nfs@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the nfs-anna tree with the mm-stable
- tree
-Message-ID: <20240715105836.6d6e6e50@canb.auug.org.au>
+	s=arc-20240116; t=1721005726; c=relaxed/simple;
+	bh=Pa5I0cVPLyu9hM+t7OcRoRA7sRLi4NugvS+t0stj8qg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dk04jt8NF4y1RR1sZDtVjEUPiA67/4NNPnqYyV9ZROixj9kztXmRQLv7a3xSBOhSIgyPi7EUi7QDwk9YmCPoexRlYEWQqP4DvZHW+cWj6RPPPGoM0D8DvEXI3e5lCiwMk+Vp09+VmvP55Hm7cqvfOqjyFbuPUMN4m4nHzKDB9sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JP4TaZFO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721005723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PFD7oUV9b+eqssJJfa29SNu/zafN6i0hj5VXLiDFp+I=;
+	b=JP4TaZFOkf0suF/tn3u7Xlp9fYeXmBec1E3oRoMssixB/Ew8+KA5r4kU2BtF5OFvUdTfsD
+	e4Ll8pmNZISatmjKr95K+otxK0Qww5sqWTobIn09l3xOIAK0xqP4jzfokUy4x9fyS1Aj+p
+	jt9FKHeOiSKod3icKkkIVILQTHqfIvs=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-152-gU-8rlgpPOSMboFZjmx6_Q-1; Sun, 14 Jul 2024 21:08:40 -0400
+X-MC-Unique: gU-8rlgpPOSMboFZjmx6_Q-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c9e5c4fdefso3790863a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 18:08:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721005719; x=1721610519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PFD7oUV9b+eqssJJfa29SNu/zafN6i0hj5VXLiDFp+I=;
+        b=eCmsmzFsdRpszLtCYIVo4r02YWOcThKEiYVS8oCtfxb5iKmPbAS+8fWM1B20HsowtE
+         Mk9T+FVL+b3YcHYL6pHN583DBRTW+8lJpICuVnKK9SNQ0EG+gHgyTyqPhUpHqJcJ5aM6
+         Ktd5/GHVWMUT6aNgbs7tfdn+7fA+fNst8RxgXveQzo75IKphDISDdVs0nJmyNX2l7cwa
+         vGCbw6sHxMXBSxRResOM6zIi3R5bgYvZa0SbbaBUVKSXX9dKeuGEOb6N8DzoU9lxzspN
+         41c6ZpAoIkwQuXbffPZA+2S5QhXZ9+u6tQF5po0SIEIvuSDNjyQpHGNXJ2qq4GgfEq0C
+         515w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUSGHMXhWiFc57ysV/02kz5nDLisjj5UlXSSA6B6CYoueTa4ICyuKYTjUwc3HZ5U3xQumaF3e3rfRXmzc3JJEYbyEc5VChT0KHl4eg
+X-Gm-Message-State: AOJu0YyPFTkSaLHSr0Eff13FOYJmch1Ha1OYQWDx/nMw4ynq5bFcOp0F
+	WF58M9wfg1veW3TtTkpyg5qVaiE48f7Tfu4Gi20gmghPdruTgy+HBoRKRmJPC8mADsq4r0MogjA
+	nVupt3y6dGAS3VGhJIyHtpYMJv/LgifYmznqKNkihyVCnBlyoRZZDshxHoKeuvYjmc679x2Rykq
+	heHEivbicclXmSuenEB2yifx3NKCxwH6A9BdjL
+X-Received: by 2002:a17:90a:5288:b0:2c9:36bf:ba6f with SMTP id 98e67ed59e1d1-2caee674e2cmr7215529a91.3.1721005719665;
+        Sun, 14 Jul 2024 18:08:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzfOYW4Dode62bRmQR3obF0rhuYSCpoHB6v8yaabskH3L/XYm5x+VvgWMx3soWzdSy10hWnKT2zpLzTYDaJWk=
+X-Received: by 2002:a17:90a:5288:b0:2c9:36bf:ba6f with SMTP id
+ 98e67ed59e1d1-2caee674e2cmr7215499a91.3.1721005719219; Sun, 14 Jul 2024
+ 18:08:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nzY+LIQudv7Wf9cBm5ruQYH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/nzY+LIQudv7Wf9cBm5ruQYH
-Content-Type: text/plain; charset=US-ASCII
+References: <20240712115325.54175-1-leitao@debian.org>
+In-Reply-To: <20240712115325.54175-1-leitao@debian.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 15 Jul 2024 09:08:28 +0800
+Message-ID: <CACGkMEtDDCtF3FrjOppS=+Fmb1uHZborXn3biuRKV4iTwHmVaw@mail.gmail.com>
+Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
+To: Breno Leitao <leitao@debian.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, rbc@meta.com, horms@kernel.org, 
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jul 12, 2024 at 7:54=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> After the commit bdacf3e34945 ("net: Use nested-BH locking for
+> napi_alloc_cache.") was merged, the following warning began to appear:
+>
+>          WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_=
+put+0x82/0x4b0
+>
+>           __warn+0x12f/0x340
+>           napi_skb_cache_put+0x82/0x4b0
+>           napi_skb_cache_put+0x82/0x4b0
+>           report_bug+0x165/0x370
+>           handle_bug+0x3d/0x80
+>           exc_invalid_op+0x1a/0x50
+>           asm_exc_invalid_op+0x1a/0x20
+>           __free_old_xmit+0x1c8/0x510
+>           napi_skb_cache_put+0x82/0x4b0
+>           __free_old_xmit+0x1c8/0x510
+>           __free_old_xmit+0x1c8/0x510
+>           __pfx___free_old_xmit+0x10/0x10
+>
+> The issue arises because virtio is assuming it's running in NAPI context
+> even when it's not, such as in the netpoll case.
+>
+> To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
+> is available. Same for virtnet_poll_cleantx(), which always assumed that
+> it was in a NAPI context.
+>
+> Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
 
-Today's linux-next merge of the fs-next tree got conflicts in:
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-  fs/nfs/nfstrace.h
-  fs/nfs/write.c
+Thanks
 
-between commit:
-
-  237d29075ca7 ("nfs: drop usage of folio_file_pos")
-
-from the mm-stable tree and commit:
-
-  64568b27b2d2 ("nfs: pass explicit offset/count to trace events")
-
-from the nfs-anna tree.
-
-I fixed it up (for the nfstrace.h file I just used the latter, and see
-below) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be mentioned
-to your upstream maintainer when your tree is submitted for merging.
-You may also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/nfs/write.c
-index 3573cdc4b28f,680505d664f0..000000000000
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@@ -279,9 -180,9 +180,9 @@@ static void nfs_grow_file(struct folio=20
-  	spin_lock(&inode->i_lock);
-  	i_size =3D i_size_read(inode);
-  	end_index =3D ((i_size - 1) >> folio_shift(folio)) << folio_order(folio);
-- 	if (i_size > 0 && folio_index(folio) < end_index)
-+ 	if (i_size > 0 && folio->index < end_index)
-  		goto out;
- -	end =3D folio_file_pos(folio) + (loff_t)offset + (loff_t)count;
- +	end =3D folio_pos(folio) + (loff_t)offset + (loff_t)count;
-  	if (i_size >=3D end)
-  		goto out;
-  	trace_nfs_size_grow(inode, end);
-@@@ -2073,8 -2062,8 +2062,8 @@@ int nfs_wb_folio_cancel(struct inode *i
-   */
-  int nfs_wb_folio(struct inode *inode, struct folio *folio)
-  {
- -	loff_t range_start =3D folio_file_pos(folio);
- +	loff_t range_start =3D folio_pos(folio);
-- 	loff_t range_end =3D range_start + (loff_t)folio_size(folio) - 1;
-+ 	size_t len =3D folio_size(folio);
-  	struct writeback_control wbc =3D {
-  		.sync_mode =3D WB_SYNC_ALL,
-  		.nr_to_write =3D 0,
-
---Sig_/nzY+LIQudv7Wf9cBm5ruQYH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaUdDwACgkQAVBC80lX
-0Gw+6Af/VTNgao+oEEVH8WwqmF8qVOkwdCpkkkLvXYL4qk4hK95h/bANxClYnPwn
-+BWgbj+LHCgVcA//EPGj5Ku/sO7weONZTRefQLkBIGvhGruSUdbvscRQAyNs8N5+
-F0d3fSQYlqpAkYemxAuMen2+1X8a27UkAPeJK52W3Q7ouVAWirEfmOLIpq79PJcq
-EcaIFV23AnzKBUT9BU8fIRXvS7BbQqvTWFRO0rZ/fGfQ9TXKvmSmK7CmemwOlXHc
-PT5gafpwva4TbeVjB3+MpoBnelMdwVTY5NwerEpcXa2QZBRFGVXyBY9HuKMUuX3f
-N6OnBnlDz2YugHNxCZOsdlA8KV4F+A==
-=qROP
------END PGP SIGNATURE-----
-
---Sig_/nzY+LIQudv7Wf9cBm5ruQYH--
 
