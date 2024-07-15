@@ -1,74 +1,64 @@
-Return-Path: <linux-kernel+bounces-252279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FB39310E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610D59310EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C4E8B22DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93AF51C220AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8730186287;
-	Mon, 15 Jul 2024 09:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07BF186E20;
+	Mon, 15 Jul 2024 09:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcnYtGy4"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="sL2kg5Ba"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AE55223
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C96F1862B2
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721034589; cv=none; b=hgb2W7QHaEHEugsLuJpOd+STEq+Mb0D801L9JWtsyW8rkPhYvTVQobYGcitJbXOL4Y1/Pd6EVYNwKWCymvc/LKj27QT1zBYUTsOK4ek1bg/CVH3YUco/Lvc43FCjZ2c6SdkUAUDZPUUrNasRj2vhNXICJybWVL4/8Gbppn21yh8=
+	t=1721034717; cv=none; b=hWLmXEMGv9RQn5ptU6KjR16TMRJd78uOpqm1cEN9DGswbPPTZI8M1BFhIIn/qryb0BnCrJTYiVsRmIFwP6vhHv3dame3HfYo22fRda/oWWOY9EdjmeU8V+c8FXLz9cK3nBUBXIp4pIbu7AGgNwUAmCZ8xSrjmlgRYYM96VoyZAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721034589; c=relaxed/simple;
-	bh=u+Gaa0hibGb8iA3gN6UB9Fck2zCztXz6k5FGOnbEuUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkHXq1V16RKkfPA+VRCbQoWPK56Af0bTQOc401EZeK9/a7RK+fcUgXWkHUI0icBOs2bPxnBYCr93Li5O2FQ9jKYlbEw/Gc9Op+iPXpbeSZZPVd7NRHFaae8mAG4ZrmSiBLQ24JC++ib1fVXq5shRxr2hpZOlH35zpEeSQ1ws+0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcnYtGy4; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427adb1cf75so5308755e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721034584; x=1721639384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+3B6jB8UMroqJ2Yc/1gLAFE4gd/G0YdH5HhxS6qLOew=;
-        b=xcnYtGy472lUiPqLeQZaIqzpvnyS9w9FgeUvynpJcLdf7GPgzJjwFUfZAWbtGhJBbm
-         QOoGLCijVZkAzobxwoJ3kb0QBb0xxWloUaEbVYki2HFL5LD1Iy/0G2J8FstygyvpC29J
-         zHOcEHL8UFIkrYud8K2aqEAIS/wWLASfrvBYXOln7p6HeK0igSg+T+Uno0RJnoSHBIql
-         dilDAkE6N0BM510SWTO6XCIvmoORlzCFTXSm0L/zYY1vH9y1vlQWjT8mi1gXyjAryXxv
-         9q+BPGtuzP6A8XMOyO6CZimXQwEQM/D9F797ay86cspL3HKK07894mwmTJxwNAgBt/AN
-         NQ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721034584; x=1721639384;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+3B6jB8UMroqJ2Yc/1gLAFE4gd/G0YdH5HhxS6qLOew=;
-        b=D7rap5wT15ccvDkBSOppws+i2miLKJmVvL0vQ8SF3k7M+SWwJZLB80oSjWpzHMWEcm
-         THaKWdaKqvLxi8J796d8fRtUAJ2Pn8KGxt0hKyZJQvw2XXxo3fQqQQQ/8TJtf3uqDEmk
-         zaBuMvSmTARXsumHr93yhlvW/Gx3zuT28lSPvr9CIBEUlDkVsfNeihzk4bMs8Q9BT1VC
-         LwIXRDgyCtJ8SurPvrj2ZUT50pMbYwnS3hPnmgK1n3kWC2h00dg0z8OB0iD3e/q0MOzo
-         tcYVG7E43JDx+mewyqkJQODKokBSKx3QF6nSUt0RXMExTnDR/NiB1Ruz/1v3wl5vO/lb
-         4YWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBgwq5GCTLCSmkluMCNdAlISHrb3gS7UX7hMV/ujtGMxhPny4KPSDeBzYhVMBC40LxuB4Ayg5n5xetP4PM6oGM/IDNKWqlBHP+X60
-X-Gm-Message-State: AOJu0YzfyyvNYPB/+YkRZ/TI+PNrE0txe4CZxGffyud7ucgaTJL+81Mz
-	THAGdOmB7l/T5pQEc3n4RXIW7buvKkZ8aTXk0xjwSH1soxxu97znjPGl4AscHdu8PIHKKjToOhs
-	8
-X-Google-Smtp-Source: AGHT+IHoknIsEXpesRP/qX2XWO81Tb0GhanCjhRsodiU3YItQHNxx21jIEKs66uJTiHHN8J6aJ56mg==
-X-Received: by 2002:a7b:cd98:0:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-426708f1d94mr128457725e9.26.1721034584503;
-        Mon, 15 Jul 2024 02:09:44 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:e709:abf9:48b3:5079? ([2a05:6e02:1041:c10:e709:abf9:48b3:5079])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-427a5edb489sm77959745e9.37.2024.07.15.02.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 02:09:44 -0700 (PDT)
-Message-ID: <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
-Date: Mon, 15 Jul 2024 11:09:43 +0200
+	s=arc-20240116; t=1721034717; c=relaxed/simple;
+	bh=EmBq4iYlhep3ZGRFPwGod6Rwi9HusrX/rf39e4GhoPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EGqCtBP6hOQS6Qh+5UZNfHz8MeKoauCP/xJfMoS+luF+cVZ1x9Qh78T+S/Z837DFMZJQEgJpBzoraEqwWtPIs1ryPXJG/BZjA0tn/Dip52jZqBnvy8bYa9ggZ7FwOqd4klME2Vg/yNgfsUN2q7GN9VSHjYLyhkeTHrgUN/zWgXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=sL2kg5Ba; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F7nQAY011784;
+	Mon, 15 Jul 2024 11:11:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	EmBq4iYlhep3ZGRFPwGod6Rwi9HusrX/rf39e4GhoPk=; b=sL2kg5Ba5l3zIKIy
+	72wYw8A4IqRvX627qjMpEHz7ZHHqYknfLccmEqqCnITeHsF4XFSYAETGftsGw9Ly
+	RMh04G41xx5AkrFuJzLtL4oDkqVQmhLgZrJlbjnPVsn4MPpRTevLXz44+uDODwgb
+	G0oGgZp6ygZ/c3zGmZP/kQpxmgv7nj61EJbhk8cDqH9PbDfaAkfHQX1fEaNecV/O
+	LMuuTOKKmeNx/8AfL6yqk4vfIOlM9jLc3Tegf5WGAiXyLHNe7HirMBzCEsOaAMsd
+	HuUwWfrvki2m+98mmdRqnZ7ZRhlOJMWn/A5yQDLeXTTyrX0vliPZWQ6AXucNHdyB
+	zWyqqA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40bgfddrdv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 11:11:14 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BC8C84002D;
+	Mon, 15 Jul 2024 11:11:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CC568210F72;
+	Mon, 15 Jul 2024 11:10:19 +0200 (CEST)
+Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 15 Jul
+ 2024 11:10:18 +0200
+Message-ID: <aa8d12a0-1cf1-4f83-aa52-e0f3d8e3338f@foss.st.com>
+Date: Mon, 15 Jul 2024 11:10:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,96 +66,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>
-References: <6064157.lOV4Wx5bFT@rjwysocki.net>
- <20240715044527.GA1544@sol.localdomain>
+Subject: Re: [PATCH] drm/stm: ltdc: Remove unused function plane_to_ltdc
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        <yannick.fertre@foss.st.com>
+CC: <philippe.cornu@foss.st.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Abaci
+ Robot <abaci@linux.alibaba.com>
+References: <20240624024113.54850-1-jiapeng.chong@linux.alibaba.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240715044527.GA1544@sol.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20240624024113.54850-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-
-On 15/07/2024 06:45, Eric Biggers wrote:
-> Hello,
-> 
-> On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
->> if zone temperature is invalid") caused __thermal_zone_device_update()
->> to return early if the current thermal zone temperature was invalid.
->>
->> This was done to avoid running handle_thermal_trip() and governor
->> callbacks in that case which led to confusion.  However, it went too
->> far because monitor_thermal_zone() still needs to be called even when
->> the zone temperature is invalid to ensure that it will be updated
->> eventually in case thermal polling is enabled and the driver has no
->> other means to notify the core of zone temperature changes (for example,
->> it does not register an interrupt handler or ACPI notifier).
->>
->> Also if the .set_trips() zone callback is expected to set up monitoring
->> interrupts for a thermal zone, it needs to be provided with valid
->> boundaries and that can only be done if the zone temperature is known.
->>
->> Accordingly, to ensure that __thermal_zone_device_update() will
->> run again after a failing zone temperature check, make it call
->> monitor_thermal_zone() regardless of whether or not the zone
->> temperature is valid and make the latter schedule a thermal zone
->> temperature update if the zone temperature is invalid even if
->> polling is not enabled for the thermal zone (however, if this
->> continues to fail, give up after some time).
->>
->> Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
->> Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd033fca16@linaro.org
->> Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.net
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> On v6.10 I'm seeing the following messages spammed to the kernel log endlessly,
-> and reverting this commit fixes it.
-> 
->      [  156.410567] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  156.666583] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  156.922598] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  157.178613] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  157.434636] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  157.690774] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  157.946659] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  158.202717] thermal thermal_zone0: failed to read out thermal zone (-61)
->      [  158.458697] thermal thermal_zone0: failed to read out thermal zone (-61)
-> 
-> /sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
-
-Does the following change fixes the messages  ?
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c 
-b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-index 61a4638d1be2..b519db76d402 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-@@ -622,7 +622,7 @@ static int iwl_mvm_tzone_get_temp(struct 
-thermal_zone_device *device,
-
-  	if (!iwl_mvm_firmware_running(mvm) ||
-  	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
--		ret = -ENODATA;
-+		ret = -EAGAIN;
-  		goto out;
-  	}
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_05,2024-07-11_01,2024-05-17_01
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+On 6/24/24 04:41, Jiapeng Chong wrote:
+> The function are defined in the ltdc.c file, but not called
+> anywhere, so delete the unused function.
+>
+> drivers/gpu/drm/stm/ltdc.c:494:35: warning: unused function 'encoder_to_ltdc'.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9403
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+
+Hi Jiapeng,
+
+Applied on drm-misc-next.
+
+Thanks,
+Raphaël
 
 
