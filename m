@@ -1,106 +1,167 @@
-Return-Path: <linux-kernel+bounces-252848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28239318DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:55:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7CA9318DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 630AFB2256F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:55:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA04B2260C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC5D2D7B8;
-	Mon, 15 Jul 2024 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EBF2BB02;
+	Mon, 15 Jul 2024 16:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="N4iLTXsR"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vZYkCHbX"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEDF446D1
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74B81CAB8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721062545; cv=none; b=HRlHHlxjWj8eHWByKXE1I09P4cJJD6gmN46uYyoQhYQ1GYGwIsMtmhA6o0/UEgy9q8W8qf7Zoq9kf6sWibVpRFtcQq/ilWx8JfQ3gT+ipVS/Yd+osXPdNjSIq2jjOxMQWBIFRwmUM0MHVmnJac5ZLBFakCPmhxmShoXd88528CA=
+	t=1721062578; cv=none; b=P+me34t7KzTDfqB32vmkW/xTIuE8RmemZGcNnhg/zXQdYAPdKhg/jEm5GNdO8jr2w0C5eSqO1mSiPetBop7r8GZFFtCRtdEoSgzOdCHblpX4648UFOGHTV6TTMxAVRsOdkSOslLgnXYX1F7fkdn9ujF7f4DXB5YA6aDC4v9oKbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721062545; c=relaxed/simple;
-	bh=kS0fwxUH/JUKLTIiU2CiR8HRF9SdfEDnRNZgjvea2O8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZY/nt7sRPdqjPldddZdCLPFaJN8v+kP6duW0leA+6Et3m+m7ml6a7SoRd8v/e9UVKs10z5B79/tCcWsgb2xiMCu5qVf+FXfKtR+PUbEpg2VxiLltvWujFKFDftHI36mzS6oUmJcrRLnInDRXxi+osx1Du3VIZDJQLmtDRbdV9vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=N4iLTXsR; arc=none smtp.client-ip=212.77.101.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 24655 invoked from network); 15 Jul 2024 18:55:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1721062533; bh=9KE2JDUcNrmeHQCDFpPFbwwq+eLfcwh1/bc9mtWbaXk=;
-          h=Subject:To:Cc:From;
-          b=N4iLTXsRnGqRcNaRDDF8PO4SFQtUiCFBLSGlLcr5MT7zmKIskESa5uY0I2/ArBAHH
-           xJrtGBKBYQYRJdzn7ghZyzn6YIH+HxlyQ9tI4Dl52rJTLDiNhP9722TiX0O8hVpsDx
-           W9PwoSKaxYGgchLyAH2AScLcZX6uhnzgqRTfCyw4=
-Received: from 83.24.148.52.ipv4.supernova.orange.pl (HELO [192.168.3.174]) (olek2@wp.pl@[83.24.148.52])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <andrew@lunn.ch>; 15 Jul 2024 18:55:33 +0200
-Message-ID: <475f4e18-5595-4761-ad3c-f792e6dc60a2@wp.pl>
-Date: Mon, 15 Jul 2024 18:55:33 +0200
+	s=arc-20240116; t=1721062578; c=relaxed/simple;
+	bh=b8bjZwB6QeTPAtY832jHAfoqjJVRh8eguL+Cmdzqh6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQSJrIZnjLBVR0WSTPLj4VErqIj65ZiaulQZLueKzrOQipSdPNj3dg8SEMAG/1lY+FxHAPQ557UUV9iEU1lfWYQ3AAsUoWueIuyEqeq44EPZc2AdGxnowa7+FXuDTmh5zCU4jVaCE/Wt9UdIirt+M9Z/UgI+ogkQHteikMD9yO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vZYkCHbX; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-447f8aa87bfso15531cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721062576; x=1721667376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=02jBTyIYbhiBgb/Yu2ftb/npqvSP6Ka1Kr7RVDqcuYI=;
+        b=vZYkCHbXVguwl/U+Tbh98FyJaESZx5ABa0Eq60htOKSZk4QoeAp+7p+JOlY141xfbd
+         N5UtaPtHdIYNTZFxCqT8WEYjK8gHyGt6D8g5EfaJwbM0+1h0sLWPZ3TBuVnhkbROVNEi
+         ebbZLnqPZc1jLX/mKKEP5/8erTShg8jpgkRtmTmDm7Yk1B+FU5w+LweVyJiQQ7JCe8dy
+         xmuwT6I0ElNtWUIXBR+vD48tET2VqibHEwBxGo72OjZD4z3FwySP4yFZ0U/Uc9EpqHmJ
+         pdgUbvNYrA7vVDdld/Z6K9jUtucbQGue1b8hXraRAptbwhsr6sAQRz//85BOqVChZfrK
+         /arQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721062576; x=1721667376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=02jBTyIYbhiBgb/Yu2ftb/npqvSP6Ka1Kr7RVDqcuYI=;
+        b=Ajibyu/NRCwmPJ0iIJTeh4erJoyB4keIOSLthLMuPnVp1B/XyWghDKEGziGkZiGPRH
+         oaysdaki0WHP0gBEXKR2ZxbuvhKiFEyYVKDycGKgP4swKpqZg84GwA8SUwLm8BF0OJEG
+         pSygrSnrPHAdSq307ayIPJotRPX/7wolpDlgrUA4f4eyB0wwOpUvkyDj+6e5J0836Stp
+         UNRZhBL/DQxHJU7+VkPK6lPKxp1Q5q8nnZZK5bKDOawBkg7ejYWTaed8Y/Xd5XjZ9Kda
+         /nPFwFVcqgNg+pa4VDEYOOCoPxntt8vitiUaoCIO02brbwJILMkfajVzKcHSmtLZCA+/
+         y8uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeZ781VgBzFhGC1BGpEnHqJ9FoKJFcOYfWVA1CvccDpBPtiTABGHP3w6YFE+sjxJrxfOqVg46SP7gOEgc5DMooxlxLUZiafFqvdrfS
+X-Gm-Message-State: AOJu0YyaqhXxV6CaxF3vFm1BuPMNVO8Zn+Opl3XssKow3AHRRqVRTGF5
+	EMPGddcvtQS4CHQ278RnwKdON5nuYZ+iCo/LUWoFZxF2SOPa7Nee1ErTuTKpyLYrXEgATQSoH1H
+	GNW9BYJezlYbBmbmSphWtPS3BxlfTnu/C35W1
+X-Google-Smtp-Source: AGHT+IGga64Ehsgh34xHpgbxZ4XkIMmBA3oeSeXSOSPWRrkTmDK1WjXya3JOHlljMiiiEhUtI9zjO9VfED8ibiHkp3s=
+X-Received: by 2002:a05:622a:548f:b0:444:97b7:e3b1 with SMTP id
+ d75a77b69052e-44f5ac8ec0amr5581261cf.13.1721062575590; Mon, 15 Jul 2024
+ 09:56:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: ethernet: lantiq_etop: remove redundant
- device name setup
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jacob.e.keller@intel.com, horms@kernel.org,
- u.kleine-koenig@pengutronix.de, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240713170920.863171-1-olek2@wp.pl>
- <92570003-ddcd-482b-80e1-1da1fa0cc91f@lunn.ch>
-Content-Language: en-US
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <92570003-ddcd-482b-80e1-1da1fa0cc91f@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: 1da0bff9ba1eba8cac3f37dd5dcfd54e
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [ccPQ]                               
+References: <20240715094715.3914813-1-james.clark@linaro.org>
+In-Reply-To: <20240715094715.3914813-1-james.clark@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 15 Jul 2024 09:56:04 -0700
+Message-ID: <CAP-5=fXug1ht3dVDpuG6hvzEYdexT9eH80E3B2NUraONXcCS=w@mail.gmail.com>
+Subject: Re: [PATCH] perf dso: Fix build when libunwind is enabled
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Leo Yan <leo.yan@linux.dev>, 
+	Yunseong Kim <yskelg@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 13.07.2024 20:02, Andrew Lunn wrote:
-> On Sat, Jul 13, 2024 at 07:09:20PM +0200, Aleksander Jan Bajkowski wrote:
->> The same name is set when allocating the netdevice structure in the
->> alloc_etherdev_mq()->alloc_etherrdev_mqs() function. Therefore, there
->> is no need to manually set it.
-> If this one is not needed:
+On Mon, Jul 15, 2024 at 2:48=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
 >
-> grep -r "eth%d" *
-> 3com/3c515.c:		sprintf(dev->name, "eth%d", unit);
-> 8390/smc-ultra.c:	sprintf(dev->name, "eth%d", unit);
-> 8390/wd.c:	sprintf(dev->name, "eth%d", unit);
-> 8390/ne.c:	sprintf(dev->name, "eth%d", unit);
-> amd/lance.c:	sprintf(dev->name, "eth%d", unit);
-> atheros/atlx/atl2.c:	strcpy(netdev->name, "eth%d"); /* ?? */
-> cirrus/cs89x0.c:	sprintf(dev->name, "eth%d", unit);
-> dec/tulip/tulip_core.c:		strcpy(dev->name, "eth%d");			/* un-hack */
-> intel/ixgbe/ixgbe_main.c:	strcpy(netdev->name, "eth%d");
-> intel/ixgbevf/ixgbevf_main.c:	strcpy(netdev->name, "eth%d");
-> intel/e100.c:	strcpy(netdev->name, "eth%d");
-> intel/igbvf/netdev.c:	strcpy(netdev->name, "eth%d");
-> intel/e1000e/netdev.c:	strscpy(netdev->name, "eth%d", sizeof(netdev->name));
-> intel/igb/igb_main.c:	strcpy(netdev->name, "eth%d");
-> intel/igc/igc_main.c:	strscpy(netdev->name, "eth%d", sizeof(netdev->name));
-> intel/e1000/e1000_main.c:	strcpy(netdev->name, "eth%d");
-> lantiq_etop.c:	strcpy(dev->name, "eth%d");
-> micrel/ks8842.c:	strcpy(netdev->name, "eth%d");
-> smsc/smc9194.c:		sprintf(dev->name, "eth%d", unit);
+> Now that symsrc_filename is always accessed through an accessor, we also
+> need a free() function for it to avoid the following compilation error:
 >
-> maybe you can remove all these as well?
+>   util/unwind-libunwind-local.c:416:12: error: lvalue required as unary
+>     =E2=80=98&=E2=80=99 operand
+>   416 |      zfree(&dso__symsrc_filename(dso));
+>
+> Fixes: 1553419c3c10 ("perf dso: Fix address sanitizer build")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Added to my todo list.
+And I wonder how this ever built..
 
+Reviewed-by: Ian Rogers <irogers@google.com>
 
->        Andrew
+Thanks!
+Ian
+
+> ---
+>  tools/perf/util/dso.c                    | 2 +-
+>  tools/perf/util/dso.h                    | 5 +++++
+>  tools/perf/util/unwind-libunwind-local.c | 2 +-
+>  3 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> index 2340c4f6d0c2..67414944f245 100644
+> --- a/tools/perf/util/dso.c
+> +++ b/tools/perf/util/dso.c
+> @@ -1501,7 +1501,7 @@ void dso__delete(struct dso *dso)
+>         auxtrace_cache__free(RC_CHK_ACCESS(dso)->auxtrace_cache);
+>         dso_cache__free(dso);
+>         dso__free_a2l(dso);
+> -       zfree(&RC_CHK_ACCESS(dso)->symsrc_filename);
+> +       dso__free_symsrc_filename(dso);
+>         nsinfo__zput(RC_CHK_ACCESS(dso)->nsinfo);
+>         mutex_destroy(dso__lock(dso));
+>         RC_CHK_FREE(dso);
+> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+> index 878c1f441868..ed0068251c65 100644
+> --- a/tools/perf/util/dso.h
+> +++ b/tools/perf/util/dso.h
+> @@ -602,6 +602,11 @@ static inline void dso__set_symsrc_filename(struct d=
+so *dso, char *val)
+>         RC_CHK_ACCESS(dso)->symsrc_filename =3D val;
+>  }
+>
+> +static inline void dso__free_symsrc_filename(struct dso *dso)
+> +{
+> +       zfree(&RC_CHK_ACCESS(dso)->symsrc_filename);
+> +}
+> +
+>  static inline enum dso_binary_type dso__symtab_type(const struct dso *ds=
+o)
+>  {
+>         return RC_CHK_ACCESS(dso)->symtab_type;
+> diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/u=
+nwind-libunwind-local.c
+> index f6a6f6a91030..16c2b03831f3 100644
+> --- a/tools/perf/util/unwind-libunwind-local.c
+> +++ b/tools/perf/util/unwind-libunwind-local.c
+> @@ -413,7 +413,7 @@ static int read_unwind_spec_debug_frame(struct dso *d=
+so,
+>                                                         __func__,
+>                                                         dso__symsrc_filen=
+ame(dso),
+>                                                         debuglink);
+> -                                       zfree(&dso__symsrc_filename(dso))=
+;
+> +                                       dso__free_symsrc_filename(dso);
+>                                 }
+>                                 dso__set_symsrc_filename(dso, debuglink);
+>                         } else {
+> --
+> 2.34.1
+>
 
