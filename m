@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-252267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D9B9310C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:00:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF39A9310B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D061F22414
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0161C21BB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49332187573;
-	Mon, 15 Jul 2024 08:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B2318629E;
+	Mon, 15 Jul 2024 08:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYOh8/v/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYMRuFeb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEBC187546;
-	Mon, 15 Jul 2024 08:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872DC185E57;
+	Mon, 15 Jul 2024 08:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033965; cv=none; b=pDZH9xpoF6LLlm5xeBAqbbPhca2xM9XjI3M65YwHrhAIluH9v8Sb5M4Jir9PiNopqy8hqIKeFY21BSuavMaWFFKsED2xhB7zD5tvszAlvfSupyvL7H6ApZKCmsx8pon/yROIHca7fGL7omCjm9/iipcP2zQ+SILc1QNQUEx3II4=
+	t=1721033961; cv=none; b=j+MmkK4J+120ZQqcAXxcIJ/Mfgrf7O+395mmrt1vCwnb6qSe5fGcFT2ht2jmicOgJuQCuPg1NgC0n8URt1ysAQfUfX1kBXUQgASqpRC0EoczoXicCNPiU8SoUnyNHihxVp/z+AXfXk0/LctYKpUgyY8w6xm12pNqocQByJA9AJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033965; c=relaxed/simple;
-	bh=y+kTudWLmMVZqjkmKb1Iq2iwCRwyu/ABbyO06TY0Lqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HzwpKKoI2K9JbeHkavP9DKA9AWU4GOjvKcVZj2keVqJHxDH9p3oui8ViUGcjcfnyrbtpEpWDxSEJvpdvHCBTwAG7MtiYLiHlVI38kYcvWw5MeiawSOn0ffw6xesShZ0b1uNkXa1lai4I4GhaPHGQ1BIquVdz8PImYDv4DAk/qXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYOh8/v/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FD7C4AF0A;
-	Mon, 15 Jul 2024 08:59:19 +0000 (UTC)
+	s=arc-20240116; t=1721033961; c=relaxed/simple;
+	bh=1X1lMeZGpdzV9mt09bNsIQMlalbtKkMui88g6bFSQE0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AbpmEJpu1EzUdsudoIwe/OfnAzC/fwZLxKJZ43pB+JZa4w+fD6CGanCYCgrXsQPxtVbqWSnHe8zFii4TtEn3gnP7FTGa8vJWNCahGulEDGpVhjTArtzQFv+9+UvFFhDpMuLA0PZ2Zm57kaALHzz/3oMFRpa8OKKotjtBGxe1LWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYMRuFeb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5037EC4AF0E;
+	Mon, 15 Jul 2024 08:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721033964;
-	bh=y+kTudWLmMVZqjkmKb1Iq2iwCRwyu/ABbyO06TY0Lqk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZYOh8/v/YWIs+Ao47qs+d+9EKaxbK0cC0b7Y31tEdLfGSuNpwBYwfPBiD5mHQROPr
-	 W6hwnrWtfpBx+bih/+p3WbvYkxTzgWWTnlDsZckTHHeHk6zqUihvYYYnSm9u89gy5j
-	 G3L/Go11ltDmadciyl16m7/6O89VuMa9T8+ZvB5zRnQOlkrvnoixwA2XJvu1I6Dj9q
-	 3VorcuEWf4aRsIa+zivmdmQA8UzXX9bz0UGOzu8LP9+ijRVKDtAW8ITfp+sIP0u7wa
-	 Who+rhecgtLlW7Zmuwe2qsNygRazAzgQIQKOMX+pYAHpdSvAEWxNrfJW0YOAsnfGAn
-	 WU6Y+sp+TWCtg==
-Message-ID: <a9eed7f2-86d6-471e-883e-acbd89755fec@kernel.org>
-Date: Mon, 15 Jul 2024 10:59:17 +0200
+	s=k20201202; t=1721033961;
+	bh=1X1lMeZGpdzV9mt09bNsIQMlalbtKkMui88g6bFSQE0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AYMRuFebTcAyJvTuZVQrD/ZPNQrxp2m05upe0mkLoXPpymA4H2TtHq0zGEjbnpwS+
+	 wLZnVDePiWh8BtmkItksSbj5poy2Ti69PXtRO9nqh1v5nqGiosZnquztDiIYzjE0bW
+	 M72d6JWMuYpUGg7+yKT2aZKexDjyZsWiUyUYb3fSXZ0X0gp5AUmCLeiyp9bHiiR8Jp
+	 K68E5nVmUQEjvRzqy//16d+BQdf0fXk9xs5RbN8TH9JvzeyKC90lYkZwXL6LrkYkNg
+	 GKBNL+Sfc4x9WxvrywNXsLuPBDLggfuKDglXzuBPZonpD+FrjjXjcsVwXs/a+LMrA9
+	 InV75tv/VOjng==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA8EC3DA5D;
+	Mon, 15 Jul 2024 08:59:21 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v2 0/6] Add new Amlogic SoCs info defines.
+Date: Mon, 15 Jul 2024 16:59:18 +0800
+Message-Id: <20240715-soc_info-v2-0-3836c8cc27a5@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: kionix,kxcjk1013: Document
- KX022-1020
-To: Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, Jonathan Cameron <jic23@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- "Rafael J. Wysocki" <rafael@kernel.org>, Robert Yang <decatf@gmail.com>,
- Rob Herring <robh@kernel.org>, Sean Rhodes <sean@starlabs.systems>
-References: <20240714173431.54332-1-rayyan@ansari.sh>
- <20240714173431.54332-2-rayyan@ansari.sh>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240714173431.54332-2-rayyan@ansari.sh>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAObklGYC/0XMQQrCMBCF4auUWRtJolHjyntIkTSZtgM2I4kUp
+ eTuxoK4/B+Pb4GMiTDDuVkg4UyZONbQmwb86OKAgkJt0FLv5VEpkdnfKPYsglT2dOh2AaWFen8
+ k7Om1Ute29kj5yem9yrP6rj9E/5FZCSmk6Zw1Vttg3MVNdx7Ibz1P0JZSPuPSe8KiAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721033959; l=1350;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=1X1lMeZGpdzV9mt09bNsIQMlalbtKkMui88g6bFSQE0=;
+ b=LFT8ReBhEBQbxL20C4GgGLQv5fFEqrxtwgHaVVGjck5SfooLGn+EnlxWoF2LqJjZBeY7w7PB8
+ zCkN97YAq1XAmfJKLwQlgbGGi4ymn/3cEaN4DceJdUmDLLQeZpS4Pbj
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On 14/07/2024 19:33, Rayyan Ansari wrote:
-> Document the KX022-1020 accelerometer, which has the same register
-> layout as the KX023-1025 and so can use the same driver.
-> 
-> Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
+Add more Amlogic SoCs info defines, include S4, C3
+T7, A4, A5.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Changes in v2:
+- Add S4,C3,T7,A4 ao-secure bindings.
+- Modify ao_secure node using fallback to meson-gx.
+- Link to v1: https://lore.kernel.org/r/20240712-soc_info-v1-0-05ba95929d5a@amlogic.com
+
+---
+Xianwei Zhao (6):
+      dt-bindings: arm: amlogic: meson-gx-ao-secure: support more SoCs.
+      soc: amlogic: meson-gx-socinfo: add new SoCs id
+      arm64: dts: amlogic: s4: add ao secure node
+      arm64: dts: amlogic: c3: add ao secure node
+      arm64: dts: amlogic: t7: add ao secure node
+      arm64: dts: amlogic: a4: add ao secure node
+
+ .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml | 16 ++++++++++++----
+ arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi       |  8 ++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi              |  7 +++++++
+ arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi              |  8 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi                |  8 ++++++++
+ drivers/soc/amlogic/meson-gx-socinfo.c                   | 10 ++++++++++
+ 6 files changed, 53 insertions(+), 4 deletions(-)
+---
+base-commit: db067bd17c0124228c31c5fdfa29ec65239e692a
+change-id: 20240711-soc_info-d01986b3de09
 
 Best regards,
-Krzysztof
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
