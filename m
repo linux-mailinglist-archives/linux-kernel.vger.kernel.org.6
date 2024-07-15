@@ -1,160 +1,302 @@
-Return-Path: <linux-kernel+bounces-252775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E80931813
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:07:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65DC931817
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3DFCB21D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92801C21553
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DE217758;
-	Mon, 15 Jul 2024 16:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93E417C7F;
+	Mon, 15 Jul 2024 16:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GqyaCWkA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hrioozvu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CE2E556
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2039B17547;
+	Mon, 15 Jul 2024 16:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059620; cv=none; b=WegCK99h5Lsyoh5hwbH3331lQ4jImgXfwHbPYwCDAlcKTGIIDVf8cuDpN5Pcndt/FLXxWLYtcx7NMaQDUwot+SmDexjwGmTg/lh48x7DcHWOKvLkj0mDg+RjpYUR2CaM7AaAAn/w/eQs/XnC68KX9s5nOpHlNOOVsNDpwzsG6X8=
+	t=1721059649; cv=none; b=bSw+lBpIWEgOE2pcZZa2CbPExwHUdZZ2Ag1U7sgBh7gLOcVJxkY8voJZrKrlbvtPpslJx/1qiPp4iIL05jVnEvtq2mFJUyimTIbKhpnJY0m8g5WI8B42Se1I3UaaFqDD4LugRqgb6rkX5rJmnKXP2QKdcPxLkLiVnNoynEkoZLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059620; c=relaxed/simple;
-	bh=tIHK6dnfCyfce+euPyIB2CpRn5YuCncPitx4IOKXycw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MHPv65v0uWQjjIdMXWvzK6wH96cBg7zG0lpgKv4nAa4bbkTqv8zvYwwWa21bmrZEtVIabU4TChxb/baa1mwweMXV2htR6ITAQa2pZarRltCyHofGZPKz6JksDm+HyNc+S/ZsoOGuIjzVinl4LiyIgZxoa+mwrN8/8xzmapGnjG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GqyaCWkA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721059617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zm6ujIbOEx2ahSbq3oVxgq1NM0ojAISTIQFPM/ZZy+4=;
-	b=GqyaCWkASzPauEuNBiRCEs45P7NfM/b7PK6UBvFMX0Bbry+gmqSbCBo6O4OZQAVQBtgAbl
-	L/HyHnlnqFt+/ZzVxPz2JgjWzutMS/9sI03QHIBw9yjAke7HR3EFQHPNkLACfBU8XNVcrE
-	cbpkUwwNzBb4vPSFyXgUHi4jVE8VCAM=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-GP0u5JxgMgCjqSDQ8iDjUQ-1; Mon, 15 Jul 2024 12:06:56 -0400
-X-MC-Unique: GP0u5JxgMgCjqSDQ8iDjUQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52e98693f43so4149576e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:06:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721059615; x=1721664415;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zm6ujIbOEx2ahSbq3oVxgq1NM0ojAISTIQFPM/ZZy+4=;
-        b=PqZhG1Tvw6WjO683wOcdWJ5zkEeUFzNZt3+kvPtMB89HWc71OX/lufcFqve0n5DAxR
-         pmIW+d5SYNeNLVHxHtkJwFpsvtl1Wty4ZDuVofuMwPn06WdYpwesXxCuyoWH5ZfboI3r
-         ZYypoF735+jYBJubNbHv/vV6MfhdCHh6xpELNl43D+OhL+5rbAUShKO8a3M2p0wi1PRn
-         em4x4YCNRRJ3LvtMpmvauyBCKZ5wzFbudTeq72WCMckvuACNInVPisDCJ0dNeiNxYpXi
-         moRDQBvKAU91BPzooDWSRqRKdPna1C9qZx/9nsq2QDdKPdkzxeteKxpb+8gb0JhYWCOF
-         0DHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCPEikjQ9lPRczp7I1AG6qX5EADghf+oBkvM8KU+YHEQSXxEfzzHfavE760pfDskiDGwo56FTSVX7qY0+/mX1rlr+BgE1YdtnPJ39C
-X-Gm-Message-State: AOJu0YyvKuTEnq9qcou4DsFu0RQLy19qPk2NXubtGjtVuHIqNy1W83Xq
-	XjnCBdjvzGiSamh7eHI3dDTsuJIJMyig0WffGFoQD56+fNj87Q8N+uRO4VnA0TUrX6rwqZZtjSO
-	HL5ombRZ1RGAlfYewRl+i6+jHAJw6rjcmk5lOsIt4HN38Vhfal9d/hYvOPXiJxg==
-X-Received: by 2002:a05:6512:3d05:b0:52c:dc4a:fb14 with SMTP id 2adb3069b0e04-52eb998e77emr13957386e87.14.1721059614867;
-        Mon, 15 Jul 2024 09:06:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIK9AT/n4qKqwBZydk+u7mgmcsReV129oM7FJoE//40vMarWE0IgLjLxGYk6YCbc+6Ev01CQ==
-X-Received: by 2002:a05:6512:3d05:b0:52c:dc4a:fb14 with SMTP id 2adb3069b0e04-52eb998e77emr13957357e87.14.1721059614399;
-        Mon, 15 Jul 2024 09:06:54 -0700 (PDT)
-Received: from [10.0.229.2] (ip-037-024-227-121.um08.pools.vodafone-ip.de. [37.24.227.121])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427ae750519sm29307195e9.1.2024.07.15.09.06.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 09:06:54 -0700 (PDT)
-Message-ID: <16aa56bd-b71f-417a-9a82-a2d0876571f2@redhat.com>
-Date: Mon, 15 Jul 2024 18:06:52 +0200
+	s=arc-20240116; t=1721059649; c=relaxed/simple;
+	bh=vuodAQMZIicFjLwLieXXD/IxPHA66X2UjT1Bs0ONaak=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bffTUTiGGjfnaO+UsIsFhZ/ryPCJtJRfFlkhPjHqaJikOgXZPanio4E1FttNYyBntGY4PkP32o9QtB63Irw45lOImisUYfciScANicDOggjKVN5nMNF7acaB1tSxBoadU9uwsqZYN0JY9FFg2Afed48d/0PPeMsg7TsQEztvCB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hrioozvu; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721059648; x=1752595648;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vuodAQMZIicFjLwLieXXD/IxPHA66X2UjT1Bs0ONaak=;
+  b=Hrioozvu6f0/x5PYoM6cN33eOyar0ksg8tnfDGQpZQggHkXWRnAiGy6j
+   buCcusLGwAQ+XgmrBauOmkZjKEpHfQp7/fWEgJuvphFEcH7agPfjOWprX
+   pdnogxNqqrOg84RKlcWKz+J2PPPKMGPg2DhNPb7PoEGfvVbw7416u9ZtP
+   9K6bEu/ifjy4Kj1n/nwNok+9FL5u1a+7AwqMxpEqB9ou9lNf+qH6j3YAC
+   5XT3G8hjttR3+UfAZaiMIRI++sneJ54ArXgjt+AjtvXDOEgNRH3ttWmEY
+   ydS61fEO03AVdkY1H2sUbgolKRkFz0ezukc7BVOddjY11bjIMZ8DfJNko
+   Q==;
+X-CSE-ConnectionGUID: n785yImXQ7KV7Qdq8RFj8w==
+X-CSE-MsgGUID: 53hNjcTpRoqbxl3oHYLt0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="21361081"
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="21361081"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 09:07:27 -0700
+X-CSE-ConnectionGUID: HwXiQdCURoKDGhhL+3BXhw==
+X-CSE-MsgGUID: Bce7koWlStS/rfKzDSd6gQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="49413470"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.246.49.253])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 09:07:21 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH V9 00/13] perf/core: Add ability for an event to "pause" or "resume" AUX area tracing
+Date: Mon, 15 Jul 2024 19:06:59 +0300
+Message-Id: <20240715160712.127117-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] WARNING in unmap_page_range (3)
-To: syzbot <syzbot+e145145f0c83d4deb8fa@syzkaller.appspotmail.com>,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, lstoakes@gmail.com,
- syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-References: <0000000000007b55ab061d494ced@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <0000000000007b55ab061d494ced@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 15.07.24 15:35, syzbot wrote:
-> This bug is marked as fixed by commit:
-> mm/memory: Fix missing pte marker for !page on pte zaps
-> 
-> But I can't find it in the tested trees[1] for more than 90 days.
-> Is it a correct commit? Please update it by replying:
-> 
-> #syz fix: exact-commit-title
+Hi
 
-Should be long fixed
+Hardware traces, such as instruction traces, can produce a vast amount of
+trace data, so being able to reduce tracing to more specific circumstances
+can be useful.
 
-#syz fix: f8572367eaff6739e3bc238ba93b86cd7881c0ff
+The ability to pause or resume tracing when another event happens, can do
+that.
 
--- 
-Cheers,
+These patches add such a facilty and show how it would work for Intel
+Processor Trace.
 
-David / dhildenb
+Maintainers of other AUX area tracing implementations are requested to
+consider if this is something they might employ and then whether or not
+the ABI would work for them.  Note, thank you to James Clark (ARM) for
+evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
+positively to the RFC.
 
+Changes to perf tools are now (since V4) fleshed out.
+
+Please note, Intel® Architecture Instruction Set Extensions and Future
+Features Programming Reference March 2024 319433-052, currently:
+
+	https://cdrdv2.intel.com/v1/dl/getContent/671368
+
+introduces hardware pause / resume for Intel PT in a feature named
+Intel PT Trigger Tracing.
+
+For that more fields in perf_event_attr will be necessary.  The main
+differences are:
+	- it can be applied not just to overflows, but optionally to
+	every event
+	- a packet is emitted into the trace, optionally with IP
+	information
+	- no PMI
+	- works with PMC and DR (breakpoint) events only
+
+Here are the proposed additions to perf_event_attr, please comment:
+
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 0c557f0a17b3..05dcc43f11bb 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -369,6 +369,22 @@ enum perf_event_read_format {
+ 	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
+ };
+ 
++enum {
++	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
++	PERF_AUX_ACTION_PAUSE			=   1U << 1,
++	PERF_AUX_ACTION_RESUME			=   1U << 2,
++	PERF_AUX_ACTION_EMIT			=   1U << 3,
++	PERF_AUX_ACTION_NR			= 0x1f << 4,
++	PERF_AUX_ACTION_NO_IP			=   1U << 9,
++	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
++	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
++	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
++	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
++	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
++	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
++	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
++};
++
+ #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
+ #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
+ #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
+@@ -515,10 +531,19 @@ struct perf_event_attr {
+ 	union {
+ 		__u32	aux_action;
+ 		struct {
+-			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
+-				aux_pause        :  1, /* on overflow, pause AUX area tracing */
+-				aux_resume       :  1, /* on overflow, resume AUX area tracing */
+-				__reserved_3     : 29;
++			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
++				aux_pause         :  1, /* on overflow, pause AUX area tracing */
++				aux_resume        :  1, /* on overflow, resume AUX area tracing */
++				aux_emit          :  1, /* generate AUX records instead of events */
++				aux_nr            :  5, /* AUX area tracing reference number */
++				aux_no_ip         :  1, /* suppress IP in AUX records */
++				/* Following apply to event occurrence not overflows */
++				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
++				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
++				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
++				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
++				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
++				__reserved_3      : 13;
+ 		};
+ 	};
+
+
+Changes in V9:
+      perf/x86/intel/pt: Fix sampling synchronization
+	New patch
+
+      perf/core: Add aux_pause, aux_resume, aux_start_paused
+	Move aux_paused to struct hw_perf_event
+
+      perf/x86/intel/pt: Add support for pause / resume
+	Add more comments and barriers for resume_allowed and
+	pause_allowed
+	Always use WRITE_ONCE with resume_allowed
+
+
+Changes in V8:
+
+      perf tools: Parse aux-action
+	Fix clang warning:
+	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
+	     821 |         {NULL},
+	         |              ^
+
+Changes in V7:
+
+	Add Andi's Reviewed-by for patches 2-12
+	Re-base
+
+Changes in V6:
+
+      perf/core: Add aux_pause, aux_resume, aux_start_paused
+	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
+	Expanded comment about guarding against NMI
+
+Changes in V5:
+
+    perf/core: Add aux_pause, aux_resume, aux_start_paused
+	Added James' Ack
+
+    perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+	New patch
+
+    perf tools
+	Added Ian's Ack
+
+Changes in V4:
+
+    perf/core: Add aux_pause, aux_resume, aux_start_paused
+	Rename aux_output_cfg -> aux_action
+	Reorder aux_action bits from:
+		aux_pause, aux_resume, aux_start_paused
+	to:
+		aux_start_paused, aux_pause, aux_resume
+	Fix aux_action bits __u64 -> __u32
+
+    coresight: Have a stab at support for pause / resume
+	Dropped
+
+    perf tools
+	All new patches
+
+Changes in RFC V3:
+
+    coresight: Have a stab at support for pause / resume
+	'mode' -> 'flags' so it at least compiles
+
+Changes in RFC V2:
+
+	Use ->stop() / ->start() instead of ->pause_resume()
+	Move aux_start_paused bit into aux_output_cfg
+	Tighten up when Intel PT pause / resume is allowed
+	Add an example of how it might work for CoreSight
+
+
+Adrian Hunter (13):
+      perf/x86/intel/pt: Fix sampling synchronization
+      perf/core: Add aux_pause, aux_resume, aux_start_paused
+      perf/x86/intel/pt: Add support for pause / resume
+      perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+      perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
+      perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
+      perf tools: Add aux_start_paused, aux_pause and aux_resume
+      perf tools: Add aux-action config term
+      perf tools: Parse aux-action
+      perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
+      perf intel-pt: Improve man page format
+      perf intel-pt: Add documentation for pause / resume
+      perf intel-pt: Add a test for pause / resume
+
+ arch/x86/events/intel/core.c               |  10 +-
+ arch/x86/events/intel/pt.c                 |  82 +++-
+ arch/x86/events/intel/pt.h                 |   4 +
+ include/linux/perf_event.h                 |  18 +
+ include/uapi/linux/perf_event.h            |  11 +-
+ kernel/events/core.c                       |  76 +++-
+ kernel/events/internal.h                   |   1 +
+ tools/include/uapi/linux/perf_event.h      |  11 +-
+ tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
+ tools/perf/Documentation/perf-record.txt   |   4 +
+ tools/perf/arch/arm/util/pmu.c             |   3 +
+ tools/perf/builtin-record.c                |   4 +-
+ tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
+ tools/perf/util/auxtrace.c                 |  67 +++-
+ tools/perf/util/auxtrace.h                 |   6 +-
+ tools/perf/util/evsel.c                    |  13 +-
+ tools/perf/util/evsel.h                    |   1 +
+ tools/perf/util/evsel_config.h             |   1 +
+ tools/perf/util/parse-events.c             |  10 +
+ tools/perf/util/parse-events.h             |   1 +
+ tools/perf/util/parse-events.l             |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c  |   3 +
+ tools/perf/util/pmu.c                      |   7 +-
+ 23 files changed, 712 insertions(+), 246 deletions(-)
+
+
+Regards
+Adrian
 
