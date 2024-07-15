@@ -1,280 +1,126 @@
-Return-Path: <linux-kernel+bounces-252242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E8E93106C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:48:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4415B93107D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458ED1C21772
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:48:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79ECB229C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F56185E46;
-	Mon, 15 Jul 2024 08:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20582185E66;
+	Mon, 15 Jul 2024 08:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM2yj4ZE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S5Bpm5kz"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D7D187328;
-	Mon, 15 Jul 2024 08:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52549185E52
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032805; cv=none; b=nKVnnc4C0OqZaI1JPgnqtrgksV5ULGy4baV4Rn+5oDmlJKap6TVBVL/txjhVqBdka3MYlV8b62LZzrFvVoWIskrgd9veRp04klynWbDhfzXNp5ojrcePUPy8a3ikxC6lPcmz+gH83JrZltR4Fp+PQsL6uU1dbtuDMhlcHc+T/fM=
+	t=1721032850; cv=none; b=onn/REvYmbhroq2iPzdStyacCGJe4rbNeKxxpC1d9R2FTYKRmZtBgt1lP/J6CtGz42bZM6qhLHsnK1NvJa8/9pWeNxqaBvvgX6PSzrIQleSfwZ/jfK7daNA9TDbtcdip/gXsXxP4a7x2cmEeP84ahkBGaV1Cn9LRnB7BUW/sd0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032805; c=relaxed/simple;
-	bh=y2IxKtzUhXnXpBUVRkzQENsuJPq31K5nZgVywAEhZnw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tBap0JPHAiYqTfnVo1fpyr771owjYXLYkzNnm8HhmqATqscygdre0Bn2LVMCqRC+e0ingw9YG+/1XkNXFzUTAO6iYxahpue1inYkCTsF0q+qwxJ/KXET5hUgl2hEdUyQ0yL0f59Dc+0Pc+Vs4IahzPW2lVo1g50JKB/XJRVIGtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM2yj4ZE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 85C7CC4AF10;
-	Mon, 15 Jul 2024 08:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721032805;
-	bh=y2IxKtzUhXnXpBUVRkzQENsuJPq31K5nZgVywAEhZnw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CM2yj4ZEAoBnzkYdHYoX2kh+N2QiXUApUkja7V5RTKDaruHXmVqN7wK6FQC8aVDFQ
-	 YD3WDjSyJWDo+MPfcTMuN8yhDIUMIVa0q+078gtdXapCF8THaFxEFtNV7VmV5SFYQ0
-	 7W0UYlXKX/EzRBRsbseWk2uvXOvhzt3U69+bJ3/u/BZJrwFzP22c5ExpCdUCg+2dkt
-	 2ApVrt9jWGuZOss9c3blzuk20dDlyu3RDn6KlFG9qw5Y2oU33+o44YYZi1WocAU4ow
-	 TT5sztkgTW1kYwxSvIJ/kDNhaWJf+13cavRCW4a93cvemLDdSALX42kS15qNTTQPSC
-	 WWJ1bvmBoV6kQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B87FC3DA59;
-	Mon, 15 Jul 2024 08:40:05 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 15 Jul 2024 11:38:42 +0300
-Subject: [PATCH v11 38/38] dmaengine: cirrus: remove platform code
+	s=arc-20240116; t=1721032850; c=relaxed/simple;
+	bh=6GvFMbwUATk1sUXZPl4JjNM3bArP2OemPHis6rIs1Wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GgYN8LR9y+Je2BK8aKouxeK+j3so7BGGpdohrNHIcnshUKGV86wvX8C65Oh2TjkPd2vMx7p9Nc39Qtz0EB1PNURqXAH6rNmgbN9rQ96kCj8BiQME8SFZAPNOkFpkJDsLSNBWJTOCNiPJ9Wbybl7UL0m85a9MfTbcnqpesg+AfJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S5Bpm5kz; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso29123945e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721032846; x=1721637646; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eHmMsEVmf8JfSBcSjUAB0cZkcplmejuDCV0HeNhunZE=;
+        b=S5Bpm5kztS/wQxSqEXxgUitFkdfMIFaoaefj1gFwhr0WZvh4H8Q0a8qtu1p4bGUwra
+         K1Eqa5Tl9g2lb0Fw/Ya1t0t8DBsJfUB4R8bXv7StqUdKf+wiIfW/KF4fSyC0UmMwcd8a
+         bTeHUpxZ6DEVD0MZZyDikR9HCsfUSEi4RYj3Um1NEoVuESM2YBJroVYGocjIpcBLUXIe
+         oeNA512SQQ+xeYFx1Moan013s7CXXDJCY5zvJiTrGdIPUD9a8ysX5uxSz2in2dwrw38R
+         TxkdBWW0SfwOMk/bWPS9toX3LhoAPCQ8q2aZR5fBNTlhNyitvbikEIPljTayRpftpZRW
+         lEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721032846; x=1721637646;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHmMsEVmf8JfSBcSjUAB0cZkcplmejuDCV0HeNhunZE=;
+        b=Dv+SnKGxGbiIPksC85E9vZ92ZZHKomTBTWEkK5CfmlPagzkjaYFS2t3qGCYOX9toId
+         ysSFXclGDXgymch/sE5ZN1XY0Kdb6CKRaDy84UpWlWUEqCB+e++NlzYRkIyQOpHlolkZ
+         pzVFs/5O/4uj+knev9S5ZUfxIoM12zdr2SzS8V7yhDV3gtohkiDTeLIyCxAzIytfeimc
+         fm3x1mMIQ+Gs18Sj0Tu/LulcMxdt6VFxdP2ksY9oHS4M9Y5gSmQmLrP1PVGnJ2zZv+lf
+         IW08Tb4ZUaH8FnnQrF0O7Nm9yhPQ4h1W8bOxI6Ginwvko9mDpxjD0kK9AYhEUcONwtc9
+         0gvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFGixO6X69dKZbdW4ZKALftEOWE65Yjb5rYklclNlPTsr2ofmeaCS3kAcgvh8LTU8EghdBgITEhXj9d9ebJRij+Gnrcvh7xe8lObw
+X-Gm-Message-State: AOJu0YyUB6FNJNufcW5rnXHpfplmfMeTfhKOYph163P2EzmTSb6YJtlW
+	HGzCqMDPClrC1UAaMT3HXZ8CMMyVKpLwykLUgO39Y6Or4+ApoDkjcdpbqclnFtY=
+X-Google-Smtp-Source: AGHT+IEq9NHTu5d9NOH12PpLGxN0a5a7Quiyv4R9B8DpiRqNRjUD8dabhuJrMp+F5YO9PhasKO+KNw==
+X-Received: by 2002:a05:600c:5125:b0:427:985b:178b with SMTP id 5b1f17b1804b1-427985b188emr84919855e9.16.1721032846220;
+        Mon, 15 Jul 2024 01:40:46 -0700 (PDT)
+Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc2efsm113024225e9.36.2024.07.15.01.40.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:40:46 -0700 (PDT)
+Message-ID: <4b7888b7-8848-4374-b532-f65cefd40e56@suse.com>
+Date: Mon, 15 Jul 2024 10:40:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+To: Hongyu Xie <xy521521@gmail.com>, stern@rowland.harvard.edu
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com, brauner@kernel.org,
+ jlayton@kernel.org, jack@suse.cz, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xiehongyu1@kylinos.cn
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <a782c5bc-fc8b-43ad-9c6e-1e6799243364@kylinos.cn>
+ <8a16e1c2-fd59-4279-8b36-806a214385b6@rowland.harvard.edu>
+ <b15d0ba0-e133-4df7-8371-a701ec5005fb@kylinos.cn>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <b15d0ba0-e133-4df7-8371-a701ec5005fb@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-ep93xx-v11-38-4e924efda795@maquefel.me>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-In-Reply-To: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-To: Vinod Koul <vkoul@kernel.org>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032800; l=6076;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=qbQ0k1cwlr7iv0JKjGQW+rzyy6spZcOEIpiufkU6/UM=;
- b=WMPqh1SifiYBS+sJ0DL54/q99WbOs4Le3kfFcKidpOt9cYcsyAdMSSBp3iiVGliA8eIQACJHzVhy
- zEvvtsjzDmu9h8asVynI1LQl2jcf5itdK8xgiPs4J09Sh7dYiylm
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+On 15.07.24 03:13, Hongyu Xie wrote:
+> From: Hongyu Xie <xiehongyu1@kylinos.cn>
 
-Remove DMA platform header, from now on we use device tree for DMA
-clients.
+>>> When will "a reset user space has not requested" happen if there is a
+>>> reset_resume in usbfs?
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
----
- drivers/dma/ep93xx_dma.c                 |  48 ++++++++++++++-
- include/linux/platform_data/dma-ep93xx.h | 100 -------------------------------
- 2 files changed, 46 insertions(+), 102 deletions(-)
+The literal answer to your question is: during resumption
+of the device or when power was restored to it.
+Before reset_resume() is called.
 
-diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-index 17c8e2badee2..43c4241af7f5 100644
---- a/drivers/dma/ep93xx_dma.c
-+++ b/drivers/dma/ep93xx_dma.c
-@@ -17,6 +17,7 @@
- #include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-@@ -25,8 +26,6 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--#include <linux/platform_data/dma-ep93xx.h>
--
- #include "dmaengine.h"
- 
- /* M2P registers */
-@@ -106,6 +105,26 @@
- #define DMA_MAX_CHAN_BYTES		0xffff
- #define DMA_MAX_CHAN_DESCRIPTORS	32
- 
-+/*
-+ * M2P channels.
-+ *
-+ * Note that these values are also directly used for setting the PPALLOC
-+ * register.
-+ */
-+#define EP93XX_DMA_I2S1			0
-+#define EP93XX_DMA_I2S2			1
-+#define EP93XX_DMA_AAC1			2
-+#define EP93XX_DMA_AAC2			3
-+#define EP93XX_DMA_AAC3			4
-+#define EP93XX_DMA_I2S3			5
-+#define EP93XX_DMA_UART1		6
-+#define EP93XX_DMA_UART2		7
-+#define EP93XX_DMA_UART3		8
-+#define EP93XX_DMA_IRDA			9
-+/* M2M channels */
-+#define EP93XX_DMA_SSP			10
-+#define EP93XX_DMA_IDE			11
-+
- enum ep93xx_dma_type {
- 	M2P_DMA,
- 	M2M_DMA,
-@@ -242,6 +261,31 @@ static struct ep93xx_dma_chan *to_ep93xx_dma_chan(struct dma_chan *chan)
- 	return container_of(chan, struct ep93xx_dma_chan, chan);
- }
- 
-+static inline bool ep93xx_dma_chan_is_m2p(struct dma_chan *chan)
-+{
-+	if (device_is_compatible(chan->device->dev, "cirrus,ep9301-dma-m2p"))
-+		return true;
-+
-+	return !strcmp(dev_name(chan->device->dev), "ep93xx-dma-m2p");
-+}
-+
-+/*
-+ * ep93xx_dma_chan_direction - returns direction the channel can be used
-+ *
-+ * This function can be used in filter functions to find out whether the
-+ * channel supports given DMA direction. Only M2P channels have such
-+ * limitation, for M2M channels the direction is configurable.
-+ */
-+static inline enum dma_transfer_direction
-+ep93xx_dma_chan_direction(struct dma_chan *chan)
-+{
-+	if (!ep93xx_dma_chan_is_m2p(chan))
-+		return DMA_TRANS_NONE;
-+
-+	/* even channels are for TX, odd for RX */
-+	return (chan->chan_id % 2 == 0) ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
-+}
-+
- /**
-  * ep93xx_dma_set_active - set new active descriptor chain
-  * @edmac: channel
-diff --git a/include/linux/platform_data/dma-ep93xx.h b/include/linux/platform_data/dma-ep93xx.h
-deleted file mode 100644
-index 9ec5cdd5a1eb..000000000000
---- a/include/linux/platform_data/dma-ep93xx.h
-+++ /dev/null
-@@ -1,100 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ARCH_DMA_H
--#define __ASM_ARCH_DMA_H
--
--#include <linux/types.h>
--#include <linux/device.h>
--#include <linux/dmaengine.h>
--#include <linux/dma-mapping.h>
--#include <linux/property.h>
--#include <linux/string.h>
--
--/*
-- * M2P channels.
-- *
-- * Note that these values are also directly used for setting the PPALLOC
-- * register.
-- */
--#define EP93XX_DMA_I2S1		0
--#define EP93XX_DMA_I2S2		1
--#define EP93XX_DMA_AAC1		2
--#define EP93XX_DMA_AAC2		3
--#define EP93XX_DMA_AAC3		4
--#define EP93XX_DMA_I2S3		5
--#define EP93XX_DMA_UART1	6
--#define EP93XX_DMA_UART2	7
--#define EP93XX_DMA_UART3	8
--#define EP93XX_DMA_IRDA		9
--/* M2M channels */
--#define EP93XX_DMA_SSP		10
--#define EP93XX_DMA_IDE		11
--
--/**
-- * struct ep93xx_dma_data - configuration data for the EP93xx dmaengine
-- * @port: peripheral which is requesting the channel
-- * @direction: TX/RX channel
-- * @name: optional name for the channel, this is displayed in /proc/interrupts
-- *
-- * This information is passed as private channel parameter in a filter
-- * function. Note that this is only needed for slave/cyclic channels.  For
-- * memcpy channels %NULL data should be passed.
-- */
--struct ep93xx_dma_data {
--	int				port;
--	enum dma_transfer_direction	direction;
--	const char			*name;
--};
--
--/**
-- * struct ep93xx_dma_chan_data - platform specific data for a DMA channel
-- * @name: name of the channel, used for getting the right clock for the channel
-- * @base: mapped registers
-- * @irq: interrupt number used by this channel
-- */
--struct ep93xx_dma_chan_data {
--	const char			*name;
--	void __iomem			*base;
--	int				irq;
--};
--
--/**
-- * struct ep93xx_dma_platform_data - platform data for the dmaengine driver
-- * @channels: array of channels which are passed to the driver
-- * @num_channels: number of channels in the array
-- *
-- * This structure is passed to the DMA engine driver via platform data. For
-- * M2P channels, contract is that even channels are for TX and odd for RX.
-- * There is no requirement for the M2M channels.
-- */
--struct ep93xx_dma_platform_data {
--	struct ep93xx_dma_chan_data	*channels;
--	size_t				num_channels;
--};
--
--static inline bool ep93xx_dma_chan_is_m2p(struct dma_chan *chan)
--{
--	if (device_is_compatible(chan->device->dev, "cirrus,ep9301-dma-m2p"))
--		return true;
--
--	return !strcmp(dev_name(chan->device->dev), "ep93xx-dma-m2p");
--}
--
--/**
-- * ep93xx_dma_chan_direction - returns direction the channel can be used
-- * @chan: channel
-- *
-- * This function can be used in filter functions to find out whether the
-- * channel supports given DMA direction. Only M2P channels have such
-- * limitation, for M2M channels the direction is configurable.
-- */
--static inline enum dma_transfer_direction
--ep93xx_dma_chan_direction(struct dma_chan *chan)
--{
--	if (!ep93xx_dma_chan_is_m2p(chan))
--		return DMA_TRANS_NONE;
--
--	/* even channels are for TX, odd for RX */
--	return (chan->chan_id % 2 == 0) ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
--}
--
--#endif /* __ASM_ARCH_DMA_H */
+>> That's what a reset-resume is: a reset that occurs when the device is
+>> resumed, rather than when the driver has requested a reset.
+> Right now this reset_resume did nothing, it's just an empty function to prevent rebind after resume.
+> Maybe I should filter out usbfs in usb_resume_interface when setting needs_binding to 1?
 
--- 
-2.43.2
+Strictly speaking this is true. But it overlooks that at that
+point something has already been done to the device. Either it has
+literally been reset by instructing the hub it is connected to
+to reset a port or by interrupting the power supply.
 
+The important point in terms of semantics is that the device state
+has been lost. And it has been potentially lost within user space
+knowing about it.
+There is an inevitable race between a suspend/resume cycle and the
+next usbfs operation. Therefore After a suspend()/reset_resume()
+cycle the next usbfs operation must not be executed and an error
+returned to user space.
 
+At present that error is ENODEV.
+
+	Regards
+		Oliver
 
