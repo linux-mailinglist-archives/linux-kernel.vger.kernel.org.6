@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-252163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC847930F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:06:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A5D930F51
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C43E1C214D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7A3281C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA01184132;
-	Mon, 15 Jul 2024 08:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B6F184113;
+	Mon, 15 Jul 2024 08:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CciST/50"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kqqxF3pW"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91672837F;
-	Mon, 15 Jul 2024 08:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F62146A6F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721030769; cv=none; b=g2qEavDgxvo05OairTI1K8t19K8b+s93zL2F1p2wU9BCDT6zPxIkSeP31Yxcllpuab6pCIYSA8WBnpKVU3TEONypGMzy+Zaj0jcxqTofVs/h5GLznyxePbSS3bHr2nopvkp8BJWJWxGVNQEm6Bc3KyXIO9raI1jwrAqbg5AXL4k=
+	t=1721030806; cv=none; b=MUA5as/XL/nza/sKaUBJV38V7uS+ffN2xcuIikqXkYlFoiVzLkP3/1Dyh5xWGR+Mzk7g6Wpmv1CbpJ6KbZSB4JrZ4UOVgkv5jeOjWiHuGzwxMYakXieyf0s1vtRn+Qhn42bJF3r/0G6KOyotcw7oegmZjjARyZ188srbW2EXpUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721030769; c=relaxed/simple;
-	bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m3G7rNMl43rBy80bVRDmQMPVuO5wUfAcE7o5PWMPqSYsvXnemg8wk91p/rj1woI+jAajAgWST8F7ZmFy/42N5ynlYPZnbhAgDhle4x2s8UV/jVU2gyIO3FH3HCM5CIZxkMBggZRCr0M54HKN+G6JWbdEac5irkasKDeZRYmOWRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CciST/50; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77e5929033so487954666b.0;
-        Mon, 15 Jul 2024 01:06:07 -0700 (PDT)
+	s=arc-20240116; t=1721030806; c=relaxed/simple;
+	bh=16bBhiqIhGVVdwo8yfoUKxnj03L+a4RhSQqjiGpjRjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E2FSq5w8qRkY6W5OYWadNrr501Nh93fz6mIsgw+8ighig2x6tbvaPbIWNCL10FFC13YdQI0IOiK7yheAUBUimF5HYzRm/r/a+E7tdH7vKHm3iroXZdqRg4WliNxUzkhoOnAq8kzj/ptiU5yyws2cFQUrQdg3bEhQGj6Rm1FpwQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kqqxF3pW; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-367a3d1a378so3561754f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721030766; x=1721635566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
-        b=CciST/50nEWUieXmCn6BcVCOeKCplu51s98pbn/P/bVj8wOFjkYXwIB7qIq372xqGH
-         SXofO3lqwz/k22eQdx+DgyHJJeOevWflmYu6wGBYvXrnY+VlltKQLIyA23ALHLRVrQ9v
-         VswmWATBkSb5zpZ76XEZuDM/6cNmX0V33krgwnPjzFhf2nPfyKPnSvZ6y2N3zcF1v/7y
-         nwNgOpiOpjgUPe1dtl80CF8NOgdnGM2tAvrr4iCnEMtkqG/9kSZV8rHmTktgVA1aClye
-         m35TSmLN89pnvd6+FTFWccfNNloqNTBfu+MIs/2LTZuviyWRPbCxND3hAZOEQxxm3xLZ
-         HHQA==
+        d=tuxon.dev; s=google; t=1721030801; x=1721635601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ZZF6SHcFUEyiyR+Vm+15zWotXyhNbxhylYVl4y9i0Q=;
+        b=kqqxF3pWVvNmihRetXx70j2lIEY/dJu0DqcThwYNLb2JgXuxRnrdT3STOUYDfWDSle
+         tZmlWLeQnt/KnHh1X6Fdaqk/1iVwP0Olt//WGSeNqaXF3LWlrnEmAWEXh1XfASi5DfxO
+         MM3fT4dNoHS2vzbyRHaW8qEnvVDunYQ14Scbo0XqIMtQNvdVi6Y2q5IyUY3OfI1NZ8Od
+         PDF5uxASXK9MDVIK4LQ8L+pGftRYcF/Sk38e29TPnoLPQtDHxOuIJ8QMJrGveiKqkhc1
+         TzBSy3lquFmPz9NwgmVDTS/B61ZHboD18eXgsvsK5xQlZ8vrqkWlBxVsdkn4PknNGIHl
+         CitA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721030766; x=1721635566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
-        b=UHvXgWoA/NF269P+zJdx++UQ6NgGeIMK5sV4TNSkFOVl3TeqIsR0rYdtH8hsVBJzm+
-         FrqG0fBXazEwHybTFhWGwZrbXnBT+43HejlcXWooc39uVj8X3JfKdOkPFyk+Sj9x4uZP
-         v5pvq+OAA2TLxjKFuzJ4+Yg8Ki04PakPpDQZeiNMgKoujpvdbDEMuj6PF4hJwAYEL6lK
-         OJo8gMzkh8n80xMa2+HKgA3ANgy74U6e7lmLe6KZFNIQG0LdX2bVW+NG7e9Pc4aagAT5
-         VbXkkNsWsTaopi8cu53V4jlNv9s+/d2AQWGesYREqg6s7oaMwUnI+evFH6/UFgnYU/lo
-         ef5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqV+x5Z2dujT5YnMIJb3gm/uhCHUmGuQiK1zFiVn6dF+7DqWd526A29tZXaB2EmE7WJ4kR3RYfyHEmtpNyDbvcD9Sjj2/rgbe3KMdySlfkiGDyDG/l8ABsvvWSj+IT2dXfDfUJ3BQwgpTkog==
-X-Gm-Message-State: AOJu0YyZ7oBPdumywQqvJ7/aDu5RnMFsVKLVcNZ4ojfnIjyM+nn101lP
-	EPTBwdD/UX66llObdDK4JZiOS5RuFCARcqWqFpp3poE1TovdaoE4ceusMx7N4DlFL3NQJEU/Ll/
-	5DFqsJ3FF6+aawFpIX1AAxSv4515vwgS8
-X-Google-Smtp-Source: AGHT+IE4Gu5kAOXSNy/6E78Eo8myT0M+rYxfZnWeiSdNLIQZH/k5PtYqs2dhgx4czZjoLW2e1Z6+VsIy5NOoUY2j7wU=
-X-Received: by 2002:a17:906:c258:b0:a75:3627:fccc with SMTP id
- a640c23a62f3a-a780b8802c4mr1145031966b.51.1721030765980; Mon, 15 Jul 2024
- 01:06:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721030801; x=1721635601;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ZZF6SHcFUEyiyR+Vm+15zWotXyhNbxhylYVl4y9i0Q=;
+        b=La91pvRLuzW7V4zrkQ4Ck6kz16MdmioF3VxyIarp6ZmP1TrUNgulQ/ffOKu7HwBe8n
+         1VKsSWzc44UpNuKaZLk/c+fuL9DJGIIOA7x324sp0aS8WhmdSZbHzOA/Ctor4nU1oGJY
+         8DwBxdMxNVfInU6sGBByWrmP11YKOsivlP5aPWkgK8hTns2/LcLLpKQL9c465iUvmfUu
+         QdfB3WB+S5lzaAqRL+BlRruBlqiGmKlK9ADC8hwpJeF330WmNBHD7JKCLT34mRM2BpU1
+         9OnrUlQT0+EO/XFd+W1rwWGIYmCHNMrjoccGhy7x1PD4EdjyDrz6/ix6l3+RJ0+08e/5
+         cUJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXeW5cS5sL3p/A9hXj0wUxtt1X5M0Iat+9T7xvqfkxcMOIsm9GLrK9w6PLwNJY/gctcZpFDaVR8DU62KAw+z4x0Sd/ICF76MTzQ0M2
+X-Gm-Message-State: AOJu0YyMcMZipUhc5EBCTOjeZM81vOa1V19ElPCtLpLc/btJGmxajJCt
+	sKYRUiIOkq13ywYe3esKKymA9H7A1XqkL5mFK6fbkFRC39ILwkvK8ru+jJtFXKk=
+X-Google-Smtp-Source: AGHT+IGQxkCi+Sc9wBZNomHEVlA4JrxK+a6uMp912PveNzQBaXW9hcRRP6sKp7S+aVLFF5/drBpXyA==
+X-Received: by 2002:adf:e5c4:0:b0:366:ecc4:aa70 with SMTP id ffacd0b85a97d-367cea46912mr13511131f8f.5.1721030801484;
+        Mon, 15 Jul 2024 01:06:41 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db047c4sm5607243f8f.108.2024.07.15.01.06.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:06:41 -0700 (PDT)
+Message-ID: <c39a3967-1089-4113-917e-78fc14e788bf@tuxon.dev>
+Date: Mon, 15 Jul 2024 11:06:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715071324.265879-1-mjguzik@gmail.com> <f6ba51c5-e2e0-4287-b995-8a7dff59d5b9@amd.com>
-In-Reply-To: <f6ba51c5-e2e0-4287-b995-8a7dff59d5b9@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 15 Jul 2024 10:05:54 +0200
-Message-ID: <CAGudoHFBjfSkan10A-9Lx5koUs2rNsV5bWvprJTzxEaOjkETCA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: use RCU in ilookup
-To: Bharata B Rao <bharata@amd.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/27] clk: at91: sam9x7: add support for HW PLL freq
+ dividers
+Content-Language: en-US
+To: Varshini Rajendran <varshini.rajendran@microchip.com>,
+ mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+ <20240703102736.195810-1-varshini.rajendran@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240703102736.195810-1-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 15, 2024 at 10:02=E2=80=AFAM Bharata B Rao <bharata@amd.com> wr=
-ote:
->
-> On 15-Jul-24 12:43 PM, Mateusz Guzik wrote:
-> > A soft lockup in ilookup was reported when stress-testing a 512-way
-> > system [1] (see [2] for full context) and it was verified that not
-> > taking the lock shifts issues back to mm.
-> >
-> > [1] https://lore.kernel.org/linux-mm/56865e57-c250-44da-9713-cf1404595b=
-cc@amd.com/
->
-> Mateusz,
->
-> Just want to mention explicitly that in addition to the lockless lookup
-> changes that you suggested in [1], the test run also included your other
-> commit
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
-fs.inode.rcu&id=3D7180f8d91fcbf252de572d9ffacc945effed0060
-> as you had suggested.
->
 
-That commit is needed to have this compile to begin with, so it was
-kind of implied. :)
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+On 03.07.2024 13:27, Varshini Rajendran wrote:
+> Add support for hardware dividers for PLL IDs in sam9x7 SoC. The system
+> PLL - PLLA and the system PLL divided by 2 - PLLADIV2 with PLL ID 0 and
+> 4 respectively, both have a hardware divider /2. This has to be taken into
+> account in the software to obtain the right frequencies. Support for the
+> same is added in the PLL driver.
+> 
+> fcorepllack -----> HW Div = 2 -+--> fpllack
+>                                |
+>                                +--> HW Div = 2 ---> fplladiv2ck
+> 
+> In this case the corepll freq is 1600 MHz. So, the plla freq is 800 MHz
+> after the hardware divider and the plladiv2 freq is 400 MHz after the
+> hardware divider (given that the DIVPMC is 0).
+> 
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+
+Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+
+> ---
+> Changes in v5:
+> - Corrected typos in commit message.
+> - Rewrote the conditional statement.
+> ---
+>  drivers/clk/at91/clk-sam9x60-pll.c | 30 ++++++++++++++++++++++++++++--
+>  drivers/clk/at91/pmc.h             |  1 +
+>  2 files changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+> index b0314dfd7393..fda041102224 100644
+> --- a/drivers/clk/at91/clk-sam9x60-pll.c
+> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
+> @@ -73,9 +73,15 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
+>  {
+>  	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
+>  	struct sam9x60_frac *frac = to_sam9x60_frac(core);
+> +	unsigned long freq;
+>  
+> -	return parent_rate * (frac->mul + 1) +
+> +	freq = parent_rate * (frac->mul + 1) +
+>  		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
+> +
+> +	if (core->layout->div2)
+> +		freq >>= 1;
+> +
+> +	return freq;
+>  }
+>  
+>  static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
+> @@ -432,6 +438,12 @@ static unsigned long sam9x60_div_pll_recalc_rate(struct clk_hw *hw,
+>  	return DIV_ROUND_CLOSEST_ULL(parent_rate, (div->div + 1));
+>  }
+>  
+> +static unsigned long sam9x60_fixed_div_pll_recalc_rate(struct clk_hw *hw,
+> +						       unsigned long parent_rate)
+> +{
+> +	return parent_rate >> 1;
+> +}
+> +
+>  static long sam9x60_div_pll_compute_div(struct sam9x60_pll_core *core,
+>  					unsigned long *parent_rate,
+>  					unsigned long rate)
+> @@ -606,6 +618,16 @@ static const struct clk_ops sam9x60_div_pll_ops_chg = {
+>  	.restore_context = sam9x60_div_pll_restore_context,
+>  };
+>  
+> +static const struct clk_ops sam9x60_fixed_div_pll_ops = {
+> +	.prepare = sam9x60_div_pll_prepare,
+> +	.unprepare = sam9x60_div_pll_unprepare,
+> +	.is_prepared = sam9x60_div_pll_is_prepared,
+> +	.recalc_rate = sam9x60_fixed_div_pll_recalc_rate,
+> +	.round_rate = sam9x60_div_pll_round_rate,
+> +	.save_context = sam9x60_div_pll_save_context,
+> +	.restore_context = sam9x60_div_pll_restore_context,
+> +};
+> +
+>  struct clk_hw * __init
+>  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+>  			      const char *name, const char *parent_name,
+> @@ -725,10 +747,14 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+>  	else
+>  		init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+> -	if (flags & CLK_SET_RATE_GATE)
+> +
+> +	if (layout->div2)
+> +		init.ops = &sam9x60_fixed_div_pll_ops;
+> +	else if (flags & CLK_SET_RATE_GATE)
+>  		init.ops = &sam9x60_div_pll_ops;
+>  	else
+>  		init.ops = &sam9x60_div_pll_ops_chg;
+> +
+>  	init.flags = flags;
+>  
+>  	div->core.id = id;
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index bb9da35198d9..91d1c6305d95 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -64,6 +64,7 @@ struct clk_pll_layout {
+>  	u8 frac_shift;
+>  	u8 div_shift;
+>  	u8 endiv_shift;
+> +	u8 div2;
+>  };
+>  
+>  extern const struct clk_pll_layout at91rm9200_pll_layout;
 
