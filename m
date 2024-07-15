@@ -1,156 +1,156 @@
-Return-Path: <linux-kernel+bounces-252720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A304593174A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F0793174E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD88B2269D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB07B21699
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAECD18EFCE;
-	Mon, 15 Jul 2024 15:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249DB18F2D8;
+	Mon, 15 Jul 2024 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OQGasQv2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qCk3ovhE"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF79186E5A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8D3A1A0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055676; cv=none; b=h/zRRuQ2bYG5KXj7j5T6c3QCiOY5uXC0wYqevdqljsYSAJTqXTKEOpIW9DrXZ/o+J/4+b1nZ0QTMkzmKl/zuhbaIqkXwYKHM+ZeGx8RBtPK0ADgjuBR/jmoSkrnGX5thX3K4BVAmrVZXNKc4yTAmhiUETt1LY4dS7Fv3aw0vYG8=
+	t=1721055714; cv=none; b=iN032/6A8DoRQKJjmuOd4PsCWVguVq+kZSNO9M8jgsX0ygEkBGDYw8QV2ofPMW5m3t5SF3rKs2+Gb8CCYBODv7O4+qcAfFjPZ35T2JswwbnTV/dfDEtXuQhov3ahHmkyb8knGikxRVX7NG2gWjC8Fxnmbz5UOGf4bgOYFRr0aJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055676; c=relaxed/simple;
-	bh=PAJw2z/rBfFVTIAYPdyTmcMPTASE55qK5YWq0VRv6Z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=biQGqmdzaiG/jG9ZL5JVtkE3vJFGPkL+hygt5/pmLAMCSibomb6BhbncT3cePSkvgh7heiJ54CvWvuaulSgs77AECW9/mVp7+SOxl6pcyOOHW783zSNf08jLe1Nx/dTDLIwzaAnqIGsuMayBLyoeOwU3G9DVIPjP3Jp+agIEBik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OQGasQv2 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7FBCE40E021B;
-	Mon, 15 Jul 2024 15:01:09 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qiuTeiOhTSNK; Mon, 15 Jul 2024 15:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721055664; bh=NzCEpxhvXrtGwt9mvTVYL1yK9Edo2I3lN8omoaYbn6c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OQGasQv2+a+gv2V2jv5BjnxhyU0cl6VinVM4g8Djlq+51esgzYlgl4u3TT7dgZ7uV
-	 ECIhNl1ITbpUVMvUj1vUFlPcXoZFY/LHTA8Uaf6mAixGg890SgaHrVBluaunTqABJN
-	 TFghDo3TU5BXNo0XnD1zHECR8oVeilHuh2ADvreyGq13c1z7mtGs1kRF82anoL+7Qz
-	 NUzKDS5zCcbjzwA8XUkZJwVciPaPv/uMzgoBPOD+GGbXPuR4xcilGNOI6qZNqDVaLa
-	 XoQ2nI8kOxCymfql3JjE/9A7GwxHTnUm0V18HLlB72LjuRbWJcLV8n1IhDWwIsBkkH
-	 Yumdn6+JB6N1DN5wbW5IdY+L3e1fdorFvr3SSrVvuPBwMZes3ohDVN60UZTsXhhAYS
-	 McLofKHD1gHMoTVLjo59Hl3zM3hMYHmm2KM4UIZ3ZE/skbeT9/DtsgpEXl2SxQbJhn
-	 96jdUwAl9SnasbzxuZjfCz1HD6bG8escfHtIxktx5pJDxiw7lbJuS16hFJ7vadUCC9
-	 9aZnzYpuWgrt1qasi9x/vMISAQnuqR7WQWuNrDEA9TxY2mQdnIK4CcvGHHbtzfA/Fl
-	 VJyMHiedShf7QnhAqqL87TaAn/4q9haFqGbf/9W3LC9Yr0qplaOByoi8DKmZd309+x
-	 8plACWOEIpRrMzAx4uUTBWes=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 47C1440E0192;
-	Mon, 15 Jul 2024 15:01:01 +0000 (UTC)
-Date: Mon, 15 Jul 2024 17:00:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/misc for v6.11-rc1
-Message-ID: <20240715150055.GAZpU5p9TOAJSyW3gQ@fat_crate.local>
+	s=arc-20240116; t=1721055714; c=relaxed/simple;
+	bh=u6KlE4HVa6FasczsbBxFgb/lVCSAg4kHaT9LO+V1mNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YqNrdcKU9gKkvUtWmByt97icc4DYGRWzepf2n1mYOBemqxehgFDYup8lk0oSf5d3gA7EYFBcAbi8ITSHF3UMAOtKcJSvE3LdLYHnn943vXVI0p8rp8V7p31dQ7etmwx6uHMFGrVGbpuh6fSs7TThrUl/UkW9WT5usO6hakSPe0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qCk3ovhE; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e9f863c46so4838408e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721055711; x=1721660511; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AQV1Q+yibtGP3NmgXG7HhtFloGMHLEY6YaLwPlWGoDA=;
+        b=qCk3ovhEs4a2pvZ+UJzDghOMCVIjEPCG0+sMPImj3gJeZjnCWI9upH+OfYHeI6QZJG
+         BpEjZiVgx0at7aJo9KOoKnvuCyIkF47AUS2lxtLkW+ZZ/OgUk2ao+ViV6y8IFtwleAD+
+         87DpZegBpSQ9BU3aAvbAIbLRVcPBPRM1pDkLoXnK5vZAeZSTMaOPkkvNzZWoBTsp52Xk
+         U0ERieVRZWQdmo7kPnqc2Ef03PnlD/U7P+w5gDTRA282eLJa3DcFwiBIKPG24R82cJxh
+         AYMgiNypDOF6mzbiDwVzstn/gl8VVUCbK+IVJKqEFESKKJjwUNsagKTF7dd/nj4SEBHG
+         WYVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721055711; x=1721660511;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AQV1Q+yibtGP3NmgXG7HhtFloGMHLEY6YaLwPlWGoDA=;
+        b=INjCcmv4UAiRXtlMgFi6BShddxMlydJwvG9Pm3i+1KfRKV4a6xS+HKS0iYnx06IcwJ
+         6Cq5HeScgfBbiaiwpKl4lsv3EJPc/Vi9qM2kQo9y9Hdcs0VpNoZmDRrPAnP/P4JHH54/
+         nkrVInuo5NQTOC3J5jGwVG2nwiX0XpNDvhizW43qTRSC494kWRFLND9AwTtprCyKb1QF
+         7rpitqiRlxi1cFhGjBkfDXocM7WzUhT0P0xviHCDOHZluRWNxwwnx7z9tQ5nNTjdbTNO
+         CacRCemHkEKeKr8ZBdwLMpV2pjkcHRSEWTpJQY8lnlu9XwIGaZl9G6MT3AEz9m8Cf2X3
+         sbYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKiE3Dlng55+H/K3DFOV6UmmqC/Y+a7xJp3nIh49Yr7lfsaIsms62cKnSH1UJJHUyLtsLMO3DYBxflg6FZY4ffxTm3x/9bm5tn8SDE
+X-Gm-Message-State: AOJu0Yy5SVR7NIcP83TBfamJk2pEcPy2V0nL0Il3t3EoYkBtwVdb0gA6
+	ElyZS2eIoxifQivY/CVNT4NsC05SzfSd3dDyI8l/Nyxdb/byEtW/RpmWmJrWg9o=
+X-Google-Smtp-Source: AGHT+IEb0I8rR73ywWMIF9sJz1hrFFx6gcrJiETp+BiwqMDi4EiqcyEa5GzbPige/39DaAKdZj/4Rg==
+X-Received: by 2002:ac2:5f67:0:b0:52c:8944:2427 with SMTP id 2adb3069b0e04-52eb99a1440mr9801049e87.31.1721055711034;
+        Mon, 15 Jul 2024 08:01:51 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a8799e7esm80376715e9.18.2024.07.15.08.01.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 08:01:50 -0700 (PDT)
+Message-ID: <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
+Date: Mon, 15 Jul 2024 16:01:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+ <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+ <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 15/07/2024 11:38, Dmitry Baryshkov wrote:
+>>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+>>
+>> Yes, it applies to SM8150.
+> Should the same logic be applied to other chipsets supported upstream?
+> If this is the case, which chipsets?
 
-please pull the x86/misc lineup for v6.11-rc1.
+If you are representing the "top" GDSC inside of the CCF instead of 
+doing this
 
-Thx.
++	/* Keep the critical clock always-on */
++	qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
+
+then the clock should be parked else you'll find the GDSC doesn't come 
+out of reset.
+
+and... as I look at it now we have a logical conflict in 
+drivers/clk/qcom/camcc-sc8280xp.c
+
+static struct clk_branch camcc_gdsc_clk = {
+         .halt_reg = 0xc1e4,
+         .halt_check = BRANCH_HALT,
+         .clkr = {
+                 .enable_reg = 0xc1e4,
+                 .enable_mask = BIT(0),
+                 .hw.init = &(struct clk_init_data){
+                         .name = "camcc_gdsc_clk",
+                         .parent_hws = (const struct clk_hw*[]){
+                                 &camcc_xo_clk_src.clkr.hw,
+                         },
+                         .num_parents = 1,
+                         .flags = CLK_SET_RATE_PARENT,
+                         .ops = &clk_branch2_ops,
+                 },
+         },
+};
+
+Patch sent.
+
+https://lore.kernel.org/linux-arm-msm/20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org/T/#u
+
+In the round I think we should avoid these horrific hard-coded always-on 
+writes where possible.
+
+Personally I think parking is better than always-on specifically because 
+you define the clock and "see" it in the clock tree.
 
 ---
-
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa6=
-70:
-
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_misc_for=
-_v6.11_rc1
-
-for you to fetch changes up to bf6ab33d8487f5e2a0998ce75286eae65bb0a6d6:
-
-  x86/kmsan: Fix hook for unaligned accesses (2024-06-25 11:37:21 +0200)
-
-----------------------------------------------------------------
- - Make error checking of AMD SMN accesses more robust in the callers as
-   they're the only ones who can interpret the results properly
-
- - The usual cleanups and fixes, left and right
-
-----------------------------------------------------------------
-Brian Johannesmeyer (1):
-      x86/kmsan: Fix hook for unaligned accesses
-
-Christian Heusel (1):
-      tools/x86/kcpuid: Add missing dir via Makefile
-
-Ilpo J=C3=A4rvinen (4):
-      x86/of: Return consistent error type from x86_of_pci_irq_enable()
-      x86/pci/intel_mid_pci: Fix PCIBIOS_* return code handling
-      x86/pci/xen: Fix PCIBIOS_* return code handling
-      x86/platform/iosf_mbi: Convert PCIBIOS_* return codes to errnos
-
-Marcin Juszkiewicz (1):
-      x86, arm: Add missing license tag to syscall tables files
-
-Yazen Ghannam (8):
-      EDAC/amd64: Remove unused register accesses
-      EDAC/amd64: Check return value of amd_smn_read()
-      hwmon: (k10temp) Check return value of amd_smn_read()
-      x86/amd_nb: Enhance SMN access error checking
-      hwmon: (k10temp) Define a helper function to read CCD temperature
-      hwmon: (k10temp) Reduce k10temp_get_ccd_support() parameters
-      hwmon: (k10temp) Remove unused HAVE_TDIE() macro
-      hwmon: (k10temp) Rename _data variable
-
- arch/arm/tools/syscall.tbl             |  1 +
- arch/x86/entry/syscalls/syscall_32.tbl |  1 +
- arch/x86/entry/syscalls/syscall_64.tbl |  1 +
- arch/x86/include/asm/amd_nb.h          |  4 +-
- arch/x86/kernel/amd_nb.c               | 44 +++++++++++++++++++---
- arch/x86/kernel/devicetree.c           |  2 +-
- arch/x86/lib/iomem.c                   |  5 ++-
- arch/x86/pci/intel_mid_pci.c           |  4 +-
- arch/x86/pci/xen.c                     |  4 +-
- arch/x86/platform/intel/iosf_mbi.c     |  4 +-
- drivers/edac/amd64_edac.c              | 69 +++++++++++++++++++---------=
-------
- drivers/edac/amd64_edac.h              |  4 --
- drivers/hwmon/k10temp.c                | 62 +++++++++++++++++++---------=
---
- tools/arch/x86/kcpuid/Makefile         |  4 +-
- 14 files changed, 136 insertions(+), 73 deletions(-)
-
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+bod
 
