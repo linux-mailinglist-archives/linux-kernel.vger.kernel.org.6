@@ -1,173 +1,132 @@
-Return-Path: <linux-kernel+bounces-251976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489FD930C73
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CA5930C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B4628110C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15594281495
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9215672;
-	Mon, 15 Jul 2024 01:56:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB165672;
+	Mon, 15 Jul 2024 02:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LRUs0/TV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC94C6D;
-	Mon, 15 Jul 2024 01:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB79D5695;
+	Mon, 15 Jul 2024 02:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721008580; cv=none; b=HdxDlgbBnFbaL9Vz4PHsfT4lJ7ua1edssDreimwISRJS57LpJ+aIspDFHXkMpUAHzKxPYyFlWgg6idVZ0uCVBUq0BPVHjC/iUGK1uY1mVywr9+QPox4VVZuNCRb5LMMr7l2JXVNGCvOYzY9LdlmSdxFJTFlR9/V+UFUt3srGZOY=
+	t=1721008804; cv=none; b=NHBk3xiG9R1SuqqAju/vQ/wjVAoA5ySEWzb/boY7twaV/kfy+7Q6gF10t0XO1SHZgpIGVsgUxUM1ja4jgtOZhLUpxAuFx0GaIP3Ji1R63ZtX8wtZijQyo22sw4XcU7e7mL6KAkBV7504/V9ghpBwHaea0Yn9I8VVVRp2qWBqJe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721008580; c=relaxed/simple;
-	bh=KD4PlfZbPnMC3rkkwPMCI/J3H4+TVk6dGdxwy+F4UcQ=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MhkWhaN0PFDgAI2re0yN1K5icDW+k+XKYdK1N42y6ELwSLxS5Z+wbX4p3ViG4sDPhSN7xg0OAVinoKrAsh5fnsLsgyfkzqHiPJ+54lpv1LNukGhLogfPMld7j9bIPGHSnnKziYnVV7DIB4bhQB6Q3uMap8gWG00axWHzDhiVxfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WMlfL4MmMz4f3kvR;
-	Mon, 15 Jul 2024 09:55:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id AF8031A0181;
-	Mon, 15 Jul 2024 09:56:07 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgA3Gzm2gZRmXtGlAA--.23571S3;
-	Mon, 15 Jul 2024 09:56:07 +0800 (CST)
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-To: Konstantin Kharlamov <Hi-Angel@yandex.ru>,
- Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
- <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
- <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
- <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
- <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
-Date: Mon, 15 Jul 2024 09:56:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1721008804; c=relaxed/simple;
+	bh=eFeM/mubVUDDERtFQAHi8bGxnrvJRVJGCBfZtYGgymA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAfHf7XKNa6czgikZOGpRWWS9OkDZNIHXwEf5OiuCwkw1qg4gyfJbc7GXO1jqSln7Ffqo8sE2YnGKHlRC4XoJiBkeAzdwxWxdM1On+Le8m9WlZpMBIyufhIcMtIDZuLQH7LAVYEHpYVPeptps9a6lYoLThyTLKFA9juhqaJH6vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LRUs0/TV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721008803; x=1752544803;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eFeM/mubVUDDERtFQAHi8bGxnrvJRVJGCBfZtYGgymA=;
+  b=LRUs0/TVyBJxFogezK/8GwL3JDMI9lloxVb4CEFtA8+iGRdZo8lY6P4D
+   pc4VFwskTKD1ibcyRP2VAjVEUNxfh4+GxjKIDUOcDfKV0SoE6df+V+R98
+   j8x51E3kF1UlsKapp3QiLt8lucD3W7J1m963JGfCBWhhC5T/sKUjWhmtW
+   55YachrZDxkxOjvnGPnWlzCyREor+25HL39QL1AfoHyeQSlwabQ2t1gr6
+   jIUlodg9FNNzEdsj0sizMrIZ7TE8LAqB8QJQKBKNkLDhAsd367Z0QQgzt
+   v1BxoBGqWcnR4Z1Vzk16MDccbQFX3Mz6RdCnCAx2rWgkl6xITxwl9E372
+   A==;
+X-CSE-ConnectionGUID: p3iLMrWWTeGv5SQxbfqUsA==
+X-CSE-MsgGUID: mzwK6jENRY+JBZO+DLMaLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="28977055"
+X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
+   d="scan'208";a="28977055"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2024 19:00:02 -0700
+X-CSE-ConnectionGUID: x8eZ/MO0TkeFXyGhdI9v4Q==
+X-CSE-MsgGUID: 2zoIrlmTRBuw5qQNvc/QMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,209,1716274800"; 
+   d="scan'208";a="54294866"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 14 Jul 2024 18:59:58 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sTB0O-000dru-15;
+	Mon, 15 Jul 2024 01:59:56 +0000
+Date: Mon, 15 Jul 2024 09:59:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuntao Dai <d1581209858@live.com>, jassisinghbrar@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	unicorn_wang@outlook.com, inochiama@outlook.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Yuntao Dai <d1581209858@live.com>
+Subject: Re: [PATCH v2 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
+Message-ID: <202407150911.KZchf5cj-lkp@intel.com>
+References: <SYBP282MB2238F93565D20F0A5F3EEB6BC4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3Gzm2gZRmXtGlAA--.23571S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4DZrWUCFyfGr1DJF45Awb_yoW5Zw4kpa
-	93Gan0ga1DKF1I93s7tw1xXFyYyrs5trWUJr98GrWjy398WFyIqF1xKrs0gF98W34xWa1Y
-	v348KFWUuFyUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SYBP282MB2238F93565D20F0A5F3EEB6BC4A02@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
 
-Hi,
+Hi Yuntao,
 
-在 2024/07/13 21:50, Konstantin Kharlamov 写道:
-> On Sat, 2024-07-13 at 19:06 +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/07/12 20:11, Konstantin Kharlamov 写道:
->>> Good news: you diff seems to have fixed the problem! I would have
->>> to
->>> test more extensively in another environment to be completely sure,
->>> but
->>> by following the minimal steps-to-reproduce I can no longer
->>> reproduce
->>> the problem, so it seems to have fixed the problem.
->>
->> That's good. :)
->>>
->>> Bad news: there's a new lockup now 😄 This one seems to happen
->>> after
->>> the disk is returned back; unless the action of returning back
->>> matches
->>> accidentally the appearing stacktraces, which still might be
->>> possible
->>> even though I re-tested multiple times. It's because the traces
->>> (below) seems not to always appear. However, even when traces do
->>> not
->>> appear, IO load on the fio that's running in the background drops
->>> to
->>> zero, so something seems definitely wrong.
->>
->> Ok, I need to investigate more for this. The call stack is not much
->> helpful.
-> 
-> Is it not helpful because of missing line numbers or in general? If
-> it's the missing line numbers I'll try to fix that. We're using some
-> Debian scripts that create deb packages, and well, they don't work well
-> with debug information (it's being put to separate package, but even if
-> it's installed the kernel traces still don't have line numbers). I
-> didn't investigate into it, but I can if that will help.
+kernel test robot noticed the following build warnings:
 
-Line number will be helpful. Meanwhile, can you check if the underlying
-disks has IO while raid5 stuck, by /sys/block/[device]/inflight.
-> 
->> At first, can the problem reporduce with raid1/raid10? If not, this
->> is
->> probably a raid5 bug.
-> 
-> This is not reproducible with raid1 (i.e. no lockups for raid1), I
-> tested that. I didn't test raid10, if you want I can try (but probably
-> only after the weekend, because today I was asked to give the nodes
-> away, for the weekend at least, to someone else).
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.10 next-20240712]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes, please try raid10 as well. For now I'll say this is a raid5
-problem.
-> 
->> The best will be that if I can reporduce this problem myself.
->> The problem is that I don't understand the step 4: turning off jbod
->> slot's power, is this only possible for a real machine, or can I do
->> this in my VM?
-> 
-> Well, let's say that if it is possible, I don't know a way to do that.
-> The `sg_ses` commands that I used
-> 
-> 	sg_ses --dev-slot-num=9 --set=3:4:1   /dev/sg26 # turning off
-> 	sg_ses --dev-slot-num=9 --clear=3:4:1 /dev/sg26 # turning on
-> 
-> …sets and clears the value of the 3:4:1 bit, where the bit is defined
-> by the JBOD's manufacturer datasheet. The 3:4:1 specifically is defined
-> by "AIC" manufacturer. That means the command as is unlikely to work on
-> a different hardware.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuntao-Dai/dt-bindings-mailbox-add-Sophgo-cv18x-SoCs-mailbox/20240715-003952
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/SYBP282MB2238F93565D20F0A5F3EEB6BC4A02%40SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+patch subject: [PATCH v2 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240715/202407150911.KZchf5cj-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240715/202407150911.KZchf5cj-lkp@intel.com/reproduce)
 
-I never do this before, I'll try.
-> 
-> Well, while on it, do you have any thoughts why just using a `echo 1 >
-> /sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps kernel
-> not emulate device disappearance too well?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407150911.KZchf5cj-lkp@intel.com/
 
-echo 1 > delete just delete the disk from kernel, and scsi/dm-raid will
-know that this disk is deleted. However, the disk will stay in kernel
-for the other way, dm-raid does not aware that underlying disks are
-problematic and IO will still be generated and issued.
+All warnings (new ones prefixed by >>):
 
-Thanks,
-Kuai
+>> drivers/mailbox/cv1800-mailbox.c:30: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * cv1800 mailbox channel private data
 
-> .
-> 
 
+vim +30 drivers/mailbox/cv1800-mailbox.c
+
+    28	
+    29	/**
+  > 30	 * cv1800 mailbox channel private data
+    31	 * @idx: index of channel
+    32	 * @cpu: send to which processor
+    33	 */
+    34	struct cv1800_mbox_chan_priv {
+    35		int idx;
+    36		int cpu;
+    37	};
+    38	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
