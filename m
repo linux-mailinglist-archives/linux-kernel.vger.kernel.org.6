@@ -1,119 +1,168 @@
-Return-Path: <linux-kernel+bounces-252528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53DC931497
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:43:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DB1931494
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F0D28209D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:43:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A49ADB2304A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157DC18C33B;
-	Mon, 15 Jul 2024 12:43:00 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E1C18C336;
+	Mon, 15 Jul 2024 12:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VQIgH53D"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC33618C199
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946B318C324
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721047379; cv=none; b=lUXP1jHhNqukbc5osP2ZyABIKtEN1kzdfCn39Pzj+Z/V4FENkdKuQFsF55tYFJfSePC9mx27sDda7pMkziPaRNmS4z78skqIVMTumikKx0dg7qpgOyE6/bNe3VRw42Xjk1D67qoOt3BK+vl49h7VISoFv7mwneKSp62lQw68G3I=
+	t=1721047337; cv=none; b=IPNgmzMzBxbf1cZUTd4asUT7m6r32SKeTSkSTZ8wykcPV3KHDLFqStNEchJTKad05g4vmyNDRAZ+6IJn7zFgg965mHEIhlhg4ybOyw4VTg/IAW2Q5oN4EU+pfw5lOLqKDZJNAAqdteZ7Yo9b7K0yCDunpsh7E3SXlCVTUhRUWAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721047379; c=relaxed/simple;
-	bh=aPxbU1CRqN/ObjOco6L+kuqqgrjuH5Lv+0eg1N876o4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=JnFMwAchJ1DGDvirkarQqxnpsyBm98y4eMlWwkBAgxYCL0r4EpIu1Ad1j+QfxJgMERzo4FSh6IWGA2Uj2KAashMUMfqV76rEd92JcZVjcaYKrQNdHor4H1WmrgjruLh/hYwEvWWIJluVwI1R1F5jbbmpD63VnmsTZNY0gAssmJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-4-SUXMSojjO4CMOodAlWhuTQ-1; Mon, 15 Jul 2024 13:42:55 +0100
-X-MC-Unique: SUXMSojjO4CMOodAlWhuTQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 15 Jul
- 2024 13:42:08 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 15 Jul 2024 13:42:08 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Nicholas Piggin' <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Daniel Borkmann
-	<daniel@iogearbox.net>, Masahiro Yamada <masahiroy@kernel.org>, "Alexei
- Starovoitov" <ast@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, "Andrii
- Nakryiko" <andrii@kernel.org>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Vishal Chourasia <vishalc@linux.ibm.com>,
-	Mahesh Salgaonkar <mahesh@linux.ibm.com>, Hari Bathini
-	<hbathini@linux.ibm.com>, "Masami Hiramatsu" <mhiramat@kernel.org>
-Subject: RE: [RFC PATCH v4 12/17] powerpc64/ftrace: Move ftrace sequence out
- of line
-Thread-Topic: [RFC PATCH v4 12/17] powerpc64/ftrace: Move ftrace sequence out
- of line
-Thread-Index: AQHa1pCD4cP620l/NEOwGIoX3oyFIrH3uX7Q
-Date: Mon, 15 Jul 2024 12:42:08 +0000
-Message-ID: <e7e31eaa04234dddaac660a38adedee4@AcuMS.aculab.com>
-References: <cover.1720942106.git.naveen@kernel.org>
- <9cf2cdddba74ec167ae1af5ec189bba8f704fb51.1720942106.git.naveen@kernel.org>
- <D2PYW90LRVAY.3PCE9P3NE2NEB@gmail.com>
-In-Reply-To: <D2PYW90LRVAY.3PCE9P3NE2NEB@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721047337; c=relaxed/simple;
+	bh=EDBgzw5DNpqz9ajLvn1qdqXNoW+eqNa5B0DJrP/Swqs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=d4Y2HZ8KmyldYhJKnQFZqDuMbyMYoM2Q1+EDt4Rmm4arb7XbHtldOU0qlJnPFFszmO/QQ9gn/OaQkbiSxXqejFf78BkHHi95kTa1Xb0Hq1hhK0k9phIsavylaIEiZgRYkW8iqOEq7pLpZwnSKZeUn52pB9Ohsvzqs+F/WEKPA64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VQIgH53D; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so49026361fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 05:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721047334; x=1721652134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k+EQHqWsk3KyTfpZcgFPziNWV1GVC9Hoip1sZmqcTgg=;
+        b=VQIgH53DZt9MLiSkKYHTo5UySRpBK6BRx4t+gc/zlk+SDt00WimQG0eQXeuI5EwDHF
+         Im+U8lHMHJeHFBYPHBR9DnS2jBNgrtoIjmhbWa7pYEQWUUVvCRWcWv7fgRZ/sBy6DGag
+         nESudaeJHoCqrbagCOBrDV5OMPxUBxPgVOVCz/PaoK9S2UlClOVw83kSRANCBHtoVvcl
+         TcIm7vQXEFe9lLM0FK3+Bvl5Z4RpjZ/DnDuUso7adQQSWyJ970n5tezGaaDLMPPIq/uY
+         92yE1GhY6qT9BgyttHVQ2hQ7oUVMB3htEA3mFtRmZ43LwllekoICBP/yXtTuwLisspbM
+         frnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721047334; x=1721652134;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k+EQHqWsk3KyTfpZcgFPziNWV1GVC9Hoip1sZmqcTgg=;
+        b=QxHbF+hVtyrPZ11keZgoYTxhReYlWQRBgciene3Q70L53W4GOAs7o/9bMu5ChghEvF
+         AZ4qwBvzlLUqLPgZSJiCWuNq0WqEBC4Ehf7xGFUp34aekslruJtNVsAnmYf0F0MUMOLj
+         AECWy2oGJDixCMhpIVk/Q0P2ZG58lYRONU8xaLICPxMJ7wmHfY3crKkpmE/Bzf3syH//
+         C95wwE4mPbaH42Eh8P/ha7+37Qro/BGa15RXoVXEMAf3lr8M2KJ0pHg7RoupodeIJs21
+         FroubfFHr4D87DFj0doATeTXhmxOeM6gzO0ShIZ6HLPEOllbItgk/2A5EqoYqc0ue41N
+         bIew==
+X-Forwarded-Encrypted: i=1; AJvYcCUv6j/9Mkvj4QelbCB9hmijd688it9QTq2EsMIf8BInblwgENfW4CzrDM38VH3Pw6+SYPerFbL/8BExXG8xGBLR2Zo7KCBd8V6lATUO
+X-Gm-Message-State: AOJu0Yy/uav78U0jA/zSD1GWJv9TUjgbM8Xv84NZsOKIMOf8UsMkRVyp
+	9vWg+57/sv5xI1ItCE5pzkuoMttzUsdWh/lpB5kax/q4qIb7kWZ+3PVIpIUKrxI=
+X-Google-Smtp-Source: AGHT+IFiuC6l6e4W15chCpGMEHC8U71AzWjph63xnUIfCY9cb8EqCei/7BgC+gL95yvQZ5BUSuVCUw==
+X-Received: by 2002:a2e:8710:0:b0:2ee:6cda:6380 with SMTP id 38308e7fff4ca-2eeb30e3cbbmr121814191fa.18.1721047333411;
+        Mon, 15 Jul 2024 05:42:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4? ([2a01:e0a:982:cbb0:79bb:5f59:8e51:52d4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafb877sm6342646f8f.69.2024.07.15.05.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 05:42:13 -0700 (PDT)
+Message-ID: <7daa3c0d-cecf-4f50-be32-ae116b920db0@linaro.org>
+Date: Mon, 15 Jul 2024 14:42:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/4] Revert "drm/panel-edp: Add SDC ATNA45AF01"
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
+References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
+ <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240715-x1e80100-crd-backlight-v2-2-31b7f2f658a3@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogTmljaG9sYXMgUGlnZ2luDQo+IFNlbnQ6IDE1IEp1bHkgMjAyNCAwOToyNQ0KPiANCj4g
-T24gU3VuIEp1bCAxNCwgMjAyNCBhdCA2OjI3IFBNIEFFU1QsIE5hdmVlbiBOIFJhbyB3cm90ZToN
-Cj4gPiBGdW5jdGlvbiBwcm9maWxlIHNlcXVlbmNlIG9uIHBvd2VycGMgaW5jbHVkZXMgdHdvIGlu
-c3RydWN0aW9ucyBhdCB0aGUNCj4gPiBiZWdpbm5pbmcgb2YgZWFjaCBmdW5jdGlvbjoNCj4gPiAJ
-bWZscglyMA0KPiA+IAlibAlmdHJhY2VfY2FsbGVyDQo+ID4NCj4gPiBUaGUgY2FsbCB0byBmdHJh
-Y2VfY2FsbGVyKCkgZ2V0cyBub3AnZWQgb3V0IGR1cmluZyBrZXJuZWwgYm9vdCBhbmQgaXMNCj4g
-PiBwYXRjaGVkIGluIHdoZW4gZnRyYWNlIGlzIGVuYWJsZWQuDQo+ID4NCj4gPiBHaXZlbiB0aGUg
-c2VxdWVuY2UsIHdlIGNhbm5vdCByZXR1cm4gZnJvbSBmdHJhY2VfY2FsbGVyIHdpdGggJ2Jscicg
-YXMgd2UNCj4gPiBuZWVkIHRvIGtlZXAgTFIgYW5kIHIwIGludGFjdC4gVGhpcyByZXN1bHRzIGlu
-IGxpbmsgc3RhY2sgKHJldHVybg0KPiA+IGFkZHJlc3MgcHJlZGljdG9yKSBpbWJhbGFuY2Ugd2hl
-biBmdHJhY2UgaXMgZW5hYmxlZC4gVG8gYWRkcmVzcyB0aGF0LCB3ZQ0KPiA+IHdvdWxkIGxpa2Ug
-dG8gdXNlIGEgdGhyZWUgaW5zdHJ1Y3Rpb24gc2VxdWVuY2U6DQo+ID4gCW1mbHIJcjANCj4gPiAJ
-YmwJZnRyYWNlX2NhbGxlcg0KPiA+IAltdGxyCXIwDQo+ID4NCj4gPiBGdXJ0aGVyIG1vcmUsIHRv
-IHN1cHBvcnQgRFlOQU1JQ19GVFJBQ0VfV0lUSF9DQUxMX09QUywgd2UgbmVlZCB0bw0KPiA+IHJl
-c2VydmUgdHdvIGluc3RydWN0aW9uIHNsb3RzIGJlZm9yZSB0aGUgZnVuY3Rpb24uIFRoaXMgcmVz
-dWx0cyBpbiBhDQo+ID4gdG90YWwgb2YgZml2ZSBpbnN0cnVjdGlvbiBzbG90cyB0byBiZSByZXNl
-cnZlZCBmb3IgZnRyYWNlIHVzZSBvbiBlYWNoDQo+ID4gZnVuY3Rpb24gdGhhdCBpcyB0cmFjZWQu
-DQo+ID4NCj4gPiBNb3ZlIHRoZSBmdW5jdGlvbiBwcm9maWxlIHNlcXVlbmNlIG91dC1vZi1saW5l
-IHRvIG1pbmltaXplIGl0cyBpbXBhY3QuDQo+ID4gVG8gZG8gdGhpcywgd2UgcmVzZXJ2ZSBhIHNp
-bmdsZSBub3AgYXQgZnVuY3Rpb24gZW50cnkgdXNpbmcNCj4gPiAtZnBhdGNoYWJsZS1mdW5jdGlv
-bi1lbnRyeT0xIGFuZCBhZGQgYSBwYXNzIG9uIHZtbGludXgubyB0byBkZXRlcm1pbmUNCj4gPiB0
-aGUgdG90YWwgbnVtYmVyIG9mIGZ1bmN0aW9ucyB0aGF0IGNhbiBiZSB0cmFjZWQuIFRoaXMgaXMg
-dGhlbiB1c2VkIHRvDQo+ID4gZ2VuZXJhdGUgYSAuUyBmaWxlIHJlc2VydmluZyB0aGUgYXBwcm9w
-cmlhdGUgYW1vdW50IG9mIHNwYWNlIGZvciB1c2UgYXMNCj4gPiBmdHJhY2Ugc3R1YnMsIHdoaWNo
-IGlzIGJ1aWx0IGFuZCBsaW5rZWQgaW50byB2bWxpbnV4Lg0KPiANCj4gVGhlc2UgYXJlIGFsbCBn
-b2luZyBpbnRvIC50cmFtcC5mdHJhY2UudGV4dCBBRkFJS1M/IFNob3VsZCB0aGF0IGJlDQo+IG1v
-dmVkIGFmdGVyIHNvbWUgb2YgdGhlIG90aGVyIHRleHQgaW4gdGhlIGxpbmtlciBzY3JpcHQgdGhl
-biBpZiBpdA0KPiBjb3VsZCBnZXQgcXVpdGUgbGFyZ2U/IHNjaGVkIGFuZCBsb2NrIGFuZCBvdGhl
-ciB0aGluZ3Mgc2hvdWxkIGJlDQo+IGNsb3NlciB0byB0aGUgcmVzdCBvZiB0ZXh0IGFuZCBob3Qg
-Y29kZS4NCg0KQ2FuJ3QgeW91IGFsbG9jYXRlIHRoZSBzcGFjZSBmb3IgdGhlICdmdW5jdGlvbiBw
-cm9maWxlIHNlcXVlbmNlJw0KYXQgcnVuLXRpbWUgd2hlbiAoaWYpIGZ0cmFjZSBpcyBlbmFibGVk
-Pw0KV2hlbiBmdHJhY2UgZ2V0cyBkaXNhYmxlZCBpdCBpcyBsaWtlbHkgcG9zc2libGUgdG8gc2F2
-ZSB0aGUgdHJhbXBvbGluZQ0KbnVtYmVyIGluIHRoZSBub3AgLSBzbyB0aGUgc2FtZSBtZW1vcnkg
-Y2FuIGJlIHVzZWQgbmV4dCB0aW1lLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNz
-IExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAx
-UFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Hi,
 
+On 15/07/2024 14:15, Stephan Gerhold wrote:
+> This reverts commit 8ebb1fc2e69ab8b89a425e402c7bd85e053b7b01.
+> 
+> The panel should be handled through the samsung-atna33xc20 driver for
+> correct power up timings. Otherwise the backlight does not work correctly.
+> 
+> We have existing users of this panel through the generic "edp-panel"
+> compatible (e.g. the Qualcomm X1E80100 CRD), but the screen works only
+> partially in that configuration: It works after boot but once the screen
+> gets disabled it does not turn on again until after reboot. It behaves the
+> same way with the default "conservative" timings, so we might as well drop
+> the configuration from the panel-edp driver. That way, users with old DTBs
+> will get a warning and can move to the new driver.
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>   drivers/gpu/drm/panel/panel-edp.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+> index 3a574a9b46e7..d2d682385e89 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1960,8 +1960,6 @@ static const struct edp_panel_entry edp_panels[] = {
+>   	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05af, &delay_200_500_e200_d200, "Unknown"),
+>   	EDP_PANEL_ENTRY('L', 'G', 'D', 0x05f1, &delay_200_500_e200_d200, "Unknown"),
+>   
+> -	EDP_PANEL_ENTRY('S', 'D', 'C', 0x416d, &delay_100_500_e200, "ATNA45AF01"),
+> -
+>   	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1511, &delay_200_500_e50, "LQ140M1JW48"),
+>   	EDP_PANEL_ENTRY('S', 'H', 'P', 0x1523, &delay_80_500_e50, "LQ140M1JW46"),
+>   	EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
+> 
+
+How will we handle current/old crd DT with new kernels ?
+
+Same question for patch 3, thie serie introduces a bindings that won't be valid
+if we backport patch 3. I don't think patch should be backported, and this patch
+should be dropped.
+
+Neil
 
