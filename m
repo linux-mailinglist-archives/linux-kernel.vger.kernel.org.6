@@ -1,209 +1,87 @@
-Return-Path: <linux-kernel+bounces-252425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFB49312DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:16:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069729312E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40281F236A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:16:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71310B21A26
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D974E18A95F;
-	Mon, 15 Jul 2024 11:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A166188CDB;
+	Mon, 15 Jul 2024 11:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Se13DQqE"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vun2snxF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCAA1891DC;
-	Mon, 15 Jul 2024 11:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559A13D8B1;
+	Mon, 15 Jul 2024 11:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042092; cv=none; b=DVK1qpM/6NLRb27xt2o0uBc+Uq1wmhPooO4h01ypq7oC0rB67QH+hsQ+ysZcZxInKXTgHOWDX/5Ow3HXGCSEoH+4O+90TQO6VVHKGAS8WDwY0b1dkz0iklkJuZKnbLNqGOHSflEz6DfYl5k2/+/Q6K7GdxeEMHBQ2SBV/dDOrgU=
+	t=1721042201; cv=none; b=tVvW3E0KP362b3hGXrDqbHSj/xu9O0ySHDUza8NPaqg1g3Nf5desi6wIr9vxv0WLb6LSyoZuG2+W5MtWhVlMd1YrWV04ph3n4ePZ+W05E2cmWf9IetqhUWoJ10oYp1r59Vq+L1p7icYf1XwbNv16gtwWVJZexxBQMRIcuJE23fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042092; c=relaxed/simple;
-	bh=BEQ52OycMXhuGlXXvUjM+j81jFqhZR2hcVcYZWfDbOw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S7LP9bViJM5z+btP+u372mZwIl0G7VcvIWwM/5MusMYoXijO0mKYssv1fFtP9wU6nBn+ppBspMjGNNtS5slTEZBWdVV0e1BWyueDViJFmn6lmI+HpH/vms7XMBql5apY5+9aHWWdmlQcY3Iv9GNjv6oaq8j18KHJvCKI3Ob2zpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Se13DQqE; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721042090; x=1752578090;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BEQ52OycMXhuGlXXvUjM+j81jFqhZR2hcVcYZWfDbOw=;
-  b=Se13DQqEFfr8qhEJopu3cfWNk/v5EL1H+Z4pQ+ywI5YaXGpw5yPue9Xw
-   7WtsZ4ed3NvRkmSICChA8rTulPK/8q3wKkeLKVDKru71x63uwR8M1zuh0
-   DBqjwo1cLvlNd6kAIcwDJvZ7L7bEqIyKzf26ujuNGDLyRgGM00D734g1f
-   7+PiZX7qglJz9uFfRLpzAVQG8WDgmg3faD1mBN832SNSAIo1cEea/QgSI
-   Xd3/rCiTNlFT6MdSiR6dMDsBdy4i2m7el9fC2LbYl8Z2EPf44QgqxyKgj
-   tNGHO2V9K+eZe+kfwCsgSMqKOrboLtJfv+nouTumSVf4R9JqaxoQR8QuH
-   w==;
-X-CSE-ConnectionGUID: M47IHorFQcORQBAq4muecw==
-X-CSE-MsgGUID: BEBq5ILYTtKHb08hHg+Ncw==
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="196643523"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Jul 2024 04:14:46 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 15 Jul 2024 04:14:45 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 15 Jul 2024 04:14:43 -0700
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <linux-spi@vger.kernel.org>
-CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Steve Wilkins
-	<steve.wilkins@raymarine.com>, Daire McNamara <daire.mcnamara@microchip.com>,
-	Mark Brown <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 6/6] spi: microchip-core: add support for word sizes of 1 to 32 bits
-Date: Mon, 15 Jul 2024 12:13:57 +0100
-Message-ID: <20240715-cogwheel-uniquely-0d4ef518b809@wendy>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240715-retail-magnolia-bbd49a657a89@wendy>
-References: <20240715-retail-magnolia-bbd49a657a89@wendy>
+	s=arc-20240116; t=1721042201; c=relaxed/simple;
+	bh=MifBY0FmxRHX77tlDpC7n/Xo4IYQHsF6KyVfmI6zDW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxbA1iFmuyWFaeCUk/Y8PVTo7OSI9wguaFm6EUpSgZiTn2QEZJa3mpq64lHRmzP7TBoXotdgB4XLBnuD5iSBm8AiYGwqJvGRwm7y5doKTDO7+i4r6a3rvdpmNv3tr8UlvaMjGMNlRpSqmzxz4+0sVK1CvRBsokJaEmKa0ZAGjpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vun2snxF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93329C32782;
+	Mon, 15 Jul 2024 11:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721042201;
+	bh=MifBY0FmxRHX77tlDpC7n/Xo4IYQHsF6KyVfmI6zDW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vun2snxFE85Zuzs+eUY80ftaet/uz7cSJVQpmovv3Oy14IeRFFbnmVRaOLOfjtW8H
+	 MZ65IIe3CUQXDSLitUDrGSRcPVXgEMKU/BBf2eXR1crgcUuGefZYCukbccP9l7Y6Mg
+	 6J54lIkOf7/26UXpbLw5DmXTmJoktZn2s1VlyxOw=
+Date: Mon, 15 Jul 2024 13:16:38 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
+Message-ID: <2024071553-yippee-broadways-8035@gregkh>
+References: <2024071218-CVE-2024-40938-1619@gregkh>
+ <20240715.aeLiunipi8ia@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4283; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=SLr+fKyui42+8hroU8IV8E1Sye2BojjF+ZVhjk0+kHU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlTWYqDbgutmLqi6aSjewlv1DSumFrbAyrXf+u1nNJ0kFOb yu/bUcrCIMbBICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgIl84mRkWFOy1d3wvV/T+XWBLaZ7Y4 tLrh78wfK3TDVd/JBUi4IHEyPDvqaY/dcvNv4Pv7ny22/lsF7mqQn3nqxacnLFe6tP3l18XAA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20240715.aeLiunipi8ia@digikod.net>
 
-From: Steve Wilkins <steve.wilkins@raymarine.com>
+On Mon, Jul 15, 2024 at 12:37:53PM +0200, Mickaël Salaün wrote:
+> Hello,
+> 
+> AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
+> security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
+> just a canary, and this case was correctly handled with defensive
+> programming and didn't allow to bypass the security policy nor to harm
+> the kernel.  However, this fix should indeed be backported.
 
-The current implementation only supports a word size of 8 bits,
-which limits the devices it can be used with. Add support for any
-word size between 1 and 32 bits, as supported by the hardware.
+If a WARN_ON() is hit, a machine with panic_on_warn enabled will reboot,
+hence if there is any way that userspace can hit this, it needs to be
+issued a CVE, sorry.
 
-Signed-off-by: Steve Wilkins <steve.wilkins@raymarine.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/spi/spi-microchip-core.c | 53 +++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 22 deletions(-)
+> Could you please Cc me for future CVE related to my changes or to
+> Landlock?  For kernel CVEs, I think it would be good to Cc at least
+> maintainers, reviewers, authors, and committers for the related commits.
 
-diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip-core.c
-index 9f37603ccf10a..856bcbf0292d4 100644
---- a/drivers/spi/spi-microchip-core.c
-+++ b/drivers/spi/spi-microchip-core.c
-@@ -111,7 +111,7 @@ struct mchp_corespi {
- 	int irq;
- 	int tx_len;
- 	int rx_len;
--	int pending;
-+	int n_bytes;
- };
- 
- static inline u32 mchp_corespi_read(struct mchp_corespi *spi, unsigned int reg)
-@@ -135,20 +135,23 @@ static inline void mchp_corespi_disable(struct mchp_corespi *spi)
- 
- static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi)
- {
--	u8 data;
--	int fifo_max, i = 0;
-+	while (spi->rx_len >= spi->n_bytes && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_RXFIFO_EMPTY)) {
-+		u32 data = mchp_corespi_read(spi, REG_RX_DATA);
- 
--	fifo_max = min(spi->rx_len, FIFO_DEPTH);
-+		spi->rx_len -= spi->n_bytes;
- 
--	while ((i < fifo_max) && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_RXFIFO_EMPTY)) {
--		data = mchp_corespi_read(spi, REG_RX_DATA);
-+		if (!spi->rx_buf)
-+			continue;
- 
--		if (spi->rx_buf)
--			*spi->rx_buf++ = data;
--		i++;
-+		if (spi->n_bytes == 4)
-+			*((u32 *)spi->rx_buf) = data;
-+		else if (spi->n_bytes == 2)
-+			*((u16 *)spi->rx_buf) = data;
-+		else
-+			*spi->rx_buf = data;
-+
-+		spi->rx_buf += spi->n_bytes;
- 	}
--	spi->rx_len -= i;
--	spi->pending -= i;
- }
- 
- static void mchp_corespi_enable_ints(struct mchp_corespi *spi)
-@@ -210,20 +213,28 @@ static inline void mchp_corespi_set_xfer_size(struct mchp_corespi *spi, int len)
- 
- static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi)
- {
--	u8 byte;
- 	int fifo_max, i = 0;
- 
--	fifo_max = min(spi->tx_len, FIFO_DEPTH);
-+	fifo_max = DIV_ROUND_UP(min(spi->tx_len, FIFO_DEPTH), spi->n_bytes);
- 	mchp_corespi_set_xfer_size(spi, fifo_max);
- 
- 	while ((i < fifo_max) && !(mchp_corespi_read(spi, REG_STATUS) & STATUS_TXFIFO_FULL)) {
--		byte = spi->tx_buf ? *spi->tx_buf++ : 0xaa;
--		mchp_corespi_write(spi, REG_TX_DATA, byte);
-+		u32 word;
-+
-+		if (spi->n_bytes == 4)
-+			word = spi->tx_buf ? *((u32 *)spi->tx_buf) : 0xaa;
-+		else if (spi->n_bytes == 2)
-+			word = spi->tx_buf ? *((u16 *)spi->tx_buf) : 0xaa;
-+		else
-+			word = spi->tx_buf ? *spi->tx_buf : 0xaa;
-+
-+		mchp_corespi_write(spi, REG_TX_DATA, word);
-+		if (spi->tx_buf)
-+			spi->tx_buf += spi->n_bytes;
- 		i++;
- 	}
- 
--	spi->tx_len -= i;
--	spi->pending += i;
-+	spi->tx_len -= i * spi->n_bytes;
- }
- 
- static inline void mchp_corespi_set_framesize(struct mchp_corespi *spi, int bt)
-@@ -490,10 +501,9 @@ static int mchp_corespi_transfer_one(struct spi_controller *host,
- 	spi->rx_buf = xfer->rx_buf;
- 	spi->tx_len = xfer->len;
- 	spi->rx_len = xfer->len;
--	spi->pending = 0;
-+	spi->n_bytes = roundup_pow_of_two(DIV_ROUND_UP(xfer->bits_per_word, BITS_PER_BYTE));
- 
--	mchp_corespi_set_xfer_size(spi, (spi->tx_len > FIFO_DEPTH)
--				   ? FIFO_DEPTH : spi->tx_len);
-+	mchp_corespi_set_framesize(spi, xfer->bits_per_word);
- 
- 	mchp_corespi_write(spi, REG_COMMAND, COMMAND_RXFIFORST | COMMAND_TXFIFORST);
- 
-@@ -511,7 +521,6 @@ static int mchp_corespi_prepare_message(struct spi_controller *host,
- 	struct spi_device *spi_dev = msg->spi;
- 	struct mchp_corespi *spi = spi_controller_get_devdata(host);
- 
--	mchp_corespi_set_framesize(spi, DEFAULT_FRAMESIZE);
- 	mchp_corespi_set_mode(spi, spi_dev->mode);
- 
- 	return 0;
-@@ -538,7 +547,7 @@ static int mchp_corespi_probe(struct platform_device *pdev)
- 	host->num_chipselect = num_cs;
- 	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
- 	host->setup = mchp_corespi_setup;
--	host->bits_per_word_mask = SPI_BPW_MASK(8);
-+	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
- 	host->transfer_one = mchp_corespi_transfer_one;
- 	host->prepare_message = mchp_corespi_prepare_message;
- 	host->set_cs = mchp_corespi_set_cs;
--- 
-2.43.2
+I suggest setting up lei to watch the linux-cve-announce mailing list if
+you wish to do this (just filter for landlock stuff).  Automatically
+mailing cve stuff to maintainers has been deemed too "noisy" which is
+why we do not do this by default.
 
+thanks,
+
+greg k-h
 
