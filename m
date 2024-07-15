@@ -1,390 +1,290 @@
-Return-Path: <linux-kernel+bounces-253058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86F3931BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD64931B7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73AD31F22DEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4EE28299A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5072913D53F;
-	Mon, 15 Jul 2024 20:30:38 +0000 (UTC)
-Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB6313BADF;
+	Mon, 15 Jul 2024 20:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QBJ4LOgs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD7D1442E8;
-	Mon, 15 Jul 2024 20:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C6013AD3D;
+	Mon, 15 Jul 2024 20:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721075437; cv=none; b=afLJcUUv7B8o8J4gpETmOrajw8/6U1aa+GEgThKKnEf5DFbvlj5gFnyR6c1q4ImN02OJfVnzgnPmSbfqMdGJxLCeMwfCtyQToRA9wPmeePnn5epb94wX6lq4N/6K8WTqvOWsc15f6AunjlL+K0f+kkZ2mptguT59IOChOzgfB20=
+	t=1721073883; cv=none; b=LwgP7J7oz4/xUzWb7oCSAy270rMG5ShhHpqwPTxCFJgwky3lMdcSjeQTBYIYIG3U6Tf7oIoOcf9P3PA39UlTySCjqmVcz89DS3crzy89T1eNoB+ZyHaIyWRHh9X+WRFuPxYG8mZII9W9OIG3Eipez2c4dL9zBzW4TjPWaroE2Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721075437; c=relaxed/simple;
-	bh=SYXTL2ZPOP+qHncxqQvm9el6lTaId8PyESkQbR0BWBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTUd45hxE047KS5QE2mU40X3uN5+dGux1I5OEwuz1e+w12utyrQLnCV3BTCHNispcVeGgcyh/P7cyKCgygy5MCFl7ygTu8AD+SLcs8FCXCN2+UuFL+phKW0W8VmIUYg8xfkmTy3zQo1ulwhExig8rkTyPgDT6to+pzdBu9WnEw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
-Received: from martin by akranes.kaiser.cx with local (Exim 4.96)
-	(envelope-from <martin@akranes.kaiser.cx>)
-	id 1sTRfx-000ga8-0f;
-	Mon, 15 Jul 2024 21:47:57 +0200
-Date: Mon, 15 Jul 2024 21:47:57 +0200
-From: Martin Kaiser <martin@kaiser.cx>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] hwrng: add hwrng driver for Rockchip RK3568 SoC
-Message-ID: <ZpV87YMXJaPnHM8H@akranes.kaiser.cx>
-References: <cover.1720969799.git.daniel@makrotopia.org>
- <f606403145588d28dda14a55ba3afef85720a4dc.1720969799.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1721073883; c=relaxed/simple;
+	bh=ZLlB2DB3vdtMN7zCCHuoJegLf5V2awwX0vQH/01u3V0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oo+rJcVzmg3tBc6PdCFJoOJ1wTG8y3lATttbttcQW6f392ExPVagGAiqStnMiJP0GDqDOqKuURNFkO9eG6Pvz/o9FwSEb5KKl7zzygFby57YBtudr2sddqTI/jaSKrKWjFGJSbmsQt6lf6C4G5Ddkoq8uQqhdkPppck6O8G27ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QBJ4LOgs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8gc1002589;
+	Mon, 15 Jul 2024 20:04:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=w43u+d5ZRqcJtwr32+UuS6yJ
+	rT6RMoBwvxj8K+NlUkY=; b=QBJ4LOgs3NVryRbDzdsUTgXZ9SX5Ub0zK2eLcklq
+	h8Vj2mbT2PcazrFGTHGsPJQ9WmFOHwCvGB7e4qoSeZExHsHVsK5a+QmeBA/ROoYw
+	Oo04ny9G185HtmE8aTqyQEumQZ/22wibRTysOwgmy5a5sIePux5kZz4y1V4ZsR/l
+	xIfReuRXCIOhABfqQbS5ncSMwi4qRX8Rl/Lp2Js7meTsrLRM0s6g56ImXy2DaQ/i
+	OuQF9seChc4GmFo10/w9WtgHxANRc1aEMLNQ1BR8gCzp+uCtQFm4Xfb/iuWaYXIH
+	2PjMQXL5pRahYSrzcnBu6g2rahuid/0sDg5B8P6AgBxKbQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bhy6w7k1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 20:04:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FK4TXh011653
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 20:04:29 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 15 Jul 2024 13:04:23 -0700
+Date: Tue, 16 Jul 2024 01:34:19 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 1/5] drm/msm/adreno: Implement SMEM-based speed bin
+Message-ID: <20240715200419.l47ng6efa25in6sg@hu-akhilpo-hyd.qualcomm.com>
+References: <20240709-topic-smem_speedbin-v5-0-e2146be0c96f@linaro.org>
+ <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <f606403145588d28dda14a55ba3afef85720a4dc.1720969799.git.daniel@makrotopia.org>
-Sender: "Martin Kaiser,,," <martin@akranes.kaiser.cx>
+In-Reply-To: <20240709-topic-smem_speedbin-v5-1-e2146be0c96f@linaro.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -ruorJXBnZMlFD003J-lc9Lc7a_z2JHf
+X-Proofpoint-ORIG-GUID: -ruorJXBnZMlFD003J-lc9Lc7a_z2JHf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_14,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407150156
 
-Hi,
-
-Thus wrote Daniel Golle (daniel@makrotopia.org):
-
-> From: Aurelien Jarno <aurelien@aurel32.net>
-
-> Rockchip SoCs used to have a random number generator as part of their
-> crypto device, and support for it has to be added to the corresponding
-> driver. However newer Rockchip SoCs like the RK3568 have an independent
-> True Random Number Generator device. This patch adds a driver for it,
-> greatly inspired from the downstream driver.
-
-> The TRNG device does not seem to have a signal conditionner and the FIPS
-> 140-2 test returns a lot of failures. They can be reduced by increasing
-> RK_RNG_SAMPLE_CNT, in a tradeoff between quality and speed. This value
-> has been adjusted to get ~90% of successes and the quality value has
-> been set accordingly.
-
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> [daniel@makrotpia.org: code style fixes]
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Tue, Jul 09, 2024 at 12:45:29PM +0200, Konrad Dybcio wrote:
+> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
+> abstracted through SMEM, instead of being directly available in a fuse.
+> 
+> Add support for SMEM-based speed binning, which includes getting
+> "feature code" and "product code" from said source and parsing them
+> to form something that lets us match OPPs against.
+> 
+> Due to the product code being ignored in the context of Adreno on
+> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  MAINTAINERS                           |   1 +
->  drivers/char/hw_random/Kconfig        |  14 ++
->  drivers/char/hw_random/Makefile       |   1 +
->  drivers/char/hw_random/rockchip-rng.c | 227 ++++++++++++++++++++++++++
->  4 files changed, 243 insertions(+)
->  create mode 100644 drivers/char/hw_random/rockchip-rng.c
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7b2b8b1f526c..2745cfe56774 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19698,6 +19698,7 @@ M:	Daniel Golle <daniel@makrotopia.org>
->  M:	Aurelien Jarno <aurelien@aurel32.net>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
-> +F:	drivers/char/hw_random/rockchip-rng.c
-
->  ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
->  M:	Jacob Chen <jacob-chen@iotwrt.com>
-> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-> index 442c40efb200..2b62cd08f91a 100644
-> --- a/drivers/char/hw_random/Kconfig
-> +++ b/drivers/char/hw_random/Kconfig
-> @@ -573,6 +573,20 @@ config HW_RANDOM_JH7110
->  	  To compile this driver as a module, choose M here.
->  	  The module will be called jh7110-trng.
-
-> +config HW_RANDOM_ROCKCHIP
-> +	tristate "Rockchip True Random Number Generator"
-> +	depends on HW_RANDOM && (ARCH_ROCKCHIP || COMPILE_TEST)
-> +	depends on HAS_IOMEM
-> +	default HW_RANDOM
-> +	help
-> +	  This driver provides kernel-side support for the True Random Number
-> +	  Generator hardware found on some Rockchip SoC like RK3566 or RK3568.
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 14 +++++-----
+>  drivers/gpu/drm/msm/adreno/adreno_device.c |  2 ++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c    | 42 +++++++++++++++++++++++++++---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  7 ++++-
+>  4 files changed, 54 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index bcaec86ac67a..0d8682c28ba4 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -2117,18 +2117,20 @@ static u32 fuse_to_supp_hw(const struct adreno_info *info, u32 fuse)
+>  	return UINT_MAX;
+>  }
+>  
+> -static int a6xx_set_supported_hw(struct device *dev, const struct adreno_info *info)
+> +static int a6xx_set_supported_hw(struct adreno_gpu *adreno_gpu,
+> +				 struct device *dev,
+> +				 const struct adreno_info *info)
+>  {
+>  	u32 supp_hw;
+>  	u32 speedbin;
+>  	int ret;
+>  
+> -	ret = adreno_read_speedbin(dev, &speedbin);
+> +	ret = adreno_read_speedbin(adreno_gpu, dev, &speedbin);
+>  	/*
+> -	 * -ENOENT means that the platform doesn't support speedbin which is
+> -	 * fine
+> +	 * -ENOENT/EOPNOTSUPP means that the platform doesn't support speedbin
+> +	 * which is fine
+>  	 */
+> -	if (ret == -ENOENT) {
+> +	if (ret == -ENOENT || ret == -EOPNOTSUPP) {
+>  		return 0;
+>  	} else if (ret) {
+>  		dev_err_probe(dev, ret,
+> @@ -2283,7 +2285,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+>  
+>  	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
+>  
+> -	ret = a6xx_set_supported_hw(&pdev->dev, config->info);
+> +	ret = a6xx_set_supported_hw(adreno_gpu, &pdev->dev, config->info);
+>  	if (ret) {
+>  		a6xx_llc_slices_destroy(a6xx_gpu);
+>  		kfree(a6xx_gpu);
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> index cfc74a9e2646..0842ea76e616 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -6,6 +6,8 @@
+>   * Copyright (c) 2014,2017 The Linux Foundation. All rights reserved.
+>   */
+>  
+> +#include <linux/soc/qcom/socinfo.h>
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called rockchip-rng.
+>  #include "adreno_gpu.h"
+>  
+>  bool hang_debug = false;
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index 1c6626747b98..cf6652c4439d 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -21,6 +21,9 @@
+>  #include "msm_gem.h"
+>  #include "msm_mmu.h"
+>  
+> +#include <linux/soc/qcom/smem.h>
+> +#include <linux/soc/qcom/socinfo.h>
 > +
-> +	  If unsure, say Y.
-> +
->  endif # HW_RANDOM
-
->  config UML_RANDOM
-> diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-> index 32549a1186dc..01f012eab440 100644
-> --- a/drivers/char/hw_random/Makefile
-> +++ b/drivers/char/hw_random/Makefile
-> @@ -48,4 +48,5 @@ obj-$(CONFIG_HW_RANDOM_XIPHERA) += xiphera-trng.o
->  obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
->  obj-$(CONFIG_HW_RANDOM_CN10K) += cn10k-rng.o
->  obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) += mpfs-rng.o
-> +obj-$(CONFIG_HW_RANDOM_ROCKCHIP) += rockchip-rng.o
->  obj-$(CONFIG_HW_RANDOM_JH7110) += jh7110-trng.o
-> diff --git a/drivers/char/hw_random/rockchip-rng.c b/drivers/char/hw_random/rockchip-rng.c
-> new file mode 100644
-> index 000000000000..a8ccaf14c2c2
-> --- /dev/null
-> +++ b/drivers/char/hw_random/rockchip-rng.c
-> @@ -0,0 +1,227 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * rockchip-rng.c True Random Number Generator driver for Rockchip RK3568 SoC
-> + *
-> + * Copyright (c) 2018, Fuzhou Rockchip Electronics Co., Ltd.
-> + * Copyright (c) 2022, Aurelien Jarno
-> + * Authors:
-> + *  Lin Jinhan <troy.lin@rock-chips.com>
-> + *  Aurelien Jarno <aurelien@aurel32.net>
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/hw_random.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#define RK_RNG_AUTOSUSPEND_DELAY	100
-> +#define RK_RNG_MAX_BYTE			32
-> +#define RK_RNG_POLL_PERIOD_US		100
-> +#define RK_RNG_POLL_TIMEOUT_US		10000
-> +
-> +/*
-> + * TRNG collects osc ring output bit every RK_RNG_SAMPLE_CNT time. The value is
-> + * a tradeoff between speed and quality and has been adjusted to get a quality
-> + * of ~900 (~90% of FIPS 140-2 successes).
-> + */
-> +#define RK_RNG_SAMPLE_CNT		1000
-> +
-> +/* TRNG registers from RK3568 TRM-Part2, section 5.4.1 */
-> +#define TRNG_RST_CTL			0x0004
-> +#define TRNG_RNG_CTL			0x0400
-> +#define TRNG_RNG_CTL_LEN_64_BIT		(0x00 << 4)
-> +#define TRNG_RNG_CTL_LEN_128_BIT	(0x01 << 4)
-> +#define TRNG_RNG_CTL_LEN_192_BIT	(0x02 << 4)
-> +#define TRNG_RNG_CTL_LEN_256_BIT	(0x03 << 4)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_0	(0x00 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_1	(0x01 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_2	(0x02 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_3	(0x03 << 2)
-> +#define TRNG_RNG_CTL_MASK		GENMASK(15, 0)
-> +#define TRNG_RNG_CTL_ENABLE		BIT(1)
-> +#define TRNG_RNG_CTL_START		BIT(0)
-> +#define TRNG_RNG_SAMPLE_CNT		0x0404
-> +#define TRNG_RNG_DOUT			0x0410
-> +
-> +struct rk_rng {
-> +	struct hwrng rng;
-> +	void __iomem *base;
-> +	struct reset_control *rst;
-
-does it make sense to store rst here? it's used only in the probe function.
-
-> +	int clk_num;
-> +	struct clk_bulk_data *clk_bulks;
-> +};
-> +
-> +/* The mask in the upper 16 bits determines the bits that are updated */
-> +static void rk_rng_write_ctl(struct rk_rng *rng, u32 val, u32 mask)
-> +{
-> +	writel((mask << 16) | val, rng->base + TRNG_RNG_CTL);
-> +}
-> +
-> +static int rk_rng_init(struct hwrng *rng)
-> +{
-> +	struct rk_rng *rk_rng = container_of(rng, struct rk_rng, rng);
+>  static u64 address_space_size = 0;
+>  MODULE_PARM_DESC(address_space_size, "Override for size of processes private GPU address space");
+>  module_param(address_space_size, ullong, 0600);
+> @@ -1061,9 +1064,40 @@ void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *adreno_ocmem)
+>  			   adreno_ocmem->hdl);
+>  }
+>  
+> -int adreno_read_speedbin(struct device *dev, u32 *speedbin)
+> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
+> +			 struct device *dev, u32 *fuse)
+>  {
+> -	return nvmem_cell_read_variable_le_u32(dev, "speed_bin", speedbin);
 > +	int ret;
 > +
-> +	/* start clocks */
-> +	ret = clk_bulk_prepare_enable(rk_rng->clk_num, rk_rng->clk_bulks);
-> +	if (ret < 0) {
-> +		dev_err((struct device *) rk_rng->rng.priv,
-> +			"Failed to enable clks %d\n", ret);
-> +		return ret;
-> +	}
+> +	/*
+> +	 * Try reading the speedbin via a nvmem cell first
+> +	 * -ENOENT means "no nvmem-cells" and essentially means "old DT" or
+> +	 * "nvmem fuse is irrelevant", simply assume it's fine.
+> +	 */
+> +	ret = nvmem_cell_read_variable_le_u32(dev, "speed_bin", fuse);
+> +	if (!ret)
+> +		return 0;
+> +	else if (ret != -ENOENT)
+> +		return dev_err_probe(dev, ret, "Couldn't read the speed bin fuse value\n");
 > +
-> +	/* set the sample period */
-> +	writel(RK_RNG_SAMPLE_CNT, rk_rng->base + TRNG_RNG_SAMPLE_CNT);
+> +#ifdef CONFIG_QCOM_SMEM
+> +	u32 fcode;
 > +
-> +	/* set osc ring speed and enable it */
-> +	rk_rng_write_ctl(rk_rng, TRNG_RNG_CTL_LEN_256_BIT |
-> +				 TRNG_RNG_CTL_OSC_RING_SPEED_0 |
-> +				 TRNG_RNG_CTL_ENABLE,
-> +			 TRNG_RNG_CTL_MASK);
+> +	/*
+> +	 * Only check the feature code - the product code only matters for
+> +	 * proto SoCs unavailable outside Qualcomm labs, as far as GPU bin
+> +	 * matching is concerned.
+> +	 *
+> +	 * Ignore EOPNOTSUPP, as not all SoCs expose this info through SMEM.
+> +	 */
+> +	ret = qcom_smem_get_feature_code(&fcode);
+> +	if (!ret)
+> +		*fuse = ADRENO_SKU_ID(fcode);
+> +	else if (ret != -EOPNOTSUPP)
+> +		return dev_err_probe(dev, ret, "Couldn't get feature code from SMEM\n");
+> +#endif
 > +
-> +	return 0;
-> +}
-> +
-> +static void rk_rng_cleanup(struct hwrng *rng)
-> +{
-> +	struct rk_rng *rk_rng = container_of(rng, struct rk_rng, rng);
-> +
-> +	/* stop TRNG */
-> +	rk_rng_write_ctl(rk_rng, 0, TRNG_RNG_CTL_MASK);
-> +
-> +	/* stop clocks */
-> +	clk_bulk_disable_unprepare(rk_rng->clk_num, rk_rng->clk_bulks);
-> +}
-> +
-> +static int rk_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-> +{
-> +	struct rk_rng *rk_rng = container_of(rng, struct rk_rng, rng);
-> +	size_t to_read = min_t(size_t, max, RK_RNG_MAX_BYTE);
-> +	u32 reg;
-> +	int ret = 0;
+> +	return ret;
+>  }
+>  
+>  int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+> @@ -1102,9 +1136,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+>  			devm_pm_opp_set_clkname(dev, "core");
+>  	}
+>  
+> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
+> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
+>  		speedbin = 0xffff;
+> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
+> +	adreno_gpu->speedbin = speedbin;
 
-no need to initialise ret, it's overwritten immediately
+There are some chipsets which uses both Speedbin and Socinfo data for
+SKU detection [1]. We don't need to worry about that logic for now. But
+I am worried about mixing Speedbin and SKU_ID in the UABI with this patch.
+It will be difficult when we have to expose both to userspace.
 
-> +
-> +	ret = pm_runtime_resume_and_get((struct device *) rk_rng->rng.priv);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Start collecting random data */
-> +	rk_rng_write_ctl(rk_rng, TRNG_RNG_CTL_START, TRNG_RNG_CTL_START);
-> +
-> +	ret = readl_poll_timeout(rk_rng->base + TRNG_RNG_CTL, reg,
-> +				 !(reg & TRNG_RNG_CTL_START),
-> +				 RK_RNG_POLL_PERIOD_US,
-> +				 RK_RNG_POLL_TIMEOUT_US);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	/* Read random data stored in the registers */
-> +	memcpy_fromio(buf, rk_rng->base + TRNG_RNG_DOUT, to_read);
-> +out:
-> +	pm_runtime_mark_last_busy((struct device *) rk_rng->rng.priv);
-> +	pm_runtime_put_sync_autosuspend((struct device *) rk_rng->rng.priv);
-> +
-> +	return (ret < 0) ? ret : to_read;
-> +}
-> +
-> +static int rk_rng_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rk_rng *rk_rng;
-> +	int ret;
-> +
-> +	rk_rng = devm_kzalloc(dev, sizeof(*rk_rng), GFP_KERNEL);
-> +	if (!rk_rng)
-> +		return -ENOMEM;
-> +
-> +	rk_rng->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(rk_rng->base))
-> +		return PTR_ERR(rk_rng->base);
-> +
-> +	rk_rng->clk_num = devm_clk_bulk_get_all(dev, &rk_rng->clk_bulks);
-> +	if (rk_rng->clk_num < 0)
-> +		return dev_err_probe(dev, rk_rng->clk_num,
-> +				     "Failed to get clks property\n");
-> +
-> +	rk_rng->rst = devm_reset_control_array_get_exclusive(&pdev->dev);
-> +	if (IS_ERR(rk_rng->rst))
-> +		return dev_err_probe(dev, PTR_ERR(rk_rng->rst),
-> +				     "Failed to get reset property\n");
-> +
-> +	reset_control_assert(rk_rng->rst);
-> +	udelay(2);
-> +	reset_control_deassert(rk_rng->rst);
-> +
-> +	platform_set_drvdata(pdev, rk_rng);
-> +
-> +	rk_rng->rng.name = dev_driver_string(dev);
-> +	if (!IS_ENABLED(CONFIG_PM)) {
-> +		rk_rng->rng.init = rk_rng_init;
-> +		rk_rng->rng.cleanup = rk_rng_cleanup;
-> +	}
-> +	rk_rng->rng.read = rk_rng_read;
-> +	rk_rng->rng.priv = (unsigned long) dev;
-> +	rk_rng->rng.quality = 900;
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
-> +	pm_runtime_use_autosuspend(dev);
-> +	devm_pm_runtime_enable(dev);
+I think we can use a separate bitfield to expose FCODE/PCODE. Currently,
+the lower 32 bit is reserved for chipid and 33-48 is reserved for speedbin,
+so I think we can use the rest of the 16 bits for SKU_ID. And within that
+16bits, 12 bits should be sufficient for FCODE and the rest 8 bits
+reserved for future PCODE.
 
-could this fail? is it worth checking the return value?
+[1] https://git.codelinaro.org/clo/la/platform/vendor/qcom/opensource/graphics-kernel/-/commit/ab8015dec341d85cd1c97aa7eb5a903527496102
 
+-Akhil
+
+
+>  
+>  	gpu_name = devm_kasprintf(dev, GFP_KERNEL, "%"ADRENO_CHIPID_FMT,
+>  			ADRENO_CHIPID_ARGS(config->chip_id));
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> index 1ab523a163a0..0d629343ebb4 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -79,6 +79,10 @@ struct adreno_reglist {
+>  
+>  struct adreno_speedbin {
+>  	uint16_t fuse;
+> +/* As of SM8650, PCODE on production SoCs is meaningless wrt the GPU bin */
+> +#define ADRENO_SKU_ID_FCODE		GENMASK(15, 0)
+> +#define ADRENO_SKU_ID(fcode)	(fcode)
 > +
-> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip hwrng\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused rk_rng_runtime_suspend(struct device *dev)
-> +{
-> +	struct rk_rng *rk_rng = dev_get_drvdata(dev);
-> +
-> +	rk_rng_cleanup(&rk_rng->rng);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused rk_rng_runtime_resume(struct device *dev)
-> +{
-> +	struct rk_rng *rk_rng = dev_get_drvdata(dev);
-> +
-> +	return rk_rng_init(&rk_rng->rng);
-> +}
-> +
-> +static const struct dev_pm_ops rk_rng_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(rk_rng_runtime_suspend,
-> +				rk_rng_runtime_resume, NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				pm_runtime_force_resume)
-> +};
-> +
-> +static const struct of_device_id rk_rng_dt_match[] = {
-> +	{ .compatible = "rockchip,rk3568-rng", },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, rk_rng_dt_match);
-> +
-> +static struct platform_driver rk_rng_driver = {
-> +	.driver	= {
-> +		.name	= "rockchip-rng",
-> +		.pm	= &rk_rng_pm_ops,
-> +		.of_match_table = rk_rng_dt_match,
-> +	},
-> +	.probe	= rk_rng_probe,
-> +};
-> +
-> +module_platform_driver(rk_rng_driver);
-> +
-> +MODULE_DESCRIPTION("Rockchip RK3568 True Random Number Generator driver");
-> +MODULE_AUTHOR("Lin Jinhan <troy.lin@rock-chips.com>");
-> +MODULE_AUTHOR("Aurelien Jarno <aurelien@aurel32.net>");
-> +MODULE_AUTHOR("Daniel Golle <daniel@makrotopia.org>");
-> +MODULE_LICENSE("GPL");
+>  	uint16_t speedbin;
+>  };
+>  
+> @@ -555,7 +559,8 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
+>  			 struct adreno_smmu_fault_info *info, const char *block,
+>  			 u32 scratch[4]);
+>  
+> -int adreno_read_speedbin(struct device *dev, u32 *speedbin);
+> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
+> +			 struct device *dev, u32 *speedbin);
+>  
+>  /*
+>   * For a5xx and a6xx targets load the zap shader that is used to pull the GPU
+> 
 > -- 
 > 2.45.2
+> 
 
