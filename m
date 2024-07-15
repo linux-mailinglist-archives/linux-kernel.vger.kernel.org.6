@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-252600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7DE9315CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3C69315D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2111B281FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4462824B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCF218D4CC;
-	Mon, 15 Jul 2024 13:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EB718D4C8;
+	Mon, 15 Jul 2024 13:32:24 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B661836D4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B401B1836D4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721050242; cv=none; b=VO/qcVB8A63uJrvY58de1LbqtaFLbt9rN/4a3pIhyX2/7hANJ7gV0JawMmxmrcUA31uEgeApzTcX3sj7Gzsut+cK4/mSZwBkv8bJGR83sN61H7DR+sHGx8LXHB5P5GiuEfsaRHjQOoAbQMC0vyLkbMqPl8MPPCbMpCBrvIja5U0=
+	t=1721050344; cv=none; b=IdcYr1mWWBqUAvDPQIR6CFdgmTr93O84OHiH9S5mhn3+mntt7+zuS+8VQRg1szaeFYEjbYUvvp/hoA76hFMewiEGD7Zvys1igLc6xnGe3HzoyK4ZUyyyGqLjc3aZ1hbDVm6jXWSTHavT7dQhMnitIVuDYd643KhmV+tDbUJ2cZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721050242; c=relaxed/simple;
-	bh=Z8efUNCzmXWAZnbILn2Fwlrih3IDRF+pWj2sK01Nknc=;
+	s=arc-20240116; t=1721050344; c=relaxed/simple;
+	bh=3tYjXRaAKPKGv73xdHIp1UZJ/tTnFTPsWh1U5uDUUNs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fs3EnULCwJAYiPABLs9Nefk4shCGDEnxa4bY1InkMYU8K8sIwB+g0J3anITMPrCxllW6rHsoWN0F4AmldW3tPF8ygWsV1XtyoMoKdLa+XBpI5LO7dBtqqHRhW5irAweFEhc1RxzxQ2jUQLXRWjfoMuB2m7+pOk3NW3emY957jmU=
+	 In-Reply-To:Content-Type; b=rv0JdvJauQPDUiI4j763lok98jMR2hhFrbUq7it1KTh8KcTikfefzqgfjnZK7VdmRjuxFL1jIKjCn8DZKMire6SKdH1iCA+MJQFvclHcgSP8IWUVIxvd8bjVvEclNhny4O3qWO8mAEAJzjGkRGhn4rlYs+qP2UwAewwI+FJ0Nko=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4413FEC;
-	Mon, 15 Jul 2024 06:31:04 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A9A5DA7;
+	Mon, 15 Jul 2024 06:32:47 -0700 (PDT)
 Received: from [10.57.77.136] (unknown [10.57.77.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8D663F73F;
-	Mon, 15 Jul 2024 06:30:37 -0700 (PDT)
-Message-ID: <cf919805-9fb1-4d7a-83bc-60225151cd63@arm.com>
-Date: Mon, 15 Jul 2024 14:30:36 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1CF33F73F;
+	Mon, 15 Jul 2024 06:32:19 -0700 (PDT)
+Message-ID: <aaacd8b2-1e85-4260-bc89-c01d5f8d91ef@arm.com>
+Date: Mon, 15 Jul 2024 14:32:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,110 +41,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm: shmem: simplify the suitable huge orders
- validation for tmpfs
+Subject: Re: [PATCH v2 2/3] mm: shmem: rename shmem_is_huge() to
+ shmem_huge_global_enabled()
 Content-Language: en-GB
 To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
  hughd@google.com
 Cc: willy@infradead.org, david@redhat.com, 21cnbao@gmail.com, ziy@nvidia.com,
  ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 References: <cover.1720755677.git.baolin.wang@linux.alibaba.com>
- <ee1b6ac287bb376a9da88a23e1ef16951eb94a4e.1720755678.git.baolin.wang@linux.alibaba.com>
+ <26dfca33f394b5cfa68e4dbda60bf5f54e41c534.1720755678.git.baolin.wang@linux.alibaba.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ee1b6ac287bb376a9da88a23e1ef16951eb94a4e.1720755678.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <26dfca33f394b5cfa68e4dbda60bf5f54e41c534.1720755678.git.baolin.wang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/07/2024 14:24, Baolin Wang wrote:
-> Move the suitable huge orders validation into shmem_suitable_orders() for
-> tmpfs, which can reuse some code to simplify the logic.
-> 
-> In addition, we don't have special handling for the error code -E2BIG when
-> checking for conflicts with PMD sized THP in the pagecache for tmpfs, instead,
-> it will just fallback to order-0 allocations like this patch does, so this
-> simplification will not add functional changes.
+> The shmem_is_huge() is now used to check if the top-level huge page is enabled,
+> thus rename it to reflect its usage.
 > 
 > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
 Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
 > ---
->  mm/shmem.c | 39 +++++++++++++++------------------------
->  1 file changed, 15 insertions(+), 24 deletions(-)
+>  include/linux/shmem_fs.h |  9 +++++----
+>  mm/huge_memory.c         |  5 +++--
+>  mm/shmem.c               | 15 ++++++++-------
+>  3 files changed, 16 insertions(+), 13 deletions(-)
 > 
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 1d06b1e5408a..405ee8d3589a 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -111,14 +111,15 @@ extern void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+>  int shmem_unuse(unsigned int type);
+>  
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -extern bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> -			  struct mm_struct *mm, unsigned long vm_flags);
+> +extern bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> +				      struct mm_struct *mm, unsigned long vm_flags);
+>  unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>  				struct vm_area_struct *vma, pgoff_t index,
+>  				bool global_huge);
+>  #else
+> -static __always_inline bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> -					  struct mm_struct *mm, unsigned long vm_flags)
+> +static __always_inline bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+> +						      bool shmem_huge_force, struct mm_struct *mm,
+> +						      unsigned long vm_flags)
+>  {
+>  	return false;
+>  }
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f9696c94e211..cc9bad12be75 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -152,8 +152,9 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	 * own flags.
+>  	 */
+>  	if (!in_pf && shmem_file(vma->vm_file)) {
+> -		bool global_huge = shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
+> -							!enforce_sysfs, vma->vm_mm, vm_flags);
+> +		bool global_huge = shmem_huge_global_enabled(file_inode(vma->vm_file),
+> +							     vma->vm_pgoff, !enforce_sysfs,
+> +							     vma->vm_mm, vm_flags);
+>  
+>  		if (!vma_is_anon_shmem(vma))
+>  			return global_huge ? orders : 0;
 > diff --git a/mm/shmem.c b/mm/shmem.c
-> index f24dfbd387ba..db7e9808830f 100644
+> index db7e9808830f..1445dcd39b6f 100644
 > --- a/mm/shmem.c
 > +++ b/mm/shmem.c
-> @@ -1685,19 +1685,29 @@ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault
->  					   struct address_space *mapping, pgoff_t index,
->  					   unsigned long orders)
+> @@ -548,9 +548,9 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+>  
+>  static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+>  
+> -static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
+> -			    bool shmem_huge_force, struct mm_struct *mm,
+> -			    unsigned long vm_flags)
+> +static bool __shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+> +					bool shmem_huge_force, struct mm_struct *mm,
+> +					unsigned long vm_flags)
 >  {
-> -	struct vm_area_struct *vma = vmf->vma;
-> +	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
->  	unsigned long pages;
->  	int order;
+>  	loff_t i_size;
 >  
-> -	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
-> -	if (!orders)
-> -		return 0;
-> +	if (vma) {
-> +		orders = thp_vma_suitable_orders(vma, vmf->address, orders);
-> +		if (!orders)
-> +			return 0;
-> +	}
+> @@ -581,14 +581,15 @@ static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
+>  	}
+>  }
 >  
->  	/* Find the highest order that can add into the page cache */
->  	order = highest_order(orders);
->  	while (orders) {
->  		pages = 1UL << order;
->  		index = round_down(index, pages);
-> +		/*
-> +		 * Check for conflict before waiting on a huge allocation.
-> +		 * Conflict might be that a huge page has just been allocated
-> +		 * and added to page cache by a racing thread, or that there
-> +		 * is already at least one small page in the huge extent.
-> +		 * Be careful to retry when appropriate, but not forever!
-> +		 * Elsewhere -EEXIST would be the right code, but not here.
-> +		 */
->  		if (!xa_find(&mapping->i_pages, &index,
->  			     index + pages - 1, XA_PRESENT))
->  			break;
-> @@ -1735,7 +1745,6 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+> -bool shmem_is_huge(struct inode *inode, pgoff_t index,
+> +bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+>  		   bool shmem_huge_force, struct mm_struct *mm,
+>  		   unsigned long vm_flags)
 >  {
->  	struct address_space *mapping = inode->i_mapping;
->  	struct shmem_inode_info *info = SHMEM_I(inode);
-> -	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
->  	unsigned long suitable_orders = 0;
->  	struct folio *folio = NULL;
->  	long pages;
-> @@ -1745,26 +1754,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->  		orders = 0;
+>  	if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
+>  		return false;
 >  
->  	if (orders > 0) {
-> -		if (vma && vma_is_anon_shmem(vma)) {
-> -			suitable_orders = shmem_suitable_orders(inode, vmf,
-> +		suitable_orders = shmem_suitable_orders(inode, vmf,
->  							mapping, index, orders);
-> -		} else if (orders & BIT(HPAGE_PMD_ORDER)) {
-> -			pages = HPAGE_PMD_NR;
-> -			suitable_orders = BIT(HPAGE_PMD_ORDER);
-> -			index = round_down(index, HPAGE_PMD_NR);
-> -
-> -			/*
-> -			 * Check for conflict before waiting on a huge allocation.
-> -			 * Conflict might be that a huge page has just been allocated
-> -			 * and added to page cache by a racing thread, or that there
-> -			 * is already at least one small page in the huge extent.
-> -			 * Be careful to retry when appropriate, but not forever!
-> -			 * Elsewhere -EEXIST would be the right code, but not here.
-> -			 */
-> -			if (xa_find(&mapping->i_pages, &index,
-> -				    index + HPAGE_PMD_NR - 1, XA_PRESENT))
-> -				return ERR_PTR(-E2BIG);
-> -		}
+> -	return __shmem_is_huge(inode, index, shmem_huge_force, mm, vm_flags);
+> +	return __shmem_huge_global_enabled(inode, index, shmem_huge_force,
+> +					   mm, vm_flags);
+>  }
 >  
->  		order = highest_order(suitable_orders);
->  		while (suitable_orders) {
+>  #if defined(CONFIG_SYSFS)
+> @@ -1156,7 +1157,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+>  			STATX_ATTR_NODUMP);
+>  	generic_fillattr(idmap, request_mask, inode, stat);
+>  
+> -	if (shmem_is_huge(inode, 0, false, NULL, 0))
+> +	if (shmem_huge_global_enabled(inode, 0, false, NULL, 0))
+>  		stat->blksize = HPAGE_PMD_SIZE;
+>  
+>  	if (request_mask & STATX_BTIME) {
+> @@ -2153,7 +2154,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>  		return 0;
+>  	}
+>  
+> -	huge = shmem_is_huge(inode, index, false, fault_mm,
+> +	huge = shmem_huge_global_enabled(inode, index, false, fault_mm,
+>  			     vma ? vma->vm_flags : 0);
+>  	/* Find hugepage orders that are allowed for anonymous shmem. */
+>  	if (vma && vma_is_anon_shmem(vma))
 
 
