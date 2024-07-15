@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-252490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253F69313CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:13:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2209C9313D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A24281C22
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:13:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F6FB21383
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C82018A952;
-	Mon, 15 Jul 2024 12:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPE6b/eQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DEA18A957;
+	Mon, 15 Jul 2024 12:15:01 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064DC1891B2;
-	Mon, 15 Jul 2024 12:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2CF23BF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045610; cv=none; b=jA4AsdV6Uh+MCmBKHmxdsV9+4WyGSMda/aihYJLImkZBVOYobRRQSjyf8ijEXLvzBUYn18KXEpOYJGCUoPFAMEeR3DfovTw2rJuqs9fbf0U3xnFMQ9ZY95mHeAZ6bdICk/TX3BlngC70lcvOU9D0f/iBs58HJJN7NgH+zJuO1PA=
+	t=1721045700; cv=none; b=k7sFGo6qWypcC0Qunzv9Atur62i70OhA/2ZpQXvfeT3iw76E/pNeuzq/HbfUWbmviYvIeUJpunBIrjdusFZfk+9eMEv2+Rr3hBhKe0w+9Uv9sLK7RZU+AsMVbFkX98SzM0Z3pm4LZ3zgCklsouNFWviqAg5tqzxDru1/Zl+5Tzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045610; c=relaxed/simple;
-	bh=Zn83j3eNWdHYHMJ+UEUHTLaYD3lLIIF14eNqyo8jTtc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GamuUPshqHhU6dsLLInoP9OhMrkgyD/bFNcZA3uA9m1l/I8BsL8GO/WaWEv1ZoqKkO7GrCri4Wd749vBH7hRT2LeCae8ronmiyFf0EN6wvliHIXCFU2hisqm/dGMA8otouswBIivO8zsJrSwTUl8Hz2QhTAfep8ybOQhHczqJlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPE6b/eQ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721045608; x=1752581608;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Zn83j3eNWdHYHMJ+UEUHTLaYD3lLIIF14eNqyo8jTtc=;
-  b=fPE6b/eQ8N3oV/Ilu9VwZcAwLbXJD/KQUXP+BMb4jVbeH7ioOkSEW3/U
-   2f5LhTsOAKWrW1x2HY7PoFY69nazHwvpH/3CYU1Zr2zEcO3uMxjbsqoOr
-   i3SP7QwhUcd8P01zfJLY0dQ5ZhnLcEtlHtrNi7DB47hz7LuwxE4XuO+l8
-   hOMLh4OHjmsMm4bqHQ50JuwzugdGuISBTgvfg02fxO548tq9oqQUlz/kN
-   oAZD4YIEiIpZdGsXdDJSuqKbNTRgz+27dQzWNdirLFArdLM8ZPKZ49AaN
-   gP29HXOUVqU7ZvNmNCoWP5j6Kmntetgr5xigkCyGQ53Zrt6ywsyxymp7X
-   g==;
-X-CSE-ConnectionGUID: DNwVYRqrRyyMzZzH5cAnPg==
-X-CSE-MsgGUID: AhsJMa/oTFOsCAMlWi1gFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="29010144"
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="29010144"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 05:13:28 -0700
-X-CSE-ConnectionGUID: K8N519t3SiGQNzO/0yegBg==
-X-CSE-MsgGUID: 04/0i0imSR6PN1Pm890slQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="50371332"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO [10.245.245.220]) ([10.245.245.220])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 05:13:23 -0700
-Message-ID: <679e9674-9611-48a8-8f94-4285b080d3f6@intel.com>
-Date: Mon, 15 Jul 2024 14:13:37 +0200
+	s=arc-20240116; t=1721045700; c=relaxed/simple;
+	bh=tRIlbmDMhmWEUzPRiVEkLl3AwQdR4a3tBQ3K0qzrmLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sl7Aey+iVf6obgW+r2xDZxcMIHC8QqIzfIdc0gtFcQM6RvAfLvRXoge52CY018301QDPpNSO6bYHGFkMN7IcQClIlMHhfVSLA+qTsUDybHNMsMHixDcZ/87cfS9090duTDZR9gE1dMh7wGFu5TakLTcJWybh/Yn9H6h8SvNbPCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so4431073a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 05:14:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721045697; x=1721650497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fj5Gg43Az4DAnwfCesaZ9uO5GLfF2QEJvK6nOqg2Cn8=;
+        b=T3idJ0nwgXqlazMW+QLWRO4nQj5t4VIZgwx13lnas38Wm5qwlcHnGK36tQTYaH7CQr
+         pXpSfs6Q3+Dgv8RrzZ/qYYz05WAwzLfa93cVmpoyT2cZKxy+CSS8MYNqNpQ352b+MI45
+         EeBNyvJYCp/eTHC/l+ifN8Fp8Yd5aIvjaHOWxdD7hZJ6HWIxWRzicI3NHBFw2kvhLN7q
+         7H4kBypsxv9dmGWDrsN5ZQ0xCKDtrEWfjRfVBZN2lZ8JesjNDULlXnSx9fEJWxpXqFTU
+         JAFDdW0LNGQJZeoAB1it0QU34uT+Ne4ouC5U0qzLmrfeLJd/kNlyUOXfGJ7fY3r2WdS0
+         SGJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3lWABTz1b2+ySujUW52kKs2sQ3mOU6VPLHjbOqFnG+9fECc1n0xGkUVWGwVcpI0PdgTXBDaW02UL0qkNyftiPhXlPUFypQSz1ScgI
+X-Gm-Message-State: AOJu0YzDKgyb45rcNffNEwfDDG80kTqkJ+kBE7wPGaKaJWHe0SwguTnp
+	C89e9BaqeoGCHUQ2+oS3vjU7K4+BPUw0LHMo9eo6HOTtW4kmo5Zu
+X-Google-Smtp-Source: AGHT+IEQXdXi6YONA6xJoxuVoiFxUfM8cQRJMK2TGkvtsL9JX2DmFstcuiM1up0Pgg6ljAusRyEG1A==
+X-Received: by 2002:a17:907:764b:b0:a6f:53f9:7974 with SMTP id a640c23a62f3a-a780b882f28mr1376023566b.52.1721045697325;
+        Mon, 15 Jul 2024 05:14:57 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5e8609sm207906966b.94.2024.07.15.05.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 05:14:57 -0700 (PDT)
+Date: Mon, 15 Jul 2024 05:14:54 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
+Message-ID: <ZpUSvl5eKgkLeJrg@gmail.com>
+References: <20240422165830.2142904-1-leitao@debian.org>
+ <20240422165830.2142904-2-leitao@debian.org>
+ <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the drm-intel tree
-To: "Golani, Mitulkumar Ajitkumar" <mitulkumar.ajitkumar.golani@intel.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@redhat.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Suraj Kandpal <suraj.kandpal@intel.com>,
- Intel Graphics <intel-gfx@lists.freedesktop.org>,
- DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240612141110.3aebb166@canb.auug.org.au>
- <20240715091234.5e8b2701@canb.auug.org.au>
- <774fa28d-b196-0030-2fb2-5d5fb8a7d1cc@intel.com>
-Content-Language: en-US
-From: Maarten Lankhorst <maarten.lankhorst@intel.com>
-In-Reply-To: <774fa28d-b196-0030-2fb2-5d5fb8a7d1cc@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
 
-Hey,
+Hello Borislav,
 
-Den 2024-07-15 kl. 06:21, skrev Golani, Mitulkumar Ajitkumar:
->
-> On 15-07-2024 04:42, Stephen Rothwell wrote:
->> Hi all,
->>
->> On Wed, 12 Jun 2024 14:11:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> After merging the drm-intel tree, today's linux-next build (htmldocs)
->>> produced this warning:
->>>
->>> include/drm/display/drm_dp_helper.h:127: warning: Function parameter or struct member 'target_rr_divider' not described in 'drm_dp_as_sdp'
->>>
->>> Introduced by commit
->>>
->>>    a20c6d954d75 ("drm/dp: Add refresh rate divider to struct representing AS SDP")
->> I am now seeing that warning after the merge of the drm tree.
-> Hi Stephen Rothwell,
->
-> I have already floated changes : https://patchwork.freedesktop.org/patch/604143/?series=136072&rev=1
->
-> Need help on Ack from drm-maintainers to merge.
+On Fri, Jul 12, 2024 at 07:21:32PM +0200, Borislav Petkov wrote:
+> On Mon, Apr 22, 2024 at 09:58:15AM -0700, Breno Leitao wrote:
+> > +config MITIGATION_GDS
+> > +	bool "Mitigate Gather Data Sampling"
+> > +	depends on CPU_SUP_INTEL
+> > +	default y
+> > +	help
+> > +	  Enable mitigation for Gather Data Sampling (GDS). GDS is a hardware
+> > +	  vulnerability which allows unprivileged speculative access to data
+> > +	  which was previously stored in vector registers. The attacker uses gather
+> > +	  instructions to infer the stale vector register data.
+> > +
+> >  config MITIGATION_GDS_FORCE
+> 
+> Btw, can we get rid of that thing, while at it?
 
-There you go, does it need to go through drm-misc too?
+Sure, I will send a v4 and get rid of GDS_FORCE_MITIGATION completely.
 
-Cheers,
+Thanks for the review.
 
-~Maarten
-
+--breno
 
