@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-252162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82ABB930F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC847930F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B173F1C2131F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C43E1C214D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C87D184113;
-	Mon, 15 Jul 2024 08:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA01184132;
+	Mon, 15 Jul 2024 08:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="EFbRq/xn"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CciST/50"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EF8146A6F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91672837F;
+	Mon, 15 Jul 2024 08:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721030671; cv=none; b=Vx9KXp86WS2WdHZFm1VoUZXi56bhINntktp4w43cD/0V35EtYmpX/G0radIjBIK6KldbeWmWRImGVFx++Xm5HDdPfOGr7j5OSgu78gyO6GuovWfDol3YJOmh2jjJFfJ8MIAhi/I7IstdpqlLRRgisLY9n1RkUQkv08jLlsHs5Rw=
+	t=1721030769; cv=none; b=g2qEavDgxvo05OairTI1K8t19K8b+s93zL2F1p2wU9BCDT6zPxIkSeP31Yxcllpuab6pCIYSA8WBnpKVU3TEONypGMzy+Zaj0jcxqTofVs/h5GLznyxePbSS3bHr2nopvkp8BJWJWxGVNQEm6Bc3KyXIO9raI1jwrAqbg5AXL4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721030671; c=relaxed/simple;
-	bh=pfgmG4zZrrqRhVkanoP0xDLU9g9d+TR1rmNzguVilz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ByC8mWRIyL1GdcfbjBatczH8Imi6dOOmKHyheD0hT7GwK1WaMKwhaex+M+cuOKyS2BzqJS6W2FHoi/7hBIC4RU7w/heWG8/JoW/SpWUqBot/IdJRFC3AIlDH28CRjS74ixWQ44Up/XvdRnWnAcDE3GWLY9ImaYzS8lqk3eMlXQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=EFbRq/xn; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so5336797a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:04:29 -0700 (PDT)
+	s=arc-20240116; t=1721030769; c=relaxed/simple;
+	bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3G7rNMl43rBy80bVRDmQMPVuO5wUfAcE7o5PWMPqSYsvXnemg8wk91p/rj1woI+jAajAgWST8F7ZmFy/42N5ynlYPZnbhAgDhle4x2s8UV/jVU2gyIO3FH3HCM5CIZxkMBggZRCr0M54HKN+G6JWbdEac5irkasKDeZRYmOWRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CciST/50; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77e5929033so487954666b.0;
+        Mon, 15 Jul 2024 01:06:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1721030668; x=1721635468; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YiwcX9F4LtfC80GM31isd5gHfQz+XWLWe2fZmeMxBV0=;
-        b=EFbRq/xnbNG8ZVVoiMu5zOXmxigOdgnqGXmn6rkhtv322S2CKqLuoJorny+DqsUL3e
-         GSPhYW3Ks0ONr+wmmHnnzzHpfqbtHp2LWxWrJjLME9qurUVGm6+lmXVcwSr5XMfs3cbO
-         SfprEqnO5QGFsEtiYBVenhsjEHFStxi2AiADt2qA3QWnBDaC9T97E8CrhU5rRf5JO2T7
-         THjAvJ32DMq4ZWbnb0h2GLXm45KfFMwTF6iDc2bIXpeZibtkFJC26HLL2OSj5yhVJ69M
-         R3h/C0NV4HJ5P0tmYk4h2w8T1HYEBRMagcc+PklPZFAot168LQlXBYejSp/fqx7BmxmM
-         obIQ==
+        d=gmail.com; s=20230601; t=1721030766; x=1721635566; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
+        b=CciST/50nEWUieXmCn6BcVCOeKCplu51s98pbn/P/bVj8wOFjkYXwIB7qIq372xqGH
+         SXofO3lqwz/k22eQdx+DgyHJJeOevWflmYu6wGBYvXrnY+VlltKQLIyA23ALHLRVrQ9v
+         VswmWATBkSb5zpZ76XEZuDM/6cNmX0V33krgwnPjzFhf2nPfyKPnSvZ6y2N3zcF1v/7y
+         nwNgOpiOpjgUPe1dtl80CF8NOgdnGM2tAvrr4iCnEMtkqG/9kSZV8rHmTktgVA1aClye
+         m35TSmLN89pnvd6+FTFWccfNNloqNTBfu+MIs/2LTZuviyWRPbCxND3hAZOEQxxm3xLZ
+         HHQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721030668; x=1721635468;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YiwcX9F4LtfC80GM31isd5gHfQz+XWLWe2fZmeMxBV0=;
-        b=wLeM0aKv0byXbm8CA/8K69VUHijCWYl2PhF0UYGMQgwAJCzi+Z7RDUjSkePwKqGM+N
-         Yds8wo9Ji/DuH5n9BHuOqteE/gVCAwXL9UoikXaAa7gU0Ajht5PQzaYEiI9c7dEiVGzZ
-         8vamoMuBwKqqKJMC+ZmC992sYzjthGrMAznXjK3yVjpqAxsfNh7fwqBWV0U2iTR5pfSu
-         5wD9y9fc7wbn4k1I4QzCyNkdRNBm7w8aTcisOjs8GW6vD7A5DjSf6/m8EIYc7JjphcAy
-         yAEeXrgOgDdcoHKiiSu6rHUoSqkrmQ83pWFMNBHI7kfSbRBgGGwekVKrP8kk/2td+g23
-         ugnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgkNAK3w6CL2z4Xv9x9WO9ZvcqYAHBIPkEULHJhejgUGGHmaSOog7SsQaF3Nf/8ky2gm4RF17sTAxR3bW7SFmDHSQasaMhzvwuPtWa
-X-Gm-Message-State: AOJu0YxkaH0nve+DZKx7j9Bdvd58cverXliFItBOn28zLwSkBidJmXF+
-	EJnj/lYFcGcHaoHKe7Weif9UZwjMQu1HUiPqoJ9gpf+VBLdHvd6i0LdLdRxctC0=
-X-Google-Smtp-Source: AGHT+IGfLMp93Lvm4ZRrsDZSB1JnFiH19NTLePtvoM//z2ksSs/I+r4ZV/EUEPuFeQJ8h0publy2Mw==
-X-Received: by 2002:a05:6402:350b:b0:58f:ebaa:64bf with SMTP id 4fb4d7f45d1cf-594ba9975bamr13862271a12.2.1721030668208;
-        Mon, 15 Jul 2024 01:04:28 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f621c3sm3070229a12.89.2024.07.15.01.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 01:04:27 -0700 (PDT)
-Message-ID: <7476d4f9-3a45-4586-99c5-9e878d4e02ac@blackwall.org>
-Date: Mon, 15 Jul 2024 11:04:26 +0300
+        d=1e100.net; s=20230601; t=1721030766; x=1721635566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G1eFIX6OESTMDT+YLCC2lCf5/XhYggip1JajzNYg8m0=;
+        b=UHvXgWoA/NF269P+zJdx++UQ6NgGeIMK5sV4TNSkFOVl3TeqIsR0rYdtH8hsVBJzm+
+         FrqG0fBXazEwHybTFhWGwZrbXnBT+43HejlcXWooc39uVj8X3JfKdOkPFyk+Sj9x4uZP
+         v5pvq+OAA2TLxjKFuzJ4+Yg8Ki04PakPpDQZeiNMgKoujpvdbDEMuj6PF4hJwAYEL6lK
+         OJo8gMzkh8n80xMa2+HKgA3ANgy74U6e7lmLe6KZFNIQG0LdX2bVW+NG7e9Pc4aagAT5
+         VbXkkNsWsTaopi8cu53V4jlNv9s+/d2AQWGesYREqg6s7oaMwUnI+evFH6/UFgnYU/lo
+         ef5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWqV+x5Z2dujT5YnMIJb3gm/uhCHUmGuQiK1zFiVn6dF+7DqWd526A29tZXaB2EmE7WJ4kR3RYfyHEmtpNyDbvcD9Sjj2/rgbe3KMdySlfkiGDyDG/l8ABsvvWSj+IT2dXfDfUJ3BQwgpTkog==
+X-Gm-Message-State: AOJu0YyZ7oBPdumywQqvJ7/aDu5RnMFsVKLVcNZ4ojfnIjyM+nn101lP
+	EPTBwdD/UX66llObdDK4JZiOS5RuFCARcqWqFpp3poE1TovdaoE4ceusMx7N4DlFL3NQJEU/Ll/
+	5DFqsJ3FF6+aawFpIX1AAxSv4515vwgS8
+X-Google-Smtp-Source: AGHT+IE4Gu5kAOXSNy/6E78Eo8myT0M+rYxfZnWeiSdNLIQZH/k5PtYqs2dhgx4czZjoLW2e1Z6+VsIy5NOoUY2j7wU=
+X-Received: by 2002:a17:906:c258:b0:a75:3627:fccc with SMTP id
+ a640c23a62f3a-a780b8802c4mr1145031966b.51.1721030765980; Mon, 15 Jul 2024
+ 01:06:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: bridge: remove unnecessary cast from netdev_priv()
-To: Chen Ni <nichen@iscas.ac.cn>, roopa@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: bridge@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715024457.3743560-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240715024457.3743560-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240715071324.265879-1-mjguzik@gmail.com> <f6ba51c5-e2e0-4287-b995-8a7dff59d5b9@amd.com>
+In-Reply-To: <f6ba51c5-e2e0-4287-b995-8a7dff59d5b9@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 15 Jul 2024 10:05:54 +0200
+Message-ID: <CAGudoHFBjfSkan10A-9Lx5koUs2rNsV5bWvprJTzxEaOjkETCA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: use RCU in ilookup
+To: Bharata B Rao <bharata@amd.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2024 05:44, Chen Ni wrote:
-> Remove unnecessary cast of void * returned by netdev_priv().
-> 
-> Fixes: 928990631327 ("net: bridge: add notifications for the bridge dev on vlan change")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  net/bridge/br_netlink.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-This is not a fix, the code isn't broken and it doesn't violate
-anything.
+On Mon, Jul 15, 2024 at 10:02=E2=80=AFAM Bharata B Rao <bharata@amd.com> wr=
+ote:
+>
+> On 15-Jul-24 12:43 PM, Mateusz Guzik wrote:
+> > A soft lockup in ilookup was reported when stress-testing a 512-way
+> > system [1] (see [2] for full context) and it was verified that not
+> > taking the lock shifts issues back to mm.
+> >
+> > [1] https://lore.kernel.org/linux-mm/56865e57-c250-44da-9713-cf1404595b=
+cc@amd.com/
+>
+> Mateusz,
+>
+> Just want to mention explicitly that in addition to the lockless lookup
+> changes that you suggested in [1], the test run also included your other
+> commit
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
+fs.inode.rcu&id=3D7180f8d91fcbf252de572d9ffacc945effed0060
+> as you had suggested.
+>
 
-Nacked-by: Nikolay Aleksandrov <razor@blackwall.org>
+That commit is needed to have this compile to begin with, so it was
+kind of implied. :)
 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
