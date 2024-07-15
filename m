@@ -1,49 +1,72 @@
-Return-Path: <linux-kernel+bounces-252417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BE49312CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:07:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5069312CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EF61F22278
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:07:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A14B211B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC63188CD9;
-	Mon, 15 Jul 2024 11:06:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E14A185623
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0F21891AD;
+	Mon, 15 Jul 2024 11:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jHzUjlbr"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07B51465B8;
+	Mon, 15 Jul 2024 11:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041618; cv=none; b=dVAiAyFmy++4wRFplZsP1LYxJ1TKCX7eh7VGSgfF72pFaaPSwhcRRvr/cENoqAoNA3AP1JZf2ZICtxvX9Yby53jppsFfFnd822wEtBVkK1ZEgApYAY0MWsH5Nikd5aQCu2lU+8KRuy71XJbrE/FoJrIvsklBwc3p2Gvhd7Mv1Rk=
+	t=1721041944; cv=none; b=tGTC3qebjM29+a24oLo/FDuJdPI6i2/U2MbWvh+RwtKuKpFp/6B/iPIv71XKU+PF6yinida2Ls96k0j+MD5fNmwiOyVdwEtIq+hXp3lh2y6du0WvmD1FMwxwvyBoEnL+4b4Mlb73ncV5xeN9ZabOO+7V4Rc8QpTkHgrzM/UiiqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041618; c=relaxed/simple;
-	bh=9U3wtHuANCNGFZX1DjpKeN9xrR/JfiUE4Wt3jyP5Sxg=;
+	s=arc-20240116; t=1721041944; c=relaxed/simple;
+	bh=boD6DHuvEEwyMx5kkUoGvLV6Bx4Xtb7GPr27RAXcqzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/Nn7+USwM2Q5FdKfCXOY5e6AijzqQiQIyD3EMihN/OSZYO5hBKmS8609rKdKxLQG/bnFnGv9EyH+NsffnLOc/Dy3z+Lsy+CYJYbl69OTIy210YtzqH5adIeIJFSNIqm8SDNjsIhF2PGqhhPUol6b88EeNrhjuaddytrxGcuIIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F35AADA7;
-	Mon, 15 Jul 2024 04:07:20 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B41A3F766;
-	Mon, 15 Jul 2024 04:06:54 -0700 (PDT)
-Date: Mon, 15 Jul 2024 12:06:52 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	David Abdurachmanov <david.abdurachmanov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ross Burton <ross.burton@arm.com>
-Subject: Re: [PATCH v2] clocksource: sp804: Make user selectable
-Message-ID: <ZpUCzFm8Jy9TKUnk@J2N7QTR9R3>
-References: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=upVzGYQr0tBxzOFx2MKuUOxsUtjrQdc7IDLm5DZbbMSvvQkTuD0i42RszoPlXXonG/25YVWv21vbnOd6X1YF3AoJNKk2ZYgyau7Oq9hRFjUWzNEc/b+1fdiX/uoiWWTeJpyeLe2pl2pr6KAT3vs8p7mnERpzBiey/pZim3RcG/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jHzUjlbr; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/9kN955l3tWnzwnWGkkfTtGN6nU/GmY6pzkTmB5KXRk=; b=jHzUjlbrIrnnOUwFV+BCvO56Dv
+	NuAcHwv16kTWcBlBb8f89hGPKIaQ8ReRV7N94Qts3WgqSzGEn2eTSFEqHk6HlCfh/lstTlvl9ZTAN
+	xwrbHrLIPtsDkeXhhCu/wk1/a2RhDsZKuL5/EWfjsz+GKhckuw3kc++7I2QlHk5RW63WEQuhc85od
+	LAwEXxYgJCDaUvhZHO+kjmh4YNmxsIi8Uomqoj5uFW1Qh/BWbhydeaOzDFBxXy/0d1d9DZO1A+WXK
+	kJ3J9hy2ebPebZgFT1Uj0W3IUC8VWEuIWMI092iwsdRYSd5HD2v96Q9FydIYwVB2HqcadVchjq+94
+	Jk5kBmDQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTJco-00000001mO2-2bNi;
+	Mon, 15 Jul 2024 11:12:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 704D33003FF; Mon, 15 Jul 2024 13:12:08 +0200 (CEST)
+Date: Mon, 15 Jul 2024 13:12:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Kyle Huey <me@kylehuey.com>, khuey@kylehuey.com,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing
+ events
+Message-ID: <20240715111208.GB14400@noisy.programming.kicks-ass.net>
+References: <20240713044645.10840-1-khuey@kylehuey.com>
+ <ZpLkR2qOo0wTyfqB@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,59 +75,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
+In-Reply-To: <ZpLkR2qOo0wTyfqB@krava>
 
-On Wed, May 29, 2024 at 08:48:14PM +0100, Mark Brown wrote:
-> The sp804 is currently only user selectable if COMPILE_TEST, this was
-> done by commit dfc82faad725 ("clocksource/drivers/sp804: Add
-> COMPILE_TEST to CONFIG_ARM_TIMER_SP804") in order to avoid it being
-> spuriously offered on platforms that won't have the hardware since it's
-> generally only seen on Arm based platforms.  This config is overly
-> restrictive, while platforms that rely on the SP804 do select it in
-> their Kconfig there are others such as the Arm fast models which have a
-> SP804 available but currently unused by Linux.  Relax the dependency to
-> allow it to be user selectable on arm and arm64 to avoid surprises and
-> in case someone comes up with a use for extra timer hardware.
+On Sat, Jul 13, 2024 at 10:32:07PM +0200, Jiri Olsa wrote:
+> On Fri, Jul 12, 2024 at 09:46:45PM -0700, Kyle Huey wrote:
+> > The regressing commit is new in 6.10. It assumed that anytime event->prog
+> > is set bpf_overflow_handler() should be invoked to execute the attached bpf
+> > program. This assumption is false for tracing events, and as a result the
+> > regressing commit broke bpftrace by invoking the bpf handler with garbage
+> > inputs on overflow.
+> > 
+> > Prior to the regression the overflow handlers formed a chain (of length 0,
+> > 1, or 2) and perf_event_set_bpf_handler() (the !tracing case) added
+> > bpf_overflow_handler() to that chain, while perf_event_attach_bpf_prog()
+> > (the tracing case) did not. Both set event->prog. The chain of overflow
+> > handlers was replaced by a single overflow handler slot and a fixed call to
+> > bpf_overflow_handler() when appropriate. This modifies the condition there
+> > to include !perf_event_is_tracing(), restoring the previous behavior and
+> > fixing bpftrace.
+> > 
+> > Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+> > Reported-by: Joe Damato <jdamato@fastly.com>
+> > Fixes: f11f10bfa1ca ("perf/bpf: Call BPF handler directly, not through overflow machinery")
+> > Tested-by: Joe Damato <jdamato@fastly.com> # bpftrace
+> > Tested-by: Kyle Huey <khuey@kylehuey.com> # bpf overflow handlers
+> > ---
+> >  kernel/events/core.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 8f908f077935..f0d7119585dc 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -9666,6 +9666,8 @@ static inline void perf_event_free_bpf_handler(struct perf_event *event)
+> >   * Generic event overflow handling, sampling.
+> >   */
+> >  
+> > +static bool perf_event_is_tracing(struct perf_event *event);
+> > +
+> >  static int __perf_event_overflow(struct perf_event *event,
+> >  				 int throttle, struct perf_sample_data *data,
+> >  				 struct pt_regs *regs)
+> > @@ -9682,7 +9684,9 @@ static int __perf_event_overflow(struct perf_event *event,
+> >  
+> >  	ret = __perf_event_account_interrupt(event, throttle);
+> >  
+> > -	if (event->prog && !bpf_overflow_handler(event, data, regs))
+> > +	if (event->prog &&
+> > +	    !perf_event_is_tracing(event) &&
+> > +	    !bpf_overflow_handler(event, data, regs))
+> >  		return ret;
 > 
-> Fixes: dfc82faad725 ("clocksource/drivers/sp804: Add COMPILE_TEST to CONFIG_ARM_TIMER_SP804")
-> Reported-by: Ross Burton <ross.burton@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ok makes sense, it's better to follow the perf_event_set_bpf_prog condition
+> 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Urgh, so wth does event_is_tracing do with event->prog? And can't we
+clean this up?
 
-Mark.
+That whole perf_event_is_tracing() is a pretty gross function.
 
-> ---
-> Changes in v2:
-> - Rebase onto v6.10-rc1.
-> - Link to v1: https://lore.kernel.org/r/20240522-arm64-vexpress-sp804-v1-1-0344cd42eb77@kernel.org
-> ---
->  drivers/clocksource/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 34faa0320ece..ca6045f90000 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -390,7 +390,8 @@ config ARM_GT_INITIAL_PRESCALER_VAL
->  	  This affects CPU_FREQ max delta from the initial frequency.
->  
->  config ARM_TIMER_SP804
-> -	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
-> +	bool "Support for Dual Timer SP804 module"
-> +	depends on ARM || ARM64 || COMPILE_TEST
->  	depends on GENERIC_SCHED_CLOCK && HAVE_CLK
->  	select CLKSRC_MMIO
->  	select TIMER_OF if OF
-> 
-> ---
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> change-id: 20240522-arm64-vexpress-sp804-365d6938b07c
-> 
-> Best regards,
-> -- 
-> Mark Brown <broonie@kernel.org>
-> 
-> 
+Also, I think the default return value of bpf_overflow_handler() is
+wrong -- note how if !event->prog we won't call bpf_overflow_handler(),
+but if we do call it, but then have !event->prog on the re-read, we
+still return 0.
+
+
 
