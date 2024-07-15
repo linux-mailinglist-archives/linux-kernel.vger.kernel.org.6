@@ -1,151 +1,165 @@
-Return-Path: <linux-kernel+bounces-252689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4E99316D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5109316D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25FB1C21DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FF91F21EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E572918EA84;
-	Mon, 15 Jul 2024 14:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jf4XEXHR"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B578713B295
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B8418EA94;
+	Mon, 15 Jul 2024 14:34:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D2C433B3;
+	Mon, 15 Jul 2024 14:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053958; cv=none; b=kTaRdCz1tMN+LDaGSZOmo7VEqFRWrXTvNDCxtswVvVQHYusECiFFAb19CACQnZjhw0hiAiDfWITAfo5FWE65/sQ+45a8kb1q1GlcrucKPtsdHUbvURR9aOwqnihtMqjxePMtNdhPCWfUg+yFyh5l8/b3Gb9hDf6x8YG8BWsUpuk=
+	t=1721054042; cv=none; b=kTKKeqYAmmAUlm9f0eSgbOfGBD3bIszJqjDOdJ6aaG/Zcrc2dXQEzT1vhFm/00cDzhoiLTXn07D9a98/JiQmVs9eFBIumj2/1WYF6+Xq1QWzWdz5PKEx6PiQq7CS/xm9g8+DgPNpjv17eEpMpFW5krQGvlNusbGsHcuQqFoD8M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053958; c=relaxed/simple;
-	bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bx/jvb1Mo0yMLgVk3sR7oVBUugeya7jzXamicglS71riPmUPN3DjdkO3jpbvI/sv+j1/WzX4jEMU4GJX1+ooFGApMTYEa5IqJgQv2sEpJLQGsfHyhAD+Gs5nldb4/0I/TuJVkMj/cH2jrms4S+C0XqFOu217eLwaocdwR5y2FPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jf4XEXHR; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44e534a1fbeso481791cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721053956; x=1721658756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
-        b=jf4XEXHRPU2bJGciHZqTxv5st3dWzommrRdrqtFzWPTZ5cHOd0vjot4YsnseQL4gwj
-         Zay2hziIweYML9+Xcp324LHdB0y+uxlw8C5QsIGlYPbcaG1vDhU82RyZTAGKk8rblOju
-         vVmr4EYPKGSbDTqmtGKEQ/kp9kxMbFjnixu3LxpjKfmgHK/xDdvwbgyVnQqzmV7BI7tQ
-         vNIDaiRmO1TXFMCE1wHPCrPKUN4f7PUxvK3EV3T42QUUoetHNShZMqMndfHKeu0D6Fi3
-         gyKYukOd3WVPH6OXNYKDwa7G6hsZDXAvtFr48z32iMtPrlgKbAMznooiK4TsV7vEoGjK
-         ykeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721053956; x=1721658756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fc1Fj81x1LnOz6qLHDXAd34zTeKOj68tGBAgaJsMlyE=;
-        b=gfSGB4mduGEBjpnLqmuz5r0lEytI+JlJHU0NWmZQW/SVzkx6eanu2Ok8Swts+sALPV
-         wamrNqcvHGLOjoQa6e0Itw7YfHtLOVhN7uNrNNzWZTrV8WuB2vp8mI1UZyyGP+FrDDLv
-         bLMiQS+1TuHvzZQsBOUgFNm0Qp1lMiBSxoj5RlpAjtjeyHuNlQWddS69BifkXL2LL/EN
-         0D8RuoPe2Q4IaOLML43FMHbRQU6oO3nB+lyOZfPTAVvFvJVkK17dbyzzZybHxAra1hal
-         wO6AO3rOWH7LTobUp/Jp+hMaofwqicCxcNKJOIKF3CBw0UsbZc9/mhbv/ipROW9g7bOj
-         ExLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjr6aosb+3QaQ79xeQX2gL6rtJ+boIrz2RpQWetmzq8Xu2vXbYeYZxjOunxzkAYAsjV9hrIuHFOO+1ffLOOY6PNOJNQmEitSbH+J65
-X-Gm-Message-State: AOJu0YwiFZ/d2vPn4Rjk/x9cOmKKXpXjlm+ULxsBcm0K7umg/DQt3Bne
-	ohxRFQUyaYUJYiEG+8zeQrdYuJxSeHGX9WNde7cxvpbVlG0rBtHulSdwzl2yJWOHgcYkM1vGoeB
-	qDKYEbWrlfxqjt7rNQBOkMGlQRF8GQs2pVRxE
-X-Google-Smtp-Source: AGHT+IEdAV3zlBSromK7kgwqxRwwFx8kbs+vC0rwqlISqNmCiF0y0Gbsp63IltCUJUrV6HyA2qxarg6CDSl8HaBAXE8=
-X-Received: by 2002:a05:622a:298e:b0:444:fd8a:f1a0 with SMTP id
- d75a77b69052e-44f5acc840amr5659871cf.25.1721053955348; Mon, 15 Jul 2024
- 07:32:35 -0700 (PDT)
+	s=arc-20240116; t=1721054042; c=relaxed/simple;
+	bh=EBpeVIf2H1PXWOGRjMyLKWBk7WnF/jRTmoexivcti4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m0SojIvn7+5ReH5PmVbVRRMJP5muBwbXdhh96k4CChyq4bYMnzw0UmbVog87voGYMMrTKcKerPSY5DYkjKM0c3EmXYKaUTjFB9GfreIKChJQGp86k4QFSHzmKnOuuETDr4Gb35ibPF6zJXsCPyctXrcqQ3+JtuJf1fXFo3xWoUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2245FEC;
+	Mon, 15 Jul 2024 07:34:25 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 91D4E3F766;
+	Mon, 15 Jul 2024 07:33:58 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v2] perf docs: Mark the Android document as obsolete
+Date: Mon, 15 Jul 2024 15:33:42 +0100
+Message-Id: <20240715143342.52236-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715073159.25064-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240715073159.25064-2-lvzhaoxiong@huaqin.corp-partner.google.com> <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
-In-Reply-To: <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
-From: Doug Anderson <dianders@google.com>
-Date: Mon, 15 Jul 2024 07:32:24 -0700
-Message-ID: <CAD=FV=X3rQC0URNWGxPrvCF=RNsTFiFPfotBrC7v76Cam4kbxg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	linus.walleij@linaro.org, hsinyi@google.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Benjamin Tissoires <bentiss@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+As of Android NDK r15, GCC is no longer supported. Since then, the GCC
+compiler has been phased out in the NDK, and LLVM/Clang became the
+official toolchain.
 
-On Mon, Jul 15, 2024 at 7:22=E2=80=AFAM Doug Anderson <dianders@google.com>=
- wrote:
->
-> Hi,
->
-> On Mon, Jul 15, 2024 at 12:32=E2=80=AFAM Zhaoxiong Lv
-> <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
-> >
-> > The Elan ekth6a12nay touch screen chip same as Elan eKTH6915 controller
-> > has a reset gpio. The difference is that they have different
-> > post_power_delay_ms.
-> >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
->
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->
-> FWIW things have changed enough between V1 and V2 that you probably
-> should have removed Conor's "Acked-by" tag here and waited for him to
-> re-add it.
->
-> I'd also note that when posting a patch your Signed-off-by should
-> always be at the bottom of any collected tags. For reference [1].
->
-> [1] https://lore.kernel.org/tools/20221031165842.vxr4kp6h7qnkc53l@meerkat=
-.local/
->
-> That being said, the new binding seems OK to me.
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+However, the document android.txt contains steps for cross building Perf
+with GCC with using an older NDK. On the other hand, It is problematic
+for Perf cross building with Clang - multiple compilation errors and
+missing dependency libraries are observed.
 
-...also, all of your patches seem to have the wrong address for
-Benjamin Tissoires. Can you fix that? I keep getting:
+Thus, mark the Documentation/android.txt as obsolete. This file is kept
+for the historical reference.
 
-Message not delivered
-Your message couldn't be delivered to benjamin.tissoires@redhat.co
-because the remote server is misconfigured. See technical details
-below for more information.
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ tools/perf/Documentation/android.txt | 79 +---------------------------
+ 1 file changed, 1 insertion(+), 78 deletions(-)
 
-...because you have ".co" instead of ".com".
+diff --git a/tools/perf/Documentation/android.txt b/tools/perf/Documentation/android.txt
+index 24a59998fc91..2254d0483bf4 100644
+--- a/tools/perf/Documentation/android.txt
++++ b/tools/perf/Documentation/android.txt
+@@ -1,78 +1 @@
+-How to compile perf for Android
+-=========================================
+-
+-I. Set the Android NDK environment
+-------------------------------------------------
+-
+-(a). Use the Android NDK
+-------------------------------------------------
+-1. You need to download and install the Android Native Development Kit (NDK).
+-Set the NDK variable to point to the path where you installed the NDK:
+-  export NDK=/path/to/android-ndk
+-
+-2. Set cross-compiling environment variables for NDK toolchain and sysroot.
+-For arm:
+-  export NDK_TOOLCHAIN=${NDK}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-
+-  export NDK_SYSROOT=${NDK}/platforms/android-24/arch-arm
+-For x86:
+-  export NDK_TOOLCHAIN=${NDK}/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-
+-  export NDK_SYSROOT=${NDK}/platforms/android-24/arch-x86
+-
+-This method is only tested for Android NDK versions Revision 11b and later.
+-perf uses some bionic enhancements that are not included in prior NDK versions.
+-You can use method (b) described below instead.
+-
+-(b). Use the Android source tree
+------------------------------------------------
+-1. Download the master branch of the Android source tree.
+-Set the environment for the target you want using:
+-  source build/envsetup.sh
+-  lunch
+-
+-2. Build your own NDK sysroot to contain latest bionic changes and set the
+-NDK sysroot environment variable.
+-  cd ${ANDROID_BUILD_TOP}/ndk
+-For arm:
+-  ./build/tools/build-ndk-sysroot.sh --abi=arm
+-  export NDK_SYSROOT=${ANDROID_BUILD_TOP}/ndk/build/platforms/android-3/arch-arm
+-For x86:
+-  ./build/tools/build-ndk-sysroot.sh --abi=x86
+-  export NDK_SYSROOT=${ANDROID_BUILD_TOP}/ndk/build/platforms/android-3/arch-x86
+-
+-3. Set the NDK toolchain environment variable.
+-For arm:
+-  export NDK_TOOLCHAIN=${ANDROID_TOOLCHAIN}/arm-linux-androideabi-
+-For x86:
+-  export NDK_TOOLCHAIN=${ANDROID_TOOLCHAIN}/i686-linux-android-
+-
+-II. Compile perf for Android
+-------------------------------------------------
+-You need to run make with the NDK toolchain and sysroot defined above:
+-For arm:
+-  make WERROR=0 ARCH=arm CROSS_COMPILE=${NDK_TOOLCHAIN} EXTRA_CFLAGS="-pie --sysroot=${NDK_SYSROOT}"
+-For x86:
+-  make WERROR=0 ARCH=x86 CROSS_COMPILE=${NDK_TOOLCHAIN} EXTRA_CFLAGS="-pie --sysroot=${NDK_SYSROOT}"
+-
+-III. Install perf
+------------------------------------------------
+-You need to connect to your Android device/emulator using adb.
+-Install perf using:
+-  adb push perf /data/perf
+-
+-If you also want to use perf-archive you need busybox tools for Android.
+-For installing perf-archive, you first need to replace #!/bin/bash with #!/system/bin/sh:
+-  sed 's/#!\/bin\/bash/#!\/system\/bin\/sh/g' perf-archive >> /tmp/perf-archive
+-  chmod +x /tmp/perf-archive
+-  adb push /tmp/perf-archive /data/perf-archive
+-
+-IV. Environment settings for running perf
+-------------------------------------------------
+-Some perf features need environment variables to run properly.
+-You need to set these before running perf on the target:
+-  adb shell
+-  # PERF_PAGER=cat
+-
+-IV. Run perf
+-------------------------------------------------
+-Run perf on your device/emulator to which you previously connected using adb:
+-  # ./data/perf
++Android NDK compilation is deprecated and no longer supported.
+-- 
+2.34.1
 
-Having the wrong email address for the maintainer is a good way for
-your patch not to get picked up. :-P
-
-I would further note that Benjamin seems to have moved from using his
-"redhat.com" address to his "kernel.org" address. See commit
-139b4c37e9cb ("MAINTAINERS: update Benjamin's email address").
-
-One last note is that get_maintainers should have suggested you email
-my @chromium.org address rather than my @google.com address. It's not
-a huge deal since they both come to the same place, but some
-maintainer tools will refuse to accept the "Reviewed-by" that I post
-with my @chromium.org address because my mail program will notice you
-sent to my @google.com address and send my reply from there.
-
-Probably you should be using a tool like "b4" or "patman" to help you
-send your patches out [1].
-
-[1] https://youtu.be/7B3nKmBoFoQ
-
--Doug
 
