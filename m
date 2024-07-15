@@ -1,164 +1,132 @@
-Return-Path: <linux-kernel+bounces-252114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B35E930E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960C1930E90
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F3031C2120C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00211C208FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 07:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D049E1836EA;
-	Mon, 15 Jul 2024 07:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF931836E8;
+	Mon, 15 Jul 2024 07:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nj6A7otA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BUw7PG7Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD315221;
-	Mon, 15 Jul 2024 07:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBE027457
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721027732; cv=none; b=HIXnGqZIgshXn/sHoltutUC/8tbvllEp9ZlmqblDpvA9G32AAWytFY54nBXvN7OYaXakYfiVTKNnLPfS5U5nphhQ8OotKoPewZdUO6FIOIXjkOpvTO6WAOo3FtrMP97T9YZtJS5YECWVRnMhJiLAc5bTWJcDn2RWbQlnq9KRNdg=
+	t=1721027761; cv=none; b=P2CgHREIkcdvyzmjrXQ50hQWd2ey0Mnmo2uwtveY/6unFKenJ64IprieMUd4ADuAorGhxDxVWbAQn8ioP0vuVhSMKgq9LfYc3QXMa4ryz0tb9fL3krKuF2UmJ6wd8i5d3vatn4rDbJ5oVATxogHkM8kUadiCH8nGStnh9uL3lKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721027732; c=relaxed/simple;
-	bh=2EMRRHgATOG+8UaGVLwFN/+qZQ6DQZh0fU5FKzhSYOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sqqDV+6AlQOCa75NMuQk0rn3g3vJSN94f6GtGkbmxpxHBKDkxMFeEC/4/jcq+tN27wTT4Q9RFxMjg4jhltqSm3IMAc9DgM8PP/9WUzyZBOINGcuVeRtudctNGi6wf5b7yeRIvRLzwA6jo7/DVfIgbVC55pGW1VZRRqgjMXpDUxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nj6A7otA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11B5C4AF0A;
-	Mon, 15 Jul 2024 07:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721027731;
-	bh=2EMRRHgATOG+8UaGVLwFN/+qZQ6DQZh0fU5FKzhSYOw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nj6A7otAounG9xDZpTH+k2/KCMdbQ/270EWR2F2CLRlJME91G1PMUmXZiBtOZpy/d
-	 bRZbIOyzQVoFIS+hGOxSyFgzH+IQj0aAYZSJCmKUI/ep2CwXnowsFZxmHT1oeZlOea
-	 3GGwBfV2oev+vxAiydVqOBWUQS1MSSWmwkuE6MDTH47WngyrA8KDM7wO/bjOsJpRTE
-	 6TRdBEKkJyjdqnoPUjKCUdf4JRRT+HIwEI3gJUxjJUY5JMZn8p9UwX3W/7rMqQALiG
-	 gpdKVvWVXZGMNwR3z64Rl5v8Cs56u8gZ6sa9uSQGuC9MTRRCqEHF30dPzjFqYgU0dr
-	 WMn982BDX2lEw==
-Message-ID: <fca65d4a-7e2a-47c8-809d-eac758433eb4@kernel.org>
-Date: Mon, 15 Jul 2024 09:15:26 +0200
+	s=arc-20240116; t=1721027761; c=relaxed/simple;
+	bh=XcGpFqnDjKNKx8SfYe7aFOKVeti+RJENIxAU2UvUuTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g98/UfrmlWmHutFOyblI9ZXnZS2YnCc092lvRx7Z+kxqNCoweaEnf9CppTzDvHa9BXmowfAUh/yvJv0pMSXrPF8Xks5dgn6m1LmvIWMcRnMw7GtfyBEiLNF7RiKfH7F1zjpxG7o9dxhu27JELLSiOkr1Z1P9OJFlbXRfMleHkCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BUw7PG7Y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721027758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0Y2AbOnd9Mq1S+7NRXex8Vmbtv9LUYdHTykQN+yx0Do=;
+	b=BUw7PG7YjsQSqwcmdH+AG+sif630ow1LwhOV2jRETd2R46UrlMiqrgQfni4/IthW1K9KwF
+	kRmCW8A+9CiFnr0jzvF2sEpMD02OJpR8DHhEJKOGZQrUuBvJqMEHSPDZs9TAAg5evfSQbU
+	FqMOuJqyTvOeJlGNx+CSrJZy1D8VvjY=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612-doPEtFVqMk2vQoSZqQtQxA-1; Mon, 15 Jul 2024 03:15:53 -0400
+X-MC-Unique: doPEtFVqMk2vQoSZqQtQxA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52e9c23da78so486133e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 00:15:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721027751; x=1721632551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Y2AbOnd9Mq1S+7NRXex8Vmbtv9LUYdHTykQN+yx0Do=;
+        b=j7VW4MhCD7FkaAPosDQADHIfGh4/+DoJk0u2IVep5s1BkyByXNVoW6zq+vkhpGc7YL
+         osM71iXqmvR6bia3GrNxm/0tMWYnoTSN3NRxW9OD+Wmua0YDfsSmcbnWiy4fVk8lWv9q
+         ybzWXQM9e/41nafJFlu1S8YYNwgq/vy0pM6mowicymHmrUpRQIZUbXuUyvzcddJIPM6F
+         W1IAGT16QkBr9mdZF9dCekXCKHjZIOjRKIublgm1UbtVwM4iql60XE9XEKWdqDbKIBXa
+         AohzeWLlfZuVkh5gJ2IB2OJMKBy2TiwqEivaY2A0RpfZWaGegppDHhCuZLjpaaNv0Pm6
+         MjJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgmcOwi0DuCkC1N4FUoEP47HzVb2Yg8S4Taw2UeJG7q9OlrRiAogdTU4zQu/YDuECQ1u4BLidAwj8aWeZ4KfV7zf4S8OJt9CwXS7AZ
+X-Gm-Message-State: AOJu0Yzt9KcQmHF7zjbEsh4ON6WQtQzGi9LJU2gcvO4vc0lAfDUEEzQE
+	n6cs8VElBHl9WJGSPf2/4LAIFZnCKX+icHdzl6FJoP3pCxSdcAoN/eNA0QebdqYkXdbGoQfOKD1
+	Oz0H8H/BTG/PyqcinT5tNeY1k85hbpUk+dfqbVR8l0IXJfW3G5qoTsDfeJd2xcw==
+X-Received: by 2002:a2e:9859:0:b0:2ec:4a95:5f05 with SMTP id 38308e7fff4ca-2eec98bbdfcmr57232711fa.3.1721027751667;
+        Mon, 15 Jul 2024 00:15:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIxAd6BD5bhLdYSEanXaJBCdpDuS0Tp/uJ2ilToq7YjUr3fTfHTb5q7xuks66ttJZX4xDRWA==
+X-Received: by 2002:a2e:9859:0:b0:2ec:4a95:5f05 with SMTP id 38308e7fff4ca-2eec98bbdfcmr57232551fa.3.1721027751282;
+        Mon, 15 Jul 2024 00:15:51 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426740daf6dsm95815705e9.1.2024.07.15.00.15.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 00:15:50 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Luben Tuikov <ltuikov89@gmail.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>,
+	Marco Pagani <marpagan@redhat.com>
+Subject: [PATCH] drm/scheduler: Use ternary operator in standardized manner
+Date: Mon, 15 Jul 2024 09:15:33 +0200
+Message-ID: <20240715071533.12936-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: nvmem: sprd-efuse: convert to YAML
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZpJvRePtbaiG94Te@standask-GA-A55M-S2HP>
- <7a419156-d2eb-4810-9281-dc3414320ad1@kernel.org>
- <ZpOyEWwj/HwQv7n3@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZpOyEWwj/HwQv7n3@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/07/2024 13:10, Stanislav Jakubek wrote:
-> On Sat, Jul 13, 2024 at 08:31:31PM +0200, Krzysztof Kozlowski wrote:
->> On 13/07/2024 14:12, Stanislav Jakubek wrote:
-> 
-> [snip]
-> 
->>> +allOf:
->>> +  - $ref: nvmem.yaml#
->>> +  - $ref: nvmem-deprecated-cells.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: sprd,ums312-efuse
->>> +    then:
->>> +      required:
->>> +        - clocks
->>> +        - clock-names
->>> +    else:
->>> +      properties:
->>> +        clocks: false
->>> +        clock-names: false
->>
->> Half of the binding is this "if:", so I would say they are not that
->> similar. I think it would be easier to read them if these were split
->> into two bindings.
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> Hi Krzysztof,
-> 
-> pretty much this exact if-then-else is described in the "Writing Devicetree
-> Bindings in json-schema" documentation as a "typical case" for its usage, so
-> I went with that. I think that it's simple enough that it only minimally
-> hampers readability.
+drm_sched_init() omits the middle operand when using the ternary
+operator to set the timeout_wq if one has been passed.
 
-Example schema has a lot of stuff shown, because it is example...
+This is a non-standardized GNU extension to the C language [1].
 
-> 
-> I admit that there might be some confusion, since I forgot to include an
-> example for the sprd,ums312-efuse (i.e. with clocks and clock-names).
-> Could I just add this example in V2 and keep it as-is otherwise?
+It decreases code readability and might be read as a bug. Furthermore,
+it is not consistent with all other places in drm/scheduler where the
+ternary operator is used.
 
-Usually one example per binding is enough, if devices differ by one
-property.
+Replace the expression with the standard one.
 
+[1] https://gcc.gnu.org/onlinedocs/gcc-14.1.0/gcc/Conditionals.html
 
-Best regards,
-Krzysztof
+Suggested-by: Marco Pagani <marpagan@redhat.com>
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 7e90c9f95611..02cf9c37a232 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1257,7 +1257,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
+ 	sched->credit_limit = credit_limit;
+ 	sched->name = name;
+ 	sched->timeout = timeout;
+-	sched->timeout_wq = timeout_wq ? : system_wq;
++	sched->timeout_wq = timeout_wq ? timeout_wq : system_wq;
+ 	sched->hang_limit = hang_limit;
+ 	sched->score = score ? score : &sched->_score;
+ 	sched->dev = dev;
+-- 
+2.45.0
 
 
