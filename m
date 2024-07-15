@@ -1,83 +1,49 @@
-Return-Path: <linux-kernel+bounces-252027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7B1930D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861E3930D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F261C20E42
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:34:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E05D1F213F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F813A240;
-	Mon, 15 Jul 2024 04:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A5A183093;
+	Mon, 15 Jul 2024 04:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDokbObt"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nA5KIRzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7679F1843;
-	Mon, 15 Jul 2024 04:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDC1A2D;
+	Mon, 15 Jul 2024 04:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721018042; cv=none; b=MJJo+U+DpHon+ljOisJeuWK+xNC5H8Tu3Y1HyK9FIwTMgk45wNQbd+Jj0nUXGxu3efcyx4auCtRxTED9WQiRiUmUVJ4Jnj+qYPcsZZ+Y4CpuWvHwhsDkzMsDcTKmX/RkRotsGQsbnfUAP80zP9Z0BCnTLeeoIonrLECtIqEHBbs=
+	t=1721018431; cv=none; b=Uto/XXaJjxDQPm/1aGkOZwBHN5jtje4J+k9/LaurlzBaDHGVBcfru7BVV2aytHnaxfHl9fuL1s8VR2TMhS3iCn38wN4dRjEdnxQeE6LtF/O1AKlBOKC5nYz/JWJcnfGFJAJdAq8A5dxip4N8e4jqZSQcs98OyVtSqLegJZN8Ez4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721018042; c=relaxed/simple;
-	bh=3Wvcfe8oEdKfcyDZbopKoLa6dmTuK7X0SJZkvLu6YzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K7Ubs7ZnmTZdgg3poiEiPXrKnhDrV+YaUQeaaJaEJh1kjJLDwFWtjWrygAezdB8byJBfIIXW8w6YY13RsnGqSDlC/Ly4Dt/tOe02Y66iCzIVqGte3ITFEr5JlWB2ZAumsmh6haztuzEA0McqS3bh0Dj5gEIoYzz5RNqgmfHrESM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDokbObt; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c983d8bdc7so3141244a91.0;
-        Sun, 14 Jul 2024 21:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721018041; x=1721622841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a4SCJwaKwCtR2CiDRItTCkrmfcVb4Wc6JiIR88R7Gqk=;
-        b=IDokbObt2afl1Kbmedl5gPtDxasqxoJtZe/N7KnbJx6gY+/4gWdRPUqxLBguTQVxZE
-         bLBOYsyXJz9uCTP3VF48pThbbtoRQ0/1FZUhhqbGU/scQNvLU8u240yXGqSXV0p3WBOK
-         Rh0+aC/gfhb7op0xaTMpDZ+k9pnI/ALOnmPgrU1cD0XsKJneEbj+GI7fie5QWcaYxrN9
-         j41da00zkShTWqM0ERhqfcCbcu6Zyxpyt+JrO/VNTJU0e+VMZyIG5WXBA5phkj2gpCSF
-         F1NLNsgMemX6Hp4R+RJRuF9iVx4MtyLS+9pSTp/yLIILYfJfYngw0fBRh356KTcR/BGm
-         7sbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721018041; x=1721622841;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a4SCJwaKwCtR2CiDRItTCkrmfcVb4Wc6JiIR88R7Gqk=;
-        b=ng82tJDTOhjjBDOzaefLV7oqUdsvr13zmEgeOpYJO73lUkhYibV4u3jhiPw36fTZG8
-         Hb9LKzz0cwDE1wnRUCnM4MHfL6B7EXZUl4Cmt81gvozygH+T7IIvuvwAt1yacahe8Ets
-         hDqBypWJ6hF7WxzCi3Fn+tcPGIGjyMbT9GGOJ4ujfZbVDzUu5qsV2IuAv+t+Mv/UXvWy
-         3VAI0QQ3v3/2peZPCFLsD9CnlhPCzNbgrCiLr6kzKjDeZO4CUvFed8aDGoVovwg/j5IV
-         uy1lF91/3r9QyzlbcJeZl8v01nqmZ+Y7pljz7x6LTFJaS1eFFEv6OOHZUVnGZX8sR6jW
-         lFqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX48reshOBAmgn1igYTpSC5uDsdDEZ/UWQxB94fQi+X+jjM8Ye0hIPvRulRttyOH85CXoc5ZZ7aydFoaBvhCtkC3l6ZHZG9tQGUzoN3hdSzjZyCKHkk5bHA8ePuRlh85K+eNuGVlWReSg==
-X-Gm-Message-State: AOJu0Yw3GHO0qjD7WD/h6Fr5sBqc02I+ciiKDwbMZGia2nzgPVHLDNd/
-	+K/FfpSehR4uIwTTbXDm/ghes8TC34k7rnXX0uCkXQpRzpsA+VdH
-X-Google-Smtp-Source: AGHT+IFTVrPHAW2F6fx28LMhuf1pFShWPTA6HQBjHb3NaDPwyjtxNWxNbfX71qwLaOqYBHRjkmP0Cg==
-X-Received: by 2002:a17:903:184:b0:1fb:43d2:2c9e with SMTP id d9443c01a7336-1fbb6d42003mr161349985ad.17.1721018040398;
-        Sun, 14 Jul 2024 21:34:00 -0700 (PDT)
-Received: from xiaxiShen-ThinkPad.. ([50.175.126.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6fedesm30904555ad.15.2024.07.14.21.33.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 21:33:59 -0700 (PDT)
-From: Xiaxi Shen <shenxiaxi26@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	syzkaller-bugs@googlegroups.com,
-	shenxiaxi26@gmail.com,
-	syzbot+59e0101c430934bc9a36@syzkaller.appspotmail.com
-Subject: [PATCH] ext4: Fix timer use-after-free on failed mount
-Date: Sun, 14 Jul 2024 21:33:36 -0700
-Message-Id: <20240715043336.98097-1-shenxiaxi26@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721018431; c=relaxed/simple;
+	bh=6zMSjDbtjmrHn7+EQHecK0I5Qyss7k/CP011FOFvUpw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=MhbInk3m6Qb8S4dBp6oeXi0iTkoFl6aHg9SW/x+ViTB0+3BmCQoFqpAvl/oZge10D6pM1KGAfKZBycSTyjZylH/oeke5v65ApfCvG/DNT8AxgqJ9y+eOISOJZNJ6v1fCAhXNbEhiJ1WKQir62u+jBtQVZgHvlsmVzcAL69KNJvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nA5KIRzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 790D0C4AF0A;
+	Mon, 15 Jul 2024 04:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721018430;
+	bh=6zMSjDbtjmrHn7+EQHecK0I5Qyss7k/CP011FOFvUpw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nA5KIRzDCB09X9B/EL+vacyskyNFqJM+gen1xp0DOdZ9Zd/VSaJcEwwI99G9yh1yE
+	 uM2R3CDzMf6ocLTXmMvAeLgPR1eQUBoLL5M2Kw+D7+IJB8fvRo1mSqUNVa8J0v1K2J
+	 KWRZB+PCAwHBU136HmxJ2wyDWBUFofKIh7kpiHG7W/xqqWiVPGPrzUwMmRuYP1nT+8
+	 fz9FinX+3Y0q2+5u25bU0WSpc3jxDQ1nfKoFfxISBHOS9Ds29nlE+SoXNFSxeI0fqK
+	 LgsP+ozPkEJehvQCzhTfE/kgLkUVXgIyVyBkM41Ya5zTIpTHQyZEbPYwugTDH7qwyy
+	 mJIG+tuB6gPHQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 64671C43614;
+	Mon, 15 Jul 2024 04:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,43 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v10] af_packet: Handle outgoing VLAN packets without
+ hardware offloading
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172101843040.2749.1887961636233742988.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 04:40:30 +0000
+References: <20240713114735.62360-1-chengen.du@canonical.com>
+In-Reply-To: <20240713114735.62360-1-chengen.du@canonical.com>
+To: Chengen Du <chengen.du@canonical.com>
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, kaber@trash.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-Syzbot has found an ODEBUG bug in ext4_fill_super
+Hello:
 
-The del_timer_sync function cancels the s_err_report timer,
-which reminds about filesystem errors daily. We should
-guarantee the timer is no longer active before kfree(sbi).
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-When filesystem mounting fails, the flow goes to failed_mount3,
-where an error occurs when ext4_stop_mmpd is called, causing
-a read I/O failure. This triggers the ext4_handle_error function
-that ultimately re-arms the timer,
-leaving the s_err_report timer active before kfree(sbi) is called.
+On Sat, 13 Jul 2024 19:47:35 +0800 you wrote:
+> The issue initially stems from libpcap. The ethertype will be overwritten
+> as the VLAN TPID if the network interface lacks hardware VLAN offloading.
+> In the outbound packet path, if hardware VLAN offloading is unavailable,
+> the VLAN tag is inserted into the payload but then cleared from the sk_buff
+> struct. Consequently, this can lead to a false negative when checking for
+> the presence of a VLAN tag, causing the packet sniffing outcome to lack
+> VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
+> tool may be unable to parse packets as expected.
+> 
+> [...]
 
-Fix the issue by canceling the s_err_report timer after calling ext4_stop_mmpd.
+Here is the summary with links:
+  - [net,v10] af_packet: Handle outgoing VLAN packets without hardware offloading
+    https://git.kernel.org/netdev/net/c/79eecf631c14
 
-Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
-Reported-and-tested-by: syzbot+59e0101c430934bc9a36@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=59e0101c430934bc9a36
----
- fs/ext4/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c682fb927b64..1b4b0d3d8889 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5626,8 +5626,8 @@ failed_mount8: __maybe_unused
- failed_mount3:
- 	/* flush s_sb_upd_work before sbi destroy */
- 	flush_work(&sbi->s_sb_upd_work);
--	del_timer_sync(&sbi->s_err_report);
- 	ext4_stop_mmpd(sbi);
-+	del_timer_sync(&sbi->s_err_report);
- 	ext4_group_desc_free(sbi);
- failed_mount:
- 	if (sbi->s_chksum_driver)
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
