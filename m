@@ -1,89 +1,155 @@
-Return-Path: <linux-kernel+bounces-252311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B44931174
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F619931178
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4211F2310A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A158A1F23023
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6F3187328;
-	Mon, 15 Jul 2024 09:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70988186E51;
+	Mon, 15 Jul 2024 09:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re0OJe5U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LPdJIqLs"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8470186E53;
-	Mon, 15 Jul 2024 09:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E7E186E34
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 09:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721036471; cv=none; b=nJcyVKCps5ovWEeCLzVkErsNWXZ5tziDfiNy+PAwk+zpl/k8A2KkOxEZbEhm/a0xuf06H7pUxnaOIgGL0I6H0WSD0tkWHk77fl8jaAZlmVK41jHRIKmeF9zEI2kcMIRqa8odxFzGTILKvrcPM3AOojm7iaIG4GDEmW4hpdD9de0=
+	t=1721036496; cv=none; b=di/DscjAWmpJZ8puytv+8E5XtuaVq6O+vO1wKFiMoY52vpi2pX2RGpE1B25j6HcaHCfBBNwGej4G1W53ELMUNHLUgmKjMz/U0anyhl+2dJSZIVClkDeEeNKOi20NderawlKsPwUb98csOHwe2vJ8sJJf6k7s5DXLqj6/6ZGnlJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721036471; c=relaxed/simple;
-	bh=AEai4tRTjpLLxJMQynC7rJSqQSFH7z3lKVFB/znJm0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxllvNLoS4GX6nZi93XRtNNOsFCWTxJNPpbtuYhy2RIKRj5aI9kja6r41h0rtDGlO24oSscNqY9fDVqA6TBsXbfN81pYq6xHq0LJ0PycIuXY6LdsV7vpenc+tOTBOcQnJSKlqJtMRfO7EU29FMasLdj1jxKDjyRapamTNPc7J1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re0OJe5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD12C32782;
-	Mon, 15 Jul 2024 09:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721036471;
-	bh=AEai4tRTjpLLxJMQynC7rJSqQSFH7z3lKVFB/znJm0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Re0OJe5Upu2yCWIQNxGahN+p84im4ZC+xPwuDAcU7lA32btwaFLFUvESaTrLCC+Ym
-	 +8EJ5hYpVTKB03qr7qZWCc4j7viDn5U7zFyHXOZdGqDRPzWKe69MVWDPK2EK3u7RIq
-	 fdkPcC/SRlP1jKND+cSsxUclGSf9jxWqcHnQ5v10f+vc5jHI0RVo6kFm0EuUYKwsyO
-	 zcu8XzDREKByGytbo+fCidF98zSEub+UNcFvc8vpwjqO7sXlQDtB7eNNJPfe3uwmvg
-	 MoXnLe5zVbbR0ZLQX1D/9Aaokk1x2QQfJCmJVCEJ7Im0iz96ID0d7TnXvz8+AWLOtt
-	 BEHkPejXNg2WA==
-Date: Mon, 15 Jul 2024 10:41:07 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] net/ipv4/tcp_cong: Replace strncpy() with strscpy()
-Message-ID: <20240715094107.GM8432@kernel.org>
-References: <20240714041111.it.918-kees@kernel.org>
+	s=arc-20240116; t=1721036496; c=relaxed/simple;
+	bh=2QIjhysmqOLRkWLcuEaszDiXxoKcbQXrijp7Huy0A/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OdaIuI1NV+UZvqOHutXmxJrj9A4QNslKVMkKqPRWEm075Ym9lBBuvrpFSjpNBF8Xa1HmxNRv7TlBA3M5hyHlrYF1Fr7ibamJjEMZ4yGiI5JRwPK1EkbwT/coZFJ+cZCqYCh7UyYeXkEkqxSkNiO4u1hDb1upPNh5bP7qC+mziWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LPdJIqLs; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42793fc0a6dso27651995e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721036493; x=1721641293; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mHE4l0k8/7T78Ojpyx4d9zMjrV9vqM25M9k+Cb+8n74=;
+        b=LPdJIqLskKgah6zmgZZyB0GjMxhIbiNBw/Q0vR+/kXdueZiMFj9LrpD8IXDc0hgJ8c
+         Rfv+LjVZYr9IfzxAEwVO43ak+mM9yzUYqRI6dROBPqg1ccOyWQcz/r9qrCLIEj+/l0h0
+         6DB+wT5er2WoVnlZ1glPWy5q1QqrFSqUoGfqBg+qWh6pIF9+SxF9f+bc09BkcJ1kVBH7
+         znxXYKxZgbxOq7vZOBmd9np0JiWQHJxOvLCoiqtDv3plR4u6urTuCdProjMzZvg3GgHt
+         eoOBfD+OdKTiU5+FuAiw02XAeFbRryLSMQUo61WjVhXjf87WJZx5CzE0r51FmXNZMJhj
+         0yiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721036493; x=1721641293;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mHE4l0k8/7T78Ojpyx4d9zMjrV9vqM25M9k+Cb+8n74=;
+        b=ZkgeEvoMt/sY9RR8zSzlyh16e36qdR+woBZ5ccs4GavlSRmsaEctqeCmLF0JmoFntb
+         TcfTtlw/aJZg5eqV7J1jFaFHoOSqEawCxwiug8Rfoo1K9fTJfJ+pzY93Yg5fDWPVEuVK
+         tb97yZgOHRUnbY2o49/3l9vpqRZZjjrrOdJPRESoKviMKNhz4+YpnSD9k4MDcIL1j8UF
+         vB9tgoctLQLyenQldZ209c5cFq3EUt6UujOb4cp+1u85h0eGd6BOULu0TQ+c+w7GBqJN
+         T8mylMjez8UjHf1pEtnE8XTeaiarMkoe5PpOwQfTe5hXglGkQ6nBt+NJVS4dL6Lt9QP/
+         ZMmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSbavIy+keLUCS54xU5dzVXOJqRjX1xEapnh5beuIF/vMw50jqVEI2fY/ZX6+/0GsklOkdCVWNYaXPXJF4YykNrk4gAIrbZTELPAho
+X-Gm-Message-State: AOJu0Yy/eCT7853UDOnjR5+MebXSavDkcNCCVFAvhw9doB7Xif1SsW4t
+	sLxqf8OY9Fdx6HHSfivqfP3zm9GKrMTEb9xOFt5XuEUJeVYFF8VwfshduofgMvY=
+X-Google-Smtp-Source: AGHT+IGhU9bRZWIhRj8ltuVwAL0IJFfi4kPMozw+e1xRw050BOveYMhuHTQtu3BGvJFH7Lref3Apiw==
+X-Received: by 2002:a05:600c:428b:b0:426:5f7d:add3 with SMTP id 5b1f17b1804b1-426708f9d5amr125080585e9.36.1721036493329;
+        Mon, 15 Jul 2024 02:41:33 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:e709:abf9:48b3:5079? ([2a05:6e02:1041:c10:e709:abf9:48b3:5079])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4279f25a962sm112632815e9.12.2024.07.15.02.41.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 02:41:32 -0700 (PDT)
+Message-ID: <9a07ad5b-5dd5-4bda-893d-8faabdf1acad@linaro.org>
+Date: Mon, 15 Jul 2024 11:41:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240714041111.it.918-kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: supply: core: return -EAGAIN on uninitialized read
+ temp
+To: neil.armstrong@linaro.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, Rhyland Klein <rklein@nvidia.com>,
+ Anton Vorontsov <cbouatmailru@gmail.com>, Jenny TC <jenny.tc@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <20240704-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-9d66d6f6efde@linaro.org>
+ <a50eb87a-4dcc-4272-b897-fb8170bfe58b@linaro.org>
+ <0516a900-0911-47f3-888e-57d014986e3b@kernel.org>
+ <b63ac8c6-213b-4307-8d33-48badee7881d@linaro.org>
+ <1c981a21-8735-4bf6-9964-233b3a742f44@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <1c981a21-8735-4bf6-9964-233b3a742f44@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 13, 2024 at 09:11:15PM -0700, Kees Cook wrote:
-> Replace the deprecated[1] uses of strncpy() in tcp_ca_get_name_by_key()
-> and tcp_get_default_congestion_control(). The callers use the results as
-> standard C strings (via nla_put_string() and proc handlers respectively),
-> so trailing padding is not needed.
+On 15/07/2024 11:30, Neil Armstrong wrote:
+> On 05/07/2024 10:08, Daniel Lezcano wrote:
+>> On 05/07/2024 07:56, Krzysztof Kozlowski wrote:
+>>> On 04/07/2024 18:41, Daniel Lezcano wrote:
+>>>> On 04/07/2024 10:52, Neil Armstrong wrote:
+>>>>> If the thermal core tries to update the temperature from an
+>>>>> uninitialized power supply, it will swawn the following warning:
+>>>>> thermal thermal_zoneXX: failed to read out thermal zone (-19)
+>>>>>
+>>>>> But reading from an uninitialized power supply should not be
+>>>>> considered as a fatal error, but the thermal core expects
+>>>>> the -EAGAIN error to be returned in this particular case.
+>>>>>
+>>>>> So convert -ENODEV as -EAGAIN to express the fact that reading
+>>>>> temperature from an uninitialized power supply shouldn't be
+>>>>> a fatal error, but should indicate to the thermal zone it should
+>>>>> retry later.
+>>>>>
+>>>>> It notably removes such messages on Qualcomm platforms using the
+>>>>> qcom_battmgr driver spawning warnings until the aDSP firmware
+>>>>> gets up and the battery manager reports valid data.
+>>>>
+>>>> Is it possible to have the aDSP firmware ready first ?
+>>>
+>>> I don't think so. ADSP firmware is a file, so as every firmware it can
+>>> be loaded from rootfs, not initramfs (unlike this driver), or even 
+>>> missing.
+>>
+>> Ok, said differently, can't we initialize the thermal zone after the 
+>> firmware is loaded ?
 > 
-> Since passing the destination buffer arguments decays it to a pointer,
-> the size can't be trivially determined by the compiler. ca->name is
-> the same length in both cases, so strscpy() won't fail (when ca->name
-> is NUL-terminated). Include the length explicitly instead of using the
-> 2-argument strscpy().
-> 
-> Link: https://github.com/KSPP/linux/issues/90 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> This is the goal, but this can't be a fix but a proper rework.
 
-nit: Looking at git history, the subject prefix should probably be 'tcp'.
-     And it would be best to explicitly target the patch against net-next.
+Right, it is a design issue and we are finding this problem in several 
+drivers using the thermal zone. Unfortunately that forces the thermal 
+core to do cumbersome mechanisms because of this and obviously it is a 
+friction for thermal core cleanups / rework. IOW, bad driver design => 
+thermal core impacted.
 
-     Subject: [PATCH net-next v2] tcp: ...
+> I think changing power_supply_core.c is not the right solution.
 
-That notwithstanding, this looks good to me.
+ From my POV, it is the right solution but I agree it could take a cycle 
+or more to fix.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> qcom_battmgr_bat_get_property() should return -EAGAIN instead of
+> -ENODEV.
 
-...
+Yes, we can do that in the first place and come back to solve this 
+firmware / async issue in a more generic way later
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
