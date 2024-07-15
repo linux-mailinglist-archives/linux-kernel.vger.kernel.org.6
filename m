@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-252327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8539311A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFBD9311AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB70F2850EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA941C214B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 09:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4312F187329;
-	Mon, 15 Jul 2024 09:50:09 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3F5187328;
+	Mon, 15 Jul 2024 09:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CiUxJTcl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B0335C0;
-	Mon, 15 Jul 2024 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4477335C0;
+	Mon, 15 Jul 2024 09:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721037008; cv=none; b=MPedI5fetRoEh3lmRt7e3Ln5dHP3yYeES3WMH/Zq6bwqQoft8fJShmjxK/pIKEGj+TjLXpxiD62jcZcl9QO69YfdQvQwHOu+R8wyC9eTIN8hfolES0m8fly+9l7uM7jYUTtmII+w9kux1xybgnfNqza1fxRI+oeSWaJ8tRMsT90=
+	t=1721037219; cv=none; b=oEhpG3FlOe3jEW3lgqWGgn2KJWzbKbZya9QvtU8DwzXbg2s/3HrFtS0MedeLKa9fwAp4gfgP7AGPlUTcYKWdavCBAFdCtG/Xroep+UDiIk9pnBnr8Z7sQjzsfRrhgncTKRjZ7HbkpSg/mb/2bSh/QpVP4pfCJmkOfRCkL+SEtJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721037008; c=relaxed/simple;
-	bh=8Wqe6jMM+VpytjTp0IknaTsCK85fp+DTV+hMsMcvZQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldERAR2jsPIaZlPOpgHmrAqUv5saO8kp2YfpoCbrk8gh28HgzybIN7rxBzNYGC46M9Kh5etuk8beBUvKTzY5ghGpti6t0TN2qncY8KmlUNxtxjpz8Rk70P6xTyzQggxqOCD9Ed1l1i/S/BReAlMSrV9n73WdymLxfzVoYnc8GPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtp89t1721036861toicl6cc
-X-QQ-Originating-IP: +1vDfVCq/sJoRCMWUwHIAZGyJFSNel82oHF6cTZdGjs=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 15 Jul 2024 17:47:38 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11744980703197485822
-From: WangYuli <wangyuli@uniontech.com>
-To: kuba@kernel.org,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	guanwentao@uniontech.com,
-	sergio.it.consultant@gmail.com,
-	nbd@nbd.name,
-	lorenzo@kernel.org,
-	shayne.chen@mediatek.com,
-	deren.wu@mediatek.com,
-	mingyen.hsieh@mediatek.com,
-	chui-hao.chiu@mediatek.com
-Cc: linux-wireless@vger.kernel.org,
+	s=arc-20240116; t=1721037219; c=relaxed/simple;
+	bh=CfMnHS5zJUENrAraCEsrzQew3kJSn98ssCkzn4XE9vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUoBdHztlas1YAbFQNTP6DpGizFSJdqwAHQuRfAbRIDhcmuoZFeRcfRSbncF9v8li9F3DsK+KYTLh+ocN/T2vgHksac3enekf9jtoQ3Le/XaHv5IIIwIPPyizeTtiISKWKIIjWCrK7f0iUkr9xW7OPgHRcSODOpUSZ5EDovhy7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CiUxJTcl; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721037218; x=1752573218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CfMnHS5zJUENrAraCEsrzQew3kJSn98ssCkzn4XE9vc=;
+  b=CiUxJTcl8omieCZu4XnbrCuRz9M1wW2L4mBBjnyHLhh5zEBOBotMR8GY
+   a1KbjtfA25Xk6VUZKP3HjwHSVqqpZAWZbUHmxkkIMktitSeM7WFRAccUh
+   jtlJEepPrQaDnW134p8ZVbhO4ri1PV5vg7acNGxbYxn2j03K64NiJDA/0
+   VdzH4dCPeTDrWiFGyVVKCXPovHVOclp5ZrQPHsf5UiO0bcLU01zNetMDO
+   +KFWD0EXgFWVlvXFO/P4F9fvUZHZBWWtCcxybrr/HhXQQlCNUoXur1+lX
+   zMiQ2lI3mWg5KL9ENQzNzL+QDZR7aDwZXeNSDZRzzw4rctgiHs4/4ekV2
+   g==;
+X-CSE-ConnectionGUID: wePK3tVMTbCq2kE+r1zuvg==
+X-CSE-MsgGUID: xmlsARpSQ9KYRwIpMhHudA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="29800080"
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="29800080"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:53:37 -0700
+X-CSE-ConnectionGUID: 5YlYDFg1QSmphb37NGbiHA==
+X-CSE-MsgGUID: il7UJBUKQ62fdIDdABr0gQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="49531650"
+Received: from linux.bj.intel.com ([10.238.157.71])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:53:36 -0700
+Date: Mon, 15 Jul 2024 17:48:37 +0800
+From: Tao Su <tao1.su@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [RESEND. PATCH] drivers/mediatek: Fix some mt7601u vendor could not connect
-Date: Mon, 15 Jul 2024 17:47:14 +0800
-Message-ID: <A9442D62405552CE+20240715094714.1553336-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	syzbot+2fb9f8ed752c01bc9a3f@syzkaller.appspotmail.com
+Subject: Re: [PATCH] KVM: x86: Suppress MMIO that is triggered during task
+ switch emulation
+Message-ID: <ZpTwddPr+4X6CCof@linux.bj.intel.com>
+References: <20240712144841.1230591-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+In-Reply-To: <20240712144841.1230591-1-seanjc@google.com>
 
-Some mt7601 devices cannot establish a connection properly.
-This patch fixes the issue.
-We do not know why, but it just works.
+On Fri, Jul 12, 2024 at 07:48:41AM -0700, Sean Christopherson wrote:
 
-Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1716301/comments/52
-Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1716301/comments/53
-Link: https://github.com/kuba-moo/mt7601u/issues/64
-Link: https://www.mediatek.com/products/broadband-wifi/mt7601u
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/wireless/mediatek/mt7601u/mcu.c | 1 -
- drivers/net/wireless/mediatek/mt7601u/phy.c | 5 -----
- 2 files changed, 6 deletions(-)
+[...]
 
-diff --git a/drivers/net/wireless/mediatek/mt7601u/mcu.c b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-index 1b5cc271a9e1..15751d11b4dc 100644
---- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-@@ -446,7 +446,6 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
- 	mt7601u_wr(dev, 0x94c, 0);
- 	mt7601u_wr(dev, MT_FCE_PSE_CTRL, 0);
- 
--	mt7601u_vendor_reset(dev);
- 	msleep(5);
- 
- 	mt7601u_wr(dev, 0xa44, 0);
-diff --git a/drivers/net/wireless/mediatek/mt7601u/phy.c b/drivers/net/wireless/mediatek/mt7601u/phy.c
-index d4cd2215aba9..f3c14a1552df 100644
---- a/drivers/net/wireless/mediatek/mt7601u/phy.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/phy.c
-@@ -589,8 +589,6 @@ void mt7601u_phy_recalibrate_after_assoc(struct mt7601u_dev *dev)
- 	if (test_bit(MT7601U_STATE_REMOVED, &dev->state))
- 		return;
- 
--	mt7601u_mcu_calibrate(dev, MCU_CAL_DPD, dev->curr_temp);
--
- 	mt7601u_rxdc_cal(dev);
- }
- 
-@@ -1160,9 +1158,6 @@ static int mt7601u_init_cal(struct mt7601u_dev *dev)
- 	if (ret)
- 		return ret;
- 	ret = mt7601u_mcu_calibrate(dev, MCU_CAL_RXIQ, 0);
--	if (ret)
--		return ret;
--	ret = mt7601u_mcu_calibrate(dev, MCU_CAL_DPD, dev->dpd_temp);
- 	if (ret)
- 		return ret;
- 
--- 
-2.43.4
+> See commit 0dc902267cb3 ("KVM: x86: Suppress pending MMIO write exits if
+> emulator detects exception") for more details on KVM's limitations with
+> respect to emulated MMIO during complex emulator flows.
+> 
 
+I try to understand the changelog of commit 0dc902267cb3 but I’m confused with
+the MMIO read. The commit said, "For MMIO reads, KVM immediately exits to
+userspace upon detecting MMIO as userspace provides the to-be-read value in a
+buffer, and so KVM can safely (more or less) restart the instruction from the
+beginning." But in read_emulated(), mc->end is adjusted after checking rc,
+i.e., although the value will be saved in the buffer, mc->end is not adjusted
+after existing to userspace.
+
+Maybe this would really support a buffer for multiple MMIO read instructions
+(e.g. POPA)?
+
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 5d4c86133453..841d5b6f21b0 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -1367,8 +1367,11 @@ static int read_emulated(struct x86_emulate_ctxt *ctxt,
+ 
+ 	rc = ctxt->ops->read_emulated(ctxt, addr, mc->data + mc->end, size,
+ 				      &ctxt->exception);
+-	if (rc != X86EMUL_CONTINUE)
++	if (rc != X86EMUL_CONTINUE) {
++		if (rc == X86EMUL_IO_NEEDED)
++			mc->end += size;
+ 		return rc;
++	}
+ 
+ 	mc->end += size;
+
+[...]
 
