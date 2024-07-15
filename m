@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-252414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58259312C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915039312C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33DEEB22858
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9BE51C212A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6C0189F46;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B976189F34;
 	Mon, 15 Jul 2024 11:04:17 +0000 (UTC)
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA95187321;
-	Mon, 15 Jul 2024 11:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C1188CA4;
+	Mon, 15 Jul 2024 11:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041457; cv=none; b=Z7/VAlBs3dE4kkHxfJ/wopl4rfl4M+rjHfDBU/jr4xmdDm2h2mS/bsSmQWruBUlpFK5KkvLHQwwXKdKjsq4HZUwR9ZBqlvyCrklT0TEOiS4iE17UFXWWxgAkjtSpKziOtWg2Kr+K1Rbw3+j1oWrvM729e0oeXA2/tGU7IaPIBNc=
+	t=1721041457; cv=none; b=RJmcoQopW9tQ7KfBPMt5WG4D1dbH99gnJoUXbEje4cp9ul8C1gkKrk4vd9VVqUZqIlstJLGEx8+JOqrkYA0WsCap62LkZVce97Wlub+Hz7D84EoFdZzmd4y6F1ebUW1KzzBgYK3fym/9K5m/WlznP+NznLsQOEiw+acgB1l/Y50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721041457; c=relaxed/simple;
-	bh=ouJC+8gRTfBbj5yxuVUTwSQl4xfN0ySlsCOV6/pgvts=;
+	bh=jQZXPjC9rL31xUb9Is+Qs2L8/C+PL4JdLjc+3vJPBMw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P8KkA92nxvUSwPbLXblEjSysswOatIJGf4J1CBf8QspBQQmSBq+/MFiBeycRkR5OYxA4NEEHd+fhLTaKivfbRuAvtAFgZY00VUynsdgJar7bvouZK8j7bpdBnzahSscVr1X8WepN+uvYQySdeFilnlrDOhK+U3LxGP/Cnwa1k78=
+	 MIME-Version; b=rP1NLoZnlqJSKCTLH+wkb3dsQ86nPD6oFDnIkzk1Org8LPQ/CQgnEwzJ6HMq/TUABZiYpBC/Ndaw+AG6ggVociy9Ah1m+uVeaJJR+cbFd9XLLLs4TbYn3b4Sno89v+f3bbb47DHR9gEJvZ1qIXpPjB0p51WgM1v+ILy3hCBeUsI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -32,7 +32,7 @@ Received: from i5e860d09.versanet.de ([94.134.13.9] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sTJV4-0006GM-5V; Mon, 15 Jul 2024 13:04:10 +0200
+	id 1sTJV4-0006GM-M0; Mon, 15 Jul 2024 13:04:10 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org
@@ -45,9 +45,9 @@ Cc: robh@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 2/3] clk: add driver for voltage controlled oscillators
-Date: Mon, 15 Jul 2024 13:02:50 +0200
-Message-Id: <20240715110251.261844-3-heiko@sntech.de>
+Subject: [PATCH v2 3/3] arm64: dts: rockchip: fix the pcie refclock oscillator on Rock 5 ITX
+Date: Mon, 15 Jul 2024 13:02:51 +0200
+Message-Id: <20240715110251.261844-4-heiko@sntech.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240715110251.261844-1-heiko@sntech.de>
 References: <20240715110251.261844-1-heiko@sntech.de>
@@ -59,200 +59,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In contrast to fixed clocks that are described as ungateable, boards
-sometimes use additional oscillators for things like PCIe reference
-clocks, that need actual supplies to get enabled and enable-gpios to be
-toggled for them to work.
+The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and its
+SATA controller with 2 lanes each. The supply for the refclk oscillator is
+the same that supplies the M.2 slot, but the SATA controller port is
+supplied by a different rail.
 
-This adds a driver for those generic voltage controlled oscillators,
-that can show up in schematics looking like
+This leads to the effect that if the PCIe30x4 controller for the M.2
+probes first, everything works normally. But if the PCIe30x2 controller
+that is connected to the SATA controller probes first, it will hang on
+the first DBI read as nothing will have enabled the refclock before.
 
-         ----------------
-Enable - | 100MHz,3.3V, | - VDD
-         |    3225      |
-   GND - |              | - OUT
-         ----------------
+Fix this by describing the clock generator with its supplies so that
+both controllers can reference it as needed.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/Kconfig   |  10 ++++
- drivers/clk/Makefile  |   1 +
- drivers/clk/clk-vco.c | 133 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 144 insertions(+)
- create mode 100644 drivers/clk/clk-vco.c
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 38 ++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 3e9099504fad4..e93a380b6ee47 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -414,6 +414,16 @@ config COMMON_CLK_VC7
- 	  Renesas Versaclock7 is a family of configurable clock generator
- 	  and jitter attenuator ICs with fractional and integer dividers.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+index d0b922b8d67e8..37bc53f2796fc 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+@@ -72,6 +72,15 @@ hdd-led2 {
+ 		};
+ 	};
  
-+config COMMON_CLK_VCO
-+	tristate "Clock driver for voltage controlled oscillators"
-+	depends on GPIOLIB && REGULATOR
-+	help
-+	  This driver supports generic voltage controlled oscillators that
-+	  are not configurable but need supplies to be enabled to run.
-+	  Generally they need a supply voltage to be enabled and may also
-+	  require a separate enable pin, though in a lot of cases, vdd
-+	  and enable control might be tied to the same supply.
++	/* Unnamed voltage oscillator: 100MHz,3.3V,3225 */
++	pcie30_port0_refclk: pcie30_port1_refclk: pcie-voltage-oscillator {
++		compatible = "voltage-oscillator";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "pcie30_refclk";
++		vdd-supply = <&vcc3v3_pi6c_05>;
++	};
 +
- config COMMON_CLK_STM32F
- 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
- 	help
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 4abe16c8ccdfe..ca7b7b7ddfd8d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -79,6 +79,7 @@ obj-$(CONFIG_COMMON_CLK_SI521XX)	+= clk-si521xx.o
- obj-$(CONFIG_COMMON_CLK_VC3)		+= clk-versaclock3.o
- obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
- obj-$(CONFIG_COMMON_CLK_VC7)		+= clk-versaclock7.o
-+obj-$(CONFIG_COMMON_CLK_VCO)		+= clk-vco.o
- obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+ 	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		#cooling-cells = <2>;
+@@ -146,13 +155,14 @@ vcc3v3_lan: vcc3v3_lan_phy2: regulator-vcc3v3-lan {
+ 		vin-supply = <&vcc_3v3_s3>;
+ 	};
  
-diff --git a/drivers/clk/clk-vco.c b/drivers/clk/clk-vco.c
-new file mode 100644
-index 0000000000000..f7fe2bc627f36
---- /dev/null
-+++ b/drivers/clk/clk-vco.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * Generic voltage controlled oscillator
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+
-+struct clk_vco {
-+	struct device *dev;
-+	struct clk_hw hw;
-+	u32 rate;
-+	struct regulator *supply;
-+	struct gpio_desc *enable_gpio;
-+};
-+
-+#define to_clk_vco(_hw) container_of(_hw, struct clk_vco, hw)
-+
-+static int clk_vco_prepare(struct clk_hw *hw)
-+{
-+	return regulator_enable(to_clk_vco(hw)->supply);
-+}
-+
-+static void clk_vco_unprepare(struct clk_hw *hw)
-+{
-+	regulator_disable(to_clk_vco(hw)->supply);
-+}
-+
-+static int clk_vco_enable(struct clk_hw *hw)
-+{
-+	gpiod_set_value(to_clk_vco(hw)->enable_gpio, 1);
-+	return 0;
-+}
-+
-+static void clk_vco_disable(struct clk_hw *hw)
-+{
-+	gpiod_set_value(to_clk_vco(hw)->enable_gpio, 0);
-+}
-+
-+static unsigned long clk_vco_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	return to_clk_vco(hw)->rate;
-+}
-+
-+const struct clk_ops clk_vco_ops = {
-+	.prepare = clk_vco_prepare,
-+	.unprepare = clk_vco_unprepare,
-+	.enable = clk_vco_enable,
-+	.disable = clk_vco_disable,
-+	.recalc_rate = clk_vco_recalc_rate,
-+};
-+
-+static int clk_vco_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_vco *clkgen;
-+	const char *clk_name;
-+	int ret;
-+
-+	clkgen = devm_kzalloc(dev, sizeof(*clkgen), GFP_KERNEL);
-+	if (!clkgen)
-+		return -ENOMEM;
-+
-+	clkgen->dev = dev;
-+
-+	if (device_property_read_u32(dev, "clock-frequency", &clkgen->rate))
-+		return dev_err_probe(dev, -EIO, "failed to get clock-frequency");
-+
-+	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
-+	if (ret)
-+		clk_name = fwnode_get_name(dev->fwnode);
-+
-+	clkgen->supply = devm_regulator_get_optional(dev, "vdd");
-+	if (IS_ERR(clkgen->supply)) {
-+		if (PTR_ERR(clkgen->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(clkgen->supply),
-+					     "failed to get regulator\n");
-+		clkgen->supply = NULL;
-+	}
-+
-+	clkgen->enable_gpio = devm_gpiod_get_optional(dev, "enable",
-+						      GPIOD_OUT_LOW);
-+	if (IS_ERR(clkgen->enable_gpio))
-+		return dev_err_probe(dev, PTR_ERR(clkgen->enable_gpio),
-+				     "failed to get gpio\n");
-+
-+	ret = gpiod_direction_output(clkgen->enable_gpio, 0);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to set gpio output");
-+
-+	clkgen->hw.init = CLK_HW_INIT_NO_PARENT(clk_name, &clk_vco_ops, 0);
-+
-+	/* register the clock */
-+	ret = devm_clk_hw_register(dev, &clkgen->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &clkgen->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id clk_vco_ids[] = {
-+	{ .compatible = "voltage-oscillator" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_vco_ids);
-+
-+static struct platform_driver clk_vco_driver = {
-+	.driver = {
-+		.name = "clk_vco",
-+		.of_match_table = clk_vco_ids,
-+	},
-+	.probe = clk_vco_probe,
-+};
-+module_platform_driver(clk_vco_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-+MODULE_DESCRIPTION("Voltage controlled oscillator driver");
-+MODULE_LICENSE("GPL");
+-	vcc3v3_mkey: regulator-vcc3v3-mkey {
++	/* The PCIE30x4_PWREN_H controls two regulators */
++	vcc3v3_mkey: vcc3v3_pi6c_05: regulator-vcc3v3-pi6c-05 {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+ 		gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pcie30x4_pwren_h>;
+-		regulator-name = "vcc3v3_mkey";
++		regulator-name = "vcc3v3_pi6c_05";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		startup-delay-us = <5000>;
+@@ -513,6 +523,18 @@ &pcie30phy {
+ 
+ /* ASMedia ASM1164 Sata controller */
+ &pcie3x2 {
++	/*
++	 * The board has a "pcie_refclk" oscillator that needs enabling,
++	 * so add it to the list of clocks.
++	 */
++	clocks = <&cru ACLK_PCIE_2L_MSTR>, <&cru ACLK_PCIE_2L_SLV>,
++		 <&cru ACLK_PCIE_2L_DBI>, <&cru PCLK_PCIE_2L>,
++		 <&cru CLK_PCIE_AUX1>, <&cru CLK_PCIE2L_PIPE>,
++		 <&pcie30_port1_refclk>;
++	clock-names = "aclk_mst", "aclk_slv",
++		      "aclk_dbi", "pclk",
++		      "aux", "pipe",
++		      "ref";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pcie30x2_perstn_m1_l>;
+ 	reset-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+@@ -522,6 +544,18 @@ &pcie3x2 {
+ 
+ /* M.2 M.key */
+ &pcie3x4 {
++	/*
++	 * The board has a "pcie_refclk" oscillator that needs enabling,
++	 * so add it to the list of clocks.
++	 */
++	clocks = <&cru ACLK_PCIE_4L_MSTR>, <&cru ACLK_PCIE_4L_SLV>,
++		 <&cru ACLK_PCIE_4L_DBI>, <&cru PCLK_PCIE_4L>,
++		 <&cru CLK_PCIE_AUX0>, <&cru CLK_PCIE4L_PIPE>,
++		 <&pcie30_port0_refclk>;
++	clock-names = "aclk_mst", "aclk_slv",
++		      "aclk_dbi", "pclk",
++		      "aux", "pipe",
++		      "ref";
+ 	num-lanes = <2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pcie30x4_perstn_m1_l>;
 -- 
 2.39.2
 
