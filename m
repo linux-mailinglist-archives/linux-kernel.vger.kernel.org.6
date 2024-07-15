@@ -1,145 +1,189 @@
-Return-Path: <linux-kernel+bounces-252402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AF89312A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D7D9312A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F14284523
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:52:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFB31F2141D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D8D1891AE;
-	Mon, 15 Jul 2024 10:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8856188CDC;
+	Mon, 15 Jul 2024 10:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sJ7Musss"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nR30q+cs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE7418411C;
-	Mon, 15 Jul 2024 10:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3FC18411C;
+	Mon, 15 Jul 2024 10:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721040735; cv=none; b=lVohwsu2Rr7Vg5vF/mVaXqt/UrhdXSjBvFQuxQYA8/1UHWHbx6T+J+tSJf2l2oiRrDQx1BcbqFv3ESihfkCTSxeqbX0BigLVaiLPlfEQqYjZLuHL9mr0I20GR9x065DRIPBtLDwrp1LEJKU8jBlWMATJArR+bFjqFR6oOD6o/NI=
+	t=1721040794; cv=none; b=SayN3PjUVqkJIyJuZNha1P3JBASQ1IoZWx+U5kTnJJpKY+GSOZZP7ZEHHDmkVrL3+6hJ24dE+/81Aj2yRQltNHvvxccR7HyOoBUAJuUQaAQRHOVqfxogBvZp2cANN33wZeS3wT7Hi270EQsWrcEl88GebJKTL6CfeEBETJ84zVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721040735; c=relaxed/simple;
-	bh=0ffIqFMhgd62MRjku7YOL5+9xOlnOuR2WZLZmX447b0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ibtroRXX7lfSzTTAo+xPQtmVXbixoszwCSQT19gMb2e+l+TXQkq9FMu6xwThlUNdVTZiQ3qw4+BJwVHfTjVYQcin99jaLEbhwFiGFlnzZ5O4vbgi9DOzzKG6EcUI3Kmq53rmkTgygt/ewzyKvpMc8W5VXotFOu9yXvzluZx828I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sJ7Musss; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721040728; x=1721645528; i=markus.elfring@web.de;
-	bh=HE81+eZZ6QrvNNv/IW9iPA4uF80hwznlTx71KPwroGY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sJ7Musssy8QG/WOwueBnBFptBlRexNoXi4l+JklyIlijLc+wzO7DiGqIlxLu2mmh
-	 zft9lEQ7/LeVSyMS8LVTe6ROXEPZdNP9hYilMSZmsix5eSluarHT+kQY6TsOWBTHD
-	 ylicIq55e6ieeR2GQDBRS3soYfp0pZ84TktTc1ObQvAz1Clhysd8iQHLqU0owd9aV
-	 b1DJaLj675IP0MhrpgJILPX5npzOqwMRIhR2cnrORH4XjE/vaY4J7zYrHy9GLUGVC
-	 6RaVfnnGVjZZrK7M4wbbhLEiaud0egr8b8RW0aRUMGIFMe51DN6ncMcbLUQjrWk0p
-	 TUfVWYwJcIrZS5hISg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xnj-1sL5ng3hDf-011DNf; Mon, 15
- Jul 2024 12:52:07 +0200
-Message-ID: <f69334a0-ccdb-4caf-b5b4-177cbf0ed1d7@web.de>
-Date: Mon, 15 Jul 2024 12:52:07 +0200
+	s=arc-20240116; t=1721040794; c=relaxed/simple;
+	bh=go1RKdeWevmqlzJcj+0SmBE1i8gOi6uPq998XQXL1vw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OJloEx8dBr4DNStTiugd+egw0EVpE1/lVc4PAVvjOfmz9esQjJ5W5hHtvUuhv89K+rzjSpQRRVY5tL/AYUYAlQ6aWdIptDb/y5FGlyDCnaqIllGTVs77GfAv9rBUPgkXQDK4NlFI3HshtvcfM/VUlCWaWUIHzHDLG1b1kxZelEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nR30q+cs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8874FC4AF0A;
+	Mon, 15 Jul 2024 10:53:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721040793;
+	bh=go1RKdeWevmqlzJcj+0SmBE1i8gOi6uPq998XQXL1vw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nR30q+cs4rFBRHrQyHOahbPpP+cEQfIX73N0QYnyhXX7X50amjFHedLGO049M/USJ
+	 IZBoCKvhxfAQwJ8UdknlF5zwxwknlsVbimal5MVv/6g+D209oTEDt1ffQTtwKNu8wN
+	 HzApz+athrZE4j4NPEpFd0XSn/kMglwY6SOjRuOnQas67g1G+8sFf9ImWTgMQtfcbc
+	 9Li5SimRbki3pbfRV9UdrYwPhRRKM0AkkTcIQI0yFTensmOUvPq6znbU3TbjojEy0a
+	 ryvyYVcbD94zVV9L5EktUU0MAXG9xanH0vm3cgHadO3ZDxhyo4u/IKXxdt2TgaQ23x
+	 k2q4V+tXNeMlA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25e80d68776so573883fac.1;
+        Mon, 15 Jul 2024 03:53:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqLSmJoyrGWbt406IEvoEyFSHsf/hTvwIhA0d5OSQqKGknxujmEWZi1makpZAWBi24aPvyX9lBrhdv2X5Nx8Zf8FFtNwt3Qj0eAKCAd1alE+1w52OpEgR+arHhns9/p411SabzNe8=
+X-Gm-Message-State: AOJu0YzLnW31NgvrxV+Au33Ln7bOZSW7tMDsRhEf3jGLeIkA/Ls2jlEg
+	M/7Pqn8Cayae1r6H0mMefbxE8FNryP0pqCO/WAKxFaOphzkLdkP1hJeIrbXuJ/as38FBKg6Bvxp
+	MMJKUOV4YjfRmHoimOy3YBVcIKxM=
+X-Google-Smtp-Source: AGHT+IE1nRYX5jYV7UE4UwfWPU1vFbo3Fy2uevt/GfSWI5Xg5ImMvJ8CpEY8MdH+3+KbLcUGvz2nYnAWzACxPo6QfMk=
+X-Received: by 2002:a05:6870:d146:b0:25e:180:9183 with SMTP id
+ 586e51a60fabf-2603abb9762mr10053514fac.4.1721040792760; Mon, 15 Jul 2024
+ 03:53:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: gfs2@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Alexander Aring <aahringo@redhat.com>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- David Teigland <teigland@redhat.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] dlm: Simplify character output in three functions
-Content-Type: text/plain; charset=UTF-8
+References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
+ <20240715110659.51b441e2@mir>
+In-Reply-To: <20240715110659.51b441e2@mir>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Jul 2024 12:52:56 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iZeAEXXVnqUccOwfu7-WEwAeXwrV-PoE4+BiOVVrOiEg@mail.gmail.com>
+Message-ID: <CAJZ5v0iZeAEXXVnqUccOwfu7-WEwAeXwrV-PoE4+BiOVVrOiEg@mail.gmail.com>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0Vridu5YqH381X6uz5LbU5TKudpxIA7pichPMTsY2HmUpGQH3pX
- WCHy8n3D+LenESIj6JhctSYEKKRZpxrxoZImTMpczvpUzeR+1Ap8jzslD4wvMNo0AoKXHaG
- 8hv/7Nq46U7PvnYgHOESj/ppRNqafD4pxhf0WYT7mtALzHJDy0l1uZgE/LNT5qq1SUkSFet
- y/ol+fmXwQx5uwSVnY1Hg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MVsrPNsOdCU=;uEGUbUv1yWP+h4W+v/FYIfFrOl6
- 9M49U5qSBF9Lyq077ScapIhwvXiOw2+B4FlpyYYUPiVg17mLTjfoz3DrG6SiI44Le1Hfj5HZX
- +vsK6E5/lB0JSHUv8H1ly+6y3TmvSSCtcPBtK1LAXfqnnj4onm6XJSvuGl5uyxggsnceD2rUU
- Slpc7ay+tEtvh8CcF4qD6j40KoYX85rSUOZimJ71U01ALB7L7GMCrRglSDQn2o6C1ke9LVuBg
- rmYIgSWJPZ9Wu8eAkyDZH3WzvpKEm0cj3zA5el9uHuWzTV2dnUBgp2YM2G3ueHI5BxnDle1+X
- CyKXiHOazQaBVTZ0vTN7XfxTq6+MEK5749C2xG4XtV2Sm7pUDRR9WwwXM1qScCQNeTV3ykBwo
- q9fR/MlduoaMAKyLVdUo1cDg6Zi3v3W4HpQHOjZ6MhbFblToL8tM+xzfuzYnUBh6E6f/hpgjS
- cqifQmAytMbxqhTcxriSE0ndPQWGJ2cH4AmRR0uP8ZuZLv0uLwGgjTKiWbhtZHIhlBrktxsfx
- A5b8S4knIm9jjSi11Gxk7U8Ucl0SNs9ESwhHtqUzHCEgHNT7gcZuKyZ41ZcFHM/y8uUle070g
- fC+CgE8rr+Je/kEvp2BV+A70E3pVdFgNIB+Bc5nA/SPaP5DY5ff0Kv9ZHLBLcAw3f4R6+1Z3u
- HZnR4XPeApD3ymBzvUpRsAVtE6A9d9vFQ3q5vXB+B1OmgsrNJqHXGvNzbxRV7xD50tdBRtlea
- y6I4bDuEcGfYukX+lZ/we3l1G/OA+W/Qes6Y4HZfpka+0hPewE0bGnhYPzrOb04dFwo6faJfF
- 0l4gLG2JMss4gtDDt14/lv5A==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jul 2024 12:36:44 +0200
+On Mon, Jul 15, 2024 at 11:07=E2=80=AFAM Stefan Lippers-Hollmann <s.l-h@gmx=
+.de> wrote:
+>
+> Hi
+>
+> On 2024-07-14, Eric Biggers wrote:
+> > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip(=
+)
+> > > if zone temperature is invalid") caused __thermal_zone_device_update(=
+)
+> > > to return early if the current thermal zone temperature was invalid.
+> > >
+> > > This was done to avoid running handle_thermal_trip() and governor
+> > > callbacks in that case which led to confusion.  However, it went too
+> > > far because monitor_thermal_zone() still needs to be called even when
+> > > the zone temperature is invalid to ensure that it will be updated
+> > > eventually in case thermal polling is enabled and the driver has no
+> > > other means to notify the core of zone temperature changes (for examp=
+le,
+> > > it does not register an interrupt handler or ACPI notifier).
+> > >
+> > > Also if the .set_trips() zone callback is expected to set up monitori=
+ng
+> > > interrupts for a thermal zone, it needs to be provided with valid
+> > > boundaries and that can only be done if the zone temperature is known=
+.
+> > >
+> > > Accordingly, to ensure that __thermal_zone_device_update() will
+> > > run again after a failing zone temperature check, make it call
+> > > monitor_thermal_zone() regardless of whether or not the zone
+> > > temperature is valid and make the latter schedule a thermal zone
+> > > temperature update if the zone temperature is invalid even if
+> > > polling is not enabled for the thermal zone (however, if this
+> > > continues to fail, give up after some time).
+> > >
+> > > Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip(=
+) if zone temperature is invalid")
+> > > Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > > Link: https://lore.kernel.org/linux-pm/dc1e6cba-352b-4c78-93b5-94dd03=
+3fca16@linaro.org
+> > > Link: https://lore.kernel.org/linux-pm/2764814.mvXUDI8C0e@rjwysocki.n=
+et
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > On v6.10 I'm seeing the following messages spammed to the kernel log en=
+dlessly,
+> > and reverting this commit fixes it.
+> >
+> >     [  156.410567] thermal thermal_zone0: failed to read out thermal zo=
+ne (-61)
+> [...]
+> >     [  158.458697] thermal thermal_zone0: failed to read out thermal zo=
+ne (-61)
+> >
+> > /sys/class/thermal/thermal_zone0/type contains "iwlwifi_1".
+>
+> I am observing the same issue on v6.10 with an Intel ax200 WLAN
+> card in a kaby-lake/ i5-7400 system and a Fujitsu D3400-B22
+> mainboard and the 'newest' BIOS (V5.0.0.12 R1.29.0) as well:
+>
+> $ dmesg | grep -i -e iwlwifi -e thermal_zone2
+> [    3.692433] iwlwifi 0000:04:00.0: enabling device (0140 -> 0142)
+> [    3.698547] iwlwifi 0000:04:00.0: Detected crf-id 0x3617, cnv-id 0x100=
+530 wfpm id 0x80000000
+> [    3.698556] iwlwifi 0000:04:00.0: PCI dev 2723/0084, rev=3D0x340, rfid=
+=3D0x10a100
+> [    3.703292] iwlwifi 0000:04:00.0: TLV_FW_FSEQ_VERSION: FSEQ Version: 8=
+9.3.35.37
+> [    3.797296] iwlwifi 0000:04:00.0: loaded firmware version 77.a20fb07d.=
+0 cc-a0-77.ucode op_mode iwlmvm
+> [    4.090341] iwlwifi 0000:04:00.0: Detected Intel(R) Wi-Fi 6 AX200 160M=
+Hz, REV=3D0x340
+> [    4.090524] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [    4.218496] iwlwifi 0000:04:00.0: Detected RF HR B3, rfid=3D0x10a100
+> [    4.285399] iwlwifi 0000:04:00.0: base HW address: 94:e6:f7:XX:XX:XX
+> [    4.341754] iwlwifi 0000:04:00.0 wlp4s0: renamed from wlan0
+> [    4.345445] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [    4.601400] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [    4.857372] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [    5.114387] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [...]
+> [  143.643801] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  143.899818] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  144.155813] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  144.411815] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  144.667828] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  144.923801] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [  145.179822] thermal thermal_zone2: failed to read out thermal zone (-6=
+1)
+> [...]
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for three s=
-elected calls.
+As I said in the reply to the previous report, this thermal zone is
+useless and it can be disabled via sysfs.  The message will go away
+then.
 
-This issue was transformed by using the Coccinelle software.
-
-Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/dlm/debug_fs.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/fs/dlm/debug_fs.c b/fs/dlm/debug_fs.c
-index 7112958c2e5b..0d21007930ed 100644
-=2D-- a/fs/dlm/debug_fs.c
-+++ b/fs/dlm/debug_fs.c
-@@ -81,12 +81,8 @@ static void print_format1(struct dlm_rsb *res, struct s=
-eq_file *s)
-
- 	seq_printf(s, "\nResource %p Name (len=3D%d) \"", res, res->res_length);
-
--	for (i =3D 0; i < res->res_length; i++) {
--		if (isprint(res->res_name[i]))
--			seq_printf(s, "%c", res->res_name[i]);
--		else
--			seq_printf(s, "%c", '.');
--	}
-+	for (i =3D 0; i < res->res_length; i++)
-+		seq_putc(s, (isprint(res->res_name[i]) ? res->res_name[i] : '.'));
-
- 	if (res->res_nodeid > 0)
- 		seq_printf(s, "\"\nLocal Copy, Master is node %d\n",
-@@ -284,7 +280,7 @@ static void print_format3(struct dlm_rsb *r, struct se=
-q_file *s)
-
- 	for (i =3D 0; i < r->res_length; i++) {
- 		if (print_name)
--			seq_printf(s, "%c", r->res_name[i]);
-+			seq_putc(s, r->res_name[i]);
- 		else
- 			seq_printf(s, " %02x", (unsigned char)r->res_name[i]);
- 	}
-@@ -358,7 +354,7 @@ static void print_format4(struct dlm_rsb *r, struct se=
-q_file *s)
-
- 	for (i =3D 0; i < r->res_length; i++) {
- 		if (print_name)
--			seq_printf(s, "%c", r->res_name[i]);
-+			seq_putc(s, r->res_name[i]);
- 		else
- 			seq_printf(s, " %02x", (unsigned char)r->res_name[i]);
- 	}
-=2D-
-2.45.2
-
+We'll see what can be done to make the message go away completely or
+at least stop being printed after a certain number of iterations.
 
