@@ -1,109 +1,162 @@
-Return-Path: <linux-kernel+bounces-252748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9416B9317A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:32:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824AE9317AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03801C21995
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:32:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340E0282BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2418F2E4;
-	Mon, 15 Jul 2024 15:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7035C18F2F6;
+	Mon, 15 Jul 2024 15:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6T85qz4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJMDZeZM"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BB9F9EC;
-	Mon, 15 Jul 2024 15:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E1118A95B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721057516; cv=none; b=bOUL3hNX0SZlxY9F2GzZXoO4P7JONSvVFR4sgAgE3ZAWMwGRB5wz6mPbAP8wzXLMi6ix3QI15bmFwjmZOV6Sxq5OTN6fMj+hnJmGGv3ijfyyP4QUJW5jNEb3PorCjSwxQCRResrgCkHfa5bLrpN3tY5Y87+KudcFXAzRXqNQgzY=
+	t=1721057610; cv=none; b=N/ltNF8JtNK3+a5XV0gdJYL1Ql4tPeb0GWYgwLHu+628aAWuFi+mGiVMBm6aD9szmGcA8errmohQ8aTknbPEwYD9CwKz8/lbFQf+r4pDyZ2K0oP7OXGvUf/LFuuNrzzvF0kO3wikReI0EHavm5egEWZAd1gG6aZXzuF/OiUryD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721057516; c=relaxed/simple;
-	bh=siv179GxtAnDGBBlaJJzeBtfyYpYJ/nI4Rg+Brcy6wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ToA9/7UElSsrRQQgBo0I8yHHcFs6YclbOWr5d75+OoXxtwk/s3DvIKKJfKXXq0mgyqtMZX0BKBPPm2V+ZDPuHYLc25+XmtFDcRPb1TbiyuBVls7DynW3rzDocOth4kNsoWlY4JJhp1dywUvzQtQYcVKwj3M/YSOnlskeJPkghMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6T85qz4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C4CC32782;
-	Mon, 15 Jul 2024 15:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721057516;
-	bh=siv179GxtAnDGBBlaJJzeBtfyYpYJ/nI4Rg+Brcy6wM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V6T85qz4XFtXHUN4p1FTpcjzvJu+RdeIVt89kxB+SQbX9w9TGCmjSsI+RK/RJa5N/
-	 ZRVvElOVnzk4co2EGVmbetO6JbU7T0lEM15kKhHJMTaHalOiYFo5vBbxOaDPOXtqiH
-	 GNWeJTGHST++3Y2qTVVnuzhn3eLV17Dcmfyw3zmFileVaCg+bV0O6MCqeiCsF/P+Cp
-	 UEzuVUWlRg1e6ok6UB86Ec7xyl+qm5f7Q0HGRgMaYu1zEEeYZWEwUEC0rzXY2Ob5vF
-	 8tk5ch6NNVeuKwxXphTrs6ZT93FWlTMUdCdO3BphfXfhuQKEZaumetON/Mdt184Vvp
-	 ZgCPc6YA7nTeg==
-Date: Mon, 15 Jul 2024 16:31:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
- Document ATNA45AF01
-Message-ID: <20240715-scorn-canning-a7f23b9e2039@spud>
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
+	s=arc-20240116; t=1721057610; c=relaxed/simple;
+	bh=E+yqBgrP1UPJq+8J1/84UWzdIokD9cy7vK/4QbsLD5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pd/hIwBLcjqXk1RJWwVV2wkT4dNA4Niyt32CqkNbDfGYtVSaZX3RrOIvylGTRmR2k6fUfHDXqYi39D1hCsOQLoUMpJ4miHZI5danAyCLq7Rv3NM/AuxY65BuLY2UWnHbH9/wRHS1Iwbgt88fmOnvEHJx5/CKp/RYNNvMgj7gXxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJMDZeZM; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso21514a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 08:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721057607; x=1721662407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E+yqBgrP1UPJq+8J1/84UWzdIokD9cy7vK/4QbsLD5o=;
+        b=iJMDZeZMuqJNfVgpMwmuDpKOUAUjhZqOeZ1IfBdfTd2slkE2cuaadNIj3UtmLTWOcz
+         tzLVwfUnBYxuYiumSiz0nN2kAdQMkMZ0Cp+BRw9dR63cR2so0PWGfLlEar0gI/ENdfrp
+         IixzEVbeSFKB9pYK40N2BGSoCgtxkyfUn5Dlsgs7mQ01OQt/7qHVO+r107dTMAUQpVMo
+         TySOn9BAEOlqh6BJ6MQXK9Wl+PXvDHqCenjGlxQQC8rJmpPzPR+WRCD3hRTIT8uZAOP7
+         x9+u7542k0tBENeaAxVPG7329WNWSCz+w9SXb/hqaS48uaYZTw2ssjL5VLI1EhV9F98V
+         ynyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721057607; x=1721662407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E+yqBgrP1UPJq+8J1/84UWzdIokD9cy7vK/4QbsLD5o=;
+        b=kuLFhtf0QfVjWoGJ82sYisAUYIL8yE3PpFsArjHrVlE3iP9k45bUcFJ/acm3r23c2S
+         xQbJPA/6TfvwXLQA95mGfqrVXsX7u47nc4sg0zlAycq+ctT9lHkTCHjx+uJ4yAIBCL6j
+         BJRtWG/gQq5GFcxvY7UfXpjIun0gmOb1Jy1u59zQvMIIeJlu5zeYsBL1fxtfQSSAK46D
+         MFsyTYaYeiEXDKkR6SMEmPuP4bqj2RzuGrgK2sV6+t16JET8ZDECiwQ/NEB78MNN4nVG
+         pZo8dBBtaNVHY3VpiLkA0qvscA77uyIzGKbSi4mwRK2eWn4KLUbe1JOUCvf9N4iXwuHr
+         wlNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqsMNp1IoJokFQPTDVy1qNFJO0HBhRxbfSf1y+P4/HVEbYNaAb8Ixj8blhZKjFrMGtxo+sNgBKLCUJadcOqjZ+YoeVPKtxWkt8W2NC
+X-Gm-Message-State: AOJu0YyGGdD/8hGUfrwYh84YtI/6BM5pUhgrgnZqu1kAgcwTCwdE8VES
+	qFTeFX0AhgoYNDV8mG8Z1y2l187JLObBVArnm1/8s49BClxUGP9v6NoixYz0ZGPp9vKO27ysdKT
+	DeLu/qbA11fIuyFPDyBiJRhstBuNhN9aymDYP
+X-Google-Smtp-Source: AGHT+IG4zOGhlqECPSqe5NnzkSQaewh2qBn+E2XZcxxObGHWBKbinkLXc6ZZ02OJHMttBdSXb90pTnw+IvWoKmukbJU=
+X-Received: by 2002:a05:6402:34c6:b0:59e:9fb1:a0dc with SMTP id
+ 4fb4d7f45d1cf-59e9fb1a16dmr8041a12.6.1721057606980; Mon, 15 Jul 2024 08:33:26
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PGPY0L/uV9VV1R85"
-Content-Disposition: inline
-In-Reply-To: <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
-
-
---PGPY0L/uV9VV1R85
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240116141801.396398-1-khtsai@google.com> <02bec7b8-7754-4b9d-84ae-51621d6aa7ec@kernel.org>
+ <2024012724-chirpy-google-51bb@gregkh> <CAKzKK0oEO5_-CBKvYSw4DKY4Wp5UPrrt1ehBFRd79idy7FsUuQ@mail.gmail.com>
+ <CAKzKK0pmswLnGa8zabp_wo=6BcvCd9DR368FCJ5mcpZ38i4Jdw@mail.gmail.com> <f9f0fb8b-2261-452c-878d-8b0f831bdf5d@kernel.org>
+In-Reply-To: <f9f0fb8b-2261-452c-878d-8b0f831bdf5d@kernel.org>
+From: Kuen-Han Tsai <khtsai@google.com>
+Date: Mon, 15 Jul 2024 23:33:00 +0800
+Message-ID: <CAKzKK0o0Mu5woA5AOrJRGicn=SpuB1+S8=zb4T79YUJ=7V=Agg@mail.gmail.com>
+Subject: Re: [PATCH] usb: gadget: u_serial: Add null pointer checks after
+ RX/TX submission
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, quic_prashk@quicinc.com, 
+	stern@rowland.harvard.edu, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 02:15:37PM +0200, Stephan Gerhold wrote:
-> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backlight
-> control over the DP AUX channel. While it works almost correctly with the
-> generic "edp-panel" compatible, the backlight needs special handling to
-> work correctly. It is similar to the existing ATNA33XC20 panel, just with
-> a larger resolution and size.
->=20
-> Add a new "samsung,atna45af01" compatible to describe this panel in the D=
-T.
-> Use the existing "samsung,atna33xc20" as fallback compatible since existi=
-ng
-> drivers should work as-is, given that resolution and size are discoverable
-> through the eDP link.
->=20
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+Hi Jiri,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Sorry for the late reply, I've finally been able to revisit this issue.
 
---PGPY0L/uV9VV1R85
-Content-Type: application/pgp-signature; name="signature.asc"
+On Thu, Mar 28, 2024 at 5:02=E2=80=AFPM Jiri Slaby <jirislaby@kernel.org> w=
+rote:
+>
+> On 08. 03. 24, 12:47, Kuen-Han Tsai wrote:
+> > Hi Greg & Jiri,
+> >
+> > On Sun, Jan 28, 2024 at 9:29=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> >>
+> >> On Thu, Jan 18, 2024 at 10:27:54AM +0100, Jiri Slaby wrote:
+> >>> On 16. 01. 24, 15:16, Kuen-Han Tsai wrote:
+> >>>> Commit ffd603f21423 ("usb: gadget: u_serial: Add null pointer check =
+in
+> >>>> gs_start_io") adds null pointer checks to gs_start_io(), but it does=
+n't
+> >>>> fully fix the potential null pointer dereference issue. While
+> >>>> gserial_connect() calls gs_start_io() with port_lock held, gs_start_=
+rx()
+> >>>> and gs_start_tx() release the lock during endpoint request submissio=
+n.
+> >>>> This creates a window where gs_close() could set port->port_tty to N=
+ULL,
+> >>>> leading to a dereference when the lock is reacquired.
+> >>>>
+> >>>> This patch adds a null pointer check for port->port_tty after RX/TX
+> >>>> submission, and removes the initial null pointer check in gs_start_i=
+o()
+> >>>> since the caller must hold port_lock and guarantee non-null values f=
+or
+> >>>> port_usb and port_tty.
+> >>>
+> >>> Or you switch to tty_port refcounting and need not fiddling with this=
+ at all
+> >>> ;).
+> >>
+> >> I agree, Kuen-Han, why not do that instead?
+> >
+> > The u_serial driver has already maintained the usage count of a TTY
+> > structure for open and close. While the driver tracks the usage count
+> > via open/close, it doesn't fully eliminate race conditions. Below are
+> > two potential scenarios:
+> >
+> > Case 1 (Observed):
+> > 1. gs_open() sets usage count to 1.
+> > 2. gserial_connect(), gs_start_io(), and gs_start_rx() execute in
+> > sequence (lock held).
+> > 3. Lock released, usb_ep_queue() called.
+> > 4. In parallel, gs_close() executes, sees count of 1, clears TTY, relea=
+ses lock.
+> > 5. Original thread resumes in gs_start_rx(), potentially leading to
+> > kernel panic on an invalid TTY.
+>
+> If it used refcounting -- tty_port_tty_get(), how comes?
 
------BEGIN PGP SIGNATURE-----
+If gs_start_rx() uses refcounting, the race problem will still persist
+because gs_close() currently decides to reset port->port.tty to NULL
+only when port->port.count reaches one (i.e. last open), without
+checking if the associated TTY instance is still in use. I am
+uncertain if you are suggesting that I should modify gs_close() by
+considering the refcount of a tty instance? I'm still unsure how to
+fix this race problem by using refcounting. I'd greatly appreciate it
+if you could provide more detailed guidance on how to resolve this
+issue, as I'm not very experienced with TTY drivers.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVA5wAKCRB4tDGHoIJi
-0g1+AQC1TYeQhL78aVmae/bbIeS87fROp/400N/NvEFiEGltuwD+LfPcF+qGTN+D
-tZeky3VyyMG7F0Xqx5tCLLcl7Dm2tgQ=
-=dlyh
------END PGP SIGNATURE-----
+Also, I noticed a typo in my earlier emails, including the commit
+message. It should be port->port.tty instead of port->port_tty.
 
---PGPY0L/uV9VV1R85--
+Regards,
+Kuen-Han
 
