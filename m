@@ -1,105 +1,157 @@
-Return-Path: <linux-kernel+bounces-252928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C97A9319FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:07:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510D1931B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80BC282152
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E235FB2200F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE355589A;
-	Mon, 15 Jul 2024 18:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBBE130E4B;
+	Mon, 15 Jul 2024 19:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUcJAgep"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bjqeqgm1"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928284C62A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326636E61B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066851; cv=none; b=F4NQU6n/G1u6D8aEkqk20D4E9EnVlEMPBqDJ5ehMJ2tVv6+nYEwCuHZQcQGqJNMdEXs30LI5YLSfw1LOURr0nNm4D72lDEBbQVWXB/OMbA9vAi7bGxk/C0GuIGzIrbVOWPGYxqbzlg+gLKKV/1ctyJ/Z5TdTCuhMlpaLWNB4k7I=
+	t=1721072003; cv=none; b=DXsG5AOTIswW18KLnzoRVEezvU+X9V2bX04Qh4y9GXSoSsXKUeNDPLzif2LLyu3feFqeSz8dNSZl+6HUgYUampIRNDmfE25ItZgrWRDbNyXposqn6M59w2vOdZvDZSxPKQqbwN3cBaQWbJoOK+BhtrPOpQBXXhl8GLoUr1wo8Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066851; c=relaxed/simple;
-	bh=E5wYUGyt7Ir/qYAhUbW44IRGQ5AMiuS2oe6KXU0RIk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRsjcxparXImnroqpu2A8B1a7uU/slGlboG3FycP1H+O64UA93LIu9QOO40BluPHY5oUhUs0gT9GZcYcGLU7heOMe3qT0si9dSzHA17ce02I9iGrsvRp1i1o/slcm0AzYYb/FU1lx9bZA7W74gpJv6bGvc41jaWqcPtTVlV6NgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUcJAgep; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681EFC32782;
-	Mon, 15 Jul 2024 18:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721066851;
-	bh=E5wYUGyt7Ir/qYAhUbW44IRGQ5AMiuS2oe6KXU0RIk8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ZUcJAgep2XNM5Cc/ddLvJphVsuftYoBdfE2HAv1SEQ6IqqyEMg5FEvil/bTZKXuh4
-	 e+8ReTdSIwHvp8HSzvlWVC+pRx3P9oGr/ZDw5Mq6LsHgstR+I8otkV6j8w96eIycS7
-	 c/YQaHhtHyCdgH8R20tqF6S2iHvbLAQEyeNC+mX+598UdiuBWeM1Eq3AdIWc+uPCtk
-	 mw6HeYo/2Ba9z2H+Wowmzxi5G9+ZkhvHvJweNStGOsEgEhOIc7Un4IjAQnkRMx30q9
-	 a+bJu+tFq/lewVP+3rCRDrLGXF9qhw98j3Gm6Fq3dh03Rxqv9kWPDubnkuO3mdCMOK
-	 T85JL6AeMQ0fA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id F0AF4CE0AD3; Mon, 15 Jul 2024 11:07:30 -0700 (PDT)
-Date: Mon, 15 Jul 2024 11:07:30 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	neeraj.upadhyay@kernel.org, mingo@kernel.org, rostedt@goodmis.org,
-	Leonardo Bras <leobras@redhat.com>
-Subject: Re: [PATCH] smp: print only local CPU info when sched_clock goes
- backward
-Message-ID: <88d281fe-d101-47d9-b70e-bb6a8959f5ff@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240715134941.7ac59eb9@imladris.surriel.com>
+	s=arc-20240116; t=1721072003; c=relaxed/simple;
+	bh=XvO/IQPBY3WxMzOIIj1lPrjiKqO7ITQ9tRLogvdaoz4=;
+	h=Message-ID:Date:MIME-Version:From:To:CC:Subject:Content-Type; b=ZD5ipDVALXZw941f02xvE/YSc5/SDQHEDTuhW3bJN880XSu8TaRKZy4qdMi1SPNyY4Z9JuI3LRuxt//9oIGSrYi3BodlwCWZeDoxwvmxUeVpl1oJXqO76iy++eZB9OQj+y6MOOl3Ai2ObhTajIeLz38lcyxWMQ+4KPkjnUmHu2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bjqeqgm1; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46FI7p3p126761;
+	Mon, 15 Jul 2024 13:07:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721066871;
+	bh=hQ9KDt0pj5QqeR51RglSiqAIoTDr1j7wa4/OE1HUhrs=;
+	h=Date:From:To:CC:Subject;
+	b=bjqeqgm1ZFt00bEoDMcquuQZ/dBdYg15taX2LiPwv+e4EXaNsoPs8S/ENB3hdi/xb
+	 rL6VAxqW6pq9kNFfQOFl24qATWvTXDxHW7ro8QObD0Ht6xyMiWXO7XXscgxs2diTOJ
+	 zMFh4X3ez95uXKev8Cad3m3VC7VWwA/Y4T5YAO90=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46FI7kWW014962
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 15 Jul 2024 13:07:46 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
+ Jul 2024 13:07:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 15 Jul 2024 13:07:45 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46FI7g72004328;
+	Mon, 15 Jul 2024 13:07:43 -0500
+Message-ID: <aacd1e96-9ff4-4222-9f4d-29e63041f7fb@ti.com>
+Date: Mon, 15 Jul 2024 23:37:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715134941.7ac59eb9@imladris.surriel.com>
+User-Agent: Mozilla Thunderbird
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm-soc
+	<arm@kernel.org>, SoC <soc@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+Subject: [GIT PULL] arm64: dts: ti: K3 devicetree updates for v6.11 - part2
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------RUwPAC00nLsJ4vnxysuoeY8i"
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Jul 15, 2024 at 01:49:41PM -0400, Rik van Riel wrote:
-> About 40% of all csd_lock warnings observed in our fleet appear to
-> be due to sched_clock() going backward in time (usually only a little
-> bit), resulting in ts0 being larger than ts2.
-> 
-> When the local CPU is at fault, we should print out a message reflecting
-> that, rather than trying to get the remote CPU's stack trace.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
+--------------RUwPAC00nLsJ4vnxysuoeY8i
+Content-Type: multipart/mixed; boundary="------------ueqxuF7AE95w104VQykrKzYI";
+ protected-headers="v1"
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+ arm-soc <arm@kernel.org>, SoC <soc@kernel.org>
+Cc: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Nishanth Menon <nm@ti.com>
+Message-ID: <aacd1e96-9ff4-4222-9f4d-29e63041f7fb@ti.com>
+Subject: [GIT PULL] arm64: dts: ti: K3 devicetree updates for v6.11 - part2
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+--------------ueqxuF7AE95w104VQykrKzYI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  kernel/smp.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index f085ebcdf9e7..5656ef63ea82 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -237,6 +237,14 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
->  	if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0))
->  		return false;
->  
-> +	if (ts0 > ts2) {
-> +		/* Our own sched_clock went backward; don't blame another CPU. */
-> +		ts_delta = ts0 - ts2;
-> +		pr_alert("sched_clock on CPU %d went backward by %llu ns\n", raw_smp_processor_id(), ts_delta);
-> +		*ts1 = ts2;
-> +		return false;
-> +	}
-> +
->  	firsttime = !*bug_id;
->  	if (firsttime)
->  		*bug_id = atomic_inc_return(&csd_bug_count);
-> -- 
-> 2.45.2
-> 
+Hi ARM SoC Maintainers,
+
+Please pull below PR which consists of a late fix to my earlier pull requ=
+est:
+https://lore.kernel.org/linux-arm-kernel/37f251a1-f3bd-402f-ab22-cf786c38=
+71d7@ti.com/
+
+The following changes since commit 6406c5d5512c0814b8c155df7f833a98d9069a=
+72:
+
+  arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of global CMA (2024-07-03 =
+19:51:21 +0530)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3=
+-dt-for-v6.11-part2
+
+for you to fetch changes up to cc5049007d722364bca4a4eeb619d5629733a004:
+
+  arm64: dts: ti: k3-j784s4-evm: Consolidate serdes0 references (2024-07-=
+12 17:08:40 +0530)
+
+----------------------------------------------------------------
+Late fixes towards v6.11-rc1
+
+First patch fixes warning splat seen on J784S4 due to overlapping
+serdes0 lane. Second patch cleans up the serdes0 references for readabili=
+ty
+
+----------------------------------------------------------------
+Andrew Halaney (2):
+      arm64: dts: ti: k3-j784s4-evm: Assign only lanes 0 and 1 to PCIe1
+      arm64: dts: ti: k3-j784s4-evm: Consolidate serdes0 references
+
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 25 +++-------
+ 1 file changed, 8 insertions(+), 17 deletions(-)
+
+--=20
+Regards
+Vignesh
+
+--------------ueqxuF7AE95w104VQykrKzYI--
+
+--------------RUwPAC00nLsJ4vnxysuoeY8i
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEyRC2zAhGcGjrhiNExEYeRXyRFuMFAmaVZW4FAwAAAAAACgkQxEYeRXyRFuMp
+XAgAvyMc9Sy66U1Vk0pNe6ebRIFaA2Tt/Dwp4FuOsoCT/7I6jW9uonvRLqY4XjkQJhm9ER/vzPXS
+EYAKDHQlaZ9bGUo9pTY0+RF25tlse6cL7icOiEsoj65DNmeVm7xo18q8hfPw0XmbQVSjK5/l2UWY
+8VQueqtQ8T15ufRo6XuRSfjfPoeO+vpqMynqMpz2JKc+YP8vouRqrUWzVwQARqv8OrqWdl2KTmgs
+kX3oX55+UU+if0xoNCPM4j/tS/jtyqlwSYEU7LQpjrHMc0oM9n8om4Hw4dF2aMh6CoowYtq9MjNl
+HFMGZfeUPpA1z/xPQwmYopSEywXDYQIQ5BbZ9gaCuQ==
+=TME8
+-----END PGP SIGNATURE-----
+
+--------------RUwPAC00nLsJ4vnxysuoeY8i--
 
