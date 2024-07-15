@@ -1,313 +1,202 @@
-Return-Path: <linux-kernel+bounces-253143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0043B931D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:32:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA69931D34
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1102825D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:32:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29079B220E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5789F13C83D;
-	Mon, 15 Jul 2024 22:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FF513E88B;
+	Mon, 15 Jul 2024 22:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nh5wj+l7"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hl7CHqnF"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F29313C9CD
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2426C13C820;
+	Mon, 15 Jul 2024 22:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721082737; cv=none; b=kTeLyJiNpu808PPyzDbWeFjEQtnpj4e6MYl5ufXkBFjyXocMXOZbfdOoFHQco7FOZl8yWuiWYS05jT+yGYoZfDXmCTU0zC8uIieNBsdiJfeabS+oZPPT3CiBCNXSzh4cwNjpjgl9QdIUbg4J3j9v/lZnro7vO3giisYlK+Vb2Zc=
+	t=1721082980; cv=none; b=WylIo68lqzxhBoHowKZL3RofyIiX3r1tUziSZmuzuFTNnyS10Rx8B5hyBIBHNFIpF6SyOWhuGYRVF6u1lpcdQZswFrSJcp6lVpjsXeIVll+nH8shEfrRFMuey9fvG78ndrhbttCYQd92qZxWhNAtRW+WbMbtceP7xmacFADyPJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721082737; c=relaxed/simple;
-	bh=cCQ/dDZtLxFAq6kNJolNSC2nyFw75yy5poaboJqO7qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZMh2VUvr3bA68eHQK/vfx8+2f6/FKlsMjK6FjnP7O0ktUAVpKnlJNdz6yzV72BH0AquuEEaZM4fQT0Dyc+Z8MzspcvlBX4hNnPaFSSinc9PrBhraushlaT5s8mRIQWEAAiCCAyJIHEDQKsbkBSqTzPjQGc13hY8s+P7UkgAxtsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nh5wj+l7; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so2991256b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721082734; x=1721687534; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQTmg6gNoZ2A3Wv6/0cVS+L9bdYEbBsPvzgZFph3pGI=;
-        b=Nh5wj+l7qABqH8XEKLHDcift4ARgwNdHLNPapyoKChjabRkNKCCS0N9W3Zmw+fHQBY
-         VGAio7rUVa51cT0OHPWLwUTRvi7ZhnGovzEjJRkxf+/X/ALZPKTfknhsZT2FyKKVQr03
-         IOYfEdAwDGbR/hpwFTcJZHGXkJbZmvBq2UEzWC6ZV+ov4T1nr8TcyiUIW4gIWEpHYdLi
-         3C5q+e2tUL8lqJwMPlaAE710IDDuaE/e8RXYW3mEeczT0aBXziMTZi2ZEIpZNBkouZVX
-         2gV9zozPYOcxG1L/TniJn3rmp7Oxr8ZenWzzBa1/7e+CxzpNs/UnQHfad/Gu1P6djzWs
-         AXVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721082734; x=1721687534;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hQTmg6gNoZ2A3Wv6/0cVS+L9bdYEbBsPvzgZFph3pGI=;
-        b=VGqDvfrNB8ywR9SzyW9PBLAGsrOJmzjUH41Z59CpGpGm5cl7957AQBEf3MxBKtlq3z
-         6MOccvmF4ctoIQ+3lhupnVxsP3Yl0sxT2ImE522Y9oFkCW9W7CjWfEoKbbkJX71u7SK8
-         X+CKRoTxXhDBzVkHmxkadS8HC9CxDJUHLTXtxNq8Z1+7Rm0H5uzKWKrOR1XRSwF+lMBl
-         rVeRT5/2VRqj+r7FE9TC/VEmehNKUv98lYFsyHrX0/UnOR6X26u1TpRUioIWZOjtHFM3
-         vAs9PfAEi5wcBTNKWN/1dPdplaz5LV/FpMa4jTXgY7POcIRQiR0u/iHkzcHM0keaACSa
-         Mdfw==
-X-Gm-Message-State: AOJu0Yy79PRz6Mxpb7NZqQLpjOaBHMbFR6Evn66dylLx9L33DlOK5/ok
-	afo+FdSBB9ZApWVDMlrywo/z8Cn9QHog1BfX9aLIKHGHX1DGNntI
-X-Google-Smtp-Source: AGHT+IHWQDyGo/3otgvkhIlF9s1aakNlCiNUbnrgmfYXPhl0xBrHBVboPM/3mwgX9WCl91f1hGbIlA==
-X-Received: by 2002:a05:6a20:8427:b0:1c0:ebca:963d with SMTP id adf61e73a8af0-1c3f1e73544mr68164637.4.1721082734339;
-        Mon, 15 Jul 2024 15:32:14 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6a44sm4890009b3a.67.2024.07.15.15.32.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 15:32:13 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 15 Jul 2024 12:32:12 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+	s=arc-20240116; t=1721082980; c=relaxed/simple;
+	bh=Vnaz3yR8oLknVJ+XnauozoyHYn9J9p7r/V81IkxSeO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUiDD7SPSVTHnFwcPPKvGxAgnsdqSOxQyTFW6kC8pIn1nbdm6xduzGrNIS/zpkyAcURM6DDpqXbujTNKy77y8kwtq31Sx+hNWlS3bm/ySEqicDDPFmOUqWlQqpxlonSW9QzQhjrqLza6W+h1MbZWGY5bNUqpPbswXH2mTqH43Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hl7CHqnF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721082977;
+	bh=Vnaz3yR8oLknVJ+XnauozoyHYn9J9p7r/V81IkxSeO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hl7CHqnFLvh66/oOSs4T+0uC4aTSHMVhfSR1k9tWu0vuXBx+Jz3F11eZ2OeDm/W71
+	 rewIdIDvqxMTeYhrPl6OhyGSDEloGZeTF7r6HpvljeHA0YqiNEsETq5VXsSsPZuaL/
+	 0xJx3pR/2KLFh1ZVqmOrmp9FH1X/ikuH7+GtvnE0HBCcfuwvx8hb452tpNQw7S0rSl
+	 Jnjzqt3iweClprMni/Ui7WO1FdeAGYCWWsm9r+u/DcvXEDRF/YLPK7/D+wV91koZ/M
+	 7LO6cFncldcZzfECUIQd0AUitbtWicGdf+Mr5CukJ5bXY+XSBKbJ215M346IxKpHTt
+	 XrUSxCYOfWoDw==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 54C973781144;
+	Mon, 15 Jul 2024 22:36:14 +0000 (UTC)
+Date: Mon, 15 Jul 2024 18:36:12 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Von Dentz <luiz.dentz@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-mediatek <linux-mediatek@lists.infradead.org>,
+	regressions@lists.linux.dev, kernelci@lists.linux.dev,
+	kernel@collabora.com
+Subject: Re: [PATCH v7 8/8] Bluetooth: btusb: mediatek: add ISO data
+ transmission functions
+Message-ID: <7851401b-e884-4ed4-998d-7651f427ad37@notapiano>
+References: <20240704060116.16600-1-chris.lu@mediatek.com>
+ <20240704060116.16600-9-chris.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240704060116.16600-9-chris.lu@mediatek.com>
 
-NOTE: I couldn't get git-request-pull to generate the correct diffstat. The
-      diffstat at the end is generated against the merged base and should
-      match the diff when sched_ext-for-6.11 is pulled after tip/sched/core
-      and bpf/for-next.
+On Thu, Jul 04, 2024 at 02:01:16PM +0800, Chris Lu wrote:
+> This patch implements functions for ISO data send and receive in btusb
+> driver for MediaTek's controller.
+> 
+> MediaTek defines a specific interrupt endpoint for ISO data transmissin
+> because the characteristics of interrupt endpoint are similar to the
+> application of ISO data which can support guaranteed transmissin
+> bandwidth, enough maximum data length and error checking mechanism.
+> 
+> Driver sets up ISO interface and endpoints in btusb_mtk_setup and clears
+> the setup in btusb_mtk_shutdown. These flow can't move to btmtk.c due to
+> btusb_driver is only defined in btusb.c when claiming/relaesing interface.
+> ISO packet anchor stops when driver suspending and resubmit interrupt urb
+> for ISO data when driver resuming.
+> 
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> ---
 
-The following changes since commit d329605287020c3d1c3b0dadc63d8208e7251382:
+Hi,
 
-  sched/fair: set_load_weight() must also call reweight_task() for SCHED_IDLE tasks (2024-07-04 15:59:52 +0200)
+KernelCI has identified a boot regression originating from this patch. It
+affects the mt8195-cherry-tomato-r2 platform.
 
-are available in the Git repository at:
+Through additional runs I've determined that it only happens when the bluetooth
+firmware (BT_RAM_CODE_MT7961_1_2_hdr.bin) isn't present. I realize the firmware
+should be present to make proper use of the bluetooth driver, and I'll add it to
+our testing images. Still, a panic shouldn't happen when it's missing, hence
+this report.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.11
+Reverting this patch fixes the issue.
 
-for you to fetch changes up to 8bb30798fd6ee79e4041a32ca85b9f70345d8671:
+This is the traceback:
 
-  sched_ext: Fixes incorrect type in bpf_scx_init() (2024-07-14 18:10:10 -1000)
+[    6.734214] BUG: spinlock bad magic on CPU#3, kworker/3:1/104
+[    6.740002]  lock: 0xffff2c7b8655f660, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+[    6.748207] CPU: 3 UID: 0 PID: 104 Comm: kworker/3:1 Not tainted 6.10.0-next-20240715 #1 35893202ca8f99b37129997821441a29d2b23f0a
+[    6.759874] Hardware name: Acer Tomato (rev2) board (DT)
+[    6.765195] Workqueue: pm pm_runtime_work
+[    6.769235] Call trace:
+[    6.771689]  dump_backtrace+0x9c/0x100
+[    6.775456]  show_stack+0x20/0x38
+[    6.778786]  dump_stack_lvl+0x80/0xf8
+[    6.782463]  dump_stack+0x18/0x28
+[    6.785791]  spin_bug+0x90/0xd8
+[    6.788950]  do_raw_spin_lock+0xf4/0x128
+[    6.792890]  _raw_spin_lock_irq+0x30/0x70
+[    6.796915]  usb_kill_anchored_urbs+0x48/0x1e0
+[    6.801378]  btmtk_usb_suspend+0x20/0x38 [btmtk 5f200a97badbdfda4266773fee49acfc8e0224d5]
+[    6.809578]  btusb_suspend+0xd0/0x210 [btusb 0bfbf19a87ff406c83b87268b87ce1e80e9a829b]
+[    6.817527]  usb_suspend_both+0x90/0x288
+[    6.821469]  usb_runtime_suspend+0x3c/0xa8
+[    6.825585]  __rpm_callback+0x50/0x1f0
+[    6.829351]  rpm_callback+0x70/0x88
+[    6.832856]  rpm_suspend+0xe4/0x5a0
+[    6.836361]  pm_runtime_work+0xd4/0xe0
+[    6.840126]  process_one_work+0x18c/0x440
+[    6.844156]  worker_thread+0x314/0x428
+[    6.847923]  kthread+0x128/0x138
+[    6.851167]  ret_from_fork+0x10/0x20
+[    6.854769] Unable to handle kernel paging request at virtual address ffffffffffffffd8
+[    6.862694] Mem abort info:
+[    6.865494]   ESR = 0x0000000096000006
+[    6.869249]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    6.874571]   SET = 0, FnV = 0
+[    6.877632]   EA = 0, S1PTW = 0
+[    6.880780]   FSC = 0x06: level 2 translation fault
+[    6.885665] Data abort info:
+[    6.888553]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[    6.894044]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    6.899103]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    6.904423] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000042533000
+[    6.911134] [ffffffffffffffd8] pgd=0000000000000000, p4d=0000000042e94003, pud=0000000042e95003, pmd=0000000000000000
+lav[    6.921781] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+[    6.921794] Modules linked in: mt7921e mt7921_common mt792x_lib mt76_connac_lib mt76 mtk_vcodec_dec_hw mac80211 cros_ec_lid_angle cros_ec_sensors cros_ec_sensors_core industrialio_triggered_buffer cfg80211 kfifo_buf mtk_vcodec_dec mtk_jpeg v4l2_vp9 cros_ec_rpmsg mtk_vcodec_enc v4l2_h264 mtk_jpeg_enc_hw btusb mtk_vcodec_dbgfs mtk_jpeg_dec_hw mtk_dp mtk_vcodec_common btintel btbcm uvcvideo btmtk mtk_mdp3 videobuf2_vmalloc v4l2_mem2mem btrtl uvc joydev videobuf2_v4l2 videobuf2_dma_contig bluetooth elan_i2c videobuf2_memops ecdh_generic ecc videobuf2_common cros_ec_sensorhub cros_kbd_led_backlight mtk_scp snd_sof_mt8195 pcie_mediatek_gen3 mtk_rpmsg mtk_svs mtk_adsp_common snd_sof_xtensa_dsp rpmsg_core lvts_thermal snd_sof_of mtk_scp_ipi snd_soc_mt8195_afe snd_sof snd_sof_utils mtk_wdt mt6577_auxadc mt8195_mt6359
+[    6.922087] CPU: 3 UID: 0 PID: 104 Comm: kworker/3:1 Not tainted 6.10.0-next-20240715 #1 35893202ca8f99b37129997821441a29d2b23f0a
+[    6.922106] Hardware name: Acer Tomato (rev2) board (DT)
+[    6.922114] Workqueue: pm pm_runtime_work
+[    6.922132] pstate: 804000c9 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    6.922147] pc : usb_kill_anchored_urbs+0x6c/0x1e0
+[    6.922164] lr : usb_kill_anchored_urbs+0x48/0x1e0
+[    6.922181] sp : ffff800080903b60
+[    6.922187] x29: ffff800080903b60 x28: ffff2c7b85c32b80 x27: ffff2c7bbb370930
+[    6.922211] x26: 00000000000f4240 x25: 00000000ffffffff x24: ffffd49ece2dcb48
+[    6.922233] x23: 0000000000000001 x22: ffff2c7b8655f660 x21: ffff2c7b8655f628
+[    6.922255] x20: ffffffffffffffd8 x19: 0000000000000000 x18: 0000000000000006
+[    6.922276] x17: 6531656337386238 x16: 3632373862333863 x15: ffff800080903480
+[    6.922297] x14: 0000000000000000 x13: 303278302f303178 x12: ffffd49ecf090e30
+[    6.922318] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd49ecd2c5bb4
+[    6.922339] x8 : c0000000ffffdfff x7 : ffffd49ecefe0db8 x6 : 00000000000affa8
+[    6.922360] x5 : ffff2c7bbb35dd48 x4 : 0000000000000000 x3 : 0000000000000000
+[    6.922379] x2 : 0000000000000000 x1 : 0000000000000003 x0 : ffffffffffffffd8
+[    6.922400] Call trace:
+[    6.922405]  usb_kill_anchored_urbs+0x6c/0x1e0
+[    6.922422]  btmtk_usb_suspend+0x20/0x38 [btmtk 5f200a97badbdfda4266773fee49acfc8e0224d5]
+[    6.922444]  btusb_suspend+0xd0/0x210 [btusb 0bfbf19a87ff406c83b87268b87ce1e80e9a829b]
+[    6.922469]  usb_suspend_both+0x90/0x288
+[    6.922487]  usb_runtime_suspend+0x3c/0xa8
+[    6.922507]  __rpm_callback+0x50/0x1f0
+[    6.922523]  rpm_callback+0x70/0x88
+[    6.922538]  rpm_suspend+0xe4/0x5a0
+[    6.922553]  pm_runtime_work+0xd4/0xe0
+[    6.922569]  process_one_work+0x18c/0x440
+[    6.922588]  worker_thread+0x314/0x428
+[    6.922606]  kthread+0x128/0x138
+[    6.922621]  ret_from_fork+0x10/0x20
+[    6.922644] Code: f100a274 54000520 d503201f d100a260 (b8370000)
+[    6.922654] ---[ end trace 0000000000000000 ]---
+a-148[    7.203910] Kernel panic - not syncing: Oops: Fatal exception
+[    7.209649] SMP: stopping secondary CPUs
+[    7.213713] Kernel Offset: 0x549e4c400000 from 0xffff800080000000
+[    7.219796] PHYS_OFFSET: 0xfff0d38580000000
+[    7.223969] CPU features: 0x04,0000000b,80140528,4200720b
+[    7.229360] Memory Limit: none
 
-----------------------------------------------------------------
-sched_ext: Initial pull request for v6.11
+Full kernel log: http://0x0.st/X9rx.txt
+Config: http://0x0.st/X9r2.txt
 
-This is the initial pull request of sched_ext. The v7 patchset
-(https://lkml.kernel.org/r/20240618212056.2833381-1-tj@kernel.org) is
-applied on top of tip/sched/core + bpf/for-next as of Jun 18th.
+#regzbot introduced: ee6bd4b95c66
+#regzbot title: usb_kill_anchored_urbs panic during boot on mt8195-cherry-tomato-r2
 
-  tip/sched/core 793a62823d1c ("sched/core: Drop spinlocks on contention iff kernel is preemptible")
-  bpf/for-next   f6afdaf72af7 ("Merge branch 'bpf-support-resilient-split-btf'")
-
-Since then, the following changes:
-
-- cpuperf support which was a part of the v6 patchset was posted separately
-  and then applied after reviews.
-
-- tip/sched/core is pulled into resolve the conflicts between
-
-    e83edbf88f18 ("sched: Add sched_class->reweight_task()")
-    d32960528702 ("sched/fair: set_load_weight() must also call reweight_task() for SCHED_IDLE tasks")
-
-  The former makes reweight_task() a sched_class operation for sched_ext
-  while the latter fixed a bug around idle weight handling in the same area.
-  The conflicts are not trivial although not that complicated either.
-
-- Improve integration with sched core.
-
-- DSQ iterator which was a part of the v6 patchset was posted separately.
-  The iterator itself was applied after a couple revisions. The associated
-  selective consumption kfunc can use further improvements and is still
-  being worked on.
-
-- The BPF scheduler couldn't directly dispatch to the local DSQ of another
-  CPU using a SCX_DSQ_LOCAL_ON verdict. This caused difficulties around
-  handling non-wakeup enqueues. Updated so that SCX_DSQ_LOCAL_ON can be used
-  in the enqueue path too.
-
-- Various fixes and improvements.
-
-As the branch is based on top of tip/sched/core + bpf/for-next, please merge
-after both are applied.
-
-----------------------------------------------------------------
-Aboorva Devarajan (1):
-      sched_ext: Documentation: Remove mentions of scx_bpf_switch_all
-
-Andrea Righi (2):
-      sched_ext: fix typo in set_weight() description
-      sched_ext: add CONFIG_DEBUG_INFO_BTF dependency
-
-Colin Ian King (1):
-      sched_ext: Fix spelling mistake: "intead" -> "instead"
-
-David Vernet (6):
-      sched_ext: Implement runnable task stall watchdog
-      sched_ext: Print sched_ext info when dumping stack
-      sched_ext: Implement SCX_KICK_WAIT
-      sched_ext: Implement sched_ext_ops.cpu_acquire/release()
-      sched_ext: Add selftests
-      sched_ext: Make scx_bpf_cpuperf_set() @cpu arg signed
-
-Hongyan Xia (1):
-      sched/ext: Add BPF function to fetch rq
-
-Jiapeng Chong (1):
-      sched_ext: Fixes incorrect type in bpf_scx_init()
-
-Tejun Heo (48):
-      sched: Restructure sched_class order sanity checks in sched_init()
-      sched: Allow sched_cgroup_fork() to fail and introduce sched_cancel_fork()
-      sched: Add sched_class->reweight_task()
-      sched: Add sched_class->switching_to() and expose check_class_changing/changed()
-      sched: Factor out cgroup weight conversion functions
-      sched: Factor out update_other_load_avgs() from __update_blocked_others()
-      sched: Add normal_policy()
-      sched_ext: Add boilerplate for extensible scheduler class
-      sched_ext: Implement BPF extensible scheduler class
-      sched_ext: Add scx_simple and scx_example_qmap example schedulers
-      sched_ext: Add sysrq-S which disables the BPF scheduler
-      sched_ext: Allow BPF schedulers to disallow specific tasks from joining SCHED_EXT
-      sched_ext: Print debug dump after an error exit
-      tools/sched_ext: Add scx_show_state.py
-      sched_ext: Implement scx_bpf_kick_cpu() and task preemption support
-      sched_ext: Add a central scheduler which makes all scheduling decisions on one CPU
-      sched_ext: Make watchdog handle ops.dispatch() looping stall
-      sched_ext: Add task state tracking operations
-      sched_ext: Implement tickless support
-      sched_ext: Track tasks that are subjects of the in-flight SCX operation
-      sched_ext: Implement sched_ext_ops.cpu_online/offline()
-      sched_ext: Bypass BPF scheduler while PM events are in progress
-      sched_ext: Implement core-sched support
-      sched_ext: Add vtime-ordered priority queue to dispatch_q's
-      sched_ext: Documentation: scheduler: Document extensible scheduler class
-      sched, sched_ext: Replace scx_next_task_picked() with sched_class->switch_class()
-      cpufreq_schedutil: Refactor sugov_cpu_is_busy()
-      sched_ext: Add cpuperf support
-      sched_ext: Drop tools_clean target from the top-level Makefile
-      sched_ext: Swap argument positions in kcalloc() call to avoid compiler warning
-      Merge branch 'sched/core' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip into for-6.11
-      sched, sched_ext: Simplify dl_prio() case handling in sched_fork()
-      sched_ext: Account for idle policy when setting p->scx.weight in scx_ops_enable_task()
-      sched_ext: Disallow loading BPF scheduler if isolcpus= domain isolation is in effect
-      sched_ext: Minor cleanups in kernel/sched/ext.h
-      sched, sched_ext: Open code for_balance_class_range()
-      sched, sched_ext: Move some declarations from kernel/sched/ext.h to sched.h
-      sched_ext: Take out ->priq and ->flags from scx_dsq_node
-      sched_ext: Implement DSQ iterator
-      sched_ext/scx_qmap: Add an example usage of DSQ iterator
-      sched_ext: Reimplement scx_bpf_reenqueue_local()
-      sched_ext: Make scx_bpf_reenqueue_local() skip tasks that are being migrated
-      sched: Move struct balance_callback definition upward
-      sched_ext: Open-code task_linked_on_dsq()
-      sched_ext: Unpin and repin rq lock from balance_scx()
-      sched_ext: s/SCX_RQ_BALANCING/SCX_RQ_IN_BALANCE/ and add SCX_RQ_IN_WAKEUP
-      sched_ext: Allow SCX_DSQ_LOCAL_ON for direct dispatches
-      sched_ext/scx_qmap: Pick idle CPU for direct dispatch on !wakeup enqueues
-
- Documentation/scheduler/index.rst                                   |    1
- Documentation/scheduler/sched-ext.rst                               |  316 +
- MAINTAINERS                                                         |   13
- drivers/tty/sysrq.c                                                 |    1
- include/asm-generic/vmlinux.lds.h                                   |    1
- include/linux/cgroup.h                                              |    4
- include/linux/sched.h                                               |    5
- include/linux/sched/ext.h                                           |  206
- include/linux/sched/task.h                                          |    3
- include/trace/events/sched_ext.h                                    |   32
- include/uapi/linux/sched.h                                          |    1
- init/init_task.c                                                    |   12
- kernel/Kconfig.preempt                                              |   26
- kernel/fork.c                                                       |   17
- kernel/sched/build_policy.c                                         |   11
- kernel/sched/core.c                                                 |  192
- kernel/sched/cpufreq_schedutil.c                                    |   50
- kernel/sched/debug.c                                                |    3
- kernel/sched/ext.c                                                  | 6537 ++++++++++++++++++++++++++
- kernel/sched/ext.h                                                  |   69
- kernel/sched/fair.c                                                 |   22
- kernel/sched/idle.c                                                 |    2
- kernel/sched/sched.h                                                |  158
- kernel/sched/syscalls.c                                             |   26
- lib/dump_stack.c                                                    |    1
- tools/Makefile                                                      |   10
- tools/sched_ext/.gitignore                                          |    2
- tools/sched_ext/Makefile                                            |  246
- tools/sched_ext/README.md                                           |  258 +
- tools/sched_ext/include/bpf-compat/gnu/stubs.h                      |   11
- tools/sched_ext/include/scx/common.bpf.h                            |  401 +
- tools/sched_ext/include/scx/common.h                                |   75
- tools/sched_ext/include/scx/compat.bpf.h                            |   28
- tools/sched_ext/include/scx/compat.h                                |  186
- tools/sched_ext/include/scx/user_exit_info.h                        |  111
- tools/sched_ext/scx_central.bpf.c                                   |  361 +
- tools/sched_ext/scx_central.c                                       |  135
- tools/sched_ext/scx_qmap.bpf.c                                      |  706 ++
- tools/sched_ext/scx_qmap.c                                          |  144
- tools/sched_ext/scx_show_state.py                                   |   39
- tools/sched_ext/scx_simple.bpf.c                                    |  156
- tools/sched_ext/scx_simple.c                                        |  107
- tools/testing/selftests/sched_ext/.gitignore                        |    6
- tools/testing/selftests/sched_ext/Makefile                          |  218
- tools/testing/selftests/sched_ext/config                            |    9
- tools/testing/selftests/sched_ext/create_dsq.bpf.c                  |   58
- tools/testing/selftests/sched_ext/create_dsq.c                      |   57
- tools/testing/selftests/sched_ext/ddsp_bogus_dsq_fail.bpf.c         |   42
- tools/testing/selftests/sched_ext/ddsp_bogus_dsq_fail.c             |   57
- tools/testing/selftests/sched_ext/ddsp_vtimelocal_fail.bpf.c        |   39
- tools/testing/selftests/sched_ext/ddsp_vtimelocal_fail.c            |   56
- tools/testing/selftests/sched_ext/dsp_local_on.bpf.c                |   65
- tools/testing/selftests/sched_ext/dsp_local_on.c                    |   58
- tools/testing/selftests/sched_ext/enq_last_no_enq_fails.bpf.c       |   21
- tools/testing/selftests/sched_ext/enq_last_no_enq_fails.c           |   60
- tools/testing/selftests/sched_ext/enq_select_cpu_fails.bpf.c        |   43
- tools/testing/selftests/sched_ext/enq_select_cpu_fails.c            |   61
- tools/testing/selftests/sched_ext/exit.bpf.c                        |   84
- tools/testing/selftests/sched_ext/exit.c                            |   55
- tools/testing/selftests/sched_ext/exit_test.h                       |   20
- tools/testing/selftests/sched_ext/hotplug.bpf.c                     |   61
- tools/testing/selftests/sched_ext/hotplug.c                         |  168
- tools/testing/selftests/sched_ext/hotplug_test.h                    |   15
- tools/testing/selftests/sched_ext/init_enable_count.bpf.c           |   53
- tools/testing/selftests/sched_ext/init_enable_count.c               |  166
- tools/testing/selftests/sched_ext/maximal.bpf.c                     |  132
- tools/testing/selftests/sched_ext/maximal.c                         |   51
- tools/testing/selftests/sched_ext/maybe_null.bpf.c                  |   36
- tools/testing/selftests/sched_ext/maybe_null.c                      |   49
- tools/testing/selftests/sched_ext/maybe_null_fail_dsp.bpf.c         |   25
- tools/testing/selftests/sched_ext/maybe_null_fail_yld.bpf.c         |   28
- tools/testing/selftests/sched_ext/minimal.bpf.c                     |   21
- tools/testing/selftests/sched_ext/minimal.c                         |   58
- tools/testing/selftests/sched_ext/prog_run.bpf.c                    |   32
- tools/testing/selftests/sched_ext/prog_run.c                        |   78
- tools/testing/selftests/sched_ext/reload_loop.c                     |   75
- tools/testing/selftests/sched_ext/runner.c                          |  201
- tools/testing/selftests/sched_ext/scx_test.h                        |  131
- tools/testing/selftests/sched_ext/select_cpu_dfl.bpf.c              |   40
- tools/testing/selftests/sched_ext/select_cpu_dfl.c                  |   72
- tools/testing/selftests/sched_ext/select_cpu_dfl_nodispatch.bpf.c   |   89
- tools/testing/selftests/sched_ext/select_cpu_dfl_nodispatch.c       |   72
- tools/testing/selftests/sched_ext/select_cpu_dispatch.bpf.c         |   41
- tools/testing/selftests/sched_ext/select_cpu_dispatch.c             |   70
- tools/testing/selftests/sched_ext/select_cpu_dispatch_bad_dsq.bpf.c |   37
- tools/testing/selftests/sched_ext/select_cpu_dispatch_bad_dsq.c     |   56
- tools/testing/selftests/sched_ext/select_cpu_dispatch_dbl_dsp.bpf.c |   38
- tools/testing/selftests/sched_ext/select_cpu_dispatch_dbl_dsp.c     |   56
- tools/testing/selftests/sched_ext/select_cpu_vtime.bpf.c            |   92
- tools/testing/selftests/sched_ext/select_cpu_vtime.c                |   59
- tools/testing/selftests/sched_ext/test_example.c                    |   49
- tools/testing/selftests/sched_ext/util.c                            |   71
- tools/testing/selftests/sched_ext/util.h                            |   13
- 93 files changed, 13834 insertions(+), 95 deletions(-)
+Thanks,
+Nícolas
 
