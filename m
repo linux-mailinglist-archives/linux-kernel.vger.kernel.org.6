@@ -1,134 +1,180 @@
-Return-Path: <linux-kernel+bounces-252073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAB2930DE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A16D930DE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D38E1F217AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430D8281554
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371D613B29F;
-	Mon, 15 Jul 2024 06:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cX5HT+C6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0D013BC3D;
+	Mon, 15 Jul 2024 06:23:50 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717CB5223
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9421E89C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721024557; cv=none; b=CQloYGRjUjd6wZqzjZlypqSj+gE1mwkLT7BziSPf9+YqaLnS3IoEA0B+JlN9U/8EZfC3wsynw1t9q0wvgz3xFXRp5Ly+f6t4wErPfwEU5+9SY2ckV8wqw9o+SCcXZIiHzkyCYasQdeHKiDEHupV4YcyxVHL4X+AeivbB0MLyXEw=
+	t=1721024630; cv=none; b=RxoEXvYXduxMJO8ahQLbYudL5bMJnw+oMKSV06fwsUS/u2UroUH05iW0tNsuIYFPa9zQwZq+UrvPbjTQD42ZWI0qS7p8lCCXD9AnWvE4S0mk3wU/7aS2t2Cxum6VNE07rwDvzbk7aHpgN9mv1u2Eg4TzkjlU6mGgP0jPSM8OM80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721024557; c=relaxed/simple;
-	bh=Co1Akgsep+V5e0x3SqKrYkPdSIfOqSklD63YDt8g5Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZolsbDKSKEroJ8OUcySBkE97vrp/mwjX6vXDxyKNr72oXDPUfXuh7WVpdqIVowC1rDpmpphZ/VW+C11TP+i1rXFSvs6fmWA0WFmAmJmMaRnY9ot36AzLQpGeHtn7MlQI0V1O1Ce3r2jEgwh8riWCNJQln7QT2cQBM5Z5xS2KPFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cX5HT+C6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59614C4AF0A;
-	Mon, 15 Jul 2024 06:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721024556;
-	bh=Co1Akgsep+V5e0x3SqKrYkPdSIfOqSklD63YDt8g5Ns=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cX5HT+C6feoGfAic3pfRtIP+Ps13HfXKzbul1Heg5+MDHnUMYqVQi8CX6b1xF9Tjd
-	 bBnxsFlV9vM3lRe6iC7hIjAdX8MGm4aFhzjorAnCFVQqlpMuymoqX/WS8SMJm66glk
-	 ONZ2LFoiNtace049iRGggYA67l74Crb4EeXBAhsRohG9TgnkPShlRf5xYYrxj0fNrn
-	 g1sBJ9uqq19dLqP2ghdoTz9tObkR12i6Ght+zFBqLJQp2LTa8G+xIg22rZupWOFlpA
-	 HkXLnp7n3aCWh3HQ0z631IEa0SYolhgYdJE6RabHOg8hxaSmVkOmAkh/OcvbTeyRO7
-	 mYQk1DX3zXshw==
-Date: Mon, 15 Jul 2024 14:22:27 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [GIT PULL] erofs updates for 6.11-rc1
-Message-ID: <ZpTAI1mLZ1pfTnz8@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>,
-	Chao Yu <chao@kernel.org>
+	s=arc-20240116; t=1721024630; c=relaxed/simple;
+	bh=XXCUXGWPSSzklNSCq2m8DSQ0Hyy3sM2PBwlUqsyAC4k=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=f+uTmdK3dAWklpx6ddovsNMe+eHusV+g7zi2R30SA4IFdXuqQuLf0hVhWGyCsa1Yl2Of/323d+h3wtELYO/j+BkrwTP2P1yJvOqN7qO6V8C0t9kCiVUM4sTIHq5gtM2H/6dh8USroFtnYqPr/i1eiSBsoZpGfcngOFVs69x7tlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WMsVc3nDhzQllW;
+	Mon, 15 Jul 2024 14:19:36 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9E195140158;
+	Mon, 15 Jul 2024 14:23:37 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Jul 2024 14:23:37 +0800
+Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
+ when unpoison memory
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240712064249.3882707-1-linmiaohe@huawei.com>
+ <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
+Date: Mon, 15 Jul 2024 14:23:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-Hi Linus,
+On 2024/7/13 5:09, Andrew Morton wrote:
+> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+> 
+>> When I did memory failure tests recently, below panic occurs:
+>>
+>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+>> kernel BUG at include/linux/page-flags.h:616!
+>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>> Call Trace:
+>>  <TASK>
+>>  unpoison_memory+0x2f3/0x590
+>>  simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>>  debugfs_attr_write+0x42/0x60
+>>  full_proxy_write+0x5b/0x80
+>>  vfs_write+0xd5/0x540
+>>  ksys_write+0x64/0xe0
+>>  do_syscall_64+0xb9/0x1d0
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f08f0314887
+>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>>  </TASK>
+>> Modules linked in: hwpoison_inject
+>> ---[ end trace 0000000000000000 ]---
+>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>> Kernel panic - not syncing: Fatal exception
+>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>> ---[ end Kernel panic - not syncing: Fatal exception ]---
+>>
+>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+>> triggered.
+> 
+> I'm not seeing the call path.  Is this BUG happening via
+> 
+> static __always_inline void __ClearPage##uname(struct page *page)	\
+> {									\
+> 	VM_BUG_ON_PAGE(!Page##uname(page), page);			\
+> 	page->page_type |= PG_##lname;					\
+> }
+> 
+> ?
+> 
+> If so, where's the callsite?
 
-Could you consider this pull request for 6.11-rc1?
+It is BUG on PF_ANY():
 
-No outstanding new features have landed for this cycle so far.
+PAGEFLAG(HWPoison, hwpoison, PF_ANY)
 
-There are patches addressing folio conversions for compressed inodes:
-While large folio support for compressed data could work now, it remains
-disabled since the stress test could hang due to page migration in a few
-hours after enabling it.  I need more time to investigate further before
-enabling this feature.
+#define PF_ANY(page, enforce)	PF_POISONED_CHECK(page)
 
-Additionally, there are also some patches to clean up stream
-decompressors and tracepoints for simplicity.
+#define PF_POISONED_CHECK(page) ({					\
+	VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);		\
+	page; })
 
-All commits have been tested and no potential merge conflict is
-observed.
+#define	PAGE_POISON_PATTERN	-1l
+static inline int PagePoisoned(const struct page *page)
+{
+	return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
+}
 
-Thanks,
-Gao Xiang
+The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
 
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+offline_pages
+  remove_pfn_range_from_zone
+    page_init_poison
+      memset(page, PAGE_POISON_PATTERN, size);
 
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
+> 
+>> This can be reproduced by below steps:
+>> 1.Offline memory block:
+>>  echo offline > /sys/devices/system/memory/memory12/state
+>> 2.Get offlined memory pfn:
+>>  page-types -b n -rlN
+>> 3.Write pfn to unpoison-pfn
+>>  echo <pfn> > /sys/kernel/debug/hwpoison/unpoison-pfn
+>>
+> 
+> I guess cc:stable.  It looks old?  Can you help to identify the Fixes:
+> target?
 
-are available in the Git repository at:
+Since memory unpoison is only used for testing and users usually won't pass in a offlined pfn (memory
+offline itself should be rare too). So I think this doesn't deserve cc statble. But If a Fixes tag is
+required, I think it should be:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.11-rc1
+Fixes: f165b378bbdf ("mm: uninitialized struct page poisoning sanity checking")
 
-for you to fetch changes up to a3c10bed330b7ab401254a0c91098a03b04f1448:
+Thanks.
+.
 
-  erofs: silence uninitialized variable warning in z_erofs_scan_folio() (2024-07-13 12:47:34 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
- - More folio conversions for compressed inodes;
-
- - Stream decompressor (LZMA/DEFLATE/ZSTD) cleanups;
-
- - Minor tracepoint cleanup.
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      erofs: silence uninitialized variable warning in z_erofs_scan_folio()
-
-Gao Xiang (8):
-      erofs: convert z_erofs_pcluster_readmore() to folios
-      erofs: convert z_erofs_read_fragment() to folios
-      erofs: teach z_erofs_scan_folios() to handle multi-page folios
-      erofs: tidy up `struct z_erofs_bvec`
-      erofs: move each decompressor to its own source file
-      erofs: refine z_erofs_{init,exit}_subsystem()
-      erofs: tidy up stream decompressors
-      erofs: avoid refcounting short-lived pages
-
-Hongzhen Luo (1):
-      erofs: get rid of z_erofs_map_blocks_iter_* tracepoints
-
- fs/erofs/compress.h             |  61 ++++---
- fs/erofs/decompressor.c         | 148 ++++++++++++++---
- fs/erofs/decompressor_deflate.c | 149 +++++------------
- fs/erofs/decompressor_lzma.c    | 166 +++++++------------
- fs/erofs/decompressor_zstd.c    | 154 ++++++------------
- fs/erofs/internal.h             |  48 ++----
- fs/erofs/super.c                |  34 +---
- fs/erofs/zdata.c                | 346 ++++++++++++++++++++--------------------
- fs/erofs/zmap.c                 |   4 +-
- include/trace/events/erofs.h    |  32 +---
- 10 files changed, 496 insertions(+), 646 deletions(-)
 
