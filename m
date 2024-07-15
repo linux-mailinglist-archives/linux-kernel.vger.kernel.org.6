@@ -1,154 +1,199 @@
-Return-Path: <linux-kernel+bounces-252443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E058931324
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC66593132C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34214B21EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C311C21889
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3798E1891D7;
-	Mon, 15 Jul 2024 11:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7298189F5D;
+	Mon, 15 Jul 2024 11:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u6+1WA6i"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bhGVHCJY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4DE1891C9
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EEB188CBA
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721043280; cv=none; b=qTFy+bCOx6SoJ2wfDJ/BVVtM2Ak8sCQkjRxxpmVgKUqmtu7zf0ZNrSNKZSyWyNzMpr+gRNQPZmbqjg3h7MpTtZdiq+k0cP/fgbXezk/+xRyRFY6lDhvmoFITGaoGCQD00QdiBkjSW0YJ1hTUAzwutgy3Jg3NG6WGMdy2p2UowW8=
+	t=1721043415; cv=none; b=amVFjrvdE6/3Ry3XhvToGkwgP9YFCkJPDXi1pl8A7hKxE3SyQXhJFRkSW/KAtXbndi0kMClq08ubLL3VNsoeC0FS2JpoE9t8O3pCCezVNLkr48VZDwR2YanKSaWK+uwctNDSK+6NAXBU3atstrHQ3asl1/iB2xOxAyhXbhQqdBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721043280; c=relaxed/simple;
-	bh=E6mBSC8ElHiTZyKnY3hPc8mpcA+En3s7+2fII0D2J0w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QYFFK7OVH3hijpaSGYA1k2lFA9AXq2sr+K+6ZZRyglSavyvSvG5vVH1ejKsn/69+Tx6tzGshJ311KHd1rU+tQ1VlWvjE+4JuAI2M8zJH1Mz5uCY/k9U1UAY3p1rqJAbq6m0vVvQ3qQ99lok00rixS3Qm7azbI4bZosn3c0Ry72s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u6+1WA6i; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e04196b7603so4176484276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 04:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721043278; x=1721648078; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLF2QTwHcfWU+cCOWewnyPRM9tr8SbrtNYjr/V5uS+I=;
-        b=u6+1WA6idJIb9iI4c+EngFq5BsEPoM6lTq2ifVNw//+Z6GZNwgxS236wamSqG0KTbD
-         rE7kH3CFM9T9P81pg4uYSeOlDmnpH8+51D8BTfZIXxJJqRy7zL+nj+fWh219PG7GwmeW
-         Fp3DruQVFqHCxsnIyJh8vdWZLfN4v51o7RMIhjxXMvltFq6T87TtTKoLirdK58gLHzBg
-         KdKBm8eCpBx35EYPbOWKrtCwpAizUi5NruFLUkE4Wo8dgBGgNoe6AtnPuRjK4CTJYlny
-         Q/BoxjKuo++KyN7O8nyDMI3GQuVG4p019g8Vr3dHlynUTObZnOvwLyZAU731wmitaoG7
-         K+lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721043278; x=1721648078;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hLF2QTwHcfWU+cCOWewnyPRM9tr8SbrtNYjr/V5uS+I=;
-        b=Cj2x91zIVtutbVeIA9v633ohjyWpDBd4eMl19iWuBWLMUyq27Z+XvvpuGlZAZQj9Ux
-         8gdZL1GFHFlREjQed50+ueat+8RP4rlJQKLwTJlhxsQuhLFWUZRe4vtvWqlt2yuCgL76
-         OcDEGrcHqQiHikz4kv2X5bbth1w0NZY1VhMzaZs1R0GZca+MtJ3mN8nUpK90wj8RIqAG
-         u8CIE3Hs8mWbLX4v/ibJihrMNBELTkUxmAA463vgneqAuA1jzA0s8wThVwR60YRblpTB
-         r/zhr5WAyFX+o1Oq2OGH/jg37HuEAlYKUzj1pxtxtR1ncDhj18Q/G2re5FD3eIyWlBEP
-         XvaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWcNxXVDBHJU+KrFjk5MDapJOyn1U/RPUaeegTzqfFz7b8N6ix24W7IJDmdQ8QC+vqRZB0x8prVsjq6Ed9csXEixH92tTmgSTjcbt4
-X-Gm-Message-State: AOJu0Yz2Cc/gC+GOuzCqeJ6kyby2bnXiCoMLllJ3KC//doteJjkl/o3y
-	uzRfOzOEpPBmelsNYQemHCcBSGioQ4iA5nKp9iO/tAJ+alshRyIfmRsLbzSK7yd7A6fKMkEcjVN
-	SZlkgKCUhSzUktcZZoqPQzBFBc/mT6dvuo0TnJQ==
-X-Google-Smtp-Source: AGHT+IEOgknY00PdFF074Gq/NtklDAqCV92zohXf0HWlAfSqBXUpd0sF+ISF0QadFc7KrRiSoPziF6L8GOQGiXxwkCE=
-X-Received: by 2002:a25:ce05:0:b0:e03:4607:10ff with SMTP id
- 3f1490d57ef6-e041b11d3d3mr21076692276.42.1721043276900; Mon, 15 Jul 2024
- 04:34:36 -0700 (PDT)
+	s=arc-20240116; t=1721043415; c=relaxed/simple;
+	bh=wfcJXya/B1cl9E+80bHHXJa2FnjvkTEmW36pL00mEAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BBwisRiF3wmczjUrdxysO+uXzR98D40etxwzQ0gGPt/BPQUyhl+9JGRoTCl0QJO0dQoPeYAGEP64x/LM/DCQLxe/e8DEwr+zwVnrV/iL4bne9q1NgK9hnyTkNpTagP4GyEEZzC0Es1/KFO2mo9UauWJ17JrKS/erjbTV0sD/URI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bhGVHCJY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BFA1740E021B;
+	Mon, 15 Jul 2024 11:36:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1FCRgngiESKh; Mon, 15 Jul 2024 11:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721043406; bh=wVNtPXsRWfANqGhXjhREtyO8FzQ41t07I5DJbTV9G/g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bhGVHCJYZQMOZF5cChFUyyI1/cBlatUaJGMtj/fxIqBjxWr0R1fkjihOynmPLRc0Z
+	 Q5AhU8ydMZ6kqJYdCwESAbm5joYvrCUyd5JOTS2T40OysjfmSDc/g3WQN2xwLEWdrU
+	 +OtgyYqw/IMPCZzsv7Mv5WzC1mucGjekJ6Mt1GyNQvjhbsa/Nr17PS3NgrmCk2SnKy
+	 luFahqG/yw9asfcOlJ0EfbLdFMmsZ4cqlOdsiWvZ1B9v40M++w0hP5djKRrrFxavts
+	 i4h1jN3ffJg3XQlVV3pMzRUuEXtk7RIWHC1AJjpSZqFXBF9yLeldk4AWxzFJEuJm2q
+	 ltq9liE4p94aRhvVxRJ6Tc8YIJfzAi3g3tORdakA1YS4Wk5qInFR3cwl0PpLP4v/NF
+	 Cgs9uC9BX+6p//IqpjlGf2bKbewEujFXR8TRO7PRaVx+IJMumgYyIGxLlmhuyOgM7Y
+	 8senVHkzPohFTyy1PxljbkPNkmDwovHLrDMGCEGEHOA9BjGIb6tFP8O0E1HzAA/9Xl
+	 xYVZElUMIVAiLxxvgY4jjMeDts3OyepuQmri7lNvJGPev3u4tg3omezx/t/5bdBpxP
+	 mnv7bO4xBZWRVgwYaLEEYP9Yo2ubiHm+C+qJFdxctGH2VJDZUqKnSNm9a6zcc1Hrie
+	 xdQswoacwsOG5j1EAIjRmZHM=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7773F40E0027;
+	Mon, 15 Jul 2024 11:36:43 +0000 (UTC)
+Date: Mon, 15 Jul 2024 13:36:37 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/cc for v6.11-rc1
+Message-ID: <20240715113637.GAZpUJxSbBiAhXSGPl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
- <20240708-topic-cpr3h-v15-1-5bc8b8936489@linaro.org> <cd1c3450-1905-4d71-bcdd-5f880d743820@kernel.org>
- <94b2842b-6093-4c4d-a099-3e0a3198b753@linaro.org> <d35f5c94-7a86-4eea-bb0a-3f2785a25465@kernel.org>
-In-Reply-To: <d35f5c94-7a86-4eea-bb0a-3f2785a25465@kernel.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 15 Jul 2024 13:34:01 +0200
-Message-ID: <CAPDyKFqhmNqbZ9Xkg0tWHE5LavoNaGMyE3dKmAFtHdS5=x33NA@mail.gmail.com>
-Subject: Re: [PATCH v15 01/10] MAINTAINERS: Include new Qualcomm CPR drivers
- in the file list
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Andy Gross <agross@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Niklas Cassel <nks@flawful.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Robert Marko <robimarko@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Varadarajan Narayanan <quic_varada@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Tue, 9 Jul 2024 at 16:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 09/07/2024 11:49, Konrad Dybcio wrote:
-> > On 9.07.2024 11:04 AM, Krzysztof Kozlowski wrote:
-> >> On 08/07/2024 14:22, Konrad Dybcio wrote:
-> >>> Expand the Qualcomm Core Power Reduction section to include the files
-> >>> concerning CPR3+ support.
-> >>>
-> >>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>> ---
-> >>>  MAINTAINERS | 5 +++--
-> >>>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >>> index dcb37b635f2c..f3e013a52c16 100644
-> >>> --- a/MAINTAINERS
-> >>> +++ b/MAINTAINERS
-> >>> @@ -18687,14 +18687,15 @@ F:        Documentation/accel/qaic/
-> >>>  F: drivers/accel/qaic/
-> >>>  F: include/uapi/drm/qaic_accel.h
-> >>>
-> >>> -QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVER
-> >>> +QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVERS
-> >>>  M: Bjorn Andersson <andersson@kernel.org>
-> >>>  M: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>  L: linux-pm@vger.kernel.org
-> >>>  L: linux-arm-msm@vger.kernel.org
-> >>>  S: Maintained
-> >>>  F: Documentation/devicetree/bindings/power/avs/qcom,cpr.yaml
-> >>> -F: drivers/pmdomain/qcom/cpr.c
-> >>> +F: Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.yaml
-> >>
-> >> Maybe combine these two into:
-> >> Documentation/devicetree/bindings/power/avs/qcom,cpr*
-> >
-> > I think avs was proposed to be a subsystem/driver directory at some point
-> > and (adaptive voltage source? something like that) and this is the only file
-> > in that directory in bindings..
-> >
-> > Should we continue with this "class" of devices, or should I move qcom,cpr.yaml
-> > to soc?
->
-> Rather cpr3 should be moved to avs or some other power directory. "soc"
-> is fallback, junkyard for things without clear domain.
+Hi Linus,
 
-In my opinion, I would suggest dropping the
-"Documentation/devicetree/bindings/power/avs/" directory. We already
-have similar bindings sprinkled across various directories, see below.
-One less seems better to me.
+please pull the x86 confidential computing lineup for v6.11-rc1.
 
-Documentation/devicetree/bindings/arm/*
-Documentation/devicetree/bindings/firmware/*
-Documentation/devicetree/bindings/power/*
-Documentation/devicetree/bindings/soc/*
+Thx.
 
-Kind regards
-Uffe
+---
+
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_cc_for_v6.11_rc1
+
+for you to fetch changes up to 16df35946120fca2346c415fae429c821391eef8:
+
+  ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed (2024-06-17 17:46:28 +0200)
+
+----------------------------------------------------------------
+- Unrelated x86/cc changes queued here to avoid ugly cross-merges and
+  conflicts:
+
+   - Carve out CPU hotplug function declarations into a separate header
+     with the goal to be able to use the lockdep assertions in a more
+     flexible manner
+
+   - As a result, refactor cacheinfo code after carving out a function
+     to return the cache ID associated with a given cache level
+
+   -  Cleanups
+
+- Add support to be able to kexec TDX guests. For that
+
+   - Expand ACPI MADT CPU offlining support
+
+   - Add machinery to prepare CoCo guests memory before kexec-ing into a new
+     kernel
+
+   - Cleanup, readjust and massage related code
+
+----------------------------------------------------------------
+Ashish Kalra (1):
+      x86/mm: Do not zap page table entries mapping unaccepted memory table during kdump
+
+Borislav Petkov (1):
+      x86/relocate_kernel: Use named labels for less confusion
+
+Kirill A. Shutemov (17):
+      x86/acpi: Extract ACPI MADT wakeup code into a separate file
+      x86/apic: Mark acpi_mp_wake_* variables as __ro_after_init
+      cpu/hotplug: Add support for declaring CPU offlining not supported
+      cpu/hotplug, x86/acpi: Disable CPU offlining for ACPI MADT wakeup
+      x86/kexec: Keep CR4.MCE set during kexec for TDX guest
+      x86/mm: Make x86_platform.guest.enc_status_change_*() return an error
+      x86/mm: Return correct level from lookup_address() if pte is none
+      x86/tdx: Account shared memory
+      x86/mm: Add callbacks to prepare encrypted memory for kexec
+      x86/tdx: Convert shared memory back to private on kexec
+      x86/mm: Make e820__end_ram_pfn() cover E820_TYPE_ACPI ranges
+      x86/acpi: Rename fields in the acpi_madt_multiproc_wakeup structure
+      x86/acpi: Do not attempt to bring up secondary CPUs in the kexec case
+      x86/smp: Add smp_ops.stop_this_cpu() callback
+      x86/mm: Introduce kernel_ident_mapping_free()
+      x86/acpi: Add support for CPU offlining for ACPI MADT wakeup method
+      ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed
+
+Nikolay Borisov (1):
+      x86/kexec: Remove spurious unconditional JMP from from identity_mapped()
+
+Tony Luck (4):
+      cpu: Move CPU hotplug function declarations into their own header
+      cpu: Drop "extern" from function declarations in cpuhplock.h
+      cacheinfo: Add function to get cacheinfo for a given CPU and cache level
+      x86/resctrl: Replace open coded cacheinfo searches
+
+ arch/x86/Kconfig                          |   7 +
+ arch/x86/coco/core.c                      |   1 -
+ arch/x86/coco/tdx/tdx.c                   | 121 ++++++++++++-
+ arch/x86/hyperv/ivm.c                     |  22 +--
+ arch/x86/include/asm/acpi.h               |   7 +
+ arch/x86/include/asm/init.h               |   3 +
+ arch/x86/include/asm/pgtable.h            |   5 +
+ arch/x86/include/asm/pgtable_types.h      |   1 +
+ arch/x86/include/asm/set_memory.h         |   3 +
+ arch/x86/include/asm/smp.h                |   1 +
+ arch/x86/include/asm/x86_init.h           |  14 +-
+ arch/x86/kernel/acpi/Makefile             |   1 +
+ arch/x86/kernel/acpi/boot.c               |  86 +--------
+ arch/x86/kernel/acpi/madt_playdead.S      |  28 +++
+ arch/x86/kernel/acpi/madt_wakeup.c        | 292 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  17 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  14 +-
+ arch/x86/kernel/crash.c                   |  12 ++
+ arch/x86/kernel/e820.c                    |   9 +-
+ arch/x86/kernel/process.c                 |   7 +
+ arch/x86/kernel/reboot.c                  |  18 ++
+ arch/x86/kernel/relocate_kernel_64.S      |  27 +--
+ arch/x86/kernel/x86_init.c                |   8 +-
+ arch/x86/mm/ident_map.c                   |  73 ++++++++
+ arch/x86/mm/init_64.c                     |  16 +-
+ arch/x86/mm/mem_encrypt_amd.c             |   8 +-
+ arch/x86/mm/pat/set_memory.c              |  75 ++++++--
+ drivers/acpi/tables.c                     |  14 ++
+ include/acpi/actbl2.h                     |  19 +-
+ include/linux/cacheinfo.h                 |  25 ++-
+ include/linux/cc_platform.h               |  10 -
+ include/linux/cpu.h                       |  33 +---
+ include/linux/cpuhplock.h                 |  49 +++++
+ kernel/cpu.c                              |  12 +-
+ 34 files changed, 812 insertions(+), 226 deletions(-)
+ create mode 100644 arch/x86/kernel/acpi/madt_playdead.S
+ create mode 100644 arch/x86/kernel/acpi/madt_wakeup.c
+ create mode 100644 include/linux/cpuhplock.h
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
