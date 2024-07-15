@@ -1,244 +1,161 @@
-Return-Path: <linux-kernel+bounces-253079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE3F931C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2270C931C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CA6B2349D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:40:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9C1281188
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861A5481D5;
-	Mon, 15 Jul 2024 20:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6754E13AD33;
+	Mon, 15 Jul 2024 20:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yPWPewEk"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="caqq3xJt"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D8D13B5AE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A9D481D5
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721076039; cv=none; b=glFac3zxR/YuEbP4GJXdUav+7QC7n61BIR0k5xvponvqf/FgVGd6Ec3/jU9bISIVrW+0CeHb+U3D6r61DPf61kUEaGU7sf6e53me456yQggGprZYhvVmmAVra3d6I2oRn2bI0pBpfVPWwfBs7NT040PgolJImx4Qs9dQHCgJAM8=
+	t=1721076248; cv=none; b=iR2krG5nnu4MeOZqZjnJy8Fyl/IymY7gNipkM8c3LWXzvCBEzyY7zXy4ktiC1kUyerOSIEGlGXwD3YrXg+Dq7UojHyYGt5dcM2UYY4v6s93zSqq8oQjtwL9vv8RcBDTXpu1r/xzSg6wGOJyrjGT3NcjJ6TUU3g0UcvvxYFztKoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721076039; c=relaxed/simple;
-	bh=oSy7pWCF/gI0rY02+WvHWDsxr8vczHoYLSUS5+7+31E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pH4laxktxmgBgJS7F4vDVWWSyq6QqrsfEWK8LmhOIC2yJjymYDZep2pItkbkp5e6qUP0gmBwqR+OvfLmS672lfMfwJns1/cF+6rFGFEkrxDbpVe3kQKeeGlzl//KsNZePrPDOG9wIOvOUZie07/jmUJiXjFcqWtFaLprAAxAloY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yPWPewEk; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-81179185d4fso1507542241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721076037; x=1721680837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eS0BTNSokaMY/dxoDgKw9rrLuSVkHGouvH7zTfa5F8Y=;
-        b=yPWPewEk2HIlUxcXck4BYGsGLeEMtdjG/EihbfhLtN8JPK+hD0B68i4exYg49Aa26L
-         1vFb5XolTRkvGVoBmN8xNYfC1zKFGp5pRfL2vaZwIJ9aHFtFTn37cpL7vzcWIHwFyJdT
-         gh5832lBw1fToUNWEOnIplLZKHKxuSXv2VPGZLVBKtZssq8Vb45aJ6XpLtEeUNPH4CKW
-         GKiB2fp3baFbcoiukYQHFfWTXTGyTrTYBhLNXVbbm3Dw7MpAPpn6imESgM46TfhkSYCj
-         485aFPbNVDgkdHdCH1TZMRRJ7hzFWjv5GAF3vTmTILyxWrT9ReqTZIhzR+CWtqCs4CWL
-         8w2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721076037; x=1721680837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eS0BTNSokaMY/dxoDgKw9rrLuSVkHGouvH7zTfa5F8Y=;
-        b=C7NKXZHxrxqFCLm43Jijr9Nit5oxwEHYzKm80m2JqwDr7jAnLzm4OXaCE1KlGUhva3
-         LmsKQshtrdLlmbTQl1T6gHL7ncWb6lNNS8zwBxlQgdNYe6IlU9VNcQXpphn9qNRsS3TZ
-         WWaL/6upzvxFJAqa8nQv4BQDmjFHh8fY1osO21g5cfigPs7Sfhu4Fdrxg078uzakMu91
-         e1ordAqnSwH8/u4cQtbKZCnMCmRIcF1yAdggbGMGKd4diMk5UnJ+83BR4QOdb8V1Im2/
-         CZ6CUCTJhmDex/4AsZUfE2vKrd0wmt238oMvVt7bHxuUtvscNoC7WtPKfTAx00WF0bos
-         w5fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGNKK9uIsFTfotXOambxZaIAMHT5/bWtdlPvY2Ucxa+vpyKKlrRNrDCOqDx5dKAj/wLr6MNLzfQPnyqjNA5stPuzizGvm2hhF10iY4
-X-Gm-Message-State: AOJu0YyTz6O0drI2Dq/ZXwvce0re2PoUKmD8OVwlifNGwpSur73PT5Af
-	6pqYMpcKN7up13dn353fI3EU49o95WNDHAkByGPZozcg0iJJmQ88lQP7ZRmcPK2omr4IqyB3jWB
-	Y3xHRu+SmKZzsgVPhlJKk42uc+RpAExV0Pms3
-X-Google-Smtp-Source: AGHT+IEielVS1o0SbsVVS78wRgd1TDMQT3A8qiYKcy98d6bE9prj7+6YJzc5lzzm8j0RfdvdKEkpi5wqVYxF4RpD0X4=
-X-Received: by 2002:a05:6102:3c88:b0:48f:e86c:5e1d with SMTP id
- ada2fe7eead31-4914c4defeemr201499137.9.1721076036510; Mon, 15 Jul 2024
- 13:40:36 -0700 (PDT)
+	s=arc-20240116; t=1721076248; c=relaxed/simple;
+	bh=rGBskOZO+a8j3UbGA9lhaMgrvVJ0iVhdxMZpKep7/F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWaOVY0HGIKmMS+zI15/TkCR6MhHLnbS+ajBSB+UFIDL7uZF/w/ip7SRtzTlmYKBnsuLqn5BP3zd5XKPHIdsFX4EXWLpLrKUqffRGr843nbxxa/pRHY6GaQ8YCeKqAO1/rC1cpc4Niw2OHmqaVxCulO3p29vyUuzLNPtRjh1SKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=caqq3xJt; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721076239;
+	bh=rGBskOZO+a8j3UbGA9lhaMgrvVJ0iVhdxMZpKep7/F8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=caqq3xJttnkhGiaCc/OTEsbX3BglAA9d0zPTPA18xII3qvEh2Ph+Lch1XTl80/Wo0
+	 L7Opsq1ozXa4mKDSDhVxL4yuMyH24a5SCircU+Bgb0NYwckXsNQw69DiOlmtrDXv5g
+	 NGrIWXhd5LsHGi2rM6bqIMieRbJpX3i+zto6kTSjWQt3Lhr0UPKE87vcZN+J+wpB0q
+	 cMcu/cN/KoknIx6SYjI16jbHsbfbMsf3U9N/1DTVnoIO6s9NHtLk/5HLIXKBLFM40Z
+	 X6+465KjBSzATxbkWLkCvtsC7SbZ9BCMANzQ0WMstiG+6OCzJ4FhJiQvbYqw/jiWIU
+	 1+ShuDuWtmMjw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: alarumbe)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CE6923782063;
+	Mon, 15 Jul 2024 20:43:58 +0000 (UTC)
+Date: Mon, 15 Jul 2024 21:43:58 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Support fdinfo runtime and memory stats on Panthor
+Message-ID: <dqhnxhgho6spfh7xhw6yvs2iiqeqzeg63e6jqqpw2g7gkrfphn@dojsixyl4esv>
+References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
+ <ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617175818.58219-17-samitolvanen@google.com> <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
-In-Reply-To: <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Mon, 15 Jul 2024 20:39:59 +0000
-Message-ID: <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-To: Petr Pavlu <petr.pavlu@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae1ec268-fd76-48b5-94f9-761565153e12@arm.com>
 
-Hi Petr,
+Hi Steven, thanks for the review.
 
-On Wed, Jul 10, 2024 at 7:30=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
-ote:
->
-> On 6/17/24 19:58, Sami Tolvanen wrote:
-> > Hi folks,
-> >
-> > This series implements CONFIG_MODVERSIONS for Rust, an important
-> > feature for distributions like Android that want to ship Rust
-> > kernel modules, and depend on modversions to help ensure module ABI
-> > compatibility.
->
-> Thanks for working on this. Below is some feedback with my (open)SUSE
-> hat on, although it should be quite general.
+On 13.06.2024 16:28, Steven Price wrote:
+> On 06/06/2024 01:49, Adrián Larumbe wrote:
+> > This patch series enables userspace utilities like gputop and nvtop to
+> > query a render context's fdinfo file and figure out rates of engine
+> > and memory utilisation.
+> > 
+> > Previous discussion can be found at
+> > https://lore.kernel.org/dri-devel/20240423213240.91412-1-adrian.larumbe@collabora.com/
+> > 
+> > Changelog:
+> > v3:
+> >  - Fixed some nits and removed useless bounds check in panthor_sched.c
+> >  - Added support for sysfs profiling knob and optional job accounting
+> >  - Added new patches for calculating size of internal BO's
+> > v2:
+> >  - Split original first patch in two, one for FW CS cycle and timestamp
+> >  calculations and job accounting memory management, and a second one
+> >  that enables fdinfo.
+> >  - Moved NUM_INSTRS_PER_SLOT to the file prelude
+> >  - Removed nelem variable from the group's struct definition.
+> >  - Precompute size of group's syncobj BO to avoid code duplication.
+> >  - Some minor nits.
+> > 
+> > 
+> > Adrián Larumbe (7):
+> >   drm/panthor: introduce job cycle and timestamp accounting
+> >   drm/panthor: add DRM fdinfo support
+> >   drm/panthor: enable fdinfo for memory stats
+> >   drm/panthor: add sysfs knob for enabling job profiling
+> >   drm/panthor: support job accounting
+> >   drm/drm_file: add display of driver's internal memory size
+> >   drm/panthor: register size of internal objects through fdinfo
+> 
+> The general shape of what you end up with looks correct, but these
+> patches are now in a bit of a mess. It's confusing to review when the
+> accounting is added unconditionally and then a sysfs knob is added which
+> changes it all to be conditional. Equally that last patch (register size
+> of internal objects through fdinfo) includes a massive amount of churn
+> moving everything into an 'fdinfo' struct which really should be in a
+> separate patch.
+> 
+> Ideally this needs to be reworked into a logical series of patches with
+> knowledge of what's coming next. E.g. the first patch could introduce
+> the code for cycle/timestamp accounting but leave it disabled to be then
+> enabled by the sysfs knob patch.
+> 
+> One thing I did notice though is that I wasn't seeing the GPU frequency
+> change, looking more closely at this it seems like there's something
+> dodgy going on with the devfreq code. From what I can make out I often
+> end up in a situation where all contexts are idle every time tick_work()
+> is called - I think this is simply because tick_work() is scheduled with
+> a delay and by the time the delay has hit the work is complete. Nothing
+> to do with this series, but something that needs looking into. I'm on
+> holiday for a week but I'll try to look at this when I'm back.
 
-Great, thanks for taking a look!
+I've found why the current frequency value wasn't updating when manually
+adjusting the device's devfreq governor. Fix will be part of the next patch
+series revision.
 
-> > There have been earlier proposals [1][2] that would allow Rust
-> > modules to coexist with modversions, but none that actually implement
-> > symbol versioning. Unlike C, Rust source code doesn't have sufficient
-> > information about the final ABI, as the compiler has considerable
-> > freedom in adjusting structure layout for improved performance [3],
-> > for example, which makes using a source code parser like genksyms
-> > a non-starter. Based on Matt's suggestion and previous feedback
-> > from maintainers, this series uses DWARF debugging information for
-> > computing versions. DWARF is an established and relatively stable
-> > format, which includes all the necessary ABI details, and adding a
-> > CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
-> > reasonable trade-off.
->
-> Using the DWARF data makes sense to me. Distribution kernels are
-> normally built with debuginfo because one has to be able to debug them
-> later, unsurprisingly. Besides that, one now typically wants to use BPF
-> together with built-in BTF data (CONFIG_DEBUG_INFO_BTF), which also
-> requires building the kernel with debuginfo.
->
-> I would however keep in mind that producing all DWARF data has some
-> cost. From a quick test, an x86_64-defconfig build is ~30% slower for me
-> with CONFIG_DEBUG_INFO=3Dy. The current genksyms tool allows to have
-> debuginfo disabled when backporting some patches and consequently have
-> a quicker feedback whether modversions changed. This option would
-> disappear with gendwarfksyms but I think it is acceptable.
+Adrian
 
-Yes, this matches my benchmarks too. Presumably folks who care about
-build times and are not interested in debugging information or Rust
-support would prefer genksyms instead. I'm planning to turn this into
-a Kconfig choice in the next version.
+> Steve
+> 
+> >  Documentation/gpu/drm-usage-stats.rst     |   4 +
+> >  drivers/gpu/drm/drm_file.c                |   9 +-
+> >  drivers/gpu/drm/msm/msm_drv.c             |   2 +-
+> >  drivers/gpu/drm/panfrost/panfrost_drv.c   |   2 +-
+> >  drivers/gpu/drm/panthor/panthor_devfreq.c |  10 +
+> >  drivers/gpu/drm/panthor/panthor_device.c  |   2 +
+> >  drivers/gpu/drm/panthor/panthor_device.h  |  21 ++
+> >  drivers/gpu/drm/panthor/panthor_drv.c     |  83 +++++-
+> >  drivers/gpu/drm/panthor/panthor_fw.c      |  16 +-
+> >  drivers/gpu/drm/panthor/panthor_fw.h      |   5 +-
+> >  drivers/gpu/drm/panthor/panthor_gem.c     |  67 ++++-
+> >  drivers/gpu/drm/panthor/panthor_gem.h     |  16 +-
+> >  drivers/gpu/drm/panthor/panthor_heap.c    |  23 +-
+> >  drivers/gpu/drm/panthor/panthor_heap.h    |   6 +-
+> >  drivers/gpu/drm/panthor/panthor_mmu.c     |   8 +-
+> >  drivers/gpu/drm/panthor/panthor_mmu.h     |   3 +-
+> >  drivers/gpu/drm/panthor/panthor_sched.c   | 304 +++++++++++++++++++---
+> >  include/drm/drm_file.h                    |   7 +-
+> >  18 files changed, 522 insertions(+), 66 deletions(-)
+> > 
+> > 
+> > base-commit: 310ec03841a36e3f45fb528f0dfdfe5b9e84b037
 
-> > The first 12 patches of this series add a small tool for computing
-> > symbol versions from DWARF, called gendwarfksyms. When passed a list
-> > of exported symbols, the tool generates an expanded type string
-> > for each symbol, and computes symbol CRCs similarly to genksyms.
-> > gendwarfksyms is written in C and uses libdw to process DWARF, mainly
-> > because of the existing support for C host tools that use elfutils
-> > (e.g., objtool).
->
-> In addition to calculating CRCs of exported symbols, genksyms has other
-> features which I think are important.
->
-> Firstly, the genksyms tool has a human-readable storage format for input
-> data used in the calculation of symbol CRCs. Setting the make variable
-> KBUILD_SYMTYPES enables dumping this data and storing it in *.symtypes
-> files.
->
-> When a developer later modifies the kernel and wants to check if some
-> symbols have changed, they can take these files and feed them as
-> *.symref back to genksyms. This allows the tool to provide an actual
-> reason why some symbols have changed, instead of just printing that
-> their CRCs are different.
->
-> Is there any plan to add the same functionality to gendwarfksyms, or do
-> you envison that people will use libabigail, Symbol-Type Graph, or
-> another tool for making this type of comparison?
-
-gendwarfksyms also uses human-readable input for the CRC calculations,
-and it prints out the input strings with the --debug option. I plan to
-hook this up to KBUILD_SYMTYPES in v2. It should be convenient enough
-to simply compare the pretty-printed output with diff, so I'm not sure
-if a built-in comparison option is needed. Any other DWARF analysis
-tool can be used to spot the differences too, as you mentioned.
-
-> Secondly, when distributions want to maintain stable kABI, they need to
-> be able to deal with patch backports that add new members to structures.
-> One common approach is to have placeholders in important structures
-> which can be later replaced by the new members as needed. __GENKSYMS__
-> ifdefs are then used at the C source level to hide these kABI-compatible
-> changes from genksyms.
->
-> Gendwarfksyms works on the resulting binary and so using such ifdefs
-> wouldn't work. Instead, I suspect that what is required is a mechanism
-> to tell the tool that a given change is ok, probably by allowing to
-> specify some map from the original definition to the new one.
->
-> Is there a plan to implement something like this, or how could it be
-> addressed?
-
-That's a great question. Here's what Android uses currently to
-maintain a stable kABI, I assume you're doing something similar?
-
-https://android.googlesource.com/kernel/common/+/refs/heads/android15-6.6/i=
-nclude/linux/android_kabi.h
-
-If using unions here is acceptable to everyone, a simple solution
-would be to use a known name prefix for the reserved members and teach
-gendwarfksyms to only print out the original type for the replaced
-ones. For example:
-
-The initial placeholder:
-
-    u8 __kabi_reserved_1[8];
-
-After replacement:
-
-    union {
-            u64 new_member;
-            struct {
-                    u8 __kabi_reserved_1[8];
-            };
-    }
-
-Here gendwarfksyms would see the __kabi_reserved prefix and only use
-u8 [8] for the CRC calculation. Does this sound reasonable?
-
-Greg, I know you've been dealing with this for a long time, any thoughts?
-
-> > Another compatibility issue is fitting the extremely long mangled
-> > Rust symbol names into struct modversion_info, which can only hold
-> > 55-character names (on 64-bit systems). Previous proposals suggested
-> > changing the structure to support longer names, but the conclusion was
-> > that we cannot break userspace tools that parse the version table.
-> >
-> > The next two patches of the series implement support for hashed
-> > symbol names in struct modversion_info, where names longer than 55
-> > characters are hashed, and the hash is stored in the name field. To
-> > avoid breaking userspace tools, the binary hash is prefixed with a
-> > null-terminated string containing the name of the hash function. While
-> > userspace tools can later be updated to potentially produce more
-> > useful information about the long symbols, this allows them to
-> > continue working in the meantime.
->
-> I think this approach with hashed names is quite complex. I'd personally
-> be also in favor of having a new section with variable-length strings to
-> store the names of imported symbols. As yet another alternative, it
-> should be also possible to refer directly into .symtab/.strtab to avoid
-> duplicating the names, but I suspect it would be non-trivial to
-> implement.
-
-Thanks for the feedback. I think for the next version we'll look into
-reviving the relevant bits of Matt's previous patch series, which
-implemented a new section that supports variable-length names:
-
-https://lore.kernel.org/lkml/CAGSQo03R+HYcX2JJDSm7LA8V370s_3hrbTBc2s51Pp9nx=
-WTz5w@mail.gmail.com/
-
-Sami
 
