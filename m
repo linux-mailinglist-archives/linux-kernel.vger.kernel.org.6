@@ -1,304 +1,190 @@
-Return-Path: <linux-kernel+bounces-252567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0783A931551
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B48931559
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 15:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E54CB210BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:05:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46641C2185E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0222B18C320;
-	Mon, 15 Jul 2024 13:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahT1SP/X"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE8518D4A8;
+	Mon, 15 Jul 2024 13:08:36 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3472172BA6
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 13:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABBB18C16D;
+	Mon, 15 Jul 2024 13:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721048745; cv=none; b=O+JvMVnheQdybp6yW+3kt1AetpUA3+FFag5z6/UnVqOYlRDOee4HUdGqtWkx6h0QzG6lqHwZLfxJ49AEWE0ZTV+hqRsvIa0WhsWfwq0ojatFr/NtqW7vlHZlXR3XORTaRTqqtxOH9Cl2OJIWJBDykd7bAbDs8PaX2GabN95SC08=
+	t=1721048916; cv=none; b=cx56DDVcdtC9TVRL3drOsBEvzJPwQsHJqbE6KWSOMFXqFSY9Uf3uiQTA1ZD3RClYPqIzYaRH2R0M1f2CgQCELyWDP0RfMFI5DzZwJpMUepa4bMcaMlYqMDZq1YNgcZPQHqmA79xNulRMVid0CwRM2mv0a2H92n187wjp069q/Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721048745; c=relaxed/simple;
-	bh=/1PS59mVRV6Xv1lVlTssQUd2p/SagHtxgxIvX5Ft0Ns=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:Cc:
-	 In-Reply-To:Content-Type; b=m39v75X/XKHpsZg0TE0t5XPtzQgnWdRkh2xY70PGmSespT23Hi0M4zHTUACCe1+PlX6KoOpeZX5Z8bIIqACIR0l4wMVTW0Gk9ND2ktc5HXjZ08NtbN6TZevpP3/hIrUovzuvYXT9RzpCH7RKLfIYOM036EUunznXAYNoXuVo5U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahT1SP/X; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1721048916; c=relaxed/simple;
+	bh=EDZP059plenFt28uw0V0eC5w9BbEx78ROF3IDIofSYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1j1iYubhbJTP31GVg+kKuYAJPoh7zzWgi6xNqhJxweYCmelvvKtLSdaoOUIt6VUSMmtADdnt6JjDcj033doxC0VospaafHM9cNs+vf6YRte0PosdZyue9RrT+fKrjkCgEJElDWdulyjOk6vLEiQ9wgVrNpZsbYDyphWwDfqgmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7611b6a617cso2528984a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 06:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721048743; x=1721653543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g8TzOv/RkYZEdAKVPlxezOS+UCgONHV6iTjvvjprWNI=;
-        b=ahT1SP/XXjSREStKTKpYrzAvmMO6k1VHH7dgKJ5S5hgMaGTSma7SO3eKClTF4AjJRx
-         hdDmtZ4tooC7uQ4rGC1OnlNjagNk3QGm8PWrFNs10CxcijKiAOnsV7RJBgSC86PkPwYM
-         MtEyo7sQiuYeIEVqM5MGra15tdFDhx9+nOm6/V0+ISSMB1/CZMJ6Da8iOQxdEzLx0TVY
-         CtiHXZO7LFtkeyhKl5tirn9fHVCj/bfDiUKxJ4pWnQi4xZrbacH47Ue6NsRZRuOrKzF3
-         6p9nG/1z3GHAiN3ZHSFq6WToXEDWflqExBlRG5f3d7DI49qT5u6y2U/dP57RFq1fBnig
-         BgkA==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58c2e5e8649so7880915a12.1;
+        Mon, 15 Jul 2024 06:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721048743; x=1721653543;
-        h=content-transfer-encoding:in-reply-to:cc:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8TzOv/RkYZEdAKVPlxezOS+UCgONHV6iTjvvjprWNI=;
-        b=Y4pfu4G7v43+TMQgEJ4sL0DQE3MoYF2UYE2OkWCER+hg9Jax7I8Vogzz2fZzEc0RYc
-         etAV5g0ttFuyiIXmgQB3mRrZXT5o2j3usD7/L7uzzAr/zOZXxrC7fjsgGxzjNWYxowhP
-         dwaOVkNuvYlnwx6FAkR5SwVtg/xfRifkjUHbYl004OhqGXKLIB9EpB7hxgagY8eFz86P
-         5+N4fXUxhdPaDbYRATvQc+iXveS1HXtbUJ1MJI8n0i9rXNoN5j/D6fVB6baZ9Ql7xmyu
-         kTqexYR4V+d6zwD0QQqR+RJkZDDfC2loLZVG/eN/UxiHhzRFWfWsF4H4GUxijQ/yS3n0
-         Yx+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWr22CU7L2g0i2IJqqsddMsuurJlU8jUrJfEVhFPIjWJize098VYow6UuntAT+sMA9LcgEbGnc2SVgIuEa11hf6eT0SaZSP7GPKLlE
-X-Gm-Message-State: AOJu0Yx5L0nbkpB2ZnJVxnWjbddQecqUSU7FIk+IscBnzSfaQOYfbbgf
-	ZZAxoxpXqHY1mvFhTqEvdGoqIYgjTQK0LweHqw4eLV0ilpI6Hdv/
-X-Google-Smtp-Source: AGHT+IGhIlYVyzNODcuDIe1egfQbfKzXzT3jHQd/TRdcrVb1VM0jAbOottvs5cCYcJiDLyj5GUQKgA==
-X-Received: by 2002:a05:6a21:680b:b0:1c0:f785:b2c3 with SMTP id adf61e73a8af0-1c298216488mr16020638637.2.1721048742763;
-        Mon, 15 Jul 2024 06:05:42 -0700 (PDT)
-Received: from [10.125.112.27] (014136220210.static.ctinets.com. [14.136.220.210])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb9a5d2sm40194595ad.67.2024.07.15.06.05.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 06:05:42 -0700 (PDT)
-Message-ID: <e53a487f-e811-45de-a188-cadffd8a3a97@gmail.com>
-Date: Mon, 15 Jul 2024 09:05:36 -0400
+        d=1e100.net; s=20230601; t=1721048913; x=1721653713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mN9oE6P50Gu84NfU0zGEZkck2rnm4DusfnagcSf9agQ=;
+        b=xVGDpAubxuJ1uawqCWU43qVtUxsXyolIbzRKAHVOeVO2ihpcY01FUVvRkSiOwi6E9w
+         WjPA6TvB4ZrFC8SdslRn8Xk8JwRHgU+n/AGDDukA6FCNv6isLDNmRMzSCsfrdKPtnccJ
+         Ww4xvCXVExwtkz10/5PXLXAqJcowC13VENpeh5NYknmb2bfhVACjEjGlgl7vrZjLK5A6
+         ZMy9IoiRIHBtljnn+RQhFdoeRT637U8NTEVNM/W9LFk+Iq/apyZRkWHg9XkIBnm6ru6a
+         XTbQkE8uGN58O6wwWAe7EkWB5AYMUZyH5kuHFGvl6lM2vrLdVScP/WiSQkgMLD2QPpdp
+         efKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgivJ+5a/SbAWp0UjsHaxocsA0qMqyeb3+ubXOY5C87W5dB+YR/ZjZl7O4E6pbmg33JZLD0G2nvhe5uJlMv5huO9jlx55TOHWERPurSIdJ5dklcrhWhTV2wPRRdZwRNUAmUoCpCeahuas=
+X-Gm-Message-State: AOJu0Ywc/M8pG7mb5oR/8cIcE/Q68Xoablkw72bbvyYe/6CaXfDvO4v2
+	tv2WeIY0QiTs/CYTf2L+yDV9luSCS0Ok+bMKwE9ajNb4AGLeyH3l
+X-Google-Smtp-Source: AGHT+IGV55i1WARhIjOu9gWKsRuWftTHKuhl6H8KDHNbKUVqZsCJ02tr9Li02Zw3eyhBW48plv88Xw==
+X-Received: by 2002:a05:6402:50cc:b0:585:9e73:8ac6 with SMTP id 4fb4d7f45d1cf-59964ac31f1mr8756266a12.16.1721048912446;
+        Mon, 15 Jul 2024 06:08:32 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f73ce200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f73c:e200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b24a76fefsm3349204a12.16.2024.07.15.06.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 06:08:31 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: 
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Qu Wenruo <wqu@suse.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4] btrfs: don't hold dev_replace rwsem over whole of btrfs_map_block
+Date: Mon, 15 Jul 2024 15:08:19 +0200
+Message-ID: <20240715130820.19907-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sched/fair: Preempt if the current process is
- ineligible
-From: John Stills <johnstills191@gmail.com>
-To: Chunxin Zang <spring.cxz@gmail.com>
-References: <20240613131437.9555-1-spring.cxz@gmail.com>
- <20240620125155.GY31592@noisy.programming.kicks-ass.net>
- <8B4C4FA2-C261-4723-ABA4-2EF3CBBB2C0E@gmail.com>
- <36B22124-E952-4508-A4A3-5AE2C944FBDF@gmail.com>
- <9e56b874-724e-4c2e-8e7d-db6317cb414c@gmail.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org,
- Chen Yu <yu.c.chen@intel.com>, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, linux-kernel@vger.kernel.org,
- Mike Galbraith <efault@gmx.de>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Honglei Wang <jameshongleiwang@126.com>, Chen Yang <yangchen11@lixiang.com>,
- Chunxin Zang <zangchunxin@lixiang.com>
-In-Reply-To: <9e56b874-724e-4c2e-8e7d-db6317cb414c@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-> On Jun 21, 2024, at 21:53, Chunxin Zang <spring.cxz@gmail.com> wrote:
->
->
->
->> On Jun 20, 2024, at 20:51, Peter Zijlstra <peterz@infradead.org> wrote:
->>
->> On Thu, Jun 13, 2024 at 09:14:37PM +0800, Chunxin Zang wrote:
->>> ---
->>> kernel/sched/fair.c | 28 +++++++++++++++++++++-------
->>> 1 file changed, 21 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 03be0d1330a6..21ef610ddb14 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -745,6 +745,15 @@ int entity_eligible(struct cfs_rq *cfs_rq, 
->>> struct sched_entity *se)
->>> return vruntime_eligible(cfs_rq, se->vruntime);
->>> }
->>>
->>> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, struct 
->>> sched_entity *se)
->>> +{
->>> + if (sched_feat(RUN_TO_PARITY) || cfs_rq->nr_running <= 1 ||
->>> +    entity_eligible(cfs_rq, se))
->>> + return false;
->>> +
->>> + return true;
->>> +}
->>> +
->>> static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
->>> {
->>> u64 min_vruntime = cfs_rq->min_vruntime;
->>> @@ -974,11 +983,13 @@ static void clear_buddies(struct cfs_rq 
->>> *cfs_rq, struct sched_entity *se);
->>> /*
->>> * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
->>> * this is probably good enough.
->>> + *
->>> + * return true if se need preempt
->>> */
->>> -static void update_deadline(struct cfs_rq *cfs_rq, struct 
->>> sched_entity *se)
->>> +static bool update_deadline(struct cfs_rq *cfs_rq, struct 
->>> sched_entity *se)
->>> {
->>> if ((s64)(se->vruntime - se->deadline) < 0)
->>> - return;
->>> + return false;
->>>
->>> /*
->>> * For EEVDF the virtual time slope is determined by w_i (iow.
->>> @@ -995,10 +1006,7 @@ static void update_deadline(struct cfs_rq 
->>> *cfs_rq, struct sched_entity *se)
->>> /*
->>> * The task has consumed its request, reschedule.
->>> */
->>> - if (cfs_rq->nr_running > 1) {
->>> - resched_curr(rq_of(cfs_rq));
->>> - clear_buddies(cfs_rq, se);
->>> - }
->>> + return true;
->>> }
->>>
->>> #include "pelt.h"
->>> @@ -1157,6 +1165,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
->>> {
->>> struct sched_entity *curr = cfs_rq->curr;
->>> s64 delta_exec;
->>> + bool need_preempt;
->>>
->>> if (unlikely(!curr))
->>> return;
->>> @@ -1166,12 +1175,17 @@ static void update_curr(struct cfs_rq *cfs_rq)
->>> return;
->>>
->>> curr->vruntime += calc_delta_fair(delta_exec, curr);
->>> - update_deadline(cfs_rq, curr);
->>> + need_preempt = update_deadline(cfs_rq, curr);
->>> update_min_vruntime(cfs_rq);
->>>
->>> if (entity_is_task(curr))
->>> update_curr_task(task_of(curr), delta_exec);
->>>
->>> + if (need_preempt || check_entity_need_preempt(cfs_rq, curr)) {
->>> + resched_curr(rq_of(cfs_rq));
->>> + clear_buddies(cfs_rq, curr);
->>> + }
->>> +
->>> account_cfs_rq_runtime(cfs_rq, delta_exec);
->>> }
->> Yeah sorry no. This will mess up the steady state schedule. At best we
->> can do something like the below which will make PREEMPT_SHORT a little
->> more effective I suppose.
->>
->>
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -985,10 +985,10 @@ static void clear_buddies(struct cfs_rq
->> * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
->> * this is probably good enough.
->> */
->> -static void update_deadline(struct cfs_rq *cfs_rq, struct 
->> sched_entity *se)
->> +static bool update_deadline(struct cfs_rq *cfs_rq, struct 
->> sched_entity *se)
->> {
->> if ((s64)(se->vruntime - se->deadline) < 0)
->> - return;
->> + return false;
->>
->> /*
->> * For EEVDF the virtual time slope is determined by w_i (iow.
->> @@ -1005,10 +1005,7 @@ static void update_deadline(struct cfs_r
->> /*
->> * The task has consumed its request, reschedule.
->> */
->> - if (cfs_rq->nr_running > 1) {
->> - resched_curr(rq_of(cfs_rq));
->> - clear_buddies(cfs_rq, se);
->> - }
->> + return true;
->> }
->>
->> #include "pelt.h"
->> @@ -1168,6 +1165,8 @@ static void update_curr(struct cfs_rq *c
->> {
->> struct sched_entity *curr = cfs_rq->curr;
->> s64 delta_exec;
->> + struct rq *rq;
->> + bool resched;
->>
->> if (unlikely(!curr))
->> return;
->> @@ -1177,13 +1176,23 @@ static void update_curr(struct cfs_rq *c
->> return;
->>
->> curr->vruntime += calc_delta_fair(delta_exec, curr);
->> - update_deadline(cfs_rq, curr);
->> + resched = update_deadline(cfs_rq, curr);
->> update_min_vruntime(cfs_rq);
->>
->> if (entity_is_task(curr))
->> update_curr_task(task_of(curr), delta_exec);
->>
->> account_cfs_rq_runtime(cfs_rq, delta_exec);
->> +
->> + rq = rq_of(cfs_rq);
->> + if (rq->nr_running == 1)
->> + return;
->> +
->> + if (resched ||
->> +    (curr->vlag != curr->deadline && !entity_eligible(cfs_rq, curr))) {
->> + resched_curr(rq);
->> + clear_buddies(cfs_rq, curr);
->> + }
->> }
->>
->> static void update_curr_fair(struct rq *rq)
-> Hi peter
->
-> Got it. If I understand correctly, modifications to basic interfaces 
-> like update_curr
-> should be appropriate and not too aggressive. Additionally, these 
-> changes have
-> already shown significant improvements in scheduling delay (test 
-> results are at the
-> end). How about we limit this patch to these changes for now? 
-> Actually, I also want
-> to try a more aggressive preemption under NO_RUN_TO_PARITY, but it 
-> might be
-> better to consider this comprehensively after integrating the changes 
-> from your
-> latest branch.
->
->
-> Comparison of this modification with the mainline EEVDF in cyclictest.
->
->                                  EEVDF      PATCH EEVDF-NO_PARITY  
-> PATCH-NO_PARITY
->
->   LNICE(-19)    # Avg Latencies: 00191      00162      00089 00080
->
->   LNICE(0)      # Avg Latencies: 00466      00404      00289 00285
->
->   LNICE(19)     # Avg Latencies: 37151      38781      18293 19315
->
-> thanks
-> Chunxin
->
->
-Hi Chunxin
+Don't hold the dev_replace rwsem for the entirety of btrfs_map_block().
 
-The latency test results look great. Have you conducted tests in other 
-scenarios, such
-as performance testing in production networks or machine learning?
+It is only needed to protect
+a) calls to find_live_mirror() and
+b) calling into handle_ops_on_dev_replace().
 
+But there is no need to hold the rwsem for any kind of set_io_stripe()
+calls.
+
+So relax taking the dev_replace rwsem to only protect both cases and check
+if the device replace status has changed in the meantime, for which we have
+to re-do the find_live_mirror() calls.
+
+This fixes a deadlock on raid-stripe-tree where device replace performs a
+scrub operation, which in turn calls into btrfs_map_block() to find the
+physical location of the block.
+
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+---
+Cc: Filipe Manana <fdmanana@suse.com>
+
+Changes in v4:
+- Free bioc in case we need to redo the mapping
+Link to v3:
+https://lore.kernel.org/linux-btrfs/20240712-b4-rst-updates-v3-1-5cf27dac98a7@kernel.org
+---
+ fs/btrfs/volumes.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index fcedc43ef291..9437e779d020 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6650,14 +6650,9 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	max_len = btrfs_max_io_len(map, map_offset, &io_geom);
+ 	*length = min_t(u64, map->chunk_len - map_offset, max_len);
+ 
++again:
+ 	down_read(&dev_replace->rwsem);
+ 	dev_replace_is_ongoing = btrfs_dev_replace_is_ongoing(dev_replace);
+-	/*
+-	 * Hold the semaphore for read during the whole operation, write is
+-	 * requested at commit time but must wait.
+-	 */
+-	if (!dev_replace_is_ongoing)
+-		up_read(&dev_replace->rwsem);
+ 
+ 	switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
+ 	case BTRFS_BLOCK_GROUP_RAID0:
+@@ -6695,6 +6690,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 			   "stripe index math went horribly wrong, got stripe_index=%u, num_stripes=%u",
+ 			   io_geom.stripe_index, map->num_stripes);
+ 		ret = -EINVAL;
++		up_read(&dev_replace->rwsem);
+ 		goto out;
+ 	}
+ 
+@@ -6710,6 +6706,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 		 */
+ 		num_alloc_stripes += 2;
+ 
++	up_read(&dev_replace->rwsem);
++
+ 	/*
+ 	 * If this I/O maps to a single device, try to return the device and
+ 	 * physical block information on the stack instead of allocating an
+@@ -6782,6 +6780,19 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 		goto out;
+ 	}
+ 
++	/*
++	 * Check if something changed the dev_replace state since
++	 * we've checked it for the last time and if redo the whole
++	 * mapping operation.
++	 */
++	down_read(&dev_replace->rwsem);
++	if (dev_replace_is_ongoing !=
++	    btrfs_dev_replace_is_ongoing(dev_replace)) {
++		btrfs_put_bioc(bioc);
++		up_read(&dev_replace->rwsem);
++		goto again;
++	}
++
+ 	if (op != BTRFS_MAP_READ)
+ 		io_geom.max_errors = btrfs_chunk_max_errors(map);
+ 
+@@ -6789,6 +6800,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	    op != BTRFS_MAP_READ) {
+ 		handle_ops_on_dev_replace(bioc, dev_replace, logical, &io_geom);
+ 	}
++	up_read(&dev_replace->rwsem);
+ 
+ 	*bioc_ret = bioc;
+ 	bioc->num_stripes = io_geom.num_stripes;
+@@ -6796,11 +6808,6 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	bioc->mirror_num = io_geom.mirror_num;
+ 
+ out:
+-	if (dev_replace_is_ongoing) {
+-		lockdep_assert_held(&dev_replace->rwsem);
+-		/* Unlock and let waiting writers proceed */
+-		up_read(&dev_replace->rwsem);
+-	}
+ 	btrfs_free_chunk_map(map);
+ 	return ret;
+ }
 -- 
-thanks,
-John
-
-
+2.43.0
 
 
