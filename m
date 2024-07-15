@@ -1,115 +1,209 @@
-Return-Path: <linux-kernel+bounces-252954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EBC931A88
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9CFB931A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABD91F2261E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:54:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16BC5B22460
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF798763E7;
-	Mon, 15 Jul 2024 18:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DBC7D07D;
+	Mon, 15 Jul 2024 18:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nO91fFva"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzM56u57"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A851C687
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0805025E;
+	Mon, 15 Jul 2024 18:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721069655; cv=none; b=QfzQcjc6WtCiWudJUiRKO1Lj0I5IMnKTAqejv+xweA/NLDPNb6KV14towh1ZOtVKUMMgrlRS1nLGIH+JXZ8fzVlhN23baOLXyDWmFqpVhDofpz+LgWdJ9v+vYVMm03EA2QNJ2ZHZmY7PvFUE9lQp1H7QBEnqMQOeYcBR3yNtI2w=
+	t=1721069748; cv=none; b=Y5WBwW3QRdtlUyPj1eLe5qw3hFDpDYSwJ8n4yJtU8fFZNqvU7U7z/dLl2QI30DkDgMOdXnQ6Bfo1u3D5+RkK5r81j4+k0WP2MLNKtdA/Hf+qfjYx7NGoUOdJNpoVCjCBB/qPxHzC+kqBjkgacgt4xqYIl5u8l8JiUt2wrFkSL2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721069655; c=relaxed/simple;
-	bh=x7K9WmffnsoocnAYmMUcSmMdv//kjNrchqx15DlCGsw=;
+	s=arc-20240116; t=1721069748; c=relaxed/simple;
+	bh=fTaVUp5ixXjyj/IQvLPoiMP1xh8WB5ilzwlfi5SQ9Uo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZ+wUEWU2wKdhOiJjrw+MF66pJlU/gaaWvEIk8yP2M1AziEUWlrGxlKMFPEQuoN5IYXM9bE0sp/0mhU7vzT69AWeqquz4QSyO3BOhhGMLHmIC2WO75d6U6uXzggwH26Vx2UBnQwnNxTNEc7ThM60cGa0Zakhp0TJSJby5JRy3Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nO91fFva; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc312a36f9so34875ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721069653; x=1721674453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x7K9WmffnsoocnAYmMUcSmMdv//kjNrchqx15DlCGsw=;
-        b=nO91fFvakVwOoreYPYmshC6Loa6fGC3AZldqVAXec3OEobuZGVRtFOz4jzb0Zddsrk
-         wbctwsjoz6TrG65YMo+0ZYeEBrfVre+rdS93HJrDmy4euNNAYFZYH+MRBmL5sJe5Y8Rp
-         27mdhXdhK78VqQJxCNL7oMwVaNceFou3rrIdxV97TVjLPMkr7+XOvquBvh7/NOOay07k
-         ErTzgnqgC7lxIFj9eBkqgLP8TweB5P7BFDpHS0cglUfUkJV1npF8VgqYtailgmfJiYLv
-         gvdu5RMG7ToFxv6nxNKw3jHauxpLcVgXpEfFZDpNSLd/OmTNgAcqxUIxo83KvKHdb61k
-         TKzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721069653; x=1721674453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x7K9WmffnsoocnAYmMUcSmMdv//kjNrchqx15DlCGsw=;
-        b=vukBqCZx2+dIZrANKfeh4UxnNsHXs/MsAaodce9gV/XAdu2Co9Ha1yEt2AGajFXgQa
-         U+kecitEFNO6nKsauhSV7UX80yGKD7mnPTH5hSEAGygJ+URFg/q+Az8/n+8PBJDgptRy
-         /pRBIpKH6K3pQRC6Mk4a1lXHuUrQFZyRsT0BfTQ1OWly24t/8w2VKvwabOAFTpNEq2jO
-         Qjha0EXaRSrLB/lAaveckXA/eXmg6bfDFDWKTwUGOG1060ofEKPyT0g2rSrvIM691sHI
-         SvIlqnAeFcdKX37kUi8N5dx++JNGbZgBd7CF6aP3IHy8t+ihU5lDL3kSB4/22Vq91B+m
-         qVGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH3COaKRj9jpxExE1/FjkThtpWpCr2opWokz55f7NrTlFCSqqfny0KWkADA58/gmKuDNgp/brkHP1bPgLipi+A7gaz04Sof+qTkMdd
-X-Gm-Message-State: AOJu0Yyxb/CASWzVxXHRdktcz+8tNzg9jRZt5a3aVEqw6LpwHKCCgVnZ
-	Qq7MMo64caU0DVT9nra/9+CIXIQ+aPe8NOqMjcJAW4/PefvaYfaac207T10TssxT3wcRKY5/PBE
-	iT9Lu3ahpmzpbd9xi8gSSxi1enZ0Omw2QEMA4
-X-Google-Smtp-Source: AGHT+IHdXl0gIzk+FfvAunF99BLrAefPFSM3Vv+rGhx1OBGRoBiPzTJ727s5npnkAi9T5hKY5R+bKCct6IInzP2GQmY=
-X-Received: by 2002:a17:903:24f:b0:1e4:3a10:5944 with SMTP id
- d9443c01a7336-1fc3c774ca5mr424545ad.14.1721069652789; Mon, 15 Jul 2024
- 11:54:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=N1SFmn5YwaduPOhBvv5lOhT724LOHwwrfnHaWQLKJW1UcrhMVOSCUAnAveO+yEC8kHTT4Ooar3cTghWAALBYBMyaOTk3RXy645Jf7Xv6leQUw07i7zBjZ/D1EP0go/naGlKFLy3WNw4TmTXZurbeeVTa8AwzAlBU+KkW7i05qcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzM56u57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56281C4AF0E;
+	Mon, 15 Jul 2024 18:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721069748;
+	bh=fTaVUp5ixXjyj/IQvLPoiMP1xh8WB5ilzwlfi5SQ9Uo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mzM56u57vbSMU7UUmNVR4LLKrqMOvG0VNwKB6Losab0GAaAtgyoVZ5a5yCpA/S/D7
+	 sbovS4flkyFA7smIGcKPNkt9qbdkLfEW/ixpl5yuO288I7N8GcOQbgL7x+TQNGD+B9
+	 wN1PsljQzJSNiOq+B4zKMYjVqY8uAYYuoEtRQG0PFQBy1wmbjyYjtdwlQTnOF4I1A5
+	 33RglqbJ2gLElY1MIjHGK2yB212+Tp/hUw+OwoEpHGQxCpIe+iYzssVx43PRZ8laHU
+	 taaqx9n+A8pb4XwEBlxpYNZkkX5cYFHERPLLHHSNexnZAn/Yy6/RSr3VB5cyR8pl8d
+	 WMu1M4G2Wlrlg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eeb2d60efbso55744871fa.1;
+        Mon, 15 Jul 2024 11:55:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXumxkft9uq3D7HTZ3tbblkpFb/SHx+MhywvHUaWqaAyXfqs2S3plvWQI05jGYEgBFHAkdj2aPhkFB4DUIjkdh3UX2S1Dg3rWi3HbHReipRa9x40IRGfWp6IPe8oV3zG4XCioVZzMjHVpzk+lMriGs1epP2FLXftXZeBnXYdhO0eNM=
+X-Gm-Message-State: AOJu0Yxsp0S3URk3bakVAfjAKkGaSF7LP2wajKRPRZIDdWR6og0Q8IlA
+	nrGMTcgxgW46ACuQiz8t4aW+OdllKiH44iMWA+2Ie/rLVWUX+wbYpxN7Bat59EVWYDplPkCk1Ze
+	/NUwUnLVqb7N2hbEEJGmr4Xgxdw==
+X-Google-Smtp-Source: AGHT+IG5hZtW/6OyRaCvviup+P1U2Ghou4YKlTCsHtRsWKDMqkEasf58VhGXraqlzg+5tGrRgvrOkOsdfd2CYJKf+h0=
+X-Received: by 2002:a05:651c:1254:b0:2ec:57c7:c740 with SMTP id
+ 38308e7fff4ca-2eef41d72bbmr63931fa.39.1721069746552; Mon, 15 Jul 2024
+ 11:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000007b55ab061d494ced@google.com> <16aa56bd-b71f-417a-9a82-a2d0876571f2@redhat.com>
-In-Reply-To: <16aa56bd-b71f-417a-9a82-a2d0876571f2@redhat.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Mon, 15 Jul 2024 20:54:01 +0200
-Message-ID: <CANp29Y7vkA+GvS0c0EPk0=f_V0Ci25_4+ok+dRkqGqR3pBXt9g@mail.gmail.com>
-Subject: Re: [syzbot] WARNING in unmap_page_range (3)
-To: syzbot <syzbot+e145145f0c83d4deb8fa@syzkaller.appspotmail.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
+In-Reply-To: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 15 Jul 2024 12:55:33 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
+Message-ID: <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+To: Amit Machhiwal <amachhiw@linux.ibm.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>, 
+	Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, 
+	Kowshik Jois B S <kowsjois@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-#syz fix: mm/memory: fix missing pte marker for !page on pte zaps
+On Mon, Jul 15, 2024 at 2:08=E2=80=AFAM Amit Machhiwal <amachhiw@linux.ibm.=
+com> wrote:
+>
+> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+> of a PCI device attached to a PCI-bridge causes following kernel Oops on
+> a pseries KVM guest:
+>
+>  RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+>  Kernel attempted to read user page (10ec00000048) - exploit attempt? (ui=
+d: 0)
+>  BUG: Unable to handle kernel data access on read at 0x10ec00000048
+>  Faulting instruction address: 0xc0000000012d8728
+>  Oops: Kernel access of bad area, sig: 11 [#1]
+>  LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D2048 NUMA pSeries
+> <snip>
+>  NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
+>  LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
+>  Call Trace:
+>  [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
+>  [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
+>  [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
+>  [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_loc=
+ked+0x34/0x64
+>  [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
+>  [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
+>  [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
+>  [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
+>  [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
+>  [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
+>  [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
+>  [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/=
+0x2ec
+> <snip>
+>
+> A git bisect pointed this regression to be introduced via [1] that added
+> a mechanism to create device tree nodes for parent PCI bridges when a
+> PCI device is hot-plugged.
+>
+> The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
+> device-tree node associated with the pci_dev that was earlier
+> hot-plugged and was attached under a pci-bridge. The PCI dev header
+> `dev->hdr_type` being 0, results a conditional check done with
+> `pci_is_bridge()` into false. Consequently, a call to
+> `of_pci_make_dev_node()` to create a device node is never made. When at
+> a later point in time, in the device node removal path, a memcpy is
+> attempted in `__of_changeset_entry_invert()`; since the device node was
+> never created, results in an Oops due to kernel read access to a bad
+> address.
+>
+> To fix this issue, the patch updates `of_changeset_create_node()` to
+> allocate a new node only when the device node doesn't exist and init it
+> in case it does already. Also, introduce `of_pci_free_node()` to be
+> called to only revert and destroy the changeset device node that was
+> created via a call to `of_changeset_create_node()`.
+>
+> [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
+>
+> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> ---
+> Changes since v1:
+>     * Included Lizhi's suggested changes on V1
+>     * Fixed below two warnings from Lizhi's changes and rearranged the cl=
+eanup
+>       part a bit in `of_pci_make_dev_node`
+>         drivers/pci/of.c:611:6: warning: no previous prototype for =E2=80=
+=98of_pci_free_node=E2=80=99 [-Wmissing-prototypes]
+>           611 | void of_pci_free_node(struct device_node *np)
+>               |      ^~~~~~~~~~~~~~~~
+>         drivers/pci/of.c: In function =E2=80=98of_pci_make_dev_node=E2=80=
+=99:
+>         drivers/pci/of.c:696:1: warning: label =E2=80=98out_destroy_cset=
+=E2=80=99 defined but not used [-Wunused-label]
+>           696 | out_destroy_cset:
+>               | ^~~~~~~~~~~~~~~~
+>     * V1: https://lore.kernel.org/all/20240703141634.2974589-1-amachhiw@l=
+inux.ibm.com/
+>
+>  drivers/of/dynamic.c  | 16 ++++++++++++----
+>  drivers/of/unittest.c |  2 +-
+>  drivers/pci/bus.c     |  3 +--
+>  drivers/pci/of.c      | 39 ++++++++++++++++++++++++++-------------
+>  drivers/pci/pci.h     |  2 ++
+>  include/linux/of.h    |  1 +
+>  6 files changed, 43 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index dda6092e6d3a..9bba5e82a384 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -492,21 +492,29 @@ struct device_node *__of_node_dup(const struct devi=
+ce_node *np,
+>   * a given changeset.
+>   *
+>   * @ocs: Pointer to changeset
+> + * @np: Pointer to device node. If null, allocate a new node. If not, in=
+it an
+> + *     existing one.
+>   * @parent: Pointer to parent device node
+>   * @full_name: Node full name
+>   *
+>   * Return: Pointer to the created device node or NULL in case of an erro=
+r.
+>   */
+>  struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> +                                            struct device_node *np,
+>                                              struct device_node *parent,
+>                                              const char *full_name)
+>  {
+> -       struct device_node *np;
+>         int ret;
+>
+> -       np =3D __of_node_dup(NULL, full_name);
+> -       if (!np)
+> -               return NULL;
+> +       if (!np) {
+> +               np =3D __of_node_dup(NULL, full_name);
+> +               if (!np)
+> +                       return NULL;
+> +       } else {
+> +               of_node_set_flag(np, OF_DYNAMIC);
+> +               of_node_set_flag(np, OF_DETACHED);
 
-On Mon, Jul 15, 2024 at 6:06=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 15.07.24 15:35, syzbot wrote:
-> > This bug is marked as fixed by commit:
-> > mm/memory: Fix missing pte marker for !page on pte zaps
-> >
-> > But I can't find it in the tested trees[1] for more than 90 days.
-> > Is it a correct commit? Please update it by replying:
-> >
-> > #syz fix: exact-commit-title
->
-> Should be long fixed
->
-> #syz fix: f8572367eaff6739e3bc238ba93b86cd7881c0ff
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/16aa56bd-b71f-417a-9a82-a2d0876571f2%40redhat.com.
+Are we going to rename the function to
+of_changeset_create_or_maybe_modify_node()? No. The functions here are
+very clear in that they allocate new objects and don't reuse what's
+passed in.
+
+Rob
 
