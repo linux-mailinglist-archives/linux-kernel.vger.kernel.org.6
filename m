@@ -1,202 +1,132 @@
-Return-Path: <linux-kernel+bounces-252902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071649319B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02339319B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B70AB22C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05E61C21D6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438A4535B7;
-	Mon, 15 Jul 2024 17:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3BF6BFA6;
+	Mon, 15 Jul 2024 17:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjSapmbT"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NLJIjcoA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED77B4D8B1;
-	Mon, 15 Jul 2024 17:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CE56A33A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721064876; cv=none; b=nUld/A73ROBJcvAkXMuHpOBvVu7LIwyMWSkNYwl8BEG73rt6/HrpNe18roqtiTudgAPuoQZRDNw0Q8QGrLf29D/gwSEUPgymPWzRtNhzo/xBuEe7REOSGR8uRqnQw13TRo2i6xjYTVLHOv699xt4WTBTyIi1ly6Q/TIN3fMsJyY=
+	t=1721064894; cv=none; b=dLeEOtgAC21wcU/1rBar41zZD9FstdzBhnvEpfr9R3PcHC379QW7iN2AMAAHUSMAcBNNDGPPbQoMUqi4ByAnNk55OWnfouARsUA7gVCbOZhfgNenoh5bfujykwCFtEWgkkomdv3rrxttzBALxwSMDtoaY71KKs1MqQtfxOjcj48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721064876; c=relaxed/simple;
-	bh=ffeMUlmK/Fq3a35a+TUdvjumDs98NyO9DPbQao+X4dY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D2VGttuXYC2a9qNLYsspIgxi+sEUSE1XM0YlMnYTJqnfKdj6MhAFHST2i/Mo94VdTYZ4YksF47K+gicd5Dykay9z83lHcvxKafta8Yu+f8bRV+8U+uJRvXy749RWpMVau5smGTF3lFaruzM1CopMY5FqHxVO05P1ym/PXX6oJ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjSapmbT; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-75e15a48d6aso2446690a12.0;
-        Mon, 15 Jul 2024 10:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721064874; x=1721669674; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gYdxhbbHIWWH2ixkk73ZJszIT+H79ZWarOUTpgHr6qo=;
-        b=hjSapmbTQzm+TJFcRVSTNPRUJ2o0my4c86m6lBjIeTHvOFRE2DBCVr4Qe1OM1P1zii
-         7mg2+aGogkE8VIFacZtExddI/oSizC+A5neNjFntErOx6vkxdf24y6QfMZO5Z1Ibz4wq
-         fsf2W+C6LoCK74hQCyrE2NIP+JZG5Gy0onKdOibG9wVbg2omkFWZf+W9yCRi+MSCJ940
-         3zQluIPIO2FTM8M65TVzRkmkfKLozSd0RtpZMLEh5SMJTYRpqrakLnKN5Kg89DdWntZw
-         Fi7rmiLPYQM9q8818bdfTZM6SrZ5z/oGlqyXsX5OSL0Cd+2uQ8L2X3g1M4k8kBeS9AOY
-         7OiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721064874; x=1721669674;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gYdxhbbHIWWH2ixkk73ZJszIT+H79ZWarOUTpgHr6qo=;
-        b=KNvIetSjtxmhVfFSe71XTHLKwnKFKgFR4PQhxdIqGWbE9lwysw47H1mLGIwbZ0c8CV
-         vdFkYKFjMqj/gC/4SkpAVEdV9nbL2IF/Rtid/X93JY1N/6njToGyvKKhp9I8+7ZjLV1W
-         HTjdQ2jxMf/ueap0Gy4/VVLsx+fj0H636SWe8zBy6cTpXW7IP4uJe3MU/Sjt/wlwWO8r
-         8q3ztLJ1YflKkAM8tILcuekMpFmpbKihcBK7jP4IAC38AKMiz2i3zGf7h5JJ0AnGXcMv
-         i0kbq7NNjOYqOQYl4w0Oc1YlFo/uSbbj2efF6jz51zUJsUUH1TUxsuCW5H0qtzCM/TLi
-         Bzzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbEn7GxmQKeYYnJ5ULY3DvnQJgwA89IdZVSjmhVuV7gZIFZfALW8F8mn1RlkRwQNrw00QBmh3QOYV71uGmZdMRRiK/blYwGkpvY9jWlX1z4cO8OJNUnbI6L1KK6Wb2aoVxUAeXTDv7s8mUsOlSGg/iaYnmqEQaJI5PF2jiel85GITl/i7I
-X-Gm-Message-State: AOJu0YwFhNsxoAofQOWjvMNDWO5/PVGGE3biafut5N/C+teRQxgnzXbr
-	flPHs/mVhCYZzoFcCDaNOJU9s9gHH0UMIlN1b65RhtZ1LROLhob+1UYMulAp0gezKTiOCQSSuoJ
-	blCasZPKL77MfYxqA45PiO0lh37o=
-X-Google-Smtp-Source: AGHT+IEKyiNYE5yqKdi2me9tunULdPdiJOcvYzgKX6xqeTAbuCCI0LIR26V0zznbOPmF45Mfc/7J4vVEZuk0mzk+LL0=
-X-Received: by 2002:a05:6a20:7485:b0:1be:c9bd:7b8b with SMTP id
- adf61e73a8af0-1c3ee5bfc10mr718383637.45.1721064874075; Mon, 15 Jul 2024
- 10:34:34 -0700 (PDT)
+	s=arc-20240116; t=1721064894; c=relaxed/simple;
+	bh=zHTYgJUSd8AMhAtmrvgOtc17tYwT1AAFxi+FCTnDc+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tHUVBykWJ9F58ChnMbqeIH/+oituyQ0rqJlcPTEFLlCv59+1ImEggKPBvzyUryJt2U93+pzt0IqhnYOgufrvjUeewvHcYhleuuxC28pl0nn2sX3hXf5FSLmbnnhe7r+xtI0wx16m7sCocwuc+qHhFkYIr/RwzgIxDkH7EaWWeC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NLJIjcoA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4456F40E021B;
+	Mon, 15 Jul 2024 17:34:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qH_f3mQmR0kk; Mon, 15 Jul 2024 17:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721064883; bh=JbobzmRoh+ZaGzHFkvCxcb2mG2S653Y2TJEqXrSj0mI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NLJIjcoASna5vaBrsxsNo+JxJdsK6kTBvJ3bYno2UWu4C5rfP3IUI4Hpi7hEWzM8a
+	 iVLcNmbSddxVvj43BLw5IL3S1j2l9JK+Zcm1TnCPI5Qxol40GYu00tKIeq9hn3361T
+	 L//zfGqxsNrCacxvV3fTtZpZH0GOd8RcSX5xf3nYnTSzDGJLkh6iC+NDwuOMuhV17B
+	 5x8Il90zORozsA5Z1XwlL3+MsDlUxJ61v3DQoTRv4YJUjNlAPDQQYmZOjXQVFmSgha
+	 Is27ZIfTjfbOsAxJ1PW7p5JDPXlfsa1whqbfXfr0n6LVn7M8Lti+SrKPmK+Z2qBJx+
+	 +CEkYaL0utPYZltA5GRk0NS1hMkeIsmHDcskLIdwjWJRa+I2PPHyEGCMXkw5GORrlL
+	 DwUhTxZ8j9DwpTPi0LeP+18cPWaAXOjnUUha36wtE/aMR6tKcIfh+AltrWq804N8tr
+	 LPSF5L2D6t50LrtUsYDTnpd5L2IPpb6v1kdkCUvNKZEaYaEvAvNd2JC7S/NK8CPCyf
+	 TVjIL3W3bXlgCET5MKVMSvtPS57ur16Kn39o8piKjGqIhfijw5kg6OpMCOw1dN+C87
+	 qtccJo/5Me4gNxz71JOC++NgCP4SjAIbUXsLkL81k/ilNwsvgkHuOFJ3UHcT6dErHU
+	 C3WLWViztcF/8HmxJSX4loGQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0CC6240E019C;
+	Mon, 15 Jul 2024 17:34:40 +0000 (UTC)
+Date: Mon, 15 Jul 2024 19:34:33 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/bugs for v6.11-rc1
+Message-ID: <20240715173433.GAZpVdqWGG1ymjPfER@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <20240711110401.412779774@infradead.org>
- <CAEf4BzZCzqOsk55E0b8i9y5zFuf8t=zwrjORnVaLGK0ZVgJTFg@mail.gmail.com> <20240715114107.GE14400@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240715114107.GE14400@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 15 Jul 2024 10:34:22 -0700
-Message-ID: <CAEf4BzaycyKxX7KFim0_C+FobPSDcfahUGA4mgfiz_d81noSGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Mon, Jul 15, 2024 at 4:41=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Fri, Jul 12, 2024 at 02:43:52PM -0700, Andrii Nakryiko wrote:
-> > + bpf
-> >
-> > On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > In order to put a bound on the uretprobe_srcu critical section, add a
-> > > timer to uprobe_task. Upon every RI added or removed the timer is
-> > > pushed forward to now + 1s. If the timer were ever to fire, it would
-> > > convert the SRCU 'reference' to a refcount reference if possible.
-> > >
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  include/linux/uprobes.h |    8 +++++
-> > >  kernel/events/uprobes.c |   67 +++++++++++++++++++++++++++++++++++++=
-+++++++----
-> > >  2 files changed, 69 insertions(+), 6 deletions(-)
-> > >
-> > > --- a/include/linux/uprobes.h
-> > > +++ b/include/linux/uprobes.h
-> > > @@ -15,6 +15,7 @@
-> > >  #include <linux/rbtree.h>
-> > >  #include <linux/types.h>
-> > >  #include <linux/wait.h>
-> > > +#include <linux/timer.h>
-> > >
-> > >  struct vm_area_struct;
-> > >  struct mm_struct;
-> > > @@ -79,6 +80,10 @@ struct uprobe_task {
-> > >         struct return_instance          *return_instances;
-> > >         unsigned int                    depth;
-> > >         unsigned int                    active_srcu_idx;
-> > > +
-> > > +       struct timer_list               ri_timer;
-> > > +       struct callback_head            ri_task_work;
-> > > +       struct task_struct              *task;
-> > >  };
-> > >
-> > >  struct return_instance {
-> > > @@ -86,7 +91,8 @@ struct return_instance {
-> > >         unsigned long           func;
-> > >         unsigned long           stack;          /* stack pointer */
-> > >         unsigned long           orig_ret_vaddr; /* original return ad=
-dress */
-> > > -       bool                    chained;        /* true, if instance =
-is nested */
-> > > +       u8                      chained;        /* true, if instance =
-is nested */
-> > > +       u8                      has_ref;
-> >
-> > Why bool -> u8 switch? You don't touch chained, so why change its
-> > type? And for has_ref you interchangeably use 0 and true for the same
-> > field. Let's stick to bool as there is nothing wrong with it?
->
-> sizeof(_Bool) is implementation defined. It is 1 for x86_64, but there
-> are platforms where it ends up begin 4 (some PowerPC ABIs among others.
-> I didn't want to grow this structure for no reason.
+Hi Linus,
 
-There are tons of bools in the kernel, surprised that we (kernel
-makefiles) don't do anything on PowerPC to keep it consistent with the
-rest of the world. Oh well, it just kind of looks off when there is a
-mix of 0 and true used for the same field.
+please pull the x86/bugs lineup for v6.11-rc1.
 
->
-> > >         int                     srcu_idx;
-> > >
-> > >         struct return_instance  *next;          /* keep as stack */
-> >
-> > [...]
-> >
-> > > @@ -1822,13 +1864,20 @@ static int dup_utask(struct task_struct
-> > >                         return -ENOMEM;
-> > >
-> > >                 *n =3D *o;
-> > > -               __srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx)=
-;
-> > > +               if (n->uprobe) {
-> > > +                       if (n->has_ref)
-> > > +                               get_uprobe(n->uprobe);
-> > > +                       else
-> > > +                               __srcu_clone_read_lock(&uretprobes_sr=
-cu, n->srcu_idx);
-> > > +               }
-> > >                 n->next =3D NULL;
-> > >
-> > >                 *p =3D n;
-> > >                 p =3D &n->next;
-> > >                 n_utask->depth++;
-> > >         }
-> > > +       if (n_utask->return_instances)
-> > > +               mod_timer(&n_utask->ri_timer, jiffies + HZ);
-> >
-> > let's add #define for HZ, so it's adjusted in just one place (instead
-> > of 3 as it is right now)
->
-> Can do I suppose.
+Thx.
 
-thanks!
+---
 
->
-> > Also, we can have up to 64 levels of uretprobe nesting, so,
-> > technically, the user can cause a delay of 64 seconds in total. Maybe
-> > let's use something smaller than a full second? After all, if the
-> > user-space function has high latency, then this refcount congestion is
-> > much less of a problem. I'd set it to something like 50-100 ms for
-> > starters.
->
-> Before you know it we'll have a sysctl :/ But sure, we can do something
-> shorter.
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
 
-:) let's hope we won't need sysctl (I don't think we will, FWIW)
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_bugs_for_v6.11_rc1
+
+for you to fetch changes up to 42c141fbb651b64db492aab35bc1d96eb4c20261:
+
+  x86/bugs: Add 'spectre_bhi=vmexit' cmdline option (2024-06-28 15:35:54 +0200)
+
+----------------------------------------------------------------
+ - Add a spectre_bhi=vmexit mitigation option aimed at cloud
+   environments
+
+ - Remove duplicated Spectre cmdline option documentation
+
+ - Add separate macro definitions for syscall handlers which do not
+   return in order to address objtool warnings
+
+----------------------------------------------------------------
+Josh Poimboeuf (3):
+      x86/syscall: Mark exit[_group] syscall handlers __noreturn
+      x86/bugs: Remove duplicate Spectre cmdline option descriptions
+      x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
+
+ Documentation/admin-guide/hw-vuln/spectre.rst   | 86 +++----------------------
+ Documentation/admin-guide/kernel-parameters.txt | 12 +++-
+ arch/x86/entry/syscall_32.c                     | 10 +--
+ arch/x86/entry/syscall_64.c                     |  9 ++-
+ arch/x86/entry/syscall_x32.c                    |  7 +-
+ arch/x86/entry/syscalls/syscall_32.tbl          |  6 +-
+ arch/x86/entry/syscalls/syscall_64.tbl          |  6 +-
+ arch/x86/kernel/cpu/bugs.c                      | 16 +++--
+ arch/x86/um/sys_call_table_32.c                 | 10 +--
+ arch/x86/um/sys_call_table_64.c                 | 11 ++--
+ scripts/syscalltbl.sh                           | 18 +++++-
+ tools/objtool/noreturns.h                       |  4 ++
+ 12 files changed, 86 insertions(+), 109 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
