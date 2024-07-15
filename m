@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-253004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906A4931B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:35:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DA1931B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 21:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D23EB2230F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F204A1C21BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4E6139D00;
-	Mon, 15 Jul 2024 19:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8C3139D19;
+	Mon, 15 Jul 2024 19:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U+c8yoRC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=patrick-wildt-de.20230601.gappssmtp.com header.i=@patrick-wildt-de.20230601.gappssmtp.com header.b="cXTiYOxj"
+Received: from mail-lj1-f227.google.com (mail-lj1-f227.google.com [209.85.208.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202A415491;
-	Mon, 15 Jul 2024 19:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3611E136658
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721072135; cv=none; b=rpppwk+tsumDYwTN05tITuPvOTIGZYzJbVVntHPA/d+ObIL1C6suBFKoLeLdJ1Bp3wTiXbNzvdabEDtKpeyvtNmD0i9FXEFVsr0mrU/cq70LLgJhU9WQL9/AvWXwwdnw/ent909bLC5lH2tNSa1Hl7LZ7CiLUs+voByAm21j2fc=
+	t=1721072300; cv=none; b=hqKrue+J5+tKSr13drSDo6S0BMB/mX+vUaoRZwP8mFp44c33RAOo8xKRcL59tix2+J8J2QzSo6USIAlXDwjanRPSfIEXncobskj8c9pV1XzaGaohXt0HAHbM8pHF9Gwyj+37eJSzowrFrrriDHZlAJcrkDb8z8bPB6SqY/3zuGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721072135; c=relaxed/simple;
-	bh=FRn9L6xt/4pBPTKmgkgNlVfwV8prnDiH2WQXjDdDtOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h5RB6wYZnr23Nn3cuAMOEGnGTulYo9adDBYKW68EYB5+aMDYmxj/F9EKt7E0RpMoh0vrSCpQd/878jMaOy/ZtsmOkjA9TJcSmoUCt/crtwcgztS6b6rhFH5eBHKVWr4TZvCpFUDjouMaBVLp59+Z/jzM7YpygePFY+2/IZ/8tug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U+c8yoRC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8jKZ031938;
-	Mon, 15 Jul 2024 19:35:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KMUJ2TW4Kz92vZ1WNbj9fim2oaakNFSraWNVGeLCagg=; b=U+c8yoRCaunVsvgr
-	XG+15WKI+r84R5ti6CuwxYjgMxlP7Sm0SE1k2Tm1Mrg9d/O7GvrjlRw4kqEu9vhQ
-	6KixL6vuFBRM/EZ1+JHTU+yfNyaVwhEO6MKy+tju10wQdfVY0l32MCoQnlz/Z/KL
-	20ovJCG4Ugy7LJbNX0Ynt6qTatm/P7cKSCmk/sw8cl4Ycx7K/0s9drAYggl3UOpV
-	Ux3vpxaL2z34mt7SfO/h5g0P5CrXc5m0R1kutWp+xppsA5qpV6xxmFkP8prBHNQv
-	kNS61b1lkOMM9b5l5ByeKUmQdwrlnxZLqEts3vS0BxBsXowysOWdvltHBkUgEyYv
-	wTm9mw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bjbh50b2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:35:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FJZC02001309
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:35:12 GMT
-Received: from [10.48.247.129] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 12:35:11 -0700
-Message-ID: <6c324421-f35a-450a-9a39-05aab3136c8d@quicinc.com>
-Date: Mon, 15 Jul 2024 12:35:10 -0700
+	s=arc-20240116; t=1721072300; c=relaxed/simple;
+	bh=cemq+9OuqeY3+ummp337Mvo5F4mXDIT79m4hgKaBI1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G+HQ7LMysUDZwAMOscCMLGr7LHlLK5JxZj5erlwxy1YFUaA7J/65p+nRLCw+v3ieKREEgpdAHtZKYeY1jNOnPr7kzYmMpLALD0bud6Wzv8f8e24KrM7zqv4VNIzeqrV4fIVq/UoHLSLG3qgAhY/L2Uo1d4qdSKK1tUhs5Ck5U8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blueri.se; spf=pass smtp.mailfrom=blueri.se; dkim=pass (2048-bit key) header.d=patrick-wildt-de.20230601.gappssmtp.com header.i=@patrick-wildt-de.20230601.gappssmtp.com header.b=cXTiYOxj; arc=none smtp.client-ip=209.85.208.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blueri.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blueri.se
+Received: by mail-lj1-f227.google.com with SMTP id 38308e7fff4ca-2eee083c044so26603161fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:38:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=patrick-wildt-de.20230601.gappssmtp.com; s=20230601; t=1721072296; x=1721677096; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NFsCI/nUGMHpQYBhPffSAiv0o4Z8VMEXV4FQksJuyUk=;
+        b=cXTiYOxjsrz5BFWB5pXFPYwf5UusjMzd5o6+Kwrii5SuKh/2njn3BY9/edtzCLuxWn
+         TRzSnXtUIkdwbyAxibs7EOTVlJEVmAxZdOiRsM71pRbF+eNhztMeijNDVSxe2SlziSxX
+         EMAq3G5sVqhGIYC9cXO0/yxR9YQaPtRAZPt/RT5idM5vwS8Qj0Rb4Ztvx4wGIlOxE9Zm
+         A9B8d2QaYZZ3XnEsbt+aYRGczVBra+jhfdbqUbt/osRgy2JofcSWdya490iHGSHts3us
+         lEY5zUnHVMJE+KG82VozYh659abwJ7jmNvY0Jv9S93Ly3RTwKpLBDTkPGEqDFgMdjxm2
+         zBAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721072296; x=1721677096;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFsCI/nUGMHpQYBhPffSAiv0o4Z8VMEXV4FQksJuyUk=;
+        b=Q3HYFzEWD3aLijF8TbTD8QVGpPm1HO6DX/jCDUyfhy6D75xxqwPltIFo1/wbxDBZ3z
+         aG2gk0oG55Lu5srTcxXWgADpZ8uQWyt2juOsaW8/naIv3DMaiVEt9/6pbbVyztm1qcTO
+         joghneGjSJy2ddQVKavIcG0mcdQrR7nwS/VbLRX1pk4medQckBflvsRxlYoBy+FqE1k8
+         hsaYSMTLSt+9O3yXDgRiG29l5g8RcHM0YfhV0ztnKG7xw6N/4u7iHINJAYoIxdQl45gd
+         GFeMu46LBWbrwIxmYO5QuMJonEbfXi3yQyEDBTJWa2Fei1AyiKS66WCTeQjQuvbBIr8M
+         I5rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPT9QG2pLGZi5t76n8xKXUzIFbgRKQ+DPuAh1TDrptK1uGR9GNc3UvyAibAW2rENUefmbwjuVkxOlBRGwDckFQYfAlRiikUSe7ifRM
+X-Gm-Message-State: AOJu0Yx35ZJaWzGyDmapR4Bh83+cTJ3AEcQKtAINpap2L4PK+y/DNfe3
+	+cWUuEgcK6+4RN/1vjHHaqOMcTm8/TCQXbEAC/IQ/9iNW6a9TkOPHOAqYASaEI8iYbVKhRgXUvt
+	Kd95WxwdWtnG+HJKqsadN3Y+ih1V4kZa8
+X-Google-Smtp-Source: AGHT+IHjhs7lFn6xanLhyvwaA7PatZ3sOOeEdpx/Nn5lzGlDNwLD/+lV4ElphVBjqkaDIyu0IV9Qs/ersaIQ
+X-Received: by 2002:a2e:91d3:0:b0:2ee:8eb6:ff61 with SMTP id 38308e7fff4ca-2eef4156be4mr722331fa.2.1721072295803;
+        Mon, 15 Jul 2024 12:38:15 -0700 (PDT)
+Received: from windev.fritz.box (p5b0ac4d1.dip0.t-ipconnect.de. [91.10.196.209])
+        by smtp-relay.gmail.com with ESMTPS id 38308e7fff4ca-2eee1936872sm625101fa.64.2024.07.15.12.38.14
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 15 Jul 2024 12:38:15 -0700 (PDT)
+X-Relaying-Domain: blueri.se
+Date: Mon, 15 Jul 2024 21:38:11 +0200
+From: Patrick Wildt <patrick@blueri.se>
+To: Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Andy Gross <agross@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Steev Klimaszewski <steev@kali.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Patrick Wildt <patrick@blueri.se>
+Subject: [PATCH 0/2] arm64: dts: qcom: x1e80100-yoga: add wifi calibration
+ variant
+Message-ID: <ZpV6o8JUJWg9lZFE@windev.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Ellerman
-	<mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
-	<christophe.leroy@csgroup.eu>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>
-References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
- <20240701083320.c3r4aussa4qojewq@vireshk-i7>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240701083320.c3r4aussa4qojewq@vireshk-i7>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ctGWlwWjxygEGzUEfixMirX5izh2d6XZ
-X-Proofpoint-GUID: ctGWlwWjxygEGzUEfixMirX5izh2d6XZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- clxscore=1011 spamscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150152
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/1/2024 1:33 AM, Viresh Kumar wrote:
-> On 14-06-24, 23:08, Jeff Johnson wrote:
->> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
->> files which have a MODULE_LICENSE().
->>
->> This includes three additional files which, although they did not
->> produce a warning with the powerpc allmodconfig configuration, may
->> cause this warning with specific options enabled in the kernel
->> configuration.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+This series adds the missing calibration variant devicetree property
+which is needed to load the calibration data and use the ath12k wifi
+on the Lenovo Yoga Slim 7x.
 
-I still don't see this in linux-next. Is anything else needed from me?
+Patrick Wildt (2):
+  dt-bindings: net: wireless: add ath12k pcie bindings
+  arm64: dts: qcom: x1e80100-yoga: add wifi calibration variant
 
-Of the almost 300 patches I've submitted to fix these issues tree-wide, this
-is one of the 13 remaining. Hopefully this can make it into the 6.11 merge
-window. If not, Greg KH has indicated he'll take this as an -rc instead of
-waiting for 6.12.
+ .../net/wireless/qcom,ath12k-pci.yaml         | 59 +++++++++++++++++++
+ .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  9 +++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 10 ++++
+ 3 files changed, 78 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/qcom,ath12k-pci.yaml
+
+-- 
+2.45.2
+
 
