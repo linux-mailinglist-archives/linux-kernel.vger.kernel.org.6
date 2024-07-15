@@ -1,216 +1,149 @@
-Return-Path: <linux-kernel+bounces-252858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D462D9318F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:11:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5BF9318FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A52C2815A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:11:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2775B20F75
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BEE3EA76;
-	Mon, 15 Jul 2024 17:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4D73EA76;
+	Mon, 15 Jul 2024 17:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvEIRw3y"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VX0+vnb5"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881A217BB4;
-	Mon, 15 Jul 2024 17:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28C9481CE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721063472; cv=none; b=oXzUF/DWNIB8wVHB3KUi5zR2vOqUouHubFOqjZDs3kt+5+inV/Nou6ZngIigQshWG7+MC945y6DKB/veV+5zbiuCzDZtIk1vthree7JFaeWhs7j3odga/R6aIMB7hvHRmliTq/9420V4Z0U2MIywy6pCxqGLNXTJW1G/Qpq2VQI=
+	t=1721063481; cv=none; b=fDRxmtrryjkaZ9dqt7MBfJY+aV1Djyv5z2R8+q0tBHQGwrd4S6I3tz/DwCjlDPNfAMcXTxmVAcnAOTpdawEPtsEIRMO7KF1O/cR2I03ebKhEXpif65CHZyhaYM5f4vN73pGiQ8OwJQHLZRxsu5l2iyfM0YMTUvXrtn9wcglHx8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721063472; c=relaxed/simple;
-	bh=sE2l+AJ+jOkXSJEM7XiFmIWXkjkGToqX6Q5unCwbdcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XB9nX5X/9npEKtZXbyvgEOpQuyzhk9YBNoXacMnhf4R59qXCPoUe5lezO/bdjA6UkX68yzSSeDlRiSN6faMHlG/rc+fWIgeHzIQbOulBhDP8bh2lGuuf5qby9cjQEM3kJreN706GXmdqu4DCCOM8a3ba/8X6X4Ik0NqVDiWiu8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvEIRw3y; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70b12572bd8so3083058b3a.2;
-        Mon, 15 Jul 2024 10:11:10 -0700 (PDT)
+	s=arc-20240116; t=1721063481; c=relaxed/simple;
+	bh=LW9qJPi1pyF5KeBuCOkgBiLO+cfrlARunEDSaY9b8yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vu7x8RS4X0R+ka5LT0n7DyUjFeq29LWiR6DPiJFZWC3uXAwyu07mDoTq3hOuy4tSG/Tk7s8IwLtBn45L6oLulasu7uLdfQtjkpnU3nibGLa/xY/y8ovCt9+jo4ejNCmMBfgqldgk4hf7Zn52VaLJbDI1KuNKE25YFiuMsQzslZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VX0+vnb5; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ccfdc3157dso1297013eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721063470; x=1721668270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Juvk9Mh9FVF1mZV8matVXreUlpeXpyTK/r3nCThib2I=;
-        b=gvEIRw3yILbjp7pnstBSmJzXmFg0X3tGi3H9+HhgOCl96i1IpURSH4191wGZrdcSIr
-         luGAZufWULlwWh0N/TMW5X/ccRN41ktWnAYb92IEt//lHQud7UaFxyGCmZNIVr++FRUb
-         prp379ihnpGoPxPjLAs+LSmWOSqSJOXMmB8mqch9t+l1wzZZcWiBCkGZ4qfu9pOzjtgw
-         Gm0+6yJFun17KoahVqcJDGqd7+XW1REl3EsSyBb0IxqWvOdEIx/wvtq8ORIyMC0G2DZf
-         Jpv/9EX6TgFNYQeNAjmNTTHABLiSyEpK2n2ExsW/zdKCs1KFm18In9A2CWQCcq6adyX/
-         nyyw==
+        d=linaro.org; s=google; t=1721063479; x=1721668279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lkVsVegZWb4nDKyM/hEerXFr2vdLkv9KD3h/brW3Bc=;
+        b=VX0+vnb5D8cmCefhsQAPB7E7SxZqBB4JNlsWhXhiXia4uFXgY2zAXA1VV7GcSWRmoE
+         WNJN41VaiEBSqc0jBxa+SlYKM8DhKX6B74Zb8facMVP2Xqlr6rSx4nEarTj9mMJu6m5b
+         6ERzKP/OBEk5r5ks/o62chcRc9kP2WGZajQAB4kon9beHUmj01uhOLu91S8brwAH+otn
+         kWcSR15cjfUCk69JbYvGL5HDWycRm0UwJLTqyvwo44kykarPdehpD+pono4sV5u6Uo5Y
+         IlE6xFwH5QsBgf2w/6W7OfFDO/uR2RTsC0S0uo+E6+7MczVmGqSphI71jHve+vrcs2hy
+         pGvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721063470; x=1721668270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Juvk9Mh9FVF1mZV8matVXreUlpeXpyTK/r3nCThib2I=;
-        b=l1ga8FjkWSilzKkY2USqoxFiJqVpjfwdtVpnDm5VuexSQie3KE6BGEH7Om8iD/BonC
-         G9+gweYmgKlmr2Xtoagoh4fuanfOOhHFYZ/JfrVlbBYqfM11WtLAOqDl4J/s/Y+1D2LU
-         GNDoxX/RnUHP92h910ZTh9Mpd1VvA/1mQQ3FnadW8qSx41eF4UyysT3DAzK94i6V4Cur
-         LuuLFJZwC5g6zOzHqzp5hAUsPQupYsCkW2EVHZm5TbgcZSMZtpKGx8CGZP34nOAS4qCM
-         7IsY0bTOE0GN0ePzP12GwZ294NpIoW2qIMzKhJWQbx9spd9dEaF7Efz9Djrq2zb/W0cC
-         19CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdYS7FrwDkxM6M5F19M6tXbOVrVj/HLYZZzIEMIeKFoFlnK6Gye1x5T2ys5tKGup8mLY+Db5tY8u5iJ1LLhHKtMxmjcGvbzacyfaBc6SLd+lUujqsVhe/e6OkCjGJ1sosrGEBFBy55tcKndDhxX8VH
-X-Gm-Message-State: AOJu0YzOT+IfrIKUUsyfWqSCxG2GsiYwaUxwC3rWfLqKDkn5VA8SdoL9
-	8cIrtfxl+16Qf+pftCTfOR5x7YEz4SMWFBl1gdBVYo5GsQJ0FY21/elKDpLDGmsOcmg+ebWx33I
-	Pfb/DGOrS7W/rIz3GrfrbQ37CzK4=
-X-Google-Smtp-Source: AGHT+IHDMbDPUkUH66xtlh2FLSelH0/gS7ZfUGbaXVnMbpZhuTsxonLkX6SB67lKTohe16DcY4BsPNHxZRQa336TGgM=
-X-Received: by 2002:a05:6a21:150d:b0:1c3:cfc2:2b1f with SMTP id
- adf61e73a8af0-1c3ee6572e7mr568762637.37.1721063469690; Mon, 15 Jul 2024
- 10:11:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721063479; x=1721668279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9lkVsVegZWb4nDKyM/hEerXFr2vdLkv9KD3h/brW3Bc=;
+        b=LZXobEFsgbcpit4zUCiv6eENiv6eG5x0YNrIfaHG6dqeUa10f4HAy4oDyYj90Z/U84
+         At+gDVn/mxQc6epcdMl6vYrPW98G7bv1aSnZeAe6LLnWQYkK7Ncw49q3nLxrpjyDOd/E
+         b44Mdft0QEkbygqj7idwyIIJiuxIdWfT+X/8bdZ7bOlHPi6LK8AlnnBhSDEPgQroFkY+
+         AUxbe7ui2mWGqaeCPP/KAX6zbQHMd3h0Dc4fmdnK7SlKis6YUDpNOiLNi2zEt1Keghmo
+         BjhqNPe5wnRPmMRIlMISarBNrPVVAVg3lgYZ12oYDuehVnUu8JxV0hULhOz2GKOudCdM
+         Hntg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtRjPI5cY5BnI0QWx+19dBQEGkoclq7WUuwJjtYKz2DPYoEKehn0yE36kfujFAa5Su2faA8eMz6nupRH0Ag/i+3rC5NuYXoOzRPs7t
+X-Gm-Message-State: AOJu0YxWnOhxSNTNVIIgGP00kmwsnL5oFgqzv4bg9FHfq1OWgewT8L0c
+	lu6P1PscfzhTrPNSQAlcbS1HgmUfzQ+DUgfp6JtUKvpEn/+o62InkAJpx+YA33Y=
+X-Google-Smtp-Source: AGHT+IF3Y5r7ANdidB8C985shaZ7Y4HsbOHKtwwiZnz6qoF9sy+jIhyV9aA0zqaSYAUY8dPs31frdQ==
+X-Received: by 2002:a4a:c3cc:0:b0:5c6:989b:a1ca with SMTP id 006d021491bc7-5cc99922016mr4589202eaf.3.1721063478879;
+        Mon, 15 Jul 2024 10:11:18 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:750c:19a4:cf5:50a9])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ce753d22ccsm897578eaf.15.2024.07.15.10.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 10:11:18 -0700 (PDT)
+Date: Mon, 15 Jul 2024 12:11:10 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Ma Ke <make24@iscas.ac.cn>, fbarrat@linux.ibm.com, ajd@linux.ibm.com,
+	arnd@arndb.de, gregkh@linuxfoundation.org, manoj@linux.vnet.ibm.com,
+	imunsie@au1.ibm.com, clombard@linux.vnet.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
+ read_handle()
+Message-ID: <6630fb82-9836-453d-a8bb-cf8f19b5665f@stanley.mountain>
+References: <20240715025442.3229209-1-make24@iscas.ac.cn>
+ <87y163w4n4.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
- <20240715144536.GI14400@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240715144536.GI14400@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 15 Jul 2024 10:10:57 -0700
-Message-ID: <CAEf4BzZuR883FEuKAXp3DY1iJcL+ST8eNq5ioq8oRpDyg0w8Kw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] perf/uprobe: Optimize uprobes
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: oleg@redhat.com, mingo@kernel.org, andrii@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y163w4n4.fsf@mail.lhotse>
 
-On Mon, Jul 15, 2024 at 7:45=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Thu, Jul 11, 2024 at 09:57:44PM -0700, Andrii Nakryiko wrote:
->
-> > But then I also ran it on Linux built from perf/uprobes branch (these
-> > patches), and after a few seconds I see that there is no more
-> > attachment/detachment happening. Eventually I got splats, which you
-> > can see in [1]. I used `sudo ./uprobe-stress -a10 -t5 -m5 -f3` command
-> > to run it inside my QEMU image.
->
-> So them git voodoo incantations did work and I got it built. I'm running
-> that exact same line above (minus the sudo, because test box only has a
-> root account I think) on real hardware.
->
-> I'm now ~100 periods in and wondering what 'eventually' means...
+On Mon, Jul 15, 2024 at 04:28:15PM +1000, Michael Ellerman wrote:
+> Ma Ke <make24@iscas.ac.cn> writes:
+> > In read_handle(), of_get_address() may return NULL if getting address and
+> > size of the node failed. When of_read_number() uses prop to handle
+> > conversions between different byte orders, it could lead to a null pointer
+> > dereference. Add NULL check to fix potential issue.
+> >
+> > Found by static analysis.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-So I was running in a qemu set up with 16 cores on top of bare metal's
-80 core CPU (Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz). I just tried
-it again, and I can reproduce it within first few periods:
+The bug is real and the fix looks okay to me. I'm surprised that Smatch doesn't
+print a warning about "size" being uninitialized.  I must not have it enabled
+in the .configs that I test.  But I also wouldn't have reported that because
+it's from 2016 so it's too old.
 
-WORKING HARD!..
+> > ---
+> > Changes in v4:
+> > - modified vulnerability description according to suggestions, making the 
+> > process of static analysis of vulnerabilities clearer. No active research 
+> > on developer behavior.
+> > Changes in v3:
+> > - fixed up the changelog text as suggestions.
+> > Changes in v2:
+> > - added an explanation of how the potential vulnerability was discovered,
+> > but not meet the description specification requirements.
+> > ---
+> >  drivers/misc/cxl/of.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+> > index bcc005dff1c0..d8dbb3723951 100644
+> > --- a/drivers/misc/cxl/of.c
+> > +++ b/drivers/misc/cxl/of.c
+> > @@ -58,7 +58,7 @@ static int read_handle(struct device_node *np, u64 *handle)
+> >  
+> >  	/* Get address and size of the node */
+> >  	prop = of_get_address(np, 0, &size, NULL);
+> > -	if (size)
+> > +	if (!prop || size)
+> >  		return -EINVAL;
+> >  
+> >  	/* Helper to read a big number; size is in cells (not bytes) */
+> 
+> If you expand the context this could just use of_property_read_reg(),
+> something like below.
+> 
 
-PERIOD #1 STATS:
-FUNC CALLS               919632
-UPROBE HITS              706351
-URETPROBE HITS           641679
-ATTACHED LINKS              951
-ATTACHED UPROBES           2421
-ATTACHED URETPROBES        2343
-MMAP CALLS                33533
-FORKS CALLS                 241
+You're a domain expert so I trust you, but as a static checker person, there is
+no way I'd feel comfortable sending a patch like that...  It's way too
+complicated and I wouldn't be able to test it.  If this were my patch I would
+ask you to handle send that patch and give me Reported-by credit.
 
-PERIOD #2 STATS:
-FUNC CALLS                11444
-UPROBE HITS               14320
-URETPROBE HITS             9896
-ATTACHED LINKS               26
-ATTACHED UPROBES             75
-ATTACHED URETPROBES          61
-MMAP CALLS                39093
-FORKS CALLS                  14
+regards,
+dan carpenter
 
-PERIOD #3 STATS:
-FUNC CALLS                  230
-UPROBE HITS                 152
-URETPROBE HITS              145
-ATTACHED LINKS                2
-ATTACHED UPROBES              2
-ATTACHED URETPROBES           2
-MMAP CALLS                39121
-FORKS CALLS                   0
-
-PERIOD #4 STATS:
-FUNC CALLS                    0
-UPROBE HITS                   0
-URETPROBE HITS                0
-ATTACHED LINKS                0
-ATTACHED UPROBES              0
-ATTACHED URETPROBES           0
-MMAP CALLS                39010
-FORKS CALLS                   0
-
-You can see in the second period all the numbers drop and by period #4
-(which is about 20 seconds in) anything but mmap()ing stops. When I
-said "eventually" I meant about a minute tops, however long it takes
-to do soft lockup detection, 23 seconds this time.
-
-So it should be very fast.
-
-Note that I'm running with debug kernel configuration (see [0] for
-full kernel config), here are debug-related settings, in case that
-makes a difference:
-
-$ cat ~/linux-build/default/.config | rg -i debug | rg -v '^#'
-CONFIG_X86_DEBUGCTLMSR=3Dy
-CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=3Dy
-CONFIG_BLK_DEBUG_FS=3Dy
-CONFIG_PNP_DEBUG_MESSAGES=3Dy
-CONFIG_AIC7XXX_DEBUG_MASK=3D0
-CONFIG_AIC79XX_DEBUG_MASK=3D0
-CONFIG_SCSI_MVSAS_DEBUG=3Dy
-CONFIG_DM_DEBUG=3Dy
-CONFIG_MLX4_DEBUG=3Dy
-CONFIG_USB_SERIAL_DEBUG=3Dm
-CONFIG_INFINIBAND_MTHCA_DEBUG=3Dy
-CONFIG_INFINIBAND_IPOIB_DEBUG=3Dy
-CONFIG_INFINIBAND_IPOIB_DEBUG_DATA=3Dy
-CONFIG_CIFS_DEBUG=3Dy
-CONFIG_DLM_DEBUG=3Dy
-CONFIG_DEBUG_BUGVERBOSE=3Dy
-CONFIG_DEBUG_KERNEL=3Dy
-CONFIG_DEBUG_INFO=3Dy
-CONFIG_DEBUG_INFO_DWARF4=3Dy
-CONFIG_DEBUG_INFO_COMPRESSED_NONE=3Dy
-CONFIG_DEBUG_INFO_BTF=3Dy
-CONFIG_DEBUG_INFO_BTF_MODULES=3Dy
-CONFIG_DEBUG_FS=3Dy
-CONFIG_DEBUG_FS_ALLOW_ALL=3Dy
-CONFIG_ARCH_HAS_DEBUG_WX=3Dy
-CONFIG_HAVE_DEBUG_KMEMLEAK=3Dy
-CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=3Dy
-CONFIG_ARCH_HAS_DEBUG_VIRTUAL=3Dy
-CONFIG_SCHED_DEBUG=3Dy
-CONFIG_DEBUG_PREEMPT=3Dy
-CONFIG_LOCK_DEBUGGING_SUPPORT=3Dy
-CONFIG_DEBUG_RT_MUTEXES=3Dy
-CONFIG_DEBUG_SPINLOCK=3Dy
-CONFIG_DEBUG_MUTEXES=3Dy
-CONFIG_DEBUG_WW_MUTEX_SLOWPATH=3Dy
-CONFIG_DEBUG_RWSEMS=3Dy
-CONFIG_DEBUG_LOCK_ALLOC=3Dy
-CONFIG_DEBUG_LOCKDEP=3Dy
-CONFIG_DEBUG_ATOMIC_SLEEP=3Dy
-CONFIG_DEBUG_IRQFLAGS=3Dy
-CONFIG_X86_DEBUG_FPU=3Dy
-CONFIG_FAULT_INJECTION_DEBUG_FS=3Dy
-
-  [0] https://gist.github.com/anakryiko/97a023a95b30fb0fe607ff743433e64b
-
->
-> Also, this is a 2 socket, 10 core per socket, 2 threads per core
-> ivybridge thing, are those parameters sufficient?
-
-Should be, I guess? It might be VM vs bare metal differences, though.
-I'll try to run this on bare metal with more production-like kernel
-configuration to see if I can still trigger this. Will let you know
-the results when I get them.
 
