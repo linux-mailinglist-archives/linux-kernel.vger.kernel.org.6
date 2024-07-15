@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-252454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D1B931349
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:43:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C227693134B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E4F1C21EAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FAB2844E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D002572;
-	Mon, 15 Jul 2024 11:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529EE18A923;
+	Mon, 15 Jul 2024 11:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kqZjWEou"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ntqiu1Gl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA481850B3;
-	Mon, 15 Jul 2024 11:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3B2572;
+	Mon, 15 Jul 2024 11:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721043804; cv=none; b=hcmgL73IQT/8L+McKbHXwXuRqIXi8JRXc072otTrF2LID5KMSbV/VaFAZnym83PHsS2MMSTS7oBGoGZA7CfOh/BKohlevHG7Zo7fa5PHWbEE0yYW8SuN4gzbSvBO+F9oLJ8FyAfGYxSOoWmxbv4Zm8/ISXLZmXBaVtLKQhyVa80=
+	t=1721043857; cv=none; b=m1gc9uWkgi1h4uo7k2q0edgTFuQPBnn3bhY01wX9qjbKdpEgnTqy8ZbUHBDmOwqiolZMvStlUTJyhlBOwSIFYYnVcwm4xz4C0y1vnTl36W6cjqZnTs45atkoPqxaXVgIBxRMYtwBMY/GhSGWTsFt/Q/lYivxJ2Rk7EI73wQ5/08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721043804; c=relaxed/simple;
-	bh=e+MHyCyj9h3QpDGIY8dzDG9OfbTUY49n9aY53EdlVcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+8vtFqSCL3ZwiptAS6wLwfJ94ediuKGrOPMP8rGusQmucj/127BQN9nnC7qr6XGeb61WNCKnnAoRlQAthhGxsGo/jzFK5YonymSUaSWxJphR22hbgyLr4uc2J0DDbb1L58WyKMEaYcJk9tyyBir4HKcWwRx0S5b5I3Kw8IJsvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kqZjWEou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215E3C32782;
-	Mon, 15 Jul 2024 11:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721043803;
-	bh=e+MHyCyj9h3QpDGIY8dzDG9OfbTUY49n9aY53EdlVcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kqZjWEou3Q+C80oY1OIuC4gm2F89DW85dO8PZAuWwzIEKgyFpECOp1YKP0tqcErMW
-	 c782+I5icTMl0TRNv4i7iXo3tmrnwmqV6MbNI7iI0Twz6Qajel82rtVJHbcPTVjgLp
-	 61pyQLhRHzuEdfxCtRGihfjAH/qRs0NzgsdcFzj8=
-Date: Mon, 15 Jul 2024 13:43:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Frank Scheiner <frank.scheiner@web.de>
-Cc: stable@vger.kernel.org, akpm@linux-foundation.org, allen.lkml@gmail.com,
-	broonie@kernel.org, conor@kernel.org, f.fainelli@gmail.com,
-	jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-	linux@roeck-us.net, lkft-triage@lists.linaro.org,
-	patches@kernelci.org, patches@lists.linux.dev, pavel@denx.de,
-	rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
-	sudipm.mukherjee@gmail.com, torvalds@linux-foundation.org,
-	=?utf-8?B?VG9tw6HFoQ==?= Glozar <tglozar@gmail.com>
-Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
-Message-ID: <2024071543-footing-vantage-bd4f@gregkh>
-References: <20240704094505.095988824@linuxfoundation.org>
- <76458f11-0ca4-4d3b-a9bc-916399f76b54@web.de>
- <2024071237-hypnotize-lethargic-98f2@gregkh>
- <07a7bc4b-9b71-486f-8666-d3b3593d682c@web.de>
+	s=arc-20240116; t=1721043857; c=relaxed/simple;
+	bh=rkcjPN2IC9uGeSh3wi5QJubFjAvwqQr3HfLBYlq3/r4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uqsl3Tl3j30YnxZ2VnMUmiV/gYD0GcEHoaDXQVlSrfewV6pht1EFn5wT9qdAYxHO+7MGRZ/v67+NxgllSrPwmWYN0Ps2CTy5DMu6MLzVVBkJqzHri51a1+TWutcuUBUgcYlA5tVo4Wnt8/NVteVghCbfBqUA0IHp7AwMIz3B/dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ntqiu1Gl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE43C32782;
+	Mon, 15 Jul 2024 11:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721043857;
+	bh=rkcjPN2IC9uGeSh3wi5QJubFjAvwqQr3HfLBYlq3/r4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ntqiu1Gl8p43tSq/WbDdf6xqczW1nPbYmzEHcFBLgU0LrWL8buPrsJ0H4jotjGUOY
+	 21zbPrFdQ0s6mbhIwiUzTPFlrJ9UXcK3E08lBM7Mvw2Ps2h8/yU2/MOGZcW57vRDiN
+	 QMwNVqoNmAPnWFPUlN4CpsJULRP6rfy8kn4PggywUkWJ+DAVMGVoWUMDeaFWSdQWKS
+	 HoanM+918lp3wqjpN1v9UNXSbPBa5ROkYG5S0Ug1CDgPFL10Zsbd+7poziO+cecQj/
+	 /D6JKlzIi1H76bxCn1XWltNJ4nb7z3l3cPAgu/bZ5jrldcbInFJRKm9Da8i513n+H1
+	 4AQQxaKEzrQ8Q==
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v1 0/2] DMA IOMMU static calls
+Date: Mon, 15 Jul 2024 14:44:01 +0300
+Message-ID: <cover.1721041611.git.leon@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07a7bc4b-9b71-486f-8666-d3b3593d682c@web.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 04:19:39PM +0200, Frank Scheiner wrote:
-> On 12.07.24 15:32, Greg KH wrote:
-> > I'm confused, which commit should we add, or should we just revert what
-> > we have now?
-> 
-> Sorry for the confusion. Let me try again:
-> 
-> 1. efi: memmap: Move manipulation routines into x86 arch tree
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-5.10.y&id=31e0721aeabde29371f624f56ce2f403508527a5
-> 
-> ...breaks the build for ia64, because it requires a header that does not
-> exist before 8ff059b8531f3b98e14f0461859fc7cdd95823e4 for ia64.
-> 
-> 2. efi: ia64: move IA64-only declarations to new asm/efi.h header
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8ff059b8531f3b98e14f0461859fc7cdd95823e4
-> 
-> adds this header and fixes the ia64 build, see for example [1].
-> 
-> [1]:
-> https://github.com/linux-ia64/linux-stable-rc/actions/runs/9871144965#summary-27258970494
-> 
-> From my understanding 31e0721aeabde29371f624f56ce2f403508527a5 should
-> not be merged w/o 8ff059b8531f3b98e14f0461859fc7cdd95823e4, which also
-> seems to be the case for all other stable kernels from linux-5.12.y up.
-> 
-> So 8ff059b8531f3b98e14f0461859fc7cdd95823e4 should be added, too, if
-> 31e0721aeabde29371f624f56ce2f403508527a5 stays in.
+Changelog:
+v1:
+ * Dropped extra layer and called directly to iommu_dma_* functions
+ * Added unmap_page and unmap_sg to dummy ops
+ * Converted all dma-mapping calls to use iommu directly
+ * Updated commit messages
+v0: https://lore.kernel.org/all/98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org/
 
-Ok, thanks, now queued up.
+Leon Romanovsky (2):
+  dma: call unconditionally to unmap_page and unmap_sg callbacks
+  dma: Add IOMMU static calls with clear default ops
 
-> > And I thought that ia64 was dead?
-> 
-> No, actually it's alive and well - just currently outside of mainline -
-> but still in the stable kernels up to linux-6.6.y and for newer kernels
-> patched back in. If you want to check on our CI ([2]), all current
-> stable kernels build fine for ia64 and run in Ski - but linux-5.10.y
-> currently only because I manually added
-> 8ff059b8531f3b98e14f0461859fc7cdd95823e4 to the list of patches applied
-> by the CI.
-> 
-> [2]: https://github.com/linux-ia64/linux-stable-rc/actions/runs/9901808825
+ MAINTAINERS                 |   1 +
+ drivers/iommu/dma-iommu.c   | 108 ++++++++++-------------
+ include/linux/dma-map-ops.h |   3 +
+ include/linux/iommu-dma.h   | 169 ++++++++++++++++++++++++++++++++++++
+ kernel/dma/dummy.c          |  21 +++++
+ kernel/dma/mapping.c        |  73 ++++++++++++++--
+ 6 files changed, 305 insertions(+), 70 deletions(-)
+ create mode 100644 include/linux/iommu-dma.h
 
-Will be interesting to see how long it lasts, good luck!
+-- 
+2.45.2
 
-greg k-h
 
