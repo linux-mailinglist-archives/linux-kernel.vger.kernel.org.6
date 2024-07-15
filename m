@@ -1,567 +1,238 @@
-Return-Path: <linux-kernel+bounces-252715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C21931734
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:57:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C721D931737
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9688283440
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:57:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 357A3B22370
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D19918EFFB;
-	Mon, 15 Jul 2024 14:57:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AFC18EFDA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721055434; cv=none; b=SQtE4PARTxuOHbO/B9xKTsIHAq/VgHv4mImFEJhW0A4vUHuy72u0WYuq/nGkbUz7jnIv0Mu/HYh0rBk8zBx61DkHjkFrtvsp3n/kKy0mGG+sGC2F5ShtKc7VEjURQrvJYjOAI7jL/B5X2FCxYE+0EwT/9YQuSWTslM8BfpTLxVY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721055434; c=relaxed/simple;
-	bh=fxNOoVfZGigSgGwgKBCHi68MBPkHY62RQBw2t9jrFL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M3o3yKudj0mdZgOjgnmgKPD6M15+bo8bV8Gz3nzOX4pVhHU5T/bDAHCy8H47dJ3ro9lpNX14YKRqOf6NbJbo0cO+b0pXAMn+8MdZmuBhvKbpvj3rYClB658uIXSehEticrQfOcIQFJNbT36AQO+FME6rbSDCn8mQWb0uKbkTCQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFC1AFEC;
-	Mon, 15 Jul 2024 07:57:36 -0700 (PDT)
-Received: from [10.57.77.136] (unknown [10.57.77.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2766A3F766;
-	Mon, 15 Jul 2024 07:57:10 -0700 (PDT)
-Message-ID: <301b2399-a834-4c34-89cf-1425062c91ff@arm.com>
-Date: Mon, 15 Jul 2024 15:57:08 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD2318F2C9;
+	Mon, 15 Jul 2024 14:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jjp1rjLM";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="g+uD9lKe"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2735818EFDA;
+	Mon, 15 Jul 2024 14:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721055496; cv=fail; b=BUEjps2BgFoM6KfyaXTqpaxZalOUwGLkqgYDiAeiz1IAEaKiSQ5Vq583Abd82DPslak8Cu/ls1eJCwac0su8S7jCPb4KU41jnqDcaj8p/kAGW4+NnWQpniWTMcWxVRVd/JFB1JDU8ecQ8wddAHFwXhd9XD1ATrUPcUin0YRXmfI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721055496; c=relaxed/simple;
+	bh=N7J7UOFLAqrMyW9sejP11oCewb4MtW2p4ZoAJsGRpy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=piIIMJPKTUClKo9Pbmza15+SZRZt63nLDFkzhkrQrBCLF/p3C4Fo+zElvhN+SfvWXG/VYMCTTAppAw0pn9L80IJ+Zocacj08yZwvXgJ1M7Nx2YcabHxY55OsPkSKiN6k/Htop5b7fOFV92qifhMJzINltfAK1V6Rw+0uTaeBrfI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Jjp1rjLM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=g+uD9lKe; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FENbGF005763;
+	Mon, 15 Jul 2024 14:58:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=G/i2jXjQKQtAotX
+	6oykzv/jHuxbJgqVtP/G6DSt4Qu8=; b=Jjp1rjLM1JFwwADiv2govAEzEoFDc6Q
+	26gV1cB6ouYQVtilRncz3vvY+gUm8rzWgBfFhnhqWsYYWsLHHg+PwsfDsUGpdWyW
+	2KAH+ZI/pp1n/7QoEYHHIBo5ARmHFNM0m49qL5u6rweU9gaPBZqmWNy8jGZxmkA7
+	G+Vr6JYnwGhqQtKeBwjIiN17Cz68bTjiFwkXcSh1DoRT7DLOzFVZOA6UtiVMYV89
+	HxPpW/X4kWebCiPt0Vhqd0juPdR45OzN4Y6Egg5WtPx7PETjWIahvyja6zI7SxKM
+	JWonk3V/4RAWKYe5OMRm6vDafcJzJAQ9+Ew4OBwEDlInlC7G5gW1z2Q==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40bgc2bpua-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Jul 2024 14:58:03 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46FDQdB4040595;
+	Mon, 15 Jul 2024 14:58:02 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2040.outbound.protection.outlook.com [104.47.51.40])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40bg17pcw0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Jul 2024 14:58:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L3+JoBIYJhIIya8mtWm+bZnsRirHBks8gNh/UtZoz/PIRy4lKkRdTQkfUncGxhtu/6qBEO/U6/CjKM01hPLQ0ycDzM240MD61AgS338tCeIELt9UgXJ6mST0NsEvIbnWac5eK0kjPF1Cg1+wDQ7iHaqwMzjQpSFaUb3eupsannyUZiLXcsZ0OSPCJYGzUOQPWESb4si8EpMQiHzp48JZDDLThnJvjIa9VZoLg3pseyMtPFJvv8CAQ7Etvv7ZVaX07zWCNjqgZsfPOtsVIQs/l48f80ya8sOxVYsnM3WiX+NLc7+RxpcV0XW2nPeot99Fp7PtLpP5lEe5HaOJ7puWDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G/i2jXjQKQtAotX6oykzv/jHuxbJgqVtP/G6DSt4Qu8=;
+ b=bx6PxPVkSluArnvIujjBV2hzxBm4BW0GLeakXiH6UQ9sKgOAOM/0n+LE+SYgDaDN1OIOYV9mynEYqbVcNyR54OVrl5b9bRBwfZ1stOV9cvWvaq2NMIlI2vrpULmACPCXV/J3qTdTCvJEs7HgIsKlZA8m9GKdeiG8OSDGt0wXBLqGsbT8iN9kWooiuq0fF06Y0bIWP3gxeCNPvep8bbRNR3kaQmykH19TyHL5nE1+aTZNMNQZPRa+hppEPcOMis6IBzX51SQ40oGvmEz/AEx5zd+gW5Ms888aVY0BEBkCnwQIpBZEaBYLd6TlrSJptazlMjoKUqzov+cTE+H41bpJDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G/i2jXjQKQtAotX6oykzv/jHuxbJgqVtP/G6DSt4Qu8=;
+ b=g+uD9lKekVB9JRQuAKRi6LLNFLhOI1ohtqOkajGR1MJtcDgRd/unfAitP5PQWj1Q9JI4Y19bByYKoxlQfi+A9ZTfXjqEb8y7sIDxrSqQmUdWyyr+r9CpLka1AUKpcPkcfn5vmTkAUE7Ny+saSU7zPqHwm1Ae6X6X4q01SNEIXII=
+Received: from CY8PR10MB7265.namprd10.prod.outlook.com (2603:10b6:930:79::6)
+ by SJ0PR10MB4719.namprd10.prod.outlook.com (2603:10b6:a03:2d1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 15 Jul
+ 2024 14:58:00 +0000
+Received: from CY8PR10MB7265.namprd10.prod.outlook.com
+ ([fe80::d299:36f1:493b:33fc]) by CY8PR10MB7265.namprd10.prod.outlook.com
+ ([fe80::d299:36f1:493b:33fc%6]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 14:58:00 +0000
+Date: Mon, 15 Jul 2024 10:57:56 -0400
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+To: syzbot <syzbot+2009b142f47c1e8fe762@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [crypto?] possible deadlock in alloc_workqueue
+Message-ID: <thmfb3q55cnqkqwep55rbngla3veaaw56kduriianxlwkgmbnu@rqmefdenius7>
+References: <0000000000001ea4c3061d220fae@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000001ea4c3061d220fae@google.com>
+X-ClientProxiedBy: BL6PEPF00016410.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1004:0:17) To CY8PR10MB7265.namprd10.prod.outlook.com
+ (2603:10b6:930:79::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] mm: swap: swap cluster switch to double link list
-Content-Language: en-GB
-To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>,
- "Huang, Ying" <ying.huang@intel.com>, Kalesh Singh <kaleshsingh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <baohua@kernel.org>
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
- <20240711-swap-allocator-v4-1-0295a4d4c7aa@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240711-swap-allocator-v4-1-0295a4d4c7aa@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR10MB7265:EE_|SJ0PR10MB4719:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c4071ec-5810-462d-a506-08dca4de852e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?CRYNDfoZC1R8mtR300ZluZEySC7FXW9WZGQ+9oVt873foO4IVLMpweqS7rjO?=
+ =?us-ascii?Q?CVd+AEETmAEBfyAiPc2/Ta9S0Is8KneKeQC3oHgEsA79VMt4qspRzKPZAQg2?=
+ =?us-ascii?Q?ZeZ4AqKEdR0Aq2nBBMkGG50tMjLYLP5u78HX1fNNTr4mQ7NP4fqoMAsG7bcT?=
+ =?us-ascii?Q?A0knxEtmfAZ/7q80O63CmcuEHVor4cxjlrc/eAZa6X4CeK9TVnm67+uOvmnH?=
+ =?us-ascii?Q?30jedrlzywv19VWScM6cGP+3bl5r4e01/CYn9IGvyULJKWD8pfH0sMSbKTz/?=
+ =?us-ascii?Q?vGiLHk0NnQzkbadgP4q5bSU5Uyq/C7fkgB2zKTrgFckvvzXAbnJmbxsX8gCg?=
+ =?us-ascii?Q?gDywYIqVjVxn65+qALmj1qxrMKloJXE2SPLPmNJpNQ3gCP+Yb1Ocn53CIS4M?=
+ =?us-ascii?Q?En7YcfJSsowKCxDEWGoZVoM6KuWBHxiUOuNwAHSnI+tA46Kv5dRPZGeNJxiF?=
+ =?us-ascii?Q?IVivj+2TiZ2eET8ASEW6Ac92uARMUepmkNNul5uUK2N3tmZ1tscbNOuzDue4?=
+ =?us-ascii?Q?9javAk5KZz7gmYvNQbm4WHiM2iXrqqKiJgdYlQKYxzNDlKkIKBprfc0q9Tvn?=
+ =?us-ascii?Q?UUUYGJAY7PCQHmadQQlsYhxC3ROWKaw62U1J8DNaElXq/dCYpF8oqV6whB+G?=
+ =?us-ascii?Q?zDSb86YFoyJnT5Ew0g4ze1F5lxIC3CKYcGRxZKyskBPZXVKYRZvhb4BR9+Jw?=
+ =?us-ascii?Q?+3A8xtE8aF+ezofXHISGxk0F1GKSn6Rev5WT9Hy4vFNovx8QuWXCIKnXcMaZ?=
+ =?us-ascii?Q?7hrvGU9abkS0poznDGhNZdjpydXfRxom6+z/2wZ0WlsNZAh4jHcSxi/Jk+Uz?=
+ =?us-ascii?Q?28ITR/0x+0B8JUIkyU8JnhKEta4wftRi+RUJFe2MjRjAdrockPL1H0FBEilD?=
+ =?us-ascii?Q?GchXR41rd0qYhf5Kx8u3ghIgEGdNwK4aato2bRgiPFS5LKr/0mJoMRpVZNWD?=
+ =?us-ascii?Q?NCayBo4QqLZMwxkhlm/FJdrQXVUJhnoKJS4c815RpOXuPEA+UBC7zetp240+?=
+ =?us-ascii?Q?vUqyL0l1TecZoMmlflbPlok79CoK/frzEZw3AtK6a+i0X0JhZA7jIk/fhTup?=
+ =?us-ascii?Q?b7UvTDPBOcxhHAEHI13KzLzkWm40iNKx38CZHKppbd+zMbIC8AI5TSLMc0I6?=
+ =?us-ascii?Q?1n1aIT2uhxkTDd+lbnM+n5U6n9Ja3RDp7yJGcutENAciZe3JqaK4E7wFS1HI?=
+ =?us-ascii?Q?EhsnUfeGrcWFK9zCj2lWZpcBSMrDyWIcDav5rFZuCMc+KGaCdJh59aKYcqJE?=
+ =?us-ascii?Q?MXBDqypSjvkkJi5XBIMB0VN0xAPQt6nN9KspP7T4za0dpevq24L0BY2WM94j?=
+ =?us-ascii?Q?+X0=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB7265.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?ThAfKpPyaZrY0XxkECB0KnrMa/EPVCEih+/kORe8wYQDEz3uoK2ZaeZnLx7d?=
+ =?us-ascii?Q?meqtO9Ld99/R/Ue9SJgREzg1ZmBBTmT7QYtFicusMnXq6luQYDSdTPDh8WZ6?=
+ =?us-ascii?Q?KYwbDUC9kQ6B32Ugx7KhNStJaWNh4ScbwxHxwyh0hO7Br844ykJhex6F0Gre?=
+ =?us-ascii?Q?iA4moM5Lkd2X5FPyvj21XIPayGKFROzJ7qAgYki2HlVSJ3widKi3WSKXkPXd?=
+ =?us-ascii?Q?1XcVrjcgpIO2HUoEKt2dsGhkr9q9DCQ7RR+pF36TsdIpKhLfsP+1f4P0Wq31?=
+ =?us-ascii?Q?tZ2IkFWQUwOC2FMMG2FDFNs42QzYeUxzpCQY0TWjVXm8XyPhXxKG5TDSQ33c?=
+ =?us-ascii?Q?bA6VP9b/ns9nh9S/SVoYusWdyTqp+6Zjwwx+AgNhlNO7ipTuGjvFzLJkNc/e?=
+ =?us-ascii?Q?vEtZOvTdoND8Vkl7hXv4DwCQVjKV2AAdjpS+tXGu+PrN2p3JFNIp8WjL0eMl?=
+ =?us-ascii?Q?uVEvPfliNlGPJl8nZE+pK42Mv11iZz1ZVqs7xQ/IRpSCBvETq1CB/T381ihf?=
+ =?us-ascii?Q?sYsP4P+5mRixID52m7YGknM5EQW9jmI0U/q0B6/vCviNF+Kex++Giw97HhdG?=
+ =?us-ascii?Q?eG7xFLe/leo/l/HfLwvcvAiqjd4I/5dWGw1ftPxyggdgjnJ00P5ck6bcsmm5?=
+ =?us-ascii?Q?IWDXjC66MqPHbmyumbaipVwIjHVONG433iDWyHs7KYOCUz0EPRuqoVBbcDt3?=
+ =?us-ascii?Q?NnWihWYa516Uq6lgkJnMIBHXYzCCOk5zuEohPACJJna3oQDMmabG8RcUcvDe?=
+ =?us-ascii?Q?JWTYlq1y4L7O+BLGYV07KSvhvRmtuGudU1OZxINFIsaxiYf74xap9k8fIYLO?=
+ =?us-ascii?Q?ZnqbgtgR4DkBdjvaE/udxTMSf0YxtMLzph7gNTPcyL3VBq4AIYMvUdOsvIUJ?=
+ =?us-ascii?Q?XsSyEWEPej6vLifR/zoOUDb0VT6CR8Cug4GCZ+bQxtS1mYntQs4oAhMCYjt5?=
+ =?us-ascii?Q?nkRaSvOczSbyqyughjuC4iO+96ugYyeLWS1YpbHRfByA1LYDbAXiYeQu6iTy?=
+ =?us-ascii?Q?7AqsKikY2TUNLVWYPzsW9FhIIqzY3vDFmaxcysoyhGHiUuB/U5Y2swyzS4es?=
+ =?us-ascii?Q?IPEQxZ8IfMBKGm9dlwh1A18LyZaeu7F2OMU92Y//Tu0fXor7cbbE3Cr1Yxt6?=
+ =?us-ascii?Q?fNa5SgcE95vS4GMfMl7HB1+ErY5dajXcGctwlXjOgPYHPQRFCmpDoW3kOcZ3?=
+ =?us-ascii?Q?ysM3kcSHw4OjNsb5qrnMD2z8gXLkUzVA1PwW23SYiGECFAj8zCj9fHBM6CY+?=
+ =?us-ascii?Q?htvjuIcIYg+57xk1bKyuKtihYTcp5z+r4jQgCo+6thVRAcDNV/dhpdwdsBk6?=
+ =?us-ascii?Q?4J6bj0hwfjaD5UB6CeBS568ONzEcT1/OtAbWSZzdpeLshoB2ow7gnOKpIOWe?=
+ =?us-ascii?Q?p14D7cCc6AJcAojMypZh+NXojPsUsoWIUFws6ZrjwXkZxpBpCvC7Tsc8Et9D?=
+ =?us-ascii?Q?pNbvSYNnoYfITVxC/nn6Y4TiXJXP5H4gd+exirjejL5op3OGZn0Ovpb6U4lO?=
+ =?us-ascii?Q?1nrZhn6NmJYkwJb8+QMj8FXjzCP6NXYgJ0BVaDNmWPx5kOluUte1tPF44eP3?=
+ =?us-ascii?Q?PnutzEa/IZE1qj9uEl6tzoM6j8G2lLvbWJsPNJPWpvUpfSYwyGRqFeJLGFkI?=
+ =?us-ascii?Q?2Q=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	vXhcb0vkAOMvgnEaAy4MbYAT5LZjx3ll33Tw4rbYvRFZQEx56B1Bf+aI4y7FDnTXC9WtN0MAZ4mDH2ndy+rNwVbo3xhHUpVvxfac61bGQ4yz9wiikwHT0fyhje+v2u8dOe/k14HQiPeb8jYZZj3gr5QeuecjCdD6c1x1d/p6pQyh2KI2LRzBb2fRqh/jq8wigUEMWuTsUA7jJ3QlG4xel/IA1GYZG0Y7zlNP7i/zMQcWzl3S4dFw3N+yaaDsJ13N0FA6LtqSDcHV2Jx2w0GbKm+auBG7m00M6hYImo3kUzHcvioUyt9Ydau4SsTdRTq4AidFVIq7gEMKGSXiWtXVr/XHobamQ81d+NdDHqE/UgoPwBVBsG2Pd9hlmxtDzOoj4xhf5wTl8KbjSIRm5oDbVkMBPF6+mrTDc7+y4DNFMA6iWsRqYPdrhZ+7fXfrXbDplK4zfWOo55V+xpXHp8ok8IcKmqwGNwCfCMcfJdKxSTbkvl7xEknEtyIHfBna5lPLtUXpdo1iHOMpbsOnRQzYRyXglQxmeNk9dgs6NOGrI2+9I6YOKr9opek6993pid82TG14Vga23P/Z8xtPPG0zHYtvP1C9S/jeXS9FLbeUxK0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c4071ec-5810-462d-a506-08dca4de852e
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB7265.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 14:58:00.5338
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cAQcZZ5KyFlkg7rA5UYx0E0eekIMydopAdhR2Xfnhp72uj2z6ju0L/ynmbKxsYo26YuD3FrkARvqv/1JPZeY4CCWlkmsFvLwnIkpjJh0DBQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4719
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_09,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407150117
+X-Proofpoint-GUID: RbVS4ueI6bmNDflrKgLOtp5AnAcNwD9C
+X-Proofpoint-ORIG-GUID: RbVS4ueI6bmNDflrKgLOtp5AnAcNwD9C
 
-On 11/07/2024 08:29, Chris Li wrote:
-> Previously, the swap cluster used a cluster index as a pointer
-> to construct a custom single link list type "swap_cluster_list".
-> The next cluster pointer is shared with the cluster->count.
-> It prevents puting the non free cluster into a list.
+On Sat, Jul 13, 2024 at 07:46:20AM GMT, syzbot wrote:
+> Hello,
 > 
-> Change the cluster to use the standard double link list instead.
-> This allows tracing the nonfull cluster in the follow up patch.
-> That way, it is faster to get to the nonfull cluster of that order.
+> syzbot found the following issue on:
 > 
-> Remove the cluster getter/setter for accessing the cluster
-> struct member.
+> HEAD commit:    82d01fe6ee52 Add linux-next specific files for 20240709
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15ecf3b9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=95a20e7acf357998
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2009b142f47c1e8fe762
+...
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.10.0-rc7-next-20240709-syzkaller #0 Not tainted
+> --------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+> ffffffff8e1d19f0 (cpu_hotplug_lock){++++}-{0:0}, at: apply_wqattrs_lock kernel/workqueue.c:5134 [inline]
+> ffffffff8e1d19f0 (cpu_hotplug_lock){++++}-{0:0}, at: alloc_workqueue+0xb99/0x1ff0 kernel/workqueue.c:5719
 > 
-> The list operation is protected by the swap_info_struct->lock.
-> 
-> Change cluster code to use "struct swap_cluster_info *" to
-> reference the cluster rather than by using index. That is more
-> consistent with the list manipulation. It avoids the repeat
-> adding index to the cluser_info. The code is easier to understand.
-> 
-> Remove the cluster next pointer is NULL flag, the double link
-> list can handle the empty list pretty well.
-> 
-> The "swap_cluster_info" struct is two pointer bigger, because
-> 512 swap entries share one swap struct, it has very little impact
-> on the average memory usage per swap entry. For 1TB swapfile, the
-> swap cluster data structure increases from 8MB to 24MB.
-> 
-> Other than the list conversion, there is no real function change
-> in this patch.
-> 
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
->  include/linux/swap.h |  26 +++---
->  mm/swapfile.c        | 225 ++++++++++++++-------------------------------------
->  2 files changed, 70 insertions(+), 181 deletions(-)
-> 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index e473fe6cfb7a..e9be95468fc7 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -243,22 +243,21 @@ enum {
->   * free clusters are organized into a list. We fetch an entry from the list to
->   * get a free cluster.
->   *
-> - * The data field stores next cluster if the cluster is free or cluster usage
-> - * counter otherwise. The flags field determines if a cluster is free. This is
-> - * protected by swap_info_struct.lock.
-> + * The flags field determines if a cluster is free. This is
-> + * protected by cluster lock.
->   */
->  struct swap_cluster_info {
->  	spinlock_t lock;	/*
->  				 * Protect swap_cluster_info fields
-> -				 * and swap_info_struct->swap_map
-> -				 * elements correspond to the swap
-> -				 * cluster
-> +				 * other than list, and swap_info_struct->swap_map
-> +				 * elements correspond to the swap cluster.
+> but task is already holding lock:
+> ffffffff8e1d19f0 (cpu_hotplug_lock){++++}-{0:0}, at: padata_alloc+0xaa/0x370 kernel/padata.c:1005
+...
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc7-next-20240709-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3034
+>  check_deadlock kernel/locking/lockdep.c:3086 [inline]
+>  validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3888
+>  __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5193
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
+>  percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>  cpus_read_lock+0x42/0x150 kernel/cpu.c:490
+>  apply_wqattrs_lock kernel/workqueue.c:5134 [inline]
+>  alloc_workqueue+0xb99/0x1ff0 kernel/workqueue.c:5719
+>  padata_alloc+0xc3/0x370 kernel/padata.c:1007
+>  pcrypt_init_padata+0x27/0x100 crypto/pcrypt.c:327
+>  pcrypt_init+0x65/0xe0 crypto/pcrypt.c:352
 
-nit: correspond -> corresponding
+This isn't an issue anymore.
 
->  				 */
-> -	unsigned int data:24;
-> -	unsigned int flags:8;
-> +	u16 count;
+A workqueue change in the above next tree did cause this deadlock, but
+it was reported at
 
-Just to make sure I've understood correctly; count can safely be 16 bit (down
-from previous 24 bit) because the max it will ever be is the number of swap
-entries in the cluster, and that's currently no bigger than 512, and in future
-we wouldn't expect it to ever get bigger than 8192 (number of pages in PMD-order
-for arm64 64K base pages). 8192 is represented in 14 bits.
+    https://lore.kernel.org/all/CAJhGHyC=5FC1uFt0xzMwk42m=zm-_d9-OxoC4BQmSREAbAQrog@mail.gmail.com/
 
-> +	u8 flags;
-> +	struct list_head list;
->  };
->  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
-> -#define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next cluster */
-> +
-
-nit: why the blank line?
-
->  
->  /*
->   * The first page in the swap file is the swap header, which is always marked
-> @@ -283,11 +282,6 @@ struct percpu_cluster {
->  	unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offset */
->  };
->  
-> -struct swap_cluster_list {
-> -	struct swap_cluster_info head;
-> -	struct swap_cluster_info tail;
-> -};
-> -
->  /*
->   * The in-memory structure used to track swap areas.
->   */
-> @@ -301,7 +295,7 @@ struct swap_info_struct {
->  	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
->  	unsigned long *zeromap;		/* vmalloc'ed bitmap to track zero pages */
->  	struct swap_cluster_info *cluster_info; /* cluster info. Only for SSD */
-> -	struct swap_cluster_list free_clusters; /* free clusters list */
-> +	struct list_head free_clusters; /* free clusters list */
->  	unsigned int lowest_bit;	/* index of first free in swap_map */
->  	unsigned int highest_bit;	/* index of last free in swap_map */
->  	unsigned int pages;		/* total of usable pages of swap */
-> @@ -332,7 +326,7 @@ struct swap_info_struct {
->  					 * list.
->  					 */
->  	struct work_struct discard_work; /* discard worker */
-> -	struct swap_cluster_list discard_clusters; /* discard clusters list */
-> +	struct list_head discard_clusters; /* discard clusters list */
->  	struct plist_node avail_lists[]; /*
->  					   * entries in swap_avail_heads, one
->  					   * entry per node.
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index f7224bc1320c..f70d25005d2c 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -290,62 +290,15 @@ static void discard_swap_cluster(struct swap_info_struct *si,
->  #endif
->  #define LATENCY_LIMIT		256
->  
-> -static inline void cluster_set_flag(struct swap_cluster_info *info,
-> -	unsigned int flag)
-> -{
-> -	info->flags = flag;
-> -}
-> -
-> -static inline unsigned int cluster_count(struct swap_cluster_info *info)
-> -{
-> -	return info->data;
-> -}
-> -
-> -static inline void cluster_set_count(struct swap_cluster_info *info,
-> -				     unsigned int c)
-> -{
-> -	info->data = c;
-> -}
-> -
-> -static inline void cluster_set_count_flag(struct swap_cluster_info *info,
-> -					 unsigned int c, unsigned int f)
-> -{
-> -	info->flags = f;
-> -	info->data = c;
-> -}
-> -
-> -static inline unsigned int cluster_next(struct swap_cluster_info *info)
-> -{
-> -	return info->data;
-> -}
-> -
-> -static inline void cluster_set_next(struct swap_cluster_info *info,
-> -				    unsigned int n)
-> -{
-> -	info->data = n;
-> -}
-> -
-> -static inline void cluster_set_next_flag(struct swap_cluster_info *info,
-> -					 unsigned int n, unsigned int f)
-> -{
-> -	info->flags = f;
-> -	info->data = n;
-> -}
-> -
->  static inline bool cluster_is_free(struct swap_cluster_info *info)
->  {
->  	return info->flags & CLUSTER_FLAG_FREE;
->  }
->  
-> -static inline bool cluster_is_null(struct swap_cluster_info *info)
-> -{
-> -	return info->flags & CLUSTER_FLAG_NEXT_NULL;
-> -}
-> -
-> -static inline void cluster_set_null(struct swap_cluster_info *info)
-> +static inline unsigned int cluster_index(struct swap_info_struct *si,
-> +					 struct swap_cluster_info *ci)
->  {
-> -	info->flags = CLUSTER_FLAG_NEXT_NULL;
-> -	info->data = 0;
-> +	return ci - si->cluster_info;
->  }
->  
->  static inline struct swap_cluster_info *lock_cluster(struct swap_info_struct *si,
-> @@ -394,65 +347,11 @@ static inline void unlock_cluster_or_swap_info(struct swap_info_struct *si,
->  		spin_unlock(&si->lock);
->  }
->  
-> -static inline bool cluster_list_empty(struct swap_cluster_list *list)
-> -{
-> -	return cluster_is_null(&list->head);
-> -}
-> -
-> -static inline unsigned int cluster_list_first(struct swap_cluster_list *list)
-> -{
-> -	return cluster_next(&list->head);
-> -}
-> -
-> -static void cluster_list_init(struct swap_cluster_list *list)
-> -{
-> -	cluster_set_null(&list->head);
-> -	cluster_set_null(&list->tail);
-> -}
-> -
-> -static void cluster_list_add_tail(struct swap_cluster_list *list,
-> -				  struct swap_cluster_info *ci,
-> -				  unsigned int idx)
-> -{
-> -	if (cluster_list_empty(list)) {
-> -		cluster_set_next_flag(&list->head, idx, 0);
-> -		cluster_set_next_flag(&list->tail, idx, 0);
-> -	} else {
-> -		struct swap_cluster_info *ci_tail;
-> -		unsigned int tail = cluster_next(&list->tail);
-> -
-> -		/*
-> -		 * Nested cluster lock, but both cluster locks are
-> -		 * only acquired when we held swap_info_struct->lock
-> -		 */
-> -		ci_tail = ci + tail;
-> -		spin_lock_nested(&ci_tail->lock, SINGLE_DEPTH_NESTING);
-
-Just to confirm my understanding, there was never previously any list
-manipulation where the si->lock wasn't held, so this ensuring that both clusters
-were locked for list manipulation was unnecessary? I don't see any extra places
-where you are taking si->lock, so I guess that must be the case (or your new
-regime is unsafe...).
-
-> -		cluster_set_next(ci_tail, idx);
-> -		spin_unlock(&ci_tail->lock);
-> -		cluster_set_next_flag(&list->tail, idx, 0);
-> -	}
-> -}
-> -
-> -static unsigned int cluster_list_del_first(struct swap_cluster_list *list,
-> -					   struct swap_cluster_info *ci)
-> -{
-> -	unsigned int idx;
-> -
-> -	idx = cluster_next(&list->head);
-> -	if (cluster_next(&list->tail) == idx) {
-> -		cluster_set_null(&list->head);
-> -		cluster_set_null(&list->tail);
-> -	} else
-> -		cluster_set_next_flag(&list->head,
-> -				      cluster_next(&ci[idx]), 0);
-> -
-> -	return idx;
-> -}
-> -
->  /* Add a cluster to discard list and schedule it to do discard */
->  static void swap_cluster_schedule_discard(struct swap_info_struct *si,
-> -		unsigned int idx)
-> +		struct swap_cluster_info *ci)
->  {
-> +	unsigned int idx = cluster_index(si, ci);
->  	/*
->  	 * If scan_swap_map_slots() can't find a free cluster, it will check
->  	 * si->swap_map directly. To make sure the discarding cluster isn't
-> @@ -462,17 +361,14 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
->  	memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->  			SWAP_MAP_BAD, SWAPFILE_CLUSTER);
->  
-> -	cluster_list_add_tail(&si->discard_clusters, si->cluster_info, idx);
-> -
-> +	list_add_tail(&ci->list, &si->discard_clusters);
->  	schedule_work(&si->discard_work);
->  }
->  
-> -static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
-> +static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
->  {
-> -	struct swap_cluster_info *ci = si->cluster_info;
-> -
-> -	cluster_set_flag(ci + idx, CLUSTER_FLAG_FREE);
-> -	cluster_list_add_tail(&si->free_clusters, ci, idx);
-> +	ci->flags = CLUSTER_FLAG_FREE;
-> +	list_add_tail(&ci->list, &si->free_clusters);
->  }
->  
->  /*
-> @@ -481,24 +377,25 @@ static void __free_cluster(struct swap_info_struct *si, unsigned long idx)
->  */
->  static void swap_do_scheduled_discard(struct swap_info_struct *si)
->  {
-> -	struct swap_cluster_info *info, *ci;
-> +	struct swap_cluster_info *ci;
->  	unsigned int idx;
->  
-> -	info = si->cluster_info;
-> -
-> -	while (!cluster_list_empty(&si->discard_clusters)) {
-> -		idx = cluster_list_del_first(&si->discard_clusters, info);
-> +	while (!list_empty(&si->discard_clusters)) {
-> +		ci = list_first_entry(&si->discard_clusters, struct swap_cluster_info, list);
-> +		list_del(&ci->list);
-> +		idx = cluster_index(si, ci);
->  		spin_unlock(&si->lock);
->  
->  		discard_swap_cluster(si, idx * SWAPFILE_CLUSTER,
->  				SWAPFILE_CLUSTER);
->  
->  		spin_lock(&si->lock);
-> -		ci = lock_cluster(si, idx * SWAPFILE_CLUSTER);
-> -		__free_cluster(si, idx);
-> +
-> +		spin_lock(&ci->lock);
-> +		__free_cluster(si, ci);
->  		memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->  				0, SWAPFILE_CLUSTER);
-> -		unlock_cluster(ci);
-> +		spin_unlock(&ci->lock);
->  	}
->  }
->  
-> @@ -521,20 +418,20 @@ static void swap_users_ref_free(struct percpu_ref *ref)
->  	complete(&si->comp);
->  }
->  
-> -static void alloc_cluster(struct swap_info_struct *si, unsigned long idx)
-> +static struct swap_cluster_info *alloc_cluster(struct swap_info_struct *si, unsigned long idx)
->  {
-> -	struct swap_cluster_info *ci = si->cluster_info;
-> +	struct swap_cluster_info *ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
-
-nit: long line; consider separating the variable declaration and assignment?
-
->  
-> -	VM_BUG_ON(cluster_list_first(&si->free_clusters) != idx);
-> -	cluster_list_del_first(&si->free_clusters, ci);
-> -	cluster_set_count_flag(ci + idx, 0, 0);
-> +	VM_BUG_ON(cluster_index(si, ci) != idx);
-> +	list_del(&ci->list);
-> +	ci->count = 0;
-> +	ci->flags = 0;
-> +	return ci;
->  }
->  
-> -static void free_cluster(struct swap_info_struct *si, unsigned long idx)
-> +static void free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
->  {
-> -	struct swap_cluster_info *ci = si->cluster_info + idx;
-> -
-> -	VM_BUG_ON(cluster_count(ci) != 0);
-> +	VM_BUG_ON(ci->count != 0);
->  	/*
->  	 * If the swap is discardable, prepare discard the cluster
->  	 * instead of free it immediately. The cluster will be freed
-> @@ -542,11 +439,11 @@ static void free_cluster(struct swap_info_struct *si, unsigned long idx)
->  	 */
->  	if ((si->flags & (SWP_WRITEOK | SWP_PAGE_DISCARD)) ==
->  	    (SWP_WRITEOK | SWP_PAGE_DISCARD)) {
-> -		swap_cluster_schedule_discard(si, idx);
-> +		swap_cluster_schedule_discard(si, ci);
->  		return;
->  	}
->  
-> -	__free_cluster(si, idx);
-> +	__free_cluster(si, ci);
->  }
->  
->  /*
-> @@ -559,15 +456,15 @@ static void add_cluster_info_page(struct swap_info_struct *p,
->  	unsigned long count)
->  {
->  	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-> +	struct swap_cluster_info *ci = cluster_info + idx;
->  
->  	if (!cluster_info)
->  		return;
-> -	if (cluster_is_free(&cluster_info[idx]))
-> +	if (cluster_is_free(ci))
->  		alloc_cluster(p, idx);
->  
-> -	VM_BUG_ON(cluster_count(&cluster_info[idx]) + count > SWAPFILE_CLUSTER);
-> -	cluster_set_count(&cluster_info[idx],
-> -		cluster_count(&cluster_info[idx]) + count);
-> +	VM_BUG_ON(ci->count + count > SWAPFILE_CLUSTER);
-> +	ci->count += count;
->  }
->  
->  /*
-> @@ -581,24 +478,20 @@ static void inc_cluster_info_page(struct swap_info_struct *p,
->  }
->  
->  /*
-> - * The cluster corresponding to page_nr decreases one usage. If the usage
-> - * counter becomes 0, which means no page in the cluster is in using, we can
-> - * optionally discard the cluster and add it to free cluster list.
-> + * The cluster ci decreases one usage. If the usage counter becomes 0,
-> + * which means no page in the cluster is in using, we can optionally discard
-
-nit: "in using" -> "in use"
-
-> + * the cluster and add it to free cluster list.
->   */
-> -static void dec_cluster_info_page(struct swap_info_struct *p,
-> -	struct swap_cluster_info *cluster_info, unsigned long page_nr)
-> +static void dec_cluster_info_page(struct swap_info_struct *p, struct swap_cluster_info *ci)
->  {
-> -	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-> -
-> -	if (!cluster_info)
-> +	if (!p->cluster_info)
->  		return;
->  
-> -	VM_BUG_ON(cluster_count(&cluster_info[idx]) == 0);
-> -	cluster_set_count(&cluster_info[idx],
-> -		cluster_count(&cluster_info[idx]) - 1);
-> +	VM_BUG_ON(ci->count == 0);
-> +	ci->count--;
->  
-> -	if (cluster_count(&cluster_info[idx]) == 0)
-> -		free_cluster(p, idx);
-> +	if (!ci->count)
-> +		free_cluster(p, ci);
->  }
->  
->  /*
-> @@ -611,10 +504,10 @@ scan_swap_map_ssd_cluster_conflict(struct swap_info_struct *si,
->  {
->  	struct percpu_cluster *percpu_cluster;
->  	bool conflict;
-> -
-> +	struct swap_cluster_info *first = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
-
-nit: long line; consider splitting variable declaration and assignment.
-
-nit: You're removed the blank line between variable declarations and statements;
-did you run checkpatch.pl?
-
->  	offset /= SWAPFILE_CLUSTER;
-> -	conflict = !cluster_list_empty(&si->free_clusters) &&
-> -		offset != cluster_list_first(&si->free_clusters) &&
-> +	conflict = !list_empty(&si->free_clusters) &&
-> +		offset !=  first - si->cluster_info &&
->  		cluster_is_free(&si->cluster_info[offset]);
->  
->  	if (!conflict)
-> @@ -655,10 +548,10 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
->  	cluster = this_cpu_ptr(si->percpu_cluster);
->  	tmp = cluster->next[order];
->  	if (tmp == SWAP_NEXT_INVALID) {
-> -		if (!cluster_list_empty(&si->free_clusters)) {
-> -			tmp = cluster_next(&si->free_clusters.head) *
-> -					SWAPFILE_CLUSTER;
-> -		} else if (!cluster_list_empty(&si->discard_clusters)) {
-> +		if (!list_empty(&si->free_clusters)) {
-> +			ci = list_first_entry(&si->free_clusters, struct swap_cluster_info, list);
-> +			tmp = cluster_index(si, ci) * SWAPFILE_CLUSTER;
-> +		} else if (!list_empty(&si->discard_clusters)) {
->  			/*
->  			 * we don't have free cluster but have some clusters in
->  			 * discarding, do discard now and reclaim them, then
-> @@ -1070,8 +963,9 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
->  
->  	ci = lock_cluster(si, offset);
->  	memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
-> -	cluster_set_count_flag(ci, 0, 0);
-> -	free_cluster(si, idx);
-> +	ci->count = 0;
-> +	ci->flags = 0;
-> +	free_cluster(si, ci);
->  	unlock_cluster(ci);
->  	swap_range_free(si, offset, SWAPFILE_CLUSTER);
->  }
-> @@ -1344,7 +1238,7 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
->  	count = p->swap_map[offset];
->  	VM_BUG_ON(count != SWAP_HAS_CACHE);
->  	p->swap_map[offset] = 0;
-> -	dec_cluster_info_page(p, p->cluster_info, offset);
-> +	dec_cluster_info_page(p, ci);
->  	unlock_cluster(ci);
->  
->  	mem_cgroup_uncharge_swap(entry, 1);
-> @@ -3022,8 +2916,8 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
->  
->  	nr_good_pages = maxpages - 1;	/* omit header page */
->  
-> -	cluster_list_init(&p->free_clusters);
-> -	cluster_list_init(&p->discard_clusters);
-> +	INIT_LIST_HEAD(&p->free_clusters);
-> +	INIT_LIST_HEAD(&p->discard_clusters);
->  
->  	for (i = 0; i < swap_header->info.nr_badpages; i++) {
->  		unsigned int page_nr = swap_header->info.badpages[i];
-> @@ -3074,14 +2968,15 @@ static int setup_swap_map_and_extents(struct swap_info_struct *p,
->  	for (k = 0; k < SWAP_CLUSTER_COLS; k++) {
->  		j = (k + col) % SWAP_CLUSTER_COLS;
->  		for (i = 0; i < DIV_ROUND_UP(nr_clusters, SWAP_CLUSTER_COLS); i++) {
-> +			struct swap_cluster_info *ci;
->  			idx = i * SWAP_CLUSTER_COLS + j;
-> +			ci = cluster_info + idx;
->  			if (idx >= nr_clusters)
->  				continue;
-> -			if (cluster_count(&cluster_info[idx]))
-> +			if (ci->count)
->  				continue;
-> -			cluster_set_flag(&cluster_info[idx], CLUSTER_FLAG_FREE);
-> -			cluster_list_add_tail(&p->free_clusters, cluster_info,
-> -					      idx);
-> +			ci->flags = CLUSTER_FLAG_FREE;
-> +			list_add_tail(&ci->list, &p->free_clusters);
->  		}
->  	}
->  	return nr_extents;
-> 
-
+and workqueue used different locking to avoid it.
 
