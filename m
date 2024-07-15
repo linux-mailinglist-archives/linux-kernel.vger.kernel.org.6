@@ -1,39 +1,95 @@
-Return-Path: <linux-kernel+bounces-253076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63F5931C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9159C931C1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 216611C21E53
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD71D1C21560
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B233713C9C8;
-	Mon, 15 Jul 2024 20:36:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F81813C8E2;
-	Mon, 15 Jul 2024 20:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768D013C904;
+	Mon, 15 Jul 2024 20:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="orGAZVa7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EO6Fc55G";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="orGAZVa7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EO6Fc55G"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DFE2B9CD;
+	Mon, 15 Jul 2024 20:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721075807; cv=none; b=Dy3ATgaPGqZmPQKrKAzaXN9ziY4Q74zcgWJfUnARasurYf2xLUtVLm+221gahNI17Nj3acxarjoi9QjW92W4TYYM+G2tavzCvWuFhFZgOTtqPxqxcw39RZL27Z1HdkCAqMXfGCR5WSUAzh5flngr84WwAe94hYQoWgX9XKv070I=
+	t=1721075982; cv=none; b=RJtZTVvFGI2kARy2UF0JDyYoFFNpUbJS3ClJpdLCNtsH+kaf0u+HPz+KnUUnfLqx03VO3db+1GxA73hje54QoMVAXUjUV+ea5LYJ7F9gsQtUsmr/a5CiH8ZULJPxOXsSyOnFKJgHgIOiYAWr3/yT/zHqm2gefviIR13s8WrTITM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721075807; c=relaxed/simple;
-	bh=QQFltvoMJZSltEw4rJCM+AgHmWo2Lewu/argm0xDyKo=;
+	s=arc-20240116; t=1721075982; c=relaxed/simple;
+	bh=V9+/ko+zXoD5I2WF5JxJeceKIAQ9TGTSvmNI/rBGt7c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kg+jPXd0I/L2FuI/AEQy/wJ0Y4g9hVcr6nAWpczvupwyUfIAwE9mF6uE/JIcXakpkNKCL516CfYscLHTvwWOuRD1j40oIjlfiFivKMgNGQ+3KJZ73Xu61nwWo/enz/ppA8cvCViCOMJArRAsT+2vFFFcquw1zzwn+kKL8HWj7ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3F9CFEC;
-	Mon, 15 Jul 2024 13:37:08 -0700 (PDT)
-Received: from [10.57.10.251] (unknown [10.57.10.251])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 56B523F73F;
-	Mon, 15 Jul 2024 13:36:41 -0700 (PDT)
-Message-ID: <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com>
-Date: Mon, 15 Jul 2024 21:36:38 +0100
+	 In-Reply-To:Content-Type; b=BYKpm2v5WQMp+BHJ2nN1f9SXW8bN+TFAF2+SLUr6JR/Ks1S4bJnCSKz6N9OjOLnCZN9ym+gYA9mQUAKXkb2RO+IpULgmc70FwAZrDBcRGxmSFAOhcbe2BlqLSWDx3PeqjgkG0Iz3M1JjaBKcj0DRhRDfd5D/3XnCKPR3NyGj1yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=orGAZVa7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EO6Fc55G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=orGAZVa7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EO6Fc55G; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A2D1C1F833;
+	Mon, 15 Jul 2024 20:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721075978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=13l4KWTF4acx+DoFosvJJOCp5skXW9ib/ek+T6Gj1BU=;
+	b=orGAZVa7aS8dwRz7zAaSJ5DJiGvjUzgF5byRuSW/xh5bX54ACMhuDxQkfq5CvQlpDzfm/f
+	7H3aOI+fyJhVNx5bbD4Da7e9RAJfuv0ndyxHiJjpa7Ge0olMyxuQG9l3WTPXJu6+k4V3zL
+	SP5Vu2G4xvhozdFB/d1UMLGaAWWMK04=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721075978;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=13l4KWTF4acx+DoFosvJJOCp5skXW9ib/ek+T6Gj1BU=;
+	b=EO6Fc55GxbiJuyg2W5VpBFdcwuiQvmKGGmLix2LUIJPD2ddGxBU7Wq0S9CY3ZDHFFWeWrJ
+	OXCTUbUPdgEU3SDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=orGAZVa7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EO6Fc55G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721075978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=13l4KWTF4acx+DoFosvJJOCp5skXW9ib/ek+T6Gj1BU=;
+	b=orGAZVa7aS8dwRz7zAaSJ5DJiGvjUzgF5byRuSW/xh5bX54ACMhuDxQkfq5CvQlpDzfm/f
+	7H3aOI+fyJhVNx5bbD4Da7e9RAJfuv0ndyxHiJjpa7Ge0olMyxuQG9l3WTPXJu6+k4V3zL
+	SP5Vu2G4xvhozdFB/d1UMLGaAWWMK04=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721075978;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=13l4KWTF4acx+DoFosvJJOCp5skXW9ib/ek+T6Gj1BU=;
+	b=EO6Fc55GxbiJuyg2W5VpBFdcwuiQvmKGGmLix2LUIJPD2ddGxBU7Wq0S9CY3ZDHFFWeWrJ
+	OXCTUbUPdgEU3SDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6827F137EB;
+	Mon, 15 Jul 2024 20:39:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xIrMGAqJlWZ9VgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 15 Jul 2024 20:39:38 +0000
+Message-ID: <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
+Date: Mon, 15 Jul 2024 22:39:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,100 +97,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715143342.52236-1-leo.yan@arm.com>
- <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
- <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
- <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
- <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
 Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: paulmck@kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+ wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+ ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ kasan-dev <kasan-dev@googlegroups.com>
+References: <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
+ <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
+ <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz> <ZnCDgdg1EH6V7w5d@pc636>
+ <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz> <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+ <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz> <ZnVInAV8BXhgAjP_@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZnVInAV8BXhgAjP_@pc636>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zx2c4.com,inria.fr,vger.kernel.org,lists.linux.dev,efficios.com,lists.ozlabs.org,linux.ibm.com,csgroup.eu,gmail.com,lists.zx2c4.com,suse.de,netapp.com,oracle.com,talpey.com,netfilter.org,googlegroups.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLujeud1qp5x6qhm7ow61zc6bu)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Rspamd-Queue-Id: A2D1C1F833
 
-On 7/15/2024 9:06 PM, Ian Rogers wrote:
-
-[...]
-
-> So if I add (somewhat taken from tools/testing/selftests/lib.mk):
-> ```
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 5271a4c1d2b3..9edf5f41d6e4 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -19,6 +19,35 @@ detected_var = $(shell echo "$(1)=$($(1))" >>
-> $(OUTPUT).config-detected)
-> CFLAGS := $(EXTRA_CFLAGS) $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
-> HOSTCFLAGS := $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
+On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
+> On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
+> One question. Maybe it is already late but it is better to ask rather than not.
 > 
-> +CLANG := clang
-> +
-> +CLANG_TARGET_FLAGS_arm          := arm-linux-gnueabi
-> +CLANG_TARGET_FLAGS_arm64        := aarch64-linux-gnu
-> +CLANG_TARGET_FLAGS_hexagon      := hexagon-linux-musl
-> +CLANG_TARGET_FLAGS_i386         := i386-linux-gnu
-> +CLANG_TARGET_FLAGS_m68k         := m68k-linux-gnu
-> +CLANG_TARGET_FLAGS_mips         := mipsel-linux-gnu
-> +CLANG_TARGET_FLAGS_powerpc      := powerpc64le-linux-gnu
-> +CLANG_TARGET_FLAGS_riscv        := riscv64-linux-gnu
-> +CLANG_TARGET_FLAGS_s390         := s390x-linux-gnu
-> +CLANG_TARGET_FLAGS_x86          := x86_64-linux-gnu
-> +CLANG_TARGET_FLAGS_x86_64       := x86_64-linux-gnu
-> +
-> +# Default to host architecture if ARCH is not explicitly given.
-> +ifeq ($(ARCH),)
-> +CLANG_TARGET_FLAGS := $(shell $(CLANG) -print-target-triple)
-> +else
-> +CLANG_TARGET_FLAGS := $(CLANG_TARGET_FLAGS_$(ARCH))
-> +endif
-> +
-> +ifeq ($(CLANG_TARGET_FLAGS),)
-> +$(error Specify CROSS_COMPILE or add '--target=' option to lib.mk)
-> +else
-> +CLANG_FLAGS     += --target=$(CLANG_TARGET_FLAGS)
-> +endif # CLANG_TARGET_FLAGS
-> +
-> +CC := $(CLANG) $(CLANG_FLAGS) -fintegrated-as
-> +
-> # Enabled Wthread-safety analysis for clang builds.
-> ifeq ($(CC_NO_CLANG), 0)
->   CFLAGS += -Wthread-safety
-> ```
-> I was able to build with:
-> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C tools/perf
-> O=/tmp/perf NO_LIBELF=1 NO_LIBTRACEEVENT=1 NO_LIBPYTHON=1 CC=clang
-> CXX=clang++
-
-This command doesn't work for me.
-
-Built with 'CROSS_COMPILE=aarch64-linux-gnu-' option, the perf tool is still
-built with GCC:
-
-  $ strings perf | grep GCC
-  GCC: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
-
-After removing the option 'CROSS_COMPILE=aarch64-linux-gnu-', still failed
-building.
-
-Anyway, thanks a lot for sharing.
-
-Leo
-
-> Obviously not a complete fix as it is unconditionally forcing CC to
-> clang, but I don't think we're too far from having a clang/llvm cross
-> compile build that can work.
+> What do you think if we have a small discussion about it on the LPC 2024 as a
+> topic? It might be it is already late or a schedule is set by now. Or we fix
+> it by a conference time.
 > 
-> Thanks,
-> Ian
+> Just a thought.
+
+Sorry for the late reply. The MM MC turned out to be so packed I didn't even
+propose a slab topic. We could discuss in hallway track or a BOF, but
+hopefully if the current direction taken by my RFC brings no unexpected
+surprise, and the necessary RCU barrier side is also feasible, this will be
+settled by time of plumbers.
+
+> --
+> Uladzislau Rezki
+
 
