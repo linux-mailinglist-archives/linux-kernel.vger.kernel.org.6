@@ -1,320 +1,222 @@
-Return-Path: <linux-kernel+bounces-252645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC3593164B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B9C93164D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420E51F22556
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1B91C21F7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC44E18E776;
-	Mon, 15 Jul 2024 14:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D99A18E771;
+	Mon, 15 Jul 2024 14:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gJpq0wlN"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQNMTknN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="s96+alHR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PoxUaKoI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5NYjoUQo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3C51836D4;
-	Mon, 15 Jul 2024 14:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FC21836D4;
+	Mon, 15 Jul 2024 14:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721052052; cv=none; b=LdBF2xAjH7kYlNBUtCONF7c916O2j9TZJgKEmLQuStI/Mz1jTzEqUA597dJlrfcOLzV0ZTQyrIeJRFeOzejMflDDfO+TKUc3UOU8WysuZy67s8NA2E5kg6a1E5KjccXm5j5J+Ku14xYim4UF4fs8x46+z1CuqhPxHTj3e6v1RRg=
+	t=1721052087; cv=none; b=gDcKey1irBbzxTfS+t2bFxskteskkd641m5iqy1CqpNSHxrx0WvFQPyqYxeiZ3n3/nGSQW4K9gA4Z8BGRKLT14Nob4BnUY3xA3yk9DMASpQskZL9IiK96+iZLXEbScrTI/SSFSrTXdgavuaObuoIlTzpNpvDdVq2GGXH0wcc7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721052052; c=relaxed/simple;
-	bh=pG+ZdbY1Ozpp5+nY8kZjID0lQIZrvEhPTA7pCS5fkXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2kK8wFhfCoo5i1djGwwk+xezohJ7wPMXmoekbhegVo2G6Xp++HQF6nr3GVWbfuSe++VOTJ6E865OJuD8i6q4VIs9GB08dgAZuv9/jhCktQbyOuRvPZbxv4DPpXdL7Uh5NJIqLfGQZK81TTc41fOKMZCz2N6h/ghsAYDEh0Hsyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gJpq0wlN; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721052048;
-	bh=pG+ZdbY1Ozpp5+nY8kZjID0lQIZrvEhPTA7pCS5fkXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gJpq0wlNQVGCCiv8i9a6zUjP7ey20eGidyAOkRzKOHWqugF3+y8WUMDm2YMjTXnFW
-	 NJs0H6xwO/oKhYRWuITu/9xhgQ30GBzlLbIusqM43PWadfO7+mCiFXTUmZRPzMofyP
-	 sLkwh/5aSqcrMJmoUGfwIBQva494XuVDBffoNH7VT0MSso/oHb8EeSWU3DAAOCz0np
-	 dZt7/BlBLOo9ANU6P4z2CeloB/P+S9WrD1NKcEqOkXCotSW208cYyNDS6JwdHprLPn
-	 +QcbVaGbOh3Yx1zMRz663DoGpC7PoVgMFRO2IvYIMN2mHSZakQ0B1pNWwHHAv4RDU8
-	 RdXIjjaFtvHgw==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	s=arc-20240116; t=1721052087; c=relaxed/simple;
+	bh=OUBXN9lElVgsA0EjOPFCnq2S7IJgOAnZ+ok3Nr+msNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kC2VjDqUSWrKP7mJjnssd3RJcxJrOKDKjEjl9MxDS0Cdt7LBitXAW054jrcUckdhvk6OVX6oMkuHSxm9xyXEXlGjtuqGx26+tPrKy/ePaWoG/ECGxInsdLfm2Kvf+Ltuoq2me6F/sozzXSOjAUCqvJb2lP1v6/px1T6p2b/uIxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQNMTknN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=s96+alHR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PoxUaKoI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5NYjoUQo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0790C3782101;
-	Mon, 15 Jul 2024 14:00:45 +0000 (UTC)
-Date: Mon, 15 Jul 2024 10:00:43 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Macpaul Lin <macpaul.lin@mediatek.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>
-Subject: Re: Probe failure of usb controller @11290000 on MT8195 after
- next-20231221
-Message-ID: <a3b347fb-7b95-4cab-a7ec-4963cbeaa7f7@notapiano>
-References: <9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano>
- <064935d8-fbda-4eda-b013-8c8fc63b561c@collabora.com>
- <375b2345-657a-4b8f-b5e3-dc16784ffde9@notapiano>
- <da27d957-866f-f055-9e83-cdc362d98dc7@mediatek.com>
- <2dba1638-f155-463b-8f87-421101b8f4f2@collabora.com>
- <521df3a8-5bc2-4e81-a819-02b755c88d3a@notapiano>
- <ac0d1ba5-1ed0-4d4d-a287-1d3e6efadc0a@collabora.com>
- <ea97fb15-684e-4009-b312-f39c2acdde5b@notapiano>
- <9f12777b-b8b6-4d34-b336-7637e551b552@collabora.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DE74F21BBE;
+	Mon, 15 Jul 2024 14:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721052084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Zn/o0vWxJvI8uafBBDslyWACdzZ+2xD3hQW8mRKVxU=;
+	b=xQNMTknNXhDPj8wSl2RpchGQCVZCMmL86IgH8AA6wiq+e8hprw10ZoOKUexZDbaD9/UxVQ
+	WCSx8QAMS51wdhrjA+rlokIM/LJFp/InRp5HORWqo7L3I2xP5reSIGwplrThhzlG5QV9M0
+	Eohgg0HuqUYFfV12zhTPysZHg8WRUvg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721052084;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Zn/o0vWxJvI8uafBBDslyWACdzZ+2xD3hQW8mRKVxU=;
+	b=s96+alHRnsGOJu+qVcpxR42UwIaZakk0kFuVH3/M559MzBvGNrqHeLQU+w+eNyoeRWhgjv
+	TvX6OifyXnQv/qCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721052083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Zn/o0vWxJvI8uafBBDslyWACdzZ+2xD3hQW8mRKVxU=;
+	b=PoxUaKoIOc3p0GhFr6usKFy5dhk6g6kuz5m+nQaXZPumXbBUAzGZSoFm4XoLOuzBhE1b1i
+	+BhEAq+4LWTS5hKdvGHSLXkiFF6YyFDo9XoFFNcbt/Zyi22SVlLiIsIcGsgh4SS0CKib6Y
+	rPNCKtor8pdCPw1vPXF88SI6UfeORuw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721052083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Zn/o0vWxJvI8uafBBDslyWACdzZ+2xD3hQW8mRKVxU=;
+	b=5NYjoUQoArWFelRw52kCH0VQ00Fpvg9Mck9JGGZgNTdo4L7WT5CMBAMZaqACgjQi2Uji1N
+	OCW6kM9tBdpPFqAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F9A9137EB;
+	Mon, 15 Jul 2024 14:01:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SINeAbMrlWaHYAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 15 Jul 2024 14:01:23 +0000
+Message-ID: <dd95d25c-4bea-4019-a5e4-e68f359516ef@suse.de>
+Date: Mon, 15 Jul 2024 17:01:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9f12777b-b8b6-4d34-b336-7637e551b552@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/12] PCI: brcmstb: Check return value of all
+ reset_control_xxx calls
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240710221630.29561-1-james.quinlan@broadcom.com>
+ <20240710221630.29561-11-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240710221630.29561-11-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -0.29
+X-Spamd-Result: default: False [-0.29 / 50.00];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Level: 
 
-On Mon, Jul 15, 2024 at 02:04:54PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 12/07/24 17:58, Nícolas F. R. A. Prado ha scritto:
-> > On Fri, Jul 12, 2024 at 10:12:39AM +0200, AngeloGioacchino Del Regno wrote:
-> > > Il 11/07/24 18:33, Nícolas F. R. A. Prado ha scritto:
-> > > > On Thu, Jul 11, 2024 at 11:21:14AM +0200, AngeloGioacchino Del Regno wrote:
-> > > > > Il 11/07/24 06:13, Macpaul Lin ha scritto:
-> > > > > > 
-> > > > > > 
-> > > > > > On 7/11/24 03:15, Nícolas F. R. A. Prado wrote:
-> > > > > > > On Fri, Jan 19, 2024 at 10:12:07AM +0100, AngeloGioacchino Del Regno wrote:
-> > > > > > > > Il 18/01/24 19:36, Nícolas F. R. A. Prado ha scritto:
-> > > > > > > > > Hi,
-> > > > > > > > > 
-> > > > > > > > > KernelCI has identified a failure in the probe of one of the USB controllers on
-> > > > > > > > > the MT8195-Tomato Chromebook [1]:
-> > > > > > > > > 
-> > > > > > > > > [   16.336840] xhci-mtk 11290000.usb: uwk - reg:0x400, version:104
-> > > > > > > > > [   16.337081] xhci-mtk 11290000.usb: xHCI Host Controller
-> > > > > > > > > [   16.337093] xhci-mtk 11290000.usb: new USB bus
-> > > > > > > > > registered, assigned bus number 5
-> > > > > > > > > [   16.357114] xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
-> > > > > > > > > [   16.357119] xhci-mtk 11290000.usb: can't setup: -110
-> > > > > > > > > [   16.357128] xhci-mtk 11290000.usb: USB bus 5 deregistered
-> > > > > > > > > [   16.359484] xhci-mtk: probe of 11290000.usb failed with error -110
-> > > > > > > > > 
-> > > > > > > > > A previous message [2] suggests that a force-mode phy property that has been
-> > > > > > > > > merged might help with addressing the issue, however it's not clear to me how,
-> > > > > > > > > given that the controller at 1129000 uses a USB2 phy and the phy driver patch
-> > > > > > > > > only looks for the property on USB3 phys.
-> > > > > > > > > 
-> > > > > > > > > Worth noting that the issue doesn't always happen. For instance the test did
-> > > > > > > > > pass for next-20240110 and then failed again on today's next [3]. But it does
-> > > > > > > > > seem that the issue was introduced, or at least became much more likely, between
-> > > > > > > > > next-20231221 and next-20240103, given that it never happened out of 10 runs
-> > > > > > > > > before, and after that has happened 5 out of 7 times.
-> > > > > > > > > 
-> > > > > > > > > Note: On the Tomato Chromebook specifically this USB controller is not connected
-> > > > > > > > > to anything.
-> > > > > > > > > 
-> > > > > > > > > [1] https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/659ce3506673076a8c52a428/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENT5oGHKY$
-> > > > > > > > > [2] https://lore.kernel.org/all/239def9b-437b-9211-7844-af4332651df0@mediatek.com/
-> > > > > > > > > [3] https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/65a8c66ee89acb56ac52a405/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENi-d0sVc$
-> > > > > > > > > 
-> > > > > > > > > Thanks,
-> > > > > > > > > Nícolas
-> > > > > > > > 
-> > > > > > > > Hey Nícolas,
-> > > > > > > > 
-> > > > > > > > I wonder if this is happening because of async probe... I have seen those happening
-> > > > > > > > once in a (long) while on MT8186 as well with the same kind of flakiness and I am
-> > > > > > > > not even able to reproduce anymore.
-> > > > > > > > 
-> > > > > > > > For MT8195 Tomato, I guess we can simply disable that controller without any side
-> > > > > > > > effects but, at the same time, I'm not sure that this would be the right thing to
-> > > > > > > > do in this case.
-> > > > > > > > 
-> > > > > > > > Besides, the controller at 11290000 is the only one that doesn't live behind MTU3,
-> > > > > > > > but I don't know if that can ring any bell....
-> > > > > > > 
-> > > > > > > An update on this issue: it looks like it only happens if "xhci-mtk
-> > > > > > > 11290000.usb" probes before "mtk-pcie-gen3 112f8000.pcie". What they have in
-> > > > > > > common is that both of those nodes use phys that share the same t-phy block:
-> > > > > > > pcie uses the usb3 phy while xhci uses the usb2 phy. So it seems that some of
-> > > > > > > the initialization done by the pcie controller might be implicitly needed by the
-> > > > > > > usb controller.
-> > > > > > > 
-> > > > > > > This should help to narrow down the issue and find a proper fix for it.
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > Nícolas
-> > > > > > 
-> > > > > > 'force-mode' should only applied to the boards which require XHCI
-> > > > > > function instead of a PCIE port.
-> > > > > > 
-> > > > > > For example, mt8395-genio-1200-evk.dts requires property 'force-mode' to
-> > > > > > fix probe issue for USBC @11290000.
-> > > > > > 
-> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux.git/commit/?h=v6.10-next/dts64&id=666e6f39faff05fe12bfc64c64aa9015135ce783
-> > > > > > 
-> > > > > > 'force-mode' should be no need for tomato boards and the behavior should
-> > > > > > be the same as before.
-> > > > > > 
-> > > > > > Another possibility is the firmware change on tomato boards. I'm not
-> > > > > > sure if there is any changes on tomato's recent firmware for tphy of
-> > > > > > this port, which could also be a reason causes this kind of failure.
-> > > > > > I don't have tomato boards on hand.
-> > > > > > 
-> > > > > 
-> > > > > Hello Macpaul,
-> > > > > 
-> > > > > it's just about the usb node missing a power domain: as the PCIE_MAC_P1 domain
-> > > > > seems to be shared between USB and PCIe, adding it to the USB node fixes the
-> > > > > setup phase.
-> > > > > 
-> > > > > I'll send a devicetree fix soon.
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > As I replied to that patch
-> > > > (https://lore.kernel.org/all/20240711093230.118534-1-angelogioacchino.delregno@collabora.com)
-> > > > it didn't fix the issue for me, but I have more updates:
-> > > > 
-> > > > I confirmed the pcie was doing some required setup since disabling the pcie1
-> > > > node made the issue always happen, and that also made it easier to test.
-> > > > 
-> > > > I was able to track the issue down to the following clock:
-> > > > <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>
-> > > > 
-> > > > Adding it to the clocks property of the xhci1 node fixed the issue.
-> > > > 
-> > > 
-> > > Clocks is what I tried first, and didn't do anything for me...
-> > > 
-> > > ..anyway, can you at this point try to run that solution on the multiple
-> > > devices that we have in the lab through KernelCI?
-> > > 
-> > > That would help validating that you're not facing the same false positive
-> > > as mine from yesterday...
-> > 
-> > Hi,
-> > 
-> > I've ran 10 times with and 10 times without the following patch:
-> > 
-> >    diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> >    index 2ee45752583c..611afe4de968 100644
-> >    --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> >    +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> >    @@ -1453,9 +1453,10 @@ xhci1: usb@11290000 {
-> >                                     <&topckgen CLK_TOP_SSUSB_P1_REF>,
-> >                                     <&apmixedsys CLK_APMIXED_USB1PLL>,
-> >                                     <&clk26m>,
-> >    -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
-> >    +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
-> >    +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
-> >                            clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
-> >    -                                     "xhci_ck";
-> >    +                                     "xhci_ck", "frmcnt_ck";
-> >                            mediatek,syscon-wakeup = <&pericfg 0x400 104>;
-> >                            wakeup-source;
-> >                            status = "disabled";
-> > 
-> > In both cases I also had
-> > 
-> >    diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> >    index fe5400e17b0f..e50be8a82d49 100644
-> >    --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> >    +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> >    @@ -613,7 +613,7 @@ flash@0 {
-> >     };
-> >     &pcie1 {
-> >    -       status = "okay";
-> >    +       /* status = "okay"; */
-> >            pinctrl-names = "default";
-> >            pinctrl-0 = <&pcie1_pins_default>;
-> > 
-> > to make the issue always happen.
-> > 
-> > For reproducibility purposes, this was tested on next-20240703 with the
-> > following config: http://0x0.st/XMGM.txt
-> > 
-> > And the results confirm that every run (10/10) with the patch didn't experience
-> > the issue:
-> > 
-> >     https://lava.collabora.dev/scheduler/job/14805738
-> >     https://lava.collabora.dev/scheduler/job/14805757
-> >     https://lava.collabora.dev/scheduler/job/14805759
-> >     https://lava.collabora.dev/scheduler/job/14805789
-> >     https://lava.collabora.dev/scheduler/job/14805791
-> >     https://lava.collabora.dev/scheduler/job/14805792
-> >     https://lava.collabora.dev/scheduler/job/14805795
-> >     https://lava.collabora.dev/scheduler/job/14805799
-> >     https://lava.collabora.dev/scheduler/job/14805816
-> >     https://lava.collabora.dev/scheduler/job/14805820
-> > 
-> > While every run (10/10) without the patch experienced the issue:
-> > 
-> >     https://lava.collabora.dev/scheduler/job/14805740
-> >     https://lava.collabora.dev/scheduler/job/14805758
-> >     https://lava.collabora.dev/scheduler/job/14805787
-> >     https://lava.collabora.dev/scheduler/job/14805790
-> >     https://lava.collabora.dev/scheduler/job/14805793
-> >     https://lava.collabora.dev/scheduler/job/14805796
-> >     https://lava.collabora.dev/scheduler/job/14805803
-> >     https://lava.collabora.dev/scheduler/job/14805818
-> >     https://lava.collabora.dev/scheduler/job/14805822
-> >     https://lava.collabora.dev/scheduler/job/14805876
-> > 
-> > These runs are across different units of tomato-r2. I also tried on tomato-r3
-> > with the same result:
-> > without clock, fail: https://lava.collabora.dev/scheduler/job/14806546
-> > with clock, pass: https://lava.collabora.dev/scheduler/job/14806547
-> > 
-> > So this definitely fixes it. Whether or not this is the right fix, or how to
-> > describe this clock, I'll need your and MediaTek's help to figure out.
-> > 
-> 
-> I analyzed the situation and....
-> well, it's right, this clock does indeed resolve the issue, also tested locally,
-> but apparently there is no reference anywhere to why this happens to resolve it.
-> 
-> So, after a bit of extensive research, the only realistic reason here is that
-> there is some sort of hardware bug/quirk for the clocking of the secondary XHCI
-> controller.
-> Whether that is on the clock controller, on the internal paths or wherever else
-> is curious to know, but I suspect that this would take a lot of time for MediaTek
-> to perform the research.
-> 
-> What counts is that MediaTek is aware of this situation so that they can internally
-> understand what is going on with this and resolve that at a hardware level on new
-> SoC models.
-> 
-> As for what we can do about this, since this is a one-off, we can add that as
-> the frmcnt_ck one, with a comment in DT saying that this is a bug, and eventually
-> that we don't know if this has anything to do with the frame counter.
-> 
-> Besides, I also noticed that the CLK_APMIXED_PLL_SSUSB26M is missing from u2port1
-> and the reason why it works is because other u3phy0 should be enabling that before
-> u3phy1 inits and/or before the USB controller using U3P1 tries to initialize, so
-> while you're at it ... if you can please also add that to the u3p1, I appreciate.
-> 
-> 			u2port1: usb-phy@0 {
-> 				reg = <0x0 0x700>;
-> 				clocks = <&apmixedsys CLK_APMIXED_PLL_SSUSB26M>,
-> 					 <&topckgen CLK_TOP_SSUSB_PHY_P1_REF>;
-> 				clock-names = "ref", "da_ref";
-> 				#phy-cells = <1>;
-> 			};
-> 
-> Anyway, nice catch! Waiting for your patch :-)
 
-Sure thing, will do. I'll just wait a couple days to give MediaTek a chance to
-comment on this. Then I'll send the patch(es).
 
-Thanks,
-Nícolas
+On 7/11/24 01:16, Jim Quinlan wrote:
+> In some cases the result of a reset_control_xxx() call have been ignored.
+> Now we check all return values of such functions and propagate the error to
+> the next level.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 100 ++++++++++++++++++--------
+>  1 file changed, 71 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index c44a92217855..c334cc427fb7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -232,8 +232,8 @@ struct pcie_cfg_data {
+>  	const enum pcie_type type;
+>  	const bool has_phy;
+>  	unsigned int num_inbound;
+> -	void (*perst_set)(struct brcm_pcie *pcie, u32 val);
+> -	void (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+> +	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+> +	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+>  };
+>  
+>  struct subdev_regulators {
+> @@ -278,8 +278,8 @@ struct brcm_pcie {
+>  	int			num_memc;
+>  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
+>  	u32			hw_rev;
+> -	void			(*perst_set)(struct brcm_pcie *pcie, u32 val);
+> -	void			(*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+> +	int			(*perst_set)(struct brcm_pcie *pcie, u32 val);
+> +	int			(*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+>  	struct subdev_regulators *sr;
+>  	bool			ep_wakeup_capable;
+>  	bool			has_phy;
+> @@ -742,13 +742,18 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+>  	return base + DATA_ADDR(pcie);
+>  }
+>  
+> -static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+> +static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+>  {
+> +	int ret = 0;
+> +
+>  	if (pcie->bridge) {
+>  		if (val)
+> -			reset_control_assert(pcie->bridge);
+> +			ret = reset_control_assert(pcie->bridge);
+>  		else
+> -			reset_control_deassert(pcie->bridge);
+> +			ret = reset_control_deassert(pcie->bridge);
+> +		if (ret)
+> +			dev_err(pcie->dev, "failed to %s 'bridge' reset, err=%d\n",
+> +				val ? "assert" : "deassert", ret);
+>  	} else {
+>  		u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+>  		u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> @@ -757,9 +762,10 @@ static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val
+>  		tmp = (tmp & ~mask) | ((val << shift) & mask);
+>  		writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+>  	}
+
+In case you sending new version, please add a blank like here.
+
+Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+
+~Stan
+
+> +	return ret;
+>  }
+>  
 
