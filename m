@@ -1,168 +1,157 @@
-Return-Path: <linux-kernel+bounces-252860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34289318FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45290931906
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 19:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70B211F22863
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410FF1C21327
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 17:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F6D446AF;
-	Mon, 15 Jul 2024 17:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9013EA76;
+	Mon, 15 Jul 2024 17:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FLvMxbCq"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiUQMlCt"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA443D3BD
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4830517BB4;
+	Mon, 15 Jul 2024 17:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721063499; cv=none; b=oN53/DmzfAsV4YoTBhmOiczo9DDuVsu+bpdP9AoOj8eQEDgHo4gd22Fm4EQwKRcgT42nqreTtIX74UVHZIT9hEC5YcugvcVif/fmoMoyRBli0kTFh1yBGN0uQ8cgTBe3JIXEDsIkzANSJZ/vCTp2PXS7KJ9wh/x0Ck5E37whWLM=
+	t=1721063609; cv=none; b=Skng5rDlPZMj0T4p14ib6838VtOQ8r1xiEQfacaFqNA4Oj+cOa1p37kP1S8qZz6yFnUBIeL+lzQkwZsHwja+T4QW4DCQPqm+2J+/aYpiVBhZgcoYfryWs9sRJPQct7luzNeDWveQ+hOi3rOChefaSKKuAaEv4REvZ72zbYcyuco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721063499; c=relaxed/simple;
-	bh=BcJbKmVKSGDM/WHI+1p7JiS2U0qfJkD2DUYs97sj0vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QtOR1vJ1zAUfrLde0+rI1Ul0+Dd3yf0aD8ok6T9bGU5qmhd3Fe//XVdIzLcuchPtdDJ3Brz8ZZm4uyqCoBSA2zpIdrVRPRh6t9i9cJXeky7Fbm21PWU1x2qV6nqqy06ptx/u0iITpidhRM2wlSQaFKI8ax39cSLR9IKcb3dVP1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FLvMxbCq; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4267300145eso35372395e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:11:36 -0700 (PDT)
+	s=arc-20240116; t=1721063609; c=relaxed/simple;
+	bh=ToyDY2GJHUSzmGIMw6C9J6PHdvvxMBv4VCSXZlwXWVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qjRAANJtTMTLp6lJSf7M9Z1qaF0YDlDwaKaiekb6oEzwh3jtTLX+Dv6XYJRTD0AdpUtWADdPv93xCLG+3J4nLr1getgnh3yYcLmvT4KbzS8K2m9JKVJv3R66uvv90QMlg/54lr1jVjtW8mPk+JHJwbRzIGhtGWaDrnRkoXqb/6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiUQMlCt; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-78aeee1068aso1939537a12.2;
+        Mon, 15 Jul 2024 10:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721063495; x=1721668295; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qSOszyLr52vvd3J2gSBMUHz1uDskXOJN7E3GeY5OGHo=;
-        b=FLvMxbCqDXEVQPhKeJwbYewIZzW2D2mFdr4/X6waE/6LEDoQY5N9oN0RhEkFeqvTrP
-         A7bSxblLMfmcEg+ALIWbJslMGchD5lj5RvK9XEiXumVL4bvmMyf5Hjx+igCagsX9Vb8e
-         OoZXhUbBG10ZMcFh8NvwWv2M8eiOYOvWw3MzC+m5f0VSrnu1Tc7BVkA/jDgZ+gDFFQ0A
-         8RRD5uxOXC4wCe2QedSNZJnp7Bvr9xuIi+Se0Uo4DCkXlC6n5zTkijttVnwuakGjZOAT
-         XeF5XP5fo/lXOO1zDs8DNiP2NowiC7trZnsqGuQfyx9MB1XEOiYFtWIEnSGkkzEcwZOK
-         u8hQ==
+        d=gmail.com; s=20230601; t=1721063607; x=1721668407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmve5Pgom/RNA/I+ArMsB4iJ1Fmflyafvmw7oAQ2pjs=;
+        b=fiUQMlCtqGL4zpakVMJaOxBsNVndq4bZkmP2s0a/OOFJvd+putWjXdqoBgBXtZbIg+
+         s+sXWe7C2V1CsMXIPDC0jIkD+2tUpjboHJ9ctCBseHx7DYseezoHUcILyHeMFfaU+dCd
+         OntqhA1f9t6rjqABIS6d8uKLCZBCPNNl3P3XJfrx1aJ5EgXYxW/muMAqKRIeEW4RL8yU
+         gdYebJmdl+Qg6xkkr2r20tXraxdrSgeeSl257nSSkV3yrCRNdmLMv5Dzt/fVAxQaNCcT
+         zzteOz9qRyk/IvhMpfpVnNp6diYWvWmDUwRLjPzI3/qKWCE9A6KZZlBnU6XP+/4b1x9G
+         lfCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721063495; x=1721668295;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSOszyLr52vvd3J2gSBMUHz1uDskXOJN7E3GeY5OGHo=;
-        b=MgnUcnzxvyFl7zwv/uk4PUnFqWDfSZl9LnvD4tn+bja4S9PW5dW2RWCKWWoKkkamwQ
-         NOVbeaAgo64m9P91opbpaJcQai7EMz+wkwlzaRgaxp7ens8eM0L0hvx24SXc3OlE+oZE
-         wvR4Gd2dHUmz7LYBBaccBCQzjXc+luhMh04MgIl9hDciThaDsyxkNMnZ2l6O/kmY/zdz
-         0A204qVsRPC+VPPmtRoZMSVQGv0te+WIEYzmt+i2GV8CdbTIJ8zQGINlz3kAa1py2QnL
-         gwqFSCMRjgPAPSkIqg0ilLBm5o2/0A/Tz/f+oFnG7ReQetPMLooRfGYEp6Crqu4etfxs
-         LIgQ==
-X-Gm-Message-State: AOJu0YyGbB6KH6YNrjBWZRGzMYihx92au6dWuiJAMpJ3In9XvUGT1heo
-	V4r0L0s947POFDJHLp72Jnk3YHUD9P0NA0zejpxpzqFmQo6Jb61M8DFE9YL6sps=
-X-Google-Smtp-Source: AGHT+IHOHPisiK8XidFLa4CeSrrPquV4Tt/J8vlYz8N+N7fTL2d+kepabCLUgdbWLlDd4HajJwchgw==
-X-Received: by 2002:adf:f848:0:b0:367:957d:b46d with SMTP id ffacd0b85a97d-368240c1d04mr276813f8f.66.1721063494905;
-        Mon, 15 Jul 2024 10:11:34 -0700 (PDT)
-Received: from [192.168.1.94] (21.31.102.84.rev.sfr.net. [84.102.31.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3f2esm6950148f8f.18.2024.07.15.10.11.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 10:11:34 -0700 (PDT)
-Message-ID: <48e7b828-77f1-4ff3-9ff2-cdb563c14878@baylibre.com>
-Date: Mon, 15 Jul 2024 19:11:32 +0200
+        d=1e100.net; s=20230601; t=1721063607; x=1721668407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tmve5Pgom/RNA/I+ArMsB4iJ1Fmflyafvmw7oAQ2pjs=;
+        b=ZhUNENPeJp17juTx0alv3gjtnt41ZlicFiwPwB3t/fYjGEHZSe75JZOi+7vgTLj6FV
+         VMi1E9MWJ8KwCXW1r3m4D3x3CyJq9sFsDqpHf1ORLpsL6AfZryuFPr7Izy0X8Hb4MELX
+         iyrKfGvS0nGlzzODXc9T5a5My9Z+BFkqOCWWZAhh6MtWH4s1pZy9tpgDiis3ot7qLIfj
+         M14D21KCpJ9bDuvlCRXWgeFHox5WCK1c75VQK7kveTiEAgKEUnO+G/a//pcoORQG2s02
+         VNNEaijpW0OXNd9isdwlOrU87w+kV9Fp032M92r9olL4XC40h9Dmu1jIX4Ov8Foy+9v/
+         r4jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYMc47uxHkxx/zmFO7VNOBj3Q2Ji3MIrcQlv+DRpgJUbcN5zgk21a6IDe0ZoH2m7UeGhIJ3RSefmvsJ3N+18ot6BE5PFecHH77qCAkXEcye9IcW1bDkstXjGs9o6fch/N5dOS9t7o7ZdhurqAxOYXX
+X-Gm-Message-State: AOJu0Yxse+/1vFiwu+pDJ/XzluQL9fo3nehu2SH7X/dAUolkPUw+mC8/
+	x4XvohMuRKr3N/O3P3rFJp4zkbs1fPyhuhWQrbf18OZgr4Qo2vei4oH1uEf1FpN9peyqI7J4V4U
+	ux3UPHcLIIkMOh0Q5MchDI1wb61Q=
+X-Google-Smtp-Source: AGHT+IFtmqOvgWYZ98cfSUB0ddYCIleqfcRrm2OJ3m1eoM1lsMpb2EXPy5skW+GxVwn+ZNslbWgoWnBm0HpOkK2rQ+g=
+X-Received: by 2002:a05:6a21:78c:b0:1c0:f648:8571 with SMTP id
+ adf61e73a8af0-1c3ee50fd32mr631369637.4.1721063607532; Mon, 15 Jul 2024
+ 10:13:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the mediatek tree
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Brown <broonie@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Nicolas Pitre <npitre@baylibre.com>,
- "khilman@baylibre.com" <khilman@baylibre.com>
-References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
- <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
- <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
- <be5a8b12-b042-48cc-9508-759a2a285a8b@kernel.org>
- <99b7f55f-2909-450f-88ce-8cbe8f41c7f8@baylibre.com>
- <9674d79f-83c0-44bf-bcf0-e78f8bdbfbd3@linaro.org>
- <ebd65254-c0bb-4c07-810a-e46ba7e0b929@kernel.org>
-Content-Language: en-US
-From: Julien Panis <jpanis@baylibre.com>
-In-Reply-To: <ebd65254-c0bb-4c07-810a-e46ba7e0b929@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240711110235.098009979@infradead.org> <20240711110400.529465037@infradead.org>
+ <CAEf4BzZLW+Dez6-WOe1jtCEjC8n6vUqcewWAYViquT4Cc6AA0Q@mail.gmail.com> <20240715112135.GC14400@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240715112135.GC14400@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 15 Jul 2024 10:13:15 -0700
+Message-ID: <CAEf4Bzb5kv=9GSGw86YzkbpdD_E81Yfk_xNoBYwuSfeEMbThbg@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] rbtree: Provide rb_find_rcu() / rb_find_add_rcu()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/24 09:40, AngeloGioacchino Del Regno wrote:
-> Il 18/06/24 20:03, Daniel Lezcano ha scritto:
->> On 18/06/2024 18:45, Julien Panis wrote:
->>> On 6/18/24 12:20, AngeloGioacchino Del Regno wrote:
->>>> Il 18/06/24 12:03, AngeloGioacchino Del Regno ha scritto:
->>>>> Il 18/06/24 09:49, Julien Panis ha scritto:
->>>>>> On 6/17/24 18:44, Mark Brown wrote:
->>>>>>> Hi all,
->>>>>>>
->>>>>>> After merging the mediatek tree, today's linux-next build (arm64
->>>>>>> defconfig) failed like this:
->>>>>>>
->>>>>>> /tmp/next/build/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-display.dtsi:113.6-121.3: 
->>>>>>> Warning (graph_port): /fragment@4/__overlay__: graph port node name should be 'port'
->>>>>>> Error: /tmp/next/build/arch/arm64/boot/dts/mediatek/mt8186.dtsi:2399.29-30 syntax error
->>>>>>> FATAL ERROR: Unable to parse input tree
->>>>>>> make[4]: *** [/tmp/next/build/scripts/Makefile.lib:431: 
->>>>>>> arch/arm64/boot/dts/mediatek/mt8186-corsola-magneton-sku393216.dtb] Error 1
->>>>>>>
->>>>>>> Caused by commit
->>>>>>>
->>>>>>>    d7c1bde38bf37a5 ("arm64: dts: mediatek: mt8186: add default thermal zones")
->>>>>>>
->>>>>>> I have used the last version of the mediatek tree from 20240613 instead.
->>>>>>
->>>>>> Hello Mark,
->>>>>>
->>>>>> Here is the explanation:
->>>>>> https://lore.kernel.org/all/71d53ff6-fdae-440d-b60d-3ae6f0c881d9@baylibre.com/
->>>>>> https://lore.kernel.org/all/6d9e0f19-9851-4f23-a8b8-6acc82ae7a3d@baylibre.com/
->>>>>>
->>>>>> For some reason, the 2 first commits of the series were not applied
->>>>>> with the dts. These commits are needed because they contain some
->>>>>> definitions used by the dts.
->>>>>>
->>>>>> Julien
->>>>>
->>>>> I'm not sure how should I proceed here.
->>>>>
->>>>
->>>> Reiterating, I'm sure how should I proceed.
->>>>
->>>> I'm removing those patches from mediatek for-next until further notice.
->>>>
->>>> Regards,
->>>> Angelo
->>>
->>> Just for my information: Should we just wait for another maintainer
->>> to pick the 2 missing patches ? Who is in charge of doing it ?
->>
->> I've picked the 2 first patches but they are going through the validation process through our CI. 
->> They will be available in a couple of days in linux-next.
->>
->> If you want me to drop them and let them go through the Mediatek tree, just let me know.
->>
+On Mon, Jul 15, 2024 at 4:21=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> Thanks but no, thanks :-)
+> On Fri, Jul 12, 2024 at 01:23:43PM -0700, Andrii Nakryiko wrote:
+> > On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradea=
+d.org> wrote:
+> > >
+> > > Much like latch_tree, add two RCU methods for the regular RB-tree,
+> > > which can be used in conjunction with a seqcount to provide lockless
+> > > lookups.
+> > >
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > ---
+> > >  include/linux/rbtree.h |   67 ++++++++++++++++++++++++++++++++++++++=
++++++++++++
+> > >  1 file changed, 67 insertions(+)
+> > >
+> > > --- a/include/linux/rbtree.h
+> > > +++ b/include/linux/rbtree.h
+> > > @@ -245,6 +245,42 @@ rb_find_add(struct rb_node *node, struct
+> > >  }
+> > >
+> > >  /**
+> > > + * rb_find_add_rcu() - find equivalent @node in @tree, or add @node
+> > > + * @node: node to look-for / insert
+> > > + * @tree: tree to search / modify
+> > > + * @cmp: operator defining the node order
+> > > + *
+> > > + * Adds a Store-Release for link_node.
+> > > + *
+> > > + * Returns the rb_node matching @node, or NULL when no match is foun=
+d and @node
+> > > + * is inserted.
+> > > + */
+> > > +static __always_inline struct rb_node *
+> > > +rb_find_add_rcu(struct rb_node *node, struct rb_root *tree,
+> > > +               int (*cmp)(struct rb_node *, const struct rb_node *))
+> >
+> > I don't get the point of the RCU version of rb_find_add as RCU itself
+> > doesn't provide enough protection for modification of the tree, right?
+> > So in uprobes code you do rb_find_add_rcu() under uprobes_treelock +
+> > uprobes_seqcount locks. Wouldn't it be just as fine to do plain
+> > non-RCU rb_find_add() in that case? After all, you do plain rb_erase
+> > under the same set of locks.
+> >
+> > So what's the point of this one?
 >
-> Please, keep them in the thermal trees where they belong.
-> I will adjust accordingly.
+> The store-release when adding it to the tree. Without that it becomes
+> possible to find the entry while the entry itself is incomplete.
 >
-> Cheers,
-> Angelo
+> Eg. something like:
+>
+>  entry.foo =3D A
+>  rb_find_add(&entry->node, &my_tree, my_cmp);
+>
+> vs
+>
+>  rcu_read_lock();
+>  entry =3D rb_find_rcu(...);
+>  assert(entry->foo =3D=3D A);
+>
+> might fail. Because there is nothing ordering the foo store and the
+> rb-node add.
+>
+>
 
-Hello Angelo,
-
-AFAICS, the dt-bindings patches are now in v6.10.
-Would it be possible to re-apply the dts patches please ?
-
-Julien
+Ah, I see, thanks for the explanation. That's what "Adds a
+Store-Release for link_node." in the comment means, I see.
 
