@@ -1,164 +1,171 @@
-Return-Path: <linux-kernel+bounces-252939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9EA931A2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:18:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62E4931A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA8D1F21E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:18:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389971F22C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCF6763E7;
-	Mon, 15 Jul 2024 18:18:28 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024966FE21;
+	Mon, 15 Jul 2024 18:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNusSIxu"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2CF6E61B
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C761FF0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721067508; cv=none; b=ccXWuWf5w40J7071+eecDK39lxfyPx7j+orMbBw0bpPSivIWa0MlCND7AWcmJlJWN5btNIJiDDt1n300wLSRaBYixNZIm6CSy0LrINV8KEuOYCsaJhCNHCcx/jrm1AkhSkRIMrOGouBXL5dxj1v5uUrdjbp81YtW5RhubijnSAA=
+	t=1721067534; cv=none; b=QwkdPVdHUW4nQ00XfHCInVW5YwkqMe7+1ri/++SWRksJPmq3Qf95eFBki2ntYUt3dMlQO1Vv+zsjRQDQjlGabmJf0IZPBXBEgZVJTKxhxtTSdq+KxaosZqku3N29vwC+Q1BI26vmZdYcRmrGOs94diivzcKqeby6V9n87ZF6Fcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721067508; c=relaxed/simple;
-	bh=OBznxfoYKy1Zf974n+ASvWJ9uXh8KBeGGa1OHU3//EI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aS/c9nEHjSFSfAR08dO3iuVnoQwRhCQavFZDvyqTpaJ5sNNsQBYi5nfdrjoz/u8tZAX2Z8pkQa3ZhHVm/yK0Q8MzqLJd/97ihErHOSniMxuLoIiUGKEafcXqBWfcv0O8b+8EeMNK0oPmEVzoZOg9USasv1caSMLRi37ZtRe1Sv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-381dd2a677bso59715815ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:18:26 -0700 (PDT)
+	s=arc-20240116; t=1721067534; c=relaxed/simple;
+	bh=8t4RfQy3P1Z1EKYBuZRc0Ktb+Ojx7hgB9B/9U4scGzE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kaBspvqp/atdywysYIlC+37x4iHqzwZ4Gq0Tqx202a7gPeBosII+9Unm2OVx6dH7uVlAOkEXl3PQvt1Qlks9ffMDbkAnI6CR49SLYVsHhMvia2n2zg4ERDxD7RAOZHCm9OYNDfjvXTOTmHB8VdTPMDZEJMIcAxURqCkO6Vpl0js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VNusSIxu; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea79e689eso6525345e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721067530; x=1721672330; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNnn9ne6FBNOzHrQiv0XRrAgPKUaJ4BowhgnQsLGK3Y=;
+        b=VNusSIxuMs+eOcDjQslQzphKuOLyup3OlahZ4aodKdn33d5ZRyF753ocSUloatxZRT
+         /OJcAwZueHKCTassuDLtzKl0NKux2Hhl94wKOvBSdTu2dZeqswmLk2dko9I6bU6gw/Yy
+         zjhRV37TdZa9aFR+TOOJKbrRBIcVQk8ghFGq/p2MXyACX/5I3yJQXdF2+nnA+xTfx/dj
+         dyp0oOqmMISPu8aOqkPhOyEcE59hI5l9erS6KCHjIJZtzDvvij3DSsysN/xCH/bssSI3
+         CQm2h6RGEIuCij1QPbDEZCTU1sjlfvz9lkkmuKdLN3j7qRJw5brpL6KDN0ufe+1Yre7M
+         JM+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721067505; x=1721672305;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9L7surq7e5cJ+iFDr3RDLEh2S5o7LANGMRFfpgtm4I=;
-        b=PY3TiiEcMcZFXdaW3PgoroJMnGNr2sfLpdvp48igaNbzzXHZjFU981YdfTFLkkC8eI
-         c/cXjMmDdVGq4vEk0FAefoFOqVi/d/YL21i2QypQg39x7LB/snRTBgdg2nfnxlI3HgUP
-         7PzQiQkUC/9o9TflFzrF6fqkoHIT8il5YNgT2PSvuI2Jqc+dPKCZJ4PoR/r/UEvt3gnI
-         g0q3PeUrqVKGSDCxM1TmVhBixUgvEv0pU4ZMH3qLScOs5HjeQGPlrsA3mvd7SIFoHLI8
-         HtEuqCuDL4utjrZlVGlc1nvJjojkIdwv2nK0+ggF6Xpc3x+nms0j+uQfUgW0qoaqESwU
-         hHQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoczHnJ1N3xfG+HuHj+xti3VkJi4626OyXN2mdlASXlZARN2B41yMM4Mt41B2sLBZQDECACUWpTEfg/RPf8y/EKFYseDGczNH0/+qF
-X-Gm-Message-State: AOJu0Yx7zHkan7euQtJqsvfWJhMMFXkx4UJMIn93KItwFH0pj05VDUyM
-	eKcgCNF1RJ5nVMiLT5PbdC7O/NTzxsBOlcCkpWGLe2PVmq+RdTgejkkZILRlSX/DvMInDHfmexD
-	QGlfZg1m5P9IdIa8OvrXe57jFQtcC/Nyb3uy/JZAW1yG/BXxRuEOSUsQ=
-X-Google-Smtp-Source: AGHT+IGvaAmICzGAjLmKfxj+Tf0nNdpleoxIcGAnXRywkDzcjemvQr9koMk4Qo8p6WOSIkGSpIZhfL9f/b69V1iSna2jGbm4IwCp
+        d=1e100.net; s=20230601; t=1721067530; x=1721672330;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mNnn9ne6FBNOzHrQiv0XRrAgPKUaJ4BowhgnQsLGK3Y=;
+        b=dmqXWMhREot/HvtxuYNsD94Ipt4EUca7GwSOlj613qNqCcTHeLwm1OcFEcXMq64hBy
+         +2iXDk/IsuRGHT1GwGw9JkdWswj3BhIIzBq0uMmGPfCIRATElzbG3lzEjSZ1GH3OdVbp
+         H/NPUtWCiEtgxRh5pjIHKb/JyCZdxTQAai68b8hPx1SS38YL0JSFdhCZWMiozMd0JZrI
+         xpGrHhz2fj45c6lUK6FN+Yz0+widrOoFmtibZOfx6eYtxmT+wQDw3ve3IHKJcaq7ANQk
+         mDDxrfOrYXdyLTdQ0PwXXrLZ8uMWECXAbD2Ig68T1Z1MnFTatq5x22OCUPhIW0/o6uzf
+         gGhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMXDtMLNRCC21MHYMI5NQcOzLjC8jpoNvJ3Ds6nNZ057cKR+uz+ekg/qSyDC+WarQBxoirMMkg3rbypxFQi1nYq8pU7AoB5VMC60r/
+X-Gm-Message-State: AOJu0YwovPDaNvNGJCo4ZZu7fska1U81tYrp2pF37FPMsnPclkcRTEAU
+	IQtI5go1FHe99cJC1XzBa2nH1qwmRfDtn/ZAskhNnznj2tNjaSxLPZoee0H21RHThcwupRPDgEC
+	4JkFDig==
+X-Google-Smtp-Source: AGHT+IFkkGxram/jBAsSoDWoc9wLHHENMyQZK8P4BmDRuJEgg+65S8JXf0gLeTGtH9lpl+K9f7O4Yg==
+X-Received: by 2002:a05:6512:3b8f:b0:52c:df8e:a367 with SMTP id 2adb3069b0e04-52ede1d4519mr222874e87.53.1721067530303;
+        Mon, 15 Jul 2024 11:18:50 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e1d6esm938943e87.9.2024.07.15.11.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 11:18:49 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 15 Jul 2024 21:18:49 +0300
+Subject: [PATCH v2] arm64: dts: qcom: disable GPU on x1e80100 by default
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1985:b0:380:fd76:29e4 with SMTP id
- e9e14a558f8ab-393a0ec10edmr406765ab.4.1721067505542; Mon, 15 Jul 2024
- 11:18:25 -0700 (PDT)
-Date: Mon, 15 Jul 2024 11:18:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004d78dd061d4d4190@google.com>
-Subject: [syzbot] [wireless?] WARNING in drv_link_info_changed (2)
-From: syzbot <syzbot+91af2efe46a484b223f0@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240715-x1e8-zap-name-v2-1-a82488e7f7c1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAholWYC/3XMQQ6CMBCF4auQWTumLQXElfcwLAoMMIm2pDUNS
+ np3K3uX/0vet0MgzxTgWuzgKXJgZ3OoUwHDYuxMyGNuUEJp0cgKN0kX/JgVrXkSNn05NK0qtRY
+ S8mf1NPF2ePcu98Lh5fz74KP8rf+kKFFiX9fjJNpR9HV1e7A13p2dn6FLKX0BgB52t6sAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2274;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=8t4RfQy3P1Z1EKYBuZRc0Ktb+Ojx7hgB9B/9U4scGzE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmlWgJU2FHIHovyrQZGHxcu0wF6Ze4+yiPMLqcJ
+ 0naRxhVN0iJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZpVoCQAKCRCLPIo+Aiko
+ 1dYDB/4y1k+neVwbpxO7yiZBRb8UX3qWw9aG5RITGWb2Gl27Z596lCCwjNx1wV3qqLEeyFWc7s1
+ nAXFNVYbC/D9ASfKbbY+ef/QAiulb5tWZPjJ9nFaMunTWTFO8qjFXpfXM9bV7lqU4FFXlhu4egv
+ S2EQ+XBLTylJV62G3COXdEcQNbi4BmExgSgv6waiafspwzPk3ITFqU8kJIn9ngpGNMJ87Ln/MfY
+ NO5w6W6mb9/w0urTvmGWmhF840ibY0HPhEBXwAEfUKTjoiNCQwHVdxBLeqAp6lQJVKpykkcAFJm
+ CUxa9ZIBmHBcvur+q9gU0KYg4eu4HK9fjDuVudwC013NqPVg
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hello,
+The GPU on X1E80100 requires ZAP 'shader' file to be useful. Since the
+file is signed by the OEM keys and might be not available by default,
+disable the GPU node and drop the firmware name from the x1e80100.dtsi
+file. Devices not being fused to use OEM keys can specify generic
+location at `qcom/x1e80100/gen70500_zap.mbn` while enabling the GPU.
 
-syzbot found the following issue on:
+The CRD was lucky enough to work with the default settings, so reenable
+the GPU on that platform and provide correct firmware-name (including
+the SoC subdir).
 
-HEAD commit:    9d9a2f29aefd Merge tag 'mm-hotfixes-stable-2024-07-10-13-1..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11988fb9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b63b35269462a0e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=91af2efe46a484b223f0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Keep GPU enabled for X1E80100-CRD (Johan)
+- Link to v1: https://lore.kernel.org/r/20240715-x1e8-zap-name-v1-1-b66df09d0b65@linaro.org
+---
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 8 ++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 3 ++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c1cad98f467f/disk-9d9a2f29.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e4f4b4b7a5f8/vmlinux-9d9a2f29.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ed300468d50d/bzImage-9d9a2f29.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+91af2efe46a484b223f0@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 18830 at net/mac80211/driver-ops.c:465 drv_link_info_changed+0x153/0x8b0 net/mac80211/driver-ops.c:460
-Modules linked in:
-CPU: 1 PID: 18830 Comm: syz.2.3286 Not tainted 6.10.0-rc7-syzkaller-00076-g9d9a2f29aefd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:drv_link_info_changed+0x153/0x8b0 net/mac80211/driver-ops.c:460
-Code: 83 fd 01 75 1f e8 cd 3b a6 f6 eb 32 e8 c6 3b a6 f6 eb 2b 83 fd 03 74 21 83 fd 05 75 07 e8 b5 3b a6 f6 eb 1a e8 ae 3b a6 f6 90 <0f> 0b 90 e9 c3 01 00 00 e8 a0 3b a6 f6 eb 05 e8 99 3b a6 f6 4d 8d
-RSP: 0018:ffffc9000e11ece8 EFLAGS: 00010283
-RAX: ffffffff8aefec72 RBX: 0000000000000001 RCX: 0000000000040000
-RDX: ffffc9000a6de000 RSI: 0000000000000f5a RDI: 0000000000000f5b
-RBP: 0000000080000000 R08: 0000000000000005 R09: ffffffff8aefec40
-R10: 0000000000000004 R11: ffff88801dc30000 R12: 0000000000000000
-R13: 0000000000000200 R14: ffff88806d0c0ca0 R15: ffff88801f218e20
-FS:  00007f81b55296c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2e311ff8 CR3: 000000002d852000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ieee80211_offchannel_stop_vifs+0x25c/0x590 net/mac80211/offchannel.c:122
- ieee80211_start_sw_scan net/mac80211/scan.c:559 [inline]
- __ieee80211_start_scan+0x1a7d/0x1e00 net/mac80211/scan.c:849
- rdev_scan net/wireless/rdev-ops.h:466 [inline]
- cfg80211_conn_scan+0x9de/0xe80 net/wireless/sme.c:133
- cfg80211_sme_connect net/wireless/sme.c:630 [inline]
- cfg80211_connect+0x14a4/0x1cf0 net/wireless/sme.c:1524
- nl80211_connect+0x188f/0x1fe0 net/wireless/nl80211.c:12035
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
- netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
- netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f81b4775bd9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f81b5529048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f81b4904038 RCX: 00007f81b4775bd9
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000004
-RBP: 00007f81b47e4e60 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f81b4904038 R15: 00007f81b4a2fa78
- </TASK>
-
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+index 6152bcd0bc1f..8f4e238f014f 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+@@ -637,6 +637,14 @@ vreg_l3j_0p8: ldo3 {
+ 	};
+ };
+ 
++&gpu {
++	satus = "okay";
++
++	zap-shader {
++		firmware-name = "qcom/x1e80100/gen70500_zap.mbn";
++	};
++};
++
+ &i2c0 {
+ 	clock-frequency = <400000>;
+ 
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 7bca5fcd7d52..8df90d01eba8 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -3155,9 +3155,10 @@ gpu: gpu@3d00000 {
+ 			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+ 			interconnect-names = "gfx-mem";
+ 
++			status = "disabled";
++
+ 			zap-shader {
+ 				memory-region = <&gpu_microcode_mem>;
+-				firmware-name = "qcom/gen70500_zap.mbn";
+ 			};
+ 
+ 			gpu_opp_table: opp-table {
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+change-id: 20240715-x1e8-zap-name-7b3c79234401
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
