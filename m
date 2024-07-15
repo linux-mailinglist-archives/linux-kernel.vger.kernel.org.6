@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-252397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BF1931290
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:46:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EE0931291
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68CD6B20BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0ECF2843EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDAC188CAB;
-	Mon, 15 Jul 2024 10:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA76C188CD4;
+	Mon, 15 Jul 2024 10:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TDwsHkQ7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W3KsUgT4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FE8187876
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 10:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1812413D8B1;
+	Mon, 15 Jul 2024 10:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721040400; cv=none; b=iOx66qWmM4X4pkNvoTskRVZwzOqR4VLM0sXpFFTU/8g33zvaRLJS+cWpnjNlwS/2VG4Z/XwQBo1Z3bZOC1btAmMGS4tXAx18AHf33ZrAWYMCVi22VDKtddMKVs46GX3BN0v+zUtG4GsFomMJmodAtPdM/9oydU+dNyssdTmMb5w=
+	t=1721040454; cv=none; b=MbR2MO6e7k/YsTrcUDNTbSKCbuoi7YtnPiP68BcvK3qS340np3/wGrKo5Uqg6HxRs2XDD32VQEyR/7KUBTvinFrPRuZk8Iv5B7yi6HiUsjamiy+se2MUEd34WK9DQ1AEAxE/PG6VrEIhFH8Zak0MvgiYPcm2qxRAURd0jnLZNrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721040400; c=relaxed/simple;
-	bh=CwOo8NaJLNmJEZKdA1WAC/NL8RPQXM8XrRqhohO97S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GtlqWuLRqoyoPcfebd+JKq/fuMtHddQoCkC1w35ZtDyB62fBc/2scAR2+DhI6Azxi2jvETexrwqN1Wd/aDOcwKt5xT0EwqIDDHktisW8XQs9T4sb0SwPTa1pvYGnAS3irQT+SOcgmHs0ODwpk4iadoqf0PASEA6p78b5JmMxMEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TDwsHkQ7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E1D6140E021B;
-	Mon, 15 Jul 2024 10:46:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ZQ6G7toqsk-f; Mon, 15 Jul 2024 10:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721040390; bh=RBWMgRYf7a9xNVMq0E8WN+8BHfE3VZ5k8tOSfQ2ZyU0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TDwsHkQ7cihBSws71i7vQui+fKRBj7S56ZRzetaGw3ucqapiXBIiySCK0Sdxebb5R
-	 JpPqnWBecoZwRceIep3oZCnqhiGufwRFmT3bNWtbMlTm/k0hw0hp1clZFqwf8rJvwP
-	 dfXE27z2XS3gjpRHapDc/xzIsMAfaf/OiTs54EMY743o8noePNDq76VCCRlqjlslXv
-	 hycFDWOEe55PmiB2nKfObjBFOZNk18vH8w2FqliLT2rSbUFYaUu8qgHznfDvONiL+h
-	 MMMhmcfj3PLYb6+lN1e8EbXnFZqr3wmLItA0mY8KTWXHgwXQNHP39g2f3sZonMtlUK
-	 GlYd2rSAJQva8mHoV6JPnboKFEoGQglIdSexZQmR1tnIXgla0tuaxn9eVSUkg3liXW
-	 Z6Ddr1ds5HgJfYlt+CFbujZOZt/d7Fm4bXXwedaM6xUF9Gqpdf3fd+xMeVTvsBDKL+
-	 kWWRyek913t10TSNPZwb0czO6ZXuHkAyRuUSHqrS8+A0Domq3JWDy9MACwiCjCfNbe
-	 4SUIYgPpbteSAqKcuAU3HsMoMzGGxw2yyDpEdJhjI0jJ1qHxrI27wCc7Z2fHI3p5L9
-	 o7xdL8HfTA0EB3JQuy4ZkgkK0wp0ld74HcdBKSC/88AKKt/UysQ2u1yRPMWq+tW6y1
-	 K7Y1+vwCDSHTyOLzIeliFqso=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 57A7E40E0192;
-	Mon, 15 Jul 2024 10:46:27 +0000 (UTC)
-Date: Mon, 15 Jul 2024 12:46:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] RAS updates for v6.11-rc1
-Message-ID: <20240715104621.GAZpT9_YnUJpJAtq00@fat_crate.local>
+	s=arc-20240116; t=1721040454; c=relaxed/simple;
+	bh=UwOwjRIPId3MzSFTYliEs+J+7giC8fz2YOnusqx+vFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDH551HnV7ELhu0CMYRoDZE0odljzxobeRCNYzBhJFXQgRCfteLDWyxrZABzxRTfk3urSc2U84aXtWC7sQLTL8aqogEXNIJHRXOw4xr/Lxl1xeDld2SoI/p4VQmZDgCXTLymzzdmpWpUw/8vK/f7czaEsCrIq6L4HWmfs8Vgaqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W3KsUgT4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kwP3k0MYAZqHQtpweUNey7MZGCcgrYPRk6j0LQVUVUc=; b=W3KsUgT4h0kADdrtR1DPpli7sk
+	M1k/KOMK/M3EyHHyPUNlH2DS3GQbEdct15zEa/ldwO+zo8F9EWadk0Dxylwbi4PDBja4VVV1ShOSd
+	rPFkdfa3NgprTj3n1Qhmv/7gbG7z2L8C981qX9Jt3vM1JFBTECrMgr1vdjPIY2a65gIMoH08KJzLm
+	MK6HIA5k8kP4S5Z2OVnLh/bjP8gTHXRaayENtZVe7pbFiPj1wG5W6wV5ZgwECpRnukGhIgwPKQvSO
+	Xr4SSzA30hU3Mujs+EHaKYsYPuwgdfrUEYxP3h2/BPr1nRQzZQIBhn4393wLkBetR9qUwZuhQvJce
+	3avD0YIA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTJEm-00000001mH9-2FT1;
+	Mon, 15 Jul 2024 10:47:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 224FB3003FF; Mon, 15 Jul 2024 12:47:20 +0200 (CEST)
+Date: Mon, 15 Jul 2024 12:47:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	syzbot+72a43cdb78469f7fbad1@syzkaller.appspotmail.com
+Subject: Re: [PATCH] perf callchain: Fix suspicious RCU usage in
+ get_callchain_entry()
+Message-ID: <20240715104719.GA14400@noisy.programming.kicks-ass.net>
+References: <20240715102326.1910790-2-radoslaw.zielonek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240715102326.1910790-2-radoslaw.zielonek@gmail.com>
 
-Hi Linus,
+On Mon, Jul 15, 2024 at 12:23:27PM +0200, Radoslaw Zielonek wrote:
+> The rcu_dereference() is using rcu_read_lock_held() as a checker, but
+> BPF in bpf_prog_test_run_syscall() is using rcu_read_lock_trace() locker.
+> To fix this issue the proper checker has been used
+> (rcu_read_lock_trace_held() || rcu_read_lock_held())
 
-please pull ras/core for v6.11-rc1.
+How does that fix it? release_callchain_buffers() does call_rcu(), not
+call_rcu_tracing().
 
-Thx.
+Does a normal RCU grace period fully imply an RCU-tracing grace period?
 
----
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip ras_core_for_v6.11_rc1
-
-for you to fetch changes up to 5b9d292ea87c836ec47483f98344cb0e7add82fe:
-
-  x86/mce: Remove unused variable and return value in machine_check_poll() (2024-05-27 10:49:25 +0200)
-
-----------------------------------------------------------------
- - A cleanup and a correction to the error injection driver to inject
-   a MCA_MISC value only when one has actually been supplied by the user
-
-----------------------------------------------------------------
-Yazen Ghannam (2):
-      x86/mce/inject: Only write MCA_MISC when a value has been supplied
-      x86/mce: Remove unused variable and return value in machine_check_poll()
-
- arch/x86/include/asm/mce.h       | 3 ++-
- arch/x86/kernel/cpu/mce/core.c   | 7 +------
- arch/x86/kernel/cpu/mce/inject.c | 8 ++++++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>  kernel/events/callchain.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index 1273be84392c..a8af7cd50626 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/perf_event.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched/task_stack.h>
+> +#include <linux/rcupdate_trace.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -32,7 +33,7 @@ static inline size_t perf_callchain_entry__sizeof(void)
+>  static DEFINE_PER_CPU(int, callchain_recursion[PERF_NR_CONTEXTS]);
+>  static atomic_t nr_callchain_events;
+>  static DEFINE_MUTEX(callchain_mutex);
+> -static struct callchain_cpus_entries *callchain_cpus_entries;
+> +static struct callchain_cpus_entries __rcu *callchain_cpus_entries;
+>  
+>  
+>  __weak void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+> @@ -158,7 +159,13 @@ struct perf_callchain_entry *get_callchain_entry(int *rctx)
+>  	if (*rctx == -1)
+>  		return NULL;
+>  
+> -	entries = rcu_dereference(callchain_cpus_entries);
+> +	/*
+> +	 * BPF locked rcu using rcu_read_lock_trace() in
+> +	 * bpf_prog_test_run_syscall()
+> +	 */
+> +	entries = rcu_dereference_check(callchain_cpus_entries,
+> +					rcu_read_lock_trace_held() ||
+> +					rcu_read_lock_held());
+>  	if (!entries) {
+>  		put_recursion_context(this_cpu_ptr(callchain_recursion), *rctx);
+>  		return NULL;
+> -- 
+> 2.43.0
+> 
 
