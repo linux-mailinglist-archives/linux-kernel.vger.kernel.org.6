@@ -1,117 +1,85 @@
-Return-Path: <linux-kernel+bounces-252024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24841930D25
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:15:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5BB930D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 06:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9961F21372
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD30280F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D65157A42;
-	Mon, 15 Jul 2024 04:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJpLSrFw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E0157A42;
+	Mon, 15 Jul 2024 04:19:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A67CC8F6;
-	Mon, 15 Jul 2024 04:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BBF28FC
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 04:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721016949; cv=none; b=gBuN3PPFQAEbZaqi1Yz2XLDf7SBZnC6tzekns0hOKRiaSflHNS1Fc1fwMbQYFZU/+1u7aQiLi+cCUPHQ7C1qZ6uQrnbq+bBxhjBjUCPDkf6vSRuF082nHERNvHvDcoHttGH2Ae13y0k3zWJeIGXbHgFPLGR6ddvy1LiZjlrfDUw=
+	t=1721017145; cv=none; b=o8WswsdUGfmDY9TkEmF4njHhtdri3bfHn+n2e6+CW9prxdW3DcmcmO4DFzgzbJ1vjAVee1yn2l3+OpDA+c+xWOCvQGHf6PC1sEkEGrczOfOZrZbDn3ukj01UdZiBQKibDG7xAZNFHb/cOmeJe9ug1ZeSJTBe2FEiuPXj54AT83Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721016949; c=relaxed/simple;
-	bh=m7cRVEiy0w0PxLyJMh9RYlXBFq9JJo3gs5kdmHF0Bpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GwklinNoI0gfkTTdRLVoaF4nxrpfT5DR6ahQo9Ywv0HU1J6qInbnGRUnS2YNyo76OoD/l3ddOnoufsiW0DO0YqB/2xcymS0wgKbUJMCsoOc1H+HL5iqetop9mB4BguRrYyMH7EWhBvz67LubGqERVkb8s43Sfyi/Ce40iT9X9pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJpLSrFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CD6C4AF0A;
-	Mon, 15 Jul 2024 04:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721016949;
-	bh=m7cRVEiy0w0PxLyJMh9RYlXBFq9JJo3gs5kdmHF0Bpo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YJpLSrFwPsfNXMwH1MMuwIFLQIUWAOyZmLjxPNFqf6WFC/LX4edaXdTeItzN9wLVz
-	 FyQNR253uMlb9Lvo/S7pkxWOvoO7xnliTJohr9CkFMEEN2NN+HllVZGeXwtjxLIATw
-	 wnwMdnWmqkabSufq8TWcMiCRIP71+QNfUlFTN6Hj3dsAs0ID8Lcm/N9IX2u/i+8y2i
-	 POZW6cstJG2InUhQpL8uxbWcD8NxX6g3VxgmpU2YakqsTxudv3t86BGNL1DPGTNiU/
-	 MqQ7Av1TJ8XtGNoyWgMZe9HDuligaadlo+sM5b4Oiie9LToluGJPEpZDqe2MNSORAb
-	 J4hVKOAt+Andg==
-Date: Mon, 15 Jul 2024 12:15:45 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: briannorris@chromium.org, jwerner@chromium.org, groeck@chromium.org,
-	tzungbi@kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev
-Subject: [GIT PULL] chrome-platform-firmware changes for v6.11
-Message-ID: <ZpSicQDtkyR5r4vF@tzungbi-laptop>
+	s=arc-20240116; t=1721017145; c=relaxed/simple;
+	bh=qh12YNwtJC084T5blKlxpVcONYM1ZGSqnO6LO3G2XQU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EhOxbuPqNTXoLmOaInzcEomnckQCpzb3SW3kbUD1SlGzsIYmj/QQmxx664zciAWCmQpcUoMf8gK25r1Ys75ugxud8wbDW6XAqGyUgxuVT7MC22HdXjYCr0UF/+AjgymKPYm5enF61JRBA66qUi9KtgGHadZ6FRwIsqOXh12da3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-806199616d0so433099239f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 21:19:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721017143; x=1721621943;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CeJvkD+W3Swp9uHKd/nDj71Blp77hPnw3Ii9HpZa0h8=;
+        b=K1oWhP6VxQfc+a02KX/VMd7C6GqolEJvhQjw9U6+zCp4vPq+/lcP4HfJ8/HaPGxAx1
+         6lG82qFqjI53iVRipASZGQ6DAbPQVZ8qmK76fy3HXQ6XcTaRp00BStKkAS5R4ohaKnea
+         SKpQy9DBDh2OBNhVrme6l0Gj1HPy2coTwUYNdwvx6bYkhtsrZDOOXDWvKqosHhXzMmsd
+         FwU63xh8bEp/wcnzDJ2kb94svcEOQgpFyAp8CqFJuug16ASOXSHLSiHvg1wyCNKVX6U8
+         FWMLGDqn3kcvBdv8NL94KAGsGMAYH3fS0a+iHOG39lk25OFFAUTHtO95EP+r8EcqXIB7
+         RROg==
+X-Gm-Message-State: AOJu0YxGTxaf4IZvyD1WNUxWMbDISh9kaE23BOsYrL6btCvq9QKbDUwh
+	xi+XBdEOZR6gyB7u/In3XrAB5FCe10wN2ILd/FVW1e6C/EVBUnDvhxf0LecQQY0CvVRf0UCjnSp
+	QDbeBqi07e94fJcI7ux+NlnMOXb4ZiGr22QCW63gbDMMwTvNMIEfJ0o0=
+X-Google-Smtp-Source: AGHT+IExGJrinM0/FKofTmijXr4lq+yUb1rfk/m7RGyU7WTsu9bvgLKttmmqrZ0vMPfyo3Dth/Uztr4kHEqIgRmTruNqStSwGFHL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PWpL0YzOyfPR8cB0"
-Content-Disposition: inline
+X-Received: by 2002:a05:6638:2192:b0:4b9:b122:d07d with SMTP id
+ 8926c6da1cb9f-4c0b2b545d3mr1135075173.4.1721017143632; Sun, 14 Jul 2024
+ 21:19:03 -0700 (PDT)
+Date: Sun, 14 Jul 2024 21:19:03 -0700
+In-Reply-To: <CABtBSab86_An9zwJT4R+dCQT==bGgtsCoRiLskU=PW4_jg3XiQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007fb50b061d41871d@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING: ODEBUG bug in ext4_fill_super (4)
+From: syzbot <syzbot+59e0101c430934bc9a36@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, shenxiaxi26@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---PWpL0YzOyfPR8cB0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Hi Linus,
+Reported-and-tested-by: syzbot+59e0101c430934bc9a36@syzkaller.appspotmail.com
 
-Please pull chrome-platform-firmware changes for v6.11.
+Tested on:
 
-Thanks,
-TzungBi
-------
+commit:         0c383648 Linux 6.10
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1278cae9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b195d59be68c3b56
+dashboard link: https://syzkaller.appspot.com/bug?extid=59e0101c430934bc9a36
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14977631980000
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-firmware-for-v6.11
-
-for you to fetch changes up to fc2c1d716d4a879dd52c612ea19a7f994f08748d:
-
-  firmware: google: add missing MODULE_DESCRIPTION() macros (2024-06-11 03:34:05 +0000)
-
-----------------------------------------------------------------
-chrome platform firmware changes for 6.11
-
-* Minor cleanups.
-
-----------------------------------------------------------------
-Jeff Johnson (1):
-      firmware: google: add missing MODULE_DESCRIPTION() macros
-
- drivers/firmware/google/cbmem.c                 | 1 +
- drivers/firmware/google/coreboot_table.c        | 1 +
- drivers/firmware/google/framebuffer-coreboot.c  | 1 +
- drivers/firmware/google/gsmi.c                  | 1 +
- drivers/firmware/google/memconsole-coreboot.c   | 1 +
- drivers/firmware/google/memconsole-x86-legacy.c | 1 +
- drivers/firmware/google/memconsole.c            | 1 +
- drivers/firmware/google/vpd.c                   | 1 +
- 8 files changed, 8 insertions(+)
-
---PWpL0YzOyfPR8cB0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS0yQeDP3cjLyifNRUrxTEGBto89AUCZpSicAAKCRArxTEGBto8
-9HOfAQD4Z/iQMhXUpsPTJtUB1BIfP9QDTI+k35lIC3MemOsAWQD9HYsxHH582Xsq
-pd5B4/OKoaOhVm/EQcuDDoIcap1ovA8=
-=9znZ
------END PGP SIGNATURE-----
-
---PWpL0YzOyfPR8cB0--
+Note: testing is done by a robot and is best-effort only.
 
