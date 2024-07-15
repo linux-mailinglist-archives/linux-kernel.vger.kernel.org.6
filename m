@@ -1,100 +1,91 @@
-Return-Path: <linux-kernel+bounces-252500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3001E9313F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC5F9313F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2D61F21F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A4E282BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651B318C169;
-	Mon, 15 Jul 2024 12:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FB818C32B;
+	Mon, 15 Jul 2024 12:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RJuG2H3y"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK25P6Dw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E51E18C170
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 12:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699E21465B8;
+	Mon, 15 Jul 2024 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045852; cv=none; b=k4r4EkZKcgkeIf5wD5j1Oja3YxgPCLu6r98ixI+7Ni+ssu0JcxU3a8CyAtkf5qsYkX48fKVRl78YLFxORyM9A9mGAwn3TagTNr3TnyquFIrme0cDsxEgqIJCoXNf48yIGoc00Dav0jBbXmpHa3+4W19sGUhPvuVT/IK92O+N3FY=
+	t=1721045864; cv=none; b=YSnU3hhJaA26zzHE7209xa3s4IvA5cZ1hYFfbwecNJNFnPIczs0N1JwAyUbM/SjrHkMtR8DzEaaw08E3xD1dRpl0ml6zrd26978lgF9C6NptkvOOcIQbTQrs7AAVQ2B0blbcw8wjLlWoSNFJDVyjiyqGKF3zEFTPwio2mmSMKkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045852; c=relaxed/simple;
-	bh=42W8b2dBPueTWFZdOdOwfS1/BzZPdpyWZRA0qbwDSKo=;
+	s=arc-20240116; t=1721045864; c=relaxed/simple;
+	bh=uCJLkcwDXyYOQxbRIMSEE+HcgfmMo2augGT7JD3amXY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfkfAMcXdFOwtSQlmW8uPGVkcVTVxzkau7A4QBN+VFgxlS2zVu9ntT2N9qhKbPkLxkRxi2Eg3jpkVjl+r041VFbBjf/y0xhtcFRMU00QJlDYZ+4Wo0dZNo7aqOGv4HmQx1TASf6kDI21lS9em6j2hLoFQk9YcLi2cwllQ+UwdMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RJuG2H3y; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 49D1A40E0027;
-	Mon, 15 Jul 2024 12:17:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8Vtsc0DUDhAl; Mon, 15 Jul 2024 12:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721045841; bh=+YWvB3+WTpnDtMqqGNaMhXgj0kOHzjlz8VXcq8FE3aw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=hue0QjM/66DsU23OGuDw91PDEBrwWhqPHm/nHN2FY8OF1kMfSd50q0nuyn45gVR0S79Y5q+ZjVc7iVBY4CzhGS2WKhstUh5BquZN+FD/vr71XmXoZ9aLX+vOueG7KhjF7yjcYQbDpvqqnC+XoTv00Po8OJbceOjVJDkhBQGUbL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK25P6Dw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF5E4C32782;
+	Mon, 15 Jul 2024 12:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721045863;
+	bh=uCJLkcwDXyYOQxbRIMSEE+HcgfmMo2augGT7JD3amXY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RJuG2H3y7PA2XfdYWg3onv85NW6uz3qlYRSOVE0DOjjKRPyq7x+cF08H8sNdvbEfE
-	 QUoX0yTPqrtHqOCVXr/n9rqJlR6YPp+LeoRlltVaYJiANSRsFxfKPduzBLx2vI8rJu
-	 RM9YVLWkRz5tuA3XA58VODQ+hsDVUaIP5MhTEXl5DWsAZPriHkJpzdRR3lUvBkh8hi
-	 fD2bsynGkhKJbZLgKdHRyfQLwgg2496EUbSIz3IEdbX9+mDYH43CMR+WdGUM0WioTN
-	 jmU1g1frmzTeFcAh4pHTOKfN2Osyr7pfLlUnzLtuSW1MlsXcQPt7rhefso+UOPoeqO
-	 wcXCvFSHxqOr4K8txBwDfbU3g1pPI69EWi5V69j1k8R8vIXiLQ1rE/G/ZjRPojgmNo
-	 9Bmzj8WT8H4mI9mFrl7RT0yZL1UeGzVLHpvAFcrzM6iMCFHcaVM55BICLrkzD+uMaj
-	 tdj9YGdkEye/nqJ+ZeSP2FCfXFbkN924dSIzqSmSN2HXbzvXnBddYlsdbCCacwLLig
-	 nhNEV218xEDfUDd5u5kzaKRpASCFRNjCPVWqpeVHAPxGOltNEY2sQgjo8XwoJ+jQkG
-	 O5BaZ6tAYCAwojFgmSpdQ+AwNWiqUpddVprR4OZenecMr4MbOX8BQkadfSyWAQZKq5
-	 7/uQZ/6klHuyfNgvn8ojoLv0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AA9240E021F;
-	Mon, 15 Jul 2024 12:17:10 +0000 (UTC)
-Date: Mon, 15 Jul 2024 14:17:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
-Message-ID: <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
-References: <20240422165830.2142904-1-leitao@debian.org>
- <20240422165830.2142904-2-leitao@debian.org>
- <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
- <ZpUSvl5eKgkLeJrg@gmail.com>
+	b=YK25P6DwQ38slp4Xm5FuFT9bxBatFQVlAPCI+40+ivQ+GocnyGfz9fUkmHVcQzGre
+	 de0KiGh5aZp4hEkSqgZh1m5AepsnXGvNlGni3pdK5ygCVXK3jmud2WBCPb6gtb3Tdk
+	 vyTI1VI7NLeiECHZy4nKKUGBd3Gu2SA2bAwtG5xHfRr/7hrpNfSRCPHDiXVIBl9UpK
+	 bNb0z6HaGbIDVPsyyXS2EDoefB1ES8v7aTYYuoMHx5mkkVZWvvi2yW0SescCmtHj40
+	 0JsS7IW4lIc2nFRXyn5+6EO3SydTaXVCIqvuhRoqox3tXcIBnIdr5SSEibcxE8aTWC
+	 b6yvjya+TJOOw==
+Date: Mon, 15 Jul 2024 06:17:42 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-hwmon@vger.kernel.org, conor+dt@kernel.org, linux@roeck-us.net,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	krzk+dt@kernel.org, ukleinek@kernel.org, devicetree@vger.kernel.org,
+	jdelvare@suse.com
+Subject: Re: [PATCH v5 1/3] dt-bindings: hwmon: Add adt7475 fan/pwm properties
+Message-ID: <172104586129.3775717.7588578554384809361.robh@kernel.org>
+References: <20240711234614.3104839-1-chris.packham@alliedtelesis.co.nz>
+ <20240711234614.3104839-2-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpUSvl5eKgkLeJrg@gmail.com>
+In-Reply-To: <20240711234614.3104839-2-chris.packham@alliedtelesis.co.nz>
 
-On Mon, Jul 15, 2024 at 05:14:54AM -0700, Breno Leitao wrote:
-> Sure, I will send a v4 and get rid of GDS_FORCE_MITIGATION completely.
 
-I'm actually waiting on the people on Cc to chime in whether we really need
-it. The three distro configs we checked, don't set it.
+On Fri, 12 Jul 2024 11:46:12 +1200, Chris Packham wrote:
+> Add fan child nodes that allow describing the connections for the
+> ADT7475 to the fans it controls. This also allows setting some
+> initial values for the pwm duty cycle and frequency.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v5:
+>     - Use nanoseconds for PWM frequency and duty cycle as per existing
+>       conventions for PWMs
+>     - Set flags to 0 in example to match adi,pwm-active-state setting
+>     Changes in v4:
+>     - 0 is not a valid frequency value
+>     Changes in v3:
+>     - Use the pwm provider/consumer bindings
+>     Changes in v2:
+>     - Document 0 as a valid value (leaves hardware as-is)
+> 
+>  .../devicetree/bindings/hwmon/adt7475.yaml    | 35 ++++++++++++++++++-
+>  1 file changed, 34 insertions(+), 1 deletion(-)
+> 
 
--- 
-Regards/Gruss,
-    Boris.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
