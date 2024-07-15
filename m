@@ -1,136 +1,99 @@
-Return-Path: <linux-kernel+bounces-251994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D8F930CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:41:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CE7930CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 04:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24231F21283
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:41:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF68B20D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 02:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E44B9474;
-	Mon, 15 Jul 2024 02:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EhiVEr1s"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FABDDA6
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 02:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5B8F47;
+	Mon, 15 Jul 2024 02:41:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38F64A35;
+	Mon, 15 Jul 2024 02:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721011295; cv=none; b=IvJ6YhcKj2qdYz9/yWK2WimzwWWhKvS/FfkEXCDRPXtip0k9dEMZkdLrrBt4YwYJ7DStu1NjX4AyxxUQqiH+tgR80I1c2va5Q0HsYRApkwrMpDv0xC1hB93u+0toCAPuZj89KkS1qmZCshncCAt+1kfW26raCOKhpv0wSidYHcQ=
+	t=1721011278; cv=none; b=TTBYWyVahOXbRm3VBYtWaeWpY2mGbBQp4OoHXXy9rrzWMwcFjnlacpI8sDbFzSyrKTFaeAwrv6wlTJR08+VCQVc5Bt3+Y45uyfklX/5WJWStHBGSxZY6R3Jp5YiT4vsH5ZeEnB0XQ585maURpmUiPjk7lRtREI1FLUxtF0fmPQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721011295; c=relaxed/simple;
-	bh=snMf7HzH7J2dr+IDOBFDYmYluvIOXw6b/0NlGy93V+s=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=UPBAreDl68FzBum3Xjt51TU0hh9cT/U+hC5G6j3jGYnVaWXhnY6ONIFR2nEYvvhIJKQ14mvs4QzUIg00gAIf42U5ZSmk3FcKv7i9g+NpFTOQVNnvxp+/o6LqRva+aO7fZqqzMyum3AKOQWygI/hf8+2LadDzpCdobC1eMBSGWTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EhiVEr1s; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: oliver.sang@intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721011289;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snMf7HzH7J2dr+IDOBFDYmYluvIOXw6b/0NlGy93V+s=;
-	b=EhiVEr1s1uBJO3KUGzG42t0vzhixEhQL9Cc5s24YTX/YL0uw4hKXhPGRYHFs33PioDKT1M
-	LhTm+FjmNe4HiZTSSrBWyeJIqbkXN6DVAVK6zXVSl74dZwtXGhSOLt/Y1PhPlz96E1F0S5
-	SP2pEL/Wl0Z67rv7j6WOswnpMKJyOi8=
-X-Envelope-To: yuzhao@google.com
-X-Envelope-To: oe-lkp@lists.linux.dev
-X-Envelope-To: lkp@intel.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: david@redhat.com
-X-Envelope-To: fvdl@google.com
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: peterx@redhat.com
-X-Envelope-To: yang@os.amperecomputing.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: ying.huang@intel.com
-X-Envelope-To: feng.tang@intel.com
-X-Envelope-To: fengwei.yin@intel.com
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1721011278; c=relaxed/simple;
+	bh=CcuJ6zalw48fPT60jgM+/sKMTg6u/KrFTffpyNv1ZbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X1WWbIpoAhFqkbgEiA7Ad74qVZTXVqZ7HW7CJ3RIZO6FzGTKdVm2R0I5CLvVKxHLzRyy0Y3Pwvu1L3EYFK/Gx2HVnCiTUTCgxPsl9sPXUtmtc1BgS1vd1Mx4pdJRBQJESAhbtuSHipo0R5oTyIRbr2UTFmx1rY0N9xqu0tZReg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06D84FEC;
+	Sun, 14 Jul 2024 19:41:39 -0700 (PDT)
+Received: from [10.162.16.42] (unknown [10.162.16.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D30CF3F762;
+	Sun, 14 Jul 2024 19:41:11 -0700 (PDT)
+Message-ID: <87d70313-9c8c-4cdf-a040-7ea31804cad7@arm.com>
+Date: Mon, 15 Jul 2024 08:11:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [linux-next:master] [mm/hugetlb_vmemmap] 875fa64577:
- vm-scalability.throughput -34.3% regression
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <ZpPD4Mz3t5xT87aN@xsang-OptiPlex-9020>
-Date: Mon, 15 Jul 2024 10:40:43 +0800
-Cc: Yu Zhao <yuzhao@google.com>,
- oe-lkp@lists.linux.dev,
- kernel test robot <lkp@intel.com>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Frank van der Linden <fvdl@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Huang Ying <ying.huang@intel.com>,
- Feng Tang <feng.tang@intel.com>,
- Yin Fengwei <fengwei.yin@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CB8E06DE-0DB7-4605-AB19-19CF4F0F17B9@linux.dev>
-References: <202407091001.1250ad4a-oliver.sang@intel.com>
- <CAOUHufYdGbgnqNprKVUH8woMR_R5Wcc=281vcmm3+NRO-=+-jw@mail.gmail.com>
- <ZpPD4Mz3t5xT87aN@xsang-OptiPlex-9020>
-To: Oliver Sang <oliver.sang@intel.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240714105848.1844400-1-masahiroy@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240714105848.1844400-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/14/24 16:28, Masahiro Yamada wrote:
+> The condition 'select HAVE_ARCH_KASAN' is always true because
+> there is 'select HAVE_ARCH_KASAN' statement above.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  arch/arm64/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index c87d16b12e9b..d37cbfc3031e 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -167,9 +167,9 @@ config ARM64
+>  	select HAVE_ARCH_JUMP_LABEL
+>  	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+>  	select HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_VMALLOC if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_SW_TAGS if HAVE_ARCH_KASAN
+> -	select HAVE_ARCH_KASAN_HW_TAGS if (HAVE_ARCH_KASAN && ARM64_MTE)
+> +	select HAVE_ARCH_KASAN_VMALLOC
+> +	select HAVE_ARCH_KASAN_SW_TAGS
+> +	select HAVE_ARCH_KASAN_HW_TAGS if ARM64_MTE
+>  	# Some instrumentation may be unsound, hence EXPERT
+>  	select HAVE_ARCH_KCSAN if EXPERT
+>  	select HAVE_ARCH_KFENCE
 
+There is another similar instance with HAVE_FUNCTION_GRAPH_TRACER as well.
+Just wondering if the following change should be folded in here ?
 
-> On Jul 14, 2024, at 20:26, Oliver Sang <oliver.sang@intel.com> wrote:
->=20
-> hi, Yu Zhao,
->=20
-> On Wed, Jul 10, 2024 at 12:22:40AM -0600, Yu Zhao wrote:
->> On Mon, Jul 8, 2024 at 11:11=E2=80=AFPM kernel test robot =
-<oliver.sang@intel.com> wrote:
->>>=20
->>> Hello,
->>>=20
->>> kernel test robot noticed a -34.3% regression of =
-vm-scalability.throughput on:
->>>=20
->>>=20
->>> commit: 875fa64577da9bc8e9963ee14fef8433f20653e7 =
-("mm/hugetlb_vmemmap: fix race with speculative PFN walkers")
->>=20
->> This is likely caused by synchronize_rcu() wandering into the
->> allocation path. I'll patch that up soon.
->>=20
->=20
-> we noticed this commit has already been merged into mainline
->=20
-> [bd225530a4c717714722c3731442b78954c765b3] mm/hugetlb_vmemmap: fix =
-race with speculative PFN walkers
-> branch: linus/master
-
-Did you test with HVO enabled (there are two ways to enable HVO: 1) =
-adding cmdline with "hugetlb_free_vmemmap=3Don"
-or 2) write 1 to /proc/sys/vm/hugetlb_optimize_vmemmap)? I want to =
-confirm if the regression is related
-to HVO routine.
-
-Thanks.
-
->=20
-> and the regression still exists in our tests. do you want us to test =
-your
-> patch? Thanks!
-
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -210,8 +210,8 @@ config ARM64
+        select HAVE_FTRACE_MCOUNT_RECORD
+        select HAVE_FUNCTION_TRACER
+        select HAVE_FUNCTION_ERROR_INJECTION
+-       select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
+        select HAVE_FUNCTION_GRAPH_TRACER
++       select HAVE_FUNCTION_GRAPH_RETVAL
+        select HAVE_GCC_PLUGINS
+        select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
+                HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
 
