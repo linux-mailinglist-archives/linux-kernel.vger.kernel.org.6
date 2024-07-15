@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-252433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F309312FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B499312FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 13:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1415A1C2190F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BD82825FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 11:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C843188CBA;
-	Mon, 15 Jul 2024 11:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D3188CBA;
+	Mon, 15 Jul 2024 11:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="M91PuPJQ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TnxjyKLD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA016CD36
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468E316CD36
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 11:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042569; cv=none; b=tx33KAMyb8PHTZv3p9Id0mBTLcA0OH0rtQBtJPbD8QE/h6sJQ5OQWc6EHjtEd82M1QwMzJfDzgIXfl0qFXn3Jrq186sE5KWy0d6W56EjYB9D4RfgnajElSdrVYsJ4oCcmS+2hSchvbKWkNgE58/u9JoL0+0nGzinQm0hPDQpFFo=
+	t=1721042626; cv=none; b=lXzT0z9hq3KrZI0bckSdblDAS07LBGzbzyw61uPRQcUtN9p30yRlogMcKFppDba4QpbGR9DChlmJbskJ6rDHMLtaZE0VZvKcgkEzOsNRDqfKtO9DplB7sORrcplBHQgDswvrFL3XzUV56zIc2qYD2SVgH7lQR+bbxXogYF6zbT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042569; c=relaxed/simple;
-	bh=UwvuMo9q+BM5zDJoEmawhhWB8dTM6b6Yc6OQfdkW8g4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d7e620ix8nybEgjg/+U6UYHwW/xQVoV9tmYcfVaviAVPGTj/zMSontdFw+TG722rUyr3af459lXplNf6UgAbyK+h5a/J8bO9WLu8GzjW5zoQE5hvr5l+IC7+odfoc6mU8J+d1dOxPcPJsV7fihYeFeOUkZuEYy9B57bgbf1lkpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=M91PuPJQ; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721042567; x=1752578567;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UwvuMo9q+BM5zDJoEmawhhWB8dTM6b6Yc6OQfdkW8g4=;
-  b=M91PuPJQkPkWlGvvyvvbkclrRdnEHjuXsK5o9gRm/dIdJpPCe86rLn8J
-   tlplwLjf7o7Jlbxbc/5e2L/yfSBosf6bgvMdeVeIX+2c8IPBjDiMikiiI
-   C0P19mtHKKI3Zl8cM60+2e7azS9nLzeV7IAZxMsHQGhajJakx2XRb2qjp
-   ejv7A0XDKo4fSPvG2MiVnX95zPRPqqiHlZO4EUv0BBwphsEGG8V0ee84x
-   n0pmQxNU6ALNY3GIhD4qQpnY/ycwArpsJViynfJoMMcCaYy5MgdUHp+v+
-   F4LBrC1v1J5wfHlNZ+Desa/bOwr9e7KiTwjdcXpXgjF1hN5LPyQaFExt4
-   A==;
-X-CSE-ConnectionGUID: 59ssF+iFTAuETctFWYV9gw==
-X-CSE-MsgGUID: mJN010RHSSC0HHi61+wzdg==
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="196643730"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Jul 2024 04:22:47 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 15 Jul 2024 04:22:22 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 15 Jul 2024 04:22:21 -0700
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <soc@kernel.org>
-CC: <conor@kernel.org>, <conor.dooley@microchip.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: drop riscv list from cache controllers
-Date: Mon, 15 Jul 2024 12:21:48 +0100
-Message-ID: <20240715-pesticide-strike-6217a07b72ef@wendy>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1721042626; c=relaxed/simple;
+	bh=OQtKlEM90EGGXqPFr7eTy5TGYT9QG36bLVo6XMtrfXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WhpamKyVfugOI73qNBapvtICIKHCS+Zs8/Va6MhW4jg/8PlEQ0IXAUEqAJJ0XybGY7+Om+HOKGp5tqHJARr+7xbqPDGhmheL2Q6jEdcefUxVbf0EFU7+K0pPH+q0Duf0gBVN84jatlx7KC2403cIHd4Py/epbphe7ma+Rzo+BNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TnxjyKLD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 607F940E019C;
+	Mon, 15 Jul 2024 11:23:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kmRqgXZyKDmj; Mon, 15 Jul 2024 11:23:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721042619; bh=MP1CrB4sQJUWjZBO3Jfu7c26FIeYv3oaH9Eqc+I4mlI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TnxjyKLDkVuopm8xQpRLERXc44buppVNclDDmWMnAb4ByIbjY0KQ2+Cf8Uombi9LX
+	 VvEK6/NXc4brWTwM84G/XIEVhOTMeXRqsG1OBJmZ6XE3U69UbvQc8n1IhFUUhnRwhD
+	 HNZZyhhGny6q3g7sDzi2GPjqI+0sl41qLOuOU3r5jKiF3768DR/HhXLAqpeQSC2qSt
+	 /GQQyTge4kBHIoPQAUF4XAnHFkzbBSBKJOiMEFYvFR3hM4JJPjErmVQnYQd/ogGUBp
+	 vINdE9ic0ZPpThIwjdGwZARgoz5Igh7FsGTSkygK7zKSt+q8ENY1LF9GMSFAoQSirl
+	 GXMzh/8EXUmnLDgFPADbYK4eQ9NkrO6TH0f1g+6BIrTVjUXZwEHtyTLFf8cnJJH403
+	 TaBtc2n3Xcbe56QJp8sovnyiwtbKhro4PJfSKjdrSZw+G4OxVKf4zTTuY81VA6JXXc
+	 kQ6hhvYtTBJyrMf4fh9bwtHDG/fVAQXxzwghMlzXamhAGhrfo9FJeoPOfbDPoF+xFn
+	 qW4pbRqP8yMgWoVQnxAmUDUAnRlUmX1pvZaPZ2wFgcGkGToBThUbcW/yU66qeEIDKy
+	 C4PsbbvjClOJB1ULqqntOfJ9yJaVkhgd4kD6rcmqtXPOeaXaj6woeD3X//lTsWy6QE
+	 0+nI7CMegxrtwILU+Cn/WxZg=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6486440E0027;
+	Mon, 15 Jul 2024 11:23:36 +0000 (UTC)
+Date: Mon, 15 Jul 2024 13:23:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/cleanups for v6.11-rc1
+Message-ID: <20240715112329.GAZpUGseCodLDRBpET@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=899; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=UwvuMo9q+BM5zDJoEmawhhWB8dTM6b6Yc6OQfdkW8g4=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlT2fyuXpbWD2k2Kwx8f8lnz7G5RYZLZMtzrQ0+RQa7CNmF /O7tKGVhEONgkBVTZEm83dcitf6Pyw7nnrcwc1iZQIYwcHEKwEQWajD8M3VwDT+zNTRom0J17vY1X6 3Kpr5IvPL59YUui01WHh1xVxj+lylMr3t37bSCCL/43aBrEnqnVj3rX7d67uOiTfualtmu4gAA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-When adding the bindings for cache controllers to the MAINTAINERS entry,
-I forgot to drop the riscv mailing list - and so completely unrelated to
-riscv stuff is now being sent there. Drop it.
+Hi Linus,
 
-Fixes: 4ca47d8bcca0 ("MAINTAINERS: add cache binding directory to cache driver entry")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+please pull the x86/cleanups lineup for v6.11-rc1.
+
+Thx.
+
 ---
-Arnd,
 
-Can you grab this directly please?
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-Cheers,
-Conor.
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bb2addcf836a..3e701e5ff93d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21284,7 +21284,6 @@ F:	drivers/staging/
- 
- STANDALONE CACHE CONTROLLER DRIVERS
- M:	Conor Dooley <conor@kernel.org>
--L:	linux-riscv@lists.infradead.org
- S:	Maintained
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
- F:	Documentation/devicetree/bindings/cache/
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_cleanups_for_v6.11_rc1
+
+for you to fetch changes up to 71315037cb7d40cdb2f4fbefad31927f6e6caba5:
+
+  x86/boot: Remove unused function __fortify_panic() (2024-06-14 18:08:45 +0200)
+
+----------------------------------------------------------------
+ - Remove an unused function and the documentation of an already removed
+   cmdline parameter
+
+----------------------------------------------------------------
+Nikolay Borisov (1):
+      x86/boot: Remove unused function __fortify_panic()
+
+Thomas Huth (1):
+      Documentation: Remove "mfgpt_irq=" from the kernel-parameters.txt file
+
+ Documentation/admin-guide/kernel-parameters.txt | 4 ----
+ arch/x86/boot/compressed/misc.c                 | 5 -----
+ 2 files changed, 9 deletions(-)
+
+
 -- 
-2.43.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
