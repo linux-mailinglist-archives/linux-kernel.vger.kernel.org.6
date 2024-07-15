@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-252183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FC9930FA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:25:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2B9930FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 10:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95AA1C21392
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:25:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF5B1C214E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC813185086;
-	Mon, 15 Jul 2024 08:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40E81849F2;
+	Mon, 15 Jul 2024 08:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PVGSn0zl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYvu4pSs"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D873F185E78;
-	Mon, 15 Jul 2024 08:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B61849D7;
+	Mon, 15 Jul 2024 08:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721031854; cv=none; b=N12sP3aK12NCKcfbpoIL4iVPz7+7abSqu8D3ulrt4y4vM4WKYEFbHqk1Q+zdsHouOMzAWkEnDiRk9t2VBVmgH+UQzTSjeGSQ+4iIzwBihFGUfszxptN05DCFCRaOO26CmfyjsAQbR9XC6/Y6ykQqKBx7YLYl42BfZojapZ1BI/s=
+	t=1721031923; cv=none; b=ThWdVjDZCM2epwpEh5Y/UPd5LEwpuPbdMmv8PIjxOLvmzLdSgmNfrL/JIXGPanGYD69LBPS7NZXOAgV2GJc63RfskODImIiR0UjO0WXV5uXsn2KB8u796uHg7RdVumzAmD7F2R2EEsWK/DPgnYUJhh/shEdjFClhm5qU8nWhTxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721031854; c=relaxed/simple;
-	bh=6IUbUd7CVgpp8YFE5kuRFVubVcn8trPnn2XkL93AU3w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UOpGCp4qLhcEYbitQ4h7ZrR8TKsQ1QjXY6cKpEcBILuCNp8p3wxdL1Ezb7yF6f4MWVF3grY3c+fdKDhgJXxGLw2FkoRggXkRgFdr2VrsHKMwl1aqb6M4IeOx2SX0NezMw7MwC37qdB41alGEZZfDD7JvTgcQKoRtQE1WX75Q/YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PVGSn0zl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dfJx013353;
-	Mon, 15 Jul 2024 08:24:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/6XS7rLcH6kjUN8HkzuC/8DlxiPTtsq50fFB//5j+CE=; b=PVGSn0zl+gUW9Je2
-	8/UibJ0qUdnGgPGlsx26UcupZqCvKknrevlFdkK6TZdIPyqILluugeScaWXs80qY
-	0apTsBbkJ86ZmRSRJA6Khv6Z0sd0bErObhhi0s907jV/EcGmWtKQzQBg+M59XaQO
-	WJg+oJXU1jaJdP9y3qdSQPGswVmkUjhJVzFdK6Igzg2s/qQu4wi/VvUmaTuFi49p
-	le3LFwoCTBOH8fQ0h/Uyn0edJPGU3opTPmkl8s15NyL20PMvx6Hh/FKNdO+2lSf+
-	Xer3MruGFAupKr7FSRLHBxAG0HAOYmuTGYnjbNnRnsThwRaA142LCca20mpG9nAr
-	/u5JJg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bexnbdmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 08:24:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46F8O8CN031357
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 08:24:08 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 15 Jul 2024 01:24:03 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Mon, 15 Jul 2024 13:53:23 +0530
-Subject: [PATCH v3 8/8] arm64: dts: qcom: Update sleep_clk frequency to
- 32000 on SA8775P
+	s=arc-20240116; t=1721031923; c=relaxed/simple;
+	bh=sYTa3WNcV2F8VcxAC4M8JpZN4WhbxWbON/EkXLJ5Ojc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ewN21EMMj0YyR2Hld5ylURhtoFqVtkSsl7K7SH9WAfw+RBKh0MNmkzhUMFE8ZDD2NgLt1IDEAUB6fnyq2KNg6t5JWf4FvfuJs5e85s1nBoGqCogJ0cYADPOWyESKrv66LhTxDtJhRPehQArKnd5g1lgTKxme92Gmhs0L/FWp/Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYvu4pSs; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7f6e9662880so185054239f.2;
+        Mon, 15 Jul 2024 01:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721031921; x=1721636721; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rW2thNGYkRyZe8HIPJ8rpQcN6uYkUSeuH9TVqbqQqOM=;
+        b=GYvu4pSsyqgoKAFf6PcsNfdojmRklpIlh+GywOkhChVFcqRWHaDGJT4hi/lTOL6GXF
+         gKe99qYxtO6d+Ui4JF2Z+vrEYAB5rz2FowVZOb2Bp75YV5VuCcEHHf/zEoGky1WTOHcb
+         2lZ/Xw2e5CA4FXgBAqoSmYQJAo3L3x+Q0oy1MNnUk7dCPczF8IlsFnA/PhyP5vhCbuAf
+         9hqhg/MgUrnPMT2Ra/8AWX8M3Vr8hMuex7OvkhPaXHktiImv+Yh2ls45v+cjJPDdNWHw
+         U1B95XlYUhmP6ouS+dYYoGxIlSZf+sDtdCEjVTLKHKH6/3uLTcYlsKArSS2jL/37KB6s
+         xFzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721031921; x=1721636721;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rW2thNGYkRyZe8HIPJ8rpQcN6uYkUSeuH9TVqbqQqOM=;
+        b=famRvm+cqMhxTUp5LxtLu9m7fldyK+05h2eDzBm8r4fcD6MbNsoVyvJ6plzMp8ny1R
+         718KSHQLzPNQO2ggA7gMg/xZOWtKQlq6aDiSISMr+X3Gq3nRsfSTOFY76T8M/waum2wB
+         x2SQ0geN2C+iaAqyKVIyzJgaDyzS32imn0GpXLHY6c6fLTcmz1GeniKuVZ2T2rmMDN4v
+         UbaS5cEcaX7NokAogTD7gOW3tK5SlhHc3IbpQaMSdB1TGi+PNTxBWrUZjOkE8Zafofap
+         eOMSvbaJeRu5DHXTXxY3wWQwNfwzrOJdizWYbrO/zf1uF9vQjekpGY7aSaz/ZDA8P6Lw
+         yzCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxBYJf/KOwQetoqgEGyvQofQSn4Ha0Glw99HAqoeiqb+QaPWEaqkDuJw59HJg5ORfcQKXFzkwk+1MUVeRv4oqHm4V851IOTlu3q6+YTnkE8EC/gkLCapouSh11N2txJQsqRUadbTxoeWqu5+iU01aBBOZ7EdlJB8WJ4GVSySH7Ys447pGADr8PzidOnt/EXlmEFCU/sI7VHpmuoPcfq/pmk+V
+X-Gm-Message-State: AOJu0YzgG5hEpn1eqm3ECohbOYynB+VzW+odwA21TXZgfrEVxfgT0Ni/
+	WclQ/LTEHwCUr4TrR390iMyGinv8NYuBiwQR6UedJ2Y3vWNe/teh
+X-Google-Smtp-Source: AGHT+IEJOtY6h6sgqUX2Zqpq7jO4aSc5SbNrF10Bl+Cu1roWxg+N/2mw68X1fDSEsPnU5o1cPk9G6A==
+X-Received: by 2002:a6b:db0d:0:b0:805:e2bf:f303 with SMTP id ca18e2360f4ac-805e2bff70emr1391622039f.8.1721031920882;
+        Mon, 15 Jul 2024 01:25:20 -0700 (PDT)
+Received: from localhost ([1.146.120.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7eed2sm3770443b3a.116.2024.07.15.01.25.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 01:25:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240715-sa8775p-mm-v3-v1-8-badaf35ed670@quicinc.com>
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
-In-Reply-To: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
-        <quic_tdas@quicinc.com>
-X-Mailer: b4 0.14-dev-f7c49
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KiEiLw34kcTJ321tcQMsB8col0570nj3
-X-Proofpoint-GUID: KiEiLw34kcTJ321tcQMsB8col0570nj3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_03,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0
- spamscore=0 phishscore=0 mlxlogscore=873 lowpriorityscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150065
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 15 Jul 2024 18:25:10 +1000
+Message-Id: <D2PYW90LRVAY.3PCE9P3NE2NEB@gmail.com>
+Cc: "Michael Ellerman" <mpe@ellerman.id.au>, "Christophe Leroy"
+ <christophe.leroy@csgroup.eu>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, "Hari Bathini"
+ <hbathini@linux.ibm.com>, "Mahesh Salgaonkar" <mahesh@linux.ibm.com>,
+ "Vishal Chourasia" <vishalc@linux.ibm.com>
+Subject: Re: [RFC PATCH v4 12/17] powerpc64/ftrace: Move ftrace sequence out
+ of line
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Naveen N Rao" <naveen@kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+ <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <cover.1720942106.git.naveen@kernel.org>
+ <9cf2cdddba74ec167ae1af5ec189bba8f704fb51.1720942106.git.naveen@kernel.org>
+In-Reply-To: <9cf2cdddba74ec167ae1af5ec189bba8f704fb51.1720942106.git.naveen@kernel.org>
 
-The HW supported sleep_clk frequency on SA8775P is 32000, hence
-update the sleep_clk frequency with the correct value on SA8775P.
+On Sun Jul 14, 2024 at 6:27 PM AEST, Naveen N Rao wrote:
+> Function profile sequence on powerpc includes two instructions at the
+> beginning of each function:
+> 	mflr	r0
+> 	bl	ftrace_caller
+>
+> The call to ftrace_caller() gets nop'ed out during kernel boot and is
+> patched in when ftrace is enabled.
+>
+> Given the sequence, we cannot return from ftrace_caller with 'blr' as we
+> need to keep LR and r0 intact. This results in link stack (return
+> address predictor) imbalance when ftrace is enabled. To address that, we
+> would like to use a three instruction sequence:
+> 	mflr	r0
+> 	bl	ftrace_caller
+> 	mtlr	r0
+>
+> Further more, to support DYNAMIC_FTRACE_WITH_CALL_OPS, we need to
+> reserve two instruction slots before the function. This results in a
+> total of five instruction slots to be reserved for ftrace use on each
+> function that is traced.
+>
+> Move the function profile sequence out-of-line to minimize its impact.
+> To do this, we reserve a single nop at function entry using
+> -fpatchable-function-entry=3D1 and add a pass on vmlinux.o to determine
+> the total number of functions that can be traced. This is then used to
+> generate a .S file reserving the appropriate amount of space for use as
+> ftrace stubs, which is built and linked into vmlinux.
 
-Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These are all going into .tramp.ftrace.text AFAIKS? Should that be
+moved after some of the other text in the linker script then if it
+could get quite large? sched and lock and other things should be
+closer to the rest of text and hot code.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 2a6170623ea9..864ad109371c 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -517,7 +517,7 @@ &serdes1 {
- };
- 
- &sleep_clk {
--	clock-frequency = <32764>;
-+	clock-frequency = <32000>;
- };
- 
- &spi16 {
-
--- 
-2.45.2
-
+Thanks,
+Nick
 
