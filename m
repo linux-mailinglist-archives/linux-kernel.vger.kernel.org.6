@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-253139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11531931D26
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:25:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFA4931D27
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9C91F21DFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:25:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46BA0B216B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEF013D24C;
-	Mon, 15 Jul 2024 22:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9154813CFA5;
+	Mon, 15 Jul 2024 22:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pn3j2b9z"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDpzabdr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BAF61FFA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44E620EB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721082319; cv=none; b=RhbIXcnjpxiaJ5z6Xlttlrqn4mkZaSHw5yQ3VOrNGSOabucDfqQmT1nVrCTHPupMxKw+J9LhyGa7WQ2GflnrbZvypOByMkFrn1LhzO1gZ1AwEtg/cLry7K6mNgXtAll5/OAngMRTq2wNO3GBD1fFE+l2YanGtEwnJ2owolQFfTw=
+	t=1721082412; cv=none; b=cTZJ0Hg2bbrDa20vA2OM602Di6597vX5cuY2m+H21yXVbhkx4++5i1STS/hzViK6qVW8VL9emk/JYMPpFwcZke/EGmyZ8fQXYScsODs4dcqNup/Ivp1RaFcR/CDYhmzWp1po4c/HUq0SlGk28p4q/jMHOLf8X6Fkr/wz4gQjdMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721082319; c=relaxed/simple;
-	bh=VDosR8c7HVdHMUbSmYVlLvcmNQzOGgdXeW3Tav7KBzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AjFl8zJbfnNrehUQdbS0eRgpLM3Z7cNCta7cyxM2Cnq/LHjgxu3Q7ZSNsqBn1mO0Z2S9IbwUJiqumDZeO42yU4ycm0uz5O/Rli3ue+deOjAl2noJWr9NToqHls/5Qo/WOUnk47WigzXMkUieHER99mZoIITEE3PQcNo6FHExBJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pn3j2b9z; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447df43324fso62131cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721082317; x=1721687117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VDosR8c7HVdHMUbSmYVlLvcmNQzOGgdXeW3Tav7KBzk=;
-        b=pn3j2b9zi3XTrM02C7ReXE7sV/qPEgq4U+xAa8SxqmK+SATpL398jkwaBUUR1N00cR
-         6A2rJAmqPZEpYkhtu+2rVG+uMtU2KuQdaA4xas+GJ9P2pe1iYOdooG+G/n3abRbEzXLM
-         0LX4op730olIqcD+8Uy43xXTI9Iqq8bWc05tbPEA6R0O7Cl2mp/bmnXfFBVVBv0am7vG
-         +CSHXgtxcos3mlf7udAeE4/dBj5GlcUsDoVSKAxKLD/J9v4IpEJZMCzkSniiM5puElCB
-         Yy5iDJOSfZUF5JMYh3GjxiO5bOinUY0y65u2BL4ITYysQLLoA0j1RqrqSfD5QYB3s/xU
-         NS9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721082317; x=1721687117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VDosR8c7HVdHMUbSmYVlLvcmNQzOGgdXeW3Tav7KBzk=;
-        b=IPGzBzaP6RvytFjuYlus3kBD9RkMbq4mdiXTvBzm8cB+IrX9erfHQ27UBMHCnc/ebc
-         HRUiMwYC9Db2krp9heSc68wW+85mQr/D+yCzA7rlCbkKTbq4cxyyX31162n2jgpd6j++
-         p8l3Qh3BVZQqI/nqk9m1GIC+OVA2tHg+G0mgog1czReahP0qvJi2iTehNqG0IoJ9lnjA
-         2LMyWIcQZg6aHIZUhISc9RCLC1IUM+uppk+W79MwxwMOIVYF3iS5vgg+IqpPmDgihhXN
-         hcf7F1P6u2YjuRAvUjSKS2sSs/gZzjVoWZ4xefxHOLW3k7nBuKnUB1GbsTEgBQthHPn5
-         HdsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG744ZZ2NQR+SYrWizKG1EZ7nXBoIspAryfH7ivdbqqOwwgl/QEVRIo6PMVvLJjLxLAL5Ua3JEC6aO6wSStnKhGl/vmUBiD0X/2viW
-X-Gm-Message-State: AOJu0Yzm2thrpr8m+1tSfSpt7pIHwn5TYqTiQvTEjbhMJRZylhdv6MYQ
-	FYpB/f5W/OHiYz7HY7DugiPB5pwYtQk5IZ+LRdi3BGyNOYJhlVXTmyir1Z5Gcv7iAy7g8LCD2qr
-	He15ILe7bQCcp3MB6VfKu5PwxTWPa1wtpfeUX
-X-Google-Smtp-Source: AGHT+IHYyLx5NZMwuMuZh1Z+E4Fk+g7KzT9Wi9MbqWX8yuGKTcGdIruyD9WKu8v1r6Koq/eGYelxM2+D839RrwOyfs4=
-X-Received: by 2002:a05:622a:5907:b0:446:64ad:ee91 with SMTP id
- d75a77b69052e-44f7a7425c9mr1258371cf.20.1721082317051; Mon, 15 Jul 2024
- 15:25:17 -0700 (PDT)
+	s=arc-20240116; t=1721082412; c=relaxed/simple;
+	bh=REL6mawUXWg9pJuCF0P7yIYPi7TSuPz0T6RHE6SXxAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ODDDYJTd6FbcelczGuhQBAM7KABZhe/vMfn7i4r+hNsOOuT1SWMzgOC0kGqocyVEyBPTCN+XRFYDR7LJCKo8RhO49Rgsi83Udt1t+5xjVuhpdUdhMpgDDlVm5MYThlWWRRZh/ssefGu79IhcPnl77GAytaLrfiScNWIJ5Mz3yxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDpzabdr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5AAC32782;
+	Mon, 15 Jul 2024 22:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721082412;
+	bh=REL6mawUXWg9pJuCF0P7yIYPi7TSuPz0T6RHE6SXxAA=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=SDpzabdrpIZ9//lRJHglHyE+msdc/x0Cp18z9T+ME7YKCTAidhOb/dOS9CTPJ/Wqa
+	 +oBoIY/gOxy1tJcP2hj0oUWdOIkOH4TzRBDVcoCv9LYegNNQjzNLtSlWL4cBEqLQFj
+	 fmcX6vIP0fKB/wVIE5ffHnl4Sb4xFCP7jKV7w9+zjlfjOPKTIi+B7UDMthN+yK5Bqk
+	 J/PdnhHp/f5eWzxj29oTssMCO3MzgAeblDAscw8zQ7WCibFju/LG/95N4gJLip0oow
+	 6lDCyM+t0v7oxOFrbeKVMO1IoPcw1TVoWRS2yOgyrA/i13poPdU53ex5jQFRAqioJK
+	 c6ZH+mhPAhoWQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 01A66CE134B; Mon, 15 Jul 2024 15:26:51 -0700 (PDT)
+Date: Mon, 15 Jul 2024 15:26:51 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, w@lwt.eu,
+	linux@weissschuh.net, skhan@linuxfoundation.org
+Subject: [GIT PULL] nolibc changes for v6.11
+Message-ID: <db9eca51-1e0a-4bd4-8bdf-6f60f4bc91b7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522204254.1841420-1-weilin.wang@intel.com> <CAP-5=fUtp_vd=EeeesXPR=nsm0VOZoyXico=EVWobOEYsxq27g@mail.gmail.com>
-In-Reply-To: <CAP-5=fUtp_vd=EeeesXPR=nsm0VOZoyXico=EVWobOEYsxq27g@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 15 Jul 2024 15:25:05 -0700
-Message-ID: <CAP-5=fXOTmMyPx_tQPoCfCP35E1o6YSyZde58ojyU1PLJBt96A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] perf test: make metric validation test return
- early when there is no metric supported on the test system
-To: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
-	Caleb Biggers <caleb.biggers@intel.com>, weilin.wang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 6:26=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Wed, May 22, 2024 at 1:43=E2=80=AFPM <weilin.wang@intel.com> wrote:
-> >
-> > From: Weilin Wang <weilin.wang@intel.com>
-> >
-> > Add a check to return the metric validation test early when perf list m=
-etric
-> > does not output any metric. This would happen when NO_JEVENTS=3D1 is se=
-t or in a
-> > system that there is no metric supported.
-> >
-> >
-> > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
->
-> Tested-by: Ian Rogers <irogers@google.com>
+Hello, Linus,
 
-Ping.
+Please please pull the latest nolibc changes from:
 
-Thanks,
-Ian
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/nolibc.2024.07.15a
+  # HEAD: 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b: selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
+
+----------------------------------------------------------------
+nolibc updates for v6.11
+
+o	Fix selftest printf format mismatch in expect_str_buf_eq().
+
+o	Stop using brk() and sbrk() when testing against musl, which
+	implements these two functions with ENOMEM.
+
+o	Make tests use -Werror to force failure on compiler warnings.
+
+o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
+
+o	Implement strtol() and friends.
+
+o	Add facility to skip nolibc-specific tests when running against
+	non-nolibc libraries.
+
+o	Implement strerror().
+
+o	Also use strerror() on nolibc when running kselftests.
+
+----------------------------------------------------------------
+Thomas Weiﬂschuh (8):
+      selftests/nolibc: fix printf format mismatch in expect_str_buf_eq()
+      selftests/nolibc: disable brk()/sbrk() tests on musl
+      selftests/nolibc: run-tests.sh: use -Werror by default
+      tools/nolibc: add limits for {u,}intmax_t, ulong and {u,}llong
+      tools/nolibc: implement strtol() and friends
+      selftests/nolibc: introduce condition to run tests only on nolibc
+      tools/nolibc: implement strerror()
+      selftests: kselftest: also use strerror() on nolibc
+
+ tools/include/nolibc/stdint.h                |  19 +++++
+ tools/include/nolibc/stdio.h                 |  10 +++
+ tools/include/nolibc/stdlib.h                | 109 +++++++++++++++++++++++++++
+ tools/testing/selftests/kselftest.h          |   8 --
+ tools/testing/selftests/nolibc/Makefile      |   2 +-
+ tools/testing/selftests/nolibc/nolibc-test.c | 109 ++++++++++++++++++++++-----
+ tools/testing/selftests/nolibc/run-tests.sh  |   9 ++-
+ 7 files changed, 238 insertions(+), 28 deletions(-)
 
