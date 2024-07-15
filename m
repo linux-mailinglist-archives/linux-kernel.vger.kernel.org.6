@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-252927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F3C9319FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C97A9319FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 20:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3101F2342E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80BC282152
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 18:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1F361FC5;
-	Mon, 15 Jul 2024 18:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE355589A;
+	Mon, 15 Jul 2024 18:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CKpW3p5q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUcJAgep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4481A33987;
-	Mon, 15 Jul 2024 18:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928284C62A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 18:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066729; cv=none; b=uGUl1E6RHeYUV1ADKukmdm2q47JGIBGHz3O7pBB8O9QL+Z5688gVuRvdli2nA5WmJ/s7P/6Ciet3vxZBTo6ZO5j0a0dxbI9IWlxIf2K2UQeIw8w7ieDD/uIKBDk6ue1n3YcJvsYCBjephvdzKadAPV+nDc5MRCxUUNpzPMLNpow=
+	t=1721066851; cv=none; b=F4NQU6n/G1u6D8aEkqk20D4E9EnVlEMPBqDJ5ehMJ2tVv6+nYEwCuHZQcQGqJNMdEXs30LI5YLSfw1LOURr0nNm4D72lDEBbQVWXB/OMbA9vAi7bGxk/C0GuIGzIrbVOWPGYxqbzlg+gLKKV/1ctyJ/Z5TdTCuhMlpaLWNB4k7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066729; c=relaxed/simple;
-	bh=KraVWH9h2oC0iidUG8sGF//wwgQ2nyOKlC7IXhuh50Y=;
+	s=arc-20240116; t=1721066851; c=relaxed/simple;
+	bh=E5wYUGyt7Ir/qYAhUbW44IRGQ5AMiuS2oe6KXU0RIk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bURwPOAo2V2625NSs/+rN78rWaRtN8tt10RoiSpr32v/SLt/MT/dTbXIriILcRPomKirvLAxx971cZxiL9KWs74y0M4mbqrBWqjFnkXQbpkmxfqpXGIxw5BxFRhOPCVZAN0ELtIFZhibuUokMF4SlnUe3+5Z0iPGJWJTS47m424=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CKpW3p5q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pqHqXcd4plsh9mCkPXR2+UXnLFjsClDH5v3E0JBOoQE=; b=CKpW3p5q4tsnCI3dVKqNYaso+S
-	mVRZ3Vkg+Kz7cAUwxYVtehoLS2I7YT0yFtxmiTswRrcp7iXBDzqEvxgphA19KEvgLU/gqbs8UKMtr
-	gI+OlZP5Eclswf+dFVRqWFcuy8ZbTGILQ2LP9aUxQ8zpMjeeDW3ZPQEt4NLUetc9WiAU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sTQ4S-002aUF-RA; Mon, 15 Jul 2024 20:05:08 +0200
-Date: Mon, 15 Jul 2024 20:05:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] phy: mvebu-cp110-utmi: add support for
- armada-380 utmi phys
-Message-ID: <837de973-0a58-4a07-a126-43445bfa7721@lunn.ch>
-References: <20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com>
- <20240715-a38x-utmi-phy-v1-1-d57250f53cf2@solid-run.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRsjcxparXImnroqpu2A8B1a7uU/slGlboG3FycP1H+O64UA93LIu9QOO40BluPHY5oUhUs0gT9GZcYcGLU7heOMe3qT0si9dSzHA17ce02I9iGrsvRp1i1o/slcm0AzYYb/FU1lx9bZA7W74gpJv6bGvc41jaWqcPtTVlV6NgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUcJAgep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681EFC32782;
+	Mon, 15 Jul 2024 18:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721066851;
+	bh=E5wYUGyt7Ir/qYAhUbW44IRGQ5AMiuS2oe6KXU0RIk8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ZUcJAgep2XNM5Cc/ddLvJphVsuftYoBdfE2HAv1SEQ6IqqyEMg5FEvil/bTZKXuh4
+	 e+8ReTdSIwHvp8HSzvlWVC+pRx3P9oGr/ZDw5Mq6LsHgstR+I8otkV6j8w96eIycS7
+	 c/YQaHhtHyCdgH8R20tqF6S2iHvbLAQEyeNC+mX+598UdiuBWeM1Eq3AdIWc+uPCtk
+	 mw6HeYo/2Ba9z2H+Wowmzxi5G9+ZkhvHvJweNStGOsEgEhOIc7Un4IjAQnkRMx30q9
+	 a+bJu+tFq/lewVP+3rCRDrLGXF9qhw98j3Gm6Fq3dh03Rxqv9kWPDubnkuO3mdCMOK
+	 T85JL6AeMQ0fA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id F0AF4CE0AD3; Mon, 15 Jul 2024 11:07:30 -0700 (PDT)
+Date: Mon, 15 Jul 2024 11:07:30 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	neeraj.upadhyay@kernel.org, mingo@kernel.org, rostedt@goodmis.org,
+	Leonardo Bras <leobras@redhat.com>
+Subject: Re: [PATCH] smp: print only local CPU info when sched_clock goes
+ backward
+Message-ID: <88d281fe-d101-47d9-b70e-bb6a8959f5ff@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240715134941.7ac59eb9@imladris.surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,61 +62,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715-a38x-utmi-phy-v1-1-d57250f53cf2@solid-run.com>
+In-Reply-To: <20240715134941.7ac59eb9@imladris.surriel.com>
 
-> @@ -191,8 +196,15 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
->  	struct mvebu_cp110_utmi_port *port = phy_get_drvdata(phy);
->  	struct mvebu_cp110_utmi *utmi = port->priv;
->  	struct device *dev = &phy->dev;
-> +	const void *match;
-> +	enum mvebu_cp110_utmi_type type;
->  	int ret;
->  	u32 reg;
-> +	u32 sel;
+On Mon, Jul 15, 2024 at 01:49:41PM -0400, Rik van Riel wrote:
+> About 40% of all csd_lock warnings observed in our fleet appear to
+> be due to sched_clock() going backward in time (usually only a little
+> bit), resulting in ts0 being larger than ts2.
+> 
+> When the local CPU is at fault, we should print out a message reflecting
+> that, rather than trying to get the remote CPU's stack trace.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
+
+> ---
+>  kernel/smp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index f085ebcdf9e7..5656ef63ea82 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -237,6 +237,14 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+>  	if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0))
+>  		return false;
+>  
+> +	if (ts0 > ts2) {
+> +		/* Our own sched_clock went backward; don't blame another CPU. */
+> +		ts_delta = ts0 - ts2;
+> +		pr_alert("sched_clock on CPU %d went backward by %llu ns\n", raw_smp_processor_id(), ts_delta);
+> +		*ts1 = ts2;
+> +		return false;
+> +	}
 > +
-> +	match = of_device_get_match_data(dev);
-> +	if (match)
-> +		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
->  
->  	/* It is necessary to power off UTMI before configuration */
->  	ret = mvebu_cp110_utmi_phy_power_off(phy);
-> @@ -208,16 +220,38 @@ static int mvebu_cp110_utmi_phy_power_on(struct phy *phy)
->  	 * to UTMI0 or to UTMI1 PHY port, but not to both.
->  	 */
->  	if (port->dr_mode == USB_DR_MODE_PERIPHERAL) {
-> +		switch (type) {
-
-Just looking at this, i'm surprised there is not a warning about
-type possibly being uninitialled. 
-
-> @@ -285,6 +320,8 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
->  	struct mvebu_cp110_utmi *utmi;
->  	struct phy_provider *provider;
->  	struct device_node *child;
-> +	const void *match;
-> +	enum mvebu_cp110_utmi_type type;
->  	u32 usb_devices = 0;
->  
->  	utmi = devm_kzalloc(dev, sizeof(*utmi), GFP_KERNEL);
-> @@ -293,6 +330,10 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
->  
->  	utmi->dev = dev;
->  
-> +	match = of_device_get_match_data(dev);
-> +	if (match)
-> +		type = (enum mvebu_cp110_utmi_type)(uintptr_t)match;
-> +
->  	/* Get system controller region */
->  	utmi->syscon = syscon_regmap_lookup_by_phandle(dev->of_node,
->  						       "marvell,system-controller");
-> @@ -326,6 +367,18 @@ static int mvebu_cp110_utmi_phy_probe(struct platform_device *pdev)
->  			return -ENOMEM;
->  		}
->  
-> +		/* Get port memory region */
-> +		switch (type) {
-
-Same here.
-
-	Andrew
+>  	firsttime = !*bug_id;
+>  	if (firsttime)
+>  		*bug_id = atomic_inc_return(&csd_bug_count);
+> -- 
+> 2.45.2
+> 
 
