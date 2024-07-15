@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-251975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E099A930C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489FD930C73
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 03:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5590DB20CBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B4628110C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 01:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A576A5695;
-	Mon, 15 Jul 2024 01:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XtLOPlr5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9215672;
+	Mon, 15 Jul 2024 01:56:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D082572
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 01:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC94C6D;
+	Mon, 15 Jul 2024 01:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721008477; cv=none; b=o6ZaNGiY8s05NPmUxlZh2fJQ2v93azwTw3OTx0MHNl+mKeCesN3YIRMDUuGC/eNdgljGU+ilodHH2em8FtiMu2n19UrnEok8emh/phVxuDyVw0+iUdI+wkmegWUk6L1jAHEvGFRYxndrnJlHWq1/P6bdxgLLU3ejd1EFdbUebyA=
+	t=1721008580; cv=none; b=HdxDlgbBnFbaL9Vz4PHsfT4lJ7ua1edssDreimwISRJS57LpJ+aIspDFHXkMpUAHzKxPYyFlWgg6idVZ0uCVBUq0BPVHjC/iUGK1uY1mVywr9+QPox4VVZuNCRb5LMMr7l2JXVNGCvOYzY9LdlmSdxFJTFlR9/V+UFUt3srGZOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721008477; c=relaxed/simple;
-	bh=PdJcb3igX9JMsq3rnGseO282QWH+Nqt+bo8dY3Ir/84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XDib4NVnrCLyyL0MVJwZO6GJSnEAbCw+o0ODWC2NEcOenNVe5x5sUFDwI7HNisG1ym34o7kk5KewHjCbIby5A/dimYakTjJ3vzgbe7z8iGnb2LB9VDZLeuu69yH0OK+EZGqzBXQn4XvWNobM90xxhB3c7nv9fpy2W1cMR35F3zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XtLOPlr5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721008473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TyziscBlQ1c0/6ktS+LCg/Ky3aZzCiDK4+QaHxxkrmw=;
-	b=XtLOPlr5tsFLBhgWfwBaHNMcdzzva11Lp+XTk6OB01Gs8kzyktcFQkb3HR1Cva6YarmPkj
-	/h7cJ4PeURMlsp+VOEt9+xjzU0R7XdqquchD1JBq78W/kl+GFaRvA50jqa5rVXs04rGLq/
-	9YYCeDMHlnXqqywKOfKbw9FCqGYxsZc=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-J1Luc06vMLeghmUe_n5Mvg-1; Sun, 14 Jul 2024 21:54:31 -0400
-X-MC-Unique: J1Luc06vMLeghmUe_n5Mvg-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c967a7aceeso4052615a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2024 18:54:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721008471; x=1721613271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TyziscBlQ1c0/6ktS+LCg/Ky3aZzCiDK4+QaHxxkrmw=;
-        b=au8csPq9akg4hreNDi/p2xQsrN5Ks50nvNDGTju4tgm+CUzXDfgY/BRhT3Jzo/PFFn
-         mb1mxGJq9lCUM5XNDY0r5H0/Js+X2bPKjve7v/i1HvS+qBlQQyspEozHmWhSofBlaKZY
-         L2Ld2Lbak6U7jMvpfCk0Zgw5hUC0u1APXYHBFO9yapu1LlVeyNA3FdZVRBBeO3zAASz2
-         7fh0lpsEtC2h97RbVTb11dHlOXXE5ojtTOExOoS3jvsvA9ngLGiaMOAl8kPB/scw+5aP
-         qFeQGHiI3hPXgvnQeEDH9qkjtJ6BrGg65epb1l/GeMteqnfFWUantVMuiziNrF2yhi7X
-         1hsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXJgO4rkS0LNYp81YG7oLeT0cYRhMsiRVE4ire0w5or9vrfuGBh2ICkIFG6l4D3OsRTU/v1f6kccvYad8z1/jlpNcPTxK+/lECnKfk
-X-Gm-Message-State: AOJu0Yzj8DZ6MTa3MyFZG4BP+ji4xw+QYOY0oFEwQl0aqb7cqp8mut0V
-	vQbo1v6ZrE2Asyuhx8o3ueZ6wriqyMw9FCVZWk/wVVIhdtiE+evIokNRO2quTAm7uZxUpEQYSdm
-	0NI+JLd3zpZ7ZtQ+q39WCHWgtCZrX0rTNEd1ifCnpwK5Ey16zP+GfXc/QoCRC52fX9CrRaR3D48
-	qn8hUhwA+7CkfbCxicSG4wahDYBTrHuuERjOXn
-X-Received: by 2002:a17:90a:5ac7:b0:2c9:81fd:4c27 with SMTP id 98e67ed59e1d1-2ca35c312cdmr15354432a91.14.1721008470745;
-        Sun, 14 Jul 2024 18:54:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsQqLS63Hvq5fYpeQcjjiPgAVcyB+pI69ldGNsmD5W0H1x9xueomtQ2GsZcTQmFkboH3lsYYRff1IdWbUz/UY=
-X-Received: by 2002:a17:90a:5ac7:b0:2c9:81fd:4c27 with SMTP id
- 98e67ed59e1d1-2ca35c312cdmr15354418a91.14.1721008470209; Sun, 14 Jul 2024
- 18:54:30 -0700 (PDT)
+	s=arc-20240116; t=1721008580; c=relaxed/simple;
+	bh=KD4PlfZbPnMC3rkkwPMCI/J3H4+TVk6dGdxwy+F4UcQ=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MhkWhaN0PFDgAI2re0yN1K5icDW+k+XKYdK1N42y6ELwSLxS5Z+wbX4p3ViG4sDPhSN7xg0OAVinoKrAsh5fnsLsgyfkzqHiPJ+54lpv1LNukGhLogfPMld7j9bIPGHSnnKziYnVV7DIB4bhQB6Q3uMap8gWG00axWHzDhiVxfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WMlfL4MmMz4f3kvR;
+	Mon, 15 Jul 2024 09:55:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id AF8031A0181;
+	Mon, 15 Jul 2024 09:56:07 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgA3Gzm2gZRmXtGlAA--.23571S3;
+	Mon, 15 Jul 2024 09:56:07 +0800 (CST)
+Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
+ load
+To: Konstantin Kharlamov <Hi-Angel@yandex.ru>,
+ Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+ <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
+ <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+ <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
+ <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
+Date: Mon, 15 Jul 2024 09:56:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <623e885b-1a05-479e-ab97-01bcf10bf5b8@stanley.mountain>
-In-Reply-To: <623e885b-1a05-479e-ab97-01bcf10bf5b8@stanley.mountain>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 15 Jul 2024 09:54:18 +0800
-Message-ID: <CACGkMEusUJvJuk2QLcQNt4kb4TK-dsUwzx1q5zzK1dggx3iDpw@mail.gmail.com>
-Subject: Re: [PATCH] vdpa/octeon_ep: Fix error code in octep_process_mbox()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Srujana Challa <schalla@marvell.com>, vattunuru@marvell.com, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Shijith Thotton <sthotton@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3Gzm2gZRmXtGlAA--.23571S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw4DZrWUCFyfGr1DJF45Awb_yoW5Zw4kpa
+	93Gan0ga1DKF1I93s7tw1xXFyYyrs5trWUJr98GrWjy398WFyIqF1xKrs0gF98W34xWa1Y
+	v348KFWUuFyUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
+	73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Jul 12, 2024 at 10:06=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> Return -EINVAL for invalid signatures.  Don't return success.
->
-> Fixes: 8b6c724cdab8 ("virtio: vdpa: vDPA driver for Marvell OCTEON DPU de=
-vices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Nag mode: When we add a new driver, then could we use the patch prefix fo=
-r the
-> driver not for the subsystem only.
->
->  BAD: net: add driver for abc123
-> GOOD: net/abc123: add driver for abc123
->
->  drivers/vdpa/octeon_ep/octep_vdpa_hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon=
-_ep/octep_vdpa_hw.c
-> index 7fa0491bb201..11bd76ae18cf 100644
-> --- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-> +++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-> @@ -140,7 +140,7 @@ static int octep_process_mbox(struct octep_hw *oct_hw=
-, u16 id, u16 qid, void *bu
->         val =3D octep_read_sig(mbox);
->         if ((val & 0xFFFF) !=3D MBOX_RSP_SIG) {
->                 dev_warn(&pdev->dev, "Invalid Signature from mbox : %d re=
-sponse\n", id);
-> -               return ret;
-> +               return -EINVAL;
->         }
->
->         val =3D octep_read_sts(mbox);
+Hi,
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+在 2024/07/13 21:50, Konstantin Kharlamov 写道:
+> On Sat, 2024-07-13 at 19:06 +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2024/07/12 20:11, Konstantin Kharlamov 写道:
+>>> Good news: you diff seems to have fixed the problem! I would have
+>>> to
+>>> test more extensively in another environment to be completely sure,
+>>> but
+>>> by following the minimal steps-to-reproduce I can no longer
+>>> reproduce
+>>> the problem, so it seems to have fixed the problem.
+>>
+>> That's good. :)
+>>>
+>>> Bad news: there's a new lockup now 😄 This one seems to happen
+>>> after
+>>> the disk is returned back; unless the action of returning back
+>>> matches
+>>> accidentally the appearing stacktraces, which still might be
+>>> possible
+>>> even though I re-tested multiple times. It's because the traces
+>>> (below) seems not to always appear. However, even when traces do
+>>> not
+>>> appear, IO load on the fio that's running in the background drops
+>>> to
+>>> zero, so something seems definitely wrong.
+>>
+>> Ok, I need to investigate more for this. The call stack is not much
+>> helpful.
+> 
+> Is it not helpful because of missing line numbers or in general? If
+> it's the missing line numbers I'll try to fix that. We're using some
+> Debian scripts that create deb packages, and well, they don't work well
+> with debug information (it's being put to separate package, but even if
+> it's installed the kernel traces still don't have line numbers). I
+> didn't investigate into it, but I can if that will help.
 
-Thanks
+Line number will be helpful. Meanwhile, can you check if the underlying
+disks has IO while raid5 stuck, by /sys/block/[device]/inflight.
+> 
+>> At first, can the problem reporduce with raid1/raid10? If not, this
+>> is
+>> probably a raid5 bug.
+> 
+> This is not reproducible with raid1 (i.e. no lockups for raid1), I
+> tested that. I didn't test raid10, if you want I can try (but probably
+> only after the weekend, because today I was asked to give the nodes
+> away, for the weekend at least, to someone else).
+
+Yes, please try raid10 as well. For now I'll say this is a raid5
+problem.
+> 
+>> The best will be that if I can reporduce this problem myself.
+>> The problem is that I don't understand the step 4: turning off jbod
+>> slot's power, is this only possible for a real machine, or can I do
+>> this in my VM?
+> 
+> Well, let's say that if it is possible, I don't know a way to do that.
+> The `sg_ses` commands that I used
+> 
+> 	sg_ses --dev-slot-num=9 --set=3:4:1   /dev/sg26 # turning off
+> 	sg_ses --dev-slot-num=9 --clear=3:4:1 /dev/sg26 # turning on
+> 
+> …sets and clears the value of the 3:4:1 bit, where the bit is defined
+> by the JBOD's manufacturer datasheet. The 3:4:1 specifically is defined
+> by "AIC" manufacturer. That means the command as is unlikely to work on
+> a different hardware.
+
+I never do this before, I'll try.
+> 
+> Well, while on it, do you have any thoughts why just using a `echo 1 >
+> /sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps kernel
+> not emulate device disappearance too well?
+
+echo 1 > delete just delete the disk from kernel, and scsi/dm-raid will
+know that this disk is deleted. However, the disk will stay in kernel
+for the other way, dm-raid does not aware that underlying disks are
+problematic and IO will still be generated and issued.
+
+Thanks,
+Kuai
+
+> .
+> 
 
 
