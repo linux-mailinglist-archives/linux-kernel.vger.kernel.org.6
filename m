@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-252655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9446C93166A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7432931669
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07D81C21774
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88E91C2170B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C7918EA8F;
-	Mon, 15 Jul 2024 14:10:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423DF18EA8A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B3518EA64;
+	Mon, 15 Jul 2024 14:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktbuj53l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1718E76A;
+	Mon, 15 Jul 2024 14:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721052636; cv=none; b=mv8X1mSPOe8E5b8zJmU0ffyGlRuDcjlCoBjfitclC0VtZgMCdoqGVPdf7tpbU4pO+4Jp8Q6I/QTzU3CpJwGKji6tJRd6Z2AYK77fPOagzTjAsFvrnffigSpZAQMWMO/XNnwZFCpLc1246VmKuYZfqRTgEiE+X+tU3NUjI3X1KIw=
+	t=1721052631; cv=none; b=KdZvgy0qvl0cjAkJ6SCmWm46K09W6WjcveNHiW9SRtuK3BXTFhBp26i9Y7+atTCktqtbbnwWwOLwB3xITWEXZkbyGFy2ntRNFOZwuD0EQv4wZdHDXjr/VW2bSYsywCPwvvyBebsQMHJVUqotPvLQSqhYtUqs3MMpoksyXx4Q+QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721052636; c=relaxed/simple;
-	bh=hEt2+tulFHQ5OfcTM/fsDAzdpEf70Wr1pz+q3O5Oxq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bzuzNa/HJ2EEY6Grk+qhnDbpiDkU2FgRu4G6D6x4en5wZxW1eTLS3yhskhYDonNGDbMc4rjpcBtwjZYix5lf0c6oAyyA+aFQSN13hGf4nCk4wDKKKHlzAdoSGiF8U3+W/mhQlNQUd43sIxPR+32XrH68+zlrke75SEe6vZD5u8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 819A2DA7;
-	Mon, 15 Jul 2024 07:10:56 -0700 (PDT)
-Received: from [10.57.77.136] (unknown [10.57.77.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C76F43F766;
-	Mon, 15 Jul 2024 07:10:29 -0700 (PDT)
-Message-ID: <96965a23-49ea-41f5-a4b0-9b5296dafe00@arm.com>
-Date: Mon, 15 Jul 2024 15:10:28 +0100
+	s=arc-20240116; t=1721052631; c=relaxed/simple;
+	bh=ht2JCIAsLHGmnyNUQgUbLpCK5RPVGRPrPxDVIVFF+lg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=p7qTm4qVyzOR1icXf6dWLiv2emCexp8yfR2rGnogyRciHK4C+YoHmTEbPZGrFbl1u8eyxnyoMwEGpxZ0SQ0+hhypp7DJ8ojCKNMPxeGKVYtYB8IvZwxa5Xnopk3+spKRkjThsnWJ4qqLSsKHTj8XW9epmYr8z+rAgd0LbCWJpqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktbuj53l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4923AC32782;
+	Mon, 15 Jul 2024 14:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721052630;
+	bh=ht2JCIAsLHGmnyNUQgUbLpCK5RPVGRPrPxDVIVFF+lg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ktbuj53lpTM6F2I8ArwOnwgjaqskCau7aFYFhJ9th35/B7sfEwgBQuM30h51CxOkV
+	 /ifE1copqwKUpoO+ouGGRt2GcrGJe2AXtBhSgr1421VnfoYKn0HmcqnQ49Tn6CeS0c
+	 91Q8qB724M3l5JGKAUJXe6BrHRHy/MsoCuc8XopoP8Ab1j8YMiO+uCcCSiWG3VM5yf
+	 N47sXsoP6W+j/o6lGhvKrobsVocsSd6jdoaJ7kAEynC9M0WM918A8Ez4w+Thw1gJav
+	 YimuaI7Sf29/E+wyaSWoA35BR2YBwPjS3HEsOYfHTUUJ/LZ9tDpOlWMZNXJOd8HtD2
+	 GKmdfChydNPUQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 335AEC4332C;
+	Mon, 15 Jul 2024 14:10:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] mm: swap: mTHP swap allocator base on swap cluster
- order
-Content-Language: en-GB
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>,
- "Huang, Ying" <ying.huang@intel.com>, Kalesh Singh <kaleshsingh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <baohua@kernel.org>
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
- <ae6b4885-0590-4585-a1fd-39b64df2f902@arm.com>
- <CACePvbX99r8BNZTkax=KGBx-XYP6WLxZKez3qsi+FfreC2TwGg@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CACePvbX99r8BNZTkax=KGBx-XYP6WLxZKez3qsi+FfreC2TwGg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] net: ethernet: lantiq_etop: remove redundant
+ device name setup
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172105263020.31289.15084984358464625955.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 14:10:30 +0000
+References: <20240713170920.863171-1-olek2@wp.pl>
+In-Reply-To: <20240713170920.863171-1-olek2@wp.pl>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, jacob.e.keller@intel.com, horms@kernel.org,
+ u.kleine-koenig@pengutronix.de, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 11/07/2024 15:08, Chris Li wrote:
-> On Thu, Jul 11, 2024 at 3:02 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->>> Kernel compile under tmpfs with cgroup memory.max = 2G.
->>> 12 core 24 hyperthreading, 32 jobs.
->>>
->>> HDD swap 3 runs average, 20G swap file:
->>>
->>> Without:
->>> user  4186.290
->>> system        421.743
->>> real  597.317
->>>
->>> With:
->>> user  4113.897
->>> system        413.123
->>> real  659.543
->>
->> If I've understood this correctly, this test is taking~10% longer in wall time?
-> 
-> Most likely due to the high variance in measurement and fewer
-> measuring samples 3 vs 10. Most of that wall time is waiting for IO.
-> It is likely just noise.
+Hello:
 
-OK, that certainly makes sense, as long as you're sure its noise. The other
-(unlikely) possibility is that somehow the HDD placement descisions are
-changing, which increases waiting due to increased seek times.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Sat, 13 Jul 2024 19:09:20 +0200 you wrote:
+> The same name is set when allocating the netdevice structure in the
+> alloc_etherdev_mq()->alloc_etherrdev_mqs() function. Therefore, there
+> is no need to manually set it.
 > 
->> But your changes shouldn't affect HDD swap path? So what's the reason for this?
+> This fixes CheckPatch warnings:
+> WARNING: Prefer strscpy over strcpy - see: https://github.com/KSPP/linux/issues/88
+> 	strcpy(dev->name, "eth%d");
 > 
-> The change did affect HDD swap path in the sense that it did not need
-> to check for si->cluster_info any more. A small gain there.
-> 
-> The wall clock time is more than double the SSD or zram. Which means
-> most of the time the system is waiting for HDD IO to complete (wait is
-> 98%) , there will be much higher variance for sure. At this point the
-> wall clock we are measuring the wait mostly,  not the actual work. The
-> system time is quicker, that is good.
-> 
-> I now have a dedicated machine to run the HDD swap now. The HDD is
-> very very slow to swap. The point of the HDD test is being able to
-> complete the run without OOM. Because of the high latency in HDD,
-> there will be more memory pressure. It did catch some other bugs in my
-> internal version of the patch.
-> 
->> I'm hoping to review this properly next week. It would be great to get this in
->> sooner rather than later IMHO.
-> 
-> Thank you. This new code path is much easier to work with than the
-> previous SSD and HDD mixed allocation path. I am able to implement the
-> cluster reservation experiment in the new allocator much quicker.
-> 
-> Chris
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2] net: ethernet: lantiq_etop: remove redundant device name setup
+    https://git.kernel.org/netdev/net-next/c/9283477e2891
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
