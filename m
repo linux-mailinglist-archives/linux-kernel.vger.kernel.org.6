@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-252479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA408931397
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:08:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C48D93139B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF412815EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:08:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 941A4B23E1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 12:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E7218A94A;
-	Mon, 15 Jul 2024 12:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0165118C176;
+	Mon, 15 Jul 2024 12:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VD2/umn1";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VD2/umn1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="CZDMmaSm"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379891E51D;
-	Mon, 15 Jul 2024 12:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010518C16E;
+	Mon, 15 Jul 2024 12:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721045296; cv=none; b=DyBwas2oPShwSk0xtV/uzjTcNcD99oXQdxuXFXU0/O/QaYKkEv+q3kRUVh+Uv4Vycq/MQrcp03aP9GWJLrLLkZNuhbSkNYsKbQZ3OiEOzomId5orTGrzLvSVMkn7McSNDdp5oIwJWlNzaHM/h33crzoqdfVjgY2JQBivmJ8+yFo=
+	t=1721045304; cv=none; b=kzUeWub8z5vr4j1Dke2ev7u4ajBxdhxjTuCY1YL20SDnM7EGgGpHtx1z8JndROECtHYHyvgRmivxRxs9UTuOOvZB0WB1C7jEQKgqAnTA98S9fuv2qRk3XB3HEQV4RTIAmNUDfmLymk9Ci/G0jnfiugDbQGSqNUN0Dt3N9bqHh5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721045296; c=relaxed/simple;
-	bh=+24K5iZcsujaxjjrIUAmidftw7jLqEiRN1XT9yzX20U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JpP+EyUDb+CziO2DOT+C10qeneJYKNbP0ebrH2VPe+LMnkEdGPIEiseSKXgHW0koEyQWfdoRKTt2DEWEAjvNXcBqdf733e3km12qJI1bLDBaaWkT6i+YDob8W4UXuMCZ8l4KW3FgmCXCFpo+QTl4/SDPOM4115wMeukxD1Tl79M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VD2/umn1; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VD2/umn1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1721045304; c=relaxed/simple;
+	bh=eOzKsJZ68Zti0agSsF1k6ZKZakTJy8YwzojJ5tl+3zU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8KOTaszVeCjLb/ONCCNUxspYGNTynhY7wdjBpoT8C5dymqnV4Pitmy6brqq3gT8sVv05ApALRtUFux4cyyb2d9WFX+KZwGTzB7gxw8+KQpHZZJRqg22DaKQbYyxe0nlXMHSzGirWW9kQFwhMrec7qdeQe2F2ztAQX8ErevS9z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=CZDMmaSm; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 4E3C1100006;
+	Mon, 15 Jul 2024 15:08:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4E3C1100006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721045294;
+	bh=5vyLVI9BUcQiXbKOPPF+ePjGPjESIUWqofEKwJ2vX2o=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=CZDMmaSmlR1cR5+XJuk0LCuwSj3cp/3MVs4Oq5Fvave73qp84CMlqkJbhrtoqhI/y
+	 ooCjE+gijiqfKUmTZEF3sRDEiveEl/9bNs5njX4qHU9KAszdw4J5s35csVZaxKCZ0N
+	 Ap8HyT/RfYzx3T0i0Ll91yR67I4JbTYv4Vdpm1mItML1MYRAqJxH6MwaXLLnOowd4Y
+	 H6hGUz4fxXyPzaZ7vthzcUp1qZKvKRu+hQo04m8V9lL1oou3034th9IMoC+bOfIips
+	 rX9dRBKGOoq3Q3jTfG3FhMQtHLaR8DySrz0LSELN/PIk3t112QB7Ruj/TUDXzZTXkP
+	 lq3RnABnT9CSA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2709021962;
-	Mon, 15 Jul 2024 12:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1721045291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=iM7h0ngJnCCzaco1I/l6pMGsHYRhbItHxFWUVJNby7U=;
-	b=VD2/umn1I/S5m1nuFEYSVGXvPaod30Fpckt0Sy8TjVkY+vjFQYAB6kDf+iz9nGVCsMvwMP
-	rjZeKYTiLw2Y5NLprYpqZH6C0h9z10CbpU7fi0Kw53cfbvBpBe1WMCm9DppEtp9zQeAPYq
-	FVHFHe1UD6vfrtiOx5YFhO0mm2O9P2Y=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="VD2/umn1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1721045291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=iM7h0ngJnCCzaco1I/l6pMGsHYRhbItHxFWUVJNby7U=;
-	b=VD2/umn1I/S5m1nuFEYSVGXvPaod30Fpckt0Sy8TjVkY+vjFQYAB6kDf+iz9nGVCsMvwMP
-	rjZeKYTiLw2Y5NLprYpqZH6C0h9z10CbpU7fi0Kw53cfbvBpBe1WMCm9DppEtp9zQeAPYq
-	FVHFHe1UD6vfrtiOx5YFhO0mm2O9P2Y=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15A31137EB;
-	Mon, 15 Jul 2024 12:08:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VWE/BSsRlWbpPQAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Mon, 15 Jul 2024 12:08:11 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] AFFS updates for 6.11
-Date: Mon, 15 Jul 2024 14:08:02 +0200
-Message-ID: <cover.1721044972.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 15 Jul 2024 15:08:14 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 15 Jul
+ 2024 15:08:13 +0300
+Date: Mon, 15 Jul 2024 15:08:13 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Vladimir Zapolskiy
+	<vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Michal Simek <michal.simek@amd.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-sunxi@lists.linux.dev>
+Subject: Re: [DMARC error][DKIM error] [PATCH 01/10] clk: meson: a1:
+ peripherals: Constify struct regmap_config
+Message-ID: <20240715120813.m74t5y2br6yfhurk@CAB-WSD-L081021>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+ <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2709021962
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186522 [Jul 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lists.infradead.org:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/15 09:24:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/15 09:25:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/15 05:41:00 #25996221
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi,
+On Wed, Jul 03, 2024 at 11:50:14AM +0200, Javier Carrasco wrote:
+> `a1_periphs_regmap_cfg` is not modified and can be declared as const to
+> move its data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-please pull the following conversions of the one-element to flexible
-arrays. Thanks.
+Reviewed-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 
-----------------------------------------------------------------
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+> ---
+>  drivers/clk/meson/a1-peripherals.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 99b5bc450446..728ad13924ad 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -2183,7 +2183,7 @@ static struct clk_regmap *const a1_periphs_regmaps[] = {
+>  	&dmc_sel2,
+>  };
+>  
+> -static struct regmap_config a1_periphs_regmap_cfg = {
+> +static const struct regmap_config a1_periphs_regmap_cfg = {
+>  	.reg_bits   = 32,
+>  	.val_bits   = 32,
+>  	.reg_stride = 4,
+> 
+> -- 
+> 2.40.1
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/affs-6.11-tag
-
-for you to fetch changes up to 0aef1d41c61b52b21e1750e7b53447126ff257de:
-
-  affs: struct slink_front: Replace 1-element array with flexible array (2024-07-11 16:14:26 +0200)
-
-----------------------------------------------------------------
-Kees Cook (3):
-      affs: struct affs_head: Replace 1-element array with flexible array
-      affs: struct affs_data_head: Replace 1-element array with flexible array
-      affs: struct slink_front: Replace 1-element array with flexible array
-
- fs/affs/amigaffs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+-- 
+Thank you,
+Dmitry
 
