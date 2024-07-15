@@ -1,60 +1,74 @@
-Return-Path: <linux-kernel+bounces-253145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58F8931D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:46:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D8D931D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136ED1C2178C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83807283428
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 22:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EEE13D244;
-	Mon, 15 Jul 2024 22:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96293143866;
+	Mon, 15 Jul 2024 22:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="HJAh5Y2u"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ygproN6H"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDC520DF4;
-	Mon, 15 Jul 2024 22:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B7513BC26
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721083598; cv=none; b=aI2QIYmiLMABflW49eApwRxxjjiAuhmPFwds4BTUvSbTpfTtd3n3Sn/4um8lrcR5XFluYWSmVsovoXJ7Cln2MbwYAmNDD0pIXm2x5Q7hCwWOIZGNjVG/Hj4+4WwkQ94AZs7QwvWIzJhl5z39u+yiKL0qpQ91ZrVfQafTv2D+xcA=
+	t=1721083610; cv=none; b=HJdRRyqs1D9F0Hz5wfeuoVBa44xAuQ8M73Yy1G9drRLS2aR7GeAaAUAeXsfWD+r57Mxo9TzdQHNmtYQcTye5zMo+8MfUB2UTPKW7ZTi4cK+U/z4wyzeEc2gDx9byIgf9zlbY8CP8DsR+1aJc94yvUTWKKZEP5QvbmQO6LzyzXyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721083598; c=relaxed/simple;
-	bh=l8R33TDh82Ch8zeI4mriHFMj0ZHNLMAhYEqvFE2lOBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IdwTueoFJz3Ior6K1uBwj3GVxHi8mbY16LVm1T4c6NljSzIbJdEaVMrgIhXb0vGPqqP8aeKXfeB/9/f//6L7y2EwDdcojxpB+/TIpLlfB+eeEuY4y41Ux2R+a8XYwiDZT3mODot2ilnD6yLmHI+km5LNQrD3Pie8MUzA3smRs7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=HJAh5Y2u; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DA91B100006;
-	Tue, 16 Jul 2024 01:46:26 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DA91B100006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721083586;
-	bh=1JJIEhrCtyAs2dCw9KVsU1KYY5XyTbExctYubMHysNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=HJAh5Y2ux5AR0Am+g2l1lpDcNUNFWH0TyqKuunqfgVPwJU8N70jP8dpxi4oj8/R7M
-	 m/8SYYBxH6+HSeb1H8xcldxkqKLF22likxwo+kGx+rE/feZV0df8cqAt0gTVCj7Ny8
-	 X+0Qt0wUFgPTSaiL2FwLTPohAifKXxVxLbza6Mg1upbOENeri7So2r7AvJiiJljZ8y
-	 8eeOrvvu+Sn5ofQmmwz/l7GTXFl/nxorjVrNsI7RXmQ7ynB/KnrL0kkDUDpOhyARtk
-	 n4xFzEpnrN0ZnjGJ+2whdfilCAOwDLEHK+9XMPqmHRpR8b0AFMkDdOGnJcmfBSu6b/
-	 EQpTILOn5brRg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 16 Jul 2024 01:46:26 +0300 (MSK)
-Received: from [172.28.128.6] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 16 Jul 2024 01:46:26 +0300
-Message-ID: <51f8fff1-30e7-456c-918b-c63603d7c159@salutedevices.com>
-Date: Tue, 16 Jul 2024 01:45:17 +0300
+	s=arc-20240116; t=1721083610; c=relaxed/simple;
+	bh=QBduxMJn/8/VoYF+kBKf4aPNndK2PEZIT4i/cR4yh00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HCAKQX39f3wW5KfgXXH41OOdYtDfPw9NUvEgzhcXyxe1yZQgbPQaBscbSQiWQDO28GtrJP6HEB/3cchIChGuzy74N0KNFgsgNHWenLi7Uc/xJhcLFM7yvvmoilOmn1/o//DORdZpNih6NVOnGwmB9MkmynOLSIaMuo6O/Sdxd5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ygproN6H; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so764701066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 15:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721083607; x=1721688407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DrQDTkdWhn+Ce7ZQ8t9MzeROhcASOFp1mS0+Men98I=;
+        b=ygproN6HuPmxAZ2LpsGfrTMxWIndv0e2eTh3eBD5l/24QS0rbmi8+ynETIW6ZA/ITe
+         kQYZz8mTGhJ2fHvLXtdzvwFsuyWapMJQEjVu/PXr6emEppvWXKJtkSo+BgO31icmlV8O
+         QDOL/sl4XDVms50cKQxmrw65747iY3HClPEB5hrmP4gdYCAeU2Lb+Ki028tlVYvBAPG0
+         j8eovP7mDarZ3nuznRqoda++7AEZmQmGTAfRPi0b9f70M8B7AUGrwutYs0o8HaMeC8Xn
+         zIra5Th8wPysSWTgLY1oClz9csvaTbs/nipv+mo4CsxYLXBN49wk22duQjG8KFBOjFso
+         NwHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721083607; x=1721688407;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DrQDTkdWhn+Ce7ZQ8t9MzeROhcASOFp1mS0+Men98I=;
+        b=IDPsB1EMACcfQOA7jNpeTcfu/NMyC43YLxshDjpt374vtWr5P2TNHhLR+re01Aagq7
+         fF5hw1HMNT0DeK+L16y5k+xE0l9UTDT9ZdpJOw6Qu/QtNKwlie+i5mF1ePxMBmVoKayI
+         alwLYcMeGidClXvvytKzKGnZfwQSHFzOMnfevdMKP2yw/RazDCV7uAIPxdvHX/vVurjo
+         i2pQmlv5GY0E//fQf1wF4P8RlCn1qGCf8GmbR7eXKSy/BxF4Xv/8JPULn0ZdL6OVdiKs
+         7cQrS7TggICrXWyS3K0TtA/p5Gq65BD7sHviOpbSH622wzk79e46y4fda0aLFpqj+fCb
+         Hpcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ2hD87uvd27Yi9nke1RnB8lZLCjWpDR5R4QhyahJOae9WtGiWh9q4nR8q6Wc1pAdg1csqe23iMVnlPhgDdatLyC7mlXg+oRVtIF8Q
+X-Gm-Message-State: AOJu0YzTnA1nIpjZvEFr44Y0l5/p9mJ/Mo3PlYCHh/7pcYeCE+MM/3st
+	dnl/im41dHJiZkrwog4DHNXu1tUMj1J8qB7BBdwKhUV7kacFHIn407uRw5Enb/c=
+X-Google-Smtp-Source: AGHT+IG4DEesDMZcuysfgLZvQ/+OAO3Qsg+dE/NjXv/QQ07Ez023CbJmTu8w+jAxCcCb3jgETbq3fg==
+X-Received: by 2002:a17:906:489:b0:a77:abc3:48e2 with SMTP id a640c23a62f3a-a79edc4be78mr2890166b.25.1721083607319;
+        Mon, 15 Jul 2024 15:46:47 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d1a73sm247528966b.87.2024.07.15.15.46.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 15:46:46 -0700 (PDT)
+Message-ID: <a077b6ce-4fe9-43da-9c6a-454df609fdfb@linaro.org>
+Date: Tue, 16 Jul 2024 00:46:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,81 +76,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] reset: amlogic: move audio reset drivers out of CCF
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH 1/2] dt-bindings: net: wireless: add ath12k pcie bindings
+To: Patrick Wildt <patrick@blueri.se>, Andrew Lunn <andrew@lunn.ch>
+Cc: Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Andy Gross <agross@kernel.org>, Steev Klimaszewski <steev@kali.org>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
+References: <ZpV6o8JUJWg9lZFE@windev.fritz.box>
+ <ZpV7B9uGVpeTSCzp@windev.fritz.box>
+ <d921bf20-1d83-492f-ab88-0f23de26a649@lunn.ch> <ZpWQKMX9jhb-nNlh@mone.local>
 Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240710162526.2341399-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ZpWQKMX9jhb-nNlh@mone.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186528 [Jul 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;salutedevices.com:7.1.1;lore.kernel.org:7.1.1;sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/15 22:06:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/15 22:06:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/15 21:24:00 #26011023
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Jerome, I have tested the series on SM1 SoC (Amlogic AC200 ref board).
-As far as I can tell, it works as it should
+On 15.07.2024 11:10 PM, Patrick Wildt wrote:
+> Am Mon, Jul 15, 2024 at 10:54:18PM +0200 schrieb Andrew Lunn:
+>> On Mon, Jul 15, 2024 at 09:39:51PM +0200, Patrick Wildt wrote:
+>>> Add devicetree bindings for Qualcomm ath12k PCIe devices such as WCN7850
+>>> for which the calibration data variant may need to be described.
+>>
+>> Hi Patrick
+>>
+>> General, the device tree binding and the needed changes to the driver
+>> to implement the binding are in the same patchset. I don't see
+>> anything implementing qcom,ath12k-calibration-variant here? Does the
+>> driver already support this, and you are just fixing up missing
+>> documentation?
+>>
+>> 	Andrew
+> 
+> Hi there,
+> 
+> technically I could try and make that change, but I don't actually run
+> this driver or Linux at all; this change is for running OpenBSD on that
+> machine with a correctly defined device tree.
+> 
+> The realities of Linux being the de facto upstream for device tree
+> bindings force me to submit changes here so they end up being usable
+> for other operating systems as well.
+> 
+> I would assume that eventually someone that runs Linux will adjust the
+> ath12k driver as well, because this kind of binding has been used for
+> both ath10k and ath11k and this is just a copy with a name change for
+> ath12k.
 
+Paraphrasing a certain company.. Linux <3 OpenBSD!
 
-On 7/10/24 19:25, Jerome Brunet wrote:
-> This patchset follows the discussion about having reset driver in the
-> clock tree [1]. Ideally those should reside in the reset part of tree.
-> 
-> Also the code of the amlogic reset driver is very similar between the 2
-> trees and could use the same driver code.
-> 
-> This patchset moves the reset driver of audio clock controller of the
-> g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
-> 
-> The infrastructure put in place is meant to be generic enough so we may
-> eventually also move the reset drivers in the meson8b and aoclk clock
-> controllers.
-> 
-> Change since RFC [2]:
->  * Move the aux registration helper out of clock too.
-> 
-> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
-> [2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (8):
->   reset: amlogic: convert driver to regmap
->   reset: amlogic: add driver parameters
->   reset: amlogic: split the device and platform probe
->   reset: amlogic: use reset number instead of register count
->   reset: amlogic: add reset status support
->   reset: amlogic: add toggle reset support
->   reset: amlogic: add auxiliary reset driver support
->   clk: amlogic: axg-audio: use the auxiliary reset driver
-> 
->  drivers/clk/meson/Kconfig                   |   1 +
->  drivers/clk/meson/axg-audio.c               | 109 +-------
->  drivers/reset/Kconfig                       |   1 +
->  drivers/reset/reset-meson.c                 | 285 ++++++++++++++++----
->  include/soc/amlogic/meson-auxiliary-reset.h |  23 ++
->  5 files changed, 271 insertions(+), 148 deletions(-)
->  create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
-> 
+Since as you mentioned Linux is the de facto upstream for dt-bindings,
+many people identify those two.. I think a solution that would keep
+everyone reasonably happy is dropping a line about your usage in the
+cover letter
 
--- 
-Best regards
-Jan Dakinevich
+Konrad
 
