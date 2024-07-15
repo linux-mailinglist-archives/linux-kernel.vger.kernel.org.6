@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-252666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-252667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7F8931697
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:22:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC7A931699
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 16:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6661F223BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02D41C21A0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2024 14:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB79618EA6C;
-	Mon, 15 Jul 2024 14:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57E218EA71;
+	Mon, 15 Jul 2024 14:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kArY6Fbs"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Vm8f0bNN"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2B1E89C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 14:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A151E89C;
+	Mon, 15 Jul 2024 14:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053368; cv=none; b=ZuFbeaPUiUVbcmTay3sF/DZzzRzTGfcWbpZowA+quxnUa8xFwKwNh/35BHt0FNz0/1VWmuYX5Xq288sYuPSZAGJelVrOGfADquoqXBFTfx6wV8zrnBl/wi3sqohouewF/TBZM+cL4cEfykKC6K4sC9G7PQPnc94E0V6B+sTDTOs=
+	t=1721053414; cv=none; b=BBMJFAaZjqIZqIRupBmOUlE8kIgHOdIA9mYmjvX0LZhnOfGXb4gtNaMTEqUtN8z8LpXDl/hujnSfKpzwl4aAzHLXjuTlx4SIamM9ncestUgnBT/wbAuTb3pu/3vMXAhAJA2R2g82n9cYUIaNGSuliPyvUEry85GzeGK52q0mCVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053368; c=relaxed/simple;
-	bh=akLoDmbDPs+NEvbjDftdXeJMTJGD6oHfGcOTzt9l9co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0IXYWpv39BkBjyit2iRB7zlpO7aPm6ZMeiAuvcqCSHACJZdqWULBs0MYOl+s9czkHbK+XO/pYDQtZvreabrcY9zzvBAVtG1+kzJRBoBtxl3woUH8LIBHhdW81FHXMnLZp+0mgoy39oY0M+QurQrQN+bFoSl58QYcVcTC1qzrPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kArY6Fbs; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-447df43324fso507561cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 07:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721053366; x=1721658166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=akLoDmbDPs+NEvbjDftdXeJMTJGD6oHfGcOTzt9l9co=;
-        b=kArY6FbswdD3bIC/7VmyL5/ynK8w3PmxNwWnv9NuoedUFq9ufOmtzhV/KIfsKdqoVt
-         W+8sViUWeTkkcJ2hZNWs5UFKodp6CZoewcBYd2bxRPOsjYSOGclvAV6rP6hHjB37sO9K
-         J8VuftPxZcEhCApAbmkRifeUXdxOoK4a/p4M6D3Vtw5dMkUoKZMMVwYF9l3LL6geTG/J
-         p8WD0clGNwUGPffh7b4cEz9GCuBn1wQsZkbqnEmCrus1iaOrG4Evx6Yc9eyp9s25W2Yc
-         61fESWw7S+VJ/H1zZfObi3muuRF2fOc3BbTL9DB+PYm+WqP58FG8dzx9BT63wFK6aMUQ
-         79sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721053366; x=1721658166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=akLoDmbDPs+NEvbjDftdXeJMTJGD6oHfGcOTzt9l9co=;
-        b=vcKtI6LIcMP5pmr1ouqFiE0skYN+FiPtOPplncT1ftoJ9uhqSZutpDV1bYzRL5+UMA
-         8UJX7nhuQ+bq87b+g4SjdLAQ4nSGr9OGknSNry0fnfcWz5Oa3up1RJwHOXr/shJKFtpn
-         S1HpSnxKkvNg9qHED55jtLlTR75jopKrPqNyntnukgnrhus/QKMGsGzCYLkKP2baQIQj
-         CmJ1l+g3CIJsQH+6gp1K4icT5+ON8kXi7XcF4FqJj5ue3EWccse52Ah6Q57TUIrvq5f3
-         Z46SC1Jx8lKPjF3nU9DaCi/PQwHY42K+S8qmegcGAW5+IqjjuIGZTwCvUqPYlFx6TIbK
-         koQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BTe1skSXsGjWn0OanPWtEIX9NGFGVls6xIDb4l9l/OuWqkYnvb1BhOYZdzF88HcJRgwCP6BfSz9FPCijyMKb/KYq83BUYspnAFPe
-X-Gm-Message-State: AOJu0YzwyM2LMdAw8CvrUMBqh8hRR7frKSPIT/Zxwj3TbT2D4TBTbDyQ
-	GmLVEY9IJQnwazXa5eSnufH9KZR6YqbO5NP3TEeAoAe+R0eB1ztIyO0611DsdikqJpGH59Yb/c1
-	gBGMXOCIY2ivdlRFu5SvUthbx9rpCPMMDqc4D7oCGwtu6exI1YC8Wz/I=
-X-Google-Smtp-Source: AGHT+IHgg91W4475NpHdXcKHyv1HYgpe1WM8KIiuzYplyzBGaDbvdiQnNL6KYb2XilWjHQWvHuedrSmfj2F8s8OAIiE=
-X-Received: by 2002:a05:622a:544a:b0:447:dbac:facd with SMTP id
- d75a77b69052e-44f5a31ec96mr5088861cf.24.1721053365546; Mon, 15 Jul 2024
- 07:22:45 -0700 (PDT)
+	s=arc-20240116; t=1721053414; c=relaxed/simple;
+	bh=8W/NbhbOtzlfo5nBCm9HhO+NCk0WKIFpF3ts5SLPFJY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=a6h7GE3QzLXptC01K4zNN386Xhpsa0FjaVhqG8O3vC6/4GAxHbGHQAjcUxgzeWGqlfEMqIAdHgqp7YWoBmQkiCckCEsZjHI0UJZYjQl3mYMS27EHYHp7+7Ac4YyYXI+TsVvEgetUIZcqupmDBkL8tArbO8CjufVWqyLTlVsb1jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Vm8f0bNN; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721053385; x=1721658185; i=markus.elfring@web.de;
+	bh=8W/NbhbOtzlfo5nBCm9HhO+NCk0WKIFpF3ts5SLPFJY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Vm8f0bNNH/uH+JUYznMdwwmJaEDOPlHOKqUivQ42dHq53qqz+HWx0jqe1HGO8ow0
+	 wKzsAcDHN89s2ya/1w9tddaqU+LQmyToFb4cxArMOwWvq0yxUfv6Set9i236MkC/s
+	 vzf5WvMtto/hjUAKh9JG9nQ28AcPIm4RwDLEjhnVEuDcMfyvA92FNe81w4OLj9qOC
+	 5wZF+BAU/amD/MNMqIA5nHDY9y+e/+CH33e6/YIvItDME2G90ARxr0xU+dk2t0Ll1
+	 Zol9c0sow38k9skELR11H+Z37Mpw/iSvgZ3O8eG0E/DV3SOIt4iGlJUFex88lNlhP
+	 gwZ1DypQxOvWQRDOWg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MActe-1seKy91ilU-00AZo0; Mon, 15
+ Jul 2024 16:23:05 +0200
+Message-ID: <3644b87d-d283-4539-aa61-263ca7a81249@web.de>
+Date: Mon, 15 Jul 2024 16:23:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715073159.25064-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240715073159.25064-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-In-Reply-To: <20240715073159.25064-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@google.com>
-Date: Mon, 15 Jul 2024 07:22:30 -0700
-Message-ID: <CAD=FV=VHDksKiZXrauiipa3HjtK4sE5+dbmXmVfhFoM-RKQP6A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, linus.walleij@linaro.org, hsinyi@google.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240712103000.16655-2-benjamin.gaignard@collabora.com>
+Subject: Re: [PATCH v3 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240712103000.16655-2-benjamin.gaignard@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QfwYEWLVQ6kZx6KTIuE8fzL7Zjn6qY++jXuW43skhT6HeJrL9pT
+ HrzaG5PzYShFRTcgkVoKMz4coboztN8K/zsPnJodLKrNMxR0aMv3lLFlfKA0GI79RzLkFmm
+ qk/yuYfEZkTdvGoGxkIdZrzfAvzf9HUaIYokswkbAc6bE/KK2HoPDUKyctn2CEsmL8LqALB
+ YV7fkjhhFBCMzEPAwFKGA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SbuFEh6f8Ms=;vADHCL5fWBqHt+00OVZkSE0Y1nH
+ 4ivCoRthhuJGr0uvXsL3w8U6jVaXp6qZqBXa+P0djltwj2akn59hQ1IPIfLdatMvr6Dr85DJE
+ z0FacJoMLEJjTlL1UsRgaTwAUbxruEUrx8RjPxDVgASmpI9+7H/SWp9u939j73OtGlaut3/2F
+ hv5Z+X9ki0CdO4gsMbpQjmm4yvewbEvOCQ3bvCPYosajRe7fQvFhZYFB3fSNiY6FiT0cI7TVV
+ lR7uYssDKb66j8pVpLg1tbjdRmr8uvLTYlejJDF1FUZavqyfbqmGJZLc/SIpp6w73NRc6gN+4
+ 10oSKv2PpE1K1AFWDjWK4eaWFKQZAQoezPk7O/Cm7szJlw/8XZ0B3kNbBA0oglJkHCFUUuocO
+ thPHxQkVN5AazxvLgueaTehmeAy7PMdaOghsDTGOOsU13jjw4ohdeSrExlTpbxQml5P/qWbo4
+ ouAPmDckx8fFuB624XgLHACoX2i6GH/ZY89d83dRlUm6JOo6V9DGr/YyWEYPthuoPPsZmoP0g
+ M6tZBpjIzQSPOHHob2TcrHygdVewOInddL7b2OHuPNZni84bcUtFcgzUdkei1nbRhgcYTdsRu
+ mTpZ2LvPCuU6fUqzne84dVp5Yj3i0XZwXjL8TepHWpt99NpicVC4+XsY3HODZg9f/OARuM0W7
+ DtwCQNtA1YAGzvkOUPtc6AbnVfPsMXIPx7ETL6Y7WQRrS4iO+NE14wbCTEvhYuwg6f8VjLu52
+ JYp1iZR4L2usRb6AHvlJanj76hoZvLC/cvFkNw6A4kxqv984wNmlnSTsOd8JA+IbIZateCDIU
+ LFLREtSlSob4SjzJo8BeA0VA==
 
-Hi,
+> Add new flags to enumerate all pixels formats when calling VIDIOC_ENUM_F=
+MT ioctl.
+=E2=80=A6
 
-On Mon, Jul 15, 2024 at 12:32=E2=80=AFAM Zhaoxiong Lv
-<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
->
-> The Elan ekth6a12nay touch screen chip same as Elan eKTH6915 controller
-> has a reset gpio. The difference is that they have different
-> post_power_delay_ms.
->
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Will the word =E2=80=9Cunconditionally=E2=80=9D be more appropriate for th=
+e next summary phrase?
 
-FWIW things have changed enough between V1 and V2 that you probably
-should have removed Conor's "Acked-by" tag here and waited for him to
-re-add it.
-
-I'd also note that when posting a patch your Signed-off-by should
-always be at the bottom of any collected tags. For reference [1].
-
-[1] https://lore.kernel.org/tools/20221031165842.vxr4kp6h7qnkc53l@meerkat.l=
-ocal/
-
-That being said, the new binding seems OK to me.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Regards,
+Markus
 
