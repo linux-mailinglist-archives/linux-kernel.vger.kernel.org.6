@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-253671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BEA9324A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:12:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD669324AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4BF01C21357
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6132B237C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E56E1990B2;
-	Tue, 16 Jul 2024 11:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57E31991A0;
+	Tue, 16 Jul 2024 11:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s/ERb0z7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="08YWWQ95";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s/ERb0z7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="08YWWQ95"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UFqYks1F"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8A7450F2;
-	Tue, 16 Jul 2024 11:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590E1450F2
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721128321; cv=none; b=kcpSY9eWpPS0axi51mWzRfwX5JLWiJw+j5CPHS0RdwIjom8Ev+lAgJV4OwnPDrFfKA/nmraekIKMW9AWuTtzESD1coDW1d0WWe5u1xVFb3FEXmhf3Cr1TTcCTunF8Y3nSivlXfsp9pYQ0AQ78yO3dyYGo/oMtH1pmdYV5K0SoXg=
+	t=1721128382; cv=none; b=W2i67LE4fxM1fd0ixQVxDObaOdQ6QOPNa/oNa76cjhS8Z83F2otif14mXWyd/3bNuDBFMmUVFYmTe3EXbXJJ5x7ntoj0RU6uC0zHsB12WiUDxyyAKbGAT6kQVVbRifY1COIXXLkTlr2Iu6Nr6A+OR8fp028ZTDVsJnG6Qonqj/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721128321; c=relaxed/simple;
-	bh=0vY9oB0wJG33ZForSuVbyomL10P6lGH1BYfodotrqMI=;
+	s=arc-20240116; t=1721128382; c=relaxed/simple;
+	bh=Npyk8yTFFIp3zu60cJGVp6aA2D+oqrywC7FU3CijOAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUGurfejAPMhXHdQPmyWS3DS+9zZgsOqn5KTUqlQsC7FHOLiamLQrbhabq/ckQ3Pjwa6P5EhDv+QP7TxLUpI0Urj59fWsnbG5VpEICx3T39l8gLI57wwIJ53IsyJ6FUj8jFykgTq8KS6yr3aRCkkVgwTmmRsQjdeJ7hhGXBGjU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s/ERb0z7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=08YWWQ95; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s/ERb0z7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=08YWWQ95; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C279D1F8AE;
-	Tue, 16 Jul 2024 11:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721128317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ic0DUfS6E4Agr0btoOv+0XKFKvt3C6xqRimAilWQ0M=;
-	b=s/ERb0z7tltpnt6y1uMPgW/oiRhYaBLn2ci+W8Ayw+4nasJ7eV0L3pS0epTe6odHfQyluP
-	8N2a1YeNE4qnKbFoPf1sl6VNCaAVu0VKZqtuI43w41Rauo5YQ1yGKfD8alZc/vyBFLVAUD
-	MPwr6AmdmLgagm/2l9SKXZhNA/Ma4HY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721128317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ic0DUfS6E4Agr0btoOv+0XKFKvt3C6xqRimAilWQ0M=;
-	b=08YWWQ95I/gk5v8snQSKVrDx7MYYYxJ1tfbzo3RPYR+JuSixaQHs4X8fCpsadm0W/ugYtZ
-	zqOLYEy5Y56f7GBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="s/ERb0z7";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=08YWWQ95
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721128317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ic0DUfS6E4Agr0btoOv+0XKFKvt3C6xqRimAilWQ0M=;
-	b=s/ERb0z7tltpnt6y1uMPgW/oiRhYaBLn2ci+W8Ayw+4nasJ7eV0L3pS0epTe6odHfQyluP
-	8N2a1YeNE4qnKbFoPf1sl6VNCaAVu0VKZqtuI43w41Rauo5YQ1yGKfD8alZc/vyBFLVAUD
-	MPwr6AmdmLgagm/2l9SKXZhNA/Ma4HY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721128317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ic0DUfS6E4Agr0btoOv+0XKFKvt3C6xqRimAilWQ0M=;
-	b=08YWWQ95I/gk5v8snQSKVrDx7MYYYxJ1tfbzo3RPYR+JuSixaQHs4X8fCpsadm0W/ugYtZ
-	zqOLYEy5Y56f7GBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2CD613795;
-	Tue, 16 Jul 2024 11:11:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BUCkK31Vlma5PQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 16 Jul 2024 11:11:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2C6E3A0987; Tue, 16 Jul 2024 13:11:53 +0200 (CEST)
-Date: Tue, 16 Jul 2024 13:11:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v4 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-Message-ID: <20240716111153.lrwr2rdg6roka2x6@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240713023917.3967269-1-yu.ma@intel.com>
- <20240713023917.3967269-2-yu.ma@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CpVNVhXDMnxU3gW8ydm18PE1HpoAQsuLdwvPVgtlxHfq12xsU1irZcPTuYfvuU250jN3Yz0mj+pjthAGX4Ae0k7SjpBeoAlstNqWbh3tSrqrwhxAVv+RXnoubuNuIS5NMqYn/ncM7xw4fNtNo4MLHwXexcUpFQTpJ+fRDcZ7F7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UFqYks1F; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9944764fso6200027e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721128378; x=1721733178; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lkRwuDFICXCFOrI/2I8SRM97q+8MIDN5II0awTzIkIA=;
+        b=UFqYks1FUQj1fkWtSQONxgEwcl+o5btCtEqDcCrVT9OxqiHB9vYmhNm1+w7/X4+VFH
+         Q9qiZiDhyUvnxE1bLmtmcUACwFMWspkXahEVywXfGHMy/FedYBFK8NjjV91fUU/z/RHF
+         lgFmDrUqZjYRIFeA8JJ57TaCkFrXfNr711ynsBu0aawhbENZ9a9TIHt31O5yVfCEeTED
+         /RJrjLCLs1VPO855WiAi7XY0fkMIzmbI/J9gJyGAXtiz5kW+3t5oS+rpy0YHW7f7vskh
+         SYLrCG9cYkuSNo1Xj38ZvkiOJDfEFcxq1XENPmmuBtgwWgxSpH+kn2UKY3YPeaLLVMR1
+         PfyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721128378; x=1721733178;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lkRwuDFICXCFOrI/2I8SRM97q+8MIDN5II0awTzIkIA=;
+        b=fcYY8Wp/H0Ti4f9zxqx8/HhmX090CJ6OOrWudCvnhPNowETiUu6SolA9/BonFVt6KN
+         o57UfoHfKHXO7RkTrhfcEWRMwskpnaGo9oi9My1QoZiGc2f4ADjKIuWrkdjunFFitf6W
+         VekNfMbJBD3tPNvSNa7CyO2MnJvOaHJotjRVRFaW0odtJbJS5mLRPlSQPQDv3cBvs975
+         7U7sVj6UR5/EEZVcu7C7lNcPFEJing2UNj590EvLGRy0lrfCwr6t+e3BTfX3/KsCiNSJ
+         9OpCKpsZG3Y1AouGQdu06K3uFLdDjZV8ZaONrJlsFvN+uNyCbxZ9+4ojMd02G1AVU7bO
+         kYZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXq0W9q5xLKxKFP9/2uLeJtBiUfAv6X5BhbTgIJ3vKaUt+sOzZpoAn4SYzLqCgA4bt+hk35K81TvDDl26yL78Wx4xDkNPdMwjAi6YNu
+X-Gm-Message-State: AOJu0YxCTJtxX/q7mlqGAF5SnzLmRxuXA/RHSybBJtAiyIZFlET7E2QU
+	dTfB1ogiOaqfETR9lbAITbw8GmamVg8z++erlJoTVAxP+5mqqtFB2bRbtsYbJNc=
+X-Google-Smtp-Source: AGHT+IG35l+B1/YBwglx16llaqYjEWDCga2Oe9hUaLufPC7j7EzfiIml0NpEIJWCt7t15bPWQxNWIg==
+X-Received: by 2002:a05:6512:138a:b0:52e:7a8c:35a0 with SMTP id 2adb3069b0e04-52edef0e8edmr1040257e87.7.1721128378321;
+        Tue, 16 Jul 2024 04:12:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed25398basm1111790e87.285.2024.07.16.04.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 04:12:57 -0700 (PDT)
+Date: Tue, 16 Jul 2024 14:12:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Patrick Wildt <patrick@blueri.se>
+Cc: Kalle Valo <kvalo@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Andy Gross <agross@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Steev Klimaszewski <steev@kali.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-yoga: add wifi
+ calibration variant
+Message-ID: <56zweixkjz2oqvmmxxgd3zoc2jf4us4mmhutjtjvejsurtycwh@fv24arxg2eqr>
+References: <ZpV6o8JUJWg9lZFE@windev.fritz.box>
+ <ZpV7OeGNIGGpqNC0@windev.fritz.box>
+ <cisap4ctuolfrs6hjqxz45fqtckcy6uhjzma2shcxkso73jvoh@jj7l4bgftoir>
+ <ZpWbUjHna1cE5zHW@mone.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,135 +91,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240713023917.3967269-2-yu.ma@intel.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.com:email]
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C279D1F8AE
+In-Reply-To: <ZpWbUjHna1cE5zHW@mone.local>
 
-On Fri 12-07-24 22:39:15, Yu Ma wrote:
-> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
-> allocated fd is NULL. Remove this sanity check since it can be assured by
-> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
-> likely/unlikely and expand_file() call avoidance to reduce the work under
-> file_lock.
+On Tue, Jul 16, 2024 at 12:01:28AM GMT, Patrick Wildt wrote:
+> Am Tue, Jul 16, 2024 at 12:51:53AM +0300 schrieb Dmitry Baryshkov:
+> > On Mon, Jul 15, 2024 at 09:40:41PM GMT, Patrick Wildt wrote:
+> > > Describe the bus topology for PCIe domain 4 and add the ath12k
+> > > calibration variant so that the board file (calibration data) can be
+> > > loaded.
+> > > 
+> > > Signed-off-by: Patrick Wildt <patrick@blueri.se>
+> > > ---
+> > >  .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts      |  9 +++++++++
+> > >  arch/arm64/boot/dts/qcom/x1e80100.dtsi                 | 10 ++++++++++
+> > >  2 files changed, 19 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> > > index fbff558f5b07..f569f0fbd1fc 100644
+> > > --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> > > @@ -635,6 +635,15 @@ &pcie4_phy {
+> > >  	status = "okay";
+> > >  };
+> > >  
+> > > +&pcie4_port0 {
+> > > +	wifi@0 {
+> > > +		compatible = "pci17cb,1107";
+> > > +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> > > +
+> > > +		qcom,ath12k-calibration-variant = "LES790";
+> > 
+> > It doesn't look like it follows the rest of the calibration variants.
+> > 
+> > Something like "Lenovo_Y7x" or "Lenovo_Yoga7x" sounds more logical.
 > 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
-
-Looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/file.c | 33 ++++++++++++++-------------------
->  1 file changed, 14 insertions(+), 19 deletions(-)
+> This is what's both in the DSDT
 > 
-> diff --git a/fs/file.c b/fs/file.c
-> index a3b72aa64f11..e1b9d6df7941 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -515,7 +515,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	if (fd < files->next_fd)
->  		fd = files->next_fd;
->  
-> -	if (fd < fdt->max_fds)
-> +	if (likely(fd < fdt->max_fds))
->  		fd = find_next_fd(fdt, fd);
->  
->  	/*
-> @@ -523,19 +523,21 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	 * will limit the total number of files that can be opened.
->  	 */
->  	error = -EMFILE;
-> -	if (fd >= end)
-> +	if (unlikely(fd >= end))
->  		goto out;
->  
-> -	error = expand_files(files, fd);
-> -	if (error < 0)
-> -		goto out;
-> +	if (unlikely(fd >= fdt->max_fds)) {
-> +		error = expand_files(files, fd);
-> +		if (error < 0)
-> +			goto out;
->  
-> -	/*
-> -	 * If we needed to expand the fs array we
-> -	 * might have blocked - try again.
-> -	 */
-> -	if (error)
-> -		goto repeat;
-> +		/*
-> +		 * If we needed to expand the fs array we
-> +		 * might have blocked - try again.
-> +		 */
-> +		if (error)
-> +			goto repeat;
-> +	}
->  
->  	if (start <= files->next_fd)
->  		files->next_fd = fd + 1;
-> @@ -546,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	else
->  		__clear_close_on_exec(fd, fdt);
->  	error = fd;
-> -#if 1
-> -	/* Sanity check */
-> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
-> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
-> -		rcu_assign_pointer(fdt->fd[fd], NULL);
-> -	}
-> -#endif
->  
->  out:
->  	spin_unlock(&files->file_lock);
-> @@ -618,7 +613,7 @@ void fd_install(unsigned int fd, struct file *file)
->  		rcu_read_unlock_sched();
->  		spin_lock(&files->file_lock);
->  		fdt = files_fdtable(files);
-> -		BUG_ON(fdt->fd[fd] != NULL);
-> +		WARN_ON(fdt->fd[fd] != NULL);
->  		rcu_assign_pointer(fdt->fd[fd], file);
->  		spin_unlock(&files->file_lock);
->  		return;
-> -- 
-> 2.43.0
+>   Device (WLN)
+>   {
+>     [...]
+>     Name (BDFE, "BDF_LES790")
 > 
+> and kvalo's board-2.bin for this machine:
+> 
+>   $ strings board-2.bin | grep LES
+>   bus=pci,vendor=17cb,device=1107,subsystem-vendor=17aa,subsystem-device=e0e9,qmi-chip-id=2,qmi-board-id=255,variant=LES790
+> 
+> I don't think we can hand-pick these strings, they come from whoever
+> decided upon them and fed them into ACPI tables and QC's binaries.
+
+Ack, if Kalle has already selected this string, we can't argue.
+
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With best wishes
+Dmitry
 
