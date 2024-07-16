@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-253416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC63932101
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:12:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D99932109
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD62285CC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9236B1C219B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B537B23741;
-	Tue, 16 Jul 2024 07:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EA527473;
+	Tue, 16 Jul 2024 07:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iG3d7sGP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kT1s73ju"
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B66225A8;
-	Tue, 16 Jul 2024 07:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D5037700
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721113947; cv=none; b=EkrOQJ5wKdsz4d15qeX0XHgX0MSHVm7J6a7EvAhKT46Ywb1HPskaGvSBINAnFRQnApXU9S4aa5Gadfa3uWtYpCT8CqoT9Z/7kaC+5Y/IU+nmBEh1roEnpKRUUb+n5UmFObGvrQO6/o5PT5+45RFCFd6sbKLodL91O6XJ6Sz2eY8=
+	t=1721114040; cv=none; b=aQx/F4EAEF5BgMO0QtibFfudCmKMnEM7EiK7FmVl6z1byqdiS327qf6pxTAGXovbs8tZl2TZHNSlum2Srsir3obR3If89t+rjoQnph+8RKOBbup2EgqYyi1xNkq6LpSSsVaKyTeUX0ijFg76O7qnIor6a2gpbFz9KHknbFZaSgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721113947; c=relaxed/simple;
-	bh=78U4m1ep53Zq6/5AXJs1cwRSOc03EfOxeMNNRKdtJbU=;
+	s=arc-20240116; t=1721114040; c=relaxed/simple;
+	bh=om5UofC4ryHM94Wlsk4/cAWNj8IrCD8xKsDi+0pvYEI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eBMp31qnT4k/rz5UsRmgaQmR/evpUTq7pq0yI37CRXlUWyD1SFH0U6QHfEPV4ywG9a0fI0Onx9zQZWxUZtZ1GmHLBPgALa+7plumiDiPB7pEl6Cfwz+JE9SllymWBSCO1+U/ohctq8bpJuMFU8Ceqe+q9c75lhRCLUmv4N+l1jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iG3d7sGP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4313DC116B1;
-	Tue, 16 Jul 2024 07:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721113946;
-	bh=78U4m1ep53Zq6/5AXJs1cwRSOc03EfOxeMNNRKdtJbU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuAL3KVEodU6sokAFHyaOGLKDrYYJeuTfaGBCEikcy7WGV6+Q3FVIh4hhrex10jjL0Ytlmj6AfU5ASsUrpk0pBkm3FOuO1MeJxBna1P8BHJzH/1OvSzEs6ac+OcpwJMb3Swm6JBfGFdQZ8O7GriVf7L4uw3+vms6QhwvrzEs47M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kT1s73ju; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNVfn1WqqzlGb;
+	Tue, 16 Jul 2024 09:13:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721114033;
+	bh=Pgvv7MQ5tPNIpIpwnO7JzPSqhpV+bSm8Xa4gUvwKzv8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iG3d7sGPKcubWbLntz9f8rvFLxB/pfik+BzdH0A6oIrArbh0cgrY/iLkxl9z6g45q
-	 unabXTJUDoQkryc8ebDFmj1HOi5CYBNGqcTiXht9zN/xHG+t8jGWDVFudY7yzAwXBK
-	 TNxnRKLN2HJTNh2Bj5WnKrrOB6scKyKmYW4aV24I=
-Date: Tue, 16 Jul 2024 09:12:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Message-ID: <2024071643-washcloth-patronize-ce6b@gregkh>
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
- <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
+	b=kT1s73ju4LMuNR9iv/HUc1o8CwZJ5xCxOz/+egyw3P7sbZeW2jRv16p+ElhwyUtEA
+	 zvYnMjKHWvc/qG6EqgzzBjF8lkQqacaFr+P3FuSQ58elSfbJjsGYZnsmUg1ZWS8FKD
+	 1oJ6pWXDMHcM7ab84mB83LrO7VC6Cvd3MjkJ0lkk=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNVff3KMVzQHl;
+	Tue, 16 Jul 2024 09:13:46 +0200 (CEST)
+Date: Tue, 16 Jul 2024 09:13:44 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
+Message-ID: <20240716.bebeeX1aequi@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <8734oawguu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8734oawguu.fsf@trenco.lwn.net>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 15, 2024 at 08:39:59PM +0000, Sami Tolvanen wrote:
-> If using unions here is acceptable to everyone, a simple solution
-> would be to use a known name prefix for the reserved members and teach
-> gendwarfksyms to only print out the original type for the replaced
-> ones. For example:
+On Mon, Jul 15, 2024 at 02:16:41PM -0600, Jonathan Corbet wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
 > 
-> The initial placeholder:
+> FYI:
 > 
->     u8 __kabi_reserved_1[8];
-
-Don't use u8, use u64 please, it makes things simpler :)
-
-> After replacement:
+> > User space patches can be found here:
+> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
 > 
->     union {
->             u64 new_member;
->             struct {
->                     u8 __kabi_reserved_1[8];
->             };
->     }
+> That link appears to be broken.
 
-Note, such a thing would only be for the distros that want it, you can
-add support for this to the tool, but there is no need for any
-__kabi_reserved fields in mainline.
+Unfortunately, GitHub's code search links only work with an account.
+git grep prints a similar output though.
 
-> Here gendwarfksyms would see the __kabi_reserved prefix and only use
-> u8 [8] for the CRC calculation. Does this sound reasonable?
 > 
-> Greg, I know you've been dealing with this for a long time, any thoughts?
-
-It's a good start, yes.  Also watch out for when structures go from
-"anonymous" to "fully described" when new #include lines get added to
-files.  The current tooling has issues with that, so we need to use
-__GENKSYMS__ #ifdef lines in some places to keep crc generation stable.
-Don't know if dwarf output would be susceptible to the same issues with
-that or not, but you should check.
-
-thanks,
-
-greg k-h
+> Thanks,
+> 
+> jon
 
