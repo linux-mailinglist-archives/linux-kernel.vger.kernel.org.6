@@ -1,278 +1,173 @@
-Return-Path: <linux-kernel+bounces-254096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248B5932ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BBB932ECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66247B22F0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F8FB22F2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C3C19F499;
-	Tue, 16 Jul 2024 17:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B537219E7D3;
+	Tue, 16 Jul 2024 17:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5c1hqR6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tw8pRxu0"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF8012B7F;
-	Tue, 16 Jul 2024 17:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F8F12B7F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721149212; cv=none; b=qEXIyEP5gBmNUdvSjzsZqgyv+CbyZR1erNX2Aw0PuLC8VQz4hmWcpVw2BkqtVVwu4UQw9Z/w91qvitqobA8Ca84olVV42FVgfhLW7cdKfu69JX5bGSRIoL+ufP9MCOHsuO4IcwFsPtveAaNmUZvT8QdfxvDeWjb3lw2oNntRmqU=
+	t=1721149282; cv=none; b=OpkshkIA4GDDesJUWkRm1DjTJTttdt4g4vNTzav/2NRvkGEVEzB58r1xEvHA6e5PB3qrIgrPU1Sh/7p1JQhQIbNdIs+jtzZQ2WvGK5TgdF+lT1/u6hFJO5unPA0iyFTb3KWapCTcuwxEOTLyeNVPEEgPUdpfHcpSzkAlAzBYfK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721149212; c=relaxed/simple;
-	bh=sAD7lS47r/gd6n42i7U6IFrQNXMKogyHlRfzfc24w4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q1v/2NVk2dr+xOan1eDa9uevDI32TzR8OJRzwCY/1E2wHZm0ZMYVzmn6ispxZkDhaeEo8B3gEk4ZMDoxBSlTpchEmPYPeCgL4OCPrrnHSzXKYDjdswAvIRhDZOSrH6PaGatiDQTiuc9xPGSKz41Fo0G8VS+i8CwX2sihpg6Lpa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5c1hqR6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80FDC116B1;
-	Tue, 16 Jul 2024 17:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721149212;
-	bh=sAD7lS47r/gd6n42i7U6IFrQNXMKogyHlRfzfc24w4g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h5c1hqR6g1bDVxhbWkBLjJKujIOAQx98JN7UvHNTU+pyvpCARzraCWmPJtHsjhxXN
-	 l8kh1c4vg92SFXiqQm1omrIxuqwzXLZ7qw0t8JshU7LUCLE/0IWQIOWf7FTDbEPUb4
-	 P9Yb3fKakuWjwf0tcOfy6esRNNyo1WzIs71kDNNQVFzkkyiHekToJXFhy+JHGpLtZl
-	 2px9phGNgMMNZisKUBbxRRagMlk8HUhYTTRKX/Ky9qAOE5rME3eJUflbyyQdGB2m5I
-	 2F1NY0AEfdlRksv/PXece95F22gPAYeQM4j9dOnNL5W6zKpqlWhiLG86SAlA29Rxcg
-	 tdYBOgDVOJSSA==
-Date: Tue, 16 Jul 2024 18:00:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: <Marius.Cristea@microchip.com>
-Cc: <matteomartelli3@gmail.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <robh@kernel.org>, <lars@metafoo.de>,
- <linux-kernel@vger.kernel.org>, <krzk+dt@kernel.org>,
- <Jonathan.Cameron@Huawei.com>, <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
-Message-ID: <20240716180004.606006d0@jic23-huawei>
-In-Reply-To: <483de34b3a74a2981fac89a8232e3ef2448f57ef.camel@microchip.com>
-References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
-	<20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
-	<20240707160442.6bab64c9@jic23-huawei>
-	<668bec2a8b23a_6e037017@njaxe.notmuch>
-	<20240708173439.000070b4@Huawei.com>
-	<668cf2f3ece62_1f6ba37012@njaxe.notmuch>
-	<20240713112153.3576fc2a@jic23-huawei>
-	<66963b764ac3c_706370bd@njaxe.notmuch>
-	<483de34b3a74a2981fac89a8232e3ef2448f57ef.camel@microchip.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721149282; c=relaxed/simple;
+	bh=aMqJugMTKIuXb5RuRQqKniLGa4G7WSQsOWUcC4fy8uA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQl5k0EN2GPK4Fk261fAupdSlTr+ItuuU0/J2QyVNqQIeL6MZPwlJIEHOiiNfRdTMqchsZq+/ZgTRr3wSiDPTbL2dGnYMTF+MfO1nvjZZYxHf3tk0Ecl0g0bJ4YjMXyz0tKq1yxUyjK4mUTrDCv9vX2xIEMaBO9lN1quoH6uZxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tw8pRxu0; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eec7e431d9so74631581fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721149278; x=1721754078; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ojyLoEn72jNNSfiPNc8alfjrCiqwwyPI9yuQ8RPWAmY=;
+        b=Tw8pRxu0HehXoPsdyCG43cQWM5NqfwrNbmhkDYjZvwXMZ1+yybAYqS4BR68P5T3mQO
+         OuTE9aEY+3OBD9ygUGG6PYx8ooar+AHQ4J/6SMHN/Da0w+GK5Op8aupRzqryWIJ7hYgv
+         t9Cqal7SDPwr3XMGTI03lFfbfiYPAoj8ow0N8vcr1/vql2aMbLRrZK27HBV4ZPYNPPJc
+         D1nszUKf39nEJdlHsbwSFpCzUsMuws+Yr0Os9JQyy72PdNwWZXKnGaTJXzBs8CvVBBwh
+         Yj66DH+/VGaIcR+WWvtoSL9ON5p7AmsgqOGGGXP4yxsfZK2u2UlP/M61Ge67nWACnfBc
+         riiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721149278; x=1721754078;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ojyLoEn72jNNSfiPNc8alfjrCiqwwyPI9yuQ8RPWAmY=;
+        b=mU/PZjoG7gUGnQ5irmnXqAINIVg2FwJonJjWCBsrkQ6hj522X2LTu9Ceyfb3Ta72DK
+         TG8y6NiDVXw7aiAiCe9kH0gEJmpgtFrnOY4Tn6KM/sKEPOXXW4mbp0kLVL/4hKqSi0TE
+         AY7WK+jiVi89UtWOY3V7BG2jlXzjjwI2tkkXMHER8kC8nQS5xn+G7mSWS/EXFYXwJm+k
+         loqJetfIWJ+UTa+rPOAof0B1PoCLpmEPsC3/S0EnBw/QSgBpdOgvScB+wIOY8stZ6d4F
+         pQKfsRSG/JEiCSntQ2CBpRjGSEGchMfvesOD/XcgIGUVN3xifYyrqXOV8iBfBcMe8Cwb
+         xYXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWizcaOui/nvu9UZuNAh+w+DpKwuXosY3DdiUyFwQzFP1KN91bg7W54hp2HFNW8n11XFSPTQ5XvIEMAFS8fQxf8c1/cqqlPccZ17ym9
+X-Gm-Message-State: AOJu0YzMW4PIMMcwSLhLHs62MU6GJ70AiSZQ/n4s3A9zKHynei/vACTU
+	ZgZQSOB4AmlOEOzwHYWDAAc94J6ZZYDVHdnaLIcqcXk94Q7u2ackP7Xf75xYJ2TP5K+F+wxjjnf
+	+
+X-Google-Smtp-Source: AGHT+IHiCpiwO8rjZ0htUoeJgpfV/+P+mkbfZbe70bQAoD70zJuFqjvQXKFf8ezzilfK8kEIP12apg==
+X-Received: by 2002:ac2:4c52:0:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-52edef1eb90mr2131099e87.25.1721149278075;
+        Tue, 16 Jul 2024 10:01:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d6cesm1197833e87.149.2024.07.16.10.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 10:01:17 -0700 (PDT)
+Date: Tue, 16 Jul 2024 20:01:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, dianders@chromium.org, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/mipi-dsi: Introduce macros to create
+ mipi_dsi_*_multi functions
+Message-ID: <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn>
+References: <20240716133117.483514-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716133117.483514-1-tejasvipin76@gmail.com>
 
-On Tue, 16 Jul 2024 11:19:53 +0000
-<Marius.Cristea@microchip.com> wrote:
+On Tue, Jul 16, 2024 at 07:01:17PM GMT, Tejas Vipin wrote:
+> Introduce 2 new macros, DSI_CTX_NO_OP and MIPI_DSI_ADD_MULTI_VARIANT.
+> 
+> DSI_CTX_NO_OP calls a function only if the context passed to it hasn't
+> encountered any errors. It is a generic form of what mipi_dsi_msleep
+> does.
+> 
+> MIPI_DSI_ADD_MULTI_VARIANT defines a multi style function of any
+> mipi_dsi function that follows a certain style. This allows us to
+> greatly reduce the amount of redundant code written for each multi
+> function. It reduces the overhead for a developer introducing new
+> mipi_dsi_*_multi functions.
+> 
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_mipi_dsi.c | 286 ++++++++++-----------------------
+>  1 file changed, 83 insertions(+), 203 deletions(-)
+> 
 
-> Hi Matteo,
->=20
-> On Tue, 2024-07-16 at 11:20 +0200, Matteo Martelli wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you
-> > know the content is safe
-> >=20
-> > Jonathan Cameron wrote: =20
-> > > On Tue, 09 Jul 2024 10:21:07 +0200
-> > > Matteo Martelli <matteomartelli3@gmail.com> wrote:
-> > >  =20
-> > > > Jonathan Cameron wrote:
-> > > > ... =20
-> > > > > > I could add the shunt-resistor controls to allow calibration
-> > > > > > as Marius
-> > > > > > suggested, but that's also a custom ABI, what are your
-> > > > > > thoughts on this? =20
-> > > > >=20
-> > > > > This would actually be a generalization of existing device
-> > > > > specific ABI
-> > > > > that has been through review in the past.
-> > > > > See Documentation/ABI/testing/sysfs-bus-iio-adc-pac1934
-> > > > > for example (similar in other places).
-> > > > > So if you want to do this move that ABI up a level to cover
-> > > > > multiple devices
-> > > > > (removing the entries in specific files as you do so).
-> > > > >  =20
-> > > > I would do this in a separate commit, would you prefer it in this
-> > > > same patch
-> > > > set or in another separate patch? =20
-> > >=20
-> > > Separate commit in this series as otherwise it's not obvious why we
-> > > are
-> > > doing it. In theory should be before this patch as then what you
-> > > use here
-> > > is already documented, but I don't care that much on the order.
-> > >  =20
-> > Just a few more questions about this point.
-> >=20
-> > * I see 3 other drivers exposing the shunt resistor attribute:
-> > ina2xx, max9611
-> > and pac1934. While the unit for first two is in Ohms, for the latter
-> > it's in
-> > micro-Ohms. What should be the unit for the generalized ABI? I would
-> > guess Ohms =20
->=20
-> For measuring current the usual "scale" is part of miliOhms in order to
-> reduce the power dissipation. As a rule of thumb 0.1 miliOhms is a
-> usual value for shunt resistors. I think the "correct" way is to setup
-> the  value in sub units of Ohms. Like the current is in miliAmps and
-> the voltage is in miliVolts.
+[...]
 
-The milli thing is historical curiosity (we were trying to maintain
-interface compatibility with hwmon briefly many years ago - it rapidly
-proved impractical). For almost all remotely recent units we have
-gone with the SI base unit.
+> -void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+> -				    enum mipi_dsi_dcs_tear_mode mode)
+> -{
+> -	struct mipi_dsi_device *dsi = ctx->dsi;
+> -	struct device *dev = &dsi->dev;
+> -	ssize_t ret;
+> -
+> -	if (ctx->accum_err)
+> -		return;
+> -
+> -	ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
+> -	if (ret < 0) {
+> -		ctx->accum_err = ret;
+> -		dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
+> -			ctx->accum_err);
+> -	}
+> -}
+> -EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
+> +#define MIPI_DSI_ADD_MULTI_VARIANT(proto, err, inner_func, ...)	\
+> +proto {								\
+> +	struct mipi_dsi_device *dsi = ctx->dsi;			\
+> +	struct device *dev = &dsi->dev;				\
+> +	int ret;						\
+> +	\
+> +	if (ctx->accum_err)					\
+> +		return;						\
+> +	\
+> +	ret = inner_func(dsi, ##__VA_ARGS__);			\
+> +	if (ret < 0) {						\
+> +		ctx->accum_err = ret;				\
+> +		dev_err(dev, err, ctx->accum_err);		\
+> +	}							\
+> +}								\
+> +EXPORT_SYMBOL(inner_func##_multi);
+> +
+> +MIPI_DSI_ADD_MULTI_VARIANT(
+> +	void mipi_dsi_picture_parameter_set_multi(
+> +	struct mipi_dsi_multi_context *ctx,
+> +	const struct drm_dsc_picture_parameter_set *pps),
+> +	"sending PPS failed: %d\n",
+> +	mipi_dsi_picture_parameter_set, pps);
 
-This is an corner of ABI so if things were consistent I'd say copy
-the others, but failing that ohms for the reason you give.
-Copy the in_resistance_raw value
+I'd say that having everything wrapped in the macro looks completely
+unreadable.
 
+If you really insist, it can become something like:
 
->=20
->=20
-> > as /sys/bus/iio/devices/iio:deviceX/in_resistance_raw.
-> >=20
-> > * If for instance the generalized ABI unit is going to be Ohms,
-> > should I still
-> > remove the entry from the pac1934 even though it would not be fully
-> > compliant
-> > with the generalized ABI?
-> >=20
-> > * To cover the current exposed attributes, the "What" fields would
-> > look like:
-> > from max9611:
-> > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:devi=
-ceX/in_current_shunt_resistor
-> > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:devi=
-ceX/in_power_shunt_resistor
-> > from ina2xx:
-> > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:devi=
-ceX/in_shunt_resistor
-> > from pac1934:
-> > What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /sys/.../iio:devi=
-ceX/in_shunt_resistorY
+MIPI_DSI_ADD_MULTI_VARIANT(mipi_dsi_picture_parameter_set
+	MULTI_PROTO(const struct drm_dsc_picture_parameter_set *pps),
+	MULTI_ARGS(pps),
+	"sending PPS failed");
 
-This one is a bit odd in that it describes it if it were a measurable
-channel in of itself but we probably couldn't figure out a better way
-to scope it to a specific channel.
+(note, I dropped the obvious parts: that the funciton is foo_multi, its
+return type is void, first parameter is context, etc).
 
-> > Does this look correct? I think that for the first two drivers the
-> > shunt_resistor can be considered as a channel info property, shared
-> > by type for
-> > max9611 case and shared by direction for ina2xx case (maybe better to
-> > remove
-> > "in_" from the What field if the type is not specified?).
+However it might be better to go other way arround.
+Do we want for all the drivers to migrate to _multi()-kind of API? If
+so, what about renaming the multi and non-multi functions accordingly
+and making the old API a wrapper around the multi() function?
 
-Keep it consistent.  It's valid to provide the in_ and in general
-over restrict channel attributes, even if not strictly necessary.
-
-> > What seems odd to me is the pac1934 case, since it doesn't fit in the
-> > format
-> > <type>[Y_]shunt_resistor referred in many other attributes (where I
-> > assume
-> > <type> is actually [dir_][type_]?).
-> > Doesn't it look like pac1934 is exposing additional input channels,
-> > that are
-> > also writeable? Maybe such case would more clear if the shunt
-> > resistor would be
-> > an info property of specific channels? For example:
-> > in_currentY_shunt_resistor,
-> > in_powerY_shunt_resistor and in_engergyY_shunt_resitor.
-
-
-
-> >  =20
->=20
-> I don't think it will be a good idea to duplicate the same information
-> into multiple attributes like: in_currentY_shunt_resistor,
-> in_powerY_shunt_resistor and in_engergyY_shunt_resitor.
->=20
-> The pac1934 device could be viewed like 4 devices that have only one
-> measurement hardware. Changing the shunt for a hardware channel will
-> impact multiple software measurements for that particular channel.
-Yup. You've=20
->=20
-> For example "sampling_frequency" is only one property per device and
-> not one property per channel.
-
-Not necessarily.  If it varies per channel it is
-in_voltageX_sampling_frequency etc
-That is rare, but we have specific text to cover it in the ABI docs.
-
-What:		/sys/bus/iio/devices/iio:deviceX/in_voltageX_sampling_frequency
-What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_sampling_frequency
-What:		/sys/bus/iio/devices/iio:deviceX/in_currentZ_sampling_frequency
-KernelVersion:	5.20
-Contact:	linux-iio@vger.kernel.org
-Description:
-		Some devices have separate controls of sampling frequency for
-		individual channels. If multiple channels are enabled in a scan,
-		then the sampling_frequency of the scan may be computed from the
-		per channel sampling frequencies.
-
->=20
-> Also I'm not felling comfortable to remove the [dir_] from the name,
-> because this value is dependent of the hardware and we can't have a
-> "available" properties for it.
-Removing the dir is unnecessary.  Just leave that in place.
-Note we can't change existing ABI of drivers for this sort of thing
-that wasn't standardized (as we can't argue they break ABI) so
-they are stuck as they stand.
-
-Unfortunately the most consistent path is probably to treat it as a
-normal attribute, even if that generates a bunch of silly duplication
-if there is more than one shunt_resistance.
-I agree it's ugly but it's not the only case of this sort of duplication.
-It happens for that sampling_frequency case in a few corners were there is
-on channel that is sampled different from all the others.
-
-So I think
-in_powerY_shut_resistor and in_energyY_shunt_resistor is
-most consistent with existing 'standard' ABI.
-
-This is one where I didn't do a great job in review unfortunately
-so the one with the index on the end got through.
-
-I'm not hugely worried about this mess though as runtime shunt resistor
-calibration is not that common.  If people want good measurements they
-tend to build their circuit with good components / PCB tracks etc.
-
->=20
->=20
->=20
-> > * I would go for a simple and generic description such as:
-> > "The value of current sense resistor in Ohms." like it is in
-> > Documentation/devicetree/bindings/hwmon/hwmon-common.yaml. Should it
-> > include
-> > any additional detail?
-That sounds good.  It is permissible when generalizing ABI like this
-to include any particular quirks of the ones you are generalizing.
-I doubt there are any here though.
-
-> >=20
-> > * I am assuming the generalized API would have Date and KernelVersion
-> > of
-> > today even though the original attributes are older.
-> >=20
-> > * Should this ABI be inserted at any particular place of
-> > Documentation/ABI/testing/sysfs-bus-iio or just appended at its end?
-End is fine for this one.  We've never attempted to assign an order to that
-file so grouping only occurs if there are related attributes and I don't
-see this as closely related to much else.
-
-Thanks,
-
-Jonathan
-
-> >=20
-> > Thanks,
-> > Matteo
-> >  =20
->=20
-
+-- 
+With best wishes
+Dmitry
 
