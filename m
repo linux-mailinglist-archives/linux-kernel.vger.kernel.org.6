@@ -1,125 +1,168 @@
-Return-Path: <linux-kernel+bounces-253819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BA2932774
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107BD932778
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8330B21F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19B72817A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF419AD86;
-	Tue, 16 Jul 2024 13:28:22 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE94619ADBE;
+	Tue, 16 Jul 2024 13:28:23 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419B019AD4F;
-	Tue, 16 Jul 2024 13:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0871117CA05;
+	Tue, 16 Jul 2024 13:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136502; cv=none; b=Berwlq94ARz/IlFu5hsKY856Qn9Y6j5sXqphvg8QlGDxYirkondMF/XXnjYXQTHZ6St0CvvbCZcaf+jgaTLyBN3VMoFtw2hslb8a5O194fmHoJ35wYhb0HcK3dkUODhMtefAwcm3k54n8QjnpWGM9I7HgHQrilG1RXdGTcmuUNo=
+	t=1721136503; cv=none; b=j24DBRiVevFbPvFOQUoFEfSCpkMxKHEvuUrX3CRDQfz7TACQawymxMNiGjQ6KL2TVZO82Auxh8G6m3+LtgRX6h0Nz0eYBDQXffQw2Pq1rYyb3aoY96nwEkfHpZRK4BfBlHF8cCyUdBsMAv9qeKFYEoTHA7vZEW6mmNj7meGS6yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136502; c=relaxed/simple;
-	bh=TF815M0MHPBYp/3TtLytnCXOCoWe3Z5Pimkt2dlp1GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slmoB5Xqryj9TfVvY/P4D5/9SSFADGBKZW52FUkm/2Jz+KGz6h+r79O9rtHwM6FiZaLTv8sfmw7aYvAOcboqbk52mlg43LKmEDuARbFqbVb+06T9HDFW9qSRWDzI0WJROvQ7uYOtP7w0a+qwFNlvEXQv6sTTs7DzePyhbnS+esM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sTiDR-000000003jW-40cV;
-	Tue, 16 Jul 2024 13:27:38 +0000
-Date: Tue, 16 Jul 2024 14:27:33 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Message-ID: <ZpZ1RSSYaLo45kUI@makrotopia.org>
-References: <cover.1720969799.git.daniel@makrotopia.org>
- <6425788.NZdkxuyfQg@bagend>
+	s=arc-20240116; t=1721136503; c=relaxed/simple;
+	bh=SzHFUtYF5aB+3Ib2JFXt3lhZ1219Egl0mU/P+n64EF8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NwIUEtHFpXPXiHJSacM6A7T6kBqOUpwQsjazc75WMM4nFvWUZpmknFpBwJHIXiw+mib4D0evCyKTO3Fvky/LyNpLHz6uG0/16Hv1iehzO/VdsanXzCwCPlE5srTiJZlSnBQuwk/rwN9qcp1nh4vbmCiUSITvWPdfyq06K3gO8Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAA3IyBJdZZmvOKhAw--.58290S2;
+	Tue, 16 Jul 2024 21:27:52 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: mpe@ellerman.id.au
+Cc: ajd@linux.ibm.com,
+	arnd@arndb.de,
+	clombard@linux.vnet.ibm.com,
+	fbarrat@linux.ibm.com,
+	gregkh@linuxfoundation.org,
+	imunsie@au1.ibm.com,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	make24@iscas.ac.cn,
+	dan.carpenter@linaro.org,
+	manoj@linux.vnet.ibm.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in read_handle()
+Date: Tue, 16 Jul 2024 21:27:37 +0800
+Message-Id: <20240716132737.1642226-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <87y163w4n4.fsf@mail.lhotse>
+References: <87y163w4n4.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tknJYtWE5EdE/uFK"
-Content-Disposition: inline
-In-Reply-To: <6425788.NZdkxuyfQg@bagend>
-
-
---tknJYtWE5EdE/uFK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:zQCowAA3IyBJdZZmvOKhAw--.58290S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF1rtrWrCw1kCFy7Jr48Crg_yoW5XrWUpF
+	WxJFWUArWDJa1qgF4DZa18tFyjva48tFWYgry0g3s3Zws8ZF1fJFy5Ga4F9a4q9348C340
+	va1qqF9Iga1UZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi Diederik,
+> Michael Ellerman<mpe@ellerman.id.au> wrote:=0D
+> > In read_handle(), of_get_address() may return NULL if getting address a=
+nd=0D
+> > size of the node failed. When of_read_number() uses prop to handle=0D
+> > conversions between different byte orders, it could lead to a null poin=
+ter=0D
+> > dereference. Add NULL check to fix potential issue.=0D
+> >=0D
+> > Found by static analysis.=0D
+> >=0D
+> > Cc: stable@vger.kernel.org=0D
+> > Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")=0D
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
+> > ---=0D
+> > Changes in v4:=0D
+> > - modified vulnerability description according to suggestions, making t=
+he =0D
+> > process of static analysis of vulnerabilities clearer. No active resear=
+ch =0D
+> > on developer behavior.=0D
+> > Changes in v3:=0D
+> > - fixed up the changelog text as suggestions.=0D
+> > Changes in v2:=0D
+> > - added an explanation of how the potential vulnerability was discovere=
+d,=0D
+> > but not meet the description specification requirements.=0D
+> > ---=0D
+> >  drivers/misc/cxl/of.c | 2 +-=0D
+> >  1 file changed, 1 insertion(+), 1 deletion(-)=0D
+> >=0D
+> > diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c=0D
+> > index bcc005dff1c0..d8dbb3723951 100644=0D
+> > --- a/drivers/misc/cxl/of.c=0D
+> > +++ b/drivers/misc/cxl/of.c=0D
+> > @@ -58,7 +58,7 @@ static int read_handle(struct device_node *np, u64 *h=
+andle)=0D
+> >  =0D
+> >  	/* Get address and size of the node */=0D
+> >  	prop =3D of_get_address(np, 0, &size, NULL);=0D
+> > -	if (size)=0D
+> > +	if (!prop || size)=0D
+> >  		return -EINVAL;=0D
+> >  =0D
+> >  	/* Helper to read a big number; size is in cells (not bytes) */=0D
+> =0D
+> If you expand the context this could just use of_property_read_reg(),=0D
+> something like below.=0D
+> =0D
+> cheers=0D
+> =0D
+> =0D
+> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c=0D
+> index bcc005dff1c0..a184855b2a7b 100644=0D
+> --- a/drivers/misc/cxl/of.c=0D
+> +++ b/drivers/misc/cxl/of.c=0D
+> @@ -53,16 +53,15 @@ static const __be64 *read_prop64_dword(const struct d=
+evice_node *np,=0D
+>  =0D
+>  static int read_handle(struct device_node *np, u64 *handle)=0D
+>  {=0D
+> -	const __be32 *prop;=0D
+>  	u64 size;=0D
+> +	=0D
+> +	if (of_property_read_reg(np, 0, handle, &size))=0D
+> +		return -EINVAL;=0D
+>  =0D
+> -	/* Get address and size of the node */=0D
+> -	prop =3D of_get_address(np, 0, &size, NULL);=0D
+> +	// Size must be zero per PAPR+ v2.13 =C2=A7 C.6.19=0D
+>  	if (size)=0D
+>  		return -EINVAL;=0D
+>  =0D
+> -	/* Helper to read a big number; size is in cells (not bytes) */=0D
+> -	*handle =3D of_read_number(prop, of_n_addr_cells(np));=0D
+>  	return 0;=0D
+>  }=0D
+Thank you for discussing and guiding me on the vulnerability I submitted. =
+=0D
+I've carefully read through your conversation with Dan Carpenter. I'm =0D
+uncertain whether to use my patch or the one you provided. Could you please=
+=0D
+advise on which patch would be more appropriate? =0D
+Looking forward to your reply.=0D
+--=0D
+Regards,=0D
+=0D
+Ma Ke=
 
-On Tue, Jul 16, 2024 at 02:34:40PM +0200, Diederik de Haas wrote:
-> [...]
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 362
-> rngtest: FIPS 140-2 failures: 638
-> rngtest: FIPS 140-2(2001-10-10) Monobit: 634
-> rngtest: FIPS 140-2(2001-10-10) Poker: 106
-> rngtest: FIPS 140-2(2001-10-10) Runs: 43
-> rngtest: FIPS 140-2(2001-10-10) Long run: 0
-> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-> rngtest: input channel speed: (min=3D2.638; avg=3D139.351; max=3D9765625.=
-000)Kibits/s
-> rngtest: FIPS tests speed: (min=3D21.169; avg=3D36.158; max=3D68.610)Mibi=
-ts/s
-> rngtest: Program run time: 148109761 microseconds
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> That's almost twice as many failures as successes ...
-
-That's bad news, and apparently different from Aurelien's initial
-testing of the driver.
-
-Can you try if the result is also that bad when using his version of
-the driver:
-
-https://patchwork.kernel.org/project/linux-arm-kernel/patch/20221128184718.=
-1963353-3-aurelien@aurel32.net/
-
-If so, we can try to increase RK_RNG_SAMPLE_CNT, and we may need
-different values depending on the SoC...
-
---tknJYtWE5EdE/uFK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABEIAB0WIQQ8WXOkSQLJP/KOu5qX7zeyq+FyywUCZpZ1PgAKCRCX7zeyq+Fy
-y7a0AQCE/4d3YLgHabbloqz9iyKoj0GdIFZwjHK3KL4968XEDQD/ajA3gjz4QmH0
-pQJAwVHNMGK6A9q8yQ6Rq+ZWpqvwmLM=
-=3OSJ
------END PGP SIGNATURE-----
-
---tknJYtWE5EdE/uFK--
 
