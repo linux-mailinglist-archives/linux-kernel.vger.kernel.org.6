@@ -1,171 +1,289 @@
-Return-Path: <linux-kernel+bounces-253254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AEE0931EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:17:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2459931EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9CE1C21066
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA0F1F21EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C219AD48;
-	Tue, 16 Jul 2024 02:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A361BF9F5;
+	Tue, 16 Jul 2024 02:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ruQz1qsv"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2012.outbound.protection.outlook.com [40.92.20.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMrZcYBP"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDC8AD24;
-	Tue, 16 Jul 2024 02:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721096222; cv=fail; b=Zg7B6NekjSRPzF0ki6aSeA+cMRM4q9oIjE8YSXRSO/iH2E/c5MoQvKo13LiddWDu+SI8I48YovMaFti1g8gVOUjln3ZtLVCSX0378edKSXMsFWVm3HHUrlm+hW9Sm6KYS6KkAw0s2MX+6eoTkzUfV6mVQapaAVOVx+GZcTDWuuc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721096222; c=relaxed/simple;
-	bh=zk7RRXnFF4DTEE599YlFYxiJBgrJy96N+Jlyz0i9mJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OPv+8JtrJN/Vo1xKB/dYrLIR1jKyoKyyz28uLCbQelgSxg7kMBx6WNZAN1dpS3xPPj9dZL/7+dx3L9+EIsDXYVeeYEEhphxUBg+0USJIOD6WlWSuPhpjHV+WH0ilWJckyAHoMq/op1adfa459Pa6M65V5fquT8oJQgh46Dhqw5k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ruQz1qsv; arc=fail smtp.client-ip=40.92.20.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yU83606YpqmL0Lzfj1p389E4EJVUE6db00yMD5XK3bwI803DWBgB9xGtT/Sm2Lu0rhC8BA+qI79rSejdo9Zohstm5Ce82dK4EntlXG02s1D5CwSPiUTWanutnNaroDvXD8Jn8PizkOEi0MVvU/hi7yy9XxwR4dayCUwz4kGNrtgvkCyABKdP0N0xrXnbX+5ZlieOTJGM8yatf1s7VUKRkYKxm1EbdRUgs+q/uYGPX0/l9qlDVP9RA4juUl8DtjUMjex/epq03e/Jh/ZCu9p5Cy+xdYxH3Hk/5ruynuwKOwj9YPh6eJ5vvpeWC48ALWiXS7qvPL7tuMZ93+TmH8DpKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y7lmMj7eWc2SezcTMgvW0xsBrU/KFU3BOtQtEUGWIis=;
- b=tgSiD94Va4LTRUYnQdt4PPQr3OKz93wPFqrLS+QxdCh2CRM9Jb1XqxHhaUdteDQh1RIcPFkrNW2D8uEI0ohVF262kNMCTSyYz3dyTqMX4mvx8GX3Kd5mpyFzvJQ2MvdDE/JtGL1v+b+4fKQmWx/jRKhsmo+YDJ/fEiTWgGDdUPQaz8KtYjhA4Z5SrbBI8CFc/RajgenLtjm/DIFom3npzNl6BH00vV+LgiS4A+t+QnUuK9mM4mlbQzOStiY4uNUfbf2Y696aDzP2ANO226Tfu/WjftL3ZolTiLVNFu63L/hIVD80mK+liZu5zZCeb7sdRL1o4PnXrx/qmyLpTE5z8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7lmMj7eWc2SezcTMgvW0xsBrU/KFU3BOtQtEUGWIis=;
- b=ruQz1qsvhK8kxMJlWgSO+tt0tdwVjg8BcDlEOAh0TIeSCKtw/arI3F7UebZbIVk6kL28okxf7/b7yJ61jLexN2h+/5cPZr4naSupTDW9AAyayYF0YGRjnQIFlBmjdwRCjlQZNiaX9JGEMJ538ZiGN9YJZY0a2krUjIVw6np9HBQfBsWirQIHe/H6TEQENWek0mz6U7ReXZplhJwNptrtY11NIA4vgmIb+9L5tZMERiOBejq5OBrqY3pjl1Vq0D3qGHT4PC/GJQ3/5VFTh3IJ8gGDyLzb+VTajLuiXZhYfMgXe/nEGzl6F0A2UtyDTB2aH8b2v5hcKcjja2R9RDs3rA==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by CY8PR20MB5737.namprd20.prod.outlook.com (2603:10b6:930:84::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
- 2024 02:16:57 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%6]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 02:16:57 +0000
-Date: Tue, 16 Jul 2024 10:16:47 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@outlook.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pincfg-node: Add "input-schmitt" property
-Message-ID:
- <IA1PR20MB4953747880CD84FCB5453608BBA22@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953BB6E71CA3216E652E8B8BBA02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <e74d1c2f-576d-4d97-89d2-5bdabe00fb58@kernel.org>
- <IA1PR20MB495302FAFD2003B831342CF4BBA12@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240715-strainer-creamlike-b1ff49b25c1f@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715-strainer-creamlike-b1ff49b25c1f@spud>
-X-TMN: [IZ9F28rhu5AN4WQT4+5GH6BfaFHS8Lgt4rnvAi5R8YA=]
-X-ClientProxiedBy: PU1PR01CA0029.apcprd01.prod.exchangelabs.com
- (2603:1096:803:16::17) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <lyr3jobkd24q3dzbr2u3lmqocfpk43faducvvw23rpruocwmj4@2dea57yogrzm>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB5CDDC0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721096258; cv=none; b=Wt8M+vj2p4NnRo/er+PHvaGNCrFxA2c9DbXgtmOxOdnQ+tJYuAhN3hW1CJx8qqaLj7SgcCAcJqweGz+BCIkE1042zUhbAcLdDnrCBiwx2AgLGlXPvGHHZ8TspRSHVa4NNoTtExSBkVIj4OxbtHtXj2n3HlLlbcNbB5UyN38TfKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721096258; c=relaxed/simple;
+	bh=OoToNNHALmGJkBV57ahMlKIETKcnluRe1cAwoCY+RPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N95wsNqzLVT21euOgU2zEmBGM0bVrvzvLzw1Qeofu7mISydEYEMRZIl0mva34Xb0SbIdLsayebw3MJGwmYZfEWMzSEvRO2Lbx3eWiAWhxlHf5Mb39TPD+JUGvLGoA1Bv6Qu6SA0mGG6hSCSO1Av54Bnwd90zVLCj5pGL8ahZBuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMrZcYBP; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-25e171122fcso2179504fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721096256; x=1721701056; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qG2e5OOr0a9SDC7lHn4BFqHyo95FcZxWbDfNRVBACI=;
+        b=ZMrZcYBPrCxSrJCEGB4tFN0UMT2pxKjGcN4+ftlpRFf2hLAYSgrT3WuG/wsWSkKrKy
+         fBxqA0nvpO3aBdrACUKT1yyJ/0F6K6S4ao3c+X5iVk2PMHQVerW5bPcvXENSzl1VUu9w
+         TxMR5UUAnz6sXmWU/uR8zn3uVjNflS90Ra8R8Ie4aGZDfQRRdAzDt06TG8gtiY8DFTLf
+         F80dgc2w9yLNRRbQ4FGRbGXs9xnRS6MSP3PcsZ/gvgfkDbBsrkIuOZ3//CnBTxTfHmCH
+         X/5AIQIV01lSpod0DN8D9kUicsgNQ/eX//wAUNiQhlOjmrHNgWLPElh7PFiS1XU02klW
+         IHXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721096256; x=1721701056;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3qG2e5OOr0a9SDC7lHn4BFqHyo95FcZxWbDfNRVBACI=;
+        b=eJy37ZhVpn9Opuj2zoqo6VVqlF1knxWK5JWU2NATmVTkfDSdl4eTUXdog4HoQXYpFQ
+         m3+tGQh1HBBKmKkO7ecUJQPwAksx4htTwQ0PycVmr0GSFNiqGYg1UxCCqTRp/qdBO9Pj
+         dtKxwC/kjMEXbrx8qcLsxKXQBOxnndtqKFwsQlNPWE6f/8Yeh8Pu/5yDCUb6izsoOx14
+         P75fqkkltI6zIUPrj+sL5RMZoso1VXIO/xpNLb0K+nNiqqlvg17KET0pAhn4pjqlwCiI
+         HoXjnt/bEvVJldi02JgVKg0GQJehydQezdX2jHvutpNggXjzqKTnSKNVwYSJ5ntAnuuc
+         kHLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJsMQyA+IE+Y8ND+tidRw0BWKxOnxQ+dfoP/BAVkMOg1DwTwcAx6FN9VgKaxptc5y6v9m8UkQEuvOffnfew58aGd6MRUHMJ+KIrS5y
+X-Gm-Message-State: AOJu0YyLF88fDCkoIYT265xQTUxMQCMMHiEeARl3cLfScfRHwg9sQs0j
+	TWT+GfEJVUYn0hZzyE+If0GUW28Ve6lHjifz71AUY+KADmYfd9O3807p3rLjKEwewAKivqzNwvr
+	Meh6ajEltknHWmg3YjT/yJ44+oCBtt2F0gg5G+w==
+X-Google-Smtp-Source: AGHT+IF2iQvXMWZ+A/wS21lKkIcp4ScrIAImMKmhcq0FvVKMA7n1XTY7UZQNopwH2fOnvWt5n+kBM1ZVCbdtyBlI7Y8=
+X-Received: by 2002:a05:6870:9e4d:b0:25e:b74e:e1b8 with SMTP id
+ 586e51a60fabf-260bf388476mr234928fac.9.1721096256110; Mon, 15 Jul 2024
+ 19:17:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CY8PR20MB5737:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04f3e55a-dcef-4144-d7ea-08dca53d5e27
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|19110799003|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	X6x+mqHkMVPqojaJvXLmeu4FluWHtYhg5itoGUUPfE6hmo9XU4HRwsNxHPqDwUeCF+nvgozbwSNAJvyBMXJ+BXpaFD3l2Y/vv7PyoB+odLws7mrQBUbRekU8MQjqeV4efuV07TwCkTh+0LmqESkvQp81+g9ME2Wurvgd4aiJRjY6K9SR+LRkORXJvyUh6vYn/1xmkrZtPzU1eC5oKEq9D49c1OC/udBUPYPB9HTa2/aGLxT+houX/Zol8ERf1jpmouRR4sWtVrxE3XvCnu41KxiCiXdo72Fggn3ZwK8EwSjxOVwZl1rXFXuTehdEyIkb4KuRibvHiyZbHRIJKVxiG9qPsjWgBh9PDAh4BcU7ZUCoGUNk7vwdVOj9VQunefzNb6jzniLzMneBcp4KCl4XuGpm0VmtoVUqP3sBjVkFM1nqKR4FF6XdDMTwQR7NLGE3lQsO2fGcgj2elYoXO4L3r1adgaf0QHmLuDXEjFcJMMRzyIXJeutWDAELBkvApxD1UHb0VCJjc3xTWTMczACmpRaYw+3eH/4DPWDpwqpxrt7/HqPbBsnhzeC7HLvg0Xg2qp/zrM8Mc/ursilJFcGqgVMJNSMcHb4SEuDOkE3OO+NhTeboDUnHoxOIUeU3q4NEQcE+7xysyE+a9nWa8hVTg2taCzWKW07y9QdSXnRnunO4PRCm2iesRqmUoTpxkOr7
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ScDdAKWSHJBEtSAAeC1lCi+7HSxgG/BksEiIsSsCQx81aFmO4vvaTVEevjr6?=
- =?us-ascii?Q?Rm/U2ztOACHGeeXU1y+KTWv6A2D3trd8cEUWrkFnROpkh3rnkvrq7Eu+gw6J?=
- =?us-ascii?Q?Z/bSPb7lUJ/SNCKBJtyWHDBPWmpwy9NtCLCrxBg7joIZrg6gW+/dMPZhqODe?=
- =?us-ascii?Q?ZI2s0MEHMSXDxNeFquo39l4mEOK39oMUadbJ3N9El+Oheb3tN7FMOCTp/h6l?=
- =?us-ascii?Q?5vEyItbf6xxF7DzCn2h6tN+/IUXCgRFOBdmtda2wWcmeIUi/6Hy9M0/yDwIQ?=
- =?us-ascii?Q?Ic52lkQ0JKIkwsPyWKnWppaOl0TROf/Lt3TKI+OgBmy5LPHlWhUviIzTCrC0?=
- =?us-ascii?Q?LTJyA3AII4Khh7i+i65kjaIHrO8Ko7tb5gN8FYLKQzF64Qmj3VRhSS4UCkQz?=
- =?us-ascii?Q?YldkFjLh2eJ7a2Tg45PoabaIZVtSLCI9rtKMzNI8EmHa5xxBI0/dUp5WAqUF?=
- =?us-ascii?Q?0ILZzX3FrK8xTqY1yFtTKwGkzjkWpTYk/dXLafr6fj4w8nNDQ6JIMh8j85Sf?=
- =?us-ascii?Q?K40XqJkSxTk4ddGXRBrrmtOIPTvgeP8B1ApxupqlR1qQS2rWhLlVMp86UMBj?=
- =?us-ascii?Q?Mw1LIq+ZH5nnJMl0gT9Ie5r0vR6aIA3Rxt+UOLN0ldv54mIoGdDnaLHX/SvW?=
- =?us-ascii?Q?ZN3ACwlWzG/J19jiC/uiyKSHA2dxdFeGgyciOnPIgaojsCr1f+bgzDRcAdd9?=
- =?us-ascii?Q?+kVYbmycmqcOmrjx1/VGXTpVO7QmFKT0+gIUYlxCBMZ0Y87YFIHJv+eKmzUd?=
- =?us-ascii?Q?8V98avyJv16R/nB/Wz0/IqHreYM3eB+kwZfj6xIngxo2odJTOL8TI6Xrma4Z?=
- =?us-ascii?Q?U5kuPiwsM8BAymuSj8ORhHR2Hp6PRHdVdlwEmr1pWWtkMslJr4iwagZrY9UR?=
- =?us-ascii?Q?QuTXVYRQ3rXxsB6Mp3dU/B1t1gSnApqpKwBi1Eh/d6LC/C9VATnjCCNP4dOr?=
- =?us-ascii?Q?0FM1+siY5lb1R+xI1wAk+5mOmrTvG66m0YOFXpxW+c0vmZDFaiPGvJHwqPii?=
- =?us-ascii?Q?m2kdev7y3Yoae143fpomzY2/1JOpuezuoteFDjOJ4HxlIx5MNaYPAs/0j4yv?=
- =?us-ascii?Q?LMzk4/jz/V3nYCYgI6xMTeLmRAMbrX4+rPyy1ActT+bHJcIESImeOmZUipsM?=
- =?us-ascii?Q?wUIZuRl5CXfQFl/eBuL6j4PdtTy2XZAlYxfTOco+sRY2XCUW4ifLTo1qOpiK?=
- =?us-ascii?Q?l80BSSa4wocLgtS/2nWAOXwZyL8lelEK/cS1qRhFukY7hHkzjBiIbdv7Vssw?=
- =?us-ascii?Q?XBYwp5JOpVAOUAaf0Mi3?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04f3e55a-dcef-4144-d7ea-08dca53d5e27
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 02:16:57.3060
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR20MB5737
+References: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn> <9bf70f7c-5deb-4fce-b7c1-ec70d78cb5db@ghiti.fr>
+In-Reply-To: <9bf70f7c-5deb-4fce-b7c1-ec70d78cb5db@ghiti.fr>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Tue, 16 Jul 2024 10:16:59 +0800
+Message-ID: <CAAfSe-vhhVvP5Sa9bGGSw4ZQvexqUrjdTFjJL-4gLn0jsuk0ew@mail.gmail.com>
+Subject: Re: [PATCH] riscv/mm: Add soft-dirty page tracking support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 15, 2024 at 05:19:41PM GMT, Conor Dooley wrote:
-> On Mon, Jul 15, 2024 at 05:55:28PM +0800, Inochi Amaoto wrote:
-> > On Mon, Jul 15, 2024 at 11:21:25AM GMT, Krzysztof Kozlowski wrote:
-> > > On 14/07/2024 13:28, Inochi Amaoto wrote:
-> > > > On Sophgo CV18XX platform, threshold strength of schmitt trigger can
-> > > > be configured. As this standard property is already supported by the
-> > > > common pinconf code. Add "input-schmitt" property in pincfg-node.yaml
-> > > > so that other platforms requiring such feature can make use of this
-> > > > property.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 4 ++++
-> > > >  1 file changed, 4 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > > index d0af21a564b4..e838fcac7f2a 100644
-> > > > --- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > > +++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> > > > @@ -88,6 +88,10 @@ properties:
-> > > >      description: disable input on pin (no effect on output, such as
-> > > >        disabling an input buffer)
-> > > > 
-> > > > +  input-schmitt:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    description: threshold strength for schmitt-trigger
-> > > 
-> > > Strength in which units? This should have proper property name suffix.
-> > > 
-> > 
-> > I think it should be mV. Using voltage may leads to decimal.
-> 
-> The standard suffix for voltage is "-microvolts", so no issues with
-> decimals :) And with a standard suffix, the $ref can be dropped.
+Hi Alex,
 
-Yeah, I have seen the "-microvolts", but I does not think add standard
-suffix is a good idea, as "input-schmitt" is a standard pinconf attribute.
+On Mon, 15 Jul 2024 at 19:21, Alexandre Ghiti <alex@ghiti.fr> wrote:
+>
+> Hi Chunyan,
+>
+> On 10/07/2024 05:30, Chunyan Zhang wrote:
+> > The PTE bit (9) is reserved for software, so we can use it for
+> > soft-dirty tracking. This patch adds its standard handlers for
+> > PTE, PMD, and swap entry.
+>
+>
+> Unfortunately, ZONE_DEVICE has just used this last bit and should be
+> merged in 6.11.
 
-The only thing confused me is that the description of PIN_CONFIG_INPUT_SCHMITT 
-in include/linux/pinctrl/pinconf-generic.h says it just uses an custom
-format as argument. So I think it may keep something generic?
+Yes, I read the patch just now.
 
+> I'm currently discussing internally how we can get 2 other PTE bits from
+> RVI in order to have the same number of available bits as x86 and arm64.
+
+Yes I noticed that PTE bits reserved for software are too limited on RISC-V.
+
+Besides softdirty, we probably can support uffd write-protect on
+RISC-V if we will have two PTE bits for use.
+
+> I guess that for now, if we really have a usecase for softdirty (and I
+> think we do with CRIU), we'll have to make ZONE_DEVICE and soft-dirty
+> mutually exclusive.
+
+Yes, I also learned that CRIU uses soft-dirty.
+
+> >
+> > To add swap PTE soft-dirty tracking, we borrow bit (4) which is
+> > available for swap PTEs on RISC-V systems.
+> >
+> > This patch has been tested with the kselftest mm suite in which
+> > soft-dirty and madv_populate run and pass, and no regressions
+> > are observed in any of the other tests.
+>
+>
+> Did you give CRIU a try?
+
+I haven't tried CRIU, actually I found soft-dirty was missing on
+RISC-V by the way of running mm selftest cases.
+
+I can cook a new patch to implement soft-dirty and ZONE_DEVICE share
+the PTE bit(9), and make both features mutually exclusive if this
+solution is accepted.
+
+Or not to add soft-dirty until we have more other PTE bits that can be
+used for software.
+
+I'm open to listen to suggestions.
+
+Thanks,
+Chunyan
+
+>
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >   arch/riscv/Kconfig                    |  1 +
+> >   arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
+> >   arch/riscv/include/asm/pgtable.h      | 65 ++++++++++++++++++++++++++-
+> >   3 files changed, 78 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index b94176e25be1..2e3ad2925a6b 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -118,6 +118,7 @@ config RISCV
+> >       select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+> >       select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+> >       select HAVE_ARCH_SECCOMP_FILTER
+> > +     select HAVE_ARCH_SOFT_DIRTY
+> >       select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+> >       select HAVE_ARCH_TRACEHOOK
+> >       select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
+> > diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+> > index 179bd4afece4..bab48f5fd1e2 100644
+> > --- a/arch/riscv/include/asm/pgtable-bits.h
+> > +++ b/arch/riscv/include/asm/pgtable-bits.h
+> > @@ -19,6 +19,19 @@
+> >   #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
+> >
+> >   #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
+> > +
+> > +#ifdef CONFIG_MEM_SOFT_DIRTY
+> > +#define _PAGE_SOFT_DIRTY     (1 << 9)    /* RSW: 0x2 for software dirty tracking */
+> > +/*
+> > + * BIT 4 is not involved into swap entry computation, so we
+> > + * can borrow it for swap page soft-dirty tracking.
+> > + */
+> > +#define _PAGE_SWP_SOFT_DIRTY _PAGE_USER
+> > +#else
+> > +#define _PAGE_SOFT_DIRTY     0
+> > +#define _PAGE_SWP_SOFT_DIRTY 0
+> > +#endif /* CONFIG_MEM_SOFT_DIRTY */
+> > +
+> >   #define _PAGE_TABLE     _PAGE_PRESENT
+> >
+> >   /*
+> > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> > index aad8b8ca51f1..46f512f52580 100644
+> > --- a/arch/riscv/include/asm/pgtable.h
+> > +++ b/arch/riscv/include/asm/pgtable.h
+> > @@ -408,7 +408,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
+> >
+> >   static inline pte_t pte_mkdirty(pte_t pte)
+> >   {
+> > -     return __pte(pte_val(pte) | _PAGE_DIRTY);
+> > +     return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+> >   }
+> >
+> >   static inline pte_t pte_mkclean(pte_t pte)
+> > @@ -436,6 +436,36 @@ static inline pte_t pte_mkhuge(pte_t pte)
+> >       return pte;
+> >   }
+> >
+> > +static inline int pte_soft_dirty(pte_t pte)
+> > +{
+> > +     return pte_val(pte) & _PAGE_SOFT_DIRTY;
+> > +}
+> > +
+> > +static inline pte_t pte_mksoft_dirty(pte_t pte)
+> > +{
+> > +     return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
+> > +}
+> > +
+> > +static inline pte_t pte_clear_soft_dirty(pte_t pte)
+> > +{
+> > +     return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
+> > +}
+> > +
+> > +static inline int pte_swp_soft_dirty(pte_t pte)
+> > +{
+> > +     return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
+> > +}
+> > +
+> > +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
+> > +{
+> > +     return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
+> > +}
+> > +
+> > +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+> > +{
+> > +     return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
+> > +}
+> > +
+> >   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+> >   #define pte_leaf_size(pte)  (pte_napot(pte) ?                               \
+> >                                       napot_cont_size(napot_cont_order(pte)) :\
+> > @@ -721,6 +751,38 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
+> >       return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
+> >   }
+> >
+> > +static inline int pmd_soft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_soft_dirty(pmd_pte(pmd));
+> > +}
+> > +
+> > +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
+> > +}
+> > +
+> > +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
+> > +}
+> > +
+> > +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> > +static inline int pmd_swp_soft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_swp_soft_dirty(pmd_pte(pmd));
+> > +}
+> > +
+> > +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
+> > +}
+> > +
+> > +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> > +{
+> > +     return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
+> > +}
+> > +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> > +
+> >   static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+> >                               pmd_t *pmdp, pmd_t pmd)
+> >   {
+> > @@ -811,6 +873,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+> >    * Format of swap PTE:
+> >    *  bit            0:       _PAGE_PRESENT (zero)
+> >    *  bit       1 to 3:       _PAGE_LEAF (zero)
+> > + *   bit            4:       _PAGE_SWP_SOFT_DIRTY
+> >    *  bit            5:       _PAGE_PROT_NONE (zero)
+> >    *  bit            6:       exclusive marker
+> >    *  bits      7 to 11:      swap type
 
