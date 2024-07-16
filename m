@@ -1,110 +1,161 @@
-Return-Path: <linux-kernel+bounces-253826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAD4932787
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABA89327A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2431C20C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC71285C5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F070A19AD80;
-	Tue, 16 Jul 2024 13:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="J4bYUr+1"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A972519ADBE;
+	Tue, 16 Jul 2024 13:39:43 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9054919AD61
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB4D19ADB1;
+	Tue, 16 Jul 2024 13:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136656; cv=none; b=W55a7uXJM6JQiD5ucbNmHJZOVfxVvBpBC5TIs4cy3GxAqIJZldI1CzZIIVhGIrQd+K3IFPaZxIkA1MUR5X6+Wu5LbRdUwSjbOz8nqjXSpKfNqL3OwI9y1aWh5MeS34/5YPwIeX12d9tv8mm9WrHpvw/xJ/9CuQOoNmXkqNzx67c=
+	t=1721137183; cv=none; b=VpA4WI7bDcL6K0UVSAp/4xVTFYhPxAW/M2nBlL6s0zZbleKDVz0Pi1D8nx6ZKXGy0p+QT1Cjoek4ob1f8/vejFvxQbJfBrXJbnrn0x1U8cp7OSvDKfaXI1fz3Ispp3LQZe3T7sezEg8C18e0PFDGvGCFxjSe4eB1jwQLxu9bVZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136656; c=relaxed/simple;
-	bh=/crOubLp6udsD5zhjxldO7SEGmeDTBHhP0I0MWVD0zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1yGTe0JB+VXTBc4UCAxmsN4VaIC41B9ekciI950/IE2pJBry5g6mu3N/qFHKkAn8Bu91cTM6DGTWfSyZUloMc5D2B5DN5JAxDPTtT90lOcHLSTzZtXM+ArQ9xEcWHIXrs245IY4Gb3t9RVyfAL688C+tTZ5pcv6mUHVwJVOBC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=J4bYUr+1; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-427b4c621b9so11800105e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1721136653; x=1721741453; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YcLBf72AGLqz53r/avJkjakt+ekctAYLnsPdlsvC3fU=;
-        b=J4bYUr+1BxhyHy0eNkp45q7NPqrSR7+vN5BVLQaELtLwzjqCJOHff3CirIQthb9tH2
-         kZufv242PKtOKWEQJkK/X3RA3lBtNiL+izW3frsueQF5nFif7pPlNmuncIKTnsIXWZ20
-         aYObeQg48aTVZT/P8xdVNP1kJlfTM/vXbVuMhRf75IscZ56FjEZQkghDm8ORRcwfiCd/
-         MoPYgtGYOCmI2Ezh4z0gzKjWr+rvEgsjxGIkdBGGkp1rrTiccDrpB5uQRNkGgn0ZSPXF
-         /iuR4ihzvvFGw1BkmaKT4ROYpWAvLua9c2ZdwPDc/+YK5ULRNXjKjSiU8fCmYukJl7xB
-         UPhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721136653; x=1721741453;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YcLBf72AGLqz53r/avJkjakt+ekctAYLnsPdlsvC3fU=;
-        b=X6tUULmLNhGZx+DTgPfEZ37ZUObtDs2Rtal/uPTTuTR/8X7VTHyXwwQgOkkcWpvhYi
-         xp06GLRTd2en3G/0UJOpJaZqQKoxD4iH0w/fg1rOsXHNmlQDnZZ6/W8IwiQp/WRhPUns
-         V10rOtvCBx9DCNBKBZnuK/fZPsYszW/IRnG4pp2c0Lud1G3eWZRNxIUSMVRHv0ysHjVC
-         iPyKzeBnwTuQyFP+f7m53ohktpsea44J3lwhqeC+uqPWB1hFhQwBR88DVbPInTSBGJly
-         OsBW110NqzgAAjznZDHHELRYq3otyO5LUhfB/t/NLfc2NfbK+i7I9Xdhl0f2ffCqUqfC
-         dueg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsEpA+InRWw/qSonqRuKjymJUUD/gpT7xGi5bLRJMJi/A9srgYhbLAtVp+/hfX42ElCv79rgrKVmeqD8p2r4mscssySDLEr2ujF4YM
-X-Gm-Message-State: AOJu0Yznj+rBBFlXEWsKmqRVxNe0XkLStgOH6f+3AQX63BC6dGjlxqES
-	MUCbFtzMnmnsOWhccq+cnfBp/3aiAPHryuixI9NxwX0JtrQfN8rl2k012tc8Y1HaE+aixtuN4lI
-	jW0I=
-X-Google-Smtp-Source: AGHT+IFKdR1AsGx4POLKWxsTeU6zlw8fAns+4xpz4w4ZoyIBkhXGrK+6JHZOeNFPpEg5EVVeMjtCnQ==
-X-Received: by 2002:a05:600c:524f:b0:426:5269:9838 with SMTP id 5b1f17b1804b1-427ba654c24mr15602675e9.4.1721136652680;
-        Tue, 16 Jul 2024 06:30:52 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f23981fsm164204555e9.4.2024.07.16.06.30.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 06:30:52 -0700 (PDT)
-Date: Tue, 16 Jul 2024 15:30:48 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Chen Ni <nichen@iscas.ac.cn>, roopa@nvidia.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: bridge: remove unnecessary cast from netdev_priv()
-Message-ID: <ZpZ2CA5h8hsCu4Id@nanopsycho.orion>
-References: <20240715024457.3743560-1-nichen@iscas.ac.cn>
- <7476d4f9-3a45-4586-99c5-9e878d4e02ac@blackwall.org>
+	s=arc-20240116; t=1721137183; c=relaxed/simple;
+	bh=/B1Uwq/PitS5XFJ0CIRuXcyGgq5rm49B8F+kxIhIZzs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJ0yDkPOdG64xxUcmg1Gf0TE32xmBQrPPP0gINsGKJg5x0DPkdGUo3M6UDIyjpvLhpZw/fl3DhckRojs9YqUaGFdiQ+QZ985Dn+zddcuzyxAZ86XBTqp0ZwYPNNz0kuqrjovwmxMHvJXK7DteOEw95Yx3SuJmzD0XLhdGrn6Ji0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WNg9s6t35zdhyn;
+	Tue, 16 Jul 2024 21:37:53 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4CE99180064;
+	Tue, 16 Jul 2024 21:39:37 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 16 Jul 2024 21:39:37 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <tj@kernel.org>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] blk-cgroup: move congestion_count to struct blkcg
+Date: Tue, 16 Jul 2024 13:30:58 +0000
+Message-ID: <20240716133058.3491350-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7476d4f9-3a45-4586-99c5-9e878d4e02ac@blackwall.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-Mon, Jul 15, 2024 at 10:04:26AM CEST, razor@blackwall.org wrote:
->On 15/07/2024 05:44, Chen Ni wrote:
->> Remove unnecessary cast of void * returned by netdev_priv().
->> 
->> Fixes: 928990631327 ("net: bridge: add notifications for the bridge dev on vlan change")
->> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
->> ---
->>  net/bridge/br_netlink.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
->This is not a fix, the code isn't broken and it doesn't violate
->anything.
+The congestion_count was introduced into the struct cgroup by
+commit d09d8df3a294 ("blkcg: add generic throttling mechanism"),
+but since it is closely related to the blkio subsys, it is not
+appropriate to put it in the struct cgroup, so let's move it to
+struct blkcg. There should be no functional changes because blkcg
+is per cgroup.
 
-Yeah, it's cosmetics, send it to net-next without "Fixes" tag.
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ block/blk-cgroup.c          |  7 ++++---
+ block/blk-cgroup.h          | 10 ++++++----
+ include/linux/cgroup-defs.h |  3 ---
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
->
->Nacked-by: Nikolay Aleksandrov <razor@blackwall.org>
->
->
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 37e6cc91d576..69e70964398c 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -2182,12 +2182,13 @@ void blk_cgroup_bio_start(struct bio *bio)
+ 
+ bool blk_cgroup_congested(void)
+ {
+-	struct cgroup_subsys_state *css;
++	struct blkcg *blkcg;
+ 	bool ret = false;
+ 
+ 	rcu_read_lock();
+-	for (css = blkcg_css(); css; css = css->parent) {
+-		if (atomic_read(&css->cgroup->congestion_count)) {
++	for (blkcg = css_to_blkcg(blkcg_css()); blkcg;
++	     blkcg = blkcg_parent(blkcg)) {
++		if (atomic_read(&blkcg->congestion_count)) {
+ 			ret = true;
+ 			break;
+ 		}
+diff --git a/block/blk-cgroup.h b/block/blk-cgroup.h
+index bd472a30bc61..864fad4a850b 100644
+--- a/block/blk-cgroup.h
++++ b/block/blk-cgroup.h
+@@ -95,6 +95,8 @@ struct blkcg {
+ 	struct cgroup_subsys_state	css;
+ 	spinlock_t			lock;
+ 	refcount_t			online_pin;
++	/* If there is block congestion on this cgroup. */
++	atomic_t			congestion_count;
+ 
+ 	struct radix_tree_root		blkg_tree;
+ 	struct blkcg_gq	__rcu		*blkg_hint;
+@@ -374,7 +376,7 @@ static inline void blkcg_use_delay(struct blkcg_gq *blkg)
+ 	if (WARN_ON_ONCE(atomic_read(&blkg->use_delay) < 0))
+ 		return;
+ 	if (atomic_add_return(1, &blkg->use_delay) == 1)
+-		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_inc(&blkg->blkcg->congestion_count);
+ }
+ 
+ static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
+@@ -399,7 +401,7 @@ static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
+ 	if (old == 0)
+ 		return 0;
+ 	if (old == 1)
+-		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_dec(&blkg->blkcg->congestion_count);
+ 	return 1;
+ }
+ 
+@@ -418,7 +420,7 @@ static inline void blkcg_set_delay(struct blkcg_gq *blkg, u64 delay)
+ 
+ 	/* We only want 1 person setting the congestion count for this blkg. */
+ 	if (!old && atomic_try_cmpxchg(&blkg->use_delay, &old, -1))
+-		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_inc(&blkg->blkcg->congestion_count);
+ 
+ 	atomic64_set(&blkg->delay_nsec, delay);
+ }
+@@ -435,7 +437,7 @@ static inline void blkcg_clear_delay(struct blkcg_gq *blkg)
+ 
+ 	/* We only want 1 person clearing the congestion count for this blkg. */
+ 	if (old && atomic_try_cmpxchg(&blkg->use_delay, &old, 0))
+-		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_dec(&blkg->blkcg->congestion_count);
+ }
+ 
+ /**
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 293af7f8a694..ae04035b6cbe 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -539,9 +539,6 @@ struct cgroup {
+ 	/* used to store eBPF programs */
+ 	struct cgroup_bpf bpf;
+ 
+-	/* If there is block congestion on this cgroup. */
+-	atomic_t congestion_count;
+-
+ 	/* Used to store internal freezer state */
+ 	struct cgroup_freezer_state freezer;
+ 
+-- 
+2.34.1
+
 
