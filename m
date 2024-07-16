@@ -1,115 +1,205 @@
-Return-Path: <linux-kernel+bounces-253374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3255932035
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5973B93203A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC22283EA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A79A1B22860
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37621B80F;
-	Tue, 16 Jul 2024 05:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34BE1B947;
+	Tue, 16 Jul 2024 05:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Kfz2fJX8"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D103A17BAA;
-	Tue, 16 Jul 2024 05:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bin38Phh"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72EA17C91
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721109160; cv=none; b=ZsOvzRvWNeclzzEnPlewS3X2d5jEkSgtKjENneyRso8BN576tQHUO8ScrGDqZzYKvkAD/uyu4xkbZLBPmn3DQOpCq2z3ZOvM46UImdTLAtMh5081fy3oNV6KKVm/Hhnl8Db+EdHrqbNiW/s4a1rg81zup/GbeuaY9u7LAnB716M=
+	t=1721109270; cv=none; b=i+/Rlmw+D0Q1VQAhfNSPz7UNw6qU3PnNOEduotSptgsyyOaLtPE//KPEVWCIsngHGSAdncUdiyVaUmTe7D0TiIV3H+N5Y9SbJtWvIHqLtTFpJ4uOnim3Wx5S0CUMZ9KkSYjMydvpqz/vz7pwBr39I25OAmfTTcRjALni5FYpzlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721109160; c=relaxed/simple;
-	bh=lxA/bOoTsrzGF5ZrrKJOhVVAsW6vWLK5zIiPznI1C88=;
+	s=arc-20240116; t=1721109270; c=relaxed/simple;
+	bh=8SWh3YsFQcByki1FvXThWtAwdidMLruKFc3hekCFPe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N50j0B7AiR+RtBhAP1debn8JEBzHpxhE6CW+qTMuI5EhAztihR4O92GPbbKzoRNV811LrMvtB2tCwLyvyeTqmd0mk0n3NMQ+pH1zxpUa8zzKykFOgw766Xks+g/1tJMIt0CnjuuxRqroFap0CSS0KEjCltJwqEGKDwUbEMyg1oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Kfz2fJX8; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 5AB2820B7165; Mon, 15 Jul 2024 22:52:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5AB2820B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721109158;
-	bh=0Ma31MmB44D6lO+VmB474XyxCD3bBumrQiidhEUKV88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kfz2fJX8n5tY4xcbOx8uFBhU5ckHsjNwX7GZIQKFg1GNpQGUHmB2B+6FvZO3EgDlp
-	 5a/bcv96jpLylmbIYWeWR2OolcZcaVN8yJxe4kEOE64dsz+396W618Q/wgrAd/rlIw
-	 7lx5XUb3QeoShbBkIJDw0BV8evL3D9nCu8AJkuLg=
-Date: Mon, 15 Jul 2024 22:52:38 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Ajay Sharma <sharmaajay@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>
-Subject: Re: [PATCH net-next] net: mana: Implement
- get_ringparam/set_ringparam for mana
-Message-ID: <20240716055238.GC16469@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1721014820-2507-1-git-send-email-shradhagupta@linux.microsoft.com>
- <20240715064551.6036d46b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uni5z74XHt3ah5wPptSiC9BiYcPK+/Z5QlwScM78w5qWRGLEZNGQyQVAMPl6pzhmtGGFLIXJNogz4YIWmIw2j/zpaL2E9fyij4gd+PnCC+QPTO3UTnYkL/yCOvJ1B6mVwNKsH6ej2u5s/I8dfNlghvzvtpcUn473nrZCbBZ/pFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bin38Phh; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-75c5bdab7faso2658936a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721109267; x=1721714067; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j5Rz5pUnmzAdXYXomrqcCRUBtbJFIpPghAcemVOy+KE=;
+        b=Bin38Phh/YO4wP/ycVDtJnLhtZUmQc5HRpqIjFTQCetmN9R9Gz561cslSDnHxn+avn
+         8WASst5DssPGJRPrFIgqJY98vofVSg1G5jOyvxTHClqC1JvbatJeysYmq2ib/jstT5uU
+         p1FkAfKs6BQejf5/iT2pR/3E4rq4NH8vQJzrAwU1zxCksA95oJG0wnn+kswPFoi5RnTo
+         t4SNQ5v8X8DI4RSX1P9SHGz84siD7ugr9PYZrvr765THrCoBgB3iCiLFqzIKD6YMZjER
+         6w9mk23TC4y/eY6PgPG3SKmw6jcrgtabUcbnoiaRQSCSVZpl8D2ZA3RHCajU/TtUWnjO
+         EAXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721109267; x=1721714067;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5Rz5pUnmzAdXYXomrqcCRUBtbJFIpPghAcemVOy+KE=;
+        b=BkHTSLWj/s4/22WmoNNyI8ISaYm/tjG/8xHa7tMtIxx+V20+beZBV6HrlFmj5G2rnd
+         bHQO95eEohXCh7Mtn+Sr9va+sNr5T9lTzFJmpEHfWRJEQV2fLMepJfu4Zyrj+ny/OcvT
+         hgDviWnLdFPC1mpeeGdr1mj5YK0lcwRpbZJ5fgRW28aIxKdkwP3IIBG3ybsUMSPxcXx8
+         Oms9GVS3Er1tNYbaNc+h/NJPamcJrIzpJT/T7CIvUHQDkpn4TAURv4kycgPNyDqsSqHj
+         IdJiE1ATzxOyAegBM3iXR8TPO4FtjxVXAu9lJ8W71mz9bhYhPUb5XTDDDQk+ppM1tEH0
+         WFCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Tint9U0iDYfqJp6n3Hnotzb4QCMx255wx/mWu+iSZ8nMr1f9OUl6rmWRo7EQsuLiEmg82IT2AgnJ7EHhyLBh8mQ9XFjxht9xlOeY
+X-Gm-Message-State: AOJu0YwI4CDl+RnaKTgjdE6zWnsyX/L76wyFwrM0nuPdtqsS9y7PWzdD
+	K9qf/qS/ytVw7ihVzganFxsL74PsUxaD4MNGZrHIjCmGybYgTnMFfKnSuBMUkg==
+X-Google-Smtp-Source: AGHT+IHuG+uTfs6HPzYAk3BUQ13tmoIgfCaKYHZ7kdFOSweAVIAvws9TwolgArzopQbySBvmZoFtVg==
+X-Received: by 2002:a05:6a20:7348:b0:1c2:a3c7:47dd with SMTP id adf61e73a8af0-1c3f1271246mr1372239637.42.1721109266955;
+        Mon, 15 Jul 2024 22:54:26 -0700 (PDT)
+Received: from thinkpad ([220.158.156.207])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedcacf88sm5380644a91.55.2024.07.15.22.54.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 22:54:26 -0700 (PDT)
+Date: Tue, 16 Jul 2024 11:24:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 13/14] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+Message-ID: <20240716055421.GF3446@thinkpad>
+References: <20240715-pci-qcom-hotplug-v1-0-5f3765cc873a@linaro.org>
+ <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+ <dca49572-dc77-58df-1bd1-b0e897191c87@quicinc.com>
+ <20240716041827.GD3446@thinkpad>
+ <5f8218cb-a8d6-789a-8723-0af07353e432@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240715064551.6036d46b@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f8218cb-a8d6-789a-8723-0af07353e432@quicinc.com>
 
-On Mon, Jul 15, 2024 at 06:45:51AM -0700, Jakub Kicinski wrote:
-> On Sun, 14 Jul 2024 20:40:20 -0700 Shradha Gupta wrote:
-> > +	if (ring->rx_jumbo_pending) {
-> > +		netdev_err(ndev, "%s: rx_jumbo_pending not supported\n", __func__);
-> > +		return -EINVAL;
-> > +	}
-> > +	if (ring->rx_mini_pending) {
-> > +		netdev_err(ndev, "%s: rx_mini_pending not supported\n", __func__);
-> > +		return -EINVAL;
-> > +	}
+On Tue, Jul 16, 2024 at 09:54:54AM +0530, Krishna Chaitanya Chundru wrote:
 > 
-> I think that core already checks this
 > 
-> > +	if (!apc)
-> > +		return -EINVAL;
-> 
-> Provably impossible, apc is netdev + sizeof(netdev) so it'd have to
-> wrap a 64b integer to be NULL :|
-> 
-> > +	old_tx = apc->tx_queue_size;
-> > +	old_rx = apc->rx_queue_size;
-> > +	new_tx = clamp_t(u32, ring->tx_pending, MIN_TX_BUFFERS_PER_QUEUE, MAX_TX_BUFFERS_PER_QUEUE);
-> > +	new_rx = clamp_t(u32, ring->rx_pending, MIN_RX_BUFFERS_PER_QUEUE, MAX_RX_BUFFERS_PER_QUEUE);
-> > +
-> > +	if (new_tx == old_tx && new_rx == old_rx)
-> > +		return 0;
-> 
-> Pretty sure core will also not call you if there's no change.
-> If it does please update core instead of catching this in the driver.
+> On 7/16/2024 9:48 AM, Manivannan Sadhasivam wrote:
+> > On Tue, Jul 16, 2024 at 09:34:13AM +0530, Krishna Chaitanya Chundru wrote:
+> > > 
+> > > 
+> > > On 7/15/2024 11:03 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > 
+> > > > Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> > > > when an endpoint is attached to the SoC, users have to rescan the bus
+> > > > manually to enumerate the device. But this can be avoided by simulating the
+> > > > PCIe hotplug using Qcom specific way.
+> > > > 
+> > > > Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> > > > interrupt to the host CPUs. The device driver can use this event to
+> > > > identify events such as PCIe link specific events, safety events etc...
+> > > > 
+> > > > One such event is the PCIe Link up event generated when an endpoint is
+> > > > detected on the bus and the Link is 'up'. This event can be used to
+> > > > simulate the PCIe hotplug in the Qcom SoCs.
+> > > > 
+> > > > So add support for capturing the PCIe Link up event using the 'global'
+> > > > interrupt in the driver. Once the Link up event is received, the bus
+> > > > underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> > > > thus simulating hotplug.
+> > > > 
+> > > > All of the Qcom SoCs have only one rootport per controller instance. So
+> > > > only a single 'Link up' event is generated for the PCIe controller.
+> > > > 
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > ---
+> > > >    drivers/pci/controller/dwc/pcie-qcom.c | 55 ++++++++++++++++++++++++++++++++++
+> > > >    1 file changed, 55 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > index 0180edf3310e..38ed411d2052 100644
+> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > @@ -50,6 +50,9 @@
+> > > >    #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> > > >    #define PARF_Q2A_FLUSH				0x1ac
+> > > >    #define PARF_LTSSM				0x1b0
+> > > > +#define PARF_INT_ALL_STATUS			0x224
+> > > > +#define PARF_INT_ALL_CLEAR			0x228
+> > > > +#define PARF_INT_ALL_MASK			0x22c
+> > > >    #define PARF_SID_OFFSET				0x234
+> > > >    #define PARF_BDF_TRANSLATE_CFG			0x24c
+> > > >    #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> > > > @@ -121,6 +124,9 @@
+> > > >    /* PARF_LTSSM register fields */
+> > > >    #define LTSSM_EN				BIT(8)
+> > > > +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> > > > +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> > > > +
+> > > >    /* PARF_NO_SNOOP_OVERIDE register fields */
+> > > >    #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+> > > >    #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> > > > @@ -260,6 +266,7 @@ struct qcom_pcie {
+> > > >    	struct icc_path *icc_cpu;
+> > > >    	const struct qcom_pcie_cfg *cfg;
+> > > >    	struct dentry *debugfs;
+> > > > +	int global_irq;
+> > > >    	bool suspended;
+> > > >    };
+> > > > @@ -1488,6 +1495,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+> > > >    				    qcom_pcie_link_transition_count);
+> > > >    }
+> > > > +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > > > +{
+> > > > +	struct qcom_pcie *pcie = data;
+> > > > +	struct dw_pcie_rp *pp = &pcie->pci->pp; > +	struct device *dev = pcie->pci->dev;
+> > > > +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> > > > +
+> > > > +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> > > > +
+> > > > +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> > > > +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> > > > +		/* Rescan the bus to enumerate endpoint devices */
+> > > > +		pci_lock_rescan_remove();
+> > > > +		pci_rescan_bus(pp->bridge->bus);
+> > > There can be chances of getting link up interrupt before PCIe framework
+> > > starts enumeration and at that time bridge-> bus is not created and
+> > > cause NULL point access.
+> > > Please have a check for this.
+> > > 
+> > 
+> > Host bridge is enumerated during dw_pcie_host_init() and the IRQ handler is
+> > registered afterwards. So there is no way the 'pp->bridge' can be NULL.
+> > 
+> > - Mani
+> I leaved a gap between bridge-> & bus by mistake, I want to highlight
+> bridge->bus in above comment. The bus can be NULL and it can create NULL
+> point access.
 
-Thanks for the comments Jakub. I'll verify these and make the relevant changes in the next version
+How can the bridge->bus be NULL? Only if the bridge itself is not enumerated, it
+will be NULL. And that cannot happen unless something wrong with the controller
+itself. In that case, how can Link up event be generated?
 
-> 
-> Please keep in mind that net-next will be closed for the duration
-> of the merge window.
-Noted, Thanks.
+- Mani
 
-> -- 
-> pw-bot: cr
+-- 
+மணிவண்ணன் சதாசிவம்
 
