@@ -1,102 +1,92 @@
-Return-Path: <linux-kernel+bounces-254130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F0B932F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC6D932F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA991F23AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EBE1F20627
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888B41A00E6;
-	Tue, 16 Jul 2024 17:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505F61A00FD;
+	Tue, 16 Jul 2024 17:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY4ZkLpZ"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BWM6OdOD"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6DB19FA94;
-	Tue, 16 Jul 2024 17:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B8F19FA94;
+	Tue, 16 Jul 2024 17:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721152036; cv=none; b=RJ89FVuUGPnpYdOL55/t0tUBnJUQyTWzBT7lQOoqbCUiVi9oPxOQug+g6w+6cP587Knu1APGJ+hcafdSJzAKJ7Tq+lrWyfZAFwwNF1yFMV+MJyjAt5VRbxGG7hJINiYU8/l5Jkp9NsjTZsrzO+9qYlbNOWRaysbEybcAyzYs9Iw=
+	t=1721152481; cv=none; b=KfDy1fymICTROi7G8SUY4Gv8eQbg7s2qyM0pREflzFvbRbOwbKO/jZc7lNB9PDWWWqF81N/2hdEwCk2pVYwnpQnZifSbhfYu1AR2SQ6nW8UVR9w7uu/e+lD46xePRVjTrWF8eZ/0t9an2SdrUAxKzv6NJOZB0XH0QN/zh5moJHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721152036; c=relaxed/simple;
-	bh=zP6VZGFvNqh6vr2WndNyDJWCO94Nxi1jI+zWTjI1NW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e+mX2dhG9zA41LELiesnVDjxvRuMsXnNdiKApK457CwvlVZ1dfz63HTzn1VNg+hlQyJIN1XoXmxq3oBXZRkqDP4jYOBgqsVHIkOpVu4TqCZS52YfSXOsJTJMFddmkqmjKkgx74fk5eOaERHdySz5InJVjZtfG9HTbbAcC94VKSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QY4ZkLpZ; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so6048368276.1;
-        Tue, 16 Jul 2024 10:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721152034; x=1721756834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zP6VZGFvNqh6vr2WndNyDJWCO94Nxi1jI+zWTjI1NW8=;
-        b=QY4ZkLpZ3XP0NgdGZJLkHI/xbkjxpGFyq1I63K5AHemjcWK2E8QhoVm8HnGlTOmP/w
-         oMzVB0Gn3RJ0nFYaUO6o5rg/mnH7dGfTsSNh/WkyV3ZaZx2eNuTMN7Ps9XNB9myofGKV
-         uS9gRPxNNVDeLBWdo24NBVt5YN3PnOwNoF/dDlZ6lA+x719A/ZyEQKZ2hprrrw6AUdif
-         ef0H/FSE9Y8s4hx7k7MFNWFY+1FuuLHBleBrM/kTBLT8/NW7hcdahwh2y+9fNzOKJita
-         yenLedSklj/Dhpv6Cr0Cubd3uOITynGipiEANzf+iItN+Q5Dhelz6NcqDPEz5ehiMnPd
-         ccYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721152034; x=1721756834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zP6VZGFvNqh6vr2WndNyDJWCO94Nxi1jI+zWTjI1NW8=;
-        b=sQ9fJcLIsdCsZTBYY6rgu+kxIFgFaVarFhiV4KsOiErvZATorDe6NfoY34DVxQampl
-         LpNKSNqnw4/gWC9Cs9NO+cQlA2ygOxCLuVi7mQQ8xWMyIdEaZOelahjXY+QdK2qYtIGO
-         ATP86VqPVvUW9RMt8Ar7KiASRwNSSyQEN3JDSqGHH/CYamDw0KKErQF+zh5APa1oWu/Z
-         vE+ekLDlR0RvSD86Iqo9WiC5Kch3TlRot7vczyjQNqnMWa8/RzlytlJEHgFULLlwNJiH
-         3FiSHmZr78VDdBR44Eldnh8TAc8qUyIPfn+lBZbEUT8n49uJ+lCA0cyQ4NVZlt6XUwVm
-         fC5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXiaYQ/t330zuMYimJAdylRblDkrWlE+XRBswuVeAjSfOeGpzx0Z7s/cC18qTgtYiWxMUHSvrz7pZZIAumsMpb1rt/IX3a86BIcRDWQ
-X-Gm-Message-State: AOJu0Yy8Xc8xxc9Gk4O/c7pvoennr/7Ui3GE5vnBSiLY/Wl8syMhqgdI
-	OortYWHf6zovsxuSYo400D8v8t1vETQw2aVzeZ46fAiwJtVruvNP38rw6hLWD/BtwbrK3wfxOaN
-	mUaaxtJFMtEG2swk1ijCrEdJS6ZaqqnWdD/8=
-X-Google-Smtp-Source: AGHT+IHVOI0HSJi0zRPxvELEb2w+OnjZ3yJTvbCTUdAC9u98fwxF7zADV1Q4j7u0zTquMsEiV5uh2BP6gWBZ4FpYsoc=
-X-Received: by 2002:a25:83c4:0:b0:e03:6533:136d with SMTP id
- 3f1490d57ef6-e05d58044c4mr3376413276.40.1721152034314; Tue, 16 Jul 2024
- 10:47:14 -0700 (PDT)
+	s=arc-20240116; t=1721152481; c=relaxed/simple;
+	bh=prgjPxYij3SHyZHpzob8UsPYte+J2xXXXesa79k4KJI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mYg9toVTuqmp4dDehahAlDES8Hr6N7R5Hif1js5fAyHzSKJPmel8DbS9v8yt+B9ze7IyrlgfETNalX/fKawNxA9Nz/43RzWDZVgjRgfRxEaFwZP3NT4G/tPI5VpuWUfvIkfls+lCJpwQnfqEIrdRxVqhufCZuDxOUV/ZanKI1Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BWM6OdOD; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id D3594C0000E4;
+	Tue, 16 Jul 2024 10:47:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com D3594C0000E4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1721152049;
+	bh=prgjPxYij3SHyZHpzob8UsPYte+J2xXXXesa79k4KJI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BWM6OdODQlUfSYOS6Sw8LT+MMM3a7TcFGdn3NHt2X6T9ZJVEz2K/BSvr2p7NWtP2T
+	 dIdevqG9cT9+9U1q+TntRym7i8YSKa1R8D3zufLa5BxAl2S0AmwO1gLHnckFyoXAdp
+	 tzXFxoakoZkUk3Rpra/Gl3m9rPbSEnB+Gu73AsyQ=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 5E6D618041CAC4;
+	Tue, 16 Jul 2024 10:47:27 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Florian Klink <flokli@flokli.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] ARM: dts: bcm283x: Fix hdmi hpd-gpio pin
+Date: Tue, 16 Jul 2024 10:47:29 -0700
+Message-Id: <20240716174729.197020-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240715230311.685641-1-flokli@flokli.de>
+References: <20240715230311.685641-1-flokli@flokli.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240713211620.1125910-1-paweldembicki@gmail.com> <20240713223629.ncgkw4cg6blakv2e@skbuf>
-In-Reply-To: <20240713223629.ncgkw4cg6blakv2e@skbuf>
-From: =?UTF-8?Q?Pawe=C5=82_Dembicki?= <paweldembicki@gmail.com>
-Date: Tue, 16 Jul 2024 19:47:03 +0200
-Message-ID: <CAJN1KkwWx3rHj5+VeLCJu74U2HWhsKBhn05pp2SjF=1JhKAKbg@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 00/12] net: dsa: vsc73xx: Implement VLAN operations
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	UNGLinuxDriver@microchip.com, Russell King <linux@armlinux.org.uk>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-niedz., 14 lip 2024 o 00:36 Vladimir Oltean <olteanv@gmail.com> napisa=C5=
-=82(a):
->
-> On Sat, Jul 13, 2024 at 11:16:06PM +0200, Pawel Dembicki wrote:
-> > This patch series is a result of splitting a larger patch series [0],
-> > where some parts was merged before.
->
-> It is a good day for this driver. Thanks for your perseverence with this.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-It's a small step for the kernel but a big one for me. I'm glad that
-we managed to finalize this series of patches. I want to thank
-everyone for their help and the many valuable lessons. Especially you,
-Vladimir, for your immense patience and willingness to help.
+On Tue, 16 Jul 2024 02:03:11 +0300, Florian Klink <flokli@flokli.de> wrote:
+> HDMI_HPD_N_1V8 is connected to GPIO pin 0, not 1.
+> 
+> This fixes HDMI hotplug/output detection.
+> 
+> See https://datasheets.raspberrypi.com/cm/cm3-schematics.pdf
+> 
+> Signed-off-by: Florian Klink <flokli@flokli.de>
+> ---
+
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/fixes, thanks!
+--
+Florian
 
