@@ -1,243 +1,116 @@
-Return-Path: <linux-kernel+bounces-253337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B0E931FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0978931FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988F71C21164
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FBE282619
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463EE1429B;
-	Tue, 16 Jul 2024 04:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B205617550;
+	Tue, 16 Jul 2024 04:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rFr9xsfD"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DQv1XXnl"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA32D17550
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4358B23B0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721104142; cv=none; b=vEBDhat4xegHivGD+S+imGao2eIvUFgTC4UsZaRBcFVxzSLFspnxDv/K6FVvA8aDjWD19U1+lMxRIOqrrmdSrUO3YnNwYgi4xFf/HFfBxGwuZLdo23gL4OFli1SVP7AEMaMghBFMgKLn4dY+zau+SQNEzJIZUHbjGNRESElxW3M=
+	t=1721104197; cv=none; b=rYZfCUc4azRu+EdV5zfQg9sXyalTxfRT33qc7uHCbKm73IVaQdK71VSU6iHp+OInFY4RhA4pxnKI7djQqhgJsUJlfP8UD6mIUzG0f4JC10jpJoUgPWpuCGLedaF0QfGb3FLxXRr1moyoIbJIbT3dN5LmRRVFwgbvN8pZ3A1AwSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721104142; c=relaxed/simple;
-	bh=4Gi9EsuLgBZmH7h9xoX/wphIaCIqAVbRY7tbzzhbcYA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L9txV+1ajLc73aMTip8dbLalAojFjHZCDjW3Du1wraG5/JquxHQzpjQ2Yf3pQ7vEMuIKYAaDY44d1Ox++ZxUtQYjcWJlQSuJy0u+CPZEfwqRFVGa5QUrcpjy3ivrF/8jril7tIex4VRBgorvUUhWzoFPWTZ3H4uuW4FqfGJcKTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rFr9xsfD; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6522c6e5ed9so97995107b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:29:00 -0700 (PDT)
+	s=arc-20240116; t=1721104197; c=relaxed/simple;
+	bh=Fxaw7Ng7X6+7vJdzrKhj430hol4ifALArDkQpc2cjpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M/ism2NTYhT/9sfqtWZ0ZkoqeGn6M9brOGJp4nB+/SOZcMCFcgYfXY5ALgKatrm/v4p6C9nZ/lgdyCTc9oWsaXY2GsSgC8qwr8DWvKDuF574pReDDw8RZWbC1UG5mYPbwXUk3+ebTZ2VuPEu/P+T06+KJuw473hiPxjFa9DRYiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DQv1XXnl; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77d9217e6fso578586666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721104140; x=1721708940; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pt2IJQldOz0JFDryR35KpZ+LDeTPQpPCV34EnsUw17k=;
-        b=rFr9xsfDWd3+jEvYiRE1RRFbKFm3Hq9uQnBfqqQxQEBKBrBbEZI/iy9bMulm/7l54C
-         GOaYq/GSwey/uFtMDzRChmlaANAbY5Ovmbqzosn4vG0XIEXQexH0V1jYG8VNxCKxIJDg
-         gi4GzyerIGXC0yI14oA8jU2OxfskPlCqhlDEnX95LP/8rwLaublfKicj0MYme7gIVZDK
-         GeUzdO+bmU6DOCTZbeasH1IFzb9TI8mIHqPgs/4l/wdN2KzyEuAI+kH1rUZcpQOLYylq
-         geoPXU6HAqLQPFj+q2vfhUjAvKb0irPxJXhi7yiZi2EEYkV9v0AlPt6tU5RhbLL7K9DU
-         /u3Q==
+        d=linux-foundation.org; s=google; t=1721104193; x=1721708993; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iubjZBekOpPoOdvguIEUCzz0zvPcWVts706zRXNeNzw=;
+        b=DQv1XXnlfp5iHcf83CSoCPTgHbQa5eomip02DQCGgXMn15FoHbDAUnkU0c+8zRuCba
+         ZMPlYvR5ka2rXpWD8cWz1GYxI5C8/7UwKM6TcIfvNYHpC5g2HOdg5V66Moy4c6bzZMaa
+         gTsNenYA+pBqf/nCdHO3cjnnD/7+jB6BWXVfY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721104140; x=1721708940;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pt2IJQldOz0JFDryR35KpZ+LDeTPQpPCV34EnsUw17k=;
-        b=GfOQylceBThY06Qmy7H1GALSnUlAo1QyNlUltouP4qTKdYcU/H6aQfbMeUEMPCt/Us
-         xZn57b6QnFQe4zvKJXluYkf+TipJ2dNL9Egdly0MgnW04VLoBJNP0j+3MsEUCWTw2cmZ
-         AFq4IoZLDdT4U6/JhDExGAbEpzUucJOWTwLygYYckjR1noAOISvEqh4/PNTwTDVBzWPL
-         9x6UThtixRcHEFelNrAw2b3YXvyiFEfXS1zw3zoi88KvUxwh1k1LHdXUJKXWrLFudojs
-         SxeVkP6SrRc6fEbCiq1umJfuEvfihTTUveZMug349vTgJ3nTDADm3XZ10ZbeaU8ngNca
-         A2eA==
-X-Gm-Message-State: AOJu0Yw5L1LTG442IHt/fE3WyCzdFwbdThfwStsP4pIkdWhCDw1CXKah
-	zNRFnYEIpvTSv+w17tjj9fEXRsAz14ONczoP8tJ0m0Xw2h9anIH+pLRC8FGzZpfrscvKsw6P8ul
-	vx6TosnF/Pw==
-X-Google-Smtp-Source: AGHT+IEDUsoHRwY3Md2RBRvkyGLpUtH0lWc1gjEYWBrr7ZUoAYArK3I1k9Ht/aQJYwv2CfEx1ZkP97e56n6zIQ==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:690c:fd4:b0:62d:cef:67dd with SMTP id
- 00721157ae682-6637f1c259emr508367b3.1.1721104139877; Mon, 15 Jul 2024
- 21:28:59 -0700 (PDT)
-Date: Tue, 16 Jul 2024 04:28:54 +0000
-In-Reply-To: <000000000000601513061d51ea72@google.com>
+        d=1e100.net; s=20230601; t=1721104193; x=1721708993;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iubjZBekOpPoOdvguIEUCzz0zvPcWVts706zRXNeNzw=;
+        b=WBbg/N3Rv0jvfrKOL7HAKTmLlgu4GoJqjSKPUrotdCANsrv/SLogOHXnChdCFG4inn
+         xViVkhSUzFRGAX4gldstamlRYZ4eb62HCbFkAjzu3gdWjHY0eKHdbzKdSsD1SolO7M/F
+         A7dFF41WGLwvBrmfSi50hLcsHmrWnlsHDV1Pwc2JXmswxj2ilH/wKTaYZongDaMST2N2
+         6KTfiYjUHdOUlR3hoNx8gSJSsn8xpyUybVqhAItQa6iOob0bsybFMHXxtdkB4uU6qIm4
+         CifUGCu27JVwvjOppE68q84Zjo2+5N4gRrF3cuDigbYWzJK96Sk0SrJonmI65aQdZqHv
+         y1qg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5hzScofZQuB2vognnvn7cHmHyip89Jd/9lqYXBTAQPGirDpJigrMLnDAkQVyEkDEeFwxsUHdgDhXu7auSrrs9QIbpezxx54K/7wuj
+X-Gm-Message-State: AOJu0Yz49dfUlYd483p0BCDWZhaZrqv7pZ36ooPcTnyskwkhA8OURtj1
+	gYzYRm2j/4KPYn6fgKcmpNGyWC/LWYdx+hNL/WKNkLNy2hXd4A5UguurZDrTer0N4h2s7q8KQRI
+	tOhkkbg==
+X-Google-Smtp-Source: AGHT+IFc/QbHmoQflQgLmo9EjLnf2+JTBTHovKbnwiwZ9/g3STsWqqMfeNRBp/Utl093B6kB88sAxQ==
+X-Received: by 2002:a17:906:374d:b0:a79:8318:288f with SMTP id a640c23a62f3a-a79ea43ac5emr52012966b.16.1721104193381;
+        Mon, 15 Jul 2024 21:29:53 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc80101fsm268392666b.179.2024.07.15.21.29.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 21:29:52 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso6718782a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:29:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQXjOpfnIwL6yUfIVFHiMteYAUbAfxmNOvY9u8FJGN0xCXcUmbAklkyzebxSol0Oo/yBlnNMgZv8rarh+yibdh2uCupB/Yioay3G+9
+X-Received: by 2002:a05:6402:234d:b0:57a:1e0a:379f with SMTP id
+ 4fb4d7f45d1cf-59eee832048mr631175a12.16.1721104191819; Mon, 15 Jul 2024
+ 21:29:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <000000000000601513061d51ea72@google.com>
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240716042856.871184-1-cmllamas@google.com>
-Subject: [PATCH] binder: fix descriptor lookup for context manager
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	syzkaller-bugs@googlegroups.com, stable@vger.kernel.org, 
-	syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com
+MIME-Version: 1.0
+References: <20240712091008.14815-1-brgl@bgdev.pl> <CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 15 Jul 2024 21:29:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjcO_9dkNf-bNda6bzykb5ZXWtAYA97p7oDsXPHmMRi6g@mail.gmail.com>
+Message-ID: <CAHk-=wjcO_9dkNf-bNda6bzykb5ZXWtAYA97p7oDsXPHmMRi6g@mail.gmail.com>
+Subject: Re: [GIT PULL] power sequencing updates for v6.11-rc1
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-In commit 15d9da3f818c ("binder: use bitmap for faster descriptor
-lookup"), it was incorrectly assumed that references to the context
-manager node should always get descriptor zero assigned to them.
+On Mon, 15 Jul 2024 at 19:17, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hmm. Let's see how this all works out, but I already found an annoyance.
 
-However, if the context manager dies and a new process takes its place,
-then assigning descriptor zero to the new context manager might lead to
-collisions, as there could still be references to the older node. This
-issue was reported by syzbot with the following trace:
+.. and another one.
 
-  kernel BUG at drivers/android/binder.c:1173!
-  Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-  Modules linked in:
-  CPU: 1 PID: 447 Comm: binder-util Not tainted 6.10.0-rc6-00348-g31643d84b8c3 #10
-  Hardware name: linux,dummy-virt (DT)
-  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : binder_inc_ref_for_node+0x500/0x544
-  lr : binder_inc_ref_for_node+0x1e4/0x544
-  sp : ffff80008112b940
-  x29: ffff80008112b940 x28: ffff0e0e40310780 x27: 0000000000000000
-  x26: 0000000000000001 x25: ffff0e0e40310738 x24: ffff0e0e4089ba34
-  x23: ffff0e0e40310b00 x22: ffff80008112bb50 x21: ffffaf7b8f246970
-  x20: ffffaf7b8f773f08 x19: ffff0e0e4089b800 x18: 0000000000000000
-  x17: 0000000000000000 x16: 0000000000000000 x15: 000000002de4aa60
-  x14: 0000000000000000 x13: 2de4acf000000000 x12: 0000000000000020
-  x11: 0000000000000018 x10: 0000000000000020 x9 : ffffaf7b90601000
-  x8 : ffff0e0e48739140 x7 : 0000000000000000 x6 : 000000000000003f
-  x5 : ffff0e0e40310b28 x4 : 0000000000000000 x3 : ffff0e0e40310720
-  x2 : ffff0e0e40310728 x1 : 0000000000000000 x0 : ffff0e0e40310710
-  Call trace:
-   binder_inc_ref_for_node+0x500/0x544
-   binder_transaction+0xf68/0x2620
-   binder_thread_write+0x5bc/0x139c
-   binder_ioctl+0xef4/0x10c8
-  [...]
+On my Altra box, commit 8fb18619d910 ("PCI/pwrctl: Create platform
+devices for child OF nodes of the port node") causes annoying messages
+at bootup:
 
-This patch adds back the previous behavior of assigning the next
-non-zero descriptor if references to previous context managers still
-exist. It amends both strategies, the newer dbitmap code and also the
-legacy slow_desc_lookup_olocked(), by allowing them to start looking
-for available descriptors at a given offset.
+  pci 000c:00:01.0: failed to populate child OF nodes (-22)
+  pci 000c:00:02.0: failed to populate child OF nodes (-22)
+  .. repeat for every PCI bridge ..
 
-Fixes: 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
-Cc: stable@vger.kernel.org
-Reported-and-tested-by: syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/000000000000c1c0a0061d1e6979@google.com/
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binder.c  | 15 ++++++---------
- drivers/android/dbitmap.h | 16 ++++++----------
- 2 files changed, 12 insertions(+), 19 deletions(-)
+for no obvious reason.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index f26286e3713e..905290c98c3c 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -1044,13 +1044,13 @@ static struct binder_ref *binder_get_ref_olocked(struct binder_proc *proc,
- }
- 
- /* Find the smallest unused descriptor the "slow way" */
--static u32 slow_desc_lookup_olocked(struct binder_proc *proc)
-+static u32 slow_desc_lookup_olocked(struct binder_proc *proc, u32 offset)
- {
- 	struct binder_ref *ref;
- 	struct rb_node *n;
- 	u32 desc;
- 
--	desc = 1;
-+	desc = offset;
- 	for (n = rb_first(&proc->refs_by_desc); n; n = rb_next(n)) {
- 		ref = rb_entry(n, struct binder_ref, rb_node_desc);
- 		if (ref->data.desc > desc)
-@@ -1071,21 +1071,18 @@ static int get_ref_desc_olocked(struct binder_proc *proc,
- 				u32 *desc)
- {
- 	struct dbitmap *dmap = &proc->dmap;
-+	unsigned int nbits, offset;
- 	unsigned long *new, bit;
--	unsigned int nbits;
- 
- 	/* 0 is reserved for the context manager */
--	if (node == proc->context->binder_context_mgr_node) {
--		*desc = 0;
--		return 0;
--	}
-+	offset = (node == proc->context->binder_context_mgr_node) ? 0 : 1;
- 
- 	if (!dbitmap_enabled(dmap)) {
--		*desc = slow_desc_lookup_olocked(proc);
-+		*desc = slow_desc_lookup_olocked(proc, offset);
- 		return 0;
- 	}
- 
--	if (dbitmap_acquire_first_zero_bit(dmap, &bit) == 0) {
-+	if (dbitmap_acquire_next_zero_bit(dmap, offset, &bit) == 0) {
- 		*desc = bit;
- 		return 0;
- 	}
-diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
-index b8ac7b4764fd..1d58c2e7abd6 100644
---- a/drivers/android/dbitmap.h
-+++ b/drivers/android/dbitmap.h
-@@ -6,8 +6,7 @@
-  *
-  * Used by the binder driver to optimize the allocation of the smallest
-  * available descriptor ID. Each bit in the bitmap represents the state
-- * of an ID, with the exception of BIT(0) which is used exclusively to
-- * reference binder's context manager.
-+ * of an ID.
-  *
-  * A dbitmap can grow or shrink as needed. This part has been designed
-  * considering that users might need to briefly release their locks in
-@@ -132,16 +131,17 @@ dbitmap_grow(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
- }
- 
- /*
-- * Finds and sets the first zero bit in the bitmap. Upon success @bit
-+ * Finds and sets the next zero bit in the bitmap. Upon success @bit
-  * is populated with the index and 0 is returned. Otherwise, -ENOSPC
-  * is returned to indicate that a dbitmap_grow() is needed.
-  */
- static inline int
--dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
-+dbitmap_acquire_next_zero_bit(struct dbitmap *dmap, unsigned long offset,
-+			      unsigned long *bit)
- {
- 	unsigned long n;
- 
--	n = find_first_zero_bit(dmap->map, dmap->nbits);
-+	n = find_next_zero_bit(dmap->map, dmap->nbits, offset);
- 	if (n == dmap->nbits)
- 		return -ENOSPC;
- 
-@@ -154,9 +154,7 @@ dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
- static inline void
- dbitmap_clear_bit(struct dbitmap *dmap, unsigned long bit)
- {
--	/* BIT(0) should always set for the context manager */
--	if (bit)
--		clear_bit(bit, dmap->map);
-+	clear_bit(bit, dmap->map);
- }
- 
- static inline int dbitmap_init(struct dbitmap *dmap)
-@@ -168,8 +166,6 @@ static inline int dbitmap_init(struct dbitmap *dmap)
- 	}
- 
- 	dmap->nbits = NBITS_MIN;
--	/* BIT(0) is reserved for the context manager */
--	set_bit(0, dmap->map);
- 
- 	return 0;
- }
--- 
-2.45.2.993.g49e7a77208-goog
+FWIW, -22 is -EINVAL.
 
+            Linus
 
