@@ -1,78 +1,110 @@
-Return-Path: <linux-kernel+bounces-254184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BAF932FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:30:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7C4932FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD9CB22128
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11691F23288
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB6A1A0714;
-	Tue, 16 Jul 2024 18:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3B81A01A1;
+	Tue, 16 Jul 2024 18:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jn+XJk16"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3CUcyJc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66561A0702
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD171643A;
+	Tue, 16 Jul 2024 18:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721154620; cv=none; b=LM5iMFwP+nWH+t36U/CwSLKuvnD/4MJZYz7qYsB4BPj3Kyw7FjVG2ptLDFXaz/0drny4xAn+5v09mZSVg/+50axSG0Ny7BcnyFWiYJXPOMPOHcMBjTKmceD/lz2yRePX0MQhqcBrWvKA9k/e7XwkIKNX6P2ENShGrnQXO7O6JEM=
+	t=1721154746; cv=none; b=cCH9lsamekDjwmSfA5P6/cAeVx6samGWqLbiIa4sZBnK4sPkwnbLh00zPFxChIBsVlRvC8EQUYGP+fp8XwcULKc+lBzY3YCvv8h/SaJhQZq/k8lSog9HoVTvH9CeSWqktVFXNyfZaQ3P3671gmIcL3YF2M52qqJDF1FNFTszza4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721154620; c=relaxed/simple;
-	bh=nJfAx9vqSqvm6w/41vXyFmij3+9nKbqd1cfuivXg0+k=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pPdakrb6mvJniWrq9yHROJRdwDkkQ0ZlkJbWDUIVOPqiJDYOWsx7jYvCCUVd6eBZIqxvCsyJ/Ytp5xCHMjLgXL+LgaTHXxsG2q3qvR24w4Xh+fnK8EWnk4fnbkyg83pPTIsrRUyJ/eUjIz3PlyVbFlxjJgHEc1Y+rxoK5QTLM/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jn+XJk16; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2AE9C4AF0F;
-	Tue, 16 Jul 2024 18:30:19 +0000 (UTC)
+	s=arc-20240116; t=1721154746; c=relaxed/simple;
+	bh=GCyw3wZavAMC99QfaxVM5H72XYf2IXkOHKGfTxLKjDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UkeS6ElSIydo0gbHKeNnFfiRjE0iq3IRHNALVBbO9PY96/PDLaaBuavyUSSwgWxzLzOGQIXkDR9hL82HobCr9n3LyZZx5LYfXSbAZGgDF8U0+NZQBFc4uWjY081z/eJ271UhffuQ+/7Mu7AFBgZCDpfnCYyzx/mPKmxRY/6AOk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3CUcyJc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8324EC116B1;
+	Tue, 16 Jul 2024 18:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721154619;
-	bh=nJfAx9vqSqvm6w/41vXyFmij3+9nKbqd1cfuivXg0+k=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jn+XJk16qhzRNZE4nRMXU2N9Cl1z4QM9YQiRWipNw/MieN6eMedPXP+FHwsdAAes6
-	 HjO2qIfZV3bHad5x7INkskfzt5YEMBpwnvJoqNtEtzw3539zB5+aYNBwptFk/H1xs5
-	 LKkhY/wPNmf8I1s4wjBgSDosDFt52S184sSK00I7ImlB9myXzz+P7vXA686Q6zt0KL
-	 vte6PN/VgcFR8+eNdoQ0EdMQJ5n1Py44w51ZkY2PvDw6Q7jmqr84fqEshxPz5WvJ2H
-	 d6lqPCexbSILIPJiBE/F4Flz8JE+2jJyXNubc2Ejs09nt6vtwblSx4AendabZnvx8T
-	 iHkIYH8U+4z8Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B0718C43336;
-	Tue, 16 Jul 2024 18:30:19 +0000 (UTC)
-Subject: Re: [GIT PULL] x86/sev for v6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240716095557.GAZpZDrdC3HA0Zilxr@fat_crate.local>
-References: <20240716095557.GAZpZDrdC3HA0Zilxr@fat_crate.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240716095557.GAZpZDrdC3HA0Zilxr@fat_crate.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_v6.11_rc1
-X-PR-Tracked-Commit-Id: 5fa96c7ab3dc666c2904a35895635156c17a8f05
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 408323581b722c9bd504dd296920f392049a7f52
-Message-Id: <172115461971.31841.17750263413718145343.pr-tracker-bot@kernel.org>
-Date: Tue, 16 Jul 2024 18:30:19 +0000
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1721154745;
+	bh=GCyw3wZavAMC99QfaxVM5H72XYf2IXkOHKGfTxLKjDw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b3CUcyJcRgnmsLwZyI6oQxHUVztGAgrD79TQzlX9xayt1o7WFanNNxaR3zQw56R3N
+	 +R/JMuG9vb9y88Wy7iuUYDm0FjEjfj2QGbcQnjNnSopaMFeXMl8bZTwwjWx4N/KFSl
+	 phweh2r/FZBOUbUIB+yQhffQUetxJcFCM4R9sNs79jdzAQR5vC/iQC66Imokzi9D9e
+	 +F+p6XYkkYTgdGQ03Sqj1qXOuh0XzyIAXcGEkY6Q7eVXfSTAvoOEQC+dYCTQy6Quvt
+	 heuyl1q/36x7sq/ep5Lo1JKqmBUCFBvqjH3BMoiL6a9ZR4vAJUyobtwdjnhr7kMbIP
+	 Hpz+jRYZ5IbaQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	shawnguo@kernel.org,
+	linux-spi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.9 01/11] spi: imx: Don't expect DMA for i.MX{25,35,50,51,53} cspi devices
+Date: Tue, 16 Jul 2024 14:31:45 -0400
+Message-ID: <20240716183222.2813968-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.9
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Tue, 16 Jul 2024 11:55:57 +0200:
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_v6.11_rc1
+[ Upstream commit ce1dac560a74220f2e53845ec0723b562288aed4 ]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/408323581b722c9bd504dd296920f392049a7f52
+While in commit 2dd33f9cec90 ("spi: imx: support DMA for imx35") it was
+claimed that DMA works on i.MX25, i.MX31 and i.MX35 the respective
+device trees don't add DMA channels. The Reference manuals of i.MX31 and
+i.MX25 also don't mention the CSPI core being DMA capable. (I didn't
+check the others.)
 
-Thank you!
+Since commit e267a5b3ec59 ("spi: spi-imx: Use dev_err_probe for failed
+DMA channel requests") this results in an error message
 
+	spi_imx 43fa4000.spi: error -ENODEV: can't get the TX DMA channel!
+
+during boot. However that isn't fatal and the driver gets loaded just
+fine, just without using DMA.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Link: https://patch.msgid.link/20240508095610.2146640-2-u.kleine-koenig@pengutronix.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/spi/spi-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 09b6c1b45f1a1..09c676e50fe0e 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -1050,7 +1050,7 @@ static struct spi_imx_devtype_data imx35_cspi_devtype_data = {
+ 	.rx_available = mx31_rx_available,
+ 	.reset = mx31_reset,
+ 	.fifo_size = 8,
+-	.has_dmamode = true,
++	.has_dmamode = false,
+ 	.dynamic_burst = false,
+ 	.has_targetmode = false,
+ 	.devtype = IMX35_CSPI,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
