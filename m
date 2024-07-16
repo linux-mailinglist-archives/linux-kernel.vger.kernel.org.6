@@ -1,138 +1,168 @@
-Return-Path: <linux-kernel+bounces-253442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8387B932163
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:44:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736CF932166
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6421C21083
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:44:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15271F21CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6443BB59;
-	Tue, 16 Jul 2024 07:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EC244375;
+	Tue, 16 Jul 2024 07:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnymz5oF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ks+5ixS7"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535C4D8B0;
-	Tue, 16 Jul 2024 07:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398D364A4;
+	Tue, 16 Jul 2024 07:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721115879; cv=none; b=dNEuWxhKnFzs+Et+sa3DiJ0wUoHhwgYYEgVU0uJJ6XzWreltmoUjYeKqvXufmgWaJFDv7A4OKGZZOvyJ7kwyD7n7a7kVVg3Gxx3EnNIk+i1bcRZySa/79c0rcpbQEvRjpmBCMh+LlTc3eGvKJNXcbUH/Uk1iIaQyTKO7Zig85rU=
+	t=1721115901; cv=none; b=uRO7OzaEnPfosw+eJKEKqX4PsI5DlcMcuRCKzadyFFSGIB/bgI+I9Z+9bElYfs5s38zwzKjgy9MN7JIsbmwUa6Z8dBYNQ2JtEdfGbzhmg68re0xAwszpO5YaTKpFnbK9DrYxOhlR4KgDiVhq7a2FdEpAYaYuO1kJh8276AJLjBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721115879; c=relaxed/simple;
-	bh=vrL/1VRskB8sKM6OA1bB/gSuqAGDsJIpQJbxICgDIg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CpebMn2yG9+3t7+KYItbkz1aFZomEH22tUhNI8ejUHoI1K1gSwrNzm5xErag3JZ+0b5fvwjnhq2yid/n13GasZSB0obdhhFdg1Iy3epoz+o5hDw/FfERN54qsXTmr9SfQfcKyBdJreqLHuzotMUBXntGkwp7YHTiZvzatsjbEF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnymz5oF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCA6C116B1;
-	Tue, 16 Jul 2024 07:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721115878;
-	bh=vrL/1VRskB8sKM6OA1bB/gSuqAGDsJIpQJbxICgDIg0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bnymz5oFxvKJ952m6QCt7BJumHC4o5CUIPvYqqcp2L4OYOozoOJwV/r+zJs/1o7ME
-	 avixkfuy6ECvu8nw6S+6MxiL2GFJqMs9CPv8kJoSOwDoVi0He8pmGElzITpyfz6CH8
-	 h13OVKj42NeY7L4fx0hRDSGmA4XeAKPQqoCWyMbzzNlx6gXnVVJmdCmBdXukzy4XBb
-	 MawWggsA/cbpEyVPZNRR8DDlNRcp9WZu3HyVsVYRMi6UoF79wybWrSevRPLrjfPs6Q
-	 Ig041iuJFs5TNNrdmIMx9xMp3Gj4cttPHEkUDLPFeHnVsSzMVzfoZEgMyotqS2a+P2
-	 Ekp3oOgJlM5jQ==
-Message-ID: <01f041b5-8ae9-4f04-b5cd-22ad39f12da3@kernel.org>
-Date: Tue, 16 Jul 2024 09:44:31 +0200
+	s=arc-20240116; t=1721115901; c=relaxed/simple;
+	bh=LhvDWCz+qUg7uLWIVZVAd05xhIPqDLC5aQEUa5TAj/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lKLfISJUucSdnYMkdyBetrgOCWGezqzFyyIyMmGv4MArvEAbSL5mZ4SQYrFYG65Rj96+pWMo4XbhT7UBeW2sZmebeMtzdSOKIwJpxIRNyEOiqJBgkAxrTxJdXESX60mSgoLfA6eePjQNtmOg6EH9UtIeTvG1ErfjDnIsYcmDXEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ks+5ixS7; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-79110d8e459so1171964a12.0;
+        Tue, 16 Jul 2024 00:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721115899; x=1721720699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DbCWXGRuvzHfZO2VrOM/qCgFYRHsmheQfUlw+5FY2Pc=;
+        b=ks+5ixS7YShCohAwbHfLUL/AzfzwU0C25etVnqZ4X2m/wkQ8PSex+SlGYLnKaW3HXp
+         wqcn2oWvIl2z4QKZ+HZrMluQ4HRqrE/vFRf7GBApPjEk+6bcELnZsNmxSGnxLZV1WSsH
+         Wp7I43471Jus6WvBiVVwNpQwcnVg/Pzwm+n7RmwClVFrqpkxa3EJ4yQbCLlh9l9IFB5h
+         xC+p/SL4McMxUt2HOCe9VfTy9sZ/EbbS3bTgcXhiUSvnay+f1hoUb0gtQUGmTOea6l++
+         G86n8gmyWUgnIoHF1G3SYefIRqmzPDvvc4SzCzNMD0pcr2b5yoVQf/6M6lN1S2nuZ9OC
+         nggQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721115899; x=1721720699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DbCWXGRuvzHfZO2VrOM/qCgFYRHsmheQfUlw+5FY2Pc=;
+        b=okF4Nk1TNRI13K6VFZNYWFX0jI4UiDWgNS4rbdl7bbvpQFGEjdNACWPw+2o3VO2HUz
+         bNfSMEDSfSI2hvHJ1m3XglpVo04anD+gxNoYN42eAo6XDu9PLtN4aUJj8QIhmLEtsSae
+         EPp4h9ZU271pJq+lwbd+6ZDtHA3PFcSUcgjYnpaqJf2hhKjTZSbt5oFT/er0OPC9/noU
+         zV6i63mrRZXrmIz/FogPSkLkO9Fh2jjWdCJ1uUiTatMbIB4ZlTa0g5lqup5j5is5uv1e
+         7ZgZVQucfmGJlwpy3Ntat4+iG5jhIVu1lMmYmY1LLPpykckU84rFaqsNgKKa7wcyh9F6
+         +k9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVf0pOqWcPoUFb7uiIEEeqL9ZcNipmN9eC2DGYI0QMJvT437B0DuN1h5LMS5VO7lcT2Xl4RHSQbcNhkvX/QbeXN/R8JnXeCic5OaWwwroGxYCWMLOsCW27G0rSqgPMxI+gjKCjKrDgFbylIdCKyLE45TAsV9yTpTTxiajnI71ACiFccoxe+ZvHQNh4RQejNwgL+roUxVtjH1KwEmq0F90WS0i8xFHs=
+X-Gm-Message-State: AOJu0YxN+RN1Mk7N9KUe42m7rsyP39tPB1esDGsIUo1fwjxqKwMSlpTg
+	2LVWFrzTKn4wAzHgQrEizXUxfYsRMFI0X642dqK2juDRAFElpoLFRUj417ehlfPYsrvTnFeMlbN
+	uXK5BI9XSefMxOAEnGbqUlbBWUV4=
+X-Google-Smtp-Source: AGHT+IHKJ4A/6L2tAH7elOzCsqesMbEdr+mBHlIAhQKeuGXL0JGbvM+BD5UNGVOtYhJwy9ZQIVoEqnE6Pzw8x3iWzrA=
+X-Received: by 2002:a05:6a20:72a2:b0:1c0:f5be:a3ca with SMTP id
+ adf61e73a8af0-1c3f124b1bdmr1554068637.30.1721115898766; Tue, 16 Jul 2024
+ 00:44:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: qcom: Add SA8775P video clock
- controller
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_imrashai@quicinc.com, quic_jkona@quicinc.com
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-1-badaf35ed670@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240715-sa8775p-mm-v3-v1-1-badaf35ed670@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240714160238.238708-1-vadorovsky@gmail.com> <CANiq72=kchSt5XjAJRVgNWG-iNXbc2E64ojwsQYnB2pshULK1Q@mail.gmail.com>
+ <52676577-372c-4a7f-aace-4cf100f93bfb@gmail.com>
+In-Reply-To: <52676577-372c-4a7f-aace-4cf100f93bfb@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 16 Jul 2024 09:44:46 +0200
+Message-ID: <CANiq72nbbtNp4vGGHkXVSgSW+WU=5Z9uGRO_LLg7+ezTqrZ_tQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: str: Use `core::CStr`, remove the custom `CStr` implementation
+To: Michal Rostecki <vadorovsky@gmail.com>, Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+	Finn Behrens <me@kloenk.dev>, Manmohan Shukla <manmshuk@gmail.com>, 
+	Valentin Obst <kernel@valentinobst.de>, Laine Taffin Altman <alexanderaltman@me.com>, 
+	Danilo Krummrich <dakr@redhat.com>, Yutaro Ohno <yutaro.ono.418@gmail.com>, 
+	Tiago Lam <tiagolam@gmail.com>, Charalampos Mitrodimas <charmitro@posteo.net>, 
+	Ben Gooding <ben.gooding.dev@gmail.com>, Roland Xu <mu001999@outlook.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	netdev@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2024 10:23, Taniya Das wrote:
-> Add device tree bindings for the video clock controller on Qualcomm
-> SA8775P platform.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../bindings/clock/qcom,sa8775p-videocc.yaml       | 62 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,sa8775p-videocc.h   | 47 ++++++++++++++++
->  2 files changed, 109 insertions(+)
+On Mon, Jul 15, 2024 at 6:12=E2=80=AFPM Michal Rostecki <vadorovsky@gmail.c=
+om> wrote:
+>
+> @@ -71,11 +75,11 @@ macro_rules! kunit_assert {
+>                   //
+>                   // This mimics KUnit's failed assertion format.
+>                   $crate::kunit::err(format_args!(
+> -                    "    # {}: ASSERTION FAILED at {FILE}:{LINE}\n",
+> +                    "    # {:?}: ASSERTION FAILED at {FILE:?}:{LINE:?}\n=
+",
+>                       $name
+>                   ));
+>                   $crate::kunit::err(format_args!(
+> -                    "    Expected {CONDITION} to be true, but is false\n=
+"
+> +                    "    Expected {CONDITION:?} to be true, but is false=
+\n"
+>                   ));
+>
+> The only practical difference in switching from `Display` to `Debug`
+> here is that the fallback kunit error messages are going to include
+> quotation marks around conditions, files and lines.
 
+That is a fairly important difference -- the messages are intended to
+match the C KUnit ones.
 
-AFAIK, the sa8775p is being dropped and later re-introduced as quite
-different device.
+Especially the file:line notation -- I don't think a user would expect
+to have quotes there (regardless of KUnit).
 
-What will be the use of these bindings after we remove sa8775p? Or
-rename it? Or after whatever Qualcomm is planning?
+In general, even if we didn't need it right now, I think it is
+something we will need sooner or later.
 
-I am sorry, but at this moment I am reluctant to ack anything related to
-sa8775p.
+> wording. My general point is that I've never seen `&mut str` being
+> exposed in any core/std API to the external user, mutation usually
+> implies usage of an owned String.
 
+Not sure what you mean by exposed, but even if `&mut str`'s methods do
+not count (used via `String`), there is also
+`from_utf8_unchecked_mut()` that returns one, which is essentially the
+same idea as what we had here.
 
-Best regards,
-Krzysztof
+So I am not sure about the "The rule of Rust std" part in the new
+commit messages. And, to be clear, while the Rust standard library is
+a good reference to look into, sometimes we want/need to do things
+differently anyway (which is not really the case here given
+`from_utf8_unchecked_mut()`, I would say).
 
+In this case, regardless of the standard library, personally I would
+have preferred to have a non-public function, but still have it (and
+properly documented), rather than open code the `unsafe` block with
+the casts.
+
+> I think the best solution would be leaving `c_str` macro for that. The
+> reason why I removed it is that the GitHub issue[0] mentions its
+> removal. But for that case, I think it makes sense to leave it. What do
+> you think?
+
+Perhaps the issue was only taking into account the C string literal
+case? Benno may know more.
+
+Generally speaking, replacing a clean line with a bigger `unsafe`
+block is something to be avoided.
+
+Maybe a `c_stringify!` is what we need :)
+
+Cheers,
+Miguel
 
