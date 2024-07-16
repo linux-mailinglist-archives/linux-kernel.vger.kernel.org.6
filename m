@@ -1,120 +1,259 @@
-Return-Path: <linux-kernel+bounces-254079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1983E932E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE72932E78
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9933B2111B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC6B1F23A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D62119EEAA;
-	Tue, 16 Jul 2024 16:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7402D19F464;
+	Tue, 16 Jul 2024 16:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fx/6aA5z"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="khRQU3Ny"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0133C1DFF0;
-	Tue, 16 Jul 2024 16:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE3B1DFF0;
+	Tue, 16 Jul 2024 16:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721147799; cv=none; b=Udlz3TPNrnL+HvZTGp1krcTHzYGK4E0FO3aT/9giwK+A9fNkMEbfDDEkLdOl76Qab2x+68/a2MB7zTf2J1fMcLsHfqCiKpK/nhkWc1V58i//IxGuPeRVPlzC47LhwW1Z61Byga8kO2WKkb6BAZAuHxTJAYDbUpqzJKSqE8gKq9w=
+	t=1721147879; cv=none; b=PtfIKX0E0Nr9DJ+8YWAHpci6btEAGx/GOPUx+P3osJ/ne8WeAzU400hgItb0wtm1cybFBZY3V3M64PpI36nSQW+CenJXOg7goT2G4A/2W2jZN9iYLSMYim7r//vpu+kTxIdXQjhgXBu3FU89bEe4kaQTfiX/87JU6FRxSMmNxE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721147799; c=relaxed/simple;
-	bh=N6DkqU9kVd50qY6QOEjJkCKPk7AYB/47AQ27J+e1OYA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cyiVbpVeNixxA8QHN2p8X1KlhRog3XGWIQ8Ukc1uCiD+7TbVjsmG3khnRa0fauX8shHRwx4Jbg5z2uaOjOy6jd2U1Kafc5o3VKFnJytYvV6tUCZImUPGONEalRIAG5nJ+tG6leQUVuKmC5+QC2gUJCvDhV3i2zECRdEHsbVZ1Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fx/6aA5z; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721147796;
-	bh=N6DkqU9kVd50qY6QOEjJkCKPk7AYB/47AQ27J+e1OYA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fx/6aA5zuQvaIkk6mkq8PLvb+pTVYcUuGC6mz0mWGB/BkOYANrycEf0eoQzQ1KfyY
-	 zOuUAh3oW1zSdZqlAopHpuMT2m+UZ2V31N8oWRGPi5OiIbYdTg/ftvkiSJ1iOr2n+w
-	 wJbeW233xmEalvqTJXKCy9Vxf+wRuPQF/FyBnqkrA351v07E1AY/WINt06/QiFs0cV
-	 HJvJckQOBSNdRjgO7+hOi8z+DcdSB1dmyP5uRcZInGeWuXoUpQrIZYxQKvKeNMatKQ
-	 LBiiui38EaoD6ZOUVtuzNicrjCITv4QUtG6ONesVIuP7x49EQcFdv4ntr1/VT9qZk5
-	 3L8lpyL3cIAzg==
-Received: from [100.77.12.232] (cola.collaboradmins.com [195.201.22.229])
+	s=arc-20240116; t=1721147879; c=relaxed/simple;
+	bh=1eAQm+0eHdRcliRJMlnZYWIN502qcG2eMpfTDewy/ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l+kzl+rBrXojNniLBbtHa9//FvWd6GNY3/yXLvkTavoFvNi0zPbkWIVPxUmLRgvPsEDY4ApFUqbPJPHyYnchyg0KPXfiqFZVMU2uWAoIV0uAn3GwfGvdU4g/wMorSX0YhOmL+bVgwdffJle7aKyouYVy0nC8ZLFzJ0rG5QnS+u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=khRQU3Ny; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: obbardc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C502037821D8;
-	Tue, 16 Jul 2024 16:36:35 +0000 (UTC)
-Message-ID: <9f336131235de9f39a02b6bccb4d3d9a8f296bf3.camel@collabora.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: rockchip: add Firefly CORE PX30
- JD4
-From: Christopher Obbard <chris.obbard@collabora.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,  linux-kernel@vger.kernel.org, Kever
- Yang <kever.yang@rock-chips.com>
-Date: Tue, 16 Jul 2024 17:36:35 +0100
-In-Reply-To: <20240716-wrinkly-carving-686b84bc0933@spud>
-References: <20240716-rockchip-px30-firefly-v1-0-60cdad3023a3@collabora.com>
-	 <20240716-rockchip-px30-firefly-v1-1-60cdad3023a3@collabora.com>
-	 <20240716-wrinkly-carving-686b84bc0933@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-1 
+	by prime.voidband.net (Postfix) with ESMTPSA id 514DD62DD1A9;
+	Tue, 16 Jul 2024 18:37:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1721147867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gbHbW0Vj8SJ7TmfouW/0B1H8GEcznuy9AtDQQuKhDoE=;
+	b=khRQU3Nyhakhw7mk6w6dF//Ii8GmLuD+1boCKnhrN/AsiRZp1mLlYLj/W0nQb317BngDch
+	HJUYekXwW6rD3uvZ6AgEbQhklkc/1M4U1rOrE8D+njvMsJaTsPyNnXn+vIwbI/s5R7flnT
+	bczzX73re+Yfr05BSgmA0WlOE8uy4As=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Stefan Lippers-Hollmann <s.l-h@gmx.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Eric Biggers <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject:
+ Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone temperature
+ is invalid
+Date: Tue, 16 Jul 2024 18:37:30 +0200
+Message-ID: <12474042.O9o76ZdvQC@natalenko.name>
+In-Reply-To:
+ <CAJZ5v0gZ5611KXqfjSZOdjRi7v8num3P-vO82c7LGuS1Ak1=FQ@mail.gmail.com>
+References:
+ <6064157.lOV4Wx5bFT@rjwysocki.net> <20240716152025.7f935fb0@mir>
+ <CAJZ5v0gZ5611KXqfjSZOdjRi7v8num3P-vO82c7LGuS1Ak1=FQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart5797067.DvuYhMxLoT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Tue, 2024-07-16 at 17:26 +0100, Conor Dooley wrote:
-> On Tue, Jul 16, 2024 at 04:51:04PM +0100, Christopher Obbard wrote:
-> > The Firefly CORE PX30 JD4 board is a SOM and motherboard bundle from
-> > Firefly. Add devicetree binding documentation for it.
-> >=20
-> > Signed-off-by: Christopher Obbard <chris.obbard@collabora.com>
-> > ---
-> > =C2=A0Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
-> > =C2=A01 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > index e04c213a0dee4..19e06e1253e15 100644
-> > --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> > @@ -148,6 +148,11 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: e=
-ngicam,px30-core
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: r=
-ockchip,px30
-> > =C2=A0
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Firefly Core PX30 JD4
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: firefl=
-y,core-px30-jd4
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: rockch=
-ip,px30
+--nextPart5797067.DvuYhMxLoT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Tue, 16 Jul 2024 18:37:30 +0200
+Message-ID: <12474042.O9o76ZdvQC@natalenko.name>
+MIME-Version: 1.0
+
+Hello.
+
+On =C3=BAter=C3=BD 16. =C4=8Dervence 2024 16:04:16, SEL=C4=8C Rafael J. Wys=
+ocki wrote:
+> On Tue, Jul 16, 2024 at 3:20=E2=80=AFPM Stefan Lippers-Hollmann <s.l-h@gm=
+x.de> wrote:
+> >
+> > Hi
+> >
+> > On 2024-07-16, Rafael J. Wysocki wrote:
+> > > On Tue, Jul 16, 2024 at 1:36=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> > > > On Tue, Jul 16, 2024 at 1:15=E2=80=AFPM Stefan Lippers-Hollmann <s.=
+l-h@gmx.de> wrote:
+> > > > > On 2024-07-16, Stefan Lippers-Hollmann wrote:
+> > > > > > On 2024-07-16, Rafael J. Wysocki wrote:
+> > > > > > > On Tue, Jul 16, 2024 at 1:48=E2=80=AFAM Stefan Lippers-Hollma=
+nn <s.l-h@gmx.de> wrote:
+> > > > > > > > On 2024-07-15, Rafael J. Wysocki wrote:
+> > > > > > > > > On Mon, Jul 15, 2024 at 2:54=E2=80=AFPM Stefan Lippers-Ho=
+llmann <s.l-h@gmx.de> wrote:
+> > > > > > > > > > On 2024-07-15, Rafael J. Wysocki wrote:
+> > > > > > > > > > > On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezca=
+no
+> > > > > > > > > > > <daniel.lezcano@linaro.org> wrote:
+> > > > > > > > > > > > On 15/07/2024 06:45, Eric Biggers wrote:
+> > > > > > > > > > > > > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael =
+J. Wysocki wrote:
+> > > > > > > > > > > > >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.=
+com>
+> > > > > > > > [...]
+> > > > > > > > > > Silencing the warnings is already a big improvement - a=
+nd that patch
+> > > > > > > > > > works to this extent for me with an ax200, thanks.
+> > > > > > > > >
+> > > > > > > > > So attached is a patch that should avoid enabling the the=
+rmal zone
+> > > > > > > > > when it is not ready for use in the first place, so it sh=
+ould address
+> > > > > > > > > both the message and the useless polling.
+> > > > > > > > >
+> > > > > > > > > I would appreciate giving it a go (please note that it ha=
+sn't received
+> > > > > > > > > much testing so far, though).
+> > > > > > > >
+> > > > > > > > Sadly this patch doesn't seem to help:
+> > > > > > >
+> > > > > > > This is likely because it is missing checks for firmware imag=
+e type.
+> > > > > > > I've added them to the attached new version.  Please try it.
+> > > > > > >
+> > > > > > > I've also added two pr_info() messages to get a better idea o=
+f what's
+> > > > > > > going on, so please grep dmesg for "Thermal zone not ready" a=
+nd
+> > > > > > > "Enabling thermal zone".
+> > > > > >
+> > > > > > This is the output with the patch applied:
+> > > > >
+> > > > > The ax200 wlan interface is currently not up/ configured (system
+> > > > > using its wired ethernet cards instead), the thermal_zone1 stops
+> > > > > if I manually enable the interface (ip link set dev wlp4s0 up)
+> > > > > after booting up:
+> > > >
+> > > > This explains it, thanks!
+> > > >
+> > > > The enabling of the thermal zone in iwl_mvm_load_ucode_wait_alive()=
+ is
+> > > > premature or it should get disabled in the other two places that cl=
+ear
+> > > > the IWL_MVM_STATUS_FIRMWARE_RUNNING bit.
+> > > >
+> > > > I'm not sure why the thermal zone depends on whether or not this bit
+> > > > is set, though. Is it really a good idea to return errors from it if
+> > > > the interface is not up?
+> > [...]
+> > > > > [   22.033468] thermal thermal_zone1: failed to read out thermal =
+zone (-61)
+> > > > > [   22.213120] thermal thermal_zone1: Enabling thermal zone
+> > > > > [   22.283954] iwlwifi 0000:04:00.0: Registered PHC clock: iwlwif=
+i-PTP, with index: 0
+> > > >
+> > > > Thanks for this data point!
+> > > >
+> > > > AFAICS the thermal zone in iwlwifi is always enabled, but only valid
+> > > > if the interface is up.  It looks to me like the thermal core needs=
+ a
+> > > > special "don't poll me" error code to be returned in such cases.
+> > >
+> > > Attached is a thermal core patch with an iwlwifi piece along the lines
+> > > above (tested lightly).  It adds a way for a driver to indicate that
+> > > temperature cannot be provided at the moment, but that's OK and the
+> > > core need not worry about that.
+> > >
+> > > Please give it a go.
+> >
+> > This seems to fail to build on top of v6.10, should I test Linus' HEAD
+> > or some staging tree instead?
 >=20
-> Not having individual compatibles for the carrier and som seems odd to,
-> given there's no requirement to use the som with this particular
-> carrier.
-
-Thanks, I will fix that up in V2.
-
+> No, it's missing one hunk, sorry about that.
 >=20
-> > +
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Firefly Firefly-RK3=
-288
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> >=20
-> > --=20
-> > 2.45.2
-> >=20
+> > [ I will be offline for the next few hours now, but will test it as soon
+> >   as possible, probably in ~9-10 hours ]
+>=20
+> No worries and thanks for your persistence!
+>=20
+> >   CC      drivers/thermal/thermal_core.o
+> > drivers/thermal/thermal_core.c: In function 'handle_thermal_trip':
+> > drivers/thermal/thermal_core.c:383:37: error: 'THERMAL_TEMP_INIT' undec=
+lared (first use in this function); did you mean 'THERMAL_TEMP_INVALID'?
+> >   383 |             tz->last_temperature !=3D THERMAL_TEMP_INIT) {
+> >       |                                     ^~~~~~~~~~~~~~~~~
+> >       |                                     THERMAL_TEMP_INVALID
+> > drivers/thermal/thermal_core.c:383:37: note: each undeclared identifier=
+ is reported only once for each function it appears in
+> > drivers/thermal/thermal_core.c: In function 'thermal_zone_device_init':
+> > drivers/thermal/thermal_core.c:432:27: error: 'THERMAL_TEMP_INIT' undec=
+lared (first use in this function); did you mean 'THERMAL_TEMP_INVALID'?
+> >   432 |         tz->temperature =3D THERMAL_TEMP_INIT;
+> >       |                           ^~~~~~~~~~~~~~~~~
+> >       |                           THERMAL_TEMP_INVALID
+> >
+>=20
+> Attached is a new version that builds for me on top of plain 6.10.
+>=20
+
+This builds and runs fine for me, no dmesg spamming any more. In `sensors` =
+I get this:
+
+```
+iwlwifi_1-virtual-0
+Adapter: Virtual device
+temp1:       -274.0=C2=B0C
+```
+
+(very beneficial during the heat wave)
+
+There are no "thermal" messages in dmesg whatsoever, any other info you'd l=
+ike me to provide?
+
+Also, feel free to add:
+
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+
+Thank you.
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart5797067.DvuYhMxLoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmaWocoACgkQil/iNcg8
+M0tMNQ/+Me1Tmrsk8H3eLYu+vrI4V6c9GbYMK3QkG05KbRAplXh4dxIx787CH+gG
+Gs9BmBGcrt3M7qwBFTZ0/4AlHMO+hxESxwY9A5b3AizXZB/lYRW7F2Xq7YlSkoHV
+50mpAo8n3qkRAe4cWZt3xS/VeydfHPI1VZTxLhruy6QtyPxnEQHYwZNX5CXksWmk
+LwXKr6tIxrZtGIXN7MKcQl6HGfCnBYkkj/dZGf756cz+RgHsHzDmXW9TgobqTISZ
+NfAkRNyaBg3t0M0BuJHmV/Kt0QNFadaCaDQfwW2qp4/NzqgnbTBysK07+kuLK0LR
+CqCG03Fd55wiTfm5E1jagC3nGutoJE3TltNFOQXuLppB4jQLrka/Lp94Mxtih6Wl
+dXRGsl7ekE4iR5rbeby5h9dYdYqb7MjswQR5pzlrVJh63P3mXehY1tcZptGHqLgl
+6S18eC/veSztY4k7p08y0ANzpw7DmTtp4nwCj7A32bClDjbVU8gDoq0VqNM/4bMk
+GqNI0mhJoOU6SeeQAWojhpmwIL47nRbhV+y2zKEQzVwYJFz9gy0mcjDet6aXiQFt
+OEfn0cI+gy1L/8xrTyCdtIqO7w6pUSK523/L9Z7gMFBnwfZlfXXrPIsZhoSFl5Jr
+fC5/uKtkAxtwE7bDhzirUDFjJdr4wzwSQfxMMbijvpmm4Lnkm4g=
+=CUGE
+-----END PGP SIGNATURE-----
+
+--nextPart5797067.DvuYhMxLoT--
+
+
 
 
