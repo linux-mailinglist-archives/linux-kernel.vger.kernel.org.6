@@ -1,151 +1,135 @@
-Return-Path: <linux-kernel+bounces-253552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818749322D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:28:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D3C9322D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41334284502
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71D0DB23240
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996A3196D98;
-	Tue, 16 Jul 2024 09:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DD9196D98;
+	Tue, 16 Jul 2024 09:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3oAlN5V"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeKppaMo"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396C9196C6C;
-	Tue, 16 Jul 2024 09:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C640941A87;
+	Tue, 16 Jul 2024 09:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721122057; cv=none; b=Ni8KrnTcy9+KnZXvF76ebp/Fpg5b+mZDB21tEZDbjgz/XTEqDfi5BctmXlcBvkS9Y+bmgJryzk88WfgXqc51eFxfeIEAtS6SzsW0t+pjOqrB7zY92qyVo2AfFh28VgG66NCZzOnFgJb7Bf3KGOZc65RR1A+6b3Q6E2IReeqaDgY=
+	t=1721122151; cv=none; b=JyGPTrmAzbnz2Z6HRqgw0EBv9kplGrOkljmmLm3m5SaLXQWvBzWmU0KQw/3T2o/UNBZhjV4QWOuTZT0JtF4Jia6hdnTIKKtTTmJgBvYfbmoKVO7kAYMCb+y5NYQgqKD+428ubvLziaHCqc2MWoShH/aUSvnVidn31+9BtffRiE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721122057; c=relaxed/simple;
-	bh=0AvImW20JI33GnYfDuA9xlRzQVQN5eOuU1t4kmhQGTI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=hYgpxhZ8HdYeBfnNHvp2g+Xi+h5X97OrytYii6ZhRc533Wgm0yTYg4J8EWTtxhMPJQ+WQGHq3EB+zTYtufDFgXG61qNShf0KscxBkyJJqf+G3AOXVLdGM8MOI7RNNd9vjWT8HMTwYnajWkPKHUWqhzRxOpbHS0AE7Irm2K1Ktag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3oAlN5V; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1721122151; c=relaxed/simple;
+	bh=PWafDMA3nAmTKUCsHotIQrVEnAKwP1snc0kk495JPQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iQzmLq+jcZAdTBcoljAXhLBtMzofA2WB3nu02JeZaIrCdZKfxENh8ujjGceQM5Jt4TOL5gGPZqhGoHkcX5rq3MEdRgWKSN0+7F3RG1zAcdL+3aZb1+lKs6DeEpMAbE/5jYsK/hz7dLN6wtqwdE49J5S0rycajmQYVFMjk6Jsf98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeKppaMo; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so35725405e9.1;
-        Tue, 16 Jul 2024 02:27:35 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368255de9ebso317260f8f.1;
+        Tue, 16 Jul 2024 02:29:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721122054; x=1721726854; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721122148; x=1721726948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2PEU4qwN7WxP6VJDTGvYtCPzC+v0lV1/cj8lPv93ylU=;
-        b=f3oAlN5V66SN+S4/9s7HkVZiyBc7MYesEfRVBaWbQdgu40FVbCFQSs5WzcACvdxG0t
-         o2oUJ2mr5k/6Uzc8UBSijyRDisLps5AJeKzTwE4k2QaP6z2JKvgQ3ub+n7n7OPNZ43eB
-         u9wQXqQzXfD4DqNEfxJXugiu5ixyW1jSGSlAx+SUwmvfEuOtHEGLYtdpvWGYXy+YwHgt
-         vio19/9ws8FBJp3Ujtk/Q2P1YKJ8nRy0Oo/qAY771vWMRjK3H+QNexD4UnYFMwMAaAWu
-         M+KwPWlMIqqx++wQzgrZVSw/hQK3gCOcl8VPnN1I6cXK3+wUlbQgalDOcVgTH+Vua3HC
-         aX1A==
+        bh=TfGBCFg1TxUQ0m+kDDNis5njrwTl2DSqMiWSlz2UN7k=;
+        b=UeKppaMoZeA8yMsJ8ioMvf72B2Q4c8p/CDKqiP5HefIN2NffvKgUkv0q1XpdXNrqBp
+         +5nnAOgtyZVDmd77xc+kkBAnh1QXIdAWz+57+JQFOhwYYRiuQlNKdRv8Fjg1Mj06+Qpb
+         qVkKdTka8B1b/tKg9BZAAliaw8kriYEDbvKhwLJDisHThRShWfwohJ5pdoGmG1en1PuV
+         kgK7YsxDgyBS/llmImkkSALCGOwjJFW6X9wRdXB8r6cvilWDJNLlGXnvy57rOg/FkfZK
+         wXbEiAubW9vE+ROdyxF16g2MIVgtso7WCeXd11eqkgF3+gxCA56PpCd6fI4KIXWoQktt
+         x3xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721122054; x=1721726854;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2PEU4qwN7WxP6VJDTGvYtCPzC+v0lV1/cj8lPv93ylU=;
-        b=Hz/6Diah459pkprvEdA23+4mZ7rQQkdTuPZBVbIsbaJ/4lInnCg0rc7EMBjl9HKc3r
-         vBfvToEBUBDs4Uo9korg2M5bRwwEeoM4xwG2KFVgJTzGXwrV/VX0Jc+KgeFpknfGA84X
-         LFjpfii4hhPR4qYzfof8ENRBV7KfGPqD86nje3NNZH5q0l7XGhmWVZbIdTtUb1DBxCq8
-         7NN3JfEnryn67ReqZjE6DH8IATp70Gz7dm7GDFf/+9wQxJDTM5ecBY9qnYNNtzDtvtm6
-         9ZG5hMBIupcTusN2VAuu7tFJDyyyCMCBVGJwhjRYT4QqVdnQ/aX/Js0FqPTcykjcFEAy
-         VPWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWJTquTqdF9QREHUF4azdDx1PUfO/sZXxaBMciHNtY6miIiCZhyiY3yTpwuYXhW420KuEN8tywufu0PqGNqrfsM7/tiaaFXEWN03oEiXWdD9/mAy/b8jRNdG+tN0zAJ/xc/+nntklT8EQ=
-X-Gm-Message-State: AOJu0YwAgtLqZhBu7kTu7E73AOU97UckGu14iwLnM9pNuc0rfdZXj8LV
-	q18VzskG5qD4Nx0Ye9oSdLuX3BlJKAgpp5yW2U35tZJEV9Ehbwbr
-X-Google-Smtp-Source: AGHT+IEGHl0l97n2oZGPosdV8rJBmnt5GWQ20KKOkfy2e9pjEUSSh+vmDhtfqRS+c9+nFRYnAae6Rw==
-X-Received: by 2002:a05:600c:3152:b0:426:6eb9:db07 with SMTP id 5b1f17b1804b1-427ba684a4fmr10488545e9.13.1721122054395;
-        Tue, 16 Jul 2024 02:27:34 -0700 (PDT)
-Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427bb9976casm9090835e9.1.2024.07.16.02.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 02:27:33 -0700 (PDT)
-Date: Tue, 16 Jul 2024 11:27:33 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Maxime Ripard <mripard@kernel.org>, 
- Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Marcus Cooper <codekipper@gmail.com>, 
- =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>, 
- linux-sound@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-Message-ID: <66963d0531f17_7063708a@njaxe.notmuch>
-In-Reply-To: <20240715-rigorous-bipedal-sloth-c8df1b@houat>
-References: <20240529140658.180966-2-matteomartelli3@gmail.com>
- <20240529140658.180966-3-matteomartelli3@gmail.com>
- <20240606-savvy-wallaby-of-champagne-d4a50e@houat>
- <6662bf1b61bbc_2f51737023@njaxe.notmuch>
- <20240702-copperhead-of-unusual-intensity-7f43a8@houat>
- <668419fb8ef9f_2a76d370f1@njaxe.notmuch>
- <20240715-rigorous-bipedal-sloth-c8df1b@houat>
-Subject: Re: [PATCH 1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
- mode
+        d=1e100.net; s=20230601; t=1721122148; x=1721726948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TfGBCFg1TxUQ0m+kDDNis5njrwTl2DSqMiWSlz2UN7k=;
+        b=Tuo8CDhCFrrUhJ83XRDtzikA19n24Nf3uLzzGWAV1tTp/e+TV7uf+JYYOuIugxbSFG
+         VudDX2Yj1fptYRQx4o7lYj3TAh97oFDBE3WEPx7DZnoYIWuFbqGAuKomE0vc6cSurkIu
+         ki6xLeJFZ3IODZq6DO2TEHWWTWUvJymhCzNWr6QknRROoYx0SU+j1ICtAuQgAXMARkGy
+         J9mT+O57VERD+ov5oGHOuvWo7QaGKE5F7bxnK6nek0t/by+IthMgfTdLHfpsNWiNa6bo
+         Rhbn1kZq2a2I8imr8XgYcn5gZzrYQ72kh0tZ2b2DK1Eb8MlFmAZwjSdTE/+fIF71S+45
+         vwbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUr2nnH0zXoKE+6QjFw1bdqD5GE03uB6uTi7hHsK+P/APU5THjuaTIbMKr/JeCDgFKX1g3PwsZdYERaBuXQu7oUDzI8A9pVt6g5Xj601LnDLNr3lxvfC8HHZJXFilEJd/0YORsPgyyNp0E=
+X-Gm-Message-State: AOJu0YyHOaK50UfApzyj8u0Ogh3Dlen28EENIzVJr+PdL6w7tWdVhZlw
+	bu8s7r7htJfVNuAZGARrCpYW3tjekXjsSRRFnTmaGYrGxDJS7mPjTvy5eKuKuHyLWIqA0EEzrBu
+	+7476SgXaaew5n/hNoblhRUc1ZNOJbA==
+X-Google-Smtp-Source: AGHT+IEIlpce3gvsiAdYcfBzP2cKueZmkNAch2fOB3He9ZCro8x5v5m11xa+vfnvWzNWQlRylnvPO/qoXyu40ae4vDU=
+X-Received: by 2002:adf:ff8a:0:b0:363:b3ea:7290 with SMTP id
+ ffacd0b85a97d-3682753b33bmr944598f8f.20.1721122147833; Tue, 16 Jul 2024
+ 02:29:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <1720518712-28301-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <1720518712-28301-1-git-send-email-zhiguo.niu@unisoc.com>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Tue, 16 Jul 2024 17:28:55 +0800
+Message-ID: <CAHJ8P3LTxcMK0fuM5XCr5fmXffQUGxXsRSYdW46MtPoX8961UA@mail.gmail.com>
+Subject: Re: [PATCH V2] block: uapi: Fix compliation warning of using IOPRIO_PRIO_DATA
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Cc: axboe@kernel.dk, dlemoal@kernel.org, hch@lst.de, bvanassche@acm.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, ke.wang@unisoc.com, 
+	Hao_hao.Wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Maxime Ripard wrote:
-> On Tue, Jul 02, 2024 at 05:17:15PM GMT, Matteo Martelli wrote:
-> > Maxime Ripard wrote:
-> > > On Fri, Jun 07, 2024 at 10:04:43AM GMT, Matteo Martelli wrote:
-> > > > Maxime Ripard wrote:
-> > > > > > -	/*
-> > > > > > -	 * DAI clock polarity
-> > > > > > -	 *
-> > > > > > -	 * The setup for LRCK contradicts the datasheet, but under a
-> > > > > > -	 * scope it's clear that the LRCK polarity is reversed
-> > > > > > -	 * compared to the expected polarity on the bus.
-> > > > > > -	 */
-> > > > > 
-> > > > > I think we should keep that comment somewhere.
-> > > > 
-> > > > I think that keeping that comment would be very misleading since the LRCLK
-> > > > setup would not contradict the datasheet anymore [1][2].
-> > > >
-> > > > Also, do you recall any details about the mentioned scope test setup? Was i2s
-> > > > mode tested in that occasion? It would help clarify the situation.
-> > > 
-> > > I can't remember if I tested i2s, I think I did though. But most of the
-> > > work was done on either TDM or DSP modes, and I remember very clearly
-> > > that the LRCK polarity was inverted compared to what Allwinner documents.
-> > > 
-> > > So the doc was, at best, misleading for these formats and we should keep
-> > > the comments.
-> > 
-> > Thanks for the reply Maxime, would you be able to point out the Allwinner
-> > document part that is (or was) misleading? The current datasheets (see links
-> > [1][2]) look correct, the current driver setup for TDM and DSP modes respects
-> > those datasheets and it's not "reversed compared to the expected polarity on
-> > the bus" as the comment states. 
-> 
-> I clearly remember having to debug something there, but I don't remember
-> much more, sorry.
-> 
-> I guess if you have tested on the H3 I2S, TDM and DSP and it all works
-> as expected with your changes, go ahead and ignore my comment then.
+kindly ping...
 
-I did test it on the A64 SoC only (all modes I2S, TDM and DSP working).
-
-Best reguards,
-Matteo
+Zhiguo Niu <zhiguo.niu@unisoc.com> =E4=BA=8E2024=E5=B9=B47=E6=9C=889=E6=97=
+=A5=E5=91=A8=E4=BA=8C 17:52=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Generally, the input of IOPRIO_PRIO_DATA has 16 bits. If use format "%d"
+> to printk IOPRIO_PRIO_DATA, there will be the following warning or error.
+>
+> fs/f2fs/sysfs.c:348:31: warning: format =E2=80=98%d=E2=80=99 expects argu=
+ment of type =E2=80=98int=E2=80=99, but argument 4 has type =E2=80=98long u=
+nsigned int=E2=80=99 [-Wformat=3D]
+>    return sysfs_emit(buf, "%s,%d\n",
+>                               ~^
+>                               %ld
+>
+> This is because the output of IOPRIO_PRIO_DATA is converted to "UL" from
+> IOPRIO_PRIO_MASK, which is not reasonable. unsigned int is more suitable.
+>
+> Fixes: 06447ae5e33b ("ioprio: move user space relevant ioprio bits to UAP=
+I includes")
+> Cc: stable@vger.kernel.org
+> Cc: Oliver Hartkopp <socketcan@hartkopp.net>
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Link: https://lore.kernel.org/all/1717155071-20409-1-git-send-email-zhigu=
+o.niu@unisoc.com
+> ---
+> v2: add Fixes tag and Cc tag
+> ---
+> ---
+>  include/uapi/linux/ioprio.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
+> index bee2bdb0..9ead07f 100644
+> --- a/include/uapi/linux/ioprio.h
+> +++ b/include/uapi/linux/ioprio.h
+> @@ -11,7 +11,7 @@
+>  #define IOPRIO_CLASS_SHIFT     13
+>  #define IOPRIO_NR_CLASSES      8
+>  #define IOPRIO_CLASS_MASK      (IOPRIO_NR_CLASSES - 1)
+> -#define IOPRIO_PRIO_MASK       ((1UL << IOPRIO_CLASS_SHIFT) - 1)
+> +#define IOPRIO_PRIO_MASK       ((1U << IOPRIO_CLASS_SHIFT) - 1)
+>
+>  #define IOPRIO_PRIO_CLASS(ioprio)      \
+>         (((ioprio) >> IOPRIO_CLASS_SHIFT) & IOPRIO_CLASS_MASK)
+> --
+> 1.9.1
+>
 
