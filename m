@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-254041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD42932BA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58885932BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06756280E75
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D6B280E22
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B9119F482;
-	Tue, 16 Jul 2024 15:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D0119DF88;
+	Tue, 16 Jul 2024 15:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4SGebI7i"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="uvMQIl7v";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gvXB098s"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED44B19DFBF
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C141D19DF53
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721144824; cv=none; b=Sjx+WRrXvQZwiHmrpAQuzfhUvtJHbAM1rtUS2nysxvG+Q1sSiigllVVA/PRdbBCGPTGcqeVyIIOjc0/nnAMnNo0JP7oYWD2FLIH5YiE0+dLfnQma7jcb/O4rmiPNF3Uso/g/lc0rVbyeOWZ5kUoMsxpN/y96WwVThmSHeSTi24g=
+	t=1721144941; cv=none; b=YRWyMR+2NCkP+2vn7T8GklgrWVu0FewQiH2Vmd1XMlfGJi8S64tTCXgIdQMvybRLqZT9cP3NjDnSKj0XmOrT1jDDcDBB6Om73YaAxv8lGCjjXrbCOnqifEdtulHeKGfNj1FE3Y5jNuwdt5/FDNI9q1Lguo17bgQkoi+qjDV6zBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721144824; c=relaxed/simple;
-	bh=YpEF0Q6yKkYxLuQtT2PJS/GZ92XHHf4x1MDsqSuwVCk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uJuztkWS1n+JEU1WCC7ScgdwUStOvRteZmufn9fieKlSfaiodthIJrh5sV9GkAZg42Tw/x06gmKUGoub9qJ24Do5F3vYS0skt2Vp5DPHJ683yvj1IAULtS7cIvrhCFa1dWeqv5eNZrzu/xDVIwE2YFcbncarDmMLxR3PT39CI+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4SGebI7i; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70af58f79d1so4514861b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721144821; x=1721749621; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ETWgHgOd443GlHDheQNvvEwb46QHybHGr7wnanCFogo=;
-        b=4SGebI7iw6V6jR9glZcEtxBZ6Ur5cF7+TLS51iaw7rfy0sRRBuLLrWsDgFXrGS93Qw
-         jcep0fZPitNTZpnc+s7Qb4Y86j7W6aV2AYvOYVGpGKOBeHij7qJictFCKZt6EbbYMycs
-         nwHXnxE4GY8q9XZ5ygUBn1Z2fWCXdMnToK0V8AVETHeMufQQRDIafzPgykUvqXedZ9WG
-         VYNLCMreLZkHzHwWoJvEPw2mGILOHnmJMxeBCHLqByGsUd2AwR1OH88RWw9Ac82xm9X4
-         c5kKddXLW0H4iHPyHGQYV5Kd3AAXtUa0pZRaxkuctu2CSa+sz+Qc97W/5nuqklCFbfX+
-         oVWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721144821; x=1721749621;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ETWgHgOd443GlHDheQNvvEwb46QHybHGr7wnanCFogo=;
-        b=kiRzK9Ac4wTdzoJf1XibR3iW2G5OV6i7sz63EVV4WNV0PWoifl6O2rmON9NqTV0yM+
-         kYvdqWYBo6zUK6G3xV0y0KtVop6+Ags6VWkP1FzhXYvxY525qyVK3gJQ2YctL3z1SfZB
-         I0Ylf4vH3oKnzxJ2Mcv6fAPUc9dn9TpckQWI9v6zeouiXLJ89zd4IU+uInTRkho9DCZ4
-         FuE1CZFoi3jSmc0HhBS6nalvVjNIR7gdyEQ6PkJwwG0weh8FHL5ex1RpjHb0gcB003l2
-         2TmQYl2GWaI81I3fEfXjqMHCI7aIyTvUVidaNOX0hjeSai3fhOHASqyyfsqtIOr1/uUO
-         QxZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYOMonZkb4RjctLNWf5WaSAOdHWohpxrf6017UFyJMh3HNkgRrR4/IHUvpWw2bUgOdBQak+MtuSgFNRbXa97oiDeyO6t3XpMbScc/s
-X-Gm-Message-State: AOJu0Yxd0ECJApMsOkcpTCksg51aCjoLKg879jMO2+AbAoqKsruMquAb
-	FLnVrseTEXFgdKrW4euzcJAAaIDzZFA30tQ2TsOfO3GFnjvI0VcP3E4gdIAlTCp4iAwjGn5tyqH
-	b+w==
-X-Google-Smtp-Source: AGHT+IGc/BULnIieuwv9+FBRnu1M5AufL70Ng4HgUceQ2bAiT7WRdGZZQ21V3+tP1L1LEbg35yWRxfFG4Ss=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:1a93:b0:706:6b52:438c with SMTP id
- d2e1a72fcca58-70c14000242mr208338b3a.0.1721144821054; Tue, 16 Jul 2024
- 08:47:01 -0700 (PDT)
-Date: Tue, 16 Jul 2024 08:46:54 -0700
-In-Reply-To: <0f60918d-bc46-4332-ad28-c155a1990e3d@redhat.com>
+	s=arc-20240116; t=1721144941; c=relaxed/simple;
+	bh=RG0OOcowRv7G/wQ529Xh5NxbuzC8x7bbZE1w2c5DLDU=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=PjhwTInXLmmV4DnrvsbXYeQsoN/rk6Rw2O1LkMQdJmFzuEYrREfKe02yZocWUfzGUEzIVHXrzD+1sfTAxpj0f434NL+L+scPvsFN2TMHvYAa/u4RR+p95HeYFHmFxlyeuZ5SirF/o0AeYUXv1je891Utg4ojQEvPwdw+jbnOhKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=uvMQIl7v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gvXB098s; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id D39B11140A13;
+	Tue, 16 Jul 2024 11:48:58 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 16 Jul 2024 11:48:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721144938; x=1721231338; bh=pgpViVSXQF
+	5LkqrApHu3+j3/uGYvXxssZVnHOA1Pxy0=; b=uvMQIl7vMbQGIdyxbwFRkZ+e6r
+	zDDntJgaIyt8ofP//YZO0+xcyHxo9a7d9X2NAFeJy2MI13nTlmlKA8+OgBK33iRg
+	0a8KUSGAatufOqgF/aPIj6LoTYIsnoc2ZftGCyMEmFDkvtJTSrzYXLyRJMEng8YF
+	JSXYJxUJv0rd17c8ap8yQg5ClN9bhW7n+KAiSpG38Zxc+AuQqWpH8hXq46d0vdfA
+	hRLzQmfCLMrGvcl8xjQVCsQGkIBVudUOon+xZEmyvFJKxN7CnpZ1H66J6pTcD6z1
+	1q0QhE71e1cjb/IbbPyizdKZUN6unzxwC+KcKMisBSWYideM5xKLD8V4yH8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721144938; x=1721231338; bh=pgpViVSXQF5LkqrApHu3+j3/uGYv
+	XxssZVnHOA1Pxy0=; b=gvXB098sg6CkqEk+obKXHKbQVjUs4NvPq30RFYL8Mq8F
+	VF+DDCkpMPj1Gwm0X4uDMwTq2aLj61wPHFFUY5gIWBxGoO4iAoOXRGH9us1/c35d
+	cRwkHUBX4UXgP1L+TGGyMPdyYXg/1LnftojU9g9ctdq8M+BL8F18Y2hYfCA+8tYL
+	VP5wFEOiHzOYaT6fXf0JdE5k0GX9tMD0OZ4le6j/R8ubSBY/K7K+tgMZTYO3LS2B
+	JOtYuor5ueeZB6MZ7uoRBTocU3AjER5SmdNDwMUNE0/5G7xMPGDVF5q+Kx4X5fah
+	oQizIRucrbimEh3fhsLHxH6kuAev/swRzlQ/HSTD0A==
+X-ME-Sender: <xms:apaWZmRsoi-8Kb0B7hl3kPCrCa7n-sqJGu0BxxZ-bJaUqLtd9Uo93g>
+    <xme:apaWZrwasCFSTmAceSO7H2sEi6Z7_txuDbkNHRxJDxBZLVqcRHZVrnZg7YEkbewLD
+    vB5qgL0AI6wbq9S52A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdelvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:apaWZj2isDT_m8DLcrAYx1FlQQE6fugS2UHEo-tzwJ4Zb6knEkUzPA>
+    <xmx:apaWZiBOF9wTHZ66JIAN8TCt-7o7Uc8w1ySHhLowIR9HJhVnYbfltA>
+    <xmx:apaWZvjH4Kepq1mSOujrhI7VuVgW-GCcy-YDjeqboV0GU80rey0SpQ>
+    <xmx:apaWZuqQ5FfJOKmE11pIe34r8i5Pf0IslgcZk1E6W5zx8qtPxQBm5A>
+    <xmx:apaWZstp8ncO0f-f0pBjSP_D4F9r6B_XY-R1e9aETbyGgw1ZX_k6wC5r>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9AF18B6008D; Tue, 16 Jul 2024 11:48:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240712235701.1458888-1-seanjc@google.com> <20240712235701.1458888-9-seanjc@google.com>
- <0f60918d-bc46-4332-ad28-c155a1990e3d@redhat.com>
-Message-ID: <ZpaV7kaVL1rj7MXj@google.com>
-Subject: Re: [GIT PULL (sort of)] KVM: x86: Static call changes for 6.11
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Message-Id: <10d583d4-29ec-4dae-8629-f6097639cc4e@app.fastmail.com>
+In-Reply-To: 
+ <MW4PR18MB5244F75E2D16051A5B838FF5A6A22@MW4PR18MB5244.namprd18.prod.outlook.com>
+References: <20240711120115.4069401-1-vattunuru@marvell.com>
+ <20240716132603.GA3136577@thelio-3990X>
+ <83ac6b91-c7f1-4b18-a522-8188d6d1298b@app.fastmail.com>
+ <MW4PR18MB5244F75E2D16051A5B838FF5A6A22@MW4PR18MB5244.namprd18.prod.outlook.com>
+Date: Tue, 16 Jul 2024 17:48:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Vamsi Attunuru" <vattunuru@marvell.com>,
+ "Nathan Chancellor" <nathan@kernel.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH] misc: Kconfig: add a new dependency for
+ MARVELL_CN10K_DPI
+Content-Type: text/plain
 
-On Tue, Jul 16, 2024, Paolo Bonzini wrote:
-> On 7/13/24 01:56, Sean Christopherson wrote:
-> > Here's a massage pull request for the static_call() changes, just in case you
-> > want to go this route instead of applying patches directly after merging
-> > everything else for 6.11 (it was easy to generate this).  If you want to go the
-> > patches route, I'll post 'em next week.
-> > 
-> > The following changes since commit c1c8a908a5f4c372f8a8dca0501b56ffc8d260fe:
-> > 
-> >    Merge branch 'vmx' (2024-06-28 22:22:53 +0000)
-> > 
-> > are available in the Git repository at:
-> > 
-> >    https://github.com/kvm-x86/linux.git  tags/kvm-x86-static_calls-6.11
-> > 
-> > for you to fetch changes up to b528de209c858f61953023b405a4abbf9a9933da:
-> > 
-> >    KVM: x86/pmu: Add kvm_pmu_call() to simplify static calls of kvm_pmu_ops (2024-06-28 15:23:49 -0700)
-> 
-> Thanks, indeed there was no straggler static_call() after applying
-> this.  However, there might be a problem: static_call_cond() is equal
-> to static_call() only if CONFIG_HAVE_STATIC_CALL_INLINE,
+On Tue, Jul 16, 2024, at 17:33, Vamsi Krishna Attunuru wrote:
+>>> Including one of the io-64-nonatomic headers would resolve this but I
+>>> am not sure which one would be appropriate (or perhaps the dependency
+>>> should be tightened to requiring 64BIT, as some other drivers have
+>>> done).
+>>
+>>Right, a dependency on 64BIT makes sense here. The alternative is to include
+>>linux/io-64-nonatomic-hi-lo.h or linux/io-64-nonatomic-lo-hi.h in order to
+>>have a replacement readq/writeq implementation that works on 32-bit
+>>architectures. However, doing this requires understanding whether what the
+>>side-effects of accessing the 64-bit registers are and whether they require
+>>writing the upper or lower half of the register last.
+>>
+>
+> Yes Arnd, I am checking the functionality using lo-hi calls that you suggested.
+> If it has any implications, I will fix it with the 64BIT dependency.
+>
 
-No, I think you misread the #if-#elif-#else.  It's only the !HAVE_STATIC_CALL
-case that requires use of static_call_cond().  From include/linux/static_call.h:
+If the datasheet does not give you any insight about how it works,
+you can try it out on a 64-bit kernel by changing all the
+readq/writeq into lo_hi_readq()/lo_hi_writeq() or
+hi_lo_readq()/hi_lo_writeq() after including the corresponding header.
 
-  #ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-  #define static_call_cond(name)	(void)__static_call(name)
+Usually only one of the two works, or possibly neither if the registers
+require 64-bit access. If you figure out which one works, you
+can change the calls back to readq/writeq and leave the correct
+header included that will provide fallback implementations on 32-bit
+architectures but use the native 64-bit access on 64-bit architectures.
 
-  #elif defined(CONFIG_HAVE_STATIC_CALL)
-  #define static_call_cond(name)	(void)__static_call(name)
+In practice this is not really important because nobody will ever
+need to use this driver on a 32-bit kernel, given that this SoC
+only supports 32-bit usermode but not kernel.
 
-  #else
-  #define static_call_cond(name)	(void)__static_call_cond(name)
-
-  #endif
-
-And per Josh, from an old RFC[*] to yank out static_call_cond():
-
- : Static calling a NULL pointer is a NOP, unless you're one of those poor
- : souls running on an arch (or backported x86 monstrosity) with
- : CONFIG_HAVE_STATIC_CALL=n, then it's a panic.
-
-I double checked that 32-bit KVM works on Intel (which is guaranteed to have a
-NULL guest_memory_reclaimed()).  I also verified that the generated code is
-identical for both static_call() and static_call_cond(), i.e. the READ_ONCE() of
-the func at runtime that's present in __static_call_cond() isn't showing up.
-
-Dump of assembler code for function kvm_arch_guest_memory_reclaimed:
-   0xc1042094 <+0>:	call   0xc10ce650 <__fentry__>
-   0xc1042099 <+5>:	push   %ebp
-   0xc104209a <+6>:	mov    %esp,%ebp
-   0xc104209c <+8>:	call   0xc1932d8c <__SCT__kvm_x86_guest_memory_reclaimed>
-   0xc10420a1 <+13>:	pop    %ebp
-   0xc10420a2 <+14>:	ret    
-End of assembler dump.
-
-Dump of assembler code for function __SCT__kvm_x86_guest_memory_reclaimed:
-   0xc1932d8c <+0>:	ret    
-   0xc1932d8d <+1>:	int3   
-   0xc1932d8e <+2>:	nop
-   0xc1932d8f <+3>:	nop
-   0xc1932d90 <+4>:	nop
-   0xc1932d91 <+5>:	ud1    %esp,%ecx
-End of assembler dump.
-
-[*] https://lore.kernel.org/all/cover.1678474914.git.jpoimboe@kernel.org
+       Arnd
 
