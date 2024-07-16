@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-254522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE2C933443
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:36:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5968F933447
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDD31F22ACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:36:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE0C28281B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD514386B;
-	Tue, 16 Jul 2024 22:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C610414386E;
+	Tue, 16 Jul 2024 22:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mWIAAXVD"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1p9IYH6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8094613CA95
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2537581D;
+	Tue, 16 Jul 2024 22:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721169375; cv=none; b=IrCzbwAFrD4ge/5iw/6WIaPBYyAlB1anaA8b/yFdSfrmAq6yHpeMhvet0HmBZ4yIPDoVaX1IN4E57Fz//3kVEsMLQI3DKDXSwOSP1eLtKrjUt7FOsVyVBAlSC3r/7Lt/J1xxncA47rxC8eQZk0t0EnJ+NZTC9gOD6HH/GW2NZOg=
+	t=1721169423; cv=none; b=rPlRK1C+tqZQlpM6YDRc/Gi9BiLKpatIvZUvir+ED2mS5I6c7hxYuIFtKlAJOTEMa09ISU8p6ItdqtEJ1AVS+BarF+Y/+RHtCSe4/tOr13p5+r5k2QVEIA7/YhzeY3Pt3SEUA34UnFB98FRreJejRr5andhUyBHxr/eLgd2FRyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721169375; c=relaxed/simple;
-	bh=zqTZu32QXN381eF2EXvGL2ywKpU4EioF0+pMA9whoCc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oFgrzAAZ8TmUV57fFiletg41sE3yEWznngaKV2Mpy9Rpp9wN18tw+wKfdGZK0LPir9M/00tfuBcNMOkzwTBHeDVJ+TW4obC9zhZPr8kbXN2dT4yteEr6zUJ697QQC6lTwTEfQW1Fiog1iqmbd+PGagTrzohVds5zWgpYGZ/XvEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mWIAAXVD; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e05d72f044cso2276453276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721169372; x=1721774172; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eWXs3z6b+9NSb4Ic7sSWzsLfXZane5NyKc2hSTtR2Q=;
-        b=mWIAAXVDA85+j4Y8+QlaeTU0e2sLe7tyt7w9xtVZieIxIasBKD0JFXa5qdLpHrfel7
-         EhoSgmqxrwMWqNGIbNr/gY4/18ci/552RIezKv0fKOjmTsZVnKjajr3B4ttuTVEhSqqI
-         yu7q37k4PmR7SKSt7YOqglKs8vThlq2MRBTt5UIvmjeY765JKJNlNXVtYwKtMoWVz5gt
-         ramWhk0Us3/8Fur6p/LeZwAL4h2lLBo/Nyk1hIUjIfP903yUD74FsElsoVVKlaMIc/t+
-         J5HyEo83LUnw5hYCR2bV9muTE7j7Qdec76pLcVnQQUR5KfCh94Q4siIQo20FRYH+wpnu
-         X4YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721169372; x=1721774172;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eWXs3z6b+9NSb4Ic7sSWzsLfXZane5NyKc2hSTtR2Q=;
-        b=m5J0+FhohfrN0i1YCnx4Gk3BWe+0PnK8ziUyxsu8eSijXxz9FdRpUsA8IalQyeWbi5
-         K2Ctoo9VyujKx8o9ugHv/hYWZLGVRmtLceTDcIVm1tfXsjgVutSHMFgEpevoQbZnySIS
-         K/4PPUcTiCzm5Sgmc9LpecEfbcNHfuu7h7FVlNNiBT3ZDnDvByykcWe7fMG8uuAjJubN
-         mWYIdnp6Kz/9i1AIa+rRwdI/Qwtdc04/DegCLxpozFmYgU0fkkZ1bPB1f+Rs7hVPuAVQ
-         Ml4BtOljV1FSXWNB9v90RJnC17Zq9izeuIkVZJ89I6T3AfWGYP7Mn1i8PT6BmKftjEDO
-         Jsng==
-X-Forwarded-Encrypted: i=1; AJvYcCU2qRBrAl/oj/tU6h57O3QupsjLv/ikjUllZ6klikXBaJeVi/QSzUJNvPpDqtA+zhPQz7WB8vyiOVtKhN3K+IVWi/a5P+htIFyGCct7
-X-Gm-Message-State: AOJu0YxP4O+BXfCP/+wKOFYfr1nZ/1eETEL0wcTV5w/ki7o/9dvHQzhT
-	mdsw9cEX7ng2s2JJHiydXBCdByzMBGfAqGSim28Knj9KGpLCSjyA6R1i3yGB7eB3xZZ7o7wrx8q
-	Erw==
-X-Google-Smtp-Source: AGHT+IHNefrgBmTcHKeT33Kds1JOiySYeJA9EAuLooxQygT8+6NXMEow7nFCWlJVAdiiNkTRCVbt/ahSqC8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1002:b0:e03:5312:c053 with SMTP id
- 3f1490d57ef6-e05d56c7498mr6635276.7.1721169372469; Tue, 16 Jul 2024 15:36:12
- -0700 (PDT)
-Date: Tue, 16 Jul 2024 15:36:11 -0700
-In-Reply-To: <20240716022014.240960-3-mlevitsk@redhat.com>
+	s=arc-20240116; t=1721169423; c=relaxed/simple;
+	bh=XUhPqr66mBnpUl5wHd3I09bj5Pm8QPcHLcQbS8RN2FY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjRFd9K+tRVF/XYZ8SP3OESEE0Z+o1g0fVhyGSp98vueYgGgLdhUuyhZv8uZPBR5A4VyvAQNUQStcRPFHW09EUEAXfr3qVCsyaZGl8hA+fEXC3e/lub/9r0VU0kliRZ5zrV4xz5QChUPN25JE/mizdkTYgOLWgQQbJJbuGaTx/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1p9IYH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0D6C116B1;
+	Tue, 16 Jul 2024 22:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721169422;
+	bh=XUhPqr66mBnpUl5wHd3I09bj5Pm8QPcHLcQbS8RN2FY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F1p9IYH6CeswGs4EhE3VvNyGUrDLpo0oWzVNjMgdh1KruHl2vKfSDfiscijpVIalA
+	 DHurXGvl7xl1FcRKM+mgjsN5Q8QAUUSQ5i64eUKdblM8SurZYwSNXaTLK63c2MPcPJ
+	 wWG13t+2ppvzi8J65PTwRj0YFm7SBgwlzjAYjHozzpKrlEIR8bQUg+m6zedz8yS8km
+	 4JZndZ1R6/kkdFyE6/5L0/UnCAhdf/MMPw6YTn72JsINyPJfeRg9gvOpMBFC0/IlC0
+	 MI+IxItyLo0XzPGtrksOOQTYCXZQFJua4YwNox8hmOrVBBkM1UaR/xa7rNE/MimPu6
+	 PxeS4v9QjH9Ng==
+Date: Tue, 16 Jul 2024 15:37:01 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v10 10/10] xfs: enable block size larger than page size
+ support
+Message-ID: <20240716223701.GG103014@frogsfrogsfrogs>
+References: <20240715094457.452836-1-kernel@pankajraghav.com>
+ <20240715094457.452836-11-kernel@pankajraghav.com>
+ <ZpaRwdi3Vo3qutyk@casper.infradead.org>
+ <20240716174016.GZ1998502@frogsfrogsfrogs>
+ <ZpayAGWQdw1rbCng@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240716022014.240960-1-mlevitsk@redhat.com> <20240716022014.240960-3-mlevitsk@redhat.com>
-Message-ID: <Zpb127FsRoLdlaBb@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: VMX: disable preemption when touching segment fields
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
-	Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpayAGWQdw1rbCng@casper.infradead.org>
 
-On Mon, Jul 15, 2024, Maxim Levitsky wrote:
-> VMX code uses segment cache to avoid reading guest segment fields.
+On Tue, Jul 16, 2024 at 06:46:40PM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 16, 2024 at 10:40:16AM -0700, Darrick J. Wong wrote:
+> > On Tue, Jul 16, 2024 at 04:29:05PM +0100, Matthew Wilcox wrote:
+> > > On Mon, Jul 15, 2024 at 11:44:57AM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > +++ b/fs/xfs/xfs_super.c
+> > > > @@ -1638,16 +1638,30 @@ xfs_fs_fill_super(
+> > > >  		goto out_free_sb;
+> > > >  	}
+> > > >  
+> > > > -	/*
+> > > > -	 * Until this is fixed only page-sized or smaller data blocks work.
+> > > > -	 */
+> > > >  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+> > > > -		xfs_warn(mp,
+> > > > -		"File system with blocksize %d bytes. "
+> > > > -		"Only pagesize (%ld) or less will currently work.",
+> > > > +		size_t max_folio_size = mapping_max_folio_size_supported();
+> > > > +
+> > > > +		if (!xfs_has_crc(mp)) {
+> > > > +			xfs_warn(mp,
+> > > > +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
+> > > >  				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> > > > -		error = -ENOSYS;
+> > > > -		goto out_free_sb;
+> > > > +			error = -ENOSYS;
+> > > > +			goto out_free_sb;
+> > > > +		}
+> > > > +
+> > > > +		if (mp->m_sb.sb_blocksize > max_folio_size) {
+> > > > +			xfs_warn(mp,
+> > > > +"block size (%u bytes) not supported; maximum folio size supported in "\
+> > > > +"the page cache is (%ld bytes). Check MAX_PAGECACHE_ORDER (%d)",
+> > > > +			mp->m_sb.sb_blocksize, max_folio_size,
+> > > > +			MAX_PAGECACHE_ORDER);
+> > > 
+> > > Again, too much message.  Way too much.  We shouldn't even allow block
+> > > devices to be created if their block size is larger than the max supported
+> > > by the page cache.
+> > 
+> > Filesystem blocksize != block device blocksize.  xfs still needs this
+> > check because one can xfs_copy a 64k-fsblock xfs to a hdd with 512b
+> > sectors and try to mount that on x86.
+> > 
+> > Assuming there /is/ some fs that allows 1G blocksize, you'd then really
+> > want a mount check that would prevent you from mounting that.
 > 
-> The cache is reset each time a segment's field (e.g base/access rights/etc)
-> is written, and then a new value of this field is written.
-> 
-> However if the vCPU is preempted between these two events, and this
-> segment field is read (e.g kvm reads SS's access rights to check
-> if the vCPU is in kernel mode), then old field value will get
-> cached and never updated.
+> Absolutely, we need to have an fs blocksize check in the fs (if only
+> because fs fuzzers will put random values in fields and expect the system
+> to not crash).  But that should have nothing to do with page cache size.
 
-It'be super helpful to include the gory details about how kvm_arch_vcpu_put()
-reads stale data.  Without that information, it's very hard to figure out how
-getting preempted is problematic.
+I don't understand your objection -- we're setting the minimum folio
+order on a file's pagecache to match the fs-wide blocksize.  If the
+pagecache can't possibly fulfill our fs-wide requirement, then why would
+we continue the mount?
 
-  vmx_vcpu_reset resets the segment cache bitmask and then initializes
-  the segments in the vmcs, however if the vcpus is preempted in the
-  middle of this code, the kvm_arch_vcpu_put is called which
-  reads SS's AR bytes to determine if the vCPU is in the kernel mode,
-  which caches the old value.
+Let's pretend that MAX_PAGECACHE_ORDER is 1.  The filesystem has 16k
+blocks, the CPU has 4k base pages.  xfs will try to set the min folio
+order to 2 via mapping_set_folio_order_range.  That function clamps it
+to 1, so we try to cache a 16k fsblock with 8k pages.  Does that
+actually work?
 
-> Usually a lock is required to avoid such race but since vCPU segments
-> are only accessed by its vCPU thread, we can avoid a lock and
-> only disable preemption, in places where the segment cache
-> is invalidated and segment fields are updated.
+If not, then doesn't it make more more sense to fail the mount?
 
-This doesn't fully fix the problem.  It's not just kvm_sched_out() => kvm_arch_vcpu_put()
-that's problematic, it's any path that executes KVM code in interrupt context.
-And it's not just limited to segment registers, any register that is conditionally
-cached via arch.regs_avail is susceptible to races.
-
-Specifically, kvm_guest_state() and kvm_guest_get_ip() will read SS.AR_bytes and
-RIP in NMI and/or IRQ context when handling a PMI.
-
-A few possible ideas.
-
- 1. Force reads from IRQ/NMI context to skip the cache and go to the VMCS.
-
- 2. Same thing as #1, but focus it specifically on kvm_arch_vcpu_in_kernel()
-    and kvm_arch_vcpu_get_ip(), and WARN if kvm_register_is_available() or
-    vmx_segment_cache_test_set() is invoked from IRQ or NMI context.
-
- 3. Force caching of SS.AR_bytes, CS.AR_bytes, and RIP prior to kvm_after_interrupt(),
-    rename preempted_in_kernel to something like "exited_in_kernel" and snapshot
-    it before kvm_after_interrupt(), and add the same hardening as #2.
-
-    This is doable because kvm_guest_state() should never read guest state for
-    PMIs that occur between VM-Exit and kvm_after_interrupt(), nor should KVM
-    write guest state in that window.  And the intent of the "preempted in kernel"
-    check is to query vCPU state at the time of exit.
-
- 5. Do a combination of #3 and patch 02 (#3 fixes PMIs, patch 02 fixes preemption).
-
-My vote is probably for #2 or #4.  I definitely think we need WARNs in the caching
-code, and in general kvm_arch_vcpu_put() shouldn't be reading cacheable state, i.e.
-I am fairly confident we can restrict it to checking CPL.
-
-I don't hate this patch by any means, but I don't love disabling preemption in a
-bunch of flows just so that the preempted_in_kernel logic works.
+--D
 
