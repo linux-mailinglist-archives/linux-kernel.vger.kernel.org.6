@@ -1,119 +1,71 @@
-Return-Path: <linux-kernel+bounces-253271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD46B931EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A09931EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3881C21D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86A41F22476
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6B813FF9;
-	Tue, 16 Jul 2024 02:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABB0DDC0;
+	Tue, 16 Jul 2024 02:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="20y6mUqq"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H8MQ33Od"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB568208A5
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EF3182B9
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721097041; cv=none; b=U4WicNCmCk9EvVpKsIj/HAN49tN/tex+D9dqzEqZuHPw812P/dop7NNH2XWlEVvv1lPHTH72Pr0+1w2SX/68tTXDm4AkeGmnFbJOnMjuv+7aAzpe/4FsjyDXdaSt5ZepHfMLXpIt5rvpD7K8SpBfrRasGf5OpH2zgZ1uZnQdpUE=
+	t=1721097071; cv=none; b=IwXq2Ayw3Fas/asz+W/9KkBYaVuO6Cyjzoy5dZz1geNLBmeB5w5uF/bK4dijnuBZEQ2ClSYDdMO4204LJJ+ixz06I2wMeN6T8q6eqkQ6CiOAFl1aIhh4ih6N5O7QZeYX5EHo362sfBrnUyepD918opS0qPU4J/xuMvVYCNAYFGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721097041; c=relaxed/simple;
-	bh=3iqw1t/CyrkP/qQUgCQYv/zzWd4pYBWDepSahEba1wM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJm73Ey8T5fB9LEJbQO+Qk33StXuqBFZiTezlSNTyicznyyRbKKBZPpS9byFanyEoKpn/N+DPNlXLl4xrBoj8lPVQK972lCMyXsRea/37xSPNJQfaNIvGawcdMWbzDpp/m+n055wIbO8e/0mugbmTjOyurOkURlwRCfr+xcSAFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=20y6mUqq; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso8489a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 19:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721097037; x=1721701837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C1pYeevvK77sMTv04yGyie+GvLz7zwfPlA255cFn8ls=;
-        b=20y6mUqqZ4Hlapopze6MwurCtiQxWesiGSVefW0xb0QimWX+9QkK4ML/ClNpfxBowE
-         O98QfJ5YRKhJxj2GeQbzBLSPKVsT/i8GbU89uhnKq5lvW0HnyPlzXlbmZZ5GA+r1OaGa
-         HNOvaNrtbw0tb+3N/kl6QIPtyfnhrku7BA3MQIxnfM6FW16aag9jb0hdIxWiIkAgM5yZ
-         68JJBSxJhgp01xjd2I0blEc4xSPGJbfiLH/NOEDcDNyd5NVXVYsdeiQ3M0SWZL+sVzdF
-         OGkxs4/6Qi9Mshb2OZlweMA+WWKp3EEALVlo2/sWEc5Z5BaVLcXi3PO42XiirsEgz7A8
-         4HWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721097037; x=1721701837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C1pYeevvK77sMTv04yGyie+GvLz7zwfPlA255cFn8ls=;
-        b=fmSGwXHNwQNwBzISebiWwTsLffVI8Zi0NTPu/7tsLAw1HTv6KUdoF7fzIH76Pge4eL
-         UjTPuWRvLdERltd/nS6vzWjNL86kydw+AoLeuWoFE2YHA31RJs7H7ODxJqITKiP8aGLv
-         SVn9blKzFttZ9zlRP5dkd/eVFVB4q8NxJB4nKfnwScUeuR60Da/IxCtfQmruGiYL/hgE
-         hoPQ3SsqQ1Xm1yelwKWCZJgrb2LlcY5x/2Yxi55Yfef/wUr/Z6RghQRxmGAe56WoNxuL
-         HC+oxrJwAPA99Mk5LcaW30DlPlZl93wK9w2N0+WC0SIEsUxNEIcdsjBcD07zONuJm6al
-         lHhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNfHQmzU26tPhN7tP59E3Eet7FaB3ehmkx7Im4uZA+tazUucQW+/xDtQeFcrxDVxW7ugrNZNzqaGFTnY6H6/TXjxoa+b5HUhohRqT3
-X-Gm-Message-State: AOJu0YwodD4FoFVSisrHJU1MarUgd4K+nxURX82fZgbRQini7oxIYVhw
-	Cv220zjKU29dPdJc1eoa75whp0/GFC6K5l4mQkFHR4J/8lVsxVe9hGHSQCN0f6JJkA5vTwELmeX
-	k2eqfi2JfAo3hMapcrwI2A8AC+Scc4B6K/KNi
-X-Google-Smtp-Source: AGHT+IHchWRK+QagrkmTdo8Drjk6/O7gp0y4ZtZeA4qUKecjhmMM8xytG2fGoy6xfybpClQwkF1ivmZiDztRHX4l/es=
-X-Received: by 2002:a05:6402:5106:b0:58b:90c6:c59e with SMTP id
- 4fb4d7f45d1cf-59eed87975dmr81644a12.7.1721097036784; Mon, 15 Jul 2024
- 19:30:36 -0700 (PDT)
+	s=arc-20240116; t=1721097071; c=relaxed/simple;
+	bh=mXtlf6yx+UQfOiM5Bt9On2FgzKxuGLzAdiKPY6+VSM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QW7kzlpeSb8LHlvjXQ21AWyRkR+LlRoK0xueGIKOgijDRu39P3P304Xxf527YjZPSftSZH4FER8vQxIDRdsPHok/kKXdV6qq3UPDopyPPIRqPxcsoEu5yExrdS9KvTkeZlaI9Q+1nckYMViizXeks4w0PIROdsA0jCGJVrswfhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H8MQ33Od; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mXtlf6yx+UQfOiM5Bt9On2FgzKxuGLzAdiKPY6+VSM8=; b=H8MQ33Od/V+0Y7VflaQ1IgXUZw
+	a33kzLtCYRtLr1YScZRXUJy7/T9ytk6jrsVXuYcLHj1GjXtnaHxtKirNJlyrrFlHm0qEmhX+tiQ0Q
+	DBFDsN7RS7nQN1RhGSA1v4zMsLnycJvHrOPcXxfXa9ySrlLo57P9KwL9GXYdEbz7/QkTXqLFKQLhF
+	vUEAPPOLO4jwqjj1OmQiV46teFPywDk3nsNjY3wYL2fBVwMsjCcAVwSrNUDbnMSSlkpQkaiCF5LSP
+	2eVKqeNbC03eyeYQXY7NSceqUBGkdvJvrhNTg6RJGDXWVxTiuvB/YK0fsMbonRSffjsJLPFqe0sTr
+	PKUKWGDQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTXy6-0000000Gcqf-0eUV;
+	Tue, 16 Jul 2024 02:31:06 +0000
+Date: Tue, 16 Jul 2024 03:31:06 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH 1/2] radix tree test suite: include kconfig.h with
+ incomplete path
+Message-ID: <ZpXbalVnI9FzHMHx@casper.infradead.org>
+References: <20240712074151.27009-1-richard.weiyang@gmail.com>
+ <20240716021543.ghzeiq5yqtov43lk@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716021548.339364-1-make24@iscas.ac.cn>
-In-Reply-To: <20240716021548.339364-1-make24@iscas.ac.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 15 Jul 2024 19:30:24 -0700
-Message-ID: <CANn89iKzNXMNjYmf+2uA1kutKcfW_XbYVQ==00meJvC3XpM2nw@mail.gmail.com>
-Subject: Re: [PATCH] ipv6: prevent possible NULL dereference in ndisc_recv_na()
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, johannes.berg@intel.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716021543.ghzeiq5yqtov43lk@master>
 
-On Mon, Jul 15, 2024 at 7:16=E2=80=AFPM Ma Ke <make24@iscas.ac.cn> wrote:
->
-> In ndisc_recv_na(), __in6_dev_get() could return NULL, which is a NULL
-> pointer dereference. Add a check to prevent bailing out.
->
-> Fixes: 7a02bf892d8f ("ipv6: add option to drop unsolicited neighbor adver=
-tisements")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  net/ipv6/ndisc.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-> index d914b23256ce..f7cafff3f6a9 100644
-> --- a/net/ipv6/ndisc.c
-> +++ b/net/ipv6/ndisc.c
-> @@ -1000,6 +1000,8 @@ static enum skb_drop_reason ndisc_recv_na(struct sk=
-_buff *skb)
->         struct ndisc_options ndopts;
->         struct net_device *dev =3D skb->dev;
->         struct inet6_dev *idev =3D __in6_dev_get(dev);
-> +       if (!idev)
-> +               return SKP_DROP_REASON_NOT_SPECIFIED;
->         struct inet6_ifaddr *ifp;
->         struct neighbour *neigh;
->         SKB_DR(reason);
+On Tue, Jul 16, 2024 at 02:15:43AM +0000, Wei Yang wrote:
+> If you think my understanding is correct, I would send a v2 with proper
+> changelog to describe it.
 
-Please do not mix code and variables.
-
-Also, idev is correctly tested in the current code, therefore your
-patch is not needed.
-
-Thank you.
+It seems like you're trying to change something that isn't broken.
 
