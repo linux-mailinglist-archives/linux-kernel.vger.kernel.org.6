@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-253407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E542B9320DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686799320DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2291F1C21A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EEE284E74
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F78A224D4;
-	Tue, 16 Jul 2024 07:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B468D224DD;
+	Tue, 16 Jul 2024 07:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HPETwiBU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WvkNDN9p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9B9196;
-	Tue, 16 Jul 2024 07:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEB6196;
+	Tue, 16 Jul 2024 07:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721113248; cv=none; b=k9lwVlnHyZJwq5KQzNheHheJZ7DodA2CuPZvHdcNMNUToZyj4/cyryQyMDG+33AuWdSfzXWu4yfQNe+nIrcVSt522XQo6X1C/D6Pcndcr+jfHMkxb4ttLqFEFgSxfAsVBvd2oA65OrgMR5/2g6w2TCtSwtlRms98Y8WA5K8CcRc=
+	t=1721113429; cv=none; b=ofalyPClkO0W7l2q2JvxpNH2tjxybtPGZobq6fPADeYG69LZPle6d2O6OCL7r4MpUHMJzObBQzu6WIED1ETSRoac0Rgji8Mzj7ipPFslg9bfQgYaks05o8AcM5qMuX3jbJhG2LkN1agIFXeDyOAVGLjImP3aW10mbSFgYPmHmBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721113248; c=relaxed/simple;
-	bh=Lb5BfWwfXD1W2vdI6TG7Vn7ilEe0ebcG3kNqQ5aOXYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QnLw/OPE5hStdGi2/kko7NvlwOsosdmo/aYaTpbGtSUoK/mfY+63qUiVr4jSy8gcwIM8q+4H8g1NWbyHuXTRwogFBw+iPf1lOjWEMcaIrPZhgkLfc2/R+Oa8w4MuQr5ucK+Ts/BNptgxeZ6p83rCuRJV23OYKzOJEZagZVyYkio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HPETwiBU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G4XUu1016917;
-	Tue, 16 Jul 2024 07:00:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ITeBy0oov4fGUP+gZYoNcS9Gm/5LHpylTb5XUEZUGL8=; b=HPETwiBUDhi9XEFh
-	h8Yaei+X0aJezWhsgdh0M2/mnIE5ny/hvebcRq8uLj7WZepzH9DNj4b63dumhUTP
-	FYbDP6PjTkfZYznUCReQnOSDb7TS3/6k/Dl9qfDG23SjlC2v2G5IYuxeCQ2YesrQ
-	bwh3RrBA75nXLadc7H7AUi+W9I4VyKVamlice/6vt28wme9Lq359Rwws68OwFS8b
-	4em3TLX6pFxzk4RumjtC+KTLK8y8hRnjqzyOxiksuf0ngUVC6tsGXpF93okF+70Y
-	QyAwzq7FrPwR/XJ6jgRLF6CYvWVzi5pLo7vcVoDz7elPjirgQeGGL/QapIjQ9fsq
-	Ywh5mg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bgk6p9f0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 07:00:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46G70dC7031482
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 07:00:39 GMT
-Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 00:00:37 -0700
-Message-ID: <8fd5abb2-caea-4e72-a07b-5a1d0cecc1d1@quicinc.com>
-Date: Tue, 16 Jul 2024 15:00:34 +0800
+	s=arc-20240116; t=1721113429; c=relaxed/simple;
+	bh=kb4BLUFgOrXwORd9OqvI1kr/TaikVBCAK64a4eBA/ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K3vPnGB6+ZQTQ6OPYSnkuK5M0wVYfNVCV/ygiLD1+o65inP/U0Xk/8KzKM8QYXtBqqT65EDU7rMwNEhtj+Ohuq28XeJmlhbAZZLrL3dbxIxjwfhR8esyVL5/t5bi1OWjzkm9jpv77MMZZqQ6ngpdymh3PE/OK480O6bMz3bC3kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WvkNDN9p; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721113428; x=1752649428;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kb4BLUFgOrXwORd9OqvI1kr/TaikVBCAK64a4eBA/ws=;
+  b=WvkNDN9pzqRrOJparANmigi661+e1OIuIf4AExuYHavjH2LuPUb+mCdG
+   9tWoLo2nTrWAnX7saNnlkMcqMex703MRnG3UO0jw7ILcaIv+9+ovHl3FV
+   YH0Cs6U76oodbKBNRPvR5BjteRnvGgiECxCI22BrSJ87xGeWK890AL0oA
+   JNZLhvYK71tZftItKdC5g68NUXGxG6rtTAx7vnI+T8cC1km/tTN++EWoS
+   WgDhW+u6e3r453hIm6Jzg0ew+il6eBN9B+lqJVQAOMC2fqDiKscJq3CwB
+   JmCNjMdXhCDykAbUbLWiMurYwxaJRqy8O3Nrj1fj/6DHQkrqNnCPZyek2
+   g==;
+X-CSE-ConnectionGUID: NBGOfBwwTUaUqu+qEhs6UQ==
+X-CSE-MsgGUID: MI+LQKNNTEK+CvnWL/aQDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="29206655"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="29206655"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 00:03:46 -0700
+X-CSE-ConnectionGUID: 39z+WceyQWyviCcHjTEOYA==
+X-CSE-MsgGUID: AcCfRfahTcuxTe1TZvmqpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="49787694"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 00:03:40 -0700
+Message-ID: <935aedd8-0a7a-4e3a-a89d-e1f134ab7fd0@intel.com>
+Date: Tue, 16 Jul 2024 10:03:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,69 +66,398 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: Mark APPS and PCIE SMMUs as
- DMA coherent
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Andrew Halaney <ahalaney@redhat.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240715071649.25738-1-quic_qqzhou@quicinc.com>
- <nulprwjd52j2iq7cpx5nq733cbi6ccdpemq6a7ocglv4ep5jmh@jvs6zof5u535>
- <c8b0c7ce-f02a-4d38-8473-4c20287ddbcc@quicinc.com>
- <20240716060536.GH3446@thinkpad>
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-In-Reply-To: <20240716060536.GH3446@thinkpad>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HtSc5oV-vQlbxLQHPp_pFZqWPwzbIglL
-X-Proofpoint-ORIG-GUID: HtSc5oV-vQlbxLQHPp_pFZqWPwzbIglL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 mlxlogscore=881 suspectscore=0 clxscore=1011 mlxscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407160052
+Subject: Re: [PATCH v5 2/2] mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI
+ driver
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, pbrobinson@gmail.com, serghox@gmail.com,
+ mcgrof@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ forbidden405@outlook.com, tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240716004527.20378-1-shanchun1218@gmail.com>
+ <20240716004527.20378-3-shanchun1218@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240716004527.20378-3-shanchun1218@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mani,
-Thanks for reviewing, do you mean to post a new patch which adds "Fixes:" tags and "cc: stable@vger.kernel.org"?
+On 16/07/24 03:45, Shan-Chun Hung wrote:
+> Add the SDHCI driver for the MA35D1 platform. It is based upon the
+> SDHCI interface, but requires some extra initialization.
+> 
+> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
 
-在 7/16/2024 2:05 PM, Manivannan Sadhasivam 写道:
-> On Tue, Jul 16, 2024 at 02:00:15PM +0800, Qingqing Zhou wrote:
->>
->>
->> 在 7/16/2024 2:14 AM, Andrew Halaney 写道:
->>> On Mon, Jul 15, 2024 at 12:46:49PM GMT, Qingqing Zhou wrote:
->>>> The SMMUs on sa8775p are cache-coherent. GPU SMMU is marked as such,
->>>> mark the APPS and PCIE ones as well.
->>>>
->>>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
->>>
->>> I think this deserves a Fixes tag as well, not treating it as
->>> dma-coherent is a bug and can lead to difficult to debug errors based on
->>> a quick search through lkml.
->>>
->>> Thanks,
->>> Andrew
->>>
->>
->> Andrew, thanks for your review comments, do you mean to add below two lines?
->> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
->> Fixes: 2dba7a613a6e ("arm64: dts: qcom: sa8775p: add the pcie smmu node")
->>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/Kconfig           |  12 ++
+>  drivers/mmc/host/Makefile          |   1 +
+>  drivers/mmc/host/sdhci-of-ma35d1.c | 314 +++++++++++++++++++++++++++++
+>  3 files changed, 327 insertions(+)
+>  create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
 > 
-> Yes, looks to be it. With the tags added,
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index bb0d4fb0892a..aa6922ff4210 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -252,6 +252,18 @@ config MMC_SDHCI_OF_SPARX5
 > 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>  	  If unsure, say N.
 > 
-> And CC stable if the offending commits went into any stable kernels.
+> +config MMC_SDHCI_OF_MA35D1
+> +	tristate "SDHCI OF support for the MA35D1 SDHCI controller"
+> +	depends on ARCH_MA35 || COMPILE_TEST
+> +	depends on MMC_SDHCI_PLTFM
+> +	help
+> +	  This selects the MA35D1 Secure Digital Host Controller Interface.
+> +	  The controller supports SD/MMC/SDIO devices.
+> +
+> +	  If you have a controller with this interface, say Y or M here.
+> +
+> +	  If unsure, say N.
+> +
+>  config MMC_SDHCI_CADENCE
+>  	tristate "SDHCI support for the Cadence SD/SDIO/eMMC controller"
+>  	depends on MMC_SDHCI_PLTFM
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index f53f86d200ac..3ccffebbe59b 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -88,6 +88,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)	+= sdhci-of-esdhc.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_HLWD)		+= sdhci-of-hlwd.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)	+= sdhci-of-dwcmshc.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_SPARX5)	+= sdhci-of-sparx5.o
+> +obj-$(CONFIG_MMC_SDHCI_OF_MA35D1)	+= sdhci-of-ma35d1.o
+>  obj-$(CONFIG_MMC_SDHCI_BCM_KONA)	+= sdhci-bcm-kona.o
+>  obj-$(CONFIG_MMC_SDHCI_IPROC)		+= sdhci-iproc.o
+>  obj-$(CONFIG_MMC_SDHCI_NPCM)		+= sdhci-npcm.o
+> diff --git a/drivers/mmc/host/sdhci-of-ma35d1.c b/drivers/mmc/host/sdhci-of-ma35d1.c
+> new file mode 100644
+> index 000000000000..b84c2927bd4a
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-of-ma35d1.c
+> @@ -0,0 +1,314 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2024 Nuvoton Technology Corp.
+> + *
+> + * Author: Shan-Chun Hung <shanchun1218@gmail.com>
+> + */
+> +
+> +#include <linux/align.h>
+> +#include <linux/array_size.h>
+> +#include <linux/bits.h>
+> +#include <linux/build_bug.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/err.h>
+> +#include <linux/math.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/minmax.h>
+> +#include <linux/mmc/card.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/pinctrl/consumer.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <linux/sizes.h>
+> +#include <linux/types.h>
+> +
+> +#include "sdhci-pltfm.h"
+> +#include "sdhci.h"
+> +
+> +#define MA35_SYS_MISCFCR0	0x070
+> +#define MA35_SDHCI_MSHCCTL	0x508
+> +#define MA35_SDHCI_MBIUCTL	0x510
+> +
+> +#define MA35_SDHCI_CMD_CONFLICT_CHK	BIT(0)
+> +#define MA35_SDHCI_INCR_MSK		GENMASK(3, 0)
+> +#define MA35_SDHCI_INCR16		BIT(3)
+> +#define MA35_SDHCI_INCR8		BIT(2)
+> +
+> +struct ma35_priv {
+> +	struct reset_control	*rst;
+> +	struct pinctrl		*pinctrl;
+> +	struct pinctrl_state	*pins_uhs;
+> +	struct pinctrl_state	*pins_default;
+> +};
+> +
+> +struct ma35_restore_data {
+> +	u32	reg;
+> +	u32	width;
+> +};
+> +
+> +static const struct ma35_restore_data restore_data[] = {
+> +	{ SDHCI_CLOCK_CONTROL,		sizeof(u32)},
+> +	{ SDHCI_BLOCK_SIZE,		sizeof(u32)},
+> +	{ SDHCI_INT_ENABLE,		sizeof(u32)},
+> +	{ SDHCI_SIGNAL_ENABLE,		sizeof(u32)},
+> +	{ SDHCI_AUTO_CMD_STATUS,	sizeof(u32)},
+> +	{ SDHCI_HOST_CONTROL,		sizeof(u32)},
+> +	{ SDHCI_TIMEOUT_CONTROL,	sizeof(u8) },
+> +	{ MA35_SDHCI_MSHCCTL,		sizeof(u16)},
+> +	{ MA35_SDHCI_MBIUCTL,		sizeof(u16)},
+> +};
+> +
+> +/*
+> + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+> + * so that each DMA transfer doesn't exceed the boundary.
+> + */
+> +static void ma35_adma_write_desc(struct sdhci_host *host, void **desc, dma_addr_t addr, int len,
+> +				 unsigned int cmd)
+> +{
+> +	int tmplen, offset;
+> +
+> +	if (likely(!len || (ALIGN(addr, SZ_128M) == ALIGN(addr + len - 1, SZ_128M)))) {
+> +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +		return;
+> +	}
+> +
+> +	offset = addr & (SZ_128M - 1);
+> +	tmplen = SZ_128M - offset;
+> +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
+> +
+> +	addr += tmplen;
+> +	len -= tmplen;
+> +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +}
+> +
+> +static void ma35_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	u32 ctl;
+> +
+> +	/*
+> +	 * If the clock frequency exceeds MMC_HIGH_52_MAX_DTR,
+> +	 * disable command conflict check.
+> +	 */
+> +	ctl = sdhci_readw(host, MA35_SDHCI_MSHCCTL);
+> +	if (clock > MMC_HIGH_52_MAX_DTR)
+> +		ctl &= ~MA35_SDHCI_CMD_CONFLICT_CHK;
+> +	else
+> +		ctl |= MA35_SDHCI_CMD_CONFLICT_CHK;
+> +	sdhci_writew(host, ctl, MA35_SDHCI_MSHCCTL);
+> +
+> +	sdhci_set_clock(host, clock);
+> +}
+> +
+> +static int ma35_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +
+> +	switch (ios->signal_voltage) {
+> +	case MMC_SIGNAL_VOLTAGE_180:
+> +		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_uhs))
+> +			pinctrl_select_state(priv->pinctrl, priv->pins_uhs);
+> +		break;
+> +	case MMC_SIGNAL_VOLTAGE_330:
+> +		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_default))
+> +			pinctrl_select_state(priv->pinctrl, priv->pins_default);
+> +		break;
+> +	default:
+> +		dev_err(mmc_dev(host->mmc), "Unsupported signal voltage!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return sdhci_start_signal_voltage_switch(mmc, ios);
+> +}
+> +
+> +static void ma35_voltage_switch(struct sdhci_host *host)
+> +{
+> +	/* Wait for 5ms after set 1.8V signal enable bit */
+> +	fsleep(5000);
+> +}
+> +
+> +static int ma35_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +	int idx;
+> +	u32 regs[ARRAY_SIZE(restore_data)] = {};
+> +
+> +	/*
+> +	 * Limitations require a reset of SD/eMMC before tuning and
+> +	 * saving the registers before resetting, then restoring
+> +	 * after the reset.
+> +	 */
+> +	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
+> +		if (restore_data[idx].width == sizeof(u32))
+> +			regs[idx] = sdhci_readl(host, restore_data[idx].reg);
+> +		else if (restore_data[idx].width == sizeof(u16))
+> +			regs[idx] = sdhci_readw(host, restore_data[idx].reg);
+> +		else if (restore_data[idx].width == sizeof(u8))
+> +			regs[idx] = sdhci_readb(host, restore_data[idx].reg);
+> +	}
+> +
+> +	reset_control_assert(priv->rst);
+> +	reset_control_deassert(priv->rst);
+> +
+> +	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
+> +		if (restore_data[idx].width == sizeof(u32))
+> +			sdhci_writel(host, regs[idx], restore_data[idx].reg);
+> +		else if (restore_data[idx].width == sizeof(u16))
+> +			sdhci_writew(host, regs[idx], restore_data[idx].reg);
+> +		else if (restore_data[idx].width == sizeof(u8))
+> +			sdhci_writeb(host, regs[idx], restore_data[idx].reg);
+> +	}
+> +
+> +	return sdhci_execute_tuning(mmc, opcode);
+> +}
+> +
+> +static const struct sdhci_ops sdhci_ma35_ops = {
+> +	.set_clock		= ma35_set_clock,
+> +	.set_bus_width		= sdhci_set_bus_width,
+> +	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+> +	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+> +	.reset			= sdhci_reset,
+> +	.adma_write_desc	= ma35_adma_write_desc,
+> +	.voltage_switch		= ma35_voltage_switch,
+> +};
+> +
+> +static const struct sdhci_pltfm_data sdhci_ma35_pdata = {
+> +	.ops = &sdhci_ma35_ops,
+> +	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN | SDHCI_QUIRK2_BROKEN_DDR50 |
+> +		   SDHCI_QUIRK2_ACMD23_BROKEN,
+> +};
+> +
+> +static int ma35_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct sdhci_pltfm_host *pltfm_host;
+> +	struct sdhci_host *host;
+> +	struct ma35_priv *priv;
+> +	int err;
+> +	u32 extra, ctl;
+> +
+> +	host = sdhci_pltfm_init(pdev, &sdhci_ma35_pdata, sizeof(struct ma35_priv));
+> +	if (IS_ERR(host))
+> +		return PTR_ERR(host);
+> +
+> +	/* Extra adma table cnt for cross 128M boundary handling. */
+> +	extra = DIV_ROUND_UP_ULL(dma_get_required_mask(dev), SZ_128M);
+> +	extra = min(extra, SDHCI_MAX_SEGS);
+> +
+> +	host->adma_table_cnt += extra;
+> +	pltfm_host = sdhci_priv(host);
+> +	priv = sdhci_pltfm_priv(pltfm_host);
+> +
+> +	pltfm_host->clk = devm_clk_get_optional_enabled(dev, NULL);
+> +	if (IS_ERR(pltfm_host->clk)) {
+> +		err = dev_err_probe(dev, PTR_ERR(pltfm_host->clk), "failed to get clk\n");
+> +		goto err_sdhci;
+> +	}
+> +
+> +	err = mmc_of_parse(host->mmc);
+> +	if (err)
+> +		goto err_sdhci;
+> +
+> +	priv->rst = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(priv->rst)) {
+> +		err = dev_err_probe(dev, PTR_ERR(priv->rst), "failed to get reset control\n");
+> +		goto err_sdhci;
+> +	}
+> +
+> +	sdhci_get_of_property(pdev);
+> +
+> +	priv->pinctrl = devm_pinctrl_get(dev);
+> +	if (!IS_ERR(priv->pinctrl)) {
+> +		priv->pins_default = pinctrl_lookup_state(priv->pinctrl, "default");
+> +		priv->pins_uhs = pinctrl_lookup_state(priv->pinctrl, "state_uhs");
+> +		pinctrl_select_state(priv->pinctrl, priv->pins_default);
+> +	}
+> +
+> +	if (!(host->quirks2 & SDHCI_QUIRK2_NO_1_8_V)) {
+> +		struct regmap	*regmap;
+> +		u32		reg;
+> +
+> +		regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev), "nuvoton,sys");
+> +		if (!IS_ERR(regmap)) {
+> +			/* Enable SDHCI voltage stable for 1.8V */
+> +			regmap_read(regmap, MA35_SYS_MISCFCR0, &reg);
+> +			reg |= BIT(17);
+> +			regmap_write(regmap, MA35_SYS_MISCFCR0, reg);
+> +		}
+> +
+> +		host->mmc_host_ops.start_signal_voltage_switch =
+> +					ma35_start_signal_voltage_switch;
+> +	}
+> +
+> +	host->mmc_host_ops.execute_tuning = ma35_execute_tuning;
+> +
+> +	err = sdhci_add_host(host);
+> +	if (err)
+> +		goto err_sdhci;
+> +
+> +	/*
+> +	 * Split data into chunks of 16 or 8 bytes for transmission.
+> +	 * Each chunk transfer is guaranteed to be uninterrupted on the bus.
+> +	 * This likely corresponds to the AHB bus DMA burst size.
+> +	 */
+> +	ctl = sdhci_readw(host, MA35_SDHCI_MBIUCTL);
+> +	ctl &= ~MA35_SDHCI_INCR_MSK;
+> +	ctl |= MA35_SDHCI_INCR16 | MA35_SDHCI_INCR8;
+> +	sdhci_writew(host, ctl, MA35_SDHCI_MBIUCTL);
+> +
+> +	return 0;
+> +
+> +err_sdhci:
+> +	sdhci_pltfm_free(pdev);
+> +	return err;
+> +}
+> +
+> +static void ma35_disable_card_clk(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	if (ctrl & SDHCI_CLOCK_CARD_EN) {
+> +		ctrl &= ~SDHCI_CLOCK_CARD_EN;
+> +		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> +	}
+> +}
+> +
+> +static void ma35_remove(struct platform_device *pdev)
+> +{
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +
+> +	sdhci_remove_host(host, 0);
+> +	ma35_disable_card_clk(host);
+> +	sdhci_pltfm_free(pdev);
+> +}
+> +
+> +static const struct of_device_id sdhci_ma35_dt_ids[] = {
+> +	{ .compatible = "nuvoton,ma35d1-sdhci" },
+> +	{}
+> +};
+> +
+> +static struct platform_driver sdhci_ma35_driver = {
+> +	.driver	= {
+> +		.name	= "sdhci-ma35",
+> +		.of_match_table = sdhci_ma35_dt_ids,
+> +	},
+> +	.probe	= ma35_probe,
+> +	.remove_new = ma35_remove,
+> +};
+> +module_platform_driver(sdhci_ma35_driver);
+> +
+> +MODULE_DESCRIPTION("SDHCI platform driver for Nuvoton MA35");
+> +MODULE_AUTHOR("Shan-Chun Hung <shanchun1218@gmail.com>");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.25.1
 > 
-> - Mani
-> 
+
 
