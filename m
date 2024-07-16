@@ -1,189 +1,347 @@
-Return-Path: <linux-kernel+bounces-253583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4325F932363
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83263932366
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E649A282447
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E35282902
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0A5197A7B;
-	Tue, 16 Jul 2024 09:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819B1197552;
+	Tue, 16 Jul 2024 09:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IIC4jQoR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ayk51sUa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TyBalTTs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gBhBdWMw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MF45T1Qz"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C52A1957EA;
-	Tue, 16 Jul 2024 09:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E958D2E832
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123532; cv=none; b=tig3fyocwYo+pzi88EtiNWgCbxSqrwNRWcS7C2akkiexbXp7Kw5cXDZD8r84E5dY3eKZetAbrU6KZVTlZVUDWGyVP9UpRc3EwFKrR40qhukyq6uGf3KIvFpnhKxFs+HbunrPGOy7a8J51Od6AG2556ow71SUQsSrZ7xJp+3Vh4I=
+	t=1721123602; cv=none; b=Rvz/lm0uWVUvu3vp6mSJ4KG3M56kSokoNI7LQksGD7V25aUJRTMqkOPQ/yT24IjyMdbVauA/Y7NpbvcNlQzcilPhsP5+gIxNfgY3YFrAzv8vxlnhdu8SKteZn/ize5PlhgsHHpuZ1xYGNLrT788GuqppPAnZxqWwjuU2SDmwvoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123532; c=relaxed/simple;
-	bh=sTEq+71d74BYVRgRntDOvHNAUACrFmPk/YofTyor9gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCyudW/TE+fTxXO0+Al5R3KmnVUf52Y92niqgN2FwZJyGSjcFWp3tsv9sy3t7f41FixVCjYlj7+No9sehE9Qayc2hZmx72njnWJuxC0CB7F/W2t3Musth4/wYcf2D/5mPsNWmTWdj4d4Ifx15ZlRgHSZlcAHprWEEwAVr4wNxz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IIC4jQoR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ayk51sUa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TyBalTTs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gBhBdWMw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CBC5921BF7;
-	Tue, 16 Jul 2024 09:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721123527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=faLu8ANarLN64HGOqW59wT/J2T9GSRfX6GdQz79QNrg=;
-	b=IIC4jQoRmwsprrx0Cw+8GqOMvr4XhWNHcYEdYuCsMFQFd1JQbs246iHTRygSfuyD+HKF6M
-	ND76nfpPy5iHyJ/0PgHdw8SbpXFn51qjwo1JzApmMbz8ie/QPqOauzehmm+9UuoT88KtsR
-	XdWEX67flo9b2B8ZIKS1lHhiuiELA44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721123527;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=faLu8ANarLN64HGOqW59wT/J2T9GSRfX6GdQz79QNrg=;
-	b=Ayk51sUaWccAfvkjogklhKJzJMzmzeNaUgsq2Lxm+jZlBc+jXl/W3dkUqImrfaI0SfrMln
-	cxBjxKicmC6A5qCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TyBalTTs;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=gBhBdWMw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721123525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=faLu8ANarLN64HGOqW59wT/J2T9GSRfX6GdQz79QNrg=;
-	b=TyBalTTsXSavQfQGt3C8zUyKDX66zhMxYgtSmS+Db9+MauHZl9bNGqoy15N2du+oxsaM3t
-	KkLbv7EemL0DrA7Sg7qUn3nB7wYDijyK9BItTugw/XI3lRoJvfcxX9M/q1m3c8MzG49vRI
-	kqmfEplnnKSyF/vSUTdRSOsp+/WEt6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721123525;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=faLu8ANarLN64HGOqW59wT/J2T9GSRfX6GdQz79QNrg=;
-	b=gBhBdWMwrZ29Hit3ULCHrRFho/kCSyMBnFlo71PaFXgVoHEZTV1yVnIvD471Fp9Qvtvp2J
-	XbZG+o57rTmo7oBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2CDC13795;
-	Tue, 16 Jul 2024 09:52:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +cCeK8VClmavIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 16 Jul 2024 09:52:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3DF74A0987; Tue, 16 Jul 2024 11:52:01 +0200 (CEST)
-Date: Tue, 16 Jul 2024 11:52:01 +0200
-From: Jan Kara <jack@suse.cz>
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Andreas Dilger <adilger@dilger.ca>,
-	Wang Jianjian <wangjianjian0@foxmail.com>,
-	"wangjianjian (C)" <wangjianjian3@huawei.com>,
-	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] jbd2: make '0' an invalid transaction sequence
-Message-ID: <20240716095201.o7kkrhfdy2bps3rw@quack3>
-References: <20240711083520.6751-1-luis.henriques@linux.dev>
- <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
- <878qy8nem5.fsf@brahms.olymp>
- <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
- <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
- <87ed7znf8n.fsf@linux.dev>
- <87wmlrkkch.fsf_-_@linux.dev>
+	s=arc-20240116; t=1721123602; c=relaxed/simple;
+	bh=fw1opmFA1yWu6Zf4s/QanTKQ2IQadzLjtRvu4W109uA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qasLs6MNQe711XM/d2NxLiQTShUKWsNxufxU9RTR/4oA5L3NEKiOODzrRXxNAAOJmfl1sXt7UixxdHp8PXQONCJUaeNt02cxV8tfTcADK1bRYh4n0sETkwYey0t2jEUNQyj5HX0dz3ZgwwiL8Y9C3uHBTAzX9Jth0D2jiEY0fuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MF45T1Qz; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-79ef7ecc7d4so325505185a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721123600; x=1721728400; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=55EDdcQ8nQNovPuhv7U48LBs7k1+cwbUeJ5tdjYXXYE=;
+        b=MF45T1QzhPN/qLpVC2am2BmnHu43UyMv4K+cRspG6bRXrtpJp1nk8KAvMc3hLMfZeU
+         0b4k/G4frfWB5VNQL9mFSy6oHz4AqrRsh6+TA0SnM1POKDe/aYjGlPVIPcV/pGiEeLt+
+         Fzma2ST4dj+UoVwFeKxQ35+ubRW6UPuSnsCYKRsy8JbVT4MBo/hK9HCOi/FkJrBS6w8T
+         LJSu7TvXiVzoXzPLMSCIdaldtFYOR4EDuA7ogpchTyesKd9uADhB9g7aeZCtWD0QwWCV
+         trt+bbIyFuFebODdw7GsZ5Hq5L7hKgd0jXoIyajJGDQeBbTUrv/eNC0dC3wR1gTZx4sq
+         +TQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721123600; x=1721728400;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=55EDdcQ8nQNovPuhv7U48LBs7k1+cwbUeJ5tdjYXXYE=;
+        b=Ew5Yzxjk+hfSBMwl0yk0vpvuqZU3m/Y0ZB7o5vjneb+oTqtDfuFDrlcLzXw9oBsBgS
+         PazTG0QXB3xdQPxkKztf1EOs+suoy0o6WUv4ga8aaUJDZYeBifRxnT44RQCSorOmxbEJ
+         h1w/pnaF8hH6xxqYMx7bdq5bM/uOqn/1X8i63Qz3YSEO2SwTkAnbffU4ebDbHbEOrcyp
+         OWRmA0ExysXH3VNg+vqxWpXurKnSQgV5CI4L7L0ODwmAdx9kl/CorOeAZ+Tvp/b40im8
+         H9uTX2qx89U4I/trOdrpA8hepE2MSb2I+OVsKlatC9kUO8UQVLjV4gJ8pf2jbeKVpdwS
+         QoyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeBXzRXsE7IjzUD8DZK3gKIQZcdZ1S5QI4rfM9smme8Zf8XAaE9y2L5jd+aWX3OZ3+kKKbQ5wWnpysW1ywjNCSkOJeCfaaY5PgbC+I
+X-Gm-Message-State: AOJu0YzXVk2PVyvVzBJXaLQgED3cJ9yVqcEGY7e9CVi4are5gqJZ5WNr
+	vj7v4GVGhdXeEreuPK4sxpxcuQBaZeC8uXnDyM/HcAgjq4K1s43b
+X-Google-Smtp-Source: AGHT+IFHVDKFHaoyeov8n775dZ9CaLj5bDkw/sRcccLQN+VHXYMiJQZD6tsReH5V8A9zULLgBIu/6A==
+X-Received: by 2002:a05:620a:1a1e:b0:79f:178f:99e6 with SMTP id af79cd13be357-7a17b750175mr208364585a.64.1721123599716;
+        Tue, 16 Jul 2024 02:53:19 -0700 (PDT)
+Received: from smtpclient.apple (174.137.59.200.16clouds.com. [174.137.59.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160ba82cdsm276149085a.4.2024.07.16.02.53.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2024 02:53:19 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmlrkkch.fsf_-_@linux.dev>
-X-Rspamd-Queue-Id: CBC5921BF7
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[foxmail.com,gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[dilger.ca,foxmail.com,huawei.com,mit.edu,suse.cz,gmail.com,vger.kernel.org];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,dilger.ca:email,linux.dev:email]
-X-Spam-Level: 
-X-Spamd-Bar: /
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH v3] sched/fair: Preempt if the current process is
+ ineligible
+From: Chunxin Zang <spring.cxz@gmail.com>
+In-Reply-To: <e53a487f-e811-45de-a188-cadffd8a3a97@gmail.com>
+Date: Tue, 16 Jul 2024 17:52:59 +0800
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ mingo@redhat.com,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ Chen Yu <yu.c.chen@intel.com>,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ bristot@redhat.com,
+ vschneid@redhat.com,
+ linux-kernel@vger.kernel.org,
+ Mike Galbraith <efault@gmx.de>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Honglei Wang <jameshongleiwang@126.com>,
+ Chen Yang <yangchen11@lixiang.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3C49DFE5-657F-4D64-9D2C-9F5D2A8AA220@gmail.com>
+References: <20240613131437.9555-1-spring.cxz@gmail.com>
+ <20240620125155.GY31592@noisy.programming.kicks-ass.net>
+ <8B4C4FA2-C261-4723-ABA4-2EF3CBBB2C0E@gmail.com>
+ <36B22124-E952-4508-A4A3-5AE2C944FBDF@gmail.com>
+ <9e56b874-724e-4c2e-8e7d-db6317cb414c@gmail.com>
+ <e53a487f-e811-45de-a188-cadffd8a3a97@gmail.com>
+To: John Stills <johnstills191@gmail.com>
+X-Mailer: Apple Mail (2.3731.700.6)
 
-On Fri 12-07-24 10:53:02, Luis Henriques wrote:
-> Since there's code (in fast-commit) that already handles a '0' tid as a
-> special case, it's better to ensure that jbd2 never sets it to that value
-> when journal->j_transaction_sequence increment wraps.
-> 
-> Suggested-by: Andreas Dilger <adilger@dilger.ca>
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Well, sadly it isn't so simple. If nothing else, journal replay
-(do_one_pass()) will get broken by the skipped tid as we do check:
 
-                if (sequence != next_commit_ID) {
-                        brelse(bh);
-                        break;
-                }
+> On Jul 15, 2024, at 21:05, John Stills <johnstills191@gmail.com> =
+wrote:
+>=20
+>=20
+>> On Jun 21, 2024, at 21:53, Chunxin Zang <spring.cxz@gmail.com> wrote:
+>>=20
+>>=20
+>>=20
+>>> On Jun 20, 2024, at 20:51, Peter Zijlstra <peterz@infradead.org> =
+wrote:
+>>>=20
+>>> On Thu, Jun 13, 2024 at 09:14:37PM +0800, Chunxin Zang wrote:
+>>>> ---
+>>>> kernel/sched/fair.c | 28 +++++++++++++++++++++-------
+>>>> 1 file changed, 21 insertions(+), 7 deletions(-)
+>>>>=20
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 03be0d1330a6..21ef610ddb14 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -745,6 +745,15 @@ int entity_eligible(struct cfs_rq *cfs_rq, =
+struct sched_entity *se)
+>>>> return vruntime_eligible(cfs_rq, se->vruntime);
+>>>> }
+>>>>=20
+>>>> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, =
+struct sched_entity *se)
+>>>> +{
+>>>> + if (sched_feat(RUN_TO_PARITY) || cfs_rq->nr_running <=3D 1 ||
+>>>> +    entity_eligible(cfs_rq, se))
+>>>> + return false;
+>>>> +
+>>>> + return true;
+>>>> +}
+>>>> +
+>>>> static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 =
+vruntime)
+>>>> {
+>>>> u64 min_vruntime =3D cfs_rq->min_vruntime;
+>>>> @@ -974,11 +983,13 @@ static void clear_buddies(struct cfs_rq =
+*cfs_rq, struct sched_entity *se);
+>>>> /*
+>>>> * XXX: strictly: vd_i +=3D N*r_i/w_i such that: vd_i > ve_i
+>>>> * this is probably good enough.
+>>>> + *
+>>>> + * return true if se need preempt
+>>>> */
+>>>> -static void update_deadline(struct cfs_rq *cfs_rq, struct =
+sched_entity *se)
+>>>> +static bool update_deadline(struct cfs_rq *cfs_rq, struct =
+sched_entity *se)
+>>>> {
+>>>> if ((s64)(se->vruntime - se->deadline) < 0)
+>>>> - return;
+>>>> + return false;
+>>>>=20
+>>>> /*
+>>>> * For EEVDF the virtual time slope is determined by w_i (iow.
+>>>> @@ -995,10 +1006,7 @@ static void update_deadline(struct cfs_rq =
+*cfs_rq, struct sched_entity *se)
+>>>> /*
+>>>> * The task has consumed its request, reschedule.
+>>>> */
+>>>> - if (cfs_rq->nr_running > 1) {
+>>>> - resched_curr(rq_of(cfs_rq));
+>>>> - clear_buddies(cfs_rq, se);
+>>>> - }
+>>>> + return true;
+>>>> }
+>>>>=20
+>>>> #include "pelt.h"
+>>>> @@ -1157,6 +1165,7 @@ static void update_curr(struct cfs_rq =
+*cfs_rq)
+>>>> {
+>>>> struct sched_entity *curr =3D cfs_rq->curr;
+>>>> s64 delta_exec;
+>>>> + bool need_preempt;
+>>>>=20
+>>>> if (unlikely(!curr))
+>>>> return;
+>>>> @@ -1166,12 +1175,17 @@ static void update_curr(struct cfs_rq =
+*cfs_rq)
+>>>> return;
+>>>>=20
+>>>> curr->vruntime +=3D calc_delta_fair(delta_exec, curr);
+>>>> - update_deadline(cfs_rq, curr);
+>>>> + need_preempt =3D update_deadline(cfs_rq, curr);
+>>>> update_min_vruntime(cfs_rq);
+>>>>=20
+>>>> if (entity_is_task(curr))
+>>>> update_curr_task(task_of(curr), delta_exec);
+>>>>=20
+>>>> + if (need_preempt || check_entity_need_preempt(cfs_rq, curr)) {
+>>>> + resched_curr(rq_of(cfs_rq));
+>>>> + clear_buddies(cfs_rq, curr);
+>>>> + }
+>>>> +
+>>>> account_cfs_rq_runtime(cfs_rq, delta_exec);
+>>>> }
+>>> Yeah sorry no. This will mess up the steady state schedule. At best =
+we
+>>> can do something like the below which will make PREEMPT_SHORT a =
+little
+>>> more effective I suppose.
+>>>=20
+>>>=20
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -985,10 +985,10 @@ static void clear_buddies(struct cfs_rq
+>>> * XXX: strictly: vd_i +=3D N*r_i/w_i such that: vd_i > ve_i
+>>> * this is probably good enough.
+>>> */
+>>> -static void update_deadline(struct cfs_rq *cfs_rq, struct =
+sched_entity *se)
+>>> +static bool update_deadline(struct cfs_rq *cfs_rq, struct =
+sched_entity *se)
+>>> {
+>>> if ((s64)(se->vruntime - se->deadline) < 0)
+>>> - return;
+>>> + return false;
+>>>=20
+>>> /*
+>>> * For EEVDF the virtual time slope is determined by w_i (iow.
+>>> @@ -1005,10 +1005,7 @@ static void update_deadline(struct cfs_r
+>>> /*
+>>> * The task has consumed its request, reschedule.
+>>> */
+>>> - if (cfs_rq->nr_running > 1) {
+>>> - resched_curr(rq_of(cfs_rq));
+>>> - clear_buddies(cfs_rq, se);
+>>> - }
+>>> + return true;
+>>> }
+>>>=20
+>>> #include "pelt.h"
+>>> @@ -1168,6 +1165,8 @@ static void update_curr(struct cfs_rq *c
+>>> {
+>>> struct sched_entity *curr =3D cfs_rq->curr;
+>>> s64 delta_exec;
+>>> + struct rq *rq;
+>>> + bool resched;
+>>>=20
+>>> if (unlikely(!curr))
+>>> return;
+>>> @@ -1177,13 +1176,23 @@ static void update_curr(struct cfs_rq *c
+>>> return;
+>>>=20
+>>> curr->vruntime +=3D calc_delta_fair(delta_exec, curr);
+>>> - update_deadline(cfs_rq, curr);
+>>> + resched =3D update_deadline(cfs_rq, curr);
+>>> update_min_vruntime(cfs_rq);
+>>>=20
+>>> if (entity_is_task(curr))
+>>> update_curr_task(task_of(curr), delta_exec);
+>>>=20
+>>> account_cfs_rq_runtime(cfs_rq, delta_exec);
+>>> +
+>>> + rq =3D rq_of(cfs_rq);
+>>> + if (rq->nr_running =3D=3D 1)
+>>> + return;
+>>> +
+>>> + if (resched ||
+>>> +    (curr->vlag !=3D curr->deadline && !entity_eligible(cfs_rq, =
+curr))) {
+>>> + resched_curr(rq);
+>>> + clear_buddies(cfs_rq, curr);
+>>> + }
+>>> }
+>>>=20
+>>> static void update_curr_fair(struct rq *rq)
+>> Hi peter
+>>=20
+>> Got it. If I understand correctly, modifications to basic interfaces =
+like update_curr
+>> should be appropriate and not too aggressive. Additionally, these =
+changes have
+>> already shown significant improvements in scheduling delay (test =
+results are at the
+>> end). How about we limit this patch to these changes for now? =
+Actually, I also want
+>> to try a more aggressive preemption under NO_RUN_TO_PARITY, but it =
+might be
+>> better to consider this comprehensively after integrating the changes =
+from your
+>> latest branch.
+>>=20
+>>=20
+>> Comparison of this modification with the mainline EEVDF in =
+cyclictest.
+>>=20
+>>                                  EEVDF      PATCH EEVDF-NO_PARITY  =
+PATCH-NO_PARITY
+>>=20
+>>   LNICE(-19)    # Avg Latencies: 00191      00162      00089 00080
+>>=20
+>>   LNICE(0)      # Avg Latencies: 00466      00404      00289 00285
+>>=20
+>>   LNICE(19)     # Avg Latencies: 37151      38781      18293 19315
+>>=20
+>> thanks
+>> Chunxin
+>>=20
+>>=20
+> Hi Chunxin
+>=20
+> The latency test results look great. Have you conducted tests in other =
+scenarios, such
+> as performance testing in production networks or machine learning?
+>=20
+> --=20
+> thanks,
+> John
+>=20
+>=20
 
-So we'd abort journal replay too early. Secondly, there's also code
-handling journal replay in libext2fs which would need to be checked and
-fixed up. Finally, I've found code in mballoc which alternates between two
-lists based on tid & 1, so this logic would get broken by skipping 0 tid
-as well.
+Hi John
 
-Overall, I think we might be better off to go and fix places that assume
-tid 0 is not valid. I can see those assumptions in:
+Due to limited resources in my environment, over the past month, I have =
+mainly conducted
+basic scheduling latency tests (hackbench + cyclictest). Currently, this =
+modification has been
+merged into Peter's eevdf branch and is expected to be released with =
+Peter's other changes
+in the next version. I believe there will be more test data available at =
+that time.
 
-ext4_fc_mark_ineligible()
-ext4_wait_for_tail_page_commit()
-__jbd2_log_wait_for_space()
-jbd2_journal_shrink_checkpoint_list()
+[sched/eevdf: Allow shorter slices to wakeup-preempt]
+=
+https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=
+=3Dsched/eevdf&id=3D87ca38328760c9834c465d6939b4e89aa8354ac3
 
-Now I don't see it as urgent to fix all these right now. Just for this
-series let's not add another place making tid 0 special. Later we can fixup
-the other places...
+thanks
+Chunxin
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
 
