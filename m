@@ -1,150 +1,152 @@
-Return-Path: <linux-kernel+bounces-254006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0BD932A14
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:07:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C2F932A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3351F24858
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C181F247F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9578019F468;
-	Tue, 16 Jul 2024 15:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B13719DF97;
+	Tue, 16 Jul 2024 15:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgmP60eD"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Kmq6K7xI"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B619EEB5;
-	Tue, 16 Jul 2024 15:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A949C19DF5B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721142334; cv=none; b=FCmmTWVgFusEiTNU/qxXsiYMlAecweAkt2gINaBkjsextQ7mv5DAPvTE0527zStlCfBRzzBBixMjOnHojbd/Yb0CfelITasKw22fe/F9LdX34AAomXtJI3fcoUo+suOH+vT+hQyL9FU1kcU1AOTz73CLMr25/a8UxmPASxKemeQ=
+	t=1721142403; cv=none; b=IpIDkUnAXAvcFhyh1lRLu4+Ul8SKzwPA99Wh5nfpSz1kZM+EB7l7D+96bsSFsEpBCbbXCXY3nNewVK0HfzPKyZOeJ5S/c8qYdzWWhKQ/awedvgRiqbxPGBNDKMuYpwi0W9kCFjm1h62wmA0+msQ0KF0Cl3fyaBXT4ZXCpw2qR0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721142334; c=relaxed/simple;
-	bh=cprunrzR2Vx52GohB9P9vzAt1SjTpPE0piOrxfNcg2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZyssK8W47sSZ/pArTjTmESmdh4IauluLcgAXna7JNiKnAAqsld+DI006GktVIB+1c/Vu7bZB9mgF3PzT6AcibAIva+VRTo0exRyaGPqQjz/wi6/QNg+h4ybpnQnuKpX/Vmzs2DMX2lwsnVn805C1M/CGNtJBpjR9at8GxlW0PAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgmP60eD; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77b60cafecso663056866b.1;
-        Tue, 16 Jul 2024 08:05:32 -0700 (PDT)
+	s=arc-20240116; t=1721142403; c=relaxed/simple;
+	bh=+BGYl+sdySwOSWJtFRDOhdjOTNoj+oygwIGJHHV6QCU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tUyiJ3H7DSSktarjfh25UIUOC5f6vfE27+K44Tts804Ogxzf6B4JGB6GyvemHCNsEWXds/7sC8EdbkTnWALRW0eRcYX+AB7SsgZo5SP2ZGRE6g0SyXx5iWI0XdWTOIGGvd8WMUgg/BjBktM/iTRrRpIe88l/ycsn3bg9Y63sGCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Kmq6K7xI; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7662181d487so3055168a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721142331; x=1721747131; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIsP9WfA0TMZUezHpRe4LD3xeHG2Pnug2FDZg/pF9jA=;
-        b=lgmP60eDc5wTrUBuxpjOlKEvggdxrKafQwoT+G0kVFcsxwNphSBPsNKWEtP9unNf9q
-         7rcnGRB1LWlv8K380RvXyD0YtAIEE7W/oyee0dnx52KQn9K5CcgvKId1HqXylwi/lKdR
-         jEwe73eTbLj4Ma7ZtrL0wgIndm2E/Zey1w5/B2QceI8YRpztNwnzo2n5OG0K3qg4hhYF
-         yZevMzjX8r/JgBqSPgVzoI8uA1Ut1RImyg8XVObZwfUgEY9W1beYfJDZa4taU+g05R/6
-         uhhPXYZqR/+uY+5vQjwx7qSPBvYZREDv6JEtY637QZQx2amD4PbVyFmVQTkrBJ9auY2J
-         T3/w==
+        d=bytedance.com; s=google; t=1721142401; x=1721747201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vOPNodhmEDx/9ntEQLpFCLonFQQCQoq9melw4nw0YfI=;
+        b=Kmq6K7xI2brSrTlvxP1+MkP66eEfIp0QBmJWHc/L4BMuG8K7yo8WuIftYbOvanOLz3
+         Y22TEK1bZzgeOhIK1OVgrg6XokEWnJTE6yuRrABf6EYMLEgwf5yJb0kn3+L4za84pOmy
+         P0LzVuQSvyeICrHo1cm0t5oM6gQZZfaP6ojwOY8oVq2kDcOX+OWzhjyatk+eZpAJMEqj
+         XqC7C7SR7NdqFlwE5j96yCK8wqJNPB+3AopeJNp/SsMwLkD4MMGjYm/PwLw5YN+CH8eL
+         CLzQhOEEc1cyRbzYKWUDzNijiYOfqfynR2FjgFi595ApRgK/4AhiYwQVyfWz08Qw/sm6
+         /Www==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721142331; x=1721747131;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oIsP9WfA0TMZUezHpRe4LD3xeHG2Pnug2FDZg/pF9jA=;
-        b=Klw3/wG2bKD27BrK+n3vISNW6RB+tqBV12hzjuRxTg/8/FjXyIahG6GdBBWv9RbWaw
-         Tp3lybs44ozleJdG2rQQzxSAF70szshUIgv+tU07mWWA3sI/T8DifHqd9R0tQi2kAnjE
-         qoJjbUCBN3Be3iUTeCLlGcJ0GmKo9wxK5F8JnI7Of0rEMkmPFOakNg7+rq06NIjbdapu
-         0WsaCzyjK0xtIxaXzfVh7ml9TTUEz+EeHwnI+eTEfjjq7bYDm9pCh+sIqxZp3soY8AMl
-         7Kecrc1irN2HsFjXdPca1080BFeyHKIA5lj//zJIh6sQgn9bcXHa/RyFUT8Ry9isQcan
-         9KIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2/UPvf4tymsTb2WYda6iJQ/uCt7GunkKeft6ZTBaXB8JwkBUdk11g8pIknfMe2D71vdVIrSJbSXiTqpBrbuhQMRtG5oadzzKmGepyEERGWly3GGPVhOiKdeGd1IMCYWfD5IPPLBcf
-X-Gm-Message-State: AOJu0YwvIxYfTLkrQsjdCj9DKZNM1NyMXXBm5eo7h8tnhf4QGvui3gz/
-	lYOy57jjZD0tYSZyHqQDdpoPEpp6b54XGnkDEcv8kfRgi0D8Rao/8Yqxh7I7
-X-Google-Smtp-Source: AGHT+IHu17WSkuVX0jxOAWCJadIe0O6dlHEv4dokYnccOiyPeH2LoXogdOhBgimTWYiWMAXlMX5fnw==
-X-Received: by 2002:a17:907:dac:b0:a77:e0ed:8b9 with SMTP id a640c23a62f3a-a79ea3dfc64mr274375466b.6.1721142330957;
-        Tue, 16 Jul 2024 08:05:30 -0700 (PDT)
-Received: from eichest-laptop ([77.109.188.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e04sm328378066b.127.2024.07.16.08.05.29
+        d=1e100.net; s=20230601; t=1721142401; x=1721747201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vOPNodhmEDx/9ntEQLpFCLonFQQCQoq9melw4nw0YfI=;
+        b=CPmuBUjOXSYJ3UoZkBeISSmFPB2ad6dK0t9K0j3d0VMxFnJIkoEY3olIQCPuXYHr3r
+         KBSwaNOjMVMO5N7QztdKexPS0um7qJwHw4342RXugFLoGXwBznJiJ/P4eFQXf708miBd
+         mwmYDk85EpPb/s0aG/NYBfBfIfCmu/S+9TGAMHx7df3sgAmyJlx+/kvMxPoEwtYqUL4U
+         1rbKR1DPD/Z2GZHZ1BCWvtkK26Ae3pwMZz9bbjHt6Fazfxux0iEpx0ce0XvfGJoC38Sm
+         bjnOThJrLCxh3hPKkl1nsxOaqMcKx01MAhbwuZk1CR7+Guj89l0WHXeP1P+4L8yKyKqJ
+         +lkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTsaYB78VA3sx/zwvKDux4BTfeF9Tekdm3qsWT6ipLJwvsCa2W32BfhQfh68mAd03Y9KBDcCRZ99Gb5TAYgZRV1Sa75nAdQNbXcSjJ
+X-Gm-Message-State: AOJu0Yw4nu7yI+OJriFFEnBrP2TGMalC8E0dZy4b3Xc270PBH9ci93Xk
+	LkJzA3O5N6sANNSKug9HcLCaG1eukS2EVuSVwe+/ilSVzBui4qlB1AxpgQFV/Zk=
+X-Google-Smtp-Source: AGHT+IHBWSdchGhjxX3rT8W0KAzi3CHwcEhahx5HeddVhmxys/LYNXL8MHJQFdwxBJbf5cKa7DUWmQ==
+X-Received: by 2002:a05:6a20:918e:b0:1c2:94ad:1c68 with SMTP id adf61e73a8af0-1c3f123df96mr2978926637.31.1721142400897;
+        Tue, 16 Jul 2024 08:06:40 -0700 (PDT)
+Received: from n37-019-243.byted.org ([180.184.51.40])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedbf746dsm6455266a91.23.2024.07.16.08.06.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:05:30 -0700 (PDT)
-Date: Tue, 16 Jul 2024 17:05:28 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	wsa+renesas@sang-engineering.com, francesco.dolcini@toradex.com,
-	joao.goncalves@toradex.com, linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        Tue, 16 Jul 2024 08:06:40 -0700 (PDT)
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org
+Cc: chengming.zhou@linux.dev,
 	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1 3/3] i2c: imx: prevent rescheduling in non dma mode
-Message-ID: <ZpaMOHhs1uDPAuKe@eichest-laptop>
-References: <20240715151824.90033-1-eichest@gmail.com>
- <20240715151824.90033-4-eichest@gmail.com>
- <ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810>
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: [PATCH] sched/fair: Remove cfs_rq::nr_spread_over and cfs_rq::exec_clock
+Date: Tue, 16 Jul 2024 23:06:34 +0800
+Message-Id: <20240716150634.21247-1-zhouchuyi@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: 8bit
 
-Hi Frank,
+cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
+eevdf. Remove them from struct cfs_rq.
 
-On Mon, Jul 15, 2024 at 01:03:26PM -0400, Frank Li wrote:
-> > +static inline void i2c_imx_isr_read_continue(struct imx_i2c_struct *i2c_imx)
-> > +{
-> > +	unsigned int temp;
-> > +
-> > +	if ((i2c_imx->msg->len - 1) == i2c_imx->msg_buf_idx) {
-> > +		if (i2c_imx->is_lastmsg) {
-> > +			/*
-> > +			 * It must generate STOP before read I2DR to prevent
-> > +			 * controller from generating another clock cycle
-> > +			 */
-> > +			temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
-> > +			if (!(temp & I2CR_MSTA))
-> > +				i2c_imx->stopped =  1;
-> > +			temp &= ~(I2CR_MSTA | I2CR_MTX);
-> > +			imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
-> > +		} else {
-> > +			/*
-> > +			 * For i2c master receiver repeat restart operation like:
-> > +			 * read -> repeat MSTA -> read/write
-> > +			 * The controller must set MTX before read the last byte in
-> > +			 * the first read operation, otherwise the first read cost
-> > +			 * one extra clock cycle.
-> > +			 */
-> > +			temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
-> > +			temp |= I2CR_MTX;
-> > +			imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
-> > +		}
-> > +	} else if (i2c_imx->msg_buf_idx == (i2c_imx->msg->len - 2)) {
-> > +		temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
-> > +		temp |= I2CR_TXAK;
-> > +		imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
-> > +	}
-> > +
-> > +	i2c_imx->msg->buf[i2c_imx->msg_buf_idx++] = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
-> 
-> Why not use loop to read all data from FIFO? I think read_reg use readb(),
-> suggest change to readb_relaxed(). The similar case for writeb. dma_engine
-> will use writel() at least once when start DMA. it should be enough for
-> memory barrier. 
-> 
-> Because it move to irq handle, writex__relaxed() will help reduce some
-> register access time.
-> 
+Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+---
+ kernel/sched/debug.c | 4 ----
+ kernel/sched/sched.h | 6 ------
+ 2 files changed, 10 deletions(-)
 
-I think there is not FIFO on the i.MX I2C controller, or do I miss
-something? In the i.MX 8M Plus reference manual they write for example:
-> In Master Receive mode, reading the data register allows a read to occur
-> and initiates the next byte to be received.
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index c1eb9a1afd13..90c4a9998377 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -641,8 +641,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 	SEQ_printf(m, "\n");
+ 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
+ #endif
+-	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
+-			SPLIT_NS(cfs_rq->exec_clock));
+ 
+ 	raw_spin_rq_lock_irqsave(rq, flags);
+ 	root = __pick_root_entity(cfs_rq);
+@@ -669,8 +667,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 			SPLIT_NS(right_vruntime));
+ 	spread = right_vruntime - left_vruntime;
+ 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
+-	SEQ_printf(m, "  .%-30s: %d\n", "nr_spread_over",
+-			cfs_rq->nr_spread_over);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "idle_nr_running",
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4c36cc680361..8a071022bdec 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -599,7 +599,6 @@ struct cfs_rq {
+ 	s64			avg_vruntime;
+ 	u64			avg_load;
+ 
+-	u64			exec_clock;
+ 	u64			min_vruntime;
+ #ifdef CONFIG_SCHED_CORE
+ 	unsigned int		forceidle_seq;
+@@ -619,10 +618,6 @@ struct cfs_rq {
+ 	struct sched_entity	*curr;
+ 	struct sched_entity	*next;
+ 
+-#ifdef	CONFIG_SCHED_DEBUG
+-	unsigned int		nr_spread_over;
+-#endif
+-
+ #ifdef CONFIG_SMP
+ 	/*
+ 	 * CFS load tracking
+@@ -1158,7 +1153,6 @@ struct rq {
+ 	/* latency stats */
+ 	struct sched_info	rq_sched_info;
+ 	unsigned long long	rq_cpu_time;
+-	/* could above be rq->cfs_rq.exec_clock + rq->rt_rq.rt_runtime ? */
+ 
+ 	/* sys_sched_yield() stats */
+ 	unsigned int		yld_count;
+-- 
+2.20.1
 
-I will test the changes with readb_relaxed() and writeb_relaxed() and
-see what happens, thanks a lot for the hint.
-
-Regards,
-Stefan
 
