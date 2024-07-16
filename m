@@ -1,487 +1,253 @@
-Return-Path: <linux-kernel+bounces-254055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12601932C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FDE932A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BACAB23A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCF2B2316C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21B919F489;
-	Tue, 16 Jul 2024 15:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66D31DFDE;
+	Tue, 16 Jul 2024 15:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k+MzSt7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="eIqD6Im6"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B29F19AD93;
-	Tue, 16 Jul 2024 15:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721145354; cv=none; b=BBHSF2l6cxf1sPrKonMSkFO/KglyucQ5dRetApxmq1IMfcukpRMq/43ctSVuUefIibjM+RqWPwGOfeU9ft+7bcmoDMDoNVjDNT0RKqAG+4mANDdrS7+S5bRcuFz197GLwqkiHGAR6b+TKljvzxgqHFYfRC3kd4DSyS57NcPNb+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721145354; c=relaxed/simple;
-	bh=tm7aVMSRW4H5rCz1KUovZQRy1KHvfAsTb8dg+wAylog=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o4tEHEfuZvffQwQwD+n0AUn3lC1BbH3MalNZmIIF4PEYRGa4z8X2F3rdMoihrGtuqeJqyl7I5xZoowkzSibfaBEEMq9LMRHqDx94uvTFjqX0eyw8ccXeOrj4KdlNm1kPWsyUYsmwx+iSMOlISTh94HTbJQdM1jtuNiDJlf5zdJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k+MzSt7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5072C116B1;
-	Tue, 16 Jul 2024 15:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721145354;
-	bh=tm7aVMSRW4H5rCz1KUovZQRy1KHvfAsTb8dg+wAylog=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k+MzSt7M9IdDoPXLeVyCUOVADM2PdzeHXQwu9z2Z+0quMebFsIfqFbllQtRXyW/Gu
-	 9dPXDbHDHUkpK7OGabfcfiha6YQaw1zC0X1Rzd5TPZrxdXOibPKEqKwFXNpwBYEwJ1
-	 enkjszU+stmf6ZCBrKvbCFayqE+Gtjw0XynIpw/8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/96] 6.1.100-rc1 review
-Date: Tue, 16 Jul 2024 17:31:11 +0200
-Message-ID: <20240716152746.516194097@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBAACA40
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721144054; cv=fail; b=KMD16HMufzMyJJ538rdlDFqLdUPyTVkQiVTx7iiq61ei9ORL3dcNZLBcCrmfHayq/oFW0nPJ8iS5IjQUf+6FewFu1G0X1ApEh8LfUkguLyN9tltclS0hdalWp+pD5Kr7i5qrTvVTZ5Q3IuuqltnAf1ioEBUWBbnqLH4tpYYMYk4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721144054; c=relaxed/simple;
+	bh=H7bBCQba5hdbX2AeTivs7MipegcO1qQTr3H/XaeXuv4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=RkJWhS7aERPJxV7OQkpoc7NSzLx/kuQxpFb26I+xoDD2XiDzIezJRQhrcS6Row2+rId5zp8cgvUdgLd7sc0ssjVv8cpu2JTga/HEz+vKiCdMEGYDQqHpZnZRaLF3WPxyAlBYUlkgzpUEzWfUVPY2LPxdD662Ju6c5SsSV1jbtgU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=fail (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=eIqD6Im6 reason="signature verification failed"; arc=fail smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G8G1Cl020182;
+	Tue, 16 Jul 2024 08:33:53 -0700
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40dn6y9ex7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 08:33:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QIdyjbj4GvxNHHaOmtVcdzfrdxzWM7gArzrdwalQYb/9A6+7DFqpRjQYCJKrZuzF6XvsPsmVj+cjDVvDRYd6JIyOJojMJ9n947aGg6jmVr5d0KQxOL1V+20+Pn12rLMzIXqFkKYaNlu1XUNSUGhv9kQf013/NP9pyiXiAQBEmg9QpZj/YBqZU9GnFnko8ygb9WwpV9JYresqCIxQWe3oK/K38KIJ8rvO2Osulvx46t3FHOwmNPrbl+rNND/Ka9zcWj5qRAv4p3jhw5NZd98O7W7z3jv+UYNpEMNwOdczCl8mYAWRo4CTV2zNbvjfQ2PEaruCK0GxfGRvCL1ECZA7NA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fGdI7YDCLJh7Iv365BHPD6A1jJWg0KO68vzfae3DxO0=;
+ b=HQ9nVtZetmS7KRy4qYxSId/cOGiQNnaPVLvN0jJgBqFsn6hJ/g7SuVUxgKNKN2yKfmyGUPlga7Sbpf/G6siFOEidiMwQ6d2CWyGDGSv5sMnqR0lfPj7FeZVH8ENQ01PBdCT4Sc184NVPL8FjkSsNjb6FkmliIk26eH0HmCKvVsQt34nxJJPSPHVdFRpp23PdSLgKHRPNY4lC57xG61RLK45nFH/XCodjBp6cPZiDjxZJglwbVTJSBGsPZhntpscnQDmsB02N2MhnJAjizN6n7TSgwSLAAo703jlthXWiLmZu3EqKPaZ+qVP9D0j0MEg0HXx5Bsh5LvQ+dINQJ5s/zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fGdI7YDCLJh7Iv365BHPD6A1jJWg0KO68vzfae3DxO0=;
+ b=eIqD6Im6rfALwMYAWv6LKDAhKaSCHAW1ygtZ40hqWLCBJrNDWbvZUQcd6q/tBiTIaqvK7qFP4SFfvoWEie+NIzpCnPHe6tXtcOCCCi+Ig8M1jzIwvm2mylRgxAo/H0EnlbhSxa3Za8EmtbfA5hp4bQ8CRAC62LtkNwbOUA5AacI=
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com (2603:10b6:303:1e0::16)
+ by IA3PR18MB6381.namprd18.prod.outlook.com (2603:10b6:208:532::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
+ 2024 15:33:49 +0000
+Received: from MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b]) by MW4PR18MB5244.namprd18.prod.outlook.com
+ ([fe80::52f3:9792:ee42:90b%3]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 15:33:49 +0000
+From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+To: Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXTERNAL] Re: [PATCH] misc: Kconfig: add a new dependency for
+ MARVELL_CN10K_DPI
+Thread-Topic: [EXTERNAL] Re: [PATCH] misc: Kconfig: add a new dependency for
+ MARVELL_CN10K_DPI
+Thread-Index: AQHa04oXt5mMdFhNZEuhWZ7W7UjoL7H5YFSAgAAHAgCAABkkMA==
+Date: Tue, 16 Jul 2024 15:33:49 +0000
+Message-ID: 
+ <MW4PR18MB5244F75E2D16051A5B838FF5A6A22@MW4PR18MB5244.namprd18.prod.outlook.com>
+References: <20240711120115.4069401-1-vattunuru@marvell.com>
+ <20240716132603.GA3136577@thelio-3990X>
+ <83ac6b91-c7f1-4b18-a522-8188d6d1298b@app.fastmail.com>
+In-Reply-To: <83ac6b91-c7f1-4b18-a522-8188d6d1298b@app.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW4PR18MB5244:EE_|IA3PR18MB6381:EE_
+x-ms-office365-filtering-correlation-id: 2728205c-38de-4c52-0a02-08dca5acb054
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?czY4TTVkb0VyNUJ6WmdmRnk1VFVCQnhXQjIzaVJzMloxd3hJN3FIQzRmY1p6?=
+ =?utf-8?B?M09uU0ZxRFFYVU0xa2h2anFJTlNUb0JzNHZMU3h3Y1o5SnZIV0hMdTBJd1U4?=
+ =?utf-8?B?Z0poUmRtOXJodXdSQU1JeG1qYnM0THYyZjg1ZW00ZzJ1Wm1NeE40K2JWM0Vo?=
+ =?utf-8?B?NHdwRnE4RHRhanR1QUF0elcxdHVKdSsyWXZyWnEva3FueHZ5ZnZiTlROdXpr?=
+ =?utf-8?B?WW52Rko0NEdDc1JKU3hWdzZPWGh0ZWZzaXlIaUF0eEpnNHhtbUora2djNHR4?=
+ =?utf-8?B?emt0ZFJDZnZVNG5qaTJKYW5pcWVGeFpWTm8zc3RlZnVpTFRTVXZSd216Y3d3?=
+ =?utf-8?B?YVZtdXlUczNsdURjK3lGM3Q5Z0R1MjlkeG83bzNZSHpFL25qTjdya2M2N3dx?=
+ =?utf-8?B?elRtcS9md2R4WnE1bE1IS05FMEJ3WXJDSFNCZU5pdFNEVGx6SzBXN1ZqNWxp?=
+ =?utf-8?B?WkwzNG11bUJCOFNIbHpPRm54NmhJVjJsdVg5d1Rvb0NqSXFMb01QN0xXRjJO?=
+ =?utf-8?B?MWJ5Tk1IYjlmMXpvN0k3NHRGZlI2cnhSK0tPRFRwVXM0b3hjNi82WDdRb0lL?=
+ =?utf-8?B?VjJ1VFdvZjVzUHVzR2VvbmxVd2s3Zk9tWFpSUXdncm5qeitmRndDQW5scEFO?=
+ =?utf-8?B?cUUvZWo0UFd4cWZpMW43d0lid3lUYVV6SmpuQTQrK29JQnZ6NExsNUJQcTJr?=
+ =?utf-8?B?aG1WSm83U0doeEEwSUkyWUNPY25tZ2JRR2lCY3g5QlNyT2lDbHgzajFneCt5?=
+ =?utf-8?B?WkUxTzFkZThTMVByb0I0U0FqR2kzTGxrRUtab1J3Q3l0OStyamtqYTlXSUJS?=
+ =?utf-8?B?OVh4b3BpWmZiUEtlZmgwcEg3djUrdUdEWnU3WEpSZGx4NHMrVHJBa1RHOHJG?=
+ =?utf-8?B?WSs4ai84V0NqU3A1dTFZMHhXYW14eUlHT2NyRDg5bm1jYUF3Nk9xV0gzdVhy?=
+ =?utf-8?B?bHE1RkFVVlFRb2N2WlJkSm1xUC9pbjQyWHdvTE1sQ3Rveno2dWRpbW12RVlh?=
+ =?utf-8?B?Y09adEorL01uLzduTno4Yi9INXplcUszN0piVUJUZlc4Qk51Q0QvL1lURlRa?=
+ =?utf-8?B?UmZLOHlBZG1RZWlKRktVY08zUStYRVJUcEdrOVpkNGtqVnNYZnA2SnNsalFx?=
+ =?utf-8?B?VnB5bStxSjFzemZ4VzNyQWFrWG5ENElkTldFY1ZlYWdmL2xrSmgrRW45VWJX?=
+ =?utf-8?B?R2s3N1BZSTRXWlpEQnErS0IxWHF6Tys0MjloZllVeWFrRE9mWm52N3VkUkFP?=
+ =?utf-8?B?dGdvcCtLRlJFcjNPQzE4dnRRRDRHVkZJUzJweERDS1FwUmlZTE9uSUpKOUVQ?=
+ =?utf-8?B?UTdLb1JRYmNmNE5FZXE5V1AwdmJFT3FPcEw1Y0htRVpVb1JTNFRiOTFGQjJE?=
+ =?utf-8?B?b0hxaWVlbEY1clQ5cFdaQ0owYlNaVGV2ajZ3d21IQmhmWlNlUnhvQTMza2N0?=
+ =?utf-8?B?THA2OHZJd2RmT01JK1R5Mk5kL1dkK0RkWk5KVk9admxObERsMFprYzFqbXpJ?=
+ =?utf-8?B?RW9zT2FUczVMdldtWktYalZyWFJMbS8zZ0NWNDZmb09PNlFOdGp2UWhvZlY2?=
+ =?utf-8?B?YlROK1NCYUZPclY3cDY2TDhKQkVCQlpIWUcwYjNLWG9ET0pQTUVydCtWODhj?=
+ =?utf-8?B?UXpIcWNuTkp4M1ZUN0xBZkNDaVA5UHlNY05aeEpjeWdHdW44YXg5aWdVS24v?=
+ =?utf-8?B?bjdMeFlJdnhqcW9UdlNFcWtRcENZN2FqK1BXQnBWM3cxaHI0SnlrY1VzdmUr?=
+ =?utf-8?B?eWJDTXFRNXM1aXpJeERIU3l3ampWU00zZXp5VVMyUC9jTWsxUGEyaGJJUm9x?=
+ =?utf-8?B?WUdFaFdHaDZkMnEybVUwc1hCL20ra2M4b050TmVuY0oxakZBRWd3b09MbElD?=
+ =?utf-8?B?QTN6ZlV3K0VKZUJHcFNnN3NFWmRDV3F4K3huVEplTFcxTFE9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR18MB5244.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?NE5sRytOdTBocWFiQ0plQU1BWkVCLzNEWkRZbmQraHY1bFZyVXBzUnNEZVhL?=
+ =?utf-8?B?OEtkbmZVY2daSGVRSG8zd1dpNUtSbDVvT0k5RGRzb082WHAwRHJrTkRYaU51?=
+ =?utf-8?B?MVczUVpkR3laT3BRd1dmczVZYXliNDFnS1ZDNjJMY2Jia1FuQjh5aHJIaEJB?=
+ =?utf-8?B?VHRhRldneW5RT3NhSjlmcFZVeXJYMEVuZEhrWkJqVXlxUlRzTjNxOWtZWnV4?=
+ =?utf-8?B?WDNHdFpDZ1ZUNWxPeFh3dGpSRXZWb1luNjBJbzRrRkcySWdjQW5MdCtGRE9s?=
+ =?utf-8?B?MjVEWU1YWXNlRWtFbUhuWGc3QXo4U3FPaEEwQ3lLV0dSdFF0c3lyakNEUFJu?=
+ =?utf-8?B?Vm9YbE1RNVNPa0s1VTBweC8wR0ZmVkVpVjAyTHA4Vld3UGpiZW5YejZVejBh?=
+ =?utf-8?B?am1jQkJzODNJQjQrZy9tZ1dSWkRXOWNXVHd4MlZyOElLZFBLZFRhdkpJbWVn?=
+ =?utf-8?B?MFRWZnRvdSthT05UcStrcHBzK09qL3I1OGNaOGZyU0o1cFlMdVdxVE14UHgx?=
+ =?utf-8?B?b0xKQVhTMUpjSWE1aFlGRG45cGRxNThGZDNOcEIyamgwSXpyQ1lHQkR6alN2?=
+ =?utf-8?B?cWdXRk0vejBHcmdtYlBXUm5PTXNyWkJ4ald3TWt5OVR3cVlRaWtta2w0NHpx?=
+ =?utf-8?B?cVJ1TFptQmtGV1VKWlNiNldPN08vTmxpUUcrTE00N3Z5blVlemtLQmEzVnVX?=
+ =?utf-8?B?TXNWS3NyM2J2c2tmL1M5Slp5ZUZjYkpldlRpYVlyc1BsVmlXNk93c1VmblNl?=
+ =?utf-8?B?WWM5Um52ZkhiK3Uyb042QzFJUVJKQTd6Q0d6UVNsaU9OZlpsWXZjSEJ6REg0?=
+ =?utf-8?B?R1JZaU1EbTk3d2ZUWGNOT25JWUlQZlRWcXNUWk93cGFZOWh2bmttMFVieEJT?=
+ =?utf-8?B?bjUrZ2wrYXVmR0lIY2QyMFJRN1ZMVG5aano4YXU1NGRDSU1idXBpTzJGbzk5?=
+ =?utf-8?B?NWRPWkUzaDJiK3VXUzQ5RDcvaFRvSllEODJlTW1ReENTZ3BUc3lhazMxSzFL?=
+ =?utf-8?B?U0U3c0dzZE9uQXpxOEtjMzJkbVpqazRRNnlpam5Ca1o0dVVKY0NZd040c2Jl?=
+ =?utf-8?B?cGJ5bDFZWmxqSmFZdHVLOGdNcmk5NnMzTGo3M1Fsa3NGbmpMUkh5K005NEJw?=
+ =?utf-8?B?L0hCRndST1VvSWp6S1RqcWxYM1RsaFpxMGFVMVcraytQOXJJYnUydjNPZitI?=
+ =?utf-8?B?a3pQakRKRm1idkluVUNvRnZ3OVEwMFFDRnJjYXpkQjZsWnNoQXZCdjJFdnFi?=
+ =?utf-8?B?MHV1Q0s5Q1NDUTdGaHR1YVF5cmc5SW4xZTZJWnZLc2hVRXU3V1hQamZTdXZ5?=
+ =?utf-8?B?WlBFNzlkdVhyRlFnbGt2Y0R0RFh3eEJjblphbUhkTXg4MXQ0UE5QRlFXcVdY?=
+ =?utf-8?B?Znd4Y3J1ODZ3aGd5dmw2bjVMVFU4REtNUnJMRDVPSW1BMkcxUVpOSi9qMTYz?=
+ =?utf-8?B?WG4rbjl6cmY2QkxaQXFRUHF5Y3pUZlpOOEU0OGp1Y3lUN3Z2Zzl2aldSajhC?=
+ =?utf-8?B?alV5MzhOOC80MWVNR3BBclo1R0xhS3U1Rk5HN25vOW5lR3Z0UDhrWkxyWWZH?=
+ =?utf-8?B?V3VkM0xWbkVJMVlEajFoaVBYd0RYUElTYUlMVU0xeXlOaVpGWUhjQXZIMVMy?=
+ =?utf-8?B?S0VxcmRvemtyMUZUbldxdVRmOHgvSjBTQzdZUk96a2FVa3Bpbm4xVHQrRVdE?=
+ =?utf-8?B?SnE0SHBUbnBVTnJFRnd0Y3llYjBXRnJReWQrRGpjN01jQlIwa1JrU1RjR1Vy?=
+ =?utf-8?B?OTFpMDViSWN6UW9ocnBlNGNTb1crcngzTnBaYkkyc0NEZXhXSE95RUhvdmRt?=
+ =?utf-8?B?V1l0K2FvcjlwQVBZb2pQajVSYnM2bTkvbTkzaHJ0ZFhMc0J5QmthMG5zYTRB?=
+ =?utf-8?B?ZEtMeTh1M01Ub2YvUHVXZ2hPTEl3Y09tS3B6UU0wdmhuNEZ6SFZkV1JNdEJo?=
+ =?utf-8?B?eFJ5Qlh4NmNZU3kxQ0ZvbG1lam5NaTY3M21CM3lCMUNGQUdzRGd1TUlTNW5W?=
+ =?utf-8?B?bS9UY2l1WFdQbUpmNGN0ZkZKWlYvc3NVei92N2x5ckFVYlpBd1BmRTREWFBT?=
+ =?utf-8?B?TG42SjBCRjRqYVd6S2pHRUorSnlRdENZQVFocFpZT3A4Slc3QmlueTRsS01W?=
+ =?utf-8?Q?TGJVtIJ8GTRCyMiaqgJpcivy3?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.100-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.100-rc1
-X-KernelTest-Deadline: 2024-07-18T15:27+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.1.100 release.
-There are 96 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.100-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.100-rc1
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    i2c: rcar: fix error code in probe()
-
-Nathan Chancellor <nathan@kernel.org>
-    kbuild: Make ld-version.sh more robust against version string changes
-
-Alexandre Chartre <alexandre.chartre@oracle.com>
-    x86/bhi: Avoid warning in #DB handler due to BHI mitigation
-
-Brian Gerst <brgerst@gmail.com>
-    x86/entry/64: Remove obsolete comment on tracing vs. SYSRET
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: clear NO_RXDMA flag after resetting
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: testunit: avoid re-issued work after read message
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: ensure Gen3+ reset does not disturb local targets
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: introduce Gen4 devices
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: reset controller is mandatory for Gen3+
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: mark HostNotify target address as used
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: bring hardware to known state when probing
-
-John Stultz <jstultz@google.com>
-    sched: Move psi_account_irqtime() out of update_rq_clock_task() hotpath
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix kernel bug on rename operation of broken directory
-
-Eduard Zingerman <eddyz87@gmail.com>
-    bpf: Allow reads from uninit stack
-
-Paulo Alcantara <pc@manguebit.com>
-    cifs: avoid dup prefix path in dfs_get_automount_devname()
-
-Paulo Alcantara <pc@cjr.nz>
-    cifs: use origin fullpath for automounts
-
-Jim Mattson <jmattson@google.com>
-    x86/retpoline: Move a NOENDBR annotation to the SRSO dummy return thunk
-
-Ekansh Gupta <quic_ekangupt@quicinc.com>
-    misc: fastrpc: Copy the complete capability structure to user
-
-Ekansh Gupta <quic_ekangupt@quicinc.com>
-    misc: fastrpc: Avoid updating PD type for capability request
-
-Ekansh Gupta <quic_ekangupt@quicinc.com>
-    misc: fastrpc: Fix DSP capabilities request
-
-Jason A. Donenfeld <Jason@zx2c4.com>
-    wireguard: send: annotate intentional data race in checking empty queue
-
-Jason A. Donenfeld <Jason@zx2c4.com>
-    wireguard: queueing: annotate intentional data race in cpu round robin
-
-Helge Deller <deller@kernel.org>
-    wireguard: allowedips: avoid unaligned 64-bit memory accesses
-
-Jason A. Donenfeld <Jason@zx2c4.com>
-    wireguard: selftests: use acpi=off instead of -no-acpi for recent QEMU
-
-Kuan-Wei Chiu <visitorckw@gmail.com>
-    ACPI: processor_idle: Fix invalid comparison with insertion sort for latency
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: fix race between delayed_work() and ceph_monc_stop()
-
-Audra Mitchell <audra@redhat.com>
-    Fix userfaultfd_api to return EINVAL as expected
-
-Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-    ALSA: hda/realtek: Limit mic boost on VAIO PRO PX
-
-Nazar Bilinskyi <nbilinskyi@gmail.com>
-    ALSA: hda/realtek: Enable Mute LED on HP 250 G7
-
-Michał Kopeć <michal.kopec@3mdeb.com>
-    ALSA: hda/realtek: add quirk for Clevo V5[46]0TU
-
-Armin Wolf <W_Armin@gmx.de>
-    platform/x86: toshiba_acpi: Fix array out-of-bounds access
-
-Thomas Weißschuh <linux@weissschuh.net>
-    nvmem: core: only change name to fram for current attribute
-
-Joy Chakraborty <joychakr@google.com>
-    nvmem: meson-efuse: Fix return value of nvmem callbacks
-
-Joy Chakraborty <joychakr@google.com>
-    nvmem: rmem: Fix return value of rmem_read()
-
-Hobin Woo <hobin.woo@samsung.com>
-    ksmbd: discard write access to the directory open
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: always resume roothubs if xHC was reset during resume
-
-He Zhe <zhe.he@windriver.com>
-    hpet: Support 32-bit userspace
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
-
-Lee Jones <lee@kernel.org>
-    usb: gadget: configfs: Prevent OOB read/write in usb_string_copy()
-
-WangYuli <wangyuli@uniontech.com>
-    USB: Add USB_QUIRK_NO_SET_INTF quirk for START BP-850k
-
-Dmitry Smirnov <d.smirnov@inbox.lv>
-    USB: serial: mos7840: fix crash on resume
-
-Vanillan Wang <vanillanwang@163.com>
-    USB: serial: option: add Rolling RW350-GL variants
-
-Mank Wang <mank.wang@netprisma.us>
-    USB: serial: option: add Netprisma LCUK54 series modules
-
-Slark Xiao <slark_xiao@163.com>
-    USB: serial: option: add support for Foxconn T99W651
-
-Bjørn Mork <bjorn@mork.no>
-    USB: serial: option: add Fibocom FM350-GL
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit FN912 rmnet compositions
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit generic core-dump composition
-
-Ronald Wahl <ronald.wahl@raritan.com>
-    net: ks8851: Fix potential TX stall after interface reopen
-
-Ronald Wahl <ronald.wahl@raritan.com>
-    net: ks8851: Fix deadlock with the SPI chip variant
-
-Eric Dumazet <edumazet@google.com>
-    tcp: avoid too many retransmit packets
-
-Eric Dumazet <edumazet@google.com>
-    tcp: use signed arithmetic in tcp_rtx_probe0_timed_out()
-
-Josh Don <joshdon@google.com>
-    Revert "sched/fair: Make sure to try to detach at least one movable task"
-
-Steve French <stfrench@microsoft.com>
-    cifs: fix setting SecurityFlags to true
-
-Satheesh Paul <psatheesh@marvell.com>
-    octeontx2-af: fix issue with IPv4 match for RSS
-
-Kiran Kumar K <kirankumark@marvell.com>
-    octeontx2-af: fix issue with IPv6 ext match for RSS
-
-Kiran Kumar K <kirankumark@marvell.com>
-    octeontx2-af: extend RSS supported offload types
-
-Michal Mazur <mmazur2@marvell.com>
-    octeontx2-af: fix detection of IP layer
-
-Srujana Challa <schalla@marvell.com>
-    octeontx2-af: fix a issue with cpt_lf_alloc mailbox
-
-Srujana Challa <schalla@marvell.com>
-    octeontx2-af: update cpt lf alloc mailbox
-
-Nithin Dabilpuram <ndabilpuram@marvell.com>
-    octeontx2-af: replace cpt slot with lf id on reg write
-
-Chen Ni <nichen@iscas.ac.cn>
-    ARM: davinci: Convert comma to semicolon
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    firmware: cs_dsp: Use strnlen() on name fields in V1 wmfw files
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    firmware: cs_dsp: Prevent buffer overrun when processing V2 alg headers
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    firmware: cs_dsp: Validate payload length before processing block
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    firmware: cs_dsp: Return error if block header overflows file
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    firmware: cs_dsp: Fix overflow checking of wmfw header
-
-Sven Schnelle <svens@linux.ibm.com>
-    s390: Mark psw in __load_psw_mask() as __unitialized
-
-Daniel Borkmann <daniel@iogearbox.net>
-    net, sunrpc: Remap EPERM in case of connection failure in xs_tcp_setup_socket
-
-Chengen Du <chengen.du@canonical.com>
-    net/sched: Fix UAF when resolving a clash
-
-Kuniyuki Iwashima <kuniyu@amazon.com>
-    udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
-
-Oleksij Rempel <linux@rempel-privat.de>
-    ethtool: netlink: do not return SQI value if link is down
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    ppp: reject claimed-as-LCP but actually malformed packets
-
-Jian Hui Lee <jianhui.lee@canonical.com>
-    net: ethernet: mtk-star-emac: set mac_managed_pm when probing
-
-Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-    bpf: fix order of args in call to bpf_map_kvcalloc
-
-Martin KaFai Lau <martin.lau@kernel.org>
-    bpf: Remove __bpf_local_storage_map_alloc
-
-Yafang Shao <laoar.shao@gmail.com>
-    bpf: use bpf_map_kvcalloc in bpf_local_storage
-
-Martin KaFai Lau <martin.lau@kernel.org>
-    bpf: Reduce smap->elem_size
-
-Yonghong Song <yhs@fb.com>
-    bpf: Refactor some inode/task/sk storage functions for reuse
-
-Aleksander Jan Bajkowski <olek2@wp.pl>
-    net: ethernet: lantiq_etop: fix double free in detach
-
-Michal Kubiak <michal.kubiak@intel.com>
-    i40e: Fix XDP program unloading while removing the driver
-
-Hugh Dickins <hughd@google.com>
-    net: fix rc7's __skb_datagram_iter()
-
-Aleksandr Mishin <amishin@t-argos.ru>
-    octeontx2-af: Fix incorrect value output on error path in rvu_check_rsrc_availability()
-
-Geliang Tang <tanggeliang@kylinos.cn>
-    skmsg: Skip zero length skb in sk_msg_recvmsg
-
-Oleksij Rempel <linux@rempel-privat.de>
-    net: phy: microchip: lan87xx: reinit PHY after cable test
-
-Neal Cardwell <ncardwell@google.com>
-    tcp: fix incorrect undo caused by DSACK of TLP retransmit
-
-Brian Foster <bfoster@redhat.com>
-    vfs: don't mod negative dentry count when on shrinker list
-
-linke li <lilinke99@qq.com>
-    fs/dcache: Re-use value stored to dentry->d_flags instead of re-reading
-
-Jeff Layton <jlayton@kernel.org>
-    filelock: fix potential use-after-free in posix_lock_inode
-
-Jingbo Xu <jefflexu@linux.alibaba.com>
-    cachefiles: add missing lock protection when polling
-
-Baokun Li <libaokun1@huawei.com>
-    cachefiles: cyclic allocation of msg_id to avoid reuse
-
-Hou Tao <houtao1@huawei.com>
-    cachefiles: wait for ondemand_object_worker to finish when dropping object
-
-Baokun Li <libaokun1@huawei.com>
-    cachefiles: cancel all requests for the object that is being dropped
-
-Baokun Li <libaokun1@huawei.com>
-    cachefiles: stop sending new request when dropping object
-
-Jia Zhu <zhujia.zj@bytedance.com>
-    cachefiles: narrow the scope of triggering EPOLLIN events in ondemand mode
-
-Baokun Li <libaokun1@huawei.com>
-    cachefiles: propagate errors from vfs_getxattr() to avoid infinite loop
-
-Waiman Long <longman@redhat.com>
-    mm: prevent derefencing NULL ptr in pfn_section_valid()
-
-
--------------
-
-Diffstat:
-
- Documentation/admin-guide/cifs/usage.rst           |  34 +--
- Makefile                                           |   4 +-
- arch/arm/mach-davinci/pm.c                         |   2 +-
- arch/s390/include/asm/processor.h                  |   2 +-
- arch/x86/entry/entry_64.S                          |  19 +-
- arch/x86/entry/entry_64_compat.S                   |  14 +-
- arch/x86/lib/retpoline.S                           |   2 +-
- drivers/acpi/processor_idle.c                      |  37 ++--
- drivers/char/hpet.c                                |  34 ++-
- drivers/firmware/cirrus/cs_dsp.c                   | 231 +++++++++++++++------
- drivers/i2c/busses/i2c-rcar.c                      |  67 +++---
- drivers/i2c/i2c-core-base.c                        |   1 +
- drivers/i2c/i2c-slave-testunit.c                   |   7 +
- drivers/misc/fastrpc.c                             |  14 +-
- drivers/net/ethernet/intel/i40e/i40e_main.c        |   9 +-
- drivers/net/ethernet/lantiq_etop.c                 |   4 +-
- drivers/net/ethernet/marvell/octeontx2/af/mbox.h   |  10 +-
- drivers/net/ethernet/marvell/octeontx2/af/npc.h    |   8 +-
- drivers/net/ethernet/marvell/octeontx2/af/rvu.c    |   2 +-
- .../net/ethernet/marvell/octeontx2/af/rvu_cpt.c    |  33 ++-
- .../net/ethernet/marvell/octeontx2/af/rvu_nix.c    |  67 +++++-
- drivers/net/ethernet/mediatek/mtk_star_emac.c      |   7 +
- drivers/net/ethernet/micrel/ks8851_common.c        |  10 +-
- drivers/net/ethernet/micrel/ks8851_spi.c           |   4 +-
- drivers/net/phy/microchip_t1.c                     |   2 +-
- drivers/net/ppp/ppp_generic.c                      |  15 ++
- drivers/net/wireguard/allowedips.c                 |   4 +-
- drivers/net/wireguard/queueing.h                   |   4 +-
- drivers/net/wireguard/send.c                       |   2 +-
- drivers/nvmem/core.c                               |   5 +-
- drivers/nvmem/meson-efuse.c                        |  14 +-
- drivers/nvmem/rmem.c                               |   5 +-
- drivers/platform/x86/toshiba_acpi.c                |   1 +
- drivers/usb/core/config.c                          |  18 +-
- drivers/usb/core/quirks.c                          |   3 +
- drivers/usb/gadget/configfs.c                      |   3 +
- drivers/usb/host/xhci.c                            |  16 +-
- drivers/usb/serial/mos7840.c                       |  45 ++++
- drivers/usb/serial/option.c                        |  38 ++++
- fs/cachefiles/daemon.c                             |  14 +-
- fs/cachefiles/internal.h                           |  15 ++
- fs/cachefiles/ondemand.c                           |  52 ++++-
- fs/cachefiles/xattr.c                              |   5 +-
- fs/dcache.c                                        |  12 +-
- fs/locks.c                                         |   2 +-
- fs/nilfs2/dir.c                                    |  32 ++-
- fs/smb/client/cifs_dfs_ref.c                       |  36 +++-
- fs/smb/client/cifsglob.h                           |   4 +-
- fs/smb/client/cifsproto.h                          |  36 ++++
- fs/smb/client/dir.c                                |  21 +-
- fs/smb/server/smb2pdu.c                            |  13 +-
- fs/userfaultfd.c                                   |   7 +-
- include/linux/bpf.h                                |   8 +
- include/linux/bpf_local_storage.h                  |  17 +-
- include/linux/mmzone.h                             |   3 +-
- kernel/bpf/bpf_inode_storage.c                     |  38 +---
- kernel/bpf/bpf_local_storage.c                     | 199 +++++++++++-------
- kernel/bpf/bpf_task_storage.c                      |  38 +---
- kernel/bpf/syscall.c                               |  15 ++
- kernel/bpf/verifier.c                              |  11 +-
- kernel/sched/core.c                                |   7 +-
- kernel/sched/fair.c                                |  12 +-
- kernel/sched/psi.c                                 |  21 +-
- kernel/sched/sched.h                               |   1 +
- kernel/sched/stats.h                               |  11 +-
- net/ceph/mon_client.c                              |  14 +-
- net/core/bpf_sk_storage.c                          |  35 +---
- net/core/datagram.c                                |   3 +-
- net/core/skmsg.c                                   |   3 +-
- net/ethtool/linkstate.c                            |  41 ++--
- net/ipv4/tcp_input.c                               |  11 +-
- net/ipv4/tcp_timer.c                               |  31 ++-
- net/ipv4/udp.c                                     |   4 +-
- net/sched/act_ct.c                                 |   8 +
- net/sunrpc/xprtsock.c                              |   7 +
- scripts/ld-version.sh                              |   8 +-
- sound/pci/hda/patch_realtek.c                      |   4 +
- .../selftests/bpf/progs/test_global_func10.c       |   9 +-
- tools/testing/selftests/bpf/verifier/calls.c       |  13 +-
- .../selftests/bpf/verifier/helper_access_var_len.c | 104 ++++++----
- tools/testing/selftests/bpf/verifier/int_ptr.c     |   9 +-
- .../selftests/bpf/verifier/search_pruning.c        |  13 +-
- tools/testing/selftests/bpf/verifier/sock.c        |  27 ---
- tools/testing/selftests/bpf/verifier/spill_fill.c  |   7 +-
- tools/testing/selftests/bpf/verifier/var_off.c     |  52 -----
- tools/testing/selftests/wireguard/qemu/Makefile    |   8 +-
- 86 files changed, 1204 insertions(+), 634 deletions(-)
-
-
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR18MB5244.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2728205c-38de-4c52-0a02-08dca5acb054
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 15:33:49.0830
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bNdJSbdir4x/LJLsdBdIhU6C7Y3nNIYOa0hLsKS4NUfz+hirl15wqZY5ralSWttNiYp2hzWpYMtkn5mum/uSaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR18MB6381
+X-Proofpoint-GUID: oUdNtOsDQafU1N30YuPSwFqHmJZzJFbH
+X-Proofpoint-ORIG-GUID: oUdNtOsDQafU1N30YuPSwFqHmJZzJFbH
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
+
+
+
+>-----Original Message-----
+>From: Arnd Bergmann <arnd@arndb.de>
+>Sent: Tuesday, July 16, 2024 7:21 PM
+>To: Nathan Chancellor <nathan@kernel.org>; Vamsi Krishna Attunuru
+><vattunuru@marvell.com>
+>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
+>kernel@vger.kernel.org
+>Subject: [EXTERNAL] Re: [PATCH] misc: Kconfig: add a new dependency for
+>MARVELL_CN10K_DPI
+>
+>On Tue, Jul 16, 2024, at 15:=E2=80=8A26, Nathan Chancellor wrote: > On Thu=
+, Jul 11, 2024
+>at 05:=E2=80=8A01:=E2=80=8A15AM -0700, Vamsi Attunuru wrote: >> > > After =
+this change,
+>ARCH=3Darm allmodconfig fails with: > > drivers/misc/mrvl_cn10k_dpi.=E2=80=
+=8Ac: In
+>
+>On Tue, Jul 16, 2024, at 15:26, Nathan Chancellor wrote:
+>> On Thu, Jul 11, 2024 at 05:01:15AM -0700, Vamsi Attunuru wrote:
+>>>
+>>
+>> After this change, ARCH=3Darm allmodconfig fails with:
+>>
+>>   drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_write':
+>>   drivers/misc/mrvl_cn10k_dpi.c:190:9: error: implicit declaration of
+>> function 'writeq'; did you mean 'writeb'?
+>> [-Wimplicit-function-declaration]
+>>     190 |         writeq(val, dpi->reg_base + offset);
+>>         |         ^~~~~~
+>>         |         writeb
+>>   drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_read':
+>>   drivers/misc/mrvl_cn10k_dpi.c:195:16: error: implicit declaration of
+>> function 'readq'; did you mean 'readb'?
+>> [-Wimplicit-function-declaration]
+>>     195 |         return readq(dpi->reg_base + offset);
+>>         |                ^~~~~
+>>         |                readb
+>>
+>> Including one of the io-64-nonatomic headers would resolve this but I
+>> am not sure which one would be appropriate (or perhaps the dependency
+>> should be tightened to requiring 64BIT, as some other drivers have
+>> done).
+>
+>Right, a dependency on 64BIT makes sense here. The alternative is to inclu=
+de
+>linux/io-64-nonatomic-hi-lo.h or linux/io-64-nonatomic-lo-hi.h in order to
+>have a replacement readq/writeq implementation that works on 32-bit
+>architectures. However, doing this requires understanding whether what the
+>side-effects of accessing the 64-bit registers are and whether they require
+>writing the upper or lower half of the register last.
+>
+
+Yes Arnd, I am checking the functionality using lo-hi calls that you sugges=
+ted.
+If it has any implications, I will fix it with the 64BIT dependency.
+
+Thanks, Nathan, for reaching out. Could you please advise on the branch whe=
+re
+I should implement the fix.
+
+
+
+>     Arnd
 
