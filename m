@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-253216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB84C931E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:04:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FD2931E3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E111F21E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:04:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AAF91C21F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9073FF1;
-	Tue, 16 Jul 2024 01:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FE34687;
+	Tue, 16 Jul 2024 01:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C36iLi6U"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="itbrRJox"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C17AD24;
-	Tue, 16 Jul 2024 01:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F93C79CD
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091848; cv=none; b=YAwewXAPVbCyOK5LU21UsRsguNcaz2vTpvkafdPxWEtQ3t4kKEjJzOpklgce9AYb+efvuZgDanbS36O/3vfQiTUxevMqO20MJpbHiLCvBqd8PO9wvXTqIsjEhKJ4bBQbAFaHg9FEFW1RI3wYAJ2H7cf2//JR3xYCnko0NE0jPPw=
+	t=1721091873; cv=none; b=WVqnxFrcyGhgkkgCJfFfj0KquXT3En40SerKq0exPTdckz4o3mzhrtUPT1jfiDr2Y+7g7f9Sm/JvR3mPbYN1zgDtCwNHYtrGrQ2gn1eweevA80NYgtxrbQGPhB2v7JbnyNMQCCJKMIHTgAf6/5pkmXUKibf4TzF9Hv2Z5O6xRIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091848; c=relaxed/simple;
-	bh=JykLpQbTyoukdRXHFjpu2mN/Wz8dPUDG8VaxidhVyjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUvYrv6FwLjAsiV1HzjBUAxNVrZYtkGpYlnnIFGmF1eQm/TVrhHWqpxY+H1wKon24wtJdJ4yZ0pGjieN7OjTtO2mldxtWAtQosirzQMHDGfanYjWDqENgdlvo+g6puFfglfFRhp1T4lfK3lcSfsF8A23JTc7E0Z74NIMEsSmDgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C36iLi6U; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b12572bd8so3362156b3a.2;
-        Mon, 15 Jul 2024 18:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721091846; x=1721696646; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tlte24jdXSyuVqMMgCxd4aC/sf94qwR/jmVRbqiCIzc=;
-        b=C36iLi6UEfx6dfMFD8mHCd2Nagl6CI06uej63b33tMgPwq5XIB1KSOpac89dK8jsJZ
-         MBCOM8YVeXatI85PJVSHWhYQhawYp56ifcG0KuIvT2pGDKJVfiUeCfbv9wxClnpEToqC
-         mVSiNs5eOI80U7WQCjLyFE+b46L5uhbDS/l6aU2Kdt5ElW3osahlUpwonblsibOm+A52
-         6uZmHL5XcI+mshU/N3Y2R7V+rJmEyxeCTK/zNF/8RZtu3JeddrInibXNjZTdk+UDlTbQ
-         geJgaGtOffaNc6ISFMkMceA21EfhR11bYNmOrI430Gh45i/OVpPW1jewjNdX92sRLg9Q
-         9VsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721091846; x=1721696646;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tlte24jdXSyuVqMMgCxd4aC/sf94qwR/jmVRbqiCIzc=;
-        b=RVY8R4uyT1W+oWiEl9F61leqx8a+sR6n2uIkjShnZd6ZAVGML8A9HKTgRksoWCQRsh
-         Tt582MCXmm1R7Tvubg9O+zCJO9OLyxlpAdxNSv9bXEFY8bM3cv2JWMn0x/Rd9hvNhEuu
-         8UO23XvlbiMTG3yGjamoXIoNXBfOYfF2wWwV0kW1YLljKcC6a5R0i/pWh138TpnF0ZPJ
-         DhZokJrglv+OEW3YVJhdnNKgh4Cabi+jFqzigOcoM8TYRHRd1ZFixLz2pZpvTj2LZX/T
-         L8jngt2USOpPRpMKDgcSlzMskdoWAfJcG39hsu0LTDgCtZvew2yoPTbtCCDIv+yg64jo
-         JwvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrEhN2/q0nyaP0UAiCPo31JXzknmZBIbiVDDxBIHK6b/LCa+P1nQHEkiPkiBeoTWHfM+3g5Cu8CP4938+6Wm3A9Ii9pdwCsKalwz59
-X-Gm-Message-State: AOJu0Yy/ryqnigqgFn8HaE9KvHE6q/7RGTB2Hk0xJYW8MIggQxCLFstr
-	7Hk7Xq+hXFwMoRhaqU1lSCABpWKX1QGbpz50GPuJIA78eK9q/dAkx2itFA==
-X-Google-Smtp-Source: AGHT+IE/6TRveaY0Y6sSrSyjvFT0kDbVPysVwYRP3ptgHxGoXyXvuQ0351hSyDQjvvhe4lNU/xAO7w==
-X-Received: by 2002:a05:6a00:9a3:b0:70b:2a:15cd with SMTP id d2e1a72fcca58-70c130a5276mr1073521b3a.0.1721091846163;
-        Mon, 15 Jul 2024 18:04:06 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6d45:d4db:b14d:ea69])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e34d2b21fsm3218428a12.47.2024.07.15.18.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 18:04:02 -0700 (PDT)
-Date: Mon, 15 Jul 2024 18:03:57 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] input: qt1050: use
- device_for_each_child_node_scoped()
-Message-ID: <ZpXG_TOdvq6SF22s@google.com>
-References: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
- <20240412-input_device_for_each_child_node_scoped-v1-2-dbad1bc7ea84@gmail.com>
+	s=arc-20240116; t=1721091873; c=relaxed/simple;
+	bh=DxVL674DykXj38h1XVGpn0hsaGmd4nf0QTNzrbjYn8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqYV5oG+Xlv0bzp0BqlKh18MIYvfDeLwC5hn8LERBNWXA141YQ7p3DPAsqmIPGWSTQ4uurwVrORL5SavhqqaADc6eYeqIUSmhkTdAoq9CSEsRDIU0nIKlT7iX3nz2P0zu7Wlb8oxN8OuhcvRDzLotfu7iMgXneRb4dPWvmvr/Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=itbrRJox; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jarkko@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721091867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rrsdvOcbnZj3fLM/P3nqd13De7FARkH+xOOXrXATVM0=;
+	b=itbrRJoxtO+pLwhn2iCH2bPN8FYFO9ODrSsOjdtfC8sPOGXa2S0CGR745jKwKFlH46Bf7s
+	8FPVMAmvHtIeGiKJcN7LS/QuOgmwi5BC1W0/qhlvkFXrNkkQDcq3CJB+TVm9sRuSx0iwN7
+	P2FkeEmQc5ApsAYkJUkOqhKVS4kEhNY=
+X-Envelope-To: peterhuewe@gmx.de
+X-Envelope-To: jgg@ziepe.ca
+X-Envelope-To: linux-integrity@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: gehao@kylinos.cn
+Message-ID: <593e3ae7-1f8c-218a-a5ce-3d90e3008999@linux.dev>
+Date: Tue, 16 Jul 2024 09:04:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412-input_device_for_each_child_node_scoped-v1-2-dbad1bc7ea84@gmail.com>
+Subject: Re: [PATCH] tpm: Move dereference after NULL check in
+ tpm_buf_check_hmac_response
+To: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de, jgg@ziepe.ca
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hao Ge <gehao@kylinos.cn>
+References: <20240709023337.102509-1-hao.ge@linux.dev>
+ <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Javier,
+Hi Jarkko
 
-On Fri, Apr 12, 2024 at 10:57:31PM +0200, Javier Carrasco wrote:
-> Switch to the _scoped() version introduced in commit 365130fd47af
-> ("device property: Introduce device_for_each_child_node_scoped()")
-> to remove the need for manual calling of fwnode_handle_put() in the
-> paths where the code exits the loop early.
-> 
-> In this case the err label was no longer necessary and EINVAL is
-> returned directly.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  drivers/input/keyboard/qt1050.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/qt1050.c b/drivers/input/keyboard/qt1050.c
-> index b51dfcd76038..6ac2b9dbdb85 100644
-> --- a/drivers/input/keyboard/qt1050.c
-> +++ b/drivers/input/keyboard/qt1050.c
-> @@ -355,21 +355,21 @@ static int qt1050_parse_fw(struct qt1050_priv *ts)
->  		if (fwnode_property_read_u32(child, "linux,code",
->  					     &button.keycode)) {
->  			dev_err(dev, "Button without keycode\n");
-> -			goto err;
-> +			return -EINVAL;
+Have a nice day.
 
-It looks like the chunk actually switching to
-device_for_each_child_node_scoped() is missing from the patch. I added
-it and applied, thank you.
+On 7/15/24 19:25, Jarkko Sakkinen wrote:
+> On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> We shouldn't dereference "auth" until after we have checked that it is
+>> non-NULL.
+>>
+>> Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_session*()")
+>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> Also lacking:
+>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/T/#u
 
-Thanks.
+Regarding this version, I don't think I should add these.
 
--- 
-Dmitry
+I send this patch on July 9th, 2024.
+
+The following email was sent on July 13th, 2024.
+
+https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/T/#u
+
+I think these should be included in the subsequent versions (if any).
+
+>
+> What is happening here is that my commit exposed pre-existing bug to
+> static analysis but it did not introduce a new regression. I missed
+> from your patch how did you ended up to your conclusions.
+>
+> Please *do not* ignore the sources next time. Either explain how the bug
+> was found or provide the reporting source. You are essentially taking
+> credit and also blame from the work that you did not accomplish
+> yourself, which is both wrong and dishonest.
+>
+> BR, Jarkko
+
+OK,got it,I'll pay more attention to such details in the future.
+
+I would like to clarify that I did not taking credit and dishonest.
+
+As stated earlier, the timeline indicates that my patch preceded his email.
+
+Before submitting my patch, I conducted a thorough search to ensure that 
+there were no related submissions,
+
+  in order to avoid any duplication of effort and wastage of everyone's 
+time.
+
+I didn't expect to have wasted everyone's time because of commit message 
+, and I sincerely apologize for that.
+
+
+Thanks
+
+BR
+
+Hao
+
+
+
 
