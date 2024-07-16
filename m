@@ -1,156 +1,147 @@
-Return-Path: <linux-kernel+bounces-253411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C629320EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E87999320EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D881F22E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6544A1F22E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D5124B29;
-	Tue, 16 Jul 2024 07:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236B12BAE9;
+	Tue, 16 Jul 2024 07:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLKMRaQm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="higpwW40"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE03225D4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC0A22309;
+	Tue, 16 Jul 2024 07:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721113605; cv=none; b=Af7in7UZLE3puvpu1PPsKRWJGsSR+gzwR+sGH+q9b0Kdsvy3EOldS2Kvy87ETbUIZkD+k8ckOkXX96vFRjEZYHZlSrGsQRIZIi+V+8BycCG6x32hWFdfG1U7WQxnBm6JqT/wq0+gwDjRYbT2D1lUcWhsMXh4qLLi6abH/3rg+/Y=
+	t=1721113605; cv=none; b=CZEhKsq9zZVeuyhK1hcIZRLNT9UldJJuygoqkkevos7XickCyyi9hLX6VkwEMd7qHr+ICD3owLk6O+gbM2wSqMntkTno2/fEranPj6OLkZyBiTm3g17+do1esRukJYE1PWFOVmv9/dyKy5hQGtBxeEJA0KzA2uwLwfQ3z5Wolfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721113605; c=relaxed/simple;
-	bh=eXgoe0KsoXvTXbbnANqs1nc2DePYQfgFu+yrlw2MJcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aBezk4cUY8ROCLzHphQVPGo2HjCj47WtRQtLk5aEyo9PnKf5Hn7prVzq/hpm6POzUGE6NvP8G/a11E531VrXUl3gN2EeD0A1kQlhyDd6rruOu+bO2lBZBmNAHfT/wlQnlh/JcmFwnYvqwAG989HY6dxWzsj4GW2e2f0xmdDl6Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLKMRaQm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4ED0C4AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721113604;
-	bh=eXgoe0KsoXvTXbbnANqs1nc2DePYQfgFu+yrlw2MJcI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oLKMRaQmSHDNbcKowCoaGtPV404IN0QcT2J9+5dYBnVK8JTO6d5QYOzroAeht5oTk
-	 xoqBaYM59p/s8mj+2UoADpiO4jBjnYnRsgEjb0TyxF96k2Cu+cGMpe+k8TXgy+ezRd
-	 k+MtIO81hzm+CwETegeqNuySZ3d2Kyyq1svVjgQzwhREggZrxO+n3xN0tAnWOZJnMp
-	 XkxapYmoBeokzU9KmVmLaqmnrbex32+eYlmwG2eWprhVdf18CBBh53iTTIa6RbfLQz
-	 SED4PTDF0LV0VQGzCvq0Vz5sagWouVWbkvbs8s9s57U37kvwS8W+34Zj+lwgsuQgMp
-	 4fvmR5uwQ9gCQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso7189715e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:06:44 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yx+XweNidB1ZEdtjAeEuaZKsidp2Kn32En3ykxMKLAcPPsAGcC4
-	p83a5do+bQg61ZpPZU7u/Y2JaualkIRIjkZXXOBpErFetLX+Xsf4hxpwRPBJU+hfdgt5aKG2xS/
-	AJdt9OXbTJPMMSsXGSrbjChunS2w=
-X-Google-Smtp-Source: AGHT+IG2SKSfcAknDc+cGMV6ZWR9F+Epdw6tLdCyCb6lq5wJ5KH/PaaTkBXKIn5wjb2xKS0W0ZFsjDWd25/fDFmCYV0=
-X-Received: by 2002:a05:6512:3d1d:b0:52c:a20e:4da4 with SMTP id
- 2adb3069b0e04-52edf0344cbmr1060172e87.57.1721113603541; Tue, 16 Jul 2024
- 00:06:43 -0700 (PDT)
+	bh=B3oJmPLKzKDBo49PqlHHwlEkh4WuQknsB/0OjdXxY+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KpWMu4OtkNjos6jUOvQBguXJEUoB8+P+bRpTC8TrwyU1XsUU5m3V/eyUWJR67T6Vf7U8itSNZb0QQGoTuSlto8h6lFdyY63TwPxnmIeXsr/fSwpqXZpUvb2c3w/Nb7BR49envnjt55CJ0FevYe0Qe+pUUQ+Kf9semrWn4CB1ODk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=higpwW40; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G72mxg005314;
+	Tue, 16 Jul 2024 07:06:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=U
+	bJ9PN2ocB3ub4Ud6fp71ukk0Rx+QhDOVMxYciX9QWk=; b=higpwW40DfxgEZbFm
+	IwFGJx20VQkIx7DdNoCR4uRdjUfPEWwpmWyBfOvwOu3tU82lYBkny4rYLr+0ETrO
+	yENkTekvx4O1VaIX5v41+2lVHkJW2np4kwxSqpYtpKHWzTFyNUnyLWkMEga+4v1G
+	MDcKYZunVxFHKoMU4+a0k079csGjy4jiaZlKn3zi2uowjAbe9ppIByJRa9dtPQ/W
+	FAFOKSDU6KvtdnOmbXI0xSkkWPF+pA5Gf/DZ67ZQ38gAcU0MS4jOngIC1KM4f7jR
+	XPI9IHbFaxN/whkyuWuUGnkFso1vS/Que7qJsGC/Rf6BgN/nN5FW7QGqjL+q4NFX
+	iq+Lg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dkmdg47k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 07:06:20 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46G76J3U011077;
+	Tue, 16 Jul 2024 07:06:19 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dkmdg47g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 07:06:19 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G4fNpp018009;
+	Tue, 16 Jul 2024 07:06:19 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40c3wtu2rg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 07:06:18 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46G76FDY52953408
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 07:06:17 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 55DA52004B;
+	Tue, 16 Jul 2024 07:06:15 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7228120043;
+	Tue, 16 Jul 2024 07:06:13 +0000 (GMT)
+Received: from [9.203.115.143] (unknown [9.203.115.143])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 16 Jul 2024 07:06:13 +0000 (GMT)
+Message-ID: <92e61201-2ee4-458d-988d-a476018a05dc@linux.ibm.com>
+Date: Tue, 16 Jul 2024 12:36:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710172717.1346194-1-maz@kernel.org>
-In-Reply-To: <20240710172717.1346194-1-maz@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 16 Jul 2024 16:06:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAREexLc6O_wakzz9+3uYP6d5c7Ch2aVAn9FCbKNgCSu7A@mail.gmail.com>
-Message-ID: <CAK7LNAREexLc6O_wakzz9+3uYP6d5c7Ch2aVAn9FCbKNgCSu7A@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: deb-pkg: Fix build error caused by lack of
- positionnal argument
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] MAINTAINERS: Update powerpc BPF JIT maintainers
+To: Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bpf@vger.kernel.org
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+References: <fb6ef126771c70538067709af69d960da3560ce7.1720944897.git.naveen@kernel.org>
+ <24fea21d9d4458973aadd6a02bb1bf558b8bd0b2.1720944897.git.naveen@kernel.org>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <24fea21d9d4458973aadd6a02bb1bf558b8bd0b2.1720944897.git.naveen@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9H5WhQee8nWzWOgKC_l9BaEh45cpN-WB
+X-Proofpoint-ORIG-GUID: tRVYrAhgPlQbwhcoW8TOCUuyXtUj4JPU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160051
 
-On Thu, Jul 11, 2024 at 2:27=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
-:
->
-> Since 8ef052389f7f ("kbuild: package: add -e and -u options to some
-> shell scripts"), building a debian package on my arm64 box fails:
->
-> $ make -j20 bindeb-pkg
->   UPD     include/config/kernel.release
->   GEN     debian
-> ./scripts/package/mkdebian: 138: 1: parameter not set
-> make[2]: *** [scripts/Makefile.package:98: debian] Error 2
-> make[1]: *** [/home/maz/hot-poop/arm-platforms/Makefile:1538: bindeb-pkg]=
- Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
->
-> Applying the same pattern for substitution of undefined variables
-> seems to paper over the issue and brings the script back to life.
->
-> Fixes: 8ef052389f7f ("kbuild: package: add -e and -u options to some shel=
-l scripts")
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Nicolas Schier <nicolas@fjasle.eu>
+
+
+On 14/07/24 2:04 pm, Naveen N Rao wrote:
+> Hari Bathini has been updating and maintaining the powerpc BPF JIT since
+> a while now. Christophe Leroy has been doing the same for 32-bit
+> powerpc. Add them as maintainers for the powerpc BPF JIT.
+> 
+> I am no longer actively looking into the powerpc BPF JIT. Change my role
+> to that of a reviewer so that I can help with the odd query.
+> 
+> Signed-off-by: Naveen N Rao <naveen@kernel.org>
+
+Acked-by: Hari Bathini <hbathini@linux.ibm.com>
+
 > ---
->  scripts/package/mkdebian | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 196b14e8ad47..de8b460a46b4 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -135,7 +135,7 @@ else
->  fi
->  maintainer=3D"${name} <${email}>"
->
-> -if [ "$1" =3D --need-source ]; then
-> +if [ "${1:+set}" =3D --need-source ]; then
->         gen_source
->  fi
->
-
-
-This is wrong.
-
-It will break 'make srcdeb-pkg' because
-"set" =3D "--need-source" is always false.
-
-
-
-I will squash the following.
-
-
-while [ $# -gt 0 ]; do
-    case "$1" in
-    --need-source)
-        gen_source
-        shift
-        ;;
-    *)
-        break
-        ;;
-    esac
-done
-
-
-Thanks for the report.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+>   MAINTAINERS | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 05f14b67cd74..c7a931ee7a2e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3878,8 +3878,10 @@ S:	Odd Fixes
+>   F:	drivers/net/ethernet/netronome/nfp/bpf/
+>   
+>   BPF JIT for POWERPC (32-BIT AND 64-BIT)
+> -M:	Naveen N Rao <naveen@kernel.org>
+>   M:	Michael Ellerman <mpe@ellerman.id.au>
+> +M:	Hari Bathini <hbathini@linux.ibm.com>
+> +M:	Christophe Leroy <christophe.leroy@csgroup.eu>
+> +R:	Naveen N Rao <naveen@kernel.org>
+>   L:	bpf@vger.kernel.org
+>   S:	Supported
+>   F:	arch/powerpc/net/
 
