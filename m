@@ -1,374 +1,199 @@
-Return-Path: <linux-kernel+bounces-254462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0C1933386
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9052E93338B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EC3283474
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50AD4283900
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2ED8121B;
-	Tue, 16 Jul 2024 21:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BD313A276;
+	Tue, 16 Jul 2024 21:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QWxQ+ofT"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Jw3Bpk4r"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7755894
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 21:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C762AE6A;
+	Tue, 16 Jul 2024 21:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721165145; cv=none; b=TfaQd4doCzLjc2A9mFXquaMNOe8S+knKIpW8VPZM3wUa8I+Id9mPwRIlsc8IvjSx0pz5+CIvoxriafFwNKlsNwiErP7khhW+yYH0Nn2R5vPSuR6gAaowjfFKO+7YCSPXvGiGa1QDEs3dSs6iW1mtOP1ySK3koHziterFuUbUzUY=
+	t=1721165168; cv=none; b=Cmbfr4cii794I+x60KSmiiIwA7Bt9nEpPBKWxQTSyZuR09mxjCNYYTZuCUuitDsOXxdnCGbvHJnXmqlJczLfm13+Vi4C5CrZGOuFlESYD9tz0eipNmE0yhim3tG2UR0Q+DM4dset5OrzqVWWDw2njYouPd+fFMotIrs1CYBsPXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721165145; c=relaxed/simple;
-	bh=dxKUl0LE8GC6ln6r73zcd+n7L3K8PYBZj3/wJG+sflU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uIYqxZjxsjs/tstui13MQ2BxvU+Vs+Y0YGugIMTx1jvBnUnSdy1YWbCC/n1KBlMdF32MDvxDFcwUjmhxx+rUEALwUHCHWG/WkmpH3wA7qJKaG5Oz6xLmwMEOUPMeGr8ILccC7StMrunZ7ySTonVeSxTuY6e9hMNxQziXmlUV4iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QWxQ+ofT; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e036150efc6so10462825276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721165142; x=1721769942; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hW7r7fMrBo0Bh6v0NShpaVL56BDK32NHibV5Yy51e2A=;
-        b=QWxQ+ofTbL0E8cMNEgF3QVzxVQfxcVywyTQx08OVRlMkIvmPHhO/6x0/mnj+7XvbCO
-         AU2030MDZa5oe4nQcD180pY5VrISwEVLcaInZ9aqMZuUacLGOyGW5vNuvqkPBzM7wVa/
-         +lGYNe29ttw3Z3wTaK7pcSW8JyaJY66Svc0MpIdb7j5+y0cymAuQpSO099GT0ufZ6gc5
-         26gKzZFBYbBuKx6RVUuv+Aho8QWopTn3ltn8MTVuLwhyS3OfpF/qWfIXomGx7iCSsFH9
-         /durh4pIV0+tAB00rOTreYH9whcWtKckq2sGNJubWhwjnI8YwKa5AbYVYSxH9Q62nolp
-         L4mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721165142; x=1721769942;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hW7r7fMrBo0Bh6v0NShpaVL56BDK32NHibV5Yy51e2A=;
-        b=qcyOMRVJ5sRQx7gXL0Rw5aUKwup/cNZwK8fYrQQtspSyBuUuujmNLrQEZXQ5ehXW5t
-         lpOC8t9oVV7yrA/VQ+g4Y66rg1ejOL2rzrFxxCUKbAKa6TAB+qDm+TsQqkHArq6QHgNt
-         o/1vmVA05MDAQO2rvPxZbVhhoy69+eY7PcJ2M09Y0YpLpytN8K6h3nVG2TpN9pirtyjo
-         qmiyiK6HayfEnz2TuWiTDbVmVpWw8qXBjcBLfJdzlDZEN4Na9wmRMcUbOYcHNUwMMb9w
-         Nw+USmnqWdYZ/+BHmjSUwYP1dpRSPvS/bY8xfqK68akVedeZ+ItqJrKPXHqgApBGduDY
-         iczg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGmv8JLbISsK6ur051zFzO03BqYOGgf756Btter/KB0i+2EgLIaL2cuU+8YkNFcoklT8ZVK6Lz+ra8x94mjVnVTnKgDqFtM+9teLxE
-X-Gm-Message-State: AOJu0YyLM8ctWQaNmeSptWmoj0tYnvvvcS4HpXj3VrpQ3cksszrDgQKn
-	q59ZuCq3TGXZrkN1KH1GBswVcJBl6XXWkDAQLp6XWWNHW9tCklZdimm8MpqcDAs0hVleuIOzKQ=
-	=
-X-Google-Smtp-Source: AGHT+IE3+EORzqa1AKq4gwHc5gW8KHxrlRPiRlpcdmONZNfxCwqZxpIpSt2aw+tA+p/cpIRu4uKaXbIc/w==
-X-Received: from rmoar-specialist.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:45d3])
- (user=rmoar job=sendgmr) by 2002:a05:6902:2492:b0:dfb:fb2:ebd with SMTP id
- 3f1490d57ef6-e05d57b536cmr5647276.8.1721165142154; Tue, 16 Jul 2024 14:25:42
- -0700 (PDT)
-Date: Tue, 16 Jul 2024 21:25:30 +0000
+	s=arc-20240116; t=1721165168; c=relaxed/simple;
+	bh=qSXKDj/E6KXWYc7coY4nH6LtAza9l3lpYuhCB3RxndU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H35yFDDfTXEJ/UWcbI2NptiluviGBF7FSyhkuv4qDwKDuWakEx5mMulmTEnPDG0B/EQHNMKX85Je8sr1naL/egve9zkHm540WRdpcFkTL5dJkUcKOAFfNpzwrAIzxovr5shRWv/LOX/2N5ZI4lvafZ37dY1vllsnRWxvgGha+uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Jw3Bpk4r; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHeu7Q025081;
+	Tue, 16 Jul 2024 21:25:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	leQBczBp6BDwomra/9IMX++GEiqamSE1x+UX2ngRveg=; b=Jw3Bpk4rpbkKA3Mr
+	HVeeHu/hIn18qPGSj9ckUUfr8+SJIzl4Vu/dgLKqPMzuR2WFOBPm6h0+3wGFjxL9
+	ilxlPy+BbiD0HlKYm5PLb9xsuZyfFmT8eIdygbJ/DA/tqnD7Y9NN/fnzScTfa/Tm
+	w9oC846WH35mqJE7B7I1cuMRr0Ucned1FkEv23+Asz+nJPRDPoHLcsddJAmY6x7h
+	5Nww9UYJvan48gWGpQ55OyLv2EVnSsDgzC3X6JX/3FIu+25jU0RTk72vUECjOkm9
+	mcjkqI+yGUhNZvJ0h0F0w0q6VQaPumTVoPCzjmcykioClntEXOjlTj5kN8L7we6x
+	5RgG9w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfpge1t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 21:25:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GLPtWB016846
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 21:25:55 GMT
+Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
+ 2024 14:25:54 -0700
+Message-ID: <96d26519-5879-4ae7-a8f3-ebdc4f3ade3e@quicinc.com>
+Date: Tue, 16 Jul 2024 14:25:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240716212530.603924-1-rmoar@google.com>
-Subject: [PATCH] kunit: add test duration attribute
-From: Rae Moar <rmoar@google.com>
-To: shuah@kernel.org, davidgow@google.com, dlatypov@google.com, 
-	brendan.higgins@linux.dev
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] drm/msm/dpu: rate limit snapshot capture for mmu
+ faults
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <swboyd@chromium.org>, <dianders@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
+ <20240628214848.4075651-6-quic_abhinavk@quicinc.com>
+ <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4-fjC3Wps4it5BJvRwkdzkbAJkrkM6IJ
+X-Proofpoint-GUID: 4-fjC3Wps4it5BJvRwkdzkbAJkrkM6IJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-16_01,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407160157
 
-Add a new test duration attribute to print the duration of a test run.
 
-Example:
- KTAP version 1
-    # Subtest: memcpy
-    # module: memcpy_kunit
-    1..4
-    # memcpy_large_test.speed: slow
-    # memcpy_large_test.duration: 1.134787584s
-    ok 1 memcpy_large_test
-    ...
 
-This attribute is printed for each test (excluding parameterized tests).
+On 7/1/2024 12:43 PM, Dmitry Baryshkov wrote:
+> On Fri, Jun 28, 2024 at 02:48:47PM GMT, Abhinav Kumar wrote:
+>> There is no recovery mechanism in place yet to recover from mmu
+>> faults for DPU. We can only prevent the faults by making sure there
+>> is no misconfiguration.
+>>
+>> Rate-limit the snapshot capture for mmu faults to once per
+>> msm_kms_init_aspace() as that should be sufficient to capture
+>> the snapshot for debugging otherwise there will be a lot of
+>> dpu snapshots getting captured for the same fault which is
+>> redundant and also might affect capturing even one snapshot
+>> accurately.
+> 
+> Please squash this into the first patch. There is no need to add code
+> with a known defficiency.
+> 
 
-Add documentation for this new attribute to KUnit docs.
+Sure, will squash it.
 
-In order to save the timespec64 object, add the ability to save a memory
-allocated object to the attributes framework.
+> Also, is there a reason why you haven't used <linux/ratelimit.h> ?
+> 
 
-Signed-off-by: Rae Moar <rmoar@google.com>
----
- .../dev-tools/kunit/running_tips.rst          |  7 +++
- include/kunit/attributes.h                    |  5 ++
- include/kunit/test.h                          |  1 +
- lib/kunit/attributes.c                        | 61 ++++++++++++++++++-
- lib/kunit/test.c                              | 25 ++++++--
- 5 files changed, 93 insertions(+), 6 deletions(-)
+There is really no interval I can conclude on which is safe here. In 
+fact rate-limit is probably not the right terminology here.
 
-diff --git a/Documentation/dev-tools/kunit/running_tips.rst b/Documentation/dev-tools/kunit/running_tips.rst
-index bd689db6fdd2..a528d92e5d8f 100644
---- a/Documentation/dev-tools/kunit/running_tips.rst
-+++ b/Documentation/dev-tools/kunit/running_tips.rst
-@@ -446,3 +446,10 @@ This attribute indicates whether the test uses init data or functions.
- 
- This attribute is automatically saved as a boolean and tests can also be
- filtered using this attribute.
-+
-+``duration``
-+
-+This attribute indicates the length of time in seconds of the test execution.
-+
-+This attribute is automatically saved as a timespec64 and printed for each test
-+(excluding parameterized tests).
-diff --git a/include/kunit/attributes.h b/include/kunit/attributes.h
-index bc76a0b786d2..89ca54ef380d 100644
---- a/include/kunit/attributes.h
-+++ b/include/kunit/attributes.h
-@@ -18,6 +18,11 @@ struct kunit_attr_filter {
- 	char *input;
- };
- 
-+/*
-+ * Frees all of a test's allocated attributes.
-+ */
-+void kunit_free_attr(void *test_or_suite, bool is_test);
-+
- /*
-  * Returns the name of the filter's attribute.
-  */
-diff --git a/include/kunit/test.h b/include/kunit/test.h
-index ec61cad6b71d..dca78d9bd3f6 100644
---- a/include/kunit/test.h
-+++ b/include/kunit/test.h
-@@ -82,6 +82,7 @@ enum kunit_speed {
- /* Holds attributes for each test case and suite */
- struct kunit_attributes {
- 	enum kunit_speed speed;
-+	struct timespec64 *duration;
- };
- 
- /**
-diff --git a/lib/kunit/attributes.c b/lib/kunit/attributes.c
-index 2cf04cc09372..b9fd6c686d65 100644
---- a/lib/kunit/attributes.c
-+++ b/lib/kunit/attributes.c
-@@ -40,6 +40,7 @@ struct kunit_attr {
- 	int (*filter)(void *attr, const char *input, int *err);
- 	void *attr_default;
- 	enum print_ops print;
-+	bool to_free;
- };
- 
- /* String Lists for enum Attributes */
-@@ -79,8 +80,29 @@ static const char *attr_string_to_string(void *attr, bool *to_free)
- 	return (char *) attr;
- }
- 
-+static const char *attr_duration_to_string(void *attr, bool *to_free)
-+{
-+	int string_max_len = 20;
-+	char *str = kmalloc(string_max_len, GFP_KERNEL);
-+	struct timespec64 *val = (struct timespec64 *)attr;
-+
-+	*to_free = true;
-+
-+	/* Check if duration will overflow string */
-+	if (val->tv_sec >= 1000000)
-+		str = "Greater than or equal to 1000000s";
-+	else
-+		sprintf(str, "%lld.%09lds", val->tv_sec, val->tv_nsec);
-+	return str;
-+}
-+
- /* Filter Methods */
- 
-+static int attr_default_filter(void *attr, const char *input, int *err)
-+{
-+	return false;
-+}
-+
- static const char op_list[] = "<>!=";
- 
- /*
-@@ -246,8 +268,20 @@ static void *attr_is_init_get(void *test_or_suite, bool is_test)
- 		return ((void *) suite->is_init);
- }
- 
-+static void *attr_duration_get(void *test_or_suite, bool is_test)
-+{
-+	struct kunit_case *test = is_test ? test_or_suite : NULL;
-+
-+	if (test && !test->generate_params)
-+		return ((void *) test->attr.duration);
-+	else
-+		return ((void *) NULL);
-+}
-+
- /* List of all Test Attributes */
- 
-+static struct timespec64 duration_default = {0, 0};
-+
- static struct kunit_attr kunit_attr_list[] = {
- 	{
- 		.name = "speed",
-@@ -256,6 +290,7 @@ static struct kunit_attr kunit_attr_list[] = {
- 		.filter = attr_speed_filter,
- 		.attr_default = (void *)KUNIT_SPEED_NORMAL,
- 		.print = PRINT_ALWAYS,
-+		.to_free = false,
- 	},
- 	{
- 		.name = "module",
-@@ -264,6 +299,7 @@ static struct kunit_attr kunit_attr_list[] = {
- 		.filter = attr_string_filter,
- 		.attr_default = (void *)"",
- 		.print = PRINT_SUITE,
-+		.to_free = false,
- 	},
- 	{
- 		.name = "is_init",
-@@ -272,10 +308,33 @@ static struct kunit_attr kunit_attr_list[] = {
- 		.filter = attr_bool_filter,
- 		.attr_default = (void *)false,
- 		.print = PRINT_SUITE,
-+		.to_free = false,
-+	},
-+	{
-+		.name = "duration",
-+		.get_attr = attr_duration_get,
-+		.to_string = attr_duration_to_string,
-+		.filter = attr_default_filter,
-+		.attr_default = (void *)(&duration_default),
-+		.print = PRINT_ALWAYS,
-+		.to_free = true,
- 	}
- };
- 
--/* Helper Functions to Access Attributes */
-+/* Helper Functions to Access/Free Attributes */
-+
-+void kunit_free_attr(void *test_or_suite, bool is_test)
-+{
-+	int i;
-+	void *attr;
-+
-+	for (i = 0; i < ARRAY_SIZE(kunit_attr_list); i++) {
-+		if (kunit_attr_list[i].to_free) {
-+			attr = kunit_attr_list[i].get_attr(test_or_suite, is_test);
-+			kfree(attr);
-+		}
-+	}
-+}
- 
- const char *kunit_attr_filter_name(struct kunit_attr_filter filter)
- {
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index e8b1b52a19ab..0d18e4969015 100644
---- a/lib/kunit/test.c
-+++ b/lib/kunit/test.c
-@@ -376,11 +376,11 @@ static void kunit_run_case_check_speed(struct kunit *test,
- /*
-  * Initializes and runs test case. Does not clean up or do post validations.
-  */
--static void kunit_run_case_internal(struct kunit *test,
-+static struct timespec64 kunit_run_case_internal(struct kunit *test,
- 				    struct kunit_suite *suite,
- 				    struct kunit_case *test_case)
- {
--	struct timespec64 start, end;
-+	struct timespec64 start, end, duration;
- 
- 	if (suite->init) {
- 		int ret;
-@@ -389,7 +389,9 @@ static void kunit_run_case_internal(struct kunit *test,
- 		if (ret) {
- 			kunit_err(test, "failed to initialize: %d\n", ret);
- 			kunit_set_failure(test);
--			return;
-+			duration.tv_sec = 0;
-+			duration.tv_nsec = 0;
-+			return duration;
- 		}
- 	}
- 
-@@ -399,7 +401,11 @@ static void kunit_run_case_internal(struct kunit *test,
- 
- 	ktime_get_ts64(&end);
- 
--	kunit_run_case_check_speed(test, test_case, timespec64_sub(end, start));
-+	duration = timespec64_sub(end, start);
-+
-+	kunit_run_case_check_speed(test, test_case, duration);
-+
-+	return duration;
- }
- 
- static void kunit_case_internal_cleanup(struct kunit *test)
-@@ -424,6 +430,7 @@ struct kunit_try_catch_context {
- 	struct kunit *test;
- 	struct kunit_suite *suite;
- 	struct kunit_case *test_case;
-+	struct timespec64 duration;
- };
- 
- static void kunit_try_run_case(void *data)
-@@ -440,7 +447,7 @@ static void kunit_try_run_case(void *data)
- 	 * abort will be called, this thread will exit, and finally the parent
- 	 * thread will resume control and handle any necessary clean up.
- 	 */
--	kunit_run_case_internal(test, suite, test_case);
-+	ctx->duration = kunit_run_case_internal(test, suite, test_case);
- }
- 
- static void kunit_try_run_case_cleanup(void *data)
-@@ -521,6 +528,7 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
- {
- 	struct kunit_try_catch_context context;
- 	struct kunit_try_catch *try_catch;
-+	struct timespec64 *duration = kmalloc(sizeof(struct timespec64), GFP_KERNEL);
- 
- 	try_catch = &test->try_catch;
- 
-@@ -533,6 +541,10 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
- 	context.test_case = test_case;
- 	kunit_try_catch_run(try_catch, &context);
- 
-+	duration->tv_sec = context.duration.tv_sec;
-+	duration->tv_nsec = context.duration.tv_nsec;
-+	test_case->attr.duration = duration;
-+
- 	/* Now run the cleanup */
- 	kunit_try_catch_init(try_catch,
- 			     test,
-@@ -670,6 +682,7 @@ int kunit_run_tests(struct kunit_suite *suite)
- 		}
- 
- 		kunit_print_attr((void *)test_case, true, KUNIT_LEVEL_CASE);
-+		kunit_free_attr((void *)test_case, true);
- 
- 		kunit_print_test_stats(&test, param_stats);
- 
-@@ -680,6 +693,7 @@ int kunit_run_tests(struct kunit_suite *suite)
- 
- 		kunit_update_stats(&suite_stats, test_case->status);
- 		kunit_accumulate_stats(&total_stats, param_stats);
-+
- 	}
- 
- 	if (suite->suite_exit)
-@@ -688,6 +702,7 @@ int kunit_run_tests(struct kunit_suite *suite)
- 	kunit_print_suite_stats(suite, suite_stats, total_stats);
- suite_end:
- 	kunit_print_suite_end(suite);
-+	kunit_free_attr((void *)suite, false);
- 
- 	return 0;
- }
+I should probably just rename this to once per init_aspace() which is 
+essentially once per bootup.
 
-base-commit: 67c9971cd6d309ecbcb87b942e22ffc194d7a376
--- 
-2.45.2.993.g49e7a77208-goog
+I couldnt come up with a better limiter because ideally if we had a 
+recovery we should reset the counter there.
 
+Similar to other DPU errors like underrun and ping-pong timeouts (which 
+capture the snapshot once per suspend/resume) , I just kept it to once 
+per init_aspace().
+
+smmu faults happen at a pretty rapid rate and capturing the full DPU 
+snapshot each time was redundant. So I thought atleast once should be 
+enough.
+
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/msm_kms.c | 6 +++++-
+>>   drivers/gpu/drm/msm/msm_kms.h | 3 +++
+>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+>> index d5d3117259cf..90a333920c01 100644
+>> --- a/drivers/gpu/drm/msm/msm_kms.c
+>> +++ b/drivers/gpu/drm/msm/msm_kms.c
+>> @@ -168,7 +168,10 @@ static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void
+>>   {
+>>   	struct msm_kms *kms = arg;
+>>   
+>> -	msm_disp_snapshot_state(kms->dev);
+>> +	if (!kms->fault_snapshot_capture) {
+>> +		msm_disp_snapshot_state(kms->dev);
+>> +		kms->fault_snapshot_capture++;
+> 
+> When is it decremented?
+> 
+
+It is not because it will only increment once in a bootup, I can switch 
+this to a bool since it will happen only once unless we conclude on a 
+better way.
+
+>> +	}
+>>   
+>>   	return -ENOSYS;
+>>   }
+>> @@ -208,6 +211,7 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+>>   		mmu->funcs->destroy(mmu);
+>>   	}
+>>   
+>> +	kms->fault_snapshot_capture = 0;
+>>   	msm_mmu_set_fault_handler(aspace->mmu, kms, msm_kms_fault_handler);
+>>   
+>>   	return aspace;
+>> diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
+>> index 1e0c54de3716..240b39e60828 100644
+>> --- a/drivers/gpu/drm/msm/msm_kms.h
+>> +++ b/drivers/gpu/drm/msm/msm_kms.h
+>> @@ -134,6 +134,9 @@ struct msm_kms {
+>>   	int irq;
+>>   	bool irq_requested;
+>>   
+>> +	/* rate limit the snapshot capture to once per attach */
+>> +	int fault_snapshot_capture;
+>> +
+>>   	/* mapper-id used to request GEM buffer mapped for scanout: */
+>>   	struct msm_gem_address_space *aspace;
+>>   
+>> -- 
+>> 2.44.0
+>>
+> 
 
