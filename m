@@ -1,188 +1,119 @@
-Return-Path: <linux-kernel+bounces-254174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B04D932FDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A77E932FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA415B21B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3A12830D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D3B1A01D2;
-	Tue, 16 Jul 2024 18:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E065519F48C;
+	Tue, 16 Jul 2024 18:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Moe6rkWH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vw7EWo3u"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68801C6B7;
-	Tue, 16 Jul 2024 18:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E204718E28;
+	Tue, 16 Jul 2024 18:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721154102; cv=none; b=B7NVmwOos10NXDIkFs5CCTGjQJJ/lpdMEXiKoGPh0zJrM22k5yy/gvGTgBOKJU1ofQOYesWYXzPeaqFShCJ/gNCqklgx4u+59WMJbwVtFPhDvyqrWtVohkuGiCx3v7cHQEAorQ2xjSqoRLPsfq3BuzZUhnVQ7Ix7mYi1zuYdnf8=
+	t=1721154213; cv=none; b=sfrmU4V3z8sBndLpRGsEypf9DLuVN2WvC4g6IlGeyra0xU6Q2NXBYtVJgBfHnl01HM/+dB5SFTRy2ufxIyNRfvLyEN56Clgl3GZFKwpYyblgoJhIvTtbKA1t8Z6r7r610St5FVekGBT/6mvsTmo4eezNHJ4vvKlH5rU7Dfoux6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721154102; c=relaxed/simple;
-	bh=ntHqDMyy/4I/yJt5qk7IPvkZsikYxf20GiACJzvxlp8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hLDGYLNhiSOtp11+ExQvAEymh5YKV8nAVsjD0OfSTLFApW0gbKHNYrd/B3Gy6OdcXu0Mx07/a3HIbtXUmbaSer7b+dtffhA7DDs6BnlV33YNSc1czrmIvmdmrB/m7PJwBoOSIvYExteKlvbDJAkY51t1Idfl1lwCAaFCZE9qA3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Moe6rkWH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA22C116B1;
-	Tue, 16 Jul 2024 18:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721154102;
-	bh=ntHqDMyy/4I/yJt5qk7IPvkZsikYxf20GiACJzvxlp8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Moe6rkWHIpcISLL9Bdv+AIX3fWvauZDaxK6/G/uXTLrViAMp3gu2NAEKxY4bWa8i9
-	 HZFVra7oHheW9IwUVFEW1rh9y359eLgJ9RHkS1GIjBCIKNAn01u8ggLgsF/HhKJDQZ
-	 rFRO/WiIos5YcA9ANiZte57+IW6XZ2Ucb+Y+itOtIr7c3A/HWlVYt5/W+117hS2tMf
-	 bXimsSdEXKKaTPeTGBf2slLCFtN16gvfzj3CRdNxIPDjL6BFLgsGW8Ncz2etBTHUUG
-	 Cfl9iyyV+XSvFOjNNLgkTBu4CySnCGMHoFG75PeFjRuFl4wFzo4zC7E6wV1iMUYiNV
-	 Z3Rxh5xR7VO9w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sTmnz-00Cu51-NC;
-	Tue, 16 Jul 2024 19:21:39 +0100
-Date: Tue, 16 Jul 2024 19:21:39 +0100
-Message-ID: <86plrd2o5o.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
-In-Reply-To: <ZpaJaM1G721FdLFn@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
-	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-	<878qy26cd6.wl-maz@kernel.org>
-	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
-	<86r0bt39zm.wl-maz@kernel.org>
-	<ZpaJaM1G721FdLFn@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1721154213; c=relaxed/simple;
+	bh=BKt5xsXhkdBcvCqqnMHb4pGJ9FJn/IlmyieTO4qcx4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HFH/13oS+Ne6OqXNJg95YGEZJMEnx9yO6Za33y0hh/HY51+JhstltFwUEbefgqIG7RKB54oZQkeYK1Vaabt3p4w0LytbhZDi7+kytaRGbkLktD1QFtNmSZPzbUrs874cw4bLI9ZW3IDt3v8+TU0pjE1IUPRG2wpwlqDfiZ45Ew0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vw7EWo3u; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b2a0542c2so5524317b3a.3;
+        Tue, 16 Jul 2024 11:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721154210; x=1721759010; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hU2WUxOdEYMWjHVCKzeUA8Qq59FBn2+v28YS9SBj8kI=;
+        b=Vw7EWo3uG/5xbl9nyYVzyLqAQeMfC8JMStMHx+EfbnGHxnwOdLTmxkVX3qgv5q3Lip
+         iKG3WjyJyUUOgmKa80lwJiNPS2XXG3fe8Y1aUUmY89kYZr+aZvgCurzIxlJ7fGcREDNG
+         PNFUTmNpO/JqOShF2qrW8WYEAPe3ayUvbNcebuPyac5sjAc7Uk1EJgPvdELcE4ttJhp+
+         BtzhDSvPfmAaG9qAgdD4Fx70PHwBZ8Hx16R3BAdEmhj2QFvyEgwoSSmoKOkxt2qh+VpF
+         L6y2BKAiELuClL5IyaUFrhdr3YWfNwWcjOrYfz+mlMAe47Bj5L9ts7Rpotuab64sEPkF
+         mbXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721154210; x=1721759010;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hU2WUxOdEYMWjHVCKzeUA8Qq59FBn2+v28YS9SBj8kI=;
+        b=UBovg8FEVF4JdSOgPVCzWE2Jd/CPy2rVMldV7DSlBeo4TueGm7VY0BbiNiw/dTAbM/
+         9klwXLNnjxXbUjokzmdCWxuBfa0XUQVnmGuL/bQB/O886ieFE8lnPFNSYmqfBQMb5/9p
+         7JpNTzMjhvqxk9YyQhjdNzEYLdRVqueVzeJW8NqRs5Zwxm2E61JRLpqf8zISVKpy3n49
+         9JWISbEloKTJrrgX4ZGmi+txTyCU2eVjDszAW8oNmn8r/KtBqHa9QQP6tRXLqqwcgSEL
+         9v/BqqoBtxOBx5Tl0+zaQxIj8zJYZZKcA0QdmoDvhh9WOfBeFgCXKBKznkT1+U84nFAL
+         wEtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD8De+tc1EoWJJYqhma5or2IZr61Slx1NwHqwFnKtnvwOTqw0UgTI8OKMcz0qxUzxcQYrlgYXeWr1ZGXmoChb0DbozRNaMwdqr5S8jTLD9rEzGrK6nDqurQn+3WlTq9+0y42xe
+X-Gm-Message-State: AOJu0Yy9nB11TAD9zhBUnL9oQMfSX2eaYtqWvIrI2C8eIUVnL+6ZxjJn
+	fNZAQRPZ4e0P5yaFJ4LsEAknQ7zDfm+MxpVKL0FYY1pmAEY5PPuj
+X-Google-Smtp-Source: AGHT+IH64YZd43c5HM2OovaMMEJBUEGZWYmx6/asMW62Jc2JJR2BQvxJy2tdoJu5j83Asvb1gdgZGg==
+X-Received: by 2002:a05:6a21:9985:b0:1c0:dd3d:ef3a with SMTP id adf61e73a8af0-1c3f123ea4amr3987370637.29.1721154210077;
+        Tue, 16 Jul 2024 11:23:30 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b7eca7545sm6651358b3a.153.2024.07.16.11.23.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 11:23:29 -0700 (PDT)
+Message-ID: <231354c7-2480-4503-857a-12946366c1df@gmail.com>
+Date: Tue, 16 Jul 2024 11:23:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240716152752.524497140@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240716152752.524497140@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[Dropping shivamurthy.shastri@linutronix.de who is now bouncing...]
-
-On Tue, 16 Jul 2024 15:53:28 +0100,
-Johan Hovold <johan@kernel.org> wrote:
+On 7/16/24 08:31, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.163 release.
+> There are 144 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Tue, Jul 16, 2024 at 11:30:05AM +0100, Marc Zyngier wrote:
-> > On Mon, 15 Jul 2024 15:10:01 +0100,
-> > Johan Hovold <johan@kernel.org> wrote:
-> > > On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
-> > > > On Mon, 15 Jul 2024 12:18:47 +0100,
-> > > > Johan Hovold <johan@kernel.org> wrote:
-> > > > > On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
-> > > > > > This is version 4 of the series to convert ARM MSI handling over to
-> > > > > > per device MSI domains.
-> > > 
-> > > > > This series only showed up in linux-next last Friday and broke interrupt
-> > > > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-> > > > > and x1e80100 that use the GIC ITS for PCIe MSIs.
-> > > > > 
-> > > > > I've applied the series (21 commits from linux-next) on top of 6.10 and
-> > > > > can confirm that the breakage is caused by commits:
-> > > > > 
-> > > > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-> > > > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> > > > > 
-> > > > > Applying the series up until the change before 3d1c927c08fc unbreaks the
-> > > > > wifi on one machine:
-> > > > > 
-> > > > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-> > > > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
+> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> Anything received after that time might be too late.
 > 
-> Correction, this doesn't fix the wifi, but I'm not seeing these errors
-> with the commit before cc23d1dfc959 as the ath11k driver doesn't get
-> this far (or doesn't probe at all).
-
-I think we need to track one thing at a time. The wifi and nvme
-problems seem subtly different... Which is the exact commit that
-breaks nvme on your machine?
-
-[...]
-
-> > So is this issue actually tied to the async probing? Does it always
-> > work if you disable it?
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
-> There seem to multiple issues here.
+> thanks,
 > 
-> With the full series applied and normal async (i.e. parallel) probing of
-> the PCIe controllers I sometimes see allocation failing with -ENOSPC
-> (e.g. the above ath11k errors). This seems to indicate broken locking
-> somewhere.
+> greg k-h
 
-Your log doesn't support this theory. At least not from an ITS
-perspective, as it keeps dishing out INTIDs (and it is very hard to
-run out of IRQs with the ITS).
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
->
-> With synchronous probing, allocation always seems to succeed but the
-> ath11k (and modem) drivers time out as no interrupts are received.
-> 
-> The NVMe driver sometimes falls back to INTx signalling and can access
-> the drive, but often end up with an MSIX (?!) allocation and then fails
-> to probe:
-> 
-> 	[  132.084740] nvme nvme0: I/O tag 17 (1011) QID 0 timeout, completion polled
-
-So one of my test boxes (ThunderX) fails this exact way, while another
-(Synquacer) is pretty happy. Still trying to understand the difference
-in behaviour.
-
-How do you enforce synchronous probing?
-
-	M.
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Without deviation from the norm, progress is not possible.
+Florian
+
 
