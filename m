@@ -1,348 +1,174 @@
-Return-Path: <linux-kernel+bounces-254530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094CB93345B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B183093345E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7131C22203
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24E01C220B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AA0143C48;
-	Tue, 16 Jul 2024 22:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DF143C57;
+	Tue, 16 Jul 2024 22:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HPwJlcIU"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBs/jGkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE53F14389F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93EA6D1B4;
+	Tue, 16 Jul 2024 22:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721170056; cv=none; b=BKZHnQUGbFfQO868/+9sidKZbXe1sTDwUpGjKi+DZarbrf+sX63jD0wpuTZnrnc89sdPnplsMdFNnQMSMY09rN1K5smKwJRIXGDpg2xXm8GBEyPaVKtySYdUPuC2ZI9ZlWDPoHZg4fuTMxal/xHd+zxswJIebn/Qp12VB8ISgWA=
+	t=1721170109; cv=none; b=SZ6lAHQsEbP4A4QSHmYZok/+ryIiQcnG4FItwHN7eQxOCt1Bg2SyJMyi8Qy0tqHeMO99dGzDjuu2TXb5j61n4dZfC1Z0PRY9tkmEHizp2GlLAAJHVXUx0veds+tIieNXXIA0s4xHngBZnVZv1DOh6DfKIaADYrILDaRf8f3zptk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721170056; c=relaxed/simple;
-	bh=9MaJofm+++Q68BNaCakwqLyHo3TZ9wFFHQ0DvoN+RYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WYF8+AHuar46Gqvc8KXO2n2cITazuxMtxb7KIVXBcdsiPfgyaRpFoWdIZqWtN+NdOLqyLUsD9G7Ep4BcDvH5irRGIdTPfQyHheiVuLRiwV1kxxGheIGCoQTUOh9ahjWPvV0lIaqjjewOQtrhRyjjW5/khmmffTP4KSxr5mGsT+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HPwJlcIU; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3815ad8adc9so49395ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721170054; x=1721774854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YqatXpCeOeeYRRYniUfxQaID24gWkHyIwmTyEpa9Osk=;
-        b=HPwJlcIU00WhrhRhV8MOhDl/LYbWBmUQrFWecwrHLOQ2q+iD/UCdsXI63oANSc+Dh9
-         S7i1oSjg/EIWsjsPQWdTeBKzNSX4F1XAqY8wN1ZUZBOGYucC9Qso6Q8kvGBSXKLS4gT+
-         zrck4mEZgW/nLraMGj2WHqo1CU/7yAkNb6809HpEgqdassOMwSNYoNYqF4Kzery6zKBP
-         zBD0hhuZHHm8P/zhklEDWm2g7i+F47G4vJhfNdQzrtEyXGM/lhegwKYYAkzqWbhJUKSU
-         wvJbdvkwn9FRow3Nrx1vTdci6jkCJ/eYhe6Np99nUytsfsw6ciztk/AEBfIVlkxTPcLh
-         yXkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721170054; x=1721774854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YqatXpCeOeeYRRYniUfxQaID24gWkHyIwmTyEpa9Osk=;
-        b=Em9JtotWjg46aQGkWi+ZzJnVbqSqpcb4pUj8zhBQn6bvLLWg8JYp+/DxfJYwpXxV7R
-         KajWy2+Oqc9z50GHmChHwQqdu12xtQQq5FBFPrJOrwNsuGi8TcMwN+TCAPdO2pjWAXFB
-         C3h4Xg27ljQ3p1PkkRZYwBab0m8kw/bnsRYmbZbxaCEHRjeaoPdUnbmMCIlTgGlr54xQ
-         2muWkZgg2N+aeCsf1k1Y0cdaS/o+WDXSos5KC92bMGhiro7mqkx9y1wCImawzgrqdFUT
-         TtH8xlKwjnSu8JjOBL+oz5ntidML25VCKVMC0Iz0P2CdpV3dIRO7AiMUz6W4xm+9Cx+/
-         Kd2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU32kkj0DuqHyp1mitKqjAstErItFCcn7eQespIlPUFr1EL2DYSP+8F4W/a9myArzBEvEqeHJBro5RHkk/OUnGHM4Qt8UoOA5GMrlkz
-X-Gm-Message-State: AOJu0YxVJUQqlsIO0KdVB9aaeA8vsao8rDYS31q9m/otsed7+uK77P0B
-	NDW4a3C23ZoxLLVesMOerApiH6B/+LV7CeJk5NaW77aGHvAQoCzEOHxNZ0Ui/fHbnIqQsUw8mot
-	4w1BbFuORF3OUawEINubMKHl5pltYyNs8OFYx
-X-Google-Smtp-Source: AGHT+IE30+A5+lNa3FYa2SP2MHH4fk60OXoX0aWIvrvIXGeOH+XbKkl+n+Lav00eYBsP2CVhSNRfXkkl4yqZEHA6oMA=
-X-Received: by 2002:a05:6e02:184c:b0:375:ee62:5917 with SMTP id
- e9e14a558f8ab-3951364af1bmr1124465ab.6.1721170053573; Tue, 16 Jul 2024
- 15:47:33 -0700 (PDT)
+	s=arc-20240116; t=1721170109; c=relaxed/simple;
+	bh=Bc4xTGNKVk7Hlv8gcknsmkXuaNvkoVNmZN1zbJzDlWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gC2M4cggomntCFQNCTP8tFBmeEWl1eQ/J/nV8edmid47lIExNQ9i2/tHKDWgmbCHttSZkBPnyK19IDtGHRfwESmd4qh4itxI/T0uMUbxH/p/87gC855OvWx7Dm8oS6Ke/ve7afqhOiON8BidsYBemdaWfOx68LiEtPATvtoYR/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBs/jGkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76310C4AF09;
+	Tue, 16 Jul 2024 22:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721170108;
+	bh=Bc4xTGNKVk7Hlv8gcknsmkXuaNvkoVNmZN1zbJzDlWY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dBs/jGkF1za9BWqtguN1YGZERXq3FgP+0R9AlKLNiB4mkptN81MYpE7g5nDvw1Que
+	 MFz0/UrmcFfTgAOJJppe7YhY5aq9EgsMegUd775my7c6a35gNURCh1NSXRu7FFMiNe
+	 pLD6vs2P4VeoZOFmLUCUbaL0JsGHyQz3bqy6n7Nmf52mu4Uv4Ngyw88mHesf9fCq7f
+	 WKHU83sAhZ3v9zElDIK3Xd1O+ah6B8gLNORw+oSTv++8zYJczbnMabU2aV7JpkQCoJ
+	 9k4f23DKT1Ulc/y43pi+MF696K1nFgtVJ2XFhRDNawpLJrp+C26sZ6ws0cfr1KwwGd
+	 i5mjlpmpSRNiQ==
+Message-ID: <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
+Date: Wed, 17 Jul 2024 07:48:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
- <CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com>
- <05e96873-12a9-4b1f-b1b3-1db7647211ce@amd.com> <CAP-5=fVXi3Pdtjaw++oRkYgubh-MDkRYf=2k7dNqE8s+jyQ+Ew@mail.gmail.com>
- <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com>
-In-Reply-To: <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 16 Jul 2024 15:47:22 -0700
-Message-ID: <CAP-5=fXBYVH=qBJPm1d0-QEp8+HP3WtTLuukfF0g-2WU3gTofQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/11] Add per-core RAPL energy counter support for AMD CPUs
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	kees@kernel.org, gustavoars@kernel.org, rui.zhang@intel.com, 
-	oleksandr@natalenko.name, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
-	ravi.bangoria@amd.com, sandipan.das@amd.com, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
+ message"
+To: Johan Hovold <johan+linaro@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240716161101.30692-1-johan+linaro@kernel.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240716161101.30692-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 1:42=E2=80=AFAM Dhananjay Ugwekar
-<Dhananjay.Ugwekar@amd.com> wrote:
->
-> Hello Ian,
->
-> On 7/15/2024 8:52 PM, Ian Rogers wrote:
-> > On Mon, Jul 15, 2024 at 2:36=E2=80=AFAM Dhananjay Ugwekar
-> > <Dhananjay.Ugwekar@amd.com> wrote:
-> >>
-> >> Hello Ian,
-> >>
-> >> On 7/12/2024 3:53 AM, Ian Rogers wrote:
-> >>> On Thu, Jul 11, 2024 at 3:25=E2=80=AFAM Dhananjay Ugwekar
-> >>> <Dhananjay.Ugwekar@amd.com> wrote:
-> >>>>
-> >>>> Currently the energy-cores event in the power PMU aggregates energy
-> >>>> consumption data at a package level. On the other hand the core ener=
-gy
-> >>>> RAPL counter in AMD CPUs has a core scope (which means the energy
-> >>>> consumption is recorded separately for each core). Earlier efforts t=
-o add
-> >>>> the core event in the power PMU had failed [1], due to the differenc=
-e in
-> >>>> the scope of these two events. Hence, there is a need for a new core=
- scope
-> >>>> PMU.
-> >>>>
-> >>>> This patchset adds a new "power_per_core" PMU alongside the existing
-> >>>> "power" PMU, which will be responsible for collecting the new
-> >>>> "energy-per-core" event.
-> >>>
-> >>> Sorry for being naive, is the only reason for adding the new PMU for
-> >>> the sake of the cpumask? Perhaps we can add per event cpumasks like
-> >>> say `/sys/devices/power/events/energy-per-core.cpumask` which contain=
-s
-> >>> the CPUs of the different cores in this case. There's supporting
-> >>> hotplugging CPUs as an issue. Adding the tool support for this
-> >>> wouldn't be hard and it may be less messy (although old perf tools on
-> >>> new kernels wouldn't know about these files).
-> >>
-> >> I went over the two approaches and below are my thoughts,
-> >>
-> >> New PMU approach:
-> >> Pros
-> >> * It will work with older perf tools, hence these patches can be backp=
-orted to an older kernel and the new per-core event will work there as well=
-.
-> >> Cons
-> >> * More code changes in rapl.c
-> >>
-> >> Event specific cpumask approach:
-> >> Pros
-> >> * It might be easier to add diff scope events within the same PMU in f=
-uture(although currently I'm not able to find such a usecase, apart from th=
-e RAPL pkg and core energy counters)
-> >> Cons
-> >> * Both new kernel and perf tool will be required to use the new per-co=
-re event.
-> >>
-> >> I feel that while the event-specific cpumask is a viable alternative t=
-o the new PMU addition approach, I dont see any clear pros to select that o=
-ver the current approach. Please let me know if you have any design related=
- concerns to the addition of new PMU or your concern is mostly about the am=
-ount of code changes in this approach.
-> >
-> > Thanks Dhananjay, and thanks for taking the time for an objective
-> > discussion on the mailing list. I'm very supportive of seeing the work
-> > you are enabling land.
-> >
-> > My concern comes from the tool side. If every PMU starts to have
-> > variants for the sake of the cpumask what does this mean for
-> > aggregation in the perf tool? There is another issue around event
-> > grouping, you can't group events across PMUs, but my feeling is that
-> > event grouping needs to be rethought. By default the power_per_core
-> > events are going to be aggregated together by the perf tool, which
-> > then loses their per_core-ness.
->
-> Yea right, maybe we need to fix this behavior.
->
-> >
-> > I was trying to think of the same problem but in other PMUs. One
-> > thought I had was the difference between hyperthread and core events.
-> > At least on Intel, some events can only count for the whole core not
-> > per hyperthread. The events don't have a cpu_per_core PMU, they just
-> > use the regular cpu one, and so the cpumask is set to all online
-> > hyperthreads. When a per-core event is programmed it will get
-> > programmed on every hyperthread and so counted twice for the core.
-> > This at the least wastes a counter, but it probably also yields twice
-> > the expected count as every event is counted twice then aggregated. So
-> > this is just wrong and the user is expected to be smart and fix it
-> > (checking the x86 events there is a convention to use a ".ALL" or
-> > ".ANY" suffix for core wide events iirc). If we had a cpumask for
-> > these events then we could avoid the double setting, free up a counter
-> > and avoid double counting. Were we to fix things the way it is done in
-> > this patch series we'd add another PMU.
->
-> Yes, this seems like a valid usecase for event-specific cpumasks.
->
-> >
-> > My feeling is that in the longer term a per event cpumask looks
-> > cleaner. I think either way you need a new kernel for the new RAPL
-> > events. The problem with an old perf tool and a new kernel, this
-> > doesn't normally happen with distributions as they match the perf tool
-> > to the kernel version needlessly losing features and fixes along the
-> > way. If the new PMU is going to get backported through fixes.. then we
-> > can do similar for reading the per event cpumask. I'd be tempted not
-> > to do this and focus on the next LTS kernel, getting the kernel and
-> > tool fixes in as necessary.
->
-> Makes sense, even though this approach will require more effort but it se=
-ems
-> to be worthwhile as it would help things down the line (make it easier to=
- have
-> heterogenous-scope events within a PMU). I'll need to go through the perf=
- tool
-> to see how we can design this. I'll get back with an RFC series probably =
-once
-> I have an initial design in mind.
+On 7/17/24 01:11, Johan Hovold wrote:
+> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+> 
+> The offending commit tried to suppress a double "Starting disk" message
+> for some drivers, but instead started spamming the log with bogus
+> messages every five seconds:
+> 
+> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
+> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
+> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
+> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
+> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
+> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
+> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
+> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
+> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
+> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
+> 	...
+> 
+> on machines that do not actually stop the disk on runtime suspend (e.g.
+> the Qualcomm sc8280xp CRD with UFS).
 
-Hi Dhananjay,
+This is odd. If the disk is not being being suspended, why does the platform
+even enable runtime PM for it ? Are you sure about this ? Or is it simply that
+the runtime pm timer is set to a very low interval ?
 
-I can have a go at the perf tool side of this - I probably know the
-way around the code best. Basically we need to do something similar to
-how other "<event>.<setting>" values are parsed:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n335
-The cpumask handling in the perf tool is a little weird as there is a
-summary value in the evlist. Anyway, I can do that if you want to spin
-the RAPL/power PMU side of things.
+It almost sound like what we need to do here is suppress this message for the
+runtime resume case, so something like:
 
-Thanks,
-Ian
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 2e933fd1de70..4261128bf1f3 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -4220,7 +4220,8 @@ static int sd_resume_common(struct device *dev, bool runtime)
+        if (!sdkp)      /* E.g.: runtime resume at the start of sd_probe() */
+                return 0;
 
-> Thanks,
-> Dhananjay
->
-> >
-> > Thanks,
-> > Ian
-> >
-> >
-> >> Thanks,
-> >> Dhananjay
-> >>
-> >>>
-> >>> Thanks,
-> >>> Ian
-> >>>
-> >>>
-> >>>> Tested the package level and core level PMU counters with workloads
-> >>>> pinned to different CPUs.
-> >>>>
-> >>>> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
-> >>>> machine:
-> >>>>
-> >>>> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- slee=
-p 1
-> >>>>
-> >>>>  Performance counter stats for 'system wide':
-> >>>>
-> >>>> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-co=
-re/
-> >>>>
-> >>>> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b1422886=
-8d@linux.intel.com/
-> >>>>
-> >>>> This patchset applies cleanly on top of v6.10-rc7 as well as latest
-> >>>> tip/master.
-> >>>>
-> >>>> v4 changes:
-> >>>> * Add patch 11 which removes the unused function cpu_to_rapl_pmu()
-> >>>> * Add Rui's rb tag for patch 1
-> >>>> * Invert the pmu scope check logic in patch 2 (Peter)
-> >>>> * Add comments explaining the scope check in patch 2 (Peter)
-> >>>> * Use cpumask_var_t instead of cpumask_t in patch 5 (Peter)
-> >>>> * Move renaming code to patch 8 (Rui)
-> >>>> * Reorder the cleanup order of per-core and per-pkg PMU in patch 10 =
-(Rui)
-> >>>> * Add rapl_core_hw_unit variable to store the per-core PMU unit in p=
-atch
-> >>>>   10 (Rui)
-> >>>>
-> >>>> PS: Scope check logic is still kept the same (i.e., all Intel system=
-s being
-> >>>> considered as die scope), Rui will be modifying it to limit the die-=
-scope
-> >>>> only to Cascadelake-AP in a future patch on top of this patchset.
-> >>>>
-> >>>> v3 changes:
-> >>>> * Patch 1 added to introduce the logical_core_id which is unique acr=
-oss
-> >>>>   the system (Prateek)
-> >>>> * Use the unique topology_logical_core_id() instead of
-> >>>>   topology_core_id() (which is only unique within a package on teste=
-d
-> >>>>   AMD and Intel systems) in Patch 10
-> >>>>
-> >>>> v2 changes:
-> >>>> * Patches 6,7,8 added to split some changes out of the last patch
-> >>>> * Use container_of to get the rapl_pmus from event variable (Rui)
-> >>>> * Set PERF_EV_CAP_READ_ACTIVE_PKG flag only for pkg scope PMU (Rui)
-> >>>> * Use event id 0x1 for energy-per-core event (Rui)
-> >>>> * Use PERF_RAPL_PER_CORE bit instead of adding a new flag to check f=
-or
-> >>>>   per-core counter hw support (Rui)
-> >>>>
-> >>>> Dhananjay Ugwekar (10):
-> >>>>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
-> >>>>   perf/x86/rapl: Rename rapl_pmu variables
-> >>>>   perf/x86/rapl: Make rapl_model struct global
-> >>>>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
-> >>>>   perf/x86/rapl: Add wrapper for online/offline functions
-> >>>>   perf/x86/rapl: Add an argument to the cleanup and init functions
-> >>>>   perf/x86/rapl: Modify the generic variable names to *_pkg*
-> >>>>   perf/x86/rapl: Remove the global variable rapl_msrs
-> >>>>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
-> >>>>   perf/x86/rapl: Remove the unused function cpu_to_rapl_pmu
-> >>>>
-> >>>> K Prateek Nayak (1):
-> >>>>   x86/topology: Introduce topology_logical_core_id()
-> >>>>
-> >>>>  Documentation/arch/x86/topology.rst   |   4 +
-> >>>>  arch/x86/events/rapl.c                | 454 ++++++++++++++++++-----=
----
-> >>>>  arch/x86/include/asm/processor.h      |   1 +
-> >>>>  arch/x86/include/asm/topology.h       |   1 +
-> >>>>  arch/x86/kernel/cpu/debugfs.c         |   1 +
-> >>>>  arch/x86/kernel/cpu/topology_common.c |   1 +
-> >>>>  6 files changed, 328 insertions(+), 134 deletions(-)
-> >>>>
-> >>>> --
-> >>>> 2.34.1
-> >>>>
+-       sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
++       if (!runtime)
++               sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+
+        if (!sd_do_start_stop(sdkp->device, runtime)) {
+                sdkp->suspended = false;
+
+However, I would like to make sure that this platform is not calling
+sd_resume_runtime() for nothing every 5s. If that is the case, then there is a
+more fundamental problem here and reverting this patch is only hiding that.
+
+> 
+> Let's just revert for now to address the regression.
+> 
+> Fixes: 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk message")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/scsi/sd.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> 
+> Hi,
+> 
+> I just noticed this regression that snuck into 6.10-final and tracked it
+> down to 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk
+> message").
+> 
+> I wanted to get this out ASAP to address the immediate regression while
+> someone who cares enough can work out a proper fix for the double start
+> message (which seems less annoying).
+> 
+> Note that the offending commit is marked for stable.
+> 
+> Johan
+> 
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 1b7561abe05d..6b64af7d4927 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -4119,6 +4119,8 @@ static int sd_resume(struct device *dev)
+>  {
+>  	struct scsi_disk *sdkp = dev_get_drvdata(dev);
+>  
+> +	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+> +
+>  	if (opal_unlock_from_suspend(sdkp->opal_dev)) {
+>  		sd_printk(KERN_NOTICE, sdkp, "OPAL unlock failed\n");
+>  		return -EIO;
+> @@ -4135,13 +4137,12 @@ static int sd_resume_common(struct device *dev, bool runtime)
+>  	if (!sdkp)	/* E.g.: runtime resume at the start of sd_probe() */
+>  		return 0;
+>  
+> -	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+> -
+>  	if (!sd_do_start_stop(sdkp->device, runtime)) {
+>  		sdkp->suspended = false;
+>  		return 0;
+>  	}
+>  
+> +	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+>  	ret = sd_start_stop_device(sdkp, 1);
+>  	if (!ret) {
+>  		sd_resume(dev);
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
