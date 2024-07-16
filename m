@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-253536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF6A932299
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:20:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5CC93229D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B52F1F2355D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:20:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC80FB22A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF525195B35;
-	Tue, 16 Jul 2024 09:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86596196450;
+	Tue, 16 Jul 2024 09:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6h83RmS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAluaaIL"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B44157A43
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5895FEE6;
+	Tue, 16 Jul 2024 09:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121629; cv=none; b=mGGnmPGBFi46dpw1mHSdz6vyOujwXHHEpld+WExred+DEQPMMXrFw0+RD1sD6HOo162BtdzR8UTjzHpgaCtIu7uhLdhSliKvQ+D6Y9gkdjdPW+Ixg/qH3UMxU2/xE5q/++Iauz3SNoQNdRG2OZNqI2flLaodcBUuSnBf0fVITD8=
+	t=1721121659; cv=none; b=RLWg05haUVgN+UjXr5wIWEqq5fH/VogymWn9/mDBUtW/oGRXpNrKD+r5x9MtYn4PfmEwDcPUAmnkUlVSAKML/rPREUCUWHRg+gBjUbOCnjf5hFhug+wpgXBmW4fpUO5M6j1NjoRsv4ZWyn2CSqAEBWnyJ/g4QD/lX12Qy0jwsIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121629; c=relaxed/simple;
-	bh=1/a/yfY0TjRJwxbZeY/ns27L44GCeG6929a15uNimF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/Hkw5RIBh+uuIh1vS5suDpNgnBgvUwYOorhSziHAOvdqO1Kv0HQr6KuzKau5K4zmsZuxnE7/24qDjHfBNdGlyBss+M3MdZFRpYnpTkThgdzlZCT/ZP/C/Dhm4cm686OkkyROb6dG9M22iQJp4dH2QwPlcxNQkqpcux9iErV+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6h83RmS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721121626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZdCPq+U46ySE0zyw6mUy09hUxN+0LCiqbk6pLbsUD44=;
-	b=S6h83RmSOB/Qj8wOP8722nQGRlRJsnh4iDzGeqmWtfz1U0/UcEiLDShy7PPObEoCV0ohWs
-	smorBnnpLRszxV/7sMWQJIFor+TO5bX1264Qj6vIgxhWu6yspykRuS3HhNj+U8+mfuauS7
-	ADZ9XNnZ687iXB/hE79BOaYrS23hw8k=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-YhrADwczP_Geho9NpPUqUA-1; Tue, 16 Jul 2024 05:20:22 -0400
-X-MC-Unique: YhrADwczP_Geho9NpPUqUA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a77f0eca759so397323766b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:20:21 -0700 (PDT)
+	s=arc-20240116; t=1721121659; c=relaxed/simple;
+	bh=DeomL/J0ih7QGM6I3eGgzhI2RkGQ4kYfyHnuweLDEf0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=BKSW4sxFjA7OcEwM8EO5V/BTDD0OlRkvUFukbJ3V/DRdFSnT6sCoQok3HmbBiqElcxfUQ8VXraShd4daePS7rwsNrK7aG5EZwNvjXOx4sxXbGI4ht77TTnmxmLi8QIY4WzKR7q+RU5blfnU1yJmT/dffGLRUapaaMtyQBBMAXeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAluaaIL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266eda81c5so41244515e9.0;
+        Tue, 16 Jul 2024 02:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721121656; x=1721726456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t7BqESmx+IIydtJebt5JNYngfdr0KF7zc1P0PpXHnVk=;
+        b=kAluaaILtpWcNpGROK6u0W4DAkvn3a+XJy1ty/8pUkPd4yxW7p38tgiYkxsE0ptsFb
+         HMwtzqpmkLTS91uG4EagaVgEjy1OYqvPzAeR1ZPV+uDP5d9MDC2dtp87AySvSO0mbQ3x
+         SjjD2/O57faE9XHaqbjYL//5//KgEWJq/UAhNrf3/a/1yObULwiPlqRDzuy7UZjnOjIr
+         rXIIr8Lql+jg/arqYpU2NT4XntA4wjaAziUrfoI09jx39XzlhGNsS/lVzcErx2ZwBDfu
+         TxdFmyMR8eLUfYoRcCv4X2OzhYznfUK1LZiK3IG6wW+Y3UuS7iCHFWSjtY8eIGHYflmE
+         UEMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721121621; x=1721726421;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdCPq+U46ySE0zyw6mUy09hUxN+0LCiqbk6pLbsUD44=;
-        b=mifAi5Q0aga95PF9qZ3IXUGeylys9Mt5zNRhfSfU/pDVfBNgymo9lVxHY0k69FypFF
-         jPI90R4zfOVv71sMcI/iP9aqnj/vINzmZpZWOAaKLp7wZp4FvoQxrQ0R/+QmjuA4aecU
-         HTtB3mFY63eihgteJpRbpZx1fTl//gV8z1QBCNZrdDXOkzdydwWCHMx6HZzg1VLq7S7Z
-         col/k/j3uJ9B3C7PuJfw5RapZCgbmcR9MGXqQPWr2KZRfeYXg84QNbxdIcYejOBJblwl
-         jqKsOBms455Vdz0ZW8dIv+yGqyE8tOrbIGkIKZJu0vhAYlsM8RSt3aux7uSMfKVgZeBn
-         KUeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCQ384oGW2rJGqN7yc2+LOB4IjsBlEApvbAzeFwQHBaK5B5Az2qrMSC7kiZc9o5DKKCrCwkUSD/ODIlEBsTKQ7gGHKQov7wOo8mx71
-X-Gm-Message-State: AOJu0Yzbk3VhLhYioXr3ei23GERnNajitEgpMA60yEn9b5vtgHCKtd4Z
-	7+5qs5kd4fLYrABooqzTfrfrpCMhRsPZHFDxHcoSyMnIOm/QZCo7yeyLFwyuYgn9FmHLv6MhQVZ
-	Do/KilD79FioAeKN0cniYAqEpbEbnkxPIEnPTZmyEZ75rjJFa2RybTsBz6UywgQ==
-X-Received: by 2002:a17:907:7b8d:b0:a6f:4e1f:e613 with SMTP id a640c23a62f3a-a79ea46d7c7mr116985266b.37.1721121620912;
-        Tue, 16 Jul 2024 02:20:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/Q4gXbO33pY/K/+W8CI52EKCa4YRbHywZ2eE0EP0YYT2rgJqMwTnbQ9LovHqj4KSIV23TPQ==
-X-Received: by 2002:a17:907:7b8d:b0:a6f:4e1f:e613 with SMTP id a640c23a62f3a-a79ea46d7c7mr116983666b.37.1721121620520;
-        Tue, 16 Jul 2024 02:20:20 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b7f00sm285964166b.63.2024.07.16.02.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 02:20:20 -0700 (PDT)
-Message-ID: <8273ed57-4c65-41da-ad7d-907acf168c07@redhat.com>
-Date: Tue, 16 Jul 2024 11:20:19 +0200
+        d=1e100.net; s=20230601; t=1721121656; x=1721726456;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t7BqESmx+IIydtJebt5JNYngfdr0KF7zc1P0PpXHnVk=;
+        b=ct4JfU8RkrADaPy6ZD9fL5QU19W8lbNcb6zyShca82ZW+SAalBjiY4K689Y0ciTH8e
+         FZVczqG2UHQ9+r7hec0lfit1L1Ts7DoBojRPWJhAcDJ+APGzkc+ny+Uk3fOahgvSWu1w
+         IGtwfboK1tQeoOJCx4lxIUf84GYRtRxPoL2lV4EBNRJnDTCtR5HEWm05itIOdsP6IOxd
+         3fMRBkVm8u0072HyaoSOYATqmrdd5EZcMZxLSxTer31nKyfyj5zS64nGTlrrEGchyRgd
+         K43gPq+Vv5FeWKx/dgiUx4qTU2WQjSkOStzzApzCVxA+9J3lhMJ2JF2npyxh678jit5u
+         qYsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUb6QasbjP6/0jf34nPRr7sR4WDOQVXI9FcF4h+4L58X9SRzUeLIPch4NMU2/N5OjXMRei1RfeJi9YtGrS91RhPZLoTd2wj71CyvxhkQIz9U1DulewSCQi+NpuRI1SsNmYf/PuYxgbd51U6QfcdO+l1eP4S9JTQsGMUf9/yvMYIk46RQ==
+X-Gm-Message-State: AOJu0Yy96mqy9UJ9FMfYDxTnIGq9HnzWwaTfWvQoIAp61fgywEoupIic
+	rVeEEgggxJIIklvH0pbAW04ouaZiag2ZPapYAwPGzbp/zqzkvGSZ
+X-Google-Smtp-Source: AGHT+IFZMv0uB6Kdauv0Sn4FjZMJf3VleAYBZ2v4VUWwXZVoVHVnISNAUuB4x5u5DT1HwIQpAHMq0A==
+X-Received: by 2002:a05:600c:1d12:b0:426:6416:aa83 with SMTP id 5b1f17b1804b1-427ba64d454mr12536575e9.6.1721121656224;
+        Tue, 16 Jul 2024 02:20:56 -0700 (PDT)
+Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e9a809sm116540225e9.28.2024.07.16.02.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 02:20:55 -0700 (PDT)
+Date: Tue, 16 Jul 2024 11:20:54 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marius Cristea <marius.cristea@microchip.com>, 
+ linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <66963b764ac3c_706370bd@njaxe.notmuch>
+In-Reply-To: <20240713112153.3576fc2a@jic23-huawei>
+References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
+ <20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
+ <20240707160442.6bab64c9@jic23-huawei>
+ <668bec2a8b23a_6e037017@njaxe.notmuch>
+ <20240708173439.000070b4@Huawei.com>
+ <668cf2f3ece62_1f6ba37012@njaxe.notmuch>
+ <20240713112153.3576fc2a@jic23-huawei>
+Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] platform/x86: introduce asus-bioscfg
-To: "Luke D. Jones" <luke@ljones.dev>, platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com, ilpo.jarvinen@linux.intel.com,
- mario.limonciello@amd.com, linux-kernel@vger.kernel.org
-References: <20240716051612.64842-1-luke@ljones.dev>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240716051612.64842-1-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-Hi Luke, Mario,
-
-On 7/16/24 7:16 AM, Luke D. Jones wrote:
-> This is the first major patch I've ever done with the intention of
-> introducing a new module, so it's highly likely I've made some mistakes
-> or misunderstood something.
+Jonathan Cameron wrote:
+> On Tue, 09 Jul 2024 10:21:07 +0200
+> Matteo Martelli <matteomartelli3@gmail.com> wrote:
 > 
-> TL;DR:
-> 1. introduce new module to contain bios attributes, using fw_attributes_class
-> 2. deprecate all possible attributes from asus-wmi that were added ad-hoc
-> 3. remove those in the next LTS cycle
+> > Jonathan Cameron wrote:
+> > ...
+> > > > I could add the shunt-resistor controls to allow calibration as Marius
+> > > > suggested, but that's also a custom ABI, what are your thoughts on this?  
+> > > 
+> > > This would actually be a generalization of existing device specific ABI
+> > > that has been through review in the past.
+> > > See Documentation/ABI/testing/sysfs-bus-iio-adc-pac1934
+> > > for example (similar in other places).
+> > > So if you want to do this move that ABI up a level to cover multiple devices
+> > > (removing the entries in specific files as you do so).
+> > >   
+> > I would do this in a separate commit, would you prefer it in this same patch
+> > set or in another separate patch?
 > 
-> The idea for this originates from a conversation with Mario Limonciello
-> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+> Separate commit in this series as otherwise it's not obvious why we are
+> doing it. In theory should be before this patch as then what you use here
+> is already documented, but I don't care that much on the order.
 > 
-> It is without a doubt much cleaner to use, easier to discover, and the
-> API is well defined as opposed to the random clutter of attributes I had
-> been placing in the platform sysfs.
+Just a few more questions about this point.
 
-This is a bit of a novel use of the fw_attributes_class and I'm not
-entirely sure of what to think of this.
+* I see 3 other drivers exposing the shunt resistor attribute: ina2xx, max9611
+and pac1934. While the unit for first two is in Ohms, for the latter it's in
+micro-Ohms. What should be the unit for the generalized ABI? I would guess Ohms
+as /sys/bus/iio/devices/iio:deviceX/in_resistance_raw.
 
-The fw_attributes_class API was designed for (mostly enterprise)
-x86 machines where it is possible to change all BIOS settings directly
-from the OS without entering the BIOS.
+* If for instance the generalized ABI unit is going to be Ohms, should I still
+remove the entry from the pac1934 even though it would not be fully compliant
+with the generalized ABI?
 
-Here some ACPI or WMI function is present to actually enumerate all
-the BIOS options (which can be set this way) and get there type.
+* To cover the current exposed attributes, the "What" fields would look like:
+from max9611:
+What:         /sys/.../iio:deviceX/in_current_shunt_resistor
+What:         /sys/.../iio:deviceX/in_power_shunt_resistor
+from ina2xx:
+What:         /sys/.../iio:deviceX/in_shunt_resistor
+from pac1934:
+What:         /sys/.../iio:deviceX/in_shunt_resistorY
+Does this look correct? I think that for the first two drivers the
+shunt_resistor can be considered as a channel info property, shared by type for
+max9611 case and shared by direction for ina2xx case (maybe better to remove
+"in_" from the What field if the type is not specified?).
+What seems odd to me is the pac1934 case, since it doesn't fit in the format
+<type>[Y_]shunt_resistor referred in many other attributes (where I assume
+<type> is actually [dir_][type_]?).
+Doesn't it look like pac1934 is exposing additional input channels, that are
+also writeable? Maybe such case would more clear if the shunt resistor would be
+an info property of specific channels? For example: in_currentY_shunt_resistor,
+in_powerY_shunt_resistor and in_engergyY_shunt_resitor.
 
-IOW there is not a static list of options inside the driver, nor
-is there special handling in the driver other then handling differences
-per type.
+* I would go for a simple and generic description such as:
+"The value of current sense resistor in Ohms." like it is in
+Documentation/devicetree/bindings/hwmon/hwmon-common.yaml. Should it include
+any additional detail?
 
-And if a new BIOS version has new options or a different machine model
-has different options then these are discovered automatically.
+* I am assuming the generalized API would have Date and KernelVersion of
+today even though the original attributes are older.
 
-This new use is quite different from this. Although I do see that
-at least for the attributes using WMI_STORE_INT() + WMI_SHOW_INT()
-that there is quite some commonality between some of the attributes.
+* Should this ABI be inserted at any particular place of
+Documentation/ABI/testing/sysfs-bus-iio or just appended at its end?
 
-I see how using the existing firmware-attributes class API definition
-for this, including allow tweaking this with some of the fwupd
-firmware-attributes class commandline util work Mario did is a useful
-thing to have.
-
-I guess using the firmware-attributes class for this is ok, but
-this _must_ not be named bioscfg, since the existing hp-bioscfg
-driver is a "classic" firmware-attributes drivers enumerating all
-the options through BIOS provided enumeration functions and I want
-the name to make it clear that this is not that. And the Dell
-implementation is called dell-wmi-sysman so lets also avoid sysman
-as name.
-
-Maybe call it "asus-bios-tunables" ?   And then if Asus actually
-implements some more classic firmware-attributes enumerable interface
-we can use "asus-bioscfg" for that.
-
-Mario, Ilpo what is your opinion on this ?
-
-Regards,
-
-Hans
-
-
-
+Thanks,
+Matteo
 
