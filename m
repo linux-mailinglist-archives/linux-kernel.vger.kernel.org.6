@@ -1,93 +1,90 @@
-Return-Path: <linux-kernel+bounces-253425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB06D932133
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:29:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E9993213D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6C21C212A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9DFC2824AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE472BAE9;
-	Tue, 16 Jul 2024 07:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptlHl7ka"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF42B9C2;
+	Tue, 16 Jul 2024 07:31:00 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6374C7B;
-	Tue, 16 Jul 2024 07:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF574687;
+	Tue, 16 Jul 2024 07:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114933; cv=none; b=e8IgO0uPtWfZKxNUlhLUbrjLm1PRYd3h+G5ilhpnTbbRhID4cMFRT8LuqfZwo+ZK27AaUMxvCXNaI7cByWZzCT0sw8sjBEAt5hEEfWbFmMp/r+5wqKc22/WOdOD0JhCSggfkbHMEDLgV5M7zBfmmPkYFfftl39IurqHsDhAC4JE=
+	t=1721115059; cv=none; b=F/tPjmlb+6BfkErHw/c5MlH5e7HQqPC+o8w9xc/CDW5HHqaUrZIWN8SBHhm06H2iDfnCxTLnM61xD5Xpe6rFo+TDThVMyXtuQJX96nKT09dFjp2ZRUJYQI+in3/YDNBd2uUUW4JnvXJ6szehf3twN4lUvFOM1T3JPLz0KkOiyYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114933; c=relaxed/simple;
-	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c30bxyP/HNMs7nik4yHpEXxjOgmEmIcsyDrFGhaVs8AHAfsYUaE4RZ6iRgPuP+ABwiGPR+lI7LRHTXpPIWn8TCZnRiT9Bx7Zp+eQaw868N66ZXato5HXpIxyBv+7FjcYoxY0GO+52mISx13XoY3nD6F8+w1KnCZhKJi+jlO26V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptlHl7ka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56D2C116B1;
-	Tue, 16 Jul 2024 07:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721114933;
-	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ptlHl7kahu5keqDU2790FlrXYD0BOTtQ7TbQTwB0PxrNCH3e2rtOeGoRJBfMM4CBg
-	 519c/LdG6Y2E/JHLYPO4PP1BgQldPJnldNp3DJjw0h368UjKIJza7R28viaFjP1tGB
-	 Pm0G4S7vNmVJ0lkHhe6XIzDFK19ox93KqGN6bsx6kT3RqZqKLzQGnfCGz7xG+/fGux
-	 zs6yVLKWiOmm+LEC58Fog6f1pZ+yd2kxjIu3kbcG1juqQBXlvgCMo0RL6jAKcmdIKc
-	 VS3Ie4LqQWhHei/TDurhIHawgSnmt9P3tc6mwBIgsr0MOeVEmdr9V14I0HfOGakzHq
-	 J2Wo5UgRs7swg==
-From: Christian Brauner <brauner@kernel.org>
-To: syzkaller-bugs@googlegroups.com,
-	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com,
-	Christian Brauner <brauner@kernel.org>
-Cc: akpm@linux-foundation.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH] nsfs: use cleanup guard
-Date: Tue, 16 Jul 2024 09:28:44 +0200
-Message-ID: <20240716-unsterblich-ausnutzen-7c57cce852e4@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716-elixier-fliesen-1ab342151a61@brauner>
-References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com> <20240716-elixier-fliesen-1ab342151a61@brauner>
+	s=arc-20240116; t=1721115059; c=relaxed/simple;
+	bh=cVPIPkX7v007ff3LU6KGGLWVrARomilM8CycTdtwLNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nIftgWwJ4zith0auYlcX2FxIVH9AqaG3d3r4Hu8OrFqolUVPqieEs7HqH8E1IYp0wdB5ATS6WsgNg0bAKb2g02GJB+rFMNVqrdtrHpdcKUl70dEXnzI/dACNhIZAk1tjieYA/G5HSZ8GAeYQpg0ohWHogqMBUQE66iBcOR7Fxgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WNW0Q2p7Dzdhvy;
+	Tue, 16 Jul 2024 15:29:10 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93EF5140158;
+	Tue, 16 Jul 2024 15:30:53 +0800 (CST)
+Received: from DESKTOP-8RFUVS3.china.huawei.com (10.174.178.219) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 16 Jul 2024 15:30:52 +0800
+From: Zenghui Yu <yuzenghui@huawei.com>
+To: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_jhugo@quicinc.com>, <quic_carlv@quicinc.com>,
+	<quic_pkanojiy@quicinc.com>, <ogabbay@kernel.org>, <corbet@lwn.net>,
+	<wanghaibin.wang@huawei.com>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH] accel/qaic: Remove the description of DRM_IOCTL_QAIC_PART_DEV
+Date: Tue, 16 Jul 2024 15:30:36 +0800
+Message-ID: <20240716073036.453-1-yuzenghui@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNU9Qr87DwVuex/m/sv6drj4VD82MpYbee/Atyp4q6U xNVbRM6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqJ4iOF/4eHZ/kHvWE63JHA1 fvjyJmplCMfZ81f8D1vNi+Sz2XRPnZFh75zS+VXNi9vy8i5bnWx226wltCVqxYbPQj0fcnIT7P3 4AA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-On Tue, 16 Jul 2024 09:19:11 +0200, Christian Brauner wrote:
-> Ensure that rcu read lock is given up before returning.
-> 
-> 
+The partition device ioctl was removed during the development of the
+initial version of qaic driver. Remove its description from the
+documentation to avoid confusing readers.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+---
+ Documentation/accel/qaic/qaic.rst | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/Documentation/accel/qaic/qaic.rst b/Documentation/accel/qaic/qaic.rst
+index efb7771273bb..62a8d2b4711d 100644
+--- a/Documentation/accel/qaic/qaic.rst
++++ b/Documentation/accel/qaic/qaic.rst
+@@ -147,12 +147,6 @@ DRM_IOCTL_QAIC_PERF_STATS_BO
+   recent execution of a BO. This allows userspace to construct an end to end
+   timeline of the BO processing for a performance analysis.
+ 
+-DRM_IOCTL_QAIC_PART_DEV
+-  This IOCTL allows userspace to request a duplicate "shadow device". This extra
+-  accelN device is associated with a specific partition of resources on the
+-  AIC100 device and can be used for limiting a process to some subset of
+-  resources.
+-
+ DRM_IOCTL_QAIC_DETACH_SLICE_BO
+   This IOCTL allows userspace to remove the slicing information from a BO that
+   was originally provided by a call to DRM_IOCTL_QAIC_ATTACH_SLICE_BO. This
+-- 
+2.33.0
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] nsfs: use cleanup guard
-      https://git.kernel.org/vfs/vfs/c/0052b241e3e5
 
