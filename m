@@ -1,166 +1,205 @@
-Return-Path: <linux-kernel+bounces-254391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BDE9332B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:12:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E05E9332B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4605B2833B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417881C225AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC70C1A2560;
-	Tue, 16 Jul 2024 20:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6881A2567;
+	Tue, 16 Jul 2024 20:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="nK0+7Ki2"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q11zwxu0"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2066.outbound.protection.outlook.com [40.107.96.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19E919F477;
-	Tue, 16 Jul 2024 20:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721160669; cv=none; b=Mc2A9Fi2I887oeXFT8/6YHYzADykbP6Ge8jJGF9hk/q3YugSfHWvTdiszMqwXGeuVyGvdSZxEglzy5CQI6xwMeQdrEQSyp+6S8CFUEgHexfWr1Eo08MbZlpSsbgQ2mivr65BkuRBAA2KQyM3vKnfNChQM+YcIFemjwG3n5vKK5Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721160669; c=relaxed/simple;
-	bh=6pmHMEmUxMpbFQs48GQ6MskIRmBnGh3l7ycRIPEdiwQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=p5TIiPzqgh4wgRlY44ZJt/OYeGF4Q2nzVL8dV7WPUaZlj7XXLwoWVbWhQxn7dPIV/CjhcuKTIKxYHLztKDIzgLv3AveMdE3nwzhu2q9kg6Bn7J9JAR/JHXmES3yOsxYmOwBIHPPfWe5pE/f/tUygJM8XOT3jt7bf8XqxsbAsC5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=nK0+7Ki2; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4051E1A0AE7;
+	Tue, 16 Jul 2024 20:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721160670; cv=fail; b=Yv/lCmxVEh3/u5BDNpQu/jP+fMKDVsxEqldSrCrEpHQ638PLil9AUMDLib1LAUtkQ4uGzyMXN66QAKxoiymT8BKHfLyCnX5oHzBtEAGtpRRtJX7xnDwdkQkMRYMbvuaDHnsgDUpHOfXxIV7xvwyvWBe26TskchlGk/JR+9LzB64=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721160670; c=relaxed/simple;
+	bh=U1bYchqiDPfUO/U6aCHYfLPKOqBtyDAGdEwpWZ2IbNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=U71CYCfC8ZrZzWtBQYna9nqFdaS1vJ8XQZ3CyXjpFBr6OF7GS+RsT7vGk2uhSQU0xItCmGxE9aBVi1nLCx2GUunIa/Et1EFmf1doaP/dCJx9OE/CYc261VYK+AVMRRkYfK+OGCf1oWPvgsIxRXe+U2I+eONFr1X8NNgl9HznlZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q11zwxu0; arc=fail smtp.client-ip=40.107.96.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XJnXQe7XpYrED4ckrF7ITT6tw4EFA8D9O1jknR8yqcevFUzjtltbDqfxFi0Dg9VpiQsjjPclVAIQrm4dHYuSEKT3EzS9YRROWLHukqpwwAGkp8B6DkYF7lo0XifCnOHw/hEPHE9+vPfEBWg6SLOd2HTrrNMmWLgDKGuvJI0K7C9QEdOTDBZqxs9D0LFu/g5WL2UqODZ3dXuHJ+QiMeCZcrnnLoPmNVG+rBiNEWCuANU1tEH0+5LJ9hEURsFDhMcbnGDWjXpPC8oKx352qvYaynMITpyzS5hx4lJdNY3y88xV5f60eljl0q7Zvkq1bIAmCDOgytmoMg2Cnx5YUOju+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CW4nCUErxqf9EFOY5BhVz7urnYTKyG/WtrEjkwh83Io=;
+ b=Z2JRW37Zn7VPLHEkDwTdta9P9teXFRoPZq3gwVO682qWCNLu1Nv/pylPignvgIuLcZeNlhlSz6n2wtXSrKxyIdd59X2m6dCjHbTdnWl9TOAT59r2JT7B66V9+3DnyGN3XUO6V+o/KSMy1wiYwxiTUPlVBvr/nq4j3vp01Wx/DSRUJQMcABTPqmdb0xJ7RtROpZHMUulTXKch2g95l67ljkFr8A08hLpIjvqCquPTPP+zFwGfVgqPCqbUK2oJjBzWJ6OgbnE2X+bElz737l7GQc7X8xC3/5eCZqsAfriuOYLsIEYseO1aacKp5vBIBTZzdSk0Cj9R9uyeIgcwsRGrww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CW4nCUErxqf9EFOY5BhVz7urnYTKyG/WtrEjkwh83Io=;
+ b=Q11zwxu0hn9voYtc3tpnJcdWIyJjeWDhSM5a1Mg1Q2yyNpL6fnqmllv54Iy8/HfgE16mi5qY4ESe22btbtptNlCEoS4/eydNly94M9YuO3fjiPGc8YL7pZcLkabJVDnUQjrL96qMw63MSkmXI988RfVnKeUGSB7Ge+eRZonWKfqdacuKuYZDbDOHquGU2F71QHmGhahcEWD18bMckbuYOhNiujd/JkXeo/9S5Miy6RwO2eDQacQPShFzkXlQiZ/mcwQ8FTYpV6LKytoZiB3B4pvcNi3HaKchOUsp1/SxWtf0vvk/qK1c72L2qPAKhhcWeg51tKzegv+v6fZbs/Dj/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by CY8PR12MB8411.namprd12.prod.outlook.com (2603:10b6:930:6e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.15; Tue, 16 Jul
+ 2024 20:11:04 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 20:11:04 +0000
+Date: Tue, 16 Jul 2024 17:11:03 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, quic_eberman@quicinc.com,
+	akpm@linux-foundation.org, david@redhat.com, kvm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, maz@kernel.org,
+	pbonzini@redhat.com, shuah@kernel.org, tabba@google.com,
+	willy@infradead.org, vannapurve@google.com, hch@infradead.org,
+	rientjes@google.com, jhubbard@nvidia.com, qperret@google.com,
+	smostafa@google.com, fvdl@google.com, hughd@google.com
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Message-ID: <20240716201103.GE1482543@nvidia.com>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <20240712232937.2861788-1-ackerleytng@google.com>
+ <ZpaZtPKrXolEduZH@google.com>
+ <20240716160842.GD1482543@nvidia.com>
+ <ZpavP3K_xAMiu4kE@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpavP3K_xAMiu4kE@google.com>
+X-ClientProxiedBy: BL1PR13CA0253.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::18) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721160663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Gr4Tt/4RDJMqOyQSHRFnO0qkTxn2d0ynsCHySOLEAA=;
-	b=nK0+7Ki2CZmmn09ZBJ7KVoICHInvS0VwzHqyUESuXBGnJpRj6Qp6y1LTMRW1JttVsSwuB/
-	7LrvqJ3za/v+eAfs2exHrNOcv8v7sYfXDS9ay1wPimODWQUrBlrvUOurM8opXtfs7BVzEP
-	ygGOSichUAbQYbPWZFcZCTWFYROAk4qg1XciUjYoHgCq3Hlt9ypfFwkRvUchCnVJQYrHO6
-	/Sd+XdCcPTm1fEnMoJt9zRUkzBn6+SH5nUr7euH68ZNwPkiQCIAdsjM3/NitVcCnsjGIe8
-	t9xOZ2qiHj/q/S8V2aGQuMsXcKp3CaCuJoTheGpHCIA3z18JFmjudO76OXqExg==
-Date: Tue, 16 Jul 2024 22:11:02 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-In-Reply-To: <2186398.KiezcSG77Q@diego>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <2832997.XrmoMso0CX@diego> <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
- <2186398.KiezcSG77Q@diego>
-Message-ID: <dca9e4c3e2ed61bf25a2d96a82a77e04@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CY8PR12MB8411:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64d38fbe-60b4-4983-9f1c-08dca5d36baf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cLrHY2RnP9AxVmzwXjF6e/NP3cRB5GceXEMnNGiNeq3yzs2K+3/jMqN7+gfd?=
+ =?us-ascii?Q?lx4x8psndBlq7vBhfpt9vJ3zlPE/f0R0A3I5aC++XFvliBi3BAZQ0mGrVi8u?=
+ =?us-ascii?Q?7PsD9be3HypEasq/dIXhzfMQINnMvlTunfIAO6fQcVQ6A4kKWYsuXt04ov3S?=
+ =?us-ascii?Q?DFpv3I6YmJJg9tVzn40KdE08Q4F2PevBc4nfTfYQJTqUgHHAU1osoGXBkvmd?=
+ =?us-ascii?Q?4yWlVGz0MSRtKTv5Lod4/yc15D5/2k0moHESzmTu4VQtDnO2HIPbCNXOmOYt?=
+ =?us-ascii?Q?706lwm+Jqmlptoh5aPORdDcj9Y76F634gpS9/6pYL2L+WX200k2Adm6gEjEH?=
+ =?us-ascii?Q?Jqh5ov0LpKaCLr6vDs5g9YGDrZ8frEJG+60EVHM76hE61i1lpvxGr6zjkxDR?=
+ =?us-ascii?Q?l5BRN8G+7MPeqI0UuCRY/FqlHzsG85Isa0zxFe375BKegJsb49c2VIBmLvX2?=
+ =?us-ascii?Q?SDn0YIS5eKQzYOkW7OFiAWK5K88RVhfkoisoTnoEflqIbxB82hz8btSxK3fR?=
+ =?us-ascii?Q?ZKWpDG+F1i3PedFYuI/39uzd8goeqLNoW3khQbRi2HseO95kAi95ervL5PtX?=
+ =?us-ascii?Q?WEu9CIKnEpGczkxk+daccuwG21EEBXv3GMse3vKv/pnFT7oKbqE7PNv/CsVZ?=
+ =?us-ascii?Q?58KJqdw3v7mDErYdxMUSYobZQ2ZsDZ9Jh0znA1hYGrJv2vN9ekzEGrkDI60J?=
+ =?us-ascii?Q?G2uFN5Xs+i1XF9ckwrk11unYeVXI05WYxp8kP9hYo6p+WOW1mJZ+glY7ihAL?=
+ =?us-ascii?Q?V8j8T0DBntk6CuObbTFBM8IPsOOq7rmPm/G/IIbdppCzWJdnxZxt1SfRyzRT?=
+ =?us-ascii?Q?updckRJcdDADBGhkGO6I8oCXdo3zJtGX64NvHOov8N/qsbBRQLDicDtT1/Z3?=
+ =?us-ascii?Q?fkmDI73Hag1+bLAsse2LE+joa8WmETxFcWr3kjVOen34KEwWzMQ+3qY1S6Sq?=
+ =?us-ascii?Q?4er76ZMO/Ya8e2EC4xKDXYX1L3M3RrG7xGyHZO/iRp7My1S/HxVXo3/Wkq4k?=
+ =?us-ascii?Q?AojN9ByNQ6oCJnFsDdW9RY0271DSiLg7xkfMjuQZ9xdX/FEiYq1lLRSl0dFr?=
+ =?us-ascii?Q?UUPc/gtTRzoWP1lCVJrb2RREnAa2aNslRzA/deOJpm30aypR+CbKdEjOKjbe?=
+ =?us-ascii?Q?LamaD32RFdtkDQq61+H3RcABO+hZGUF46iRbetHhxuOP5lln9tkXLnZGava+?=
+ =?us-ascii?Q?BzPQl8GMpODM5RkdjoBrLHDlNIGVaN1WggikPvzRJdQrKbK3DCKQ0rPAjPMM?=
+ =?us-ascii?Q?aFUtRZ8K6e/yTKKoSE1QZL055kdRg49sp9++WpzJC6Xp5rY2VsPYisLvQ+Zt?=
+ =?us-ascii?Q?XFiYsM0r+XKJKdLJd5hlOFRMw5yR5ywol2k4tOwDQMhu2A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7j0Eo6RKuWjS5t66Z4WncAEMvP1kAUEahmQ6GQ2EntLMXhcEsJTIP39YPxjB?=
+ =?us-ascii?Q?2iotzQfdK7UA8sdp6P/JdQUqQ7nR2wt4amQX6S+xjs8wmkBQqgqUxhxquYzT?=
+ =?us-ascii?Q?4aeMgLM9+9kyexUX+R9yBiT8LTLfCyZ/u9atXLuWIQxulKwGZULB0IGQS9Z2?=
+ =?us-ascii?Q?AD/Vy4wyBSBySefystzZwQ6EK15jHgcVSDsF6ubQRY8nFCgjNV4Myt1mNu7k?=
+ =?us-ascii?Q?WhMxnzDHWcN+BRTIPl1RZuBUdbYk3tVYMpza2BEQP2Tqk8KQ6h8vythp8fUB?=
+ =?us-ascii?Q?cLvu1vduVDPgFhgw0+7btc7t2U9u4Wrr9PNspZM+Q1lj+LQja5/8hpzw85yC?=
+ =?us-ascii?Q?fWzXoik2FKd0tp2Nn6zRLH8E/0UnNlJ9HJl+YNkooRc2IiLvwbMdrvzH5jp3?=
+ =?us-ascii?Q?abgdBQaiSbQJiaOqeADPLAvOHZffQNv3B3hk2vdUlklaX6ilRjdb0J2gyCkn?=
+ =?us-ascii?Q?J9f5aU026w4PNlkyFOc54KWc7VVJzILW97uw4QWdQEKiW1FAdPKd+rvyv2kl?=
+ =?us-ascii?Q?UAjk3f2Ua1J/CPQG6LCxKuu4quQB/bVbhBPavYV6eMHgFozGMv9sFzLimcJO?=
+ =?us-ascii?Q?0MXVcZXNvxCb4q3dU/Z4OWAvPCEYkgnCvhGWeMoGHmGTftqdNDAsnYIOFR8O?=
+ =?us-ascii?Q?hAsdrMI94YKi4S0HfeH8eQojpuHvOM9SL/vY3f1w0P8+HLUNyoTfT+POKgTv?=
+ =?us-ascii?Q?45aya+EuaJQvM7P4pyFOkvGxKpSVKG7u1hVdW7F+d/JhOHdSWtUcXRYlaPjp?=
+ =?us-ascii?Q?1f2WoITnX3q1mBF+VxdcxpgqLAd6ZBJZwZJyuvAe3nY/Dq098e05OzICavFM?=
+ =?us-ascii?Q?wVZXDJMw1w/mCMDpmfsup2LPCBc9GOybBtzSQc91BxOA9vAp/GGl3tChw2sZ?=
+ =?us-ascii?Q?s7TreEWW1Zb6JUIHYpzs6HDGiZJwQ+GklNTEIPRybjk9GFz/5w83d91p+L7+?=
+ =?us-ascii?Q?ZSVaUNc4eFfJ839fFytOiEPQMOVs1dwWtp63nxgCwfazURIXfBx2D1yQar1z?=
+ =?us-ascii?Q?ZEPa/epG55djFLMcWYymFhorBdaG83uPSmifFvwPypxbWDbBgpM8eaWCCGvS?=
+ =?us-ascii?Q?0cIWxa8Ka3jsgjx4HuIwygv1yvtxztWpb9nuCrz+/GpqPzTWeYFiqbt0UUmd?=
+ =?us-ascii?Q?pz6xmXwaM3pPwxN3u5fgXlBzaAFxxmZNW+5Ui78M6ql92+WGjDHZ7pWFuDdF?=
+ =?us-ascii?Q?0PbGzRaRoK9EXTrdSipJQ4zf5xNHdGKqHY+oGMnp+0om0myWBoRqaeTCJIiZ?=
+ =?us-ascii?Q?iTw3zTKQdfvsCj2ANZArTkIWC2nUxDe6+DuPLIYmJUiWXdrEXssp7opPiK7p?=
+ =?us-ascii?Q?DFnxKPJ9ZjFkrYDUlLFkRnLcdBjtdbNY0HNv+vaDowAl0/ymVreUBG7ES7vf?=
+ =?us-ascii?Q?wkQX3fAaA+yPLRXstBhI5nQ5JoHRERwHsaBAOGWP3RjjN+M7IAI6p3OiAJJm?=
+ =?us-ascii?Q?6yuLdn9N3bvIcq22cBCz53LpLxIvTa4kriWdtB1pP3nbQLg9yA5o/RajSO9p?=
+ =?us-ascii?Q?s6OzaX3tVjoNC8/WCGEygrbZBWvMO0FZQmLgSpx8vJlyXh6glQYMKhG0don3?=
+ =?us-ascii?Q?/138IALEupA8j1UTkq6gOADFmhE+bOmZvkAVKX/l?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64d38fbe-60b4-4983-9f1c-08dca5d36baf
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 20:11:04.4922
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xt7UWUsvNp3RgCMnoJnIb6zJx8gBq9JB1+biay32aBvGGUmsKLetgej24sGLOyla
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8411
 
-Hello Heiko,
+On Tue, Jul 16, 2024 at 10:34:55AM -0700, Sean Christopherson wrote:
+> On Tue, Jul 16, 2024, Jason Gunthorpe wrote:
+> > On Tue, Jul 16, 2024 at 09:03:00AM -0700, Sean Christopherson wrote:
+> > 
+> > > > + To support huge pages, guest_memfd will take ownership of the hugepages, and
+> > > >   provide interested parties (userspace, KVM, iommu) with pages to be used.
+> > > >   + guest_memfd will track usage of (sub)pages, for both private and shared
+> > > >     memory
+> > > >   + Pages will be broken into smaller (probably 4K) chunks at creation time to
+> > > >     simplify implementation (as opposed to splitting at runtime when private to
+> > > >     shared conversion is requested by the guest)
+> > > 
+> > > FWIW, I doubt we'll ever release a version with mmap()+guest_memfd support that
+> > > shatters pages at creation.  I can see it being an intermediate step, e.g. to
+> > > prove correctness and provide a bisection point, but shattering hugepages at
+> > > creation would effectively make hugepage support useless.
+> > 
+> > Why? If the private memory retains its contiguity seperately but the
+> > struct pages are removed from the vmemmap, what is the downside?
+> 
+> Oooh, you're talking about shattering only the host userspace mappings.  Now I
+> understand why there was a bit of a disconnect, I was thinking you (hand-wavy
+> everyone) were saying that KVM would immediately shatter its own mappings too.
 
-On 2024-07-15 21:13, Heiko Stübner wrote:
-> Am Montag, 15. Juli 2024, 20:01:35 CEST schrieb Dragan Simic:
->> On 2024-07-15 19:46, Heiko Stübner wrote:
->> > Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
->> >> On 2024-07-15 13:02, Heiko Stuebner wrote:
->> >> > In contrast to fixed clocks that are described as ungateable, boards
->> >> > sometimes use additional oscillators for things like PCIe reference
->> >> > clocks, that need actual supplies to get enabled and enable-gpios to be
->> >> > toggled for them to work.
->> >> >
->> >> > This adds a binding for such oscillators that are not configurable
->> >> > themself, but need to handle supplies for them to work.
->> >> >
->> >> > In schematics they often can be seen as
->> >> >
->> >> >          ----------------
->> >> > Enable - | 100MHz,3.3V, | - VDD
->> >> >          |    3225      |
->> >> >    GND - |              | - OUT
->> >> >          ----------------
->> >> >
->> >> > or similar. The enable pin might be separate but can also just be tied
->> >> > to the vdd supply, hence it is optional in the binding.
->> >> >
->> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> >> > ---
->> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
->> >> >  1 file changed, 49 insertions(+)
->> >> >  create mode 100644
->> >> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >> >
->> >> > diff --git
->> >> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >> > new file mode 100644
->> >> > index 0000000000000..8bff6b0fd582e
->> >> > --- /dev/null
->> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >> > @@ -0,0 +1,49 @@
->> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> >> > +%YAML 1.2
->> >> > +---
->> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
->> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> >> > +
->> >> > +title: Voltage controlled oscillator
->> >>
->> >> Frankly, I find the "voltage-oscillator" and "voltage controlled
->> >> oscillator" names awkward.  In general, "clock" is used throughout
->> >> the entire kernel, when it comes to naming files and defining
->> >> "compatible" strings.  Thus, I'd suggest that "clock" is used here
->> >> instead of "oscillator", because it's consistent and shorter.
->> >>
->> >> How about using "gated-clock" for the "compatible" string, and
->> >> "Simple gated clock generator" instead of "voltage controlled
->> >> oscillator"?  Besides sounding awkward, "voltage controlled
->> >> oscillator" may suggest that the clock generator can be adjusted
->> >> or programmed somehow by applying the voltage, while it can only
->> >> be enabled or disabled that way, which is by definition clock
->> >> gating.  Thus, "gated-clock" and "Simple gated clock generator"
->> >> would fit very well.
->> >
->> > The naming came from Stephen - one of the clock maintainers ;-)
->> > See discussion in v1. Who also described these things as
->> > "voltage-controlled-oscillators".
->> >
->> > And from that discussion I also got the impression we should aim for
->> > more specific naming - especially when talking about dt-bindings, for
->> > this
->> > "usage in the Linux kernel" actually isn't a suitable metric and
->> > "gated-clock" is probably way too generic I think.
->> 
->> I see, thanks for the clarification.  Though, the generic nature of
->> "gated-clock" as the name may actually make this driver a bit more
->> future-proof, by allowing some other features to be added to it at
->> some point in the future, avoiding that way the need for yet another
->> kernel driver.
-> 
-> you're talking about the driver ... we're in the hardware-binding here.
-> Those are two completely different topics ;-) .
-> 
-> Devicetree is always about describing the hardware as best as possible,
-> so you don't want too many "generics" there, because we're always 
-> talking
-> about specific ICs soldered to some board.
-> 
-> I also "violated" that in my v1 by grouping in the the Diodes parts, 
-> which
-> as Stephen pointed out are quite different afterall.
+Right, I'm imagining that guestmemfd keep track of the physical ranges
+in something else, like a maple tree, xarray or heck a SW radix page
+table perhaps. It does not use struct pages. Then it has, say, a
+bitmap indicating what 4k granuals are shared.
 
-I'll make sure to go through the v1 discussion in detail ASAP.  After
-that, I'll come back with some more thoughts.
+When kvm or the private world needs the physical addresses it reads
+them out of that structure and it always sees perfectly physically
+contiguous data regardless of any shared/private stuff.
+
+It is not so much "broken at creation time", but more that guest memfd
+does not use struct pages at all for private mappings and thus we can
+setup the unused struct pages however we like, including removing them
+from the vmemmap or preconfiguring them for order 0 granuals.
+
+There is definitely some detailed datastructure work here to allow
+guestmemfd to manage all of this efficiently and be effective for 4k
+and 1G cases.
+
+Jason
 
