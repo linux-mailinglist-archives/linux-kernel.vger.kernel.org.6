@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-254372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331C2933258
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D308593325D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16C9B2136C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867E31F232AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432B01A0727;
-	Tue, 16 Jul 2024 19:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8EC1A0714;
+	Tue, 16 Jul 2024 19:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAHy4RtG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkxEFtyA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF1195B27;
-	Tue, 16 Jul 2024 19:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3D1195B27;
+	Tue, 16 Jul 2024 19:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721158929; cv=none; b=Kn7nKYjeV0QnzZcskpfCobzIrd1kWXS84tY1babhfrKoA9TauvgWuAUTVQfWI2OMH/xGntz5aSGGcbQRhJkSid60mBxu6VsBYB2U21/3JNYKNbRIgZ4snh4AdajZCyATPklpi12ME7gbLMfIZ/XIpDF7DI1CVjatw1TNadcMDcU=
+	t=1721159005; cv=none; b=KJ8pwEGIqMmLp3L5OudKF0SwA9ZfzZBss8FkrUlfeexmNq5eFIfChCM0KnlETy+YUNKRgLnsGIzSczGYGeGLN8o4lO3rE8EFKzTtFpg5mtK+7ped2U7pqAQBsX7pdvDm64XydUS9U0XYbkfL3Y/jI38jDOo114Y4d4Ff5vAbwFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721158929; c=relaxed/simple;
-	bh=6DvLx3sKolVTpOiafMSeKq1oULOoas8XiUb/mMWIEbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J9nH5BoHHcZzYahtH8ROT4DNRwOnu61lcDeCYuVUGrIoGQsPtmwRdmUhSNZYJ7CLE3rkss3rM88qsGZI53CAzQ6/9cg+WLXL82d+g0IHOH1AAO4VC0j1DMrFiKjtQYZisi3qUfFLmYd/iS7cVIkvmdWe+0EW5VEaGCUU0lRQErw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAHy4RtG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61064C116B1;
-	Tue, 16 Jul 2024 19:42:04 +0000 (UTC)
+	s=arc-20240116; t=1721159005; c=relaxed/simple;
+	bh=N1DLYAjNSkmL3ZlMpnusTmfnT3+8W7vAgxCZebBFTDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lw4Thc4o42lR3DiJnTEXGY3gsnYHGhc4o9lKL0/UN0QSiw+HIakKBUsdIbaMuSTyzQeQbyRa2zlgsN/4C0Hxu+dh2V9mH+72BjNzkW1ifZsghWHxX668lNaaXvinH4cRsQu6qbjISWnIFjUVbbRvV2I9tzFTLi53GU6XJ21gjJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BkxEFtyA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D49BEC4AF0D;
+	Tue, 16 Jul 2024 19:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721158929;
-	bh=6DvLx3sKolVTpOiafMSeKq1oULOoas8XiUb/mMWIEbY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CAHy4RtGF80Hu9aODyMUCooU8tqaZoGRo6kb6XRWkaGuYAMzJqoCzthEATl4QjSAL
-	 7TElFupQl6IkGWfM3mEQ+szvvSmHi3W/9ul54rAa8RcxByDLQR15D+HAqsnQw7JxIy
-	 H504OTvG3j4MfcGqAssPtrjqIhkWm0gowykOHzbu07lquvz7tkfbbKqHR7xMqCf6x2
-	 m8+Yq//4M6qV9ycqiWjftgD7h2K71SOtL+6Os8fd+imUqiQVwRvtVfwAi+BYBihz09
-	 hAJ4El+nhDbKYnmA1d9uocsbx18fXCgFWH9nTd8M4NhFtykm9vbOv7G9d51EQ72fPZ
-	 T4xEfLOlSD7ow==
-Message-ID: <c696fac6-1f26-437d-84fc-b14eb15ccce4@kernel.org>
-Date: Tue, 16 Jul 2024 21:42:01 +0200
+	s=k20201202; t=1721159004;
+	bh=N1DLYAjNSkmL3ZlMpnusTmfnT3+8W7vAgxCZebBFTDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BkxEFtyAZ8N+WCAMR6qPMljdwiWsTbBUBGVVZq/WBBZvCuncCxVTCDhBNR++sNsOu
+	 wE76zNzZlZ1AtI7qXYcbyj4JRZk0e+1SWw7qVSJrFTSXTEfaD/X5H6xSmm9M5KxWYO
+	 /U8h892PAahvz85D57OIdQFmSa8spfZ1w8I8OJvNKIMJvG9T6LVSp28KbY5qfSKawN
+	 hgAWNdlTSksy3Q7KqYPaUhpzHf8BsQMfGMBMpVjY0a4T6THoSmPD5VlO6vUJWBl0Ue
+	 kKcZZOC63Axlw+uOpe2xVSx3VMKoGbd5t72EX9Kfxyu/b8sRlNWZ4UVnC4xvXB+Cvy
+	 0bL5g9bXhjXJg==
+Date: Tue, 16 Jul 2024 20:43:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
+Message-ID: <78475039-0f5d-4bd3-bb57-4047370374c0@sirena.org.uk>
+References: <20240716152752.524497140@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 1/4] dt-bindings: PCI: qcom: Document the IPQ9574 PCIe
- controller.
-To: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
- manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: devi priya <quic_devipriy@quicinc.com>
-References: <20240716092347.2177153-1-quic_srichara@quicinc.com>
- <20240716092347.2177153-2-quic_srichara@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716092347.2177153-2-quic_srichara@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="086BrWzPyQrKK0j7"
+Content-Disposition: inline
+In-Reply-To: <20240716152752.524497140@linuxfoundation.org>
+X-Cookie: Think honk if you're a telepath.
 
-On 16/07/2024 11:23, Sricharan R wrote:
-> From: devi priya <quic_devipriy@quicinc.com>
-> 
-> Document the PCIe controller on IPQ9574 platform.
 
-Subjects are without full stop.
+--086BrWzPyQrKK0j7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-With that fixed:
+On Tue, Jul 16, 2024 at 05:31:09PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.163 release.
+> There are 144 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Best regards,
-Krzysztof
+--086BrWzPyQrKK0j7
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaWzVUACgkQJNaLcl1U
+h9C8igf/cRoQrDOxCOI8fD62tQSa6VHzKv9NKO2yRDiGn/Z+kRorzKzGHAgjr67/
+aqGkW4EgwvK60ABKf32HhnJI1+QN1acr3EXke+4VZ6uxqvvxEB47LugxsPQ9suqO
+Ii+hiutbkMcu/Now9I5/J9u94rXxT/qKoETo8Ktin1GhmrQ2QrD+OTNxEfPFMkYI
+aF3OncetVhbv4cUGksvarSnM6YJZzM76H5FmToNHlNkZUvWQ7j/FksotLNK4p+8c
+A22v8HYYlkCVwJs6cPmLvEjIe5zerXu+l9Rrs7Nl5Lie2CcT1i2LnMv1/E2kGJaL
+GD5vjSnc3ygkb2lRqklmz11vjFIRRA==
+=vn+8
+-----END PGP SIGNATURE-----
+
+--086BrWzPyQrKK0j7--
 
