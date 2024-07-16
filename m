@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-253804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5705893273D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B00993273E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D27C1F225E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BDA22808FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1CE19AD7D;
-	Tue, 16 Jul 2024 13:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8899199E9F;
+	Tue, 16 Jul 2024 13:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S5FwofiY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMXN53hx"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4E219AD4B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF017CA05
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721135685; cv=none; b=sssqUEBMu8cTbswlU6pq+vvoEtqVdRBFT3eornEOKCqRfZU1kSqgjcEs0ZF+YJOvlWKKUy/AKrtfFhpl9nMfxq2g/qltNj5BtVwKdlUBPFgFjUv3toiwqxWrNTDInT+KyCJmr099CDi34tKVRWsi+VtQYQs9aWTq7aVL57QDvVk=
+	t=1721135719; cv=none; b=p30QMFg1TK5km9QTo5EK54oLIm9DJkQPWE5AZ8RdgEgqY9bYDDk0PSncpnE4Xw8Jaw3B7IA5hYu+7eE/89imEZDw/laliZieYbm9MCyWHfSYDaoflnJW8Oufq6phB7pu1fTnxbMy+OD7dX3KKz3sVRIduA28zwP0COefiIAljYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721135685; c=relaxed/simple;
-	bh=6dRbIrshTheomuibRAqbFDbRKbFnbPCmtotF4+QiYF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=W+Jc0754JGdVCr8vloxmBTZ18rV2XMiCbjxc9hKk1uT0eoDHu5f+WlLqxlVsg48XCG23ygjco4lvuAPmiQGJwXFrcaIHehgveKY0d13TxTI5JJaYEuTv09tayw/t+QptIoIyfHUan2j5+zakgEvSvf9Dd0LZmNPW23zo8v0+STs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S5FwofiY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721135683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0LEDQDLQ3briFZ7Dh19M97K7riFuoWHHeSMgTzHc0b0=;
-	b=S5FwofiYqKTbtJlnk3WZNjy7v1B1Gy5or6ga8f2GEr/b8iQHk+QCWY5+Fh2WYEmTOxoX78
-	84Ew5BuRyw7g7IfjmSqrSUxcMAkocZNpr6kygKd8kGUx0ksy40547Ry7vGyDA1YN7IodP7
-	tQZ7YzaR2JntZE8PyiYaJNc+e+oGZlo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-Rbj3c6HuMxubLRLB2laM_w-1; Tue, 16 Jul 2024 09:14:39 -0400
-X-MC-Unique: Rbj3c6HuMxubLRLB2laM_w-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-427ac40d4ecso902795e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:14:39 -0700 (PDT)
+	s=arc-20240116; t=1721135719; c=relaxed/simple;
+	bh=d6tVEyM4+zfsQ3f/Lp21lCQNFXCnL5duwmm+qOIsJ4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l0ZuWqQCansycdFFRs7F2+GR90xfxB++M8JjAHnlkqidxrpzq2FK+P+8nKqMsBHIdfbt2LdRqZESB4w8jPIe9eq/kyqsxD/SnXf+DMZ9rkJf60KFeLdV9dwcNGjUIm16WVL8nPmYy0NluNgbE0eTH6r4y45fP+VZKfCx9kQ4jbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMXN53hx; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0365588ab8so4824256276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721135716; x=1721740516; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsbTKT2fsyn57FNCsAGBNDGfhW5cbmqj9qjWElmr/2o=;
+        b=PMXN53hx9J8Cw2qI6JKeCaYmjC7ohmVmzHbF5QHVGPGrpSg0vOi+qLBZ/LsKnSRVlf
+         SwYhn3ODIUC0CNMZd6/tPf+h9TsXYSpr/ZTD6sOd1szdU4l64dV0LCb31CC/qnSoCCaR
+         JNV8O+4HMC+PituhtGeybvQd6+evGPlLl/FL8NcRNZtjtiD1fvjxyrDXVNXO6p6bQtaj
+         v5Rj5Se4bwvuZ//xoMwijwNSQ9wBHFK2fkueskiTHPda8/0nqXyulYskXk4xwkLgcumO
+         DJfK7g2nB7VwXiPYq8BkekLmsyINFkfQEOLOrCJQXCLWSx9WmSTWKlqxQvhf/puNBBtm
+         tF4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721135678; x=1721740478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0LEDQDLQ3briFZ7Dh19M97K7riFuoWHHeSMgTzHc0b0=;
-        b=Po5jokZ54tacVZhyICy4bS6DGGOWCVi/HZMWtIMRT1evChhbVbEiUgiXrYUS2H82SH
-         ahB7OQijE00lmiiaF+0b/0NLk3FUMaKRlonOCP0BIK8jaqBiRk9yluWg7GczdavL+bEM
-         S0ms5fOrBMftl8bLIkgApQiOYrokECjV00tflRQ2h0GIz8mf9nt8vQ+18Q0izJjkTS6E
-         OSWRdXgc9uRfxth2AoVxWw+jo2fGYNmsmwZQ9infHcl5pjHtvmfujxElpVtJRLQy+sKj
-         CMCob7kCxpjZVQruGzne3BhmD+sWfrkX+ddoj5PDOutKsw79q3TmdNmCJZBH4xvzAyri
-         Tl7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXN6aiRo329elRJDmJiX0c+2uFNeInQmRJCc/WpKJ89J5JqSdyHDlDTkA8bM1uFDj/vm2YjzEGlzNCutdg1IxbtdUFUTzGOV5tc5j1A
-X-Gm-Message-State: AOJu0YxnmVbKLip3304FIQqDaR0AhYCIPNEWpZzl33Ouh9KuZhT0O60Q
-	LqjN3Hsc1vozcwnSdJ4+JkDJYTnKIBeFFlgjArpOxoLfiNt3zTXzrPUNM4aWaDXxxail9c5c3N6
-	eRjt/Ryksv5VYb/G/5eSDaTCMkFzBG878ltrT2NWPoAGuwBnULWnr4einZjjA0g==
-X-Received: by 2002:a5d:47af:0:b0:368:4c5:b67 with SMTP id ffacd0b85a97d-368240c5cecmr1297770f8f.8.1721135678528;
-        Tue, 16 Jul 2024 06:14:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUbkZufXxQmRD68YJ0BeYGsi3kx+leKWXkuE2NaNvjicZkL5J0TGrRmp7vSDKiJutaHe6Utg==
-X-Received: by 2002:a5d:47af:0:b0:368:4c5:b67 with SMTP id ffacd0b85a97d-368240c5cecmr1297756f8f.8.1721135678126;
-        Tue, 16 Jul 2024 06:14:38 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1738:5210::f71? ([2a0d:3344:1738:5210::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e93c92sm129511955e9.22.2024.07.16.06.14.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 06:14:37 -0700 (PDT)
-Message-ID: <e5603fa0-0755-4b49-ad5f-9f999e8d4e3f@redhat.com>
-Date: Tue, 16 Jul 2024 15:14:36 +0200
+        d=1e100.net; s=20230601; t=1721135716; x=1721740516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nsbTKT2fsyn57FNCsAGBNDGfhW5cbmqj9qjWElmr/2o=;
+        b=ciQY9rwHU+FBEKaeIAK5xpBUpyd4jHkMgNpYQU4uecNg8DK4zaYTJL2jp3sbmoAa9s
+         6iYsFfvOzoNB0q7bnt3eEfWXL4qoL5XBhUO8eAX2cm7LTLjc9aPBov1Bo4WocFN5ofZe
+         4UlA8fSMnjPQsdr7CIEUhMa1AxJFraEw6qeNc5eshOfyk1/R3D3yDkf5FHWd+wb+0ykC
+         tKAAInzaSstw2nVYyPN/yowDrRCOFOGP9I23R73wwqTmBE7MSn2gO9MBK7+83wYzHVZR
+         3GVwBMNI5fkXdh/7cuj6QxP/Fkmuu1p10YRwLOjqg9INSJIr3Squ4juWk6kD+kohIuRF
+         1N6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXeUrV+ADINUSK5MwTfqCx7OnkkdemM/jWwSNiNPk6od2kgEBd4N4ZGO1a7oYFYg4GAEp8cz0JBBJlMy1MLAYbB6UXq+dL4ncpOgLRR
+X-Gm-Message-State: AOJu0Yz1oTx2PawR6gW2gkiylOhajQjGCFOechoQACNzeZFxXSYXFxGL
+	+fetJ42LNfMhT63IEN/tTsY5DIIxEFXVWg/nqhGq/pfA6U6/XUsGWvbOm+ty6LHxS7iYT6SQxnE
+	IFx+3YKVFONPGUogD802OFIYItvI28hDVSpn7Ow==
+X-Google-Smtp-Source: AGHT+IEwvdUN5GYHZf+oYL2BhSIhMj4XizKcfWTfNboHzaZQRsgNKDXEA+WWZyOEhNMgMjD9xNvIqRmYe8MWm5x6WVI=
+X-Received: by 2002:a05:6902:2211:b0:dfb:d50:a761 with SMTP id
+ 3f1490d57ef6-e05d5d8b07emr2822669276.14.1721135716388; Tue, 16 Jul 2024
+ 06:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 net-next] lan78xx: Refactor interrupt handling and
- redundant messages
-To: Rengarajan S <rengarajan.s@microchip.com>, woojung.huh@microchip.com,
- UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240716045818.1257906-1-rengarajan.s@microchip.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240716045818.1257906-1-rengarajan.s@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <74947f7f132a811cc951749907b01bd25dcf23e6.1721135509.git.geert+renesas@glider.be>
+In-Reply-To: <74947f7f132a811cc951749907b01bd25dcf23e6.1721135509.git.geert+renesas@glider.be>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 16 Jul 2024 15:15:05 +0200
+Message-ID: <CACMJSevi+U81ASqG-DCSxcuW4C4hPRt-_nYgmnpaMXF_7Ozw-g@mail.gmail.com>
+Subject: Re: [PATCH] firmware: qcom: QCOM_TZMEM_* should depend on QCOM_TZMEM
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Andrew Halaney <ahalaney@redhat.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/16/24 06:58, Rengarajan S wrote:
-> The MAC and PHY interrupt are not synchronized. When multiple phy
-> interrupt occur while the MAC interrupt is cleared, the phy handle
-> will not be called which causes the PHY interrupt to remain set
-> throughout. This is avoided by not clearing the MAC interrupt each
-> time. When the PHY interrupt is set, the MAC calls the PHY handle
-> and after processing the timestamp the PHY interrupt is cleared.
-> Also, avoided repetitive debug messages by replacing netdev_err
-> with netif_dbg.
-> 
-> Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
+On Tue, 16 Jul 2024 at 15:12, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> The Qualcomm TrustZone interface memory allocator is specific to
+> Qualcomm firmware.  Hence add a dependency on QCOM_TZMEM, to prevent
+> asking the user about these options when configuring a kernel without
+> Qualcomm firmware support.  Various Qualcomm drivers already select the
+> main QCOM_SCM gatekeeper symbol, which in turn selects QCOM_TZMEM, so it
+> is auto-enabled when needed.
+>
+> While at it, add "Qualcomm" to the one-line summary for the choice
+> option, to make it clear this is not related to generic TrustZone
+> support.
+>
+> Fixes: 84f5a7b67b61bfeb ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/firmware/qcom/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+> index 7f6eb41747346a4f..c607574397e9a7e7 100644
+> --- a/drivers/firmware/qcom/Kconfig
+> +++ b/drivers/firmware/qcom/Kconfig
+> @@ -15,7 +15,8 @@ config QCOM_TZMEM
+>         select GENERIC_ALLOCATOR
+>
+>  choice
+> -       prompt "TrustZone interface memory allocator mode"
+> +       prompt "Qualcomm TrustZone interface memory allocator mode"
+> +       depends on QCOM_TZMEM
+>         default QCOM_TZMEM_MODE_GENERIC
+>         help
+>           Selects the mode of the memory allocator providing memory buffers of
+> --
+> 2.34.1
+>
 
-## Form letter - net-next-closed
-
-The merge window for v6.11 and therefore net-next is closed for new 
-drivers, features, code refactoring and optimizations. We are currently 
-accepting bug fixes only.
-
-Please repost when net-next reopens after July 29th.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See: 
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
--- 
-pw-bot: defer
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
