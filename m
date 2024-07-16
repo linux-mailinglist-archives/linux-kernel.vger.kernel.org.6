@@ -1,312 +1,348 @@
-Return-Path: <linux-kernel+bounces-254529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25316933459
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:47:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094CB93345B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06312810A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7131C22203
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD27614386D;
-	Tue, 16 Jul 2024 22:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AA0143C48;
+	Tue, 16 Jul 2024 22:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wGTIi3p8"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2078.outbound.protection.outlook.com [40.107.237.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HPwJlcIU"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD906F2F7;
-	Tue, 16 Jul 2024 22:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721170026; cv=fail; b=jEk8632NTuK9lBlPSNO0905mIn+oxvbT7imIcZBOtGu1NF4DJ6ZXMmBfwVwThgacadPFMBw1lBu/FBcJHJ6e8NEsZ3ORH220zxn+gF/+3vNuTgsSh65HPWL+nL14yjzZmQMCfGAbBYQQ43xeviTQZY8hPf8kvqR1O2iEwqkAGmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721170026; c=relaxed/simple;
-	bh=juxm2UjBmOFWL/IrQrwg4YDwQnVaNMVT+aQvmfbnThw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fQxllCk6D2b7N+jUWaio/fZk93TIQTwLKuEqvmUm7GYwhJY4eHKFfk+dUt8U/Fvt2thJjkz5v8BCU9d3z1r/DjTak1PClojCsbNf9bVJT3OOE7JpHviuGCPfKatGuOgZ80VIUjcfKtez8IG+HLcOGXu+fBZQ2x4cATxHuKtfnFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wGTIi3p8; arc=fail smtp.client-ip=40.107.237.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dk/JHO4vKJ2D9pAfHjNodCVEZQX/6oVaqqN0fSyH2AU9FtmAlnXa7ShnoDbEaZ7xwbKsDxDD7igf0PlQxfDiChYsRU0ZteRp9k5wuQ9k9z8JydpSN3HukD6rJ4Rd3DUFNzH+9eSZRygFOWsD5Nn0Elde+rPRy6h2o17Org13+9zJGlZGxKJxTCLct2VDsCGXjXbQt6H/d8nTPeNthK2rlbJu6TJjsDHkie6OKheqnvkZ/gG8kmFUxIMvR8sVgTsSYv0C77dn2AnoOf5ejWcj9gWAutezhEFwon+SK6VlFRoPjd9BE6gD6zhp/vtI/Ur2Z/XIpnrSIlj8k116He+UWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oKZ2q+E+0OkC0aKq4KMUk7tgNOTJdw5MTq8tTznlaXc=;
- b=Onysl9iqFXt1yp2Bmys+P6WeuUGvi6oLNSEQH0G6GL5PD4e3dxSCf/IOu7Rlqff9pOYVrD9f+4tVjrFgx6hMBmfCgmTbOhE1Yws0hJO5Ba/mPaXmVkXtlu9t84IFl1KT/8cy5oz5/q9+Xrq0mqlXqs3bUrd9oijyFBHbURdG+aA91birNcPVUtKc7GnlCZvvGxuBnXrM63Mn0obocEabmnwQaecTU47wy1rFSv9+4W24heKyMZy+sbP+Z+L9oCt342QFBKJyv7yJ7VZK/UpVngwypFb51B6T/4s074ok7NiV0T8KFTm2nLv1qYrXlUeRnpfJMOra/mbrEh/h+m5ErQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oKZ2q+E+0OkC0aKq4KMUk7tgNOTJdw5MTq8tTznlaXc=;
- b=wGTIi3p828nmUhyAV1T/FfgpcDUqz+PQi2GE0Li3hYVoWJs5f7w4DKLOOi3NWyHfQxdEq/IYq5vpaNoVzg9GMafjuuRTQFYt4BBpnCi8nqmp7ecPK6tnm2ABuowwj8AHfP9j4sThl8LGUCP8/EKUcdu30Vfk+OGWnmuxinty45s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SA0PR12MB4557.namprd12.prod.outlook.com (2603:10b6:806:9d::10)
- by IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 16 Jul
- 2024 22:47:01 +0000
-Received: from SA0PR12MB4557.namprd12.prod.outlook.com
- ([fe80::d22d:666e:be69:117f]) by SA0PR12MB4557.namprd12.prod.outlook.com
- ([fe80::d22d:666e:be69:117f%7]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 22:47:01 +0000
-Message-ID: <ac5595a8-b3f3-7f9a-c297-1b7d0220da06@amd.com>
-Date: Tue, 16 Jul 2024 17:46:58 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v5 17/20] x86/resctrl: Introduce the interface switch
- between monitor modes
-Content-Language: en-US
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1720043311.git.babu.moger@amd.com>
- <cce527151843aaa1a6001c75a17ee46108821233.1720043311.git.babu.moger@amd.com>
- <0815b30c-8bff-484d-895c-4f40e9b2d1db@intel.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <0815b30c-8bff-484d-895c-4f40e9b2d1db@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0104.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c5::14) To SA0PR12MB4557.namprd12.prod.outlook.com
- (2603:10b6:806:9d::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE53F14389F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721170056; cv=none; b=BKZHnQUGbFfQO868/+9sidKZbXe1sTDwUpGjKi+DZarbrf+sX63jD0wpuTZnrnc89sdPnplsMdFNnQMSMY09rN1K5smKwJRIXGDpg2xXm8GBEyPaVKtySYdUPuC2ZI9ZlWDPoHZg4fuTMxal/xHd+zxswJIebn/Qp12VB8ISgWA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721170056; c=relaxed/simple;
+	bh=9MaJofm+++Q68BNaCakwqLyHo3TZ9wFFHQ0DvoN+RYQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WYF8+AHuar46Gqvc8KXO2n2cITazuxMtxb7KIVXBcdsiPfgyaRpFoWdIZqWtN+NdOLqyLUsD9G7Ep4BcDvH5irRGIdTPfQyHheiVuLRiwV1kxxGheIGCoQTUOh9ahjWPvV0lIaqjjewOQtrhRyjjW5/khmmffTP4KSxr5mGsT+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HPwJlcIU; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3815ad8adc9so49395ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721170054; x=1721774854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YqatXpCeOeeYRRYniUfxQaID24gWkHyIwmTyEpa9Osk=;
+        b=HPwJlcIU00WhrhRhV8MOhDl/LYbWBmUQrFWecwrHLOQ2q+iD/UCdsXI63oANSc+Dh9
+         S7i1oSjg/EIWsjsPQWdTeBKzNSX4F1XAqY8wN1ZUZBOGYucC9Qso6Q8kvGBSXKLS4gT+
+         zrck4mEZgW/nLraMGj2WHqo1CU/7yAkNb6809HpEgqdassOMwSNYoNYqF4Kzery6zKBP
+         zBD0hhuZHHm8P/zhklEDWm2g7i+F47G4vJhfNdQzrtEyXGM/lhegwKYYAkzqWbhJUKSU
+         wvJbdvkwn9FRow3Nrx1vTdci6jkCJ/eYhe6Np99nUytsfsw6ciztk/AEBfIVlkxTPcLh
+         yXkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721170054; x=1721774854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YqatXpCeOeeYRRYniUfxQaID24gWkHyIwmTyEpa9Osk=;
+        b=Em9JtotWjg46aQGkWi+ZzJnVbqSqpcb4pUj8zhBQn6bvLLWg8JYp+/DxfJYwpXxV7R
+         KajWy2+Oqc9z50GHmChHwQqdu12xtQQq5FBFPrJOrwNsuGi8TcMwN+TCAPdO2pjWAXFB
+         C3h4Xg27ljQ3p1PkkRZYwBab0m8kw/bnsRYmbZbxaCEHRjeaoPdUnbmMCIlTgGlr54xQ
+         2muWkZgg2N+aeCsf1k1Y0cdaS/o+WDXSos5KC92bMGhiro7mqkx9y1wCImawzgrqdFUT
+         TtH8xlKwjnSu8JjOBL+oz5ntidML25VCKVMC0Iz0P2CdpV3dIRO7AiMUz6W4xm+9Cx+/
+         Kd2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU32kkj0DuqHyp1mitKqjAstErItFCcn7eQespIlPUFr1EL2DYSP+8F4W/a9myArzBEvEqeHJBro5RHkk/OUnGHM4Qt8UoOA5GMrlkz
+X-Gm-Message-State: AOJu0YxVJUQqlsIO0KdVB9aaeA8vsao8rDYS31q9m/otsed7+uK77P0B
+	NDW4a3C23ZoxLLVesMOerApiH6B/+LV7CeJk5NaW77aGHvAQoCzEOHxNZ0Ui/fHbnIqQsUw8mot
+	4w1BbFuORF3OUawEINubMKHl5pltYyNs8OFYx
+X-Google-Smtp-Source: AGHT+IE30+A5+lNa3FYa2SP2MHH4fk60OXoX0aWIvrvIXGeOH+XbKkl+n+Lav00eYBsP2CVhSNRfXkkl4yqZEHA6oMA=
+X-Received: by 2002:a05:6e02:184c:b0:375:ee62:5917 with SMTP id
+ e9e14a558f8ab-3951364af1bmr1124465ab.6.1721170053573; Tue, 16 Jul 2024
+ 15:47:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR12MB4557:EE_|IA1PR12MB9031:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec9c7544-02f6-4033-04b3-08dca5e934d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGlKemlLc0haUm5kWkJxOS9senJBTGViOXcvYm56WGJYaFc1dTg4YWwrRDV3?=
- =?utf-8?B?NFB5a0tQN3EwdW5UT1pzZUY5NnJUOVdQT29WbDNTTUw1OXh3RzZQcnMxNG9v?=
- =?utf-8?B?SkVzUTcwSitJbldBVFlueURaKzVyRTAxRU9qU2FnZXVtclJMVWpnWmp0RytQ?=
- =?utf-8?B?bGpvd2lEUFZueEtJOW82TVAyUzFPU1Boc2FUNUhUN1hVbFM5WHBqaGV1WlNu?=
- =?utf-8?B?UUtkRkYzcXIzWDNZcjI5S2docDNzN0JNa2lrWFVQT1o3R3BwRUJhWDFDYXlE?=
- =?utf-8?B?cVVVRk5TSU1VUG1vOWRuNi9xanV5dWRoSkNlNVNTUEkvbnhCODJsM1VraFRr?=
- =?utf-8?B?U0VKZXlUR1d1cFdPVkp0RFZEbUtaT3Y5amlYVzNMUExONXJVWURFTHhCSzZQ?=
- =?utf-8?B?YTc5VEZPak1BRXNiTlczRFRBTGw2L1NoSDRyeVR3L0p5K29zdUNPUmtjdzFR?=
- =?utf-8?B?Q2F0UTh4MHZKNnhadXdPMkUzbzNRbjB1dWVjMUcvNGNlaXRTWXZ0V05TSFdV?=
- =?utf-8?B?elRuWUwrQitnWmxicW9TN0grOExxUlIwVHhGNE1hM3dyeGMzRFkxMlVpckVo?=
- =?utf-8?B?REE4cE9zSUYrOEcreHcyMWp2NWkwY01vQ0U1Nm9RNGRNZStJUzZIcHZKcUxO?=
- =?utf-8?B?Uk5GNzYyLzJIUCtTY3pZTmhSdFViMFlkZXY0R0lKbFhjdVQxZTdwVVdBMVQz?=
- =?utf-8?B?dUpydFlMZjNtazdiUUtlc0Q1V3N0czdwaWFqSDY3TStYdVNFNm84clpKeURY?=
- =?utf-8?B?R2hGb0xvWmUrd3Q5bXNqdEV6aFRqL3NnY2VmL0g4emlmRzJoTjRhMXJQcGRs?=
- =?utf-8?B?WlIyT2g0V1pvZVBzUjQ1Sm8rZnl2bStBbzJZRDBCRXFLa0QrdUZodjIxUEdB?=
- =?utf-8?B?ZjJxU2FpUzlmTUFWcVEzc3dwcVpiODc5b0EyN1VXcVFQR0J2K1J5cUM2Vy9q?=
- =?utf-8?B?Mnl2cHo4KzVyMTVpaVlrclFvSHdValJxNnpPME1sQU5OS1U0SThwbFlFR2tr?=
- =?utf-8?B?aTJXVkkvZWVaU0VZMDFYY0dGd2JHVXRGa2lwTitWS2ZxWXBYZFhYM25CSGg1?=
- =?utf-8?B?Q2U4c1hUOHYxa0pyakw1Rmx2cFVaSnJsMHE0SW5iMWdndUdtTXI1MkhTeW9V?=
- =?utf-8?B?bnBoaEJPY3kvaXJrbEpuWklaL2RVNFMybU5OdURCS2NjMS9DYjdIYkp4M2hD?=
- =?utf-8?B?dGN0NStLVk9oMlZQbnd4OHVGZlpBVExlckRZL2pnVEZRRDh2YXE3MjBwRFNQ?=
- =?utf-8?B?SmtGZzJQeExBOWVjU1pGZjhWSEFyNGwwcUZacnNzY0FxemowMU8wbkdmOXlC?=
- =?utf-8?B?V0tBQlNHY2VkY3I4RGFUMGdMQ21EN2N0MzhoZnlDWjFDcVRha1g0YkY0dlY0?=
- =?utf-8?B?QTdmYWJqQVZYUmthZk1hT0d3L3U1YXh4RURMdEV4dmtZYVpocHh3QWpqamZK?=
- =?utf-8?B?RWhQTEdxTVM5VEpKZ2dXU3RGZnIveTZ0cFB5RkFrbERNeW9mb0pqMzc3clpa?=
- =?utf-8?B?b2Y0a1NSOUdZWllrcGQ5MWVpTXUzOFNUUDNRZ09BSmZhL3NEKzBwMGNiVGQ5?=
- =?utf-8?B?K2FuT0Y3QmUwcVBRcUJyaWs1RXlpL05pRlN3bFdWTzNjTGxOSEZaT0JmV01a?=
- =?utf-8?B?RG5qRXlpYldaWG82ZG9YWEdreUNlRTU5dHArRkY5dkhGOXdCV05xcWpyRHh5?=
- =?utf-8?B?WHlpektPWm81UUhSWUJyaENZU21yOFVRdWE5VDBrUjQydlkwY3dFUFVHRm9C?=
- =?utf-8?B?WGliV3VXN0ZGVlc4S2dueS9mRWZqSWxHaTltL1FoUXFWNkVqckF5Wm1oMmFt?=
- =?utf-8?B?elViWTNGeGFuVnRmQ1FmQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4557.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y2U2Wm04YUFtcVBPTjZ3cGtqeXlnWnUzM3E4eUZmQ3hxbWMvS2U1bTRMcHFR?=
- =?utf-8?B?NlZaamQwKzRrNzZWbjdyVDFZMlpHdnIvVVZFR2JEdU1CM0JpNmh3TjhQbFJ2?=
- =?utf-8?B?N3N1Y2o3Nk9udjVFaVEvdWt6eEtJa0dUMnFVU0ZuVHRoYjBaanNoemwrYi9s?=
- =?utf-8?B?N0ZZV0tIVVk2a0lnOUlBaG80Z1ZVK1MvWWlGbXZOS3J4UkpUWEEyRmRqZS8z?=
- =?utf-8?B?L1laUVFpZUdGazl6RWQ0RXA3ZzhQcFZvbVk4QTFDNW1JWlNoWElKa1hUbXl2?=
- =?utf-8?B?SEgyYWlUbTBlc2pRWDN1TFdLR3JKZHAzVFYrOHdGblg4VGUxSjBsSkIyYWtx?=
- =?utf-8?B?Uk9IMWwzWjVqSVZYWXdRell5QUkrM2oyTmpncHZoMVFSTWtaVzJ4KzlsOVlJ?=
- =?utf-8?B?MTdOeFAxTXF2NTV5Z0hQSldUWkRoZ2dJQjM3NXBiS2thNFd1RHlrRnN2bzA1?=
- =?utf-8?B?UzZ3eFRSWEh3bXNwbDFwMTlJWTFYUitFczFBUWhrUnpWQWQvVjBjcGYvWHgr?=
- =?utf-8?B?aXFBS3RxRzdyS3l1VUx3QW5ydmVHTGtSWnZydWVXbzMwQ0FwcHFuaUp5dVZO?=
- =?utf-8?B?QjNYUmlOckpuUUtUMWtmMEdEY1NJVFdaSWJjcDhHcUlNZHRLeFJhK2JCZnU4?=
- =?utf-8?B?aUV4Q05QK3lPUnk1cmZ2ZE95OUdyQkRTL2JoV0NUREwwUmxEU2xBamNKRlJM?=
- =?utf-8?B?bUVKNEVFdXc3c3VOQmI0QU9jODhBUytrcVJxMnI1WEFIcjBmOENJYzVnNGpn?=
- =?utf-8?B?bEtzRUZabStOMmZXSlVDNXRTZlNBNE5zaUYxVUxKVDFpWjlNVWFBQnRqRCtk?=
- =?utf-8?B?aEs5SjRlSHBRV0NvZkhTeXlSaDlnU3N6ZElsL05NdWFhOUs1aDgxcnNsMWtP?=
- =?utf-8?B?SEdVeGVRN3hobG1MeEdrNUc3SkNzUERzVzVFcFFURkNaTDJqYlhmL09TTHJr?=
- =?utf-8?B?OWt5OWU4czZydTMvbjdaMGgzU3hNNVluWWIxQWFvZ2lFRThJUXNsUWs5VWZj?=
- =?utf-8?B?ZGJIZStYWDd6MFEzekl0cGhkMUNOM29qREdENXNqdFUyWHB4RkVmK1ZWZTZ2?=
- =?utf-8?B?cEdXd2g3bms0Z2FTcmZWQWdPMzNPZFF2NGtBcEVRdmIxdGFhODluUlZTdDJG?=
- =?utf-8?B?V283aGJwdHhxTEhXdE8zaE41SzdGcUlFUHFJbFBjZlc3b0tRRkozWVVkZVNs?=
- =?utf-8?B?WmtNUi9ET3Rkdm5xTDhKRHVyblZ3bG5PSXc1a1hKMFRzcE5sazloamJldmpT?=
- =?utf-8?B?eEJuaUsxdFE3ckhmMlVCTzVXNlNoY1h3Zzdsb0hnVmI3M0NBZ3E4a3pDZmlz?=
- =?utf-8?B?dmsyVEtHUERDdmlwUTFwVjloMGVLa2l3WlUzQy8xc21pUk9BS2ZYWURmc1Uw?=
- =?utf-8?B?V3Ewckg0clh5NUdDYVV2Nm5DZDdNNmhtUm9pTE5BZ3NIM3hDejlqaWJMUm8z?=
- =?utf-8?B?NmhMK3RSNlVxOXAzVTYzUStRMUVwdWhBODRSb0pFSk9SSzFiV0dNVjdyT1Z3?=
- =?utf-8?B?OEVIclBCdkU4S2pPb09HbWhzZ2hoZFROcFlYeTA3L2hMcEk5cm5UQlJwNVZL?=
- =?utf-8?B?cm53NStuVEtuSHJmWU12bEVlL0Q0Z3FSdDB6TjlzdFZPdGw0M09vQ0ptK0FL?=
- =?utf-8?B?R01uUEdUNFdBampqQkhEQy9zSzRsQ0sza3lOUlVOSmVocCtkM05pZm9PU2li?=
- =?utf-8?B?bWhNWlRoOSt6cXh1MUlyY3E3aUxHVjZDa01iaDg3V1RSUmhsY0ZZeG5hUy8v?=
- =?utf-8?B?TGtWcDlrMjNBdG41Q1Y0ZW9nUVY2ZWhEK0wxODlFT1Mweks0bzVXVnBEZThE?=
- =?utf-8?B?Y1RSUEc4T3oxMGJ2RWJWUDNKb1c3OGdud0lwQ1p0a3JYc2NhY3A4R3JzMFFG?=
- =?utf-8?B?MmUzY0pwa25acmNXZTFSMHM5ZDBYNEZGL1l1bGpmYWJ3VWFBeU82bktoMmVn?=
- =?utf-8?B?NlF3U3Z3Q290bG5XN3RHdDZESDdZdFN4TVNycStYeWJDQ3pBS2NlTlFhZEVo?=
- =?utf-8?B?eEszR2grNloyNXBCZGdqMzNMWXB4b3BlZGV1eTNZdklua1hrREd6b25IS2hI?=
- =?utf-8?B?bkZuNy8zZlY3WnBZTW9CL3QwNTd1UFJ2RzVsWXl1WWsxUmhxcHZkZ0tZM2F1?=
- =?utf-8?Q?Xxlsv/oEHZ+0elqeAPs43XnKm?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec9c7544-02f6-4033-04b3-08dca5e934d4
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4557.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 22:47:01.4387
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3qvDG7NSxViFuLrCpWS4+NbQP0ftrTrlzGPLeFwWdZib0LVxMLG4o3Cf28nhrdLk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9031
+References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
+ <CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com>
+ <05e96873-12a9-4b1f-b1b3-1db7647211ce@amd.com> <CAP-5=fVXi3Pdtjaw++oRkYgubh-MDkRYf=2k7dNqE8s+jyQ+Ew@mail.gmail.com>
+ <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com>
+In-Reply-To: <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 16 Jul 2024 15:47:22 -0700
+Message-ID: <CAP-5=fXBYVH=qBJPm1d0-QEp8+HP3WtTLuukfF0g-2WU3gTofQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/11] Add per-core RAPL energy counter support for AMD CPUs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	kees@kernel.org, gustavoars@kernel.org, rui.zhang@intel.com, 
+	oleksandr@natalenko.name, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
+	ravi.bangoria@amd.com, sandipan.das@amd.com, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Tue, Jul 16, 2024 at 1:42=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
+>
+> Hello Ian,
+>
+> On 7/15/2024 8:52 PM, Ian Rogers wrote:
+> > On Mon, Jul 15, 2024 at 2:36=E2=80=AFAM Dhananjay Ugwekar
+> > <Dhananjay.Ugwekar@amd.com> wrote:
+> >>
+> >> Hello Ian,
+> >>
+> >> On 7/12/2024 3:53 AM, Ian Rogers wrote:
+> >>> On Thu, Jul 11, 2024 at 3:25=E2=80=AFAM Dhananjay Ugwekar
+> >>> <Dhananjay.Ugwekar@amd.com> wrote:
+> >>>>
+> >>>> Currently the energy-cores event in the power PMU aggregates energy
+> >>>> consumption data at a package level. On the other hand the core ener=
+gy
+> >>>> RAPL counter in AMD CPUs has a core scope (which means the energy
+> >>>> consumption is recorded separately for each core). Earlier efforts t=
+o add
+> >>>> the core event in the power PMU had failed [1], due to the differenc=
+e in
+> >>>> the scope of these two events. Hence, there is a need for a new core=
+ scope
+> >>>> PMU.
+> >>>>
+> >>>> This patchset adds a new "power_per_core" PMU alongside the existing
+> >>>> "power" PMU, which will be responsible for collecting the new
+> >>>> "energy-per-core" event.
+> >>>
+> >>> Sorry for being naive, is the only reason for adding the new PMU for
+> >>> the sake of the cpumask? Perhaps we can add per event cpumasks like
+> >>> say `/sys/devices/power/events/energy-per-core.cpumask` which contain=
+s
+> >>> the CPUs of the different cores in this case. There's supporting
+> >>> hotplugging CPUs as an issue. Adding the tool support for this
+> >>> wouldn't be hard and it may be less messy (although old perf tools on
+> >>> new kernels wouldn't know about these files).
+> >>
+> >> I went over the two approaches and below are my thoughts,
+> >>
+> >> New PMU approach:
+> >> Pros
+> >> * It will work with older perf tools, hence these patches can be backp=
+orted to an older kernel and the new per-core event will work there as well=
+.
+> >> Cons
+> >> * More code changes in rapl.c
+> >>
+> >> Event specific cpumask approach:
+> >> Pros
+> >> * It might be easier to add diff scope events within the same PMU in f=
+uture(although currently I'm not able to find such a usecase, apart from th=
+e RAPL pkg and core energy counters)
+> >> Cons
+> >> * Both new kernel and perf tool will be required to use the new per-co=
+re event.
+> >>
+> >> I feel that while the event-specific cpumask is a viable alternative t=
+o the new PMU addition approach, I dont see any clear pros to select that o=
+ver the current approach. Please let me know if you have any design related=
+ concerns to the addition of new PMU or your concern is mostly about the am=
+ount of code changes in this approach.
+> >
+> > Thanks Dhananjay, and thanks for taking the time for an objective
+> > discussion on the mailing list. I'm very supportive of seeing the work
+> > you are enabling land.
+> >
+> > My concern comes from the tool side. If every PMU starts to have
+> > variants for the sake of the cpumask what does this mean for
+> > aggregation in the perf tool? There is another issue around event
+> > grouping, you can't group events across PMUs, but my feeling is that
+> > event grouping needs to be rethought. By default the power_per_core
+> > events are going to be aggregated together by the perf tool, which
+> > then loses their per_core-ness.
+>
+> Yea right, maybe we need to fix this behavior.
+>
+> >
+> > I was trying to think of the same problem but in other PMUs. One
+> > thought I had was the difference between hyperthread and core events.
+> > At least on Intel, some events can only count for the whole core not
+> > per hyperthread. The events don't have a cpu_per_core PMU, they just
+> > use the regular cpu one, and so the cpumask is set to all online
+> > hyperthreads. When a per-core event is programmed it will get
+> > programmed on every hyperthread and so counted twice for the core.
+> > This at the least wastes a counter, but it probably also yields twice
+> > the expected count as every event is counted twice then aggregated. So
+> > this is just wrong and the user is expected to be smart and fix it
+> > (checking the x86 events there is a convention to use a ".ALL" or
+> > ".ANY" suffix for core wide events iirc). If we had a cpumask for
+> > these events then we could avoid the double setting, free up a counter
+> > and avoid double counting. Were we to fix things the way it is done in
+> > this patch series we'd add another PMU.
+>
+> Yes, this seems like a valid usecase for event-specific cpumasks.
+>
+> >
+> > My feeling is that in the longer term a per event cpumask looks
+> > cleaner. I think either way you need a new kernel for the new RAPL
+> > events. The problem with an old perf tool and a new kernel, this
+> > doesn't normally happen with distributions as they match the perf tool
+> > to the kernel version needlessly losing features and fixes along the
+> > way. If the new PMU is going to get backported through fixes.. then we
+> > can do similar for reading the per event cpumask. I'd be tempted not
+> > to do this and focus on the next LTS kernel, getting the kernel and
+> > tool fixes in as necessary.
+>
+> Makes sense, even though this approach will require more effort but it se=
+ems
+> to be worthwhile as it would help things down the line (make it easier to=
+ have
+> heterogenous-scope events within a PMU). I'll need to go through the perf=
+ tool
+> to see how we can design this. I'll get back with an RFC series probably =
+once
+> I have an initial design in mind.
 
-On 7/12/2024 5:14 PM, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/3/24 2:48 PM, Babu Moger wrote:
->> Introduce interface to switch between ABMC and legacy modes.
->>
->> By default ABMC is enabled on boot if the feature is available.
->> Provide the interface to go back to legacy mode if required.
->>
->> $ cat /sys/fs/resctrl/info/L3_MON/mbm_mode
->> [abmc]
->> legacy
->>
->> To enable the legacy monitoring feature:
->> $ echo "legacy" > /sys/fs/resctrl/info/L3_MON/mbm_mode
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
->> v4: Minor commit text changes. Keep the default to ABMC when supported.
->>      Fixed comments to reflect changed interface "mbm_mode".
->>
->> v3: New patch to address the review comments from upstream.
->> ---
->>   Documentation/arch/x86/resctrl.rst     | 10 +++++++
->>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 37 +++++++++++++++++++++++++-
->>   2 files changed, 46 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/arch/x86/resctrl.rst 
->> b/Documentation/arch/x86/resctrl.rst
->> index 11b7a5f26b40..4c41c5622627 100644
->> --- a/Documentation/arch/x86/resctrl.rst
->> +++ b/Documentation/arch/x86/resctrl.rst
->> @@ -291,6 +291,16 @@ with the following files:
->>       Without ABMC enabled, monitoring will work in "legacy" mode
->>       without assignment option.
->> +    * To enable ABMC feature:
->> +      ::
->> +
->> +        # echo  "abmc" > /sys/fs/resctrl/info/L3_MON/mbm_mode
->> +
->> +    * To enable the legacy monitoring feature:
->> +      ::
->> +
->> +        # echo  "legacy" > /sys/fs/resctrl/info/L3_MON/mbm_mode
->> +
-> 
-> Needs details on what user can expect to happen to counters/data when
-> switching between modes.
+Hi Dhananjay,
 
-Sure. Will add the details.
+I can have a go at the perf tool side of this - I probably know the
+way around the code best. Basically we need to do something similar to
+how other "<event>.<setting>" values are parsed:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n335
+The cpumask handling in the perf tool is a little weird as there is a
+summary value in the evlist. Anyway, I can do that if you want to spin
+the RAPL/power PMU side of things.
 
-> 
->>   "num_mbm_cntrs":
->>       The number of monitoring counters available for assignment.
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c 
->> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> index 475a0c7b2a25..531233779f8d 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -910,6 +910,40 @@ static int rdtgroup_num_mbm_cntrs_show(struct 
->> kernfs_open_file *of,
->>       return 0;
->>   }
->> +static ssize_t rdtgroup_mbm_mode_write(struct kernfs_open_file *of,
->> +                       char *buf, size_t nbytes,
->> +                       loff_t off)
->> +{
->> +    struct rdt_resource *r = of->kn->parent->priv;
->> +    int ret = 0;
->> +
->> +    if (!r->mon.abmc_capable)
->> +        return -EINVAL;
->> +
-> 
-> Why should a user not be able to write "legacy" into this
-> file if "legacy" is the only mode supported?
+Thanks,
+Ian
 
-Yes. Will fix it.
-
-> 
->> +    /* Valid input requires a trailing newline */
->> +    if (nbytes == 0 || buf[nbytes - 1] != '\n')
->> +        return -EINVAL;
->> +
->> +    buf[nbytes - 1] = '\0';
->> +
->> +    cpus_read_lock();
->> +    mutex_lock(&rdtgroup_mutex);
->> +
->> +    rdt_last_cmd_clear();
->> +
->> +    if (!strcmp(buf, "legacy"))
->> +        resctrl_arch_abmc_disable();
->> +    else if (!strcmp(buf, "abmc"))
->> +        ret = resctrl_arch_abmc_enable();
->> +    else
->> +        ret = -EINVAL;
->> +
->> +    mutex_unlock(&rdtgroup_mutex);
->> +    cpus_read_unlock();
->> +
->> +    return ret ?: nbytes;
->> +}
->> +
->>   #ifdef CONFIG_PROC_CPU_RESCTRL
->>   /*
->> @@ -2103,9 +2137,10 @@ static struct rftype res_common_files[] = {
->>       },
->>       {
->>           .name        = "mbm_mode",
->> -        .mode        = 0444,
->> +        .mode        = 0644,
->>           .kf_ops        = &rdtgroup_kf_single_ops,
->>           .seq_show    = rdtgroup_mbm_mode_show,
->> +        .write        = rdtgroup_mbm_mode_write,
->>       },
->>       {
->>           .name        = "cpus",
-> 
-> Reinette
-> 
-
--- 
-- Babu Moger
+> Thanks,
+> Dhananjay
+>
+> >
+> > Thanks,
+> > Ian
+> >
+> >
+> >> Thanks,
+> >> Dhananjay
+> >>
+> >>>
+> >>> Thanks,
+> >>> Ian
+> >>>
+> >>>
+> >>>> Tested the package level and core level PMU counters with workloads
+> >>>> pinned to different CPUs.
+> >>>>
+> >>>> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
+> >>>> machine:
+> >>>>
+> >>>> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- slee=
+p 1
+> >>>>
+> >>>>  Performance counter stats for 'system wide':
+> >>>>
+> >>>> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-co=
+re/
+> >>>>
+> >>>> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b1422886=
+8d@linux.intel.com/
+> >>>>
+> >>>> This patchset applies cleanly on top of v6.10-rc7 as well as latest
+> >>>> tip/master.
+> >>>>
+> >>>> v4 changes:
+> >>>> * Add patch 11 which removes the unused function cpu_to_rapl_pmu()
+> >>>> * Add Rui's rb tag for patch 1
+> >>>> * Invert the pmu scope check logic in patch 2 (Peter)
+> >>>> * Add comments explaining the scope check in patch 2 (Peter)
+> >>>> * Use cpumask_var_t instead of cpumask_t in patch 5 (Peter)
+> >>>> * Move renaming code to patch 8 (Rui)
+> >>>> * Reorder the cleanup order of per-core and per-pkg PMU in patch 10 =
+(Rui)
+> >>>> * Add rapl_core_hw_unit variable to store the per-core PMU unit in p=
+atch
+> >>>>   10 (Rui)
+> >>>>
+> >>>> PS: Scope check logic is still kept the same (i.e., all Intel system=
+s being
+> >>>> considered as die scope), Rui will be modifying it to limit the die-=
+scope
+> >>>> only to Cascadelake-AP in a future patch on top of this patchset.
+> >>>>
+> >>>> v3 changes:
+> >>>> * Patch 1 added to introduce the logical_core_id which is unique acr=
+oss
+> >>>>   the system (Prateek)
+> >>>> * Use the unique topology_logical_core_id() instead of
+> >>>>   topology_core_id() (which is only unique within a package on teste=
+d
+> >>>>   AMD and Intel systems) in Patch 10
+> >>>>
+> >>>> v2 changes:
+> >>>> * Patches 6,7,8 added to split some changes out of the last patch
+> >>>> * Use container_of to get the rapl_pmus from event variable (Rui)
+> >>>> * Set PERF_EV_CAP_READ_ACTIVE_PKG flag only for pkg scope PMU (Rui)
+> >>>> * Use event id 0x1 for energy-per-core event (Rui)
+> >>>> * Use PERF_RAPL_PER_CORE bit instead of adding a new flag to check f=
+or
+> >>>>   per-core counter hw support (Rui)
+> >>>>
+> >>>> Dhananjay Ugwekar (10):
+> >>>>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+> >>>>   perf/x86/rapl: Rename rapl_pmu variables
+> >>>>   perf/x86/rapl: Make rapl_model struct global
+> >>>>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
+> >>>>   perf/x86/rapl: Add wrapper for online/offline functions
+> >>>>   perf/x86/rapl: Add an argument to the cleanup and init functions
+> >>>>   perf/x86/rapl: Modify the generic variable names to *_pkg*
+> >>>>   perf/x86/rapl: Remove the global variable rapl_msrs
+> >>>>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
+> >>>>   perf/x86/rapl: Remove the unused function cpu_to_rapl_pmu
+> >>>>
+> >>>> K Prateek Nayak (1):
+> >>>>   x86/topology: Introduce topology_logical_core_id()
+> >>>>
+> >>>>  Documentation/arch/x86/topology.rst   |   4 +
+> >>>>  arch/x86/events/rapl.c                | 454 ++++++++++++++++++-----=
+---
+> >>>>  arch/x86/include/asm/processor.h      |   1 +
+> >>>>  arch/x86/include/asm/topology.h       |   1 +
+> >>>>  arch/x86/kernel/cpu/debugfs.c         |   1 +
+> >>>>  arch/x86/kernel/cpu/topology_common.c |   1 +
+> >>>>  6 files changed, 328 insertions(+), 134 deletions(-)
+> >>>>
+> >>>> --
+> >>>> 2.34.1
+> >>>>
 
