@@ -1,55 +1,45 @@
-Return-Path: <linux-kernel+bounces-253364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F33932014
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC00932015
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2511F22CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF6D1F229CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C83817BD2;
-	Tue, 16 Jul 2024 05:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="NWqxhtB7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B276617588;
+	Tue, 16 Jul 2024 05:33:29 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1469714265;
-	Tue, 16 Jul 2024 05:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F299A1C683
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721107879; cv=none; b=a4lnmAQrRI5LImIIeECFSNE++6k7t2vllkYk/rVSddZCagb1ZuFtNuIo+EKTxt+riJjvWUX/Rx0fTG/AZxEoccwl9zqUiYgKB6QCTKNtd/OEvEl0MfuAsr0V9ZWQ15JP3E67Sdws15af9qklGHte4orq3BhkwDFlUc3wTeUwoug=
+	t=1721108009; cv=none; b=GF0d/enNmtJoP0AXHOham+lS5rTfJTN9QBr9CfkWLJmp0AQiziV4hWtAajcDZZusKpJaE19C02Rt3tNQ/EReV9j6b+06aq/z/Py1DIVfkI/MEWlmTPahWni6aT0ccgpltOdVhfHDxXfZCA5nC7+ocJrh5r+POq+s79I97WCxdKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721107879; c=relaxed/simple;
-	bh=GEA9ENbhZWGDPmMJssjlNHfB+SDxG7pIhtmGNTTI+GU=;
+	s=arc-20240116; t=1721108009; c=relaxed/simple;
+	bh=nCckyQVSl9RWFzxpXeWMuMmk9rCbqGobkRXB/sbEGTw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GrIIUXkDu/4J/EaCSwuhHymEgOmYemnNsyXklOZfr6hPX8bYdhXWC++XzOxrbxuD/i+U6WrXGsoTFXJDzFELk0MSkhoARImng4WSizCIB570YjIA+T+WmXjp5+UdtlxajNDIoXA0LLt+GdmNv+5f0SMjUKb1sWRiuVNNykFQEOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=NWqxhtB7; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1721107833; x=1721712633; i=wahrenst@gmx.net;
-	bh=GEA9ENbhZWGDPmMJssjlNHfB+SDxG7pIhtmGNTTI+GU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=NWqxhtB7pWdhEg0wv9oAOJLva/dtCLW3J0lKRFabPWVxsVo3nuT0U56OvnNQGvAS
-	 mpjUmc89IhVGpZ/0X6mhaQbyRk3hRvq3XVSJUDKj5ITezhOa0zxKPh83W/Vaak6wX
-	 H5xrZWIHmaPFiB0Q7PIak0tBHjjD+1AdF3WutqJS5B9f4mDvjYhlWEvdXRvCdYC7H
-	 dFQDTrd6lQHVUZ3dGpnW++hUBSreyXRCk9h0Jb9I3dgAahQH3IC/Klm1z+pnF9qjJ
-	 JrVn9C5lRIiqPT9jdnFD0MusE0kvbOwW7miiV4F5UHMVSpiwXk9p7LxZwNV0Tgk7A
-	 KbhQPZ1jLrMG3UDYgQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mzyuc-1s6AIR0tfC-014AaU; Tue, 16
- Jul 2024 07:30:33 +0200
-Message-ID: <e3872f3a-9736-4507-bbd3-2ad7698562b4@gmx.net>
-Date: Tue, 16 Jul 2024 07:30:32 +0200
+	 In-Reply-To:Content-Type; b=ThhtBpj5JYa+qjulrhqOHdfypl3r0BBGej1MFNvo6IYC1CJDHlSMGK1NFR8hv85rLOMzxshL4OAsT7o34KAD0krhzaIuACAwD/gFDDC0Znvrm+Yix3wq20l94Km+gHbaj/3gcC4pXvbhXD/V8h2nJpDf+zhSXzrHqZzzzBufArw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WNSKC6PhVzxSnk;
+	Tue, 16 Jul 2024 13:28:31 +0800 (CST)
+Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
+	by mail.maildlp.com (Postfix) with ESMTPS id 362E81403D1;
+	Tue, 16 Jul 2024 13:33:22 +0800 (CST)
+Received: from [10.45.179.188] (10.45.179.188) by
+ kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 16 Jul 2024 13:33:20 +0800
+Message-ID: <e1297077-8ab3-4bc7-a713-c0d81eda5d97@huawei.com>
+Date: Tue, 16 Jul 2024 13:32:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,91 +47,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: bcm283x: Fix hdmi hpd-gpio pin
-To: Florian Fainelli <f.fainelli@gmail.com>, Florian Klink
- <flokli@flokli.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240715230311.685641-1-flokli@flokli.de>
- <f178aa92-d91c-406d-9fea-1021bfb99f55@gmail.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <f178aa92-d91c-406d-9fea-1021bfb99f55@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ov6tpBP0d2OFeSZwwZ/gm/qKTDUvkrxB64dYB53gJH6A3CIFuKK
- VrydRCopr9lL7w+BEINTmhGfq4sSUgKMLhaUgmNbOcFvVmRD4PZxjCcO4RVQ7arwOMTEi0I
- Ry8a0TqX7+djp0WFFS7cl5w3vUzS6nzJiJejjfUdvtLPRp/mXAELrgRJFfDPvLjAmBU3Ds3
- UUZS0nreajzeEJi+0GpxA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z30lAduWNCE=;fV0L35pAK3O51tYS5ZEfPlO5vJa
- tckhRHNLsxgh4GhkULVhwz7YfyqMrY9wlsfGX6D38W2TwTLgeh/YP21MzG2k26maw3ksEju14
- BezV1wUyq9ZDurBss4Cc4HOvOZJVTiBXrGT948NTSvDSO8PpyPwG4cAcO7Pj2MSMzUlqjU2IF
- TuIBVXNE/pD0iIUmwqks635Rqvun4TyCI/bnqD03uFA1Rb50rfjPen7VrE8Qdp7lA9FTJGOUm
- 8Offb0K7m5NL0t2iwJ1Y81s2r4R1KczeVObdHN+WiwDxoimGNTXO5mn7x+kfPsnIyzChoNumO
- 5Rgdaxc5lgL/JhgDJgLIOWmbjyQ70nRQg8FeTmaY3LUp0oUJClQpufU0nUxMCiURdH6CnbOta
- bzMA/iPrvMD15fBhOeM3xQh/qij1rh7IyqAwMH7tZEU1/Q09bPyCYpEolfSjZLr2BLLWYRfIz
- tI7b2/8xZnkZGENcNQua7KQf4k/pDvO9hinrb7mNCTZesF3mYmYprQJFSFKCzH6bN4JRsYIvM
- IGqc2gkNk+3w5C1+4bWtDfTwwpCHQpYzYEGGTVraPQ9xztHHiGa5qPD0gXhB6/An+yYNCKfLY
- H+nQmkWxL9ovXs37wth7NyThaBdkk6U6DnW+CGWlN7amhP/ENDBbKpFaRjxBtjfOYEidLyUE/
- IIwW9ix5FvnxjDIpRJflyFmTdQRFsrYXjFH5j/ecNN7PfAywgnt+FmktjI0m+gK23U3BWmq7X
- sqLrprHTX4r+Sj7pOxpf2cWHwhAULSJ7I60cQcKtCir0xjAYR4bsnj1wfwH+YHshxqib/RWLx
- nCo0xm3m97Mfax0HTC2Emr/w==
+Subject: Re: [PATCH v2] sched: Initialize the vruntime of a new task when it
+ is first enqueued
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <Markus.Elfring@web.de>,
+	<linux-kernel@vger.kernel.org>
+References: <20240627133359.1370598-1-zhangqiao22@huawei.com>
+From: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>
+In-Reply-To: <20240627133359.1370598-1-zhangqiao22@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200007.china.huawei.com (7.202.181.34)
 
-Hi,
+Ping 🙂
 
-Am 16.07.24 um 01:19 schrieb Florian Fainelli:
-> +Stefan,
+
+
+在 2024/6/27 21:33, Zhang Qiao 写道:
+> When creating a new task, we initialize vruntime of the newly task at
+> sched_cgroup_fork(). However, the timing of executing this action is too
+> early and may not be accurate.
 >
-> On 7/15/24 16:03, Florian Klink wrote:
->> HDMI_HPD_N_1V8 is connected to GPIO pin 0, not 1.
->>
->> This fixes HDMI hotplug/output detection.
->>
->> See https://datasheets.raspberrypi.com/cm/cm3-schematics.pdf
->>
->> Signed-off-by: Florian Klink <flokli@flokli.de>
+> Because it uses current CPU to init the vruntime, but the new task
+> actually runs on the cpu which be assigned at wake_up_new_task().
 >
-> Assuming Stefan is OK wit the change, I will apply this along with a:
+> To optimize this case, we pass ENQUEUE_INITIAL flag to activate_task()
+> in wake_up_new_task(), in this way, when place_entity is called in
+> enqueue_entity(), the vruntime of the new task will be initialized.
 >
-> Fixes: a54fe8a6cf66 ("ARM: dts: add Raspberry Pi Compute Module 3 and
-> IO board")
-thanks for fixing and i'm fine with this change. The GPIO line names are
-already correct.
-
-Maybe the subject should be more specific:
-
-ARM: dts: bcm2837-rpi-cm3-io3: Fix HDMI hpd-gpio pin
-
-Except of this:
-
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
-
-Regards
+> In addition, place_entity() in task_fork_fair() was introduced for two
+> reasons:
+> 1. Previously, the __enqueue_entity() was in task_new_fair(),
+> in order to provide vruntime for enqueueing the newly task, the
+> vruntime assignment equation "se->vruntime = cfs_rq->min_vruntime" was
+> introduced by commit e9acbff6484d ("sched: introduce se->vruntime").
+> This is the initial state of place_entity().
 >
->> ---
->> =C2=A0 arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts | 2 +-
->> =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
->> b/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
->> index 72d26d130efa..85f54fa595aa 100644
->> --- a/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
->> +++ b/arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts
->> @@ -77,7 +77,7 @@ &gpio {
->> =C2=A0 };
->> =C2=A0 =C2=A0 &hdmi {
->> -=C2=A0=C2=A0=C2=A0 hpd-gpios =3D <&expgpio 1 GPIO_ACTIVE_LOW>;
->> +=C2=A0=C2=A0=C2=A0 hpd-gpios =3D <&expgpio 0 GPIO_ACTIVE_LOW>;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 power-domains =3D <&power RPI_POWER_DOMA=
-IN_HDMI>;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> =C2=A0 };
+> 2. commit 4d78e7b656aa ("sched: new task placement for vruntime") added
+> child_runs_first task placement feature which based on vruntime, this
+> also requires the new task's vruntime value.
 >
+> After removing the child_runs_first and enqueue_entity() from
+> task_fork_fair(), this place_entity() no longer makes sense, so remove
+> it also.
+>
+> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
+> ---
+> v2:
+> Improve comments and commit log.
+>
+> v1: https://lore.kernel.org/lkml/20240606121133.2218723-1-zhangqiao22@huawei.com/
+> ---
+>   kernel/sched/core.c |  2 +-
+>   kernel/sched/fair.c | 15 ---------------
+>   2 files changed, 1 insertion(+), 16 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index bcf2c4cc0522..b4ff595a2dc8 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4897,7 +4897,7 @@ void wake_up_new_task(struct task_struct *p)
+>   	update_rq_clock(rq);
+>   	post_init_entity_util_avg(p);
+>   
+> -	activate_task(rq, p, ENQUEUE_NOCLOCK);
+> +	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
+>   	trace_sched_wakeup_new(p);
+>   	wakeup_preempt(rq, p, WF_FORK);
+>   #ifdef CONFIG_SMP
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8a5b1ae0aa55..bb5f376fd51e 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12702,22 +12702,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+>    */
+>   static void task_fork_fair(struct task_struct *p)
+>   {
+> -	struct sched_entity *se = &p->se, *curr;
+> -	struct cfs_rq *cfs_rq;
+> -	struct rq *rq = this_rq();
+> -	struct rq_flags rf;
+> -
+> -	rq_lock(rq, &rf);
+> -	update_rq_clock(rq);
+> -
+>   	set_task_max_allowed_capacity(p);
+> -
+> -	cfs_rq = task_cfs_rq(current);
+> -	curr = cfs_rq->curr;
+> -	if (curr)
+> -		update_curr(cfs_rq);
+> -	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
+> -	rq_unlock(rq, &rf);
+>   }
+>   
+>   /*
 
 
