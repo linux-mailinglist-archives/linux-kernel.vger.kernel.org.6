@@ -1,205 +1,166 @@
-Return-Path: <linux-kernel+bounces-254549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116649334A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0439334A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FF21C225F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B961F21542
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3B11442E8;
-	Tue, 16 Jul 2024 23:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F043A1442E8;
+	Tue, 16 Jul 2024 23:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqqXO6vt"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C+sTG0f2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F146F079
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7E86F079;
+	Tue, 16 Jul 2024 23:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721173381; cv=none; b=hWJsJJd3Cx7QFi1mh+n3wMsDrvUoXhj6N1bI9UMPazSadPe+wy2Q47sthzZjSFGjMIpMlaJMxDLzYvDI3ejcguJD6VsqZzFLgzibgo8SkRQeedEDU0oL0+KlLsvjjy6qGbT5JBrHVmojizepe9r+QyqfGkMHdfpFU66jexSq82c=
+	t=1721173439; cv=none; b=neiP833SWfZtnCekoJRqvLOTLum4YtEybwbjDNxbV3QW0QO5nEUetFsx/EoPpWCBcFBhuZzRPeEjR//JBgTRMjnijvKsg/MEDjOttVD+v8eJ6CQry1nrv2X8TZ4Ta5JwKk2aNGaNHaz8A4LPePEg0B6wEhdbscTkZkVmrbVqYC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721173381; c=relaxed/simple;
-	bh=U4CreDnCs9YPeisW/eCWgyMYBTlTYVg5mz6bOZK23wE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NV8dQGvEeLgWQqSK+tdcyLdLqXZ48Rj05TSrWZpbylfeW0u9cCwoh5jUEJToRS48iCxuBeWJ4QvIogImzaqSWQ+2Tz/TJrdMxZdWQt7qtGfYsZRCwoKe4fhZTqzM04N6JgPAIsoAstg95HSp3gmybmk/3WxWGh60ipjTaFz4Yog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eqqXO6vt; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65f8b0df1f0so35670287b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721173378; x=1721778178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdx0WrTJA3HLe4B/c0rt0W2OYcQp3lvzc1IIRVfiSI0=;
-        b=eqqXO6vtV6sj5Z0Ng7E6GVqeqXvbKfjFkyAUES5FbaeRRU29vTRKbGH7cR6Jbbwnrj
-         Jqq5EbgUBnFaYmvR1mBoc+38yU5ZQSR/yHwLBqsGVlMBwqA7BqcdfT60YvGTjQpSyfwE
-         CnAvsq/CK9Wd4Jkby07T8fEINPLiTC3fQP3AB8+dvSSB4SVCz01hI2dcBxysS14Qfew7
-         fZvlH1iyggvK4lWGVXQYN5xxrds5Nw/wYYahs0WZmlU3PeApSqggZTNlSeJJ0JWmHMun
-         97sV6jQDgVNDK64vt24KjZ6OGPxsPpgCSAVolKgoMGSxbMsI902y7M2qWOKB1Cc4o9jj
-         GGbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721173378; x=1721778178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdx0WrTJA3HLe4B/c0rt0W2OYcQp3lvzc1IIRVfiSI0=;
-        b=i32GXywLSzrpituV5FgzK9uBlxljQKEkD4BiyInn6YTmayYJS3EeYdyi6Ip3ZVjY6v
-         BySO8oBJ+U0R9UsRBxV9utiVuv+x3YRjRsd/ePJ11RgBAkZWuFlNyQisiohLaMS9irbB
-         QeUCToUtU/9KgEQMu/SfJXWb4OYOCHvy8zBEAIERKC6UQ3sveLg3G8vL7AB6WKKcwsdY
-         ZYaCXoGdiIqnV6LlVnsxjKj24ZKkWM0JCOGUOXJ8vVHOdZMQNDjNl2BgVgk+1QdRXaF0
-         /2O4oGNFZcX5gwZwoLsc3mdMsHVmOEdUn1dbY0Ght62xDYWfY5C9jirInXnTuMkgK/zg
-         evPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLx5x5eRanVGWV+hiFjzw7vt0pA10lim2lZ3HTA9yq4N43YIuoR0tzH/ewa+yHm3W5Tb4soDMDE46QnQZIjm4S154Dotv5NPsqwT+
-X-Gm-Message-State: AOJu0YwYlanCIIVAVttJ6couk8JODieiY9/pu7YDWLbtpyEtH81RU8J3
-	des/cKGMIfBR/xkqcEpgk9WJgfKYlXgVEy82j9A0U343peeeutBu3dRl0epI4gqnwv36IaSMxJ/
-	hFV09iYFrzHsiccwxGFaLsFBB2kgAT2fwB3CRBw==
-X-Google-Smtp-Source: AGHT+IEbqyDEFCrlR4xZQuknxtqbab+UfGCCmomcF2ZpZpJc3MJzA97KvniYAqlPDbzdPnbRG9F/Ih49/ciL+gHMBnE=
-X-Received: by 2002:a0d:d387:0:b0:65c:2536:bea2 with SMTP id
- 00721157ae682-664fe357ac1mr1641717b3.19.1721173378606; Tue, 16 Jul 2024
- 16:42:58 -0700 (PDT)
+	s=arc-20240116; t=1721173439; c=relaxed/simple;
+	bh=JAgdu+9OpTZPi2IVaMQAqtoBaYEPT5bMQjn0wMqPYrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E2SbfoUGE9zl5OYoza7zp0F3OpFyqqkj87HEfEddhmnYsRjPAqwI/nTrtjQqt4J7RMUephcQwuhlTYez+I9zIWC++nnyaIAJ/T8AIRA4rI8omH3MZVGV6Y/w8c+MkW8gx4kog3vHlvlPmuUakwA5K5cJnGXAAukirenVRBZlQqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C+sTG0f2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHf5TC027012;
+	Tue, 16 Jul 2024 23:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N3QJ5/o/wDR3TZtIE94AfbmLbVWg1q+EHZ/P1r1AiVg=; b=C+sTG0f2IMrnTAlx
+	4lk2QaJ4v/CcGvT5+BB4BGpLGPxpFumq8mOwZ8gnPNZInGHl+N6YXUaLmbKzDLHj
+	2K7veyXTejKeunE66CPV9GkvVW4D2OGsK3W7xkpAf9hFrmAr+7eMDLDSMOuk7C5F
+	4q0u2R2TYxypbZW1hi/eQMdk2YRi99/EQfzNwIO/fOCoT/bRKwkD1tyJm9IrZ5iq
+	qf8w0m1c/zcyLLh7Ejuu2P/X/E3PhZyUkRXC78ctdGuN3o4vAB/mzO4Rj5ky2O/f
+	9WskK7p8+NlIZgiGcwRgyczAVyL4JBR8p8c7KBE715OiYWbcWfSPPUteyC7z9Ull
+	NFaZVw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs0m4r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 23:43:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GNhZE5003908
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 23:43:35 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
+ 2024 16:43:34 -0700
+Message-ID: <7145cd8e-590a-4260-a738-dc1a386e7787@quicinc.com>
+Date: Tue, 16 Jul 2024 16:43:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
- <20240628214848.4075651-6-quic_abhinavk@quicinc.com> <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
- <CAF6AEGtVBarvEUqgt7SHzYwXUsjY_rVQS6aMsN00G91Dr1aWAQ@mail.gmail.com>
- <cf8d00cd-6dc6-42b9-be61-93ef48d42b0c@quicinc.com> <CAF6AEGv2H2FQ4wCWEzgboK0Lz3em-0XkG5pe_HwN1rW2iaGVrw@mail.gmail.com>
- <6460042b-a2cb-41fa-9f6f-fb11e20f69aa@quicinc.com> <CAA8EJprmi9zxEipq=0LyBi4nJ59BrLgN1sL+3u7-n9kJ3yQcRg@mail.gmail.com>
- <d7905aa1-67fa-4468-b3ce-69c7aa4ec5e5@quicinc.com>
-In-Reply-To: <d7905aa1-67fa-4468-b3ce-69c7aa4ec5e5@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 02:42:47 +0300
-Message-ID: <CAA8EJprFNXpO568hwNwJvHY_NmcHJxJECe4v3O+ONp17v1Q_iw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] drm/msm/dpu: rate limit snapshot capture for mmu faults
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, freedreno@lists.freedesktop.org, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	quic_jesszhan@quicinc.com, swboyd@chromium.org, dianders@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] nvmem: layouts: add U-Boot env layout
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Walle
+	<michael@walle.cc>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        <devicetree@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-boot@lists.denx.de>,
+        <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+	<rafal@milecki.pl>
+References: <20240715135434.24992-1-zajec5@gmail.com>
+ <20240715135434.24992-2-zajec5@gmail.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240715135434.24992-2-zajec5@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HjDUvP7cKZSBjai9_qJv7ION5Anjs5h9
+X-Proofpoint-GUID: HjDUvP7cKZSBjai9_qJv7ION5Anjs5h9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-16_02,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=956
+ impostorscore=0 mlxscore=0 phishscore=0 suspectscore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407160174
 
-On Wed, 17 Jul 2024 at 02:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wro=
-te:
->
->
->
-> On 7/16/2024 4:10 PM, Dmitry Baryshkov wrote:
-> > On Wed, 17 Jul 2024 at 01:43, Abhinav Kumar <quic_abhinavk@quicinc.com>=
- wrote:
-> >>
-> >>
-> >>
-> >> On 7/16/2024 2:50 PM, Rob Clark wrote:
-> >>> On Tue, Jul 16, 2024 at 2:45=E2=80=AFPM Abhinav Kumar <quic_abhinavk@=
-quicinc.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 7/15/2024 12:51 PM, Rob Clark wrote:
-> >>>>> On Mon, Jul 1, 2024 at 12:43=E2=80=AFPM Dmitry Baryshkov
-> >>>>> <dmitry.baryshkov@linaro.org> wrote:
-> >>>>>>
-> >>>>>> On Fri, Jun 28, 2024 at 02:48:47PM GMT, Abhinav Kumar wrote:
-> >>>>>>> There is no recovery mechanism in place yet to recover from mmu
-> >>>>>>> faults for DPU. We can only prevent the faults by making sure the=
-re
-> >>>>>>> is no misconfiguration.
-> >>>>>>>
-> >>>>>>> Rate-limit the snapshot capture for mmu faults to once per
-> >>>>>>> msm_kms_init_aspace() as that should be sufficient to capture
-> >>>>>>> the snapshot for debugging otherwise there will be a lot of
-> >>>>>>> dpu snapshots getting captured for the same fault which is
-> >>>>>>> redundant and also might affect capturing even one snapshot
-> >>>>>>> accurately.
-> >>>>>>
-> >>>>>> Please squash this into the first patch. There is no need to add c=
-ode
-> >>>>>> with a known defficiency.
-> >>>>>>
-> >>>>>> Also, is there a reason why you haven't used <linux/ratelimit.h> ?
-> >>>>>
-> >>>>> So, in some ways devcoredump is ratelimited by userspace needing to
-> >>>>> clear an existing devcore..
-> >>>>>
-> >>>>
-> >>>> Yes, a new devcoredump device will not be created until the previous=
- one
-> >>>> is consumed or times out but here I am trying to limit even the DPU
-> >>>> snapshot capture because DPU register space is really huge and the r=
-ate
-> >>>> at which smmu faults occur is quite fast that its causing instabilit=
-y
-> >>>> while snapshots are being captured.
-> >>>>
-> >>>>> What I'd suggest would be more useful is to limit the devcores to o=
-nce
-> >>>>> per atomic update, ie. if display state hasn't changed, maybe an
-> >>>>> additional devcore isn't useful
-> >>>>>
-> >>>>> BR,
-> >>>>> -R
-> >>>>>
-> >>>>
-> >>>> By display state change, do you mean like the checks we have in
-> >>>> drm_atomic_crtc_needs_modeset()?
-> >>>>
-> >>>> OR do you mean we need to cache the previous (currently picked up by=
- hw)
-> >>>> state and trigger a new devcores if the new state is different by
-> >>>> comparing more things?
-> >>>>
-> >>>> This will help to reduce the snapshots to unique frame updates but I=
- do
-> >>>> not think it will reduce the rate enough for the case where DPU did =
-not
-> >>>> recover from the previous fault.
-> >>>
-> >>> I was thinking the easy thing, of just resetting the counter in
-> >>> msm_atomic_commit_tail().. I suppose we could be clever filter out
-> >>> updates that only change scanout address.  Or hash the atomic state
-> >>> and only generate devcoredumps for unique states.  But I'm not sure
-> >>> how over-complicated we should make this.
-> >>>
-> >>> BR,
-> >>> -R
-> >>
-> >> Its a good idea actually and I would also like to keep it simple :)
-> >>
-> >> One question, is it okay to assume that all compositors will only issu=
-e
-> >> unique commits? Because we are assuming thats the case with resetting
-> >> the counter in msm_atomic_commit_tail().
-> >
-> > The compositors use drm_mode_atomic_ioctl() which allocates a new
-> > state each time. It is impossible to re-submit the same
-> > drm_atomic_state from userspace.
-> >
->
-> No, what I meant was, is it okay to assume that a commit is issued only
-> when display configuration has changed?
+On 7/15/24 06:54, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
+> 
+> U-Boot environment variables are stored in a specific format. Actual
+> data can be placed in various storage sources (MTD, UBI volume, EEPROM,
+> NVRAM, etc.).
+> 
+> Move all generic (NVMEM device independent) code from NVMEM device
+> driver to an NVMEM layout driver. Then add a simple NVMEM layout code on
+> top of it.
+> 
+> This allows using NVMEM layout for parsing U-Boot env data stored in any
+> kind of NVMEM device.
+> 
+> The old NVMEM glue driver stays in place for handling bindings in the
+> MTD context. To avoid code duplication it uses exported layout parsing
+> function. Please note that handling MTD & NVMEM layout bindings may be
+> refactored in the future.
+> 
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+> This change was originally sent (and approved by Miquel) as a
+> [PATCH V3 6/6] nvmem: layouts: add U-Boot env layout
+> 
+> I just adjusted it to the approved binding and updated commit message.
+> I kept Miquel's Reviewed-by tag due to minimal changes.
+> 
+> I've successfully tested this code using it in both ways: as NVMEM
+> device driver & NVMEM layout.
+> 
+>   MAINTAINERS                        |   1 +
+>   drivers/nvmem/Kconfig              |   3 +-
+>   drivers/nvmem/layouts/Kconfig      |  11 ++
+>   drivers/nvmem/layouts/Makefile     |   1 +
+>   drivers/nvmem/layouts/u-boot-env.c | 203 +++++++++++++++++++++++++++++
+>   drivers/nvmem/layouts/u-boot-env.h |  15 +++
+>   drivers/nvmem/u-boot-env.c         | 158 +---------------------
+>   7 files changed, 234 insertions(+), 158 deletions(-)
+>   create mode 100644 drivers/nvmem/layouts/u-boot-env.c
+>   create mode 100644 drivers/nvmem/layouts/u-boot-env.h
+> 
+...
 
-No.
+> +module_nvmem_layout_driver(u_boot_env_layout);
+> +
+> +MODULE_AUTHOR("Rafał Miłecki");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DEVICE_TABLE(of, u_boot_env_of_match_table);
 
-> Like if we get multiple commits for the same frame for some reason,
-> thats also spam and this approach will not avoid that.
+Is this missing a MODULE_DESCRIPTION()?
 
-I'd say, new commit means that userspace thinks that something
-changed. So if the driver got another hang / issue / etc, it should
-try capturing a new state.
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the 
+description is missing") a module without a MODULE_DESCRIPTION() will 
+result in a warning with make W=1.
 
---=20
-With best wishes
-Dmitry
+I'll hopefully have all existing warnings fixed in 6.11 so please avoid 
+adding new ones :)
+
+/jeff
 
