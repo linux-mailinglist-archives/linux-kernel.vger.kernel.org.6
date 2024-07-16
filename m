@@ -1,145 +1,218 @@
-Return-Path: <linux-kernel+bounces-254060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E91A932CFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:59:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6C3932D45
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF15E281DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF9F1C222AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BBF19E7C8;
-	Tue, 16 Jul 2024 15:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAF019E822;
+	Tue, 16 Jul 2024 16:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WY0JRKAh"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mX8mJtYc"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844E119DF71
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C719B59C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721145590; cv=none; b=gnCslG9nMFDBB7+nEyDftT0CGV/H5i4Y8ocIj8NsNWOQjUnmPuyWP6yLk+uLmuZtPivHwfsKQ0obU+sT7RJmc271XdVrqlSzY9NAz6Rwkkp1NLz+/imve2R3ukIWkC8es78b7KA7BsxzXSRBbRYGy+luQNlPOp4tdpd6VRxmOk4=
+	t=1721145783; cv=none; b=Qfp1/ZiWQwpq0Ed+RgCL6YcKP4p1RDD8RF26suaDJnmyjjCa3HsQZz/sqRsMXwGzsq5L0YftR3cn8uM1hvaN2QRpfihHDPyhPrlFZJrP22N/+NfrABuiAyA/wyS3OB1lMEsL1gOSpWfsRNSJvjkIaUnXuqnWE4b85vYhQSTAjv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721145590; c=relaxed/simple;
-	bh=/f9cEEl/8MayIBFDh5qE7G73v8hj1iS5ECJxNgSsu4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GC0OLM4Bxx4FXDyaVhzTn31MMFcst8/BRP9IbLVyvFvWdxKvifRS9zmxKdAxaBMJ4LNWPFTmG6ilib9BMoPZq4Leh6EnExjzemgp1A3mUydT+s4YMFkBd0HozT8IoAtlsKYoGKnHylyQW5n9D54XKcLMPa6RRrouGaJ31ykLDt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WY0JRKAh; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c964f5a037so3740339a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:59:48 -0700 (PDT)
+	s=arc-20240116; t=1721145783; c=relaxed/simple;
+	bh=V3XIltUZy+EAGhbi36SoKcnYH8QOpAigc2QQmc3zTsw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HIxy/vyTIuO3mh5eqzhMmkKxR9STfObtwdCgPD63PC/zkrOlviZpj2AmzHu4qGlKf6t68LcSZLMScv60S1PMQESR8katacB/AoGruJRyG0uvNRcvg/CVSwK6JjOuIrfQ68HVL4AHCjB+lyKv4cHybcYr55iO6oslvGonfiKHJFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mX8mJtYc; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6522c6e5ed9so111628047b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:03:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721145588; x=1721750388; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kl3Jx4H/WoP0kRmoJKehZi92SYKLfR+SxVfx7nbEybM=;
-        b=WY0JRKAhQJVDB1jbkAmT9dTD1ZuzxGieKRzJMbonixWI6s2iQwjMKDeI3J+PqPs13i
-         WENE5IPFrJviymrNeJJ9LOjZ89TGAdWi0uNoox+M/HVutjVTmJlRuOTPGrvd5LxctLzr
-         rwnkUQwOEEeV8IWEMHEbtfbNgCgTL+BXfGJ7//40qDadj29Sj+v1oju/McmpomAITMBx
-         sC5ea/kxhSBdKpeL1779ei8dObvoAQSoZEF9ltCrU2GI+PUcw380bDUXzmF8BfMIZNpz
-         8RAFUN5KcCzTwLEjdF7008WSgdgHkZ+px/j329CNb4vkWjPMGxYlbWqw8ZCPr7DjU0bC
-         p3iw==
+        d=google.com; s=20230601; t=1721145781; x=1721750581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BMs2wY7Im2gJwcvsvkhutz6yojdHTU9eBYvDppSee3o=;
+        b=mX8mJtYcq9zluHtVnzREhZxbiiULi7i2I+mJi4Mt08+GskaWUHf5gWVjXt5W27r0kS
+         weqAWKColS7fzPZ/XyCf6qTaU0n4l/g7QwS3RhBGURMGs/LVEzq36zwElFVxRZhLx7lw
+         WM4Qhv+0Ncj+0SqxX5NvtCupt3zX+r1L0TUqx6Iuu9YGo1CYTh0XeX1iRlwd2+DQNEty
+         BbckODM0k85fY+vvYTBvHD9S4Fdwdn6B6PX51Nl5yJXu8bXWlahlEPRa6AKnEg7ZRT/y
+         t2h3IS26gKTSfcnSeOM5iK4Iojjn4cq2rHi+vxzF1YUGVruUttEyEf7Gx19q0X5j/I5I
+         sVbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721145588; x=1721750388;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kl3Jx4H/WoP0kRmoJKehZi92SYKLfR+SxVfx7nbEybM=;
-        b=TPn/wYcvgwUE2nhtZP8Cy1mnmhL63o5mmDrsHm5miksdhm6BUsoWhFfuLI8mkk4goe
-         x76L95qns1aIzDQ6tDxC53gf5XrMPdokHj/SlAokDyo2EQMj3JYS9la+QdU8LPyBuA8S
-         OOMoiWyaI+IMsEYP1VT6iPMPxA1gOqYI9+62eUBEMFQ++mjJlcfGxvydoBBLTGTrkLcT
-         hbBoNf/ZvOvf0LgMVRMl7nbJxrZp7x0RB1pRD52e4cQ9qRnRAlvuSLva1jxXjB8t2rLZ
-         bT6WBj+kEmnKMtHRfZtgmQPsGMXg/IBBH3RdBLQysC4jygrXHZLNkbxy3K0p1jIO9Cpb
-         O7IA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0AMGkkRDsWnXiIflVxqt4FFljMgKOhhZvdKVoHKoZlO27zdgRUCfgQrPyazvq64Wr6SNG0MVShTbtAy+lt0G3yrxtWsWP0bDFjcLk
-X-Gm-Message-State: AOJu0Yy3ahvM6mHuiNz/RH/C5UQeL9tRygaJjOyYDwtimh+NtsXpxMZs
-	4NY2GMlEjYaGWXyWTx+Q8adJAoka9EnQRyMNDWgW8DqrDopZgqGxG1OuG6IEZXK67HbjuYq7Fto
-	=
-X-Google-Smtp-Source: AGHT+IHHz98ceVJ8T5HzQt1BnBw5Awqzt0u6lGO5YK4BDL0d0/bxDwtAIk26dAssJfi7VGkM8sJGdw==
-X-Received: by 2002:a17:90b:4c8a:b0:2c9:63ef:95b9 with SMTP id 98e67ed59e1d1-2cb37402065mr1970857a91.14.1721145587606;
-        Tue, 16 Jul 2024 08:59:47 -0700 (PDT)
-Received: from thinkpad ([220.158.156.207])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cacd419b6bsm8487009a91.27.2024.07.16.08.59.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:59:47 -0700 (PDT)
-Date: Tue, 16 Jul 2024 21:29:43 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
-Message-ID: <20240716155943.GM3446@thinkpad>
-References: <20240716152318.207178-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1721145781; x=1721750581;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BMs2wY7Im2gJwcvsvkhutz6yojdHTU9eBYvDppSee3o=;
+        b=NxNVPnrSDJIDkM8z/k5qkYiQwo7f2Q9piBG1EVoqZEcoFhMm3KRmK6MaAMlMXtfiUe
+         ALdAyMFyFNGhpgikBgLPPPJv4IuezoJKwXYDbA3D6L+lfdgCjjsjOGdAxiUFgYwFuqxc
+         pSw+Y1qHTCBSzh5R9QaPSpVF2lyJw0KDp8GA5MwSs/08gZbjZ3TJzjJgiX2/gxmm6Cj3
+         IZDibJPyozlqU6lQLPn6dHH8YZ3tyL2gwjVoqvOSiw+Tn0jXVLTLHifiJh7UDpKE6EiM
+         zvpY7itn3FOyZEkbdIcwJ1ZYMTqq5gGVdBAkMWY3KKphs8zqUHYMLTuS0zTFMwnoSW6g
+         gqDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXByRY9tGBuLBNEJtIO4v9JOdEN5tJmVNTBwcYnPXn1hds8iLrYEbLreKXUbv51NdCpR7s28MN0731auUV6g0v1ekIOhwHlwfQFo3D2
+X-Gm-Message-State: AOJu0Yww18vOzJLwQa6AN4LZacI0Z8G8BsMMGH6MrvMcd7C+oORrrFFo
+	/3XCcP1LVXWfJ7yB98tvTFDhlAvf+tVw2aTbEhwjGVFa1N7GIWwXtMDrX7eubGXkiNOkFdq/R3y
+	09g==
+X-Google-Smtp-Source: AGHT+IHGZLEiSniWpPk9RJXTJkROIXXHkCGmFW1fdkqpo+4QpAqRJbF6e6n8zR9oFjopeWKxjqT3PAofiHk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:fd4:b0:62d:cef:67dd with SMTP id
+ 00721157ae682-6637f1c259emr1606177b3.1.1721145781339; Tue, 16 Jul 2024
+ 09:03:01 -0700 (PDT)
+Date: Tue, 16 Jul 2024 09:03:00 -0700
+In-Reply-To: <20240712232937.2861788-1-ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716152318.207178-1-brgl@bgdev.pl>
+Mime-Version: 1.0
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com> <20240712232937.2861788-1-ackerleytng@google.com>
+Message-ID: <ZpaZtPKrXolEduZH@google.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: quic_eberman@quicinc.com, akpm@linux-foundation.org, david@redhat.com, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, maz@kernel.org, pbonzini@redhat.com, shuah@kernel.org, 
+	tabba@google.com, willy@infradead.org, vannapurve@google.com, 
+	hch@infradead.org, jgg@nvidia.com, rientjes@google.com, jhubbard@nvidia.com, 
+	qperret@google.com, smostafa@google.com, fvdl@google.com, hughd@google.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 05:23:18PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Kconfig will ask the user twice about power sequencing: once for the QCom
-> WCN power sequencing driver and then again for the PCI power control
-> driver using it.
-> 
-> Let's remove the public menuconfig entry for PCI pwrctl and instead
-> default the relevant symbol to 'm' only for the architectures that
-> actually need it.
-> 
+Thanks for doing the dirty work!
 
-Why can't you put it in defconfig instead?
+On Fri, Jul 12, 2024, Ackerley Tng wrote:
+> Here=E2=80=99s an update from the Linux MM Alignment Session on July 10 2=
+024, 9-10am
+> PDT:
+>=20
+> The current direction is:
+>=20
+> + Allow mmap() of ranges that cover both shared and private memory, but d=
+isallow
+>   faulting in of private pages
+>   + On access to private pages, userspace will get some error, perhaps SI=
+GBUS
+>   + On shared to private conversions, unmap the page and decrease refcoun=
+ts
 
-- Mani
+Note, I would strike the "decrease refcounts" part, as putting references i=
+s a
+natural consequence of unmapping memory, not an explicit action guest_memfd=
+ will
+take when converting from shared=3D>private.
 
-> Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Closes: https://lore.kernel.org/lkml/CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/pci/pwrctl/Kconfig | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/pwrctl/Kconfig b/drivers/pci/pwrctl/Kconfig
-> index f1b824955d4b..b8f289e6a185 100644
-> --- a/drivers/pci/pwrctl/Kconfig
-> +++ b/drivers/pci/pwrctl/Kconfig
-> @@ -1,17 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  
-> -menu "PCI Power control drivers"
-> -
->  config PCI_PWRCTL
->  	tristate
->  
->  config PCI_PWRCTL_PWRSEQ
-> -	tristate "PCI Power Control driver using the Power Sequencing subsystem"
-> +	tristate
->  	select POWER_SEQUENCING
->  	select PCI_PWRCTL
->  	default m if ((ATH11K_PCI || ATH12K) && ARCH_QCOM)
-> -	help
-> -	  Enable support for the PCI power control driver for device
-> -	  drivers using the Power Sequencing subsystem.
-> -
-> -endmenu
-> -- 
-> 2.43.0
-> 
-> 
+And more importantly, guest_memfd will wait for the refcount to hit zero (o=
+r
+whatever the baseline refcount is).
 
--- 
-மணிவண்ணன் சதாசிவம்
+> + To support huge pages, guest_memfd will take ownership of the hugepages=
+, and
+>   provide interested parties (userspace, KVM, iommu) with pages to be use=
+d.
+>   + guest_memfd will track usage of (sub)pages, for both private and shar=
+ed
+>     memory
+>   + Pages will be broken into smaller (probably 4K) chunks at creation ti=
+me to
+>     simplify implementation (as opposed to splitting at runtime when priv=
+ate to
+>     shared conversion is requested by the guest)
+
+FWIW, I doubt we'll ever release a version with mmap()+guest_memfd support =
+that
+shatters pages at creation.  I can see it being an intermediate step, e.g. =
+to
+prove correctness and provide a bisection point, but shattering hugepages a=
+t
+creation would effectively make hugepage support useless.
+
+I don't think we need to sort this out now though, as when the shattering (=
+and
+potential reconstituion) occurs doesn't affect the overall direction in any=
+ way
+(AFAIK).  I'm chiming in purely to stave off complaints that this would bre=
+ak
+hugepage support :-)
+
+>     + Core MM infrastructure will still be used to track page table mappi=
+ngs in
+>       mapcounts and other references (refcounts) per subpage
+>     + HugeTLB vmemmap Optimization (HVO) is lost when pages are broken up=
+ - to
+>       be optimized later. Suggestions:
+>       + Use a tracking data structure other than struct page
+>       + Remove the memory for struct pages backing private memory from th=
+e
+>         vmemmap, and re-populate the vmemmap on conversion from private t=
+o
+>         shared
+>   + Implementation pointers for huge page support
+>     + Consensus was that getting core MM to do tracking seems wrong
+>     + Maintaining special page refcounts for guest_memfd pages is difficu=
+lt to
+>       get working and requires weird special casing in many places. This =
+was
+>       tried for FS DAX pages and did not work out: [1]
+>=20
+> + Implementation suggestion: use infrastructure similar to what ZONE_DEVI=
+CE
+>   uses, to provide the huge page to interested parties
+>   + TBD: how to actually get huge pages into guest_memfd
+>   + TBD: how to provide/convert the huge pages to ZONE_DEVICE
+>     + Perhaps reserve them at boot time like in HugeTLB
+>=20
+> + Line of sight to compaction/migration:
+>   + Compaction here means making memory contiguous
+>   + Compaction/migration scope:
+>     + In scope for 4K pages
+>     + Out of scope for 1G pages and anything managed through ZONE_DEVICE
+>     + Out of scope for an initial implementation
+>   + Ideas for future implementations
+>     + Reuse the non-LRU page migration framework as used by memory ballon=
+ing
+>     + Have userspace drive compaction/migration via ioctls
+>       + Having line of sight to optimizing lost HVO means avoiding being =
+locked
+>         in to any implementation requiring struct pages
+>         + Without struct pages, it is hard to reuse core MM=E2=80=99s
+>           compaction/migration infrastructure
+>=20
+> + Discuss more details at LPC in Sep 2024, such as how to use huge pages,
+>   shared/private conversion, huge page splitting
+>=20
+> This addresses the prerequisites set out by Fuad and Elliott at the begin=
+ning of
+> the session, which were:
+>=20
+> 1. Non-destructive shared/private conversion
+>   + Through having guest_memfd manage and track both shared/private memor=
+y
+> 2. Huge page support with the option of converting individual subpages
+>   + Splitting of pages will be managed by guest_memfd
+> 3. Line of sight to compaction/migration of private memory
+>   + Possibly driven by userspace using guest_memfd ioctls
+> 4. Loading binaries into guest (private) memory before VM starts
+>   + This was identified as a special case of (1.) above
+> 5. Non-protected guests in pKVM
+>   + Not discussed during session, but this is a goal of guest_memfd, for =
+all VM
+>     types [2]
+>=20
+> David Hildenbrand summarized this during the meeting at t=3D47m25s [3].
+>=20
+> [1]: https://lore.kernel.org/linux-mm/cover.66009f59a7fe77320d413011386c3=
+ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com/
+> [2]: https://lore.kernel.org/lkml/ZnRMn1ObU8TFrms3@google.com/
+> [3]: https://drive.google.com/file/d/17lruFrde2XWs6B1jaTrAy9gjv08FnJ45/vi=
+ew?t=3D47m25s&resourcekey=3D0-LiteoxLd5f4fKoPRMjMTOw
 
