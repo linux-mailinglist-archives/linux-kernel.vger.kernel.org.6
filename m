@@ -1,269 +1,656 @@
-Return-Path: <linux-kernel+bounces-253991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8869B9329DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:02:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017B59329FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9931C20CDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C51CB22844
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213B319DF78;
-	Tue, 16 Jul 2024 15:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iX1bevRb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B8919EED4;
+	Tue, 16 Jul 2024 15:04:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A0C1E861
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721142165; cv=fail; b=ageWdh96uCdLXX/cKjAoNPxKqO6t5H4ywKLR/naXj8QY/Y3iIHVf2xYcjgLZxamFVVMHIeXSkil/Ur4px+iUXf6/F7DItJ2nc5y+oIfCBSar8MCCdQaK29lkSNJQwYK2ByGL8TpTyBQdfIE5RX7MAEz0JY70oNuRqn80USKOxPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721142165; c=relaxed/simple;
-	bh=C0+Vn5MJFB9LUROK9KQpHLhnvHpTb4YAOcy748Z4t5Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fpK+oVBRSQmQtqirBxzy/fUojWIxMf5yDWB2X81uGEWNv5FhXoRY0YsAs2ISzVOUxTadSC7tNw6aCTo47PE4XkE6E3CmEdv5VqUf2PIDm/+I7guB8U2swna3qL3z8Vrns348WfbrPBRslR/x1QzXh8V7gOMtUBDhjzia1ubaO7g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iX1bevRb; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721142164; x=1752678164;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=C0+Vn5MJFB9LUROK9KQpHLhnvHpTb4YAOcy748Z4t5Y=;
-  b=iX1bevRbCqJn6TvyNbaDRFJXkCIhx2Mh5w5TogWfiFOzPKCmbQcEzB4i
-   8pyBZojttnCGn2m4uiVwc2Hk5pD9WHKznjfm+3mtl8TCu0unXSKtuM0kz
-   L2nWQIfaFpu18V08VC7H0WJmH99EwYccLPIxlzIMFQcN+T1az9bjvN6Ce
-   VLVuHTJCCVpAo6Pu/say4ZduxBrlV1nHcEPKOv3AmrkvwBwsSwmfNztEE
-   fvv+OjpOrLs5jKhWq/sx6dzSJ97ZxCsPxg9X/2soYtNpf3fYwLRw7pYga
-   sJzzNLxCK7XH8pi1u0TTVX02CwE9m2Zo+cWqYSMT57a0u0J6hqLaTgti8
-   g==;
-X-CSE-ConnectionGUID: jT5X1s9yRh243iCc7350uA==
-X-CSE-MsgGUID: 1fIAw+e5R16lTn984Juxyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="22449658"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="22449658"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 08:02:43 -0700
-X-CSE-ConnectionGUID: 3OdRn89hSuuHF+pwD95xEA==
-X-CSE-MsgGUID: laNi4+d/RFi9k20LWz+JSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="80712586"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Jul 2024 08:02:44 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 16 Jul 2024 08:02:42 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 16 Jul 2024 08:02:42 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 16 Jul 2024 08:02:42 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0219B3FF;
+	Tue, 16 Jul 2024 15:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721142275; cv=none; b=D7bMLWalOHfaIWVHabcKHwGRhIUD8A2j3Y/ucRkS8bUSQMU7ENvCqsIJGo+SIVSI0my65Yu0Tpbl50o6aP35gX1E3AF3DO7ddntxPYpN+74XOlLx/26f7nRPcP4BvHpkI9hLPg9xOPdqIsTkP2D66R+2Rf5c99jUr8fTzK340OE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721142275; c=relaxed/simple;
+	bh=A84BF7jiRF5nq4g7RoYFO41WrzgOgBgbYl2GndJey/I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c+2mEMxkCfSZ2ZTopYTuW/KDhK1kqFz9INJk1Q1NTVs6OSMIraKL8aN2/xMxN4h4TnjJpkqpf5NZf2U77yDZm9FVeADdP/tCtMTPE7lgRh6XigxB31grKjlGW6xXeprJE1DMcsufJfm20RlkoXeZ4of72t7JVKLluBWZ9l9TYIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WNj3603sdz6K924;
+	Tue, 16 Jul 2024 23:02:10 +0800 (CST)
+Received: from lhrpeml500006.china.huawei.com (unknown [7.191.161.198])
+	by mail.maildlp.com (Postfix) with ESMTPS id DF7CF1400CF;
+	Tue, 16 Jul 2024 23:04:22 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.48.159.153) by
+ lhrpeml500006.china.huawei.com (7.191.161.198) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 16 Jul 2024 08:02:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BC/C0wP+jtu3gtsEyC85WwiJ2mxoNPi/6e9ySPgFx4ekJkpQjO2FM6mybHEbY5EzUdLj10mgPioEf28pMsHZZVA3yliNelCekMRdNRusawDccTCBzFUG560ekg2a4YCJaX+3a+PVsoAIm3XLFCcdrEPc96xEd0F8uirHlKhMvcb7O/ko5YQI/As9X7mQVfNVJMsAgwgqMq35KHl7J1UCNJXmOSSJ9ZzHi9zRqqtVETwcd4hZv/UzQ2Mh9/g7RvyzaTJ9FMuppRW+mQ2qwvEBHs7pqwOaGEPxbEMuZpH2qo9GXr88EuXo5ygsHEb0tGSXSvlANE4o2gpq1rtb5mY/sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C0+Vn5MJFB9LUROK9KQpHLhnvHpTb4YAOcy748Z4t5Y=;
- b=Vctz2Fy7/Iy0W0MaIqHEa3+IncWgNwlJ+DIJLgq4ChfOcB2jo+sZR/nSyfj/0vH04ixwvqC27nplk5l+jp1KekkNl/5Et+D7tDpBvE3+Yy8xH64ZmftaGcQaXg/NoRqCgDoy7udwYM09bqSiLQlbx7Ryj2UBAlmNaEpeSeIQAn/KmccZ/bgqmQl/NT7Wdsk8exOJkxN7pqxcTGtuY+wy4y44XzZ3IU7vgo7lKY9dHtfxjsoqreBC9l/kDr6TiYh7DaljQqyT6+VKP8596VjnpuBnFuup6hFBMiD8QEBgPrXx9jJHH0QaNZANVVg5ThDHpDl+DGUvPc+MpHCFvnhPRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6129.namprd11.prod.outlook.com (2603:10b6:a03:488::12)
- by CO1PR11MB5074.namprd11.prod.outlook.com (2603:10b6:303:97::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.27; Tue, 16 Jul
- 2024 15:02:39 +0000
-Received: from SJ1PR11MB6129.namprd11.prod.outlook.com
- ([fe80::21c3:4b36:8cc5:b525]) by SJ1PR11MB6129.namprd11.prod.outlook.com
- ([fe80::21c3:4b36:8cc5:b525%7]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 15:02:39 +0000
-From: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-CC: "jiangshan.ljs@antgroup.com" <jiangshan.ljs@antgroup.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Nikula, Jani"
-	<jani.nikula@intel.com>, "Saarinen, Jani" <jani.saarinen@intel.com>, "Kurmi,
- Suresh Kumar" <suresh.kumar.kurmi@intel.com>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>
-Subject: RE: Regression on linux-next (next-20240709)
-Thread-Topic: Regression on linux-next (next-20240709)
-Thread-Index: AdrUGlgPzCjArjqLR6Ou8zsvlQzOkQAHokAAAMJl3MAAE5Gw8A==
-Date: Tue, 16 Jul 2024 15:02:38 +0000
-Message-ID: <SJ1PR11MB61290A3105C95E8C6BF171DFB9A22@SJ1PR11MB6129.namprd11.prod.outlook.com>
-References: <SJ1PR11MB612946A115B182F4C81692EDB9A62@SJ1PR11MB6129.namprd11.prod.outlook.com>
- <CAJhGHyAFn96n8vW4z_cmXLCd4p1HfxQBLR-u81m8HipWRVsJZg@mail.gmail.com>
- <SJ1PR11MB612916646EC106E6AEA22149B9A22@SJ1PR11MB6129.namprd11.prod.outlook.com>
-In-Reply-To: <SJ1PR11MB612916646EC106E6AEA22149B9A22@SJ1PR11MB6129.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6129:EE_|CO1PR11MB5074:EE_
-x-ms-office365-filtering-correlation-id: e6c88746-5270-4781-f0ca-08dca5a855a4
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?aFRSMWNjMTRjeFhyL1RCUGVnZWRmRFI4SXEycnArU2F3c0NvUGVqSjRpdFBk?=
- =?utf-8?B?a0JBdmx4ZTN6NEVjdWNlMkhxMW85aGxlQUFvWHI2WDJORHpLM0hKT1c0R0Rm?=
- =?utf-8?B?RnRGMFM3M05Xa2t2S1Z0c2FJOVRvdkhWRUJUK1FQTmhkeVFiVithSk1CNFI2?=
- =?utf-8?B?dU82NzFaOSs4NWNZd1B6SEIwajYrd1A0VGF0dXZmb0w1eHZjYmV2TU5zc2VI?=
- =?utf-8?B?YWpNRlRmckRiSno0S1JBdER5U20zTUlsWHNYR2I1Wmx0ZkVuK25HbG9jdkt4?=
- =?utf-8?B?bXRRM29lL256QWNaWGN5YkNNVENDU2tSMjBlSUdmYUlJMktxK1dGaEZodXVH?=
- =?utf-8?B?aXV6RG9FUWxBUXI5OXk1YlVlT25SYjhET0NCdHpQSUV5U0JhbWF3QWorRUhk?=
- =?utf-8?B?ZEpDbjZwM3ZtcjRDVk8vTUI1U2RTd3phbVh5dWducEdPR0tJbXg5UHBsUW9v?=
- =?utf-8?B?S0paeHdqTDl2b3pZTTRKVTZsSU1TZU5wcnZoNEZrekdDeTRZUHRxZklzUFk5?=
- =?utf-8?B?VklqWnRaYTFrS3IyUWh6d2pROUowa1VJZkh2OXFCdW9ScEdEdkpYZEdqc3FI?=
- =?utf-8?B?TC9aTk9mS0V6T0NsVFpBNFQ5Z2pGMVVjdWVBMEFscldOOVVIUmMyaUhUV3J1?=
- =?utf-8?B?NStvaVdCWktIWHVPUWZBOEVncnFBL1pHd2pLZjNtaGordytIOTk2TkR2VzFi?=
- =?utf-8?B?RjQ4RmlxZDV4UCtvY0JKRUF6SHVnMVM0TWVRT3RaNnV1UlNjZUNxT3c3RGpE?=
- =?utf-8?B?ZEJDUmI0VDhUcGczWFZraVMrOVNTTmx2SzF6c0hRWmpCaGRoQlpvNlFkTkg5?=
- =?utf-8?B?TTNVUm5iV0tWNnowWjRPVnV1ZFM5Y043c3VFM2dJVFpOWjR1UkFwaWFuQ3Ar?=
- =?utf-8?B?ZjFDWWZnd1lsZW9lM29GSXRyYk13UUVYZXZkSFByb3JjYWNoVEcyMmx4MkpG?=
- =?utf-8?B?MlVaNFZWV214SDd2d2diYy92YlErL1p0aktuQk1ZTEdWZzd2V215amMxL0gv?=
- =?utf-8?B?U005VmNUVm1lRXo4M2tjVFNpVFdwVnlUYWM1clczT00zcEVsRnAxNndObm1a?=
- =?utf-8?B?ZloxQjNPRzdkOGExZ0xGS2dSRy91ZngwdTgxRG5TSVJySTZWcjFTR2d2eWpw?=
- =?utf-8?B?aWRobFFHK1lwaHdLN29FckY4ZzlHTnk3R2VCMFdDb0VSKzVaUVdoTFgxRE5I?=
- =?utf-8?B?TGwxS2tpaFU2WFVIcVhmN1pMRDhLKytXWlhRR3lyYzZLMkNZaUhNRWxERXE3?=
- =?utf-8?B?YnlKSGFUMDR1VmticFU4VHNnSEZOUnQzeGZUblpseGFjY0N3cVpKUzVNZ3Zj?=
- =?utf-8?B?UXV0QjJmUzJDL3BTOTdrckNWV2pRb2ZuVWdYbDFtc2trbHpaaS9kQVloY2N4?=
- =?utf-8?B?VGgzc1lRaFZjOU8rNXlRNVhWMFZFb2IzdUVweVBwWjh1V1RHbHpRbXRMRFow?=
- =?utf-8?B?QTBCbVlqUmFiZkMyQVpmMVJ6SGpqL25zR25BNHhreklybGZyOTh5WnBtNTdu?=
- =?utf-8?B?UHdscFR3dlA0bGZHTUl1NTRIZGZob1BnUUlZWkNKYTJ2WVM4WEYzRnlNd1FS?=
- =?utf-8?B?YjFjbXZiM3Z0cDNJM1M3dkdTeXN6dWI1NEhGaDZGTHVZQUhsbld6SUVZYWxh?=
- =?utf-8?B?TStkUVV4WFl3dWpDNFBvdXRSdUlidnVMMXYxMEtOR09iU21tUXdSR09OZmRq?=
- =?utf-8?B?QjNveHlZOUo2MWEzMkZqeVFuNXJZcjdpaHZMait0MXBjOGJGZ1Q4WmF0MTMz?=
- =?utf-8?B?bFAxcDdXUGJxR3J0THJHYUV5WWN1Snp3RHBrV3F5aEJLeUdQWUt0WFJ4OG9o?=
- =?utf-8?Q?jbxrf8zstqG6fQGt6ogm/wYavyOjk53LkDNMc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6129.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZktFQndUemdCQkZLcCtjaFk1TG9lUTB0b0Nra1BPRDhzT2FieURFeDFpN3Bv?=
- =?utf-8?B?dkdEUXQrOG5JNk9mK0pvUTV4bDAwQmxPREppSytxUGU1YmNkcG9qbjdLbldU?=
- =?utf-8?B?NGcwY3BRTXdqbGR4VkllRVpjV1oxdmFxdC85bDlLUXBlUVNpNytaY1hnZlYw?=
- =?utf-8?B?T25RTm9yNUIxSy9NdkYvakk5dTFBckM4YTdzdTRwL0VreEZkdFZjVjBPL3R6?=
- =?utf-8?B?cU1SR2psUlBMZm5IZWxDQzduTDJ1enlrQzRIV055bGJCYm84TjhHL1h3STJP?=
- =?utf-8?B?b1lSbldXU3dwMUNjSllNdk96a3piM2doV05yYW83eWlrT2F1ZkFBRndlOWZB?=
- =?utf-8?B?YS9GVTkrK3FRejRjV2lUenlqUlp0UFJadndoN1ZFZkpZUzdudXRCWFZzRkZq?=
- =?utf-8?B?a0V1T3RJZjJSRVJyZFFET1RBcnJ4eFBBTG9XTW1tb0NzTkk2eWMvUnhUeXpV?=
- =?utf-8?B?UmxRYmRES1ZZVTA4dVV3VkgvY0lJSUtEeFh3b3k5TGNVMHYxdVRnd3FuMHgr?=
- =?utf-8?B?WEluTXVUWUVMdTRIZDVnZ0hmUTZ3ZnB6UEdlTTh2TklWbHE4NGZYdVhFV2ZN?=
- =?utf-8?B?cjFjYWxNMmhPTEEyeVhBS2FkZCtpL0JMbUpiam50b0JIdUlLQ1NXczZIb1dk?=
- =?utf-8?B?b053WTZ1cldUaDR2ZjNnZTJHRnhpUUhsalQvWCt4TUR4QjJ6K2VoSzVBblNK?=
- =?utf-8?B?ZlFYajFSL3BwdHdod0puKy9SVlJ3bVladVBtVVMyeUdicFdhQ3FYb3lvS2Va?=
- =?utf-8?B?NEVMVUc5dFV2S0p0TWIrQTdwNjNyMy9PRVBsdHU0VityWU92elBhNFJFSFU0?=
- =?utf-8?B?VjlqQjEwM0xmQ3kzOHl2NXVVY2NpRTFwNWQ4Z1dQRUI3c2c5UFJuMENucVk2?=
- =?utf-8?B?am5oOEgxQ3BiYXF4bm10UTFHQlNYekRSd3JHcjFoWGtFbGM3U253YTNpNkZs?=
- =?utf-8?B?M0tYOTM0UUpQRXVJd1BGckRXVVdnRVRtd2kzMmFoY0hJcTVaVnVDVVZLTUxH?=
- =?utf-8?B?b3hPK0lxZE4wS3oxYTM2L04xM0xTaUptL2pCTkQ3QTRLZVdBektjYXM5QitQ?=
- =?utf-8?B?RjBJb3ptaEJOa0swZUszb1RpNWVsTlBrcDJ6QkZYWGNCWVcxYi9MMFR2S1o3?=
- =?utf-8?B?RTBBVnJ5ZlFjSkRGSlBCaWM5VnZrS1Y5bmRSRmhMQXRqOGxPV0NUVmJRV3Bh?=
- =?utf-8?B?aFp3UTJ2ZUx1TTVpMzVSSEgxQ3psSGN5TjBpZHVPT1RvN29sQktXN0dOOG4r?=
- =?utf-8?B?cmx4QXNkcXJrUloyOFRGZUdzbDdxRXJpN2ttb0JDZThhTzl4Zm1lTitVV2tR?=
- =?utf-8?B?R0Zub1FJUVJLTldhMVFtNk0rTFpORkRXWDluSlpLeU5YTEdXY1VMWWVyZ1Uv?=
- =?utf-8?B?Y3U4UHNNTGhraHhJQkU4aEpqRGNLMTdkbDJHM2NGV0ZLSzBxMVg2Q3ZxMTk4?=
- =?utf-8?B?cjRNbkRQOHQxQUQxUURveE5hMWp4T3BvR0RvenRmc2U5ZGorREhvVUZiV3I5?=
- =?utf-8?B?b3R5d3ZyMVpoN0IrYWVGRVRXSURuNURmR1FUd0pPVjEwbWVHRDhRbjUwWnhs?=
- =?utf-8?B?RU5xWlNrZ011UjF0SEV5UVVvaFF1a2crSytOY1o4UXEwbS9Pc2lON3kvWGgz?=
- =?utf-8?B?ZVNkV0h1N2ViM2g0VjRQWEdBdnNhWkN6bmcrRlY2VlRKcWEwNC9UZWN0d0Uv?=
- =?utf-8?B?UDNnbGpHRi9DTldLaDBuOGJ1UFJrOTliTGZmcWtoS3p0MnZ5WjNQNzF3NG96?=
- =?utf-8?B?dVFOU1lhMU1PVENGbDBYT3lqc2FvTDZDU0ExbkZKRlZkR29oYnh1V1ZzNUI1?=
- =?utf-8?B?QUhLem5ldXpwYUZsT3JIamRKaWdYM1NmYVkrblE5RVNiN2o4UjJoRDBJdzh1?=
- =?utf-8?B?Q20yTlRPU0VVS29wNlNNS3pqU3FvbXhybkxnWk9Icmp2VTFCcGRKL3UycmJV?=
- =?utf-8?B?Zno1dnhVSlZTQkZtZk5WcnMreXp2MEdMQzh0ZTdFb0NtUmVjYm5FQzNPK3o4?=
- =?utf-8?B?NUw5TC96VHo0aTA5MHY5b1hrVEdtQkFXcHp0UUxuS2htMVJxM21oV3ZyMkZo?=
- =?utf-8?B?Yk1NRnRvRjhqc1NSTGlwdVlkU2lTZFdOSDJhL29NVW9rT0tVTC9TZHlNZm9l?=
- =?utf-8?B?Y2dzUW9QMjBpT1czUmJtby9sT2FRdWgrV095bUtjZmQrcndLOTZucVpiejVh?=
- =?utf-8?B?bkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 15.1.2507.39; Tue, 16 Jul 2024 16:04:21 +0100
+From: <shiju.jose@huawei.com>
+To: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <bp@alien8.de>, <tony.luck@intel.com>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <mchehab@kernel.org>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <mike.malvestuto@intel.com>, <gthelen@google.com>,
+	<wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
+	<wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>, <yazen.ghannam@amd.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>, <shiju.jose@huawei.com>
+Subject: [RFC PATCH v9 00/11] EDAC: Scrub: Introduce generic EDAC RAS control feature driver + CXL/ACPI-RAS2 drivers
+Date: Tue, 16 Jul 2024 16:03:24 +0100
+Message-ID: <20240716150336.2042-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6129.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6c88746-5270-4781-f0ca-08dca5a855a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 15:02:38.9590
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7ih/CTn6jgrJITAmO3LAdcFI8HVWlxu9c0U5N9Q3VQtTm/zc1MiOC3zg3bs2yBHex8aerkuFgGmRSgLG/2r0e+y83BNEGLINJtFd/NxfIVY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5074
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500006.china.huawei.com (7.191.161.198)
 
-SGVsbG8gTGFpLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJvcmFo
-LCBDaGFpdGFueWEgS3VtYXINCj4gU2VudDogVHVlc2RheSwgSnVseSAxNiwgMjAyNCAxMToxMCBB
-TQ0KPiBUbzogTGFpIEppYW5nc2hhbiA8amlhbmdzaGFubGFpQGdtYWlsLmNvbT4NCj4gQ2M6IGpp
-YW5nc2hhbi5sanNAYW50Z3JvdXAuY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBO
-aWt1bGEsIEphbmkNCj4gPGphbmkubmlrdWxhQGludGVsLmNvbT47IFNhYXJpbmVuLCBKYW5pIDxq
-YW5pLnNhYXJpbmVuQGludGVsLmNvbT47IEt1cm1pLA0KPiBTdXJlc2ggS3VtYXIgPFN1cmVzaC5L
-dW1hci5LdXJtaUBpbnRlbC5jb20+OyBpbnRlbC0NCj4gZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9y
-Zw0KPiBTdWJqZWN0OiBSRTogUmVncmVzc2lvbiBvbiBsaW51eC1uZXh0IChuZXh0LTIwMjQwNzA5
-KQ0KPiANCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTog
-TGFpIEppYW5nc2hhbiA8amlhbmdzaGFubGFpQGdtYWlsLmNvbT4NCj4gPiBTZW50OiBGcmlkYXks
-IEp1bHkgMTIsIDIwMjQgMjoyMyBQTQ0KPiA+IFRvOiBCb3JhaCwgQ2hhaXRhbnlhIEt1bWFyIDxj
-aGFpdGFueWEua3VtYXIuYm9yYWhAaW50ZWwuY29tPg0KPiA+IENjOiBqaWFuZ3NoYW4ubGpzQGFu
-dGdyb3VwLmNvbTsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgTmlrdWxhLA0KPiA+IEph
-bmkgPGphbmkubmlrdWxhQGludGVsLmNvbT47IFNhYXJpbmVuLCBKYW5pDQo+ID4gPGphbmkuc2Fh
-cmluZW5AaW50ZWwuY29tPjsgS3VybWksIFN1cmVzaCBLdW1hcg0KPiA+IDxzdXJlc2gua3VtYXIu
-a3VybWlAaW50ZWwuY29tPg0KPiA+IFN1YmplY3Q6IFJlOiBSZWdyZXNzaW9uIG9uIGxpbnV4LW5l
-eHQgKG5leHQtMjAyNDA3MDkpDQo+ID4NCj4gPiBIZWxsbw0KPiA+DQo+ID4gT24gRnJpLCBKdWwg
-MTIsIDIwMjQgYXQgMTo0MuKAr1BNIEJvcmFoLCBDaGFpdGFueWEgS3VtYXINCj4gPiA+IGNvbW1p
-dCAxNzI2YTE3MTM1OTA1ZTJkMjc3M2YxOGQ0N2JkNGUxN2RkMjZlMWVkDQo+ID4gPiBBdXRob3I6
-IExhaSBKaWFuZ3NoYW4gbWFpbHRvOmppYW5nc2hhbi5sanNAYW50Z3JvdXAuY29tDQo+ID4gPiBE
-YXRlOiAgIFRodSBKdWwgNCAxMTo0OToxMyAyMDI0ICswODAwDQo+ID4gPg0KPiA+ID4gICAgIHdv
-cmtxdWV1ZTogUHV0IFBXUSBhbGxvY2F0aW9uIGFuZCBXUSBlbmxpc3RtZW50IGluIHRoZSBzYW1l
-IGxvY2sNCj4gQy5TLg0KPiA+ID4gYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBg
-YGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGANCj4gPiA+IGBgYGBgYGBgYGBgYGBgYGBg
-YGBgYGBgYGBgYGBgYGBgYGBgYGANCj4gPiA+DQo+ID4gPiBXZSBjb3VsZCBub3QgcmV2ZXJ0IHRo
-ZSBwYXRjaCBiZWNhdXNlIG9mIG1lcmdlIGNvbmZsaWN0IGJ1dA0KPiA+ID4gcmVzZXR0aW5nIHRv
-IHRoZQ0KPiA+IHBhcmVudCBvZiB0aGUgY29tbWl0IHNlZW1zIHRvIGZpeCB0aGUgaXNzdWUNCj4g
-PiA+DQo+ID4gPiBDb3VsZCB5b3UgcGxlYXNlIGNoZWNrIHdoeSB0aGUgcGF0Y2ggY2F1c2VzIHRo
-aXMgcmVncmVzc2lvbiBhbmQNCj4gPiA+IHByb3ZpZGUgYQ0KPiA+IGZpeCBpZiBuZWNlc3Nhcnk/
-DQo+ID4NCj4gPg0KPiA+IEl0IGhhcyBiZWVuIGZpeGVkIGFuZCBpdCBpcyBpbiB3cS9mb3ItNi4x
-MS4NCj4gPg0KPiA+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvWnBBU05CTjBocFRWY2pF
-LUBzbG0uZHVja2Rucy5vcmcvDQo+ID4NCg0KV2l0aCB0aGlzIHBhdGNoIHdlIGFyZSBydW5uaW5n
-IGludG8gYW5vdGhlciByZWdyZXNzaW9uLg0KDQpgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBg
-YGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgDQo8ND5b
-ICAgIDQuMTcxMzcyXSBXQVJOSU5HOiBDUFU6IDExIFBJRDogMjgzIGF0IGtlcm5lbC9jcHUuYzo1
-MjcgbG9ja2RlcF9hc3NlcnRfY3B1c19oZWxkLnBhcnQuMCsweDI0LzB4MzANCjw0PlsgICAgNC4x
-NzEzNzddIE1vZHVsZXMgbGlua2VkIGluOiBrdm1faW50ZWwoKykgbWVpX2hkY3AgbWVpX3B4cCBy
-ODE1MigrKSBtaWkgd21pX2Jtb2Yga3ZtIHI4MTY5IHZpZGVvIGNyY3QxMGRpZl9wY2xtdWwgY3Jj
-MzJfcGNsbXVsIGdoYXNoX2NsbXVsbmlfaW50ZWwgcmVhbHRlayBpMmNfaTgwMSBtZWlfbWUgaTJj
-X211eCBtZWkgaW50ZWxfbHBzc19wY2koKykgaTJjX3NtYnVzIHdtaSBidHVzYiBidHJ0bCBidGlu
-dGVsIGJ0YmNtIGJsdWV0b290aA0KPDQ+WyAgICA0LjE3MTM4NV0gQ1BVOiAxMSBVSUQ6IDAgUElE
-OiAyODMgQ29tbTogc3lzdGVtZC11ZGV2ZCBUYWludGVkOiBHICAgICAgICBXICAgICAgICAgIDYu
-MTAuMC1uZXh0LTIwMjQwNzE1LW5leHQtMjAyNDA3MTUtZzkxZTNiMjRlYjdkMisgIzENCjw0Plsg
-ICAgNC4xNzEzODddIFRhaW50ZWQ6IFtXXT1XQVJODQo8ND5bICAgIDQuMTcxMzg3XSBIYXJkd2Fy
-ZSBuYW1lOiBBU1VTIFN5c3RlbSBQcm9kdWN0IE5hbWUvUFJJTUUgWjc5MC1QIFdJRkksIEJJT1Mg
-MDgxMiAwMi8yNC8yMDIzDQo8ND5bICAgIDQuMTcxMzg4XSBSSVA6IDAwMTA6bG9ja2RlcF9hc3Nl
-cnRfY3B1c19oZWxkLnBhcnQuMCsweDI0LzB4MzANCmBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBg
-YGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGANCg0K
-UGxlYXNlIGZpbmQgdGhlIGZ1bGwgbG9ncyBoZXJlLg0KDQpodHRwczovL2dmeC1jaS5pZ2suaW50
-ZWwuY29tL3RyZWUvbGludXgtbmV4dC9uZXh0LTIwMjQwNzE1L2JhdC1ycGxzLTQvYm9vdDAudHh0
-DQoNClRoZSBpc3N1ZSB3YXMgYmlzZWN0ZWQgdG8gdGhlIGNvbW1pdCB5b3UgaGF2ZSBtZW50aW9u
-ZWQgYWJvdmUuDQoNClJldmVydGluZyB0aGUgcGF0Y2ggcmVzb2x2ZXMgdGhlIGlzc3VlLg0KDQpB
-cmUgeW91IGFscmVhZHkgbG9va2luZyBpbnRvIGl0Pw0KDQpSZWdhcmRzDQoNCkNoYWl0YW55YQ0K
-PiANCj4gVGhhbmsgeW91IExhaSBmb3IgeW91ciByZXNwb25zZS4NCj4gDQo+IFJlZ2FyZHMNCj4g
-DQo+IENoYWl0YW55YQ0KPiANCj4gPiBUaGFua3MNCj4gPiBMYWkNCg==
+From: Shiju Jose <shiju.jose@huawei.com>
+
+Previously known as "ras: scrub: introduce subsystem + CXL/ACPI-RAS2 drivers".
+
+EDAC based Subsystem for controlling RAS Features
+=================================================
+The proposed EDAC based subsystem for controlling RAS features and
+expose the feature's control attributes to the userspace in sysfs.
+Some Examples:
+ - Scrub control
+ - Error Check Scrub (ECS) control
+ - ACPI RAS2 features
+ - ACPI Address Range Scrubbing (ARS)
+ - Post Package Repair (PPR) etc.
+
+High level design is illustrated in the following diagram.
+ 
+         _______________________________________________
+        |   Userspace - Rasdaemon                       |
+        |  ____________                                 |
+        | | RAS CXL    |       _____________            | 
+        | | Err Handler|----->|             |           |
+        | |____________|      | RAS Dynamic |           |
+        |  ____________       | Scrub       |           |
+        | | RAS Memory |----->| Controller  |           |
+        | | Err Handler|      |_____________|           |
+        | |____________|           |                    |
+        |__________________________|____________________|                              
+                                   |
+                                   |
+    _______________________________|______________________________
+   |   Kernel EDAC based SubSystem | for RAS Features Control     |
+   | ______________________________|____________________________  |
+   || EDAC Core          Sysfs EDAC| Bus                        | |
+   ||    __________________________|_______     _____________   | |
+   ||   |/sys/bus/edac/devices/<dev>/scrub/|   | EDAC Device |  | |
+   ||   |/sys/bus/edac/devices/<dev>/ecs*/ |<->| EDAC MC     |  | |
+   ||   |/sys/bus/edac/devices/<dev>/ars/  |   | EDAC Sysfs  |  | |
+   ||   |/sys/bus/edac/devices/<dev>/ppr/  |   | EDAC Module |  | |
+   ||   |__________________________________|   |_____________|  | |
+   ||                               | EDAC Bus                  | |
+   ||               Get             |                           | |
+   ||    __________ Feature's       |             __________    | |
+   ||   |          |Descs  _________|______      |          |   | |
+   ||   |EDAC Scrub|<-----|    EDAC RAS    |---->| EDAC ARS |   | |
+   ||   |__________|      |Control Feature |     |__________|   | |
+   ||    __________       |    Driver      |      __________    | |
+   ||   |          |<-----|________________|---->|          |   | |
+   ||   |EDAC ECS  |   Register RAS | Features   | EDAC PPR |   | |
+   ||   |__________|                |            |__________|   | |
+   ||         ______________________|___________________        | |
+   ||_________|_____________|_____________|____________|________| |
+   |   _______|____    _____|______   ____|______   ___|_____     |
+   |  |            |  | CXL Mem   |  |           | |         |    |
+   |  | ACPI RAS2  |  | Driver    |  | ACPI ARS  | | PPR     |    |
+   |  | Driver     |  | Scrub,ECS |  | Driver    | | Driver  |    |
+   |  |____________|  |___________|  |___________| |_________|    |
+   |        |              |              |           |           |
+   |________|______________|______________|___________|___________|
+            |              |              |           |          
+     _______|______________|______________|___________|___________
+    |     __|______________|_ ____________|___________|_____      |
+    |    |                                                  |     |
+    |    |            Platform HW and Firmware              |     |
+    |    |__________________________________________________|     |
+    |_____________________________________________________________|                             
+
+1. EDAC Features components - Create feature specific descriptors.
+2. EDAC RAS Feature driver - Get feature's attr descriptors from the 
+   EDAC RAS feature component and registers device's RAS features with
+   EDAC bus and expose the feature's sysfs attributes under the sysfs
+   EDAC bus.
+3. RAS dynamic scrub controller - Userspace sample module added in the
+   rasdaemon to start scrubbing when excess number of related errors
+   are reported in a short span of time.
+
+The added EDAC feature specific components (e.g. EDAC scrub, EDAC ECS,
+EDAC PPR etc) do callbacks to  the parent driver (e.g. CXL driver,
+ACPI RAS driver etc) for the controls rather than just letting the
+caller deal with it because of the following reasons.
+1. Enforces a common API across multiple implementations can do that
+   via review, but that's not generally gone well in the long run for
+   subsystems that have done it (several have later moved to callback
+   and feature list based approaches).
+2. Gives a path for 'intercepting' in the EDAC feature driver.
+   An example for this is that we could intercept PPR repair calls
+   and sanity check that the memory in question is offline before
+   passing back to the underlying code.  Sure we could rely on doing
+   that via some additional calls from the parent driver, but the
+   ABI will get messier.
+3. (Speculative) we may get in kernel users of some features in the
+   long run.
+
+More details of the common RAS features are described in the following
+sections.
+
+Memory Scrubbing
+================
+Increasing DRAM size and cost has made memory subsystem reliability
+an important concern. These modules are used where potentially
+corrupted data could cause expensive or fatal issues. Memory errors are
+one of the top hardware failures that cause server and workload crashes.
+
+Memory scrub is a feature where an ECC engine reads data from
+each memory media location, corrects with an ECC if necessary and
+writes the corrected data back to the same memory media location.
+
+The memory DIMMs could be scrubbed at a configurable rate to detect
+uncorrected memory errors and attempts to recover from detected memory
+errors providing the following benefits.
+- Proactively scrubbing memory DIMMs reduces the chance of a correctable
+  error becoming uncorrectable.
+- Once detected, uncorrected errors caught in unallocated memory pages are
+  isolated and prevented from being allocated to an application or the OS.
+- The probability of software/hardware products encountering memory
+  errors is reduced.
+Some details of background can be found in Reference [5].
+
+There are 2 types of memory scrubbing,
+1. Background (patrol) scrubbing of the RAM whilest the RAM is otherwise
+   idle.
+2. On-demand scrubbing for a specific address range/region of memory.
+
+There are several types of interfaces to HW memory scrubbers
+identified such as ACPI NVDIMM ARS(Address Range Scrub), CXL memory
+device patrol scrub, CXL DDR5 ECS, ACPI RAS2 memory scrubbing.
+
+The scrub control varies between different memory scrubbers. To allow
+for standard userspace tooling there is a need to present these controls
+with a standard ABI.
+
+Introduce generic memory EDAC scrub control which allows user to
+control underlying scrubbers in the system via generic sysfs scrub
+control interface.
+
+Use case of common scrub control feature
+========================================
+1. There are several types of interfaces to HW memory scrubbers identified
+   such as ACPI NVDIMM ARS(Address Range Scrub), CXL memory device patrol
+   scrub, CXL DDR5 ECS, ACPI RAS2 memory scrubbing features and software
+   based memory scrubber(discussed in the community Reference [5]).
+   Also some scrubbers support controlling (background) patrol scrubbing
+   (ACPI RAS2, CXL) and/or on-demand scrubbing(ACPI RAS2, ACPI ARS).
+   However the scrub controls varies between memory scrubbers. Thus there
+   is a requirement for a standard generic sysfs scrub controls exposed
+   to the userspace for the seamless control of the HW/SW scrubbers in
+   the system by admin/scripts/tools etc.
+2. Scrub controls in user space allow the user to disable the scrubbing
+   in case disabling of the background patrol scrubbing or changing the
+   scrub rate are needed for other purposes such as performance-aware
+   operations which requires the background operations to be turned off
+   or reduced.
+3. Allows to perform on-demand scrubbing for specific address range if
+   supported by the scrubber.
+4. User space tools controls scrub the memory DIMMs regularly at a
+   configurable scrub rate using the sysfs scrub controls discussed help,
+   - to detect uncorrectable memory errors early before user accessing memory,
+     which helps to recover the detected memory errors.
+   - reduces the chance of a correctable error becoming uncorrectable.
+5. Policy control for hotplugged memory. There is not necessarily a system
+   wide bios or similar in the loop to control the scrub settings on a CXL
+   device that wasn't there at boot. What that setting should be is a policy
+   decision as we are trading of reliability vs performance - hence it should
+   be in control of userspace. As such, 'an' interface is needed. Seems more
+   sensible to try and unify it with other similar interfaces than spin
+   yet another one.
+
+The draft version of userspace code for dynamic scrub control, based
+on frequency of memory errors reported to the userspace, is added in
+rasdaemon and enabled, tested for CXL device based patrol scrubbing feature
+and ACPI RAS2 based scrubbing feature.
+
+https://github.com/shijujose4/rasdaemon/tree/scrub_control_6_june_2024
+
+Comparison of scrubbing features
+================================
+ ................................................................
+ .              .   ACPI    . CXL patrol.  CXL ECS  .  ARS      .
+ .  Name        .   RAS2    . scrub     .           .           .
+ ................................................................
+ .              .           .           .           .           .
+ . On-demand    . Supported . No        . No        . Supported .
+ . Scrubbing    .           .           .           .           .
+ .              .           .           .           .           .  
+ ................................................................
+ .              .           .           .           .           .
+ . Background   . Supported . Supported . Supported . No        .
+ . scrubbing    .           .           .           .           .
+ .              .           .           .           .           .
+ ................................................................
+ .              .           .           .           .           .
+ . Mode of      . Scrub ctrl. per device. per memory.  Unknown  .
+ . scrubbing    . per NUMA  .           . media     .           .
+ .              . domain.   .           .           .           .
+ ................................................................
+ .              .           .           .           .           . 
+ . Query scrub  . Supported . Supported . Supported . Supported .       
+ . capabilities .           .           .           .           .
+ .              .           .           .           .           .
+ ................................................................
+ .              .           .           .           .           . 
+ . Setting      . Supported . No        . No        . Supported .       
+ . address range.           .           .           .           .
+ .              .           .           .           .           .
+ ................................................................
+ .              .           .           .           .           . 
+ . Setting      . Supported . Supported . No        . No        .       
+ . scrub rate   .           .           .           .           .
+ .              .           .           .           .           .
+ ................................................................
+ .              .           .           .           .           . 
+ . Unit for     . Not       . in hours  . No        . No        .       
+ . scrub rate   . Defined   .           .           .           .
+ .              .           .           .           .           .
+ ................................................................
+ .              . Supported .           .           .           .
+ . Scrub        . on-demand . No        . No        . Supported .
+ . status/      . scrubbing .           .           .           .
+ . Completion   . only      .           .           .           .
+ ................................................................
+ . UC error     .           .CXL general.CXL general. ACPI UCE  .
+ . reporting    . Exception .media/DRAM .media/DRAM . notify and.
+ .              .           .event/media.event/media. query     .
+ .              .           .scan?      .scan?      . ARS status.
+ ................................................................
+ .              .           .           .           .           .      
+ . Clear UC     .  No       . No        .  No       . Supported .
+ . error        .           .           .           .           .
+ .              .           .           .           .           .  
+ ................................................................
+ .              .           .           .           .           .
+ . Translate    . No        . No        . No        . Supported .
+ . *(1)SPA to   .           .           .           .           .
+ . *(2)DPA      .           .           .           .           .  
+ ................................................................
+ .              .           .           .           .           .
+ . Error inject . No        . Can inject. No        . Supported .
+ .              .           . poison for.           .           .
+ .              .           . CXL       .           .           .  
+ ................................................................
+*(1) - SPA - System Physical Address. See section 9.19.7.8
+       Function Index 5 - Translate SPA of ACPI spec r6.5.  
+*(2) - DPA - Device Physical Address. See section 9.19.7.8
+       Function Index 5 - Translate SPA of ACPI spec r6.5.  
+
+CXL Scrubbing features
+======================
+Add support for control CXL patrol scrubber and ACPI RAS2 HW based memory
+patrol scrubber and register with the EDAC scrub to expose the scrub
+controls to the userspace tool.
+
+CXL spec r3.1 section 8.2.9.9.11.1 describes the memory device patrol scrub
+control feature. The device patrol scrub proactively locates and makes
+corrections to errors in regular cycle. The patrol scrub control allows the
+request to configure patrol scrubber's input configurations.
+
+The patrol scrub control allows the requester to specify the number of
+hours in which the patrol scrub cycles must be completed, provided that
+the requested number is not less than the minimum number of hours for the
+patrol scrub cycle that the device is capable of. In addition, the patrol
+scrub controls allow the host to disable and enable the feature in case
+disabling of the feature is needed for other purposes such as
+performance-aware operations which require the background operations to be
+turned off.
+
+The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
+Specification (JESD79-5) and allows the DRAM to internally read, correct
+single-bit errors, and write back corrected data bits to the DRAM array
+while providing transparency to error counts.
+
+The DDR5 device contains number of memory media FRUs per device. The
+DDR5 ECS feature and thus the ECS control driver supports configuring
+the ECS parameters per FRU.
+
+ACPI RAS2 Hardware-based Memory Scrubbing
+=========================================
+ACPI spec 6.5 section 5.2.21 ACPI RAS2 describes ACPI RAS2 table
+provides interfaces for platform RAS features and supports independent
+RAS controls and capabilities for a given RAS feature for multiple
+instances of the same component in a given system.
+Memory RAS features apply to RAS capabilities, controls and operations
+that are specific to memory. RAS2 PCC sub-spaces for memory-specific RAS
+features have a Feature Type of 0x00 (Memory).
+
+The platform can use the hardware-based memory scrubbing feature to expose
+controls and capabilities associated with hardware-based memory scrub
+engines. The RAS2 memory scrubbing feature supports following as per spec,
+ - Independent memory scrubbing controls for each NUMA domain, identified
+   using its proximity domain.
+   Note: However AmpereComputing has single entry repeated as they have
+         centralized controls.
+ - Provision for background (patrol) scrubbing of the entire memory system,
+   as well as on-demand scrubbing for a specific region of memory.
+
+ACPI Address Range Scrubbing(ARS)
+================================
+ARS allows the platform to communicate memory errors to system software.
+This capability allows system software to prevent accesses to addresses
+with uncorrectable errors in memory. ARS functions manage all NVDIMMs
+present in the system. Only one scrub can be in progress system wide
+at any given time.
+Following functions are supported as per the specification.
+1. Query ARS Capabilities for a given address range, indicates platform
+   supports the ACPI NVDIMM Root Device Unconsumed Error Notification.
+2. Start ARS triggers an Address Range Scrub for the given memory range.
+   Address scrubbing can be done for volatile memory, persistent memory,
+   or both.
+3. Query ARS Status command allows software to get the status of ARS,  
+   including the progress of ARS and ARS error record.
+4. Clear Uncorrectable Error.
+5. Translate SPA
+6. ARS Error Inject etc.
+Note: Support for ARS is not added in this series because to reduce the
+line of code for review and could be added after initial code is merged. 
+We'd like feedback on whether this is of interest to ARS community?
+
+Series adds,
+1. Generic EDAC RAS feature driver, EDAC scrub driver, EDAC ECS driver
+   supports memory scrub control, ECS control and other RAS features
+   in the system.
+2. Support for CXL feature mailbox commands, which is used by
+   CXL device scrubbing features. 
+3. CXL scrub driver supporting patrol scrub control (device and
+   region based).
+4. CXL ECS driver supporting ECS control feature.
+5. ACPI RAS2 driver adds OS interface for RAS2 communication through
+   PCC mailbox and extracts ACPI RAS2 feature table (RAS2) and
+   create platform device for the RAS memory features, which binds
+   to the memory ACPI RAS2 driver.
+7. Memory ACPI RAS2 driver gets the PCC subspace for communicating
+   with the ACPI compliant platform supports ACPI RAS2. Add callback
+   functions and registers with EDAC scrub to support user to
+   control the HW patrol scrubbers exposed to the kernel via the
+   ACPI RAS2 table.
+
+The QEMU series to support the CXL specific scrub features is
+available here,
+https://lore.kernel.org/linux-cxl/20240705123039.963781-3-Jonathan.Cameron@huawei.com/T/#mae1e799306d2841eb7e1b637b82046114b926d56
+
+Open Questions based on feedbacks from the community:
+1. Leo: Standardize unit for scrub rate, for example ACPI RAS2 does not define
+   unit for the scrub rate. RAS2 clarification needed. 
+2. Jonathan: Any need for discoverability of capability to scan different regions,
+   such as global PA space to the userspace. Left as future extension.
+3. Jiaqi:
+   - STOP_PATROL_SCRUBBER from RAS2 must be blocked and, must not be exposed to
+     OS/userspace. Stopping patrol scrubber is unacceptable for platform where
+     OEM has enabled patrol scrubber, because the patrol scrubber is a key part
+     of logging and is repurposed for other RAS actions.
+   If the OEM does not want to expose this control, they should lock it down so the
+   interface is not exposed to the OS. These features are optional afterall.
+   - "Requested Address Range"/"Actual Address Range" (region to scrub) is a
+      similarly bad thing to expose in RAS2.
+   If the OEM does not want to expose this, they should lock it down so the
+   interface is not exposed to the OS. These features are optional afterall.
+4. Borislav: 
+   - How the scrub control exposed to the userspace will be used?
+     POC added in rasdaemon with dynamic scrub control for CXL memory media
+     errors and memory errors reported to the userspace.
+     https://github.com/shijujose4/rasdaemon/tree/scrub_control_6_june_2024
+   - Is the scrub interface is sufficient for the use cases?
+   - Who is going to use scrub controls tools/admin/scripts?
+     1) Rasdaemon for dynamic control
+     2) Udev script for more static 'defaults' on hotplug etc.
+
+References:
+1. ACPI spec r6.5 section 5.2.21 ACPI RAS2.
+2. ACPI spec r6.5 section 9.19.7.2 ARS.
+3. CXL spec  r3.1 8.2.9.9.11.1 Device patrol scrub control feature
+4. CXL spec  r3.1 8.2.9.9.11.2 DDR5 ECS feature
+5. Background information about kernel support for memory scan, memory
+   error detection and ACPI RASF.
+   https://lore.kernel.org/all/20221103155029.2451105-1-jiaqiyan@google.com/
+6. Discussions on RASF:
+   https://lore.kernel.org/lkml/20230915172818.761-1-shiju.jose@huawei.com/#r 
+
+Changes
+=======
+v8 -> v9:
+1. Feedback from Borislav:
+   - Add scrub control driver to the EDAC on feedback from Borislav.
+   - Changed DEVICE_ATTR_..() static.
+   - Changed the write permissions for scrub control sysfs files as
+     root-only.
+2. Feedback from Fan:
+   - Optimized cxl_get_feature() function by using min() and removed
+     feat_out_min_size.
+   - Removed unreached return from cxl_set_feature() function.
+   - Changed the term  "rate" to "cycle_in_hours" in all the
+     scrub control code.
+   - Allow cxl_mem_probe() continue if cxl_mem_patrol_scrub_init() fail,
+     with just a debug warning.
+      
+3. Feedback from Jonathan:
+   - Removed patch __free() based cleanup function for acpi_put_table.
+     and added fix in the acpi ras2 driver.
+
+4. Feedback from Dan Williams:
+   - Allow cxl_mem_probe() continue if cxl_mem_patrol_scrub_init() fail,
+     with just a debug warning.
+   - Add support for CXL region based scrub control.
+
+5. Feedback from Daniel Ferguson on RAS2 drivers:
+    In the ACPI RAS2 driver,
+  - Incorporated the changes given for clearing error reported.
+  - Incorporated the changes given for check the Set RAS Capability
+    status and return an appropriate error.
+    In the RAS2 memory driver,
+  - Added more checks for start/stop bg and on-demand scrubbing
+    so that addr range in cache do not get cleared and restrict
+    permitted operations during scrubbing.
+
+v7 -> v8:
+1. Add more detailed cover letter and add info for basic analysis
+   of ACPI ARS for comment from Dan Williams.
+2. Changed file name etc from ras2 to acpi_ras2 in memory ACPI RAS2
+   driver for comment from Boris.
+3. Add documents for usage for comment from Jonathan.
+4. Changed logic in memory/acpi_ras2.c for enable background
+   scrubbing to allow setting the scrub rate.
+5. Merged memory/acpi_ras2_common.c with memory/acpi_ras2.c and
+   obselete code, suggested by Jonathan.  
+6. Initial optimizations and cleanup especially in the memory/acpi_ras2.
+7. Removed CXL ECS support for time being. 
+8. Removed support for region based scrub control from the scrub
+   subsytem, which was needed for the CXL ECS, can be added later
+   if required.
+9. Fixed the format of few comments and a definition in CXL feature
+    code for the feedbacks from Fan.
+11. Jonathan done several optimizations, interface changes and
+    cleanups all over the code.
+12. Fixes for feedbacks from Daniel Ferguson(Amperecomputing)
+    for RAS2.
+13.  Workaround for a RAS2 case of only one actual controller as
+     reported by Daniel Ferguson(AmpereComputing) in their hardware.
+14. Feedback from Yazen, move the common scrub and ras2 changes
+    under /drivers/ras/.
+15. Drop patch ACPICA: ACPI 6.5: Add support for RAS2 table because 
+    Rafael queued the patch.
+    https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=bleeding-edge&id=9726d821f88e284ecd998b76ae5f2174721cd9dc
+ 
+v6 -> v7:
+1. Main changes for comments from Jonathan, Thanks.
+1.1. CXL
+ - Changes for deal with small mail box and supporting multipart
+   feature data transfers.
+ - Provide more specific parameters to mbox supported/get/set features
+   interface functions.
+ - kvmalloc -> kmalloc in CXL scrub mem allocation for feature commands.
+ - Changed the way using __free(kfree)
+ - Removed readback and verify for setting CXL scrub patrol and ECS
+   parameters. Could be added later if needed.
+ - In is_visible() callback functions for scrub control sysfs attrs
+   changed to writeback the default attribute mode value instead of
+   setting per attrs.
+ - Add documentation for sysfs interfaces for CXL ECS scrub control. 
+1.2. RAS2
+ - In rasf common code, rename rasf to ras2 because RASF seems obselete.
+ - Replace pr_* with dev_* log function calls from ACPI RAS2 and
+   memory RAS2 drivers.
+ - In rasf common code, rename rasf to ras2.
+ - Removed including unnecessary .h file from memory RAS2 driver.
+ - In is_visible() callback functions for scrub control sysfs attrs
+   changed to writeback the default attribute mode value instead of
+   setting per attribute.
+
+2. Changes for comments from Fan, Thanks.
+ - Add debug message if cxl patrol scrub and ecs init function
+   calls fail.
+3. Updated cover letter for feedback from Dan Williams. 
+   
+v5 -> v6:
+1. Changes for comments from Davidlohr, Thanks.
+ - Update CXL feature code based on spec 3.1.
+ - attrb -> attr
+ - Use enums with default counting.  
+2. Rebased to the latest kernel.
+
+v4 -> v5:
+1. Following are the main changes made based on the feedback from Dan Williams on v4.
+1.1. In the scrub subsystem the common scrub control attributes are statically defined
+     instead of dynamically created.
+1.2. Add scrub subsystem support externally defined attribute group.
+     Add CXL ECS driver define ECS specific attribute group and pass to
+	 the scrub subsystem.
+1.3. Move cxl_mem_ecs_init() to cxl/core/region.c so that the CXL region_id
+     is used in the registration with the scrub subsystem. 	 
+1.4. Add previously posted RASF common and RAS2 patches to this scrub series.
+	 
+2. Add support for the 'enable_background_scrub' attribute
+   for RAS2, on request from Bill Schwartz(wschwartz@amperecomputing.com).
+
+v3 -> v4:
+1. Fixes for the warnings/errors reported by kernel test robot.
+2. Add support for reading the 'enable' attribute of CXL patrol scrub.
+
+Changes
+v2 -> v3:
+1. Changes for comments from Davidlohr, Thanks.
+ - Updated cxl scrub kconfig
+ - removed usage of the flag is_support_feature from
+   the function cxl_mem_get_supported_feature_entry().
+ - corrected spelling error.
+ - removed unnecessary debug message.
+ - removed export feature commands to the userspace.
+2. Possible fix for the warnings/errors reported by kernel
+   test robot.
+3. Add documentation for the common scrub configure attributes.
+
+v1 -> v2:
+1. Changes for comments from Dave Jiang, Thanks.
+ - Split patches.
+ - reversed xmas tree declarations.
+ - declared flags as enums.
+ - removed few unnecessary variable initializations.
+ - replaced PTR_ERR_OR_ZERO() with IS_ERR() and PTR_ERR().
+ - add auto clean declarations.
+ - replaced while loop with for loop.
+ - Removed allocation from cxl_get_supported_features() and
+   cxl_get_feature() and make change to take allocated memory
+   pointer from the caller.
+ - replaced if/else with switch case.
+ - replaced sprintf() with sysfs_emit() in 2 places.
+ - replaced goto label with return in few functions.
+2. removed unused code for supported attributes from ecs.
+3. Included following common patch for scrub configure driver
+   to this series.
+   "memory: scrub: Add scrub driver supports configuring memory scrubbers
+    in the system"
+
+Jonathan Cameron (1):
+  platform: Add __free() based cleanup function for platform_device_put
+
+Shiju Jose (10):
+  EDAC: Add generic EDAC RAS feature driver
+  EDAC: Add EDAC scrub control driver
+  EDAC: Add EDAC ECS control driver
+  cxl/mbox: Add GET_SUPPORTED_FEATURES mailbox command
+  cxl/mbox: Add GET_FEATURE mailbox command
+  cxl/mbox: Add SET_FEATURE mailbox command
+  cxl/memscrub: Add CXL memory device patrol scrub control feature
+  cxl/memscrub: Add CXL memory device ECS control feature
+  ACPI:RAS2: Add ACPI RAS2 driver
+  ras: scrub: ACPI RAS2: Add memory ACPI RAS2 driver
+
+ Documentation/ABI/testing/sysfs-edac-scrub |  64 ++
+ Documentation/scrub/edac-scrub.rst         | 107 +++
+ drivers/acpi/Kconfig                       |  10 +
+ drivers/acpi/Makefile                      |   1 +
+ drivers/acpi/ras2.c                        | 391 ++++++++++
+ drivers/cxl/Kconfig                        |  19 +
+ drivers/cxl/core/Makefile                  |   1 +
+ drivers/cxl/core/mbox.c                    | 135 ++++
+ drivers/cxl/core/memscrub.c                | 842 +++++++++++++++++++++
+ drivers/cxl/core/region.c                  |   6 +
+ drivers/cxl/cxlmem.h                       | 129 ++++
+ drivers/cxl/mem.c                          |   4 +
+ drivers/edac/Makefile                      |   1 +
+ drivers/edac/edac_ecs.c                    | 396 ++++++++++
+ drivers/edac/edac_ras_feature.c            | 161 ++++
+ drivers/edac/edac_scrub.c                  | 312 ++++++++
+ drivers/ras/Kconfig                        |  10 +
+ drivers/ras/Makefile                       |   1 +
+ drivers/ras/acpi_ras2.c                    | 401 ++++++++++
+ include/acpi/ras2_acpi.h                   |  59 ++
+ include/linux/edac_ras_feature.h           | 130 ++++
+ include/linux/platform_device.h            |   1 +
+ 22 files changed, 3181 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-edac-scrub
+ create mode 100644 Documentation/scrub/edac-scrub.rst
+ create mode 100755 drivers/acpi/ras2.c
+ create mode 100644 drivers/cxl/core/memscrub.c
+ create mode 100755 drivers/edac/edac_ecs.c
+ create mode 100755 drivers/edac/edac_ras_feature.c
+ create mode 100755 drivers/edac/edac_scrub.c
+ create mode 100644 drivers/ras/acpi_ras2.c
+ create mode 100644 include/acpi/ras2_acpi.h
+ create mode 100755 include/linux/edac_ras_feature.h
+
+-- 
+2.34.1
+
 
