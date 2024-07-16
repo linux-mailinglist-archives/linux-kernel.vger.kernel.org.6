@@ -1,177 +1,118 @@
-Return-Path: <linux-kernel+bounces-254425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA6793330D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7235293330E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2513D28409A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4FA284A9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B31550297;
-	Tue, 16 Jul 2024 20:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5834D8CE;
+	Tue, 16 Jul 2024 20:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VeEWI9Ey"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYsjaTq5"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87708208BA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485704D8C3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721162889; cv=none; b=usDv4VDfyJOB4spo2x1i25hLMEhvYxWzLUHJHenO80p8H6bXB1HBWyYQu3a4Ym8V9aMPN9Qr+cqVIqITffKgey+vqrNNN4igKYvVmWVEWs701rKsiH+MScL5tQM+mbATmZlZ2TYF3UiUr/BVDlVP962yc8sXt1bSDFKzaHD6MMw=
+	t=1721162906; cv=none; b=nwxrecIHUp9pAz8svKWbohfK439RU9DgpLt8gDvACloQ3qPVt8duof8700GSgDkws9c1AzvgbwXZV4WwV/6eaKvjsDQt2SoteOxdR2Ky5hTXLcYDJeTsm1sOng9D0JDuFfmsbMgw8CUj7++DO5sdAILKQ9NQP6iNdNQoN0EGM+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721162889; c=relaxed/simple;
-	bh=4Ur9xhTL+sC+z2fRn1LeIE7AdwT2fsvHEHXp8cMQVuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j4/A2zeUckluDtkfjRiCms46C+cneKDD87Y6X/ZC4eiACNtX+oi9uiKWYBRSNnXpFF8zXqZ6yBxSnL2EkO+ltEZ64kdbNIeLJLYPbGx0KlJ2laNhK96ct+IIupJXaiBhT/buHm9QygubmEFpHfzt0s+/WTVauDLWCoiWDVBf1rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VeEWI9Ey; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so112216261fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:48:06 -0700 (PDT)
+	s=arc-20240116; t=1721162906; c=relaxed/simple;
+	bh=PP7y+WL2AY+msFEliyCUOfZnXqva6U7QCZDcFMaL1nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gao2D30NHABxwNy9LsuRtqWmNYwtW+SejiEfXqtzA/f3VS5SmVqPMhRaFBuWFb1RKcV3To//kJTFE2XE2T1FlwUujlNfzr8zChT0rhIABeuHNzuNK72s6Xh0uf5vWFgGS1OpsJE8LDxGVT38oMzixVnTN0U0qfHy0n9ThQiSCQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYsjaTq5; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7039e4a4a03so3624213a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:48:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721162885; x=1721767685; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c6GNJjXe4aQne+TSaa8LyLS0Eu5HZLIaZpjqqmJNiR4=;
-        b=VeEWI9EyciqbuLf9Wa6+20MtEkcqAiPa0hUJdiMZRrfK19fu7kvXwJt26/ApcaKTEd
-         3johlFxLkv9XlRej+faKj1CpexjMXPyZyZThJsn475vAOzpLeWRGDSoz0Fp34IC4j4VM
-         fyxkDvlmlW2Xz0pHzCRsLPMFjxKwKwIjAKmUnQzq8e864Xx4vO1OMItomdxA9mL87+1I
-         irU8Hlhy8NbKe9lud//6DUr9DKYueQ23DzmA13k74Tkog+qOoMcKmKChzqqLYG1WihQK
-         ekcxNqYjIn9ubooPSvYwt5+idyhK5cqLcFBbk2Bvi+ePDfNe5rWaGywGCRy7+c8p24xf
-         c0Gw==
+        d=gmail.com; s=20230601; t=1721162904; x=1721767704; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lwLgbXv+0AKPQzwn33w2M6jpxpfVd7tZaswXpHQn/IU=;
+        b=KYsjaTq55g0P5Dw5L9iguADTly2Cci0+S6ZVpoIUXuJeGLA77vTNgkq5ZpBdx7uejn
+         r3y+1GdVh5qeXzoyPU+Qwew1UZZd8bxiqRScHIaxk16S6H474uA7dy44AXpkQaZHfTue
+         xmsfcjs/EGMn/qpYqd1A+hn64CzpLVS1EYeTXrglwaRoVFyrmji0Ypsjl+xVmuvUSKP4
+         hF99Kgw2eC+kORy3ieQNcMD2AIqNltzf+fQ2wBfwuRrhdUY+5M3Pc24d7NUqzuiBtGq2
+         V/QuoWhSZrB/o+kehhFeUa9zOi128yLNevx85jJ0BJsgySFsTfz8jHOdx0n6D0ij143F
+         Te4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721162885; x=1721767685;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c6GNJjXe4aQne+TSaa8LyLS0Eu5HZLIaZpjqqmJNiR4=;
-        b=OvHZUMhJJIGRkA2Z5vzeCWYUWxGtjM7NBIgCdy2Ia5Y3rD8YmLkxWNc4ZFBSw1GS46
-         pCOvUbFI8/9ANaELDD84OEGmFJNHH2XLbYB/7pgNfvv2tF27pre9/lNlatoyQI49LICB
-         1N8EYsp/wM0nutu8j+XZNg0ZRP3rJ9Li66e9/ZchhgoseAj8R+adb13y9orQQtQOE9yY
-         3PZw0nIShXLKqa/LA7yeDkWLJPsikPZftEqQf6UoGVPQ3i22jM1UFu32PDJiDNPVsRXU
-         3A+Pqgka1KHgvZjgniqzEzvdE8z8mOhHiNupYSu0TibsDTsZEoGf/OGxC37YMSfAHIQ1
-         6G3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXEnCfKCvqlSa+DPfmwfrSQBQj0HoTRMae4yij7INYWhlAAy+CwrmL/AXpXnbcdsbjX09Vi7D9pHUcC3P2CHJnO29RX5XQkJZpk0Vpm
-X-Gm-Message-State: AOJu0YyMBd1YqjkdX/6S+ubR6SBuqr550udj4jvbfOHjc4t1F2V15bTu
-	GKS9az33llX+ePv1m/VKDb6/wVr0ae1f7u+Sa6tPZxhSa3rnW3c6b+eyhY+1QwAum+UBHv58Yj9
-	l/DmqNaUctTWYyRQyzl1zIVobJWgC9v+E8r45JA==
-X-Google-Smtp-Source: AGHT+IHWB9+UFZMeujAczzwgAyMeRBak9A7BEJ7/zhXCtvVtyq9dOdepGTchh2FUJeUis1miwAnEDhoODIErtZbpgPQ=
-X-Received: by 2002:a2e:8205:0:b0:2ea:e74c:40a2 with SMTP id
- 38308e7fff4ca-2eef4173e8emr28566101fa.20.1721162884653; Tue, 16 Jul 2024
- 13:48:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721162904; x=1721767704;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lwLgbXv+0AKPQzwn33w2M6jpxpfVd7tZaswXpHQn/IU=;
+        b=Pqh//pRZ2mP8vkLYy3mkA/phqE1kdAUGhlIuzBoOrmZmVsFLEvYKskK4/o1WJds9Dc
+         2Sbv8ltP6LqKXFVSq6VO7WB5ASRhNVpVdmeslFMYDefvgtJnb8UG2Ir8zEGilUTCWtYX
+         5KDbx0BXXfw7J9GSTi6d9/bxJRbFN7aQCZjlqHyQmPr+hI5tv2CfSkLko3E5N0tX/7Q0
+         +IF3gGUFkv+CVWy+UMYHrHFIRkYKRmS8UupKOCvHI9+LG6r28jTC4m1g2h1zJ5ijHMDY
+         SVPSMZKGNQCpOiGEtXKdBm9ZKQydYMs6G331RYmqfOaZIH74cSvuZGs4dyl6h98U+Al5
+         rdhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzEWG4WmSudvLnNiRTGk/3PXh0IUJinwMGO5zzq+3jkQljSheOi1Gd/BTDlJFZftPwRu9uS9lRLE4lvXEj2FCJ/jz5F0sM6CDzhIfO
+X-Gm-Message-State: AOJu0YzrQy+Pm3al/EQT60SY7KbrdDGHRy8z3BxJ35etY6y+WSa4mJrq
+	ZDZz4ErYcPe7ErayesnzFY013JQnVGMsTfoNDWKQT18lzWRDujjt
+X-Google-Smtp-Source: AGHT+IHcuuyW2diFiVsIgYD8st796q0j4cvhtGkBF8ipn8ZmRPmEr/n4pwPozt1RVflhHuZd8VgAAQ==
+X-Received: by 2002:a05:6830:700b:b0:702:1ea0:cfbb with SMTP id 46e09a7af769-708d995f497mr4256777a34.18.1721162904296;
+        Tue, 16 Jul 2024 13:48:24 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7c5ddsm6802006b3a.124.2024.07.16.13.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 13:48:23 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 16 Jul 2024 10:48:22 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>
+Cc: void@manifault.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Reverting @p->sched_class
+ if @p->disallow is set
+Message-ID: <ZpbclgFjf_q6PSd1@slm.duckdns.org>
+References: <20240711110720.1285-1-zhangqiao22@huawei.com>
+ <ZpArK0qxZZI-0ykt@slm.duckdns.org>
+ <ba2702f9-f66e-498b-853c-d23f1f9191bc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152745.988603303@linuxfoundation.org>
-In-Reply-To: <20240716152745.988603303@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 17 Jul 2024 02:17:51 +0530
-Message-ID: <CA+G9fYskex_Z+r0wxv7XDdPVHrk=8jBPWH601mY_Q2mKDj-T=A@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/108] 5.10.222-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba2702f9-f66e-498b-853c-d23f1f9191bc@huawei.com>
 
-On Tue, 16 Jul 2024 at 21:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.222 release.
-> There are 108 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.222-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello,
 
+On Tue, Jul 16, 2024 at 07:32:09PM +0800, Zhangqiao (2012 lab) wrote:
+> 在 2024/7/12 2:57, Tejun Heo 写道:
+> > On Thu, Jul 11, 2024 at 07:07:20PM +0800, Zhangqiao (2012 lab) wrote:
+> > ...
+> > >   		if (p->policy == SCHED_EXT) {
+> > >   			p->policy = SCHED_NORMAL;
+> > > +			p->sched_class = &fair_sched_class;
+> > >   			atomic_long_inc(&scx_nr_rejected);
+> > Did you see any issues with the existing implementation? The policy is set
+> > before the task is attached, so it should work fine. Also, you can't change
+> > sched_class by just assigning to it.
+> 
+> What does "attach" mean? I'm not sure. p->sched_class is assigned in
+> __sched_fork() which is performed before scx_ops_init_task().
 
-The 390 builds failed on stable-rc 5.10.222-rc1 review; it has been
-reported on 6.6, 6.1, 5.15 and now on 5.10.
+Ah, I see what you mean. I was referring to the classs switching operations
+in scx_ops_enable(). You're looking at the fork path. I don't think we can
+switch sched_class at that point and the .disallow mechanism is there to
+allow the scheduler to filter out tasks on scheduler start. I'll update the
+code so that .disallow is only allowed during the initial attach.
 
-Started from this round of stable rc on 5.10.222-rc1
+Thanks.
 
-  Good:6db6c4ec363b ("Linux 5.10.221-rc2")
-  BAD: 4ec8d630a600 ("Linux 5.10.222-rc1")
-
-* s390, build
-  - clang-18-allnoconfig
-  - clang-18-defconfig
-  - clang-18-tinyconfig
-  - clang-nightly-allnoconfig
-  - clang-nightly-defconfig
-  - clang-nightly-tinyconfig
-  - gcc-12-allnoconfig
-  - gcc-12-defconfig
-  - gcc-12-tinyconfig
-  - gcc-8-allnoconfig
-  - gcc-8-defconfig-fe40093d
-  - gcc-8-tinyconfig
-
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Build log:
--------
-linux/arch/s390/include/asm/processor.h: In function '__load_psw_mask':
-arch/s390/include/asm/processor.h:255:19: error: expected '=', ',',
-';', 'asm' or '__attribute__' before '__uninitialized'
-  255 |         psw_t psw __uninitialized;
-      |                   ^~~~~~~~~~~~~~~
-arch/s390/include/asm/processor.h:255:19: error: '__uninitialized'
-undeclared (first use in this function)
-arch/s390/include/asm/processor.h:255:19: note: each undeclared
-identifier is reported only once for each function it appears in
-arch/s390/include/asm/processor.h:256:9: warning: ISO C90 forbids
-mixed declarations and code [-Wdeclaration-after-statement]
-  256 |         unsigned long addr;
-      |         ^~~~~~~~
-arch/s390/include/asm/processor.h:258:9: error: 'psw' undeclared
-(first use in this function); did you mean 'psw_t'?
-  258 |         psw.mask = mask;
-      |         ^~~
-      |         psw_t
-
-metadata:
----------
-  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2jKrKyHqAZ7eSsKwMSVqDueYpKo/config
-  download_url:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2jKrKyHqAZ7eSsKwMSVqDueYpKo/
-  git_describe: v5.10.221-109-g4ec8d630a600
-  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git_sha: 4ec8d630a6005e1aa82671aca9f6716039f5b6e7
-  git_short_log: 4ec8d630a600 ("Linux 5.10.222-rc1")
-  arch: s390
-  toolchain: gcc-12 and clang-18
-
-Steps to reproduce:
-----------
-# tuxmake --runtime podman --target-arch s390 --toolchain gcc-12
---kconfig tinyconfig
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+tejun
 
