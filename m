@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-253860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D5D932805
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:11:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9382893280A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2751C223D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BC01F23110
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDAB19B3C9;
-	Tue, 16 Jul 2024 14:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3016019B3E6;
+	Tue, 16 Jul 2024 14:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H/EmzLpH"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l6x2064q"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE5F13CA99
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2D4D8A3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139093; cv=none; b=IvWiCRSSNH9L5iic3KerSwzFIMSm7hhzNCNthujp/enStIUbQeIjAjKU8v15ye1dJt5yNqdXTqV8hJt9MFX8ZxmKYwU1wZfhAWYjspzv0DJfXhJ2aMNC1gCYm0OxLzPv8JT/HY7y0bXd26aPAncCzwHUpWKoQD2oEHyXsS8Gt8U=
+	t=1721139199; cv=none; b=NtKNv0FjWBEDB5ReagWtFGHQGGFKtkW1jFtgpduVnMjH/AoZx0KArL+LRwAMt8zhc/bzSA7c3JGc67XdblvM80fcqylRWWLaqP+8ACxK02zAuJOxeVylnbxdEBqrWF/bVgsBbY6RweopFVm3XwChxZylwGCWy2hFMj8UTy10QGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139093; c=relaxed/simple;
-	bh=hO0GPFmh/HLMhCeNAbcbW/66SZs3FuNYPDv8kM1b5fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIjfAuMa2E2Zz6RqTfY5j7ctkBGiF2RlwJhQmSduBMWqUmOLXXzwznHh/+A2+n+J595Eyw1j/M74JkgJAm0KWc6F0AJ/YG7BAIOOP4EV1CIbhl0rmIh2EwzKrQmL+EC3X5MwHC1jxttvsWid8LT+OSe/h9mqgdSVWuXsMCYWCQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H/EmzLpH; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-78512d44a17so4045623a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721139091; x=1721743891; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LMhrIhzKgKIGB9nzoEar7WI57bGhMjucU6qQ1Vl4qeM=;
-        b=H/EmzLpHnbnNNdPgRgaOIcULvffr90HPSyqFBYxFLu8TOhNZa/gpMv350aqNdNAooH
-         FhNl3Pnhh+fs2vyeKVHLah977cf3kHhSermKeMjcy6dWg1ezF9o2BgvAbyzQqhD6/V2b
-         /2ld2r3myTKs72JmHJjyzAGr5SBcxFyaBRTzKndXDii1vkjWwUyDjLi84YPFgiMQBPsJ
-         KRxR7oiwFKLBgCjDuiXJtgcJLkeg2FdFJwtQJNxckGK6FBg/63ogSvMm/5KR7pg0jElY
-         VyBUKrJhez/3ZrTLbRmIcJrWdiGUJdBM+2hkPGWEHzusx09p4B8AZHe51H3k334rXVyK
-         bsEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721139091; x=1721743891;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LMhrIhzKgKIGB9nzoEar7WI57bGhMjucU6qQ1Vl4qeM=;
-        b=AS9g1uXKoDQ5AbPn3orJACKrgMsjBQ+eGmumlIn9OFn1VWcdgDNHMBMoOt/fNQNtPe
-         jN91Ny3UfC8klGi0Axt7n0P2EiUPvlDSuMG6wRjHXbiNYhwD8JB8pSDvCnOxXHPRMLsa
-         MDXDzqY6r+Q6CrLq5SeXUI1BHbkuFMgwCQ4Nr6TkaMFcxiuSVR9cgIJk24JG7L5ED3A0
-         96u9BJVQW6S40hCo0OtFtcjHDCpWpXuIypCiMIM/wsRtdO/z3b5+ukGhf6wVLefC7P5Z
-         yPX6G53vt9vZvr3/b8wCEMqLQi1A29n5hNTaV1PqUUSRGUs5I1gnFRyyQ94hxx+NWRtR
-         rcwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTk1CDO3NBN2zB/QkkUwSp+nIsb24NSDPKkcoXr4jJKnaaLJ0lfbptslBiDDJ41aTGkD8uQy8ebrCEWND3izyw/fxrlOWemZYTL2QW
-X-Gm-Message-State: AOJu0YwM97GQARBMZzi84+LV7bjP/orJbs7eo4N/s20XIoA7V7rYfVAj
-	mymnEeoWRFCjegsgJZ3//2ehDPWMmRkB+sIhQQPMmWlm+/zR4vYvuRQKso04Ew==
-X-Google-Smtp-Source: AGHT+IFWO+xFFI3Lr3vgv5cXLwSpXJX+ZGbQfvEZyOjk6fVB+oNr+E43PHlKhaCRpcB6/npLwI487Q==
-X-Received: by 2002:a05:6a20:a10b:b0:1c0:e329:5c51 with SMTP id adf61e73a8af0-1c3f1227571mr3066957637.13.1721139090933;
-        Tue, 16 Jul 2024 07:11:30 -0700 (PDT)
-Received: from google.com (33.5.83.34.bc.googleusercontent.com. [34.83.5.33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7da19sm6321904b3a.133.2024.07.16.07.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 07:11:30 -0700 (PDT)
-Date: Tue, 16 Jul 2024 14:11:26 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Yu-Ting Tseng <yutingtseng@google.com>
-Cc: tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	surenb@google.com, aliceryhl@google.com, kernel-team@android.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 1/2] binder: frozen notification
-Message-ID: <ZpZ_jva0L5DorZPh@google.com>
-References: <20240709070047.4055369-2-yutingtseng@google.com>
- <20240709070047.4055369-4-yutingtseng@google.com>
+	s=arc-20240116; t=1721139199; c=relaxed/simple;
+	bh=lMHctMZZgHXALQXjijLLcrYq0EEkBBXuPM2pzUtBsOk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yfb1mMQ5B8Oguz+JhdKAYjHHuIC4iuKx6NYRus9aZmCHAWXOMkyubPxGylGr/reJEunC1u2smlVTVeKD8IyVso5hM2MII8HHaHRLI8FNL7YGtyLUsUXbOv4Rd6FnZNx/977kgVMIrIjDwRdXxqMvokO7blh6zwpS/melLLJoNac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l6x2064q; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jack@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721139192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MMpVo1XbRtxcz118lo+kxvs4FtSr6A+atkLL/getcvY=;
+	b=l6x2064qicwAvu7NGcNnyY5KR4wFbwsAWM3QyAjcqxX7aApo1BMUP0lBNGP8tIxS8uxj2w
+	tciytTDkOsVhjTZco5kq9XecjlyuiJtIix8LV6wq+tEzJH0Cea94zMzpkTQNksYioyDKCt
+	GaPdaKGIZfxGa5lBISjomT2ThR/UPDw=
+X-Envelope-To: luis.henriques@linux.dev
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Harshad Shirwadkar
+ <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+In-Reply-To: <20240716102416.jublpma3qiltlrbr@quack3> (Jan Kara's message of
+	"Tue, 16 Jul 2024 12:24:16 +0200")
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+	<20240716102416.jublpma3qiltlrbr@quack3>
+Date: Tue, 16 Jul 2024 15:13:05 +0100
+Message-ID: <87bk2xtoge.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709070047.4055369-4-yutingtseng@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 09, 2024 at 12:00:47AM -0700, Yu-Ting Tseng wrote:
-> Frozen processes present a significant challenge in binder transactions.
-> When a process is frozen, it cannot, by design, accept and/or respond to
-> binder transactions. As a result, the sender needs to adjust its
-> behavior, such as postponing transactions until the peer process
-> unfreezes. However, there is currently no way to subscribe to these
-> state change events, making it impossible to implement frozen-aware
-> behaviors efficiently.
-> 
-> Introduce a binder API for subscribing to frozen state change events.
-> This allows programs to react to changes in peer process state,
-> mitigating issues related to binder transactions sent to frozen
-> processes.
-> 
-> Implementation details:
-> For a given binder_ref, the state of frozen notification can be one of
-> the followings:
-> 1. Userspace doesn't want a notification. binder_ref->freeze is null.
-> 2. Userspace wants a notification but none is in flight.
->    list_empty(&binder_ref->freeze->work.entry) = true
-> 3. A notification is in flight and waiting to be read by userspace.
->    binder_ref_freeze.sent is false.
-> 4. A notification was read by userspace and kernel is waiting for an ack.
->    binder_ref_freeze.sent is true.
-> 
-> When a notification is in flight, new state change events are coalesced into
-> the existing binder_ref_freeze struct. If userspace hasn't picked up the
-> notification yet, the driver simply rewrites the state. Otherwise, the
-> notification is flagged as requiring a resend, which will be performed
-> once userspace acks the original notification that's inflight.
-> 
-> See https://r.android.com/3070045 for how userspace is going to use this
-> feature.
-> 
-> Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
-> ---
+On Tue, Jul 16 2024, Jan Kara wrote:
 
-Thanks,
+> On Thu 11-07-24 09:35:20, Luis Henriques (SUSE) wrote:
+>> When a full journal commit is on-going, any fast commit has to be enqueu=
+ed
+>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueue=
+ing
+>> is done only once, i.e. if an inode is already queued in a previous fast
+>> commit entry it won't be enqueued again.  However, if a full commit star=
+ts
+>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs=
+ to
+>> be done into FC_Q_STAGING.  And this is not being done in function
+>> ext4_fc_track_template().
+>>=20
+>> This patch fixes the issue by re-enqueuing an inode into the STAGING que=
+ue
+>> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+>> greater than the one being handled.  The STAGING queue will then be spli=
+ced
+>> back into MAIN.
+>>=20
+>> This bug was found using fstest generic/047.  This test creates several =
+32k
+>> bytes files, sync'ing each of them after it's creation, and then shutting
+>> down the filesystem.  Some data may be loss in this operation; for examp=
+le a
+>> file may have it's size truncated to zero.
+>>=20
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>
+> ...
+>
+>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>> index 3926a05eceee..facbc8dbbaa2 100644
+>> --- a/fs/ext4/fast_commit.c
+>> +++ b/fs/ext4/fast_commit.c
+>> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, i=
+nt full, tid_t tid)
+>>  				       EXT4_STATE_FC_COMMITTING);
+>>  		if (tid_geq(tid, iter->i_sync_tid))
+>>  			ext4_fc_reset_inode(&iter->vfs_inode);
+>> +		} else if (tid) {
+>> +			/*
+>> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
+>> +			 * inode into STAGING, which will then be splice back
+>> +			 * into MAIN
+>> +			 */
+>> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+>> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+>> +		}
+>
+> I don't think this is going to work (even if we fix the tid 0 being speci=
+al
+> assumption). With this there would be a race like:
+>
+> Task 1					Task2
+> modify inode I
+> ext4_fc_commit()
+>   jbd2_fc_begin_commit()
+>   commits changes
+>   jbd2_fc_end_commit()
+>     __jbd2_fc_end_commit(journal, 0, false)
+>       jbd2_journal_unlock_updates(journal)
+> 					jbd2_journal_start()
+> 					modify inode I
+> 					...
+> 					ext4_mark_iloc_dirty()
+> 					  ext4_fc_track_inode()
+> 					    ext4_fc_track_template()
+> 					      - doesn't add inode anywhere
+> 					      because i_fc_list is not empty
+>       ext4_fc_cleanup(journal, 0, 0)
+>         removes inode I from i_fc_list =3D> next fastcommit will not prop=
+erly
+> flush it.
+>
+> To avoid this race I think we could move the
+> journal->j_fc_cleanup_callback() call to happen before we call
+> jbd2_journal_unlock_updates(). Then we are sure that inode cannot be
+> modified (journal is locked) until we are done processing the fastcommit
+> lists when doing fastcommit. Hence your patch could then be changed like:
+>
+> +		} else if (full) {
+> +			/*
+> +			 * We are called after a full commit, inode has been
+> +			 * modified while the commit was running. Re-enqueue
+> +			 * the inode into STAGING, which will then be splice
+> +			 * back into MAIN. This cannot happen during
+> +			 * fastcommit because the journal is locked all the
+> +			 * time in that case (and tid doesn't increase so
+> +			 * tid check above isn't reliable).
+> +			 */
+> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+> +		}
+>
+> Later, Harshad's patches change the code to use EXT4_STATE_FC_COMMITTING
+> for protecting inodes during fastcommit and that will also deal with these
+> races without having to keep the whole journal locked.
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+OK, this looks like it should fix all the issues I was trying to fix
+(g/047, g/472, and a few others Ted pointed out).  I'll go run a few more
+tests on this to try to catch any possible regression.
+
+Once again, thanks a lot for your help, Jan.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
