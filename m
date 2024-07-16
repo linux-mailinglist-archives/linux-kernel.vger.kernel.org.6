@@ -1,107 +1,169 @@
-Return-Path: <linux-kernel+bounces-253398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7A9932090
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7B89320BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2919B20D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5007D1C21387
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB16225DA;
-	Tue, 16 Jul 2024 06:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0D21CFBE;
+	Tue, 16 Jul 2024 06:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NMxtzTqe"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M7oyBmDG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441761862C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8517C1CD29
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721112397; cv=none; b=PAGjUGNMcXwc7FOvA2R+yqBfEi8CEqpmqESYy4OM489DDdfgy219zHD/iGchCOShVxRAjV6mba26YjoywUcViC3RlUynnPRRyxW/HFkQwlVt3zRbuwyzcvOWj9LFrtDWHNaPWI8j8IDCMulUdYmzPsfobNh6YxJmmwwQOzGm1Jc=
+	t=1721112576; cv=none; b=c1vj7223J9Z3iMh2vM59SuqltKh8C1mYo//dmNzJlROmbAlbPLnpAMmNOWh6NGWoKEH6VylcwgPFJbLsdajHGDbxdurwuyf49ooJ2VDzd8bzInjmzwrgPhcj1vFdHfAuhGevKPDISBBOLJt7xldegTaEfMvivCetCFOz6QIsSaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721112397; c=relaxed/simple;
-	bh=cWVc6+CdvyhCJ8SbmioGD8az2nNiDojYywOeUMzt/Co=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jUsLCJ1BJWA9sMZKzNReQ2EigaCE+NN9W7aKK+Elz3NEblRCZ8Vn5xw93eiPmHJEVfGC+8hESC/K2K1SksIiv0YmxrAzeBGlzNhnMJpGJCeKCSNVWIwtFewzwh2RIGAPKMbjkM2CbywwFCVs6qFI0HudthlV+iXwFm7rPCoU92o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NMxtzTqe; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721112386; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=3VjkPs1ND3ZkbMZwPcFQ6dQO7g+M9DvU25mbr2pS8LQ=;
-	b=NMxtzTqe/hnFQCUWYVE1Wini4yyHdSb3XNyYlQvnnOmHph+aCObgHqlgmzCP1Op2lWIQYQtfLBQNL8vIv5sM2JzG2miuRRfWANrbWStRsaX4/wlrBNyg/83LTO7kK0NHHWOpNqdIWcuxvokybnssnmQaHoI8H0yZW+kX1Hy8JyQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAgYxGS_1721112385;
-Received: from 30.97.48.217(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WAgYxGS_1721112385)
-          by smtp.aliyun-inc.com;
-          Tue, 16 Jul 2024 14:46:26 +0800
-Message-ID: <dedea322-c2c5-4e1b-b5c6-0889a78c19fa@linux.alibaba.com>
-Date: Tue, 16 Jul 2024 14:46:25 +0800
+	s=arc-20240116; t=1721112576; c=relaxed/simple;
+	bh=u6zGMe7AFn2M/uTxtJvY31jYBv0LzziLp0O1Ad6E950=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6LCgqHb5Kz271TCXX3YYJtvaa1NWA9Wuizf6sByvUM+rAQfv9yPajcLmDjo2n5HlvqIykk8U+I1HupqbswP1VF0Q+QWxUzXGz70VSS1sXMOXmIPPcS7rwrQfotvUnhGhCPdNHuGcfsGNs/1myjcvt//ri2TDwDDWUnK9Gjb1TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M7oyBmDG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G6Q5Yr013934;
+	Tue, 16 Jul 2024 06:49:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=dpCUcIAqXkW6G0o01i7UYeaiyv0
+	1UMhuG5DTlzxIDoA=; b=M7oyBmDGBlVH7HR7PGTclmt3Fe+edaLE6fZmhZZ2jR+
+	ZTc8yFjRYh26+iVlSS+EP4PU98GULecQC/URF1kTbX/ZuRNb7SbI40EhftZ2x/AA
+	scK1ymJsBBKHydFVOM+sxQeErMuMVUFT8LBb6NQXSgxjrFttCGhTMUpGRfQ0dZoT
+	0OVNN1p3pivE0wepTcFvhoMELXTevDZWP9xVqlKb7lzMPd5jYRsFCPT+B+aWdBHb
+	aHrN7MFxm/9cilXzgKV9siZ9MUtjx/DxLXAez+3CTjhtbqZ38bj3loWpzO87hS2W
+	sRB3rT0bO968E1P3YShajpdy/REuW1HjJ3qk+/vjcJQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40djr9r5uq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 06:49:27 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G6hOYj021920;
+	Tue, 16 Jul 2024 06:49:27 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40c5dntn9v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 06:49:27 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46G6nNv513041986
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 06:49:25 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 23A602004B;
+	Tue, 16 Jul 2024 06:49:23 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 437C32004F;
+	Tue, 16 Jul 2024 06:49:22 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.204.201.194])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 16 Jul 2024 06:49:22 +0000 (GMT)
+Date: Tue, 16 Jul 2024 12:19:16 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: sched_ext/for-6.11: cpu validity check in ops_cpu_valid
+Message-ID: <ZpYX7BgiirBmwLa3@linux.ibm.com>
+References: <ZpLSEHskvXXv4EoR@linux.ibm.com>
+ <ZpSw7PvW1Teh6tNV@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: fix schedule while atomic caused by gfp of
- erofs_allocpage
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Gao Xiang
- <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale
- <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-References: <20240716054414.2446134-1-zhaoyang.huang@unisoc.com>
- <d3629955-71e5-442f-ad19-e2a4e1e9b04c@linux.alibaba.com>
- <CAGWkznEpn0NNTiYL-VYohcmboQ-kTDssiGZyi84BXf5i8+KA-Q@mail.gmail.com>
- <a41d38bb-756a-4773-8d87-b43b0c5ed9a9@linux.alibaba.com>
- <CAGWkznH4h=B1iUHps6r6DKhx2xt-Pn3-Pd1_fFjabeun6rmO_Q@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAGWkznH4h=B1iUHps6r6DKhx2xt-Pn3-Pd1_fFjabeun6rmO_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpSw7PvW1Teh6tNV@slm.duckdns.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gCrC5Hqyxz7F2My0jvuwBO0djnp79U0L
+X-Proofpoint-GUID: gCrC5Hqyxz7F2My0jvuwBO0djnp79U0L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=580
+ priorityscore=1501 impostorscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 spamscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160047
 
+On Sun, Jul 14, 2024 at 07:17:32PM -1000, Tejun Heo wrote:
+> Hello, Vishal.
+> 
+> On Sun, Jul 14, 2024 at 12:44:24AM +0530, Vishal Chourasia wrote:
+> > Currently, the BPF scheduler can return a CPU that is marked as possible
+> > in the system configurations, but this doesn't guarantee that the CPU is
+> > actually present or online at the time. This behavior can lead to
+> > scenarios where the scheduler attempts to assign tasks to CPUs that are
+> > not available, causing the fallback mechanism to activate and
+> > potentially leading to an uneven load distribution across the system.
+> 
+> ops.select_cpu() is allowed to return any CPU and then the scheduler will
+> pick a fallback CPU. This is mostly because that's how
+> sched_class->select_task_rq() behaves. Here, SCX is just inheriting the
+> behavior.
+> 
+> Dispatching to foreign local DSQ using SCX_DSQ_LOCAL_ON also does
+> auto-fallback. This is because it's difficult for the BPF scheduler to
+> strongly synchronize its dispatch operation against CPU hotplug operations.
+> 
+> > By defalut, When a "not possible" CPU is returned, sched_ext gracefully
+> > exits the bpf scheduler.
+> > 
+> > static bool ops_cpu_valid(s32 cpu, const char *where)
+> > {
+> > 	if (likely(cpu >= 0 && cpu < nr_cpu_ids && cpu_possible(cpu))) {
+> > 		return true;
+> > 	} else {
+> > 		scx_ops_error("invalid CPU %d%s%s", cpu,
+> > 			      where ? " " : "", where ?: "");
+> > 		return false;
+> > 	}
+> > }
+> >
+> > On POWER, a system can have differences in cpu_present and cpu_possible
+> > mask. Not present, but possible CPUs can be added later but once added
+> > will also be marked set in the cpu present mask. 
+> > 
+> > Looks like cpu_present() is a better check.
+> 
+> We can consider tightening each path separately but I'm not sure making
+What do you mean by "each path separately"?
 
+> ops_cpu_valid() more strict is a good idea. For example, there's no reason
+> to abort because a scheduler is calling scx_bpf_dsq_nr_queued() on an
+> offline CPU especially given that the kfunc is allowed from any context
+> without any synchronization. It can create aborting bugs which are really
+> difficult to reproduce.
+I agree, I wouldn't want to kick the BPF scheduler out for things that
+can be handled. If an invalid CPU was returned by any sched_class, it's
+best to handle it, because we don't have any other option.
 
-On 2024/7/16 14:43, Zhaoyang Huang wrote:
-> On Tue, Jul 16, 2024 at 2:20 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
->>
->>
+However, the case of the BPF scheduler is different; we shouldn't need
+to handle corner cases but instead immediately flag such cases.
 
-...
+Consider this: if a BPF scheduler is returning a non-present CPU in
+select_cpu, the corresponding task will get scheduled on a CPU (using
+the fallback mechanism) that may not be the best placement, causing
+inconsistent behavior. And there will be no red flags reported making it
+difficult to catch. My point is that sched_ext should be much stricter
+towards the BPF scheduler.
 
->>>>
->>>> I don't see why it's an atomic context,
->>>> so this patch is incorrect.
->>> Sorry, I should provide more details. page_cache_ra_unbounded() will
->>> call filemap_invalidate_lock_shared(mapping) to ensure the integrity
->>> of page cache during readahead, which will disable preempt.
->>
->> Why a rwsem sleepable lock disable preemption?
-> emm, that's the original design of down_read()
-
-No.
+Note: There is still the case when a offline CPU is returned by the bpf
+scheduler. If sched_ext can catch that and handle it seperately by
+calling scx_bpf_select_cpu_dfl
 
 > 
->> context should be always non-atomic context, which is applied
->> to all kernel filesystems.
->   AFAICT, filemap_fault/read have added the folios of readahead to page
-> cache which means the aops->readahead basically just need to map the
-> block to this folios and then launch the bio. The erofs is a little
-> bit different to others as it has to alloc_pages for decompression
-> when doing this.
-
-Interesting.  The whole .readahead is sleepable, including
-submit block I/Os to storage.
-
-Nacked-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-
-Thanks,
-Gao Xiang
+> Thanks.
+> 
+> -- 
+> tejun
 
