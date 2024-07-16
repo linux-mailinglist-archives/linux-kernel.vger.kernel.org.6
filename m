@@ -1,218 +1,235 @@
-Return-Path: <linux-kernel+bounces-254016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60656932A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CB1932A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C08285059
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63412865D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3719DF9D;
-	Tue, 16 Jul 2024 15:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C7919E822;
+	Tue, 16 Jul 2024 15:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OStJuxMG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KuM2abcJ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021332B9B3;
-	Tue, 16 Jul 2024 15:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABC219E7D3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721143039; cv=none; b=s9f/ra3qQakjaii3P+GlWnEduH5kfeKKkgqjcAF13wX/0KYSIN3K7zfOitsywy660azbzAPewdwywwJsutgRKyln0i9Ar5gbxxUdpROlggbPeQFeoORAYQ8BLwVQj8JWq4KnDY/bPb3zWcuz87IQ1nZTwwzOKlHbYBsnvIyeSpA=
+	t=1721143133; cv=none; b=cJeMjKwchhPvk2O+AI+2ntlxHLZKZySR/jvB+6YA9Ar73FM1Hu/U9yqzRQPSeUyCoSgpI25Unh584AukrpgTrEBkkPeZQ5FTSzVTXWUq+H6uY8ZnHF1QKZOha9fVN2iJOsfzpcZL0lm6HVdSY5G0/qverXf59v0ii6vUmFPMr1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721143039; c=relaxed/simple;
-	bh=aPtkDon0fbJqih4uVR9A9V0XEADmRixC6/HZP3ixjcU=;
+	s=arc-20240116; t=1721143133; c=relaxed/simple;
+	bh=9Cy/3Y8kPlwgnsA87ATuYpWF26sXvnlcGY/yqfqbXSU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJIkXdsKyfj5nNGpkvYGIWfebiARiyv6zDrm/niqStvsr2nqAWG55YPRoxpbkKKHYH/DyZFFqQLviB8F1VkTJ7+hHyqEOMlkR3Wq386tl2JNg2PJECChyreSDTLjrE1TNcANAH0RiugoHLWP/sma/ufz7RauNKQrNgQ5dJ8I6XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OStJuxMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7539FC4AF16;
-	Tue, 16 Jul 2024 15:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721143038;
-	bh=aPtkDon0fbJqih4uVR9A9V0XEADmRixC6/HZP3ixjcU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OStJuxMGNf9E4N7aPla00MkyLckmcowT/RVS9OvxJzZhsomXeQJQe7YsuInEbNfo/
-	 3HkD/P5S8g1ogojfW4mnT7BbdW2jrbKbX24IiWzl4CW9mzxwSlCYO48AI0dkeUNI94
-	 Ryfom9DbqAn2TLlSI9aEFtmZV/2pWYiC+B9PW6X80mqwjv7o6XlXB3jhUBHhfcAuvN
-	 KcoI+Yh/ano29inhTp+T8STcGM1u6aqKcLFzgN3lRzEHmu34/6D4fAmsSPDpwC8QrE
-	 667UJ1UpTX+hBQMUUfznT+4apeKrYmyaCEEhLr+mSAjq1Uqmfku1NKA/IRob9pMyMX
-	 WxSjXAQYN+52g==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea5765e75so6850444e87.0;
-        Tue, 16 Jul 2024 08:17:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW5iQz8xWxI8ZY1hNOjjI6WMjxu3Mk+PqlzOVLntQS2el3WiDftUGr8o3+eAzcJ3Zz3lkkWdYiqrZM/jGiAPwjUaWHz0UpLSEK8yb6V/X9PTQKbJrIg1r74mGQaYtYPmZKLYqoP2eNW
-X-Gm-Message-State: AOJu0Yzc3al7oxwrihSvGiG1v/08VfHq1Q5IaWdzcklsMy7/ktRRNG8W
-	aFOlHa0KHdERiQvxEgouLixaLqjqBciJbmsOEo5/PTFK62y8hg4obu0TmlW2W3YKvJuJesupBKp
-	wF557bJWaHJfVWXuxLPxpaYKsrwo=
-X-Google-Smtp-Source: AGHT+IFXMyRqVEuv0lOnARYZkpoy4q6bG9QB8sGhRLJi8OPsread22Hc+2bdOi+Zy5Y6+YCk5vlxTdBbCgvBP7y/N54=
-X-Received: by 2002:a05:6512:b94:b0:52c:c032:538d with SMTP id
- 2adb3069b0e04-52edf02300cmr1727066e87.27.1721143036612; Tue, 16 Jul 2024
- 08:17:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=IWnR1khEbRuXcW5bhhlJ3qEo1OyiFORDI0T3JrcX8zSzQ7o89OhVcN8uCdXRL3Zu9iERdYjkIIxyieiKvqnGb3nnu/7b7IMSPdYOI+jdtKnF7A2PY6g0Y4UipcZJnacUl5X04bgjgLPC34fZnDGZPDeR56IUK94Cnr/YIEw1zJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KuM2abcJ; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44e534a1fbeso317841cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721143131; x=1721747931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WWVNrxbBHDXZu/jCvfJLl2ens68sOvgHXhZ1riQlav8=;
+        b=KuM2abcJKNu6Wu/Zo6y3Dila7DecYrbJ3Jt4gioQHFe2bftbtrqLfYEDx7ZvWclHS2
+         HY8POeFIzuln87aKfgkH39mcSevAbp2lvfj6gWOn0n+xO+RlHMjSfV1C6jF4w89pNtQr
+         6QttE9ehDZWnTJppIhMidRDOjxHwb7Hf3+IUzEn0E3AWoBclFHDTZ6BFMkoFe8yH8JhK
+         2sAVJWYu0HFyYerDwucdOrwouVmkCQCCj9q4M1LdV7oe/pvY1KsFZO0YomFMX9B/uUlS
+         kaNqwnZkhkKf7mBYUcm44e0sorNHWXg8mgDi5vaPxrsS45DcpgBlHTrUTBhdUYjQXn6A
+         c99A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721143131; x=1721747931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WWVNrxbBHDXZu/jCvfJLl2ens68sOvgHXhZ1riQlav8=;
+        b=IjnCEcGpIiyhM6qOQitEyUUQl4khn8u8yS9nPqi64bjF+5SOOH1LgjBrDjmecq5Y/H
+         /3lp45hJKWc0TkCdFnmQKStrKRmwNx/JayVm0L6x8zvkDkWjClZZHoMBfJ0tHLe7/7Tm
+         WSVtFbFEBj00Ny/SsvT3jYZ848rxHVx9EyzPNf2NtFZpsAK34J8hLcpUm5yjoRxNGeTB
+         2aZtFpEmt2jMbBd/UgtoWrYykur+xKI3Cc1V943mXy9R70tXUAMnFbsUtSDJIv8QZeiH
+         jcRVoR48DVV0lGcVzLsfNr32IQkApRQrJwIxyab5W8+TkZeYrd6TcpqfH9g/bThTAZWb
+         ouLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/U3hU8xO4R1KxILdPiwG2NfcEoqs4sSbUpxqxc4KHzMDCQ7S/BVsrqBvwktVPV0CdwdVNQ/LoSAdbYRCkZ4dp56zWhORdn8MWkP73
+X-Gm-Message-State: AOJu0YzTzGpSsqyBDy2h896Td1kkj/cg4uI9lhS6TRO2yulwsbZkSzil
+	zGtZPoWMeshyOsJTsoBcpzKeBnC1TgOuv25kddxKmEqMr9hLYs+2a3xJ+mcq9eOMEgB/iavX0cA
+	Sh+URrx5PLbVLHUM5whbaDg8k/uKeSKDtb+vZ
+X-Google-Smtp-Source: AGHT+IHWbKj34zsRyLKiBWqdmFyKlDq6Wr5+2Wdecg/ZG3HyZU7BuDsfvRbU1vyabej6wFPdLE9jOxxXXzqK9dZsCJU=
+X-Received: by 2002:a05:622a:997:b0:444:dc22:fb1d with SMTP id
+ d75a77b69052e-44f7a64c7e0mr3638781cf.12.1721143130336; Tue, 16 Jul 2024
+ 08:18:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715185309.1637839-1-steve.wahl@hpe.com> <20240715185309.1637839-2-steve.wahl@hpe.com>
-In-Reply-To: <20240715185309.1637839-2-steve.wahl@hpe.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 16 Jul 2024 08:17:02 -0700
-X-Gmail-Original-Message-ID: <CAMj1kXF7SXvN=szKb=g8MSzLyLWy=Uozr0ps40zRUoajoeG6pQ@mail.gmail.com>
-Message-ID: <CAMj1kXF7SXvN=szKb=g8MSzLyLWy=Uozr0ps40zRUoajoeG6pQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] x86/kexec: Add EFI config table identity mapping
- for kexec kernel
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
-	Pavin Joseph <me@pavinjoseph.com>, Eric Hagberg <ehagberg@gmail.com>, 
-	Simon Horman <horms@verge.net.au>, Eric Biederman <ebiederm@xmission.com>, 
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>, 
-	Dimitri Sivanich <sivanich@hpe.com>, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>, 
-	Michael Roth <michael.roth@amd.com>, Tao Liu <ltao@redhat.com>, kexec@lists.infradead.org, 
-	"Kalra, Ashish" <ashish.kalra@amd.com>, linux-efi@vger.kernel.org
+References: <20240708.quoe8aeSaeRi@digikod.net> <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org> <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+ <20240709.aech3geeMoh0@digikod.net> <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
+ <20240710.eiKohpa4Phai@digikod.net> <202407100921.687BE1A6@keescook>
+ <20240711.sequuGhee0th@digikod.net> <CALmYWFt7X0v8k1N9=aX6BuT2gCiC9SeWwPEBckvBk8GQtb0rqQ@mail.gmail.com>
+ <20240716.Zah8Phaiphae@digikod.net>
+In-Reply-To: <20240716.Zah8Phaiphae@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Tue, 16 Jul 2024 08:18:09 -0700
+Message-ID: <CALmYWFu=kdsxZwj-U5yqCUXrhvzxWCt1YjuJv0eAAaAyGFbxFQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>, Steve Dower <steve.dower@python.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 15 Jul 2024 at 11:53, Steve Wahl <steve.wahl@hpe.com> wrote:
+On Tue, Jul 16, 2024 at 8:15=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> From: Tao Liu <ltao@redhat.com>
+> On Tue, Jul 16, 2024 at 08:02:37AM -0700, Jeff Xu wrote:
+> > On Thu, Jul 11, 2024 at 1:57=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Wed, Jul 10, 2024 at 09:26:14AM -0700, Kees Cook wrote:
+> > > > On Wed, Jul 10, 2024 at 11:58:25AM +0200, Micka=C3=ABl Sala=C3=BCn =
+wrote:
+> > > > > Here is another proposal:
+> > > > >
+> > > > > We can change a bit the semantic by making it the norm to always =
+check
+> > > > > file executability with AT_CHECK, and using the securebits to res=
+trict
+> > > > > file interpretation and/or command injection (e.g. user supplied =
+shell
+> > > > > commands).  Non-executable checked files can be reported/logged a=
+t the
+> > > > > kernel level, with audit, configured by sysadmins.
+> > > > >
+> > > > > New securebits (feel free to propose better names):
+> > > > >
+> > > > > - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
+> > > >
+> > > > Would you want the enforcement of this bit done by userspace or the
+> > > > kernel?
+> > > >
+> > > > IIUC, userspace would always perform AT_CHECK regardless of
+> > > > SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
+> > > >
+> > > > 1) userspace would ignore errors from AT_CHECK when
+> > > >    SECBIT_EXEC_RESTRICT_FILE is unset
+> > >
+> > > Yes, that's the idea.
+> > >
+> > > >
+> > > > or
+> > > >
+> > > > 2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE i=
+s
+> > > >    unset
+> > > >
+> > > > I suspect 1 is best and what you intend, given that
+> > > > SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
+> > >
+> > > Indeed. We don't want AT_CHECK's behavior to change according to
+> > > securebits.
+> > >
+> > One bit is good.
+> >
+> > > >
+> > > > > - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
+> > > > >   command line arguments, environment variables, or configuration=
+ files.
+> > > > >   This should be ignored by dynamic linkers.  We could also have =
+an
+> > > > >   allow-list of shells for which this bit is not set, managed by =
+an
+> > > > >   LSM's policy, if the native securebits scoping approach is not =
+enough.
+> > > > >
+> > > > > Different modes for script interpreters:
+> > > > >
+> > > > > 1. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D0 (default)
+> > > > >    Always interpret scripts, and allow arbitrary user commands.
+> > > > >    =3D> No threat, everyone and everything is trusted, but we can=
+ get
+> > > > >    ahead of potential issues with logs to prepare for a migration=
+ to a
+> > > > >    restrictive mode.
+> > > > >
+> > > > > 2. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D0
+> > > > >    Deny script interpretation if they are not executable, and all=
+ow
+> > > > >    arbitrary user commands.
+> > > > >    =3D> Threat: (potential) malicious scripts run by trusted (and=
+ not
+> > > > >       fooled) users.  That could protect against unintended scrip=
+t
+> > > > >       executions (e.g. sh /tmp/*.sh).
+> > > > >    =3D=3D> Makes sense for (semi-restricted) user sessions.
+> > > > >
+> > > > > 3. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D1
+> > > > >    Deny script interpretation if they are not executable, and als=
+o deny
+> > > > >    any arbitrary user commands.
+> > > > >    =3D> Threat: malicious scripts run by untrusted users.
+> > > > >    =3D=3D> Makes sense for system services executing scripts.
+> > > > >
+> > > > > 4. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D1
+> > > > >    Always interpret scripts, but deny arbitrary user commands.
+> > > > >    =3D> Goal: monitor/measure/assess script content (e.g. with IM=
+A/EVM) in
+> > > > >       a system where the access rights are not (yet) ready.  Arbi=
+trary
+> > > > >       user commands would be much more difficult to monitor.
+> > > > >    =3D=3D> First step of restricting system services that should =
+not
+> > > > >        directly pass arbitrary commands to shells.
+> > > >
+> > > > I like these bits!
+> > >
+> > > Good! Jeff, Steve, Florian, Matt, others, what do you think?
+> >
+> > For below two cases: will they be restricted by one (or some) mode abov=
+e ?
+> >
+> > 1> cat /tmp/a.sh | sh
+> >
+> > 2> sh -c "$(cat /tmp/a.sh)"
 >
-> A kexec kernel boot failure is sometimes observed on AMD CPUs due to
-> an unmapped EFI config table array.  This can be seen when "nogbpages"
-> is on the kernel command line, and has been observed as a full BIOS
-> reboot rather than a successful kexec.
+> Yes, DENY_INTERACTIVE=3D1 is to deny both of these cases (i.e. arbitrary
+> user command).
 >
-> This was also the cause of reported regressions attributed to Commit
-> 7143c5f4cf20 ("x86/mm/ident_map: Use gbpages only where full GB page
-> should be mapped.") which was subsequently reverted.
->
-> To avoid this page fault, explicitly include the EFI config table
-> array in the kexec identity map.
->
-> Further explanation:
->
-> The following 2 commits caused the EFI config table array to be
-> accessed when enabling sev at kernel startup.
->
->     commit ec1c66af3a30 ("x86/compressed/64: Detect/setup SEV/SME features
->                           earlier during boot")
->     commit c01fce9cef84 ("x86/compressed: Add SEV-SNP feature
->                           detection/setup")
->
-> This is in the code that examines whether SEV should be enabled or
-> not, so it can even affect systems that are not SEV capable.
->
-> This may result in a page fault if the EFI config table array's
-> address is unmapped. Since the page fault occurs before the new kernel
-> establishes its own identity map and page fault routines, it is
-> unrecoverable and kexec fails.
->
-> Most often, this problem is not seen because the EFI config table
-> array gets included in the map by the luck of being placed at a memory
-> address close enough to other memory areas that *are* included in the
-> map created by kexec.
->
-> Both the "nogbpages" command line option and the "use gpbages only
-> where full GB page should be mapped" patch greatly reduce the chance
-> of being included in the map by luck, which is why the problem
-> appears.
->
-> Signed-off-by: Tao Liu <ltao@redhat.com>
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> Tested-by: Pavin Joseph <me@pavinjoseph.com>
-> Tested-by: Sarah Brofeldt <srhb@dbc.dk>
-> Tested-by: Eric Hagberg <ehagberg@gmail.com>
-> ---
->  arch/x86/kernel/machine_kexec_64.c | 35 ++++++++++++++++++++++++++----
->  1 file changed, 31 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> index cc0f7f70b17b..563d119f9f29 100644
-> --- a/arch/x86/kernel/machine_kexec_64.c
-> +++ b/arch/x86/kernel/machine_kexec_64.c
-> @@ -28,6 +28,7 @@
->  #include <asm/setup.h>
->  #include <asm/set_memory.h>
->  #include <asm/cpu.h>
-> +#include <asm/efi.h>
->
->  #ifdef CONFIG_ACPI
->  /*
-> @@ -83,10 +84,12 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
->  #endif
->
->  static int
-> -map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
-
-I think we can keep the name - the array of EFI config table
-references could be considered part of the system table, even though
-it may live in a separate allocation.
-
-> +map_efi_tables(struct x86_mapping_info *info, pgd_t *level4p)
->  {
->  #ifdef CONFIG_EFI
->         unsigned long mstart, mend;
-> +       void *kaddr;
-> +       int ret;
->
->         if (!efi_enabled(EFI_BOOT))
->                 return 0;
-> @@ -102,6 +105,30 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
->         if (!mstart)
->                 return 0;
->
-> +       ret = kernel_ident_mapping_init(info, level4p, mstart, mend);
-> +       if (ret)
-> +               return ret;
-> +
-> +       kaddr = memremap(mstart, mend - mstart, MEMREMAP_WB);
-> +       if (!kaddr) {
-> +               pr_err("Could not map UEFI system table\n");
-> +               return -ENOMEM;
-> +       }
-> +
-> +       mstart = efi_config_table;
-> +
-> +       if (efi_enabled(EFI_64BIT)) {
-> +               efi_system_table_64_t *stbl = (efi_system_table_64_t *)kaddr;
-> +
-> +               mend = mstart + sizeof(efi_config_table_64_t) * stbl->nr_tables;
-> +       } else {
-> +               efi_system_table_32_t *stbl = (efi_system_table_32_t *)kaddr;
-> +
-> +               mend = mstart + sizeof(efi_config_table_32_t) * stbl->nr_tables;
-> +       }
-> +
-> +       memunmap(kaddr);
-> +
->         return kernel_ident_mapping_init(info, level4p, mstart, mend);
->  #endif
->         return 0;
-> @@ -241,10 +268,10 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
->         }
->
->         /*
-> -        * Prepare EFI systab and ACPI tables for kexec kernel since they are
-> -        * not covered by pfn_mapped.
-> +        * Prepare EFI systab, config table and ACPI tables for kexec kernel
-
-Please avoid 'config table' here, as it is ambiguous. IMO you can just
-drop this hunk (and the one below)
-
-> +        * since they are not covered by pfn_mapped.
->          */
-> -       result = map_efi_systab(&info, level4p);
-> +       result = map_efi_tables(&info, level4p);
->         if (result)
->                 return result;
->
-> --
-> 2.26.2
->
+> These other examples should be allowed with AT_CHECK and RESTRICT_FILE=3D=
+1
+> if a.sh is executable though:
+> * sh /tmp/a.sh
+> * sh < /tmp/a.sh
+That looks good. Thanks for clarifying.
 
