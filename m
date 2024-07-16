@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-253372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C5593202C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA8B932031
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2CE4B2291A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD447B2294D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7560918029;
-	Tue, 16 Jul 2024 05:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6B71CD0C;
+	Tue, 16 Jul 2024 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NoIPQ8G6"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F4F9CC
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HHQo67fV"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC611C286;
+	Tue, 16 Jul 2024 05:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721109017; cv=none; b=OClxYTmBDkj6+SEuZ/j6HpXGyPVKN5hwA7lCo0xGqKfxKZxePnQZhQOaNssK/JmBI5SKPvwG2tB89wZPiLgpUgggE+w+HXiEjaJhri5nXpP636rrbzmG0+KTBSAAjF2VFkA43Pk8GdUMM8cZc6spJj1IGb9FBxJP6hNirEFCsHY=
+	t=1721109022; cv=none; b=hpoLgTK1cQiUbloHIbOjSZcsXl1m12vZoTs9QcymmDQOgVBe4ByA17mh21dXWNWmVvMbgIjE8w16eJ1zFaHHtB/QIydlfC9RdHaeDZ8B+fpCZbIQbk/q9Iwanq8UD0yWkyu64WEBReO+J2wBKeeOSGRSxaeky/71aioceZ5Cuq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721109017; c=relaxed/simple;
-	bh=PEQNoWdAuWkBVrSWvj/4HDM1KpHAC4M5oAihWS7ihD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tesWN7vhEXSAjcsX6u96oUijUboPOREg9DACn3PJWJD+AtRjQSosWLCUU5zNtAG/yqU5ZPOCHtWtT8gC3hUDSrSUdfSwGEjNTnq1nxUwYQ15YXNMDMpG/7li1sggqWuAEMH4C36475pkl5KtUbGCC2jfQl6+Yn/TA40g3bs6Drw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NoIPQ8G6; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721109012; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=H8zq9naPob4y2i4lL8vhQLgKLKRADgCO3+XOJHZaf6Y=;
-	b=NoIPQ8G69r0UGpxbwBYip47rZK5RUuvUUsBBVXHGl71E5/CWnB6DWzVUyZ3SzTalDlmpYl+4o2yTVK7PPQe5mb0E9G1UuhND+qZ0oW00mNjgFcFFzgzg+oMPNLI3byJ7tAENCeDsPsMUxzlMrLCDxmys7284s1OYJREXv23674w=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAgKAfp_1721109010;
-Received: from 30.97.48.217(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WAgKAfp_1721109010)
-          by smtp.aliyun-inc.com;
-          Tue, 16 Jul 2024 13:50:11 +0800
-Message-ID: <d3629955-71e5-442f-ad19-e2a4e1e9b04c@linux.alibaba.com>
-Date: Tue, 16 Jul 2024 13:50:10 +0800
+	s=arc-20240116; t=1721109022; c=relaxed/simple;
+	bh=oel0VGQtFFVn7VcAvi3ianHKfhfy/DHPrz7TuNbCTcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ru8BI6ETAyH5nmYGxvH6aV6W4ZhvLiF9rWsBO7SBMId9fXcM9nBEDBsJSVQPKc1py9M7MOtaH/K2wEw1jBYCoC2tJMvmI+/6aDkiq0wyaGdWF7D1QYA/lWkgNIhOHM3xpgZ/NPv5iP4JPO9vNYr2kZWeqIXx2SOFGkjiCoOdtn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HHQo67fV; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 5C9C520B7165; Mon, 15 Jul 2024 22:50:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5C9C520B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721109020;
+	bh=QXWx9lUrpLWs3EVn56AuR9gmfE5Q+7yYX5/1e3sAPYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HHQo67fVhraUlcRpVybY1uhzc9QUCTGbRhtQG+IbIaToDruoEqjveTIwFyt5Jo9E6
+	 jAtrWrxdUzXuTPwVshJqlml3YypZymr8tBPhERMSRUwMtZhM90+2+Is15lg1lvjwHP
+	 y+4g231WJfh8rHvgUR3FlH6kkIYNM9OBXpX1WcvI=
+Date: Mon, 15 Jul 2024 22:50:20 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Simon Horman <horms@kernel.org>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Ajay Sharma <sharmaajay@microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>
+Subject: Re: [PATCH net-next] net: mana: Implement
+ get_ringparam/set_ringparam for mana
+Message-ID: <20240716055020.GB16469@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1721014820-2507-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20240715132842.GF45692@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: fix schedule while atomic caused by gfp of
- erofs_allocpage
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Gao Xiang
- <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale
- <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
- steve.kang@unisoc.com
-References: <20240716054414.2446134-1-zhaoyang.huang@unisoc.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240716054414.2446134-1-zhaoyang.huang@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715132842.GF45692@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
-
-On 2024/7/16 13:44, zhaoyang.huang wrote:
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Mon, Jul 15, 2024 at 02:28:42PM +0100, Simon Horman wrote:
+> On Sun, Jul 14, 2024 at 08:40:20PM -0700, Shradha Gupta wrote:
+> > Currently the values of WQs for RX and TX queues for MANA devices
+> > are hardcoded to default sizes.
+> > Allow configuring these values for MANA devices as ringparam
+> > configuration(get/set) through ethtool_ops.
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > Reviewed-by: Long Li <longli@microsoft.com>
 > 
-> scheduling while atomic was reported as below where the schedule_timeout
-> comes from too_many_isolated when doing direct_reclaim. Fix this by
-> masking GFP_DIRECT_RECLAIM from gfp.
+> ...
 > 
-> [  175.610416][  T618] BUG: scheduling while atomic: kworker/u16:6/618/0x00000000
-> [  175.643480][  T618] CPU: 2 PID: 618 Comm: kworker/u16:6 Tainted: G
-> [  175.645791][  T618] Workqueue: loop20 loop_workfn
-> [  175.646394][  T618] Call trace:
-> [  175.646785][  T618]  dump_backtrace+0xf4/0x140
-> [  175.647345][  T618]  show_stack+0x20/0x2c
-> [  175.647846][  T618]  dump_stack_lvl+0x60/0x84
-> [  175.648394][  T618]  dump_stack+0x18/0x24
-> [  175.648895][  T618]  __schedule_bug+0x64/0x90
-> [  175.649445][  T618]  __schedule+0x680/0x9b8
-> [  175.649970][  T618]  schedule+0x130/0x1b0
-> [  175.650470][  T618]  schedule_timeout+0xac/0x1d0
-> [  175.651050][  T618]  schedule_timeout_uninterruptible+0x24/0x34
-> [  175.651789][  T618]  __alloc_pages_slowpath+0x8dc/0x121c
-> [  175.652455][  T618]  __alloc_pages+0x294/0x2fc
-> [  175.653011][  T618]  erofs_allocpage+0x48/0x58
-> [  175.653572][  T618]  z_erofs_runqueue+0x314/0x8a4
-> [  175.654161][  T618]  z_erofs_readahead+0x258/0x318
-> [  175.654761][  T618]  read_pages+0x88/0x394
-> [  175.655275][  T618]  page_cache_ra_unbounded+0x1cc/0x23c
-> [  175.655939][  T618]  page_cache_ra_order+0x27c/0x33c
-> [  175.656559][  T618]  ondemand_readahead+0x224/0x334
-> [  175.657169][  T618]  page_cache_async_ra+0x60/0x9c
-> [  175.657767][  T618]  filemap_get_pages+0x19c/0x7cc
-> [  175.658367][  T618]  filemap_read+0xf0/0x484
-> [  175.658901][  T618]  generic_file_read_iter+0x4c/0x15c
-> [  175.659543][  T618]  do_iter_read+0x224/0x348
-> [  175.660100][  T618]  vfs_iter_read+0x24/0x38
-> [  175.660635][  T618]  loop_process_work+0x408/0xa68
-> [  175.661236][  T618]  loop_workfn+0x28/0x34
-> [  175.661751][  T618]  process_scheduled_works+0x254/0x4e8
-> [  175.662417][  T618]  worker_thread+0x24c/0x33c
-> [  175.662974][  T618]  kthread+0x110/0x1b8
-> [  175.663465][  T618]  ret_from_fork+0x10/0x20
+> > diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+> > index e39b8676fe54..3e27ca5155aa 100644
+> > --- a/include/net/mana/mana.h
+> > +++ b/include/net/mana/mana.h
+> > @@ -38,9 +38,21 @@ enum TRI_STATE {
+> >  
+> >  #define COMP_ENTRY_SIZE 64
+> >  
+> > -#define RX_BUFFERS_PER_QUEUE 512
+> > +/* This Max value for RX buffers is derived from __alloc_page()'s max page
+> > + * allocation calculation. It allows maximum 2^(MAX_ORDER -1) pages. RX buffer
+> > + * size beyond this value gets rejected by __alloc_page() call.
+> > + */
+> > +#define MAX_RX_BUFFERS_PER_QUEUE 8192
+> > +#define DEF_RX_BUFFERS_PER_QUEUE 512
+> > +#define MIN_RX_BUFFERS_PER_QUEUE 128
+> >  
+> > -#define MAX_SEND_BUFFERS_PER_QUEUE 256
+> > +/* This max value for TX buffers is dervied as the maximum allocatable
 > 
-> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-
-I don't see why it's an atomic context,
-so this patch is incorrect.
-
-Thanks,
-Gao Xiang
+> nit: derived
+> 
+>      Flagged by checkpatch --codespell
+Noted, Thanks for the review.
+> 
+> 
+> 
+> > + * pages supported on host per guest through testing. TX buffer size beyond
+> > + * this value is rejected by the hardware.
+> > + */
+> > +#define MAX_TX_BUFFERS_PER_QUEUE 16384
+> > +#define DEF_TX_BUFFERS_PER_QUEUE 256
+> > +#define MIN_TX_BUFFERS_PER_QUEUE 128
+> >  
+> >  #define EQ_SIZE (8 * MANA_PAGE_SIZE)
+> >  
+> 
+> ...
 
