@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-253852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE4F9327E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FC99327E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C8D281C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D681C22802
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A438D19B3D6;
-	Tue, 16 Jul 2024 13:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23619B587;
+	Tue, 16 Jul 2024 13:59:20 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F03199E91
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F51B19AD6B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721138358; cv=none; b=CuNGrE8aEZDPMyRNQzbdEgU3iiapWvBcjsYOUYIi6pDkdxv9VodS7fCacxzlWXfVbm8QO4Hz02llAgaCscHV7nNvJRQNrY5XXN88n1+wL/29V+eOVLWpSPlnaCXalkyUElhS8ThREYLVTkh1hEUnVLCZsBGl7R9VWC6gU4cU0v0=
+	t=1721138359; cv=none; b=u0EK7biQ3AjaJYDMgUd6tevB3ZeTVNU3mnjEIvRubGNqlwsyijjouX0GlbmHzteWhpOrCj/XMrzf1jLGQBPGo/kxJk1BQoRUNGxPoFR5lntcuWVklRzM2ruDq3+SGZW+BzTz6xPrJsAwA+cXrENHTHMyJZDyrNH6l1egMXU53ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721138358; c=relaxed/simple;
-	bh=WLGMI5biP9wC0bAA4fv1QtHA1ydybUCxQPHQetQ9FPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSleIv4F8LC1otr4SgmHy+u9S8i7X+InWEzip1cE0F6UAmQKNmUh34nMMQcQsLHPRvfA2OiBMBsr0XIjskpv66TymgcHwfMv+4xFMEnz3i6LUi1/OAB9o+j+gBP7Q+BjBXzPIc4FJeirGc0Bousxj1luikOcivQ1biOyV6GwsrA=
+	s=arc-20240116; t=1721138359; c=relaxed/simple;
+	bh=aQ5hfll0QTq/89EgPIxvlFW6ylakwRy8Tw8Ys5SzMOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dnDIVkOtRl8sq5zy2klCGjppDmax2dmRfy6uwGcKRtz+8Eeh2e0WPCJMrDW/T+OdigIAc52gT/+wQPQj14hLMNNzte+7OIoUoILosRB9RZKiDLx8BWJ6aXs8rAVkihUD6POK3M9D4S4emZNVYNF9HF7slkqHr9xKmvy51ytr88o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 121D51063;
-	Tue, 16 Jul 2024 06:59:41 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE2AF106F;
+	Tue, 16 Jul 2024 06:59:42 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474593F762;
-	Tue, 16 Jul 2024 06:59:14 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00A7F3F762;
+	Tue, 16 Jul 2024 06:59:15 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Hugh Dickins <hughd@google.com>,
@@ -44,10 +45,12 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH v2 0/3] mTHP allocation stats for file-backed memory
-Date: Tue, 16 Jul 2024 14:59:03 +0100
-Message-ID: <20240716135907.4047689-1-ryan.roberts@arm.com>
+Subject: [PATCH v2 1/3] mm: Cleanup count_mthp_stat() definition
+Date: Tue, 16 Jul 2024 14:59:04 +0100
+Message-ID: <20240716135907.4047689-2-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240716135907.4047689-1-ryan.roberts@arm.com>
+References: <20240716135907.4047689-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,47 +59,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi All,
+Let's move count_mthp_stat() so that it's always defined, even when THP
+is disabled. Previously uses of the function in files such as shmem.c,
+which are compiled even when THP is disabled, required ugly THP
+ifdeferry. With this cleanup, we can remove those ifdefs and the
+function resolves to a nop when THP is disabled.
 
-With the mTHP shmem stat names cleaned up [2], we can now introduce real "file_"
-stats for file-backed memory. This series does that. The stats are useful to
-give visibility into how file-backed memory is being allocated. I'm planning to
-build upon this with controls to restrict the folio sizes that can be allocatd
-for pagecache (subject to test results that demonstrate the value).
+I shortly plan to call count_mthp_stat() from more THP-invariant source
+files.
 
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Acked-by: Barry Song <baohua@kernel.org>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Reviewed-by: Lance Yang <ioworker0@gmail.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
-This applies on top of today's mm-unstable (650b6752c8a3). All mm selftests have
-been run; no regressions were observed.
+ include/linux/huge_mm.h | 70 ++++++++++++++++++++---------------------
+ mm/memory.c             |  2 --
+ mm/shmem.c              |  6 ----
+ 3 files changed, 35 insertions(+), 43 deletions(-)
 
-Changes since v1 [1]
-====================
-
-  - Added patch 2 to tidy up shmem controls; now exposed for order-1, and not
-    exposed for any unsupported high orders.
-  - Simplified "stats" subdirectory management with sysfs_merge_group().
-  - Added R-b/A-b to patch 1; thanks to David, Barry, Baolin, Lance
-
-[1] https://lore.kernel.org/linux-mm/20240711072929.3590000-1-ryan.roberts@arm.com/
-[2] https://lore.kernel.org/linux-mm/20240710095503.3193901-1-ryan.roberts@arm.com/
-
-Thanks,
-Ryan
-
-Ryan Roberts (3):
-  mm: Cleanup count_mthp_stat() definition
-  mm: Tidy up shmem mTHP controls and stats
-  mm: mTHP stats for pagecache folio allocations
-
- Documentation/admin-guide/mm/transhuge.rst |  13 +++
- include/linux/huge_mm.h                    |  73 +++++++------
- include/linux/pagemap.h                    |  16 ++-
- mm/filemap.c                               |   6 +-
- mm/huge_memory.c                           | 117 +++++++++++++++------
- mm/memory.c                                |   2 -
- mm/shmem.c                                 |   6 --
- 7 files changed, 156 insertions(+), 77 deletions(-)
-
---
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index e25d9ebfdf89..b8c63c3e967f 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -114,6 +114,41 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
+ #define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
+ #define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
+ 
++enum mthp_stat_item {
++	MTHP_STAT_ANON_FAULT_ALLOC,
++	MTHP_STAT_ANON_FAULT_FALLBACK,
++	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
++	MTHP_STAT_SWPOUT,
++	MTHP_STAT_SWPOUT_FALLBACK,
++	MTHP_STAT_SHMEM_ALLOC,
++	MTHP_STAT_SHMEM_FALLBACK,
++	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
++	MTHP_STAT_SPLIT,
++	MTHP_STAT_SPLIT_FAILED,
++	MTHP_STAT_SPLIT_DEFERRED,
++	__MTHP_STAT_COUNT
++};
++
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && defined(CONFIG_SYSFS)
++struct mthp_stat {
++	unsigned long stats[ilog2(MAX_PTRS_PER_PTE) + 1][__MTHP_STAT_COUNT];
++};
++
++DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
++
++static inline void count_mthp_stat(int order, enum mthp_stat_item item)
++{
++	if (order <= 0 || order > PMD_ORDER)
++		return;
++
++	this_cpu_inc(mthp_stats.stats[order][item]);
++}
++#else
++static inline void count_mthp_stat(int order, enum mthp_stat_item item)
++{
++}
++#endif
++
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 
+ extern unsigned long transparent_hugepage_flags;
+@@ -269,41 +304,6 @@ struct thpsize {
+ 
+ #define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
+ 
+-enum mthp_stat_item {
+-	MTHP_STAT_ANON_FAULT_ALLOC,
+-	MTHP_STAT_ANON_FAULT_FALLBACK,
+-	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+-	MTHP_STAT_SWPOUT,
+-	MTHP_STAT_SWPOUT_FALLBACK,
+-	MTHP_STAT_SHMEM_ALLOC,
+-	MTHP_STAT_SHMEM_FALLBACK,
+-	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+-	MTHP_STAT_SPLIT,
+-	MTHP_STAT_SPLIT_FAILED,
+-	MTHP_STAT_SPLIT_DEFERRED,
+-	__MTHP_STAT_COUNT
+-};
+-
+-struct mthp_stat {
+-	unsigned long stats[ilog2(MAX_PTRS_PER_PTE) + 1][__MTHP_STAT_COUNT];
+-};
+-
+-#ifdef CONFIG_SYSFS
+-DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
+-
+-static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+-{
+-	if (order <= 0 || order > PMD_ORDER)
+-		return;
+-
+-	this_cpu_inc(mthp_stats.stats[order][item]);
+-}
+-#else
+-static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+-{
+-}
+-#endif
+-
+ #define transparent_hugepage_use_zero_page()				\
+ 	(transparent_hugepage_flags &					\
+ 	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+diff --git a/mm/memory.c b/mm/memory.c
+index 802d0d8a40f9..a50fdefb8f0b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4597,9 +4597,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
+ 
+ 	folio_ref_add(folio, nr_pages - 1);
+ 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	count_mthp_stat(folio_order(folio), MTHP_STAT_ANON_FAULT_ALLOC);
+-#endif
+ 	folio_add_new_anon_rmap(folio, vma, addr, RMAP_EXCLUSIVE);
+ 	folio_add_lru_vma(folio, vma);
+ setpte:
+diff --git a/mm/shmem.c b/mm/shmem.c
+index f24dfbd387ba..fce1343f44e6 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1776,9 +1776,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 
+ 			if (pages == HPAGE_PMD_NR)
+ 				count_vm_event(THP_FILE_FALLBACK);
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 			count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
+-#endif
+ 			order = next_order(&suitable_orders, order);
+ 		}
+ 	} else {
+@@ -1803,10 +1801,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 				count_vm_event(THP_FILE_FALLBACK);
+ 				count_vm_event(THP_FILE_FALLBACK_CHARGE);
+ 			}
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
+ 			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+-#endif
+ 		}
+ 		goto unlock;
+ 	}
+@@ -2180,9 +2176,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 		if (!IS_ERR(folio)) {
+ 			if (folio_test_pmd_mappable(folio))
+ 				count_vm_event(THP_FILE_ALLOC);
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 			count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
+-#endif
+ 			goto alloced;
+ 		}
+ 		if (PTR_ERR(folio) == -EEXIST)
+-- 
 2.43.0
 
 
