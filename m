@@ -1,142 +1,103 @@
-Return-Path: <linux-kernel+bounces-254507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A2F933401
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:00:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BAF93340D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DCB284ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:00:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481021C22EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFB56B7C;
-	Tue, 16 Jul 2024 22:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38CB143733;
+	Tue, 16 Jul 2024 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJRMQHkb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gkb/WLmL"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DE71860
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A05D5FBB1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721167222; cv=none; b=lOOL12G/RfyGkJ62lp+IC+5W25RdWWkFligb/HovPVMI2kX0y6gjgmRmW9nQDY4Xdp3wEOYUHTRfeQVjVw2AH8S1zHEY4W0dq4Rz5ojTny61fZv5tkHmaK4A30I/6BNkXO0QD1YXGHjrMkbmIqq7r4vdOjECURtyJcsn3CVHGho=
+	t=1721167224; cv=none; b=LwIEgqvKyAN7M91n9xRp1kmj3PCbaiqLSqy4PxjSmYHsQXMdvgrjp0EbcHmsyjKKqb1bb+0Z8AEfl+NkomunUtoD/Zxzpz11B0SUI6LdJXJuGJrN1KWzQMyyshl1GrGPMIf61AcaBh4g8h7mXdncHXYm3q7ymTwK4e3hNRQSG9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721167222; c=relaxed/simple;
-	bh=/2jhcYJqnoyY8/k+vpxU+TG96PiNCbd+Ybh1k1MxL9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZiNmstEXLjSV1ofhcl8Q5/9pBAjhdbX6fznc7XGDc0IUV+DQaoYtk5WuM6FGKqiicDOVJmtiinB33bP7vdcovX3OKJbCPoCaPLe9bK/qrcGQHtakSR3nqFlbQoK8Tlu8ZZgyDmQF9OxKS5GqmQExYCo0IoidJUc3qSaixAUhygc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJRMQHkb; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721167220; x=1752703220;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/2jhcYJqnoyY8/k+vpxU+TG96PiNCbd+Ybh1k1MxL9s=;
-  b=QJRMQHkbsy3V6sF6MFTZ9LxdXFrOjnNrHLAbgpO3yuHOdXpAbGImFvmF
-   NtQ+ujcC+lkUsARgke8kx5LMqG+ef/2eo2/35rmYAVxzuFHBawGLR6W4Y
-   24fs1DbMCS1sqFCuf/qDd5n9Oq5bwA4l0l6kK6D+p99e5BWLbOn2wRYik
-   1P3g3wFY2n4bF9R4Kv8CZd4L8YoYQp5F4C7xvsHX/y4tbZ0G51lJ0IJ6o
-   r7TgvWhG3KL13qzfpOI7flfq12CDRzgeacq9vCHdvfk9Be4GHl2EWbCqM
-   JaPRfEREgzkJi3Uzttb0pUJ4N1iKvR44aZCygYCtJRS31tHGQm4v5Kmzx
-   A==;
-X-CSE-ConnectionGUID: 04kZsvgyQh2rtOaVPPo9ug==
-X-CSE-MsgGUID: HBXUOElSSBCNrl/HM2diow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29246853"
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="29246853"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 15:00:20 -0700
-X-CSE-ConnectionGUID: 2Ec/3ao0RI2fyXpm3ZNf0g==
-X-CSE-MsgGUID: zn23qb4dRF6yqV6tG+8Okg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="50233731"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 16 Jul 2024 15:00:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sTqDY-000fi7-09;
-	Tue, 16 Jul 2024 22:00:16 +0000
-Date: Wed, 17 Jul 2024 05:59:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240710-cbc 12/13]
- usr/include/linux/ethtool.h:1644:51: error: expected ')'
-Message-ID: <202407170517.BxkUPcmH-lkp@intel.com>
+	s=arc-20240116; t=1721167224; c=relaxed/simple;
+	bh=1R7wr/CSPAA1iHr/h8MuMIditUBxtwJRY7Nbns8+sqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bVnUcqJhrZya9096X+n+3x12kwh1idMAXxtznwMtUI9CflBJDUI8sXnxataEmpHGnaHUn3mfNVfl2Gqs2eWUqjiXwMo3TLyaXhyN8jrurfwTLOdqEgPZd3gyulcpoa3FOOEAjvCOdLhOBY7OT95o4EQimmreIkfh8bPbXPvP8KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gkb/WLmL; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f70a7470d3so1156139f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1721167221; x=1721772021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D43C5TtbFu53O2HFSds4/+8o7M/kPrl9sujLKKNyGx8=;
+        b=gkb/WLmLVdkCV24pmLzLbZMrgaIrKa+Gv8CrKENnZyvY+XvA3yxcnR2/TCqBZjJUnN
+         a/AMSH7uusOPEU6i/aukUP3vXp34Xq4QFsv7kFmHbfdKCUaNOFxXKXNsr5iJokXSTYbu
+         oJPFN0RI4e3ae0EDeXgpf3PwwUR8/X6qHAn4k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721167221; x=1721772021;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D43C5TtbFu53O2HFSds4/+8o7M/kPrl9sujLKKNyGx8=;
+        b=fiAwXsUxIfLhPoPrNaJqqAKRDM89/wbq5WNYNbZ6WIiftQmBG9561Fz23BX0q9qv5Y
+         ZMRGThoJMrWU097EXaK9orKecw9QFvUYUVD/foUYrCQUHe1aIbv+cOnx/6VtBeF9A3cN
+         I5N8/Z7Z7WTcZzw1bvGtPfw9vU8/lUBoiWmv14MkVw+kYl2bGnDvLCnZA8ap2N9yxpnu
+         PdUXYRPqRupZMbB9a+OjIGAXtm+l0BJIl5YR1Y271xW5gsY1OyVTbvaQRTtrYv+pm08m
+         YMmeZeqNMAHzxBYuhgYQlj40H2HNZyvYMVeMyk1s25dwJo5LhFvhWiRn02D9EjBlrcNU
+         oKLA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/aovYvmI47ZDQjevfHw/5tm4IOw7R9/Ki7Dh8/wTL03uc/PtAdBf+TNTT6SV+VB4TOecASyzbgQQwInmGbdapykPQbW1Tx1l/iLli
+X-Gm-Message-State: AOJu0YzqAMJxn10L+2ol1iMNvk/HftktWShl35nWp4/EAbDmhwchw/bB
+	cpytESwMduC/npyqzIghkfLjwP8zQ/OfYxTdQZn8+TrX3ombBtPaJnYIfqBMC/E=
+X-Google-Smtp-Source: AGHT+IG1OOoDocWaqpAynyoemwtS+Ij3u9aPSsTymae4wzjO7bqNyaMRiC7XHDUFhRvJW5/wrIM2jw==
+X-Received: by 2002:a05:6602:1605:b0:7f9:444e:4918 with SMTP id ca18e2360f4ac-816c51c7e48mr68814539f.2.1721167221509;
+        Tue, 16 Jul 2024 15:00:21 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-816c1e8e118sm17824739f.28.2024.07.16.15.00.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 15:00:20 -0700 (PDT)
+Message-ID: <37214c0b-4b75-44ed-8801-56a09b71040e@linuxfoundation.org>
+Date: Tue, 16 Jul 2024 16:00:19 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests: x86: vdso_restorer: remove manual counting
+ of pass/fail tests
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240712073045.110014-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240712073045.110014-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240710-cbc
-head:   e3597892cb471e5732700d17c2cca098f3148759
-commit: d2fc97b383bbbdff9312f7993dbc9fd9d44bf379 [12/13] ethtool: Avoid -Wflex-array-member-not-at-end warning
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240717/202407170517.BxkUPcmH-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240717/202407170517.BxkUPcmH-lkp@intel.com/reproduce)
+On 7/12/24 01:30, Muhammad Usama Anjum wrote:
+> Use kselftest wrapper to mark tests pass/fail instead of manually
+> counting. This is needed to return correct exit status. This also
+> improves readability and mainability.
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407170517.BxkUPcmH-lkp@intel.com/
+As mentioned earlier, include before and after output from test run
+to see the improvement clearly.
 
-All error/warnings (new ones prefixed by >>):
-
-   In file included from <built-in>:1:
-   In file included from ./usr/include/linux/mdio.h:15:
-   In file included from usr/include/linux/mii.h:13:
->> usr/include/linux/ethtool.h:1644:45: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |                                             ^
-         |                                             int
-   usr/include/linux/ethtool.h:1644:15: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |               ^
-         |               int
->> usr/include/linux/ethtool.h:1644:51: error: expected ')'
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |                                                   ^
-   usr/include/linux/ethtool.h:1644:14: note: to match this '('
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |              ^
-   usr/include/linux/ethtool.h:1644:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         | ^
-         | int
-   3 warnings and 1 error generated.
---
-   In file included from <built-in>:1:
->> ./usr/include/linux/ethtool.h:1644:45: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |                                             ^
-         |                                             int
-   ./usr/include/linux/ethtool.h:1644:15: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |               ^
-         |               int
->> ./usr/include/linux/ethtool.h:1644:51: error: expected ')'
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |                                                   ^
-   ./usr/include/linux/ethtool.h:1644:14: note: to match this '('
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |              ^
-   ./usr/include/linux/ethtool.h:1644:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         | ^
-         | int
-   3 warnings and 1 error generated.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thanks,
+-- Shuah
 
