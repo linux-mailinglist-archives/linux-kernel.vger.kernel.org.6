@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-254116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99039932F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881E9932F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72991C216D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB7A1F23F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBDD1A00D4;
-	Tue, 16 Jul 2024 17:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9461A01BD;
+	Tue, 16 Jul 2024 17:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BhoDx/d0"
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJ5M3Mzb"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CB4F9E8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099619DF87;
+	Tue, 16 Jul 2024 17:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721151119; cv=none; b=nTQ7shBSuB0Rma9wKNjKyizFE7E3gsLzNSpeN/ozgnPuJGMkH9JDZw1l8F2zRDbFy8Hi+fBOPw67nTL9+xvRDGanmn/t60b3QVfQaTHQo8V9GrX4WjOjQs+V/tiOxvxS2tYc7Ea1hFztF8I2Kr3ro/nGY5RAQaWjAQJdz50cREM=
+	t=1721151316; cv=none; b=Ku+WusXNV0amap7LQjFhMY19vyjeU+eHttNpBNWOsZmzpPW+N1ESEZzToz8M14FeItOs69OFzOcmZW+TCvFDwuIpBUkKH381GuzkEUeFDCEoU8LpR2cYR5MwD4JV4kCulAR22NaW3ayY4qO7wuC64XPT/daoRalkC6eGfUF6c4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721151119; c=relaxed/simple;
-	bh=MW5MM0UiDoNQ5jIccGyeCS2wNwBx87O/gkIYwsEBj+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oleHjWSgMM+4oPizmy1eg1MxK+us6JtW3yGoupDdv+YfkSoPk9iMH4AmHD5DL7elnvWtk3y/oXZLDNT7mBSR3yL+g5TCUbwGcRCiXV3wvfiou5GqAeFwvnYMexXpVnPQ4atcL55lefWMNmGowPahtAIklwG9GSlrrq1xxESgt1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BhoDx/d0; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNmMj60Qdz4K9;
-	Tue, 16 Jul 2024 19:31:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721151105;
-	bh=Xu6GB1mmYQXJSoJZK4nvtCnpIij3wppCLjoOW51w6fM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BhoDx/d0FL+9WOZsjJfJW8taaEo6bVoFn6l1M02l3CmqODMqqKPv7R3eCAw4USrP/
-	 G+nhmkrZacHDd01il83mrHH+zULbipwD/RLRES9qWSMAIN23MFh2hYqoKE2W5cieGD
-	 HBnwBBUcQ3ZObdCcIHv/DM7C3kLPxfeMt0lO2WTY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNmMc22bKz12m6;
-	Tue, 16 Jul 2024 19:31:39 +0200 (CEST)
-Date: Tue, 16 Jul 2024 19:31:38 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-Message-ID: <20240716.leeV4ooveinu@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
- <20240709.AhJ7oTh1biej@digikod.net>
- <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
- <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
+	s=arc-20240116; t=1721151316; c=relaxed/simple;
+	bh=x9IikHbyBVVijgjWkItmyxDW+2/bZ36MDO5Jtixmhbk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SWYN8hq4tLWsCW8+L24jc7NaskyBiT0pKYTfDL6WhxzhLz9klRCRHFH30VFye3+uYtpGMGnrwR7bgcvrhY69IZhxt90KNT2GZ2ALo9F8ItU2n5NnU/7SevmbSzvCKo8IlU2/I+p+5ZZEYu9YpYBMUrsYtllkCpiBNgsABcKRPn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJ5M3Mzb; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e9fe05354so8065276e87.1;
+        Tue, 16 Jul 2024 10:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721151312; x=1721756112; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kchnNo8yPLFh2dK5IcV05EsWvdVMiZ16c0fFJ750TxA=;
+        b=mJ5M3MzbFZB5soIVsqcR3xJyJaUKWTZLIbFx3NUK84V1odGRk8KLfv78ll6cIcRpUc
+         yvzAvtuKVMQJMXAn/4x9pSvLKk+tProahUaIarJTLqSekxG3rbc/kHWFkbzj5ahWvdR1
+         NnbLP4uAfw7aDRoc+ZubwLMxf3N/I7InBwKnAAC2kQcO8a/ZOAZ0T8DyzJtn1gC/FHn5
+         oD+A8MzgNNsnqJ27Qnom7jyXdCe1lsYu4ntad/CTezmb6S5Mx+PhqmxmML+4nff4gwtl
+         6OJd429Zy52BUEZxQXItGsUXXbL1II0aPlEkm4Qq5rS2aAbx21IpgbsE3UFxmk64SQbu
+         Uu0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721151312; x=1721756112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kchnNo8yPLFh2dK5IcV05EsWvdVMiZ16c0fFJ750TxA=;
+        b=KJtrjVvxIw8tpeed3xSIqQmkri6aFNeoW6HYs85suSgu7hQjVOz7ttcZ03z+ZcbpXk
+         bT6C2XDsmBLbpsAGiwTelCw+zyUBNzy80qWfs9NIU1EAXsUFkVkdFSO2xSx2rguE+54+
+         vvWboHbE+6gQDUiN/cofoUQm4UpYo026Ubw69CNxglcoCnhKohB5Y+nTW3Pw5MH4TeUI
+         ohvcQ5rc+VgzlCoi7oC9ExeHVpkwVyQ5lsTPGDmTnROXnP8R7RbVeQR4jZNSKcahoLEo
+         15eDjs7540rA8dmdbu/zDd+ukCQUMtj61o4yZmxOZB/jNgiM+f3oafPtgX9H6kCtDy78
+         95Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY7XxV53kGLYb3HN7OCJz53pRWqY3y1eEl26W54jKHltOURMhMJqAa1RhU8paZiw7s4QbBo21w8Sk3FRCfIERy5h5o3Vgc6qbEo24In1JuuVkxYhgyTfQmTbIo8JNkoj8oB5tdRw9Biw==
+X-Gm-Message-State: AOJu0YyZB67kyOJ4iCQLzoJoVIbdCvADCtbOWc33fCv6xgx0Ck/IO5PJ
+	UIln/vsSQHPXs/kbuQVSULmxV0dXVs4Nbi6JY3JamCcvwW4sDkHV
+X-Google-Smtp-Source: AGHT+IE2mB4oZTOTvFDO5DkXK2tpo0pPHe/jgiUbxjLLBf4wAR3RggsbcbiEp4YgqrGFa1ldiV2H0w==
+X-Received: by 2002:a05:6512:e93:b0:52c:8e00:486a with SMTP id 2adb3069b0e04-52edf038979mr2407374e87.55.1721151311803;
+        Tue, 16 Jul 2024 10:35:11 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2397easm172599675e9.6.2024.07.16.10.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 10:35:11 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+Subject: [PATCH v4 0/2] Add thermal management support for STi platform
+Date: Tue, 16 Jul 2024 19:34:50 +0200
+Message-Id: <20240716-thermal-v4-0-947b327e165c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADqvlmYC/2XNTQ7CIBCG4as0rMUUGCx15T2MCwpDS9IfA02ja
+ Xp3aTcYXX4TnpeVRAweI7kWKwm4+OinMQ04FcR0emyReps24SWHUjJF5w7DoHuq3IVL4EobV5P
+ 0+hnQ+ddRuj/S7nycp/A+wgvbr/+NhdGSVtYZLdCChObWDtr3ZzMNZG8sPLv0W3Y8ucYpIQGtZ
+ Ii/TmRXMchOJKeU46BqdJWV327btg/VmqHEDgEAAA==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+X-Mailer: b4 0.14.0
 
-On Tue, Jul 16, 2024 at 12:12:49PM -0400, James Bottomley wrote:
-> On Tue, 2024-07-16 at 17:57 +0200, Roberto Sassu wrote:
-> > But the Clip OS 4 patch does not cover the redirection case:
-> > 
-> > # ./bash < /root/test.sh
-> > Hello World
-> > 
-> > Do you have a more recent patch for that?
+This patch series enhances the st_thermal driver in order to enable
+support for thermal zones. The changes include:
 
-Bash was only partially restricted for CLIP OS because it was used for
-administrative tasks (interactive shell).
+1. Replace deprecated PM runtime macros with their updated counterparts.
+2. Implementing devm_* based thermal of zone functions within the driver.
+3. Updating the stih418 device-tree.
 
-Python was also restricted for user commands though:
-https://github.com/clipos-archive/clipos4_portage-overlay/blob/master/dev-lang/python/files/python-2.7.9-clip-mayexec.patch
+The device-tree patch depends on an earlier patch sent to the mailing
+list [1].
 
-Steve and Christian could help with a better Python implementation.
+As it is currently implemented, an alert threshold of 85°C is set to
+trigger the CPU throttling, and when the temperature exceeds the
+critical threshold of 95°C, the system shuts down. There is for now no
+active cooling device on the platform, which explains the use of the
+cpufreq framework.
 
-> 
-> How far down the rabbit hole do you want to go?  You can't forbid a
-> shell from executing commands from stdin because logging in then won't
-> work.  It may be possible to allow from a tty backed file and not from
-> a file backed one, but you still have the problem of the attacker
-> manually typing in the script.
+[1] https://lore.kernel.org/lkml/20240320-thermal-v3-2-700296694c4a@gmail.com
 
-Yes, that's why we'll have the (optional) SECBIT_EXEC_DENY_INTERACTIVE:
-https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+Changes in v4:
+- [2/2] optimize dependencies
+- [2/2] do not return devm_* exit code
+- Link to v3: https://lore.kernel.org/r/20240714-thermal-v3-0-88f2489ef7d5@gmail.com
 
-> 
-> The saving grace for this for shells is that they pretty much do
-> nothing on their own (unlike python) so you can still measure all the
-> executables they call out to, which provides reasonable safety.
+Changes in v3:
+- Fix unmet dependency in [2/2]
+- Remove no more used variable in [2/2]
+- Remove already merged patch in soc tree
+- Link to v2: https://lore.kernel.org/r/20240625-thermal-v2-0-bf8354ed51ee@gmail.com
 
-Exactly. Python is a much more interesting target for attacker because
-it opens the door for arbitrary syscalls (see the cover letter).
+Changes in v2:
+- Add Patrice's R-b
+- Edit patch [2/3] to remove unused struct
+- Link to v1: https://lore.kernel.org/r/20240518-thermal-v1-0-7dfca3ed454b@gmail.com
 
-If we want to have a more advanced access control (e.g. allow Bash but
-not Python), we should extend existing LSMs to manage the appropriate
-securebits according to programs/subjects.
+---
+Raphael Gallais-Pou (2):
+      thermal: st: switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()
+      thermal: sti: depend on THERMAL_OF subsystem
+
+ drivers/thermal/Kconfig                |  2 +-
+ drivers/thermal/st/st_thermal.c        | 32 ++++++++++++--------------------
+ drivers/thermal/st/st_thermal_memmap.c |  2 +-
+ drivers/thermal/st/stm_thermal.c       |  8 +++-----
+ 4 files changed, 17 insertions(+), 27 deletions(-)
+---
+base-commit: 4f40be61af99a67d5580c1448acd9b74c0376389
+change-id: 20240518-thermal-8f625428acf9
+
+Best regards,
+-- 
+Raphael Gallais-Pou <rgallaispou@gmail.com>
+
 
