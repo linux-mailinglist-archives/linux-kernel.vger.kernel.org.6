@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-253813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EDA93275C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5D1932771
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CF228370F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5644728257A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7827619AD6C;
-	Tue, 16 Jul 2024 13:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD64919AD58;
+	Tue, 16 Jul 2024 13:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U13Kb87g"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0kHqhkH"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A2217CA05;
-	Tue, 16 Jul 2024 13:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB2C19AD4F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136240; cv=none; b=lUqUjOYx3spcUIfA3RW5hrI1alshMVbhM/Coi2EzWYXWzRNf8Dfo64UMuWtYDjRb4C/ZpzcoJvKXq/4XJWsLccT68912CxrhqzFMbQROTGyG/iIdtfe4rCFuurE7v6coUBKnveYNyHhlArjPGY/Uz+5On2sMPLp1ta7VBkYlc3Q=
+	t=1721136455; cv=none; b=qF/rYntoEkD68CBZCanrKo716KMUdIRs/FIExS1L0VSAE1mO9pBVkUVKmIhW0xVzTckF11RMg2zfmhm83+cC4CVZIGgHWxme9LSFp7YAfYgaJ/4HWpcJcD+Foy86B0w80kqqzKXEGC6BuF9+ikTI3d0YfG6Z3uAGk9BFLsgBWZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136240; c=relaxed/simple;
-	bh=CaJASSV1ka7Bj5NyM8UKeKZUos0RTwMlBmpSxl6lGyo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Q4a/i5VjbdYsbgDZx15rOga8iHvInxixm+iw2w2puvS5j9wj2IMrxfo7vhlFgheGbOPcWOFtoGwMRKYSe8S+jbNnDc1Aa9LvymPDVFdH4jEGRW6QELYmQR9Wp9IN1NgOFwU/XkQOKlVed1Udd81a7832Ma8yn7zOH+z2V1RFISM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U13Kb87g; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721136185; x=1721740985; i=markus.elfring@web.de;
-	bh=7bRGzv8Y9/jye8elVbQZuYfnhOqWdiGOQotYz8+ZuWA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=U13Kb87gd53Tp5IrR7ajhybnxH3UyWXxGEve4Eq3Wt+H/4q/Ci8CmWpiFjK4hySa
-	 aFM67qk7yqijpoTNo2gTxmjtvsonwutvMEUH9th8IgN/mUxmCJNrXnORc314XdHq9
-	 WSudyEVE784Um1CAxSR2aJcFe0cNkeQN8afAo8FYvkJRTuQ3W8LMJtZ27Rof9Zkfa
-	 WFeVQTJD/K8GhXf95u70rwO+bNbsRLx+litOnqKMxg9AktVSf42dVdKIp4V7WhZst
-	 UbYBxZX7PbITq5ZUUgIzER2pAkJFxjrkXX9/EIkSFaTCE1z0F++mkRyVVJqhqSONl
-	 6u9d0koan7UpMnHGMQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8TBM-1sPIID2qga-000P3c; Tue, 16
- Jul 2024 15:23:05 +0200
-Message-ID: <17ac3b59-b189-41d9-b88d-268d7202dde2@web.de>
-Date: Tue, 16 Jul 2024 15:22:59 +0200
+	s=arc-20240116; t=1721136455; c=relaxed/simple;
+	bh=L4q/f/OtWa5M69YBoQW2fcIKupxqZNLZsMK3IgdJdtQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q734FtXzhkdn9eFPt22SUPMjQpFYUaKqUbvHkVQvxk4/cq1ML83R3FAlDbLs/z/6KZYWqSG48fS5tRKydi6ZZ5yXEGr16XE1xNnHhTYiNGGhXiozNQiWjt+m1vvZ2UtnEFe6gN0+9jCQqmYB6o3rjW7aSixpV+i3nQjBWGdBvH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y0kHqhkH; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266ed6c691so35329005e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:27:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721136451; x=1721741251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8nnUYNlwO0k6ZBjwD5Erccb4E+P924xRgxG4C0KqEnM=;
+        b=Y0kHqhkHJN2Ib3B04DpFvaK+tBDfaTUazQrgEW5O0Q338nbodwMT5MyObQeenFtca9
+         HdvTbXsbxCYzC+yVeTmJmFYBprsBFWEwrrI32wfehQe5iiEHz6KND7Hi7zhsr97koO/N
+         FH1Tx6fbdz/vnYQitxM2gGIOW1hefV9EYjJ5oEBVkElMNsPLeY2P1TKu9qyydzHBP7+y
+         T6cFjV6nJWdh8DnQ2mlHLp/cLvwZ2owyvmj5xOQCag9UcPglrUnXAC7jGGagTM6XvgTD
+         HE71gjWuO5tW9q12FHF8HR5zRM+Iovr8/lOoAn5+GrCIg8+5+noi3EgfVKFUB6Qk8FiV
+         a84g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721136451; x=1721741251;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8nnUYNlwO0k6ZBjwD5Erccb4E+P924xRgxG4C0KqEnM=;
+        b=A57uOrVh3ZCmfV2EhYRQvV56c2V//H3T79glKKQ2eWzWDBUVj7U59wm274CRN233dg
+         mY4fZM2zkJuIFeX3bcgo5lGMjd1+4ELYOW2fUKXbW+Vm73itz+H3lGdqmRdt4lRw8s94
+         xtZYKsGdPIeAPcbuQi1Fg6G1BY8Iy8BvQ/N+ABJmsHl2BM+Cf8RUamsdg2cG1405+jKg
+         ZMB249n7y2vUne9g+/4ypuf9eqgkyDygRfNJ5DQB+cJQE4fOL0UFR3KXABXBWU4ma3fs
+         7M5BCMYiptuA+w5r0V1LzVnxanznteky+E49rY9jPgP/uAvArx2s9DkcbIFS6cCPjH1V
+         uDLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgoeUVrJMo3kofkVo43AQYPd3vBRnWoO6GBzFQRaqkDyPa6HtVl8rYsWAesVsjusTZM5xus3hI3E9pvXpbQUjhHcPx8MMydNuQ20EY
+X-Gm-Message-State: AOJu0YxvqAWAD8oYtVTLNdAKp4dzdEHUOnnr/khUDz8ufnmYB91EW18Y
+	2qPuvtyJfc3dhnAatd/WITloOhVR1kUD7mhruD133kiaFJlJt/T+MyZj7+L3R8E=
+X-Google-Smtp-Source: AGHT+IGhqCHFIX7TkLPtIRTTvgB7kbFHYhFo3zMfT1v/DCloAtgq+4vAX8iGpdJXs9kK8D9hqV8L0Q==
+X-Received: by 2002:a05:600c:5127:b0:426:6099:6eaa with SMTP id 5b1f17b1804b1-427ba6dbd32mr13126415e9.26.1721136451525;
+        Tue, 16 Jul 2024 06:27:31 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc2efsm163985725e9.36.2024.07.16.06.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 06:27:31 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: magnetometer: bmc150: Document mount-matrix
+Date: Tue, 16 Jul 2024 14:25:09 +0100
+Message-ID: <20240716132512.80337-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yang Yingliang <yangyingliang@huawei.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
- Chen Yu <yu.c.chen@intel.com>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Tim Chen <tim.c.chen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Wei Li <liwei391@huawei.com>
-References: <20240703031610.587047-4-yangyingliang@huaweicloud.com>
-Subject: Re: [PATCH 3/4] sched/core: Introduce sched_set_rq_on/offline()
- helper
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240703031610.587047-4-yangyingliang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Lb3PFhy4QoVrF9aQMRQMyTD51u46Uv/eEbs99RnY3+8og40DpS6
- hWv6RepkX5JgaTk+yeClWNyyu7QVwNPYrI0zhjfAu5FXbGqyfK+IPpXEKrCzwKiDqsdvoFg
- rNbkG2iKK3fXbKDk8Mm2qkCFJuVO6vig+RndJojVaqGXbfABnjlwpAOXO6Ra6Qedl4Rx49X
- Fg+DctmnlVchu+Eru/c2A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MrfjKyHyf7M=;hpyO1/IVf2lLY3T45v3wAUmX/oR
- Y15LTHxtmzJnFa8m8v6EVLURLSkem6juPXkgT31aGZZH4z6nM7HQpcQpNeuBZDDWp9MSTDpCT
- CUyVg2ysp1LWOBAfOUxEuKNYudMYLzHZWQFWljcHJtSo80FuJ7inxyHRK6vCBlaRFlxvwBOA3
- XD7ei3Q9n8HcYzcpIcetubBQD6GJaTiD/SDVRFeBACbAOc3dugZMDjWx8Npif0rjrFN9kPizM
- 4NdXi+NOdaem0Y7dhSNAIxlCJt2YWfVOA1UIBAJR7NNNNj8oghJr/5hKP4QWY3iuVaGQu7TEB
- tDLPJdEOCCqiPTMEqeRpH/BpqH0zq5JUlx0JFacKC3PBsbztKn/5NX0c8wRlsd+AtWnfdVgim
- VSWxcvsjTtLbDF4vKtA5WoZTrG9X3yX/wjK5qHANBMFiUywXMeeDwSalmNtJTHXla/KC+AuWw
- VFzddEXBWg5CnuO1JJ9vlb728JYoETS75LNbrAxZNH7ReA20BUgfr7pXxpcFw/whiXvwH5HAO
- /EdErjnKfTMJFk4QeYdjSxoLNeyRE0nsh9cvrEw6It4mtpH0Obgob2bcTwerEBBIFI+XGq1WD
- +11TiuXrV5cwa/YNU9AQZdyCDzYuFGwYtMXQQfFTgAtY91Cxzzg7Q55y2TQsQ5n53vqqmg4Nb
- +MDKmtpER3yEaaxg8RrlgKLk0nU9K5Q+c99kBaPZu6u2heI8w4Go8Ah8MrClsznsykZqg1Mm7
- jMh7jFaGM07lGWEd9HeWcYYOdbHoa4V58d1PAugCCemJwg77Z1a5d51RSM5zTKhKcHNqdlLoY
- DIGG8oYdtd8YhJBVFVL6W8UQ==
+Content-Transfer-Encoding: 8bit
 
-> Introduce sched_set_rq_on/offline() helper, so it can be called
-> in normal or error path simply. No functional changed.
+Document the mount-matrix property, which is used in device trees such
+as msm8916-samsung-fortuna-common.dtsi, and supported by the driver.
 
-Would you like to improve such a change description another bit?
+Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+---
+ .../bindings/iio/magnetometer/bosch,bmc150_magn.yaml           | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml b/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
+index 2867ab6bf9b0..a3838ab0c524 100644
+--- a/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
++++ b/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
+@@ -36,6 +36,9 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  mount-matrix:
++    description: an optional 3x3 mounting rotation matrix.
++
+ additionalProperties: false
+ 
+ required:
+-- 
+2.45.2
 
-=E2=80=A6
-> +++ b/kernel/sched/core.c
-> @@ -9604,6 +9604,30 @@ void set_rq_offline(struct rq *rq)
-=E2=80=A6
-> +static inline void sched_set_rq_online(struct rq *rq, int cpu)
-> +{
-=E2=80=A6
-> +	rq_lock_irqsave(rq, &rf);
-> +	if (rq->rd) {
-=E2=80=A6
-> +	}
-> +	rq_unlock_irqrestore(rq, &rf);
-> +}
-=E2=80=A6
-
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(rq_lock_irqsave)(rq);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10/source/kernel/sched/sched.h#L1741
-
-Regards,
-Markusbsegall@google.com
 
