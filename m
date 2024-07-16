@@ -1,131 +1,179 @@
-Return-Path: <linux-kernel+bounces-253635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90564932422
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CAA932424
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33F71C209BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD401C217DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F721199396;
-	Tue, 16 Jul 2024 10:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0D3198E7E;
+	Tue, 16 Jul 2024 10:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BlLLwGcN"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NISWl0X5"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FEB19A867
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FCB196438;
+	Tue, 16 Jul 2024 10:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721125858; cv=none; b=h+d0ntEGIiQuN0pwpJzECCA/4ZdaUwH3FkYO62zdwCtJtUean+HL89X+7fLqxod+z5FKjtJmBwNaV6iGPdmdAPkJzrs7Rx1GNIjk0B7IeZaguYtnF4GyfKQSBxCiMVKQs5JJsNN4YpJSGDRxZYbBfwpGv5TBq3O0e1nNoNMdOe0=
+	t=1721126000; cv=none; b=ok7LnLwCivvi2J/JUgkiOiptdeVi5TS1MfsGJUlYcKHcaWGFZN+URKr5d2Yc9h0YkmwzDroRyiWXepFm+1GAMYov2D37R38JTHtnpWwKsVCT48Atkt8VBy7App9xjZrsX4jwof0FafCyoCLKs7/JlPHVrHALIyyaKJO2GDjyITY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721125858; c=relaxed/simple;
-	bh=JipNE+kqEQPBn7Jx4UqjRRUM4WXbboTrnyw0mDx93KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WYtTceoiyIvwrYU+Tvh5mcz76FeAQPZSUmrmjCQvrHjUaAZ71DZBpQuHpWquhhaX3hkt6BDiMSmx4DEWc+CnMz0JJSsfOJkT2ZG12uNXz6HYRdQI9hhkgIwzE4ibHF+6fQ0Xzh961f/lhzqT4P24tjB8xCINEI39egBrpYxBZJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BlLLwGcN; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e9f863c46so5824506e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721125854; x=1721730654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DAXdKc5Z+02xSdGxMpcMXF7UJmX+WtkbTbyJ/hK50W0=;
-        b=BlLLwGcN5mUmW7Fw/0UW6QIyETSGj7d8hXPmhMifppK3O4TM/M+3EpH4Y77Z91LIdG
-         +QKUxlUrAU1YA41ly59IxsHMDk7eP90M+7f69/ecHBwsB6Aqz0N9jeGCcx139e7BY+vK
-         CFV6zL3sUklGCCH2yqsmLI03eMQnthm68cm0vKDc8n5/X8yiQ017VilaZ84Ahuh/whCk
-         lmuaCVmj3xW2dxeEBe4DZ1609eaQij4OkDnbuXC03PqtIfFpZunUDlG3AQaScWe0kAJp
-         8XRUxU5xSZMA9SLEfRnf2g6fhQ/SDo3En9Vsftai6OcnphvLeGwg9TmRF77lQIiCphEY
-         TtJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721125854; x=1721730654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DAXdKc5Z+02xSdGxMpcMXF7UJmX+WtkbTbyJ/hK50W0=;
-        b=O6vp/JbVnRS3TI2JmQXpffd/B256+4WEULMl333yRSwcGIbx9mTXWewFe9zLULCuQs
-         LE/UbknyfyR5gHOhyPGRFyRS9Sm2D3wC0zQc5Jn2axL0W8XBMh2tLs1tUM0ZJ9mY3VrB
-         EDuTgWVzVMY+kIlJr0p5QuAJ0XEFyswhYtoG2O1ubGcbzc+yryBo7YV4VSvOTvDZ0P6X
-         Q/s3BzmJwhVE80ZSRzKNo0NGUaW7cupXlCo5tiiFT5fOolzDO2z9kzLrJ38its0pIg12
-         6i5X9uoMrc4XLX5dlAVurjvKr0KnWhEvwWKiIqxYrtgp1wSRgcFsAoWmkmkR7hyF20h4
-         WxfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0zZe8Th+0CHjpGpQswrg0AvzkM30hI8M7AWaZ/iCntytLIZIAuQmJKxJjvST5129l+5huw6eY8p6iE3vTcJSvaE6/zLYrfbB2LqKa
-X-Gm-Message-State: AOJu0YzRZEDjkdJ9Wh3e/HReikODiIlUjUneks0Pn/3wb5Bi4qT4MZy2
-	R1+Iq0zP7aNu2uyLoxdiabvg7xGdGGgcMT87G8RAVDYn/uItNtyicWy6RH5V3Tg=
-X-Google-Smtp-Source: AGHT+IFbkiHtNVlSjCVJf3cVxZfgoUXWPkU+uRJ0BzsW0f977HEVh4lCus0KUh+9d9jKXgqmMYtbgA==
-X-Received: by 2002:a05:6512:3c8c:b0:52b:c025:859a with SMTP id 2adb3069b0e04-52edef1cc52mr1084908e87.2.1721125853907;
-        Tue, 16 Jul 2024 03:30:53 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77488sm121546145e9.9.2024.07.16.03.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 03:30:53 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 11/11] arm64: defconfig: Enable Renesas RTCA-3 flag
-Date: Tue, 16 Jul 2024 13:30:25 +0300
-Message-Id: <20240716103025.1198495-12-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1721126000; c=relaxed/simple;
+	bh=vTflwazVaPGM5ZCdDCKRyUNgR5nEg0hgVF6yqKN58mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BNrzFSsvN2NU4PeKvPtKpPUDIhZozaGzc1JC6+QlT/Eo4NIftkPF6ebB4XMgUDixGK7k6bDvgn/lCl5Wr1de1cnzmfCAEJae4x40rfJRvEdqTvV37x/KrPlal6aENu8VZyDgcn2Rkg0VApyRQdL8ARkWrkfuKTw5SMwc3cx+PR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NISWl0X5; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GASX0v007229;
+	Tue, 16 Jul 2024 10:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=+UQQJ/4g4npGy4OKFE1cPqYM0BR
+	ctKyIGBatWAVAOjY=; b=NISWl0X5jLa695N4joATffKR609BFQHOi30SBi+J5Fd
+	V+Yt8cU/KBDK9jaZpMr2dXCj3+qS/KW6Rd1YiO8qZOqWwnRTl93CXl6LpXrOY3+t
+	0p+gnX9dj39Zm1NXpbC6wxmJFPaxZevKkgigVWPwGcFy8bS5pAlNkogNWO1TE0rI
+	gqN6OXhnLK1KhCQXmqkbgwfYtnn05WqJpCeJ8/q/q1opUQqO5rELJ6ttJ5Tj3TyC
+	ck/zA9sy7HeZaR3+e/uLdeq/lq+eyXKAgJO3OANsujueSDf0NdPjYHIuCgdYCoaU
+	tqS420W8Il2Id8gDTKUsl2FrUl7EQ8um5ZZU0GYO0dA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dppur27a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:33:04 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46GAX3M3014379;
+	Tue, 16 Jul 2024 10:33:03 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dppur278-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:33:03 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G8VSLa030795;
+	Tue, 16 Jul 2024 10:33:02 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40c4a0krx6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:33:02 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46GAWwEh50200924
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 10:33:00 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 937EA20040;
+	Tue, 16 Jul 2024 10:32:58 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3D9FC20043;
+	Tue, 16 Jul 2024 10:32:57 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 16 Jul 2024 10:32:57 +0000 (GMT)
+Date: Tue, 16 Jul 2024 16:02:54 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/powerpc/kvm: Avoid extra checks when emulating
+ HFSCR bits
+Message-ID: <jwujothqmnnno5el6ehucdw6xiasoa6dkyksa7zxev4goligmy@u3wpdu3ilnya>
+References: <20240626123447.66104-1-gautam@linux.ibm.com>
+ <87v816w2xy.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v816w2xy.fsf@mail.lhotse>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9FuTioXVKY14k7mK67ujftAWd0VT3nqH
+X-Proofpoint-ORIG-GUID: DycL2rxeg4CuuqSbBOpGbbfKzFj99hZP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=677 impostorscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160075
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Tue, Jul 16, 2024 at 11:17:13AM GMT, Michael Ellerman wrote:
+> Gautam Menghani <gautam@linux.ibm.com> writes:
+> > When a KVM guest tries to use a feature disabled by HFSCR, it exits to
+> > the host for emulation support, and the code checks for all bits which
+> > are emulated. Avoid checking all the bits by using a switch case.
+> 
+> The patch looks fine, but I don't know what you mean by "avoid checking
+> all the bits".
+> 
+> The existing code checks 4 cases, the case statement checks the same 4
+> cases (plus the default case).
+> 
+> There are other cause values (not bits), but the new and old code don't
+> check them all anyway. (Which is OK because the default return value is
+> EMULATE_FAIL)
+> 
+> AFAICS it generates almost identical code.
+> 
+> So I think the change log should just say something like "all the FSCR
+> cause values are exclusive so use a case statement which better
+> expresses that" ?
 
-Enable Renesas RTCA-3 flag for the Renesas RZ/G3S SoC.
+Yes agreed, will send a v2 with suggested changes.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+> 
+> Also please try to copy the existing subject style for the KVM code, for
+> this file it would be "KVM: PPC: Book3S HV: ...". I agree it's verbose,
+> and wouldn't be my choice, but thats what's always been used so let's
+> stick to it.
+> 
 
-Changes in v2:
-- none
+Ack. 
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
+Gautam
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f35fd006bbbc..e90578659447 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1213,6 +1213,7 @@ CONFIG_RTC_DRV_IMX_SC=m
- CONFIG_RTC_DRV_MT6397=m
- CONFIG_RTC_DRV_XGENE=y
- CONFIG_RTC_DRV_TI_K3=m
-+CONFIG_RTC_DRV_RENESAS_RTCA3=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_BCM2835=y
- CONFIG_DMA_SUN6I=m
--- 
-2.39.2
-
+> cheers
+> 
+> > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> > index 99c7ce825..a72fd2543 100644
+> > --- a/arch/powerpc/kvm/book3s_hv.c
+> > +++ b/arch/powerpc/kvm/book3s_hv.c
+> > @@ -1922,14 +1922,22 @@ static int kvmppc_handle_exit_hv(struct kvm_vcpu *vcpu,
+> >  
+> >  		r = EMULATE_FAIL;
+> >  		if (cpu_has_feature(CPU_FTR_ARCH_300)) {
+> > -			if (cause == FSCR_MSGP_LG)
+> > +			switch (cause) {
+> > +			case FSCR_MSGP_LG:
+> >  				r = kvmppc_emulate_doorbell_instr(vcpu);
+> > -			if (cause == FSCR_PM_LG)
+> > +				break;
+> > +			case FSCR_PM_LG:
+> >  				r = kvmppc_pmu_unavailable(vcpu);
+> > -			if (cause == FSCR_EBB_LG)
+> > +				break;
+> > +			case FSCR_EBB_LG:
+> >  				r = kvmppc_ebb_unavailable(vcpu);
+> > -			if (cause == FSCR_TM_LG)
+> > +				break;
+> > +			case FSCR_TM_LG:
+> >  				r = kvmppc_tm_unavailable(vcpu);
+> > +				break;
+> > +			default:
+> > +				break;
+> > +			}
+> >  		}
+> >  		if (r == EMULATE_FAIL) {
+> >  			kvmppc_core_queue_program(vcpu, SRR1_PROGILL |
+> > -- 
+> > 2.45.2
 
