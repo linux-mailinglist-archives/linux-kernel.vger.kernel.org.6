@@ -1,174 +1,224 @@
-Return-Path: <linux-kernel+bounces-254531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B183093345E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C257933460
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24E01C220B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489A5284250
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DF143C57;
-	Tue, 16 Jul 2024 22:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2C9143C48;
+	Tue, 16 Jul 2024 22:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBs/jGkF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aq8n/Fk5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93EA6D1B4;
-	Tue, 16 Jul 2024 22:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D81121350;
+	Tue, 16 Jul 2024 22:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721170109; cv=none; b=SZ6lAHQsEbP4A4QSHmYZok/+ryIiQcnG4FItwHN7eQxOCt1Bg2SyJMyi8Qy0tqHeMO99dGzDjuu2TXb5j61n4dZfC1Z0PRY9tkmEHizp2GlLAAJHVXUx0veds+tIieNXXIA0s4xHngBZnVZv1DOh6DfKIaADYrILDaRf8f3zptk=
+	t=1721170507; cv=none; b=EAoNwFwlFke3LSTNnHg0Pd+OWL0d/0u2QuaqTG+nSaTfJBfi2t12U4V/B474Ir03TUGeUWUIGyWebogq4ir0Zq/rnsqVGu07ewczRfp5sp7MT3FcCZ2UDXMCRj/evr2tYT7orIkyjjNvqJrJ45Z624/aDd5hoHsXa18dkQZENrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721170109; c=relaxed/simple;
-	bh=Bc4xTGNKVk7Hlv8gcknsmkXuaNvkoVNmZN1zbJzDlWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gC2M4cggomntCFQNCTP8tFBmeEWl1eQ/J/nV8edmid47lIExNQ9i2/tHKDWgmbCHttSZkBPnyK19IDtGHRfwESmd4qh4itxI/T0uMUbxH/p/87gC855OvWx7Dm8oS6Ke/ve7afqhOiON8BidsYBemdaWfOx68LiEtPATvtoYR/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBs/jGkF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76310C4AF09;
-	Tue, 16 Jul 2024 22:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721170108;
-	bh=Bc4xTGNKVk7Hlv8gcknsmkXuaNvkoVNmZN1zbJzDlWY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dBs/jGkF1za9BWqtguN1YGZERXq3FgP+0R9AlKLNiB4mkptN81MYpE7g5nDvw1Que
-	 MFz0/UrmcFfTgAOJJppe7YhY5aq9EgsMegUd775my7c6a35gNURCh1NSXRu7FFMiNe
-	 pLD6vs2P4VeoZOFmLUCUbaL0JsGHyQz3bqy6n7Nmf52mu4Uv4Ngyw88mHesf9fCq7f
-	 WKHU83sAhZ3v9zElDIK3Xd1O+ah6B8gLNORw+oSTv++8zYJczbnMabU2aV7JpkQCoJ
-	 9k4f23DKT1Ulc/y43pi+MF696K1nFgtVJ2XFhRDNawpLJrp+C26sZ6ws0cfr1KwwGd
-	 i5mjlpmpSRNiQ==
-Message-ID: <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
-Date: Wed, 17 Jul 2024 07:48:26 +0900
+	s=arc-20240116; t=1721170507; c=relaxed/simple;
+	bh=g/xwm05rvbTzK1jG2tJXHLW8KGiMdROBtBgyRvzO4aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXIYqdSP4gZlWmCWRRyPplrGtOuT37TiTSjCZLU5oybP0AajEmrUqAxvLz7gsaisrdXylLe01NrMYra3gcX0Mb5pA7WPtgrsmiEBJzcfYBNDgqdDu5GCEqSw4O0Qk+LqFg5DYGFa9WKMLd23b7tphHWBjHlxljc4NjrOi8p7acs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aq8n/Fk5; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721170506; x=1752706506;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=g/xwm05rvbTzK1jG2tJXHLW8KGiMdROBtBgyRvzO4aQ=;
+  b=Aq8n/Fk558sETot7f1Pf9zNrUGUiL6GJeqWTHOTSbIW5nVxRAOeM1qL3
+   w6Yo68clBNYjoF2lsFMQrtjdN3dKvE8z8X7dlVkp1kEFujlt5gc9MuEkK
+   ZyUmhzYiEM8CYBmU3opZkp+v/QEsGTNSutsu7yzlUnpYELNnehUEHHRrU
+   LGmNYT+js2D5uNUHFF/D6yoSCUh5iI/Az8JNzHHvBOA3+Umcu2hSnytNX
+   QzJL6MvgE8AoEGjmgDPJFy0R5FjtJ7otibCQMucLUxs814Nb8h6q+Muty
+   +4pDbNrXcNcrRFH3NuZu7VclXIma8WIlwM5qxfFgITouSWaBXPuWV9DcU
+   Q==;
+X-CSE-ConnectionGUID: 6JSRVvh7RmCDGI+DybcYWA==
+X-CSE-MsgGUID: oJppjU58Rq2rMKqAlMG1NQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29233178"
+X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
+   d="scan'208";a="29233178"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 15:55:05 -0700
+X-CSE-ConnectionGUID: rnR1z46eR3q8JcAqPn4pdg==
+X-CSE-MsgGUID: 0ovMS4lhTkazQpRKC1VNrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
+   d="scan'208";a="54394068"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 15:55:04 -0700
+Date: Tue, 16 Jul 2024 15:55:04 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: isaku.yamahata@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
+	Sean Christopherson <seanjc@google.com>,
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v19 117/130] KVM: TDX: Silently ignore INIT/SIPI
+Message-ID: <20240716225504.GE1900928@ls.amr.corp.intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <4a4225de42be0f7568c5ecb5c22f2029f8e91d62.1708933498.git.isaku.yamahata@intel.com>
+ <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
- message"
-To: Johan Hovold <johan+linaro@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240716161101.30692-1-johan+linaro@kernel.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240716161101.30692-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
 
-On 7/17/24 01:11, Johan Hovold wrote:
-> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
-> 
-> The offending commit tried to suppress a double "Starting disk" message
-> for some drivers, but instead started spamming the log with bogus
-> messages every five seconds:
-> 
-> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
-> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
-> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
-> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
-> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
-> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
-> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
-> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
-> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
-> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
-> 	...
-> 
-> on machines that do not actually stop the disk on runtime suspend (e.g.
-> the Qualcomm sc8280xp CRD with UFS).
-
-This is odd. If the disk is not being being suspended, why does the platform
-even enable runtime PM for it ? Are you sure about this ? Or is it simply that
-the runtime pm timer is set to a very low interval ?
-
-It almost sound like what we need to do here is suppress this message for the
-runtime resume case, so something like:
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 2e933fd1de70..4261128bf1f3 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -4220,7 +4220,8 @@ static int sd_resume_common(struct device *dev, bool runtime)
-        if (!sdkp)      /* E.g.: runtime resume at the start of sd_probe() */
-                return 0;
-
--       sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
-+       if (!runtime)
-+               sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
-
-        if (!sd_do_start_stop(sdkp->device, runtime)) {
-                sdkp->suspended = false;
-
-However, I would like to make sure that this platform is not calling
-sd_resume_runtime() for nothing every 5s. If that is the case, then there is a
-more fundamental problem here and reverting this patch is only hiding that.
+On Mon, Jun 17, 2024 at 09:20:36AM +0800,
+Binbin Wu <binbin.wu@linux.intel.com> wrote:
 
 > 
-> Let's just revert for now to address the regression.
 > 
-> Fixes: 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk message")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/scsi/sd.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> > 
+> > The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
+> > Instead it defines the different protocols to boot application processors.
+> > Ignore INIT and SIPI events for the TDX guest.
+> > 
+> > There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
+> > error to guest TDs somehow.  Given that TDX guest is paravirtualized to
+> > boot AP, the option 1 is chosen for simplicity.
+> > 
+> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > ---
+> >   arch/x86/include/asm/kvm-x86-ops.h |  1 +
+> >   arch/x86/include/asm/kvm_host.h    |  2 ++
+> >   arch/x86/kvm/lapic.c               | 19 +++++++++++-------
+> >   arch/x86/kvm/svm/svm.c             |  1 +
+> >   arch/x86/kvm/vmx/main.c            | 32 ++++++++++++++++++++++++++++--
+> >   arch/x86/kvm/vmx/tdx.c             |  4 ++--
+> >   6 files changed, 48 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+> > index 22d93d4124c8..85c04aad6ab3 100644
+> > --- a/arch/x86/include/asm/kvm-x86-ops.h
+> > +++ b/arch/x86/include/asm/kvm-x86-ops.h
+> > @@ -149,6 +149,7 @@ KVM_X86_OP_OPTIONAL(migrate_timers)
+> >   KVM_X86_OP(msr_filter_changed)
+> >   KVM_X86_OP(complete_emulated_msr)
+> >   KVM_X86_OP(vcpu_deliver_sipi_vector)
+> > +KVM_X86_OP(vcpu_deliver_init)
+> >   KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
+> >   KVM_X86_OP_OPTIONAL(get_untagged_addr)
+> >   KVM_X86_OP_OPTIONAL_RET0(gmem_max_level)
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index bb8be091f996..2686c080820b 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -1836,6 +1836,7 @@ struct kvm_x86_ops {
+> >   	int (*complete_emulated_msr)(struct kvm_vcpu *vcpu, int err);
+> >   	void (*vcpu_deliver_sipi_vector)(struct kvm_vcpu *vcpu, u8 vector);
+> > +	void (*vcpu_deliver_init)(struct kvm_vcpu *vcpu);
+> >   	/*
+> >   	 * Returns vCPU specific APICv inhibit reasons
+> > @@ -2092,6 +2093,7 @@ void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+> >   void kvm_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
+> >   int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
+> >   void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
+> > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu);
+> >   int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+> >   		    int reason, bool has_error_code, u32 error_code);
+> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > index 8025c7f614e0..431074679e83 100644
+> > --- a/arch/x86/kvm/lapic.c
+> > +++ b/arch/x86/kvm/lapic.c
+> > @@ -3268,6 +3268,16 @@ int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
+> >   	return 0;
+> >   }
+> > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu)
+> > +{
+> > +	kvm_vcpu_reset(vcpu, true);
+> > +	if (kvm_vcpu_is_bsp(vcpu))
+> > +		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+> > +	else
+> > +		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+> > +}
+> > +EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_init);
+> > +
+> >   int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+> >   {
+> >   	struct kvm_lapic *apic = vcpu->arch.apic;
+> > @@ -3299,13 +3309,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+> >   		return 0;
+> >   	}
+> > -	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
+> > -		kvm_vcpu_reset(vcpu, true);
+> > -		if (kvm_vcpu_is_bsp(apic->vcpu))
+> > -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+> > -		else
+> > -			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+> > -	}
+> > +	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events))
+> > +		static_call(kvm_x86_vcpu_deliver_init)(vcpu);
+> >   	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
+> >   		if (vcpu->arch.mp_state == KVM_MP_STATE_INIT_RECEIVED) {
+> >   			/* evaluate pending_events before reading the vector */
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index f76dd52d29ba..27546d993809 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -5037,6 +5037,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+> >   	.complete_emulated_msr = svm_complete_emulated_msr,
+> >   	.vcpu_deliver_sipi_vector = svm_vcpu_deliver_sipi_vector,
+> > +	.vcpu_deliver_init = kvm_vcpu_deliver_init,
+> >   	.vcpu_get_apicv_inhibit_reasons = avic_vcpu_get_apicv_inhibit_reasons,
+> >   };
+> > diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+> > index 4f3b872cd401..84d2dc818cf7 100644
+> > --- a/arch/x86/kvm/vmx/main.c
+> > +++ b/arch/x86/kvm/vmx/main.c
+> > @@ -320,6 +320,14 @@ static void vt_enable_smi_window(struct kvm_vcpu *vcpu)
+> >   }
+> >   #endif
+> > +static bool vt_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
+> > +{
+> > +	if (is_td_vcpu(vcpu))
+> > +		return true;
 > 
+> Since for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
+> code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
+> .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
+> TD.
+> Seems no need to add the new interface  vcpu_deliver_init or the new wrapper
+> vt_vcpu_deliver_sipi_vector().
 > 
-> Hi,
-> 
-> I just noticed this regression that snuck into 6.10-final and tracked it
-> down to 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk
-> message").
-> 
-> I wanted to get this out ASAP to address the immediate regression while
-> someone who cares enough can work out a proper fix for the double start
-> message (which seems less annoying).
-> 
-> Note that the offending commit is marked for stable.
-> 
-> Johan
-> 
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 1b7561abe05d..6b64af7d4927 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -4119,6 +4119,8 @@ static int sd_resume(struct device *dev)
->  {
->  	struct scsi_disk *sdkp = dev_get_drvdata(dev);
->  
-> +	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
-> +
->  	if (opal_unlock_from_suspend(sdkp->opal_dev)) {
->  		sd_printk(KERN_NOTICE, sdkp, "OPAL unlock failed\n");
->  		return -EIO;
-> @@ -4135,13 +4137,12 @@ static int sd_resume_common(struct device *dev, bool runtime)
->  	if (!sdkp)	/* E.g.: runtime resume at the start of sd_probe() */
->  		return 0;
->  
-> -	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
-> -
->  	if (!sd_do_start_stop(sdkp->device, runtime)) {
->  		sdkp->suspended = false;
->  		return 0;
->  	}
->  
-> +	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
->  	ret = sd_start_stop_device(sdkp, 1);
->  	if (!ret) {
->  		sd_resume(dev);
+> And consider the INIT/SIPI for TD:
+> - Normally, for TD, INIT ans SIPI should not be set in APIC's
+> pending_events.
+>   Maybe we can call KVM_BUG_ON() in vt_apic_init_signal_blocked() for TD?
+> - If INIT and SIPI are allowed be set in APIC's pending_events for somehow,
+> the current code has a problem, it will never clear INIT bit in APIC's
+> pending_events.
+>   Then kvm_apic_accept_events() needs to execute more check code if INIT was
+> once set.
+>   INIT bit should be cleared with this assumption.
 
+
+KVM_SET_MP_STATE and KVM_SET_VCPU_EVENTS can set INIT/SIPI by the user space.
+If we change those two IOCTLs to reject INIT/SIPI for TDX, we can go for the
+above "Normally" option.  Because I didn't want to touch the common functions, I
+ended in extra callbacks.  The user space shouldn't use those two IOCTLs for
+TDX, though.
 -- 
-Damien Le Moal
-Western Digital Research
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
