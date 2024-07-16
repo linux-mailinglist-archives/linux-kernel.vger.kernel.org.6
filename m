@@ -1,45 +1,52 @@
-Return-Path: <linux-kernel+bounces-253526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F057693227F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:11:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7468C9322D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C611F23219
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:11:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1470B23375
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A10195B27;
-	Tue, 16 Jul 2024 09:11:09 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074C7197548;
+	Tue, 16 Jul 2024 09:26:45 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5BA4C74;
-	Tue, 16 Jul 2024 09:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDF919752C;
+	Tue, 16 Jul 2024 09:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121068; cv=none; b=sgZEUsKKDvD0ErEB1tsKRG9am8Oz28+xKgv4dJ3jXMV5GZZrlnljai+GrSDLYq7SQ9Ml6uA1681LRcGpw6jqtWwPw6TOMZgLUaYl1W1TbXWlV6ncnsGIV9TKpBWNwZA+sMFelNGNErBygBSjtnGX8buKDFVD9SV/ml8OE+Ly0Ls=
+	t=1721122004; cv=none; b=kZ/WM65NxZ4tzqnIOKbFvAO3MROnutbRky4kTH98g4FcHntr7GHNjrFNi42CblgCr26VK22q9hOVWpFOLUNmmSBHBm4cluJMJmJB6gAm15lztqqfPBpxb+CXf/iA7Uf4tv+TR7akZvDFIiO8DylMtrljsbul3BboD6UfRw9Wqew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121068; c=relaxed/simple;
-	bh=2BF2CsXqFLTo7IKdC/7zs3m9os45UdbNfcSeRODgDzA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LZUSpqzelI6M4aP84rPtajAPKOFfuWiNzw45oUrYdsPwthZTPgirb2KolEGZzMJDvFh3wIZwxNtFaFqNjg7N66KrFLgRzcoXRd5hedmBVCoV46+2QO8lsyCL6HDajiAdFb0crbC6zW42KXszGSR2ghHe6B6KjDpISrogrjM8fvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 16 Jul
- 2024 12:11:01 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, Sergey Shtylyov <s.shtylyov@omp.ru>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Fedor Pchelkin <pchelkin@ispras.ru>
-Subject: [PATCH] Revert "media: tuners: fix error return code of hybrid_tuner_request_state()"
-Date: Tue, 16 Jul 2024 12:10:40 +0300
-Message-ID: <20240716091040.93681-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721122004; c=relaxed/simple;
+	bh=mPyAgdnCG6X0qIxb245UTKv9eD2XhiUuSqcL48hhmNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZemKxP1VXWV4xAmG0fwaEQgTxYDMfDRog4Duw3tjO2AJVByIfAYYeZ392QpSo76rIaVB043eJGncIasyagE6bI8cL4kNAWh3f24UCg3LXYA9ZsAlWRr99BC4FEkBmB/X9RubtWfkwfuIxbqH58/TXDa1ax3Gk1uOLfwVHsl6m+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowADn7+fIPJZmC_qZAw--.55159S2;
+	Tue, 16 Jul 2024 17:26:32 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: broonie@kernel.org,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com,
+	yixun.lan@amlogic.com,
+	sunny.luo@amlogic.com
+Cc: linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] spi: meson-spicc: convert comma to semicolon
+Date: Tue, 16 Jul 2024 17:11:51 +0800
+Message-Id: <20240716091151.1434450-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,73 +54,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 07/16/2024 08:42:27
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 186531 [Jul 16 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
- 186c4d603b899ccfd4883d230c53f273b80e467f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_all_Bitcoin, text}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;inp1wst083.omp.ru:7.1.1;lore.kernel.org:7.1.1;81.22.207.138:7.1.2;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 07/16/2024 08:45:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 7/16/2024 7:02:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-CM-TRANSID:zQCowADn7+fIPJZmC_qZAw--.55159S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw4fuF48ZryDCF45WryxGrg_yoW8Kr4xpa
+	nrG3yUWry7Gan7urn3K34DZr45Gry0gaykZryFyrW8KwsrWF1qqFy5JF4rAFWYqFZ7uF40
+	9ryrWrs8Wr17GaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbFoGPUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-This reverts commit b9302fa7ed979e84b454e4ca92192cf485a4ed41.
+Replace a comma between expression statements by a semicolon.
 
-As Fedor Pchelkin pointed out, this commit violates the
-convention of using the macro return value, which causes errors.
-For example, in functions tda18271_attach(), xc5000_attach(),
-simple_tuner_attach().
-
-Link: https://lore.kernel.org/linux-media/20240424202031.syigrtrtipbq5f2l@fpc/
-Suggested-by: Fedor Pchelkin <pchelkin@ispras.ru>
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+Fixes: 3e0cf4d3fc29 ("spi: meson-spicc: add a linear clock divider support")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/media/tuners/tuner-i2c.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/spi/spi-meson-spicc.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/tuners/tuner-i2c.h b/drivers/media/tuners/tuner-i2c.h
-index 07aeead0644a..724952e001cd 100644
---- a/drivers/media/tuners/tuner-i2c.h
-+++ b/drivers/media/tuners/tuner-i2c.h
-@@ -133,10 +133,8 @@ static inline int tuner_i2c_xfer_send_recv(struct tuner_i2c_props *props,
- 	}								\
- 	if (0 == __ret) {						\
- 		state = kzalloc(sizeof(type), GFP_KERNEL);		\
--		if (!state) {						\
--			__ret = -ENOMEM;				\
-+		if (NULL == state)					\
- 			goto __fail;					\
--		}							\
- 		state->i2c_props.addr = i2caddr;			\
- 		state->i2c_props.adap = i2cadap;			\
- 		state->i2c_props.name = devname;			\
+diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+index 8838a98b04c2..1d05590a7434 100644
+--- a/drivers/spi/spi-meson-spicc.c
++++ b/drivers/spi/spi-meson-spicc.c
+@@ -655,8 +655,8 @@ static int meson_spicc_pow2_clk_init(struct meson_spicc_device *spicc)
+ 	}
+ 	init.num_parents = 1;
+ 
+-	pow2_fixed_div->mult = 1,
+-	pow2_fixed_div->div = 4,
++	pow2_fixed_div->mult = 1;
++	pow2_fixed_div->div = 4;
+ 	pow2_fixed_div->hw.init = &init;
+ 
+ 	clk = devm_clk_register(dev, &pow2_fixed_div->hw);
+@@ -674,9 +674,9 @@ static int meson_spicc_pow2_clk_init(struct meson_spicc_device *spicc)
+ 	parent_data[0].hw = &pow2_fixed_div->hw;
+ 	init.num_parents = 1;
+ 
+-	spicc->pow2_div.shift = 16,
+-	spicc->pow2_div.width = 3,
+-	spicc->pow2_div.flags = CLK_DIVIDER_POWER_OF_TWO,
++	spicc->pow2_div.shift = 16;
++	spicc->pow2_div.width = 3;
++	spicc->pow2_div.flags = CLK_DIVIDER_POWER_OF_TWO;
+ 	spicc->pow2_div.reg = spicc->base + SPICC_CONREG;
+ 	spicc->pow2_div.hw.init = &init;
+ 
+@@ -721,8 +721,8 @@ static int meson_spicc_enh_clk_init(struct meson_spicc_device *spicc)
+ 	}
+ 	init.num_parents = 1;
+ 
+-	enh_fixed_div->mult = 1,
+-	enh_fixed_div->div = 2,
++	enh_fixed_div->mult = 1;
++	enh_fixed_div->div = 2;
+ 	enh_fixed_div->hw.init = &init;
+ 
+ 	clk = devm_clk_register(dev, &enh_fixed_div->hw);
+@@ -740,8 +740,8 @@ static int meson_spicc_enh_clk_init(struct meson_spicc_device *spicc)
+ 	parent_data[0].hw = &enh_fixed_div->hw;
+ 	init.num_parents = 1;
+ 
+-	enh_div->shift	= 16,
+-	enh_div->width	= 8,
++	enh_div->shift	= 16;
++	enh_div->width	= 8;
+ 	enh_div->reg = spicc->base + SPICC_ENH_CTL0;
+ 	enh_div->hw.init = &init;
+ 
+@@ -761,8 +761,8 @@ static int meson_spicc_enh_clk_init(struct meson_spicc_device *spicc)
+ 	init.num_parents = 2;
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 
+-	mux->mask = 0x1,
+-	mux->shift = 24,
++	mux->mask = 0x1;
++	mux->shift = 24;
+ 	mux->reg = spicc->base + SPICC_ENH_CTL0;
+ 	mux->hw.init = &init;
+ 
 -- 
-2.34.1
+2.25.1
 
 
