@@ -1,190 +1,121 @@
-Return-Path: <linux-kernel+bounces-253523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82781932279
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:09:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F106B93227B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B280281BD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8651C21215
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6761919580A;
-	Tue, 16 Jul 2024 09:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="iGLG3FIj"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F17D195807;
+	Tue, 16 Jul 2024 09:10:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7554C74;
-	Tue, 16 Jul 2024 09:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB2F4C74
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721120991; cv=none; b=bl4pybGzy3ZT8rf8ypqoHY/bmJj+TIXUwY0iUbZfhB5PEBjQDrXUDA3F6QEP/Ow8NRfwf03n/nUvwRk9Ju5wAM9xYlKlgrkL2PZsB1F/fT+OxU1WQF7qxJIpJOSB07V5mLZngG0HHgUyIK836mb1nClSoHFQ42FYD4EGOZYcwfA=
+	t=1721121035; cv=none; b=BwWhwq5gkURUAUoIeb25t+4wOTAnXj/OUnA3LWnnwspXXXPqgszHidOU1U4JRNt8n69ryS+P+ut7W1YlO0hKgrgX4Zve1z8Lgr1qLQC9FWkE+QxUqijjbtULSfrM6aosZWzSfYXCFfEnC28Q81N/rEe3tMBHDCNN2T6Fpu/0Oqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721120991; c=relaxed/simple;
-	bh=3ieAoPKRveRs7kahBOXvbKadm9r7qWcBZNkkhIbV4kQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uk+8ltPafRg/soQgX7YRjz9aOyUDnjEkefb3f6D8OWOquiJrnYRC7m28mqSvCatdnJCezwvBfHrt1UFkOKhVAtTeLC8TS+cB/zpLceKRMWfEe7ee5B19n1yZz3cxxpCr3sBfopFc/mpyGRikRVD/F25tFgFumQQ6kfnS8NhHvU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=iGLG3FIj; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721120989; x=1752656989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3ieAoPKRveRs7kahBOXvbKadm9r7qWcBZNkkhIbV4kQ=;
-  b=iGLG3FIjrMtghi3X6D5UqgIXskmZpNQwZ0QYU/NsziVp8qnclPjCIpE/
-   zfY2wKVaXsWxfM4xcDJyr0C2+O1DUd7QAxbi3fJySaeXHgiijU2GUGSfy
-   eg0nS0UmOy8vd9MMPyTnrAEMNB+33ZNaaJwu7o4PCNuUqNdG5445WgRBq
-   Pvsas2xOSXNF8DA40gjj+lxY5ztql8nw8kNbxyt0bcFma5NSuZgssgPiE
-   drCDBiCuvsvynUZxnWT1aRhur/Krd0kGJiAv91F4jjSgrbn0lpxcUEmBs
-   lDpx5fFwrLWvb0MvfgJs1nv9DEHb93q3knHBmXleH5XZLOT7wUMBxaqKb
-   g==;
-X-CSE-ConnectionGUID: eBnu20vsR2SmZnSyEPMB2Q==
-X-CSE-MsgGUID: yzzyoGJoSqiiuAmDZ8pomA==
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="asc'?scan'208";a="29263502"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Jul 2024 02:09:41 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 16 Jul 2024 02:09:33 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Tue, 16 Jul 2024 02:09:32 -0700
-Date: Tue, 16 Jul 2024 10:09:09 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-CC: Mark Brown <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH] spi: spidev: add "generic-spidev" for compatible string
-Message-ID: <20240716-stuck-saggy-0638f8f0af4e@wendy>
-References: <20240714202303.164-1-egyszeregy@freemail.hu>
- <31758947-5570-4b20-94e5-52ea77f4f4e3@sirena.org.uk>
- <8d18306c-8d36-4e59-bc1f-0fc83dd40ca4@freemail.hu>
+	s=arc-20240116; t=1721121035; c=relaxed/simple;
+	bh=Q/J5HPjD3nULGe63cSK+WgRKArnBrtmlU+sZid0smjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7SnlfqoclvKl70c7XwmxkOM5OdgVGB0z/IPRuZc9DOVJidzazjnqBI8ricWSsDOrIQ9cziKeO7uq7xm9mrpM6KrH38kWn4LZqN2Mo0NYigHyEUus8T/NQTdpBs5uLgwTt6+5PIPSm7HuaN1Wljuh6WdFxSjTQJOcpXOE2zX3GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTeCP-00068u-US; Tue, 16 Jul 2024 11:10:17 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTeCO-0005nC-PZ; Tue, 16 Jul 2024 11:10:16 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sTeCO-002HWK-2C;
+	Tue, 16 Jul 2024 11:10:16 +0200
+Date: Tue, 16 Jul 2024 11:10:16 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	linux-wireless@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
+Message-ID: <ZpY4-PpxgMOH0wQB@pengutronix.de>
+References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Was0fRQbt8tb8PIi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d18306c-8d36-4e59-bc1f-0fc83dd40ca4@freemail.hu>
+In-Reply-To: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
---Was0fRQbt8tb8PIi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 30, 2024 at 03:01:56PM +0200, Sascha Hauer wrote:
+> The maximum number of AKM suites will be set to two if not specified by
+> the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
+> specify up to ten AKM suites in the akm_suites array.
+> 
+> Without only the first two AKM suites will be used, further ones are
+> ignored.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+> 
+> Current wpa_supplicant/hostapd only put a maximum of two into the
+> akm_suites array as well, a patch changing this can be found here:
+> http://lists.infradead.org/pipermail/hostap/2024-May/042720.html
 
-On Tue, Jul 16, 2024 at 09:41:08AM +0200, Sz=C5=91ke Benjamin wrote:
-> 2024. 07. 15. 16:10 keltez=C3=A9ssel, Mark Brown =C3=ADrta:
-> > On Sun, Jul 14, 2024 at 10:23:03PM +0200, egyszeregy@freemail.hu wrote:
-> > > From: Benjamin Sz=C5=91ke <egyszeregy@freemail.hu>
-> > >=20
-> > > Spidev is a not an ASIC, IC or Sensor specific driver.
-> > > It is better to use a simple and generic compatible
-> > > string instead of many dummy vendor/product names
-> > > which are all just fake.
-> >=20
-> > > Signed-off-by: Benjamin Sz=C5=91ke <egyszeregy@freemail.hu>
-> > > ---
-> > >   drivers/spi/spidev.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> >=20
-> > No, as previously and repeatedly discussed the DT describes the
-> > hardware, not the software that happens to be used to control that
-> > hardware.
-> >=20
-> > You also need to document any new bindings.
->=20
-> If DT describes the hardware, yes this is why need a generic compatible
-> string for SPIdev driver. SPIdev driver is a typical driver for boards wh=
-ich
-> have just header pin for SPI connection and it is not defined what IC/Sen=
-sor
-> will be connected on it later.
+This was recently merged: http://lists.infradead.org/pipermail/hostap/2024-July/042802.html
 
-What is preventing you using, for example, overlays to describe what
-devices are being connected to your board?
+Kalle, given that userspace now would be able to make use of a bigger
+AKM suites array, can we merge this patch for the kernel as well?
 
-> In normally if a developer start to use an IC/Sensor which has not yet any
-> driver in Linux he/she should start to make it in a regular way and not
-> hardcoding these fake compatible strings inside spidev.c and use it for
-> longterm.
+Sascha
 
-As I understand it the process would be:
-- document the actual device you have
-- add that compatible to spidev.c
-- work on a driver in userspace
-- drop the compatible from spidev.c and create a specific driver
+> ---
+>  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> index b909a7665e9cc..908dfe01c30d7 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> @@ -4358,6 +4358,8 @@ int mwifiex_register_cfg80211(struct mwifiex_adapter *adapter)
+>  				 BIT(NL80211_IFTYPE_P2P_GO) |
+>  				 BIT(NL80211_IFTYPE_AP);
+>  
+> +	wiphy->max_num_akm_suites = CFG80211_MAX_NUM_AKM_SUITES;
+> +
+>  	if (ISSUPP_ADHOC_ENABLED(adapter->fw_cap_info))
+>  		wiphy->interface_modes |= BIT(NL80211_IFTYPE_ADHOC);
+>  
+> -- 
+> 2.39.2
+> 
+> 
 
-The hardware at all points in time remains identical, and so the
-description of it does not change depending on what driver the OS
-happens to use.
-
-Of course a developer could just develop a specific driver for the
-hardware from the beginning, and not ever add its compatible to the
-spidev driver.
-
-> By the way, please send some reference link about the rules what you say =
-for
-> DT
-
-For instance checkpatch will complain about your change:
-WARNING: DT compatible string "generic-spidev" appears un-documented -- che=
-ck ./Documentation/devicetree/bindings/
-#35: FILE: drivers/spi/spidev.c:732:
-+	{ .compatible =3D "generic-spidev", .data =3D &spidev_of_check },
-
-
-> and please send the link for SPIdev binding documents, i can not find it,
-> but you point on it all the time.
-
-There is no binding for "spidev" because it is not a real device. The
-devices currently bound to by the driver should be documented in various
-locations.
-
-> devicetree@vger.kernel.org
-> Please start a normal discussion about it with devicetree maintainers who
-> can decided it real what need in this driver code for compatible strings.
-
-I do not understand what you are saying here. Are you telling Mark to
-have a conversation with the devicetree maintainers?
-
-> I
-> do not think it is a good idea to append these list for +100 fake devices=
- in
-> the future because you say this is the rules for it.
-
-What do you mean "+100 fake devices"? Surely the things being appended
-to this list would be real devices that do not have a driver right now?
-
-You keep talking about lots of fake compatibles, but actually
-"generic-spidev" is the fake, and the specific compatibles for
-different sensors etc are the real ones!
-
-A wee bit confused,
-Conor.
-
---Was0fRQbt8tb8PIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpY4qQAKCRB4tDGHoIJi
-0qWEAQD3OKqlCIYRAL+FaoY49aqySH0f9I6G22TAsrA7BhaOhAEA6n+52hfA9lik
-hZY2T0ZcPvsXihmoepNWRI5xrtPcEg0=
-=SpFJ
------END PGP SIGNATURE-----
-
---Was0fRQbt8tb8PIi--
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
