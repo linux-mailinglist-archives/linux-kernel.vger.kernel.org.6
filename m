@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-253818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5D1932771
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:27:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1760932765
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5644728257A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:27:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DCA1C21278
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD64919AD58;
-	Tue, 16 Jul 2024 13:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2419AD6A;
+	Tue, 16 Jul 2024 13:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0kHqhkH"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BM3Oev54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB2C19AD4F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264B5199EB0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136455; cv=none; b=qF/rYntoEkD68CBZCanrKo716KMUdIRs/FIExS1L0VSAE1mO9pBVkUVKmIhW0xVzTckF11RMg2zfmhm83+cC4CVZIGgHWxme9LSFp7YAfYgaJ/4HWpcJcD+Foy86B0w80kqqzKXEGC6BuF9+ikTI3d0YfG6Z3uAGk9BFLsgBWZw=
+	t=1721136366; cv=none; b=jYe2H5WE2W3bHUgpRBbjD5ormwMN945E88oJAHeXbS4mMhJjDlKNLwhOfY+rFzrDSqttwO3iKY9ielbP0iZyFgKxgq2rCLTa6cSb8q+P9waTrPVeMRsDsfOkyXyZoe6HDepmW+w0tJmVidtMNoUpNU8bgsiywDkUUCV8fo3G1NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136455; c=relaxed/simple;
-	bh=L4q/f/OtWa5M69YBoQW2fcIKupxqZNLZsMK3IgdJdtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q734FtXzhkdn9eFPt22SUPMjQpFYUaKqUbvHkVQvxk4/cq1ML83R3FAlDbLs/z/6KZYWqSG48fS5tRKydi6ZZ5yXEGr16XE1xNnHhTYiNGGhXiozNQiWjt+m1vvZ2UtnEFe6gN0+9jCQqmYB6o3rjW7aSixpV+i3nQjBWGdBvH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y0kHqhkH; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266ed6c691so35329005e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721136451; x=1721741251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8nnUYNlwO0k6ZBjwD5Erccb4E+P924xRgxG4C0KqEnM=;
-        b=Y0kHqhkHJN2Ib3B04DpFvaK+tBDfaTUazQrgEW5O0Q338nbodwMT5MyObQeenFtca9
-         HdvTbXsbxCYzC+yVeTmJmFYBprsBFWEwrrI32wfehQe5iiEHz6KND7Hi7zhsr97koO/N
-         FH1Tx6fbdz/vnYQitxM2gGIOW1hefV9EYjJ5oEBVkElMNsPLeY2P1TKu9qyydzHBP7+y
-         T6cFjV6nJWdh8DnQ2mlHLp/cLvwZ2owyvmj5xOQCag9UcPglrUnXAC7jGGagTM6XvgTD
-         HE71gjWuO5tW9q12FHF8HR5zRM+Iovr8/lOoAn5+GrCIg8+5+noi3EgfVKFUB6Qk8FiV
-         a84g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721136451; x=1721741251;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8nnUYNlwO0k6ZBjwD5Erccb4E+P924xRgxG4C0KqEnM=;
-        b=A57uOrVh3ZCmfV2EhYRQvV56c2V//H3T79glKKQ2eWzWDBUVj7U59wm274CRN233dg
-         mY4fZM2zkJuIFeX3bcgo5lGMjd1+4ELYOW2fUKXbW+Vm73itz+H3lGdqmRdt4lRw8s94
-         xtZYKsGdPIeAPcbuQi1Fg6G1BY8Iy8BvQ/N+ABJmsHl2BM+Cf8RUamsdg2cG1405+jKg
-         ZMB249n7y2vUne9g+/4ypuf9eqgkyDygRfNJ5DQB+cJQE4fOL0UFR3KXABXBWU4ma3fs
-         7M5BCMYiptuA+w5r0V1LzVnxanznteky+E49rY9jPgP/uAvArx2s9DkcbIFS6cCPjH1V
-         uDLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgoeUVrJMo3kofkVo43AQYPd3vBRnWoO6GBzFQRaqkDyPa6HtVl8rYsWAesVsjusTZM5xus3hI3E9pvXpbQUjhHcPx8MMydNuQ20EY
-X-Gm-Message-State: AOJu0YxvqAWAD8oYtVTLNdAKp4dzdEHUOnnr/khUDz8ufnmYB91EW18Y
-	2qPuvtyJfc3dhnAatd/WITloOhVR1kUD7mhruD133kiaFJlJt/T+MyZj7+L3R8E=
-X-Google-Smtp-Source: AGHT+IGhqCHFIX7TkLPtIRTTvgB7kbFHYhFo3zMfT1v/DCloAtgq+4vAX8iGpdJXs9kK8D9hqV8L0Q==
-X-Received: by 2002:a05:600c:5127:b0:426:6099:6eaa with SMTP id 5b1f17b1804b1-427ba6dbd32mr13126415e9.26.1721136451525;
-        Tue, 16 Jul 2024 06:27:31 -0700 (PDT)
-Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc2efsm163985725e9.36.2024.07.16.06.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 06:27:31 -0700 (PDT)
-From: Rayyan Ansari <rayyan.ansari@linaro.org>
-To: devicetree@vger.kernel.org
-Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: iio: magnetometer: bmc150: Document mount-matrix
-Date: Tue, 16 Jul 2024 14:25:09 +0100
-Message-ID: <20240716132512.80337-1-rayyan.ansari@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721136366; c=relaxed/simple;
+	bh=bPVZJLWZWfdDq5CJz2bIWaWUTb6wxDi+EpVlIhFnHyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7ZyLmbfCI9UaOCfPuq9too1SCHShIxVLYV0622Vel5FQxD9dvC5PXEp01KtbG/cJaxcJtzGvFoIT45sVaIUUU7q4457ulgs+K62yiOcY6YDh+8BHOZxIUwyjmSgIkmImEZApp8o5GKWnDn1szdAwoQIJBvNiHNus0JIrLJR0rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BM3Oev54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85527C116B1;
+	Tue, 16 Jul 2024 13:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721136365;
+	bh=bPVZJLWZWfdDq5CJz2bIWaWUTb6wxDi+EpVlIhFnHyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BM3Oev54FfxAGYzqvc09ziZwnBKtpDF3ktlwlC1oCX9+oALFPXa7Gzno70S31/Iyp
+	 IPb/VlsxHHHxc0IMX6zupj1/72CGTy0rtNcqNDD8FSVxHJPAjDYWe49ovPkZW1s9kF
+	 hD5kIWU5YvHYmtcGK+OzG9s0BfWqJTBOQ5U/TA0+9rLO62P6f5ISU1MW7UmpEAHipO
+	 YN+s/JGTho4vsYdht7gYvfJmrW1+ai5ofm8cHGPW0UjboCPhO9cQ/U2DVjbupAesJh
+	 nkxBKa7Or/dwScln4xDdW7tZLRWd5I2mFfll8IZlGBHTDjum2sHEPk7e0rtWgtrxJy
+	 sEjCmeO0TQx+A==
+Date: Tue, 16 Jul 2024 06:26:03 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Vamsi Attunuru <vattunuru@marvell.com>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: Kconfig: add a new dependency for MARVELL_CN10K_DPI
+Message-ID: <20240716132603.GA3136577@thelio-3990X>
+References: <20240711120115.4069401-1-vattunuru@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711120115.4069401-1-vattunuru@marvell.com>
 
-Document the mount-matrix property, which is used in device trees such
-as msm8916-samsung-fortuna-common.dtsi, and supported by the driver.
+Hi Vamsi,
 
-Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
----
- .../bindings/iio/magnetometer/bosch,bmc150_magn.yaml           | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Jul 11, 2024 at 05:01:15AM -0700, Vamsi Attunuru wrote:
+> DPI hardware is an on-chip PCIe device on Marvell's arm64 SoC
+> platforms. As Arnd suggested, CN10K belongs to ARCH_THUNDER
+> lineage.
+> 
+> Patch makes mrvl_cn10k_dpi driver dependent on CONFIG_ARCH_THUNDER.
+> 
+> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> ---
+>  drivers/misc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 64fcca9e44d7..f3bb75384627 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -588,6 +588,7 @@ config NSM
+>  config MARVELL_CN10K_DPI
+>  	tristate "Octeon CN10K DPI driver"
+>  	depends on PCI
+> +	depends on ARCH_THUNDER || COMPILE_TEST
+>  	help
+>  	  Enables Octeon CN10K DMA packet interface (DPI) driver which
+>  	  intializes DPI hardware's physical function (PF) device's
+> -- 
+> 2.25.1
+> 
 
-diff --git a/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml b/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
-index 2867ab6bf9b0..a3838ab0c524 100644
---- a/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
-+++ b/Documentation/devicetree/bindings/iio/magnetometer/bosch,bmc150_magn.yaml
-@@ -36,6 +36,9 @@ properties:
-   interrupts:
-     maxItems: 1
- 
-+  mount-matrix:
-+    description: an optional 3x3 mounting rotation matrix.
-+
- additionalProperties: false
- 
- required:
--- 
-2.45.2
+After this change, ARCH=arm allmodconfig fails with:
 
+  drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_write':
+  drivers/misc/mrvl_cn10k_dpi.c:190:9: error: implicit declaration of function 'writeq'; did you mean 'writeb'? [-Wimplicit-function-declaration]
+    190 |         writeq(val, dpi->reg_base + offset);
+        |         ^~~~~~
+        |         writeb
+  drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_read':
+  drivers/misc/mrvl_cn10k_dpi.c:195:16: error: implicit declaration of function 'readq'; did you mean 'readb'? [-Wimplicit-function-declaration]
+    195 |         return readq(dpi->reg_base + offset);
+        |                ^~~~~
+        |                readb
+
+Including one of the io-64-nonatomic headers would resolve this but I am
+not sure which one would be appropriate (or perhaps the dependency
+should be tightened to requiring 64BIT, as some other drivers have
+done).
+
+Cheers,
+Nathan
 
