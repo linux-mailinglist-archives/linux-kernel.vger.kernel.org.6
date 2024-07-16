@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-253212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C93931E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57975931E36
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C242E1C21F68
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C6F1C218F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A828C4428;
-	Tue, 16 Jul 2024 00:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE90B33C5;
+	Tue, 16 Jul 2024 00:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ytt3NNLD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fa7HPgLZ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A152917F7;
-	Tue, 16 Jul 2024 00:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F643FD4
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091504; cv=none; b=Baj/sMSjpz/HiIHkBZGJ9DaVlvmj6vqhuO/feLFZiyqJTT70bZ93E+tMrhYl1L0MsAKb+vG6KGF3iHcX0V5B4K/hlv9gT46hl4xi1n9HNtUXcJoQcZ+fqW6mumEhCc8i2BN6o6pFtDPU74uwWrmjxodd1IClcTD5WoJlThsEwkA=
+	t=1721091544; cv=none; b=r3pQ4bRpjeHAMkOaPGFZBUAwTZ+yjyXnBLAEsRqN0ryg5LGTMjCYM8UONoPLMP3PuZy1tqqK1tECGmNZJqIjvCL5aPwo2IpBR3Q5OuMtYgJH8aqJhYgWORpm9KRTIsMDgnaJzWxqaA0jTeXt6caoF2WaqqjwZuaZEKD/MXZT0T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091504; c=relaxed/simple;
-	bh=mZWafBkOw1E3DFBP11k33323DzGxODmyAUnJuloCuZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YyfvG+yRPAUwhYBRZkHic4PGXof0mXymadu0B7/YkHVzr+RFOugV7sg4nFYQQ+NlM1W3UBsTCw/gWP5JOaJPwCrn0knGNBzqFmMJD9i8gv5p0WE3nL/YFaamF2blxCjgJ+uGyMVzG4uZVDnXny28rBsT2UZD0Of1u+XUJd9ZBYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ytt3NNLD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721091499;
-	bh=YW6SVvLGC382A1pg1wvXRYmrvH68wauPrtI3gelmCn8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ytt3NNLDOXV4ANwpbIWof9PE+6XfSBLmQp3CJeL/8A642eGN/V//j7dBTNJ8A9Xxo
-	 q2r1UpV0EHUvmEtDI1NkgY3EEi4DokRahii+EbclNgQGzLtJPAXIHDa34gNlWyLB4G
-	 10y+fE+6rj1z2l/+fsUyIMqLHuoaFIqNAcutna84XCDD8/JpDPx2WA6JtjjDeD8AHu
-	 ei/fW6Oj4F/+7usu3VM6OeDJdj/DQRhuRgrCcssBZ6Gr/SFnWH11HN2dYEfWAW/UDK
-	 FMXD2FcvnBqDLOE3JxKGVHBs9WBRsK9OxCSKVUiq2qKyz5CJL2UdNo+sM1wlJAT4Fo
-	 M3JOKn9mUpNQg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNLKR2gfHz4wc3;
-	Tue, 16 Jul 2024 10:58:19 +1000 (AEST)
-Date: Tue, 16 Jul 2024 10:58:18 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.com>
-Cc: Mark Brown <broonie@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Filipe Manana <fdmanana@suse.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the btrfs
- tree
-Message-ID: <20240716105818.03558dae@canb.auug.org.au>
-In-Reply-To: <ZnFyeNLLrEcX5_g0@sirena.org.uk>
-References: <ZnFyeNLLrEcX5_g0@sirena.org.uk>
+	s=arc-20240116; t=1721091544; c=relaxed/simple;
+	bh=5/3XMi0sWjH0usNMkH3l2OHbSJdTb8+mblQfHS6NEc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXQSCxI0VXEOP2W6ASk/LDysovRPToNHfRmH4Fo1jBsNQUojIqX9DNv65xQi7qP2PQleJ51XPGRQJ1zPVlQhE7SpSSD3yohkzgYUepbG1P5lLe6tmiFqSjV9kLw5jIHXxDGsFMAX6BynL8Nj10WYVLo7l0cTVHdR6LjFNUyzXSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fa7HPgLZ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6b3so3260907a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721091540; x=1721696340; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VUxVHzmi756PDihJ0U17OMpQG/MHUV3/or5nWPlSfz8=;
+        b=fa7HPgLZVBeASbq6zoRXQI8R4VWsLi07ZZJgaLpPjYxdKhJ3OMl8dtEbQOzYo7JkYO
+         n/eRmavks9nHcespwEIAB5IBWADwgvkaPsXi3K2WtM3N5Yc2siAoxfVP6qcrEO1NJBhE
+         4+oVBgnxis2yoe1bPvcMr4mz1lU8qMDIwWpKqWCAdx5+EylP3tCXVBfk3zG/thDvJ0lt
+         fT6G9yAw83CQRE4UIjvmufhV7KbB7S5FdSQ86ahAbqFwk+1vqVW1kucM+E+gRBAn0pky
+         FvM/ePciv8n5XbbrpEdfG7amERRNn0WefOtEJeeqZ1du8NRM9L3TRnm+MUbtDjobC7up
+         oz4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721091540; x=1721696340;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VUxVHzmi756PDihJ0U17OMpQG/MHUV3/or5nWPlSfz8=;
+        b=IjMHwnDgEYa9k9d+Htm45BnYW4xJeknfk1R9CvWS+GNMSxV5R9rA1IFX0hco9r1xZ7
+         vja9KaHInd73BPQ+tWFwWznvJ+obHoVABFjDaAafr6iHr2LYjxOFJFGqHfIZQKx+qeU1
+         YzEddmCi/ZKkisST2lEpjAVqbJZL4V5i4SkIhraVey3c9nzGcmpsoet40pzcBzMYnMZp
+         GCw9/H6CgTxa2W6M6QATcfrhMva3EN22hYDcb2muNmEzie83hxXeSiDzOcYhH64d5KgL
+         iG916YSP27U1QkHvyJqEv0JR9ZhnV8Dl8awDKjJF+KaYxewU/GUVmwJeoy90E0NwZckY
+         6Urw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4jCboZCSlIOCFU1u88h3VUfOR8pNzOOQv6UnK/W92SBRGxWrRYCIdquWWQ+ss4uoZLOb0gRbnNRcX5BjajSDcaKd8Elfq08cnpZKE
+X-Gm-Message-State: AOJu0YxyCNHkTHIBIHNvfkwSulZTM1GcJfdR9kashUrwzJqf5ChGdp0z
+	dKVE6VggEbE1E4xdADmJ+ELkLi5mtJiAecPHhYrWV5PvJ6inKBg2UzNy3w==
+X-Google-Smtp-Source: AGHT+IG7mai8zmLYQYE4GTwFAEr0+juBlGB0mKwmbkeqCqyoSvdPIHCUPdgX/PQOfRNOJQonzmug1Q==
+X-Received: by 2002:a05:6402:34c5:b0:57d:1696:fd14 with SMTP id 4fb4d7f45d1cf-59eeda75044mr352917a12.8.1721091540170;
+        Mon, 15 Jul 2024 17:59:00 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b24a76fc3sm4063121a12.9.2024.07.15.17.58.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Jul 2024 17:58:59 -0700 (PDT)
+Date: Tue, 16 Jul 2024 00:58:59 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 1/2] radix tree test suite: include kconfig.h with
+ incomplete path
+Message-ID: <20240716005859.ldmkuqutcail27in@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240712074151.27009-1-richard.weiyang@gmail.com>
+ <lj3rlnhffccwunowrjvk7i6pq6gcpg6rzdmvspwhjdiqfmfvob@a45kjy2du77z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BhsuFU2eRxBq/l/FS5GcHN8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lj3rlnhffccwunowrjvk7i6pq6gcpg6rzdmvspwhjdiqfmfvob@a45kjy2du77z>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
---Sig_/BhsuFU2eRxBq/l/FS5GcHN8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 18 Jun 2024 12:41:44 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Mon, Jul 15, 2024 at 12:17:44PM -0400, Liam R. Howlett wrote:
+>* Wei Yang <richard.weiyang@gmail.com> [240712 03:42]:
+>> The include path indicates it is the kconfig.h in tools/include/linux.
+>> 
+>> Let's use the same format as others for better reading.
 >
-> Today's linux-next merge of the vfs-brauner tree got a conflict in:
->=20
->   fs/btrfs/inode.c
->=20
-> between commit:
->=20
->   adaac2633c9ad ("btrfs: remove super block argument from btrfs_iget_lock=
-ed()")
->=20
-> from the btrfs tree and commit:
->=20
->   b49558e8ce3dc ("btrfs: use iget5_locked_rcu")
->=20
-> from the vfs-brauner tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc fs/btrfs/inode.c
-> index 89e58647d08de,cbb2c92b6c084..0000000000000
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@@ -5582,7 -5587,7 +5582,7 @@@ static struct inode *btrfs_iget_locked(
->   	args.ino =3D ino;
->   	args.root =3D root;
->  =20
-> - 	inode =3D iget5_locked(root->fs_info->sb, hashval, btrfs_find_actor,
->  -	inode =3D iget5_locked_rcu(s, hashval, btrfs_find_actor,
-> ++	inode =3D iget5_locked_rcu(root->fs_info->sb, hashval, btrfs_find_acto=
-r,
->   			     btrfs_init_locked_inode,
->   			     (void *)&args);
->   	return inode;
+>nack
+>
+>This change stops using tools/testing/radix-tree/generated/autoconf.h
+>which is included from kconfig.h.
+>
+>If you add an #error to that generated/autoconf.h header, then you will
+>see it will build with your change, but fails with the existing code.
+>
 
-This is now a coflict between the btrfs tree and Linus' tree.
+Thanks for your review.
 
---=20
-Cheers,
-Stephen Rothwell
+>So this is not equivalent.
 
---Sig_/BhsuFU2eRxBq/l/FS5GcHN8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+BTW, if I am correct, the difference is introduced by patch #2. If I just apply
+patch #1, the #error in generated/autoconf.h works.
 
------BEGIN PGP SIGNATURE-----
+Patch #1 looks good?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaVxaoACgkQAVBC80lX
-0Gx4RwgAn4IPLlN12vgPZXl2YDHou5JEtr8MB78A35PTMlRwWkeKt/3MpUKNcOMF
-xZPLZol+L1QYr2Ymt7af1H4ZOqny+jnH/ZqfFzGpsAkmEtUjV9SSqYwqKhkkyjyN
-2hWfxgREuqZvUm+TFm1jB2Dutm01WGdvrwXP+rP+pylDAt0dsb84TK5XLlQfZEII
-DnuIFjVFlPQo6Fg50AvtrfNzovRQNy2ZY8VlPwXcWEmA5oNaJOtilLp/c/Vf9aie
-rL0MMrrFCDqloeYrbg2poY9LEpogr9U02d1XobwIl1/62qQZMKy6zjLkfVVjJeNw
-dptiGIIY+6NZ+y9Pncx4qQZJY3oHIQ==
-=7vtu
------END PGP SIGNATURE-----
+>
+>> 
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> CC: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> CC: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> ---
+>>  tools/testing/radix-tree/linux/kernel.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/tools/testing/radix-tree/linux/kernel.h b/tools/testing/radix-tree/linux/kernel.h
+>> index c0a2bb785b92..fab6f47a9472 100644
+>> --- a/tools/testing/radix-tree/linux/kernel.h
+>> +++ b/tools/testing/radix-tree/linux/kernel.h
+>> @@ -11,7 +11,7 @@
+>>  #include <linux/err.h>
+>>  #include <linux/bitops.h>
+>>  #include <linux/log2.h>
+>> -#include "../../../include/linux/kconfig.h"
+>> +#include <linux/kconfig.h>
+>>  
+>>  #define printk printf
+>>  #define pr_err printk
+>> -- 
+>> 2.34.1
+>> 
 
---Sig_/BhsuFU2eRxBq/l/FS5GcHN8--
+-- 
+Wei Yang
+Help you, Help me
 
