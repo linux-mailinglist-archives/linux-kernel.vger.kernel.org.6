@@ -1,174 +1,148 @@
-Return-Path: <linux-kernel+bounces-254415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950279332F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042E89332F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70721C22775
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CC61C22782
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F471A01DC;
-	Tue, 16 Jul 2024 20:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB9A548E0;
+	Tue, 16 Jul 2024 20:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbwdMmEY"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FpaFvr57"
 Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462FF3B784
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0539E19E83D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721161777; cv=none; b=P4ii2z923szKU52NPuvdw/rX4Z1WCPFpC3fp9fJtXvDeeSssBDd3J53FolhGiXXTzqSaG3hoYUaeyj1g2yYLy4LubfwTpz/sICZMz6C6qEyVfGH+Snvb85y9cJW0L2ZuOBTV6vAFOdDRRFeOfNQvXDY5szXYI6R77XDzNZGOiTs=
+	t=1721161798; cv=none; b=pIS+IDrA/+2Rgxw7UmwEy+VOsqopSFSCmAYaVdiLYDJJOboN92G8m27baBvW5XA8egs7vXgUSDBwUqqNm/Hdqelju+0R8Cp2nVqMjP4UvDlYUCnax0TxPp6ZPHyFVRAbE2YNSy7Nwx0bNmDla8rY55+hCJD5oy/nxO6NDsTfSH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721161777; c=relaxed/simple;
-	bh=Yhuhmc5ref3VmS6JXOcfK0IohaRteaXk3J4z1O4kN40=;
+	s=arc-20240116; t=1721161798; c=relaxed/simple;
+	bh=up0D5nQQftdcKhSarVd2jtZJoskmXDlGtz+96WFVZLM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tpp05UnHXmhhZIPpRDf7pbma0/v0kgpdX/PQxz/8LadpgktO7/5iMoFoGUdBYelewzEjPzzu6f55hL9UxKzBmm6DIVLJBS94DNMcEJIhsDmdyFJFJU7muV0WKBZIzv7sGq73ekFpRTUocpea2u0HbDHdU60eLDMvNGDVK1I2D7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbwdMmEY; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-59f9f59b827so1191355a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:29:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=sP6X58gC5MPYZZX1Q8DLBOEl0ATsdhjKAX0MD3/NHXABPSXTsxeUTyQGuw4mR7/bAnl2nD4J5Ax7ELFoIPkWMN1Jwbojr19BkIn9yU7P7o17nq+9WfOr1YkjHqzkeXnJnT9nazuEuJI+9P4f8JpgE6u6nz5rgD6JD2h7s5kvDdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FpaFvr57; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58bac81f3f9so6835171a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721161773; x=1721766573; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1721161795; x=1721766595; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbPj/PZFGIDhT7c0ujDQ6E8Mz16O/2FBR9KQusTsgDg=;
-        b=nbwdMmEY0NTg9IWIkgVAwywUnPLwvHAtByVr0aLQW+TAEgNyqHoykQjVREcD71cBdj
-         Rd0jY5SU0ju5pq+R9z6vazIw2WknZttGVwaBMfssCVLsIC5pbdJsdVJO1qw3Eky/3Kmx
-         OjApGc7C1oIyjZvzYrQFMf13+N5C188Vqu4pNOKVqcx8nCIestQ23aFs3XSo9n1JXEsl
-         rxyqMxTt4mJq1sJs4FhrOlpwcumjSoIRwYERrMAYHEbtIBIEjl3xbKEOagrxKmjIQ0mc
-         DE1aQpzAcVBONd/Z7zXSUqXmvlhaLWASlIYd8XKnhF+I+DjF8Ioury8ibnMFbIJf8/Yf
-         vEKg==
+        bh=Bcqla/AFwdtdNx0I9cN8FcPEG+DdSCj27CfmPF17X+o=;
+        b=FpaFvr57i/y4aSZgmNlhiWTvfDkQnhiagoK7ZHptrURmxRz5Moqh+52WdXVlJunUWU
+         8Mblq1TGW2T2dPcENDdjJchG7F/3JCA5qz9rvOTbHKc1kjeeD3wY2QZIFiOgzJgZTjMX
+         MDYVqsIueMbwaVIeU9ToTB8eddIsaEbzeHhek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721161773; x=1721766573;
+        d=1e100.net; s=20230601; t=1721161795; x=1721766595;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bbPj/PZFGIDhT7c0ujDQ6E8Mz16O/2FBR9KQusTsgDg=;
-        b=KKsB8OmxKAU1YSB8tQTAr1c/tSO3uXgWFSP2CTlutELWZRYpNZg5B+FQJYHJ7dkn6A
-         IIqSwYKVxL/0u3jhYBIkkcwMOWlJkddCYQIcTIw2X+gMyvOSUY8v8i7nv8G9m8C3AM0N
-         L5cRv/giH0K4LECuHalQVl2ctV2Y5L9Zmm/A2sYnp5SX0wbFuvvkYjmLPS5sSQHzYewD
-         1IIJsKhrTXKDGuoP7b2LyGOkK/ljSeHcTWR3uIPe2H/YgfreGDxDKDzr/ra8X36uUugM
-         BzD3FiCqquJULbwNHQHk9RpocV2EOQo6tOgV2h0jVYBDvtx8lK4dVnJTKYcOL2+GkfpP
-         qKqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlsAk1YpxJ/teMZFHwooU886wW38CreSEjMSpYiG/MzFoZwxyrYYc6ZM3U79anfKWnGX1HNNoeN4HxruCF08j6oFxtqjlvOck+6bJv
-X-Gm-Message-State: AOJu0YxjVjzgIyEhbcBmaRkQxnhKENAwHRnEoyIY4/Bp1PBSRB63jv6j
-	4DGi26BTfpGXIxmAEL70zN1TvS24IPyqmZd1//b3UmrP1l7SBPaX8WthLhh7NUdG1dg9qAVqE9+
-	E6Od9eJmFh267mE0ahw0fVkSr4cAHndwxzhUU7Q==
-X-Google-Smtp-Source: AGHT+IF+ga++87qZIL9GesqchqNJ7nMQoknpRRE8QlgGw72R1Ft17dXna2B9Rqo1YtNOnhci3c7g/FHe4x02at6YBzY=
-X-Received: by 2002:a50:a696:0:b0:58d:b529:7dc3 with SMTP id
- 4fb4d7f45d1cf-59eef45b5e4mr1989963a12.19.1721161773520; Tue, 16 Jul 2024
- 13:29:33 -0700 (PDT)
+        bh=Bcqla/AFwdtdNx0I9cN8FcPEG+DdSCj27CfmPF17X+o=;
+        b=XnJW7dLmEKUcgYB0gWZfzzeIvhB7VLKipG6NS+VX3jDfMMyq5VG1AE86C/MBNJTui8
+         ttpsRgr8jVhDiKQ577tTZYX9F+3WOSJVTQAN04I0AurI3Fm5efrkEENdPlujdy43Wope
+         CQPwR4YwZH6aGuO2pTJPKglruN0YYgkChawcxOCNvyc9HG5PKElRM5XgPgdd2rolQtK3
+         luLWoRSHk0DiYKPkuanTEZGBA9m/CKKTSQLJBATmiQ7JqNfvomKn9nCtLeyHCtpQuiWU
+         osXJvqWICsNeFtTVfGFLD7b6zbNlxzcvHlzc6Qgbtqsq0Rmkafm9LRWQzGTqLXKwCLMo
+         NNvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9RG1Zzsk94Ms0y3zZeVQOTOLX418D44lqaJ8XJutfrgsk6FqAUkIPyDg/G4rRdSr6RCOURSxX574Hx+NPukhQjIMKkSibjA9LKwGB
+X-Gm-Message-State: AOJu0YyxtMTvThWqdrL5ucQ5Kn+VS90OfnfKqb/z8YpSjAmv+ovZeaZh
+	/eHV78SZqFtwCy5hUswG0uVaxKKFcnhkok8jsZ5xP0UveXvuRjB724OMUJAcrGr6tGaNQXxVCB1
+	2g/Woeg==
+X-Google-Smtp-Source: AGHT+IEhhzr9MjnFUT2kcWWTYJ6S7GXwDkAf/zjnShUJFnRFc2iJG1wpJMzrOiVL6c2FLCHPjmnxMQ==
+X-Received: by 2002:a05:6402:5216:b0:57d:2c9:6494 with SMTP id 4fb4d7f45d1cf-59eee64738fmr2398859a12.10.1721161795145;
+        Tue, 16 Jul 2024 13:29:55 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59cf7763236sm3766748a12.12.2024.07.16.13.29.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 13:29:54 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38028so7634367a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:29:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKDF9Yb50R8xo7YNrD2LQVQZLBqF3kQ57C9Mmw5bTCK6YMyPXJtWhCKs1tRI+jX1wSYTJBK5y4d6pEJk6FbrNL0vCBK11sSv81gsaW
+X-Received: by 2002:a05:6402:2711:b0:59f:6797:57c1 with SMTP id
+ 4fb4d7f45d1cf-59f6797623bmr2049355a12.11.1721161794010; Tue, 16 Jul 2024
+ 13:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152746.516194097@linuxfoundation.org> <aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com>
- <ZpbDlwpfBwViDonu@duo.ucw.cz>
-In-Reply-To: <ZpbDlwpfBwViDonu@duo.ucw.cz>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 17 Jul 2024 01:59:21 +0530
-Message-ID: <CA+G9fYtosFR2O3A+bgYKV4q+13dWdfqGFqmB+NVu3Qfdfa3Ghg@mail.gmail.com>
-Subject: Re: [PATCH 6.1 00/96] 6.1.100-rc1 review
-To: Pavel Machek <pavel@denx.de>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	stable@vger.kernel.org, Paulo Alcantara <pc@manguebit.com>, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, jonathanh@nvidia.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240716152318.207178-1-brgl@bgdev.pl> <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
+ <CAMRc=MemuOOrEwN6U3usY+d0y2=Pof1dC=xE2P=23d2n5xZHLw@mail.gmail.com>
+ <CAHk-=wg-L1K6N+0zZ-bcU7kGZMMDbXj4Z8smrsi1gvbi5U-GiQ@mail.gmail.com> <CACMJSeuSS1GBeMP66xt8CP3=6X9xNUZvj9cZHm_Lav6iaw9Gdw@mail.gmail.com>
+In-Reply-To: <CACMJSeuSS1GBeMP66xt8CP3=6X9xNUZvj9cZHm_Lav6iaw9Gdw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 16 Jul 2024 13:29:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
+Message-ID: <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Jul 2024 at 00:31, Pavel Machek <pavel@denx.de> wrote:
+On Tue, 16 Jul 2024 at 13:10, Bartosz Golaszewski
+<bartosz.golaszewski@linaro.org> wrote:
 >
-> On Tue 2024-07-16 11:42:39, Florian Fainelli wrote:
-> > On 7/16/24 08:31, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.1.100 release.
-> > > There are 96 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.100-rc1.gz
-> > > or in the git tree and branch at:
-> > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > > and the diffstat can be found below.
+>     select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
 >
-> > Commit acbfb53f772f96fdffb3fba2fa16eed4ad7ba0d2 ("cifs: avoid dup prefix
-> > path in dfs_get_automount_devname()") causes the following build failure on
-> > bmips_stb_defconfig:
-> >
-> > In file included from ./include/linux/build_bug.h:5,
-> >                  from ./include/linux/container_of.h:5,
-> >                  from ./include/linux/list.h:5,
-> >                  from ./include/linux/module.h:12,
-> >                  from fs/smb/client/cifsfs.c:13:
-> > fs/smb/client/cifsproto.h: In function 'dfs_get_automount_devname':
-> > fs/smb/client/cifsproto.h:74:22: error: 'struct TCP_Server_Info' has no
-> > member named 'origin_fullpath'
-> >   if (unlikely(!server->origin_fullpath))
->
->
-> We see same problem.
+> in the ATH11K_PCI and ATH12K Kconfig entries? Am I getting this right?
 
-Same problem as others have already reported on the
-arm, parisc and powerpc.
-+
-The old s390 build failures which were reported from
-the previous stable-rc 6.1 release.
+So on the whole, I'd prefer these things to be done where they are
+actually required.
 
-* arm, build
-  - clang-18-nhk8815_defconfig
-  - clang-18-s3c2410_defconfig
-  - clang-nightly-nhk8815_defconfig
-  - clang-nightly-s3c2410_defconfig
-  - gcc-13-nhk8815_defconfig
-  - gcc-13-s3c2410_defconfig
-  - gcc-8-nhk8815_defconfig
+But I'm not actually entirely sure what the hard _requirements_ from a
+hardware - or a kernel build - standpoint actually are.
 
-* parisc, build
-  - gcc-11-defconfig
+If there aren't any hard requirements at all, then maybe the whole "do
+you want pweseq" should be an actual question (but limited only to
+situations where it makes sense).
 
-* powerpc, build
-  - clang-18-defconfig
-  - clang-18-ppc64e_defconfig
-  - clang-nightly-defconfig
-  - clang-nightly-ppc64e_defconfig
-  - gcc-13-defconfig
-  - gcc-13-ppc64e_defconfig
-  - gcc-8-defconfig
-  - gcc-8-ppc64e_defconfig
+If the hard requirement is at the level of the driver itself, then the
+"select" should be in the driver.
 
-and
+That doesn't seem to be the case here, since ATH11K_PCI certainly
+works without it, but if that driver requires power sequencing on
+ARCH_QCOM platforms, then maybe that is indeed the right thing.
 
-* s390, build
-  - clang-18-allnoconfig
-  - clang-18-defconfig
-  - clang-18-tinyconfig
-  - clang-nightly-allnoconfig
-  - clang-nightly-defconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-allnoconfig
-  - gcc-13-defconfig
-  - gcc-13-tinyconfig
-  - gcc-8-allnoconfig
-  - gcc-8-defconfig-fe40093d
-  - gcc-8-tinyconfig
+And if the hard requirement comes from some SoC setup, then optimally
+I think the "select" should be at that level, but we don't actually
+seem to have that level of questions (but maybe something in
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+   drivers/soc/qcom/Kconfig
 
+might make sense?)
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Anyway, this is not necessarily something where there is "one correct
+answer". This may be a somewhat gray area, and it looks like ARCH_QCOM
+is a very big "any Qualcomm SoC" thing and not very specific.
+
+So I'm not sure what the right answer is, but I *am* pretty sure of
+what the wrong answer is. And this:
+
+        default m if ((ATH11K_PCI || ATH12K) && ARCH_QCOM)
+
+looks like it cannot possibly be right if ATH11K_PCI is built-in,
+since then the probing of the device will happen long before that
+PCI_PWRCTL_PWRSEQ module has been loaded.
+
+And that doesn't sound sensible to me. Does it?
+
+TL;DR:  I do think that the
+
+      select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
+
+in the ATH11K_PCI and ATH12K Kconfig entries *may* be the right thing.
+But again, I'm not actually 100% sure of the hard requirements here.
+
+           Linus
 
