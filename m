@@ -1,109 +1,142 @@
-Return-Path: <linux-kernel+bounces-253402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0ED69320C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:54:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CF19320C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6737A1F22937
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:54:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDD67B219EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2957208D0;
-	Tue, 16 Jul 2024 06:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8627C1CFBE;
+	Tue, 16 Jul 2024 06:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QO/e7/ng"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bLWEJ6In"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E7AE556;
-	Tue, 16 Jul 2024 06:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03A61CD39
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721112882; cv=none; b=B5Qt9U0ycLrGAPFLmtChtCFjAdnCr9fStOpJqdIo8lU2xnNuy8OXtghmwIgV0PF5okllee0DpaHDwGG5BunWeVULvcsHNtGEOrhuVLK2rLY9DYdzEk4hquHTz1l0mk/LnhRyw23B/21JLg9RTOhtkuqZIJeN2MCqx5cxmTlGkyQ=
+	t=1721112918; cv=none; b=e0TB6xDtzcSVBR66V1UdVRZlrqBBKSk0U2oIufU5rFYh6/rfGGnh1E/B4HC7DQcuH5jT/v9Mj4mkKlr2SYPBQBNoN749geqIQz+AZwSRHYEq3j1A+H8BAnYJ0uLKdcvqOjhNFyY7KUce1gZwWA6ZhGGDB6RXwEWFsaCagLsp+Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721112882; c=relaxed/simple;
-	bh=y9u9BfMi2pzTxyeZINCSQb5zGRPZzrVhIRUHCYFe3N8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=j/3/AbANfr2zJcYHSjJWdhzMARnL/1Zop/nQGT1p6JUQSu4dO8UhHV417h+2RCHCZnhovC9WB/kyhjHEZokgFaIXTgFjbxdXVvBGFTaHRLym7/7MOpuVqR4/T9OjDqXrCtrzZYah5NjXJO7VbeooxUptR9qfh5qyOfC+zpWHCe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QO/e7/ng; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721112877;
-	bh=MLzjKEa62nqzTCjCBEQPDm/giOfD6JdarZC3Gti2dfc=;
+	s=arc-20240116; t=1721112918; c=relaxed/simple;
+	bh=DfqVHEM/JHNEmI3EXhl5J5LalUoDyiv4zLiIsKFYdKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=A3yEzQZw70Gxl3RTXUOmKzXluCqd8qdjr0zKehE+oZLclfysxmaLNPODNBBpWLldml5j9Z32DZzKFlYPqUpF0brDvUmWqC/ykguj8wgGYbWyLCSNJLuQiYB76XKMCLmUYIJgyZPZgv+GptIQejznUMTukNcsuViXYhCVvVfmVg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bLWEJ6In; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A4EFD40E0223;
+	Tue, 16 Jul 2024 06:55:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lLySKcLE_cIi; Tue, 16 Jul 2024 06:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1721112908; bh=ygzrCeNipETpAP+iPDncrOl/Mb7ATe7ELb5oVJ00kts=;
 	h=Date:From:To:Cc:Subject:From;
-	b=QO/e7/ngcIO81+lVUzk+3QJ5T+PGYlvmL2ycLvhRAdYJtUU9xvxxUvEDvgi+QHBhW
-	 P11xhXWsEiI3OSrM4FfFZF/ynJexBbWiI0vH4gNOaObVFTEinC8G6vsN68GduCrsjR
-	 MRH0/RA+saqemmUhRQc/0ycym1mDcbObuRGJaCWBdfgsvuLwWLj6w7TwnSslfdh8KD
-	 GtehUJOK56JDWPsEec/+IEJ1GcUhII1N8e9OgxLZy48wp6Y3dV8AfFUMXwv5sIpKmY
-	 dFt6PpbsUtLhPJCB0M2unA4fUeAGCHCvkzbjDwOt6GA6BxRgIvXNQR6rN+g2Yca/PP
-	 4HKITcFEb96LA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	b=bLWEJ6In/yqGtVzSj+WE/bRqyi3nVLNWduGV/dfemuHQf9SojL4C3U5Cjh1ly2kPj
+	 f3pwM8P/YJ5Qz+nE5BdhOwrl67hUL/4BVXZCL9Xrf5bSH7VUubHUo8RUPRdrbVOWnG
+	 UMGiAqU62HUWtyUqlMgNAqzIv3y6NX34y89mkuSbNXi/lHMDsWzJWvf/AOC0Tee2dy
+	 T1dsG+IeFmQJ4sK7fiNJEHive/20di3dnTamJ4BoByj35BjjMldhCeY4lrJ7SboI7G
+	 kAgy0HWnrdeh4f4JZNvLZ5uuINtOGp7ohkDYts4pg/VdDdhsuduvl78JWoL4c6OxBA
+	 l3ljGoCE02+knxMpu3ToloSS72go6q+2fU3TQxdfoQUubb/dj66KilOtkYCxjJjCWg
+	 Cl5WJ9j8HttGZANUMWAvE0jv41rBCixQMZttId8nnUfnKl2SB+QowANKiBBFCcd5sm
+	 LypiRnOtonNhLzNr2O5S+o2IqKXR3Wek04smkLOVsukiaGMS51q3cjCaPGTaNHv7yb
+	 weoCKDAP1zK+wj459DaoNnYwjOZrpHbMMPvgkZB1tp+ggAcAZXTeQ3VFVozsPDMLjL
+	 1YLxnRQuruMmCCPCUEFOpfRRD+lTgKIE2f5NbjqKIlM3uiTCWQ5ncjWbzgVXzcdHDa
+	 dEAEzwDy9VIVaHSdfNrV950Q=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNVDX6Xv2z4w2S;
-	Tue, 16 Jul 2024 16:54:36 +1000 (AEST)
-Date: Tue, 16 Jul 2024 16:54:35 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Shay Drory <shayd@nvidia.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the net-next tree
-Message-ID: <20240716165435.22b8bfa5@canb.auug.org.au>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5269640E0221;
+	Tue, 16 Jul 2024 06:55:05 +0000 (UTC)
+Date: Tue, 16 Jul 2024 08:54:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/cache for v6.11-rc1
+Message-ID: <20240716065458.GAZpYZQhh0PBItpD1k@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mFv1NVk8tx=sR/9i89dwHTz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
---Sig_/mFv1NVk8tx=sR/9i89dwHTz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi all,
+please pull the x86/cache lineup for v6.11-rc1.
 
-After merging the net-next tree, today's linux-next build (htmldocs)
-produced this warning:
+Thx.
 
-include/linux/auxiliary_bus.h:150: warning: Function parameter or struct me=
-mber 'sysfs' not described in 'auxiliary_device'
-include/linux/auxiliary_bus.h:150: warning: Excess struct member 'irqs' des=
-cription in 'auxiliary_device'
-include/linux/auxiliary_bus.h:150: warning: Excess struct member 'lock' des=
-cription in 'auxiliary_device'
-include/linux/auxiliary_bus.h:150: warning: Excess struct member 'irq_dir_e=
-xists' description in 'auxiliary_device'
+---
 
-Introduced by commit
+The following changes since commit f385f024639431bec3e70c33cdbc9563894b3ee5:
 
-  a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
+  x86/resctrl: Replace open coded cacheinfo searches (2024-06-10 08:50:12 +0200)
 
---=20
-Cheers,
-Stephen Rothwell
+are available in the Git repository at:
 
---Sig_/mFv1NVk8tx=sR/9i89dwHTz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cache_for_v6.11_rc1
 
------BEGIN PGP SIGNATURE-----
+for you to fetch changes up to ea34999f41873c96ac89e861e5fdfc7d0403f9e3:
 
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaWGSsACgkQAVBC80lX
-0Gxybgf2ITKmUskUHvtQglGmVAeVYnASe7wme/AKgff1Adh8ofJIA1+ondebtYus
-JWxOyJPAdXu7rXrttUp14m5FdFye6YIOTmrmFr70JBiJxJAh7Y28sSBtCWk6wWWo
-pEiL7HG28lu9F/wO3Yl0/2mTNmX5KNN0CeZnjD6IScRmRBCCM2bNrqBcZSTc1BGl
-TlkmYnisRAI+/bhJg2AcyOXNcGPxRZCorFB5owvNwAlvL7DAfbA4LdMCJf/uRr9K
-cWc4IZn51xfx5NadbTLJfvFCknQG2VrhbHM/krBp0n4TLmDU5wGPpkYWQrCE6CNr
-PXtwu+wgSFV8BnmDG2MfBpciyY90
-=Ubod
------END PGP SIGNATURE-----
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes (2024-07-02 20:03:19 +0200)
 
---Sig_/mFv1NVk8tx=sR/9i89dwHTz--
+----------------------------------------------------------------
+ - Enable Sub-NUMA clustering to work with resource control on Intel by
+   teaching resctrl to handle scopes due to the clustering which
+   partitions the L3 cache into sets. Modify and extend the subsystem to
+   handle such scopes properly
+
+----------------------------------------------------------------
+Tony Luck (19):
+      x86/resctrl: Prepare for new domain scope
+      x86/resctrl: Prepare to split rdt_domain structure
+      x86/resctrl: Prepare for different scope for control/monitor operations
+      x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+      x86/resctrl: Add node-scope to the options for feature scope
+      x86/resctrl: Introduce snc_nodes_per_l3_cache
+      x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster (SNC) systems
+      x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
+      x86/resctrl: Add a new field to struct rmid_read for summation of domains
+      x86/resctrl: Initialize on-stack struct rmid_read instances
+      x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+      x86/resctrl: Allocate a new field in union mon_data_bits
+      x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+      x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC) mode
+      x86/resctrl: Fill out rmid_read structure for smp_call*() to read a counter
+      x86/resctrl: Make __mon_event_count() handle sum domains
+      x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
+      x86/resctrl: Detect Sub-NUMA Cluster (SNC) mode
+      x86/resctrl: Update documentation with Sub-NUMA cluster changes
+
+ Documentation/arch/x86/resctrl.rst        |  27 +++
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++++++++--------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  89 ++++++---
+ arch/x86/kernel/cpu/resctrl/internal.h    | 108 ++++++++---
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 250 +++++++++++++++++++-----
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +--
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 276 ++++++++++++++++----------
+ include/linux/resctrl.h                   |  88 ++++++---
+ 9 files changed, 855 insertions(+), 323 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
