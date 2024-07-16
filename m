@@ -1,231 +1,321 @@
-Return-Path: <linux-kernel+bounces-253755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DE8932666
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7DB932669
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3921C22379
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964211F22F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509B1199221;
-	Tue, 16 Jul 2024 12:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270D19923E;
+	Tue, 16 Jul 2024 12:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6oFMW57"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="m81PWCUS"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B413C690;
-	Tue, 16 Jul 2024 12:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5844B17CA15
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721132328; cv=none; b=KKsLd7mnbLcQK2IuOf7iodi/eZ8xnOuk0aIWHGEu4Sel7FbtD4HoLX2On2AvidEVc4ElK9Y8u1do2MpwP0Fvpp3PfKp5GSFLzn0EA6iJXHnT+CU44BK75G9d4nY6NYRfbfb/HHRCA0YbaXfsbBUJ9f6oWvOSLz94uJYE8R2fJdM=
+	t=1721132413; cv=none; b=Lg8oVW0YXk4udjD6TfM+9VchH4HVmvfuqE71X7pkyJjLJ9VRXeiE28Bq9Hdz00cCsj5RTqi3rpDgFyofHUxhMx6DmyxfLSczI4wcG7C3cAhwb+nTREHFiM00nzvbZVHGG4vOCqBbTeuGmyutotctNeGgLcotuSgl6g4MBZzvMTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721132328; c=relaxed/simple;
-	bh=FDLsFj/j7/0aJWOvOswPbb/rMJRj8vsDAO8E+cJk9XY=;
+	s=arc-20240116; t=1721132413; c=relaxed/simple;
+	bh=NPFmz/N6G3Ip3lB/40h8jCNz3HQpYtZd62s4Uir8yVY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IeD5TACv/3JyOGREA88GfRTYzGiNinTqyf5SlqxZVqQ9nGXFkITGhjcvlnzlOVdR5h09xZ+rNgu6AvM2gfVWNIVrVSi6fuyfWix6PDxgZ9/eqM/0cvzRN/Nb/6MfSDtDKfMuiB/GzMFQfYGf9xBJwQ9phc9BWy3xwGX0pyqOl9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6oFMW57; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE490C116B1;
-	Tue, 16 Jul 2024 12:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721132328;
-	bh=FDLsFj/j7/0aJWOvOswPbb/rMJRj8vsDAO8E+cJk9XY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=X6oFMW57qgQ5YpqnjZoPBYDc6f3j3r9NrAynIONY/WxXKY5aIFsZILq0Ct/AbSoim
-	 pWFN1rV35QsQ7ORxDO8dRm9IxR2iTrYm5xjbay7SUI021SxnUfMO8CafepESCXeHw/
-	 N6Gt7GruNVwF/5eR+7i+Y0Q+/zSmLBCifDYK01L4f84zF7bnaIafC80u0Oq7C7iojM
-	 4fOxhvJ5GuTMjtUY4pyWhk+XprtPG5nDoFt9g4XX59tV965klln4pXzm7JCW6GLPRo
-	 +MlH34uRTwG3Us66WcCyoHX9hL2EKJU5FtoA3r4Nipdy0arnxBD4t2vmwXXrBsiyhf
-	 7CC/HvRbXvC3w==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5cf146a82a5so94890eaf.3;
-        Tue, 16 Jul 2024 05:18:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUE1WPzlTLIxFlN1I4AGY48ePxpDNW8vie1VhmY9oiYYpdIDDgn4Ri0/Ri64QDYix2M7Ry7upm/6i+yLueqq2LjyBt95RjL8FCfMK/DLuVy+vFHGEWtzkgPSujV3AdpNwD5AovWT0U=
-X-Gm-Message-State: AOJu0YxpGxVQ4VzF7c6FTJN9kSTpLSXAp/UzIbt0RCkU9vp8YPlhVNeO
-	7iF/G2PjjkHVUbWL3i8wu9Pr6ZGRVyVyTWPbPdVNtqVO0TiDwq3ODO6eL04O4aXH/ys2qCX7CrW
-	HHUOTa4TewZJMvecnBbw/1M4aLuY=
-X-Google-Smtp-Source: AGHT+IGRuW3fPMDNKIDP464lg/EsyFgzKv+qXxHQoeyl4NruNjCNpP0eDkGH37+kFiig+YoZznBTCUTcdbIjQX4QaAM=
-X-Received: by 2002:a4a:4308:0:b0:5c7:aeba:77a0 with SMTP id
- 006d021491bc7-5d25035be58mr2055249eaf.0.1721132327279; Tue, 16 Jul 2024
- 05:18:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=PJtP2QKapnRuafEx0TAxZUYx9y6c1rShTnQbkvSyPuYZWvFlWcpaO4cRJjKakNEr+e9y1EnRAO3FoL9y6zQxGYsI0WaJzz1FBHz/xrmRB2vEbX8Ifcve8dobZqkLFkAPgfqMtE7uEfEdYOjcKUwq5HYgL3xtofKlL3KrBFWUbcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=m81PWCUS; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77cb7c106dso634501866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721132409; x=1721737209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wgyK3rI/+GRYXc3I3puXIGSeacbfUlZLjUaC5dlWKs=;
+        b=m81PWCUSKVoucZp1MciQ0ROjqMYeWq30mutTME71+Ze4PetsOU/Po1WY64iGU3Cq0f
+         uJYmkSmn9zLARYfzqWhiCfNFy29fljpudhlUwT2ptODTh25buk9XKGOGF7YUBHu+YeId
+         KREfsUbYrnYRE03IFqRjj/yHU3rd1hxzlEq2T5mE6URyjBAQSdNrA/YysAAMhvxU2fXQ
+         QYV/fu+mhL4T/xilppRMbll5NdNYZu+XsSPn+KuAGbLpf+F79d9Otzwc2J5DEEDbZa5f
+         2q03ZPG0iDTXLCte1jqnnW0fbRGwLGgLK19ufdkiENM7yALZ9TVtwEdWug5kC5sbFiBK
+         588g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721132409; x=1721737209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/wgyK3rI/+GRYXc3I3puXIGSeacbfUlZLjUaC5dlWKs=;
+        b=r4+RvSzf9uHxfUAAaJ4ejsZqtPP0yBYLeQExcG10WzzWlS28Do7zqSXKm25P9/D0Mg
+         jkKddz0fvuV4vwDV8hCgBKw3yVN3H9Qan7O6U7uku5FXz4TEtrcQi9uYrH23eIjzI4FO
+         8Z3V+pxWCL4SV7uL4JNlih5TbUuzLBRSYjxHrzzpgbZgGV43dgok4TZpl7qjj+hkzdh4
+         BTI6pETgxxji+HQqel6fOhuewOrph5f2u2po+l8+kGfWdifyK9GA6Mp+Q65umiY6e0NO
+         xErdpVp31W4AtKRmZ2azn5RnWkOhlEFxnxY11en/6TLMGQB/TqROUvIJ9M6nGHea8VTh
+         Eg1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCyJpAOITgMHT/oex9WLJPZE5DLCkFquLutozlEd3tA35jdVtKaM1M1SmKZEjcCDjM+uPo/sXOyhjx9okmmuGI0bDTuH0oSddaM0As
+X-Gm-Message-State: AOJu0YyIOLJzdeReF8FRLrNVOuWMQeKkJCwCrggyOFqRyIJAHxIalP81
+	USlmZnRkfVA+37420hxjf8GXWjw2ZkfvP5GV6Hc8CxyLEtGYmU/o+0bFT6DA3RSZEKt3FVrS/CC
+	16O1/3eWXmgdO78bCLytPdGO7tkvIKGKJopjIZw==
+X-Google-Smtp-Source: AGHT+IG9FrD1fBVgqj60WTDAt3AQCQU/Sf+dX7Y3PES5xjXq+TMnTztj457Qr4E/dPajDDm9BXML7CFjSdsFPn+WNxQ=
+X-Received: by 2002:a17:906:2409:b0:a6f:c268:ff2e with SMTP id
+ a640c23a62f3a-a79ea3d7952mr139799466b.5.1721132408420; Tue, 16 Jul 2024
+ 05:20:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
- <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org> <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
- <20240715145426.199c31d0@mir> <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
- <20240716014830.243bb0cf@mir> <CAJZ5v0jkA72=avuthGkrS5iu_UGEQeaEp7LjedXCpzamcnRKsA@mail.gmail.com>
- <20240716125538.09f716d1@mir> <20240716131500.35cf4f00@mir>
- <CAJZ5v0j2w-8c83Lw6OdJGg53pOKQMdeWiwaNkEEThwE6fXLiHQ@mail.gmail.com> <3238291f-9d2a-4308-98fe-4765d7e1bcfb@linaro.org>
-In-Reply-To: <3238291f-9d2a-4308-98fe-4765d7e1bcfb@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 16 Jul 2024 14:18:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jk+VCO7mk9Ox=t1ijn7cMbto5qNbEgc9V0qPswSY_Ezw@mail.gmail.com>
-Message-ID: <CAJZ5v0jk+VCO7mk9Ox=t1ijn7cMbto5qNbEgc9V0qPswSY_Ezw@mail.gmail.com>
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Stefan Lippers-Hollmann <s.l-h@gmx.de>, Eric Biggers <ebiggers@kernel.org>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240626130347.520750-2-alexghiti@rivosinc.com>
+ <202407041157.odTZAYZ6-lkp@intel.com> <20240705172750.GF987634@thelio-3990X>
+In-Reply-To: <20240705172750.GF987634@thelio-3990X>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 16 Jul 2024 14:19:57 +0200
+Message-ID: <CAHVXubhvk_CbBX=hWFGt+1HEM4cj=cAc1NsCEknn=B8UDcXVSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
+To: Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor.dooley@microchip.com>
+Cc: kernel test robot <lkp@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 2:10=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+Hi Nathan,
+
+On Fri, Jul 5, 2024 at 7:27=E2=80=AFPM Nathan Chancellor <nathan@kernel.org=
+> wrote:
 >
-> On 16/07/2024 13:36, Rafael J. Wysocki wrote:
-> > On Tue, Jul 16, 2024 at 1:15=E2=80=AFPM Stefan Lippers-Hollmann <s.l-h@=
-gmx.de> wrote:
-> >>
-> >> Hi
-> >>
-> >> On 2024-07-16, Stefan Lippers-Hollmann wrote:
-> >>> On 2024-07-16, Rafael J. Wysocki wrote:
-> >>>> On Tue, Jul 16, 2024 at 1:48=E2=80=AFAM Stefan Lippers-Hollmann <s.l=
--h@gmx.de> wrote:
-> >>>>> On 2024-07-15, Rafael J. Wysocki wrote:
-> >>>>>> On Mon, Jul 15, 2024 at 2:54=E2=80=AFPM Stefan Lippers-Hollmann <s=
-.l-h@gmx.de> wrote:
-> >>>>>>> On 2024-07-15, Rafael J. Wysocki wrote:
-> >>>>>>>> On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
-> >>>>>>>> <daniel.lezcano@linaro.org> wrote:
-> >>>>>>>>> On 15/07/2024 06:45, Eric Biggers wrote:
-> >>>>>>>>>> On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wr=
-ote:
-> >>>>>>>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>> [...]
-> >>>>>>> Silencing the warnings is already a big improvement - and that pa=
-tch
-> >>>>>>> works to this extent for me with an ax200, thanks.
-> >>>>>>
-> >>>>>> So attached is a patch that should avoid enabling the thermal zone
-> >>>>>> when it is not ready for use in the first place, so it should addr=
-ess
-> >>>>>> both the message and the useless polling.
-> >>>>>>
-> >>>>>> I would appreciate giving it a go (please note that it hasn't rece=
-ived
-> >>>>>> much testing so far, though).
-> >>>>>
-> >>>>> Sadly this patch doesn't seem to help:
-> >>>>
-> >>>> This is likely because it is missing checks for firmware image type.
-> >>>> I've added them to the attached new version.  Please try it.
-> >>>>
-> >>>> I've also added two pr_info() messages to get a better idea of what'=
-s
-> >>>> going on, so please grep dmesg for "Thermal zone not ready" and
-> >>>> "Enabling thermal zone".
-> >>>
-> >>> This is the output with the patch applied:
-> >>
-> >> The ax200 wlan interface is currently not up/ configured (system
-> >> using its wired ethernet cards instead), the thermal_zone1 stops
-> >> if I manually enable the interface (ip link set dev wlp4s0 up)
-> >> after booting up:
+> On Thu, Jul 04, 2024 at 11:38:46AM +0800, kernel test robot wrote:
+> > Hi Alexandre,
 > >
-> > This explains it, thanks!
+> > kernel test robot noticed the following build errors:
 > >
-> > The enabling of the thermal zone in iwl_mvm_load_ucode_wait_alive() is
-> > premature or it should get disabled in the other two places that clear
-> > the IWL_MVM_STATUS_FIRMWARE_RUNNING bit.
+> > [auto build test ERROR on soc/for-next]
+> > [also build test ERROR on linus/master v6.10-rc6 next-20240703]
+> > [cannot apply to arnd-asm-generic/master robh/for-next tip/locking/core=
+]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > >
-> > I'm not sure why the thermal zone depends on whether or not this bit
-> > is set, though. Is it really a good idea to return errors from it if
-> > the interface is not up?
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Alexandre-Ghiti/=
+riscv-Implement-cmpxchg32-64-using-Zacas/20240627-034946
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for=
+-next
+> > patch link:    https://lore.kernel.org/r/20240626130347.520750-2-alexgh=
+iti%40rivosinc.com
+> > patch subject: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Z=
+acas
+> > config: riscv-randconfig-002-20240704 (https://download.01.org/0day-ci/=
+archive/20240704/202407041157.odTZAYZ6-lkp@intel.com/config)
+> > compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7c=
+bf1a2591520c2491aa35339f227775f4d3adf6)
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20240704/202407041157.odTZAYZ6-lkp@intel.com/reproduce)
 > >
-> >> $ dmesg | grep -i -e iwlwifi -e thermal
-> >> [    0.080899] CPU0: Thermal monitoring enabled (TM1)
-> >> [    0.113768] thermal_sys: Registered thermal governor 'fair_share'
-> >> [    0.113770] thermal_sys: Registered thermal governor 'bang_bang'
-> >> [    0.113771] thermal_sys: Registered thermal governor 'step_wise'
-> >> [    0.113772] thermal_sys: Registered thermal governor 'user_space'
-> >> [    0.113773] thermal_sys: Registered thermal governor 'power_allocat=
-or'
-> >> [    3.759673] iwlwifi 0000:04:00.0: enabling device (0140 -> 0142)
-> >> [    3.764918] iwlwifi 0000:04:00.0: Detected crf-id 0x3617, cnv-id 0x=
-100530 wfpm id 0x80000000
-> >> [    3.764974] iwlwifi 0000:04:00.0: PCI dev 2723/0084, rev=3D0x340, r=
-fid=3D0x10a100
-> >> [    3.769432] iwlwifi 0000:04:00.0: TLV_FW_FSEQ_VERSION: FSEQ Version=
-: 89.3.35.37
-> >> [    3.873466] iwlwifi 0000:04:00.0: loaded firmware version 77.a20fb0=
-7d.0 cc-a0-77.ucode op_mode iwlmvm
-> >> [    3.907122] iwlwifi 0000:04:00.0: Detected Intel(R) Wi-Fi 6 AX200 1=
-60MHz, REV=3D0x340
-> >> [    3.907886] iwl_mvm_thermal_zone_register: Thermal zone not ready
-> >> [    4.032380] iwlwifi 0000:04:00.0: Detected RF HR B3, rfid=3D0x10a10=
-0
-> >> [    4.032392] thermal thermal_zone1: Enabling thermal zone
-> >> [    4.098308] iwlwifi 0000:04:00.0: base HW address: 94:e6:f7:XX:XX:X=
-X
-> >> [    4.112535] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    4.128306] iwlwifi 0000:04:00.0 wlp4s0: renamed from wlan0
-> >> [    4.369396] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    4.625385] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    4.881416] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    5.137377] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    5.394377] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    5.649412] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    5.905379] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    6.161380] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    6.418381] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    6.673381] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [    6.929377] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >>                 [...]
-> >> [   21.009413] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [   21.265496] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [   21.521462] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [   21.777481] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [   22.033468] thermal thermal_zone1: failed to read out thermal zone =
-(-61)
-> >> [   22.213120] thermal thermal_zone1: Enabling thermal zone
-> >> [   22.283954] iwlwifi 0000:04:00.0: Registered PHC clock: iwlwifi-PTP=
-, with index: 0
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-l=
+kp@intel.com/
 > >
-> > Thanks for this data point!
+> > All errors (new ones prefixed by >>):
 > >
-> > AFAICS the thermal zone in iwlwifi is always enabled, but only valid
-> > if the interface is up.  It looks to me like the thermal core needs a
-> > special "don't poll me" error code to be returned in such cases.
+> > >> kernel/sched/core.c:11873:7: error: cannot jump from this asm goto s=
+tatement to one of its possible targets
+> >                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UN=
+SET))
+> >                        ^
+> >    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded fr=
+om macro 'try_cmpxchg'
+> >            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+> >            ^
+> >    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded fr=
+om macro 'raw_try_cmpxchg'
+> >            ___r =3D raw_cmpxchg((_ptr), ___o, (_new)); \
+> >                   ^
+> >    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded fr=
+om macro 'raw_cmpxchg'
+> >    #define raw_cmpxchg arch_cmpxchg
+> >                        ^
+> >    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'a=
+rch_cmpxchg'
+> >            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw=
+\n")
+> >            ^
+> >    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_=
+arch_cmpxchg'
+> >                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,  =
+    \
+> >                    ^
+> >    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '_=
+_arch_cmpxchg'
+> >                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,        =
+    \
+> >                    ^
+> >    kernel/sched/core.c:11840:7: note: possible target of asm goto state=
+ment
+> >            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
+> >                 ^
+> >    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded fr=
+om macro 'try_cmpxchg'
+> >            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+> >            ^
+> >    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded fr=
+om macro 'raw_try_cmpxchg'
+> >            ___r =3D raw_cmpxchg((_ptr), ___o, (_new)); \
+> >                   ^
+> >    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded fr=
+om macro 'raw_cmpxchg'
+> >    #define raw_cmpxchg arch_cmpxchg
+> >                        ^
+> >    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'a=
+rch_cmpxchg'
+> >            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw=
+\n")
+> >            ^
+> >    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_=
+arch_cmpxchg'
+> >                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,  =
+    \
+> >                    ^
+> >    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '=
+__arch_cmpxchg'
+> >                                                                        =
+    \
+> >                                                                        =
+    ^
+> >    kernel/sched/core.c:11872:2: note: jump exits scope of variable with=
+ __attribute__((cleanup))
+> >            scoped_guard (irqsave) {
+> >            ^
+> >    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_gu=
+ard'
+> >            for (CLASS(_name, scope)(args),                             =
+    \
+> >                              ^
+> >    kernel/sched/core.c:11840:7: error: cannot jump from this asm goto s=
+tatement to one of its possible targets
+> >            if (!try_cmpxchg(&pcpu_cid->cid, &cid, lazy_cid))
+> >                 ^
+> >    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded fr=
+om macro 'try_cmpxchg'
+> >            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+> >            ^
+> >    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded fr=
+om macro 'raw_try_cmpxchg'
+> >            ___r =3D raw_cmpxchg((_ptr), ___o, (_new)); \
+> >                   ^
+> >    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded fr=
+om macro 'raw_cmpxchg'
+> >    #define raw_cmpxchg arch_cmpxchg
+> >                        ^
+> >    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'a=
+rch_cmpxchg'
+> >            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw=
+\n")
+> >            ^
+> >    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_=
+arch_cmpxchg'
+> >                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,  =
+    \
+> >                    ^
+> >    arch/riscv/include/asm/cmpxchg.h:144:3: note: expanded from macro '_=
+_arch_cmpxchg'
+> >                    asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,        =
+    \
+> >                    ^
+> >    kernel/sched/core.c:11873:7: note: possible target of asm goto state=
+ment
+> >                    if (try_cmpxchg(&pcpu_cid->cid, &lazy_cid, MM_CID_UN=
+SET))
+> >                        ^
+> >    include/linux/atomic/atomic-instrumented.h:4880:2: note: expanded fr=
+om macro 'try_cmpxchg'
+> >            raw_try_cmpxchg(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+> >            ^
+> >    include/linux/atomic/atomic-arch-fallback.h:192:9: note: expanded fr=
+om macro 'raw_try_cmpxchg'
+> >            ___r =3D raw_cmpxchg((_ptr), ___o, (_new)); \
+> >                   ^
+> >    include/linux/atomic/atomic-arch-fallback.h:55:21: note: expanded fr=
+om macro 'raw_cmpxchg'
+> >    #define raw_cmpxchg arch_cmpxchg
+> >                        ^
+> >    arch/riscv/include/asm/cmpxchg.h:212:2: note: expanded from macro 'a=
+rch_cmpxchg'
+> >            _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw=
+\n")
+> >            ^
+> >    arch/riscv/include/asm/cmpxchg.h:189:3: note: expanded from macro '_=
+arch_cmpxchg'
+> >                    __arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,  =
+    \
+> >                    ^
+> >    arch/riscv/include/asm/cmpxchg.h:161:10: note: expanded from macro '=
+__arch_cmpxchg'
+> >                                                                        =
+    \
+> >                                                                        =
+    ^
+> >    kernel/sched/core.c:11872:2: note: jump bypasses initialization of v=
+ariable with __attribute__((cleanup))
+> >            scoped_guard (irqsave) {
+> >            ^
+> >    include/linux/cleanup.h:169:20: note: expanded from macro 'scoped_gu=
+ard'
+> >            for (CLASS(_name, scope)(args),                             =
+    \
+> >                              ^
+> >    2 errors generated.
 >
->  From my POV, it is not up to the thermal core to adapt to the driver.
+> Ugh, this is an unfortunate interaction with clang's jump scope analysis
+> and asm goto in LLVM releases prior to 17 :/
+>
+> https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1645979=
+992
+>
+> Unfortunately, 'if (0)' does not prevent this (the analysis runs early
+> in the front end as far as I understand it), we would need to workaround
+> this with full preprocessor guards...
 
-The core provides a service to its users, not the other way around,
-and this is a valid use case.
+Thanks for jumping in on this one, I was quite puzzled :)
 
-The owner of the thermal zone knows that it is only useful when the
-interface is up and so it should be possible for them to indicate to
-the core that, for the time being, nothing needs to be done.
+>
+> Another alternative would be to require LLVM 17+ for RISC-V, which may
+> not be the worst alternative, since I think most people doing serious
+> work with clang will probably be living close to tip of tree anyways
+> because of all the extension work that goes on upstream.
 
-> Usually network devices have ops when they are transitioning to up or
-> down, would it make sense to move enable / disable the thermal zone in
-> these ops ?
+Stupid question but why the fix in llvm 17 was not backported to
+previous versions?
 
-Not really, because it can be enabled and disabled via sysfs in the meantim=
-e.
+Anyway, I'd rather require llvm 17+ than add a bunch of preprocessor
+guards in this file (IIUC what you said above) as it is complex
+enough.
+
+@Conor Dooley @Palmer Dabbelt WDYT? Is there any interest in
+supporting llvm < 17? We may encounter this bug again in the future so
+I'd be in favor of moving to llvm 17+.
+
+Thanks again Nathan,
+
+Alex
+
+>
+> I am open to other thoughts though.
+>
+> Cheers,
+> Nathan
 
