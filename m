@@ -1,291 +1,108 @@
-Return-Path: <linux-kernel+bounces-253695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54AD932574
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:21:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E271A9324CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AAFBB257AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F87EB24591
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E3319AA55;
-	Tue, 16 Jul 2024 11:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83811993B7;
+	Tue, 16 Jul 2024 11:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMx+mv1b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hd8nUhB/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E544B19922C;
-	Tue, 16 Jul 2024 11:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7EE1991D0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721128619; cv=none; b=qgaJxB3akENLGj6X1eGMhvmgrXdaRJPhCCvtxibWLLHWS4fJczlsSBEtDPjb8VmXZH0NoJdIQRBJrw2RoM3B454mckzP/2i+SB9C00UkWuh/sDSCUoKo9PJX2KS+lCvBXPpaRsiP/oEQuTZSnHohlT3szZShp4Ctp1HuYBgUsac=
+	t=1721128467; cv=none; b=juJPj1OSFUxIe/CZveR9jMbcOXd0r3AhwS1escY/iKhT0nJXhcgw23WysKYUc0AfqWMYCX9M7Mczgo9o849hRm1yIL4uCywkFlWBU9WCyMmpVvz1e6IuU9mwH7tZ7fwwQwAc1ZuwjUaFw1r91OelYsD1oye4kESrjT8qArs3reY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721128619; c=relaxed/simple;
-	bh=YeX/zOM98p7oq0+D8eMJgxNsT4zHLIp5lz3y21iev7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otAl9oLiV9i0ALmVdbmn62ejIJYATSk7GeLNOPOFbYxgJwMG8xDRii0IFwGZpBqNktMt14yoMMOlMcdnrqlqn06vPePyW3c9/9i5u4JENfnawxKnX37c/H1Vj6nAEmtN1okUV1cFqSV/9DfAG9UVKr6Lv5nfFHKURtuvfkNO4hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMx+mv1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332CBC116B1;
-	Tue, 16 Jul 2024 11:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721128618;
-	bh=YeX/zOM98p7oq0+D8eMJgxNsT4zHLIp5lz3y21iev7w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HMx+mv1bGMjSPO/WhXFoC7Rb6iwGJqO9+dc/PUQ7veMxE3nuT0c0YLJwrz38TAU5U
-	 0Q11IMAbO3FNvgruj4uJVrCJo6jk1vS1LAVFC81AqQ0MuvdcmgStTZWJbieXGzd32z
-	 Q1AvmWDPdMBMJcrP6CfzjFyV8++UxYuZCQYAOp+h3jZQ5SWk7yVa1h51Es450b+Bna
-	 bZVU+zwGud/LyPykJINM4pTaM5I/ZzInZVcM5NxM3FdZ+R1KpT3irgg+XUabbvLr17
-	 V3NQfhWGoJ5Yxgbl2OLtmxSFWA3NTbUkLFBCFfIYdmmncDx1yZMjgx/873JHAnRRkM
-	 +SJO1kobq7E8g==
-From: Mike Rapoport <rppt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Mike Rapoport <rppt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	x86@kernel.org
-Subject: [PATCH 17/17] mm: make range-to-target_node lookup facility a part of numa_memblks
-Date: Tue, 16 Jul 2024 14:13:46 +0300
-Message-ID: <20240716111346.3676969-18-rppt@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716111346.3676969-1-rppt@kernel.org>
-References: <20240716111346.3676969-1-rppt@kernel.org>
+	s=arc-20240116; t=1721128467; c=relaxed/simple;
+	bh=uSU/7FRcOsd+KxgKnvrUWf7fdIpaa2zZXRFytICH0Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGCs/atlzaybomWRG156KmnK6fJAS2ohF7fMqrh7nn2980dhgA2B+TsuIPC76bg6TBqoU4ztoXa7bi0I+VoJnZM/S1kO22X4ijmvjWa+WkoQlkcFH1Mi+6QU0wassqDwLTZZvGu52c0/0p4BU2yWWAEzwUZrYRqcPzZQYSdvYyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hd8nUhB/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9944764fso6201720e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721128463; x=1721733263; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=85f26GaihuywFHrHhUzvUmoac6GcFjyo3+D5MhFAkAc=;
+        b=hd8nUhB/0HGZer+abo8vixfwv9BmdT3srf1gn+cnizp13kZ54Du4KqZ9OIsr14URnr
+         IP8rMYhFxf/1kJN055OUn+y3Ogw4K2Xo2H4Q400+rRW/hpPCW9+6YKqjls6WrTzTnARH
+         4/mlsyAiPvhV5RvWaZNS2hLfc93AkNPsLrVLtIJ5Pu/Fw8R0QumLEltQLzUWPHh9PvCR
+         FxXKX4H+QZi89EHJE75yk/IyYtNATqPyT/sDnsWtyrUPA3JCxt+DuOJxmi6bL90vdEPR
+         v5RQYlLyEv41c/fKizVy9Yorb7v9RAmd+D7RKKfJx0TsgR9Xci7oSbeibC4hCGaVCByR
+         ruLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721128463; x=1721733263;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=85f26GaihuywFHrHhUzvUmoac6GcFjyo3+D5MhFAkAc=;
+        b=C5M3P33it5LYurL4hoO+GKm45DZ11Im1r2uRG3S3FTHvD/dLB70fYKc2HerWNEEqoN
+         iuOHnHgpRzy1n+QkYDkpza+fQgMhv+gmd/f53nnZaVjlGpHGWIroSHrECBvd8Z3rlN5M
+         nROWXIV1TEcatL1tP+arCQxWehDP2gGK+IrTuXqvGz0iiodqtvDfhGzXTQCLOt11g6X4
+         vh6nGBFwnP5oyktHej5CNH57z2kK50JJU9GjJYHKUroVjtFs2DIri+FidTZW28WYht61
+         zisUZY7dAbUlTzzuNCm1uW2CwD00RLtWZKDjkx84RA0CUiDFw/124ox2q0DpWWY+GFR5
+         kVHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsqn4/unLkMoxbAu8ZU6H+cdAbBl0N27TDPqhtSpfwSFH5K7G0kD9xDwswObqACOAuP2MiBNAnPtZ583uePQioWcPRZ3efLQK22sDb
+X-Gm-Message-State: AOJu0Yz/v/nwgrcj6n22MghOvz90xLkaFz7xlGWEm5mm6vBZ3Q+GoQTs
+	9vyowi8Db9os9oDf3cESwwBy4M+AX8i0IiFPJ12Mi5htvi9OM8v38zAmG78AXPA=
+X-Google-Smtp-Source: AGHT+IFQIqSG9+GMvlee2xBU5TyMBzdPzC8eUN9VYPN9K9+xtbawhMMv+6NZ61ZiZWul45/PpPGmEw==
+X-Received: by 2002:a05:6512:39d4:b0:52c:d8c7:49ce with SMTP id 2adb3069b0e04-52edef1df2cmr1238456e87.22.1721128463615;
+        Tue, 16 Jul 2024 04:14:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24f32a6sm1132866e87.67.2024.07.16.04.14.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 04:14:23 -0700 (PDT)
+Date: Tue, 16 Jul 2024 14:14:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sm8650-hdk: use the PMU to power
+ up bluetooth
+Message-ID: <vpwioxy6aw4xp6d45stftprsqo7rwqe3c66qs3h6ecrzi5sutv@kacd47ux2ozk>
+References: <20240716-topic-sm8x50-upstream-use-pmu-to-power-up-bt-v1-0-67b3755edf6a@linaro.org>
+ <20240716-topic-sm8x50-upstream-use-pmu-to-power-up-bt-v1-1-67b3755edf6a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716-topic-sm8x50-upstream-use-pmu-to-power-up-bt-v1-1-67b3755edf6a@linaro.org>
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Tue, Jul 16, 2024 at 11:45:10AM GMT, Neil Armstrong wrote:
+> Change the HW model in sm8650-hdk.dts to a one closer to reality - where
+> the WLAN and Bluetooth modules of the WCN7850 are powered by the PMU
+> inside the package.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts | 26 +++++++++-----------------
+>  1 file changed, 9 insertions(+), 17 deletions(-)
+> 
 
-The x86 implementation of range-to-target_node lookup (i.e.
-phys_to_target_node() and memory_add_physaddr_to_nid()) relies on
-numa_memblks.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Since numa_memblks are now part of the generic code, move these
-functions from x86 to mm/numa_memblks.c and select
-CONFIG_NUMA_KEEP_MEMINFO when CONFIG_NUMA_MEMBLKS=y for dax and cxl.
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- arch/x86/include/asm/sparsemem.h |  9 --------
- arch/x86/mm/numa.c               | 38 --------------------------------
- drivers/cxl/Kconfig              |  2 +-
- drivers/dax/Kconfig              |  2 +-
- include/linux/numa_memblks.h     |  7 ++++++
- mm/numa.c                        |  1 +
- mm/numa_memblks.c                | 38 ++++++++++++++++++++++++++++++++
- 7 files changed, 48 insertions(+), 49 deletions(-)
-
-diff --git a/arch/x86/include/asm/sparsemem.h b/arch/x86/include/asm/sparsemem.h
-index 64df897c0ee3..3918c7a434f5 100644
---- a/arch/x86/include/asm/sparsemem.h
-+++ b/arch/x86/include/asm/sparsemem.h
-@@ -31,13 +31,4 @@
- 
- #endif /* CONFIG_SPARSEMEM */
- 
--#ifndef __ASSEMBLY__
--#ifdef CONFIG_NUMA_KEEP_MEMINFO
--extern int phys_to_target_node(phys_addr_t start);
--#define phys_to_target_node phys_to_target_node
--extern int memory_add_physaddr_to_nid(u64 start);
--#define memory_add_physaddr_to_nid memory_add_physaddr_to_nid
--#endif
--#endif /* __ASSEMBLY__ */
--
- #endif /* _ASM_X86_SPARSEMEM_H */
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index 16bc703c9272..8e790528805e 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -449,41 +449,3 @@ u64 __init numa_emu_dma_end(void)
- 	return PFN_PHYS(MAX_DMA32_PFN);
- }
- #endif /* CONFIG_NUMA_EMU */
--
--#ifdef CONFIG_NUMA_KEEP_MEMINFO
--static int meminfo_to_nid(struct numa_meminfo *mi, u64 start)
--{
--	int i;
--
--	for (i = 0; i < mi->nr_blks; i++)
--		if (mi->blk[i].start <= start && mi->blk[i].end > start)
--			return mi->blk[i].nid;
--	return NUMA_NO_NODE;
--}
--
--int phys_to_target_node(phys_addr_t start)
--{
--	int nid = meminfo_to_nid(&numa_meminfo, start);
--
--	/*
--	 * Prefer online nodes, but if reserved memory might be
--	 * hot-added continue the search with reserved ranges.
--	 */
--	if (nid != NUMA_NO_NODE)
--		return nid;
--
--	return meminfo_to_nid(&numa_reserved_meminfo, start);
--}
--EXPORT_SYMBOL_GPL(phys_to_target_node);
--
--int memory_add_physaddr_to_nid(u64 start)
--{
--	int nid = meminfo_to_nid(&numa_meminfo, start);
--
--	if (nid == NUMA_NO_NODE)
--		nid = numa_meminfo.blk[0].nid;
--	return nid;
--}
--EXPORT_SYMBOL_GPL(memory_add_physaddr_to_nid);
--
--#endif
-diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-index 99b5c25be079..29c192f20082 100644
---- a/drivers/cxl/Kconfig
-+++ b/drivers/cxl/Kconfig
-@@ -6,7 +6,7 @@ menuconfig CXL_BUS
- 	select FW_UPLOAD
- 	select PCI_DOE
- 	select FIRMWARE_TABLE
--	select NUMA_KEEP_MEMINFO if (NUMA && X86)
-+	select NUMA_KEEP_MEMINFO if NUMA_MEMBLKS
- 	help
- 	  CXL is a bus that is electrically compatible with PCI Express, but
- 	  layers three protocols on that signalling (CXL.io, CXL.cache, and
-diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-index a88744244149..d656e4c0eb84 100644
---- a/drivers/dax/Kconfig
-+++ b/drivers/dax/Kconfig
-@@ -30,7 +30,7 @@ config DEV_DAX_PMEM
- config DEV_DAX_HMEM
- 	tristate "HMEM DAX: direct access to 'specific purpose' memory"
- 	depends on EFI_SOFT_RESERVE
--	select NUMA_KEEP_MEMINFO if (NUMA && X86)
-+	select NUMA_KEEP_MEMINFO if NUMA_MEMBLKS
- 	default DEV_DAX
- 	help
- 	  EFI 2.8 platforms, and others, may advertise 'specific purpose'
-diff --git a/include/linux/numa_memblks.h b/include/linux/numa_memblks.h
-index 5c6e12ad0b7a..17d4bcc34091 100644
---- a/include/linux/numa_memblks.h
-+++ b/include/linux/numa_memblks.h
-@@ -46,6 +46,13 @@ static inline int numa_emu_cmdline(char *str)
- }
- #endif /* CONFIG_NUMA_EMU */
- 
-+#ifdef CONFIG_NUMA_KEEP_MEMINFO
-+extern int phys_to_target_node(phys_addr_t start);
-+#define phys_to_target_node phys_to_target_node
-+extern int memory_add_physaddr_to_nid(u64 start);
-+#define memory_add_physaddr_to_nid memory_add_physaddr_to_nid
-+#endif /* CONFIG_NUMA_KEEP_MEMINFO */
-+
- #endif /* CONFIG_NUMA_MEMBLKS */
- 
- #endif	/* __NUMA_MEMBLKS_H */
-diff --git a/mm/numa.c b/mm/numa.c
-index 0483cabc4c4b..64c30cab2208 100644
---- a/mm/numa.c
-+++ b/mm/numa.c
-@@ -3,6 +3,7 @@
- #include <linux/memblock.h>
- #include <linux/printk.h>
- #include <linux/numa.h>
-+#include <linux/numa_memblks.h>
- 
- struct pglist_data *node_data[MAX_NUMNODES];
- EXPORT_SYMBOL(node_data);
-diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-index 640f3a3ce0ee..46ac3f998b4e 100644
---- a/mm/numa_memblks.c
-+++ b/mm/numa_memblks.c
-@@ -525,3 +525,41 @@ int __init numa_fill_memblks(u64 start, u64 end)
- 	}
- 	return 0;
- }
-+
-+#ifdef CONFIG_NUMA_KEEP_MEMINFO
-+static int meminfo_to_nid(struct numa_meminfo *mi, u64 start)
-+{
-+	int i;
-+
-+	for (i = 0; i < mi->nr_blks; i++)
-+		if (mi->blk[i].start <= start && mi->blk[i].end > start)
-+			return mi->blk[i].nid;
-+	return NUMA_NO_NODE;
-+}
-+
-+int phys_to_target_node(phys_addr_t start)
-+{
-+	int nid = meminfo_to_nid(&numa_meminfo, start);
-+
-+	/*
-+	 * Prefer online nodes, but if reserved memory might be
-+	 * hot-added continue the search with reserved ranges.
-+	 */
-+	if (nid != NUMA_NO_NODE)
-+		return nid;
-+
-+	return meminfo_to_nid(&numa_reserved_meminfo, start);
-+}
-+EXPORT_SYMBOL_GPL(phys_to_target_node);
-+
-+int memory_add_physaddr_to_nid(u64 start)
-+{
-+	int nid = meminfo_to_nid(&numa_meminfo, start);
-+
-+	if (nid == NUMA_NO_NODE)
-+		nid = numa_meminfo.blk[0].nid;
-+	return nid;
-+}
-+EXPORT_SYMBOL_GPL(memory_add_physaddr_to_nid);
-+
-+#endif /* CONFIG_NUMA_KEEP_MEMINFO */
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
