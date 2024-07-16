@@ -1,136 +1,228 @@
-Return-Path: <linux-kernel+bounces-254084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23484932E8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:46:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D20932E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C841C21F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EB21C21EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A736519AA66;
-	Tue, 16 Jul 2024 16:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B619EEC4;
+	Tue, 16 Jul 2024 16:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saqgYE8M"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3VkrCe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2251DFD1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721148395; cv=none; b=bn7EOlg9JZvyouCt1bkwF90cdyEu97ZVUvRmXNBVWZAwMNfIFG2TQSxoWx5VdTao8WuJ75X84FDhOQbLbZ4fcKThk0lPwZvzLijeEw0rSF1l/DAFwEH0pnWgucRqcSuWsTywSKHX9bo8TPY48ImwctV9VLZ5xYJACjzQCLXTMkw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721148395; c=relaxed/simple;
-	bh=/uO28JIzVjT3o+pteNKJcM0A5ixMT0fdtKUaIBjY+XA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wzk7dHFOoKa8uu9m0jTFzPs4pe/JJgrbC6OaiTWNmw04YdSh9CX7xZiVIMkE4qWMEBi8S3RBq5lYu2J1ApAPi88tncGqXR/idI3cLdnzLZNlgV+mPv/HHQ+mAE1rZLM8fbmX8RKVd6LznVJ9EPoCSfry753wsSE0LF1Ke9L+byM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saqgYE8M; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea5765e75so6988087e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721148390; x=1721753190; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UdlcGvPV4rMkeD613/ZfNJun3YfIW1JB7Y540EAzI4A=;
-        b=saqgYE8M0ftR2nbP5DxHECYBBnLZaf4K3mgxJwXRQWPIohsd5GZ7gFu2w+AbdivJBI
-         T6PxtFRY0zshmzfSobXiOV/IHV2ILKu2g0awIbxv4VekTuE+4F9cWNTDCYSEsdutbCo0
-         9M67xcWKOZShoEPxq/wd1gCEE/LStzL1V01c3uT/CJFOA9watrRtMPEHZBpVxPQGvm02
-         vPVYLDHfVDsJAqsRq6x8dYZlbpzNbeW/Re6AzfS2Qqc+cXPw2lU7fiQxxiVDe29bzzfJ
-         9EdYBkccpH9JT/xrscrs8JRjgA3o+zCH4t37ldGA+3U2PYd9AQ9oF2Z9S//dSGIqTh3I
-         B3FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721148390; x=1721753190;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UdlcGvPV4rMkeD613/ZfNJun3YfIW1JB7Y540EAzI4A=;
-        b=VSQoKWDEni9pOi2p6Th/3FeEfPWLJgpcJ2QQixtSLosoAeHko5V5hWL+bnfL4VO+Ba
-         XhKvDpbHmZ9J2layb4LRHgRH/XWET4bFIBBFrLAU6pV9qNoqlpw5NY5o3lLIiDSDvPZK
-         4p4BXN0dBBIsjcnrPWIy0cK3zBcECFjFb94ovlTIS4sl12eaPgd5nIABV0D8u9tRkipg
-         yxvLj6qJGd/z6zP7gnEtOl0MKQUGNyzezOEoUDRIayPOMwX9BSnh9XHd9a7kzSXGNGX1
-         4MiWZ4aB4L/FXUcAb49WwAvIsa4bK8OLxcukfndR6wH8XYRjo52eU/Lee7L+UuYg7+7N
-         bq/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDKcY7qv2GxVlsfuvHSpnurtzX1A+CWGJeFHqkzYH+b/O1nTlItKIIVOk+rbjUGDyF90e5d3LUwJKk1y+267G8o5jZZElDkA0V1H7u
-X-Gm-Message-State: AOJu0YywYzR8BxYZejomvNVMD9s853AeDD3TG+8mE4b90LPjB3+i4+R5
-	XL0G+t1ccDik939EJGnbTfUq4ElO6m9+BjFemJbyeU3jy1vhJAOZ4eF+/c6/unnLHT6y6PKjjIT
-	2
-X-Google-Smtp-Source: AGHT+IH1Umt4AGKUi97EA/xp39tZETdjijAkzPUgbnJvzG0aE8B3zUOXJakTJA6Nzb4q5X83AOT3QQ==
-X-Received: by 2002:a05:6512:3f29:b0:52e:9d6c:4462 with SMTP id 2adb3069b0e04-52edf01c462mr1777240e87.23.1721148390000;
-        Tue, 16 Jul 2024 09:46:30 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e2b66sm1202263e87.59.2024.07.16.09.46.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 09:46:29 -0700 (PDT)
-Date: Tue, 16 Jul 2024 19:46:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
-Message-ID: <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
- <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
- <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
- <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
- <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
- <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A0E1DFD1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721148513; cv=fail; b=Ghm5N50z2XO6m74TWrLPmLx0ZpxF1VIN0LHFLyt3TtLljgEG/obJgCmjOiOewcBGF91nTuzXvpLo+VZRIReMzpIyiU8cNhXir+DnknGGAV59pA0dQ/J2V6jYw/Vl6t64II8IoQirHLof7S6bcSFNl2BJI6TsJLAxqw1HZegYSe0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721148513; c=relaxed/simple;
+	bh=AgWXBoEe+FKxPi2eEk8rCmPsD5PywfbBUYyq05+sa/c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JdzvYuAWYxW/S6eDcTPvFpQdKNoUvgQZ6rApzlkrwZxTrRVDQZvR+ryx0mOABV3vAwB9QD/k4ymBoNQE7+cO19dWPnbCLB01pCjgd7ECPVIM4t2qkyL0moQnQ7tzgw+xWiSJOYajmYz7HLxdbVb70H/VmcKEekQYW36JetDnigQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3VkrCe; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721148511; x=1752684511;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=AgWXBoEe+FKxPi2eEk8rCmPsD5PywfbBUYyq05+sa/c=;
+  b=Oq3VkrCez2CHFBFpSA1993X/59hBeBmSmOWIKkaimbFAj6LwiGf9UNPU
+   jUwW9kBq1hQfmn7DwZdD8q45J0xa82qkwtJ3d5H9YQ2e9Qfo/hapAI3G3
+   CAou+2RHGQlttKWoVGgO2z6HdOXQBrgZJ/U3Xnh9KbqBoPvg4RzhebGEc
+   sqpq+mm0q0HGs/8T84s254/A42ItavF+ynju47U8m6yGVADoZZ2jHQxUO
+   qnoGRaSaKzjr1kaXGmPSRJq+HhMNWJPY+5NJ6UwJTgeyz+XzLYyWi5D1+
+   UPp+Y9lzLZnLxbqwo5hP7ZXdYp+4WFzMsc07ObZWg3VV9whAY99hmwapo
+   g==;
+X-CSE-ConnectionGUID: 7E9pAyb+REyroo2Kuu4ymA==
+X-CSE-MsgGUID: ZGwyMMxPQ4iuHx8soBE45g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29277509"
+X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
+   d="scan'208";a="29277509"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 09:48:30 -0700
+X-CSE-ConnectionGUID: au6utRPXTkalhGfCm75eSg==
+X-CSE-MsgGUID: z7IgEwh6SNKk/1m++KrmsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
+   d="scan'208";a="50442873"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Jul 2024 09:48:31 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 16 Jul 2024 09:48:30 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 16 Jul 2024 09:48:30 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 16 Jul 2024 09:48:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KWgZ8Dt47z9qh5YGocY0m/OhaGO7YXQ6EiTufJ5hvplnjYQDq8g30RXjNafoKbBXSQ4CWAtEONyzPWrfyDorwcGwSo1nVw2m83In/6i4UJk3FKB5kQQ2pVCWIKKDxuEJlH7Sw61wrLcpxMUMDWV2m+Z92fCV2KgPNNtLMSp7fzkzsy8WO2w+phYgy73FZlhZnWoHNrceGosXutC6BtvV5zsBtgzuQBmzpy8R8FatAPAQYSSdYrJIBYL8gzOBJwMSZ/DkNVESf/kLhZXnJq6yvtSzBiW15hnP0PdsT65EODluxIdlxWfv4g98VMKbLcQMTqJIooSlzDHe5pz21ZwpzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kS2Izegj/2N4V9cxcZRHv3DvBTZBtIuucIfWIdp3dyA=;
+ b=iEac+HN3HVRahTk/tOxfywr4ndCPEt7HTWGKHKRMpXqXn3AcBnacFFUba9GFFx+CGi4ECaZasP73G220jUeFeG7Yd38zoa1O2kKn3qNb6Za6D0mFYZnUG5X4Cs5yAX5eohWVcDzfctrfcJctVvTGcBl3BuYYmOFd0UegORMpMdq4oxXW8raAiE1kOKW9XKNHg/U5GWk9PVoC0riJOpSr725E+ZnXg40JACUadDJyEgoyDbvZ8Zcz3xFEr17DZRtTkC95ypwwNdzIzGWQq/ehKIxtWVu80VoweySHY+luZUKfL90fwTjIkJg8pdAHilxwCf3HeP8Tiz/q7ZUuJ/GzeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SA1PR11MB8445.namprd11.prod.outlook.com (2603:10b6:806:3a9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
+ 2024 16:48:27 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%5]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 16:48:27 +0000
+Date: Tue, 16 Jul 2024 16:47:40 +0000
+From: Matthew Brost <matthew.brost@intel.com>
+To: Philipp Stanner <pstanner@redhat.com>
+CC: Luben Tuikov <ltuikov89@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, Marco Pagani <marpagan@redhat.com>
+Subject: Re: [PATCH] drm/scheduler: Use ternary operator in standardized
+ manner
+Message-ID: <ZpakLNAkQHsJTM3g@DUT025-TGLU.fm.intel.com>
+References: <20240715071533.12936-1-pstanner@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240715071533.12936-1-pstanner@redhat.com>
+X-ClientProxiedBy: SJ0PR03CA0079.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::24) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA1PR11MB8445:EE_
+X-MS-Office365-Filtering-Correlation-Id: b81a1d15-aa73-4e67-8e0c-08dca5b71d5b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?L59emBr3kUQzA4qsJY78TuLKr4DKhtn3JHTeBNFOc8mW1KIvuaURC2cdMG6I?=
+ =?us-ascii?Q?6YJdO8KkeN0hE36NrUora4FqiBD5uNQN1iGH2BwYLyw+nNhwu6N/YfbpGAEw?=
+ =?us-ascii?Q?tKqm9biSxLr0VcR52Nrv2xpK/ZJVdJFcSMjoJ7JT4DvKmgNbrexpVex4MGaD?=
+ =?us-ascii?Q?Z5eW0Cwpzk64iU6txxxyalDytZXL6UvBrXQJTO+q31QTBOMKAO9+YXO8kUes?=
+ =?us-ascii?Q?nKXdtE6OsCZYnhanPgSsc53zIDFuL1SZvCXtVLNxADRpN2M5yaT59qG3k1Dj?=
+ =?us-ascii?Q?+w0kVsu/riwbbPrqmrHSh/r1knLb6wL8o+GpxfxpMfaJfE1I6ORbRnBMxUQY?=
+ =?us-ascii?Q?S6b/Oj5Zsk4WVzZFyyYFRExrySQdjG1j0rnV/lgK5N+FRuzPkRb7Dcdck3HL?=
+ =?us-ascii?Q?uhNv9qm30oupgaL4+w5qhKkKD2HFR2YBkksyF2vyMeX8CYEFx5a3vJqI6taC?=
+ =?us-ascii?Q?/zNvoVZ4Btu3DSyY87NyA1oYlOGosXHsYCKVcUbi6PbLEKgnrhYrZPOxLPxg?=
+ =?us-ascii?Q?gokLUJ9xlU3FBBuCs2vkuQLVGuJ1f7YTZM2D69LGVUFRiHsSqKohY5UMDix4?=
+ =?us-ascii?Q?d5nwfo0URRkyTCLusZVqWRBpO0majVezXhcAwFtxXR8wYTNDIAdXpQGPKO7d?=
+ =?us-ascii?Q?Fqi4y/fMCXZ7FiTSKMlLRSZmDttP7GlZSN981hsyOGnk14qXFhomTR5ETxiH?=
+ =?us-ascii?Q?7e6zvW06I+wJM+A13LiQ8UUDqoLEJp+efgQBIoGXeJbK1MK2FJ22El8ar4Mc?=
+ =?us-ascii?Q?ETGQjWkrwPS2+LeBOm4jOmhol2YCum47hckL3m6fN//jVN5VY4gmnNr9k1F+?=
+ =?us-ascii?Q?JTd+Q5X+1l5DxuIRHuJ17/gSNE/pv7ciu4lk6NgRL0n99oPR2g7g8E2ULKO1?=
+ =?us-ascii?Q?0htixkqs1WkNVOjScf+TvgG+A7gqE7O3xsd4sT3NnP1UCNwPDS4MroGupkMo?=
+ =?us-ascii?Q?GSRw0Wk3jxuX66SjkQjcavUKdVMIV5mwjHEYvHmx3iv+Z4ygYYp0eJBUytLA?=
+ =?us-ascii?Q?VEsshkMA9TITur/Gg5U+MwegxO3oNQwGzt6hTMuzS/poPRQm6kkVmKQoiqbb?=
+ =?us-ascii?Q?8wqzVZcYFwVUk6Tf+Q0+ikwEGBTz0koCxBXBwjEfC6haMI9HA7vGDwY8PjyJ?=
+ =?us-ascii?Q?0MR2i0H8vRvcJvUaa8Wu3NIL/S3xhCXBxeZhXEDkmkjLugbNbC7annAzqQA2?=
+ =?us-ascii?Q?V51Um23CU/xsXedCmFUYK1yHhuENag1umA7kRVDo1RnBqQ9T5lPQC2K60h/X?=
+ =?us-ascii?Q?8QmNQMOUH2J8mVrEBErRhhDJFYd8SiStVG2Hqo7WHNYcEvYxjGRqg/giTlmk?=
+ =?us-ascii?Q?WZcMk1kDbf8oM7V23A1hKb7tFhXwRs9DywMsDq5aWXklTw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tkkcZ+Zzkb4a5VkDpv9VOcUy2wxYM2SYE62eMUnWjm0v7fQc1rSZ5um8ZQYH?=
+ =?us-ascii?Q?IgDu5+nZ41yzh8dAOokFDl3zCpdauVTExcs9x3hdhJqYXJXI44qI7AOZjdsE?=
+ =?us-ascii?Q?kngMv6F4hrx/+7itTwHyI+If61nQIDcABv+7NP5bRGtWpbhHuu1fOpDzCWBF?=
+ =?us-ascii?Q?7ZuEAFmKWPdzmxL48MWBOqVwiLgWW5UcRWFMGgeJ20w2NAwURMKQ62UaRsUE?=
+ =?us-ascii?Q?RvUegeTLavsEwuSCRSr/OalgKBTjbfJj+HfpuH5yU+yaI+ywn8WuGK2zp7DH?=
+ =?us-ascii?Q?p4Yd0y1rb1wa4TS+lkg34qkl7lmZITkM89xKNIT/Au6xlRXCjonBlyuoHdN3?=
+ =?us-ascii?Q?6xM2FcdZKM9/K2pGVbzixMDYvaB3JmVCtVibg3OQij0jSyli0WzFrr9SiPYh?=
+ =?us-ascii?Q?A4tK4YlsV22AZlakD7Tzo0pOzreMJloy4afInoRtZXSjGRN/4LvSjJFrDFHe?=
+ =?us-ascii?Q?YzdScBt0VcNa6wsrxVSYUUUwYO9+/OlpVpWiC3OrFVZuVU+u+AC4Aw+XqEOJ?=
+ =?us-ascii?Q?n23VVfpNKE0t5AmU26JxHVp98Pg85htAkUa+SKanAFzJBbit35pirFjJ6k1/?=
+ =?us-ascii?Q?wLjz7HVzmszTS0zc8frWuBEi9PGLFQ5m7LViPoYNSQ+I7rrzfSfsGanOGNk5?=
+ =?us-ascii?Q?e7Xlp77P0JdPXux1FBrG7MMsM7o9WFW0+E0ZMBOGxg4qb7srYUUYxJsqKM5x?=
+ =?us-ascii?Q?KshZ99huBsG0uwOp1eK1GVoEYEsSqg4izUmlCKSG9emNdsk5kkBjbzdlaFLt?=
+ =?us-ascii?Q?1wsdURRA1xvONJWGkdX6IMfCaPaBhOSPplk9JVE12Kk8EV68MJk/rGV1MqoA?=
+ =?us-ascii?Q?5EOUoQO/wp8MdvGvqIlZRhHZTyxqG4IBRfgCQ1X6b1O4CzcPAqm3hTppkNq1?=
+ =?us-ascii?Q?I+iQ9bew24mmqXrnYxr8wVAUvcGg2Ucvi4GbCISZAF+tWI4ESPn0erbyGBle?=
+ =?us-ascii?Q?fv7zLv5kNnF9M5CBAAmq8gUUkicYC9zkRM/dZTxUoivuEtI1LR5TE/D58dZr?=
+ =?us-ascii?Q?hVwfnfNAW8zZ2rPnAOXicjBBwRBOiRtyT3uxGKqBtStyqmxlNeQ8TyWRsgQ/?=
+ =?us-ascii?Q?I4TeQVeZKP4wmOaeOUzRe6eWSViffJwAGS7F1UWL8yiSiBX7LdZ58UtaT8kM?=
+ =?us-ascii?Q?EgoenOSJ1wLWVez020ICbslH1vkeRIU/5aC9y+IdvQcs6iE2Jj8ofvSUDFy9?=
+ =?us-ascii?Q?tn4aApYi5CbmsyZ1sBVu2AOwIRxkAjSk+Od/gjrIH2ekNcDEdraz/NpiIaLp?=
+ =?us-ascii?Q?9SpeFYa2F5aWhLKG3PLIOhvef4CsNA//GWba/y2UXgVdQuP9s2fqX27q6C13?=
+ =?us-ascii?Q?inNykUS7TxvKyLfic4HwkIvrY4vxZVyFfeQgtemiCizGNROoJsbZ5cxPdtwb?=
+ =?us-ascii?Q?N/HWoo0U9PrBhTp2pvbX4oN/qPLg+PnWGF4YW5RSiRPPPhtvmO/0l89nEfou?=
+ =?us-ascii?Q?wLg7GVWsdNRTfRRua/Xd3qFVpB6m2qWs6RhduLfwt0bRsJnfhu/LByuMpTmc?=
+ =?us-ascii?Q?stbndZeNnA8fSEsPZKLanz+1L7KDgCo4JWvknwwQiyu12G/4XEuT9ct1aHC5?=
+ =?us-ascii?Q?mYkD2G7rFbgpAADbuvinVN4ZgS1hQjZWpx1BJeN05xNY/rK9+Tkz7IN/H8R/?=
+ =?us-ascii?Q?Pg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b81a1d15-aa73-4e67-8e0c-08dca5b71d5b
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 16:48:27.1549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HN7yH0rN0yEtZzRTY9Fj0OiYaSHGjjH86AQQau51WhkhyukjwK0ZPwm5Lz7JbqrD+TmIOEeKAGSWJ4Cefen0Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8445
+X-OriginatorOrg: intel.com
 
-On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
-> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
-> > On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> > > 
-> > > On 16/07/2024 13:20, Dmitry Baryshkov wrote:
-> > > > On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
-> > > > > Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
-> > > > > and byte1_div_clk_src, the clock rate should propagate to
-> > > > > the corresponding _clk_src.
-> > > > > 
-> > > > > Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > > > ---
-> > > > >    drivers/clk/qcom/dispcc-sm8650.c | 2 ++
-> > > > >    1 file changed, 2 insertions(+)
-> > > > 
-> > > > This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
-> > > > rate should not be propagated. Other platforms don't set this flag.
-> > > > 
-> > > 
-> > > Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
-> > > and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
-> > 
-> > Yes, the driver sets byte_clk with the proper rate, then it sets
-> > byte_intf_clk, which results in a proper divisor.
-> > If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
-> > byte_intf_clk rate will also result in a rate change for the byte_clk
-> > rate.
-> > 
-> > Note, all other platforms don't set that flag for this reason (I think
-> > I had to remove it during sm8450 development for this reason).
-> > 
+On Mon, Jul 15, 2024 at 09:15:33AM +0200, Philipp Stanner wrote:
+> drm_sched_init() omits the middle operand when using the ternary
+> operator to set the timeout_wq if one has been passed.
 > 
-> Ack, I think this deserves a comment explaining this, I'll add it.
+> This is a non-standardized GNU extension to the C language [1].
+> 
+> It decreases code readability and might be read as a bug. Furthermore,
+> it is not consistent with all other places in drm/scheduler where the
+> ternary operator is used.
+> 
+> Replace the expression with the standard one.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc-14.1.0/gcc/Conditionals.html
+> 
+> Suggested-by: Marco Pagani <marpagan@redhat.com>
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-But where to place it? This applies to _all_ dispcc controllers.
+Reviewed-by: Matthew Brost <matthew.brost@intel.com>
 
--- 
-With best wishes
-Dmitry
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 7e90c9f95611..02cf9c37a232 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1257,7 +1257,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
+>  	sched->credit_limit = credit_limit;
+>  	sched->name = name;
+>  	sched->timeout = timeout;
+> -	sched->timeout_wq = timeout_wq ? : system_wq;
+> +	sched->timeout_wq = timeout_wq ? timeout_wq : system_wq;
+>  	sched->hang_limit = hang_limit;
+>  	sched->score = score ? score : &sched->_score;
+>  	sched->dev = dev;
+> -- 
+> 2.45.0
+> 
 
