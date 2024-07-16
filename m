@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-253484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDA69321F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B8A9321F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8714428286F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:38:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720C5282777
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3967B17D36C;
-	Tue, 16 Jul 2024 08:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6517CA09;
+	Tue, 16 Jul 2024 08:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jbeXH7k9";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jbeXH7k9"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="quiISYgu"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E20142E9D;
-	Tue, 16 Jul 2024 08:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E42178378;
+	Tue, 16 Jul 2024 08:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119089; cv=none; b=EKwtgfi16oplMb0f6eFzrL9JD5gHzVq56/s2APtOhtpySM1Tv/rsT8Tlk7PQ+LcDHUzkGIO71BZvokdOKfkPiTS/1GDLXkOTixeZ/Iv65SAe+jVgLPH7GehfT5NwSXH5eUiNW3vIp8IrLFmGMg1+K3zFeT3IE5ZWsXBUwo5QPAI=
+	t=1721119057; cv=none; b=QpLs7aYYL7dN0Lw46XiPFqlT2WTRukmY2Gj0jEQaOwb/OKIc8UgFh3h0TimJk9fqqN94GVROjkuAA6Bc+efDVw1oDa8D4O+/xXao3Q96UeXyu4Bm7icUwtnI551StlNI5P74PLJGHsPHibA5yZORozVtGVa3KbeLgezswIRd/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119089; c=relaxed/simple;
-	bh=h8o3oRHmLl/azwP+hpM8aQmxsMBmeviL+0DH7hM8/js=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hhiJ5z+094BD6JE5wlOrtdpakZWwTeAlNsldT0tqgHAs3wn3xWJlmDxWvYon0PaGjs/k1D5iGPpahZ8qF9lcn9OclsOUIzPCX51rpm5O3x5QeV57IN4IaLB6w2ol/DnmL8rZ6Y85rLBczAuwcg+suL/vi6i+GyAO6agw892TxrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jbeXH7k9; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jbeXH7k9; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WNXWw5Jzpz9sVN;
-	Tue, 16 Jul 2024 10:38:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1721119084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ow+QdwIrgyh8EvIaH+qkUT5SOVpYbVc8f2Oz9+7S0Cg=;
-	b=jbeXH7k9JqKT3QrM2Q6d12suCfHzCxiTvjNc4NGyLb3eZn/n4zZ/4t33lGJPs2pOu5fUX0
-	lEfD3gKgeiNcTA/odlFIs1zkf2dHmh8xUH6PGSghZfhYSnAUzyTGgRLZUG+Tvm8sA33vnF
-	4+2fvuS/TSbOmK135gOAN8l2mN45lEGzODrKCE5Vt5a7qmjgk7V26huXrRhkoYJlDF/tX5
-	Wc49bjWaAMIHpTMc97YoX64YsjZFi4f74KBzXW4Y8hQ8BGALArF+hYO7c/rucPiRxyHXMS
-	Qrr3j34DnlJfqm5xIBIN6/RKWP4NdEYphUEjTVa2wXB0Kxm7yPf7bU3SbxoqWw==
-From: Christopher Wecht <cwecht@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1721119084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ow+QdwIrgyh8EvIaH+qkUT5SOVpYbVc8f2Oz9+7S0Cg=;
-	b=jbeXH7k9JqKT3QrM2Q6d12suCfHzCxiTvjNc4NGyLb3eZn/n4zZ/4t33lGJPs2pOu5fUX0
-	lEfD3gKgeiNcTA/odlFIs1zkf2dHmh8xUH6PGSghZfhYSnAUzyTGgRLZUG+Tvm8sA33vnF
-	4+2fvuS/TSbOmK135gOAN8l2mN45lEGzODrKCE5Vt5a7qmjgk7V26huXrRhkoYJlDF/tX5
-	Wc49bjWaAMIHpTMc97YoX64YsjZFi4f74KBzXW4Y8hQ8BGALArF+hYO7c/rucPiRxyHXMS
-	Qrr3j34DnlJfqm5xIBIN6/RKWP4NdEYphUEjTVa2wXB0Kxm7yPf7bU3SbxoqWw==
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Christopher Wecht <cwecht@mailbox.org>
-Subject: [PATCH] arm64: dts: freescale: imx8mp-phyboard-pollux-rdk: add HDMI support
-Date: Tue, 16 Jul 2024 10:36:35 +0200
-Message-Id: <20240716083635.626596-1-cwecht@mailbox.org>
+	s=arc-20240116; t=1721119057; c=relaxed/simple;
+	bh=Mr/uMakLcuC7WzGCfsWpNQgKRVkSgGcbw8oXnlBJngw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=obeG6y5Z/7gcMJ5hlNEwm6POcKgYkj1DcvSaZP9yAXx8dkkKaeQf2TYY1FkSvKRiE/zNT8brpGFUah4Ap0IX6GhFN3Vcc8Iz/Eb+Skxg6X3vA/N/Yjv9HKsObn6Vv/oqNXjK6JCdA+xxaPZ7OBRKemG/adC1vbgPew9/qdHbkB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=quiISYgu; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721119031; x=1721723831; i=markus.elfring@web.de;
+	bh=kGIG2lk9JnUGS5D/DzGGpsIb8TqI9jSGdEPMw6I2qBg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=quiISYgunLxFVUByQIsXh1AXUlf1KHqxPHF7NcGDw5BSzCkxx6bmUerj7ZdVF3kk
+	 uH63GsM7SWgvKRCT2oNt1hUh8LWOPWGlhDbRwDQlmziZ8iEN4qGFSOYhJIovq6Txd
+	 9gGHLEJS82mmEr7dmE9Xh554FnP+6lBDtXNg2qt/GgPTkq+5aNlovpNzB+JVBIWYE
+	 0eaBwl8VND196r5Mgn+4+VF4dXhb0d+WEQKdyy7ycNOLMpTtXdXqW1+jKpDr9HazK
+	 7tiWuLUF1DLlECkBbgc8PlmtySp1sAncWUKrv0KCkJeK+X+6tLBXZJH48FPnUsFqb
+	 Z3UWwvy7ydUi/Bwhug==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVJRb-1sshbU1VGJ-00R6y0; Tue, 16
+ Jul 2024 10:37:11 +0200
+Message-ID: <2c153a0f-87aa-4f4a-83cc-c17798f0795b@web.de>
+Date: Tue, 16 Jul 2024 10:36:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 072d6153867c17ad5d9
-X-MBO-RS-META: 4k3pbw9cnfn889ay8kianab16t8kpfnk
-X-Rspamd-Queue-Id: 4WNXWw5Jzpz9sVN
+User-Agent: Mozilla Thunderbird
+To: netdev@vger.kernel.org, David Ahern <dsahern@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] net/ipv6/ndisc: Fix typo in a comment line
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nQEHSPejrsVq+DGhGqvitACK7uhP97GuZ/FP+NcjWUwEb4FmnHO
+ 1GS+SyYMtauJon7zF2HtN41bteyORBlf+Xgl2hAeqjOsyJRbkuhxoMoe3PaCNeoAuX0IGPc
+ Yto5bYstxgTiZ+eBRxtaXE/8Rn9uhlEYu26BCNLLBO+Z6yk935FefF+SGllZBXmGv9DusCx
+ FxXFYUL1Mh0Q0deIpvIvw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OTwN86JcMQ4=;N5iQnSN7aZOY/e8DQ0g839CdEPb
+ KIHs06WlhycmawLMyM+7ShXB7O6r1NZdq0RtaEf0x9ME9baIAmHKfCAwa/fATJRHC7SAR/MaQ
+ PB0d+j0FMQoPi/kcTCT93XATFZi/gzA648etRfXc/5s7B2HpwGUWEpVGx2p/sF0hVQOGcf/tg
+ jXtN7TN2ebP8nX04/ZvdL/bvysxzGn7NH2UInssPYCduwKMgEno018jiLZm7MX6951VvNNgmL
+ car0/p8C9ouBYZeU2I2S3WTGhYsP317el46Q7Jj70A28yKAFjHvtDKhkq3nLsKWpvhoPYTuFx
+ fzK5jEET5WeW1HtyZtMGnt4ZKzz6J7GZVOyYhW8bDYuha5gCvQM7F+bEEBPa2vO9/fNlOmhR7
+ Ev9/GCAjayDqbgiP3Dv2igbv4TsjoB0tlUjYl2/R2Lc7zZ7sHjPvpNb+ItD6f06Ksldb1Rbpj
+ FYRoXp1On1S6TM8HOakiNS2VhXnr0JWIX0Z5Yx7GQOZIl0kI5nwEyzykIUoq8EWQkED2MlevS
+ B9Cuc1w5IJKJbVIQYjHCB0PUaYEh/b+BIs5wvRG53OpIkukF0Uxmofino/xui9ZTEzWNBEnfU
+ CGB/wmb/VkuCAFryC3T19VSzU9rIxEh4flaOsL0sIz1bBLeIa748ZDMNQnrbYv63QFfI3jL6m
+ H+B7ppfDI5ROSy+cxaX/YkDDIzYPJ/4NgTWnC1hozwALzQA8ouu0nZix4YW4Bv2OhGN+YTYnY
+ 7Vs0nWMXfKRLjg+B+WN1OemuXkw2iUh41sLSh2AmUntu0GdBsVKxTMfLtBm4dpD6kuwS1Ujw7
+ 9H++H5DM+HgbHBXt6Mkma4rg==
 
-Enable the HDMI output on the phyBOARD Pollux, using the HDMI encoder
-present in the i.MX8MP SoC.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 16 Jul 2024 10:28:37 +0200
 
-Please note that lcdif3 has not bee enabled. This is due the fact
-that as of now either HDMI or LVDS may be enabled. If both are
-enabled it won't worked. With this patch, however, HDMI can be
-enabled by turning ldcif3 on and ldcif2 off.
+Adjust this description for a condition check.
 
-Signed-off-by: Christopher Wecht <cwecht@mailbox.org>
----
- .../freescale/imx8mp-phyboard-pollux-rdk.dts  | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ net/ipv6/ndisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 00a240484c25..3ea67bada2c1 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -101,6 +101,18 @@ reg_vcc_3v3_sw: regulator-vcc-3v3-sw {
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
- 	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		label = "hdmi";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_out>;
-+			};
-+		};
-+	};
- };
- 
- &eqos {
-@@ -127,6 +139,38 @@ ethphy0: ethernet-phy@1 {
- 	};
- };
- 
-+
-+/* HDMI */
-+&irqsteer_hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_blk_ctrl {
-+	status = "okay"";
-+};
-+
-+&hdmi_pvi {
-+	status = "okay"";
-+};
-+
-+&hdmi_tx {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hdmi>;
-+	status = "okay"";
-+
-+	ports {
-+		port@1 {
-+			hdmi_tx_out: endpoint {
-+				remote-endpoint = <&hdmi_connector_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi_tx_phy {
-+	status = "okay";
-+};
-+
- /* CAN FD */
- &flexcan1 {
- 	pinctrl-names = "default";
-@@ -346,6 +390,15 @@ MX8MP_IOMUXC_SAI5_RXD0__GPIO3_IO21	0x154
- 		>;
- 	};
- 
-+	pinctrl_hdmi: hdmigrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL     0x400001c3
-+			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA     0x400001c3
-+			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD         0x40000019
-+			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC         0x40000019
-+		>;
-+	};
-+
- 	pinctrl_i2c2: i2c2grp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL		0x400001c2
--- 
-2.34.1
+diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
+index 254b192c5705..4d0785bf6937 100644
+=2D-- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1020,7 +1020,7 @@ static enum skb_drop_reason ndisc_recv_na(struct sk_=
+buff *skb)
+ 	}
+
+ 	/* For some 802.11 wireless deployments (and possibly other networks),
+-	 * there will be a NA proxy and unsolicitd packets are attacks
++	 * there will be a NA proxy and unsolicited packets are attacks
+ 	 * and thus should not be accepted.
+ 	 * drop_unsolicited_na takes precedence over accept_untracked_na
+ 	 */
+=2D-
+2.45.2
 
 
