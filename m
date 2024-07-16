@@ -1,93 +1,125 @@
-Return-Path: <linux-kernel+bounces-253817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D9C93276D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:27:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA2932774
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28243B21503
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8330B21F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A319AD6B;
-	Tue, 16 Jul 2024 13:27:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64B919645E
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF419AD86;
+	Tue, 16 Jul 2024 13:28:22 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419B019AD4F;
+	Tue, 16 Jul 2024 13:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136427; cv=none; b=srqz3k0m+kM6qLURfiZN9TSxDwUBVpee1YQ8SIptkTc3rhm2bzV5lN11pU1KD25VhT8LdDVLRifeWt09UL7ptA4+mNTux1SVA/DPbpKiqLXm1coeVhihyR2PFXqerbGZJf/+qXfbcdjj8SGdHATexVY7+D4SxnrrRDLnMES7Y6U=
+	t=1721136502; cv=none; b=Berwlq94ARz/IlFu5hsKY856Qn9Y6j5sXqphvg8QlGDxYirkondMF/XXnjYXQTHZ6St0CvvbCZcaf+jgaTLyBN3VMoFtw2hslb8a5O194fmHoJ35wYhb0HcK3dkUODhMtefAwcm3k54n8QjnpWGM9I7HgHQrilG1RXdGTcmuUNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136427; c=relaxed/simple;
-	bh=AxtB/lm2jW5e/hK0f+ovoWdve6yM24Dk6nMxzgUuflE=;
+	s=arc-20240116; t=1721136502; c=relaxed/simple;
+	bh=TF815M0MHPBYp/3TtLytnCXOCoWe3Z5Pimkt2dlp1GI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNfrTuy4F7for4NqLKLhil4YxcYnWDr2S5PaInNTAZNy/K412PcdMdMeKnbGvfpfuVY3a6y7KJKhKLpLKJdzuqaP9e4a3fwFyIOVbEk+sfLHsVNoT48kTsxDcYsF3qphjGxrRPbjsf3f63TAIT2tOf8c0BHjg2m9TadBNBTgAII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74D9F1063;
-	Tue, 16 Jul 2024 06:27:29 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B0E03F762;
-	Tue, 16 Jul 2024 06:27:03 -0700 (PDT)
-Date: Tue, 16 Jul 2024 14:26:52 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, masahiroy@kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/Kconfig: Remove redundant 'if
- HAVE_FUNCTION_GRAPH_TRACER'
-Message-ID: <ZpZ1E0r0oFn7CTBF@J2N7QTR9R3.cambridge.arm.com>
-References: <20240716050915.2657694-1-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=slmoB5Xqryj9TfVvY/P4D5/9SSFADGBKZW52FUkm/2Jz+KGz6h+r79O9rtHwM6FiZaLTv8sfmw7aYvAOcboqbk52mlg43LKmEDuARbFqbVb+06T9HDFW9qSRWDzI0WJROvQ7uYOtP7w0a+qwFNlvEXQv6sTTs7DzePyhbnS+esM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sTiDR-000000003jW-40cV;
+	Tue, 16 Jul 2024 13:27:38 +0000
+Date: Tue, 16 Jul 2024 14:27:33 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Chen-Yu Tsai <wens@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Message-ID: <ZpZ1RSSYaLo45kUI@makrotopia.org>
+References: <cover.1720969799.git.daniel@makrotopia.org>
+ <6425788.NZdkxuyfQg@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tknJYtWE5EdE/uFK"
+Content-Disposition: inline
+In-Reply-To: <6425788.NZdkxuyfQg@bagend>
+
+
+--tknJYtWE5EdE/uFK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716050915.2657694-1-anshuman.khandual@arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 10:39:15AM +0530, Anshuman Khandual wrote:
-> Since the commit 819e50e25d0c ("arm64: Add ftrace support"),
-> HAVE_FUNCTION_GRAPH_TRACER has always been enabled. Although a subsequent
-> commit 364697032246 ("arm64: ftrace: Enable HAVE_FUNCTION_GRAPH_RETVAL")
-> redundantly added check on HAVE_FUNCTION_GRAPH_TRACER, while enabling the
-> config HAVE_FUNCTION_GRAPH_RETVAL. Let's just drop this redundant check.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Hi Diederik,
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+On Tue, Jul 16, 2024 at 02:34:40PM +0200, Diederik de Haas wrote:
+> [...]
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 362
+> rngtest: FIPS 140-2 failures: 638
+> rngtest: FIPS 140-2(2001-10-10) Monobit: 634
+> rngtest: FIPS 140-2(2001-10-10) Poker: 106
+> rngtest: FIPS 140-2(2001-10-10) Runs: 43
+> rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> rngtest: input channel speed: (min=3D2.638; avg=3D139.351; max=3D9765625.=
+000)Kibits/s
+> rngtest: FIPS tests speed: (min=3D21.169; avg=3D36.158; max=3D68.610)Mibi=
+ts/s
+> rngtest: Program run time: 148109761 microseconds
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> That's almost twice as many failures as successes ...
 
-Mark.
+That's bad news, and apparently different from Aurelien's initial
+testing of the driver.
 
-> ---
->  arch/arm64/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 79a656a62cbc..cf1781cdc062 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -211,8 +211,8 @@ config ARM64
->  	select HAVE_FTRACE_MCOUNT_RECORD
->  	select HAVE_FUNCTION_TRACER
->  	select HAVE_FUNCTION_ERROR_INJECTION
-> -	select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
->  	select HAVE_FUNCTION_GRAPH_TRACER
-> +	select HAVE_FUNCTION_GRAPH_RETVAL
->  	select HAVE_GCC_PLUGINS
->  	select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
->  		HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
-> -- 
-> 2.30.2
-> 
+Can you try if the result is also that bad when using his version of
+the driver:
+
+https://patchwork.kernel.org/project/linux-arm-kernel/patch/20221128184718.=
+1963353-3-aurelien@aurel32.net/
+
+If so, we can try to increase RK_RNG_SAMPLE_CNT, and we may need
+different values depending on the SoC...
+
+--tknJYtWE5EdE/uFK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABEIAB0WIQQ8WXOkSQLJP/KOu5qX7zeyq+FyywUCZpZ1PgAKCRCX7zeyq+Fy
+y7a0AQCE/4d3YLgHabbloqz9iyKoj0GdIFZwjHK3KL4968XEDQD/ajA3gjz4QmH0
+pQJAwVHNMGK6A9q8yQ6Rq+ZWpqvwmLM=
+=3OSJ
+-----END PGP SIGNATURE-----
+
+--tknJYtWE5EdE/uFK--
 
