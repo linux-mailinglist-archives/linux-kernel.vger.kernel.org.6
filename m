@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-253286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E99931F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:02:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69811931F16
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08251C20E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:02:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B032EB216D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E48D2FA;
-	Tue, 16 Jul 2024 03:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="pNhi+IHp"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9F8D26A;
+	Tue, 16 Jul 2024 03:03:39 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DB13224;
-	Tue, 16 Jul 2024 03:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AA2101D4;
+	Tue, 16 Jul 2024 03:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721098948; cv=none; b=oMt0Og14ZRjiVSr/RTn2e5xKIzf+7q8hXhowj0alcuKoK6zLikDzl25gY1TbmEF02UQfBxm5bPaZpkeSEeED9X6TWkLu3+0P88MaIDkttplY2JCSPrzKiHHy1tw6lUvqpx6OokdWxSiaF+92HAF/8RDGQ+gSD6z9yXjaBcKGrrc=
+	t=1721099018; cv=none; b=VhsB9rk+h+PAA9gxQRtvwEiofJVphx+/jBfMuItTXB/cATU3/Vuvt99BfILfZcO1QXBdiSoDLA3tJ22viDLumY5hM+cLEatY2fmM9AoFt2p2ok3J9mWChY7AbNZ5d+TCO0/0bvGtPxPe+cPGjB9fc16p5fHW3macmCg66Fnq8C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721098948; c=relaxed/simple;
-	bh=3pNgEHFGTvAI+GEAp/ruHV8Mn3DiUl+0KhvdRdpKuHA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PhrH+S1/Uv2XPSwvJrlJ630zuLrtNtK+bJl7wrgdj0oUE2IhAuKAa+zvdN01eMf8DlSxQ4oH6gdOKrLp5p7DzViAcUHdywYGOcLfxBV9l1yNTrji07SOn52/n13TN9LXiHrNMsX1ebv7VgZ5KnK68XKkWydCx/waqkIYQ+REwP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=pNhi+IHp; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46G31oNQ2366112, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1721098910; bh=3pNgEHFGTvAI+GEAp/ruHV8Mn3DiUl+0KhvdRdpKuHA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=pNhi+IHp/VrDUh43JMginECavVYk5Y9kug/oftPBkkZwa7k56oHsMbTU9o2e3qfne
-	 YdvBlQMqNetoj64w8EbvuggddtIT0hquVbyvmLNsGAUK421/l3K3Hfz4jSjx2g8Dvk
-	 tgLG3U6bw+8KXNih4Jsn6XDQ+Hr1X5rbphkxIgZw1lf1mBkHhOFPbDUwBAzbu26u43
-	 p33oECdGjcoeLe06JYVBtCIwYrO7JDUg3McqUbUOhyd6qfglXiLcoyiGgvi1Xs0tTE
-	 uxKasxZZl2vYYUpTRvFLFg2IT6dyZ6eBWmw7qXKQsAHGzHtZyadf2Nf20j1w3Ac5u3
-	 njEj4Y/Ygx3vg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46G31oNQ2366112
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Jul 2024 11:01:50 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 16 Jul 2024 11:01:50 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 16 Jul 2024 11:01:49 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Tue, 16 Jul 2024 11:01:49 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "andrew@lunn.ch"
-	<andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        "rkannoth@marvell.com" <rkannoth@marvell.com>,
-        "jdamato@fastly.com" <jdamato@fastly.com>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v24 00/13] Add Realtek automotive PCIe driver
-Thread-Topic: [PATCH net-next v24 00/13] Add Realtek automotive PCIe driver
-Thread-Index: AQHa1oZMG7/rZMIDUEmvFL30FgTtirH3QEEAgAFqSWA=
-Date: Tue, 16 Jul 2024 03:01:49 +0000
-Message-ID: <91a34dd8e23843459ccaa7f48171caf9@realtek.com>
-References: <20240715071158.110384-1-justinlai0215@realtek.com>
- <20240715062006.7d640a30@kernel.org>
-In-Reply-To: <20240715062006.7d640a30@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721099018; c=relaxed/simple;
+	bh=Qpb/xQXuIOKgJiuFgZVFJH4zCl5bOj+M3rTyJeLsIxw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ugrvQLxWUXzoXyXrGXqt8Pag/4F7jr7XHAzQEIbNRavlGIOOv8mLipBpB89EKbAaSLtuqDYbojr2dWOrlTtD3YO38SGK1sf40lAPuBV1ddgf/GsIwb1GMyFqU9kpK4c/q+3G9eKiUEj+iggbxFr/A6rJc3eQUBvp3ky1Sw8alhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACHj+f54pVmJS+NAw--.51704S2;
+	Tue, 16 Jul 2024 11:03:22 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: alexandre.belloni@bootlin.com,
+	ladis@linux-mips.org,
+	tony@atomide.com
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] rtc: twl: convert comma to semicolon
+Date: Tue, 16 Jul 2024 11:02:52 +0800
+Message-Id: <20240716030252.400340-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHj+f54pVmJS+NAw--.51704S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF18Ww1xKr1xur4xXrb_yoWfAFg_Cw
+	1YqF4xJ3WkJr1qy3W8Aw45u34jyayjgF1kZr1jgasxA3y2qr18ZasFvrWDAryfXw48GF93
+	JwnrXrWkuFW7WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK
+	6r48MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjoKZJUUUU
+	U==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-> On Mon, 15 Jul 2024 15:11:45 +0800 Justin Lai wrote:
-> > This series includes adding realtek automotive ethernet driver and
-> > adding rtase ethernet driver entry in MAINTAINERS file.
-> >
-> > This ethernet device driver for the PCIe interface of Realtek
-> > Automotive Ethernet Switch,applicable to RTL9054, RTL9068, RTL9072,
-> > RTL9075, RTL9068, RTL9071.
->=20
-> Sorry, net-next is closed already for v6.11:
->=20
-> https://lore.kernel.org/all/20240714204612.738afb58@kernel.org/
+Replace a comma between expression statements by a semicolon.
 
-Hi Jakub,
+Fixes: 7130856f5605 ("rtc: twl: add NVRAM support")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/rtc/rtc-twl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thank you for providing this information. I will repost my patch when
-net-next reopens next time.
+diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
+index 2cfacdd37e09..4e24c12004f1 100644
+--- a/drivers/rtc/rtc-twl.c
++++ b/drivers/rtc/rtc-twl.c
+@@ -591,8 +591,8 @@ static int twl_rtc_probe(struct platform_device *pdev)
+ 	memset(&nvmem_cfg, 0, sizeof(nvmem_cfg));
+ 	nvmem_cfg.name = "twl-secured-";
+ 	nvmem_cfg.type = NVMEM_TYPE_BATTERY_BACKED;
+-	nvmem_cfg.reg_read = twl_nvram_read,
+-	nvmem_cfg.reg_write = twl_nvram_write,
++	nvmem_cfg.reg_read = twl_nvram_read;
++	nvmem_cfg.reg_write = twl_nvram_write;
+ 	nvmem_cfg.word_size = 1;
+ 	nvmem_cfg.stride = 1;
+ 	if (twl_class_is_4030()) {
+-- 
+2.25.1
 
-Thanks
-Justin
 
