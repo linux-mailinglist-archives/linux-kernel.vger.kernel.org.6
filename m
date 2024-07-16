@@ -1,235 +1,232 @@
-Return-Path: <linux-kernel+bounces-253320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FEC931F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F7F931F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F9028208F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA1A282067
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283CA15E9B;
-	Tue, 16 Jul 2024 03:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0376914265;
+	Tue, 16 Jul 2024 03:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="d2VSHAC7"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2063.outbound.protection.outlook.com [40.107.117.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HkrwAQGN"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2C51078B;
-	Tue, 16 Jul 2024 03:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721101696; cv=fail; b=bgMkaYBm3dAdn99JMJ3rTgaS2DRHG7RbEfh4DVQVK+pu7jK5HP7Apx9zXJGdB/PX8iVaj45D1fX5SH4bsTPx942byHpp07pkCwS3hK1YNzYZ+abf2P7ukDISmzR5u7wnFDP3T2LnBW8rPUAqs3nA8GZMKyk0yJYEpe7qD2c+XaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721101696; c=relaxed/simple;
-	bh=XjzLqt82OLWQkyy8BPFxI+pFAs44OUZ6amaqX5m/SQA=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=frrmChPe256IUF/A6w0lH9JbbeaMFa5wNFZDoUN2Edss06K9MxyLPk93+ODw5AtkRgGEMj3evEZaBVQDdwX6byskVXNMlA8FYJzkB9EemiyyBY/E1eG0N/HBkezQGTdBCPdham5mEpG9nVSu8kWcWjcvYQKCEx6RaBveVDcBmwc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=d2VSHAC7; arc=fail smtp.client-ip=40.107.117.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j66ubbG6qGCzoVdKh5CSID/VyFe3Mnz586fjmFMPmY16lyC000kpsDcFFCP0XnAvHCjqoMZnUXQWOWyYWmEY6JN9cMrYuRAMnaLVdm8DvEz6sM3gO4d4pt9XlipxIgR4fKvYVc3uBuXr/kPh5rgJVYlZ3WaLNAeoNdOv3dfNK/bW0kjFODjCqBtZImCiQTYKtIObdXhY9Y+Wut36rmcaW9/QiZPsxk8MOByImx8J7Mu/oxKuv+3wJVtdhJ5UVtEJYEUPg9kAivJwd2lPjzP9z+06MdBTVd22x3tUa6i1YzgRittTJosOc/EhxkDEPodOKuWwaSBRKkEcm64jEs4saQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vuF0DTorf6q8rtUS7P4kNlMdnHURJEbh4VzjYpnWsT4=;
- b=wvUQeH0IlivLnj4MfSG9dAZYhlQu0fDsLzmFOvIkDeB3nmCc1qhBG74IN2NRd7pRw581u97hHCUV7F1apAl9yeSTtknqVMG1LlZVGullbf+Mn5mO3TaKiekZWmuoVcMRd2MNWyBSqH0/1kXGfyRnKPDZmauv9AmgVlAhcsnodGeLElinFSt0vq044ylzRFR7r+BHJQhtRDwZpZxUPsT5bmHfiDNXtIEBsheoWnTtnpTOQiUUNzF1nfe0CP2X2AOCYgiUZmBzm+RkQuTfbuy7tVe+FdgheF8q4qlvFPpn83sLex71oa8vuQ8P19plRaoqdV6iX9OTdSwIZQsN594j4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vuF0DTorf6q8rtUS7P4kNlMdnHURJEbh4VzjYpnWsT4=;
- b=d2VSHAC70W2onjSf8OHL0z3bUYq0rtDKhqrleq+uXKI2IwY8QiYENjiwcXEoEmKFr9VPznup9QxB7ojyBObUZI9laaO3k3XX1bD1DQfkbBpQJ3dIbZxuUPvdVIpnHmAMh26WuywzFAGSceld9DU1IzsJruK9LBkQ0SE2elfhqzShMRNDK0Hso15wui4IB+dvBnzRoc1FiLx3c6zbCG1bYbYynNj2FrJo2MZMVHguYY/jicAijgMwhFZjcTLRGC8XLB0i1KuW1KyxiJ30372W1JyD3B+jDnuZnOFBdUgLNBWy1Q635E6uhkPx4IrnCR55nzE9CL2aAF3UKQ/0lvqO8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by SEZPR06MB5365.apcprd06.prod.outlook.com (2603:1096:101:7d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.27; Tue, 16 Jul
- 2024 03:48:10 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 03:48:06 +0000
-Message-ID: <37053ba7-68bb-4afc-88cd-8ceac30e2f85@vivo.com>
-Date: Tue, 16 Jul 2024 11:48:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>
-References: <20240715091125.36381-1-yang.yang@vivo.com>
- <263282cd-dadc-43f7-be8f-892248bc3318@acm.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-From: YangYang <yang.yang@vivo.com>
-In-Reply-To: <263282cd-dadc-43f7-be8f-892248bc3318@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCPR01CA0057.jpnprd01.prod.outlook.com
- (2603:1096:405:2::21) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4113F17556;
+	Tue, 16 Jul 2024 03:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721101815; cv=none; b=KjuvHqmz+4l/TJDnONnGcZA0eLJoGyJL+HtqAAvarZHAqAeTZOOfRBmQd6U6s1Mnw7NVAmR/le2nam/GgLh1TnvQ8QSLAT7KqRs9WTbXWeY3V2k24289moaPYA0C9fPxQws4Opynna6x8egT4ybbVLAoQmsH+we1hI+vUnz+8eA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721101815; c=relaxed/simple;
+	bh=3uwgV1BPGOp5LI11pjXTSlHn5AJ0MqKK2/hNhZQnv0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kveOF4l0dfkKAcS+FOL01Jee47ayxkrWDXAZi0ZErrjIwq+3fL9M5IJIaisQt/gwOGjRWS/W2T9kTClrDN7KKArW5CBFW4EyVMi9Co7ql8xcBjIg3r0NCUl0Q7hV+OdYcuoWGzrejCfsObfiV9M0JCNNB+mm28IOCU1wLctBUWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HkrwAQGN; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so31069021fa.1;
+        Mon, 15 Jul 2024 20:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721101811; x=1721706611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yivlLehWeWkGzD/Vz1kNg6VHWOFzQFVk0AWHMYW4nk4=;
+        b=HkrwAQGNKHOubh1AZe9BqkSLT7aKEUv2RDO3hHwM8QVR1AYpcBbhCyb2T+KpSdWJKf
+         mzcx/1d8ZO6Y8v0sXmU4VfkaFx61LfYawO0WW9IWOwDob6IHxrC2VHFRlPeqLFGyYept
+         DlnpFX8mHnVA+/rbC17Aax5dNm7JfWSEroQlOSOfzHj13mg7jreixsiE123Wta7xJsCC
+         J06kBOp1VKukXB+v3VBwxewo8lFEmOip6qaB2nOVAGNlY55wQvtJGR0z6XpR29HFKoPd
+         lzGT7gmYU5tPao0hipx9md/YJFGgAC1bbABRnmb3/t3Wv/djtQVLXtB2wzWXZ1XNwVl9
+         FwSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721101811; x=1721706611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yivlLehWeWkGzD/Vz1kNg6VHWOFzQFVk0AWHMYW4nk4=;
+        b=AElNdqU127GqteEPTJYE3+vatdW3eZQj7dmd/8jZtI/zDKp7z/fKo1mF1I7MMBnkz2
+         UOQoTWrEmjrh84Scx/umVb0N3CTmm4nHYIMT8ZmG10bvtKlZouQlE5EmjbyQU5cwEL4x
+         paDQmh5IyBXqm67IeDMjgA+HBhoGOoh7Vse/XgvHMRaHygu9bTecPvRa6RpfOoYb5J8u
+         iIwnPbYfSKf+i3g2HawPhyDT5A7Jv+wgPbWI0WvM7S5+JxBeCpRQqOiB2sanNBqpq3Wa
+         vBJVc/TwpAeHwpmOsas8C3jSIv3G4n1ylPZFqzfmk1KjujVGch0HTZ1JLSmJVVdM5sys
+         qYjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwxHbwyW94xrNq9TQoaUOz1gVVjuXs8gYy0I6JSJjl5qnkcu8A0QQBWQh1Gf1Hd9E2bzQB5cdQLT58zDcRyy7xQa9FiVmczxtZD+Q=
+X-Gm-Message-State: AOJu0YyavQnzPGspReEax0GIl5J7PEHUXS/U4ANIIjX0ZK7uFUH7nXGe
+	NPsdLVmMrTwDkhaaafojMoWon3W0Jo3noTrEOWGx+Fk44PokK7mLwCNgIiSN4KdCROIyeDm4NWp
+	FLUEkE+hM0ZGVKTDR2vSlduPY2g4=
+X-Google-Smtp-Source: AGHT+IEGE4nIBBg5HnJ7jxFNH55nZTExCc7xv8PNRrw/vwzTBcn4E3dcYVEnlRxnCYVqDm6D2tGD78G1wrYPNE4dJzY=
+X-Received: by 2002:a2e:9acd:0:b0:2ee:56b0:38e3 with SMTP id
+ 38308e7fff4ca-2eef4184785mr6570951fa.24.1721101810837; Mon, 15 Jul 2024
+ 20:50:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|SEZPR06MB5365:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb5f29f1-d1d6-4337-1e35-08dca54a19d3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dGtBTHJCNmxDRkZvRE4zMUZZSlk1QVFZMzVjTFVodWhmYTNWLzFIZDBUL09o?=
- =?utf-8?B?R1hwYi9xSkt4QVNvdWpkUk1ydjMyT0Viam9VK1BUSFdKT05jRVZwQ1Yvcy96?=
- =?utf-8?B?VzNXcG95NDZJaTh6ak5FTURnS09XZ1VjbHNiYXhlejhwSk13UitzTjRwTkJr?=
- =?utf-8?B?OCtmQUhyZFB3NG8ybjBRajAxU3NXTmZBQk1pYkdxNmNOZ1JiS3VFUmhzcWdr?=
- =?utf-8?B?eFpUOVZkN0pUTDNRWVVKZVlld1dObXhFUG92ekh0dXcwcTBJZnhPQXV2M3g2?=
- =?utf-8?B?UU9qUFE3MVNFdU5NSGo2eUdTaVdwV2ttUVlxVnBzZ1JuY2p6YnpBVW5FRzZ1?=
- =?utf-8?B?Uzc5cnpQVFl4NFJrOWZrcEU1eEFLTkQyMXZndE9OWGs4bjIvV3UyTzRuRi9C?=
- =?utf-8?B?MTlKdWd5MVVyamNEall3Mkh1RmxzWFlldVM1RmtKSTVDdG1DVERvTnJ0ZDE3?=
- =?utf-8?B?eXJHTWR2ZUF1cGlUb0xRZm9vZ2RMb1hNdElkQlk0M3QwWkpkVUJoRkdWNnhO?=
- =?utf-8?B?UE5ESVhNTU5FU29IMGtRWXVaMUUwR0xORkZiSnF0ZC9ub0pMTmZlY3RPMWZF?=
- =?utf-8?B?VWY0N2hFQ05TZXRmRVk0WHpCTGlpaUFHZU1uT2FxbmhCSXlnbmFZT2MyUFpm?=
- =?utf-8?B?UWxSOUQ3NkgzY3BKcktQNjlhUmlPNGxKaG81Vk5nZjF2L3dPZ2FTb09tZlJI?=
- =?utf-8?B?WXp4R2hBYzdiQXFHSkEwM2ZXNkEyMVhvalM5TEJnYjZKa1BxWUlvQWpUZ1BK?=
- =?utf-8?B?ODJTQUVIbVBjaTcxTHVQRGFudHJHRGZLMk9oVEMwYzZqOWEvWFVJQjRBNGdn?=
- =?utf-8?B?MHFDMEx3L3JTbzFxYzdCMWNBbnpsWHRQS2pFRUdKZ2FkZm9hVDRrRUhIVVRW?=
- =?utf-8?B?aGVvWTBFaEtYL0N3QzdjWlZMeXYyRzBZWUQzRFFScW4rdEF6R3Y3OFJ1OC92?=
- =?utf-8?B?OXVBeXNxdmNnZU44QVpSVE5iMlVLZXlFendHT3duUU1tZHAyNWt5WGpjdU5w?=
- =?utf-8?B?bkN4ZnE4TlhNUWhMRWhVRDkrcEo0WWMreXc3ei9FTlNJdVZ5SndrZDgzaXBF?=
- =?utf-8?B?bDVsSjdLb2tuUXhMUVdRSnV4Y0RsaGJZUzJjcyt0aVJXYTRiTDVDN2lTMFNp?=
- =?utf-8?B?MVhLeGpBMWlJUkJmb25MNEtaWFYvUktjazBwZUt5QjdOWjlRSm5rVWEySXMx?=
- =?utf-8?B?SUdWcXBwK3AwOEprdVNoNzR6RjF0N2F4RjYrb1RTdkthTmxGVkErY2Qvakhs?=
- =?utf-8?B?SGRKVVZ0T3Z4bHhMUEwvYm1qcDM0NkhpemNBRXIrVnpVbVJuYjdHQ25JdDhL?=
- =?utf-8?B?RkdXQWxCUE9RMkt6bFQ5cmhaU2FwdGwrWWI5SDlkL1l2RXRhajEyMDhBWDZJ?=
- =?utf-8?B?RVFVN2VDMzFTMjcyZ3dyUU1zNC95TDdxVzYwek84eDBWY2hhdTl6V1F0NHhy?=
- =?utf-8?B?NnJ0MktKa1NXYXY1Y1JBY3NLaVgvbVcrNzQrckFBY3dFZFdjMzFQcGlYV0JY?=
- =?utf-8?B?QkFDbWRqVVA1WVNsU0ptZ0U3WmJ2SllENGd6NzQwaEtKazAwWmRWN29FTnBZ?=
- =?utf-8?B?TU91czdBTy8zbXZRTXhmN2JncmJQTXV3RnlXSlhZUXJjaXlKWTcvR1gzMUNI?=
- =?utf-8?B?MnNSb3NGNDRETXZXWG5xWHl3N2E5TkRUaWhSQzNpaE43QnM3cVQ2dUd3QkdC?=
- =?utf-8?B?d2JXOUlxNUlYUFhCUEVpT1ZIMmNQREQ2ZG9YRkVLWVVhbGc3TldYVGFhR1I2?=
- =?utf-8?B?TmxmWGJGTmRZWHNrVFF0eW9XY2k1WWl4alhHTlJ6QVFSbWQrcmU0WkxveG0w?=
- =?utf-8?B?L3lybWN2SjNaeEs5YU03UT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RTZKMHZyNk1MVVpOQmhQd1N4WGg0VWhKYXc4Skdna2VkMTVVODdmUzM0ZjNm?=
- =?utf-8?B?ZEdPVzc2dTVwblBLc2dvTEs4R21YUWhMeVJ6bkNTTGNpUzJsY3hSN3F5ZlAz?=
- =?utf-8?B?YWpLR3FOVzl5dUlpL3NXTGVVZE1FbnNsMXlQMTNGQ2p4eGh4U3Z1RWxRZWUz?=
- =?utf-8?B?UTNNUWYrNVpVOXd4MmV4MG44elpMZGdNYXFlQ2JaZWRuMXFjekxsekp2YlBJ?=
- =?utf-8?B?aXQ5TXhyVHM4V1VVMEV5SWNlZzdSYjZtbTdDUmpHcm1FVWlGUWhieTllcnUx?=
- =?utf-8?B?eU15YnorcFBwU0hSNE9WQzV2QktKdzhwNVI3YU02eGlraGI1bi9qcXZmVW9L?=
- =?utf-8?B?cHBubE1sL1llNWxHZzNKREo3cWs3QWQ4QlZsU1RZQVVOditIVm1KeDg2MzNz?=
- =?utf-8?B?UDkybm83MENETG9TeHVjR0NtZ294NUxTdjhvR0FYc0VSa0dRcmYzNVR1TGJD?=
- =?utf-8?B?b2xucEc2RlA4VnpXREVhNjhYL0QwUUY5M25tWjBVdlgyWWlIUWVvMGtUZzFQ?=
- =?utf-8?B?OEd5c3QvWVZWOHI0eW0wWm81S2FwamE0S3RzTUd6TjhtU1pSREdqOVRVQ1FE?=
- =?utf-8?B?cVhpODU2ZDdLUUJjbSsvelZGRzdxaVd6TXc4TmVjREpsZzJ2cjFUZWpnSUtM?=
- =?utf-8?B?MU1GTkJId0ZHSmtxUDZYM245c0MreDd1QURtK2NJc1FrQVRYWmtxOCtPazZF?=
- =?utf-8?B?WjNTNVVWTFhHL0k4ME9kQmNSL2srdUk5MVpTTHErY1Q1aGFOUjNYVzBiM3ZR?=
- =?utf-8?B?bmY4OWpJNUdybXhydlNmRzFITzFMWERNajBzckNTNW1CcTZtNk5OZVQ5emcz?=
- =?utf-8?B?YXd5OCtVeTZ2ZURMWHhlN0YxWVJrN2l5cFBvQnFsSzRnNHl5QTlCK0tSVzUx?=
- =?utf-8?B?SklGL2J6NXpJRzZQalAydytKZnF4S3NqYjB0RWVrUE9qQzd5K21yZmdFR0hT?=
- =?utf-8?B?TXFvZ212NW1namxna2kwWEVTenNrZytaQVdIRHI2a1dsSndPRm04ZXQxVnc4?=
- =?utf-8?B?Z29UU2FSSDVZZysxMVRvOEZlSU1LQmZwSzBDbU9WVU15Z3FqMWxwYTEzdnVw?=
- =?utf-8?B?WHZieHFpWlEwc3J0OEx3WEpueXdGUk52by9KdERWUG9yUURndjgyQm00cUNv?=
- =?utf-8?B?KzJweDljY3MwTDY2dmRKR25LSW8zQW9uOWZpNXd5VnZDbzkxaUR4eUdpaEdK?=
- =?utf-8?B?VEM1T3JuaENCb0xuWDVLNlhrTjNpMUxiZkVEKzZqNFFPVmlMTENUSmxRaFp3?=
- =?utf-8?B?WWEwWnZrTzhxSHc2dVJWL3pJSUo2b0NHTnhkeEFpb3FLRnFhdVZtWHpFdldp?=
- =?utf-8?B?d0hrWEJpNjBIK3dhWnNDelNvN0NURDBmQzFIYVRVZEVXV1VxSW4zWlR2eTRJ?=
- =?utf-8?B?MXo0ZVZBWGhyOW0xRXVhVVNxR3pneVBOUGxrV1N3cm5zUmo2U2p6eVVhb01X?=
- =?utf-8?B?MnFZWWZiV3A2MkUxUnduK3lQU2RqRnB2MHR6TTNvb0FxT2M5SFM2bmNZeW95?=
- =?utf-8?B?T3orYWVJZEptbTZTUnJienl0bjE1Mi85VVlETlBrSENERWhOakFjRzczUHdJ?=
- =?utf-8?B?Vm5VZkxsNW4zVUE5UmFNdWNmQ3JOdGJITXNEbU1EYVJ2RlYvV1hKUEY3REVv?=
- =?utf-8?B?cUorYmgxRTQ3NElITFNuQnlVdDNub2NBWHJDa1M1VjZ6QXR5bFVXQjErcUZr?=
- =?utf-8?B?dHVZL25yeXlBVEFrb1VHajFZS254OHJ4azdHSGo5RkJ0V1lYaHpjY1Npa2Vt?=
- =?utf-8?B?d3VOcTY5WGNEV1hjVGtvSjM0REMrcG5YVWlUQzBKdGx5S1BEWFR6UG1SL1hu?=
- =?utf-8?B?UlJ6MStpMXljMzFlWWpka0xUWGsrVzVpem94RWQ0YXVvalRFWGhrWTlkaGN2?=
- =?utf-8?B?dnJ0VVV4TmFvSVdyb1IzL1VOOWE3SlRpOGw3WVJHMmJFMmdjNHc0UUM2dDhE?=
- =?utf-8?B?ekR2eStINXpnZEhCWlFxR05PUkNBYWxzb2FNQWVXUldET0tnOVUvWmg4b3Bq?=
- =?utf-8?B?TkJkdFNBRFF1dlFidHRKREV6dC9rVFF6Q2Z4YXp6VUZTbm5Mc2ZOblZBTkhI?=
- =?utf-8?B?ZnJSbW1ZRVRKU2dFZnh4VmlDcFljREhMWUtTNzlOMmNHRENhL3Z5UDRtVVpU?=
- =?utf-8?Q?LCPgLPrTCchrsMR0lND1LVN9x?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb5f29f1-d1d6-4337-1e35-08dca54a19d3
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 03:48:06.1536
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1p4GnScQKvGNU/u2clJdKf/oFK49HjSdZbwDMXooAz/BuXi+8tQ981STritzp9D/krRotQFhRoE6PnKBGi3f0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5365
+References: <00000000000098d783061af2f133@google.com> <CAKFNMokFbVm5CBMLUCXoFwL3phAWDZLNhMykOxL+hvGMX8Cq_Q@mail.gmail.com>
+In-Reply-To: <CAKFNMokFbVm5CBMLUCXoFwL3phAWDZLNhMykOxL+hvGMX8Cq_Q@mail.gmail.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Tue, 16 Jul 2024 12:49:54 +0900
+Message-ID: <CAKFNMomks7UdhmCjgC=D+8Ez+meLTUdA7+oCZOPnXq4TH_LoWQ@mail.gmail.com>
+Subject: Re: [syzbot] [nilfs?] KMSAN: uninit-value in nilfs_add_checksums_on_logs
+ (3)
+To: syzbot <syzbot+206133fb2e7b32bba4be@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/16 1:26, Bart Van Assche wrote:
-> On 7/15/24 2:11 AM, Yang Yang wrote:
->> +
->> +    /**
->> +     * @swap_lock: serializes simultaneous updates of ->word and ->cleared
->> +     */
->> +    spinlock_t swap_lock;
->>   } ____cacheline_aligned_in_smp;
-> 
-> Thank you for having updated this comment.
-> 
->> -static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
->> +static inline bool sbitmap_deferred_clear(struct sbitmap_word *map,
->> +        unsigned int depth, unsigned int alloc_hint, bool wrap)
->>   {
->> -    unsigned long mask;
->> +    unsigned long mask, word_mask;
->> +    bool ret = false;
->> -    if (!READ_ONCE(map->cleared))
->> -        return false;
->> +    guard(spinlock_irqsave)(&map->swap_lock);
->> +
->> +    if (!map->cleared) {
->> +        if (depth > 0) {
->> +            word_mask = (~0UL) >> (BITS_PER_LONG - depth);
->> +            /*
->> +             * The current behavior is to always retry after moving
->> +             * ->cleared to word, and we change it to retry in case
->> +             * of any free bits. To avoid an infinite loop, we need
->> +             * to take wrap & alloc_hint into account, otherwise a
->> +             * soft lockup may occur.
->> +             */
->> +            if (!wrap && alloc_hint)
->> +                word_mask &= ~((1UL << alloc_hint) - 1);
->> +
->> +            if ((READ_ONCE(map->word) & word_mask) == word_mask)
->> +                ret = false;
->> +            else
->> +                ret = true;
->> +        }
->> +
->> +        return ret;
->> +    }
-> 
-> Now that guard()() is being used, the local variable 'ret' can be eliminated. The if 
-> (READ_ONCE() ...) statement can be changed into the
-> following: return (READ_ONCE(map->word) & word_mask) != word_mask;
-> and "return ret;" can be changed into "return false;". Additionally,
-> the indentation depth can be reduced by changing "if (depth > 0) {" ...
-> into "if (depth == 0) return false;".
+On Sun, Jun 16, 2024 at 8:03=E2=80=AFAM Ryusuke Konishi wrote:
+>
+> On Sun, Jun 16, 2024 at 4:43=E2=80=AFAM syzbot wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of gi=
+t:/..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12d26ada980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df5d2cbf3363=
+3f507
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D206133fb2e7b3=
+2bba4be
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/d=
+isk-614da38e.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmli=
+nux-614da38e.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115=
+/bzImage-614da38e.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+206133fb2e7b32bba4be@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> > BUG: KMSAN: uninit-value in crc32_body lib/crc32.c:110 [inline]
+> > BUG: KMSAN: uninit-value in crc32_le_generic lib/crc32.c:179 [inline]
+> > BUG: KMSAN: uninit-value in crc32_le_base+0x43c/0xd80 lib/crc32.c:197
+> >  crc32_body lib/crc32.c:110 [inline]
+> >  crc32_le_generic lib/crc32.c:179 [inline]
+> >  crc32_le_base+0x43c/0xd80 lib/crc32.c:197
+> >  nilfs_segbuf_fill_in_data_crc fs/nilfs2/segbuf.c:224 [inline]
+> >  nilfs_add_checksums_on_logs+0xb80/0xe40 fs/nilfs2/segbuf.c:327
+> >  nilfs_segctor_do_construct+0x9876/0xdeb0 fs/nilfs2/segment.c:2078
+> >  nilfs_segctor_construct+0x1eb/0xe30 fs/nilfs2/segment.c:2381
+> >  nilfs_segctor_thread_construct fs/nilfs2/segment.c:2489 [inline]
+> >  nilfs_segctor_thread+0xc50/0x11e0 fs/nilfs2/segment.c:2573
+> >  kthread+0x3e2/0x540 kernel/kthread.c:389
+> >  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> >
+> > Uninit was stored to memory at:
+> >  memcpy_from_iter lib/iov_iter.c:73 [inline]
+> >  iterate_bvec include/linux/iov_iter.h:122 [inline]
+> >  iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
+> >  iterate_and_advance include/linux/iov_iter.h:271 [inline]
+> >  __copy_from_iter lib/iov_iter.c:249 [inline]
+> >  copy_page_from_iter_atomic+0x12b7/0x2ae0 lib/iov_iter.c:481
+> >  generic_perform_write+0x4c1/0xc60 mm/filemap.c:3982
+> >  __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4069
+> >  generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4095
+> >  __kernel_write_iter+0x64d/0xc80 fs/read_write.c:523
+> >  dump_emit_page fs/coredump.c:895 [inline]
+> >  dump_user_range+0x8dc/0xee0 fs/coredump.c:956
+> >  elf_core_dump+0x57c7/0x5ae0 fs/binfmt_elf.c:2083
+> >  do_coredump+0x32d5/0x4920 fs/coredump.c:769
+> >  get_signal+0x267e/0x2d00 kernel/signal.c:2896
+> >  arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
+> >  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+> >  syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
+> >  do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Uninit was created at:
+> >  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
+> >  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
+> >  alloc_pages+0x1bf/0x1e0 mm/mempolicy.c:2335
+> >  dump_user_range+0x4a/0xee0 fs/coredump.c:940
+> >  elf_core_dump+0x57c7/0x5ae0 fs/binfmt_elf.c:2083
+> >  do_coredump+0x32d5/0x4920 fs/coredump.c:769
+> >  get_signal+0x267e/0x2d00 kernel/signal.c:2896
+> >  arch_do_signal_or_restart+0x53/0xcb0 arch/x86/kernel/signal.c:310
+> >  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+> >  syscall_exit_to_user_mode+0x5d/0x160 kernel/entry/common.c:218
+> >  do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > CPU: 0 PID: 5368 Comm: segctord Not tainted 6.9.0-syzkaller-02707-g614d=
+a38e2f7a #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 06/07/2024
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> >
+> >
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> >
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+>
+> Ah, this issue appears to be the same as the following issue where a
+> memory dump generated by elf_core_dump() gets mixed into the
+> filesystem:
+>
+> https://syzkaller.appspot.com/bug?extid=3D47a017c46edb25eff048
+>
+> However, the kernel that syzbot tested had the common fix for this
+> issue, commit 61b258b0d2f6 ("x86: call instrumentation hooks from
+> copy_mc.c") applied.  So the patch may not have fixed the issue.
+>
+> Ryusuke Konishi
 
-This looks much better, I will make these changes in the next version.
+#syz dup: KMSAN: uninit-value in nilfs_add_checksums_on_logs (2)
 
-Thanks.
+After checking again, I found that the fix for this issue, commit
+61b258b0d2f6 ("x86: call instrumentation hooks from copy_mc.c"), had
+not yet been applied to the kernel of commit 614da38e2f7a, for which
+the problem was reported.
 
-> 
-> Otherwise this patch looks good to me.
-> 
-> Thanks,
-> 
-> Bart.
+My initial analysis above was incorrect; this issue overlaps with the
+existing bug that has already been fixed.
 
+Ryusuke Konishi
 
