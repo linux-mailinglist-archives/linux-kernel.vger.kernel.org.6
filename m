@@ -1,144 +1,236 @@
-Return-Path: <linux-kernel+bounces-253968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9602F932963
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88455932964
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557231F21464
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:44:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59551C20B70
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDFC1B013C;
-	Tue, 16 Jul 2024 14:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1ynLfSn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A736419FA72;
+	Tue, 16 Jul 2024 14:32:18 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488C01B0127;
-	Tue, 16 Jul 2024 14:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7275219B3CC
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721140250; cv=none; b=cpVXMbVdnfvSStyAavjL6SahEcCSLpQqyk1obzo/PdrMlE6Dk5fFSlPaNgrCKjPRUS9CbYYxS2+HHZBEYNZQksCRb+YFDIiHWe6KtM2uTTSC4hdIrCCvjfiQurWjxzjApX+/yWpkI69iRk+GuAfcRFSu58cLiuaK4wHzt7k1PBc=
+	t=1721140338; cv=none; b=L80vNXI9GEU/vm4e5J0BTdXh9rS6U4uoOLbSe59GoO0u0O/1LkjatpqljcjABexKk0zxzQCOic978YCnhVI7CCMyVMIlXhU8NP/Pm4vOgzLlcbFO4gNAV294JaM3w0oRRzGOzT1MK0cFxF0XS+bPvGxKJqUv/UTFxnGMg2X2IfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721140250; c=relaxed/simple;
-	bh=JB7FpzoeqtwLJkHES8RfcRvvPze5GkSItXCifJDKpsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jrcw/csIcA1eEfcayOXpFM0OceWiDvqikC4D38PlZY/PNjMLgtATD7J4xK1vp6SkyjXb2DaGzYFbyqGrpyxstze2vgtYVZdbQjsGPcG6YDjS1wntWZLF/FZDBJTV+uX47bPFBpjbT34oPk6AH5w2LUR2oJXbaNj37sU4eGQ1qf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1ynLfSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A24C116B1;
-	Tue, 16 Jul 2024 14:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721140249;
-	bh=JB7FpzoeqtwLJkHES8RfcRvvPze5GkSItXCifJDKpsM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p1ynLfSnecfyRP4hYPkZKcie1Mb3BMaTSD3yaU6JVzSD5Ri7Ocikkp6wFiUkV98uB
-	 xbkVe1mwCcRF1l5fQO4fvboqoA++x5F9X6IsZdqDv7K8r9ANfFw7Q9lGtb3K+dIABC
-	 BHbqyx3KjEtS1ytEn7wWlMOXVgCc/s+sm3U9L2IDm/EGcSorilufvZCfpgtixlus53
-	 O7VI9taVBcl4l1RXg37bMz+XYiPu6SDMoy0qZo7K5O5tSgOGOBaLnzqpfOT7qa2EXh
-	 qaagaBg7KwyoyDoykhI59PUcrBuuGSPPABDfLoEL8ybHOlm+cgKWBF6joby8ZDTHTq
-	 PtCq1dPlwbdGw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 3/3] fs: better handle deep ancestor chains in is_subdir()
-Date: Tue, 16 Jul 2024 10:30:42 -0400
-Message-ID: <20240716143043.2714553-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716143043.2714553-1-sashal@kernel.org>
-References: <20240716143043.2714553-1-sashal@kernel.org>
+	s=arc-20240116; t=1721140338; c=relaxed/simple;
+	bh=xRGOAZ9uIrqSqP9CsHFuQU34BbTsNnWVeq2uNzb7NGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tZfJNSHtROFW/h++NEBuUdTsZHkx0ogPO2Hz4S7bmwXo1z7Vmgkv0qgqjWBYuOQokuQyjhO7Taj7UvKO6GNJuXop9YlhymkQQ5/81l83h7J+eDzkotryfBasXIivRwBmniPwTVVcMXwSkzMDpNEGBnJxhOuYkq/Q9T3GDM9//DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com; spf=pass smtp.mailfrom=nucleisys.com; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nucleisys.com
+X-QQ-mid: bizesmtpsz13t1721140261tj58ko
+X-QQ-Originating-IP: NBZFp+AS+UqidTDZtusW2XpCktXKr11YqKhgYZc1MTw=
+Received: from [192.168.0.105] ( [113.57.28.136])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 16 Jul 2024 22:30:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 873248409974035214
+Message-ID: <C3FA50DD88E41384+a8e54b7c-d4ec-45c3-9fea-bedc44a4a6f6@nucleisys.com>
+Date: Tue, 16 Jul 2024 22:30:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.317
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Only flush the mm icache when setting an exec pte
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: aou <aou@eecs.berkeley.edu>, linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>, palmer <palmer@dabbelt.com>,
+ "paul.walmsley" <paul.walmsley@sifive.com>, =?UTF-8?B?5pa55Y2O5ZCv?=
+ <hqfang@nucleisys.com>
+References: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
+ <CAHVXubhkrDv3Fx1KH-jjjWjo-LGKBMabvafAPsDZeSpGMEt-gg@mail.gmail.com>
+ <592DAA3973EEA52F+9b62c73a-cc43-498c-8afb-da2d43e56b5c@nucleisys.com>
+ <CAHVXubhy6tfAEfTF=fsZ90UDc+_vnWurWpK4xDqciwptzuvg6A@mail.gmail.com>
+From: guibing <guibing@nucleisys.com>
+In-Reply-To: <CAHVXubhy6tfAEfTF=fsZ90UDc+_vnWurWpK4xDqciwptzuvg6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:nucleisys.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-From: Christian Brauner <brauner@kernel.org>
+Hi Alex，
 
-[ Upstream commit 391b59b045004d5b985d033263ccba3e941a7740 ]
+ From RISC-V Unprivileged ISA Spec，or zifencei.adoc :
 
-Jan reported that 'cd ..' may take a long time in deep directory
-hierarchies under a bind-mount. If concurrent renames happen it is
-possible to livelock in is_subdir() because it will keep retrying.
+FENCE.I does not ensure that other RISC-V harts’ instruction fetches 
+will observe the local hart’s stores in a multiprocessor system.
 
-Change is_subdir() from simply retrying over and over to retry once and
-then acquire the rename lock to handle deep ancestor chains better. The
-list of alternatives to this approach were less then pleasant. Change
-the scope of rcu lock to cover the whole walk while at it.
+thanks.
 
-A big thanks to Jan and Linus. Both Jan and Linus had proposed
-effectively the same thing just that one version ended up being slightly
-more elegant.
-
-Reported-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/dcache.c | 31 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 4d96eb591f5d9..93671238abce1 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3003,28 +3003,25 @@ EXPORT_SYMBOL(d_splice_alias);
-   
- bool is_subdir(struct dentry *new_dentry, struct dentry *old_dentry)
- {
--	bool result;
-+	bool subdir;
- 	unsigned seq;
- 
- 	if (new_dentry == old_dentry)
- 		return true;
- 
--	do {
--		/* for restarting inner loop in case of seq retry */
--		seq = read_seqbegin(&rename_lock);
--		/*
--		 * Need rcu_readlock to protect against the d_parent trashing
--		 * due to d_move
--		 */
--		rcu_read_lock();
--		if (d_ancestor(old_dentry, new_dentry))
--			result = true;
--		else
--			result = false;
--		rcu_read_unlock();
--	} while (read_seqretry(&rename_lock, seq));
--
--	return result;
-+	/* Access d_parent under rcu as d_move() may change it. */
-+	rcu_read_lock();
-+	seq = read_seqbegin(&rename_lock);
-+	subdir = d_ancestor(old_dentry, new_dentry);
-+	 /* Try lockless once... */
-+	if (read_seqretry(&rename_lock, seq)) {
-+		/* ...else acquire lock for progress even on deep chains. */
-+		read_seqlock_excl(&rename_lock);
-+		subdir = d_ancestor(old_dentry, new_dentry);
-+		read_sequnlock_excl(&rename_lock);
-+	}
-+	rcu_read_unlock();
-+	return subdir;
- }
- EXPORT_SYMBOL(is_subdir);
- 
--- 
-2.43.0
+在 2024/7/16 20:51, Alexandre Ghiti 写道:
+> Hi Guibing,
+>
+> First, sorry for the delay, I was out last week.
+>
+> On Wed, Jun 26, 2024 at 5:59 AM guibing <guibing@nucleisys.com> wrote:
+>> Hi Alex,
+>>
+>> Sorry, yesterday I clicked the mouse by mistake to sent an empty email.
+>>
+>>> Is it a multithreaded application? You mean that if the application
+>>> always runs on core1/2/3, you get an illegal instruction, but that
+>>> does not happen when run on core0?
+>> test_printf is not a multithread application, just output "hello world"
+>> strings.
+>>
+>> #include <stdio.h>
+>>
+>> int main()
+>> {
+>>           printf("hello world!\n");
+>>           return 0;
+>> }
+>>
+>>   From testing results, illegal instruction always occur on core1/2/3, no
+>> core0.
+>>
+>>> Did you check if the instruction in badaddr is different from the
+>>> expected instruction? The image you provided is not available here,
+>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
+>>> that correct?
+>> this badaddr is same with the expected instruction, but i meet the
+>> different.
+>>
+>> /mnt # ./test_printf
+>> [   76.393222] test_printf[130]: unhandled signal 4 code 0x1 at
+>> 0x0000000000019c82 in test_printf[10000+68000]
+>> [   76.400427] CPU: 1 PID: 130 Comm: test_printf Not tainted 6.1.15 #6
+>> [   76.406797] Hardware name: asrmicro,xlcpu-evb (DT)
+>> [   76.411665] epc : 0000000000019c82 ra : 000000000001ca36 sp :
+>> 0000003fc5969b00
+>> [   76.418941]  gp : 000000000007e508 tp : 0000003f8faec780 t0 :
+>> 000000000000003d
+>> [   76.426244]  t1 : 0000002abe28cecc t2 : 0000002abe369d63 s0 :
+>> 0000003fc5969d98
+>> [   76.433524]  s1 : 0000000000082ab8 a0 : 0000003fc5969b00 a1 :
+>> 0000000000000000
+>> [   76.440835]  a2 : 00000000000001a0 a3 : 0000000001010101 a4 :
+>> 0101010101010101
+>> [   76.448108]  a5 : 0000003fc5969b00 a6 : 0000000000000040 a7 :
+>> 00000000000000dd
+>> [   76.455432]  s2 : 0000000000000001 s3 : 0000003fc5969d38 s4 :
+>> 0000000000082a70
+>> [   76.462695]  s5 : 0000000000000000 s6 : 0000000000010758 s7 :
+>> 0000002abe371648
+>> [   76.469995]  s8 : 0000000000000000 s9 : 0000000000000000 s10:
+>> 0000002abe371670
+>> [   76.477275]  s11: 0000000000000001 t3 : 0000003f8fb954cc t4 :
+>> 0000000000000000
+>> [   76.484576]  t5 : 00000000000003ff t6 : 0000000000000040
+>> [   76.489948] status: 0000000200004020 badaddr: 00000000ffffffff cause:
+>> 0000000000000002
+>> Illegal instruction
+>>
+>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
+>>>
+>> core0 is responsible for reading data from sd cards to dcache and ddr.
+>>
+>> before core1/2/3 continue to execute the application, it only execute
+>> fence.i instruction.
+>>
+>> in our riscv hardware , fence.i just flush dcache and invalidate icache
+>> for local core.
+>>
+>> in this case, how core1/2/3 can get application instruction data from
+>> the core0 dcache ?
+> I don't understand this point ^: you mean that core1/2/3 can't access
+> the data in the core0 dcache? And they go straight to main memory? To
+> me, the cores dcaches should be coherent and then a fence.i on any
+> core would sync the icache with the content of any dcache and that
+> should not happen.
+>
+> To me, the patch is correct, but maybe I did not fully understand your
+> issue. Don't hesitate to give more details.
+>
+> Thanks,
+>
+> Alex
+>
+>> i try to send remote fence.i to core0, iilegal instruction cannot
+>> reproduced, it can work well.
+>>
+>> @@ -66,8 +66,11 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+>>                    * messages are sent we still need to order this hart's
+>> writes
+>>                    * with flush_icache_deferred().
+>>                    */
+>> +              sbi_remote_fence_i(cpumask_of(0));
+>>                   smp_mb();
+>>           } else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
+>>                   sbi_remote_fence_i(&others);
+>>           } else {
+>>
+>>
+>> thank you for your reply! ：）
+>>
+>>
+>> 在 2024/6/25 19:45, Alexandre Ghiti 写道:
+>>> Hi Guibing,
+>>>
+>>> You sent your email in html, so it got rejected by the ML, make sure
+>>> you reply in plain text mode :)
+>>>
+>>> On Tue, Jun 25, 2024 at 10:45 AM 桂兵 <guibing@nucleisys.com> wrote:
+>>>> Hi alex，
+>>>>
+>>>> We have encountered a problem related to this patch and would like to ask for your advice, thank you in advance!
+>>>>
+>>>> Problem description:
+>>>> When we use the v6.9 kernel, there is an illegal instruction problem when executing a statically linked application on an SD card, and this problem is not reproduced in v6.6/v6.1 kernel.
+>>>> SD card driver uses PIO mode, and the SD card interrupt is bound to core0. If the system schedule the apllication to execute on core1, core2, or core3, it will report an illegal instruction, and if scheduled to execute on core0, it will be executed successfully.
+>>> Is it a multithreaded application? You mean that if the application
+>>> always runs on core1/2/3, you get an illegal instruction, but that
+>>> does not happen when run on core0?
+>>>
+>>>> We track the source code, flush_icache_pte function patch leads to this issue on our riscv hardware.
+>>>> If you merge this patch into the v6.1 kernel, the same problem can be reproduced in v6.1 kernel.
+>>>> If using flush_icache_all() not flush_icache_mm in v6.9 kernel ; this issue can not be reproduced in v6.9 kernel.
+>>>>
+>>>> +void flush_icache_pte(struct mm_struct *mm, pte_t pte)
+>>>>    {
+>>>>    struct folio *folio = page_folio(pte_page(pte));
+>>>>
+>>>>    if (!test_bit(PG_dcache_clean, &folio->flags)) {
+>>>> -           flush_icache_all();
+>>>> +           flush_icache_mm(mm, false);
+>>>>    set_bit(PG_dcache_clean, &folio->flags);
+>>>>    }
+>>>>    }
+>>> Did you check if the instruction in badaddr is different from the
+>>> expected instruction? The image you provided is not available here,
+>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
+>>> that correct?
+>>>
+>>>> Our riscv cpu IP supports multi-core L1 dcache synchronization, but does not support multi-core L1 icache synchronization. iCache synchronization requires software maintenance.
+>>>> Does the RISCV architecture kernel in future have mandatory requirements for multi-core iCache hardware consistency?
+>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
+>>>
+>>>> Thank you for your reply!
+>>>>
+>>>>
+>>>> Link：[PATCH] riscv: Only flush the mm icache when setting an exec pte - Alexandre Ghiti (kernel.org)
+>>>>
+>>>> ________________________________
+>>>> 发自我的企业微信
+>>>>
+>>>>
+>>> Thanks for the report,
+>>>
+>>> Alex
+>>>
 
 
