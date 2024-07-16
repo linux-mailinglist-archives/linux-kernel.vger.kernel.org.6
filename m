@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-254149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC6D932F84
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A44F932F59
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EBE1F20627
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9471C224A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505F61A00FD;
-	Tue, 16 Jul 2024 17:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3CD1A01A1;
+	Tue, 16 Jul 2024 17:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BWM6OdOD"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QQQ+S7I2"
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B8F19FA94;
-	Tue, 16 Jul 2024 17:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E1D19FA6B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721152481; cv=none; b=KfDy1fymICTROi7G8SUY4Gv8eQbg7s2qyM0pREflzFvbRbOwbKO/jZc7lNB9PDWWWqF81N/2hdEwCk2pVYwnpQnZifSbhfYu1AR2SQ6nW8UVR9w7uu/e+lD46xePRVjTrWF8eZ/0t9an2SdrUAxKzv6NJOZB0XH0QN/zh5moJHs=
+	t=1721152099; cv=none; b=XQdvYSNTNqVRN76HGQA6gUxCQDJsIo0a7YqwHsxOZgwI22IHeGXE9gTKNr/wCmElDHOj/8xnKtIyTOnq+rQoHNosOXhM0FOVOVFa6+CDe3WpQD2u9hG+7n97dS2AzO7YoFAZy2ZUVVKhp0ko5Y0TzqJWiHoVb6XKN2osbxZTlu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721152481; c=relaxed/simple;
-	bh=prgjPxYij3SHyZHpzob8UsPYte+J2xXXXesa79k4KJI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mYg9toVTuqmp4dDehahAlDES8Hr6N7R5Hif1js5fAyHzSKJPmel8DbS9v8yt+B9ze7IyrlgfETNalX/fKawNxA9Nz/43RzWDZVgjRgfRxEaFwZP3NT4G/tPI5VpuWUfvIkfls+lCJpwQnfqEIrdRxVqhufCZuDxOUV/ZanKI1Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BWM6OdOD; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id D3594C0000E4;
-	Tue, 16 Jul 2024 10:47:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com D3594C0000E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1721152049;
-	bh=prgjPxYij3SHyZHpzob8UsPYte+J2xXXXesa79k4KJI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BWM6OdODQlUfSYOS6Sw8LT+MMM3a7TcFGdn3NHt2X6T9ZJVEz2K/BSvr2p7NWtP2T
-	 dIdevqG9cT9+9U1q+TntRym7i8YSKa1R8D3zufLa5BxAl2S0AmwO1gLHnckFyoXAdp
-	 tzXFxoakoZkUk3Rpra/Gl3m9rPbSEnB+Gu73AsyQ=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 5E6D618041CAC4;
-	Tue, 16 Jul 2024 10:47:27 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Florian Klink <flokli@flokli.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] ARM: dts: bcm283x: Fix hdmi hpd-gpio pin
-Date: Tue, 16 Jul 2024 10:47:29 -0700
-Message-Id: <20240716174729.197020-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240715230311.685641-1-flokli@flokli.de>
-References: <20240715230311.685641-1-flokli@flokli.de>
+	s=arc-20240116; t=1721152099; c=relaxed/simple;
+	bh=NiVYgJ9EX5zgNqw3xIpFnIScG6qQ7oONoRUqdjLrXPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTmjC5UpmM61/49fnp1R6zdJoSu/Tg/FWNdkNgKZ+JSQH6T1/jk8GQVwm0Wz3Q0WEsGERnEfdRmQiW7YGHwLQvmhFFeOw+oNSnhe/Uqwgz9sRbk5y/Wgn/QT2J5nr8w6CtTMHuDinIRJq+ICxu6/47siu31nVzKRLx94XRIT0f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QQQ+S7I2; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNmkc3K3RzncK;
+	Tue, 16 Jul 2024 19:48:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721152088;
+	bh=LWblpPfF9wNYIYfX15oQl6tTRp3rZAKkmPWjrsQep60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QQQ+S7I2Ua4od8sW/6D1JC9ivlgTH1sZMkaw8jYNQtPma8Ip6DbG40h1NpdimI7Xc
+	 F/k0WwtFrl7pTIGzv0AQntKmgMTJmCu5m09toaI5LhDwng++5GebvyVFtv5GfZB3yN
+	 VtdK+y0E4iqnH4BuYwNCr38mLDQw/yAs+Enhz0wE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNmkS378YzxCQ;
+	Tue, 16 Jul 2024 19:48:00 +0200 (CEST)
+Date: Tue, 16 Jul 2024 19:47:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Boris Lukashev <blukashev@sempervictus.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
+Message-ID: <20240716.shaliZ2chohj@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
+ <20240709.AhJ7oTh1biej@digikod.net>
+ <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
+ <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
+ <E608EDB8-72E8-4791-AC9B-8FF9AC753FBE@sempervictus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <E608EDB8-72E8-4791-AC9B-8FF9AC753FBE@sempervictus.com>
+X-Infomaniak-Routing: alpha
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+(adding back other people in Cc)
 
-On Tue, 16 Jul 2024 02:03:11 +0300, Florian Klink <flokli@flokli.de> wrote:
-> HDMI_HPD_N_1V8 is connected to GPIO pin 0, not 1.
-> 
-> This fixes HDMI hotplug/output detection.
-> 
-> See https://datasheets.raspberrypi.com/cm/cm3-schematics.pdf
-> 
-> Signed-off-by: Florian Klink <flokli@flokli.de>
-> ---
+On Tue, Jul 16, 2024 at 01:29:43PM -0400, Boris Lukashev wrote:
+> Wouldn't count those shell chickens - awk alone is enough and we can
+> use ssh and openssl clients (all in metasploit public code). As one of
+> the people who makes novel shell types, I can assure you that this
+> effort is only going to slow skiddies and only until the rest of us
+> publish mitigations for this mitigation :)
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree/fixes, thanks!
---
-Florian
+Security is not binary. :)
+
+Not all Linux systems are equals. Some hardened systems need this kind
+of feature and they can get guarantees because they fully control and
+trust their executable binaries (e.g. CLIP OS, chromeOS) or they
+properly sandbox them.  See context in the cover letter.
+
+awk is a script interpreter that should be patched too, like other Linux
+tools.
+
+> 
+> -Boris (RageLtMan)
+> 
+> On July 16, 2024 12:12:49 PM EDT, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> >On Tue, 2024-07-16 at 17:57 +0200, Roberto Sassu wrote:
+> >> But the Clip OS 4 patch does not cover the redirection case:
+> >> 
+> >> # ./bash < /root/test.sh
+> >> Hello World
+> >> 
+> >> Do you have a more recent patch for that?
+> >
+> >How far down the rabbit hole do you want to go?  You can't forbid a
+> >shell from executing commands from stdin because logging in then won't
+> >work.  It may be possible to allow from a tty backed file and not from
+> >a file backed one, but you still have the problem of the attacker
+> >manually typing in the script.
+> >
+> >The saving grace for this for shells is that they pretty much do
+> >nothing on their own (unlike python) so you can still measure all the
+> >executables they call out to, which provides reasonable safety.
+> >
+> >James
+> >
 
