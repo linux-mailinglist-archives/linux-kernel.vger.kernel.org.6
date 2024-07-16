@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-253262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC2C931ECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:23:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7E5931ECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87491B218F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837E41C21251
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A5579E0;
-	Tue, 16 Jul 2024 02:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05878814;
+	Tue, 16 Jul 2024 02:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7EgFWI4"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D52IViGD"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341E2AD24;
-	Tue, 16 Jul 2024 02:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AD86FB8;
+	Tue, 16 Jul 2024 02:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721096586; cv=none; b=EBSCn4R9CngNEtLqTujMEs/JViYMPI0UNHFev8I8oAfb4yS8K170AbuMyc8vg+Mwm1Cx+qGE8usjRcLR20j1Lb5/brxKHIL0o06hM3UCetBpYjRs9YKvP1D/1e+dnFbuj9b/QnkwrA7+wd5R5F+13rHvwzRNZTIlKSqwIiihf98=
+	t=1721096718; cv=none; b=VnHqMpB1uBHl+lbPDnISEML74JLtpfZgExLMw1mh9eV/6J/0aTI/VWVDOVNB6F9P3+aTt/ma72t3LYCdG9wgKkunZ8uwxCj/ULg5J8D+cXNM3gcW3Tu0JTCB4KbjWJFDZ1O73jKDYyoG9vXTDBgyDGmNkVrGVvfPXdpLCcNH7lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721096586; c=relaxed/simple;
-	bh=szvP/ZammT9Bdm7xWuDoBaWuwi+bVR7iMdq3Lj/DJq8=;
+	s=arc-20240116; t=1721096718; c=relaxed/simple;
+	bh=GKnKYLa+DE2NlVgtcy8pzU6V8LQ3hzGs0ZGuh8Bao2g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dsz+HsAZ1uxbA6BGP9UVJdGIg8gEZXAbOuKQaWdKd+o9Uzd6dlJnUXEhYsSxyZ4H/kVqNFaHh3IC0sk6zBQ/GzRF8hGecHsQcf5GcFrnQ9utHIYjgfbXdgOTmU1bV80TqHXCCLzp3isH7jCtnNQVC3lgze6qVeHCzblLvQgVb68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7EgFWI4; arc=none smtp.client-ip=209.85.214.169
+	 In-Reply-To:Content-Type; b=TMk9FOBedAaoaeAfFWEPEBIDfylHJ3J452szdT/DnN21/6CAK2RgnYBgdxZy74buKkGACfjfOWYRMDBx6cF14W7FfasL5+PB3j3rJ/jfzngiCM6MrqW6mPGM28y3S88+ArqapTjNmdKvt+h9o04n5F5LHe5jwz32QoqBX4eeecs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D52IViGD; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fbc3a9d23bso35036965ad.1;
-        Mon, 15 Jul 2024 19:23:04 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-765590154b4so2936012a12.0;
+        Mon, 15 Jul 2024 19:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721096583; x=1721701383; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721096716; x=1721701516; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nk9o31w13WrHum1mzimiqzqxtNTbngMXtgySQBpQkQI=;
-        b=K7EgFWI4bXwG+gLpQLZ6l9lgRTgamKj9iZq3KYAjfkEnsfIMMr76ZWU8mHHyZZhjDk
-         gjXzPinO7E0ABezwx62yCilkgwi+exmZTFEEHzgiF5Hzr/YooIy6+AIScARVfDo/5hsh
-         Crk0F2pwSeuXHtpHNIWMyohQhCNwFhnqF34/TdZnF47sYAazFVosHqcK32HduNy+iuGL
-         Zl/64bMOl5urRFfaS5LlrV2xX/JPaxL9Eos8vEmkHco0APEmcrtarq/y3tF2Vu85g5Hc
-         yy7HBLmXwXV+Mru0kz+LAzDbkFCVqnnsXtrijE1OA8RkhSAN72bRKDfm9ina+BjAiorJ
-         AP4g==
+        bh=pC6VGOzZrexQd1bwg3uHzhS7HotZy2k172Ta/hi+Z/A=;
+        b=D52IViGDTPc/bJTk0GwK5dY+Qi+3ar5lgilZTzlx9EtSKnScOZ3Pij5ptNUibrz7oA
+         Tk3R1LI6h4T76A34cQO4/aaCBTXSqUYg2IBwk9CzdifqbqIYLwX4j6AfF25EiR+9uEgo
+         2NDJd5q8krUGcepL9GevSxWfa4SzY0FG5Vgubr2taJuyQbYKZHReCduCAZ+APBuHQdr7
+         xgJbF9lq/7oIKNQSt6tLgqEgMjzOkEX9CHEUad9QYN/8TO59PpWABuszhQ4mhQHBFgtR
+         NlelPo7qA6s3L0dTIRSx4S3bjQl+KnaC71qXegPKKd8Ahl0gcYeM2ElwoskjCwpTKYFz
+         j+Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721096583; x=1721701383;
+        d=1e100.net; s=20230601; t=1721096716; x=1721701516;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nk9o31w13WrHum1mzimiqzqxtNTbngMXtgySQBpQkQI=;
-        b=whOkviQH7YAPCOn526nmBcuXEqPGMCj9wOm7qzm5ykHD1s/M4PZJg629cB7x49Mc76
-         AhYu80LX2nvrOVAAo+fbzD3M1AaoxkXmBkhdmG+kH74gt7IRAoRhYcncckXGwIc9WDCF
-         mrzy8BX7NA3Ec4PvJcFlXQ4bTDstXBMXE6xzgSZXj1ZftsP23MeVE0PTd70Bae+JOLa1
-         r+7rPbkXNvTPl16RGRPCyT+saw1IMPSYqgmy4sL49YrvfZM6Na6NeukQSZc3KtOypEnN
-         fBkeCxQkT0f5jXaVOCdIaey4XOsClGEumJEHQo45D2J3IIK7jlqaIzaQvaUvi7vwTvn/
-         2VBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbKtKWZNBTEDqA01lO7XJff68jXKCLc7B5hb9QK6TJfn5ZYf8P+IABRDb9xEGfCCdOa7KRzP8fWU778L0Uu/qTTXNcAv84/r4HxZMt4ppHOGmseLe+peHBrAFW6Av7lbW5b+RFPOLUPM=
-X-Gm-Message-State: AOJu0YxW4U6MXJX/9k+oiJDZYNXdnEjBppJ5SxSQIB5N9hQftdwqVx77
-	IuLkuE4+eLLfOYjUWsYf//4rffMuu6jIdKXbT7YlaDEe9QFjZZ6x
-X-Google-Smtp-Source: AGHT+IHkLykjohz3Iph/scVS9rontdt9AV3QZ4N90YQkawwDwF1I7e7z5/uJ/dJTiahpv5Euamz2aA==
-X-Received: by 2002:a17:903:2311:b0:1fb:5d9e:22ab with SMTP id d9443c01a7336-1fc3caeeddemr10782635ad.22.1721096583348;
-        Mon, 15 Jul 2024 19:23:03 -0700 (PDT)
+        bh=pC6VGOzZrexQd1bwg3uHzhS7HotZy2k172Ta/hi+Z/A=;
+        b=pu746UqtTg3v4lNu8XTVMIIIZ5EpwuXrewmBgBK3WzNXoDlb2tFnMEf051/2z5tP3O
+         /aQx/TA8QfX8gHNiJhwvlVe8QZePOdhcK14YOMaTdblPaiFYGdPejKdN9r5uUcjhU7dp
+         zdf1L2I9lwppWPnYrIlqla6TamM2goGVhocg0Z4XRlhIl6CeEvjSRhZcaexwNFmZI1nf
+         xhck6LH+OFdprzoIV0ht6lMWOHOFltEmBXCo9DjkUaE9SdQMrJZqiao4Zgcs/ihMDzP0
+         vV9IxR5H3t26pQsxA5K1zzl1Zq4mIcHJcvTrH0Omiw081jhJ+pb92W5G7H04bfqL7CZO
+         5aEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXF/3Nylb34FH4XWpbbTlSxvWX7lccHl32hjr7c4kiNnWrau94V4KkV5qbstDCQ2tg1hJyQUl9sOzERqFTKNzcVeeX/OiOxlS7Hg4kUsC4V527WJaMWSZIFkOOT81f+mXLdMDsbLcJGZFI=
+X-Gm-Message-State: AOJu0Yyxe12FY1JY2OtCDSb5y2m760n6S+YvWFK2X9BkPgB3oHhoB6+v
+	L2hXlk1uT4t73hWjjfCxxRTjDazsll1fuQn4YuI1xbpFS68unMxdsm0yTA==
+X-Google-Smtp-Source: AGHT+IGrGTJfsLDC/rddJm9PgxcTma9Pi3I//sDl6F7ZaWOBXaXN9lBrNQ1vRtjipoJkSoR4nYT0lw==
+X-Received: by 2002:a05:6a20:d502:b0:1c2:94ad:1c5d with SMTP id adf61e73a8af0-1c3f11fead3mr801206637.2.1721096716033;
+        Mon, 15 Jul 2024 19:25:16 -0700 (PDT)
 Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6f46csm47732735ad.44.2024.07.15.19.22.59
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cacd3e5a87sm7163531a91.14.2024.07.15.19.25.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 19:23:00 -0700 (PDT)
+        Mon, 15 Jul 2024 19:25:15 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <114e3fd3-d7d7-41bb-a6b8-babd05ef4eab@roeck-us.net>
-Date: Mon, 15 Jul 2024 19:22:58 -0700
+Message-ID: <c3d89f68-80e6-4282-b6b1-c757a2bea775@roeck-us.net>
+Date: Mon, 15 Jul 2024 19:25:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -211,7 +211,11 @@ On 7/15/24 00:30, Patrick Rudolph wrote:
 > +/* Some chips need a delay between accesses. */
 > +static inline void pmbus_optional_wait(struct i2c_client *client)
 
-I'd suggest to name the function either pmbus_access_wait() or even simply pmbus_wait().
+Also, please drop the inline here and below to let the compiler decide
+if it wants to inline or not.
+
+Thanks,
+Guenter
 
 > +{
 > +	struct pmbus_data *data = i2c_get_clientdata(client);
@@ -223,19 +227,185 @@ I'd suggest to name the function either pmbus_access_wait() or even simply pmbus
 > +
 > +		if (delta < info->access_delay)
 > +			udelay(info->access_delay - delta);
-
-I am not too happy with this one; the delay can get large.
-I'd suggest to use fsleep().
-
 > +	} else if (info->write_delay) {
 > +		delta = ktime_us_delta(ktime_get(), data->write_time);
 > +
 > +		if (delta < info->write_delay)
 > +			udelay(info->write_delay - delta);
-
-Same here.
-
-Thanks,
-Guenter
+> +	}
+> +}
+> +
+> +/* Sets the last accessed timestamp for pmbus_optional_wait */
+> +static inline void pmbus_update_ts(struct i2c_client *client, bool write_op)
+> +{
+> +	struct pmbus_data *data = i2c_get_clientdata(client);
+> +	const struct pmbus_driver_info *info = data->info;
+> +
+> +	if (info->access_delay) {
+> +		data->access_time = ktime_get();
+> +	} else if (info->write_delay && write_op) {
+> +		data->write_time = ktime_get();
+> +	}
+> +}
+> +
+>   int pmbus_set_page(struct i2c_client *client, int page, int phase)
+>   {
+>   	struct pmbus_data *data = i2c_get_clientdata(client);
+> @@ -168,11 +204,15 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
+>   
+>   	if (!(data->info->func[page] & PMBUS_PAGE_VIRTUAL) &&
+>   	    data->info->pages > 1 && page != data->currpage) {
+> +		pmbus_optional_wait(client);
+>   		rv = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
+> +		pmbus_update_ts(client, true);
+>   		if (rv < 0)
+>   			return rv;
+>   
+> +		pmbus_optional_wait(client);
+>   		rv = i2c_smbus_read_byte_data(client, PMBUS_PAGE);
+> +		pmbus_update_ts(client, false);
+>   		if (rv < 0)
+>   			return rv;
+>   
+> @@ -183,8 +223,10 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
+>   
+>   	if (data->info->phases[page] && data->currphase != phase &&
+>   	    !(data->info->func[page] & PMBUS_PHASE_VIRTUAL)) {
+> +		pmbus_optional_wait(client);
+>   		rv = i2c_smbus_write_byte_data(client, PMBUS_PHASE,
+>   					       phase);
+> +		pmbus_update_ts(client, true);
+>   		if (rv)
+>   			return rv;
+>   	}
+> @@ -202,7 +244,11 @@ int pmbus_write_byte(struct i2c_client *client, int page, u8 value)
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_write_byte(client, value);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_write_byte(client, value);
+> +	pmbus_update_ts(client, true);
+> +
+> +	return rv;
+>   }
+>   EXPORT_SYMBOL_NS_GPL(pmbus_write_byte, PMBUS);
+>   
+> @@ -233,7 +279,11 @@ int pmbus_write_word_data(struct i2c_client *client, int page, u8 reg,
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_write_word_data(client, reg, word);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_write_word_data(client, reg, word);
+> +	pmbus_update_ts(client, true);
+> +
+> +	return rv;
+>   }
+>   EXPORT_SYMBOL_NS_GPL(pmbus_write_word_data, PMBUS);
+>   
+> @@ -351,7 +401,11 @@ int pmbus_read_word_data(struct i2c_client *client, int page, int phase, u8 reg)
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_read_word_data(client, reg);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_read_word_data(client, reg);
+> +	pmbus_update_ts(client, false);
+> +
+> +	return rv;
+>   }
+>   EXPORT_SYMBOL_NS_GPL(pmbus_read_word_data, PMBUS);
+>   
+> @@ -410,7 +464,11 @@ int pmbus_read_byte_data(struct i2c_client *client, int page, u8 reg)
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_read_byte_data(client, reg);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_read_byte_data(client, reg);
+> +	pmbus_update_ts(client, false);
+> +
+> +	return rv;
+>   }
+>   EXPORT_SYMBOL_NS_GPL(pmbus_read_byte_data, PMBUS);
+>   
+> @@ -422,7 +480,11 @@ int pmbus_write_byte_data(struct i2c_client *client, int page, u8 reg, u8 value)
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_write_byte_data(client, reg, value);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_write_byte_data(client, reg, value);
+> +	pmbus_update_ts(client, true);
+> +
+> +	return rv;
+>   }
+>   EXPORT_SYMBOL_NS_GPL(pmbus_write_byte_data, PMBUS);
+>   
+> @@ -454,7 +516,11 @@ static int pmbus_read_block_data(struct i2c_client *client, int page, u8 reg,
+>   	if (rv < 0)
+>   		return rv;
+>   
+> -	return i2c_smbus_read_block_data(client, reg, data_buf);
+> +	pmbus_optional_wait(client);
+> +	rv = i2c_smbus_read_block_data(client, reg, data_buf);
+> +	pmbus_update_ts(client, false);
+> +
+> +	return rv;
+>   }
+>   
+>   static struct pmbus_sensor *pmbus_find_sensor(struct pmbus_data *data, int page,
+> @@ -2450,9 +2516,11 @@ static int pmbus_read_coefficients(struct i2c_client *client,
+>   	data.block[1] = attr->reg;
+>   	data.block[2] = 0x01;
+>   
+> +	pmbus_optional_wait(client);
+>   	rv = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+>   			    I2C_SMBUS_WRITE, PMBUS_COEFFICIENTS,
+>   			    I2C_SMBUS_BLOCK_PROC_CALL, &data);
+> +	pmbus_update_ts(client, false);
+>   
+>   	if (rv < 0)
+>   		return rv;
+> @@ -2604,7 +2672,10 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+>   
+>   	/* Enable PEC if the controller and bus supports it */
+>   	if (!(data->flags & PMBUS_NO_CAPABILITY)) {
+> +		pmbus_optional_wait(client);
+>   		ret = i2c_smbus_read_byte_data(client, PMBUS_CAPABILITY);
+> +		pmbus_update_ts(client, false);
+> +
+>   		if (ret >= 0 && (ret & PB_CAPABILITY_ERROR_CHECK)) {
+>   			if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC))
+>   				client->flags |= I2C_CLIENT_PEC;
+> @@ -2617,10 +2688,16 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+>   	 * Bail out if both registers are not supported.
+>   	 */
+>   	data->read_status = pmbus_read_status_word;
+> +	pmbus_optional_wait(client);
+>   	ret = i2c_smbus_read_word_data(client, PMBUS_STATUS_WORD);
+> +	pmbus_update_ts(client, false);
+> +
+>   	if (ret < 0 || ret == 0xffff) {
+>   		data->read_status = pmbus_read_status_byte;
+> +		pmbus_optional_wait(client);
+>   		ret = i2c_smbus_read_byte_data(client, PMBUS_STATUS_BYTE);
+> +		pmbus_update_ts(client, false);
+> +
+>   		if (ret < 0 || ret == 0xff) {
+>   			dev_err(dev, "PMBus status register not found\n");
+>   			return -ENODEV;
+> @@ -2635,7 +2712,10 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+>   	 * limit registers need to be disabled.
+>   	 */
+>   	if (!(data->flags & PMBUS_NO_WRITE_PROTECT)) {
+> +		pmbus_optional_wait(client);
+>   		ret = i2c_smbus_read_byte_data(client, PMBUS_WRITE_PROTECT);
+> +		pmbus_update_ts(client, false);
+> +
+>   		if (ret > 0 && (ret & PB_WP_ANY))
+>   			data->flags |= PMBUS_WRITE_PROTECTED | PMBUS_SKIP_STATUS_CHECK;
+>   	}
 
 
