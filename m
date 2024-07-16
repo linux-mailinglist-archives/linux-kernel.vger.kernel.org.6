@@ -1,224 +1,95 @@
-Return-Path: <linux-kernel+bounces-253618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E6D9323DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08CEC932413
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206BD1F23E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B4628447D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4FC197A88;
-	Tue, 16 Jul 2024 10:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FE519A29C;
+	Tue, 16 Jul 2024 10:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rhgK4Cbd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CJzm1eEm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0CFuARiI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SGwN97yZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GWyqT/vW"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B22BAF0;
-	Tue, 16 Jul 2024 10:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F78199E83
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721125466; cv=none; b=QNyqe+HqwmfTutYSjBm8clOe1ulnHZQS7Ql5znybPpBTHvBk+rVG+nHFeZekHeqVkYV9+Cnu9h7Sc53EJrkEhFXz+LcoSOQDGt7kDVLAFNprRIJYLRvUO2lnnU4hMVrqwmhTDSwiZwkVgUwbd7dENYIwwmxj7mrLK9CdkNfD+/8=
+	t=1721125852; cv=none; b=WMEQiZ4AgipxjNuf0birLgIxPQdTvUgPToES3uV/R7oeG0oEAkhwZLgVOweCOqGQTHVvvQyoI18xKa83EjmQ/mdj2fEMwgTZZIyGEK+kquRgMYR3M8bxLc/NYyTUJQH9Ef/sS1nvK3ThKC9pekrKYTdpnLYGEXLEPNFyAM0CMWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721125466; c=relaxed/simple;
-	bh=NXOZnkekiyVsuIjOADrk+toWDiA2DAUH1u2Y3mUCJIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGx6Us6sshMZlB8mblTVoS25fHdcVg08PTy7G5RiuNZX2QLrJnHQs0YRR3aKsA4sma7CHllTzZE7dn/YBG4PDDOIu1YuhculO7AdqC7eH+JpOfiTiI/4nftqsmP5lhUnyJUf2hH6Cjp2ApMWnNsXRSCT2NsW/zlcWyd5X7BaJOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rhgK4Cbd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CJzm1eEm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0CFuARiI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SGwN97yZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7F0A31F8AC;
-	Tue, 16 Jul 2024 10:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721125462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPrOEKAiT+WpE+UHCR8Fkie45MEJdb7Gn9tKLiB19Es=;
-	b=rhgK4CbdV6it233wlZQ1r2g2dvrd/no4/w8IIDiSMdf7+FLOIqdV3OX56LRogWijX+74gB
-	iLjnIWNauEilhjyMe6wzzYPYJ+X2H8pjIgvX0I54Yk57RMzZuB8HX8ehjWflrxogTugYle
-	XMAtAEN2mQJ1k+IoCi8Ua7tEU3H8KkA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721125462;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPrOEKAiT+WpE+UHCR8Fkie45MEJdb7Gn9tKLiB19Es=;
-	b=CJzm1eEmoXcYIMbpaT6pw8mgKfw1VNBoFCtWzsCs6D+NjqJ2xRZoOHReZpHH6+Q0dwJCUz
-	HIRuBxovAfsaJXCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721125461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPrOEKAiT+WpE+UHCR8Fkie45MEJdb7Gn9tKLiB19Es=;
-	b=0CFuARiIsq6jMJJPpTcKeRRjpk/ZChpwgMEfIeQM8B2P2HhduJvuLyw0jbCjI5C0UpwdgV
-	FX/5JDF/pPgDXrtF0IoVrJfkbOiK6w4opBwwtJecpN26lJ3tjTZF+vmi/51jSXCK1CDyDY
-	XZx+AlyqTkKE6ov2hKD/7UTEYVPx2tk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721125461;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPrOEKAiT+WpE+UHCR8Fkie45MEJdb7Gn9tKLiB19Es=;
-	b=SGwN97yZiTtiQBK1FjWa+hoOQzOXtdqc5aLsGiIcUdqXOAXKESQPqCXeOtv2Opg5xbv5Mg
-	Ig1A2a1rQLbtY8BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66D3F136E5;
-	Tue, 16 Jul 2024 10:24:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IzrUGFVKlmYULgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 16 Jul 2024 10:24:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E28E6A0987; Tue, 16 Jul 2024 12:24:16 +0200 (CEST)
-Date: Tue, 16 Jul 2024 12:24:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
- journal commit
-Message-ID: <20240716102416.jublpma3qiltlrbr@quack3>
-References: <20240711083520.6751-1-luis.henriques@linux.dev>
+	s=arc-20240116; t=1721125852; c=relaxed/simple;
+	bh=g9/gVNxpx+7t2o8PmFGwzhgSGmNVeRe29Vhrb1wQwcw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mw8zQ6So5lyn97UORuCoPmKT0DjFa9wT+ZFUoOKcmNKBEMz+6VVXGqMiBoNC3TmhJ2gWbIwIkf43D41blugd1kaHM5xSTGMVyryKxUFH/YBDAqLG7U5ukagIqb13AiaEppKZmZS2DdMQEIuvkhM/qPZ4z8qxOP7CvYwe0EXEP+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GWyqT/vW; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721125840; bh=o+BNYnMQrUCLxfU5llips2j6mfC0NAa8rtMrfluuLg4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=GWyqT/vWaoEp2zuHVd3o9p1dyLEksvL6MoUYHDrTPMFSjlUCcjTJDzv/QYiMbdDpP
+	 fr0gRcqF0ViIFN3Jvwi/sLOvCq+gYWriW8QIDArJSvCexdJjvjznMb9FtW3Q5w+mPB
+	 nAv3n1XrVuMg82hJQOSTSyMZhl8iUw2YJyX0uoHE=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 62530A82; Tue, 16 Jul 2024 18:24:37 +0800
+X-QQ-mid: xmsmtpt1721125477tdjzbkjo0
+Message-ID: <tencent_5FFE6CF02F716D549514EB16EC6ACC3C780A@qq.com>
+X-QQ-XMAILINFO: NhUkPfKlCtQwr6nIzfYme0iGaJnDN/14xU2kEyPpgPnCOZR/hdjivbPfBphZbD
+	 BVwRzZTCldhOgF7/bhREq3r0nlao4h+lpJUmHdsF0spXH9D8/CknU7anUIoXGPH6/nXmv2PSUOk2
+	 8oRFtoIjfoENyukVIbr/6QXMVbFt0MB7LaJjzdS7frECrxOdya5E+U19M5omXmmtJYMGvygiWWm4
+	 JKrgkxWWSDWN1r7I5Wvz2Yq/ycOjr4wLVccwN6jOfiVtxaYn9uSZZ16JjaIB6Ef9+GqaJLW38wRM
+	 GzVfA2pTjFFbSelgT/HrmZV9Wp7iWx5OiOiL+vNN4IR7j79hPAxDBHoNp/sN6K8LxutC2yX8T2Rr
+	 R8iQ8y/KpP/BwlgcJZnGRTnJ9RQQ043aq6d8CVVb3kBjhZ48DTDSxdK5sLxWkDj8AwXl4yLxVINa
+	 Uf32HI32qw0nqPS91czBdgEmwScPe2IEucLebMGpx59xbScMactXWQAQEy9EkWZb5l/IigFEm9BA
+	 B4CADbtBUzmdsU7XfhN1CrVkF2bryiTNInYk9CcRbi51eHwVNN5051oR1Quev9VX0psjVzehGtcv
+	 avt4OnmysBKG3TncRngK6UADqQvPqnSMUQCA/hm6eN+/9fF8qvDhFQBgAU86lAiH12GNl600NAet
+	 vmhfQEUKBz562xkt/fPrtu5Lre1gZauv6nioWLB6o4tSv3XAgOKYv5dx2DN8LSMNhvxTyoBT3owW
+	 L9cXHCo3JR5bXTES61DRnY5aQZXt7abOpYkiowpKtO69fqll5hclycEDEF/spZW9yP6ZYAzNesjO
+	 cXTMP1+Zk1h4496ov/C/I2EnNjfUMI1anpat5TX/WotwFslWlA0N299sFI5iSC/mjiXmMKo1KeC+
+	 E5eSZMIoN0bMSBVY8p4xntTqd0slRm4rX22NBF6kZg0f938awy6iJkE8zgEyXeFxVPI/ogE9+bNz
+	 w7SJ8rk5kjwe6nAncR8maLsjsumpnR
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [sound?] [usb?] UBSAN: shift-out-of-bounds in parse_audio_unit
+Date: Tue, 16 Jul 2024 18:24:37 +0800
+X-OQ-MSGID: <20240716102436.1438568-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000000adac5061d3c7355@google.com>
+References: <0000000000000adac5061d3c7355@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711083520.6751-1-luis.henriques@linux.dev>
-X-Spam-Flag: NO
-X-Spam-Score: 0.20
-X-Spamd-Result: default: False [0.20 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,linux.dev:email]
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu 11-07-24 09:35:20, Luis Henriques (SUSE) wrote:
-> When a full journal commit is on-going, any fast commit has to be enqueued
-> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
-> is done only once, i.e. if an inode is already queued in a previous fast
-> commit entry it won't be enqueued again.  However, if a full commit starts
-> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
-> be done into FC_Q_STAGING.  And this is not being done in function
-> ext4_fc_track_template().
-> 
-> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
-> during the fast commit clean-up callback if it has a tid (i_sync_tid)
-> greater than the one being handled.  The STAGING queue will then be spliced
-> back into MAIN.
-> 
-> This bug was found using fstest generic/047.  This test creates several 32k
-> bytes files, sync'ing each of them after it's creation, and then shutting
-> down the filesystem.  Some data may be loss in this operation; for example a
-> file may have it's size truncated to zero.
-> 
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+invalid bControlSize and bLength make channels too large
 
-...
+#syz test: upstream a19ea421490d
 
-> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> index 3926a05eceee..facbc8dbbaa2 100644
-> --- a/fs/ext4/fast_commit.c
-> +++ b/fs/ext4/fast_commit.c
-> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->  				       EXT4_STATE_FC_COMMITTING);
->  		if (tid_geq(tid, iter->i_sync_tid))
->  			ext4_fc_reset_inode(&iter->vfs_inode);
-> +		} else if (tid) {
-> +			/*
-> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
-> +			 * inode into STAGING, which will then be splice back
-> +			 * into MAIN
-> +			 */
-> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-> +				      &sbi->s_fc_q[FC_Q_STAGING]);
-> +		}
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 409fc1164694..17081ada6802 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2000,6 +2000,8 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+ 	if (state->mixer->protocol == UAC_VERSION_1) {
+ 		csize = hdr->bControlSize;
+ 		channels = (hdr->bLength - 7) / csize - 1;
++		if (channels > 32)
++			return -EINVAL;
+ 		bmaControls = hdr->bmaControls;
+ 	} else if (state->mixer->protocol == UAC_VERSION_2) {
+ 		struct uac2_feature_unit_descriptor *ftr = _ftr;
 
-I don't think this is going to work (even if we fix the tid 0 being special
-assumption). With this there would be a race like:
-
-Task 1					Task2
-modify inode I
-ext4_fc_commit()
-  jbd2_fc_begin_commit()
-  commits changes
-  jbd2_fc_end_commit()
-    __jbd2_fc_end_commit(journal, 0, false)
-      jbd2_journal_unlock_updates(journal)
-					jbd2_journal_start()
-					modify inode I
-					...
-					ext4_mark_iloc_dirty()
-					  ext4_fc_track_inode()
-					    ext4_fc_track_template()
-					      - doesn't add inode anywhere
-					      because i_fc_list is not empty
-      ext4_fc_cleanup(journal, 0, 0)
-        removes inode I from i_fc_list => next fastcommit will not properly
-flush it.
-
-To avoid this race I think we could move the
-journal->j_fc_cleanup_callback() call to happen before we call
-jbd2_journal_unlock_updates(). Then we are sure that inode cannot be
-modified (journal is locked) until we are done processing the fastcommit
-lists when doing fastcommit. Hence your patch could then be changed like:
-
-+		} else if (full) {
-+			/*
-+			 * We are called after a full commit, inode has been
-+			 * modified while the commit was running. Re-enqueue
-+			 * the inode into STAGING, which will then be splice
-+			 * back into MAIN. This cannot happen during
-+			 * fastcommit because the journal is locked all the
-+			 * time in that case (and tid doesn't increase so
-+			 * tid check above isn't reliable).
-+			 */
-+			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-+				      &sbi->s_fc_q[FC_Q_STAGING]);
-+		}
-
-Later, Harshad's patches change the code to use EXT4_STATE_FC_COMMITTING
-for protecting inodes during fastcommit and that will also deal with these
-races without having to keep the whole journal locked.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
