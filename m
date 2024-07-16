@@ -1,489 +1,225 @@
-Return-Path: <linux-kernel+bounces-253589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C89932377
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:56:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FD693237C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAF1B228AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642E01C221FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366FD197A7D;
-	Tue, 16 Jul 2024 09:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35043198A3E;
+	Tue, 16 Jul 2024 09:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cNp39yqw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Y9pN6CNO"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011034.outbound.protection.outlook.com [52.101.65.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C410A25624
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123778; cv=none; b=ijO0BSlMfQeq/G8fz8yxN6s9IC2+qYMnSmwMzHVBRltE18RL6kRTTitPviKcX7NQ7FVGrPYdnlVHjTnL/v8wQFWVdDQAwv62ggUFv7geIapkcAk+yioG8XkSZZ4Hv09CU7SWFuLo/j9MiJLbkzziFDMfK1t2QZZiutD+PKzwDm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123778; c=relaxed/simple;
-	bh=GCT4d51R1N6ToRFotgASCsK+nt/EhZatWUO+z0hqHN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tB2HAtrmhbcveXnk8ZOccKlGmI8VbALHLl//zE6rgwf1TcGXpDEfClHnXhTS0Fvw/ASD7DPQkKefSrQVevt+fF2TDjJGehw3hfNOEZZN2+4M46c5XhUys+f8Qq419Q7gU6T+COnyZIKEt/tIdBLh/DHChoJ4pELUCcDu8Tc33b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cNp39yqw reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 59A9340E01A8;
-	Tue, 16 Jul 2024 09:56:12 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uUo9WHSGDPP9; Tue, 16 Jul 2024 09:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721123766; bh=+1ritM+rr5qoYoC/fcuaPOkpkREkie5KiCElYsbaFd8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cNp39yqwIOPiqcsX7JanTkdbfbY2zpNwneYhyHJO2FADVPYXUslcSHVY+OgvD1C8T
-	 2+ZgS/ErClNLgE/HEg79aAZXfKiJ/9Zbndx5J1xTGoRjTY7L9aRadIBSIA/9ezSer6
-	 La/iFg5y7umgViSHP/Qppo8g5JeS27pLGTxZOi3in89ciSpPyZLYKQX4bitn2doWZV
-	 jcfXfc2Za5fFqAfE/al39T7hHRGmno6LgHhuZiF921pzhH9XZoH67WXCaekKntfiMs
-	 L1FRUoQBAUeMgLLcQ8eUjrARz2fnWs4jsdviN//6Wd4GJ4gCZF6tvt75GvC7jnOYL1
-	 LkBxxfZl8Zy9y8PKQn1qMujE6eXTrSMr31CZ3M6uUJxNnP2uhN/4ZA+ULN8DsjnPrx
-	 hmqwww+BDjuOmoylBOlt74CRY0y99+fVvLtoUmyafHefYq/xLR8Y1cdf1NwL43EHNn
-	 TChecl+prLcbmSTUKGd8J0J+wiN/N8t9XQzNTRQRr9vUgJOAJXU3OS5n9JpEacMfmJ
-	 Wo5C9GO6t+VpFDfQaAMRWtMSeRzdqF/580A4Bbd7dU4MMhzo1whEJ63gyIaxKTqg5Q
-	 gP03HN44KfMi8KStnks2fWPYi5+3KSpmufZivXxPwn3als+YdSN8n6So8pbN8Y2JKM
-	 6yi5Hn+bCCe6u3nL/M+Dj8T4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2945340E01A2;
-	Tue, 16 Jul 2024 09:56:03 +0000 (UTC)
-Date: Tue, 16 Jul 2024 11:55:57 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/sev for v6.11-rc1
-Message-ID: <20240716095557.GAZpZDrdC3HA0Zilxr@fat_crate.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3617CF16;
+	Tue, 16 Jul 2024 09:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721123784; cv=fail; b=HqkUtgZi2+sm0m4PRIvutOu2hXO6JkFXeetiVCoUA/tm/YzzpZwhehujQSwL+bSsQS7VD2+5uSJEDyMX8zds6JxRuBAthwp2d66FaNBlNFPZcOPy42oAbzWmODxj56MghGUE0gzj2kqcuZ5fEeD2olNKR1OYVzVBjwBKNckK0lY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721123784; c=relaxed/simple;
+	bh=o1id2tT7bDGpH658q1BFK+X6qmVC12rGiU9rN8Nrsjg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IC6T/g5PHoJpDT4F2HKyaJ+EM5CkemqkxVS+fgqkUBnkiTWgXUavTzWN9LcB3+Z3cgP+0x71TmPbIhXoyuv54nEmfbv6cSRJ0hGqnMeTXWGRZrRMqfm2rmmMvKPbcudFuuu+BvQptK54Xm+ZiEi8z4n6KCAVDIL/TVt5RMPmI24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Y9pN6CNO; arc=fail smtp.client-ip=52.101.65.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KU8fjw7A5gq67L7XyomzT5N7Ewr1r2grOD0Mj6X+S3+xEwezOQym1hLNiuXvZ5my6CYafTmvvIJICla5WuClMyadJlTPySSDmZAQp8SA983ovC/OnXAFBVhwUSdGADS8lcBoPx+IUURURfOMmF+ZTo0FkaSqaek8UDypYm5btwiTRWh6BENt5FnHzarxUDz/IOdN/7n4kY13TcXMz1dPOBmdNcVTCbryEXCj4Jv/+Fovi+jHOnLl5qNrMGNGyUHFe3142DD/rzf4yvb3O8TpIx9/kD5z3YQKo/Z6gEDmKlwhTe3rttmtT1YRuQJGXTBYtOzLQImzfPvG+kFdde3qOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Su3nPn5CQDvNz2YKKX/zEG/xTyxhTIkHeapBvBI4xmk=;
+ b=AUVQWcG/NLVSdmvammqwN+k5S5nU7m3JHqO4UvELHBYDqTGz9xvAKwNaFBcsrjpFIK289pLrTI9jtRAmtr5L83S7v80X4aMnI5MWqQgQsuYe7K/VuAt54OdNkcxTdhL0R91EkliPPrcW0IN0dpsaVXo1g+7vIi+5ksQvBVp1rx3Q+yzBngmImoLgcPJF3VAg940K4rGonh7liD7awMOhD28JPACYLd1bFoGogur9pmsc6EFq8eXX+e/49DAxVj4nK1F6zgqiUW3zOM15NCNtb8dISuO6pR8bzK6f5sGJiRs2DzXSj8tVlWTdE36k+zKMlPF9XlTv8my/pknJvZK26g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Su3nPn5CQDvNz2YKKX/zEG/xTyxhTIkHeapBvBI4xmk=;
+ b=Y9pN6CNOZgd7m7o5TEXkExC+vmBYQOcR8H7nMl9UhHkZy6HYeVqAMpopMqTO08Vrf/5hlR3L0XMhv6Hc61HTKoq2VapleNBitCemhcg92O/agLiSyV51ZJMJH/NHV9U+tyJtjyf2fN1VAemNn1YCMfdMHkqmBPBFXsfIhBsU4SI=
+Received: from AS8PR04MB8450.eurprd04.prod.outlook.com (2603:10a6:20b:346::5)
+ by AM7PR04MB6984.eurprd04.prod.outlook.com (2603:10a6:20b:de::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Tue, 16 Jul
+ 2024 09:56:18 +0000
+Received: from AS8PR04MB8450.eurprd04.prod.outlook.com
+ ([fe80::c1b2:719:a52f:26cc]) by AS8PR04MB8450.eurprd04.prod.outlook.com
+ ([fe80::c1b2:719:a52f:26cc%7]) with mapi id 15.20.7762.020; Tue, 16 Jul 2024
+ 09:56:18 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Cristian Marussi <cristian.marussi@arm.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>, "linux-rtc@vger.kernel.org"
+	<linux-rtc@vger.kernel.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>
+Subject: RE: [PATCH v5 1/7] Documentation: firmware-guide: add NXP i.MX95 SCMI
+ documentation
+Thread-Topic: [PATCH v5 1/7] Documentation: firmware-guide: add NXP i.MX95
+ SCMI documentation
+Thread-Index: AQHaw6gJ3kigbFXI4ku+minp7wB8vbHxoakAgAYwAHCAABSwAIABXqTg
+Date: Tue, 16 Jul 2024 09:56:18 +0000
+Message-ID:
+ <AS8PR04MB8450D6EB9E61E73802F402A888A22@AS8PR04MB8450.eurprd04.prod.outlook.com>
+References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+ <20240621-imx95-bbm-misc-v2-v5-1-b85a6bf778cb@nxp.com>
+ <Zo_bFnjWixZF6seV@pluto>
+ <DB9PR04MB8461684315E753DAFDDBACA788A12@DB9PR04MB8461.eurprd04.prod.outlook.com>
+ <ZpUdMmvucei9lLPI@bogus>
+In-Reply-To: <ZpUdMmvucei9lLPI@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8450:EE_|AM7PR04MB6984:EE_
+x-ms-office365-filtering-correlation-id: 9af58311-c212-40bd-4caf-08dca57d89eb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?+G9ANsonxQScfzBwhgfoQXQVjKtT1nqO894MEBqXDZy+0j87cySd57WgxrKa?=
+ =?us-ascii?Q?KJ7AOS85K2iRAhB6sHrHm5RruGCXHe4YwqkBQINGy0NQnJBJOLoC422OhKRD?=
+ =?us-ascii?Q?lzoG3VImrvXslyIFK0cQFGTg33a6tIQfLZ/aeB11uFuD38wZZo7nhlxO8L4D?=
+ =?us-ascii?Q?YAtsG1AkfEbJJ0YfkdXPlRClUCSvCcIz/+AynG9OY7cLNQkDsZBTMpyOOT5B?=
+ =?us-ascii?Q?azL5W7glEC9vz7m2UlIuMYk0RXVuUl2frK8MkmaOigjCp6MJ3vOGRpplmNHt?=
+ =?us-ascii?Q?Vpv9Pi2DZ+U8+Kzk8r0v/HnZg3/8i62GFsXtSzPgPwfFxvO0a/xPcRj7N9mw?=
+ =?us-ascii?Q?FbkCZ3jlhfK2pJxAgEkvXxC622CGi5h9dHHuia6N+Y5vGA9rsI4xsZ/mv8Bv?=
+ =?us-ascii?Q?edj7iOd9Zbb9Xy+2WRWjQ4QZL0ImHU6BlVb9XTUcihJbFe6RyN8LBrt+MPtJ?=
+ =?us-ascii?Q?pV8tRa6+05OnmvAlI7c9H4VrtmpKrZXdqGy87mJHU+SXHp5EhvEj2s6TonLE?=
+ =?us-ascii?Q?1iPrXoFzzEr8nWd4fgQP7CJTLaFanUTHtgvYWZ26PEkA5L3i9ca+G37tYqQS?=
+ =?us-ascii?Q?1nZ0txOL3BfOF5aOAZWf8FzvF1dttU/e60X8Rm+YQjxhmuvzJoI5GAk++uyZ?=
+ =?us-ascii?Q?kXmIOVaXYpGm8qwHMSGVa+RYHMIMIFGDuAmGYCRZbxDCPeFvOB0P7/rPbX9b?=
+ =?us-ascii?Q?kfaOhIrq6wEB0Zr7CegZg3Ch0VT0ycAlGL2HI321Gb24T0FU4/SBeng8lEks?=
+ =?us-ascii?Q?5yFsNMumL4yvX+DrIRdW5UtUsRMhSfFtt5eQb7Rft6NV3ps6Fjaobd9zCrs9?=
+ =?us-ascii?Q?JOM8qGhZtxwMKWC7oafeFU0HibaFiAERCf8gAbXMDZWiPuV6iMNXro4VmnhJ?=
+ =?us-ascii?Q?EcEFeuH9VT0guHZ0iMF/EniF1lYP77otGutnRfMIm8DoG7s2jsUjCcWbbkB7?=
+ =?us-ascii?Q?5H4Triue46i2mfBGgBaknauEvP5LJR9lrkQbe5drYJDj+3Y1lphb40Pb1tEs?=
+ =?us-ascii?Q?D0WslF03P+5Zr0bBrR/cNDw1ojOWP/Tpgq7p8Ft6LjzGmdPDxLTHBVEN3AZL?=
+ =?us-ascii?Q?GPFCKcvBh0bL3hjq/z1ek1CNUItTpESKCCs8lxVk90sVV8nwYiDsnahQs36U?=
+ =?us-ascii?Q?TpL8nbKc6WE2WqX8HWGLgwg8LsAV81t8zEJsm5HVRYZ+hcnwwmgNJogjkgZz?=
+ =?us-ascii?Q?Jsn/5eXWtBvJAssQjIFgAAMK3inNDQVRQZ1zFBQO1z3Y6B2NPm5tVsWXX1dK?=
+ =?us-ascii?Q?YYz8aeuxe796mrflyY5RfIlu6JkkyHpnZDbIk57lb5rQd+IjptYDQr2S/cKS?=
+ =?us-ascii?Q?xrXJJlKsZ3uzPlCVKvcLxg/x8poc2iWPTbcyHy2CfdfMHXbauer9hV+rXR9E?=
+ =?us-ascii?Q?yEHiLBs=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8450.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?UkbI9L7CEB8G5sq/OAdP6fB6ekkNaFKVIGbpKIXPMgQFXbEgNl/FJPXXuRqa?=
+ =?us-ascii?Q?GqaJXa/40yGDl6yDSeO9K04vek4e8et4jYEVWxl1UyeeHsqo5SztDkYMiR9k?=
+ =?us-ascii?Q?n1yMOPe5ukO3dTRMDnJHHmll/ukDZdgkspLp8r4HLc0DclRb9CMelVPsG/OE?=
+ =?us-ascii?Q?R7rTAtAb4Ktr2VgLm6RNnn52FekDir2t9bfaZlGoe1O6k3tnfBt8VGdLmJda?=
+ =?us-ascii?Q?Q5QLSpa5EIwQxG+HEadCiaMRKh8zEUpjxIzQIoJOZJjo+CVqfg2kR6DkymP6?=
+ =?us-ascii?Q?PwKf+Vqe+Rc89RSRbK/N6Dg1M9mlbwwPhmmesC+RDyCSuKVXAlJ6m+Wmb/kF?=
+ =?us-ascii?Q?Njsqf9IMUIE6X514aOZaqWeZL77dyvjI7cMWqDOV9vbBb2X7LlkgHvWOVbrq?=
+ =?us-ascii?Q?bmmdt8YVpCU9bCFBaONTLU+tJqnjRh6fJNiqz63hnZGsOSpN94UfFI5StAQ1?=
+ =?us-ascii?Q?j1Baor58h9eOGi2YmgY6XcDesx5gQLn+SxGSQjqU2o20JG1F/Wx+KuCPea+k?=
+ =?us-ascii?Q?1NbZHg4u8e3RES9Otd8ClCNvEWdG7ROc6patLlvadw/7IHM2x2UW/eXrlyNQ?=
+ =?us-ascii?Q?5aY12VpJXuwUZhDtdQVJDovw4ou09HDx4YyYb11WlLaefhFGQOB4P66njORP?=
+ =?us-ascii?Q?Yu1rVRMSTo25ri56aHmM9uCH7opTFWOK66iNlMxpUjx4y6x56IRZdZSNCcKd?=
+ =?us-ascii?Q?FDOTPJdtq8dZhw6zoJX7hvqj4HDrXoPENHODweIKBlkeUVgFu9+QvdJf3s+B?=
+ =?us-ascii?Q?ciUzAwCAARzgpCGT/K3Rp4rfz48+hcMn2cTI30V9+46fCXj0+CaARDhey/XP?=
+ =?us-ascii?Q?Y0HVW/TzZj2fRpuuPCUVyZ05VK6Ibfa6P8CHrv2Ktbd8bRlN1dLeygnA7gDA?=
+ =?us-ascii?Q?7IaUBan9Rg+e52CCNMcL8ZkoS51YWT1srFV+cx+SDl9XGg1AzETgYS5yOAwO?=
+ =?us-ascii?Q?lGlA42FaxwvcvjobMraXFXtx3vG3b7aSkn3mQIHAe3euJ52NssCm6DhhYB7F?=
+ =?us-ascii?Q?GkVY9xfO4Gtye7y6EYFjxo/f9pFTSVIDnEuRvpE0IYBKKduqCGs9H0L979f0?=
+ =?us-ascii?Q?yXpKPUx51UCoOC0elbbXoY8Na4XkP2OIwAyiLcy7U9p2HUB6qHUlskS0yr1y?=
+ =?us-ascii?Q?fJYJgx8Ci5GlRIpnvInk21h9Yeo43PM5k3kmyoUl/t6f8d4J57hNm7JQ/5NZ?=
+ =?us-ascii?Q?WfPHTRO+4yzFbqsvKL1D8QvdI9qrM69glNS4Ws7YhDKUauJvRRm71Fig+Q+Q?=
+ =?us-ascii?Q?BfWx9Pfn5Q1yM57qjA0UIV8gah4VI68++edRxQQNoyTKYCVigbRvQqroGokI?=
+ =?us-ascii?Q?gI8OWPKfktinSvRO/+AKSXn4j3MPmIryOiZEkkPjlp/tfcUtYMNP77eJjcAm?=
+ =?us-ascii?Q?qfZ1Qm8JHF8S5h/y63Ah2s7blDZ3FtiLY1Sbs+vEdFJRXcRnhd5wW8kXEO5c?=
+ =?us-ascii?Q?GQbJh2CSr6L6VbsN8jNGh/s0/Pyodbv6+b73Ql36cJIf49WDd8tzxMv/N2ok?=
+ =?us-ascii?Q?sEbR5NRJTyRUbVX8nDvHdINasyFNLYPDrm+XNPp7meEQazefra7ctaJJ+6Hf?=
+ =?us-ascii?Q?OrTTuW03B5GUh8Er++o=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8450.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9af58311-c212-40bd-4caf-08dca57d89eb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 09:56:18.2793
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MrspTodSoOzubXk3TrvOXQp5EZ25QnQYWrmkNt3RN8MkJmE3nwGcBVcesLQORg5fPGpod8X9PHuIML0smSA57Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6984
 
-Hi Linus,
+> Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP
+> i.MX95 SCMI documentation
+>=20
+> On Mon, Jul 15, 2024 at 11:47:56AM +0000, Peng Fan wrote:
+> > > Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add
+> NXP
+> > > i.MX95 SCMI documentation
+> > >
+> > > On Fri, Jun 21, 2024 at 03:04:36PM +0800, Peng Fan (OSS) wrote:
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > Add NXP i.MX95 System Control Management Interface(SCMI)
+> > > vendor
+> > > > extensions protocol documentation.
+> > > >
+> > >
+> > > Hi,
+> > >
+> > > beside the final location of this file in the tree, and a few
+> > > nitpicks down below.
+> >
+> > Thanks for reviewing the patches. Except Documentation/firmware-
+> guide,
+> > I not have good idea where to put the API doc.
+> >
+> > Sudeep,
+> >   Do you have any suggestions?
+> >
+>=20
+> Not really. But I am OK to keep it under
+> drivers/firmware/arm_scmi/vendor/docs
+> or something similar.
 
-please pull the x86/sev lineup for v6.11-rc1.
+ok, Cristian's patch not applied.
+https://lore.kernel.org/all/20240418095121.3238820-3-cristian.marussi@arm.c=
+om/
 
-There's a simple merge conflict with your current tree to which I'm addin=
-g the
-resolve at the end of this mail.
+So I will use
+drivers/firmware/arm_scmi/imx/docs in
+v6 patchset
 
-Thx.
+Regards,
+Peng.
 
----
-
-The following changes since commit c3f38fa61af77b49866b006939479069cd4511=
-73:
-
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_=
-v6.11_rc1
-
-for you to fetch changes up to 5fa96c7ab3dc666c2904a35895635156c17a8f05:
-
-  Documentation/ABI/configfs-tsm: Fix an unexpected indentation silly (20=
-24-07-11 12:03:23 +0200)
-
-----------------------------------------------------------------
- - Add support for running the kernel in a SEV-SNP guest, over a Secure
-   VM Service Module (SVSM).
-
-   When running over a SVSM, different services can run at different
-   protection levels, apart from the guest OS but still within the
-   secure SNP environment.  They can provide services to the guest, like
-   a vTPM, for example.
-
-   This series adds the required facilities to interface with such a SVSM
-   module.
-
- - The usual fixlets, refactoring and cleanups
-
-----------------------------------------------------------------
-Borislav Petkov (AMD) (2):
-      x86/sev: Move SEV compilation units
-      Documentation/ABI/configfs-tsm: Fix an unexpected indentation silly
-
-Tom Lendacky (14):
-      x86/irqflags: Provide native versions of the local_irq_save()/resto=
-re()
-      x86/sev: Check for the presence of an SVSM in the SNP secrets page
-      x86/sev: Use kernel provided SVSM Calling Areas
-      x86/sev: Perform PVALIDATE using the SVSM when not at VMPL0
-      x86/sev: Use the SVSM to create a vCPU when not in VMPL0
-      x86/sev: Provide SVSM discovery support
-      x86/sev: Provide guest VMPL level to userspace
-      virt: sev-guest: Choose the VMPCK key based on executing VMPL
-      sev-guest: configfs-tsm: Allow the privlevel_floor attribute to be =
-updated
-      fs/configfs: Add a callback to determine attribute visibility
-      x86/sev: Take advantage of configfs visibility support in TSM
-      x86/sev: Extend the config-fs attestation support for an SVSM
-      x86/sev: Allow non-VMPL0 execution when an SVSM is present
-      x86/sev: Do RMP memory coverage check after max_pfn has been set
-
-Uwe Kleine-K=C3=B6nig (1):
-      virt: sev-guest: Mark driver struct with __refdata to prevent secti=
-on mismatch
-
- Documentation/ABI/testing/configfs-tsm             |  63 +++
- Documentation/ABI/testing/sysfs-devices-system-cpu |  12 +
- Documentation/arch/x86/amd-memory-encryption.rst   |  29 +-
- Documentation/virt/coco/sev-guest.rst              |  11 +
- arch/x86/boot/compressed/sev.c                     |  86 +++-
- arch/x86/coco/Makefile                             |   1 +
- arch/x86/coco/sev/Makefile                         |  15 +
- arch/x86/{kernel/sev.c =3D> coco/sev/core.c}         | 449 +++++++++++++=
-+++----
- .../x86/{kernel/sev-shared.c =3D> coco/sev/shared.c} | 460 +++++++++++++=
-+++++++-
- arch/x86/include/asm/cpufeatures.h                 |   1 +
- arch/x86/include/asm/irqflags.h                    |  20 +
- arch/x86/include/asm/msr-index.h                   |   2 +
- arch/x86/include/asm/sev-common.h                  |  18 +
- arch/x86/include/asm/sev.h                         | 135 +++++-
- arch/x86/include/uapi/asm/svm.h                    |   1 +
- arch/x86/kernel/Makefile                           |   6 -
- arch/x86/mm/mem_encrypt_amd.c                      |   8 +-
- arch/x86/virt/svm/sev.c                            |  44 +-
- drivers/virt/coco/sev-guest/sev-guest.c            | 211 +++++++++-
- drivers/virt/coco/tdx-guest/tdx-guest.c            |  26 +-
- drivers/virt/coco/tsm.c                            | 177 ++++++--
- fs/configfs/dir.c                                  |  10 +
- include/linux/configfs.h                           |   3 +
- include/linux/tsm.h                                |  59 ++-
- 24 files changed, 1658 insertions(+), 189 deletions(-)
- create mode 100644 arch/x86/coco/sev/Makefile
- rename arch/x86/{kernel/sev.c =3D> coco/sev/core.c} (86%)
- rename arch/x86/{kernel/sev-shared.c =3D> coco/sev/shared.c} (72%)
-
----
-
-commit a07757e6656bcadcc63e9c41d0c9ab9330773730 (refs/remotes/ps2/build-t=
-est)
-Merge: 10cf263b4d7a 5fa96c7ab3dc
-Author: Borislav Petkov (AMD) <bp@alien8.de>
-Date:   Tue Jul 16 11:43:26 2024 +0200
-
-    Merge remote-tracking branch 'tip/x86/sev' into build-test
-   =20
-     Conflicts:
-            arch/x86/include/asm/cpufeatures.h
-
-diff --cc arch/x86/include/asm/cpufeatures.h
-index a1dd81027c2d,1826f1f94111..6007462e03d6
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -370,94 -370,95 +370,95 @@@
-  #define X86_FEATURE_NRIPS		(15*32+ 3) /* "nrip_save" SVM next_rip save =
-*/
-  #define X86_FEATURE_TSCRATEMSR		(15*32+ 4) /* "tsc_scale" TSC scaling s=
-upport */
-  #define X86_FEATURE_VMCBCLEAN		(15*32+ 5) /* "vmcb_clean" VMCB clean bi=
-ts support */
- -#define X86_FEATURE_FLUSHBYASID		(15*32+ 6) /* flush-by-ASID support */
- -#define X86_FEATURE_DECODEASSISTS	(15*32+ 7) /* Decode Assists support =
-*/
- -#define X86_FEATURE_PAUSEFILTER		(15*32+10) /* filtered pause intercept=
- */
- -#define X86_FEATURE_PFTHRESHOLD		(15*32+12) /* pause filter threshold *=
-/
- -#define X86_FEATURE_AVIC		(15*32+13) /* Virtual Interrupt Controller */
- -#define X86_FEATURE_V_VMSAVE_VMLOAD	(15*32+15) /* Virtual VMSAVE VMLOAD=
- */
- -#define X86_FEATURE_VGIF		(15*32+16) /* Virtual GIF */
- -#define X86_FEATURE_X2AVIC		(15*32+18) /* Virtual x2apic */
- -#define X86_FEATURE_V_SPEC_CTRL		(15*32+20) /* Virtual SPEC_CTRL */
- -#define X86_FEATURE_VNMI		(15*32+25) /* Virtual NMI */
- -#define X86_FEATURE_SVME_ADDR_CHK	(15*32+28) /* "" SVME addr check */
- +#define X86_FEATURE_FLUSHBYASID		(15*32+ 6) /* "flushbyasid" Flush-by-A=
-SID support */
- +#define X86_FEATURE_DECODEASSISTS	(15*32+ 7) /* "decodeassists" Decode =
-Assists support */
- +#define X86_FEATURE_PAUSEFILTER		(15*32+10) /* "pausefilter" Filtered p=
-ause intercept */
- +#define X86_FEATURE_PFTHRESHOLD		(15*32+12) /* "pfthreshold" Pause filt=
-er threshold */
- +#define X86_FEATURE_AVIC		(15*32+13) /* "avic" Virtual Interrupt Contro=
-ller */
- +#define X86_FEATURE_V_VMSAVE_VMLOAD	(15*32+15) /* "v_vmsave_vmload" Vir=
-tual VMSAVE VMLOAD */
- +#define X86_FEATURE_VGIF		(15*32+16) /* "vgif" Virtual GIF */
- +#define X86_FEATURE_X2AVIC		(15*32+18) /* "x2avic" Virtual x2apic */
- +#define X86_FEATURE_V_SPEC_CTRL		(15*32+20) /* "v_spec_ctrl" Virtual SP=
-EC_CTRL */
- +#define X86_FEATURE_VNMI		(15*32+25) /* "vnmi" Virtual NMI */
- +#define X86_FEATURE_SVME_ADDR_CHK	(15*32+28) /* SVME addr check */
- =20
-  /* Intel-defined CPU features, CPUID level 0x00000007:0 (ECX), word 16 =
-*/
- -#define X86_FEATURE_AVX512VBMI		(16*32+ 1) /* AVX512 Vector Bit Manipul=
-ation instructions*/
- -#define X86_FEATURE_UMIP		(16*32+ 2) /* User Mode Instruction Protectio=
-n */
- -#define X86_FEATURE_PKU			(16*32+ 3) /* Protection Keys for Userspace *=
-/
- -#define X86_FEATURE_OSPKE		(16*32+ 4) /* OS Protection Keys Enable */
- -#define X86_FEATURE_WAITPKG		(16*32+ 5) /* UMONITOR/UMWAIT/TPAUSE Instr=
-uctions */
- -#define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* Additional AVX512 Vector=
- Bit Manipulation Instructions */
- -#define X86_FEATURE_SHSTK		(16*32+ 7) /* "" Shadow stack */
- -#define X86_FEATURE_GFNI		(16*32+ 8) /* Galois Field New Instructions *=
-/
- -#define X86_FEATURE_VAES		(16*32+ 9) /* Vector AES */
- -#define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication=
- Double Quadword */
- -#define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network In=
-structions */
- -#define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W=
-] and VPSHUF-BITQMB instructions */
- -#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption *=
-/
- -#define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors o=
-f DW/QW */
- -#define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
- -#define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
- -#define X86_FEATURE_BUS_LOCK_DETECT	(16*32+24) /* Bus Lock detect */
- -#define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
- -#define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
- -#define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
- -#define X86_FEATURE_ENQCMD		(16*32+29) /* ENQCMD and ENQCMDS instructio=
-ns */
- -#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Lau=
-nch Control */
- +#define X86_FEATURE_AVX512VBMI		(16*32+ 1) /* "avx512vbmi" AVX512 Vecto=
-r Bit Manipulation instructions*/
- +#define X86_FEATURE_UMIP		(16*32+ 2) /* "umip" User Mode Instruction Pr=
-otection */
- +#define X86_FEATURE_PKU			(16*32+ 3) /* "pku" Protection Keys for Users=
-pace */
- +#define X86_FEATURE_OSPKE		(16*32+ 4) /* "ospke" OS Protection Keys Ena=
-ble */
- +#define X86_FEATURE_WAITPKG		(16*32+ 5) /* "waitpkg" UMONITOR/UMWAIT/TP=
-AUSE Instructions */
- +#define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* "avx512_vbmi2" Additiona=
-l AVX512 Vector Bit Manipulation Instructions */
- +#define X86_FEATURE_SHSTK		(16*32+ 7) /* Shadow stack */
- +#define X86_FEATURE_GFNI		(16*32+ 8) /* "gfni" Galois Field New Instruc=
-tions */
- +#define X86_FEATURE_VAES		(16*32+ 9) /* "vaes" Vector AES */
- +#define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* "vpclmulqdq" Carry-Less M=
-ultiplication Double Quadword */
- +#define X86_FEATURE_AVX512_VNNI		(16*32+11) /* "avx512_vnni" Vector Neu=
-ral Network Instructions */
- +#define X86_FEATURE_AVX512_BITALG	(16*32+12) /* "avx512_bitalg" Support=
- for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
- +#define X86_FEATURE_TME			(16*32+13) /* "tme" Intel Total Memory Encryp=
-tion */
- +#define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* "avx512_vpopcntdq" P=
-OPCNT for vectors of DW/QW */
- +#define X86_FEATURE_LA57		(16*32+16) /* "la57" 5-level page tables */
- +#define X86_FEATURE_RDPID		(16*32+22) /* "rdpid" RDPID instruction */
- +#define X86_FEATURE_BUS_LOCK_DETECT	(16*32+24) /* "bus_lock_detect" Bus=
- Lock detect */
- +#define X86_FEATURE_CLDEMOTE		(16*32+25) /* "cldemote" CLDEMOTE instruc=
-tion */
- +#define X86_FEATURE_MOVDIRI		(16*32+27) /* "movdiri" MOVDIRI instructio=
-n */
- +#define X86_FEATURE_MOVDIR64B		(16*32+28) /* "movdir64b" MOVDIR64B inst=
-ruction */
- +#define X86_FEATURE_ENQCMD		(16*32+29) /* "enqcmd" ENQCMD and ENQCMDS i=
-nstructions */
- +#define X86_FEATURE_SGX_LC		(16*32+30) /* "sgx_lc" Software Guard Exten=
-sions Launch Control */
- =20
-  /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
- -#define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery =
-support */
- -#define X86_FEATURE_SUCCOR		(17*32+ 1) /* Uncorrectable error containme=
-nt and recovery */
- -#define X86_FEATURE_SMCA		(17*32+ 3) /* Scalable MCA */
- +#define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* "overflow_recov" MCA o=
-verflow recovery support */
- +#define X86_FEATURE_SUCCOR		(17*32+ 1) /* "succor" Uncorrectable error =
-containment and recovery */
- +#define X86_FEATURE_SMCA		(17*32+ 3) /* "smca" Scalable MCA */
- =20
-  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 =
-*/
- -#define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network =
-Instructions */
- -#define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumu=
-lation Single precision */
- -#define X86_FEATURE_FSRM		(18*32+ 4) /* Fast Short Rep Mov */
- -#define X86_FEATURE_AVX512_VP2INTERSECT (18*32+ 8) /* AVX-512 Intersect=
- for D/Q */
- -#define X86_FEATURE_SRBDS_CTRL		(18*32+ 9) /* "" SRBDS mitigation MSR a=
-vailable */
- -#define X86_FEATURE_MD_CLEAR		(18*32+10) /* VERW clears CPU buffers */
- -#define X86_FEATURE_RTM_ALWAYS_ABORT	(18*32+11) /* "" RTM transaction a=
-lways aborts */
- -#define X86_FEATURE_TSX_FORCE_ABORT	(18*32+13) /* "" TSX_FORCE_ABORT */
- -#define X86_FEATURE_SERIALIZE		(18*32+14) /* SERIALIZE instruction */
- -#define X86_FEATURE_HYBRID_CPU		(18*32+15) /* "" This part has CPUs of =
-more than one type */
- -#define X86_FEATURE_TSXLDTRK		(18*32+16) /* TSX Suspend Load Address Tr=
-acking */
- -#define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
- -#define X86_FEATURE_ARCH_LBR		(18*32+19) /* Intel ARCH LBR */
- -#define X86_FEATURE_IBT			(18*32+20) /* Indirect Branch Tracking */
- -#define X86_FEATURE_AMX_BF16		(18*32+22) /* AMX bf16 Support */
- -#define X86_FEATURE_AVX512_FP16		(18*32+23) /* AVX512 FP16 */
- -#define X86_FEATURE_AMX_TILE		(18*32+24) /* AMX tile Support */
- -#define X86_FEATURE_AMX_INT8		(18*32+25) /* AMX int8 Support */
- -#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IB=
-RS + IBPB) */
- -#define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirec=
-t Branch Predictors */
- -#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* Flush L1D cache */
- -#define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILIT=
-IES MSR (Intel) */
- -#define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABI=
-LITIES MSR */
- -#define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store B=
-ypass Disable */
- +#define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* "avx512_4vnniw" AVX-512=
- Neural Network Instructions */
- +#define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* "avx512_4fmaps" AVX-512=
- Multiply Accumulation Single precision */
- +#define X86_FEATURE_FSRM		(18*32+ 4) /* "fsrm" Fast Short Rep Mov */
- +#define X86_FEATURE_AVX512_VP2INTERSECT (18*32+ 8) /* "avx512_vp2inters=
-ect" AVX-512 Intersect for D/Q */
- +#define X86_FEATURE_SRBDS_CTRL		(18*32+ 9) /* SRBDS mitigation MSR avai=
-lable */
- +#define X86_FEATURE_MD_CLEAR		(18*32+10) /* "md_clear" VERW clears CPU =
-buffers */
- +#define X86_FEATURE_RTM_ALWAYS_ABORT	(18*32+11) /* RTM transaction alwa=
-ys aborts */
- +#define X86_FEATURE_TSX_FORCE_ABORT	(18*32+13) /* TSX_FORCE_ABORT */
- +#define X86_FEATURE_SERIALIZE		(18*32+14) /* "serialize" SERIALIZE inst=
-ruction */
- +#define X86_FEATURE_HYBRID_CPU		(18*32+15) /* This part has CPUs of mor=
-e than one type */
- +#define X86_FEATURE_TSXLDTRK		(18*32+16) /* "tsxldtrk" TSX Suspend Load=
- Address Tracking */
- +#define X86_FEATURE_PCONFIG		(18*32+18) /* "pconfig" Intel PCONFIG */
- +#define X86_FEATURE_ARCH_LBR		(18*32+19) /* "arch_lbr" Intel ARCH LBR *=
-/
- +#define X86_FEATURE_IBT			(18*32+20) /* "ibt" Indirect Branch Tracking =
-*/
- +#define X86_FEATURE_AMX_BF16		(18*32+22) /* "amx_bf16" AMX bf16 Support=
- */
- +#define X86_FEATURE_AVX512_FP16		(18*32+23) /* "avx512_fp16" AVX512 FP1=
-6 */
- +#define X86_FEATURE_AMX_TILE		(18*32+24) /* "amx_tile" AMX tile Support=
- */
- +#define X86_FEATURE_AMX_INT8		(18*32+25) /* "amx_int8" AMX int8 Support=
- */
- +#define X86_FEATURE_SPEC_CTRL		(18*32+26) /* Speculation Control (IBRS =
-+ IBPB) */
- +#define X86_FEATURE_INTEL_STIBP		(18*32+27) /* Single Thread Indirect B=
-ranch Predictors */
- +#define X86_FEATURE_FLUSH_L1D		(18*32+28) /* "flush_l1d" Flush L1D cach=
-e */
- +#define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* "arch_capabilities"=
- IA32_ARCH_CAPABILITIES MSR (Intel) */
- +#define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* IA32_CORE_CAPABILIT=
-IES MSR */
- +#define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* Speculative Store Bypa=
-ss Disable */
- =20
-  /* AMD-defined memory encryption features, CPUID level 0x8000001f (EAX)=
-, word 19 */
- -#define X86_FEATURE_SME			(19*32+ 0) /* AMD Secure Memory Encryption */
- -#define X86_FEATURE_SEV			(19*32+ 1) /* AMD Secure Encrypted Virtualiza=
-tion */
- -#define X86_FEATURE_VM_PAGE_FLUSH	(19*32+ 2) /* "" VM Page Flush MSR is=
- supported */
- -#define X86_FEATURE_SEV_ES		(19*32+ 3) /* AMD Secure Encrypted Virtuali=
-zation - Encrypted State */
- -#define X86_FEATURE_SEV_SNP		(19*32+ 4) /* AMD Secure Encrypted Virtual=
-ization - Secure Nested Paging */
- -#define X86_FEATURE_V_TSC_AUX		(19*32+ 9) /* "" Virtual TSC_AUX */
- -#define X86_FEATURE_SME_COHERENT	(19*32+10) /* "" AMD hardware-enforced=
- cache coherency */
- -#define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* AMD SEV-ES full debug sta=
-te swap support */
- +#define X86_FEATURE_SME			(19*32+ 0) /* "sme" AMD Secure Memory Encrypt=
-ion */
- +#define X86_FEATURE_SEV			(19*32+ 1) /* "sev" AMD Secure Encrypted Virt=
-ualization */
- +#define X86_FEATURE_VM_PAGE_FLUSH	(19*32+ 2) /* VM Page Flush MSR is su=
-pported */
- +#define X86_FEATURE_SEV_ES		(19*32+ 3) /* "sev_es" AMD Secure Encrypted=
- Virtualization - Encrypted State */
- +#define X86_FEATURE_SEV_SNP		(19*32+ 4) /* "sev_snp" AMD Secure Encrypt=
-ed Virtualization - Secure Nested Paging */
- +#define X86_FEATURE_V_TSC_AUX		(19*32+ 9) /* Virtual TSC_AUX */
- +#define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced ca=
-che coherency */
- +#define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES f=
-ull debug state swap support */
-+ #define X86_FEATURE_SVSM		(19*32+28) /* SVSM present */
- =20
-  /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), wo=
-rd 20 */
- -#define X86_FEATURE_NO_NESTED_DATA_BP	(20*32+ 0) /* "" No Nested Data B=
-reakpoints */
- -#define X86_FEATURE_WRMSR_XX_BASE_NS	(20*32+ 1) /* "" WRMSR to {FS,GS,K=
-ERNEL_GS}_BASE is non-serializing */
- -#define X86_FEATURE_LFENCE_RDTSC	(20*32+ 2) /* "" LFENCE always seriali=
-zing / synchronizes RDTSC */
- -#define X86_FEATURE_NULL_SEL_CLR_BASE	(20*32+ 6) /* "" Null Selector Cl=
-ears Base */
- -#define X86_FEATURE_AUTOIBRS		(20*32+ 8) /* "" Automatic IBRS */
- -#define X86_FEATURE_NO_SMM_CTL_MSR	(20*32+ 9) /* "" SMM_CTL MSR is not =
-present */
- +#define X86_FEATURE_NO_NESTED_DATA_BP	(20*32+ 0) /* No Nested Data Brea=
-kpoints */
- +#define X86_FEATURE_WRMSR_XX_BASE_NS	(20*32+ 1) /* WRMSR to {FS,GS,KERN=
-EL_GS}_BASE is non-serializing */
- +#define X86_FEATURE_LFENCE_RDTSC	(20*32+ 2) /* LFENCE always serializin=
-g / synchronizes RDTSC */
- +#define X86_FEATURE_NULL_SEL_CLR_BASE	(20*32+ 6) /* Null Selector Clear=
-s Base */
- +#define X86_FEATURE_AUTOIBRS		(20*32+ 8) /* Automatic IBRS */
- +#define X86_FEATURE_NO_SMM_CTL_MSR	(20*32+ 9) /* SMM_CTL MSR is not pre=
-sent */
- =20
- -#define X86_FEATURE_SBPB		(20*32+27) /* "" Selective Branch Prediction =
-Barrier */
- -#define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* "" MSR_PRED_CMD[IBPB] fl=
-ushes all branch type predictions */
- -#define X86_FEATURE_SRSO_NO		(20*32+29) /* "" CPU is not affected by SR=
-SO */
- +#define X86_FEATURE_SBPB		(20*32+27) /* Selective Branch Prediction Bar=
-rier */
- +#define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flush=
-es all branch type predictions */
- +#define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO =
-*/
- =20
-  /*
-   * Extended auxiliary flags: Linux defined - for features scattered in =
-various
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>=20
+> --
+> Regards,
+> Sudeep
 
