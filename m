@@ -1,123 +1,95 @@
-Return-Path: <linux-kernel+bounces-254034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D064E932B27
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4BE932B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9961C22C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2371C22C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D89B19E827;
-	Tue, 16 Jul 2024 15:42:05 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85181F9E8;
-	Tue, 16 Jul 2024 15:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8927419DF70;
+	Tue, 16 Jul 2024 15:42:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DD01DDF5;
+	Tue, 16 Jul 2024 15:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721144525; cv=none; b=Hsdl1kfeK2AbfUuMtaRntN3ULHikF/RVGjTRhFSqnXfFtguMRXa4sw+5qxFMxsJBcifmzf6YHhPRZokZyoch30CEIgw11cWst506jRizUnSUstsE2EDMT2IsIOhJMOAEuHTmnRgbOGcoAFgjvBRWQgJDV5a/EmlpRmY78R7C7IA=
+	t=1721144523; cv=none; b=PBNi8Bscw+itXPgLd8EwJgZrRa1XcdmeNx/YwhWV63f6HsaWhO4VetgxYny4Mx0fwknPcwY4TT6NXFMTc7fGGr0ugnMfKdOv6lHZMfejqlsGWGfLTUGLaGgiUtPGcQxfHIf0xM7jz64dXPgrEDgkhkGrefTfP4p5wq9/XZwdyiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721144525; c=relaxed/simple;
-	bh=zBoXikfS0DYHkE7nQK2Clg9f1dRTsl9vE7fWg7VizRE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZkqWUuRn1zMUf2MvvliXcR+uJBZsjkx9WBg/tjcs2cUEpET1v8HDuFTThSB7kL5RQWjLv2x/MJbuiJBEDD7252B+Emv53s5zjVu888+VpX35bVRGFiVHXUfHxi3RbS91gDi7MYsYu9Gr1k+OhWpqMWx/Knff9MtOpfe7xzECiI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.73.18) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 16 Jul
- 2024 18:41:49 +0300
-Subject: Re: [PATCH] fs: buffer: set the expression type to unsigned long in
- folio_create_buffers()
-To: Roman Smirnov <r.smirnov@omp.ru>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-References: <20240716090105.72179-1-r.smirnov@omp.ru>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <5002a830-6a66-82fc-19e3-ec1e907eeb49@omp.ru>
-Date: Tue, 16 Jul 2024 18:41:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1721144523; c=relaxed/simple;
+	bh=YDRfs8TeH7tguac1ZOsghS+/wUkkP+SkbqwvhONt+QU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mydCwueidazWI5QYZX98W/mwea0Bx2WKD64x+tlCSxVghBmICjzR10M2p1l2NRpVIBbeHmsWsDxoTRWlAQB9xfoc+zEH5uFbdeodltDGzz9n37R0bTksFKD56LH+Fw4PTU22ZrLJOreneccMk2cghMDrNknJZ4hStMXs36Jnlfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA3051063;
+	Tue, 16 Jul 2024 08:42:25 -0700 (PDT)
+Received: from [10.1.34.31] (PF4Q20KV.arm.com [10.1.34.31])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E3403F766;
+	Tue, 16 Jul 2024 08:41:58 -0700 (PDT)
+Message-ID: <88887095-fd7d-4428-b96f-27e18b547b2c@arm.com>
+Date: Tue, 16 Jul 2024 16:41:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240716090105.72179-1-r.smirnov@omp.ru>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
+To: Ian Rogers <irogers@google.com>, llvm@lists.linux.dev
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240715143342.52236-1-leo.yan@arm.com>
+ <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
+ <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
+ <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
+ <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com>
+ <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com>
+ <CAP-5=fU=LguHNi861L4gmgZWXrrgZtG1w5cdw7hXDxnfWyJyMQ@mail.gmail.com>
+ <a17e6701-4195-4132-8518-fe4b10403f7e@arm.com>
+ <CAP-5=fVi8RJVokVBQtin8xSAq7uxN=GB7zcC4OiT=SzqWB+V0w@mail.gmail.com>
+ <0c20b4b7-c1f6-4c0e-9f89-a99c25555640@arm.com>
+ <CAP-5=fVvg=5SE29_SUW0MWmLADL477vpP2DBid2kKZ8kNqxXiA@mail.gmail.com>
 Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <CAP-5=fVvg=5SE29_SUW0MWmLADL477vpP2DBid2kKZ8kNqxXiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 07/16/2024 15:17:05
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 186542 [Jul 16 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
- 186c4d603b899ccfd4883d230c53f273b80e467f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.73.18 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.73.18 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;178.176.73.18:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.73.18
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 07/16/2024 15:19:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 7/16/2024 12:52:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 7/16/24 12:01 PM, Roman Smirnov wrote:
+On 7/16/2024 4:05 PM, Ian Rogers wrote:
 
-> Shift without specifying the type casts the expression to int,
-
-   You mean the result of the shift? Or what expression?
-
-> which is then passed as an unsigned long argument. It is necessary
-
-   And here we'll have at least one potential problem (that you neglected
-to describe): with 1 << 31, that 1 will land in a sign bit and then, when
-it's implicitly cast to *unsigned long*, the 32-bit value will be sign-
-extended to 64-bit on 64-bit arches) and then we'll have an incorrect size
-(0xffffffff80000000) passed to create_empty_buffers()...
-
-> to use 1UL instead.
-
-   Perphas was worth noting that using 1UL saves us 1 movsx instruction on
-x86_64...
-
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
 [...]
 
-MBR, Sergey
+>>> I'm not sure how we detect
+>>> in the build that we're using clang, I suspect there is an approach in
+>>> a different kernel Makefile/Build that already tackles this but my
+>>> quick searching didn't yield anything - perhaps the change would be
+>>> better suited to the location the CROSS_COMPILE prefix is added to
+>>> gcc.
+>>
+>> Should we follow up the steps in the Documentation/kbuild/llvm.rst?
+>> The document uses the flag 'LLVM=1' for selecting LLVM/Clang.
+> 
+> Fix clang-built-linux email to llvm@lists.linux.dev
+> 
+> I'm not sure as the kernel build and the tools build differ in certain
+> ways. Perhaps look at the selftests build to see what they do, as they
+> are under tools and share the build files.
+
+Okay. thanks for suggestion.
+
+Leo
 
