@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-253227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BAE931E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B15931E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D222283761
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51392283630
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2727B653;
-	Tue, 16 Jul 2024 01:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD63D6FBE;
+	Tue, 16 Jul 2024 01:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TvweJxsz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF4prrSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A039DF6C;
-	Tue, 16 Jul 2024 01:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25931E54C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721092641; cv=none; b=SYtr3kGVRkppgEqZvFO//1q8S1ECZCojzaBNRRSw53qxVY7YRwlDcWDvC3bxPSp5EbWMppDTHBqInfYmE60mM0Rad1ITElwq1hd8s9QNXiIuX/azmZq4bAhn6wkyY+ZWVKPiD65mD7c1Mow+udm4DWw2WVQfmai9rQbqhlcLGFA=
+	t=1721092654; cv=none; b=gzgelv2dNv8Aqn8U5gpQdL7mCMR2lFmkxiHm1Oio0yQpLU78qtasnCaRrKvD8KH7QB4NbI4FnH7jEbkPs+u2qe7zuRkK5BswfB6Qz/r2hAYdeQnJJnOL65bhhZMrNQFls1EyWqQZ2TpDz6LTOK4SAU52v/AbFx77gZAw/izUJK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721092641; c=relaxed/simple;
-	bh=b/brgE1NdkiBFb9cLdPhtBUH3E9/F6sdQb2O5orbzK4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Dg78MutJjHRMGKytTCu46CJAdrAXbViRn1PKLaSAsaDFRT6ZOS4y22xRBdrpfgvVE2rLO211uEEUypNsGnJc1EK+mS68pCLA89E1zSvGkVFACyRJeBhOpmTbEpOlfx2S6Id3hOfsrTL2UhhyxvhAx8kUTANKyFBQlO4gr/FwKig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TvweJxsz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1721092635;
-	bh=Q1jIChmgdEnBmrz69/fPODiz0wMaK/AiIWdVBtqH+CU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TvweJxsz0Rv7qrlm26p9wecfCrPSmIizMcVgyDmBMTCwSOKUpDkaTcaJKSi0pROwO
-	 N2VuFdU92RUYU/g3o01OUyFuqjsetjHCky4eATZhFv2pB5g3xTx/DXH6QEKUk5/DZq
-	 SrLEEOwvK7X1XNyoBWeTf5ORYTDLZTxnKSswjn+xa4UaCNWm3ughdmd/hn5oy9LYTn
-	 SoSiKn8B5OW1+7N6KNqZq7ycf7nBbwpgyTsS0qzLkZbr9P+2E2Z7H6d3NGRGi9i9LU
-	 /A61Ri2WTMyg574R8o/mUFuDbPC2q7svsQHBOgS3ZjdQEuL0cTV9HgOkLScpyXJDHX
-	 UFdhXLauw+0ag==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNLlG6P1dz4wcl;
-	Tue, 16 Jul 2024 11:17:14 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Gautam Menghani <gautam@linux.ibm.com>, npiggin@gmail.com,
- christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/powerpc/kvm: Avoid extra checks when emulating
- HFSCR bits
-In-Reply-To: <20240626123447.66104-1-gautam@linux.ibm.com>
-References: <20240626123447.66104-1-gautam@linux.ibm.com>
-Date: Tue, 16 Jul 2024 11:17:13 +1000
-Message-ID: <87v816w2xy.fsf@mail.lhotse>
+	s=arc-20240116; t=1721092654; c=relaxed/simple;
+	bh=E7jx93tCkd8wfG7j1I+p+WwSpXjDC7OevdJzp0ACkk0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DrYmFsDkIHbCWPAOOV/JDckL3PF9W9CsVZGCUUOnyvj4XBiU6PoWBDrNmphn43coH+R6AcFw1uv0+7hAJW/VuJDnk/oJ5ZoutHFkP+ZLpB4jCxNEtH8ZdQA9agSSSB/QQbXnBlQIKKrnfB50sNy7AVqO7rRYyJ1PFogQiwj2pWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF4prrSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08A0BC4AF0C;
+	Tue, 16 Jul 2024 01:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721092654;
+	bh=E7jx93tCkd8wfG7j1I+p+WwSpXjDC7OevdJzp0ACkk0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=HF4prrSwXu2uCkBt/954+OTdewJ68IOJrzVERDQbiE4xoKtBxbh196lprhQOikKiX
+	 OjGdXmte1XPjZBwvbceR3esLGbfM9IVTsY/j8TsNvPaVznJI/eHPPPX7Q/2Q2ySEMS
+	 7NvKNV+OYRJ/RhfrcEUue9JAZbfBCU3CUGB9gLWoQXAokVeQiloaT6CCYN3G+8L4pV
+	 1PgiTJ0iSL7P4Uh8X3I5lQu9mxRDQQSeP9WjnhraSFCJ7lTi8iYebQGQmzLki8EoOL
+	 CU+2zHfPLW3sRE4EfHAU12G7NrluA7bnBpJH6vBJ/7QoU1JR54NVsZmtjdUWcVFneD
+	 /jS2etw2EYVlg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EB6A2C433E9;
+	Tue, 16 Jul 2024 01:17:33 +0000 (UTC)
+Subject: Re: [GIT PULL] regmap updates for v6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <bc8cbd2e0620ffd78a3a4f71b06a3a88.broonie@kernel.org>
+References: <bc8cbd2e0620ffd78a3a4f71b06a3a88.broonie@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <bc8cbd2e0620ffd78a3a4f71b06a3a88.broonie@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v6.11
+X-PR-Tracked-Commit-Id: c2bb8198fee88a428513f8d023c627ecd13aa694
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 25617a5c4503b20d2edcc75804169960e7c0d88e
+Message-Id: <172109265396.10916.16753263621365510515.pr-tracker-bot@kernel.org>
+Date: Tue, 16 Jul 2024 01:17:33 +0000
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Gautam Menghani <gautam@linux.ibm.com> writes:
-> When a KVM guest tries to use a feature disabled by HFSCR, it exits to
-> the host for emulation support, and the code checks for all bits which
-> are emulated. Avoid checking all the bits by using a switch case.
+The pull request you sent on Mon, 15 Jul 2024 15:14:40 +0100:
 
-The patch looks fine, but I don't know what you mean by "avoid checking
-all the bits".
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v6.11
 
-The existing code checks 4 cases, the case statement checks the same 4
-cases (plus the default case).
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/25617a5c4503b20d2edcc75804169960e7c0d88e
 
-There are other cause values (not bits), but the new and old code don't
-check them all anyway. (Which is OK because the default return value is
-EMULATE_FAIL)
+Thank you!
 
-AFAICS it generates almost identical code.
-
-So I think the change log should just say something like "all the FSCR
-cause values are exclusive so use a case statement which better
-expresses that" ?
-
-Also please try to copy the existing subject style for the KVM code, for
-this file it would be "KVM: PPC: Book3S HV: ...". I agree it's verbose,
-and wouldn't be my choice, but thats what's always been used so let's
-stick to it.
-
-cheers
-
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 99c7ce825..a72fd2543 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -1922,14 +1922,22 @@ static int kvmppc_handle_exit_hv(struct kvm_vcpu *vcpu,
->  
->  		r = EMULATE_FAIL;
->  		if (cpu_has_feature(CPU_FTR_ARCH_300)) {
-> -			if (cause == FSCR_MSGP_LG)
-> +			switch (cause) {
-> +			case FSCR_MSGP_LG:
->  				r = kvmppc_emulate_doorbell_instr(vcpu);
-> -			if (cause == FSCR_PM_LG)
-> +				break;
-> +			case FSCR_PM_LG:
->  				r = kvmppc_pmu_unavailable(vcpu);
-> -			if (cause == FSCR_EBB_LG)
-> +				break;
-> +			case FSCR_EBB_LG:
->  				r = kvmppc_ebb_unavailable(vcpu);
-> -			if (cause == FSCR_TM_LG)
-> +				break;
-> +			case FSCR_TM_LG:
->  				r = kvmppc_tm_unavailable(vcpu);
-> +				break;
-> +			default:
-> +				break;
-> +			}
->  		}
->  		if (r == EMULATE_FAIL) {
->  			kvmppc_core_queue_program(vcpu, SRR1_PROGILL |
-> -- 
-> 2.45.2
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
