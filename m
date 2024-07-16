@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-253423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5991C932127
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D99EB932128
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD242825E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953172826E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B08F2BAEA;
-	Tue, 16 Jul 2024 07:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ta1nTP7B"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E54628387;
+	Tue, 16 Jul 2024 07:26:19 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE06225A8;
-	Tue, 16 Jul 2024 07:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5F3219F6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114727; cv=none; b=UAV4cRTNzqxr5hhkqYfaXVgWQWo+WjT/7xsA+Vu05k9vhAhOlck0i0m64u38SYa89e9qFwzGLP3IIZHjRqiWkXRa2TkFlxKomR6mWfNTj6UkChC3Di8uBrGLyNsoCTxKjPdJbJoGDoSCxdHg+Vcn0Fq9fykLySHoQK1lNXMV6u0=
+	t=1721114779; cv=none; b=QxGuLp7zEIG6e+GpoHFIvFgf1G+G5ZvRHRqG6C+svIajnyg45/Ic0swjswoxLTrOG1y9Oy/IYGjZwwLj9mlczNihyD3GYi3IlIpV+5INs6hU79A+4d8o3or2Azn1UkQESh4Kuu0idV5IEZKxXUGwcgertvoNIG0md5Oj0MsAkJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114727; c=relaxed/simple;
-	bh=NtKSZ7m9ucMv5FMZ2KxPPKFYZhlsQr3il8/7YHPTDTc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bM1slBxdtwD8ebAeLfG+Rb7U+qbM5wYaaCgzedCKGcBgfQwQfQ65bX5qa8+9fvUcEE7QojV9VssJ2zf2CSlfkbAQo/6Q7o7sdCOURmxzbTT99xLQSxcRmWsDFIOeAE8SsVfXao3efojZ6X3pqIqJomwuHP2Ck+TJLoN85pjhb/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ta1nTP7B; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4266f535e82so34441305e9.1;
-        Tue, 16 Jul 2024 00:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721114724; x=1721719524; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TU7CUD5K5Dcz+Ml2hXnHmVw1Jiy081Oy7EHg5HRuEwo=;
-        b=Ta1nTP7B76nY4binkpm0IYUUIXc0TAJHRpBuz/2aWJkNDtw+YqoBcZXFTAMdX3gKD5
-         PV16bixHOoxoB4IqDV2gyL0SHuavpmWsPx1S2dJrvxsv1XOfO7ZfYphYNVuOruQokFze
-         /TVHPWOqOODfV7UlgQagJG826fySdWhXwGExSFhoronWiKrDgodG7vh/EMAK6SYF/pTU
-         j9JlhJCj5wqLQZGKIMhqP3C8bpcGYe3qu+aR0WjoZQxv2T3rZ/Myi9f04etA1AOHk2xO
-         Tnc/5z7RtxZyktwuPkUXkFUiT3t1PeL42a3yccRDvqy6sZv8nZGltOGhvJ4o4UVVur/H
-         KtyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721114724; x=1721719524;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TU7CUD5K5Dcz+Ml2hXnHmVw1Jiy081Oy7EHg5HRuEwo=;
-        b=NAD9PT1FLdn9jlncOIB4PXO5kEblkHUBnlWW0CcBmYDm4BrrpfxXYH1UB56x8HiMkl
-         wYYo/n698LrQHrA9x8myiOQddtJSYvSFHGL9GuhJtqv1YdHU2xFfK1dsC2fc5R9bkmK6
-         +xJYqWQR37lUhQ/oo7V3WiUINFvaQT9a0+r3RH3LqCWxejuH3p/SN168Op0BSguqC4pH
-         bAXoaAS/hxqupp3t8q/KnE0JjpOp2OvG7/xQcVRZtPWHDhkIVF3beQsOEC2UqVTg3Bgr
-         5PAKxZsK/UBL68trEFAq3ElZgOnuHKCFP5NeGKK1NvMYs7FcfCEPVQoWNuUAoE4UOMHT
-         FnYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkTLjbjAUDHpqf9m9AQdI+6BUmA6PnxgQKqORHHkrIrMGohysLMkQuN8YM5eh7HJ38+gxHpqWeZ+TlYioGdP0sH05t7dsFFBfu52/fSVx3f2x/5s7ZuurKqOMehyJixDV32CCfMeHCGaXhOR/bGJECWrGy6ReBR8K60Ko+HGnGrIVmXA==
-X-Gm-Message-State: AOJu0Yzugk0cLQlMmf+7SmPvzoXLL0eUG24LDBI61uZVCc+vJIwfxsIR
-	0zUXRy+LPk2iea4mRZkOy18kxS6e3TVycG35mFrdPOX9A09Oz6ja
-X-Google-Smtp-Source: AGHT+IETcC+uhL7n71HBlQuBAi445zap6TIzKxMp+t5U77n2cdDJTIp+1rY93nNJkKd1EJXI3i+23g==
-X-Received: by 2002:a05:600c:1988:b0:425:7796:8e2c with SMTP id 5b1f17b1804b1-427ba684893mr8865765e9.12.1721114724192;
-        Tue, 16 Jul 2024 00:25:24 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0f263sm8112744f8f.115.2024.07.16.00.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 00:25:23 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 16 Jul 2024 09:25:21 +0200
-To: Kyle Huey <me@kylehuey.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <olsajiri@gmail.com>,
-	khuey@kylehuey.com, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing
- events
-Message-ID: <ZpYgYaKKbw3FPUpv@krava>
-References: <20240713044645.10840-1-khuey@kylehuey.com>
- <ZpLkR2qOo0wTyfqB@krava>
- <20240715111208.GB14400@noisy.programming.kicks-ass.net>
- <CAP045ArBNZ559RFrvDTsHj42S4W+BuReHe+XV2tBPSeoHOMMpA@mail.gmail.com>
- <20240715150410.GJ14400@noisy.programming.kicks-ass.net>
- <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
- <20240715163003.GK14400@noisy.programming.kicks-ass.net>
- <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
+	s=arc-20240116; t=1721114779; c=relaxed/simple;
+	bh=5TeE6nG+SVarqq22UTL3bw8T6FItccUVOc5vZCC71AQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSbe7wL8ywDpUMRgeJ7r+GbETDwMUQ43Ls9yRwA48rZGkY20EKW7uwVIjNAz+JsxKLlME11xi8Hfg85OlkOdbBin/qDVN0hoMnS2XqQJR21LC7khoPB5rUwF0QYyLOm+UxBhOXBDi3i6g42sIoRU7Ls24e0hWpDOQiZqVcw06UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACnreWLIJZmVeCVAw--.49954S2;
+	Tue, 16 Jul 2024 15:26:03 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: joro@8bytes.org,
+	suravee.suthikulpanit@amd.com,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] iommu/amd: Convert comma to semicolon
+Date: Tue, 16 Jul 2024 15:25:45 +0800
+Message-Id: <20240716072545.968690-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
+X-CM-TRANSID:zQCowACnreWLIJZmVeCVAw--.49954S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF1UKry5Kr4Dtw47Jwb_yoWDCwb_ZF
+	1jqrZ3G34YkrnxC3W5twnavryjgayktan2gr92qr93Ar48Ar48Aay8ZFy8uw4UXr43uF1x
+	G3s8Cr13uayqvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
+	CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd5rcUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, Jul 15, 2024 at 09:48:58AM -0700, Kyle Huey wrote:
-> On Mon, Jul 15, 2024 at 9:30 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote:
-> >
-> > > I think this would probably work but stealing the bit seems far more
-> > > complicated than just gating on perf_event_is_tracing().
-> >
-> > perf_event_is_tracing() is something like 3 branches. It is not a simple
-> > conditional. Combined with that re-load and the wrong return value, this
-> > all wants a cleanup.
-> >
-> > Using that LSB works, it's just that the code aint pretty.
-> 
-> Maybe we could gate on !event->tp_event instead. Somebody who is more
-> familiar with this code than me should probably confirm that tp_event
-> being non-null and perf_event_is_tracing() being true are equivalent
-> though.
-> 
+Replace a comma between expression statements by a semicolon.
 
-it looks like that's the case, AFAICS tracepoint/kprobe/uprobe events
-are the only ones having the tp_event pointer set, Masami?
+Fixes: c9b258c6be09 ("iommu/amd: Prepare for generic IO page table framework")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/iommu/amd/io_pgtable.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-fwiw I tried to run bpf selftests with that and it's fine
-
-jirka
+diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
+index 9d9a7fde59e7..1074ee25064d 100644
+--- a/drivers/iommu/amd/io_pgtable.c
++++ b/drivers/iommu/amd/io_pgtable.c
+@@ -588,9 +588,9 @@ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
+ {
+ 	struct amd_io_pgtable *pgtable = io_pgtable_cfg_to_data(cfg);
+ 
+-	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES,
+-	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE,
+-	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE,
++	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES;
++	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE;
++	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE;
+ 	cfg->tlb            = &v1_flush_ops;
+ 
+ 	pgtable->iop.ops.map_pages    = iommu_v1_map_pages;
+-- 
+2.25.1
 
 
