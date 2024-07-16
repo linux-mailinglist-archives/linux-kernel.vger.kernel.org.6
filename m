@@ -1,78 +1,139 @@
-Return-Path: <linux-kernel+bounces-253211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EBF931E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C93931E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125CA1F2184D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C242E1C21F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDE32AE74;
-	Tue, 16 Jul 2024 00:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A828C4428;
+	Tue, 16 Jul 2024 00:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSeGuuBK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ytt3NNLD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877852374C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A152917F7;
+	Tue, 16 Jul 2024 00:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091132; cv=none; b=BvU0XiEbfNCvBi748WxTQOn9+IvBupyVz4BTgwW1Y4cd8sJ6Atr/am6Vx0cJSzdB285/EOv/lwzjpZoBXpyiUzTATZG4FPX2RO99YMgB1f/lsyRppjKHvPPl1Xxey6zwPM71jA4klrjq9rB2fSvt7NQSaHjTZ8+GLNsexWXLm2M=
+	t=1721091504; cv=none; b=Baj/sMSjpz/HiIHkBZGJ9DaVlvmj6vqhuO/feLFZiyqJTT70bZ93E+tMrhYl1L0MsAKb+vG6KGF3iHcX0V5B4K/hlv9gT46hl4xi1n9HNtUXcJoQcZ+fqW6mumEhCc8i2BN6o6pFtDPU74uwWrmjxodd1IClcTD5WoJlThsEwkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091132; c=relaxed/simple;
-	bh=cdzkPKk9UuKKKzHvQiAki1qBm+07o26cQTX5wMEMWwk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VmveLHZdh5M3bSJIzyy2gT/P5pWq7f+URAK3LAMazjqRSgU++dw0FcHQp371nJ8wL/L+fNkhs8Yfg+975PrtPFMQpcGDWdvrwxJcWZ240AgtC4stxtVC75N356nbISSS5jf2Z0VZh36JLio/5OH+wXoBKms3PjycRrcdtOLv4vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSeGuuBK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3085BC32782;
-	Tue, 16 Jul 2024 00:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721091132;
-	bh=cdzkPKk9UuKKKzHvQiAki1qBm+07o26cQTX5wMEMWwk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=DSeGuuBKQHaTf+/wjGzvO875seQYTRx96enFeUy1lmlkae0BIEqICLxSqkZjiDQFm
-	 JpTI5ikrl7M3YQuD4vF3NAy7aUEjanBn1dIN47qhj5laqhGZH/SnxC8s00YUS4ACiW
-	 76Y+lcOdYPAwEPe54oA86EYw1gZx+NhlfJ5dOtApo2vmSuDZdKgIgHEl8UraBU8OyX
-	 43SPUMplt5VN0F5jJi7UzBbPrWrZY/b3P7Ja1t44qnvYghR4Uh1EnBbDBESpXf9zgw
-	 GsGe4ksZK/ogaNQ/ZVHVoA5yJxlCbNKpclVfY4rMzSDnulnEOcy5iQY4ryvPYR/mp8
-	 M+DL4xPyTQG5g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 27E91C43443;
-	Tue, 16 Jul 2024 00:52:12 +0000 (UTC)
-Subject: Re: [GIT PULL] workqueue: Fixes for v6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZpW7N55a5usrGoVw@slm.duckdns.org>
-References: <ZpW7N55a5usrGoVw@slm.duckdns.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZpW7N55a5usrGoVw@slm.duckdns.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.11-rc1-fixes
-X-PR-Tracked-Commit-Id: aa8684755a283536bd8ad93141052f47a4faa5a3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d8764c1931a4c91b9b53ee183757f70999da2bb3
-Message-Id: <172109113215.26590.5372007395635327280.pr-tracker-bot@kernel.org>
-Date: Tue, 16 Jul 2024 00:52:12 +0000
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>
+	s=arc-20240116; t=1721091504; c=relaxed/simple;
+	bh=mZWafBkOw1E3DFBP11k33323DzGxODmyAUnJuloCuZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YyfvG+yRPAUwhYBRZkHic4PGXof0mXymadu0B7/YkHVzr+RFOugV7sg4nFYQQ+NlM1W3UBsTCw/gWP5JOaJPwCrn0knGNBzqFmMJD9i8gv5p0WE3nL/YFaamF2blxCjgJ+uGyMVzG4uZVDnXny28rBsT2UZD0Of1u+XUJd9ZBYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ytt3NNLD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721091499;
+	bh=YW6SVvLGC382A1pg1wvXRYmrvH68wauPrtI3gelmCn8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ytt3NNLDOXV4ANwpbIWof9PE+6XfSBLmQp3CJeL/8A642eGN/V//j7dBTNJ8A9Xxo
+	 q2r1UpV0EHUvmEtDI1NkgY3EEi4DokRahii+EbclNgQGzLtJPAXIHDa34gNlWyLB4G
+	 10y+fE+6rj1z2l/+fsUyIMqLHuoaFIqNAcutna84XCDD8/JpDPx2WA6JtjjDeD8AHu
+	 ei/fW6Oj4F/+7usu3VM6OeDJdj/DQRhuRgrCcssBZ6Gr/SFnWH11HN2dYEfWAW/UDK
+	 FMXD2FcvnBqDLOE3JxKGVHBs9WBRsK9OxCSKVUiq2qKyz5CJL2UdNo+sM1wlJAT4Fo
+	 M3JOKn9mUpNQg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNLKR2gfHz4wc3;
+	Tue, 16 Jul 2024 10:58:19 +1000 (AEST)
+Date: Tue, 16 Jul 2024 10:58:18 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.com>
+Cc: Mark Brown <broonie@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Filipe Manana <fdmanana@suse.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the btrfs
+ tree
+Message-ID: <20240716105818.03558dae@canb.auug.org.au>
+In-Reply-To: <ZnFyeNLLrEcX5_g0@sirena.org.uk>
+References: <ZnFyeNLLrEcX5_g0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/BhsuFU2eRxBq/l/FS5GcHN8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The pull request you sent on Mon, 15 Jul 2024 14:13:43 -1000:
+--Sig_/BhsuFU2eRxBq/l/FS5GcHN8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.11-rc1-fixes
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d8764c1931a4c91b9b53ee183757f70999da2bb3
+On Tue, 18 Jun 2024 12:41:44 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+>=20
+>   fs/btrfs/inode.c
+>=20
+> between commit:
+>=20
+>   adaac2633c9ad ("btrfs: remove super block argument from btrfs_iget_lock=
+ed()")
+>=20
+> from the btrfs tree and commit:
+>=20
+>   b49558e8ce3dc ("btrfs: use iget5_locked_rcu")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc fs/btrfs/inode.c
+> index 89e58647d08de,cbb2c92b6c084..0000000000000
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@@ -5582,7 -5587,7 +5582,7 @@@ static struct inode *btrfs_iget_locked(
+>   	args.ino =3D ino;
+>   	args.root =3D root;
+>  =20
+> - 	inode =3D iget5_locked(root->fs_info->sb, hashval, btrfs_find_actor,
+>  -	inode =3D iget5_locked_rcu(s, hashval, btrfs_find_actor,
+> ++	inode =3D iget5_locked_rcu(root->fs_info->sb, hashval, btrfs_find_acto=
+r,
+>   			     btrfs_init_locked_inode,
+>   			     (void *)&args);
+>   	return inode;
 
-Thank you!
+This is now a coflict between the btrfs tree and Linus' tree.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BhsuFU2eRxBq/l/FS5GcHN8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaVxaoACgkQAVBC80lX
+0Gx4RwgAn4IPLlN12vgPZXl2YDHou5JEtr8MB78A35PTMlRwWkeKt/3MpUKNcOMF
+xZPLZol+L1QYr2Ymt7af1H4ZOqny+jnH/ZqfFzGpsAkmEtUjV9SSqYwqKhkkyjyN
+2hWfxgREuqZvUm+TFm1jB2Dutm01WGdvrwXP+rP+pylDAt0dsb84TK5XLlQfZEII
+DnuIFjVFlPQo6Fg50AvtrfNzovRQNy2ZY8VlPwXcWEmA5oNaJOtilLp/c/Vf9aie
+rL0MMrrFCDqloeYrbg2poY9LEpogr9U02d1XobwIl1/62qQZMKy6zjLkfVVjJeNw
+dptiGIIY+6NZ+y9Pncx4qQZJY3oHIQ==
+=7vtu
+-----END PGP SIGNATURE-----
+
+--Sig_/BhsuFU2eRxBq/l/FS5GcHN8--
 
