@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-253700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2BE932587
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F093258A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3979E1F23579
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6041C22765
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254FA1991BB;
-	Tue, 16 Jul 2024 11:24:13 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702FC1991BA;
+	Tue, 16 Jul 2024 11:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8Lk+DDz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ADA22309;
-	Tue, 16 Jul 2024 11:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552ED17D881
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721129052; cv=none; b=s28jxhNX3z6Unr4BQ63bf8RzHt7G0tJ2vmgD+StF7kSGnH8Ijc0RUeKezhiAXdvFESjXQaMlleoqpuil1WwO/09BmLu6AdFl7itRDL5bMxs3zaCSDIKKrhg2boLN5DwQNSbuLTLYGqvZsSqC9XqiP+KzjOIpuCyQzjJ/1KytMdc=
+	t=1721129083; cv=none; b=IQUo9ny/+UjI6hjaejwOEaa0x9NlFLryuDAHLtVUHt3i8SIMX8tVBUWTO2WIptSjkA+1n6IPK72x3i0Hee1UoM3d9m5EM7rxg4HQUQOzei4fJUwS+47PjaMy/dPhmF8VcCvNjp70rToi+361c+iXHVot/zmwXETp33DHWoU6icE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721129052; c=relaxed/simple;
-	bh=UlbGu3EkA+Lvmf3I3klsx8B2VOESek2LOyeDAUqvLIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5aDVBEZsLLyAIoRlXkatJN2KFLKCHcdyU7J9ycNmnDkPlgTTpHVfLJtTEQXwde7KX6nWwBFu1echIUgP/EIodBIH1E0XF1Pl/nnbwoTj4lGc1aFsetSHbS0JgYtdXoXoAvQN4ANXNEXk10DUW6XSePw/4SctR9lkXJU6+PKGWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65cd720cee2so48566747b3.1;
-        Tue, 16 Jul 2024 04:24:10 -0700 (PDT)
+	s=arc-20240116; t=1721129083; c=relaxed/simple;
+	bh=DgKuKRTEZ4elrnLxiUiV49PCVL1/62eRHniBrw+ImiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LDAXr7qla/UhFB5CKxlk9yn4viR3WgEjIrqZrW36301ssTjEs2WzXKZhQi2v78s8PBiXtcRgr+YiKY2MCPVIGJB5NmsSJFM44XtFkpzgz7smsMLD+cniPIswjUFAuE6rPd78CacSyBAQx7LVAYJTfeRd7twPqNQ2s7OgFA7rM8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8Lk+DDz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721129081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9xigDHiuKg1vf2r9wLNcMWu6wRFVXSmz8+urmcNUTy4=;
+	b=c8Lk+DDzv9DeaGNnh8kUHmDT7J9J5k+Wxnk5N1LCUaElPtoyIavNz9zEqxdgolErOTLpYu
+	3E1xALkoRNCmgV3J6fGY3O7iqUgipwQ/VM1OhZbeTvuEF6qjLn/xlF+8a7I2kmHkzHlhPt
+	PlkAhHftrrI6+XJSiVPUI+zY1MU1Q4o=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-z4QIsFypPJq_SVhCtE2e0w-1; Tue, 16 Jul 2024 07:24:39 -0400
+X-MC-Unique: z4QIsFypPJq_SVhCtE2e0w-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ee920d5efdso11428981fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:24:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721129049; x=1721733849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5tEqgeyPZzEuby1pRGoux5oH5BnRs53yKaWTX95zMy4=;
-        b=F7mM4c+Ma28YUeEYCQEnka8AIXgEnhpZYiRQztx3sGVIZ7LS76FS0NcrdmWLnQwbYn
-         hh+lw5HODOfij8yDYWBKsXknB8KyX5tbWRmgL22vi9fuHoT+N1bGs+hgwDhlwz7AdBAa
-         yTucGgy8qEj1rtGGvYZmhSZaBaE9ZgRs6JQMjCunAgAH3Nb5QOXyLyVz0mIIJCrRXwYR
-         1cd33dltB7MYGGTUzeJp8XVVivyEhnnYDXe1i1nkqLIKCBFC7wVdbTqBhDiQXFLkrtpD
-         XZLfHpc8Eh9ufmgyqEKMNNU1Bu0CJqbE2edCvNZfv/tiLtUD6sn4EvHQsGAgzdo8rH24
-         mGsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuj4Ob/hIAg0pobOY1Q1wodgO39Br/uezNSuXdIOBz82Wt9F/gwl9wc9TdqKY1amkFoJE1nDK+aOhEoM7a4+Nw4rFDNxkE6WKX3UU7pxf0Eh4XEbmFrHmvloxUHrKJ/bq/mEVlJYdBvAsxz51PRzXYSZfKnkLFrABowd5uAuwsBfR/S5cwypn0QVLDT4N+z6hCuwBX1Yx7/g0OBE8lQKK6GVron1XLx1C0Bp8eTND0KP8cuBHBCQFjzXP4oRMhNA==
-X-Gm-Message-State: AOJu0YyynRSVOQ6pJZzxYIU171XDRDA063kd/S02paCcVOZfAfWybv6f
-	B8jCR1tw+5yKzB3OPTpgZsJDOjujgwtaJlB4QdCHnGbdftXSD5yjF3xFpk4B
-X-Google-Smtp-Source: AGHT+IHRqnHBIIsFYs75OEXLP+i+KlrxluxUBGG9UsNTTmTPDl6qYEa2wtiGCOvFVe6HF7EbkEv8/g==
-X-Received: by 2002:a81:a209:0:b0:660:56fb:7f00 with SMTP id 00721157ae682-66381ac112emr21533597b3.46.1721129048894;
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-65fc2af4232sm11106767b3.70.2024.07.16.04.24.08
+        d=1e100.net; s=20230601; t=1721129078; x=1721733878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9xigDHiuKg1vf2r9wLNcMWu6wRFVXSmz8+urmcNUTy4=;
+        b=IkHSY4LH1Xgimvbaa2am9kX3/Pn81bV4arkEKhFfDawSAVgu6vGrs8AwT5dzoAoTrR
+         2A+3O0v7XiFzq/AkX/dXk0cvTj8XHqzDrueJ40MQok8hjvjC2d+xmKxD5TZexfQLSuCT
+         hiUP2z3Mm7SQ5PPhbuQq8nqoysJ0WGZgPhDTg18ME0/Si/bsoDKYMyeQD9UJasoVbXqT
+         IahiDkzC5BP2qFCFXFWCgYjQSxbQ7FzGGGgGugfYG603nuFljJyqGZs6dloYQ/1XAXVO
+         957Tcnu2C8Q/Ml+v/BNVBWdKHx5PW/1YXwAzIwyTIwad6FkrCXVAcU/2z0Ju1u2TLMyT
+         YFKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo4U5dcpmw3+ru2wepx/H3jgwyFU5GXFQclq6JOvAjpCjatNXOK5Cb6XICj6uMlWKfu0zaMz8a1+8mUl8stEKk/lyLmG0BEpumrxIm
+X-Gm-Message-State: AOJu0YxT0vYT9Ugn2vXpBCWAB0s1jNiPUmKVdQXrp5AbVCp3OJpcg5Dr
+	YR/XlbqYck/5sovdqdzPWSGBRPdzsLjeQ4kEv5rs7DYP8EwHaNi4Z46+voz2y4tYRA9oUEmgiIp
+	ZQK+j1j5MkJ9cPrYATWszSDqCk53bJV08e0Q7LKEZ/zB7j/wy3it+9dsaRQFTeA==
+X-Received: by 2002:a05:651c:2213:b0:2ed:59fa:551e with SMTP id 38308e7fff4ca-2eef2dbf4d6mr13944961fa.4.1721129078259;
+        Tue, 16 Jul 2024 04:24:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEC6ZKy2OwDqLzG5ygo5Ts8XnTEGW3eK1A1I6PdcCUOGLjny3/tsLCx7Haj/ejGp6zed7Bdw==
+X-Received: by 2002:a05:651c:2213:b0:2ed:59fa:551e with SMTP id 38308e7fff4ca-2eef2dbf4d6mr13944781fa.4.1721129077826;
+        Tue, 16 Jul 2024 04:24:37 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1738:5210:e05b:d4c9:1ad4:1bd3? ([2a0d:3344:1738:5210:e05b:d4c9:1ad4:1bd3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f259761sm154663685e9.11.2024.07.16.04.24.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65cd720cee2so48566427b3.1;
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxbWyXJ7cnklMJnBek3yformXt9KWDwYgrU1HFTRr74iVFw0+XWLYbyv3E2zXs7f+ENU6GjzHHH9m5kPu+atrODhg0E6nP0Y4EgBLD+hjZ52dERcm1GKg3pZh2WcbYxPAXF0us47Aob61uk9p/bijGTbIdSK6SBTTR7M2WUI1qW71VnVM89rDz2aAZk6H35oQNGBWbc6RyK4nc79axFaBhwpqa6GaazPpk9J6cQehKCIFUtQeCZUYLxfRGoG7scg==
-X-Received: by 2002:a05:690c:ece:b0:64a:3e36:7fd1 with SMTP id
- 00721157ae682-6637f2bc7c4mr23335497b3.10.1721129048431; Tue, 16 Jul 2024
- 04:24:08 -0700 (PDT)
+        Tue, 16 Jul 2024 04:24:37 -0700 (PDT)
+Message-ID: <596fd758-11ad-46c0-b6f1-2c04aeba5e06@redhat.com>
+Date: Tue, 16 Jul 2024 13:24:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-2-sboyd@kernel.org>
- <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Jul 2024 13:23:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9EwBgmNYP9jZBZKNNn0ZX2XErcyeXu1xatFdBVzdXmw@mail.gmail.com>
-Message-ID: <CAMuHMdV9EwBgmNYP9jZBZKNNn0ZX2XErcyeXu1xatFdBVzdXmw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] of/platform: Allow overlays to create platform
- devices from the root node
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>, Peter Rosin <peda@axentia.se>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] tipc: Return non-zero value from tipc_udp_addr2str()
+ on error
+To: Shigeru Yoshida <syoshida@redhat.com>, tung.q.nguyen@endava.com
+Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
+ tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20240716020905.291388-1-syoshida@redhat.com>
+ <AS5PR06MB8752BF82AFB1C174C074547DDBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
+ <20240716.164535.1952205982608398288.syoshida@redhat.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240716.164535.1952205982608398288.syoshida@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 11:48=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Jul 10, 2024 at 10:14=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> =
-wrote:
-> > We'd like to apply overlays to the root node in KUnit so we can test
-> > platform devices created as children of the root node.
-> >
-> > On some architectures (powerpc), the root node isn't marked with
-> > OF_POPULATED_BUS. If an overlay tries to modify the root node on these
-> > platforms it will fail, while on other platforms, such as ARM, it will
-> > succeed. This is because the root node is marked with OF_POPULATED_BUS
-> > by of_platform_default_populate_init() calling
-> > of_platform_default_populate() with NULL as the first argument.
-> >
-> > Loosen the requirement here so that platform devices can be created for
-> > nodes created as children of the root node via DT overlays even if the
-> > platform bus wasn't populated for the root node.
-> >
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > Cc: Saravana Kannan <saravanak@google.com>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+On 7/16/24 09:45, Shigeru Yoshida wrote:
+> On Tue, 16 Jul 2024 07:35:50 +0000, Tung Nguyen wrote:
+>>> net/tipc/udp_media.c | 5 ++++-
+>>> 1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/net/tipc/udp_media.c b/net/tipc/udp_media.c index b849a3d133a0..439f75539977 100644
+>>> --- a/net/tipc/udp_media.c
+>>> +++ b/net/tipc/udp_media.c
+>>> @@ -135,8 +135,11 @@ static int tipc_udp_addr2str(struct tipc_media_addr *a, char *buf, int size)
+>>>                 snprintf(buf, size, "%pI4:%u", &ua->ipv4, ntohs(ua->port));
+>>>         else if (ntohs(ua->proto) == ETH_P_IPV6)
+>>>                 snprintf(buf, size, "%pI6:%u", &ua->ipv6, ntohs(ua->port));
+>>> -       else
+>>> +       else {
+>>>                 pr_err("Invalid UDP media address\n");
+>>> +               return 1;
+>> Please use -EINVAL instead.
+> 
+> Other addr2str functions like tipc_eth_addr2str() use 1, so I followed
+> convention. But -EINVAL is more appropriate, as you say.
 
-> > --- a/drivers/of/platform.c
-> > +++ b/drivers/of/platform.c
-> > @@ -732,11 +732,14 @@ static int of_platform_notify(struct notifier_blo=
-ck *nb,
-> >         struct of_reconfig_data *rd =3D arg;
-> >         struct platform_device *pdev_parent, *pdev;
-> >         bool children_left;
-> > +       struct device_node *parent;
-> >
-> >         switch (of_reconfig_get_state_change(action, rd)) {
-> >         case OF_RECONFIG_CHANGE_ADD:
-> > -               /* verify that the parent is a bus */
-> > -               if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BU=
-S))
-> > +               parent =3D rd->dn->parent;
-> > +               /* verify that the parent is a bus (or the root node) *=
-/
-> > +               if (!of_node_is_root(parent) &&
-> > +                   of_node_check_flag(parent, OF_POPULATED_BUS))
->
-> Oh, you inverted the check for of_node_check_flag(); was that
-> intentional?  Re-adding the "!" fixes all issues for me.
+I think that consistency with other tipc helpers here would be more 
+appropriate: IMHO no need to send a v2.
 
-I have sent a fix.
-https://lore.kernel.org/a9ada686e1f1c6f496e423deaf108f1bcfd94d7d.1721123679=
-.git.geert+renesas@glider.be/
+@Tung: please trim your replies to only include the relevant quoted text 
+and fix your configuration to avoid inserting the long trailer, quite 
+unsuitable for messages sent to a public ML.
 
-Gr{oetje,eeting}s,
+Thanks,
 
-                        Geert
+Paolo
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
