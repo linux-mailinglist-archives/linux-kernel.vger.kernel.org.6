@@ -1,142 +1,313 @@
-Return-Path: <linux-kernel+bounces-253580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D09932356
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:49:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F7693235E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D94EDB23451
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422B61F22A27
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580E5197531;
-	Tue, 16 Jul 2024 09:49:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0C819755B;
+	Tue, 16 Jul 2024 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ItQl0CZb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA8315EA6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A58715572B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123344; cv=none; b=hm0qd1OqEnTuBTRCuWjI/CVLSnaNJpX+9IUwXgR6lzEaSlbFRQ9Q0XBhk3A2uY9r0Dlzd7vnD38nzJe/dc6XyGo5Cp3PXgyzCO3ythG/PgVqGm7/Q/NuoUJoDBFo0+gLpnys2HZGldsc11PLQI1Lvk52D4MSo1CEmb8xk20IPHQ=
+	t=1721123451; cv=none; b=YI3zWXtABaLE3d7RR8o+GqmUKJV73MnNMW9DWS40M5PDZyDTEWI3nQU2gduOxoENvVChE8cU8pk58q8vhZ+9RtynKnTubs5R4aWyqJunSeZFzKh2y/wF00IH4qiQNZQthQ+kFGmncrWIDiDQRaKpemY9ZzOvXvrObmrs/7jiJ1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123344; c=relaxed/simple;
-	bh=M7R3ByYWAtQ77jzbA8HobRpqqTRbPBr3GQKhFH7UWRE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iyXtkAoqmlhQyANxdYakhKSub22LT0BB+8fUTALS5PKC001Fft1jGn1emcnPNvD6oZoLNkV1gPliaaI0vUNRQyoqH1XwsuZ9t4yeek6si+NXNH3aLMaoeT5qzrkhxDmQoVYeM8O/3TIEQBdS7GAF/QHhMwBwMxPCfqigXuk6Rk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f682fb3b16so644463239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:49:03 -0700 (PDT)
+	s=arc-20240116; t=1721123451; c=relaxed/simple;
+	bh=Qcgw1oG6GqZ+DX7h0GjwKedbviM6HftzX+3DO1sjRek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0pE+8EASEeMusIA4euuFNrxql6B52IVPeP+xMzuXIc8kaq+6wdewJXzFx/QMHRBCeREwBYHEhO4KjS8pYJ6c1r0tjutm2zHxtR/d1ytHHrcuun4cclu0oqnbnK7JluhENHfyFpSOc2C5kkS7g0Hf1gD7X5df7+31o+2Ixk3Eg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ItQl0CZb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721123446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyooQ7tbGs3I8/sxfZKSolu0QjG6tDcxBAoTwiUTCyU=;
+	b=ItQl0CZb4bsHp2txXo59mMI+qWT3sQMHgYDlbwEeslPKZ+AcL9xqWJ5W7dlAuVyE/kYn5s
+	OIcxAkI7mSmNtaRa4lpjUxtegQ2gvAOYLXx8xwjyi1pwOLSacM2ks8u1yVF2mZ6dqttFI/
+	z1W6wrleBRTuF7/eC6SthyWf0WcAEio=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-lco2oQNEPZ2hWCGOZUsaRw-1; Tue, 16 Jul 2024 05:50:45 -0400
+X-MC-Unique: lco2oQNEPZ2hWCGOZUsaRw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77eb9abdfaso436492466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:50:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721123342; x=1721728142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1721123444; x=1721728244;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NFq5tcnflhHEZpsdeJTSeaik4GMv4dVOKmIS3WsyGQM=;
-        b=dD9uY2cdCyvQc6BFygOHERBvG22Xzzdd5Ctd9FOgGOa66PO12FKFQkcLB5Ejs25yG9
-         C54FFaYuTqfY7KOq6mzXO+J8+zRGNaT2cewpHKYQ7SZwjOeaGn4UfscqwZ8xP2WYVYyE
-         5ZxT6jT9FfN2JorPCOmA2qJxhrFIsVJxthXHFcAkyjOlbBh/tYVOm7oSkseuhzfakb8i
-         ypa+s5mwpZTYD2PDiZmmr5Y3tmfSW6jDqd2WKz/LhLt1lRKmgthGdO4ZCVT/jEloNfQl
-         ny9w/iS1p0MtLZ3fWFOAtIC0y7cVVzGBFlflwTl3uhwYG6b1VEaZEpp3NkCKKr9ikpLo
-         hxFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKHf16aPc8iPBq3WuvAgru0OcxFURoZv4RUV/ae+6/+VrKxS0CGqu2g8gUd5TG4Nppv9q9GbjoMRmX5NRnQde5Slg3dA50or7j2MwW
-X-Gm-Message-State: AOJu0YznmLuDjjCp2a8Ar/t8/CaEJvuG4si1DT9ZSNhFAXC9egqOI45J
-	TKJtMWlhEZWtbYR4P9WdNYaobvX3nIe/tuBKdYVTuhSZHl8rKZvaMJb6SSo0jlaJ8w1pmQEoxy/
-	HeYWnMieRU07Swr1CCW27gjKqzrV1vF0UwGvEysxZUn986GefAkZuhkE=
-X-Google-Smtp-Source: AGHT+IERmXxu5I/wlA/JGvjQwk/YRdD/qqYO28UwG7l6NlzGzKwsQ3vR+Zoi9ybyuL2f8E/tniBLSA9LWcpGT5jPd90Kj+QSXJ73
+        bh=EyooQ7tbGs3I8/sxfZKSolu0QjG6tDcxBAoTwiUTCyU=;
+        b=uE/E6ZN52YLrLxfXoMswVFuFkvIqariHnJXQA2QK5ANfLhrpQR37M4OuTNJAEmSSxW
+         I7L+iSP4Y3p4cCfu+8W4d0XNHVh8VV0KnhWOOaavKWO55nzaMNHkB3KShRuEHq6mZoEP
+         PBNM1uXYSqGn8UyvPDiid/QyezhTmjg6hTc2e1lzMqozojGlfz5kSyMUWDD7UBNQ+pQv
+         uYW64frzAHy0xcrD84ZmJ6N/aBO7I4isxre+Ch1Cofd+tdbM3W8UZabxoAoQkVMbKecU
+         ZpTr5CEcOW74NZ6Pw31Ar+DJkf4JVze+na3zsiVtI1rdlOoXCDdhmVTthOm8DNggrLsa
+         polA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXzDh6VQk/6yQRe+dGspIzGNrGkAWfSnbSbBxcGd+dS10YTNaJ4dQx/65JATNeXArG1b2lLygfdQ208lUuQEuDB9/WdTu+6pg9osxj
+X-Gm-Message-State: AOJu0YyotwMUwO8lhiqSms3pZHftIxCMZ2VcWCVlw/GHJETNgCDZGKlD
+	jREOAbia5tzz0O5lfN9y6ACItHZBo0Up2ktYUsPjTfhg7BLKWtNzQfc88Ace5SOBwPP8ZOX0y3g
+	4w91Nr1WwOmXPcwDtLNWWXmbZ0kyvSqgTEI7Oa76p/8VHmPDBM5NfX3xMFnPuww==
+X-Received: by 2002:a17:906:b812:b0:a77:d85c:86f5 with SMTP id a640c23a62f3a-a79eaa3ed0cmr92441066b.53.1721123444351;
+        Tue, 16 Jul 2024 02:50:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7KlLMxe0hFh0JMGq+2j9fkkzcxGTYPaYAchGDzkCLy54SxVZA8oNRIGkbFcGy3Yy5zdX0hw==
+X-Received: by 2002:a17:906:b812:b0:a77:d85c:86f5 with SMTP id a640c23a62f3a-a79eaa3ed0cmr92440266b.53.1721123443972;
+        Tue, 16 Jul 2024 02:50:43 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f24d6sm285898866b.125.2024.07.16.02.50.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 02:50:43 -0700 (PDT)
+Message-ID: <9123108d-cb50-43bb-b7ff-0327fb760a89@redhat.com>
+Date: Tue, 16 Jul 2024 11:50:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22c4:b0:4b9:3703:4adf with SMTP id
- 8926c6da1cb9f-4c2048246f2mr115291173.3.1721123342670; Tue, 16 Jul 2024
- 02:49:02 -0700 (PDT)
-Date: Tue, 16 Jul 2024 02:49:02 -0700
-In-Reply-To: <tencent_9FA26F1C2CBD6D889734E986EDE6CDC47A0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000074701f061d5a411c@google.com>
-Subject: Re: [syzbot] [sound?] [usb?] UBSAN: shift-out-of-bounds in parse_audio_unit
-From: syzbot <syzbot+78d5b129a762182225aa@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] platform/x86 asus-bioscfg: move existing tunings to
+ asus-bioscfg module
+To: "Luke D. Jones" <luke@ljones.dev>, platform-driver-x86@vger.kernel.org
+Cc: corentin.chary@gmail.com, ilpo.jarvinen@linux.intel.com,
+ mario.limonciello@amd.com, linux-kernel@vger.kernel.org
+References: <20240716051612.64842-1-luke@ljones.dev>
+ <20240716051612.64842-2-luke@ljones.dev>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240716051612.64842-2-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Luke,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in parse_audio_unit
+On 7/16/24 7:16 AM, Luke D. Jones wrote:
+> The fw_attributes_class provides a much cleaner interface to all of the
+> attributes introduced to asus-wmi. This patch moves all of these extra
+> attributes over to fw_attributes_class, and shifts the bulk of these
+> definitions to a new kernel module to reduce the clutter of asus-wmi
+> with the intention of deprecating the asus-wmi attributes in future.
+> 
+> The work applies only to WMI methods which don't have a clearly defined
+> place within the sysfs and as a result ended up lumped together in
+> /sys/devices/platform/asus-nb-wmi/ with no standard API.
+> 
+> Where possible the fw attrs now implement defaults, min, max, scalar,
+> choices, etc. As en example dgpu_disable becomes:
+> 
+> /sys/class/firmware-attributes/asus-bioscfg/attributes/dgpu_disable/
+> ├── current_value
+> ├── display_name
+> ├── possible_values
+> └── type
+> 
+> as do other attributes.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
 
-usb 1-1: config 1 has 1 interface, different from the descriptor's value: 3
-usb 1-1: New USB device found, idVendor=08b7, idProduct=0000, bcdDevice= 0.00
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=3
-usb 1-1: SerialNumber: syz
-usb 1-1: 0:2 : does not exist
-c: 0, bLen: 69, E, 
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in sound/usb/mixer.c:2060:20
-shift exponent 42 is too large for 32-bit type 'int'
-CPU: 1 PID: 5219 Comm: kworker/1:3 Not tainted 6.10.0-rc7-syzkaller-00025-ga19ea421490d-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- parse_audio_feature_unit sound/usb/mixer.c:2060 [inline]
- parse_audio_unit+0x270f/0x3f60 sound/usb/mixer.c:2910
- snd_usb_mixer_controls sound/usb/mixer.c:3255 [inline]
- snd_usb_create_mixer+0x1365/0x2fa0 sound/usb/mixer.c:3602
- usb_audio_probe+0x1688/0x2100 sound/usb/card.c:888
- usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
- really_probe+0x2b8/0xad0 drivers/base/dd.c:656
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
- driver_probe_device+0x50/0x430 drivers/base/dd.c:828
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
- __device_attach+0x333/0x520 drivers/base/dd.c:1028
- bus_probe_device+0x189/0x260 drivers/base/bus.c:532
- device_add+0x856/0xbf0 drivers/base/core.c:3679
- usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
- usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
- really_probe+0x2b8/0xad0 drivers/base/dd.c:656
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
- driver_probe_device+0x50/0x430 drivers/base/dd.c:828
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
- __device_attach+0x333/0x520 drivers/base/dd.c:1028
- bus_probe_device+0x189/0x260 drivers/base/bus.c:532
- device_add+0x856/0xbf0 drivers/base/core.c:3679
- usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d6a/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
----[ end trace ]---
+Interesting (also see my reply to the cover-letter).
 
+Note this is not a full review, just a few small remarks
+with things which I noticed while taking a quick look.
 
-Tested on:
+<snip>
 
-commit:         a19ea421 Merge tag 'platform-drivers-x86-v6.10-6' of g..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1127894e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b63b35269462a0e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=78d5b129a762182225aa
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=103c33e1980000
+> +static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> +{
+> +	return !strcmp(attr->attr.name, "gpu_mux_mode");
+> +		!strcmp(attr->attr.name, "panel_hd_mode");
+> +}
+
+The second statement here is never reached, I believe you want
+a || between the 2 strcmp() calls:
+
+static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+{
+	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+	       !strcmp(attr->attr.name, "panel_hd_mode");
+}
+
+<snip>
+
+> +/* Simple attribute creation */
+
+I think it would be good to do the following for registering
+these "simple" attributes ... continued below.
+
+> +ATTR_GROUP_ENUM_INT_RW(thermal_policy, "thermal_policy", ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY,
+> +		0, 3, "0;1;2", "Set the thermal profile: 0=normal, 1=performance, 2=quiet");
+> +ATTR_GROUP_PPT_RW(ppt_pl2_sppt, "ppt_pl2_sppt", ASUS_WMI_DEVID_PPT_PL2_SPPT,
+> +		cpu_default, 5, cpu_max, 1, "Set the CPU fast package limit");
+> +ATTR_GROUP_PPT_RW(ppt_apu_sppt, "ppt_apu_sppt", ASUS_WMI_DEVID_PPT_APU_SPPT,
+> +		platform_default, 5, platform_max, 1, "Set the CPU slow package limit");
+> +ATTR_GROUP_PPT_RW(ppt_platform_sppt, "ppt_platform_sppt", ASUS_WMI_DEVID_PPT_PLAT_SPPT,
+> +		platform_default, 5, platform_max, 1, "Set the CPU slow package limit");
+> +ATTR_GROUP_PPT_RW(ppt_fppt, "ppt_fppt", ASUS_WMI_DEVID_PPT_FPPT,
+> +		cpu_default, 5, cpu_max, 1, "Set the CPU slow package limit");
+> +
+> +ATTR_GROUP_PPT_RW(nv_dynamic_boost, "nv_dynamic_boost", ASUS_WMI_DEVID_NV_DYN_BOOST,
+> +		nv_boost_default, 5, nv_boost_max, 1, "Set the Nvidia dynamic boost limit");
+> +ATTR_GROUP_PPT_RW(nv_temp_target, "nv_temp_target", ASUS_WMI_DEVID_NV_THERM_TARGET,
+> +		nv_temp_default, 75, nv_temp_max, 1, "Set the Nvidia max thermal limit");
+> +
+> +ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE,
+> +		"0;1;2", "Show the current mode of charging");
+> +ATTR_GROUP_BOOL_RW(boot_sound, "boot_sound", ASUS_WMI_DEVID_BOOT_SOUND,
+> +		"Set the boot POST sound");
+> +ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
+> +		"Set MCU powersaving mode");
+> +ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
+> +		"Set the panel refresh overdrive");
+> +ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_PANEL_HD,
+> +		"Set the panel HD mode to UHD<0> or FHD<1>");
+> +ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
+> +	"Show the eGPU connection status");
+
+Create an array of simple attribute groups for this
+entire set of simple attributes:
+
+struct asus_attr_group {
+	const struct attribute_group *attr_group;
+	u32 wmi_devid;
+};
+
+static const struct asus_attr_group simple_attribute_groups[] = {
+	{ &thermal_policy_attr_group, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY },
+	{ &ppt_pl2_sppt_attr_group, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY },
+	...
+	{ &egpu_connected_attr_group, ASUS_WMI_DEVID_EGPU_CONNECTED },
+};
+
+And then in asus_fw_attr_add() .. continued below:
+
+> +static int asus_fw_attr_add(void)
+> +{
+> +	int ret;
+> +
+> +	ret = fw_attributes_class_get(&fw_attr_class);
+> +	if (ret)
+> +		goto fail_class_created;
+> +	else
+> +		asus_bioscfg.fw_attr_dev = device_create(fw_attr_class, NULL,
+> +			MKDEV(0, 0), NULL, "%s", DRIVER_NAME);
+> +
+> +	if (IS_ERR(asus_bioscfg.fw_attr_dev)) {
+> +		ret = PTR_ERR(asus_bioscfg.fw_attr_dev);
+> +		goto fail_class_created;
+> +	}
+> +
+> +	asus_bioscfg.fw_attr_kset = kset_create_and_add("attributes", NULL,
+> +				&asus_bioscfg.fw_attr_dev->kobj);
+> +	if (!asus_bioscfg.fw_attr_dev) {
+> +		ret = -ENOMEM;
+> +		pr_debug("Failed to create and add attributes\n");
+> +		goto err_destroy_classdev;
+> +	}
+> +
+> +	/* Add any firmware_attributes required */
+> +	ret = sysfs_create_file(&asus_bioscfg.fw_attr_kset->kobj, &pending_reboot.attr);
+> +	if (ret) {
+> +		pr_warn("Failed to create sysfs level attributes\n");
+> +		goto fail_class_created;
+> +	}
+> +
+> +	// TODO: logging
+> +	asus_bioscfg.mini_led_dev_id = 0;
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE)) {
+> +		asus_bioscfg.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mini_led_mode_attr_group);
+> +	} else if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE2)) {
+> +		asus_bioscfg.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE2;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mini_led_mode_attr_group);
+> +	}
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX)) {
+> +		asus_bioscfg.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &gpu_mux_mode_attr_group);
+> +	} else if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX_VIVO)) {
+> +		asus_bioscfg.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX_VIVO;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &gpu_mux_mode_attr_group);
+> +	}
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_DGPU)) {
+> +		asus_bioscfg.dgpu_disable_available = true;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &dgpu_disable_attr_group);
+> +	}
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU)) {
+> +		asus_bioscfg.egpu_enable_available = true;
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &egpu_enable_attr_group);
+> +	}
+
+Replace the block starting here and ending ...
+
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU_CONNECTED))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &egpu_connected_attr_group);
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &thermal_policy_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PL1_SPL))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_pl1_spl_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PL2_SPPT))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_pl2_sppt_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_APU_SPPT))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_apu_sppt_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PLAT_SPPT))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_platform_sppt_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_FPPT))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_fppt_attr_group);
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_NV_DYN_BOOST))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &nv_dynamic_boost_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_NV_THERM_TARGET))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &nv_temp_target_attr_group);
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_CHARGE_MODE))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &charge_mode_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_BOOT_SOUND))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &boot_sound_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_MCU_POWERSAVE))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mcu_powersave_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PANEL_OD))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &panel_od_attr_group);
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_PANEL_HD))
+> +		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &panel_hd_mode_attr_group);
+
+here, with:
+
+	for (i = 0; i < ARRAY_SIZE(simple_attribute_groups); i++) {
+		if (!asus_wmi_is_present(simple_attribute_groups[i].wmi_devid))
+			continue;
+
+		sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, simple_attribute_groups[i].attr_group);
+		pr_dbg("Created sysfs-group for %s\n", simple_attribute_groups[i].attr_group->name);
+	}
+
+This will make adding new simple attributes a matter of just:
+
+1. Declaring the new attr using one of the macros
+2. Adding it to simple_attribute_groups[]
+
+And this also takes care of you logging TODO for simple attributes
+without needing to add a ton of pr_debug() calls.
+
+Regards,
+
+Hans
+
 
 
