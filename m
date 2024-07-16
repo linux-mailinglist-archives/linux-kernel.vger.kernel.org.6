@@ -1,300 +1,140 @@
-Return-Path: <linux-kernel+bounces-254108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B95932EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:17:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7A2932EF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 505AAB22ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:17:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68AD1C222DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708BB19EEDB;
-	Tue, 16 Jul 2024 17:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EA919F48C;
+	Tue, 16 Jul 2024 17:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5q0sJ3u"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="qc8zIPW0"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDC1FC19;
-	Tue, 16 Jul 2024 17:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287CEFC19
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721150231; cv=none; b=KU6sOH0yDzQW+7Fla/TEVO/RCAJwq4m6xr73rM4dILGKOvgxmQhRwSSu0Yph/WlEvH3PqruDE0OIcKyJbJEhw57YjwJb640h6F0G06OiEw11+eMf1vLlNiiV5yovqk94e7gqMZpaPahlLWNEmszGoL92yZ9o9KoJPZepzXVzGY4=
+	t=1721150389; cv=none; b=uMakk1YZGaWX6jzTae97NvxG63wbu/aWYzjlK2/vSXvoZT/c0mRSbNfSm5LS6QXglHcCqEUR8dGMenD2AFZsA9c7cVmGFUrOOIUb2C2h+2pVaSTZ7d9r04oN9rXZj5ubtSKPZXf8NdWFY6XRqPZvtNIf7HPLczYhKLZYe2qVSSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721150231; c=relaxed/simple;
-	bh=8CGrJN7VMAaxXZ17NXTgQIpAQcE0yer5DiihunMH7jE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uPpc+qsyKf6z4vCYFG1rMYDM+/OxZnGKQK1MZC6opAI5ynDcvlA55SnGjQmnCg164Hn635n7pm8O/mehp2WzMqN1SOKm+BReXMKbR3EvwD4NJIRq3Cjgxjgit+PFNFbuL2HP2nvNS7PLgbo8h5zrVDyyVkMAu099/R8iQ2FR9lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5q0sJ3u; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77e7a6cfa7so628123366b.1;
-        Tue, 16 Jul 2024 10:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721150228; x=1721755028; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L9+CSyykIZdK3Bn4NjGqL4WiD9KkvAB7XWIG5/efHno=;
-        b=l5q0sJ3uutP5A6ht2sJau6XvIXn5EoD+uYyyJy9nIkNnx8UiirPiUfLcptAdkyqfg4
-         uEp/njYvXPt5Seid7isFPbJlNdbXzfTBqDHXzdhK9rfb1OI9bAjh9inlA9evALP+u6Wc
-         ma57YfeZ1Ol2GnQhkhfnhU3xyTF4ArJYtC3tnpyJMBUGg47nHctv8v5hr4etUtPBblhF
-         Vg4bbpuWCvWOiXgrNjskfGA4hdkrkxdsWjDCioj2psNNEi4+z8g9p4tTc/Fa29184FW/
-         4cqrhPzvanAR1AZiQObLIg87yd5LyCI+FeAT/tGActL4RTlpZP8X/6vFsF3BYV5CIXp5
-         GBow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721150228; x=1721755028;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9+CSyykIZdK3Bn4NjGqL4WiD9KkvAB7XWIG5/efHno=;
-        b=h9Sft/KewVy6o3AMbSwD7MvaR15f4g+GLkBSdLHsppSNGwk0JeQBjGo6oCYG0vbdyH
-         9dEgtdMTbx7wiG1ZR1aJlkEpnRxxvxWyjTB17zS/KQEBIaVU9dj/JszVjBv29oyzBpJn
-         RfWZL+qm5T5hhvEEBt5YAao/jFw/nAwjdHZPioGHyAjUPyjUiRE/1StQY055pewnh0ZX
-         31nhHCeFTGLgaoN6dUvlN0l89NiX6n6e+invWb/M5EWIBARdvPAsvwb8M2J6/Qq95g27
-         29JnlD6Q8P58EUif6UBAYmY7H3Icial9Cy0I3jouX7kyzVikjPu4IK+19r4KT8JuhKiK
-         +grQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQnIj4WZZ1V15H8352/ODi73ckXPOZD7RgtF62vUSdglx356830c42LTfgMBKMFDo8bdl6dNmZFR2dEwryxEQx6pZ7XBgC9c7jH6nlRE0=
-X-Gm-Message-State: AOJu0YwdiwgvAPqdJ2+MFLCIdtVTRVqONa06T9zjd3Gom4E4D81QWfgx
-	jxDN87jJOijVD+P4KtY/UszDkDBohaKbiOtUHvu1Mtvwm2K/URQh
-X-Google-Smtp-Source: AGHT+IGkoQ1bSF/E61IIu5fC2kh3wnR+BPUhCenX4jQogjyvTZ8VQ7QXzhZcRHbeYR8TUyfyfUK7qw==
-X-Received: by 2002:a17:906:8308:b0:a77:e2b2:8ef with SMTP id a640c23a62f3a-a79eaaa11a7mr168879266b.70.1721150227537;
-        Tue, 16 Jul 2024 10:17:07 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-28.xnet.hr. [88.207.42.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1ef5sm338398566b.134.2024.07.16.10.17.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 10:17:06 -0700 (PDT)
-Message-ID: <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
-Date: Tue, 16 Jul 2024 19:17:05 +0200
+	s=arc-20240116; t=1721150389; c=relaxed/simple;
+	bh=LQtVgMXT1kLs9xuSAb2Dnp0S9QMFr2sEd0jibq58t+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ljIgqFz92i29cx2TkpS3veM37q3FFpSM2Nj6vVgRMSKVJ/rBYYEJ93KQy59jd14k/uikOir+RsNPD9wMRanBEczTRb1C8QP1iuoQB2mHuHnbCSqcSXA/KCBdyJykM21QUfDtyczNZ6u04QqthWzwzzGR7Id9DPzHXgRks5wgx/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=qc8zIPW0; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: wens@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721150385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LQtVgMXT1kLs9xuSAb2Dnp0S9QMFr2sEd0jibq58t+M=;
+	b=qc8zIPW0HWu090g9RF35uDSfiwvOgImM2IhEQPwe4ttIfKmuVhVARSUh+CW3NoFQWb2A+t
+	N7ZhQYxRoUK3P54ZsqKHUcKBRvUDzJyA9kf7GNsk/vrif1Bt6SJ+jJSPXC89ufy8mcxvRv
+	lAsOS4t3za0sjHnk2be5j1wXrPrpP4+UhjJjcQNN9hACBFfRzj2roqKHxC7S8m745JJSCl
+	QTmDpIcOpWBvVC/ljM7CogwHo/wi5a9l1Up23ke9vE05Bo/BzSgyIs7CbORxL2ZxEIDgbC
+	kyo2QL09uMIfaEz4x2Gp9LrtI2XzzX5pZcAQdCeIeOcKCcYlON0+qSZzCE/1HQ==
+X-Envelope-To: daniel@makrotopia.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: didi.debian@cknow.org
+X-Envelope-To: linux.amoon@gmail.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Chen-Yu Tsai <wens@kernel.org>, Daniel Golle <daniel@makrotopia.org>
+Cc: linux-rockchip@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+ Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>,
+ Diederik de Haas <didi.debian@cknow.org>, Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Date: Tue, 16 Jul 2024 19:19:35 +0200
+Message-ID: <3220752.Q7WYUMVHaa@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <3190961.CRkYR5qTbq@bagend>
+References:
+ <cover.1720969799.git.daniel@makrotopia.org>
+ <CAGb2v67zxs03xScN8OfWXR1gf8tddJciXrjw3FQZcL7pR3ocxA@mail.gmail.com>
+ <3190961.CRkYR5qTbq@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
- =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
- =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
- Christian Brauner <brauner@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
- reiserfs-devel@vger.kernel.org
-References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
- <20240715172826.wbmlg52ckdxze7sg@quack3>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <20240715172826.wbmlg52ckdxze7sg@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart4668013.QbK88pdo3q";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jan!
+--nextPart4668013.QbK88pdo3q
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Tue, 16 Jul 2024 19:19:35 +0200
+Message-ID: <3220752.Q7WYUMVHaa@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <3190961.CRkYR5qTbq@bagend>
+MIME-Version: 1.0
 
-On 7/15/24 19:28, Jan Kara wrote:
-> Hello Mirsad!
-> 
-> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
->> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
->> which was known from before to trigger various errors in compile and build process.
->>
->> Though this might seem as contributing to channel noise, Linux refuses to build this config,
->> treating warnings as errors, using this build line:
->>
->> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
->>
->> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
->> left, there seems to be more tedious work ahead to make the compilers happy.
->>
->> The compiler output is:
->>
->> ---------------------------------------------------------------------------------------------------------
->> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
->> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
->>  1147 |         int leaf_mi;
->>       |             ^~~~~~~
-> 
-> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
-> the code is going to get removed in two releases, so I guess we can live
-> with these warnings for a few more months...
+On Tuesday, 16 July 2024 18:53:43 CEST Diederik de Haas wrote:
+> rngtest: FIPS 140-2(2001-10-10) Long run: 0
 
-In essence I agree with you, but for sentimental reasons I would like to keep it because
-it is my first journaling Linux system on Knoppix 🙂
+I don't know if it means something, but I noticed that I have
+``Long run: 0`` with all my poor results,
+while Chen-Yu had ``Long run: 1``.
 
-Patch is also simple and a no-brainer, as proposed by Mr. Cook:
+Different SoC (RK3399), but Anand had ``Long run: 0`` too on their
+very poor result (100% failure):
+https://lore.kernel.org/linux-rockchip/CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com/
+--nextPart4668013.QbK88pdo3q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
--------------------------------><------------------------------------------
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index 5129efc6f2e6..fbe73f267853 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
- {
- 	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
- 	int n = B_NR_ITEMS(tbS0);
-+#ifdef CONFIG_REISERFS_CHECK
- 	int leaf_mi;
-+#endif
- 	struct item_head *pasted;
- 	struct buffer_info bi;
- 
-@@ -1157,7 +1159,6 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
- 		reiserfs_panic(tb->tb_sb,
- 			     "PAP-12235",
- 			     "pos_in_item must be equal to ih_item_len");
--#endif
- 
- 	leaf_mi = leaf_move_items(LEAF_FROM_S_TO_SNEW, tb, tb->snum[i],
- 				  tb->sbytes[i], tb->S_new[i]);
-@@ -1165,6 +1166,7 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
- 	RFALSE(leaf_mi,
- 	       "PAP-12240: unexpected value returned by leaf_move_items (%d)",
- 	       leaf_mi);
-+#endif
- 
- 	/* paste into item */
- 	buffer_info_init_bh(tb, &bi, tb->S_new[i]);
-diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
-index 6c13a8d9a73c..3cbc8e4491ee 100644
---- a/fs/reiserfs/fix_node.c
-+++ b/fs/reiserfs/fix_node.c
-@@ -1926,6 +1926,7 @@ static int dc_check_balance_leaf(struct tree_balance *tb, int h)
- {
- 	struct virtual_node *vn = tb->tb_vn;
- 
-+#ifdef CONFIG_REISERFS_CHECK
- 	/*
- 	 * Number of bytes that must be deleted from
- 	 * (value is negative if bytes are deleted) buffer which
-@@ -1935,26 +1936,39 @@ static int dc_check_balance_leaf(struct tree_balance *tb, int h)
- 	int levbytes;
- 
- 	/* the maximal item size */
--	int maxsize, ret;
-+	int maxsize;
-+#endif
- 
- 	/*
- 	 * S0 is the node whose balance is currently being checked,
- 	 * and F0 is its father.
- 	 */
--	struct buffer_head *S0, *F0;
-+
-+#ifdef CONFIG_REISERFS_CHECK
-+	struct buffer_head *S0;
-+#endif
-+	struct buffer_head *F0;
-+
- 	int lfree, rfree /* free space in L and R */ ;
-+	int ret;
- 
-+#ifdef CONFIG_REISERFS_CHECK
- 	S0 = PATH_H_PBUFFER(tb->tb_path, 0);
-+#endif
- 	F0 = PATH_H_PPARENT(tb->tb_path, 0);
- 
-+#ifdef CONFIG_REISERFS_CHECK
- 	levbytes = tb->insert_size[h];
- 
- 	maxsize = MAX_CHILD_SIZE(S0);	/* maximal possible size of an item */
-+#endif
- 
- 	if (!F0) {		/* S[0] is the root now. */
- 
-+#ifdef CONFIG_REISERFS_CHECK
- 		RFALSE(-levbytes >= maxsize - B_FREE_SPACE(S0),
- 		       "vs-8240: attempt to create empty buffer tree");
-+#endif
- 
- 		set_parameters(tb, h, 0, 0, 1, NULL, -1, -1);
- 		return NO_BALANCING_NEEDED;
-diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-index 7f868569d4d0..6f431819fd5e 100644
---- a/fs/reiserfs/lbalance.c
-+++ b/fs/reiserfs/lbalance.c
-@@ -521,8 +521,9 @@ static void leaf_item_bottle(struct buffer_info *dest_bi,
- static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
- 			   int last_first, int cpy_num, int cpy_bytes)
- {
--	struct buffer_head *dest;
- 	int pos, i, src_nr_item, bytes;
-+#ifdef CONFIG_REISERFS_CHECK
-+	struct buffer_head *dest;
- 
- 	dest = dest_bi->bi_bh;
- 	RFALSE(!dest || !src, "vs-10210: !dest || !src");
-@@ -532,6 +533,7 @@ static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
- 	       "vs-10230: No enough items: %d, req. %d", B_NR_ITEMS(src),
- 	       cpy_num);
- 	RFALSE(cpy_num < 0, "vs-10240: cpy_num < 0 (%d)", cpy_num);
-+#endif
- 
- 	if (cpy_num == 0)
- 		return 0;
---
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Mirsad Todorovac
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZparpwAKCRDXblvOeH7b
+bghfAP0STaXg+UlSKsk1L6VzJ9BHzyphyFMlfj7FGoFob7nyLgEAh1Yebqje+avX
+NIUvaQhX4nxlMMHIY/hZdtpdZIfbigs=
+=VxyF
+-----END PGP SIGNATURE-----
 
-> 								Honza
-> 
-> 
->>   CC      fs/reiserfs/lbalance.o
->> fs/reiserfs/fix_node.c: In function ‘dc_check_balance_leaf’:
->> fs/reiserfs/fix_node.c:1938:13: error: variable ‘maxsize’ set but not used [-Werror=unused-but-set-variable]
->>  1938 |         int maxsize, ret;
->>       |             ^~~~~~~
->> fs/reiserfs/fix_node.c:1935:13: error: variable ‘levbytes’ set but not used [-Werror=unused-but-set-variable]
->>  1935 |         int levbytes;
->>       |             ^~~~~~~~
->> fs/reiserfs/prints.c: In function ‘prepare_error_buf’:
->> fs/reiserfs/prints.c:221:17: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->>   221 |                 p += vscnprintf(p, end - p, fmt1, args);
->>       |                 ^
->> fs/reiserfs/prints.c:260:9: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->>   260 |         p += vscnprintf(p, end - p, fmt1, args);
->>       |         ^
->> make[4]: Target 'arch/x86/kernel/' not remade because of errors.
->> make[3]: *** [scripts/Makefile.build:485: arch/x86/kernel] Error 2
->> make[3]: Target 'arch/x86/' not remade because of errors.
->> make[2]: *** [scripts/Makefile.build:485: arch/x86] Error 2
->> fs/reiserfs/lbalance.c: In function ‘leaf_copy_items’:
->> fs/reiserfs/lbalance.c:524:29: error: variable ‘dest’ set but not used [-Werror=unused-but-set-variable]
->>   524 |         struct buffer_head *dest;
->>       |                             ^~~~
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/prints.o] Error 1
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/fix_node.o] Error 1
->> ---------------------------------------------------------------------------------------------------------
->>
->> In fs/reiserfs/fix_node.c:1938:13, fs/reiserfs/fix_node.c:1935:13, and fs/reiserfs/lbalance.c:524:29,
->> the problem seem to lie within the construct RFALSE(), like
->>
->>  521 static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
->>  522                            int last_first, int cpy_num, int cpy_bytes)
->>  523 {
->>  524         struct buffer_head *dest;
->>  525         int pos, i, src_nr_item, bytes;
->>  526 
->>  527         dest = dest_bi->bi_bh;
->>  528         RFALSE(!dest || !src, "vs-10210: !dest || !src");
->>  529         RFALSE(last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST,
->>  530                "vs-10220:last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST");
->>  531         RFALSE(B_NR_ITEMS(src) < cpy_num,
->>  532                "vs-10230: No enough items: %d, req. %d", B_NR_ITEMS(src),
->>  533                cpy_num);
->>  534         RFALSE(cpy_num < 0, "vs-10240: cpy_num < 0 (%d)", cpy_num);
->>
->> Hope this helps.
->>
->> Best regards,
->> Mirsad Todorovac
->>
+--nextPart4668013.QbK88pdo3q--
+
+
+
 
