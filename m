@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-254121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312F9932F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9023F932F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BDE1F2212F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBB2865F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9CD19DF87;
-	Tue, 16 Jul 2024 17:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054C81A00ED;
+	Tue, 16 Jul 2024 17:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DZfcO+C1"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnG4iEP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FBF19E832
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CE919E832;
+	Tue, 16 Jul 2024 17:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721151541; cv=none; b=mh5ajxbLeC8/IqakyLV/8pqRMd8VG8tDnqeiDdMXvnOtoEGJTYPJI1idz0phQdV6B4DVUXepRiwPc/enYW11DRB+KTWsjOrpxZiwne3zzU5cgKezOLs0OeQYmRnC3T5HLGDUdfpZIThR4nqZ986gIbljeORxgAPcwWfDMP4eMd0=
+	t=1721151617; cv=none; b=fe7HquQVXknb5KudzzuOLXCBatr/POPB5eWKAQfRoFG7oBpUebDdPIzW0LXilxu+q7EoeyEXwePJLeiyVNbmaso0cLMAvFMql3DEPWPP+E8H96MMxg1wk3woF0gsJS/K0tlzNPv/z8dU+RcHqiHl4vX3ENWAGCNZk5jo7UZm2jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721151541; c=relaxed/simple;
-	bh=fiuf3BXNn2hReR+sxnVMbn9Wa/YussXuxBdQcdgwLiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ww4K0+3knznLeLIFAt+edSbweWwUl/+kjyPy/dznaa97tbyLj2K+fwWT+DypkDTx/NSsdh/lLB+Q1GTlz6QRcWzw3W12Jl1gwroPZuh8dUplje31j0p9VBoabzjsL/BD/lrHmMDdBNgtEkmBANvjdJnz5U6A5MibgrZYx1fJ3Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DZfcO+C1; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eec7e43229so70082311fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721151538; x=1721756338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fiuf3BXNn2hReR+sxnVMbn9Wa/YussXuxBdQcdgwLiQ=;
-        b=DZfcO+C1X3vJk7prvjcdloA1Vu1hfDpoSSW9t+RjTZhnfJsyS0fkn+yf85zW/Le1WL
-         GybGinpI3khd14lhDu7WqaNXopk+XzN9GFabtla/20wlj40WNjgKS3wMmXjdgGem+n+m
-         wB/GfO3aYz22wFsj4z5TCOnolaifEDrF5Iq9y6/HLWkxp0gVvO7ePZIJCBunbPzRGWfi
-         +nlfMtsjCXMcWxI0z5U+7GErxltq8tDJKFfY4J6STDELuPUVFjUhbOAYlipKK2kuRPgn
-         r/JFmR9RYEPn0Lw874ckATGFiYK5EwN89VCq2X/ENXuTnmdNdxGAk3iQ+PiE6vVUzNED
-         8JTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721151538; x=1721756338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fiuf3BXNn2hReR+sxnVMbn9Wa/YussXuxBdQcdgwLiQ=;
-        b=cnaFKPQB5LD6NsryX69MWit2esFUVwl6hczMtw0Gd/fOI7m0nvxvpWFa+fMIxBbdRU
-         DhVAomND8TboX03mf/wigNdLOex1/OYVMwd4i1P/IS/epf/YEV04+7NIjgRtPZgYvzIV
-         DQTdCXU+grMbW6zGGj62O9uj2fkSu8oQBg8rdjHUxdrYh7YOQE34BThwj0he8rbyvnNh
-         68QKPGxjkPwaidGuV+AXiooX0lvkMFu/69bJRvQRkceQm6aov6Pt4bfuPAHAU0NvskPp
-         MU0x7Js3M5Rd5hLIPhel02EHX8WH7DqwuFIpUfrCIPl+BgOqgz1k18naMXN3k/7B5y4q
-         heSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFeDHefUPkMUn6+VFY8sluOtUfEE9/ifD3n72YqMMk3svRvSEoRJMHOWVhpPhfKw4LFNMnq8m8UN/GC8xlnIghHForPYgiqn4RiUHX
-X-Gm-Message-State: AOJu0Yz1h4d79o7KUfUABYY2RVrgriQtblz595Br9FGwBW2Nu51Pqvw2
-	gBqp1tQT+XgvGutDzNS+Rpd6VIHKlcPsOVehBiyw3n74Gkdf4HDHqIiDQsNqV1jKQ5mUH/XDAoU
-	Mtjqf4ffo57+NAIdXAy81sON8Ys3yfArIoiIwpw==
-X-Google-Smtp-Source: AGHT+IECPMk9nLTlTEBNBAM0hlphHHU06zWDAV/V7jCJo+x5uJ2sPc1vymCk2s3xyDlUux14Sy2sFoQ/7Uwhcj2sgsE=
-X-Received: by 2002:a05:651c:a06:b0:2ee:7d3c:670 with SMTP id
- 38308e7fff4ca-2eef416e906mr25736141fa.19.1721151537558; Tue, 16 Jul 2024
- 10:38:57 -0700 (PDT)
+	s=arc-20240116; t=1721151617; c=relaxed/simple;
+	bh=/DWRRzlwPclikws22W4iLFI9F32izmSn+UFrDAbSZ5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MB1WhFTqdwJBgzfkjDJSJA2bUmdK+Y/+FNHm9ga0NhyK6ln667/giE1dmPHxdWCxz9dm4UdEEqdAF3VwLlzNiE3RvVJa9DqPtivMl/EILCH1luRBCcUl2Edv31f0C8KV7AHZ4zrE3wjqiIsHY92Ph6JPwrI7mHlNQh1Xl/oahWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnG4iEP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E687FC116B1;
+	Tue, 16 Jul 2024 17:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721151617;
+	bh=/DWRRzlwPclikws22W4iLFI9F32izmSn+UFrDAbSZ5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jnG4iEP4JUqetBoPTMZyAsGFAaYNtgCfXuqwuKe9v0neIVIxyJ2dkW8aaCQYFB+VL
+	 t3HPOBIiGhUHUdi9EQ9UfrU5dCgDUOyOPb3fpVpqHpczhhxFKsFsHU0m4FDKJg0ljb
+	 Vnp8jEPky8TJiCbnWtFVfF2Eafx17VmCr3LTR4UerjscPcONdbddRQqJ4tM4d2pinM
+	 H9CJUTcyz+3Z/mF7X++iFZtZzRlAaBcTa+2BYMbuJu0vgrEGGJxoorHzHqVF9F7S75
+	 cOdYE1z6WYYy1EYclanvs8RerANxPhlG02Dj0xuNIgIVL59OAg1A3I7eG+HxkWm/aY
+	 v04NdoJCtHwNA==
+Date: Tue, 16 Jul 2024 10:40:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v10 10/10] xfs: enable block size larger than page size
+ support
+Message-ID: <20240716174016.GZ1998502@frogsfrogsfrogs>
+References: <20240715094457.452836-1-kernel@pankajraghav.com>
+ <20240715094457.452836-11-kernel@pankajraghav.com>
+ <ZpaRwdi3Vo3qutyk@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152318.207178-1-brgl@bgdev.pl> <20240716155943.GM3446@thinkpad>
- <CAMRc=McObC-+xPfZADQ2wEHO5c3htLbPZLU0Ng-VmgBPEN-2Yw@mail.gmail.com> <20240716163312.GN3446@thinkpad>
-In-Reply-To: <20240716163312.GN3446@thinkpad>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 16 Jul 2024 19:38:46 +0200
-Message-ID: <CAMRc=Mdr3QaP1-tLwH9Oyjw1+8mfCsNj18u3YGwpHTmhBtB6OA@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpaRwdi3Vo3qutyk@casper.infradead.org>
 
-On Tue, Jul 16, 2024 at 6:33=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Tue, Jul 16, 2024 at 06:29:04PM +0200, Bartosz Golaszewski wrote:
-> > On Tue, Jul 16, 2024 at 5:59=E2=80=AFPM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > On Tue, Jul 16, 2024 at 05:23:18PM +0200, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > Kconfig will ask the user twice about power sequencing: once for th=
-e QCom
-> > > > WCN power sequencing driver and then again for the PCI power contro=
-l
-> > > > driver using it.
-> > > >
-> > > > Let's remove the public menuconfig entry for PCI pwrctl and instead
-> > > > default the relevant symbol to 'm' only for the architectures that
-> > > > actually need it.
-> > > >
-> > >
-> > > Why can't you put it in defconfig instead?
-> > >
-> >
-> > Only Qualcomm uses it right now. I don't think it's worth building it
-> > for everyone just yet. Let's cross that bridge when we have more
-> > platforms selecting it?
-> >
->
-> This is the same case for rest of the Qcom specific drivers as well, but =
-we
-> enable it in ARM/ARM64 defconfig. So I think this driver should also foll=
-ow the
-> same.
->
+On Tue, Jul 16, 2024 at 04:29:05PM +0100, Matthew Wilcox wrote:
+> On Mon, Jul 15, 2024 at 11:44:57AM +0200, Pankaj Raghav (Samsung) wrote:
+> > +++ b/fs/xfs/xfs_super.c
+> > @@ -1638,16 +1638,30 @@ xfs_fs_fill_super(
+> >  		goto out_free_sb;
+> >  	}
+> >  
+> > -	/*
+> > -	 * Until this is fixed only page-sized or smaller data blocks work.
+> > -	 */
+> >  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+> > -		xfs_warn(mp,
+> > -		"File system with blocksize %d bytes. "
+> > -		"Only pagesize (%ld) or less will currently work.",
+> > +		size_t max_folio_size = mapping_max_folio_size_supported();
+> > +
+> > +		if (!xfs_has_crc(mp)) {
+> > +			xfs_warn(mp,
+> > +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
+> >  				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> > -		error = -ENOSYS;
+> > -		goto out_free_sb;
+> > +			error = -ENOSYS;
+> > +			goto out_free_sb;
+> > +		}
+> > +
+> > +		if (mp->m_sb.sb_blocksize > max_folio_size) {
+> > +			xfs_warn(mp,
+> > +"block size (%u bytes) not supported; maximum folio size supported in "\
+> > +"the page cache is (%ld bytes). Check MAX_PAGECACHE_ORDER (%d)",
+> > +			mp->m_sb.sb_blocksize, max_folio_size,
+> > +			MAX_PAGECACHE_ORDER);
+> 
+> Again, too much message.  Way too much.  We shouldn't even allow block
+> devices to be created if their block size is larger than the max supported
+> by the page cache.
 
-Ok, so let's do it in the next cycle.
+Filesystem blocksize != block device blocksize.  xfs still needs this
+check because one can xfs_copy a 64k-fsblock xfs to a hdd with 512b
+sectors and try to mount that on x86.
 
-Bart
+Assuming there /is/ some fs that allows 1G blocksize, you'd then really
+want a mount check that would prevent you from mounting that.
+
+--D
 
