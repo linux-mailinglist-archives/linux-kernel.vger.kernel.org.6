@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-253488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B25932203
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:39:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14427932204
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9101F21819
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA12B212B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FDF17D376;
-	Tue, 16 Jul 2024 08:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA5917D346;
+	Tue, 16 Jul 2024 08:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I8vBcSIy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Gq2vRck/"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B6913CF8E;
-	Tue, 16 Jul 2024 08:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6B93FB3B;
+	Tue, 16 Jul 2024 08:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119166; cv=none; b=n8FeUaSZS74tu11kYtf9TXWq++Seb75ymNXSG6UtqdcnDHW9laLL6qeelf/U3j8mBk5Z7BCjebyL3HEIgvpJKSTlQKq1M9IGq7wzx1LORR+B7ns85ZT53UIMZFUzv+xcbG948Ub51b4COLPksm49oQY8k3qjdq6IQ00UwDsSQjw=
+	t=1721119223; cv=none; b=NM4nVpvfDmkGztvUj2yeUx9PyPR5NRTbR1+PuSydHVEtGNI+Obk4kGfsl+mHw9GrZLJf7NyNR6oM5sFgawh4cpQormSP+Vh0vM36WJM1c8mhTrCG2PRW4cICmg6q+YpwLKXMdIUu+yTNU8lF+nRWxm8x8hQse1BxgzWSKo/MeRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119166; c=relaxed/simple;
-	bh=pnBIBVWhf5BT7kXBetHfhRVjUopJwG8oDLrBX4fP/vU=;
+	s=arc-20240116; t=1721119223; c=relaxed/simple;
+	bh=+cb+A396TX01g/+krPAkegLsduwSJBAoVPNUU5Z37no=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S4RqWo9beYfTAv5Z0z3m60S2RTU/eZCsof+Dlp009pC06yHwvS/U/nouKcVtBAtCNQu05rVuoaR9w4m6WvEiGROj9H49NZ8msmSnudffqOyu119k3lMzmQQ/iXhwnHZOpa0277ieTkmTs2gk7LQhoSdXdfdvJyNX/PK1LAt7wso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I8vBcSIy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G4XQPm031357;
-	Tue, 16 Jul 2024 08:39:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EeHaRWYXiK3/lLN0S5rke1NcA+FU45aTCk2uQSql5dI=; b=I8vBcSIy1sFRlY4L
-	Us32aFsxGOXp6B68Wafh7n7lb7D+ySERR0ngeiSZO04vrmV5TAsGy99ZCwLCCATq
-	K15IMbFNUo9HrUZc7z+Cf3pb1xOEgnLCxyRiZmnmCo0KNDGtm71Dh3Hptw1CAahP
-	t0uSv+NtI0+LOiyKC2fSt5Ff3O6euqT5Sr4F0CxqU5JqHgI8HcSz2A9vWVAXR8p8
-	2CPm3lSEbCm/MQ0sRw/98j34VC0gG6YpUpf8RBONqauZS+iiMv5rOpxhKKS2FWJX
-	ao8UkmBy2kiRdDY9UvgWy8g5OKillyqZ7WVapjAuL3wqyLam0xx8GVM32F8zGzWF
-	5i/tbg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bgwg6few-1
+	 In-Reply-To:Content-Type; b=QGklHBnpj0U/kem2TJK+lB6vYv/X/1rS6AeV9wyHSRA7mr2txvb6tj8Idyq1MUU3Q2nBz06SwXEWWYm0TROujCHcrmqipk1YgcABa2WqdnUy5acvPIxSnhKJoisDoiEIGrlRIhvrXbFFJvGSA8DPkI7UYYbu6Y18n2ZTJl0eMtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Gq2vRck/; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G4hlA9004722;
+	Tue, 16 Jul 2024 03:39:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=ITk2kB8sB5irsmZZA3IWAt7qcuvh9CDhBEbjd9TVeBs=; b=
+	Gq2vRck/Wc9wYqV7eTMmO+E3SpDVljLtpleVSPMImSgY/I4HhEASKihLW6QwD+Nd
+	ai2OI5iikP0hq+P/pZhfPZeXSVdiZsd4hX0wJb5oJqtuBEWkZgbOBQhDF51yuHSD
+	38F8jxO8C9qhjXkV98aoqcvc4A6/jeg7ODvo1Lnrf43li7FU7Ve0/Pn/JuV6+p/v
+	QgqU7V+zuOg6Y3fZxlKCcc4FBUIRHgPz7sJYCWTv78J/HAQpwN5eUyN3ZhCgveRb
+	4LlEo4Jw33TFDt+R0yjeRT0y/u/E3v+j6sGJut4o0lRd2gCRtiJL65VAhL8sjfoI
+	5K0iptwj7xZ0F900KuvvGQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40bp0jjrcp-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:39:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46G8dIk1022098
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:39:18 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 16 Jul 2024 03:39:49 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 01:39:13 -0700
-Message-ID: <dd8ad439-f74c-4bb6-9066-73394bb9befe@quicinc.com>
-Date: Tue, 16 Jul 2024 14:09:10 +0530
+ 2024 09:39:47 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Tue, 16 Jul 2024 09:39:47 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 4258D820244;
+	Tue, 16 Jul 2024 08:39:47 +0000 (UTC)
+Message-ID: <f551bffd-43f1-4162-9eaa-aac64ab227d0@opensource.cirrus.com>
+Date: Tue, 16 Jul 2024 09:39:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,125 +66,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>
-References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
- <20240611133752.2192401-9-quic_ajipan@quicinc.com>
- <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
- <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
- <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
- <9c3de930-47b7-45a9-bf7e-6e506ea2accc@quicinc.com>
- <8f7cdb31-c50d-4690-b878-518bad545612@linaro.org>
- <46e6f1f0-d244-4e53-99ce-9fee339dc4de@quicinc.com>
- <f9a23663-7a1d-44dc-8e0b-8463c3c88a29@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <f9a23663-7a1d-44dc-8e0b-8463c3c88a29@linaro.org>
+Subject: Re: [PATCH] ASoC: cs42l42: Convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, <david.rhodes@cirrus.com>,
+        <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>,
+        <sbinding@opensource.cirrus.com>
+CC: <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240716025307.400156-1-nichen@iscas.ac.cn>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <20240716025307.400156-1-nichen@iscas.ac.cn>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WkTPEf-BUhFJZI68eqwGh_Cp_RhYmNsp
-X-Proofpoint-ORIG-GUID: WkTPEf-BUhFJZI68eqwGh_Cp_RhYmNsp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 clxscore=1011 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407160063
+X-Proofpoint-GUID: OGq9hTF291lQclwBhHxKYphq6Eq1Plre
+X-Proofpoint-ORIG-GUID: OGq9hTF291lQclwBhHxKYphq6Eq1Plre
+X-Proofpoint-Spam-Reason: safe
 
-
-
-On 7/12/2024 6:10 PM, Konrad Dybcio wrote:
-> On 12.07.2024 2:31 PM, Ajit Pandey wrote:
->>
->>
->> On 7/12/2024 5:52 PM, Konrad Dybcio wrote:
->>> On 12.07.2024 11:53 AM, Ajit Pandey wrote:
->>>>
->>>>
->>>> On 7/11/2024 3:25 PM, Konrad Dybcio wrote:
->>>>> On 3.07.2024 11:16 AM, Ajit Pandey wrote:
->>>>>>
->>>>>>
->>>>>> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 6/11/24 15:37, Ajit Pandey wrote:
->>>>>>>> Add device node for camera, display and graphics clock controller on
->>>>>>>> Qualcomm SM4450 platform.
->>>>>>>>
->>>>>>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>>>>>>> ---
->>>>>>>
->>>>>>> None of these nodes reference a power domain (which would usually be
->>>>>>> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
->>>>>>>
->>>>>>> The current upstream implementation only allows one power domain to be
->>>>>>> scaled, but that's better than none (see other DTs for recent SoCs).
->>>>>>>
->>>>>>> Konrad
->>>>>>
->>>>>> SM4450 doesn't support MMCX and CX/MX domains will remain active so
->>>>>> power-domains property is actually not required for SM4450 clock nodes.
->>>>>
->>>>> It's not only about them being active.. some PLLs require e.g. MX to be
->>>>> at a certain level, or the system will be unstable
->>>>>
->>>>> Konrad
->>>>
->>>> With active I mean CX/MX rails will be default running at minimum level required for clock controllers. Adding power-domains property for CX/MX rails is like a redundant code as that will also scale such rails at default specified minimum level only. Also we hadn't added such property for other targets DT nodes to scale up CX/MX at minimum level.
->>>
->>> What I mean here is that, the minimum level may not be enough. In such case
->>> you would also add a required-opps = <&handle_to_rpmhpd_opp_level>
->>>
->>> Konrad
->>>
->>
->> Apologies, but could you please elaborate the use-case where minimum level isn't enough ? I guess for clock controllers configuration min level of CX/MX would be suffice, client will anyhow scale such rails to higher levels depending on their use-case.
+On 16/07/2024 03:53, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
 > 
-> The main issue here is with PLLs within the clock controllers. Nobody
-> votes for them. It's an unsolved problem and we currently work around
-> cases where it's necessary by requiring that (with runtime pm, so when
-> there's active consumers of the clock controller) the attached power
-> domain is at >= SOME_LEVEL
+> Fixes: 90f6a2a20bd2 ("ASoC: cs42l42: Add SoundWire support")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>   sound/soc/codecs/cs42l42-sdw.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> Konrad
-
-Konrad, this target (SM4450) have all the PLLs connected to CX/MX(again 
-this is not collapsible). At boot the RPMHPD driver would keep the rails 
-at minimum level and which is good to operate for the clock controller. 
-I do not see currently this requirement you pose here specifically for 
-SM4450.
-
-As part of the PLL requirement within clock controller, this is 
-definitely a requirement which we plan to RFC soon. There are 
-discussions already in progress on how to handle this requirement.
-
--- 
-Thanks & Regards,
-Taniya Das.
+> diff --git a/sound/soc/codecs/cs42l42-sdw.c b/sound/soc/codecs/cs42l42-sdw.c
+> index 94a66a325303..29891c1f6bec 100644
+> --- a/sound/soc/codecs/cs42l42-sdw.c
+> +++ b/sound/soc/codecs/cs42l42-sdw.c
+> @@ -323,15 +323,15 @@ static int cs42l42_sdw_read_prop(struct sdw_slave *peripheral)
+>   	prop->scp_int1_mask = SDW_SCP_INT1_BUS_CLASH | SDW_SCP_INT1_PARITY;
+>   
+>   	/* DP1 - capture */
+> -	ports[0].num = CS42L42_SDW_CAPTURE_PORT,
+> -	ports[0].type = SDW_DPN_FULL,
+> -	ports[0].ch_prep_timeout = 10,
+> +	ports[0].num = CS42L42_SDW_CAPTURE_PORT;
+> +	ports[0].type = SDW_DPN_FULL;
+> +	ports[0].ch_prep_timeout = 10;
+>   	prop->src_dpn_prop = &ports[0];
+>   
+>   	/* DP2 - playback */
+> -	ports[1].num = CS42L42_SDW_PLAYBACK_PORT,
+> -	ports[1].type = SDW_DPN_FULL,
+> -	ports[1].ch_prep_timeout = 10,
+> +	ports[1].num = CS42L42_SDW_PLAYBACK_PORT;
+> +	ports[1].type = SDW_DPN_FULL;
+> +	ports[1].ch_prep_timeout = 10;
+>   	prop->sink_dpn_prop = &ports[1];
+>   
+>   	return 0;
+Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
