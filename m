@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-253218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66857931E41
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10616931E43
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65D2282E27
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3A7282E13
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5FBC8E1;
-	Tue, 16 Jul 2024 01:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9694428;
+	Tue, 16 Jul 2024 01:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToyINu31"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7cdU2n6"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE8AD24;
-	Tue, 16 Jul 2024 01:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D3F9EB;
+	Tue, 16 Jul 2024 01:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091905; cv=none; b=Xp40ndxZrH3FNxQLkWAAwSoQv4DXcYK6a5wvVD3mftQGkEos8bw75C59OU00MCX/hblKJqSGlDa3pk6ZvDEpGs03nn/GejNu5h2/Sm8iNZ/sbzy92Zz8fFqiavI6mkiB+6PEsG9zADbP1M475nX00NC+dJWywNNyPHohR+FxzGk=
+	t=1721091915; cv=none; b=dPn6TzEpFymeePAMZm/oR/u4St8t29y6XdJNs5wV0wmhKMMJo64MzLmM9nCuFqn/0QvPkyY8/j/VAe9c4VOyoVOF1IK4Wa8NTiyfXnb/V1662H2Nv2x2xpdeIHqt/EDvNcW7Y7khBySACByxydQE5galqwUgGd52fBHlmV9TI50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091905; c=relaxed/simple;
-	bh=QG29vkIJ/KvY/97Bru3A84cybIUnamlVoJnN1kflOmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gat1JSeWJMNyVgZJJP0NKoorwJHhciKRRoeTJGtpOttT1aLO+2MgYBW7GG/SCayCo9UYd5cziUToW53Nc78E7+CkV0JU9s32kUPOWtNfGdvpSKyZaqaqk5TIGcKoZCjpIBUkjIeRGY3icnOmK8yKAOaet+Z+vjJjA8JczotbbZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToyINu31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53982C4AF0B;
-	Tue, 16 Jul 2024 01:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721091905;
-	bh=QG29vkIJ/KvY/97Bru3A84cybIUnamlVoJnN1kflOmU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ToyINu31o0mwiMTvB5jB7n0JqZmTDkbSgm3t3bwVwzYP75J65cEK6v6oyb8tYVOhv
-	 v283nYUQlfOOu5dkmJkSXA7x3GfOcAgcUwSZ23oscxwuTlMrDQv9GuHJ9AuZDnkjU3
-	 KGEZWRS6uz9S2DA8GajHIs6NU9sefPICsgdx2qDIbes6U6ElBomuJN3h+6C0pwpDmx
-	 abIAgm1tiGWHam/Y9EjCnlpXRq5alYhZmF4YpzXbnIkpfqe18YXG0uxRhfKfoIz+qJ
-	 Brbx0sk7a7jc2ovVW4SEzYnEvoOaLtrMtixOVW1ayPOwJnQ7UnVjRjO8mfbe4KjanQ
-	 Ei/CYG98ITPjw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eea7e2b0e6so66159281fa.3;
-        Mon, 15 Jul 2024 18:05:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKcym/LGhXmcssf/ceKZ7NWc59TOS+A321xZJpD/ZOzICcYpdEHVgWwPvYVkm2NtqXmkQsYuTITfOQJBvRbtehNHibRk5QUmhU7YLZ3lh4YxyaN2opC1i7Mrmb6OqHL0lv/Ho3y0jta1opkKRYE4cO0wK2AnLILdBb5ZWZe7nj4uu7DA==
-X-Gm-Message-State: AOJu0YxUXds6735nTgt9PB/5ot5W5pEE6qZgQaAf5q8yvMtQzogiXozI
-	eb/K8W87KDZ8CNDe9Qq3MTOKWcHo5QXteuofT1x/F+W2vrpT/dNIkypYfZvTpjnmmXVLe2QLlWa
-	zmthnOVEIOAZaxOtI/u19NrK8ZhQ=
-X-Google-Smtp-Source: AGHT+IEN6H27w2IkU8okfWfdkHSr98KLu1OkcEMwEZm2647siY5rx5myWRTdnfrOyys1KrSYGu4NevvkqFvZHj/70C0=
-X-Received: by 2002:a05:6512:138c:b0:52e:9b92:4990 with SMTP id
- 2adb3069b0e04-52edf0192ffmr286040e87.32.1721091903625; Mon, 15 Jul 2024
- 18:05:03 -0700 (PDT)
+	s=arc-20240116; t=1721091915; c=relaxed/simple;
+	bh=9gPSAq95rNiZCXyBU3Kd6hCeOEJ2HutuI47VBsQFkI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlJ3vraF9f/aJw34ZKtydSccyeiADy2dY3Q5BGIxyy6C+VtGAEGykqlBYtJCB1Bxgp620CajtPOBOYhCkZ3uNemcKdhhI5ehk5bDeoMhosvDiVDA4QY8rDwUNJW2XXKV7RYH5+HFbAjPsJSIQlsD8/66u9YXmdDP6lvkIWT9nnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7cdU2n6; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2881670a12.1;
+        Mon, 15 Jul 2024 18:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721091913; x=1721696713; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pp+fEGwUsMKJFAFFVlger+9tRuEQAUzXCtEx0rK1fiM=;
+        b=E7cdU2n6Upm6xCnLL1w5NjmUJD5TG+BuE76Z/0MX2yU5gDPiY9O1UAxmDlixH2YLnX
+         G4o799dNNMGydXTaovxMECeO2nPMZhpW/CDQl5wwR88HmFHFwmuqWaKfTSDyFv38TTH9
+         IyjIOWTfF9FKeA3rH6UCp/Z0u9ZwVJ1MmGBiOOpmBSO9z4jHBhK5WHWaZztXL7L+H0BX
+         wRuCrgloI6ID5dPcUcbSWIRqnPYB1YACId6Y64GTgH0XoS/ucl7Of4eh5dzRdPLsOMWu
+         M8SjncA6c4lUWQZsgjbWXMRwgq1iwTc+5CqKX3OINPlFORvRoISWZZ8FcJqjXr1Hmvsw
+         57hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721091913; x=1721696713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pp+fEGwUsMKJFAFFVlger+9tRuEQAUzXCtEx0rK1fiM=;
+        b=UFS7yRru1hX44zi3mwx7A659U/PgZR5pSTlhO/kFSN9+FdXsCBGVDKPwRqzSHgeYV6
+         BZOEwhfqrriDwrBDCXgT7ZwWSoO8h0uo9tgU74rizZGxbOhmi8LkK5HI3Cnmgv1AmxWC
+         TI41sS0e/sbtYTadSHYD8j9b7SsFm8FGDdIC0Nz0P6tk6aDyJkYIToHCdKCGq8crDj5/
+         imgnmbUzz6bPZTEr2BS8zWaKD7oHIYAw105eKZaalVN+Ms3eH4NEFQ5nj3IgHKCrjvL4
+         sXLRz39uhmFJ2fKR2MaSdu/bGO30SSAJM7i9NYt0aZDsxmI0X1cAOZYa4YoG3hnOltJn
+         LsNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1DaEc2Vh318ukkSuuq3Amo8RoMhGB7P8UOiFFiLsXA7dzKIFH444II/MqIXGNgvmbU6ofoLU7+RE3VIhc3ya7B0REY+2rpfF0h/xE
+X-Gm-Message-State: AOJu0Yyq/sWa0yg8MnQq2y1HL4u+oqjMi7xgYOtdZyU3bb74DgwnxtUa
+	lwOWB8VizT3qEVY3rLBzIjsNS7b9TBx8BuSqAjANodJ5KXvIF++J
+X-Google-Smtp-Source: AGHT+IGGgF7eGJU3h+t38zRil0xKHRoO/XzydhvlGw9FhA3C+gaj3VzYyzjevCA2/kXHraOzTumULA==
+X-Received: by 2002:a05:6a21:1796:b0:1c0:f48e:a5ed with SMTP id adf61e73a8af0-1c3f12719b5mr644048637.37.1721091912990;
+        Mon, 15 Jul 2024 18:05:12 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:6d45:d4db:b14d:ea69])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6754sm5011506b3a.56.2024.07.15.18.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 18:05:11 -0700 (PDT)
+Date: Mon, 15 Jul 2024 18:05:08 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] input: use device_for_each_child_node_scoped()
+Message-ID: <ZpXHRPLJOMJ-K2jb@google.com>
+References: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-11-alexghiti@rivosinc.com> <CAJF2gTSG7HzV7mgZpkWLbSBNn2dRv_NaSmCimd+kRdU=EZrmmg@mail.gmail.com>
- <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com> <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
-In-Reply-To: <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 16 Jul 2024 09:04:52 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRrZwVk2xyhF_PsJGKCfkvun-rifG8MjDBcGDt3YBuhPg@mail.gmail.com>
-Message-ID: <CAJF2gTRrZwVk2xyhF_PsJGKCfkvun-rifG8MjDBcGDt3YBuhPg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha extension
-To: Waiman Long <longman@redhat.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
 
-On Tue, Jul 16, 2024 at 3:30=E2=80=AFAM Waiman Long <longman@redhat.com> wr=
-ote:
->
-> On 7/15/24 03:27, Alexandre Ghiti wrote:
-> > Hi Guo,
-> >
-> > On Sun, Jul 7, 2024 at 4:20=E2=80=AFAM Guo Ren <guoren@kernel.org> wrot=
-e:
-> >> On Wed, Jun 26, 2024 at 9:14=E2=80=AFPM Alexandre Ghiti <alexghiti@riv=
-osinc.com> wrote:
-> >>> In order to produce a generic kernel, a user can select
-> >>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
-> >>> spinlock implementation if Zabha is not present.
-> >>>
-> >>> Note that we can't use alternatives here because the discovery of
-> >>> extensions is done too late and we need to start with the qspinlock
-> >> That's not true; we treat spinlock as qspinlock at first.
-> > That's what I said: we have to use the qspinlock implementation at
-> > first *because* we can't discover the extensions soon enough to use
-> > the right spinlock implementation before the kernel uses a spinlock.
-> > And since the spinlocks are used *before* the discovery of the
-> > extensions, we cannot use the current alternative mechanism or we'd
-> > need to extend it to add an "initial" value which does not depend on
-> > the available extensions.
->
-> With qspinlock, the lock remains zero after a lock/unlock sequence. That
-> is not the case with ticket lock. Assuming that all the discovery will
-> be done before SMP boot, the qspinlock slowpath won't be activated and
-> so we don't need the presence of any extension. I believe that is the
-> main reason why qspinlock is used as the initial default and not ticket
-> lock.
-Thx Waiman,
-Yes, qspinlock is a clean guy, but ticket lock is a dirty one.
+On Fri, Apr 12, 2024 at 10:57:29PM +0200, Javier Carrasco wrote:
+> Switch to the _scoped() version introduced in commit 365130fd47af
+> ("device property: Introduce device_for_each_child_node_scoped()")
+> to remove the need for manual calling of fwnode_handle_put() in the
+> paths where the code exits the loop early. This modification simplifies
+> the code and eliminates the risk of leaking memory if any early exit is
+> added without de-allocating the child node.
+> 
+> There are six users of the non-scoped version in the input subsystem:
+> 
+> - iqs269a
+> - qt1050
+> - gpio_keys
+> - gpio_keys_polled
+> - adc-keys
+> - adc-joystick
+> 
+> This series is based on the master branch of linux-next (next-20240412)
+> to have access to the scoped version of device_for_each_child_node().
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Hi Alexandre,
-Therefore, the switch point(before reset_init()) is late enough to
-change the lock mechanism, and this satisfies the requirements of
-apply_boot_alternatives(), apply_early_boot_alternatives(), and
-apply_module_alternatives().
+Applied the series (after adjusting qt1050 patch), thank you.
 
->
-> Cheers,
-> Longman
->
-
-
---=20
-Best Regards
- Guo Ren
+-- 
+Dmitry
 
