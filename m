@@ -1,211 +1,279 @@
-Return-Path: <linux-kernel+bounces-253809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36856932750
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:20:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5915932753
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F3828397F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D381C1C21FE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505D019AD5F;
-	Tue, 16 Jul 2024 13:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE47019AD4D;
+	Tue, 16 Jul 2024 13:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=s.l-h@gmx.de header.b="ScWtrcZ4"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b="cA9G9k/5"
+Received: from refb02.tmes.trendmicro.eu (refb02.tmes.trendmicro.eu [18.185.115.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06F228387;
-	Tue, 16 Jul 2024 13:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136048; cv=none; b=NvLZJaDt+yLPqKiDI7P0mpCqrTyZz2hD7EkJrigVqPdYaotgzGZG/1w3UozK5RRR65dRc8lFvCkfLSMBONvR2zEBWDcqQfMrmmS25bAUTZMwlMY/G1k2e2zVCWvcD6bDwF0L9HmMBcuJMmjp2iDNwcsA9tq3hAgOa3ZGEG/NOnw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136048; c=relaxed/simple;
-	bh=AtAOBV7bnSPUuscLq8rdkSFWIOQBpUtV0DPaZ6zFNAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cKv1i7uHORvYxppf8Sl2JmfSKlFwSUb73Pq1ewK37AnpW23oWzWr5VclsK3P6wiuvAjyIkQXQ+nXbAvqHMWBGbxkSQac/Mv90ZQg/+jE/IV+OyVVwazYLEZUQLMp5Nm/CRvRe00HsxgydN/jxr0+tcXEQ+ry/oeF6XP/JrZdq5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=s.l-h@gmx.de header.b=ScWtrcZ4; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1721136028; x=1721740828; i=s.l-h@gmx.de;
-	bh=qaaJnwwOJeq0Tus7RbxDEYWH4Q9zRZMm7LlWwaOaigU=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ScWtrcZ4d/IDXf1snaWbM8+UeAS6LD/Qb/hIjACXRE2wGHFLVCQw1urqyoSwMPMe
-	 UxVV41zEdTwAWlYCYlkmfW1bhmSAN9nx9pcALGYHFGlBFKtEqIW2GvqRG7os8/Hf1
-	 Ot1z6Hczc3HEjfoLcXz9OQgI2kjWI78E0uznUYHT/ACsNcJ31zxepeBdT3Ux6Gs/p
-	 wGfh8HbXwwYaUObmwzIen+hlZCfHbOd/Xfuqy11CFkHnb8TG47ZE+edtqtZHbFjyz
-	 Lzj4AOYx9r/H3yhy2N5ffjoaX9V0lbAxJACu1JMslRh4HgNwcOtpGAR2G1uQYaJ17
-	 h0gnfPQhsDv41nn6Aw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mir ([94.31.83.155]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MwQT9-1sBMGv2vf3-00y6M4; Tue, 16
- Jul 2024 15:20:28 +0200
-Date: Tue, 16 Jul 2024 15:20:25 +0200
-From: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Eric Biggers
- <ebiggers@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
- <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Lukasz
- Luba <lukasz.luba@arm.com>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
- temperature is invalid
-Message-ID: <20240716152025.7f935fb0@mir>
-In-Reply-To: <CAJZ5v0g8L-TA7kT92J_nX8PkjyGkqGeuXh4-ATOprhSPKsY7Rg@mail.gmail.com>
-References: <6064157.lOV4Wx5bFT@rjwysocki.net>
-	<20240715044527.GA1544@sol.localdomain>
-	<4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org>
-	<CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
-	<20240715145426.199c31d0@mir>
-	<CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
-	<20240716014830.243bb0cf@mir>
-	<CAJZ5v0jkA72=avuthGkrS5iu_UGEQeaEp7LjedXCpzamcnRKsA@mail.gmail.com>
-	<20240716125538.09f716d1@mir>
-	<20240716131500.35cf4f00@mir>
-	<CAJZ5v0j2w-8c83Lw6OdJGg53pOKQMdeWiwaNkEEThwE6fXLiHQ@mail.gmail.com>
-	<CAJZ5v0g8L-TA7kT92J_nX8PkjyGkqGeuXh4-ATOprhSPKsY7Rg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F98119AD48
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=18.185.115.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721136057; cv=fail; b=hhI/cN7rmqPGn53C8Rig74iWYtoW7YCwRWbOPBww4WzHNYGRZ4q+Vj8mO+h2Hsrevo+0KNtjmoEGwsBAeG0ZvvT0K5ZtAoG7QeuSA6f+mREM3//0v7MlwGrFoUJGmXnsqgi7ePxibrIiECuJ4218EC9FpPgODjtko7T/l5s7s7U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721136057; c=relaxed/simple;
+	bh=scAJbgVh6T4+FH6eMi+Z+RzbLC/TSm4nVDoTq3f0Kpo=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oKWEgZ8gzhxLtmx5fL4FrGNTH3hIqny9/gs8H7OmiG/N2exuyKeVlpJCsiUZdWfUMnQcMGq10ntIIZNie/YBpOW4MgeEm8iZnrCXdyWQ76BLlRqnkM8gRkaiZtCg2N4lfAINMLYSzshCIyapfBPj0MuxF+T85c1qIM7f/CfxAHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com; spf=pass smtp.mailfrom=opensynergy.com; dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b=cA9G9k/5; arc=fail smtp.client-ip=18.185.115.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensynergy.com
+Received: from 40.93.78.49_.trendmicro.com (unknown [172.21.9.50])
+	by refb02.tmes.trendmicro.eu (Postfix) with ESMTPS id 8E075100F7140
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:20:49 +0000 (UTC)
+Received: from 40.93.78.49_.trendmicro.com (unknown [172.21.173.61])
+	by repost01.tmes.trendmicro.eu (Postfix) with SMTP id 31AAF100014C7;
+	Tue, 16 Jul 2024 13:20:42 +0000 (UTC)
+X-TM-MAIL-RECEIVED-TIME: 1721136040.582000
+X-TM-MAIL-UUID: 3880b2b9-0cc1-41c0-9e1c-565d091236b8
+Received: from FR4P281CU032.outbound.protection.outlook.com (unknown [40.93.78.49])
+	by repre01.tmes.trendmicro.eu (Trend Micro Email Security) with ESMTPS id 8E594100003D1;
+	Tue, 16 Jul 2024 13:20:40 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dv1ICR+9EQ+hGhm6xm28Y2Ir33orvkoTVGs9oc/x00V66i8X8UcrzoTygFLHFtm0aKIrHAqOYBMeOepR6T5sE7kk0400u04lRyG1SNUauApU1mPnG2wpO/XFdXUw2VOpXBVef+F8eecrTocgri1hZjLFzKlCvX273Ny7KiX96y6MnJONU5zgec6e5OP2sGRNQLP3fZuQAt1bqtLrHpFTtsIUTv7mB8oLuYzJc5JExmoyaNUzUPJzQItsFRR1bcPVRi5XYTL26b61kmJ21HWaMFkVM67tZfoC5q8r9Emwdv0pbdl08aMMK0qAuWhj1LURDMGbW2K/YAPzBOn7XAw6RQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y3nyCsIRBsehbMbSusgXSQoxEnRZAfAHpp2U966/u/M=;
+ b=x9VEmcxlEl3v6p61pzdyrz/nx4TyNlrdlHmNVlmQcqHUsJKXuLZaaMkg4xAh6Y3IZEInf+L4DWI6022qMHzRWFJNbLY2O7ZjtuhGOsTDelqfk8QYCsQFI9xIaJi5st07piDsg5PmZIEduopHorShNRZbICOUHjELl0vit4yMt+EITFiziFNYd36kUAwSMaP+zRz8u6KPDOyk2d6VzFVhY84I1BjZe4Ski11ezH+1I2VYUQkZ1VjTPK8vSdl1VRKmIGtOX5ULb+P8+wLSpnOwlADUFogef76/SjeuaNkrnVWnPvU96KPSDDGJa9k2elFrUWV4zOEeVQ111YCW1w70eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=opensynergy.com; dmarc=pass action=none
+ header.from=opensynergy.com; dkim=pass header.d=opensynergy.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=opensynergy.com;
+Message-ID: <10db46e9-b753-43bb-a826-14d4c11026bd@opensynergy.com>
+Date: Tue, 16 Jul 2024 15:20:37 +0200
+From: Peter Hilber <peter.hilber@opensynergy.com>
+Subject: Re: [RFC PATCH v4] ptp: Add vDSO-style vmclock support
+To: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
+ "Chashper, David" <chashper@amazon.com>
+Cc: "Christopher S . Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+ Richard Cochran <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+References: <20240708092924.1473461-1-dwmw2@infradead.org>
+ <060f392c-7ba9-4ff6-be82-c64f542abaa1@opensynergy.com>
+ <98b20feebf4e7a11870dca725c03ee4e411b1aa3.camel@infradead.org>
+ <1c24e450-5180-46c2-8892-b10709a881e5@opensynergy.com>
+ <1ca48fb47723ed16f860611ac230ded7a1ca07f1.camel@infradead.org>
+ <9f132922-2bf7-4749-b8c7-4c57445f9cde@opensynergy.com>
+ <DD886A0D-B8E2-4749-AB21-7B26A4B70374@infradead.org>
+Content-Language: en-US
+In-Reply-To: <DD886A0D-B8E2-4749-AB21-7B26A4B70374@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0026.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c9::11) To BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:3d::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BuctFrxmpgMmHs/b0oCkUBW87B3AItciqXRkhNWTtfjO+U6a0AV
- OGJqvF6/MEURSJXL2nM2BnMegHU1/bppd0jCOqex2pWbjpbTY8GuZRuRSmN4F4O9+Y0XMDH
- NOfB2WegdDtDoNEYouDxMcqdcLh6PY7SaSaL3ytoZZXbWsoymTefO9rhLtN2JgyQMmJhT+P
- Sbi/tgOYFZX2wgM3r95CA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Fpj+yPuf1NA=;TrF5dYQHwYa6V8q/A0iNoHJ6MOm
- BmthHWWGrUl9mb6Or+DBHmPZGN/begyHO963MSKFPJ9blcZO33e8Yk9Gc2rpJ9y4f+J9vLfH4
- LrwxdQviqYcVs0VfHktRaoLgc2Iimuc47HUwIpJDcpo7WSGMWRiAiN+xJbXpxCeZ1G4yL2mvP
- WpLgCEdjEt5jNxv3cjLK7nKaFQ71HSOSAmtNv2YBGJtu6Qc3Gs2FYbr/dXwu4+jDVV/NXnu+n
- vhY1K11HL8ls3FytCAWMYUVJgzj37BEMNh+b0m0LhkFEam6r0rzhZ/5+/pW3ARxR3Pl0HgH6F
- FkUuQum2qXg60iKMErTx+ZcR1ddQCUPFD4iWuZp3uljyIQq93Qfm6QTfDFrYLHtHxiVZmqHFv
- 0DemIFyBpsU/ogi3hNdfGCrum1dXeYtxqvkJpqwE2G8wvAxEcM+I7kd16mc3rFTGJmpuLyu2V
- L3R2zSPrwTiU9H2ZqV+RAxkiAogomSWATyQPR4+wb8yNdqOS6anGYQJOiWyvCaU055DIleh29
- TPeiHGzbm4JjtaZjFon1crqxksB5NVXBQeFgr7R7u0fl66FCk2+X3BVmaeq4hm4IXWLkHo+Lc
- sJtv+bhTZHaCi6Q4FsSr22sv+s3BzF/67ytlkDpLx3xXSJWEEL5y5l5dTqsun4gvOkQTXKObD
- rdsag3j1dY81Qq+wBsTXSqYrtqyHrAgt6RRsR6lmS4MrVFFFlYX9Ccmzhe+tyWDcvlfj/Mlq0
- WWYeKxD8sc4sleI9NY6rpGWQBod9CJ6P3T5PEupVJaSRS0Q8QdwA434fOvxW9SglCdoE+T6Pq
- EA6o1VhWuuhuWCZSUmUtn2bg==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BE1P281MB1906:EE_|FR4P281MB4208:EE_
+X-MS-Office365-Filtering-Correlation-Id: 198f1568-ca8b-4cd9-d182-08dca59a15ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dFFSbmtDT0xTZC9WdTg4cXphelozM3dmOGhNakRsVm1lZFFqWFJoWGFpMEVW?=
+ =?utf-8?B?Wm5uTndITlRNaXR0WS9Wd1p0UlVycnM2TGVVblJ0WExiM0M5Z2c2QlZEWGhE?=
+ =?utf-8?B?UGtzTU5aaWVUUWNma3cvWUY4c3ZtdjFENzk5Rjd6cmtNa3lFUmN0WGFmVm9H?=
+ =?utf-8?B?b2VlcEJhczdFOWF0Q1RLNm03R0ZYN0UxdTAySFNUN2xDWVpuVzBKNDFadkdm?=
+ =?utf-8?B?SGU0Y3ZxeEdrc1RyRmlvNEVIWVpPL2NIV2JkeWZ3VE5KWEE3VDMvaE11YmFH?=
+ =?utf-8?B?STRpTDdQUDhsMDhhRkw0bnJBOG9kSnA5enNZaktuYUhWZkovMUU4emhtQnpv?=
+ =?utf-8?B?Q05QTjBCOTc0Z1JhR0RBaVdSN0N1ZEErQ0FKeEVHZ3ZGTEYvVHhEUktuaDJu?=
+ =?utf-8?B?bnVDK2RubDBHZ0Y0VFN5TzRhVmlxUjhPenc2Zjk2eG1OM1lXNFR3YllTckxJ?=
+ =?utf-8?B?T1l2Q3A2UTVVcUxjZjY5TE5vOWhoL0w0c1dIWkRTVWJIdDh5VHo4UzlkbDJQ?=
+ =?utf-8?B?OXdUZEpuRUFLa1NrMWFyOE1jclR6MjQzbHpXZ09DZmtVMU8wY0M0a0s0WkJK?=
+ =?utf-8?B?WXoxVFF2S29CdWVlVW1MWWdTUXppaHgyVVdhc1FiZkE4WGRldCtlU0dVUHN3?=
+ =?utf-8?B?WWpqNEF5TWVteDdwYmsvd0RKb1d2TERzQ1VHRVJWb2pZaHUrckJ0dCtBUWZC?=
+ =?utf-8?B?ZHkyaXQzWHh4RUloVXl3S1lFNVRuVHhXZk0xdXNRNVNiMzhhUWphNjUwRkFs?=
+ =?utf-8?B?bFBtTjA4eVIwQld4OTF4RnRHTDhsaUZTZkpuS2hNQ3ZSNTFPZzZ4Nzh4cnlm?=
+ =?utf-8?B?Y24rQVhLVHhOazd2OWtMQlg5ZUc5Y3JSS2Q3S1E2RHR6MGVDbXpmdXphdG4x?=
+ =?utf-8?B?b09BRHFSRXVBT01uL0lIOVBXYmRXaUg1c0ZlSjlHY0xLZnVZWkhCYVJKa2xa?=
+ =?utf-8?B?YTRJMXIyMXBob0tBUVhXSzl5VmRycWN0VUU2YjIvUUVFcWRod1pkL0tPcWhr?=
+ =?utf-8?B?K1pzSitrVkNCOGwxNjZQV015NkxYS1FHM2UxWTdqVGorQ2pjLyt2bThlTm0v?=
+ =?utf-8?B?elVsVURYT3I4NlRIMmI0QnpDVzl4cUpqb0tMc2FFaVZHNG1HTi9yK1hnSVpa?=
+ =?utf-8?B?UDJYL0ZNMzZHcW5YZ3pDMnVBbk5ueU9hVWxMNGlmcm5kcnpTeVlpNFFCUitN?=
+ =?utf-8?B?MmRObE9Gd3ZMREk3TDR3U1hwTklMM050cGUyY1lVNGdZZFRCMC9XdTVtMG5r?=
+ =?utf-8?B?WDNBdVRLb1ZqUWllZndadUFEWm03VCsycEtoRFQxTGdaSzQvNDJVUkpUM2F1?=
+ =?utf-8?B?UzJEN2kydEZJbGpNWFNyUHhnWUpaNUhvbVFaNEV4cE1SM3dmTC84RVpvTkJW?=
+ =?utf-8?B?cHBaeTc2WldGNzJudmhCNDhFTlVkZ3RTR05UTkhyMks2L2orVEFEbG85TUhQ?=
+ =?utf-8?B?aVBDaTYzSlNIZThYanIrUEZSbWFxUzdpZkdTbjhYZ04xaWJncWlIUW5DQjho?=
+ =?utf-8?B?QUI3MmxhbWwwakt5a1ZzOW1INXRZb2FOZ3MzbHBkSlpRemQ4c2QzV1g3Y2ZE?=
+ =?utf-8?B?YU1CTjJGcHlRdGtOYTAyY0ozYXo0TzlHblZLY041M3FEcCtDNENkVEZiYnl4?=
+ =?utf-8?B?c0Y2VURHRjU2RWF2RmFvY1pkSG9rUnJiMFovdTQ5aCtoSUlCQmYrMjh5UmNI?=
+ =?utf-8?B?bitCeFR6cFhiaVVGVXBnSkx6QmdPU1FqVXZQRnBEazE5VWt1ckpjUzg4Qk5k?=
+ =?utf-8?B?UHYxc0w2aDkyK004N2M3RkZOcEx2U0ZlcEV1dXZ1OTZIM3ZCejZkdnhYeDZY?=
+ =?utf-8?B?RTBQK2liRStkZm5QY0REUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WHhoWjN4U210dW9BS2FrdkZOaktGcXRWWW9KRUJEa0kvNHVDeGRTUmtGcVFh?=
+ =?utf-8?B?UjducDZ5Vy92QjNYODZxaXRXU3hLQ1JEb1FQZW9QU1hzdE9QdXVCRmI5THJK?=
+ =?utf-8?B?bmtKR1BraGt6Y2FTRlpiL3hkRmUvajRvSG9DL0NpRndCNE5xcXFuSUthN2g4?=
+ =?utf-8?B?aTZhcTFKbWFkVnJVVTdBOHA1S1UyWVE2dmRJZ0JyRHNSanBnL0kzRzB6MW8v?=
+ =?utf-8?B?ekJaRXI4SHFDcEpUR1lPSWoxZmhEV25LSkpSalhGQzUvbERDUXAwTnZVSlRV?=
+ =?utf-8?B?ZkQzNGdNOGQweDZRSmpiYmlrVStMWXdEY3dLS21jRHJBaWJQTjhOblBlTjd6?=
+ =?utf-8?B?bnhaaGpTakwxZ3JpRGpEQnhLdUNLZ2o1aEo1bXhIR2ZuSnNwYU85UGI4bExD?=
+ =?utf-8?B?Mkp4QjQ2OXRHczNXTkp1U096bVA5QUM2NUpzVWtUMEhOcEFPcGV4UE9VUUpV?=
+ =?utf-8?B?S0RSSFJnMUEwa0Y2R2ZyNGZ2OHgxUFVpWER1V2V1T0xwNHlYalhXaXdETDAx?=
+ =?utf-8?B?eEk4ZlI1eTVJZWZpSWFRalpPdlBCY1VKeWpUcnlSRmpva2V3Si8zTFMxYlF6?=
+ =?utf-8?B?QUtRYnU5SXlTb3k4SVA1Y01ER211TDRlT0ZENFVRN3d2UmxPODA2ZWR5V1Q3?=
+ =?utf-8?B?YWhRRi9NWWo3eU5DU1hET05iaVpvTzFJZFBEaTVVaXk5ZEVRUG9mRExuREtw?=
+ =?utf-8?B?ekdBeGVMeGk1V0lrbk4xQTI2WFJzMGJLc2sxaEczVld0MHZGQ3RyMFBydGZY?=
+ =?utf-8?B?TUZpb0p6OEJQcnFtRFNZUEMrN09IZjV6SzZ6VFVuOHM1Y3JLODNHMmZ6d2g4?=
+ =?utf-8?B?RzZQZTlqQWVVaEtMbXVYclNISVB6b0k0RGhhZTdZMDZFNzR3ZlZrY1FYVDRP?=
+ =?utf-8?B?Nlc1akhVL1dQSndhT0lwcmR1VWJlbDBpWDA0NmxNV0k4U0h3RWJ4RldvNkto?=
+ =?utf-8?B?TmtLTUFXWlNPQms3ZGhrT0Y2eTh0Z2gzNDJRRTkvbE9weHZxUGNxN3A0aW1h?=
+ =?utf-8?B?RzJYVFBzUzNieEROM2hlT1lhZ0hGWmc4OEI1Snd3QkRNTld6dFFJRDdmTVJz?=
+ =?utf-8?B?bUhZbnpuckpJMThVT1kyY3BDSlJnMFNLR0krUldMK0hBVWxHQm9tR29LQ0sv?=
+ =?utf-8?B?NEJjYU1nZGtnYW9ZMVlJNjlLLzRGTXZtaU9EWXRyZUFnaWZXc292Nk05akNn?=
+ =?utf-8?B?d2g4ZXRyOUFrTGkyRmUweTRuOWxqTGlScit0Q2JxdXlhR3ZRUTZFRVVwQzVH?=
+ =?utf-8?B?T2tKNEZ6MjJrQkdUQjc5RWdEWnJUMlhWS1kybzcwbnNPWXA1UHArUGRCRmJa?=
+ =?utf-8?B?NWp1UXcycEJFRGZSWXEwRU43WXdoeFBRbDBzenhua1JSd29McGovcnkwbVRB?=
+ =?utf-8?B?THQ2U1ZpOTNPQjMwdUt1cDVhSVZ4bnVxZCtPZ1R1UlpNSHZFU1AyNlh4allk?=
+ =?utf-8?B?N0VNVW9FbmtBVTh6M3QwWnhnYUFHTmkvNXdNRUw1bWFhVGJKZWdKSU9paENN?=
+ =?utf-8?B?VGEvZVp2QldDZWdVTEY2eWYzbUptdndtVmxPRitJMlJqVk1lNFQwTUR2b1NG?=
+ =?utf-8?B?cG84L2tHRzd0NFIxb2RkUWZKOFNyVGQxdjdIMUlrdnNEQlU2WHlYU3phMzNJ?=
+ =?utf-8?B?a3ZCeEt0cTc4bjlOZjNSRkJjbkdZTElvbjVTVjA0djV2ejA4U3pNK1BEQ2th?=
+ =?utf-8?B?aTV2V083Vm1kVlVnTFh0UlhLWHkxb201ZmtCSklEM0MySS9CSWNSWFNCcVhZ?=
+ =?utf-8?B?VWZPRERTWHNyNFVmc2pLQ28vRElkUUhsTXdPRENqMkpiQXpObS9pOG1DWXQ2?=
+ =?utf-8?B?NTJxVUFGdjdrSXBUSGVid1hoVlU1VGF2SG9vY0hXZUxOSUU3Vm1sM2lzazBU?=
+ =?utf-8?B?TVhENVcxWjZnc0gwSVZkNms5WUVRTURCcVAyQ0c5VUZ3UVBwbGtkZWVuVmpB?=
+ =?utf-8?B?SVN4aEJlRWNBNXVkYy9jV3dwNzB3N29CYnM3dFJDVktzeGFTMUVBWGtNdjRy?=
+ =?utf-8?B?VFJ6MzZvZ1dKNUY5cm9XRE1lbnVRbFVxZVlmUUF2QWtydFZBSHF2di9UbnRE?=
+ =?utf-8?B?SUVJSUZvaU0xL0hSRkhzNy9hTTIyTFhKZTZYajJvWDhhd3EwcDMva01PcERl?=
+ =?utf-8?B?NlY3b3lCVHVTL3FRZ2tGQnNySVhrSGplVHpGa0YraUVTR3dZTTA2Y0RCVnlW?=
+ =?utf-8?Q?6Q9n0YZr3Mzvp0UCtRHBZyRa1I+uuEtP81rkZCJuO15Z?=
+X-OriginatorOrg: opensynergy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 198f1568-ca8b-4cd9-d182-08dca59a15ac
+X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 13:20:38.8017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 800fae25-9b1b-4edc-993d-c939c4e84a64
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w6M3hujQftAFDZdBP2On4N+r0+if0kR6BdHdS2MWW4OjwUUpI+0jkDQFp1UGIwJ6CdTPvnsrZ21qwKcqcQScpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR4P281MB4208
+X-TM-AS-ERS: 40.93.78.49-0.0.0.0
+X-TMASE-Version: StarCloud-1.3-9.1.1026-28532.005
+X-TMASE-Result: 10--18.514500-4.000000
+X-TMASE-MatchedRID: X4bcv0S75Kn5ETspAEX/ngw4DIWv1jSVbU+XbFYs1xIhkL0gCMh6Dsig
+	HKaC3ZDJADKNkHTrGGc4AS+kYyrrEcd2HSheDtk3eJchdZcr1K2vfe6AKVPc3pGeN+9dVIq3YXc
+	dG5rihMXLjprZcXPZwOFsZGt1Klu61geCRZ1F9LQKonRFsndtvUb3ed6yowduRLCxdbGDxWrErb
+	l4/evtZNGuZq+LiOD3p+fNEmMhWtjYT6uZOaIN0x+1m4xl+bZJIyQ2IZ1g8ybGWwYDp5NIUuMhy
+	XW0ThjcRX5VaQhLt8pJvs8/NAI9NeCc2N46uxVRpJgUXPcinGTJ+MXwxLqnFUFGZQj4DiD8hes1
+	L7EqVuqxA7pVyH8J9tXNOAQ2MSi2muMpo5XKw29WPx536TZMQBomt7e+ksQhJpK4F9wnIiY7AFc
+	zfjr/7J/jCfQBNNj4Ijj+VBDm5y749tOn7ULKeU9g/VrpVC3a+nI6agRjOOQ=
+X-TMASE-XGENCLOUD: 24220c83-df75-4635-af70-ce9b1ab66bb6-0-0-200-0
+X-TM-Deliver-Signature: B4AE5B39AE630974A4886E35AA9EEC28
+X-TM-Addin-Auth: 8kPkiYCYIO0VxXUm5tc8W/6i7g/XDo/1/TkWt7dkfl4GNOS6I8kpKl/k6Q3
+	6bGPVZMYbaKSXndquQzKFxee5xWFGZPmTDbdnTEAX5LJlP4mCPDyTEvJiEBWS4EiGxreOyFgcik
+	8oPfFUainTiwvGVR4/HXCtpmGIWyYOXroVyxRe9Ba+WpzmerEVZDsSx9kWyLgD2TBEvTKK1YNPa
+	WyvoAl0m1X/91jrik2azubPhGJol2P++7GFIqhPe9h/ZuZrRBqZOUGH52mXdY2XQ2kRW2Zd07/u
+	KhdUUQRtHxhJsmE=.ZF3NUxe/RDHPoS+PuDYA67U/6v8wKBrNzCtqhfFKr0syKrDpc5pythItA5
+	EKEQFqNMvdJgbG1Lq3S8x/p1dP6Cory24/6TRHPgEYHFAkHISteHA4wRZ4ieXtf2mcrsCK5YOK6
+	6wHbjuCD1RNSLvrTFY9pTVz6/D0tzaclBUdOT+qYZ+P6LVLs9W2dvlt7G2N7uUch59su/TT+4eB
+	7KQCGzEZ17fQSIRNau3TzrBEo3dPbQOPd/PjduDl8nbQLo2MZu2Hgg2GGOLRw7Sxd4JO7yzfMkr
+	KxV9KzwX0vT4tqFl7bo3QnUlf4y4EQVRevQa2IpP/O3L7Hvpy0w1hB9k8pw==
+X-TM-Addin-ProductCode: EMS
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=opensynergy.com;
+	s=TM-DKIM-20210503141657; t=1721136042;
+	bh=scAJbgVh6T4+FH6eMi+Z+RzbLC/TSm4nVDoTq3f0Kpo=; l=2548;
+	h=Date:From:To;
+	b=cA9G9k/5ZjumY9aIHHQoOFmDNjcdw8z/Z1t3C1AcW75U2Syh6Xg2tdSSbKUQh4I5f
+	 FY2bEFm/Pp9DQnCKlg4hbrofZr9NPuLppTEHbSBekhk+10oBE6bAG7yc3QaSZX34GU
+	 8iUwo0VZGSyBUJqU4ikJMue3HdNhXYH2Rl8lfPpPEkxLPVQXX17a07eYF+cfl5VlR8
+	 ye8NdUwW/Ly/Sj1z76rjEt8pYIN1uXFR4K9ytuW2UVp98NDPChreSArwM/oadadLFm
+	 uXWBHaVZ3paL8PEm7sDOUtSSP9v3zQTmRFmAsl41nsE18nJhmfI/jq9sVsa6E0Hm4z
+	 F9g45PKT1GWYQ==
 
-Hi
+On 16.07.24 14:32, David Woodhouse wrote:
+> On 16 July 2024 12:54:52 BST, Peter Hilber <peter.hilber@opensynergy.com> wrote:
+>> On 11.07.24 09:50, David Woodhouse wrote:
+>>> On Thu, 2024-07-11 at 09:25 +0200, Peter Hilber wrote:
+>>>>
+>>>> IMHO this phrasing is better, since it directly refers to the state of the
+>>>> structure.
+>>>
+>>> Thanks. I'll update it.
+>>>
+>>>> AFAIU if there would be abnormal delays in store buffers, causing some
+>>>> driver to still see the old clock for some time, the monotonicity could be
+>>>> violated:
+>>>>
+>>>> 1. device writes new, much slower clock to store buffer
+>>>> 2. some time passes
+>>>> 3. driver reads old, much faster clock
+>>>> 4. device writes store buffer to cache
+>>>> 5. driver reads new, much slower clock
+>>>>
+>>>> But I hope such delays do not occur.
+>>>
+>>> For the case of the hypervisor←→guest interface this should be handled
+>>> by the use of memory barriers and the seqcount lock.
+>>>
+>>> The guest driver reads the seqcount, performs a read memory barrier,
+>>> then reads the contents of the structure. Then performs *another* read
+>>> memory barrier, and checks the seqcount hasn't changed:
+>>> https://git.infradead.org/?p=users/dwmw2/linux.git;a=blob;f=drivers/ptp/ptp_vmclock.c;hb=vmclock#l351
+>>>
+>>> The converse happens with write barriers on the hypervisor side:
+>>> https://git.infradead.org/?p=users/dwmw2/qemu.git;a=blob;f=hw/acpi/vmclock.c;hb=vmclock#l68
+>>
+>> My point is that, looking at the above steps 1. - 5.:
+>>
+>> 3. read HW counter, smp_rmb, read seqcount
+>> 4. store seqcount, smp_wmb, stores, smp_wmb, store seqcount become effective
+>> 5. read seqcount, smp_rmb, read HW counter
+>>
+>> AFAIU this would still be a theoretical problem suggesting the use of
+>> stronger barriers.
+> 
+> This seems like a bug on the guest side. The HW counter needs to be read *within* the (paired, matching) seqcount reads, not before or after.
+> 
+> 
 
-On 2024-07-16, Rafael J. Wysocki wrote:
-> On Tue, Jul 16, 2024 at 1:36=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> > On Tue, Jul 16, 2024 at 1:15=E2=80=AFPM Stefan Lippers-Hollmann <s.l-h=
-@gmx.de> wrote:
-> > > On 2024-07-16, Stefan Lippers-Hollmann wrote:
-> > > > On 2024-07-16, Rafael J. Wysocki wrote:
-> > > > > On Tue, Jul 16, 2024 at 1:48=E2=80=AFAM Stefan Lippers-Hollmann =
-<s.l-h@gmx.de> wrote:
-> > > > > > On 2024-07-15, Rafael J. Wysocki wrote:
-> > > > > > > On Mon, Jul 15, 2024 at 2:54=E2=80=AFPM Stefan Lippers-Hollm=
-ann <s.l-h@gmx.de> wrote:
-> > > > > > > > On 2024-07-15, Rafael J. Wysocki wrote:
-> > > > > > > > > On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
-> > > > > > > > > <daniel.lezcano@linaro.org> wrote:
-> > > > > > > > > > On 15/07/2024 06:45, Eric Biggers wrote:
-> > > > > > > > > > > On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. =
-Wysocki wrote:
-> > > > > > > > > > >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com=
->
-> > > > > > [...]
-> > > > > > > > Silencing the warnings is already a big improvement - and =
-that patch
-> > > > > > > > works to this extent for me with an ax200, thanks.
-> > > > > > >
-> > > > > > > So attached is a patch that should avoid enabling the therma=
-l zone
-> > > > > > > when it is not ready for use in the first place, so it shoul=
-d address
-> > > > > > > both the message and the useless polling.
-> > > > > > >
-> > > > > > > I would appreciate giving it a go (please note that it hasn'=
-t received
-> > > > > > > much testing so far, though).
-> > > > > >
-> > > > > > Sadly this patch doesn't seem to help:
-> > > > >
-> > > > > This is likely because it is missing checks for firmware image t=
-ype.
-> > > > > I've added them to the attached new version.  Please try it.
-> > > > >
-> > > > > I've also added two pr_info() messages to get a better idea of w=
-hat's
-> > > > > going on, so please grep dmesg for "Thermal zone not ready" and
-> > > > > "Enabling thermal zone".
-> > > >
-> > > > This is the output with the patch applied:
-> > >
-> > > The ax200 wlan interface is currently not up/ configured (system
-> > > using its wired ethernet cards instead), the thermal_zone1 stops
-> > > if I manually enable the interface (ip link set dev wlp4s0 up)
-> > > after booting up:
-> >
-> > This explains it, thanks!
-> >
-> > The enabling of the thermal zone in iwl_mvm_load_ucode_wait_alive() is
-> > premature or it should get disabled in the other two places that clear
-> > the IWL_MVM_STATUS_FIRMWARE_RUNNING bit.
-> >
-> > I'm not sure why the thermal zone depends on whether or not this bit
-> > is set, though. Is it really a good idea to return errors from it if
-> > the interface is not up?
-[...]
-> > > [   22.033468] thermal thermal_zone1: failed to read out thermal zon=
-e (-61)
-> > > [   22.213120] thermal thermal_zone1: Enabling thermal zone
-> > > [   22.283954] iwlwifi 0000:04:00.0: Registered PHC clock: iwlwifi-P=
-TP, with index: 0
-> >
-> > Thanks for this data point!
-> >
-> > AFAICS the thermal zone in iwlwifi is always enabled, but only valid
-> > if the interface is up.  It looks to me like the thermal core needs a
-> > special "don't poll me" error code to be returned in such cases.
->
-> Attached is a thermal core patch with an iwlwifi piece along the lines
-> above (tested lightly).  It adds a way for a driver to indicate that
-> temperature cannot be provided at the moment, but that's OK and the
-> core need not worry about that.
->
-> Please give it a go.
+There would be paired reads:
 
-This seems to fail to build on top of v6.10, should I test Linus' HEAD
-or some staging tree instead?
+1. device writes new, much slower clock to store buffer
+2. some time passes
+3. read seqcount, smp_rmb, ..., read HW counter, smp_rmb, read seqcount
+4. store seqcount, smp_wmb, stores, smp_wmb, store seqcount all become
+   effective only now
+5. read seqcount, smp_rmb, read HW counter, ..., smp_rmb, read seqcount
 
-[ I will be offline for the next few hours now, but will test it as soon
-  as possible, probably in ~9-10 hours ]
-
-  CC      drivers/thermal/thermal_core.o
-drivers/thermal/thermal_core.c: In function 'handle_thermal_trip':
-drivers/thermal/thermal_core.c:383:37: error: 'THERMAL_TEMP_INIT' undeclar=
-ed (first use in this function); did you mean 'THERMAL_TEMP_INVALID'?
-  383 |             tz->last_temperature !=3D THERMAL_TEMP_INIT) {
-      |                                     ^~~~~~~~~~~~~~~~~
-      |                                     THERMAL_TEMP_INVALID
-drivers/thermal/thermal_core.c:383:37: note: each undeclared identifier is=
- reported only once for each function it appears in
-drivers/thermal/thermal_core.c: In function 'thermal_zone_device_init':
-drivers/thermal/thermal_core.c:432:27: error: 'THERMAL_TEMP_INIT' undeclar=
-ed (first use in this function); did you mean 'THERMAL_TEMP_INVALID'?
-  432 |         tz->temperature =3D THERMAL_TEMP_INIT;
-      |                           ^~~~~~~~~~~~~~~~~
-      |                           THERMAL_TEMP_INVALID
-
-Regards
-	Stefan Lippers-Hollmann
+I just omitted the parts which do not necessarily need to happen close to
+4. for the monotonicity to be violated. My point is that 1. could become
+visible to other cores long after it happened on the local core (during
+4.).
 
