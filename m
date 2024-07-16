@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-253385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6435E93205C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D581E93205E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEB62821CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935AD283BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5931CA9E;
-	Tue, 16 Jul 2024 06:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCCB1CAA2;
+	Tue, 16 Jul 2024 06:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grYsf5+B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VY3FxGhc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C422599;
-	Tue, 16 Jul 2024 06:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA012599;
+	Tue, 16 Jul 2024 06:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721110625; cv=none; b=b6irukrYb9WJTymw97ZQNbsrtR2KuN2jEgTDVcTRnfNUhkZknEnKJEW2XJI5DOz/DlEEYM52003HfywpgN4EJ2SVy9nKHdGxUwq2ObeKRJTcLCixdRvOkcvghrmOIrBxidaBgZJUzL94+cxG4DflHDovaWvg2nPZrK3vtFTPfqM=
+	t=1721110649; cv=none; b=ncjciQJzlJ0oPmZb7CAYqSIhIgvQo4EfqhWoqX1PS7H28BeveSKb4viybjizw5kPMFE/M9gABQ25xWiGFuH6NARPccHHlP2lax7Drk8fwWnN/2pnIJFtXOoyuGLBkWwVwiO2yDXCpewMWIasndAzvgi5DwUFzwZclXSnLl2MS3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721110625; c=relaxed/simple;
-	bh=3o+iFursrZ2BdMTCdh88JM9TIF5wTTuuvLbca83Te/8=;
+	s=arc-20240116; t=1721110649; c=relaxed/simple;
+	bh=aw1zUubyG40hAK9exnDXCEFh8oOAQEx5VmdkLC6tevM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y53yZTuE+0MtDt9XjnHz4X9XA0owQIseUUJtyYzSU2KaJ3gST4EPRYHlXwQJigSTXzubWwP/8a+h2S5ntydXegl6umV1vCT8urrl/EwA1gh157WifIS2MQRqoipLJgEYWdQowaY+13/zhHDbwj8HCOotzBunMlnf6Rnoc36FlCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grYsf5+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C722C116B1;
-	Tue, 16 Jul 2024 06:17:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NkAImqXjpJtkxuQBqhIBNUBeRuULx6GwNZNxh7Vz71s74YIMxIvfKlN9G1tHO0Mr5p5qwlDl9Ce8SJ2CZI7P8bjYKZygIKuzgmF7zMyWD0uI8I/ZyuHkOXjg+796ul3LF7nVkO9oYO/YHvCcj0/b8O7fiLkZEpFJ1PP0t39DDvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VY3FxGhc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E42C116B1;
+	Tue, 16 Jul 2024 06:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721110624;
-	bh=3o+iFursrZ2BdMTCdh88JM9TIF5wTTuuvLbca83Te/8=;
+	s=k20201202; t=1721110648;
+	bh=aw1zUubyG40hAK9exnDXCEFh8oOAQEx5VmdkLC6tevM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=grYsf5+ByWlEaD/OD1xZzIQOlAtfo5IsXWZPv06YzDyQo3tK8OSc2rpjSaLfnhc8K
-	 zdewoA3JsLT4B17V+GrV6dniheTQhvstf+ZgCsDcjYba83NnHlPcxVepzFm+L9Sy35
-	 hGdNu1bML58W0fJum/V/2JRE3r7vNdclm42l6tVco30IGcoQl/Bu7zpEkfVdLC4TzL
-	 iASIUb/hmCNrvxQBxA+pNttD4f2TgovrccqjguW2Yns+dKJkJmYYVzyTQgrog/XQ1P
-	 G95rKAB+k9/3qZUqsEhRVtJyP0WFbrGIUm/i3PLiXE1n4Ju+2GL25lgzkXG1UuZrE5
-	 WoAPXDmAS2Flw==
-Message-ID: <ac3473c4-633f-41c4-b604-cc027eb7e016@kernel.org>
-Date: Tue, 16 Jul 2024 08:16:59 +0200
+	b=VY3FxGhcGrmotOq7k+CviHhWi2nqB0Vwq5JeNbINhRGnWBPCMTZ9uyMsiRuvtr5T2
+	 jaf8cpVDC0nECrevC+9JxCavm24eEKge7GHtWpnaYItJWBlRoYscnmHaMGD5XCsoNf
+	 tUKNDSCGU3DioU8N0U/G4fgYKtWoYqdCJS//YFCXhXMdy1FIGzYIO829zXE5KFMjDD
+	 eANNDGv8aHPoChUYS5YlmUhLj+07NjqbOqeCbDEr1lVzGeTLf1VpE7m8zHeru8pUKg
+	 4Zk1bebMrmGPDv5veqES/IrAQBAd8VX64HCNxrMlbhLJuwYo8jGYWjJumFXkFaI5mK
+	 IzDHk4TQZhdCA==
+Message-ID: <f7c3c4d1-bb2f-44b2-8f94-f3e3059fefe3@kernel.org>
+Date: Tue, 16 Jul 2024 08:17:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: pincfg-node: Add "input-schmitt" property
-To: Inochi Amaoto <inochiama@outlook.com>, Conor Dooley <conor@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <IA1PR20MB4953BB6E71CA3216E652E8B8BBA02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <e74d1c2f-576d-4d97-89d2-5bdabe00fb58@kernel.org>
- <IA1PR20MB495302FAFD2003B831342CF4BBA12@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240715-strainer-creamlike-b1ff49b25c1f@spud>
- <IA1PR20MB4953747880CD84FCB5453608BBA22@IA1PR20MB4953.namprd20.prod.outlook.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: i3c: add header for generic I3C flags
+To: Frank Li <Frank.Li@nxp.com>
+Cc: alexandre.belloni@bootlin.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev, krzk+dt@kernel.org,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ miquel.raynal@bootlin.com, robh@kernel.org
+References: <20240715225351.3237284-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,58 +101,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <IA1PR20MB4953747880CD84FCB5453608BBA22@IA1PR20MB4953.namprd20.prod.outlook.com>
+In-Reply-To: <20240715225351.3237284-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/07/2024 04:16, Inochi Amaoto wrote:
-> On Mon, Jul 15, 2024 at 05:19:41PM GMT, Conor Dooley wrote:
->> On Mon, Jul 15, 2024 at 05:55:28PM +0800, Inochi Amaoto wrote:
->>> On Mon, Jul 15, 2024 at 11:21:25AM GMT, Krzysztof Kozlowski wrote:
->>>> On 14/07/2024 13:28, Inochi Amaoto wrote:
->>>>> On Sophgo CV18XX platform, threshold strength of schmitt trigger can
->>>>> be configured. As this standard property is already supported by the
->>>>> common pinconf code. Add "input-schmitt" property in pincfg-node.yaml
->>>>> so that other platforms requiring such feature can make use of this
->>>>> property.
->>>>>
->>>>> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
->>>>> ---
->>>>>  Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 4 ++++
->>>>>  1 file changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
->>>>> index d0af21a564b4..e838fcac7f2a 100644
->>>>> --- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
->>>>> +++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
->>>>> @@ -88,6 +88,10 @@ properties:
->>>>>      description: disable input on pin (no effect on output, such as
->>>>>        disabling an input buffer)
->>>>>
->>>>> +  input-schmitt:
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    description: threshold strength for schmitt-trigger
->>>>
->>>> Strength in which units? This should have proper property name suffix.
->>>>
->>>
->>> I think it should be mV. Using voltage may leads to decimal.
->>
->> The standard suffix for voltage is "-microvolts", so no issues with
->> decimals :) And with a standard suffix, the $ref can be dropped.
+On 16/07/2024 00:53, Frank Li wrote:
+> From: Carlos Song <carlos.song@nxp.com>
 > 
-> Yeah, I have seen the "-microvolts", but I does not think add standard
-> suffix is a good idea, as "input-schmitt" is a standard pinconf attribute.
+> Add header file for generic I3C flags to avoid hard code in dts file.
 > 
-> The only thing confused me is that the description of PIN_CONFIG_INPUT_SCHMITT 
-> in include/linux/pinctrl/pinconf-generic.h says it just uses an custom
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Reviewed-by: Frank Li <frank.li@nxp.com>
+> Acked-by: Jason Liu <jason.hui.liu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-You cannot add binding based on argument "I don't want to change kernel
-code", so sorry, but it does not really matter whatever pinctrl has
-undocumented.
-
-> format as argument. So I think it may keep something generic?
-> 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
