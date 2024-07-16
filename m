@@ -1,182 +1,109 @@
-Return-Path: <linux-kernel+bounces-254444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105CC933349
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E2B93334C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1298D1C22278
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A3A1F22386
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714CD770F5;
-	Tue, 16 Jul 2024 21:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255F4768EC;
+	Tue, 16 Jul 2024 21:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tghLh9jf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHFgeeBg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C56155894;
-	Tue, 16 Jul 2024 21:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C7155894;
+	Tue, 16 Jul 2024 21:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721164279; cv=none; b=TxPSgiLM86lWTblezeoihhGxnVvchw8+RSqD37ANO9O6c2NMMd0wh3KSA2lgFkS1f6a+yWwcLkEbQ+FtO+Vy9qEJ88JxrENlRwG5P54fcCzT7TUZhN8MlD3OByXE2soTRDgpB/m6/5TxHs60GroLom80xsUQpOvytes/Zt5/oiA=
+	t=1721164356; cv=none; b=fULkyG2JSx3s3XJoVPgQHe5JfOGY4okIeMkGXlOT9gQZEMfV8UVaXVT+Afp0HejYAZEsbG0LKiHqtdlSGdmUdajJWUVIxI5wF4GREOFWdjN50QaTzqxJt4uj03zYAP/RzfWaZHxiHt30nfrSylKM9OOBsEdS5wfFSq+LUsThQQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721164279; c=relaxed/simple;
-	bh=1jW0L9A3iRqmH7/WtH+jzNTYliriggcP44IDfWuj9xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QAkvXAYrZh84LOptooEL3ehskJs7j5DU933k1BApAIQ57NRV+IRzw/lgDR7zyQsn4NxhPt6EchkErTaZdfo1JD7atBPvOOEtBGUUR25EU9CFg0VU0nUqykI9aJlZHSAcC8J9R2fVgTNwnVQBspvU2IXpv5g+BsKoLsf+4ZqtHlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tghLh9jf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC982C116B1;
-	Tue, 16 Jul 2024 21:11:18 +0000 (UTC)
+	s=arc-20240116; t=1721164356; c=relaxed/simple;
+	bh=zNjq8hlb8zQrX+gh4VlzfaIJdM0/MhlIUFLSP0DoTuI=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=twid6J7rAQfmQstjofv5lT5S4fHgVNjIdXy9YBpF2qp7ef/i0M1/+MpIgqJE9rwwzm+34zQQAOAWpBiDVq9DaayTrKnKXIUsNrOMunXoWtmKSIwFHsId0Jtya7NFLIXLoNzbSMKKwewiTOjC2lbT2UodcZ5hWlyfAV04owE862M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHFgeeBg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B189C116B1;
+	Tue, 16 Jul 2024 21:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721164279;
-	bh=1jW0L9A3iRqmH7/WtH+jzNTYliriggcP44IDfWuj9xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tghLh9jfOMBim3IX1QfM4yS2ofpN385lvpnXmFBp0BfF5oCxcniZ0tkKnocDQTqd/
-	 c8XPw4rL2wdcmKF15SxMmzDfCWDFSSuUv2L0O0nkePDvp3igaULT1EO95aHbsMpR1K
-	 0qGUejPBbh+Bx429UbcQtuozzegrutlE9LCl/l9XrudayzjyML9933cVEFWExtK5I/
-	 5NdKIUBZWOxxo+pGqZCueUAXxngGiwkDg2bgMaXznBMWoWZELO5Jqghqk6i0OQDsJQ
-	 aJgP89unBMxjg7/iCi/f+EyySFTuwbpjqq7NljneNSmUDix0HbUGYPfFn2ikM4zHyd
-	 9qmwVfzEH77ng==
-Date: Tue, 16 Jul 2024 15:11:17 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-pwm@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add i2c device adi5585
-Message-ID: <20240716211117.GA387758-robh@kernel.org>
-References: <20240716-adi-v1-0-79c0122986e7@nxp.com>
- <20240716-adi-v1-1-79c0122986e7@nxp.com>
+	s=k20201202; t=1721164355;
+	bh=zNjq8hlb8zQrX+gh4VlzfaIJdM0/MhlIUFLSP0DoTuI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=BHFgeeBgTQW/7S6epLIyhBqzTv6wDihpvNkouzSe3mZ36fbyG1TgRn6dtgfHmCrY6
+	 ewi2Z6PRBXNRpkzmzKtgLj95BC+NUyia8SsC6Khkf9XW5dN0zRZixSn7AFhaDNo8+Q
+	 zovQMmYGj/FPDwdMbLghyPDqy77esS9xdwbt90Sl1e57/2E3nOXDI2TiT0XUvB8Nf7
+	 3krmbMPz7HE2xUlm8dXTcITNYttRXgqIyuDBcpBgBw7QtcgXf6UOrxHP/YzhiVGv41
+	 0wYGEYin1qQbz/OcrN+UqMrMSvHOUWcRi5XzcBj8yvE+i1KqdmVmHOxgmAOKskPMfc
+	 fjI5RRGHqTN5w==
+Date: Tue, 16 Jul 2024 15:12:33 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716-adi-v1-1-79c0122986e7@nxp.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christopher Wecht <cwecht@mailbox.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev, 
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240716083635.626596-1-cwecht@mailbox.org>
+References: <20240716083635.626596-1-cwecht@mailbox.org>
+Message-Id: <172116301222.347257.7232211573130018569.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: freescale: imx8mp-phyboard-pollux-rdk: add
+ HDMI support
 
-On Tue, Jul 16, 2024 at 03:28:24PM -0400, Frank Li wrote:
-> Add adi5585, which provide gpio, pwm and keypad controller.
+
+On Tue, 16 Jul 2024 10:36:35 +0200, Christopher Wecht wrote:
+> Enable the HDMI output on the phyBOARD Pollux, using the HDMI encoder
+> present in the i.MX8MP SoC.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Please note that lcdif3 has not bee enabled. This is due the fact
+> that as of now either HDMI or LVDS may be enabled. If both are
+> enabled it won't worked. With this patch, however, HDMI can be
+> enabled by turning ldcif3 on and ldcif2 off.
+> 
+> Signed-off-by: Christopher Wecht <cwecht@mailbox.org>
 > ---
->  .../devicetree/bindings/mfd/adi,adp5585.yaml       | 83 ++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
+>  .../freescale/imx8mp-phyboard-pollux-rdk.dts  | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> new file mode 100644
-> index 0000000000000..03c4760242ddd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ADI adp5585 GPIO, PWM, keypad controller
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +description:
-> +  adp5585 is a multifunctional device that can provide GPIO, PWM and keypad.
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,adp5585
-> +
-> +  reg:
-> +    items:
-> +      description: I2C device address.
-> +
-> +  gpio:
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: adp5585-gpio
-> +
-> +      gpio-controller: true
-> +
-> +      "#gpio-cells":
-> +        const: 2
-> +
-> +    required:
-> +      - compatible
-> +      - gpio-controller
-> +      - "#gpio-cells"
-> +
-> +    additionalProperties: false
-> +
-> +  pwm:
-> +    $ref: /schemas/pwm/pwm.yaml
-> +    properties:
-> +      compatible:
-> +        const: adp5585-pwm
-> +
-> +      "#pwm-cells":
-> +        const: 3
-> +
-> +    required:
-> +      - compatible
-> +      - "#pwm-cells"
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        mfd@34 {
-> +            compatible = "adi,adp5585";
-> +            reg = <0x34>;
-> +
-> +            gpio {
-> +                compatible = "adp5585-gpio";
 
-Missing vendor prefix. However, ...
 
-> +                gpio-controller;
-> +                #gpio-cells = <2>;
-> +            };
-> +
-> +            pwm {
-> +                compatible = "adp5585-pwm";
-> +                #pwm-cells = <3>;
-> +            };
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-There's no need for these child nodes. This can be just:
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-mfd@34 {
-    compatible = "adi,adp5585";
-    reg = <0x34>;
-    gpio-controller;
-    #gpio-cells = <2>;
-    #pwm-cells = <3>;
-};
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Rob
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y freescale/imx8mp-phyboard-pollux-rdk.dtb' for 20240716083635.626596-1-cwecht@mailbox.org:
+
+Error: arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts:149.17-153.12 syntax error
+FATAL ERROR: Unable to parse input tree
+make[3]: *** [scripts/Makefile.lib:442: arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:485: arch/arm64/boot/dts/freescale] Error 2
+make[2]: Target 'arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1381: freescale/imx8mp-phyboard-pollux-rdk.dtb] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+make: Target 'freescale/imx8mp-phyboard-pollux-rdk.dtb' not remade because of errors.
+
+
+
+
+
 
