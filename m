@@ -1,183 +1,275 @@
-Return-Path: <linux-kernel+bounces-253490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63D6932206
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:41:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D25932209
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269901F22181
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D841C21BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A7017D346;
-	Tue, 16 Jul 2024 08:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B7717CA12;
+	Tue, 16 Jul 2024 08:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMmXkjLt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Psutq6jX"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610641B947;
-	Tue, 16 Jul 2024 08:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9BD3FB3B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119254; cv=none; b=TpRMckYQl6tQFAkdriIN2j/oUdfSC/dowqxo8Z5V4PmEe5EBipGuI7u/uZmehwntSjTiUm0oN3Xu/tvtmEus4FC0+HI+YK8+1gjwNTAwQVhzl7ruiMbNyHJEzGeVxWVYufNM+je0PCwk0PLNgB0mKwTxQ7Gt1WtA9vpbDj0l/2E=
+	t=1721119261; cv=none; b=Iha6tugLh3wX90/GfD3pjWlmgY+DGL1nG90Dq1EhDs+BrR4Tbq1DLDtM4/xGcaU4cHQKt8SF4fuDPQ0+37fN//IlXiODgc9hmxC32dXFp+LHRZC1kX6agDobBNqQ/QXHcXMdKVHMX0v7BST60rHL12H42pfTQhRJPm/LKUDjBQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119254; c=relaxed/simple;
-	bh=YGrAhIFA8TiKJPE2DQShtLM985VOP2rPL3cg5tyAXnI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nn6HXxCZblDrCePXa8TZl2ecyTYDgIo/yO2YooUunc9rIcTHeUvYNhQNu0U4kJbUV+mV4sMPkzFYBH7zl+U8RUiJm2QQCriOF4NI/bPUazMtpzppRjmJR+nMHtxaJLUA8X0yQ8NDiu6dMLB2cpZ14N78N2dJg/sGnPihaWm3+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMmXkjLt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0172AC116B1;
-	Tue, 16 Jul 2024 08:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721119254;
-	bh=YGrAhIFA8TiKJPE2DQShtLM985VOP2rPL3cg5tyAXnI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sMmXkjLtcHsxf0S0mQVPm+PJ4MxdgywbOp2QUM+8YQbpIRKzEsdfajxJTYNOITHao
-	 m60qZobVlsEIJLo4YVMC0eYU9DdeESzgjQC4fdKY/1aem/WNiYq5gl94Cmwvqj6kD0
-	 j44JAByKQfPlNV/f8NxcGJFE/5PaTUHDxBTO3nlMt0zO2ltWYylU/wWTauQXb+QHHI
-	 s4KbpzrefHjAn67to8/nEdZMnVtTWTdQD3zxlghxs76K5wkGXPr0MSUiGZuf31xZjk
-	 z1r1hWLqSz5RyX0ns+NLXFQI0QBdIWOKSfpx4/of4h8aWIJAUgUeNI27F7vJhhLDqC
-	 d17wY6EWE50KQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ed9b802ceso1560217e87.3;
-        Tue, 16 Jul 2024 01:40:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/7vOEw78Y2mA6++BHsjFXRLCeL0h+9dSXeJUwVYJMSzm1UyoJwRKYnuvIxwq9aAoAC1CgxWE5wH8yxP4P18LQl1COVG2YJ6DmIJqm
-X-Gm-Message-State: AOJu0YyaJFyuBEDFQUwlYWbxqCl1V40L1WjBQ26puMFyzyvzLpOi8NKR
-	AclKmq+UlGTDJJceVQtWKIR4CoeBTi1qEWcXjrGf2EJ3cvU+6Xi5HA/d+JSxWfrk873sI6JYF+q
-	wtrUbm4NPoTePz6l7a05Uf9lg+LI=
-X-Google-Smtp-Source: AGHT+IEq4MJh9BWAM9rUzzPFUm544rLLMhXI2gofWB48KSRPyMHZCc/zqfanTxwz2hUyWLr/V4wQoCVBbhDWDcDZARw=
-X-Received: by 2002:a05:6512:3e18:b0:52d:b226:9428 with SMTP id
- 2adb3069b0e04-52edef0fe66mr1111565e87.6.1721119252503; Tue, 16 Jul 2024
- 01:40:52 -0700 (PDT)
+	s=arc-20240116; t=1721119261; c=relaxed/simple;
+	bh=xQ9/x2GqWi4zcKLiTBi4C62v+VnYNcJ/Tm16XoWVmgw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=udqtHBSNoPnNxHd8dtfZ/nKCNTAs5+OwQNvTenzv+DJi9KZYINfYTAKfznUHHdjJ0GZGO7IKUelo7r5ng7zEeQltsREuJd/i0vvUhTC4mRBLo6CTkDkbvgbIfiK0gQ3S8crBsQ0AZTYDPRuDPudBpfL//uSXhhhczi8thFYSq+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Psutq6jX; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42795086628so35013835e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721119258; x=1721724058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qGZ95YmptuK5HlceEeqL/CGEkmBT458I94bArLpmhkk=;
+        b=Psutq6jXvD5HxYpWGMqFboX0Yjvx6igIhAcLxbbEf1U9Q+bayHP0kcN9nh/hMyX1ip
+         0Z1lrL+e4hL+J0L8qe0mBxgXyPoUk2SNmzfT0aMXAn3x7NX2+Tx2QOWkt7Ef0B8Uz6/I
+         V4Gq3HVPy0uXGfQSmyw0nTg7cTo/UwxKL3b+O5Q/9OcI2v4dHGysua1tkUszaDfoC7Pu
+         566r2+Bj4v1ec0pBQ6JaADVL9AVEYgzKUZXMcBeiVYA+PVZM4kIm0dy94t2nDYZKwwpN
+         Sikix6RF8ukSsEqaZx7goIZpP655odvfpgCds5aK93JZm8WFzWPavKCUysm6CY70l8sL
+         yV2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721119258; x=1721724058;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qGZ95YmptuK5HlceEeqL/CGEkmBT458I94bArLpmhkk=;
+        b=Q1pzg8KradeF5Xsnu/tJNRGpTQEucIGyTWqkBA8pyl1UYYux/L0sqoVvjqhxWitAa3
+         f56++0TxvA5eBGBWL9r6smQEy/oh1W056tEo/2ckKnGPX0ByikWRCFAT6WScmXoezfTp
+         tPR3qH7hZGPErFbRyAbrHGkLV+m6+YOOXC1KDqoti70COBrBG0Kfa7aNatDUWZ0WRKtR
+         EM8gPHsGX0wpX9GhuVz45Q7Fe6RPRE4yj0IpCGKXkGZhUsMrHifaDPx/4w7qhzMSLYNp
+         kHf1rcgLiuqKyd0WPIZPF8L6Hzw7F/leNb9aWUKCws0trOViV6Wk3d5LeZO+YuNPeYBO
+         CBsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMNmKGKMY1BKLjFQpwwO+FW0iTwMbMrWrv+PD+s6jTTeHx2bAWAj8VMoERiANlIyDzW9LE/8FYGL5S7Ve/hId4TafMR9R+aRO6KCkn
+X-Gm-Message-State: AOJu0YxemcPCDkby6V9B7V7cK82pzsyEsKihlBqs67FhREOwO64QeZUT
+	Mv7h6QFmLI8H8k0hsb/IbosnAMwYii9Qsdov3O4sctAig8/OICGGfEEOy9S6bAs=
+X-Google-Smtp-Source: AGHT+IFJ3ZZ66ZwgXY6S7JWiWlM0Gkw+rArroSfqSWDk1RItR9IE3Osm2Pe1IjmAFkBqHB+A2+qrJA==
+X-Received: by 2002:a05:600c:4f96:b0:426:6379:3b56 with SMTP id 5b1f17b1804b1-427ba62e3a7mr11223485e9.15.1721119257970;
+        Tue, 16 Jul 2024 01:40:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197? ([2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db04581sm8405607f8f.97.2024.07.16.01.40.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 01:40:57 -0700 (PDT)
+Message-ID: <5f0a751a-f1b9-4cb5-af31-624c08833b10@linaro.org>
+Date: Tue, 16 Jul 2024 10:40:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNASzX29R38ApwByCO3kpiY6-L5UqHnP1Vs2WRBQM8z+kQw@mail.gmail.com>
- <20240706164423.1934390-1-aquini@redhat.com> <CAK7LNARATMy4hJ=Jp0fLd=JyD_SRC5ok8CFmLwHPv7kam4Eq1g@mail.gmail.com>
- <ZpWSxtUzBRkqB6CQ@optiplex-fbsd>
-In-Reply-To: <ZpWSxtUzBRkqB6CQ@optiplex-fbsd>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 16 Jul 2024 17:40:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT_b6hmN4W94D_7o5XZAc7jYhBi5rp=GUE=y+_BHjccGQ@mail.gmail.com>
-Message-ID: <CAK7LNAT_b6hmN4W94D_7o5XZAc7jYhBi5rp=GUE=y+_BHjccGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kbuild: rpm-pkg: introduce a simple changelog
- section for kernel.spec
-To: Rafael Aquini <aquini@redhat.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 13/14] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+To: manivannan.sadhasivam@linaro.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240715-pci-qcom-hotplug-v1-0-5f3765cc873a@linaro.org>
+ <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 6:21=E2=80=AFAM Rafael Aquini <aquini@redhat.com> w=
-rote:
->
-> On Tue, Jul 16, 2024 at 01:32:56AM +0900, Masahiro Yamada wrote:
-> > On Sun, Jul 7, 2024 at 1:45=E2=80=AFAM Rafael Aquini <aquini@redhat.com=
-> wrote:
-> > >
-> > > Fix the following rpmbuild warning:
-> > >
-> > >   $ make srcrpm-pkg
-> > >   ...
-> > >   RPM build warnings:
-> > >       source_date_epoch_from_changelog set but %changelog is missing
-> > >
-> > > Signed-off-by: Rafael Aquini <aquini@redhat.com>
-> > > ---
-> > >  scripts/package/mkspec | 23 +++++++++++++++++++++++
-> > >  1 file changed, 23 insertions(+)
-> > >
-> > > diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-> > > index ce201bfa8377..e45fdb12fbc7 100755
-> > > --- a/scripts/package/mkspec
-> > > +++ b/scripts/package/mkspec
-> > > @@ -28,3 +28,26 @@ cat<<EOF
-> > >  EOF
-> > >
-> > >  cat "${srctree}/scripts/package/kernel.spec"
-> > > +
-> > > +# collect the user's name and email address for the changelog entry
-> > > +if [ "$(command -v git)" ]; then
-> > > +       name=3D$(git config user.name) || true
-> > > +       email=3D$(git config user.email) || true
-> > > +fi
-> > > +
-> > > +if [ ! "${name:+set}" ]; then
-> > > +       name=3D${KBUILD_BUILD_USER:-$(id -nu)}
-> > > +fi
-> > > +
-> > > +if [ ! "${email:+set}" ]; then
-> > > +       buildhost=3D${KBUILD_BUILD_HOST:-$(hostname -f 2>/dev/null ||=
- hostname)}
-> > > +       builduser=3D${KBUILD_BUILD_USER:-$(id -nu)}
-> > > +       email=3D"${builduser}@${buildhost}"
-> > > +fi
-> > > +
-> > > +cat << EOF
-> > > +
-> > > +%changelog
-> > > +* $(LC_ALL=3DC; date +'%a %b %d %Y') ${name} <${email}> - ${KERNELRE=
-LEASE}
-> >
-> >
-> > I am not sure whether the version is required or not.
-> >
-> > In the following guide, not all entries have the version.
-> >
-> >   https://jfearn.fedorapeople.org/en-US/RPM/4/html/RPM_Guide/ch09s06.ht=
-ml
-> >
-> >
-> > If you want to add the version, perhaps is it better to
-> > follow the fedora convention?
-> >
-> >
-> > The spec file of Fedora looks as follows.
-> > The version is enclosed in the square brackets.
-> >
-> > %changelog
-> > * Wed Dec 13 2023 Augusto Caringi <acaringi@redhat.com> [6.6.7-0]
-> > - Add rhbz#2253632 rhbz#2253633 to BugsFixed (Justin M. Forbes)
-> > - Turn on DRM_ACCEL drivers for Fedora (Justin M. Forbes)
-> > - Linux v6.6.7
-> >
-> >
-> >
-> >
-> > Or, is this not important because there is no strict format?
->
-> Darn, I've been using the "- release" pattern for my RPMs for
-> quite a long time, as circa 2010 that was the suggestion.
-> I guess I just got used to it and never really noticed
-> the change along the way.
->
-> There's not a strict format, though, and it's just nice
-> to have the version showing in there.
-> I have no strong feelings about the format we should be
-> going to go with, so I'll leave it up to you.
->
-> What is the format you'd prefer for the changelog entry?
-> Leave it as it is in this patch, or adopt the Fedora standard?
->
-> I'll wait for your input before refreshing this patch (or not)
+On 15/07/2024 19:33, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> when an endpoint is attached to the SoC, users have to rescan the bus
+> manually to enumerate the device. But this can be avoided by simulating the
+> PCIe hotplug using Qcom specific way.
+> 
+> Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> interrupt to the host CPUs. The device driver can use this event to
+> identify events such as PCIe link specific events, safety events etc...
+> 
+> One such event is the PCIe Link up event generated when an endpoint is
+> detected on the bus and the Link is 'up'. This event can be used to
+> simulate the PCIe hotplug in the Qcom SoCs.
+> 
+> So add support for capturing the PCIe Link up event using the 'global'
+> interrupt in the driver. Once the Link up event is received, the bus
+> underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> thus simulating hotplug.
+> 
+> All of the Qcom SoCs have only one rootport per controller instance. So
+> only a single 'Link up' event is generated for the PCIe controller.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-qcom.c | 55 ++++++++++++++++++++++++++++++++++
+>   1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..38ed411d2052 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -50,6 +50,9 @@
+>   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+>   #define PARF_Q2A_FLUSH				0x1ac
+>   #define PARF_LTSSM				0x1b0
+> +#define PARF_INT_ALL_STATUS			0x224
+> +#define PARF_INT_ALL_CLEAR			0x228
+> +#define PARF_INT_ALL_MASK			0x22c
+>   #define PARF_SID_OFFSET				0x234
+>   #define PARF_BDF_TRANSLATE_CFG			0x24c
+>   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> @@ -121,6 +124,9 @@
+>   /* PARF_LTSSM register fields */
+>   #define LTSSM_EN				BIT(8)
+>   
+> +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> +
+>   /* PARF_NO_SNOOP_OVERIDE register fields */
+>   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+>   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> @@ -260,6 +266,7 @@ struct qcom_pcie {
+>   	struct icc_path *icc_cpu;
+>   	const struct qcom_pcie_cfg *cfg;
+>   	struct dentry *debugfs;
+> +	int global_irq;
 
+I think you can drop this, the irq number is no more needed after probe
 
-My preference is to get rid of the version number from %changelog
-because this is an upstream snapshot source package,
-and there is only one entry.
+>   	bool suspended;
+>   };
+>   
+> @@ -1488,6 +1495,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+>   				    qcom_pcie_link_transition_count);
+>   }
+>   
+> +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> +{
+> +	struct qcom_pcie *pcie = data;
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +	struct device *dev = pcie->pci->dev;
+> +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> +
+> +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> +
+> +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> +		/* Rescan the bus to enumerate endpoint devices */
+> +		pci_lock_rescan_remove();
+> +		pci_rescan_bus(pp->bridge->bus);
+> +		pci_unlock_rescan_remove();
+> +	} else {
+> +		dev_err(dev, "Received unknown event. INT_STATUS: 0x%08x\n",
+> +			status);
 
-The version number is already expressed in the
-"Version:" field.
+Can this happen ? perhaps dev_warn_once instead ?
 
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>   static int qcom_pcie_probe(struct platform_device *pdev)
+>   {
+>   	const struct qcom_pcie_cfg *pcie_cfg;
+> @@ -1498,6 +1528,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   	struct dw_pcie_rp *pp;
+>   	struct resource *res;
+>   	struct dw_pcie *pci;
+> +	char *name;
+>   	int ret;
+>   
+>   	pcie_cfg = of_device_get_match_data(dev);
+> @@ -1617,6 +1648,28 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   		goto err_phy_exit;
+>   	}
+>   
+> +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_global_irq%d",
+> +			      pci_domain_nr(pp->bridge->bus));
+> +	if (!name) {
+> +		ret = -ENOMEM;
+> +		goto err_host_deinit;
+> +	}
+> +
+> +	pcie->global_irq = platform_get_irq_byname_optional(pdev, "global");
+> +	if (pcie->global_irq > 0) {
+> +		ret = devm_request_threaded_irq(&pdev->dev, pcie->global_irq,
+> +						NULL,
+> +						qcom_pcie_global_irq_thread,
+> +						IRQF_ONESHOT, name, pcie);
+> +		if (ret) {
+> +			dev_err_probe(&pdev->dev, ret,
+> +				      "Failed to request Global IRQ\n");
+> +			goto err_host_deinit;
+> +		}
+> +
+> +		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
 
+Is this available on all PCIe RC core versions ?
+perhaps this should be moved into a callback of ops_1_9_0 for now ?
 
+> +	}
+> +
+>   	qcom_pcie_icc_opp_update(pcie);
+>   
+>   	if (pcie->mhi)
+> @@ -1624,6 +1677,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   
+>   	return 0;
+>   
+> +err_host_deinit:
+> +	dw_pcie_host_deinit(pp);
+>   err_phy_exit:
+>   	phy_exit(pcie->phy);
+>   err_pm_runtime_put:
+> 
 
-
---=20
-Best Regards
-Masahiro Yamada
 
