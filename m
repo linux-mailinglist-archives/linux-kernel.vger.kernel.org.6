@@ -1,245 +1,268 @@
-Return-Path: <linux-kernel+bounces-253811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170BA932758
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:22:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717F3932759
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A6CE1C21083
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FE91F21B5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517D719AD4F;
-	Tue, 16 Jul 2024 13:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E810F19AD58;
+	Tue, 16 Jul 2024 13:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yo+N+JGO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J5FrBOep"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F2145345
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721136139; cv=none; b=ZXIaYrY38H7W79zbneTNr2k8kjUai9h67wULgvENjSQkRJDCKAvjABDNn+2iRHa8NLMHgVj8CMSYe7IjbwwL330DCXew5ihhn49hljJJRWofqtRXW36+ypXZruSutIDEjT2JLq4BUB3hNgUy3MgYY38cA9TrxhcopwGn/TWCN30=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721136139; c=relaxed/simple;
-	bh=Alc9vqJ5BpvN2NaZaTUCfR3vCWvedss6z9+NvQtaIhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aA1g6VEJEZEKsJ626xjK6OLD/rgcSSpFLkxX6chdHn5Tdn4KsJmOSNt8LH+a5jIVWnQ9/cpPN0uU+UkzrBAY7/7wtDMKS5QERvvqT51BK7VVY0blF9iLfsKK7OgZt5tTqGfb4rLl+EHl0GfXE+Ph5nBpIEuXpTOeAGl4RjAM2Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yo+N+JGO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721136136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nrgb/Mh65bVbEYxmC9C7+RX2N1f2oZoQ84ptMXWN1Fs=;
-	b=Yo+N+JGO/hTxAQ7MedLWT3xYJ15mlQJ3Hex0aM/M0OSODWxqnMWl0lLx3UiuEk2qpLHHo8
-	1A+NxH5XYWh/T2B2cBGUM3+jJLe+LgiX0/MegkC8V1JOoW6a0Uy72vcKG4rH/UCZ0uWGA0
-	tDni2LWXloGUuJgE22wFv54PYa0JCBs=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-c177zulRNYOfNQ3WNCOg4A-1; Tue, 16 Jul 2024 09:22:15 -0400
-X-MC-Unique: c177zulRNYOfNQ3WNCOg4A-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-426683d9c4bso35703835e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:22:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721136134; x=1721740934;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nrgb/Mh65bVbEYxmC9C7+RX2N1f2oZoQ84ptMXWN1Fs=;
-        b=cndT21ZqB0+d1SBXmobjKPhk2+mJyZEEhRIkwKotTxKUKRnV85yE1cHKoMBZLOJiyQ
-         IyaAtk3gtlsNEwXJLqgavnEoHO3o8zujjSoAvU/QYC8KM3sdlYBZC4fv3m/J7WXYu3WV
-         mROgXhdKIfHndSFkFKZ7xHDTsoR2vJlPb3UVujAumQnpBxJOh+g8PXHiwV5zY4rdPR7l
-         hiWCpGpcKCV4dZnRsJ144hURRe78QNsXdpZzfIxL/TEJ26f9j7l9cw2lFIm2XCS7UKPR
-         iuszGYDFAP2ppQQWLBa4NYCWrvsF3McOfza7gpSgWqFcr8W/7bdB+IBRUrjD6kqTXEol
-         c1+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/gZRCubo89PtnkcRDCFPjPUC/t3ZkyAQOS031PiSRKHqoOFMNZSNO17ZMW3gas8FqwwlAytria35C+rIPkztgeEBnM1VKKuHGeLvz
-X-Gm-Message-State: AOJu0YyrVX3aPY2doQxlKLxdEkAeQibgGJV1ofanJJTQqECDSGfM/AbY
-	nY1Xp18jdcifSluEUQrPGFJYsL2Qr/07D+kbb9DOI4+kIKnDktSFeMZI9qtV0WILDwh23ZOZduc
-	w1SugV/S6mJEwnIh1mOXOpqGzlWuf+tDTJudE8E3q2oTZwQ5cjo533iI7zNj6TQ==
-X-Received: by 2002:a05:600c:45d3:b0:426:6f48:2dad with SMTP id 5b1f17b1804b1-427ba6fc389mr13875335e9.35.1721136134134;
-        Tue, 16 Jul 2024 06:22:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcLKnvj0vQt118VmPlyJIJ5OthADHlSPU/J5Bg8ZHsvr4juoanT3+P+BEG9JC6f8ieiLGE3w==
-X-Received: by 2002:a05:600c:45d3:b0:426:6f48:2dad with SMTP id 5b1f17b1804b1-427ba6fc389mr13875135e9.35.1721136133662;
-        Tue, 16 Jul 2024 06:22:13 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f02:7c00:e95e:dbc6:7ea8:d075? (p200300d82f027c00e95edbc67ea8d075.dip0.t-ipconnect.de. [2003:d8:2f02:7c00:e95e:dbc6:7ea8:d075])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef4617sm125545885e9.41.2024.07.16.06.22.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 06:22:13 -0700 (PDT)
-Message-ID: <fe313c95-5d49-4b53-9ff4-597fa5c6a898@redhat.com>
-Date: Tue, 16 Jul 2024 15:22:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541B7199E9F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721136195; cv=fail; b=OOKWXxH8D8QDQ190TX7A62FEMrtzKxt+ds4BilTbZ6gJfBAoLV+BFPyWDKNToIhMzxF9M+3cDQ+b38gYz4GCVd4p/B2Q4D1KWWUVjAi/WcmWK7UwFTFPmotW3gGIFvnz2xsBYBPS9hC/5ePrAys/ZDtQCGSFww+183ce92F6C8U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721136195; c=relaxed/simple;
+	bh=Dj6g7UhqqhSC9tBY+h+MUdynzqXxFbW4tQipRVmOc3g=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=dmVbAibFOlzxDTHCyGb9Zw5Fer+w4NgvhZvGQqMP88vc209BHIv3MU24aCNuwoigAtAzPHFE8ksGZcxeuZfy1potImTGFaFTRxLi9qWea9VAsnFbwshqRT31EBt2WRhEf0ETUlzSEkuNG9W+pfjvTm03G8of2cQUgm1rc5O9dvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J5FrBOep; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721136194; x=1752672194;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Dj6g7UhqqhSC9tBY+h+MUdynzqXxFbW4tQipRVmOc3g=;
+  b=J5FrBOepNfCH6QAG59DEkwrvHZXnsqAhx1uUeM6kwvq/TwSJe0C/bau3
+   l0k3ityF1or5eCgko82yPLsw9gLHpfVbBjgR5FLOUB3mfNE5RItZclxXF
+   CtjxZJAuKFxI9gih/XGpI1Fy0pHSnOKRqxY1W4BrPGWDJWV7tk5qZE/Bc
+   eyBMQHf58IvY9UNyB3rpra/hEBjgdBs25QuHqPuIN+RAqWjalXbqBP+q4
+   mfni3D1j3KIsEw2L+JgCCqmH9NYUaroQuRe93yU+uUG/N/o1Ty7qdUBlz
+   WsX0EcnjKBornmeE6WZS/CB2BZ6kXxi5uoSnc5yB2nd+lLTGrZBCbl4MQ
+   A==;
+X-CSE-ConnectionGUID: 5ErcL92lQSuXKzfoj1yZwQ==
+X-CSE-MsgGUID: ASOfBNnDQXa8Eux6rMfkag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29179053"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="29179053"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 06:23:14 -0700
+X-CSE-ConnectionGUID: ddNOd6iGRA2FlIkVvcPqOA==
+X-CSE-MsgGUID: +AbU9L1SQsa6V+H8QeU/LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="54859371"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Jul 2024 06:23:14 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 16 Jul 2024 06:23:12 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 16 Jul 2024 06:23:12 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 16 Jul 2024 06:23:12 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 16 Jul 2024 06:23:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AwXSK83OD1B+8KwxX+32oQCOZJYuJ+NU97ZH6fRsTPqP3SHq2jvEWz+C1zWxa1y7y2MDnepI2HOvKMosgIFB0qmPr29X8T3FNcL8xUewG70BWeflx2M5p7YzlnJL0EGvhhZY9kKFRHFINuTiwXsdRsAx5LnoR8Z0TalnLCr0xcZLRfy/dowiTKX/WGiTGHK6XrT6Q8A3eipDVohkxw9EfD/i5kr7TtvzqZ7LKi9ztC+OYQGjYx0VlTIrsRkTCjwVOK2f7rRWF0kPY3Gx/CtMRc7QeDTo2eUuhge6NNdEx6CBMszPFYQP9uIFplkOt+EZhmMABENuZ3Xe/fOXYDWuGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QdbnV6kZoJtuXzAlKMAt/yPG7WC5749+S8teHbcWSvk=;
+ b=mnD4pTDpaLhzOCGrQ2kRqi4wDgVtZXXckxyXOXbXs1nxNa1rBYTolqYg8vrDF9jBmagv9wIc5v5sDrhSmCU/L1vTA2ZVChYvFH1UjOUI2r7lrY8vegdbYvSRG9U7Qn2fJB4H6qPeX+moHRQ5qo9pFESpF+oAbv3jtFeKg/UMqtNPYFVA4+T1ymvfKQPnyU7I5/tVUIcDcjGz503DewsiKrJpABLbB/fROOvHL3/Mw0EDV+9sKgmj33jKPy+mXd3Xn7q50IvASNWGR+k97ov0fr3i7ad/zZDsR+QKZyGJ7Y1gnCh+Isqzz0ghMeJkP5lUM20LWpWKJrpB7g3PsK2uJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by MN2PR11MB4695.namprd11.prod.outlook.com (2603:10b6:208:260::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 16 Jul
+ 2024 13:23:10 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 13:23:10 +0000
+Date: Tue, 16 Jul 2024 21:22:59 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Christian Brauner <brauner@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, <linux-mm@kvack.org>,
+	<ltp@lists.linux.it>, <oliver.sang@intel.com>
+Subject: [linus:master] [fs]  2a010c4128: ltp.execve04.fail
+Message-ID: <202407162117.7730986d-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: KL1PR01CA0153.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:149::11) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
-To: Daniel Gomez <da.gomez@samsung.com>, Ryan Roberts <ryan.roberts@arm.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Matthew Wilcox <willy@infradead.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Hugh Dickins <hughd@google.com>
-References: <ZobtTmzj0AmNXcav@casper.infradead.org>
- <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
- <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
- <Zob8xI-LWe9H_iJs@casper.infradead.org>
- <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
- <e826368d-499a-483b-8991-8c25aff88f00@arm.com>
- <CGME20240705085911eucas1p17f1e79c871c6290b426737ca1738e529@eucas1p1.samsung.com>
- <32f04739-0cd0-4a9e-9419-c5a13c333c28@redhat.com>
- <ihgsmfaqgpjcewxpjnpoo3ibdhm72s2balhpedkgr2aou5l355@ps7vb3l5j54n>
- <e83e1687-3e3c-40d0-bf0e-225871647092@arm.com>
- <pxeazv32rilu75pxzfw6ksx3fmlij5brih2247d73c3vq6mokc@qcnuqbqs4buj>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <pxeazv32rilu75pxzfw6ksx3fmlij5brih2247d73c3vq6mokc@qcnuqbqs4buj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MN2PR11MB4695:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64ef066b-b3b9-4d2c-1521-08dca59a6fe5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?55ZyPHsP6Hh0uiC1AJSswPVB8fnsXNSt2N+RSYlFilVB+giwATeKRCfWr25v?=
+ =?us-ascii?Q?kPkGj0S/fi/ZIvEHhxYr2gF5GoCXV1QTL+OsCJQbQiTf82OBH8VfD0xwHkHx?=
+ =?us-ascii?Q?2r/CyL/zALbhORLVAEK2Zrv4En6O08u0INFoWq9IS8Ttl6PXdn2mRgP/ckls?=
+ =?us-ascii?Q?V9S31CFyJSqmy4Derae2ERAckoZg69GMSvUXXG8A4aq5LMo+xB4ueVXQvqy3?=
+ =?us-ascii?Q?1SAneaP/7XOWmHEd6Ao7OTbpKRdH1s82FJsn870tGhBwpbkkD7PFG0GOyX5Y?=
+ =?us-ascii?Q?miayPZoQkzVsdIxPp5jC0nR5mHkA9hMCdKLiSzJBdKS62z2Nupj/kypVyPrN?=
+ =?us-ascii?Q?7emRBA9ipwOVzPLe0766VjaNQJqpY6mYECzNnc2MckhaO4OWs/cEm/rAxcET?=
+ =?us-ascii?Q?oR6OKsKRF/hPkbGUGZlChdGZqLdKop4CSv7VOUGXfdJoK6br1f+Dl8EepDrG?=
+ =?us-ascii?Q?5Ooql4bc99/3zSrvkLtxI9K+OXGHlMjm0crSIN8uGKi0AxDCsMi1tTqYsRuh?=
+ =?us-ascii?Q?A1sVJZtRfPjgFwZHrWw0Cgq3jN5Q8jkKcvhWpeGDHrMmGYJUDITUNxK+rGFw?=
+ =?us-ascii?Q?Ac8qfTxnAd+4PyyTU7TUhVv6wrzk7m9qc7tJjGy+xvx0IWSdLJz9w6PTqo5x?=
+ =?us-ascii?Q?UkCFtXpPFpNT4DzGfUGlpz714ps9sw6IW5pgBK0rJEqIXDyO64uZ1akEWRtV?=
+ =?us-ascii?Q?MTaFS2CGr+QuXjCiLTG064yszJ6kROpnJ2hf581fCCb4iNV9OrZFdJeFoCnh?=
+ =?us-ascii?Q?h+xyc+vBSCdfH8lHSYgJJwRfmQa/cVKy8cpFdyhRibUfhK4tlWufVv51YndE?=
+ =?us-ascii?Q?JpDcU//TCs4pRt9OddkKqQ16t046X177JW6D8leP6xTDTw+6o91GZos4MtE+?=
+ =?us-ascii?Q?lJ8LHL8x2IYj/U11N2c2dDhSI43c6reNgGcx6cxk9Dyi/3VnwsLovJwO8Xxg?=
+ =?us-ascii?Q?8dcJ4dswvfB99oL6aIaXmS80LNbcDn+Ppcyb7IrWzC7zKPe0CLVg8TLgQ9TY?=
+ =?us-ascii?Q?Pjp7xJ521fmmtwGMc0NegDrcGqKIYiBNx4Cfc5VN2jIGxYXSR9B1DbcUeq3o?=
+ =?us-ascii?Q?WfvxYQKSUjEjJhzoxQtyAFbVLaXyRsQR3W6+nAgTO2JfR6NMwTvNm6sNA87W?=
+ =?us-ascii?Q?9j0ASwJrSQB95+q7wRH5qakXc7hXlnIU6R3fIngeAmw8hp421BBywVfRqh/p?=
+ =?us-ascii?Q?BJF/LS2X3Kce8cSuuG/V1p3jSo0PWeXq7YIZcCqEFC10Ts0UHlTciPMfNdSt?=
+ =?us-ascii?Q?35xfvLZDJ5NqH61hGb0SJktvPpTGqLNWS32GhtD8KFDetVEF6s6FS9RwjzCR?=
+ =?us-ascii?Q?4gE=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pxSslu4Zhhc3HKeEc0CqISyuskqzrshZ0c/HJycBAIbodz5F7NnLrKAmNLVb?=
+ =?us-ascii?Q?fv2tdJPe4PcQM+WL0YsFv68IQEZ1AhaHNgudDBpEeVFHyoJE7AEfYcnFq800?=
+ =?us-ascii?Q?vd+LE549GrkS4SdJCc1XIefi9ybDu22ZLYS2E8XvMwVbgZTHM3KQSyz4Jfdk?=
+ =?us-ascii?Q?t77qpYCdolQxD9hgqd3UphomrOz9Se2iOrVG2vk0UM8gUEKtuDij/xi4yH2C?=
+ =?us-ascii?Q?51RGNkDP40h94QDj6zXGo81emWYdRHic8KxqL+f0X/0ViZrQtZAfdw9xiJOE?=
+ =?us-ascii?Q?yBpsob9kLZPKr5aQZPerApacThG4uF80k+dt+U/L0qlUB6eHlPl6IAQQP5lP?=
+ =?us-ascii?Q?7rWBs6aWJ5v1U5RDqk7ufEclWqrLWTtckpbZLHQZXtF0rVg862VHWPbrTZur?=
+ =?us-ascii?Q?l6ovi0c80LpNywTXB66d//2r9lOuCXPDlmh7zR5Fb9Z+qMGM8PqwkTelYC7o?=
+ =?us-ascii?Q?XNpE45Uvih8aOwM1EjVLCr83/P5cLMV7xUX1E3iO55yE8nT1kcPtbjNdolF0?=
+ =?us-ascii?Q?g1Ler979XfqSJCf38YpXS4IHVy5xJZ+oBCB56PpnmP5LyhCS017pYhKHiaaw?=
+ =?us-ascii?Q?xicBpI8rUybpK4Zb5rl13WtbcXCtBZxaCHMIhLU0VNmqRUQIVoALMQn6Z0Xg?=
+ =?us-ascii?Q?tC4AaLQ+tNwiAqf5cGkNs8Kv2bYweft/1hIVx0eqmJSppX+zLRut+Svx1RbT?=
+ =?us-ascii?Q?azkuGOr3FhUGCfLwjQG/J2KwTqOD0cEl6dIRMHJWkbs7nC676rVKah8sC9br?=
+ =?us-ascii?Q?4uoALIi4W8GiFX/E8YhtOJf9ZUpP1XH01DNpLrrvoaGhm8fOKpnM5xRXAh9d?=
+ =?us-ascii?Q?cqZV+DeFkaQQxMcT6jXJbgOe2SpCEOOmZbbGo5zluptj2pV4oXFVCibMh+zH?=
+ =?us-ascii?Q?qwNLIAkuh20UelBShylWXYMaGK70X/8G3j9oJs3JsroVh8xSN/c3sjzUVII8?=
+ =?us-ascii?Q?ZcUd74QnkSxIGAZ8FAc5cxSf9s9+3lXXGw90bk0cqsFTk8j9I/5MtbnBtR1z?=
+ =?us-ascii?Q?J4LpOvGuHF1BXwk2BTmBCslXwo75aHSATAV/46xJTOrK/Z0FSUSjT9P3PGzw?=
+ =?us-ascii?Q?7XrDQKaj6pRFJjWtSmcZWVHJVF6tQut7aSXFyLNMlbqQE8onvQwqVG0xK7vG?=
+ =?us-ascii?Q?BdZkIi7hkm66BSlJgI5rDUvgpurxMVjgy8UiEn9n45fSLe5Avf7aMMslrIKV?=
+ =?us-ascii?Q?R4XoyVlJuqHcu9C12eOUmKOq9FuPmrRMEc2qF9zsQeYirC6SDGiF2OVARcgK?=
+ =?us-ascii?Q?jBjHp+UgWhCutfKuN1EI+9dKd5X4vr4sWxx+5X7ahPMI70JTpVBe6Cbp4GMC?=
+ =?us-ascii?Q?y0qsJ8Tbvbwoa1/Gw6Zc1e8dt1Z7ZxK6DRX983ZBKKOukG7ebrVVUBujux+e?=
+ =?us-ascii?Q?Twzp5ZJSSYMPUfUjFm/1isdKqhXDlWf27OPk2KOkxG5T8gax9WPyBh90nmPj?=
+ =?us-ascii?Q?nHH/bot/bODVjFvXN8fV0dqtck7T6OX83MYnr18B7/JLXT4J6OIcSPWtgrmS?=
+ =?us-ascii?Q?HzPsRV0GDHwKNQAPoO7PhN5PMyec03ON3/1sjdbiyIFKDUilCnG0+ugbxDPT?=
+ =?us-ascii?Q?5f1YXbZLQ1UA31ig/f4UEOU5F4ywE8bhqpY635uswqfrnycIwvwDWjLkLG1C?=
+ =?us-ascii?Q?hQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64ef066b-b3b9-4d2c-1521-08dca59a6fe5
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 13:23:10.1529
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vFznl/ebzdRJlwAzGfEYaxXZgByNRaxlZVlAq8I5KNFt6bLuBqy/Kpunx0IBuTNJHL/9zXm9QPljPLZ8OmQ89w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4695
+X-OriginatorOrg: intel.com
 
-On 16.07.24 15:11, Daniel Gomez wrote:
-> On Tue, Jul 09, 2024 at 09:28:48AM GMT, Ryan Roberts wrote:
->> On 07/07/2024 17:39, Daniel Gomez wrote:
->>> On Fri, Jul 05, 2024 at 10:59:02AM GMT, David Hildenbrand wrote:
->>>> On 05.07.24 10:45, Ryan Roberts wrote:
->>>>> On 05/07/2024 06:47, Baolin Wang wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/7/5 03:49, Matthew Wilcox wrote:
->>>>>>> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
->>>>>>>> On 04.07.24 21:03, David Hildenbrand wrote:
->>>>>>>>>> shmem has two uses:
->>>>>>>>>>
->>>>>>>>>>       - MAP_ANONYMOUS | MAP_SHARED (this patch set)
->>>>>>>>>>       - tmpfs
->>>>>>>>>>
->>>>>>>>>> For the second use case we don't want controls *at all*, we want the
->>>>>>>>>> same heiristics used for all other filesystems to apply to tmpfs.
->>>>>>>>>
->>>>>>>>> As discussed in the MM meeting, Hugh had a different opinion on that.
->>>>>>>>
->>>>>>>> FWIW, I just recalled that I wrote a quick summary:
->>>>>>>>
->>>>>>>> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
->>>>>>>>
->>>>>>>> I believe the meetings are recorded as well, but never looked at recordings.
->>>>>>>
->>>>>>> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
->>>>>>> was expressing an opinion on using shmem as shmem, not as using it as
->>>>>>> tmpfs.
->>>>>>>
->>>>>>> If I misunderstood Hugh, well, I still disagree.  We should not have
->>>>>>> separate controls for this.  tmpfs is just not that special.
->>>>>
->>>>> I wasn't at the meeting that's being referred to, but I thought we previously
->>>>> agreed that tmpfs *is* special because in some configurations its not backed by
->>>>> swap so is locked in ram?
->>>>
->>>> There are multiple things to that, like:
->>>>
->>>> * Machines only having limited/no swap configured
->>>> * tmpfs can be configured to never go to swap
->>>> * memfd/tmpfs files getting used purely for mmap(): there is no real
->>>>    difference to MAP_ANON|MAP_SHARE besides the processes we share that
->>>>    memory with.
->>>>
->>>> Especially when it comes to memory waste concerns and access behavior in
->>>> some cases, tmpfs behaved much more like anonymous memory. But there are for
->>>> sure other use cases where tmpfs is not that special.
->>>
->>> Having controls to select the allowable folio order allocations for
->>> tmpfs does not address any of these issues. The suggested filesystem
->>> approach [1] involves allocating orders in larger chunks, but always
->>> the same size you would allocate when using order-0 folios.
->>
->> Well you can't know that you will never allocate more. If you allocate a 2M
-> 
-> In the fs large folio approach implementation [1], the allocation of a 2M (or
-> any non order-0) occurs when the size of the write/fallocate is 2M (and index
-> is aligned).
 
-I don't have time right now follow the discussion in detail here (I 
-thought we had a meeting to discuss that and received guidance from 
-Hugh?), but I'll point out two things:
 
-(1) We need a reasonable model for handling/allocating of large folios
-     during page faults. shmem/tmpfs can be used just like anon-shmem if
-     you simply only mmap that thing (hello VMs!).
+Hello,
 
-(2) Hugh gave (IMHO) clear feedback during the meeting how he thinks we
-     should approach large folios in shmem.
+kernel test robot noticed "ltp.execve04.fail" on:
 
-Maybe I got (2) all wrong and people can point out all the issues in my 
-summary from the meeting.
+commit: 2a010c41285345da60cece35575b4e0af7e7bf44 ("fs: don't block i_writecount during exec")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-Otherwise, if people don't want to accept the result from that meeting, 
-we need further guidance from Hugh.
+[test failed on linus/master      d67978318827d06f1c0fa4c31343a279e9df6fde]
+[test failed on linux-next/master 4f40be61af99a67d5580c1448acd9b74c0376389]
+
+in testcase: ltp
+version: ltp-x86_64-14c1f76-1_20240706
+with following parameters:
+
+	disk: 1HDD
+	fs: f2fs
+	test: syscalls-05/execve04
+
+
+
+compiler: gcc-13
+test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 128G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202407162117.7730986d-oliver.sang@intel.com
+
+
+
+Running tests.......
+<<<test_start>>>
+tag=execve04 stime=1721093644
+cmdline="execve04"
+contacts=""
+analysis=exit
+<<<test_output>>>
+tst_test.c:1803: TINFO: LTP version: 20240524-71-g361f6ad13
+tst_test.c:1647: TINFO: Timeout per run is 0h 02m 30s
+execve_child.c:27: TFAIL: execve_child shouldn't be executed
+tst_test.c:1695: TINFO: Killed the leftover descendant processes
+
+Summary:
+passed   0
+failed   1
+broken   0
+skipped  0
+warnings 0
+incrementing stop
+<<<execution_status>>>
+initiation_status="ok"
+duration=0 termination_type=exited termination_id=1 corefile=no
+cutime=0 cstime=6
+<<<test_end>>>
+INFO: ltp-pan reported some tests FAIL
+LTP Version: 20240524-71-g361f6ad13
+
+       ###############################################################
+
+            Done executing testcases.
+            LTP Version:  20240524-71-g361f6ad13
+       ###############################################################
+
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240716/202407162117.7730986d-oliver.sang@intel.com
+
+
 
 -- 
-Cheers,
-
-David / dhildenb
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
