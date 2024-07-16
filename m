@@ -1,387 +1,325 @@
-Return-Path: <linux-kernel+bounces-253669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D7A932497
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F56B93249E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA123B2360D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B191C22473
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22760198E78;
-	Tue, 16 Jul 2024 11:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AB01990AE;
+	Tue, 16 Jul 2024 11:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJUOu5/R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="f9eCtXUa"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010024.outbound.protection.outlook.com [52.101.228.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049B41CFBE;
-	Tue, 16 Jul 2024 11:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721127971; cv=none; b=rrNvMSJ4Nf38CAvBlR5+VQiicqLuYrao58HXNxMz1wfbLsg24xPsio5MAnJP7dkXzPEs/rZYlUlEJJqkc+2UQdgyJQysBLhTeeLDNTbFuYqFrNeeDKuwhZvAf6Mz7D6SO1mewanOkSG5F14eoeLD0NrIOdlBVHc6amqMpk0eXfM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721127971; c=relaxed/simple;
-	bh=iVjizggjH/Quf+RBaM03/SUpOL20rM3KHOb614Ik3dM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WIr/ZlxX9WCKuhyc9Vg1LKPSfJVGGbFogecir2N4aDW43bvJ9jo8CtlIjCHqR+yT/LZfrDZFgLQfsmaqHDyJKnoEXtGf1SJ4WWdj/Nvi8TBHGu3m0DtNcbpVGXw/+WaWkakjjgevwQ/DzTx6add3YQ/sC/lvBC9AGkRSQcQypDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJUOu5/R; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721127969; x=1752663969;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iVjizggjH/Quf+RBaM03/SUpOL20rM3KHOb614Ik3dM=;
-  b=BJUOu5/RZqfubRQkBgEUIOvCfb9Rq0W5i0QxJW/0vhupZ2280MqU2IDy
-   tTXbT/SPG3z69YpJn28RXZqIGJwmBka+PRLQb7M9obf+lTDNt0NRPb0/Q
-   DO4iQFxXLzNVTCtwMrSR5tUT2+gPLHS6P76E5sfj8YQFbr3e6dhA09nnw
-   jvS+sncxj6mSlo9QUO1Lylh9fx0pOJq7RQueV62w8/8b4yD5MQ3ko4Qry
-   kzOnyinpg8nwzC+0wHw1j0ztm9Bqu16dd05uFYDujmoRlGQr44m0X2la4
-   pR//ky0kiM9EYauBYdNU4ekTt1GNtHZBPf1KwuMU3RlJxJio8RZj3PFn4
-   Q==;
-X-CSE-ConnectionGUID: 1FtqyydpTomrzXZuL/CO/w==
-X-CSE-MsgGUID: 66iCwi7RTg6clud7By0/NA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18428099"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="18428099"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 04:06:09 -0700
-X-CSE-ConnectionGUID: ARKHl+VtTzu1aZHQMgqL6A==
-X-CSE-MsgGUID: LuAFIGJzRdyCekdmWVEK1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="50053780"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.133])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 04:06:05 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 16 Jul 2024 14:06:02 +0300 (EEST)
-To: Luke Jones <luke@ljones.dev>
-cc: platform-driver-x86@vger.kernel.org, corentin.chary@gmail.com, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Mario Limonciello <mario.limonciello@amd.com>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] platform/x86 asus-bioscfg: move existing tunings to
- asus-bioscfg module
-In-Reply-To: <65069b59-a5c8-42c5-b0e3-8a097ab14b3e@app.fastmail.com>
-Message-ID: <5c639541-0fba-276f-7b57-3f5a379c5bac@linux.intel.com>
-References: <20240716051612.64842-1-luke@ljones.dev> <20240716051612.64842-2-luke@ljones.dev> <951d3dc4-5330-2bbb-0372-8ab2761bf8f3@linux.intel.com> <65069b59-a5c8-42c5-b0e3-8a097ab14b3e@app.fastmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273AC1CFBE;
+	Tue, 16 Jul 2024 11:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721128076; cv=fail; b=Oks3P9Mw1enM/Zm8sJ6n0PPXhuiNFIvPzc8gwshGZ2DOgpHuvSkgL1nUn39AqVC9cJw3Q1Emv0IGjE0vH/fUZv4nVGeYrHCoqT1V1tH3DVrzIywa/5D8UPruFmgKpn3OBtVdeKuBCqIqhIcSt6x9Zf6lZTWX1OAN6IfZyVP4ZKA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721128076; c=relaxed/simple;
+	bh=E3Tulh9wr7BDfQqqhCTVgS1mJEaZn3EAGBbGoYCzAkY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gsQC6NB1QodWKEVbQ3bZAX5WlJw4X4Nfw8GkcIbOr6heNKbYEV5gwCR0M5W9zVIEuTijlrgWB05keQlVCTgcWn8YBp1pNnvjd92qu2YzT8tlhbWulX2jg8fJpV/nARecdosGHywOin/FYGQVnOHlidS4UfTbf3JAsHJ/j84aKqw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=f9eCtXUa; arc=fail smtp.client-ip=52.101.228.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mVvoR1s7/V3TfaLrWNgWGTIhtT4CZuvlf06AokVMqFP1unpm+DAWuBUY4StX6B0FB2pYxTrQ0pyEVP6tCESOSe7iJ0n3kvsfguOxbjBrQ/mBR/3RSBgF1LklT/XcMW0HCUyGZ2k3+VZupQcWoLhYXDfZFbcRNYQGPm9ADGRP3+QQe1eGmc4v+J96Fi7qlBFvHs+dqg0I2tjZZ+MieqR9674+egb4M9ag2YuXDxUAWVpqFYrl7Kzup3P5xPCnLapik/1yxYmY31aE1EWnkBrF0yUTh6E3OJwYtmtdoUTzhgJHnky2o7ZR7y7d25z0aQ1Fc9v46NzUBTfMngVdKaIShA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jl5J5qFwbobXn2L1E0tir4Shi6BNYrNkp0XuV7tocWk=;
+ b=ogo6ZUnHMs3MkQaLx7jANW5Qv83eQFR5FBhFKTT/iRpDW1eSvy7lG5Afbp/fT6hp969YJ2vaJIqCkwXZ2L3vjCrR2gnYZKHmDcG43paEPEioLYBP+MKwqsczz/9Hus87L0O0cOblw8soC9wzEjuhRjIf0gWwwgmGl+b5DVKmz9AxJFHb1DtQ1htTqL39zdOYtp5UpMINrpdVNmPERvOcc0SfLn4IsHxCFgfDmihwRqPdjb4rSy1WpFfmWFzPgGtBiSiR3GSAg5sO1SLjRB2q8Q0Xa/Mag3uq519rArAjRp8KGQQTO02rXteUjJbpNTr623FQszjGZHZi3yYEtZdTbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jl5J5qFwbobXn2L1E0tir4Shi6BNYrNkp0XuV7tocWk=;
+ b=f9eCtXUaBz+K/1zog5/O2x4GiXL257fOkSVrvjHkwdO11WcfCoezbW1prZw9oz0eRBIKEigq8AjeFOSNNnpmiVo9sSjtxJVPuZmspTtgk22Bf/yv1PDZD4KlrgxCt3HG7lERapTSoESwkXHkHqt6odDVSMQzJxR+scGIIfXXjqQ=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY3PR01MB9903.jpnprd01.prod.outlook.com (2603:1096:400:229::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 16 Jul
+ 2024 11:07:50 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 11:07:50 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "lee@kernel.org"
+	<lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Claudiu.Beznea <claudiu.beznea@tuxon.dev>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Thread-Topic: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Thread-Index: AQHa12tDxiFdQX5gCUGHOGSoT2m2RLH5MR+w
+Date: Tue, 16 Jul 2024 11:07:49 +0000
+Message-ID:
+ <TY3PR01MB11346E71D18A145DA70441CF786A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB9903:EE_
+x-ms-office365-filtering-correlation-id: dcdfa4f1-8479-452f-aa04-08dca58787f7
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?rTyGi+5qxnNiVGQkKBiiHYXEXTRljpF+pRMm/phidrYfMRAJP5+1yPUSqX18?=
+ =?us-ascii?Q?zoeiUdx7lySMrI3nKqhvO8kl1gTSQXoA0PF/bIWuFa9rDaFvCXvVJG+377OJ?=
+ =?us-ascii?Q?atXOMlseGcTFyeKNxqWCHB7vjP4Nkc889olXnxaoqpJZITZtMR4h5FvBN/tA?=
+ =?us-ascii?Q?M4y9rM0FFdXuxxQyExpG5sHGTs30SI0QtyO8F375BDegCYQcAoGa0lrhz6Zt?=
+ =?us-ascii?Q?8DazU/v/IYPLYwGjElJlzmv8ycjbyXRu4NxuITw1KxxnD54jjBGagtVdLGaw?=
+ =?us-ascii?Q?tnb6K0qSnuGyIatQIaGHWt6436M93FLQbYjODgmw13uY/EINvNjl9TS7zu/z?=
+ =?us-ascii?Q?PjcwHeB2gL/6YY9qkqBiAlYcIFlbjN1seLgO3IU/SPDNwmdRA9NLG5I8FBqZ?=
+ =?us-ascii?Q?c1SZbYrlrEtUQ2EajPoGswcas81rVXKrtXacRVBbfkdA919AyL7/F7BodnoR?=
+ =?us-ascii?Q?0G12kQSrns0yVSh1Rr+joNh2i/IBjgdlOrqprzODevE3MSbrgVTQPeqcJAIo?=
+ =?us-ascii?Q?VY530RBzdmPShBLuz4IPceK/swn8tMX58O8SE9g3uceNBWD5yOY+2A6FEUbP?=
+ =?us-ascii?Q?MebZh9CTJm+XfhCxyKYVNcqhRmQ39tfR0AFtTzq69sSfhD75hiAsd7GA/b22?=
+ =?us-ascii?Q?dMBsPQYJRzKmfGm61HltlfkCF6/Z+54HwLic5eozBETUTToksZYW6eA/S0EZ?=
+ =?us-ascii?Q?HI3ctpAHAlnWgSiM9tMqXnpcL89mcKQDt3Llq+YMD9/3dVHkcCXzAskyPZHn?=
+ =?us-ascii?Q?sLk9e5DhjMpiNOskZNEPAsAtC+a1uvJw+OVMja37ef05wsqXqhU7d+w06Tuv?=
+ =?us-ascii?Q?WsbzC1bhLdAk01o59GzVu1K94quhVPrKbzFc4iFDyjiQSqUYqhFiwCfwyipx?=
+ =?us-ascii?Q?jxa3o0DpodB69NhAkC8i0EW6REvuoi2kwGdFGAXlOeojON7jyhl60yIR2Nj+?=
+ =?us-ascii?Q?8YDaidEf2mxAxLuVCXnZhVOxnh/CxnLB5J1p11ee6zs9X6awjsJH5Y30/6cv?=
+ =?us-ascii?Q?9IfnB1APVy378eLrEGwiqErE/77exHKxx7PQRTTQBJEqE6+tmJj+tc8Cpiwb?=
+ =?us-ascii?Q?lf1rJU3jcF5BvisBGsIt6ADk2bbT+AsKVf2ceWPp3iCLDXtKf7keQt6oC2l2?=
+ =?us-ascii?Q?iYcNaYN90HyMtIb5DutdMQFDmgbsMyKAjvtYtTC5fbz1/i2fWzE/rUWXVXo+?=
+ =?us-ascii?Q?MUhfQcvlihansOwAjpQoJrQr16nTbxmOYzNw2zRya9xplcq3LUZXfy2kzWNh?=
+ =?us-ascii?Q?IyPMjq1WgnZYSrGv+Ot2CYSpq/TIPRPKJxmdNVCw0cU156j9SCR0thBcsl+V?=
+ =?us-ascii?Q?kB7Ivn5XsLBOiUMfRf2EEyyyrcI3qpwMeOpE4A3QSBwtq/RY2jveKhyCevN8?=
+ =?us-ascii?Q?erPI7k5Iy+zxmV/Vt7EkdWizQ6UPdZwi93Frxu4bp8eDxPdHCHI476w2UvCJ?=
+ =?us-ascii?Q?Z0w6gX933sY=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?aAQObcOcSgB8vwQMn+p6s81GmkjCO+2/RdJZO0VrsEZRqU/rIiPitbEfCEbq?=
+ =?us-ascii?Q?YIV6v5yEEHoeY7/rE39JwWZTli2kOE89UGhOiHPxCYHf63xiyv17Y/E3qVDh?=
+ =?us-ascii?Q?5us8dCU3LQqUPguemvWfJZkJ712ZDx/w4YhgA7Z84VvT8VTIIQbbB5KOtxlu?=
+ =?us-ascii?Q?LrXxXBSR7vN0AeiseKb2MVwCuBFX4she8SGC4Ou5/4orSCwfblI5TAERBJkW?=
+ =?us-ascii?Q?FSUuOcynrpAz0+TqgFx0xw9i99YAR0DT0OpOStBBbk7MZHpSkHLYg36+ZYk2?=
+ =?us-ascii?Q?EByo7qwdgd8Mm/4n/XGgPQtxxE96w1VDels0ZB8Lo2uQYrFyzd5gD44WQHxn?=
+ =?us-ascii?Q?b9M2/biBSIpJLUkvwxLnOdeUs6PBO05r+hjkqkyWpYp6IbGtM9sxMZOe3VB0?=
+ =?us-ascii?Q?BcnR/kXKGv4Wo3NhshgjFub+m2CAwJd7bXwFe1j4NhmDAgrQhZTzHC353lt6?=
+ =?us-ascii?Q?hqTD9dxFvWK/8sitB+tWWiR+4R2iFHAjx0gC3vH8ZKCyFppyMa5ydzCuVkLZ?=
+ =?us-ascii?Q?YtGK7S40BnOEZjCcRbJ5avq1OOQRFOfScSXTd/skXw1z2qmDJtiftBPvhC8E?=
+ =?us-ascii?Q?El/GxTwb5SSjm1ZWc/fJZZ/rpbTyN2HyajyW2R3xjouGF84MYP6iDKArL9F1?=
+ =?us-ascii?Q?T7wTy+S2tn91wW6JUAXer0tF9XFXiTLg7DKjNdVZVmV+1SQj3K6ANal5Vs3I?=
+ =?us-ascii?Q?EPpBvIbpOuqJO4H1D+0Rxp8SxUcVsQGfADrydMMK3Jsb3/DZKXI40nUotaQt?=
+ =?us-ascii?Q?E77v6Q91t/QftNMBey2/vmUcSN/iYLzuE6wXzSQsUrDebbuQDVjmn8WNWMJT?=
+ =?us-ascii?Q?PkSVZtwoS+DVZvTV8Z1mnjHE7VOHiia9Fj5UwWBMzuhDbIVLFq7Ehf9pvFE7?=
+ =?us-ascii?Q?aeRNFTuShcR7KZX+38lcZnFQNt9i9Z/YdAQSj4Yr3fxLS3hypRzpnaRYVfDl?=
+ =?us-ascii?Q?LdITK11Z2h9o/UXVRdgtqSSgsfr/KvgGIFIK9/VjQyGl1ZjlFuNIO9z9O6kz?=
+ =?us-ascii?Q?Phc9sfoHaD3+zLcaI8CBzph7enEAscV0v2QbW3Nh544NPKJzOiPjpD8qwpxQ?=
+ =?us-ascii?Q?kNr9Lg8aL/olkvirUcMSZscxhwQG3tbo/IadnF67QdBhbbH1oossFsJm8uJh?=
+ =?us-ascii?Q?qHUXwyDfiQwNSCZhZfvE9xaE7iInDZA59L+ilHeYTCuSRkljEmDYS3qtnueD?=
+ =?us-ascii?Q?GvI8x1qO0tGEsZA7Knt1rOoyEhFxxmnNQL+vAdSG2UZAB+fLkuxInQn6U8Xf?=
+ =?us-ascii?Q?Wl3avY7hdzf6gSlNYQcKGrXTnNny7ITWi3xfmhw9tguz7Zmuq70bCJ6BKhqo?=
+ =?us-ascii?Q?23fY+kaR5QLMFb6qVa82mIjwucZFaMXYqwcP+KW7sAKCkYc/fblixpHy7fLz?=
+ =?us-ascii?Q?7zabst+hfS3Ztu1AzAXNUPZATjK7No7yqQ5oSeE6XbeD31H6qwqoFaPYUFlr?=
+ =?us-ascii?Q?x3mWRgt4AbCm7FpIH69w/lXXbJwH51x1yzb9lyWavWz+KEdiwY5tr4yzrM8W?=
+ =?us-ascii?Q?acmRM19uMXPjZyYAgGIfYUZD537YcBqa4MrwIwQP0iEjDR40DvyNJNHsWzIC?=
+ =?us-ascii?Q?oNRia3GiQe/rSEm75sKT/6rC6amVt7eNL2Szmh6ZNwNwFq6IyTXQI5MIxdbl?=
+ =?us-ascii?Q?cQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-740309722-1721127962=:1037"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcdfa4f1-8479-452f-aa04-08dca58787f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 11:07:49.9892
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FImK/y7l2ZkPVRskGzsWax8z6MsC2FVDp6nixu5/ng2BaDZU2Zy28JCsylijiu1Iz8ohg+LTGJ3DiwVhd07H4k3tv5sis5vPKmR9Wx4YgC8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9903
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Claudiu,
 
---8323328-740309722-1721127962=:1037
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Tue, 16 Jul 2024, Luke Jones wrote:
-
-> On Tue, 16 Jul 2024, at 9:45 PM, Ilpo J=C3=A4rvinen wrote:
-> > On Tue, 16 Jul 2024, Luke D. Jones wrote:
-> >=20
-> > > The fw_attributes_class provides a much cleaner interface to all of t=
-he
-> > > attributes introduced to asus-wmi. This patch moves all of these extr=
-a
-> > > attributes over to fw_attributes_class, and shifts the bulk of these
-> > > definitions to a new kernel module to reduce the clutter of asus-wmi
-> > > with the intention of deprecating the asus-wmi attributes in future.
-> > >=20
-> > > The work applies only to WMI methods which don't have a clearly defin=
-ed
-> > > place within the sysfs and as a result ended up lumped together in
-> > > /sys/devices/platform/asus-nb-wmi/ with no standard API.
-> > >=20
-> > > Where possible the fw attrs now implement defaults, min, max, scalar,
-> > > choices, etc. As en example dgpu_disable becomes:
-> > >=20
-> > > /sys/class/firmware-attributes/asus-bioscfg/attributes/dgpu_disable/
-> > > =E2=94=9C=E2=94=80=E2=94=80 current_value
-> > > =E2=94=9C=E2=94=80=E2=94=80 display_name
-> > > =E2=94=9C=E2=94=80=E2=94=80 possible_values
-> > > =E2=94=94=E2=94=80=E2=94=80 type
-> > >=20
-> > > as do other attributes.
-> > >=20
-> > > Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> > > ---
-> > >  drivers/platform/x86/Kconfig               |  14 +
-> > >  drivers/platform/x86/Makefile              |   1 +
-> > >  drivers/platform/x86/asus-bioscfg.c        | 666 +++++++++++++++++++=
-++
-> > >  drivers/platform/x86/asus-bioscfg.h        | 243 ++++++++
-> > >  drivers/platform/x86/asus-wmi.c            |  18 +-
-> > >  include/linux/platform_data/x86/asus-wmi.h |  11 +
-> > >  6 files changed, 952 insertions(+), 1 deletion(-)
-> > >  create mode 100644 drivers/platform/x86/asus-bioscfg.c
-> > >  create mode 100644 drivers/platform/x86/asus-bioscfg.h
-> > >=20
-> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kcon=
-fig
-> > > index 665fa9524986..b4a5a5bec7f3 100644
-> > > --- a/drivers/platform/x86/Kconfig
-> > > +++ b/drivers/platform/x86/Kconfig
-> > > @@ -265,6 +265,18 @@ config ASUS_WIRELESS
-> > >    If you choose to compile this driver as a module the module will b=
-e
-> > >    called asus-wireless.
-> > > =20
-> > > +config ASUS_BIOS
-> > > + tristate "ASUS BIOS Driver"
-> > > + depends on ACPI_WMI
-> > > + depends on ASUS_WMI
-> > > + select FW_ATTR_CLASS
-> > > + help
-> > > +   Say Y here if you have a WMI aware Asus laptop and would like to =
-use the
-> > > +   firmware_attributes API.
-> > > +
-> > > +   To compile this driver as a module, choose M here: the module wil=
-l
-> > > +   be called asus-bios.
-> > > +
-> > >  config ASUS_WMI
-> > >  tristate "ASUS WMI Driver"
-> > >  depends on ACPI_WMI
-> > > @@ -276,6 +288,8 @@ config ASUS_WMI
-> > >  depends on HOTPLUG_PCI
-> > >  depends on ACPI_VIDEO || ACPI_VIDEO =3D n
-> > >  depends on SERIO_I8042 || SERIO_I8042 =3D n
-> > > + select ASUS_BIOS
-> >=20
-> > Selecting user visible configs is not a good idea. Also, there=20
-> > seems to be circular dependency now between ASUS_BIOS & ASUS_WMI ?
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Tuesday, July 16, 2024 11:30 AM
+> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the R=
+enesas VBATTB IP
 >=20
-> Is "selects" the same as "depends"?
-
-It's not the same. Selects ask to enabled another symbol (with caveats)=20
-and depends only shows this symbol if the other symbol is already enabled.
-
-Select comes with many many caveats and should only be used for the=20
-config symbols which are truly library type (and not presented to user in=
-=20
-the first place).
-
-> I did just remove:
-> =09select ASUS_WMI_BIOS
-> which should not be there at all.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >=20
-> ASUS_BIOS does need ASUS_WMI. And I'd like ASUS_BIOS to be selected by=20
-> defualt, is this not the right way to do that?=20
-
-Default should not be handled with either depends on / select I think,=20
-but I'm not Kconfig expert.
-
-There's also default clause but it should be used sparingly as each and=20
-every developer naturally thinks their thing is so important it must be on=
-=20
-by default so we know where that thinking ends to. :-)
-
-Distros tend enable about everything anyway so it might not be so=20
-important in the end what the default is.
-
-> > > + select ASUS_WMI_BIOS
-> > >  select INPUT_SPARSEKMAP
-> > >  select LEDS_CLASS
-> > >  select NEW_LEDS
-
-> > > + struct mutex mutex;
-> > > +} asus_bioscfg =3D {
-> > > + .mutex =3D __MUTEX_INITIALIZER(asus_bioscfg.mutex),
-> >=20
-> > Don't try to initialize it on the same go like this.
-> >=20
-> > You might want static too.
+> Renesas VBATTB IP has logic to control the RTC clock, tamper detection an=
+d a small 128B memory. Add a
+> MFD driver to do the basic initialization of the VBATTB IP for the inner =
+components to work.
 >=20
-> Ack both
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
 >=20
-> >=20
-> > > +};
-> > > +
-> > > +static struct fw_attrs_group {
-> > > + u32 pending_reboot;
-> > > +} fw_attrs =3D {
-> > > + .pending_reboot =3D 0,
-> > > +};
-> >=20
-> > Same here.
+> Changes in v2:
+> - none; this driver is new
 >=20
-> It was probably done like this in code I read as a reference. I'll shift=
-=20
-> to the module init function.=20
-
-???
-
-I just meant this split:
-
-struct fw_attrs_group {
-=09u32 pending_reboot;
-};
-
-static struct fw_attrs_group fw_attrs =3D {
-=09.pending_reboot =3D 0,
-};
-
-> > > +static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
-> > > +{
-> > > + return !strcmp(attr->attr.name, "gpu_mux_mode");
-> > > + !strcmp(attr->attr.name, "panel_hd_mode");
-> >=20
-> > ???
-> >=20
-> > Semicolon and && confusion here?
+>  drivers/mfd/Kconfig          |  8 ++++
+>  drivers/mfd/Makefile         |  1 +
+>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
+>  create mode 100644 drivers/mfd/renesas-vbattb.c
 >=20
-> Yeah i know, bad rebase I didn't catch.
-
-For the record, || is correct here, not && but you probably know this=20
-already.
-
-> > > + if (result)
-> > > + return result;
-> > > +
-> > > + if (value < min || value > max)
-> > > + return -EINVAL;
-> > > +
-> > > + asus_wmi_set_devstate(wmi_dev, value, &result);
-> >=20
-> > Type confusion, u32 * vs int pointer being passed.
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6=
+..df93e8b05065 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>  	  This driver provides common support for accessing the SC27xx PMICs,
+>  	  and it also adds the irq_chip parts for handling the PMIC chip events=
+.
 >=20
-> I miss rust...
+> +config MFD_RENESAS_VBATTB
+> +	tristate "Renesas VBATTB driver"
+> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+> +	select MFD_CORE
+> +	help
+> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
+> +
+>  config RZ_MTU3
+>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/=
+Makefile
+> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -186,6 +186,7 @@ pcf50633-objs			:=3D pcf50633-core.o pcf50633-irq.o
+>  obj-$(CONFIG_MFD_PCF50633)	+=3D pcf50633.o
+>  obj-$(CONFIG_PCF50633_ADC)	+=3D pcf50633-adc.o
+>  obj-$(CONFIG_PCF50633_GPIO)	+=3D pcf50633-gpio.o
+> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+=3D renesas-vbattb.o
+>  obj-$(CONFIG_RZ_MTU3)		+=3D rz-mtu3.o
+>  obj-$(CONFIG_ABX500_CORE)	+=3D abx500-core.o
+>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+=3D db8500-prcmu.o
+> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c =
+new file mode 100644 index
+> 000000000000..5d71565b8cbf
+> --- /dev/null
+> +++ b/drivers/mfd/renesas-vbattb.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * VBATTB driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> +
+> +static int vbattb_probe(struct platform_device *pdev) {
+> +	struct device *dev =3D &pdev->dev;
+> +	struct reset_control *rstc;
+> +	int ret;
+> +
+> +	rstc =3D devm_reset_control_array_get_exclusive(dev);
+> +	if (IS_ERR(rstc))
+> +		return PTR_ERR(rstc);
+> +
+> +	ret =3D devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		return ret;
 
+Maybe as an optimization drop pm calls and use "devm_clk_get_enabled"
+instead as it perfectly fits in this scenario??
 
-
-> > > + if (result) {
-> > > + pr_err("Failed to set %s: %d\n", attr->attr.name, result);
-> > > + return result;
-> > > + }
-> > > +
-> > > + if (result > 1) {
-> >=20
-> > What's this supposed to mean given you've the type confusion to begin=
-=20
-> > with and return on the earlier line if result is non-zero?
-> >=20
-> > Did you mean to capture the return value of asus_wmi_set_devstate() and=
-=20
-> > test that in the first if ()?
+> +
+> +	ret =3D reset_control_deassert(rstc);
+> +	if (ret)
+> +		goto rpm_put;
+> +
+> +	platform_set_drvdata(pdev, rstc);
+> +
+> +	ret =3D devm_of_platform_populate(dev);
+> +	if (ret)
+> +		goto reset_assert;
+> +
+> +	return 0;
+> +
+> +reset_assert:
+> +	reset_control_assert(rstc);
+> +rpm_put:
+> +	pm_runtime_put(dev);
+> +	return ret;
+> +}
+> +
+> +static void vbattb_remove(struct platform_device *pdev) {
+> +	struct reset_control *rstc =3D platform_get_drvdata(pdev);
+> +
+> +	reset_control_assert(rstc);
+> +	pm_runtime_put(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id vbattb_match[] =3D {
+> +	{ .compatible =3D "renesas,r9a08g045-vbattb" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, vbattb_match);
+> +
+> +static struct platform_driver vbattb_driver =3D {
+> +	.probe =3D vbattb_probe,
+> +	.remove_new =3D vbattb_remove,
+> +	.driver =3D {
+> +		.name =3D "renesas-vbattb",
+> +		.of_match_table =3D vbattb_match,
+> +	},
+> +};
+> +module_platform_driver(vbattb_driver);
+> +
+> +MODULE_ALIAS("platform:renesas-vbattb");
+> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
+> --
+> 2.39.2
 >=20
-> Yep.. this whole bit is a mess. I've fixed the type mess, and added a=20
-> comment to clarify the "if (result > 1) {"=20
-> (WMI methods return 0 =3D fail, 1 =3D success, anything else is error)
 
-Don't add these comments into everywhere in the code but document=20
-asus_wmi_set_devstate() instead with kerneldoc.
-
-> > If you make a previously internal function such as asus_wmi_set_devstat=
-e()=20
-> > EXPORTed, you should document it with kerneldoc so the interface is cle=
-ar.
->=20
-> I'm not sure how to do this, I'll read up. Also didn't know about it so=
-=20
-> thanks for the pointer.=20
-
-It's this format:
-
-/**
- * funcname - func short desc
- * @param1: foo
- * ...
- *
- * Func long description (IMHO, often optional if not some major API).
- *
- * Returns: important info about return value
- */
-
-You'll find plenty of examples with varying quality with grep but the most=
-=20
-imporant bits are the return value and parameters, and if there are=20
-caveats the caller should know, the long desciption might be handy.
-
-
-> > > + err =3D -ENODEV;
-> > > + pr_warn("Can not switch MUX to dGPU mode when dGPU is disabled: %d\=
-n", err);
-> > > + return err;
-> > > + }
-> > > + }
-> > > +
-> > > + if (asus_bioscfg.egpu_enable_available) {
-> > > + err =3D asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_EGPU, &result);
-> > > + if (err)
-> > > + return err;
-> > > + if (result && !optimus) {
-> > > + err =3D -ENODEV;
-> > > + pr_warn("Can not switch MUX to dGPU mode when eGPU is enabled: %d\n=
-", err);
-> > > + return err;
-> > > + }
-> > > + }
-> > > +
-> > > + err =3D asus_wmi_set_devstate(asus_bioscfg.gpu_mux_dev_id, optimus,=
- &result);
-> > > + if (err) {
-> > > + pr_err("%s Failed to set GPU MUX mode: %d\nn", __func__, err);
-> >=20
-> > Never use __func__ for messages shown to normal user.
->=20
-> Must have been a holdover from debug. Also wasn't aware of that rule, tha=
-nks.
-
-For pr_debug() I can give some leeway but for anything info/warn/error=20
-should definitely be user readable and preferrably understandable too :-D.
-
-> > > + return err;
-> > > + }
-> > > + /* !1 is considered a fail by ASUS */
-> >=20
-> > If the interface is documented with kerneldoc, this is unnecessary=20
-> > comment. Is 0 also a failure (this differs from >1 checks elsewhere)?
->=20
-> I've changed the other checks to match. But I'll also try and do a=20
-> deeper analysis of those particular WMI functions to see if I can find=20
-> the actual causes for other returns and their significance (0 and 2). 1=
-=20
-> is most definitely success though.=20
-
-Understood, I don't expect you to know everything about these interfaces=20
-but the difference just caught my eye so I mentioned it in case it's a=20
-mistake.
-
-> > As general feel of the readiness of this code, I suspect there were man=
-y=20
-> > more problems which I failed to notice :-(.
->=20
-> I'd put money on it (sorry). I definitely should have cleaned up better=
-=20
-> than I did so you weren't pointing out silly little things, but I was=20
-> never expecting to get over the line on the first try and desperately=20
-> needed some insight for the overall patch series to see if what I was=20
-> doing was actually going to be acceptable or not.=20
-
-It's not problem in itself if you were just after an early review of the=20
-concept but there are little things like not maintaining consistency in=20
-variable naming which easily trips one here and there which I really=20
-recommend you change because then many patterns can be checked with grep /=
-=20
-find if things are consistent (and it helps the code reader too if the=20
-variable naming doesn't suddenly became opposite of what it was in the=20
-previous function).
-
-> As always, thanks so much for your time and review.
-
---=20
- i.
-
---8323328-740309722-1721127962=:1037--
 
