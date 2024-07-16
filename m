@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-253654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5E893245E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBCF93247D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA881C2232D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECDF1C21DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A64198E6E;
-	Tue, 16 Jul 2024 10:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1451990A1;
+	Tue, 16 Jul 2024 10:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="DQd1tazg"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g1MqdYC1"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAB13D630
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0913A416;
+	Tue, 16 Jul 2024 10:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721127076; cv=none; b=VPgiu13ghSP3A+fzwnTvc2/QzN++ATx35c1lLXsyc8lvqRWS0JlrXpxIKfPFLEYC5XdIYWjdz5xwJpjev77cLgEzcyHrG0WvtB7B6v9/k4JuyH5G3SKQ3W/duPySK5d/oYF+hqkpDdinQFy1MxXpq9WnbiMdxOvhaR2SSw5IWHw=
+	t=1721127457; cv=none; b=gIaamZXbhCbUPaaQLqc9/vwhBu1euNMcUGqL8apnqaD8wPgyRpfVd4BuRpswRiA+sErWeJNB/nfMj2fjoOiMEcJl+Ug2WxnYgKcpFD3Wo+fFfRQ3sZpbuiKZ6dyNG0y00Ax6lmr0KCnU+Y4HgLZVkw37JkOwDSGC2W+KTElnOgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721127076; c=relaxed/simple;
-	bh=Y4eYjHJ1coNIJsiv5IOAsbQ5dekTLijWkfuE3vo9PXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dhn/UmoSy6SOHPvo1txdV6RBJ2tgR0NSsE4FmFSsQ7Y4MC18VMcAfWZpLZM7xkdcM8ZcxzMhJXsfEDct2d7fHTraHvfJZOIn2TKsHxaMqINk4JUAyPakt4nOd0ma6tn/yfqbDAwd8E/IV8+XaI5hFdqZDM4dehMK9mHu41wKikk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=DQd1tazg; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8063553b837so261319139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1721127074; x=1721731874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0SOtGr51pErFpahsrrtYqkp40ybrWdij71XCYB1jqEQ=;
-        b=DQd1tazg2XoJ71WO+o+lEP6sse7ZrhNAiFmy2cdGaPq9cYFN0KALA3F4uZJgCRu5DJ
-         rYI4tkAs0MOBPE1fLoqhNKmPRwk1KvG5rTFVNvAznlFSvoAodsyXMHOkyjnh+li1agUS
-         mXzH4KalwPLmOuKZitnx/LKgiF39TC59/2g5JKE9KaEj7Jga1Pcx3JW80aH/DaCLipuf
-         6i38lkEfTXteFsYweggCGY0evwnYOTmUyyA6sBOzh7cih2UPK2vJz5NKfnw+W0mTdtXl
-         bwaBc6FtY1Mei8siZxAVVzmxIhyvDWmFJH9Ifb3ffDtqLOQv7A41Y4l8061+IkRiZkkj
-         RoAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721127074; x=1721731874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0SOtGr51pErFpahsrrtYqkp40ybrWdij71XCYB1jqEQ=;
-        b=SDkBuf76UNASise4P9hDRHtJatPs5wmLlqQUHfOwd1f/UpuahC607h3Gh0kQmidi4n
-         kBtSeP4xfa8EzjjcB5FckCZTw/ctUTT/J8gV5NTSjMBomWj4JxIkw+Huh5MhptKX40DG
-         r0aGUJAMqPs4qMFHJfgxFGM1HJ1a+WgHXcG2NWI9Gc1JKthGT99DX1n5xFSCyupPDi+v
-         O35XvfNVmxYf0k5UvMn5IHBsF35BZBNA0Cnnmx/rE5jeH/1iqJJkXTjKZVP6B4cJwN4e
-         PtStjGSdZobv6rBfK2voOuiUeyS/YRd+mJ0wfcrlzbXEir1IScMQzdNGfDJ/3WKT1o3S
-         zvDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsEDd5N7qaJQKcTBVuZyP6ERHu+VVRVAoxkqrasiwQ+ms9Bz5WhPo55GldSn9FwjNRS1Tf5nQGj+8YE+5K42E45CZ0vZrQ9mv6O+Mc
-X-Gm-Message-State: AOJu0YxJBAH3eJSB0PV77CfCcgjXuKD5T6C3x8NahpS9jB7xE+QoDGyY
-	q/+NXx6zDUex+3JigjLCSx2mXbRuWod5ARA8ux6mTy9zl0IKqPmUqdC+NQ0R44pn97UcHMIvUal
-	DB83xfBez9gxr0wmPjmeYL59DSITn1g9nQOIUpA==
-X-Google-Smtp-Source: AGHT+IFgLgr7BH1UuGGVhx6H0o4guImRTlhd3fKWbpAvzMa5o4ntPygEZJHxgQXzcZZOiJZ5wZoNNfFdR2dzx/sgAYs=
-X-Received: by 2002:a92:c56a:0:b0:375:aaaf:e88f with SMTP id
- e9e14a558f8ab-393d2c94bebmr24128255ab.27.1721127074278; Tue, 16 Jul 2024
- 03:51:14 -0700 (PDT)
+	s=arc-20240116; t=1721127457; c=relaxed/simple;
+	bh=u3tdViBmCFTWsqM5V2S0H18K58R1pakhIEDmxZF6AJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H5WI6relJD1sCEc2vHZ/ptOYWLn9BNiDgOxKxMbYmCRWV9kJ8ZmgMT4Quoup977rNV37KkHHpfWiQ7fipAx0A8+AmxfMizmkKFyiAlEJTuiAZZgU3IxcWUNMRmBPYn3tcr29Y1bGEzk8BJCE24vfXSgNfQ3qh9LhORWAFeT1TyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g1MqdYC1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GAlTkY013924;
+	Tue, 16 Jul 2024 10:57:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	5YpLZBFHa4u/yz0h1zDRTMe6ArvUdZ8SFwam82a19uI=; b=g1MqdYC16MSvXnSC
+	RNEUUAV6nWW70hptfnT8bMAMjyQxdsV2SFbXGn8CI13yDWySB4Ja2XsLnHD9WD+w
+	F4dCLeD19qYDE+Hanm7ADpvxXUtJ+1xh5ydIb236y6HJVCuAM4FiZ0ezaYWbFPWo
+	U7LlV9dh+yAjYN6Gb5wAk9KzmylwwBSXGUU8sHtOPAyl6dLSWYDhnfYOoOfLw2LK
+	Jjps/xcGLznmIpWBejvZ+cjh5WYclyfHesVhYvVizdkJrLT2GFOHnaw6GCqLTnF0
+	zWJAk0TggqHOX5ZKbTf8tqrhLJRIFC2PNVQcUcIwBt/7tpZF7ckkIM9OMD6GC/Vo
+	XPo38A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dq4wr1fr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:57:06 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46GAv5nb025254;
+	Tue, 16 Jul 2024 10:57:05 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dq4wr1cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:57:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G8jlL1030523;
+	Tue, 16 Jul 2024 10:52:27 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40c4a0ktt3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 10:52:27 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46GAqMU322872322
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 10:52:24 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EA57920043;
+	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8C3D220040;
+	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 16 Jul 2024 10:52:21 +0000 (GMT)
+Date: Tue, 16 Jul 2024 12:52:20 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+        Alexander Duyck
+ <alexander.h.duyck@linux.intel.com>,
+        Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg
+ <johannes@sipsolutions.net>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck
+ <cohuck@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Jason
+ Wang <jasowang@redhat.com>,
+        Eugenio =?UTF-8?B?UMOpcmV6?=
+ <eperezma@redhat.com>,
+        linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        kvm@vger.kernel.org, Halil Pasic
+ <pasic@linux.ibm.com>
+Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
+Message-ID: <20240716125220.677dccf4.pasic@linux.ibm.com>
+In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+References: <cover.1720611677.git.mst@redhat.com>
+	<3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716090521.1752166-1-nick.hu@sifive.com>
-In-Reply-To: <20240716090521.1752166-1-nick.hu@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 16 Jul 2024 16:21:02 +0530
-Message-ID: <CAAhSdy1pjg=etzNNu-E+-VDmU5gLkS2jYhdO29pPN23OQ5=NiA@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: Enable the IPI before workqueue_online_cpu()
-To: Nick Hu <nick.hu@sifive.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	tglx@linutronix.de, peterz@infradead.org, samuel.holland@sifive.com, 
-	tj@kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	greentime.hu@sifive.com, zong.li@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -ciPuNbu1ulB9x3MDH6mw0VxJdTjfl_5
+X-Proofpoint-ORIG-GUID: _zkRs-FyWlqEBV9NEtx1Xwx1HT6kmSDZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=866 spamscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160079
 
-On Tue, Jul 16, 2024 at 2:35=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrote:
->
-> Sometimes the hotplug cpu stalls at the arch_cpu_idle() for a while after
-> workqueue_online_cpu(). When cpu stalls at the idle loop, the reschedule
-> IPI is pending. However the enable bit is not enabled yet so the cpu stal=
-ls
-> at WFI until watchdog timeout. Therefore enable the IPI before the
-> workqueue_online_cpu() to fix the issue.
->
-> Fixes: 63c5484e7495 ("workqueue: Add multiple affinity scopes and interfa=
-ce to select them")
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> ---
->  arch/riscv/kernel/sbi-ipi.c | 2 +-
->  include/linux/cpuhotplug.h  | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/sbi-ipi.c b/arch/riscv/kernel/sbi-ipi.c
-> index 1026e22955cc..e05e68de8871 100644
-> --- a/arch/riscv/kernel/sbi-ipi.c
-> +++ b/arch/riscv/kernel/sbi-ipi.c
-> @@ -71,7 +71,7 @@ void __init sbi_ipi_init(void)
->          * the masking/unmasking of virtual IPIs is done
->          * via generic IPI-Mux
->          */
-> -       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-> +       cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_SWINT_STARTING,
->                           "irqchip/sbi-ipi:starting",
->                           sbi_ipi_starting_cpu, NULL);
->
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 7a5785f405b6..57dcf1229b27 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -147,6 +147,7 @@ enum cpuhp_state {
->         CPUHP_AP_IRQ_LOONGARCH_STARTING,
->         CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
->         CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
-> +       CPUHP_AP_IRQ_RISCV_SWINT_STARTING,
+On Wed, 10 Jul 2024 07:42:46 -0400
+"Michael S. Tsirkin" <mst@redhat.com> wrote:
 
-This is a misleading name.
+> --- a/drivers/s390/virtio/virtio_ccw.c
+> +++ b/drivers/s390/virtio/virtio_ccw.c
+> @@ -694,7 +694,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  {
+>  	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
+>  	dma64_t *indicatorp = NULL;
+> -	int ret, i, queue_idx = 0;
+> +	int ret, i;
+>  	struct ccw1 *ccw;
+>  	dma32_t indicatorp_dma = 0;
+>  
+> @@ -710,7 +710,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  			continue;
+>  		}
+>  
+> -		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, vqi->callback,
+> +		vqs[i] = virtio_ccw_setup_vq(vdev, i, vqi->callback,
+>  					     vqi->name, vqi->ctx, ccw);
+>  		if (IS_ERR(vqs[i])) {
+>  			ret = PTR_ERR(vqs[i]);
 
-I suggest s/_RISCV_SWINT_/_RISCV_SBI_IPI_/ .
-
->         CPUHP_AP_ARM_MVEBU_COHERENCY,
->         CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
->         CPUHP_AP_PERF_X86_STARTING,
-> --
-> 2.34.1
->
-
-Regards,
-Anup
+Acked-by: Halil Pasic <pasic@linux.ibm.com> #s390
 
