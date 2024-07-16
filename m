@@ -1,307 +1,102 @@
-Return-Path: <linux-kernel+bounces-253782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF559326ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:53:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EB59326F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953BC2858CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1C9285AAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8869F19AA79;
-	Tue, 16 Jul 2024 12:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89C119AA7D;
+	Tue, 16 Jul 2024 12:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0fDHM7m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8o1cY6Q"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877431E498;
-	Tue, 16 Jul 2024 12:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54576145345;
+	Tue, 16 Jul 2024 12:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721134381; cv=none; b=WFgn1O7Q3jDUyEmFwy6bLeQ5y9YdnJ231OVu/RMj2WtGbKrso+orCyecILp5617WiOL8R16UygI0MM546nsdhNp8X1uCcOnrVuiDsv6KCtn9Od86g7IJXup8jUe70Ko/CU9/XgKN6ckIF1SKUoY3jq+M7VnxAh6jCF5dXZRA/5Y=
+	t=1721134474; cv=none; b=Fnf8EpJB3VIEXt4EWRm1+EqINqcTemI7+u4M9fnONaZhExcKG6nu5xlkIqv4UrTfFQaOKi2GJ43Opz8ho0sdaLcwvbe5GSRX/M82JzPTQ3lZBG5VYhAW7HYq4gx1Q/yOiJ+ebPk+gGNu2IZ6fnot5+J4Rr/GL0uHNYxAJWljKhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721134381; c=relaxed/simple;
-	bh=SSgUscryii1clarjrDEuWe0oAR9tIv+UZaWDyL8CiQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uQt78nawFzrl1/c2nLVjy26npLPElNY+gGkXoINw/TLer51ck+XQGc0fbhjgWD2atpDzlMuCZnpM1n2wpIkmDDKWXNlKqo9T3+c5P5aYPbfBdWmco7C4r3pyfFQZ7Mpk+ztbg0UHJ66jkx76E5uuHbO3xhi8fDZJQw63qv2wXSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0fDHM7m; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721134380; x=1752670380;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SSgUscryii1clarjrDEuWe0oAR9tIv+UZaWDyL8CiQM=;
-  b=m0fDHM7meuyiqw5PIdfQXzrC0QrPVscaW7Vpvl7zHoeodfi/cnZrAvoB
-   cENFF0I9CI/jw1p372cV0zVJ0ojLe+qTGjROGd3Z/CB0DqltE/Gr0tE0z
-   GH7NvVKe4QJnDk+dkeIWd4XoyQCGhrwBBLl0IWK9cjRvw7b9LrCv/5vqW
-   K3AjDuil8/QWYy9kslgk2V1TO1is6zOEvdRG4y0+hUE6DtJ/Ll4Cu2vZ3
-   KtMfjkQmYcPO/sPjXwLBiUFhYKDWLxORuFueYV65fuKSOTOmjWy0/q3ME
-   guCvIAtZloG3Rgk8DSqaNpmMVvg6S7ryKhuSya65Kko2KXqI6sXVpuPxM
-   A==;
-X-CSE-ConnectionGUID: s91ENogjSdSlErRHlfCFCA==
-X-CSE-MsgGUID: aF9ib/P1QC+3QPPwW5+osw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18700718"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="18700718"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:52:59 -0700
-X-CSE-ConnectionGUID: CyQTy01RQ4S4qOmeiA/5sA==
-X-CSE-MsgGUID: 9koCZ61vTuW6piZp7MQsJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="50062034"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:52:59 -0700
-Received: from [10.213.174.231] (kliang2-mobl1.ccr.corp.intel.com [10.213.174.231])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4883E20B8CD6;
-	Tue, 16 Jul 2024 05:52:57 -0700 (PDT)
-Message-ID: <7491af6f-7be8-4a7a-8f48-249d26440bbc@linux.intel.com>
-Date: Tue, 16 Jul 2024 08:52:55 -0400
+	s=arc-20240116; t=1721134474; c=relaxed/simple;
+	bh=w443Y11DSvLdjuKg9qpLGp5NVOHIdcdYJsD2BsPm4BA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XF+bXVpW2QD7YZy2nZNQam7gdXlfDjGVTiap33Sw+S0a44QQZpyAHQLKJyavarh0s8iIko4xT0n35PRkwjWN4oDXvGYZFitqvHZHC3CkzbYKnVw2ID2Joqkz/hZEJWXfct8g+6WZARIhvXKMXriW6TETJG7PaKqCJ+9jQE2JjQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8o1cY6Q; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e954d7bd5so502928e87.2;
+        Tue, 16 Jul 2024 05:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721134470; x=1721739270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w443Y11DSvLdjuKg9qpLGp5NVOHIdcdYJsD2BsPm4BA=;
+        b=l8o1cY6Q+kHHe12nGttEXjjCTnJZcFDqII+WTm7NbiUnZwbdwdZxqomMnRA9h99LAq
+         om52ehAtDxPVBf2NaB+KSY+ZlEtGm1kyVFgKDz4KrL0/+Mq/XIpIHtr0khBs8DReGxhR
+         N/+Yalm7pRAe3inx8Yna+pN7rCV/wIrH/lxugWp0mOBdqTBKD/44eXKVRkNGPIlf+f6Z
+         V9zEigT4ECCvFDCQwI5fhaCxbOZP1YoBM15RFXbWvli2GoH4FQ2xcapfasO/gj2G501l
+         diAUoFOiyItu+YGhxKjdEtvzrDe5wdTzomF66ITHm/hSD9XsaNIpCQc0e8UStdttTfqD
+         L3Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721134470; x=1721739270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w443Y11DSvLdjuKg9qpLGp5NVOHIdcdYJsD2BsPm4BA=;
+        b=JexbJZ1evlEZGYlTaQRK8mZO5X2805Iyv1wJZn/16oasICZ2RU7gH2OnXolVKgaRz8
+         FfZTC+G80wl5gKaflsIN84oLEb68HKXc+89s6eHWR0MW1xE+a8H3QpC4X6WQxYgNr7LA
+         N/+Nwi/1J2j5n6otNOy5t77Z8zSkLRfm/r59i5LswCdUCpdCQBY6rT9AhRC8D3x7Ukmw
+         EJ4NsvNZ0Usu8+lnNeu4YB7bRrN8p4NrbOQJH88zxHam0PzgaKwjpq5bMSr5RkuvGO9a
+         O+J7/yrpzqZ1+0oHa6U3eMe7dYUNoDu77Jji6K2VgyRab3HRmRe4TU0IbOyCPlblVvlB
+         Dnqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB3uVuxOsjKMfw0QnGwR4FKKKZYG2PxwBxb1m4HSRf4FpCpYXxy47Shaq3bFCTC09OEkZeM1Fbri4HlAKSHvaiqn3sf9qaRhrZTTUgzGrMyXR9HMsGBg8j3z2CEu5r3gFzqqfwqhawJJXFluHkrrcdTXE3Q41qQN5WFjFpymDd6DO7MA==
+X-Gm-Message-State: AOJu0YwvHaG27E01gLRZetj/yZTDhHNzRTzbPGkn0k7OeR7d9g3E63zH
+	5YcqDUg7eCtrID/o4dOP++MOC4mnnO0FQNMbxNGRTcmYeGX0lWnLIwLTP0ayjv2tw5yt6sBaONF
+	+OtDdl9PlVoZ5SOJF3/KA6n+N/rQ=
+X-Google-Smtp-Source: AGHT+IG/vrVAKsY/0W0RBArGdtvKS4CIa8jX+XOvYmA8Zc1PfQP9HbEO8nW0OSq4gwRGiSV2PfZYdZTJA1TRv6MNPlg=
+X-Received: by 2002:a05:6512:2381:b0:52e:7bb4:942d with SMTP id
+ 2adb3069b0e04-52ede18f4famr1143999e87.1.1721134470099; Tue, 16 Jul 2024
+ 05:54:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [perf vendor events] e2641db83f:
- perf-sanity-tests.perf_all_PMU_test.fail
-To: Ian Rogers <irogers@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
- Namhyung Kim <namhyung@kernel.org>, Weilin Wang <weilin.wang@intel.com>,
- Caleb Biggers <caleb.biggers@intel.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <202407101021.2c8baddb-oliver.sang@intel.com>
- <ec744c86-b73e-417a-8e3a-c07142bf37d1@linux.intel.com>
- <CAP-5=fUqGcnGvB71jHHTecLqcky6+TrFo+hWb=eBxZjxfe_m-g@mail.gmail.com>
- <48b4bfb0-d0c7-4d1f-9e52-06e873646366@linux.intel.com>
- <CAP-5=fV2YTD5ZWcZgYN+cX7atdoiM2G2=xN=c_q5UmXyQzEkRQ@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAP-5=fV2YTD5ZWcZgYN+cX7atdoiM2G2=xN=c_q5UmXyQzEkRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240712-imx-se-if-v5-0-66a79903a872@nxp.com> <20240712-imx-se-if-v5-5-66a79903a872@nxp.com>
+ <ZpGr6qKjJKz14J+y@lizhi-Precision-Tower-5810> <AM9PR04MB860496FEE467B7CC7C2DF50895A22@AM9PR04MB8604.eurprd04.prod.outlook.com>
+In-Reply-To: <AM9PR04MB860496FEE467B7CC7C2DF50895A22@AM9PR04MB8604.eurprd04.prod.outlook.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 16 Jul 2024 09:54:18 -0300
+Message-ID: <CAOMZO5ChgVzfnh0COEbvDGKcmVPEjS83St0tRmKdhvKJDAt7xQ@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] firmware: imx: adds miscdev
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 16, 2024 at 1:50=E2=80=AFAM Pankaj Gupta <pankaj.gupta@nxp.com>=
+ wrote:
 
+> Thanks for the explanation, Frank.
+> Will replace scope_guard with guard().
 
-On 2024-07-15 5:48 p.m., Ian Rogers wrote:
-> On Mon, Jul 15, 2024 at 2:41 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>
->>
->> On 2024-07-15 4:11 p.m., Ian Rogers wrote:
->>> On Mon, Jul 15, 2024 at 1:05 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>>>
->>>> Hi Ian,
->>>>
->>>> On 2024-07-10 12:59 a.m., kernel test robot wrote:
->>>>>
->>>>>
->>>>> Hello,
->>>>>
->>>>> kernel test robot noticed "perf-sanity-tests.perf_all_PMU_test.fail" on:
->>>>>
->>>>> commit: e2641db83f18782f57a0e107c50d2d1731960fb8 ("perf vendor events: Add/update skylake events/metrics")
->>>>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>>>>
->>>>> [test failed on linux-next/master 82d01fe6ee52086035b201cfa1410a3b04384257]
->>>>>
->>>>> in testcase: perf-sanity-tests
->>>>> version:
->>>>> with following parameters:
->>>>>
->>>>>       perf_compiler: gcc
->>>>>
->>>>>
->>>>>
->>>>> compiler: gcc-13
->>>>> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz (Coffee Lake) with 32G memory
->>>>>
->>>>> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>>>>
->>>>>
->>>>> we also observed two cases which also failed on parent can pass on this commit.
->>>>> FYI.
->>>>>
->>>>>
->>>>> caccae3ce7b988b6 e2641db83f18782f57a0e107c50
->>>>> ---------------- ---------------------------
->>>>>        fail:runs  %reproduction    fail:runs
->>>>>            |             |             |
->>>>>            :6          100%           6:6     perf-sanity-tests.perf_all_PMU_test.fail
->>>>>            :6          100%           6:6     perf-sanity-tests.perf_all_metricgroups_test.pass
->>>>>            :6          100%           6:6     perf-sanity-tests.perf_all_metrics_test.pass
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>>>> the same patch/commit), kindly add following tags
->>>>> | Reported-by: kernel test robot <oliver.sang@intel.com>
->>>>> | Closes: https://lore.kernel.org/oe-lkp/202407101021.2c8baddb-oliver.sang@intel.com
->>>>>
->>>>>
->>>>>
->>>>> 2024-07-09 07:09:53 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 105
->>>>> 105: perf all metricgroups test                                      : Ok
->>>>> 2024-07-09 07:10:11 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 106
->>>>> 106: perf all metrics test                                           : Ok
->>>>> 2024-07-09 07:10:23 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 107
->>>>> 107: perf all libpfm4 events test                                    : Ok
->>>>> 2024-07-09 07:10:47 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 108
->>>>> 108: perf all PMU test                                               : FAILED!
->>>>>
->>>>
->>>> The failure is caused by the below change in the e2641db83f18.
->>>>
->>>> +    {
->>>> +        "BriefDescription": "This 48-bit fixed counter counts the UCLK
->>>> cycles",
->>>> +        "Counter": "FIXED",
->>>> +        "EventCode": "0xff",
->>>> +        "EventName": "UNC_CLOCK.SOCKET",
->>>> +        "PerPkg": "1",
->>>> +        "PublicDescription": "This 48-bit fixed counter counts the UCLK
->>>> cycles.",
->>>> +        "Unit": "cbox_0"
->>>>      }
->>>>
->>>> The other cbox events have the unit name "CBOX", while the fixed counter
->>>> has a unit name "cbox_0". So the events_table will maintain separate
->>>> entries for cbox and cbox_0.
->>>>
->>>> The perf_pmus__print_pmu_events() calculate the total number of events,
->>>> allocate an aliases buffer, store all the events into the buffer, sort,
->>>> and print all the aliases one by one.
->>>>
->>>> The problem is that the calculated total number of events doesn't match
->>>> the stored events on the SKL machine.
->>>>
->>>> The perf_pmu__num_events() is used to calculate the number of events. It
->>>> invokes the pmu_events_table__num_events() to go through the entire
->>>> events_table to find all events. Because of the
->>>> pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. So
->>>> the events for cbox and cbox_0 are all counted.
->>>>
->>>> When storing events into the aliases buffer, the
->>>> perf_pmu__for_each_event() only process the events for cbox.
->>>>
->>>> Since a bigger buffer was allocated, the last entry are all 0.
->>>> When printing all the aliases, null will be outputed.
->>>>
->>>> $ perf list pmu
->>>>
->>>> List of pre-defined events (to be used in -e or -M):
->>>>
->>>>   (null)                                             [Kernel PMU event]
->>>>   branch-instructions OR cpu/branch-instructions/    [Kernel PMU event]
->>>>   branch-misses OR cpu/branch-misses/                [Kernel PMU event]
->>>>
->>>>
->>>> I'm thinking of two ways to address it.
->>>> One is to only print all the stored events. The below patch can fix it.
->>>>
->>>> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
->>>> index 3fcabfd8fca1..2b2f5117ff84 100644
->>>> --- a/tools/perf/util/pmus.c
->>>> +++ b/tools/perf/util/pmus.c
->>>> @@ -485,6 +485,7 @@ void perf_pmus__print_pmu_events(const struct
->>>> print_callbacks *print_cb, void *p
->>>>                 perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
->>>>                                         perf_pmus__print_pmu_events__callback);
->>>>         }
->>>> +       len = state.index;
->>>>         qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
->>>>         for (int j = 0; j < len; j++) {
->>>>                 /* Skip duplicates */
->>>>
->>>> The only drawback is that perf list will not show the new cbox_0 event.
->>>> (But the event name still works. Users can still apply perf stat -e
->>>> unc_clock.socket.)
->>>>
->>>> Since the cbox_0 event is only available on old machines (SKL and
->>>> earlier), people should already use the equivalent kernel event. It
->>>> doesn't sounds a big issue for me. I prefer this simple fix.
->>>>
->>>> I think the other way would be to modify the perf_pmu__for_each_event()
->>>> to go through all the possible PMUs.
->>>> It seems complicated and may impact others ARCHs (e.g., S390). I haven't
->>>> tried it yet.
->>>>
->>>> What do you think?
->>>> Do you see any other ways to address the issue?
->>>
->>> Ugh. It seems the sizing and then iterating approach is just prone to
->>> keep breaking. Perhaps we can switch to realloc-ed arrays to avoid the
->>> need for perf_pmu__num_events, which seems to be the source of the
->>> problems.
->>>
->>
->> I think a realloc-ed array should have the same drawback as the first
->> way, but bad performance.
->> Because the pmu_add_cpu_aliases() in the perf_pmu__for_each_event() only
->> add the events from the first matched PMU. If we don't fix it, the
->> UNC_CLOCK.SOCKET of cbox_0 will never be displayed.
-> 
-> Ok, but I don't think we need to optimize `perf list` for speed. Fwiw,
-> I think this was the fix for the last bug in this code:
-> https://lore.kernel.org/r/20240511003601.2666907-1-irogers@google.com
+Please properly trim your replies to only the relevant context.
 
-That seems a different issue.
-The root cause of this issue should be that different methods are used
-between calculating the total number of events and adding the events.
-A realloc-ed array should just hide the problem. There will still be an
-issue if anyone use the pair of perf_pmu__num_events() and
-pmu_add_cpu_aliases() somewhere else later.
-
-It looks like the difference is introduced from the commit 	e3edd6cf6399
-("perf pmu-events: Reduce processed events by passing PMU").
-
-The pmu_events_table__for_each_event() stops immediately once a pmu is
-set. But for uncore, especially this case, the method is wrong and
-mismatch what perf does in the perf_pmu__num_events().
-
-The below patch can fix it.
-
-diff --git a/tools/perf/pmu-events/jevents.py
-b/tools/perf/pmu-events/jevents.py
-index ac9b7ca41856..97a3b018f865 100755
---- a/tools/perf/pmu-events/jevents.py
-+++ b/tools/perf/pmu-events/jevents.py
-@@ -923,7 +923,7 @@ int pmu_events_table__for_each_event(const struct
-pmu_events_table *table,
- 			continue;
-
- 		ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
--		if (pmu || ret)
-+		if (ret)
- 			return ret;
- 	}
- 	return 0;
-
-The event can be displayed by the perf list pmu with the patch.
-
-$ perf list pmu | grep -A 1 clock.socket
-   unc_clock.socket
-        [This 48-bit fixed counter counts the UCLK cycles. Unit:
-uncore_cbox_0
-& perf test "perf all PMU test"
-  107: perf all PMU test                                               : Ok
-
-I will send the patch shortly.
-
-Thanks,
-Kan
+Keeping the full message makes it too hard to locate your reply within
+such a big thread.
 
