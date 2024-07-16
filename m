@@ -1,211 +1,123 @@
-Return-Path: <linux-kernel+bounces-254120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71BB932F34
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3972932F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158CD1C20EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7019A283523
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C741A070D;
-	Tue, 16 Jul 2024 17:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9D1A00E6;
+	Tue, 16 Jul 2024 17:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Odpg4G1l"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eb/zTCU5"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E02419FA81;
-	Tue, 16 Jul 2024 17:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BE9F9E8
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721151317; cv=none; b=Ma5GrYC2CoGhBMwPZI2fIFn+WImTPtHIYSb93nSxQWUu4NprGO2OonxrBW8kEIQdbAoL5WgQQRlBR/Wqe+X/A/Rz6EquAREC6IKh9TOIRYbTvNMf4zQ8gDxRiGTuKZ0A3c0rU/qhRaEmlc6CWc0rhyfHVjDEiSyPUTONVU71rp0=
+	t=1721151299; cv=none; b=poMR/Jxx6qmDVYQfb8S8VnvauSE1lX7IL9FDPScIGq+Z9/DXqexQlT0o0n6gEc0loW60aANhDMnUklv4k1G28QdiFQWDX2H2Fgzhiu6Ew+YdrpQ4Njaib8j3msYz0+VQsGjZ7oJpFipA5Biw8QcBLigQVc0DxtWSRIX0AX5w9XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721151317; c=relaxed/simple;
-	bh=xlHRw3w2m2tg6cht4Qq290RJJ7J5SeCZAW8m9wfBb1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RMKUtcn9dMlebYA3p7EbZ44Wf17YWHrquLUSRLhUk+5IOd3tWSb9MZXQfq4qmwYmizmqth0Vsqwse7UekCb970t8623tKbRCYvEz9fvBJuoxRQjB5jk1Ot1MVfZuPCamtrcB92hjmUP91EziR4mkVQHTVpVWoyg/oHsv2nAd1Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Odpg4G1l; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367ab76d5e1so1919402f8f.3;
-        Tue, 16 Jul 2024 10:35:15 -0700 (PDT)
+	s=arc-20240116; t=1721151299; c=relaxed/simple;
+	bh=3M0QByp5nIuBwkxRifE56E0QWbZdgARiPYYVK/zs0M4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qHVCgpKI7tLjxEQ+SWG9vml2RxLFdJHm+eLhcaGiTDT3TshPqwXOsDURrGbM6cIgrEFd5v1j6aozSrpA/bfMv+uegaI/YNFXyNUkVsNnBmo052VVibjqzo6Ccs+BGcghu8nGTURAxn92FksCwTAfjOQ/4Yc4HD/V2CVFjkAOibs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Eb/zTCU5; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c95c80c6f7so5094025a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721151314; x=1721756114; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mFZzo+h40ZkOiMih2IEE7mwoxCHvaz4i8bbYlqWEClA=;
-        b=Odpg4G1lZPl9u8TEk7/tp0rUITV/8bCcuyKbohJ3/NIS8FksCDX1dvDPIzioUnuhXK
-         oeOnE4ErnMb3QLbG9pVE0TqbZeb/KYBTQHv6IW2RESUgwOv/Z7M/czUPPJ2xnsq1z5Wu
-         kYknGw5IY7zi5uSu4EQLP64YiCnMOAcMyoaWYLUMr9P/aNl6xbA/6twlPWZ2uiJtFRmH
-         OXOkxc8kMoMuLA7nKXZ4EK6MqTidGbbaMrmcMaPH00CA3V2jAwXvgt9tC7L+xLAECQeR
-         YSnjoRIS62M3TV2PGE7nEIUUGk0zmA4yLOaYhnXf4Bq6pWpFDUfzKG24wM9ZAaS9uxEO
-         /MzQ==
+        d=google.com; s=20230601; t=1721151297; x=1721756097; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bzncl9L3e27llWjrAt0uSGnBBcBzotmsp09OvMIhHpc=;
+        b=Eb/zTCU5kPhzS0/bk11Payd+5kyJ5P2aPcU0yqX7V8Y4LtmgT0sDl/yHktUTM0Mb7e
+         z5CaMMry8WZjMr5ZtlxQ87ORckr2HKdH4DQNITPpw9aS71YoA9TgD07EukwUOenFSQpo
+         7sE/rSzawBqGFpZSZo33IEuluLPX35cCdKe/yMWDsQypYBEBvgsBkxJB62ksxnOWSts9
+         9mv2eGtomZymF8HSMD+UFj7wZifkS1l1Fc0HLYVkEQlqKTJsMosmVePzRZhL8EqitXyK
+         tTYiarBJJM/8pKKq28QrQMz57hDBMA2kBG28/SP+ikuUyjJw6ZV/0skeTvjYY9C/Unpv
+         u+ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721151314; x=1721756114;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mFZzo+h40ZkOiMih2IEE7mwoxCHvaz4i8bbYlqWEClA=;
-        b=bfhOMYeVoMvuYC1bjyyL95Hkjgf4lT1CtbXqr0TU4tpOt7My9pJYJ4BB2a8bB4y4m3
-         Uwo1eMS9JRmJB/8BHUbvTsK8hCCl8HWirDpXkp5UpyHScbfn4qbjGUGBwBRc5Tahqfq6
-         LkfiL3n0tWTzfdYk44HsElnuXGaDZBZzHv71VammtHjXtLezbwPbhcRGR4kXrklYy8mY
-         xvrjsSxJBsbGG5dfkgXE1B7hQk0aI7BPWyGZVoK2mfj3dOjDS2KLb+bKur3xYNnpwrRo
-         MthUchkTx8b/Xjn60LIRXqZ4hr6gYUFpNvsiVW73TYiiyx2N06YQvBCAGL+tS4hajNpy
-         DbiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtYozKIFBikB5BtJmhmOcb92N44B2WJJH056CUDX8AbPc4GRUqRk47QMjNP6Mn3H8lFpx8a/8FuBGXpPznRnNjfJ6VQy/dULzfOlwsW/H/WVUSZnSEmqGTzWJR1iAFjn5HRxRHmaJHrQ==
-X-Gm-Message-State: AOJu0YxawpHx2lKPhQ4PCisVBMKASG962DGYGOQzB5qUvciKVMn7uzld
-	TVmXpCcMr/4/HxWHShhLusZkX11GYi2f8RzzaF3RdltMDPlIv/Ch
-X-Google-Smtp-Source: AGHT+IE70zhsNBUYOAewbvXHcYgepuMa8i+6KzIjuE7KgPVIgmBQVK7/cIQLRs1F0enKt0xhxVITpg==
-X-Received: by 2002:a5d:588d:0:b0:367:958e:9822 with SMTP id ffacd0b85a97d-36825f715c0mr2543892f8f.14.1721151313262;
-        Tue, 16 Jul 2024 10:35:13 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f27877dsm167381895e9.26.2024.07.16.10.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 10:35:13 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Tue, 16 Jul 2024 19:34:52 +0200
-Subject: [PATCH v4 2/2] thermal: sti: depend on THERMAL_OF subsystem
+        d=1e100.net; s=20230601; t=1721151297; x=1721756097;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bzncl9L3e27llWjrAt0uSGnBBcBzotmsp09OvMIhHpc=;
+        b=TFWIdYCYf43LSO2Oe8DJirck9yU2l6tAS+Y2fQK36gZyHsQIiDkZuPUdTqse2gL4l+
+         PLmhVK8fvdlgtMrCxXmW4Y9ps8TcJxgwQnUt4pcfqAH4L7xC2aW3YMuIFbS1kbEeELqW
+         4eA1EfNtQCamCvdtbPKOZorWNRRmK06OX/smYQZnFSfYEyJkmizw33jLYh03aGAk+gG4
+         lJlpz3TnOHKlCmAD9jPUqxPOXyCzLoOFH05miyvfowbktPUI4H6pTU6KLl7BLGYWyC14
+         O2h2XKj3cEZHUPL+M79Tp10ngvNhxgo6P9rE6rC4dxy4I9mYiDIswm7iHSkMXGtBKorA
+         EgQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgA4lA/reK7lyhfUyKLFbQKjKgzC1a0wzMzvXqSMmQDqQ3C8Zgq3gv/mlM+GnE6g2yhHPq1gsNXMqNqfHG1iEHc1EEpHE0ZLULHMZj
+X-Gm-Message-State: AOJu0YyhXgBAcHvH4ZzBpGIDmUjxQJcditXQ2+hBZCGVDJGfl51FiSXb
+	IbwEfxx8rzq9r+SneVIedOcFCWIRsaHTIA40QSAj5vYnedFvop2L0IxwUlaQBcpFT7fgA5YFyg+
+	k+A==
+X-Google-Smtp-Source: AGHT+IG32VHtdxdaUsDDPJunrvckiTWNO91gPhz+tHm9yc4gkYSQ85JHqlVjFo5Nvdj8OgpwD3v6pjKH7w4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:b96:b0:2c9:ba2b:42ac with SMTP id
+ 98e67ed59e1d1-2cb36d483c4mr6722a91.4.1721151297229; Tue, 16 Jul 2024 10:34:57
+ -0700 (PDT)
+Date: Tue, 16 Jul 2024 10:34:55 -0700
+In-Reply-To: <20240716160842.GD1482543@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-thermal-v4-2-947b327e165c@gmail.com>
-References: <20240716-thermal-v4-0-947b327e165c@gmail.com>
-In-Reply-To: <20240716-thermal-v4-0-947b327e165c@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.14.0
+Mime-Version: 1.0
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <20240712232937.2861788-1-ackerleytng@google.com> <ZpaZtPKrXolEduZH@google.com>
+ <20240716160842.GD1482543@nvidia.com>
+Message-ID: <ZpavP3K_xAMiu4kE@google.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+From: Sean Christopherson <seanjc@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, quic_eberman@quicinc.com, 
+	akpm@linux-foundation.org, david@redhat.com, kvm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, maz@kernel.org, 
+	pbonzini@redhat.com, shuah@kernel.org, tabba@google.com, willy@infradead.org, 
+	vannapurve@google.com, hch@infradead.org, rientjes@google.com, 
+	jhubbard@nvidia.com, qperret@google.com, smostafa@google.com, fvdl@google.com, 
+	hughd@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-Switch to thermal_of_zone to handle thermal-zones. Replace
-thermal_zone_device_register() by devm_thermal_of_zone_register() and
-remove ops st_thermal_get_trip_type, st_thermal_get_trip_temp.
+On Tue, Jul 16, 2024, Jason Gunthorpe wrote:
+> On Tue, Jul 16, 2024 at 09:03:00AM -0700, Sean Christopherson wrote:
+> 
+> > > + To support huge pages, guest_memfd will take ownership of the hugepages, and
+> > >   provide interested parties (userspace, KVM, iommu) with pages to be used.
+> > >   + guest_memfd will track usage of (sub)pages, for both private and shared
+> > >     memory
+> > >   + Pages will be broken into smaller (probably 4K) chunks at creation time to
+> > >     simplify implementation (as opposed to splitting at runtime when private to
+> > >     shared conversion is requested by the guest)
+> > 
+> > FWIW, I doubt we'll ever release a version with mmap()+guest_memfd support that
+> > shatters pages at creation.  I can see it being an intermediate step, e.g. to
+> > prove correctness and provide a bisection point, but shattering hugepages at
+> > creation would effectively make hugepage support useless.
+> 
+> Why? If the private memory retains its contiguity seperately but the
+> struct pages are removed from the vmemmap, what is the downside?
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
-Changes in v4:
-- Optimize dependencies
-- Do not return devm_* exit code
-Changes in v3:
-- Fix unmet dependency when building with ARM64 compiler
-  https://lore.kernel.org/lkml/202406270605.qodaWd4n-lkp@intel.com/
-- Remove no more used polling_delay variable detected by kernel robot
-  https://lore.kernel.org/lkml/202406270530.kN5wIswi-lkp@intel.com/
-Changes in v2:
-- Remove unused struct thermal_trip trip
----
- drivers/thermal/Kconfig         |  2 +-
- drivers/thermal/st/st_thermal.c | 28 +++++++++++-----------------
- 2 files changed, 12 insertions(+), 18 deletions(-)
+Oooh, you're talking about shattering only the host userspace mappings.  Now I
+understand why there was a bit of a disconnect, I was thinking you (hand-wavy
+everyone) were saying that KVM would immediately shatter its own mappings too.
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index ed16897584b4..b6b916e7e294 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -429,7 +429,7 @@ source "drivers/thermal/samsung/Kconfig"
- endmenu
- 
- menu "STMicroelectronics thermal drivers"
--depends on (ARCH_STI || ARCH_STM32) && OF
-+depends on (ARCH_STI || ARCH_STM32) && THERMAL_OF
- source "drivers/thermal/st/Kconfig"
- endmenu
- 
-diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
-index 5f33543a3a54..a14a37d54698 100644
---- a/drivers/thermal/st/st_thermal.c
-+++ b/drivers/thermal/st/st_thermal.c
-@@ -12,6 +12,7 @@
- #include <linux/of_device.h>
- 
- #include "st_thermal.h"
-+#include "../thermal_hwmon.h"
- 
- /* The Thermal Framework expects millidegrees */
- #define mcelsius(temp)			((temp) * 1000)
-@@ -135,8 +136,6 @@ static struct thermal_zone_device_ops st_tz_ops = {
- 	.get_temp	= st_thermal_get_temp,
- };
- 
--static struct thermal_trip trip;
--
- int st_thermal_register(struct platform_device *pdev,
- 			const struct of_device_id *st_thermal_of_match)
- {
-@@ -145,7 +144,6 @@ int st_thermal_register(struct platform_device *pdev,
- 	struct device_node *np = dev->of_node;
- 	const struct of_device_id *match;
- 
--	int polling_delay;
- 	int ret;
- 
- 	if (!np) {
-@@ -197,29 +195,24 @@ int st_thermal_register(struct platform_device *pdev,
- 	if (ret)
- 		goto sensor_off;
- 
--	polling_delay = sensor->ops->register_enable_irq ? 0 : 1000;
--
--	trip.temperature = sensor->cdata->crit_temp;
--	trip.type = THERMAL_TRIP_CRITICAL;
--
- 	sensor->thermal_dev =
--		thermal_zone_device_register_with_trips(dev_name(dev), &trip, 1, sensor,
--							&st_tz_ops, NULL, 0, polling_delay);
-+		devm_thermal_of_zone_register(dev, 0, sensor, &st_tz_ops);
- 	if (IS_ERR(sensor->thermal_dev)) {
--		dev_err(dev, "failed to register thermal zone device\n");
-+		dev_err(dev, "failed to register thermal of zone\n");
- 		ret = PTR_ERR(sensor->thermal_dev);
- 		goto sensor_off;
- 	}
--	ret = thermal_zone_device_enable(sensor->thermal_dev);
--	if (ret)
--		goto tzd_unregister;
- 
- 	platform_set_drvdata(pdev, sensor);
- 
-+	/*
-+	 * devm_thermal_of_zone_register() doesn't enable hwmon by default
-+	 * Enable it here
-+	 */
-+	devm_thermal_add_hwmon_sysfs(dev, sensor->thermal_dev);
-+
- 	return 0;
- 
--tzd_unregister:
--	thermal_zone_device_unregister(sensor->thermal_dev);
- sensor_off:
- 	st_thermal_sensor_off(sensor);
- 
-@@ -232,7 +225,8 @@ void st_thermal_unregister(struct platform_device *pdev)
- 	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
- 
- 	st_thermal_sensor_off(sensor);
--	thermal_zone_device_unregister(sensor->thermal_dev);
-+	thermal_remove_hwmon_sysfs(sensor->thermal_dev);
-+	devm_thermal_of_zone_unregister(sensor->dev, sensor->thermal_dev);
- }
- EXPORT_SYMBOL_GPL(st_thermal_unregister);
- 
+> As I understand it the point is to give a large contiguous range to
+> the private world and use only 4k pages to give the hypervisor world
+> access to limited amounts of the memory.
+> 
+> Is there a reason that not having the shared memory elevated to higher
+> contiguity a deal breaker?
 
--- 
-2.45.2
-
+Nope.  I'm sure someone will ask for it sooner than later, but definitely not a
+must have.
 
