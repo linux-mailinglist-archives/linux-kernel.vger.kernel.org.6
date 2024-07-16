@@ -1,181 +1,141 @@
-Return-Path: <linux-kernel+bounces-253885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA6D932846
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C858932867
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A71F222AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9561F2385D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7534419D066;
-	Tue, 16 Jul 2024 14:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCC519E81D;
+	Tue, 16 Jul 2024 14:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nObZSuhB"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COUSdfXH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F6F19AA4D;
-	Tue, 16 Jul 2024 14:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB52819D89A;
+	Tue, 16 Jul 2024 14:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139864; cv=none; b=bd+uCtXqdT6fDwBjZ+SKGpRx2mrFRI/ii3KfeKBrGRGW1Q2zJySM64QE29K9wR6i+IKPWGKtnQzjPdnam9bvj4wl3q7KfLa8RRDXYoOoMyjjMTzxAAxtaBAHGlpf9WHgzfAD/GYwkTDwk10Thw0Sjl8kugSlIXXj3vCS9w1FGiI=
+	t=1721139934; cv=none; b=gcUj7HmvHIZpmXuo4YWq8aiL2Oo/CpLeflu54dEDPXEa+2+EE+3HFDR8jBtIW7Q3325DNjoH8/KPN1JqksVDKGE6FoMQuGTXfOpnAaZUpqBgiAC9BF0Jgg3GCXsNtG81ninRRxj2+dTgHCy1xMXOXQX7TencHcHl8KGzgBxngPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139864; c=relaxed/simple;
-	bh=fxEQUXnEMQA5C1VJILrD6j+i9GLSuIHDtfy2J+qm6lo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MR6o4E1mxZwU900HHYRFBwTZrEZr4ilD5JFcxE6mgw+85MFNJ/eBdq5XbN3TjwgvWSHT9Lbx7It6/HQwFsow79CoyOocpuIrduXV28i2ztfo3Eup9++HDMXyAza/E9bPmLhpS+tZAJD0052YYUuvlPNvjjhe8JnOdEr3U8JUmVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nObZSuhB; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64b0d45a7aaso57954187b3.0;
-        Tue, 16 Jul 2024 07:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721139862; x=1721744662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IloAEevb9j/jeRb0W1UmR0i732zAODizdCFxqOWvxSA=;
-        b=nObZSuhBxf26+OXftH6jkotZCgVOVSgBMlE0x5BoOZIpZh0o2T24K3JW3SlAzrFwsn
-         WeF/UrzlRy7oGGtf6tFtKXwsN0wKghrkfzuW+o3pd/Wez58xXaP4QL3wXHr06aW2lFOc
-         J36XHBhWJYiyBgCT2OOZANCRiAWwOyJN+PdA40oOPV7iVF07Sb7Bt+eoHh3UHwplaftc
-         b+ARCLdE7emPM6IN1tVzzUO2BUxyk1QJUxqQpCOPtwtxVaaDy/vLQXtKbuQoIakBP1OV
-         +EzM+pPS0Qmj6dzYEfd32ZFExTzExm6/Oz1QInfiZ3azZrxVjQvH/pCD20c9eQg9eJwk
-         bS9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721139862; x=1721744662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IloAEevb9j/jeRb0W1UmR0i732zAODizdCFxqOWvxSA=;
-        b=OiDKLwIh8k0OhENwr/CawhuBl1Fz2HMg/c2APliAUWkCqHQjKIHOqO3+NDi9QuPT6O
-         RYYefq4/74yYd17M5D7sfTFl0Yr23vZsufMS0jbJPGNJ/syRnrebHHKJjAVFaa17TGE5
-         wEFxqV62e11khjGDa9hxgqlI6LUe1a+dsGVg8nkfALWObPSK322+UuJUDSog0H3j8EeE
-         QQRh58FL1repJK9S7ohXEP+Db02mToPGCuKPcex6qYfCndw/odh71SibgpSV8HUyLTpe
-         x9OdwbNuMToIMl2sIFPwGRniQx6iurmzOpiUJYR39PHCjITn60AsnJl9+CVuq8oZMJpb
-         Y4sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+RH1VgSQAWf4m4ra8I15jyPrftaZ6QKtcNG4+YVNQDIWJ6fVp22CM3f6cWvD9KGi34DpFKCb1QrQRVp7xCIccHY8dcqrg7+0sPG7HaaHdIAv9LSeX6tvlj4zC2g2hUfDuo0LgydibdA==
-X-Gm-Message-State: AOJu0YyPCPrdYFniNkq4+Y0tZxwbz41wPL0MXU4rC1JDpV6pKqF08LP2
-	yuDp5bP8+jeIpwzyaU+Pl4YE/shBVDYyCYnRs0AERD5ss5nNhXcFdWIhujHpbNpz/V3J813K7RW
-	d7SMEHk/M4GG57cuNOdAvE2uOa2w=
-X-Google-Smtp-Source: AGHT+IF45F4/cjaTHhqZQI1M7kkXoOzONUc/n2JH/TE3b2V5uGdk0Ign5R7+DjG+ypwkKUTt2WfJP6BJa8GLui80V64=
-X-Received: by 2002:a05:690c:ecf:b0:650:4542:56e6 with SMTP id
- 00721157ae682-66381abfa0dmr28480317b3.48.1721139862151; Tue, 16 Jul 2024
- 07:24:22 -0700 (PDT)
+	s=arc-20240116; t=1721139934; c=relaxed/simple;
+	bh=Pz/FCcPpIIcflHJWdaUVOnrEGkz7zM28OqyAofFcqQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F4yXH3U/OiYZo2hulMNo7yYFI2mBT+gQuX4GrGbtMPu8LgJyAo3WCmKyZCU3XH8K6uaZuh8rSgIbv9qgjYgl3x36b4/iJ+IYOJloTLx/M3/SFsuY1sZeMLgbMqLZ5lctC8nPs2KolEW6jUaXPMakOrmh2RNXIxXdnzPvZb0wvtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COUSdfXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA022C4AF0E;
+	Tue, 16 Jul 2024 14:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721139934;
+	bh=Pz/FCcPpIIcflHJWdaUVOnrEGkz7zM28OqyAofFcqQQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=COUSdfXHPQth4ckGhVe1vAxsGJ5iBfw4GIGtniRTulZ+xaRia/K7Jg3Uq7La1w1Ae
+	 Pq2RqyDUFbEHyZ2fUmy7TdMoQyNbvlB0xVNw8bZikpIXaYIe2eMVu9NP0PZd3pkCog
+	 y5cyDDBRwSjRdIOhX4Ifr2fIak9TTv2xViKxWAHLG+qIbDRVmxK2vsALb7YxNZa3vH
+	 UuXB/YNNWEk0LzgQ6Vk5XCh9fdJbuKs6bWBJDQzoHNQkJkvSgbSS53L7+V8Dxqw9Kd
+	 qKXZQ218yAWBc07CTA1yIsTkeAvg1ErLVvujReb6HUr9X+cEXmHVmvgpqYa9Xxtodu
+	 YxzWYAgCjX1VQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Xingui Yang <yangxingui@huawei.com>,
+	John Garry <john.g.garry@oracle.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	yanaijie@huawei.com,
+	dlemoal@kernel.org,
+	yuehaibing@huawei.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 05/22] scsi: libsas: Fix exp-attached device scan after probe failure scanned in again after probe failed
+Date: Tue, 16 Jul 2024 10:24:12 -0400
+Message-ID: <20240716142519.2712487-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240716142519.2712487-1-sashal@kernel.org>
+References: <20240716142519.2712487-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711193749.2397471-1-tmaimon77@gmail.com> <20240711193749.2397471-5-tmaimon77@gmail.com>
- <ZpFrslx57m62SEsg@probook>
-In-Reply-To: <ZpFrslx57m62SEsg@probook>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 16 Jul 2024 17:24:11 +0300
-Message-ID: <CAP6Zq1gYSiXFhtA0HAaoSLD7Lz-9nuoy-cUn+qvh0BLev_ifVg@mail.gmail.com>
-Subject: Re: [PATCH v1 4/7] pinctrl: nuvoton: npcm8xx: remove unused smb4den
- pin, group, function
-To: =?UTF-8?B?Si4gTmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
-Cc: linus.walleij@linaro.org, avifishman70@gmail.com, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.9
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Xingui Yang <yangxingui@huawei.com>
 
-It does not exist, do you suggest modifying the "unused" to "not exist"?
+[ Upstream commit ab2068a6fb84751836a84c26ca72b3beb349619d ]
 
-Thanks,
+The expander phy will be treated as broadcast flutter in the next
+revalidation after the exp-attached end device probe failed, as follows:
 
-Tomer
+[78779.654026] sas: broadcast received: 0
+[78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+[78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+[78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+[78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+[78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 500e004aaaaaaa05 (stp)
+[78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+[78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+[78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+...
+[78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 tries: 1
+[78835.171344] sas: sas_probe_sata: for exp-attached device 500e004aaaaaaa05 returned -19
+[78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+[78835.187487] sas: broadcast received: 0
+[78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+[78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+[78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+[78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+[78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 500e004aaaaaaa05 (stp)
+[78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+[78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
 
-On Fri, 12 Jul 2024 at 20:45, J. Neusch=C3=A4fer <j.neuschaefer@gmx.net> wr=
-ote:
->
-> On Thu, Jul 11, 2024 at 10:37:46PM +0300, Tomer Maimon wrote:
-> > Remove unused smb4den pin, group and function on the Nuvoton NPCM8XX BM=
-C
-> > SoC.
->
-> Does "unused" mean that they are just unused in current board designs,
-> or does the hardware functionality actually not exist?
->
-> Best regards, J
->
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > ---
-> >  drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctr=
-l/nuvoton/pinctrl-npcm8xx.c
-> > index f342aec3f6ca..396bd07e7c74 100644
-> > --- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-> > +++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-> > @@ -438,7 +438,6 @@ static const int smb4_pins[]  =3D { 28, 29 };
-> >  static const int smb4b_pins[] =3D { 18, 19 };
-> >  static const int smb4c_pins[] =3D { 20, 21 };
-> >  static const int smb4d_pins[] =3D { 22, 23 };
-> > -static const int smb4den_pins[] =3D { 17 };
-> >  static const int smb5_pins[]  =3D { 26, 27 };
-> >  static const int smb5b_pins[] =3D { 13, 12 };
-> >  static const int smb5c_pins[] =3D { 15, 14 };
-> > @@ -700,7 +699,6 @@ struct npcm8xx_pingroup {
-> >       NPCM8XX_GRP(smb4b), \
-> >       NPCM8XX_GRP(smb4c), \
-> >       NPCM8XX_GRP(smb4d), \
-> > -     NPCM8XX_GRP(smb4den), \
-> >       NPCM8XX_GRP(smb5), \
-> >       NPCM8XX_GRP(smb5b), \
-> >       NPCM8XX_GRP(smb5c), \
-> > @@ -949,7 +947,6 @@ NPCM8XX_SFUNC(smb4);
-> >  NPCM8XX_SFUNC(smb4b);
-> >  NPCM8XX_SFUNC(smb4c);
-> >  NPCM8XX_SFUNC(smb4d);
-> > -NPCM8XX_SFUNC(smb4den);
-> >  NPCM8XX_SFUNC(smb5);
-> >  NPCM8XX_SFUNC(smb5b);
-> >  NPCM8XX_SFUNC(smb5c);
-> > @@ -1173,7 +1170,6 @@ static struct npcm8xx_func npcm8xx_funcs[] =3D {
-> >       NPCM8XX_MKFUNC(smb4b),
-> >       NPCM8XX_MKFUNC(smb4c),
-> >       NPCM8XX_MKFUNC(smb4d),
-> > -     NPCM8XX_MKFUNC(smb4den),
-> >       NPCM8XX_MKFUNC(smb5),
-> >       NPCM8XX_MKFUNC(smb5b),
-> >       NPCM8XX_MKFUNC(smb5c),
-> > @@ -1348,7 +1344,7 @@ static const struct npcm8xx_pincfg pincfg[] =3D {
-> >       NPCM8XX_PINCFG(14,      gspi, MFSEL1, 24,       smb5c, I2CSEGSEL,=
- 20,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> >       NPCM8XX_PINCFG(15,      gspi, MFSEL1, 24,       smb5c, I2CSEGSEL,=
- 20,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> >       NPCM8XX_PINCFG(16,      lkgpo0, FLOCKR1, 0,     smb7b, I2CSEGSEL,=
- 27,   tp_gpio2b, MFSEL7, 10,  none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> > -     NPCM8XX_PINCFG(17,      pspi, MFSEL3, 13,       cp1gpio5, MFSEL6,=
- 7,    smb4den, I2CSEGSEL, 23, none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> > +     NPCM8XX_PINCFG(17,      pspi, MFSEL3, 13,       cp1gpio5, MFSEL6,=
- 7,    none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> >       NPCM8XX_PINCFG(18,      pspi, MFSEL3, 13,       smb4b, I2CSEGSEL,=
- 14,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> >       NPCM8XX_PINCFG(19,      pspi, MFSEL3, 13,       smb4b, I2CSEGSEL,=
- 14,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> >       NPCM8XX_PINCFG(20,      hgpio0, MFSEL2, 24,     smb15, MFSEL3, 8,=
-       smb4c, I2CSEGSEL, 15,   none, NONE, 0,          none, NONE, 0,      =
-    SLEW),
-> > --
-> > 2.34.1
-> >
+The cause of the problem is that the related ex_phy's attached_sas_addr was
+not cleared after the end device probe failed, so reset it.
+
+Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+Link: https://lore.kernel.org/r/20240619091742.25465-1-yangxingui@huawei.com
+Reviewed-by: John Garry <john.g.garry@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/libsas/sas_internal.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+index 3804aef165adb..164086c5824ec 100644
+--- a/drivers/scsi/libsas/sas_internal.h
++++ b/drivers/scsi/libsas/sas_internal.h
+@@ -145,6 +145,20 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
+ 		func, dev->parent ? "exp-attached" :
+ 		"direct-attached",
+ 		SAS_ADDR(dev->sas_addr), err);
++
++	/*
++	 * If the device probe failed, the expander phy attached address
++	 * needs to be reset so that the phy will not be treated as flutter
++	 * in the next revalidation
++	 */
++	if (dev->parent && !dev_is_expander(dev->dev_type)) {
++		struct sas_phy *phy = dev->phy;
++		struct domain_device *parent = dev->parent;
++		struct ex_phy *ex_phy = &parent->ex_dev.ex_phy[phy->number];
++
++		memset(ex_phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
++	}
++
+ 	sas_unregister_dev(dev->port, dev);
+ }
+ 
+-- 
+2.43.0
+
 
