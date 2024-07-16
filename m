@@ -1,239 +1,104 @@
-Return-Path: <linux-kernel+bounces-253734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321E8932614
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:01:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E82932615
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B356C1F22C57
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A19284174
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5D3195FE8;
-	Tue, 16 Jul 2024 12:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6B21990DE;
+	Tue, 16 Jul 2024 12:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfPU+mCO"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSweZPeK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B411CA9F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536EB1CA9F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721131273; cv=none; b=qP9QJ5PQWOPidIty/NbYaRFj0qDerwyzabQraUDNm4PpMgX4FEh0ruLm+K6zEHJFb9E4r6Allh7yexvldqoZ1eVVH093Woct5+QnQgXLXZW2kNg74cEalf1Zg3ev5ODX6rD+1uTU3IbgBdyKb3nSPGTqZVI+9uY4if+kYtL5FPM=
+	t=1721131305; cv=none; b=B2Kpp6eeQvm2O4DuFaROIzruGmMmTd3ol8pWVBkWkLG5Moi+iHVw5MlUEiXOUJ3vMklauZAw78ygmdSm3aSxuPVUjpzv4HgG0XExCKgZhjA+OKxtHfbtgmOVKi4iiKzOdAhqhHHFaz+70/qMBAnlm88HSz2P+MRZUdCXS4cZHKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721131273; c=relaxed/simple;
-	bh=WLrC6303y1CuWwTqT4Hq19/LjVv0oNDQam+0R7DofS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FlZmDwFJjdtILTOLCl0Jf6cgqSBOHn2atB5g+woQZov+Ogx7Rkus70rXwvwOaMgb4HjaDex9i1MaxEUQglR9dtgYANVrJGkoIXAvL8uqiwHkoiB8VYCwbwlx/9ToF8YFfUwy9/RrSqNhebsAfzc0swnxO6PmexxKQrrCuJ0G7PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfPU+mCO; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25e134abf00so2651653fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721131271; x=1721736071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j8G+O43a2cJN5Lg9/71+1+Z/ywQQTj8X6yfoV7PP9dU=;
-        b=DfPU+mCOfLxbeiIg0iO4bkpHKWO2M4wEyWn43KdoN2XXQMKn0NrGdz5hJFikkxj1wd
-         8jUbxB0BEWsLE6lp6nOEk88Md0LAyxLW6CxzriGWXs6PWDOu44jb1lbPW6u8zYKdiuFw
-         V+eZhULxDIAla+j0k0y7EtGsnrRZtKuLFIV1G9ULrOxeyvk4DM0K4oJNJHVcuQnrRQqu
-         2kUHQdQpzxC6eNhL5O21LiwD9gMVpBgYHZfPxHkvPFrAfIDZgNfRyN6mKhlRvig4CiTx
-         nnEWF7VBRhtyakUnarZrmfrsYinRGE2ytClHvMynCuoLUNQY0WceCch23Rcs/ZOnWJ7F
-         UaRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721131271; x=1721736071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j8G+O43a2cJN5Lg9/71+1+Z/ywQQTj8X6yfoV7PP9dU=;
-        b=IfnzXIKLZB3ez6ov/CKrt3QjA9SAELAwxF+OYbRE1dXCcl0bcH8JbGMENtTyy4pw6k
-         u84LHeLyLKOZn+0Hzefs095K1UyEuKeY+CtQoxzImyocploIk6zonYO1aFfQLGYwKwu/
-         ND0yuHjaW2XqQfiy5D3g+xAWCrRviRpDE7cK+HRrmKpaUkmVfFpdW7tQQWpXrElP0gYo
-         TjjyJypXN/REDR/I6PXUuJuxMoE7RqZNu/+/2fxCeEJTuMkSlOHnqpUWRuDREaZIff/V
-         6qWLi/3ssxpurN2eg4kcliVLmzP/51/l6AnaSIxLSZoymgLJr8561Vx6MXqIWIco0ahx
-         E3Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUk8jFvpghDGUAm//ZvihF8Q5yQ31G9MksshAXerPfvM73Fe/KC7GhT4f5VU2tvkgpwChGDv9ebYjEwKDrCBBe0EFYPaNOF510RcojA
-X-Gm-Message-State: AOJu0YxI/RzGfhZS6B01mcJrhHYz9FRhLaaXjsT+SQHQfsVCmKkSPz76
-	MEA5ks8jRLgEYcV+HfK3fXH9fwBsqsdqdRYBE/3kTAJFcZqL8QqNyUxWYIu3V0rcELB0HOmBjFQ
-	ziz9o2Gv+HoXO1xtp39++eTJp9Q0=
-X-Google-Smtp-Source: AGHT+IGjNegrAaFQHqDetHpbOkioAUdczDLg0HOi4yOfbP20ScveXYR6yf2v9NSMbFQJuVkNuifZ4o03vbMlD0wOdIw=
-X-Received: by 2002:a05:6871:5223:b0:25e:bd3d:624a with SMTP id
- 586e51a60fabf-260bd52cf0emr1401551fac.7.1721131271161; Tue, 16 Jul 2024
- 05:01:11 -0700 (PDT)
+	s=arc-20240116; t=1721131305; c=relaxed/simple;
+	bh=yF/VNxt1FJ1J8kZ8uWR0zCePG4D5vCSp1wx/QoH+zTE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=H25Jijm7c0Q9JXKkMlnTMfqHndDP0kmuW8RzLzquXF/tQ0Lr5AD0TsZcvlki5siKyGB61jQi1IysLcLcVm2fxRxrDLO2HSuolCqCNmlFU7kB+KdkdHAiZWXBIaSJa4utZ5zH4ayieF6Kn9ug1oZl2sBLQNMpwXi/i6SXQHbje/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSweZPeK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D996DC4AF0D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721131304;
+	bh=yF/VNxt1FJ1J8kZ8uWR0zCePG4D5vCSp1wx/QoH+zTE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lSweZPeKLfBxKQNYOSxXZcT+YxY2lG5Gc6Dw0NgaRF+z8HH90spsmePJphvbkBNX8
+	 C0uk4o/0WZV4EPb9U4yAzQ6ISZ8q/9CU10t3YJwpAdU3snB0DpNVFVPkvOJ2zgVjre
+	 7zjuj3E9X62NQd27tlXV/zvkh7DYWQCe+zSnBadF7nKEryaHpEX7mDIec1m4Z+F/vx
+	 DdZm9CentZkPUrgpIf3IZJanfwHfLzNWGRDlUXHpkkc8RM/Cq/vn5kptLkutzc9Lwq
+	 o5EWRjbptwf331IoAKU5QwKtpLptI7qXJH83S04zOgB8KATQoLz+nhglfhROjhSQaq
+	 HrWdJJiJNFgog==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c46c8b0defso2905868eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:01:44 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwOb2U0fegXIyahNCP2VuOxUEE+z91zx5UsV570jqwZ+576/6f/
+	bnaOaHtjHf9Df1wkxSz+1Jt0adWJXkAuKLEK+WDyPx3yK+J3eWZI/iqdsZdx+oUxiafLDxBZsbO
+	OC8innGny8uzJZA5408J7b2TLg0M=
+X-Google-Smtp-Source: AGHT+IEoPlk65Wr9YfqoTl1UD5/IsvHHFudkACBlXuObdwvON6VKgPpCTqantpEVwj4FZWKwPDOvdNC/INj2Cha5+bw=
+X-Received: by 2002:a05:6820:198a:b0:5c2:1bdc:669c with SMTP id
+ 006d021491bc7-5d289eacbbcmr2336235eaf.6.1721131304217; Tue, 16 Jul 2024
+ 05:01:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507072242.585-1-xuewen.yan@unisoc.com>
-In-Reply-To: <20240507072242.585-1-xuewen.yan@unisoc.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Tue, 16 Jul 2024 20:01:00 +0800
-Message-ID: <CAB8ipk_dy1PyAowefiysS_QB_sxiW9bQD_Y+AQp_b_iUTWhqbw@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched: Clear user_cpus_ptr only when no intersection
- with the new mask
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, longman@redhat.com, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org, 
-	Saket Kumar Bhaskar <skb99@linux.ibm.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 16 Jul 2024 21:01:33 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_M5+ZHh9aWowoOcOLtwbOpX4TtUa7ea4VcEtKTq1nmNA@mail.gmail.com>
+Message-ID: <CAKYAXd_M5+ZHh9aWowoOcOLtwbOpX4TtUa7ea4VcEtKTq1nmNA@mail.gmail.com>
+Subject: [GIT PULL] exfat update for 6.11-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
+	"Yuezhang.Mo" <Yuezhang.Mo@sony.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Friendly ping..
+Hi Linus,
 
-Could anyone please give some comments?
+This is exfat update pull request for v6.11-rc1. I add description of
+this pull request on below. Please pull exfat with following ones.
 
 Thanks!
 
-On Tue, May 7, 2024 at 3:23=E2=80=AFPM Xuewen Yan <xuewen.yan@unisoc.com> w=
-rote:
->
-> The commit 851a723e45d1c("sched: Always clear user_cpus_ptr in do_set_cpu=
-s_allowed()")
-> would cause that online/offline cpu will produce different results
-> for the !top-cpuset task.
-> For example:
->
-> If the task was running, then offline task's cpus, would lead to clear
-> its user-mask.
->
-> unisoc:/ # while true; do sleep 600; done&
-> [1] 6786
-> unisoc:/ # echo 6786 > /dev/cpuset/top-app/tasks
-> unisoc:/ # cat /dev/cpuset/top-app/cpus
-> 0-7
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-7
->
-> unisoc:/ # taskset -p c0 6786
-> pid 6786's current affinity mask: ff
-> pid 6786's new affinity mask: c0
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   c0
-> Cpus_allowed_list:      6-7
->
-> After offline the cpu6 and cpu7, the user-mask would be cleared:
->
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   40
-> Cpus_allowed_list:      6
-> ums9621_1h10:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> ums9621_1h10:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
->
-> When online the cpu6/7, the user-mask can not bring back:
->
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-6
->
-> However, if we offline the cpu when the task is sleeping, at this
-> time, because would not call the fallback_cpu(), its user-mask will
-> not be cleared.
->
-> unisoc:/ # while true; do sleep 600; done&
-> [1] 5990
-> unisoc:/ # echo 5990 > /dev/cpuset/top-app/tasks
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   ff
-> Cpus_allowed_list:      0-7
->
-> unisoc:/ # taskset -p c0 5990
-> pid 5990's current affinity mask: ff
-> pid 5990's new affinity mask: c0
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   c0
-> Cpus_allowed_list:      6-7
->
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   80
-> Cpus_allowed_list:      7
-> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
->
-> After 10 minutes, it was waked up, it can also keep its user-mask:
-> ums9621_1h10:/ # cat /proc/5990/status | grep Cpus
-> Cpus_allowed:   3f
-> Cpus_allowed_list:      0-5
->
-> And when online the cpu6/7,the user-mask could bring back.
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
-> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
-> unisoc:/ # cat /proc/6786/status | grep Cpus
-> Cpus_allowed:   c0
-> Cpus_allowed_list:      6-7
->
-> Indeed, there is no need to clear the user_cpus_ptr if there is an
-> intersection between user_cpus_ptr and new_mask.
-> So add the judgement of whether there is an intersection between them.
-> Clear user_cpus_ptr only when no intersection with the new mask.
-> In this way, the above problems can also be solved.
->
-> Suggested-by: Waiman Long <longman@redhat.com>
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
-> previous discussion:
->  https://lore.kernel.org/all/e402d623-1875-47a2-9db3-8299a54502ef@redhat.=
-com/
-> ---
->  kernel/sched/core.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7019a40457a6..bbb8e88949f4 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p, stru=
-ct affinity_context *ctx)
->  }
->
->  /*
-> - * Used for kthread_bind() and select_fallback_rq(), in both cases the u=
-ser
-> - * affinity (if any) should be destroyed too.
-> + * Used for kthread_bind() and select_fallback_rq().
-> + * Destroy user affinity if no intersection with the new_mask.
->   */
->  void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *ne=
-w_mask)
->  {
->         struct affinity_context ac =3D {
->                 .new_mask  =3D new_mask,
->                 .user_mask =3D NULL,
-> -               .flags     =3D SCA_USER,  /* clear the user requested mas=
-k */
-> +               .flags     =3D 0,
->         };
->         union cpumask_rcuhead {
->                 cpumask_t cpumask;
->                 struct rcu_head rcu;
->         };
->
-> +       if (p->user_cpus_ptr && !cpumask_intersects(p->user_cpus_ptr, new=
-_mask))
-> +               ac.flags =3D SCA_USER;    /* clear the user requested mas=
-k */
-> +
->         __do_set_cpus_allowed(p, &ac);
->
->         /*
-> --
-> 2.25.1
->
->
+The following changes since commit 0c3836482481200ead7b416ca80c68a29cfdaabd:
+
+  Linux 6.10 (2024-07-14 15:43:32 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
+tags/exfat-for-6.11-rc1
+
+for you to fetch changes up to 89fc548767a2155231128cb98726d6d2ea1256c9:
+
+  exfat: fix potential deadlock on __exfat_get_dentry_set (2024-07-15
+21:44:28 +0900)
+
+----------------------------------------------------------------
+Description for this pull request:
+- Fix deadlock issue reported by syzbot.
+- Handle idmapped mounts.
+
+----------------------------------------------------------------
+Michael Jeanson (1):
+      exfat: handle idmapped mounts
+
+Sungjong Seo (1):
+      exfat: fix potential deadlock on __exfat_get_dentry_set
+
+ fs/exfat/dir.c   |  2 +-
+ fs/exfat/file.c  | 22 +++++++++++++---------
+ fs/exfat/super.c |  2 +-
+ 3 files changed, 15 insertions(+), 11 deletions(-)
 
