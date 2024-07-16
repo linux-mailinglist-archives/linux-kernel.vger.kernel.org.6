@@ -1,97 +1,180 @@
-Return-Path: <linux-kernel+bounces-254519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F5E933434
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AC293343A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50341F21BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01AA4284635
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C851428F3;
-	Tue, 16 Jul 2024 22:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2136F14386B;
+	Tue, 16 Jul 2024 22:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSs8u8ZW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hce1rIEZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1AC25779;
-	Tue, 16 Jul 2024 22:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C13613D262;
+	Tue, 16 Jul 2024 22:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721168878; cv=none; b=YFDzxL7nBmdJldqgzR0T3ZNOQzdE6N+Df4XerxJV+L65h+x4p2fKhRNsl+TRYcDnSk221hSpM0FZ9g7VMuNqk7dBi0FpeKHp8zp2ZEUDA+Prk42Ox41JPwOk/jKaaOb544R/dZnho4S8biHdf8JI2o+hfVvT4S5A5i5ZTD9OeCE=
+	t=1721168888; cv=none; b=ajIVOJwFWDVTqlz4L0HBxz9dKq+upz6B4zteSgYqoOpc0T4ZH/XaGMQ4k7JAXGpIe3jAXzaPQRw7HDymw0D0MQL6uh6yDaKeCdxGYR42XjfFQJM1jjbOUJ8P18zmRKySvOGcPYRoEtg7Vdv1jw9qqeQn8dUivwmlq12ySTiyPCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721168878; c=relaxed/simple;
-	bh=XICf/J4vEdapWSlC6sB0/YElc+k5l1HHspEipF/GID4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQvVOrGBa3cOmxv2R96qYShEwW2sE+ywlRAMhMoHOZJ6yZxb2U/u3eDFgr1ZjBj3l6yYCQPcPTt+u1qBM1wMJdvLpMilFPeQ0A0J45466lZMqytxmufjE9CHaORMSWQAKSL9kRL/kgyNroxVOG/8sZSLjBw4AFt847aT9rGZ5t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSs8u8ZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D111C116B1;
-	Tue, 16 Jul 2024 22:27:54 +0000 (UTC)
+	s=arc-20240116; t=1721168888; c=relaxed/simple;
+	bh=NfPZkGC+r85TH2hak7B3uZ5xb2lxTRsz0Snd8QaZPZA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Qr/b1DfmA5errGWbnrYXEMM54AoCZQiQBF0jEFetK3lLGIMU1xvAdWhXOR73yY/CXJMq8sW2KJ8efwBILdA9+xz/UcLL8PvEf2OAvCRiyPycJH7WIWOy5GbIZj9Vo7zYmS1kuezi4iHdGNryZm+yGyzbaHGBDTNuJ8y/HPkXtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hce1rIEZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C32C116B1;
+	Tue, 16 Jul 2024 22:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721168878;
-	bh=XICf/J4vEdapWSlC6sB0/YElc+k5l1HHspEipF/GID4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XSs8u8ZWC33CIePBO3MmP4uKeWQfbTDddsDj5CUFjfT8zWno7AS6gJCrexsqTFApc
-	 uG2E5k+B4vWkG1LdlPQw0fLnlyFP+BEmMzQyGJryenbNGhVet7POfjAoplMKy2ooF5
-	 G5d2H+jO1qz5kfUDAXAFedT4lrI70z+p5cpe486pqlAN9dEPiI1x7GxcdCn2nYZHDE
-	 euytfPGKXgH2zVV0ZKEd38OuKMWyd8A+uWEeT0H5w/VeilBUbL2IWjLoyz3kLZqABL
-	 yf96Ul+Sx2Moafy5uYOyAKSHelaOGaNlqSuyUERd6BjlHmO7t2YBd+gzFDgXc3S1WU
-	 WAChr+FfhLkqA==
-Date: Tue, 16 Jul 2024 23:27:51 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 5.10 000/108] 5.10.222-rc1 review
-Message-ID: <14f3a52b-c934-45e8-8d39-2fc199f3c3f6@sirena.org.uk>
-References: <20240716152745.988603303@linuxfoundation.org>
+	s=k20201202; t=1721168887;
+	bh=NfPZkGC+r85TH2hak7B3uZ5xb2lxTRsz0Snd8QaZPZA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Hce1rIEZ0Thyin4pnSSKLVdjqAvQt5o4Bi8Wljh+Q4reiza4WyXEcCRTWY+Z3l6iF
+	 yziZSPyhD3Y05kE8JY+eHXFL3qoH4h8/TUFDFWa+BkQe5w41h3WMkO7R5Ji55Hd4gn
+	 D1eXAIgPvKD4LltPe4u+48sJnfTki9tQqM1Pe3U/e5KEHLp++QOpzlpzm0RNg1p2cI
+	 X21mE4Px7LjIdWjLAkbqg97IMG4ri907ymCqjEjQLG60JAj94NbqyiWJ98r3kGhV9U
+	 v0L0F7+GfRqT5g+WKvPkjPxgtq+egE6G/63jwYwCFbhHOKJSKYrYYkWiRWRlVHB9ZZ
+	 0YT9Jt4a4HwEA==
+Message-ID: <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zTkn3FRT4d+unsDg"
-Content-Disposition: inline
-In-Reply-To: <20240716152745.988603303@linuxfoundation.org>
-X-Cookie: Think honk if you're a telepath.
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com> <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Tue, 16 Jul 2024 15:28:05 -0700
+User-Agent: alot/0.10
 
+Quoting Claudiu (2024-07-16 03:30:17)
+> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-v=
+battb.c
+> new file mode 100644
+> index 000000000000..8effe141fc0b
+> --- /dev/null
+> +++ b/drivers/clk/renesas/clk-vbattb.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * VBATTB clock driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/clk.h>
 
---zTkn3FRT4d+unsDg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Prefer clk providers to not be clk consumers.
 
-On Tue, Jul 16, 2024 at 05:30:15PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.222 release.
-> There are 108 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Is of_platform.h used?
 
---zTkn3FRT4d+unsDg
-Content-Type: application/pgp-signature; name="signature.asc"
+Include mod_devicetable.h for of_device_id.
 
------BEGIN PGP SIGNATURE-----
+> +#include <linux/platform_device.h>
+> +
+> +#define VBATTB_BKSCCR                  0x0
+> +#define VBATTB_BKSCCR_SOSEL            BIT(6)
+> +#define VBATTB_SOSCCR2                 0x8
+> +#define VBATTB_SOSCCR2_SOSTP2          BIT(0)
+[..]
+> +
+> +static int vbattb_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np =3D pdev->dev.of_node;
+> +       struct clk_parent_data parent_data =3D {};
+> +       struct device *dev =3D &pdev->dev;
+> +       struct clk_init_data init =3D {};
+> +       struct vbattb_clk *vbclk;
+> +       u32 load_capacitance;
+> +       struct clk_hw *hw;
+> +       int ret, bypass;
+> +
+> +       vbclk =3D devm_kzalloc(dev, sizeof(*vbclk), GFP_KERNEL);
+> +       if (!vbclk)
+> +               return -ENOMEM;
+> +
+> +       vbclk->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(vbclk->base))
+> +               return PTR_ERR(vbclk->base);
+> +
+> +       bypass =3D vbattb_clk_need_bypass(dev);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaW8+YACgkQJNaLcl1U
-h9D2ZQf7BX3dbGU4rvvrtSJgk/gZbVBNglgvPGznUitD8WVhh9tTDiELl0xTNYwe
-3vRiRlcN4szARBAy6ZNZ2uCYcMRHVDWxjiYtuffwUiBIsXLsdjxh8rFanEajoL0W
-HbX/cgSyEpQ6b1zSWoJlfn3cEz/7xnm8YyyhUpZN6lYFgKT2uZcEvwC6WEWFY96K
-jtNHRkFubL3uSDwy2xGCjQVGfQilREiWHtEZOiW00VemA2TiIK6JBIXI+j81RUsv
-CkzncFgmWalPlIF+FJhmk+WnWxfB3xSL8zRv2X7DxK9ZFbsTpHYbXX56IodaZ9W2
-jWhvSoN0letC8dnZlPafZKgC8VjEhg==
-=B/Ne
------END PGP SIGNATURE-----
+This is a tri-state bool :(
 
---zTkn3FRT4d+unsDg--
+> +       if (bypass < 0) {
+> +               return bypass;
+> +       } else if (bypass) {
+> +               parent_data.fw_name =3D "clkin";
+> +               bypass =3D VBATTB_BKSCCR_SOSEL;
+
+And now it is a mask value.
+
+> +       } else {
+> +               parent_data.fw_name =3D "xin";
+> +       }
+> +
+> +       ret =3D of_property_read_u32(np, "renesas,vbattb-load-nanofarads"=
+, &load_capacitance);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D vbattb_clk_validate_load_capacitance(vbclk, load_capacita=
+nce);
+> +       if (ret)
+> +               return ret;
+> +
+> +       vbattb_clk_update_bits(vbclk->base, VBATTB_BKSCCR, VBATTB_BKSCCR_=
+SOSEL, bypass);
+
+Please don't overload 'bypass'. Use two variables or a conditional.
+
+I also wonder if this is really a mux, and either assigned-clock-parents
+should be used, or the clk_ops should have an init routine that looks at
+which parent is present by determining the index and then use that to
+set the mux. The framework can take care of failing to set the other
+parent when it isn't present.
+
+> +
+> +       spin_lock_init(&vbclk->lock);
+> +
+> +       init.name =3D "vbattclk";
+> +       init.ops =3D &vbattb_clk_ops;
+> +       init.parent_data =3D &parent_data;
+> +       init.num_parents =3D 1;
+> +       init.flags =3D 0;
+> +
+> +       vbclk->hw.init =3D &init;
+> +       hw =3D &vbclk->hw;
+> +
+> +       ret =3D devm_clk_hw_register(dev, hw);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
+> +}
+> +
+> +static const struct of_device_id vbattb_clk_match[] =3D {
+> +       { .compatible =3D "renesas,r9a08g045-vbattb-clk" },
+> +       { /* sentinel */ }
+> +};
+
+Any MODULE_DEVICE_TABLE?
 
