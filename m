@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-253658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0745693246F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:54:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8F6932471
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06E62852BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265C21F24059
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD9819922A;
-	Tue, 16 Jul 2024 10:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1C01990B5;
+	Tue, 16 Jul 2024 10:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QOIe+j4i"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aEqDs/i8"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35770199225
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8603199245
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721127254; cv=none; b=Hn+slYBb/y9vda7sV6tQCqZeEtrJ/4UqasQbRBNmHRy+9IjbDYfD83l6eApoe9yxgtdT7WnfGKd8e7xzyyFLDWRMFlyFA5VYCklDhsHJw2xEY7MCgCWFPjmK82C+3by6DcFwA94aeqUJmGdT1f0/OV+suJKwx8qWHBeoNOzaHOc=
+	t=1721127256; cv=none; b=KpGeJJ/gfs01Qq1RDxnn+YsKfaPRILbPKerUKuCKSckau3KtbBTz0/aqTtrCLyEWkDIR1JnLRo1xaTOdFJ1BsWTVqlTVpNLc/cevmX4/94q+9OvtmS36OccWqztofw8TSASJN4an8wBW5l+vA1PFd+XZ0bmdUafsFiWDaLS9FlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721127254; c=relaxed/simple;
-	bh=AxX7wCkkfOj42QI7vsWajUNUXVUkZbWsJaH69GKrKh0=;
+	s=arc-20240116; t=1721127256; c=relaxed/simple;
+	bh=fLnCOcn0YVyI228OI5sEyoJf3tCOMYcmsPToXiA0QJM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QOr3OlpHJS9S0B3wBEQXf7ZfhomTYvD2inTo2JKtq1ThJivDJEg3dC9/uNPHBI7uzBLpx3u/1vnHDzvK8NYLI8R4QbYoP8yq52uv2RQD6DZwqcKW8IRXKniXoFRNX4HiI/sY09Y6GOqB9fZTPcp9zgVBaLBa+SP2M/xdZfNDMBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QOIe+j4i; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=qy/eiOQu+WbyYvLOKCTolHledmamwRTqThLoaDfU7DPvQ8OxjHtYMy1WSFR+/j+MBBwV2uaTXgRFBsoJNwkbRFmc7GTM4SAbhNmqeHNghFqGMQU159S33j+hxvyNNIfxQm+KuTE75oDqRCs2z9xeeb4nHK7XL3T0GCBXyOqgZSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aEqDs/i8; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42726d6eca5so38742485e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:54:11 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3678aa359b7so3860260f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:54:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721127250; x=1721732050; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721127253; x=1721732053; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/q+vCguQf3NUUbSEhJNStzM73J6osU7HD6N++I0+lqQ=;
-        b=QOIe+j4iAQRkbZsfJSAwQmuOEUSy9+yxy5yeoPVYeYGug54ETMs85nZ1w7aXQECGP1
-         1fuOuA0usZZ5mojOB/w4ux6COxUs2H6ObCAfCZ+zEtOli6/GBf2CdmdJvCdsyT88XOuL
-         INhk32lR8qPIrmION8tO9eipy/2HsV3/tHc2Hv4mNymNa2ni+7iG4R3a7hF81hehMJ+y
-         OXcG/QrJXymAKW9bLHIiuYhHrWPVOkm+PPRcLnT3rs/WQWTAtRYhvnUZFIzWXudU9Yc2
-         fU0inutXenNdVnCYgxmPHl6dlKtDGVM9I2SFB9OlBOPX8BRhEL4rn1oloC1mcq7nMuXD
-         QQmQ==
+        bh=06/mGBoVpO/E3PxYGWvGUiycM4NlfZYrcU+JP01aYB4=;
+        b=aEqDs/i8dlbeQAeafablfaFLtzNNEZ3Pt4sElSEcFyrIP7YCtqIj81tgCFfBsBT9g7
+         Y1VQeKvqGe18DEVpaxOtyBUh5vRXKcdeAo0VOcSI81qDgKyxU0CmpyGtkuyGiMYYb2B1
+         kKztuC8gt7qwXCvJ/PXdjr+Zdt0SUzIHSUIYG4Y0ufYN2SuSMVMO6Jhv6b9QCsXY1Hsn
+         pSNferPzOSwOi1qHDIBxt3XXA22+E5bv/Hw9/IQv6ClTLSYiJcMKolXfTLr84vLOCB7p
+         PMt0AcmWBwqU3N7dYUm9/66BldzBI0jcP29i61/ovPD2fg0plSuSpbynsjStWyMNnYOJ
+         JfEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721127250; x=1721732050;
+        d=1e100.net; s=20230601; t=1721127253; x=1721732053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/q+vCguQf3NUUbSEhJNStzM73J6osU7HD6N++I0+lqQ=;
-        b=dbPZfQTAzp8zJMZCV17fKSop7dkg83mF0e6MMAZZSIwqhMn1vhk08p79EfQTg9Tjpf
-         jn1yXDnlx6UnUzRjWuqvljU+TIQAybmDAjt50HYEGMq/ztzsm95dTU6WSV3MKsEZuGFy
-         +9pzCZKQGJfFJjiy/R6T/nxPEDao5qlpALbeCYdK4bjwEOJ3XQ/4KtKajhGchBBzSBJD
-         wosBqOoNCElQYkAwickvL7IVL8jAGii4ZUlS6OsTjl0xNFiqS+/2LSpIubnZDfnCXTDW
-         3at0f6VXyVhryozRTF6miORrYkIE+Utb2NTSuyKbxduUq77RORWjOu2UWQdYcdutYhq/
-         Gsjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWa5iwZpK1JYwnBcUQbPMeaO5tx+XDnBcTPY+/7jd9VluVUuBdV/2/pwNUZbyn7PArem81jqHWvINbHSq6PokO3eMyDKDi8sLjnvmZJ
-X-Gm-Message-State: AOJu0YwDFJJEp6+IcYiDDZa8sjCze3StT/aKEmCdOyCdCmdLtZ8bpG9d
-	lqyjst5r1ASr+cKaN1iw2tJcrqP6nY0kMTn2BjPasv0Q/jh0AD6Us8eeHmnRdWE=
-X-Google-Smtp-Source: AGHT+IEhjOcGQEmu3Anam4Iq8+f5K76T83y06jbOta7ND04zwcw7VGC98aRFKAmunjQoyid33YORuA==
-X-Received: by 2002:adf:b30c:0:b0:367:8fbc:8892 with SMTP id ffacd0b85a97d-36826316853mr1075117f8f.44.1721127250680;
-        Tue, 16 Jul 2024 03:54:10 -0700 (PDT)
+        bh=06/mGBoVpO/E3PxYGWvGUiycM4NlfZYrcU+JP01aYB4=;
+        b=FUKyxev5t3SUSCWwsuknaW54LC8VdDZRynf4dYC26x5K3xf6NU/xB4wt/4YuvLYtgS
+         I6ZdXUtg+lRlmTGwgfusJ2hpIuh0be5y9hLYbMyiSRChbFrF6Hsct/VJlvoxmj4sK1EN
+         SrTUH3YpWia5bIcoKEq20p99UFAiQ1feWePlKel9oRvBtsI8aqa5kqeP90n5IBMyXKWF
+         Giyirghjol07A8XrtWST3cYw30/gSOJrYzLzc29p5Z0ucc7nNNlYMAIuWpYk0owft7S9
+         FVrVCsv4W4oIZEQlSMfnyHdVW4VEi1KvZ4Vr9Kb+cn0rFEOO8LU3ZJAnUGL3LKaSla4W
+         rgBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG4BboTlNrZYd7VSXv+nnP7XDOjvKjXnnpuz8EfY5LJ2nzeHKfMivsOVWYRVpnqNFMinIVdZbr5bnwGekGn58H2NCM1DFTmNUCqn7B
+X-Gm-Message-State: AOJu0Ywm4Q2E0y/Xje+jRYQwo25ZpjQKSGP/qprQkHgt/ugR8sTAzrG6
+	MohKxSpkp3lL8WfROSMlWsnBN1XkuL6WChZMqJY/ano7VEMPKW688D4CAiuf3dQ=
+X-Google-Smtp-Source: AGHT+IF3X3X7MG4NMq7wMRsdQiUSxzDLW2vp7H8VSvOxK4xUxE4UVg727QPaetSCY5evGN2ShEnrZg==
+X-Received: by 2002:a05:6000:1f8b:b0:363:776:821b with SMTP id ffacd0b85a97d-3682717a775mr1409987f8f.0.1721127253293;
+        Tue, 16 Jul 2024 03:54:13 -0700 (PDT)
 Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccbafsm8608295f8f.51.2024.07.16.03.54.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccbafsm8608295f8f.51.2024.07.16.03.54.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 03:54:10 -0700 (PDT)
+        Tue, 16 Jul 2024 03:54:12 -0700 (PDT)
 From: Rayyan Ansari <rayyan.ansari@linaro.org>
 To: devicetree@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org
@@ -81,9 +81,9 @@ Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	Niklas Cassel <cassel@kernel.org>,
 	Rob Herring <robh@kernel.org>
-Subject: [PATCH 2/3] dt-bindings: ata: qcom,ipq806x-ahci: use dtschema
-Date: Tue, 16 Jul 2024 11:46:00 +0100
-Message-ID: <20240716105245.49549-3-rayyan.ansari@linaro.org>
+Subject: [PATCH 3/3] dt-bindings: ata: qcom,apq8064-ahci: add to dtschema
+Date: Tue, 16 Jul 2024 11:46:01 +0100
+Message-ID: <20240716105245.49549-4-rayyan.ansari@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240716105245.49549-1-rayyan.ansari@linaro.org>
 References: <20240716105245.49549-1-rayyan.ansari@linaro.org>
@@ -95,144 +95,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove old text bindings and add ipq806x AHCI compatible to
-ahci-common.yaml, as well as its required properties.
+The APQ8064 SATA AHCI controller is used in apq8064.dtsi, although it
+was not documented in the old text bindings.
+Add its compatible to ahci-platform.yaml.
 
 Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 ---
- .../bindings/ata/ahci-platform.yaml           | 39 ++++++++++++++-
- .../devicetree/bindings/ata/qcom-sata.txt     | 48 -------------------
- 2 files changed, 37 insertions(+), 50 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/ata/qcom-sata.txt
+ Documentation/devicetree/bindings/ata/ahci-platform.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.yaml b/Documentation/devicetree/bindings/ata/ahci-platform.yaml
-index 358617115bb8..b103d2c44421 100644
+index b103d2c44421..51624406392a 100644
 --- a/Documentation/devicetree/bindings/ata/ahci-platform.yaml
 +++ b/Documentation/devicetree/bindings/ata/ahci-platform.yaml
 @@ -30,6 +30,7 @@ select:
            - marvell,armada-3700-ahci
            - marvell,armada-8k-ahci
            - marvell,berlin2q-ahci
-+          - qcom,ipq806x-ahci
++          - qcom,apq8064-ahci
+           - qcom,ipq806x-ahci
            - socionext,uniphier-pro4-ahci
            - socionext,uniphier-pxs2-ahci
-           - socionext,uniphier-pxs3-ahci
-@@ -45,6 +46,7 @@ properties:
+@@ -46,6 +47,7 @@ properties:
                - marvell,armada-8k-ahci
                - marvell,berlin2-ahci
                - marvell,berlin2q-ahci
-+              - qcom,ipq806x-ahci
++              - qcom,apq8064-ahci
+               - qcom,ipq806x-ahci
                - socionext,uniphier-pro4-ahci
                - socionext,uniphier-pxs2-ahci
-               - socionext,uniphier-pxs3-ahci
-@@ -64,11 +66,11 @@ properties:
- 
-   clocks:
-     minItems: 1
--    maxItems: 3
-+    maxItems: 5
- 
-   clock-names:
-     minItems: 1
--    maxItems: 3
-+    maxItems: 5
- 
-   interrupts:
-     maxItems: 1
-@@ -97,6 +99,39 @@ required:
- 
- allOf:
-   - $ref: ahci-common.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,ipq806x-ahci
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 5
-+        clock-names:
-+          items:
-+            - const: slave_iface
-+            - const: iface
-+            - const: core
-+            - const: rxoob
-+            - const: pmalive
-+        assigned-clocks:
-+          minItems: 2
-+          maxItems: 2
-+        assigned-clock-rates:
-+          items:
-+            - const: 100000000
-+            - const: 100000000
-+      required:
-+        - phys
-+        - phy-names
-+        - clocks
-+        - clock-names
-+        - assigned-clocks
-+        - assigned-clock-rates
-+
-   - if:
-       properties:
+@@ -105,6 +107,7 @@ allOf:
          compatible:
-diff --git a/Documentation/devicetree/bindings/ata/qcom-sata.txt b/Documentation/devicetree/bindings/ata/qcom-sata.txt
-deleted file mode 100644
-index 094de91cd9fd..000000000000
---- a/Documentation/devicetree/bindings/ata/qcom-sata.txt
-+++ /dev/null
-@@ -1,48 +0,0 @@
--* Qualcomm AHCI SATA Controller
--
--SATA nodes are defined to describe on-chip Serial ATA controllers.
--Each SATA controller should have its own node.
--
--Required properties:
--- compatible		: compatible list, must contain "generic-ahci"
--- interrupts		: <interrupt mapping for SATA IRQ>
--- reg			: <registers mapping>
--- phys			: Must contain exactly one entry as specified
--			  in phy-bindings.txt
--- phy-names		: Must be "sata-phy"
--
--Required properties for "qcom,ipq806x-ahci" compatible:
--- clocks		: Must contain an entry for each entry in clock-names.
--- clock-names		: Shall be:
--				"slave_iface" - Fabric port AHB clock for SATA
--				"iface" - AHB clock
--				"core" - core clock
--				"rxoob" - RX out-of-band clock
--				"pmalive" - Power Module Alive clock
--- assigned-clocks	: Shall be:
--				SATA_RXOOB_CLK
--				SATA_PMALIVE_CLK
--- assigned-clock-rates	: Shall be:
--				100Mhz (100000000) for SATA_RXOOB_CLK
--				100Mhz (100000000) for SATA_PMALIVE_CLK
--
--Example:
--	sata@29000000 {
--		compatible = "qcom,ipq806x-ahci", "generic-ahci";
--		reg = <0x29000000 0x180>;
--
--		interrupts = <0 209 0x0>;
--
--		clocks = <&gcc SFAB_SATA_S_H_CLK>,
--			 <&gcc SATA_H_CLK>,
--			 <&gcc SATA_A_CLK>,
--			 <&gcc SATA_RXOOB_CLK>,
--			 <&gcc SATA_PMALIVE_CLK>;
--		clock-names = "slave_iface", "iface", "core",
--				"rxoob", "pmalive";
--		assigned-clocks = <&gcc SATA_RXOOB_CLK>, <&gcc SATA_PMALIVE_CLK>;
--		assigned-clock-rates = <100000000>, <100000000>;
--
--		phys = <&sata_phy>;
--		phy-names = "sata-phy";
--	};
+           contains:
+             enum:
++              - qcom,apq8064-ahci
+               - qcom,ipq806x-ahci
+     then:
+       properties:
 -- 
 2.45.2
 
