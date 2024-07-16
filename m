@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-253219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10616931E43
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:05:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94088931E4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3A7282E13
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57371C21BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9694428;
-	Tue, 16 Jul 2024 01:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201DF4C98;
+	Tue, 16 Jul 2024 01:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7cdU2n6"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuOdOMhM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D3F9EB;
-	Tue, 16 Jul 2024 01:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE7617C2;
+	Tue, 16 Jul 2024 01:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091915; cv=none; b=dPn6TzEpFymeePAMZm/oR/u4St8t29y6XdJNs5wV0wmhKMMJo64MzLmM9nCuFqn/0QvPkyY8/j/VAe9c4VOyoVOF1IK4Wa8NTiyfXnb/V1662H2Nv2x2xpdeIHqt/EDvNcW7Y7khBySACByxydQE5galqwUgGd52fBHlmV9TI50=
+	t=1721092187; cv=none; b=TqTdpc820WNx7WtatStO4tYbD/2m3ijxWD8Csfzd+XBSdqf6nXLmbk4dwES65hEbFc/ruSeqBPxRd0IXZATcnbVV5e5S2G0Hnz8cF1DLwiwmahtkROt+Asf3XJSmIYapy7O3aupbe9IZowL0z9EMS1DgUc39dQCxoMiyZBNvTrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091915; c=relaxed/simple;
-	bh=9gPSAq95rNiZCXyBU3Kd6hCeOEJ2HutuI47VBsQFkI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlJ3vraF9f/aJw34ZKtydSccyeiADy2dY3Q5BGIxyy6C+VtGAEGykqlBYtJCB1Bxgp620CajtPOBOYhCkZ3uNemcKdhhI5ehk5bDeoMhosvDiVDA4QY8rDwUNJW2XXKV7RYH5+HFbAjPsJSIQlsD8/66u9YXmdDP6lvkIWT9nnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7cdU2n6; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2881670a12.1;
-        Mon, 15 Jul 2024 18:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721091913; x=1721696713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pp+fEGwUsMKJFAFFVlger+9tRuEQAUzXCtEx0rK1fiM=;
-        b=E7cdU2n6Upm6xCnLL1w5NjmUJD5TG+BuE76Z/0MX2yU5gDPiY9O1UAxmDlixH2YLnX
-         G4o799dNNMGydXTaovxMECeO2nPMZhpW/CDQl5wwR88HmFHFwmuqWaKfTSDyFv38TTH9
-         IyjIOWTfF9FKeA3rH6UCp/Z0u9ZwVJ1MmGBiOOpmBSO9z4jHBhK5WHWaZztXL7L+H0BX
-         wRuCrgloI6ID5dPcUcbSWIRqnPYB1YACId6Y64GTgH0XoS/ucl7Of4eh5dzRdPLsOMWu
-         M8SjncA6c4lUWQZsgjbWXMRwgq1iwTc+5CqKX3OINPlFORvRoISWZZ8FcJqjXr1Hmvsw
-         57hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721091913; x=1721696713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pp+fEGwUsMKJFAFFVlger+9tRuEQAUzXCtEx0rK1fiM=;
-        b=UFS7yRru1hX44zi3mwx7A659U/PgZR5pSTlhO/kFSN9+FdXsCBGVDKPwRqzSHgeYV6
-         BZOEwhfqrriDwrBDCXgT7ZwWSoO8h0uo9tgU74rizZGxbOhmi8LkK5HI3Cnmgv1AmxWC
-         TI41sS0e/sbtYTadSHYD8j9b7SsFm8FGDdIC0Nz0P6tk6aDyJkYIToHCdKCGq8crDj5/
-         imgnmbUzz6bPZTEr2BS8zWaKD7oHIYAw105eKZaalVN+Ms3eH4NEFQ5nj3IgHKCrjvL4
-         sXLRz39uhmFJ2fKR2MaSdu/bGO30SSAJM7i9NYt0aZDsxmI0X1cAOZYa4YoG3hnOltJn
-         LsNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1DaEc2Vh318ukkSuuq3Amo8RoMhGB7P8UOiFFiLsXA7dzKIFH444II/MqIXGNgvmbU6ofoLU7+RE3VIhc3ya7B0REY+2rpfF0h/xE
-X-Gm-Message-State: AOJu0Yyq/sWa0yg8MnQq2y1HL4u+oqjMi7xgYOtdZyU3bb74DgwnxtUa
-	lwOWB8VizT3qEVY3rLBzIjsNS7b9TBx8BuSqAjANodJ5KXvIF++J
-X-Google-Smtp-Source: AGHT+IGGgF7eGJU3h+t38zRil0xKHRoO/XzydhvlGw9FhA3C+gaj3VzYyzjevCA2/kXHraOzTumULA==
-X-Received: by 2002:a05:6a21:1796:b0:1c0:f48e:a5ed with SMTP id adf61e73a8af0-1c3f12719b5mr644048637.37.1721091912990;
-        Mon, 15 Jul 2024 18:05:12 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:6d45:d4db:b14d:ea69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6754sm5011506b3a.56.2024.07.15.18.05.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 18:05:11 -0700 (PDT)
-Date: Mon, 15 Jul 2024 18:05:08 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] input: use device_for_each_child_node_scoped()
-Message-ID: <ZpXHRPLJOMJ-K2jb@google.com>
-References: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
+	s=arc-20240116; t=1721092187; c=relaxed/simple;
+	bh=Q0kp7iabKKyIX54Klme9KRFmTX+5d+5P/TaWauXzIwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QUOJiXuGCBEFXwwNgN39uRWgNDi3ldUT20EdzpntVGL5+DqDGz7p/9/trrthnv4AcTpFCxb1NZltVlocnfI2SkahEmoEhgyk2Q/OXZO55+pTbq+M1ZTGK3B4qn3pQU5wxN1duYjnCYi7kMkiAe3PwXh/7zD6Ge0RTZ3eR13yT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuOdOMhM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF75AC4AF14;
+	Tue, 16 Jul 2024 01:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721092186;
+	bh=Q0kp7iabKKyIX54Klme9KRFmTX+5d+5P/TaWauXzIwc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SuOdOMhMQrBKxsDhNOE2+dxfWNQn3d9vcNUQjYyXVgZOmD9eIHi4ZHka54A9BPnqU
+	 wrPoFacpN+3Yfg+IqHwVVmeyw8su9TXlxdoVIaWsncph7s1jQMZNAAxS6iUyRXB6wF
+	 f/5hbQSSh78DanJr9xSKo5wDHY3woLJD9c1DETeDxvGJ8CAUJ//76H6+DaniOBsy6C
+	 CubIvP+gNFfEJupN9r6VkJt4KDPxU9Z9RBbv5kONoq6c4WWs1ui+VpvKH4qSdwtvIv
+	 aP4ZmhyeYhnM2o4fYhJAIm+ALc9w520XYJmooV4JSa1+/kFJmtK2cR3yXxgOi1BF4c
+	 kTLI2DQSWYRDg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea79e6979so5504582e87.2;
+        Mon, 15 Jul 2024 18:09:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVlj7mYgp2iI766vY864/v/XfLN52pbywQLXbL1doy+YBK8Qui44vDN/1UQg5sHEFd8/50+OMhWRcAT0KByx65fw1CGxhVy8wL+QFA/ojVYFCCbCzE5lCBVUz54OUhBJ557DG+mZXnqpFNPdZyS2PRDgZ+XeP5EwYy1qSaaW+EnVq466S7M4pKCP0/cglae+990Cs0OpJvhTWHIZtDOQvKw3SW79FGAkJFt2Zcm8BT73Yw4DOcNQMx/+zjGTyLKXBtC2OgtzjC7DyoAeJqO4LQ1ZZiOTXBWR+8lHS7nDm7PeYQ=
+X-Gm-Message-State: AOJu0Yx+VoKQHjyEl1qbUzpsZxyr8rF0V/zovzBPzvMUxtMadU/egISC
+	Lw7/cMPUtwBCkRDVYbCodpCWzi0HGAKkxj6Y1Bh4hnYj+TNB9MSDCSli3STepj1ZWubDcCegOxq
+	Jgogz77xK6yO6YrNHpvScGnEP5BA=
+X-Google-Smtp-Source: AGHT+IHWiEkBygbqwCGlDokgR7Nb1VQa68dIBoq67wVmj13obpWvn2q8U35d1Igma4IeakMMYKXavF2qtV7ei5Itrxo=
+X-Received: by 2002:a05:6512:3b06:b0:52c:952a:67da with SMTP id
+ 2adb3069b0e04-52edf0329c1mr316791e87.55.1721092185161; Mon, 15 Jul 2024
+ 18:09:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
+References: <20240704143611.2979589-1-arnd@kernel.org> <20240704143611.2979589-3-arnd@kernel.org>
+ <CAK7LNATLVY1xtSMVMro-KMQVPgVHoiRKGX33ajCg8ZU0-EZS2w@mail.gmail.com>
+In-Reply-To: <CAK7LNATLVY1xtSMVMro-KMQVPgVHoiRKGX33ajCg8ZU0-EZS2w@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 16 Jul 2024 09:09:33 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQuu3SBKR-Q7+njKqbXZsRgWHjfDBYgBGMbERpuqWKjew@mail.gmail.com>
+Message-ID: <CAJF2gTQuu3SBKR-Q7+njKqbXZsRgWHjfDBYgBGMbERpuqWKjew@mail.gmail.com>
+Subject: Re: [PATCH 02/17] csky: drop asm/gpio.h wrapper
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Brian Cain <bcain@quicinc.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Christian Brauner <brauner@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 12, 2024 at 10:57:29PM +0200, Javier Carrasco wrote:
-> Switch to the _scoped() version introduced in commit 365130fd47af
-> ("device property: Introduce device_for_each_child_node_scoped()")
-> to remove the need for manual calling of fwnode_handle_put() in the
-> paths where the code exits the loop early. This modification simplifies
-> the code and eliminates the risk of leaking memory if any early exit is
-> added without de-allocating the child node.
-> 
-> There are six users of the non-scoped version in the input subsystem:
-> 
-> - iqs269a
-> - qt1050
-> - gpio_keys
-> - gpio_keys_polled
-> - adc-keys
-> - adc-joystick
-> 
-> This series is based on the master branch of linux-next (next-20240412)
-> to have access to the scoped version of device_for_each_child_node().
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+On Thu, Jul 11, 2024 at 11:49=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+>
+> On Thu, Jul 4, 2024 at 11:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> w=
+rote:
+> >
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > The asm/gpio.h header is gone now that all architectures just use
+> > gpiolib, and so the redirect is no longer valid.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Applied the series (after adjusting qt1050 patch), thank you.
+> > ---
+>
+>
+> Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+>
+> >  arch/csky/include/asm/Kbuild | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuil=
+d
+> > index 1117c28cb7e8..13ebc5e34360 100644
+> > --- a/arch/csky/include/asm/Kbuild
+> > +++ b/arch/csky/include/asm/Kbuild
+> > @@ -1,7 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  generic-y +=3D asm-offsets.h
+> >  generic-y +=3D extable.h
+> > -generic-y +=3D gpio.h
+> >  generic-y +=3D kvm_para.h
+> >  generic-y +=3D mcs_spinlock.h
+> >  generic-y +=3D qrwlock.h
+> > --
+> > 2.39.2
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
--- 
-Dmitry
+
+
+--=20
+Best Regards
+ Guo Ren
 
