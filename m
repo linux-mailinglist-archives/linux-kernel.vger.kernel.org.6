@@ -1,150 +1,175 @@
-Return-Path: <linux-kernel+bounces-253769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D5F9326B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821DC9326BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CFC2847FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:37:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C18B7B22BF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DA219AA64;
-	Tue, 16 Jul 2024 12:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAAD19AA72;
+	Tue, 16 Jul 2024 12:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3PDmArl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXzN2oqs"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D997317C233;
-	Tue, 16 Jul 2024 12:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B54D19AA5B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721133432; cv=none; b=oEgz0oOFJcRkXQtsMW4v275QSaQRlVlxvTof8nD2PRY3TmKiX2GsCx6BqFOFZ08JC/GrOVuRLZAo6lH9zPDWmHhR+8xR7F71hpIiNTOpsQkoWfbGscBzLzPvkBE3ckkFC+Hz2KGBi2L/1qid2lcoUT3EXsq/698B4FF+rsaIs90=
+	t=1721133772; cv=none; b=rXwm48aeuC6MTPqsuKd14D0yKEVxyT3Ynd4jhT/yfM/lkmkTTeTN5SMiBt1Rg18LFbedF6RmVAkU19ap0IGq+KHIDIgl4ujgOrI9pRFv4YEuW1ezmsqJeTaNgehtX9idNKm7XwUTCz0dyBHUvGL+FZjmIAcKxkcMvzomwfl9VZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721133432; c=relaxed/simple;
-	bh=a3qAbusKgntIluHRD33W5ItQ8YsM9fy8EGzR2BhtmUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VZsm6Pu+ehEzbqzYBVh/T1kuyVEwZXAIoKm+oLfIEhDDidHht/Lw28yRWaUeSH4LS7zY6C/22uXFF74e4JSRs8NYj/nxW/3dkQCiy5Yx2RBqLzUli/GVXAEVjejdBtTVmrUqrIwM0ymp6ojxZO+A9YE4h9noDi9eLZCLDZN3aWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3PDmArl; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721133431; x=1752669431;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=a3qAbusKgntIluHRD33W5ItQ8YsM9fy8EGzR2BhtmUs=;
-  b=F3PDmArlKpamiRBBxKsO4JqUCDHxwmLhXXgnYqxI7f5hx78KVFxOsCDg
-   rrO0cIabFdqn+oeD3fdly++4H40dEjQgYlhlyrIUomKYAbH2TlSHJHwxn
-   dm3zYfe4Oc5MPkaik1CuMvDKiwAB368gHz1cTD9MeO49WQVQwCHQkxhRi
-   VVmrciu7Ed5xTehvy3K6RVRzYbGGA8OAh1S6uu8hNu8hLdmSSCCQH0KG6
-   fc32Auow5CaVDijGQ8VMb9uF8pj2Bj6g15a/qwYrPTX7EZIai5pKVbtKz
-   4HH7I3exCCdVQoJVr3MFex++2lZX2eRzsPlm9zUoEMz95AMgnAp/m+8zv
-   w==;
-X-CSE-ConnectionGUID: qfJpnIbYQx+NvqAS7Iwkng==
-X-CSE-MsgGUID: dCefI/n4TdK5jQwdodt+UA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18682244"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="18682244"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:37:10 -0700
-X-CSE-ConnectionGUID: ycBl0GIkTbiJtOLvCIgjPA==
-X-CSE-MsgGUID: P86ezPSVRwORv/wlLjufhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="54896455"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:37:07 -0700
-Message-ID: <398cd906-c31a-465b-9400-d8d81a3cf049@intel.com>
-Date: Tue, 16 Jul 2024 20:37:04 +0800
+	s=arc-20240116; t=1721133772; c=relaxed/simple;
+	bh=VJJZquS/P0YNc9UeBC9Nt7mXot1B5hUOhRYzxYu3GJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpcDmimlYm3D/sB5110ho3AB1A98aJ7DFOX4BLyy4cYj8T1h2i5snj7xGcp0IJEB+L1BIsUUxr8GgexSWMf8MOODpC0NFguTD0vkVjACbwx6Yyim2I4MMH71hb99gW2u+qxZp0Kq0gSn6YGfLUJVFaTWZgXeeB3hAXJAW6nx220=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXzN2oqs; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4266ea6a412so37911045e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721133769; x=1721738569; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDOFu1w1GjC5O3toNyE2qTxbfeyv2wcTcN9pFC2ABm4=;
+        b=eXzN2oqs4Aeub4OWqozwIHe2wM1yiyzl99znXTYfX8TMoSEaoLJ8ksWoD1gqvZIkEx
+         KSR/SpWB5XWNx8tfPmxQdyDJIIZKoejHSYxdUnQUvkqD/AL5HutkC9OOAB9CvzvuqfPy
+         CXwN2Ftg7Wyv6uuWW4vd0XoSBXwbCYT58xsP+EqgMlYFm50/j31AVqqgtUdbNPpbg/cj
+         rcrW9wK0/4PuztMUUlK2cko5X/SvxhHg4JBOTCnO3mKTsab+TXiBPRznNRXkd/ZXPmh+
+         qjKzAfL5aFJ76GjAVURy0fQWqXwPXUU5PDGui4+RozYLzdrqTN9scLlJhetpmpcvCQlt
+         g3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721133769; x=1721738569;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDOFu1w1GjC5O3toNyE2qTxbfeyv2wcTcN9pFC2ABm4=;
+        b=Dkb+XCJR5QU3ERjnP5Nicnvbpj+1chg9WdDkVCGeRyHb5XEUmn6Fzu1v+KMAdnH/BD
+         SmclFKBFt7es1J2V57PPzOoeFETR2KfS8Tb/g4cUvETmi4MTnp4bPNy5e7T2RnKqGLVI
+         /p1iKTtz/KzhucczcD88hlGAj5YTxr8vbRqQurLfovOBxlL7uZGqpi5r8ywcLG9StJOb
+         hHnxMkKwtu+EtS6kqd1GHZFdFWUQbe274jyMkNipUcDdODyE6zjBtWj3rO3ihW6Q5m4u
+         hA0eyjbntBw04RX4N5b7u9lEIaojMGzSDmunwmAAtCSPNZIQBHioY3YGiEAtdtl5FqRQ
+         ZCsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrnDh7BP86iMJ9bImMDcAJtQjWVfFrQOVVTAcGAcqD8Tk0gnKFfWxrxC55SLPM4ZgnNqaFBbTgiGQ9xl0BNpNBuB6WgoLM1tHk8nyx
+X-Gm-Message-State: AOJu0YyXrx5PlO/D0GXhz0A9VCSQ9ERHHQCpz3ajvAY9wtd8nWNom0fU
+	sVxOapxP0ECNlONlbtiN2/of/a7c8t+9SdXTjZhR1RDXjCAs622/Fu8Mcm+NYD0=
+X-Google-Smtp-Source: AGHT+IHVhasDFRpNi8H81iWLBfyj86iIjk8RqZ5Dg+VMsBjYFk6zW1zKZ8bejyuXVEkAukw39EHSpw==
+X-Received: by 2002:a05:600c:4455:b0:426:62c5:473e with SMTP id 5b1f17b1804b1-427ba697989mr12541385e9.26.1721133769202;
+        Tue, 16 Jul 2024 05:42:49 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:1e82:77b7:9ac1:bc6c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f259761sm157780385e9.11.2024.07.16.05.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 05:42:48 -0700 (PDT)
+Date: Tue, 16 Jul 2024 14:42:44 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH] power: supply: qcom_battmgr: return EAGAIN when firmware
+ service is not up
+Message-ID: <ZpZqxEof85jo-1K3@linaro.org>
+References: <20240715-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-16e842ccead7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] fs/file.c: add fast path in find_next_fd()
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240713023917.3967269-1-yu.ma@intel.com>
- <20240713023917.3967269-4-yu.ma@intel.com>
- <20240716111908.tocqtq435d6bc3q3@quack3>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240716111908.tocqtq435d6bc3q3@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-v1-1-16e842ccead7@linaro.org>
 
+On Mon, Jul 15, 2024 at 02:57:06PM +0200, Neil Armstrong wrote:
+> The driver returns -ENODEV when the firmware battmrg service hasn't
+> started yet, while per-se -ENODEV is fine, we usually use -EAGAIN to
+> tell the user to retry again later. And the power supply core uses
+> -EGAIN when the device isn't initialized, let's use the same return.
+> 
+> This notably causes an infinite spam of:
+> thermal thermal_zoneXX: failed to read out thermal zone (-19)
+> because the thermal core doesn't understand -ENODEV, but only
+> considers -EAGAIN as a non-fatal error.
+> 
+> While it didn't appear until now, commit [1] fixes thermal core
+> and no more ignores thermal zones returning an error at first
+> temperature update.
+> 
+> [1] 5725f40698b9 ("thermal: core: Call monitor_thermal_zone() if zone temperature is invalid")
+> 
+> Link: https://lore.kernel.org/all/2ed4c630-204a-4f80-a37f-f2ca838eb455@linaro.org/
+> Cc: stable@vger.kernel.org
+> Fixes: 29e8142b5623 ("power: supply: Introduce Qualcomm PMIC GLINK power supply")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-On 7/16/2024 7:19 PM, Jan Kara wrote:
-> On Fri 12-07-24 22:39:17, Yu Ma wrote:
->> Skip 2-levels searching via find_next_zero_bit() when there is free slot in the
->> word contains next_fd, as:
->> (1) next_fd indicates the lower bound for the first free fd.
->> (2) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
->> searching.
->> (3) After fdt is expanded (the bitmap size doubled for each time of expansion),
->> it would never be shrunk. The search size increases but there are few open fds
->> available here.
->>
->> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agreed by
->> Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
->> versions. And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
->> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
->>
->> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> Looks good. Just some code style nits below.
+The "failed to read out thermal zone (-19)" error happens on 6.10 on the
+Qualcomm X1E80100 CRD too. This patch fixes it. Thanks for looking into
+this! FWIW:
 
-Copy that, thanks Honza, I'll revise and send out updated version soon.
+Tested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-
->
->> diff --git a/fs/file.c b/fs/file.c
->> index 1be2a5bcc7c4..a3ce6ba30c8c 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -488,9 +488,20 @@ struct files_struct init_files = {
->>   
->>   static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
->>   {
->> +	unsigned int bitbit = start / BITS_PER_LONG;
->> +	unsigned int bit;
->> +
->> +	/*
->> +	 * Try to avoid looking at the second level bitmap
->> +	 */
->> +	bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
->> +				 start & (BITS_PER_LONG -1));
-> 							^^ Either
-> (BITS_PER_LONG-1) or (BITS_PER_LONG - 1) please. Your combination looks
-> particularly weird :)
->
->> +	if (bit < BITS_PER_LONG) {
->> +		return bit + bitbit * BITS_PER_LONG;
->> +	}
-> No need for braces around the above block.
->
->>   	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
->>   	unsigned int maxbit = maxfd / BITS_PER_LONG;
-> We keep declarations at the beginning of the block. Usually it keeps the
-> code more readable and the compiler should be clever enough to perform the
-> loads & arithmetics only when needed.
->
-> After fixing these style nits feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
-> 								Honza
-
-Yes, I'll polish this part of code accordingly, thanks for all the 
-comments here :)
-
+> ---
+>  drivers/power/supply/qcom_battmgr.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
+> index 46f36dcb185c..bde874b5e0e7 100644
+> --- a/drivers/power/supply/qcom_battmgr.c
+> +++ b/drivers/power/supply/qcom_battmgr.c
+> @@ -486,7 +486,7 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>  	int ret;
+>  
+>  	if (!battmgr->service_up)
+> -		return -ENODEV;
+> +		return -EAGAIN;
+>  
+>  	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+>  		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+> @@ -683,7 +683,7 @@ static int qcom_battmgr_ac_get_property(struct power_supply *psy,
+>  	int ret;
+>  
+>  	if (!battmgr->service_up)
+> -		return -ENODEV;
+> +		return -EAGAIN;
+>  
+>  	ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>  	if (ret)
+> @@ -748,7 +748,7 @@ static int qcom_battmgr_usb_get_property(struct power_supply *psy,
+>  	int ret;
+>  
+>  	if (!battmgr->service_up)
+> -		return -ENODEV;
+> +		return -EAGAIN;
+>  
+>  	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+>  		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+> @@ -867,7 +867,7 @@ static int qcom_battmgr_wls_get_property(struct power_supply *psy,
+>  	int ret;
+>  
+>  	if (!battmgr->service_up)
+> -		return -ENODEV;
+> +		return -EAGAIN;
+>  
+>  	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+>  		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+> 
+> ---
+> base-commit: 91e3b24eb7d297d9d99030800ed96944b8652eaf
+> change-id: 20240715-topic-sm8x50-upstream-fix-battmgr-temp-tz-warn-c5a2f956d28d
+> 
+> Best regards,
+> -- 
+> Neil Armstrong <neil.armstrong@linaro.org>
+> 
 
