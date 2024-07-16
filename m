@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-253806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1C5932741
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6761932749
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98EE2280CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72829283936
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36ECB19AD8A;
-	Tue, 16 Jul 2024 13:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60A519AD65;
+	Tue, 16 Jul 2024 13:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WVYznPay"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YwHb91dz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C688E20EB;
-	Tue, 16 Jul 2024 13:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF36C4D8A3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721135726; cv=none; b=dUW46tHbKaOgqMJeaIPxJn2r8kwOs/LqM6JjeQpYjZeNTNhFsBBHXx3MElD1pjYe2DVhAeaNhFBXXlx5gaJw0ur4NTV1iDseDf/TtBeRuV3HZnRvEBjJzhdxVJTDwUo2h31ukkezyLnKFzGE4oo5ubPTz7CFHxcauv96qIAXaRo=
+	t=1721135845; cv=none; b=U7bWDr9L8ciSERtFKDlfCiGCJEkMey3SU3qlqYmZnutNjO4YXLVLrIDNvs5tBOiCLeRRt7O3furMoTGsVQawMNKbAdWzdkqVsMbiYMBSr3eIZdMt8R2Ys+lgiFv0N0FMx6MjqkphhA3RmJEvWXdqkpANmg6DDjG8COWLmow00xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721135726; c=relaxed/simple;
-	bh=yFBj2Z3cTt97+mtm5CkIkh82J/HREikyWJ6CMEPIgQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mHZvpBJd8poTJOhlth+UY6Us5fUzjG5sz64iZCv8k/9nM1qCaAvlquIjr37hhk1oDEXBwcA/sAYIXHnieKF71CgmbQl3QbXmcyukl5p9v63NGQSNSLczbawd8qbJyKClz/yzwAVmFJzynofNuU+Sf4UWIhIBcOxRgdoCuJ7raIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WVYznPay; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721135723;
-	bh=yFBj2Z3cTt97+mtm5CkIkh82J/HREikyWJ6CMEPIgQI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WVYznPayrojOOlVqrvSRuo06bXr8xAjqja3DRapcN8Ehf4D7zCWn2CItmGftFXCKe
-	 o/AT2SoldnlcENIxJAQEWeaWZz/i1s0zRu/fUMnUaK+RwiS10q3pQLNW68kfLSNdjl
-	 MT0iTScsz0DQwaenSwukUk04EIaq5Jbr1ViZI7M2IQmm86UN/xevAaMH/4OntSB3Cj
-	 KyJWg/wmoC7XiLcPY/I6/FEiDiWf4rZ1bl6gbcvOVljpWsw0j1S4lmllqrje0reoZs
-	 WQGW9hb7kfpOgE+aliD7xx5ORxPk0u4HtAYVW8ytxRsgqfG5sOBOuPTkcUv6COOv5L
-	 QT2rBwm54cisQ==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 883EF3780EC6;
-	Tue, 16 Jul 2024 13:15:20 +0000 (UTC)
-Date: Tue, 16 Jul 2024 09:15:18 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Von Dentz <luiz.dentz@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v1] Bluetooth: btmtk: Fix kernel crash when entering
- btmtk_usb_suspend
-Message-ID: <5be71231-9818-479d-8592-c7c3b9722443@notapiano>
-References: <20240716074947.23073-1-chris.lu@mediatek.com>
+	s=arc-20240116; t=1721135845; c=relaxed/simple;
+	bh=Eg/lftqubvyEX5Bd60Ucs7ETOpklpI3/xFJ3osyU9aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M3LOFSCFwZSxnhk5KpA2meCaK6j/kbnPmqYHzcUs/2XDiz+Jn7sdmCURGYphmvnVtVagnEqEQE5B1MyLuGViJElhwXi8m/M+NqaAv2wM6/7N9VfbxTo6kAmnUuUs0zlDDJYIe4iltlCL5UsAyUJMd+UUXW6EfxGiE1PVK92l9qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YwHb91dz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721135842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qeViZGApj3eElsFuZdKIKlgTMa1oEImto5Da5j+IQyc=;
+	b=YwHb91dzTKu0wXjDrHVdSLAhMkoHwucctngwrZ8/PCDbzDbp/rzaQvoFbwmNnamLAWn5cs
+	24cCX3PWn/G1bWcd0y2FFimbrVEx94GPbq267Njsg2YUqo/53YPXkb9+NViZvptjChmDIB
+	Y13rbgxOZlapLfsd0MsKH6HCqSPPa+o=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-591-MiShNjCjMkyph6f9eY92YA-1; Tue, 16 Jul 2024 09:17:21 -0400
+X-MC-Unique: MiShNjCjMkyph6f9eY92YA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-367916e42d1so104251f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:17:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721135839; x=1721740639;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qeViZGApj3eElsFuZdKIKlgTMa1oEImto5Da5j+IQyc=;
+        b=BR+rk8SungBJG9ltEsXXIhEOoqlSWJqHYAuXIKQWbQ7B+VmFLLx3i/XxY5BkKPqvaa
+         zKZthMGXvoKzoMISuIK1SwNEkIU6VRLXub+hmpbqzXfA02UMp+QOV72BrUDABWQ9uxuN
+         UvqbC9c+9eMgBYDRigQHwf5Lcb/KTysebxJNTa8jHTcjhB7/JeMHrYnl3HfYPXs6/dPO
+         xbM6xYpNG1ByucG8aZC1KAet+YxgCAUoTjmbvVip+Jo1DYrbhFH7LcwfRbafMJKuTnVv
+         lABxPhMbWZ5fG22C05iEITGow+esd1NcJxE7LIV5MVh63KaEzFvZbE0vNYfCytc/VJY/
+         c3tA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCqV8OlBDVJKNsm/aB8/Cwsf+sC2Y/+FGkKbhopcdhJJDoz5F/MJ+dV5c6Z3I+ed1lBik2mrx6cHLbTBY56ACzkOoBWFi8p6BEVBXZ
+X-Gm-Message-State: AOJu0YzG4Oo0fxHD4fkTNvG8Kn5aIocyB8V+vfETtvN10yc2oJH43EEl
+	1K9vE7igVnenyH3kvdIEf5cAWdHKDoykCojXD8wpkOWfSGMUp65IpO1K4UB8H/S2BymMZwYcvyV
+	qLVKLvuCHchko8o4GLNQ0ddVv6Ax9jFg00HPzDk89H42Q7qhHBgtwkqIyPxBiEQ==
+X-Received: by 2002:a05:6000:2a4:b0:368:4c5:af4 with SMTP id ffacd0b85a97d-368240cee04mr1382612f8f.9.1721135839666;
+        Tue, 16 Jul 2024 06:17:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElLoSdJ+xIm3/ZPGhjV3ZWalyIbR92kQEiDTKB7VrzFAGFDpH1fCFbmAZ+FYNryODygsdaFw==
+X-Received: by 2002:a05:6000:2a4:b0:368:4c5:af4 with SMTP id ffacd0b85a97d-368240cee04mr1382598f8f.9.1721135839228;
+        Tue, 16 Jul 2024 06:17:19 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1738:5210::f71? ([2a0d:3344:1738:5210::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db049f6sm8947213f8f.113.2024.07.16.06.17.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 06:17:18 -0700 (PDT)
+Message-ID: <5f5f9d5e-6c2f-496a-b795-bc609cd1137b@redhat.com>
+Date: Tue, 16 Jul 2024 15:17:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716074947.23073-1-chris.lu@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next V2 0/4] Add support to PHYLINK for
+ LAN743x/PCI11x1x chips
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch, horms@kernel.org,
+ hkallweit1@gmail.com, richardcochran@gmail.com, rdunlap@infradead.org,
+ linux@armlinux.org.uk, bryan.whitehead@microchip.com, edumazet@google.com,
+ linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com
+References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 03:49:47PM +0800, Chris Lu wrote:
-> If MediaTek's Bluetooth setup is unsuccessful, a NULL pointer issue
-> occur when the system is suspended and the anchored kill function
-> is called. To avoid this, add protection to prevent executing the
-> anchored kill function if the setup is unsuccessful.
+On 7/16/24 13:33, Raju Lakkaraju wrote:
+> This is the follow-up patch series of
+> https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
 > 
-> [    6.922106] Hardware name: Acer Tomato (rev2) board (DT)
-> [    6.922114] Workqueue: pm pm_runtime_work
-> [    6.922132] pstate: 804000c9
-> (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    6.922147] pc : usb_kill_anchored_urbs+0x6c/0x1e0
-> [    6.922164] lr : usb_kill_anchored_urbs+0x48/0x1e0
-> [    6.922181] sp : ffff800080903b60
-> [    6.922187] x29: ffff800080903b60
-> x28: ffff2c7b85c32b80 x27: ffff2c7bbb370930
-> [    6.922211] x26: 00000000000f4240
-> x25: 00000000ffffffff x24: ffffd49ece2dcb48
-> [    6.922255] x20: ffffffffffffffd8
-> x19: 0000000000000000 x18: 0000000000000006
-> [    6.922276] x17: 6531656337386238
-> x16: 3632373862333863 x15: ffff800080903480
-> [    6.922297] x14: 0000000000000000
-> x13: 303278302f303178 x12: ffffd49ecf090e30
-> [    6.922318] x11: 0000000000000001
-> x10: 0000000000000001 x9 : ffffd49ecd2c5bb4
-> [    6.922339] x8 : c0000000ffffdfff
-> x7 : ffffd49ecefe0db8 x6 : 00000000000affa8
-> [    6.922360] x5 : ffff2c7bbb35dd48
-> x4 : 0000000000000000 x3 : 0000000000000000
-> [    6.922379] x2 : 0000000000000000
-> x1 : 0000000000000003 x0 : ffffffffffffffd8
-> [    6.922400] Call trace:
-> [    6.922405]  usb_kill_anchored_urbs+0x6c/0x1e0
-> [    6.922422]  btmtk_usb_suspend+0x20/0x38
-> [btmtk 5f200a97badbdfda4266773fee49acfc8e0224d5]
-> [    6.922444]  btusb_suspend+0xd0/0x210
-> [btusb 0bfbf19a87ff406c83b87268b87ce1e80e9a829b]
-> [    6.922469]  usb_suspend_both+0x90/0x288
-> [    6.922487]  usb_runtime_suspend+0x3c/0xa8
-> [    6.922507]  __rpm_callback+0x50/0x1f0
-> [    6.922523]  rpm_callback+0x70/0x88
-> [    6.922538]  rpm_suspend+0xe4/0x5a0
-> [    6.922553]  pm_runtime_work+0xd4/0xe0
-> [    6.922569]  process_one_work+0x18c/0x440
-> [    6.922588]  worker_thread+0x314/0x428
-> [    6.922606]  kthread+0x128/0x138
-> [    6.922621]  ret_from_fork+0x10/0x20
-> [    6.922644] Code: f100a274 54000520 d503201f d100a260 (b8370000)
-> [    6.922654] ---[ end trace 0000000000000000 ]---
+> Divide the PHYLINK adaptation and SFP modifications into two separate patch
+> series.
 > 
-> Fixes: ceac1cb0259d ("Bluetooth: btusb: mediatek: add ISO data transmission functions")
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> The current patch series focuses on transitioning the LAN743x driver's PHY
+> support from phylib to phylink.
+> 
+> Tested on chip PCI11010 Rev-B with Bridgeport Evaluation board Rev-1
 
-Hi Chris,
+## Form letter - net-next-closed
 
-thank you for the patch. Please add the following tags:
+The merge window for v6.11 and therefore net-next is closed for new
+drivers, features, code refactoring and optimizations. We are currently
+accepting bug fixes only.
 
-Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-Closes: https://lore.kernel.org/all/7851401b-e884-4ed4-998d-7651f427ad37@notapiano
+Please repost when net-next reopens after July 29th.
 
-Those will make it easier to find the bug report and also make sure regzbot
-closes the issue once the patch is merged.
+RFC patches sent for review only are obviously welcome at any time.
 
-I've tested this patch and indeed it fixes the issue, so please also add
+See:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+-- 
+pw-bot: defer
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
-Thanks,
-Nícolas
 
