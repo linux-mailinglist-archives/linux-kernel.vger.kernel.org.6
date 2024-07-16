@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-254319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAF09331B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:13:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EA19331BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8671C226CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9741F251CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E459619DFA6;
-	Tue, 16 Jul 2024 19:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="vrQOfBwM"
-Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3251A01B9;
+	Tue, 16 Jul 2024 19:19:24 +0000 (UTC)
+Received: from relay161.nicmail.ru (relay161.nicmail.ru [91.189.117.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAAF1A01CD;
-	Tue, 16 Jul 2024 19:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FB04D8A3;
+	Tue, 16 Jul 2024 19:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721157119; cv=none; b=IwnJPLiqZvqQzLnAeCSNi0OXcaApE+rc3OPaPOKOERSqt5b/GGMkHvHoMQgAtJWSbr0Ag5Dwm7O6/Y3d8bmDlwLFPtspvl5T0Y77xA7CWAhH2djiYeSUGGlXFpdpghnH3r8PZYr/gURWJnQGCpt7pTbM6pLKawBsVsBy3DLjOm4=
+	t=1721157563; cv=none; b=e8/goiKjvGzwZKHPuwSvfkGuwgEB+mNAoJNQmMk2ydC309lHiV8Td4NAHxfoYgUkArW1qCnbIuCuRh2shF8dWxKLSA+jTpNlGV6qQqnnJEyq5HAP9E0wsE06WzZKgCVrszkTyMSaJfrTgNCbxP9jNxXreI6fCN3J8PjZXBsm/1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721157119; c=relaxed/simple;
-	bh=eD+szWeVRX7fN+TEDsvAIa1f1bT5LvJxKW+51Ka5dpk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qk9yjMBADgI3+t/BBvuzyZVIsHQCCqe3ZHYVoKU0KW7bd1u3sD9WenfowQSuKGxktloQD2FBxi697O24ySyoQZqdH5JESLQOhpmMizwts0O3MErMm1JyT/6eo6pLh69J82LezNspI4YfYkIzGqVCBl5vzCbdPkZl0v3s479iyXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=vrQOfBwM; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Tue, 16 Jul 2024 21:11:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1721157109;
-	bh=eD+szWeVRX7fN+TEDsvAIa1f1bT5LvJxKW+51Ka5dpk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 references:reply-to:Sender:Subject:Subject:To:To;
-	b=vrQOfBwM9Usilw0NmYXsPUstMmpH1l81I3RqeOrt0yAq0DyUfVOw93Pr7qZhy3cLD
-	 E478HEYIhrwVIwUr7nkyjmZtntMqEtQpP+l6QJ1+byoFYFMzh2l9kAuHOwIyTej7ou
-	 vEHUJiLh1ERsKg48vBx/524GvMuo4rwXMDgfOuJsVs43AiGn80alk9fQH7nLiJ0Gqf
-	 02peCr6L1RjvBBVoS/wdHhLHBBxt0nGpWfpU511FcPv/qpDhH0GMXbs6SpMmG71EG8
-	 xA7qKr3r2Ph2NR79q8aU5RN6J5Ai3JFrL/xa0kuFz1ED8dUH5Ze082IfzWP5EZ49go
-	 A9z5RfzCoaPzA==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.9 000/143] 6.9.10-rc1 review
-Message-ID: <20240716191148.GA3657@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240716152755.980289992@linuxfoundation.org>
+	s=arc-20240116; t=1721157563; c=relaxed/simple;
+	bh=uOqxIR/y+C6SavkwmV0PCCVGngtLdxFEej36RUzL8Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HWGVAEN3i5FeulviBC9izG5cVVGhUhK1FJvdX8X5OXTnQItTQRcR1CD5PZGqn3OE4Nqfbp5dTyd8UChaKo3d3UXgrGArNNtS7LZsGV1Y916qM6LcUfSjTrDvMOCjFZ59V1C7LBcSB+u/sO+XquWmF5UtKYOIbRgGEBnkF5KGk/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
+Received: from [10.28.136.255] (port=4522 helo=[192.168.95.111])
+	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
+	(envelope-from <kiryushin@ancud.ru>)
+	id 1sTnha-0003cf-5l;
+	Tue, 16 Jul 2024 22:19:07 +0300
+Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO [192.168.95.111])
+	by incarp1105.mail.hosting.nic.ru (Exim 5.55)
+	with id 1sTnha-00AzYT-2J;
+	Tue, 16 Jul 2024 22:19:06 +0300
+Message-ID: <38513f97-d99a-4758-b84e-278e30f5565c@ancud.ru>
+Date: Tue, 16 Jul 2024 22:19:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716152755.980289992@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [lvc-project] [PATCH] tracing: remove unreachable trace_array_put
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: lvc-project@linuxtesting.org, linux-trace-kernel@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240712201258.99070-1-kiryushin@ancud.ru>
+ <20240712193306.3174c85e@gandalf.local.home>
+ <98c01cc6-dcee-46d0-bdc8-0e35165ec68b@ancud.ru>
+ <5ec2d185-0359-b0df-664a-d20722fe3666@ispras.ru>
+Content-Language: en-US
+From: Nikita Kiryushin <kiryushin@ancud.ru>
+In-Reply-To: <5ec2d185-0359-b0df-664a-d20722fe3666@ispras.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MS-Exchange-Organization-SCL: -1
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-> This is the start of the stable review cycle for the 6.9.10 release.
-> There are 143 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> Anything received after that time might be too late.
+On 7/16/24 12:45, Alexey Khoroshilov wrote:
+> Yes, but there is another possible modification: replacement of call to
+> nonseekable_open() by a call to some other function that returns error.
+> Current code is already ready for such modification.
 
-Hi Greg
+The change of which function is called would change the behavior indeed, but,
+TBH, I do not see it as a valid point: If we assume that nonseekable_open() changes to something else in the future, we may assume as well that some other call will be
+added later with a risk of resource leaking. This is a thing, that whoever would do
+such changes should be careful about.
 
-6.9.10-rc1 compiles, boots and runs here on x86_64
-(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
-
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+For me, the code as it is now, is not uniform with the other places that use
+nonseekable_open().
 
