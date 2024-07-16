@@ -1,110 +1,300 @@
-Return-Path: <linux-kernel+bounces-253605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6699B9323B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:15:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0059323B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 032C7B23EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326D0284BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ACE198E9F;
-	Tue, 16 Jul 2024 10:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64C41991CA;
+	Tue, 16 Jul 2024 10:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="VwSQfmY+"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OhD5dbDe"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2055.outbound.protection.outlook.com [40.107.255.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA1198E80;
-	Tue, 16 Jul 2024 10:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE871991B3;
+	Tue, 16 Jul 2024 10:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721124864; cv=pass; b=JT7XAmHfR+f7AtYXvU+6Y/a1g/n81eFnl+7SMQJtyqH7M6+Wuos92cizYQ3vSObwwz7K7UxzZw94Ln2OX/1azO0IbVIZGY6TD/7QIczNMsQEzE66+iw2Z4N5VEH9pskB7TljW+wfc6aaBsDxh0CIak+nq0ksA3eXx9tga+6qxHs=
+	t=1721124901; cv=fail; b=GwUKVFPfS25pMC1lo0sJH1u7pefEVnSwXljTqiJyyEFa/iodR9nd1ZB6uAXgfneCy9Jv0IVMpg1Lqd06c2iubKKW8mIobpJg1T3JmyyINxvczyYGbpCtXIDQGPjzcwE58Pnji+mWkDMhFAxV+oEGGrEIbEy2vnB6raEWiaoFuWY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721124864; c=relaxed/simple;
-	bh=auHXyIzMq19o3h1AQgK/QLmEH0d6gJOwKegdbLLXI04=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Dl4Lc2JjdJm1wP8H2LgBtd0txa7QTw4fYKcF0DqfIBifQuj9ltu/PgMisfDEhMCuRXeduHdqDX0Cz7XCySykrDo/ao5zoj4VkX0MfG0Oq31sa4jhnJig1dEqE0Co3vIB+ByHB1tCxLQDHHEIrD2fq11J5g8Qi4hNbszXlST0m+I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=VwSQfmY+; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WNZfz26Dbz49Pv5;
-	Tue, 16 Jul 2024 13:14:18 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1721124859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vz2BYHAepGUfzGb3RUlq/A9v/BHZkzM6AzuGybD702k=;
-	b=VwSQfmY+Sd2+2AlWuzamso5sMnjPeLMRygKFA0zfpMv+bnebNUF6be3abdDyi+TzjM85vZ
-	MXZsHUVoglqb/IUrjwH28VpkD0G5Hmj8KPvYfA22QnQdeHwO0+Eh3L0OSwSJBCoIGxZ3eX
-	eX4Xpfvo2jeKtpL9bDxEc6nH7rjl+f054tFshnLVyarIcE59NkT3pJUG1DNobRa/258tki
-	ReUsA64BPzqvPq6ucfQi7OIye8qO4VaESeL6iGs/Od72oVZ4dI/g299CORRQd4T97z0oYt
-	d+PtYg+llp83oujWPsRb8klk3dq7G9REkNhx7Tw/yUyGH+LTl9i5XsxEgTh86Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1721124859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vz2BYHAepGUfzGb3RUlq/A9v/BHZkzM6AzuGybD702k=;
-	b=v2loLBE80vmcksXCNMms9mEeGfpCza2+PN029FuHy/gCrT/66ZQ6iQnMv8BWgg0r+PaUqe
-	gyzx6oN8x/t1ilOkqhn/03VZCKIF6v5dGmgcYk+K60ok3U/ZNJPmScw3qwWxm+YYl4cB/S
-	ucD+38SckXiC3YuelheTYINIEAO/lNhxh7NoRp5wP5cXjN29nwPwUSC36mxSpKstOZKA6N
-	iEx9TYIeGmNxl9m13T5qKBZGsTh/mjNfQ3IndeLkxh8eBIkp1l5YHK0vNHuEAWR/aKYKCb
-	KfAPls43JjIyiqs7ZYpuecbvJwi7H2iwa2a8hziRo/sZjfSCyMFmfNh8few7Jw==
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1721124859; a=rsa-sha256;
-	cv=none;
-	b=WdXvUcuVyZzRufikyCshNbB1HPnUcRFSxsubQzkhpExrPfRlt/8iCvhlJMGs0l8cBdsskk
-	SnGNHB1HTy9S7jHXYm+axild+FnWTxYappghfIYXL6bG9AKwe3iTF8TVSRVJCAKNv79hPF
-	k8J2rCOfuoWELHNbb4D3szNdpMzFxVSdk52w6lC1e7DfN0ak7ZsKMJmSTnoZfsNmhwi2gy
-	tdzOrQveFgwWcVrtjP7iQUR6Pl6S3Or+Nkd7vDB01fV5OXyYhrLiGL4w5yDK2oZWkF0Mjc
-	SJktWIQoo/qR0Zf2K/7ocE6MmIwQpMgmLo3mGdyspvZwHflze5YcdPtHVZ4RoQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+	s=arc-20240116; t=1721124901; c=relaxed/simple;
+	bh=0KLQGHMC0DTDWz9zv/99XNZrt6sDQk53xBhx20AA0ik=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DQ7AM7M2kvsMMMMuFWTIw6u/Q8yc+9gbZptHuvsT9RXEhMvcpy0NzEjNdEWs+UnFhWoeUOEXY4yO3yHY7dCzsIg3Z+QviZ1UhJWrZgFh4kmP3z5krAZH/XJoSWXf0GQxCyX2sJ20ZJvSvIO1C970amrUov8JPbQ3Bh6Nv5tL7TA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OhD5dbDe; arc=fail smtp.client-ip=40.107.255.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DQEqoK++QgIZDChJuo2TC66UIX0GqyZf8CSUis7EGNwvvAb9hiUJZmRE+0WKGTIEfMVXgYHaIhov+Pc5hVrNgvvaSVwUCsJI9wG3RTo4A73ycbu4aBYhYr6OxTrnvu/ShmJIv65e5kbKc6PjVW+aI5M47ucbGBKxwSDJB+8idtQvswZMre4Fw5UaQWcYxRfOVG8BCrthZGt9j0xQP2RJj3gXGZsJpFYdFSMyObi8BM27Bug8Pjdrvhbn8iyuuuwJqyR44HpnHu0i2gFTFInx/QT+LrIqC5F7XnRuPkxjbKFAZiG5vE1yzRKLKfUUTqqUFE8NDQ+lS2qhpRh46faWpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oNqxdkREbRM04cyXKPDuLFH7D5TDZoGA2qzzvXgEa+g=;
+ b=vMtkmFMAVce5cfX+fYyqKPQqrKsnhFcaRo9pT9cvMqIFCwmjB+JA1wPmJ7rF5H6/4D7GbqolZ4pgj6zwYtkZpN2uaXVdm41N2eO8VtPPePXM07Kz+Z+onWkM/+AgKwhZFnN/Tsq3ZY1YSVMLLj13Hpk9vSK5oE70qI9zYwb9k0akuMNGCWQ4jWIinBAQDsL2xrUOBPp5+4srDjhDFUA4dXkGLy+AbMWpcEfkjqtrZhWaEtFYqUE0rnanIDk1zbY6OIr84SK9JptcE2XLNZ+BjTBDBRoaDGyhY5brmewRG9y5vmicQeCVODry4+JDu6n7v/18INYvpW3XbgiSLS8zRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oNqxdkREbRM04cyXKPDuLFH7D5TDZoGA2qzzvXgEa+g=;
+ b=OhD5dbDe/UAXh1h4ksnTqIGx0dN3wwsMRpvjRzwm/VjnQ4B+mfTU4y5yGxydA6iWwD3sw2js80aGqOamad7wtvK8GkmgZrdHQFmlBVU29t2JnljZvdf8jfm7xdYvrbLzC7dvrWvPoomtlaxzhx8NJA3c25/tLN0X1ae3N0u/DEolTQewXRn3ayZmMJEJ1In/enAZgXucxF7Zk/Jq8wza9thBnRWII9/XYX9yhd+BuQqFKVpI9jXWAbsPXdpnHm+K/6E2C3QyE5xinAJKYQKBPwzY+VYdlYwsMnKM/ZL6+ms3lfRxfD1nh1JowB82i6DNYda5s4zlg5HX/MRqK4oIHQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by KL1PR0601MB5632.apcprd06.prod.outlook.com (2603:1096:820:c6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
+ 2024 10:14:53 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 10:14:53 +0000
+Message-ID: <b18ad853-90e4-4ad7-b621-2ca8a8111708@vivo.com>
+Date: Tue, 16 Jul 2024 18:14:48 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
+ framework
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240711074221.459589-1-link@vivo.com>
+ <20240711074221.459589-2-link@vivo.com>
+ <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
+ <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
+ <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
+ <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
+ <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR02CA0024.apcprd02.prod.outlook.com
+ (2603:1096:4:195::18) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 16 Jul 2024 13:14:18 +0300
-Message-Id: <D2QVUCH4G25N.XSO2PYWM0AOR@iki.fi>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the tpmdd tree
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Jarkko Sakkinen"
- <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240716171927.46b75f4e@canb.auug.org.au>
-In-Reply-To: <20240716171927.46b75f4e@canb.auug.org.au>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|KL1PR0601MB5632:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9de9c57f-bd04-4af2-f08d-08dca580224f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UDNqcVhkSmlPUWh1OFVkSWp1Z1JHK04zR1BTNWFXUlBjLzZRdFFLSjY5MFAw?=
+ =?utf-8?B?V3F6NnNFb0N6VU5lOXkyT0QvclBWKzA3OXBiR3R2T2FkbVlmVng4eXNsL2dO?=
+ =?utf-8?B?c3hEWTRQWDZrZkNKRnQ4Z1V0RTc0MG1wNitxajh0UHNacUNvVEs0NlpXL1Ex?=
+ =?utf-8?B?Rk9zSHd5MEZTUGlmdEN4TWN4NzlTRlFQRkdPS081SjBKQVFRVUhrUjcxSXlE?=
+ =?utf-8?B?UFdhZklpQzJaUk5QQzdRcWFJMVl0c3g1SUd5Tm5PWUJkN2FFUTRnR0ozVEZK?=
+ =?utf-8?B?dkkxME95ZnlpVFZNcGZ4VzJxeFdvdU5IQW1aZitHQzA0aGNVMUZtTnZsazNi?=
+ =?utf-8?B?QTdoZ3Q3MTE5eWx6dEtQamRLYlZFQndyM0gzYjZ4SXYyMFh4bWlPRE9kOTZB?=
+ =?utf-8?B?cDRXcFluTmJrd0x3QlJBbHJZajNJMnAwRnU1YnVTcUtZVXdtQWxoLy93K01k?=
+ =?utf-8?B?RkZRTHZYRVUwc0ZlbXg1SXBoTEJtd1lHa05WanUxUTl6eDZkbnYwTm05ZDRa?=
+ =?utf-8?B?Tk5XdUI0WmdWR3N5S1BwUndwa0RzYkVsMzhRZGpHbC9WdTNrK0ZYY0JtQjZX?=
+ =?utf-8?B?TFozeDlPMEZZc1FGUnExdVQxaUxtUnoyNUIyeURpMlBlNXFvdmFSYkRKU1ZW?=
+ =?utf-8?B?Y2ZZekhVNWJ0WEtyOWlYSVV1YWc2QW50VXlBeDNvQzRPbk9ISlc4c2pzamlh?=
+ =?utf-8?B?RVo4NWVkVXRuTUx1ODkramlkTUIyYndoWGZseU55QnYydGREZWJXTlo1R0sv?=
+ =?utf-8?B?M2RpOTloZGZ6SEljWXYzck5KQzJFSDg2SzVuZThianRQM01CVnpFUG92R2lW?=
+ =?utf-8?B?eTExU3c3WEN2UjB3dVU5b0M2L0hrcWQ3U1ZIL05QWUlxeDcya1F2NGs4Zk1M?=
+ =?utf-8?B?L21EVGd0bm5NWktNQVozQlJ1cC9FaDdxTGxKelZ5QzBRK1RCOG1UbTM1eFg3?=
+ =?utf-8?B?VW1zcEJVZHlnVUlqanRoUjlLa0p4NUpCbXBmL2VRRXg1WmZDOXhCNnVKMDVQ?=
+ =?utf-8?B?dVpTREliRCtSaHd2NVljN3Y1WHZqMjVoM1pVRURqSGNNK3hDWFNXa1IxL0xs?=
+ =?utf-8?B?TU5MTmJLbkFMb2ZGcXIxL1dKT0Z1UzJoVWhhUGtVajNQT1BmZmRvcW5BdXZz?=
+ =?utf-8?B?eHZCUE1xbUVJUlhTaVZzUElwYjBpSVhIYiszemROOElWRVVVZk1FQmhURWNI?=
+ =?utf-8?B?Z0JxaWNaelRhR0NJckFBU29pSGdOaFFxRlN2NzZ4T3dFa0NTbG9lRmxWMEVl?=
+ =?utf-8?B?RUx0VDdJZit6ZnB0am9PU1c1VnpTMmE1M2l3ZThOZVlFQUVtRFBTNDg1Sytr?=
+ =?utf-8?B?WW9HVTVwdFFXMm12ZGFHdDBIR3MrSHJ1VEwyMklFajFhR1RqeHVQNFYyeG9s?=
+ =?utf-8?B?cVhGMDFueHNkT0x2dm5UbFhSVzBhVVFRVjhCRUxHbGljZWZ3VFY3bGlKMHVq?=
+ =?utf-8?B?UmpUdTJYQ1dlWE1kN28xSTBNN3pxSDVIM3h6QXJsWjRKRUYrYUcxSlZTV0hV?=
+ =?utf-8?B?ai93bFc3dFZaTlFLYjhlWGNVSVFCZUVwSVpBNUhvdXB3TkJUcXFUYitJMUpj?=
+ =?utf-8?B?aTUxYStzVkdJdzBZTFVmMnNuRnFLR2tXd28zSlRNSVdMa3ZLTS9PVmJBd1o1?=
+ =?utf-8?B?d1g2aWRkOXhqVndKd0JXOFludEN0a0lFQ2VNdmhsNy90V1UyS3pBTzNObFp4?=
+ =?utf-8?B?WWNIbDVPcTc2emNiK05CT0FSbFZDeTlvdDJTcHhIMVcwZmhmWkRzbFNJaktH?=
+ =?utf-8?B?YWNxMUFvVHJ2UWVjL1RHeDh0aEJSYmdBUXphRWp3Z0pnVTVDL1piQUdLU1Uy?=
+ =?utf-8?Q?Q4LrsIBGKA7pVHHEuzI/EkQzH6zCStxmSKaIk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OGZFSXJkeWw4N3NhaGlOMEVSTXpWZEdWbUJzM0wzRzBLaUNXWmI2OGllSTFB?=
+ =?utf-8?B?SlBiRTlFRVdRQnhtN1AyUmJnNG9yeFY1b2NkSGt3SmtxTC9nOFNTWS8rekQ0?=
+ =?utf-8?B?T0RBRUFVQ1o1VXh0VGVkVG5uWmtyNDErQjJkUXJ4SUhITVpSd2ZEQTd0Wlhy?=
+ =?utf-8?B?ZDl1cHI2L1RTcUVQUkpKbDRhU0l1Nm1yQWxpeVhWdjBELzhrWVdwVnU2d0VW?=
+ =?utf-8?B?S1pNZ1I4SThyU1RWaVQ0YkV1S1N5Tkp5YWZ2L05xQU9kWjJHdUN0OWZRdGNv?=
+ =?utf-8?B?K3VQMmprWm5oeTJaZUdtOVo0WUppN1FlQi9ra1ZHWjluM25ZWi92Tk5kWm9T?=
+ =?utf-8?B?VVlTMjlPTGxvYkcwd0xxSlJsR3dqSi80WTZEWlpNMGMvSWZKa09MTUFYOUhp?=
+ =?utf-8?B?aFliMWI1LytvR2gzQTczbHNvYjhVeXI5MitObnllZXplOXJMZlprc1QvdnNS?=
+ =?utf-8?B?a0MxamxWWEM3MW03V3lOY2UwaUtjTmxXWU83TEtsV1lxNEJHcGNnL0NYY0tX?=
+ =?utf-8?B?bzlPTTZpOVNzbUhlZy9paXowaUxUM2NudzNKVFJRT0N2bHlNNzNtQUdiYUk3?=
+ =?utf-8?B?UkJ0bzVYc200YXBKY1M0S085ZzRyQXlHVmQveHprM2ZmWEh3NHFZYnBpTmd5?=
+ =?utf-8?B?QUt3bXFOL1MxR3ZKV0ZuL2ZsR0owaGxZR3YxT3NqcEJSeG9xcjJtbHcyeUNw?=
+ =?utf-8?B?cWp3eTU1ZjY3a0dPRGZBLzlwMmcydlI1MElFMzhQamNBbnFhdnAxNDU3ODdX?=
+ =?utf-8?B?M256d2JNK3VwWk1RT2huQXVtNWozdm02eXArWHNlZWlNLy9qR3BGMEgwbW9J?=
+ =?utf-8?B?NDc4Y1hkeVZFaHZZRVFDRzNMNlpBTEJkY1lzN1h5MFhJT0hwS0I5dUdOQzFN?=
+ =?utf-8?B?d2dsUVlOWTZFMytlc0lEeTFlK1BvTm8zaHRWbFordDl0ZmV6emxwaHJaMDli?=
+ =?utf-8?B?dG42Mm9kKzVaWDdPU0xVU2gwRDVXYUJSN1hLMTM5SkZuZmsxcFVIZFBiSGlx?=
+ =?utf-8?B?ZVV0UFVGZkVQQnpVNzRmdU5XSGcreWVNeExxRy9vOU9lODNCMUFFVk56T2FZ?=
+ =?utf-8?B?dU1leTMyVGdFNGluWGdLZmlvcXRqeEdtUzJhS0t0WVRqK2NMNTY3UTZGL3U2?=
+ =?utf-8?B?cjEzMlNReWE4RkovTHM2VHU0aGdWOU9pZlJwSGM3Ky9YNDErVWZmSHlVNWZ6?=
+ =?utf-8?B?TEVIS216SitHSlYvbTAzdjladTB6QzNheFBKL255c1JtbXpUMFhNZU10TExw?=
+ =?utf-8?B?dHovaGsza1JsRVNISVdnRUlxWGFLNEMrY09jTFE4bmJrbXhaT3NpSXk2MGsw?=
+ =?utf-8?B?SHNSOVdTSS9hQmRYOFVIekx6bUhPQVlENmsrdkFCS0MrOXNnbXY2M2xacGto?=
+ =?utf-8?B?Mm41WVQvbkd3VkhacDBzTE5nSTdFT3VNRXByKy9PM0swV1ExeGhsWUUvRE1h?=
+ =?utf-8?B?ZjZQOUtCdTUzamtReXFTcGtUTWFVQVQxM0ozakFGaHpYZ1NMcithMmZkVmRu?=
+ =?utf-8?B?TmJrclpQZmtsaVAxWXhkOEN2ZTEwUHFnTlE4TXEwdEJaYXlTaXhMSVlCanp3?=
+ =?utf-8?B?dkNmdHkxTlpZMUduUTdha3JraWpYUTJUcXJiYWZFT2ZJaTlmNy9GelQvampG?=
+ =?utf-8?B?aW52cFlvMURTS2FtRmtYWDVTSHpVazBjc2dCbW93MUdXRnVEZmR1RWlvTWlV?=
+ =?utf-8?B?UU9maHBIblBjRVdwYVMvWkh4QTRJeEVlVVZxRkRFdHZYMXBMSHhVeDg4N1pH?=
+ =?utf-8?B?dmJobTFjVnJla1Z5V0VCVDVHQ2NsMTdmdHhHZFJrNVdsWkZIN1lWSnlKOFRF?=
+ =?utf-8?B?Ukc3VDR4Uzg4MUoxVlQ1R0pZNjl4ZVYwZjMvV2oxcG1PTGlpVVhQMVhCaEl0?=
+ =?utf-8?B?MllYL1prMWN6eXdWZnFBYVB1TE54NlFuRlE4MWtadU1Cc2FkaXc1YzJLRFox?=
+ =?utf-8?B?NTNsMGxUQlJjWUQyUFZSYkhab1V3QlV5cEtUU2lIME9IQytGbjR5Rytnajd0?=
+ =?utf-8?B?WGlmKzBXYWorY3Jnc3JVb0hwUTJzWklXUUNkaDdkbm5PR2tkR2oyaDR5TGxa?=
+ =?utf-8?B?bnVaM1hSeVMvbUo1YVdvOTVkcjlqdXZmUjJpeHN2cTg5Q2JXZU9tM3V1TU1s?=
+ =?utf-8?Q?YqlLHi8ThsnVR2bHtqf9sO5xf?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9de9c57f-bd04-4af2-f08d-08dca580224f
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 10:14:53.1408
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cuaqnuNSY8mK8F+3A9UZGVjxz5IEO08g3/q1fd2gKRaPHanDzuqIfUVgHHNe3Wzg7vJ5mKpvmYOV9ObtjiWVFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5632
 
-On Tue Jul 16, 2024 at 10:19 AM EEST, Stephen Rothwell wrote:
-> Hi all,
+
+在 2024/7/16 17:31, Daniel Vetter 写道:
+> [你通常不会收到来自 daniel.vetter@ffwll.ch 的电子邮件。请访问 https://aka.ms/LearnAboutSenderIdentification，以了解这一点为什么很重要]
 >
-> The following commits are also in Linus Torvalds' tree as different
-> commits (but the same patches):
+> On Tue, Jul 16, 2024 at 10:48:40AM +0800, Huan Yang wrote:
+>> I just research the udmabuf, Please correct me if I'm wrong.
+>>
+>> 在 2024/7/15 20:32, Christian König 写道:
+>>> Am 15.07.24 um 11:11 schrieb Daniel Vetter:
+>>>> On Thu, Jul 11, 2024 at 11:00:02AM +0200, Christian König wrote:
+>>>>> Am 11.07.24 um 09:42 schrieb Huan Yang:
+>>>>>> Some user may need load file into dma-buf, current
+>>>>>> way is:
+>>>>>>      1. allocate a dma-buf, get dma-buf fd
+>>>>>>      2. mmap dma-buf fd into vaddr
+>>>>>>      3. read(file_fd, vaddr, fsz)
+>>>>>> This is too heavy if fsz reached to GB.
+>>>>> You need to describe a bit more why that is to heavy. I can only
+>>>>> assume you
+>>>>> need to save memory bandwidth and avoid the extra copy with the CPU.
+>>>>>
+>>>>>> This patch implement a feature called DMA_HEAP_IOCTL_ALLOC_READ_FILE.
+>>>>>> User need to offer a file_fd which you want to load into
+>>>>>> dma-buf, then,
+>>>>>> it promise if you got a dma-buf fd, it will contains the file content.
+>>>>> Interesting idea, that has at least more potential than trying
+>>>>> to enable
+>>>>> direct I/O on mmap()ed DMA-bufs.
+>>>>>
+>>>>> The approach with the new IOCTL might not work because it is a very
+>>>>> specialized use case.
+>>>>>
+>>>>> But IIRC there was a copy_file_range callback in the file_operations
+>>>>> structure you could use for that. I'm just not sure when and how
+>>>>> that's used
+>>>>> with the copy_file_range() system call.
+>>>> I'm not sure any of those help, because internally they're all still
+>>>> based
+>>>> on struct page (or maybe in the future on folios). And that's the thing
+>>>> dma-buf can't give you, at least without peaking behind the curtain.
+>>>>
+>>>> I think an entirely different option would be malloc+udmabuf. That
+>>>> essentially handles the impendence-mismatch between direct I/O and
+>>>> dma-buf
+>>>> on the dma-buf side. The downside is that it'll make the permanently
+>>>> pinned memory accounting and tracking issues even more apparent, but I
+>>>> guess eventually we do need to sort that one out.
+>>> Oh, very good idea!
+>>> Just one minor correction: it's not malloc+udmabuf, but rather
+>>> create_memfd()+udmabuf.
+> Hm right, it's create_memfd() + mmap(memfd) + udmabuf
 >
->   46ebbf4061e2 ("KEYS: trusted: add missing MODULE_DESCRIPTION()")
->   6e9a602077a4 ("tpm_tis_spi: add missing attpm20p SPI device ID entry")
->   732cbb267287 ("char: tpm: Fix possible memory leak in tpm_bios_measurem=
-ents_open()")
->   b270b463aaad ("KEYS: encrypted: add missing MODULE_DESCRIPTION()")
+>>> And you need to complete your direct I/O before creating the udmabuf
+>>> since that reference will prevent direct I/O from working.
+>> udmabuf will pin all pages, so, if returned fd, can't trigger direct I/O
+>> (same as dmabuf). So, must complete read before pin it.
+> Why does pinning prevent direct I/O? I haven't tested, but I'd expect the
+> rdma folks would be really annoyed if that's the case ...
+>
+>> But current way is use `memfd_pin_folios` to boost alloc and pin, so maybe
+>> need suit it.
+>>
+>>
+>> I currently doubt that the udmabuf solution is suitable for our
+>> gigabyte-level read operations.
+>>
+>> 1. The current mmap operation uses faulting, so frequent page faults will be
+>> triggered during reads, resulting in a lot of context switching overhead.
+>>
+>> 2. current udmabuf size limit is 64MB, even can change, maybe not good to
+>> use in large size?
+> Yeah that's just a figleaf so we don't have to bother about the accounting
+> issue.
+>
+>> 3. The migration and adaptation of the driver is also a challenge, and
+>> currently, we are unable to control it.
+> Why does a udmabuf fd not work instead of any other dmabuf fd? That
+> shouldn't matter for the consuming driver ...
 
-Sorry, I came from holiday to fix some bugs, and forgot to update my
-tree. Now it is fixed.
+Hmm, our production's driver provider by other oem. I see many of they 
+implement
 
-BR, Jarkko
+their own dma_buf_ops.  These may not be generic and may require them to 
+reimplement.
+
+>
+>> Perhaps implementing `copy_file_range` would be more suitable for us.
+> See my other mail, fundamentally these all rely on struct page being
+> present, and dma-buf doesn't give you that. Which means you need to go
+> below the dma-buf abstraction. And udmabuf is pretty much the thing for
+> that, because it wraps normal struct page memory into a dmabuf.
+Yes, udmabuf give this, I am very interested in whether the page 
+provided by udmabuf can trigger direct I/O.
+
+So, I'll give a test and report soon.
+>
+> And copy_file_range on the underlying memfd might already work, I haven't
+> checked though.
+
+I have doubts.
+
+I recently tested and found that I need to modify many places in 
+vfs_copy_file_range in order to run the copy file range with DMA_BUF 
+fd.(I have managed to get it working,
+
+but I don't think the implementation is good enough, so I can't provide 
+the source code.)
+
+Maybe memfd can work or not, let's give it a test.:)
+
+Anyway, it's a good idea too. I currently need to focus on whether it 
+can be achieved, as well as the performance comparison.
+
+>
+> Cheers, Sima
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch/
 
