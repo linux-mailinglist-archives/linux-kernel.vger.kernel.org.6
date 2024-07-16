@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-253801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E43C93272D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A345932736
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE45EB2127F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21FF1F226B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6E119AD6F;
-	Tue, 16 Jul 2024 13:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="prCdNrql"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630C019AD5F;
+	Tue, 16 Jul 2024 13:12:27 +0000 (UTC)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FD01448ED
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44B119AD4E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721135500; cv=none; b=HbKzngVAfWiorU0LkDU+j3h+mfmA+LLeJbw2caAljM+nbtpK5k9ciM44z8byUmVehDT7L9O6JqgmFpz/3A7FkOpN9B5XDM4HaPDTMVjGWbfr8+OyAfD+6z23wuCpMe4P50tEX2VCIakR+jzax3oJLuxKnIIsEW4E4G4FyeGEG0o=
+	t=1721135547; cv=none; b=G33qEbMKIbDMWPWcIDbiHVmOuUKkic7rQdrJx9ypGb8iiCR2xFfKZLCVAG4IlN8dGC14dbeQD5TvCYzSotF9J91J0B6nEEl7/Dk5Z4YEO3V79tOLyenVhI6yRpfpumhMjVjRT8PqU+jq5hgoC3E0iY44+xPPVk3OvmUvnyU6K+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721135500; c=relaxed/simple;
-	bh=ExTw1ifcqBIk4pnEeEdEBemsyUSeC33CCBhl/Uemgzg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ftf3JA6DXDEu3JAqymNLi5EdaZz1ASwCHiNn7h8hvFv+MjovUvyPo6DsCcrXUoaamRsaiQyY7Bf8cBa0hvquH2Aaf1aZ2WWbPuFbeDltfa2osMP+8kmqRbwwDs+CaJ5Wewb5ufBiA1BDkbtw2zFRLQJDBQPkAVq23BRG9lVJ+Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=prCdNrql; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jack@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721135495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3iQxLjS4a8Zfh0TO4hBQW9tA1hT0GSokUblGYOiit1o=;
-	b=prCdNrqlzyslzD4X1onFxFMANwojouahTUwqBTmPfh7+cR57T9ajLXDUaDQPCJg7RIjOxN
-	QbyRR3MHObjdbG9DLCYSKyybQjSQk6UZXUT1lo1+Sx+m+XBxF0J8qy7Y0XgF1HkrGAJFB/
-	OfKFagRqRVU0J0KTISzqEY/74cArdZU=
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: wangjianjian0@foxmail.com
-X-Envelope-To: wangjianjian3@huawei.com
-X-Envelope-To: tytso@mit.edu
-X-Envelope-To: harshadshirwadkar@gmail.com
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Andreas Dilger <adilger@dilger.ca>,  Wang Jianjian
- <wangjianjian0@foxmail.com>,  "wangjianjian (C)"
- <wangjianjian3@huawei.com>,  Theodore Ts'o <tytso@mit.edu>,  Harshad
- Shirwadkar <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] jbd2: make '0' an invalid transaction sequence
-In-Reply-To: <20240716095201.o7kkrhfdy2bps3rw@quack3> (Jan Kara's message of
-	"Tue, 16 Jul 2024 11:52:01 +0200")
-References: <20240711083520.6751-1-luis.henriques@linux.dev>
-	<4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
-	<878qy8nem5.fsf@brahms.olymp>
-	<tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
-	<A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
-	<87ed7znf8n.fsf@linux.dev> <87wmlrkkch.fsf_-_@linux.dev>
-	<20240716095201.o7kkrhfdy2bps3rw@quack3>
-Date: Tue, 16 Jul 2024 14:11:27 +0100
-Message-ID: <87ikx5trb4.fsf@linux.dev>
+	s=arc-20240116; t=1721135547; c=relaxed/simple;
+	bh=89eKhLjmh9pK9XKXeeHqM39D1cInD+Qdggol4Xw1vBo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e42rcDs4ubxB4GDFqMDkqGvPs1iuCqQ2n2WzJTKdeAP9fjR8fouGwUi8iDcaoatfpjASRlgHnPatCx7QXtYtStKsBEqK7YOaqLrPY1R3s8zuZtLQK+RYuwMzTT5MbNcQCooo0y1grtgvl2yNKBCYnM9FXQWwx8hNs6jWHQpNw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2ada:8dc9:1826:6616])
+	by xavier.telenet-ops.be with bizsmtp
+	id oDCG2C0073EiDc401DCGf8; Tue, 16 Jul 2024 15:12:16 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sThyK-002MTq-Fh;
+	Tue, 16 Jul 2024 15:12:16 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sThya-00Fq0z-58;
+	Tue, 16 Jul 2024 15:12:16 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] firmware: qcom: QCOM_TZMEM_* should depend on QCOM_TZMEM
+Date: Tue, 16 Jul 2024 15:12:14 +0200
+Message-Id: <74947f7f132a811cc951749907b01bd25dcf23e6.1721135509.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 16 2024, Jan Kara wrote:
+The Qualcomm TrustZone interface memory allocator is specific to
+Qualcomm firmware.  Hence add a dependency on QCOM_TZMEM, to prevent
+asking the user about these options when configuring a kernel without
+Qualcomm firmware support.  Various Qualcomm drivers already select the
+main QCOM_SCM gatekeeper symbol, which in turn selects QCOM_TZMEM, so it
+is auto-enabled when needed.
 
-> On Fri 12-07-24 10:53:02, Luis Henriques wrote:
->> Since there's code (in fast-commit) that already handles a '0' tid as a
->> special case, it's better to ensure that jbd2 never sets it to that value
->> when journal->j_transaction_sequence increment wraps.
->>=20
->> Suggested-by: Andreas Dilger <adilger@dilger.ca>
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->
-> Well, sadly it isn't so simple. If nothing else, journal replay
-> (do_one_pass()) will get broken by the skipped tid as we do check:
->
->                 if (sequence !=3D next_commit_ID) {
->                         brelse(bh);
->                         break;
->                 }
->
-> So we'd abort journal replay too early. Secondly, there's also code
-> handling journal replay in libext2fs which would need to be checked and
-> fixed up. Finally, I've found code in mballoc which alternates between two
-> lists based on tid & 1, so this logic would get broken by skipping 0 tid
-> as well.
->
-> Overall, I think we might be better off to go and fix places that assume
-> tid 0 is not valid. I can see those assumptions in:
->
-> ext4_fc_mark_ineligible()
-> ext4_wait_for_tail_page_commit()
-> __jbd2_log_wait_for_space()
-> jbd2_journal_shrink_checkpoint_list()
->
-> Now I don't see it as urgent to fix all these right now. Just for this
-> series let's not add another place making tid 0 special. Later we can fix=
-up
-> the other places...
+While at it, add "Qualcomm" to the one-line summary for the choice
+option, to make it clear this is not related to generic TrustZone
+support.
 
-Yikes!  Looks like I haven't done my homework -- I should have caught at
-least one of the three breakages you point out.  Obviously, because I've
-seen this assumption in different places, I thought it would be OK.
+Fixes: 84f5a7b67b61bfeb ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/firmware/qcom/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Anyway, thanks a lot for point this out, Jan.  I'll add a new TODO to my
-list to start looking at other places that need to be fixed.
+diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+index 7f6eb41747346a4f..c607574397e9a7e7 100644
+--- a/drivers/firmware/qcom/Kconfig
++++ b/drivers/firmware/qcom/Kconfig
+@@ -15,7 +15,8 @@ config QCOM_TZMEM
+ 	select GENERIC_ALLOCATOR
+ 
+ choice
+-	prompt "TrustZone interface memory allocator mode"
++	prompt "Qualcomm TrustZone interface memory allocator mode"
++	depends on QCOM_TZMEM
+ 	default QCOM_TZMEM_MODE_GENERIC
+ 	help
+ 	  Selects the mode of the memory allocator providing memory buffers of
+-- 
+2.34.1
 
-Cheers,
---=20
-Lu=C3=ADs
 
