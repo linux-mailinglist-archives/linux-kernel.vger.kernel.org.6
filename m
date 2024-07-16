@@ -1,210 +1,175 @@
-Return-Path: <linux-kernel+bounces-254402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396B99332CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:14:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9DF9332A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD0F1C22AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD5C1F2368C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6641A0716;
-	Tue, 16 Jul 2024 20:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5706A19DF8C;
+	Tue, 16 Jul 2024 20:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="LAjrPFfX"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01rlnn2061.outbound.protection.outlook.com [40.95.54.61])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Qjt+wD3g"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDA719DF8C;
-	Tue, 16 Jul 2024 20:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.95.54.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721160868; cv=fail; b=vBPaCOKQLoNT60lANofIR8E/ylWpSrRVSTaii+asMChN6oIegrZ41V9EpDub/1zhjQwpGIthrmbGFJwjrS4VnDiGFghVssxD35LyEN5w/jh6r1J40Dd/sO3nEGhHVzauLszmWHk81o6dCCOGFM+cFI4Dx8M7+8aoae4bpukX3RE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721160868; c=relaxed/simple;
-	bh=j0QnNQkjXriMAqli4xwWART4THYaemaITYs7SJ8yimw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ljSjQB6pQngazaUnwGF6WMWMZ5zVBEQ4mP8UAOebWH9Vqjpk8NHqnwxEMpAXQ8zAUUE4SX/omEO6TQR/dasGy6s5EafI0cS968jnPaB1BmFR+k7mcRwXZFjRbMTs9s8OgSI3sqXic3h9AXk054yJGFQPGjifKPb+OCVrlSl7XwY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=LAjrPFfX; arc=fail smtp.client-ip=40.95.54.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wySUfAeACtb38SFGbYalLqe2uD1DQV5Y+D1aeVSnvMoVFxPbwnP5dVym+ZcvDxatbKxijAK3GjokAEDs8p6hjsINELl09h8eTSclJV5zy3Ee31EqWrUwbl7gMtxHDSZAwff+p4m6oGNJfm0LP5lQdBhdNMqtzws0kCzYpt0UsrQ05dy3KDk/uhllzZpWE5LoyKmlplwTv9DTyz19FsgbzlTjFoRVDw5twe0H+eMgbq/ZOB4ze3ThBFSp7QTebvJOyeWRAjjW39FCl9vGoeuDcWLgeazSPNpJR1WBCfQ5CmgKtQ7s4LiNd7kelUoORkMz8obfbe07MJ/a7CDWII9qdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=USfhtjwCFsWwinLs7bv4By5l28cZ86qv9uou5oNgcfU=;
- b=jHraYtuCV7XRiD5iHKKqhUoh9gt/rlStCHa86wU/VlmFsDz6m7+r95doqCx8gdrQcwn48t/P9RDvswQbwSR8l/wX4L9o4tUAE+s6PwOPIVb7XWLHW7MRR2Kz1iC9jDgs37o3EEoALrUfqL6oUIcR9pNcLgH1uqqqs+wlEEWdxELkCSnt8FDwZdFPbpJNd6V3wpVVjoQTE9G84nhDFXCEDzkQe1JjIZ5W5mSgscIE/HtElnqjxNz0VEvBt6uWUzzH+lhoCfsZ/AmSn2inqqdjJVlxVcWdLRX2ZFfn41qdk6/IcfNQ1WJimTAQ5hTtyTAhbPpQciA/jtrQu4vWYvsK5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 175.98.123.7) smtp.rcpttodomain=gmail.com smtp.mailfrom=taln60.nuvoton.co.il;
- dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=USfhtjwCFsWwinLs7bv4By5l28cZ86qv9uou5oNgcfU=;
- b=LAjrPFfXNFXL2aLN03CXsTwM+FlfSkRJz9/Fd1XZmWluVztcGTABXVDEA5gdPFu3wo5VRqKa8xBUKh75wschAL1OLDOogTE2S91r2Swy/Od03cr33Hnu+zXynNZnovaYDshsSYMFvCQM/avrjyun8Kdj7wBqHLtLBX9qWOLLmXo=
-Received: from SG2PR06CA0202.apcprd06.prod.outlook.com (2603:1096:4:1::34) by
- KL1PR03MB8756.apcprd03.prod.outlook.com (2603:1096:820:132::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7762.28; Tue, 16 Jul 2024 19:40:18 +0000
-Received: from HK2PEPF00006FAF.apcprd02.prod.outlook.com
- (2603:1096:4:1:cafe::4d) by SG2PR06CA0202.outlook.office365.com
- (2603:1096:4:1::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
- Transport; Tue, 16 Jul 2024 19:40:17 +0000
-X-MS-Exchange-Authentication-Results: spf=none (sender IP is 175.98.123.7)
- smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
- designate permitted sender hosts)
-Received: from NTHCCAS02.nuvoton.com (175.98.123.7) by
- HK2PEPF00006FAF.mail.protection.outlook.com (10.167.8.5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Tue, 16 Jul 2024 19:40:16 +0000
-Received: from NTHCML01A.nuvoton.com (10.1.8.177) by NTHCCAS02.nuvoton.com
- (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
- 2024 03:40:12 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01A.nuvoton.com
- (10.1.8.177) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
- 2024 03:40:12 +0800
-Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 17 Jul 2024 03:40:12 +0800
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 6E2265F642;
-	Tue, 16 Jul 2024 22:40:11 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 6A5B9DC0BCE; Tue, 16 Jul 2024 22:40:11 +0300 (IDT)
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
-	<joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
-	<benjaminfair@google.com>
-CC: <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
-	<tmaimon77@gmail.com>
-Subject: [PATCH v2 4/7] pinctrl: nuvoton: npcm8xx: add gpi35 and gpi36
-Date: Tue, 16 Jul 2024 22:40:05 +0300
-Message-ID: <20240716194008.3502068-5-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240716194008.3502068-1-tmaimon77@gmail.com>
-References: <20240716194008.3502068-1-tmaimon77@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5009F41C7F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721160342; cv=none; b=e/Yzvy1/bwitd66uT7G47SgsHjyheCf5NxsO3FIPKgYvDU9pDT59uBEHTsGnfylBItlx5pSIBxLwTVrcOYjiJNUY+hdZ7UkWy/jvflHpSf7tcpStJpRLusq3RxlErZLITRCZgcVrNwyq6gTyHC8vjdMMTqIg97F+K5K57bx5bCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721160342; c=relaxed/simple;
+	bh=6c/U6i9C9qUTRmjPlMdW5T8LBDogRxmEOQNNMUbLuQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sKkNKf5S572DEXkMgkFORPD5uCOmt6tZj8FQJ/7o2+rMp2JEhJH+DTppyg96TE7AisuCR+wUShPimiQczohsi/48hCkh6Wu6OIAueN/8dQ+Vs3X1rzdPwM/Z5NX84SK+AKCenQXFgo80Vp2o99UUQiSgKwyOZumrQ5R+tA2/1CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Qjt+wD3g; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1721160332;
+	bh=6c/U6i9C9qUTRmjPlMdW5T8LBDogRxmEOQNNMUbLuQE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Qjt+wD3gW7GBDzgrZCjslJXNsa+FjWwCRWGZs2dpVVwnYmrRZQX1LqtzKsYV1h0OS
+	 bgDYNvysiHH3TVv2bmdfU/1yWTrN0IM6RYY1/F5s6vfS51vOizjyywl9xJIkXiajsA
+	 EM7MYiDlaBjITgVltaVGZJeVzqAyUVNH8iBE4CRaMW9OPXiVHjN6ZnwO0slII4ffhK
+	 IB+jDlqcY/sgJKbto9g/rTzrQ/LBp+d6Hc+qduXNSrVV5WofqK40CV6eVKf9xlH6n/
+	 w+I8MAgM1c0F+svo2mWbBdXgaEWv6cz14rdLikpl71N3kpr8yPxd/hvQgBxdDEXl8/
+	 9mtEAeTB+cLWA==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WNqn83hByz1CSc;
+	Tue, 16 Jul 2024 16:05:32 -0400 (EDT)
+Message-ID: <a71100aa-ffe4-477e-814a-1564e00cb067@efficios.com>
+Date: Tue, 16 Jul 2024 16:05:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FAF:EE_|KL1PR03MB8756:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d29b46b-6df6-4864-0e2f-08dca5cf1e29
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7093399012|61400799027|35950700016|48200799018|376014|82310400026|7416014|921020|35450700002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A0LkJqoB5yBtolHt5bDnDpKwsAR10wjFQVieGiWTbPlqpIeAHPOkcJcJKy4R?=
- =?us-ascii?Q?xCgdIcNGShsnp0zpv0X1MfI8FbIMtAgLKNA/DGLSmUULEB/n3n3Tum7rNLbB?=
- =?us-ascii?Q?74f9p7SquK//izfqjRshhoeS9wb85CbeOhVhEXlzhDWcAwCJ1rvADIgS9K3c?=
- =?us-ascii?Q?P2R4c0OIsNyrEu05CFZkcyXpGG5Bq03doX5IhoCRDn8CjUnE2YI9ETraN+Fn?=
- =?us-ascii?Q?T3oToIiG8nG27/cgWrThrDq2Nt3/KxtFq5mSaWfIZQL2qCts25XpLctvO4wE?=
- =?us-ascii?Q?QgxupAWDxKPZAPY4y+yfJOUqbcqLB6f2QcV+QXlF+z2gIYKONAvX5aHOMg/u?=
- =?us-ascii?Q?POL5mL/Jo8nhinpWVfo/TR2hpI5+veebjlCzpxXf/caX26SEpmpP+NxCsWh5?=
- =?us-ascii?Q?LGPzN4tsQL1FgccLi7hdvLuaueBG7FCp3eKXpcCMhu8ZuY1cdddr2s3jSJ6S?=
- =?us-ascii?Q?jqdZkuzJ3y/wPL/FOe3N5SkMhJqYt1O9qHmR08/0U6vSVMl/m05kHZKXRqkb?=
- =?us-ascii?Q?MSn26vbHqRNM+mK0fzzoVMPnEpUCVeCcc4hyACkfuXFUZZ+UqEmYmbyu+K75?=
- =?us-ascii?Q?8LWFwYs+K72H5nM2RY7cfVbzYU9A1z7PFcFFjbmCAfKMK0L0Vb2xNs5ehmmo?=
- =?us-ascii?Q?9n1R3VWVdoe+ZGwqscQ7rxLk7uKdchdfOtx9GEwVP8HY5Vz2dNMjpjxKhR+V?=
- =?us-ascii?Q?NSRfZG4WFc61djZV1r8ekY7DliCMkktC+yDE9GZlFlRIAIC9DaZs/We+6u8w?=
- =?us-ascii?Q?u+1x4YbGfJ2R6u6MezIH5Hunkp+fYek4NBMqPOTDS0a12mWW3XMfyltGsBKw?=
- =?us-ascii?Q?vvP6ZOoYFsdd2+mQ2ZythdZjYjK7jvyHnByLne+INjKWzoUSaEJw+pYhSY01?=
- =?us-ascii?Q?Tudu4dB1jZn0ohNDYBL5Y+k66/1LRpV3x3bCawLcBNjTt0v265y8ViEbpYZ1?=
- =?us-ascii?Q?WJpuUmIUDDG+QuNVRcsrEVEioBScDTmvzofUDuC/CNghrxwVGjOmj0t/51+t?=
- =?us-ascii?Q?f3htshUAN4e9G7KZkh8S+u0GFRTnHy8APUn1AxGK5bnJ+EAYWhbzV57RWeYE?=
- =?us-ascii?Q?D6RqvZiy6YXehs0HjMaRTllS6dZNaQ9Zo9PIIMkNNRaXuF5q4F08vVSbk/BG?=
- =?us-ascii?Q?I7F5SLH0ztuvc8zyLkqgS9Rm4GXVuK/w/7kS/Ke3FrWcw2zsaYiBz2J9SATV?=
- =?us-ascii?Q?98udLZO+/DR7bUxYz6uaaw1K2Z6BxhdA0vOlyYW82PaqfO+oYQfCBrWyDOfk?=
- =?us-ascii?Q?rFlJzzMP6vAQpxwSafMUpGyGSlcHBAWXFzaB1OyJOoU5CYpICOKPUjS1VEle?=
- =?us-ascii?Q?ijyUjFKDKjPjrpbvQu51wnrQHgBcZFswhYl4pIQQPmszRRIh63thSWJRlqZT?=
- =?us-ascii?Q?/pVmieVxqnDW87YxGEJsyRFcin8bX/c3y3aRfPN/Rmh5oIkGsQDlHoolIhGy?=
- =?us-ascii?Q?+x2MRSLyU+Tde3rN0RMDJpq1qVZ1jLfDVTIfo6zbCaAififF6kItIv4nw6PE?=
- =?us-ascii?Q?Dfvn4KMQJPo3fsA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS02.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230040)(7093399012)(61400799027)(35950700016)(48200799018)(376014)(82310400026)(7416014)(921020)(35450700002);DIR:OUT;SFP:1022;
-X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 19:40:16.2275
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d29b46b-6df6-4864-0e2f-08dca5cf1e29
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[175.98.123.7];Helo=[NTHCCAS02.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK2PEPF00006FAF.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8756
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] ring-buffer: Updates for 6.11
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Thorsten Blum <thorsten.blum@toblux.com>
+References: <20240716155118.152dea35@rorschach.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240716155118.152dea35@rorschach.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch adds support for GPIO pins GPI35 and GPI36 on the Nuvoton
-NPCM8xx BMC SoC.
+On 2024-07-16 15:51, Steven Rostedt wrote:
+> 
+> 
+> Linus,
+> 
+> tracing/ring-buffer: Have persistent buffer across reboots
 
-The pins are configured for only for input.
+Hi Steven,
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Perhaps I'm missing something here, but we discussed previously that
+you would document the fact that users of this feature are expected
+to run the same kernel before/after reboot.
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index 7985400de12a..4e02d1a68f39 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -316,8 +316,8 @@ static struct irq_chip npcmgpio_irqchip = {
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
- 
--static const int gpi36_pins[] = { 58 };
--static const int gpi35_pins[] = { 58 };
-+static const int gpi36_pins[] = { 36 };
-+static const int gpi35_pins[] = { 35 };
- 
- static const int tp_jtag3_pins[] = { 44, 62, 45, 46 };
- static const int tp_uart_pins[] = { 50, 51 };
-@@ -1358,6 +1358,8 @@ static const struct npcm8xx_pincfg pincfg[] = {
- 	NPCM8XX_PINCFG(32,	spi0cs1, MFSEL1, 3,	smb14b, MFSEL7, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(33,	i3c4, MFSEL6, 10,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(34,	i3c4, MFSEL6, 10,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(35,	gpi35, MFSEL5, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
-+	NPCM8XX_PINCFG(36,	gpi36, MFSEL5, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
- 	NPCM8XX_PINCFG(37,	smb3c, I2CSEGSEL, 12,	smb23, MFSEL5, 31,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(38,	smb3c, I2CSEGSEL, 12,	smb23, MFSEL5, 31,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(39,	smb3b, I2CSEGSEL, 11,	smb22, MFSEL5, 30,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-@@ -1603,6 +1605,8 @@ static const struct pinctrl_pin_desc npcm8xx_pins[] = {
- 	PINCTRL_PIN(32, "GPIO32/SMB14B_SCL/SPI0_nCS1"),
- 	PINCTRL_PIN(33, "GPIO33/I3C4_SCL"),
- 	PINCTRL_PIN(34, "GPIO34/I3C4_SDA"),
-+	PINCTRL_PIN(35, "MCBPCK/GPI35_AHB2PCI_DIS"),
-+	PINCTRL_PIN(36, "SYSBPCK/GPI36"),
- 	PINCTRL_PIN(37, "GPIO37/SMB3C_SDA/SMB23_SDA"),
- 	PINCTRL_PIN(38, "GPIO38/SMB3C_SCL/SMB23_SCL"),
- 	PINCTRL_PIN(39, "GPIO39/SMB3B_SDA/SMB22_SDA"),
-@@ -2037,7 +2041,7 @@ static int npcm8xx_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	const unsigned int *pin = &offset;
- 	int mode = fn_gpio;
- 
--	if (pin[0] >= 183 && pin[0] <= 189)
-+	if ((pin[0] >= 183 && pin[0] <= 189) || pin[0] == 35 || pin[0] == 36)
- 		mode = pincfg[pin[0]].fn0;
- 
- 	npcm8xx_setfunc(npcm->gcr_regmap, &offset, 1, mode);
+Looking at this PR, I fail to find that documentation, or in fact
+any documentation at all. Is this something that was overlooked ?
+
+Thanks,
+
+Mathieu
+
+> 
+> This allows for the tracing instance ring buffer to stay persistent across
+> reboots. The way this is done is by adding to the kernel command line:
+> 
+>    trace_instance=boot_map@0x285400000:12M
+> 
+> This will reserve 12 megabytes at the address 0x285400000, and then map
+> the tracing instance "boot_map" ring buffer to that memory. This will
+> appear as a normal instance in the tracefs system:
+> 
+>    /sys/kernel/tracing/instances/boot_map
+> 
+> A user could enable tracing in that instance, and on reboot or kernel
+> crash, if the memory is not wiped by the firmware, it will recreate the
+> trace in that instance. For example, if one was debugging a shutdown of a
+> kernel reboot:
+> 
+>   # cd /sys/kernel/tracing
+>   # echo function > instances/boot_map/current_tracer
+>   # reboot
+> [..]
+>   # cd /sys/kernel/tracing
+>   # tail instances/boot_map/trace
+>         swapper/0-1       [000] d..1.   164.549800: restore_boot_irq_mode <-native_machine_shutdown
+>         swapper/0-1       [000] d..1.   164.549801: native_restore_boot_irq_mode <-native_machine_shutdown
+>         swapper/0-1       [000] d..1.   164.549802: disconnect_bsp_APIC <-native_machine_shutdown
+>         swapper/0-1       [000] d..1.   164.549811: hpet_disable <-native_machine_shutdown
+>         swapper/0-1       [000] d..1.   164.549812: iommu_shutdown_noop <-native_machine_restart
+>         swapper/0-1       [000] d..1.   164.549813: native_machine_emergency_restart <-__do_sys_reboot
+>         swapper/0-1       [000] d..1.   164.549813: tboot_shutdown <-native_machine_emergency_restart
+>         swapper/0-1       [000] d..1.   164.549820: acpi_reboot <-native_machine_emergency_restart
+>         swapper/0-1       [000] d..1.   164.549821: acpi_reset <-acpi_reboot
+>         swapper/0-1       [000] d..1.   164.549822: acpi_os_write_port <-acpi_reboot
+> 
+> On reboot, the buffer is examined to make sure it is valid. The validation
+> check even steps through every event to make sure the meta data of the
+> event is correct. If any test fails, it will simply reset the buffer, and
+> the buffer will be empty on boot.
+> 
+> 
+> Please pull the latest ring-buffer-v6.11 tree, which can be found at:
+> 
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> ring-buffer-v6.11
+> 
+> Tag SHA1: d3d32acdae295a7eb0600aa878ff33f4fe52460d
+> Head SHA1: b96c312551b241bc17226c5347c6d6b38a1efd3e
+> 
+> 
+> Dan Carpenter (1):
+>        tracing: Fix NULL vs IS_ERR() check in enable_instances()
+> 
+> Steven Rostedt (Google) (13):
+>        ring-buffer: Allow mapped field to be set without mapping
+>        ring-buffer: Add ring_buffer_alloc_range()
+>        ring-buffer: Add ring_buffer_meta data
+>        tracing: Implement creating an instance based on a given memory region
+>        ring-buffer: Add output of ring buffer meta page
+>        ring-buffer: Add test if range of boot buffer is valid
+>        ring-buffer: Validate boot range memory events
+>        tracing: Add option to use memmapped memory for trace boot instance
+>        ring-buffer: Save text and data locations in mapped meta data
+>        tracing/ring-buffer: Add last_boot_info file to boot instance
+>        tracing: Handle old buffer mappings for event strings and functions
+>        tracing: Update function tracing output for previous boot buffer
+>        tracing: Add last boot delta offset for stack traces
+> 
+> Thorsten Blum (1):
+>        ring-buffer: Use vma_pages() helper function
+> 
+> ----
+>   Documentation/admin-guide/kernel-parameters.txt |   9 +
+>   include/linux/ring_buffer.h                     |  20 +
+>   kernel/trace/ring_buffer.c                      | 886 +++++++++++++++++++++---
+>   kernel/trace/trace.c                            | 244 ++++++-
+>   kernel/trace/trace.h                            |  10 +-
+>   kernel/trace/trace_output.c                     |  12 +-
+>   6 files changed, 1061 insertions(+), 120 deletions(-)
+> ---------------------------
+
 -- 
-2.34.1
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
