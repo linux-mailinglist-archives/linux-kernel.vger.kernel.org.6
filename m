@@ -1,91 +1,169 @@
-Return-Path: <linux-kernel+bounces-253974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE44932989
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8172C932997
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D17B22850
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:46:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1CC0B20DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F5919EEB3;
-	Tue, 16 Jul 2024 14:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D4E19E827;
+	Tue, 16 Jul 2024 14:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXFKDoNn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FefoqI0J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0FD25761
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB89319CD0F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721140831; cv=none; b=rAopo1RlROfeeVGuJT5J2MSjmiO9X0ghdjgC+NtUdhkmU4XEaJruAmhQTqdvCyalgyHFHf8n09kiImIMXEo2cLx7f61enwYsxxSAJXJijM1+XCXJl569iUp9iig0oXMqIYNJGIAlDgaBB/GjLAMHeZi5Ko4CALEwvWiL9VWUK7E=
+	t=1721141090; cv=none; b=gsNAsMXyA4NrFJZqrAzYzOzL0xC7XlPBtDPwhn+PIFoZN0ULzRvehbgfSzRHwoxzDd4s6cH855TiK+Blq7hz+IHAgmas/EtSJeNpR7vUjvl/HcTt2BjFqvGq9iOidEAkAnR9q4xtxjjYNprHRnhw/tk4LRjSuYqR+IUiH5OKoTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721140831; c=relaxed/simple;
-	bh=PBO2ewmeUiu1P2OlbjXR95+ysrCUmj5kcHJz80vh+z0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SDaLE6wqPQjWWGfidoS+CvUC22phQtYPgFOAu6RbhHJXDQ/XUApQG4s6H7L8QaQZtzfA4aFdv50IrdANkTjm8Nq/k0DRQ0vjcA0WLVRT230aZy9fZOU7dkOpVWKKMRfRiAkUIqQzseRQuRVBj+EnmcC9xYhmL8t2E4ryWl7A5SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXFKDoNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1678BC4AF09;
-	Tue, 16 Jul 2024 14:40:31 +0000 (UTC)
+	s=arc-20240116; t=1721141090; c=relaxed/simple;
+	bh=H4NquPLU96OgxyfbuAsKR5J5KG7JvsxSWW0kdaj4CrI=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=aLZv3QK7hz+TrTzZ+R4OZJY1qCZqnTWylS9VpmM5g2KuMH6Xs3t4Srvcl68FKgUZl0M3oj/WVI+nFw57eWlI/9L8uD1p+c10Mi1jUZrLjFNn7I3AUrLq0bZf2d9/WxhjIJyhU5rhrleJo27mukHVmGiFUjpAP1k7B3My2XjtzV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FefoqI0J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 891C4C4AF0F;
+	Tue, 16 Jul 2024 14:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721140831;
-	bh=PBO2ewmeUiu1P2OlbjXR95+ysrCUmj5kcHJz80vh+z0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iXFKDoNnFuP665VsBRXxF8xlf376tP8d2FC5GrxB23OTheD3tfNcfcLHUDfzY0FH6
-	 ++59NLPgiZsm3sXbj3UGZ4TsXvFRM8PzlDP1PSdqt84zwt7kBu3sZkzekAzoweXfEB
-	 CNyuJh7QPGgT4xeCevJ2Hff1BUXLbWdLz5GyXG/tQCZ6z5TuMLcxlbutA5vKgMEd2D
-	 VadDONiLvVkHpAzi1MalVTEXAecJ/cw+4G7bjubytFy7FkVNQOzwakTiGGrlihQ78Z
-	 aFy+e/qY7tbYWHZZqCqdzVUqBYmut9Om5+6KUKrFZIY8ezVa47sFUOr8T5t4CfP/kW
-	 gsNm4Y+bSe3Tw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 02CB0C4332E;
-	Tue, 16 Jul 2024 14:40:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721141089;
+	bh=H4NquPLU96OgxyfbuAsKR5J5KG7JvsxSWW0kdaj4CrI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FefoqI0JIwHyhJ5ltT6vZLouzs2tu7aFi3uWWspvlAMp0iuBEn65FdUsS5+6f4tjW
+	 +MdF8NBw7Wpbj4GlY6BhDribawevbeY+l7gok1s3wg742IKrIeIttvjkDsvNroobQn
+	 HVLSmqsYa/Qot3M9+LeZyOj1TUkeMOAEUIVh3W9h4Ts5cznmqtrg5uhmK/EmcTpeK1
+	 8x0y79hWZMJQ2gQA9E9Q3astCkPGT77KWn3hjpbG8B7Ss4Po13ucN7a9SWbZ50MMES
+	 2uAFmQRGmp/4dIm1IVwsvKc1TxP72svERxgV2DuNlNvUfJfU/Ppc+hJDvD42Y1TAzp
+	 wg3Psx5jHt3og==
+Date: Tue, 16 Jul 2024 23:44:45 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jeff Johnson
+ <quic_jjohnson@quicinc.com>, Jiri Olsa <jolsa@kernel.org>, Masami Hiramatsu
+ (Google) <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Updates for v6.11
+Message-Id: <20240716234445.a17a40e8d3d7b4ba5cef949e@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] riscv: lib: relax assembly constraints in hweight
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172114083100.24303.3143384859191995319.git-patchwork-notify@kernel.org>
-Date: Tue, 16 Jul 2024 14:40:31 +0000
-References: <20240527092405.134967-1-dqfext@gmail.com>
-In-Reply-To: <20240527092405.134967-1-dqfext@gmail.com>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
- xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+Hi Linus,
 
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+Probes updates for v6.11:
 
-On Mon, 27 May 2024 17:24:04 +0800 you wrote:
-> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> 
-> rd and rs don't have to be the same. In some cases where rs needs to be
-> saved for later usage, this will save us some mv instructions.
-> 
-> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
-> 
-> [...]
+Uprobes:
+- x86/shstk: Make return uprobe work with shadow stack.
+- Add uretprobe syscall which speeds up the uretprobe 10-30% faster. This
+  syscall is automatically used from user-space trampolines which are
+  generated by the uretprobe. If this syscall is used by normal
+  user program, it will cause SIGILL. Note that this is currently only
+  implemented on x86_64.
+  (This also has 2 fixes for adjusting the syscall number to avoid conflict
+   with new *attrat syscalls.)
+- uprobes/perf: fix user stack traces in the presence of pending uretprobe.
+  This corrects the uretprobe's trampoline address in the stacktrace with
+  correct return address.
+- selftests/x86: Add a return uprobe with shadow stack test.
+- selftests/bpf: Add uretprobe syscall related tests.
+  . test case for register integrity check.
+  . test case with register changing case.
+  . test case for uretprobe syscall without uprobes (expected to be failed).
+  . test case for uretprobe with shadow stack.
+- selftests/bpf: add test validating uprobe/uretprobe stack traces
+- MAINTAINERS: Add uprobes entry. This does not specify the tree but to
+  clarify who maintains and reviews the uprobes.
 
-Here is the summary with links:
-  - [v2] riscv: lib: relax assembly constraints in hweight
-    https://git.kernel.org/riscv/c/93b63f68d00a
+Kprobes:
+- tracing/kprobes: Test case cleanups. Replace redundant WARN_ON_ONCE() +
+  pr_warn() with WARN_ONCE() and remove unnecessary code from selftest.
+- tracing/kprobes: Add symbol counting check when module loads. This
+  checks the uniqueness of the probed symbol on modules. The same check
+  has already done for kernel symbols.
+  (This also has a fix for build error with CONFIG_MODULES=n)
 
-You are awesome, thank you!
+Cleanup:
+- Add MODULE_DESCRIPTION() macros for fprobe and kprobe examples.
+
+
+Please pull the latest probes-v6.11 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-v6.11
+
+Tag SHA1: aa4c31f7638918b4fe22ccea2bc9469721ee95cd
+Head SHA1: c26b1b89b8a9fd8665e79cd798bd970e233772b6
+
+
+Andrii Nakryiko (2):
+      perf,uprobes: fix user stack traces in the presence of pending uretprobes
+      selftests/bpf: add test validating uprobe/uretprobe stack traces
+
+Jeff Johnson (2):
+      fprobe: add missing MODULE_DESCRIPTION() macro
+      samples: kprobes: add missing MODULE_DESCRIPTION() macros
+
+Jiri Olsa (10):
+      x86/shstk: Make return uprobe work with shadow stack
+      uprobe: Wire up uretprobe system call
+      uprobe: Add uretprobe syscall to speed up return probe
+      selftests/x86: Add return uprobe shadow stack test
+      selftests/bpf: Add uretprobe syscall test for regs integrity
+      selftests/bpf: Add uretprobe syscall test for regs changes
+      selftests/bpf: Add uretprobe syscall call from user space test
+      selftests/bpf: Add uretprobe shadow stack test
+      uprobe: Change uretprobe syscall scope and number
+      selftests/bpf: Change uretprobe syscall number in uprobe_syscall test
+
+Masami Hiramatsu (Google) (5):
+      tracing/kprobe: Integrate test warnings into WARN_ONCE
+      tracing/kprobe: Remove cleanup code unrelated to selftest
+      tracing/kprobes: Add symbol counting check when module loads
+      tracing/kprobes: Fix build error when find_module() is not available
+      MAINTAINERS: Add uprobes entry
+
+----
+ MAINTAINERS                                        |  13 +
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/x86/include/asm/shstk.h                       |   4 +
+ arch/x86/kernel/shstk.c                            |  16 +
+ arch/x86/kernel/uprobes.c                          | 124 ++++++-
+ include/linux/syscalls.h                           |   2 +
+ include/linux/uprobes.h                            |   3 +
+ include/uapi/asm-generic/unistd.h                  |   5 +-
+ kernel/events/callchain.c                          |  43 ++-
+ kernel/events/uprobes.c                            |  33 +-
+ kernel/sys_ni.c                                    |   2 +
+ kernel/trace/trace_kprobe.c                        | 192 +++++-----
+ samples/fprobe/fprobe_example.c                    |   1 +
+ samples/kprobes/kprobe_example.c                   |   1 +
+ samples/kprobes/kretprobe_example.c                |   1 +
+ tools/include/linux/compiler.h                     |   4 +
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c        | 123 ++++++-
+ .../selftests/bpf/prog_tests/uprobe_syscall.c      | 385 +++++++++++++++++++++
+ .../selftests/bpf/prog_tests/uretprobe_stack.c     | 186 ++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c |  15 +
+ .../selftests/bpf/progs/uprobe_syscall_executed.c  |  17 +
+ .../testing/selftests/bpf/progs/uretprobe_stack.c  |  96 +++++
+ tools/testing/selftests/x86/test_shadow_stack.c    | 145 ++++++++
+ 23 files changed, 1320 insertions(+), 92 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/uretprobe_stack.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uretprobe_stack.c
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
