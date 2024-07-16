@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-253419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB53B932116
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:19:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B694932118
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6672C281775
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:19:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5E7B2202B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07973771C;
-	Tue, 16 Jul 2024 07:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEFB446D2;
+	Tue, 16 Jul 2024 07:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnoohVBL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H17J1Kir"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD0B33987;
-	Tue, 16 Jul 2024 07:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6534206E;
+	Tue, 16 Jul 2024 07:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114362; cv=none; b=lzebHgL+P6wQSdp9sZ1HMDe2/NKD2GNhcJS0Soixlgfh+hbgttLfOFWuLJKQgKo7B92E15HBBsE79AheZZHgJs9pNL8n7+xiWC/aRgFF2Xt9j9b3J2E4E7PkuOZ7AcPFqgIszmPM/U/sVGJ7gpMt2M+OdRAxG4/u12JMtUMqpJU=
+	t=1721114372; cv=none; b=hU5WJGVdwaXcVed6Fp6M4YlMQSuURJH3+T7HGqWgRcBlPHPktvpnBFiH5az2U067H/0EoHqFbFkD89lX4BiobzWN1RqwW6379bRfPcDKaN/vJnx8w6la47LTEVbakEE3D6XXerI5ISlOOZnyaMrQhazXzYIUAzvUMl6IqfvZgUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114362; c=relaxed/simple;
-	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MS5NnWSbGR/mnork0O2X/uI5/veT/NczbaOt/n8lLpORQilw95hsO0/z5BEDPTwCxIS06CnGdLEs7IEz/hW09Cf9oloWojaBCyEu0IcTn0ROQFHRnb4xJ7OiIVD9J0Kp1EgEciGPGMSTcvINUNpUVMmVs9nYunXqmPxqUTZZL80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnoohVBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA893C116B1;
-	Tue, 16 Jul 2024 07:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721114361;
-	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dnoohVBLpFeCsb16MupJzO5EHjMN/W0DrnUEFPB1KoJtFlLxu0A35XgLJvABwCESV
-	 hw1R6Na5QXfQEMjMGbO1bcnhe/B1ivt1yigZlCG0S0+GBvgd8BWFkEkkFLalUshOcK
-	 MF6+OeFGb7cnt+xTuuoRag/A09+Ldu1+YZRtkksLSsolEJBo9e9ViG1/Z/A7gd4J9k
-	 73aGty2Nr3PRg8hwlM92B0sR/FSzzzKy0TiKQi6LcdcNVH3a++rgEWntTpUDMqIekC
-	 IB0M8lpxjy1fh6ZrxkQmMaJhqyUQ4yuDiOvEbaoQkRzot0TfkmncWb33GUa2trh+/e
-	 e4vLjeH7Qg2Fw==
-From: Christian Brauner <brauner@kernel.org>
-To: syzkaller-bugs@googlegroups.com,
-	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
-Cc: Christian Brauner <brauner@kernel.org>,
-	akpm@linux-foundation.org,
-	aleksandr.mikhalitsyn@canonical.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH] nsfs: use cleanup guard
-Date: Tue, 16 Jul 2024 09:19:11 +0200
-Message-ID: <20240716-elixier-fliesen-1ab342151a61@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>
-References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com>
+	s=arc-20240116; t=1721114372; c=relaxed/simple;
+	bh=qOCYhPf1BlbbY/0Oa1Xw8ZefKlBagnS0w5FDZGJlY4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AAjDSTtHE0inEXKuLXxoPnbKwpnq3bfVvu6OVncfJnPB5h5LbtsleUvE48FPRYY2lnji8kcE+AMFCzlupY3ZzEf/W+QR6W2hYxXZWlt1PoX6iWBwMu2c8Noi6mdDy0C4NA5a5MHrad6MdJmN68Pbz5Hi53Z6Uh4kmV4GA+9kc7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=H17J1Kir; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721114368;
+	bh=DQKcJlkyRwC0s/zttvXhJ/t0tAWfJpvToZmj+GRDL9I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=H17J1Kir+CPiOZI+wfE9J7aX+g2rIHzQ8yMl9yVk46tSZjQikiPhMISK8ny2/ggLI
+	 7G2Dib9pkLlXH7UNUH3ASSkftww6c1jtsWkfGjIcfFhKdNeHhr5Ug2Xqo7kUU/jWET
+	 TSgRFQxnZsCd4B08YQGLQz554jgPEvaATov779o1Gk8m8zfoy/n1aWuQjDYm3TGiFi
+	 0vfjKM+QY8C96lbB0BAE9cG5s93R/JBEMmqXyUkD3wFiTdQDa59Xeib19Svj/ZCeJ+
+	 Wl6maG40AovV5nefukjEHV/GxprbCKzTUg88tt0PwhXv4qRG6YAHwAUTjnpXCurwUU
+	 36NB9iQPMW0JA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNVnD0yhQz4w2S;
+	Tue, 16 Jul 2024 17:19:28 +1000 (AEST)
+Date: Tue, 16 Jul 2024 17:19:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the tpmdd tree
+Message-ID: <20240716171927.46b75f4e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1198; i=brauner@kernel.org; h=from:subject:message-id; bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNk/tw7aG63qxQT29G+UTT4iCjfYfXP2xYwLdzU5ZGZ vjkRXb1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5+ozhf+j9i/IzBeT43KcE n4/K9j7yN/+ceTb//m9peifzdt5/WMDwv3j9vRmtWe7hGpx888XiowyTM3n0zPafPxh8cLvgnZ0 NTAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/DLZPhcWam3Rits_Ap2I5YHC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Ensure that rcu read lock is given up before returning.
+--Sig_/DLZPhcWam3Rits_Ap2I5YHC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
-Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-I have a few fixes pending I plan to send out asap.
----
- fs/nsfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi all,
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index a4a925dce331..97c37a9631e5 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -174,14 +174,14 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 		fallthrough;
- 	case NS_GET_PID_IN_PIDNS:
- 		fallthrough;
--	case NS_GET_TGID_IN_PIDNS:
-+	case NS_GET_TGID_IN_PIDNS: {
- 		if (ns->ops->type != CLONE_NEWPID)
- 			return -EINVAL;
- 
- 		ret = -ESRCH;
- 		pid_ns = container_of(ns, struct pid_namespace, ns);
- 
--		rcu_read_lock();
-+		guard(rcu)();
- 
- 		if (ioctl == NS_GET_PID_IN_PIDNS ||
- 		    ioctl == NS_GET_TGID_IN_PIDNS)
-@@ -208,11 +208,11 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			ret = 0;
- 			break;
- 		}
--		rcu_read_unlock();
- 
- 		if (!ret)
- 			ret = -ESRCH;
- 		break;
-+	}
- 	default:
- 		ret = -ENOTTY;
- 	}
--- 
-2.43.0
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
+  46ebbf4061e2 ("KEYS: trusted: add missing MODULE_DESCRIPTION()")
+  6e9a602077a4 ("tpm_tis_spi: add missing attpm20p SPI device ID entry")
+  732cbb267287 ("char: tpm: Fix possible memory leak in tpm_bios_measuremen=
+ts_open()")
+  b270b463aaad ("KEYS: encrypted: add missing MODULE_DESCRIPTION()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/DLZPhcWam3Rits_Ap2I5YHC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaWHv8ACgkQAVBC80lX
+0GzvBAgAjJd6qUHmG1XE3pD8bjhaU3TIvvrFnpbw9nzbx2n4bw/G17Of9fSpcpmz
+8tNXXGWQ0FH3ZAsQB0l90/csu17MGeolxt5PlKQawHysCi0+/d+GvvSj7Y9TcYC/
+AoR7xcnSHk3ahInM1hERRE/fUlrtObC9TDdEz4dFVvO5sDFwLhCgis3AVaeg1bAG
+HvKwzgK4qMwO4LtfcaUfWDVboEeJusxA4HzWVS9fyC/N66cOPdKl44VViAJJf+rB
+osQpMVy6w8Dn296G5LbWAZbznuhbnQgMaDNSX4qjP2T/42x2fOkzxS4aH58T9QCa
+xO/jyc8EL3fmzhyA/QomeYHX5QpvLA==
+=pDG5
+-----END PGP SIGNATURE-----
+
+--Sig_/DLZPhcWam3Rits_Ap2I5YHC--
 
