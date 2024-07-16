@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-253797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00091932722
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:10:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67975932726
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9632836B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFFBBB2158C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CA919A87E;
-	Tue, 16 Jul 2024 13:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1978319ADBB;
+	Tue, 16 Jul 2024 13:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdzDU6Ym"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YyFCx8Hq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0701448ED
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179F19AD6F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721135426; cv=none; b=e0xRSwRDG0roW6P1F6yefVmtCT8cLgxDSNYG+B9YrqAG+L9KBumQ+zHzS3bIz3O7icdpghLw/S5jUfGr6epgQI0rVpRY3yyYStPfyoAbbMctCJYqqG2zG164raolS9xsGjByZIRNxj4MIuMFO5Ppa61COfZQA7fSGkodAhfpgAA=
+	t=1721135431; cv=none; b=GiUY+erX8Q6mkaoq12mds5UBTnofhJhPmi5K1SqisG7+h61+k+vxGChwdFuoIKqRFaatrwKdmBTRMbX5zlSTAtzlwM/a2Xowluy+O6fKg+TFnLBn1UOgkt/MW17SDOKDz5qHPbDvfM2pvJTiVSfRlao/2IuH9WTDlAlOlfQzqy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721135426; c=relaxed/simple;
-	bh=GpzScpedIteht8jhFd7VYb19IPxE1c/uuH6Qu+Gk9Fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5Qr9hoaB27nWGDb12IdeX46zh5lQpbdFY3ll1J2BAh+owNTXzJAlV0riAra/Whxteb/Knp7s4+beTXWwiR/B/99OdMzcZYbfJwBbdmQBBZx/qmJsdxSGjbw1uPj7ipgA5l1jNDELCAnUYu0utXGpB9dTjNhxibwlcRUHyGl290=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdzDU6Ym; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1721135431; c=relaxed/simple;
+	bh=k+1RV5GCOT+tXPua6FJHUXMrykjI0VBKOpOtbCgIoYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d9SHVRxiRDxxfIneDaXQ8kxA6RqNXl94pdLzDPdQADeDdRSL5scKgnyGcaZ4ahw/8JPjZg1EbJpcIeKVNtO8tOlaG08UT5nxuudRawpMLBEg+xq8LTsEskRMIg8eK8GK4j9YZxdgH5Y2b5sIzaajpa73eIgd2nV05Ri7NQvJAj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YyFCx8Hq; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721135424;
+	s=mimecast20190719; t=1721135428;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GpzScpedIteht8jhFd7VYb19IPxE1c/uuH6Qu+Gk9Fc=;
-	b=MdzDU6YmnjxA/BPqN4A2tzroMnRW/HfclIMamTDJePpi0CLfSAY0ktuam55nXCexxXUeDq
-	5gMxqk3N+UESaSe0AfSrws2iw/Aq/ZjZ20JPicSvUPPxjGLKEhQfwkr9FjtLEZodDipz7b
-	eD8AkDprwf2fVKKxBbjea08cvy7TT2c=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=v1gOfjCAx0JVhYPMj4vGIbpwiWQL5RJ8uO9QhWtc93A=;
+	b=YyFCx8Hqmti+EVjkVJ3tu5O1kShFs3y/RehqlK7x5sY+YU1Icq9C/Og4yxrurhMIy2bb7A
+	TFQn/pSxUpf5J+zjNrOrQfn/HxBAcS5GCu8iZx1dM6ThgKjeE9HbuD1TtCP1oVLgIxsMyS
+	WY7E98aQ2x8v69qtGt2UgMBwt8Uptuw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-387-oqeZXyfQNIWa6AiLYqsFyA-1; Tue, 16 Jul 2024 09:10:22 -0400
-X-MC-Unique: oqeZXyfQNIWa6AiLYqsFyA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ee8e0dab26so49897581fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:10:22 -0700 (PDT)
+ us-mta-48-fuWFhv2xMriD0Hrj7ZaDag-1; Tue, 16 Jul 2024 09:10:26 -0400
+X-MC-Unique: fuWFhv2xMriD0Hrj7ZaDag-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42660e2e147so10246785e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721135421; x=1721740221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GpzScpedIteht8jhFd7VYb19IPxE1c/uuH6Qu+Gk9Fc=;
-        b=Tn7dnQIbvuAKys03m300/PdXSi04mEt2Do1vWD5sysf4+JaMYPvvOBZas+VGHsuP3T
-         3CL5InhbX+mfFwLq4Aq80xk2O+rARA22DayBu+qo5pbpIMXrKzDs8+zH5g0lKayyyMEl
-         j7DIw3edN38zwM//HxVzBQWo43uDvfzq3KOVUvvISYQAhwR9RHDtPbBHFzu4kwyhKtua
-         tOkhNuClbvFgtfhhtvuEdI0V/Q1AFqYmt87bN4qvbjbPM31U+j/JQDQWI7Hy8gzryVa4
-         MWw2LSgQu33X1Nhr4EYHHhROHLNpxfAHL6TVy9lRUxqZMKfZpnFQf8E+XBzD3jknzHcb
-         nA+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXT8BvKeeibliKIzsUPRCXSlhRJ35nNj2J+LBa1K/EnosckNYrH/wcRdxZEjiganBrAeqt2rTSBPoUvXIRfGVBMx0S7dyVGjs76TYVQ
-X-Gm-Message-State: AOJu0Yy/T1mEuu3zjsPVFSFtGyfmx+MmyxRDdV0CCiIN1ROQZnU/pzRy
-	GwVd+C3R2e8n8T3JAXRaXFQ17ov8lWnLWBra6z8K5BiWIRvo5zrEzLixvPOVETi5eQrV7e25U53
-	S4UfDPuC6VQp5rVxASoA2vW/OLwMOTTUyAVcaNzqbGjJPDQkJ+r/QJARAZ3Sr64+EDe3pUhe/Q8
-	QZN31FsW0aSznzW2txtDa8GJSHf0Ysm+qWmvy7
-X-Received: by 2002:a2e:be05:0:b0:2ee:8b92:952f with SMTP id 38308e7fff4ca-2eef40b2fcemr15945921fa.0.1721135420990;
-        Tue, 16 Jul 2024 06:10:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0+2ysOJp9MP5ZxmZgy3Wn0oI5vGQOyK2l9FcQNTEYAB8b/kz09NzAswEUe82pE7C4WMswef/74L9f5BSYjlo=
-X-Received: by 2002:a2e:be05:0:b0:2ee:8b92:952f with SMTP id
- 38308e7fff4ca-2eef40b2fcemr15945781fa.0.1721135420605; Tue, 16 Jul 2024
- 06:10:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721135425; x=1721740225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1gOfjCAx0JVhYPMj4vGIbpwiWQL5RJ8uO9QhWtc93A=;
+        b=mKFutesl3WO+uVp+guNhNy3MJY4MoEhdIGQCwj/35sVRYeULIjhqIpgHyWUOiOknTU
+         Y6HkW/221k1GVbEJjQvrNFc12KtZzOh1NZacm9sX0Ysz4b48Ha2nRNiaDf85gWXUktjd
+         VnMs2uCLJuZHBY54IRa3rhyYfq6lTDj+YQPdnFlyyvvRFjVujjwlfTtO/NT1ThuUGL4Y
+         mo2tBg8qskjMELjAXg73ub41G3sLPbJTzLR0zcsSelW01FvIzcaizMqVMUxzq2xvQCox
+         BlOr5+V4zNrC8NOFPTf1knlKcZEKeUXcU0QUDqJUL5ot18W8qxdGNX/x0v9UqMbkCSFb
+         x4Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVM5WzB9nKtBX1Q7tXFRv4DWiqHQHK1ZaL2VCCr+4C8SgagNT+s29wWQwgvkrpG49RxrWWBemzBUUxxqjX9euJQ2fO0r58FZJp2cRX7
+X-Gm-Message-State: AOJu0YyR/+qWMYpBDv7XDS25+x/R8DIQJossti/EXSVPYLKQcQD2r0QD
+	rWxLnqen6HZtwSkygq6uPR7cCyfQv9UIAuK0YGMJr+vxEQTTdtepF0cltVMjXXvYr09BfZbqoOg
+	EwBR2yaM29ayqiI3WZIIJo7fACRiO2C+gJMuQkhs1hMbBwrIQcH9kyNSXw5QjHg==
+X-Received: by 2002:a05:600c:3b93:b0:427:9f6c:e4bd with SMTP id 5b1f17b1804b1-427b8a559f1mr12081385e9.6.1721135425395;
+        Tue, 16 Jul 2024 06:10:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+ZbyRm/fg6TpbsA1hJlGXyGgkBQ+2szmJWprS7Kts5UhI3RP5xWMTxQEtgatsEgKvIffHsw==
+X-Received: by 2002:a05:600c:3b93:b0:427:9f6c:e4bd with SMTP id 5b1f17b1804b1-427b8a559f1mr12081225e9.6.1721135425043;
+        Tue, 16 Jul 2024 06:10:25 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1738:5210::f71? ([2a0d:3344:1738:5210::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef44b4sm127311255e9.42.2024.07.16.06.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 06:10:24 -0700 (PDT)
+Message-ID: <c87f411c-ad0e-4c14-b437-8191db438531@redhat.com>
+Date: Tue, 16 Jul 2024 15:10:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK-6q+jSBjuFaFqGLQcfVLMUwRcJJMHk2oUnSgMObwz+OAih6g@mail.gmail.com>
- <3353d6c1-54ce-46c0-8b65-a0383c8da324@163.com>
-In-Reply-To: <3353d6c1-54ce-46c0-8b65-a0383c8da324@163.com>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Tue, 16 Jul 2024 09:10:09 -0400
-Message-ID: <CAK-6q+gvhDSrzUyHB=KAw=hMco5BAHxbXuhVYLdzHm12JEJG1g@mail.gmail.com>
-Subject: Re: udev kset_create_and_add() with own struct kobj_type?
-To: Lk Sii <lk_sii@163.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, gfs2 <gfs2@lists.linux.dev>, 
-	David Teigland <teigland@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] tipc: Return non-zero value from tipc_udp_addr2str()
+ on error
+To: Tung Nguyen <tung.q.nguyen@endava.com>,
+ Shigeru Yoshida <syoshida@redhat.com>
+Cc: "jmaloy@redhat.com" <jmaloy@redhat.com>,
+ "ying.xue@windriver.com" <ying.xue@windriver.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "tipc-discussion@lists.sourceforge.net"
+ <tipc-discussion@lists.sourceforge.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240716020905.291388-1-syoshida@redhat.com>
+ <AS5PR06MB8752BF82AFB1C174C074547DDBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
+ <20240716.164535.1952205982608398288.syoshida@redhat.com>
+ <596fd758-11ad-46c0-b6f1-2c04aeba5e06@redhat.com>
+ <AS5PR06MB875264DC53F4C10ACA87D227DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <AS5PR06MB875264DC53F4C10ACA87D227DBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 7/16/24 13:43, Tung Nguyen wrote:
+> 
+>> I think that consistency with other tipc helpers here would be more
+>> appropriate: IMHO no need to send a v2.
+>>
+> I do not think so. If you look at other helper functions for udp media, they use predefined error codes, for example:
+> tipc_udp_msg2addr()
+> {
+>   ...
+> return -EINVAL;
+>   ...
+> }
 
-On Tue, Jul 16, 2024 at 8:15=E2=80=AFAM Lk Sii <lk_sii@163.com> wrote:
->
-> On 2024/7/15 23:27, Alexander Aring wrote:
-> > Hi,
-> >
-> > I am currently implementing namespace support into the fs/dlm
-> > subsystem. The DLM subsystem uses kset_create_and_add("dlm",
-> > &dlm_uevent_ops, kernel_kobj); to create the "dlm" sysfs directory.
-> > Underneath it creates for each lockspace a subdirectory using
-> > kobject_init_and_add() with a non-static name and being known during
-> > runtime.
-> >
-> > Now I want to add namespace support and need to change the "default"
-> > kset->kobj.ktype =3D &kset_ktype; that is set by
-> > kset_create_and_add()->kset_create() to my own kobj_type because I
-> > need to implement a different ".child_ns_type" callback before
-> > kset_register() is called.
-> >
-> you maybe use kset_register() instead of kset_create_and_add().
-> you maybe find example codes from below kernel files:
-> fs/nfs/sysfs.c
-> fs/f2fs/sysfs.c
-> fs/ubifs/sysfs.c
+It's not a big deal really, but, as noted by Shigeru, all the other 
+tipc_*_addr2str() callbacks return 1 on error and such callback is 
+invoked via function pointer.
 
-looked into the first one, it looks like potential new users for such
-a new helper. This is what I am currently doing and it works, but I
-mostly copy&paste the code of kset_create_and_add() just to set a
-different "kobj.ktype" in the kset and feeling bad about it.
+If only this one returns a negative error, modification to the function 
+pointer callsite will become prone to errors (and stable backports more 
+fragiles)
 
-Thanks.
+Cheers,
 
-- Alex
+Paolo
 
 
