@@ -1,206 +1,239 @@
-Return-Path: <linux-kernel+bounces-253733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66ADD93260C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 321E8932614
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90911F22A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B356C1F22C57
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B770419A289;
-	Tue, 16 Jul 2024 11:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5D3195FE8;
+	Tue, 16 Jul 2024 12:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p+jlVhqe"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfPU+mCO"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322AA1991B6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B411CA9F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721131130; cv=none; b=Q1vgayvrzW3bS1rg3W0SmGxOdc+XD6DNnUw1AGUXkU9Qxl1xFyOPa+yHNcJyknVFpZz2HZ3lhx7pOCkVnMrnDtY4C5K5JVxfsmgzngRayUakn5yrospOIJcKd4BwjXNvYW6j+MBTbmZrbVvqOhrTL0uuzvEBH3t9exS+N9c+pzk=
+	t=1721131273; cv=none; b=qP9QJ5PQWOPidIty/NbYaRFj0qDerwyzabQraUDNm4PpMgX4FEh0ruLm+K6zEHJFb9E4r6Allh7yexvldqoZ1eVVH093Woct5+QnQgXLXZW2kNg74cEalf1Zg3ev5ODX6rD+1uTU3IbgBdyKb3nSPGTqZVI+9uY4if+kYtL5FPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721131130; c=relaxed/simple;
-	bh=WMGVdhkswcGCPNl24Vc3UsTW32JuYclOdmU51VC/M+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q1aDre5kd1zx60stWt8eAZAShdFEigCWxxxq9uFeFYVaK65zLr5XUAUyds0GLwH2B9R42mw3ju/lpBmQ42hIk3w3AwJ5exo0yPgQLE2x2Cpzuj+lsuxSpLjUb/X50d1bBTykGb8E4Z4frwaREuhOZJD4qbSB+UGSttfyp0XuVrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p+jlVhqe; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77c0b42a8fso976795966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:58:48 -0700 (PDT)
+	s=arc-20240116; t=1721131273; c=relaxed/simple;
+	bh=WLrC6303y1CuWwTqT4Hq19/LjVv0oNDQam+0R7DofS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FlZmDwFJjdtILTOLCl0Jf6cgqSBOHn2atB5g+woQZov+Ogx7Rkus70rXwvwOaMgb4HjaDex9i1MaxEUQglR9dtgYANVrJGkoIXAvL8uqiwHkoiB8VYCwbwlx/9ToF8YFfUwy9/RrSqNhebsAfzc0swnxO6PmexxKQrrCuJ0G7PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfPU+mCO; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25e134abf00so2651653fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721131127; x=1721735927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=W6o3+zcaQ0J4JlSyMMbb1JPfluO0g2AHR4AxHBCQt0o=;
-        b=p+jlVhqerU5LGat3X3i2heoQ1wJnCc/1PROoXcRXl8GtoqdXJFdWOjFRo+UB4Vz3e1
-         nRTRXSlsNvqrEEXBQ3Utn1Fei3ptBZaUUOx+sZzyWFmhV7DPoX2cBcVA5Y5pF/k2XF0u
-         yEjragvdmcQush7Am/+CwPZXUZCfrUvTzc92Ujg43wZ+uauLmsuvNUQjQYJW6t/BrKuw
-         vVNU15CsoWJ6uhrYz7p2lx7a04lflkLZEkVOADvlZ65JxMl0Bf6DhjPQ6/hemmz4r+8o
-         Xx4a7G/cNFmiHNyIItTH4xgOxYIQfLXEjN2FTK6ttRx8h7rvwhKdPr2N+n8aQZ3nxST8
-         LPOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721131127; x=1721735927;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721131271; x=1721736071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W6o3+zcaQ0J4JlSyMMbb1JPfluO0g2AHR4AxHBCQt0o=;
-        b=idIlZq1J6m8XsACY3js7JvH1u7M8nFFwLPmVgPen3kDEFqsBiQqRYJowU1hEHuFibd
-         vNBAFU++biFMhEO70WKJvPbpcAaakhDx2IqsYOMJWUQ9GqINUAbTsA08bSsbZMRoBAEn
-         UA5o/MBZ9GQ6kLoi5xqDk8d7yLKA1/3dEBE1iHZrQNkJQirm3fIg/b0lCsApb7PZM0pn
-         XOJSecjRt+bRXgGdxvgy8AFsb+kHXfDK0EZp81MCsRjfgMaaeYabD4JtRC7BkyeEAW9o
-         Ms9e/ZSm46qA0UAu0FIysntbJkP5MAFwGT/cT3wR+Ym3omijrPB2D1BOuxASSOvhuoQo
-         dHdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcZBoFfLO/1gHnUnyDiLVLk3nLc2xo8l6UP7/6MVdE2m7L0rwEs1EXAgCT40pq42lxgqYhyvDVTHxZ4LodPjyx3S5wL8zgmur5IIC+
-X-Gm-Message-State: AOJu0YyBaQmC6UDd0dGTFv9zXCD3CXLzfFggs3RCI+EO5Knr37e2Vnit
-	IFvZRxHKHI41gAbSjbMJfGg5bloMY5Sky8MMzXqQY/yxprXOXj3kZjWp7BaSCVo=
-X-Google-Smtp-Source: AGHT+IGOv2iJhRqmlirWNOvw+oT9/mS4RBfl4FgOfGJ0IZ2r6JHK8magsphr8VEyqBK4UxOymyNbXg==
-X-Received: by 2002:a17:906:268e:b0:a72:62e0:6636 with SMTP id a640c23a62f3a-a79edc14910mr141319666b.24.1721131127350;
-        Tue, 16 Jul 2024 04:58:47 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b7f00sm304061666b.63.2024.07.16.04.58.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 04:58:46 -0700 (PDT)
-Message-ID: <d1d7b58c-b605-4adc-b329-f74ea4567982@linaro.org>
-Date: Tue, 16 Jul 2024 13:58:44 +0200
+        bh=j8G+O43a2cJN5Lg9/71+1+Z/ywQQTj8X6yfoV7PP9dU=;
+        b=DfPU+mCOfLxbeiIg0iO4bkpHKWO2M4wEyWn43KdoN2XXQMKn0NrGdz5hJFikkxj1wd
+         8jUbxB0BEWsLE6lp6nOEk88Md0LAyxLW6CxzriGWXs6PWDOu44jb1lbPW6u8zYKdiuFw
+         V+eZhULxDIAla+j0k0y7EtGsnrRZtKuLFIV1G9ULrOxeyvk4DM0K4oJNJHVcuQnrRQqu
+         2kUHQdQpzxC6eNhL5O21LiwD9gMVpBgYHZfPxHkvPFrAfIDZgNfRyN6mKhlRvig4CiTx
+         nnEWF7VBRhtyakUnarZrmfrsYinRGE2ytClHvMynCuoLUNQY0WceCch23Rcs/ZOnWJ7F
+         UaRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721131271; x=1721736071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j8G+O43a2cJN5Lg9/71+1+Z/ywQQTj8X6yfoV7PP9dU=;
+        b=IfnzXIKLZB3ez6ov/CKrt3QjA9SAELAwxF+OYbRE1dXCcl0bcH8JbGMENtTyy4pw6k
+         u84LHeLyLKOZn+0Hzefs095K1UyEuKeY+CtQoxzImyocploIk6zonYO1aFfQLGYwKwu/
+         ND0yuHjaW2XqQfiy5D3g+xAWCrRviRpDE7cK+HRrmKpaUkmVfFpdW7tQQWpXrElP0gYo
+         TjjyJypXN/REDR/I6PXUuJuxMoE7RqZNu/+/2fxCeEJTuMkSlOHnqpUWRuDREaZIff/V
+         6qWLi/3ssxpurN2eg4kcliVLmzP/51/l6AnaSIxLSZoymgLJr8561Vx6MXqIWIco0ahx
+         E3Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUk8jFvpghDGUAm//ZvihF8Q5yQ31G9MksshAXerPfvM73Fe/KC7GhT4f5VU2tvkgpwChGDv9ebYjEwKDrCBBe0EFYPaNOF510RcojA
+X-Gm-Message-State: AOJu0YxI/RzGfhZS6B01mcJrhHYz9FRhLaaXjsT+SQHQfsVCmKkSPz76
+	MEA5ks8jRLgEYcV+HfK3fXH9fwBsqsdqdRYBE/3kTAJFcZqL8QqNyUxWYIu3V0rcELB0HOmBjFQ
+	ziz9o2Gv+HoXO1xtp39++eTJp9Q0=
+X-Google-Smtp-Source: AGHT+IGjNegrAaFQHqDetHpbOkioAUdczDLg0HOi4yOfbP20ScveXYR6yf2v9NSMbFQJuVkNuifZ4o03vbMlD0wOdIw=
+X-Received: by 2002:a05:6871:5223:b0:25e:bd3d:624a with SMTP id
+ 586e51a60fabf-260bd52cf0emr1401551fac.7.1721131271161; Tue, 16 Jul 2024
+ 05:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 01/10] MAINTAINERS: Include new Qualcomm CPR drivers
- in the file list
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, Niklas Cassel <nks@flawful.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Robert Marko
- <robimarko@gmail.com>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Varadarajan Narayanan <quic_varada@quicinc.com>
-References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
- <20240708-topic-cpr3h-v15-1-5bc8b8936489@linaro.org>
- <cd1c3450-1905-4d71-bcdd-5f880d743820@kernel.org>
- <94b2842b-6093-4c4d-a099-3e0a3198b753@linaro.org>
- <d35f5c94-7a86-4eea-bb0a-3f2785a25465@kernel.org>
- <CAPDyKFqhmNqbZ9Xkg0tWHE5LavoNaGMyE3dKmAFtHdS5=x33NA@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAPDyKFqhmNqbZ9Xkg0tWHE5LavoNaGMyE3dKmAFtHdS5=x33NA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240507072242.585-1-xuewen.yan@unisoc.com>
+In-Reply-To: <20240507072242.585-1-xuewen.yan@unisoc.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Tue, 16 Jul 2024 20:01:00 +0800
+Message-ID: <CAB8ipk_dy1PyAowefiysS_QB_sxiW9bQD_Y+AQp_b_iUTWhqbw@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched: Clear user_cpus_ptr only when no intersection
+ with the new mask
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, longman@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org, 
+	Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15.07.2024 1:34 PM, Ulf Hansson wrote:
-> On Tue, 9 Jul 2024 at 16:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 09/07/2024 11:49, Konrad Dybcio wrote:
->>> On 9.07.2024 11:04 AM, Krzysztof Kozlowski wrote:
->>>> On 08/07/2024 14:22, Konrad Dybcio wrote:
->>>>> Expand the Qualcomm Core Power Reduction section to include the files
->>>>> concerning CPR3+ support.
->>>>>
->>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>> ---
->>>>>  MAINTAINERS | 5 +++--
->>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>>> index dcb37b635f2c..f3e013a52c16 100644
->>>>> --- a/MAINTAINERS
->>>>> +++ b/MAINTAINERS
->>>>> @@ -18687,14 +18687,15 @@ F:        Documentation/accel/qaic/
->>>>>  F: drivers/accel/qaic/
->>>>>  F: include/uapi/drm/qaic_accel.h
->>>>>
->>>>> -QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVER
->>>>> +QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVERS
->>>>>  M: Bjorn Andersson <andersson@kernel.org>
->>>>>  M: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>>  L: linux-pm@vger.kernel.org
->>>>>  L: linux-arm-msm@vger.kernel.org
->>>>>  S: Maintained
->>>>>  F: Documentation/devicetree/bindings/power/avs/qcom,cpr.yaml
->>>>> -F: drivers/pmdomain/qcom/cpr.c
->>>>> +F: Documentation/devicetree/bindings/soc/qcom/qcom,cpr3.yaml
->>>>
->>>> Maybe combine these two into:
->>>> Documentation/devicetree/bindings/power/avs/qcom,cpr*
->>>
->>> I think avs was proposed to be a subsystem/driver directory at some point
->>> and (adaptive voltage source? something like that) and this is the only file
->>> in that directory in bindings..
->>>
->>> Should we continue with this "class" of devices, or should I move qcom,cpr.yaml
->>> to soc?
->>
->> Rather cpr3 should be moved to avs or some other power directory. "soc"
->> is fallback, junkyard for things without clear domain.
-> 
-> In my opinion, I would suggest dropping the
-> "Documentation/devicetree/bindings/power/avs/" directory. We already
-> have similar bindings sprinkled across various directories, see below.
-> One less seems better to me.
-> 
-> Documentation/devicetree/bindings/arm/*
-> Documentation/devicetree/bindings/firmware/*
-> Documentation/devicetree/bindings/power/*
-> Documentation/devicetree/bindings/soc/*
+Friendly ping..
 
-So, should it go to bindings/power? Or should we get a new
-bindings/pmdomain dir?
+Could anyone please give some comments?
 
-Konrad
+Thanks!
+
+On Tue, May 7, 2024 at 3:23=E2=80=AFPM Xuewen Yan <xuewen.yan@unisoc.com> w=
+rote:
+>
+> The commit 851a723e45d1c("sched: Always clear user_cpus_ptr in do_set_cpu=
+s_allowed()")
+> would cause that online/offline cpu will produce different results
+> for the !top-cpuset task.
+> For example:
+>
+> If the task was running, then offline task's cpus, would lead to clear
+> its user-mask.
+>
+> unisoc:/ # while true; do sleep 600; done&
+> [1] 6786
+> unisoc:/ # echo 6786 > /dev/cpuset/top-app/tasks
+> unisoc:/ # cat /dev/cpuset/top-app/cpus
+> 0-7
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-7
+>
+> unisoc:/ # taskset -p c0 6786
+> pid 6786's current affinity mask: ff
+> pid 6786's new affinity mask: c0
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   c0
+> Cpus_allowed_list:      6-7
+>
+> After offline the cpu6 and cpu7, the user-mask would be cleared:
+>
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   40
+> Cpus_allowed_list:      6
+> ums9621_1h10:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
+> ums9621_1h10:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+>
+> When online the cpu6/7, the user-mask can not bring back:
+>
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-6
+>
+> However, if we offline the cpu when the task is sleeping, at this
+> time, because would not call the fallback_cpu(), its user-mask will
+> not be cleared.
+>
+> unisoc:/ # while true; do sleep 600; done&
+> [1] 5990
+> unisoc:/ # echo 5990 > /dev/cpuset/top-app/tasks
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-7
+>
+> unisoc:/ # taskset -p c0 5990
+> pid 5990's current affinity mask: ff
+> pid 5990's new affinity mask: c0
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   c0
+> Cpus_allowed_list:      6-7
+>
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   80
+> Cpus_allowed_list:      7
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+>
+> After 10 minutes, it was waked up, it can also keep its user-mask:
+> ums9621_1h10:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+>
+> And when online the cpu6/7,the user-mask could bring back.
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   c0
+> Cpus_allowed_list:      6-7
+>
+> Indeed, there is no need to clear the user_cpus_ptr if there is an
+> intersection between user_cpus_ptr and new_mask.
+> So add the judgement of whether there is an intersection between them.
+> Clear user_cpus_ptr only when no intersection with the new mask.
+> In this way, the above problems can also be solved.
+>
+> Suggested-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+> previous discussion:
+>  https://lore.kernel.org/all/e402d623-1875-47a2-9db3-8299a54502ef@redhat.=
+com/
+> ---
+>  kernel/sched/core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 7019a40457a6..bbb8e88949f4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p, stru=
+ct affinity_context *ctx)
+>  }
+>
+>  /*
+> - * Used for kthread_bind() and select_fallback_rq(), in both cases the u=
+ser
+> - * affinity (if any) should be destroyed too.
+> + * Used for kthread_bind() and select_fallback_rq().
+> + * Destroy user affinity if no intersection with the new_mask.
+>   */
+>  void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *ne=
+w_mask)
+>  {
+>         struct affinity_context ac =3D {
+>                 .new_mask  =3D new_mask,
+>                 .user_mask =3D NULL,
+> -               .flags     =3D SCA_USER,  /* clear the user requested mas=
+k */
+> +               .flags     =3D 0,
+>         };
+>         union cpumask_rcuhead {
+>                 cpumask_t cpumask;
+>                 struct rcu_head rcu;
+>         };
+>
+> +       if (p->user_cpus_ptr && !cpumask_intersects(p->user_cpus_ptr, new=
+_mask))
+> +               ac.flags =3D SCA_USER;    /* clear the user requested mas=
+k */
+> +
+>         __do_set_cpus_allowed(p, &ac);
+>
+>         /*
+> --
+> 2.25.1
+>
+>
 
