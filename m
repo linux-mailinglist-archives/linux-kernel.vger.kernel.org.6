@@ -1,86 +1,122 @@
-Return-Path: <linux-kernel+bounces-253773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81509326C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40439326C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1E0B233C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B91B1F220B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A995E19AA66;
-	Tue, 16 Jul 2024 12:44:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71519AA72;
+	Tue, 16 Jul 2024 12:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xq7LEDcr"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246017C233
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF2A19AA41
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721133844; cv=none; b=uQnwwpHog2y8E1H3fHgfvAEqMVi/Nf7gRAF7Dlw0VX3LaZrNtvlCO+RxkeFEApkog9GRb6vg533QwFyL50TASXuEcIE+89Xh1Mrj92X24SC/+V5RSHBoAw2Ozpd2M7LdkmHxhcxlyXUYzebunMxXb5OJudC36MXGiqHSYd4JW8A=
+	t=1721133896; cv=none; b=KE6K5LFYRL6KTEU8IwNK4Qab/5vrEi4EWL4KnM2sQSrqY4Myf0ZUsKFGFXUAt4TRZ29B+e9jv3regmUhgc9EHAMWEoXHqz7kVUFrOJ23J8XEJQSrRIJRu20frAMfYprKYMi+jdya2ISYf/ix22AixMWNJKoK07on7QGt7GdIPUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721133844; c=relaxed/simple;
-	bh=Ry/5YTBsVvR9REbbyIAXHyQci2H2u79AtPCrWlByGcQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kIP2dJzNBadhUzJDOOOWKqfR4n9bWKQPbW8Da/IB/YJyyu6Zq4dHraXkve+bkCiQPnieaazZ/XcZl+Q7tVHHR5I6GhyuBwSqYGow4MWgMF7W8TCaTJBZI58yENKK6bfsTfqaUVLJCJLqm1H7qvKDsVmXFeP+WAjhIO7wjKLw+rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-386540d8c90so62773195ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:44:02 -0700 (PDT)
+	s=arc-20240116; t=1721133896; c=relaxed/simple;
+	bh=dwdxgv8V8kbKAJ6WjEKzHMmmBgdH2PPjzi17SlmdtD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R3rHqSYz5Z2E8f1Loef7oGo1uhMhFRt/83t+2s9XgE0G1JtBjRk4b524n10bIUbDmrBqT1A+BdjpukgVTJI2A7vPC4TGf8Pe/GLXO0lT0PPP09sE88rRFZLztWwiIsn3mRn3UE+E0ptG3CLz9iJcZI8hMHZYhW7bgdj2uOPY9rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xq7LEDcr; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-367a183df54so3697115f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721133892; x=1721738692; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zyK0V5xn54DTZJ+xeJki1ggFMkkVmgI9Zw/UgD7lbLg=;
+        b=Xq7LEDcrAvxZiLRt1MW+FKltSN/zYPZfrplhGLU+HMWv371zqhzeAdwjebInwxh8jv
+         O8Znq0oGV1M8+w1AWlP3ykqPovEsfLx6cSLZvXZGp2RuIh19v3zpIxhfCbcO4mpNu7xZ
+         VxSy4EcigezuonOTvDW6olHX0XLL1R+mFHx1112tzKs9P4YqkYadODGPPW8bwa1RmeYe
+         DBENSlkJ5QvzqVcl9zHDXW0uMWhaQce8hDu7Gb+6X/PExT1qxLfNHUSP8oTdYQYQDZgI
+         dLneiPVb0J8x/+lDiWa6+K7TMzn4PmphgpPHJgprQun+d9PEOrmWH69d0gQUclK+RCWt
+         PPcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721133842; x=1721738642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1721133892; x=1721738692;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RdyGEHqBnFMt1nPt1eV6xECBNR3tFqZ6LsQJrhOt+k=;
-        b=Qgj0A58UIxa0Fh1o5GyZGWWeK7OuDobWX6w3xdupTLS7iedouvbG/zfsvIp4IKpL/1
-         39Kp4u1nuZqhiwMfrUmPNOpmLv9zBMIFCBSlQ/Pb45oq3IeBS+9PODgeS3MhTL532Nte
-         jaReqMVTj7jxl78WtzQv5a4MgsPhGIZlYrjPLLw+sqA1bAfS6E3MQWF291WY/rdR+YD2
-         XPjCe+Nha8uZ1Hn02qrWJ7+uh4VKRqDayrHsmT0+B+pfjyX5f2HfQBK74mYlV5pT+frp
-         tWvoy2FZ/M3CPbxjfCbLJHZG3+i8W44zD5DoxT487BHbE/NBPNTENdNmqrXTJciY+NWn
-         rXeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmRkZZhCvrL58K0MRlbcCqk4QPkkWDcrOtmbqW9OHdDTT/Ggj7m7ZiyzGytidC9FheT6GuRY/0mZiCPBJwqQORiQTKc/Q/kQGEDYIt
-X-Gm-Message-State: AOJu0YyHzCqc3ZDrR3rPVX0FlI6QjbToNYHSRx5kTqPOeenqNOZ14kbS
-	iFceHMnVvn6wlFC0jkZKIFGbLzHjuLkAGChg+SZpYUVHIljMJ64aQ3lkVMp+3NW/X10oHKyFy46
-	gs4Vxy4WaOdV5mndYDSk2CBhcqkeT5/cKCbBpe0siH/e8AjyWdfE/H8k=
-X-Google-Smtp-Source: AGHT+IFJ9isERFxWkiz18kCcoNDmUeaWuruDIJTmUnJWrA5G5uztzV2WynsyFFKgd0Mpd3ah4yb5p7BQfXkDabGV4f0uhBWvKf0+
+        bh=zyK0V5xn54DTZJ+xeJki1ggFMkkVmgI9Zw/UgD7lbLg=;
+        b=ZvbeAFd3e4ETBqBAKxeuRV0hZ0WcPkHcideMfnoDSaLa94sIWkO30WhKl6szdSTWgB
+         V07vDwMzZZ1F8klOgx5tT7XmSVA/6cH/Ms2yQMb+hytSy7Ur9vI6Nsb9bJPcR/h9kzel
+         vtq4r87cB/seetw1PBvmpMEtuQLJJVyL6dldlGHAtLjKvy1Q1HuiYo4G34WK2AmATqbc
+         AtkJjzXHg1Gbgf34Ihxh3d3yYN3wZd25T568U2mQWeeEBvJ/Yx5kZNQD1bjX98uAk1Hq
+         +gAGYiHJW/1mbi5hQFB5jozCmh4qjt7hhEDZKhgDuSprN/sVLwJafpwszaITNiKHOd8x
+         ga6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVE2yADkt/i/zmYLZE3ABtrB6x1rRK7wSYl/S//xYS0hJa+EcZMOBJLT2qg4KXMj1lfBA1GN7sC0uENvEbZ9KZhoyyZ50ox2LQeuSot
+X-Gm-Message-State: AOJu0YysB+KULDALrMwdZH2dKJ4ceIoZ2+ZvCI7sa6O+NKr8tK1UnElf
+	ULVumlYFdEo+oVhFhy4qkPe/GTOH0mGDYzjoavQpjfC+jDViyB0KZX3rmP4NQZ0=
+X-Google-Smtp-Source: AGHT+IG4JqpTiP+3C1HhXZKcAWP+e9nawyIqUtu+FoJG6WPJmyQbdnc3UldtOHL9uNgvdNnfCJNAlw==
+X-Received: by 2002:adf:f0c4:0:b0:362:3b56:dbda with SMTP id ffacd0b85a97d-36825f72505mr1289464f8f.9.1721133891884;
+        Tue, 16 Jul 2024 05:44:51 -0700 (PDT)
+Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db04841sm8924139f8f.101.2024.07.16.05.44.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 05:44:51 -0700 (PDT)
+Message-ID: <3073c8ce-1923-4816-a442-41b4cc333af9@suse.com>
+Date: Tue, 16 Jul 2024 14:44:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218c:b0:385:ffe:4516 with SMTP id
- e9e14a558f8ab-393d150aa12mr1266775ab.2.1721133841910; Tue, 16 Jul 2024
- 05:44:01 -0700 (PDT)
-Date: Tue, 16 Jul 2024 05:44:01 -0700
-In-Reply-To: <20240716115504.1136-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000422161061d5cb3ee@google.com>
-Subject: Re: [syzbot] [crypto?] KASAN: slab-use-after-free Read in handle_mm_fault
-From: syzbot <syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+To: Alan Stern <stern@rowland.harvard.edu>, Oliver Neukum <oneukum@suse.com>
+Cc: Hongyu Xie <xiehongyu1@kylinos.cn>, gregkh@linuxfoundation.org,
+ brauner@kernel.org, jlayton@kernel.org, jack@suse.cz,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
+ <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
+ <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 15.07.24 16:22, Alan Stern wrote:
+> On Mon, Jul 15, 2024 at 10:53:14AM +0200, Oliver Neukum wrote:
+>>
+>>
+>> On 11.07.24 16:41, Alan Stern wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+>>> Agreed, but the solution is pretty simple.  Because the device was
+>>> suspended, the userspace driver must have enabled suspend via the
+>>> USBDEVFS_ALLOW_SUSPEND ioctl.
+>>
+>> The whole system could have been suspended, in particularly to S4.
+> 
+> You are right.  I was thinking of runtime suspend, not system suspend.
+> My mistake.
 
-Reported-and-tested-by: syzbot+4c882a4a0697c4a25364@syzkaller.appspotmail.com
+This is at the intersection of several scenarios. That is a good part of
+what makes this difficult.
+In principal I think we could get away with checking for a flag to be set
+at reset_resume() before each operation. Elegant this is not. Yet, it seems
+to me like the race necessarily exists and is unsolvable in user space.
 
-Tested on:
+Furthermore in the long run, if we want to use D3cold in runtime power
+management, it looks to me like we would want a second permission ioctl
+for that.
 
-commit:         3fe121b6 Add linux-next specific files for 20240712
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17749121980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c882a4a0697c4a25364
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11c86045980000
+	Regards
+		Oliver
 
-Note: testing is done by a robot and is best-effort only.
 
