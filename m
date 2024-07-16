@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-253584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7077B932365
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:52:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABC1932347
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A99D280DEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB62E1C225B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61EA197A6C;
-	Tue, 16 Jul 2024 09:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25BA197A99;
+	Tue, 16 Jul 2024 09:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="jnGLM5wc"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNdby14H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1957196D98;
-	Tue, 16 Jul 2024 09:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C8655896;
+	Tue, 16 Jul 2024 09:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123557; cv=none; b=n4RMNOqo5DUUbKk67hkZ5ZDy+D2Ugv24Sgr6vJKEQBpGAaYWpHZTL70HrEi0n4gfwwR0ACs3PFNcgaRZVCz9wVtwkiwNee0DPcW9fe32K8KnjGbEDbYEoDqSKvtAlQSeI0JCyeYCJWh+Gs9oJEeJV+QXE/3XoLHI/MrVcMV6u8g=
+	t=1721123157; cv=none; b=pL7OM9S63cDJMiYbgvt4RNLQebMTpM6p1uJbNbzZ69MW2EqGwmhfCT4m26NLpZ1PxrzWMSMexMujqtI4cU9qDx7+kI20NEWDcNTgOigqDcWlATRy07mO+XGtpsTlb6SCWfmBXwRI28futFZ7OAYtiYgzFoLyTOSPrcvRGovfCQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123557; c=relaxed/simple;
-	bh=IFxQxOBpCXNtHrOj1Qmg3nTitVZprBCWUOd6OttIEQo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=odp+OP+QiDw7c85qJIpMczd8sc8bqGgWIfpYPbwq0d9rjZtzBMqiwyxZ/Djzu4Vi0KhwlnwP+gz6HBoMBwl2pwvbaYUC1aI0WglltG2zYwtDh2uLalRaqfUDTAwJy6f0tPz7kcntQiHG7sOJnYsUc3sP3upkd5Qzjc1n5aGMsN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=jnGLM5wc; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from [192.168.1.103] (unknown [88.230.7.215])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 2213E40B1E60;
-	Tue, 16 Jul 2024 09:45:24 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2213E40B1E60
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1721123125;
-	bh=8z0xCwX0Y91Gmm3XU03ogAxSGYi69FQUcjo49bLpk9Y=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-	b=jnGLM5wcrVimEfWk1y7vQDrDHW/xKUD3au2jCxLJR5vwJ/T5iCPSVtDwoBM+TdrrX
-	 8jJ7bhxC6Rk1bSCcBlYhk2oGG1Wfnake8FULApF6Q/zQWFUwy+qDf+TcrrnZ7beoph
-	 tCS2Q2I7VejnBK1Ge9mb8n0Ze9WY0OHRQsYopWAc=
-Subject: Re: [lvc-project] [PATCH] tracing: remove unreachable trace_array_put
-To: Nikita Kiryushin <kiryushin@ancud.ru>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: lvc-project@linuxtesting.org, linux-trace-kernel@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240712201258.99070-1-kiryushin@ancud.ru>
- <20240712193306.3174c85e@gandalf.local.home>
- <98c01cc6-dcee-46d0-bdc8-0e35165ec68b@ancud.ru>
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Message-ID: <5ec2d185-0359-b0df-664a-d20722fe3666@ispras.ru>
-Date: Tue, 16 Jul 2024 12:45:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1721123157; c=relaxed/simple;
+	bh=SqXgNm6FhzAJA14mBWUxDsVvY4d+YHMpCRQGynbdfDE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NefZ1agLAdW5rZ/JgVceYEh6XQnH5+CRAL72VpKqunYzk8IQDRExqU9uZ9Ju1K+TuGBYystYD9/nrohrSZth0Ti3uxuVoegQa/Qa9/Y2QPdOUqpCjd9sUgzWNJ4Oj/oCNio1hRHb0aqMxOLGjWbHwsRq1kjEBm6xbzOf9VjDbpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNdby14H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA146C116B1;
+	Tue, 16 Jul 2024 09:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721123156;
+	bh=SqXgNm6FhzAJA14mBWUxDsVvY4d+YHMpCRQGynbdfDE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gNdby14HQ2ApZ0VAhsv66j6UvRn5Salr683iDSupG4UaBeZz3im4hmb7e8qgpkmF8
+	 ZqLreb1UdfoR7cJHu4k1Umj3o18fFw+vlSVBn6dpVUaLH4GhcwjILYRKe68LDxB5fe
+	 qkRE1k5avvu8yT+D/M3yf1ZClg6IQl6Xpzzw6VG74nZ1x7ADbWIJjbTXnee65e7c0c
+	 ItzKSFgmm3+5+V9pV61+RHXrjqatLO/ofe96tkY+QqksRD2V0KB36GNhKkkSspT3Zx
+	 c15TfackFDw9V/0UOa0m9nfvayW+mh54Gsr+qeQQoG3WVlpklIYGwP/RMN4jtIeEkt
+	 YWiPHW4xxHGxg==
+Date: Tue, 16 Jul 2024 18:45:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bpf@vger.kernel.org, Daniel Borkmann
+ <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Nicholas Piggin <npiggin@gmail.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 2/2] MAINTAINERS: Update powerpc BPF JIT maintainers
+Message-Id: <20240716184551.a16cfd72b3f31148b0e9170a@kernel.org>
+In-Reply-To: <92e61201-2ee4-458d-988d-a476018a05dc@linux.ibm.com>
+References: <fb6ef126771c70538067709af69d960da3560ce7.1720944897.git.naveen@kernel.org>
+	<24fea21d9d4458973aadd6a02bb1bf558b8bd0b2.1720944897.git.naveen@kernel.org>
+	<92e61201-2ee4-458d-988d-a476018a05dc@linux.ibm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <98c01cc6-dcee-46d0-bdc8-0e35165ec68b@ancud.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 15.07.2024 16:47, Nikita Kiryushin wrote:
-> As nonseekable_open() documentation states:
-> "The function is not supposed to ever fail, the only
-> reason it returns an 'int' and not 'void' is so that it can be plugged
-> directly into file_operations structure."
+Hi,
+
+On Tue, 16 Jul 2024 12:36:11 +0530
+Hari Bathini <hbathini@linux.ibm.com> wrote:
+
 > 
-> So it seems, that it will not fail anytime as it is not meant to?
-> Otherwise,
-> there will be a huge problem with leaks in many other parts of code, as
-> there are plenty of places, where nonseekable_open() is not checked after
-> resource allocations.
+> 
+> On 14/07/24 2:04 pm, Naveen N Rao wrote:
+> > Hari Bathini has been updating and maintaining the powerpc BPF JIT since
+> > a while now. Christophe Leroy has been doing the same for 32-bit
+> > powerpc. Add them as maintainers for the powerpc BPF JIT.
+> > 
+> > I am no longer actively looking into the powerpc BPF JIT. Change my role
+> > to that of a reviewer so that I can help with the odd query.
+> > 
+> > Signed-off-by: Naveen N Rao <naveen@kernel.org>
+> 
+> Acked-by: Hari Bathini <hbathini@linux.ibm.com>
 
-Yes, but there is another possible modification: replacement of call to
-nonseekable_open() by a call to some other function that returns error.
-Current code is already ready for such modification.
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
---
-Alexey
+But this should go through powerpc tree or bpf tree.
+
+Thank you,
+
+> 
+> > ---
+> >   MAINTAINERS | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 05f14b67cd74..c7a931ee7a2e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -3878,8 +3878,10 @@ S:	Odd Fixes
+> >   F:	drivers/net/ethernet/netronome/nfp/bpf/
+> >   
+> >   BPF JIT for POWERPC (32-BIT AND 64-BIT)
+> > -M:	Naveen N Rao <naveen@kernel.org>
+> >   M:	Michael Ellerman <mpe@ellerman.id.au>
+> > +M:	Hari Bathini <hbathini@linux.ibm.com>
+> > +M:	Christophe Leroy <christophe.leroy@csgroup.eu>
+> > +R:	Naveen N Rao <naveen@kernel.org>
+> >   L:	bpf@vger.kernel.org
+> >   S:	Supported
+> >   F:	arch/powerpc/net/
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
