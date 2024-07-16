@@ -1,149 +1,97 @@
-Return-Path: <linux-kernel+bounces-253711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BAE9325B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F869325B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C057B233E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:33:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D1CB245B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4637B199233;
-	Tue, 16 Jul 2024 11:33:37 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4E719922A;
+	Tue, 16 Jul 2024 11:33:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315291799D;
-	Tue, 16 Jul 2024 11:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EED1991CD
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721129616; cv=none; b=hKKCnrkIOnEtPolc0nnRD1glSg+ArLKDEIaY74hXXtHChUwuWj33GM9W7KQGiZDulJyJZHvP8nlIHS6sxdTJ/FYPc34Zw4xF7/NHtDqnVVP6T4ac8iFnzlurK+wLL+yJcM/qdm3mbwbNz19m9PhrY9+JzZWyxiw45Gzb6YeBwQ0=
+	t=1721129629; cv=none; b=EdoZBgWu80B69uP49YRcDS91tN1vL0mxIM2qDLyq6HAxV6lFgBvSg2uYxFLhZupOBKuyHKSSncEnMUtZslE6oHQ1AdHntczwkW+0X19rAQUTh32cdjGU+Kur2i03vWY0mNwJ3b/OcDOkB66n+Zq/LRaHDBag43PXS0ZIG2BaoZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721129616; c=relaxed/simple;
-	bh=sosqrIxnBeUnlwj1KeZsQy403vNwtsK+OO+Up7CJZpg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TS4yilI06QP7YXwSApuYtSnZkhes2kLK7ywOelGesBOBg59hAxwbdp2tdzbUWhF1cesP9Jy2umj7QdSBN6fIPEhPBpA6hUpmwYE91r3bHUvu5tzNUyu5ql5GpVbfkGnzMGZYNFTGdotkgSq3DVSLanMgxlnGpGCT1Gg4p9Oqm5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-65f771485f2so28750857b3.0;
-        Tue, 16 Jul 2024 04:33:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721129613; x=1721734413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rTjJvunI/3IdeTHGVPBeO3bQArOQUTZAiowXG2DOChw=;
-        b=e+nvCMeT6b1nzsmjvdoMvprJH1Ycio7I82CBbACYJdc1vOHRd+9+cCFBb2039K+0Ax
-         9xXQr1rdgBfUzpnaKaGaCo9mMMokkjkppicSUjDAKJ/eBUiRePP/TCp5R4cqnp5nZrvP
-         2wAjN3v0oa300A20K/IfZjReyANAvndSXzBtDF3H7Jg/1HqDlOozFqE7KUlOpakf6dwO
-         tQTx56X+OyquPiBDhzb08xcWYFNSVME9Wo/4TB3eDu2HIzfOtQTybL1VpO4wbDdrvatq
-         C/4o1TCXOKHrXzCC8yaWgndIb5rvsB/R4H/lR0tBY4DjDvqW9MCBoIAFJgOeChH/Q3We
-         p7Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc8bjsIqZA9EYrr/aEpHqrpklf5bWGA4wzR++G9Zllx7MwCtaWSDOkeTko5RyhjYY8v4XpzD5pJnwfOBAo03eDgE5rVi2vgC6p
-X-Gm-Message-State: AOJu0YzQU/Tfp4HLxpN8E2Y66J3dhp4ht/fkkf9jkD+awtt8L2ksKWQm
-	pL3fSZDOH4iZGpvk91TsFzSpdmvvddynRSmf6zHH2ipwDzPOSFH5uAOmN/Kq
-X-Google-Smtp-Source: AGHT+IE9tnw4i4Q1y38buyT2l2NfRqFGMwIZ780Q1WZf7lP1eYoALkXHEvZdzmmg6PT7QtiYPPUvPQ==
-X-Received: by 2002:a0d:ea07:0:b0:64a:7d9b:934 with SMTP id 00721157ae682-6637f2badf5mr19604947b3.16.1721129613548;
-        Tue, 16 Jul 2024 04:33:33 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-65fc4452033sm11204797b3.126.2024.07.16.04.33.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 04:33:33 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65465878c1fso60920017b3.2;
-        Tue, 16 Jul 2024 04:33:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5J9JZWTVnaCGWqtrB8il0g08ZcgaZHxGhWKbg2JHvJKOOdpS6Skqd5fKOCUggdwZmM5kZWHQRtmCi1gqkgqA3gjmQLZyBXF/9
-X-Received: by 2002:a0d:eec1:0:b0:64a:efa6:b3d5 with SMTP id
- 00721157ae682-66380c110afmr19020037b3.37.1721129613037; Tue, 16 Jul 2024
- 04:33:33 -0700 (PDT)
+	s=arc-20240116; t=1721129629; c=relaxed/simple;
+	bh=OecnYhmAKmIrEHR9tlf+DLf3fBjhHDrDi+XiPTBGFL8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jnP+QIDc8gVdf966FcpFWCG+4OaEiIjzTgkCDpRb3e3CJpP43x/+2aMOJr00clBP2DucLhS3FmrolIfEWQBLrwOV0lL+OfCgAHufnDmM+XKKU2/zJ77mqFJDeBkjC7g5dHXDyQAQ6ZktnipOMrZeOdD9uQfULl2a+6BTq8I2U0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sTgQz-0007kQ-8w; Tue, 16 Jul 2024 13:33:29 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sTgQy-0007Kz-O2; Tue, 16 Jul 2024 13:33:28 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sTgQy-009ho5-27;
+	Tue, 16 Jul 2024 13:33:28 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 0/2] mwifiex: add support for WPA-PSK-SHA256
+Date: Tue, 16 Jul 2024 13:33:26 +0200
+Message-Id: <20240716-mwifiex-wpa-psk-sha256-v1-0-05ae70f37bb3@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706142313.2028-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240706142313.2028-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Jul 2024 13:33:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW2yU75c2Erv8swXwTye=TQWAHQNQCQ8xMHbFspm1Ohjw@mail.gmail.com>
-Message-ID: <CAMuHMdW2yU75c2Erv8swXwTye=TQWAHQNQCQ8xMHbFspm1Ohjw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: delete entries for Thor Thayer
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, linux-i2c@vger.kernel.org, 
-	Dinh Nguyen <dinguyen@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIZalmYC/x3MQQqEMAxA0atI1hOoUSvjVQYXVVMNMloa0IJ4d
+ 4vLt/j/AuUorNAVF0Q+RGXfMspPAePitplRpmwgQ7VpS4v/U7xwwjM4DLqiLo4aizSR+/qxGow
+ dIMchspf0jn/9fT+Sb3QXaAAAAA==
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721129608; l=652;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=OecnYhmAKmIrEHR9tlf+DLf3fBjhHDrDi+XiPTBGFL8=;
+ b=CunJgc6ADlYPjBoQ89yj0/Mj8rq+Hp7g8NcWrMZlxGSdpa0hQFL4LQ5sxQK8m1AST07BcbtaM
+ 8KgEnABRBJLCpBgarmbhV7Pt/hpKEhe55aJGXFo7i7NVUMjqLyu4hLB
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+This series adds support for the WPA-PSK AKM suite with SHA256 as hashing
+method (WPA-PSK-SHA256)
 
-CC Dinh
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+Sascha Hauer (2):
+      wifi: mwifiex: simplify WPA flags setting
+      wifi: mwifiex: add support for WPA-PSK-SHA256
 
-On Sat, Jul 6, 2024 at 4:24=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> The email address bounced. I couldn't find a newer one in recent git
-> history. Delete the entries and let them fallback to subsystem defaults.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ drivers/net/wireless/marvell/mwifiex/fw.h      |  1 +
+ drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 30 +++++++++-----------------
+ 2 files changed, 11 insertions(+), 20 deletions(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240716-mwifiex-wpa-psk-sha256-2d2a9fc3b06b
 
-Thanks for your patch, which is now commit
-8c91b81933d35ae4 ("EDAC/socfpga: Transfer SoCFPGA EDAC
-maintainership") in v6.10.
+Best regards,
+-- 
+Sascha Hauer <s.hauer@pengutronix.de>
 
-Dinh took over a previous entry in commit 8c91b81933d35ae4
-("EDAC/socfpga: Transfer SoCFPGA EDAC maintainership").
-
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -846,12 +846,6 @@ ALPS PS/2 TOUCHPAD DRIVER
->  R:     Pali Roh=C3=A1r <pali@kernel.org>
->  F:     drivers/input/mouse/alps.*
->
-> -ALTERA I2C CONTROLLER DRIVER
-> -M:     Thor Thayer <thor.thayer@linux.intel.com>
-> -S:     Maintained
-> -F:     Documentation/devicetree/bindings/i2c/i2c-altera.txt
-> -F:     drivers/i2c/busses/i2c-altera.c
-> -
->  ALTERA MAILBOX DRIVER
->  M:     Mun Yew Tham <mun.yew.tham@intel.com>
->  S:     Maintained
-> @@ -871,21 +865,6 @@ L: linux-gpio@vger.kernel.org
->  S:     Maintained
->  F:     drivers/gpio/gpio-altera.c
->
-> -ALTERA SYSTEM MANAGER DRIVER
-> -M:     Thor Thayer <thor.thayer@linux.intel.com>
-> -S:     Maintained
-> -F:     drivers/mfd/altera-sysmgr.c
-> -F:     include/linux/mfd/altera-sysmgr.h
-> -
-> -ALTERA SYSTEM RESOURCE DRIVER FOR ARRIA10 DEVKIT
-> -M:     Thor Thayer <thor.thayer@linux.intel.com>
-> -S:     Maintained
-> -F:     drivers/gpio/gpio-altera-a10sr.c
-> -F:     drivers/mfd/altera-a10sr.c
-> -F:     drivers/reset/reset-a10sr.c
-> -F:     include/dt-bindings/reset/altr,rst-mgr-a10sr.h
-> -F:     include/linux/mfd/altera-a10sr.h
-> -
->  ALTERA TRIPLE SPEED ETHERNET DRIVER
->  M:     Joyce Ooi <joyce.ooi@intel.com>
->  L:     netdev@vger.kernel.org
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
