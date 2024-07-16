@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-253534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A653F932293
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:18:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7691D932294
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C26283FC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDA01F2307E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A85195806;
-	Tue, 16 Jul 2024 09:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6305195B35;
+	Tue, 16 Jul 2024 09:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pb/iEJEe"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B934A33C5
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q9BYATXO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864B3157A43;
+	Tue, 16 Jul 2024 09:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121524; cv=none; b=HgVIxCLvBRJxQ43jj/ww8OcTYBrE9o2pm6uVgASSL78epZsw0TMDm26VM+yfjvcZ7P952XkKNQGz3y5vcozyDnvD0i9kFoUVB0DAskD5Brz1rYT/1O7LumA4LlrzlVp+dZ7uchGs0XG91xY+yu1Ad0gw6AfaPNxW7YglU1A9b5I=
+	t=1721121547; cv=none; b=Byhq0sz7mrC7zuzP0UZsKOgOFiS+Kq3ViJONKBpIY02r7aisVyvV7isWygwZY4cOW3ZLGPfYIR8gWDWqKwixd5iTJZjpymYSz4mRjFS5azhK7Ni3axVwD69DwlIYAkKbg0gEvTFta9a3RiJ07Vh3JsAknwuiOSNOJdXJRub6xco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121524; c=relaxed/simple;
-	bh=nb3xb3sXwEanxjCXlbGAWGwIaoxkVr8ECUVkNCAabwg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=TUG3UytvkoZCm9lF01aBvGnirRozSdrkfhiUw8KBtsyMPurxXIWvhsmAecIkQJ9AJhOG0C9llvwxNJPbWh4rkgAnEduG2DuhUG5yfA8TSOMfA3hD4SHJMYbckwcLF98kBegWeJh68kf5y7nPy7sjC6JhyNIx9FQikOa4+N6F+wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pb/iEJEe; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=nb3xb3sXwEanxjCXlbGAWGwIaoxkVr8ECUVkNCAabwg=; b=p
-	b/iEJEeB0LvNrUnHOAehGFIUnRDLqzN3O7CYD4XDRIv4XwGDB+N7PPjGKGspSwS+
-	GLQz00dhR9rgw0kZ/wRA/kVX0Pk3VDZjo59/iljlbE0GGfScm8dc0XR8ChpiXPG8
-	KQwHr7ePHxD890K1rLcpVX08je7/56GvkZcNChtjes=
-Received: from xavier_qy$163.com ( [59.82.45.126] ) by
- ajax-webmail-wmsvr-40-107 (Coremail) ; Tue, 16 Jul 2024 17:17:50 +0800
- (CST)
-Date: Tue, 16 Jul 2024 17:17:50 +0800 (CST)
-From: Xavier  <xavier_qy@163.com>
-To: "Peter Zijlstra" <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com
-Subject: Re:Re: [PATCH-RT sched v3 0/2] Optimize the RT group scheduling
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240716085926.GP14400@noisy.programming.kicks-ass.net>
-References: <20240716052543.302383-1-xavier_qy@163.com>
- <20240716085926.GP14400@noisy.programming.kicks-ass.net>
-X-CM-CTRLMSGS: z3no6nBsdXM9MTcyMTEyMTQ3MDkxNV80ZmFmOTFhZTg0NzBjZWQ0NmQ1MjJlO
- GZjMmY5NDY2NQ==
-X-NTES-SC: AL_Qu2ZA/2Zvkws5imaY+kfmk4aj+k+XsG0vfUj34FWOp9wjCHp1AQlXU1tJ0H/1eaKCR2gmja5byVM7/5qUbd7TYYLQeXDscmwbG8rymwAIvzNDg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1721121547; c=relaxed/simple;
+	bh=K8r96+NWXM9HvACg9ptDl+CrQpKzGn68GkYyfetMe1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5TkZ5feMuQIAtPsdJc0Z83npuHH86YIxggUv7T74yTmpITswwDR5oVOMIKdRM7q98QDwgUXnusipvBO56yBjQgAVtPhz62TlR2ffmzHMVQJ6FZdQ4+/8ZdLRg8KF96XvDatnnP1JZsDZHztSqnCeIHyc9AHkyg/P+XXhkO4KpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q9BYATXO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ar6ntNI1eFIpMIWTyK9TL2PHcE8HFBjg+tUUhYe8r28=; b=q9BYATXOq9EAT9t+HmMfI28VP1
+	wtThkq5hKkJ/Q9emhJBaxobyROhVF5sELkAlt7qqIE/VPpMzuY3MOTXOfsOSDju8BLBqkO1wPDiHV
+	fuPSm+Ka2Nc+bzByIPzFLZ5e75gDSUy7G8pLE+28HUYDu1bKjXZ054yHPzB/JimZlNkLnEXuugMrh
+	GcUOkYmovIqKWsh5ZoZ0ZHsWqHvYArrYioiHPUTRDasJe/A6LrX4zRxMx5vAsHgV+pMXuhG+3bGm5
+	1/2my1SdjHDfo1bZsGijuQmeqwH8bKaAw9bwmym3QweDt7xgX9BscIdLC50DuHbIlHl9nzdZc20fF
+	YS3DSk2A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTeKi-0000000GvQS-366o;
+	Tue, 16 Jul 2024 09:18:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F346F300694; Tue, 16 Jul 2024 11:18:51 +0200 (CEST)
+Date: Tue, 16 Jul 2024 11:18:51 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tio Zhang <tiozhang@didiglobal.com>, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	vineethr@linux.ibm.com, akpm@linux-foundation.org,
+	mathieu.desnoyers@efficios.com, mingo@kernel.org,
+	mgorman@techsingularity.net, qyousef@layalina.io,
+	vincent.guittot@linaro.org, elver@google.com, zyhtheonly@gmail.com,
+	zyhtheonly@yeah.net, Juri Lelli <juri.lelli@gmail.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH 1/1] tracing/sched: sched_switch: place prev_comm and
+ next_comm in right order
+Message-ID: <20240716091851.GC26750@noisy.programming.kicks-ass.net>
+References: <20240703033353.GA2833@didi-ThinkCentre-M930t-N000>
+ <20240715150412.655abdda@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6af6feef.83df.190bad579d3.Coremail.xavier_qy@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDnr5y+OpZmP0wuAA--.37731W
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiZQEeEGXAnEnBpAACs9
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715150412.655abdda@rorschach.local.home>
 
-CkhpIFBldGVyLAoKWW91ciBtZWFuaW5nIGlzLCB3aWxsIHRoZSBSVCBzY2hlZHVsaW5nIHBvbGlj
-eSBiZSByZW1vdmVkPyBJIHNlZSB0aGF0IHRoZQpjdXJyZW50IGtlcm5lbCBhbHJlYWR5IGluY2x1
-ZGVzIHRoZSBkZWFkbGluZSBhbmQgRUVWREYgc2NoZWR1bGluZyBwb2xpY2llcy4KSSBub3RpY2Vk
-IHRoYXQgdGhlIGVucXVldWUgYW5kIGRlcXVldWUgb3BlcmF0aW9ucyBmb3IgUlQgYXJlIHF1aXRl
-CmNvbXBsaWNhdGVkLCBzbyBJIHByb3Bvc2VkIHRoaXMgcGF0Y2ggZm9yIG9wdGltaXphdGlvbi4K
-CgoKQXQgMjAyNC0wNy0xNiAxNjo1OToyNiwgIlBldGVyIFppamxzdHJhIiA8cGV0ZXJ6QGluZnJh
-ZGVhZC5vcmc+IHdyb3RlOgo+T24gVHVlLCBKdWwgMTYsIDIwMjQgYXQgMDE6MjU6NDFQTSArMDgw
-MCwgWGF2aWVyIHdyb3RlOgo+PiBIaSBhbGwsCj4+IAo+PiBQYXRjaCAzIGZpeGVkIHRoZSBpc3N1
-ZSB3aXRoIGhhbmRsaW5nIHRhc2tzIHdpdGggcHJpbyBzZXQgdG8gMCBkdXJpbmcKPj4gdGhlIGV4
-ZWN1dGlvbiBvZiBibGt0ZXN0cy4KPgo+KnNpZ2gqLi4uIGFyZSB5b3UgYWN0dWFsbHkgdXNpbmcg
-dGhpcyBob3Jyb3Igc2hvdz8KPgo+VGhlIHBsYW4gd2FzIHRvIHNjcmFwIHRoaXMgY29kZSAtLSBh
-bmQgcmVwbGFjZSBpdCB3aXRoIHNvbWV0aGluZyBiYXNlZAo+b24gZGVhZGxpbmUgc2VydmVycy4g
-U2FkbHkgbm90IGEgbG90IG9mIHBlb3BsZSBhcmUgYWJsZSB0byB3b3JrIG9uIHRoYXQKPjovCg==
+On Mon, Jul 15, 2024 at 03:04:12PM -0400, Steven Rostedt wrote:
+> 
+> [ Adding sched maintainers, as this is a scheduling trace event ]
+> 
+> On Wed, 3 Jul 2024 11:33:53 +0800
+> Tio Zhang <tiozhang@didiglobal.com> wrote:
+> 
+> > Switch the order of prev_comm and next_comm in sched_switch's code to
+> > align with its printing order.
+> 
+> I'm going to pick this up in my tree, as it is pretty much a nop. It's
+> just changing the ordering of the assignments of the comm names so that
+> the copy of prev_comm is with the updates to the prev_fields, and the
+> next_comm is with the updates to the next fields.
 
+Right, have at. very close to a whitespace patch.
 
