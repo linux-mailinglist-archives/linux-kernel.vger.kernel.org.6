@@ -1,108 +1,66 @@
-Return-Path: <linux-kernel+bounces-254156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C34932F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2545B932F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E1C2811B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FA3282031
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863B31A01B3;
-	Tue, 16 Jul 2024 18:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EMGM9htE"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7AA1A072A;
+	Tue, 16 Jul 2024 18:03:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080791F171
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3611A01B3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721152944; cv=none; b=J2CDBwlzFzd974F4oGRzbfXNj1/8FDVnO7eHiBpCcP5k3GwH2p0JIMEzqpGxZKm65lZin/hKsRRCSjOC3fQ/t9tmi61uNsaopVCXXBet3gOVQ+iWR1IdmjBfP+p38s5/Z11yb6eiqROZZW/Dx9iS37/DhvoFn9NUt5dkpV2ZQKg=
+	t=1721152987; cv=none; b=moQY2pyqLtd3rijGBXhUoSYeP1IZQEU1b1TPfFpPBo6TsVTpFL9MGbd2V8VnV+7NDnZMjVVkR7Nataw58AKdV2HNxI2GCIcyNL0IN2/T0UP6iBuhhmTTfiQV6DP90RCkSggFSvGtZPi+YrPG/NJhq7I4ihn8P0VPFRYdnac+BN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721152944; c=relaxed/simple;
-	bh=AXDvP7/UmEbrryVE943UNdrWU5PiS7V0l28WHbhrZ9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2mcdaH5rbAGIY8BursaJ1oKdgE6aQVP2q1rNFGOr/L5Zm/Zk4pbTxDg9eSMalnYVXv+mTnDmIGf1cirdndvqy8tuxLi8niQPPAmOBbRMhCdxVTYRmCJ22+e31VsZtxmZ3IAjDN5VzH4p05PrfchoTsHuq9jgHHA1DkhIPfdgeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EMGM9htE; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77c9d3e593so610326466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721152940; x=1721757740; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOCx9jSH+Kwj05EqOSaKkaYB3+Y38iYxRASkxIAb7vg=;
-        b=EMGM9htEpaZnHoMZeKPeVFqZcThbggIICqknIgWsh9qi7hSwZN8tzN4DcEJ9ekosUJ
-         zQ3/Jym72JzbbypJspWvUXgK9KErvmR3uo5AFAabVpYldwNNWKflEYLlriCIbnFTJKOU
-         LMKzwok27MFOfoJSIQ49c/tBlVDB49Rx/ctVM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721152940; x=1721757740;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOCx9jSH+Kwj05EqOSaKkaYB3+Y38iYxRASkxIAb7vg=;
-        b=P9pXBSV0N8hk/bw5C0+JPyELO2UUJ5Hl2KkS1FabUiy9fV6P8D/USMkLvLh0xS/Kcd
-         reCJbl1HUmGXe8mSZybRvT1ZRz8LbNJln6X66gtyyf7X3e5+fyl7W7WJQzEftvdVgaQB
-         elGn4aq3ynbbK0E1/c675/AXzs9xOLfdVlS7OWbxOloWAwtAx+psMYUTalMjnq4Aq/Nn
-         c8sJfcmoNG54qvpNJ/IUMPCDEIzcXBssT/Ot9yj/9N3dV4lNi5gWFMba2n431cJzUe2H
-         JdRX+jvPoL5KkNUV7W0ymemrRtnw1XbHwjm5FedeGuY2GTeg0R5YOWI9KgWDlDsgoE0/
-         fm9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNlFni5k/sPY7WYeM1kKX27/E1mn+LZNi22tWFQ7I937zL/fQCGtseDoyyal3cUc0fFSEEihFF1jU5Upjcv3DeOuZbBrvWOyak7F9/
-X-Gm-Message-State: AOJu0Yy2ovZaxfxUWCNrKIbmMx+dmWiXbAJ3Y4eT9ZdEtzaYkMzNg2V7
-	kjJt8M/8EbteY/KEz9vE6oEz+qaZWZa1uFleNSRUfl7oLUdThSO7eu3nZdSy0gNumhTbk9I7mK9
-	0X+q7tA==
-X-Google-Smtp-Source: AGHT+IHVMx1dqm3x2s5rURpC1utG0M6MBx7meDy6EIcjPBQ+XvDsearCfFh0fqkW6MgbY0RLAoYFxA==
-X-Received: by 2002:a17:906:ae8c:b0:a77:cca9:b212 with SMTP id a640c23a62f3a-a79eaa3197dmr183296166b.45.1721152940248;
-        Tue, 16 Jul 2024 11:02:20 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d00aasm342863566b.90.2024.07.16.11.02.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 11:02:19 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ba3e37feeso7174880a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:02:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/1GaUvWZRz/fsQp9Ex69Dk+I59K/y5SIjy6A+47amU2GZGJm9goFvcnQrmmEMnUJrlsm+OuEh9zys1oSGnAHvIHNnx8UumRP3DBD8
-X-Received: by 2002:a05:6402:2106:b0:582:ca34:31b1 with SMTP id
- 4fb4d7f45d1cf-59eeef3d862mr2165623a12.16.1721152939113; Tue, 16 Jul 2024
- 11:02:19 -0700 (PDT)
+	s=arc-20240116; t=1721152987; c=relaxed/simple;
+	bh=PMSItOgaVO5uTOiyK4ac/g8IpH5aPjnsDZh3Bav6XtI=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=RZwlKyyz+H//yTElfm5QcpXje3cNlt7XpD0U5DZ4zFDEFwA+rg6OJQ4dl1HDM8e1DbmMw/GBbnaNIEAChruJtFNA6hQkY2Pn481Ji2KIACQwzjb08ezrxyoXMm289LHRo1QMp0RKI0KZzdc/cm1E04X996SP4Y+TgsyigJuUmsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F3C3C4AF0B;
+	Tue, 16 Jul 2024 18:03:07 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sTmW0-000000006tn-2coB;
+	Tue, 16 Jul 2024 14:03:04 -0400
+Message-ID: <20240716180223.593493907@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 16 Jul 2024 14:02:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/2] ring-buffer: Last minute updates for 6.11
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240716080418.34426-1-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20240716080418.34426-1-manivannan.sadhasivam@linaro.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 16 Jul 2024 11:02:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjxiAvNJejbpMbn_CMYzU97uHFPiRmYQ5Gaxw56UyK8sA@mail.gmail.com>
-Message-ID: <CAHk-=wjxiAvNJejbpMbn_CMYzU97uHFPiRmYQ5Gaxw56UyK8sA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Check for the existence of 'dev.of_node' before
- calling of_platform_populate()
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 16 Jul 2024 at 01:04, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> -       if (IS_ENABLED(CONFIG_OF) && pci_is_bridge(dev)) {
-> +       if (IS_ENABLED(CONFIG_OF) && dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
->                 retval = of_platform_populate(dev->dev.of_node, NULL, NULL,
->                                               &dev->dev);
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/for-next
 
-I think you should just drop the IS_ENABLED(CONFIG_OF) check entirely.
+Head SHA1: b96c312551b241bc17226c5347c6d6b38a1efd3e
 
-afaik, dev_of_node() already returns NULL if CONFIG_OF isn't set.
 
-So the bug was literally that you based the decision on something
-pointless that shouldn't be there at all.
+Dan Carpenter (1):
+      tracing: Fix NULL vs IS_ERR() check in enable_instances()
 
-                Linus
+Thorsten Blum (1):
+      ring-buffer: Use vma_pages() helper function
+
+----
+ kernel/trace/ring_buffer.c | 8 ++++----
+ kernel/trace/trace.c       | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
