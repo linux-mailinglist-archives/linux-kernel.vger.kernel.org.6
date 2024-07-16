@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-253881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D1893282D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BDF932836
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209E8B21ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A812844F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2619B590;
-	Tue, 16 Jul 2024 14:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D281D19CCE0;
+	Tue, 16 Jul 2024 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXbp5dZz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNQnbiKa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8FB19B3FB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E7319B58D;
+	Tue, 16 Jul 2024 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139645; cv=none; b=NtAuiPBSIhCSI46v6PsihaunkD+EA9YdWv70BWgNGCkX5sZzLvys1t/07chEWbZYECFcUrXBI2d3LfbBgDyx+ZzK+2HahslPM3DjwZWZ5i2rR/COgnqcRBcQSg5goEIbxa91l4UozvOM8OzgLHmv5OC4HQbCql2bjEaXzbBXuAs=
+	t=1721139748; cv=none; b=MV68YLFTSDN7l6wrn7zIz2m5Hsontm5d+zIjKh8s+txOzfMzXZ/7OPgTSEbIt0xByhgz/uNFmWhXq/Gg/A8y4HobEGmUZDDlYK1wZjaIeDhE2zvhmeWUggUwPSxCT6jrF1V9zRc9pEt6xj0vHmIdcU3W3P7m1odZBRBbQ39G2Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139645; c=relaxed/simple;
-	bh=YDCzt9Ym0E4AXnhOajxOlPxDcqhpZsHRx4t0TG99PwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ugT5fzpzX2IwnEVMLvxQ9U7yEDLvzU972ldnrZNgclBCJkkvXzEt38XuhoETc6oDoFXBuI11v/qSjGR2JLMgemQeZO2clT2cbR9McvMg0kgv9LAcfH45ls7tOJy9xu0y6vMnPmK3tXBkj2M0R+yiZgJxcbtZDI0gErywHIV5naw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXbp5dZz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EF5C116B1;
-	Tue, 16 Jul 2024 14:20:43 +0000 (UTC)
+	s=arc-20240116; t=1721139748; c=relaxed/simple;
+	bh=lRacVhN7ynbA5xBcabtmPnIkPfU0DMzBPbT8tnfeQWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxZMg96jV3Ngd4CX2v+Hj+vaUV/3S5o/DlxZHDBvzVrJvGQxJhm5McF/7g2HeaFHxP9J7hAnSTSwjg8KPIXwTeyz4fAjJqASwOCR1cGofCbxm2T4c9RRn6xJ57E+k6z8di1yopPa2Nz6mQPjkr8x/Ys47mPNNYDamp0A2swF5iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNQnbiKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72794C4AF09;
+	Tue, 16 Jul 2024 14:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721139644;
-	bh=YDCzt9Ym0E4AXnhOajxOlPxDcqhpZsHRx4t0TG99PwE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LXbp5dZz+TDgd7oSYA24+umrvjAL1eE28+HI2ajUUBYtZSIa+Yw4qLBPsxlsSxEW6
-	 Xu72SduAHd8+LBTXshSEznz/Fwu+jz6IquDn0cgs8Fi9ayirwWOm/63GQtZL1sJ4p/
-	 +04XYoNV8LYiDO8JE91iMJUqGJMS/em7eizA6uiiT0GbECOcpCsRyPmJ3e8dtUWk4d
-	 ry+j0UiCXZ/1vm+gZa4P8uCf71sXE10EUB8pXydqNeR0SQyTX3Ozs867Z8JkOGrXSq
-	 vwLckkrNUdqgdkyOLmCUv62WS3HvPJ1gbgnR5a22f/aZkB2KKLqEmcFw3EMDphuPrT
-	 +YQamUIAclEPw==
-Date: Tue, 16 Jul 2024 15:20:41 +0100
-From: Lee Jones <lee@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [GIT PULL] Backlight for v6.11
-Message-ID: <20240716142041.GV501857@google.com>
+	s=k20201202; t=1721139748;
+	bh=lRacVhN7ynbA5xBcabtmPnIkPfU0DMzBPbT8tnfeQWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNQnbiKadchSFpiphsNrYnEOQ3WO0ySEZWkrHpEd4VleEauhswxGjM+MJFceiIOzC
+	 g7LU35QO4aDn9Bl/oThjSP1kUw3Y3oXIACDsyeiymbuQ/aoyqQZ3VUHygOCXZP7531
+	 Oe0C5Fr/M291vBPYRwyZRNQB+dZeOW6hp31DIoOUgXr1lZoWoNsjZyHlJU+vlzp7c3
+	 rdjiHMT5Ze/xgow3CJSeKjc1WL84bG+giGGqtz2a0JiY6Mfcof9xYvwRM4sWivka6d
+	 Qv7US3RiUfoBoZEKHgJBJATRipkUeIiFRED8MwVzYbzoHB7jXdevwiJqgIF8A3eyuH
+	 2qYQlaC1XtzLA==
+Date: Tue, 16 Jul 2024 17:22:23 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Konstantin Taranov <kotaranov@microsoft.com>
+Cc: Konstantin Taranov <kotaranov@linux.microsoft.com>,
+	Wei Hu <weh@microsoft.com>,
+	"sharmaajay@microsoft.com" <sharmaajay@microsoft.com>,
+	Long Li <longli@microsoft.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH rdma-next 1/1] RDMA/mana_ib: indicate that inline data is
+ not supported
+Message-ID: <20240716142223.GC5630@unreal>
+References: <1721126889-22770-1-git-send-email-kotaranov@linux.microsoft.com>
+ <20240716111441.GB5630@unreal>
+ <PAXPR83MB0559406ED7CCDAFC0CAEC63DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR83MB0559406ED7CCDAFC0CAEC63DB4A22@PAXPR83MB0559.EURPRD83.prod.outlook.com>
 
-Good afternoon Linus,
+On Tue, Jul 16, 2024 at 01:42:49PM +0000, Konstantin Taranov wrote:
+> > > Set max_inline_data to zero during RC QP creation.
+> > >
+> > > Fixes: fdefb9184962 ("RDMA/mana_ib: Implement uapi to create and
+> > > destroy RC QP")
+> > > Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+> > > ---
+> > >  drivers/infiniband/hw/mana/qp.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/infiniband/hw/mana/qp.c
+> > > b/drivers/infiniband/hw/mana/qp.c index 73d67c853b6f..d9f24a763e72
+> > > 100644
+> > > --- a/drivers/infiniband/hw/mana/qp.c
+> > > +++ b/drivers/infiniband/hw/mana/qp.c
+> > > @@ -426,6 +426,8 @@ static int mana_ib_create_rc_qp(struct ib_qp *ibqp,
+> > struct ib_pd *ibpd,
+> > >  	u64 flags = 0;
+> > >  	u32 doorbell;
+> > >
+> > > +	/* inline data is not supported */
+> > > +	attr->cap.max_inline_data = 0;
+> > 
+> > Can you please point to me to the flow where attr is not zeroed before?
+> >
+> 
+> Sorry, I do not understand the question. I cannot point to something that is not in the code.
+> 
+> It is to support the case when user asks for x bytes inlined
+> when it creates a QP, and we respond with actual allowed inline
+> data for the created QP. (as defined in: "The function ibv_create_qp()
+> will update the qp_init_attr->cap struct with the actual QP values of
+> the QP that was created;")
+> 
+> The kernel logic is inside "static int create_qp(struct uverbs_attr_bundle *attrs, struct ib_uverbs_ex_create_qp *cmd)"
+> where we do the following:
+> attr.cap.max_inline_data = cmd->max_inline_data;
+> qp = ib_create_qp_user(..,&attr,..);
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Awesome, ib_create_qp_user() is called exactly in two places, and in
+both cases I see this line "struct ib_qp_init_attr attr = {}; "
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+It means that attr is zeroed.
 
-are available in the Git repository at:
+Thanks
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git backlight-next-6.11
-
-for you to fetch changes up to 1df5aa3754cac2045998ca505edb84d994786c67:
-
-  backlight: sky81452-backlight: Use backlight power constants (2024-07-04 16:45:25 +0100)
-
-----------------------------------------------------------------
- - New Drivers
-   - Add support for Texas Instruments LM3509 Backlight Driver
-
- - Fix-ups
-   - Device Tree binding adaptions/conversions/creation
-   - Drop i2c_device_id::driver_data where the value is unused
-   - Make use of the new *_scoped() guard APIs
-   - Decouple from fbdev by providing Backlight with its own BACKLIGHT_POWER_* constrains
-
- - Bug Fixes
-   - Correctly assess return values (NULL vs IS_ERR())
-   - Supply a bunch of MODULE_DESCRIPTIONs to silence modpost warnings
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      backlight: lm3509_bl: Fix NULL vs IS_ERR() check in register() function
-
-Javier Carrasco (1):
-      backlight: lm3509_bl: Fix early returns in for_each_child_of_node()
-
-Jeff Johnson (1):
-      backlight: Add missing MODULE_DESCRIPTION() macros
-
-Patrick Gansterer (2):
-      dt-bindings: backlight: Add Texas Instruments LM3509
-      backlight: Add new lm3509 backlight driver
-
-Thomas Zimmermann (17):
-      backlight: Add BACKLIGHT_POWER_ constants for power states
-      backlight: aat2870-backlight: Use blacklight power constants
-      backlight: ams369fb06: Use backlight power constants
-      backlight: corgi-lcd: Use backlight power constants
-      backlight: gpio-backlight: Use backlight power constants
-      backlight: ipaq-micro-backlight: Use backlight power constants
-      backlight: journada_bl: Use backlight power constants
-      backlight: kb3886-bl: Use backlight power constants
-      backlight: ktd253-backlight: Use backlight power constants
-      backlight: led-backlight: Use backlight power constants
-      backlight: lm3533-backlight: Use backlight power constants
-      backlight: mp3309c: Use backlight power constants
-      backlight: pandora-backlight: Use backlight power constants
-      backlight: pcf50633-backlight: Use backlight power constants
-      backlight: pwm-backlight: Use backlight power constants
-      backlight: rave-sp-backlight: Use backlight power constants
-      backlight: sky81452-backlight: Use backlight power constants
-
-Uwe Kleine-König (1):
-      backlight: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
- Documentation/ABI/stable/sysfs-class-backlight     |   7 +-
- .../bindings/leds/backlight/ti,lm3509.yaml         | 136 ++++++++
- drivers/video/backlight/Kconfig                    |   7 +
- drivers/video/backlight/Makefile                   |   1 +
- drivers/video/backlight/aat2870_bl.c               |   4 +-
- drivers/video/backlight/adp8870_bl.c               |   2 +-
- drivers/video/backlight/ams369fg06.c               |  23 +-
- drivers/video/backlight/bd6107.c                   |   2 +-
- drivers/video/backlight/corgi_lcd.c                |   4 +-
- drivers/video/backlight/gpio_backlight.c           |   9 +-
- drivers/video/backlight/ipaq_micro_bl.c            |   3 +-
- drivers/video/backlight/jornada720_bl.c            |   3 +-
- drivers/video/backlight/kb3886_bl.c                |   4 +-
- drivers/video/backlight/ktd253-backlight.c         |   5 +-
- drivers/video/backlight/ktz8866.c                  |   4 +-
- drivers/video/backlight/led_bl.c                   |   4 +-
- drivers/video/backlight/lm3509_bl.c                | 343 +++++++++++++++++++++
- drivers/video/backlight/lm3533_bl.c                |   3 +-
- drivers/video/backlight/lm3630a_bl.c               |   2 +-
- drivers/video/backlight/lm3639_bl.c                |   2 +-
- drivers/video/backlight/lv5207lp.c                 |   2 +-
- drivers/video/backlight/mp3309c.c                  |   6 +-
- drivers/video/backlight/pandora_bl.c               |   3 +-
- drivers/video/backlight/pcf50633-backlight.c       |   5 +-
- drivers/video/backlight/platform_lcd.c             |   1 +
- drivers/video/backlight/pwm_bl.c                   |   4 +-
- drivers/video/backlight/rave-sp-backlight.c        |   2 +-
- drivers/video/backlight/rt4831-backlight.c         |   1 +
- drivers/video/backlight/sky81452-backlight.c       |   2 +-
- include/linux/backlight.h                          |  20 +-
- 30 files changed, 550 insertions(+), 64 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/ti,lm3509.yaml
- create mode 100644 drivers/video/backlight/lm3509_bl.c
-
--- 
-Lee Jones [李琼斯]
+> resp.base.max_inline_data = attr.cap.max_inline_data;
+> 
+> So, my change makes sure that the response will have 0 and not the value the user asked,
+> as we do not support inlining. So without the fix, the user who was asking for inlining was falsely
+> seeing that we support it (example of such an application is rdma_server from librdmacm).
+> 
+> Thanks
+> 
+> > Thanks
+> > 
+> > >  	if (!udata || udata->inlen < sizeof(ucmd))
+> > >  		return -EINVAL;
+> > >
+> > > --
+> > > 2.43.0
+> > >
 
