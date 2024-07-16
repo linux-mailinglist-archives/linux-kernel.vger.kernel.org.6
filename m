@@ -1,141 +1,178 @@
-Return-Path: <linux-kernel+bounces-253597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA24D932392
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC779323BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848A11F23BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351B91F23C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A2198A20;
-	Tue, 16 Jul 2024 10:06:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0186B44369;
-	Tue, 16 Jul 2024 10:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721124392; cv=none; b=Apwu5BHoxA7dvY7qs2Li6J9BGXvfkOh3LG7xgWdHRMMZ1ZD+KxqzLExKm3IF1AJqOBN93cfcuEDQ99hpUlCMz3ysoZF1criATd6MX43yZLi691EQ29wuHinXkGcEv6MlKXXQ27IlqxAZLI6xFXOX7t3NAObRSy/XaGvOKjXXkio=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721124392; c=relaxed/simple;
-	bh=15GE7Kublid/r/h32zPnzD+qmdotNJ/HsZeI1Dk8tSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BY/EJr+tL1S7fIURsnDEElzjHObajxKMf9gcuVzuwgV4qCuT/bY2n2yFaBuvIlOzNwetMP+n7e5kAeBwuKZ6Dw+5Aij+Bu1TMOToTFu4LOeNbJM1xEN/y3lTZdk8XBGvn3DRFBCK7g/v/dY0tCpv38Ke5dyFmXN2n0Kog1aWZWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 971421063;
-	Tue, 16 Jul 2024 03:06:54 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7195F3F762;
-	Tue, 16 Jul 2024 03:06:27 -0700 (PDT)
-Message-ID: <a17e6701-4195-4132-8518-fe4b10403f7e@arm.com>
-Date: Tue, 16 Jul 2024 11:06:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C9C198A35;
+	Tue, 16 Jul 2024 10:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="lMgeDqUs";
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="b4ReaF9y"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58D5198832;
+	Tue, 16 Jul 2024 10:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721124914; cv=pass; b=NdU358SKhisv0N0voY5p1ep6VnzAil6YmTz/3TKa6VA1dN/jkAwUjcl+Cc5WeZSJRL6OX8MAugqQ2t7ruF+YylYBi3S+LW4XRmh4NekpsrggRxYYD1RrE3lncaCHv4Fbh+0p+QocFNLl4U/uvX1YSQKUlhche8pEEHtGHtGduUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721124914; c=relaxed/simple;
+	bh=qjgFpWpR5+BHvJKoHx4VOD2XEZQxafJHmKAcxjKa2h4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=XlCThdG+Na1e3e3o90A+JMZxjA17Mzlj1Zil49JzUguLfBfw1ngo+XOtAZQquvtBUMG4dex5aEjwwT0jQr36CYFa58qVw3U02TzOpSTFModSfOov5FN9XA0r6wF+AUlTru3IpZTTvDkQV//R4AN3B0MgqEf1ab1mqoM9b7NviPo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=lMgeDqUs; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=b4ReaF9y; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4WNZVZ0tBTz49PyZ;
+	Tue, 16 Jul 2024 13:07:02 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1721124422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
+	b=lMgeDqUsqGBQfbQ5ls0Fd7+95WDR0Nv57O8qhkGrg2Dp8JbxzSs0glBo4OfK0XgH0RJcN4
+	ZEneYeu1DfoZ/eu2OKCRehzXsytLB1ocjZHH3EhLQ2LLE7lRKXXa6BKxyYYpY29ZACHNmp
+	lnEHlPk08CTZSjzPr7l1/D/zXCiUgVdCzEPY7YDIwK4RoaviMpD9cCnFjMmaLCVcF+4r9T
+	0LjR2CoQljGEI41ffDOdhz0uesJde2jYObujIvdHEXHw1eOMMYIKiVVqo9Nuydcqr6UBP/
+	ZHWosDXOB7DDTOXzWbneNvyRM0mG2KS+963Chet+mY+apR9iYrvsFkZ+c1TA+g==
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4WNZVL6DdKzyT2;
+	Tue, 16 Jul 2024 13:06:49 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1721124413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
+	b=b4ReaF9y8dRqV59aja1fjnq0qUGK8jKtKo4rGLbkq6SYT7dUdSNJ5xHMkTNP8By/g4aOW5
+	QgaLyxrm4t8gP/m50pLB4kVuzjK+cOaovfagPrgmnXVnX7Q8EoQq6F6c7L4vPcq0hPPRms
+	LfA+OgdkNoiD4z1woGIgSr1MvXS6rNE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1721124413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
+	b=qqVfNR58AMWIU9S1I8LbK7x47ttvNaOp2BVSr03w76oRvu537Lq5/pj+2kOQeaME/N4DGm
+	sHGWaAuAImJKxnoluQxu9A9ZpK4+Y2kP+SvxywdO039lWZ5CK/oKLMkexk0oR+P04f8C9t
+	LwQNiHCkbxWHdyY73B39B88Atu7xNqE=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1721124413; a=rsa-sha256; cv=none;
+	b=bcrJbs+z2VvEPuakv3T2Q07ItztVLO/4lg4IHlWAeDPVB1Xfq3BccIFufL7W1sO7kzQhQN
+	4084IFC+Y3tIXoZVxngQ7co34FCeSGsZcTsUltWG4R8BT/Ztun77AUTbrZ1pWpOW99goVr
+	M66E9SqG6394+HaMJjkdg/epoCx/Bo8=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715143342.52236-1-leo.yan@arm.com>
- <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
- <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com>
- <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
- <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com>
- <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com>
- <CAP-5=fU=LguHNi861L4gmgZWXrrgZtG1w5cdw7hXDxnfWyJyMQ@mail.gmail.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <CAP-5=fU=LguHNi861L4gmgZWXrrgZtG1w5cdw7hXDxnfWyJyMQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 16 Jul 2024 13:06:49 +0300
+Message-Id: <D2QVOMDX6BJW.3GCX7CFZL4KSF@iki.fi>
+Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Hao
+ Ge" <gehao@kylinos.cn>
+Subject: Re: [PATCH] tpm: Move dereference after NULL check in
+ tpm_buf_check_hmac_response
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Jarkko
+ Sakkinen" <jarkko@kernel.org>, "Hao Ge" <hao.ge@linux.dev>,
+ <peterhuewe@gmx.de>, <jgg@ziepe.ca>
+X-Mailer: aerc 0.17.0
+References: <20240709023337.102509-1-hao.ge@linux.dev>
+ <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
+ <f6ab30f39a14550b6fc111feb83b2657006b8b8c.camel@HansenPartnership.com>
+In-Reply-To: <f6ab30f39a14550b6fc111feb83b2657006b8b8c.camel@HansenPartnership.com>
 
+On Mon Jul 15, 2024 at 2:52 PM EEST, James Bottomley wrote:
+> On Mon, 2024-07-15 at 14:25 +0300, Jarkko Sakkinen wrote:
+> > On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
+> > > From: Hao Ge <gehao@kylinos.cn>
+> > >=20
+> > > We shouldn't dereference "auth" until after we have checked that it
+> > > is
+> > > non-NULL.
+> > >=20
+> > > Fixes: 7ca110f2679b ("tpm: Address !chip->auth in
+> > > tpm_buf_append_hmac_session*()")
+> > > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> >=20
+> > Also lacking:
+> >=20
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes:
+> > https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e=
+13ec2@stanley.mountain/T/#u
+> >=20
+> > What is happening here is that my commit exposed pre-existing bug to
+> > static analysis but it did not introduce a new regression.
+>
+> Actually, it didn't.  The previous design was sessions were config
+> determined and either auth would be non-NULL or attach would fail.  You
+> chose with this series to make auth the indicator of whether sessions
+> should be used, and before this auth could not be NULL so no bug
+> existed.
 
+Not on at least one driver, which does not call tpm2_sessions_init().
 
-On 7/15/24 22:21, Ian Rogers wrote:
+What do you exactly mean by design? It is first time I hear anyone to
+claim that validating pointer is an alternative design.
 
-[...]
+Before my fixes:
 
-> Hmm.. I can repro but I don't see where the string comes from and my
-> build is definitely using clang:
-> ```
-> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C tools/perf
-> O=/tmp/perf NO_LIBELF=1 NO_LIBTRACEEVENT=1 NO_LIBPYTHON=1 CC=clang
-> CXX=clang++ V=1
-> ...
-> clang --target=aarch64-linux-gnu -fintegrated-as  -Wbad-function-cast
-> -Wdeclaration-after-statement -Wformat-security -Wformat-y2k
-> -Winit-self -Wmissing-declarations -Wmissing-prototypes
-> -Wno-system-headers -Wold-style-definition -Wpacked -Wredundant-decls
-> -Wstrict-prototypes -Wswitch-default -Wswitch-enum -Wundef
-> -Wwrite-strings -Wformat -Wno-type-limits -Wshadow -Wthread-safety
-> -DHAVE_SYSCALL_TABLE_SUPPORT -I/tmp/perf/arch/arm64/include/generated
-> -DHAVE_ARCH_REGS_QUERY_REGISTER_OFFSET -Werror -DNDEBUG=1 -O3
-> -fno-omit-frame-pointer -Wall -Wextra -std=gnu11 -fstack-protector-all
-> -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -D_LARGEFILE64_SOURCE
-> -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I~/src/tools/perf/util/include
-> -I~/src/tools/perf/arch/arm64/include -I~/src/tools/include/
-> -I~/src/tools/arch/arm64/include/uapi -I~/src/tools/include/uapi
-> -I~/src/tools/arch/arm64/include/ -I~/src/tools/arch/arm64/
-> -I/tmp/perf//util -I/tmp/perf/ -I~/src/tools/perf/util
-> -I~/src/tools/perf -DHAVE_PTHREAD_ATTR_SETAFFINITY_NP
-> -DHAVE_PTHREAD_BARRIER -DHAVE_EVENTFD_SUPPORT
-> -DHAVE_GET_CURRENT_DIR_NAME -DHAVE_GETTID -DHAVE_FILE_HANDLE
-> -DHAVE_AIO_SUPPORT -DHAVE_SCANDIRAT_SUPPORT
-> -DHAVE_SCHED_GETCPU_SUPPORT -DHAVE_SETNS_SUPPORT -DNO_LIBPERL
-> -DHAVE_TIMERFD_SUPPORT -DNO_LIBPYTHON -DHAVE_BACKTRACE_SUPPORT
-> -DHAVE_KVM_STAT_SUPPORT -DHAVE_AUXTRACE_SUPPORT
-> -I/tmp/perf/libapi/include -I/tmp/perf/libsubcmd/include
-> -I/tmp/perf/libsymbol/include -I/tmp/perf/libperf/include -I/tmp/perf/
-> -Wl,-z,noexecstack \
->          /tmp/perf/perf-in.o -Wl,--whole-archive
-> /tmp/perf/libapi/libapi.a /tmp/perf/libperf/libperf.a
-> /tmp/perf/libsubcmd/libsubcmd.a /tmp/perf/libsymbol/libsymbol.a
-> /tmp/perf/libperf-bench.a /tmp/perf/libperf-test.a
-> /tmp/perf/libperf-ui.a /tmp/perf/libperf-util.a
-> /tmp/perf/libpmu-events.a  -Wl,--no-whole-archive -Wl,--start-group
-> -lpthread -lrt -lm -ldl -Wl,--end-group -o /tmp/perf/perf
-> $ strings /tmp/perf/perf|grep GCC
-> GCC: (Debian 13.2.0-13) 13.2.0
-> $ find /tmp/perf -name '*.[oa]' -exec sh -c "strings {} | grep GCC" \; -print
-> GCC: (Debian 13.2.0-13) 13.2.0
-> /tmp/perf/fixdep.o
-> GCC: (Debian 13.2.0-13) 13.2.0
-> /tmp/perf/fixdep-in.o
-> ```
-> fixdep is being compiled with HOSTCC which isn't clang. Some more digging:
-> ```
-> $ aarch64-linux-gnu-readelf -p .comment /tmp/perf/perf
-> 
-> String dump of section '.comment':
->   [     0]  GCC: (Debian 13.2.0-13) 13.2.0
->   [    1f]  Debian clang version 16.0.6 (20+build1)
-> ```
-> So I suspect that the GCC is coming from crt0.o and that the binary
-> was built with clang.
+int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
+				int rc)
+{
+	struct tpm_header *head =3D (struct tpm_header *)buf->data;
+	struct tpm2_auth *auth =3D chip->auth;
+I.e.
 
-Thanks for correcting. Now I even can build successfully with the Clang
-from Android NDK with an additional flag 'NO_DEMANGLE=1'. Though we still
-need to disable several modules for passing the building, but we are on the 
-right way.
+Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
 
-Would you like to continue a formal fixing or you want me to follow up?
+Even in the current master there is still inline function that when HMAC
+is disable:
 
-Thanks,
-Leo
+static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
+					      struct tpm_buf *buf,
+					      int rc)
+{
+	return rc;
+}
+
+>
+> Consider also the fidelity of the Fixes tag for stable: this commit
+> needs backporting with 7ca110f2679b and Fixes should identify that
+>
+> James
+
+I'd suggest for you to focus fixing issue and not complaining about
+irrelevant stuff.
+
+And I'd suggest IBM to do better job next time as a company, and test
+at least with your own hardware before sending anything.
+
+BR, Jarkko
 
