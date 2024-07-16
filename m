@@ -1,97 +1,206 @@
-Return-Path: <linux-kernel+bounces-254248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837D99330B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4026A9330BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C221F24587
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:51:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5E5CB214AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A0E71B52;
-	Tue, 16 Jul 2024 18:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAAC1A00F7;
+	Tue, 16 Jul 2024 18:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dKiHe2IU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Btv5GK+G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FB01643A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D42B1643A;
+	Tue, 16 Jul 2024 18:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721155899; cv=none; b=U8Jl0PDEDVzZKRXhAPOKBFuCKmbqdM1skLBUzl2HB3zPnPwXZKH266wh6xhDDA8z0t+CcHkuJFJO5KTr0EQFlDW6hg5qg16fLmhq6kOCaAipL5sMO+bQOvm2RLT0qr62T7+fzfiYzw/do4fs677wlTdsheE1mNNelgqi1kpVi0w=
+	t=1721155955; cv=none; b=ecqTbOZVmFy4nWnck6eNPFvEb9+d5TW31BGMkEoTXu74BIBkM/mF/ZtKE5xQCD9XNnmBHZGlajwlSkbroZ9tvMC8ljOCbmFH8d2Kf89WvTUhGbIfXJsApSMzsy1xu6ILB+gufBfs7/Xk16hqlnxzQ2EiKiJq+H643O8g2fyJQlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721155899; c=relaxed/simple;
-	bh=tfVJ/+1KbYj1S9wQiiqJ/Wfrv4cX0tlJjh3DxE8BYEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQnJnVwM/4YNvGX4RZLFtuOttm4oc32wf3S/jtr5rwoCfaxhBxv3orU0N3j3THEC1TqosYw/VR5CpBNqOwHHdvhrQAN8iaIiH+XsjS4BPq9jj1CV05ly/JoNr0rPKr7vtjAfDlxxttQXNZx18jYiDxAWBiKvecGP9QTpjovurcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dKiHe2IU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721155898; x=1752691898;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=tfVJ/+1KbYj1S9wQiiqJ/Wfrv4cX0tlJjh3DxE8BYEM=;
-  b=dKiHe2IUwyi2F2TbxXUAlG4HaSUPNmgq11olNacC9YOe0yvFiSG2uP8+
-   E+/Dypv0Av8f8/1P2SFLAB+KEFUr8e+jPpxzsLUqsXqIr7lacmGNl4FC1
-   BG0UrFd3hJDXxxKtoTaRuXWLbm07CICa6HGHa6WBWYJx1wXnWZanjAa7t
-   EiRHNx5eZJBAYoySqhcjspRbZ84agf6MNZpRc47VbN8yB61i5C3CpqLDC
-   lQZlUKRftsNkXXFbDhfN7KYzD2qLeTZPQCnaW2fT0e2IBQOgB0mPksBT7
-   Lt9hfjqz01uMad1BbchbgWgYw6PQ2G0XuZFjCS3EVKJWGmeqs4CPrdpvo
-   g==;
-X-CSE-ConnectionGUID: ts2ul0iLSI+SCBZoxEh3Hg==
-X-CSE-MsgGUID: e6Y+7ib5TKyXb0+wZyJv1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="18815587"
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="18815587"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 11:51:37 -0700
-X-CSE-ConnectionGUID: dalCEvOVQzeqUUkz5v69Kw==
-X-CSE-MsgGUID: NFSXBK03TzmYAUK89QQWpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="54440322"
-Received: from alicebur-mobl.amr.corp.intel.com (HELO [10.125.98.21]) ([10.125.98.21])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 11:51:35 -0700
-Message-ID: <97041043-7198-4044-b1ec-f4865f614cf2@linux.intel.com>
-Date: Tue, 16 Jul 2024 11:51:23 -0700
+	s=arc-20240116; t=1721155955; c=relaxed/simple;
+	bh=X9OpwdZtZFTZbbC8V7nGKukaKQcflFFBotd4UiiS6jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RT+Sfzz0t6RvqT0Zu3pW0A/RMYNjvhCVy+PvU0Xk3SVs+/4DadnpnkA4M2xVX8wL/DU+4VpJk5P2q6HuBvojXuUtbYee49cS/v0LEvjabcMYnHbGe0K2f+KVwrORb+LjDvYjppAOU7OnlkiyRWp54PS+JbUfV/81Mx4CfUKXVec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Btv5GK+G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 394C8C116B1;
+	Tue, 16 Jul 2024 18:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721155954;
+	bh=X9OpwdZtZFTZbbC8V7nGKukaKQcflFFBotd4UiiS6jk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Btv5GK+GHpWpFgNUGAXhwF491WnEU1qSMBJhT0aqTx3Wo0FiUPDwzz6DMf0TEcKfP
+	 69Wiqt0ydpi9IoNxqSCEHKcJQzlQ7EGH9XfSUeA+PxHkJXRNHhvLGw/9off8twSSfV
+	 RUL2dfcD7qcQozPy666ljreu4OgKwn6rK0mxbYFV1X/zahQq6tPGks0AKtNDO2PtCB
+	 DMISNjOAqeojj1esoLn04dkScVrDQ0cTw82ACQtmOVK4xqNTmb+VFdnRHHHeKboz2i
+	 JJ3BX/2fPHIA//3uDPy0EkZKWXzivS7bWvyQ7AO2snIm9xtfCw9UksZLgOqcoyEJ2O
+	 wBUwOlPNB3rsQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] tpm: Relocate buf->handles to appropriate place
+Date: Tue, 16 Jul 2024 21:52:24 +0300
+Message-ID: <20240716185225.873090-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/10] x86/bugs: Add a separate config for GDS
-To: Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, mingo@redhat.com,
- Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, linux-kernel@vger.kernel.org
-References: <20240422165830.2142904-1-leitao@debian.org>
- <20240422165830.2142904-2-leitao@debian.org>
- <20240712172132.GFZpFmHBJHte2xS1fr@fat_crate.local>
- <ZpUSvl5eKgkLeJrg@gmail.com>
- <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
-Content-Language: en-US
-From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-In-Reply-To: <20240715121703.GAZpUTP-8TJpZBCWne@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/15/24 05:17, Borislav Petkov wrote:
-> On Mon, Jul 15, 2024 at 05:14:54AM -0700, Breno Leitao wrote:
->> Sure, I will send a v4 and get rid of GDS_FORCE_MITIGATION completely.
-> 
-> I'm actually waiting on the people on Cc to chime in whether we really need
-> it. The three distro configs we checked, don't set it.
-> 
+tpm_buf_append_name() has the following snippet in the beginning:
 
-If no one is using it I don't see any reason to keep it. It's just cluttering up
-the code at that point. End users can still set gather_data_sampling=force anyway.
+	if (!tpm2_chip_auth(chip)) {
+		tpm_buf_append_u32(buf, handle);
+		/* count the number of handles in the upper bits of flags */
+		buf->handles++;
+		return;
+	}
+
+The claim in the comment is wrong, and the comment is in the wrong place
+as alignment in this case should not anyway be a concern of the call
+site. In essence the comment is  lying about the code, and thus needs to
+be adressed.
+
+Further, 'handles' was incorrectly place to struct tpm_buf, as tpm-buf.c
+does manage its state. It is easy to grep that only piece of code that
+actually uses the field is tpm2-sessions.c.
+
+Address the issues by moving the variable to struct tpm_chip.
+
+Cc: stable@vger.kernel.org # v6.10+
+Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+v3:
+* Reset chip->handles in the beginning of tpm2_start_auth_session()
+  so that it shows correct value, when TCG_TPM2_HMAC is enabled but
+  tpm2_sessions_init() has never been called.
+v2:
+* Was a bit more broken than I first thought, as 'handles' is only
+  useful for tpm2-sessions.c and has zero relation to tpm-buf.c.
+---
+ drivers/char/tpm/tpm-buf.c       | 1 -
+ drivers/char/tpm/tpm2-cmd.c      | 2 +-
+ drivers/char/tpm/tpm2-sessions.c | 7 ++++---
+ include/linux/tpm.h              | 8 ++++----
+ 4 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+index cad0048bcc3c..d06e8e063151 100644
+--- a/drivers/char/tpm/tpm-buf.c
++++ b/drivers/char/tpm/tpm-buf.c
+@@ -44,7 +44,6 @@ void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+ 	head->tag = cpu_to_be16(tag);
+ 	head->length = cpu_to_be32(sizeof(*head));
+ 	head->ordinal = cpu_to_be32(ordinal);
+-	buf->handles = 0;
+ }
+ EXPORT_SYMBOL_GPL(tpm_buf_reset);
+ 
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 1e856259219e..b781e4406fc2 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -776,7 +776,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 	if (rc)
+ 		goto out;
+ 
+-	rc = tpm2_sessions_init(chip);
++	/* rc = tpm2_sessions_init(chip); */
+ 
+ out:
+ 	/*
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index d3521aadd43e..5e7c12d64ba8 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -238,8 +238,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+ 
+ 	if (!tpm2_chip_auth(chip)) {
+ 		tpm_buf_append_u32(buf, handle);
+-		/* count the number of handles in the upper bits of flags */
+-		buf->handles++;
++		chip->handles++;
+ 		return;
+ 	}
+ 
+@@ -310,7 +309,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+ 
+ 	if (!tpm2_chip_auth(chip)) {
+ 		/* offset tells us where the sessions area begins */
+-		int offset = buf->handles * 4 + TPM_HEADER_SIZE;
++		int offset = chip->handles * 4 + TPM_HEADER_SIZE;
+ 		u32 len = 9 + passphrase_len;
+ 
+ 		if (tpm_buf_length(buf) != offset) {
+@@ -963,6 +962,8 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+ 	int rc;
+ 	u32 null_key;
+ 
++	chip->handles = 0;
++
+ 	if (!auth) {
+ 		dev_warn_once(&chip->dev, "auth session is not active\n");
+ 		return 0;
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index e93ee8d936a9..b664f7556494 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -202,9 +202,9 @@ struct tpm_chip {
+ 	/* active locality */
+ 	int locality;
+ 
++	/* handle count for session: */
++	u8 handles;
+ #ifdef CONFIG_TCG_TPM2_HMAC
+-	/* details for communication security via sessions */
+-
+ 	/* saved context for NULL seed */
+ 	u8 null_key_context[TPM2_MAX_CONTEXT_SIZE];
+ 	 /* name of NULL seed */
+@@ -377,7 +377,6 @@ struct tpm_buf {
+ 	u32 flags;
+ 	u32 length;
+ 	u8 *data;
+-	u8 handles;
+ };
+ 
+ enum tpm2_object_attributes {
+@@ -517,7 +516,7 @@ static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
+ 	if (tpm2_chip_auth(chip)) {
+ 		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
+ 	} else  {
+-		offset = buf->handles * 4 + TPM_HEADER_SIZE;
++		offset = chip->handles * 4 + TPM_HEADER_SIZE;
+ 		head = (struct tpm_header *)buf->data;
+ 
+ 		/*
+@@ -541,6 +540,7 @@ void tpm2_end_auth_session(struct tpm_chip *chip);
+ 
+ static inline int tpm2_start_auth_session(struct tpm_chip *chip)
+ {
++	chip->handles = 0;
+ 	return 0;
+ }
+ static inline void tpm2_end_auth_session(struct tpm_chip *chip)
+-- 
+2.45.2
+
 
