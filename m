@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-253864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5CD932810
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:15:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C65932811
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E11C1F230BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:15:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48C51C22CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4980C19B3C9;
-	Tue, 16 Jul 2024 14:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8161419B58C;
+	Tue, 16 Jul 2024 14:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="HAM/oXwj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p0l9jdZo"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="JDRBCUG/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BjD+pOLu"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136D19ADBB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BECA19B3D1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139312; cv=none; b=nEgsxNpjLOCF+Wgd9aKfVr1PiZjVP6C3lSvyjPcmu4OnW+q7/xoIWHjuOqrXbFEQCMxVu1Pd7KIFptU+i6+bhw90D0wTkirdZVyfq9jCeFchIEwepVYc3Gt9NW9F7g+A3T0y3ZqhFrVCVNiy3WaNFaYrbTCC3qQPLXJszmQ8Zuk=
+	t=1721139313; cv=none; b=OQfPrvsSz3booegPQyinuDDBU1MPshcCngHteD0VD26UP8NejdnX1dHGG7m+FHic2DbiLKNyCrEOoVQbeuADO7nzX4uuLSXn/qqSwegm4I3aG8FVWMUjN2imwbk4l8irmsoy7ioG2lMVnOzmLdRSueIPggjMQFAloubYFGM+L5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139312; c=relaxed/simple;
-	bh=tk5TMmuul2lboVBVIaOCJWUBH1Nrg+wwCKaNSNGbwcM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=li5DiIQNb+oelsE8y+YP0bDriR7myp4CZJ7yr20/tXmNGM/8x1NBS7kWCcJuCaUewEcbEg7iUz/o4D31dPYQSMv0SFtO56Fb7VxDfxjVULByFEJL3unB4GB8z4SZCazE2BNGCRvkHOogGK3tt02sZAIyQ/coVR6s1Ysa4bNIYEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=HAM/oXwj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=p0l9jdZo; arc=none smtp.client-ip=103.168.172.156
+	s=arc-20240116; t=1721139313; c=relaxed/simple;
+	bh=ipsmsZYbAnzZ2nLzzwwb1hP9L5BCCXst27sn5MQXPoE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lGGGt+imnPIwTDR01YCNSgTquUuYsP5MZds7adZBpnkxaJODqtIMJkkoneFo6GgKaOGUPYikkUjNiwWIO6oR34vzvSVyXIfVTJUpHUC8//fBVcr19UMb5vJuHO78K3+X+LxceBtW3YvMVo9eozrKvPLy4hfLDDRB9xXenI5spS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=JDRBCUG/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BjD+pOLu; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 7A06B11480A5;
-	Tue, 16 Jul 2024 10:15:08 -0400 (EDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 36F001388CB4;
+	Tue, 16 Jul 2024 10:15:11 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 16 Jul 2024 10:15:08 -0400
+  by compute3.internal (MEProxy); Tue, 16 Jul 2024 10:15:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1721139308; x=1721225708; bh=IN
-	JyV6lCgUK9JMf7AobUOIZXv0ZhcOYphpMoAPpaOlw=; b=HAM/oXwjEQcav6UbEb
-	GO8a9OaHrpF60lAOu34ZY40VHl06S0xt41/DVlrDdjP22gm6zMMRG5kmlpMvNwQu
-	joT4Cexz8ulU2DT6fx78dVlGrvpEuWL4rLPg90DpdverljOmEsa9aISSYoSuY6kV
-	0TPIUbJj0SycsT6p7l5nw4XFmThfoU61isaPkuRdAC1rpv4x2OfvNjvrVWlQLiUQ
-	cNsJIagb6nhZacf5zSHn/+1quF9NffVLvxme17/W09doidZ8ej+SKYN+Uz7O2Noy
-	09LSVk1bHQtxFXZXON2GT/fojnZxhSBLh20bhpQPkESEMVwvJVYCtVv+cdc5KCRU
-	y1PQ==
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1721139311;
+	 x=1721225711; bh=80MXqoF8BPSn2t5IK17fPjbSuREk2f3XfiBkJXSaTeQ=; b=
+	JDRBCUG/08sl74aGjVXKuI2/bqW41XFIdbIoiJWSOGK7cUaIOrbwIkD04B8fY6k/
+	VeJEBuICTREXHFSzaa5EavaBFiHlP6OdYtd6OmDiK6f9xJQCq/xqBj/2PUdvw/Bn
+	b9owId7L71qbOAkYdiNMKL7OP0V8sB4jAD41p3tJHp6qH88KpthYSBxL6F1QLX1y
+	aAha+WU91lM9pSXTO1rjUtr4rW+7mvI0onvuzjBOozsUljHFRLjMojRUAe4L5m6v
+	p1NRwBl9LEBl98sO9RQEkHbbKKDg13iCYX4vCvwHqhH5eDhjz4BZJCdKqm0aDOPL
+	9v/8e96spVBaV8DPX++4VA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1721139308; x=1721225708; bh=INJyV6lCgUK9J
-	Mf7AobUOIZXv0ZhcOYphpMoAPpaOlw=; b=p0l9jdZoTQUNIaUlS5oJDG0xQy4J5
-	7l0McLMVUmLiGe2HVFV314lo+/WEfk/xoNV1EqK7tOTWLXJo+8j3XhKwaMCntr32
-	ZcGCsfpTWyKVOiO4RLE0FoZ1LcmuWAHjw7b24WRmBN5R2O92Tv6rJfZfqLQdTpQv
-	lrnOVy4/8hZTFkjZe//q2UAp6SFLN6WaJNp2NVrE1VsPik7OjwuilLMWLD+wf04q
-	0rC9UZSXmrVtssLbGPTNBmMCPx0g/Q/sq3Mn00vTp2eY9iW3o8CfxdQCwHqz6rvT
-	SEQjZ9uEEwQYnVS+ltZwjqNluL7OQAdunqlltvgSatC44J7KtglukVqeA==
-X-ME-Sender: <xms:aoCWZjROUzFXkXkg_cJCuJ_Z6xOzbx3qohZ-dNbnnCGwyKODityeaA>
-    <xme:aoCWZkwgoVDSONIpNE0F9987HGeacX8n0AqDowYP9YY7ch8yo_EbuXmOUHH4G2rMB
-    iqxWleUeAlTYRmRcqE>
-X-ME-Received: <xmr:aoCWZo1gD73GfitUq9ISMrLLwC7SzhfUcEjufPcXdMmSWIY_HK1UPvTy3PWSE7rcsubr>
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721139311; x=
+	1721225711; bh=80MXqoF8BPSn2t5IK17fPjbSuREk2f3XfiBkJXSaTeQ=; b=B
+	jD+pOLuXbREnMvcpxwI1RKMnG7ViFyR9zCcPuxi6z2l9DDqAnpaNbxW7M/oHQ9Lq
+	KypNRD41piK9u+8jriNC/br1xzD1jQceoI+wrivp6iFXmRGDJ4TXahTd2gLiM5oD
+	glP0Wh3jdUv6VILmczVUFLS1JB0d1hySPBfRb5RqfCpH2nYYC1KCT4P2IoWq9GhM
+	jxerG+ac33XNCAJRnD6b1/O27cYhMxOTccmmyLQZjvSHag6FMy/bzoHZ0V75qfiD
+	d4orjeCMwEGUE6C3XFTJnnxEQa4D/T4gezDHCc8our3z/dAkFyWM+keIlcDrI/4/
+	uTFK3Xtn7Tj6CFo4Xxs2A==
+X-ME-Sender: <xms:boCWZlHKovwMLupW-mn-nWkuqFSW_1b9Z_CiAgh-mdraKTlL6dU2BQ>
+    <xme:boCWZqUGt9ujCTf6tfETlOl0gbZHO8OM7wYQ2qZjLLLJXa_bUp0dYg1yi5sfbZh1J
+    TRuaph1wLzIyvlEopA>
+X-ME-Received: <xmr:boCWZnJqYirdcurxW8dev4tIYQEp0eixUiLK0tg9ByTZZCuAAAQpiB_naTQszyem3BU9>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdejfecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheplfhirgiguhhn
-    ucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenucggtf
-    frrghtthgvrhhnpefgveffjeetgeejfeelgfekteelkefhuefggedvueeujeekjeetkeek
-    vdffffefudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhl
-    hihgohgrthdrtghomh
-X-ME-Proxy: <xmx:aoCWZjA2Kt1i1LlR-rft3xVpJ3QpmXhxwd_vGWrYgTOz3MAZPh7PyA>
-    <xmx:aoCWZsj2K-g6sWsQig46RY3SGC7Fke2ZTtriM6TBIo3S6Jno3krTwQ>
-    <xmx:aoCWZnpftsuAG1Px7KyI0GcNP8B_l6VjkTXrsckWFDET7rxwKXXMsQ>
-    <xmx:aoCWZnjUg9mR5m-qq9j-Iy9f5gTfyz32bKL0TSdB67RFRt7ET-u0nQ>
-    <xmx:bICWZohVA9CDlCE4FTkC5Nc0LFWmuEeH9GTfZMfDnYPCcyqEwzU2KZby>
+    fjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheplfhirgig
+    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpedvkeeihfefveekueevteefleffkeegudeghfdtuddugefhueev
+    geffgedukeejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:boCWZrEqhbnEtsCxOjX5atBndgPHqLHdv9k0DLY12C1NpfU981jqFg>
+    <xmx:b4CWZrX3fbeUZNpn4uYcJT3HJit60abLhGMFNxp9nNm-_bF4DjKpwg>
+    <xmx:b4CWZmOy8R4qXfEdqZjSso9d-K1EdDGOzMLcMiWlMhLcPZKHJVkpIQ>
+    <xmx:b4CWZq13DxMf6hU7NBOOroL39D8YsacGwSTwNoLb02ByS6W2C6x6iA>
+    <xmx:b4CWZiGEswwwlCSdH0y2qyBiolvGSTiYUwaNaUIoc_aOBhbllGrE8Soy>
 Feedback-ID: ifd894703:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Jul 2024 10:15:04 -0400 (EDT)
+ 16 Jul 2024 10:15:08 -0400 (EDT)
 From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v3 0/3] LoongArch: CPU parallel bring up
-Date: Tue, 16 Jul 2024 22:14:57 +0800
-Message-Id: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
+Date: Tue, 16 Jul 2024 22:14:58 +0800
+Subject: [PATCH v3 1/3] cpu/hotplug: Make HOTPLUG_PARALLEL independent of
+ HOTPLUG_SMT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,66 +92,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGKAlmYC/23N3wqDIBiH4VsJj+fw39J2tPsYOzA1FVqGNllE9
- z4LBht0+P7ge74FJBO9SeBaLSCa7JMPQwl6qoBycrAGel0aEEQY4ojBPoTByqgcdGEa+5eFtBO
- C1K0QklFQ7sZoOv/ezfujtPNpCnHeX2S8rV/tcqBlDBGsuW4U46iRsrl1/WyDnM4qPMHmZfJj4
- EODFINrLFqqWd1i/G+s6/oBQe/8lvgAAAA=
+Message-Id: <20240716-loongarch-hotplug-v3-1-af59b3bb35c8@flygoat.com>
+References: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
+In-Reply-To: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
 To: Thomas Gleixner <tglx@linutronix.de>, 
  Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>, 
  WANG Xuerui <kernel@xen0n.name>
 Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
  Jiaxun Yang <jiaxun.yang@flygoat.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1397;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1139;
  i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=tk5TMmuul2lboVBVIaOCJWUBH1Nrg+wwCKaNSNGbwcM=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrRpDelMPqdMJ7xzzXl/9+e04z15ZXfltuxp072yaN/65
- zwvpjl1dZSyMIhxMciKKbKECCj1bWi8uOD6g6w/MHNYmUCGMHBxCsBEJrIxMmyZ8Fk1v1o7uLeC
- pcXkS+jz0hMbHIu/8DxTPOi42EzXLZyR4ca+KN3pM2PCOVj5TpaszWde6OTDWdt9c/ZJZo2WyvN
- RrAA=
+ bh=ipsmsZYbAnzZ2nLzzwwb1hP9L5BCCXst27sn5MQXPoE=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrRpDenPv5gq+2X9T4xZtGGpdNW3iEuSD1UeHLlR9GSRV
+ XJPYsiqjlIWBjEuBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZiIRR7DP7srZrbfGDadSAnQ
+ nF+5YtlVjqOnqr40XfedpZpjNNP9lAXDfzfVF9elJuc8FuY1+j/n3MfPex65RljunV04//zyg/O
+ WfOQEAA==
 X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
  fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hi all,
-
-This series implemented CPU parallel bring up for LoongArch.
-
-Being the first non-x86 arch enabling that we need to fix some
-infra in patch 1 and 2, then implement everything in patch 3.
-
-Please review.
-Thanks
+Provide stub function for SMT related parallel bring up functions
+so that HOTPLUG_PARALLEL can work without HOTPLUG_SMT.
 
 Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
-Changes in v3:
-- Commit message improvemente
-- Remove unnecessary indirection
-- Link to v2: https://lore.kernel.org/r/20240715-loongarch-hotplug-v2-0-7d18b3d46b11@flygoat.com
-
-Changes in v2:
-- Use stub functions (tglx)
-- Link to v1: https://lore.kernel.org/r/20240705-loongarch-hotplug-v1-0-67d9c4709aa9@flygoat.com
-
+v2: Use stub function (tglx)
+v3: Improve commit message (tglx)
 ---
-Jiaxun Yang (3):
-      cpu/hotplug: Make HOTPLUG_PARALLEL independent of HOTPLUG_SMT
-      cpu/hotplug: Weak fallback for arch_cpuhp_init_parallel_bringup
-      LoongArch: SMP: Implement parallel CPU bring up
+ kernel/cpu.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- arch/loongarch/Kconfig              |  1 +
- arch/loongarch/include/asm/smp.h    |  6 -----
- arch/loongarch/kernel/asm-offsets.c | 10 ---------
- arch/loongarch/kernel/head.S        |  7 +++---
- arch/loongarch/kernel/smp.c         | 44 ++++++++-----------------------------
- kernel/cpu.c                        | 16 ++++++++++++++
- 6 files changed, 30 insertions(+), 54 deletions(-)
----
-base-commit: 82e4255305c554b0bb18b7ccf2db86041b4c8b6e
-change-id: 20240704-loongarch-hotplug-3f8826b88a43
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 1209ddaec026..c89e0e91379a 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1808,6 +1808,7 @@ static int __init parallel_bringup_parse_param(char *arg)
+ }
+ early_param("cpuhp.parallel", parallel_bringup_parse_param);
+ 
++#ifdef CONFIG_HOTPLUG_SMT
+ static inline bool cpuhp_smt_aware(void)
+ {
+ 	return cpu_smt_max_threads > 1;
+@@ -1817,6 +1818,16 @@ static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
+ {
+ 	return cpu_primary_thread_mask;
+ }
++#else
++static inline bool cpuhp_smt_aware(void)
++{
++	return false;
++}
++static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
++{
++	return cpu_none_mask;
++}
++#endif
+ 
+ /*
+  * On architectures which have enabled parallel bringup this invokes all BP
 
-Best regards,
 -- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+2.45.2
 
 
