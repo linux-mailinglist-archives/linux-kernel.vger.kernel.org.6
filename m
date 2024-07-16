@@ -1,113 +1,181 @@
-Return-Path: <linux-kernel+bounces-253891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D80932860
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:26:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA6D932846
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98B61F22391
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A71F222AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC2F19D066;
-	Tue, 16 Jul 2024 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7534419D066;
+	Tue, 16 Jul 2024 14:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dg0rfLEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nObZSuhB"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1838B19D896;
-	Tue, 16 Jul 2024 14:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F6F19AA4D;
+	Tue, 16 Jul 2024 14:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139931; cv=none; b=gFFxMBufcE97Yd5893r1TLcZzUQkTeODb6mfjybOxlCyO0FSYTRJmhNRDAEoF/xt8Eujer6dvwuRjF6MDtoX+NJGnMlFpc9cW2nhNYjp2jqNWl7thTqec9vop0Zd6Ile2qsB0FfssJz6lh760OHoX4tHF75fCRjpNDc4IsQY1/A=
+	t=1721139864; cv=none; b=bd+uCtXqdT6fDwBjZ+SKGpRx2mrFRI/ii3KfeKBrGRGW1Q2zJySM64QE29K9wR6i+IKPWGKtnQzjPdnam9bvj4wl3q7KfLa8RRDXYoOoMyjjMTzxAAxtaBAHGlpf9WHgzfAD/GYwkTDwk10Thw0Sjl8kugSlIXXj3vCS9w1FGiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139931; c=relaxed/simple;
-	bh=Q5oPOfaPPMtVbJo9sOz517kdeGlVdwhnoDlCg22S/Pg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FQjcsDFrmmkJiMlhe5bwxZPi5LyXbmO/JtpCHgZlZ6ypyhwOr0aRa82PfVqa8Thslq+QmTIwiuZxONu/zqML24YF49h74e7Q1wmCW79QeIz7Fd2JbUK+u39JfNjpv0z0uAL4CSa01AnKM13Tk51+ClzVgVyF7/CCNdS5a//tGV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dg0rfLEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D1BC4AF0D;
-	Tue, 16 Jul 2024 14:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721139930;
-	bh=Q5oPOfaPPMtVbJo9sOz517kdeGlVdwhnoDlCg22S/Pg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dg0rfLEhvWLxm1RCOVV1Qy28tuRXLrndXV3VQJq3ACF32d1MAa6F0dCqiAvY9ZmNi
-	 TeAuyWJtFqLdkfkBDyl8O1Fw3eMZL1t9/7pIJ87JcyFMRhvFCggelP6JC+S1u1ahse
-	 K3yXvUowRwUkfhVS2hEhfhVADngjnCTJ3p+FNaBaZrdVZZB1gyjPcfr0YSLHGp+aaX
-	 Cjz9nYBEy1GLIII8Ip9Sr+PNqd/k/xzSP4EfZQN+BeYUdFOI7qTGOFLV/V+UpiXgkv
-	 3qKf+RO+SCi5s8ON0p3/Co8lHqyhqbeSm9YXuBpgu6uOb/RnQrTF9tqQgYwRAdVtj/
-	 jXed5+4C/XJAg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ganesh Goudar <ganeshgr@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Sasha Levin <sashal@kernel.org>,
-	mahesh@linux.ibm.com,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 6.9 04/22] powerpc/eeh: avoid possible crash when edev->pdev changes
-Date: Tue, 16 Jul 2024 10:24:11 -0400
-Message-ID: <20240716142519.2712487-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716142519.2712487-1-sashal@kernel.org>
-References: <20240716142519.2712487-1-sashal@kernel.org>
+	s=arc-20240116; t=1721139864; c=relaxed/simple;
+	bh=fxEQUXnEMQA5C1VJILrD6j+i9GLSuIHDtfy2J+qm6lo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MR6o4E1mxZwU900HHYRFBwTZrEZr4ilD5JFcxE6mgw+85MFNJ/eBdq5XbN3TjwgvWSHT9Lbx7It6/HQwFsow79CoyOocpuIrduXV28i2ztfo3Eup9++HDMXyAza/E9bPmLhpS+tZAJD0052YYUuvlPNvjjhe8JnOdEr3U8JUmVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nObZSuhB; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64b0d45a7aaso57954187b3.0;
+        Tue, 16 Jul 2024 07:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721139862; x=1721744662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IloAEevb9j/jeRb0W1UmR0i732zAODizdCFxqOWvxSA=;
+        b=nObZSuhBxf26+OXftH6jkotZCgVOVSgBMlE0x5BoOZIpZh0o2T24K3JW3SlAzrFwsn
+         WeF/UrzlRy7oGGtf6tFtKXwsN0wKghrkfzuW+o3pd/Wez58xXaP4QL3wXHr06aW2lFOc
+         J36XHBhWJYiyBgCT2OOZANCRiAWwOyJN+PdA40oOPV7iVF07Sb7Bt+eoHh3UHwplaftc
+         b+ARCLdE7emPM6IN1tVzzUO2BUxyk1QJUxqQpCOPtwtxVaaDy/vLQXtKbuQoIakBP1OV
+         +EzM+pPS0Qmj6dzYEfd32ZFExTzExm6/Oz1QInfiZ3azZrxVjQvH/pCD20c9eQg9eJwk
+         bS9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721139862; x=1721744662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IloAEevb9j/jeRb0W1UmR0i732zAODizdCFxqOWvxSA=;
+        b=OiDKLwIh8k0OhENwr/CawhuBl1Fz2HMg/c2APliAUWkCqHQjKIHOqO3+NDi9QuPT6O
+         RYYefq4/74yYd17M5D7sfTFl0Yr23vZsufMS0jbJPGNJ/syRnrebHHKJjAVFaa17TGE5
+         wEFxqV62e11khjGDa9hxgqlI6LUe1a+dsGVg8nkfALWObPSK322+UuJUDSog0H3j8EeE
+         QQRh58FL1repJK9S7ohXEP+Db02mToPGCuKPcex6qYfCndw/odh71SibgpSV8HUyLTpe
+         x9OdwbNuMToIMl2sIFPwGRniQx6iurmzOpiUJYR39PHCjITn60AsnJl9+CVuq8oZMJpb
+         Y4sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+RH1VgSQAWf4m4ra8I15jyPrftaZ6QKtcNG4+YVNQDIWJ6fVp22CM3f6cWvD9KGi34DpFKCb1QrQRVp7xCIccHY8dcqrg7+0sPG7HaaHdIAv9LSeX6tvlj4zC2g2hUfDuo0LgydibdA==
+X-Gm-Message-State: AOJu0YyPCPrdYFniNkq4+Y0tZxwbz41wPL0MXU4rC1JDpV6pKqF08LP2
+	yuDp5bP8+jeIpwzyaU+Pl4YE/shBVDYyCYnRs0AERD5ss5nNhXcFdWIhujHpbNpz/V3J813K7RW
+	d7SMEHk/M4GG57cuNOdAvE2uOa2w=
+X-Google-Smtp-Source: AGHT+IF45F4/cjaTHhqZQI1M7kkXoOzONUc/n2JH/TE3b2V5uGdk0Ign5R7+DjG+ypwkKUTt2WfJP6BJa8GLui80V64=
+X-Received: by 2002:a05:690c:ecf:b0:650:4542:56e6 with SMTP id
+ 00721157ae682-66381abfa0dmr28480317b3.48.1721139862151; Tue, 16 Jul 2024
+ 07:24:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.9
-Content-Transfer-Encoding: 8bit
+References: <20240711193749.2397471-1-tmaimon77@gmail.com> <20240711193749.2397471-5-tmaimon77@gmail.com>
+ <ZpFrslx57m62SEsg@probook>
+In-Reply-To: <ZpFrslx57m62SEsg@probook>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Tue, 16 Jul 2024 17:24:11 +0300
+Message-ID: <CAP6Zq1gYSiXFhtA0HAaoSLD7Lz-9nuoy-cUn+qvh0BLev_ifVg@mail.gmail.com>
+Subject: Re: [PATCH v1 4/7] pinctrl: nuvoton: npcm8xx: remove unused smb4den
+ pin, group, function
+To: =?UTF-8?B?Si4gTmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
+Cc: linus.walleij@linaro.org, avifishman70@gmail.com, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ganesh Goudar <ganeshgr@linux.ibm.com>
+Hi,
 
-[ Upstream commit a1216e62d039bf63a539bbe718536ec789a853dd ]
+It does not exist, do you suggest modifying the "unused" to "not exist"?
 
-If a PCI device is removed during eeh_pe_report_edev(), edev->pdev
-will change and can cause a crash, hold the PCI rescan/remove lock
-while taking a copy of edev->pdev->bus.
+Thanks,
 
-Signed-off-by: Ganesh Goudar <ganeshgr@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240617140240.580453-1-ganeshgr@linux.ibm.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/powerpc/kernel/eeh_pe.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Tomer
 
-diff --git a/arch/powerpc/kernel/eeh_pe.c b/arch/powerpc/kernel/eeh_pe.c
-index e0ce812796241..7d1b50599dd6c 100644
---- a/arch/powerpc/kernel/eeh_pe.c
-+++ b/arch/powerpc/kernel/eeh_pe.c
-@@ -849,6 +849,7 @@ struct pci_bus *eeh_pe_bus_get(struct eeh_pe *pe)
- {
- 	struct eeh_dev *edev;
- 	struct pci_dev *pdev;
-+	struct pci_bus *bus = NULL;
- 
- 	if (pe->type & EEH_PE_PHB)
- 		return pe->phb->bus;
-@@ -859,9 +860,11 @@ struct pci_bus *eeh_pe_bus_get(struct eeh_pe *pe)
- 
- 	/* Retrieve the parent PCI bus of first (top) PCI device */
- 	edev = list_first_entry_or_null(&pe->edevs, struct eeh_dev, entry);
-+	pci_lock_rescan_remove();
- 	pdev = eeh_dev_to_pci_dev(edev);
- 	if (pdev)
--		return pdev->bus;
-+		bus = pdev->bus;
-+	pci_unlock_rescan_remove();
- 
--	return NULL;
-+	return bus;
- }
--- 
-2.43.0
-
+On Fri, 12 Jul 2024 at 20:45, J. Neusch=C3=A4fer <j.neuschaefer@gmx.net> wr=
+ote:
+>
+> On Thu, Jul 11, 2024 at 10:37:46PM +0300, Tomer Maimon wrote:
+> > Remove unused smb4den pin, group and function on the Nuvoton NPCM8XX BM=
+C
+> > SoC.
+>
+> Does "unused" mean that they are just unused in current board designs,
+> or does the hardware functionality actually not exist?
+>
+> Best regards, J
+>
+> >
+> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > ---
+> >  drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctr=
+l/nuvoton/pinctrl-npcm8xx.c
+> > index f342aec3f6ca..396bd07e7c74 100644
+> > --- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+> > +++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+> > @@ -438,7 +438,6 @@ static const int smb4_pins[]  =3D { 28, 29 };
+> >  static const int smb4b_pins[] =3D { 18, 19 };
+> >  static const int smb4c_pins[] =3D { 20, 21 };
+> >  static const int smb4d_pins[] =3D { 22, 23 };
+> > -static const int smb4den_pins[] =3D { 17 };
+> >  static const int smb5_pins[]  =3D { 26, 27 };
+> >  static const int smb5b_pins[] =3D { 13, 12 };
+> >  static const int smb5c_pins[] =3D { 15, 14 };
+> > @@ -700,7 +699,6 @@ struct npcm8xx_pingroup {
+> >       NPCM8XX_GRP(smb4b), \
+> >       NPCM8XX_GRP(smb4c), \
+> >       NPCM8XX_GRP(smb4d), \
+> > -     NPCM8XX_GRP(smb4den), \
+> >       NPCM8XX_GRP(smb5), \
+> >       NPCM8XX_GRP(smb5b), \
+> >       NPCM8XX_GRP(smb5c), \
+> > @@ -949,7 +947,6 @@ NPCM8XX_SFUNC(smb4);
+> >  NPCM8XX_SFUNC(smb4b);
+> >  NPCM8XX_SFUNC(smb4c);
+> >  NPCM8XX_SFUNC(smb4d);
+> > -NPCM8XX_SFUNC(smb4den);
+> >  NPCM8XX_SFUNC(smb5);
+> >  NPCM8XX_SFUNC(smb5b);
+> >  NPCM8XX_SFUNC(smb5c);
+> > @@ -1173,7 +1170,6 @@ static struct npcm8xx_func npcm8xx_funcs[] =3D {
+> >       NPCM8XX_MKFUNC(smb4b),
+> >       NPCM8XX_MKFUNC(smb4c),
+> >       NPCM8XX_MKFUNC(smb4d),
+> > -     NPCM8XX_MKFUNC(smb4den),
+> >       NPCM8XX_MKFUNC(smb5),
+> >       NPCM8XX_MKFUNC(smb5b),
+> >       NPCM8XX_MKFUNC(smb5c),
+> > @@ -1348,7 +1344,7 @@ static const struct npcm8xx_pincfg pincfg[] =3D {
+> >       NPCM8XX_PINCFG(14,      gspi, MFSEL1, 24,       smb5c, I2CSEGSEL,=
+ 20,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> >       NPCM8XX_PINCFG(15,      gspi, MFSEL1, 24,       smb5c, I2CSEGSEL,=
+ 20,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> >       NPCM8XX_PINCFG(16,      lkgpo0, FLOCKR1, 0,     smb7b, I2CSEGSEL,=
+ 27,   tp_gpio2b, MFSEL7, 10,  none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> > -     NPCM8XX_PINCFG(17,      pspi, MFSEL3, 13,       cp1gpio5, MFSEL6,=
+ 7,    smb4den, I2CSEGSEL, 23, none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> > +     NPCM8XX_PINCFG(17,      pspi, MFSEL3, 13,       cp1gpio5, MFSEL6,=
+ 7,    none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> >       NPCM8XX_PINCFG(18,      pspi, MFSEL3, 13,       smb4b, I2CSEGSEL,=
+ 14,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> >       NPCM8XX_PINCFG(19,      pspi, MFSEL3, 13,       smb4b, I2CSEGSEL,=
+ 14,   none, NONE, 0,          none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> >       NPCM8XX_PINCFG(20,      hgpio0, MFSEL2, 24,     smb15, MFSEL3, 8,=
+       smb4c, I2CSEGSEL, 15,   none, NONE, 0,          none, NONE, 0,      =
+    SLEW),
+> > --
+> > 2.34.1
+> >
 
