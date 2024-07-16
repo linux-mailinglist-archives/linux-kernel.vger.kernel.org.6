@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-254178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDC9932FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9D3932FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A0D5B21F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20EF1C22581
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE071A01CC;
-	Tue, 16 Jul 2024 18:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F111A0722;
+	Tue, 16 Jul 2024 18:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nt9Jiin8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqmB3NQZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5671C6B7;
-	Tue, 16 Jul 2024 18:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA8E1A0702;
+	Tue, 16 Jul 2024 18:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721154414; cv=none; b=jHAhiptL84F7QjGMvLL7w2N41fLaH9MLpjLiMj16kNM4v3aSg8rgysvDn1ja3H6R7mI/h6+hzVfYGaDUQLoHofjRJ1zy9b+la13VNMpm7rppxk9QMMC9BZAlDJRQjDt3bMqTiGXRu9tue4l+3lOtnWaCPys0FK+vl/X8rGA1sgI=
+	t=1721154416; cv=none; b=gEgyZjtrfaUfL8mWgEgateu8Hj5cQmL0Pi8hl3Bwy3mp6I2mZhEAPz8q4Fgq/QQGj1FVu2bVlGl8NZIRRMOrwjKc1+2kPHmF7yj0G8t8X+D3omdTLEXZ/lQVeQRDwDhb+miXXrqzF0Ial0OU+OGEb84MXELAtVGVSVNwc8VdbXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721154414; c=relaxed/simple;
-	bh=tlOGeycUnPqaxZJFZ2oWy0gztTZXn9im8D/9UvMg+FQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rSuEDAmikMcqrlwKfh4ESeT/lECInnIXGjCgTL6RHv4ALwXBYBF95VpK6OqP9z7Gxs7q4Ui2k9fywiu/1D+oxTpZWjPGUOPkDLnCv8C6b67XdYx10ES0jUqezLZsvspVo685kNCjw1Yn7nvAXDXwJ0HOGaxFwQ9vb3p366qR0ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nt9Jiin8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D4BC116B1;
-	Tue, 16 Jul 2024 18:26:53 +0000 (UTC)
+	s=arc-20240116; t=1721154416; c=relaxed/simple;
+	bh=ysl9DH2yXr5Lh8llXyDr1QTsZ4bj/lVm5BbTmR2Ro0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hf2unGG3DoNVJpXo+KQMdlQVfOWKvrpKcCPRK17dOiRlq+EwsVmLRlk7b8m/N7sGfZ33nwl8zJZIRYjCya+qd55SMi7O1M6wMlhKmSXrsfkKsRrGZ8CsId+TJVwRHTT9oScnAZ/SfyBc4a4iG95erDu9pX/7q41upRxGmBIl1Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqmB3NQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 224B9C4AF0E;
+	Tue, 16 Jul 2024 18:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721154413;
-	bh=tlOGeycUnPqaxZJFZ2oWy0gztTZXn9im8D/9UvMg+FQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nt9Jiin8YBEVHys5vt7DZU9pK5IYWVTSdrWgSxBVJHZT2glpIj0y6NLgZ7Sikm7e0
-	 yZEVOb10fDPEg8H/uUN5at8NJk914PVAEjAtB4ojKpLBP4ZG/TeB19xqmRHCSVXRrL
-	 livzMRIvYjVvDo8VRXCMnKPdZBuUEAEw/jVaUfLnXLqkfhwNREroTRD3ZAm0pdRcg8
-	 RqUe21h1Xs/GebE7Ef8MzKnBlooga1Re0FYTjBBWp+O+avSrwwps5MYZA66fdq0W7E
-	 zHa1JGGWBRb7ePth6GmMYy5AIWgIBwx9rB2IlQI6ewX9T6HQYODMkWu9mjOjc5O/sP
-	 jUhVT0MVE3xQA==
-Message-ID: <4edc5e10f4407c281960dad69d7f463b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721154416;
+	bh=ysl9DH2yXr5Lh8llXyDr1QTsZ4bj/lVm5BbTmR2Ro0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PqmB3NQZ7glH3Q9ZZ8lejHDWoxlb+hGOjENHMv+LkX/KbNqhVtMRXedYx28NnQf61
+	 oEpx8Rm90pN6PcmpmZpFEaD4jFa8lBk6X15lh2DRYCZg2EGWmuT7ryCnGe6O1Z9XB2
+	 foZa1WTXjoCIV2oRiMuU0NqfjkzyNuuw1RMNg0s7lnIk13ckp4FyabKM+4xW//fVmI
+	 LKohF2F5xssPr14h0C5lxVoes2PDmTINwcVBVE1OxwSXCRt34/fK47v6zq90jrt6Ce
+	 eKxjnH/gNoaPa2JOxzedae8Tmj/colXT63tch5Bd74jLLVzFvxewm5xV+Zzq6YZq41
+	 zvLkAEwtHnfjg==
+Date: Tue, 16 Jul 2024 11:26:55 -0700
+From: Kees Cook <kees@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Shuah Khan <shuah@kernel.org>, davidgow@google.com,
+	"open list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	kunit-dev@googlegroups.com,
+	"kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: Converting kselftest test modules to kunit
+Message-ID: <202407161124.8DF2E794AF@keescook>
+References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
+ <202407150936.C32FE24CA@keescook>
+ <8412a936-b202-4313-b5b4-ce6e72a3392f@collabora.com>
+ <202407161005.CACE2E355@keescook>
+ <11359c6a-9863-4ffd-8fe4-04b777c72c9f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a9ada686e1f1c6f496e423deaf108f1bcfd94d7d.1721123679.git.geert+renesas@glider.be>
-References: <a9ada686e1f1c6f496e423deaf108f1bcfd94d7d.1721123679.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] of/platform: Fix inverted check in of_platform_notify()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Date: Tue, 16 Jul 2024 11:26:51 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11359c6a-9863-4ffd-8fe4-04b777c72c9f@nvidia.com>
 
-Quoting Geert Uytterhoeven (2024-07-16 02:57:25)
-> The check for of_node_check_flag() was accidentally inverted, causing
-> i2c-demux-pinctrl to fail on the Koelsch development board:
->=20
->     i2c-demux-pinctrl i2c-mux1: failed to setup demux-adapter 0 (-19)
->     i2c-demux-pinctrl i2c-mux2: failed to setup demux-adapter 0 (-19)
->     i2c-demux-pinctrl i2c-mux3: failed to setup demux-adapter 0 (-19)
->     i2c-demux-pinctrl i2c-mux2: Failed to create device link (0x180) with=
- e6ef0000.video
->     i2c-demux-pinctrl i2c-mux2: Failed to create device link (0x180) with=
- e6ef1000.video
->     i2c-demux-pinctrl i2c-mux2: Failed to create device link (0x180) with=
- hdmi-in
->     i2c-demux-pinctrl i2c-mux2: Failed to create device link (0x180) with=
- hdmi-out
->=20
-> and anything relying on I2C connected to these muxes fails, too.
->=20
-> Also, loading the 25LC040 DT overlay on Ebisu using the out-of-tree
-> of-configfs now fails, too.
->=20
-> Fixes: 98290f295fbcf18f ("of/platform: Allow overlays to create platform =
-devices from the root node")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+On Tue, Jul 16, 2024 at 11:04:06AM -0700, John Hubbard wrote:
+> This is a classic case of testing a kernel API via ioctl into the
+> kernel, so I think it meets your criteria for moving to KUnit.
+> Having said that, I must now go try out KUnit in a bit more depth
+> before I'm sure that this will work out. But it should.
 
-Thanks. I'm going to fold this into the patch and resend the series.
+I've found the docs really helpful:
+https://docs.kernel.org/dev-tools/kunit/
+
+Searching for *_kunit.c will also give a lot of examples. And the kunit
+folks are really responsive to questions, helping guide finding solutions
+to novel testing needs, etc. :)
+
+-- 
+Kees Cook
 
