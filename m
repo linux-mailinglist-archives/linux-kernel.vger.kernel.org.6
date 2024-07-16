@@ -1,206 +1,177 @@
-Return-Path: <linux-kernel+bounces-253622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855109323E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:30:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31E19323EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CC31C21714
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:30:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FCBEB23182
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE95198A2E;
-	Tue, 16 Jul 2024 10:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA83E198E60;
+	Tue, 16 Jul 2024 10:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqyuFhOD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="P+p0GZwm"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E43B143875;
-	Tue, 16 Jul 2024 10:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1AD43146
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721125809; cv=none; b=RCjk4jERu26Qc7/UfmV+pHcfeh36BCfmyrLjaeRWAQEM/F0cX0NDif9UPJqv8rXNRcA/jBA2rsDo29HnkE2wdYUl/AVVOtQ18sUmQnQCc3HIbmaCA2Y532VDoxfs0QA0Li+RQ57emsZGkW9rGa8xevzd0xmIc9KRCavx7qpgmk8=
+	t=1721125839; cv=none; b=Incljyam7M5Yk0kzlovSO7e0ziOOAxymdCvebDX7GRjl63vut4RNy09xLF3s/Zq2ubaL4hxgEHnXcRzMlkoyju4H6c4quWakkPEoV2dpwaOle9qNFEPoo0NLRI2ctFgTtONuXxBho6O7qxKg/6YhsrRVVtJWcwr5o545Qggy+Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721125809; c=relaxed/simple;
-	bh=QysKPyiFau2fw2f0p+pSgBtnoBOL8OjYbm8noFYeFeY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EFTS3DC5wxGLP/owk20ka8CW5GT8eKTgpe5Dq1nKQRWNqL0BOBCRJsLDm16D0RphJE5U1vJZ4jF8R2zk8MvRjM3Ys+lnCiamzt0J6SM1EGYYCv1TGBJXVv8J4yf/K82vdr8byKRQANJdCzZ0/RZKZ5640bHn0Qc9dG1NnYEyNvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqyuFhOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E84AC116B1;
-	Tue, 16 Jul 2024 10:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721125808;
-	bh=QysKPyiFau2fw2f0p+pSgBtnoBOL8OjYbm8noFYeFeY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rqyuFhODQa3Qr5Fjyld3vuMaw73GnEGfh7LiSlIU39EKJ6H6OuvH7DpkPRCVmIO2D
-	 fnSFR9X3Zd3yFE7NAMVIM+2zmmZsGd1KsjQp6yCBL3xqSVCTEDihI/N5+A7RUF6s3+
-	 uEnXbXRkSpNlv8ngsrYtTQ1gXPRYCPKIAc+DnsxuVrWdRPgV4xz+ArhaF4bXvuOjLY
-	 bv5phdTOyK3wSd0wgm8N3BrCTJappg15Km3/XMLexZn8BOqN3HVoD5UUo/CpPrjCwT
-	 6ZBAL7iRhgoDMIjI1yqvEGsLJELRBHmbW7ay/1NLHoCAK/tyaYw4EyEV26WZuuZRhk
-	 Lrq9p3Bow9nCw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sTfRd-00ClkI-MZ;
-	Tue, 16 Jul 2024 11:30:05 +0100
-Date: Tue, 16 Jul 2024 11:30:05 +0100
-Message-ID: <86r0bt39zm.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
+	s=arc-20240116; t=1721125839; c=relaxed/simple;
+	bh=6VyR9TNhbMrQhPhYEUVNJpdMEkYjK1X2W/9Ih6F1hpQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Op404i2hR/fn7FfwB04fVNpkzO9/lxTv+fd9p59cT7uSRIJBi8S8ZijscoUdKO+pbh2cvzcLRg6hpS9XjnRH3CNF+MfSHGgaiAeNEkW1NdZ75gFO1GgskehlG8eidWYSYR3slCr8uV3SeEPKENLzGkH6POH8xSLcI3dI0T0LJKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=P+p0GZwm; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-368255de9ebso359700f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721125836; x=1721730636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2oAUOUIr8Inm5CAOgiH6h0kthoIy+ddKKLth4dhl9c=;
+        b=P+p0GZwmVtXD/CIc70JXy7hhGnW5KX1y7+CCYj8/Mf+NeyCcWe5vgCRsiYJz4wtFFG
+         P56BGhcHi5YGBkTMM1+IdvtERmjYPXqo2mW0nJ4rZDSD+Y0772I3iHRnKQF0QU+SGy9U
+         jK6Yi2JUCjtEksast60/KsvqDbA3Bn5rSMKz5FX1rRPgUSJoGBhwWG6F2FVfeieptBgW
+         aa3U7VjcIP+dIya0/Y5DuHvZap3k68Bs48yZssC5/NIvtwpEGL/m71A+S8IJd6Vstb+4
+         oNpxNDLdvTSFBnJlQ35rPCKIuwKLvSspztc8XArwA4YSSYJUv2UXFpLHmawVmQMtC4n+
+         oTRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721125836; x=1721730636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2oAUOUIr8Inm5CAOgiH6h0kthoIy+ddKKLth4dhl9c=;
+        b=gPpZUnBuA80YQriKICUjoV8XKER9mCFSwcRAYY3ztUUL5Y8yfARX/jWyv8zjpMJGFL
+         QPsSG1/KkgMaccnE2h3fOCt0BYW1Z66RucX9tguy/LOqY5tspydTNzv3aYcNcEXi18F+
+         alB0Uyjy7rzgi/x/QDcpBinfrZ8aKzlANPiy82psZPhtjiR6I4k+hiCVN6SAditlX9oN
+         CFmoI/3sF+VTB0DhQancLEEi+LQUFCZ2Ve3EbXceISPc38gIo01LoQ8dZ1j+8WkbsY16
+         oLEA5EGLRHWW09wjxvA3BQ9Yqr4j6VaLfWwrg2GuhjHLSRtmK2vJfj9d5n6BrGrqSCHh
+         k/Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcZAoEHWuHlx5e+zjH6uT6QHbAHm/wv/DFMsoiJiZteqdoe1/1BSR09ejiF7CewlpW3HNQCZnVAYLg7A3N8mvbZg0P4SiIT8oL0tEn
+X-Gm-Message-State: AOJu0YyEY2U/vLwIH5qfK2UaobtzhGvzG8a5LWZfvZRGjlKoOesMTesG
+	synOomEgAifyu4FWM7hHBctulogiNjP/3Uqvjx5bSA2IpUuLUpF8oYJ6xspdQzA=
+X-Google-Smtp-Source: AGHT+IFfQhmkb59uH7LLa18F1SN7rqCnC4h7YO13ztbZBrn/+rB64CFv3oFG71YVR5qVnFq44xDcDA==
+X-Received: by 2002:a5d:62c8:0:b0:366:ea4a:17ec with SMTP id ffacd0b85a97d-368273575b2mr1107731f8f.2.1721125835619;
+        Tue, 16 Jul 2024 03:30:35 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77488sm121546145e9.9.2024.07.16.03.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 03:30:35 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
-In-Reply-To: <ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
-	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-	<878qy26cd6.wl-maz@kernel.org>
-	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-clk@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 00/11] Add RTC support for the Renesas RZ/G3S SoC
+Date: Tue, 16 Jul 2024 13:30:14 +0300
+Message-Id: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 15 Jul 2024 15:10:01 +0100,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
-> > On Mon, 15 Jul 2024 12:18:47 +0100,
-> > Johan Hovold <johan@kernel.org> wrote:
-> > > On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
-> > > > This is version 4 of the series to convert ARM MSI handling over to
-> > > > per device MSI domains.
-> 
-> > > This series only showed up in linux-next last Friday and broke interrupt
-> > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-> > > and x1e80100 that use the GIC ITS for PCIe MSIs.
-> > > 
-> > > I've applied the series (21 commits from linux-next) on top of 6.10 and
-> > > can confirm that the breakage is caused by commits:
-> > > 
-> > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-> > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> > > 
-> > > Applying the series up until the change before 3d1c927c08fc unbreaks the
-> > > wifi on one machine:
-> > > 
-> > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-> > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
-> > >
-> > > and backing up until the commit before 233db05bc37f makes the NVMe come
-> > > up again during boot on another.
-> > > 
-> > > I have not tried to debug this further.
-> > 
-> > I need a few things from you though, because you're not giving much to
-> > help you (and I'm travelling, which doesn't help).
-> 
-> Yeah, this was just an early heads up.
-> 
-> > Can you at least investigate what in ath11k_pci_alloc_msi() causes the
-> > wifi driver to be upset? Does it normally use a single MSI vector or
-> > MSI-X? How about your nVME device?
-> 
-> It uses multiple vectors, but now it falls back to trying to allocate a
-> single one and even that fails with -ENOSPC:
-> 
-> 	ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
-> 
-> Similar for the NVMe, it uses multiple vectors normally, but now only
-> the AER interrupts appears to be allocated for each controller and there
-> is a GICv3 interrupt for the NVMe:
-> 
-> 208:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
-> 212:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
-> 214:        161          0          0          0          0          0          0          0     GICv3 562 Level     nvme0q0, nvme0q1
-> 215:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
->
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-That's an indication of the driver having failed its MSI allocation
-and gone back to INTx signalling.
+Hi,
 
-> Next boot, after disabling PCIe controller async probing, it's an MSI-X?!:
-> 
-> 201:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
-> 203:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
-> 205:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
-> 206:          0          0          0          0          0          0          0          0  ITS-PCI-MSIX-0002:01:00.0   0 Edge      nvme0q0
->
+On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+input pins. The logic to control this clock (and pass it to RTC)
+is inside the VBATTB IP. For this, the clk-vbattb driver was added
+(patches 01-03/11).
 
-So is this issue actually tied to the async probing? Does it always
-work if you disable it?
+Patches 04-05/11 add the RTC driver.
 
-> This time ath11k vector allocation succeeded, but the driver times out
-> eventually:
-> 
-> [    8.984619] ath11k_pci 0006:01:00.0: MSI vectors: 32
-> [   29.690841] ath11k_pci 0006:01:00.0: failed to power up mhi: -110
-> [   29.697136] ath11k_pci 0006:01:00.0: failed to start mhi: -110
-> [   29.703153] ath11k_pci 0006:01:00.0: failed to power up :-110
-> [   29.732144] ath11k_pci 0006:01:00.0: failed to create soc core: -110
-> [   29.738694] ath11k_pci 0006:01:00.0: failed to init core: -110
-> [   32.841758] ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -110
-> 
-> > It would also help if you could define the DEBUG symbol at the very
-> > top of irq-gic-v3-its.c and report the debug information that the ITS
-> > driver dumps.
-> 
-> See below (with synchronous probing of the pcie controllers).
+Patches 06-09/11 update the device trees with proper nodes to enable RTC.
 
-I don't see much going wrong there, and the ITS driver correctly
-dishes out interrupts. I'll take the current -next for a ride on my
-own HW and see what happens.
+Patches 10-11/11 enable proper config flags for RTC to work on RZ/G3S SoC.
 
-	M.
+Thank you,
+Claudiu Beznea
+
+Changes in v2:
+- dropped patch "clk: renesas: r9a08g045: Add clock, reset and power domain
+  support for the VBATTB IP" as it was already integrated
+- kept only a documentation file for both VBATT MFD and clock drivers as
+  suggested
+- addressed review comments
+- used cleanup.h lock helpers
+- update startup sequence for the RTC driver
+- switch to 24 hours mode on the RTC driver
+- fixed range for the RTC driver
+- added a generic compatible for the RTC driver as this will also be
+  used by RZ/V2H
+- used clkin/xin clock names for the VBATTB clock driver to determine
+  if bypass should be configured on registers instead of having
+  dedicated DT property
+- added mfd driver for VBATTB
+- updated Kconfig flag names to include vendor name
+- removed DT node labels from Documentation files
+- used items to describe the interrupts and clocks
+
+Claudiu Beznea (11):
+  dt-bindings: mfd: renesas,r9a08g045-vbattb: Document VBATTB
+  mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
+  clk: renesas: clk-vbattb: Add VBATTB clock driver
+  dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+  rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S
+    SoC
+  arm64: dts: renesas: r9a08g045: Add VBATTB node
+  arm64: dts: renesas: r9a08g045: Add RTC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB clock
+  arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+  arm64: defconfig: Enable VBATTB
+  arm64: defconfig: Enable Renesas RTCA-3 flag
+
+ .../mfd/renesas,r9a08g045-vbattb.yaml         | 136 +++
+ .../bindings/rtc/renesas,rz-rtca3.yaml        |  69 ++
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  43 +
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  17 +
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/clk-vbattb.c              | 212 +++++
+ drivers/mfd/Kconfig                           |   8 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/renesas-vbattb.c                  |  78 ++
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-renesas-rtca3.c               | 853 ++++++++++++++++++
+ 15 files changed, 1445 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 drivers/mfd/renesas-vbattb.c
+ create mode 100644 drivers/rtc/rtc-renesas-rtca3.c
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.2
+
 
