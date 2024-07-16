@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-253454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EA2932187
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F97932186
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA16F1F22745
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37291C20CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108D643AC3;
-	Tue, 16 Jul 2024 07:55:33 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893103BB32;
+	Tue, 16 Jul 2024 07:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jZ9zq28U"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40B94C74;
-	Tue, 16 Jul 2024 07:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB311224EF
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721116532; cv=none; b=b3DSxerzS1cVChCj6e39LiJ/vB1O5l7T58O2NBobjWaCQAV8Bc71jsdWJ9gJMm2dQ3is8oOhcMvT7XxucXUpd6kz2sDmyAW7xw/F3KMmJgYeD2RfoAy84bI+ATR9KHxjTIcXYJ0E5t0LRq7QYG2b2qVwm1ijdb8A3zazXb4YeRo=
+	t=1721116475; cv=none; b=dcRhLljm6lIjYRA62h9dBSKp7Dij0cGiKsSxpP2vnbTqxSdQk+eOwxvGDw9/pV0/J+7EgHR+SVx2blRUz8Wszl86FDHiW8lNhzEIYQnlEvvNjnxBvyoEHLNr66rTLTl/YsGLy+7zxfeBrBevtnlIr9BOLkvmrE/rtEbNLEciCgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721116532; c=relaxed/simple;
-	bh=1w/t3Enj+agqwPfSNzEYS6I1cisuuk5fmCmz/ssryDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GVdzERXNaJcpYzd7ubQrNBmBew4cnwST6s9TIfjz2QNkGkwQl+9jmMWAkCWvAeH8UcoD+/2oODPG2UDJGbN/oXofnYX38fYfsSTYmbXXASqhHqrP8Kv7T7tuK0cIlToMbVWI1JkUpc1RYguZZbt25GV1syXAgrzW/6DF7h47O6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADX3+djJ5Zm_dOWAw--.54281S2;
-	Tue, 16 Jul 2024 15:55:15 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] perf inject: Convert comma to semicolon
-Date: Tue, 16 Jul 2024 15:53:47 +0800
-Message-Id: <20240716075347.969041-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721116475; c=relaxed/simple;
+	bh=MNn8gxXYqvsNcb1Yh/X9L/MXxeX3VNL1a9Hrw0q3y2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=th5rLi17J0ht2fNpFhtNVDHFSiJXNezrmQntnkCKlU8u8h5szz9yjRQnXG774KjyfYMNQGTp3xsjEE1eJTeLR5HPFZ0mib8A/n5PY1NT2FFuhX0Xy4VOjRxeeV+hngtMWpti5/KxHw1rjjgTyvdM5f95ILNx/o36eJAmN6EgHfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jZ9zq28U; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so69033881fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721116472; x=1721721272; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tsyjNs+epxjHFckk0dd03DwfQ8j6M5Wrc4itesRp3IU=;
+        b=jZ9zq28U/QegcdkYucUMhsZ0jz/UEk+ep9TqOdqrh04TvsoAMdaQccxfm5eZnYTuFt
+         OEXGX5DwXlut5H0URAzWjrVCZ53d8ox0dDlapjfXDm36piDq7bEC2WLj5RVWAME9VmDv
+         qUEKl4GAtcMU7cBdkLXa5GS26a4jn1cWeFkbGcrMYouv3BWp07uk7U7YJFUSUXtChr7U
+         RK4xW5UXY/Wx1GYJboIKM6H8rGt3QXS5afpnYfs8njrKr5FvzkQML36/Kg20qT1AGyXx
+         +1S2AszH7lhZTUxrqNpCwFsh+JCnJEK+BVvGyWgCmd+TsLxxrSER/mWSLszPtJUAG0P4
+         JkPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721116472; x=1721721272;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tsyjNs+epxjHFckk0dd03DwfQ8j6M5Wrc4itesRp3IU=;
+        b=Nc0v5X1hKxZ7SxP0Uixv/HbIRF8xqnyJ7w27REiHSzaMfU177HJ2arFzdqnCg+aPhy
+         xWQRHGz4ap5iEnCmGLb5SqU1O3V34afvCcvcheQXKp0/2h1ycQRtdbHlxYQcnYic59Xa
+         YEWsLVPjyJFW22kLM0OgV3FmU0Yi3hG463j0WFHxnPhkNgNYAfFmOdVwxFN21DdxHaMl
+         uPGOAogJXYQvkbXTrbOi7rcLWhmwVAJ+0meQCZVL8mBUv8A4Ar/tXjEczojI7n3grV00
+         NNLsgVTrfB2DHH2YVXgdw9HZVHk5RiIpBEiXbOF7wyShql15fbnm7x25Zx9aphMNOvlt
+         Vq1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6DjDKoACH3qJd5nxhO+KtYDMAdaK8gAu9Yo6ag3hcdnZF7F2CUxYCkYZn7UI733cMaxRBdMPdB67wA1zOTSUxjfbxVgyyuu3EBWCr
+X-Gm-Message-State: AOJu0Yy6pu1086NhJLGpPaTmTiRr0MH2wGNM2ThwDPYFCaF+cQJ+wR2l
+	8LQ/HXBRCxQXRLilfv35WXwCv2PFBiHZO31RWB8nrnMHz5tpj+YBEATLq0w7QV6Su9regKoF/KE
+	MwvCNryNwq30Thmmru0pxFdSc6yp1PSLEIGaBDw==
+X-Google-Smtp-Source: AGHT+IHxiGnjKEzJz5PukU3GQJwtAAOXLOqzHFNcG1Fx6SzxLyf+ALXiDO+KrLhwXbWwUy5jSuyneyfndt37ndL/n+8=
+X-Received: by 2002:a05:6512:690:b0:52e:9ab6:cb53 with SMTP id
+ 2adb3069b0e04-52edf032e94mr698476e87.64.1721116472011; Tue, 16 Jul 2024
+ 00:54:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADX3+djJ5Zm_dOWAw--.54281S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZrWfCr4rZw43JrWDArb_yoWfAwb_X3
-	Z7XFn2vFZ8CrZrtFnrZ3y5XFWUJa95Ga4UZr4kGr1UXrW7Aw4qqFWxuryDC3ZxKryUtr9I
-	qFs5Gw4Utr48ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUd5rcUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240712091008.14815-1-brgl@bgdev.pl> <CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 16 Jul 2024 09:54:20 +0200
+Message-ID: <CAMRc=MfdREubJBjxy-WDZotYWY-uU_6C1N7L8STisoJwtpAgjg@mail.gmail.com>
+Subject: Re: [GIT PULL] power sequencing updates for v6.11-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace a comma between expression statements by a semicolon.
+On Tue, Jul 16, 2024 at 4:17=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, 12 Jul 2024 at 02:13, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > This PR contains the core power sequencing framework, the first driver,=
+ PCI
+> > changes using the pwrseq library (blessed by Bjorn Helgaas) and some fi=
+xes
+> > that came later.
+>
+> Hmm. Let's see how this all works out, but I already found an annoyance.
+>
+> It first asks me about the new PCI power sequencing driver.
+>
+> And then it asks me separately if I want the power sequencing support.
+>
+> Now, either this should
+>
+>  (a) not ask about the generic power sequencing support at all, and
+> just select if if a driver that is enabled needs it
+>
+> OR
+>
+>  (b) it should ask about power sequencing support and then if you say
+> "N", it should not ask about the drivers.
+>
+> But asking *twice* is definitely not kosher.
+>
+>             Linus
 
-Fixes: 97406a7e4fa6 ("perf inject: Add support for injecting guest sideband events")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- tools/perf/builtin-inject.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I didn't notice it because I almost always use menuconfig. I'll look into i=
+t.
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index a212678d47be..7b4a5d56d279 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -2069,7 +2069,7 @@ static int __cmd_inject(struct perf_inject *inject)
- 		 */
- 		inject->tool.finished_init	= host__finished_init;
- 		/* Obey finished round ordering */
--		inject->tool.finished_round	= host__finished_round,
-+		inject->tool.finished_round	= host__finished_round;
- 		/* Keep track of which CPU a VCPU is runnng on */
- 		inject->tool.context_switch	= host__context_switch;
- 		/*
--- 
-2.25.1
-
+Bartosz
 
