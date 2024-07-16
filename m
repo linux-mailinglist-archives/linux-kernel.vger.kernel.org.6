@@ -1,319 +1,276 @@
-Return-Path: <linux-kernel+bounces-254104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A154932EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:11:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345D5932EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB198B22CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:11:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F461C22561
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A839519FA9F;
-	Tue, 16 Jul 2024 17:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7E119FA90;
+	Tue, 16 Jul 2024 17:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0d13dRIA"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqF4sEic"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A6019F499
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8B319FA6F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721149868; cv=none; b=QWsL1hcrBB39F/HbkqkQPxcLSEDaRuc8jXa7R9epzl2yK5+WZcJgFTxvI77mao2xavhkuzxsWWi1vkJbobzTltpjmVmXNyLVJ8Zck3KH/6nYg2VVspdlEqZs6aVljMk7tYpgUq5hGukDvHI87CpoIbCSoDqPLpxlgyy8N05cKjc=
+	t=1721149851; cv=none; b=nTnrm80pxQp0sOlVYtnjMEUGbxxQEDeGsQ75iGfJOycqsr1/069Gn6z/CHMrWFaJELeUCoVhFvPpQ33rfN+EuAmyGYkMST+mwRahQ0USj7GJPLrEunw1c98FxEtg+Jk5KXfJbsIn8az3DyPiEcktCKMnX/IhHzMqNACq9ZSpc4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721149868; c=relaxed/simple;
-	bh=d9Y3PppBIVaDeA7OUV7QSIfz7XlMBytja2woDfy2rK4=;
+	s=arc-20240116; t=1721149851; c=relaxed/simple;
+	bh=hlqLKLbX0qyMhlRkXe2uoF/HIiNqFudsAelPue49iXE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LvLzv3R07YVPFF4NP0xyRH46Lbjp0CQ+G0itiSrEmcc1sSm9GhbCvfmgk1cpY4LcHf0aNgq3ztlOhZCCxWKrVFnityIv7pnF9SKh2pwqYT1UnwdtK/jX10TEuN87fVYP5dSj73S7R9atfbWBt91EzjGkWeZcrrTbwiq8Hsj6TxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0d13dRIA; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-447df43324fso10231cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:11:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=XFHgNpJK5XE6/iSid35yS1N4vUxIX3ItO7fd/e/rDiZSzl3mRlYsu2yGu7+9heU0X0wxGxWfIpOVAAL/gRpdM+s6Z6FY4uTLCTSDOC11kkCFz070InQ8ix/odraZdPDcjC6dS92f98C6zLJCt73iUFjR4qJGYqxEKYo++azU//k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqF4sEic; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c964f5a037so3805502a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721149866; x=1721754666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DV9GhdKZyJ6M+6gQqAdxuqd09DQjKmEarDGs4L0SsCI=;
-        b=0d13dRIAB5GTTXQ4R7HHUgEVpJYZdGKUMMbUtQpJgzyU8RQsXfveZc9oW75Ewq9YSL
-         IEmfRYqrGMOgwwwPltsqqValwqQu093pHuiXFfFsoaB+CyvKxw+BXcSv8vClj5xftCQ/
-         UBvcIRM31f0qCvnI+VRiD90lVs6S31HYav7cqBAqzRb/uC6nx4dY9DDraJqXMjFlHB7r
-         ZQgXDb32SxPXo2OtLoG0twic7Xnrvseeev7Xx8zDRIpZVv7PHT+2AVoaniDUyOqPPrRG
-         voOn7ts2bzDpplC8xhO+rmLZmsyLdFW+gTBoYKSkjX/It98bYqM2k7XqSQYFX25XEz09
-         xR9g==
+        d=gmail.com; s=20230601; t=1721149849; x=1721754649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HBCcifw/MxneSumY4Gn53fiNKzT4rFL1SoKdpcBm9fI=;
+        b=HqF4sEic1AgJF8zCqAPmBGghcMT4y94XvwRHUtpeTR1Cm1qPClE0ANqt/z2bK1W9Fb
+         CxHQg+MGZ11o+znhRP9w3I8WYV5Rc2LRxyrXW18kuk8tCFWazhewduYqUTPwKMY2/W+G
+         12iOFDsfNyqV8CoXaVwZOLiWmggYh7dgKv/D7hIBsDg0ezi5FANdXrfW2XPiGcnKEt/h
+         iXNzbIuJI2JEQ4boEdCVYiree+EsKs7aylfpEye3/QBneEZnE8ig1gQGDqU49znjRWBU
+         hpMwdtW0zvCuICPxjc5z8sptjYTPUWCmRa5mZJT+fU+29IXo/jn9pEYLewo10UUZ8Cdw
+         7SIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721149866; x=1721754666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DV9GhdKZyJ6M+6gQqAdxuqd09DQjKmEarDGs4L0SsCI=;
-        b=culXscdp08MOHeaiTfXQKC9Ka2KVCHXyS7wG5d5JDOpX6UjJsbTHTGQr1chYgkP7CG
-         DeEI/QMK+Vk37nZkd6TopMOZuhOu4FjYqheJVip1cgCX7TauguAqdfL4kmxjDBVoT/nE
-         SX1VfHdz9eanVfX8FuouCp9PEreQwvswbK9Aef1GOV8WHaj+5meoA/29upo7i/qDk3/0
-         tIVaTS99s4e/vqIQQdOjJ021WwvODpkR5nKjRV2zroJq6ELhmxQ53Kl5R9K0xOnelHBp
-         9B6LK3Q7OPzsSliu02/NAXbShwDpfbv1zC2i6ER2xTS0SdoAzd63uWZVfZg4oLNea2/y
-         4ODw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrNbKKDFYWjfqrfpgy+ZZRNuYPPldsRuQ2KMHHXBzn9ayS2Dc5lId4xvVEuyBfIgG2FBJqf9XTbQ190KP3sDG6LhfjAaXw8MCZHVY4
-X-Gm-Message-State: AOJu0YzJPD8PSZoXWPctYpAA5nrNTK0oTrOs+MhhsDVW/NC+NawdKY1r
-	cjzyZZCiz2wrRUXiZONuRAiBWdpLWp5JTjnuWr0Qe0B+DkUOqk0k64sghirFlOzBL+BLessJK4f
-	6St0/U0U9QzckgeXQpbZFVLSqFvA2wYnPPhNw
-X-Google-Smtp-Source: AGHT+IFaV9/2Z7WSL/mHSXyBRuqYSsif3Jd7vrRf+CGU9hcp7x64cONNeb1r2bfZCOcTK8Iuat3cjGzcxnXcLyg9ASI=
-X-Received: by 2002:a05:622a:2a0f:b0:444:dc9a:8e95 with SMTP id
- d75a77b69052e-44f7b927bc1mr3465511cf.15.1721149865452; Tue, 16 Jul 2024
- 10:11:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721149849; x=1721754649;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HBCcifw/MxneSumY4Gn53fiNKzT4rFL1SoKdpcBm9fI=;
+        b=WOtT6hB60ZjwyETPdtMe3mnloA4TGZVv7SYh/YkQs3teXEqR0bOHC1wU7XWH9DEAyd
+         TkrNIDj51vFIU4X6+wjZZB0vUnpJ1AIh+r/C0brfOHGv8hGcr/z2266b0UiSdlSy09Qm
+         7dxqniUpciD35WjnBRDaFA5QWN7jAKw4ZvEAVi4V4cIuS4zSeVm4HyrtqeltTEE3KlqM
+         Du/Xsb41hHQKz7gGzJwuxhxj8t3cElffkRxSeyajN+rn5Hrw9NwZNR/DHEPIUfCoVauy
+         lmkgMdLqQDl/0N5qkj9Ub3YLw08jg4ib73vye7sM99Yxu7Y1xFTcMe/qXHNsBwhyhg6H
+         pKjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0sl4GtApvJ5vp1KsswR8WGb1+9Y2N4Qh5a5Ka+Cq7h2h1vqyO+MNQdE3YAuvWArcgHuflSIomwSRTPNXL1Wk0yaS5KjXEpto4d6FN
+X-Gm-Message-State: AOJu0Yyn1bkKfT7TZ5AtQPAT9Qfpc6aFad79+GhT/xl4MTS4Vlh/sChA
+	yRojiQplONRulSl3dG5QwLANjfJdGZrnGo8QYyO0Me/i+a4ztRh4MhE1v9QneQ0k4WqoE1SxnnM
+	IiF3WAXw+tBk7JgdGilP0CewXSvo=
+X-Google-Smtp-Source: AGHT+IEDuw/AVQEdbV51NKAchZjEw/WYNsA6D5/dWMbPS5ZJqj3cU3E+5vndl4zzLETn8cK4hWqad44n6jDQRAxfsbw=
+X-Received: by 2002:a17:90a:7890:b0:2c8:6eea:7ad8 with SMTP id
+ 98e67ed59e1d1-2cb3741810dmr2263105a91.26.1721149849285; Tue, 16 Jul 2024
+ 10:10:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com> <DS0PR11MB637397059B5DAE2AA7B819BCDCA12@DS0PR11MB6373.namprd11.prod.outlook.com>
-In-Reply-To: <DS0PR11MB637397059B5DAE2AA7B819BCDCA12@DS0PR11MB6373.namprd11.prod.outlook.com>
-From: James Houghton <jthoughton@google.com>
-Date: Tue, 16 Jul 2024 10:10:27 -0700
-Message-ID: <CADrL8HUv+RvazbOyx+NJ1oNd8FdMGd_T61Kjtia1cqJsN=WiOA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
-To: "Wang, Wei W" <wei.w.wang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, Peter Xu <peterx@redhat.com>
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+ <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
+ <CABXGCsNN9LwHc2x2AAEH=5UNwpvkWkBqRYz3OP8MZ6Woy+HDXA@mail.gmail.com>
+ <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info> <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+ <CADnq5_PDSkr4hOHJmb1J30UC0a7sXsm5-TPkEmjzffMK_A+7ug@mail.gmail.com>
+ <ea465a40-f673-42b1-8b1c-a2efb20cd562@amd.com> <CABXGCsPyrUEqDq2gbr4VLw5ncd9cKoCZ9nOr2SRfg8Lh=9H5Kg@mail.gmail.com>
+ <2915a8c4-ebac-4dae-8f09-32a5b4d9aeda@amd.com> <CABXGCsPuRViSd_WeOciLKcQ4hjYxJ7e3i7LomwsUMzd0a+zvBw@mail.gmail.com>
+ <CABXGCsOsfP2SToiDhRAS51nPJ+Qr2v7B3Kjr+yVeP4G7zFZpMA@mail.gmail.com>
+In-Reply-To: <CABXGCsOsfP2SToiDhRAS51nPJ+Qr2v7B3Kjr+yVeP4G7zFZpMA@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 16 Jul 2024 13:10:37 -0400
+Message-ID: <CADnq5_Mjxna+aqhWT49YLmXGH+piittc4FUSyCDEJ8s7G-Rb3Q@mail.gmail.com>
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Rodrigo Siqueira Jordao <Rodrigo.Siqueira@amd.com>, "Mahfooz, Hamza" <Hamza.Mahfooz@amd.com>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, 
+	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000005f5140061d606d94"
+
+--0000000000005f5140061d606d94
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 8:28=E2=80=AFAM Wang, Wei W <wei.w.wang@intel.com> =
-wrote:
+Does the attached partial revert fix it?
+
+Alex
+
+On Wed, Jul 10, 2024 at 3:03=E2=80=AFAM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
 >
-> On Thursday, July 11, 2024 7:42 AM, James Houghton wrote:
-> > This patch series implements the KVM-based demand paging system that wa=
-s
-> > first introduced back in November[1] by David Matlack.
+> On Wed, Jul 10, 2024 at 12:01=E2=80=AFPM Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
 > >
-> > The working name for this new system is KVM Userfault, but that name is=
- very
-> > confusing so it will not be the final name.
+> > On Tue, Jul 9, 2024 at 7:48=E2=80=AFPM Rodrigo Siqueira Jordao
+> > <Rodrigo.Siqueira@amd.com> wrote:
+> > > Hi,
+> > >
+> > > I also tried it with 6900XT. I got the same results on my side.
 > >
-> Hi James,
-> I had implemented a similar approach for TDX post-copy migration, there a=
-re quite
-> some differences though. Got some questions about your design below.
-
-Thanks for the feedback!!
-
+> > This is weird.
+> >
+> > > Anyway, I could not reproduce the issue with the below components. I =
+may
+> > > be missing something that will trigger this bug; in this sense, could
+> > > you describe the following:
+> > > - The display resolution and refresh rate.
+> >
+> > 3840x2160 and 120Hz
+> > At 60Hz issue not reproduced.
+> >
+> > > - Are you able to reproduce this issue with DP and HDMI?
+> >
+> > My TV, an OLED LG C3, has only an HDMI 2.1 port.
+> >
+> > > - Could you provide the firmware information: sudo cat
+> > > /sys/kernel/debug/dri/0/amdgpu_firmware_info
+> >
+> > > sudo cat /sys/kernel/debug/dri/0/amdgpu_firmware_info
+> > [sudo] password for mikhail:
+> > VCE feature version: 0, firmware version: 0x00000000
+> > UVD feature version: 0, firmware version: 0x00000000
+> > MC feature version: 0, firmware version: 0x00000000
+> > ME feature version: 38, firmware version: 0x0000000e
+> > PFP feature version: 38, firmware version: 0x0000000e
+> > CE feature version: 38, firmware version: 0x00000003
+> > RLC feature version: 1, firmware version: 0x0000001f
+> > RLC SRLC feature version: 1, firmware version: 0x00000001
+> > RLC SRLG feature version: 1, firmware version: 0x00000001
+> > RLC SRLS feature version: 1, firmware version: 0x00000001
+> > RLCP feature version: 0, firmware version: 0x00000000
+> > RLCV feature version: 0, firmware version: 0x00000000
+> > MEC feature version: 38, firmware version: 0x00000015
+> > MEC2 feature version: 38, firmware version: 0x00000015
+> > IMU feature version: 0, firmware version: 0x00000000
+> > SOS feature version: 0, firmware version: 0x00000000
+> > ASD feature version: 553648344, firmware version: 0x210000d8
+> > TA XGMI feature version: 0x00000000, firmware version: 0x00000000
+> > TA RAS feature version: 0x00000000, firmware version: 0x00000000
+> > TA HDCP feature version: 0x00000000, firmware version: 0x1700003f
+> > TA DTM feature version: 0x00000000, firmware version: 0x12000016
+> > TA RAP feature version: 0x00000000, firmware version: 0x00000000
+> > TA SECUREDISPLAY feature version: 0x00000000, firmware version: 0x00000=
+000
+> > SMC feature version: 0, program: 0, firmware version: 0x00544fdf (84.79=
+.223)
+> > SDMA0 feature version: 52, firmware version: 0x00000009
+> > VCN feature version: 0, firmware version: 0x0311f002
+> > DMCU feature version: 0, firmware version: 0x00000000
+> > DMCUB feature version: 0, firmware version: 0x05000f00
+> > TOC feature version: 0, firmware version: 0x00000007
+> > MES_KIQ feature version: 0, firmware version: 0x00000000
+> > MES feature version: 0, firmware version: 0x00000000
+> > VPE feature version: 0, firmware version: 0x00000000
+> > VBIOS version: 102-RAPHAEL-008
+> >
 >
-> > Problem: post-copy with guest_memfd
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Post-copy live migration makes it possible to migrate VMs from one host=
- to
-> > another no matter how fast they are writing to memory while keeping the=
- VM
-> > paused for a minimal amount of time. For post-copy to work, we
-> > need:
-> >  1. to be able to prevent KVM from being able to access particular page=
-s
-> >     of guest memory until we have populated it  2. for userspace to kno=
-w when
-> > KVM is trying to access a particular
-> >     page.
-> >  3. a way to allow the access to proceed.
-> >
-> > Traditionally, post-copy live migration is implemented using userfaultf=
-d, which
-> > hooks into the main mm fault path. KVM hits this path when it is doing =
-HVA ->
-> > PFN translations (with GUP) or when it itself attempts to access guest =
-memory.
-> > Userfaultfd sends a page fault notification to userspace, and KVM goes =
-to sleep.
-> >
-> > Userfaultfd works well, as it is not specific to KVM; everyone who atte=
-mpts to
-> > access guest memory will block the same way.
-> >
-> > However, with guest_memfd, we do not use GUP to translate from GFN to H=
-PA
-> > (nor is there an intermediate HVA).
-> >
-> > So userfaultfd in its current form cannot be used to support post-copy =
-live
-> > migration with guest_memfd-backed VMs.
-> >
-> > Solution: hook into the gfn -> pfn translation
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > The only way to implement post-copy with a non-KVM-specific userfaultfd=
--like
-> > system would be to introduce the concept of a file-userfault[2] to inte=
-rcept
-> > faults on a guest_memfd.
-> >
-> > Instead, we take the simpler approach of adding a KVM-specific API, and=
- we
-> > hook into the GFN -> HVA or GFN -> PFN translation steps (for tradition=
-al
-> > memslots and for guest_memfd respectively).
+> I forgot to add output for discrete GPU:
+>
+> > sudo cat /sys/kernel/debug/dri/1/amdgpu_firmware_info
+> [sudo] password for mikhail:
+> VCE feature version: 0, firmware version: 0x00000000
+> UVD feature version: 0, firmware version: 0x00000000
+> MC feature version: 0, firmware version: 0x00000000
+> ME feature version: 44, firmware version: 0x00000040
+> PFP feature version: 44, firmware version: 0x00000062
+> CE feature version: 44, firmware version: 0x00000025
+> RLC feature version: 1, firmware version: 0x00000060
+> RLC SRLC feature version: 0, firmware version: 0x00000000
+> RLC SRLG feature version: 0, firmware version: 0x00000000
+> RLC SRLS feature version: 0, firmware version: 0x00000000
+> RLCP feature version: 0, firmware version: 0x00000000
+> RLCV feature version: 0, firmware version: 0x00000000
+> MEC feature version: 44, firmware version: 0x00000076
+> MEC2 feature version: 44, firmware version: 0x00000076
+> IMU feature version: 0, firmware version: 0x00000000
+> SOS feature version: 0, firmware version: 0x00210e64
+> ASD feature version: 553648345, firmware version: 0x210000d9
+> TA XGMI feature version: 0x00000000, firmware version: 0x2000000f
+> TA RAS feature version: 0x00000000, firmware version: 0x1b00013e
+> TA HDCP feature version: 0x00000000, firmware version: 0x1700003f
+> TA DTM feature version: 0x00000000, firmware version: 0x12000016
+> TA RAP feature version: 0x00000000, firmware version: 0x07000016
+> TA SECUREDISPLAY feature version: 0x00000000, firmware version: 0x0000000=
+0
+> SMC feature version: 0, program: 0, firmware version: 0x003a5a00 (58.90.0=
+)
+> SDMA0 feature version: 52, firmware version: 0x00000053
+> SDMA1 feature version: 52, firmware version: 0x00000053
+> SDMA2 feature version: 52, firmware version: 0x00000053
+> SDMA3 feature version: 52, firmware version: 0x00000053
+> VCN feature version: 0, firmware version: 0x0311f002
+> DMCU feature version: 0, firmware version: 0x00000000
+> DMCUB feature version: 0, firmware version: 0x02020020
+> TOC feature version: 0, firmware version: 0x00000000
+> MES_KIQ feature version: 0, firmware version: 0x00000000
+> MES feature version: 0, firmware version: 0x00000000
+> VPE feature version: 0, firmware version: 0x00000000
+> VBIOS version: 113-D4120100-100
 >
 >
-> Why taking KVM_EXIT_MEMORY_FAULT faults for the traditional shared
-> pages (i.e. GFN -> HVA)?
-> It seems simpler if we use KVM_EXIT_MEMORY_FAULT for private pages only, =
-leaving
-> shared pages to go through the existing userfaultfd mechanism:
-> - The need for =E2=80=9Casynchronous userfaults,=E2=80=9D introduced by p=
-atch 14, could be eliminated.
-> - The additional support (e.g., KVM_MEMORY_EXIT_FLAG_USERFAULT) for priva=
-te page
->   faults exiting to userspace for postcopy might not be necessary, becaus=
-e all pages on the
->   destination side are initially =E2=80=9Cshared,=E2=80=9D and the guest=
-=E2=80=99s first access will always cause an
->   exit to userspace for shared->private conversion. So VMM is able to lev=
-erage the exit to
->   fetch the page data from the source (VMM can know if a page data has be=
-en fetched
->   from the source or not).
+> --
+> Best Regards,
+> Mike Gavrilov.
 
-You're right that, today, including support for guest-private memory
-*only* indeed simplifies things (no async userfaults). I think your
-strategy for implementing post-copy would work (so, shared->private
-conversion faults for vCPU accesses to private memory, and userfaultfd
-for everything else).
+--0000000000005f5140061d606d94
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-drm-amd-display-fix-corruption-with-high-refresh-rat.patch"
+Content-Disposition: attachment; 
+	filename="0001-drm-amd-display-fix-corruption-with-high-refresh-rat.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lyoo67610>
+X-Attachment-Id: f_lyoo67610
 
-I'm not 100% sure what should happen in the case of a non-vCPU access
-to should-be-private memory; today it seems like KVM just provides the
-shared version of the page, so conventional use of userfaultfd
-shouldn't break anything.
-
-But eventually guest_memfd itself will support "shared" memory, and
-(IIUC) it won't use VMAs, so userfaultfd won't be usable (without
-changes anyway). For a non-confidential VM, all memory will be
-"shared", so shared->private conversions can't help us there either.
-Starting everything as private almost works (so using private->shared
-conversions as a notification mechanism), but if the first time KVM
-attempts to use a page is not from a vCPU (and is from a place where
-we cannot easily return to userspace), the need for "async userfaults"
-comes back.
-
-For this use case, it seems cleaner to have a new interface. (And, as
-far as I can tell, we would at least need some kind of "async
-userfault"-like mechanism.)
-
-Another reason why, today, KVM Userfault is helpful is that
-userfaultfd has a couple drawbacks. Userfaultfd migration with
-HugeTLB-1G is basically unusable, as HugeTLB pages cannot be mapped at
-PAGE_SIZE. Some discussion here[1][2].
-
-Moving the implementation of post-copy to KVM means that, throughout
-post-copy, we can avoid changes to the main mm page tables, and we
-only need to modify the second stage page tables. This saves the
-memory needed to store the extra set of shattered page tables, and we
-save the performance overhead of the page table modifications and
-accounting that mm does.
-
-There's some more discussion about these points in David's RFC[3].
-
-[1]: https://lore.kernel.org/linux-mm/20230218002819.1486479-1-jthoughton@g=
-oogle.com/
-[2]: https://lore.kernel.org/linux-mm/ZdcKwK7CXgEsm-Co@x1n/
-[3]: https://lore.kernel.org/kvm/CALzav=3Dd23P5uE=3DoYqMpjFohvn0CASMJxXB_XE=
-OEi-jtqWcFTDA@mail.gmail.com/
-
->
-> >
-
-> > I have intentionally added support for traditional memslots, as the com=
-plexity
-> > that it adds is minimal, and it is useful for some VMMs, as it can be u=
-sed to
-> > fully implement post-copy live migration.
-> >
-> > Implementation Details
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Let's break down how KVM implements each of the three core requirements
-> > for implementing post-copy as laid out above:
-> >
-> > --- Preventing access: KVM_MEMORY_ATTRIBUTE_USERFAULT ---
-> >
-> > The most straightforward way to inform KVM of userfault-enabled pages i=
-s to
-> > use a new memory attribute, say KVM_MEMORY_ATTRIBUTE_USERFAULT.
-> >
-> > There is already infrastructure in place for modifying and checking mem=
-ory
-> > attributes. Using this interface is slightly challenging, as there is n=
-o UAPI for
-> > setting/clearing particular attributes; we must set the exact attribute=
-s we want.
-> >
-> > The synchronization that is in place for updating memory attributes is =
-not
-> > suitable for post-copy live migration either, which will require updati=
-ng
-> > memory attributes (from userfault to no-userfault) very frequently.
-> >
-> > Another potential interface could be to use something akin to a dirty b=
-itmap,
-> > where a bitmap describes which pages within a memslot (or VM) should tr=
-igger
-> > userfaults. This way, it is straightforward to make updates to the user=
-fault
-> > status of a page cheap.
-> >
-> > When KVM Userfault is enabled, we need to be careful not to map a userf=
-ault
-> > page in response to a fault on a non-userfault page. In this RFC, I've =
-taken the
-> > simplest approach: force new PTEs to be PAGE_SIZE.
-> >
-> > --- Page fault notifications ---
-> >
-> > For page faults generated by vCPUs running in guest mode, if the page t=
-he
-> > vCPU is trying to access is a userfault-enabled page, we use
->
-> Why is it necessary to add the per-page control (with uAPIs for VMM to se=
-t/clear)?
-> Any functional issues if we just have all the page faults exit to userspa=
-ce during the
-> post-copy period?
-> - As also mentioned above, userspace can easily know if a page needs to b=
-e
->   fetched from the source or not, so upon a fault exit to userspace, VMM =
-can
->   decide to block the faulting vcpu thread or return back to KVM immediat=
-ely.
-> - If improvement is really needed (would need profiling first) to reduce =
-number
->   of exits to userspace, a  KVM internal status (bitmap or xarray) seems =
-sufficient.
->   Each page only needs to exit to userspace once for the purpose of fetch=
-ing its data
->   from the source in postcopy. It doesn't seem to need userspace to enabl=
-e the exit
->   again for the page (via a new uAPI), right?
-
-We don't necessarily need a way to go from no-fault -> fault for a
-page, that's right[4]. But we do need a way for KVM to be able to
-allow the access to proceed (i.e., go from fault -> no-fault). IOW, if
-we get a fault and come out to userspace, we need a way to tell KVM
-not to do that again. In the case of shared->private conversions, that
-mechanism is toggling the memory attributes for a gfn. For
-conventional userfaultfd, that's using UFFDIO_COPY/CONTINUE/POISON.
-Maybe I'm misunderstanding your question.
-
-[4]: It is helpful for poison emulation for HugeTLB-backed VMs today,
-but this is not important.
+RnJvbSA4YWFmOGRhMDdhOGI1NDJjMGEwZjRkYTI2MDFkYTA3YmVkZGZkZWIwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5j
+b20+CkRhdGU6IFR1ZSwgMTYgSnVsIDIwMjQgMTI6NDk6MjUgLTA0MDAKU3ViamVjdDogW1BBVENI
+XSBkcm0vYW1kL2Rpc3BsYXk6IGZpeCBjb3JydXB0aW9uIHdpdGggaGlnaCByZWZyZXNoIHJhdGVz
+IG9uCiBEQ04gMy4wCgpUaGlzIHJldmVydHMgY29tbWl0IGJjODdkNjY2YzA1YTEzZTZkNGFlMWRk
+Y2U0MWZjNDNkMjU2N2I5YTIgYW5kIHRoZQpyZWdpc3RlciBjaGFuZ2VzIGZyb20gY29tbWl0IDZk
+NDI3OWNiOTlhYzRmNTFkMTA0MDk1MDFkMjk5NjlmNjg3YWM4ZGMuCgpDbG9zZXM6IGh0dHBzOi8v
+Z2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9kcm0vYW1kLy0vaXNzdWVzLzM0NzgKQ2M6IG1pa2hhaWwu
+di5nYXZyaWxvdkBnbWFpbC5jb20KQ2M6IFJvZHJpZ28gU2lxdWVpcmEgPFJvZHJpZ28uU2lxdWVp
+cmFAYW1kLmNvbT4KU2lnbmVkLW9mZi1ieTogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hl
+ckBhbWQuY29tPgotLS0KIC4uLi9kcm0vYW1kL2Rpc3BsYXkvZGMvb3B0Yy9kY24xMC9kY24xMF9v
+cHRjLmMgICAgfCAxNSArKystLS0tLS0tLS0tLS0KIC4uLi9kcm0vYW1kL2Rpc3BsYXkvZGMvb3B0
+Yy9kY24yMC9kY24yMF9vcHRjLmMgICAgfCAxMCArKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQs
+IDEzIGluc2VydGlvbnMoKyksIDEyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9hbWQvZGlzcGxheS9kYy9vcHRjL2RjbjEwL2RjbjEwX29wdGMuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9hbWQvZGlzcGxheS9kYy9vcHRjL2RjbjEwL2RjbjEwX29wdGMuYwppbmRleCA0Zjgy
+MTQ2ZDk0YjEuLmYwMGQyN2I3YzZmZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9k
+aXNwbGF5L2RjL29wdGMvZGNuMTAvZGNuMTBfb3B0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9h
+bWQvZGlzcGxheS9kYy9vcHRjL2RjbjEwL2RjbjEwX29wdGMuYwpAQCAtOTUwLDE5ICs5NTAsMTAg
+QEAgdm9pZCBvcHRjMV9zZXRfZHJyKAogCQkJCU9UR19GT1JDRV9MT0NLX09OX0VWRU5ULCAwLAog
+CQkJCU9UR19TRVRfVl9UT1RBTF9NSU5fTUFTS19FTiwgMCwKIAkJCQlPVEdfU0VUX1ZfVE9UQUxf
+TUlOX01BU0ssIDApOwotCi0JCS8vIFNldHVwIG1hbnVhbCBmbG93IGNvbnRyb2wgZm9yIEVPRiB2
+aWEgVFJJR19BCi0JCW9wdGMtPmZ1bmNzLT5zZXR1cF9tYW51YWxfdHJpZ2dlcihvcHRjKTsKLQot
+CX0gZWxzZSB7Ci0JCVJFR19VUERBVEVfNChPVEdfVl9UT1RBTF9DT05UUk9MLAotCQkJCU9UR19T
+RVRfVl9UT1RBTF9NSU5fTUFTSywgMCwKLQkJCQlPVEdfVl9UT1RBTF9NSU5fU0VMLCAwLAotCQkJ
+CU9UR19WX1RPVEFMX01BWF9TRUwsIDAsCi0JCQkJT1RHX0ZPUkNFX0xPQ0tfT05fRVZFTlQsIDAp
+OwotCi0JCW9wdGMtPmZ1bmNzLT5zZXRfdnRvdGFsX21pbl9tYXgob3B0YywgMCwgMCk7CiAJfQor
+CisJLy8gU2V0dXAgbWFudWFsIGZsb3cgY29udHJvbCBmb3IgRU9GIHZpYSBUUklHX0EKKwlvcHRj
+LT5mdW5jcy0+c2V0dXBfbWFudWFsX3RyaWdnZXIob3B0Yyk7CiB9CiAKIHZvaWQgb3B0YzFfc2V0
+X3Z0b3RhbF9taW5fbWF4KHN0cnVjdCB0aW1pbmdfZ2VuZXJhdG9yICpvcHRjLCBpbnQgdnRvdGFs
+X21pbiwgaW50IHZ0b3RhbF9tYXgpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rp
+c3BsYXkvZGMvb3B0Yy9kY24yMC9kY24yMF9vcHRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rp
+c3BsYXkvZGMvb3B0Yy9kY24yMC9kY24yMF9vcHRjLmMKaW5kZXggNDM0MTdjZmYyYzliLi5iNDY5
+NDk4NWE0MGEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9vcHRj
+L2RjbjIwL2RjbjIwX29wdGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMv
+b3B0Yy9kY24yMC9kY24yMF9vcHRjLmMKQEAgLTQ1Myw2ICs0NTMsMTYgQEAgdm9pZCBvcHRjMl9z
+ZXR1cF9tYW51YWxfdHJpZ2dlcihzdHJ1Y3QgdGltaW5nX2dlbmVyYXRvciAqb3B0YykKIHsKIAlz
+dHJ1Y3Qgb3B0YyAqb3B0YzEgPSBEQ04xMFRHX0ZST01fVEcob3B0Yyk7CiAKKwkvKiBTZXQgdGhl
+IG1pbi9tYXggc2VsZWN0b3JzIHVuY29uZGl0aW9uYWxseSBzbyB0aGF0CisJICogRE1DVUIgZncg
+bWF5IGNoYW5nZSBPVEcgdGltaW5ncyB3aGVuIG5lY2Vzc2FyeQorCSAqIFRPRE86IFJlbW92ZSB0
+aGUgdy9hIGFmdGVyIGZpeGluZyB0aGUgaXNzdWUgaW4gRE1DVUIgZmlybXdhcmUKKwkgKi8KKwlS
+RUdfVVBEQVRFXzQoT1RHX1ZfVE9UQUxfQ09OVFJPTCwKKwkJCQkgT1RHX1ZfVE9UQUxfTUlOX1NF
+TCwgMSwKKwkJCQkgT1RHX1ZfVE9UQUxfTUFYX1NFTCwgMSwKKwkJCQkgT1RHX0ZPUkNFX0xPQ0tf
+T05fRVZFTlQsIDAsCisJCQkJIE9UR19TRVRfVl9UT1RBTF9NSU5fTUFTSywgKDEgPDwgMSkpOyAv
+KiBUUklHQSAqLworCiAJUkVHX1NFVF84KE9UR19UUklHQV9DTlRMLCAwLAogCQkJT1RHX1RSSUdB
+X1NPVVJDRV9TRUxFQ1QsIDIxLAogCQkJT1RHX1RSSUdBX1NPVVJDRV9QSVBFX1NFTEVDVCwgb3B0
+Yy0+aW5zdCwKLS0gCjIuNDUuMgoK
+--0000000000005f5140061d606d94--
 
