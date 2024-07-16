@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-253854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5619327E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CB29327E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828FE2821D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157AC1F23639
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1040219B5AF;
-	Tue, 16 Jul 2024 13:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841A619CD18;
+	Tue, 16 Jul 2024 13:59:23 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FED19B3FF
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6715D19B59E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721138361; cv=none; b=P89ZM7SYrPoILAcQijCdF6NxJfUSXHsK7mGeiPBM0irvtNFUC2VqI/tPUX/dYzZK94S0PVeLUnt1eNG1l6nSnlcihykiRxaMQVhZQGwSrj1vJyPCEoLE8alpxDpMjl7OjiPAafmBbhdxL1se8P/3RbvrltOiEeSfzskjxBJcKZA=
+	t=1721138363; cv=none; b=NoX/MTxT8ebBginrUKmNZjO99+YcjIwc/s7OjkKCQ5SCwjVxQHo2Rmn91OcToUrhz0ZF5tP/GvcSkffZUUCiYtrQvzZRv9A5IaUYSKo9vDpGUiybxZ78XP/RQcRXyan8wqG3hNsVsupbj2jq154yoZsRmHv0tQuPizXrh1iDj4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721138361; c=relaxed/simple;
-	bh=s/Yi/2bhcdoSH95wnhhoWS18pSn9Bg5vCLqOBPZfl6U=;
+	s=arc-20240116; t=1721138363; c=relaxed/simple;
+	bh=yyX7PWPHicisMhpnA1yestKoyro22csgS91ghFcJ/mM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fSBxMGO0fep7QtAdhnH6f/3NRb2ZsoRCqkjHJYD38kqgdY3YT+OrTBHGErK3uNoAdsvqpH0o5QX5Wp00II0yX8p2iDY+yqAzhWboxpq9ATdUjJReENoWn9yaBoWkPSouRuVRPI8VTg0tDfRLv5Auk4uzCrKvIEgZs1MlRq87RGU=
+	 MIME-Version; b=VrhV9QqTa5cV/8Xenhwt3zNhmdpG/gsgaRwZUjwSwjF50mPNdz7GatCEkZroW9Imq+O+wq3nMnqHjr3NugbAXwEMAQInP4pWp7wWmlrDFgV47+fhuz8KYRCNmnP71yOcPCwUzE/X3WfzjP1ksIxYfUUIpxlfpQZKGsMl1beokt8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76C89113E;
-	Tue, 16 Jul 2024 06:59:44 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F31B106F;
+	Tue, 16 Jul 2024 06:59:46 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADBC33F762;
-	Tue, 16 Jul 2024 06:59:17 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 660803F762;
+	Tue, 16 Jul 2024 06:59:19 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Hugh Dickins <hughd@google.com>,
@@ -45,9 +45,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH v2 2/3] mm: Tidy up shmem mTHP controls and stats
-Date: Tue, 16 Jul 2024 14:59:05 +0100
-Message-ID: <20240716135907.4047689-3-ryan.roberts@arm.com>
+Subject: [PATCH v2 3/3] mm: mTHP stats for pagecache folio allocations
+Date: Tue, 16 Jul 2024 14:59:06 +0100
+Message-ID: <20240716135907.4047689-4-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240716135907.4047689-1-ryan.roberts@arm.com>
 References: <20240716135907.4047689-1-ryan.roberts@arm.com>
@@ -59,221 +59,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously we had a situation where shmem mTHP controls and stats were
-not exposed for some supported sizes and were exposed for some
-unsupported sizes. So let's clean that up.
+Expose 3 new mTHP stats for file (pagecache) folio allocations:
 
-Anon mTHP can support all large orders (2, PMD_ORDER). But shmem can
-support all large orders (1, MAX_PAGECACHE_ORDER). However, per-size
-shmem controls and stats were previously being exposed for all the anon
-mTHP orders, meaning order-1 was not present, and for arm64 64K base
-pages, orders 12 and 13 were exposed but were not supported internally.
+  /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_alloc
+  /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback
+  /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback_charge
 
-Tidy this all up by defining ctrl and stats attribute groups for anon
-and file separately. Anon ctrl and stats groups are populated for all
-orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
-populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
+This will provide some insight on the sizes of large folios being
+allocated for file-backed memory, and how often allocation is failing.
 
-The side-effect of all this is that different hugepage-*kB directories
-contain different sets of controls and stats, depending on which memory
-types support that size. This approach is preferred over the
-alternative, which is to populate dummy controls and stats for memory
-types that do not support a given size.
+All non-order-0 (and most order-0) folio allocations are currently done
+through filemap_alloc_folio(), and folios are charged in a subsequent
+call to filemap_add_folio(). So count file_fallback when allocation
+fails in filemap_alloc_folio() and count file_alloc or
+file_fallback_charge in filemap_add_folio(), based on whether charging
+succeeded or not. There are some users of filemap_add_folio() that
+allocate their own order-0 folio by other means, so we would not count
+an allocation failure in this case, but we also don't care about order-0
+allocations. This approach feels like it should be good enough and
+doesn't require any (impractically large) refactoring.
+
+The existing mTHP stats interface is reused to provide consistency to
+users. And because we are reusing the same interface, we can reuse the
+same infrastructure on the kernel side.
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
- mm/huge_memory.c | 110 ++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 80 insertions(+), 30 deletions(-)
+ Documentation/admin-guide/mm/transhuge.rst | 13 +++++++++++++
+ include/linux/huge_mm.h                    |  3 +++
+ include/linux/pagemap.h                    | 16 ++++++++++++++--
+ mm/filemap.c                               |  6 ++++--
+ mm/huge_memory.c                           |  7 +++++++
+ 5 files changed, 41 insertions(+), 4 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index f4be468e06a4..578ac212c172 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -463,8 +463,8 @@ static void thpsize_release(struct kobject *kobj);
- static DEFINE_SPINLOCK(huge_anon_orders_lock);
- static LIST_HEAD(thpsize_list);
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 058485daf186..d4857e457add 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -512,6 +512,19 @@ shmem_fallback_charge
+ 	falls back to using small pages even though the allocation was
+ 	successful.
  
--static ssize_t thpsize_enabled_show(struct kobject *kobj,
--				    struct kobj_attribute *attr, char *buf)
-+static ssize_t anon_enabled_show(struct kobject *kobj,
-+				 struct kobj_attribute *attr, char *buf)
- {
- 	int order = to_thpsize(kobj)->order;
- 	const char *output;
-@@ -481,9 +481,9 @@ static ssize_t thpsize_enabled_show(struct kobject *kobj,
- 	return sysfs_emit(buf, "%s\n", output);
++file_alloc
++	is incremented every time a file huge page is successfully
++	allocated.
++
++file_fallback
++	is incremented if a file huge page is attempted to be allocated
++	but fails and instead falls back to using small pages.
++
++file_fallback_charge
++	is incremented if a file huge page cannot be charged and instead
++	falls back to using small pages even though the allocation was
++	successful.
++
+ split
+ 	is incremented every time a huge page is successfully split into
+ 	smaller orders. This can happen for a variety of reasons but a
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index b8c63c3e967f..4f9109fcdded 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -123,6 +123,9 @@ enum mthp_stat_item {
+ 	MTHP_STAT_SHMEM_ALLOC,
+ 	MTHP_STAT_SHMEM_FALLBACK,
+ 	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
++	MTHP_STAT_FILE_ALLOC,
++	MTHP_STAT_FILE_FALLBACK,
++	MTHP_STAT_FILE_FALLBACK_CHARGE,
+ 	MTHP_STAT_SPLIT,
+ 	MTHP_STAT_SPLIT_FAILED,
+ 	MTHP_STAT_SPLIT_DEFERRED,
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 6e2f72d03176..95a147b5d117 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -562,14 +562,26 @@ static inline void *detach_page_private(struct page *page)
  }
  
--static ssize_t thpsize_enabled_store(struct kobject *kobj,
--				     struct kobj_attribute *attr,
--				     const char *buf, size_t count)
-+static ssize_t anon_enabled_store(struct kobject *kobj,
-+				  struct kobj_attribute *attr,
-+				  const char *buf, size_t count)
+ #ifdef CONFIG_NUMA
+-struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
++struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
+ #else
+-static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
++static inline struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
  {
- 	int order = to_thpsize(kobj)->order;
- 	ssize_t ret = count;
-@@ -525,19 +525,27 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
- 	return ret;
+ 	return folio_alloc_noprof(gfp, order);
  }
- 
--static struct kobj_attribute thpsize_enabled_attr =
--	__ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
-+static struct kobj_attribute anon_enabled_attr =
-+	__ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
- 
--static struct attribute *thpsize_attrs[] = {
--	&thpsize_enabled_attr.attr,
-+static struct attribute *anon_ctrl_attrs[] = {
-+	&anon_enabled_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group anon_ctrl_attr_grp = {
-+	.attrs = anon_ctrl_attrs,
-+};
-+
-+static struct attribute *file_ctrl_attrs[] = {
- #ifdef CONFIG_SHMEM
- 	&thpsize_shmem_enabled_attr.attr,
  #endif
- 	NULL,
- };
  
--static const struct attribute_group thpsize_attr_group = {
--	.attrs = thpsize_attrs,
-+static const struct attribute_group file_ctrl_attr_grp = {
-+	.attrs = file_ctrl_attrs,
- };
- 
- static const struct kobj_type thpsize_ktype = {
-@@ -583,57 +591,99 @@ DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
- DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
- DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
- 
--static struct attribute *stats_attrs[] = {
-+static struct attribute *anon_stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
- 	&anon_fault_fallback_attr.attr,
- 	&anon_fault_fallback_charge_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
--	&shmem_alloc_attr.attr,
--	&shmem_fallback_attr.attr,
--	&shmem_fallback_charge_attr.attr,
- 	&split_attr.attr,
- 	&split_failed_attr.attr,
- 	&split_deferred_attr.attr,
- 	NULL,
- };
- 
--static struct attribute_group stats_attr_group = {
-+static struct attribute_group anon_stats_attr_grp = {
-+	.name = "stats",
-+	.attrs = anon_stats_attrs,
-+};
-+
-+static struct attribute *file_stats_attrs[] = {
-+#ifdef CONFIG_SHMEM
-+	&shmem_alloc_attr.attr,
-+	&shmem_fallback_attr.attr,
-+	&shmem_fallback_charge_attr.attr,
-+#endif
-+	NULL,
-+};
-+
-+static struct attribute_group file_stats_attr_grp = {
- 	.name = "stats",
--	.attrs = stats_attrs,
-+	.attrs = file_stats_attrs,
- };
- 
-+static int sysfs_add_group(struct kobject *kobj,
-+			   const struct attribute_group *grp)
++static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
 +{
-+	int ret = -ENOENT;
++	struct folio *folio;
 +
-+	/*
-+	 * If the group is named, try to merge first, assuming the subdirectory
-+	 * was already created. This avoids the warning emitted by
-+	 * sysfs_create_group() if the directory already exists.
-+	 */
-+	if (grp->name)
-+		ret = sysfs_merge_group(kobj, grp);
-+	if (ret)
-+		ret = sysfs_create_group(kobj, grp);
++	folio = __filemap_alloc_folio_noprof(gfp, order);
 +
-+	return ret;
++	if (!folio)
++		count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
++
++	return folio;
 +}
 +
- static struct thpsize *thpsize_create(int order, struct kobject *parent)
+ #define filemap_alloc_folio(...)				\
+ 	alloc_hooks(filemap_alloc_folio_noprof(__VA_ARGS__))
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 53d5d0410b51..131d514fca29 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -963,6 +963,8 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
+ 	int ret;
+ 
+ 	ret = mem_cgroup_charge(folio, NULL, gfp);
++	count_mthp_stat(folio_order(folio),
++		ret ? MTHP_STAT_FILE_FALLBACK_CHARGE : MTHP_STAT_FILE_ALLOC);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -990,7 +992,7 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
+ EXPORT_SYMBOL_GPL(filemap_add_folio);
+ 
+ #ifdef CONFIG_NUMA
+-struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
++struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
  {
- 	unsigned long size = (PAGE_SIZE << order) / SZ_1K;
- 	struct thpsize *thpsize;
--	int ret;
-+	int ret = -ENOMEM;
- 
- 	thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
- 	if (!thpsize)
--		return ERR_PTR(-ENOMEM);
-+		goto err;
-+
-+	thpsize->order = order;
- 
- 	ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
- 				   "hugepages-%lukB", size);
- 	if (ret) {
- 		kfree(thpsize);
--		return ERR_PTR(ret);
-+		goto err;
+ 	int n;
+ 	struct folio *folio;
+@@ -1007,7 +1009,7 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
  	}
- 
--	ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
--	if (ret) {
--		kobject_put(&thpsize->kobj);
--		return ERR_PTR(ret);
-+	if (BIT(order) & THP_ORDERS_ALL_ANON) {
-+		ret = sysfs_add_group(&thpsize->kobj, &anon_ctrl_attr_grp);
-+		if (ret)
-+			goto err_put;
-+
-+		ret = sysfs_add_group(&thpsize->kobj, &anon_stats_attr_grp);
-+		if (ret)
-+			goto err_put;
- 	}
- 
--	ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
--	if (ret) {
--		kobject_put(&thpsize->kobj);
--		return ERR_PTR(ret);
-+	if (BIT(order) & THP_ORDERS_ALL_FILE_DEFAULT) {
-+		ret = sysfs_add_group(&thpsize->kobj, &file_ctrl_attr_grp);
-+		if (ret)
-+			goto err_put;
-+
-+		ret = sysfs_add_group(&thpsize->kobj, &file_stats_attr_grp);
-+		if (ret)
-+			goto err_put;
- 	}
- 
--	thpsize->order = order;
- 	return thpsize;
-+err_put:
-+	kobject_put(&thpsize->kobj);
-+err:
-+	return ERR_PTR(ret);
+ 	return folio_alloc_noprof(gfp, order);
  }
+-EXPORT_SYMBOL(filemap_alloc_folio_noprof);
++EXPORT_SYMBOL(__filemap_alloc_folio_noprof);
+ #endif
  
- static void thpsize_release(struct kobject *kobj)
-@@ -673,7 +723,7 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
- 		goto remove_hp_group;
- 	}
+ /*
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 578ac212c172..26d558e3e80f 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -608,7 +608,14 @@ static struct attribute_group anon_stats_attr_grp = {
+ 	.attrs = anon_stats_attrs,
+ };
  
--	orders = THP_ORDERS_ALL_ANON;
-+	orders = THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE_DEFAULT;
- 	order = highest_order(orders);
- 	while (orders) {
- 		thpsize = thpsize_create(order, *hugepage_kobj);
++DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
++DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
++DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
++
+ static struct attribute *file_stats_attrs[] = {
++	&file_alloc_attr.attr,
++	&file_fallback_attr.attr,
++	&file_fallback_charge_attr.attr,
+ #ifdef CONFIG_SHMEM
+ 	&shmem_alloc_attr.attr,
+ 	&shmem_fallback_attr.attr,
 -- 
 2.43.0
 
