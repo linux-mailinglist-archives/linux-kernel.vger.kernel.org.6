@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-254168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9608932FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:09:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066FD932FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CED3AB21153
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:09:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386F51C20EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BF8111AA;
-	Tue, 16 Jul 2024 18:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843E11A01BF;
+	Tue, 16 Jul 2024 18:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OlsXrQcT"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOEDnt58"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B88454BD4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC0C111AA;
+	Tue, 16 Jul 2024 18:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721153334; cv=none; b=IIR0EoqAJEj/cfacMuCV6A1PlKZZSEXrRzQVCk0VyFC5FVa/qcYoOR50a4Klo3JOzySLc5z01OXiC+3dx/b2SatS68HOGJpzRNwoJotMrnnk1UBPnjCX0fghXwCrrv8BvrTqnprFxFqcg31GPOa9P+uDq4n9wkKSAJDBjHHIg0w=
+	t=1721153375; cv=none; b=fCvZnZPBeqW+KMX9XVHRwxTIrUSHXyGhFScR95wkA1oif/nWXlxgY3w8zLuaMhSS35CFeRbOe7KOQuQhgnX7otY8/1VS5TqjQBfvGFAOmDiENoNN+1/NS/4LH2ADkpr7y9ut97EqvB10amWGOuPPSnjt1LJ3EIyoOVZKM5LmTR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721153334; c=relaxed/simple;
-	bh=qhvpW9ySp0c3Q3YTMvLYSq349/2CtNUgGU8+Fc3TzLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYmiP9rV65C6BU/zw081NcGSmyBgc11xjmGDC6/OWNUI0OD/DJOwXjKVrTJJkXdlwLfYGqgTfE3LTQTrfkd3yeHpgFWOuGFWFNCxMKlOrKJmnkIxjta16rZkjnUu+w55esI6QU60JlQgLf6hdObsYnjBsCGnfV05xhsoy+p6mIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OlsXrQcT; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e976208f8so6345764e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:08:52 -0700 (PDT)
+	s=arc-20240116; t=1721153375; c=relaxed/simple;
+	bh=g9CfOXkLcan6WBgXvNGE/BIOD9t9bAsaGP4P2EQXzqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LhGCQmEB3aMpo26ozlaIsT6Yx4eo+4BjNJN89hRi9XtJZg/IgzzfUhZ+cpn7/10OjTy30XWEY64UfDj4sJMo/9HLb9IhOshMXm2BRxsRRWngOS6DD8usiRnEFKs41eETwGuF5feF4zFCnJAAdcR5GhY7V04By3YEMopqpgtlGK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOEDnt58; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c690949977so41502eaf.1;
+        Tue, 16 Jul 2024 11:09:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721153330; x=1721758130; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KOjYz7yaXpRDTT5QSfg/sdBFbTuHViu6MqiHwYD6nv8=;
-        b=OlsXrQcTw3YmwbV8vUTIhDfhRjflVdUKWDMGcYEC/b4EW3A8bh0e4CTU+nbdNfyKpT
-         VxOBMPXukfUG/bVrPyvYQuf2eVOrfc3OYQqbY/0jnqVGY6BCoJqh2aGZTv3M33vfmT+G
-         Dck2ys6z68rHiFzrAiSagq7p8uqWwxqDrahYo=
+        d=gmail.com; s=20230601; t=1721153373; x=1721758173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d+jvhKyrOsm+zWY2YedScKUBxcdQMCOw7qzfz7YdD3I=;
+        b=GOEDnt58L+rY2BVf60xkZ+sdUwDcXhMNVcRMApmGhy8crlmBhfX/S6NQE5wp9patW+
+         /F0W7hens+AcOhDk04ZMXpy8R+eQy07+p+5WpDPpTyrdeHazC74zz0gp32k+0EunDGut
+         hRtohG/x2L4EvqLpHCm2gilPD86UCcXz2VduzVWOXYHqKxjUA2xfEQI+4voss09iRQ7L
+         bUreHe6T9yQGFCGKRaVBUfL95+LZYEt04RdjdGd/la/vVEawbWxleXBf4a5pWNfx7Gzl
+         B878HGXeVQPHQDDFdry6TrwoJJS5ZaFihztYFWrwYetgtZACs3OcLgkZK46Nxzno1bgC
+         wumw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721153330; x=1721758130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KOjYz7yaXpRDTT5QSfg/sdBFbTuHViu6MqiHwYD6nv8=;
-        b=FwdBgU4po1VYxDIJyndFYhOM2ix2j6xKaa1FLV7Ij7+szsXYUrw2nQ8cMtpu89FqSG
-         Nxeb+pGgaCG/KvTRrGTzlwa5l2pSuKxdiviZu2Ike28ofTboxmWld4EGLMiiAZCwGp+Y
-         CxC3vfU4GThfWXM7nXdY05gGOoE67xoz6Ddnby/ddr8NH0HcU7oLsuVhhaHvECpIJdAE
-         Lokd8Qcw6ELgCFInS4OZQUA5lH419yxr6z8mVIFMckqIVwtZld/enG4kqesQzRs2NIYW
-         Hp0nHm7NFy2rnFLeHVR0WrAUT06UBk66w1/KE5zKoxklIDbEEj+rX/WaUuDVo+oGfJT4
-         TcQw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Jnlhi0Q/DG2WX0XEJF1rSD+NhBTRvLXcebghYxjz4U1aL1jGK2OYIpTVwe7qeO35HVo54Gzw262LQ8ugA8oFaxJCs+IhXS+nnZjT
-X-Gm-Message-State: AOJu0Yz+Z5C/b6laXspCwZ8iufPpE7uxiT2/zAVkzsmzaMV0sQlX9+fj
-	TQzeJkDAA0sZfD05WeIREVXrYrK6Y721g4ZzGl4nNdVu4aiW9Zplbh3SfPsXv0MlP0lEq5k51r+
-	/UPHq0g==
-X-Google-Smtp-Source: AGHT+IGPFSs3JI9uwr88GwZHNK/okWXFTdQTCEab01hmHMyz1PuS3N30xy/j9ltLR7Ni+hvhifLFIw==
-X-Received: by 2002:a05:6512:1254:b0:52c:e133:7b2e with SMTP id 2adb3069b0e04-52edf0195f5mr2003537e87.35.1721153330148;
-        Tue, 16 Jul 2024 11:08:50 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed2532da7sm1227896e87.239.2024.07.16.11.08.49
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1721153373; x=1721758173;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d+jvhKyrOsm+zWY2YedScKUBxcdQMCOw7qzfz7YdD3I=;
+        b=kF3n56A5oamtQ2GAY3DXsa/CvTy0s+Fgf4UNlC4/LtNl4/kmlNtAEAapULGEtjUcVD
+         eAvEetev+8aB0FhDdmKNRDQm+vARcT4yOVvxc3LXDBg//udU1k8XC9nUoq36u+32DQk/
+         l37rE136DkybpmuQvvNtwJnC4Mj35u7CtpZCnKsqYA7N47IWOh38EFktn3Co+DqFMss3
+         TNXWujlwuE5aT2NAYfuDjuLHvFsa2RYpwHumQr0s9Kaq0ExbONfj64QSSP61ED1VOSIf
+         K12X9Rb/iXRxpVy6TQm57I5c/3lTC9Mp1d+EL+JdkUxilAOfAkmmCj3ocTZ3KfvQKYLp
+         fw5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhaLP0csk2RhmLdK6gZhV3mZSJtrm7mGwXWW8ik8LiGydgiP+OiLwwd5SYDfuy7NGYmlyUxYLuhpwnVxgJ/tm2DzH4r6DkJRb10z3kB5bAIngPobrWIISwsyd5h5iUIpzOaKsi
+X-Gm-Message-State: AOJu0Yx4qUpBVDIrWTvWmFd8lZQOSYsKjE/t0TX0ohAPYxpSQAWp4+DC
+	nVwTld7qQEN8NlF9I45D7/xqy5IZ0LYK+7u9GEjNWEVqR0hdNlKC
+X-Google-Smtp-Source: AGHT+IF3dNmLleWLkSbEQrh9sPKL50qMCpAsHuIjsxgfCe1EA3kyx+2RHXisp7kDG0a4e6w2IIsi4g==
+X-Received: by 2002:a05:6870:7020:b0:25e:1be2:a163 with SMTP id 586e51a60fabf-260bdfbed0amr2327263fac.47.1721153373304;
+        Tue, 16 Jul 2024 11:09:33 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6ae9sm6639931b3a.78.2024.07.16.11.09.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 11:08:49 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so40180061fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 11:08:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXUctvhT9/5EYQ/gHgXBKJZSSzdOmb8bfMstsPRlowT+pkDRmVvU2vi5etYZ0CYvoELmDcf0wCoxcLNNVbude1eJj/wt2ycvTPlrDrC
-X-Received: by 2002:a2e:9acd:0:b0:2ee:56b0:38e3 with SMTP id
- 38308e7fff4ca-2eef4184785mr22070261fa.24.1721153329186; Tue, 16 Jul 2024
- 11:08:49 -0700 (PDT)
+        Tue, 16 Jul 2024 11:09:32 -0700 (PDT)
+Message-ID: <9fc222c5-2ecd-472c-9890-f109a34bdb09@gmail.com>
+Date: Tue, 16 Jul 2024 11:09:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152318.207178-1-brgl@bgdev.pl>
-In-Reply-To: <20240716152318.207178-1-brgl@bgdev.pl>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 16 Jul 2024 11:08:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
-Message-ID: <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/108] 5.10.222-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240716152745.988603303@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240716152745.988603303@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 16 Jul 2024 at 08:23, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> Let's remove the public menuconfig entry for PCI pwrctl and instead
-> default the relevant symbol to 'm' only for the architectures that
-> actually need it.
+On 7/16/24 08:30, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.222 release.
+> There are 108 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.222-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-This feels like you should just use "select" instead.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-IOW, don't make PCI_PWRCTL_PWRSEQ a question at all. Instead, have the
-drivers that need it just select it automatically.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-It's much better to ask people "do you have hardware XYZ" that they
-can hopefully answer, and then we enable all the things that hardware
-needs.
-
-In contrast, asking people "do you need support for ABC?" when they
-don't know what ABC is is _not_ helpful.
-
-IOW, when you write Kconfig entries, your rules should be:
-
- - NOTHING is ever enabled by default, unless it's an old feature that
-was enabled before and got split out (so that "make oldconfig" gives a
-working kernel)
-
- - you NEVER ask questions that normal people can't answer.
-
-For example, we have *way* too many questions that come about because
-some developer went "I don't know what the answer is, I'll just make
-it a Kconfig option". And I absolutely *HATE* those questions. Dammit,
-if the developer doesn't know, then a user sure as hell doesn't
-either.
-
-I tend to keep on harping on Kconfig issues, because I really do think
-that it's one of the biggest hurdles for normal users to just build
-their own kernels. We make the rest of the build system pretty damn
-simple, with a simple "make" and then as root "make modules_install
-install".
-
-But the Kconfig phase is a complete disaster, and it's because kernel
-developers don't seem to think about users.
-
-              Linus
 
