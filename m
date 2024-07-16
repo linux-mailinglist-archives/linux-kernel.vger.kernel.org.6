@@ -1,195 +1,252 @@
-Return-Path: <linux-kernel+bounces-253232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFBA931E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 190D1931E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D58D1C22145
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3881C22199
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B35C4A1D;
-	Tue, 16 Jul 2024 01:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2405227;
+	Tue, 16 Jul 2024 01:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="V7wTUPEp"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dSfRGrQP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B54C74
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44165139B;
+	Tue, 16 Jul 2024 01:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721092784; cv=none; b=iwjlMfqYSDnvwwIoEJFZX/aa2eZHX0KruV1KK+lTEy3yOUAkukd8Coaujx0his+MGyGi/3dTBRUf4b5mO154rF4/DU2tqDsx4c/pNT6LP81lBXWdX7zrs/omc55TbylI+aJorMev4+qc4NJjCaIGagwrJ0Kxxo2Qe22/dMw4Nc4=
+	t=1721092874; cv=none; b=DC4onsI8D00VHwZ9EAwesNghjbXtvn+8I7nrJQ8JSAz7D0mfnS5rW5UR6PFSSp82KnBk9Sl2h6eelF2tqAwFu8A0WY+XqjIl+hJQnjC6URHMjJEBeQehbhH7T9ElDJZmmUbWUzstRQbGCZr4gxNXqUhyzLmi+HPzxye5l6eoqN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721092784; c=relaxed/simple;
-	bh=DJ09cF3HsJTJHuU7bu45zXCFCvS3d9+y+Q76yGosF98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bu1ZFmBcviqbtBgSdTnF+qxlZJXtWUP5Z8Hq8GqCwi9GAVsSk7PGaN+7vNOZ3a4MR0dQb5ZqCBvM/RpadtDvYoQjdBMyp0mMMvBDVyWiqvJIy2bCg77FYbHk6sZktqPvdoCVE0qjCN+ZbtKBWIhIwV45LCWRjkivm9fYZ2y5eew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=V7wTUPEp; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721092772; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Xec8Q/X1EdPBny7ED667Auisr/10A9HW03C61vOQHzQ=;
-	b=V7wTUPEpdXJQCvfGpcW378hKNJrgmKa1vn9XPDVtq5yTVUbQb550aykwT5yXi5DPErmXkgBVQwxUlvWAd1ehiHpO8XhLp5oSlAswu9V0dp8lLVITxH3JhbGxwg2ugGbAF7XaCyblaQMJAXq+NNgQexcGR3/LdeC+gRwhjXqEDZw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0WAfQXmk_1721092771;
-Received: from 30.221.128.129(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WAfQXmk_1721092771)
-          by smtp.aliyun-inc.com;
-          Tue, 16 Jul 2024 09:19:32 +0800
-Message-ID: <7ed24ac3-73ad-4cd0-ba27-c4e8098c5830@linux.alibaba.com>
-Date: Tue, 16 Jul 2024 09:19:31 +0800
+	s=arc-20240116; t=1721092874; c=relaxed/simple;
+	bh=YLnF3vXmTwHVi/fglXgJKae0Ty7PKcRO4fdfrxeMSg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0yT7CXTgxrI4afZIdBEw/PJS3JwyRyu1qgAJyiPJoAOYczMSY0xk7y01V4qnUY/PX1hKVM6i+zNpOUibHk1PsXn1jIbwl4cAmcXkD4gxJxQILGvJUDiYX0N2P6t9KNhA05By0U5Ltw4vj/F7buArwlAmjwzz3kjf+gAGa8IEaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dSfRGrQP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721092872; x=1752628872;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YLnF3vXmTwHVi/fglXgJKae0Ty7PKcRO4fdfrxeMSg4=;
+  b=dSfRGrQP9iy9KP+eGUOcaZcP0hIHmDDIDxv4xQdc4eAWeC6N5kYThva+
+   rvKmKtLtXbXyiUB67yy++Y5+AsrGFkXcM45/bXF4Xjv3pceDd6iFGcng2
+   cH34m4/xweHk87XaFyqcer1WlkRmigK/97vUFNu6zOp9XH6Mb5XAQEyA5
+   fMNA3uAfDZxlpGFkiK8P6UFqvftMIUxkBPogWqXZk0WsLdQ2e2hrptYxj
+   ZFrwSe0J9ofJNZQpk52rujl+kYuyNNN+8GHDBJYzLH7udGjPLZpMtXTWH
+   ClhpoOvaEkDMS0+GUNQz4YBdu+zGZQ6jzJOrtwzAlcx0QMwEoi/8KZaqH
+   w==;
+X-CSE-ConnectionGUID: 1h026Oq1TVu0/hGJwVoE4A==
+X-CSE-MsgGUID: 1g4L3RdXQu+tPCM48eFckA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18699447"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="18699447"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 18:21:11 -0700
+X-CSE-ConnectionGUID: L+/jyIgiRHGjy+g616567g==
+X-CSE-MsgGUID: dhyjsaffTVWXCI8AereOYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="73062583"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 18:21:10 -0700
+From: isaku.yamahata@intel.com
+To: kvm@vger.kernel.org
+Cc: isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: x86/mmu: Allow per VM kvm_mmu_max_gfn()
+Date: Mon, 15 Jul 2024 18:21:03 -0700
+Message-ID: <fdddad066c88c6cd8f2090f11e32e54f7d5c6178.1721092739.git.isaku.yamahata@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] quota: remove unneeded return value of
- register_quota_format
-To: Kemeng Shi <shikemeng@huaweicloud.com>, jack@suse.com
-Cc: mark@fasheh.com, jlbec@evilplan.org, hughd@google.com,
- akpm@linux-foundation.org, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
- <20240715130534.2112678-3-shikemeng@huaweicloud.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240715130534.2112678-3-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Looks good.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+From: Isaku Yamahata <isaku.yamahata@intel.com>
 
-On 7/15/24 9:05 PM, Kemeng Shi wrote:
-> The register_quota_format always returns 0, simply remove unneeded return
-> value.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  fs/ocfs2/super.c      | 6 ++----
->  fs/quota/dquot.c      | 3 +--
->  fs/quota/quota_v1.c   | 3 ++-
->  fs/quota/quota_v2.c   | 9 +++------
->  include/linux/quota.h | 2 +-
->  mm/shmem.c            | 7 +------
->  6 files changed, 10 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index afee70125ae3..73caa8914ebe 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -1571,15 +1571,13 @@ static int __init ocfs2_init(void)
->  
->  	ocfs2_set_locking_protocol();
->  
-> -	status = register_quota_format(&ocfs2_quota_format);
-> -	if (status < 0)
-> -		goto out3;
-> +	register_quota_format(&ocfs2_quota_format);
-> +
->  	status = register_filesystem(&ocfs2_fs_type);
->  	if (!status)
->  		return 0;
->  
->  	unregister_quota_format(&ocfs2_quota_format);
-> -out3:
->  	debugfs_remove(ocfs2_debugfs_root);
->  	ocfs2_free_mem_caches();
->  out2:
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 23fcf9e9d6c5..a08a71890cd8 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -163,13 +163,12 @@ static struct quota_module_name module_names[] = INIT_QUOTA_MODULE_NAMES;
->  /* SLAB cache for dquot structures */
->  static struct kmem_cache *dquot_cachep;
->  
-> -int register_quota_format(struct quota_format_type *fmt)
-> +void register_quota_format(struct quota_format_type *fmt)
->  {
->  	spin_lock(&dq_list_lock);
->  	fmt->qf_next = quota_formats;
->  	quota_formats = fmt;
->  	spin_unlock(&dq_list_lock);
-> -	return 0;
->  }
->  EXPORT_SYMBOL(register_quota_format);
->  
-> diff --git a/fs/quota/quota_v1.c b/fs/quota/quota_v1.c
-> index 3f3e8acc05db..6f7f0b4afba9 100644
-> --- a/fs/quota/quota_v1.c
-> +++ b/fs/quota/quota_v1.c
-> @@ -235,7 +235,8 @@ static struct quota_format_type v1_quota_format = {
->  
->  static int __init init_v1_quota_format(void)
->  {
-> -        return register_quota_format(&v1_quota_format);
-> +	register_quota_format(&v1_quota_format);
-> +	return 0;
->  }
->  
->  static void __exit exit_v1_quota_format(void)
-> diff --git a/fs/quota/quota_v2.c b/fs/quota/quota_v2.c
-> index c48c233f3bef..1fda93dcbc1b 100644
-> --- a/fs/quota/quota_v2.c
-> +++ b/fs/quota/quota_v2.c
-> @@ -440,12 +440,9 @@ static struct quota_format_type v2r1_quota_format = {
->  
->  static int __init init_v2_quota_format(void)
->  {
-> -	int ret;
-> -
-> -	ret = register_quota_format(&v2r0_quota_format);
-> -	if (ret)
-> -		return ret;
-> -	return register_quota_format(&v2r1_quota_format);
-> +	register_quota_format(&v2r0_quota_format);
-> +	register_quota_format(&v2r1_quota_format);
-> +	return 0;
->  }
->  
->  static void __exit exit_v2_quota_format(void)
-> diff --git a/include/linux/quota.h b/include/linux/quota.h
-> index 07071e64abf3..89a0d83ddad0 100644
-> --- a/include/linux/quota.h
-> +++ b/include/linux/quota.h
-> @@ -526,7 +526,7 @@ struct quota_info {
->  	const struct quota_format_ops *ops[MAXQUOTAS];	/* Operations for each type */
->  };
->  
-> -int register_quota_format(struct quota_format_type *fmt);
-> +void register_quota_format(struct quota_format_type *fmt);
->  void unregister_quota_format(struct quota_format_type *fmt);
->  
->  struct quota_module_name {
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index a8b181a63402..d27104e1af9b 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -4660,11 +4660,7 @@ void __init shmem_init(void)
->  	shmem_init_inodecache();
->  
->  #ifdef CONFIG_TMPFS_QUOTA
-> -	error = register_quota_format(&shmem_quota_format);
-> -	if (error < 0) {
-> -		pr_err("Could not register quota format\n");
-> -		goto out3;
-> -	}
-> +	register_quota_format(&shmem_quota_format);
->  #endif
->  
->  	error = register_filesystem(&shmem_fs_type);
-> @@ -4693,7 +4689,6 @@ void __init shmem_init(void)
->  out2:
->  #ifdef CONFIG_TMPFS_QUOTA
->  	unregister_quota_format(&shmem_quota_format);
-> -out3:
->  #endif
->  	shmem_destroy_inodecache();
->  	shm_mnt = ERR_PTR(error);
+Prepare for TDX support by making kvm_mmu_max_gfn() configurable.  Have
+this preparation also be useful by non-TDX changes to improve correctness
+associated with the combination of 4-level EPT and MAXPA > 48.  The issue
+is analyzed at [1].
+
+Like other confidential computing technologies, TDX has the concept of
+private and shared memory.  For TDX, the private and shared mappings of the
+same GFN are mapped at separate GPAs, with a configurable GPA bit selecting
+between private and shared aliases of the same GFN.  This means that
+operations working with the concept of a maximum GFN should only go up to
+this configurable GPA bit instead of the existing behavior based on
+shadow_phys_bits.  Other TDX changes will handle applying the operation
+across both GFN aliases.
+
+Using the existing kvm_mmu_max_gfn() based on shadow_phys_bits would cause
+functional problems for TDX.  Specifically, because the function is used to
+restrict the range where memslots can be created.  For TDX, if a memslot is
+created at a GFN that includes the bit that selects between private/shared,
+it would confuse the logic that zaps both aliases.  It would end up zapping
+only the higher alias and missing the lower one.  In this case, freed pages
+could remain mapped in the TDX guest.
+
+Since this GPA bit is configurable per-VM, make kvm_mmu_max_gfn() per-VM by
+having it take a struct kvm, and keep the max GFN as a member on that
+struct.  Future TDX changes will set this member based on the configurable
+position of the private/shared bit.
+
+Besides functional issues, it is generally more correct and easier to
+reason about in the context of solutions like TDX which have multiple
+aliases for the same GFN.  For example, in other TDX changes the logic in
+__tdp_mmu_zap_root() will made to iterate twice for each alias.  Using a
+correct kvm_mmu_max_gfn() will avoid iterating over high GFN ranges that
+could not have set PTEs.
+
+It is worth noting, that existing VM types could get correctness/efficiency
+benefits in the same way.  One case would be where a host MAXPA is above
+48, but 4-level EPT is used.  In this case, KVM could skip iterating over
+EPT that cannot be mapped.  In this case, the benefit of the per-VM value
+is to cache the max GFN.  Another could be SEV, where it is unnecessary to
+iterate over the C-bits position.  The benefit of the per-VM max GFN in
+that case would be not all guests would have a C-bit.
+
+No functional change intended.
+
+Link: https://lore.kernel.org/kvm/20240522223413.GC212599@ls.amr.corp.intel.com/ [1]
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+---
+ arch/x86/include/asm/kvm_host.h | 2 ++
+ arch/x86/kvm/mmu.h              | 7 ++++++-
+ arch/x86/kvm/mmu/mmu.c          | 3 ++-
+ arch/x86/kvm/mmu/tdp_mmu.c      | 8 ++++----
+ arch/x86/kvm/x86.c              | 2 +-
+ 5 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 9bb2e164c523..2e1d330206a4 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1519,6 +1519,8 @@ struct kvm_arch {
+ 	 */
+ #define SPLIT_DESC_CACHE_MIN_NR_OBJECTS (SPTE_ENT_PER_PAGE + 1)
+ 	struct kvm_mmu_memory_cache split_desc_cache;
++
++	gfn_t mmu_max_gfn;
+ };
+ 
+ struct kvm_vm_stat {
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index dc80e72e4848..670ec63b0434 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -63,7 +63,7 @@ static __always_inline u64 rsvd_bits(int s, int e)
+  */
+ extern u8 __read_mostly shadow_phys_bits;
+ 
+-static inline gfn_t kvm_mmu_max_gfn(void)
++static inline gfn_t __kvm_mmu_max_gfn(void)
+ {
+ 	/*
+ 	 * Note that this uses the host MAXPHYADDR, not the guest's.
+@@ -81,6 +81,11 @@ static inline gfn_t kvm_mmu_max_gfn(void)
+ 	return (1ULL << (max_gpa_bits - PAGE_SHIFT)) - 1;
+ }
+ 
++static inline gfn_t kvm_mmu_max_gfn(struct kvm *kvm)
++{
++	return kvm->arch.mmu_max_gfn;
++}
++
+ static inline u8 kvm_get_shadow_phys_bits(void)
+ {
+ 	/*
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 4e0e9963066f..b8f36779898a 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3302,7 +3302,7 @@ static int kvm_handle_noslot_fault(struct kvm_vcpu *vcpu,
+ 	 * only if L1's MAXPHYADDR is inaccurate with respect to the
+ 	 * hardware's).
+ 	 */
+-	if (unlikely(fault->gfn > kvm_mmu_max_gfn()))
++	if (unlikely(fault->gfn > kvm_mmu_max_gfn(vcpu->kvm)))
+ 		return RET_PF_EMULATE;
+ 
+ 	return RET_PF_CONTINUE;
+@@ -6483,6 +6483,7 @@ static bool kvm_has_zapped_obsolete_pages(struct kvm *kvm)
+ 
+ void kvm_mmu_init_vm(struct kvm *kvm)
+ {
++	kvm->arch.mmu_max_gfn = __kvm_mmu_max_gfn();
+ 	kvm->arch.shadow_mmio_value = shadow_mmio_value;
+ 	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
+ 	INIT_LIST_HEAD(&kvm->arch.zapped_obsolete_pages);
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index ff27e1eadd54..a903300d3869 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -733,7 +733,7 @@ static inline bool __must_check tdp_mmu_iter_cond_resched(struct kvm *kvm,
+ 	return iter->yielded;
+ }
+ 
+-static inline gfn_t tdp_mmu_max_gfn_exclusive(void)
++static inline gfn_t tdp_mmu_max_gfn_exclusive(struct kvm *kvm)
+ {
+ 	/*
+ 	 * Bound TDP MMU walks at host.MAXPHYADDR.  KVM disallows memslots with
+@@ -741,7 +741,7 @@ static inline gfn_t tdp_mmu_max_gfn_exclusive(void)
+ 	 * MMIO SPTEs for "impossible" gfns, instead sending such accesses down
+ 	 * the slow emulation path every time.
+ 	 */
+-	return kvm_mmu_max_gfn() + 1;
++	return kvm_mmu_max_gfn(kvm) + 1;
+ }
+ 
+ static void __tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
+@@ -749,7 +749,7 @@ static void __tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
+ {
+ 	struct tdp_iter iter;
+ 
+-	gfn_t end = tdp_mmu_max_gfn_exclusive();
++	gfn_t end = tdp_mmu_max_gfn_exclusive(kvm);
+ 	gfn_t start = 0;
+ 
+ 	for_each_tdp_pte_min_level(iter, root, zap_level, start, end) {
+@@ -850,7 +850,7 @@ static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct kvm_mmu_page *root,
+ {
+ 	struct tdp_iter iter;
+ 
+-	end = min(end, tdp_mmu_max_gfn_exclusive());
++	end = min(end, tdp_mmu_max_gfn_exclusive(kvm));
+ 
+ 	lockdep_assert_held_write(&kvm->mmu_lock);
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a6968eadd418..f8bfbcb818e3 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -12939,7 +12939,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 		return -EINVAL;
+ 
+ 	if (change == KVM_MR_CREATE || change == KVM_MR_MOVE) {
+-		if ((new->base_gfn + new->npages - 1) > kvm_mmu_max_gfn())
++		if ((new->base_gfn + new->npages - 1) > kvm_mmu_max_gfn(kvm))
+ 			return -EINVAL;
+ 
+ 		return kvm_alloc_memslot_metadata(kvm, new);
+
+base-commit: c8b8b8190a80b591aa73c27c70a668799f8db547
+-- 
+2.45.2
+
 
