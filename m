@@ -1,45 +1,74 @@
-Return-Path: <linux-kernel+bounces-253751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B10932657
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E393593265C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6908282A9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F0B1F21F8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BAC17C9F9;
-	Tue, 16 Jul 2024 12:14:39 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276BA13C660;
+	Tue, 16 Jul 2024 12:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcNOrxf3"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB95146A8A;
-	Tue, 16 Jul 2024 12:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B79F511
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721132078; cv=none; b=JL92gfox3DZwp+5iEqfvzptZUlL68CQQ6chJ9ogpCEg8nmkL5GQOESXphEi6NH6h1AKz0cNEMBPZP8zeGwJUFr4Ic3Glr6/9ara7mmMr8sxhJspw2MungvMA3LnIpbZtkIfxaqw75Y0C+0Fv9pYJZHrDDzWRWAP/6dmQT2CVJqw=
+	t=1721132119; cv=none; b=QZtXPPMo+Lt5ArkYM0aLx2M4DspCxK90bSjMjeG+uEMcq+iLRY9Pxs8SggE2kqj9QIO04fKcRfWh8toxZDw7vbnbb/dX+iOzhxInWexRa6qbkWL/fbO1r8GTREyu4go41ja2h57PlL1tRn4Lm7xqRzpOM1OkKuMFhKNwtDuYYH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721132078; c=relaxed/simple;
-	bh=m5EP5zYf0FNCFvIMCApC8o9k3JJ5QCLIwoKuW5AEFrA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=LzKxGXG+cwq9TxSmqked40wsIs+Xv7cMs9a7nr9WuFO37s24WPZBs0DVTSTazw4WrtTusgaTKexqxXpacx8yp3FVS383B2QGpI3sT4CmBUSvJrR4FHB1zTN/xg52ePdSt7QOq01pg29HLxO8zysd9L9A3VcDmq0kcR0NvKgULfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WNdHj3DN2zdj0J;
-	Tue, 16 Jul 2024 20:12:49 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id B9355140158;
-	Tue, 16 Jul 2024 20:14:32 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 16 Jul
- 2024 20:14:31 +0800
-Message-ID: <c6d10b39-4583-4162-b481-375f41aaeba1@huawei.com>
-Date: Tue, 16 Jul 2024 20:14:31 +0800
+	s=arc-20240116; t=1721132119; c=relaxed/simple;
+	bh=/mJSEHVWWL/+/TzG4vXCLTvtSyApfM55zicTRypWeIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OO/01C81FCLL9I7sVjcaAZZ3pApkoRYRujGULOP7l81trrP+fZ3Yq84OWwiC2oiFBifNYN+OsInmQsU6OOHrpWKbiOLVZLeDfogApxoJQhhiyD51UYs95pUlj/y90Ut1HO+NuGLmtWUoWk8q7KXedi3B1wLB9wPr4EpUNdxhRg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OcNOrxf3; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-59f9f59b88cso312950a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721132116; x=1721736916; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
+        b=OcNOrxf3FUK8MfZDS0v5z5fks207JeddgsHbPSNuDyPWiH2bxC1aHMnj44pkhQ4dli
+         CzE6dicMDQ6q+TrkT1t5f9tdbGxAPp/WZrIm0zAZiEmt3b+vfcKdVDSl/9XB0/SVsf5Q
+         WcbAwmQnlGEm3jgDPT97829aYEIo4KeAUJjeAtLrQscdk3pH61ezuBvyy24WkUbjoueX
+         GHEpAw/cu3ip6ZZabTv2L3FQm7WjkF6zhoIVj8P96zLaA3ij5jrk5g9huRMYS954JCkh
+         nAzCjSMjw0/rJYnm9ZX975JIqjd0LwAqvxvO96mNNmOd/uIUBa5Z/dkAoTLZFJPGLpEX
+         HDTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721132116; x=1721736916;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
+        b=QSMbeBaNbeUnuGByonmS3VXADpEwKA6nyu60WkTs1eU4D06LzCEb7g2s/uLIBQMqrP
+         FDIucq8XBOqLD/RMB8yhC8h65cwuSYM9a5/ia2QSaGlwVE0dDtc2lx91AmWXUHmCPQl5
+         yPPABrmNfGeotGkV87K6Nln5MuRVgz5G+Gk8S5K4dQajcsSlwb7Zi2sm+MJ5CbIRRSkF
+         2aVNpD4AQE7AVpnGVdmogiasWJHNgL2zi+DofaCAi4Yd4a/SIPI4IE1Oh/aB792UzPdZ
+         l6kpAAMC8a6A9nbFh9NsMfpmSWHlf4Zx0OhHbETo1H/cp2hdfyGcVftspEvPiw3+4gDT
+         GSvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+KdM6MXEipsD4EomASokh2O9wZ2Aq7PMn8zfMclazOCEcPJe96jzuZPr56vThM4ghu2FY/dD9np9XNUYMuMI+jAEK6Y+Xtcxk4w/Y
+X-Gm-Message-State: AOJu0YwFbd6fZtKlv9M7/iqXRQj34GgkCWNpDFehom/Uo3GJFVE19s/w
+	jz6QxpTDysmLoyTbROip2wvExHQHcz7yna4nGAsJMmkpg7hajOmEFRra0+Kh75U=
+X-Google-Smtp-Source: AGHT+IHfEm9rSiHqbH+SusBNneyOosPqVrpvY7RwUkyFYFz6O61G1Ifzfw53sglOfpelrIaM3lCSvg==
+X-Received: by 2002:a05:6402:3486:b0:58e:4088:ed2 with SMTP id 4fb4d7f45d1cf-59eeee44bc9mr1445338a12.16.1721132115994;
+        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59e663e4a6esm1594433a12.80.2024.07.16.05.15.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
+Message-ID: <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+Date: Tue, 16 Jul 2024 14:15:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,90 +76,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
- cgroup_bpf_release
-From: chenridong <chenridong@huawei.com>
-To: Tejun Heo <tj@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>
-CC: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <bpf@vger.kernel.org>,
-	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240607110313.2230669-1-chenridong@huawei.com>
- <67B5A5C8-68D8-499E-AFF1-4AFE63128706@linux.dev>
- <300f9efa-cc15-4bee-b710-25bff796bf28@huawei.com>
- <a1b23274-4a35-4cbf-8c4c-5f770fbcc187@huawei.com>
- <Zo9XAmjpP6y0ZDGH@google.com> <ZpAYGU7x6ioqBir5@slm.duckdns.org>
- <5badbb85-b9e9-4170-a1b9-9b6d13135507@huawei.com>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, quic_rjendra@quicinc.com, danila@jiaxyga.com,
+ neil.armstrong@linaro.org, otto.pflueger@abscue.de, abel.vesa@linaro.org,
+ luca@z3ntu.xyz, geert+renesas@glider.be, stephan.gerhold@kernkonzept.com,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Praveenkumar I <quic_ipkumar@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com>
 Content-Language: en-US
-In-Reply-To: <5badbb85-b9e9-4170-a1b9-9b6d13135507@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240710061102.1323550-6-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
+On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> 
+> Add the APC power domain definitions used in IPQ9574.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
 
+Could you please confirm [1]?
 
-On 2024/7/12 9:15, chenridong wrote:
-> 
-> 
-> On 2024/7/12 1:36, Tejun Heo wrote:
->> Hello,
->>
->> On Thu, Jul 11, 2024 at 03:52:34AM +0000, Roman Gushchin wrote:
->>>> The max_active of system_wq is WQ_DFL_ACTIVE(256). If all active 
->>>> works are
->>>> cgroup bpf release works, it will block smp_call_on_cpu work which 
->>>> enque
->>>> after cgroup bpf releases. So smp_call_on_cpu holding 
->>>> cpu_hotplug_lock will
->>>> wait for completion, but it can never get a completion because 
->>>> cgroup bpf
->>>> release works can not get cgroup_mutex and will never finish.
->>>> However, Placing the cgroup bpf release works on cgroup destroy will 
->>>> never
->>>> block smp_call_on_cpu work, which means loop is broken. Thus, it can 
->>>> solve
->>>> the problem.
->>>
->>> Tejun,
->>>
->>> do you have an opinion on this?
->>>
->>> If there are certain limitations from the cgroup side on what can be 
->>> done
->>> in a generic work context, it would be nice to document (e.g. don't grab
->>> cgroup mutex), but I still struggle to understand what exactly is wrong
->>> with the blamed commit.
->>
->> I think the general rule here is more "don't saturate system wqs" rather
->> than "don't grab cgroup_mutex from system_wq". system wqs are for misc
->> things which shouldn't create a large number of concurrent work items. If
->> something is going to generate 256+ concurrent work items, it should 
->> use its
->> own workqueue. We don't know what's in system wqs and can't expect its 
->> users
->> to police specific lock usages.
->>
-> Thank you, Tj. That's exactly what I'm trying to convey. Just like 
-> cgroup, which has its own workqueue and may create a large number of 
-> release works, it is better to place all its related works on its 
-> workqueue rather than on system wqs.
-> 
-> Regards,
-> Ridong
-> 
->> Another aspect is that the current WQ_DFL_ACTIVE is an arbitrary number I
->> came up with close to 15 years ago. Machine size has increased by 
->> multiple
->> times, if not an order of magnitude since then. So, "there can't be a
->> reasonable situation where 256 concurrency limit isn't enough" is most
->> likely not true anymore and the limits need to be pushed upward.
->>
->> Thanks.
->>
-> 
-Hello, Tejun, and Roman, is the patch acceptable? Do I need to take any 
-further actions?
+Konrad
+
+[1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
 
