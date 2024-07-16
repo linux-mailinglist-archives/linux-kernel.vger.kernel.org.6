@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-253445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79EF93216D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:45:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B1E932171
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2DE5281B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7AB281F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A90442071;
-	Tue, 16 Jul 2024 07:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A43224EF;
+	Tue, 16 Jul 2024 07:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LsLf3Ekv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNhwsygh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120BF3BB32
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670C033CC2;
+	Tue, 16 Jul 2024 07:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721115948; cv=none; b=ef+kNXn4B8kMGHtkTzwQGW/UaZbRLhGTBgzGsWoifo1KVOaUnBz4G6KIoiuerx+tTOdTvtroEvn8IRT+xogI7RBRI5zrgKc5tMYQkeaG5Z3u85vMNyVBmMa0sogy4GCgpPDleCtmfz7w2li5xBsRhPEi8QneH0MCBin9yxno/Uc=
+	t=1721115960; cv=none; b=Y4fcPxjQ4b5zMTDMLT9Nebk3TLfBr3Tf2hSCuOVfead5vjeJ3v0zbF6KtBvNhKbEj6Uj6F5LWH7jRLna77I65gz01X74n8vPd7oYaipv8LCRGgRyrY+a7C5nfsojXOPoL5bYw+NKWiV99C/7wD6BbbLmuOEGUn5Amkdg31+RVHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721115948; c=relaxed/simple;
-	bh=86MUwza1xWsJAaFKgS4rDz0o1jK2RJQSPKS8NDzal6g=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=e34281fdMFaukyUMLg+InZOjOL/kgz8sQy5eJF456oXELuQ8/7W6QaA81eQpmO6FaDJWjaGDjAc5aCP0bFgz9KqocYNAV1k46pUrx96L8C8VUhxGVNGuyZ/hy5Uc9HawbrgcuOv0ZCmz/8Ll7ZFTIsUD1t3AfuhMI42daW0mVv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LsLf3Ekv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721115945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+V++ss0Y+nF3bHAtu1rHuXiHCzOFsrcCTkSe7rWi5E=;
-	b=LsLf3EkvpO4oDAyyhzmwRDSCRzw1uYZIYpT1c1EEH5/NNN25COufRVPVp96BHRqtgNxy9q
-	jwQGRWeVqhGtPi829/CVn62zvovAdxy2zsB6klLoI8QveESQmgh7ulCfgDShe7rU8TIXnH
-	13JLJYERLdm3HS93A0iYZBiaxj5uXhU=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-_65BbCPSNj-Vc_gZhuxkeA-1; Tue, 16 Jul 2024 03:45:43 -0400
-X-MC-Unique: _65BbCPSNj-Vc_gZhuxkeA-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-79f006f9f14so1037763885a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:45:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721115942; x=1721720742;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z+V++ss0Y+nF3bHAtu1rHuXiHCzOFsrcCTkSe7rWi5E=;
-        b=mSKJnUO/pWZmDof2Cm01qc4rt4yXXmNeV6sCI1NsxOhTD5DquxrKo1fo1dLB+xkp7q
-         541VIHs+2fwv0z3fc4JPV/E0FJ01ehO2/4CTC9uzQJlDlDL1vpo9ey0Y+8hBDYU1qFGX
-         SqdXjKERsEkx4n318G7bcintVY8eHcotjRonQZhO0O5YY6H0WtuXE64cPIE32+gZvmjo
-         bhTwhGxvjfPZENA4xBgP4cavZ9/fDotVznjATB8nJcnqUw3Zp0rd0cFnz6g7+ZSV+pXp
-         vPXCUzkE2qFytNYYsbUr4B5w7IV1fS+pJtFE6XvnIEl+9CkDgZK4jDVxSgRKJhR215A1
-         GM8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5jEZeI7xrjTXICZQFOjoV8dkdm7yO37dUeVH6Yk81TDz4c2R0+AuLF+GWRxsjHIR8jk20ndoQDhQwfzEjRNgPECNrQasDk/E9bnow
-X-Gm-Message-State: AOJu0YzEo3knlYwtpUiicW4IUKnvmDJ/Fue9f7nxU/6uepOK+OJ3bQAR
-	bgqtlGhFd5P9OZ0nEbcHDM/7oht/BcV9bUowzi3FOBgiwpIJXyeof1cYyb5pIAgIt1zI9uGnQrR
-	VipyqbDBlONzDeltpM8JfcCNrDBhJ2CVSawa4Dhx95TcX4zEvPauWgsQEpOkraOE4uhP9aodA
-X-Received: by 2002:a05:620a:2987:b0:79e:ff18:a510 with SMTP id af79cd13be357-7a17ca0990bmr122367985a.2.1721115942388;
-        Tue, 16 Jul 2024 00:45:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHja7LIrw3Q4bZ6oSnFrulhGf/6KoTTkPi7QV9BQCaqrfjnWFBtckwybN/MOQzLHKDVIObrtA==
-X-Received: by 2002:a05:620a:2987:b0:79e:ff18:a510 with SMTP id af79cd13be357-7a17ca0990bmr122365585a.2.1721115942034;
-        Tue, 16 Jul 2024 00:45:42 -0700 (PDT)
-Received: from localhost ([240d:1a:c0d:9f00:523b:c871:32d4:ccd0])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160bdd7fesm270250585a.65.2024.07.16.00.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 00:45:41 -0700 (PDT)
-Date: Tue, 16 Jul 2024 16:45:35 +0900 (JST)
-Message-Id: <20240716.164535.1952205982608398288.syoshida@redhat.com>
-To: tung.q.nguyen@endava.com
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] tipc: Return non-zero value from
- tipc_udp_addr2str() on error
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <AS5PR06MB8752BF82AFB1C174C074547DDBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-References: <20240716020905.291388-1-syoshida@redhat.com>
-	<AS5PR06MB8752BF82AFB1C174C074547DDBA22@AS5PR06MB8752.eurprd06.prod.outlook.com>
-X-Mailer: Mew version 6.9 on Emacs 29.4
+	s=arc-20240116; t=1721115960; c=relaxed/simple;
+	bh=/OR9CLXPGgVQlwRMU9z0KRnQvomjGInPoZPYS4L4aN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZnIHvQPWrTYKYr8vY67nDVtDZ4zV9JM4oocd3e3c8hQT6c+mkC17iaW+DhIdXF3JhgP2eC2hzQknvjlpEotxuf2MwtVKpMI6redtASzFwx4s3XzmqRKa1p/l1B7ccjI5Cj+JPeSlzxuasyXZKG46T0CbfTAze9tk4ZQayByiOMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNhwsygh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD2F4C4AF09;
+	Tue, 16 Jul 2024 07:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721115959;
+	bh=/OR9CLXPGgVQlwRMU9z0KRnQvomjGInPoZPYS4L4aN4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNhwsyghehenLIOupJ0mO+eaAspss3ghUiZ8qiQ7cWVVbftjF50zZpokUI95gExxK
+	 tAmY2CgfEj55fFcraA4tZu7TRgbUTPg9GzGXZOy9CKBE6hhmZ21L29s5bfYFXtOeXC
+	 UszwcZGLD2Lqkkru38T8pPh/eDlUgzcJqqVwOttDJa5F3ledbSbMt9RgsZJBYOMiNA
+	 1t0aaQBVjfFSXIAipkX8FWjQSbAShKCLhL+ujiwmagKUy94rkBYjviuYKoxJl2/ooA
+	 QSMLyHDOPv9/FnGt+8W1Vfd0kIV4B1pp/17NMLhoKyp8g1zhPeLPWS12zFwYDSUCTA
+	 T/NKTzQ1p76ug==
+Message-ID: <16cd561d-d8d5-4acb-8536-cadc3f073201@kernel.org>
+Date: Tue, 16 Jul 2024 09:45:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: Update sleep_clk frequency to
+ 32000 on SA8775P
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_imrashai@quicinc.com, quic_jkona@quicinc.com
+References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-8-badaf35ed670@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240715-sa8775p-mm-v3-v1-8-badaf35ed670@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Tung,
+On 15/07/2024 10:23, Taniya Das wrote:
+> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+> update the sleep_clk frequency with the correct value on SA8775P.
+> 
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-On Tue, 16 Jul 2024 07:35:50 +0000, Tung Nguyen wrote:
->>tipc_udp_addr2str() should return non-zero value if the UDP media address is invalid. Otherwise, a buffer overflow access can occur in
->>tipc_media_addr_printf(). Fix this by returning 1 on an invalid UDP media address.
->>
->>Fixes: d0f91938bede ("tipc: add ip/udp media type")
->>Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
->>---
->> net/tipc/udp_media.c | 5 ++++-
->> 1 file changed, 4 insertions(+), 1 deletion(-)
->>
->>diff --git a/net/tipc/udp_media.c b/net/tipc/udp_media.c index b849a3d133a0..439f75539977 100644
->>--- a/net/tipc/udp_media.c
->>+++ b/net/tipc/udp_media.c
->>@@ -135,8 +135,11 @@ static int tipc_udp_addr2str(struct tipc_media_addr *a, char *buf, int size)
->>                snprintf(buf, size, "%pI4:%u", &ua->ipv4, ntohs(ua->port));
->>        else if (ntohs(ua->proto) == ETH_P_IPV6)
->>                snprintf(buf, size, "%pI6:%u", &ua->ipv6, ntohs(ua->port));
->>-       else
->>+       else {
->>                pr_err("Invalid UDP media address\n");
->>+               return 1;
-> Please use -EINVAL instead.
+Avoid combining fixes with features, but if you do, then fixes are never
+the last patch, but first.
 
-Other addr2str functions like tipc_eth_addr2str() use 1, so I followed
-convention. But -EINVAL is more appropriate, as you say.
-
-Thanks,
-Shigeru
+Best regards,
+Krzysztof
 
 
