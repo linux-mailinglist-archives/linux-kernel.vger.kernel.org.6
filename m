@@ -1,619 +1,211 @@
-Return-Path: <linux-kernel+bounces-253465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BD29321B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:13:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AC19321B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CF5282BCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:13:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587DCB21A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5479E56B7C;
-	Tue, 16 Jul 2024 08:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A385455885;
+	Tue, 16 Jul 2024 08:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=l-acoustics.com header.i=@l-acoustics.com header.b="UVKJBrIf"
-Received: from MRZP264CU002.outbound.protection.outlook.com (mail-francesouthazon11020089.outbound.protection.outlook.com [52.101.165.89])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="VkYyqFns"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020122.outbound.protection.outlook.com [52.101.69.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399402EAEA;
-	Tue, 16 Jul 2024 08:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.165.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798523224;
+	Tue, 16 Jul 2024 08:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.122
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721117607; cv=fail; b=k1LMSY7c0lJscPxKssTv0/Gjm2ctm5OVaYWUb6tDxwihdDodvq4UroqeVXAn3GT7lh2LpFG1Vuc4LOS2bhigNd2ISae4xj1IOj/IHTpuERm4Khavh5UYklbYlsChtXbld2uPMQNxjynI/MnYSibwEQUTH4qIzYFWdRqeANctPfQ=
+	t=1721117767; cv=fail; b=iyzRsjEkYHypiUxmYJLjNvuh3T2i/8FhUpnVayIAX+j/cpH9+NOrzY/b4MfpQLNBWPhM2Lyl6zGwQweEgNJv3qr/TxjcMlO+VRs4j4kqDtAaCaUiFuPFtUD9lPfFw+6juShfM3lW3azbEVwWEnq+wKZRfr/LgciQIPqmLjB5GSs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721117607; c=relaxed/simple;
-	bh=xTVMPVb3w7HSBfzDJhtcTUf4NCpK4E1K8FXFtsEYU74=;
+	s=arc-20240116; t=1721117767; c=relaxed/simple;
+	bh=yTnW1amBie5sOZwpVnUJF64O3pBsl7g9KQSjczwzM6E=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R7pIze8J8tD6SwodzU6JWKKNmrhFyvXl9tNIkbuHd2kR9vYyXKaUWvF3n92JynYvHrFdGWBgxXH1Suoj7U6+W5/lKpnFVbMMhLPAFDxPe/dcz8YHuEVyEOPHvfBqpjGuXtagLrEkkCUEUj25a0ggYNdcs39kPudaaM0VqVmaEZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=l-acoustics.com; spf=pass smtp.mailfrom=l-acoustics.com; dkim=pass (1024-bit key) header.d=l-acoustics.com header.i=@l-acoustics.com header.b=UVKJBrIf; arc=fail smtp.client-ip=52.101.165.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=l-acoustics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=l-acoustics.com
+	 Content-Type:MIME-Version; b=LKkgVYjn8/tGaNKjjWiw345fjKo1z1eOPlQL89BJVl7IU33cTYy/Yn9qa4mOc0gpu5joEM3LwvW5+09b8Ysy8uaWJdDDrs/a+QvCMi9iRhCfbzC4815FwmJaXzbalEE7WgrwUWhVD7rjcAJy1dcrkUOk1/E9NUXAQlCfnTWu/Yk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=VkYyqFns; arc=fail smtp.client-ip=52.101.69.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R61KtXI1CneVOrHjs32bcjlzU8yJg+pk31Pe1dSAYN2Juc6hWGJzKHMiWk80wsoMxcjhwdRc7wYwDc0QDGufiiez2/m7LwC7qq9uhhcIZCdtyME5tU7bMaqzRhHy4uBebTExuXh4MbJ14S2C1rapRKGl57qA2Ly4YPJ+8qLMeyuxqviKQ+xNNIj6HhU9oDv2Pv72tKYDrDg09U3SqAhJL37K3oD3Kb4r87KYAVqnonnMI3TheIj8WCAG7shURKJzBE3lGE+wBYG8nHTsPjFpKrx7BxTCYeFNhTFOzkf3ofmYUU4vfJm3UMsGZ3UpEHD36mxNr0nux7U9uDUUTUlf8w==
+ b=RJf+RTyvsJUczAwEodtUg93KOPXDZKkTAWWnPuo5BdchBnMmNPGfXEVJLwAV3SOGuWlTLuKsI0bn0Fn1Ru9EAJQrR18d5zUnhpefYghr9vD3A3z+TDo4WjF+xigo1cqDA8ufhavbYzSYxhoV2FD0Id7QnRCfXzQhm7lyF1jJ/OUxEzgBEj29+IFyyp5qNKaw6aIia9Hc/gEfVsuFMuYlTwzu5kyVnO/7RLOInEti0oE4uJQH0kkDO2T/llwlebr1Y2wIIJ0NZEpxOV+omr88iPCEGEO32HSHexymM+xs1hwGYTA5T2xwT5x2cnCD524Vxqdq1V/GK5198XqZoX5orQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S+TU6gobIcaApdVQDMwhuoAogtPGqqjAOPH2QJylr30=;
- b=nuYOV4mFzISePFiRCC0qqa7PVTOAxrQQizUwg8gG79qrT332cozw/NuLud5NoMu40E4QtTNea/1A+5jhzU6cT7Abo+U35AAVIEI+7rX1ckZ3DrvdhcK9KYv8ZsAKfWDgfCk9OSPzSGDetAO+2sD8qGFbFuSR/UbQNxPYbyEO/+3PvztdauOwikpI3JfO8MaW6/04Bw4t3LEuPEBKVaYriYENCvem7EJ5BLXvH6LM9le0abwJjzL+N2ZNPGsIEDhheKk43csjOQjmHIdSgQGoJMteH3R+Gs+pWY8p6QxKdk6Su/+FmiNjEYqdtsBvQt/fob0Vjt5cJgbRytR7EDuT9w==
+ bh=yTnW1amBie5sOZwpVnUJF64O3pBsl7g9KQSjczwzM6E=;
+ b=M72pa0KJGKcbaQkKjbwRzJxi6pSpqZtfqTEirPukZridb0hXo6DLGDnHkR1Qb7lZqg4Fb6fG37HKqpOGEPE3ahNvYzL8rv0NSy4c4j5F2B8vHpPK0Y0H1O1TtxZJiRP2cAkgdwiawT05KLGBV5YovvDEO/lO0u1NnZgH7I7Rt9X7W4De4r83MRbCv+/hT3ME4cM4338c03/gYWjJ9zR1sy8R4CEnrKlHajV/ZjGf0NlGYKigAGcC+wduv76NQ44oMbunhnRzMcw3HKp5XKpd4rzqApqA1qWOq8IxXV4dOwdtg1rhYsNe87gO5CfedOwPCIEtFm88fDc1Q11Po4aEfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=l-acoustics.com; dmarc=pass action=none
- header.from=l-acoustics.com; dkim=pass header.d=l-acoustics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=l-acoustics.com;
- s=selector1;
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S+TU6gobIcaApdVQDMwhuoAogtPGqqjAOPH2QJylr30=;
- b=UVKJBrIfqUGDELSnkjKgtepQR9dVuUPMtnaPVgUuFtD0DB6SV0/DQGjoLxwDmbyX74hTR+WiZowh56wg01RRBWCXZnGX8jYbJoo7Q7fUkaXH+fNG9YVhnDlnsuSenh70QSrYjHcTVSHlq7+PhIdirTPv/mRh/8Va9iEZxlx5LY8=
-Received: from PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:25d::9)
- by MRZP264MB2199.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:16::10) with
+ bh=yTnW1amBie5sOZwpVnUJF64O3pBsl7g9KQSjczwzM6E=;
+ b=VkYyqFnslmRuUmAgMyA2k9qROu9D8ma1kc7pyllHYuYFhyWSBe9+0UxXyETwuezFVCje6jgiUiw7tdNVGn3QUxKUW9+p6vLXgsUoPzX4WhTvFkKFZY+Ow6b0X0lueuxOzOA0emfuzVG5NBdkHp6uq3jOc8baBQ1BB0/6VJwvzgg=
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
+ by DB9PR04MB9380.eurprd04.prod.outlook.com (2603:10a6:10:368::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 16 Jul
- 2024 08:13:21 +0000
-Received: from PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
- ([fe80::8062:2bfa:50b2:8368]) by PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
- ([fe80::8062:2bfa:50b2:8368%4]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 08:13:21 +0000
-From: Rodrigo CADORE CATALDO <rodrigo.cadore@l-acoustics.com>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, Rodrigo Cataldo via B4
- Relay <devnull+rodrigo.cadore.l-acoustics.com@kernel.org>, Jesse Brandeburg
-	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Kurt Kanzenbach
-	<kurt.kanzenbach@linutronix.de>, "Christopher S. Hall"
-	<christopher.s.hall@intel.com>
-CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH iwl-net] igc: Ensure PTM request is completed before
- timeout has started
-Thread-Topic: [PATCH iwl-net] igc: Ensure PTM request is completed before
- timeout has started
-Thread-Index: AQHa0Rm3nlgP9ehLg0KZNjzimJDpDbHwtfeAgAcw5VA=
-Date: Tue, 16 Jul 2024 08:13:20 +0000
-Message-ID:
- <PR0P264MB44642D545FA8C5701F318DA2C8A22@PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM>
-References:
- <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
- <87r0c0sqhe.fsf@intel.com>
-In-Reply-To: <87r0c0sqhe.fsf@intel.com>
-Accept-Language: en-US, fr-FR
-Content-Language: en-US
+ 2024 08:16:00 +0000
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529%3]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 08:16:00 +0000
+From: Josua Mayer <josua@solid-run.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yazan
+ Shhady <yazan.shhady@solid-run.com>, "linux-phy@lists.infradead.org"
+	<linux-phy@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH RFC 2/2] arm: dts: marvell: armada-38x: add description
+ for usb phys
+Thread-Topic: [PATCH RFC 2/2] arm: dts: marvell: armada-38x: add description
+ for usb phys
+Thread-Index: AQHa1t8UBLBa+iFCB0+N+odSS9eyG7H4F2AAgADrqgA=
+Date: Tue, 16 Jul 2024 08:16:00 +0000
+Message-ID: <4468f388-b9e0-4407-9be3-260d2204e9d9@solid-run.com>
+References: <20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com>
+ <20240715-a38x-utmi-phy-v1-2-d57250f53cf2@solid-run.com>
+ <e35e0edf-f99e-4af7-8abc-c8f96b73ddd5@lunn.ch>
+In-Reply-To: <e35e0edf-f99e-4af7-8abc-c8f96b73ddd5@lunn.ch>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-x-lsi-version: 1.0
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=l-acoustics.com;
+ header.d=none;dmarc=none action=none header.from=solid-run.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PR0P264MB4464:EE_|MRZP264MB2199:EE_
-x-ms-office365-filtering-correlation-id: 3f8e59ba-c173-4205-219f-08dca56f27ee
-x-ms-exchange-atpmessageproperties: SA
+x-ms-traffictypediagnostic: AM9PR04MB7586:EE_|DB9PR04MB9380:EE_
+x-ms-office365-filtering-correlation-id: dce1d1c8-830c-46be-363e-08dca56f86ff
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|38070700018;
+ BCL:0;ARA:13230040|7416014|1800799024|366016|376014|38070700018;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?gV1Q4sVBL0jzGDvQQtnbI/cvzo6mboZKyCtAf6nQ3n6U1XR6v/LviCd7cMBF?=
- =?us-ascii?Q?MdwehAT8NNwKFrt0ls83+XraedjNeGMDUV5pUJbqX36/2OF13A9AygD0lWa2?=
- =?us-ascii?Q?58Lsk72CLfJNwIZqgo8I//yJXTk6NncBCc3CBMydkSiRZQaP//79h3xd/sP1?=
- =?us-ascii?Q?fHB72j+whk7A2zPrfCmZihOZGkNGVMlNYeOKjIX1BigRkvuTatat2NBMtfYG?=
- =?us-ascii?Q?4vE60RP5Qri66BvpgdLh+1vesRaOy1apW953/4HuYkfzISxg7BOQZW14lQYI?=
- =?us-ascii?Q?NdR2kxyr3YknfnjXk6VJIwK+lcBhaeNgXWN97TwjHk7Ye0RKd8+fE5wrqO89?=
- =?us-ascii?Q?mXTmZAllqycCiL0nXGekWbGCwSummRbjAqfuZ3aZrJwyyhOfoxzBTVMaK6ZB?=
- =?us-ascii?Q?oqxYLL6UtxIECedcVYsO8ze1un3+ItlxkBcDBPGPptgCi46r0GC4A4aTmdqJ?=
- =?us-ascii?Q?1uka9rsEf/B6wuzLBY7m2N7g7m+UbpewCG0ZWJyF03IHydeA4vLfY/5nBG9I?=
- =?us-ascii?Q?I2PbpirMj6ZyJ8bainoeVekmkRaXIVl4E3ZelPeZBAyAnc3B9eFNj0DsSsFC?=
- =?us-ascii?Q?h6WAl4T6auUVYVMOgtqNhw+36Bx9Q9Nf375i4NksHqsQS6Go08EfCYoOUy9q?=
- =?us-ascii?Q?mhs1OlFcjiaFN3vwyD1PmbTTgVZFGGchr8+rBqOTBjUtmE4i0XcygDljV3vY?=
- =?us-ascii?Q?M39riJpEG9wzP/Q44fL5VTLV/r/5P2UiR/C0REGPnpZh6Qrpax3YB8txs2CH?=
- =?us-ascii?Q?MljmpBH4oKjnp38Pp5Ch2LJfCxVKVqibUcUgYz/H19yrKmZBZtxGx4PLH67E?=
- =?us-ascii?Q?2iLK7og/KiiflTWaraIU8E0I5OQMoJqCcbzh1kM53wdhWX3QG5ZQVK81AaD5?=
- =?us-ascii?Q?tSqa82zoV5ZI19kxp0oZwrqKdugdK8PRjC3VH88XI/vs6xIL9Sm/OQ1PWmlf?=
- =?us-ascii?Q?u3rHNM9waBsFdWod7g2oRp+MNll/+t/fYHBP7TZeNBAficNP7aWcdjcq9F8A?=
- =?us-ascii?Q?eaRDI5gcQMdxsYd9TWkuz9T3OQJ76s546L3/YKmBbIb0Fu4IHoCfvoDXzMVU?=
- =?us-ascii?Q?IVeXJwy29jbCgLj8mR9W/tSW5mnn10T9jq/qifjw6W+sEgtgmOy9OuPbQDWh?=
- =?us-ascii?Q?QT11H2M2vRy4+9Iuc2mDidFIzX0SCoWsZvtgC0hwq0SAFI3FvzDDMV36jH1a?=
- =?us-ascii?Q?ioTPOQkf0G5LOB28x114wK37ZDrSD/TsQPQnRVv7XA9quEMxLQKTwRACTsfo?=
- =?us-ascii?Q?BFWHCgnwDgs5iho3gaV9os0dvJ6flvjyrrDsmqC/KG/cEGpU28HfEZPc3Y3B?=
- =?us-ascii?Q?6urY3Ekma2WTItMR897uGuUT0+btpiH8dv8u4q2onKSwOExY2V6YiAYuuogy?=
- =?us-ascii?Q?myHyjJTJ5EXC/+7a9U5VW36SLkVLIzDr9oJLmaXiEpxsvp2Mv++Du5csA1Pn?=
- =?us-ascii?Q?I4zjRWoolAM=3D?=
+ =?utf-8?B?cjJUc0EyU1R5WVNmcW05R2tvVzJjR1ZzTDZwa24wY29HUmQralNBbXh5OXdH?=
+ =?utf-8?B?VHBxTlhRdjI5cDNEc1hNUHo3SjIzMTdwNE1FNjZmVExNdjdhanhBcUxSaXdQ?=
+ =?utf-8?B?VmhXK0U1WkZkOVVTVmV5QVl4SG53SmttUWd3bmlUM2dTTlFnc1F6ODc4MEFK?=
+ =?utf-8?B?Mk1XcE4zY2VBUUhKc05HOHc1VGJ5dHNtYS8rYUttWExySEVKWFBad29NVkp0?=
+ =?utf-8?B?eVhZWHJST2c3ZW5XeDNlUE81VVl2clYyZTRiTW0yZUxlV01BWE85QW9kTnNv?=
+ =?utf-8?B?QkpaWDlrenEzT3o2Qlk4dG40amNSQ2p0VlpadkVPclc0czVqdmh2R3VySlp1?=
+ =?utf-8?B?azBucFNQWXNQNkkvWnF2Z2RxS3A3TFBPSStlY1FQMXU3eFdaNHVzbDRFMnBK?=
+ =?utf-8?B?QklnaUZ0bDNxMFNHWGFwRFdhOUJlQ1ZLdzZaZTAwS0VhYXdXNnUyRHpaWkls?=
+ =?utf-8?B?SXRSNlcySlI1amYrTFBWT3Z1VjdGMTVtdStFSjdtUUg4SmNIcGtqcTVkdzVv?=
+ =?utf-8?B?OFZ1R0RBQVovcytkTWFxeENua0JnWHZEMXpHbXpPWmxrczlUWEJVRnRESElm?=
+ =?utf-8?B?aEtKOFlIa1hxSzdDN2tOSFNXUU5KVnBWQUFvekNPSVRiSEpNQlAva3IySVBs?=
+ =?utf-8?B?QmJ0bHE1ejVwT3BGYXFSSW1pVFVqQjFzZFpseW1RZ0s3WnA5RUtFS0FvNGsv?=
+ =?utf-8?B?MklSQTJBcHd3L3hRUnpDazYxRzh6RFd1SnBOL1RmTGVxUUF6cmpsMUVCbU4v?=
+ =?utf-8?B?aytNd2NXVEtpa055cHRuUHdFNjhrUFZXZWNacDBNb29JL2Q0dS9WdjJMTlhG?=
+ =?utf-8?B?NzgvK1FQTld3L083emZaUFpCaDJ6UXRrc3l3NXk5b1dYaDN5WXJpNTNNUDc1?=
+ =?utf-8?B?OG1FUnBPejFWc3lyUGtIMlNQazVmUXQ4MWtKb2o5Q0JLRWgxb09OM3R2aG9U?=
+ =?utf-8?B?dnFSQkQzMGM2Yk4xTVpNOEZoOXpuQTQveUpSMjVOWkdxdHdyZDVRUTVJOWM4?=
+ =?utf-8?B?eUxUNUlQVzdES2xLL2RFZ0xyZVJSbHlGSERUUUlHWTZrQTg0ZDdOczkzYnFF?=
+ =?utf-8?B?MkdWenM1ZW9ORzVyVTNwbmVSVUkrcnBKNXJ4M1VubEJwVHlSZUk3RDh4c0Mv?=
+ =?utf-8?B?bXdZVjNEeWxDQ25wbzE3SzIvMVhjbHZUdmc3MEtqUXR4U2R0aTVybDVOUGFQ?=
+ =?utf-8?B?YlB1cndYWUpLcVIwUkd1MGl6NWpmMzZlM1c1QXhKTFIvNWVRZUEyeWpLaHVX?=
+ =?utf-8?B?bUszc3lLblFMNWtCb3U4d1pRamNLLzdKVk84ZGsya1pCTHJXcDIxWWMyUzgy?=
+ =?utf-8?B?clV2emc2Sy8xSlJaVE9IQTZUVmNvZE1DbDlnTitxb2N1NXJSazZmYTdkdDJC?=
+ =?utf-8?B?dzFCdWFnVkgvY3kvT3RuK0VoSm1OYmcyVktPSUFDdEUveHk1UXJkSEpNalB2?=
+ =?utf-8?B?aW1WQUNGWjFCSmZNV3JpSkU3K0ozQThjcDhKZ2tHaDFJeFpHSzVSZmNEREpp?=
+ =?utf-8?B?alJUMkd0THE3OVJ5TnlwZlUyMHNrLzdzdXM3SjF3eldkSTg5bEtYMjJuY0VE?=
+ =?utf-8?B?aFlPazJMM0ZYeHFWcGx4bHdwdmFmTEtOb0NnYkE0Z2h5UmZVSGJxZTlXZWJW?=
+ =?utf-8?B?NjJ1dUx0Nml6QzRyaERuZ1R6RUExUmg5cjhrMS9vRnFESldDc1REUVN5OUh1?=
+ =?utf-8?B?UmtBREx0d01VNTVTMzVPY0IrVzBESmR2UU1OYlNZNUpJOHlXZFlZOUpHZWx3?=
+ =?utf-8?B?cWkzbWFnZ0lkakxUOTltc1REdlZZbktrVllkUzZkNGNnMzZ6N0tNbXJWMm9o?=
+ =?utf-8?B?K3lxb0llaEJZUTRlS2NhQ1AvQXdIQnBHNjZmT3lKMmR6enVvaVhQUlNVM054?=
+ =?utf-8?B?dFJuaXI2TjU0VDExWW9MYTBrZVovODdmTEQzSFFlMDhhYmc9PQ==?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?iHRaUEf4CPkxlTCT/B1IKefE9x6OC5rMWTbCcxqnb1C94A5GTi0coovw4qXK?=
- =?us-ascii?Q?zy/3NpU0Y/YhROerXQtvSJ2423zup23LzZKRbtDtZ3XJVMvIPYrocehZ+yVE?=
- =?us-ascii?Q?0hF7VD6aIojWUOfExXtT51mNv8dfB7wA1InVQuuZfedi653jYs6I/Q1KVjEb?=
- =?us-ascii?Q?P1NfiykrGX0C1wuw98Rkyjavp0Jua1NoAsJvF1/eK66odmkQHLisw49aHjX2?=
- =?us-ascii?Q?xII559fskT/AWCZ9SR2lR0CkNY//Vh9Vt5KV9IPo2+D3PtN4DzIpg4Mc+BNc?=
- =?us-ascii?Q?2GaZsNqAK+dmxUQsPsWbIHWT2snYt2N2XMYYGPh3rzBFHbEXZ6BRJGT4Qp6b?=
- =?us-ascii?Q?gwK1pZS2iyPKRtL3mma71UAyiakBFoiMgpavK6AeEA5W19yk89lPLJYPzOPG?=
- =?us-ascii?Q?D1x2lRcQZp7X+ys0WS144wltVNGPfmHYqRurOJ4aTiVveKA+zViu6+3/k6kA?=
- =?us-ascii?Q?dMmLK+L5wIJVzmcuH8/KVr9GXmD/CkOYxGiIvSUo9OYKCxBctoWpA/o0OGE/?=
- =?us-ascii?Q?I32vf/nB8HdpAM9XZ9VNmZckU2Bye939FfyA0FENJdrifCc2o6fKHqByqL2w?=
- =?us-ascii?Q?0ueMrE8km2fUjXpWA6yy1ga199AH7/tJ0LI+DazFhT3CGy9i21bmS3VaX0wP?=
- =?us-ascii?Q?+4OS9zgFhHmJtv6uTc9Q7sp5qf7t7MKi/k+k/bPuGb0UMlCbhqHa8vbf/6mM?=
- =?us-ascii?Q?a1lifDEnhHGvBGSDShvTWnjhgTiYtux3xnqq8KxuZfiKQM44GDiB67y1JjHr?=
- =?us-ascii?Q?UQVaimS2jkZqwSvvHYSJDwpE02qjuD/G4k7kelAbYRGSGDdTFklJiDafgNZ8?=
- =?us-ascii?Q?IE9Q66U+wYfPKL7vfDzErTprA0em4HqP7F2DqrGjtVaQArVztDgFtUmXmT1p?=
- =?us-ascii?Q?VRXGSIR7neS4ImBmbliOJAszBKgs21sJmqBjtD1FJ/CkOGo64uMJHIMj7dH8?=
- =?us-ascii?Q?CY6LOETEUv19wXv8ZCjTTrzJu73Zpaa/a33kmzIl5aOrUWuFEtw9dA+Cg5Ez?=
- =?us-ascii?Q?4TXFaJLcOj9Nljc8yfyxTNmAH7DwM/AlR+1kGwrUO54wWVy0mxBPeOc7+jXa?=
- =?us-ascii?Q?E+xyHZP1bbUw68z2bpW9xhRqckGWnJ1GaxEwRY49X3MvMo2VBSVybnUL6SYq?=
- =?us-ascii?Q?Td/qS9UIcQJz1ZHZhwj77kiemo95be4R1JqIsIpQ4sNS7BT/NGXMAw/HOo/Z?=
- =?us-ascii?Q?grPiqVUNjFyKiY1nD6EuhFNU8TY2QOYHwUg+zXXsKHAJR5PCPXkdJ6S0DfgM?=
- =?us-ascii?Q?ECX2qH8BP68CCFS+dTPDY6IgG8dlKgxVT5zrhNtGL/EF1YqVJzGk4Ztmmi85?=
- =?us-ascii?Q?7BT6XZatQClZSqF9QYemJaBXbWyLZDpCCH69+AIkwf0ZCEblGe2m58LOcmnZ?=
- =?us-ascii?Q?CTwMkiKPY3Fvx2CF55+xlvLr6bF1JXVimUd0xrf7OhW7B0Mbw8zE3eH5SXGz?=
- =?us-ascii?Q?lAi46aZKlb/G4oRQ0W3emXz2J2abutyVkqlqQwXMGYRvrHogO3xtvvq6byHB?=
- =?us-ascii?Q?odLG/Mbla/bxgPsbxQIA4kGTrfvKHF28lczSkbO3KSqV7AElPSGPAWO2rzIZ?=
- =?us-ascii?Q?3udRJ6k6izSqjc9Z46m4baPD8PlcW2ZJbPhhBU9ul1J+7LtWRnaz4qIzpFeM?=
- =?us-ascii?Q?wW8u9KcHiIThxw39qgiZylfFWQ2zu0t3jG5QvEdggm8CZ/x2GZI5X8Xb0Hho?=
- =?us-ascii?Q?/rvVUQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ =?utf-8?B?dDZHTndWSTNINlpLT2hhVlNXV1d4eFBoaUxpOS9hZ055U0xtNitpUzd0UDl0?=
+ =?utf-8?B?OVhOWFJGdnJVb1dOUTh4RHAya1hRN2FLOGNHQ1hSUGgrZE9VUzFkSndNT25h?=
+ =?utf-8?B?ek1pdUZDRllPVWZSWFExcHBuR29TN0U4aXE1eXk4TlQ1RWZ5SzkzQ2Vpdjla?=
+ =?utf-8?B?NVpVNk5DVjZROUZLMXZxZDkzM0NSREFaelRUUmUyM3lvMFZ6Y3JPMWtIMzJn?=
+ =?utf-8?B?Mi9uQXNTOWhWbHJOSzBkVlljQkpBZGdRYXFpeVFRMDhieFp0c1lhUmErR3li?=
+ =?utf-8?B?U201NkMvMUwwUnJhMW05QkdxZjF5QS9FcmFZTW9uTDV4RzZDTXJZSE8rdXBh?=
+ =?utf-8?B?ZU04c3VqS3N6Z0o1Kzh5b2ZGdWwrRDlrbWZSbGdnZGRMczVJTW1nNEZuZWd4?=
+ =?utf-8?B?Zkl3TTE0UGNWOXpqejE1U0MxVUIrSFJlWEpxQm1nOVNybFI0VHNtSFRlYkVD?=
+ =?utf-8?B?N3BPTE5YTTJORmRWTjRZQm5PZEZFUnd2eTdOU3hjb1VXOExoTTU4M0p4L0xZ?=
+ =?utf-8?B?MUVZWFZBK3ZobElPVlNCbDQrSERlSVZZNGgzaGZmbmx5aGZTNEQrd3pnWWo3?=
+ =?utf-8?B?NWpVZ3hmUldaUU5XdFk0d2Z3TzhDRU5ONzBaWnd3V0RneTY0Rk9seitIVDl3?=
+ =?utf-8?B?ajRZM1k5aWdnSDRzYk9rV0JlRGEraHNHeFFSTEI2NXBzbGRVbWt2cHFCbnpZ?=
+ =?utf-8?B?SXBDYVVENW42RzQralJ4WHlVazA2QkdGRllWRUJ1c1RVSnJYVG5PaktxdWJT?=
+ =?utf-8?B?eUNxaks1dXhIeHEwdEJJcjJyVUZZNXQ1T1VoWnZ0Qk84QmxlSmU2WE00UXZ0?=
+ =?utf-8?B?eHNjQitHcm5LMDF5VXVqTVM0SHJ0OEdMckV4TUF6U3ljTUFTQS9lNk10RVBG?=
+ =?utf-8?B?SnFxNXZJSm9YSmpZbEtmQ0hXY1J6amhrMVRhenNMVWx3MVViSnBNYmFPQkVK?=
+ =?utf-8?B?dDVBZVFIQ2tWN1ZwME0yS3A5NkVuYXV3YUlSTDN2ejVQenFQdzRjZ1h3NE1r?=
+ =?utf-8?B?ZFh4aGFwczZzYm8wU25keS84Y2ZueFpoalBIRFJDSlJaUzdITUdyODdBQWNn?=
+ =?utf-8?B?TTZoV0I0cGUrbmZoS2hlT1VRT0RrZkZudXM2U24vWUtvUEdKZFc1T0NDM2pQ?=
+ =?utf-8?B?cUI1UmxEMUkxT2VwMUZZU0VudFA5NzVoMkpQa0IvcTk2SW5vUTRhWEo0MWhF?=
+ =?utf-8?B?UEFyV1VuNURrZHZzYlBUcDRQMGRmVkFLbVcxQ2x6QXQ5N3c2NjhXT2tGM3BP?=
+ =?utf-8?B?ZzBGUUpzUk12T3FSU1JVQkZVMjJ0VWh4RU4zOG1ySEs0KzFoVTBnVlZpNktD?=
+ =?utf-8?B?dDZPTFppb3pWOTdQMXJhSldMUWlxWVhHbDh3VmovWU9hMEJNeDAyWFIreUFy?=
+ =?utf-8?B?bTNEUklhT0phTXVxVlNQeXpKM29ORlpvYk9HVGdXa1Y0UVZxa1NBbTlJRjFj?=
+ =?utf-8?B?aXpTWXdpVUdpSVIxdW1zYWNTZG83cU1nWkV0NmdBMkNYdHQ1M2ptV0tlRngr?=
+ =?utf-8?B?MU9veVEvQjVRaUdzWStFV1ZodjV3aE4xYUU4UkhLMFF2aEtlZ1pjS1VHU0hU?=
+ =?utf-8?B?Mlg0Q0FVTSs2c0ZTTlRiMHZBQy9YOElNUkMyL2NJSUtVOXhYRjJock1oWTZv?=
+ =?utf-8?B?NUxLU29NK1JRM085Um1NYVNaSHlJR2VsRWVEWFI3SFVpWUtUNnlxN2NqWmRx?=
+ =?utf-8?B?MGpMZVlYUUIrWWhGNGFxQkx6N2pQT2tHVnFhcFRzQWNMdjU0TmZxOVFSeVlV?=
+ =?utf-8?B?NVp1aXo0Qk9DMkJWdlh4cEJCaFZSaEIrVGNLTWZZWHhCK012cDcwNUptYkhY?=
+ =?utf-8?B?N3BBbEh3KzBlVzFCWDlvVldJQWUvZzVmdWEzN3dibFBOUE5ZZEszdUY2ZENk?=
+ =?utf-8?B?RndrZTJQenVldHl0aEZQMXVkaHNQcUpwNzBYQkw1RlA2MVFiYSt3Q2xPbDZ5?=
+ =?utf-8?B?YmVYRlhlOTk2RGtGSlc5TDBUZGtiQjQ4NlB0dnp5YklvYUt1UEhheUdBM1JK?=
+ =?utf-8?B?N3F0ZUxIOER5UkZNUzFaanQ1VWlQUTBYN1M0QjJYdmdYalVvTGhSMDBIOW9W?=
+ =?utf-8?B?SERKaU85NGZUN0J4TWJUVjYwKys4SGlVMDZ0d1VlL2l5dGFpQ1JPZHk0YUdP?=
+ =?utf-8?Q?ZrhJkvmC475njn5aZ0a4T9TTD?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BD36E9B0BCB23341821C1BC7BBFB5291@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: l-acoustics.com
+X-OriginatorOrg: solid-run.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f8e59ba-c173-4205-219f-08dca56f27ee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 08:13:20.9170
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dce1d1c8-830c-46be-363e-08dca56f86ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 08:16:00.4499
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 68e431e8-d632-483e-ae79-f28a7b4c69e6
+X-MS-Exchange-CrossTenant-id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h107inzrFkUgfErAxOMNAkL+FOvNv3+XTNuSF60AClQXzQUQT3oKme4XVAFQe8IajibStN1Ex55FHcMp974RfBP9MTpbTGeDWtqttUnu01o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2199
+X-MS-Exchange-CrossTenant-userprincipalname: ebBGYoKZrFXa8nUyyq/jlVtIEWG/s3cFbNKBjI7u4g7OCBdkhKFm4ghKQEJr0XM3m0dCVnJ7GKB+dFufLfopyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9380
 
-Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:=20
-
-> From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
->=20
-> Rodrigo Cataldo via B4 Relay
-> <devnull+rodrigo.cadore.l-acoustics.com@kernel.org> writes:
->=20
-> > From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-> >
-> > When a PTM is requested via wr32(IGC_PTM_STAT), the operation may only
-> > be completed by the next read operation (flush). Unfortunately, the nex=
-t
-> > read operation in the PTM request loop happens after we have already
-> > started evaluating the response timeout.
-> >
-> > Thus, the following behavior has been observed::
-> >
-> >   phc2sys-1655  [010]   103.233752: funcgraph_entry:                   =
- |
-> igc_ptp_getcrosststamp() {
-> >   phc2sys-1655  [010]   103.233754: funcgraph_entry:                   =
- |
-> igc_phc_get_syncdevice_time() {
-> >   phc2sys-1655  [010]   103.233755: funcgraph_entry:                   =
- |      igc_rd32()
-> {
-> >   phc2sys-1655  [010]   103.233931: preempt_disable:
-> caller=3Dirq_enter_rcu+0x14 parent=3Dirq_enter_rcu+0x14
-> >   phc2sys-1655  [010]   103.233932: local_timer_entry: vector=3D236
-> >   phc2sys-1655  [010]   103.233932: hrtimer_cancel:
-> hrtimer=3D0xffff8edeef526118
-> >   phc2sys-1655  [010]   103.233933: hrtimer_expire_entry:
-> hrtimer=3D0xffff8edeef526118 now=3D103200127876
-> function=3Dtick_nohz_handler/0x0
-> >
-> >   ... tick handler ...
-> >
-> >   phc2sys-1655  [010]   103.233971: funcgraph_exit:       !  215.559 us=
- |      }
-> >   phc2sys-1655  [010]   103.233972: funcgraph_entry:                   =
- |      igc_rd32()
-> {
-> >   phc2sys-1655  [010]   103.234135: funcgraph_exit:       !  164.370 us=
- |      }
-> >   phc2sys-1655  [010]   103.234136: funcgraph_entry:         1.942 us  =
- |
-> igc_rd32();
-> >   phc2sys-1655  [010]   103.234147: console:              igc 0000:03:0=
-0.0 enp3s0:
-> Timeout reading IGC_PTM_STAT register
-> >
-> > Based on the (simplified) code::
-> >
-> >       ctrl =3D rd32(IGC_PTM_CTRL);
-> >         /* simplified: multiple writes here */
-> >       wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
-> >
-> >       err =3D readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
-> >                                stat, IGC_PTM_STAT_SLEEP,
-> >                                IGC_PTM_STAT_TIMEOUT);
-> >       if (err < 0) {
-> >               netdev_err(adapter->netdev, "Timeout reading IGC_PTM_STAT
-> register\n");
-> >               return err;
-> >       }
-> >
-> > Where readx_poll_timeout() starts the timeout evaluation before calling
-> > the rd32() parameter (rd32() is a macro for igc_rd32()).
-> >
-> > In the trace shown, the read operation of readx_poll_timeout() (second
-> > igc_rd32()) took so long that the timeout (IGC_PTM_STAT_VALID) has expi=
-red
-> > and no sleep has been performed.
-> >
-> > With this patch, a write flush is added (which is an additional
-> > igc_rd32() in practice) that can wait for the write before the timeout
-> > is evaluated::
-> >
-> >   phc2sys-1615  [010]    74.517954: funcgraph_entry:                   =
- |
-> igc_ptp_getcrosststamp() {
-> >   phc2sys-1615  [010]    74.517956: funcgraph_entry:                   =
- |
-> igc_phc_get_syncdevicetime() {
-> >   phc2sys-1615  [010]    74.517957: funcgraph_entry:                   =
- |      igc_rd32() {
-> >   phc2sys-1615  [010]    74.518127: preempt_disable:
-> caller=3Dirq_enter_rcu+0x14 parent=3Dirq_enter_rcu+0x14
-> >   phc2sys-1615  [010]    74.518128: local_timer_entry: vector=3D236
-> >   phc2sys-1615  [010]    74.518128: hrtimer_cancel:
-> hrtimer=3D0xffff96466f526118
-> >   phc2sys-1615  [010]    74.518128: hrtimer_expire_entry:
-> hrtimer=3D0xffff96466f526118 now=3D74484007229 function=3Dtick_nohz_handl=
-er/0x0
-> >
-> >   ... tick handler ...
-> >
-> >   phc2sys-1615  [010]    74.518180: funcgraph_exit:       !  222.282 us=
- |      }
-> >   phc2sys-1615  [010]    74.518181: funcgraph_entry:                   =
- |      igc_rd32() {
-> >   phc2sys-1615  [010]    74.518349: funcgraph_exit:       !  168.160 us=
- |      }
-> >   phc2sys-1615  [010]    74.518349: funcgraph_entry:         1.970 us  =
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518352: hrtimer_init: hrtimer=3D0xffffa6f94=
-13a3940
-> clockid=3DCLOCK_MONOTONIC mode=3D0x0
-> >   phc2sys-1615  [010]    74.518352: preempt_disable:
-> caller=3D_raw_spin_lock_irqsave+0x28 parent=3Dhrtimer_start_range_ns+0x56
-> >   phc2sys-1615  [010]    74.518353: hrtimer_start: hrtimer=3D0xffffa6f9=
-413a3940
-> function=3Dhrtimer_wakeup/0x0 expires=3D74484232878 softexpires=3D7448423=
-1878
-> >
-> >   .. hrtimer setup and return ...
-> >
-> >   kworker/10:1-242   [010]    74.518382: sched_switch: kworker/10:1:242=
- [120]
-> W =3D=3D> phc2sys:1615 [120]
-> >   phc2sys-1615  [010]    74.518383: preempt_enable: caller=3Dschedule+0=
-x36
-> parent=3Dschedule+0x36
-> >   phc2sys-1615  [010]    74.518384: funcgraph_entry:      !  100.088 us=
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518484: funcgraph_entry:         1.958 us  =
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518488: funcgraph_entry:         2.019 us  =
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518490: funcgraph_entry:         1.956 us  =
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518492: funcgraph_entry:         1.980 us  =
- |
-> igc_rd32();
-> >   phc2sys-1615  [010]    74.518494: funcgraph_exit:       !  539.386 us=
- |    }
-> >
-> > Now the sleep is called as expected, and the operation succeeds.
-> > Therefore, regardless of how long it will take for the write to be
-> > completed, we will poll+sleep at least for the time specified in
-> > IGC_PTM_STAT_TIMEOUT.
-> >
-> > Fixes: a90ec8483732 ("igc: Add support for PTP getcrosststamp()")
-> > Signed-off-by: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-> > ---
-> > I have been searching for the proper solution for this PTM issue for a =
-long
-> > time. The issue was observed on a 13700 (Raptor Lake). We also use a 85=
-00
-> > (Coffee Lake) that is much less susceptible for this issue, but still
-> > happens. Both are using I225-LM cards.
-> >
-> > For a 24 hours test, idle system, I have observed with 13700::
-> >
-> >       number of timeouts in 86400 seconds: 2509
-> >
-> > The same test on a 8500::
-> >
-> >         number of timeouts in 86400 seconds: 9
-> >
-> > Where one PTM request is sent per second. Test was done this script::
-> >
-> >   record_multiple_timeout_param()
-> >   {
-> >       local taskset_cpu=3D$1
-> >       local cur_limit=3D$((SECONDS + LIMIT_SECONDS ))
-> >       local timeouts=3D0
-> >
-> >       while [ $SECONDS -lt $cur_limit ]
-> >       do
-> >               REL_TO=3D$((cur_limit - SECONDS))
-> >
-> >               timeout $REL_TO taskset $taskset_cpu \
-> >                       phc2sys -c $ITF_NAME -s CLOCK_REALTIME -O 37 -m 1=
->/dev/null
-> >               if [ $? -eq 255 ]; then
-> >                       timeouts=3D$((timeouts + 1))
-> >               fi
-> >       done
-> >       printf "\tnumber of timeouts in %s seconds: %d\n" $LIMIT_SECONDS
-> $timeouts
-> >   }
-> >
-> >   record_multiple_timeout_param $NON_ISOLCPU_MASK
-> >
-> > Firmware version for the cards::
-> >
-> >   # lshw -class network -json | jq '.[0].product,.[0].configuration.fir=
-mware'
-> >   "Ethernet Controller I225-LM"
-> >   "1057:8754"
-> >
-> >   # lshw -class network -json | jq '.[2].product,.[2].configuration.fir=
-mware'
-> >   "Ethernet Controller I225-LM"
-> >   "1057:8754
-> >
-> > A couple of attempts were made that did not lead to solving the
-> > issue (disabling ASPM in kernel and boot, using periodic tick), and a c=
-ouple
-> > of solutions that worked but that were subpar:
-> >
-> > 1. The issue was not observed for a phc2sys(8) running on a fully
-> >    isolated nohz_full core. We do not have the luxury of dedicating a a
-> >    core for it.
->=20
-> This one is interesting. Was it because the isolated CPU never got to
-> sleep and readx_poll_timeout() became a busy loop? I am trying to fit
-> this one on my mental model.
-
-Hello Vinicius! thank you for the reply.
-Actually, in the isolation case, it is the opposite! the CPU always sleeps.
-Which is good in this scenario.. More specifically, this is because the=20
-request always arrives 'quickly' in the device with the rd32() after=20
-readx_poll_timeout(). As long as the rd32() is 'quick', you have time to sl=
-eep.
-
-This 'quickly' reference is about the 'power-saving' hypothesis I mention
-below. Since the CPU is isolated, it is never interrupted, so I do not obse=
-rve
-the 'slow' rd32() in readx_poll_timeout().
-
-In the end, the idea of this patch is to insert the write flush for avoidin=
-g this=20
-'quickly' or 'slowly' rd32() inside readx_poll_timeout().
-
->=20
-> > 2. Bumping the IGC_PTM_STAT_TIMEOUT value. Other machines may need
-> >    another value though.
->=20
-> This one is not horrible as well. Some value like 400us comes to mind.
->=20
-> Your proposed fix looks fine as well, I was thinking a bit about it, and
-> even if it's more a like a timing issue than "the absolutely correct
-> fix", there are little chances for bad side effects.
->=20
-> If there aren't any other ideas, I am fine with this:
->=20
-> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
-Thank you for the Ack!
-I can test with a 400us. It should work fine.
-
-(I talked with some of your intel colleagues before sending the patch, and =
-there is=20
-supposed to be a patch response here with (another?) PTM solution. We will =
-see :)
-
->=20
-> > 3. Retry (multiple times) readx_poll_timeout() in case of failure. This=
- may
-> >    significantly increase the function latency, because each
-> >    readx_poll_timeout() can take more than 100 us.
-> > 4. Disabling preemption during the PTM request. Horrible.
-> >
->=20
-> I wonder if you tried moving the I225 to the graphics card PCIe slot, or
-> is it an onboard card? IIRC there are different PCIe controllers for the
-> graphics slot vs. the other ones, at least on Coffee Lake.
->=20
-
-I was only able to come to the lab yesterday, hence why I did not answer be=
-fore.
-
-It is true, I was not using the graphic card slot. So, I changed from the P=
-CIe root
-1c.4/1c.7 to 01 (for both machines)
-
-I'm running the 24-hour test again.  Here are the results
-
-For Raptor Lake (13700), PCIe root 01 (width x16, 32GT/s)::
-    # dmesg | grep "Timeout reading IGC_PTM_STAT register" | wc -l
-    514
-    $ ps -eo user,pid,lstart,comm | grep 1797
-    root        1797 Mon Jul 15 11:32:03 2024 ptm_timeout.sh
-    $ date=20
-    Tue Jul 16 10:02:48 AM CEST 2024
-
-514 timeouts for ~23h. The issue persists.
-
-For Coffee Lake (8500), I was surprised to see this::
-    # dmesg | grep PTM
-    [    0.412210] pci 0000:00:1c.0: PTM enabled (root), 4ns granularity
-    [    0.413769] pci 0000:00:1c.7: PTM enabled (root), 4ns granularity
-    [    0.415250] pci 0000:00:1d.0: PTM enabled (root), 4ns granularity
-    [    1.353468] igc 0000:01:00.0: PCIe PTM not supported by PCIe bus/con=
-troller
-
-It seems PCIe root 01 does not support PTM.
-
-There is something else I want to mention. We aim to support redundancy mod=
-e
-for AVB, where we will likely use two PCIe slots; so, one of them would not=
- use the
-graphic card slot.
-
-> > For the Coffee Lake machine, the issue tends to be avoided because the
-> > read does not take so long. Here is basically the same trace using the
-> > Cofee Lake machine::
-> >
-> >   phc2sys-1204  [002]  1778.220288: funcgraph_entry:                   =
- |
-> igc_ptp_getcrosststamp() {
-> >   phc2sys-1204  [002]  1778.220290: funcgraph_entry:                   =
- |
-> igc_phc_get_syncdevicetime() {
-> >   phc2sys-1204  [002]  1778.220291: funcgraph_entry:                   =
- |      igc_rd32()
-> {
-> >   phc2sys-1204  [002]  1778.220373: preempt_disable:
-> caller=3Dirq_enter_rcu+0x14 parent=3Dirq_enter_rcu+0x14
-> >   phc2sys-1204  [002]  1778.220374: local_timer_entry: vector=3D236
-> >   phc2sys-1204  [002]  1778.220375: hrtimer_cancel:
-> hrtimer=3D0xffff894027326118
-> >   phc2sys-1204  [002]  1778.220376: hrtimer_expire_entry:
-> hrtimer=3D0xffff894027326118 now=3D1778228034802
-> function=3Dtick_nohz_handler/0x0
-> >
-> >   ... tick handler ...
-> >
-> >   phc2sys-1204  [002]  1778.220411: funcgraph_exit:       !  119.843 us=
- |      }
-> >   phc2sys-1204  [002]  1778.220412: funcgraph_entry:                   =
- |      igc_rd32()
-> {
-> >   phc2sys-1204  [002]  1778.220492: funcgraph_exit:       + 80.094 us  =
- |      }
-> >   phc2sys-1204  [002]  1778.220493: funcgraph_entry:        2.951 us   =
- |
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220497: hrtimer_init: hrtimer=3D0xffffa504c=
-0d83aa0
-> clockid=3DCLOCK_MONOTONIC mode=3D0x0
-> >   phc2sys-1204  [002]  1778.220498: preempt_disable:
-> caller=3D_raw_spin_lock_irqsave+0x28 parent=3Dhrtimer_start_range_ns+0x56
-> >   phc2sys-1204  [002]  1778.220499: hrtimer_start:
-> hrtimer=3D0xffffa504c0d83aa0 function=3Dhrtimer_wakeup/0x0
-> expires=3D1778228158866 softexpires=3D1778228157866
-> >
-> >   ... timer setup ....
-> >
-> >   phc2sys-1204  [002]  1778.220509: preempt_enable:
-> caller=3D_raw_spin_unlock_irqrestore+0x2b parent=3Dhrtimer_start_range_ns=
-+0x12d
-> >   phc2sys-1204  [002]  1778.220511: funcgraph_entry:        7.338 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220519: funcgraph_entry:        2.769 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220522: funcgraph_entry:        2.798 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220525: funcgraph_entry:        2.736 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220529: funcgraph_entry:        2.750 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1778.220532: funcgraph_exit:       !  242.656 us=
- |    }
-> >
-> > For both machines, I observed that the first igc_rd32() after an idle
-> > period (more than 10us) tends to take significantly more time. I assume
-> > this is a hardware power-saving technique, but I could not find any
-> > mention in the manuals. This is very easily observable with an idle
-> > system running phc2sys, since it will request only once every second.
-> >
-> > This is the typical trace of the operation::
-> >
-> >   phc2sys-1204  [002]  1749.209397: funcgraph_entry:                   =
-|
-> igc_ptp_getcrosststamp() {
-> >   phc2sys-1204  [002]  1749.209398: funcgraph_entry:                   =
-|
-> igc_phc_get_syncdevicetime() {
-> >   phc2sys-1204  [002]  1749.209400: funcgraph_entry:      + 81.491 us  =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1749.209482: funcgraph_entry:        3.691 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1749.209487: funcgraph_entry:        2.942 us   =
-|
-> igc_rd32();
-> >   phc2sys-1204  [002]  1749.209490: hrtimer_init: hrtimer=3D0xffffa504c=
-0d83a00
-> clockid=3DCLOCK_MONOTONIC mode=3D0x0
-> >   phc2sys-1204  [002]  1749.209491: preempt_disable:
-> caller=3D_raw_spin_lock_irqsave+0x28 parent=3Dhrtimer_start_range_ns+0x56
-> >   ... timer setup and it goes on like before ...
-> >
-> > The preemption needs to happen for this issue, so that this power-savin=
-g
-> > mode is triggered, making the igc_rd32 'slow enough' so that all of the
-> > timeout is consumed before the card has time to answer.
-> >
-> > I believe flushing the write solves the issue definitely, since the
-> > write should be completed before the timeout has started. So that, even
-> > if the timeout is consumed by a slow read operation, the write has been
-> > received before and the card had time to process the request.
-> > ---
-> >  drivers/net/ethernet/intel/igc/igc_ptp.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c
-> b/drivers/net/ethernet/intel/igc/igc_ptp.c
-> > index 1bb026232efc..d7269e4f1a21 100644
-> > --- a/drivers/net/ethernet/intel/igc/igc_ptp.c
-> > +++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
-> > @@ -1005,6 +1005,10 @@ static int igc_phc_get_syncdevicetime(ktime_t
-> *device,
-> >                * VALID bit.
-> >                */
-> >               wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
-> > +             /* Ensure the hardware receives the ptm request before th=
-e
-> > +              * response timeout starts.
-> > +              */
-> > +             wrfl();
-> >
-> >               err =3D readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
-> >                                        stat, IGC_PTM_STAT_SLEEP,
-> >
-> > ---
-> > base-commit: 0005b2dc43f96b93fc5b0850d7ca3f7aeac9129c
-> > change-id: 20240705-igc-flush-ptm-request-before-timeout-6-10-f6e02c96f=
-6d4
-> >
-> > Best regards,
-> > --
-> > Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-> >
-> >
->=20
->=20
-> Cheers,
-> --
-> Vinicius
+QW0gMTUuMDcuMjQgdW0gMjA6MTIgc2NocmllYiBBbmRyZXcgTHVubjoNCj4gT24gTW9uLCBKdWwg
+MTUsIDIwMjQgYXQgMDc6NDc6MzBQTSArMDIwMCwgSm9zdWEgTWF5ZXIgd3JvdGU6DQo+PiBBcm1h
+ZGEgMzh4IGhhcyAzeCBVU0ItMi4wIHV0bWkgcGh5cy4gVGhleSBhcmUgYWxtb3N0IGlkZW50aWNh
+bCB0byB0aGUgMngNCj4+IHV0bWkgcGh5cyBvbiBhcm1hZGEgOGsuDQo+Pg0KPj4gQWRkIGRlc2Ny
+aXB0aW9ucyBmb3IgYWxsIDMgcGh5IHBvcnRzLg0KPj4NCj4+IEFsc28gYWRkIGEgc3lzY29uIG5v
+ZGUgY292ZXJpbmcganVzdCB0aGUgdXNiIGNvbmZpZ3VyYXRpb24gcmVnaXN0ZXJzLg0KPj4gQXJt
+YWRhIDhLIGhhdmUgYSBzeXNjb24gbm9kZSBjb3ZlcmluZyBjb25maWd1cmF0aW9uIHJlZ2lzdGVy
+cyBmb3INCj4+IHZhcmlvdXMgZnVuY3Rpb25zIGluY2x1ZGluZyBwaW5tdXgsIHdvaXRoIGRpcnZl
+cnMgdXNpbmcgc3lzY29uIGZyYW1ld29yaw0KPiB3b2l0aCAtPiB3aXRoDQo+DQo+PiBmb3IgcmVn
+aXN0ZXIgYWNjZXNzLg0KPj4NCj4+IEFybWFkYSAzODggaGFzIHZhcmlvdXMgZHJpdmVycyBkaXJl
+Y3RseSBjbGFpbWluZyBzb21lIG9mIHRob3NlDQo+PiBjb25maWd1cmF0aW9uIHJlZ2lzdGVycy4g
+SGVuY2UgYSBzaW1pbGFyIHN5c2NvbiBub2RlIHdvdWxkIGNvbXBldGUgZm9yDQo+PiByZXNvdXJj
+ZXMgd2l0aCB0aGVzZSBkcml2ZXJzLg0KPiBEbyB0aGVzZSBkcml2ZXJzIG1ha2UgZXhjbHVzaXZl
+IHVzZSBvZiB0aGVzZSByZWdpc3RlcnM/IE9yIGFyZQ0KPiBtdWx0aXBsZSBkcml2ZXJzIHVzaW5n
+IHRoZSBzYW1lIHJlZ2lzdGVycyBhbmQgeW91IG5lZWQgc29tZXRoaW5nIHRvDQo+IG1lZGlhdGUg
+aW4gb3JkZXIgdG8gaGF2ZSBhdG9taWMgYWNjZXNzPw0KDQpPbiBBcm1hZGEgMzh4IHRoZXNlIGRy
+aXZlcnMgZXhjbHVzaXZlbHkgdXNlIHRoZWlyIG93biByZWdpc3RlcnMuDQoNCkkgc3VzcGVjdCBh
+cm1hZGHCoCA4ayB3YXMgdHJ5aW5nIHRvIGF2b2lkIGRlY2xhcmluZyBsb3RzIG9mIHRpbnkgcmFu
+Z2VzLA0KYnkgdXNpbmcgYSBzeXNjb24gbm9kZS4NCg0KVGhlIHN5c2NvbiByZWdpc3RlcnMgYWNj
+ZXNzZWQgYnkgY3AxMTAtdXRtaSBkcml2ZXIgYXJlIGV4Y2x1c2l2ZWx5DQpmb3IgdXNiIGFuZCBu
+b3QgYWNjZXNzZWQgZWxzZXdoZXJlLg0KDQo+DQo+IEluIHRoZSBvbGQgZGF5cywgYSByZWdpc3Rl
+ciBzcGFjZSBjb3VsZCBiZSBtYXBwZWQgaW50byBtdWx0aXBsZQ0KPiBkcml2ZXJzLCBzbyBsb25n
+IGFzIGFsbCB0aGUgZHJpdmVycyBhZ3JlZWQgdG8gaXQuIFRoZXJlIGFyZSBwcm9iYWJseQ0KPiBv
+cmlvbjV4LCBraXJrd29vZCBlcmEgbXZlYnUgZHJpdmVycyBkb2luZyB0aGlzLg0KPiAgDQo+IAlB
+bmRyZXcNCg==
 
