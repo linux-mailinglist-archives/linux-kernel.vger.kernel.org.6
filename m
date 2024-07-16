@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-253421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179F893211E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:21:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5991C932127
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45762824D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD242825E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41B24B2A;
-	Tue, 16 Jul 2024 07:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B08F2BAEA;
+	Tue, 16 Jul 2024 07:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qv2P7/ba"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ta1nTP7B"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2E22309;
-	Tue, 16 Jul 2024 07:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE06225A8;
+	Tue, 16 Jul 2024 07:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114474; cv=none; b=OH+NbZaGjvelc6UDJVxjfdgGYnz8pQ0PSnNCpmvua4O20Q/vXZWAVUUwRpkkd8UmyILsaYz2zrYvK9LMoyrxjYsAQIun3S7dL7Lc0ECLwJYz3Gw/uJPzwtZ7KedLyAB0/3RVgqp4Ha+j0M24VJPWG4qq8fr0ms1VPRwNHWTGXFA=
+	t=1721114727; cv=none; b=UAV4cRTNzqxr5hhkqYfaXVgWQWo+WjT/7xsA+Vu05k9vhAhOlck0i0m64u38SYa89e9qFwzGLP3IIZHjRqiWkXRa2TkFlxKomR6mWfNTj6UkChC3Di8uBrGLyNsoCTxKjPdJbJoGDoSCxdHg+Vcn0Fq9fykLySHoQK1lNXMV6u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114474; c=relaxed/simple;
-	bh=0rj3SFFw11HobcCN6i6yyKr3OQ+QCRHohtu9QlD47Hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ezVeHzjU5Wz4XC01Cok/vfg3PsFJbQNLc/XPSJhLxigtddVZCZeG6a3HEx28+QguQoVvcc9ONSRi34JTKR0tX8LuBzwjsqyX2w6FXj4JvjTAYDSyZ9P6WVPsQ7WEpxgSEnJVEJ9jkfcae7bQ/C7eS0PYJAv+Pv46E/CVdIyjDEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qv2P7/ba; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721114471;
-	bh=gl45pgGGHQDN0Fy/S/1yp97jeC0Sraqos7hiRekWu8A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qv2P7/ba7MW6lUxXLcAmhoU4a7GUW3G8PAlc/RF5rtJRxW51GnVVFsFBNsYL3csd/
-	 PFYMJjslB9sC1bTrAfIkSh8t/45k1/3krV7GqRogYCjlEdhSV00P0p4LKFUkvrIzBa
-	 Mp68xknncXtmvf/SDAqX3UUzJRDdgQQc6efmyxCcVgcqqBBmuZr1Qbp1W25h3oVMHR
-	 h7f+AX5OXdne7yCkkqo5RKSVKmVGA6AbY3LT3uK4dicyC7hgOEuZMzrIkJVbL2ja7R
-	 BuM9d+SSu1OcTrZgfpbcvE3ZUWAtyqrki159F333zzeBchxvC3u/3r5cMDVBqVo/3i
-	 p1yY99yHTEYJw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNVq86Kkzz4wbh;
-	Tue, 16 Jul 2024 17:21:08 +1000 (AEST)
-Date: Tue, 16 Jul 2024 17:21:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the clockevents tree
-Message-ID: <20240716172108.43041186@canb.auug.org.au>
-In-Reply-To: <20240716151404.0383b72a@canb.auug.org.au>
-References: <20240716151404.0383b72a@canb.auug.org.au>
+	s=arc-20240116; t=1721114727; c=relaxed/simple;
+	bh=NtKSZ7m9ucMv5FMZ2KxPPKFYZhlsQr3il8/7YHPTDTc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bM1slBxdtwD8ebAeLfG+Rb7U+qbM5wYaaCgzedCKGcBgfQwQfQ65bX5qa8+9fvUcEE7QojV9VssJ2zf2CSlfkbAQo/6Q7o7sdCOURmxzbTT99xLQSxcRmWsDFIOeAE8SsVfXao3efojZ6X3pqIqJomwuHP2Ck+TJLoN85pjhb/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ta1nTP7B; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4266f535e82so34441305e9.1;
+        Tue, 16 Jul 2024 00:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721114724; x=1721719524; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TU7CUD5K5Dcz+Ml2hXnHmVw1Jiy081Oy7EHg5HRuEwo=;
+        b=Ta1nTP7B76nY4binkpm0IYUUIXc0TAJHRpBuz/2aWJkNDtw+YqoBcZXFTAMdX3gKD5
+         PV16bixHOoxoB4IqDV2gyL0SHuavpmWsPx1S2dJrvxsv1XOfO7ZfYphYNVuOruQokFze
+         /TVHPWOqOODfV7UlgQagJG826fySdWhXwGExSFhoronWiKrDgodG7vh/EMAK6SYF/pTU
+         j9JlhJCj5wqLQZGKIMhqP3C8bpcGYe3qu+aR0WjoZQxv2T3rZ/Myi9f04etA1AOHk2xO
+         Tnc/5z7RtxZyktwuPkUXkFUiT3t1PeL42a3yccRDvqy6sZv8nZGltOGhvJ4o4UVVur/H
+         KtyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721114724; x=1721719524;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TU7CUD5K5Dcz+Ml2hXnHmVw1Jiy081Oy7EHg5HRuEwo=;
+        b=NAD9PT1FLdn9jlncOIB4PXO5kEblkHUBnlWW0CcBmYDm4BrrpfxXYH1UB56x8HiMkl
+         wYYo/n698LrQHrA9x8myiOQddtJSYvSFHGL9GuhJtqv1YdHU2xFfK1dsC2fc5R9bkmK6
+         +xJYqWQR37lUhQ/oo7V3WiUINFvaQT9a0+r3RH3LqCWxejuH3p/SN168Op0BSguqC4pH
+         bAXoaAS/hxqupp3t8q/KnE0JjpOp2OvG7/xQcVRZtPWHDhkIVF3beQsOEC2UqVTg3Bgr
+         5PAKxZsK/UBL68trEFAq3ElZgOnuHKCFP5NeGKK1NvMYs7FcfCEPVQoWNuUAoE4UOMHT
+         FnYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkTLjbjAUDHpqf9m9AQdI+6BUmA6PnxgQKqORHHkrIrMGohysLMkQuN8YM5eh7HJ38+gxHpqWeZ+TlYioGdP0sH05t7dsFFBfu52/fSVx3f2x/5s7ZuurKqOMehyJixDV32CCfMeHCGaXhOR/bGJECWrGy6ReBR8K60Ko+HGnGrIVmXA==
+X-Gm-Message-State: AOJu0Yzugk0cLQlMmf+7SmPvzoXLL0eUG24LDBI61uZVCc+vJIwfxsIR
+	0zUXRy+LPk2iea4mRZkOy18kxS6e3TVycG35mFrdPOX9A09Oz6ja
+X-Google-Smtp-Source: AGHT+IETcC+uhL7n71HBlQuBAi445zap6TIzKxMp+t5U77n2cdDJTIp+1rY93nNJkKd1EJXI3i+23g==
+X-Received: by 2002:a05:600c:1988:b0:425:7796:8e2c with SMTP id 5b1f17b1804b1-427ba684893mr8865765e9.12.1721114724192;
+        Tue, 16 Jul 2024 00:25:24 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0f263sm8112744f8f.115.2024.07.16.00.25.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 00:25:23 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 16 Jul 2024 09:25:21 +0200
+To: Kyle Huey <me@kylehuey.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <olsajiri@gmail.com>,
+	khuey@kylehuey.com, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	robert@ocallahan.org, Joe Damato <jdamato@fastly.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing
+ events
+Message-ID: <ZpYgYaKKbw3FPUpv@krava>
+References: <20240713044645.10840-1-khuey@kylehuey.com>
+ <ZpLkR2qOo0wTyfqB@krava>
+ <20240715111208.GB14400@noisy.programming.kicks-ass.net>
+ <CAP045ArBNZ559RFrvDTsHj42S4W+BuReHe+XV2tBPSeoHOMMpA@mail.gmail.com>
+ <20240715150410.GJ14400@noisy.programming.kicks-ass.net>
+ <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
+ <20240715163003.GK14400@noisy.programming.kicks-ass.net>
+ <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZVTH.Xl_qfG0H6nzLazIrxQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
 
---Sig_/ZVTH.Xl_qfG0H6nzLazIrxQ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 15, 2024 at 09:48:58AM -0700, Kyle Huey wrote:
+> On Mon, Jul 15, 2024 at 9:30 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote:
+> >
+> > > I think this would probably work but stealing the bit seems far more
+> > > complicated than just gating on perf_event_is_tracing().
+> >
+> > perf_event_is_tracing() is something like 3 branches. It is not a simple
+> > conditional. Combined with that re-load and the wrong return value, this
+> > all wants a cleanup.
+> >
+> > Using that LSB works, it's just that the code aint pretty.
+> 
+> Maybe we could gate on !event->tp_event instead. Somebody who is more
+> familiar with this code than me should probably confirm that tp_event
+> being non-null and perf_event_is_tracing() being true are equivalent
+> though.
+> 
 
-Hi all,
+it looks like that's the case, AFAICS tracepoint/kprobe/uprobe events
+are the only ones having the tp_event pointer set, Masami?
 
-On Tue, 16 Jul 2024 15:14:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> The following commits are also in the tip tree as different commits
-> (but the same patches):
->=20
->   0d8d1bd925c8 ("dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support")
->   4f2fd59b7d26 ("dt-bindings: timer: Add SOPHGO SG2002 clint")
->   8b77f4b8dc81 ("clocksource/drivers/realtek: Add timer driver for rtl-ot=
-to platforms")
->   9957722a200c ("dt-bindings: timer: renesas,tmu: Add RZ/G1 support")
->   b24868b81231 ("dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 suppo=
-rt")
->   ba39e42e9acd ("clocksource/driver/arm_global_timer: Remove unnecessary =
-=E2=80=980=E2=80=99 values from err")
->   cd6d60a0faa6 ("clocksource/drivers/mips-gic-timer: Correct sched_clock =
-width")
->   d9a7f85412a9 ("clocksource/drivers/arm_arch_timer: Remove unnecessary =
-=E2=80=980=E2=80=99 values from irq")
->   e207ae12f08e ("dt-bindings: timer: Add schema for realtek,otto-timer")
->   ec601554e3eb ("clocksource/drivers/sh_cmt: Address race condition for c=
-lock events")
->   fa957fbdf44c ("clocksource/drivers/mips-gic-timer: Refine rating comput=
-ation")
+fwiw I tried to run bpf selftests with that and it's fine
 
-And now they are in Linus' tree :-)
+jirka
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZVTH.Xl_qfG0H6nzLazIrxQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaWH2QACgkQAVBC80lX
-0GwSfggAmqbKSTCtMr1POusvHAxHe6eswMjOmcRTNaKaqa540GsxqK4oflAIJPoQ
-EFMnz+lxK/4D8YXb0KIfZa1Kp66pMEzFxZmrJFdP1p2L3+wY8ZMVR4EI1OgBXntO
-5zsFk3akBKuTGPyet9fqLYt/+1VZ6qN8ST5s+cPd+V18y9zy+Bi8/DjO1tABmZog
-OUNNSZRxXr4as5t3HPUe93IJdiHySZxXfatDqYfFFeCZO2SjofxzLYC3w4lUWcJE
-ruzmyMJyJ6dh689W47T0GtqArTfNz8FXyRuGCDwDobq4dY2AQ+bgYPW9c5r8T3rC
-DOdOAKXrFaGDw9w5ugttm0PnRAGV1w==
-=o7a3
------END PGP SIGNATURE-----
-
---Sig_/ZVTH.Xl_qfG0H6nzLazIrxQ--
 
