@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-253265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFD2931ECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:28:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB48931ED5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EECFB2186A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89531F2283B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1347779E0;
-	Tue, 16 Jul 2024 02:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE54A134A9;
+	Tue, 16 Jul 2024 02:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NTAusPSc"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aZiCnake"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09547AD24
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799B312E55;
+	Tue, 16 Jul 2024 02:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721096923; cv=none; b=bdBjNS6K/DfU/dQjjrFGX1yLZwvi8+7kvGpywl5SdsGHU3JN5AeljMgGZaDtqL0CqMJUF8sG926uO8G0Ap1PG5F1QrG667T2uZe5Hpu9eyGWkIGskNJVecagSxvrykeFyV0kfkRAXZV//n7/mPnrPhi+wxygfz2eZPBUO38vXnE=
+	t=1721097018; cv=none; b=qROaEas2VVXynCbzfdyLycB2xLmZMQeQAV+BEQ3XngMWgWJ5uLQ9iS7KIrQROV4rj2Y60dGySj+rDg4aC8woWzWgk1cjaX3KiQFP9fawlzRkHQp62r5ZE50YdVdi2Xs3i61nmbmO9wk+/NqIW6Dgf4DJ3dBjnQp//EAEXofTftM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721096923; c=relaxed/simple;
-	bh=zGyyVLQsZBlUDTSxT3K8gfH3oa1CjyI1ZTiGP21b5sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V5l5VWWAANtnnUv2jjLNfL3EbgxUH20L6D0YYDyrBm0ukhW97zY8zDMoMTQ7pFUqVxfZiK/pD2/to+1mfquS/NMef57hMWlzGgE/JzFQ3oVYZfMt4zL70jGjbS9HSJ6MSDOudqQkN9AZnLh/OXIYyIyEnru3/B7YoS42Z1f0K7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NTAusPSc; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: kent.overstreet@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721096919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O1mujR3vP2Iz9uVp53noz/jO9KfAisyw45Xfjm48+HU=;
-	b=NTAusPScl9gsv4KjVF0LzveVhAUYesQc7ZaWNzuqzJnO7NLdBRCIcXIwRIMKwoqL2LVipO
-	OMrFXf3TnqgNBgEab1VPfPPtyUVzdWxgHEmm9TD4Og7rqtYjWq8ZbHT1rFAH3v1u0CN9jV
-	wgqw+dnphKMegVJew+Tb/aywoHQdKvQ=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-X-Envelope-To: zhengqi.arch@bytedance.com
-Message-ID: <7db60e36-9c96-4938-a28d-a9745e287386@linux.dev>
-Date: Tue, 16 Jul 2024 10:28:33 +0800
+	s=arc-20240116; t=1721097018; c=relaxed/simple;
+	bh=Anh3g5XsKU2JcZm26ganVqXl0vvT1bS/Ftyrv8mu18o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GB7ii4cyQal/LphsMZCTlE571V5H5dpJtpDlCM8iaFFKgM6nliwWakJ08NtXQ+QlONl0vYyS3WJwvUGrZ7fiewehF5+V0tmgLa/D849mi+YP6dJ5JNQbIVSSViqaFaPLZmyfnwL0QIt2H9GM0HlPs+KAVJcnR46fcNNPKhgDfdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aZiCnake; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FLIgSQ002958;
+	Tue, 16 Jul 2024 02:30:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=a16ojMF+yw/Bk1HXiH8nNAJpbm692nxXRPjcZ4SBWlQ=; b=
+	aZiCnakelbzUCHxCu5B4X5ZsadxQt4ImqDznW2raLxLEAgPs9Ly5heJsF8V+kXnj
+	9QDNtZ/lbbcvgFX25Hgr+tb8sFvWYWXyV7/H6OO3NAyRVe0pjwVq/lNWoARNGYlC
+	PDFCxf49prblj6r5OZV6d+vKMlaYkcr2hHDWDT9s78D1FKiN644yY5FYY5vIr1YI
+	y8n/ngZU2CCwDI8Vb6owQsg+NyYaEWYfr7fWmYa8VHyb8kF4e+wIqC4xigMGabP4
+	pCAojk7ru+07QxekE9ICYT9sjsRvyWxOhnSYfF9lbJ5VRTgxzEz/DpC1jzxIYWOk
+	yDg61HkntvwItC4sRR+A0w==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40bh6svnf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 02:30:05 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46G1jG4g002696;
+	Tue, 16 Jul 2024 02:30:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40bg1exxdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Jul 2024 02:30:05 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46G2U3A9027682;
+	Tue, 16 Jul 2024 02:30:04 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40bg1exxah-3;
+	Tue, 16 Jul 2024 02:30:04 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+        James.Bottomley@HansenPartnership.com, skashyap@marvell.com,
+        himanshu.madhani@oracle.com, dwagner@suse.de,
+        Chen Ni <nichen@iscas.ac.cn>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: qla2xxx: Convert comma to semicolon
+Date: Mon, 15 Jul 2024 22:29:22 -0400
+Message-ID: <172109323563.941202.2035783546516054964.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240711005724.2358446-1-nichen@iscas.ac.cn>
+References: <20240711005724.2358446-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm: list_lru: Fix NULL pointer dereference in
- list_lru_add()
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>,
- Qi Zheng <zhengqi.arch@bytedance.com>
-References: <20240712032554.444823-1-youling.tang@linux.dev>
- <sd32qchit33aafht27utinrz5dizw62qbtwdmwbtugqrlglmtx@6aitsotgqnpi>
- <8ce42a2e-783f-4244-8e75-21dcd578adf5@linux.dev>
- <oxzh24oit3ulkl5at66c4g3bsyo7z6jd54757yrkgqbeftfgjz@qlzktn3nrkpl>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <oxzh24oit3ulkl5at66c4g3bsyo7z6jd54757yrkgqbeftfgjz@qlzktn3nrkpl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=756 malwarescore=0 phishscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407160018
+X-Proofpoint-GUID: Cnmj3KRaeiUrSmC2_iWUN2t5_CUVN3G4
+X-Proofpoint-ORIG-GUID: Cnmj3KRaeiUrSmC2_iWUN2t5_CUVN3G4
 
-Hi, Kent
+On Thu, 11 Jul 2024 08:57:24 +0800, Chen Ni wrote:
 
-On 12/07/2024 23:49, Kent Overstreet wrote:
-> On Fri, Jul 12, 2024 at 12:28:57PM GMT, Youling Tang wrote:
->> Hi, Kent
->>
->> On 12/07/2024 12:07, Kent Overstreet wrote:
->>> On Fri, Jul 12, 2024 at 11:25:54AM GMT, Youling Tang wrote:
->>>> From: Youling Tang <tangyouling@kylinos.cn>
->>>>
->>>> Note that list_lru_from_memcg_idx() may return NULL, so it is necessary
->>>> to error handle the return value to avoid triggering NULL pointer
->>>> dereference BUG.
->>>>
->>>> The issue was triggered for discussion [1],
->>>> Link [1]: https://lore.kernel.org/linux-bcachefs/84de6cb1-57bd-42f7-8029-4203820ef0b4@linux.dev/T/#m901bb26cdb1d9d4bacebf0d034f0a5a712cc93a6
->>> I see no explanation for why this is the correct fix, and I doubt it is.
->>> What's the real reason for the NULL lru_list_one, and why doesn't this
->>> come up on other filesystems?
->> We can break it down into two questions (independent of each other):
->> 1) Error handling is necessary when l (lru_list_one) is NULL here.
-> No, you're just hiding the actual bug - since I wasn't clear, I'm naking
-> this patch.
-We should use kmem_cache_alloc_lru() instead of kmem_cache_alloc(),
-similar to the [1] modification.
+> Replace a comma between expression statements by a semicolon.
+> 
+> 
 
-Apply the following patch to fix the problem:
+Applied to 6.11/scsi-queue, thanks!
 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index f9c9a95d7d4c..79a580dfb5e1 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -227,7 +227,8 @@ static struct inode *bch2_alloc_inode(struct 
-super_block *sb)
+[1/1] scsi: qla2xxx: Convert comma to semicolon
+      https://git.kernel.org/mkp/scsi/c/6ca9fede7c73
 
-  static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
-  {
--       struct bch_inode_info *inode = 
-kmem_cache_alloc(bch2_inode_cache, GFP_NOFS);
-+       struct bch_inode_info *inode = alloc_inode_sb(c->vfs_sb, 
-bch2_inode_cache, GFP_NOFS);
-         if (!inode)
-                 return NULL;
-
-Link [1]: 
-https://lwn.net/ml/linux-kernel/20220228122126.37293-5-songmuchun@bytedance.com/
-
-Thanks,
-Youling.
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
