@@ -1,447 +1,297 @@
-Return-Path: <linux-kernel+bounces-253357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE82932007
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D1E93200C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9296283640
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C983A1F22CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8350B17550;
-	Tue, 16 Jul 2024 05:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D815179AE;
+	Tue, 16 Jul 2024 05:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZmjCXdIg"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77B8B67F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I1gkVa41"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB1BE552
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721107632; cv=none; b=svgPkh1ixuMpLuEuzUzr3ezO4YgRbJhPT5YlzNwsucYGgOAGLuSfuLngCBDnAkiQ/H3118J/RMPXLyVd3rL2OBYEBg/t7PLzr4G31SZG2gmMsa2KLPnxx9RwO1waFoCB485xyaGSn2eo+bbg3DMXj2Dj8USaFxwRhop35u7jyrs=
+	t=1721107743; cv=none; b=Oa6KSLGW8jMJTx2yeK8BVi8uHAslcYr8ZZVwho5S78ZVQpCSr9Uw2JLFlqQ8/6iH50Ci/SN8svAnKw7wszA4Y+DYbpy2QztHdUxflAchqNJkPF437McHLNxHk7y6BdHhSTsQ52HdfoB/4BuWvC8ix6oPmP5nj2GNZEckLrDe0AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721107632; c=relaxed/simple;
-	bh=n9mrTrq5+LraWjYtTuapNum43v8RQdRKu8yn8S9340Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B/to7yvx8ptMbD3CgrM7wqzRILjw5Utiym2L3IRFVTbzcYC624kh0hLLFivapXeyIwbpg225m2i74BsQ2e0ia4QX2LshZ+Ntg3vs8oSu1tRTH7YY4fqcO/nPfymv+oSGhcRtdcCwpOSDS/3Yv+aosGwFWFpDcyBmQ/qlsL8dczc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZmjCXdIg; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=JMUzw
-	31GzDBFXXf8S1ZK7C+G64nkNDBD7NUvACKUfvQ=; b=ZmjCXdIgRpH7/ngq7XHOr
-	KQPYqt4HuVr8JiFzTBfliCRgnd02iUJQ8U6pZhd4LHfFBhL6+UvQkxZ0zVEpixs6
-	CnX7zggda+ASWDncJOG5S6ezu5aYFDq34Gb+kyxqUPnC8d8LiDhu9xgz+Wmzx6Gf
-	RrDY71YK2ac3waOOa2hjFY=
-Received: from localhost (unknown [101.132.132.191])
-	by gzga-smtp-mta-g1-5 (Coremail) with SMTP id _____wDnr1ZgBJZmH_lwBQ--.2434S2;
-	Tue, 16 Jul 2024 13:25:53 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	bristot@redhat.com,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	oliver.sang@intel.com,
-	Xavier <xavier_qy@163.com>
-Subject: [PATCH-RT sched v3 2/2] RT test: Adding test cases for RT group scheduling
-Date: Tue, 16 Jul 2024 13:25:43 +0800
-Message-Id: <20240716052543.302383-3-xavier_qy@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240716052543.302383-1-xavier_qy@163.com>
-References: <20240716052543.302383-1-xavier_qy@163.com>
+	s=arc-20240116; t=1721107743; c=relaxed/simple;
+	bh=MXVC+nb+mFTLSbcgUCk86uGQXs06nd5Go8mt3o5mB8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XF7oOojg8SgP0V0eVPvAlmvKvzyRPAcGXfmUQr4JvKfyLGp7nOG1kJRTR/az1HGDsn1TMtTThbr8MSKgnnNS0MNjPrHTEf8b6N8Emh/g563VmsVb0Tto7q8dcr0E5MXC0i3frBs3nm5pX4hcwiib6kDwqB32ZXrGYcB2JNOHmIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I1gkVa41; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721107740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gsIOpb9KWrrSWH+khCy+irTM/PEKQIZUWtlNy0wC+B4=;
+	b=I1gkVa41RiWkKOT9DGN60G+u+06aLfUEzEa+68R5yKYXlupzRGbHp/Y0CQWIsJS4LyarCL
+	UBPpJYQg1BdrenRvKLYssBDw4nxtWAIW9kGISfcigDgl7hpCnV+SsGd6GGy3JZtYlqhNNX
+	vIZbdPBW5KaMRh6Fr/ehkoi8Z66SvIo=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-464-QD3OsX9HM_2TRUfLrJ9ZIg-1; Tue, 16 Jul 2024 01:28:58 -0400
+X-MC-Unique: QD3OsX9HM_2TRUfLrJ9ZIg-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7926d869756so1559275a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:28:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721107735; x=1721712535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gsIOpb9KWrrSWH+khCy+irTM/PEKQIZUWtlNy0wC+B4=;
+        b=NZEGH+FegitEg3mYWVc62SMY0Z6ufPtLtCGkghGbU+t8bSj1i6rZl2srdhVMLnTpIe
+         s984gHR5AGbbrwKjCJWWIuBZlT/2+koWg5uv0Yi57ruf3M+a/TySAA62VmHtAPB1sXjo
+         hxv7l+KDKl7Ls5+ea/exOdD7wJL5AKFeLI/qaY88FlZ0fkXA9nQYAd534ztpWchjd5el
+         T5dSpwbGdHKAB+qe113XcqgFKF+bG9pzV1s5U7x2kEKVuV8p/o+fI4IRitFzyovYjneT
+         9yS4rC98n1k9uELDpIJsWEYCOHfrRcqC8p3D+ib88EgFJKpaJFR11dLcUnB+jwHMobtA
+         7Upw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuLFyYzYliX8jy8VwgOWNPvPhPlAT6k5Sk4zbq0kGctEIcKn4rYkZg7Aj4NQDNrK+trJ3CZiFWNpFB7oo7HkZaa90MX0DmqsWAGRh7
+X-Gm-Message-State: AOJu0YweE6naV/vMccz49EPRd/JPw7fzlz9oYxHG97tzVhMp5pDuTehT
+	m01kEPHg7ceNEasJknG/tnfhSU7rdhYtgrZA4ITNGqSVwSEZj+d35VF3TbVbVp+uxUWwp/E9H+i
+	73bWsZmRst8Xihvxk3xQNrdsgsPvcrOBOP6Au0/oQgEYSNcoIQ1aDGhuPhHfk/Lxs7SDb281fwK
+	qWF66wLO/NRODg+9hrow8yL/piKBzyRioEbwffE/RO4m3OHuY=
+X-Received: by 2002:a05:6a20:3946:b0:1c3:7405:80d0 with SMTP id adf61e73a8af0-1c3f1211cfdmr1304610637.18.1721107735514;
+        Mon, 15 Jul 2024 22:28:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHw0k4wnJZ6JiyMBimDNiLpa7AGdMM0EuO2N/PMl66auR/7kGFYq4Rv8muHy8OJ4V1I5y5HjebZFkoXdDsb9P8=
+X-Received: by 2002:a05:6a20:3946:b0:1c3:7405:80d0 with SMTP id
+ adf61e73a8af0-1c3f1211cfdmr1304572637.18.1721107734712; Mon, 15 Jul 2024
+ 22:28:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnr1ZgBJZmH_lwBQ--.2434S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Jw1xGr47XFy8ZrykCFWDXFb_yoWftFy8pF
-	WkuryDAw4rG3W3trs3Ca10vF1ruws7ZFW7JrZ3KryUAa4xGFs3tFyIkFW2qrn3CrWF9w13
-	Zayagay7CF47trJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U-db8UUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwgEeEGWXvkgPIgABsl
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <1720790333-456232-6-git-send-email-steven.sistare@oracle.com>
+ <CACGkMEurG88fXiThyainxbuzpgBUzzGkmvyQB5vuXsU7_6XBBw@mail.gmail.com> <d738a0e2-5a17-4323-9c86-b5a806066292@oracle.com>
+In-Reply-To: <d738a0e2-5a17-4323-9c86-b5a806066292@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 16 Jul 2024 13:28:43 +0800
+Message-ID: <CACGkMEuj-6EcEPo9xKkmuPSaQPQnH6zG+j2cqLRiScWUB4oqXw@mail.gmail.com>
+Subject: Re: [PATCH V2 5/7] vhost-vdpa: VHOST_IOTLB_REMAP
+To: Steven Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adding test cases for RT group scheduling, create some RT infinite loop
-processes/threads, then set them to the same or different priorities.
-Place them in different RT task groups, run for a period of time,
-and finally count the number of infinite loop executions for all tasks.
+On Mon, Jul 15, 2024 at 10:28=E2=80=AFPM Steven Sistare
+<steven.sistare@oracle.com> wrote:
+>
+> On 7/14/2024 10:34 PM, Jason Wang wrote:
+> > On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@o=
+racle.com> wrote:
+> >>
+> >> When device ownership is passed to a new process via VHOST_NEW_OWNER,
+> >> some devices need to know the new userland addresses of the dma mappin=
+gs.
+> >> Define the new iotlb message type VHOST_IOTLB_REMAP to update the uadd=
+r
+> >> of a mapping.  The new uaddr must address the same memory object as
+> >> originally mapped.
+> >>
+> >> The user must suspend the device before the old address is invalidated=
+,
+> >> and cannot resume it until after VHOST_IOTLB_REMAP is called, but this
+> >> requirement is not enforced by the API.
+> >>
+> >> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> >> ---
+> >>   drivers/vhost/vdpa.c             | 58 ++++++++++++++++++++++++++++++=
+++
+> >>   include/uapi/linux/vhost_types.h | 11 +++++-
+> >>   2 files changed, 68 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> >> index 4396fe1a90c4..51f71c45c4a9 100644
+> >> --- a/drivers/vhost/vdpa.c
+> >> +++ b/drivers/vhost/vdpa.c
+> >> @@ -1257,6 +1257,61 @@ static int vhost_vdpa_pa_map(struct vhost_vdpa =
+*v,
+> >>
+> >>   }
+> >>
+> >> +static int vhost_vdpa_process_iotlb_remap(struct vhost_vdpa *v,
+> >> +                                         struct vhost_iotlb *iotlb,
+> >> +                                         struct vhost_iotlb_msg *msg)
+> >> +{
+> >> +       struct vdpa_device *vdpa =3D v->vdpa;
+> >> +       const struct vdpa_config_ops *ops =3D vdpa->config;
+> >> +       u32 asid =3D iotlb_to_asid(iotlb);
+> >> +       u64 start =3D msg->iova;
+> >> +       u64 last =3D start + msg->size - 1;
+> >> +       struct vhost_iotlb_map *map;
+> >> +       int r =3D 0;
+> >> +
+> >> +       if (msg->perm || !msg->size)
+> >> +               return -EINVAL;
+> >> +
+> >> +       map =3D vhost_iotlb_itree_first(iotlb, start, last);
+> >> +       if (!map)
+> >> +               return -ENOENT;
+> >> +
+> >> +       if (map->start !=3D start || map->last !=3D last)
+> >> +               return -EINVAL;
+> >
+> > I had a question here, if a buggy user space that:
+> >
+> > 1) forget to update some of the mappings
+> > 2) address is wrong
+> > 3) other cases.
+> >
+> > Does this mean the device can DMA to the previous owner?
+>
+> Yes, but only to the mappings which were already pinned for DMA for this
+> device, and the old owner is giving the new owner permission to DMA to th=
+at
+> memory even without bugs.
+>
+> > If yes, does
+> > this have security implications?
+>
+> No.  The previous owner has given the new owner permission to take over. =
+ They
+> trust each other completely. In the live update case, they are the same; =
+the new
+> owner is the old owner reincarnated.
 
-Signed-off-by: Xavier <xavier_qy@163.com>
----
- MAINTAINERS                                   |   7 +
- tools/testing/selftests/sched/Makefile        |   4 +-
- tools/testing/selftests/sched/deadloop.c      | 192 ++++++++++++++++++
- .../selftests/sched/rt_group_sched_test.sh    | 119 +++++++++++
- 4 files changed, 320 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/sched/deadloop.c
- create mode 100755 tools/testing/selftests/sched/rt_group_sched_test.sh
+I understand the processes may trust each other but I meant the kernel
+may not trust those processes.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 43353b705988..d29effe57bf8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19480,6 +19480,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RT GROUP SCHED TEST
-+M:	Xavier <xavier_qy@163.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	tools/testing/selftests/sched/deadloop.c
-+F:	tools/testing/selftests/sched/rt_group_sched_test.sh
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
-diff --git a/tools/testing/selftests/sched/Makefile b/tools/testing/selftests/sched/Makefile
-index 099ee9213557..96decb58bf35 100644
---- a/tools/testing/selftests/sched/Makefile
-+++ b/tools/testing/selftests/sched/Makefile
-@@ -8,7 +8,7 @@ CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -Wl,-rpath=./ \
- 	  $(CLANG_FLAGS)
- LDLIBS += -lpthread
- 
--TEST_GEN_FILES := cs_prctl_test
--TEST_PROGS := cs_prctl_test
-+TEST_GEN_FILES := cs_prctl_test deadloop
-+TEST_PROGS := cs_prctl_test deadloop
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/sched/deadloop.c b/tools/testing/selftests/sched/deadloop.c
-new file mode 100644
-index 000000000000..d850a3e2a0ab
---- /dev/null
-+++ b/tools/testing/selftests/sched/deadloop.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#define _GNU_SOURCE
-+#include <stdlib.h>
-+#include <sys/types.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <errno.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <signal.h>
-+
-+/*
-+ * Create multiple infinite loop threads based on the passed parameters
-+ * Usage: deadloop num policy prio
-+ *	num: the number of child threads
-+ *	policy: the scheduling policy of the child threads, 0-fair, 1-fifo, 2-rr
-+ *	prio: the priority
-+ * If this process is killed, it will print the loop count of all child threads
-+ * to the OUTPUT_FILE
-+ *
-+ * Date: June 27, 2024
-+ * Author: Xavier <xavier_qy@163.com>
-+ */
-+
-+#define OUTPUT_FILE "rt_group_sched_test.log"
-+
-+#if __GLIBC_PREREQ(2, 30) == 0
-+#include <sys/syscall.h>
-+static pid_t gettid(void)
-+{
-+	return syscall(SYS_gettid);
-+}
-+#endif
-+
-+#define do_err(x) \
-+do { \
-+	if ((x) < 0) {  \
-+		printf("test BUG_ON func %s, line %d %ld\n", \
-+			__func__, __LINE__, (long)(x) \
-+		); \
-+		while (1) \
-+			sleep(1); \
-+	} \
-+} while (0)
-+
-+#define do_false(x) \
-+do { \
-+	if ((x) == 1) { \
-+		printf("test BUG_ON func %s, line %d %d\n", \
-+			__func__, __LINE__, (x) \
-+		); \
-+		while (1) \
-+			sleep(1); \
-+	} \
-+} while (0)
-+
-+
-+struct thread_data {
-+	pthread_t thread;
-+	int index;
-+	int pid;
-+	unsigned long cnt;
-+};
-+
-+static struct thread_data *pdata;
-+static int thread_num = 1;
-+
-+static void create_thread_posix(void *entry, pthread_t *thread, int *para,
-+								 int policy, int prio)
-+{
-+	int					ret;
-+	struct sched_param	param;
-+	pthread_attr_t		attr;
-+
-+	memset(&param, 0, sizeof(param));
-+	ret = pthread_attr_init(&attr);
-+	do_err(ret);
-+
-+	ret = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-+	do_err(ret);
-+
-+	param.sched_priority = prio;
-+
-+	ret = pthread_attr_setschedpolicy(&attr, policy);
-+	do_err(ret);
-+
-+	ret = pthread_attr_setschedparam(&attr, &param);
-+	do_err(ret);
-+
-+	ret = pthread_create(thread, &attr, entry, para);
-+	do_err(ret);
-+}
-+
-+static void *dead_loop_entry(void *arg)
-+{
-+	int index = *(int *)arg;
-+	struct sched_param param;
-+	int cur = gettid();
-+
-+	sched_getparam(cur, &param);
-+	pdata[index].pid = cur;
-+	printf("cur:%d prio:%d\n", cur, param.sched_priority);
-+
-+	while (1) {
-+		asm volatile("" ::: "memory");
-+		pdata[index].cnt++;
-+	}
-+	return NULL;
-+}
-+
-+static void handle_signal(int signal)
-+{
-+	int cnt = 0;
-+
-+	if (signal == SIGTERM) {
-+		FILE *file = freopen(OUTPUT_FILE, "a", stdout);
-+
-+		if (file == NULL) {
-+			perror("freopen");
-+			exit(0);
-+		}
-+
-+		while (cnt < thread_num) {
-+			printf("pid:%d cnt:%ld\n", pdata[cnt].pid, pdata[cnt].cnt);
-+			cnt++;
-+		}
-+		fclose(file);
-+		exit(0);
-+	}
-+}
-+
-+static int dead_loop_create(int policy, int prio)
-+{
-+	int cnt = 0;
-+	int ret;
-+	void *status;
-+	struct sched_param param;
-+
-+	param.sched_priority = prio;
-+	pdata = malloc(thread_num * sizeof(struct thread_data));
-+	do_false(!pdata);
-+
-+	if (policy) {
-+		ret = sched_setscheduler(0, policy, &param);
-+		do_err(ret);
-+	}
-+
-+	while (cnt < thread_num) {
-+		pdata[cnt].index = cnt;
-+		create_thread_posix(dead_loop_entry, &pdata[cnt].thread,
-+								 &pdata[cnt].index, policy, prio);
-+		cnt++;
-+	}
-+
-+	signal(SIGTERM, handle_signal);
-+
-+	cnt = 0;
-+	while (cnt < thread_num) {
-+		pthread_join(pdata[cnt].thread, &status);
-+		cnt++;
-+	}
-+
-+	free(pdata);
-+	return 0;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int policy = 2;
-+	int prio = 50;
-+
-+	if (argc == 2)
-+		thread_num = atoi(argv[1]);
-+
-+	if (argc == 3) {
-+		thread_num = atoi(argv[1]);
-+		policy = atoi(argv[2]);
-+		if (policy > 0)
-+			prio = 50;
-+	}
-+
-+	if (argc == 4) {
-+		thread_num = atoi(argv[1]);
-+		policy = atoi(argv[2]);
-+		prio = atoi(argv[3]);
-+	}
-+
-+	dead_loop_create(policy, prio);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/sched/rt_group_sched_test.sh b/tools/testing/selftests/sched/rt_group_sched_test.sh
-new file mode 100755
-index 000000000000..9031250a2684
---- /dev/null
-+++ b/tools/testing/selftests/sched/rt_group_sched_test.sh
-@@ -0,0 +1,119 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Test for rt group scheduling
-+# Date: June 27, 2024
-+# Author: Xavier <xavier_qy@163.com>
-+
-+# Record the list of child process PIDs
-+PIDS=()
-+
-+# File for redirected output
-+LOGFILE="rt_group_sched_test.log"
-+
-+# Cleanup function: kill all recorded child processes and unmount the cgroup
-+function cleanup() {
-+	echo "Cleaning up..."
-+	for pid in "${PIDS[@]}"; do
-+		if kill -0 $pid 2>/dev/null; then
-+			kill -TERM $pid
-+		fi
-+	done
-+
-+	# Sleep for a while to ensure the processes are properly killed
-+	sleep 2
-+
-+	# Unmount the cgroup filesystem
-+	umount /sys/fs/cgroup/cpu 2>/dev/null
-+	umount /sys/fs/cgroup 2>/dev/null
-+	echo "Cleanup completed."
-+
-+	# Ensure the LOGFILE exists and is correct
-+	if [ ! -f "$LOGFILE" ]; then
-+		echo "$LOGFILE not found!"
-+		exit 1
-+	fi
-+
-+	# Initialize the total count variable
-+	total=0
-+
-+	# Read matching lines and calculate the total sum
-+	while IFS= read -r line
-+	do
-+		# Use grep to match lines containing 'pid:' and 'cnt:', and extract the value of cnt
-+		if echo "$line" | grep -q '^pid:[[:digit:]]\+ cnt:[[:digit:]]\+'; then
-+			cnt=$(echo "$line" | sed -n \
-+			  's/^pid:[[:digit:]]\+ cnt:\([[:digit:]]\+\)/\1/p')
-+			total=$((total + cnt))
-+		fi
-+	done < "$LOGFILE"
-+
-+	# Print the total sum
-+	echo "Total cnt: $total"
-+	echo "Finished processing."
-+}
-+
-+# Capture actions when interrupted or terminated by a signal
-+trap cleanup EXIT
-+
-+# Start the cgroup filesystem and create the necessary directories
-+function setup_cgroups() {
-+	mount -t tmpfs -o mode=755 cgroup_root /sys/fs/cgroup
-+	mkdir -p /sys/fs/cgroup/cpu
-+	mount -t cgroup -o cpu none /sys/fs/cgroup/cpu
-+}
-+
-+# Create cgroup subdirectories and configure their settings
-+function create_child_cgroup() {
-+	local base_dir=$1
-+	local name=$2
-+	local rt_period=$3
-+	local rt_runtime=$4
-+	mkdir -p "$base_dir/$name"
-+	echo $rt_period > "$base_dir/$name/cpu.rt_period_us"
-+	echo $rt_runtime > "$base_dir/$name/cpu.rt_runtime_us"
-+}
-+# Launch a process and add it to the specified cgroup
-+function launch_process() {
-+	local process_name=$1
-+
-+	# Three parameters representing the number of child threads, scheduling policy, and priority
-+	local args=$2
-+	local cgroup_path=$3
-+
-+	# Launch the process
-+	exec -a $process_name ./deadloop $args &
-+	local pid=$!
-+	PIDS+=($pid)
-+
-+	# Short sleep to ensure the process starts
-+	sleep 1
-+
-+	# Check if the process started successfully
-+	if ! pgrep -x $process_name > /dev/null; then
-+		echo "Error: No process found with name $process_name."
-+		exit 1
-+	fi
-+
-+	echo $pid > "$cgroup_path/cgroup.procs"
-+	echo "Process $process_name with PID $pid added to cgroup $cgroup_path"
-+}
-+
-+# Main function running all tasks
-+function main() {
-+	echo "The test needs 30 seconds..."
-+	rm -f "$LOGFILE"
-+	setup_cgroups
-+	create_child_cgroup "/sys/fs/cgroup/cpu" "child1" 1000000 800000
-+	create_child_cgroup "/sys/fs/cgroup/cpu/child1" "child2" 1000000 700000
-+	create_child_cgroup "/sys/fs/cgroup/cpu/child1/child2" "child3" 1000000 600000
-+	launch_process "child1" "3 2 50" "/sys/fs/cgroup/cpu/child1"
-+	launch_process "child2" "3 2 50" "/sys/fs/cgroup/cpu/child1/child2"
-+	launch_process "child3" "1 2 50" "/sys/fs/cgroup/cpu/child1/child2/child3"
-+	launch_process "tg_root" "1 2 50" "/sys/fs/cgroup/cpu"
-+
-+	# Run for 30 seconds
-+	sleep 30
-+}
-+
-+# Execute the main function
-+main
--- 
-2.45.2
+For example:
+
+1) old owner pass fd to new owner which is another process
+2) the new owner do VHOST_NEW_OWNER
+3) new owner doesn't do remap correctly
+
+There's no way for the old owner to remove/unpin the mappings as we
+have the owner check in IOTLB_UPDATE. Looks like a potential way for
+DOS.
+
+Thanks
+
+>
+> - Steve
+>
+> >> +
+> >> +       /*
+> >> +        * The current implementation does not support the platform io=
+mmu
+> >> +        * with use_va.  And if !use_va, remap is not necessary.
+> >> +        */
+> >> +       if (!ops->set_map && !ops->dma_map)
+> >> +               return -EINVAL;
+> >> +
+> >> +       /*
+> >> +        * The current implementation supports set_map but not dma_map=
+.
+> >> +        */
+> >> +       if (!ops->set_map)
+> >> +               return -EINVAL;
+> >> +
+> >> +       /*
+> >> +        * Do not verify that the new size@uaddr points to the same ph=
+ysical
+> >> +        * pages as the old size@uaddr, because that would take time O=
+(npages),
+> >> +        * and would increase guest down time during live update.  If =
+the app
+> >> +        * is buggy and they differ, then the app may corrupt its own =
+memory,
+> >> +        * but no one else's.
+> >> +        */
+> >> +
+> >> +       /*
+> >> +        * Batch will finish later in BATCH_END by calling set_map for=
+ the new
+> >> +        * addresses collected here.  Non-batch must do it now.
+> >> +        */
+> >> +       if (!v->in_batch)
+> >> +               r =3D ops->set_map(vdpa, asid, iotlb);
+> >> +       if (!r)
+> >> +               map->addr =3D msg->uaddr;
+> >> +
+> >> +       return r;
+> >> +}
+> >> +
+> >>   static int vhost_vdpa_process_iotlb_update(struct vhost_vdpa *v,
+> >>                                             struct vhost_iotlb *iotlb,
+> >>                                             struct vhost_iotlb_msg *ms=
+g)
+> >> @@ -1336,6 +1391,9 @@ static int vhost_vdpa_process_iotlb_msg(struct v=
+host_dev *dev, u32 asid,
+> >>                          ops->set_map(vdpa, asid, iotlb);
+> >>                  v->in_batch =3D false;
+> >>                  break;
+> >> +       case VHOST_IOTLB_REMAP:
+> >> +               r =3D vhost_vdpa_process_iotlb_remap(v, iotlb, msg);
+> >> +               break;
+> >>          default:
+> >>                  r =3D -EINVAL;
+> >>                  break;
+> >> diff --git a/include/uapi/linux/vhost_types.h b/include/uapi/linux/vho=
+st_types.h
+> >> index 9177843951e9..35908315ff55 100644
+> >> --- a/include/uapi/linux/vhost_types.h
+> >> +++ b/include/uapi/linux/vhost_types.h
+> >> @@ -79,7 +79,7 @@ struct vhost_iotlb_msg {
+> >>   /*
+> >>    * VHOST_IOTLB_BATCH_BEGIN and VHOST_IOTLB_BATCH_END allow modifying
+> >>    * multiple mappings in one go: beginning with
+> >> - * VHOST_IOTLB_BATCH_BEGIN, followed by any number of
+> >> + * VHOST_IOTLB_BATCH_BEGIN, followed by any number of VHOST_IOTLB_REM=
+AP or
+> >>    * VHOST_IOTLB_UPDATE messages, and ending with VHOST_IOTLB_BATCH_EN=
+D.
+> >>    * When one of these two values is used as the message type, the res=
+t
+> >>    * of the fields in the message are ignored. There's no guarantee th=
+at
+> >> @@ -87,6 +87,15 @@ struct vhost_iotlb_msg {
+> >>    */
+> >>   #define VHOST_IOTLB_BATCH_BEGIN    5
+> >>   #define VHOST_IOTLB_BATCH_END      6
+> >> +
+> >> +/*
+> >> + * VHOST_IOTLB_REMAP registers a new uaddr for the existing mapping a=
+t iova.
+> >> + * The new uaddr must address the same memory object as originally ma=
+pped.
+> >> + * Failure to do so will result in user memory corruption and/or devi=
+ce
+> >> + * misbehavior.  iova and size must match the arguments used to creat=
+e the
+> >> + * an existing mapping.  Protection is not changed, and perm must be =
+0.
+> >> + */
+> >> +#define VHOST_IOTLB_REMAP          7
+> >>          __u8 type;
+> >>   };
+> >
+> > Thanks
+> >
+> >>
+> >> --
+> >> 2.39.3
+> >>
+> >
+>
 
 
