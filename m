@@ -1,217 +1,249 @@
-Return-Path: <linux-kernel+bounces-254308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F819331A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:10:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0589331A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D513B21F63
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1361F278F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBEF1AD9E6;
-	Tue, 16 Jul 2024 18:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4441A2563;
+	Tue, 16 Jul 2024 19:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUcZWYcT"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="piSMjnJl"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1B11AD40E;
-	Tue, 16 Jul 2024 18:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721156376; cv=none; b=pldj8hzqOpwWaXITUUpptkR4PM6IvG9DyN21Tw4FJGZZbyZTFsbdBIOMu1MFpTKxLgyTi3pwRWeqsd9VWdU0BcEPrIXemL7G1jSQn8xjLLB/bXuS+VSyQZe++ONBLRsRGevPuoLih5+aE6JjNPQNUOliMfelAUL8CwGQqoi1Lsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721156376; c=relaxed/simple;
-	bh=AhxpBW2V1Nnpaq8GxpYUxfaMj7C/CnQkNUZprsGq5Jw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OYAbZ/GQ6kjQrMkmLrbPLS+RoLfO7861XjPwCxezX6MkiXQSfZd2XwpB9iIigXH2nMFXiMp61Ewl+hQFWDm9dvpu9i7xgte3mv72CcXFsR2fD3iIAELRzE5TMLwqDUHdNJKPvwodAz/LGfpeiHOyVxLO2cGxBfFSdwWDIOua1B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUcZWYcT; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8036ce6631bso5987239f.1;
-        Tue, 16 Jul 2024 11:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721156374; x=1721761174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02GQEyQ8Fgm4yEF+9D4Fm23zLJa07LslS1GKZkXapgQ=;
-        b=MUcZWYcTh1pNdJxMKvF5QFuqTKPpRcpZIl2uMB5aA0nNkQln3hrASw6yGX5IShjxsw
-         KhSgTtcrBkh6dQYN8S0AWdi3SoiIJH2BDkJLFUVujJj1MpvM1zHftpfPc8QW2/iE8Hpo
-         BM7SaCs0nlFQqlKqnhLcC6z/yCAZ/tRC6fI5OUpS3jTkvvzVhgODehMcCgg1h9wo2wud
-         I+X8SnOBR5YhYzU+ohEeHouOvCe8J4b4w8qpf3yhqYM9Z72ZS5v9Lan44imhokC0o2ql
-         u2yU/oImS0/YL4cPB3+R7qyvxB/HWXq/0XEQthfgr9R46gt1avVzoTjYrVFRx2A9q5Ek
-         chew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721156374; x=1721761174;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02GQEyQ8Fgm4yEF+9D4Fm23zLJa07LslS1GKZkXapgQ=;
-        b=vmI3e1u2F4f6vCiQw4Bc2RK9IUZcNEDOT5oeX6WMbqN3RtdJ+yMF2s2MBsoLwQN5P7
-         QMfPJ56XJyK80MyLcOTRqmEr6UllrKTRt7ACNAZ+Ce/C4/2XXt9awMbuhwpCELRDYY7H
-         HIM41mxzobklnIa9sa/zFO2bJ2cUXgit8EhDIsJ8L5bpX8+6t3VW3XSuGKixoy6UUVte
-         cEnB9OoIFsQ6F7Nj4ED5WBFXFQ9Djm8A4s+PfKn1kHADPV4ocF/jDoDx/g1P8+Q5BmAx
-         emYGvqv6xUq9h+bdf8r/l4u/84wSSsmxAxf73fzSzqAOqNlFkN7J4T3x7D8RtT594/uE
-         z0Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKW6PotlVA/DfjcKwvgTXN18ClEyNc3YolvahZSXi6pLctFTokclLPqi564/CXV0GZOhgynhiVsryrAAEEwVMLkoaOkKSgAP9N
-X-Gm-Message-State: AOJu0YxV7yVejnF+Nq0N+/mt7kwwjFlho1XxxNRl7Lx257PderZ0/HrJ
-	AOEiwDw9VNsFchh9caeFPZDJfVGULJhl1gR/N0Z5RtIrq8laQYlLhgrBAz+x
-X-Google-Smtp-Source: AGHT+IH2P7UQSoQkuUq22B0bjuKA/ngzw01JbZNtKHx44WAJD4WRstjL+48jrY+j0JQqgWF+0C1c2g==
-X-Received: by 2002:a05:6602:1548:b0:804:f2be:ee21 with SMTP id ca18e2360f4ac-816c2c0d633mr43164039f.3.1721156373964;
-        Tue, 16 Jul 2024 11:59:33 -0700 (PDT)
-Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4c210f23f1csm75301173.102.2024.07.16.11.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 11:59:33 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	jbaron@akamai.com,
-	gregkh@linuxfoundation.org,
-	daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com,
-	jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-Cc: ukaszb@chromium.org,
-	linux@rasmusvillemoes.dk,
-	joe@perches.com,
-	mcgrof@kernel.org,
-	seanpaul@chromium.org,
-	robdclark@gmail.com,
-	groeck@google.com,
-	yanivt@google.com,
-	bleung@google.com,
-	linux-doc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	kernelnewbies@kernelnewbies.org,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9-resend 54/54] docs-dyndbg: improve howto classmaps api section
-Date: Tue, 16 Jul 2024 12:58:06 -0600
-Message-ID: <20240716185806.1572048-55-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240716185806.1572048-1-jim.cromie@gmail.com>
-References: <20240716185806.1572048-1-jim.cromie@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688E1A01C6;
+	Tue, 16 Jul 2024 19:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721156412; cv=pass; b=C/qNwQJTElkhg0p5ZDdTZQYXLpr3fudALQCVx8ihjGVb46Uvs6fQYkR05WIu8/Ns1q7hSK+6+ffSdHBXjrMer39nlf2Sq0BFL68j5DaIhAO5f8mKSC4hX/koxeMdkQu2yOxY7dZ+Fj1mEGDqP5bIDeQim62B40soegyVNYJkcx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721156412; c=relaxed/simple;
+	bh=/71gqA1ez3HMmSv3NBhfFDajpC8x32XIB8KTYzgA0Mk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iw0pDvooneVPHls1uqy/v15xqeUSeK6vz+bhSTJNvM2tiPnYxFoe4KHZu3haXGEoDzocbB2wHCW3cy2gQMV8qpLgjrtIIB9Wr01cheLdFfgeCTjvcroCwUwTAPCwtAOBGkoZx9jo831tU3JHreabRHYlqoJNwoyj4u2SiraNXUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=piSMjnJl; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from monolith.lan (unknown [IPv6:2a0c:f040:0:2790::a03d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pav@iki.fi)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WNpKY3BHhz49PsT;
+	Tue, 16 Jul 2024 22:00:00 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1721156402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x0uaStvGP7aRuGHvuQ/trIdZNovO7pQhTrTx+VbNAxc=;
+	b=piSMjnJlAOSYLP9Ck0QAUCGtqyCnWpEnXskzKtW0TTcgjExy9QoddgaJpTWM+LGZtYVRnq
+	6defQ4508bjHw111gHPq2w269hFOax0vaeylnbXc9DzGdPwDKzyN9prsrrgODmtJ6aBnL8
+	wobgGDK1Yc4WVy1gaj5vtJo+bJQ6sCnHnnNOBJCKRygW6aGKXRmnVE4yB9aKa8zh7if3cz
+	WL6/iyObNTtrDhvbNmwAvreLoWMno9Qbv/J2eSUJPx0KygDEEwnPNmk7JxPMhgBxtsBSRE
+	kAPFFidQl/C/RiHlYyJeq3fAGK5gjncxBU4H3C4VNMavFZIc8UYwgabL8bVbuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1721156402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x0uaStvGP7aRuGHvuQ/trIdZNovO7pQhTrTx+VbNAxc=;
+	b=lNRvPrM0QQXXeUhFv1FrXkHxIOD9lIh5I/pi8FuOf/CfO09W7kMoQhGZrEOjd5Dy5fVJaq
+	ZFVgOXyHJIcwSYJnTUUR9tqyGfEPGycAQ1tLM+J5xgrDs5jfXM3qbYFkVN1a52EMpF40RD
+	2ZWhp2u//faNg/7f57DI87owNZ3A9sndVvYxi1fcYXRx4OSkiSTT5YRGAfezkfGM+uj/5g
+	3iVVNNdl3pfvxh2d1yIT76GSTn2goAl6mcBR69+RVZi9DPkW5B4rKUHLkNwH0/Dtsi+HQe
+	5dm4XD7Rzm1zn5lsaz4wJ841e6I5BtzsJ4n3YwxFLoHSGHtFlFXGq0OXmEs0XA==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1721156402; a=rsa-sha256;
+	cv=none;
+	b=Kmx1KzvsJwcppEjYx9ycb0s4v4Kuw8AHil1lhDnU/eG2drzUrW/6RCxRfrsoz0GayodWC8
+	wfkafvs6gm6X192Huoki+yywIO0W/8VvY3oUBLdQC+qYUr43WnS66bT2Aa5VgxFtq6IYx2
+	/lkEAgOt6Vy2uUmSlyyRlEnHTq2sWYTwT3mTcJHQ4qtDY9NWbv/qJcUPpPcIuAgB+UjLjh
+	ruwU/FNJiNQAHSUgv2uPncw14PxomkQhpJo2k8UAgIO7CTfRKXdrqvYkmmrAG6Bb69CZR7
+	JpbxtNvSwUb/MkMG936r7IBMHgkGeSc/2hLCzZ30GZc238aiMgGDAzZtGq0m3g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
+Message-ID: <0d437a3825d2f714b24c032066b43d7b9e73b0e9.camel@iki.fi>
+Subject: Re: [PATCH AUTOSEL 6.9 09/22] bluetooth/l2cap: sync sock recv cb
+ and release
+From: Pauli Virtanen <pav@iki.fi>
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Cc: Edward Adam Davis <eadavis@qq.com>, 
+ syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com, Luiz Augusto von
+ Dentz <luiz.von.dentz@intel.com>, marcel@holtmann.org,
+ johan.hedberg@gmail.com,  luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org
+Date: Tue, 16 Jul 2024 21:59:59 +0300
+In-Reply-To: <20240716142519.2712487-9-sashal@kernel.org>
+References: <20240716142519.2712487-1-sashal@kernel.org>
+	 <20240716142519.2712487-9-sashal@kernel.org>
+Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
+ keydata=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
+ bzyGkKh2h8XdrYhtDjw9LmrprPQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-reword the classmaps-api section to better explain how it supports
-DRM, and (a little bit) to steer clear of designated-inits in the
-_DEFINE description.
+Hi,
 
-probably just squash this back in
+ti, 2024-07-16 kello 10:24 -0400, Sasha Levin kirjoitti:
+> From: Edward Adam Davis <eadavis@qq.com>
+>=20
+> [ Upstream commit 89e856e124f9ae548572c56b1b70c2255705f8fe ]
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- .../admin-guide/dynamic-debug-howto.rst       | 64 +++++++++++--------
- 1 file changed, 39 insertions(+), 25 deletions(-)
+This one needed an additional fixup that I don't see AUTOSEL picked up,
+otherwise it results to a worse regression:
 
-diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-index ccf3704f2143..1ffab6be07fc 100644
---- a/Documentation/admin-guide/dynamic-debug-howto.rst
-+++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-@@ -390,42 +390,56 @@ in case ``prefix_str`` is built dynamically.
- Dynamic Debug classmaps
- =======================
- 
--Dyndbg allows selection/grouping of *prdbg* callsites using structural
--info: module, file, function, line.  Classmaps allow authors to add
--their own domain-oriented groupings using class-names.  Classmaps are
--exported, so they referencable from other modules.
-+Classmaps adds the "class" keyword, which selects prdbgs based on
-+author supplied, domain-oriented names; this complements the code
-+organizational keywords: module, file, function, line.
-+
-+The main difference from the others: class'd prdbgs must be named to
-+be changed.  This protects them from generic overwrite:
-+
-+  # IOW this cannot undo any DRM.debug settings
-+  :#> ddcmd -p
-+
-+So each class must be enabled individually (no wildcards):
- 
--  # enable classes individually
-   :#> ddcmd class DRM_UT_CORE +p
-   :#> ddcmd class DRM_UT_KMS +p
-   # or more selectively
-   :#> ddcmd class DRM_UT_CORE module drm +p
- 
--The "class FOO" syntax protects class'd prdbgs from generic overwrite::
--
--  # IOW this doesn't wipe any DRM.debug settings
--  :#> ddcmd -p
-+Or the legacy/normal (convenient) way:
- 
--To support the DRM.debug parameter, DYNDBG_CLASSMAP_PARAM* updates all
--classes in a classmap, mapping param-bits 0..N onto the classes:
--DRM_UT_<*> for the DRM use-case.
-+  :#> echo 0x1ff > /sys/module/drm/parameters/debug
- 
- Dynamic Debug Classmap API
- ==========================
- 
--DYNDBG_CLASSMAP_DEFINE - modules use this to create classmaps, naming
--each of the classes (stringified enum-symbols: "DRM_UT_<*>"), and
--type, and mapping the class-names to consecutive _class_ids.
-+The classmap API is closely modeled on DRM, which has:
-+
-+enum drm_debug_category: DRM_UT_* // 10 independent categories. 
-+dyndbg's .classid encodes that directly, allowing 0..62 classes
-+
-+DRM has ~5k calls like: drm_dbg(DRM_UT_KMS, "kms msg");
-+these are unchanged, even in argtype, since classid === category.
-+
-+DRM controls the classes together via sysfs; bits 0..9 control the
-+classes independently.
-+
-+Its expected that other classmap users will also provide debug-macros
-+using an enum-defined categorization scheme like DRM's, and dyndbg can
-+be adapted under them similarly.
-+
-+DYNDBG_CLASSMAP_DEFINE(var,type,_base,classnames) - this maps
-+classnames onto class-ids starting at _base, it also maps the
-+names onto CLASSMAP_PARAM bits 0..N.
- 
--By doing so, modules tell dyndbg that they have prdbgs with those
--class_ids, and they authorize dyndbg to accept "class FOO" for the
--module defining the classmap, and its contained classnames.
-+DYNDBG_CLASSMAP_USE(var) - modules call this to refer to the var
-+_DEFINEd elsewhere (and exported).
- 
--DYNDBG_CLASSMAP_USE - drm drivers invoke this to ref the CLASSMAP that
--drm DEFINEs.  This shares the classmap definition, and authorizes
--dyndbg to apply changes to the user module's class'd pr_debugs.  It
--also tells dyndbg how to initialize the user's prdbgs at modprobe,
--based upon the current setting of the parent's controlling param.
-+Classmaps are opt-in: modules invoke _DEFINE or _USE to authorize
-+dyndbg to update those classes.  "class FOO" queries are validated
-+against the classes, this finds the classid to alter; classes are not
-+directly selectable by their classid.
- 
- There are 2 types of classmaps:
- 
-@@ -436,9 +450,9 @@ DYNDBG_CLASSMAP_PARAM - modelled after module_param_cb, it refers to a
- DEFINEd classmap, and associates it to the param's data-store.  This
- state is then applied to DEFINEr and USEr modules when they're modprobed.
- 
--This interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
-+The PARAM interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
- amongst the contained classnames; all classes are independent in the
--control parser itself.
-+control parser itself; there is no implied meaning in names like "V4".
- 
- Modules or module-groups (drm & drivers) can define multiple
- classmaps, as long as they share the limited 0..62 per-module-group
--- 
-2.45.2
+https://lore.kernel.org/linux-bluetooth/20240624134637.3790278-1-luiz.dentz=
+@gmail.com/
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3Df1a8f402f13f94263cf349216c257b2985100927
+
+
+Looks like f1a8f402f13f94263cf349216c257b2985100927 also contains other
+changes not related to this patch, seems like=20
+https://lore.kernel.org/linux-bluetooth/20240624144911.3817479-1-luiz.dentz=
+@gmail.com/
+was squashed.
+
+> The problem occurs between the system call to close the sock and hci_rx_w=
+ork,
+> where the former releases the sock and the latter accesses it without loc=
+k protection.
+>=20
+>            CPU0                       CPU1
+>            ----                       ----
+>            sock_close                 hci_rx_work
+> 	   l2cap_sock_release         hci_acldata_packet
+> 	   l2cap_sock_kill            l2cap_recv_frame
+> 	   sk_free                    l2cap_conless_channel
+> 	                              l2cap_sock_recv_cb
+>=20
+> If hci_rx_work processes the data that needs to be received before the so=
+ck is
+> closed, then everything is normal; Otherwise, the work thread may access =
+the
+> released sock when receiving data.
+>=20
+> Add a chan mutex in the rx callback of the sock to achieve synchronizatio=
+n between
+> the sock release and recv cb.
+>=20
+> Sock is dead, so set chan data to NULL, avoid others use invalid sock poi=
+nter.
+>=20
+> Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail=
+.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  net/bluetooth/l2cap_sock.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+> index 8645461d45e81..64827e553d638 100644
+> --- a/net/bluetooth/l2cap_sock.c
+> +++ b/net/bluetooth/l2cap_sock.c
+> @@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
+> =20
+>  	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
+> =20
+> +	/* Sock is dead, so set chan data to NULL, avoid other task use invalid
+> +	 * sock pointer.
+> +	 */
+> +	l2cap_pi(sk)->chan->data =3D NULL;
+>  	/* Kill poor orphan */
+> =20
+>  	l2cap_chan_put(l2cap_pi(sk)->chan);
+> @@ -1481,12 +1485,25 @@ static struct l2cap_chan *l2cap_sock_new_connecti=
+on_cb(struct l2cap_chan *chan)
+> =20
+>  static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *s=
+kb)
+>  {
+> -	struct sock *sk =3D chan->data;
+> -	struct l2cap_pinfo *pi =3D l2cap_pi(sk);
+> +	struct sock *sk;
+> +	struct l2cap_pinfo *pi;
+>  	int err;
+> =20
+> -	lock_sock(sk);
+> +	/* To avoid race with sock_release, a chan lock needs to be added here
+> +	 * to synchronize the sock.
+> +	 */
+> +	l2cap_chan_hold(chan);
+> +	l2cap_chan_lock(chan);
+> +	sk =3D chan->data;
+> =20
+> +	if (!sk) {
+> +		l2cap_chan_unlock(chan);
+> +		l2cap_chan_put(chan);
+> +		return -ENXIO;
+> +	}
+> +
+> +	pi =3D l2cap_pi(sk);
+> +	lock_sock(sk);
+>  	if (chan->mode =3D=3D L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
+>  		err =3D -ENOMEM;
+>  		goto done;
+> @@ -1535,6 +1552,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *ch=
+an, struct sk_buff *skb)
+> =20
+>  done:
+>  	release_sock(sk);
+> +	l2cap_chan_unlock(chan);
+> +	l2cap_chan_put(chan);
+> =20
+>  	return err;
+>  }
+
+--=20
+Pauli Virtanen
 
