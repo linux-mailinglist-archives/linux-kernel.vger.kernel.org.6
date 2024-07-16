@@ -1,196 +1,376 @@
-Return-Path: <linux-kernel+bounces-253650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B931932455
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342CD932459
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40A0B22A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70241F2172A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A6C198E6F;
-	Tue, 16 Jul 2024 10:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297A198E75;
+	Tue, 16 Jul 2024 10:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJ/R3dx0"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="brPDGIEw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rk6tIhpX"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A761C68C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC621C68C;
+	Tue, 16 Jul 2024 10:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721126894; cv=none; b=nH6fxQfEUmDia1H0OeduyWCT7Xe7IGY6xA9l5PrYZNvTdLvz3Yd9mziLw8Y0ySzM6Fp862mm50mbTroo9smdfd0G+JPK6IvT6tb+BnLjFQ9+XkKE4quai17Rul70830gHMK8hr9wW5eTkThvYQj+x2eeGVLFgFugM7uxFOFAFBs=
+	t=1721126922; cv=none; b=aBVcZd40yJdibD6Zgtywzo73A477wH3vlKfYmFWjbipIYr3kpDkKJt9eXkDK13yUDwBxeaEk1sYY+34sgbRKXHzd8LV9IxEXEtv+0fWiuLwvSyLk1/Vb/ffXco5og2u8xFPg2WWvZZgdjrkfAmXE8mwy+eAUd+44ZeiYhgIuZWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721126894; c=relaxed/simple;
-	bh=k2TvcEmB/ryg67XMa4uZcyZDgHRRsoDA8kgAOqbSvUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CK6n/bJ/D/qQi/+18pIpZre/6dvyOmC2Ddsdda4k2Srkw4N6ErCNH5WZKKutXk6gzdeOcILZnmLjg9Gu2IhUtYJyn0YydPb3oUq0ZndrL1vHb/jM1JSiNYZ0mq7OwKzezV4T5/a53L/0cANVxdCAn3WNt8MOBNsdMHafgaPBj8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PJ/R3dx0; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58bac81f3f9so6182709a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721126891; x=1721731691; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9+AqXcsl/weoU0tXvtP0PfAHHj6VzC16r+Lg+jKwkc=;
-        b=PJ/R3dx0ljeYKeLAAIfGYVgAGtXlPY+sDOCdOpyGYma8BH7trNMTkYSgkVbqyTeL8N
-         hMYeodYUs3gxWXxHHcok1HaAUtia3j+tNbUsdY/zgKyPS5CzcprWhry7xvVHjngkjwn7
-         UMwGxv6QWbc6JLAfK2mTG8GJnWMg1z292P53yZBpyX/j4SB0VSEi1M2eE8QasXPHquy8
-         iMCpxAZYRreIHyprp0MohifOeNYc6b1lsXV/gTW9kI5XltCIlIEUQYgb8yW9hrcr6aIg
-         1eD8a+X5ZAIVTb2I7zIEZRxPD0/oXZH8iiNRVi3QNdRt7lP9LvVtYmjEhUEsNH0lljuk
-         yLXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721126891; x=1721731691;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b9+AqXcsl/weoU0tXvtP0PfAHHj6VzC16r+Lg+jKwkc=;
-        b=drR00kuC8h/Avvq4Z4acHLWEFuMIxT0S+dllbBW0s0DWQTBwXcl6pN7l6RgwsG2dAg
-         LZ8BtKmxG3KhKulb0ST7SP3WfL2sZy4iLy0hiiuH65JDRG/b36RiSXaWKlija01eZFWM
-         zrZ9KlYHnt8bIDrUg9RXBdFGsK36fJz+v+JXDIGx6zq9R1YJTshBuRKj6Xz969ZvooOn
-         QXLUaT8srvgbkRK1WLF6KzrNQl0T8jQHMwk25S/HDvKp3Mb1H/8AdXN0manra+hyQ2H3
-         czsYftMWuzfHt+xpifFrPmcdE3PlpMvglSK4VS1nvQSK8obWIZlMDsGjojoyO5kXuxet
-         tw4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2mN3OJlrqIRmpkUhb/Cid+P9vwV1luN9XBoVlLe/WzEEgHdI/jrEQL4qc4SXVtZx5Y4A7dq+S3JdlCvYmxusMeLDg+L22jdtBGEzq
-X-Gm-Message-State: AOJu0YxmFf2Hf4CR45PBbyU6m6p3CjB/DN9u1Ax/nujQ3aAF318mxUeO
-	85hkSm/zkxmF93ZK3rsQqAazr+tWl2UY1tqnuNcD44lMbSDn5WRx6Q9NiR2uA8g=
-X-Google-Smtp-Source: AGHT+IFAVo8y981VQPV3hpAJCUplw06/VqfD6UbO92mSt28qGEgJ4Ny7ShTjrKxPUIV+N/iISlTYYA==
-X-Received: by 2002:a17:906:b891:b0:a77:cb7d:f359 with SMTP id a640c23a62f3a-a79eaa40bdbmr112391266b.58.1721126890557;
-        Tue, 16 Jul 2024 03:48:10 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b8387sm293656466b.66.2024.07.16.03.48.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 03:48:10 -0700 (PDT)
-Message-ID: <00fb0782-0afc-4744-ad93-437712a9fcd9@linaro.org>
-Date: Tue, 16 Jul 2024 12:48:09 +0200
+	s=arc-20240116; t=1721126922; c=relaxed/simple;
+	bh=vxb8fujrmulzBliMHJSFSkDTVtyU+U8eaP4eG/fhmM8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=dnqvZoV/gFqhbTlMUxwCR9c7Y3hQeX31QprgCZvTjwkzGQz4UloJCh4nknJ3o6itSyr7+3wNE0TT5MbCbNrYxTmhz9deg3QY4NSPxypQNnpDaT8QJjSrhv5yAa4QFz0HXQO7TKTA9fb4lRMPepFIjF2xthHmQot9Cu5gGpDtLYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=brPDGIEw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rk6tIhpX; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id CA0E911482FE;
+	Tue, 16 Jul 2024 06:48:39 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Tue, 16 Jul 2024 06:48:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1721126919;
+	 x=1721213319; bh=eLyOA6YOUXpYdPPvWopuMfNTUy73XMV5CrsQCvSxqNA=; b=
+	brPDGIEwNHF12ggREho1/324zFOsdRrNW4gfjqzPiZaKNmqFJia9gZyi9VNGN446
+	a99k+8aVomskKKMSwVTX0W1RDlEbOi8HiW84ycha+HX3tbZK5yIjULbZ+nWPLNH5
+	GF2vv5Ji+ib2VzvKNArQzeNGgyfvFgLykUWbsBaphLJrlrab6rHx2N6UjNRzlLTH
+	IJL7NeRNN9gVGsj7w23O8CxD1tpBIoU1N44iY2h9eKOrkuwN9P+7bsGO1o1fmvUA
+	qDJJLRfSDW1aXjKhRFdg717F61G+0u0Cr195eQB05oMCMemx0PiOXdIA/ODD9v7M
+	hjI7bA059qXP6uDGaf7xqA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721126919; x=
+	1721213319; bh=eLyOA6YOUXpYdPPvWopuMfNTUy73XMV5CrsQCvSxqNA=; b=R
+	k6tIhpX4ARciT9eyTcztS0XympFppDvXdPJjE45vqHZyPOeDqo5fqOxHsWELhRyx
+	MAhmQI84bhZk6SVsMJ3ukGt7GPs/vTMFy5BHSEK4VQnyEO0dGsHEodTLpyiprY4u
+	WuhJr9cj4/pyzK5kx754En7F34bneQgXVhAHcxF/Q/OKvzwwjp6D0MCZJt+n9PWr
+	FGqRfjKS6ydzoy/nqQS1X5O1oPVrGxzen83zoqhdHKPQMktTkHfLI2V4WbudCC9b
+	W8umdzkC0bnEX7E5LyikuMW0nYJ9KJzxmhWhDtdOWXpvpbGqYtZl9Bn8HE52cSqS
+	ZZUmI2RRNxCgkI57aYUkg==
+X-ME-Sender: <xms:BlCWZj2AeCm-M3oJ3yXFU507riH7m5EI5K5LjsoDIC8gZjl9-HhOFQ>
+    <xme:BlCWZiGEt1Ho1m5VdTw5nSVBLgNMqM4HZMNm3hdgshQdn3wWrdbZNNoHkaiOu2LKe
+    Y3Vox9WMb_3sLb_iqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdefudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedfnfhu
+    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpeefuefghfdvueefheeiledvgeefffevgeelhedtvdehgeekteeugedtgeeuhedv
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:BlCWZj5ApQ_6YR8RFdihr3hmO8XeHzB07afwdH-3Y47aZ5qIVDzd2g>
+    <xmx:BlCWZo16H2ODehmtJAJG0qS2seimcAkKHUGH9RkyJBx5om5zv_nmxw>
+    <xmx:BlCWZmGgwfh7IzWhH5s4ReZuOu12KHXb0wrlbsXjF1Yo9kw2VoM22A>
+    <xmx:BlCWZp8L21j8IB9iCtQbSLtKHhA1LZVe1fYFpNHTKH6O5KJbb84RzA>
+    <xmx:B1CWZigbZriKqdVd_x6EfKgvfZ4Kgd-hQn_rlVH4DAyGt2e0ZjrLrIff>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7BB3D2340080; Tue, 16 Jul 2024 06:48:38 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clocksource: qcom: Add missing iounmap() on errors in
- msm_dt_timer_init()
-To: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240713095713.GA430091@bnew-VirtualBox>
- <20240713102820.GA430622@bnew-VirtualBox>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240713102820.GA430622@bnew-VirtualBox>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <f401fd68-c5e6-4c97-ab82-400141c42cd7@app.fastmail.com>
+In-Reply-To: <9123108d-cb50-43bb-b7ff-0327fb760a89@redhat.com>
+References: <20240716051612.64842-1-luke@ljones.dev>
+ <20240716051612.64842-2-luke@ljones.dev>
+ <9123108d-cb50-43bb-b7ff-0327fb760a89@redhat.com>
+Date: Tue, 16 Jul 2024 22:48:18 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Hans de Goede" <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org
+Cc: corentin.chary@gmail.com,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Mario Limonciello" <mario.limonciello@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] platform/x86 asus-bioscfg: move existing tunings to
+ asus-bioscfg module
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 13.07.2024 12:28 PM, Ankit Agrawal wrote:
-> On Sat, Jul 13, 2024 at 03:27:13PM +0530, Ankit Agrawal wrote:
->> Add the missing iounmap() when clock frequency fails to get read by the
->> of_property_read_u32() call, or if the call to msm_timer_init() fails.
->>
->> Fixes: 6e3321631ac2 ("ARM: msm: Add DT support to msm_timer")
->> Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->> Changes in v3:
->> - Update patch commit message
->> - Link to v2: https://lore.kernel.org/linux-arm-msm/20240712082747.GA182658@bnew-VirtualBox/
->>
->> Changes in v2:
->> - Add iounmap() if msm_timer_init() fails
->> - Update patch commit message
->> - Link to v1: https://lore.kernel.org/linux-arm-msm/20240710110813.GA15351@bnew-VirtualBox/
->> ---
->>  drivers/clocksource/timer-qcom.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clocksource/timer-qcom.c b/drivers/clocksource/timer-qcom.c
->> index b4afe3a67..eac4c95c6 100644
->> --- a/drivers/clocksource/timer-qcom.c
->> +++ b/drivers/clocksource/timer-qcom.c
->> @@ -233,6 +233,7 @@ static int __init msm_dt_timer_init(struct device_node *np)
->>  	}
->>  
->>  	if (of_property_read_u32(np, "clock-frequency", &freq)) {
->> +		iounmap(cpu0_base);
->>  		pr_err("Unknown frequency\n");
->>  		return -EINVAL;
->>  	}
->> @@ -243,7 +244,11 @@ static int __init msm_dt_timer_init(struct device_node *np)
->>  	freq /= 4;
->>  	writel_relaxed(DGT_CLK_CTL_DIV_4, source_base + DGT_CLK_CTL);
->>  
->> -	return msm_timer_init(freq, 32, irq, !!percpu_offset);
->> +	ret = msm_timer_init(freq, 32, irq, !!percpu_offset);
->> +	if (ret)
->> +		iounmap(cpu0_base);
->> +
->> +	return ret;
->>  }
->>  TIMER_OF_DECLARE(kpss_timer, "qcom,kpss-timer", msm_dt_timer_init);
->>  TIMER_OF_DECLARE(scss_timer, "qcom,scss-timer", msm_dt_timer_init);
->> -- 
->> 2.25.1
-> 
-> Hello maintainers, 
-> 
-> Could you please suggest the next steps that should be taken to move
-> this patch further. From what I understand, the merge-window for the
-> next stable kernel release (v6.11) is open, and I would be very much
-> grateful if I could get help on moving this patch further.
-> 
-> Also, please let me know if I need to make any changes to the patch in
-> order to finalize it :)
+On Tue, 16 Jul 2024, at 9:50 PM, Hans de Goede wrote:
+> Hi Luke,
+>=20
+> On 7/16/24 7:16 AM, Luke D. Jones wrote:
+> > The fw_attributes_class provides a much cleaner interface to all of =
+the
+> > attributes introduced to asus-wmi. This patch moves all of these ext=
+ra
+> > attributes over to fw_attributes_class, and shifts the bulk of these
+> > definitions to a new kernel module to reduce the clutter of asus-wmi
+> > with the intention of deprecating the asus-wmi attributes in future.
+> >=20
+> > The work applies only to WMI methods which don't have a clearly defi=
+ned
+> > place within the sysfs and as a result ended up lumped together in
+> > /sys/devices/platform/asus-nb-wmi/ with no standard API.
+> >=20
+> > Where possible the fw attrs now implement defaults, min, max, scalar,
+> > choices, etc. As en example dgpu_disable becomes:
+> >=20
+> > /sys/class/firmware-attributes/asus-bioscfg/attributes/dgpu_disable/
+> > =E2=94=9C=E2=94=80=E2=94=80 current_value
+> > =E2=94=9C=E2=94=80=E2=94=80 display_name
+> > =E2=94=9C=E2=94=80=E2=94=80 possible_values
+> > =E2=94=94=E2=94=80=E2=94=80 type
+> >=20
+> > as do other attributes.
+> >=20
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>=20
+> Interesting (also see my reply to the cover-letter).
+>=20
+> Note this is not a full review, just a few small remarks
+> with things which I noticed while taking a quick look.
+>=20
+> <snip>
+>=20
+> > +static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> > +{
+> > + return !strcmp(attr->attr.name, "gpu_mux_mode");
+> > + !strcmp(attr->attr.name, "panel_hd_mode");
+> > +}
+>=20
+> The second statement here is never reached, I believe you want
+> a || between the 2 strcmp() calls:
+>=20
+> static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> {
+> return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+>        !strcmp(attr->attr.name, "panel_hd_mode");
+> }
+>=20
+> <snip>
+>=20
+> > +/* Simple attribute creation */
+>=20
+> I think it would be good to do the following for registering
+> these "simple" attributes ... continued below.
+>=20
+> > +ATTR_GROUP_ENUM_INT_RW(thermal_policy, "thermal_policy", ASUS_WMI_D=
+EVID_THROTTLE_THERMAL_POLICY,
+> > + 0, 3, "0;1;2", "Set the thermal profile: 0=3Dnormal, 1=3Dperforman=
+ce, 2=3Dquiet");
+> > +ATTR_GROUP_PPT_RW(ppt_pl2_sppt, "ppt_pl2_sppt", ASUS_WMI_DEVID_PPT_=
+PL2_SPPT,
+> > + cpu_default, 5, cpu_max, 1, "Set the CPU fast package limit");
+> > +ATTR_GROUP_PPT_RW(ppt_apu_sppt, "ppt_apu_sppt", ASUS_WMI_DEVID_PPT_=
+APU_SPPT,
+> > + platform_default, 5, platform_max, 1, "Set the CPU slow package li=
+mit");
+> > +ATTR_GROUP_PPT_RW(ppt_platform_sppt, "ppt_platform_sppt", ASUS_WMI_=
+DEVID_PPT_PLAT_SPPT,
+> > + platform_default, 5, platform_max, 1, "Set the CPU slow package li=
+mit");
+> > +ATTR_GROUP_PPT_RW(ppt_fppt, "ppt_fppt", ASUS_WMI_DEVID_PPT_FPPT,
+> > + cpu_default, 5, cpu_max, 1, "Set the CPU slow package limit");
+> > +
+> > +ATTR_GROUP_PPT_RW(nv_dynamic_boost, "nv_dynamic_boost", ASUS_WMI_DE=
+VID_NV_DYN_BOOST,
+> > + nv_boost_default, 5, nv_boost_max, 1, "Set the Nvidia dynamic boos=
+t limit");
+> > +ATTR_GROUP_PPT_RW(nv_temp_target, "nv_temp_target", ASUS_WMI_DEVID_=
+NV_THERM_TARGET,
+> > + nv_temp_default, 75, nv_temp_max, 1, "Set the Nvidia max thermal l=
+imit");
+> > +
+> > +ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_C=
+HARGE_MODE,
+> > + "0;1;2", "Show the current mode of charging");
+> > +ATTR_GROUP_BOOL_RW(boot_sound, "boot_sound", ASUS_WMI_DEVID_BOOT_SO=
+UND,
+> > + "Set the boot POST sound");
+> > +ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_M=
+CU_POWERSAVE,
+> > + "Set MCU powersaving mode");
+> > +ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANE=
+L_OD,
+> > + "Set the panel refresh overdrive");
+> > +ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_P=
+ANEL_HD,
+> > + "Set the panel HD mode to UHD<0> or FHD<1>");
+> > +ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID=
+_EGPU_CONNECTED,
+> > + "Show the eGPU connection status");
+>=20
+> Create an array of simple attribute groups for this
+> entire set of simple attributes:
+>=20
+> struct asus_attr_group {
+> const struct attribute_group *attr_group;
+> u32 wmi_devid;
+> };
+>=20
+> static const struct asus_attr_group simple_attribute_groups[] =3D {
+> { &thermal_policy_attr_group, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY },
+> { &ppt_pl2_sppt_attr_group, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY },
+> ...
+> { &egpu_connected_attr_group, ASUS_WMI_DEVID_EGPU_CONNECTED },
+> };
+>=20
+> And then in asus_fw_attr_add() .. continued below:
+>=20
+> > +static int asus_fw_attr_add(void)
+> > +{
+> > + int ret;
+> > +
+> > + ret =3D fw_attributes_class_get(&fw_attr_class);
+> > + if (ret)
+> > + goto fail_class_created;
+> > + else
+> > + asus_bioscfg.fw_attr_dev =3D device_create(fw_attr_class, NULL,
+> > + MKDEV(0, 0), NULL, "%s", DRIVER_NAME);
+> > +
+> > + if (IS_ERR(asus_bioscfg.fw_attr_dev)) {
+> > + ret =3D PTR_ERR(asus_bioscfg.fw_attr_dev);
+> > + goto fail_class_created;
+> > + }
+> > +
+> > + asus_bioscfg.fw_attr_kset =3D kset_create_and_add("attributes", NU=
+LL,
+> > + &asus_bioscfg.fw_attr_dev->kobj);
+> > + if (!asus_bioscfg.fw_attr_dev) {
+> > + ret =3D -ENOMEM;
+> > + pr_debug("Failed to create and add attributes\n");
+> > + goto err_destroy_classdev;
+> > + }
+> > +
+> > + /* Add any firmware_attributes required */
+> > + ret =3D sysfs_create_file(&asus_bioscfg.fw_attr_kset->kobj, &pendi=
+ng_reboot.attr);
+> > + if (ret) {
+> > + pr_warn("Failed to create sysfs level attributes\n");
+> > + goto fail_class_created;
+> > + }
+> > +
+> > + // TODO: logging
+> > + asus_bioscfg.mini_led_dev_id =3D 0;
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE)) {
+> > + asus_bioscfg.mini_led_dev_id =3D ASUS_WMI_DEVID_MINI_LED_MODE;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mini_led_mod=
+e_attr_group);
+> > + } else if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE2)) {
+> > + asus_bioscfg.mini_led_dev_id =3D ASUS_WMI_DEVID_MINI_LED_MODE2;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mini_led_mod=
+e_attr_group);
+> > + }
+> > +
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX)) {
+> > + asus_bioscfg.gpu_mux_dev_id =3D ASUS_WMI_DEVID_GPU_MUX;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &gpu_mux_mode=
+_attr_group);
+> > + } else if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX_VIVO)) {
+> > + asus_bioscfg.gpu_mux_dev_id =3D ASUS_WMI_DEVID_GPU_MUX_VIVO;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &gpu_mux_mode=
+_attr_group);
+> > + }
+> > +
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_DGPU)) {
+> > + asus_bioscfg.dgpu_disable_available =3D true;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &dgpu_disable=
+_attr_group);
+> > + }
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU)) {
+> > + asus_bioscfg.egpu_enable_available =3D true;
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &egpu_enable_=
+attr_group);
+> > + }
+>=20
+> Replace the block starting here and ending ...
+>=20
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU_CONNECTED))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &egpu_connect=
+ed_attr_group);
+> > +
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &thermal_poli=
+cy_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PL1_SPL))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_pl1_spl_=
+attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PL2_SPPT))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_pl2_sppt=
+_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_APU_SPPT))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_apu_sppt=
+_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_PLAT_SPPT))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_platform=
+_sppt_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PPT_FPPT))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &ppt_fppt_att=
+r_group);
+> > +
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_NV_DYN_BOOST))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &nv_dynamic_b=
+oost_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_NV_THERM_TARGET))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &nv_temp_targ=
+et_attr_group);
+> > +
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_CHARGE_MODE))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &charge_mode_=
+attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_BOOT_SOUND))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &boot_sound_a=
+ttr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_MCU_POWERSAVE))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &mcu_powersav=
+e_attr_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PANEL_OD))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &panel_od_att=
+r_group);
+> > + if (asus_wmi_is_present(ASUS_WMI_DEVID_PANEL_HD))
+> > + sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, &panel_hd_mod=
+e_attr_group);
+>=20
+> here, with:
+>=20
+> for (i =3D 0; i < ARRAY_SIZE(simple_attribute_groups); i++) {
+> if (!asus_wmi_is_present(simple_attribute_groups[i].wmi_devid))
+> continue;
+>=20
+> sysfs_create_group(&asus_bioscfg.fw_attr_kset->kobj, simple_attribute_=
+groups[i].attr_group);
+> pr_dbg("Created sysfs-group for %s\n", simple_attribute_groups[i].attr=
+_group->name);
+> }
+>=20
+> This will make adding new simple attributes a matter of just:
+>=20
+> 1. Declaring the new attr using one of the macros
+> 2. Adding it to simple_attribute_groups[]
+>=20
+> And this also takes care of you logging TODO for simple attributes
+> without needing to add a ton of pr_debug() calls.
 
-The merge window is named very confusingly.. it's when your patches are
-NOT merged, but rather the patches accumulated in the maintainer trees
-are sent to Linus Torvalds, where he merges each one of them and runs
-some tests to make sure nothing broke. Your patches will be picked up
-after 6.11-rc1 drops, and (unless they're fixes) will be scheduled for
-6.12
+Ah perfect, this was one problem I ws trying to figure out a better way =
+of doing. I'll have a crack at this after addressing all other concerns =
+mentioned so far.
 
-Konrad
+Cheers,
+Luke.
+
+>=20
+> Regards,
+>=20
+> Hans
+>=20
+>=20
+>=20
 
