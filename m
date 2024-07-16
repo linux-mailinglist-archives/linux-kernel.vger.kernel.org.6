@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-254005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71060932A12
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0BD932A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12D31C23D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3351F24858
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA7D19E812;
-	Tue, 16 Jul 2024 15:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9578019F468;
+	Tue, 16 Jul 2024 15:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WSuhoIcj"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgmP60eD"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1224919E7FC
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B619EEB5;
+	Tue, 16 Jul 2024 15:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721142330; cv=none; b=SK9O/BoH3Lr70tqQ1PTt86E5EYcjIfQ++GEzrMRQNxHeKa/0oxtoG4DbCHSxHFwHK0LbMAPSA3l9XGr5+LJszxuRL6PHbFDp9U2XJofoQZm9lZL8M6NaR5Di2wWqUTZp0JMNZW3W/kT4JbgiyQhI8jsmNGGNrXts/BsjIwyZM2I=
+	t=1721142334; cv=none; b=FCmmTWVgFusEiTNU/qxXsiYMlAecweAkt2gINaBkjsextQ7mv5DAPvTE0527zStlCfBRzzBBixMjOnHojbd/Yb0CfelITasKw22fe/F9LdX34AAomXtJI3fcoUo+suOH+vT+hQyL9FU1kcU1AOTz73CLMr25/a8UxmPASxKemeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721142330; c=relaxed/simple;
-	bh=xefOgnZeuLhtvi65uS18ux4ujjqzyflaGqyvkSgWkHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJwGKVKwT5K0SCnkXGy9bfV3lxpFJ6qxpOBtAHP0Hugb9IzgtrTefFlver0Uo+jGzzeip5KotnGFSn1UKnuT/qGS2rJiag2q1E0oKH1FhK+SES/+lSn7skGkng3OZbQGZEO4w2Ls1JhOAJmA5bq7fF4ARfjFs4fwNx7/XbT0GvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WSuhoIcj; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-38b3543541dso177585ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:05:28 -0700 (PDT)
+	s=arc-20240116; t=1721142334; c=relaxed/simple;
+	bh=cprunrzR2Vx52GohB9P9vzAt1SjTpPE0piOrxfNcg2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyssK8W47sSZ/pArTjTmESmdh4IauluLcgAXna7JNiKnAAqsld+DI006GktVIB+1c/Vu7bZB9mgF3PzT6AcibAIva+VRTo0exRyaGPqQjz/wi6/QNg+h4ybpnQnuKpX/Vmzs2DMX2lwsnVn805C1M/CGNtJBpjR9at8GxlW0PAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgmP60eD; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77b60cafecso663056866b.1;
+        Tue, 16 Jul 2024 08:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721142328; x=1721747128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xefOgnZeuLhtvi65uS18ux4ujjqzyflaGqyvkSgWkHM=;
-        b=WSuhoIcj213PE38UZtyVgeBwXsIR41nLYNaSsSOQqgd6E+8cMdZJOiDbpCj1CeGGvS
-         jEfyA4tt1pRn6Z0/mNVjjUsYc5lV7oCHFyTIzdlfbUDHL/OO9vAKQqc4ieOOhNBTEMDk
-         e0bV5Sgq5ENgkhIbOQ14te4fDeKNpPa25cNguN+bXqO8L+tsngSJgMIw9t2eG/Yo6h9J
-         TY7SJcyOHTeJCfFNcuNqfHFb4KkvdovNnh2H5sJ951ybrOxpR2F9EzGIvX3OEpaxFksW
-         2JvCuWgKa8F7uBWbe8TGunSNWgkoQMefncfWoKqe4sRtlfBpVUgo1snSvHO1PzHtXG3E
-         2uiQ==
+        d=gmail.com; s=20230601; t=1721142331; x=1721747131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIsP9WfA0TMZUezHpRe4LD3xeHG2Pnug2FDZg/pF9jA=;
+        b=lgmP60eDc5wTrUBuxpjOlKEvggdxrKafQwoT+G0kVFcsxwNphSBPsNKWEtP9unNf9q
+         7rcnGRB1LWlv8K380RvXyD0YtAIEE7W/oyee0dnx52KQn9K5CcgvKId1HqXylwi/lKdR
+         jEwe73eTbLj4Ma7ZtrL0wgIndm2E/Zey1w5/B2QceI8YRpztNwnzo2n5OG0K3qg4hhYF
+         yZevMzjX8r/JgBqSPgVzoI8uA1Ut1RImyg8XVObZwfUgEY9W1beYfJDZa4taU+g05R/6
+         uhhPXYZqR/+uY+5vQjwx7qSPBvYZREDv6JEtY637QZQx2amD4PbVyFmVQTkrBJ9auY2J
+         T3/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721142328; x=1721747128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xefOgnZeuLhtvi65uS18ux4ujjqzyflaGqyvkSgWkHM=;
-        b=Co0NUmpzRM2TomISmvyj2oFNYM25+XyXrpT/DqBdV5+nHK72AiiIIbZqcol91+rjkc
-         8m7/gOWrFgyhVfWbWrv6AlCoIkBB/u/w6ztEMxchBr39jSqDGcGLVwPLyO+6y7Lh3gTJ
-         4B7fcKw4zfOG0EmqEjq5j5rMr/NA6E0Je0lHPAnLLhde/yf0RvMdvSIDlyiVMzy/SjGL
-         JoOKghWV0J/C03y1+VmL2hCDHqaAm9JCVMTYgYHEfTwssMVRZiM9vXfiBdAQZc0qJIHP
-         sY+2fwLC1TOdxP+ifQJx8lprxT00gxOS2LiyabMeIXiJqvzc4x0aNvt+oSQ0iyXYsqaX
-         /z+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWbMm/kUndqO3oytbffXxe1croWgV1v2F3AjBUTWPNARiiWRLfK/ZLneUR90WLPoYPafkI9roFR17TiqGhayE+CnXz1NChc3yuLCRXR
-X-Gm-Message-State: AOJu0Yz4oe12oqj5xde0R6GCb7p9WedV4nvzFTN6MsuF/UlkcctTJuw2
-	R0J8LUhOd4SpmEO5X572WmoIml/GjTwlwjKUv8D4uAiR4LOHCNLOSAYutQwkI7+luHQbkZntfdM
-	Pju9rtfFEW22YXYUBdFBhjVS7X2ZMaLIohPr3
-X-Google-Smtp-Source: AGHT+IEIPantRUK2oSHuRgiQ05thlnoYDlj/klIq6vsDAHLGGqEsy9dglfj/Nwvip17tk3QxhSF3RAgc09241BCGrbc=
-X-Received: by 2002:a05:6e02:1cae:b0:37a:9156:400 with SMTP id
- e9e14a558f8ab-393c25f44e6mr3042645ab.28.1721142327777; Tue, 16 Jul 2024
- 08:05:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721142331; x=1721747131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oIsP9WfA0TMZUezHpRe4LD3xeHG2Pnug2FDZg/pF9jA=;
+        b=Klw3/wG2bKD27BrK+n3vISNW6RB+tqBV12hzjuRxTg/8/FjXyIahG6GdBBWv9RbWaw
+         Tp3lybs44ozleJdG2rQQzxSAF70szshUIgv+tU07mWWA3sI/T8DifHqd9R0tQi2kAnjE
+         qoJjbUCBN3Be3iUTeCLlGcJ0GmKo9wxK5F8JnI7Of0rEMkmPFOakNg7+rq06NIjbdapu
+         0WsaCzyjK0xtIxaXzfVh7ml9TTUEz+EeHwnI+eTEfjjq7bYDm9pCh+sIqxZp3soY8AMl
+         7Kecrc1irN2HsFjXdPca1080BFeyHKIA5lj//zJIh6sQgn9bcXHa/RyFUT8Ry9isQcan
+         9KIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2/UPvf4tymsTb2WYda6iJQ/uCt7GunkKeft6ZTBaXB8JwkBUdk11g8pIknfMe2D71vdVIrSJbSXiTqpBrbuhQMRtG5oadzzKmGepyEERGWly3GGPVhOiKdeGd1IMCYWfD5IPPLBcf
+X-Gm-Message-State: AOJu0YwvIxYfTLkrQsjdCj9DKZNM1NyMXXBm5eo7h8tnhf4QGvui3gz/
+	lYOy57jjZD0tYSZyHqQDdpoPEpp6b54XGnkDEcv8kfRgi0D8Rao/8Yqxh7I7
+X-Google-Smtp-Source: AGHT+IHu17WSkuVX0jxOAWCJadIe0O6dlHEv4dokYnccOiyPeH2LoXogdOhBgimTWYiWMAXlMX5fnw==
+X-Received: by 2002:a17:907:dac:b0:a77:e0ed:8b9 with SMTP id a640c23a62f3a-a79ea3dfc64mr274375466b.6.1721142330957;
+        Tue, 16 Jul 2024 08:05:30 -0700 (PDT)
+Received: from eichest-laptop ([77.109.188.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e04sm328378066b.127.2024.07.16.08.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 08:05:30 -0700 (PDT)
+Date: Tue, 16 Jul 2024 17:05:28 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	wsa+renesas@sang-engineering.com, francesco.dolcini@toradex.com,
+	joao.goncalves@toradex.com, linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1 3/3] i2c: imx: prevent rescheduling in non dma mode
+Message-ID: <ZpaMOHhs1uDPAuKe@eichest-laptop>
+References: <20240715151824.90033-1-eichest@gmail.com>
+ <20240715151824.90033-4-eichest@gmail.com>
+ <ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715143342.52236-1-leo.yan@arm.com> <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
- <1487da55-24dc-40ef-a6e8-4bf4b153fdc3@arm.com> <CAP-5=fUGJmOr9XcsVWWCREjr1A7rUFaMk0VPkQAKDAEjTLKJVQ@mail.gmail.com>
- <CAP-5=fWY4AeMxfNGh_jB4gss_qtGSgfX4pvv-D-fpCWuqamVfA@mail.gmail.com>
- <f316e3ce-e1e3-45f0-ac78-9af590b58706@arm.com> <CAP-5=fU=LguHNi861L4gmgZWXrrgZtG1w5cdw7hXDxnfWyJyMQ@mail.gmail.com>
- <a17e6701-4195-4132-8518-fe4b10403f7e@arm.com> <CAP-5=fVi8RJVokVBQtin8xSAq7uxN=GB7zcC4OiT=SzqWB+V0w@mail.gmail.com>
- <0c20b4b7-c1f6-4c0e-9f89-a99c25555640@arm.com>
-In-Reply-To: <0c20b4b7-c1f6-4c0e-9f89-a99c25555640@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 16 Jul 2024 08:05:15 -0700
-Message-ID: <CAP-5=fVvg=5SE29_SUW0MWmLADL477vpP2DBid2kKZ8kNqxXiA@mail.gmail.com>
-Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
-To: Leo Yan <leo.yan@arm.com>, llvm@lists.linux.dev
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810>
 
-On Tue, Jul 16, 2024 at 6:49=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
->
-> On 7/16/24 14:30, Ian Rogers wrote:
-> > On Tue, Jul 16, 2024 at 3:06=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote=
-:
->
-> [...]
->
-> >> Thanks for correcting. Now I even can build successfully with the Clan=
-g
-> >> from Android NDK with an additional flag 'NO_DEMANGLE=3D1'. Though we =
-still
-> >> need to disable several modules for passing the building, but we are o=
-n the
-> >> right way.
-> >>
-> >> Would you like to continue a formal fixing or you want me to follow up=
-?
-> >
-> > +clang-built-linux
-> >
-> > If you could follow up it would be great!
->
-> Okay, I will look into it.
->
-> > I'm not sure how we detect
-> > in the build that we're using clang, I suspect there is an approach in
-> > a different kernel Makefile/Build that already tackles this but my
-> > quick searching didn't yield anything - perhaps the change would be
-> > better suited to the location the CROSS_COMPILE prefix is added to
-> > gcc.
->
-> Should we follow up the steps in the Documentation/kbuild/llvm.rst?
-> The document uses the flag 'LLVM=3D1' for selecting LLVM/Clang.
+Hi Frank,
 
-Fix clang-built-linux email to llvm@lists.linux.dev
+On Mon, Jul 15, 2024 at 01:03:26PM -0400, Frank Li wrote:
+> > +static inline void i2c_imx_isr_read_continue(struct imx_i2c_struct *i2c_imx)
+> > +{
+> > +	unsigned int temp;
+> > +
+> > +	if ((i2c_imx->msg->len - 1) == i2c_imx->msg_buf_idx) {
+> > +		if (i2c_imx->is_lastmsg) {
+> > +			/*
+> > +			 * It must generate STOP before read I2DR to prevent
+> > +			 * controller from generating another clock cycle
+> > +			 */
+> > +			temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
+> > +			if (!(temp & I2CR_MSTA))
+> > +				i2c_imx->stopped =  1;
+> > +			temp &= ~(I2CR_MSTA | I2CR_MTX);
+> > +			imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+> > +		} else {
+> > +			/*
+> > +			 * For i2c master receiver repeat restart operation like:
+> > +			 * read -> repeat MSTA -> read/write
+> > +			 * The controller must set MTX before read the last byte in
+> > +			 * the first read operation, otherwise the first read cost
+> > +			 * one extra clock cycle.
+> > +			 */
+> > +			temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
+> > +			temp |= I2CR_MTX;
+> > +			imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+> > +		}
+> > +	} else if (i2c_imx->msg_buf_idx == (i2c_imx->msg->len - 2)) {
+> > +		temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
+> > +		temp |= I2CR_TXAK;
+> > +		imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+> > +	}
+> > +
+> > +	i2c_imx->msg->buf[i2c_imx->msg_buf_idx++] = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
+> 
+> Why not use loop to read all data from FIFO? I think read_reg use readb(),
+> suggest change to readb_relaxed(). The similar case for writeb. dma_engine
+> will use writel() at least once when start DMA. it should be enough for
+> memory barrier. 
+> 
+> Because it move to irq handle, writex__relaxed() will help reduce some
+> register access time.
+> 
 
-I'm not sure as the kernel build and the tools build differ in certain
-ways. Perhaps look at the selftests build to see what they do, as they
-are under tools and share the build files.
+I think there is not FIFO on the i.MX I2C controller, or do I miss
+something? In the i.MX 8M Plus reference manual they write for example:
+> In Master Receive mode, reading the data register allows a read to occur
+> and initiates the next byte to be received.
 
-Thanks,
-Ian
+I will test the changes with readb_relaxed() and writeb_relaxed() and
+see what happens, thanks a lot for the hint.
 
-
-> Thanks,
-> Leo
->
-> > The only thing the change to Makefile.config is doing is
-> > injecting the --target option. I'm not sure anything more is not
-> > working for me on my laptop with this approach compared to cross
-> > compiling with gcc, but as you say going in the right direction is
-> > worth it anyway.
-> >
-> > Thanks,
-> > Ian
+Regards,
+Stefan
 
