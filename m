@@ -1,211 +1,231 @@
-Return-Path: <linux-kernel+bounces-253754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0034A932663
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:17:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DE8932666
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F9E284BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3921C22379
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D456198837;
-	Tue, 16 Jul 2024 12:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509B1199221;
+	Tue, 16 Jul 2024 12:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="axDj7KFv"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6oFMW57"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E075D17CA08
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680B413C690;
+	Tue, 16 Jul 2024 12:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721132253; cv=none; b=kkO0q+/7UEcTXwNfQqrBKo5zeAPgyrwDewwhOIPZWpV2wh9YpUZlE0EcsNuSeLXuTLTWHAEgYcCiIiB1ZBv6E1oHVoox92PETKfMVVN+3uFFRbsR0K/wjRjEMcVaN2DKb2Hp+DjChgxd3ovPllqY+Cgy1J/q7EWomr4DAghsAQ0=
+	t=1721132328; cv=none; b=KKsLd7mnbLcQK2IuOf7iodi/eZ8xnOuk0aIWHGEu4Sel7FbtD4HoLX2On2AvidEVc4ElK9Y8u1do2MpwP0Fvpp3PfKp5GSFLzn0EA6iJXHnT+CU44BK75G9d4nY6NYRfbfb/HHRCA0YbaXfsbBUJ9f6oWvOSLz94uJYE8R2fJdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721132253; c=relaxed/simple;
-	bh=3va6R3ZZDZxoqHLA+PQX1kiONoNUXEoXT6Gk7c/J2Ow=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CM6x0HltjrR6EUtsuSYSsbkvEVNhKJgKiBZLkdX2DToWbn/N8hD0Aa9Yl6tdNYD2nO44MqZS9iQdqq6hFdIg8aAF8TTEsM0ozfgBakf9GGLAvRYf+fbkAjbgd7502ci9uVBIgARJEMf5GSwj+9v1ayEFqxw4ZZ59dikv9hB7SwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=axDj7KFv; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-427b9dcbb09so5670945e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721132249; x=1721737049; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
-        b=axDj7KFvCiHQJa66XkZMsZ9cUca9/MuF/SmaiJ14Ljzzk/KGOqTbI0HiNpE0R0STUe
-         4x5IPBXN5V2j/fXY6nvI1oOHJeicBdGnErY6hDTUgUlX8dJepzPUoFbl8iNjRaTtpN2p
-         dhFZQZZxdX3XvqqsCNwn5Afbwr72uUBu9lfz/lMIe4uDWT/iHDM7OvIv6Hq97nrnXSka
-         btoJ0Pv4WIK/y9QgVAkKOm5qinHUv0bMLkMhFyVo8cfP4LnvFKAzXuOtGON6KtWhg/IG
-         /A7hF34cEnH+SbHyybBLCJ5RuC8Whh/hEbhSwtbfvUvMW98wnIP4nOmDGwhnhBW5OFuE
-         Sl6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721132249; x=1721737049;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
-        b=grdvdCYNTB1n1D4x8sJiWaLc0ORIwgeckqKF2wY5iWukfdC0+AE6zF/iYL2qpg1R9m
-         NZMgvBFVYFqvHia7Jvk6Qe01UV5mY0wm7NkIzePco3hlLTFCCs5rW90iOBEBLJkUe775
-         a6y1CD/ZxwVlZpnGQrvqjYPleuTcPecbWxbG5D6nr74Llmr/wph8gIX72PtJqS1N9cOg
-         sr5pg2PIpDImta/C6EqCQKaZdmqbcXs6tAhKp9QMP0AHJmX7grRCCOKDGL2La1yOTzOj
-         ++b7dcEv2kOSbOE1LL1eAnDWts1ISK1yc4RLjIe9QRRrpp22EmTnn4QiQ5/FOiHH10CZ
-         EuGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV++XB6R1lDJJatA6Dch5LFfo2kx7OfAEaW6QGRBb/t38vc3KVQWllnfjmzPpuHFf1dSrwk3pPkjIVbqZyFzT2L8fBMAq1uPJDqWI/J
-X-Gm-Message-State: AOJu0YzWK/PAMN/qR60t+sfRAtRQH3LrwNIOypMEyLZGN0lj6FQG5Pwd
-	LDiC+WVoFkdVjOvzM3mJptuAMDp9zeXlY9T6vESfA41REnlxdtawYROMJ0fMlOE=
-X-Google-Smtp-Source: AGHT+IH4yigp1gkjcQxeAeOLYjio+1QZ5295mCJAsZNF/cho9G7FBybV0wRa9cSEe7GhaXwmooof4Q==
-X-Received: by 2002:a05:600c:46c9:b0:425:69b7:3361 with SMTP id 5b1f17b1804b1-427ba696a81mr12199525e9.18.1721132249171;
-        Tue, 16 Jul 2024 05:17:29 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e816:4889:4177:9f12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc27asm159281425e9.34.2024.07.16.05.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 05:17:28 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
- <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,
-  <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/8] reset: amlogic: split the device and platform probe
-In-Reply-To: <66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com> (Jan
-	Dakinevich's message of "Tue, 16 Jul 2024 01:48:18 +0300")
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
-	<20240710162526.2341399-4-jbrunet@baylibre.com>
-	<66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com>
-Date: Tue, 16 Jul 2024 14:17:27 +0200
-Message-ID: <1j34o9pm3s.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1721132328; c=relaxed/simple;
+	bh=FDLsFj/j7/0aJWOvOswPbb/rMJRj8vsDAO8E+cJk9XY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IeD5TACv/3JyOGREA88GfRTYzGiNinTqyf5SlqxZVqQ9nGXFkITGhjcvlnzlOVdR5h09xZ+rNgu6AvM2gfVWNIVrVSi6fuyfWix6PDxgZ9/eqM/0cvzRN/Nb/6MfSDtDKfMuiB/GzMFQfYGf9xBJwQ9phc9BWy3xwGX0pyqOl9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6oFMW57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE490C116B1;
+	Tue, 16 Jul 2024 12:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721132328;
+	bh=FDLsFj/j7/0aJWOvOswPbb/rMJRj8vsDAO8E+cJk9XY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=X6oFMW57qgQ5YpqnjZoPBYDc6f3j3r9NrAynIONY/WxXKY5aIFsZILq0Ct/AbSoim
+	 pWFN1rV35QsQ7ORxDO8dRm9IxR2iTrYm5xjbay7SUI021SxnUfMO8CafepESCXeHw/
+	 N6Gt7GruNVwF/5eR+7i+Y0Q+/zSmLBCifDYK01L4f84zF7bnaIafC80u0Oq7C7iojM
+	 4fOxhvJ5GuTMjtUY4pyWhk+XprtPG5nDoFt9g4XX59tV965klln4pXzm7JCW6GLPRo
+	 +MlH34uRTwG3Us66WcCyoHX9hL2EKJU5FtoA3r4Nipdy0arnxBD4t2vmwXXrBsiyhf
+	 7CC/HvRbXvC3w==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5cf146a82a5so94890eaf.3;
+        Tue, 16 Jul 2024 05:18:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUE1WPzlTLIxFlN1I4AGY48ePxpDNW8vie1VhmY9oiYYpdIDDgn4Ri0/Ri64QDYix2M7Ry7upm/6i+yLueqq2LjyBt95RjL8FCfMK/DLuVy+vFHGEWtzkgPSujV3AdpNwD5AovWT0U=
+X-Gm-Message-State: AOJu0YxpGxVQ4VzF7c6FTJN9kSTpLSXAp/UzIbt0RCkU9vp8YPlhVNeO
+	7iF/G2PjjkHVUbWL3i8wu9Pr6ZGRVyVyTWPbPdVNtqVO0TiDwq3ODO6eL04O4aXH/ys2qCX7CrW
+	HHUOTa4TewZJMvecnBbw/1M4aLuY=
+X-Google-Smtp-Source: AGHT+IGRuW3fPMDNKIDP464lg/EsyFgzKv+qXxHQoeyl4NruNjCNpP0eDkGH37+kFiig+YoZznBTCUTcdbIjQX4QaAM=
+X-Received: by 2002:a4a:4308:0:b0:5c7:aeba:77a0 with SMTP id
+ 006d021491bc7-5d25035be58mr2055249eaf.0.1721132327279; Tue, 16 Jul 2024
+ 05:18:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <6064157.lOV4Wx5bFT@rjwysocki.net> <20240715044527.GA1544@sol.localdomain>
+ <4d7e11a7-b352-4ced-acee-b5f64e3cd0b6@linaro.org> <CAJZ5v0gx6GyKBYt7YMFwmUQ4OCG49d9k2H=P-4Awr-mJ=eFHKw@mail.gmail.com>
+ <20240715145426.199c31d0@mir> <CAJZ5v0gPiwkNczZhCf_rkxVoUX33tS9c6irMf_7=Rg48Nw9C4w@mail.gmail.com>
+ <20240716014830.243bb0cf@mir> <CAJZ5v0jkA72=avuthGkrS5iu_UGEQeaEp7LjedXCpzamcnRKsA@mail.gmail.com>
+ <20240716125538.09f716d1@mir> <20240716131500.35cf4f00@mir>
+ <CAJZ5v0j2w-8c83Lw6OdJGg53pOKQMdeWiwaNkEEThwE6fXLiHQ@mail.gmail.com> <3238291f-9d2a-4308-98fe-4765d7e1bcfb@linaro.org>
+In-Reply-To: <3238291f-9d2a-4308-98fe-4765d7e1bcfb@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 16 Jul 2024 14:18:35 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jk+VCO7mk9Ox=t1ijn7cMbto5qNbEgc9V0qPswSY_Ezw@mail.gmail.com>
+Message-ID: <CAJZ5v0jk+VCO7mk9Ox=t1ijn7cMbto5qNbEgc9V0qPswSY_Ezw@mail.gmail.com>
+Subject: Re: [PATCH v3] thermal: core: Call monitor_thermal_zone() if zone
+ temperature is invalid
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Stefan Lippers-Hollmann <s.l-h@gmx.de>, Eric Biggers <ebiggers@kernel.org>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 16 Jul 2024 at 01:48, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-
-> On 7/10/24 19:25, Jerome Brunet wrote:
->> To prepare the addition of the auxiliary device support, split
->> out the device probe from the probe of the platform device.
->> 
->> The device probe will be common to both the platform and auxiliary
->> driver.
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  drivers/reset/reset-meson.c | 55 +++++++++++++++++++++++--------------
->>  1 file changed, 34 insertions(+), 21 deletions(-)
->> 
->> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
->> index 59126c9f194a..fec55321b52b 100644
->> --- a/drivers/reset/reset-meson.c
->> +++ b/drivers/reset/reset-meson.c
->> @@ -87,6 +87,27 @@ static const struct reset_control_ops meson_reset_ops = {
->>  	.deassert	= meson_reset_deassert,
->>  };
->>  
->> +static int meson_reset_probe(struct device *dev, struct regmap *map,
->> +			     const struct meson_reset_param *param)
->> +{
->> +	unsigned int stride = regmap_get_reg_stride(map);
->> +	struct meson_reset *data;
->> +
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->param = param;
->> +	data->map = map;
->> +	data->rcdev.owner = dev->driver->owner;
->> +	data->rcdev.nr_resets = param->reg_count * BITS_PER_BYTE
->> +		* stride;
->> +	data->rcdev.ops = &meson_reset_ops;
->> +	data->rcdev.of_node = dev->of_node;
+On Tue, Jul 16, 2024 at 2:10=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> It will be good to add here something like this. Later it would help in
-> reset debugging.
+> On 16/07/2024 13:36, Rafael J. Wysocki wrote:
+> > On Tue, Jul 16, 2024 at 1:15=E2=80=AFPM Stefan Lippers-Hollmann <s.l-h@=
+gmx.de> wrote:
+> >>
+> >> Hi
+> >>
+> >> On 2024-07-16, Stefan Lippers-Hollmann wrote:
+> >>> On 2024-07-16, Rafael J. Wysocki wrote:
+> >>>> On Tue, Jul 16, 2024 at 1:48=E2=80=AFAM Stefan Lippers-Hollmann <s.l=
+-h@gmx.de> wrote:
+> >>>>> On 2024-07-15, Rafael J. Wysocki wrote:
+> >>>>>> On Mon, Jul 15, 2024 at 2:54=E2=80=AFPM Stefan Lippers-Hollmann <s=
+.l-h@gmx.de> wrote:
+> >>>>>>> On 2024-07-15, Rafael J. Wysocki wrote:
+> >>>>>>>> On Mon, Jul 15, 2024 at 11:09=E2=80=AFAM Daniel Lezcano
+> >>>>>>>> <daniel.lezcano@linaro.org> wrote:
+> >>>>>>>>> On 15/07/2024 06:45, Eric Biggers wrote:
+> >>>>>>>>>> On Thu, Jul 04, 2024 at 01:46:26PM +0200, Rafael J. Wysocki wr=
+ote:
+> >>>>>>>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>> [...]
+> >>>>>>> Silencing the warnings is already a big improvement - and that pa=
+tch
+> >>>>>>> works to this extent for me with an ax200, thanks.
+> >>>>>>
+> >>>>>> So attached is a patch that should avoid enabling the thermal zone
+> >>>>>> when it is not ready for use in the first place, so it should addr=
+ess
+> >>>>>> both the message and the useless polling.
+> >>>>>>
+> >>>>>> I would appreciate giving it a go (please note that it hasn't rece=
+ived
+> >>>>>> much testing so far, though).
+> >>>>>
+> >>>>> Sadly this patch doesn't seem to help:
+> >>>>
+> >>>> This is likely because it is missing checks for firmware image type.
+> >>>> I've added them to the attached new version.  Please try it.
+> >>>>
+> >>>> I've also added two pr_info() messages to get a better idea of what'=
+s
+> >>>> going on, so please grep dmesg for "Thermal zone not ready" and
+> >>>> "Enabling thermal zone".
+> >>>
+> >>> This is the output with the patch applied:
+> >>
+> >> The ax200 wlan interface is currently not up/ configured (system
+> >> using its wired ethernet cards instead), the thermal_zone1 stops
+> >> if I manually enable the interface (ip link set dev wlp4s0 up)
+> >> after booting up:
+> >
+> > This explains it, thanks!
+> >
+> > The enabling of the thermal zone in iwl_mvm_load_ucode_wait_alive() is
+> > premature or it should get disabled in the other two places that clear
+> > the IWL_MVM_STATUS_FIRMWARE_RUNNING bit.
+> >
+> > I'm not sure why the thermal zone depends on whether or not this bit
+> > is set, though. Is it really a good idea to return errors from it if
+> > the interface is not up?
+> >
+> >> $ dmesg | grep -i -e iwlwifi -e thermal
+> >> [    0.080899] CPU0: Thermal monitoring enabled (TM1)
+> >> [    0.113768] thermal_sys: Registered thermal governor 'fair_share'
+> >> [    0.113770] thermal_sys: Registered thermal governor 'bang_bang'
+> >> [    0.113771] thermal_sys: Registered thermal governor 'step_wise'
+> >> [    0.113772] thermal_sys: Registered thermal governor 'user_space'
+> >> [    0.113773] thermal_sys: Registered thermal governor 'power_allocat=
+or'
+> >> [    3.759673] iwlwifi 0000:04:00.0: enabling device (0140 -> 0142)
+> >> [    3.764918] iwlwifi 0000:04:00.0: Detected crf-id 0x3617, cnv-id 0x=
+100530 wfpm id 0x80000000
+> >> [    3.764974] iwlwifi 0000:04:00.0: PCI dev 2723/0084, rev=3D0x340, r=
+fid=3D0x10a100
+> >> [    3.769432] iwlwifi 0000:04:00.0: TLV_FW_FSEQ_VERSION: FSEQ Version=
+: 89.3.35.37
+> >> [    3.873466] iwlwifi 0000:04:00.0: loaded firmware version 77.a20fb0=
+7d.0 cc-a0-77.ucode op_mode iwlmvm
+> >> [    3.907122] iwlwifi 0000:04:00.0: Detected Intel(R) Wi-Fi 6 AX200 1=
+60MHz, REV=3D0x340
+> >> [    3.907886] iwl_mvm_thermal_zone_register: Thermal zone not ready
+> >> [    4.032380] iwlwifi 0000:04:00.0: Detected RF HR B3, rfid=3D0x10a10=
+0
+> >> [    4.032392] thermal thermal_zone1: Enabling thermal zone
+> >> [    4.098308] iwlwifi 0000:04:00.0: base HW address: 94:e6:f7:XX:XX:X=
+X
+> >> [    4.112535] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    4.128306] iwlwifi 0000:04:00.0 wlp4s0: renamed from wlan0
+> >> [    4.369396] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    4.625385] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    4.881416] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    5.137377] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    5.394377] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    5.649412] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    5.905379] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    6.161380] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    6.418381] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    6.673381] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [    6.929377] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >>                 [...]
+> >> [   21.009413] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [   21.265496] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [   21.521462] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [   21.777481] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [   22.033468] thermal thermal_zone1: failed to read out thermal zone =
+(-61)
+> >> [   22.213120] thermal thermal_zone1: Enabling thermal zone
+> >> [   22.283954] iwlwifi 0000:04:00.0: Registered PHC clock: iwlwifi-PTP=
+, with index: 0
+> >
+> > Thanks for this data point!
+> >
+> > AFAICS the thermal zone in iwlwifi is always enabled, but only valid
+> > if the interface is up.  It looks to me like the thermal core needs a
+> > special "don't poll me" error code to be returned in such cases.
 >
-> data->rcdev.dev = dev;
+>  From my POV, it is not up to the thermal core to adapt to the driver.
 
-That is not the purpose of this change.
-I'm merely re-organizing exiting code, not changing it.
+The core provides a service to its users, not the other way around,
+and this is a valid use case.
 
-Plus, if you refering to rcdev_name(), we already populate
-rcdev->of_node, so a name is provided.
+The owner of the thermal zone knows that it is only useful when the
+interface is up and so it should be possible for them to indicate to
+the core that, for the time being, nothing needs to be done.
 
->
->> +
->> +	return devm_reset_controller_register(dev, &data->rcdev);
->> +}
->> +
->>  static const struct meson_reset_param meson8b_param = {
->>  	.reg_count	= 8,
->>  	.reset_offset	= 0x0,
->> @@ -125,46 +146,38 @@ static const struct regmap_config regmap_config = {
->>  	.reg_stride = 4,
->>  };
->>  
->> -static int meson_reset_probe(struct platform_device *pdev)
->> +static int meson_reset_pltf_probe(struct platform_device *pdev)
->>  {
->> +
->> +	const struct meson_reset_param *param;
->>  	struct device *dev = &pdev->dev;
->> -	struct meson_reset *data;
->> +	struct regmap *map;
->>  	void __iomem *base;
->>  
->> -	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> -	if (!data)
->> -		return -ENOMEM;
->> -
->>  	base = devm_platform_ioremap_resource(pdev, 0);
->>  	if (IS_ERR(base))
->>  		return PTR_ERR(base);
->>  
->> -	data->param = of_device_get_match_data(dev);
->> -	if (!data->param)
->> +	param = of_device_get_match_data(dev);
->> +	if (!param)
->>  		return -ENODEV;
->>  
->> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> -	if (IS_ERR(data->map))
->> -		return dev_err_probe(dev, PTR_ERR(data->map),
->> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> +	if (IS_ERR(map))
->> +		return dev_err_probe(dev, PTR_ERR(map),
->>  				     "can't init regmap mmio region\n");
->>  
->> -	data->rcdev.owner = THIS_MODULE;
->> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
->> -		* regmap_config.reg_stride;
->> -	data->rcdev.ops = &meson_reset_ops;
->> -	data->rcdev.of_node = dev->of_node;
->> -
->> -	return devm_reset_controller_register(dev, &data->rcdev);
->> +	return meson_reset_probe(dev, map, param);
->>  }
->>  
->> -static struct platform_driver meson_reset_driver = {
->> -	.probe	= meson_reset_probe,
->> +static struct platform_driver meson_reset_pltf_driver = {
->> +	.probe	= meson_reset_pltf_probe,
->>  	.driver = {
->>  		.name		= "meson_reset",
->>  		.of_match_table	= meson_reset_dt_ids,
->>  	},
->>  };
->> -module_platform_driver(meson_reset_driver);
->> +module_platform_driver(meson_reset_pltf_driver);
->>  
->>  MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
->>  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+> Usually network devices have ops when they are transitioning to up or
+> down, would it make sense to move enable / disable the thermal zone in
+> these ops ?
 
--- 
-Jerome
+Not really, because it can be enabled and disabled via sysfs in the meantim=
+e.
 
