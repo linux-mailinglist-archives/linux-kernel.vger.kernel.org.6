@@ -1,130 +1,253 @@
-Return-Path: <linux-kernel+bounces-253326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669A9931F85
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D65931F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A25C1C20D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318C01C20F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE8F13FF9;
-	Tue, 16 Jul 2024 04:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0977317C6D;
+	Tue, 16 Jul 2024 04:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A2f2+Dso"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hl/l5GHU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBDC33C5
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B033C5;
+	Tue, 16 Jul 2024 04:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721102662; cv=none; b=swPgyXsm2U974ISJfjZvDzFhlXQKwv7zNgCKxhIM0QFGbtKM60MJ4fHb+PJR2qSf7o73/dO05QkOzzZ7M3i+W41Yx63c1wH1UsTzNsRmUqcbc3VpLd3EID4Gg2WBmOCZDL7Cp+pkOeHSIzKoSvo1gX3JgKQcceS55/rX26H4k5I=
+	t=1721102675; cv=none; b=ZansPQJ+gJDoHyJOj4FsoRzssRYJce3KEenZCTzT/XiXI6bM9fOc0y/1KCF1rSmGKd8V+wkFAQ83HpPZ1YIs5R+FHB73usEKdcEqfvhv2AVXWKtYR2iqSOasQldRzCm969SFqw9zpwQbcwJNoTj/oVlj0tBKoakCTLoqmF8izdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721102662; c=relaxed/simple;
-	bh=hld6iq+ojhXPdG48NJFxUY6ACAxx33QvXkLN+12ceaQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzPJGqATSqdUB+Wf9i0/TwYRFLamxQfmofKCmRob/f2xtQOWg5IGnGZmsZXroU1HT0QI6uVYZxruIaWmw260skQuU3V3r69Clslw1xvM+iSr921jGJPxnJ5vbz1AZAq0tnrtuOlBIxRLoJMIgHwwOUY2Mub+fEkUsozK5p4/YD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A2f2+Dso; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46G444dJ119126;
-	Mon, 15 Jul 2024 23:04:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721102644;
-	bh=1d79WYKf1M0avjCQpPvE4gEYXICeLVGDCbwUPcm6h5k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=A2f2+Dsol/8YlH7fmjIgFo3nQjpeTUwZqNNXCuWoVlVHtvZUmUOmku8J5t8DRqUSS
-	 hD6pPMzPaBOKV1KaOYZUYsqKyX9FJ5OSkuC2UrcUM9g6ckie9C/AmL3R8Dl0e9DZB4
-	 QTsVSidg62nmTo3y1MCc0DJg39lhstmDZ0R6DgRo=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46G444TV111778
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 15 Jul 2024 23:04:04 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
- Jul 2024 23:04:03 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 15 Jul 2024 23:04:03 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46G442cK086362;
-	Mon, 15 Jul 2024 23:04:03 -0500
-Date: Tue, 16 Jul 2024 09:34:02 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Roger Quadros <rogerq@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Swapnil Kashinath Jakhade
-	<sjakhade@cadence.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "kishon@kernel.org" <kishon@kernel.org>,
-        "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>,
-        "thomas.richard@bootlin.com"
-	<thomas.richard@bootlin.com>,
-        "theo.lebrun@bootlin.com"
-	<theo.lebrun@bootlin.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "srk@ti.com" <srk@ti.com>, Milind
- Parab <mparab@cadence.com>
-Subject: Re: [PATCH v2] phy: cadence-torrent: add support for three or more
- links using 2 protocols
-Message-ID: <cf060fa7-f4e5-4740-8102-f9403cbfcafd@ti.com>
-References: <20240710115624.3232925-1-s-vadapalli@ti.com>
- <LV3PR07MB1036463AB8AB5D38D003175E6C5A52@LV3PR07MB10364.namprd07.prod.outlook.com>
- <7504ea5a-335b-4152-a0f4-5be68f048903@ti.com>
- <0dc54057-d7a0-4123-badc-8f7f07f2d930@kernel.org>
- <c60a1e83-c2ad-4a04-9deb-073c69a4a06d@ti.com>
- <d4538952-add4-4210-ae0a-574cd825b18d@kernel.org>
+	s=arc-20240116; t=1721102675; c=relaxed/simple;
+	bh=HsFmI1s/3LURKPRNtWHsllATcSGn3i4GKtUex6d7cjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TJQ1B9TPTY320oi6md+2R62CqKLR5VEWGZ2IRtBFOQVsRjyxGG9xNpI2LMl21O51AQjEgEYxSLnN+Ur5v1W8lqipwBXfCUor4yELizy/8BIOmwT3/5JfGv41ZG3h/RAOiGLdt5/wcCpClYr41peVBzPsgGezev7XZ/KxwKc64VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hl/l5GHU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH92wi032052;
+	Tue, 16 Jul 2024 04:04:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1sPRlKkfbA0aweXIugAyK4kAqgEqh3OJ7rsI3b38EJQ=; b=hl/l5GHUDQveJdNm
+	X+arINI4WcTLx5VOQz7JPPlpoyCLMlCZzU6P/AWcYQCenpP1lo8doQqVUmbLnnn6
+	mgbYfdb0EtMYvoyjgvArAvL+NfJ7PD380ODQucHyd97goDApj22NDJGArkChCbC3
+	P+sb959fZL75CfhEn6omymw6zSG+6ojrOBMRwlKsxqfGky33N3N/q/5qCE6oRS51
+	F90/NNul6tDYFVgz+EtYN//BvfArPn6k/iBkPWLajlk009L1WE7dEVFzmxSzykCk
+	AxasnRt7k4GJKnLI49h+c9PdYqyLrNUNCEnDxwGV8mMF3Ib5iGnJ1QVqEA/Y33lY
+	eQ00vQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bjrjdu2v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 04:04:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46G44Lsl027515
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 04:04:21 GMT
+Received: from [10.216.59.252] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
+ 2024 21:04:16 -0700
+Message-ID: <dca49572-dc77-58df-1bd1-b0e897191c87@quicinc.com>
+Date: Tue, 16 Jul 2024 09:34:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d4538952-add4-4210-ae0a-574cd825b18d@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 13/14] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+Content-Language: en-US
+To: <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240715-pci-qcom-hotplug-v1-0-5f3765cc873a@linaro.org>
+ <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fVp-wpjekQe_TtxXBc59yHBE0Ct_VETg
+X-Proofpoint-ORIG-GUID: fVp-wpjekQe_TtxXBc59yHBE0Ct_VETg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ mlxlogscore=999 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160029
 
-On Mon, Jul 15, 2024 at 07:08:30PM +0300, Roger Quadros wrote:
-> Hi Siddhath,
+
+
+On 7/15/2024 11:03 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> On 12/07/2024 13:38, Siddharth Vadapalli wrote:
-> > Roger, Swapnil,
-> > 
-
-[...]
-
-> > So assuming the above, we can enforce the constraint that there should
-> > be only 2 Protocols when 3 or more Links are present in the device-tree.
-> > This also handles the cases of
-> > PCIe Multi-Link + USB, PCIe Multi-Link + Q/SGMII
-> > which Swapnil has pointed to at [1], since PCIe Multi-Link is now a new
-> > protocol in itself (PHY_TYPE_PCIE_ML) and shall be represented in that
-> > manner in the device-tree when it is expected to be combined with a second
-> > protocol.
-> > 
-> > After grouping the links by protocol, we can check for the entry in
-> > "link_cmn_vals_entries" and proceed to configure it identical to the
-> > 2 Link case.
-> > 
-> > [1] https://github.com/t-c-collab/linux/commits/ti-linux-6.1.y-torrent-multi-pcie-sgmii-v1
+> Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> when an endpoint is attached to the SoC, users have to rescan the bus
+> manually to enumerate the device. But this can be avoided by simulating the
+> PCIe hotplug using Qcom specific way.
 > 
-> This proposal looks good to me. Thanks!
+> Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> interrupt to the host CPUs. The device driver can use this event to
+> identify events such as PCIe link specific events, safety events etc...
+> 
+> One such event is the PCIe Link up event generated when an endpoint is
+> detected on the bus and the Link is 'up'. This event can be used to
+> simulate the PCIe hotplug in the Qcom SoCs.
+> 
+> So add support for capturing the PCIe Link up event using the 'global'
+> interrupt in the driver. Once the Link up event is received, the bus
+> underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> thus simulating hotplug.
+> 
+> All of the Qcom SoCs have only one rootport per controller instance. So
+> only a single 'Link up' event is generated for the PCIe controller.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   drivers/pci/controller/dwc/pcie-qcom.c | 55 ++++++++++++++++++++++++++++++++++
+>   1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..38ed411d2052 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -50,6 +50,9 @@
+>   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+>   #define PARF_Q2A_FLUSH				0x1ac
+>   #define PARF_LTSSM				0x1b0
+> +#define PARF_INT_ALL_STATUS			0x224
+> +#define PARF_INT_ALL_CLEAR			0x228
+> +#define PARF_INT_ALL_MASK			0x22c
+>   #define PARF_SID_OFFSET				0x234
+>   #define PARF_BDF_TRANSLATE_CFG			0x24c
+>   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> @@ -121,6 +124,9 @@
+>   /* PARF_LTSSM register fields */
+>   #define LTSSM_EN				BIT(8)
+>   
+> +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> +
+>   /* PARF_NO_SNOOP_OVERIDE register fields */
+>   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+>   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> @@ -260,6 +266,7 @@ struct qcom_pcie {
+>   	struct icc_path *icc_cpu;
+>   	const struct qcom_pcie_cfg *cfg;
+>   	struct dentry *debugfs;
+> +	int global_irq;
+>   	bool suspended;
+>   };
+>   
+> @@ -1488,6 +1495,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+>   				    qcom_pcie_link_transition_count);
+>   }
+>   
+> +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> +{
+> +	struct qcom_pcie *pcie = data;
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp; > +	struct device *dev = pcie->pci->dev;
+> +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> +
+> +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> +
+> +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> +		/* Rescan the bus to enumerate endpoint devices */
+> +		pci_lock_rescan_remove();
+> +		pci_rescan_bus(pp->bridge->bus);
+There can be chances of getting link up interrupt before PCIe framework
+starts enumeration and at that time bridge-> bus is not created and
+cause NULL point access.
+Please have a check for this.
 
-Thank you for the confirmation. I will implement the above in the v3
-patch.
-
-Regards,
-Siddharth.
+- Krishna Chaitanya.
+> +		pci_unlock_rescan_remove();
+> +	} else {
+> +		dev_err(dev, "Received unknown event. INT_STATUS: 0x%08x\n",
+> +			status);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>   static int qcom_pcie_probe(struct platform_device *pdev)
+>   {
+>   	const struct qcom_pcie_cfg *pcie_cfg;
+> @@ -1498,6 +1528,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   	struct dw_pcie_rp *pp;
+>   	struct resource *res;
+>   	struct dw_pcie *pci;
+> +	char *name;
+>   	int ret;
+>   
+>   	pcie_cfg = of_device_get_match_data(dev);
+> @@ -1617,6 +1648,28 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   		goto err_phy_exit;
+>   	}
+>   
+> +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_global_irq%d",
+> +			      pci_domain_nr(pp->bridge->bus));
+> +	if (!name) {
+> +		ret = -ENOMEM;
+> +		goto err_host_deinit;
+> +	}
+> +
+> +	pcie->global_irq = platform_get_irq_byname_optional(pdev, "global");
+> +	if (pcie->global_irq > 0) {
+> +		ret = devm_request_threaded_irq(&pdev->dev, pcie->global_irq,
+> +						NULL,
+> +						qcom_pcie_global_irq_thread,
+> +						IRQF_ONESHOT, name, pcie);
+> +		if (ret) {
+> +			dev_err_probe(&pdev->dev, ret,
+> +				      "Failed to request Global IRQ\n");
+> +			goto err_host_deinit;
+> +		}
+> +
+> +		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
+> +	}
+> +
+>   	qcom_pcie_icc_opp_update(pcie);
+>   
+>   	if (pcie->mhi)
+> @@ -1624,6 +1677,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   
+>   	return 0;
+>   
+> +err_host_deinit:
+> +	dw_pcie_host_deinit(pp);
+>   err_phy_exit:
+>   	phy_exit(pcie->phy);
+>   err_pm_runtime_put:
+> 
 
