@@ -1,138 +1,177 @@
-Return-Path: <linux-kernel+bounces-253641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4BE932433
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F15932438
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B4C28163B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556D61F21A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7521199233;
-	Tue, 16 Jul 2024 10:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CFA198A37;
+	Tue, 16 Jul 2024 10:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XzpAVsza"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DG7X1yhQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rmyNpWo1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DG7X1yhQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rmyNpWo1"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B331990CE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3797A13A416
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721126114; cv=none; b=nP2ZjG8L+XM/rdX32MDnnhXj7gaVVL+Aai6wF8uTwS/sNNvq3fIddsNX+Jsn+nvFouJ8rvf7bJkS2P0w7kxO1vgNKIl2krOZLS7MOc+zYTrzV8h7zlTWHx8TjZhmZGo7MGVpxqZbRwueW/GSvYcQc//H8jU+CXSBVZr6ZAXH7D4=
+	t=1721126212; cv=none; b=LRWjtkbfWo5lslDsudch+dNYrM6gQaksS8TjKSHGmyGfe1dfnjenddHsxiKynd4Uzl/EoLI2P9UQDEJTfO9uP6XjLlmi+BbkBNMeHPYs8ahSFsizLgunrmw2mH+7lFxHFYv/XxPuctl5C5JfROV4sW0+P89GmmlAz8MbvrFbupE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721126114; c=relaxed/simple;
-	bh=bfCH8and0eCwiNx1UPmuC/ofW1D0oXAEWmEsWNK2XYU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P4Fyp6SfzOACrBsGlUCnjA+MoHXjNGEbABlBbibIFie1s2t5qpNCr9wh1og+MoYWUPsQU6CserWp3gjSOPWkR7qEqnV1HUsKFoatEDKx9O00hQzgwfeFCnW/LKvKHHaklu7WZDd2WaLmwwSC+/9rNvuL1SQ1tE1J4O9XNFBuWcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XzpAVsza; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52ea929ea56so10003300e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721126110; x=1721730910; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=glaL1NwucAvvOF+fsdv/caKhQoNYoSfHGDOwMp1a1Rs=;
-        b=XzpAVszapSb4H1kUr7mUK3fSUYlzp3cixW1Lw3V2rZv0Hx44o4Xa9ei1isppVGVluR
-         PxwsrG5vr1g7Z4IzA8SAIQGfZ7jGez1vYuUg4ZPTVXDhG8G1AgxS3lU6alRKvQ0DRuep
-         ngUGxrlvbEhMMNJIu8W19vHUaTG6rxK63QSxpz4fp3iYC46i24cggWdvnka1uo1IprIa
-         ovY2uscJoS8d6rIinu2niJJ3A3AgFLvSRtyK0F89cxXQ6WEocIMX2ZJOoDHiB8ZUnfAH
-         WTSaCVRrH/2tMtjgcWANRFW1nKnTrzJUQrclsN7A2FjFpXfGhl8z+XgrKCY0W8Ma/RAU
-         TrgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721126110; x=1721730910;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=glaL1NwucAvvOF+fsdv/caKhQoNYoSfHGDOwMp1a1Rs=;
-        b=Osl7xXJlsAoYZLwDvdee2iB6cDcBMP39LIiae6oyFYyCQR2E0xRj4SviVSeMpjGykh
-         xGCZnWKppOeIDh90IS3EbHcQDdeBMIFOv7DF5G2wj3QoLagGww0wJVB+fW2kRJPmFrek
-         Zt5oWXdf8QfJYurLcXIaZE5cu5XSjX3j8XdzJVBX+Xltg7Kb98Q9aJ8kMuGc+3Vtfxkj
-         GF2BxVXjjtMqxPLyg4ZVVxDvfv1jFqz6wbcbsDTLlLHZTBeX2WpR0YO5gTaF6Edy0/mv
-         Mwer/k0XjBiSJ5xotyKLsAHKiWf3SSXsym/Uhf31kX1qaoalQVuudjt3+PPm2EsdAToK
-         ck6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtmP/vOmskGuGLXmq9SsutoCgblDVQnVNDqs37fb3rmIuWnuZWqQPOa+dC+nLq09ND0xmFruW1AjAhRvpdgWJxTrUQdZUh8wZpEQcK
-X-Gm-Message-State: AOJu0Yzu/GA6ieyxZarK40SduKuHz2NB2A62G3qWGfH6dUzIS9WyzuiE
-	G9MH8sRq7yX5G5E7D+4QPzMerrgXdTwLMC5yUIZvwVw/zubU9vfoVQucoOV/zKk=
-X-Google-Smtp-Source: AGHT+IF/FYTXOKFpO/Y/dd8V/daSVJZBtL/wBmD7Ccmrac1MynmYXdqAUgFGPZ4mHCUKx38XS2OJbw==
-X-Received: by 2002:a05:6512:3e0d:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-52edef1e994mr1301018e87.16.1721126110428;
-        Tue, 16 Jul 2024 03:35:10 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b7eb4sm294039766b.60.2024.07.16.03.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 03:35:10 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Tue, 16 Jul 2024 12:35:04 +0200
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100: Update C4/C5
- residency/exit numbers
+	s=arc-20240116; t=1721126212; c=relaxed/simple;
+	bh=lVup5S/0ROdJB4XQiLGDWEc3gnUiLNZNUd6FdionrsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RyuUOWtAgCS73rdSV4LcUFJhESsQM0cE1RlocEbazk8YpFTGyqsLdLmxlSoFD5SnbIy3Rt/zSxQuyr76OBODGGRgZU4zrRotbupFiEgzA+vKoCPuVW3mGgD05N8rKcGFw75B0LOrHE7VqwP1D82j9Gqxt4fiZoJKfXkqT116MRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DG7X1yhQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rmyNpWo1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DG7X1yhQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rmyNpWo1; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2EFD21F8AC;
+	Tue, 16 Jul 2024 10:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721126208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WdKtjRTwOIt7k4JaJtjnwT0KE/WaLnugRaqQ1yyt8i8=;
+	b=DG7X1yhQ7idojnjCzNdAZte2vI35I8Mu/YYl044QpI9L4LvrpsjBsm+gdt0UvJoLTJ6Ke/
+	bG4UfuTwujKMnaMoeypNzC6WG5Tx5r1Zwailv/cd09N3W0MBce0j13eKEmU5isYeViFyki
+	L5wcPliVjW1pYtLDj/h6ZqXuVKvBgpo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721126208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WdKtjRTwOIt7k4JaJtjnwT0KE/WaLnugRaqQ1yyt8i8=;
+	b=rmyNpWo1Sf0GEd3e7ZegGR4stQXjg3QV5mnlHVnUKpeT5VAAZVMauTejznBpJzd5Ylb/88
+	XHC4yzunV7TnC6CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DG7X1yhQ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rmyNpWo1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721126208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WdKtjRTwOIt7k4JaJtjnwT0KE/WaLnugRaqQ1yyt8i8=;
+	b=DG7X1yhQ7idojnjCzNdAZte2vI35I8Mu/YYl044QpI9L4LvrpsjBsm+gdt0UvJoLTJ6Ke/
+	bG4UfuTwujKMnaMoeypNzC6WG5Tx5r1Zwailv/cd09N3W0MBce0j13eKEmU5isYeViFyki
+	L5wcPliVjW1pYtLDj/h6ZqXuVKvBgpo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721126208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WdKtjRTwOIt7k4JaJtjnwT0KE/WaLnugRaqQ1yyt8i8=;
+	b=rmyNpWo1Sf0GEd3e7ZegGR4stQXjg3QV5mnlHVnUKpeT5VAAZVMauTejznBpJzd5Ylb/88
+	XHC4yzunV7TnC6CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3185136E5;
+	Tue, 16 Jul 2024 10:36:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IkVaOT9NlmYIMgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 16 Jul 2024 10:36:47 +0000
+Message-ID: <af243508-e5f3-4835-8d8e-c1bb741e22f3@suse.de>
+Date: Tue, 16 Jul 2024 12:36:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-topic-h_bits-v1-2-f6c5d3ff982c@linaro.org>
-References: <20240716-topic-h_bits-v1-0-f6c5d3ff982c@linaro.org>
-In-Reply-To: <20240716-topic-h_bits-v1-0-f6c5d3ff982c@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Akhil P Oommen <quic_akhilpo@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721126104; l=1137;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=bfCH8and0eCwiNx1UPmuC/ofW1D0oXAEWmEsWNK2XYU=;
- b=seaZkneu+YvqlDp0QXFYgUyISOmkiDpU6GX4/CSMyUiwyVBHJ9wxhy5YPcWiNJApmdUUSrpuW
- uYpgXySxt7LAzZXrkIdcLQOBNOdDCa+5uIkJwpJ2rnVEUu4gUlldZ6E
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP
+To: Ping Gan <jacky_gam_2001@163.com>, sagi@grimberg.me, hch@lst.de,
+ kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com
+References: <12556163-9efa-461f-826d-264350f4ca58@grimberg.me>
+ <20240704081015.63584-1-jacky_gam_2001@163.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240704081015.63584-1-jacky_gam_2001@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_TO(0.00)[163.com,grimberg.me,lst.de,nvidia.com,lists.infradead.org,vger.kernel.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 2EFD21F8AC
 
-Update the numbers based on the information found in the DSDT.
+On 7/4/24 10:10, Ping Gan wrote:
+>> On 02/07/2024 13:02, Ping Gan wrote:
+[ .. ]
+>>> And the bandwidth of a node is only 3100MB. While we used the patch
+>>> and enable 6 polling task, the bandwidth can be 4000MB. It's a good
+>>> improvement.
+>>
+>> I think you will see similar performance with unbound workqueue and
+>> rps.
+> 
+> Yes, I remodified the nvmet-tcp/nvmet-rdma code for supporting unbound
+> workqueue, and in same prerequisites of above to run test, and compared
+> the result of unbound workqueue and polling mode task. And I got a good
+> performance for unbound workqueue. For unbound workqueue TCP we got
+> 3850M/node, it's almost equal to polling task. And also tested
+> nvmet-rdma we get 5100M/node for unbound workqueue RDMA versus 5600M for
+> polling task, seems the diff is very small. Anyway, your advice is good.
+> Do you think we should submit the unbound workqueue patches for nvmet-tcp
+> and nvmet-rdma to upstream nvmet?
 
-Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Please do. I have been using pretty much the same patch during
+development of my nvme-tcp scalability patchset, and using WQ_UNBOUND
+definitely improves the situation here.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 47bb26a66b2e..120bc418c444 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -278,8 +278,8 @@ CLUSTER_C4: cpu-sleep-0 {
- 				idle-state-name = "ret";
- 				arm,psci-suspend-param = <0x00000004>;
- 				entry-latency-us = <180>;
--				exit-latency-us = <320>;
--				min-residency-us = <1000>;
-+				exit-latency-us = <500>;
-+				min-residency-us = <600>;
- 			};
- 		};
- 
-@@ -298,7 +298,7 @@ CLUSTER_CL5: cluster-sleep-1 {
- 				idle-state-name = "ret-pll-off";
- 				arm,psci-suspend-param = <0x01000054>;
- 				entry-latency-us = <2200>;
--				exit-latency-us = <2500>;
-+				exit-latency-us = <4000>;
- 				min-residency-us = <7000>;
- 			};
- 		};
+Cheers,
 
+Hannes
 -- 
-2.45.2
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
