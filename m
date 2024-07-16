@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-254068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2A0932E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:12:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF85932E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01A41C21CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592BA1F21DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D42619E838;
-	Tue, 16 Jul 2024 16:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7D619EEA5;
+	Tue, 16 Jul 2024 16:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWOrx56i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="w5Ti5JRE";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="w5Ti5JRE"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875B41DDCE;
-	Tue, 16 Jul 2024 16:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450A81DDCE;
+	Tue, 16 Jul 2024 16:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721146322; cv=none; b=IWJV72gSSlDrI2UyyBljHySVUaHmXHzSarAh1DmKcrU7/JR54MO9M/LtgMkegVIelVr7Zn46IsXnUKNGSO7nNeCbOhMzrUvnWbsptBPwSE6JdouqVOM3SR9Zyhkh8lsGXUWTdBEenCentMnKDSnbq9e8p4Idl65hESz8QNUhQbw=
+	t=1721146381; cv=none; b=KZCahLkHdbbKyotQin7P0fL3nFsl4bWJ8FKgiY1kEs7vvIlnkdBAI572TmxH664fxfIKz3EDc9Mmu9rzUkdweDjUKGJ3OE1STSEbBOxYMzu9Y/g9uScNKxPXj68y28PtAmdNjX6oWv2D4jbNE+PG8a0GYxoUfTwJDfAUrgYMsoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721146322; c=relaxed/simple;
-	bh=223TOiKAn8QnCVka2DNtxw3AZnBBCexiX1pgPf1xvxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idctbNFNdaalQPbcYQAnZ9/+OX/f2Vef2YzKQImXa8cLZNTWud6bJCOomkk7Zyihrv48L6kJQ0V5jIfJaEiLiXS86pH0mO2zBlM6pHj/yFVerFWxd13JrTNB7AWEgCXIkRalFgDCoIYp8PsjmswcTw8Oi4TDm09Haam6MfWtVx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWOrx56i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 429ECC116B1;
-	Tue, 16 Jul 2024 16:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721146322;
-	bh=223TOiKAn8QnCVka2DNtxw3AZnBBCexiX1pgPf1xvxA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gWOrx56ilTw0HLduJfVEGyZuoTT+SMCI8lqDcP88CcrSc4vZ1vK063vdpC2kgFCvM
-	 NccTUrTQH7HGoxX51nef5kM+enb7lcResJWb4nnln0xbGf2NdnbrcE8FOGVT4Ikqb+
-	 tZEOlZmzl36f36PNp9CxKJi57+jmlKalLyPvgOS7FKxVCpwS0i1MgJCKFO1gr3bgfg
-	 7DGE1phsnjhuDX+O8M0gL+ob7bUKmMK/RUTFPHN7GRBGaX17XuZmn5pfGyC+xFvHYJ
-	 hF4l9vHRHGS/8FuehRrDZpRg1cu8+gAM3+sk6x3PJqAte3bNFqfbUG77PmrYEBFRqi
-	 Xlc9eFL3LpwFw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sTkmZ-00000000804-1kS8;
-	Tue, 16 Jul 2024 18:12:03 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] Revert "scsi: sd: Do not repeat the starting disk message"
-Date: Tue, 16 Jul 2024 18:11:01 +0200
-Message-ID: <20240716161101.30692-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1721146381; c=relaxed/simple;
+	bh=uVjkJ49b/yBaPoybzQj8BJWIAtzJ2A0MyWEfn24MNKA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=udpD7sro4wP/reXdr0qVgC8QLo7xAXSMDULjbIxhqGYUSjp36dRjBN+1hgnOizF+2TwE8h9KiyYdNN52++SQHX2g3urXnfKPFMBgXkyFJiayrGuEl/6K4rhoUP2TIiOiDIW6owFNa8iLWZBbkIMLTZWEHCTsl9ExMEW7vIZI+hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=w5Ti5JRE; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=w5Ti5JRE; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1721146374;
+	bh=uVjkJ49b/yBaPoybzQj8BJWIAtzJ2A0MyWEfn24MNKA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=w5Ti5JRE//Vx3a3OuzV8wkqcdM9o25BnWOnkKOIPpVYAihmxEB6ByOff1/m10QOAj
+	 py6wkR3M3X1tu+AvcVcI5EL3dTrPfor6U3VAEPlCcFsgi7fevJCeZzukaGyok6HDG+
+	 6u+uHdCeyHj5/D5TVEJ6WZRd2Ek87OwEv4EI0nis=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id CBD8012866B5;
+	Tue, 16 Jul 2024 12:12:54 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id seKY2ty1dPDA; Tue, 16 Jul 2024 12:12:54 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1721146374;
+	bh=uVjkJ49b/yBaPoybzQj8BJWIAtzJ2A0MyWEfn24MNKA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=w5Ti5JRE//Vx3a3OuzV8wkqcdM9o25BnWOnkKOIPpVYAihmxEB6ByOff1/m10QOAj
+	 py6wkR3M3X1tu+AvcVcI5EL3dTrPfor6U3VAEPlCcFsgi7fevJCeZzukaGyok6HDG+
+	 6u+uHdCeyHj5/D5TVEJ6WZRd2Ek87OwEv4EI0nis=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 90B851286670;
+	Tue, 16 Jul 2024 12:12:50 -0400 (EDT)
+Message-ID: <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	=?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
+	 <mic@digikod.net>, Mimi Zohar <zohar@linux.ibm.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore
+ Ts'o <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai
+ <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, Andy
+ Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Casey
+ Schaufler <casey@schaufler-ca.com>, Christian Heimes
+ <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, Eric Biggers
+ <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, Fan Wu
+ <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, James Morris
+ <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,  Jann Horn
+ <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet
+ <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi
+ <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski
+ <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Matthew
+ Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>, Steve Grubb
+ <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+ Vincent Strubel <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni
+ <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+ kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Tue, 16 Jul 2024 12:12:49 -0400
+In-Reply-To: <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
+References: <20240704190137.696169-1-mic@digikod.net>
+	 <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
+	 <20240709.AhJ7oTh1biej@digikod.net>
+	 <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+On Tue, 2024-07-16 at 17:57 +0200, Roberto Sassu wrote:
+> But the Clip OS 4 patch does not cover the redirection case:
+> 
+> # ./bash < /root/test.sh
+> Hello World
+> 
+> Do you have a more recent patch for that?
 
-The offending commit tried to suppress a double "Starting disk" message
-for some drivers, but instead started spamming the log with bogus
-messages every five seconds:
+How far down the rabbit hole do you want to go?  You can't forbid a
+shell from executing commands from stdin because logging in then won't
+work.  It may be possible to allow from a tty backed file and not from
+a file backed one, but you still have the problem of the attacker
+manually typing in the script.
 
-	[  311.798956] sd 0:0:0:0: [sda] Starting disk
-	[  316.919103] sd 0:0:0:0: [sda] Starting disk
-	[  322.040775] sd 0:0:0:0: [sda] Starting disk
-	[  327.161140] sd 0:0:0:0: [sda] Starting disk
-	[  332.281352] sd 0:0:0:0: [sda] Starting disk
-	[  337.401878] sd 0:0:0:0: [sda] Starting disk
-	[  342.521527] sd 0:0:0:0: [sda] Starting disk
-	[  345.850401] sd 0:0:0:0: [sda] Starting disk
-	[  350.967132] sd 0:0:0:0: [sda] Starting disk
-	[  356.090454] sd 0:0:0:0: [sda] Starting disk
-	...
+The saving grace for this for shells is that they pretty much do
+nothing on their own (unlike python) so you can still measure all the
+executables they call out to, which provides reasonable safety.
 
-on machines that do not actually stop the disk on runtime suspend (e.g.
-the Qualcomm sc8280xp CRD with UFS).
-
-Let's just revert for now to address the regression.
-
-Fixes: 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk message")
-Cc: stable@vger.kernel.org
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/scsi/sd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-
-Hi,
-
-I just noticed this regression that snuck into 6.10-final and tracked it
-down to 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk
-message").
-
-I wanted to get this out ASAP to address the immediate regression while
-someone who cares enough can work out a proper fix for the double start
-message (which seems less annoying).
-
-Note that the offending commit is marked for stable.
-
-Johan
-
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 1b7561abe05d..6b64af7d4927 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -4119,6 +4119,8 @@ static int sd_resume(struct device *dev)
- {
- 	struct scsi_disk *sdkp = dev_get_drvdata(dev);
- 
-+	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
-+
- 	if (opal_unlock_from_suspend(sdkp->opal_dev)) {
- 		sd_printk(KERN_NOTICE, sdkp, "OPAL unlock failed\n");
- 		return -EIO;
-@@ -4135,13 +4137,12 @@ static int sd_resume_common(struct device *dev, bool runtime)
- 	if (!sdkp)	/* E.g.: runtime resume at the start of sd_probe() */
- 		return 0;
- 
--	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
--
- 	if (!sd_do_start_stop(sdkp->device, runtime)) {
- 		sdkp->suspended = false;
- 		return 0;
- 	}
- 
-+	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
- 	ret = sd_start_stop_device(sdkp, 1);
- 	if (!ret) {
- 		sd_resume(dev);
--- 
-2.44.2
+James
 
 
