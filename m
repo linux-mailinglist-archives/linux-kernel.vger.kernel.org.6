@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-253345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81375931FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:00:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7104931FEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCF81F21EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1EA4B2178F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA8318029;
-	Tue, 16 Jul 2024 05:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vweVPmr9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC97A196;
-	Tue, 16 Jul 2024 05:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB49017556;
+	Tue, 16 Jul 2024 05:09:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A85C6AC0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721106021; cv=none; b=AVUmZzkY84jgeFUkVdZjtyGDaSW6S35mtsA+wx4bp2ztypqtehm+nDPDCBnhHdbgKzPVVW7CPDheGowz00sJh8gi3C2MpdTT2p1/aNWgNpCBsHdhCPuSi0RV1edGSs2S3bI94V+tT8LtseWvsmk2or0z7y5B83qiJ/gsH4QFGNM=
+	t=1721106570; cv=none; b=KNWAT5tVNak/Ao+Egyvmsyxxs5K/v0Znp+QulwwdwhAs07b8rT4zOdwm5GFi3mX5QhooPX1D4CC3fCk0kOE5EXSv+9DxjAIWZoZP5paIoBKQhAZuZJiiZkmpammAndexqBJ4YuGdIs/H6jh86B95gbL/3f2XVLTQQ+OF9c+McwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721106021; c=relaxed/simple;
-	bh=pTwIjEIFp01nFL8bVmeWIWztWDImcVA5oCWrlzaWhS0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PPTXLUtgaSt3lDfqEkuLfzkTH221TmIjB9F7LOocbCpF79SgeCRlIzgs3N0SMW9wUdNXeBnUpNzgFKVUobg+RvMc0MoPBcfr4QH97dIV/swzMe0JTkyQO6ot346l2UqzC7CAdoYudl6dPIjU/zdEGfDm/f6MmuzjRrMnpdxQA7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vweVPmr9; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721106019; x=1752642019;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pTwIjEIFp01nFL8bVmeWIWztWDImcVA5oCWrlzaWhS0=;
-  b=vweVPmr9eBT8fmYY9pT+yeDsxvroddzezhZWOUTMUIFi7dMPaGfKewDr
-   GLXUU2qL3I4ymgIqHIsjq+k7cOxTKYDNfhgwV/hfzxHJUf7PH969EzPyl
-   CzP0ILGOLtowo8RwcN4CS5wzlpzoD+7BeUqDTe1gVdedFf88Obi551WyE
-   BCLOsxv5kUsQ5V1+I6FDe3AaO0+Sd0abeHmBIMoyva+xqGdC187cy4Z5c
-   jjgVUrRz4i9FHsJLZABLn13belp77At7m3GV+JVrHOgaG9fPZqra6qBhT
-   L6pFvmJT4Z0mm2WMgKmoWrt6X2M3B23JS++Xp5ajDc4s0go+svhSFaiAJ
-   A==;
-X-CSE-ConnectionGUID: 62SW0KjwQPSwDAhBVTpKjw==
-X-CSE-MsgGUID: yDkkPmEITvGB3gm55T04eg==
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="29927473"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Jul 2024 22:00:17 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 15 Jul 2024 22:00:15 -0700
-Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 15 Jul 2024 22:00:12 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH v1 net-next] lan78xx: Refactor interrupt handling and redundant messages
-Date: Tue, 16 Jul 2024 10:28:18 +0530
-Message-ID: <20240716045818.1257906-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1721106570; c=relaxed/simple;
+	bh=hdU+xSbWjmQzvnT9M2PFv03mnobO6Zq6HAo/Ev5ViDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBtOmB4tcs0NpW39lLvVyRdH3tfxk0cAwKe49/nZRoXCNoiXJ+KD+tVLJaSS1u4C2ywwvHGo8ug4SbT+R095VYT7U63w9AeMdbAKdBZR8Yc1Plt7C/9a5PKeEhss1MYhJ8UzIBVn0bCJa79OJGVKTugdf7OIohRlkuq5XvG2tlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA7D51063;
+	Mon, 15 Jul 2024 22:09:52 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.45.178])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2ED0A3F762;
+	Mon, 15 Jul 2024 22:09:22 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com,
+	masahiroy@kernel.org,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/Kconfig: Remove redundant 'if HAVE_FUNCTION_GRAPH_TRACER'
+Date: Tue, 16 Jul 2024 10:39:15 +0530
+Message-Id: <20240716050915.2657694-1-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,48 +50,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-The MAC and PHY interrupt are not synchronized. When multiple phy
-interrupt occur while the MAC interrupt is cleared, the phy handle
-will not be called which causes the PHY interrupt to remain set
-throughout. This is avoided by not clearing the MAC interrupt each
-time. When the PHY interrupt is set, the MAC calls the PHY handle
-and after processing the timestamp the PHY interrupt is cleared.
-Also, avoided repetitive debug messages by replacing netdev_err
-with netif_dbg.
+Since the commit 819e50e25d0c ("arm64: Add ftrace support"),
+HAVE_FUNCTION_GRAPH_TRACER has always been enabled. Although a subsequent
+commit 364697032246 ("arm64: ftrace: Enable HAVE_FUNCTION_GRAPH_RETVAL")
+redundantly added check on HAVE_FUNCTION_GRAPH_TRACER, while enabling the
+config HAVE_FUNCTION_GRAPH_RETVAL. Let's just drop this redundant check.
 
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- drivers/net/usb/lan78xx.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/arm64/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 62dbfff8dad4..5f4e167ceeb0 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1421,11 +1421,6 @@ static int lan78xx_link_reset(struct lan78xx_net *dev)
- 	int ladv, radv, ret, link;
- 	u32 buf;
- 
--	/* clear LAN78xx interrupt status */
--	ret = lan78xx_write_reg(dev, INT_STS, INT_STS_PHY_INT_);
--	if (unlikely(ret < 0))
--		return ret;
--
- 	mutex_lock(&phydev->lock);
- 	phy_read_status(phydev);
- 	link = phydev->link;
-@@ -1518,7 +1513,7 @@ static void lan78xx_defer_kevent(struct lan78xx_net *dev, int work)
- {
- 	set_bit(work, &dev->flags);
- 	if (!schedule_delayed_work(&dev->wq, 0))
--		netdev_err(dev->net, "kevent %d may have been dropped\n", work);
-+		netif_dbg(dev, intr, dev->net, "kevent %d may have been dropped\n", work);
- }
- 
- static void lan78xx_status(struct lan78xx_net *dev, struct urb *urb)
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 79a656a62cbc..cf1781cdc062 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -211,8 +211,8 @@ config ARM64
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_TRACER
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+-	select HAVE_FUNCTION_GRAPH_RETVAL if HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_GRAPH_TRACER
++	select HAVE_FUNCTION_GRAPH_RETVAL
+ 	select HAVE_GCC_PLUGINS
+ 	select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
+ 		HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
 -- 
-2.25.1
+2.30.2
 
 
