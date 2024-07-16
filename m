@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-253834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308BD93279E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2AD9327A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC66283693
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8637A28569C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7D119ADB1;
-	Tue, 16 Jul 2024 13:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0ED19AD71;
+	Tue, 16 Jul 2024 13:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="dPTUN2in"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZQU9Rc1"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65771199EA8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC281732
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721137074; cv=none; b=F78VJeIgooDyqlE8Gs+nZi/eXOBET9pZdxqnm/95ijT/dwgboW8rfajoZcvTJks1kLsPyiQLlb6/HgwkApf6FsD1WkgDFcBkkh/rOvKljkr0Ie8Cr4fu2tBKU/1IT8k8hKbxLJ2yLxA1Wx8MkQ+FypRQEqGd5IRkaaeTrik8w/s=
+	t=1721137147; cv=none; b=nZx2uOL7PqL+6tHZ/IijJoFgRzVbH/f3E7sTRe9sbyRdGqjtkUfBRjYbveutJsfXWcFrKCA30i4aEcuoBtfA2I6VkNSjekNOV8dminQekJor3LsP8KURK7/tsiJGKk4CyNT2jdqVI1SHwRhWss3TnRctpbAKs3/9QsLs2WbDIyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721137074; c=relaxed/simple;
-	bh=bHCqDkoD3Nfw+v/tmBe2MHQcIm42tiz5H4CisXJcl64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flYGsKlxYMw8dDLFzr6u1pU2zFrccY3NCHzJIZNupfhdFGKT1qW4EONg6rWLXeWs9XYbM5WYOczM96e8KAu3w7kw15UsNV7c94j+syPmjD/+gDhdrAHF3mxeMe/ztD9py7+0LY5x50glj9vDGMLh0Wut2uhM/oFmF1jFti8VUCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=dPTUN2in; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77b60cafecso650230066b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:37:52 -0700 (PDT)
+	s=arc-20240116; t=1721137147; c=relaxed/simple;
+	bh=X7bklE2GsqthkplIQvZDv5rg3XCkY1GEHEuOa1Ws1NY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yn0hgJ3eyC9RBM6jnPRRitJLvufpd82Y7mariKq5LUsyXMH2u2+3xFw1QKp3QeCXMnVtYSS9eX3bz55JIv9ZFEDKQ/CFsGHJ6TKyQtkLsrjhCi1aOS45N+h+NtITNMFbgRQarB/GPFjxuGxDyJY/RccbKwTRHjaRQ2zG9oruCb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZQU9Rc1; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42793fc0a6dso37494525e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1721137071; x=1721741871; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=01CGZeuJlS/iVbJO+uEwAdD1+WG7mqLJ/um4UuZ/sVI=;
-        b=dPTUN2inNRGEeREUizkgFjLkgOVuGwBUPZaLRmKfwOs7fSbYVlyeJZsdv1ZzfLfs3R
-         rmaQyrZPheuo3buo2B7GQxcSJXqzJgRUHrQvdeMM0mPEvS8Dyp2jE/xB6Hi8US6yFxMV
-         ITiyNMKKGLZncRy7v/i23Axtr2GeFw/Ac/swTAirkma7VZVwFk/8+Pj7/0FCAaO320Kr
-         MsBySNVs1vVvnr2qTVkXXeGIaGfhlGZUT3v8HqQ34UqdlyqL4/0yuuS77E6j4SN4yY/i
-         V3bEpBNZ6XMKKFK8H045hr16InSUwI5Hh0YHKarPnAjECIbm2H++bKWfC10KACwuO/oE
-         ZFIQ==
+        d=linaro.org; s=google; t=1721137144; x=1721741944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hoRw9TcQOEMBdmZxq6Nd1FUggtL3OxOdKdUjU7Ar674=;
+        b=PZQU9Rc1uamUErcSkYo19qR9o9/Qg+Fl+7O1SBqoh+4cT234bFkHAWfW9/3P9NCfG6
+         CyKIFlw6jJ8JgtrXoNeYdgNzUeu0wclCpvkTi4BpyFy2nk6zJ7pQClwJmah1juz8g2Xf
+         vCVYNQr1tuhi4/5Q+eBwJUAMUoQ3p780kMURErG7+VciGybWg2hfmhi3f02TlbNtL9d2
+         zBUr0hqiWHnNfOpZ6jaoioBy2KBvm8vuCz3bVOk/gx4Mui7mnb6ykjAFK5cvR8+FiusK
+         rUli2JRfz+CfagRELvymZ1cP6MiSRrT5zrTFLNuI32eSduncjaPYK20c1UvKh8C8NACm
+         fJqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721137071; x=1721741871;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=01CGZeuJlS/iVbJO+uEwAdD1+WG7mqLJ/um4UuZ/sVI=;
-        b=UrLMDomnSQJh7e/OgI12o2bxrSCZ1n7FRkz5jjHvlO0NaWtLPA1ZSj0yA8CY6cCoMR
-         aSSZIk+NQKl+uNlCWm9FA/WMOWWnmP9k2aL5ujh75OpWBqk2LZuff8z8tAa2HaCgUKOu
-         QAs+1Lceyuf9wOu3Fzr+aS7VdM1fMyLGbMsHlkmCSz4ZTnlwmg1q2Mi5VA1KfQzWyecB
-         EAx3SdHZ8RNqF+d3gWMDfjS0lqeauHCUn9JNz1E0eiCQ/s7kO7YfF/TfBBjtye6Sv4yz
-         QwF/lsW1lOaL4aRMJ0Uk12G9rSAQnKITNX6CWnpMSbuWuE4SZf156Pz02h8wqZAbkmvv
-         tgSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA38MJt9SyEUCnLBdUr42z/Z/jwD82GcWQGnjPsEGrAFkrt4GASl4XHuQp5e+Tu8t5r6w7aa7w5PcdRdIy0vsNckfFzLKf1pWxTapq
-X-Gm-Message-State: AOJu0Yzzl0PAUk25RqnFzpSvEEFhYkDp4QVC3d/SKN6BKEs50z9c7HhU
-	kAXCp1/avS9Tk24RfUAxlA+CNYfefluJXEwNNg9bHcC3LHI9JhGtXtyJwHTqtFQ=
-X-Google-Smtp-Source: AGHT+IEEE4wIR/+qdr26oglrqdbNNCgxVgcYqpZavGvpIAmwKKRDSm/ei3CP4AVu06EkKXR2f1SbxA==
-X-Received: by 2002:a17:906:f9d5:b0:a77:e71e:ff8d with SMTP id a640c23a62f3a-a79eaa5ec64mr118347266b.70.1721137040713;
-        Tue, 16 Jul 2024 06:37:20 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e42sm317447866b.101.2024.07.16.06.37.19
+        d=1e100.net; s=20230601; t=1721137144; x=1721741944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hoRw9TcQOEMBdmZxq6Nd1FUggtL3OxOdKdUjU7Ar674=;
+        b=FEfw+eXJUHW4qjutJpScuDqJF4FZlnPECbhQvNvh01yMWlYyRdufb9F8eygBxGXO9z
+         iRlo4ZfGiDt0zqZJgV2hPQn2dB9farl0vJ99VQ/QF2wl9gmW+JTKQ+uWSyP8HlRoKPeF
+         ea8KlfFcSH6ngOj9B4r5sf9nHj24s+6n7yx9zHaJKuap1BE5iYLWNmf+i2HbnneB2KyU
+         9gyZ9rD5GlKj/FqoKIM/NOcJllQAhCS0pfxgzJHvGZK00+GrLNft3yyuDEUwNB7EMGyM
+         aIj/7lgDR+tx19HUWrd7hbJ/kqZOqPajmttQ9eFRGBV87iyRt1m3AhhF5PqkQYWVSQ9Z
+         +OKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPYPIwN2VwFCKexZnVbVyGaCNQTseHsP426UxLRJuoxzDeNYG4Ql9dey22y12KHKLy7I98ULY3wRtmFe1ww+GMkFo1xDW7TW26aURK
+X-Gm-Message-State: AOJu0YxT8v7EQYCdI9RZNkty49tVOiL0JcIox1sfBVRyh2eUVvjZ92bV
+	JSVQsX6/FNAVj2AygFXbQAFBxiyKaYABMpLpHtNpToS0/NQg2nmaMOdtZTng/bA=
+X-Google-Smtp-Source: AGHT+IGXs0HjAx3DBf4LWEbRloC7TAHjz/hinusld4TqeGA/WwEle1cNhCho1exyWsBz602KmeEFJA==
+X-Received: by 2002:a5d:6143:0:b0:367:9877:750e with SMTP id ffacd0b85a97d-3682609b526mr1426499f8f.25.1721137144212;
+        Tue, 16 Jul 2024 06:39:04 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf0e4sm9106564f8f.33.2024.07.16.06.39.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 06:37:20 -0700 (PDT)
-Date: Tue, 16 Jul 2024 15:37:16 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-	andrew@lunn.ch, horms@kernel.org, hkallweit1@gmail.com,
-	richardcochran@gmail.com, rdunlap@infradead.org,
-	linux@armlinux.org.uk, bryan.whitehead@microchip.com,
-	edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V2 0/4] Add support to PHYLINK for
- LAN743x/PCI11x1x chips
-Message-ID: <ZpZ3jOmJo_mr48K9@nanopsycho.orion>
-References: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+        Tue, 16 Jul 2024 06:39:03 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: thermal: qcom-tsens: Document ipq6018 temperature sensor
+Date: Tue, 16 Jul 2024 14:38:02 +0100
+Message-ID: <20240716133803.82907-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716113349.25527-1-Raju.Lakkaraju@microchip.com>
+Content-Transfer-Encoding: 8bit
 
-Tue, Jul 16, 2024 at 01:33:45PM CEST, Raju.Lakkaraju@microchip.com wrote:
->This is the follow-up patch series of
->https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
->
->Divide the PHYLINK adaptation and SFP modifications into two separate patch
->series.
->
->The current patch series focuses on transitioning the LAN743x driver's PHY
->support from phylib to phylink.
->
->Tested on chip PCI11010 Rev-B with Bridgeport Evaluation board Rev-1
->
->Change List:
->============
->V1 ->V2:
->  - Fix the Russell King's comments i.e. remove the speed, duplex update in 
->    lan743x_phylink_mac_config( )
->  - pre-March 2020 legacy support has been removed
->
->V0 -> V1:
->  - Integrate with Synopsys DesignWare XPCS drivers
->  - Based on external review comments,
->  - Changes made to SGMII interface support only 1G/100M/10M bps speed
->  - Changes made to 2500Base-X interface support only 2.5Gbps speed
->  - Add check for not is_sgmii_en with is_sfp_support_en support
->  - Change the "pci11x1x_strap_get_status" function return type from void to
->    int
->  - Add ethtool phylink wol, eee, pause get/set functions
+Document the ipq6018 temperature sensor, which is used in ipq6018.dtsi
+and is compatible with the ipq8074 temperature sensor.
 
-Net-next is closed. Please repost once it opens again.
+Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+---
+ Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+index 99d9c526c0b6..d6f333a7bcd1 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
++++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+@@ -76,6 +76,7 @@ properties:
+       - description: v2 of TSENS with combined interrupt
+         items:
+           - enum:
++              - qcom,ipq6018-tsens
+               - qcom,ipq9574-tsens
+           - const: qcom,ipq8074-tsens
+ 
+-- 
+2.45.2
 
->
->
->Raju Lakkaraju (4):
->  net: lan743x: Create separate PCS power reset function
->  net: lan743x: Create separate Link Speed Duplex state function
->  net: lan743x: Migrate phylib to phylink
->  net: lan743x: Add support to ethtool phylink get and set settings
->
-> drivers/net/ethernet/microchip/Kconfig        |   5 +-
-> .../net/ethernet/microchip/lan743x_ethtool.c  | 118 +---
-> drivers/net/ethernet/microchip/lan743x_main.c | 657 +++++++++++-------
-> drivers/net/ethernet/microchip/lan743x_main.h |   7 +
-> 4 files changed, 460 insertions(+), 327 deletions(-)
->
->-- 
->2.34.1
->
->
 
