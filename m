@@ -1,185 +1,181 @@
-Return-Path: <linux-kernel+bounces-253300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E8B931F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:25:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D18F931F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF01E1F21D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE671C20FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07B612B72;
-	Tue, 16 Jul 2024 03:25:24 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977314277;
+	Tue, 16 Jul 2024 03:27:47 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AAE101CA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB95101CA;
+	Tue, 16 Jul 2024 03:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721100324; cv=none; b=XpYaf+bsMMRVb7QUy4Ub4CzLrGrCv+k+PDGeC5IcudcKjPhnKCR6Sy376Hl06o05ArGEN1j7sMHk2ANxjdbzToljse2XiUIJJO2FLAuNprtDPDMar8GgIPFCFiUGBlZbqSfEpci5hVKGB3tjj51GxbA4gvTa7l2gF9TO7aqvnNg=
+	t=1721100466; cv=none; b=VLJ9P4RrFwXfHDDFViySXO3QuYcbH66+3mHY9KAwmj6q2yXaepT0Clw2d8KroriCG3kXZ/LXkUmMMeCMg5SDc53weLkbVUXH4aEbNr4G087/Z/mSvnSyilZo0GfTTUOP6FGhqDKIIX24mxQ1AbNYuI42BWj7cmo93cEWeYHi3Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721100324; c=relaxed/simple;
-	bh=McTQGGvwmihi2Iz8fCq5AfY7xst6dkZrJJzfw7rzDW0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CjFm9efAxAhFCLMj07woxTpiaj6+LIerCcY7JUhlSsgy9F6MhPYhFLxEaaplJkXS6649gfet4XtLrqdYBVnB2fKk4QsTsONg6QsvZvJj8r1FZr1AtE1d/3bp+j+leeKA2rkAY/+mf1M/KX7Ju6jBvBwRch/fDUFF9TDl5UhlrBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so641927739f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 20:25:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721100321; x=1721705121;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fz83GFOq5KzFlCswA7Bbze2t4hktP5KYwhx+++WwIVY=;
-        b=Nb2gG3ZImSS2+4/l4MzIiE+XxmcTOi63IQ7do7s1mLzem+PiaJ6YhTLd57lapSK2Yr
-         ISS+oZu8yMDk3yCf1WJUB2EwvrViH5w5fotm5HwZBYZBqftXgxNzst7PDxJgM7f5tqRX
-         v3QDK9tL6/tnCMc6Hn5KgHXjUyFYRKtwEF8P/OKIaXnTRzr5OotH+ZSVxasoNrjeWNx+
-         jUQsuJXHniLwEo0BBiFlDec0n3rHnRYWKQfv1bmAVQIMzYMOoC6agvQm7yN5jrbDhQ3a
-         CFHYKiWqbmMLCOtuCcLHHJ3+S8LU7sgKiINZigCeTpiOD5rqq/YinR52KGNRjfHXJFgu
-         icdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlnOeeHPMRfvBb5RBJBAypjWcujv2s2fD7T+R1OsiPE6Fb13se2/iB+rXSZ7+/qHgILS8ogIBX10FA6Ze8G1TfeMMjbJT/Iitg/DdE
-X-Gm-Message-State: AOJu0Yw3/pHQ6J1D9VA49b+l5X1m7hXF81/OxV0S5oVqOLe1rEJ+nerS
-	CooA70DtyPVkgVm6fojIEPaLLJVECL5OkDm30+PHtSSS/324U4cwdgySWYdETq9GJWy7J5H//3D
-	DFqCaz1Jo2HQZhQr6uAFldApv6NDbGDoOdgU9VlGFrxRQM092gGjz7f8=
-X-Google-Smtp-Source: AGHT+IHceahWAYGa46JuyGj8INeCjgtiXahPf3RtU2b2/wJWQZ34rEUGRdqtiC0GIAMKWYwj1PU9kQ9v9DIkHCj9Xf7xZgac18WN
+	s=arc-20240116; t=1721100466; c=relaxed/simple;
+	bh=D/khzkVTSnAQ7t3Ylwl2d9BOVcG3hflEnBWLEB1zIXE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=fxdTUZ5/jR9qnf5ZUaAiveDMKbm3Fusx9Eo0x0mYxrBhG1RqF2XIMJ4FRxpCyvbedFX5KZF26P1YvhcasRlcQKLIzz5z+ON5ojXkTYfB4aaifh1M8DoicbYimPjVT6RVWvkprZleJycuNS9r7NcEDDwEcMlRiYLFnnCpJ4kZ3Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WNPXM1b4fzxWSj;
+	Tue, 16 Jul 2024 11:22:59 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5411180064;
+	Tue, 16 Jul 2024 11:27:40 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 16 Jul 2024 11:27:40 +0800
+Message-ID: <cb0efc16-6df2-72b7-47ea-ce524d428cc1@huawei.com>
+Date: Tue, 16 Jul 2024 11:27:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a02:b0:382:feb2:2117 with SMTP id
- e9e14a558f8ab-393d3e3981cmr777885ab.6.1721100321564; Mon, 15 Jul 2024
- 20:25:21 -0700 (PDT)
-Date: Mon, 15 Jul 2024 20:25:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004a3a2e061d54e592@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in bch2_opts_apply
-From: syzbot <syzbot+c55b814203b2ecab10bb@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v5 2/5] cgroup/pids: Make event counters hierarchical
+Content-Language: en-US
+From: xiujianfeng <xiujianfeng@huawei.com>
+To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+	<cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
+ Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+	<shuah@kernel.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>
+References: <20240521092130.7883-1-mkoutny@suse.com>
+ <20240521092130.7883-3-mkoutny@suse.com>
+ <f124ce60-196e-2392-c4a9-11cdcacf9927@huawei.com>
+In-Reply-To: <f124ce60-196e-2392-c4a9-11cdcacf9927@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+Friendly ping, more comment as below.
 
-HEAD commit:    5e0497553643 Merge branch 'link_path_walk'
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d2e3e1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=283288d3d08ee56f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c55b814203b2ecab10bb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bd24b5980000
+On 2024/7/3 14:59, xiujianfeng wrote:
+> 
+> 
+> On 2024/5/21 17:21, Michal Koutný wrote:
+>> The pids.events file should honor the hierarchy, so make the events
+>> propagate from their origin up to the root on the unified hierarchy. The
+>> legacy behavior remains non-hierarchical.
+>>
+>> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+>> --
+> [...]
+>> diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
+>> index a557f5c8300b..c09b744d548c 100644
+>> --- a/kernel/cgroup/pids.c
+>> +++ b/kernel/cgroup/pids.c
+>> @@ -238,6 +238,34 @@ static void pids_cancel_attach(struct cgroup_taskset *tset)
+>>  	}
+>>  }
+>>  
+>> +static void pids_event(struct pids_cgroup *pids_forking,
+>> +		       struct pids_cgroup *pids_over_limit)
+>> +{
+>> +	struct pids_cgroup *p = pids_forking;
+>> +	bool limit = false;
+>> +
+>> +	for (; parent_pids(p); p = parent_pids(p)) {
+>> +		/* Only log the first time limit is hit. */
+>> +		if (atomic64_inc_return(&p->events[PIDCG_FORKFAIL]) == 1) {
+>> +			pr_info("cgroup: fork rejected by pids controller in ");
+>> +			pr_cont_cgroup_path(p->css.cgroup);
+>> +			pr_cont("\n");
+>> +		}
+>> +		cgroup_file_notify(&p->events_file);
+>> +
+>> +		if (!cgroup_subsys_on_dfl(pids_cgrp_subsys) ||
+>> +		    cgrp_dfl_root.flags & CGRP_ROOT_PIDS_LOCAL_EVENTS)
+>> +			break;
+>> +
+>> +		if (p == pids_over_limit)
+>> +			limit = true;
+>> +		if (limit)
+>> +			atomic64_inc(&p->events[PIDCG_MAX]);
+>> +
+>> +		cgroup_file_notify(&p->events_file);
+> 
+> Hi Michal,
+> 
+> I have doubts about this code. To better illustrate the problem, I am
+> posting the final code here.
+> 
+> static void pids_event(struct pids_cgroup *pids_forking,
+>                        struct pids_cgroup *pids_over_limit)
+> {
+> ...
+>         cgroup_file_notify(&p->events_local_file);
+>         if (!cgroup_subsys_on_dfl(pids_cgrp_subsys) ||
+>             cgrp_dfl_root.flags & CGRP_ROOT_PIDS_LOCAL_EVENTS)
+>                 return;
+> 
+>         for (; parent_pids(p); p = parent_pids(p)) {
+>                 if (p == pids_over_limit) {
+>                         limit = true;
+>                         atomic64_inc(&p->events_local[PIDCG_MAX]);
+>                         cgroup_file_notify(&p->events_local_file);
+>                 }
+>                 if (limit)
+>                         atomic64_inc(&p->events[PIDCG_MAX]);
+> 
+>                 cgroup_file_notify(&p->events_file);
+>         }
+> }
+> 
+> Consider this scenario: there are 4 groups A, B, C,and D. The
+> relationships are as follows, the latter is the child of the former:
+> 
+> root->A->B->C->D
+> 
+> Then the user is polling on C.pids.events. When a process in D forks and
+> fails due to B.max restrictions(pids_forking is D, and pids_over_limit
+> is B), the user is awakened. However, when the user reads C.pids.events,
+> he will find that the content has not changed. because the 'limit' is
+> set to true started from B, and C.pids.events shows as below:
+> 
+> seq_printf(sf, "max %lld\n", (s64)atomic64_read(&events[PIDCG_MAX]));
+> 
+> Wouldn't this behavior confuse the user? Should the code to be changed
+> to this?
+> 
+> if (limit) {
+>       atomic64_inc(&p->events[PIDCG_MAX]);
+>       cgroup_file_notify(&p->events_file);
+> }
+>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/261c3e7d5786/disk-5e049755.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c8c2016ade71/vmlinux-5e049755.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a12469ba78b6/bzImage-5e049755.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/63c33ff217d1/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/6fd311b2dd60/mount_1.gz
+or should the for loop be changed to the following?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c55b814203b2ecab10bb@syzkaller.appspotmail.com
+atomic64_inc(&pids_over_limit->events_local[PIDCG_MAX]);
+cgroup_file_notify(&pids_over_limit->events_local_file);
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc00000000ea: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000750-0x0000000000000757]
-CPU: 0 PID: 5957 Comm: syz.0.90 Not tainted 6.10.0-syzkaller-00017-g5e0497553643 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:bch2_opts_apply+0x175/0x4710 fs/bcachefs/opts.c:179
-Code: c0 0f 85 88 28 00 00 44 89 3b 48 8d 5c 24 40 41 f6 c6 04 0f 84 5d 19 00 00 e8 b7 23 5d fd 4d 8d 7c 24 08 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 75 28 00 00 4c 89 f8 48 c1 e8 03 42 0f
-RSP: 0018:ffffc900032d7820 EFLAGS: 00010212
-RAX: 00000000000000ea RBX: ffffc900032d7860 RCX: ffff88802046da00
-RDX: 0000000000000000 RSI: ffffc900032d7a40 RDI: ffffc900032d7900
-RBP: ffffc900032d7990 R08: ffffffff8427ea52 R09: 1ffffffff1f5b2ad
-R10: dffffc0000000000 R11: fffffbfff1f5b2ae R12: 0000000000000751
-R13: dffffc0000000000 R14: 0080000000000004 R15: 0000000000000759
-FS:  000055557be6c500(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0c3ffff000 CR3: 000000002bf8e000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- bch2_mount+0x774/0x13c0 fs/bcachefs/fs.c:1946
- legacy_get_tree+0xf0/0x190 fs/fs_context.c:662
- vfs_get_tree+0x92/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1cb79772da
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff0b6bb668 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fff0b6bb6f0 RCX: 00007f1cb79772da
-RDX: 0000000020000000 RSI: 0000000020000040 RDI: 00007fff0b6bb6b0
-RBP: 0000000020000000 R08: 00007fff0b6bb6f0 R09: 0000000000000010
-R10: 0000000000000010 R11: 0000000000000246 R12: 0000000020000040
-R13: 00007fff0b6bb6b0 R14: 0000000000005ba5 R15: 00000000200000c0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_opts_apply+0x175/0x4710 fs/bcachefs/opts.c:179
-Code: c0 0f 85 88 28 00 00 44 89 3b 48 8d 5c 24 40 41 f6 c6 04 0f 84 5d 19 00 00 e8 b7 23 5d fd 4d 8d 7c 24 08 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 75 28 00 00 4c 89 f8 48 c1 e8 03 42 0f
-RSP: 0018:ffffc900032d7820 EFLAGS: 00010212
-RAX: 00000000000000ea RBX: ffffc900032d7860 RCX: ffff88802046da00
-RDX: 0000000000000000 RSI: ffffc900032d7a40 RDI: ffffc900032d7900
-RBP: ffffc900032d7990 R08: ffffffff8427ea52 R09: 1ffffffff1f5b2ad
-R10: dffffc0000000000 R11: fffffbfff1f5b2ae R12: 0000000000000751
-R13: dffffc0000000000 R14: 0080000000000004 R15: 0000000000000759
-FS:  000055557be6c500(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff710d25000 CR3: 000000002bf8e000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	c0 0f 85             	rorb   $0x85,(%rdi)
-   3:	88 28                	mov    %ch,(%rax)
-   5:	00 00                	add    %al,(%rax)
-   7:	44 89 3b             	mov    %r15d,(%rbx)
-   a:	48 8d 5c 24 40       	lea    0x40(%rsp),%rbx
-   f:	41 f6 c6 04          	test   $0x4,%r14b
-  13:	0f 84 5d 19 00 00    	je     0x1976
-  19:	e8 b7 23 5d fd       	call   0xfd5d23d5
-  1e:	4d 8d 7c 24 08       	lea    0x8(%r12),%r15
-  23:	4c 89 e0             	mov    %r12,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 75 28 00 00    	jne    0x28ac
-  37:	4c 89 f8             	mov    %r15,%rax
-  3a:	48 c1 e8 03          	shr    $0x3,%rax
-  3e:	42                   	rex.X
-  3f:	0f                   	.byte 0xf
+for (p = pids_over_limit; parent_pids(p); p = parent_pids(p)) {
+    atomic64_inc(&pt->events[PIDCG_MAX]);
+    cgroup_file_notify(&p->events_file);
+}
 
+The current behaviour is quite different from other subsys, such as
+memcg, that make me confused, maybe I am missing something.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+it's appreciated if anyone could respond.
 
