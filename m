@@ -1,159 +1,167 @@
-Return-Path: <linux-kernel+bounces-253389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670F0932068
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71237932072
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929331C21442
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950071C212A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADEA1C6A4;
-	Tue, 16 Jul 2024 06:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DB31CD29;
+	Tue, 16 Jul 2024 06:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="avJq/JYi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KMUfw4Da"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434E31862C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9251817C91
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721110980; cv=none; b=eMH+o/LMba/teLTaV4jRdltoQCwYZ39wa0w9VR5NLXNRXSZAdsXFU3ikzu7OC0fB6BE8gMXsK+ttRVUuVnyDYY8Pe4EycJabEobyKNSzC86nCfJf4cdlqNPgrqlQH+SlseRCrJ4kCYmMwRiTZwgnnsVWpv9oHw/Pfs02uu/1AHU=
+	t=1721111474; cv=none; b=CBmCyQ1hRvfqbEeBLmILtfO5YlqPH1Ke+zxGm16JM09iFSllXiTj+DdGgI/d7RT24hKq2oEs8N7QO4CN+hVnKMaO9n9GT6+hh7s2Qchp/ZCp59izQhRUcX6D5MryEfhrPt53KIR/fy1TPMO5xtIEp/3nEpIuPc7z8Vt5/LKlVGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721110980; c=relaxed/simple;
-	bh=fD3MfLU3ikk/UuUZdhypDiJ9UTHRdvVQ0KcNRCRsAvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKyNYFgmyVMv0AtwucLLWYHZpSTOrmh7hINTOuNpPxY5tEt49GfCczkxvWD1x4zqlXMVv+JvNDqdoZkL+wreIqspm3Jwmr/SyS/1TWiFndziukKi54xzAJERIZXH1oGBynLTcBywXz7Xf+BZZX040IDM6g3S21gtllj/j0XYcDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=avJq/JYi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721110977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqKn77J468u2b1ZYWnF9Bn5NYZUmxmPmv9PF18q3/+M=;
-	b=avJq/JYiOs1lKscfqv5rhlUA8LdgBcWCgIxo0TKUTgSVWIuKdD9YfQhwf835/63SKRaXB9
-	cMQK96b5nSsFYvzBFaoxsn5NeJFBg/ploN6bN7X6GVS4gTUFjPGrKxq0NHIlt7QBjgC18S
-	1nbJ0Sa4gxQ+KMR9CB69fB6/YKxlitU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-JfpIj8o0NGGlNF0_rU1jwA-1; Tue,
- 16 Jul 2024 02:22:53 -0400
-X-MC-Unique: JfpIj8o0NGGlNF0_rU1jwA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 949221955D44;
-	Tue, 16 Jul 2024 06:22:51 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.8])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 873E21955F40;
-	Tue, 16 Jul 2024 06:22:42 +0000 (UTC)
-Date: Tue, 16 Jul 2024 14:22:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: akpm@linux-foundation.org, vgoyal@redhat.com, dyoung@redhat.com,
-	austindh.kim@gmail.com, rmk+kernel@armlinux.org.uk,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] crash: Fix x86_32 and arm32 memory reserve bug
-Message-ID: <ZpYRrsSLd2ZpUyff@MiWiFi-R3L-srv>
-References: <20240713014808.1689915-1-ruanjinjie@huawei.com>
- <ZpU2rJ1aKyqlu8IN@MiWiFi-R3L-srv>
- <ff8d5b8c-088c-9e05-53b2-f86335a18b8f@huawei.com>
+	s=arc-20240116; t=1721111474; c=relaxed/simple;
+	bh=8VezIcNuQFJ7Jvqgoi8kRV0zrSKKXW0iIxZzEbElfVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+j51aIkdKv6/FeyvT8LMtpYmVnveJEPLumYxInAhrv/Q0jc4D/Ix3dw6bO1S+zQjLdh1tQsP8zGEwCmZmD6NAiTSPV4U5OpkNiWuaMTsGI1nYEHFx0Nb+YzlTc5wJl2LPl3PXLE1W8M2uyr++/Tm9ZjDgzHYqRxtjA/jD1cHaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KMUfw4Da; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab8cso8167140a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 23:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721111471; x=1721716271; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ib7WP4Tl50HBT9YQYeKlxRIrMlFPUpbOBY9W7STica4=;
+        b=KMUfw4DadMGlZXtNyriHOX7vy4UFjX1c26XjidvFtb9D2k9TZ4xGMt+opxdQaR4GfO
+         AJoShd0GpAPBbgUTN3TriiAmO12YEVsXcFGqQ2RpPhUlatNSJeu4XtRSntOv1RNp5WjX
+         vnrTFy5R1sc7dfo52OWaxyTc96JPNMbGyiqBT+eRKV5uiMX9nsl5vEhTr/9J5GtMRgS7
+         Qdr98aaFT8aAvwHkzUx1Gl/qzvD8zoO7eWQ5Ym52dD94w/cnIe72SQCVr07i5JmMZgpA
+         KsXKKlr7G7oUEjOZSq58t6SSZrnCgd1wcHtt8yfawS+iTCvqmyDMWk1tKF0XY+H+BEQ+
+         WDbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721111471; x=1721716271;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ib7WP4Tl50HBT9YQYeKlxRIrMlFPUpbOBY9W7STica4=;
+        b=cntNre1FDTeSofSUF7I64epu4B41+3RJz61EL+saiGR4FUB36EBUOMiJ2FSLBdffMq
+         aQH0Bqp8tBa4BstI9pLo25IPrxpC5SwEO5SThYljFaL/xQa3eyTVvVI2fyynL/u/aPEa
+         XiATZtaU0ox7sxyJ19SCkCcbWisiSBnHlWxM27Y9Ja059tM+Omw5xjjf7LqbJu1qpZwt
+         poktSUxMy+bAlmZOmUOoGOk9rwHrWSys+LIzZgIOxXXfZzqbx6hKmCqR3yo6hz0cqdY8
+         u6HG8rOXqNZraSiUxykQjJDjcK92KhIkCaEnBEPyEzbcBo1N/Z48gDvMnUTGOO0KqIH0
+         8liA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYfReH174/099HQvlT9rZvvZMO8YTPrH5fAgv2iH5zifcWlU15s1WfRKDCmx4Kze5tRGYdqUaBb2s/1Nrixk8TYXcYoNIr7mXuZ2NJ
+X-Gm-Message-State: AOJu0YxSoJpUwvJBIBboF6oLgO4RSqw+B2W9n8XDpJ1/rxkM39FgcidM
+	CH2xMHXu8hwlKQAIO859YPKFa+ofGeP9vAypPjPCX0KJqoSQu+XT1RS+bnKmMGg=
+X-Google-Smtp-Source: AGHT+IHYHJo11tn9T9fAHB83wDVewhTAv6b8f703zQtbdOYeUqmBjOxrwbTLEwcJoYAJO+5Fvefdfg==
+X-Received: by 2002:a05:6402:35cc:b0:58d:c542:2500 with SMTP id 4fb4d7f45d1cf-59eee64410emr705921a12.10.1721111470966;
+        Mon, 15 Jul 2024 23:31:10 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b24a76fc3sm4375774a12.9.2024.07.15.23.31.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 23:31:10 -0700 (PDT)
+Message-ID: <04be66d2-de35-4190-ba9d-011b2b639f94@linaro.org>
+Date: Tue, 16 Jul 2024 08:31:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff8d5b8c-088c-9e05-53b2-f86335a18b8f@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 9/9] iio: adc: ad7173: Add support for AD411x devices
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
+ <20240607-ad4111-v7-9-97e3855900a0@analog.com>
+ <e48b2dee-11d2-4dbc-868d-10870e3c07dd@linaro.org>
+ <68a25946-247d-4351-b847-35605220b16f@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <68a25946-247d-4351-b847-35605220b16f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 07/16/24 at 11:44am, Jinjie Ruan wrote:
+On 15/07/2024 19:17, Ceclan, Dumitru wrote:
+>>
+>> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+>> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+>> Some warnings can be ignored, especially from --strict run, but the code
+>> here looks like it needs a fix. Feel free to get in touch if the warning
+>> is not clear.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
+> I do not get any warnings, only checks
 > 
-> On 2024/7/15 22:48, Baoquan He wrote:
-> > On 07/13/24 at 09:48am, Jinjie Ruan wrote:
-> >> On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=4G" is ok
-> >> as below:
-> >> 	crashkernel reserved: 0x0000000020000000 - 0x0000000120000000 (4096 MB)
-> >>
-> >> And on Qemu vexpress-a9 with 1GB memory, the crash kernel "crashkernel=4G"
-> >> is also ok as below:
-> >> 	Reserving 4096MB of memory at 2432MB for crashkernel (System RAM: 1024MB)
-> >>
-> >> The cause is that the crash_size is parsed and printed with "unsigned long
-> >> long" data type which is 8 bytes but allocated used with "phys_addr_t"
-> >> which is 4 bytes in memblock_phys_alloc_range().
-> >>
-> >> Fix it by limiting the "crash_size" to phys_addr_t and bypass the invalid
-> >> input size.
-> > 
-> > I am not sure if this is a good idea. Shouldn't we handle this in
-> > arch_reserve_crashkernel() to check the system RAM size?
-> > 
-> > With this patch, if you specify crashkernel=4352M (namely 4G+256M) in
-> > kernel cmdline, then you will reserve 256M crashkernel in system, don't
-> > you think that is confusing?
-> 
-> You are right!
-> 
-> In the case you mentioned, it can still allocate 256M successfully, but
-> the log shows 4352M successfully allocated, which is not taken into
-> account by this patch.
-> 
-> And handle this in arch_reserve_crashkernel() is a good idea, which will
->  bypass all these corner case, I'll do it next version.
-> 
-> > 
-> > By the way, I am considering changing code to apply generic crashkernel
-> > reservation to 32bit system. Maybe below draft code can prevent
-> > crashkernel=,high from being parsed successfully on 32bit system.
-> > 
-> > What do you think?
-> 
-> I agree with you, I've thought about passing in a parameter in the
-> generic interface whether high is supported or not to implement it,
-> which is so incompatible. An architecture-defined macro to filter out
-> parsing of "high" fundamentally avoid using the generic interface to
-> allocate memory in "high" for the architecture that does not support
-> "high". The below code do prevent "crashkernel=,high" from being parsed
-> successfully on 32bit system.
-> 
-> But if it is to support 32 bit system to use generic crash memory
-> reserve interface, reserve_crashkernel_generic() needs more modification
-> , as it may try to allocate memory at high.
+> If you meant the checks:
+> - for the alignment check, i would only argue for struct_group(config_props that looks good
+> - for unnecessary parentheses the compiler warning appears without the parentheses:
+>       warning: suggest parentheses around comparison in operand of ‘!=’ [-Wparentheses]
 
-You are right. Below change may be able to fix that. 
+Hm, in that case it looks like you documented some entirely different
+bindings?
 
-And I have been thinking if one case need be taken off in which the
-first attempt was for high memory, then fall back to low memory. Surely,
-this is not related to the 32bit crashkernel reservation.
-
-By the way, do you figure out these issues from code reading and qemu
-testing, or there's need for deploying kdump on 32bit system, e.g i386
-or arm32? Just curious.
-
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5b2722a93a48..ac087ba442cd 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -414,7 +414,8 @@ void __init reserve_crashkernel_generic(char *cmdline,
- 			search_end = CRASH_ADDR_HIGH_MAX;
- 			search_base = CRASH_ADDR_LOW_MAX;
- 			crash_low_size = DEFAULT_CRASH_KERNEL_LOW_SIZE;
--			goto retry;
-+			if (search_base != search_end)
-+				goto retry;
- 		}
- 
- 		/*
+Best regards,
+Krzysztof
 
 
