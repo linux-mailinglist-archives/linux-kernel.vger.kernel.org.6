@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-253983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163ED9329AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:49:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1DE9329A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CA02869CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:49:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 259CDB212B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5A219D88A;
-	Tue, 16 Jul 2024 14:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF25619D88D;
+	Tue, 16 Jul 2024 14:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="efPuzL5W"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZx/lAmr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDF9198A1A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1058419CD18;
+	Tue, 16 Jul 2024 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721141330; cv=none; b=DGSI9urR6SHeaw8jBqiFgBtIsB1LtoNR0bLKxunOkIWPrGP8LaPVBInqZ+77r+rErHHFaC1NmyGabtxk+PjIIe8PRkhIX7QZ+PyjBRdDtIrykYLpCA9vI7CsbqIVkqiK101K8HXNZVp4zxmQ0kgHv5vYzmF8QZ6saiDVCM3zp5Q=
+	t=1721141295; cv=none; b=McJ9jh4Xr/8POzWDGYg4rjHkDMazKDaaNiSrKnL1+wEXiIbtQNOIHUlr/mz1qwUTgTbKK7vzbOEog+yFYAQUxXOs8XzcapR5BVcW7xY9gzqNZcg1CpgAJKXzq2UtzfvOTTSAUa67jwZahsjiAQcCkdMiGQzVv0srZFc3wDAtQrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721141330; c=relaxed/simple;
-	bh=bWuhf1ICw3I2jwagK6LuZPJ5kgY086Z9ZS82Q9meJUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=toW+yOUjsQF8xb1O7++QlAj8pwaMjd8PlodKSTao7D3vPPOIo/H8SK0/YE14rhidHP2S2bN3IeVghcNjrtGlrIDLEtmeifA8YWJpvDYI4TxH6fUouQUHnJgR/wXSPf30FoC7tXSCsW48zV3RThdB90zyCOHFrFnxQvhi+DUSdrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=efPuzL5W; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so38613045e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721141327; x=1721746127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8i31+WVNl/nD6EKdwlewPxCt2fUhKOj0/YKykgGnpWo=;
-        b=efPuzL5WHy+Hxe6k+fUFNWh/4Wgi7wHojEOFTVsLLGfZmRkX1reodISk5M3z6AqKgE
-         6zTfrXirEoYK1NvJ+v9QmlVNUGkvn9m0lpNKAikKRguIEZZ4Zq0YLPC23tNZniUlUU40
-         sC1bgszmQXmrUzb4osTXbfOhYPDI2ruA2RQfRvZ6OkIK4G9+qGfhvVUUrSnk1seIBzpu
-         pPItp+VjXt5GoUjXWbtzlrJFRSd1XcVCWbsgwaBi1bWchxuNuKFzICTVSNFTv3ym+h78
-         5iBLYpRdqVjHThTwIOzNKf1mhSS4OKkgeuhmjBNWD2auGw8EWaFaIj8y9oXxswbgCVLf
-         JkVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721141327; x=1721746127;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8i31+WVNl/nD6EKdwlewPxCt2fUhKOj0/YKykgGnpWo=;
-        b=DlDklS58s7YjaMlf2r8OnY7jx31mu5msh70KCia87h0pSWM1eWiWD2jK+DDsj0PA5H
-         8Tr7zPbf8gURBL46gFdfxsgdqz59hsY8iuhkOaAE9JB+BK7HN7CtLGx6p/GlskL93sFL
-         nrFyGSp6r9aokQnjnspmnkFlyqcWghACbF8/M4BmkqZEYzY8IZvYyoNGWmJLio8gvxsa
-         3DI1nkd7vzcIeMCcmDngarlfrDR/TL0aeczCOfBPEHGsmNlvZbHqrdi4UbKt9hij+Rri
-         78N4+oFbna0X8XW3O8bEKJibtBmOxwoUXActpxm6mkD3Y2HqcUS9eTTrkR43JMdt70ZD
-         XZMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYiEX83mD1Cf2+Hi4ytmHl2K2XtekgFq1upvAYra2XzMnT2w68vtcCXo5hwdOEm24v+EH5Rt8AwXudVjfgK/SyArbAv486iwUsysk7
-X-Gm-Message-State: AOJu0YzpvSbfILuK1ZiH7qgtUrSvy8Uj2c4KpgCGNr5fBa+VNhgpVmTP
-	ZJImQzlpa7i9W0mB6VI5xyGaDFP3UWsRGRmzm0oBXsDST0ywAIoDbC5knzLrxcw=
-X-Google-Smtp-Source: AGHT+IFSyftMP3yVlnEcZDbvmlEYg59teKQ9FJhUnZ0QnL7q3XwsBMSuMJCTplBqZIJLQQ2kqfK6+Q==
-X-Received: by 2002:a05:600c:4e52:b0:426:597c:7d58 with SMTP id 5b1f17b1804b1-427ba72af91mr18038825e9.39.1721141326863;
-        Tue, 16 Jul 2024 07:48:46 -0700 (PDT)
-Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef44b4sm131907145e9.42.2024.07.16.07.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 07:48:46 -0700 (PDT)
-From: Rayyan Ansari <rayyan.ansari@linaro.org>
-To: devicetree@vger.kernel.org
-Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Odelu Kukatla <quic_okukatla@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: interconnect: qcom,rpmh: correct sm8150 camnoc
-Date: Tue, 16 Jul 2024 15:47:38 +0100
-Message-ID: <20240716144738.109823-1-rayyan.ansari@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721141295; c=relaxed/simple;
+	bh=ZT/7h9ZsmsVC1L12GWEyZknnq1KJmu8yPs8c4XxpnEw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jcgnRnsMo5EQ3i+Q4PQaZVcQoog+b7hSP1aUXAr65MrKESnu5lv0MG7g0wV/BJHAQWuW+lH50NNbaRjbVmkYRC5BMu8n0onVcC4WbFBjH6GO1tJU3xH/rOmebLxb9+/xpghxdYX0utIYjulAWENtVQHHljcIX/b6shO3TYD7fiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZx/lAmr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA05C4AF0D;
+	Tue, 16 Jul 2024 14:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721141294;
+	bh=ZT/7h9ZsmsVC1L12GWEyZknnq1KJmu8yPs8c4XxpnEw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CZx/lAmryLgsDGovHxRjryR00put2+RlYvVFcMInR61Z1iLYtYIMF1eLbf9j/H6TB
+	 hxgtcGiDXhxS75cCyij5/SXfsMHM3/srMCACu1RIUagrbm2iFeba462K3aZEF5yw5Z
+	 G6q3lkTwazgCFLXPFIKRwQjpE7XOKrU9mLEr3cvr3AzrEuXVteWo3LgIP/IscpOlZA
+	 WrF+JyJTKY1dfTFhxc0YWYDSHgVLpvNeXOn45xY3k0O84R7oNmaaur9fygjMhDgYlu
+	 SfB/LY9ZlZO9q+iDaMg/idWGt8UybLcoTKS0zzcuKH6vQw2/1UY3iuYQF+DNUF+X6+
+	 0D0OUVDCIURSA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/2] kselftest/alsa: Diagnostic improvements
+Date: Tue, 16 Jul 2024 15:47:58 +0100
+Message-Id: <20240716-alsa-kselftest-board-name-v2-0-60f1acdde096@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB+IlmYC/42NQQ6CMBBFr0Jm7RjaoCauvIdhMaVTaMDWzBCCI
+ dzdyglcvv/z399AWSIr3KsNhJeoMacC9lRBN1DqGaMvDLa2TX0zBmlSwlF5CjPrjC6TeEz0YuS
+ GDHnfdIFqKPu3cIjr4X62hYeoc5bPcbWYX/qPdTFYanfpgvXOMV0fI0vi6Zylh3bf9y9TfEhgw
+ wAAAA==
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=907; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ZT/7h9ZsmsVC1L12GWEyZknnq1KJmu8yPs8c4XxpnEw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmlogqfW0+3H5ztW5AMoEpdMErrGOvHoxgIfG0GMk5
+ m7ygr/iJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZpaIKgAKCRAk1otyXVSH0Db6B/
+ 4yrWmJXQ8WyyMU9zexZ0SYdD86TSgTshXM/1oFQjz7xJdnSIeMg/DLz76gkviXb8tCfyfGd7ZJISM6
+ N88ZF9Obb1nQqa2fnoBT5GMAabBUvvMlRg8dNORkOv5sKZGG/qfF+Zy1Sws6pdjmGxNEtVXGKXNbdE
+ M3/VnB/AJYQAMq7XvfLcHvGyNdXcJgkiOkT6jYf2hr4c0x/f6xs0gohtOyZitGp20ctgGV9iD98ed3
+ /PzBld3Iz1jCfa+M4j3LetCyIhy9n7MMokuUGRJd+ybsq5vb/Bz8ddTd1Bf/6MHDjsavWF1bAcJHLa
+ rYYF5B9UkkEIgfgUj1es7P6jzSjg8a
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The sm8150 camnoc interconnect was mistakenly documented as
-"qcom,sm8150-camnoc-noc", for which there is no reference to in
-drivers or device tree.
+The first patch fixes unstable naming of tests due to probe ordering not
+being stable, the second just provides a bit more information.
 
-Correct this to "qcom,sm8150-camnoc-virt".
-
-Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Switch to using ID rather than longame.
+- Log the PCM ID too.
+- Link to v1: https://lore.kernel.org/r/20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-index 9318b845ec35..0cb4f7154844 100644
---- a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-+++ b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
-@@ -71,7 +71,7 @@ properties:
-       - qcom,sdx65-system-noc
-       - qcom,sm8150-aggre1-noc
-       - qcom,sm8150-aggre2-noc
--      - qcom,sm8150-camnoc-noc
-+      - qcom,sm8150-camnoc-virt
-       - qcom,sm8150-compute-noc
-       - qcom,sm8150-config-noc
-       - qcom,sm8150-dc-noc
+---
+Mark Brown (2):
+      kselftest/alsa: Use card name rather than number in test names
+      kselftest/alsa: Log the PCM ID in pcm-test
+
+ tools/testing/selftests/alsa/mixer-test.c | 98 +++++++++++++++++++------------
+ tools/testing/selftests/alsa/pcm-test.c   | 68 +++++++++++++++------
+ 2 files changed, 108 insertions(+), 58 deletions(-)
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240711-alsa-kselftest-board-name-e4a1add4cfa0
+
+Best regards,
 -- 
-2.45.2
+Mark Brown <broonie@kernel.org>
 
 
