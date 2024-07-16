@@ -1,166 +1,205 @@
-Return-Path: <linux-kernel+bounces-254548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFF6933498
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116649334A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF83E1F2189F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30FF21C225F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86EF13E40F;
-	Tue, 16 Jul 2024 23:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3B11442E8;
+	Tue, 16 Jul 2024 23:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3qBmro0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqqXO6vt"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5A613DDD0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F146F079
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721172893; cv=none; b=GyGFXhWnRrzKV1kE9xMVYe+49tqAnS5vdfrtYkZvGYAjGs/ijuCVHCcKRiRFCUUX7tHBnlpiNjW1wIoWUYTAkB2PL43aU6A7c8uNblLmcHTIRK7KWusGLmGK+g8taG7yIFeOWANUwRUhUI4EQ8UDppPmt6bxFl+/6u53CeFPK2U=
+	t=1721173381; cv=none; b=hWJsJJd3Cx7QFi1mh+n3wMsDrvUoXhj6N1bI9UMPazSadPe+wy2Q47sthzZjSFGjMIpMlaJMxDLzYvDI3ejcguJD6VsqZzFLgzibgo8SkRQeedEDU0oL0+KlLsvjjy6qGbT5JBrHVmojizepe9r+QyqfGkMHdfpFU66jexSq82c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721172893; c=relaxed/simple;
-	bh=3nB1boiG1A2kWJMubHu7Tj7tDnrXQiEKyO2QJfNF6Us=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2VVsxEUzPVdMo7waYVxPuyjrki0VZyfB9zJGy93iphgScd089+XbeEMiAFMdN44en1xkiTl78WXZ5CEVg9edupkk5kC4kA6zMMHUvU6Yb7ltwQONe5cy5wwkI91Riz10PBPMBLminNj8AOShmaSKJHCmebwdhT1wNOoL5tnXDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3qBmro0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721172889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ce3oiwNi7t9StCHmh3dnbHVqDD34QccC4Vb0kWTpmbU=;
-	b=i3qBmro0VB5N9HYG3Te8iZgQUqK5Iy/dGBK9uspSjJJ8B4PCq56Z3SEZ3j+/K2sT2IACbi
-	6kua2VXsNoQya6SGP+Hy4BRY5egCq10pf+fsoUv68AJssV1r563zPb0TTDOKivsfwjgMl8
-	22EhCfGk+WCTKVij/VUEtZ+8JmMVpmg=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-468-iK6-hp9VMguDIEY7R116Zw-1; Tue, 16 Jul 2024 19:34:48 -0400
-X-MC-Unique: iK6-hp9VMguDIEY7R116Zw-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b772457b40so46682046d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:34:48 -0700 (PDT)
+	s=arc-20240116; t=1721173381; c=relaxed/simple;
+	bh=U4CreDnCs9YPeisW/eCWgyMYBTlTYVg5mz6bOZK23wE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NV8dQGvEeLgWQqSK+tdcyLdLqXZ48Rj05TSrWZpbylfeW0u9cCwoh5jUEJToRS48iCxuBeWJ4QvIogImzaqSWQ+2Tz/TJrdMxZdWQt7qtGfYsZRCwoKe4fhZTqzM04N6JgPAIsoAstg95HSp3gmybmk/3WxWGh60ipjTaFz4Yog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eqqXO6vt; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65f8b0df1f0so35670287b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:42:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721173378; x=1721778178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bdx0WrTJA3HLe4B/c0rt0W2OYcQp3lvzc1IIRVfiSI0=;
+        b=eqqXO6vtV6sj5Z0Ng7E6GVqeqXvbKfjFkyAUES5FbaeRRU29vTRKbGH7cR6Jbbwnrj
+         Jqq5EbgUBnFaYmvR1mBoc+38yU5ZQSR/yHwLBqsGVlMBwqA7BqcdfT60YvGTjQpSyfwE
+         CnAvsq/CK9Wd4Jkby07T8fEINPLiTC3fQP3AB8+dvSSB4SVCz01hI2dcBxysS14Qfew7
+         fZvlH1iyggvK4lWGVXQYN5xxrds5Nw/wYYahs0WZmlU3PeApSqggZTNlSeJJ0JWmHMun
+         97sV6jQDgVNDK64vt24KjZ6OGPxsPpgCSAVolKgoMGSxbMsI902y7M2qWOKB1Cc4o9jj
+         GGbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721172888; x=1721777688;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ce3oiwNi7t9StCHmh3dnbHVqDD34QccC4Vb0kWTpmbU=;
-        b=wG/AVyyNtKLpoRnBHAyBCHR8cbgWWUfUrx2/BF4t0r5MewXo6OMAPYiwdrrdfI+e7R
-         mv23+CYe0CAjoVO7lhpZAzGgrW+14ocqiS3Px41306Pcp/Oey6KKm4O3csOf/WjfMu2m
-         4fPc+iR8SXj9cpmV70wuqSzZkpdN6J45Klnti+is8vYZpkLqv9LWM4q1tvUrNCmgms4u
-         ltG8VXtiYOBm8sNEWd+ErP4iF7QGOtbYiDqtv3lCOB8RkdWPfuglFIyN/qnqq64SYiX9
-         uaf0SZU8wY5+wyb9jnuV3J8yoeQvPWXe0O+MNlmQpbhq88hvcD0Fqe4pBaza37hyAuKz
-         ai0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7vnJMzRpAe1rHc1lZTF3mumGl9UZ7w+jOcUMatiJRTY8STjEBNhqqoJn3WyXsHDkjras8NtaTiD4CYVSCQekH2BtYi+tnDmfQGKB7
-X-Gm-Message-State: AOJu0YybQ3bsgXw5/diN/X1lNlNLD/s2xMPSdP7WbXnImiGjVShYOHOj
-	PmFOWA2b9n+NCefpOPiibMb9SzH6sT39xwUnz9CSIh+feK6Mrb/AGFwHRfkBarJ3ZACu1/JgiMl
-	8VqOHJ+UOgtyUAWERjf8+++f6OO+GapEg3vFyAEB+E8y9WBrZq6JqDz1skR3WJBlyCyoJXyQc
-X-Received: by 2002:a05:620a:1a28:b0:79e:ff0a:a10d with SMTP id af79cd13be357-7a17b691168mr414899985a.39.1721172887762;
-        Tue, 16 Jul 2024 16:34:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvak+ZP8NES87xHiJsRxARxOOUUOyrZ6LQUGOqOsy5UAFu/hUczgJ91LesooxankFVUPn2og==
-X-Received: by 2002:a05:620a:1a28:b0:79e:ff0a:a10d with SMTP id af79cd13be357-7a17b691168mr414898485a.39.1721172887351;
-        Tue, 16 Jul 2024 16:34:47 -0700 (PDT)
-Received: from [192.168.1.152] ([70.22.187.239])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160ba82cdsm338674385a.4.2024.07.16.16.34.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 16:34:46 -0700 (PDT)
-Message-ID: <2d0a578d-aa8e-be21-f80f-3ba6c62be1f5@redhat.com>
-Date: Tue, 16 Jul 2024 19:34:45 -0400
+        d=1e100.net; s=20230601; t=1721173378; x=1721778178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bdx0WrTJA3HLe4B/c0rt0W2OYcQp3lvzc1IIRVfiSI0=;
+        b=i32GXywLSzrpituV5FgzK9uBlxljQKEkD4BiyInn6YTmayYJS3EeYdyi6Ip3ZVjY6v
+         BySO8oBJ+U0R9UsRBxV9utiVuv+x3YRjRsd/ePJ11RgBAkZWuFlNyQisiohLaMS9irbB
+         QeUCToUtU/9KgEQMu/SfJXWb4OYOCHvy8zBEAIERKC6UQ3sveLg3G8vL7AB6WKKcwsdY
+         ZYaCXoGdiIqnV6LlVnsxjKj24ZKkWM0JCOGUOXJ8vVHOdZMQNDjNl2BgVgk+1QdRXaF0
+         /2O4oGNFZcX5gwZwoLsc3mdMsHVmOEdUn1dbY0Ght62xDYWfY5C9jirInXnTuMkgK/zg
+         evPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPLx5x5eRanVGWV+hiFjzw7vt0pA10lim2lZ3HTA9yq4N43YIuoR0tzH/ewa+yHm3W5Tb4soDMDE46QnQZIjm4S154Dotv5NPsqwT+
+X-Gm-Message-State: AOJu0YwYlanCIIVAVttJ6couk8JODieiY9/pu7YDWLbtpyEtH81RU8J3
+	des/cKGMIfBR/xkqcEpgk9WJgfKYlXgVEy82j9A0U343peeeutBu3dRl0epI4gqnwv36IaSMxJ/
+	hFV09iYFrzHsiccwxGFaLsFBB2kgAT2fwB3CRBw==
+X-Google-Smtp-Source: AGHT+IEbqyDEFCrlR4xZQuknxtqbab+UfGCCmomcF2ZpZpJc3MJzA97KvniYAqlPDbzdPnbRG9F/Ih49/ciL+gHMBnE=
+X-Received: by 2002:a0d:d387:0:b0:65c:2536:bea2 with SMTP id
+ 00721157ae682-664fe357ac1mr1641717b3.19.1721173378606; Tue, 16 Jul 2024
+ 16:42:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH -next] dm: vdo: Add missing kernel-doc function comments.
-Content-Language: en-US
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- Abaci Robot <abaci@linux.alibaba.com>
-References: <20240712081204.79723-1-yang.lee@linux.alibaba.com>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <20240712081204.79723-1-yang.lee@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
+ <20240628214848.4075651-6-quic_abhinavk@quicinc.com> <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
+ <CAF6AEGtVBarvEUqgt7SHzYwXUsjY_rVQS6aMsN00G91Dr1aWAQ@mail.gmail.com>
+ <cf8d00cd-6dc6-42b9-be61-93ef48d42b0c@quicinc.com> <CAF6AEGv2H2FQ4wCWEzgboK0Lz3em-0XkG5pe_HwN1rW2iaGVrw@mail.gmail.com>
+ <6460042b-a2cb-41fa-9f6f-fb11e20f69aa@quicinc.com> <CAA8EJprmi9zxEipq=0LyBi4nJ59BrLgN1sL+3u7-n9kJ3yQcRg@mail.gmail.com>
+ <d7905aa1-67fa-4468-b3ce-69c7aa4ec5e5@quicinc.com>
+In-Reply-To: <d7905aa1-67fa-4468-b3ce-69c7aa4ec5e5@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 17 Jul 2024 02:42:47 +0300
+Message-ID: <CAA8EJprFNXpO568hwNwJvHY_NmcHJxJECe4v3O+ONp17v1Q_iw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] drm/msm/dpu: rate limit snapshot capture for mmu faults
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, freedreno@lists.freedesktop.org, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	quic_jesszhan@quicinc.com, swboyd@chromium.org, dianders@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 17 Jul 2024 at 02:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wro=
+te:
+>
+>
+>
+> On 7/16/2024 4:10 PM, Dmitry Baryshkov wrote:
+> > On Wed, 17 Jul 2024 at 01:43, Abhinav Kumar <quic_abhinavk@quicinc.com>=
+ wrote:
+> >>
+> >>
+> >>
+> >> On 7/16/2024 2:50 PM, Rob Clark wrote:
+> >>> On Tue, Jul 16, 2024 at 2:45=E2=80=AFPM Abhinav Kumar <quic_abhinavk@=
+quicinc.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 7/15/2024 12:51 PM, Rob Clark wrote:
+> >>>>> On Mon, Jul 1, 2024 at 12:43=E2=80=AFPM Dmitry Baryshkov
+> >>>>> <dmitry.baryshkov@linaro.org> wrote:
+> >>>>>>
+> >>>>>> On Fri, Jun 28, 2024 at 02:48:47PM GMT, Abhinav Kumar wrote:
+> >>>>>>> There is no recovery mechanism in place yet to recover from mmu
+> >>>>>>> faults for DPU. We can only prevent the faults by making sure the=
+re
+> >>>>>>> is no misconfiguration.
+> >>>>>>>
+> >>>>>>> Rate-limit the snapshot capture for mmu faults to once per
+> >>>>>>> msm_kms_init_aspace() as that should be sufficient to capture
+> >>>>>>> the snapshot for debugging otherwise there will be a lot of
+> >>>>>>> dpu snapshots getting captured for the same fault which is
+> >>>>>>> redundant and also might affect capturing even one snapshot
+> >>>>>>> accurately.
+> >>>>>>
+> >>>>>> Please squash this into the first patch. There is no need to add c=
+ode
+> >>>>>> with a known defficiency.
+> >>>>>>
+> >>>>>> Also, is there a reason why you haven't used <linux/ratelimit.h> ?
+> >>>>>
+> >>>>> So, in some ways devcoredump is ratelimited by userspace needing to
+> >>>>> clear an existing devcore..
+> >>>>>
+> >>>>
+> >>>> Yes, a new devcoredump device will not be created until the previous=
+ one
+> >>>> is consumed or times out but here I am trying to limit even the DPU
+> >>>> snapshot capture because DPU register space is really huge and the r=
+ate
+> >>>> at which smmu faults occur is quite fast that its causing instabilit=
+y
+> >>>> while snapshots are being captured.
+> >>>>
+> >>>>> What I'd suggest would be more useful is to limit the devcores to o=
+nce
+> >>>>> per atomic update, ie. if display state hasn't changed, maybe an
+> >>>>> additional devcore isn't useful
+> >>>>>
+> >>>>> BR,
+> >>>>> -R
+> >>>>>
+> >>>>
+> >>>> By display state change, do you mean like the checks we have in
+> >>>> drm_atomic_crtc_needs_modeset()?
+> >>>>
+> >>>> OR do you mean we need to cache the previous (currently picked up by=
+ hw)
+> >>>> state and trigger a new devcores if the new state is different by
+> >>>> comparing more things?
+> >>>>
+> >>>> This will help to reduce the snapshots to unique frame updates but I=
+ do
+> >>>> not think it will reduce the rate enough for the case where DPU did =
+not
+> >>>> recover from the previous fault.
+> >>>
+> >>> I was thinking the easy thing, of just resetting the counter in
+> >>> msm_atomic_commit_tail().. I suppose we could be clever filter out
+> >>> updates that only change scanout address.  Or hash the atomic state
+> >>> and only generate devcoredumps for unique states.  But I'm not sure
+> >>> how over-complicated we should make this.
+> >>>
+> >>> BR,
+> >>> -R
+> >>
+> >> Its a good idea actually and I would also like to keep it simple :)
+> >>
+> >> One question, is it okay to assume that all compositors will only issu=
+e
+> >> unique commits? Because we are assuming thats the case with resetting
+> >> the counter in msm_atomic_commit_tail().
+> >
+> > The compositors use drm_mode_atomic_ioctl() which allocates a new
+> > state each time. It is impossible to re-submit the same
+> > drm_atomic_state from userspace.
+> >
+>
+> No, what I meant was, is it okay to assume that a commit is issued only
+> when display configuration has changed?
 
-On 7/12/24 04:12, Yang Li wrote:
-> Add missing kernel-doc function comments to enhance code readability and
-> maintainability in accordance with the kernel coding standards.
+No.
 
-I've prepared a patch to add correct documentation which will I will 
-send out soon.
+> Like if we get multiple commits for the same frame for some reason,
+> thats also spam and this approach will not avoid that.
 
-Matt Sakai
+I'd say, new commit means that userspace thinks that something
+changed. So if the driver got another hang / issue / etc, it should
+try capturing a new state.
 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9518
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->   drivers/md/dm-vdo/repair.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/md/dm-vdo/repair.c b/drivers/md/dm-vdo/repair.c
-> index ff09e4a14333..8947e6092a91 100644
-> --- a/drivers/md/dm-vdo/repair.c
-> +++ b/drivers/md/dm-vdo/repair.c
-> @@ -319,6 +319,7 @@ static bool __must_check abort_on_error(int result, struct repair_completion *re
->   /**
->    * drain_slab_depot() - Flush out all dirty refcounts blocks now that they have been rebuilt or
->    *                      recovered.
-> + * @completion: The completion to convert.
->    */
->   static void drain_slab_depot(struct vdo_completion *completion)
->   {
-> @@ -656,6 +657,7 @@ static void rebuild_reference_counts(struct vdo_completion *completion)
->   
->   /**
->    * increment_recovery_point() - Move the given recovery point forward by one entry.
-> + * @point: The location of the next recovery journal entry to apply.
->    */
->   static void increment_recovery_point(struct recovery_point *point)
->   {
-> @@ -953,6 +955,7 @@ static void abort_block_map_recovery(struct repair_completion *repair, int resul
->   /**
->    * find_entry_starting_next_page() - Find the first journal entry after a given entry which is not
->    *                                   on the same block map page.
-> + * @repair: The repair completion.
->    * @current_entry: The entry to search from.
->    * @needs_sort: Whether sorting is needed to proceed.
->    *
-> @@ -1219,6 +1222,7 @@ static bool __must_check is_exact_recovery_journal_block(const struct recovery_j
->   
->   /**
->    * find_recovery_journal_head_and_tail() - Find the tail and head of the journal.
-> + * @repair: The repair completion.
->    *
->    * Return: True if there were valid journal blocks.
->    */
-> @@ -1447,6 +1451,7 @@ static int validate_heads(struct repair_completion *repair)
->   
->   /**
->    * extract_new_mappings() - Find all valid new mappings to be applied to the block map.
-> + * @repair: The repair completion.
->    *
->    * The mappings are extracted from the journal and stored in a sortable array so that all of the
->    * mappings to be applied to a given block map page can be done in a single page fetch.
-> @@ -1501,6 +1506,7 @@ static int extract_new_mappings(struct repair_completion *repair)
->   /**
->    * compute_usages() - Compute the lbns in use and block map data blocks counts from the tail of
->    *                    the journal.
-> + * @repair: The repair completion.
->    */
->   static noinline int compute_usages(struct repair_completion *repair)
->   {
-
+--=20
+With best wishes
+Dmitry
 
