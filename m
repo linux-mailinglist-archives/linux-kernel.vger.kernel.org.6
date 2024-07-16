@@ -1,117 +1,99 @@
-Return-Path: <linux-kernel+bounces-253436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990C1932157
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:38:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427C0932159
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 376EAB22267
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9E41F224AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8932037143;
-	Tue, 16 Jul 2024 07:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NvCEY+Or"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BA54315F;
+	Tue, 16 Jul 2024 07:38:23 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF7355893
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B844369
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721115480; cv=none; b=KhpHeZ2ZXK2L+5HS6E3Fr17hrKc050yBa81in8fylm8/Y2anYx6l5WItYpcC+ybUIAz54lDAtZFxcofurPZt3AThTqX4wRvRCsg/U34lMVqF3qBeM87mHoUuK4abcU/3krjF/tSgp4DZwLlu6KkVATs2xIK37+7+B+qrHNsRVMQ=
+	t=1721115502; cv=none; b=An2gyHiYhMuMfwIpjqPSMs302zIxVkYiVYyjjCZtIOxC1S+pgxGf97vKvUQeEtKmd8L986H8VPFOhjgRugTizI1WFL+uy0CVvSvBxcmYiP33Y0U8oaxLKKNI83mx0fG+XvOZ4wjKWPGII177hmfVFNEbxVsTMGSDGwt/fxqorA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721115480; c=relaxed/simple;
-	bh=wsUa+mBMkgyWtarKas9SFHQq+I+2BbQrdnIErDGX1R4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IyMDA3pmC+1fF1eXp6r9+89hlIbFsJE43nco5N/JfzD6gEVIeLcLKZP6pGzh1w65ld7vYBdgaBT/BZ7kd5RrhvsaNOu0HGnYw4lRNHoasShfovkYbCUnl7WaTZhPG5St3R3ucV014gz+mAAhA6l9mYL9aquOStlSwDx9WrTwEjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NvCEY+Or; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-367b8a60b60so2822353f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721115476; x=1721720276; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+OQpy4G4Eje5USDo7g38LRCjo6XrgBahA9NpvAvy43o=;
-        b=NvCEY+OrIE6vH9XxXuOq7bhFEnApX5AibzOsV0acacgXQSIAgpTZDPmw2MeQ1NelcA
-         C7J+CSIMYpL0qZXrUg+lFh5RR6T0pZ6AThNeqNmgLpROJdJNSsnGpi1c6ZDChajIuOUK
-         oak/fvXVfU1X/hjkyLqBtj3laUIQOYlksCqs5gxN9uMBwOYmwqufZ95wDvOGKYkUSw0L
-         arpAxZGJ/lCYI5XvR9rE8u3YgNz8qvHNS7e1OYZEbirDkBFi0vHVog0/pg+BPI3AWCP3
-         fB3+cVtVwjKINMwvwomA7fxMcmtH8GQjioXAv7+1U2jgVMOC7HlJCe4MvjMB/Qxa8o1L
-         lAJw==
+	s=arc-20240116; t=1721115502; c=relaxed/simple;
+	bh=Bfr+2oqKDo2i4Pdo8nM2yUXYJf1UPSlRnL4MCq3zFOM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sBHchcZeXTQg/bydOn4qtIcasNzespyDnVZ6aTKh+VK1PUAalglJpdC7A3xnmsgpZx6HtqqGwHON3APZLLcCGTb0rh7ox7FvpcN+H4n9ZpTC6h+5c5J5tJf6gNSsnHXNkVOgDnjjEMVQMk0QC3AzkxaGGy+aY0PyXHgLQ23ddvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37642e69d7eso55798705ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:38:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721115476; x=1721720276;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+OQpy4G4Eje5USDo7g38LRCjo6XrgBahA9NpvAvy43o=;
-        b=IgH7tfWqk9bd2M3X5HCp0dddvqMZtSBTNoaGK/MQ+luvdsiEJgErVWDF+ORHAcluMy
-         dD5NOYGw+FJ8CDMqrPYOcfByNr5ht8cM9eHyhih/UCtt/Yv+Am6YKmNMPevTXTVU0Bu6
-         HuTUPSNy5wt6UtHE8mKLAK0MJ4AIYiIPyxJtFU7uWzV2eK5rRSVPj1/WyFuSmGUt5+dZ
-         G4RS++RKYM/xC6Ao4xZIcR4tdZ3tff1g+WZEnV1+MuwCTmddqzAEWbq/EzMPimu7Wzwx
-         8SHzm74SLjnJapmc+fGJ35b1iiFWM1aak+UaOtrDmrR9TjDUwvD+XEKovqOofgeYL4YX
-         44kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCs7hJ0ubkZWGjz2n6L5I3yBa35H+71FS0KtHAJDdO6hBuWJEwl7/O6IQPNpgs6nA03+IKdRauxfln3nulSseW6fYPndYuWnsp/3JG
-X-Gm-Message-State: AOJu0Ywf232ywvR52rso3+bofCF/VT9oW+Nb2zFj6p3r902pfq95JdTW
-	7cjCzJi4KBc6jblBuFNZi7b3LVVG/DyUxsvVKc+PKNcV1vU2Syf4Xk0hZCwpY84=
-X-Google-Smtp-Source: AGHT+IFumldrPx/zMqUUoMsoLTBo0cyX3qA2ouOy8XlozJcYo16CimUEt8u5IYn604xDgWRpoZY2wg==
-X-Received: by 2002:a5d:5f42:0:b0:366:eade:bfbb with SMTP id ffacd0b85a97d-3682631fae8mr1021856f8f.46.1721115475606;
-        Tue, 16 Jul 2024 00:37:55 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf1a0sm8190205f8f.28.2024.07.16.00.37.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 00:37:55 -0700 (PDT)
-Message-ID: <ca920d7c-43a5-4961-acb2-3b3eae9ee286@tuxon.dev>
-Date: Tue, 16 Jul 2024 10:37:53 +0300
+        d=1e100.net; s=20230601; t=1721115500; x=1721720300;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9htk5aJgdqfYtz3ZfAD4q1FDJGfF5bTAzJYsn4qenQ=;
+        b=dpTk0ZUaLhsKCLZxn12pyfYyW3ZRPbn/e27zSKIjs6n933qTBzTjHgrYUIL/BU48hb
+         0wnK5FI6cDN5irXHLAVLQBr2KEcCoahWMTPNSwsgFOektyriPPJfSKrsaVK8hoSyoWGm
+         OV02dh2jDSx2rurmMuVCR+zbh0Ju3wxAo5It2urWG7et7/iiB23SNpccv/Cy8bbYwc7Z
+         kyJUW5Mzb8qqJcXIT0axpLLzydZiEJ+kEe4eL3Xmy0mWi2bJk+Or9OKcDYZuJmsgdlN/
+         dtshI5v/ixb6q6sF5KFnU1LFR4nkViWvujBddxQ724iEj971Xtr69QM+J/6x0g3jHu+D
+         MkvA==
+X-Gm-Message-State: AOJu0Yzak1hymeNvRKCl9tLKBLWPdKzeF1wTT9KNc1QkpaDh0VWWJwkI
+	xMlHCq0Au4tNvE3oULbV5b+Pl5d03E64/Guqsq+McKxNCLQpLDnZLuDZPFRWnqYUp10FI6nkBc8
+	MQTlLqxQDccV1bqBlGdeLkFxsOGNgf15cei6dfjACP0LYlROwvWExwR0=
+X-Google-Smtp-Source: AGHT+IF4Elg22B87swvQ1h2NhAnrhId43ftvWY/c9tmpolNBoybTkzjXI+4UZ1+mdQIP1RzKOeIqQMB+2/44dICtxnw58YIJKijV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: at91: sama7g5: Allocate only the needed amount of
- memory for PLLs
-Content-Language: en-US
-To: Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
- mturquette@baylibre.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240714141315.19480-1-claudiu.beznea@tuxon.dev>
- <2a56789d4f1eaa97ec91392f93741f19.sboyd@kernel.org>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <2a56789d4f1eaa97ec91392f93741f19.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1545:b0:381:24e:7a8c with SMTP id
+ e9e14a558f8ab-393d0e2328dmr1183045ab.1.1721115500231; Tue, 16 Jul 2024
+ 00:38:20 -0700 (PDT)
+Date: Tue, 16 Jul 2024 00:38:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000024b79061d586e6d@google.com>
+Subject: [syzbot] Monthly media report (Jul 2024)
+From: syzbot <syzbot+list68e667ad3809de6c5bd7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello media maintainers/developers,
 
+This is a 31-day syzbot report for the media subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/media
 
-On 15.07.2024 22:47, Stephen Boyd wrote:
-> Quoting Claudiu Beznea (2024-07-14 07:13:15)
->> The maximum number of PLL components on SAMA7G5 is 3 (one fractional
->> part and 2 dividers). Allocate the needed amount of memory for
->> sama7g5_plls 2d array. Previous code used to allocate 7 array entries for
->> each PLL. While at it, replace 3 with PLL_COMPID_MAX in the loop which
->> parses the sama7g5_plls 2d array.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> ---
-> 
-> Might as well add a Fixes tag so we know when it was less efficient and
-> to help anyone trying to backport this driver.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 17 issues are still open and 85 have been fixed so far.
 
-That would be:
+Some of the still happening issues:
 
-Fixes: cb783bbbcf54 ("clk: at91: sama7g5: add clock support for sama7g5")
+Ref Crashes Repro Title
+<1> 871     Yes   general protection fault in ir_raw_event_store_with_filter
+                  https://syzkaller.appspot.com/bug?extid=34008406ee9a31b13c73
+<2> 101     Yes   WARNING in media_create_pad_link
+                  https://syzkaller.appspot.com/bug?extid=dd320d114deb3f5bb79b
+<3> 90      Yes   WARNING in smsusb_start_streaming/usb_submit_urb
+                  https://syzkaller.appspot.com/bug?extid=12002a39b8c60510f8fb
+<4> 23      No    WARNING in call_s_stream
+                  https://syzkaller.appspot.com/bug?extid=5bcd7c809d365e14c4df
 
-Thank you,
-Claudiu Beznea
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
