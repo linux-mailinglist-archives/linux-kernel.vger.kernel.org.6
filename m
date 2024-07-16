@@ -1,213 +1,170 @@
-Return-Path: <linux-kernel+bounces-253559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EEF9322FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA31932306
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130871F22EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38611F234A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D981974FA;
-	Tue, 16 Jul 2024 09:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857C6197A7B;
+	Tue, 16 Jul 2024 09:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FPqw5Stc"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VQS6g1my"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2097.outbound.protection.outlook.com [40.92.52.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7891953A3
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721122819; cv=none; b=Sz+qIApjC4X7/AdUXVXMOCTJ/2/0XruLowc2CnSmfR6FsjR450NjEkXwryXdQVwYweHJ/hGqlm0BxAGtiFBDYt3QHn5HEK8bZdsPzBWuCfo7NAH0M84JlIIhmq9juuYMHpiEbo8Wo1nT9f0O5BBfrDPQhsG81qHmrmX1wcrzR4Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721122819; c=relaxed/simple;
-	bh=Yz6weDiPardgtsfKrAhEEw32tolr/Zmr4mxIYT2xDfo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ik8m8AkqObwSsO1rO2X4E5mzbytyYzWdsM39bVV3BaV3xNbUdGKB7dWdNL2/WnofULYFz61ca44oY1udNmaEK/C3tsGcR0iTb7JWcRORsDZMxGTIIQFse9mbDQblCs2KeVYofXDQ0flnAdHdSVIacOEPEw9Sz0A/x0sT9FzgCak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FPqw5Stc; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-367ab50a07aso3327023f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721122816; x=1721727616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2uC4G2iZkZ7rivx5AWjBLPvuJHPT6w3aeN8UNztFpm8=;
-        b=FPqw5StcIt+qEfNJIGlfu9UZqRx4sgi9p/d9Cd7pv7AiSlOnrgLCPEshHv+R7QguJs
-         im5cPVAYMwv1mGnygqLepT9iwP9ZrgqpcT2kn1JhJeCX8OVezgeA+r60+yBGN9eA2bE2
-         XUE5hxa9c3mY/6I7XbgFBS8FANyv1mMwYmXVTXKHv2lrBgVHPCht3stUDTdx5Q51+ApN
-         hiJF/vgcQFWfzIIX1s4/m6tLd81y/ya7jBRyOdN/i8GeJ9bAe35ph/9zvX6XOgW7xCYR
-         PTJMu3kskU2HIwXBoPEQpYxvUejAnWElCTP1qbNuzuc8CeGTKDPu7yEmqzxuPgkwiDAD
-         iUVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721122816; x=1721727616;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2uC4G2iZkZ7rivx5AWjBLPvuJHPT6w3aeN8UNztFpm8=;
-        b=BruKlWJagDrcTgxsjCTdUy7vjhet7fLmoeUJMbmlZ8J0u+vdyVxULR7sffh5zhMTD2
-         nCznDj+XvHwAj0dHnptEjYnk1dkgpz4wIF0HemOysSD40qV7AdKDPBA/TTpO9nR60uz3
-         /3wqZrRdOx8/badj1YJUzVq5rHIVXboTHG8CASDLCOx/MCOI7ImApYDQPQGGPAzHN7eE
-         iC6xVGQfiweG0EIBXjUTCAcwXW0/D5J/t+/9vjBVPzrWwV3ztmynv2gWCwFWMInC102f
-         XoviVPkqcTrV6QI4D/bWNbPW0yPozgUj9exzt4a7Aw378tWVh1klSQXPhA9OCIbVeU2J
-         EjOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWimZnBwM6jrU8rOdWWqgFnimvV5STuVTCLBu0VGg1qEInpunUXHu3WOdtxfIUpM8DIGDSYPOYwwcWILwIUfZVXNujbE33pk45+pfJJ
-X-Gm-Message-State: AOJu0YwO8788fR4LfV13cCHqhYBWacLgJRgcKS8wuY/wvjlZRUl1NpDs
-	8jiR+TXwuESYRIGaZLErXBqJeucE3AJeuEmDYAlBZaKGUllr01ez2jQOJIlhZgI=
-X-Google-Smtp-Source: AGHT+IEbHrZnwhrgVVk1jY59doNN/afF7lpjn01IM3RFuLKF8ytPrfrhh5b9YgNfl6w/M/oLDeR1DQ==
-X-Received: by 2002:adf:f6c2:0:b0:367:9978:7ff with SMTP id ffacd0b85a97d-368260a2001mr1029548f8f.18.1721122816177;
-        Tue, 16 Jul 2024 02:40:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197? ([2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db048a8sm8467124f8f.111.2024.07.16.02.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 02:40:15 -0700 (PDT)
-Message-ID: <d3416be5-b97f-4db6-a779-9c436e41dd72@linaro.org>
-Date: Tue, 16 Jul 2024 11:40:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D39529CF7;
+	Tue, 16 Jul 2024 09:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721122888; cv=fail; b=C1G4zpx8fCd3Jy+6NY7BJtLz0lmh52ztih0s4feM8QSDL+Dcg1hG+ApNF5927pbCzF/uqE9WWMDigs9wrZm6E5AUgaozrl/o+KMdyhUcqW0/KHaU0FIxIyNApJP5xXROt0fcNl70hAQuF6iPZBeYpkpJc9dA/scawtNhvXRMqQc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721122888; c=relaxed/simple;
+	bh=R5FCEvGcxjhl5Z2lSXbrnb92dKjdorj5PLGXMh6LC5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EFjXcrzqV11AEqurLAVefY2rEkW836yz0g9MfbBmvt7IKzwO3t74lAlkDxEfYhlim1S0CJVUU9yxdv7pp3ajvpEK015MpU/NchUnaqJdr5jyLtLv4P/VPt9XkiT+xYiVLDqBBUrJLhJsrwKJEfapACYzG1aMdsA4fsk7tooiPrA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VQS6g1my; arc=fail smtp.client-ip=40.92.52.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tQcvtrJlMCyazTzJOE0/iM4vrYCC+t3gu1UXV5gVJkSEEdNjjzozU4lm8MdlAz0k70qORgv+V8bE3NTlrloHAIsOcz5eayxi1VXADXi23oh0sSY/6nItw5H+cA2BY6Rj0eWVhFvrekujB+NmQvR/RNbxOG2gsJRXI9aMop8QOm4uKj05efd/ErckMGAThnlzqJXoj+Dg3w0U2Br0r/O8RUUD5Bb+X8ZY3A0DpgAzT5OJO42kt/FSkgSWfV6CmS7w6AWJxci383+H+kYwXs6J1FeRVpeK0Ae2e3p6WOa5RUp5+kcEmuzISTD5yoLXalkDo13+1vFr0v6QWc8TZqxdRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kJGKZmCuOwjzP0/WiwmegjL56TxpXPptVO23hycSm58=;
+ b=K0sIRmVr4Tg6lH6CbWmcXTxH7KlQoGszxtiNvUm8jiQ3ryByDcML/xSnMw04K61kOxqkLcv9arC0uFOBclC8v7UyU6YYFNV20ItKQqMAofz1VOM/hIjI/oj9qKS4JOlywfofSCztkzU8zQb2QkbW1lULHvUq0qXAC/gVT+wEa2nspntQYihrYqLfqDyJFtJqafZSKvR5lb+s4mxECTqetw+OcWHhBaTT9z7d+HfOewIFADAChfIQ0+iZN1StfoNYYHrY3hwN/XYuXwd+9pX2ErjHv3czg4/ErxQCxAqWUTaF9LO4gBS0E4QNAuHYlJNi99ehpzT7Djy4h17EGV4xdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJGKZmCuOwjzP0/WiwmegjL56TxpXPptVO23hycSm58=;
+ b=VQS6g1mySe/GkrIpTitp7yvlcqHUSIy6FXaBEbRAWAdAcP9IF3QzPqF7Cvjj03b9Glr7CQu0Ked+vmLU4QEsGDX8V6cPqin8FveKTVM7c7cn3On9if/jGQGIlRXUBrCC0JROyb9FtCiUqFD/eZdxX9iOxdQAp3LzKc0Q+u8wXQLYHVajp5kUTfO0Hvq88qwvzpded+07GvaAjmzilAdwJ7eUI2eieKsGXtxgND0V/aJx+UeLADLVxy7s27cqnIsqxpOx3fubB5EtMYfbzRZ7b7h9reFIg73ghc/fNGYGjbhoP9wQfLSedLUItmFu6AgTWlQSaISbpINU875DeYsaog==
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12) by TYZPR01MB4895.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:281::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
+ 2024 09:41:21 +0000
+Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ ([fe80::b674:8f70:6e29:3756%5]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 09:41:21 +0000
+From: Haylen Chu <heylenay@outlook.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Haylen Chu <heylenay@outlook.com>
+Subject: [PATCH v4 0/3] riscv: sophgo: add thermal sensor support for cv180x/sg200x SoCs
+Date: Tue, 16 Jul 2024 09:40:42 +0000
+Message-ID:
+ <SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [jOHthX33/v6T21reLR5ok0uxq7Rgoh43]
+X-ClientProxiedBy: SG2PR03CA0127.apcprd03.prod.outlook.com
+ (2603:1096:4:91::31) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:56::12)
+X-Microsoft-Original-Message-ID: <20240716094041.51406-2-heylenay@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm8550-hdk: add the Wifi node
-To: Amit Pundir <amit.pundir@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- dt <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
-References: <20240702091655.278974-1-amit.pundir@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240702091655.278974-1-amit.pundir@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYZPR01MB4895:EE_
+X-MS-Office365-Filtering-Correlation-Id: baa07176-d49c-4bcd-0ae2-08dca57b72fa
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|19110799003|461199028|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	Sn0q3dWCEbOEjf2Am1/m7eN/GADvG9Pp4sk1hgi/7m45sr09njMO0t/uvd2o1NXC+vwQo77DJ/VkJGDqjQM4PLZUJYHnd01CyWibE01S2Zl+hJNLFLjmr+nIitS1/qUX/qczG4pyTTb6JmVeVZJ/Nq3Xvy4TgZKefoy53if99oaPOgaqJiVluQCtoZk3butE0hlycnywwfm7ayhmh72cUedZV6iNxmLUyzhMP7ZapWrNIZsTBhOnEfZjrndo3MG6cpSFl4bYto4GmKjOu1oWz71BZD/gobQDNwxugKDsIqNZkinWkH/oT85tFgqCDaabWXiVkf2AsYUXKV8V1mWetuF/feu4IjAQ/buoc1XmPSu4EACkH9/jQQxeMLSczjz7pgloenaJHBD/JJQ7hPnWb6mmL7GqOLTRgwW82NiZtdjuq/nJvRhp8RMf/K2WqKdR2Gr5OBW9ujRthb5PXnjXwl7wPPCzBF9KmBlbp/gWMn8U13wLdZ/5y+Bu6l5hckjpqvBBsn5OGArVMYvZW/ZkWaPOxjXvwol7WxBm2IfkeYlXEqeZggufkh+aW5eRBZB/hRjyam9bZSDyW7oSpJQj8UARWWjeRi1Vb+QfiwK2zLvkLnEhDTjJYd8gS7umZ13S8Qlnwa6Z2QJMGFO1OVrzpMJewW7qViALseAJe6fG6Es=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o/7SCdj8FGfSrFyv2B4BdhR3f0V4aX9T6faDEyUzd+PwC0rFz7vqDgGGZ4Ph?=
+ =?us-ascii?Q?c0bspZAbXxd6QB05riM2gNv7pv2Wh+EqqjF87bI3jnaSeshXK8cf5JZbcd8d?=
+ =?us-ascii?Q?B/CJxwFiZeeXBQqj1/sGK6BBHwEaltJJHLLWqUnYk+9UO8loIXK4ksTUybiX?=
+ =?us-ascii?Q?e1H5J0YKpXXO/eRXhHc1kasooD9pHAfa6/fd2hat2unNa9JgS5l1cJmaAQCd?=
+ =?us-ascii?Q?pVACqVbinaWfAee+al8BWH5Lp3mhUKx+HF8uUBSQV3s5oponp8jI6n1Dxsg2?=
+ =?us-ascii?Q?LHNPlSVZB1GDpEOy8yxXHMEdJhGF2FytFnH4y8YIR7imkORz6U2T6AEG9qVs?=
+ =?us-ascii?Q?ZJJp0sUHcbEV+NTQ8f/bSxZ+zgtZLdC8EFQqxvRv8qis5WVNgq3KTgMV+Ba5?=
+ =?us-ascii?Q?iPikG77NoVOieE+WrQTgpysNABN75AwdsOtGWtbbuEYpyegkGoFG6An3iO1G?=
+ =?us-ascii?Q?9rj88zyC9NnN5JWKXuWdeHtZ/HOfoJBmyVEIJm8XVow713GxKoCtCH8ZpzV8?=
+ =?us-ascii?Q?BZbcRorNYQ4/AvHnOV2B8H6Lzr0ISk/i/hn3qZ8O0C+CFMkg2Mypjl1BDTwS?=
+ =?us-ascii?Q?tDC6R9XDSqgOKATcYpoWo5yAhyAuUzIRZHncaMfMG/PDGb3tggqN4z0HySXM?=
+ =?us-ascii?Q?B7HzyE0hkHxWaN1c0emm0DQJCrnLymcvJi9BJVzHh3E1nn/lq1304BybakQ0?=
+ =?us-ascii?Q?F1oIpw/F/IwzAu9qQ3mQa84qouvbrfLDGD695XogEdyx5bTvc/9/SQtS873Q?=
+ =?us-ascii?Q?cY9RMXxSWJOh+i5/e1W0/7tkwZjtqFeSpPsr5sSz7ogKmmxSiar1wBcGtCNh?=
+ =?us-ascii?Q?nk07WHLi0cCZmx0E+1W+qaWfT9z1ges6CrEQYvcieDzZZuoza1iW/1G4Fb8W?=
+ =?us-ascii?Q?fa8YByx7Ke8rzHIfbR4qtPQLNv5J00ioto5fZbDT+igC+3em7FZPf1VdYTzD?=
+ =?us-ascii?Q?5clo0sQFODhqrrnHEDmz9KT30QtaeZwNxQHNDZ70i3LSL8z56fCJ1DumGRiQ?=
+ =?us-ascii?Q?nagn68RikEZ6CSeCxFWVmqa5RhYXMRgWw3AoumacyI3VF7+lIt4HgyQvGXAO?=
+ =?us-ascii?Q?QOH5AVuUN6n+rQf/ahYViWyr8v/dGfrXDa7DHIU7Iho8ymaRrxnizmJmthQI?=
+ =?us-ascii?Q?ms4noVurcS29Wn9WReXkHD+m0jpe2ZNnznVaXyuSJ4ObXy7iPvYmk+sXpIZf?=
+ =?us-ascii?Q?LtlZ/7u+4kU5fuCyzc0fMC9YUfIpLZHqk3o7sBJc2Ru39H7OsZwLEIuFxaA?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: baa07176-d49c-4bcd-0ae2-08dca57b72fa
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 09:41:21.3962
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB4895
 
-Hi,
+This series implements driver for Sophgo cv180x/sg200x on-chip thermal
+sensor and adds thermal zones for CV1800B SoCs.
 
-On 02/07/2024 11:16, Amit Pundir wrote:
-> Describe the ath12k WLAN on-board the WCN7850 module present on the
-> board.
-> 
-> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-> ---
-> Kanged verbatim from 490812872449 ("arm64: dts: qcom: sm8550-qrd: add the Wifi node").
-> 
->   arch/arm64/boot/dts/qcom/sm8550-hdk.dts | 97 +++++++++++++++++++++++++
->   1 file changed, 97 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-> index 12d60a0ee095..c453d081a2df 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-> @@ -279,6 +279,68 @@ platform {
->   			};
->   		};
->   	};
-> +
-> +	wcn7850-pmu {
-> +		compatible = "qcom,wcn7850-pmu";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&wlan_en>, <&pmk8550_sleep_clk>;
-> +
-> +		wlan-enable-gpios = <&tlmm 80 GPIO_ACTIVE_HIGH>;
-> +		/*
-> +		 * TODO Add bt-enable-gpios once the Bluetooth driver is
-> +		 * converted to using the power sequencer.
-> +		 */
+Changed from v3:
+1. style improvments
+2. drop unnecessary dt parameters for simplicity
 
-<snip>
+Changed from v2:
+1. style and code improvements
+2. use human-readable value for sensor parameters
 
-Now [1] driver & bindings changes were merged, could you resend with the following squashed:
+Changed from v1:
+1. style and code improvements
+2. make sample parameters configurable
+3. generalize document temperature calculating formula
 
-[1] https://lore.kernel.org/all/20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org/
+Haylen Chu (3):
+  dt-bindings: thermal: sophgo,cv1800-thermal: Add Sophgo CV1800 thermal
+  riscv: dts: sophgo: cv18xx: Add sensor device and thermal zone
+  thermal: cv180x: Add cv180x thermal driver support
 
-====><=====================================
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-index 0fa0b79de741..01c921602605 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-@@ -284,13 +284,10 @@ wcn7850-pmu {
-  		compatible = "qcom,wcn7850-pmu";
+ .../thermal/sophgo,cv1800-thermal.yaml        |  55 ++++
+ arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |  30 +++
+ arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   8 +
+ drivers/thermal/Kconfig                       |   6 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/cv180x_thermal.c              | 241 ++++++++++++++++++
+ 6 files changed, 341 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
+ create mode 100644 drivers/thermal/cv180x_thermal.c
 
-  		pinctrl-names = "default";
--		pinctrl-0 = <&wlan_en>, <&pmk8550_sleep_clk>;
-+		pinctrl-0 = <&wlan_en>, <&bt_default>, <&pmk8550_sleep_clk>;
+-- 
+2.45.2
 
-  		wlan-enable-gpios = <&tlmm 80 GPIO_ACTIVE_HIGH>;
--		/*
--		 * TODO Add bt-enable-gpios once the Bluetooth driver is
--		 * converted to using the power sequencer.
--		 */
-+		bt-enable-gpios = <&tlmm 81 GPIO_ACTIVE_HIGH>;
-
-  		vdd-supply = <&vreg_s5g_0p85>;
-  		vddio-supply = <&vreg_l15b_1p8>;
-@@ -1312,20 +1309,15 @@ &uart14 {
-  	bluetooth {
-  		compatible = "qcom,wcn7850-bt";
-
--		vddio-supply = <&vreg_l15b_1p8>;
--		vddaon-supply = <&vreg_s4e_0p95>;
--		vdddig-supply = <&vreg_s4e_0p95>;
--		vddrfa0p8-supply = <&vreg_s4e_0p95>;
--		vddrfa1p2-supply = <&vreg_s4g_1p25>;
--		vddrfa1p9-supply = <&vreg_s6g_1p86>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-
-  		max-speed = <3200000>;
--
--		enable-gpios = <&tlmm 81 GPIO_ACTIVE_HIGH>;
--		swctrl-gpios = <&tlmm 82 GPIO_ACTIVE_HIGH>;
--
--		pinctrl-0 = <&bt_default>;
--		pinctrl-names = "default";
-  	};
-  };
-====><=====================================
-
-Thanks,
-Neil
 
