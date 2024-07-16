@@ -1,150 +1,170 @@
-Return-Path: <linux-kernel+bounces-253803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00E093273A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:13:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BE8932723
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4B31C22272
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D1F1C2220F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3F619AD4B;
-	Tue, 16 Jul 2024 13:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WBVwwIMD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FvlrSBVZ"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8095119AD73;
+	Tue, 16 Jul 2024 13:10:29 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D4B1448ED;
-	Tue, 16 Jul 2024 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D29F13D8A0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721135572; cv=none; b=ow8YNo8rSP5Jmo/r3qpwEDW3sBt9DT87I8g6UQ3pee0JTz4ZM5I5RlTGTEnLPofPYn4u0bWtGY9iRa3sJEQBaDD7o+aZ0FdItfKyMKVYrl8aO9Ze2RL/UWEeazywg/NlKTagcZq32NpCxU8ansXKVOsX/0n4zW5MNWarrDz+Swc=
+	t=1721135429; cv=none; b=sTengVbqQOIcr6nhuDf/B2SdovceKc+yzU1NNB02/5VUWNyMHsWr5ib3RgFKGpGktmcNDHGe0bO5kFKUgAnJO/bGrNETJDvWStyiHAjrnwXNYx11wrjUptDeXHtl8ZLsWE5wqVHx5jG7oX3qK5MnuObqm06T2/0vzwNG/RuwHpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721135572; c=relaxed/simple;
-	bh=0pbFXYblsR3UKbqkbGTRgs8/Y3F6rLYSgnaif3v3QMM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=l8bxk1AUky3Ti0QeZB+2YuT4AGxjvj6lVDVJxxUVcdgMB+g4VyDULxF16kyUZBoFrVN7hVBR64S8YvYDya650WLwp/54Dnv/hm1bLm2DxYUa6HjRfdwnSTnC2zeZf9VykwRjGadIe82kKlara/D1Wl0NGkOUeXVr0k4DfOKk9lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WBVwwIMD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FvlrSBVZ; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BF6001148052;
-	Tue, 16 Jul 2024 09:12:49 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 16 Jul 2024 09:12:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1721135569;
-	 x=1721221969; bh=0pbFXYblsR3UKbqkbGTRgs8/Y3F6rLYSgnaif3v3QMM=; b=
-	WBVwwIMD8tfmGCPF0098lIEiTE+lQYK4hC0bV/URb6+ohG5p+AQ1eI4nY6BMPLKr
-	ckk0uSHS+yLi44MBR1sCmmxGVqzhee59pJKePiHQ0wqo/3W1bjbFkqWulCPX4IfU
-	AacUYIvfVmcQ2e376BxGYhkPTQ0wJw8hFJk4YyEqh00pH3sCVKoZEW4u9TTpqMCx
-	gb4dgsUKDS9HAkHcvALJRjilyodm+P6WdcGSM+AsU4qGDc3aLcEvt8ubLOdRMQCr
-	I3gOJhc+uIdWE3pfPCFmo9RPR+e1K7evdgxf0gJJBqtultJid0nw8KnIyJVzaSvH
-	pdsLiR8sYWnm6/6IyTxGVw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721135569; x=
-	1721221969; bh=0pbFXYblsR3UKbqkbGTRgs8/Y3F6rLYSgnaif3v3QMM=; b=F
-	vlrSBVZIGhGDXGNDw5PI7qM4IJ15Ynh5BGogtppzPYkp6plzboubmx7niHEOQq6l
-	jBcvzxCjQIbLIyDqwqBhYJB1+Y1tnrh6WYfaFVhoba3XnbDui8IPD0puOmz5etNt
-	kF5BiMNmZ0EHrMIZziygj7fVaX71wlu39QrBZngFXhG9xvV5+mcO3+uuxb5kNi7r
-	fPV+l0D0djsjum52q2rk906yQxJawKw1DGUqPLNCx6fKSXli2ThF/3+PYmWvqxrM
-	QRvWEPVC/4I2Bqw/pa7EiXoJM9W1d3vukQiDTKD5RPVRI26qmzx4Qv7PkYxophvl
-	VkvH5rz2PLO/Y9tQrktlA==
-X-ME-Sender: <xms:0HGWZo4snpg3QYahBK24C7MCseiNHexn5Ke8SWQVcHfF3XErDenqng>
-    <xme:0HGWZp6oPpbtTJX2PjsCUJI_-DCSh7ZRbKIyTOJ54I9gijXEXjN6g-uMopQDGDjvw
-    HaxJKNpyVcgDg4LUG4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdeitdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:0HGWZncXNLHTnkXFVkCGAToKSPvwpH8A4nU_Ko6pdvGXwCFcq1hxCg>
-    <xmx:0HGWZtJT2lhgG2fAGM9c5cw4mJL8IzJSXi7vvao2H2jTO0LFIq0hfw>
-    <xmx:0HGWZsIgIJoPOkNzsM0-JHB2rXHRkT6dSibQIiXEoI32devFnUnpDg>
-    <xmx:0HGWZuza2mzzUmnbay7_yAwVsKHTwoGUq7f4vO3ytYI3TJLIodpFog>
-    <xmx:0XGWZqyAzUqnw-VT3wXadzDIeKiTs-UHlYFdLVZRBG9WMkW6eKOIOD5L>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7B5F736A0075; Tue, 16 Jul 2024 09:12:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721135429; c=relaxed/simple;
+	bh=OluVpnZFdHz1fo1jJWCHZCa2/HNvaWiuKoODXv7wYbU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C5irKus29ss88ziObOzULXqew4h3jT+vadHzfhaR1P0lQ/09Ptr4NJnaHNwpQFoJKsAH0exNnNOrtAYTtAJqfaFqU1jif2o2dn+r5dqj/hkY3ASqg/+B87L7kKSeu1Cukrt3Hv0RZJ9aUOUfndsk1mYrd0vrUEeQtvlRsbGmANM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sThwX-000000005Ph-08yi;
+	Tue, 16 Jul 2024 09:10:09 -0400
+Message-ID: <f1fe524a8892acf032d8ddabda036c89a3cffce5.camel@surriel.com>
+Subject: Re: [PATCH] smp: print only local CPU info when sched_clock goes
+ backward
+From: Rik van Riel <riel@surriel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, neeraj.upadhyay@kernel.org, mingo@kernel.org, 
+	rostedt@goodmis.org, Leonardo Bras <leobras@redhat.com>
+Date: Tue, 16 Jul 2024 09:10:08 -0400
+In-Reply-To: <20240716090443.GQ14400@noisy.programming.kicks-ass.net>
+References: <20240715134941.7ac59eb9@imladris.surriel.com>
+	 <20240716090443.GQ14400@noisy.programming.kicks-ass.net>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <54d9edd5-377e-4d9a-956f-8f2ba49d4295@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
-References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
- <CAAhV-H5OOXguNTvywykyJk3_ydyDiSnpc-kvERRiYggBt441tw@mail.gmail.com>
- <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
- <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com>
- <b1a53515-068a-4f70-87a9-44b77d02d1d5@app.fastmail.com>
- <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
-Date: Tue, 16 Jul 2024 21:10:07 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Kelvin Cheung" <keguang.zhang@gmail.com>,
- "Vinod Koul" <vkoul@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Conor Dooley" <conor.dooley@microchip.com>
-Subject: Re: [PATCH RESEND v9 0/2] Add support for Loongson1 APB DMA
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Sender: riel@surriel.com
+
+On Tue, 2024-07-16 at 11:04 +0200, Peter Zijlstra wrote:
+> On Mon, Jul 15, 2024 at 01:49:41PM -0400, Rik van Riel wrote:
+> > About 40% of all csd_lock warnings observed in our fleet appear to
+> > be due to sched_clock() going backward in time (usually only a
+> > little
+> > bit), resulting in ts0 being larger than ts2.
+> >=20
+> > When the local CPU is at fault, we should print out a message
+> > reflecting
+> > that, rather than trying to get the remote CPU's stack trace.
+> >=20
+> > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > ---
+> > =C2=A0kernel/smp.c | 8 ++++++++
+> > =C2=A01 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/kernel/smp.c b/kernel/smp.c
+> > index f085ebcdf9e7..5656ef63ea82 100644
+> > --- a/kernel/smp.c
+> > +++ b/kernel/smp.c
+> > @@ -237,6 +237,14 @@ static bool
+> > csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1,
+> > in
+> > =C2=A0	if (likely(ts_delta <=3D csd_lock_timeout_ns ||
+> > csd_lock_timeout_ns =3D=3D 0))
+> > =C2=A0		return false;
+> > =C2=A0
+> > +	if (ts0 > ts2) {
+> > +		/* Our own sched_clock went backward; don't blame
+> > another CPU. */
+> > +		ts_delta =3D ts0 - ts2;
+> > +		pr_alert("sched_clock on CPU %d went backward by
+> > %llu ns\n", raw_smp_processor_id(), ts_delta);
+> > +		*ts1 =3D ts2;
+> > +		return false;
+> > +	}
+>=20
+> So I've seen some chatter about this on IRC and was WTF, seeing this
+> patch I'm still WTF. What is going on with those machines?!?!
+>=20
+
+Unfortunately this particular behavior does not appear to be limited
+to a few bad systems. The distribution over time looks as follows:
+
+- 1 day:     N affected systems
+- 3 days:   3N affected systems
+- 1 week:   6N affected systems
+- 2 weeks: 14N affected systems
+- 30 days: 29N affected systems
+- 90 days: 72N affected systems
+
+In other words, we are not looking at a few "repeat customers",
+but at a large number of systems that show the backward TSC
+behavior a few times, and then not again for months.
+
+N is a triple digit number, so I'm fairly confident in these
+numbers.
+
+If it's any consolation this seems to happen on both Intel
+and AMD systems.=20
+
+The only detection code we have currently is in csd_lock_wait_toolong,
+so there could be a lot of cases of the TSC moving backward that
+are falling through the cracks.
+
+Most of the time the TSC only moves backward a few dozen, or a few
+hundred nanoseconds, and backward time past a few microseconds is
+a very long tail. I have not sliced this data by CPU model, and
+don't know if the distribution is different for different CPUs.
+
+The code in question simply loads one sched_clock value into ts0,
+and another into ts2:
+
+static void __csd_lock_wait(call_single_data_t *csd)
+{
+        int bug_id =3D 0;
+        u64 ts0, ts1;
+
+        ts1 =3D ts0 =3D sched_clock();
+        for (;;) {
+                if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id))
+                        break;
+                cpu_relax();
+        }
+
+...
+
+static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64
+*ts1, int *bug_id)
+{
+...
+        ts2 =3D sched_clock();
 
 
+I don't know if it matters for the CPU that csd_lock_wait_toolong
+gets inlined into __csd_lock_wait.
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=8816=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:40=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> On Mon, Jul 15, 2024 at 3:00=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
->>
->>
->>
->> =E5=9C=A82024=E5=B9=B47=E6=9C=8815=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
-=E5=8D=882:39=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
->> [...]
->> >
->> >> You said that you've accepted my suggestion, which means you recog=
-nize
->> >> 'loongson' as the better name for the drivers.
->> > No, I don't think so, this is just a compromise to keep consistency.
->>
->> Folks, can we settle on this topic?
->>
->> Is this naming really important? As long as people can read actual ch=
-ip name from
->> kernel code & documents, I think both are acceptable.
->>
->> I suggest let this patch go as is. And if anyone want to unify the na=
-ming, they can
->> propose a treewide patch.
-> Renaming still breaks config files.
+On one particular system replacing the rdtsc() in native_sched_clock()
+with rdtsc_ordered() did not help, but that system sees frequent
+negative time jumps of 2.5ms, and might just be broken.
 
-This is trival with treewide sed :-)
-
-Thanks
-- Jiaxun
+The MTBF is high enough that I'm not sure whether always using
+rdtsc_ordered() would be warranted, and I don't know whether it
+would even help...
 
 --=20
-- Jiaxun
+All Rights Reversed.
 
