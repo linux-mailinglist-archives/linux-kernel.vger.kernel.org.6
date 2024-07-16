@@ -1,188 +1,172 @@
-Return-Path: <linux-kernel+bounces-253984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAF49329B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB3C9329C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B901F22446
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93B771F22E30
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D5319CD1B;
-	Tue, 16 Jul 2024 14:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5785719CD01;
+	Tue, 16 Jul 2024 14:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XI77zN6T"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v9WstOPZ"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9597854BD4;
-	Tue, 16 Jul 2024 14:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0ED198840
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721141364; cv=none; b=X50hQkn/zABrY4Yie4s9/sQhhmavfiSFi99bCuZJrhVzJTk9uCIWVIQmstuUd7ZbBTVzRqb3dh2odIfFwNbc+rtUFktmlij5KGnncaU7RKxlBVZnB6fmWk0/nlfK3fRcuIGx1Ut4aqTrg2X8Z8Em90G3kCRjeEFHPMpacwiv298=
+	t=1721141595; cv=none; b=hsdfmw4LX1DOnoQ7imAwv8P5FODDrLWAta9qavr6fOXlXOy9psH9K9AShaBVyXMhzKoEfmza9OnnVM8rQSvPwe7cfJAhqmfQcn6l0PPXJ8hnrFSaXumbjzBO78Y+MCW/mHn62hg3JlySFewu+8CuckSadfmfhrHpvEDEp5+M7JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721141364; c=relaxed/simple;
-	bh=IzYm1ODjx98rPnxHT2QFZ0eJuGhCkk0xgeP66jOXqt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0tVZLifoIGx32pLD255xkzPzsYm83l6ZBed+hyr9n3AdoieRnoTwesKe9oJ0jz2dSdsRv7FZR8nJKvjlAsgBXLROJWXfHwnGEnPIp1rVn3wPzaE/bGJ3Fh13MdrsQklGzW8YPi0KbIOqsMe4rSbhKByF2g/Nn727VoCX0L5CNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XI77zN6T; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52eafa1717bso5780526e87.2;
-        Tue, 16 Jul 2024 07:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721141361; x=1721746161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bAw5U9i3+ZOKLaHb8edTb084r/ssMR28KQlSh1pAWiM=;
-        b=XI77zN6TfAjNKhdK1QxoDH+R4pnhyCrEC8bTxCItNsIz5VUyWam5XIpE+xo6lMIiOn
-         LNxgXjQkmnjJoqI7IhNjbRpiCv571DsdXXS5HIGZb+KPN8cHokZuHGujRpn/WfwMqdOs
-         NNzQWS6fpEjiKtQAdu/TlyOPcvf3O1EbY8dHsf64IAFVlWKF0xvmfZaSc+sHdfsUcGF3
-         hab42MjGqyGbH75V7beMsa8/frUPTrTtLH4sEz8PyEA+HAe8hbVz6SeUD06orbGwNvdc
-         nWtfmccYzU66FYGLXRRVnUX93356eruMEsz3FyVGpt3MLePVdiGICsg2cwFhVYZFDnEf
-         P9Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721141361; x=1721746161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bAw5U9i3+ZOKLaHb8edTb084r/ssMR28KQlSh1pAWiM=;
-        b=DAW5FRjLLh7cjIb58e7C3JA14Y+nP2a0HcgtVSL7zb4/ysrLuK3ohiZGmnCdZSx/kO
-         LXdsrZWU3jwMpf0PAdiITQNV+snyCNcRIr+z89OVTJRmXQNYXWKlu1VPsRuQXwujF5iZ
-         W1k9ggWsVxi3H9OnWXvNH2FzrgOn/TpeabEDpfQAi1loo7xLgYc/R63qBh87cOdSLc8k
-         DYYCUtWVqfNhCgh8eYJ0Ga9RjmM716IGIzXU+a1YlbtrIpBdghPJvnysWgpov3W2zhQk
-         cDrq7DUxDPvc0kLhMuKdhnLlkLFG8DNYm6pfEnXJ200tEjmf+ge/rM+RDPIUUY0u2x5E
-         Pz3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdfhn8QS7ft0K6Abyc4skNrt246Uc5L2Ki2B6kJ88HV7A0+5YvhmQ8dl2MFdMthEuaFju1NYnE8P7HRF9w1LwvP9gvdt8cZq8d0ZkKY2+6uRmDlJhlh87R8T+TWo2bAmo5ZOVZT0f7CK/FXI241nM2F12veo8WuFufzsicJMvd/F2B1wvSaWA=
-X-Gm-Message-State: AOJu0Yy/QQr4qrbmOPeXVvDB4XVlp+125PidCH/ARMp0V6F1paT2C6M6
-	8MD8InRevajGdkbUXpoSYj+ZKJXLB0QdrxNYQw1uzPYSDyJ5lHV8aWYOK3d5PK89TbPDAffxuhI
-	4cnSrZpKrhY1rhlko+1OlYy2l4SA=
-X-Google-Smtp-Source: AGHT+IHW0jnedglIdeW5LQSBi91kYNksLiz+/WQyl3NwrTbSGuqtAIGUY5Bd+0hXeaqYT+TVrFsHZ63y8ZXnG6cRE7w=
-X-Received: by 2002:a05:6512:33d0:b0:52e:9407:ddcd with SMTP id
- 2adb3069b0e04-52edef21722mr1789750e87.18.1721141360382; Tue, 16 Jul 2024
- 07:49:20 -0700 (PDT)
+	s=arc-20240116; t=1721141595; c=relaxed/simple;
+	bh=7oKTwM0hEprlyuW4WVtS91nyNIkr4Ba3tkadujS8A7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUZNSqonUlyJuDujf8/6z45edNwh4wdrkWgCpsbD6Ctca3tTbgbcwRQflkFn0DL228aFRGC7UneVoW2YynFmU3CDQaqbAo17M8v0z7LhZJKOyiPZwdsFsbdaZNJin5o8rPU/m10MgX1GSqa6SmKOVUENr5j14sVuI9hPeYy/fy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v9WstOPZ; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: chenridong@huawei.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721141591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FP4n22+iU/rM22MavGx8TeM69+CmD5kfDoX2X7lRpqs=;
+	b=v9WstOPZ1cHIkeGJgEacvtBfhvH8Ht9LRJ+pVzSloChphtxmhR/WgF8dkdS3UdzuWZfBa+
+	FJm2o/wRJqx5tRm+/ZWnprGDdbRLLeWrhtkQzC1ZwwZPafIHDLxu3AkZ/wbNZgu9tLsmMs
+	u7md5z1vcsjMl+EYVAU/gIpU7q/1XEI=
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: martin.lau@linux.dev
+X-Envelope-To: ast@kernel.org
+X-Envelope-To: daniel@iogearbox.net
+X-Envelope-To: andrii@kernel.org
+X-Envelope-To: eddyz87@gmail.com
+X-Envelope-To: song@kernel.org
+X-Envelope-To: yonghong.song@linux.dev
+X-Envelope-To: john.fastabend@gmail.com
+X-Envelope-To: kpsingh@kernel.org
+X-Envelope-To: sdf@google.com
+X-Envelope-To: haoluo@google.com
+X-Envelope-To: jolsa@kernel.org
+X-Envelope-To: lizefan.x@bytedance.com
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: bpf@vger.kernel.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Tue, 16 Jul 2024 14:53:04 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: chenridong <chenridong@huawei.com>
+Cc: Tejun Heo <tj@kernel.org>, martin.lau@linux.dev, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+	jolsa@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+	bpf@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
+ cgroup_bpf_release
+Message-ID: <ZpaJUIyiDguRQWSn@google.com>
+References: <20240607110313.2230669-1-chenridong@huawei.com>
+ <67B5A5C8-68D8-499E-AFF1-4AFE63128706@linux.dev>
+ <300f9efa-cc15-4bee-b710-25bff796bf28@huawei.com>
+ <a1b23274-4a35-4cbf-8c4c-5f770fbcc187@huawei.com>
+ <Zo9XAmjpP6y0ZDGH@google.com>
+ <ZpAYGU7x6ioqBir5@slm.duckdns.org>
+ <5badbb85-b9e9-4170-a1b9-9b6d13135507@huawei.com>
+ <c6d10b39-4583-4162-b481-375f41aaeba1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-x1e8-zap-name-v2-1-a82488e7f7c1@linaro.org>
- <20240715190108.vjctytyntxlottgt@hu-akhilpo-hyd.qualcomm.com> <CAA8EJpqzhEotdVsW3EudR9cqSOm-djjKSgRaqKRbEtJ6wTBZKQ@mail.gmail.com>
-In-Reply-To: <CAA8EJpqzhEotdVsW3EudR9cqSOm-djjKSgRaqKRbEtJ6wTBZKQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 16 Jul 2024 07:49:07 -0700
-Message-ID: <CAF6AEGvmuzMcYz+oqu+GKhhxYqc8SqKcThY5CvR6tnES-Lu71A@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: disable GPU on x1e80100 by default
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6d10b39-4583-4162-b481-375f41aaeba1@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 16, 2024 at 4:03=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, 15 Jul 2024 at 22:01, Akhil P Oommen <quic_akhilpo@quicinc.com> w=
-rote:
-> >
-> > On Mon, Jul 15, 2024 at 09:18:49PM +0300, Dmitry Baryshkov wrote:
-> > > The GPU on X1E80100 requires ZAP 'shader' file to be useful. Since th=
-e
-> > > file is signed by the OEM keys and might be not available by default,
-> > > disable the GPU node and drop the firmware name from the x1e80100.dts=
-i
-> > > file. Devices not being fused to use OEM keys can specify generic
-> > > location at `qcom/x1e80100/gen70500_zap.mbn` while enabling the GPU.
-> > >
-> > > The CRD was lucky enough to work with the default settings, so reenab=
-le
-> > > the GPU on that platform and provide correct firmware-name (including
-> > > the SoC subdir).
-> > >
-> > > Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> > > Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > > Changes in v2:
-> > > - Keep GPU enabled for X1E80100-CRD (Johan)
-> > > - Link to v1: https://lore.kernel.org/r/20240715-x1e8-zap-name-v1-1-b=
-66df09d0b65@linaro.org
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 8 ++++++++
-> > >  arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 3 ++-
-> > >  2 files changed, 10 insertions(+), 1 deletion(-)
-> > >
->
-> [..]
->
-> > > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot=
-/dts/qcom/x1e80100.dtsi
-> > > index 7bca5fcd7d52..8df90d01eba8 100644
-> > > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > > @@ -3155,9 +3155,10 @@ gpu: gpu@3d00000 {
-> > >                       interconnects =3D <&gem_noc MASTER_GFX3D 0 &mc_=
-virt SLAVE_EBI1 0>;
-> > >                       interconnect-names =3D "gfx-mem";
-> > >
-> > > +                     status =3D "disabled";
-> > > +
-> > >                       zap-shader {
-> > >                               memory-region =3D <&gpu_microcode_mem>;
-> > > -                             firmware-name =3D "qcom/gen70500_zap.mb=
-n";
-> >
-> > In general, why not keep a default zap firmware listed here? Anyway we
-> > are disabling gpu node here in case of platforms which doesn't upstream
-> > secure firmwares.
->
-> Excuse me, I missed the question before sending v3, however the answer
-> is still going to be the same:
->
-> First of all, we don't do it for other platforms
-> Second, we don't do it for other firmware. Each DT declares its own
-> set of files.
-> Last, but not least, it's better to get an error message regarding
-> firmware-name not being present rather than a possibly cryptic message
-> regarding firmware failing authentication.
+On Tue, Jul 16, 2024 at 08:14:31PM +0800, chenridong wrote:
+> 
+> 
+> On 2024/7/12 9:15, chenridong wrote:
+> > 
+> > 
+> > On 2024/7/12 1:36, Tejun Heo wrote:
+> > > Hello,
+> > > 
+> > > On Thu, Jul 11, 2024 at 03:52:34AM +0000, Roman Gushchin wrote:
+> > > > > The max_active of system_wq is WQ_DFL_ACTIVE(256). If all
+> > > > > active works are
+> > > > > cgroup bpf release works, it will block smp_call_on_cpu work
+> > > > > which enque
+> > > > > after cgroup bpf releases. So smp_call_on_cpu holding
+> > > > > cpu_hotplug_lock will
+> > > > > wait for completion, but it can never get a completion
+> > > > > because cgroup bpf
+> > > > > release works can not get cgroup_mutex and will never finish.
+> > > > > However, Placing the cgroup bpf release works on cgroup
+> > > > > destroy will never
+> > > > > block smp_call_on_cpu work, which means loop is broken.
+> > > > > Thus, it can solve
+> > > > > the problem.
+> > > > 
+> > > > Tejun,
+> > > > 
+> > > > do you have an opinion on this?
+> > > > 
+> > > > If there are certain limitations from the cgroup side on what
+> > > > can be done
+> > > > in a generic work context, it would be nice to document (e.g. don't grab
+> > > > cgroup mutex), but I still struggle to understand what exactly is wrong
+> > > > with the blamed commit.
+> > > 
+> > > I think the general rule here is more "don't saturate system wqs" rather
+> > > than "don't grab cgroup_mutex from system_wq". system wqs are for misc
+> > > things which shouldn't create a large number of concurrent work items. If
+> > > something is going to generate 256+ concurrent work items, it should
+> > > use its
+> > > own workqueue. We don't know what's in system wqs and can't expect
+> > > its users
+> > > to police specific lock usages.
+> > > 
+> > Thank you, Tj. That's exactly what I'm trying to convey. Just like
+> > cgroup, which has its own workqueue and may create a large number of
+> > release works, it is better to place all its related works on its
+> > workqueue rather than on system wqs.
+> > 
+> > Regards,
+> > Ridong
+> > 
+> > > Another aspect is that the current WQ_DFL_ACTIVE is an arbitrary number I
+> > > came up with close to 15 years ago. Machine size has increased by
+> > > multiple
+> > > times, if not an order of magnitude since then. So, "there can't be a
+> > > reasonable situation where 256 concurrency limit isn't enough" is most
+> > > likely not true anymore and the limits need to be pushed upward.
+> > > 
+> > > Thanks.
+> > > 
+> > 
+> Hello, Tejun, and Roman, is the patch acceptable? Do I need to take any
+> further actions?
+> 
 
-tbh, I think it might be better to just remove the default fw name
-from a6xx_catalog.c device table.  That would better reflect the
-situation, ie. some fw is needed and not available (if the
-firmware-name prop isn't provided).  Trying to fall back to loading
-the wrong fw is a mis-design.
+I'm not against merging it. I still find the explanation/commit message
+a bit vague and believe that maybe some changes need to be done on the watchdog
+side to make such lockups impossible. As I understand the two most important
+pieces are the watchdog which tries to run a system work on every cpu while
+holding cpu_hotplug_lock on read and the cpuset controller which tries
+to grab cpu_hotplug_lock on writing.
 
-BR,
--R
+It's indeed a tricky problem, so maybe there is no simple and clear explanation.
 
-> >
-> > -Akhil
-> >
-> > >                       };
-> > >
-> > >                       gpu_opp_table: opp-table {
-> > >
-> > > ---
-> > > base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
-> > > change-id: 20240715-x1e8-zap-name-7b3c79234401
-> > >
-> > > Best regards,
-> > > --
-> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > >
->
->
->
-> --
-> With best wishes
-> Dmitry
->
+Anyway thank you for finding the problem and providing a reproducer!
+
+Thanks!
 
