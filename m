@@ -1,133 +1,190 @@
-Return-Path: <linux-kernel+bounces-253331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF395931FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FBE931FA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECEAB1C20DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86D281F22079
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B912E6D;
-	Tue, 16 Jul 2024 04:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF599171B6;
+	Tue, 16 Jul 2024 04:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOvaDk5L"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vIjF0ytw"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6687737B;
-	Tue, 16 Jul 2024 04:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E00FFC19
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721103461; cv=none; b=jSbZgKFlhHnGQg1vrbGHOEhnQO2AEVX45ZlmmqYTnraDRHVCNSkf+ccdaC4Tz7eG1st5WrPNzCoh69dLwlYHYFzlaQuNvG3a+lzwtwhXFuAQSXQ4RoeFO6PuhWmZJBKF3q6rFSvKXR4H9atgvuR64i2lwO+xtxo5BoCsaj41CA0=
+	t=1721103515; cv=none; b=NYlqeXoSNfmiAbMGwKNYeBCX8unFyUEMM4VKe1EvF/odl7PHNIDj1l0ev6byYlRAkxjChsBkRFJvyhC59Grzii+jDfBHPx5cR7HBJp0VaWOnWx5tez0NjF1JZYTVTYHRboNX0WQFHObPrzTp9/+RSUGyVz7KSyr5eTQ4EvK75Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721103461; c=relaxed/simple;
-	bh=qJn8e1i5WLq5UWGU0oBfqjMNX1SJrBxdFucDEfseg04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btcON/FDWg+VQ/gaTRz5UCzjiWfB6vEzRd7AjHLFj+P8dc1pXVlRzAomEzwgYbHc3ro7exdx72MTRaL0H4/6+UqcMoWo4sc8Z2KLZ5MPqpEsbF4Us4Lrt89DriUrsycU+Lqwwm/ZA3p8GkpLxFY/jVkPxC1TZMKViJ/D6N4z16A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOvaDk5L; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5957040e32aso3318159a12.2;
-        Mon, 15 Jul 2024 21:17:39 -0700 (PDT)
+	s=arc-20240116; t=1721103515; c=relaxed/simple;
+	bh=RGsPBBQkzUBM0SMR+ehNOxqmnR0WbZc/DsQlI6sXDmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpqCwtA9sM+G2uBXF4cRTdr8sheF+Fbyn+S0D/VlzKCAWZseW+Ol1AIOZidq0Tvobi19Utne+UirYWGS/3CTgmNyNV2hPtkxnrfLUxYgr0r2l30fICymEAgH5fzA5Wm8DJKEJTzhZkYJlA/J7orcBq7GqJNStyAZFL/U7iRjDqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vIjF0ytw; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70b04cb28acso3970810b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 21:18:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721103458; x=1721708258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lhFeghLSccQHLDcLSo9e5QnjvRQLxj2zjcsbdhYZSqE=;
-        b=hOvaDk5LXJP0WLrR1zCOEtMJgkfoFY/DNrJxfROevICiKoeFPDKoSRe2/1iMYwP1ZA
-         EOy7/GnxEyK2xJVal3z2VB1kKRLw+nV6RNLXpBMLMCz7Vfc9HigH78tmArlboAwj76Sv
-         yeOQwc6bfoH7DoW2NPCkc5w2g9IUcm68NQ0ls/ADmh7JhVPogX2HMs5ctUy3ZoAegM0p
-         Zrxz2AIMI2Y+UYuVKkVXrMMowPng69XwlWonDb5sES8WwrcC/qu3+mx2WcOrZ43mJfkL
-         GV33KlXAxeVn7Wd+qag1Itf6PXE6Q2KLBl4dktDOYP4oHF6CDmPAK9oq77XBlB0QWtdP
-         AX6w==
+        d=linaro.org; s=google; t=1721103513; x=1721708313; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BKYgDKFHVYuhAVcjkJOhPnekOkq1qxzB/IHzo1av0Yc=;
+        b=vIjF0ytwNwE84Mhg+0lXJwc3AGQ6M/xBTeQyiRGHCJfCw/bMYct6jnQN5vaX3gaBwJ
+         GE8itWoKVfHKH74fWvjrIr+vFGdptaGdVhQGQFkmTtLOBwnbzCAy7eh1nFmQlP3+WcFb
+         gABIxN465xqcKQzEblbcXbrpO3hSp/dKWUHfYOq6fFZ36us3PAYOMhHF3kKc7s7FHJ7a
+         DPM5JJIIIwqiu/YyvWINzRMnbeqnofvc7Scm3ItR35mpw/GJXNPrAeyJIqV34W+76XBS
+         k3BTKqIkYtBXoiSwK4yLA7P70eX8fkZiNJu2+oBdXfW8vcgW6VJYvD0+WB1wp5PqYP2r
+         WfpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721103458; x=1721708258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721103513; x=1721708313;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lhFeghLSccQHLDcLSo9e5QnjvRQLxj2zjcsbdhYZSqE=;
-        b=S7ZerSWBcjO9GRAgxpXO4x0VE46IxfGcEltHLvlcYQUCcelSRnYrvgVS5ZURDm2TSl
-         KniL+IZ9Szy40sIxsnkehafV8SJlhccqtXElpNOBwOeXKn1oVVwx5TciUPwAhc9EjlQ6
-         onerSpztvCxcdcL9VpndDeC4tt4x4N2b0r0KREDJTwqwnxeOPfVVuQ6tLePqIhJDC6Yp
-         +5JLGEA6Y5maTsdF89uW3ugR3wvznlOTz7dK8jx8X6QWc1wuhzgfZK8nRp00E1yblZU3
-         B2c10IA0RsdFakaGkr21PPMUNerf8QPJn7XzjEkb85ozl+coeTVNyhKz5NyehiUpxmrz
-         U7tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWIK6AtgYiyUtylxe362bLZhMN43qtFH7X8yTp4fIocRQZFDaOFUrN2E7Ur5DvjNORoVnnGFt+1jVXt37iI0wFoEVXNZ5iNyP+DSP7
-X-Gm-Message-State: AOJu0Yx7WueX7u7q6+mP006mPUBRZqt8UbtvMvMTzRLovz9HJsu41kxN
-	o04PV29df9OHNyARykG6kLJlPY62580yJpnrgimxcCLebmBVtUddWMaMuw==
-X-Google-Smtp-Source: AGHT+IG3SMJScO8ARZP24U9bTJmilJ1G/xzJWovTLCATt8gREEpXnkKf1ea9AMJD/c4BZTzHB8QBZQ==
-X-Received: by 2002:a05:6402:13d6:b0:58c:ab6f:8d63 with SMTP id 4fb4d7f45d1cf-59ef09d20b4mr674566a12.39.1721103457271;
-        Mon, 15 Jul 2024 21:17:37 -0700 (PDT)
-Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b268a271fsm4198764a12.78.2024.07.15.21.17.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 21:17:36 -0700 (PDT)
-Message-ID: <5fcf9e51-1fcf-4f51-8870-e709b6c87a55@gmail.com>
-Date: Tue, 16 Jul 2024 06:17:35 +0200
+        bh=BKYgDKFHVYuhAVcjkJOhPnekOkq1qxzB/IHzo1av0Yc=;
+        b=LQ8/gtnl3kXNIQqBpMsekYoIbjGRsudJmzZu5k4i4Cq1Htu86oDkbHCwl/RD5TpO+H
+         ETX/qDHnBD6hmfFwGwz1CWsS1DgKc0CQw6+jKE/x3/Cdeo8gZHvYao/7mK+oZfrZb/1g
+         Mjjx/Bx4jZJal7Ypx2QNs/s4qBWL5SF4BqYzoKr6icTpkCnQ1WevcA0rQauJ4VIfdqNS
+         YJrS3lSuNpgnDpQf1qurUo26aIlVe0Pvbect1PW0L6tdUs7bT9tRYWeITYyNZs3Hpxy/
+         b07v36tXgiwvLJSHQQPhO4tPsK/Rfmyh7qDB0mLLXncZNyaBiMBwO9VZZzzMfhuk5/JR
+         8B7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUndyoLNzhe0ok1cML6+IscTddiNo8DwBomQkWjFhkojIsc6QstwOMkdIFozFbOw+Oxmj8ecRVuLrnwwW+qwxje+G+v9/csV2S9A9V
+X-Gm-Message-State: AOJu0YzJa+NCtoIsm/+PZA4nQ2MEDj55jzC/Q9N8yjtenllGgwVNvpU6
+	EeqxEb89dZ70IN/9WuebAMYIyuqmXGBH6t7WA2j5OUNbKhk4/vMMjn8EWUIMQA==
+X-Google-Smtp-Source: AGHT+IGiEeicT8EuRcZ39OL++BPMADEK4s+ncegx9kmgjnLWGE4lsZt/4u4yLE9ZcSWRMSRVO51wCw==
+X-Received: by 2002:aa7:8541:0:b0:705:9669:af1f with SMTP id d2e1a72fcca58-70cd8403e27mr881928b3a.10.1721103512634;
+        Mon, 15 Jul 2024 21:18:32 -0700 (PDT)
+Received: from thinkpad ([220.158.156.207])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ecd362dsm5202464b3a.215.2024.07.15.21.18.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 21:18:32 -0700 (PDT)
+Date: Tue, 16 Jul 2024 09:48:27 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 13/14] PCI: qcom: Simulate PCIe hotplug using 'global'
+ interrupt
+Message-ID: <20240716041827.GD3446@thinkpad>
+References: <20240715-pci-qcom-hotplug-v1-0-5f3765cc873a@linaro.org>
+ <20240715-pci-qcom-hotplug-v1-13-5f3765cc873a@linaro.org>
+ <dca49572-dc77-58df-1bd1-b0e897191c87@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] input: qt1050: use
- device_for_each_child_node_scoped()
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240412-input_device_for_each_child_node_scoped-v1-0-dbad1bc7ea84@gmail.com>
- <20240412-input_device_for_each_child_node_scoped-v1-2-dbad1bc7ea84@gmail.com>
- <ZpXG_TOdvq6SF22s@google.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <ZpXG_TOdvq6SF22s@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dca49572-dc77-58df-1bd1-b0e897191c87@quicinc.com>
 
-On 16/07/2024 03:03, Dmitry Torokhov wrote:
-> Hi Javier,
+On Tue, Jul 16, 2024 at 09:34:13AM +0530, Krishna Chaitanya Chundru wrote:
 > 
-> On Fri, Apr 12, 2024 at 10:57:31PM +0200, Javier Carrasco wrote:
->> Switch to the _scoped() version introduced in commit 365130fd47af
->> ("device property: Introduce device_for_each_child_node_scoped()")
->> to remove the need for manual calling of fwnode_handle_put() in the
->> paths where the code exits the loop early.
->>
->> In this case the err label was no longer necessary and EINVAL is
->> returned directly.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>  drivers/input/keyboard/qt1050.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/input/keyboard/qt1050.c b/drivers/input/keyboard/qt1050.c
->> index b51dfcd76038..6ac2b9dbdb85 100644
->> --- a/drivers/input/keyboard/qt1050.c
->> +++ b/drivers/input/keyboard/qt1050.c
->> @@ -355,21 +355,21 @@ static int qt1050_parse_fw(struct qt1050_priv *ts)
->>  		if (fwnode_property_read_u32(child, "linux,code",
->>  					     &button.keycode)) {
->>  			dev_err(dev, "Button without keycode\n");
->> -			goto err;
->> +			return -EINVAL;
 > 
-> It looks like the chunk actually switching to
-> device_for_each_child_node_scoped() is missing from the patch. I added
-> it and applied, thank you.
-> 
-> Thanks.
+> On 7/15/2024 11:03 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Historically, Qcom PCIe RC controllers lack standard hotplug support. So
+> > when an endpoint is attached to the SoC, users have to rescan the bus
+> > manually to enumerate the device. But this can be avoided by simulating the
+> > PCIe hotplug using Qcom specific way.
+> > 
+> > Qcom PCIe RC controllers are capable of generating the 'global' SPI
+> > interrupt to the host CPUs. The device driver can use this event to
+> > identify events such as PCIe link specific events, safety events etc...
+> > 
+> > One such event is the PCIe Link up event generated when an endpoint is
+> > detected on the bus and the Link is 'up'. This event can be used to
+> > simulate the PCIe hotplug in the Qcom SoCs.
+> > 
+> > So add support for capturing the PCIe Link up event using the 'global'
+> > interrupt in the driver. Once the Link up event is received, the bus
+> > underneath the host bridge is scanned to enumerate PCIe endpoint devices,
+> > thus simulating hotplug.
+> > 
+> > All of the Qcom SoCs have only one rootport per controller instance. So
+> > only a single 'Link up' event is generated for the PCIe controller.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >   drivers/pci/controller/dwc/pcie-qcom.c | 55 ++++++++++++++++++++++++++++++++++
+> >   1 file changed, 55 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 0180edf3310e..38ed411d2052 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -50,6 +50,9 @@
+> >   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> >   #define PARF_Q2A_FLUSH				0x1ac
+> >   #define PARF_LTSSM				0x1b0
+> > +#define PARF_INT_ALL_STATUS			0x224
+> > +#define PARF_INT_ALL_CLEAR			0x228
+> > +#define PARF_INT_ALL_MASK			0x22c
+> >   #define PARF_SID_OFFSET				0x234
+> >   #define PARF_BDF_TRANSLATE_CFG			0x24c
+> >   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> > @@ -121,6 +124,9 @@
+> >   /* PARF_LTSSM register fields */
+> >   #define LTSSM_EN				BIT(8)
+> > +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> > +#define PARF_INT_ALL_LINK_UP			BIT(13)
+> > +
+> >   /* PARF_NO_SNOOP_OVERIDE register fields */
+> >   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+> >   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
+> > @@ -260,6 +266,7 @@ struct qcom_pcie {
+> >   	struct icc_path *icc_cpu;
+> >   	const struct qcom_pcie_cfg *cfg;
+> >   	struct dentry *debugfs;
+> > +	int global_irq;
+> >   	bool suspended;
+> >   };
+> > @@ -1488,6 +1495,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+> >   				    qcom_pcie_link_transition_count);
+> >   }
+> > +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > +{
+> > +	struct qcom_pcie *pcie = data;
+> > +	struct dw_pcie_rp *pp = &pcie->pci->pp; > +	struct device *dev = pcie->pci->dev;
+> > +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
+> > +
+> > +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
+> > +
+> > +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+> > +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
+> > +		/* Rescan the bus to enumerate endpoint devices */
+> > +		pci_lock_rescan_remove();
+> > +		pci_rescan_bus(pp->bridge->bus);
+> There can be chances of getting link up interrupt before PCIe framework
+> starts enumeration and at that time bridge-> bus is not created and
+> cause NULL point access.
+> Please have a check for this.
 > 
 
+Host bridge is enumerated during dw_pcie_host_init() and the IRQ handler is
+registered afterwards. So there is no way the 'pp->bridge' can be NULL.
 
-Thank your for adding the missing bit. Did you remove the child variable
-at the beginning of the function as well? It will be unused otherwise
-(child is defined in the macro itself).
+- Mani
 
-Thanks again and best regards,
-Javier Carrasco
+-- 
+மணிவண்ணன் சதாசிவம்
 
