@@ -1,135 +1,163 @@
-Return-Path: <linux-kernel+bounces-254131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A44F932F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEB932F5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9471C224A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AA1C222EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3CD1A01A1;
-	Tue, 16 Jul 2024 17:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9851A00EE;
+	Tue, 16 Jul 2024 17:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QQQ+S7I2"
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jSbIiMZR"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E1D19FA6B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C997119B3EE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721152099; cv=none; b=XQdvYSNTNqVRN76HGQA6gUxCQDJsIo0a7YqwHsxOZgwI22IHeGXE9gTKNr/wCmElDHOj/8xnKtIyTOnq+rQoHNosOXhM0FOVOVFa6+CDe3WpQD2u9hG+7n97dS2AzO7YoFAZy2ZUVVKhp0ko5Y0TzqJWiHoVb6XKN2osbxZTlu8=
+	t=1721152126; cv=none; b=WnkIBf278q5fwpK9gca+JvTZYo0nrSbe1BvTEqJWmD3WCwu/a5E8McxBxWz340z3YYiCNKDx2ajeHFSvkh84UhSRwsihYPNZB55kBayrl8nUgp9Ky/qfhnOAUhF66oWpfNlSDIW1BURANhM50Izap+Gd83vMEw59agYQL5aHHJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721152099; c=relaxed/simple;
-	bh=NiVYgJ9EX5zgNqw3xIpFnIScG6qQ7oONoRUqdjLrXPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTmjC5UpmM61/49fnp1R6zdJoSu/Tg/FWNdkNgKZ+JSQH6T1/jk8GQVwm0Wz3Q0WEsGERnEfdRmQiW7YGHwLQvmhFFeOw+oNSnhe/Uqwgz9sRbk5y/Wgn/QT2J5nr8w6CtTMHuDinIRJq+ICxu6/47siu31nVzKRLx94XRIT0f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QQQ+S7I2; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNmkc3K3RzncK;
-	Tue, 16 Jul 2024 19:48:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721152088;
-	bh=LWblpPfF9wNYIYfX15oQl6tTRp3rZAKkmPWjrsQep60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQQ+S7I2Ua4od8sW/6D1JC9ivlgTH1sZMkaw8jYNQtPma8Ip6DbG40h1NpdimI7Xc
-	 F/k0WwtFrl7pTIGzv0AQntKmgMTJmCu5m09toaI5LhDwng++5GebvyVFtv5GfZB3yN
-	 VtdK+y0E4iqnH4BuYwNCr38mLDQw/yAs+Enhz0wE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNmkS378YzxCQ;
-	Tue, 16 Jul 2024 19:48:00 +0200 (CEST)
-Date: Tue, 16 Jul 2024 19:47:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Boris Lukashev <blukashev@sempervictus.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-Message-ID: <20240716.shaliZ2chohj@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
- <20240709.AhJ7oTh1biej@digikod.net>
- <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
- <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
- <E608EDB8-72E8-4791-AC9B-8FF9AC753FBE@sempervictus.com>
+	s=arc-20240116; t=1721152126; c=relaxed/simple;
+	bh=raeOIprojEAXyk5ne6rsnBfmNtcpuMh35GTJs4cYRYo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iF/zRLrI6MmypTHCe+UyK0ByMuP5APjE8F16p7WB8TCSaKrCcWLGUQwYmL0kIGj9M+IZ0keahSlMd9t2waFIkptENWBSifltEaaSvIjkxribL1neBTNmd3nPPlDLeKRZ9QJnOVmoAn9QWdIDneH85sCz3YJFh2HZmYJPO/KTNaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jSbIiMZR; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-367b8a60b60so3223539f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1721152123; x=1721756923; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uNQ8X7dNt4x3kIdWz1GBCSIw2yVprX6g72c4mbs0NKo=;
+        b=jSbIiMZRXdCfHj3lR2MeTjqFel5f6bFEutqq67gQ+GTOnUe9lDZ/P9ZGcTN6kqmM0B
+         yKgL7Oejk/HIL9vgdA25KSYzMhw5zncXOzROhmir09rODFpWwZ+2LncJko0amCEOt0l8
+         LjqX6YhIPx+7SKaGJazu5ly9Ch6uwfwVv4shMF2OaHwTk2sslFoeE/TbnP4+19Sq8gPS
+         BECSU6EJDyE95IJqC3mXtg+wxSzAf1ByBdLLueJWvRyZZBOkczXIFoSMhPMgvvCwzX7V
+         EO6KCX4OEiyNJxgORvv0jHf4k57xGIYKj4VuH8HDQWcDnoCZ9QrU9HeplmgOTkY219vz
+         pBNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721152123; x=1721756923;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uNQ8X7dNt4x3kIdWz1GBCSIw2yVprX6g72c4mbs0NKo=;
+        b=r+Tz+agFRQOaVq7khKnzpzwN+FwHuhSGiBlipZ3r4Ah9lIKD2QNo8i61AX2VkkpGnj
+         L5Fr+eGzCD667tA31BBqG6I0BczstHft4K3HzguYteOMfI68/gEfFlYvHWI9XIr53gJJ
+         bhrgDLkp1z6UK/uQXS5MVKIQ4WVLeGrNZDNHBd+BdMrtWYu2bdDtnnntvQy8XEMghycx
+         X3J40DxPUOK+DBIA2LCAz95OV1T1J8BBsli5hgmkba2T8f2LVNfzAVdUSwTE3SU7tN4m
+         1TZwKgXRnJkjBSaeTXFkEZDmuyrNw+rfJamFDOmFsbPLLS2SELYw02jy4MTN2MSGTHxy
+         vRug==
+X-Forwarded-Encrypted: i=1; AJvYcCUAsaTsMuxeCNJXQIJFB2uSUibveGyDW8zNlVHsoUtdWRs+G0Ub9yIcl6kcnDAnJgpqlnBLNCISZ8oWEZEjdZZNDqrOUAZoFl0EJo8P
+X-Gm-Message-State: AOJu0Yw4SZD1B2poJv6sweBe2a88YNIQBYM7OUtSkqXupxYacswyId2W
+	++0iwnb/qTRpqhWe39MY0nH5BVHcsaFqmMa9c8dp4ay42AauGjVPQE+HQreQ/VQ=
+X-Google-Smtp-Source: AGHT+IGWKabxP/OJJTLUYgjsuTiSdT0uqw/NqeK2JS5nqvpacbKOZx1/S+qHAieKxjAq2YP9XmNEgw==
+X-Received: by 2002:a05:6000:d09:b0:367:9571:ceee with SMTP id ffacd0b85a97d-36826144706mr2030805f8f.37.1721152122939;
+        Tue, 16 Jul 2024 10:48:42 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:10b5:fc01:f844:6ed2:1a28:3f1b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3e1csm9638912f8f.2.2024.07.16.10.48.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2024 10:48:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <E608EDB8-72E8-4791-AC9B-8FF9AC753FBE@sempervictus.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH net-next] net: mvpp2: Improve data types and use min()
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
+Date: Tue, 16 Jul 2024 19:48:31 +0200
+Cc: marcin.s.wojtas@gmail.com,
+ davem@davemloft.net,
+ edumazet@google.com,
+ kuba@kernel.org,
+ pabeni@redhat.com,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D2AAC5AF-59D0-4985-A3DD-EC9E72324CD7@toblux.com>
+References: <20240711154741.174745-1-thorsten.blum@toblux.com>
+ <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-(adding back other people in Cc)
+On 15. Jul 2024, at 17:44, Russell King (Oracle) <linux@armlinux.org.uk> =
+wrote:
+> On Thu, Jul 11, 2024 at 05:47:43PM +0200, Thorsten Blum wrote:
+>> Change the data type of the variable freq in mvpp2_rx_time_coal_set()
+>> and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
+>> the data type u32.
+>>=20
+>> Change the data type of the function parameter clk_hz in
+>> mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
+>> and remove the following Coccinelle/coccicheck warning reported by
+>> do_div.cocci:
+>>=20
+>>  WARNING: do_div() does a 64-by-32 division, please consider using =
+div64_ul instead
+>>=20
+>> Use min() to simplify the code and improve its readability.
+>>=20
+>> Compile-tested only.
+>>=20
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>=20
+> I'm still on holiday, but it's a wet day today. Don't expect replies
+> from me to be regular.
+>=20
+> I don't think this is a good idea.
+>=20
+> priv->tclk comes from clk_get_rate() which returns an unsigned long.
+> tclk should _also_ be an unsigned long, not a u32, so that the range
+> of values clk_get_rate() returns can be represented without being
+> truncted.
+>=20
+> Thus the use of unsigned long elsewhere where tclk is passed into is
+> actually correct.
 
-On Tue, Jul 16, 2024 at 01:29:43PM -0400, Boris Lukashev wrote:
-> Wouldn't count those shell chickens - awk alone is enough and we can
-> use ssh and openssl clients (all in metasploit public code). As one of
-> the people who makes novel shell types, I can assure you that this
-> effort is only going to slow skiddies and only until the rest of us
-> publish mitigations for this mitigation :)
+I don't think tclk should be an unsigned long.
 
-Security is not binary. :)
+In [1] Eric Dumazet wrote:
 
-Not all Linux systems are equals. Some hardened systems need this kind
-of feature and they can get guarantees because they fully control and
-trust their executable binaries (e.g. CLIP OS, chromeOS) or they
-properly sandbox them.  See context in the cover letter.
+  "This is silly, clk_hz fits in a u32, why pretends it is 64bit ?"
 
-awk is a script interpreter that should be patched too, like other Linux
-tools.
+and all functions in mvpp2_main.c (mvpp2_write(), do_div(),
+device_property_read_u32(), and mvpp22_gop_fca_set_timer()), which have
+tclk as a direct or indirect argument, assume tclk is a u32.
 
-> 
-> -Boris (RageLtMan)
-> 
-> On July 16, 2024 12:12:49 PM EDT, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> >On Tue, 2024-07-16 at 17:57 +0200, Roberto Sassu wrote:
-> >> But the Clip OS 4 patch does not cover the redirection case:
-> >> 
-> >> # ./bash < /root/test.sh
-> >> Hello World
-> >> 
-> >> Do you have a more recent patch for that?
-> >
-> >How far down the rabbit hole do you want to go?  You can't forbid a
-> >shell from executing commands from stdin because logging in then won't
-> >work.  It may be possible to allow from a tty backed file and not from
-> >a file backed one, but you still have the problem of the attacker
-> >manually typing in the script.
-> >
-> >The saving grace for this for shells is that they pretty much do
-> >nothing on their own (unlike python) so you can still measure all the
-> >executables they call out to, which provides reasonable safety.
-> >
-> >James
-> >
+Although mvpp2_cycles_to_usec() suggests it can be called with an
+unsigned long clk_hz, do_div() then immediately casts it to a u32
+anyway.
+
+Yes, the function clk_get_rate() returns an unsigned long according to
+its signature, but tclk is always used as a u32 afterwards.
+
+I'm not familiar with the hardware, but I guess the clock rate always
+fits into 32 bits (just like Eric wrote)?
+
+Thanks,
+Thorsten
+
+> If we need to limit tclk to values that u32 can represent, then that
+> needs to be done here:
+>=20
+>                priv->tclk =3D clk_get_rate(priv->pp_clk);
+>=20
+> by assigning the return value to an unsigned long local variable,
+> then checking its upper liit before assigning it to priv->tclk.
+
+[1] =
+https://lore.kernel.org/linux-kernel/cbcdb354-04de-2a9a-1754-c32dd014e859@=
+gmail.com/=
 
