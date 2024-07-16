@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-253570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0C5932333
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C32932336
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561C61F23757
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2471F2381F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487F6198E70;
-	Tue, 16 Jul 2024 09:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqcYY9TU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A480197A88;
+	Tue, 16 Jul 2024 09:44:34 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EF446450;
-	Tue, 16 Jul 2024 09:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E140B19884B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123027; cv=none; b=JNLFbUioEw17ZcvEf+fi85LfipGi90IVyApA9uXYfbgoxjmxmAgmDTrQK6vF2AADCb/9OjArf9SFT4x5Stz+Jo+w+Xwrp45njKdpLd2Ov4om2gPS8Th9rmCBOiB9zqRYi4x+2kfQENr9w/eceC7rQ0QXUp+Ju1FNOeJtalLTsuc=
+	t=1721123073; cv=none; b=RxvVfGEJTy1hgGuC757D83JZi7RSHAmXAxm+a+ARky/ItVSeJb2igIfGLIwz8sQxD7ZnB8vieVfDvlQOdgvtmpjblpaZAcuOFAJxeSmco3Vp8Y9Mob31vBmECGEfpZ6xvd+lHgP6XqoOo7nLmKHad7JyCE/AUVpLM3B2sXxYj0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123027; c=relaxed/simple;
-	bh=cb2kMyUZz+09TPxC7XSnOt+aHqAq3RB1JfOHowI1lTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mRRQ9UtYtxf+pahcVp/byYFBCIZYk2qoDgxebyEZ8D9wPqEngQxBEO2voHRU+LyX6szMdyyxpRhmbgQ8NMRPOCle7ntn4qO2HE5que8RNfN/gpj2MzLqn2FO1apKIwEnoeF9jiAjwByL2Fxe5UzZZFyDt6ql+jzbxjr6hbvp/lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqcYY9TU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C0DC116B1;
-	Tue, 16 Jul 2024 09:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721123027;
-	bh=cb2kMyUZz+09TPxC7XSnOt+aHqAq3RB1JfOHowI1lTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FqcYY9TUYD+gO1X/TCX0AUvnR4331B3UHqHC1W0kpktTNHpNsjf3Dp4YhLrqN9TkH
-	 PnBMqFqjM2H5F6O8v93th0cgBhzqMFZNFBaF5MbxY2qlckU6RkhM9Je0AqwhEO/lpb
-	 p2AhLDbcTzNI+wGb39KK8K573p/4ttCA92iEqW7F1Si7UanKBNm4uyCS+9w5vKkYl5
-	 9nTZi2UQhaDPrj3pnDIHA2AZLRLMdGunPZSIfJgKGE2KIYq7D6tQKaOdcFimxp0nLp
-	 As1I1B8WZsCguk8p+p3nnPMM7Uh1tBqwSjIArMzLbPk6uRAtouQYKRFi2nQRMG+pj4
-	 esxa//Keq3dSQ==
-Date: Tue, 16 Jul 2024 11:43:44 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
-	Edmund Dea <edmund.j.dea@intel.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] drm/connector: automatically set immutable flag
- for max_bpc property
-Message-ID: <20240716-majestic-vermilion-hornet-fd1cfb@houat>
-References: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
- <20240715-drm-bridge-connector-fix-hdmi-reset-v4-3-61e6417cfd99@linaro.org>
+	s=arc-20240116; t=1721123073; c=relaxed/simple;
+	bh=AaRySYf9zsmpura29YKROYSICIYrW+9IDE5VSrjWshI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BognoYmOvwyoUNL0xNyMj7ADlQ4KSv8/GA2VFomCzV04sNQVx08baB7WdXqH4PeAamnqgJD23HUYlY5KHe+tj/rPlfkQma0DizTa5pOMEqgN4XoOD+seH+JAkkYot9eioDOnVNhMWdtB0H9woN8OuWPWMSyX06Wzyzx4XPNqeJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 46G9huGX055900;
+	Tue, 16 Jul 2024 17:43:56 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WNYsk3wkTz2KmSNc;
+	Tue, 16 Jul 2024 17:38:34 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Tue, 16 Jul 2024 17:43:54 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Yu Zhao <yuzhao@google.com>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang
+	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [RFC PATCHv2] mm: introduce reclaim throttle in MGLRU
+Date: Tue, 16 Jul 2024 17:43:48 +0800
+Message-ID: <20240716094348.2451312-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fdsfmxhl5wgvjiuk"
-Content-Disposition: inline
-In-Reply-To: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-3-61e6417cfd99@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 46G9huGX055900
 
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
---fdsfmxhl5wgvjiuk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Being like legacy LRU management, direct reclaim threads could isolate
+over-sized folios and then be rescheduled, which could lead to
+unwanted generation update as well as the thrashing things like before.
+This commit would like to have direct_reclaim be throttled by judging
+the numbers of isolated and inactive folios.
 
-On Mon, Jul 15, 2024 at 09:33:03AM GMT, Dmitry Baryshkov wrote:
-> With the introduction of the HDMI Connector framework the driver might
-> end up creating the max_bpc property with min =3D max =3D 8. IGT insists
-> that such properties carry the 'immutable' flag. Automatically set the
-> flag if the driver asks for the max_bpc property with min =3D=3D max.
->=20
-> Fixes: aadb3e16b8f3 ("drm/connector: hdmi: Add output BPC to the connecto=
-r state")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This patch is verified by launching 8 costmem(malloc and access 1GB VM
+in an 5.5GB v6.6 Android system) concurrently and got no system hang
+any more(adb shell recovered in 10s which hanged 100% in mainline).
 
-Assuming that someone on the uapi sides agrees to patch 3:
+test script under Android14
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+---
+v2: fix a possible unpaired spin_lock/unlock and commit message
+---
+---
+ mm/vmscan.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Maxime
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2e34de9cd0d4..13e5ed9060ad 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4481,6 +4481,7 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ 	int scanned;
+ 	int tier = -1;
+ 	DEFINE_MIN_SEQ(lruvec);
++	bool stalled = false;
+ 
+ 	/*
+ 	 * Try to make the obvious choice first, and if anon and file are both
+@@ -4503,6 +4504,16 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ 	else
+ 		type = get_type_to_scan(lruvec, swappiness, &tier);
+ 
++	spin_unlock_irq(&lruvec->lru_lock);
++	while (unlikely(too_many_isolated(lruvec_pgdat(lruvec), type, sc))) {
++		if (stalled) {
++			spin_lock_irq(&lruvec->lru_lock);
++			return 0;
++		}
++		reclaim_throttle(lruvec_pgdat(lruvec), VMSCAN_THROTTLE_ISOLATED);
++	}
++	spin_lock_irq(&lruvec->lru_lock);
++
+ 	for (i = !swappiness; i < ANON_AND_FILE; i++) {
+ 		if (tier < 0)
+ 			tier = get_tier_idx(lruvec, type);
+@@ -4550,8 +4561,10 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
+ 	if (list_empty(&list))
+ 		return scanned;
+ retry:
++	__mod_node_page_state(lruvec_pgdat(lruvec), NR_ISOLATED_ANON + type, scanned);
+ 	reclaimed = shrink_folio_list(&list, pgdat, sc, &stat, false);
+ 	sc->nr_reclaimed += reclaimed;
++	__mod_node_page_state(lruvec_pgdat(lruvec), NR_ISOLATED_ANON + type, -scanned);
+ 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
+ 			scanned, reclaimed, &stat, sc->priority,
+ 			type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
+-- 
+2.25.1
 
---fdsfmxhl5wgvjiuk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZpZA0AAKCRAnX84Zoj2+
-dtNdAX9Ax2E/pR1JgBzBrUF/uMPOl1sAEeevA2aoMOeQhKfGs2BZhGJ77abapFvP
-xuT5sK8Bfjqe28CP8kHlRvXG2ER2YP8NG+nrxaw4u1WdmauMPDTJzHoGi2MW4dkH
-Czrtx7ncfw==
-=AL/r
------END PGP SIGNATURE-----
-
---fdsfmxhl5wgvjiuk--
 
