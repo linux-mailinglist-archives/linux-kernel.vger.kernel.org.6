@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-253198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E1C931E12
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:42:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0ADD931E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B403B282CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E163B21D13
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F0B4428;
-	Tue, 16 Jul 2024 00:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08304428;
+	Tue, 16 Jul 2024 00:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VQtdARkM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mc53gINu"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFB41860;
-	Tue, 16 Jul 2024 00:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A432191;
+	Tue, 16 Jul 2024 00:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721090518; cv=none; b=dbnteoo39rNHH2xab1JSTPJOkuZydZweUEVmXhx6J1U4dQHxXqrfQnGYZanEe8eDvFm5lhd7+P1myTjwijZ4HvYmB9LNjSTt4PAg0pikuUiaXxGYn+KMvuhJwGVQloZJZVdGh7qR2ycNc/rTzv0UnjWRuVKFiDBZHhdsP+sqX6k=
+	t=1721090738; cv=none; b=GOlbmSDR/lkDP4GZPgj5EZ5u4f8MYit1+jyUprb974FIWQeqF71wrkD//d3Fn9mtYB5FGKi9X7eQkXeBNDnHVe3lvacaDLQL5/YBIuDPbDJ5o3KiYLoUS5IkL8fksfX29Ui3GGhSGJ8PbwiHZloY4Sy8i2ggEKTFklu94RmDJX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721090518; c=relaxed/simple;
-	bh=BkM+ScH4RtQxVTtUSHazVvgH6+xHSxk+9PZYEGR6cT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R5t3xQMlYbkT+QjetK/3fJgV9xc2Vvyxex6SaqS4i4Frpa3ghDzSnojr5VCLfHBok3Fg9MJ4gZ51ZU9BVLZEUUYOVaL1lxWsWNLXycNduNEXVAHkWQMH+hdXHl+w1/MeK2PYmQb8x5slg0k7TbvYfA9Z3k+fdYWDeMRcLSqc2uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VQtdARkM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721090511;
-	bh=ZeZwkQCqNfnZnoGCOyubbytd70pev66kMO3JAOTChE8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VQtdARkMJO1mvAE62LlZro7Iim7IhCZdKs2vToXt92EDwUpR7Qx9dbLvi3/sagX8K
-	 laAAq2sJCd6pw0gtCnAxLigYOxUe9F85B08YNsgVPsuLad53ZPw8f7KCyyBOEqN4+h
-	 zgLE5w3Wa5ZcF5bgl7q+lDRUA3XJ80qgqrfpPywz6L0uBLxUK0epokqgTZAMA3ELmf
-	 T+e0DH/jE6g+Ko9a2Y85b+0XUlmmcUWTMpd2elW/IAomO/6Rw6983+Ya+x65lL2pWc
-	 UqzDJ/+PcpvnCkyHRIjduRss7STqF5vRjpU5a2gcMAX2CAA45lFG2QVqvaswxSEcAA
-	 AV4GfYe9sl7vg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNKyR1Hzfz4x1y;
-	Tue, 16 Jul 2024 10:41:51 +1000 (AEST)
-Date: Tue, 16 Jul 2024 10:41:50 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the clk tree
-Message-ID: <20240716104150.3e99e835@canb.auug.org.au>
+	s=arc-20240116; t=1721090738; c=relaxed/simple;
+	bh=xmVWODUyxNQoM7cdwnSoUDFS3lg0SBkGXihzRMl/Yeg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P/stl5KplMmi6dXZXyGmqkV3haai2ekDzhZklIBlPGGPsNUJhKlQ+7yG6LS2LIn1u8RhdC6zD1XqqEriInZhd/zGzrRnvQDYz/Jh2u3XXWr6IjDAY3YjgU+kQo3tDHmuy9bsLI6H7cQBppZRnw2BRASb9X1l5rBGkSJlWc99lXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mc53gINu; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25e150603a6so2451884fac.3;
+        Mon, 15 Jul 2024 17:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721090735; x=1721695535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LnXr0eXuAv0hZrIz9mCHMK0FQq9j8VZolcsUM4NL5QA=;
+        b=mc53gINuCn000kv6jnW3Ymzvu5Gb7p70ypVEVUlPBB3rWl/prXi8BAWNRdzGLy/Rap
+         EEbIJZQvy3ogfpWXc2J+w9qMeDQbwicbKxePXmdRHHrONQG1i3fpmg3tgUTflhjVs7Jt
+         GtaqvQJ5q1q8m+wzjNu3eAxK0CRk3GNDYK7gVaH29ZqxqrzXA0ZrM7MVgPIlHOUwvujZ
+         zzSvEzYLKH23B6TUFOVVEpj1cz12Cgf3rgnAoSg/mfYe7BEexT67474l4UWxzKrZGv6Z
+         GGA3FDjBMuxfvYaGDGCzk8JyVLjJPR0WJHe9LU3lkPbUQ37OKU5SSGQA/htIig0ecw9K
+         HpTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721090735; x=1721695535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LnXr0eXuAv0hZrIz9mCHMK0FQq9j8VZolcsUM4NL5QA=;
+        b=mOTMm1Lp/LE+VvgM9vWPEhEX2iiczCYML2iTESg3/i4r4W+jRcGx88Cwj2XxbCGflG
+         YJVsvdm0ioLaKrUHGwBJEnbKkcEsc0/TuEsRqKM2VQ6ru7rzRIXylEAe8VpYDuK7ofT1
+         GEKLl5I6MnVu87oxr6AHec/fAxtfIZs3yEhub4SlSyUqdo/+/1FDF9//kQLc4cV8wfar
+         oDDu14L8N7OG5qQvxNwEOm6l+tb27qTZYA9CDGWF5y8tnGWJo6qYlhU45dGQDkEhs+BG
+         0GdqKWlWnSEMGXvMS0mYUnnWY5j/RHcb1ORa9+t0Pp4ESWuLvS46aLbNWPayfmycJ380
+         fXvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVESk459zjwW8zpEZq3jgJu0Ykx8dPbOlt1TGKNqCGNI5mVH9U5vIKtIu3HNIPv5r7euQFQ2lZ5xAGNJPfr3DN4tu9L1/N3YlZK9oxPQ3zAIGSOqBOMhs3M2AhWdBV09/cDgmwq9rVGuwJZod1Y1mw5Y90cSmVsUxa5DWkqK9IxRzgCXQ==
+X-Gm-Message-State: AOJu0YzneNkT4+iZYLaQmV63L5usbZkZysIkFE/m9UAwq9pSDvTjQXUq
+	XrAxM6U6xJuzcu128qThnLWhERXoDZJEHofC8CUsK8kiNgGn05CVJjILA1DxFQM=
+X-Google-Smtp-Source: AGHT+IHhID7gzwliNwSDimSOwWCZnoturptY/gWrbZpRJF5QjxmXeZcq2t1YrqRjdEUztNfviDcFRA==
+X-Received: by 2002:a05:6870:64ab:b0:25d:f1f6:8a2c with SMTP id 586e51a60fabf-260bdfbed6bmr400179fac.39.1721090735456;
+        Mon, 15 Jul 2024 17:45:35 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eca758fsm5000949b3a.162.2024.07.15.17.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 17:45:34 -0700 (PDT)
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	pbrobinson@gmail.com,
+	serghox@gmail.com,
+	mcgrof@kernel.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	forbidden405@outlook.com,
+	tmaimon77@gmail.com,
+	andy.shevchenko@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com,
+	schung@nuvoton.com,
+	Shan-Chun Hung <shanchun1218@gmail.com>
+Subject: [PATCH v5 0/2] Add support for Nuvoton MA35D1 SDHCI
+Date: Tue, 16 Jul 2024 08:45:25 +0800
+Message-Id: <20240716004527.20378-1-shanchun1218@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BsHtZYbrJfISFjNNTpV+LO+";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/BsHtZYbrJfISFjNNTpV+LO+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch adds the SDHCI driver and DT binding documentation
+for the Nuvoton MA35D1 platform.
 
-Hi all,
+This MA35D1 SDHCI driver has been tested on the MA35D1 SOM board with
+Linux 6.10
 
-After merging the clk tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+v5:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Fixing the same orders as in the list of properties.
+  - Update ma35d1 sdhci driver
+    - Fixing the error path syntax to err = dev_err_probe().
 
-ERROR: modpost: missing MODULE_LICENSE() in drivers/of/of_kunit_helpers.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/of/kunit_overlay_test.d=
-tbo.o
-ERROR: modpost: "device_is_bound" [lib/kunit/kunit.ko] undefined!
-ERROR: modpost: "__dtbo_kunit_overlay_test_end" [drivers/of/overlay_test.ko=
-] undefined!
-ERROR: modpost: "__dtbo_kunit_overlay_test_begin" [drivers/of/overlay_test.=
-ko] undefined!
+v4:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Fixing overlooked issues.
 
-Presumably caused by commit
+v3:
+  - Update ma35d1 sdhci driver
+    - Fixing "Alignment" and "spaces preferred around".
+    - Fixing style for multi-line comments.
+    - Fixing double call to sdhci_pltfm_free().
 
-  aa46879db9ac ("of: Add a KUnit test for overlays and test managed APIs")
+v2:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Remove some redundant descriptions.
+    - Replace 'minitem' with 'maxitem' in the clock settings.
+    - Make corrections to nuvoton,sys description.
+    - Add sdhci-common.yaml.
+    - Remove '|' except where necessary to be preserved.
+    - Keeping one example is sufficient.
+    - Add regulators in the example.
+  - Update ma35d1 sdhci driver
+    - Refer to 'include what you use' to modify included header files.
+    - Replace the number 8 with sizeof(u8), and similarly for others.
+    - Use "dev" instead of "&pdev->dev".
+    - Use the min() macro to improve the code.
+    - Use dev_err_probe() instead of dev_err().
+    - Implement an error reset check mechanism.
+    - Add devm_add_action_or_reset() to help with sdhci_pltfm_free().
+    - Use devm_reset_control_get_exclusive() instead of devm_reset_control_get().
 
-I have used the clk tree from next-20240715 for today.
+Shan-Chun Hung (2):
+  dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document MA35D1 SDHCI
+    controller
+  mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
 
---=20
-Cheers,
-Stephen Rothwell
+ .../bindings/mmc/nuvoton,ma35d1-sdhci.yaml    |  87 +++++
+ drivers/mmc/host/Kconfig                      |  12 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/sdhci-of-ma35d1.c            | 314 ++++++++++++++++++
+ 4 files changed, 414 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+ create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
 
---Sig_/BsHtZYbrJfISFjNNTpV+LO+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--
+2.25.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaVwc4ACgkQAVBC80lX
-0GzvwQf8DO2YGW++1lZlZIC8jpDnVUugyZr1LS8sjMgljnLYcGZYKt6OcT38pLW0
-FwVJq36vUqbh82GkMGwXsuvrDwX85OT5a2kM5cEA8tyiNhZC4cRP/oClRGL6kGIj
-Iin6HEZLL01yTVEFKZN2HMBvm26paGdAGb89pJPirS+y7CUp8P1J/ZdaZmnpL5q6
-6syxLbHKlwp9N6+NkRpDaq4EiQUYXtXyrIh8bc6t0mjAdLCNEQf3l8q9lBolVucl
-vPY11BTyMAR7FKEnz43A3ve87Vp0tmktJZ6mmsxQmuAt9m6zp6FJZVqsy6Lv549q
-2lW2QuFPm4BFoec+9FtHKSKNY6wOjA==
-=c2BR
------END PGP SIGNATURE-----
-
---Sig_/BsHtZYbrJfISFjNNTpV+LO+--
 
