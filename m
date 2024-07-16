@@ -1,89 +1,206 @@
-Return-Path: <linux-kernel+bounces-253620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECED19323DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855109323E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAA41C22A1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CC31C21714
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240F51957F5;
-	Tue, 16 Jul 2024 10:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE95198A2E;
+	Tue, 16 Jul 2024 10:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="beFHm6bv"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqyuFhOD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8841CED8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E43B143875;
+	Tue, 16 Jul 2024 10:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721125522; cv=none; b=ZqzfTcXtwAoGVH+yhMZWw0COKVal5jiP1RJSdDB+vVEPBhgkhP85uqI6xAfmRUxPrsUdgIiAEKyoHz6IuX1olO4pldVvCJj1EpzoNSsLn5lm8ZPRIiplvKxituD8nIeEU+hteCIBs8SFVhprVGuWW9rfhpuv5AFmCLlxRFEO3W0=
+	t=1721125809; cv=none; b=RCjk4jERu26Qc7/UfmV+pHcfeh36BCfmyrLjaeRWAQEM/F0cX0NDif9UPJqv8rXNRcA/jBA2rsDo29HnkE2wdYUl/AVVOtQ18sUmQnQCc3HIbmaCA2Y532VDoxfs0QA0Li+RQ57emsZGkW9rGa8xevzd0xmIc9KRCavx7qpgmk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721125522; c=relaxed/simple;
-	bh=mfJ25zDowDH5fsSFdYo4/55ojXh7pQ1MXRAkgk42NU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qd7IWUjsrpRfqwHJ1CLuJKSCzuv77M3i0KycD9jrIczK/E+CX/tzCvem8rYDOYauWkVASnu316rkZOAKOibTi2jU3tAawkbuennGapUbUbh7AnXZJ7Y/n5Ux/fIY0M4e27kGCF4UQawHfKddwDHxB8zGwW7B+jLgZOraS6rT/MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=beFHm6bv; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ddN4CHpguZCq4xlapXCAuslzj3WHd0soajdpoP4a9lA=; b=beFHm6bv6+vRAUJfQr+Ud9P+pQ
-	25BwHtwyY8tUr4evI/z7RIV8nVHkXMeUPtilee6wP2BZ/sLj2Qxuzlp8jKnuUKSrD5O+kiZbk/6It
-	wpdFTxKk83mIJQDUNP8Tfmv+j+wCpJ81WNipSz30r19Chh716uIawGW4xPw5/82A8wpGYpI7mfJz7
-	DLRRPiUIG99SX+zW89hgLjntwi46JBmFoSFwyyENhR/mrLCWIuL/8li8lLe9HWqfPpzRbE6oup8QV
-	WNjLvQUffpsJL1SkgbaJagI68J5upUoGqOaFA15Bt4Snqdha+S+2BrEyc0sdiga/vWIl8U2CGOsx7
-	FzDIzeWQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sTfMp-000000021Gp-1BqL;
-	Tue, 16 Jul 2024 10:25:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 84B713003FF; Tue, 16 Jul 2024 12:25:06 +0200 (CEST)
-Date: Tue, 16 Jul 2024 12:25:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Xavier <xavier_qy@163.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com
-Subject: Re: Re: [PATCH-RT sched v3 0/2] Optimize the RT group scheduling
-Message-ID: <20240716102506.GE26750@noisy.programming.kicks-ass.net>
-References: <20240716052543.302383-1-xavier_qy@163.com>
- <20240716085926.GP14400@noisy.programming.kicks-ass.net>
- <6af6feef.83df.190bad579d3.Coremail.xavier_qy@163.com>
+	s=arc-20240116; t=1721125809; c=relaxed/simple;
+	bh=QysKPyiFau2fw2f0p+pSgBtnoBOL8OjYbm8noFYeFeY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EFTS3DC5wxGLP/owk20ka8CW5GT8eKTgpe5Dq1nKQRWNqL0BOBCRJsLDm16D0RphJE5U1vJZ4jF8R2zk8MvRjM3Ys+lnCiamzt0J6SM1EGYYCv1TGBJXVv8J4yf/K82vdr8byKRQANJdCzZ0/RZKZ5640bHn0Qc9dG1NnYEyNvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqyuFhOD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E84AC116B1;
+	Tue, 16 Jul 2024 10:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721125808;
+	bh=QysKPyiFau2fw2f0p+pSgBtnoBOL8OjYbm8noFYeFeY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rqyuFhODQa3Qr5Fjyld3vuMaw73GnEGfh7LiSlIU39EKJ6H6OuvH7DpkPRCVmIO2D
+	 fnSFR9X3Zd3yFE7NAMVIM+2zmmZsGd1KsjQp6yCBL3xqSVCTEDihI/N5+A7RUF6s3+
+	 uEnXbXRkSpNlv8ngsrYtTQ1gXPRYCPKIAc+DnsxuVrWdRPgV4xz+ArhaF4bXvuOjLY
+	 bv5phdTOyK3wSd0wgm8N3BrCTJappg15Km3/XMLexZn8BOqN3HVoD5UUo/CpPrjCwT
+	 6ZBAL7iRhgoDMIjI1yqvEGsLJELRBHmbW7ay/1NLHoCAK/tyaYw4EyEV26WZuuZRhk
+	 Lrq9p3Bow9nCw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sTfRd-00ClkI-MZ;
+	Tue, 16 Jul 2024 11:30:05 +0100
+Date: Tue, 16 Jul 2024 11:30:05 +0100
+Message-ID: <86r0bt39zm.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
+In-Reply-To: <ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
+References: <20240623142137.448898081@linutronix.de>
+	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+	<878qy26cd6.wl-maz@kernel.org>
+	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6af6feef.83df.190bad579d3.Coremail.xavier_qy@163.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jul 16, 2024 at 05:17:50PM +0800, Xavier wrote:
+On Mon, 15 Jul 2024 15:10:01 +0100,
+Johan Hovold <johan@kernel.org> wrote:
 > 
-> Hi Peter,
+> On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
+> > On Mon, 15 Jul 2024 12:18:47 +0100,
+> > Johan Hovold <johan@kernel.org> wrote:
+> > > On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
+> > > > This is version 4 of the series to convert ARM MSI handling over to
+> > > > per device MSI domains.
 > 
-> Your meaning is, will the RT scheduling policy be removed? I see that the
-> current kernel already includes the deadline and EEVDF scheduling policies.
-> I noticed that the enqueue and dequeue operations for RT are quite
-> complicated, so I proposed this patch for optimization.
+> > > This series only showed up in linux-next last Friday and broke interrupt
+> > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
+> > > and x1e80100 that use the GIC ITS for PCIe MSIs.
+> > > 
+> > > I've applied the series (21 commits from linux-next) on top of 6.10 and
+> > > can confirm that the breakage is caused by commits:
+> > > 
+> > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
+> > > 
+> > > Applying the series up until the change before 3d1c927c08fc unbreaks the
+> > > wifi on one machine:
+> > > 
+> > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
+> > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
+> > >
+> > > and backing up until the commit before 233db05bc37f makes the NVMe come
+> > > up again during boot on another.
+> > > 
+> > > I have not tried to debug this further.
+> > 
+> > I need a few things from you though, because you're not giving much to
+> > help you (and I'm travelling, which doesn't help).
+> 
+> Yeah, this was just an early heads up.
+> 
+> > Can you at least investigate what in ath11k_pci_alloc_msi() causes the
+> > wifi driver to be upset? Does it normally use a single MSI vector or
+> > MSI-X? How about your nVME device?
+> 
+> It uses multiple vectors, but now it falls back to trying to allocate a
+> single one and even that fails with -ENOSPC:
+> 
+> 	ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
+> 
+> Similar for the NVMe, it uses multiple vectors normally, but now only
+> the AER interrupts appears to be allocated for each controller and there
+> is a GICv3 interrupt for the NVMe:
+> 
+> 208:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
+> 212:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
+> 214:        161          0          0          0          0          0          0          0     GICv3 562 Level     nvme0q0, nvme0q1
+> 215:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
+>
 
-No, not the policy, but we would really like to completely redo the
-group scheduling part for RT.
+That's an indication of the driver having failed its MSI allocation
+and gone back to INTx signalling.
 
-For UP it is trivial, but we're not completely sure how to best do it
-for SMP yet.
+> Next boot, after disabling PCIe controller async probing, it's an MSI-X?!:
+> 
+> 201:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
+> 203:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
+> 205:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
+> 206:          0          0          0          0          0          0          0          0  ITS-PCI-MSIX-0002:01:00.0   0 Edge      nvme0q0
+>
 
-Anyway, I had gotten the impression that very few people indeed were
-using the RT group scheduling feature, so I was surprised so see your
-patches.
+So is this issue actually tied to the async probing? Does it always
+work if you disable it?
+
+> This time ath11k vector allocation succeeded, but the driver times out
+> eventually:
+> 
+> [    8.984619] ath11k_pci 0006:01:00.0: MSI vectors: 32
+> [   29.690841] ath11k_pci 0006:01:00.0: failed to power up mhi: -110
+> [   29.697136] ath11k_pci 0006:01:00.0: failed to start mhi: -110
+> [   29.703153] ath11k_pci 0006:01:00.0: failed to power up :-110
+> [   29.732144] ath11k_pci 0006:01:00.0: failed to create soc core: -110
+> [   29.738694] ath11k_pci 0006:01:00.0: failed to init core: -110
+> [   32.841758] ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -110
+> 
+> > It would also help if you could define the DEBUG symbol at the very
+> > top of irq-gic-v3-its.c and report the debug information that the ITS
+> > driver dumps.
+> 
+> See below (with synchronous probing of the pcie controllers).
+
+I don't see much going wrong there, and the ITS driver correctly
+dishes out interrupts. I'll take the current -next for a ride on my
+own HW and see what happens.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
