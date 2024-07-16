@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-253403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CF19320C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:55:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009549320CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDD67B219EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC761C213D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8627C1CFBE;
-	Tue, 16 Jul 2024 06:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bLWEJ6In"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0341208BC;
+	Tue, 16 Jul 2024 06:57:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03A61CD39
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36861CD11
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 06:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721112918; cv=none; b=e0TB6xDtzcSVBR66V1UdVRZlrqBBKSk0U2oIufU5rFYh6/rfGGnh1E/B4HC7DQcuH5jT/v9Mj4mkKlr2SYPBQBNoN749geqIQz+AZwSRHYEq3j1A+H8BAnYJ0uLKdcvqOjhNFyY7KUce1gZwWA6ZhGGDB6RXwEWFsaCagLsp+Uo=
+	t=1721113054; cv=none; b=OAmCvBmqgngrSP87qcD8Oc0s8GM0snu1rhGLtjeFCimL0aD9vz5b7tZ+XMyhdQcUpm3soWezArOMdMPvc9Jnm6fBA2sE2eD9kV94mpYe0JHeJ28khoHonHonRi8b1FnM4lg2jpXJHKPOsqC4Bc+k41MNzbxnRKxX+txUxDgaKtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721112918; c=relaxed/simple;
-	bh=DfqVHEM/JHNEmI3EXhl5J5LalUoDyiv4zLiIsKFYdKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=A3yEzQZw70Gxl3RTXUOmKzXluCqd8qdjr0zKehE+oZLclfysxmaLNPODNBBpWLldml5j9Z32DZzKFlYPqUpF0brDvUmWqC/ykguj8wgGYbWyLCSNJLuQiYB76XKMCLmUYIJgyZPZgv+GptIQejznUMTukNcsuViXYhCVvVfmVg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bLWEJ6In; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A4EFD40E0223;
-	Tue, 16 Jul 2024 06:55:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lLySKcLE_cIi; Tue, 16 Jul 2024 06:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721112908; bh=ygzrCeNipETpAP+iPDncrOl/Mb7ATe7ELb5oVJ00kts=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bLWEJ6In/yqGtVzSj+WE/bRqyi3nVLNWduGV/dfemuHQf9SojL4C3U5Cjh1ly2kPj
-	 f3pwM8P/YJ5Qz+nE5BdhOwrl67hUL/4BVXZCL9Xrf5bSH7VUubHUo8RUPRdrbVOWnG
-	 UMGiAqU62HUWtyUqlMgNAqzIv3y6NX34y89mkuSbNXi/lHMDsWzJWvf/AOC0Tee2dy
-	 T1dsG+IeFmQJ4sK7fiNJEHive/20di3dnTamJ4BoByj35BjjMldhCeY4lrJ7SboI7G
-	 kAgy0HWnrdeh4f4JZNvLZ5uuINtOGp7ohkDYts4pg/VdDdhsuduvl78JWoL4c6OxBA
-	 l3ljGoCE02+knxMpu3ToloSS72go6q+2fU3TQxdfoQUubb/dj66KilOtkYCxjJjCWg
-	 Cl5WJ9j8HttGZANUMWAvE0jv41rBCixQMZttId8nnUfnKl2SB+QowANKiBBFCcd5sm
-	 LypiRnOtonNhLzNr2O5S+o2IqKXR3Wek04smkLOVsukiaGMS51q3cjCaPGTaNHv7yb
-	 weoCKDAP1zK+wj459DaoNnYwjOZrpHbMMPvgkZB1tp+ggAcAZXTeQ3VFVozsPDMLjL
-	 1YLxnRQuruMmCCPCUEFOpfRRD+lTgKIE2f5NbjqKIlM3uiTCWQ5ncjWbzgVXzcdHDa
-	 dEAEzwDy9VIVaHSdfNrV950Q=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	s=arc-20240116; t=1721113054; c=relaxed/simple;
+	bh=8qlscJasTrwwPLY1nNciHNwhUNUtFNdBxH9NWwcXmjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N37IlloTz1D5qDUyZyEHWhttszJKPffjzExjMU54CngyVl9RtTd0p8HuBlk02Hol3P+/W+wbfuDEbK8Nql6OjTWG38mY2ZbEmaV7Sc81/H78S672qTwlqioAGHlWhLe2btZ9X7h8INqSUCFeLg7WkkxfOIBnWx2V7SPlSryJ5q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sTc74-0004f5-9S; Tue, 16 Jul 2024 08:56:38 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sTc71-0004NX-ML; Tue, 16 Jul 2024 08:56:35 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5269640E0221;
-	Tue, 16 Jul 2024 06:55:05 +0000 (UTC)
-Date: Tue, 16 Jul 2024 08:54:58 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cache for v6.11-rc1
-Message-ID: <20240716065458.GAZpYZQhh0PBItpD1k@fat_crate.local>
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4C5A2304DE4;
+	Tue, 16 Jul 2024 06:56:35 +0000 (UTC)
+Date: Tue, 16 Jul 2024 08:56:34 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	haibo.chen@nxp.com, imx@lists.linux.dev, han.xu@nxp.com, 
+	Chircu-Mare Bogdan-Petru <Bogdan.Chircu@freescale.com>, Dan Nica <dan.nica@nxp.com>, 
+	Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>, Li Yang <leoyang.li@nxp.com>, 
+	Joakim Zhang <qiangqing.zhang@nxp.com>, Leonard Crestez <cdleonard@gmail.com>
+Subject: Re: [PATCH v2 2/4] can: flexcan: Add S32V234 support to FlexCAN
+ driver
+Message-ID: <20240716-magnificent-imported-ammonite-06274a-mkl@pengutronix.de>
+References: <20240715-flexcan-v2-0-2873014c595a@nxp.com>
+ <20240715-flexcan-v2-2-2873014c595a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7czg2i2w4wkjgew7"
+Content-Disposition: inline
+In-Reply-To: <20240715-flexcan-v2-2-2873014c595a@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--7czg2i2w4wkjgew7
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On 15.07.2024 17:27:21, Frank Li wrote:
+> From: Chircu-Mare Bogdan-Petru <Bogdan.Chircu@freescale.com>
+>=20
+> Add flexcan support for S32V234.
+>=20
+> Signed-off-by: Chircu-Mare Bogdan-Petru <Bogdan.Chircu@freescale.com>
+> Signed-off-by: Dan Nica <dan.nica@nxp.com>
+> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> Reviewed-by: Li Yang <leoyang.li@nxp.com>
+> Reviewed-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/net/can/flexcan/flexcan-core.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/fle=
+xcan/flexcan-core.c
+> index 8ea7f2795551b..f6e609c388d55 100644
+> --- a/drivers/net/can/flexcan/flexcan-core.c
+> +++ b/drivers/net/can/flexcan/flexcan-core.c
+> @@ -378,6 +378,10 @@ static const struct flexcan_devtype_data fsl_lx2160a=
+_r1_devtype_data =3D {
+>  		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR,
+>  };
+> =20
+> +static struct flexcan_devtype_data fsl_s32v234_devtype_data =3D {
+> +	.quirks =3D FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_DISABLE_MECR,
+> +};
 
-please pull the x86/cache lineup for v6.11-rc1.
+- Does the core support CAN-FD?
+- Does the core generate an error interrupt when going from error warning
+  to error passive?
+- Are you sure, you don't need to enable FLEXCAN_QUIRK_ENABLE_EACEN_RRS?
+- You probably want to use the mailboxes instead of the FIFO for the
+  RX-path.
 
-Thx.
+regards,
+Marc
 
----
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-The following changes since commit f385f024639431bec3e70c33cdbc9563894b3ee5:
+--7czg2i2w4wkjgew7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  x86/resctrl: Replace open coded cacheinfo searches (2024-06-10 08:50:12 +0200)
+-----BEGIN PGP SIGNATURE-----
 
-are available in the Git repository at:
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaWGaAACgkQKDiiPnot
+vG/7sQgAgoy9kUcei84qu1gP/cmLa39WpufEkj5qo0h9LC6ryRNtHYJJVHdpthTt
+SxG5murRrAfL7yeoaG09mOH8ROFWIdoXrVULxUGYF7sumeLW1AQXnatEdzgUgAEn
+4SkwIr8lsFKMAWoV1JB/UPEBhAMaJ1eHrvVEtzXZMacVKlw/uEj6V7K8vfN2nhdh
+uL8P8ERJln6grTXv5ydB+kpSuGw8/xLMYko5qrk29Kek+Fd9FeybZdu9nYf3Ea68
+96EBM6f6E+/T7c16p7NeYZiwkc0id21xbQDLbOYRsOkehUklskz0WrY9fMPFONRP
++urFyd+I6wA0roHQBfuSy4ibb+JkdA==
+=sBBU
+-----END PGP SIGNATURE-----
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cache_for_v6.11_rc1
-
-for you to fetch changes up to ea34999f41873c96ac89e861e5fdfc7d0403f9e3:
-
-  x86/resctrl: Update documentation with Sub-NUMA cluster changes (2024-07-02 20:03:19 +0200)
-
-----------------------------------------------------------------
- - Enable Sub-NUMA clustering to work with resource control on Intel by
-   teaching resctrl to handle scopes due to the clustering which
-   partitions the L3 cache into sets. Modify and extend the subsystem to
-   handle such scopes properly
-
-----------------------------------------------------------------
-Tony Luck (19):
-      x86/resctrl: Prepare for new domain scope
-      x86/resctrl: Prepare to split rdt_domain structure
-      x86/resctrl: Prepare for different scope for control/monitor operations
-      x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
-      x86/resctrl: Add node-scope to the options for feature scope
-      x86/resctrl: Introduce snc_nodes_per_l3_cache
-      x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster (SNC) systems
-      x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
-      x86/resctrl: Add a new field to struct rmid_read for summation of domains
-      x86/resctrl: Initialize on-stack struct rmid_read instances
-      x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
-      x86/resctrl: Allocate a new field in union mon_data_bits
-      x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
-      x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC) mode
-      x86/resctrl: Fill out rmid_read structure for smp_call*() to read a counter
-      x86/resctrl: Make __mon_event_count() handle sum domains
-      x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
-      x86/resctrl: Detect Sub-NUMA Cluster (SNC) mode
-      x86/resctrl: Update documentation with Sub-NUMA cluster changes
-
- Documentation/arch/x86/resctrl.rst        |  27 +++
- arch/x86/include/asm/msr-index.h          |   1 +
- arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++++++++--------
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  89 ++++++---
- arch/x86/kernel/cpu/resctrl/internal.h    | 108 ++++++++---
- arch/x86/kernel/cpu/resctrl/monitor.c     | 250 +++++++++++++++++++-----
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +--
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 276 ++++++++++++++++----------
- include/linux/resctrl.h                   |  88 ++++++---
- 9 files changed, 855 insertions(+), 323 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--7czg2i2w4wkjgew7--
 
