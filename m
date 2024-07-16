@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-253865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C65932811
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:15:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F26932812
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48C51C22CBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A69A1C22C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8161419B58C;
-	Tue, 16 Jul 2024 14:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2FE19CD01;
+	Tue, 16 Jul 2024 14:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="JDRBCUG/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BjD+pOLu"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="jFeICd8j";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JoQvLheI"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BECA19B3D1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9188F19B59E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139313; cv=none; b=OQfPrvsSz3booegPQyinuDDBU1MPshcCngHteD0VD26UP8NejdnX1dHGG7m+FHic2DbiLKNyCrEOoVQbeuADO7nzX4uuLSXn/qqSwegm4I3aG8FVWMUjN2imwbk4l8irmsoy7ioG2lMVnOzmLdRSueIPggjMQFAloubYFGM+L5w=
+	t=1721139317; cv=none; b=iacREkTpESV8MVaekKsrTUxe8P5hfQbtUDegnCgNRDkLwDmnEEwNCbRE35Ev1rxm8ErJKdIUH6y1gJ24/urCkPv0FojTBaGuxW8DgoHfT+Z0c+HNa/sdu+PbOSPLX77jlpvgCiSi017c99iVcfanqPvoegLpdCVM3bPcABfej50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139313; c=relaxed/simple;
-	bh=ipsmsZYbAnzZ2nLzzwwb1hP9L5BCCXst27sn5MQXPoE=;
+	s=arc-20240116; t=1721139317; c=relaxed/simple;
+	bh=HlGdOd5dqkSqcrwCMdWmkz/K8kHNjKq9mNZ2Rtya5eA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lGGGt+imnPIwTDR01YCNSgTquUuYsP5MZds7adZBpnkxaJODqtIMJkkoneFo6GgKaOGUPYikkUjNiwWIO6oR34vzvSVyXIfVTJUpHUC8//fBVcr19UMb5vJuHO78K3+X+LxceBtW3YvMVo9eozrKvPLy4hfLDDRB9xXenI5spS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=JDRBCUG/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BjD+pOLu; arc=none smtp.client-ip=103.168.172.151
+	 In-Reply-To:To:Cc; b=BcLDkZvjboXKIw4rKOLblRn4T531ysWr1JTzrj4GiW8gKUzaV+3TSB1rv+LZDxCAi9AOjuyjHVVfY4aHa1lYSKlXyi1sHDppYztCIi7LjAmnTNiR5ZVCKGa+XtuEm0wrRljQiDKo/leLkyGlXLHBhE/wRLq8yS4yAyCEClbh47U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=jFeICd8j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JoQvLheI; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 36F001388CB4;
-	Tue, 16 Jul 2024 10:15:11 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B937911480AA;
+	Tue, 16 Jul 2024 10:15:14 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 16 Jul 2024 10:15:11 -0400
+  by compute4.internal (MEProxy); Tue, 16 Jul 2024 10:15:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1721139311;
-	 x=1721225711; bh=80MXqoF8BPSn2t5IK17fPjbSuREk2f3XfiBkJXSaTeQ=; b=
-	JDRBCUG/08sl74aGjVXKuI2/bqW41XFIdbIoiJWSOGK7cUaIOrbwIkD04B8fY6k/
-	VeJEBuICTREXHFSzaa5EavaBFiHlP6OdYtd6OmDiK6f9xJQCq/xqBj/2PUdvw/Bn
-	b9owId7L71qbOAkYdiNMKL7OP0V8sB4jAD41p3tJHp6qH88KpthYSBxL6F1QLX1y
-	aAha+WU91lM9pSXTO1rjUtr4rW+7mvI0onvuzjBOozsUljHFRLjMojRUAe4L5m6v
-	p1NRwBl9LEBl98sO9RQEkHbbKKDg13iCYX4vCvwHqhH5eDhjz4BZJCdKqm0aDOPL
-	9v/8e96spVBaV8DPX++4VA==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1721139314;
+	 x=1721225714; bh=8NNf6PSflYzXxqJ9whA2dYuWQM3qAulX8kNbAmc/R5c=; b=
+	jFeICd8jAzm0zV9OJUfDJ9n7+4rOSCxUhk+EM5z8mZIlhdy9uC2l11epV2bFGlzJ
+	dcGf19MeJ19+zkwJtB5GODZ6YvZPQsWuyLRrot+bFyJNKqKKyMI0QuqHsKJJVINl
+	a3JNwqKmptwhmCv9Dk2Rs3dcfNBmYLih2DJSstCT6Zac0KSUdqmDTwNoXHitMI0W
+	zSWlFo9WFkDt3WOcNQ4fNpltjJNASARMtVacfmZR4segCNVbHDeobf/pzeEpokW1
+	ifL8JJI7HGQAY8Hy6rDZFGpW8H6Lm/iAA59Zg9kH6RHuIswjc/x6xXaJ/Sgqguk0
+	2T8JNcNTZNV5+wYSXYEdJw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721139311; x=
-	1721225711; bh=80MXqoF8BPSn2t5IK17fPjbSuREk2f3XfiBkJXSaTeQ=; b=B
-	jD+pOLuXbREnMvcpxwI1RKMnG7ViFyR9zCcPuxi6z2l9DDqAnpaNbxW7M/oHQ9Lq
-	KypNRD41piK9u+8jriNC/br1xzD1jQceoI+wrivp6iFXmRGDJ4TXahTd2gLiM5oD
-	glP0Wh3jdUv6VILmczVUFLS1JB0d1hySPBfRb5RqfCpH2nYYC1KCT4P2IoWq9GhM
-	jxerG+ac33XNCAJRnD6b1/O27cYhMxOTccmmyLQZjvSHag6FMy/bzoHZ0V75qfiD
-	d4orjeCMwEGUE6C3XFTJnnxEQa4D/T4gezDHCc8our3z/dAkFyWM+keIlcDrI/4/
-	uTFK3Xtn7Tj6CFo4Xxs2A==
-X-ME-Sender: <xms:boCWZlHKovwMLupW-mn-nWkuqFSW_1b9Z_CiAgh-mdraKTlL6dU2BQ>
-    <xme:boCWZqUGt9ujCTf6tfETlOl0gbZHO8OM7wYQ2qZjLLLJXa_bUp0dYg1yi5sfbZh1J
-    TRuaph1wLzIyvlEopA>
-X-ME-Received: <xmr:boCWZnJqYirdcurxW8dev4tIYQEp0eixUiLK0tg9ByTZZCuAAAQpiB_naTQszyem3BU9>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721139314; x=
+	1721225714; bh=8NNf6PSflYzXxqJ9whA2dYuWQM3qAulX8kNbAmc/R5c=; b=J
+	oQvLheIeuwxxoFzyzCxWE7IqT1RjpR6Ow1mbH8Bic1WOrEZSuyR80snDWTHD42uV
+	3vXDXZs9zGA5CjVaIVpUUwRF/53+8wfnzh5N37yD7eODD1LyBt7vFNJU5GPOMyAQ
+	W28CQgyg0Pu7KYYWwAxBJX9KqYhOG5FmlhqML0+DyyDFp0NyZzyPF8xmiH4eNvQO
+	FSmNUaStL8JWi0hwInHWIOSG3ouOzArCmHeGgC171Jor07ti69DRz2f9bZv6faoF
+	WB2YIHMTuPjom04dKitm/fJvLBwhDSmnP0Zz9N2dkqio4pBanQg2VHdaTcqDt48r
+	5rsZANDgu7/m9ZIIK/yjg==
+X-ME-Sender: <xms:cYCWZuNxEiSlVaR1j-zR4_Ajj0yUQouEtJehXXrROLRS6r6cP9tKhw>
+    <xme:cYCWZs-LZg20IRtGFtXgXsqzyQuaZpliUPazPdoq5LtpjwthvtfSmd8Pe5zLf25KO
+    x2NogUw670fvIYI6U8>
+X-ME-Received: <xmr:cYCWZlTZeTIGAmNCBZCiGXKCCzQWTss10y1MrboVjFBrQBdjTWVxgHz2UuRXwXGD2Sx4>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdejfecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -72,18 +72,18 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeggdejfecutefuodetggdote
     ggtffrrghtthgvrhhnpedvkeeihfefveekueevteefleffkeegudeghfdtuddugefhueev
     geffgedukeejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
     hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:boCWZrEqhbnEtsCxOjX5atBndgPHqLHdv9k0DLY12C1NpfU981jqFg>
-    <xmx:b4CWZrX3fbeUZNpn4uYcJT3HJit60abLhGMFNxp9nNm-_bF4DjKpwg>
-    <xmx:b4CWZmOy8R4qXfEdqZjSso9d-K1EdDGOzMLcMiWlMhLcPZKHJVkpIQ>
-    <xmx:b4CWZq13DxMf6hU7NBOOroL39D8YsacGwSTwNoLb02ByS6W2C6x6iA>
-    <xmx:b4CWZiGEswwwlCSdH0y2qyBiolvGSTiYUwaNaUIoc_aOBhbllGrE8Soy>
+X-ME-Proxy: <xmx:cYCWZutsdm2TZC2aYJRSSO-1nODunbO89h2CsQcROJKB7UoZZb59PQ>
+    <xmx:cYCWZmdGL3BLuqfhYpLGSq2OlkDmztVeBCWlSsK51SwY7RWxgzE7-Q>
+    <xmx:cYCWZi0gPPf0D8-c1_v798WfGRlo4Idn84-3WGnV-mKqWrqShUMQKg>
+    <xmx:cYCWZq-ym2taSYXE9khWce8iK_3WGfgWE54uQbizVWS7Cs9_dRsVlg>
+    <xmx:coCWZsunViBP52x4B3yRz0wZujsCic3ogXfqmn_CEyVAk4sjetsctSgM>
 Feedback-ID: ifd894703:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Jul 2024 10:15:08 -0400 (EDT)
+ 16 Jul 2024 10:15:11 -0400 (EDT)
 From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Tue, 16 Jul 2024 22:14:58 +0800
-Subject: [PATCH v3 1/3] cpu/hotplug: Make HOTPLUG_PARALLEL independent of
- HOTPLUG_SMT
+Date: Tue, 16 Jul 2024 22:14:59 +0800
+Subject: [PATCH v3 2/3] cpu/hotplug: Weak fallback for
+ arch_cpuhp_init_parallel_bringup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-loongarch-hotplug-v3-1-af59b3bb35c8@flygoat.com>
+Message-Id: <20240716-loongarch-hotplug-v3-2-af59b3bb35c8@flygoat.com>
 References: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
 In-Reply-To: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
 To: Thomas Gleixner <tglx@linutronix.de>, 
@@ -101,56 +101,48 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
  Jiaxun Yang <jiaxun.yang@flygoat.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1139;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1087;
  i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=ipsmsZYbAnzZ2nLzzwwb1hP9L5BCCXst27sn5MQXPoE=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrRpDenPv5gq+2X9T4xZtGGpdNW3iEuSD1UeHLlR9GSRV
- XJPYsiqjlIWBjEuBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZiIRR7DP7srZrbfGDadSAnQ
- nF+5YtlVjqOnqr40XfedpZpjNNP9lAXDfzfVF9elJuc8FuY1+j/n3MfPex65RljunV04//zyg/O
- WfOQEAA==
+ bh=HlGdOd5dqkSqcrwCMdWmkz/K8kHNjKq9mNZ2Rtya5eA=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrRpDelTuJ/17SztVfxmv7UyVnLyltANExbmdIl94KgVc
+ u2f/M6zo5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACayfRUjw3dDpqOrpELbQ3Xd
+ Y42sb6z+HOy/d89SnUs3P5mH3BGUUmT4HyGvJzqrxMPkVF98ZaR78XT5v/8y63cIy1m2qesezn7
+ OBgA=
 X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
  fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Provide stub function for SMT related parallel bring up functions
-so that HOTPLUG_PARALLEL can work without HOTPLUG_SMT.
+CONFIG_HOTPLUG_PARALLEL expects the architecture to implement
+arch_cpuhp_init_parallel_bringup() to decide whether paralllel hotplug
+is possible and to do the necessary architecture specific
+initialization.
+
+There are architectures which can enable it unconditionally and do not
+require architecture specific initialization.
+
+Provide a weak fallback for arch_cpuhp_init_parallel_bringup() so that
+such architectures are not forced to implement empty stub functions.
 
 Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
-v2: Use stub function (tglx)
-v3: Improve commit message (tglx)
----
- kernel/cpu.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/cpu.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 1209ddaec026..c89e0e91379a 100644
+index c89e0e91379a..16323610cd20 100644
 --- a/kernel/cpu.c
 +++ b/kernel/cpu.c
-@@ -1808,6 +1808,7 @@ static int __init parallel_bringup_parse_param(char *arg)
+@@ -1829,6 +1829,11 @@ static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
  }
- early_param("cpuhp.parallel", parallel_bringup_parse_param);
+ #endif
  
-+#ifdef CONFIG_HOTPLUG_SMT
- static inline bool cpuhp_smt_aware(void)
- {
- 	return cpu_smt_max_threads > 1;
-@@ -1817,6 +1818,16 @@ static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
- {
- 	return cpu_primary_thread_mask;
- }
-+#else
-+static inline bool cpuhp_smt_aware(void)
++bool __weak arch_cpuhp_init_parallel_bringup(void)
 +{
-+	return false;
++	return true;
 +}
-+static inline const struct cpumask *cpuhp_get_primary_thread_mask(void)
-+{
-+	return cpu_none_mask;
-+}
-+#endif
- 
++
  /*
   * On architectures which have enabled parallel bringup this invokes all BP
+  * prepare states for each of the to be onlined APs first. The last state
 
 -- 
 2.45.2
