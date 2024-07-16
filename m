@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-253297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62412931F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:14:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7020931F4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932DD1C21552
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFD31F21F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6464012B72;
-	Tue, 16 Jul 2024 03:14:05 +0000 (UTC)
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B43B17BAA;
+	Tue, 16 Jul 2024 03:36:52 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3286115ACA;
-	Tue, 16 Jul 2024 03:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8359E6FBE;
+	Tue, 16 Jul 2024 03:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721099644; cv=none; b=Y3uxNe+cpp8RhKkYlI8Q2QN2/NTPmv67/Zxl//8HQGOqypN9PDRWBc1queHmw5jcmYoBdyMQoQvxbfBIbJSe7oLlIogYyJZi5B8lZIRxqRtLIXOMZ5qIUif7dVDK1aZ+CJLcgi3cu783NZYrf8JyfUd0sAZzVRzcvBCPp2FBBdk=
+	t=1721101012; cv=none; b=lgIzdIxqWMyJ4+ZkKBzee7gsBns3LTPA5vEgfdAgCBuzr6cTvM1ufKPzu95/ym8OGtdttWXHvBoBqReOcCE7iIXf78cIPmjxUwdhenDB/6KQZbf2secMbZw8Tv/v82wYW926C6d291vskUAIXgvMPREMXaGMpn9Qs1yfC7a8eI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721099644; c=relaxed/simple;
-	bh=/TGUaXpu0w2Zo01DYM6wone38TrTwOdm5ugkWYKDdYI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BeB2d7NUGihNraauG4BhX16RB8KEhjZVV1kJOF9kCFXNUBHXzQNTfs3DdJ67fNuzL5ouHnXBFxl5/aJ9TkahpXjEasKoi8uL8cxW4VIM+FA7qnrChG3vieffz6hrShH7fESZhL+uY/5k7dvw2wCjKyS/x6DGpfE9/3YJx5XWiOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from droid02-cd.amlogic.com (10.98.11.201) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Tue, 16 Jul 2024
- 11:14:00 +0800
-From: Yang Li <yang.li@amlogic.com>
-To: Kelvin Zhang <kelvin.zhang@amlogic.com>, <xianwei.zhao@amlogic.com>,
-	<ye.he@amlogic.com>
-CC: Yang Li <yang.li@amlogic.com>, <linux-bluetooth@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 1/4] Add support for Amlogic HCI UART
-Date: Tue, 16 Jul 2024 11:13:55 +0800
-Message-ID: <20240716031358.1256964-1-yang.li@amlogic.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1721101012; c=relaxed/simple;
+	bh=5e7kOSRl8XBPrCbjMasuiGU3+ao2+bDdz+BDslhwhVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=HYAEesyG5ztTtIdXyMyAo2S8AUTl7t/tdGy3w00T1NfxdTOeHKK+P7wng5vPuSmjl4qO+nGb+HxJpMPZ5LKzEviMSE68JckvJXdblRaqqGboMmjvCAhd0ydddiOYCaELLmIA2OBpt85z5lUqwYXVwTUVu4QitgqKeNldracHcfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 83CCA2009BA;
+	Tue, 16 Jul 2024 05:36:42 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4A7712009AE;
+	Tue, 16 Jul 2024 05:36:42 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 55CDA183487B;
+	Tue, 16 Jul 2024 11:36:40 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: tj@kernel.org,
+	dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-ide@vger.kernel.org,
+	stable@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de
+Subject: [PATCH v3 0/4] Refine i.MX8QM SATA based on generic PHY callbacks
+Date: Tue, 16 Jul 2024 11:18:11 +0800
+Message-Id: <1721099895-26098-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add support for Amlogic HCI UART, including dt-binding, Amlogic Bluetooth driver
-and enable HCIUART_AML in defconfig.
+V3 main changes:
+- Use GENMASK() macro to define the _MASK.
+- Refine the macro names.
 
-To: Marcel Holtmann <marcel@holtmann.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-To: David S. Miller <davem@davemloft.net>
-To: Eric Dumazet <edumazet@google.com>
-To: Jakub Kicinski <kuba@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Yang Li <yang.li@amlogic.com>
+V2 main changes:
+- Add Rob's reviewed-by in the binding patch.
+- Re-name the error out lables and new RXWM macro more descriptive.
+- In #3 patch, add one fix tag, and CC stable kernel.
 
----
-Changes in v2:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v1: https://lore.kernel.org/r/20240705-btaml-v1-0-7f1538f98cef@amlogic.com
+Based on i.MX8QM HSIO PHY driver, refine i.MX8QM SATA driver by using PHY
+interface.
 
+[PATCH v3 1/4] dt-bindings: ata: Add i.MX8QM AHCI compatible string
+[PATCH v3 2/4] ata: ahci_imx: Clean up code by using i.MX8Q HSIO PHY
+[PATCH v3 3/4] ata: ahci_imx: Enlarge RX water mark for i.MX8QM SATA
+[PATCH v3 4/4] ata: ahci_imx: Correct the email address
 
-
---- b4-submit-tracking ---
-# This section is used internally by b4 prep for tracking purposes.
-{
-  "series": {
-    "revision": 2,
-    "change-id": "20240418-btaml-f9d7b19724ab",
-    "prefixes": [],
-    "history": {
-      "v1": [
-        "20240705-btaml-v1-0-7f1538f98cef@amlogic.com"
-      ]
-    }
-  }
-}
--- 
-2.42.0
-
+Documentation/devicetree/bindings/ata/imx-sata.yaml |  47 +++++++++++
+drivers/ata/ahci_imx.c                              | 406 ++++++++++++++++++++++++-----------------------------------------------------------------
+2 files changed, 155 insertions(+), 298 deletions(-)
 
