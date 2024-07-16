@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-253386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D581E93205E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:17:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D31932063
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935AD283BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:17:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25BB7B21999
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCCB1CAA2;
-	Tue, 16 Jul 2024 06:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9840F1CAA2;
+	Tue, 16 Jul 2024 06:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VY3FxGhc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQTUVqRQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA012599;
-	Tue, 16 Jul 2024 06:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF983208A5;
+	Tue, 16 Jul 2024 06:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721110649; cv=none; b=ncjciQJzlJ0oPmZb7CAYqSIhIgvQo4EfqhWoqX1PS7H28BeveSKb4viybjizw5kPMFE/M9gABQ25xWiGFuH6NARPccHHlP2lax7Drk8fwWnN/2pnIJFtXOoyuGLBkWwVwiO2yDXCpewMWIasndAzvgi5DwUFzwZclXSnLl2MS3o=
+	t=1721110767; cv=none; b=myWFXlQwPbL0OaQAjaogPrl0Ih+aDEdGdKNzA9JAMHt215pWqLlLFiz7UZfxmN6PNDnrs6U5qF/3EP5hjWVxjJtjwe2dKP2n0mUllSKGAlsnKd2BFTbGxWmWFxDqpxgbzzkx9rdCLBKuDV2JOem8h5sAr64stFtCxu8CUitR7nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721110649; c=relaxed/simple;
-	bh=aw1zUubyG40hAK9exnDXCEFh8oOAQEx5VmdkLC6tevM=;
+	s=arc-20240116; t=1721110767; c=relaxed/simple;
+	bh=0+LR9B7rSDTvnbSE3g6hXnn9CfREqW1WuTsRnkZ/5kU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NkAImqXjpJtkxuQBqhIBNUBeRuULx6GwNZNxh7Vz71s74YIMxIvfKlN9G1tHO0Mr5p5qwlDl9Ce8SJ2CZI7P8bjYKZygIKuzgmF7zMyWD0uI8I/ZyuHkOXjg+796ul3LF7nVkO9oYO/YHvCcj0/b8O7fiLkZEpFJ1PP0t39DDvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VY3FxGhc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E42C116B1;
-	Tue, 16 Jul 2024 06:17:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cB4yUYAY3i9bbMc1M0ZrmSsojerRSORJP/tD8ZiMTZvKVAsjWghP4s6HFxQC+21oYFymyZKhiz8RFc/JFA0u1Pjx/ZcqQXKebd8+qG4eyKj0bm0gxXepu+BJT/VXySmbDZaDbDBIAyuykyRXD1/m2owZuKRwsedPqDdDWpqq2xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQTUVqRQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB30C116B1;
+	Tue, 16 Jul 2024 06:19:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721110648;
-	bh=aw1zUubyG40hAK9exnDXCEFh8oOAQEx5VmdkLC6tevM=;
+	s=k20201202; t=1721110767;
+	bh=0+LR9B7rSDTvnbSE3g6hXnn9CfREqW1WuTsRnkZ/5kU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VY3FxGhcGrmotOq7k+CviHhWi2nqB0Vwq5JeNbINhRGnWBPCMTZ9uyMsiRuvtr5T2
-	 jaf8cpVDC0nECrevC+9JxCavm24eEKge7GHtWpnaYItJWBlRoYscnmHaMGD5XCsoNf
-	 tUKNDSCGU3DioU8N0U/G4fgYKtWoYqdCJS//YFCXhXMdy1FIGzYIO829zXE5KFMjDD
-	 eANNDGv8aHPoChUYS5YlmUhLj+07NjqbOqeCbDEr1lVzGeTLf1VpE7m8zHeru8pUKg
-	 4Zk1bebMrmGPDv5veqES/IrAQBAd8VX64HCNxrMlbhLJuwYo8jGYWjJumFXkFaI5mK
-	 IzDHk4TQZhdCA==
-Message-ID: <f7c3c4d1-bb2f-44b2-8f94-f3e3059fefe3@kernel.org>
-Date: Tue, 16 Jul 2024 08:17:23 +0200
+	b=NQTUVqRQXSxbHLJ6TcVOWJ0VG4R7KUeylEOWOcL4Yj2/owbQfiRp+eXeyFPueBBie
+	 KSKbfbBB1Ni7A6/pfeCRdPyyQI2mgux14eSVu4twAvLwmLkBhHLnXNTBdSHw8HmPBo
+	 zNDd3xyCmJ5vTmAFuLXAcoB8L+c2N+3LS6anIFOjuIPhvhL53RcdxwOm/jhR4otRNA
+	 hCLRDOT/2Y/WaRzDw1o8MUZYUXPO+a/7dhsy+kBdhguwY6ctMG/XwlYVZcklv3eeJa
+	 OJgi/1fKvrJVoifZaBK9QNGVGQD/d7mY2UJKftv26qhFFyPjKjRsKzfDkJ/jlXqrPt
+	 69Sgbp6SKFhRQ==
+Message-ID: <833e112a-f490-4a89-931b-44f806fe043e@kernel.org>
+Date: Tue, 16 Jul 2024 08:19:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: i3c: add header for generic I3C flags
-To: Frank Li <Frank.Li@nxp.com>
-Cc: alexandre.belloni@bootlin.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev, krzk+dt@kernel.org,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- miquel.raynal@bootlin.com, robh@kernel.org
-References: <20240715225351.3237284-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240716004527.20378-1-shanchun1218@gmail.com>
+ <20240716004527.20378-2-shanchun1218@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,20 +107,14 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240715225351.3237284-1-Frank.Li@nxp.com>
+In-Reply-To: <20240716004527.20378-2-shanchun1218@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/07/2024 00:53, Frank Li wrote:
-> From: Carlos Song <carlos.song@nxp.com>
+On 16/07/2024 02:45, Shan-Chun Hung wrote:
+> Add binding for Nuvoton MA35D1 SDHCI controller.
 > 
-> Add header file for generic I3C flags to avoid hard code in dts file.
-> 
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> Reviewed-by: Frank Li <frank.li@nxp.com>
-> Acked-by: Jason Liu <jason.hui.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
+> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
