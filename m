@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-253287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69811931F16
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F444931F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B032EB216D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5E728239D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9F8D26A;
-	Tue, 16 Jul 2024 03:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB6D26A;
+	Tue, 16 Jul 2024 03:08:21 +0000 (UTC)
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AA2101D4;
-	Tue, 16 Jul 2024 03:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AD2182B5;
+	Tue, 16 Jul 2024 03:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721099018; cv=none; b=VhsB9rk+h+PAA9gxQRtvwEiofJVphx+/jBfMuItTXB/cATU3/Vuvt99BfILfZcO1QXBdiSoDLA3tJ22viDLumY5hM+cLEatY2fmM9AoFt2p2ok3J9mWChY7AbNZ5d+TCO0/0bvGtPxPe+cPGjB9fc16p5fHW3macmCg66Fnq8C4=
+	t=1721099300; cv=none; b=JADkfDNl2ArjJfoNSNXuWRxCyh07jzEWYXeJg8HIaeicMXtXEnczCQQJL3SEPUXii+kS2BKcPprmBeaXwz8gnNidxMA6PGa54okKt4XMvyVwT6OqE5oGdB9xkI3KaygPcXPqBu9+y8Hbr6/8rJrGsyZRoOBt2EvoqsnGJr1mHV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721099018; c=relaxed/simple;
-	bh=Qpb/xQXuIOKgJiuFgZVFJH4zCl5bOj+M3rTyJeLsIxw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ugrvQLxWUXzoXyXrGXqt8Pag/4F7jr7XHAzQEIbNRavlGIOOv8mLipBpB89EKbAaSLtuqDYbojr2dWOrlTtD3YO38SGK1sf40lAPuBV1ddgf/GsIwb1GMyFqU9kpK4c/q+3G9eKiUEj+iggbxFr/A6rJc3eQUBvp3ky1Sw8alhA=
+	s=arc-20240116; t=1721099300; c=relaxed/simple;
+	bh=NzFgXShPSbnJn2Za/YJQsATqis3YpfVDNrSS8xfDEDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OXI6n5wzbKslNIPfwgqiaVn/z0J8G8GQ9T/3jSxCd07fTlG3N6mP6Bw+DpWY9T4EWqQjcc/dQxmQMgTZsJ/2Lfah6ekDkFpzUrEV3wKVaSPoXKVqMUIcnuzi8osVfcBYy8QHqvt5vwkW5FHmPCVqI1XoTIcaqNyLEOzdY+1fLXI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACHj+f54pVmJS+NAw--.51704S2;
-	Tue, 16 Jul 2024 11:03:22 +0800 (CST)
+	by APP-05 (Coremail) with SMTP id zQCowADn7+cZ5JVmdVaNAw--.51321S2;
+	Tue, 16 Jul 2024 11:08:09 +0800 (CST)
 From: Chen Ni <nichen@iscas.ac.cn>
-To: alexandre.belloni@bootlin.com,
-	ladis@linux-mips.org,
-	tony@atomide.com
-Cc: linux-rtc@vger.kernel.org,
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	mpearson-lenovo@squebb.ca,
+	dober@lenovo.com
+Cc: linux-watchdog@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] rtc: twl: convert comma to semicolon
-Date: Tue, 16 Jul 2024 11:02:52 +0800
-Message-Id: <20240716030252.400340-1-nichen@iscas.ac.cn>
+Subject: [PATCH] watchdog: lenovo_se10_wdt: Convert comma to semicolon
+Date: Tue, 16 Jul 2024 11:07:25 +0800
+Message-Id: <20240716030725.400400-1-nichen@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,11 +49,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHj+f54pVmJS+NAw--.51704S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF18Ww1xKr1xur4xXrb_yoWfAFg_Cw
-	1YqF4xJ3WkJr1qy3W8Aw45u34jyayjgF1kZr1jgasxA3y2qr18ZasFvrWDAryfXw48GF93
-	JwnrXrWkuFW7WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+X-CM-TRANSID:zQCowADn7+cZ5JVmdVaNAw--.51321S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZrWkuw1rur1DtFy7Jrb_yoWDXrXE9F
+	Z7Wr4I9a1DG3ZFk3Wqkw15Cr40vrs8ZFy8u3WxK3y3Jas7t3yjqrWkZw1kta1DZFs5WryY
+	yr4DXr9YkrW3JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
 	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
 	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
 	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
@@ -63,33 +64,33 @@ X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF18Ww1xKr1xur4xXrb_yoWfAFg_Cw
 	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
 	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
 	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjoKZJUUUU
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjGQ6JUUUU
 	U==
 X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
 Replace a comma between expression statements by a semicolon.
 
-Fixes: 7130856f5605 ("rtc: twl: add NVRAM support")
+Fixes: 1f6602c8ed1e ("watchdog: lenovo_se10_wdt: Watchdog driver for Lenovo SE10 platform")
 Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/rtc/rtc-twl.c | 4 ++--
+ drivers/watchdog/lenovo_se10_wdt.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
-index 2cfacdd37e09..4e24c12004f1 100644
---- a/drivers/rtc/rtc-twl.c
-+++ b/drivers/rtc/rtc-twl.c
-@@ -591,8 +591,8 @@ static int twl_rtc_probe(struct platform_device *pdev)
- 	memset(&nvmem_cfg, 0, sizeof(nvmem_cfg));
- 	nvmem_cfg.name = "twl-secured-";
- 	nvmem_cfg.type = NVMEM_TYPE_BATTERY_BACKED;
--	nvmem_cfg.reg_read = twl_nvram_read,
--	nvmem_cfg.reg_write = twl_nvram_write,
-+	nvmem_cfg.reg_read = twl_nvram_read;
-+	nvmem_cfg.reg_write = twl_nvram_write;
- 	nvmem_cfg.word_size = 1;
- 	nvmem_cfg.stride = 1;
- 	if (twl_class_is_4030()) {
+diff --git a/drivers/watchdog/lenovo_se10_wdt.c b/drivers/watchdog/lenovo_se10_wdt.c
+index 139ff0e8220f..cd0500e5080b 100644
+--- a/drivers/watchdog/lenovo_se10_wdt.c
++++ b/drivers/watchdog/lenovo_se10_wdt.c
+@@ -196,8 +196,8 @@ static int se10_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_drvdata(&priv->wdd, priv);
+ 
+ 	priv->wdd.parent = dev;
+-	priv->wdd.info = &wdt_info,
+-	priv->wdd.ops = &se10_wdt_ops,
++	priv->wdd.info = &wdt_info;
++	priv->wdd.ops = &se10_wdt_ops;
+ 	priv->wdd.timeout = WATCHDOG_TIMEOUT; /* Set default timeout */
+ 	priv->wdd.min_timeout = MIN_TIMEOUT;
+ 	priv->wdd.max_timeout = MAX_TIMEOUT;
 -- 
 2.25.1
 
