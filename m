@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-253217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FD2931E3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66857931E41
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AAF91C21F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65D2282E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FE34687;
-	Tue, 16 Jul 2024 01:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5FBC8E1;
+	Tue, 16 Jul 2024 01:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="itbrRJox"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToyINu31"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F93C79CD
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE8AD24;
+	Tue, 16 Jul 2024 01:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721091873; cv=none; b=WVqnxFrcyGhgkkgCJfFfj0KquXT3En40SerKq0exPTdckz4o3mzhrtUPT1jfiDr2Y+7g7f9Sm/JvR3mPbYN1zgDtCwNHYtrGrQ2gn1eweevA80NYgtxrbQGPhB2v7JbnyNMQCCJKMIHTgAf6/5pkmXUKibf4TzF9Hv2Z5O6xRIY=
+	t=1721091905; cv=none; b=Xp40ndxZrH3FNxQLkWAAwSoQv4DXcYK6a5wvVD3mftQGkEos8bw75C59OU00MCX/hblKJqSGlDa3pk6ZvDEpGs03nn/GejNu5h2/Sm8iNZ/sbzy92Zz8fFqiavI6mkiB+6PEsG9zADbP1M475nX00NC+dJWywNNyPHohR+FxzGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721091873; c=relaxed/simple;
-	bh=DxVL674DykXj38h1XVGpn0hsaGmd4nf0QTNzrbjYn8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KqYV5oG+Xlv0bzp0BqlKh18MIYvfDeLwC5hn8LERBNWXA141YQ7p3DPAsqmIPGWSTQ4uurwVrORL5SavhqqaADc6eYeqIUSmhkTdAoq9CSEsRDIU0nIKlT7iX3nz2P0zu7Wlb8oxN8OuhcvRDzLotfu7iMgXneRb4dPWvmvr/Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=itbrRJox; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jarkko@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721091867;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rrsdvOcbnZj3fLM/P3nqd13De7FARkH+xOOXrXATVM0=;
-	b=itbrRJoxtO+pLwhn2iCH2bPN8FYFO9ODrSsOjdtfC8sPOGXa2S0CGR745jKwKFlH46Bf7s
-	8FPVMAmvHtIeGiKJcN7LS/QuOgmwi5BC1W0/qhlvkFXrNkkQDcq3CJB+TVm9sRuSx0iwN7
-	P2FkeEmQc5ApsAYkJUkOqhKVS4kEhNY=
-X-Envelope-To: peterhuewe@gmx.de
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: linux-integrity@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: gehao@kylinos.cn
-Message-ID: <593e3ae7-1f8c-218a-a5ce-3d90e3008999@linux.dev>
-Date: Tue, 16 Jul 2024 09:04:08 +0800
+	s=arc-20240116; t=1721091905; c=relaxed/simple;
+	bh=QG29vkIJ/KvY/97Bru3A84cybIUnamlVoJnN1kflOmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gat1JSeWJMNyVgZJJP0NKoorwJHhciKRRoeTJGtpOttT1aLO+2MgYBW7GG/SCayCo9UYd5cziUToW53Nc78E7+CkV0JU9s32kUPOWtNfGdvpSKyZaqaqk5TIGcKoZCjpIBUkjIeRGY3icnOmK8yKAOaet+Z+vjJjA8JczotbbZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToyINu31; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53982C4AF0B;
+	Tue, 16 Jul 2024 01:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721091905;
+	bh=QG29vkIJ/KvY/97Bru3A84cybIUnamlVoJnN1kflOmU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ToyINu31o0mwiMTvB5jB7n0JqZmTDkbSgm3t3bwVwzYP75J65cEK6v6oyb8tYVOhv
+	 v283nYUQlfOOu5dkmJkSXA7x3GfOcAgcUwSZ23oscxwuTlMrDQv9GuHJ9AuZDnkjU3
+	 KGEZWRS6uz9S2DA8GajHIs6NU9sefPICsgdx2qDIbes6U6ElBomuJN3h+6C0pwpDmx
+	 abIAgm1tiGWHam/Y9EjCnlpXRq5alYhZmF4YpzXbnIkpfqe18YXG0uxRhfKfoIz+qJ
+	 Brbx0sk7a7jc2ovVW4SEzYnEvoOaLtrMtixOVW1ayPOwJnQ7UnVjRjO8mfbe4KjanQ
+	 Ei/CYG98ITPjw==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eea7e2b0e6so66159281fa.3;
+        Mon, 15 Jul 2024 18:05:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKcym/LGhXmcssf/ceKZ7NWc59TOS+A321xZJpD/ZOzICcYpdEHVgWwPvYVkm2NtqXmkQsYuTITfOQJBvRbtehNHibRk5QUmhU7YLZ3lh4YxyaN2opC1i7Mrmb6OqHL0lv/Ho3y0jta1opkKRYE4cO0wK2AnLILdBb5ZWZe7nj4uu7DA==
+X-Gm-Message-State: AOJu0YxUXds6735nTgt9PB/5ot5W5pEE6qZgQaAf5q8yvMtQzogiXozI
+	eb/K8W87KDZ8CNDe9Qq3MTOKWcHo5QXteuofT1x/F+W2vrpT/dNIkypYfZvTpjnmmXVLe2QLlWa
+	zmthnOVEIOAZaxOtI/u19NrK8ZhQ=
+X-Google-Smtp-Source: AGHT+IEN6H27w2IkU8okfWfdkHSr98KLu1OkcEMwEZm2647siY5rx5myWRTdnfrOyys1KrSYGu4NevvkqFvZHj/70C0=
+X-Received: by 2002:a05:6512:138c:b0:52e:9b92:4990 with SMTP id
+ 2adb3069b0e04-52edf0192ffmr286040e87.32.1721091903625; Mon, 15 Jul 2024
+ 18:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] tpm: Move dereference after NULL check in
- tpm_buf_check_hmac_response
-To: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de, jgg@ziepe.ca
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hao Ge <gehao@kylinos.cn>
-References: <20240709023337.102509-1-hao.ge@linux.dev>
- <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-11-alexghiti@rivosinc.com> <CAJF2gTSG7HzV7mgZpkWLbSBNn2dRv_NaSmCimd+kRdU=EZrmmg@mail.gmail.com>
+ <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com> <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
+In-Reply-To: <a096151c-c349-455f-8939-3b739d73f016@redhat.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 16 Jul 2024 09:04:52 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRrZwVk2xyhF_PsJGKCfkvun-rifG8MjDBcGDt3YBuhPg@mail.gmail.com>
+Message-ID: <CAJF2gTRrZwVk2xyhF_PsJGKCfkvun-rifG8MjDBcGDt3YBuhPg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha extension
+To: Waiman Long <longman@redhat.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jarkko
-
-Have a nice day.
-
-On 7/15/24 19:25, Jarkko Sakkinen wrote:
-> On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
->> From: Hao Ge <gehao@kylinos.cn>
->>
->> We shouldn't dereference "auth" until after we have checked that it is
->> non-NULL.
->>
->> Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_session*()")
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> Also lacking:
+On Tue, Jul 16, 2024 at 3:30=E2=80=AFAM Waiman Long <longman@redhat.com> wr=
+ote:
 >
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/T/#u
+> On 7/15/24 03:27, Alexandre Ghiti wrote:
+> > Hi Guo,
+> >
+> > On Sun, Jul 7, 2024 at 4:20=E2=80=AFAM Guo Ren <guoren@kernel.org> wrot=
+e:
+> >> On Wed, Jun 26, 2024 at 9:14=E2=80=AFPM Alexandre Ghiti <alexghiti@riv=
+osinc.com> wrote:
+> >>> In order to produce a generic kernel, a user can select
+> >>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> >>> spinlock implementation if Zabha is not present.
+> >>>
+> >>> Note that we can't use alternatives here because the discovery of
+> >>> extensions is done too late and we need to start with the qspinlock
+> >> That's not true; we treat spinlock as qspinlock at first.
+> > That's what I said: we have to use the qspinlock implementation at
+> > first *because* we can't discover the extensions soon enough to use
+> > the right spinlock implementation before the kernel uses a spinlock.
+> > And since the spinlocks are used *before* the discovery of the
+> > extensions, we cannot use the current alternative mechanism or we'd
+> > need to extend it to add an "initial" value which does not depend on
+> > the available extensions.
+>
+> With qspinlock, the lock remains zero after a lock/unlock sequence. That
+> is not the case with ticket lock. Assuming that all the discovery will
+> be done before SMP boot, the qspinlock slowpath won't be activated and
+> so we don't need the presence of any extension. I believe that is the
+> main reason why qspinlock is used as the initial default and not ticket
+> lock.
+Thx Waiman,
+Yes, qspinlock is a clean guy, but ticket lock is a dirty one.
 
-Regarding this version, I don't think I should add these.
-
-I send this patch on July 9th, 2024.
-
-The following email was sent on July 13th, 2024.
-
-https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e13ec2@stanley.mountain/T/#u
-
-I think these should be included in the subsequent versions (if any).
+Hi Alexandre,
+Therefore, the switch point(before reset_init()) is late enough to
+change the lock mechanism, and this satisfies the requirements of
+apply_boot_alternatives(), apply_early_boot_alternatives(), and
+apply_module_alternatives().
 
 >
-> What is happening here is that my commit exposed pre-existing bug to
-> static analysis but it did not introduce a new regression. I missed
-> from your patch how did you ended up to your conclusions.
+> Cheers,
+> Longman
 >
-> Please *do not* ignore the sources next time. Either explain how the bug
-> was found or provide the reporting source. You are essentially taking
-> credit and also blame from the work that you did not accomplish
-> yourself, which is both wrong and dishonest.
->
-> BR, Jarkko
-
-OK,got it,I'll pay more attention to such details in the future.
-
-I would like to clarify that I did not taking credit and dishonest.
-
-As stated earlier, the timeline indicates that my patch preceded his email.
-
-Before submitting my patch, I conducted a thorough search to ensure that 
-there were no related submissions,
-
-  in order to avoid any duplication of effort and wastage of everyone's 
-time.
-
-I didn't expect to have wasted everyone's time because of commit message 
-, and I sincerely apologize for that.
 
 
-Thanks
-
-BR
-
-Hao
-
-
-
+--=20
+Best Regards
+ Guo Ren
 
