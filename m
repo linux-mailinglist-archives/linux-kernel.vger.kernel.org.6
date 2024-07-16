@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-254407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA789332DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:19:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C94E9332DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2BD71F23B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:19:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 962B5B23B90
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE291A01DC;
-	Tue, 16 Jul 2024 20:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FBE1A08BC;
+	Tue, 16 Jul 2024 20:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nENLOjbo"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZFNR85pJ"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEAD19FA72
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CC41A01DE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 20:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721161165; cv=none; b=SaDDuW5WnnfefUyv1TEQSszkC+4n0JrhNzx6tU/Y9lwp/rTlvWAwz0PuIMShlBm6Ln420zLcPhEMzlD/ZFEHY9Bk3rqC1So9PgLzZGkQd6TVJqoEK40kAaLHDc0VYohNx1YsbuksdMmun9V+eF6y1tc3YsKJnk2rAEQ8cDoumL8=
+	t=1721161168; cv=none; b=BIfP8X6KhYZeGNDJ3clcA0jRmc4Z4XJJhD5Dl0+e52Gl+DzVuBKqffSWXqz8RYwrF/yB+/5Jetff4lsgtHarRDDpVpKrox5jQrhM4dGHPVQFMiMQT7wZ/k4rdk0ZllaVEUPOddJxZMBlH2P7TIY6gNwT9DVydXNNlme9++MIKnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721161165; c=relaxed/simple;
-	bh=pXTBCm4RjQ9xxcqAkHioM89Yx2wooryHu3jCMtMWSpQ=;
+	s=arc-20240116; t=1721161168; c=relaxed/simple;
+	bh=xRs9X/zIuhjyr4G+PAXlBtEleLmm/4QgK/3XoMAkxuM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LDrM+ara5Yu05lTG+cxDN45jTMovF4jwo770qJPe/tgnnf4Mi/rKvfyyEoraC9tTjj3cHpMv6OqJVCk6G8eA7HWKWEuWpEGF0Hg8/uLK2EX546PLuTdQBkb4eAu0bQwFYBQa+I1hu8zX5TVCfTlVDw6HyU6h+2lE8lA2wS6JWjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nENLOjbo; arc=none smtp.client-ip=209.85.167.51
+	 To:Cc:Content-Type; b=WErJba8zN3rftFBX865UrGmDHyyTh6zrUHk7bXOE3iWDsIxhKpneu89hYtLjiZtSIXh6XYyBa1OxluoxyyGukGkn7AATbmFHuhNjzoct39dB+cOIefk022Opj1M8KbGeo63MYl2sRw/0dwkN0kM6PvoCOUkmNz90UdG9gGMHm7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZFNR85pJ; arc=none smtp.client-ip=209.85.221.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e976208f8so6498189e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:19:23 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f2ec49e067so224358e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:19:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721161162; x=1721765962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v7rnxoOORbgKG3u1CwvViVAf3E43JRXh1BLDYP5Qb1M=;
-        b=nENLOjbo68AI5OLRbHeHZT8VfY5PUZo31yLlgP4fzPAruK/pN4h2PVc7MDY/v2+DPt
-         CUXe0SOTS0fBKEeCBU1wDpH3WtwtWxV6W0B0VIUZGcXDaxTVfu7ECOZMFMdyfbt6Oi1A
-         VE5q+yyO6lV4bkl/25rDN2/7FAIji2v4bbVWDn911Y4MN/EpSGJDWDYrsbe1/WGaQZGb
-         qOMY2c82SXPY70onzdmDHXYGNCUoLXiUW/XbXAFJSndgixx9tGVy0wNL2y9uw04wXb4c
-         6yKLcyZnk1ha9W5PU14zbsDSwatNJgbpxzCmBqhXwZo2PegKmPtFmVo9KJQFWJzHvhaa
-         +wcQ==
+        d=linaro.org; s=google; t=1721161165; x=1721765965; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ShLOYvKi8vsHBAFo9bp96se4Div2YHM9RNeuoNs/3KI=;
+        b=ZFNR85pJC4G+LGos0GznF7kc8hrmZEb0eCrZo+HwT0ywDq3+vBpzFOLMRsUAWT+TJ3
+         bDNZaifSkUID1zqkFvT0P8CrNBA8Czq7wEt2vH3Lf49xtBH6t3QG5TbwcvkDqybpsTQ4
+         zxCYQ0HQaui5mObSwT6doKyaMaNBLkC8XhEFg2zOILjccsn/qyrwrxv4zkWdTKkSEoq5
+         FuuYCILBk/swho7DjeIdNg06lpDruLNHknEcT77gIVaXc+z5zZQhz6bExM/VZThAUnGT
+         cTMoX4O6YHtoxQedJK4LNobkOUEP9Rj3bPVQPBUKldXcZ+P6Xdd6nOJFHOg/iiN+Bfu2
+         Q/Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721161162; x=1721765962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v7rnxoOORbgKG3u1CwvViVAf3E43JRXh1BLDYP5Qb1M=;
-        b=ilfjTu9yyAUbvHxmkETHeiDQDJnRADK+s1PypmDo7PHDuPjdWw1rTrL4yYCwnAU1Dy
-         D55j47hJFaU8VLg12WKGwU42U0KiWlfwh8tMfeT+9gvoRN+Esm1+qD5rJ6Wvkvg+PE45
-         5emO8ooje3enfDBv0z83QgMRcuq15QVwB51oqCl1JTJ1JVij7u7ILt8ue+1kqW6BAqFO
-         5aBaWQiXkr9a/hkBP0BdHWH7+KXFhEFsWY3aKY6cZ5p9y571J2MzWbqI9irY9OCwoXF6
-         sKxalJj2mLvDtuOCnxzfwBCspvP5sRdUq/X3O0UByzChXXRLZA5FP/ABH/MpYRiQLnX3
-         vo/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5QsEkEci0pWFM+pdsEV8OBBPspvnIYJSxOPVpJsVUJLKsxpXYjGl7T+CRbt+uuLPf5nKfNzqd2azVkQV4S+Kw/++H5EPlVI5KQ4cp
-X-Gm-Message-State: AOJu0Yzwak9blFqVgg9qY5mVrsASauCYzkvMJoGL1TeOsprQOoZu7Rqk
-	X1ZPJ944XdG783Bu2f2lZdMrBkPoUAPZ92QwOZVqItqPPADy+FWSXkQ8LXhbwTtu1fOq3kec6d+
-	eLX7NM86xv1WBHK7QTwVs97CFjO2FTOHuo9RATg==
-X-Google-Smtp-Source: AGHT+IFR9vPzZCaRAsh1FMZTGXiS1AhwmINfoSqA8fEWvYjLsWq33v+6qCjuwBm59JwgPW2bYOjKGJ1lsdYdjsXqqhE=
-X-Received: by 2002:a05:6512:3185:b0:52e:7f18:176b with SMTP id
- 2adb3069b0e04-52edef0fddbmr2312562e87.11.1721161162024; Tue, 16 Jul 2024
- 13:19:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721161165; x=1721765965;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ShLOYvKi8vsHBAFo9bp96se4Div2YHM9RNeuoNs/3KI=;
+        b=dPFdwGvdvhe5PhXKDMpljPX7vWk8d+55GEvE4u6QkUg7KEoohGih4CpsJkipnXKFMr
+         wRrEJdcYKZ4CH6mO9XMx+cUGl6XM7Lc+8c0WVpc02WMv30w/lfFHoKuXOF5+uNJWIBNg
+         hOvUi9Tz/tpP5v5qIfJ7dtM44eneXg/l9nstP7CZhHkMedRBXDDwltW5kH72sy9IUUyP
+         EEzqtZuhyLh8s0m1FotyuELz0awm7Ez0tTbWWULiBsxMfWFvDGQAOVp0CsbCHy7N6eii
+         2OSd9lYHOX7sKpS1tA5uWdfkJnvoj1x4K2TOshJEuD4uagcwHLvjna9LB562aZkfs2Tx
+         LXLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWirpK6w/qyWvPHtxN/6l9Vq3XlUseksk32OuxYQdDh/BCBoVQhXkkyX/NnDdIgHaHciquoLaioQzoRpCEuAqAU/CqFMQUi2Wh/VLvI
+X-Gm-Message-State: AOJu0YxYSMphAdkZpwyB+cBg6NJrQ7WvLzoz7gl1Fvx5sXMOIXvfb8Ts
+	ASUiWAEw12Vx/1Tjm5YejK6w2xW2cc+HjCNrloDiCza5Z3I4G3/dZNIHJXlFpVhqZFZANAJEUVE
+	+76an6RZm2Uy+hgG9cRsamjhJabAihMsinjm/CA==
+X-Google-Smtp-Source: AGHT+IEhFbbeQTqWecix0OTUYlT5I7+az0amKdkeLMhx7c+cOrhFs6TyPr8ulUAYZZmQ7DVatjck7YtX+wTCXehOqto=
+X-Received: by 2002:a05:6122:1686:b0:4f2:f2e1:5f04 with SMTP id
+ 71dfb90a1353d-4f4d714aef4mr2572075e0c.8.1721161164744; Tue, 16 Jul 2024
+ 13:19:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621134427.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
-In-Reply-To: <20240621134427.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 16 Jul 2024 22:19:10 +0200
-Message-ID: <CACRpkdaT=zjrKtqS7h4Fq1sLOJ1MoxW9K-wMfWqOmD68owj+Kg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: Avoid warnings w/ panel-simple/panel-edp at shutdown
-To: Douglas Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, David Airlie <airlied@gmail.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240716152752.524497140@linuxfoundation.org>
+In-Reply-To: <20240716152752.524497140@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 17 Jul 2024 01:49:12 +0530
+Message-ID: <CA+G9fYvVaSX9Ot2vekBOkLjUqCx=SbQqW4vWhypCnGwwBmX4xg@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:45=E2=80=AFPM Douglas Anderson <dianders@chromiu=
-m.org> wrote:
+On Tue, 16 Jul 2024 at 21:37, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.163 release.
+> There are 144 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> At shutdown if you've got a _properly_ coded DRM modeset driver then
-> you'll get these two warnings at shutdown time:
->
->   Skipping disable of already disabled panel
->   Skipping unprepare of already unprepared panel
->
-> These warnings are ugly and sound concerning, but they're actually a
-> sign of a properly working system. That's not great.
->
-> We're not ready to get rid of the calls to drm_panel_disable() and
-> drm_panel_unprepare() because we're not 100% convinced that all DRM
-> modeset drivers are properly calling drm_atomic_helper_shutdown() or
-> drm_helper_force_disable_all() at the right times. However, having the
-> warning show up for correctly working systems is bad.
->
-> As a bit of a workaround, add some "if" tests to try to avoid the
-> warning on correctly working systems. Also add some comments and
-> update the TODO items in the hopes that future developers won't be too
-> confused by what's going on here.
->
-> Suggested-by: Daniel Vetter <daniel@ffwll.ch>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+The s390 builds failed on stable-rc 5.15.163-rc1 review due to following build
+warnings / errors.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+First time seen on stable-rc 5.15 branch.
 
-This is the right thing to do.
+  GOOD: ba1631e1a5cc ("Linux 5.15.162-rc1")
+  BAD:  b9a293390e62 ("Linux 5.15.163-rc1")
 
-Yours,
-Linus Walleij
+* s390, build
+  - clang-18-allnoconfig
+  - clang-18-defconfig
+  - clang-18-tinyconfig
+  - clang-nightly-allnoconfig
+  - clang-nightly-defconfig
+  - clang-nightly-tinyconfig
+  - gcc-12-allnoconfig
+  - gcc-12-defconfig
+  - gcc-12-tinyconfig
+  - gcc-8-allnoconfig
+  - gcc-8-defconfig-fe40093d
+  - gcc-8-tinyconfig
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build regressions:
+--------
+arch/s390/include/asm/processor.h:253:11: error: expected ';' at end
+of declaration
+  253 |         psw_t psw __uninitialized;
+      |                  ^
+      |                  ;
+1 error generated.
+
+metadata:
+----
+  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2jKu9JqgTsYkPJ9AeEnsDPajz9p/config
+  download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2jKu9JqgTsYkPJ9AeEnsDPajz9p/
+  git_describe: v5.15.162-145-gb9a293390e62
+  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git_sha: b9a293390e62ec049b3795fd1538a2d2654dfd0e
+  git_short_log: b9a293390e62 ("Linux 5.15.163-rc1")
+  toolchain: clang-18 and gcc-12
+  arch: s390
+
+Steps to reproduce:
+---
+# tuxmake --runtime podman --target-arch s390 --toolchain clang-18
+--kconfig defconfig LLVM_IAS=0
+
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
