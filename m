@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-253482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B8A9321F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:37:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637099321F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720C5282777
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59470B229B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6517CA09;
-	Tue, 16 Jul 2024 08:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="quiISYgu"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE26C17BB15;
+	Tue, 16 Jul 2024 08:38:01 +0000 (UTC)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E42178378;
-	Tue, 16 Jul 2024 08:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D533335D3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119057; cv=none; b=QpLs7aYYL7dN0Lw46XiPFqlT2WTRukmY2Gj0jEQaOwb/OKIc8UgFh3h0TimJk9fqqN94GVROjkuAA6Bc+efDVw1oDa8D4O+/xXao3Q96UeXyu4Bm7icUwtnI551StlNI5P74PLJGHsPHibA5yZORozVtGVa3KbeLgezswIRd/oc=
+	t=1721119081; cv=none; b=SjxgCZL5FVhDPLjHNsH4qf+FsicQd6StVyABW5RqNupL4PyK4b5y+6GSnandTTqxa6cpx6yR+5HTJKklqWQWH4I2i0dz0wAmYW+Q2CQuKA+c9PP+nb2/OE5zRNKSoil+8OES7caSzDoM++5RzyOajxBuXr0zFDC1lbU11WPm0gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119057; c=relaxed/simple;
-	bh=Mr/uMakLcuC7WzGCfsWpNQgKRVkSgGcbw8oXnlBJngw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=obeG6y5Z/7gcMJ5hlNEwm6POcKgYkj1DcvSaZP9yAXx8dkkKaeQf2TYY1FkSvKRiE/zNT8brpGFUah4Ap0IX6GhFN3Vcc8Iz/Eb+Skxg6X3vA/N/Yjv9HKsObn6Vv/oqNXjK6JCdA+xxaPZ7OBRKemG/adC1vbgPew9/qdHbkB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=quiISYgu; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721119031; x=1721723831; i=markus.elfring@web.de;
-	bh=kGIG2lk9JnUGS5D/DzGGpsIb8TqI9jSGdEPMw6I2qBg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=quiISYgunLxFVUByQIsXh1AXUlf1KHqxPHF7NcGDw5BSzCkxx6bmUerj7ZdVF3kk
-	 uH63GsM7SWgvKRCT2oNt1hUh8LWOPWGlhDbRwDQlmziZ8iEN4qGFSOYhJIovq6Txd
-	 9gGHLEJS82mmEr7dmE9Xh554FnP+6lBDtXNg2qt/GgPTkq+5aNlovpNzB+JVBIWYE
-	 0eaBwl8VND196r5Mgn+4+VF4dXhb0d+WEQKdyy7ycNOLMpTtXdXqW1+jKpDr9HazK
-	 7tiWuLUF1DLlECkBbgc8PlmtySp1sAncWUKrv0KCkJeK+X+6tLBXZJH48FPnUsFqb
-	 Z3UWwvy7ydUi/Bwhug==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVJRb-1sshbU1VGJ-00R6y0; Tue, 16
- Jul 2024 10:37:11 +0200
-Message-ID: <2c153a0f-87aa-4f4a-83cc-c17798f0795b@web.de>
-Date: Tue, 16 Jul 2024 10:36:57 +0200
+	s=arc-20240116; t=1721119081; c=relaxed/simple;
+	bh=BOF7NLOwq5fm/Pj/PWEnCpF9uLqIZrzl+aupNCzPNh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZUeSvTCzNwLNY0rWyrrO3rke+fOfJMwQCH5ob8A139gUKLnoGkXDCicyiGOU+8qd3EQnfvgYhtcwKrQ8uz7RDQ0YFQFN2zmoZ55Nl7bRIUYesaIZClvExoMjBQ/+byi2Fl0+GNM8UMGfYpqiYAztx5a7KweXt0uqmz6OlELWUj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz6t1721119067t1j4fc5
+X-QQ-Originating-IP: BT+kcmN9uYv2QkdoMKC/3l/74MbZXXmtA9kVUJ2qgqI=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 16 Jul 2024 16:37:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1197825335289385382
+From: WangYuli <wangyuli@uniontech.com>
+To: helen.koike@collabora.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	david.heidelberg@collabora.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	vignesh.raman@collabora.com,
+	torvalds@linux-foundation.org,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] drm/ci: Upgrade setuptools requirement to 70.0.0
+Date: Tue, 16 Jul 2024 16:37:43 +0800
+Message-ID: <0237854884D6DB3C+20240716083743.33415-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] net/ipv6/ndisc: Fix typo in a comment line
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nQEHSPejrsVq+DGhGqvitACK7uhP97GuZ/FP+NcjWUwEb4FmnHO
- 1GS+SyYMtauJon7zF2HtN41bteyORBlf+Xgl2hAeqjOsyJRbkuhxoMoe3PaCNeoAuX0IGPc
- Yto5bYstxgTiZ+eBRxtaXE/8Rn9uhlEYu26BCNLLBO+Z6yk935FefF+SGllZBXmGv9DusCx
- FxXFYUL1Mh0Q0deIpvIvw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OTwN86JcMQ4=;N5iQnSN7aZOY/e8DQ0g839CdEPb
- KIHs06WlhycmawLMyM+7ShXB7O6r1NZdq0RtaEf0x9ME9baIAmHKfCAwa/fATJRHC7SAR/MaQ
- PB0d+j0FMQoPi/kcTCT93XATFZi/gzA648etRfXc/5s7B2HpwGUWEpVGx2p/sF0hVQOGcf/tg
- jXtN7TN2ebP8nX04/ZvdL/bvysxzGn7NH2UInssPYCduwKMgEno018jiLZm7MX6951VvNNgmL
- car0/p8C9ouBYZeU2I2S3WTGhYsP317el46Q7Jj70A28yKAFjHvtDKhkq3nLsKWpvhoPYTuFx
- fzK5jEET5WeW1HtyZtMGnt4ZKzz6J7GZVOyYhW8bDYuha5gCvQM7F+bEEBPa2vO9/fNlOmhR7
- Ev9/GCAjayDqbgiP3Dv2igbv4TsjoB0tlUjYl2/R2Lc7zZ7sHjPvpNb+ItD6f06Ksldb1Rbpj
- FYRoXp1On1S6TM8HOakiNS2VhXnr0JWIX0Z5Yx7GQOZIl0kI5nwEyzykIUoq8EWQkED2MlevS
- B9Cuc1w5IJKJbVIQYjHCB0PUaYEh/b+BIs5wvRG53OpIkukF0Uxmofino/xui9ZTEzWNBEnfU
- CGB/wmb/VkuCAFryC3T19VSzU9rIxEh4flaOsL0sIz1bBLeIa748ZDMNQnrbYv63QFfI3jL6m
- H+B7ppfDI5ROSy+cxaX/YkDDIzYPJ/4NgTWnC1hozwALzQA8ouu0nZix4YW4Bv2OhGN+YTYnY
- 7Vs0nWMXfKRLjg+B+WN1OemuXkw2iUh41sLSh2AmUntu0GdBsVKxTMfLtBm4dpD6kuwS1Ujw7
- 9H++H5DM+HgbHBXt6Mkma4rg==
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 16 Jul 2024 10:28:37 +0200
+GitHub Dependabot has issued the following alert:
 
-Adjust this description for a condition check.
+"Upgrade setuptools to version 70.0.0 or later.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- net/ipv6/ndisc.c | 2 +-
+ A vulnerability in the package_index module of pypa/setuptools
+ versions up to 69.1.1 allows for remote code execution via its
+ download functions. These functions, which are used to download
+ packages from URLs provided by users or retrieved from package
+ index servers, are susceptible to code injection. If these
+ functions are exposed to user-controlled inputs, such as package
+ URLs, they can execute arbitrary commands on the system. The
+ issue is fixed in version 70.0.
+
+ Severity: 8.8 / 10 (High)
+ Attack vector:        Network
+ Attack complexity:        Low
+ Privileges required:     None
+ User interaction:    Required
+ Scope:              Unchanged
+ Confidentiality:         High
+ Integrity:               High
+ Availability:            High
+ CVE ID:         CVE-2024-6345"
+
+To avoid disturbing everyone with the kernel repo hosted on GitHub,
+I suggest we upgrade our python dependencies once again to appease
+GitHub Dependabot.
+
+Link: https://github.com/dependabot
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/gpu/drm/ci/xfails/requirements.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index 254b192c5705..4d0785bf6937 100644
-=2D-- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1020,7 +1020,7 @@ static enum skb_drop_reason ndisc_recv_na(struct sk_=
-buff *skb)
- 	}
+diff --git a/drivers/gpu/drm/ci/xfails/requirements.txt b/drivers/gpu/drm/ci/xfails/requirements.txt
+index e9994c9db799..5e6d48d98e4e 100644
+--- a/drivers/gpu/drm/ci/xfails/requirements.txt
++++ b/drivers/gpu/drm/ci/xfails/requirements.txt
+@@ -11,7 +11,7 @@ requests==2.31.0
+ requests-toolbelt==1.0.0
+ ruamel.yaml==0.17.32
+ ruamel.yaml.clib==0.2.7
+-setuptools==68.0.0
++setuptools==70.0.0
+ tenacity==8.2.3
+ urllib3==2.0.7
+ wheel==0.41.1
+-- 
+2.43.4
 
- 	/* For some 802.11 wireless deployments (and possibly other networks),
--	 * there will be a NA proxy and unsolicitd packets are attacks
-+	 * there will be a NA proxy and unsolicited packets are attacks
- 	 * and thus should not be accepted.
- 	 * drop_unsolicited_na takes precedence over accept_untracked_na
- 	 */
-=2D-
-2.45.2
 
 
