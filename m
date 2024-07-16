@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-253355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A7C932005
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:22:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F041932006
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037BB281F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:22:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535241C20D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0A017C6D;
-	Tue, 16 Jul 2024 05:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E85171B6;
+	Tue, 16 Jul 2024 05:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h50l1E50"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PsU7XA/I"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B64136A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD256E556
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721107326; cv=none; b=X2r/aU51UMv9ZCZO7/FOTgOmDMjS2VyOx+ri1k8PGorkSX5EfS4KJ88KulF+CUqJRTNb41aOoJzeh6snDtB2EruZcltsIIA6LzUhW5shPmvXtYvGxCenwz+aQcCdtRYf8gULEM2L+Vn+LDR74g1N9hegzvFdcbPgSOzyvE7HdrA=
+	t=1721107452; cv=none; b=P4bIyX2OZbemBqbUjweCfLMMQn/Skhm/zyUH+j2v5i7AVo6q1JlJvb2tXuvxaMwegPVp+kO1FpWGvovI0TfS+cKd3hR/RTyiE2ToogKv8n9PEhyImTKx4QmieJ8yGUF2SbiNGlMScUzJe7s5iSoKDNBAjtXk19fk+ycfgeO3y2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721107326; c=relaxed/simple;
-	bh=q7htRbTViAynUe1KUvBKJdXCuUBYVcPiUmif37E0la0=;
+	s=arc-20240116; t=1721107452; c=relaxed/simple;
+	bh=p6AnIFEaI8+eVR2rhWrGeDZ6/n6RxzME6epo8WhImrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kierzBXT/0vZ+B5XGn8weEE+zSOwyCskbdLwPEuLXZl5kx2nE19IdtXXUzimN45HTjgbmm6fpNC1kZQxPKZsCfy4kg04APKoaz1CvqPYf0VhB7RMtH8Ks50OKCm+Scem6R53nXOW/JdqvMfB4KtfmWYHIFBLkmAkfE/soGwMhew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h50l1E50; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-78135be2d46so3765387a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:22:03 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvO1TOhEOEKGYjeAXAfqWYFtN3HVViUfnwrS2s3WCidcbqGuWkFp6yVv1wd1wzLfXGNJdM6PaYY30Dn1B/3WCsOLJyEw9xb+wkPRlTtVSsCW+rm5Z5b95Fjp2FaSnlldIXvkfL7pbUM7iePjNXeWkErqOcZMt13BCn2nfMFwHos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PsU7XA/I; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70af81e8439so4192183b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721107323; x=1721712123; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nCJcSlsxzmcGU/ol+ZphLepYn+zSneU2YnwQbi1SKTk=;
-        b=h50l1E50aH2wPsA498Dn3f+S9K8XVSyRRjwESJmjOh1ln4jWfVali9dkzwA2Osw8VT
-         870G142gaLS3875inWTT6ndzzuTjGP9Iees/7+mJdIhc6C/88VAInksPHXbP/mmi0EPK
-         ocQH84VU65P1GASktLJxnKGU17/ohS/EDrSd+xdVAaCNy11fHXBYfi83WQ+F5+7PQyRL
-         lWddqynGJMbsKVX1bJggf2g78ICH84Gm6/7I+xPSw23XA6o4UZtPn5aL9dEWmq+xKi/s
-         VCkpJwpv51pCFxV98uv5AqIhVxHUXnVK+ebBLkye3n5HMTA9VMT8U5rd2BLLFcSYDZ3z
-         e0sQ==
+        d=google.com; s=20230601; t=1721107450; x=1721712250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9B9JN+Ua/c3Zt8bcV7ixZ6TapYKuSKmFx3Lv0YmcDA=;
+        b=PsU7XA/IifmoI66+Wxe5gQEzyDejVuRde+HoM/w84bxW1IO0ZcR3RiNxx085Ql4E4i
+         1kpNCv9nnrliuS2feSXo9+sI7rwex0XJAtV/bXfTUq0r62EeB+NyW+WlZjj/itqA5rPK
+         3CJ9qPijC7gj3yhLjp7qwKMb3FQ8+3c470GPLWcZQR5dzNFJvvndsP4/eek4OfrbLB+h
+         iip/TTP/Yredk85TVzJNGsmrHteQ0iF3Zkxl0QJvHDsggZHQYhlWzj03CIYoz//DvCF5
+         evZAcA0BF/6fcRscuQuO0bXF+3BLCeBg/5usAtTYuZVOG6QsfPHLz47bcdNWge1hWUct
+         QMDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721107323; x=1721712123;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCJcSlsxzmcGU/ol+ZphLepYn+zSneU2YnwQbi1SKTk=;
-        b=oeebt+acX1H0EymwMjkS8h58wxdTqw6+5bE0opeQOKg5Kisk/GobwnspHBFNoDOVBf
-         YrnT0yY00pau7nQ6LdTu3H3Lx/WEzyGsHaWgJGvXpCaEDxVF1Ki8TaD8rx0qVirrDuZF
-         Q9FLhDO49rGwQd7VlpuIrhIlgrwRPZCiN2iAS/htg1T/tID8QTpiSTpbi/Da2fdjRoLp
-         KAU54L19RhCKHpzlM1o5BvE5corUF0nmkCx/JkJ886Re8ehXdE/GJq1s5SPVUdEHnlvB
-         46lHFmRmOd5kcbVktI/9w2+baqk6xCzy7IN6Ci3Z+TOoAcDUpfWd8sLfSO835Huz9FeA
-         2VqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Ljy1XKTb94qTU2sE33dlN+OIdkwCzo4QxoyjWPvRKIe6YmAc5TiPXlD/3yP2lbdWgX8jC7fkWgotmv4TdjNcbM+jfFxCTlYt+5SR
-X-Gm-Message-State: AOJu0YwMw+xEGotIqb0AlcMEAS1oTgCYGjm1pILgB+iqtJcaD1NMYjvb
-	7KrvkUgxZEbBUbqErchvsbMHQ0iw9w8Fr6xfdFNgvF2/05k7g5sLl1nB5UC+JIoluvuqC/W9fQU
-	=
-X-Google-Smtp-Source: AGHT+IHYY+XYEW0QviFVSL2Wxv+cytzps03AGaTXPes1VQeCqPvZwa/jm9JROaB1vSRLz5c8LKdaTw==
-X-Received: by 2002:a05:6a21:458a:b0:1be:c1c0:b8de with SMTP id adf61e73a8af0-1c3f12978ecmr1126946637.42.1721107322938;
-        Mon, 15 Jul 2024 22:22:02 -0700 (PDT)
-Received: from thinkpad ([220.158.156.207])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cacd41aa2bsm7358175a91.31.2024.07.15.22.21.58
+        d=1e100.net; s=20230601; t=1721107450; x=1721712250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C9B9JN+Ua/c3Zt8bcV7ixZ6TapYKuSKmFx3Lv0YmcDA=;
+        b=mmgURc12x71aHNHkMuqf4OMwqYwDqw4UvM4SID9/nvxSj8plnPd02HAqnfsAslVB5X
+         dMmPGVRSr9k3e1RjLEqwzAAMD3h2JnXppMgtdxGep6miyDGaJNl9BKAl94NCkCYu3Rg+
+         dB6zQ23HYKzi8HOmjGIyrJT/EYg1Ld2cc+oaTdE5bMGWusVy6uDFO+uTrHvmd8AysZwW
+         xZstylaOWqeGuejp8U0S74aevDgQYAYGHmTH8Fj9W42bRyyPthLbNqIL6oGbOniU3J42
+         eNuzWN8mB2eevnU4CZex7UVfQTkSxGWOQWKKi1BU5wMRlsbYJ2lDvYFmmQYVvpv5ivzn
+         BBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXs2fSTks507cLfsTO3tEnLn6O5zACq7CDQItrE6vJud+LkKRMdzY9Ff2dKZ3qxuEVnkd6uZ7G5/jcep2pA4yVFNnsCyihI6oucUNv
+X-Gm-Message-State: AOJu0Yy5l8L1SlD+g3yku0riLGYDLWfaEtw52M7KSD/OyeZrFh3rmO2C
+	OZ6nz9R4i5Ly8ku+M3gH9cLGrFgegB8KwTqJgmKfcl9l51NcwgEX0jhChNXzRw==
+X-Google-Smtp-Source: AGHT+IEc20xCihgHc6qJL6l5AYhxDEX0rMlncPQrK1V5XHMLXVjhlQmd2p6P4A6WScUNDzEVCN4GeQ==
+X-Received: by 2002:a05:6a00:10c5:b0:706:4889:960d with SMTP id d2e1a72fcca58-70c1fbdef6cmr1761789b3a.16.1721107449631;
+        Mon, 15 Jul 2024 22:24:09 -0700 (PDT)
+Received: from google.com (33.5.83.34.bc.googleusercontent.com. [34.83.5.33])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e39736d12sm4168214a12.78.2024.07.15.22.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 22:22:02 -0700 (PDT)
-Date: Tue, 16 Jul 2024 10:51:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [GIT PULL] power sequencing updates for v6.11-rc1
-Message-ID: <20240716052155.GE3446@thinkpad>
-References: <20240712091008.14815-1-brgl@bgdev.pl>
- <CAHk-=wjWc5dzcj2O1tEgNHY1rnQW63JwtuZi_vAZPqy6wqpoUQ@mail.gmail.com>
- <CAHk-=wjcO_9dkNf-bNda6bzykb5ZXWtAYA97p7oDsXPHmMRi6g@mail.gmail.com>
+        Mon, 15 Jul 2024 22:24:09 -0700 (PDT)
+Date: Tue, 16 Jul 2024 05:24:05 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Joe Perches <joe@perches.com>
+Cc: Nam Cao <namcao@linutronix.de>, apw@canonical.com,
+	dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] checkpatch: add "Reported-and-tested-by:" tag
+Message-ID: <ZpYD9dDKYYK0BIA7@google.com>
+References: <20240419222818.50719-1-namcao@linutronix.de>
+ <22344b13affea741ee41b0acb3c62884aac3e1bb.camel@perches.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wjcO_9dkNf-bNda6bzykb5ZXWtAYA97p7oDsXPHmMRi6g@mail.gmail.com>
+In-Reply-To: <22344b13affea741ee41b0acb3c62884aac3e1bb.camel@perches.com>
 
-On Mon, Jul 15, 2024 at 09:29:34PM -0700, Linus Torvalds wrote:
-> On Mon, 15 Jul 2024 at 19:17, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Hmm. Let's see how this all works out, but I already found an annoyance.
+On Sat, Apr 20, 2024 at 09:22:45AM -0700, Joe Perches wrote:
+> On Sat, 2024-04-20 at 00:28 +0200, Nam Cao wrote:
+> > The tag "Reported-and-tested-by:" is used all the time. Add this tag.
 > 
-> .. and another one.
+> General nack:
 > 
-> On my Altra box, commit 8fb18619d910 ("PCI/pwrctl: Create platform
-> devices for child OF nodes of the port node") causes annoying messages
-> at bootup:
+> I think that combined tags should be avoided
 > 
->   pci 000c:00:01.0: failed to populate child OF nodes (-22)
->   pci 000c:00:02.0: failed to populate child OF nodes (-22)
->   .. repeat for every PCI bridge ..
+> see:
 > 
-> for no obvious reason.
-> 
-> FWIW, -22 is -EINVAL.
+> Documentation/process/maintainer-tip.rst:Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+> Documentation/process/maintainer-tip.rst-they just complicate automated extraction of tags.
 > 
 
-So we did see these error messages on non-CONFIG_OF platforms, and a fix was
-merged as well with commit, 50b040ef3732 ("PCI/pwrctl: only call
-of_platform_populate() if CONFIG_OF is enabled")
+If combined tags are discouraged then syzbot should perhaps stop
+suggesting the `Reported-and-tested-by:` tag? I would imagine this not
+only applies to the tip tree and that other maintainers agree with not
+using combined tags.
 
-But apparently, the fix assumed that all CONFIG_OF platforms (selected in
-defconfig) have 'dev.of_node' populated. And your platforms being an ARM64 one,
-has CONFIG_OF selected ARM64 defconfig, but uses ACPI instead of devicetree. So
-you don't have 'dev.of_node', which is a valid configuration btw (we failed to
-spot it). And in other places of these of_ APIs, we do have checks for
-'dev.of_node'. So for this issue, below diff should be sufficient:
+FWIW, this tag in particular though is quite popular:
+$ git log --grep '^Reported-and-tested-by: ' origin/master |wc -l
+82056
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index 3bab78cc68f7..abe826bb5840 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -350,7 +350,7 @@ void pci_bus_add_device(struct pci_dev *dev)
- 
-        pci_dev_assign_added(dev, true);
- 
--       if (IS_ENABLED(CONFIG_OF) && pci_is_bridge(dev)) {
-+       if (IS_ENABLED(CONFIG_OF) && dev->dev.of_node && pci_is_bridge(dev)) {
-                retval = of_platform_populate(dev->dev.of_node, NULL, NULL,
-                                              &dev->dev);
-                if (retval)
-
-Let me know if it works, I can spin a patch.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+--
+Carlos Llamas
 
