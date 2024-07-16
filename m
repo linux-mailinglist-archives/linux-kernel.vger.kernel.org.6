@@ -1,178 +1,120 @@
-Return-Path: <linux-kernel+bounces-253607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC779323BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:15:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED019932394
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351B91F23C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2992B1C228B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C9C198A35;
-	Tue, 16 Jul 2024 10:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1C6198857;
+	Tue, 16 Jul 2024 10:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="lMgeDqUs";
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="b4ReaF9y"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVnzFSMO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58D5198832;
-	Tue, 16 Jul 2024 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721124914; cv=pass; b=NdU358SKhisv0N0voY5p1ep6VnzAil6YmTz/3TKa6VA1dN/jkAwUjcl+Cc5WeZSJRL6OX8MAugqQ2t7ruF+YylYBi3S+LW4XRmh4NekpsrggRxYYD1RrE3lncaCHv4Fbh+0p+QocFNLl4U/uvX1YSQKUlhche8pEEHtGHtGduUM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721124914; c=relaxed/simple;
-	bh=qjgFpWpR5+BHvJKoHx4VOD2XEZQxafJHmKAcxjKa2h4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=XlCThdG+Na1e3e3o90A+JMZxjA17Mzlj1Zil49JzUguLfBfw1ngo+XOtAZQquvtBUMG4dex5aEjwwT0jQr36CYFa58qVw3U02TzOpSTFModSfOov5FN9XA0r6wF+AUlTru3IpZTTvDkQV//R4AN3B0MgqEf1ab1mqoM9b7NviPo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=lMgeDqUs; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=b4ReaF9y; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4WNZVZ0tBTz49PyZ;
-	Tue, 16 Jul 2024 13:07:02 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1721124422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
-	b=lMgeDqUsqGBQfbQ5ls0Fd7+95WDR0Nv57O8qhkGrg2Dp8JbxzSs0glBo4OfK0XgH0RJcN4
-	ZEneYeu1DfoZ/eu2OKCRehzXsytLB1ocjZHH3EhLQ2LLE7lRKXXa6BKxyYYpY29ZACHNmp
-	lnEHlPk08CTZSjzPr7l1/D/zXCiUgVdCzEPY7YDIwK4RoaviMpD9cCnFjMmaLCVcF+4r9T
-	0LjR2CoQljGEI41ffDOdhz0uesJde2jYObujIvdHEXHw1eOMMYIKiVVqo9Nuydcqr6UBP/
-	ZHWosDXOB7DDTOXzWbneNvyRM0mG2KS+963Chet+mY+apR9iYrvsFkZ+c1TA+g==
-Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4WNZVL6DdKzyT2;
-	Tue, 16 Jul 2024 13:06:49 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1721124413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
-	b=b4ReaF9y8dRqV59aja1fjnq0qUGK8jKtKo4rGLbkq6SYT7dUdSNJ5xHMkTNP8By/g4aOW5
-	QgaLyxrm4t8gP/m50pLB4kVuzjK+cOaovfagPrgmnXVnX7Q8EoQq6F6c7L4vPcq0hPPRms
-	LfA+OgdkNoiD4z1woGIgSr1MvXS6rNE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1721124413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EdoOS1Vx+qVFB1EZYjKbADIDpN3WKdD3NXCzP1l8TEc=;
-	b=qqVfNR58AMWIU9S1I8LbK7x47ttvNaOp2BVSr03w76oRvu537Lq5/pj+2kOQeaME/N4DGm
-	sHGWaAuAImJKxnoluQxu9A9ZpK4+Y2kP+SvxywdO039lWZ5CK/oKLMkexk0oR+P04f8C9t
-	LwQNiHCkbxWHdyY73B39B88Atu7xNqE=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1721124413; a=rsa-sha256; cv=none;
-	b=bcrJbs+z2VvEPuakv3T2Q07ItztVLO/4lg4IHlWAeDPVB1Xfq3BccIFufL7W1sO7kzQhQN
-	4084IFC+Y3tIXoZVxngQ7co34FCeSGsZcTsUltWG4R8BT/Ztun77AUTbrZ1pWpOW99goVr
-	M66E9SqG6394+HaMJjkdg/epoCx/Bo8=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E29844369;
+	Tue, 16 Jul 2024 10:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721124441; cv=none; b=tewJVO1dM6KuPZBfqMs5iIfrmJBYRbnmgcwYAV8fBVfsr+2i4dFiq5LjYh7JmsCyP9duqNU4jTLRSaKKLy0mzrQGLFy47UiWA4lz8s4DUVVCE0c+P8dD6hrYPK4YYiGsZ8qIhttUEPaEa+DFBQYpNhJbwSVDCL4Y3R/AysZz+10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721124441; c=relaxed/simple;
+	bh=3zE6ikIX0FQeoKFbzrnOX+xEwyLxQMGxtSsYhRQcMWQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GRd/Sg+uPGoVaOY/60pe8Hx1WBWiIvT2G0g0bFfO7kD9mnINHyaoSopSpF4cGHavQqS2106jkQpEq/7GgP6AESGxU8DGgLUQL2S1t0jM9ukDuP6yAcs0EOXy67eYetlA7wy72DxnKhRIV3nn8y38CDYIwmPeVJyDzAIz0vFVF5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVnzFSMO; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721124440; x=1752660440;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=3zE6ikIX0FQeoKFbzrnOX+xEwyLxQMGxtSsYhRQcMWQ=;
+  b=LVnzFSMOaTuBWq2d7yNwVOPAFk/VLt2TFju0hSIqnr9kP52+f2dq6ncc
+   hkKHb6crMYF5r1ok45ekfRIiOh/5kwnVVEXSaIbc7/Ht2DFjoClBafG7S
+   Gz3r4KHs3BIv5WWqUK189jQBkg6jIiGkVqv4a6I28DvnNGkG+6YDg5moo
+   QFFT/ZYfBTS4AMBaNmldxjKnheqYQJKN9FcENsZS1gMTZAqnq1x6CFSQv
+   wIoIqwsyg8g7H5M+YPlobe36zt71nH9qh7n2nH20paDtZ+cfYr7Bau0/P
+   mTtJap7VQpTudDw32A/2XztWW+74XYgcN93A7CH8+VXyGS4jj1gLhnJNm
+   w==;
+X-CSE-ConnectionGUID: gVwXFWYTR1Wv0/TRV7NMaA==
+X-CSE-MsgGUID: N4CdFr3aSrGIzdxrMKSs5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="29699277"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="29699277"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 03:07:20 -0700
+X-CSE-ConnectionGUID: 5STF6bgJTbCV+jA3Ye4Y1w==
+X-CSE-MsgGUID: l6mdr8y7S8S9IKv2RKPk5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="49704832"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.133])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 03:07:17 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 16 Jul 2024 13:07:13 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: platform-driver-x86@vger.kernel.org, corentin.chary@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH v1 1/1] platform/x86: asus-wmi: fix TUF laptop RGB
+ variant
+In-Reply-To: <20240716011130.17464-2-luke@ljones.dev>
+Message-ID: <529238c2-ec4f-1807-8cf3-1e74ca6a172c@linux.intel.com>
+References: <20240716011130.17464-1-luke@ljones.dev> <20240716011130.17464-2-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 16 Jul 2024 13:06:49 +0300
-Message-Id: <D2QVOMDX6BJW.3GCX7CFZL4KSF@iki.fi>
-Cc: <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Hao
- Ge" <gehao@kylinos.cn>
-Subject: Re: [PATCH] tpm: Move dereference after NULL check in
- tpm_buf_check_hmac_response
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Jarkko
- Sakkinen" <jarkko@kernel.org>, "Hao Ge" <hao.ge@linux.dev>,
- <peterhuewe@gmx.de>, <jgg@ziepe.ca>
-X-Mailer: aerc 0.17.0
-References: <20240709023337.102509-1-hao.ge@linux.dev>
- <D2Q2Q4R8BZ4Q.2QZF7NM3RE9B8@kernel.org>
- <f6ab30f39a14550b6fc111feb83b2657006b8b8c.camel@HansenPartnership.com>
-In-Reply-To: <f6ab30f39a14550b6fc111feb83b2657006b8b8c.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon Jul 15, 2024 at 2:52 PM EEST, James Bottomley wrote:
-> On Mon, 2024-07-15 at 14:25 +0300, Jarkko Sakkinen wrote:
-> > On Tue Jul 9, 2024 at 5:33 AM EEST, Hao Ge wrote:
-> > > From: Hao Ge <gehao@kylinos.cn>
-> > >=20
-> > > We shouldn't dereference "auth" until after we have checked that it
-> > > is
-> > > non-NULL.
-> > >=20
-> > > Fixes: 7ca110f2679b ("tpm: Address !chip->auth in
-> > > tpm_buf_append_hmac_session*()")
-> > > Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> >=20
-> > Also lacking:
-> >=20
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes:
-> > https://lore.kernel.org/linux-integrity/3b1755a9-b12f-42fc-b26d-de2fe4e=
-13ec2@stanley.mountain/T/#u
-> >=20
-> > What is happening here is that my commit exposed pre-existing bug to
-> > static analysis but it did not introduce a new regression.
->
-> Actually, it didn't.  The previous design was sessions were config
-> determined and either auth would be non-NULL or attach would fail.  You
-> chose with this series to make auth the indicator of whether sessions
-> should be used, and before this auth could not be NULL so no bug
-> existed.
+On Tue, 16 Jul 2024, Luke D. Jones wrote:
 
-Not on at least one driver, which does not call tpm2_sessions_init().
+> In kbd_rgb_mode_store the dev_get_drvdata() call was assuming the device
+> data was asus_wmi when it was actually led_classdev.
+> 
+> This patch corrects this by making the correct chain of calls to get the
+> asus_wmi driver data.
+> 
+> Fixes: ae834a549ec1 ("platform/x86: asus-wmi: add support variant of TUF RGB")
+> Tested-by: Denis Benato <benato.denis96@gmail.com>
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>  drivers/platform/x86/asus-wmi.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 7d87ff68f418..2b968003cb9b 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -906,10 +906,14 @@ static ssize_t kbd_rgb_mode_store(struct device *dev,
+>  				 struct device_attribute *attr,
+>  				 const char *buf, size_t count)
+>  {
+> -	struct asus_wmi *asus = dev_get_drvdata(dev);
+>  	u32 cmd, mode, r, g, b, speed;
+> +	struct led_classdev *led;
+> +	struct asus_wmi *asus;
+>  	int err;
+>  
+> +	led = dev_get_drvdata(dev);
+> +	asus = container_of(led, struct asus_wmi, kbd_led);
+> +
+>  	if (sscanf(buf, "%d %d %d %d %d %d", &cmd, &mode, &r, &g, &b, &speed) != 6)
+>  		return -EINVAL;
 
-What do you exactly mean by design? It is first time I hear anyone to
-claim that validating pointer is an alternative design.
+Thanks. Applied to review-ilpo / for-next and will go into Linus in the 
+main PR for 6.11.
 
-Before my fixes:
+-- 
+ i.
 
-int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
-				int rc)
-{
-	struct tpm_header *head =3D (struct tpm_header *)buf->data;
-	struct tpm2_auth *auth =3D chip->auth;
-I.e.
-
-Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
-
-Even in the current master there is still inline function that when HMAC
-is disable:
-
-static inline int tpm_buf_check_hmac_response(struct tpm_chip *chip,
-					      struct tpm_buf *buf,
-					      int rc)
-{
-	return rc;
-}
-
->
-> Consider also the fidelity of the Fixes tag for stable: this commit
-> needs backporting with 7ca110f2679b and Fixes should identify that
->
-> James
-
-I'd suggest for you to focus fixing issue and not complaining about
-irrelevant stuff.
-
-And I'd suggest IBM to do better job next time as a company, and test
-at least with your own hardware before sending anything.
-
-BR, Jarkko
 
