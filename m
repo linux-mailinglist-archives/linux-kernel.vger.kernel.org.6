@@ -1,104 +1,157 @@
-Return-Path: <linux-kernel+bounces-253417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D99932109
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63EB932120
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9236B1C219B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3522E1F22073
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EA527473;
-	Tue, 16 Jul 2024 07:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC1825624;
+	Tue, 16 Jul 2024 07:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kT1s73ju"
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aM3iVPmz"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D5037700
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4146C24B2A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114040; cv=none; b=aQx/F4EAEF5BgMO0QtibFfudCmKMnEM7EiK7FmVl6z1byqdiS327qf6pxTAGXovbs8tZl2TZHNSlum2Srsir3obR3If89t+rjoQnph+8RKOBbup2EgqYyi1xNkq6LpSSsVaKyTeUX0ijFg76O7qnIor6a2gpbFz9KHknbFZaSgI=
+	t=1721114538; cv=none; b=SJGDOgep0lgKmKyCPnUt+BL3TFPDjR7aWQNnoKuL9aeVqEFD9D7RJogY1+OQUOEXgKK8vtTG5udwhZvtLaTD/BReuZ2IZJe4NkT666HM1QnCnCG5OQXVBh7a1f6Vd7MzEausMRAVTu41IDF+9m5OkfSiO2au6ZWQ44U90mLOgRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114040; c=relaxed/simple;
-	bh=om5UofC4ryHM94Wlsk4/cAWNj8IrCD8xKsDi+0pvYEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuAL3KVEodU6sokAFHyaOGLKDrYYJeuTfaGBCEikcy7WGV6+Q3FVIh4hhrex10jjL0Ytlmj6AfU5ASsUrpk0pBkm3FOuO1MeJxBna1P8BHJzH/1OvSzEs6ac+OcpwJMb3Swm6JBfGFdQZ8O7GriVf7L4uw3+vms6QhwvrzEs47M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kT1s73ju; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNVfn1WqqzlGb;
-	Tue, 16 Jul 2024 09:13:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721114033;
-	bh=Pgvv7MQ5tPNIpIpwnO7JzPSqhpV+bSm8Xa4gUvwKzv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kT1s73ju4LMuNR9iv/HUc1o8CwZJ5xCxOz/+egyw3P7sbZeW2jRv16p+ElhwyUtEA
-	 zvYnMjKHWvc/qG6EqgzzBjF8lkQqacaFr+P3FuSQ58elSfbJjsGYZnsmUg1ZWS8FKD
-	 1oJ6pWXDMHcM7ab84mB83LrO7VC6Cvd3MjkJ0lkk=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNVff3KMVzQHl;
-	Tue, 16 Jul 2024 09:13:46 +0200 (CEST)
-Date: Tue, 16 Jul 2024 09:13:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-Message-ID: <20240716.bebeeX1aequi@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <8734oawguu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1721114538; c=relaxed/simple;
+	bh=CYWFic7WpGeIaUQ5kese89wQm1aU8AJ7EQWqzIEeaR8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=md8JGH9kFUCg7Czd/EPzaFPkZ1xcbxORNYuYruf+dhQZBFsso3DZJDIpQNA/X1at8kpPvx6AqwXo0hu9hOrIEnW6OlA0g7yHnPpmpKOEU9gzqQ35EaMRkTaRvTRnHdlxnyD44PQR5HNG7Jhmh7GQOZrdj5vRqEA2SK0S0gB4sxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aM3iVPmz; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240716072212epoutp01b873f8a2512dc0626b5d33459d10d633~ioIxwpdRt1262912629epoutp01i
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:22:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240716072212epoutp01b873f8a2512dc0626b5d33459d10d633~ioIxwpdRt1262912629epoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721114532;
+	bh=CYWFic7WpGeIaUQ5kese89wQm1aU8AJ7EQWqzIEeaR8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aM3iVPmz3j5pFGpPZjWmUQPyq9pJMsQ7pIMYvNQVjstngD6ibnFUhtkbZ2FVfJIuT
+	 1EiRCkNy5A0V/zJbQgNL+WCNS7/69BqwmHtuQl/q1McxcYmT74wPov7ilWkbQEV1W6
+	 A+t1PLqeUI9cYkyIzeY/B46ByXpY9/TsL8x11KME=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240716072212epcas5p1e1dfdece1dfb2c80241fbddaa6c6db28~ioIxLREl-2819828198epcas5p1E;
+	Tue, 16 Jul 2024 07:22:12 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WNVrL15Fzz4x9QB; Tue, 16 Jul
+	2024 07:22:10 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.88.19174.F9F16966; Tue, 16 Jul 2024 16:22:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240716071617epcas5p11b0423d0ee1c66167f7658c071384586~ioDm-qNF01664316643epcas5p1d;
+	Tue, 16 Jul 2024 07:16:17 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240716071617epsmtrp2126ec89d386b07c493af9e4281c57279~ioDm_9GPf2573425734epsmtrp2a;
+	Tue, 16 Jul 2024 07:16:17 +0000 (GMT)
+X-AuditID: b6c32a50-b33ff70000004ae6-96-66961f9ff557
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	06.98.18846.14E16966; Tue, 16 Jul 2024 16:16:17 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240716071616epsmtip1afd89d557540acaaf08f5a0cce4915f2~ioDlvjpSE0109101091epsmtip1p;
+	Tue, 16 Jul 2024 07:16:16 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] io_uring: Avoid polling configuration errors
+Date: Tue, 16 Jul 2024 15:16:12 +0800
+Message-Id: <20240716071612.1503734-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734oawguu.fsf@trenco.lwn.net>
-X-Infomaniak-Routing: alpha
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmlu58+WlpBvt3ClrMWbWN0WL13X42
+	i9MTFjFZvGs9x2JxedccNgdWj52z7rJ7bF6h5XH5bKnH501yASxR2TYZqYkpqUUKqXnJ+SmZ
+	eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QFuVFMoSc0qBQgGJxcVK+nY2Rfml
+	JakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZzSuvsxR84K64uGwjWwPj
+	Ds4uRk4OCQETie+72xm7GLk4hAT2MEosv7iaDcL5xCixqKWfFc7Zs/ApM0zLjFPTmSASOxkl
+	Hh17CtXyg1Hi1f4XbCBVbAJKEvu3fGAEsUUEhCX2d7SydDFycDALpEu0vfACCQsLuEhc7FrP
+	AmKzCKhKvLr/FKycV8Ba4mDfRXaIZfISN7v2gy3mFLCVaO2YzQpRIyhxcuYTsF5moJrmrbOZ
+	QW6QENjHLjGjcysjyC4JoAVn+pQg5ghLvDq+BWqmlMTnd3vZIOx8icnf1zNC2DUS6za/Y4Gw
+	rSX+XdkDdbKmxPpd+hBhWYmpp9YxQazlk+j9/YQJIs4rsWMejK0kseTICqiREhK/JyxihbA9
+	JH7OPsMOCaoJjBKnGxexTWBUmIXknVlI3pmFsHoBI/MqRqnUguLc9NRk0wJD3bzUcngsJ+fn
+	bmIEp0StgB2Mqzf81TvEyMTBeIhRgoNZSYR3AuO0NCHelMTKqtSi/Pii0pzU4kOMpsAAn8gs
+	JZqcD0zKeSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MPG35Qo6
+	VK0/O2n9VruEhds+npqvXLVKfaqMU1n1va47Zssun5eauODvidzEE8pzvp5/8dHwYrJn7tZ3
+	F5encHmutpzHWSq021pVlqmAb+rXDBu9h+w3hK9Z2s6VFlgxP3EFy1yvwq6nL45n6eWq/TwS
+	ZiLqoMC626p7SlHbs4CtB7i1lW6WLEp5uXP5zVdyu9Nmv/SZZNvUbyE93SAgN+7D+QINfsmo
+	rSYXytlPrZmnlRH/wiL8X4A6/8HZWS/YIoXrH+dfupXNLHC88OW9hqvqZmZhM+4cMTQ+LnBJ
+	xvZhwFLVTxEvX8w9E7NPQLE05vmjtZPjrOLtGHLW7LbMspXbduHb0eAA5wu1R7Md1ymxFGck
+	GmoxFxUnAgCx0nQGEgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnK6j3LQ0g+3dYhZzVm1jtFh9t5/N
+	4vSERUwW71rPsVhc3jWHzYHVY+esu+wem1doeVw+W+rxeZNcAEsUl01Kak5mWWqRvl0CV0bz
+	yussBR+4Ky4u28jWwLiDs4uRk0NCwERixqnpTCC2kMB2Romfc3gh4hISOx79YYWwhSVW/nvO
+	DlHzjVHi4FJREJtNQEli/5YPjCC2CFDN/o5WFhCbWSBbYu+sa2C9wgIuEhe71oPFWQRUJV7d
+	fwpWzytgLXGw7yI7xHx5iZtd+5lBbE4BW4nWjtmsELtsJI482ssEUS8ocXLmE6j58hLNW2cz
+	T2AUmIUkNQtJagEj0ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4EDVCtrBuGz9X71DjEwc
+	jIcYJTiYlUR4JzBOSxPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgST
+	ZeLglGpgMur/esojWXfBnpv+0noFm6r3Rq3cemu7937GrbUPDJp9euRijm0zTnxyMiPpVn3t
+	4js1Jsev1Cj4WSv6dQaWFOhlHS/PrfwVLLrZ7bnsjIONq/qWW8nGpcrnFMQ4nbaxlbsqs7w6
+	kjFx706m21v7TPsT9R5a8u9q8StoeTTlzZV7V36znCh5rMiySvX4s7nCU2qWOYfrn/w1PcDN
+	8X7w/4m7Sw7M3HxnQceeVIMVv9KmTVZdEse2/dc2lnSDt3a7ci6vai33jyydaVzg3FHxVX2f
+	llfeTQsXjQXLJV7PCGF60RGxkod/p6ZS9Revhe1bf+ecWTM5/vzZX5xm/vM+RYtc6OzT+bFk
+	XTXLwx2hSizFGYmGWsxFxYkAtEay5cMCAAA=
+X-CMS-MailID: 20240716071617epcas5p11b0423d0ee1c66167f7658c071384586
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240716071617epcas5p11b0423d0ee1c66167f7658c071384586
+References: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
+	<CGME20240716071617epcas5p11b0423d0ee1c66167f7658c071384586@epcas5p1.samsung.com>
 
-On Mon, Jul 15, 2024 at 02:16:41PM -0600, Jonathan Corbet wrote:
-> Mickaël Salaün <mic@digikod.net> writes:
-> 
-> FYI:
-> 
-> > User space patches can be found here:
-> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> 
-> That link appears to be broken.
+On 7/15/24 10:59 AM, Jens Axboe wrote:
+>On 7/14/24 8:39 PM, hexue wrote:
+>>> My stance is still the same - why add all of this junk just to detect a
+>>> misuse of polled IO? It doesn't make sense to me, it's the very
+>>> definition of "doctor it hurts when I do this" - don't do it.
+>>>
+>>> So unless this has _zero_ overhead or extra code, which obviously isn't
+>>> possible, or extraordinary arguments exists for why this should be
+>>> added, I don't see this going anywhere.
+>>
+>> Actually, I just want users to know why they got wrong data, just a
+>> warning of an error, like doctor tell you why you do this will hurt. I
+>> think it's helpful for users to use tools accurately. and yes, this
+>> should be as simple as possible, I'll working on it. I'm not sure if I
+>> made myself clear and make sense to you?
+>
+>Certainly agree that that is an issue and a much more worthy reason for
+>the addition. It's the main reason why -EOPNOTSUPP return would be more
+>useful, and I'd probably argue the better way then to do it. It may
+>indeed break existing use cases, but probably only because they are
+>misconfigured.
+>
+>That then means that it'd be saner to do this on the block layer side,
+>imho, as that's when the queue is resolved anyway, rather than attempt
+>to hack around this on the issuing side.
 
-Unfortunately, GitHub's code search links only work with an account.
-git grep prints a similar output though.
-
-> 
-> Thanks,
-> 
-> jon
+Implementing it at the block layer is indeed more reasonable, thanks for
+your affirmation and suggestion, I will look for an appropriate place in
+the path to perform the check. Thanks.
 
