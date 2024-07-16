@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-253524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C8993227A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:10:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F057693227F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E623C28270D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C611F23219
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33815195809;
-	Tue, 16 Jul 2024 09:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xSr7Jrpg"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A10195B27;
+	Tue, 16 Jul 2024 09:11:09 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09CE4C74
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5BA4C74;
+	Tue, 16 Jul 2024 09:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121024; cv=none; b=pELdTqdFSW99mjccIne0pw4P9dfMp89RGfLBb+YGJbqlVwb5H5KZpqDnzfp4R8kQ3ytkdrRedGoJj/M1IC5XquNNM+Zt/TvOP/Z/pN9kN/fGjxCJtUa32ikRxvqHB3Vx4/pwtfDUnw+O6TmDNGYzRA5z0566XLcSHZQA1gdF0Xo=
+	t=1721121068; cv=none; b=sgZEUsKKDvD0ErEB1tsKRG9am8Oz28+xKgv4dJ3jXMV5GZZrlnljai+GrSDLYq7SQ9Ml6uA1681LRcGpw6jqtWwPw6TOMZgLUaYl1W1TbXWlV6ncnsGIV9TKpBWNwZA+sMFelNGNErBygBSjtnGX8buKDFVD9SV/ml8OE+Ly0Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121024; c=relaxed/simple;
-	bh=YQTpwHzj19jUeZSWEKD+B6nfNJ6GFvEW+HxBiISSB8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmElQumFLGY9Cqeyw0nzto7xO8MeFCRXmiIoxlPbTJMldxhL3GJrqdKV8J5Tbmxg0NDSm0Pq7Zmwwbxki+05qW86+TjFy92sKCrVv6G7M2CW3JOOXjZgT9ytsY7uEbBP6DPCO4nI2IFcHB7H6d3JWLhU9SpFQFiYmlLr+72Ulro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xSr7Jrpg; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42795086628so35224855e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721121021; x=1721725821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xmDu6LpHxXI1mpawm8JNyqvXpkeHQourXad6ibcL1gQ=;
-        b=xSr7JrpgdI/xvt1+r31pszxIYDkMqWlr+asQd138vuINEh2y70Mq2dRWyqbUjBZTRv
-         cjd5Of++aQDByLmgnorE4tdyIxqZF3oGNzPVYT5JAf8mm+Ldap4ld/X35qVDIydpRAuD
-         PHcnxwAxkRJQtnjvfudMMRepVHDM0W0qIqns9eYTqefOIbiDWl7fI/NSImAzxb268b/E
-         43ygKFoFgOnvV0YLjq3tzdTKfiRePnU/eswOmJQxy2YbhSoPFmDqm8sHV2+zcJP906F8
-         /yg8WAhWm6wmRmXfhwmtr6DknODqm54jqWK+AlmsB5oG2hCtAU1pmKBlEssXP++hSmHJ
-         Mv3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721121021; x=1721725821;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xmDu6LpHxXI1mpawm8JNyqvXpkeHQourXad6ibcL1gQ=;
-        b=vInFabwG9ldboykGD8WcOCPkiLpt9RROFcwebfxRA0mxiGkx4hO3/WOwU7VToFHDMB
-         0aQYtyAtfaIr4mvT2Ez1gL1Zga0977f4LbbDBCTRrQAdQzLblrOJN6MnInZH0WqiQ0mD
-         4XegOhGXxfCz3UJummRB9T0jqrzqqkEWODzajGAAzsJW5veWRN/4UWaNRaSx2OOClkuy
-         K4INICFybdd2PFDvkTAMFVxYHZJ9GDy+fwsCCwNXZ13A3OXnqO14RT5Y8fTZ5N2BulZV
-         MhJgskYBFng86xN93EmIMr5euuPRUsTKoNBTdZb8CPLEdsZbdwVkPoArStXQ9BeqkH1D
-         /X0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUoSTBRYm6fg5PXowsWGk7H0LuD0FVAQrvG8YQtrkKqNRrC8OXzprZrjQ/rMJ3wbJqmNqZx0eMjL4PcAxqeeGFacZzi1qKVphd38IBn
-X-Gm-Message-State: AOJu0Yw0fTSS9E3RfzQZOVGWAs+tOq7n9naw8e4038Rm1D92z6QzxcK/
-	Xwp/bTs5+29k6nHlQtyZO3pk1vWP8uWL6EvphtvLEn8jeQS3Z20YUrSly3Hhleo=
-X-Google-Smtp-Source: AGHT+IFjvmlm1Pa2B5lJ+/r3HN/TpnBw7eNCgE3IgOOP1k1lCoLOaVZdKhlUdILsSRDrICcc2rV1oA==
-X-Received: by 2002:a05:6000:1fa8:b0:366:e89c:342e with SMTP id ffacd0b85a97d-368261dddcbmr1035125f8f.53.1721121021283;
-        Tue, 16 Jul 2024 02:10:21 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafb979sm8456418f8f.75.2024.07.16.02.10.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 02:10:20 -0700 (PDT)
-Message-ID: <1e5aa1e1-e5c4-49bb-a43b-a119710a000c@linaro.org>
-Date: Tue, 16 Jul 2024 10:10:19 +0100
+	s=arc-20240116; t=1721121068; c=relaxed/simple;
+	bh=2BF2CsXqFLTo7IKdC/7zs3m9os45UdbNfcSeRODgDzA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LZUSpqzelI6M4aP84rPtajAPKOFfuWiNzw45oUrYdsPwthZTPgirb2KolEGZzMJDvFh3wIZwxNtFaFqNjg7N66KrFLgRzcoXRd5hedmBVCoV46+2QO8lsyCL6HDajiAdFb0crbC6zW42KXszGSR2ghHe6B6KjDpISrogrjM8fvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 16 Jul
+ 2024 12:11:01 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Roman Smirnov <r.smirnov@omp.ru>, Sergey Shtylyov <s.shtylyov@omp.ru>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Fedor Pchelkin <pchelkin@ispras.ru>
+Subject: [PATCH] Revert "media: tuners: fix error return code of hybrid_tuner_request_state()"
+Date: Tue, 16 Jul 2024 12:10:40 +0300
+Message-ID: <20240716091040.93681-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
-To: Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240715143342.52236-1-leo.yan@arm.com>
- <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 07/16/2024 08:42:27
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 186531 [Jul 16 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
+ 186c4d603b899ccfd4883d230c53f273b80e467f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_all_Bitcoin, text}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;inp1wst083.omp.ru:7.1.1;lore.kernel.org:7.1.1;81.22.207.138:7.1.2;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 07/16/2024 08:45:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 7/16/2024 7:02:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+This reverts commit b9302fa7ed979e84b454e4ca92192cf485a4ed41.
 
+As Fedor Pchelkin pointed out, this commit violates the
+convention of using the macro return value, which causes errors.
+For example, in functions tda18271_attach(), xc5000_attach(),
+simple_tuner_attach().
 
-On 15/07/2024 6:17 pm, Ian Rogers wrote:
-> On Mon, Jul 15, 2024 at 7:34 AM Leo Yan <leo.yan@arm.com> wrote:
-> [snip]
->> +Android NDK compilation is deprecated and no longer supported.
-> 
-> I think this is objectively worse than just removing the file. It is
+Link: https://lore.kernel.org/linux-media/20240424202031.syigrtrtipbq5f2l@fpc/
+Suggested-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+---
+ drivers/media/tuners/tuner-i2c.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Objectively worse is a bit strong. There was some discussion on the 
-previous version about the reasoning, but the point is to leave keywords 
-so that someone re-writing the NDK docs in the future can find it and 
-then the history will be preserved rather than putting it in a new file 
-with a new name. Or even someone wondering why their build command 
-doesn't work has at least something documented about it, even as a negative.
+diff --git a/drivers/media/tuners/tuner-i2c.h b/drivers/media/tuners/tuner-i2c.h
+index 07aeead0644a..724952e001cd 100644
+--- a/drivers/media/tuners/tuner-i2c.h
++++ b/drivers/media/tuners/tuner-i2c.h
+@@ -133,10 +133,8 @@ static inline int tuner_i2c_xfer_send_recv(struct tuner_i2c_props *props,
+ 	}								\
+ 	if (0 == __ret) {						\
+ 		state = kzalloc(sizeof(type), GFP_KERNEL);		\
+-		if (!state) {						\
+-			__ret = -ENOMEM;				\
++		if (NULL == state)					\
+ 			goto __fail;					\
+-		}							\
+ 		state->i2c_props.addr = i2caddr;			\
+ 		state->i2c_props.adap = i2cadap;			\
+ 		state->i2c_props.name = devname;			\
+-- 
+2.34.1
 
-Of course this all depends on whether we decide the Android build 
-_should_ be working or not which looks like is also being discussed here.
-
-> likely the perf tool can build with clang/LLVM, I do it every day, and
-> the special case for Android is likely more about the libc (aka
-> bionic) which gradually over time has been becoming more full fat -
-> perhaps we need to carry somethings in tools/include for missing
-> definitions, but we build with musl and that's a PITA in this regard,
-> we've also been reducing the tools/include dependencies for perf trace
-> beauty support. We don't use ifuncs in the perf tool (Android's
-> linker/loader historically hasn't supported these) and the weak symbol
-> games should be okay and something I aspire to make less in the perf
-> tool over time. As Android uses Linux then it should work and should
-> be supported.
-> 
-> Thanks,
-> Ian
 
