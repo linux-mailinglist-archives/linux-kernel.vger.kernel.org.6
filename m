@@ -1,195 +1,182 @@
-Return-Path: <linux-kernel+bounces-254443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC683933343
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:10:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105CC933349
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625BA2829A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1298D1C22278
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B35376056;
-	Tue, 16 Jul 2024 21:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714CD770F5;
+	Tue, 16 Jul 2024 21:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eL33vpUy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tghLh9jf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9E455894;
-	Tue, 16 Jul 2024 21:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C56155894;
+	Tue, 16 Jul 2024 21:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721164210; cv=none; b=WgnqkQXRWj+ZIl5E1b55q1WLM22nvc1MfEauLVmPJXpZz+BGJLzmUBZJYFeGf+rvprFLhzRd6mxfo2apAzykKnYewMIY+KXYc9H7ZjYXKgmuiQBb9+cyhDAzLPIXm6KXU+b+XKb1dxqioO974QxlhCVuIbnzQFMnaRhxPdtr7+M=
+	t=1721164279; cv=none; b=TxPSgiLM86lWTblezeoihhGxnVvchw8+RSqD37ANO9O6c2NMMd0wh3KSA2lgFkS1f6a+yWwcLkEbQ+FtO+Vy9qEJ88JxrENlRwG5P54fcCzT7TUZhN8MlD3OByXE2soTRDgpB/m6/5TxHs60GroLom80xsUQpOvytes/Zt5/oiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721164210; c=relaxed/simple;
-	bh=E5Rhmq4w2aJRUdzOViHh0PMnhhGECVJsX0hiriu14jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iNDgzZQcfSecR5XLo/SqN2uzup+nDceFsX6qFQ+J2TVis/1UDr+qhpWqwcMNufgSUtgqpxIg5ApChq/2d48s8pX0toKQr4pXHXdyjOyPg7GcgBx3h1gETzeELtxMJasb7I+H3xLPIM9ijyIW/Q20GlCJrmW1oH1hdPzDxwMFpyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eL33vpUy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHfd6I007015;
-	Tue, 16 Jul 2024 21:09:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8EFgWzQ4bEsVEGlDIPChjTC7s40nDC03SbozmjUVxv8=; b=eL33vpUy8bWKasqY
-	zcVwbxWwmgo2HNFQJMPr00nuQZGh07iqDaBVoXSseF3/SG/1cPoHcY4tV/vqazQG
-	SEtB3S18c8IayLVhWzzIwISu7X2FCf8/nRdlVILNM9g3PzqepAX4Y2sONT++HxLn
-	CGRGnzJvf2nGpMeIMcRX3jtwS2eUFrwicFJ71WXfSR0vkVFIUnagpLwq+e5Pj2Zw
-	scYmJskdQ9niJIOkR98pXq8qtutrHbAQ3RZBDs3ttJ7PE0C0OWLBXobodQeU3nHu
-	cLsdN1l928E7612542wVpE2/6pWlxKk1EROYF74jzZ0+u/G/nHOooGkyQmToGXN0
-	n3L7VQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfx8cps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 21:09:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GL9tpm005192
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 21:09:55 GMT
-Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 14:09:54 -0700
-Message-ID: <5f80ca29-994c-4a74-a929-0480b0f2c157@quicinc.com>
-Date: Tue, 16 Jul 2024 14:09:53 -0700
+	s=arc-20240116; t=1721164279; c=relaxed/simple;
+	bh=1jW0L9A3iRqmH7/WtH+jzNTYliriggcP44IDfWuj9xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAkvXAYrZh84LOptooEL3ehskJs7j5DU933k1BApAIQ57NRV+IRzw/lgDR7zyQsn4NxhPt6EchkErTaZdfo1JD7atBPvOOEtBGUUR25EU9CFg0VU0nUqykI9aJlZHSAcC8J9R2fVgTNwnVQBspvU2IXpv5g+BsKoLsf+4ZqtHlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tghLh9jf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC982C116B1;
+	Tue, 16 Jul 2024 21:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721164279;
+	bh=1jW0L9A3iRqmH7/WtH+jzNTYliriggcP44IDfWuj9xs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tghLh9jfOMBim3IX1QfM4yS2ofpN385lvpnXmFBp0BfF5oCxcniZ0tkKnocDQTqd/
+	 c8XPw4rL2wdcmKF15SxMmzDfCWDFSSuUv2L0O0nkePDvp3igaULT1EO95aHbsMpR1K
+	 0qGUejPBbh+Bx429UbcQtuozzegrutlE9LCl/l9XrudayzjyML9933cVEFWExtK5I/
+	 5NdKIUBZWOxxo+pGqZCueUAXxngGiwkDg2bgMaXznBMWoWZELO5Jqghqk6i0OQDsJQ
+	 aJgP89unBMxjg7/iCi/f+EyySFTuwbpjqq7NljneNSmUDix0HbUGYPfFn2ikM4zHyd
+	 9qmwVfzEH77ng==
+Date: Tue, 16 Jul 2024 15:11:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add i2c device adi5585
+Message-ID: <20240716211117.GA387758-robh@kernel.org>
+References: <20240716-adi-v1-0-79c0122986e7@nxp.com>
+ <20240716-adi-v1-1-79c0122986e7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/msm/iommu: introduce msm_iommu_disp_new() for
- msm_kms
-To: Rob Clark <robdclark@gmail.com>
-CC: <freedreno@lists.freedesktop.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <swboyd@chromium.org>, <dianders@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
- <20240628214848.4075651-4-quic_abhinavk@quicinc.com>
- <CAF6AEGt2zX5anreTLnMFEiPToGFJdgYZHHpqJfUtaOkdr+Wbbw@mail.gmail.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAF6AEGt2zX5anreTLnMFEiPToGFJdgYZHHpqJfUtaOkdr+Wbbw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g7nO_hvTfjwzfwMJbO9efbhcjepe4UA3
-X-Proofpoint-GUID: g7nO_hvTfjwzfwMJbO9efbhcjepe4UA3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=965 bulkscore=0 adultscore=0
- spamscore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407160154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716-adi-v1-1-79c0122986e7@nxp.com>
 
-
-
-On 7/1/2024 1:41 PM, Rob Clark wrote:
-> On Fri, Jun 28, 2024 at 2:49 PM Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>
->> Introduce a new API msm_iommu_disp_new() for display use-cases.
->>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/msm_iommu.c | 26 ++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/msm_mmu.h   |  1 +
->>   2 files changed, 27 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
->> index a79cd18bc4c9..0420bdc4a224 100644
->> --- a/drivers/gpu/drm/msm/msm_iommu.c
->> +++ b/drivers/gpu/drm/msm/msm_iommu.c
->> @@ -343,6 +343,17 @@ static int msm_gpu_fault_handler(struct iommu_domain *domain, struct device *dev
->>          return 0;
->>   }
->>
->> +static int msm_disp_fault_handler(struct iommu_domain *domain, struct device *dev,
->> +                                 unsigned long iova, int flags, void *arg)
->> +{
->> +       struct msm_iommu *iommu = arg;
->> +
->> +       if (iommu->base.handler)
->> +               return iommu->base.handler(iommu->base.arg, iova, flags, NULL);
->> +
->> +       return -ENOSYS;
->> +}
->> +
->>   static void msm_iommu_resume_translation(struct msm_mmu *mmu)
->>   {
->>          struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(mmu->dev);
->> @@ -434,6 +445,21 @@ struct msm_mmu *msm_iommu_new(struct device *dev, unsigned long quirks)
->>          return &iommu->base;
->>   }
->>
->> +struct msm_mmu *msm_iommu_disp_new(struct device *dev, unsigned long quirks)
->> +{
->> +       struct msm_iommu *iommu;
->> +       struct msm_mmu *mmu;
->> +
->> +       mmu = msm_iommu_new(dev, quirks);
->> +       if (IS_ERR_OR_NULL(mmu))
->> +               return mmu;
->> +
->> +       iommu = to_msm_iommu(mmu);
->> +       iommu_set_fault_handler(iommu->domain, msm_disp_fault_handler, iommu);
->> +
->> +       return mmu;
->> +}
+On Tue, Jul 16, 2024 at 03:28:24PM -0400, Frank Li wrote:
+> Add adi5585, which provide gpio, pwm and keypad controller.
 > 
-> Hmm, are we using dev drvdata for the display pdev?  If
-> dev_get_drvdata() returns NULL for display pdev, we could get away
-> without having a different fault handler.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/mfd/adi,adp5585.yaml       | 83 ++++++++++++++++++++++
+>  1 file changed, 83 insertions(+)
 > 
-> BR,
-> -R
+> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> new file mode 100644
+> index 0000000000000..03c4760242ddd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ADI adp5585 GPIO, PWM, keypad controller
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description:
+> +  adp5585 is a multifunctional device that can provide GPIO, PWM and keypad.
+> +
+> +properties:
+> +  compatible:
+> +    const: adi,adp5585
+> +
+> +  reg:
+> +    items:
+> +      description: I2C device address.
+> +
+> +  gpio:
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: adp5585-gpio
+> +
+> +      gpio-controller: true
+> +
+> +      "#gpio-cells":
+> +        const: 2
+> +
+> +    required:
+> +      - compatible
+> +      - gpio-controller
+> +      - "#gpio-cells"
+> +
+> +    additionalProperties: false
+> +
+> +  pwm:
+> +    $ref: /schemas/pwm/pwm.yaml
+> +    properties:
+> +      compatible:
+> +        const: adp5585-pwm
+> +
+> +      "#pwm-cells":
+> +        const: 3
+> +
+> +    required:
+> +      - compatible
+> +      - "#pwm-cells"
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mfd@34 {
+> +            compatible = "adi,adp5585";
+> +            reg = <0x34>;
+> +
+> +            gpio {
+> +                compatible = "adp5585-gpio";
 
-It is being set to struct msm_drm_private* currently. So it shouldnt 
-return NULL.
+Missing vendor prefix. However, ...
 
-I also thought of re-using the same API as GPU but the drvdata along 
-with its own fault handler and having below code in the gpu handler all 
-made me conclude that its cleaner to let display have its own handler.
+> +                gpio-controller;
+> +                #gpio-cells = <2>;
+> +            };
+> +
+> +            pwm {
+> +                compatible = "adp5585-pwm";
+> +                #pwm-cells = <3>;
+> +            };
 
-         if (adreno_smmu->set_stall)
-                 adreno_smmu->set_stall(adreno_smmu->cookie, true);
+There's no need for these child nodes. This can be just:
 
-> 
->> +
->>   struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsigned long quirks)
->>   {
->>          struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(dev);
->> diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
->> index 88af4f490881..730458d08d6b 100644
->> --- a/drivers/gpu/drm/msm/msm_mmu.h
->> +++ b/drivers/gpu/drm/msm/msm_mmu.h
->> @@ -42,6 +42,7 @@ static inline void msm_mmu_init(struct msm_mmu *mmu, struct device *dev,
->>
->>   struct msm_mmu *msm_iommu_new(struct device *dev, unsigned long quirks);
->>   struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gpu, unsigned long quirks);
->> +struct msm_mmu *msm_iommu_disp_new(struct device *dev, unsigned long quirks);
->>
->>   static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
->>                  int (*handler)(void *arg, unsigned long iova, int flags, void *data))
->> --
->> 2.44.0
->>
+mfd@34 {
+    compatible = "adi,adp5585";
+    reg = <0x34>;
+    gpio-controller;
+    #gpio-cells = <2>;
+    #pwm-cells = <3>;
+};
+
+Rob
 
