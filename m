@@ -1,183 +1,188 @@
-Return-Path: <linux-kernel+bounces-253768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A859326A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:35:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1453E93269F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5151F23915
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370BE1C22D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C261319AA5D;
-	Tue, 16 Jul 2024 12:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFB619AA55;
+	Tue, 16 Jul 2024 12:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="PGWN6knR"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A0JQMNmh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B5519A870
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78C91991D4
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721133298; cv=none; b=LJkqVgaMagY49Rdf4B3oz0zTfS6R8QQ4D9El89Kjx0kmvSaUqnfe+scwtRLH9F/gKIgLSAmv1OxlLFu4007cUoCbXvDiqq3cZH52NOmktsp12u0P3B9Fuy25yZi6NfJXSyQsWan4HHvJ9rlmA5dqO9xj0Od/2Yxr6ySpGVyxG7g=
+	t=1721133288; cv=none; b=m37Tk3iz4x21iSxjGW4EKGh3UM1X4WKkwzJgoP87VKW4WKsNlTBwHFSIgmLcd9z9Gx0qVX4+d9dt+JNKN4BH+LMI+BtaExML2mHhZkYHIR/AzFOxKH07dwv+pkbxNa6iXDtexc+empfYyHcpsr4BwhzdORp3D4fY0HdCwmAw8dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721133298; c=relaxed/simple;
-	bh=V/F4UTvvEy3NCSvKyNNAWr4zGMGneWAsO6rPvWKaGvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MOrKrl0KjumM8YGAxZj1lKnUMKhByN+cMoDZ+MmL2PFeQ7JBd6Wjae4UEg6R/VsuSowGfXc67RlTV2iPFpTP1CWNGod9p89ru0r7hv77OCW36TzZmMLDlewoUbO1kKYLNQ2Fg2kC6hM9m0p6J3smNQ4ol7RcIsqbQdzYVE+P00s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=PGWN6knR; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: wens@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1721133292;
+	s=arc-20240116; t=1721133288; c=relaxed/simple;
+	bh=UwvO1FF7MnvexBVJsbYqtV2A6b3qtyblV0xiJ3qOHn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dLEQVsXHRhLa0AEzts0gbKOW1Y+m5UdSqVROn5OjRw/9QUE1Nx6Hy82yJpYprgHxF7q9c8xgkWhngS589XslEj9ctpy6xGSghLcdEggdahJ8WGYkX/jjpIfjo3kM+mE6dB0pnMeyXGBk62osF5OBA7iSS6aKByQOuTnkrLKDT0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A0JQMNmh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721133285;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TUFna8KX4ihrtDkjdAKNgLT+tJDIS3c9nXtfNbeflQI=;
-	b=PGWN6knRfOiyzyBmePMrs5eNI9XnN46/sa44jaUfrDReHR8E3BZIou5l4AikCZxA07uLKi
-	AODkX8ezbh6Pb09qom3tdW5X9394/BSWmdfmtcopPuSqwhP9nYVY6HoB/LRv0brek/TFd4
-	EyM8HD2LwKk1TOuAzvVY4TzEWfDV8cBlm6UBWAmehEwuAv+NCOk0HOeL6ptO6uMjRxy6OK
-	vHFPHadXuHJM+hoOHerbWBFM+nvU8F9D6Pil5tETn67vCBGlckMI9khfEm3OMxRErGF2Ar
-	bfB/A2dndy2llg0q9w2k80vW1CZeI53j3FFYERh4kEjMSJtNMjtwtV9DFi0ZZA==
-X-Envelope-To: aurelien@aurel32.net
-X-Envelope-To: herbert@gondor.apana.org.au
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: daniel@makrotopia.org
-X-Envelope-To: olivia@selenic.com
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: p.zabel@pengutronix.de
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: ukleinek@debian.org
-X-Envelope-To: sebastian.reichel@collabora.com
-X-Envelope-To: cristian.ciocaltea@collabora.com
-X-Envelope-To: s.hauer@pengutronix.de
-X-Envelope-To: martin@kaiser.cx
-X-Envelope-To: ardb@kernel.org
-X-Envelope-To: linux-crypto@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Chen-Yu Tsai <wens@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>,
- Herbert Xu <herbert@gondor.apana.org.au>, Heiko Stuebner <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>
-Cc: Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
- Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Date: Tue, 16 Jul 2024 14:34:40 +0200
-Message-ID: <6425788.NZdkxuyfQg@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
-References: <cover.1720969799.git.daniel@makrotopia.org>
+	bh=hmPFA9iny5K5WBu2KEPFzDMz5G8QExo99NmSardUinU=;
+	b=A0JQMNmh1gOg8F/nd2m4IL53IBNLOpcAkBxs/vSWvu0OTO2unV4B0j36EUPjwkMT3rHbAp
+	Gv3bbzN7hTd7vGAdGYx7t3tJLoqwPjNEfOJorxkUp6TqNCiU7MzgjKUC2WoU4ONnWttxld
+	ZY44jdrxitRukNtHS04qdYWq7lu8kaI=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-JnwOGGHBOSqgHfFi4TejiA-1; Tue, 16 Jul 2024 08:34:44 -0400
+X-MC-Unique: JnwOGGHBOSqgHfFi4TejiA-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-806199616d0so637999439f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:34:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721133284; x=1721738084;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hmPFA9iny5K5WBu2KEPFzDMz5G8QExo99NmSardUinU=;
+        b=WZcEu8G1saIWBP15c80LfmblSQidJZtHXUu0yLTaKxqSWmqoS5URdAJHNKOYHJXC4O
+         bBm0AbCAVvXmDs71890aEsaYXKiLa4XRxkwEJXw1qF41tq3t3o75CyMl1ohXaM/SXSCC
+         ESXPFWDKYB9N8nn/USwAoFSIIi24t1lqpT++8EMQlJy5gFYlcd/ZolYMvR7aOFIG1Q+a
+         zzU6pIe7igL+PEOW0Cu869vaXHr5lGiQUheaQzS5ueWqGNAp3+nFBV0X0778X9MX51ni
+         18jMawU4W2lvFIb21eaetZEeJxbXfbrHV2rfKIlvWLKSiKg7020oPdgAzeDysiYZAby1
+         F0VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGoKyrQkTDXzjE0vRJYsiMe1tnve/nYrub2Y8uO6GglVIGUbcvnp0MU4ZEYhn3npEBevcQYKYe8/8WFoiBTqsw3if3ezD3QnPMZu4G
+X-Gm-Message-State: AOJu0YxOCbV3CA5o2xEeBowPWnnGmAkyze1g/VBzTsPF/MtMaH9BzrYF
+	hXA+u0cVZUbypWJotEV2XH7mSxHhdORcBmyHGDrGwK1a8empJp2WCbmugt87jNZd8Kf19K5HB+N
+	53FfMaCrD0TZOenhhrkY3QnLexQvMFY0ET5th6y5CgBFb8mf5aLVsNGqOX4q8Lg==
+X-Received: by 2002:a05:6602:2cca:b0:805:2e94:f21f with SMTP id ca18e2360f4ac-81574540445mr278731739f.2.1721133283804;
+        Tue, 16 Jul 2024 05:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHx0v8ioi/ZYawS9SUY/Ip1EKV4weK8+lj35wr1o4vxKoM9NKhFCak+mtzECDC8UGRkfJBNgg==
+X-Received: by 2002:a05:6602:2cca:b0:805:2e94:f21f with SMTP id ca18e2360f4ac-81574540445mr278729139f.2.1721133283485;
+        Tue, 16 Jul 2024 05:34:43 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-80e115fc5f1sm188535739f.3.2024.07.16.05.34.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 05:34:43 -0700 (PDT)
+Date: Tue, 16 Jul 2024 06:34:41 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Kirti Wankhede <kwankhede@nvidia.com>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] vfio-mdev: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240716063441.132d60bd.alex.williamson@redhat.com>
+In-Reply-To: <20240715-md-vfio-mdev-v2-1-59a4c5e924bc@quicinc.com>
+References: <20240715-md-vfio-mdev-v2-1-59a4c5e924bc@quicinc.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5537839.MQpQnaDgsY";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---nextPart5537839.MQpQnaDgsY
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Date: Tue, 16 Jul 2024 14:34:40 +0200
-Message-ID: <6425788.NZdkxuyfQg@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
-References: <cover.1720969799.git.daniel@makrotopia.org>
-MIME-Version: 1.0
+On Mon, 15 Jul 2024 12:27:09 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-On Sunday, 14 July 2024 17:15:35 CEST Daniel Golle wrote:
-> Rockchip SoCs used to have a random number generator as part of their
-> crypto device.
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warnings are being
+> observed in samples/vfio-mdev:
 > 
-> However newer Rockchip SoCs like the RK3568 have an independent True
-> Random Number Generator device. This patchset adds a driver for it and
-> enables it in the device tree.
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mtty.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy-fb.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mbochs.o
 > 
-> Tested on FriendlyARM NanoPi R5C.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro to these
+> modules. And in the case of mtty.c, remove the now redundant instance
+> of the MODULE_INFO() macro.
 > 
-> ...
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Of the almost 300 patches I've submitted tree-wide to fix these
+> issues, this is one of the 13 remaining. Hopefully this can make it
+> via your tree into the 6.11 merge window. If not, Greg KH has
+> indicated he'll take this as an -rc instead of waiting for 6.12.
+> ---
+> Changes in v2:
+> - Updated the commit text to more fully describe the problem and solution.
+> - Removed the MODULE_INFO() from mtty.c
+> - Note I did not carry forward Kirti's Reviewed-by: due to this removal,
+>   please re-review
+> - Link to v1: https://lore.kernel.org/r/20240523-md-vfio-mdev-v1-1-4676cd532b10@quicinc.com
+> ---
+
+LGTM.  Kirti, would you like to re-add your R-b?  Thanks,
+
+Alex
+
+>  samples/vfio-mdev/mbochs.c  | 1 +
+>  samples/vfio-mdev/mdpy-fb.c | 1 +
+>  samples/vfio-mdev/mdpy.c    | 1 +
+>  samples/vfio-mdev/mtty.c    | 2 +-
+>  4 files changed, 4 insertions(+), 1 deletion(-)
 > 
-> Aurelien Jarno (3):
->   dt-bindings: rng: Add Rockchip RK3568 TRNG
->   hwrng: add hwrng driver for Rockchip RK3568 SoC
->   arm64: dts: rockchip: add DT entry for RNG to RK356x
+> diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+> index 9062598ea03d..836456837997 100644
+> --- a/samples/vfio-mdev/mbochs.c
+> +++ b/samples/vfio-mdev/mbochs.c
+> @@ -88,6 +88,7 @@
+>  #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+>  
+>  
+> +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+>  MODULE_LICENSE("GPL v2");
+>  
+>  static int max_mbytes = 256;
+> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+> index 4598bc28acd9..149af7f598f8 100644
+> --- a/samples/vfio-mdev/mdpy-fb.c
+> +++ b/samples/vfio-mdev/mdpy-fb.c
+> @@ -229,4 +229,5 @@ static int __init mdpy_fb_init(void)
+>  module_init(mdpy_fb_init);
+>  
+>  MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
+> +MODULE_DESCRIPTION("Framebuffer driver for mdpy (mediated virtual pci display device)");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
+> index 27795501de6e..8104831ae125 100644
+> --- a/samples/vfio-mdev/mdpy.c
+> +++ b/samples/vfio-mdev/mdpy.c
+> @@ -40,6 +40,7 @@
+>  #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+>  
+>  
+> +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+>  MODULE_LICENSE("GPL v2");
+>  
+>  #define MDPY_TYPE_1 "vga"
+> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+> index 2284b3751240..b382c696c877 100644
+> --- a/samples/vfio-mdev/mtty.c
+> +++ b/samples/vfio-mdev/mtty.c
+> @@ -2058,6 +2058,6 @@ module_init(mtty_dev_init)
+>  module_exit(mtty_dev_exit)
+>  
+>  MODULE_LICENSE("GPL v2");
+> -MODULE_INFO(supported, "Test driver that simulate serial port over PCI");
+> +MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
+>  MODULE_VERSION(VERSION_STRING);
+>  MODULE_AUTHOR(DRIVER_AUTHOR);
 > 
->  .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
->  MAINTAINERS                                   |   7 +
->  arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
->  drivers/char/hw_random/Kconfig                |  14 ++
->  drivers/char/hw_random/Makefile               |   1 +
->  drivers/char/hw_random/rockchip-rng.c         | 227 ++++++++++++++++++
->  6 files changed, 319 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml create mode
-> 100644 drivers/char/hw_random/rockchip-rng.c
-
-I just did the following test on my Quartz64 Model A running kernel 6.10
-+ a number of patches, including this one:
-
-===============================================================
-root@quartz64a:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
-1+0 records in
-1+0 records out
-100000 bytes (100 kB, 98 KiB) copied, 5.64507 s, 17.7 kB/s
-root@quartz64a:~# cat /dev/hwrng | rngtest -c 1000
-rngtest 5
-Copyright (c) 2004 by Henrique de Moraes Holschuh
-This is free software; see the source for copying conditions. 
-There is NO warranty; not even for MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.
-
-rngtest: starting FIPS tests...
-rngtest: bits received from input: 20000032
-rngtest: FIPS 140-2 successes: 362
-rngtest: FIPS 140-2 failures: 638
-rngtest: FIPS 140-2(2001-10-10) Monobit: 634
-rngtest: FIPS 140-2(2001-10-10) Poker: 106
-rngtest: FIPS 140-2(2001-10-10) Runs: 43
-rngtest: FIPS 140-2(2001-10-10) Long run: 0
-rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-rngtest: input channel speed: (min=2.638; avg=139.351; max=9765625.000)Kibits/s
-rngtest: FIPS tests speed: (min=21.169; avg=36.158; max=68.610)Mibits/s
-rngtest: Program run time: 148109761 microseconds
-===============================================================
-
-That's almost twice as many failures as successes ...
---nextPart5537839.MQpQnaDgsY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZpZo4AAKCRDXblvOeH7b
-boR5AQCgqaoiNWyzbxb+45ldj8zkL/JfpahT6y+T00sZkniBUQEAq8WpWtRZKF2U
-KCvP/JqsEptPp3b08vRkAwxriNImTgc=
-=mIG+
------END PGP SIGNATURE-----
-
---nextPart5537839.MQpQnaDgsY--
-
-
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240523-md-vfio-mdev-381f74bf87f1
+> 
 
 
