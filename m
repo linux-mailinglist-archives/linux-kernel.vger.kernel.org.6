@@ -1,142 +1,188 @@
-Return-Path: <linux-kernel+bounces-253362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4B4932010
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:30:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA64932012
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6971C214DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:30:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65571B22E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209FF179AE;
-	Tue, 16 Jul 2024 05:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694A17C91;
+	Tue, 16 Jul 2024 05:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4WCSV17"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iMix6gBa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4915EA6;
-	Tue, 16 Jul 2024 05:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4998C17556
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721107819; cv=none; b=X/bwMElfTidyQdf2kreviIYe46rl5WDSgzbRbSor7RL82bIa48r4s8cVu2WLZ+a7WAnGk6Oqz5WwdX9Cp0AbK4jp1CiyeM8+jF3tLw+eOF6JTTJtEkOgDr78k/oGAtZbq+Wjf0yGCH87Am1MUbftRQifzVNYEPSZZPr4utSlzlU=
+	t=1721107835; cv=none; b=D+P9jbwTrFx9+ihTwJMcBGa48SQ3m6OeTHzgJB286yDdL8UnXrYX/nRI+AA/oTBmB92vskMtA/xcTrwNUYOFbs+iE6DLeoWcH4MuN73BGadobBsP8uOcXt0dAz/oXbxgfe4uv7thWDwLmLJ2TPhErG8fT3xFZu+Jgif0H9+3nOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721107819; c=relaxed/simple;
-	bh=+doUghyhtuWkTqmCEPxqUDaHMOU4eE3B8vBE9cMoIVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ni4XXJ+tJAKqYEv1nDnS9Fuz7KpQIDtWv0JxrRoJAw6ll+aYF5wfa5lVa4ddCiCRZ5cUAJzaQVTszbjcior/yFrTjrUDHsVNIKNcpToyq8ECNkcr04ShJDvyys8s9nxVGpt4l80s0XXp/ICeAlP3y9agZhJWMwiDzcEp/zfXKvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4WCSV17; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fb3cf78fcaso34617575ad.1;
-        Mon, 15 Jul 2024 22:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721107817; x=1721712617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9GvAbw2+QEdQ/vGjwyQTSMa6PXDq48QTGM5pRuyk3as=;
-        b=X4WCSV172HEb7UQgG319cfvZE5/jQ34ivph2cKs15uFzrODwuAW2ruJOkRK19l+ot2
-         mFzckH+CHAuSc3HWUqw8EVrn0ClGIiVyyVVhGlXCcD0BBBlIgGNiPEQ8HdN5zWmBsQwt
-         SRj8gdxRtjbbREfJXeoBbA3S0XvF1CVXCt0yjppPeOQKpDxy9eRQO7XHlF4/hFSTbZ8H
-         /5mfGv8mQN0w87+S1eEFxnfwZWcoZPfiEPXPnN2JxKZh9/DzM/6Pqz/AlST20eScNZ9j
-         c4IvSi2dh9QEtUAggMu+RoQtaOiURT8MfjpaNgdr/yBEZqsyXZCGt0e4cCkOVqzg1d13
-         E88Q==
+	s=arc-20240116; t=1721107835; c=relaxed/simple;
+	bh=MztzX0AtfKG0vv54p9gj+yksNvKCCq9lQ3ToCgPyir4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g4cWbtfUR2tOtQJ5eiWHzOaghKhPeDQpm68dgrVLi0Tizh+HOp2BPlUevlgtPvZO1ajw2CyF2gVzE1KjAseXa/aEOEiZnNwqpK5psw9VpSjxL5eQoc1AIdTUiamobyjgKWWVmytC+5Jk8ajZGC+CswmK1LnFweVxD5FtpC0BAu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iMix6gBa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721107832;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uWVxoYotOuZE0adepWrwjW/Gf4iGqle1zZCVIlIH1KA=;
+	b=iMix6gBaVl/jbgO4fzjJ22qBTT47hNxzIXRsk5vvihZ9HEskX6h1x7/I+m+gUrYjAEpisG
+	eC3UpWjjt43AZiOBF/oC53ayLI5PR4Nk/CAmAb9AK7w7qWOMjh9q2K/OwCWOnGipMova0y
+	7Xva1K58RDHXHyPVCNe75/D03jjEH5A=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-WXIPcCaDMzq3FpTq5utJcg-1; Tue, 16 Jul 2024 01:30:30 -0400
+X-MC-Unique: WXIPcCaDMzq3FpTq5utJcg-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-78e323b3752so948915a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:30:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721107817; x=1721712617;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9GvAbw2+QEdQ/vGjwyQTSMa6PXDq48QTGM5pRuyk3as=;
-        b=gQFAOG6KWLFwMNN0u8UFyOtkn5okJeKVUKzJkn92jSnKkwkISPXNA4xTGE9vi+u9Rb
-         XEy4N1LNQZz1nypldno9O41XiHwnomuZVhfvGP00gTap+6EjTDieCL9Jd6KEPjuk2Rop
-         bVvKScnJKv2sGPWRyKSQIZUhmPb0Yehu3XROilOo6hbdoTHQr0tkdFvwJ//GE+RY1hIg
-         qvr6FMXFRHdKbJ3KQ6mOSk9r9PlvnSbaoU3uWwnRWe7Mf6OdHdFe31XIiX8apnYFQQxw
-         H2gGab415CLUWS21z2NlhMITTF4AWE0CFnIEaIselzJyIMgKiGKgrx9ybBpdaRlb9lA9
-         mfcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX892wiDh0Uw4JFCgFFAdjPjgnZgaCzrqsd3ePmXNiTdYLXuIjdS7le08S8V0EK6GKv0RCuR4CT3jvuHH4Po8xR16ojjCd6n1WzVBxx
-X-Gm-Message-State: AOJu0YxfdljuI81sdHzlID/PI1n2Nv5fvzLbhT8wiAU1IBaA5Ht3Ts80
-	Vpw3bIObmW9Lo9vN81e++R1IR18pFrm+XJn3b74RYYt+i+pZH0VP
-X-Google-Smtp-Source: AGHT+IEPYMo8gYQskcf2kw99pQwQH1OCllXS7FMoIMYGSNM6L6DAQy+pgFEZUM+2aaKZ+iGvgV4H5g==
-X-Received: by 2002:a17:902:dacf:b0:1fb:48c3:9328 with SMTP id d9443c01a7336-1fc3da01822mr8143215ad.52.1721107816932;
-        Mon, 15 Jul 2024 22:30:16 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc39078sm49710055ad.228.2024.07.15.22.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 22:30:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <58be303d-d56c-4c56-9756-6b1b0441ccc2@roeck-us.net>
-Date: Mon, 15 Jul 2024 22:30:15 -0700
+        d=1e100.net; s=20230601; t=1721107829; x=1721712629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uWVxoYotOuZE0adepWrwjW/Gf4iGqle1zZCVIlIH1KA=;
+        b=hU2hOY13hJu3ntkX1YB5oT0wGWNl6CC6aJJ6H13bq9sgf+mPHw8vqbOWIdHG+nlN+G
+         sm723OLMD2Si3DkUu2KffzKdhTwoMlRVRAr07SntL4Y3JLBwxbunyCXDltp7uT1TljMv
+         TrS0NIMNO7snhxLlvnHmWb7Tovubk2XBye5CnfF+TRRj4nbBfxiie51/DqrRKpvW5hLE
+         gwRM+4O8fmiq4/NK6eScNpsyBId51DgJuwWmeYGnB2VdNiyPi03Ns9sSOnn5V9csoRGp
+         uezOYQ/1O5SGaTEbt0ztRy+qEPkRgHerg0OsnU76P5lbB/AJW2c+nMElseXWyCpNXd87
+         PNRw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4ojXtnApd7+v418ffa4NyImSfX9u9r+CnTSLRJFg++V8tZODz63fG5GRIqoaAbD0m1I6b/qhew6NRwwwaZZRnmIU1UMxmDxpJXQ94
+X-Gm-Message-State: AOJu0Yw9OZ7iZB+QtOLSRIKUZ9KRGu2jHHgi2L3gdOCJjG8m2Bn88RFX
+	XmkfjIyMn+aWUs0BKlhli5laMjjLh9/zJPjTuO7jeGpedS5YYmw6pGdHmwI1GwUKRrHMEu80Qoi
+	Se0jxndre1D/Ms+X3AWWkkRb/GK48FT1r1KSdUoUPzEzo+GN/EL3L3mGQ0kiMVsVnU2xbyK4PH0
+	ms/c4C0fn+OM2drXTN/cL5k6CRkqhkm0sJbpMe
+X-Received: by 2002:a05:6a21:9207:b0:1c3:b2da:cdff with SMTP id adf61e73a8af0-1c3f10ec5a9mr1427749637.0.1721107829142;
+        Mon, 15 Jul 2024 22:30:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHE4/IsYi91e+b+a6BuuTQWkanz20Qq9rKT2XEAIkwUc0Z5+zjH7s27Jz8KjgAa5CWQ0wpSwUG31rJrYIKyU/c=
+X-Received: by 2002:a05:6a21:9207:b0:1c3:b2da:cdff with SMTP id
+ adf61e73a8af0-1c3f10ec5a9mr1427735637.0.1721107828571; Mon, 15 Jul 2024
+ 22:30:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog: rzn1: Convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>, wim@linux-watchdog.org,
- jjhiblot@traphandler.com, tzungbi@kernel.org, phil.edworthy@renesas.com
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240716031137.400502-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240716031137.400502-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <CACGkMEs9SvtW=Dkg1aU6HuFqTP5eekD1JdR2w377u3iGsOR-Aw@mail.gmail.com> <911f018b-c273-4983-90ac-0a8f925ab6e7@oracle.com>
+In-Reply-To: <911f018b-c273-4983-90ac-0a8f925ab6e7@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 16 Jul 2024 13:30:17 +0800
+Message-ID: <CACGkMEv_yJ6iwOexGGexVt=EEpr2SXHJSLFcH_7g1yh=L-eDgA@mail.gmail.com>
+Subject: Re: [PATCH V2 0/7] vdpa live update
+To: Steven Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/15/24 20:11, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Fixes: d65112f58464 ("watchdog: Add Renesas RZ/N1 Watchdog driver")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+On Mon, Jul 15, 2024 at 10:29=E2=80=AFPM Steven Sistare
+<steven.sistare@oracle.com> wrote:
+>
+> On 7/14/2024 10:14 PM, Jason Wang wrote:
+> > On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@o=
+racle.com> wrote:
+> >>
+> >> Live update is a technique wherein an application saves its state, exe=
+c's
+> >> to an updated version of itself, and restores its state.  Clients of t=
+he
+> >> application experience a brief suspension of service, on the order of
+> >> 100's of milliseconds, but are otherwise unaffected.
+> >>
+> >> Define and implement interfaces that allow vdpa devices to be preserve=
+d
+> >> across fork or exec, to support live update for applications such as Q=
+EMU.
+> >> The device must be suspended during the update, but its DMA mappings a=
+re
+> >> preserved, so the suspension is brief.
+> >>
+> >> The VHOST_NEW_OWNER ioctl transfers device ownership and pinned memory
+> >> accounting from one process to another.
+> >>
+> >> The VHOST_BACKEND_F_NEW_OWNER backend capability indicates that
+> >> VHOST_NEW_OWNER is supported.
+> >>
+> >> The VHOST_IOTLB_REMAP message type updates a DMA mapping with its user=
+land
+> >> address in the new process.
+> >>
+> >> The VHOST_BACKEND_F_IOTLB_REMAP backend capability indicates that
+> >> VHOST_IOTLB_REMAP is supported and required.  Some devices do not
+> >> require it, because the userland address of each DMA mapping is discar=
+ded
+> >> after being translated to a physical address.
+> >>
+> >> Here is a pseudo-code sequence for performing live update, based on
+> >> suspend + reset because resume is not yet widely available.  The vdpa =
+device
+> >> descriptor, fd, remains open across the exec.
+> >>
+> >>    ioctl(fd, VHOST_VDPA_SUSPEND)
+> >>    ioctl(fd, VHOST_VDPA_SET_STATUS, 0)
+> >
+> > I don't understand why we need a reset after suspend, it looks to me
+> > the previous suspend became meaningless.
+>
+> The suspend guarantees completion of in-progress DMA.  At least, that is
+> my interpretation of why that is done for live migration in QEMU, which
+> also does suspend + reset + re-create.  I am following the live migration
+> model.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Yes, but any reason we need a reset after the suspension?
+
+>
+> >>    exec
+> >>
+> >>    ioctl(fd, VHOST_NEW_OWNER)
+> >>
+> >>    issue ioctls to re-create vrings
+> >>
+> >>    if VHOST_BACKEND_F_IOTLB_REMAP
+> >
+> > So the idea is for a device that is using a virtual address, it
+> > doesn't need VHOST_BACKEND_F_IOTLB_REMAP at all?
+>
+> Actually the reverse: if the device translates virtual to physical when
+> the mappings are created, and discards the virtual, then VHOST_IOTLB_REMA=
+P
+> is not needed.
+
+Ok.
+
+>
+> >>        foreach dma mapping
+> >>            write(fd, {VHOST_IOTLB_REMAP, new_addr})
+> >>
+> >>    ioctl(fd, VHOST_VDPA_SET_STATUS,
+> >>              ACKNOWLEDGE | DRIVER | FEATURES_OK | DRIVER_OK)
+> >
+> >  From API level, this seems to be asymmetric as we have suspending but
+> > not resuming?
+>
+> Again, I am just following the path taken by live migration.
+> I will be happy to use resume when the devices and QEMU support it.
+> The decision to use reset vs resume should not affect the definition
+> and use of VHOST_NEW_OWNER and VHOST_IOTLB_REMAP.
+>
+> - Steve
+
+Thanks
 
 
