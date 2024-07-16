@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-253909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265299328B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040D3932849
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB46283F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2611F23324
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB59A1A2C33;
-	Tue, 16 Jul 2024 14:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D2519D06A;
+	Tue, 16 Jul 2024 14:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0fOx72v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlAW1NVT"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F519EEB0;
-	Tue, 16 Jul 2024 14:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E4C19AA4D;
+	Tue, 16 Jul 2024 14:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721140012; cv=none; b=kFBwC98xYE4zm6CK82zOycZ8JgGqjp4aVnG/4TBFW4EPP61ytQjg2mMqTLgWYLGy+57MNl+dX7ZTZIZqip6bP5gIRYoPPfJjKHUpUN5jJWHBGYmy8g1Ii5PQNbZWfdeVMo+/GBcMoBbm5RP29acusWko//ZzXjGcAScqZdBwPrM=
+	t=1721139912; cv=none; b=rGprmmR0A68D8JR+e08VROm7wQ+VQzHXnBtmU88XqSnrDaJ3TdDB8xVnTx/kg2gle/sywB1BAVvNZTPmggemlPJeTlTXSE8GDqLALbW3dMRo+iCV5rL0v7zpN01docbqYnaHFOdebkrVlFl6HK/vUMsp3w2h7jEnCsxdrfGkvvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721140012; c=relaxed/simple;
-	bh=GvxcA8wr20XF4fdAl9dv1Gnq+YAu/czSgSdTv7mKfqU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ILpNr69YQcga2LRzSkVMiERyu9pNziu7W7pQb0YYU88iNO5wIl83+lX2dDeMeG6myCY3wj6/5X1WIaMkEGAjyAIBJprvcAJHKYVwQ+g+WkMmu7+Ajtc9EMLLnziqJ7Y/rxrqH4oIcv/5GGjJbSWkmI9rrz7Td2I5Bs/GKNi4Jpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0fOx72v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4BA5C116B1;
-	Tue, 16 Jul 2024 14:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721140011;
-	bh=GvxcA8wr20XF4fdAl9dv1Gnq+YAu/czSgSdTv7mKfqU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g0fOx72vFZ8ep20tFlAdPuHW/ceqJpO3KI/4L6UPERt4tUvCsFH6o1HlchTCRvQZ2
-	 YigmvrCL+V3yMLEzyAiEeNcq5jPc0dnE0kLDJH8U7//pNSphXwlo/W4KBMWzVD5fTW
-	 kh3ZhG6cczWqs00Cz+8h6scage9uu+sdMGPY/DdzPwI8DrrwHJTWNi/wEJpDIagMoj
-	 tQW7mQ6vENEapgX94ajR20iOq+TWEaNwjaoG9md7aW3S9wiXihM1MnIZUROJ7w0a5g
-	 FqcxYFEFB42URz+scF1z6eL2aLLMrRSfx+vSZwJmHYzrFDv7aYe7wAjK54mxxY6S/Q
-	 JocpLgejHmKZw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Puranjay Mohan <puranjay@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Sasha Levin <sashal@kernel.org>,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alexghiti@rivosinc.com,
-	dev.mbstr@gmail.com,
-	andy.chiu@sifive.com,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.9 22/22] riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
-Date: Tue, 16 Jul 2024 10:24:29 -0400
-Message-ID: <20240716142519.2712487-22-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716142519.2712487-1-sashal@kernel.org>
-References: <20240716142519.2712487-1-sashal@kernel.org>
+	s=arc-20240116; t=1721139912; c=relaxed/simple;
+	bh=bgdOOXW6HMKkMs1pz4zWIPaYex4ei6fPS0RqSXTZEpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WGGlko3USCo6JyL7Z7f7p7PXdnos/s6/7PmQ74dnCBbhy/Gx0VEOoahMkeBycAWc4gHZ9fti6UiRa9T9VufyDHjt4WwBcgTvVw3+x1f6xTeWQJb6XFfN94NVK8pL40l8Q7jvoioh77wzhHOgYe9bPlR6CXFLqpenlQVVz/ChKzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlAW1NVT; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-64b05fab14eso53099807b3.2;
+        Tue, 16 Jul 2024 07:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721139910; x=1721744710; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Io8ocOM3/SFjPGKaudMWtakUYl1fpZ5VprgU1fxT8Ro=;
+        b=IlAW1NVT9FCOOFotISLl5p73XMbIuSsUuv3IlJZs05mku/tHAPWLQg0KiarZH5xyVK
+         vXf8fSPb79VyY1LhWDRQ1fGoJYkGvbN7GdK/rKf51aRHRyHhmEq40KjaOOCgXQbLxJ3l
+         De7aVurc8bPwsWdXEibq8jphJ4x+FPj2GEbbrPqmOla+L5A+nvhGA62Z0uPmVnQH0MbS
+         abE1vsS98b1sSvajcavrSeahEp8deMAY9THjaJT//1lwkkPERMmBFSepiu67GJW5ujp/
+         d/Nj6oP4ibRbhcPBQPmc8shUzvPvTZG6yhWyOAJj/nel7VCc/rFnNzmhgUeNrEXBJpR+
+         9EiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721139910; x=1721744710;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Io8ocOM3/SFjPGKaudMWtakUYl1fpZ5VprgU1fxT8Ro=;
+        b=pmcv8pyP+VrG7qDUikg5TDH+A5fWWoLz9lFWw0sS2O5rbrRqGQ2CQR/LwminDuWB/I
+         YHxg0ONiX2b7NcqKYo0oWvsr7HGSrK4v/rjsDCgT3QZClyi3pqL9qFRroXefflcLdOrl
+         udZHXWQznn0EKiW4MHD5IfchClgWlkUxu+NSdNVMB5mmeJ908Or5k0Ks112uVFXxVQEJ
+         B1q5gHCsYUJkXPp3lMFjJb4xbXGfOVz64c8mOM8heYtzWzAKBQjobBrS93KxgniuLrB6
+         Sq3GZ6ZUq1ly/6AkBjj1lHWkgX+u+dzrcmOD2LdWvCVRu1QuWMjDH5TemslJZhsK977M
+         oenA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/rrsk8DvmQDl99wNnaGbI15q8uUMDOX/Obb7c6ClBFU2K+AANDGgY2S6Zvfn7/ZB/yp7kIt97vD4zjfWiHfis2VE395LUiandV5M6p2pPT/UdQn8jnhsCYBSWWx8aDEGUVdwIWOaH6Q==
+X-Gm-Message-State: AOJu0Yw411qI5I5bCA0UFcnb7haW9pvrIw6MkKlVkxVPy/iBRH5bRqmj
+	b9+jyjqnsursufd/S7p3bSTDcy7SzW7gb89lttghSCPrX6sSf8yaIAYPHMSVJ5wBfVeoIMuxbJq
+	t1tbwGM7kfg6wykgjKfkCR4UGxjA=
+X-Google-Smtp-Source: AGHT+IG3Y418GEJOQa6ZtjMtK0nD0yDxVorgOSwIX1rqkQkDCzulW2MMqAdRjhVFhNSZf35ugKn5Papn4pfeHILmuF0=
+X-Received: by 2002:a0d:da82:0:b0:62f:cb31:1be with SMTP id
+ 00721157ae682-66380f14787mr25593137b3.8.1721139910489; Tue, 16 Jul 2024
+ 07:25:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.9
-Content-Transfer-Encoding: 8bit
+References: <20240711193749.2397471-1-tmaimon77@gmail.com> <CAOiHx=kr=_-ra392XH-vR2fG-E5ZVXAutU9OP6xQRrzXSu9ZWg@mail.gmail.com>
+In-Reply-To: <CAOiHx=kr=_-ra392XH-vR2fG-E5ZVXAutU9OP6xQRrzXSu9ZWg@mail.gmail.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Tue, 16 Jul 2024 17:24:58 +0300
+Message-ID: <CAP6Zq1jmhr4SHDG9+p=64T0AxgRTK7ufgDG7acrg=R5NnEp6JQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/7] pinctrl: npcm8xx: pin configuration changes
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: linus.walleij@linaro.org, avifishman70@gmail.com, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Puranjay Mohan <puranjay@kernel.org>
+Hi Jonas,
 
-[ Upstream commit 393da6cbb2ff89aadc47683a85269f913aa1c139 ]
+Thanks for your comment, will be addressed in next version.
 
-ftrace_graph_ret_addr() takes an `idx` integer pointer that is used to
-optimize the stack unwinding. Pass it a valid pointer to utilize the
-optimizations that might be available in the future.
+Thanks,
 
-The commit is making riscv's usage of ftrace_graph_ret_addr() match
-x86_64.
+Tomer
 
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Link: https://lore.kernel.org/r/20240618145820.62112-1-puranjay@kernel.org
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/riscv/kernel/stacktrace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-index 0d3f00eb0baee..10e311b2759d3 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -32,6 +32,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
- 			     bool (*fn)(void *, unsigned long), void *arg)
- {
- 	unsigned long fp, sp, pc;
-+	int graph_idx = 0;
- 	int level = 0;
- 
- 	if (regs) {
-@@ -68,7 +69,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
- 			pc = regs->ra;
- 		} else {
- 			fp = frame->fp;
--			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
-+			pc = ftrace_graph_ret_addr(current, &graph_idx, frame->ra,
- 						   &frame->ra);
- 			if (pc == (unsigned long)ret_from_exception) {
- 				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
--- 
-2.43.0
-
+On Sat, 13 Jul 2024 at 15:35, Jonas Gorski <jonas.gorski@gmail.com> wrote:
+>
+> Hi,
+>
+> On Fri, 12 Jul 2024 at 02:48, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> >
+> > This patch set addresses various pin configuration changes for the
+> > Nuvoton NPCM8XX BMC SoC. The patches aim to enhance functionality,
+> > remove unused pins, and improve overall pin management.
+> >
+> > Tomer Maimon (7):
+> >   pinctrl: nuvoton: npcm8xx: clear polarity before set both edge
+> >   pinctrl: nuvoton: npcm8xx: add gpi35 and gpi36
+> >   pinctrl: nuvoton: npcm8xx: add pin 250 to DDR pins group
+> >   pinctrl: nuvoton: npcm8xx: remove unused smb4den pin, group, function
+> >   pinctrl: nuvoton: npcm8xx: remove unused lpcclk pin, group, function
+> >   pinctrl: nuvoton: npcm8xx: modify clkrun and serirq pin configuration
+> >   pinctrl: nuvoton: npcm8xx: modify pins flags
+>
+> You also need to update
+> Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+> for any changes that affect the device tree bindings (e.g.
+> adding/removing functions/groups).
+>
+> Best Regards,
+> Jonas
 
