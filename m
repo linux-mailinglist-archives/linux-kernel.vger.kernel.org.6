@@ -1,139 +1,218 @@
-Return-Path: <linux-kernel+bounces-254015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAE0932A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60656932A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A82EB21ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C08285059
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3619DF94;
-	Tue, 16 Jul 2024 15:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3719DF9D;
+	Tue, 16 Jul 2024 15:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dn8L3TNZ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OStJuxMG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DB32B9B3
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021332B9B3;
+	Tue, 16 Jul 2024 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721143014; cv=none; b=Aki1rsyRA15bCLqcOvs/z5i4LdeuVXnWyhRE4Dyu304BgB9Vavc7mtIC5rlYIKIe+iRkeYXt3Pc/kdDFsnbZzcjMZ6ijVpmQWoZCo68Q0DqnkQ3rtZ7UWmHdTnIMMvmH2jecVgrBBuYTahQ8u6CEi1V12n39Uswkox1wVmBgWJo=
+	t=1721143039; cv=none; b=s9f/ra3qQakjaii3P+GlWnEduH5kfeKKkgqjcAF13wX/0KYSIN3K7zfOitsywy660azbzAPewdwywwJsutgRKyln0i9Ar5gbxxUdpROlggbPeQFeoORAYQ8BLwVQj8JWq4KnDY/bPb3zWcuz87IQ1nZTwwzOKlHbYBsnvIyeSpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721143014; c=relaxed/simple;
-	bh=QdugAtkkmtyw1j2n4aC/U95y3fRjs/Qu67PPL3gShUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cqcp1DP1c6EsjspJAKcWE0Z+BmD7LI7V1frHaKXHruF5mfiS/gXlOnWyUGt7r6dvBsIm2hmu9pKY1GasGhSGU/abVmzAIkhhkoxZ7OMMdcDiIz5Kzo3hhe9IKy4C7GEvF7knyvQWMqKF5OW/2NxAj8CuG5ssy2EbYYOgfrXf9FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dn8L3TNZ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70af8128081so3818171b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721143012; x=1721747812; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q+oBquCC6Yqm7bL0Kr3aJX57Dgk/RB3bFu+I79pPnBY=;
-        b=Dn8L3TNZ+4GGHpZzyY6vTKGmsQrmp6593yYDWGI+s/3GXs4bR/n9muz4eFXLl4OtJZ
-         SbX5ID/EbzALM0A5dWt1+faK8GtoKVEoZ5D88z1p/G6b6alCgKeVc3EdMy20SHW/kBmH
-         K6yG2wkNVcQmB3vWAR4H+wANKzc7agRoRQvB2lxkPdX8bUA28b3bRS9cq/rR2XT2Bhb8
-         cWSDvQqxS4Za8Az0kMSNlEISoW8C21H3egfBB2l4SjDoC3BcWn2lX+OO46L+cNLqWEp+
-         abL3BKZXG85hzW71VgUZdKk6CvCOKDNdj355ZYA4wqudoHychEdMtCD3Iu+vRBW2KHFt
-         2Ksw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721143012; x=1721747812;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+oBquCC6Yqm7bL0Kr3aJX57Dgk/RB3bFu+I79pPnBY=;
-        b=TBb2BCN3L8mrUsrL2ZshS9rPNSRz/PdGDF8sYmQjeihuhK72p8PWkbNswzLi841pxk
-         FY2SJ9rjFNdBIowZ2+7qi+LRQoO4u3yvheWAktl6xq0VmzM35JcgzMXC9h6ju7d2LA6b
-         glvPPyyyoVH40h42fTXJH0HaoWN6HlQNtUNKSwZr7vLlyXWRpJ5q2Ptr1nS7+6UYBGeH
-         u0UNKt3sq6wPaTzTPT3k1e/uz/1HZOda6NO/N/YyhYXqrYOll9bivdYJduZS1bf6OFdY
-         dbAlQQs5iolBXLIC/k0Wkc7dquKhQROBWKSWsdxV5+QoLyscLBE95XgSJraAka1y7ld4
-         7PPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdzmheg8by9/3b9zwhK6KQEFw1GYJUrGs6fpr0xeKgNRWDuNMitCHoKw2Ffyr8wvw5JImmuh4KrTFIA+MdlAcZ0ADYpx7qExwouJ8t
-X-Gm-Message-State: AOJu0YwgG2HGBRoMCJ+QRXO6cALZeeXC6xjqhU5Am9mfzOLIAac6sHWW
-	iWvDu0/BfYoQtPGm+mhhVyBULOOpTZuYorIhEW6YLCoN2f0Sy5VDRoISh2Ml7uo=
-X-Google-Smtp-Source: AGHT+IHK38fZflwQZj+0YBMxhcUoqsY5qUO9G0uXW0RmTRimetE4YldMaHWfupwsPvdp5aX1P8Rc/w==
-X-Received: by 2002:a05:6a00:238c:b0:6ec:f2e7:21a8 with SMTP id d2e1a72fcca58-70c2e9942e1mr3475412b3a.21.1721143011828;
-        Tue, 16 Jul 2024 08:16:51 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5d01:167d:9cf4:148e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7da19sm6413009b3a.133.2024.07.16.08.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:16:51 -0700 (PDT)
-Date: Tue, 16 Jul 2024 09:16:48 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, marex@denx.de,
-	iuliana.prodan@nxp.com, daniel.baluta@nxp.com
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
-Subject: Re: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
-Message-ID: <ZpaO4FDEYoA0cpae@p14s>
-References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
- <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
+	s=arc-20240116; t=1721143039; c=relaxed/simple;
+	bh=aPtkDon0fbJqih4uVR9A9V0XEADmRixC6/HZP3ixjcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SJIkXdsKyfj5nNGpkvYGIWfebiARiyv6zDrm/niqStvsr2nqAWG55YPRoxpbkKKHYH/DyZFFqQLviB8F1VkTJ7+hHyqEOMlkR3Wq386tl2JNg2PJECChyreSDTLjrE1TNcANAH0RiugoHLWP/sma/ufz7RauNKQrNgQ5dJ8I6XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OStJuxMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7539FC4AF16;
+	Tue, 16 Jul 2024 15:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721143038;
+	bh=aPtkDon0fbJqih4uVR9A9V0XEADmRixC6/HZP3ixjcU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OStJuxMGNf9E4N7aPla00MkyLckmcowT/RVS9OvxJzZhsomXeQJQe7YsuInEbNfo/
+	 3HkD/P5S8g1ogojfW4mnT7BbdW2jrbKbX24IiWzl4CW9mzxwSlCYO48AI0dkeUNI94
+	 Ryfom9DbqAn2TLlSI9aEFtmZV/2pWYiC+B9PW6X80mqwjv7o6XlXB3jhUBHhfcAuvN
+	 KcoI+Yh/ano29inhTp+T8STcGM1u6aqKcLFzgN3lRzEHmu34/6D4fAmsSPDpwC8QrE
+	 667UJ1UpTX+hBQMUUfznT+4apeKrYmyaCEEhLr+mSAjq1Uqmfku1NKA/IRob9pMyMX
+	 WxSjXAQYN+52g==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea5765e75so6850444e87.0;
+        Tue, 16 Jul 2024 08:17:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW5iQz8xWxI8ZY1hNOjjI6WMjxu3Mk+PqlzOVLntQS2el3WiDftUGr8o3+eAzcJ3Zz3lkkWdYiqrZM/jGiAPwjUaWHz0UpLSEK8yb6V/X9PTQKbJrIg1r74mGQaYtYPmZKLYqoP2eNW
+X-Gm-Message-State: AOJu0Yzc3al7oxwrihSvGiG1v/08VfHq1Q5IaWdzcklsMy7/ktRRNG8W
+	aFOlHa0KHdERiQvxEgouLixaLqjqBciJbmsOEo5/PTFK62y8hg4obu0TmlW2W3YKvJuJesupBKp
+	wF557bJWaHJfVWXuxLPxpaYKsrwo=
+X-Google-Smtp-Source: AGHT+IFXMyRqVEuv0lOnARYZkpoy4q6bG9QB8sGhRLJi8OPsread22Hc+2bdOi+Zy5Y6+YCk5vlxTdBbCgvBP7y/N54=
+X-Received: by 2002:a05:6512:b94:b0:52c:c032:538d with SMTP id
+ 2adb3069b0e04-52edf02300cmr1727066e87.27.1721143036612; Tue, 16 Jul 2024
+ 08:17:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
+References: <20240715185309.1637839-1-steve.wahl@hpe.com> <20240715185309.1637839-2-steve.wahl@hpe.com>
+In-Reply-To: <20240715185309.1637839-2-steve.wahl@hpe.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 16 Jul 2024 08:17:02 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXF7SXvN=szKb=g8MSzLyLWy=Uozr0ps40zRUoajoeG6pQ@mail.gmail.com>
+Message-ID: <CAMj1kXF7SXvN=szKb=g8MSzLyLWy=Uozr0ps40zRUoajoeG6pQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] x86/kexec: Add EFI config table identity mapping
+ for kexec kernel
+To: Steve Wahl <steve.wahl@hpe.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
+	Pavin Joseph <me@pavinjoseph.com>, Eric Hagberg <ehagberg@gmail.com>, 
+	Simon Horman <horms@verge.net.au>, Eric Biederman <ebiederm@xmission.com>, 
+	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>, 
+	Dimitri Sivanich <sivanich@hpe.com>, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>, 
+	Michael Roth <michael.roth@amd.com>, Tao Liu <ltao@redhat.com>, kexec@lists.infradead.org, 
+	"Kalra, Ashish" <ashish.kalra@amd.com>, linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Good morning,
-
-On Fri, Jul 12, 2024 at 04:34:54PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The DDR Alias address should be 0x40000000 according to RM, so correct
-> it.
-> 
-> Fixes: 4ab8f9607aad ("remoteproc: imx_rproc: support i.MX8MQ/M")
-
-This commit was merged more than 3 years ago...  I don't see how such a blatant
-mistake could have survived this long without causing problems or being noticed.
-On top of things checkpatch gives me a warning.
-
-> Reported-by: Terry Lv <terry.lv@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On Mon, 15 Jul 2024 at 11:53, Steve Wahl <steve.wahl@hpe.com> wrote:
+>
+> From: Tao Liu <ltao@redhat.com>
+>
+> A kexec kernel boot failure is sometimes observed on AMD CPUs due to
+> an unmapped EFI config table array.  This can be seen when "nogbpages"
+> is on the kernel command line, and has been observed as a full BIOS
+> reboot rather than a successful kexec.
+>
+> This was also the cause of reported regressions attributed to Commit
+> 7143c5f4cf20 ("x86/mm/ident_map: Use gbpages only where full GB page
+> should be mapped.") which was subsequently reverted.
+>
+> To avoid this page fault, explicitly include the EFI config table
+> array in the kexec identity map.
+>
+> Further explanation:
+>
+> The following 2 commits caused the EFI config table array to be
+> accessed when enabling sev at kernel startup.
+>
+>     commit ec1c66af3a30 ("x86/compressed/64: Detect/setup SEV/SME features
+>                           earlier during boot")
+>     commit c01fce9cef84 ("x86/compressed: Add SEV-SNP feature
+>                           detection/setup")
+>
+> This is in the code that examines whether SEV should be enabled or
+> not, so it can even affect systems that are not SEV capable.
+>
+> This may result in a page fault if the EFI config table array's
+> address is unmapped. Since the page fault occurs before the new kernel
+> establishes its own identity map and page fault routines, it is
+> unrecoverable and kexec fails.
+>
+> Most often, this problem is not seen because the EFI config table
+> array gets included in the map by the luck of being placed at a memory
+> address close enough to other memory areas that *are* included in the
+> map created by kexec.
+>
+> Both the "nogbpages" command line option and the "use gpbages only
+> where full GB page should be mapped" patch greatly reduce the chance
+> of being included in the map by luck, which is why the problem
+> appears.
+>
+> Signed-off-by: Tao Liu <ltao@redhat.com>
+> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+> Tested-by: Pavin Joseph <me@pavinjoseph.com>
+> Tested-by: Sarah Brofeldt <srhb@dbc.dk>
+> Tested-by: Eric Hagberg <ehagberg@gmail.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 144c8e9a642e..3c8b64db8823 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -210,7 +210,7 @@ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
->  	/* QSPI Code - alias */
->  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
->  	/* DDR (Code) - alias */
-> -	{ 0x10000000, 0x80000000, 0x0FFE0000, 0 },
-> +	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+>  arch/x86/kernel/machine_kexec_64.c | 35 ++++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index cc0f7f70b17b..563d119f9f29 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -28,6 +28,7 @@
+>  #include <asm/setup.h>
+>  #include <asm/set_memory.h>
+>  #include <asm/cpu.h>
+> +#include <asm/efi.h>
+>
+>  #ifdef CONFIG_ACPI
+>  /*
+> @@ -83,10 +84,12 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
+>  #endif
+>
+>  static int
+> -map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
 
-Without access to HW or the documentation there is no way for me to assess the
-validity of this patch.  Marek, Iuliana and Daniel - please review and test this
-patch.
+I think we can keep the name - the array of EFI config table
+references could be considered part of the system table, even though
+it may live in a separate allocation.
 
-Thanks,
-Mathieu
+> +map_efi_tables(struct x86_mapping_info *info, pgd_t *level4p)
+>  {
+>  #ifdef CONFIG_EFI
+>         unsigned long mstart, mend;
+> +       void *kaddr;
+> +       int ret;
+>
+>         if (!efi_enabled(EFI_BOOT))
+>                 return 0;
+> @@ -102,6 +105,30 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
+>         if (!mstart)
+>                 return 0;
+>
+> +       ret = kernel_ident_mapping_init(info, level4p, mstart, mend);
+> +       if (ret)
+> +               return ret;
+> +
+> +       kaddr = memremap(mstart, mend - mstart, MEMREMAP_WB);
+> +       if (!kaddr) {
+> +               pr_err("Could not map UEFI system table\n");
+> +               return -ENOMEM;
+> +       }
+> +
+> +       mstart = efi_config_table;
+> +
+> +       if (efi_enabled(EFI_64BIT)) {
+> +               efi_system_table_64_t *stbl = (efi_system_table_64_t *)kaddr;
+> +
+> +               mend = mstart + sizeof(efi_config_table_64_t) * stbl->nr_tables;
+> +       } else {
+> +               efi_system_table_32_t *stbl = (efi_system_table_32_t *)kaddr;
+> +
+> +               mend = mstart + sizeof(efi_config_table_32_t) * stbl->nr_tables;
+> +       }
+> +
+> +       memunmap(kaddr);
+> +
+>         return kernel_ident_mapping_init(info, level4p, mstart, mend);
+>  #endif
+>         return 0;
+> @@ -241,10 +268,10 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+>         }
+>
+>         /*
+> -        * Prepare EFI systab and ACPI tables for kexec kernel since they are
+> -        * not covered by pfn_mapped.
+> +        * Prepare EFI systab, config table and ACPI tables for kexec kernel
 
->  	/* TCML */
->  	{ 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  | ATT_IOMEM},
->  	/* TCMU */
-> 
-> -- 
-> 2.37.1
-> 
+Please avoid 'config table' here, as it is ambiguous. IMO you can just
+drop this hunk (and the one below)
+
+> +        * since they are not covered by pfn_mapped.
+>          */
+> -       result = map_efi_systab(&info, level4p);
+> +       result = map_efi_tables(&info, level4p);
+>         if (result)
+>                 return result;
+>
+> --
+> 2.26.2
+>
 
