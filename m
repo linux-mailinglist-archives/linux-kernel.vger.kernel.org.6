@@ -1,137 +1,234 @@
-Return-Path: <linux-kernel+bounces-254523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5968F933447
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:37:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DB7933450
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE0C28281B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77878282CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C610414386E;
-	Tue, 16 Jul 2024 22:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C57F14386B;
+	Tue, 16 Jul 2024 22:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1p9IYH6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kT9iVsdh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2537581D;
-	Tue, 16 Jul 2024 22:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4281B812;
+	Tue, 16 Jul 2024 22:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721169423; cv=none; b=rPlRK1C+tqZQlpM6YDRc/Gi9BiLKpatIvZUvir+ED2mS5I6c7hxYuIFtKlAJOTEMa09ISU8p6ItdqtEJ1AVS+BarF+Y/+RHtCSe4/tOr13p5+r5k2QVEIA7/YhzeY3Pt3SEUA34UnFB98FRreJejRr5andhUyBHxr/eLgd2FRyw=
+	t=1721169798; cv=none; b=mvAee8ZpsV09iSFOB0AVT8cYKlLCe1O9EV3ye3YDS2JUt4slKCzBT66E+bYmvxyvicfX6hmxQXOcKKQKOkaug8Nm9maoBwyPD5xt2+BCjP++rbMOup9ABnxV4+l0m597GpoODe763NH850kOyIJVzXWqBnrwZkBIeG79oZgmT20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721169423; c=relaxed/simple;
-	bh=XUhPqr66mBnpUl5wHd3I09bj5Pm8QPcHLcQbS8RN2FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjRFd9K+tRVF/XYZ8SP3OESEE0Z+o1g0fVhyGSp98vueYgGgLdhUuyhZv8uZPBR5A4VyvAQNUQStcRPFHW09EUEAXfr3qVCsyaZGl8hA+fEXC3e/lub/9r0VU0kliRZ5zrV4xz5QChUPN25JE/mizdkTYgOLWgQQbJJbuGaTx/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1p9IYH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0D6C116B1;
-	Tue, 16 Jul 2024 22:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721169422;
-	bh=XUhPqr66mBnpUl5wHd3I09bj5Pm8QPcHLcQbS8RN2FY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F1p9IYH6CeswGs4EhE3VvNyGUrDLpo0oWzVNjMgdh1KruHl2vKfSDfiscijpVIalA
-	 DHurXGvl7xl1FcRKM+mgjsN5Q8QAUUSQ5i64eUKdblM8SurZYwSNXaTLK63c2MPcPJ
-	 wWG13t+2ppvzi8J65PTwRj0YFm7SBgwlzjAYjHozzpKrlEIR8bQUg+m6zedz8yS8km
-	 4JZndZ1R6/kkdFyE6/5L0/UnCAhdf/MMPw6YTn72JsINyPJfeRg9gvOpMBFC0/IlC0
-	 MI+IxItyLo0XzPGtrksOOQTYCXZQFJua4YwNox8hmOrVBBkM1UaR/xa7rNE/MimPu6
-	 PxeS4v9QjH9Ng==
-Date: Tue, 16 Jul 2024 15:37:01 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v10 10/10] xfs: enable block size larger than page size
- support
-Message-ID: <20240716223701.GG103014@frogsfrogsfrogs>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-11-kernel@pankajraghav.com>
- <ZpaRwdi3Vo3qutyk@casper.infradead.org>
- <20240716174016.GZ1998502@frogsfrogsfrogs>
- <ZpayAGWQdw1rbCng@casper.infradead.org>
+	s=arc-20240116; t=1721169798; c=relaxed/simple;
+	bh=4dRhrNJGdRHHO1Qqgkhsl3gy15JR9abfeICOd3hcOLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XOMGZZCoCNdLiQiU5JLR1BPm/qLbY5NejbsvrUkNQugalMoPoZGPnEcmYbZB9bxRaCcyJxjK6gISxouDudZ3LUd7hlqMUdMS/fNaJ+2j2q+c8NVYbVOkwhUN8q4RwtoKwYm9YNt+59cZSKJsQBxpLTRrXFoV45lL9LY1uwvU0jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kT9iVsdh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHfbkl024353;
+	Tue, 16 Jul 2024 22:43:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	X0HNYJ6Zl5BBLcsAlGhkH9DCo0hSKmIGYGJnb5+xX8U=; b=kT9iVsdhrlyfogLb
+	GdHoN5QceJQ+C/A6lueNy9FpPM07cWiCpyUuJdS2PBLivd+xV0jVmys9U85n/hxq
+	ExFpOjpg8qJn50rFLh7EsMFAti7OmFrxXfTikk2S+8KYkyhDzFPMBKNjhiZwqk+C
+	VQ+y04ueSbapMUYctBaxq4fYQsSJQOuMZU6Mb4vsPRFEeplgDKj6d4oJtbLtG7M/
+	xdaMxbNq1MSl2X9K78hBWUZ2Q55ULWTPNdlh0q3T8v+r9kVAxl5Q7uucIY7d1CRV
+	qLgzQfSDIasZHhxcfmCQKVd9SolmuTTObOxlK7IKE/aV1gRslU3sGcQolAcT2Isp
+	VPqirQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfu0hju-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 22:43:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46GMh8Lu006720
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 22:43:08 GMT
+Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
+ 2024 15:43:07 -0700
+Message-ID: <6460042b-a2cb-41fa-9f6f-fb11e20f69aa@quicinc.com>
+Date: Tue, 16 Jul 2024 15:43:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpayAGWQdw1rbCng@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] drm/msm/dpu: rate limit snapshot capture for mmu
+ faults
+To: Rob Clark <robdclark@gmail.com>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <freedreno@lists.freedesktop.org>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <swboyd@chromium.org>, <dianders@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
+ <20240628214848.4075651-6-quic_abhinavk@quicinc.com>
+ <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
+ <CAF6AEGtVBarvEUqgt7SHzYwXUsjY_rVQS6aMsN00G91Dr1aWAQ@mail.gmail.com>
+ <cf8d00cd-6dc6-42b9-be61-93ef48d42b0c@quicinc.com>
+ <CAF6AEGv2H2FQ4wCWEzgboK0Lz3em-0XkG5pe_HwN1rW2iaGVrw@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAF6AEGv2H2FQ4wCWEzgboK0Lz3em-0XkG5pe_HwN1rW2iaGVrw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LsOaoasqd-g_tbx4W7LBmwroSZzfrS9Q
+X-Proofpoint-ORIG-GUID: LsOaoasqd-g_tbx4W7LBmwroSZzfrS9Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-16_02,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ spamscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407160167
 
-On Tue, Jul 16, 2024 at 06:46:40PM +0100, Matthew Wilcox wrote:
-> On Tue, Jul 16, 2024 at 10:40:16AM -0700, Darrick J. Wong wrote:
-> > On Tue, Jul 16, 2024 at 04:29:05PM +0100, Matthew Wilcox wrote:
-> > > On Mon, Jul 15, 2024 at 11:44:57AM +0200, Pankaj Raghav (Samsung) wrote:
-> > > > +++ b/fs/xfs/xfs_super.c
-> > > > @@ -1638,16 +1638,30 @@ xfs_fs_fill_super(
-> > > >  		goto out_free_sb;
-> > > >  	}
-> > > >  
-> > > > -	/*
-> > > > -	 * Until this is fixed only page-sized or smaller data blocks work.
-> > > > -	 */
-> > > >  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> > > > -		xfs_warn(mp,
-> > > > -		"File system with blocksize %d bytes. "
-> > > > -		"Only pagesize (%ld) or less will currently work.",
-> > > > +		size_t max_folio_size = mapping_max_folio_size_supported();
-> > > > +
-> > > > +		if (!xfs_has_crc(mp)) {
-> > > > +			xfs_warn(mp,
-> > > > +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
-> > > >  				mp->m_sb.sb_blocksize, PAGE_SIZE);
-> > > > -		error = -ENOSYS;
-> > > > -		goto out_free_sb;
-> > > > +			error = -ENOSYS;
-> > > > +			goto out_free_sb;
-> > > > +		}
-> > > > +
-> > > > +		if (mp->m_sb.sb_blocksize > max_folio_size) {
-> > > > +			xfs_warn(mp,
-> > > > +"block size (%u bytes) not supported; maximum folio size supported in "\
-> > > > +"the page cache is (%ld bytes). Check MAX_PAGECACHE_ORDER (%d)",
-> > > > +			mp->m_sb.sb_blocksize, max_folio_size,
-> > > > +			MAX_PAGECACHE_ORDER);
-> > > 
-> > > Again, too much message.  Way too much.  We shouldn't even allow block
-> > > devices to be created if their block size is larger than the max supported
-> > > by the page cache.
-> > 
-> > Filesystem blocksize != block device blocksize.  xfs still needs this
-> > check because one can xfs_copy a 64k-fsblock xfs to a hdd with 512b
-> > sectors and try to mount that on x86.
-> > 
-> > Assuming there /is/ some fs that allows 1G blocksize, you'd then really
-> > want a mount check that would prevent you from mounting that.
+
+
+On 7/16/2024 2:50 PM, Rob Clark wrote:
+> On Tue, Jul 16, 2024 at 2:45 PM Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 7/15/2024 12:51 PM, Rob Clark wrote:
+>>> On Mon, Jul 1, 2024 at 12:43 PM Dmitry Baryshkov
+>>> <dmitry.baryshkov@linaro.org> wrote:
+>>>>
+>>>> On Fri, Jun 28, 2024 at 02:48:47PM GMT, Abhinav Kumar wrote:
+>>>>> There is no recovery mechanism in place yet to recover from mmu
+>>>>> faults for DPU. We can only prevent the faults by making sure there
+>>>>> is no misconfiguration.
+>>>>>
+>>>>> Rate-limit the snapshot capture for mmu faults to once per
+>>>>> msm_kms_init_aspace() as that should be sufficient to capture
+>>>>> the snapshot for debugging otherwise there will be a lot of
+>>>>> dpu snapshots getting captured for the same fault which is
+>>>>> redundant and also might affect capturing even one snapshot
+>>>>> accurately.
+>>>>
+>>>> Please squash this into the first patch. There is no need to add code
+>>>> with a known defficiency.
+>>>>
+>>>> Also, is there a reason why you haven't used <linux/ratelimit.h> ?
+>>>
+>>> So, in some ways devcoredump is ratelimited by userspace needing to
+>>> clear an existing devcore..
+>>>
+>>
+>> Yes, a new devcoredump device will not be created until the previous one
+>> is consumed or times out but here I am trying to limit even the DPU
+>> snapshot capture because DPU register space is really huge and the rate
+>> at which smmu faults occur is quite fast that its causing instability
+>> while snapshots are being captured.
+>>
+>>> What I'd suggest would be more useful is to limit the devcores to once
+>>> per atomic update, ie. if display state hasn't changed, maybe an
+>>> additional devcore isn't useful
+>>>
+>>> BR,
+>>> -R
+>>>
+>>
+>> By display state change, do you mean like the checks we have in
+>> drm_atomic_crtc_needs_modeset()?
+>>
+>> OR do you mean we need to cache the previous (currently picked up by hw)
+>> state and trigger a new devcores if the new state is different by
+>> comparing more things?
+>>
+>> This will help to reduce the snapshots to unique frame updates but I do
+>> not think it will reduce the rate enough for the case where DPU did not
+>> recover from the previous fault.
 > 
-> Absolutely, we need to have an fs blocksize check in the fs (if only
-> because fs fuzzers will put random values in fields and expect the system
-> to not crash).  But that should have nothing to do with page cache size.
+> I was thinking the easy thing, of just resetting the counter in
+> msm_atomic_commit_tail().. I suppose we could be clever filter out
+> updates that only change scanout address.  Or hash the atomic state
+> and only generate devcoredumps for unique states.  But I'm not sure
+> how over-complicated we should make this.
+> 
+> BR,
+> -R
 
-I don't understand your objection -- we're setting the minimum folio
-order on a file's pagecache to match the fs-wide blocksize.  If the
-pagecache can't possibly fulfill our fs-wide requirement, then why would
-we continue the mount?
+Its a good idea actually and I would also like to keep it simple :)
 
-Let's pretend that MAX_PAGECACHE_ORDER is 1.  The filesystem has 16k
-blocks, the CPU has 4k base pages.  xfs will try to set the min folio
-order to 2 via mapping_set_folio_order_range.  That function clamps it
-to 1, so we try to cache a 16k fsblock with 8k pages.  Does that
-actually work?
+One question, is it okay to assume that all compositors will only issue 
+unique commits? Because we are assuming thats the case with resetting 
+the counter in msm_atomic_commit_tail().
 
-If not, then doesn't it make more more sense to fail the mount?
-
---D
+> 
+>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/msm/msm_kms.c | 6 +++++-
+>>>>>    drivers/gpu/drm/msm/msm_kms.h | 3 +++
+>>>>>    2 files changed, 8 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+>>>>> index d5d3117259cf..90a333920c01 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_kms.c
+>>>>> +++ b/drivers/gpu/drm/msm/msm_kms.c
+>>>>> @@ -168,7 +168,10 @@ static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void
+>>>>>    {
+>>>>>         struct msm_kms *kms = arg;
+>>>>>
+>>>>> -     msm_disp_snapshot_state(kms->dev);
+>>>>> +     if (!kms->fault_snapshot_capture) {
+>>>>> +             msm_disp_snapshot_state(kms->dev);
+>>>>> +             kms->fault_snapshot_capture++;
+>>>>
+>>>> When is it decremented?
+>>>>
+>>>>> +     }
+>>>>>
+>>>>>         return -ENOSYS;
+>>>>>    }
+>>>>> @@ -208,6 +211,7 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+>>>>>                 mmu->funcs->destroy(mmu);
+>>>>>         }
+>>>>>
+>>>>> +     kms->fault_snapshot_capture = 0;
+>>>>>         msm_mmu_set_fault_handler(aspace->mmu, kms, msm_kms_fault_handler);
+>>>>>
+>>>>>         return aspace;
+>>>>> diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
+>>>>> index 1e0c54de3716..240b39e60828 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_kms.h
+>>>>> +++ b/drivers/gpu/drm/msm/msm_kms.h
+>>>>> @@ -134,6 +134,9 @@ struct msm_kms {
+>>>>>         int irq;
+>>>>>         bool irq_requested;
+>>>>>
+>>>>> +     /* rate limit the snapshot capture to once per attach */
+>>>>> +     int fault_snapshot_capture;
+>>>>> +
+>>>>>         /* mapper-id used to request GEM buffer mapped for scanout: */
+>>>>>         struct msm_gem_address_space *aspace;
+>>>>>
+>>>>> --
+>>>>> 2.44.0
+>>>>>
+>>>>
+>>>> --
+>>>> With best wishes
+>>>> Dmitry
 
