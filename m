@@ -1,224 +1,136 @@
-Return-Path: <linux-kernel+bounces-254532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C257933460
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:55:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EFA933468
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489A5284250
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B471C22489
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2C9143C48;
-	Tue, 16 Jul 2024 22:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFC713CFA3;
+	Tue, 16 Jul 2024 23:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aq8n/Fk5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmZeM8OS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D81121350;
-	Tue, 16 Jul 2024 22:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9D8143726
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721170507; cv=none; b=EAoNwFwlFke3LSTNnHg0Pd+OWL0d/0u2QuaqTG+nSaTfJBfi2t12U4V/B474Ir03TUGeUWUIGyWebogq4ir0Zq/rnsqVGu07ewczRfp5sp7MT3FcCZ2UDXMCRj/evr2tYT7orIkyjjNvqJrJ45Z624/aDd5hoHsXa18dkQZENrw=
+	t=1721170881; cv=none; b=jxOO9HgBmxIKxHS5RhGuR0tiq+porzU4XiGDzzTDNtfmCMlK+vdv2nIalbq6zwsX31CItLSaRuGW61KTBtfHcmkuGNyFynXdKxmYGtojEZpQI1v6QE0/iU28LHFFNZvhLT/SWBPlII54lxgGLwB3HvV3UKlMwA3PBwJEpWErqsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721170507; c=relaxed/simple;
-	bh=g/xwm05rvbTzK1jG2tJXHLW8KGiMdROBtBgyRvzO4aQ=;
+	s=arc-20240116; t=1721170881; c=relaxed/simple;
+	bh=FxuQCZK6IKzWe5TebWWLlXJgqhbrRmbYDrRuUZVNejQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXIYqdSP4gZlWmCWRRyPplrGtOuT37TiTSjCZLU5oybP0AajEmrUqAxvLz7gsaisrdXylLe01NrMYra3gcX0Mb5pA7WPtgrsmiEBJzcfYBNDgqdDu5GCEqSw4O0Qk+LqFg5DYGFa9WKMLd23b7tphHWBjHlxljc4NjrOi8p7acs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aq8n/Fk5; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721170506; x=1752706506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=g/xwm05rvbTzK1jG2tJXHLW8KGiMdROBtBgyRvzO4aQ=;
-  b=Aq8n/Fk558sETot7f1Pf9zNrUGUiL6GJeqWTHOTSbIW5nVxRAOeM1qL3
-   w6Yo68clBNYjoF2lsFMQrtjdN3dKvE8z8X7dlVkp1kEFujlt5gc9MuEkK
-   ZyUmhzYiEM8CYBmU3opZkp+v/QEsGTNSutsu7yzlUnpYELNnehUEHHRrU
-   LGmNYT+js2D5uNUHFF/D6yoSCUh5iI/Az8JNzHHvBOA3+Umcu2hSnytNX
-   QzJL6MvgE8AoEGjmgDPJFy0R5FjtJ7otibCQMucLUxs814Nb8h6q+Muty
-   +4pDbNrXcNcrRFH3NuZu7VclXIma8WIlwM5qxfFgITouSWaBXPuWV9DcU
-   Q==;
-X-CSE-ConnectionGUID: 6JSRVvh7RmCDGI+DybcYWA==
-X-CSE-MsgGUID: oJppjU58Rq2rMKqAlMG1NQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29233178"
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="29233178"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 15:55:05 -0700
-X-CSE-ConnectionGUID: rnR1z46eR3q8JcAqPn4pdg==
-X-CSE-MsgGUID: 0ovMS4lhTkazQpRKC1VNrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="54394068"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 15:55:04 -0700
-Date: Tue, 16 Jul 2024 15:55:04 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: isaku.yamahata@intel.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
-	Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
-	Sean Christopherson <seanjc@google.com>,
-	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
-	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v19 117/130] KVM: TDX: Silently ignore INIT/SIPI
-Message-ID: <20240716225504.GE1900928@ls.amr.corp.intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <4a4225de42be0f7568c5ecb5c22f2029f8e91d62.1708933498.git.isaku.yamahata@intel.com>
- <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHJDydvijBcScbZjJOWAs+qxorl+4GGyqBeV4xSTnRQNDZe7OXYbq0jgAwQOle6AJsIaqn0eb8Z6PsqdMjD4PfvooClyqQDF45h7pM/PKkrF2mF2f8tn1/p1TY/qqXk60btCQvBkZt6HAxL3bUw+zgXWxJBxEGZQnUVZYU4kxcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmZeM8OS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775CFC4AF09;
+	Tue, 16 Jul 2024 23:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721170880;
+	bh=FxuQCZK6IKzWe5TebWWLlXJgqhbrRmbYDrRuUZVNejQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fmZeM8OSxo2ATMdaiXmxX85BNIYdigGi+smpykyaa8RjDyy69H2bmKDHcnPp6urbL
+	 qUzhUwbLE10Y7bFCrJ8jFiCEuBvZszql4uzTlmeyGnXb7gjazywGr8lCkVvvdJk8Lo
+	 OlFLcGV66X65GBS4MuUGpjwHx7M/JrW2JoWkOJ9YDM+PFsy4jSv9YwPuUm5hEfBEp5
+	 7du7btDTIBHznWL6EzMPZi1pBZ0DgR25+BL08stgDNSw5BKdFuEQxbxI8npD7xlrsg
+	 boRq4A2hqJYvSbpJzmHisIvzMSoHQyzs/PfVor+A92ioJWUopd3Rn6TD6a5Jl++B9b
+	 yciCnUgxB8TJQ==
+Date: Wed, 17 Jul 2024 01:01:17 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/8] timers/migration: Move hierarchy setup into
+ cpuhotplug prepare callback
+Message-ID: <Zpb7vQqarZZqvtCo@pavilion.home>
+References: <20240716-tmigr-fixes-v4-0-757baa7803fe@linutronix.de>
+ <20240716-tmigr-fixes-v4-2-757baa7803fe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c45a1448-09ee-4750-bf86-28295dfc6089@linux.intel.com>
+In-Reply-To: <20240716-tmigr-fixes-v4-2-757baa7803fe@linutronix.de>
 
-On Mon, Jun 17, 2024 at 09:20:36AM +0800,
-Binbin Wu <binbin.wu@linux.intel.com> wrote:
+Le Tue, Jul 16, 2024 at 04:19:20PM +0200, Anna-Maria Behnsen a �crit :
+> However if the active CPU prevents from tmigr_cpu_(in)active() to walk up
+> with the update not-or-half visible, nothing prevents walking up to the new
+> top with a 0 childmask in tmigr_handle_remote_up() or
+> tmigr_requires_handle_remote_up() if the active CPU doing the prepare is
+> not the migrator. But then it looks fine because:
+> 
+>   * tmigr_check_migrator() should just return false
+>   * The migrator is active and should eventually observe the new childmask
+>     at some point in a future tick.
+> 
+> Split setup functionality of online callback into the cpuhotplug prepare
+> callback and setup hotplug state. Change init call into early_initcall() to
+> make sure boot CPU prepares everything for upcoming CPUs.
 
-> 
-> 
-> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > 
-> > The TDX module API doesn't provide API for VMM to inject INIT IPI and SIPI.
-> > Instead it defines the different protocols to boot application processors.
-> > Ignore INIT and SIPI events for the TDX guest.
-> > 
-> > There are two options. 1) (silently) ignore INIT/SIPI request or 2) return
-> > error to guest TDs somehow.  Given that TDX guest is paravirtualized to
-> > boot AP, the option 1 is chosen for simplicity.
-> > 
-> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > ---
-> >   arch/x86/include/asm/kvm-x86-ops.h |  1 +
-> >   arch/x86/include/asm/kvm_host.h    |  2 ++
-> >   arch/x86/kvm/lapic.c               | 19 +++++++++++-------
-> >   arch/x86/kvm/svm/svm.c             |  1 +
-> >   arch/x86/kvm/vmx/main.c            | 32 ++++++++++++++++++++++++++++--
-> >   arch/x86/kvm/vmx/tdx.c             |  4 ++--
-> >   6 files changed, 48 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> > index 22d93d4124c8..85c04aad6ab3 100644
-> > --- a/arch/x86/include/asm/kvm-x86-ops.h
-> > +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> > @@ -149,6 +149,7 @@ KVM_X86_OP_OPTIONAL(migrate_timers)
-> >   KVM_X86_OP(msr_filter_changed)
-> >   KVM_X86_OP(complete_emulated_msr)
-> >   KVM_X86_OP(vcpu_deliver_sipi_vector)
-> > +KVM_X86_OP(vcpu_deliver_init)
-> >   KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
-> >   KVM_X86_OP_OPTIONAL(get_untagged_addr)
-> >   KVM_X86_OP_OPTIONAL_RET0(gmem_max_level)
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index bb8be091f996..2686c080820b 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1836,6 +1836,7 @@ struct kvm_x86_ops {
-> >   	int (*complete_emulated_msr)(struct kvm_vcpu *vcpu, int err);
-> >   	void (*vcpu_deliver_sipi_vector)(struct kvm_vcpu *vcpu, u8 vector);
-> > +	void (*vcpu_deliver_init)(struct kvm_vcpu *vcpu);
-> >   	/*
-> >   	 * Returns vCPU specific APICv inhibit reasons
-> > @@ -2092,6 +2093,7 @@ void kvm_get_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
-> >   void kvm_set_segment(struct kvm_vcpu *vcpu, struct kvm_segment *var, int seg);
-> >   int kvm_load_segment_descriptor(struct kvm_vcpu *vcpu, u16 selector, int seg);
-> >   void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
-> > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu);
-> >   int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
-> >   		    int reason, bool has_error_code, u32 error_code);
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index 8025c7f614e0..431074679e83 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -3268,6 +3268,16 @@ int kvm_lapic_set_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
-> >   	return 0;
-> >   }
-> > +void kvm_vcpu_deliver_init(struct kvm_vcpu *vcpu)
-> > +{
-> > +	kvm_vcpu_reset(vcpu, true);
-> > +	if (kvm_vcpu_is_bsp(vcpu))
-> > +		vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-> > +	else
-> > +		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
-> > +}
-> > +EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_init);
-> > +
-> >   int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
-> >   {
-> >   	struct kvm_lapic *apic = vcpu->arch.apic;
-> > @@ -3299,13 +3309,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
-> >   		return 0;
-> >   	}
-> > -	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
-> > -		kvm_vcpu_reset(vcpu, true);
-> > -		if (kvm_vcpu_is_bsp(apic->vcpu))
-> > -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-> > -		else
-> > -			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
-> > -	}
-> > +	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events))
-> > +		static_call(kvm_x86_vcpu_deliver_init)(vcpu);
-> >   	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
-> >   		if (vcpu->arch.mp_state == KVM_MP_STATE_INIT_RECEIVED) {
-> >   			/* evaluate pending_events before reading the vector */
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index f76dd52d29ba..27546d993809 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -5037,6 +5037,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
-> >   	.complete_emulated_msr = svm_complete_emulated_msr,
-> >   	.vcpu_deliver_sipi_vector = svm_vcpu_deliver_sipi_vector,
-> > +	.vcpu_deliver_init = kvm_vcpu_deliver_init,
-> >   	.vcpu_get_apicv_inhibit_reasons = avic_vcpu_get_apicv_inhibit_reasons,
-> >   };
-> > diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-> > index 4f3b872cd401..84d2dc818cf7 100644
-> > --- a/arch/x86/kvm/vmx/main.c
-> > +++ b/arch/x86/kvm/vmx/main.c
-> > @@ -320,6 +320,14 @@ static void vt_enable_smi_window(struct kvm_vcpu *vcpu)
-> >   }
-> >   #endif
-> > +static bool vt_apic_init_signal_blocked(struct kvm_vcpu *vcpu)
-> > +{
-> > +	if (is_td_vcpu(vcpu))
-> > +		return true;
-> 
-> Since for TD, INIT is always blocked, then in kvm_apic_accept_events(), the
-> code path to handle INIT/SIPI delivery will not be called, i.e, the OPs
-> .vcpu_deliver_init() and .vcpu_deliver_sipi_vector() are never called for
-> TD.
-> Seems no need to add the new interface  vcpu_deliver_init or the new wrapper
-> vt_vcpu_deliver_sipi_vector().
-> 
-> And consider the INIT/SIPI for TD:
-> - Normally, for TD, INIT ans SIPI should not be set in APIC's
-> pending_events.
->   Maybe we can call KVM_BUG_ON() in vt_apic_init_signal_blocked() for TD?
-> - If INIT and SIPI are allowed be set in APIC's pending_events for somehow,
-> the current code has a problem, it will never clear INIT bit in APIC's
-> pending_events.
->   Then kvm_apic_accept_events() needs to execute more check code if INIT was
-> once set.
->   INIT bit should be cleared with this assumption.
+Not sure this will always be the boot CPU doing the prepare. But I think
+the important part is that the target CPU must never do the prepare work.
+Otherwise it may activate the old root to the new root even if the old root
+is idle.
 
+> Reorder the code,
+> that all prepare related functions are close to each other and online and
+> offline callbacks are also close together.
+> 
+> Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+>  include/linux/cpuhotplug.h    |   1 +
+>  kernel/time/timer_migration.c | 196 +++++++++++++++++++++++-------------------
+>  2 files changed, 110 insertions(+), 87 deletions(-)
+> 
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 7a5785f405b6..df59666a2a66 100644
+> @@ -1623,7 +1689,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+>  			continue;
+>  		} else {
+>  			child = stack[i - 1];
+> -			tmigr_connect_child_parent(child, group);
+> +			tmigr_connect_child_parent(child, group, false);
 
-KVM_SET_MP_STATE and KVM_SET_VCPU_EVENTS can set INIT/SIPI by the user space.
-If we change those two IOCTLs to reject INIT/SIPI for TDX, we can go for the
-above "Normally" option.  Because I didn't want to touch the common functions, I
-ended in extra callbacks.  The user space shouldn't use those two IOCTLs for
-TDX, though.
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+This may need a small comment: /* Will be activated at online time */
+
+>  		}
+>  
+>  		/* check if uppermost level was newly created */
+[...]
+> -/*
+> - * tmigr_trigger_active() - trigger a CPU to become active again
+> - *
+> - * This function is executed on a CPU which is part of cpu_online_mask, when the
+> - * last active CPU in the hierarchy is offlining. With this, it is ensured that
+> - * the other CPU is active and takes over the migrator duty.
+> - */
+> -static long tmigr_trigger_active(void *unused)
+> +static int tmigr_cpu_prepare(unsigned int cpu)
+>  {
+> -	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
+> +	struct tmigr_cpu *tmc = per_cpu_ptr(&tmigr_cpu, cpu);
+> +	int ret = 0;
+>
+
+It would be nice to have this warning here (or in tmigr_setup_group()):
+
+/*
+ * The target CPU must never do the prepare work. Otherwise
+ * it may spuriously activate the old root to the new one
+ * and/or release an uninitialized childmask.
+ */
+WARN_ON_ONCE(cpu == raw_smp_processor_id());
+
+And in any case:
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
