@@ -1,117 +1,222 @@
-Return-Path: <linux-kernel+bounces-254313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3702D9331AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431A79331B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8631F282A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:11:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 663591C22375
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212001A08AB;
-	Tue, 16 Jul 2024 19:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3021A2FCE;
+	Tue, 16 Jul 2024 19:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DjC3DG1s"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBwjXqNt"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3671A19E83D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 19:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469A91A08DE;
+	Tue, 16 Jul 2024 19:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721156545; cv=none; b=M7zHYX8Okt2ordViLfhJP/HC7r2iqj0YIuv6HYoONmvF6ZUnCM/1/zE6Z5Y4vq8SmcqeelTIT3ofQiv9X24uX/y6qfOSf4ZAXJfSWDwA0Sv5bMUCcUSUFhgNxVjrPI/NfAoNhzQk4lvpql5Mz1KVp6pbouDvp7rEmMZtBltoGfs=
+	t=1721156778; cv=none; b=OiLrnPxP0zTpuO/f3FM1gdNq1hFQ+ojNIhNLSWb95I9VOHIsRGkL9qeh/3PFybfipkkSfLxl2MS+Fpr/AhmovbloShs4HY44AjiX3qo6APRIhmMNJL72MlzRzL7JOCp7jyzYYv6gxQUM5sPvXgB5l33/34Dml1jcOHRAa6QytPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721156545; c=relaxed/simple;
-	bh=IcvoyPAiBWsnUIXDnUolardaawkNmtHP8hBYcpNxiyc=;
+	s=arc-20240116; t=1721156778; c=relaxed/simple;
+	bh=hCthXUdD01KBNitk5fycxmdatgmaILEAggf7B4hbIko=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MGId/eMpzNzIypvuGfYSGXHNQZiJ8a8mvwZcNePkY0LfYT3Wmvy2OEgWn+3lp6rUC+eIJ5bKU1OT290AdokQzrqpBZ4YlcXyYsvCUafKAhxI8O9jWlAWy0ETuhnrwsAyIK95BTthqV5ZFAzT85FIrUvfiCdHNLb1EsSKdiFSgHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DjC3DG1s; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-59fa3ba8395so486674a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:02:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZQ8ql7RBuJFd+bAobfK8/Ib4b1g1JK/AR/Bkk4Uc9WoBS1A+RMtIGG7xkdHHsI2G6hfetakDuNKAPfB3cd6/ePigSL48nbgxmoUQvia9DmckpqA3DvTes3RKz0TIqLVC4V9Dhml44JJYdy10zFRFPcJBAqSJLi4ihfyNm/R7rOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBwjXqNt; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eee1384e0aso40378051fa.1;
+        Tue, 16 Jul 2024 12:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721156541; x=1721761341; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jlb1twGtDgpkIuFqjFEwx2dSO55N1dWs34CngBK1sSM=;
-        b=DjC3DG1syj+8WSO1pxFbqFTP+TOp+lIH0IWW+wDZL5r8mvx0s3kLYLacdRyQfVHrfM
-         fSpfvbcJDRlqjRFXakdba/0DLKI/m9W3MLpsvOsRZa15cEUl26zZ2zbGNvwhUzyKvIQy
-         GcX4Dz7UdalhsxLEfukx90CkMyF6zeqXqbMAI=
+        d=gmail.com; s=20230601; t=1721156774; x=1721761574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nyKoBohd+J4BAo+0pkskFiWS3AipkamgrhZnkqwfyM4=;
+        b=QBwjXqNtNEebpCPFDmulRdXuu7UrusfEeZ3r+p0YcAd8zJeDODK/lZ+aHx0JUBJ4fa
+         NqtjcAF+jLZ6BETCjkohJzV2p6pnN1T3KcJO7Cl3kBY7/RZlYRGQiLDcpDbOgybOa2d5
+         XXurw2uoHZhArXBK+BWOCS6S1HceSozlDQpu+XVDfnZ7WqC/s+3W4DppGuWmYLo1q74R
+         AaL6PkUukN4JaGl/xl76uuwVuP15SP3ZbIOVDe5EJMv4A1rcQdeGsOaPvm39PD8kRwdU
+         hKe0/df2Gzmfg+G8Nm1JSLbar1k5OhuiWvWXLIM/gbbifyH4Fc0XcdpiWTSf+N9PL7En
+         BrsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721156541; x=1721761341;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jlb1twGtDgpkIuFqjFEwx2dSO55N1dWs34CngBK1sSM=;
-        b=jrQWHofHdX9GMCdbet8upTp43g3s7GgZlU6QCno8mx3r1R/PIIlDHsMu2i915jPEED
-         JySfwkr36RO9QJxIYjUFlca3QVCaGep9U+blV5k5VLy6Ux1biWPXoAId35maz0LeFOz7
-         TM/jlwOGHkLmHtBaKo8rlKUsOUWmlNnjggLAw0Ewwawl123pjCW4jXBjanYm7+x70BOP
-         YHvOSuywkUa6EY23dV1sAOU/GyPGu4X4EdeNQ45bwRu1UVis2eoHjcyoWzfNPu3eE/4Y
-         bUsi+hdMkgI15mUSxlsvjS6Eqo3HaT1Vat2BnsDIIGrT/gwWzHBbaViOtHci3rftxHee
-         rNpw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0Iy2xRXnfIOkPWy400QZbmW0QNltQDR0PmZaWNmniFBkiU22RDk71xZ8nq9Lol4nh+cKlYSFtd+3xcOJeaB1wezQcfqE2MGVwI86m
-X-Gm-Message-State: AOJu0YyXW8BS9ObOi96F6cbmiL9RsBBlWxvaZ+G3h/ZwzgkFpsQmsnco
-	49D4qP7Z3rLsaq4d1pmczXJcY9udsMcAsWyoEVbb+gPV7mz7bQAycEIlEFH8ZvUHtZXCQo3qPY9
-	2Sf+EAQ==
-X-Google-Smtp-Source: AGHT+IE7kzxzpB5rBaYWsqIhCkoMvWfgBdLUuqksglKjsY/aXxhe2lbsZxG8ysB6Wjf0HMQJP9GROQ==
-X-Received: by 2002:a50:aadb:0:b0:58a:fa6e:9dae with SMTP id 4fb4d7f45d1cf-59eee53f70cmr2081778a12.15.1721156541269;
-        Tue, 16 Jul 2024 12:02:21 -0700 (PDT)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62b8bsm5363904a12.95.2024.07.16.12.02.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 12:02:20 -0700 (PDT)
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-367a3d1a378so5221846f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:02:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2JeAWInumwvkzxqurEAXd61yXXVksa/A/t8uUPEnpHPXF4JWzZ6B6pT4us+chK15NUYq+Chn0OH7Ix0z6uurKE2VVrcLTi7xLmiXB
-X-Received: by 2002:a05:6000:1848:b0:367:434f:cab8 with SMTP id
- ffacd0b85a97d-368261eda5cmr3359220f8f.43.1721156540333; Tue, 16 Jul 2024
- 12:02:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721156774; x=1721761574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nyKoBohd+J4BAo+0pkskFiWS3AipkamgrhZnkqwfyM4=;
+        b=lYQQuWLxCTenqiiI3hooOxsEaN4k8s7o9utWzUKJg2hv83XNQUmSkk8Fg1urxlwbf5
+         VCGMfKnbahkGZiPqcI+Y5q2O4+j6k0lQNJc7eUa1Akstv1W57i0z2gwWL3bxImovy2yl
+         wHcSBQCvAXwQumj439RgFKIK8pjJAq1zM9lCZHsAF7GVgZtU5MzfwA3V91TVq5FfywPn
+         dwonydjVOdWtt4g2bG0wiYPvIDQr8Hv6gHcKKVGo4mm93R3/v0+P6RfFrZAKW038/+s7
+         Bdv7XZPLEjz7pfFJXczKUd/ROVkFVlDjR4mgRcv8kcn2pqmk39QHqBKPHACElSI+j5+U
+         wXeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgZHdS0tQaBNqGePFO+Uxbf9xXL6CGXkr0jRIKVDOFYKiIRCSzNlMg9crsPYkmD5elKZxMbMFO+bA+cPlH2A04mjZpPQK2ekqrqjZTiAyqdvY5zHnJaQZnRg19SVVzykIbiLDpLNRT/jplfp9MqG3s0INcLa4yQ05Xu+7aRHUa1voIgV4J
+X-Gm-Message-State: AOJu0Yz2zxct1L7B5qOk2tN0Glggb6fLNzJmjcDimZe1oEpf9AXgWNlM
+	BmkG4zsm7s7cZXCggui5KAxocs0hhYDf6k8YQuTfPJyMVSC6G7wCTajNOyawzHhwwkvt4QlIHO/
+	qz+kIqyuaZidCc3eK5bjiA2+ynO4=
+X-Google-Smtp-Source: AGHT+IFyRrVrJt3yrUGmJztDaw4wnI3YQfLSOfI/fkbC52XE5Ibyn/jR5xr78gOHTeeuXfbLpf5aHP98ATBaARlmmLk=
+X-Received: by 2002:a2e:9254:0:b0:2ee:8736:6c19 with SMTP id
+ 38308e7fff4ca-2eef41dab68mr22139501fa.30.1721156773968; Tue, 16 Jul 2024
+ 12:06:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152318.207178-1-brgl@bgdev.pl> <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
- <CAMRc=MemuOOrEwN6U3usY+d0y2=Pof1dC=xE2P=23d2n5xZHLw@mail.gmail.com>
-In-Reply-To: <CAMRc=MemuOOrEwN6U3usY+d0y2=Pof1dC=xE2P=23d2n5xZHLw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 16 Jul 2024 12:02:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg-L1K6N+0zZ-bcU7kGZMMDbXj4Z8smrsi1gvbi5U-GiQ@mail.gmail.com>
-Message-ID: <CAHk-=wg-L1K6N+0zZ-bcU7kGZMMDbXj4Z8smrsi1gvbi5U-GiQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240716142519.2712487-1-sashal@kernel.org> <20240716142519.2712487-9-sashal@kernel.org>
+ <0d437a3825d2f714b24c032066b43d7b9e73b0e9.camel@iki.fi>
+In-Reply-To: <0d437a3825d2f714b24c032066b43d7b9e73b0e9.camel@iki.fi>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Tue, 16 Jul 2024 15:06:01 -0400
+Message-ID: <CABBYNZLzf2x6cScmjGv2Rxk-i3F9=QKVWosrSEBgmHBdHqOWtg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.9 09/22] bluetooth/l2cap: sync sock recv cb and release
+To: Pauli Virtanen <pav@iki.fi>
+Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Edward Adam Davis <eadavis@qq.com>, syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com, 
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, marcel@holtmann.org, johan.hedberg@gmail.com, 
+	linux-bluetooth@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Jul 2024 at 11:48, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hi Pauli,
+
+On Tue, Jul 16, 2024 at 3:00=E2=80=AFPM Pauli Virtanen <pav@iki.fi> wrote:
 >
-> But this patch does it. PCI_PWRCTL_PWRSEQ becomes a hidden symbol and
-> the entire submenu for PCI_PWRCTL disappears. There's no question in
-> Kconfig anymore.
+> Hi,
+>
+> ti, 2024-07-16 kello 10:24 -0400, Sasha Levin kirjoitti:
+> > From: Edward Adam Davis <eadavis@qq.com>
+> >
+> > [ Upstream commit 89e856e124f9ae548572c56b1b70c2255705f8fe ]
+>
+> This one needed an additional fixup that I don't see AUTOSEL picked up,
+> otherwise it results to a worse regression:
+>
+> https://lore.kernel.org/linux-bluetooth/20240624134637.3790278-1-luiz.den=
+tz@gmail.com/
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Df1a8f402f13f94263cf349216c257b2985100927
+>
+>
+> Looks like f1a8f402f13f94263cf349216c257b2985100927 also contains other
+> changes not related to this patch, seems like
+> https://lore.kernel.org/linux-bluetooth/20240624144911.3817479-1-luiz.den=
+tz@gmail.com/
+> was squashed.
 
-Yes, but look here:
+Yep, it seems I messed them up while doing the pull-request and 2
+commits were merged together, not sure if we can rebase them now that
+are in Linus tree, anyway for stable it would be better to unmerge
+them if possible.
 
-        default m if ((ATH11K_PCI || ATH12K) && ARCH_QCOM)
+> > The problem occurs between the system call to close the sock and hci_rx=
+_work,
+> > where the former releases the sock and the latter accesses it without l=
+ock protection.
+> >
+> >            CPU0                       CPU1
+> >            ----                       ----
+> >            sock_close                 hci_rx_work
+> >          l2cap_sock_release         hci_acldata_packet
+> >          l2cap_sock_kill            l2cap_recv_frame
+> >          sk_free                    l2cap_conless_channel
+> >                                     l2cap_sock_recv_cb
+> >
+> > If hci_rx_work processes the data that needs to be received before the =
+sock is
+> > closed, then everything is normal; Otherwise, the work thread may acces=
+s the
+> > released sock when receiving data.
+> >
+> > Add a chan mutex in the rx callback of the sock to achieve synchronizat=
+ion between
+> > the sock release and recv cb.
+> >
+> > Sock is dead, so set chan data to NULL, avoid others use invalid sock p=
+ointer.
+> >
+> > Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotma=
+il.com
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  net/bluetooth/l2cap_sock.c | 25 ++++++++++++++++++++++---
+> >  1 file changed, 22 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+> > index 8645461d45e81..64827e553d638 100644
+> > --- a/net/bluetooth/l2cap_sock.c
+> > +++ b/net/bluetooth/l2cap_sock.c
+> > @@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
+> >
+> >       BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
+> >
+> > +     /* Sock is dead, so set chan data to NULL, avoid other task use i=
+nvalid
+> > +      * sock pointer.
+> > +      */
+> > +     l2cap_pi(sk)->chan->data =3D NULL;
+> >       /* Kill poor orphan */
+> >
+> >       l2cap_chan_put(l2cap_pi(sk)->chan);
+> > @@ -1481,12 +1485,25 @@ static struct l2cap_chan *l2cap_sock_new_connec=
+tion_cb(struct l2cap_chan *chan)
+> >
+> >  static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff =
+*skb)
+> >  {
+> > -     struct sock *sk =3D chan->data;
+> > -     struct l2cap_pinfo *pi =3D l2cap_pi(sk);
+> > +     struct sock *sk;
+> > +     struct l2cap_pinfo *pi;
+> >       int err;
+> >
+> > -     lock_sock(sk);
+> > +     /* To avoid race with sock_release, a chan lock needs to be added=
+ here
+> > +      * to synchronize the sock.
+> > +      */
+> > +     l2cap_chan_hold(chan);
+> > +     l2cap_chan_lock(chan);
+> > +     sk =3D chan->data;
+> >
+> > +     if (!sk) {
+> > +             l2cap_chan_unlock(chan);
+> > +             l2cap_chan_put(chan);
+> > +             return -ENXIO;
+> > +     }
+> > +
+> > +     pi =3D l2cap_pi(sk);
+> > +     lock_sock(sk);
+> >       if (chan->mode =3D=3D L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy=
+)) {
+> >               err =3D -ENOMEM;
+> >               goto done;
+> > @@ -1535,6 +1552,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *=
+chan, struct sk_buff *skb)
+> >
+> >  done:
+> >       release_sock(sk);
+> > +     l2cap_chan_unlock(chan);
+> > +     l2cap_chan_put(chan);
+> >
+> >       return err;
+> >  }
+>
+> --
+> Pauli Virtanen
 
-That has at least two issues:
 
- - what if ATH11K_PCI or ATH12K is built-in and needs this driver?
-"default m" is *NOT* valid.
 
- - what happens when you add new drivers? You keep making this line
-longer and more complicated?
-
-See why I say "use select" instead? It means that the drivers that
-need it can select it, and you avoid complicated "list X drivers"
-things, but you can also get the *right* selection criteria, so that a
-built-in driver will select a built-in PCI_PWRCTL_PWRSEQ option.
-
-           Linus
+--=20
+Luiz Augusto von Dentz
 
