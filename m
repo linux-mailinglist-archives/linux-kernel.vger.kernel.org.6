@@ -1,228 +1,186 @@
-Return-Path: <linux-kernel+bounces-254086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D20932E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5D0932E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EB21C21EED
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092DF1F2357B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B619EEC4;
-	Tue, 16 Jul 2024 16:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FFD19F48B;
+	Tue, 16 Jul 2024 16:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3VkrCe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HsWxI3rX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A0E1DFD1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721148513; cv=fail; b=Ghm5N50z2XO6m74TWrLPmLx0ZpxF1VIN0LHFLyt3TtLljgEG/obJgCmjOiOewcBGF91nTuzXvpLo+VZRIReMzpIyiU8cNhXir+DnknGGAV59pA0dQ/J2V6jYw/Vl6t64II8IoQirHLof7S6bcSFNl2BJI6TsJLAxqw1HZegYSe0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721148513; c=relaxed/simple;
-	bh=AgWXBoEe+FKxPi2eEk8rCmPsD5PywfbBUYyq05+sa/c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JdzvYuAWYxW/S6eDcTPvFpQdKNoUvgQZ6rApzlkrwZxTrRVDQZvR+ryx0mOABV3vAwB9QD/k4ymBoNQE7+cO19dWPnbCLB01pCjgd7ECPVIM4t2qkyL0moQnQ7tzgw+xWiSJOYajmYz7HLxdbVb70H/VmcKEekQYW36JetDnigQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3VkrCe; arc=fail smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C12C1E528;
+	Tue, 16 Jul 2024 16:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721148495; cv=none; b=HiWEaVLmQz5K0sddodXNNGJG1NNts1L+URnufdUPcE0DwefzZ4N1CtUwxUAwpQF0FCIcc7b+x1w9hW/je/82FWOVMu4wsD8+eFdua+rOvQ+YoQHRFZtOpKuL5PVEu7Z+/5RDuFyr2kLd7L2TJbok1B89fmZBsRAFTNs82MG1rtI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721148495; c=relaxed/simple;
+	bh=ZejX7sQYy7OqqD/lZfJcjG1n/50PzY0tqu1osR9XdOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1szyRAAVkU99EJ43L0acr8+bfNFKBWb2gLyW+dapHkZ59xO+O83ueETataDXB7WPUPo6PglUshORIOMMb/H2GMaCycLPtgrwmwF/TVpCiNBodV4+S/GclMkbHTwH6nfiz5XugpkBAFX2BLV84WatpLyZW0Gm6dwXJHq61nz2Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HsWxI3rX; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721148511; x=1752684511;
+  t=1721148492; x=1752684492;
   h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=AgWXBoEe+FKxPi2eEk8rCmPsD5PywfbBUYyq05+sa/c=;
-  b=Oq3VkrCez2CHFBFpSA1993X/59hBeBmSmOWIKkaimbFAj6LwiGf9UNPU
-   jUwW9kBq1hQfmn7DwZdD8q45J0xa82qkwtJ3d5H9YQ2e9Qfo/hapAI3G3
-   CAou+2RHGQlttKWoVGgO2z6HdOXQBrgZJ/U3Xnh9KbqBoPvg4RzhebGEc
-   sqpq+mm0q0HGs/8T84s254/A42ItavF+ynju47U8m6yGVADoZZ2jHQxUO
-   qnoGRaSaKzjr1kaXGmPSRJq+HhMNWJPY+5NJ6UwJTgeyz+XzLYyWi5D1+
-   UPp+Y9lzLZnLxbqwo5hP7ZXdYp+4WFzMsc07ObZWg3VV9whAY99hmwapo
+   mime-version:in-reply-to;
+  bh=ZejX7sQYy7OqqD/lZfJcjG1n/50PzY0tqu1osR9XdOI=;
+  b=HsWxI3rXBxtvvTDiSglORt4lo6gy9jsQLvmYjKU+rlKD8qPNvEcNk4gK
+   wH6vNqP3ZHaSuHtv2rqQW4TFT8g10z5ss0NY3wIcTcCz12gogDlMtq5LV
+   DOflPek9tWWUfxBjTqIE/01vqLtXm4WRl2GgzvxqUNENSAUblTLz69+im
+   HD3EPrRTrXh3CGevSUPoX99HyYFoZUg2m2V8yfHgzxzsEDX+8anshiN9O
+   Jw2GfuMLYY/3dO/8Cax4QufvqL6Zg7UnNQY9o9DYu6QIOgqEsw+uIi3LJ
+   qXjJd9ZmZmR77IRG3J6bJBihwC9Y9J9fhU8UsniktITnqo4GVw6lvZ3yk
    g==;
-X-CSE-ConnectionGUID: 7E9pAyb+REyroo2Kuu4ymA==
-X-CSE-MsgGUID: ZGwyMMxPQ4iuHx8soBE45g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="29277509"
+X-CSE-ConnectionGUID: rxAUC8Q9Q1+tdKPZkvC96Q==
+X-CSE-MsgGUID: D6dkMJesTwu43nhVcAqlCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11135"; a="30017576"
 X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="29277509"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 09:48:30 -0700
-X-CSE-ConnectionGUID: au6utRPXTkalhGfCm75eSg==
-X-CSE-MsgGUID: z7IgEwh6SNKk/1m++KrmsQ==
+   d="scan'208";a="30017576"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 09:48:11 -0700
+X-CSE-ConnectionGUID: y8Ea+zk+QLKYSTNmND2bUQ==
+X-CSE-MsgGUID: lFusUqOWS0SdtKdYPWrdOw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,212,1716274800"; 
-   d="scan'208";a="50442873"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Jul 2024 09:48:31 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 16 Jul 2024 09:48:30 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 16 Jul 2024 09:48:30 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 16 Jul 2024 09:48:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KWgZ8Dt47z9qh5YGocY0m/OhaGO7YXQ6EiTufJ5hvplnjYQDq8g30RXjNafoKbBXSQ4CWAtEONyzPWrfyDorwcGwSo1nVw2m83In/6i4UJk3FKB5kQQ2pVCWIKKDxuEJlH7Sw61wrLcpxMUMDWV2m+Z92fCV2KgPNNtLMSp7fzkzsy8WO2w+phYgy73FZlhZnWoHNrceGosXutC6BtvV5zsBtgzuQBmzpy8R8FatAPAQYSSdYrJIBYL8gzOBJwMSZ/DkNVESf/kLhZXnJq6yvtSzBiW15hnP0PdsT65EODluxIdlxWfv4g98VMKbLcQMTqJIooSlzDHe5pz21ZwpzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kS2Izegj/2N4V9cxcZRHv3DvBTZBtIuucIfWIdp3dyA=;
- b=iEac+HN3HVRahTk/tOxfywr4ndCPEt7HTWGKHKRMpXqXn3AcBnacFFUba9GFFx+CGi4ECaZasP73G220jUeFeG7Yd38zoa1O2kKn3qNb6Za6D0mFYZnUG5X4Cs5yAX5eohWVcDzfctrfcJctVvTGcBl3BuYYmOFd0UegORMpMdq4oxXW8raAiE1kOKW9XKNHg/U5GWk9PVoC0riJOpSr725E+ZnXg40JACUadDJyEgoyDbvZ8Zcz3xFEr17DZRtTkC95ypwwNdzIzGWQq/ehKIxtWVu80VoweySHY+luZUKfL90fwTjIkJg8pdAHilxwCf3HeP8Tiz/q7ZUuJ/GzeQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SA1PR11MB8445.namprd11.prod.outlook.com (2603:10b6:806:3a9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
- 2024 16:48:27 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%5]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 16:48:27 +0000
-Date: Tue, 16 Jul 2024 16:47:40 +0000
-From: Matthew Brost <matthew.brost@intel.com>
-To: Philipp Stanner <pstanner@redhat.com>
-CC: Luben Tuikov <ltuikov89@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, Marco Pagani <marpagan@redhat.com>
-Subject: Re: [PATCH] drm/scheduler: Use ternary operator in standardized
- manner
-Message-ID: <ZpakLNAkQHsJTM3g@DUT025-TGLU.fm.intel.com>
-References: <20240715071533.12936-1-pstanner@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240715071533.12936-1-pstanner@redhat.com>
-X-ClientProxiedBy: SJ0PR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:a03:331::24) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+   d="scan'208";a="49812047"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Jul 2024 09:48:08 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sTlLR-000fSm-31;
+	Tue, 16 Jul 2024 16:48:05 +0000
+Date: Wed, 17 Jul 2024 00:47:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 06/14] PCI: endpoint: Assign PCI domain number for
+ endpoint controllers
+Message-ID: <202407170032.WTPexEVV-lkp@intel.com>
+References: <20240715-pci-qcom-hotplug-v1-6-5f3765cc873a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA1PR11MB8445:EE_
-X-MS-Office365-Filtering-Correlation-Id: b81a1d15-aa73-4e67-8e0c-08dca5b71d5b
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?L59emBr3kUQzA4qsJY78TuLKr4DKhtn3JHTeBNFOc8mW1KIvuaURC2cdMG6I?=
- =?us-ascii?Q?6YJdO8KkeN0hE36NrUora4FqiBD5uNQN1iGH2BwYLyw+nNhwu6N/YfbpGAEw?=
- =?us-ascii?Q?tKqm9biSxLr0VcR52Nrv2xpK/ZJVdJFcSMjoJ7JT4DvKmgNbrexpVex4MGaD?=
- =?us-ascii?Q?Z5eW0Cwpzk64iU6txxxyalDytZXL6UvBrXQJTO+q31QTBOMKAO9+YXO8kUes?=
- =?us-ascii?Q?nKXdtE6OsCZYnhanPgSsc53zIDFuL1SZvCXtVLNxADRpN2M5yaT59qG3k1Dj?=
- =?us-ascii?Q?+w0kVsu/riwbbPrqmrHSh/r1knLb6wL8o+GpxfxpMfaJfE1I6ORbRnBMxUQY?=
- =?us-ascii?Q?S6b/Oj5Zsk4WVzZFyyYFRExrySQdjG1j0rnV/lgK5N+FRuzPkRb7Dcdck3HL?=
- =?us-ascii?Q?uhNv9qm30oupgaL4+w5qhKkKD2HFR2YBkksyF2vyMeX8CYEFx5a3vJqI6taC?=
- =?us-ascii?Q?/zNvoVZ4Btu3DSyY87NyA1oYlOGosXHsYCKVcUbi6PbLEKgnrhYrZPOxLPxg?=
- =?us-ascii?Q?gokLUJ9xlU3FBBuCs2vkuQLVGuJ1f7YTZM2D69LGVUFRiHsSqKohY5UMDix4?=
- =?us-ascii?Q?d5nwfo0URRkyTCLusZVqWRBpO0majVezXhcAwFtxXR8wYTNDIAdXpQGPKO7d?=
- =?us-ascii?Q?Fqi4y/fMCXZ7FiTSKMlLRSZmDttP7GlZSN981hsyOGnk14qXFhomTR5ETxiH?=
- =?us-ascii?Q?7e6zvW06I+wJM+A13LiQ8UUDqoLEJp+efgQBIoGXeJbK1MK2FJ22El8ar4Mc?=
- =?us-ascii?Q?ETGQjWkrwPS2+LeBOm4jOmhol2YCum47hckL3m6fN//jVN5VY4gmnNr9k1F+?=
- =?us-ascii?Q?JTd+Q5X+1l5DxuIRHuJ17/gSNE/pv7ciu4lk6NgRL0n99oPR2g7g8E2ULKO1?=
- =?us-ascii?Q?0htixkqs1WkNVOjScf+TvgG+A7gqE7O3xsd4sT3NnP1UCNwPDS4MroGupkMo?=
- =?us-ascii?Q?GSRw0Wk3jxuX66SjkQjcavUKdVMIV5mwjHEYvHmx3iv+Z4ygYYp0eJBUytLA?=
- =?us-ascii?Q?VEsshkMA9TITur/Gg5U+MwegxO3oNQwGzt6hTMuzS/poPRQm6kkVmKQoiqbb?=
- =?us-ascii?Q?8wqzVZcYFwVUk6Tf+Q0+ikwEGBTz0koCxBXBwjEfC6haMI9HA7vGDwY8PjyJ?=
- =?us-ascii?Q?0MR2i0H8vRvcJvUaa8Wu3NIL/S3xhCXBxeZhXEDkmkjLugbNbC7annAzqQA2?=
- =?us-ascii?Q?V51Um23CU/xsXedCmFUYK1yHhuENag1umA7kRVDo1RnBqQ9T5lPQC2K60h/X?=
- =?us-ascii?Q?8QmNQMOUH2J8mVrEBErRhhDJFYd8SiStVG2Hqo7WHNYcEvYxjGRqg/giTlmk?=
- =?us-ascii?Q?WZcMk1kDbf8oM7V23A1hKb7tFhXwRs9DywMsDq5aWXklTw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tkkcZ+Zzkb4a5VkDpv9VOcUy2wxYM2SYE62eMUnWjm0v7fQc1rSZ5um8ZQYH?=
- =?us-ascii?Q?IgDu5+nZ41yzh8dAOokFDl3zCpdauVTExcs9x3hdhJqYXJXI44qI7AOZjdsE?=
- =?us-ascii?Q?kngMv6F4hrx/+7itTwHyI+If61nQIDcABv+7NP5bRGtWpbhHuu1fOpDzCWBF?=
- =?us-ascii?Q?7ZuEAFmKWPdzmxL48MWBOqVwiLgWW5UcRWFMGgeJ20w2NAwURMKQ62UaRsUE?=
- =?us-ascii?Q?RvUegeTLavsEwuSCRSr/OalgKBTjbfJj+HfpuH5yU+yaI+ywn8WuGK2zp7DH?=
- =?us-ascii?Q?p4Yd0y1rb1wa4TS+lkg34qkl7lmZITkM89xKNIT/Au6xlRXCjonBlyuoHdN3?=
- =?us-ascii?Q?6xM2FcdZKM9/K2pGVbzixMDYvaB3JmVCtVibg3OQij0jSyli0WzFrr9SiPYh?=
- =?us-ascii?Q?A4tK4YlsV22AZlakD7Tzo0pOzreMJloy4afInoRtZXSjGRN/4LvSjJFrDFHe?=
- =?us-ascii?Q?YzdScBt0VcNa6wsrxVSYUUUwYO9+/OlpVpWiC3OrFVZuVU+u+AC4Aw+XqEOJ?=
- =?us-ascii?Q?n23VVfpNKE0t5AmU26JxHVp98Pg85htAkUa+SKanAFzJBbit35pirFjJ6k1/?=
- =?us-ascii?Q?wLjz7HVzmszTS0zc8frWuBEi9PGLFQ5m7LViPoYNSQ+I7rrzfSfsGanOGNk5?=
- =?us-ascii?Q?e7Xlp77P0JdPXux1FBrG7MMsM7o9WFW0+E0ZMBOGxg4qb7srYUUYxJsqKM5x?=
- =?us-ascii?Q?KshZ99huBsG0uwOp1eK1GVoEYEsSqg4izUmlCKSG9emNdsk5kkBjbzdlaFLt?=
- =?us-ascii?Q?1wsdURRA1xvONJWGkdX6IMfCaPaBhOSPplk9JVE12Kk8EV68MJk/rGV1MqoA?=
- =?us-ascii?Q?5EOUoQO/wp8MdvGvqIlZRhHZTyxqG4IBRfgCQ1X6b1O4CzcPAqm3hTppkNq1?=
- =?us-ascii?Q?I+iQ9bew24mmqXrnYxr8wVAUvcGg2Ucvi4GbCISZAF+tWI4ESPn0erbyGBle?=
- =?us-ascii?Q?fv7zLv5kNnF9M5CBAAmq8gUUkicYC9zkRM/dZTxUoivuEtI1LR5TE/D58dZr?=
- =?us-ascii?Q?hVwfnfNAW8zZ2rPnAOXicjBBwRBOiRtyT3uxGKqBtStyqmxlNeQ8TyWRsgQ/?=
- =?us-ascii?Q?I4TeQVeZKP4wmOaeOUzRe6eWSViffJwAGS7F1UWL8yiSiBX7LdZ58UtaT8kM?=
- =?us-ascii?Q?EgoenOSJ1wLWVez020ICbslH1vkeRIU/5aC9y+IdvQcs6iE2Jj8ofvSUDFy9?=
- =?us-ascii?Q?tn4aApYi5CbmsyZ1sBVu2AOwIRxkAjSk+Od/gjrIH2ekNcDEdraz/NpiIaLp?=
- =?us-ascii?Q?9SpeFYa2F5aWhLKG3PLIOhvef4CsNA//GWba/y2UXgVdQuP9s2fqX27q6C13?=
- =?us-ascii?Q?inNykUS7TxvKyLfic4HwkIvrY4vxZVyFfeQgtemiCizGNROoJsbZ5cxPdtwb?=
- =?us-ascii?Q?N/HWoo0U9PrBhTp2pvbX4oN/qPLg+PnWGF4YW5RSiRPPPhtvmO/0l89nEfou?=
- =?us-ascii?Q?wLg7GVWsdNRTfRRua/Xd3qFVpB6m2qWs6RhduLfwt0bRsJnfhu/LByuMpTmc?=
- =?us-ascii?Q?stbndZeNnA8fSEsPZKLanz+1L7KDgCo4JWvknwwQiyu12G/4XEuT9ct1aHC5?=
- =?us-ascii?Q?mYkD2G7rFbgpAADbuvinVN4ZgS1hQjZWpx1BJeN05xNY/rK9+Tkz7IN/H8R/?=
- =?us-ascii?Q?Pg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b81a1d15-aa73-4e67-8e0c-08dca5b71d5b
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 16:48:27.1549
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HN7yH0rN0yEtZzRTY9Fj0OiYaSHGjjH86AQQau51WhkhyukjwK0ZPwm5Lz7JbqrD+TmIOEeKAGSWJ4Cefen0Kg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8445
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240715-pci-qcom-hotplug-v1-6-5f3765cc873a@linaro.org>
 
-On Mon, Jul 15, 2024 at 09:15:33AM +0200, Philipp Stanner wrote:
-> drm_sched_init() omits the middle operand when using the ternary
-> operator to set the timeout_wq if one has been passed.
-> 
-> This is a non-standardized GNU extension to the C language [1].
-> 
-> It decreases code readability and might be read as a bug. Furthermore,
-> it is not consistent with all other places in drm/scheduler where the
-> ternary operator is used.
-> 
-> Replace the expression with the standard one.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc-14.1.0/gcc/Conditionals.html
-> 
-> Suggested-by: Marco Pagani <marpagan@redhat.com>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+Hi Manivannan,
 
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+kernel test robot noticed the following build errors:
 
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 7e90c9f95611..02cf9c37a232 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1257,7 +1257,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
->  	sched->credit_limit = credit_limit;
->  	sched->name = name;
->  	sched->timeout = timeout;
-> -	sched->timeout_wq = timeout_wq ? : system_wq;
-> +	sched->timeout_wq = timeout_wq ? timeout_wq : system_wq;
->  	sched->hang_limit = hang_limit;
->  	sched->score = score ? score : &sched->_score;
->  	sched->dev = dev;
-> -- 
-> 2.45.0
-> 
+[auto build test ERROR on 91e3b24eb7d297d9d99030800ed96944b8652eaf]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-qcom-ep-Drop-the-redundant-masking-of-global-IRQ-events/20240716-014703
+base:   91e3b24eb7d297d9d99030800ed96944b8652eaf
+patch link:    https://lore.kernel.org/r/20240715-pci-qcom-hotplug-v1-6-5f3765cc873a%40linaro.org
+patch subject: [PATCH 06/14] PCI: endpoint: Assign PCI domain number for endpoint controllers
+config: i386-randconfig-011-20240716 (https://download.01.org/0day-ci/archive/20240717/202407170032.WTPexEVV-lkp@intel.com/config)
+compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240717/202407170032.WTPexEVV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407170032.WTPexEVV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pci/endpoint/pci-epc-core.c: In function '__pci_epc_create':
+>> drivers/pci/endpoint/pci-epc-core.c:902:19: error: implicit declaration of function 'pci_bus_find_domain_nr'; did you mean 'pci_bus_find_capability'? [-Werror=implicit-function-declaration]
+     epc->domain_nr = pci_bus_find_domain_nr(NULL, dev);
+                      ^~~~~~~~~~~~~~~~~~~~~~
+                      pci_bus_find_capability
+   cc1: some warnings being treated as errors
+
+
+vim +902 drivers/pci/endpoint/pci-epc-core.c
+
+   866	
+   867	/**
+   868	 * __pci_epc_create() - create a new endpoint controller (EPC) device
+   869	 * @dev: device that is creating the new EPC
+   870	 * @ops: function pointers for performing EPC operations
+   871	 * @owner: the owner of the module that creates the EPC device
+   872	 *
+   873	 * Invoke to create a new EPC device and add it to pci_epc class.
+   874	 */
+   875	struct pci_epc *
+   876	__pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
+   877			 struct module *owner)
+   878	{
+   879		int ret;
+   880		struct pci_epc *epc;
+   881	
+   882		if (WARN_ON(!dev)) {
+   883			ret = -EINVAL;
+   884			goto err_ret;
+   885		}
+   886	
+   887		epc = kzalloc(sizeof(*epc), GFP_KERNEL);
+   888		if (!epc) {
+   889			ret = -ENOMEM;
+   890			goto err_ret;
+   891		}
+   892	
+   893		mutex_init(&epc->lock);
+   894		mutex_init(&epc->list_lock);
+   895		INIT_LIST_HEAD(&epc->pci_epf);
+   896	
+   897		device_initialize(&epc->dev);
+   898		epc->dev.class = &pci_epc_class;
+   899		epc->dev.parent = dev;
+   900		epc->dev.release = pci_epc_release;
+   901		epc->ops = ops;
+ > 902		epc->domain_nr = pci_bus_find_domain_nr(NULL, dev);
+   903	
+   904		ret = dev_set_name(&epc->dev, "%s", dev_name(dev));
+   905		if (ret)
+   906			goto put_dev;
+   907	
+   908		ret = device_add(&epc->dev);
+   909		if (ret)
+   910			goto put_dev;
+   911	
+   912		epc->group = pci_ep_cfs_add_epc_group(dev_name(dev));
+   913	
+   914		return epc;
+   915	
+   916	put_dev:
+   917		put_device(&epc->dev);
+   918	
+   919	err_ret:
+   920		return ERR_PTR(ret);
+   921	}
+   922	EXPORT_SYMBOL_GPL(__pci_epc_create);
+   923	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
