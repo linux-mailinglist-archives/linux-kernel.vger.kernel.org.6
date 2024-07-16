@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-253223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C409931E51
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B11931E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 03:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3927E28316C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:12:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D6B1C22124
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 01:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B908EA943;
-	Tue, 16 Jul 2024 01:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Y1rO5zwf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ezyZEdo4"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065044A32;
+	Tue, 16 Jul 2024 01:12:41 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23088567F;
-	Tue, 16 Jul 2024 01:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1F84405
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 01:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721092307; cv=none; b=sYd51624tG3HvxMadntUA7G8CSdsr0rPUwdNRoY2+hRFGAz2C7cNNFeuntA0GKNQZAI3VJwW7nTRdutob0bOIS9N9qdoHLSSqKxHRxM4KI/M6kVN+4MofhO+qkZgylrhrkMc7dfe9kmYHfxBq3TsiVtFftRrjKXD3Fn5nWWH+AI=
+	t=1721092360; cv=none; b=GeA/nOKrXXDeNwribEClzTz/cW4kc2aB8Scg/IrYoq3zc7kDUeEhewSMtH1Ag3QovkTsqbGWcyCjIZBGBshpihm+HDvra9lynzGYhVl43Kc2X4f9p1Lm4RsErUh3pD47DBqM9JOvjryGGI2vD+pit8ibNFylRUuJmv/YeceUx4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721092307; c=relaxed/simple;
-	bh=DhUVijoft+zc2MQRWKMmLENLhF3q7rH5J4bSqaVPZ7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uKXpx6P43tPWXK4WBR8IieZJAFRf8IK5HgpjrgbywPN0KDz8R5kBrzYNrM4GQA0nl3WtfRSu2Grha0CfxbiT1fFUMvdacI/U86Qy/unIfjywTpk/AiS1HeGshGzUI6sLfq3iTllq4ogPz2SbfESOu6eOnDWSw5Xow/ooDZ0NckY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Y1rO5zwf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ezyZEdo4; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1BA331380E54;
-	Mon, 15 Jul 2024 21:11:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 15 Jul 2024 21:11:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1721092305; x=
-	1721178705; bh=qbyksZ7iEx44k4y6E5Q3QAM0NCeuNyBb9S85yzok2gA=; b=Y
-	1rO5zwfd8BwSpIcogoAAETgFeQgg2V3ilzBLAVxkEBBWspO8sDLcvADKm7fYc84R
-	j7gsseHF1BrwatW8CwGoe+9b4gi64iJV34aWHtQVwkdiL8pukSpt2mvOTTmtPMZJ
-	Keiroks3GnyTz1RpbwLEcSwpPqsB4MLMBYthblfVa0VHsqcREHcrgj+uUK9FsE67
-	cyQ9n12il+UU2V8telwIoiEhYC8+bzj7wZZt8KiaQf+C1KsL5hh8b5LMdETRyAjp
-	Yt7fEquej3VsGJ/YLTlOxgOUoXm7Qifn3mlZ22GspOkUs+NVGR6KGVwjAkwsT8eP
-	5WLYQDQmbUQssGqcBtYaA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721092305; x=
-	1721178705; bh=qbyksZ7iEx44k4y6E5Q3QAM0NCeuNyBb9S85yzok2gA=; b=e
-	zyZEdo47QX9tymoEyNvJLzfjfslLjQupYpHwXj2dgCRTOzDnT1w00UqgiCbC+ykU
-	8pHJf2bqP05ii6ZDvyQhQQq0rmdcPlE6p9iy6rXYuNVyOBMw0ip+cwtm8PbWL2qd
-	/4/kIMvJfaDBqAGqUKC7g2yrjUBtPjPSuUDVerNSmRnibfIB298jYIM58MyoZ/wi
-	CTSHIfxJN6GWul64UvwILRxyZLMvksVVmT5sueTCN/wka8Sn5hea8EfY/aVFdNY7
-	FuDM6YUuXq2tTHygIMYSnqgt9J9tGAQQ9cIehwYpz3rHf2XEtZF48xaXERzmxOJf
-	qyLBwkLuOL7gzuTv3dW2A==
-X-ME-Sender: <xms:z8iVZo1ivAAAKXeI0wHwEGo5n9igyUhw7Oo-gc4vd4LyedNI3zX-Aw>
-    <xme:z8iVZjHAsviUBmYlmJF1l9x6MjjTZgpcRDy_w9QDKpWiLh6tlHPkLCTQr27Nu4zua
-    av2u5cd7YSS8-QWNNg>
-X-ME-Received: <xmr:z8iVZg4zVB9DQDvO9_7s-Jzvn2d9pPeOnGToUox6hu9gTEPjuji_4g7bnOtT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeefgdegfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgv
-    ucffrdculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrth
-    htvghrnhepgfetfedugfetudeuheetjefhuefggfelleetvdevtefhueeujeefvdegleev
-    hefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplh
-    hukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:0MiVZh29g3a2a47laGYzb72pQkHdLY5N4v4WlAdu_43mmM0G0vKGEQ>
-    <xmx:0MiVZrFX_4rTZ_mfRJg_sIlUnIpYVa0SstwRS1_-1aOMYS4DkVn1lg>
-    <xmx:0MiVZq_4k20oGuV00MSRWgg-M1YXpsUZCnUTJ7z-lbDKI_QAnMe0hA>
-    <xmx:0MiVZgmuXw_TQXe3ajMXroMksemFXfRoAE2gt6XjWsZSCvnKZwIRgg>
-    <xmx:0ciVZg6F69vxPgTkXGCxAONwIDB_XQVupIagJarJIzkwhxM8LoiYLIlS>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Jul 2024 21:11:40 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>,
-	Denis Benato <benato.denis96@gmail.com>
-Subject: [PATCH v1 1/1] platform/x86: asus-wmi: fix TUF laptop RGB variant
-Date: Tue, 16 Jul 2024 13:11:30 +1200
-Message-ID: <20240716011130.17464-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240716011130.17464-1-luke@ljones.dev>
-References: <20240716011130.17464-1-luke@ljones.dev>
+	s=arc-20240116; t=1721092360; c=relaxed/simple;
+	bh=Z+C+4xLkWxur6AEVnE/8wvZSUObIa5jpjlzPkiUa5dY=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ohu2ipgHnifPH3IKwG9T4j1d7VGPTQAzNEF6YZlaABX48oM+p4qi2op2GrD5wBsO4sX7zyxao9witKp0aeHp9VgxlTuSPUzvKhSVQsSUvA2ZKcRVHVNbjehK63XhkSHnRz/NVF7DueplhshIJPzz1AkywT+bUARyyi7DAFCJWio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WNLXK095bzxSmp;
+	Tue, 16 Jul 2024 09:07:45 +0800 (CST)
+Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1EAA8140795;
+	Tue, 16 Jul 2024 09:12:35 +0800 (CST)
+Received: from [10.174.178.120] (10.174.178.120) by
+ dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 16 Jul 2024 09:12:34 +0800
+Message-ID: <50385bd0-f47a-46b3-a196-a93ec8f040f6@huawei.com>
+Date: Tue, 16 Jul 2024 09:12:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>,
+	<ryabinin.a.a@gmail.com>, <andreyknvl@gmail.com>, <dvyukov@google.com>,
+	<vincenzo.frascino@arm.com>, <kasan-dev@googlegroups.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Question] race during kasan_populate_vmalloc_pte
+To: <glider@google.com>
+References: <20240618064022.1990814-1-mawupeng1@huawei.com>
+ <e66bb4c1-f1bc-4aeb-a413-fcdbb327e73f@huawei.com>
+ <CAG_fn=VTKFDAx2JQAEur5cxkSwNze-SOqQRbqBGwDx96Xq-6nQ@mail.gmail.com>
+Content-Language: en-US
+From: mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <CAG_fn=VTKFDAx2JQAEur5cxkSwNze-SOqQRbqBGwDx96Xq-6nQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemd200001.china.huawei.com (7.185.36.224)
 
-In kbd_rgb_mode_store the dev_get_drvdata() call was assuming the device
-data was asus_wmi when it was actually led_classdev.
 
-This patch corrects this by making the correct chain of calls to get the
-asus_wmi driver data.
 
-Fixes: ae834a549ec1 ("platform/x86: asus-wmi: add support variant of TUF RGB")
-Tested-by: Denis Benato <benato.denis96@gmail.com>
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/platform/x86/asus-wmi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On 2024/7/16 1:19, Alexander Potapenko wrote:
+> On Fri, Jul 12, 2024 at 4:08 AM mawupeng <mawupeng1@huawei.com> wrote:
+>>
+>> Hi maintainers,
+>>
+>> kingly ping.
+>>
+>> On 2024/6/18 14:40, Wupeng Ma wrote:
+>>> Hi maintainers,
+>>>
+>>> During our testing, we discovered that kasan vmalloc may trigger a false
+>>> vmalloc-out-of-bounds warning due to a race between kasan_populate_vmalloc_pte
+>>> and kasan_depopulate_vmalloc_pte.
+>>>
+>>> cpu0                          cpu1                            cpu2
+>>>   kasan_populate_vmalloc_pte  kasan_populate_vmalloc_pte      kasan_depopulate_vmalloc_pte
+>>>                                                               spin_unlock(&init_mm.page_table_lock);
+>>>   pte_none(ptep_get(ptep))
+>>>   // pte is valid here, return here
+>>>                                                               pte_clear(&init_mm, addr, ptep);
+>>>                               pte_none(ptep_get(ptep))
+>>>                               // pte is none here try alloc new pages
+>>>                                                               spin_lock(&init_mm.page_table_lock);
+>>> kasan_poison
+>>> // memset kasan shadow region to 0
+>>>                               page = __get_free_page(GFP_KERNEL);
+>>>                               __memset((void *)page, KASAN_VMALLOC_INVALID, PAGE_SIZE);
+>>>                               pte = pfn_pte(PFN_DOWN(__pa(page)), PAGE_KERNEL);
+>>>                               spin_lock(&init_mm.page_table_lock);
+>>>                               set_pte_at(&init_mm, addr, ptep, pte);
+>>>                               spin_unlock(&init_mm.page_table_lock);
+>>>
+>>>
+>>> Since kasan shadow memory in cpu0 is set to 0xf0 which means it is not
+>>> initialized after the race in cpu1. Consequently, a false vmalloc-out-of-bounds
+>>> warning is triggered when a user attempts to access this memory region.
+>>>
+>>> The root cause of this problem is the pte valid check at the start of
+>>> kasan_populate_vmalloc_pte should be removed since it is not protected by
+>>> page_table_lock. However, this may result in severe performance degradation
+>>> since pages will be frequently allocated and freed.
+>>>
+>>> Is there have any thoughts on how to solve this issue?
+>>>
+>>> Thank you.
+> 
+> I am going to take a closer look at this issue. Any chance you have a
+> reproducer for it?
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 7d87ff68f418..2b968003cb9b 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -906,10 +906,14 @@ static ssize_t kbd_rgb_mode_store(struct device *dev,
- 				 struct device_attribute *attr,
- 				 const char *buf, size_t count)
- {
--	struct asus_wmi *asus = dev_get_drvdata(dev);
- 	u32 cmd, mode, r, g, b, speed;
-+	struct led_classdev *led;
-+	struct asus_wmi *asus;
- 	int err;
- 
-+	led = dev_get_drvdata(dev);
-+	asus = container_of(led, struct asus_wmi, kbd_led);
-+
- 	if (sscanf(buf, "%d %d %d %d %d %d", &cmd, &mode, &r, &g, &b, &speed) != 6)
- 		return -EINVAL;
- 
--- 
-2.45.2
+So far not good. I am trying to get a reproducer, but there is little progress in it.
 
+> 
 
