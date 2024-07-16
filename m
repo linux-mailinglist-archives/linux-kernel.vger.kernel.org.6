@@ -1,185 +1,210 @@
-Return-Path: <linux-kernel+bounces-253861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9382893280A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:13:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A8F93280E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BC01F23110
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:13:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697FA1C226CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3016019B3E6;
-	Tue, 16 Jul 2024 14:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BDE19B3ED;
+	Tue, 16 Jul 2024 14:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l6x2064q"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="BX/nf+C7"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2D4D8A3
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00C44D8A3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721139199; cv=none; b=NtKNv0FjWBEDB5ReagWtFGHQGGFKtkW1jFtgpduVnMjH/AoZx0KArL+LRwAMt8zhc/bzSA7c3JGc67XdblvM80fcqylRWWLaqP+8ACxK02zAuJOxeVylnbxdEBqrWF/bVgsBbY6RweopFVm3XwChxZylwGCWy2hFMj8UTy10QGI=
+	t=1721139209; cv=none; b=hZlfkl0sBxop8iEU+y8N2iVxp1oVAVog3c+EIg+GwOSJ6z8Io1fzmTMATjpQNfxlj/a5OkALQY2/8wpmBNcOLjEjYit5ZUHHXrTWXDQBYvOPAB98IembcEz814lcQQQvDYaCcgh8BGTMYMu01daYRtPRFWOjI+SAhvCrZ+7DrcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721139199; c=relaxed/simple;
-	bh=lMHctMZZgHXALQXjijLLcrYq0EEkBBXuPM2pzUtBsOk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Yfb1mMQ5B8Oguz+JhdKAYjHHuIC4iuKx6NYRus9aZmCHAWXOMkyubPxGylGr/reJEunC1u2smlVTVeKD8IyVso5hM2MII8HHaHRLI8FNL7YGtyLUsUXbOv4Rd6FnZNx/977kgVMIrIjDwRdXxqMvokO7blh6zwpS/melLLJoNac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l6x2064q; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jack@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721139192;
+	s=arc-20240116; t=1721139209; c=relaxed/simple;
+	bh=GWxCos4CnUV35zyiSw1OdpfRmSu2QcSfprIz1ty8YHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LjwNtshiChPHio3afW/bwIBRbFMsBn9FJeqJJGY52ZKfzXDcafjpYfzPFE6LNK5yDdzq0ed+8DEoc1C8qx5D8k0Kd6Aeo8+QSnl8hr4LifuRT2QmUxEy+pq2np78dZPLQgQyvhIdyVUkzT9YU3ncfBnGGK3iE2LQMczON0hDtw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=BX/nf+C7; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: daniel@makrotopia.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721139204;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MMpVo1XbRtxcz118lo+kxvs4FtSr6A+atkLL/getcvY=;
-	b=l6x2064qicwAvu7NGcNnyY5KR4wFbwsAWM3QyAjcqxX7aApo1BMUP0lBNGP8tIxS8uxj2w
-	tciytTDkOsVhjTZco5kq9XecjlyuiJtIix8LV6wq+tEzJH0Cea94zMzpkTQNksYioyDKCt
-	GaPdaKGIZfxGa5lBISjomT2ThR/UPDw=
-X-Envelope-To: luis.henriques@linux.dev
-X-Envelope-To: tytso@mit.edu
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: harshadshirwadkar@gmail.com
-X-Envelope-To: linux-ext4@vger.kernel.org
+	bh=OOwmHCe649Ack/8wyuZb0NPCZh2F1YT3rt4JfPBVRIE=;
+	b=BX/nf+C7bl7baFC2a77Dmx58LPc2Hw8RkBhjVMA5ZE4FcVNQQH9EbQuRD7yFldcBXMFGEr
+	ycmxyrLkmV6oopbF1uxmrjNO+9B/QDc1ub0rF5+ooL4uIkj2u3ErS6A2tdxBo/49+Sat3D
+	8umqn9i5Urh9oA5NDm/TmmInqquFSVNwAgI6Pri3CpHCQiy04+K2Qfuywnlh7rD4LDyBJR
+	JEHeSh/sKlxVqwLqng9EyVq7Pe+QYUkiV2Ft9dvXAvlGlvBDZ9dwYwbUi1sFCJ8b936Sx1
+	LXMNqbowsowb1UHywJ8JlGxhTNVwYaNNoL8feiaoWE+esktGBGe3LT+AGm00AA==
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: conor+dt@kernel.org
 X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: wens@kernel.org
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: didi.debian@cknow.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Harshad Shirwadkar
- <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
- journal commit
-In-Reply-To: <20240716102416.jublpma3qiltlrbr@quack3> (Jan Kara's message of
-	"Tue, 16 Jul 2024 12:24:16 +0200")
-References: <20240711083520.6751-1-luis.henriques@linux.dev>
-	<20240716102416.jublpma3qiltlrbr@quack3>
-Date: Tue, 16 Jul 2024 15:13:05 +0100
-Message-ID: <87bk2xtoge.fsf@linux.dev>
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-crypto@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+ Olivia Mackall <olivia@selenic.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+ Dragan Simic <dsimic@manjaro.org>, Aurelien Jarno <aurelien@aurel32.net>,
+ Heiko Stuebner <heiko@sntech.de>, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Date: Tue, 16 Jul 2024 16:13:10 +0200
+Message-ID: <6779787.ZJYUc1KeCW@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <1874451.yxlQQexqVa@bagend>
+References:
+ <cover.1720969799.git.daniel@makrotopia.org>
+ <ZpZ1RSSYaLo45kUI@makrotopia.org> <1874451.yxlQQexqVa@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart15370963.2mxTI6y2F0";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 16 2024, Jan Kara wrote:
+--nextPart15370963.2mxTI6y2F0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Tue, 16 Jul 2024 16:13:10 +0200
+Message-ID: <6779787.ZJYUc1KeCW@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <1874451.yxlQQexqVa@bagend>
+MIME-Version: 1.0
 
-> On Thu 11-07-24 09:35:20, Luis Henriques (SUSE) wrote:
->> When a full journal commit is on-going, any fast commit has to be enqueu=
-ed
->> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueue=
-ing
->> is done only once, i.e. if an inode is already queued in a previous fast
->> commit entry it won't be enqueued again.  However, if a full commit star=
-ts
->> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs=
- to
->> be done into FC_Q_STAGING.  And this is not being done in function
->> ext4_fc_track_template().
->>=20
->> This patch fixes the issue by re-enqueuing an inode into the STAGING que=
-ue
->> during the fast commit clean-up callback if it has a tid (i_sync_tid)
->> greater than the one being handled.  The STAGING queue will then be spli=
-ced
->> back into MAIN.
->>=20
->> This bug was found using fstest generic/047.  This test creates several =
-32k
->> bytes files, sync'ing each of them after it's creation, and then shutting
->> down the filesystem.  Some data may be loss in this operation; for examp=
-le a
->> file may have it's size truncated to zero.
->>=20
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->
-> ...
->
->> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
->> index 3926a05eceee..facbc8dbbaa2 100644
->> --- a/fs/ext4/fast_commit.c
->> +++ b/fs/ext4/fast_commit.c
->> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, i=
-nt full, tid_t tid)
->>  				       EXT4_STATE_FC_COMMITTING);
->>  		if (tid_geq(tid, iter->i_sync_tid))
->>  			ext4_fc_reset_inode(&iter->vfs_inode);
->> +		} else if (tid) {
->> +			/*
->> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
->> +			 * inode into STAGING, which will then be splice back
->> +			 * into MAIN
->> +			 */
->> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
->> +				      &sbi->s_fc_q[FC_Q_STAGING]);
->> +		}
->
-> I don't think this is going to work (even if we fix the tid 0 being speci=
-al
-> assumption). With this there would be a race like:
->
-> Task 1					Task2
-> modify inode I
-> ext4_fc_commit()
->   jbd2_fc_begin_commit()
->   commits changes
->   jbd2_fc_end_commit()
->     __jbd2_fc_end_commit(journal, 0, false)
->       jbd2_journal_unlock_updates(journal)
-> 					jbd2_journal_start()
-> 					modify inode I
-> 					...
-> 					ext4_mark_iloc_dirty()
-> 					  ext4_fc_track_inode()
-> 					    ext4_fc_track_template()
-> 					      - doesn't add inode anywhere
-> 					      because i_fc_list is not empty
->       ext4_fc_cleanup(journal, 0, 0)
->         removes inode I from i_fc_list =3D> next fastcommit will not prop=
-erly
-> flush it.
->
-> To avoid this race I think we could move the
-> journal->j_fc_cleanup_callback() call to happen before we call
-> jbd2_journal_unlock_updates(). Then we are sure that inode cannot be
-> modified (journal is locked) until we are done processing the fastcommit
-> lists when doing fastcommit. Hence your patch could then be changed like:
->
-> +		} else if (full) {
-> +			/*
-> +			 * We are called after a full commit, inode has been
-> +			 * modified while the commit was running. Re-enqueue
-> +			 * the inode into STAGING, which will then be splice
-> +			 * back into MAIN. This cannot happen during
-> +			 * fastcommit because the journal is locked all the
-> +			 * time in that case (and tid doesn't increase so
-> +			 * tid check above isn't reliable).
-> +			 */
-> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-> +				      &sbi->s_fc_q[FC_Q_STAGING]);
-> +		}
->
-> Later, Harshad's patches change the code to use EXT4_STATE_FC_COMMITTING
-> for protecting inodes during fastcommit and that will also deal with these
-> races without having to keep the whole journal locked.
+On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
+> For shits and giggles, I tried it on my PineTab2 too (also rk3566):
+> 
+> ===========================================================
+> root@pinetab2:~# uname -a
+> Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow (2024-04-24)
+> aarch64 GNU/Linux
+> 
+> root@pinetab2:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+> 1+0 records in
+> 1+0 records out
+> 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
+> 
+> root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+> rngtest 5
+> Copyright (c) 2004 by Henrique de Moraes Holschuh
+> This is free software; see the source for copying conditions.
+> There is NO warranty; not even for MERCHANTABILITY or
+> FITNESS FOR A PARTICULAR PURPOSE.
+> 
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 730
+> rngtest: FIPS 140-2 failures: 270
+> rngtest: FIPS 140-2(2001-10-10) Monobit: 266
+> rngtest: FIPS 140-2(2001-10-10) Poker: 23
+> rngtest: FIPS 140-2(2001-10-10) Runs: 9
+> rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> rngtest: input channel speed: (min=2.615; avg=137.889;
+> max=9765625.000)Kibits/s rngtest: FIPS tests speed: (min=24.643;
+> avg=34.518; max=68.364)Mibits/s rngtest: Program run time: 149674336
+> microseconds
+> ===========================================================
+> 
+> That's looking quite a lot better ... and I have no idea why.
+> 
+> The Q64-A is used as headless server and the PineTab2 is not,
+> but I connected to both over SSH and they were freshly booted
+> into, thus I haven't actually/normally used the PT2 since boot.
 
-OK, this looks like it should fix all the issues I was trying to fix
-(g/047, g/472, and a few others Ted pointed out).  I'll go run a few more
-tests on this to try to catch any possible regression.
+I did freshly install rng-tools5 package before running the test, so
+I rebooted again to make sure that wasn't a factor:
 
-Once again, thanks a lot for your help, Jan.
+===========================================================
+root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+rngtest 5
+...
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 704
+rngtest: FIPS 140-2 failures: 296
+rngtest: FIPS 140-2(2001-10-10) Monobit: 293
+rngtest: FIPS 140-2(2001-10-10) Poker: 32
+rngtest: FIPS 140-2(2001-10-10) Runs: 10
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=2.612; avg=137.833; max=9765625.000)Kibits/s
+rngtest: FIPS tests speed: (min=24.391; avg=34.416; max=68.364)Mibits/s
+rngtest: Program run time: 149736205 microseconds
+===========================================================
+
+So that 704/296 vs 730/270 in the previous run on the PT2.
+
+In case it helps:
+===========================================================
+root@quartz64a:~# grep . /sys/devices/virtual/misc/hw_random/rng_*
+/sys/devices/virtual/misc/hw_random/rng_available:rockchip-rng 
+/sys/devices/virtual/misc/hw_random/rng_current:rockchip-rng
+/sys/devices/virtual/misc/hw_random/rng_quality:900
+/sys/devices/virtual/misc/hw_random/rng_selected:0
+
+root@pinetab2:~# grep . /sys/devices/virtual/misc/hw_random/rng_*
+/sys/devices/virtual/misc/hw_random/rng_available:rockchip-rng 
+/sys/devices/virtual/misc/hw_random/rng_current:rockchip-rng
+/sys/devices/virtual/misc/hw_random/rng_quality:900
+/sys/devices/virtual/misc/hw_random/rng_selected:0
+===========================================================
 
 Cheers,
---=20
-Lu=C3=ADs
+  Diederik
+--nextPart15370963.2mxTI6y2F0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZpZ/9gAKCRDXblvOeH7b
+brwYAP9OiJP/6N11UP/cWpJx8l8/sSOgeJKLWw9r5/M98JZJbwD/bZc08/n9+WCw
+/OpBHuZSl5tXabtusXCV+hmock01kAA=
+=Jqvx
+-----END PGP SIGNATURE-----
+
+--nextPart15370963.2mxTI6y2F0--
+
+
+
 
