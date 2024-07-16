@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-254132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DEB932F5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:48:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7978932F5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 19:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AA1C222EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790801F23D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9851A00EE;
-	Tue, 16 Jul 2024 17:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176C91A00DF;
+	Tue, 16 Jul 2024 17:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jSbIiMZR"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6NBUOin"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C997119B3EE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 17:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254D54BD4;
+	Tue, 16 Jul 2024 17:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721152126; cv=none; b=WnkIBf278q5fwpK9gca+JvTZYo0nrSbe1BvTEqJWmD3WCwu/a5E8McxBxWz340z3YYiCNKDx2ajeHFSvkh84UhSRwsihYPNZB55kBayrl8nUgp9Ky/qfhnOAUhF66oWpfNlSDIW1BURANhM50Izap+Gd83vMEw59agYQL5aHHJo=
+	t=1721152192; cv=none; b=PgDybpD2ZyH+3cwsGDqErsua2vDbxzGfBC4ZTBK4vKLCCvxmyQ6x93nNh7OniW4fyvckU0YErdy2Zz49mvPJ0WA6rB/mPprO9D9nMbkAxJqFMeibi5xOgnvprhQCEPmaRWVV3nzCOAHIxJCrA1tIUSVXhGie6GkXB4D/kuSBHKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721152126; c=relaxed/simple;
-	bh=raeOIprojEAXyk5ne6rsnBfmNtcpuMh35GTJs4cYRYo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=iF/zRLrI6MmypTHCe+UyK0ByMuP5APjE8F16p7WB8TCSaKrCcWLGUQwYmL0kIGj9M+IZ0keahSlMd9t2waFIkptENWBSifltEaaSvIjkxribL1neBTNmd3nPPlDLeKRZ9QJnOVmoAn9QWdIDneH85sCz3YJFh2HZmYJPO/KTNaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jSbIiMZR; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-367b8a60b60so3223539f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:48:44 -0700 (PDT)
+	s=arc-20240116; t=1721152192; c=relaxed/simple;
+	bh=2YgWT/VTHM8vCLSpVHJrwCbPuHut7t6GyCnV+GRWJbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKfTgFPvsuQADpqVc636eqgHaCOBVmyF1emVPYLt2BFK5RCVOboM3qmdzQpwy8+oiOUYt0mqVEXhSX4VmORg7VgSmN3DfbZegG18xoRc/v5Ltpm5FQ/2pI4fLC3zBsgVriXUUJYWoiiy5OQuPjuAG/yZcm3LHy+VnYjg5MvASfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6NBUOin; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-78512d44a17so4210244a12.3;
+        Tue, 16 Jul 2024 10:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1721152123; x=1721756923; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uNQ8X7dNt4x3kIdWz1GBCSIw2yVprX6g72c4mbs0NKo=;
-        b=jSbIiMZRXdCfHj3lR2MeTjqFel5f6bFEutqq67gQ+GTOnUe9lDZ/P9ZGcTN6kqmM0B
-         yKgL7Oejk/HIL9vgdA25KSYzMhw5zncXOzROhmir09rODFpWwZ+2LncJko0amCEOt0l8
-         LjqX6YhIPx+7SKaGJazu5ly9Ch6uwfwVv4shMF2OaHwTk2sslFoeE/TbnP4+19Sq8gPS
-         BECSU6EJDyE95IJqC3mXtg+wxSzAf1ByBdLLueJWvRyZZBOkczXIFoSMhPMgvvCwzX7V
-         EO6KCX4OEiyNJxgORvv0jHf4k57xGIYKj4VuH8HDQWcDnoCZ9QrU9HeplmgOTkY219vz
-         pBNA==
+        d=gmail.com; s=20230601; t=1721152190; x=1721756990; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fw21HKKLStYNAT8K9Zm5OQcaI1CIyT02HeyhGHNjbwc=;
+        b=c6NBUOinySJ9WVPsep0NKQRcp5S+SC0tFeNRxzqF3Wee9yI7QIvZq+bHqZ3XBe4fHy
+         WOKJYa2Nr+nkL7RuGo1jAKfz7sDOPSOqHGrgSK6UKLsP6ehEj25sEoYHcXAuCdPR2OP+
+         QQHC2I9CT205QH0Lup5BX0aEFrzAmDAgAp6aewLwPdgsQ/CbLo5Qg8IzFz7ytW8JqtFb
+         o0VH6DXysIw/F4bMBxl6m59py8G3oOXa8MNwKRBoubxZoyUxPgHooBCpC8S/bnTjcLky
+         +Yaaykw0jxHYB9FfnAWbbqD8K2Oyajuz3pj+8XqKNT/Tg6bzZnO4q842J4wYmrbFT8YT
+         V4Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721152123; x=1721756923;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uNQ8X7dNt4x3kIdWz1GBCSIw2yVprX6g72c4mbs0NKo=;
-        b=r+Tz+agFRQOaVq7khKnzpzwN+FwHuhSGiBlipZ3r4Ah9lIKD2QNo8i61AX2VkkpGnj
-         L5Fr+eGzCD667tA31BBqG6I0BczstHft4K3HzguYteOMfI68/gEfFlYvHWI9XIr53gJJ
-         bhrgDLkp1z6UK/uQXS5MVKIQ4WVLeGrNZDNHBd+BdMrtWYu2bdDtnnntvQy8XEMghycx
-         X3J40DxPUOK+DBIA2LCAz95OV1T1J8BBsli5hgmkba2T8f2LVNfzAVdUSwTE3SU7tN4m
-         1TZwKgXRnJkjBSaeTXFkEZDmuyrNw+rfJamFDOmFsbPLLS2SELYw02jy4MTN2MSGTHxy
-         vRug==
-X-Forwarded-Encrypted: i=1; AJvYcCUAsaTsMuxeCNJXQIJFB2uSUibveGyDW8zNlVHsoUtdWRs+G0Ub9yIcl6kcnDAnJgpqlnBLNCISZ8oWEZEjdZZNDqrOUAZoFl0EJo8P
-X-Gm-Message-State: AOJu0Yw4SZD1B2poJv6sweBe2a88YNIQBYM7OUtSkqXupxYacswyId2W
-	++0iwnb/qTRpqhWe39MY0nH5BVHcsaFqmMa9c8dp4ay42AauGjVPQE+HQreQ/VQ=
-X-Google-Smtp-Source: AGHT+IGWKabxP/OJJTLUYgjsuTiSdT0uqw/NqeK2JS5nqvpacbKOZx1/S+qHAieKxjAq2YP9XmNEgw==
-X-Received: by 2002:a05:6000:d09:b0:367:9571:ceee with SMTP id ffacd0b85a97d-36826144706mr2030805f8f.37.1721152122939;
-        Tue, 16 Jul 2024 10:48:42 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:10b5:fc01:f844:6ed2:1a28:3f1b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3e1csm9638912f8f.2.2024.07.16.10.48.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2024 10:48:42 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1721152190; x=1721756990;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fw21HKKLStYNAT8K9Zm5OQcaI1CIyT02HeyhGHNjbwc=;
+        b=P1Ypk6znwPifUAXwBzAm6zpAw13APUxWC9xbbG7y2E8mMuk5omQVuutYBhzn/W5d2B
+         X54bSbg+f+iba3gtIkepx+M5t7asmDSQwCLc9m0aZJnyTiEnvAz1i9P41bX0lz7K4DHk
+         k/gCjWOZCsIrnM8cKet8Vd117JSPXuUDPzQ5BBM+kdUHnZ2LmDEzCYz6lU4uRGTuOoMt
+         MiN+K8YxD6v339rNAbHWENzZWZPu2+SJstOWCfprLex5DwgXdN3xQR50k7ZGg+xtnj4q
+         USZXtZvUYr3Lki4vF0aQZahNN/EgKwmNrH3ePlVV4eyTMgQAJm4zNLtPVm28v9HbD62l
+         S/fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaxCPH/T0R+ayT8u9tKYHD8SBznag019eS4AB/0p1dXjfySY/Xg/JqIBPNVDK+bWFy+W0hhXAH+IlOmIi5ggHQ6w0LZh1TQdI0dNIL3RD8BKnckZXG/spJP737I4+b9EX4sSk7
+X-Gm-Message-State: AOJu0Yy36VsFatTR3KQUoFniQl1N9FCZ/k3fdY8Y3KY7AU0Va7u8sfN1
+	qgI5kgk6XMLZCXH9o/kLiVlNb/qAK0p4jpQ2f1fV8DqALXqPLql6JbVVaA==
+X-Google-Smtp-Source: AGHT+IHEUJk0xLd08fCWUkUT6q7L5dyqKFpNyi0iCdDU+61xVknKryfkyO5HXzgACjh2WUmNoM02+A==
+X-Received: by 2002:a05:6a20:c781:b0:1c3:a446:160 with SMTP id adf61e73a8af0-1c3f12d1da4mr2342066637.56.1721152190245;
+        Tue, 16 Jul 2024 10:49:50 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fc0bc274dasm62983165ad.166.2024.07.16.10.49.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 10:49:49 -0700 (PDT)
+Message-ID: <64f66282-451c-454f-a437-d8baad186868@gmail.com>
+Date: Tue, 16 Jul 2024 10:49:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH net-next] net: mvpp2: Improve data types and use min()
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
-Date: Tue, 16 Jul 2024 19:48:31 +0200
-Cc: marcin.s.wojtas@gmail.com,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D2AAC5AF-59D0-4985-A3DD-EC9E72324CD7@toblux.com>
-References: <20240711154741.174745-1-thorsten.blum@toblux.com>
- <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 00/78] 5.4.280-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240716152740.626160410@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240716152740.626160410@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 15. Jul 2024, at 17:44, Russell King (Oracle) <linux@armlinux.org.uk> =
-wrote:
-> On Thu, Jul 11, 2024 at 05:47:43PM +0200, Thorsten Blum wrote:
->> Change the data type of the variable freq in mvpp2_rx_time_coal_set()
->> and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
->> the data type u32.
->>=20
->> Change the data type of the function parameter clk_hz in
->> mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
->> and remove the following Coccinelle/coccicheck warning reported by
->> do_div.cocci:
->>=20
->>  WARNING: do_div() does a 64-by-32 division, please consider using =
-div64_ul instead
->>=20
->> Use min() to simplify the code and improve its readability.
->>=20
->> Compile-tested only.
->>=20
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->=20
-> I'm still on holiday, but it's a wet day today. Don't expect replies
-> from me to be regular.
->=20
-> I don't think this is a good idea.
->=20
-> priv->tclk comes from clk_get_rate() which returns an unsigned long.
-> tclk should _also_ be an unsigned long, not a u32, so that the range
-> of values clk_get_rate() returns can be represented without being
-> truncted.
->=20
-> Thus the use of unsigned long elsewhere where tclk is passed into is
-> actually correct.
+On 7/16/24 08:30, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.280 release.
+> There are 78 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.280-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I don't think tclk should be an unsigned long.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-In [1] Eric Dumazet wrote:
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-  "This is silly, clk_hz fits in a u32, why pretends it is 64bit ?"
-
-and all functions in mvpp2_main.c (mvpp2_write(), do_div(),
-device_property_read_u32(), and mvpp22_gop_fca_set_timer()), which have
-tclk as a direct or indirect argument, assume tclk is a u32.
-
-Although mvpp2_cycles_to_usec() suggests it can be called with an
-unsigned long clk_hz, do_div() then immediately casts it to a u32
-anyway.
-
-Yes, the function clk_get_rate() returns an unsigned long according to
-its signature, but tclk is always used as a u32 afterwards.
-
-I'm not familiar with the hardware, but I guess the clock rate always
-fits into 32 bits (just like Eric wrote)?
-
-Thanks,
-Thorsten
-
-> If we need to limit tclk to values that u32 can represent, then that
-> needs to be done here:
->=20
->                priv->tclk =3D clk_get_rate(priv->pp_clk);
->=20
-> by assigning the return value to an unsigned long local variable,
-> then checking its upper liit before assigning it to priv->tclk.
-
-[1] =
-https://lore.kernel.org/linux-kernel/cbcdb354-04de-2a9a-1754-c32dd014e859@=
-gmail.com/=
 
