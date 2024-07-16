@@ -1,97 +1,71 @@
-Return-Path: <linux-kernel+bounces-254163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427CA932FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:05:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE7C932FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014F22822E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:05:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C850B20A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A5C1A01CF;
-	Tue, 16 Jul 2024 18:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hY5C4ziG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F41A01CF;
+	Tue, 16 Jul 2024 18:06:34 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647471F171;
-	Tue, 16 Jul 2024 18:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8308A1F171
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721153145; cv=none; b=gTyko9xXgv6eT3KMTxqmYZsCysbj3+51HPRezvWTk+TM1hd8dqtT83QzjB0nvwRx7Oq/KhCWJB0ocwxGKLBWKtMsvQzHS5wMLYsNtv54GkZgsb500fA3dqLAzqhDwWgIExdKwSoRdI5xyIvPCr6+ooufGBdW4bX5X+Bw4OH5EsQ=
+	t=1721153194; cv=none; b=HXOYKxdjtHqQsj4nyGQTmiJ3wNdmgE9NgaacKD5OEIgG4yM1fiQ7Jfge6WM3B+URnxIWVePPGbVA0CbjHk862MGUyFtaVyF49gwLXcfaPQ5vzKgjzy9AGMsvNaV2jlDZyvj6OZG0RO/tw8VcSHVG9OvDZvbrEBwmC5IDmsCd6A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721153145; c=relaxed/simple;
-	bh=HT+U1SUZjpnWe8Zswy5hdKqtal+Wsqa4Rt/sCxqDWqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZoKmC9seHzV+NPLV6BUxMjdI2j1xtEo3uWAAmm64h0GDNs3wBYb7MsA3Ph7vdGKoLPZKPpiSlhNRYagQoDvkXoYTsZ2oHThi3cGI7nPgVEMASPQVQyK8Y5cpdYfDMXCPYbaO3edAvawq7DZLM+ZH14X0OCuhuN25KIy2Pzs2Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hY5C4ziG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1E8C4AF0B;
-	Tue, 16 Jul 2024 18:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721153144;
-	bh=HT+U1SUZjpnWe8Zswy5hdKqtal+Wsqa4Rt/sCxqDWqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hY5C4ziGBlPVV/4+xcJ/w+BfmziEGjgHhV/EswIMkI567G1BAsLi/wwBb045Iyx2m
-	 tpWtUF0swZ3F44EpM8lfX4jy716KhIoZifZN10F/cY4CnLJukT2Jm89419Z6dUi+s4
-	 p770EbWSEQkSkD6MSeM524XeXDTXuhnegt6c2fqhWDK2XQI10wNgQ8dM651nCvnAyN
-	 Z/hPwFqXIeVRADlDS1uE2DaNAiaAy/OALWRiWHAwg8GROVs/Q1RJXsktm7XTdixBEv
-	 dWwIfSMnCS4K6jEycyYG9Gii4GcZtA6lqQMOEDz3rOTl+c13BqWMgdVMO891G/yTk2
-	 0Q8y8AT7lNdfg==
-Date: Tue, 16 Jul 2024 20:05:41 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guenter Roeck <linux@roeck-us.net>, Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v3 2/2] i2c: piix4: Register SPDs
-Message-ID: <r4osnmgfghlbcuprc4stmrfw3aaz62icj3mbwszej3f5anmfma@spddijyna5xk>
-References: <20240709-piix4-spd-v3-0-9d1daa204983@weissschuh.net>
- <20240709-piix4-spd-v3-2-9d1daa204983@weissschuh.net>
- <ZpEnXaRYnPIr1vG3@shikoro>
- <i633av3v2a4chdh5a7yk6nv6y77ohvpajeozypjdroufikes6k@cmvpywjwj4df>
- <1c03bc1c-b1ad-40ee-8219-718455717966@t-8ch.de>
+	s=arc-20240116; t=1721153194; c=relaxed/simple;
+	bh=0o/1U5JRdTwRrW33oYSr9k+DHLLqFJzfoxvtBKudZoQ=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=rBX1AlhR/jHHofBjI/lt7/hixvz1XkUoAMPaIFYTajlDohfZki6Br/pi+7bJBS4Qp+wU6nseb7gYivUR78WkwIeo+HcTJx1asfjaxtVxsKxJcoDu7xRhhKXc51poJHqcU1WCBbbsckZlmOdRZ0jCEHzHL57l43AB+Xu6m7qemU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299CDC4AF0B;
+	Tue, 16 Jul 2024 18:06:34 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sTmZO-0000000072I-3aFf;
+	Tue, 16 Jul 2024 14:06:34 -0400
+Message-ID: <20240716180613.399475893@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 16 Jul 2024 14:06:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/3] tracing: Last minute updates for 6.11
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c03bc1c-b1ad-40ee-8219-718455717966@t-8ch.de>
 
-On Tue, Jul 16, 2024 at 07:50:04PM GMT, Thomas Weißschuh wrote:
-> On 2024-07-16 19:46:43+0000, Andi Shyti wrote:
-> > On Fri, Jul 12, 2024 at 02:53:49PM GMT, Wolfram Sang wrote:
-> > > > Only the first 8 slots are supported. If the system has more,
-> > > > then these will not be visible.
-> > > > 
-> > > > The AUX bus can not be probed as on some platforms it reports all
-> > > > devices present and all reads return "0".
-> > > > This would allow the ee1004 to be probed incorrectly.
-> > > 
-> > > I think this information would also be helpful as a comment above the
-> > > code. But to allow this series to be applied now, I think an incremental
-> > > patch will do. With Heiner's ack, I think this can go in now.
-> > 
-> > I agree with Wolfram here. Are you up for a v4 or do you want me
-> > to add the comment while pushing?
-> 
-> I also agree. My first interpretation of that message was that I would
-> send the incremental patch during the 6.12 cycle.
-> But if it's still fine for 6.11, even better.
-> If you could add the comment, that would be great,
-> but I'm also fine with resending.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/for-next
 
-That's why I'm pushing... Wolfram is allowing me a pull request
-part 2 and I wanted this to go in.
+Head SHA1: 7dc836187f7c6f70a82b4521503e9f9f96194581
 
-I will fix the comment then.
 
-Thanks,
-Andi
+Luis Claudio R. Goncalves (1):
+      rtla/osnoise: set the default threshold to 1us
+
+Tio Zhang (1):
+      tracing/sched: sched_switch: place prev_comm and next_comm in right order
+
+levi.yun (1):
+      trace/pid_list: Change gfp flags in pid_list_fill_irq()
+
+----
+ Documentation/trace/osnoise-tracer.rst | 2 +-
+ include/trace/events/sched.h           | 4 ++--
+ kernel/trace/pid_list.c                | 4 ++--
+ kernel/trace/trace_osnoise.c           | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
