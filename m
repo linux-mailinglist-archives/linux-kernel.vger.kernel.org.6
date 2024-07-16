@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-254075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7014A932E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:28:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04F3932E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13991C221D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03F2284050
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19B419EEA5;
-	Tue, 16 Jul 2024 16:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0662419E7D0;
+	Tue, 16 Jul 2024 16:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzuZwuXD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xyUlONno"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26711DFDE;
-	Tue, 16 Jul 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730E11DFDE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721147312; cv=none; b=WwHmGWzrQ25mudOESPy/LKZHQUgHi/eQn2KkmP7Y+5roZokVcSQK+uVuKPRxSvO8NcV7MVYoy7Yyq0R3rM+wh+JndNaSTWeEaQh/sW3ztsieA9rMfDwhCVbwsCC06yu1H2YHMbvBXyTaRd5wDi+Gf8LFJCu3Cz+XCkeMJOsLPms=
+	t=1721147359; cv=none; b=APlV5YOowdDl9xuiBkGkbpnPpUtrqSxlfIH4gMNe2D2Gq87n+CZbvu15sR8jTgPoUyiJGJjMf7VIUH3ovJyn/kY8KTFh/phn+bCmyyuTNoW1f4/lBRh96QRGX87x5p8zpkbRgPXu02AC5LnX++oUBsAbrvGXjdJYjTowMeV2ETQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721147312; c=relaxed/simple;
-	bh=RgQT5cQ2M/Pr3td1yEhvTzpnWteXm56CUxfKnuWVZ/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkzzLr4X1ekmVnmqITJ09uR6D1WP92gjS4wU0LePf9/dSX/S4hqXtq+1Yxqex/gPjVHpTDJZJxrdEtlRp+nblSwuX+vrGaezoq2dykCed3EHBwbID3TIe0orzsyuZh0xpU7LyXobl0GZBfBaXhSDJ963TFx8/0RW6l7BI9IDnjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzuZwuXD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 954C1C4AF0B;
-	Tue, 16 Jul 2024 16:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721147311;
-	bh=RgQT5cQ2M/Pr3td1yEhvTzpnWteXm56CUxfKnuWVZ/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzuZwuXDj3AeYZNmNf4qm53Jmq0NskziRyyu+Xnb3del36Z9mIqs/SzyFjDR9VQ16
-	 wEWe3kh1mfLBBEJXgD3RZo/y2QMMraSJ2/8MtKAL7RVoV8gPsURFuJlJjRPGum9e4e
-	 aIUtynmUYpN3VGujwa0d+8/8phh8g3hXucByb04KlnRyMOUFkoxrkS4A6iihxD2jnJ
-	 xopO8pW6mOqmEX00MUNUh2GA0WR5X4PtkpjeJ+hbpApD8rm+9lJNgh7KYZNMg7EBgb
-	 5PxZv82MbzjxuLIvtjapUmlE8L8Ppx+beWEmomaVOooea1Xdj3JkhojROYkDGeu8Ql
-	 6oDuAOpaAsrbQ==
-Date: Tue, 16 Jul 2024 17:28:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: magnetometer: bmc150: Document
- mount-matrix
-Message-ID: <20240716-constant-underline-b6ad3e2cb571@spud>
-References: <20240716132512.80337-1-rayyan.ansari@linaro.org>
+	s=arc-20240116; t=1721147359; c=relaxed/simple;
+	bh=jaELMgsH3dwDaFt7EQM2pp+dxyHJV8grSRMCO/j51GY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHRaB2M/t0Ss9xrzs1Adnlm5KMEjdB6aEPYOgid48jwzdvCNthgiJ/DOWeW9Rdcr/vGZiZg7LF0XdHF7pdccJVA1x7swN4ZjWvhUhbb0emICGnIFOFsceV+DUY8/vgMCK22/VxhDoXciP9mA6bgVELXY3s3vNl3pcyAlCSIUmsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xyUlONno; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eecb63de15so63868231fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721147355; x=1721752155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jaELMgsH3dwDaFt7EQM2pp+dxyHJV8grSRMCO/j51GY=;
+        b=xyUlONnouG0EZNNiIdE5iDSXnkABgXZwFh0RB+wA7Rte/e6gE4ad+F/B82lbt7YVhf
+         yyGtQ381x69owuFBAWXHF69uT+rKsC9pTHfgkW7GaZeJzkryulfYryRq4WvepmsoAU3S
+         z1ImnwovdYNvEJ+pZj/t8zTJzsbHhR+1k+ZkZhoCguFfQBX4ObR3fsygzZYCnw9LIqtn
+         ogRsoNbbGtyHAgkVbW+R6nki+1LmdX0PcZsC03Qlg7TGBXjU8+E5LUwJ81f3Qa02pdyz
+         hI6YtFgW7ZrtJB2YFn0vjhEHx/BXSoDiKoQfbzP8kxZBVcZjyf5hylc59Qg40gqRzjI5
+         VCqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721147355; x=1721752155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jaELMgsH3dwDaFt7EQM2pp+dxyHJV8grSRMCO/j51GY=;
+        b=EUN7F85ZwJcaH3i1szSmwpu5YumaQaM0lUKqmNcmYj2N4llyJkm0NeO77OciSSKVFF
+         Z3VTvK4VA2oN56coKEbwRV8zcz1MO1QEBS43dY6k6If6bBITG6chXcy8dr7MYgkwOuc/
+         zhPzXlnOsgVaC9UaY+UNcGXvzl9BvrPjnJC+VHcwf6a/1wuRapb+BXTXmP141gOCGH17
+         zhW4qvFX1zwL2BmcJFJZCS3qfdX+RrrYCsuu2MHjGgH4RuiLz0UjVwanh57UiiEWwaLt
+         B0LC+2V5ILmd35QsswBkPOIPGaSreHDTEzEXNuWejZpISoH76iQIaEBH80LVCH+1Qb2L
+         3exw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFSmLrUUmiqPmZeNCrhGWOqQLIcUZDS7v0FhDAWmQxK0Cv1haD5gGMSdlP/H9a253kYJijcrFDGf0fDHOwl7tnzNXfhQRl7ViuLwLX
+X-Gm-Message-State: AOJu0YzW3vPEgLE9TgDgbuXD3sG5dzMasFtqYVU5EqlxRrSTiLzzHR/Q
+	y9zYSAAnWghfkdVEQaMJEk3a8s+mAfngkMCydc8xYap+7GzJYtNOvX/py+6NjWcpqeQCL95diWc
+	68Y4/+7yLSapwHWmPvB1rSBezTtg0F0SDU5ZuRw==
+X-Google-Smtp-Source: AGHT+IF8SDILOwF8rus+TVFHYwfHk25fVEqtCeF5iCh/e2abbWdCVtd8k0KCYLtTvI3BEyv+vV6eNO/gqJBcwvibr4E=
+X-Received: by 2002:a2e:a306:0:b0:2ee:5ed4:792f with SMTP id
+ 38308e7fff4ca-2eef415b58fmr18866581fa.2.1721147355577; Tue, 16 Jul 2024
+ 09:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cAKuj4M+rxN3rVll"
-Content-Disposition: inline
-In-Reply-To: <20240716132512.80337-1-rayyan.ansari@linaro.org>
-
-
---cAKuj4M+rxN3rVll
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240716152318.207178-1-brgl@bgdev.pl> <20240716155943.GM3446@thinkpad>
+In-Reply-To: <20240716155943.GM3446@thinkpad>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 16 Jul 2024 18:29:04 +0200
+Message-ID: <CAMRc=McObC-+xPfZADQ2wEHO5c3htLbPZLU0Ng-VmgBPEN-2Yw@mail.gmail.com>
+Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 02:25:09PM +0100, Rayyan Ansari wrote:
-> Document the mount-matrix property, which is used in device trees such
-> as msm8916-samsung-fortuna-common.dtsi, and supported by the driver.
->=20
-> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+On Tue, Jul 16, 2024 at 5:59=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Tue, Jul 16, 2024 at 05:23:18PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Kconfig will ask the user twice about power sequencing: once for the QC=
+om
+> > WCN power sequencing driver and then again for the PCI power control
+> > driver using it.
+> >
+> > Let's remove the public menuconfig entry for PCI pwrctl and instead
+> > default the relevant symbol to 'm' only for the architectures that
+> > actually need it.
+> >
+>
+> Why can't you put it in defconfig instead?
+>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Only Qualcomm uses it right now. I don't think it's worth building it
+for everyone just yet. Let's cross that bridge when we have more
+platforms selecting it?
 
---cAKuj4M+rxN3rVll
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpafqwAKCRB4tDGHoIJi
-0mcWAQCqkJGK1cHztBMlGXWivHsZc7XNeCfTcsBAQCeT5aGvhgD/Zkg9J7Qoao6H
-gKdxHLnwRX+6ob7yCImvu/Xr76wuCgc=
-=U2zY
------END PGP SIGNATURE-----
-
---cAKuj4M+rxN3rVll--
+Bartosz
 
