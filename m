@@ -1,194 +1,204 @@
-Return-Path: <linux-kernel+bounces-253187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FDB931DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:12:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E78931DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 02:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CA4282AE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151631F22365
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 00:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487E3380;
-	Tue, 16 Jul 2024 00:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB337EF;
+	Tue, 16 Jul 2024 00:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKTVPfwE"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iEzX+fRU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED40B136A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 00:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691263FD4;
+	Tue, 16 Jul 2024 00:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721088730; cv=none; b=daB1TJu52huhvAOxRE4B2CT73uJBtEydb/Z6eVICp1D6qGChUZ2YZYdw/AGkZjlXf7+F+jK4iq5hntoZUapdZMxFxbPbAapFWZ6Ohjt5JhO0TYzqGeDhVvw7I20eniaYpDH83k4uQm//R29B91N/tIQMV2JOjCerDuLSnC4YxEU=
+	t=1721088793; cv=none; b=WdpBZibHOuIUMxM/ofYx6j2ea7+LZvusALlLoFwVGV2jvFrx0mfdYLoGfMDiCZX7qXauR3I/ekbw8Ex1/OrtThWUNmesENHv49bKly3EQEZ3sZv+jR5V+YxwJrdTRK9ECFxwxsOeuFqF6wKjvog2IUsNkomwIL5N8/C1RrSGcTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721088730; c=relaxed/simple;
-	bh=B2ryOlzjx/9gFMyLNNuW3i9GqBVtqSqvTcCVm1mCkAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cALjR6oo/8JarIS/TGeL/JoIxo2UuCle5w5RlYKjET3A1umCQjQiaCYVI3bXFCvjw3NBu4mRAyT7zEa3bhEHxNd1pH9UTZuxoW3ysfr54FsH4BvKhtB2GWJj/wP9CNYkENLV4u+UtpSAUyQnUfLPSmxmWm0LkpL5ERkAy+7fzM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKTVPfwE; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70b0bc1ef81so3152220b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 17:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721088728; x=1721693528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W3DTkF60xr21ZQP8ZiR1CX555iGLsD+R63LTSk9Iw8w=;
-        b=SKTVPfwEdZfZFK5/EIoBAE5lYHa75BZgVy6RQh8EhwVSEBfyMSnBeRuCGYC7A28out
-         PtdZR42rLmDWAYga00MGtpH1CtNfLzsvEJJs9VwiY3C4wVZgGWGI8/wAYsrns6QlFbPS
-         CKqELovkuz4Ms2OnYdH3TIgqLfbBgzdMk6BUYLUjHIJm2/q8mrZX+6RxwtWiyNynGRxz
-         H2xsJZAkLkLie5UKUtxzY0bSkMZArdMT7VZVwZYG0/wfcoQWPtGI5ZwmMvuXhscR8Ir2
-         T7R3wj+N+KIseg8P8qT2jGFb/TWS6z5aAPV36t6vrgZMiJ4QtXcAi6NyoAuY8Gw42uNO
-         J21g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721088728; x=1721693528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W3DTkF60xr21ZQP8ZiR1CX555iGLsD+R63LTSk9Iw8w=;
-        b=P3jTQ0WFoGj7KJUFYP4+DziN5i4gi1K18Qixol90JaQqXgjdcybkqgbEywGch5PYeG
-         OUfUBCTtnGJaMg6hkoFie73sJGi0GyVPY+qZpf5VaDzFCu+jwIHFzHFcNIrHBY8HZTQ5
-         oEmn2Ov8Z+KmoAHDkspeHCl3OscEvRus2/CxI2mY6GuZcXlt2zDNzbpgM0NZVCEa8tg9
-         lINzglF6SHQ20X69KydR39PDT9LrVFv3UtdbnhiZVtOROKl/Tv9Szv+XvzVWeaYsiERf
-         60pJv9JKIUVsav18FyWOmwHS6thwwgEOO+UxJsrXcwsfmgy8mTHTmxgh7q2rBX/ahRhj
-         aEAQ==
-X-Gm-Message-State: AOJu0YyckR7IvYR4BALs4wgha3Ln35LtPoYJ7vYd6K9pLqDBQdDavU0I
-	mrgo7vKO/IFck2PGMulSCyMe60FsPFhK2vDsScwapHzUUiNW9KtKqbMIlQ==
-X-Google-Smtp-Source: AGHT+IGga3D2tJFtJySRGLXmOHUAjSrOsSiB1mTVTXxvc1C+ZgFRmPoGEWyTi8mRkxYGrQFD5DLpCg==
-X-Received: by 2002:a05:6a00:2443:b0:70b:30ce:dfdb with SMTP id d2e1a72fcca58-70c2e988180mr836355b3a.24.1721088727933;
-        Mon, 15 Jul 2024 17:12:07 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9c916sm4979007b3a.42.2024.07.15.17.12.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 17:12:07 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 15 Jul 2024 14:12:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] workqueue: Remove unneeded lockdep_assert_cpus_held()
-Message-ID: <ZpW61giPoe_k8mIv@slm.duckdns.org>
-References: <20240715172931.2260-1-jiangshanlai@gmail.com>
+	s=arc-20240116; t=1721088793; c=relaxed/simple;
+	bh=IECHwpDw7bZCOxZMSCqmkTZjycT1fyvO94gBHPARIfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SQYXgiKNT9+IG3bEtn0wOUa1Uj1oRF7PaGOm6GbAnu0crzZnqoPAkPWKMPi2T/6+vkz+CLnePu2hmbx010q5SXa0XsA92C5/O/RJYyVi+ZpvP3VLts51GdwJVrQoMWZ7yiXTbfpfRnUaB4c8znUDEZS+fp9NjrNnQf8uWVzcjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iEzX+fRU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8xl9031993;
+	Tue, 16 Jul 2024 00:12:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DEOdlO8zDMSoDPDlRdvvxulGld1btP9q++cglxsjV6I=; b=iEzX+fRUnxKxlrkI
+	gVArJB2ZYBNr/T587f66f8BJgpzjGufvjPjSpLaf+qo7md7cjGZL5x831ItvpXcY
+	U7Bq33zuJ2LAoy4/pe6O5nOeZmj65mG4oT0YyjqpmZCzZxWK0HMlZJm4lfAzeovw
+	bxH5o4sku2SS30iG0yddxdUi9GmbdL70corsZxQwbls/HQ6rZaLwylalJdr4M2fY
+	69nM+xWiTWxjtj4VFOaE4hW0qorC/o5GPLu2Mj5TRkezz/l5PTaDXFu68RG4+E81
+	kOOaQt2CLHDIjmon9N6+m/Pb7VBZne7iaGuPbM1pdKqbY/dayOaA1Ocfu6tq3MOH
+	1jtVFQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bjrjdghy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 00:12:52 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46G0Cqtc025805
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Jul 2024 00:12:52 GMT
+Received: from [10.71.109.148] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
+ 2024 17:12:49 -0700
+Message-ID: <121b8077-bc6d-42a3-8ec2-c792e84bd947@quicinc.com>
+Date: Mon, 15 Jul 2024 17:12:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715172931.2260-1-jiangshanlai@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] sh: Restructure setup code to reserve memory regions
+ earlier
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        <ysato@users.sourceforge.jp>, <dalias@libc.org>
+CC: <linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <kernel@quicinc.com>
+References: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
+ <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fnGclF2WBtyivyEoc-JZlGKenfGPRtt9
+X-Proofpoint-ORIG-GUID: fnGclF2WBtyivyEoc-JZlGKenfGPRtt9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_17,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407160000
 
-Lai, I dropped the cpus_read_lock/unlock() from wq_affn_dfl_set() and
-applied the following patch to fasttrack it as Linus already pulled
-for-6.11. Let's do the removal as a separate patch.
 
-Thanks.
+On 7/13/2024 12:58 AM, John Paul Adrian Glaubitz wrote:
 
-From aa8684755a283536bd8ad93141052f47a4faa5a3 Mon Sep 17 00:00:00 2001
-From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Date: Tue, 16 Jul 2024 01:29:31 +0800
-Subject: [PATCH] workqueue: Remove unneeded lockdep_assert_cpus_held()
+Hi Adrian,
 
-The commit 19af45757383 ("workqueue: Remove cpus_read_lock() from
-apply_wqattrs_lock()") removes the unneed cpus_read_lock() after the pwq
-creations and installations have been reworked based on wq_online_cpumask
-rather than cpu_online_mask making cpus_read_lock() is unneeded during
-wqattrs changes.
+>> diff --git a/arch/sh/include/asm/setup.h b/arch/sh/include/asm/setup.h
+>> index 84bb23a771f3..f8b814fb1c7f 100644
+>> --- a/arch/sh/include/asm/setup.h
+>> +++ b/arch/sh/include/asm/setup.h
+>> @@ -19,7 +19,6 @@
+>>  #define COMMAND_LINE ((char *) (PARAM+0x100))
+>>  
+>>  void sh_mv_setup(void);
+>> -void check_for_initrd(void);
+>>  void per_cpu_trap_init(void);
+>>  void sh_fdt_init(phys_addr_t dt_phys);
+>>  
+>> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+>> index 620e5cf8ae1e..8477491f4ffd 100644
+>> --- a/arch/sh/kernel/setup.c
+>> +++ b/arch/sh/kernel/setup.c
+>> @@ -35,6 +35,7 @@
+>>  #include <asm/io.h>
+>>  #include <asm/page.h>
+>>  #include <asm/elf.h>
+>> +#include <asm/kexec.h>
+>>  #include <asm/sections.h>
+>>  #include <asm/irq.h>
+>>  #include <asm/setup.h>
+>> @@ -114,7 +115,7 @@ static int __init early_parse_mem(char *p)
+>>  }
+>>  early_param("mem", early_parse_mem);
+>>  
+>> -void __init check_for_initrd(void)
+>> +static void __init check_for_initrd(void)
+>>  {
+>>  #ifdef CONFIG_BLK_DEV_INITRD
+>>  	unsigned long start, end;
+>> @@ -172,6 +173,42 @@ void __init check_for_initrd(void)
+>>  #endif
+>>  }
+> Making check_for_initrd() static seems like an unrelated change to me or am
+> I missing something? If yes, it should go into a separate patch.
+ack.
+>> +static void __init early_reserve_mem(void)
+>> +{
+>> +	unsigned long start_pfn;
+>> +	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
+>> +	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
+>> +
+>> +	/*
+>> +	 * Partially used pages are not usable - thus
+>> +	 * we are rounding upwards:
+>> +	 */
+>> +	start_pfn = PFN_UP(__pa(_end));
+>> +
+>> +	/*
+>> +	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
+>> +	 * this in two steps (first step was init_bootmem()), because
+>> +	 * this catches the (definitely buggy) case of us accidentally
+>> +	 * initializing the bootmem allocator with an invalid RAM area.
+>> +	 */
+>> +	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
+>> +
+>> +	/*
+>> +	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
+>> +	 */
+>> +	if (CONFIG_ZERO_PAGE_OFFSET != 0)
+>> +		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
+>> +
+>> +	/*
+>> +	 * Handle additional early reservations
+>> +	 */
+>> +	check_for_initrd();
+>> +	reserve_crashkernel();
+>> +
+>> +	if (sh_mv.mv_mem_reserve)
+>> +		sh_mv.mv_mem_reserve();
+>> +}
+>> +
+>>  #ifndef CONFIG_GENERIC_CALIBRATE_DELAY
+>>  void calibrate_delay(void)
+>>  {
+> I'm not really happy with moving early_reserve_mem() from mm/init.c to
+> kernel/setup.c. Can't we just leave it where it is while still keeping
+> the changes to paging_init()?
+ack.
+>
+>> @@ -319,9 +356,14 @@ void __init setup_arch(char **cmdline_p)
+>>  
+>>  	sh_mv_setup();
+>>  
+>> +	sh_mv.mv_mem_init();
+>> +
+>>  	/* Let earlyprintk output early console messages */
+>>  	sh_early_platform_driver_probe("earlyprintk", 1, 1);
+>>  
+>> +	/* set aside reserved memory regions */
+>> +	early_reserve_mem();
+>> +
+>>  #ifdef CONFIG_OF_EARLY_FLATTREE
+>>  #ifdef CONFIG_USE_BUILTIN_DTB
+>>  	unflatten_and_copy_device_tree();
 
-But it desn't remove the lockdep_assert_cpus_held() checks during wqattrs
-changes, which leads to complaints from lockdep reported by kernel test
-robot:
+I'll make adjustments based on your comments and
+resend another version.
 
-[   15.726567][  T131] ------------[ cut here ]------------
-[ 15.728117][ T131] WARNING: CPU: 1 PID: 131 at kernel/cpu.c:525 lockdep_assert_cpus_held (kernel/cpu.c:525)
-[   15.731191][  T131] Modules linked in: floppy(+) parport_pc(+) parport qemu_fw_cfg rtc_cmos
-[   15.733423][  T131] CPU: 1 PID: 131 Comm: systemd-udevd Tainted: G                T  6.10.0-rc2-00254-g19af45757383 #1 df6f039f42e8818bf9a534449362ebad1aad32e2
-[   15.737011][  T131] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 15.739760][ T131] EIP: lockdep_assert_cpus_held (kernel/cpu.c:525)
-[ 15.741326][ T131] Code: 97 c2 03 72 20 83 3d f4 73 97 c2 00 74 17 55 89 e5 b8 fc bd 4d c2 ba ff ff ff ff e8 e4 57 d1 00 85 c0 74 06 5d 31 c0 31 d2 c3 <0f> 0b eb f6 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 89 e5 b8
-
-Fix it by removing the unneeded lockdep_assert_cpus_held().
-Also remove the unneed cpus_read_lock() from wq_affn_dfl_set().
-
-tj: Dropped the removal of cpus_read_lock/unlock() in wq_affn_dfl_set() to
-    keep this patch fix only.
-
-Cc: kernel test robot <oliver.sang@intel.com>
-Fixes: 19af45757383("workqueue: Remove cpus_read_lock() from apply_wqattrs_lock()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407141846.665c0446-lkp@intel.com
-Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/workqueue.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index dfd42c28e404..1745ca788ede 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5342,8 +5342,6 @@ static int apply_workqueue_attrs_locked(struct workqueue_struct *wq,
-  *
-  * Performs GFP_KERNEL allocations.
-  *
-- * Assumes caller has CPU hotplug read exclusion, i.e. cpus_read_lock().
-- *
-  * Return: 0 on success and -errno on failure.
-  */
- int apply_workqueue_attrs(struct workqueue_struct *wq,
-@@ -5351,8 +5349,6 @@ int apply_workqueue_attrs(struct workqueue_struct *wq,
- {
- 	int ret;
- 
--	lockdep_assert_cpus_held();
--
- 	mutex_lock(&wq_pool_mutex);
- 	ret = apply_workqueue_attrs_locked(wq, attrs);
- 	mutex_unlock(&wq_pool_mutex);
-@@ -5434,7 +5430,6 @@ static int alloc_and_link_pwqs(struct workqueue_struct *wq)
- 	bool highpri = wq->flags & WQ_HIGHPRI;
- 	int cpu, ret;
- 
--	lockdep_assert_cpus_held();
- 	lockdep_assert_held(&wq_pool_mutex);
- 
- 	wq->cpu_pwq = alloc_percpu(struct pool_workqueue *);
-@@ -5695,8 +5690,7 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
- 
- 	/*
- 	 * wq_pool_mutex protects the workqueues list, allocations of PWQs,
--	 * and the global freeze state.  alloc_and_link_pwqs() also requires
--	 * cpus_read_lock() for PWQs' affinities.
-+	 * and the global freeze state.
- 	 */
- 	apply_wqattrs_lock();
- 
-@@ -6862,8 +6856,7 @@ static int workqueue_apply_unbound_cpumask(const cpumask_var_t unbound_cpumask)
-  * @exclude_cpumask: the cpumask to be excluded from wq_unbound_cpumask
-  *
-  * This function can be called from cpuset code to provide a set of isolated
-- * CPUs that should be excluded from wq_unbound_cpumask. The caller must hold
-- * either cpus_read_lock or cpus_write_lock.
-+ * CPUs that should be excluded from wq_unbound_cpumask.
-  */
- int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
- {
-@@ -6873,7 +6866,6 @@ int workqueue_unbound_exclude_cpumask(cpumask_var_t exclude_cpumask)
- 	if (!zalloc_cpumask_var(&cpumask, GFP_KERNEL))
- 		return -ENOMEM;
- 
--	lockdep_assert_cpus_held();
- 	mutex_lock(&wq_pool_mutex);
- 
- 	/*
--- 
-2.45.2
-
+Thanks,
+Oreoluwa
 
