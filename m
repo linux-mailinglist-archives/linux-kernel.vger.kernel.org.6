@@ -1,218 +1,98 @@
-Return-Path: <linux-kernel+bounces-254062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6C3932D45
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:03:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DD6932D68
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 18:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF9F1C222AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5E41F21466
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAF019E822;
-	Tue, 16 Jul 2024 16:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED87C19DFB9;
+	Tue, 16 Jul 2024 16:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mX8mJtYc"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XC/09R/Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C719B59C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E71E1DDCE;
+	Tue, 16 Jul 2024 16:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721145783; cv=none; b=Qfp1/ZiWQwpq0Ed+RgCL6YcKP4p1RDD8RF26suaDJnmyjjCa3HsQZz/sqRsMXwGzsq5L0YftR3cn8uM1hvaN2QRpfihHDPyhPrlFZJrP22N/+NfrABuiAyA/wyS3OB1lMEsL1gOSpWfsRNSJvjkIaUnXuqnWE4b85vYhQSTAjv8=
+	t=1721145894; cv=none; b=UL/k4YjxA5D+l1KJ+04VXxMgEwShz1549y0uT3KZDZhUXD5F557MFmCZOB6r9r6+mKDiK1lA1b7HGXg2nIGS7rAvYHclko2tbKJNT+N01FZa22H1AMpymQHymmntuTddbYzQSJWGCL0HmDdawTtISoqpI7Ql6QYpUVOguJRIsRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721145783; c=relaxed/simple;
-	bh=V3XIltUZy+EAGhbi36SoKcnYH8QOpAigc2QQmc3zTsw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HIxy/vyTIuO3mh5eqzhMmkKxR9STfObtwdCgPD63PC/zkrOlviZpj2AmzHu4qGlKf6t68LcSZLMScv60S1PMQESR8katacB/AoGruJRyG0uvNRcvg/CVSwK6JjOuIrfQ68HVL4AHCjB+lyKv4cHybcYr55iO6oslvGonfiKHJFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mX8mJtYc; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6522c6e5ed9so111628047b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:03:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721145781; x=1721750581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BMs2wY7Im2gJwcvsvkhutz6yojdHTU9eBYvDppSee3o=;
-        b=mX8mJtYcq9zluHtVnzREhZxbiiULi7i2I+mJi4Mt08+GskaWUHf5gWVjXt5W27r0kS
-         weqAWKColS7fzPZ/XyCf6qTaU0n4l/g7QwS3RhBGURMGs/LVEzq36zwElFVxRZhLx7lw
-         WM4Qhv+0Ncj+0SqxX5NvtCupt3zX+r1L0TUqx6Iuu9YGo1CYTh0XeX1iRlwd2+DQNEty
-         BbckODM0k85fY+vvYTBvHD9S4Fdwdn6B6PX51Nl5yJXu8bXWlahlEPRa6AKnEg7ZRT/y
-         t2h3IS26gKTSfcnSeOM5iK4Iojjn4cq2rHi+vxzF1YUGVruUttEyEf7Gx19q0X5j/I5I
-         sVbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721145781; x=1721750581;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BMs2wY7Im2gJwcvsvkhutz6yojdHTU9eBYvDppSee3o=;
-        b=NxNVPnrSDJIDkM8z/k5qkYiQwo7f2Q9piBG1EVoqZEcoFhMm3KRmK6MaAMlMXtfiUe
-         ALdAyMFyFNGhpgikBgLPPPJv4IuezoJKwXYDbA3D6L+lfdgCjjsjOGdAxiUFgYwFuqxc
-         pSw+Y1qHTCBSzh5R9QaPSpVF2lyJw0KDp8GA5MwSs/08gZbjZ3TJzjJgiX2/gxmm6Cj3
-         IZDibJPyozlqU6lQLPn6dHH8YZ3tyL2gwjVoqvOSiw+Tn0jXVLTLHifiJh7UDpKE6EiM
-         zvpY7itn3FOyZEkbdIcwJ1ZYMTqq5gGVdBAkMWY3KKphs8zqUHYMLTuS0zTFMwnoSW6g
-         gqDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXByRY9tGBuLBNEJtIO4v9JOdEN5tJmVNTBwcYnPXn1hds8iLrYEbLreKXUbv51NdCpR7s28MN0731auUV6g0v1ekIOhwHlwfQFo3D2
-X-Gm-Message-State: AOJu0Yww18vOzJLwQa6AN4LZacI0Z8G8BsMMGH6MrvMcd7C+oORrrFFo
-	/3XCcP1LVXWfJ7yB98tvTFDhlAvf+tVw2aTbEhwjGVFa1N7GIWwXtMDrX7eubGXkiNOkFdq/R3y
-	09g==
-X-Google-Smtp-Source: AGHT+IHGZLEiSniWpPk9RJXTJkROIXXHkCGmFW1fdkqpo+4QpAqRJbF6e6n8zR9oFjopeWKxjqT3PAofiHk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:fd4:b0:62d:cef:67dd with SMTP id
- 00721157ae682-6637f1c259emr1606177b3.1.1721145781339; Tue, 16 Jul 2024
- 09:03:01 -0700 (PDT)
-Date: Tue, 16 Jul 2024 09:03:00 -0700
-In-Reply-To: <20240712232937.2861788-1-ackerleytng@google.com>
+	s=arc-20240116; t=1721145894; c=relaxed/simple;
+	bh=7bdeBRk2eXQxVNqE62jOD4bNViPSgDbpp6IsB4XA/sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caxn8FoyI34MXKa3cD6araizPkW34h3mIUnz3avOBrgEOf1XAKw7rmVqr5jQ5k0Wv6Styqdl76Y2Q/siAbSqtr5De8cYktfOEmaRrCPEhUOBs/MWAK8xgtZmxjYPi1yAwXLfDdiWwV81XD2USxC6xk8dhPbgA3jQjnv5tf5NUm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XC/09R/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9098C116B1;
+	Tue, 16 Jul 2024 16:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721145894;
+	bh=7bdeBRk2eXQxVNqE62jOD4bNViPSgDbpp6IsB4XA/sI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XC/09R/Y6r9goUkhLNzEdOCM7A8ckw1j4j5nvljL16ILcXSU+YgH3pumBdl671Vm+
+	 +D34YCZlvA3JpUcYEYR6lJlPUSiE96JoorlY3HDiVibwigPoIY94WkVfY8Kzz8Y0cf
+	 W1n2M7q+2qboPIQoc7klHgfhO62E/qM2d2JqYn/Vdy3jQGbRax/VMGiM1BZbx1vKUH
+	 8Nbo5xGjaWUT82PtSD6JtTXaRaz5HZzpy28LG1OmDGFNxh2XGCF5uoCUoRG8SsLpoc
+	 veP+7Drs5XCPbORsFjJO6Ah9PwH5MgUvh1qoTyzZIfFLZty+fzemMw1DB2gm7YXEDk
+	 3Osgxv8thO9jQ==
+Date: Tue, 16 Jul 2024 17:04:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	pratikmanvar09@gmail.com, francesco@dolcini.it
+Subject: Re: [PATCH v2 1/3] dt-bindings: pwm: imx: Add optional clock '32k'
+Message-ID: <20240716-corporal-worry-15183ca9ea68@spud>
+References: <20240715-pwm-v2-0-ff3eece83cbb@nxp.com>
+ <20240715-pwm-v2-1-ff3eece83cbb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com> <20240712232937.2861788-1-ackerleytng@google.com>
-Message-ID: <ZpaZtPKrXolEduZH@google.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: quic_eberman@quicinc.com, akpm@linux-foundation.org, david@redhat.com, 
-	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, maz@kernel.org, pbonzini@redhat.com, shuah@kernel.org, 
-	tabba@google.com, willy@infradead.org, vannapurve@google.com, 
-	hch@infradead.org, jgg@nvidia.com, rientjes@google.com, jhubbard@nvidia.com, 
-	qperret@google.com, smostafa@google.com, fvdl@google.com, hughd@google.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fRibbrrJ4CaRBetE"
+Content-Disposition: inline
+In-Reply-To: <20240715-pwm-v2-1-ff3eece83cbb@nxp.com>
+
+
+--fRibbrrJ4CaRBetE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for doing the dirty work!
+On Mon, Jul 15, 2024 at 04:29:50PM -0400, Frank Li wrote:
+> The pwm in imx8qxp mipi subsystem require one extra '32k' clock. So
+> increase maxItems for clock and clock-names.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-On Fri, Jul 12, 2024, Ackerley Tng wrote:
-> Here=E2=80=99s an update from the Linux MM Alignment Session on July 10 2=
-024, 9-10am
-> PDT:
->=20
-> The current direction is:
->=20
-> + Allow mmap() of ranges that cover both shared and private memory, but d=
-isallow
->   faulting in of private pages
->   + On access to private pages, userspace will get some error, perhaps SI=
-GBUS
->   + On shared to private conversions, unmap the page and decrease refcoun=
-ts
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Note, I would strike the "decrease refcounts" part, as putting references i=
-s a
-natural consequence of unmapping memory, not an explicit action guest_memfd=
- will
-take when converting from shared=3D>private.
+--fRibbrrJ4CaRBetE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And more importantly, guest_memfd will wait for the refcount to hit zero (o=
-r
-whatever the baseline refcount is).
+-----BEGIN PGP SIGNATURE-----
 
-> + To support huge pages, guest_memfd will take ownership of the hugepages=
-, and
->   provide interested parties (userspace, KVM, iommu) with pages to be use=
-d.
->   + guest_memfd will track usage of (sub)pages, for both private and shar=
-ed
->     memory
->   + Pages will be broken into smaller (probably 4K) chunks at creation ti=
-me to
->     simplify implementation (as opposed to splitting at runtime when priv=
-ate to
->     shared conversion is requested by the guest)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpaaIAAKCRB4tDGHoIJi
+0ja3AQC57LpLdwDup3Cn5u7VwR4VXDEFrlgTSi5VVFGw+ctrgQEA1Yu0luAj3nJu
+Hbszo+7oLDmuM6hm8gKxB/zULvBtzAQ=
+=Oabq
+-----END PGP SIGNATURE-----
 
-FWIW, I doubt we'll ever release a version with mmap()+guest_memfd support =
-that
-shatters pages at creation.  I can see it being an intermediate step, e.g. =
-to
-prove correctness and provide a bisection point, but shattering hugepages a=
-t
-creation would effectively make hugepage support useless.
-
-I don't think we need to sort this out now though, as when the shattering (=
-and
-potential reconstituion) occurs doesn't affect the overall direction in any=
- way
-(AFAIK).  I'm chiming in purely to stave off complaints that this would bre=
-ak
-hugepage support :-)
-
->     + Core MM infrastructure will still be used to track page table mappi=
-ngs in
->       mapcounts and other references (refcounts) per subpage
->     + HugeTLB vmemmap Optimization (HVO) is lost when pages are broken up=
- - to
->       be optimized later. Suggestions:
->       + Use a tracking data structure other than struct page
->       + Remove the memory for struct pages backing private memory from th=
-e
->         vmemmap, and re-populate the vmemmap on conversion from private t=
-o
->         shared
->   + Implementation pointers for huge page support
->     + Consensus was that getting core MM to do tracking seems wrong
->     + Maintaining special page refcounts for guest_memfd pages is difficu=
-lt to
->       get working and requires weird special casing in many places. This =
-was
->       tried for FS DAX pages and did not work out: [1]
->=20
-> + Implementation suggestion: use infrastructure similar to what ZONE_DEVI=
-CE
->   uses, to provide the huge page to interested parties
->   + TBD: how to actually get huge pages into guest_memfd
->   + TBD: how to provide/convert the huge pages to ZONE_DEVICE
->     + Perhaps reserve them at boot time like in HugeTLB
->=20
-> + Line of sight to compaction/migration:
->   + Compaction here means making memory contiguous
->   + Compaction/migration scope:
->     + In scope for 4K pages
->     + Out of scope for 1G pages and anything managed through ZONE_DEVICE
->     + Out of scope for an initial implementation
->   + Ideas for future implementations
->     + Reuse the non-LRU page migration framework as used by memory ballon=
-ing
->     + Have userspace drive compaction/migration via ioctls
->       + Having line of sight to optimizing lost HVO means avoiding being =
-locked
->         in to any implementation requiring struct pages
->         + Without struct pages, it is hard to reuse core MM=E2=80=99s
->           compaction/migration infrastructure
->=20
-> + Discuss more details at LPC in Sep 2024, such as how to use huge pages,
->   shared/private conversion, huge page splitting
->=20
-> This addresses the prerequisites set out by Fuad and Elliott at the begin=
-ning of
-> the session, which were:
->=20
-> 1. Non-destructive shared/private conversion
->   + Through having guest_memfd manage and track both shared/private memor=
-y
-> 2. Huge page support with the option of converting individual subpages
->   + Splitting of pages will be managed by guest_memfd
-> 3. Line of sight to compaction/migration of private memory
->   + Possibly driven by userspace using guest_memfd ioctls
-> 4. Loading binaries into guest (private) memory before VM starts
->   + This was identified as a special case of (1.) above
-> 5. Non-protected guests in pKVM
->   + Not discussed during session, but this is a goal of guest_memfd, for =
-all VM
->     types [2]
->=20
-> David Hildenbrand summarized this during the meeting at t=3D47m25s [3].
->=20
-> [1]: https://lore.kernel.org/linux-mm/cover.66009f59a7fe77320d413011386c3=
-ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com/
-> [2]: https://lore.kernel.org/lkml/ZnRMn1ObU8TFrms3@google.com/
-> [3]: https://drive.google.com/file/d/17lruFrde2XWs6B1jaTrAy9gjv08FnJ45/vi=
-ew?t=3D47m25s&resourcekey=3D0-LiteoxLd5f4fKoPRMjMTOw
+--fRibbrrJ4CaRBetE--
 
