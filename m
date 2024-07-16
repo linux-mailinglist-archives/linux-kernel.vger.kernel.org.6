@@ -1,145 +1,78 @@
-Return-Path: <linux-kernel+bounces-254543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A2A933489
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:27:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679D6933491
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533701F23B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B82B244F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1CF1442F0;
-	Tue, 16 Jul 2024 23:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27ED144D39;
+	Tue, 16 Jul 2024 23:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fC4Ns9+u"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZQacgHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DB214389F;
-	Tue, 16 Jul 2024 23:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149BB144312;
+	Tue, 16 Jul 2024 23:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721172445; cv=none; b=HTuD30GkwG2S1ZcbaePmUDBlj9vRBdBinnRpZ7o/LkX3GsdvibgqsmsFrYsx6/Gb1ZxOvTNAn5Qhtkb7KRiiKM+eR3YOidRf5md+MRkQotdmf0lvAzIRBXlNuBO0Ebr0ih10F97EyOHYRu5ECQ5WItZllWx/n9mvIvRoylbt1FQ=
+	t=1721172487; cv=none; b=DGvM1lENW2Hxx/J/hoze1Stm/hy7b0zQH6KsGb8ET5zb7qjlyKUYPTARWWOgX9OLiWQnbSXhjf2Bhw7KD48CuCkVo/eskFrJqIIxrRa5LsGfgE8N0Fv2OzqEvgILGP0aXLHb53a2rvIWZ6WZLGl25/q2kzmCglSc0o3Hd97/fqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721172445; c=relaxed/simple;
-	bh=PzP2BwKqbwtLqzrDSMqw6g7N4Sox5X5/U8Z5I1XIPeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u0MiH31dJLDwyhpwlStGB4QONdf3vzwNCgzI62AaaY3MHnh4SJ2yXwX6hIC4Jlx52OmFG7bRQ5D6zuuZmQEwLtx3yjcxCfvt3r2AakjfnverxuStwowCKzbKxpx+6QrWF3JgIily/xCzccBN0gzxm6DCqfEys95UBcrM/IcJOqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fC4Ns9+u; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721172432;
-	bh=pvYQIHAlg1jMG36TFJqQN6xI1kxOhEaBgSTL/aRuTXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fC4Ns9+umCUGXyutC/9IaykmY0NCka7Q18+JVxXA/lBJFR7sAP5zf3WUI2kykBlPv
-	 q4Zh1qUserbQenvQ8KIxsq5ihK2EA5X5Wy3oqDp6qPrBNSw5Ns4+7LtiZLquz+STAK
-	 8skrtSngZzUmwrS8BlH2OaBHBiTDkCXn58SOz8w2l82jZzgKoPhLwS4KB/2AmVUk6f
-	 mj2xAUb9x5ayiV42+yQfKjEo+cW0dnyV2jCUN4MDeskI1/kd0yCXIXUBwRuywQ87lC
-	 nbQh9dfsYiWux6ku0kKTT8uCv40ccowgcMjrC0uuedPpZf9FDaBS/5uAZhoDkoi7yP
-	 ewCzoc2DRV8Ug==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WNwFn0b1Gz4wcl;
-	Wed, 17 Jul 2024 09:27:08 +1000 (AEST)
-Date: Wed, 17 Jul 2024 09:27:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Yury Norov
- <yury.norov@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the mm tree
-Message-ID: <20240717092708.0a40aca4@canb.auug.org.au>
-In-Reply-To: <20240612112746.3130d68b@canb.auug.org.au>
-References: <20240612112746.3130d68b@canb.auug.org.au>
+	s=arc-20240116; t=1721172487; c=relaxed/simple;
+	bh=Jamb/algZat8QRaoEa7lxur5B/lDH7sUdQebPu2d9T0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ixHPtd0HJ/po4NQc1nREUj3TyZk18GHvQuMc1Rfey/FFIlpEuVA9bs0lOW4YZEicG+O4p9tRT3TCo0J8yRVXa+rEQixJIjOwiChQ+Ds+K5KqYkrSVLlB05Kf+7/5lYD7KN44o/fdmWfrWxHZLZEDCAo6g1XSo7UAJHKRIu0ru/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZQacgHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EA74BC4AF0F;
+	Tue, 16 Jul 2024 23:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721172487;
+	bh=Jamb/algZat8QRaoEa7lxur5B/lDH7sUdQebPu2d9T0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=MZQacgHQjGB64DjjWUb0rmSnV2ooj7gDHjs1ihK+exLkj9c3I++FOpd7U/ZihKlIW
+	 I7iQhcUJa8hINgQBYXw3pPjKmSqsQRVUSYnu1AMyk9UnmSRpD+HIwOcQeMKMe0SCKf
+	 pJVn423VDpwB48AvBYJk9kfHLCGkPDpSSTzfbMkwehLqfc6fVLoGhPFcMJTAKAOlnn
+	 qpIB9H3cccdh48l1IMSZ90cxlNXb5F91+deix9PLfFsM0MwQ4XffWWkK/2cZsKsX6+
+	 yvCCPa9cT5adXy9OPRSKmbF+wTJLC2WkH5R8kVIjCbFJtMYYGSQmXu4QM/zxOtEqRw
+	 VFe/TJXNtbl+g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E2209C43443;
+	Tue, 16 Jul 2024 23:28:06 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI updates for v6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0jtWq5kTmM_DRPwFZZCziqY11TMP8rYtj8UQHHfRKX6tg@mail.gmail.com>
+References: <CAJZ5v0jtWq5kTmM_DRPwFZZCziqY11TMP8rYtj8UQHHfRKX6tg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0jtWq5kTmM_DRPwFZZCziqY11TMP8rYtj8UQHHfRKX6tg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc1
+X-PR-Tracked-Commit-Id: b77b0bc85b117119764107f3ee76e8877bf826ab
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 923a327e8f2257ab7cd5485cb5d8db92c965dfca
+Message-Id: <172117248692.20323.5338360240168392398.pr-tracker-bot@kernel.org>
+Date: Tue, 16 Jul 2024 23:28:06 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/U8NksPP_0/Nsod4.FVN2DGj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/U8NksPP_0/Nsod4.FVN2DGj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Mon, 15 Jul 2024 21:44:33 +0200:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc1
 
-On Wed, 12 Jun 2024 11:27:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the tip tree got a conflict in:
->=20
->   include/linux/cacheinfo.h
->=20
-> between commit:
->=20
->   f6a9651bfd74 ("cpumask: make core headers including cpumask_types.h whe=
-re possible")
->=20
-> from the mm-nonmm-unstable branch of the mm tree and commit:
->=20
->   685cb1674060 ("cacheinfo: Add function to get cacheinfo for a given CPU=
- and cache level")
->=20
-> from the tip tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc include/linux/cacheinfo.h
-> index 286db104e054,3dde175f4108..000000000000
-> --- a/include/linux/cacheinfo.h
-> +++ b/include/linux/cacheinfo.h
-> @@@ -3,7 -3,8 +3,8 @@@
->   #define _LINUX_CACHEINFO_H
->  =20
->   #include <linux/bitops.h>
-> + #include <linux/cpuhplock.h>
->  -#include <linux/cpumask.h>
->  +#include <linux/cpumask_types.h>
->   #include <linux/smp.h>
->  =20
->   struct device_node;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/923a327e8f2257ab7cd5485cb5d8db92c965dfca
 
-This is now a conflict between the mm-nonmm-stable tree and Linus' tree.
+Thank you!
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/U8NksPP_0/Nsod4.FVN2DGj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaXAcwACgkQAVBC80lX
-0GzciAgApgO9e/9WzCSTN3fg+5s303eseNP3IdGX21gdDlD2mM0PsFy80rS6fRnT
-uiI/9qhzQxUA8zEps490j/+uz734kNKlDJHW2KrNS4qYbt79h+AZoV6dKfkGCV4h
-l0guZQVFdwOm7soE2VDIa9aGVyLnaTSLXmOwi1r2AJuKrqz69CRMg9pETYNqfllW
-U/AZVOe2ClyyxbIezIeiTP1jVN14ODMnlAsym95q2UVzcIJ7l9apUWy0L6PqFrFj
-09Q5VBr1M09wTuMLCHTwbYX4J5uE1AdNafAAeNi1f05Wm7RrkNkpLPFlVrVuPKhU
-VNqQO/esxjBQI+o0T+D19045o9W7eA==
-=U/om
------END PGP SIGNATURE-----
-
---Sig_/U8NksPP_0/Nsod4.FVN2DGj--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
