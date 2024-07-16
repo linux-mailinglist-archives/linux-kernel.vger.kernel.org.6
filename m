@@ -1,70 +1,53 @@
-Return-Path: <linux-kernel+bounces-253851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CCC9327E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE4F9327E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A48071C226F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C8D281C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 13:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F28819B599;
-	Tue, 16 Jul 2024 13:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f7qams5s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3650F19B3E1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A438D19B3D6;
+	Tue, 16 Jul 2024 13:59:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F03199E91
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 13:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721138281; cv=none; b=CRgSEtF40/eCsukGNKw1PfFX+WfT44FZoGjj3MLOxNtf1TLJHRHa+BaZAfVzN1UMpp6RMRBmNtJyM48ZmabEh5ft5u2e3ujOenAjGpyxg2LhIT9qooEv2X1FFzpeRrmIgnLHCWB562iaAuFPDXi5WfKVjoarIEAt6ANQ4wXs0Y8=
+	t=1721138358; cv=none; b=CuNGrE8aEZDPMyRNQzbdEgU3iiapWvBcjsYOUYIi6pDkdxv9VodS7fCacxzlWXfVbm8QO4Hz02llAgaCscHV7nNvJRQNrY5XXN88n1+wL/29V+eOVLWpSPlnaCXalkyUElhS8ThREYLVTkh1hEUnVLCZsBGl7R9VWC6gU4cU0v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721138281; c=relaxed/simple;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T79gEuwrZ8ICIRr8P73sy4/c0vyaGX+sjcu9D4rSozLL4N73ymWUSSyIV2vp4gQCjtg+whTqj4W2tl0BreKmVzdBSdmIcgRvjXbIP3i2Kbocbyi2zFjzT8rr8QRr0IydpwagJchuC0qyx192OqXhdgC73TFaiGP5A30rp40FYC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f7qams5s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721138279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	b=f7qams5sSoyORgnKJicm8XrMQF8Ao/u7KLM8Y3LXGs7nZTxNbvBFZPMwAjEoZ88xh3vpjI
-	SP+fFkMhDSzQedEJABOhFn4fv5/MLHvPefkQXVG6MVKNDdYrdZ7fJUzR6sbyp3j10lgYBS
-	frJwBDXm6audZjeyCAV3pl4d9C5MbZU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-9bHCi2seMHqcoTRAXG8wtQ-1; Tue,
- 16 Jul 2024 09:57:56 -0400
-X-MC-Unique: 9bHCi2seMHqcoTRAXG8wtQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEE3F1955D54;
-	Tue, 16 Jul 2024 13:57:54 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0BFBA1955D42;
-	Tue, 16 Jul 2024 13:57:53 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org,
+	s=arc-20240116; t=1721138358; c=relaxed/simple;
+	bh=WLGMI5biP9wC0bAA4fv1QtHA1ydybUCxQPHQetQ9FPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSleIv4F8LC1otr4SgmHy+u9S8i7X+InWEzip1cE0F6UAmQKNmUh34nMMQcQsLHPRvfA2OiBMBsr0XIjskpv66TymgcHwfMv+4xFMEnz3i6LUi1/OAB9o+j+gBP7Q+BjBXzPIc4FJeirGc0Bousxj1luikOcivQ1biOyV6GwsrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 121D51063;
+	Tue, 16 Jul 2024 06:59:41 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 474593F762;
+	Tue, 16 Jul 2024 06:59:14 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <ioworker0@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Gavin Shan <gshan@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org,
-	syzbot+2fb9f8ed752c01bc9a3f@syzkaller.appspotmail.com
-Subject: Re: [PATCH] KVM: x86: Suppress MMIO that is triggered during task switch emulation
-Date: Tue, 16 Jul 2024 09:57:49 -0400
-Message-ID: <20240716135749.70129-1-pbonzini@redhat.com>
-In-Reply-To: <20240712144841.1230591-1-seanjc@google.com>
-References: 
+	linux-mm@kvack.org
+Subject: [PATCH v2 0/3] mTHP allocation stats for file-backed memory
+Date: Tue, 16 Jul 2024 14:59:03 +0100
+Message-ID: <20240716135907.4047689-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,11 +55,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Queued, thanks.
+Hi All,
 
-Paolo
+With the mTHP shmem stat names cleaned up [2], we can now introduce real "file_"
+stats for file-backed memory. This series does that. The stats are useful to
+give visibility into how file-backed memory is being allocated. I'm planning to
+build upon this with controls to restrict the folio sizes that can be allocatd
+for pagecache (subject to test results that demonstrate the value).
 
+---
+This applies on top of today's mm-unstable (650b6752c8a3). All mm selftests have
+been run; no regressions were observed.
+
+Changes since v1 [1]
+====================
+
+  - Added patch 2 to tidy up shmem controls; now exposed for order-1, and not
+    exposed for any unsupported high orders.
+  - Simplified "stats" subdirectory management with sysfs_merge_group().
+  - Added R-b/A-b to patch 1; thanks to David, Barry, Baolin, Lance
+
+[1] https://lore.kernel.org/linux-mm/20240711072929.3590000-1-ryan.roberts@arm.com/
+[2] https://lore.kernel.org/linux-mm/20240710095503.3193901-1-ryan.roberts@arm.com/
+
+Thanks,
+Ryan
+
+Ryan Roberts (3):
+  mm: Cleanup count_mthp_stat() definition
+  mm: Tidy up shmem mTHP controls and stats
+  mm: mTHP stats for pagecache folio allocations
+
+ Documentation/admin-guide/mm/transhuge.rst |  13 +++
+ include/linux/huge_mm.h                    |  73 +++++++------
+ include/linux/pagemap.h                    |  16 ++-
+ mm/filemap.c                               |   6 +-
+ mm/huge_memory.c                           | 117 +++++++++++++++------
+ mm/memory.c                                |   2 -
+ mm/shmem.c                                 |   6 --
+ 7 files changed, 156 insertions(+), 77 deletions(-)
+
+--
+2.43.0
 
 
