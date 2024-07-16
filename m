@@ -1,176 +1,220 @@
-Return-Path: <linux-kernel+bounces-253986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3B79329C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:53:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD9C9329C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 16:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C2C1C221C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5801F218B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD4F19D06B;
-	Tue, 16 Jul 2024 14:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD39719D083;
+	Tue, 16 Jul 2024 14:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsRy29LJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EZyFvzIC"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54753198A3E;
-	Tue, 16 Jul 2024 14:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E214198840
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721141610; cv=none; b=ib54rIGsmj+eSppD/DOEp9uaLA7IU1GXp3rMJQdO4R3V0YqQ5H9iJypHFAJJ6zNVLsqfyBCTjb+QkbrnEP0CB7UGNa27C4ukj4WSq4jr2Thg+T3muaIh+pBe1B5Ri32RdzF/wNO5l2Hp+Ronx944xZLsW5qyDtukwFQ02Nxoe7U=
+	t=1721141660; cv=none; b=KHKHcITStTwzeDhK9vdUwjMI+E76nJLA8eb6+2ulQ58Yah2/3e0xqdRDualyWacbBewIPBoIu+8b3ax8eZQVPtI/N01vserldXLjUW5fDqJUoWQyXHqIYtTf40nd+4ZNrusAj6Q5nF7Taowsmqq0J8OvjISd5OShDVWARhoR7CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721141610; c=relaxed/simple;
-	bh=bbvpHxvxvWZpxLx/447Pfo7DJPV230th4g89I8p8jw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mk4+uwVEDcbUQb2vdYYebZQz6tFDDm0n2jcrgxw+ZXNd34si/W1b58VR8P9ecDL9kSn05KsG2cy9AA7ZDSZimmL8vF62HG5SXVrTJN1Ij0Ij0/FZAaiebXFNI5RQRYHvy5geWfd7Y+udVlan+4lo2I15EYtEAWqxtX9vfDNCigM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsRy29LJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE2A9C116B1;
-	Tue, 16 Jul 2024 14:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721141609;
-	bh=bbvpHxvxvWZpxLx/447Pfo7DJPV230th4g89I8p8jw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tsRy29LJN46BlaAm8d6qHqxhYztrt36r6ibmGcq9s+rjXmgh8ndd1Y200MQd3De7Q
-	 wpRXlBW7q8gvLQZt7MB2/CbE6kyHrA96mejIHOKMn5D9ALkYiRuJS02NZVVWym+UtE
-	 T+V5KTJelZqS8FTbKIOdF/8qt6U84ualjNwNMt8BkZZZnAT/66uIF+TirX/DNdF4LJ
-	 egzNOiGFaHLlFLCBXNYFjidhUL5LVHtBs1u9DSPQjHr71bpyuHvGd0jnwzRZdiTfF+
-	 04oUHm8zW/c5wZC4544M10rTllGD+9FK/uUXaoQuHzb8MZCVw4RlFLcAqMP8mzqfnk
-	 Jdsgkw+tjsPsA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sTjYW-000000003hI-3ht7;
-	Tue, 16 Jul 2024 16:53:29 +0200
-Date: Tue, 16 Jul 2024 16:53:28 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
-	rdunlap@infradead.org, vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
-	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
-	andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
-	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
-	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
-	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
-	andersson@kernel.org, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
- per device MSI domains
-Message-ID: <ZpaJaM1G721FdLFn@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
- <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
- <878qy26cd6.wl-maz@kernel.org>
- <ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
- <86r0bt39zm.wl-maz@kernel.org>
+	s=arc-20240116; t=1721141660; c=relaxed/simple;
+	bh=8Bh6guIhZQVTnYNJwSnBOzgjlVjsEuz8MT5Z+AaE31s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cQMCrWRpDbH94oBcrJ9vHfHCWBRRXeZIMacy0cUDzPh/b0QMCcMt78KPpVmiPkLicHgo1kkdySRPEGCrKwAeyGFtGNOG3nlJsc6Bpym8mKj+mZBF2sunVTvjvx3LnxzN9/MorTLbk7tTaFKP9PFm6Y1jyTvTqmD3rl8rNYsuxao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EZyFvzIC; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-38206c2f5e3so146355ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721141658; x=1721746458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tv+rvFn1x/U1DFPm5AX9SGRIgB+cdcVraNVGv0+q5no=;
+        b=EZyFvzICSJTPyW/bdQBeyzNLrglMnS04yqsGnQga4ekxiYhpOUWBCoadouYpY5hUnz
+         MyKWNWYES4qrU8TYurFOU7L4VS8n4qX+wWjGmVGoJWQoNBMCH+RhADTtk7ViX++KTIRM
+         n45O9F8r0OWQ7yGea3b+YczXJhB2DvkxAsCTqRXynfXDv620BO4xKeWQUB0kOeK8ORPm
+         1FxZ1pRTUS7jyL4ncLkkbT22rx2YuqYQbhx5OXmcYqioUFdffOGvzcaJ4NGAv1JGlX4G
+         pp+TAFop5iyA3M7AacoooCyRZXZ9PwQ84vGyNCeo1eW8KWu8Xs2xTyWBaaYrrOhy1gZe
+         aEkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721141658; x=1721746458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tv+rvFn1x/U1DFPm5AX9SGRIgB+cdcVraNVGv0+q5no=;
+        b=R8frR01G0Auxw6oBHxi9TuNY/CMLLO7PK8lgr5WW0BmZsfkEQ4tzxEWafGNGHPxfKe
+         r9YSAboTnXOKNyaMj20bwtE4LOuDcSwP519oMk0mlgaJ1fP6NBO+ixugwzEocDIQbXXH
+         M0HoQNhyU+4nTLeittZlBVe3WymeLSUAIeJCFeKntPCCq3cvYPILC7s+aeFFcXB1Juds
+         gMivvVnZRzjJ+Oh8kSxbW4vcgq1aZ0+y+vb+2njCXzEJCwiJD3nTROfuvQBM9Ts1X7Y/
+         RTMOCOt07IONRiGgUGzL0Yx3it1Tf1sSleBwTIIDtSnTRuXdH04gRlngLZPuXa6acsT+
+         ncnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTIWlJo8FiytHa82jb3kq3B4OPO+jAYY+5PyTPVD+0mMGWko/UPTZmEjhy3wEWEnveCc0toz7DAOAWNVSJmzNKlFwdMjNPdZASbDQc
+X-Gm-Message-State: AOJu0Yyx0+SpIEasA/LE3sMvDCD6UbckzQFppJ24LFw2pbZH3//ESr4s
+	wRm8b1dAaNYPtnT84azCIN2YQcTqqx5HWwrb0kMo1ypdOyb26gMVR3QQ9F29SA21E8Vb78iTm02
+	UCKTK6U1sxe+tolcantbA7jqVfvNSMW4gztBO
+X-Google-Smtp-Source: AGHT+IEOhZKFncPOlx3bgVqvrSyoX8tV4isXtb7+LhHviIXxu2OBtWnGPIoOexXBZzILdhdEZ4iKmB1sjgFRmofa/uQ=
+X-Received: by 2002:a05:6e02:1b08:b0:375:cd76:1602 with SMTP id
+ e9e14a558f8ab-393c1e1f3a7mr3190755ab.28.1721141658176; Tue, 16 Jul 2024
+ 07:54:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86r0bt39zm.wl-maz@kernel.org>
+References: <000000000000e1609a061d5330ce@google.com> <5e4905d7-32e1-4359-9720-a32330aec424@redhat.com>
+ <87wmll7i9n.fsf@cloudflare.com>
+In-Reply-To: <87wmll7i9n.fsf@cloudflare.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 16 Jul 2024 07:54:00 -0700
+Message-ID: <CANn89iKa8fyD2s1VdHJ2SQAUUzm-iPEXoKOGF6wvuqxofC4Frw@mail.gmail.com>
+Subject: Re: [syzbot] [net?] WARNING in skb_warn_bad_offload (5)
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, 
+	syzbot <syzbot+e15b7e15b8a751a91d9a@syzkaller.appspotmail.com>, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, soheil@google.com, syzkaller-bugs@googlegroups.com, 
+	willemb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 11:30:05AM +0100, Marc Zyngier wrote:
-> On Mon, 15 Jul 2024 15:10:01 +0100,
-> Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
-> > > On Mon, 15 Jul 2024 12:18:47 +0100,
-> > > Johan Hovold <johan@kernel.org> wrote:
-> > > > On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
-> > > > > This is version 4 of the series to convert ARM MSI handling over to
-> > > > > per device MSI domains.
-> > 
-> > > > This series only showed up in linux-next last Friday and broke interrupt
-> > > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-> > > > and x1e80100 that use the GIC ITS for PCIe MSIs.
-> > > > 
-> > > > I've applied the series (21 commits from linux-next) on top of 6.10 and
-> > > > can confirm that the breakage is caused by commits:
-> > > > 
-> > > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-> > > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> > > > 
-> > > > Applying the series up until the change before 3d1c927c08fc unbreaks the
-> > > > wifi on one machine:
-> > > > 
-> > > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-> > > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
-
-Correction, this doesn't fix the wifi, but I'm not seeing these errors
-with the commit before cc23d1dfc959 as the ath11k driver doesn't get
-this far (or doesn't probe at all).
-
-> > > > and backing up until the commit before 233db05bc37f makes the NVMe come
-> > > > up again during boot on another.
-> > > > 
-> > > > I have not tried to debug this further.
-> > > 
-> > > I need a few things from you though, because you're not giving much to
-> > > help you (and I'm travelling, which doesn't help).
-> > 
-> > Yeah, this was just an early heads up.
-> > 
-> > > Can you at least investigate what in ath11k_pci_alloc_msi() causes the
-> > > wifi driver to be upset? Does it normally use a single MSI vector or
-> > > MSI-X? How about your nVME device?
-> > 
-> > It uses multiple vectors, but now it falls back to trying to allocate a
-> > single one and even that fails with -ENOSPC:
-> > 
-> > 	ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
-> > 
-> > Similar for the NVMe, it uses multiple vectors normally, but now only
-> > the AER interrupts appears to be allocated for each controller and there
-> > is a GICv3 interrupt for the NVMe:
-> > 
-> > 208:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
-> > 212:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
-> > 214:        161          0          0          0          0          0          0          0     GICv3 562 Level     nvme0q0, nvme0q1
-> > 215:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
+On Tue, Jul 16, 2024 at 3:17=E2=80=AFAM Jakub Sitnicki <jakub@cloudflare.co=
+m> wrote:
+>
+> On Tue, Jul 16, 2024 at 12:04 PM +02, Paolo Abeni wrote:
+> > On 7/16/24 03:23, syzbot wrote:
+> >> syzbot found the following issue on:
+> >> HEAD commit:    80ab5445da62 Merge tag 'wireless-next-2024-07-11' of g=
+it:/..
+> >> git tree:       net-next
+> >> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D175fb82198=
+0000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2dbcdd8641=
+c4638f
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3De15b7e15b8a7=
+51a91d9a
+> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D172bf566=
+980000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12fff53598=
+0000
+> >> Downloadable assets:
+> >> disk image: https://storage.googleapis.com/syzbot-assets/184da3869c30/=
+disk-80ab5445.raw.xz
+> >> vmlinux: https://storage.googleapis.com/syzbot-assets/85bfe9b60f21/vml=
+inux-80ab5445.xz
+> >> kernel image: https://storage.googleapis.com/syzbot-assets/06064623a94=
+8/bzImage-80ab5445.xz
+> >> The issue was bisected to:
+> >> commit 10154dbded6d6a2fecaebdfda206609de0f121a9
+> >> Author: Jakub Sitnicki <jakub@cloudflare.com>
+> >> Date:   Wed Jun 26 17:51:26 2024 +0000
+> >>      udp: Allow GSO transmit from devices with no checksum offload
+> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D142ccbe=
+d980000
+> >> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D162ccbe=
+d980000
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D122ccbed98=
+0000
+> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
+ommit:
+> >> Reported-by: syzbot+e15b7e15b8a751a91d9a@syzkaller.appspotmail.com
+> >> Fixes: 10154dbded6d ("udp: Allow GSO transmit from devices with no che=
+cksum offload")
+> >> skb frag:     00000080: 62 3f 77 e4 0e 82 0d 2f 85 cc 44 ea 25 5a 99 7=
+6
+> >> skb frag:     00000090: f2 53
+> >> ------------[ cut here ]------------
+> >> ip6tnl0: caps=3D(0x00000006401d7869, 0x00000006401d7869)
+> >> WARNING: CPU: 0 PID: 5112 at net/core/dev.c:3293 skb_warn_bad_offload+=
+0x166/0x1a0 net/core/dev.c:3291
+> >> Modules linked in:
+> >> CPU: 0 PID: 5112 Comm: syz-executor391 Not tainted 6.10.0-rc7-syzkalle=
+r-01603-g80ab5445da62 #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
+S Google 06/07/2024
+> >> RIP: 0010:skb_warn_bad_offload+0x166/0x1a0 net/core/dev.c:3291
+> >> Code: e8 5f 94 a3 f8 49 8b 04 24 48 8d 88 a0 03 00 00 48 85 c0 48 0f 4=
+4 cd 48 c7 c7 00 cc c5 8c 4c 89 f6 48 89 da e8 fb 92 ff f7 90 <0f> 0b 90 90=
+ 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 44 89 f9
+> >> RSP: 0018:ffffc900034bedc8 EFLAGS: 00010246
+> >> RAX: 7d287cad4185da00 RBX: ffff888040cdc0b8 RCX: ffff888023d1bc00
+> >> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> >> RBP: ffffffff8cc5cbc0 R08: ffffffff815857b2 R09: fffffbfff1c39994
+> >> R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff888022880518
+> >> R13: dffffc0000000000 R14: ffff888040cdc130 R15: ffff888040cdc130
+> >> FS:  000055556e9e9380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000=
+000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 0000000020001180 CR3: 000000007c876000 CR4: 00000000003506f0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>   <TASK>
+> >>   __skb_gso_segment+0x3be/0x4c0 net/core/gso.c:127
+> >>   skb_gso_segment include/net/gso.h:83 [inline]
+> >>   validate_xmit_skb+0x585/0x1120 net/core/dev.c:3661
+> >>   __dev_queue_xmit+0x17a4/0x3e90 net/core/dev.c:4415
+> >>   neigh_output include/net/neighbour.h:542 [inline]
+> >>   ip6_finish_output2+0xffa/0x1680 net/ipv6/ip6_output.c:137
+> >>   ip6_finish_output+0x41e/0x810 net/ipv6/ip6_output.c:222
+> >>   ip6_send_skb+0x112/0x230 net/ipv6/ip6_output.c:1958
+> >>   udp_v6_send_skb+0xbf5/0x1870 net/ipv6/udp.c:1292
+> >>   udpv6_sendmsg+0x23b3/0x3270 net/ipv6/udp.c:1588
+> >>   sock_sendmsg_nosec net/socket.c:730 [inline]
+> >>   __sock_sendmsg+0xef/0x270 net/socket.c:745
+> >>   ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+> >>   ___sys_sendmsg net/socket.c:2639 [inline]
+> >>   __sys_sendmmsg+0x3b2/0x740 net/socket.c:2725
+> >>   __do_sys_sendmmsg net/socket.c:2754 [inline]
+> >>   __se_sys_sendmmsg net/socket.c:2751 [inline]
+> >>   __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2751
+> >>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >> RIP: 0033:0x7f04f688fe89
+> >> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 8=
+9 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0=
+ ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> >> RSP: 002b:00007ffeebc526e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+> >> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f04f688fe89
+> >> RDX: 0000000000000001 RSI: 0000000020003cc0 RDI: 0000000000000003
+> >> RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000000001
+> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffeebc52740
+> >> R13: 00007f04f68dd406 R14: 0000000000000003 R15: 00007ffeebc52720
+> >>   </TASK>
 > >
-> 
-> That's an indication of the driver having failed its MSI allocation
-> and gone back to INTx signalling.
-> 
-> > Next boot, after disabling PCIe controller async probing, it's an MSI-X?!:
-> > 
-> > 201:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0006:00:00.0   0 Edge      PCIe PME, aerdrv
-> > 203:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0004:00:00.0   0 Edge      PCIe PME, aerdrv
-> > 205:          0          0          0          0          0          0          0          0  ITS-PCI-MSI-0002:00:00.0   0 Edge      PCIe PME, aerdrv
-> > 206:          0          0          0          0          0          0          0          0  ITS-PCI-MSIX-0002:01:00.0   0 Edge      nvme0q0
-> >
-> 
-> So is this issue actually tied to the async probing? Does it always
-> work if you disable it?
+> > Looking at the console log, the the relevant GSO packet is an UFO one w=
+ith
+> > CSUM_NONE. commit 10154dbded6d6a2fecaebdfda206609de0f121a9 only adjust =
+the skb
+> > csum for USO packets. @Jakub S. could you please have a look?
+>
+> Will do. Thanks for the hint.
 
-There seem to multiple issues here.
+The trigger for the bug is the following :
 
-With the full series applied and normal async (i.e. parallel) probing of
-the PCIe controllers I sometimes see allocation failing with -ENOSPC
-(e.g. the above ath11k errors). This seems to indicate broken locking
-somewhere.
+setsockopt(3, SOL_IPV6, IPV6_HOPOPTS,
+"\0\3\0\0\0\0\0\0\5\2\0\0\0\1\0\302\4\200\0\0\0\5\2\0\6\302\4\0\0\0\1\302".=
+..,
+40) =3D 0
 
-With synchronous probing, allocation always seems to succeed but the
-ath11k (and modem) drivers time out as no interrupts are received.
+Some random IPV6_HOPTS, with multiple IPV6_TLV_JUMBO options
 
-The NVMe driver sometimes falls back to INTx signalling and can access
-the drive, but often end up with an MSIX (?!) allocation and then fails
-to probe:
+Non GSO path sends a malformed packet just fine, but GSO complains loudly.
 
-	[  132.084740] nvme nvme0: I/O tag 17 (1011) QID 0 timeout, completion polled
-
-Johan
+(flowlabel 0x754ca, hlim 64, next-header Options (0) payload length:
+186) localhost > localhost: HBH
+(pad1)(pad1)(pad1)(pad1)(pad1)(pad1)(rtalert: 0x0000)
+(pad1)(padn)(jumbo: 2147483648 - payload len !=3D 0) (rtalert: 0x0006)
+(jumbo: 1 - already seen)  [|hbhopt]
 
