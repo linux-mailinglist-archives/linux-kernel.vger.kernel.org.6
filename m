@@ -1,92 +1,130 @@
-Return-Path: <linux-kernel+bounces-253325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65928931F84
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669A9931F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 06:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8CE728240C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A25C1C20D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 04:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7186E15ACA;
-	Tue, 16 Jul 2024 04:03:51 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE8F13FF9;
+	Tue, 16 Jul 2024 04:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A2f2+Dso"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21D013FF9;
-	Tue, 16 Jul 2024 04:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBDC33C5
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 04:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721102631; cv=none; b=psMkCFFwMcgYkymjSQzpDClXETl3cvVQDiQ/CEXtzel3I5tXv4YRVXrXlSEyqDpXHzaqhG+BIHuJgE9OnOEjxObMNRva7ffojna7tcEZAtfl1nEd0RJbaDIgLPxE+1oqXQ7Ee8sBFAUdnKYgkprScCde2HDSYXkqbrSNb4UjLUQ=
+	t=1721102662; cv=none; b=swPgyXsm2U974ISJfjZvDzFhlXQKwv7zNgCKxhIM0QFGbtKM60MJ4fHb+PJR2qSf7o73/dO05QkOzzZ7M3i+W41Yx63c1wH1UsTzNsRmUqcbc3VpLd3EID4Gg2WBmOCZDL7Cp+pkOeHSIzKoSvo1gX3JgKQcceS55/rX26H4k5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721102631; c=relaxed/simple;
-	bh=rgKIkcoiwfdnol1szttuDCQ2hA8ot8inCQwACEmLXyk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tfz4g6hQZQqXC7G1acXg4H84JCRpiaNO9uFej0Tkn7oMaaotCT6RBNqzX+mPEIfD6I8IkghawF3t8KSDXpEElfVsRMTHNOCa/kr71GLtQUUP32PSyJwvLLD3VPAQo2jJav3CwFv5etlM7EOFrm1/vSTH/EI31u7wvbey7PwIDj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAD3_1sY8ZVmn+77FQ--.19522S2;
-	Tue, 16 Jul 2024 12:03:36 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: kent.overstreet@linux.dev,
-	bfoster@redhat.com
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] bcachefs: Convert comma to semicolon
-Date: Tue, 16 Jul 2024 12:03:02 +0800
-Message-Id: <20240716040302.684034-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721102662; c=relaxed/simple;
+	bh=hld6iq+ojhXPdG48NJFxUY6ACAxx33QvXkLN+12ceaQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzPJGqATSqdUB+Wf9i0/TwYRFLamxQfmofKCmRob/f2xtQOWg5IGnGZmsZXroU1HT0QI6uVYZxruIaWmw260skQuU3V3r69Clslw1xvM+iSr921jGJPxnJ5vbz1AZAq0tnrtuOlBIxRLoJMIgHwwOUY2Mub+fEkUsozK5p4/YD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A2f2+Dso; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46G444dJ119126;
+	Mon, 15 Jul 2024 23:04:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721102644;
+	bh=1d79WYKf1M0avjCQpPvE4gEYXICeLVGDCbwUPcm6h5k=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=A2f2+Dsol/8YlH7fmjIgFo3nQjpeTUwZqNNXCuWoVlVHtvZUmUOmku8J5t8DRqUSS
+	 hD6pPMzPaBOKV1KaOYZUYsqKyX9FJ5OSkuC2UrcUM9g6ckie9C/AmL3R8Dl0e9DZB4
+	 QTsVSidg62nmTo3y1MCc0DJg39lhstmDZ0R6DgRo=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46G444TV111778
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 15 Jul 2024 23:04:04 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
+ Jul 2024 23:04:03 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 15 Jul 2024 23:04:03 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46G442cK086362;
+	Mon, 15 Jul 2024 23:04:03 -0500
+Date: Tue, 16 Jul 2024 09:34:02 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Swapnil Kashinath Jakhade
+	<sjakhade@cadence.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "kishon@kernel.org" <kishon@kernel.org>,
+        "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>,
+        "thomas.richard@bootlin.com"
+	<thomas.richard@bootlin.com>,
+        "theo.lebrun@bootlin.com"
+	<theo.lebrun@bootlin.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "srk@ti.com" <srk@ti.com>, Milind
+ Parab <mparab@cadence.com>
+Subject: Re: [PATCH v2] phy: cadence-torrent: add support for three or more
+ links using 2 protocols
+Message-ID: <cf060fa7-f4e5-4740-8102-f9403cbfcafd@ti.com>
+References: <20240710115624.3232925-1-s-vadapalli@ti.com>
+ <LV3PR07MB1036463AB8AB5D38D003175E6C5A52@LV3PR07MB10364.namprd07.prod.outlook.com>
+ <7504ea5a-335b-4152-a0f4-5be68f048903@ti.com>
+ <0dc54057-d7a0-4123-badc-8f7f07f2d930@kernel.org>
+ <c60a1e83-c2ad-4a04-9deb-073c69a4a06d@ti.com>
+ <d4538952-add4-4210-ae0a-574cd825b18d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAD3_1sY8ZVmn+77FQ--.19522S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZrWkWFWrZFykWF4UArb_yoWDXwb_WF
-	Z2qF43Kan3trsY93yDuFn3urW2g3409r12g392vFyrGa47JFW3Xr93WrZ3Xr18J3ykG34a
-	qry2qryYyr98ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
-	Gryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU0WlkUUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d4538952-add4-4210-ae0a-574cd825b18d@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Replace a comma between expression statements by a semicolon.
+On Mon, Jul 15, 2024 at 07:08:30PM +0300, Roger Quadros wrote:
+> Hi Siddhath,
+> 
+> On 12/07/2024 13:38, Siddharth Vadapalli wrote:
+> > Roger, Swapnil,
+> > 
 
-Fixes: 79032b078173 ("bcachefs: Improved topology repair checks")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- fs/bcachefs/btree_update_interior.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/fs/bcachefs/btree_update_interior.c b/fs/bcachefs/btree_update_interior.c
-index 31ee50184be2..51b43d75ddb6 100644
---- a/fs/bcachefs/btree_update_interior.c
-+++ b/fs/bcachefs/btree_update_interior.c
-@@ -96,7 +96,7 @@ int bch2_btree_node_check_topology(struct btree_trans *trans, struct btree *b)
- 			bch2_topology_error(c);
- 
- 			printbuf_reset(&buf);
--			prt_str(&buf, "end of prev node doesn't match start of next node\n"),
-+			prt_str(&buf, "end of prev node doesn't match start of next node\n");
- 			prt_printf(&buf, "  in btree %s level %u node ",
- 				   bch2_btree_id_str(b->c.btree_id), b->c.level);
- 			bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&b->key));
--- 
-2.25.1
+> > So assuming the above, we can enforce the constraint that there should
+> > be only 2 Protocols when 3 or more Links are present in the device-tree.
+> > This also handles the cases of
+> > PCIe Multi-Link + USB, PCIe Multi-Link + Q/SGMII
+> > which Swapnil has pointed to at [1], since PCIe Multi-Link is now a new
+> > protocol in itself (PHY_TYPE_PCIE_ML) and shall be represented in that
+> > manner in the device-tree when it is expected to be combined with a second
+> > protocol.
+> > 
+> > After grouping the links by protocol, we can check for the entry in
+> > "link_cmn_vals_entries" and proceed to configure it identical to the
+> > 2 Link case.
+> > 
+> > [1] https://github.com/t-c-collab/linux/commits/ti-linux-6.1.y-torrent-multi-pcie-sgmii-v1
+> 
+> This proposal looks good to me. Thanks!
 
+Thank you for the confirmation. I will implement the above in the v3
+patch.
+
+Regards,
+Siddharth.
 
