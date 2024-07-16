@@ -1,158 +1,127 @@
-Return-Path: <linux-kernel+bounces-254502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D369333EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:55:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E0D9333ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D1B1C20C5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:55:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96B3FB217FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 21:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9C713C80B;
-	Tue, 16 Jul 2024 21:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0B313C9CD;
+	Tue, 16 Jul 2024 21:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u2mznDst"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcPuY3Di"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241B928377
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 21:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F887441A;
+	Tue, 16 Jul 2024 21:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721166893; cv=none; b=ORHKNkQynIeFX9LDMxhpzHY/iv6MDkF+G1PkaYI8BrBrTrinXQrXvvx2mRFmDoaDG1YLPx771tJ0+u7QP97ioXA5yJqvQtHnS9+3+DgT1h0AHY1zG8XiewgKX8k9LDEAWWKtwwfm/GGrcPhwQ5V8bYLuIcgipsi54G7kE7fWXIk=
+	t=1721167028; cv=none; b=rznghtYC/8RohUg0mTo1v6ZhNAepkWuxFGPbKFb6vvOs9dpxss7I+pICp1TmDO7NwenIx2O2N0LThj9cWNV+RMHYuQwNd44Lr9mLvrYKtpV/ecn2aaIGImpw4cWpAuu6/TqqEFfjgkb0L2Xlj2sWraPT9keR/G4KYzFHyqzgbEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721166893; c=relaxed/simple;
-	bh=5e4Ng28q28DDq+Mos/gXCE7nX4lxZLwJsuTxdK0ZCgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UkAYNW8099OypXJ4SPDG3YBuoiuUdPR/eu2E4pQARPDBpJ+aiMxI5UzpDvQBlNAwLcu406Zfwh9SJIMS8FnmkJP4bLLaEUGzrhR6PnTV/TMq1TAxJhYI/cR1cCL9zJqqDA/PCCNWQQ1bZSfR6y8SFbZOOrIMb+02Sq2k9lom3UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u2mznDst; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77e7a6cfa7so652011266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 14:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721166890; x=1721771690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCz2Kt6Np14OnybqMGjWHHC2wl/sK9b6rMuszryzTDE=;
-        b=u2mznDstPsA5ZTNUgb0ciOTi34ZKY31aksJLu44aEZNCnH6EL0ur0jSuNV7w0SQbMk
-         77Gb1dN2MjQERkLex44VuhdzAOqorSbqQfXCnEf5rVDMzaViLSZh4JMdVyMhaGGYC8JM
-         vWSPLnZ3xDOrtghoPCrNas+sxMd7fgM6FD+7dlZM6v7hz3OwGmAdnrtsiiDjyYZsWd1L
-         zJKywWGJoCUyc9ofh6mOLQXaoIYKBsaf/uEPJrmv/v0TlEB5AG9fAo6WMojyIkvb2AJ6
-         1FpE/MymZkhqUNlLvsn8G+6QbI/DKeWd7mpR0NIAsJPfDxvE2QSczvXWpXl4K4b718gf
-         sHjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721166890; x=1721771690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TCz2Kt6Np14OnybqMGjWHHC2wl/sK9b6rMuszryzTDE=;
-        b=XcVzsLwkKKJjJ/w8e4NEXA0XDAcJleFvHMaVG6xYCMHB2K0atbCdzP9Q9Z9jvP7Hx2
-         mvyX72m0lPmMLCcUoqSE7ftOdYdQ4blYgOtuUgXn6Nnz2Ew9LG+kU5lAGjNL876YEl2C
-         x7wNNCYYroxNXf+gc6A5y03LXuYXQ+Tc3g6HJd5aDZEDQDSl/BKHql1SF1Kj0BSjnEaR
-         df1Hae9Z3m+Mo8mdhpkFqn8ell2zN5LTvU8FbfcC/DYKKXAPH3t1zaH3DSjBFrQUaPPP
-         62/k7jgYSZcBfRdUc3EII8UB0hJiuoA7uvpFxOKRFR+7aSpbOiQvjOInBflNYj46FQK0
-         itDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlUZPHuiXg/SHVs/Ym74bQHBQyw5X/35GMrJzADGi4HMvI5ZTC8E5bsFr8FICmSQrBE6ouPqZrCtKu+pfp3VovD6nKtu+haee27lFJ
-X-Gm-Message-State: AOJu0YyydpyFe6GXSKOgkufeWMQHT3iUbLwhPCc8FJVLHbJ7MyJr4FvJ
-	eFF08CL7SYmA6IB9KeNbpiLIIsBoDTpWD2gcBWmmHHwUVP0vaOTH+UswpQ5pd2BrBWIs1dAH+n4
-	I2JRYJNjSranOu16twyrhPx75PxaJY4WGywzM
-X-Google-Smtp-Source: AGHT+IH+L98WmINi2A/vrSb7b+4tKg+cB+n8wwUAWNPhhTY5kTA7Q7W01G2LTbnOXEgy7vUpJa5vdfkX9A2/O6+vCQ8=
-X-Received: by 2002:a17:906:488:b0:a72:5bb9:b140 with SMTP id
- a640c23a62f3a-a79eaa73fc1mr237672566b.54.1721166889832; Tue, 16 Jul 2024
- 14:54:49 -0700 (PDT)
+	s=arc-20240116; t=1721167028; c=relaxed/simple;
+	bh=bwiVrWgypWBECie/s1mDOD7hIJm+DB9R8xzMdeISMkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bDjLPaFfMizgR+v6f9xeqpXB1UlHGVnFkuNzaiuHCMjD99b0om4tuc0TKn+wQ93ZVlKrezRNns8WChryGHdDMj6vY/kV/1eslqoJ2mfqI53PrJlcj3DgQiKZwwCMeQJE7NbX+iRutDdSMOQA+d9CAxR6xJS87gVEtJMekGaRpb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcPuY3Di; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CCFC116B1;
+	Tue, 16 Jul 2024 21:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721167027;
+	bh=bwiVrWgypWBECie/s1mDOD7hIJm+DB9R8xzMdeISMkY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fcPuY3DiidPB6DduwthSWiUJytd1GM4AxM8MxXagjXGKXVhGK2TLvHIjtHvW9UYKN
+	 6Tea2LQsLZRvCjaSTJ5/R8QExz02QCnsCOjY0yOchzDhh1foLSc9ktUcknR6q9/m3U
+	 AdpMMyACw2+NzS8ZsE3cJ6z4GtKzYC5XnSkNouQlJc8Zl8wOhznFxNYeJUbkGUG8ZC
+	 /wXU8XPTdRUyPv3UydVfhTSRSxVN3ig1M4thUCAikgNycfir/Ww3ZrMeoApSmq58d3
+	 Za6mGytrW9s2x786pI7RN6zlzp5u2LlVB4bhYr9W79CNI22dzT1+LLSpIb4st2IEvb
+	 Z5Yb3NmPtOyPA==
+From: Kees Cook <kees@kernel.org>
+To: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] dmaengine: ti: omap-dma: Initialize sglen after allocation
+Date: Tue, 16 Jul 2024 14:57:06 -0700
+Message-Id: <20240716215702.work.802-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
- <171952312320.1810550.13209360603489797077.stgit@firesoul>
- <4n3qu75efpznkomxytm7irwfiq44hhi4hb5igjbd55ooxgmvwa@tbgmwvcqsy75>
- <7ecdd625-37a0-49f1-92fc-eef9791fbe5b@kernel.org> <9a7930b9-dec0-418c-8475-5a7e18b3ec68@kernel.org>
-In-Reply-To: <9a7930b9-dec0-418c-8475-5a7e18b3ec68@kernel.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 16 Jul 2024 14:54:12 -0700
-Message-ID: <CAJD7tkYX9OaAyWg=L_5v7GaKtKmptPpMGJh7Org5tcY4D-YnCw@mail.gmail.com>
-Subject: Re: [PATCH V4 2/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, tj@kernel.org, cgroups@vger.kernel.org, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2048; i=kees@kernel.org; h=from:subject:message-id; bh=bwiVrWgypWBECie/s1mDOD7hIJm+DB9R8xzMdeISMkY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmluyxGjp2z9PYeRXfXMWfLcFWNql3Qog4Ansrd XhNvP1P0ZyJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpbssQAKCRCJcvTf3G3A JpZ/D/99eTgdWlRO81FMBexrHCAhl4eK0zepp75IT0PSIKdvQiBBSLRKuzQkxXc0ZYdPdw2qnaF nZMfKbt2UwHEYxT6iX+EM38iuGImr2SOPzYff+/de6c9mh6uUu+cVmZQCQQf7uZIqFOjNsQ+smj fP0jdnA11FKyyhaMUCrjLeTFQo+hyNh6Kx6x8iY0x6vpBj2rKGVaRUelkxZqa3hF6U3VcAusFB6 89seG3e2LbPEYonJkciL3eqmDRuzsGs1k23OffwQv0pydgYv4wYC40wp4JJW56cP67De7VWSh+D anToQFKSgAg8zOv1qSAhFCJrIKswyl8aNn0aRM8HHfC3inwqb3mmTw1mV9xUZBGrQH+zBbqkL9f cZhWad8S5ujjjRZeIYcINGdc6KaN8RCJg6mhiOvKrovgxqdi/g6cqslOsc6iOp7Xpi4gz2Zry0p Hb0OLKgFOkava/SGQsFBccpWp4gSDZHD33Z86OrJxBBsvscVDSUVesC795dT3QQ+Q6GbEJLQe33 oVHixvHMMHLXuNWub+DSi6dxPENFky7dNPD++phmD4D2pSk0Hdsztk08z/D52YmAuE5dZ/8fhws OwYCanTQv/ppulJ6U83W5o1qjSHRbwwbuA/Hv9aEy5XzgUXLd84wxCbamI+14+vgiI6ksHEorxG 0jF9n0tlUSouA
+ HA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 8, 2024 at 8:26=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel.=
-org> wrote:
->
->
-> On 28/06/2024 11.39, Jesper Dangaard Brouer wrote:
-> >
-> >
-> > On 28/06/2024 01.34, Shakeel Butt wrote:
-> >> On Thu, Jun 27, 2024 at 11:18:56PM GMT, Jesper Dangaard Brouer wrote:
-> >>> Avoid lock contention on the global cgroup rstat lock caused by kswap=
-d
-> >>> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
-> >>> massive issues due to kswapd and the specific mem_cgroup_flush_stats(=
-)
-> >>> call inlined in shrink_node, which takes the rstat lock.
-> >>>
-> [...]
-> >>>   static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
-> >>> @@ -312,6 +315,45 @@ static inline void __cgroup_rstat_unlock(struct
-> >>> cgroup *cgrp, int cpu_in_loop)
-> >>>       spin_unlock_irq(&cgroup_rstat_lock);
-> >>>   }
-> >>> +#define MAX_WAIT    msecs_to_jiffies(100)
-> >>> +/* Trylock helper that also checks for on ongoing flusher */
-> >>> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
-> >>> +{
-> >>> +    bool locked =3D __cgroup_rstat_trylock(cgrp, -1);
-> >>> +    if (!locked) {
-> >>> +        struct cgroup *cgrp_ongoing;
-> >>> +
-> >>> +        /* Lock is contended, lets check if ongoing flusher is alrea=
-dy
-> >>> +         * taking care of this, if we are a descendant.
-> >>> +         */
-> >>> +        cgrp_ongoing =3D READ_ONCE(cgrp_rstat_ongoing_flusher);
-> >>> +        if (cgrp_ongoing && cgroup_is_descendant(cgrp, cgrp_ongoing)=
-) {
-> >>
-> >> I wonder if READ_ONCE() and cgroup_is_descendant() needs to happen
-> >> within in rcu section. On a preemptable kernel, let's say we got
-> >> preempted in between them, the flusher was unrelated and got freed
-> >> before we get the CPU. In that case we are accessing freed memory.
-> >>
-> >
-> > I have to think about this some more.
-> >
->
-> I don't think this is necessary. We are now waiting (for completion) and
-> not skipping flush, because as part of take down function
-> cgroup_rstat_exit() is called, which will call cgroup_rstat_flush().
->
->
->   void cgroup_rstat_exit(struct cgroup *cgrp)
->   {
->         int cpu;
->         cgroup_rstat_flush(cgrp);
->
->
+With the new __counted_by annocation, the "sglen" struct member must
+be set before accessing the "sg" array. This initialization was done in
+other places where a new struct omap_desc is allocated, but these cases
+were missed. Set "sglen" after allocation.
 
-Sorry for the late response, I was traveling for a bit. I will take a
-look at your most recent version shortly. But I do have a comment
-here.
+Fixes: b85178611c11 ("dmaengine: ti: omap-dma: Annotate struct omap_desc with __counted_by")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org
+---
+ drivers/dma/ti/omap-dma.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I don't see how this addresses Shakeel's concern. IIUC, if the cgroup
-was freed after READ_ONCE() (and cgroup_rstat_flush() was called),
-then cgroup_is_descendant() will access freed memory. We are not
-holding the lock here so we are not preventing cgroup_rstat_flush()
-from being called for the freed cgroup, right?
+diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+index 7e6c04afbe89..6ab9bfbdc480 100644
+--- a/drivers/dma/ti/omap-dma.c
++++ b/drivers/dma/ti/omap-dma.c
+@@ -1186,10 +1186,10 @@ static struct dma_async_tx_descriptor *omap_dma_prep_dma_cyclic(
+ 	d->dev_addr = dev_addr;
+ 	d->fi = burst;
+ 	d->es = es;
++	d->sglen = 1;
+ 	d->sg[0].addr = buf_addr;
+ 	d->sg[0].en = period_len / es_bytes[es];
+ 	d->sg[0].fn = buf_len / period_len;
+-	d->sglen = 1;
+ 
+ 	d->ccr = c->ccr;
+ 	if (dir == DMA_DEV_TO_MEM)
+@@ -1258,10 +1258,10 @@ static struct dma_async_tx_descriptor *omap_dma_prep_dma_memcpy(
+ 	d->dev_addr = src;
+ 	d->fi = 0;
+ 	d->es = data_type;
++	d->sglen = 1;
+ 	d->sg[0].en = len / BIT(data_type);
+ 	d->sg[0].fn = 1;
+ 	d->sg[0].addr = dest;
+-	d->sglen = 1;
+ 	d->ccr = c->ccr;
+ 	d->ccr |= CCR_DST_AMODE_POSTINC | CCR_SRC_AMODE_POSTINC;
+ 
+@@ -1309,6 +1309,7 @@ static struct dma_async_tx_descriptor *omap_dma_prep_dma_interleaved(
+ 	if (data_type > CSDP_DATA_TYPE_32)
+ 		data_type = CSDP_DATA_TYPE_32;
+ 
++	d->sglen = 1;
+ 	sg = &d->sg[0];
+ 	d->dir = DMA_MEM_TO_MEM;
+ 	d->dev_addr = xt->src_start;
+@@ -1316,7 +1317,6 @@ static struct dma_async_tx_descriptor *omap_dma_prep_dma_interleaved(
+ 	sg->en = xt->sgl[0].size / BIT(data_type);
+ 	sg->fn = xt->numf;
+ 	sg->addr = xt->dst_start;
+-	d->sglen = 1;
+ 	d->ccr = c->ccr;
+ 
+ 	src_icg = dmaengine_get_src_icg(xt, &xt->sgl[0]);
+-- 
+2.34.1
+
 
