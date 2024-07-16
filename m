@@ -1,209 +1,74 @@
-Return-Path: <linux-kernel+bounces-254536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451F2933475
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:08:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB8D933476
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E98CB2307C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:08:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC701C22347
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 23:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDB92AE6A;
-	Tue, 16 Jul 2024 23:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67431143C46;
+	Tue, 16 Jul 2024 23:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EBKIP0hE"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DT4AGKT9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43C313C693
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA11C2AE6A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721171291; cv=none; b=j6Pp+yGqmXAPiz4jvwlnW8y8geW1GvSp09KBtqxEchWAf9Q7TgVl1D7TTF4JwDqQrfHpiLpx7k+ua4Eop8TR3S36dGWVcHSuzW3GO8nkbHocbSCNUpB3EN+2eOUiQraAX6icaxP2miM/8SxeZd/Kr/7og7tIexkp7GAESHiuTqw=
+	t=1721171434; cv=none; b=VRcLsiBBPE1qzGe7p58TBmSmm40x3aoZdYHPIUqGZqvtkwrztpydBTdawNhmTnMJ0Q8m/Qy64eL25ew37x8HN0VDoTISFcOL34D/olNT3qmzKs2PPJxmyEaPKUlbdrvbfVoIdjtU72XqnFMO6zykmdTUVlB5oKmPlJofmUqSjY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721171291; c=relaxed/simple;
-	bh=rOoiuML7N6qLySS+ei9Dpf8UnpznrZNuBP9vY6eYx/A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nQeYhjQCsF51QO9ckJqEsa5OQ2usw0dmN8kQ49zLZ3PD26Ic6VVTuHFr8Y89ru70VfrDR5HjxJZqWtf1LOWK+eHTw3xwbv4A5Tf0puQCQ4u7X+7g/mwjjBaumbIcThZhkOnadMtVtFx4W0xbbChPib9yl3+38KAzCYWppZLE9SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EBKIP0hE; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70af7dc9780so207232b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 16:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721171289; x=1721776089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vnpo2whe8OxkxqrwKjatwsuFtnr7PRgQtu5m92egNWc=;
-        b=EBKIP0hEBasvq2evTJ3C8HeA9TM7ejyZrAvFMGnoJxO1y4ghACReB7gWhxhZCgLZzZ
-         kjXhVT9bbKsBfx6ipqIhvRbiOfYYpnMjJYAq/MBju2vLYk/iLo0XkLB5wGuR5gjSiLCg
-         ES3rB1tNpbhCLQfmHaPbV1rYyeBHvTlBenMMxLuDAo0LZbEdSmUM3xx0LJ78hPhPv/eo
-         0bw+YbnwTLuJM78KIZFYxl6jtuK2D0MX2jTdwd0/764OQVUuHFFXs7i7UifPx4LdZOPO
-         PKAwW30Ql79VX7Y2VlVtBr62+44EFrX/+dVgU8uWrYg5UkeZY57U3RPFK/HmUJkT6LNl
-         tI4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721171289; x=1721776089;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vnpo2whe8OxkxqrwKjatwsuFtnr7PRgQtu5m92egNWc=;
-        b=AfOlkMDXLyNGx/fu8dVmE79pdITFNTCmYhCbRo1Das/NsdYqCJIZQoZcmElSy/Fnjd
-         9Dcoh33YhaTEBHBOVxk79etUFA7O0hCxdrPv00q7A1qiBXCXIoomN9dVkRsWRzPYijCV
-         9Ext5XPajbQkIEkeUwUBRXtZuUy6pMXxLHkdJfYl6q6Fnt09isc62tJm6RXasPsDfdPs
-         nanNikOuHWsaKpPduBjEgjBJGkCpkBBTSYMkhZLu2tUHhvkLxi4AKTKt5LDEZxUEe9g7
-         qM6CowPiUetWZ88mEaKTSZfK6Xl8yjO7xpBNFCNMJDHtfyDOZhj8l7plJMKreKb9DCAg
-         hFnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb49cJ1HC8WXnzicAZmdqtAqFRMg3kxNElfKpTpbvhIiHNjIgwNjh5Gzxahtd5u2LLeCcDuam3JDNmt5njizsNODUvpA7CseWXt0l/
-X-Gm-Message-State: AOJu0YwUhNkHdW8f3UNGdU3Tn87zXe/A8ubvrY1E6fljF08LqpgM5O6w
-	iOBuELFK4PEht9lhZcJrc0h6IZ5rqyK72WjBNeymTiqhds4Cxyhl9pQlThSVWjaS2hguQU1Mau+
-	uaA==
-X-Google-Smtp-Source: AGHT+IHodyyfVvBZCeBo6zYHTnPh0oez+CNhQpAKC/JZhU9iwhP65w+2Cd3FMnyDUtKJfzU6NybR4fMYCt4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:8b98:b0:70a:ef84:7682 with SMTP id
- d2e1a72fcca58-70cd8378e45mr18771b3a.1.1721171288672; Tue, 16 Jul 2024
- 16:08:08 -0700 (PDT)
-Date: Tue, 16 Jul 2024 16:08:07 -0700
-In-Reply-To: <2b3e7111f6d7caffe6477a0a7da5edb5050079f7.camel@intel.com>
+	s=arc-20240116; t=1721171434; c=relaxed/simple;
+	bh=blz4Z4QKskuUYuCvow8IAsAbXnkc4XtUv9s9LqTDze8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgxRykTtAAqb/9701Ym/BZq4rUyw7N6BO9vTtVrZDa+7OhdVKqpUAg0Zhb2SQCj5GboxeeoUJcTliOyKnKDGQiY4kjh051AAcJvy4Ji1GvpFAXTtBJz0gWhZAh2LEmwyn0inqlTuvoil8+QpMFMF43olJDJTby8lQA/OiD8xlLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DT4AGKT9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75FEC116B1;
+	Tue, 16 Jul 2024 23:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721171434;
+	bh=blz4Z4QKskuUYuCvow8IAsAbXnkc4XtUv9s9LqTDze8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DT4AGKT9Di9Inn4LLhtLQlJSkTTkBguQMkxFAdg7Y+6t7FU1vg5A8MD6OUllYDxl0
+	 hqMIFwQjQYkhusJCM3OC5mzlTPu4q9+de3wB82M73OZH2H+YTkRUj9Qw1mSsm1tGHD
+	 bkmh9hflZ4Kd0lkn6lIi7ZidNkTWk8an9AY/RJ48e/fjm48eqhlAhtLccjHne8XUlc
+	 SPTTaQi9DSowSyL9b3PeJjao12u+JRsF+dowlVB81R6voO2bGPtND7yZEGkjImbOnG
+	 E9JLUMJriJqWhT4QQceukcSHbf6CJxwhqQw5TfEVfk7I9CzJEANurAqcJ8rl856M7U
+	 onGYzjl5w0LMQ==
+Date: Wed, 17 Jul 2024 01:10:31 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/8] timers/migration: Rename childmask by groupmask
+ to make naming more obvious
+Message-ID: <Zpb9520N-4wLczUO@pavilion.home>
+References: <20240716-tmigr-fixes-v4-0-757baa7803fe@linutronix.de>
+ <20240716-tmigr-fixes-v4-6-757baa7803fe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <fdddad066c88c6cd8f2090f11e32e54f7d5c6178.1721092739.git.isaku.yamahata@intel.com>
- <ZpbKqG_ZhCWxl-Fc@google.com> <2b3e7111f6d7caffe6477a0a7da5edb5050079f7.camel@intel.com>
-Message-ID: <Zpb9Vwcmp4T-0ufJ@google.com>
-Subject: Re: [PATCH] KVM: x86/mmu: Allow per VM kvm_mmu_max_gfn()
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716-tmigr-fixes-v4-6-757baa7803fe@linutronix.de>
 
-On Tue, Jul 16, 2024, Rick P Edgecombe wrote:
-> On Tue, 2024-07-16 at 12:31 -0700, Sean Christopherson wrote:
-> >=20
-> > No, it most definitely is not more correct.=C2=A0 There is absolutely n=
-o issue
-> > zapping
-> > SPTEs that should never exist.=C2=A0 In fact, restricting the zapping p=
-ath is far
-> > more
-> > likely to *cause* correctness issues, e.g. see=20
-> >=20
-> > =C2=A0 524a1e4e381f ("KVM: x86/mmu: Don't leak non-leaf SPTEs when zapp=
-ing all
-> > SPTEs")
-> > =C2=A0 86931ff7207b ("KVM: x86/mmu: Do not create SPTEs for GFNs that e=
-xceed
-> > host.MAXPHYADDR")
->=20
-> The type of correctness this was going for was around the new treatment o=
-f GFNs
-> not having the shared/alias bit. As you know it can get confusing which
-> variables have these bits and which have them stripped. Part of the recen=
-t MMU
-> work involved making sure at least GFN's didn't contain the shared bit.
+Le Tue, Jul 16, 2024 at 04:19:24PM +0200, Anna-Maria Behnsen a écrit :
+> childmask in the group reflects the mask that is required to 'reference'
+> this group in the parent. When reading childmask, this might be confusing,
+> as this suggests, that this is the mask of the child of the group.
+> 
+> Clarify this by renaming childmask in the tmigr_group and tmc_group by
+> groupmask.
+> 
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-That's fine, and doesn't conflict with what I'm asserting, which is that it=
-'s
-a-ok to process SPTEs a range of GFNs that, barring KVM bugs, should never =
-have
-"valid" entries.
-
-> Then in TDP MMU where it iterates from start to end, for example:
-> static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct kvm_mmu_page *root,
-> 			      gfn_t start, gfn_t end, bool can_yield, bool
-> flush)
-> {
-> 	struct tdp_iter iter;
->=20
-> 	end =3D min(end, tdp_mmu_max_gfn_exclusive());
->=20
-> 	lockdep_assert_held_write(&kvm->mmu_lock);
->=20
-> 	rcu_read_lock();
->=20
-> 	for_each_tdp_pte_min_level(iter, kvm, root, PG_LEVEL_4K, start, end) {
-> 		if (can_yield &&
-> 		    tdp_mmu_iter_cond_resched(kvm, &iter, flush, false)) {
-> 			flush =3D false;
-> 			continue;
-> 		}
-> ...
->=20
-> The math gets a bit confused. For the private/mirror root, start will beg=
-in at
-> 0, and iterate to a range that includes the shared bit. No functional pro=
-blem
-> because we are zapping things that shouldn't be set. But it means the 'gf=
-n' has
-> the bit position of the shared bit set. Although it is not acting as the =
-shared
-> bit in this case, just an out of range bit.
->
-> For the shared/direct root, it will iterate from (shared_bit | 0) to (sha=
-red_bit
-> | max_gfn). So where the mirror root iterates through the whole range, th=
-e
-> shared case skips it in the current code anyway.
->=20
-> And then the fact that the code already takes care here to avoid zapping =
-over
-> ranges that exceed the max gfn.
->=20
-> So it's a bit asymmetric, and just overall weird. We are weighing functio=
-nal
-> correctness risk with known code weirdness.
-
-IMO, you're looking at it with too much of a TDX lens and not thinking abou=
-t all
-the people that don't care about TDX, which is the majority of KVM develope=
-rs.
-
-The unaliased GFN is definitely not the max GFN of all the VM's MMUs, since=
- the
-shared EPT must be able to process GPAs with bits set above the "max" GFN. =
- And
-to me, _that's_ far more weird than saying that "S-EPT MMUs never set the s=
-hared
-bit, and shared EPT MMUs never clear the shared bit".  I'm guessing the S-E=
-PT
-support ORs in the shared bit, but it's still a GFN.
-
-If you were adding a per-MMU max GFN, then I'd buy that it legitimately is =
-the max
-GFN, but why not have a full GFN range for the MMU?  E.g.
-
-  static void __tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root=
-,
-			         bool shared, int zap_level)
-  {
-	struct tdp_iter iter;
-
-	gfn_t end =3D tdp_mmu_max_gfn_exclusive(root);
-	gfn_t start =3D tdp_mmu_min_gfn_inclusive(root);
-
-and then have the helpers incorporated the S-EPT vs. EPT information.  That=
- gets
-us optimized, precise zapping without needing to muddy the waters by tracki=
-ng a
-per-VM "max" GFN that is only kinda sorta the max if you close your eyes an=
-d don't
-think too hard about the shared MMU usage.
-
-> My inclination was to try to reduce the places where TDX MMU needs paths
-> happen to work for subtle reasons for the cost of the VM field.=20
-
-But it doesn't happen to work for subtle reasons.  It works because it has =
-to
-work.  Processing !PRESENT SPTEs should always work, regardless of why KVM =
-can
-guarantee there are no SPTEs in a given GFN range.
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
