@@ -1,170 +1,219 @@
-Return-Path: <linux-kernel+bounces-253561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA31932306
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:41:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC024932303
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38611F234A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9813E2824F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857C6197A7B;
-	Tue, 16 Jul 2024 09:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E662A197552;
+	Tue, 16 Jul 2024 09:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VQS6g1my"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2097.outbound.protection.outlook.com [40.92.52.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzgW2kLs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D39529CF7;
-	Tue, 16 Jul 2024 09:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721122888; cv=fail; b=C1G4zpx8fCd3Jy+6NY7BJtLz0lmh52ztih0s4feM8QSDL+Dcg1hG+ApNF5927pbCzF/uqE9WWMDigs9wrZm6E5AUgaozrl/o+KMdyhUcqW0/KHaU0FIxIyNApJP5xXROt0fcNl70hAQuF6iPZBeYpkpJc9dA/scawtNhvXRMqQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721122888; c=relaxed/simple;
-	bh=R5FCEvGcxjhl5Z2lSXbrnb92dKjdorj5PLGXMh6LC5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EFjXcrzqV11AEqurLAVefY2rEkW836yz0g9MfbBmvt7IKzwO3t74lAlkDxEfYhlim1S0CJVUU9yxdv7pp3ajvpEK015MpU/NchUnaqJdr5jyLtLv4P/VPt9XkiT+xYiVLDqBBUrJLhJsrwKJEfapACYzG1aMdsA4fsk7tooiPrA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VQS6g1my; arc=fail smtp.client-ip=40.92.52.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tQcvtrJlMCyazTzJOE0/iM4vrYCC+t3gu1UXV5gVJkSEEdNjjzozU4lm8MdlAz0k70qORgv+V8bE3NTlrloHAIsOcz5eayxi1VXADXi23oh0sSY/6nItw5H+cA2BY6Rj0eWVhFvrekujB+NmQvR/RNbxOG2gsJRXI9aMop8QOm4uKj05efd/ErckMGAThnlzqJXoj+Dg3w0U2Br0r/O8RUUD5Bb+X8ZY3A0DpgAzT5OJO42kt/FSkgSWfV6CmS7w6AWJxci383+H+kYwXs6J1FeRVpeK0Ae2e3p6WOa5RUp5+kcEmuzISTD5yoLXalkDo13+1vFr0v6QWc8TZqxdRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kJGKZmCuOwjzP0/WiwmegjL56TxpXPptVO23hycSm58=;
- b=K0sIRmVr4Tg6lH6CbWmcXTxH7KlQoGszxtiNvUm8jiQ3ryByDcML/xSnMw04K61kOxqkLcv9arC0uFOBclC8v7UyU6YYFNV20ItKQqMAofz1VOM/hIjI/oj9qKS4JOlywfofSCztkzU8zQb2QkbW1lULHvUq0qXAC/gVT+wEa2nspntQYihrYqLfqDyJFtJqafZSKvR5lb+s4mxECTqetw+OcWHhBaTT9z7d+HfOewIFADAChfIQ0+iZN1StfoNYYHrY3hwN/XYuXwd+9pX2ErjHv3czg4/ErxQCxAqWUTaF9LO4gBS0E4QNAuHYlJNi99ehpzT7Djy4h17EGV4xdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kJGKZmCuOwjzP0/WiwmegjL56TxpXPptVO23hycSm58=;
- b=VQS6g1mySe/GkrIpTitp7yvlcqHUSIy6FXaBEbRAWAdAcP9IF3QzPqF7Cvjj03b9Glr7CQu0Ked+vmLU4QEsGDX8V6cPqin8FveKTVM7c7cn3On9if/jGQGIlRXUBrCC0JROyb9FtCiUqFD/eZdxX9iOxdQAp3LzKc0Q+u8wXQLYHVajp5kUTfO0Hvq88qwvzpded+07GvaAjmzilAdwJ7eUI2eieKsGXtxgND0V/aJx+UeLADLVxy7s27cqnIsqxpOx3fubB5EtMYfbzRZ7b7h9reFIg73ghc/fNGYGjbhoP9wQfLSedLUItmFu6AgTWlQSaISbpINU875DeYsaog==
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12) by TYZPR01MB4895.apcprd01.prod.exchangelabs.com
- (2603:1096:400:281::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
- 2024 09:41:21 +0000
-Received: from SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756]) by SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- ([fe80::b674:8f70:6e29:3756%5]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
- 09:41:21 +0000
-From: Haylen Chu <heylenay@outlook.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Haylen Chu <heylenay@outlook.com>
-Subject: [PATCH v4 0/3] riscv: sophgo: add thermal sensor support for cv180x/sg200x SoCs
-Date: Tue, 16 Jul 2024 09:40:42 +0000
-Message-ID:
- <SEYPR01MB422158B2766DA03728AD90CBD7A22@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
-X-Mailer: git-send-email 2.45.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [jOHthX33/v6T21reLR5ok0uxq7Rgoh43]
-X-ClientProxiedBy: SG2PR03CA0127.apcprd03.prod.outlook.com
- (2603:1096:4:91::31) To SEYPR01MB4221.apcprd01.prod.exchangelabs.com
- (2603:1096:101:56::12)
-X-Microsoft-Original-Message-ID: <20240716094041.51406-2-heylenay@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26441A8E;
+	Tue, 16 Jul 2024 09:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721122864; cv=none; b=HKgNiGD85isM8f3L5joOwITCVJUcAZYT0dd4CLBLDIsdmp4YseQvy0YdkwqiW0lN427jPsG2sU7N52yRElT/43EC57KNLJmtNw3fInYBFlTSC2V9wH4wUcekomz2rxw7p8J7xa6cTODMQuC5IIHvOwXN/9iYkeTA7c6NHfT69OU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721122864; c=relaxed/simple;
+	bh=5Lhv2MWbc/qpZDBmQeIkbJ4Fh5cwZsrgGq6obwgN+Bg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CEwQ2arvYc+ZuQYdUp+I/9Ut04kGH5iNm0PjCdJeYh1ndPtw/GLhrHfRvPv7QJnLb1NfGmZLVH2juNc5uWj4qJfJGOET3TvkexOFySeonPuB0x/0jLLsvGYn/JfSKXsHz2X6JvsEdpOaqWsyyMwVdgKiQa9klZKDg2vF7sXlKYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzgW2kLs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EA2C4AF09;
+	Tue, 16 Jul 2024 09:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721122863;
+	bh=5Lhv2MWbc/qpZDBmQeIkbJ4Fh5cwZsrgGq6obwgN+Bg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bzgW2kLszJ6AqUktHnkjKxg0uufIxlfzP7LlFhRjCPj4XYbg5Y7t5EIY+G/sydn7m
+	 GNmSqAjCfxw9HeCqRWeOejxyi8MpXiWa76Wtrlz/HMqZKlU9Lmd0Lyw3zeq5SPc/cK
+	 X9v2MepKf9ewnEXB4Sb4BJ4rdKdWVsf//WDcPIswbzbFZ/Q4X9XKxiiiYwYKLkvd4f
+	 1k2+aI8QcR0xOGkggk3I2Ce4QPHvpf6SmYasL+1aW5V6g1GyB3/G4SpkkL2hEBaN68
+	 YwmQNX3aAcIkzD37LVr62RYmtDmwB1UVEU9GedD8pIQzSJgFqTzNou78rFSv0TVTtG
+	 gc7yFOV90rqgQ==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eedec7fbc4so34598731fa.0;
+        Tue, 16 Jul 2024 02:41:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVsat3+raNo1Ac5DcHehzi8cVRrCggFpvfIqw+zMY3gWDb+7J3qKuzhqBqNDQUfl8mnHLlyUQObovpnAEqtnVVwoAlsAFBtdLGQG/33U5rcf29a8RJp4fe878zdCm+qT4Z1iFuJEzyKO7KtJh/Ere6PpRWE0hL3mUMOSInG7ihz5Vi2x7n3eGRavcdeqswCfJztqYWDk741IgfkSHAKPRU=
+X-Gm-Message-State: AOJu0Yw/jv9rfbCKStDm8/Atc/TEgrB8p+Ac1Kwbnf+KnlH/Ft6MqTEQ
+	Lz8ef9KfwxtHTORrZUneFoxrJMMLwvAEZHb+MknI9oMtR0WEEwFHgpQmGIMW+JWzjyZugwTxVmr
+	3ogSwfTa5cUfqypsqlPev33cqf9Q=
+X-Google-Smtp-Source: AGHT+IFNuSA6H3vBYEA02jikcpDWsWbHnSz+F7UeviPWcwDTM3KKs3IU1L/Occf2nay7b5LoDEclAsMtP+ErAVWY4qs=
+X-Received: by 2002:a2e:b17a:0:b0:2ee:e0a1:c496 with SMTP id
+ 38308e7fff4ca-2eef415ff6amr11889151fa.9.1721122861833; Tue, 16 Jul 2024
+ 02:41:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR01MB4221:EE_|TYZPR01MB4895:EE_
-X-MS-Office365-Filtering-Correlation-Id: baa07176-d49c-4bcd-0ae2-08dca57b72fa
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|461199028|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	Sn0q3dWCEbOEjf2Am1/m7eN/GADvG9Pp4sk1hgi/7m45sr09njMO0t/uvd2o1NXC+vwQo77DJ/VkJGDqjQM4PLZUJYHnd01CyWibE01S2Zl+hJNLFLjmr+nIitS1/qUX/qczG4pyTTb6JmVeVZJ/Nq3Xvy4TgZKefoy53if99oaPOgaqJiVluQCtoZk3butE0hlycnywwfm7ayhmh72cUedZV6iNxmLUyzhMP7ZapWrNIZsTBhOnEfZjrndo3MG6cpSFl4bYto4GmKjOu1oWz71BZD/gobQDNwxugKDsIqNZkinWkH/oT85tFgqCDaabWXiVkf2AsYUXKV8V1mWetuF/feu4IjAQ/buoc1XmPSu4EACkH9/jQQxeMLSczjz7pgloenaJHBD/JJQ7hPnWb6mmL7GqOLTRgwW82NiZtdjuq/nJvRhp8RMf/K2WqKdR2Gr5OBW9ujRthb5PXnjXwl7wPPCzBF9KmBlbp/gWMn8U13wLdZ/5y+Bu6l5hckjpqvBBsn5OGArVMYvZW/ZkWaPOxjXvwol7WxBm2IfkeYlXEqeZggufkh+aW5eRBZB/hRjyam9bZSDyW7oSpJQj8UARWWjeRi1Vb+QfiwK2zLvkLnEhDTjJYd8gS7umZ13S8Qlnwa6Z2QJMGFO1OVrzpMJewW7qViALseAJe6fG6Es=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o/7SCdj8FGfSrFyv2B4BdhR3f0V4aX9T6faDEyUzd+PwC0rFz7vqDgGGZ4Ph?=
- =?us-ascii?Q?c0bspZAbXxd6QB05riM2gNv7pv2Wh+EqqjF87bI3jnaSeshXK8cf5JZbcd8d?=
- =?us-ascii?Q?B/CJxwFiZeeXBQqj1/sGK6BBHwEaltJJHLLWqUnYk+9UO8loIXK4ksTUybiX?=
- =?us-ascii?Q?e1H5J0YKpXXO/eRXhHc1kasooD9pHAfa6/fd2hat2unNa9JgS5l1cJmaAQCd?=
- =?us-ascii?Q?pVACqVbinaWfAee+al8BWH5Lp3mhUKx+HF8uUBSQV3s5oponp8jI6n1Dxsg2?=
- =?us-ascii?Q?LHNPlSVZB1GDpEOy8yxXHMEdJhGF2FytFnH4y8YIR7imkORz6U2T6AEG9qVs?=
- =?us-ascii?Q?ZJJp0sUHcbEV+NTQ8f/bSxZ+zgtZLdC8EFQqxvRv8qis5WVNgq3KTgMV+Ba5?=
- =?us-ascii?Q?iPikG77NoVOieE+WrQTgpysNABN75AwdsOtGWtbbuEYpyegkGoFG6An3iO1G?=
- =?us-ascii?Q?9rj88zyC9NnN5JWKXuWdeHtZ/HOfoJBmyVEIJm8XVow713GxKoCtCH8ZpzV8?=
- =?us-ascii?Q?BZbcRorNYQ4/AvHnOV2B8H6Lzr0ISk/i/hn3qZ8O0C+CFMkg2Mypjl1BDTwS?=
- =?us-ascii?Q?tDC6R9XDSqgOKATcYpoWo5yAhyAuUzIRZHncaMfMG/PDGb3tggqN4z0HySXM?=
- =?us-ascii?Q?B7HzyE0hkHxWaN1c0emm0DQJCrnLymcvJi9BJVzHh3E1nn/lq1304BybakQ0?=
- =?us-ascii?Q?F1oIpw/F/IwzAu9qQ3mQa84qouvbrfLDGD695XogEdyx5bTvc/9/SQtS873Q?=
- =?us-ascii?Q?cY9RMXxSWJOh+i5/e1W0/7tkwZjtqFeSpPsr5sSz7ogKmmxSiar1wBcGtCNh?=
- =?us-ascii?Q?nk07WHLi0cCZmx0E+1W+qaWfT9z1ges6CrEQYvcieDzZZuoza1iW/1G4Fb8W?=
- =?us-ascii?Q?fa8YByx7Ke8rzHIfbR4qtPQLNv5J00ioto5fZbDT+igC+3em7FZPf1VdYTzD?=
- =?us-ascii?Q?5clo0sQFODhqrrnHEDmz9KT30QtaeZwNxQHNDZ70i3LSL8z56fCJ1DumGRiQ?=
- =?us-ascii?Q?nagn68RikEZ6CSeCxFWVmqa5RhYXMRgWw3AoumacyI3VF7+lIt4HgyQvGXAO?=
- =?us-ascii?Q?QOH5AVuUN6n+rQf/ahYViWyr8v/dGfrXDa7DHIU7Iho8ymaRrxnizmJmthQI?=
- =?us-ascii?Q?ms4noVurcS29Wn9WReXkHD+m0jpe2ZNnznVaXyuSJ4ObXy7iPvYmk+sXpIZf?=
- =?us-ascii?Q?LtlZ/7u+4kU5fuCyzc0fMC9YUfIpLZHqk3o7sBJc2Ru39H7OsZwLEIuFxaA?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: baa07176-d49c-4bcd-0ae2-08dca57b72fa
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR01MB4221.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 09:41:21.3962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB4895
+References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
+ <CAAhV-H5OOXguNTvywykyJk3_ydyDiSnpc-kvERRiYggBt441tw@mail.gmail.com>
+ <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
+ <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com> <b1a53515-068a-4f70-87a9-44b77d02d1d5@app.fastmail.com>
+In-Reply-To: <b1a53515-068a-4f70-87a9-44b77d02d1d5@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 16 Jul 2024 17:40:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
+Message-ID: <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 0/2] Add support for Loongson1 APB DMA
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Kelvin Cheung <keguang.zhang@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This series implements driver for Sophgo cv180x/sg200x on-chip thermal
-sensor and adds thermal zones for CV1800B SoCs.
+On Mon, Jul 15, 2024 at 3:00=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+>
+>
+> =E5=9C=A82024=E5=B9=B47=E6=9C=8815=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=882:39=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> [...]
+> >
+> >> You said that you've accepted my suggestion, which means you recognize
+> >> 'loongson' as the better name for the drivers.
+> > No, I don't think so, this is just a compromise to keep consistency.
+>
+> Folks, can we settle on this topic?
+>
+> Is this naming really important? As long as people can read actual chip n=
+ame from
+> kernel code & documents, I think both are acceptable.
+>
+> I suggest let this patch go as is. And if anyone want to unify the naming=
+, they can
+> propose a treewide patch.
+Renaming still breaks config files.
 
-Changed from v3:
-1. style improvments
-2. drop unnecessary dt parameters for simplicity
+Huacai
 
-Changed from v2:
-1. style and code improvements
-2. use human-readable value for sensor parameters
-
-Changed from v1:
-1. style and code improvements
-2. make sample parameters configurable
-3. generalize document temperature calculating formula
-
-Haylen Chu (3):
-  dt-bindings: thermal: sophgo,cv1800-thermal: Add Sophgo CV1800 thermal
-  riscv: dts: sophgo: cv18xx: Add sensor device and thermal zone
-  thermal: cv180x: Add cv180x thermal driver support
-
- .../thermal/sophgo,cv1800-thermal.yaml        |  55 ++++
- arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |  30 +++
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi        |   8 +
- drivers/thermal/Kconfig                       |   6 +
- drivers/thermal/Makefile                      |   1 +
- drivers/thermal/cv180x_thermal.c              | 241 ++++++++++++++++++
- 6 files changed, 341 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv1800-thermal.yaml
- create mode 100644 drivers/thermal/cv180x_thermal.c
-
--- 
-2.45.2
-
+>
+> Otherwise, we are going nowhere.
+>
+> Thanks
+> -  Jiaxun
+>
+> >
+> >
+> >
+> > Huacai
+> >
+> >> Moreover, Loongson1 and Loongson2 belong to different SoC series.
+> >> To be honest, I can't see why Loongson1 APB DMA should give up this
+> >> intuitive and comprehensible naming.
+> >> Thanks for your review!
+> >> >
+> >> > Huacai
+> >> >
+> >> > On Thu, Jul 11, 2024 at 6:57=E2=80=AFPM Keguang Zhang via B4 Relay
+> >> > <devnull+keguang.zhang.gmail.com@kernel.org> wrote:
+> >> > >
+> >> > > Add the driver and dt-binding document for Loongson1 APB DMA.
+> >> > >
+> >> > > ---
+> >> > > Changes in v9:
+> >> > > - Fix all the errors and warnings when building with W=3D1 and C=
+=3D1
+> >> > > - Link to v8: https://lore.kernel.org/r/20240607-loongson1-dma-v8-=
+0-f9992d257250@gmail.com
+> >> > >
+> >> > > Changes in v8:
+> >> > > - Change 'interrupts' property to an items list
+> >> > > - Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-=
+0-37db58608de5@gmail.com
+> >> > >
+> >> > > Changes in v7:
+> >> > > - Change the comptible to 'loongson,ls1*-apbdma' (suggested by Hua=
+cai Chen)
+> >> > > - Update the title and description part accordingly
+> >> > > - Rename the file to loongson,ls1b-apbdma.yaml
+> >> > > - Add a compatible string for LS1A
+> >> > > - Delete minItems of 'interrupts'
+> >> > > - Change patterns of 'interrupt-names' to const
+> >> > > - Rename the file to loongson1-apb-dma.c to keep the consistency
+> >> > > - Update Kconfig and Makefile accordingly
+> >> > > - Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-=
+0-90de2c3cc928@gmail.com
+> >> > >
+> >> > > Changes in v6:
+> >> > > - Change the compatible to the fallback
+> >> > > - Implement .device_prep_dma_cyclic for Loongson1 sound driver,
+> >> > > - as well as .device_pause and .device_resume.
+> >> > > - Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
+> >> > > - into one page to save memory
+> >> > > - Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
+> >> > > - Drop dma_slave_config structure
+> >> > > - Use .remove_new instead of .remove
+> >> > > - Use KBUILD_MODNAME for the driver name
+> >> > > - Improve the debug information
+> >> > > - Some minor fixes
+> >> > >
+> >> > > Changes in v5:
+> >> > > - Add the dt-binding document
+> >> > > - Add DT support
+> >> > > - Use DT information instead of platform data
+> >> > > - Use chan_id of struct dma_chan instead of own id
+> >> > > - Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
+> >> > > - Update the author information to my official name
+> >> > >
+> >> > > Changes in v4:
+> >> > > - Use dma_slave_map to find the proper channel.
+> >> > > - Explicitly call devm_request_irq() and tasklet_kill().
+> >> > > - Fix namespace issue.
+> >> > > - Some minor fixes and cleanups.
+> >> > >
+> >> > > Changes in v3:
+> >> > > - Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+> >> > >
+> >> > > Changes in v2:
+> >> > > - Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
+> >> > > - and rearrange it in alphabetical order in Kconfig and Makefile.
+> >> > > - Fix comment style.
+> >> > >
+> >> > > ---
+> >> > > Keguang Zhang (2):
+> >> > >       dt-bindings: dma: Add Loongson-1 APB DMA
+> >> > >       dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+> >> > >
+> >> > >  .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
+> >> > >  drivers/dma/Kconfig                                |   9 +
+> >> > >  drivers/dma/Makefile                               |   1 +
+> >> > >  drivers/dma/loongson1-apb-dma.c                    | 665 ++++++++=
++++++++++++++
+> >> > >  4 files changed, 742 insertions(+)
+> >> > > ---
+> >> > > base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> >> > > change-id: 20231120-loongson1-dma-163afe5708b9
+> >> > >
+> >> > > Best regards,
+> >> > > --
+> >> > > Keguang Zhang <keguang.zhang@gmail.com>
+> >> > >
+> >> > >
+> >> > >
+> >>
+> >>
+> >>
+> >> --
+> >> Best regards,
+> >>
+> >> Keguang Zhang
+>
+> --
+> - Jiaxun
 
