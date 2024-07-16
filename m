@@ -1,118 +1,192 @@
-Return-Path: <linux-kernel+bounces-254013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28136932A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:15:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F863932A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BDC6B22E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0620E288A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225E719DFA5;
-	Tue, 16 Jul 2024 15:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E068619E7E8;
+	Tue, 16 Jul 2024 15:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwWWMv2W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xNKcZO2j"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8262B9B3;
-	Tue, 16 Jul 2024 15:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADE219DF99
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721142934; cv=none; b=PkXnBuC9cgkBt8wKi2Qi9prV7ODZ16/0Q4Pv0NbgURYNDWMcbEYMdXtR24Szc7A+Y8T2YU4RlacaLAAVNG7ZNNU/WZwB4GE0PQB83ZzFU8xADxWF5di6Z5WjaVndzQ8UR1d7cQIkBQTBsuBmQ/yjJ7AzC15XPXWYHY57kVNnIfw=
+	t=1721142947; cv=none; b=CXWotzP2OjshfJ2iSxHzpLliX2tVybTMaYVfwVDXvvCUS1r8/0HMAYFXFV36RkSMJlPJzhCl1UPiHBxutZxby5PCly8tJuiPM8O2o6YHOfIBUgeGeAT4LVlBtKTi2t53LyeftA2C75dq9Ow8jwEhMaghFJaha2XCb/gwc6TxZDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721142934; c=relaxed/simple;
-	bh=gH/9v8gdvRPTuEMlos4E4YaZ22thsKhD8PVSvs6RoRY=;
+	s=arc-20240116; t=1721142947; c=relaxed/simple;
+	bh=+ykSzV3fkNPy2WdmM0RJLsMfj+Tpi+DbuVtC9MODNqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSYRC80hHQx7AxKOmMNzG9lWzS5WPeTZOcLzdSdUfeWmZN7Em5kN9a6biwGpReA5kqD9hAZAMEnnFCfDz4dUQnShfFCxtMoqzCDvhWRvqvIcjqHH9ZsRvkvvMQMVShmymqyfSMm7u6ymHjcrBa3dC+BjxiNaaotvOopkTiC62WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwWWMv2W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA084C116B1;
-	Tue, 16 Jul 2024 15:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721142933;
-	bh=gH/9v8gdvRPTuEMlos4E4YaZ22thsKhD8PVSvs6RoRY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPhn8E8lPJKGPTVjPv5hV0DotLUX9tMESg6rYziDFJjOYSLThAR+223XB9g8Kq/jqumDxQcJ15gHFPdrPxynxkOQFUmQLJjur/hHCPnwKDxEMngZS1jXWVEpyC0+kOu2UmEKPgs5a8MH/vtOM8RbSWeOc9POBEyTO05Tn03l0Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xNKcZO2j; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNjLc08mnz18Zq;
+	Tue, 16 Jul 2024 17:15:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721142935;
+	bh=n0Yyov6793OgT9UdlDqw0KaNB/lL9GCWiAZax8WYA8Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XwWWMv2W964OtTHvFJbs2l54wvapkUOVCVPZCYUMoi6Z3eVz7kmEUwOi1cDGehWOx
-	 TzmJ5G4mxSLaw7HfydJ9c9OIaLssAQ6IM9lzNjj2RhXiL2jb04cK8Gu3LI5RMYI9Ns
-	 +NrBMobZgoXJQyG0+WxQAcp1rKcGhQx+7soPLpbpWYVot6LX+/P1gwkmYjb+6vF7fd
-	 miYJoBGoKFv+3/J61zdZ3DyRn6zssDKbw2ech2dPCGqi1lrIuufs0jdLq0FOK7H1NJ
-	 C+R/tNXXuRRrfD2SAnCx9xbWf3BVyEk2taeHBiK2Aqw7F8GbIfY2g+h28RclQOaiJ2
-	 4iA1Vx6t1sgKg==
-Date: Tue, 16 Jul 2024 17:15:25 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Danilo Krummrich <dakr@redhat.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 8/8] cpufreq: Add Rust based cpufreq-dt driver
-Message-ID: <ZpaOjcuzBsSx45jE@cassiopeiae>
-References: <cover.1720680252.git.viresh.kumar@linaro.org>
- <b1601c1dbdf68a4b812fcfaf73f3b5dea67f2025.1720680252.git.viresh.kumar@linaro.org>
- <Zo-3QIPbhBsv8EjB@pollux>
- <20240711130802.vk7af6zd4um3b2cm@vireshk-i7>
- <Zo_cW57i_GMlmYV-@pollux>
- <2024071122-escargot-treadmill-6e9a@gregkh>
- <ZpAEWAzETnrVI-cs@pollux>
- <2024071111-negotiate-spoof-da94@gregkh>
+	b=xNKcZO2jTScaIsHJJ9zP+OUxUwTBkPrcBA1yOc1q+QKNt+FHN/k4cg67/GrzLLdJi
+	 imfD9u0LbeCeE3RQsj4zkCXY8TWGoinZMOzqifRdvWlYs/h6Vg/BDKB+K2iD/f4mWS
+	 fmkY/ksgCatUJ/DslEjxtcF/8/FKyo6Kcl12Spmc=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNjLT50v4zKmx;
+	Tue, 16 Jul 2024 17:15:29 +0200 (CEST)
+Date: Tue, 16 Jul 2024 17:15:28 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Kees Cook <kees@kernel.org>, Steve Dower <steve.dower@python.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <20240716.Zah8Phaiphae@digikod.net>
+References: <20240708.quoe8aeSaeRi@digikod.net>
+ <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org>
+ <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+ <20240709.aech3geeMoh0@digikod.net>
+ <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
+ <20240710.eiKohpa4Phai@digikod.net>
+ <202407100921.687BE1A6@keescook>
+ <20240711.sequuGhee0th@digikod.net>
+ <CALmYWFt7X0v8k1N9=aX6BuT2gCiC9SeWwPEBckvBk8GQtb0rqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2024071111-negotiate-spoof-da94@gregkh>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFt7X0v8k1N9=aX6BuT2gCiC9SeWwPEBckvBk8GQtb0rqQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Jul 11, 2024 at 06:34:22PM +0200, Greg KH wrote:
-> On Thu, Jul 11, 2024 at 06:12:08PM +0200, Danilo Krummrich wrote:
-> > On Thu, Jul 11, 2024 at 04:37:50PM +0200, Greg KH wrote:
-> > > On Thu, Jul 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
-> > > > (2) You require drivers to always implement a "dummy" struct platform_device,
-> > > > there is platform_device_register_simple() for that purpose.
-> > > 
-> > > No, NEVER do that.  platform devices are only for real platform devices,
-> > > do not abuse that interface any more than it already is.
-> > 
-> > I thought we're talking about cases like [1] or [2], but please correct me if
-> > those are considered abusing the platform bus as well.
-> > 
-> > (Those drivers read the CPU OF nodes, instead of OF nodes that represent a
-> > separate device.)
-> > 
-> > [1] https://elixir.bootlin.com/linux/latest/source/drivers/cpuidle/cpuidle-riscv-sbi.c#L586
-> > [2] https://elixir.bootlin.com/linux/latest/source/drivers/cpuidle/cpuidle-psci.c#L441
+On Tue, Jul 16, 2024 at 08:02:37AM -0700, Jeff Xu wrote:
+> On Thu, Jul 11, 2024 at 1:57 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Wed, Jul 10, 2024 at 09:26:14AM -0700, Kees Cook wrote:
+> > > On Wed, Jul 10, 2024 at 11:58:25AM +0200, Mickaël Salaün wrote:
+> > > > Here is another proposal:
+> > > >
+> > > > We can change a bit the semantic by making it the norm to always check
+> > > > file executability with AT_CHECK, and using the securebits to restrict
+> > > > file interpretation and/or command injection (e.g. user supplied shell
+> > > > commands).  Non-executable checked files can be reported/logged at the
+> > > > kernel level, with audit, configured by sysadmins.
+> > > >
+> > > > New securebits (feel free to propose better names):
+> > > >
+> > > > - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
+> > >
+> > > Would you want the enforcement of this bit done by userspace or the
+> > > kernel?
+> > >
+> > > IIUC, userspace would always perform AT_CHECK regardless of
+> > > SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
+> > >
+> > > 1) userspace would ignore errors from AT_CHECK when
+> > >    SECBIT_EXEC_RESTRICT_FILE is unset
+> >
+> > Yes, that's the idea.
+> >
+> > >
+> > > or
+> > >
+> > > 2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE is
+> > >    unset
+> > >
+> > > I suspect 1 is best and what you intend, given that
+> > > SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
+> >
+> > Indeed. We don't want AT_CHECK's behavior to change according to
+> > securebits.
+> >
+> One bit is good.
 > 
-> Yes, these are abuses of that and should be virtual devices as they have
-> nothing to do with the platform bus.
+> > >
+> > > > - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
+> > > >   command line arguments, environment variables, or configuration files.
+> > > >   This should be ignored by dynamic linkers.  We could also have an
+> > > >   allow-list of shells for which this bit is not set, managed by an
+> > > >   LSM's policy, if the native securebits scoping approach is not enough.
+> > > >
+> > > > Different modes for script interpreters:
+> > > >
+> > > > 1. RESTRICT_FILE=0 DENY_INTERACTIVE=0 (default)
+> > > >    Always interpret scripts, and allow arbitrary user commands.
+> > > >    => No threat, everyone and everything is trusted, but we can get
+> > > >    ahead of potential issues with logs to prepare for a migration to a
+> > > >    restrictive mode.
+> > > >
+> > > > 2. RESTRICT_FILE=1 DENY_INTERACTIVE=0
+> > > >    Deny script interpretation if they are not executable, and allow
+> > > >    arbitrary user commands.
+> > > >    => Threat: (potential) malicious scripts run by trusted (and not
+> > > >       fooled) users.  That could protect against unintended script
+> > > >       executions (e.g. sh /tmp/*.sh).
+> > > >    ==> Makes sense for (semi-restricted) user sessions.
+> > > >
+> > > > 3. RESTRICT_FILE=1 DENY_INTERACTIVE=1
+> > > >    Deny script interpretation if they are not executable, and also deny
+> > > >    any arbitrary user commands.
+> > > >    => Threat: malicious scripts run by untrusted users.
+> > > >    ==> Makes sense for system services executing scripts.
+> > > >
+> > > > 4. RESTRICT_FILE=0 DENY_INTERACTIVE=1
+> > > >    Always interpret scripts, but deny arbitrary user commands.
+> > > >    => Goal: monitor/measure/assess script content (e.g. with IMA/EVM) in
+> > > >       a system where the access rights are not (yet) ready.  Arbitrary
+> > > >       user commands would be much more difficult to monitor.
+> > > >    ==> First step of restricting system services that should not
+> > > >        directly pass arbitrary commands to shells.
+> > >
+> > > I like these bits!
+> >
+> > Good! Jeff, Steve, Florian, Matt, others, what do you think?
+> 
+> For below two cases: will they be restricted by one (or some) mode above ?
+> 
+> 1> cat /tmp/a.sh | sh
+> 
+> 2> sh -c "$(cat /tmp/a.sh)"
 
-For those drivers, wouldn't it be better if proper devices would be derived from
-the CPU OF nodes directly? This seems to be a common problem for cpuidle and
-cpufreq drivers.
+Yes, DENY_INTERACTIVE=1 is to deny both of these cases (i.e. arbitrary
+user command).
 
-But it's quite a while ago I dealt with such drivers, maybe there are reasons
-not to do so.
-
-Anyway, using a virtual device for those seems a bit wrong to me.
-
-- Danilo
+These other examples should be allowed with AT_CHECK and RESTRICT_FILE=1
+if a.sh is executable though:
+* sh /tmp/a.sh
+* sh < /tmp/a.sh
 
