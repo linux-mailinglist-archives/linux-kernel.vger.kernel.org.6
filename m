@@ -1,697 +1,244 @@
-Return-Path: <linux-kernel+bounces-253353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C32931FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:17:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131F4932000
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6282838A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5A8283B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 05:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF0C22F11;
-	Tue, 16 Jul 2024 05:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B3D1B947;
+	Tue, 16 Jul 2024 05:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="iUCkbdUU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KDNl9mnZ"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WCpwQ2ei"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A97C224D4;
-	Tue, 16 Jul 2024 05:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378F92B9D5
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 05:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721107007; cv=none; b=QrutWaYaLcNYqWSq4mGwnvM6gyrxra3t5ZyOi0tT7qUo5zuWZskvSzLe+WuT7YduyakWqM9ANLwM578uG+fdwnvU7jLQX5x/IxWBDiFISrQME8jjee9AY4Fs+931ul0zGrXvp+AjEZl0k4gDn9HikQbXPGMXFEc7iLi5eGl968o=
+	t=1721107040; cv=none; b=WGNiew374hHry+OveLvbAcdNKeAZdtiO3z27KzvTNFv/5Mn9R0vXA213Hdy+rl01LBjXNxdLXocFQoQ6jgMMnHl1bAEF5rGenbaubHe0esr/Xd/IdeYVinJFEDHV5ztQZjPIvxBfPrOc8PqTtA5+JeA7GLSJZqWM2/C/W+ZJ4w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721107007; c=relaxed/simple;
-	bh=+f2dVQN4g89Fw2HyImwf61EWmJRbHhC5tigvz5CIgMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JT1Hr7/BaC8TuNUkckynWJjMDnIPilc7oB/mTMvpeyBK6JStSGJlQUbo+3dnp1R4PQBVj1lDjJyiDHAzafaZesWtSBBxp55iv9m7IiplLXgTeWoss6AojYofS2RyYKyIXvJo+Quu+1eQYArEDrdv36i8TT9Xjr71DN31Ypmc1Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=iUCkbdUU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KDNl9mnZ; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 976FD1388C48;
-	Tue, 16 Jul 2024 01:16:44 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 16 Jul 2024 01:16:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1721107004; x=
-	1721193404; bh=H0niasfTQ65rb/ipH5vyaIeIw2H0hcDxH6mzlLciZqM=; b=i
-	UCkbdUU0ayBZvQNkuBhbB7M95IH5IVJNJ0JJ+jqjyDLKYHt62cJDkKn7ApuuXW+T
-	IUdm6LqElpmS1WWokPsFcb2tUQtFqYKoi3M1v0skW2RYZunQl5L1dUlbs6fQhzQ8
-	IabrWOVAp6dkByOhmPxSmP9DZrM1XY2srj+nyYa39HVgN84Wnu5AOr+I10/RiAlD
-	ZgUBvBuQ+9OrNQpf2zNqBgPf4PeNcfWuJlgcX/pZ3V2mRIRRuGtciIPlo4ymef8H
-	2AL+L8rhokzSc1XWvATQpYjCAycLH/b/Gk7gXbP7nIicbHR5xO+P0kJP0OWH2iME
-	xLlujC5cW9BrZIdrM+rjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721107004; x=
-	1721193404; bh=H0niasfTQ65rb/ipH5vyaIeIw2H0hcDxH6mzlLciZqM=; b=K
-	DNl9mnZSI8dm+yhm9jW2FfpHFa+SOeVxAhS8mO/jwAwB46yfUC/Ec9lrnJrRHZIb
-	QwtTvi0OmF5W7WAUWrsHiBF05OvWE64EgtTxO/01GKU1N9/4zCPV+AwzLUUa3sa/
-	vF5edGg8Expy3g3FBnOuBZdhaemn/JrIuUZOz3o6LosRJSJmwJkq+N6Mrt6NQCvE
-	/Mav7qizQeP/lwff0/NNVDgNAOlT7xMfHthVe1b93IRwTydovGElOTMt1I6pMfdI
-	Q12usxQQ2L1QqrcvsL/oTKYI/+KbFQSnvtapZLKhIH69rfGWXsOjM0wX/nO6uBG4
-	nOKwoPQJsF7lUhIaYej9w==
-X-ME-Sender: <xms:OwKWZixw0tJklfR0TCSNRF2PlFyXYcYUEbhDOUcEW27iIxnUo49Wlw>
-    <xme:OwKWZuRm56wDLBwe2pHUP0DVBWpD7fnh4G2oDX6OYwD7Ou4TNKC1hfK_FXrmqyHTo
-    kZx5dxJ6Dxl4Ej1HbA>
-X-ME-Received: <xmr:OwKWZkX_hw7GRcNTDXRituDeTn6l3NhflPdVEP358Il-vFGXUAA4jpVVWiqj>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeefgdelfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
-    dtredttdenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghsfdcuoehluhhkvgeslhhj
-    ohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpefgteefudfgteduueehteejhfeugf
-    fgleeltedvveethfeuueejfedvgeelveehgfenucevlhhushhtvghrufhiiigvpedtnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:OwKWZogav82RC87FfKBF14HvE4WXXD5_bBvljrJxhkChpdDXd5w1Ow>
-    <xmx:OwKWZkBA2O1i2dTkAciqTPqlljMJ8ISudnO5dzI3Mme3qi3ux8Oe7g>
-    <xmx:OwKWZpJ3s8pZ2jVfzBv-ahAruA_St5SsvNhDa4eYrvbglf6ngocfeA>
-    <xmx:OwKWZrCmDNXuwwhHFOAwxh8Psw1pTPon5Uks7komVcksoeowIL-gvw>
-    <xmx:PAKWZm04rCtzcFSwG-50v715sMv70RusTBIMgxrZO4pFvWm1FskjqNRR>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Jul 2024 01:16:40 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	mario.limonciello@amd.com,
-	linux-kernel@vger.kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 5/5] asus-wmi: deprecate bios features
-Date: Tue, 16 Jul 2024 17:16:12 +1200
-Message-ID: <20240716051612.64842-6-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240716051612.64842-1-luke@ljones.dev>
-References: <20240716051612.64842-1-luke@ljones.dev>
+	s=arc-20240116; t=1721107040; c=relaxed/simple;
+	bh=Ei8Zh+WUYz9gyI6jvfia3vMDKTzpVSDcVJwlBtwjSN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RmK+u1nLxmnJ3b6A0pc8Q8BJunaNteX/Tnwj1bXRocBt15VQ6LN0dekf/sxODKkCUV6eAhUWrX2J0eOJRuXJAUjuo/odieLpGD0Em3GnsjgKx35i4hhFVj0DeFXvLipIQMG297ozIzVfdHFvWuWwE0NnTBIHXS3wpbM23FdDJN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WCpwQ2ei; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721107037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iV35LYaNNEGWx8EBWfuJaXV5qmmqt8q3YPSyBVDLw84=;
+	b=WCpwQ2ei2CgPgeATdYARUnWY2jdRAWR+rFBJDonlhygl3ctA8Z2m4cuahNIuLi7I0BYNHZ
+	6Z5QS7neyXJJqy7TXA6gXZGZ2MN/YVAy4ZO1pUj/6/IxaJM0O5xeG9cZcIUc49n5MBR1Vl
+	aUhCcfCF3OTwo6zQq3Lhv86hV4AYKUQ=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-137-WMg7nGSJNAC_EvzQrS5h6Q-1; Tue, 16 Jul 2024 01:17:13 -0400
+X-MC-Unique: WMg7nGSJNAC_EvzQrS5h6Q-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c965f8f813so4299612a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2024 22:17:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721107032; x=1721711832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iV35LYaNNEGWx8EBWfuJaXV5qmmqt8q3YPSyBVDLw84=;
+        b=Rljh9LejEqb7Go+c5jjYN8GJNpRSmu6d+/wkfYkEFmvXbWHMXa3W4ttC669zorFzZ/
+         uUEwWnOES9F2pUtvDdp2bh1hj4o1dTSO+FP8sy1lHSdtoXyzYlvz8gob/cozrb81s3qW
+         mMqbahvtnhM3Iia/G+1OnGGEeiK6zK9mbpFdkjmx3Had394QfW8seedDN7C0mMyMcPKn
+         37dgJtjmoSGAV4kDXmsKRgkMh45p2ZzmkNXQCmOaiNCjnhQBRn6oVd0Dij6oCETglUrh
+         JxwZCmLEN0SBrSSX2fO1bDeX2b99HZV0JTaibCzIM109N3GuXfU7NJu1TEDURqIMnwL4
+         HUrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHsf/uEj4xpR+hCkzrZmSXgw1jbfHC+IQTta8Qhte1Cev3w5x2CBwEUu/mG5aeTyfeOD3lEbKciYAORBJzaLfB3l4KySpcYxt1NtpL
+X-Gm-Message-State: AOJu0YwxzBHQ6rMW0Ja/KQK2sRDzWaHZkcE02n3s6LeV/VSVHKUQ2Yc+
+	InFM/ebJINcVXrK+F0cxAX4kyuh4Y59NuVV0IRiBJwWJgzadiv9M6Va+ff5xtyA08a0KZw3OzW+
+	sgM0+3AjXTzc/3xjf4+iq14KOti8O89iJ4EhrrQgBj182bzwmNaz5y/zi5BNKhxekWLPN57onNJ
+	hHUeABcPPP7rCWRBDlNPCRjK8vvgiAuHOGbkEE
+X-Received: by 2002:a17:90a:bb07:b0:2c8:f3b4:425 with SMTP id 98e67ed59e1d1-2cb3740ee4emr790012a91.23.1721107031940;
+        Mon, 15 Jul 2024 22:17:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9ANQt5ows3QOa5bdpVKACuf5yOTcvmdotzZ6xqk3YrNrhe/6vFwXEh88rK+S5GL0Jwr+RG+N864dnR4xWlNg=
+X-Received: by 2002:a17:90a:bb07:b0:2c8:f3b4:425 with SMTP id
+ 98e67ed59e1d1-2cb3740ee4emr790002a91.23.1721107031501; Mon, 15 Jul 2024
+ 22:17:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1720790333-456232-1-git-send-email-steven.sistare@oracle.com>
+ <1720790333-456232-4-git-send-email-steven.sistare@oracle.com>
+ <CACGkMEu0sNx=saZOaVRbuV7Gz7+_GD-v42i+Bdk-NCp6syABbw@mail.gmail.com> <acfccf72-2883-407d-977a-9c2566cf8cb3@oracle.com>
+In-Reply-To: <acfccf72-2883-407d-977a-9c2566cf8cb3@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 16 Jul 2024 13:16:59 +0800
+Message-ID: <CACGkMEtL7Fkj+srq+beK8UBZ5QDowpz+hT2HZ8RZR00UsRJcVA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/7] vhost-vdpa: VHOST_NEW_OWNER
+To: Steven Sistare <steven.sistare@oracle.com>
+Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With the existence of the asus-bioscfg module the attributes no-longer
-need to live under the /sys/devices/platform/asus-nb-wmi/ path.
+On Mon, Jul 15, 2024 at 10:27=E2=80=AFPM Steven Sistare
+<steven.sistare@oracle.com> wrote:
+>
+> On 7/14/2024 10:26 PM, Jason Wang wrote:
+> > On Fri, Jul 12, 2024 at 9:19=E2=80=AFPM Steve Sistare <steven.sistare@o=
+racle.com> wrote:
+> >>
+> >> Add an ioctl to transfer file descriptor ownership and pinned memory
+> >> accounting from one process to another.
+> >>
+> >> This is more efficient than VHOST_RESET_OWNER followed by VHOST_SET_OW=
+NER,
+> >> as that would unpin all physical pages, requiring them to be repinned =
+in
+> >> the new process.  That would cost multiple seconds for large memories,=
+ and
+> >> be incurred during a virtual machine's pause time during live update.
+> >>
+> >> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> >> ---
+> >>   drivers/vhost/vdpa.c       | 41 ++++++++++++++++++++++++++++++++++++=
+++
+> >>   drivers/vhost/vhost.c      | 15 ++++++++++++++
+> >>   drivers/vhost/vhost.h      |  1 +
+> >>   include/uapi/linux/vhost.h | 10 ++++++++++
+> >>   4 files changed, 67 insertions(+)
+> >>
+> >> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> >> index b49e5831b3f0..5cf55ca4ec02 100644
+> >> --- a/drivers/vhost/vdpa.c
+> >> +++ b/drivers/vhost/vdpa.c
+> >> @@ -632,6 +632,44 @@ static long vhost_vdpa_resume(struct vhost_vdpa *=
+v)
+> >>          return ret;
+> >>   }
+> >>
+> >> +static long vhost_vdpa_new_owner(struct vhost_vdpa *v)
+> >> +{
+> >> +       int r;
+> >> +       struct vhost_dev *vdev =3D &v->vdev;
+> >> +       struct mm_struct *mm_old =3D vdev->mm;
+> >> +       struct mm_struct *mm_new =3D current->mm;
+> >> +       long pinned_vm =3D v->pinned_vm;
+> >> +       unsigned long lock_limit =3D PFN_DOWN(rlimit(RLIMIT_MEMLOCK));
+> >> +
+> >> +       if (!mm_old)
+> >> +               return -EINVAL;
+> >> +       mmgrab(mm_old);
+> >> +
+> >> +       if (!v->vdpa->use_va &&
+> >> +           pinned_vm + atomic64_read(&mm_new->pinned_vm) > lock_limit=
+) {
+> >> +               r =3D -ENOMEM;
+> >> +               goto out;
+> >> +       }
+> >
+> > So this seems to allow an arbitrary process to execute this. Seems to b=
+e unsafe.
+> >
+> > I wonder if we need to add some checks here, maybe PID or other stuff
+> > to only allow the owner process to do this.
+>
+> The original owner must send the file descriptor to the new owner.
 
-Deprecate all those that were implemented in asus-bioscfg with the goal
-of removing them fully in the next LTS cycle.
+This seems not to be in the steps you put in the cover letter.
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- .../ABI/testing/sysfs-platform-asus-wmi       |  17 +++
- drivers/platform/x86/Kconfig                  |   8 ++
- drivers/platform/x86/asus-wmi.c               | 126 ++++++++++++++----
- 3 files changed, 123 insertions(+), 28 deletions(-)
+> That constitutes permission to take ownership.
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-index 28144371a0f1..765d50b0d9df 100644
---- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
-+++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-@@ -63,6 +63,7 @@ Date:		Aug 2022
- KernelVersion:	6.1
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Switch the GPU hardware MUX mode. Laptops with this feature can
- 		can be toggled to boot with only the dGPU (discrete mode) or in
- 		standard Optimus/Hybrid mode. On switch a reboot is required:
-@@ -75,6 +76,7 @@ Date:		Aug 2022
- KernelVersion:	5.17
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Disable discrete GPU:
- 			* 0 - Enable dGPU,
- 			* 1 - Disable dGPU
-@@ -84,6 +86,7 @@ Date:		Aug 2022
- KernelVersion:	5.17
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Enable the external GPU paired with ROG X-Flow laptops.
- 		Toggling this setting will also trigger ACPI to disable the dGPU:
- 
-@@ -95,6 +98,7 @@ Date:		Aug 2022
- KernelVersion:	5.17
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Enable an LCD response-time boost to reduce or remove ghosting:
- 			* 0 - Disable,
- 			* 1 - Enable
-@@ -104,6 +108,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Get the current charging mode being used:
- 			* 1 - Barrel connected charger,
- 			* 2 - USB-C charging
-@@ -114,6 +119,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Show if the egpu (XG Mobile) is correctly connected:
- 			* 0 - False,
- 			* 1 - True
-@@ -123,6 +129,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Change the mini-LED mode:
- 			* 0 - Single-zone,
- 			* 1 - Multi-zone
-@@ -133,6 +140,7 @@ Date:		Apr 2024
- KernelVersion:	6.10
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		List the available mini-led modes.
- 
- What:		/sys/devices/platform/<platform>/ppt_pl1_spl
-@@ -140,6 +148,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the Package Power Target total of CPU: PL1 on Intel, SPL on AMD.
- 		Shown on Intel+Nvidia or AMD+Nvidia based systems:
- 
-@@ -150,6 +159,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the Slow Package Power Tracking Limit of CPU: PL2 on Intel, SPPT,
- 		on AMD. Shown on Intel+Nvidia or AMD+Nvidia based systems:
- 
-@@ -160,6 +170,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the Fast Package Power Tracking Limit of CPU. AMD+Nvidia only:
- 			* min=5, max=250
- 
-@@ -168,6 +179,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the APU SPPT limit. Shown on full AMD systems only:
- 			* min=5, max=130
- 
-@@ -176,6 +188,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the platform SPPT limit. Shown on full AMD systems only:
- 			* min=5, max=130
- 
-@@ -184,6 +197,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the dynamic boost limit of the Nvidia dGPU:
- 			* min=5, max=25
- 
-@@ -192,6 +206,7 @@ Date:		Jun 2023
- KernelVersion:	6.5
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set the target temperature limit of the Nvidia dGPU:
- 			* min=75, max=87
- 
-@@ -200,6 +215,7 @@ Date:		Apr 2024
- KernelVersion:	6.10
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set if the BIOS POST sound is played on boot.
- 			* 0 - False,
- 			* 1 - True
-@@ -209,6 +225,7 @@ Date:		Apr 2024
- KernelVersion:	6.10
- Contact:	"Luke Jones" <luke@ljones.dev>
- Description:
-+        DEPRECATED, WILL BE REMOVED SOON
- 		Set if the MCU can go in to low-power mode on system sleep
- 			* 0 - False,
- 			* 1 - True
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index b4a5a5bec7f3..164c53ed06c3 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -301,6 +301,14 @@ config ASUS_WMI
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called asus-wmi.
- 
-+config ASUS_WMI_BIOS
-+	bool "BIOS option support in WMI platform (DEPRECATED)"
-+	depends on ASUS_WMI
-+	help
-+	  Say Y to expose the configurable BIOS options through the asus-wmi
-+	  driver. This can be used with or without the new asus-bios driver as
-+	  the options are the same but the asus-bios driver has more features.
-+
- config ASUS_NB_WMI
- 	tristate "Asus Notebook WMI Driver"
- 	depends on ASUS_WMI
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 3f1998638fea..e5ae1b766929 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -269,11 +269,12 @@ struct asus_wmi {
- 	u8 fan_boost_mode_mask;
- 	u8 fan_boost_mode;
- 
-+
-+	/* Tunables provided by ASUS for gaming laptops */
-+	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- 	bool egpu_enable_available;
- 	bool dgpu_disable_available;
- 	u32 gpu_mux_dev;
--
--	/* Tunables provided by ASUS for gaming laptops */
- 	u32 ppt_pl2_sppt;
- 	u32 ppt_pl1_spl;
- 	u32 ppt_apu_sppt;
-@@ -281,6 +282,9 @@ struct asus_wmi {
- 	u32 ppt_fppt;
- 	u32 nv_dynamic_boost;
- 	u32 nv_temp_target;
-+	bool panel_overdrive_available;
-+	u32 mini_led_dev_id;
-+	#endif
- 
- 	u32 kbd_rgb_dev;
- 	bool kbd_rgb_state_available;
-@@ -299,9 +303,6 @@ struct asus_wmi {
- 	// The RSOC controls the maximum charging percentage.
- 	bool battery_rsoc_available;
- 
--	bool panel_overdrive_available;
--	u32 mini_led_dev_id;
--
- 	struct hotplug_slot hotplug_slot;
- 	struct mutex hotplug_lock;
- 	struct mutex wmi_lock;
-@@ -315,6 +316,15 @@ struct asus_wmi {
- 	struct asus_wmi_driver *driver;
- };
- 
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-+void asus_wmi_show_deprecated(void)
-+{
-+	pr_notice_once("Accessing attributes through /sys/bus/platform/asus_wmi is \
-+		deprecated and will be removed in a future release.  Please switch \
-+		over to /sys/class/firmware_attributes.");
-+}
-+#endif
-+
- /* WMI ************************************************************************/
- 
- static int asus_wmi_evaluate_method3(u32 method_id,
-@@ -683,6 +693,7 @@ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
- }
- 
- /* Charging mode, 1=Barrel, 2=USB ******************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t charge_mode_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -693,12 +704,16 @@ static ssize_t charge_mode_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", value & 0xff);
- }
- 
- static DEVICE_ATTR_RO(charge_mode);
-+#endif
- 
- /* dGPU ********************************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t dgpu_disable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -709,6 +724,8 @@ static ssize_t dgpu_disable_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -762,8 +779,10 @@ static ssize_t dgpu_disable_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(dgpu_disable);
-+#endif
- 
- /* eGPU ********************************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t egpu_enable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -774,6 +793,8 @@ static ssize_t egpu_enable_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -830,8 +851,10 @@ static ssize_t egpu_enable_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(egpu_enable);
-+#endif
- 
- /* Is eGPU connected? *********************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t egpu_connected_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -842,12 +865,16 @@ static ssize_t egpu_connected_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
- static DEVICE_ATTR_RO(egpu_connected);
-+#endif
- 
- /* gpu mux switch *************************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t gpu_mux_mode_show(struct device *dev,
- 				 struct device_attribute *attr, char *buf)
- {
-@@ -858,6 +885,8 @@ static ssize_t gpu_mux_mode_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -916,6 +945,7 @@ static ssize_t gpu_mux_mode_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(gpu_mux_mode);
-+#endif
- 
- /* TUF Laptop Keyboard RGB Modes **********************************************/
- static ssize_t kbd_rgb_mode_store(struct device *dev,
-@@ -1039,6 +1069,7 @@ static const struct attribute_group *kbd_rgb_mode_groups[] = {
- };
- 
- /* Tunable: PPT: Intel=PL1, AMD=SPPT *****************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t ppt_pl2_sppt_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t count)
-@@ -1077,6 +1108,8 @@ static ssize_t ppt_pl2_sppt_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->ppt_pl2_sppt);
- }
- static DEVICE_ATTR_RW(ppt_pl2_sppt);
-@@ -1119,6 +1152,8 @@ static ssize_t ppt_pl1_spl_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->ppt_pl1_spl);
- }
- static DEVICE_ATTR_RW(ppt_pl1_spl);
-@@ -1162,6 +1197,8 @@ static ssize_t ppt_fppt_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->ppt_fppt);
- }
- static DEVICE_ATTR_RW(ppt_fppt);
-@@ -1205,6 +1242,8 @@ static ssize_t ppt_apu_sppt_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->ppt_apu_sppt);
- }
- static DEVICE_ATTR_RW(ppt_apu_sppt);
-@@ -1248,6 +1287,8 @@ static ssize_t ppt_platform_sppt_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->ppt_platform_sppt);
- }
- static DEVICE_ATTR_RW(ppt_platform_sppt);
-@@ -1291,6 +1332,8 @@ static ssize_t nv_dynamic_boost_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->nv_dynamic_boost);
- }
- static DEVICE_ATTR_RW(nv_dynamic_boost);
-@@ -1334,11 +1377,15 @@ static ssize_t nv_temp_target_show(struct device *dev,
- {
- 	struct asus_wmi *asus = dev_get_drvdata(dev);
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%u\n", asus->nv_temp_target);
- }
- static DEVICE_ATTR_RW(nv_temp_target);
-+#endif
- 
- /* Ally MCU Powersave ********************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t mcu_powersave_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -1349,6 +1396,8 @@ static ssize_t mcu_powersave_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -1384,6 +1433,7 @@ static ssize_t mcu_powersave_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(mcu_powersave);
-+#endif
- 
- /* Battery ********************************************************************/
- 
-@@ -2213,6 +2263,7 @@ static int asus_wmi_rfkill_init(struct asus_wmi *asus)
- }
- 
- /* Panel Overdrive ************************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t panel_od_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -2223,6 +2274,8 @@ static ssize_t panel_od_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -2259,9 +2312,10 @@ static ssize_t panel_od_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(panel_od);
-+#endif
- 
- /* Bootup sound ***************************************************************/
--
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t boot_sound_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
-@@ -2272,6 +2326,8 @@ static ssize_t boot_sound_show(struct device *dev,
- 	if (result < 0)
- 		return result;
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", result);
- }
- 
-@@ -2307,8 +2363,10 @@ static ssize_t boot_sound_store(struct device *dev,
- 	return count;
- }
- static DEVICE_ATTR_RW(boot_sound);
-+#endif
- 
- /* Mini-LED mode **************************************************************/
-+#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- static ssize_t mini_led_mode_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -2339,6 +2397,8 @@ static ssize_t mini_led_mode_show(struct device *dev,
- 		}
- 	}
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "%d\n", value);
- }
- 
-@@ -2409,10 +2469,13 @@ static ssize_t available_mini_led_mode_show(struct device *dev,
- 		return sysfs_emit(buf, "0 1 2\n");
- 	}
- 
-+	asus_wmi_show_deprecated();
-+
- 	return sysfs_emit(buf, "0\n");
- }
- 
- static DEVICE_ATTR_RO(available_mini_led_mode);
-+#endif
- 
- /* Quirks *********************************************************************/
- 
-@@ -4378,27 +4441,29 @@ static struct attribute *platform_attributes[] = {
- 	&dev_attr_camera.attr,
- 	&dev_attr_cardr.attr,
- 	&dev_attr_touchpad.attr,
--	&dev_attr_charge_mode.attr,
--	&dev_attr_egpu_enable.attr,
--	&dev_attr_egpu_connected.attr,
--	&dev_attr_dgpu_disable.attr,
--	&dev_attr_gpu_mux_mode.attr,
- 	&dev_attr_lid_resume.attr,
- 	&dev_attr_als_enable.attr,
- 	&dev_attr_fan_boost_mode.attr,
- 	&dev_attr_throttle_thermal_policy.attr,
--	&dev_attr_ppt_pl2_sppt.attr,
--	&dev_attr_ppt_pl1_spl.attr,
--	&dev_attr_ppt_fppt.attr,
--	&dev_attr_ppt_apu_sppt.attr,
--	&dev_attr_ppt_platform_sppt.attr,
--	&dev_attr_nv_dynamic_boost.attr,
--	&dev_attr_nv_temp_target.attr,
--	&dev_attr_mcu_powersave.attr,
--	&dev_attr_boot_sound.attr,
--	&dev_attr_panel_od.attr,
--	&dev_attr_mini_led_mode.attr,
--	&dev_attr_available_mini_led_mode.attr,
-+	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-+		&dev_attr_charge_mode.attr,
-+		&dev_attr_egpu_enable.attr,
-+		&dev_attr_egpu_connected.attr,
-+		&dev_attr_dgpu_disable.attr,
-+		&dev_attr_gpu_mux_mode.attr,
-+		&dev_attr_ppt_pl2_sppt.attr,
-+		&dev_attr_ppt_pl1_spl.attr,
-+		&dev_attr_ppt_fppt.attr,
-+		&dev_attr_ppt_apu_sppt.attr,
-+		&dev_attr_ppt_platform_sppt.attr,
-+		&dev_attr_nv_dynamic_boost.attr,
-+		&dev_attr_nv_temp_target.attr,
-+		&dev_attr_mcu_powersave.attr,
-+		&dev_attr_boot_sound.attr,
-+		&dev_attr_panel_od.attr,
-+		&dev_attr_mini_led_mode.attr,
-+		&dev_attr_available_mini_led_mode.attr,
-+	#endif
- 	NULL
- };
- 
-@@ -4420,7 +4485,13 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 		devid = ASUS_WMI_DEVID_LID_RESUME;
- 	else if (attr == &dev_attr_als_enable.attr)
- 		devid = ASUS_WMI_DEVID_ALS_ENABLE;
--	else if (attr == &dev_attr_charge_mode.attr)
-+	else if (attr == &dev_attr_fan_boost_mode.attr)
-+		ok = asus->fan_boost_mode_available;
-+	else if (attr == &dev_attr_throttle_thermal_policy.attr)
-+		ok = asus->throttle_thermal_policy_available;
-+
-+	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-+	if (attr == &dev_attr_charge_mode.attr)
- 		devid = ASUS_WMI_DEVID_CHARGE_MODE;
- 	else if (attr == &dev_attr_egpu_enable.attr)
- 		ok = asus->egpu_enable_available;
-@@ -4430,10 +4501,6 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 		ok = asus->dgpu_disable_available;
- 	else if (attr == &dev_attr_gpu_mux_mode.attr)
- 		ok = asus->gpu_mux_dev != 0;
--	else if (attr == &dev_attr_fan_boost_mode.attr)
--		ok = asus->fan_boost_mode_available;
--	else if (attr == &dev_attr_throttle_thermal_policy.attr)
--		ok = asus->throttle_thermal_policy_available;
- 	else if (attr == &dev_attr_ppt_pl2_sppt.attr)
- 		devid = ASUS_WMI_DEVID_PPT_PL2_SPPT;
- 	else if (attr == &dev_attr_ppt_pl1_spl.attr)
-@@ -4458,6 +4525,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 		ok = asus->mini_led_dev_id != 0;
- 	else if (attr == &dev_attr_available_mini_led_mode.attr)
- 		ok = asus->mini_led_dev_id != 0;
-+	#endif
- 
- 	if (devid != -1) {
- 		ok = !(asus_wmi_get_devstate_simple(asus, devid) < 0);
-@@ -4698,6 +4766,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		goto fail_platform;
- 
- 	/* ensure defaults for tunables */
-+	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
- 	asus->ppt_pl2_sppt = 5;
- 	asus->ppt_pl1_spl = 5;
- 	asus->ppt_apu_sppt = 5;
-@@ -4721,6 +4790,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		asus->gpu_mux_dev = ASUS_WMI_DEVID_GPU_MUX;
- 	else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_GPU_MUX_VIVO))
- 		asus->gpu_mux_dev = ASUS_WMI_DEVID_GPU_MUX_VIVO;
-+	#endif
- 
- 	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE))
- 		asus->kbd_rgb_dev = ASUS_WMI_DEVID_TUF_RGB_MODE;
--- 
-2.45.2
+This seems like a relaxed version of the reset_owner:
+
+Currently, reset_owner have the following check:
+
+/* Caller should have device mutex */
+long vhost_dev_check_owner(struct vhost_dev *dev)
+{
+        /* Are you the owner? If not, I don't think you mean to do that */
+        return dev->mm =3D=3D current->mm ? 0 : -EPERM;
+}
+EXPORT_SYMBOL_GPL(vhost_dev_check_owner);
+
+It means even if the fd is passed to some other process, the reset
+owner won't work there.
+
+Thanks
+
+>
+> >> +       r =3D vhost_vdpa_bind_mm(v, mm_new);
+> >> +       if (r)
+> >> +               goto out;
+> >> +
+> >> +       r =3D vhost_dev_new_owner(vdev);
+> >> +       if (r) {
+> >> +               vhost_vdpa_bind_mm(v, mm_old);
+> >> +               goto out;
+> >> +       }
+> >> +
+> >> +       if (!v->vdpa->use_va) {
+> >> +               atomic64_sub(pinned_vm, &mm_old->pinned_vm);
+> >> +               atomic64_add(pinned_vm, &mm_new->pinned_vm);
+> >> +       }
+> >> +
+> >> +out:
+> >> +       mmdrop(mm_old);
+> >> +       return r;
+> >> +}
+> >> +
+> >>   static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned in=
+t cmd,
+> >>                                     void __user *argp)
+> >>   {
+> >> @@ -876,6 +914,9 @@ static long vhost_vdpa_unlocked_ioctl(struct file =
+*filep,
+> >>          case VHOST_VDPA_RESUME:
+> >>                  r =3D vhost_vdpa_resume(v);
+> >>                  break;
+> >> +       case VHOST_NEW_OWNER:
+> >> +               r =3D vhost_vdpa_new_owner(v);
+> >> +               break;
+> >>          default:
+> >>                  r =3D vhost_dev_ioctl(&v->vdev, cmd, argp);
+> >>                  if (r =3D=3D -ENOIOCTLCMD)
+> >> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >> index b60955682474..ab40ae50552f 100644
+> >> --- a/drivers/vhost/vhost.c
+> >> +++ b/drivers/vhost/vhost.c
+> >> @@ -963,6 +963,21 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(vhost_dev_set_owner);
+> >>
+> >> +/* Caller should have device mutex */
+> >> +long vhost_dev_new_owner(struct vhost_dev *dev)
+> >> +{
+> >> +       if (dev->mm =3D=3D current->mm)
+> >> +               return -EBUSY;
+> >> +
+> >> +       if (!vhost_dev_has_owner(dev))
+> >> +               return -EINVAL;
+> >> +
+> >> +       vhost_detach_mm(dev);
+> >> +       vhost_attach_mm(dev);
+> >
+> > This seems to do nothing unless I miss something.
+>
+> vhost_detach mm drops dev->mm.
+> vhost_attach_mm grabs current->mm.
+>
+> - Steve
+>
 
 
