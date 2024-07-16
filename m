@@ -1,121 +1,129 @@
-Return-Path: <linux-kernel+bounces-253525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F106B93227B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C8993227A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8651C21215
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E623C28270D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F17D195807;
-	Tue, 16 Jul 2024 09:10:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33815195809;
+	Tue, 16 Jul 2024 09:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xSr7Jrpg"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB2F4C74
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09CE4C74
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121035; cv=none; b=BwWhwq5gkURUAUoIeb25t+4wOTAnXj/OUnA3LWnnwspXXXPqgszHidOU1U4JRNt8n69ryS+P+ut7W1YlO0hKgrgX4Zve1z8Lgr1qLQC9FWkE+QxUqijjbtULSfrM6aosZWzSfYXCFfEnC28Q81N/rEe3tMBHDCNN2T6Fpu/0Oqk=
+	t=1721121024; cv=none; b=pELdTqdFSW99mjccIne0pw4P9dfMp89RGfLBb+YGJbqlVwb5H5KZpqDnzfp4R8kQ3ytkdrRedGoJj/M1IC5XquNNM+Zt/TvOP/Z/pN9kN/fGjxCJtUa32ikRxvqHB3Vx4/pwtfDUnw+O6TmDNGYzRA5z0566XLcSHZQA1gdF0Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121035; c=relaxed/simple;
-	bh=Q/J5HPjD3nULGe63cSK+WgRKArnBrtmlU+sZid0smjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7SnlfqoclvKl70c7XwmxkOM5OdgVGB0z/IPRuZc9DOVJidzazjnqBI8ricWSsDOrIQ9cziKeO7uq7xm9mrpM6KrH38kWn4LZqN2Mo0NYigHyEUus8T/NQTdpBs5uLgwTt6+5PIPSm7HuaN1Wljuh6WdFxSjTQJOcpXOE2zX3GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTeCP-00068u-US; Tue, 16 Jul 2024 11:10:17 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTeCO-0005nC-PZ; Tue, 16 Jul 2024 11:10:16 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTeCO-002HWK-2C;
-	Tue, 16 Jul 2024 11:10:16 +0200
-Date: Tue, 16 Jul 2024 11:10:16 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	linux-wireless@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
-Message-ID: <ZpY4-PpxgMOH0wQB@pengutronix.de>
-References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+	s=arc-20240116; t=1721121024; c=relaxed/simple;
+	bh=YQTpwHzj19jUeZSWEKD+B6nfNJ6GFvEW+HxBiISSB8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZmElQumFLGY9Cqeyw0nzto7xO8MeFCRXmiIoxlPbTJMldxhL3GJrqdKV8J5Tbmxg0NDSm0Pq7Zmwwbxki+05qW86+TjFy92sKCrVv6G7M2CW3JOOXjZgT9ytsY7uEbBP6DPCO4nI2IFcHB7H6d3JWLhU9SpFQFiYmlLr+72Ulro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xSr7Jrpg; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42795086628so35224855e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 02:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721121021; x=1721725821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xmDu6LpHxXI1mpawm8JNyqvXpkeHQourXad6ibcL1gQ=;
+        b=xSr7JrpgdI/xvt1+r31pszxIYDkMqWlr+asQd138vuINEh2y70Mq2dRWyqbUjBZTRv
+         cjd5Of++aQDByLmgnorE4tdyIxqZF3oGNzPVYT5JAf8mm+Ldap4ld/X35qVDIydpRAuD
+         PHcnxwAxkRJQtnjvfudMMRepVHDM0W0qIqns9eYTqefOIbiDWl7fI/NSImAzxb268b/E
+         43ygKFoFgOnvV0YLjq3tzdTKfiRePnU/eswOmJQxy2YbhSoPFmDqm8sHV2+zcJP906F8
+         /yg8WAhWm6wmRmXfhwmtr6DknODqm54jqWK+AlmsB5oG2hCtAU1pmKBlEssXP++hSmHJ
+         Mv3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721121021; x=1721725821;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xmDu6LpHxXI1mpawm8JNyqvXpkeHQourXad6ibcL1gQ=;
+        b=vInFabwG9ldboykGD8WcOCPkiLpt9RROFcwebfxRA0mxiGkx4hO3/WOwU7VToFHDMB
+         0aQYtyAtfaIr4mvT2Ez1gL1Zga0977f4LbbDBCTRrQAdQzLblrOJN6MnInZH0WqiQ0mD
+         4XegOhGXxfCz3UJummRB9T0jqrzqqkEWODzajGAAzsJW5veWRN/4UWaNRaSx2OOClkuy
+         K4INICFybdd2PFDvkTAMFVxYHZJ9GDy+fwsCCwNXZ13A3OXnqO14RT5Y8fTZ5N2BulZV
+         MhJgskYBFng86xN93EmIMr5euuPRUsTKoNBTdZb8CPLEdsZbdwVkPoArStXQ9BeqkH1D
+         /X0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSTBRYm6fg5PXowsWGk7H0LuD0FVAQrvG8YQtrkKqNRrC8OXzprZrjQ/rMJ3wbJqmNqZx0eMjL4PcAxqeeGFacZzi1qKVphd38IBn
+X-Gm-Message-State: AOJu0Yw0fTSS9E3RfzQZOVGWAs+tOq7n9naw8e4038Rm1D92z6QzxcK/
+	Xwp/bTs5+29k6nHlQtyZO3pk1vWP8uWL6EvphtvLEn8jeQS3Z20YUrSly3Hhleo=
+X-Google-Smtp-Source: AGHT+IFjvmlm1Pa2B5lJ+/r3HN/TpnBw7eNCgE3IgOOP1k1lCoLOaVZdKhlUdILsSRDrICcc2rV1oA==
+X-Received: by 2002:a05:6000:1fa8:b0:366:e89c:342e with SMTP id ffacd0b85a97d-368261dddcbmr1035125f8f.53.1721121021283;
+        Tue, 16 Jul 2024 02:10:21 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafb979sm8456418f8f.75.2024.07.16.02.10.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 02:10:20 -0700 (PDT)
+Message-ID: <1e5aa1e1-e5c4-49bb-a43b-a119710a000c@linaro.org>
+Date: Tue, 16 Jul 2024 10:10:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530130156.1651174-1-s.hauer@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf docs: Mark the Android document as obsolete
+To: Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240715143342.52236-1-leo.yan@arm.com>
+ <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fVd9pO7kKvZX7PZ6sJ+GHOV7aF=Ry98a=vknimuSTp9Lg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 03:01:56PM +0200, Sascha Hauer wrote:
-> The maximum number of AKM suites will be set to two if not specified by
-> the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
-> specify up to ten AKM suites in the akm_suites array.
-> 
-> Without only the first two AKM suites will be used, further ones are
-> ignored.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
-> 
-> Current wpa_supplicant/hostapd only put a maximum of two into the
-> akm_suites array as well, a patch changing this can be found here:
-> http://lists.infradead.org/pipermail/hostap/2024-May/042720.html
 
-This was recently merged: http://lists.infradead.org/pipermail/hostap/2024-July/042802.html
 
-Kalle, given that userspace now would be able to make use of a bigger
-AKM suites array, can we merge this patch for the kernel as well?
-
-Sascha
-
-> ---
->  drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 ++
->  1 file changed, 2 insertions(+)
+On 15/07/2024 6:17 pm, Ian Rogers wrote:
+> On Mon, Jul 15, 2024 at 7:34 AM Leo Yan <leo.yan@arm.com> wrote:
+> [snip]
+>> +Android NDK compilation is deprecated and no longer supported.
 > 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> index b909a7665e9cc..908dfe01c30d7 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> @@ -4358,6 +4358,8 @@ int mwifiex_register_cfg80211(struct mwifiex_adapter *adapter)
->  				 BIT(NL80211_IFTYPE_P2P_GO) |
->  				 BIT(NL80211_IFTYPE_AP);
->  
-> +	wiphy->max_num_akm_suites = CFG80211_MAX_NUM_AKM_SUITES;
-> +
->  	if (ISSUPP_ADHOC_ENABLED(adapter->fw_cap_info))
->  		wiphy->interface_modes |= BIT(NL80211_IFTYPE_ADHOC);
->  
-> -- 
-> 2.39.2
-> 
-> 
+> I think this is objectively worse than just removing the file. It is
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Objectively worse is a bit strong. There was some discussion on the 
+previous version about the reasoning, but the point is to leave keywords 
+so that someone re-writing the NDK docs in the future can find it and 
+then the history will be preserved rather than putting it in a new file 
+with a new name. Or even someone wondering why their build command 
+doesn't work has at least something documented about it, even as a negative.
+
+Of course this all depends on whether we decide the Android build 
+_should_ be working or not which looks like is also being discussed here.
+
+> likely the perf tool can build with clang/LLVM, I do it every day, and
+> the special case for Android is likely more about the libc (aka
+> bionic) which gradually over time has been becoming more full fat -
+> perhaps we need to carry somethings in tools/include for missing
+> definitions, but we build with musl and that's a PITA in this regard,
+> we've also been reducing the tools/include dependencies for perf trace
+> beauty support. We don't use ifuncs in the perf tool (Android's
+> linker/loader historically hasn't supported these) and the weak symbol
+> games should be okay and something I aspire to make less in the perf
+> tool over time. As Android uses Linux then it should work and should
+> be supported.
+> 
+> Thanks,
+> Ian
 
