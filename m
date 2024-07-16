@@ -1,92 +1,178 @@
-Return-Path: <linux-kernel+bounces-254412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8472C9332F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA479332F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 22:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58621C226D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38821F2398B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 20:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F111A01B7;
-	Tue, 16 Jul 2024 20:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="lFC89okL"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585B11A01DE;
+	Tue, 16 Jul 2024 20:27:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD53B249F5;
-	Tue, 16 Jul 2024 20:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C839A249F5;
+	Tue, 16 Jul 2024 20:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721161573; cv=none; b=Vf9nAhHfRFrLrfVrQqCK+9UFvVbuFVc02DVTV4D5tzyTn+naA8ETWchR+frSrTyt2k+zyvSD86GBCucD3UpFdQwop2T6SuvxFWLEG3BBrSCdIRskIf1XLUqmkEpyYeHGCD4lckF0KAgjkllu9VV5EUlHgySWvIEX+yapbMWFuHY=
+	t=1721161637; cv=none; b=n7KArkKmNldCmZlDy7dDovLLaTbbJtSQVPz+As2bOI1kuXcaM2U+OoW0IMj06ODVuslOjtkIFcbBwrYEpypcDxY5fz8oEKr7jTjbU0B4MlXKqrnmNIGT5/6izc5b8EodlokIjFe9J/iC5BHgk9IIOdD+u18A4jG46V4boSYFoqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721161573; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=j7wfzc50CE8BYOFfc3oaMt7xLhzB4x528sQIW4nLkKxu5BDyvPxi2kTYa9X8g5iQ5ulZj4sWpB6rO43v9NAQsvXrwkXoU3Rn05O26dPfZZ5Xtm0VIqd/xZ81Y20STfTrdh5dK/oBKqiZy9uJsg5DmhQW24QfS9xP8PbwmMGlxvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=lFC89okL; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1721161567; x=1721766367; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lFC89okLcfkdzY0PvAESc8o20+l7HgVLZEKxFBAcUZadxiHHwIl0c9D5X7elIQi+
-	 fQUveIeMbiBoDIPp6HybcZWtue6XZWmI0Z4tt13yFp2XfioU581UA6kiMrs++jn3O
-	 R9ZGi4TnpkZhaY7p2pSgsH1xAalfFI0AKgSNbiCiApcp+J8SahNIl/bgMW4iSzPU3
-	 nBs58pePGtSEhGLDnDWoC4FfHwC8nRyj9/2U1ERq/IPEc2uQxa+Dy4Z2rfbnPFAV2
-	 Xy8RhcZVatw55Nu7DA+Lb3gOhbj9wXh+eTok1aB4GBJU8zc5SQ+VfibYv8Z/xmxEN
-	 Js9bu6IZEQ0tENKwYQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.33.108]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mz9Z5-1s7JkK2kLL-00zzvC; Tue, 16
- Jul 2024 22:26:07 +0200
-Message-ID: <47ab290c-b3b3-4107-b8a2-2346f43ea42d@gmx.de>
-Date: Tue, 16 Jul 2024 22:26:07 +0200
+	s=arc-20240116; t=1721161637; c=relaxed/simple;
+	bh=gAOkvFY7OIcSf4xM8Clt7t6DloB+Pnddy9P+bKD4jp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=k+ryviCY/D4mHU5pCpzpw1oIaWUgBv59W8zMdQh2JgmXsd9ujiAxdI0+sVFomw8UUqr2jDtyje53ZkUTwgJodquWCuv7Vym3zY+AvMSTJk5CRvkRTJOUyF4bEo2XQjGDnmkprzrQZ4vXvTGMdAp0HXTwNuvIdEfMdnny7vzVago=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C66C116B1;
+	Tue, 16 Jul 2024 20:27:15 +0000 (UTC)
+Date: Tue, 16 Jul 2024 16:27:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Marilene A Garcia
+ <marilene.agarcia@gmail.com>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>, Tatsuya S <tatsuya.s2862@gmail.com>, bpf
+ <bpf@vger.kernel.org>
+Subject: [GIT PULL] ftrace: Rewrite of function graph to allow multiple
+ users
+Message-ID: <20240716162714.48febeaf@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 000/143] 6.9.10-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:QL0mXEiR7FiYIaXhpbdgavibzZ+ThLByVjVAziov6TKaPNJvGdf
- Z3YVAroMfcgERSze5prglrj/hVVvfA1J4aAMO4+tjB+FnWnPdftDU1RR3bGnZQhGj7JPIer
- WJH0oel9EJ2ykcinRI5G2Sl1nvxi+8EjghXklthgEpvZFF1UhJACMvJzNyEx96Emhbd4vow
- BcRd9+ZrpH++kltpUnFNg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dOWy85jbSlI=;UbRVmIpVcy0gpA+C2geST4Pt3qp
- PQDVjooYTlf/X7pZfcWHFJznJDK7YBNXiY2xiUWCJ+1NQ4Gbu7QKLnQ3zE2fUN54o1U7VrqhX
- jhUZbQB4Yf/N2Tz6UbNncrVNcJPBIrHFZnbMp1feTM10uvnv8WcecsonTCJm6wCz5RjLWEwTC
- Qt0jtTuHT2aCoqu8RKYeDShAtjZJ5/O91t9H7ghf3i3cxFxxlT9qzlerWgMp8FjJuesBeixFd
- ONZQZc+cGbCfdRLf38mOsc4Pfo3KdpwpX6p4P7I14hRJFFN1ulgtj8gc1kzAHYiZVSA8IMiOU
- 6jsz2vCMQ2FElYMnTITiBjenB4fftrAH6eFY48nwD6Dk/U6ZTU6miUq1vVisqIPhf0KBAA7mu
- iStBXyOhOPDBJo+xdpRiKEBmfDrZs0qoTGr3mwxkPUM7esALBaauLj9JFb1ZRxA/7ldJEOyfP
- V9HAPKDH+K5yKMPCe/XmWZ8AO32D6bJ4F7bPGW4rDOJQnRooF+xAiQLx2T/9nIkG0R15Up2Pg
- RCx9UuqPi5ag2xNeVfnB7aI85d0fN4WQfEnvn0jKvwhSj0FJEKN2hjfmSNb8LHSSye0ru8RZb
- 9If0XTn+HupEewojReQkEX6My/+FP2CTVziTy9kkrdDdtAElxe4na8ymzCHY4bK/FFtzdyFRQ
- o9/BfBF91famC4x0vDRi5hCaL4HNGNMkplxkmp1Wjfck1bjHXnQf+BOla70XBxqo6mzgBd4ih
- xOK7KgtP3ObqjZtp/Vd1OjL0i8LvjVE9yuIth0jJXTn829GTEhqyObpRKEQ+3UjyMEF+cdLW3
- O5gzyNK0hZfhD7S07U3u88yA==
 
-Hi Greg
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Linus,
 
-Thanks
+ftrace: Rewrite of function graph tracer
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Up until now, the function graph tracer could only have a single user
+attached to it. If another user tried to attach to the function graph
+tracer while one was already attached, it would fail. Allowing function
+graph tracer to have more than one user has been asked for since 2009, but
+it required a rewrite to the logic to pull it off so it never happened.
+Until now!
 
+There's three systems that trace the return of a function. That is
+kretprobes, function graph tracer, and BPF. kretprobes and function graph
+tracing both do it similarly. The difference is that kretprobes uses a
+shadow stack per callback and function graph tracer creates a shadow stack
+for all tasks. The function graph tracer method makes it possible to trace
+the return of all functions. As kretprobes now needs that feature too,
+allowing it to use function graph tracer was needed. BPF also wants to
+trace the return of many probes and its method doesn't scale either.
+Having it use function graph tracer would improve that.
+
+By allowing function graph tracer to have multiple users allows both
+kretprobes and BPF to use function graph tracer in these cases. This will
+allow kretprobes code to be removed in the future as it's version will no
+longer be needed. Note, function graph tracer is only limited to 16
+simultaneous users, due to shadow stack size and allocated slots.
+
+
+Please pull the latest ftrace-v6.11 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace-v6.11
+
+Tag SHA1: d370074e4673a7f2dca52f93552a28714e8f65d7
+Head SHA1: b576d375b536568c85d42c15a189f6b6fdd75b74
+
+
+Jiapeng Chong (2):
+      fgraph: Remove some unused functions
+      fgraph: Use str_plural() in test_graph_storage_single()
+
+Marilene A Garcia (1):
+      ftrace: Add missing kerneldoc parameters to unregister_ftrace_direct()
+
+Masami Hiramatsu (Google) (3):
+      function_graph: Handle tail calls for stack unwinding
+      function_graph: Use a simple LRU for fgraph_array index number
+      ftrace: Add multiple fgraph storage selftest
+
+Steven Rostedt (Google) (27):
+      ftrace: Add subops logic to allow one ops to manage many
+      ftrace: Allow subops filtering to be modified
+      function_graph: Add pid tracing back to function graph tracer
+      function_graph: Use for_each_set_bit() in __ftrace_return_to_handler()
+      function_graph: Use bitmask to loop on fgraph entry
+      function_graph: Use static_call and branch to optimize entry function
+      function_graph: Use static_call and branch to optimize return function
+      selftests/ftrace: Add function_graph tracer to func-filter-pid test
+      selftests/ftrace: Add fgraph-multi.tc test
+      ftrace: Add back ftrace_update_trampoline() to ftrace_update_pid_func()
+      ftrace/selftests: Fix pid test with function graph not showing pids
+      ftrace: Rename dup_hash() and comment it
+      ftrace: Remove "filter_hash" parameter from __ftrace_hash_rec_update()
+      ftrace: Add comments to ftrace_hash_rec_disable/enable()
+      ftrace: Convert "inc" parameter to bool in ftrace_hash_rec_update_modify()
+      ftrace: Add comments to ftrace_hash_move() and friends
+      ftrace: Declare function_trace_op in header to quiet sparse warning
+      ftrace: Assign ftrace_list_end to ftrace_ops_list type cast to RCU
+      ftrace: Assign RCU list variable with rcu_assign_ptr()
+      ftrace: Fix prototypes for ftrace_startup/shutdown_subops()
+      function_graph: Make fgraph_do_direct static key static
+      function_graph: Do not update pid func if CONFIG_DYNAMIC_FTRACE not enabled
+      function_graph: Rename BYTE_NUMBER to CHAR_NUMBER in selftests
+      function_graph: Make fgraph_update_pid_func() a stub for !DYNAMIC_FTRACE
+      function_graph: Fix up ftrace_graph_ret_addr()
+      function_graph: Everyone uses HAVE_FUNCTION_GRAPH_RET_ADDR_PTR, remove it
+      function_graph: Add READ_ONCE() when accessing fgraph_array[]
+
+Steven Rostedt (VMware) (15):
+      function_graph: Convert ret_stack to a series of longs
+      fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
+      function_graph: Add an array structure that will allow multiple callbacks
+      function_graph: Allow multiple users to attach to function graph
+      function_graph: Remove logic around ftrace_graph_entry and return
+      ftrace/function_graph: Pass fgraph_ops to function graph callbacks
+      ftrace: Allow function_graph tracer to be enabled in instances
+      ftrace: Allow ftrace startup flags to exist without dynamic ftrace
+      function_graph: Have the instances use their own ftrace_ops for filtering
+      function_graph: Add "task variables" per task for fgraph_ops
+      function_graph: Move set_graph_function tests to shadow stack global var
+      function_graph: Move graph depth stored data to shadow stack global var
+      function_graph: Move graph notrace bit to shadow stack global var
+      function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
+      function_graph: Add selftest for passing local variables
+
+Tatsuya S (1):
+      ftrace: Hide one more entry in stack trace when ftrace_pid is enabled
+
+----
+ Documentation/trace/ftrace-design.rst              |   12 -
+ arch/arm64/include/asm/ftrace.h                    |   11 -
+ arch/csky/include/asm/ftrace.h                     |    2 -
+ arch/loongarch/include/asm/ftrace.h                |    1 -
+ arch/powerpc/include/asm/ftrace.h                  |    2 -
+ arch/riscv/include/asm/ftrace.h                    |    1 -
+ arch/s390/include/asm/ftrace.h                     |    1 -
+ arch/x86/include/asm/ftrace.h                      |    2 -
+ include/linux/ftrace.h                             |   48 +-
+ include/linux/sched.h                              |    2 +-
+ include/linux/trace_recursion.h                    |   39 -
+ kernel/trace/fgraph.c                              | 1054 ++++++++++++++++----
+ kernel/trace/ftrace.c                              |  688 +++++++++++--
+ kernel/trace/ftrace_internal.h                     |   18 +-
+ kernel/trace/trace.h                               |   93 +-
+ kernel/trace/trace_functions.c                     |   15 +-
+ kernel/trace/trace_functions_graph.c               |   96 +-
+ kernel/trace/trace_irqsoff.c                       |   10 +-
+ kernel/trace/trace_sched_wakeup.c                  |   10 +-
+ kernel/trace/trace_selftest.c                      |  259 ++++-
+ .../selftests/ftrace/test.d/ftrace/fgraph-multi.tc |  103 ++
+ .../ftrace/test.d/ftrace/func-filter-pid.tc        |   29 +-
+ 22 files changed, 2055 insertions(+), 441 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
+---------------------------
 
