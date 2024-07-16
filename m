@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-253538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A7D9322A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 11:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D99932240
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9222823CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199FE2816C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F287E195FE3;
-	Tue, 16 Jul 2024 09:22:00 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1345D5FEE6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 09:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4AE195B3B;
+	Tue, 16 Jul 2024 08:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BuXW/mJ2"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FE941A8E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721121720; cv=none; b=N/80YPcX1MhOaUlpMwf+TRTdBABZCzBYgJBxjmD2CAtt21QNV5cSUmeVRDRcXO7Kl1qATXvD7GI/vf3urJ7Xczj54EPOYs98GjoOb9G5T1CPU2HYjnI2/ghmG93HPVc98Q6NvHGR6yoHMO6hcTURHnqyD6Y8pKbecmPaXSaAAAI=
+	t=1721119906; cv=none; b=qVJS0TkhiZckOhD2gl2CmcLdzBlAO8QKOLFVv12k8xGzaA/5+D8W2/LZHbbVfGb9RqDJv9osjqIhjM9Y0vyshNPYvBT1ZfIFSvKIpPGFt0RVdb/2IUNp+1NN+pPApCrh92FG9ac564oi2dSPCrAUOj8YmOJV5Oy9bnX0lsXCcMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721121720; c=relaxed/simple;
-	bh=qYJbUY+Ga+y8iCtUVkTvpbFj7bBv86EI6/kY5KdWlAc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=LtgOwwYWroqn7TlmC7CEGtDA/KrPi0dTsae3TTFO5tmM9Dv/Xnj+p9YMUZ6u9VhKZbFZmYj8ybMY5KUnKtfqPnD4xlQy531FQGioUmcDjEsTzciBu3TOl6+Li4tqUcMjF6ZEliudVZpp6I1vWdnpnavRvyzwMIsP2RfkVJ4v7Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-	by 156.147.23.51 with ESMTP; 16 Jul 2024 17:51:54 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
-	by 156.147.1.151 with ESMTP; 16 Jul 2024 17:51:54 +0900
-X-Original-SENDERIP: 10.178.31.96
-X-Original-MAILFROM: chanho.min@lge.com
-From: Chanho Min <chanho.min@lge.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Gunho Lee <gunho.lee@lge.com>,
-	Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] arm64: set MITIGATE_SPECTRE_BRANCH_HISTORY to n by default
-Date: Tue, 16 Jul 2024 17:51:36 +0900
-Message-Id: <20240716085136.4160-1-chanho.min@lge.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1721119906; c=relaxed/simple;
+	bh=gklqEpVrs+TZShP9WfTzy8DW0cD3vHWXH1OsfT2l4YI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OY+uliz3kv+rrzsbrnZmx/1JxIaL3Gq2B2cbO/8q+aJEYxtZDK5ApC9/Y/v2slGZvHCrI1180i3UEf/rHj2bfhOf0NQyLniKixJP8oBJyrX9ua/66RO//tHSuI0wPvD7QGDKgEVAFiiQzzA4mVEmN2tp7jP4JPA9rsQPFonedM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BuXW/mJ2; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 12C1A240002;
+	Tue, 16 Jul 2024 08:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721119897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oXaYVi8PKUd4UGTeifDJUjRKE3ggu6+D+9ulPq2RYdo=;
+	b=BuXW/mJ2pxR+kPWm7hqkpNl0J6Db6BcmNn+armiDlYn6BdJC37o5V1yA/BpXNtRtfg4eKS
+	VZi8yOesX38v5w7Rfi485niCLIWp9oKdCh3VVxxzRo9yzybEqXQp7zPhdFdtT2RzpmDIqJ
+	LFMq8ln+yMqOb1TR/x/P1n0oBoWJmXHSg6SnG5ZWQ+j3OE9XYEhSF99V0CFxgT18tuw07u
+	v/fMiJ3H5y4mJvy/XtjP7UlCq43gg4UuiL0U7GMRLlIDkfoGWIw855EDmZoL7M9CTy1gq6
+	oKujF58lFyu5vXCKJjbLmSAYWQ2Mj1KSMKylCrv1M+ucWVoQfcP//NDFlcsQxw==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Ben Schneider <ben@bens.haus>, Andrew Lunn <andrew@lunn.ch>, Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, Linux Arm Kernel
+ <linux-arm-kernel@lists.infradead.org>, Linux Kernel
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
+In-Reply-To: <O1XjBTq--3-9@bens.haus>
+References: <20240603012804.122215-1-ben@bens.haus>
+ <20240603012804.122215-2-ben@bens.haus>
+ <20240605194422.klxtxgyljrrllkzy@pali>
+ <dce98e50-6b50-4d4e-abe2-8419a675d25e@lunn.ch> <O1XjBTq--3-9@bens.haus>
+Date: Tue, 16 Jul 2024 10:51:36 +0200
+Message-ID: <87ed7tlnxj.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-lmbench shows 25% performance regression after MITIGATE_SPECTRE_BRANCH_HISTORY
-is enabled. This performance drop may be more significant than mitigating
-the spectre-BHB. This patch changes this security option to disable by default
-and makes it selectable.
+Hello Ben,
 
-- lat_syscall result with MITIGATE_SPECTRE_BRANCH_HISTORY enabled (cortex-a78)
-write call      0.2777  0.2810  0.2824  0.280367
-read call       0.3435  0.3452  0.3443  0.344333
+> Jun 5, 2024, 16:44 by andrew@lunn.ch:
+>
+>> On Wed, Jun 05, 2024 at 09:44:22PM +0200, Pali Roh=C3=A1r wrote:
+>>
+>>> So, go ahead with this change with my
+>>>
+>>> Reviewed-by: Pali Roh=C3=A1r <pali@kernel.org>
+>>>
+>>
+>> I defer to your knowledge in this matter.
+>>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>
+>>  Andrew
+>>
+>
+> Hi all, just checking in to see if there are any outstanding
+> concerns/issues outstanding with this patch? I am happy to report
+> several more weeks of stability on two A3720 devices. Thanks!
+>
 
-- lat_syscall result with MITIGATE_SPECTRE_BRANCH_HISTORY disabled (cortex-a78)
-write call      0.2101  0.2117  0.2116  0.2111
-read call       0.2732  0.2744  0.2763  0.274633
+You received two "reviewed-by" approvals, and Marek Beh=C3=BAn, who wrote t=
+he
+patch removing the 1.2GHz limitation, did not object. Therefore, from my
+point of view, there is no problem merging your change.
 
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- arch/arm64/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As the original author of this driver, you can add my "Acked-by" to your
+patch if it can help:
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5d91259ee7b5..be76f425c060 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1626,7 +1626,7 @@ config UNMAP_KERNEL_AT_EL0
- 
- config MITIGATE_SPECTRE_BRANCH_HISTORY
- 	bool "Mitigate Spectre style attacks against branch history" if EXPERT
--	default y
-+	default n
- 	help
- 	  Speculation attacks against some high-performance processors can
- 	  make use of branch history to influence future speculation.
--- 
-2.17.1
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
+Gregory
+
+
+> Ben
 
