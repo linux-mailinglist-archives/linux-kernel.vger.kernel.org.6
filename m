@@ -1,149 +1,140 @@
-Return-Path: <linux-kernel+bounces-253653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E0093245D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5E893245E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA79B22BDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA881C2232D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C51990AD;
-	Tue, 16 Jul 2024 10:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A64198E6E;
+	Tue, 16 Jul 2024 10:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M22kyT+h"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="DQd1tazg"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E13B198A3D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAB13D630
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 10:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721126949; cv=none; b=M1gnxj9XeM3gij/YS6Wa+iuth3C5FUEISvff4LXOHkK261qvEei1qwkGRYh+X5TyLW0znXOazu3ZFeM6twDfEjQGeb5NLeui8dFJvwL/Fr0D8+O7V4WYwCvLPyn6TGj+zPuqZdNWTY2wnlK+sZIJq79lmdBoMgjhpcazFAt7wpE=
+	t=1721127076; cv=none; b=VPgiu13ghSP3A+fzwnTvc2/QzN++ATx35c1lLXsyc8lvqRWS0JlrXpxIKfPFLEYC5XdIYWjdz5xwJpjev77cLgEzcyHrG0WvtB7B6v9/k4JuyH5G3SKQ3W/duPySK5d/oYF+hqkpDdinQFy1MxXpq9WnbiMdxOvhaR2SSw5IWHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721126949; c=relaxed/simple;
-	bh=6PplKpjlGffvC5RHfmAoC1yuM9SJwAHrJsEqjUdSKDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rD6B1vsnPT3HF94xtaQXBLH/j+YCh4x9zoLJhtDZzZuWI4VTc0pxB8GEhJ7B+1JzhIBzfWDkqDBPl9q4aAE/RZFHI1FBBkbTRTkggPLAhZeKc1Hj3FWbX7fHbVk3iahH7eFO7I1bu/DXQW24u8zSO+6zBfVLGia4k5UuYjrKGO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M22kyT+h; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58b5f7bf3edso2934000a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:49:07 -0700 (PDT)
+	s=arc-20240116; t=1721127076; c=relaxed/simple;
+	bh=Y4eYjHJ1coNIJsiv5IOAsbQ5dekTLijWkfuE3vo9PXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dhn/UmoSy6SOHPvo1txdV6RBJ2tgR0NSsE4FmFSsQ7Y4MC18VMcAfWZpLZM7xkdcM8ZcxzMhJXsfEDct2d7fHTraHvfJZOIn2TKsHxaMqINk4JUAyPakt4nOd0ma6tn/yfqbDAwd8E/IV8+XaI5hFdqZDM4dehMK9mHu41wKikk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=DQd1tazg; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8063553b837so261319139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 03:51:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721126946; x=1721731746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSSdPTO8wok657BaYCcgzt7XSIZBPPA7Zl3G6wPHAJ0=;
-        b=M22kyT+hlxc/bvxRjJoaKlIPOoUDohKKLjaVr49DEGuai8a4jpRNRj71Y+Mp8ujIAN
-         N9EAoo9XamZwcV/fJBOUz6nz6j/Lc+qZgTNAbdvZfNRQ2g7ELFhGQ5sgDWI1S7lv8uIo
-         OfdY75+hzbVywWb3xO4vnYQ+qqtJ4GJqiB4BjKz6pYifDAVBfhYT5GiRxQsY46w5Zljv
-         bxVwiviwHsvmwut2s1AedJfpXBzK/Cd2y1l68my5tO2d1/8c8xB5V/VyzeJl0vDG88is
-         sVRw4w92tKeqUacMxXOI+3uT+aV5RJWuLqfFovjIDWKDeLDov8FEudXJmZXEjqOuM6de
-         N1wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721126946; x=1721731746;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1721127074; x=1721731874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JSSdPTO8wok657BaYCcgzt7XSIZBPPA7Zl3G6wPHAJ0=;
-        b=iAIxw2ZD43IpjxWjRh6sQybAA3A6XQ0NfzEqJDQjsNervCQPiWoDiyVDr6muRKjNBi
-         y2eIGkj+V44pM/VmR9gewSzkTYSe3AwvA6nIb1Ifx0NvhjIt1jQi+faNQkGYXeqWkZzl
-         aD4+M88lz3XA7Ieweue0ADbGgmI/AkbPbE6Jk8TzZlFAlcZ4GMwz7jRJKqdyHuSEMj1v
-         vK2+Ip+hnhYnB344oW6gdUFGfMEWtjPC1inDhJvLls7Nzq5RMh5N9XNPL1pECSyI8DUF
-         pls1GonKPAddPOdhcWkZJXwBnk8m9miQf0bCoIstmtxX7m8kL3DyWzCw7vp+Sl1E5NaI
-         DcPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+76m5u1LWi/jOB+f5hh5GwsflPYVRHEEpoXrMXAC/si0L9R2UfhWtdEtUmdf3Xo1r2oXG6AYV7EiADx4JVf2uU4gPXPeaW07jQcfB
-X-Gm-Message-State: AOJu0Ywpk1kizTSqivsSBMt6zmAO+Sl1CyuNoaaJZDfjCE32z5kf21g6
-	1MsjqwWLQaLILu3RqXtSMc1Ds6b5MzPynVbG7Pd9bLmpMXqotGciTDpYZjrCaKo=
-X-Google-Smtp-Source: AGHT+IEsrbkhN72GyfBmxo/hV8M5Q2LQBsNbIHXZvi0vkLi4V9jtbDdrRXWd2qscg7UBR3yi6L6y4Q==
-X-Received: by 2002:a05:6402:26c1:b0:58e:2f7c:a9c with SMTP id 4fb4d7f45d1cf-59eefa9bf9fmr1444655a12.26.1721126945732;
-        Tue, 16 Jul 2024 03:49:05 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b2504b915sm4744682a12.34.2024.07.16.03.49.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 03:49:05 -0700 (PDT)
-Message-ID: <2ab03911-1774-422e-b04d-f67fc75ec6da@linaro.org>
-Date: Tue, 16 Jul 2024 12:49:02 +0200
+        bh=0SOtGr51pErFpahsrrtYqkp40ybrWdij71XCYB1jqEQ=;
+        b=DQd1tazg2XoJ71WO+o+lEP6sse7ZrhNAiFmy2cdGaPq9cYFN0KALA3F4uZJgCRu5DJ
+         rYI4tkAs0MOBPE1fLoqhNKmPRwk1KvG5rTFVNvAznlFSvoAodsyXMHOkyjnh+li1agUS
+         mXzH4KalwPLmOuKZitnx/LKgiF39TC59/2g5JKE9KaEj7Jga1Pcx3JW80aH/DaCLipuf
+         6i38lkEfTXteFsYweggCGY0evwnYOTmUyyA6sBOzh7cih2UPK2vJz5NKfnw+W0mTdtXl
+         bwaBc6FtY1Mei8siZxAVVzmxIhyvDWmFJH9Ifb3ffDtqLOQv7A41Y4l8061+IkRiZkkj
+         RoAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721127074; x=1721731874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0SOtGr51pErFpahsrrtYqkp40ybrWdij71XCYB1jqEQ=;
+        b=SDkBuf76UNASise4P9hDRHtJatPs5wmLlqQUHfOwd1f/UpuahC607h3Gh0kQmidi4n
+         kBtSeP4xfa8EzjjcB5FckCZTw/ctUTT/J8gV5NTSjMBomWj4JxIkw+Huh5MhptKX40DG
+         r0aGUJAMqPs4qMFHJfgxFGM1HJ1a+WgHXcG2NWI9Gc1JKthGT99DX1n5xFSCyupPDi+v
+         O35XvfNVmxYf0k5UvMn5IHBsF35BZBNA0Cnnmx/rE5jeH/1iqJJkXTjKZVP6B4cJwN4e
+         PtStjGSdZobv6rBfK2voOuiUeyS/YRd+mJ0wfcrlzbXEir1IScMQzdNGfDJ/3WKT1o3S
+         zvDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsEDd5N7qaJQKcTBVuZyP6ERHu+VVRVAoxkqrasiwQ+ms9Bz5WhPo55GldSn9FwjNRS1Tf5nQGj+8YE+5K42E45CZ0vZrQ9mv6O+Mc
+X-Gm-Message-State: AOJu0YxJBAH3eJSB0PV77CfCcgjXuKD5T6C3x8NahpS9jB7xE+QoDGyY
+	q/+NXx6zDUex+3JigjLCSx2mXbRuWod5ARA8ux6mTy9zl0IKqPmUqdC+NQ0R44pn97UcHMIvUal
+	DB83xfBez9gxr0wmPjmeYL59DSITn1g9nQOIUpA==
+X-Google-Smtp-Source: AGHT+IFgLgr7BH1UuGGVhx6H0o4guImRTlhd3fKWbpAvzMa5o4ntPygEZJHxgQXzcZZOiJZ5wZoNNfFdR2dzx/sgAYs=
+X-Received: by 2002:a92:c56a:0:b0:375:aaaf:e88f with SMTP id
+ e9e14a558f8ab-393d2c94bebmr24128255ab.27.1721127074278; Tue, 16 Jul 2024
+ 03:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/20] media: venus: pm_helpers: Only set rate of the
- core clock in core_clks_enable
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Andy Gross <agross@kernel.org>
-Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Marijn Suijten <marijn.suijten@somainline.org>
-References: <20230911-topic-mars-v2-0-3dac84b88c4b@linaro.org>
- <20230911-topic-mars-v2-1-3dac84b88c4b@linaro.org>
- <0a9d7f9f-871c-80ea-e5b1-c7dee354a175@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <0a9d7f9f-871c-80ea-e5b1-c7dee354a175@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240716090521.1752166-1-nick.hu@sifive.com>
+In-Reply-To: <20240716090521.1752166-1-nick.hu@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 16 Jul 2024 16:21:02 +0530
+Message-ID: <CAAhSdy1pjg=etzNNu-E+-VDmU5gLkS2jYhdO29pPN23OQ5=NiA@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: Enable the IPI before workqueue_online_cpu()
+To: Nick Hu <nick.hu@sifive.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	tglx@linutronix.de, peterz@infradead.org, samuel.holland@sifive.com, 
+	tj@kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	greentime.hu@sifive.com, zong.li@sifive.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.07.2024 8:07 AM, Dikshita Agarwal wrote:
-> Hi All,
-> 
-> Please ignore this patch, didn't realize it was in my workspace when I sent
-> the other series. Sorry for spam.
+On Tue, Jul 16, 2024 at 2:35=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrote:
+>
+> Sometimes the hotplug cpu stalls at the arch_cpu_idle() for a while after
+> workqueue_online_cpu(). When cpu stalls at the idle loop, the reschedule
+> IPI is pending. However the enable bit is not enabled yet so the cpu stal=
+ls
+> at WFI until watchdog timeout. Therefore enable the IPI before the
+> workqueue_online_cpu() to fix the issue.
+>
+> Fixes: 63c5484e7495 ("workqueue: Add multiple affinity scopes and interfa=
+ce to select them")
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> ---
+>  arch/riscv/kernel/sbi-ipi.c | 2 +-
+>  include/linux/cpuhotplug.h  | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/sbi-ipi.c b/arch/riscv/kernel/sbi-ipi.c
+> index 1026e22955cc..e05e68de8871 100644
+> --- a/arch/riscv/kernel/sbi-ipi.c
+> +++ b/arch/riscv/kernel/sbi-ipi.c
+> @@ -71,7 +71,7 @@ void __init sbi_ipi_init(void)
+>          * the masking/unmasking of virtual IPIs is done
+>          * via generic IPI-Mux
+>          */
+> -       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> +       cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_SWINT_STARTING,
+>                           "irqchip/sbi-ipi:starting",
+>                           sbi_ipi_starting_cpu, NULL);
+>
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 7a5785f405b6..57dcf1229b27 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -147,6 +147,7 @@ enum cpuhp_state {
+>         CPUHP_AP_IRQ_LOONGARCH_STARTING,
+>         CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+>         CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
+> +       CPUHP_AP_IRQ_RISCV_SWINT_STARTING,
 
-Hm?
+This is a misleading name.
 
-Konrad
+I suggest s/_RISCV_SWINT_/_RISCV_SBI_IPI_/ .
+
+>         CPUHP_AP_ARM_MVEBU_COHERENCY,
+>         CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
+>         CPUHP_AP_PERF_X86_STARTING,
+> --
+> 2.34.1
+>
+
+Regards,
+Anup
 
