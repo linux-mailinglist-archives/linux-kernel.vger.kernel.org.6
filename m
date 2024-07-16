@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-254050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6EA932C37
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:53:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C30B932C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 17:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0601C1C2318B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0340F1F23896
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 15:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6798419E7C6;
-	Tue, 16 Jul 2024 15:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F3F19E7E2;
+	Tue, 16 Jul 2024 15:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oDE+5Xuh"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttzGL1Q3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDD71DDCE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 15:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ACE17A93F;
+	Tue, 16 Jul 2024 15:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721145177; cv=none; b=mzuiw8bOPoO43eSMtKJfC94nquQifX2KeY9ydgMFUSy/s1RPSAfb7oeHlCpbfnjdCL+kq+hH//uRxzrkS/clSBlCgEgsNesUuapcCY3Zq02xMEswjtcemMwqBw/QYQWUM8QwpaT/ixL9semYKsEJoorQKqygwpg18dXyUybyZbY=
+	t=1721145203; cv=none; b=mx1RVOclJzJip3HlfrjdBnIPEeNDt+tP916uzpuauwrcg7xcMLxYu8n9sUQQMuURMLishzdBUg12lPaRsoPMXIq6djy7catHBd6xKgfRzWDXgvd6hu8avSk1FmW/OT0BfoW+tMfSsNw95UWqS8n70wqSXeBjWUm5+jG0DjIgax8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721145177; c=relaxed/simple;
-	bh=lIBfZqWcjvbVJBQ9/TDHNqVDKQMTdt2Y1/qmLghrBj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y455rAvKPdTlIbhKWiRYoqC2yNYCm2bQApRpYSJq0WkQTS4yp0nJI6vyKKTiWpfOyVweuZ+M0opI3E+lkLJpn4I0B4BlLp7Atf9FQxaHXOtqGQ9YW+mt6T1mvwP6IbUGuZHmGVVkhYrGoVURocHEeO25941Cew/uWpxaJZhj8qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oDE+5Xuh; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25dfb580d1fso3045830fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 08:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721145175; x=1721749975; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKBILTe7q/CPySmaWkq9DzQOt5Q1y7jNxqFaGU3vksE=;
-        b=oDE+5XuhREzpjimQTY1SS8gq4pfqk2FMFB66CWJTVbuuVSnEAHrhftrsAglK+DUvQ3
-         /fJVuhztAhXl3yjnLlGif379JEuxCn8qBn8UhRDkyxnmFVEmWUxoUH9qx/rvAatHX/w8
-         5aZmsVkoRJwToOiitTm7tcIeXAQlz7jw27lA5Xf3R4W0ni/ql+PFaUV0WwquiYG1RbI1
-         qJYQPU8ZL9uqMvtiVp1OueyT/awtvUT1k6LunDOBHmzrqBmWtp1+60pJ2OZyq14JXgoA
-         j1z7rjqjiAJ2DqdKX8ynvWSOwniGXbeH7xd7/nZhXgdq1AVArbk2k5/dE5oKy8Qw96v0
-         DqOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721145175; x=1721749975;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JKBILTe7q/CPySmaWkq9DzQOt5Q1y7jNxqFaGU3vksE=;
-        b=B6zOhMu3Jbur5boZs28OcIiOTv7n3NNNwk3iPrYd3IEz9cQz7eW4OK1n7JCMFvL5nE
-         0jdgpU9g+NbRVTCIAaBbzlazfMgDD+v2dnu5r5po5k38ZvjRxbrIHjzTr9pu0qITixG0
-         q2yh2vH7H2Gw3yDCQtbJ5ykUb+fKhMwCayyPZHiEK6qdsG0TzKkcTPfBqWkwJTChzE5D
-         gcL0epMI9UycwqSCyNLHtfv8SVwSh3mwklcnH9pjKS2zJRfYdOnesSwmv9aEexyK30sz
-         Un9oH0zVWZrv+0UYkKj3Q5852TLfm+xKM7iJNoKCPveh9cNb0KQDWCxEdg/ZncktB/Nm
-         gNyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeToKxOdZT29vjkBm/GQWKL2dLaXm5XJyMaFobn++QD+TQehK19LMWVOk8mVeqjDCciOasIoLGGfO/cibgtLzmiK/xI4U51qyBXaNB
-X-Gm-Message-State: AOJu0Yzv8acMPRHRB7smBYMcXUX6/LKRx/3VEu0kkELSVLKMcU2qCjcy
-	63S6H3oiIuhgZ4AZfFLtq2lS6avl2aaPHNw6SdDN8SHcMUskVCWpobqiDXVRl0o=
-X-Google-Smtp-Source: AGHT+IGH6ZKwNcpITCBiSLzXtugAEPFVOciGhSh9sNS1/35g9a9+BEGmAmqFmL5Y4P5U+f0AZD+88Q==
-X-Received: by 2002:a05:6870:ac0f:b0:25e:26b6:d028 with SMTP id 586e51a60fabf-260bd780fc9mr2192578fac.32.1721145175234;
-        Tue, 16 Jul 2024 08:52:55 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5d01:167d:9cf4:148e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ebb6aacsm6475011b3a.64.2024.07.16.08.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 08:52:54 -0700 (PDT)
-Date: Tue, 16 Jul 2024 09:52:51 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, marex@denx.de,
-	daniel.baluta@nxp.com, Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, Terry Lv <terry.lv@nxp.com>
-Subject: Re: [PATCH 1/6] remoteproc: imx_rproc: correct ddr alias for i.MX8M
-Message-ID: <ZpaXU8TJbnE/yrBt@p14s>
-References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
- <20240712-imx_rproc-v1-1-7bcf6732d328@nxp.com>
- <ZpaO4FDEYoA0cpae@p14s>
- <4819651d-b9f7-4fa4-81b9-614b6d4d5a80@nxp.com>
+	s=arc-20240116; t=1721145203; c=relaxed/simple;
+	bh=8w6E/xlfm4hYonewmM13++RYPa2PQitOaad2WauLU2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jx2agnY9Wq80nPmwzIXjilahHJekZvvYhlGToJKjWGgfyvgCJlNwYPueKprDdRrl7vJY9fzJt16zM37pD9LU9lgD/1cDfesHYvdv4jbaXQVWrc62ENedqhJZq5XejukPDR1HEeJGh8iKeP7hxIJVEIt7FYEklR/swtK0MOPWkdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttzGL1Q3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63437C4AF0B;
+	Tue, 16 Jul 2024 15:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721145203;
+	bh=8w6E/xlfm4hYonewmM13++RYPa2PQitOaad2WauLU2o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ttzGL1Q3B4oKHp2jPA3ZY9ZrRqHUEwpCmsiCfK31DSnMMtXWdu4ZdZagJZZMdVZV4
+	 hPnr8NMDjRBT5ViBaDFnHCNLD25C40Sxak7Si8Jcpmeb2VCl8rMMmcuqXZ5k25MyyW
+	 FxC8zXx3G2Rr2u5/4w8yjZfAiiguRtml4cxcQFluRaAl3gVeYk2W28mgrV9G2JiuW3
+	 yet/rF7VV13GRTRBBd8c+wp503EmAFRl1YtHHF4AVlzkS7qzWFaQ0FVELJTcYRZlKk
+	 n+suYA1Iud6vS6SuhL9Vu124ilWFEo17KFk2HctzbxYf+NXSpThvQGAZPTOFOSrilI
+	 FNTtvjpE1TaWQ==
+Message-ID: <ac4f40a7-7ada-42e5-9fce-9107f2fcf4cc@kernel.org>
+Date: Tue, 16 Jul 2024 17:53:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4819651d-b9f7-4fa4-81b9-614b6d4d5a80@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 01/10] MAINTAINERS: Include new Qualcomm CPR drivers
+ in the file list
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, Niklas Cassel <nks@flawful.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Robert Marko
+ <robimarko@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org, Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Varadarajan Narayanan <quic_varada@quicinc.com>
+References: <20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org>
+ <20240708-topic-cpr3h-v15-1-5bc8b8936489@linaro.org>
+ <cd1c3450-1905-4d71-bcdd-5f880d743820@kernel.org>
+ <94b2842b-6093-4c4d-a099-3e0a3198b753@linaro.org>
+ <d35f5c94-7a86-4eea-bb0a-3f2785a25465@kernel.org>
+ <CAPDyKFqhmNqbZ9Xkg0tWHE5LavoNaGMyE3dKmAFtHdS5=x33NA@mail.gmail.com>
+ <d1d7b58c-b605-4adc-b329-f74ea4567982@linaro.org>
+ <CAPDyKFoViw3H8hCwLX0W=d8GM=5rai2xL5tnGGpctyqinkNpNw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAPDyKFoViw3H8hCwLX0W=d8GM=5rai2xL5tnGGpctyqinkNpNw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 06:49:39PM +0300, Iuliana Prodan wrote:
-> Hi Mathieu,
+On 16/07/2024 16:47, Ulf Hansson wrote:
+>>>>
+>>>> Rather cpr3 should be moved to avs or some other power directory. "soc"
+>>>> is fallback, junkyard for things without clear domain.
+>>>
+>>> In my opinion, I would suggest dropping the
+>>> "Documentation/devicetree/bindings/power/avs/" directory. We already
+>>> have similar bindings sprinkled across various directories, see below.
+>>> One less seems better to me.
+>>>
+>>> Documentation/devicetree/bindings/arm/*
+>>> Documentation/devicetree/bindings/firmware/*
+>>> Documentation/devicetree/bindings/power/*
+>>> Documentation/devicetree/bindings/soc/*
+>>
+>> So, should it go to bindings/power? Or should we get a new
+>> bindings/pmdomain dir?
 > 
-> On 7/16/2024 6:16 PM, Mathieu Poirier wrote:
-> > Good morning,
-> > 
-> > On Fri, Jul 12, 2024 at 04:34:54PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan<peng.fan@nxp.com>
-> > > 
-> > > The DDR Alias address should be 0x40000000 according to RM, so correct
-> > > it.
-> > > 
-> > > Fixes: 4ab8f9607aad ("remoteproc: imx_rproc: support i.MX8MQ/M")
-> > This commit was merged more than 3 years ago...  I don't see how such a blatant
-> > mistake could have survived this long without causing problems or being noticed.
-> 
-> Most probably whoever used imx_rproc and ran into this issue checked NXP
-> tree where this is fixed - see here https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/drivers/remoteproc/imx_rproc.c#L232
-> > On top of things checkpatch gives me a warning.
-> > 
-> > > Reported-by: Terry Lv<terry.lv@nxp.com>
-> > > Signed-off-by: Peng Fan<peng.fan@nxp.com>
-> > > ---
-> > >   drivers/remoteproc/imx_rproc.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > index 144c8e9a642e..3c8b64db8823 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -210,7 +210,7 @@ static const struct imx_rproc_att imx_rproc_att_imx8mq[] = {
-> > >   	/* QSPI Code - alias */
-> > >   	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> > >   	/* DDR (Code) - alias */
-> > > -	{ 0x10000000, 0x80000000, 0x0FFE0000, 0 },
-> > > +	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> > Without access to HW or the documentation there is no way for me to assess the
-> > validity of this patch.  Marek, Iuliana and Daniel - please review and test this
-> > patch.
-> 
-> HW documentation can be downloaded from
-> https://www.nxp.com/webapp/Download?colCode=IMX8MDQLQRM (one needs to create
-> an account)
-> So,
-> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
->
+> No strong opinions from my side. Unless Krzysztof has better
+> suggestions, using bindings/power/* works for me.
 
-The very quick reply is much appreciated. I will merge this at the beginning of
-the 6.11 cycle.
+Ack
 
-> Thanks,
-> Iulia
-> 
-> > Thanks,
-> > Mathieu
-> > 
-> > >   	/* TCML */
-> > >   	{ 0x1FFE0000, 0x007E0000, 0x00020000, ATT_OWN  | ATT_IOMEM},
-> > >   	/* TCMU */
-> > > 
-> > > -- 
-> > > 2.37.1
-> > > 
+Best regards,
+Krzysztof
+
 
