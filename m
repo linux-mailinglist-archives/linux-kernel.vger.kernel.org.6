@@ -1,133 +1,183 @@
-Return-Path: <linux-kernel+bounces-253766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C993269B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A859326A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 14:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE711C22375
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5151F23915
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 12:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769B19AA64;
-	Tue, 16 Jul 2024 12:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C261319AA5D;
+	Tue, 16 Jul 2024 12:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HUhFCbCx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="PGWN6knR"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D71991D4;
-	Tue, 16 Jul 2024 12:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B5519A870
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 12:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721133166; cv=none; b=kUHdXD8DXCFSZCJ2qxbu1ru0zAJ0FwAhhSV+SSeoa5Ud7OrcyHjfQE4w/kmJLZy0b5ynQGqOUD/Em7YSYFq3RP8UMYzqFvCET3nqcm1bT4N9LXfl1aiusf0tLNgGlrfz4R5IxcC/bLz8IZvm0Vn/M4vWHImUoO5VWL8iDhUxrqs=
+	t=1721133298; cv=none; b=LJkqVgaMagY49Rdf4B3oz0zTfS6R8QQ4D9El89Kjx0kmvSaUqnfe+scwtRLH9F/gKIgLSAmv1OxlLFu4007cUoCbXvDiqq3cZH52NOmktsp12u0P3B9Fuy25yZi6NfJXSyQsWan4HHvJ9rlmA5dqO9xj0Od/2Yxr6ySpGVyxG7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721133166; c=relaxed/simple;
-	bh=pIaGDgIPn1RkSG3S4gNRvlKDZuOR2m7qNGyMbFeFaBw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=HRHHey0mRYBGQBMaGG4QLZQrngcsmpnqVG+x+YzSRMWl1enmqi1aCnxgO5QVGMQ2AFIAHFAAb2uMysx5gHSbC0HzK7t0ygEbUfoTPXGzfXeQJOPQJZ+XS75gOCENihoqRye7AbBAI3KKCyT7PXYvAigcCD/CyuPKIWfLxD0S9UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HUhFCbCx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=pIaGDgIPn1RkSG3S4gNRvlKDZuOR2m7qNGyMbFeFaBw=; b=HUhFCbCxxO2O7trQKKBZU716z5
-	aR2jjJdEcONiiwl2owyirfMJPyFi2oyoP4SGPANW+ddVi57IkYviI0BIqrMOWOdVbHU7lWwHso4+y
-	Qy0VwdVg22UdQ7MsBfyRRNQXLJ5lnib7a/zEOWn8xnYIsOCwJqzxshAF8l/HlKqfmO+Tc0TraQgtF
-	ytML3yO5HpNe/A8j6ovesLNBYW1BnnMxj8mDF3B7PXCOvdpYwEcZLnbN3+XSF6pRVsMHGB88TVCR1
-	9JtEQJNUCCiTWwmEZq+1rtPt2HGwupqlFoNipkuGbRvXeH5JRbKDVrEV3JTPk0/bQb9eNenFTCVeu
-	rcHF+c7A==;
-Received: from [2a00:23ee:2468:1b84:edcd:8de9:5f89:1a4a] (helo=[IPv6:::1])
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sThM7-000000022Mx-1So8;
-	Tue, 16 Jul 2024 12:32:34 +0000
-Date: Tue, 16 Jul 2024 13:32:23 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
- "Chashper, David" <chashper@amazon.com>
-CC: "Christopher S . Hall" <christopher.s.hall@intel.com>,
- Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
- Richard Cochran <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [RFC PATCH v4] ptp: Add vDSO-style vmclock support
-User-Agent: K-9 Mail for Android
-In-Reply-To: <9f132922-2bf7-4749-b8c7-4c57445f9cde@opensynergy.com>
-References: <20240708092924.1473461-1-dwmw2@infradead.org> <060f392c-7ba9-4ff6-be82-c64f542abaa1@opensynergy.com> <98b20feebf4e7a11870dca725c03ee4e411b1aa3.camel@infradead.org> <1c24e450-5180-46c2-8892-b10709a881e5@opensynergy.com> <1ca48fb47723ed16f860611ac230ded7a1ca07f1.camel@infradead.org> <9f132922-2bf7-4749-b8c7-4c57445f9cde@opensynergy.com>
-Message-ID: <DD886A0D-B8E2-4749-AB21-7B26A4B70374@infradead.org>
+	s=arc-20240116; t=1721133298; c=relaxed/simple;
+	bh=V/F4UTvvEy3NCSvKyNNAWr4zGMGneWAsO6rPvWKaGvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MOrKrl0KjumM8YGAxZj1lKnUMKhByN+cMoDZ+MmL2PFeQ7JBd6Wjae4UEg6R/VsuSowGfXc67RlTV2iPFpTP1CWNGod9p89ru0r7hv77OCW36TzZmMLDlewoUbO1kKYLNQ2Fg2kC6hM9m0p6J3smNQ4ol7RcIsqbQdzYVE+P00s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=PGWN6knR; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: wens@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721133292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TUFna8KX4ihrtDkjdAKNgLT+tJDIS3c9nXtfNbeflQI=;
+	b=PGWN6knRfOiyzyBmePMrs5eNI9XnN46/sa44jaUfrDReHR8E3BZIou5l4AikCZxA07uLKi
+	AODkX8ezbh6Pb09qom3tdW5X9394/BSWmdfmtcopPuSqwhP9nYVY6HoB/LRv0brek/TFd4
+	EyM8HD2LwKk1TOuAzvVY4TzEWfDV8cBlm6UBWAmehEwuAv+NCOk0HOeL6ptO6uMjRxy6OK
+	vHFPHadXuHJM+hoOHerbWBFM+nvU8F9D6Pil5tETn67vCBGlckMI9khfEm3OMxRErGF2Ar
+	bfB/A2dndy2llg0q9w2k80vW1CZeI53j3FFYERh4kEjMSJtNMjtwtV9DFi0ZZA==
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: daniel@makrotopia.org
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: cristian.ciocaltea@collabora.com
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Chen-Yu Tsai <wens@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Heiko Stuebner <heiko@sntech.de>,
+ linux-rockchip@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>
+Cc: Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
+ Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Date: Tue, 16 Jul 2024 14:34:40 +0200
+Message-ID: <6425788.NZdkxuyfQg@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
+References: <cover.1720969799.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; boundary="nextPart5537839.MQpQnaDgsY";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On 16 July 2024 12:54:52 BST, Peter Hilber <peter=2Ehilber@opensynergy=2Eco=
-m> wrote:
->On 11=2E07=2E24 09:50, David Woodhouse wrote:
->> On Thu, 2024-07-11 at 09:25 +0200, Peter Hilber wrote:
->>>
->>> IMHO this phrasing is better, since it directly refers to the state of=
- the
->>> structure=2E
->>=20
->> Thanks=2E I'll update it=2E
->>=20
->>> AFAIU if there would be abnormal delays in store buffers, causing some
->>> driver to still see the old clock for some time, the monotonicity coul=
-d be
->>> violated:
->>>
->>> 1=2E device writes new, much slower clock to store buffer
->>> 2=2E some time passes
->>> 3=2E driver reads old, much faster clock
->>> 4=2E device writes store buffer to cache
->>> 5=2E driver reads new, much slower clock
->>>
->>> But I hope such delays do not occur=2E
->>=20
->> For the case of the hypervisor=E2=86=90=E2=86=92guest interface this sh=
-ould be handled
->> by the use of memory barriers and the seqcount lock=2E
->>=20
->> The guest driver reads the seqcount, performs a read memory barrier,
->> then reads the contents of the structure=2E Then performs *another* rea=
-d
->> memory barrier, and checks the seqcount hasn't changed:
->> https://git=2Einfradead=2Eorg/?p=3Dusers/dwmw2/linux=2Egit;a=3Dblob;f=
-=3Ddrivers/ptp/ptp_vmclock=2Ec;hb=3Dvmclock#l351
->>=20
->> The converse happens with write barriers on the hypervisor side:
->> https://git=2Einfradead=2Eorg/?p=3Dusers/dwmw2/qemu=2Egit;a=3Dblob;f=3D=
-hw/acpi/vmclock=2Ec;hb=3Dvmclock#l68
->
->My point is that, looking at the above steps 1=2E - 5=2E:
->
->3=2E read HW counter, smp_rmb, read seqcount
->4=2E store seqcount, smp_wmb, stores, smp_wmb, store seqcount become effe=
-ctive
->5=2E read seqcount, smp_rmb, read HW counter
->
->AFAIU this would still be a theoretical problem suggesting the use of
->stronger barriers=2E
+--nextPart5537839.MQpQnaDgsY
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Tue, 16 Jul 2024 14:34:40 +0200
+Message-ID: <6425788.NZdkxuyfQg@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <cover.1720969799.git.daniel@makrotopia.org>
+References: <cover.1720969799.git.daniel@makrotopia.org>
+MIME-Version: 1.0
 
-This seems like a bug on the guest side=2E The HW counter needs to be read=
- *within* the (paired, matching) seqcount reads, not before or after=2E
+On Sunday, 14 July 2024 17:15:35 CEST Daniel Golle wrote:
+> Rockchip SoCs used to have a random number generator as part of their
+> crypto device.
+> 
+> However newer Rockchip SoCs like the RK3568 have an independent True
+> Random Number Generator device. This patchset adds a driver for it and
+> enables it in the device tree.
+> 
+> Tested on FriendlyARM NanoPi R5C.
+> 
+> ...
+> 
+> Aurelien Jarno (3):
+>   dt-bindings: rng: Add Rockchip RK3568 TRNG
+>   hwrng: add hwrng driver for Rockchip RK3568 SoC
+>   arm64: dts: rockchip: add DT entry for RNG to RK356x
+> 
+>  .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
+>  MAINTAINERS                                   |   7 +
+>  arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
+>  drivers/char/hw_random/Kconfig                |  14 ++
+>  drivers/char/hw_random/Makefile               |   1 +
+>  drivers/char/hw_random/rockchip-rng.c         | 227 ++++++++++++++++++
+>  6 files changed, 319 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml create mode
+> 100644 drivers/char/hw_random/rockchip-rng.c
+
+I just did the following test on my Quartz64 Model A running kernel 6.10
++ a number of patches, including this one:
+
+===============================================================
+root@quartz64a:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+1+0 records in
+1+0 records out
+100000 bytes (100 kB, 98 KiB) copied, 5.64507 s, 17.7 kB/s
+root@quartz64a:~# cat /dev/hwrng | rngtest -c 1000
+rngtest 5
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions. 
+There is NO warranty; not even for MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 362
+rngtest: FIPS 140-2 failures: 638
+rngtest: FIPS 140-2(2001-10-10) Monobit: 634
+rngtest: FIPS 140-2(2001-10-10) Poker: 106
+rngtest: FIPS 140-2(2001-10-10) Runs: 43
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=2.638; avg=139.351; max=9765625.000)Kibits/s
+rngtest: FIPS tests speed: (min=21.169; avg=36.158; max=68.610)Mibits/s
+rngtest: Program run time: 148109761 microseconds
+===============================================================
+
+That's almost twice as many failures as successes ...
+--nextPart5537839.MQpQnaDgsY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZpZo4AAKCRDXblvOeH7b
+boR5AQCgqaoiNWyzbxb+45ldj8zkL/JfpahT6y+T00sZkniBUQEAq8WpWtRZKF2U
+KCvP/JqsEptPp3b08vRkAwxriNImTgc=
+=mIG+
+-----END PGP SIGNATURE-----
+
+--nextPart5537839.MQpQnaDgsY--
+
 
 
 
