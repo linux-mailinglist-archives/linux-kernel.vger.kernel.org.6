@@ -1,378 +1,439 @@
-Return-Path: <linux-kernel+bounces-253495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7833932214
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:43:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E7A932212
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 10:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAFD01C217DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA5F280E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 08:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1F9194C8F;
-	Tue, 16 Jul 2024 08:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3025017D373;
+	Tue, 16 Jul 2024 08:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hQSHFcjg"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP4+x07F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A478A1B947;
-	Tue, 16 Jul 2024 08:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119371; cv=fail; b=Vc577nZPaLLpLXuSncDQDw/ebnAVDMYWQlvFmr4vNovLBZfCtIm6nxKpG9lfT4e56YDCyTsD2JJNl52B8CiWEVDcHXEiUphzwSmZlOfkRPHFISiAiJDpP+thSPQaYdQATSq0qOKo2g59yZDYnUSHBi9/QF+R+0jO1I3UMwp0mvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119371; c=relaxed/simple;
-	bh=aC8TlObKdSOvyYihtG2qc/JI7N4EY5CzkY1ohDDs6pU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RBFF7mNBM5Isgsqg2CM7pGqz5Q4LoZ1Jk9/Yw0VZjS32MKjo8EX8FQUE7rt5f2mXx4XWcigO3appQ6MnltZgkUIUNw/6ckVk9SpMVVID2yuSueKPsVNC5nDRitUTDEp9Q50F3qSeCq/4DT7Xs/MhxWdmwecbVn4S2O2h6RY4X18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hQSHFcjg; arc=fail smtp.client-ip=40.107.243.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oH1OIZQ7i/VixlKqbq0euntzIHsnN8Qm4Al0eVj0nCknaFB05uQi5xlnMtGwPWs9Yz0DGU+MjkI8USivz/CG5gWjLr7nOIwkoph/zFZY5qg6nTFpgVO7a30NdCi6hFiz7kYXA0yM2q4s7sQuaqlVFbxBs0mNJ86vT2tI9/44SdVnzB3Fs/jdMETbt+dlNvBbUsQalwxQ66O9hJbm9X9HbsXj27TqlE6IG9f27YJ5/4jSr5yni2+1nekymiSmtY67cynDQSNIG6ElzsOo6E81lCGwyXinxCsxNLfPGBdYVWrzTOVObVJu6RRIvL35eKV8tUKeQdfjeSJkBEGgfa6l+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yoRzQAW+JhvkkRigvRtgg0xgaj1wA/nASQUHWOC2w4w=;
- b=tVbqmbypjx+NUEXRIfZM0sgEBJn4l1+XO93MR+L6uGL2bpoHvNggWlULs0GNvv13IftvX59nwA0ab1+9SUCcUJ0RqCjndA8Hb7yY42l+kNNKCz5Nj5C+GFqi7s1lgA10K3gk9kgpo0/fscvl8aLfFYL+vWZAdWVFnmBB1OWXqPcfmwT7hF2qbY3dP494iod9womIWzGKmGkYgrS+XeOMhxJQjl+Y8J9rnMFiss/pAdsxcOeZ6iFV66WjjubClu1IlBxXYfMEhW4+aWzv7g3PK3sgn3gkbYQ7CuX1oVe0f8myTqXMDSrg2fTrM7iFVzp3XG5rA8pMQxpadp15hT7WMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yoRzQAW+JhvkkRigvRtgg0xgaj1wA/nASQUHWOC2w4w=;
- b=hQSHFcjgJ2YH9wddjMQ+FHARbHa6Iz64Zc8PkvU9V5VpvbHm4dzXLygorsb6rEKaHZEI/sJug2naf4HIP+OCat9BODbMaLKKAubiD35s3aZnwFllHfn9d09tKUxT/G9c2g7U3f3FqmMnCxj1qYPMmJjnakhQ704XTuBXswrS4H8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by SA1PR12MB7101.namprd12.prod.outlook.com (2603:10b6:806:29d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.24; Tue, 16 Jul
- 2024 08:42:40 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%5]) with mapi id 15.20.7784.013; Tue, 16 Jul 2024
- 08:42:40 +0000
-Message-ID: <2e7064c2-c769-41bb-a536-c6e75e8e5800@amd.com>
-Date: Tue, 16 Jul 2024 14:12:25 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/11] Add per-core RAPL energy counter support for AMD
- CPUs
-To: Ian Rogers <irogers@google.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, kees@kernel.org,
- gustavoars@kernel.org, rui.zhang@intel.com, oleksandr@natalenko.name,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, ananth.narayan@amd.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, ravi.bangoria@amd.com,
- sandipan.das@amd.com, linux-pm@vger.kernel.org
-References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
- <CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com>
- <05e96873-12a9-4b1f-b1b3-1db7647211ce@amd.com>
- <CAP-5=fVXi3Pdtjaw++oRkYgubh-MDkRYf=2k7dNqE8s+jyQ+Ew@mail.gmail.com>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <CAP-5=fVXi3Pdtjaw++oRkYgubh-MDkRYf=2k7dNqE8s+jyQ+Ew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0031.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:97::20) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0811B947;
+	Tue, 16 Jul 2024 08:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721119359; cv=none; b=KjXrgm/cGYYqqZGWX4Qltf3wAo37Yvuh0OPC8DRSiLgReW2Jm/kuKPgqhgTNztNgE4quCt/neeQmOu7kr4aN/PPGnqXnHHvuEGJIYBVjl8SDjFbKCiiF+DmJbPMJ/gq2+DKSxBOt4x1ZOSInYxNUHfNO5noRDVIneYRa1DzMoN4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721119359; c=relaxed/simple;
+	bh=418fr13udianuUYqtvPQ+iZLBEydDGoXIrE96bSmGac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u2rkILJnhXazOTDSs1sw9TA5sHHhklnVeKWXWr6nRwIlKOYrlAmwzUwL3fv/SYBZk/iNeUS5f2oqw99mTNWh3IISPfggZtsKpn1brPLveHJGPizh+TTh3Z2en+sb/5egvBRPUBXkdHKsiR0jIdJmOmpumWgNlE1XsncqIQU0kUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP4+x07F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A024C116B1;
+	Tue, 16 Jul 2024 08:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721119358;
+	bh=418fr13udianuUYqtvPQ+iZLBEydDGoXIrE96bSmGac=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gP4+x07FS6zBDtumJERTPZ0rbAhvgPOhOsw4iRNYwCwyyhf2H0q6GJpH9NtpCSg84
+	 KtA7nRx565rJy2iHJe/i8N2Kilu6RpdgY3kXKDBx7rGurRsS4fiB5uS9O43GNgE4oe
+	 WP57cp1bDbx1WpR0XF0AxvSsrW5UdJ1KMzbLdF4m4QPhAixIGG2N6T+IIi469f05Nj
+	 2FUrvZ5IEoVZqwxKYyYUf/aYXhCKBHklpPXmWVbakDsw3t7mqt4q7gWE3WJWl4QFJL
+	 9uPdLC7wQsocYEDzBVY2Rgh+atO9EaH0mjhbImWnpj+c5psygrtCmmjxcNMlIkhZFf
+	 SkIHElhWPIYig==
+Message-ID: <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org>
+Date: Tue, 16 Jul 2024 10:42:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SA1PR12MB7101:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76ffb3b1-543e-4245-b3d5-08dca5734082
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MEtydjVUTlV2d29WT3RrOTgrVmhHbytBSk5KQVg2YmsxaEpWL1JKajRiVEZB?=
- =?utf-8?B?NXVmbjY4cW9PWXFkSUEwM1lZcEJ1VlR4cTkvSlZxZnVwRXc1cURabWNFYjFO?=
- =?utf-8?B?QzZnZFA4K0xDdzRGRTdZZWcvdGtRZllRYnR5MjRxOW83WFlGNkxvSTdsWlhs?=
- =?utf-8?B?Sm9FcXN3TFFqVHJUQWV2WGwwRXR0UUFudUg4dUloWUdNYjVjTmQ2eUNJQ3ky?=
- =?utf-8?B?a1AyWVBKRjYwS1R1ZFJSNldxejAwY3RsTk11TklHWWVjRlJwSU1PdEVSWENM?=
- =?utf-8?B?NkMvZkV3TEVzVkJDR2dBaWVIR25LUld3Yk5aelVnU1Z6UldGR3JibDFqOXNu?=
- =?utf-8?B?eGNNWm5XVWVRWERmOTg0MXo2aHlPc3BuRG00aWZCZHd3SmlNVjR4bERnZ01I?=
- =?utf-8?B?R01GR2FOTzZsNThoaFpteFFJQy84djd5cXNxLzhjYXNYK1ZDcUQ4OWV6cEdY?=
- =?utf-8?B?OEdxK3FlbEJMU2JWSUFDVkpodTlXVEdwejFreFhvUGJaM29uMFo2QmZGZndE?=
- =?utf-8?B?aFFHSVo0TSt1RUpvY0J6MXdYdno3bjJQRklLaDhEK3ZWbG1RaEZ5S3NIVUZC?=
- =?utf-8?B?NjJZcXppaW1rU2xUVmJUakY1TzFNSWFYY3Y0SllRVkQ0SXhhczIzSDJIWG5J?=
- =?utf-8?B?TEtNV2NQY0tBZEQ3dXpIMzF4WldlWFlnYzJCdFhzc3cxVEx5RnBZUSswUGVu?=
- =?utf-8?B?YzVnR1hTU3gwNDZqalJlcnJZMFBUNkxjMURvRENUNmVIYVlLT0dTSWZFbnNH?=
- =?utf-8?B?T2NmV1RjcEFDY1FnRjlncURGVkhOTEwvNDVES3dZSXFiUkluSXkxN0pjNDJh?=
- =?utf-8?B?T2ZUZTZFSS9vTmlWb2ZqM20wVGhvbEZrV3FuWEJyN2xsM21OUXcxWFVOZzZB?=
- =?utf-8?B?dGhBaTVQNjlmbTk4aDd4T0RxVitraGQxMmJmMnlHQ3loTVd4UFNyd1JFdGd1?=
- =?utf-8?B?VmlaMk1hdnNoTkNzd0ZnN3hMa3VTNDhuNWJpbXl2aldVZ3BiVVJYUm8xcFpS?=
- =?utf-8?B?MGQxOTJyUDJxNnQyUHVzOEVXbXFCWUZHZC83OCtiSTNCeWYrY05yVTJzR1Ra?=
- =?utf-8?B?OGQ2S1BFdmZFQ0pUbEFsY1dmVElGQkc1ZDN4dUFIcGEzenQ4U2FhcXBBdm03?=
- =?utf-8?B?eUZqd2dMTFpRSnR5SFNoNHBSazVsNXAwdFM4TXplK002dGlpZlh0VlRjK3Fj?=
- =?utf-8?B?V0s2N3J2azliQ1dLenpScGNWbDNtYU90M0lwVHlKcEJ2MEFZWHdpVU4rbFE2?=
- =?utf-8?B?LytST3FIQzJEdFN6L2JmTGtBK0FHU0kxNG5BMkRGS2ViUmZqSk5IVHplTmFT?=
- =?utf-8?B?UVBLcGdVYUxYQzZ5d25DL1NXdHBJWkhZWGtWbjlIQzJUMStLWnhGUGxEUEUx?=
- =?utf-8?B?S3JETUVTVjRBZEJFZVBJUnJ0WVBEK21DaDFELzJuenVtMW10bWVNWGUvNHJZ?=
- =?utf-8?B?S3cwdDVSU3JNc2JualQxVFVXTWhHbG9DSkZ2bXF3MTFmTzZHWlJmeFRrSEhv?=
- =?utf-8?B?WlVFZVlidWx0NlpwTmxsTFFFYTcxSW50UnB2RlZVTExjaG51TDFxZTlWdHM3?=
- =?utf-8?B?Y1lNMTlpcW5rMHNML3hPTTU0WGk3bS9TdmhIVDM4REFGa2xXUUxQRWJjZlVG?=
- =?utf-8?B?M0ovUWhraFNaVENCZzZ6OVVsVERyU25uR1E5V0FVdlh2a3dDdGpRZFZUL0g2?=
- =?utf-8?B?eDI2OTVVUTZkYXB3cTVCYlNwODU4MVIvN2huTzY2K096dm9zTmxMaE5tUEY0?=
- =?utf-8?Q?BlwwIUSk/K743dsF/Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekdXN2QvRkF1NGd6MXVTTjJJTWdCYVhmcS9HaUF1eGNzWHdQQTQ4ZS9KV3Zh?=
- =?utf-8?B?b0N5d0VDbmUvVEFFR1lVUXRMRVAzamI4KzdSUjRGQkt0RzFINGRhSGk4bmVN?=
- =?utf-8?B?R08zdkI1YUZKN0dwUUtzemR2ZTdQRkdDcjNFVVd0SHkzVmJGNXNOejRhc2Nx?=
- =?utf-8?B?YnI2MTFJcXZodXdtZWVVZkhIQ0VMdFM2YkhsbE5RN2Q4NzM1UDNiQkxZbWRj?=
- =?utf-8?B?bEJwR1VRK0NZTGRaZEJXdUF0eDV6OGxMYWVjRXNldlNLTnhEcHI3ZHBqRUs1?=
- =?utf-8?B?c0lsTHRUaitoQnNNT1UwMURhd1lNcFptYkVaNzRuTGJxdjV5RzN0QkdqaGhp?=
- =?utf-8?B?RkZHRjdVd2ZHZWFPWG43SDVzVXR6LzFXZnJaNTYxR0pnR0NPTUxZUkhqclFi?=
- =?utf-8?B?cm1qYUVVbDFldW1yS3ppS3hhdUtZTllVYjU3aUVBaXNpSFQwODdSNU1WVndB?=
- =?utf-8?B?QWtrUjN4TzYyRzE0UGJkVHlzOXRuS3lUd0VJZjZIT3VDdGtGWDV6TnVRYTdQ?=
- =?utf-8?B?WVU4Q3hsamlqZmJZN1BXZ3k5VXpwdThyTmFGMjZYUlJ3SDJGVVo2UDhpVTFo?=
- =?utf-8?B?ckNyS3k1ZlZlU1RhQXBEdHFSZXVjWjd1ak11U0lmcWMrNk5rQWppNFpCWFFi?=
- =?utf-8?B?L1ZCcG9GQnRQaG5WWUVDUExxcnRLZ3dNRnoxbXlQdG9nWXJYdGw3RGxuTzZ3?=
- =?utf-8?B?cnp0UDczOXh4dU8weTVBR1JaRHJLbGszdmRGL1RqdkZDTXNRSkRaRjZ0ZmJH?=
- =?utf-8?B?UDUvTXNGaDFpWk1pazZMVW42NGk4ZncwZDQvWS9CMVB4N0FScjhraWM2bDhm?=
- =?utf-8?B?dXlBNElKR0JFZFkwVFZFWGNyQXRIcDVpbDhOTHB4Y2s3WndSTmVZVUFXNG9x?=
- =?utf-8?B?TWJBbnRUNnFZNDcwT0pHQXRLRmRXaTNkUlJmL2wvekE3TlBXYlNCbU82R3Nj?=
- =?utf-8?B?ejdCVFQzZTNMNUlIRG9WQVBrSFVWS2RtZUR4V2M5ZFBlYjlLUHJPZHBJcU1q?=
- =?utf-8?B?V2lkR0FUMGFad2cvZUNFOHFlTnVOVlh5WkVKTHA5cXAvSzBvc2JPTE1uSHRJ?=
- =?utf-8?B?ME9tSXlraEhxT0wvRk50SjR5SkxjVjhwVmJzYjdjbXdNUlZ5ekJQd2ZPbktR?=
- =?utf-8?B?L3ErS0ZwSktINVFjS1hSa3RoRnJpT0tEeWVRVGJCVzFXbHFtK1kwVVVyY3NT?=
- =?utf-8?B?UzNKMWJ1dXFKeTk5UUtaVUJjQ2xHMkVocUZuMXRHelRIQnplYzBRTEZuS3Jq?=
- =?utf-8?B?dzEyckxjYU9HSUFKeDBZdSt1TWFOT2F0aTVaQnFXK2g3OXJTWEx5ZVVVNnZ1?=
- =?utf-8?B?Y2d3anB2STdOMXNoeUs1RzZqMVV6M2srZHc4elpXSkdTbkpaTXFEV25NaG9L?=
- =?utf-8?B?NURrdU5IYjcxcENkZjZDZ1h4WFFjSDE3VGxmK3p1aVpMc3JqdUtCdnhENDh1?=
- =?utf-8?B?YUdkSDNNZEk1NFF6Q2tyUU1XZTFMTmNodkpubXlyT2hrT25xK3J0MWdYWEdn?=
- =?utf-8?B?eFBMWmk2aUZFZU53NHJXdWZ6dE9Wcmhmdml6cGFoNUlhMEN6T01DTzVaeGpl?=
- =?utf-8?B?cUxNUXhBL3psVlB1NFh4WFNiREZJZU01c1NDSm1XRTVoL0RVWmt3b0p6cGFJ?=
- =?utf-8?B?UklmUENlRTJFcHNsNHoraVVJSk9HVGkvc3VJeTUyeVdDdk1kVVJQQjdPUEVC?=
- =?utf-8?B?N3ZkaHlQdXlHVGtLckFaUmlqR3ZSQms4dTFjWFdLMm9SbXR0NkluL3l4MzZn?=
- =?utf-8?B?dm1sUFd1dU9uajZ6M1JUUHYrWTRPRVU2UGlrSWZWSmJnSnk5NHRJZGp6TE1p?=
- =?utf-8?B?U1pjQ0lnSHhzaDE3MnlwQlNIYWowSEppdXR3aTZnM0cxR3BwcTBxaUh2VURx?=
- =?utf-8?B?MmZJWFFxbUJvSXAySWEvQ1MxVnFRU3hGaDg5L0l4ckpqalNDQkVvTFRaQ0kz?=
- =?utf-8?B?YnVheVZyQ2RZdU9PbS9SZ0ZXNlZKeDlkVERZTytJS2sza0EvelVUY0h5YktP?=
- =?utf-8?B?ZmlpTEZ1STJSSXFKZitFamRBc2xyVW9iNjU5OE1sbVArdG1ja0VDMndOMlhW?=
- =?utf-8?B?anBnKy82TzlNVkpuUm8zajZ0VjNacnhxSUR4Kzg2V0wrb1E5VUxicnYrYndi?=
- =?utf-8?Q?iqPiaUJDcHd9rwzl6fYriuSLb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76ffb3b1-543e-4245-b3d5-08dca5734082
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 08:42:40.4794
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T2v81bnQkM2er/6AyGlz1oNLyPWOHqvHhBIGbwysPgpeSremdh/En+LtnxnfmAhH0oJDtfVzgrXkR9oREKsC1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7101
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com,
+ shakeel.butt@linux.dev
+Cc: hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+ kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Ian,
 
-On 7/15/2024 8:52 PM, Ian Rogers wrote:
-> On Mon, Jul 15, 2024 at 2:36 AM Dhananjay Ugwekar
-> <Dhananjay.Ugwekar@amd.com> wrote:
->>
->> Hello Ian,
->>
->> On 7/12/2024 3:53 AM, Ian Rogers wrote:
->>> On Thu, Jul 11, 2024 at 3:25 AM Dhananjay Ugwekar
->>> <Dhananjay.Ugwekar@amd.com> wrote:
->>>>
->>>> Currently the energy-cores event in the power PMU aggregates energy
->>>> consumption data at a package level. On the other hand the core energy
->>>> RAPL counter in AMD CPUs has a core scope (which means the energy
->>>> consumption is recorded separately for each core). Earlier efforts to add
->>>> the core event in the power PMU had failed [1], due to the difference in
->>>> the scope of these two events. Hence, there is a need for a new core scope
->>>> PMU.
->>>>
->>>> This patchset adds a new "power_per_core" PMU alongside the existing
->>>> "power" PMU, which will be responsible for collecting the new
->>>> "energy-per-core" event.
->>>
->>> Sorry for being naive, is the only reason for adding the new PMU for
->>> the sake of the cpumask? Perhaps we can add per event cpumasks like
->>> say `/sys/devices/power/events/energy-per-core.cpumask` which contains
->>> the CPUs of the different cores in this case. There's supporting
->>> hotplugging CPUs as an issue. Adding the tool support for this
->>> wouldn't be hard and it may be less messy (although old perf tools on
->>> new kernels wouldn't know about these files).
->>
->> I went over the two approaches and below are my thoughts,
->>
->> New PMU approach:
->> Pros
->> * It will work with older perf tools, hence these patches can be backported to an older kernel and the new per-core event will work there as well.
->> Cons
->> * More code changes in rapl.c
->>
->> Event specific cpumask approach:
->> Pros
->> * It might be easier to add diff scope events within the same PMU in future(although currently I'm not able to find such a usecase, apart from the RAPL pkg and core energy counters)
->> Cons
->> * Both new kernel and perf tool will be required to use the new per-core event.
->>
->> I feel that while the event-specific cpumask is a viable alternative to the new PMU addition approach, I dont see any clear pros to select that over the current approach. Please let me know if you have any design related concerns to the addition of new PMU or your concern is mostly about the amount of code changes in this approach.
+Production results below.
+  - On AMD CPU with 12 NUMA nodes and 192 cores.
+
+Using this bpftrace (looong) oneliner:
+
+  sudo bpftrace -e '
+   tracepoint:cgroup:cgroup_rstat_locked {@cnt[probe]=count();
+    if (args->contended) {
+      @lock_contended["after_obtaining_lock", args->level]=count();
+    } else {
+      if (args->cpu == -1) { @lock_contended["no_ongoing_flusher", 
+args->level]}
+    }}
+   tracepoint:cgroup:cgroup_rstat_lock_contended {@cnt[probe]=count();
+    if (args->cpu == -1) {@lock_contended["normal", args->level] = count();}
+    else {@lock_contended["yield", args->level] = count();}}
+   kfunc:cgroup_rstat_flush_locked {@cnt[probe]=count()}
+   tracepoint:cgroup:cgroup_ongoing_flusher {@start[tid]=nsecs;
+   if (args->race) {
+     printf(" - XXXXXXX[%d]: Handled RACE(%d) for ongoing flusher\n", 
+tid, args->race);
+     @ongoing_flusher_cnt["handled_race"]=count(); }
+   }
+   tracepoint:cgroup:cgroup_ongoing_flusher_wait {
+    $now=nsecs; $start=@start[tid]; $diff=$now-$start;
+    @res=hist(args->res);
+    @wait=hist($diff);
+    @cnt[probe]=count();
+    @ongoing_flusher_cnt[comm]=count();
+    @ongoing_flusher_cnt["all"]=count();
+    $r=args->race;
+    if ($r) {
+     printf(" - Success[%d]: Handled RACE(%d) for ongoing flusher\n", 
+tid, $r) }
+    }
+   interval:s:1 {time("%H:%M:%S ");
+    print(@ongoing_flusher_cnt);
+    print(@cnt);
+    print(@lock_contended);
+    clear (@cnt);
+    clear (@ongoing_flusher_cnt);
+    clear (@lock_contended); }
+   END {clear(@start)}'
+
+On 11/07/2024 15.28, Jesper Dangaard Brouer wrote:
+> Avoid lock contention on the global cgroup rstat lock caused by kswapd
+> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
+> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
+> call inlined in shrink_node, which takes the rstat lock.
 > 
-> Thanks Dhananjay, and thanks for taking the time for an objective
-> discussion on the mailing list. I'm very supportive of seeing the work
-> you are enabling land.
+> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
+> we noted severe lock contention on the rstat lock. This contention
+> causes 12 CPUs to waste cycles spinning every time kswapd runs.
+> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
+> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
+> due to spinning on the rstat lock.
 > 
-> My concern comes from the tool side. If every PMU starts to have
-> variants for the sake of the cpumask what does this mean for
-> aggregation in the perf tool? There is another issue around event
-> grouping, you can't group events across PMUs, but my feeling is that
-> event grouping needs to be rethought. By default the power_per_core
-> events are going to be aggregated together by the perf tool, which
-> then loses their per_core-ness.
-
-Yea right, maybe we need to fix this behavior.
-
+> Help reviewers follow code: __alloc_pages_slowpath calls wake_all_kswapds
+> causing all kswapdN threads to wake up simultaneously. The kswapd thread
+> invokes shrink_node (via balance_pgdat) triggering the cgroup rstat flush
+> operation as part of its work. This results in kernel self-induced rstat
+> lock contention by waking up all kswapd threads simultaneously. Leveraging
+> this detail: balance_pgdat() have NULL value in target_mem_cgroup, this
+> cause mem_cgroup_flush_stats() to do flush with root_mem_cgroup.
 > 
-> I was trying to think of the same problem but in other PMUs. One
-> thought I had was the difference between hyperthread and core events.
-> At least on Intel, some events can only count for the whole core not
-> per hyperthread. The events don't have a cpu_per_core PMU, they just
-> use the regular cpu one, and so the cpumask is set to all online
-> hyperthreads. When a per-core event is programmed it will get
-> programmed on every hyperthread and so counted twice for the core.
-> This at the least wastes a counter, but it probably also yields twice
-> the expected count as every event is counted twice then aggregated. So
-> this is just wrong and the user is expected to be smart and fix it
-> (checking the x86 events there is a convention to use a ".ALL" or
-> ".ANY" suffix for core wide events iirc). If we had a cpumask for
-> these events then we could avoid the double setting, free up a counter
-> and avoid double counting. Were we to fix things the way it is done in
-> this patch series we'd add another PMU.
-
-Yes, this seems like a valid usecase for event-specific cpumasks.
-
+> To avoid this kind of thundering herd problem, kernel previously had a
+> "stats_flush_ongoing" concept, but this was removed as part of commit
+> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
+> reintroduce and generalized the concept to apply to all users of cgroup
+> rstat, not just memcg.
 > 
-> My feeling is that in the longer term a per event cpumask looks
-> cleaner. I think either way you need a new kernel for the new RAPL
-> events. The problem with an old perf tool and a new kernel, this
-> doesn't normally happen with distributions as they match the perf tool
-> to the kernel version needlessly losing features and fixes along the
-> way. If the new PMU is going to get backported through fixes.. then we
-> can do similar for reading the per event cpumask. I'd be tempted not
-> to do this and focus on the next LTS kernel, getting the kernel and
-> tool fixes in as necessary.
-
-Makes sense, even though this approach will require more effort but it seems 
-to be worthwhile as it would help things down the line (make it easier to have 
-heterogenous-scope events within a PMU). I'll need to go through the perf tool 
-to see how we can design this. I'll get back with an RFC series probably once 
-I have an initial design in mind.
-
-Thanks,
-Dhananjay
-
+> If there is an ongoing rstat flush, and current cgroup is a descendant,
+> then it is unnecessary to do the flush. For callers to still see updated
+> stats, wait for ongoing flusher to complete before returning, but add
+> timeout as stats are already inaccurate given updaters keeps running.
 > 
-> Thanks,
-> Ian
+> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
+> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> ---
+> V6: https://lore.kernel.org/all/172052399087.2357901.4955042377343593447.stgit@firesoul/
+> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
+> V4: https://lore.kernel.org/all/171952312320.1810550.13209360603489797077.stgit@firesoul/
+> V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
+> V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
+> V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
+> RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
+> 
+>   include/linux/cgroup-defs.h |    2 +
+>   kernel/cgroup/rstat.c       |   95 ++++++++++++++++++++++++++++++++++++++-----
+>   2 files changed, 85 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index b36690ca0d3f..a33b37514c29 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -548,6 +548,8 @@ struct cgroup {
+>   #ifdef CONFIG_BPF_SYSCALL
+>   	struct bpf_local_storage __rcu  *bpf_cgrp_storage;
+>   #endif
+> +	/* completion queue for cgrp_rstat_ongoing_flusher */
+> +	struct completion flush_done;
+>   
+>   	/* All ancestors including self */
+>   	struct cgroup *ancestors[];
+> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+> index fb8b49437573..fe2a81a310bb 100644
+> --- a/kernel/cgroup/rstat.c
+> +++ b/kernel/cgroup/rstat.c
+> @@ -2,6 +2,7 @@
+>   #include "cgroup-internal.h"
+>   
+>   #include <linux/sched/cputime.h>
+> +#include <linux/completion.h>
+>   
+>   #include <linux/bpf.h>
+>   #include <linux/btf.h>
+> @@ -11,6 +12,7 @@
+>   
+>   static DEFINE_SPINLOCK(cgroup_rstat_lock);
+>   static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
+> +static struct cgroup *cgrp_rstat_ongoing_flusher = NULL;
+>   
+>   static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
+>   
+> @@ -279,17 +281,32 @@ __bpf_hook_end();
+>    * value -1 is used when obtaining the main lock else this is the CPU
+>    * number processed last.
+>    */
+> -static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop)
+> +static inline bool __cgroup_rstat_trylock(struct cgroup *cgrp, int cpu_in_loop)
+> +{
+> +	bool locked;
+> +
+> +	locked = spin_trylock_irq(&cgroup_rstat_lock);
+> +	if (!locked)
+> +		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, true);
+> +	else
+> +		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, false);
+> +
+> +	return locked;
+> +}
+> +
+> +static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop,
+> +				       bool check_contention)
+>   	__acquires(&cgroup_rstat_lock)
+>   {
+> -	bool contended;
+> +	bool locked = false;
+>   
+> -	contended = !spin_trylock_irq(&cgroup_rstat_lock);
+> -	if (contended) {
+> -		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
+> +	if (check_contention)
+> +		locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
+> +
+> +	if (!locked) {
+>   		spin_lock_irq(&cgroup_rstat_lock);
+> +		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, check_contention);
+>   	}
+> -	trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
+>   }
+>   
+>   static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+> @@ -299,6 +316,53 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+>   	spin_unlock_irq(&cgroup_rstat_lock);
+>   }
+>   
+> +#define MAX_WAIT	msecs_to_jiffies(100)
+> +/* Trylock helper that also checks for on ongoing flusher */
+> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
+> +{
+> +	struct cgroup *ongoing;
+> +	bool locked;
+> +
+> +	/* Check if ongoing flusher is already taking care of this, if
+> +	 * we are a descendant skip work, but wait for ongoing flusher
+> +	 * to complete work.
+> +	 */
+> +retry:
+> +	ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
+> +	if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
+> +		wait_for_completion_interruptible_timeout(
+> +			&ongoing->flush_done, MAX_WAIT);
+> +		/* TODO: Add tracepoint here */
+> +		return false;
+> +	}
+> +
+> +	locked = __cgroup_rstat_trylock(cgrp, -1);
+> +	if (!locked) {
+> +		/* Contended: Handle loosing race for ongoing flusher */
+> +		if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
+> +			goto retry;
+
+This race do happen in production:
+
+  - XXXXXXX[1040]: Handled RACE(1) for ongoing flusher
+  - Success[1040]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1038]: Handled RACE(1) for ongoing flusher
+  - Success[1038]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1040]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1039]: Handled RACE(1) for ongoing flusher
+  - Success[1039]: Handled RACE(1) for ongoing flusher
+  - Success[1040]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1044]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1047]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1045]: Handled RACE(1) for ongoing flusher
+  - Success[1047]: Handled RACE(1) for ongoing flusher
+  - Success[1044]: Handled RACE(1) for ongoing flusher
+  - Success[1045]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1039]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1043]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1042]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1037]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1044]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1047]: Handled RACE(1) for ongoing flusher
+  - Success[1043]: Handled RACE(1) for ongoing flusher
+  - Success[1037]: Handled RACE(1) for ongoing flusher
+  - Success[1039]: Handled RACE(1) for ongoing flusher
+  - Success[1044]: Handled RACE(1) for ongoing flusher
+  - Success[1042]: Handled RACE(1) for ongoing flusher
+  - Success[1047]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1038]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1039]: Handled RACE(1) for ongoing flusher
+  - Success[1039]: Handled RACE(1) for ongoing flusher
+  - Success[1038]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1048]: Handled RACE(1) for ongoing flusher
+  - Success[1048]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1045]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1043]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1047]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1046]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1048]: Handled RACE(1) for ongoing flusher
+  - Success[1045]: Handled RACE(1) for ongoing flusher
+  - Success[1043]: Handled RACE(1) for ongoing flusher
+  - Success[1047]: Handled RACE(1) for ongoing flusher
+  - Success[1046]: Handled RACE(1) for ongoing flusher
+  - Success[1048]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1045]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1043]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1042]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1041]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1044]: Handled RACE(1) for ongoing flusher
+  - Success[1045]: Handled RACE(1) for ongoing flusher
+  - Success[1041]: Handled RACE(1) for ongoing flusher
+  - Success[1042]: Handled RACE(1) for ongoing flusher
+  - Success[1043]: Handled RACE(1) for ongoing flusher
+  - Success[1044]: Handled RACE(1) for ongoing flusher
+  - XXXXXXX[1048]: Handled RACE(1) for ongoing flusher
+  - Success[1048]: Handled RACE(1) for ongoing flusher
+07:42:02 @ongoing_flusher_cnt[kswapd11]: 7
+@ongoing_flusher_cnt[kswapd4]: 7
+@ongoing_flusher_cnt[kswapd10]: 7
+@ongoing_flusher_cnt[kswapd9]: 8
+@ongoing_flusher_cnt[kswapd6]: 8
+@ongoing_flusher_cnt[kswapd3]: 8
+@ongoing_flusher_cnt[kswapd8]: 8
+@ongoing_flusher_cnt[kswapd7]: 9
+@ongoing_flusher_cnt[kswapd1]: 9
+@ongoing_flusher_cnt[kswapd0]: 9
+@ongoing_flusher_cnt[kswapd5]: 9
+@ongoing_flusher_cnt[kswapd2]: 9
+@ongoing_flusher_cnt[handled_race]: 27
+@ongoing_flusher_cnt[all]: 98
+@cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 27
+@cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 37
+@cnt[tracepoint:cgroup:cgroup_rstat_locked]: 45
+@cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 98
+@lock_contended[normal, 0]: 27
+
+
+This is a clean (meaning no cadvisor interference) example of kswapd
+starting simultaniously on many NUMA nodes, that in 27 out of 98 cases
+hit the race (which is handled in V6 and V7).
+
+The BPF "cnt" maps are getting cleared every second, so this
+approximates per sec numbers.  This patch reduce pressure on the lock,
+but we are still seeing (kfunc:vmlinux:cgroup_rstat_flush_locked) full
+flushes approx 37 per sec (every 27 ms). On the positive side
+ongoing_flusher mitigation stopped 98 per sec of these.
+
+In this clean kswapd case the patch removes the lock contention issue
+for kswapd. The lock_contended cases 27 seems to be all related to
+handled_race cases 27.
+
+The remaning high flush rate should also be addressed, and we should
+also work on aproaches to limit this like my ealier proposal[1].
+
+  [1] 
+https://lore.kernel.org/all/171328990014.3930751.10674097155895405137.stgit@firesoul/#Z31kernel:cgroup:rstat.c
+
+
+> +
+> +		__cgroup_rstat_lock(cgrp, -1, false);
+> +	}
+> +	/* Obtained lock, record this cgrp as the ongoing flusher */
+> +	ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
+> +	if (!ongoing) {
+> +		reinit_completion(&cgrp->flush_done);
+> +		WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
+> +	}
+> +	return true; /* locked */
+> +}
+> +
+> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
+> +{
+> +	/* Detect if we are the ongoing flusher */
+> +	if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
+> +		WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
+> +		complete_all(&cgrp->flush_done);
+> +	}
+> +	__cgroup_rstat_unlock(cgrp, -1);
+> +}
+> +
+>   /* see cgroup_rstat_flush() */
+>   static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+>   	__releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
+> @@ -328,7 +392,7 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+>   			__cgroup_rstat_unlock(cgrp, cpu);
+>   			if (!cond_resched())
+>   				cpu_relax();
+> -			__cgroup_rstat_lock(cgrp, cpu);
+> +			__cgroup_rstat_lock(cgrp, cpu, true);
+>   		}
+>   	}
+>   }
+> @@ -350,9 +414,11 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+>   {
+>   	might_sleep();
+>   
+> -	__cgroup_rstat_lock(cgrp, -1);
+> +	if (!cgroup_rstat_trylock_flusher(cgrp))
+> +		return;
+> +
+>   	cgroup_rstat_flush_locked(cgrp);
+> -	__cgroup_rstat_unlock(cgrp, -1);
+> +	cgroup_rstat_unlock_flusher(cgrp);
+>   }
+>   
+>   /**
+> @@ -368,8 +434,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+>   	__acquires(&cgroup_rstat_lock)
+>   {
+>   	might_sleep();
+> -	__cgroup_rstat_lock(cgrp, -1);
+> -	cgroup_rstat_flush_locked(cgrp);
+> +
+> +	if (cgroup_rstat_trylock_flusher(cgrp))
+> +		cgroup_rstat_flush_locked(cgrp);
+> +	else
+> +		__cgroup_rstat_lock(cgrp, -1, false);
+>   }
+>   
+>   /**
+> @@ -379,7 +448,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+>   void cgroup_rstat_flush_release(struct cgroup *cgrp)
+>   	__releases(&cgroup_rstat_lock)
+>   {
+> -	__cgroup_rstat_unlock(cgrp, -1);
+> +	cgroup_rstat_unlock_flusher(cgrp);
+>   }
+>   
+>   int cgroup_rstat_init(struct cgroup *cgrp)
+> @@ -401,6 +470,8 @@ int cgroup_rstat_init(struct cgroup *cgrp)
+>   		u64_stats_init(&rstatc->bsync);
+>   	}
+>   
+> +	init_completion(&cgrp->flush_done);
+> +
+>   	return 0;
+>   }
+>   
 > 
 > 
->> Thanks,
->> Dhananjay
->>
->>>
->>> Thanks,
->>> Ian
->>>
->>>
->>>> Tested the package level and core level PMU counters with workloads
->>>> pinned to different CPUs.
->>>>
->>>> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
->>>> machine:
->>>>
->>>> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 1
->>>>
->>>>  Performance counter stats for 'system wide':
->>>>
->>>> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
->>>> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
->>>> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
->>>>
->>>> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@linux.intel.com/
->>>>
->>>> This patchset applies cleanly on top of v6.10-rc7 as well as latest
->>>> tip/master.
->>>>
->>>> v4 changes:
->>>> * Add patch 11 which removes the unused function cpu_to_rapl_pmu()
->>>> * Add Rui's rb tag for patch 1
->>>> * Invert the pmu scope check logic in patch 2 (Peter)
->>>> * Add comments explaining the scope check in patch 2 (Peter)
->>>> * Use cpumask_var_t instead of cpumask_t in patch 5 (Peter)
->>>> * Move renaming code to patch 8 (Rui)
->>>> * Reorder the cleanup order of per-core and per-pkg PMU in patch 10 (Rui)
->>>> * Add rapl_core_hw_unit variable to store the per-core PMU unit in patch
->>>>   10 (Rui)
->>>>
->>>> PS: Scope check logic is still kept the same (i.e., all Intel systems being
->>>> considered as die scope), Rui will be modifying it to limit the die-scope
->>>> only to Cascadelake-AP in a future patch on top of this patchset.
->>>>
->>>> v3 changes:
->>>> * Patch 1 added to introduce the logical_core_id which is unique across
->>>>   the system (Prateek)
->>>> * Use the unique topology_logical_core_id() instead of
->>>>   topology_core_id() (which is only unique within a package on tested
->>>>   AMD and Intel systems) in Patch 10
->>>>
->>>> v2 changes:
->>>> * Patches 6,7,8 added to split some changes out of the last patch
->>>> * Use container_of to get the rapl_pmus from event variable (Rui)
->>>> * Set PERF_EV_CAP_READ_ACTIVE_PKG flag only for pkg scope PMU (Rui)
->>>> * Use event id 0x1 for energy-per-core event (Rui)
->>>> * Use PERF_RAPL_PER_CORE bit instead of adding a new flag to check for
->>>>   per-core counter hw support (Rui)
->>>>
->>>> Dhananjay Ugwekar (10):
->>>>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
->>>>   perf/x86/rapl: Rename rapl_pmu variables
->>>>   perf/x86/rapl: Make rapl_model struct global
->>>>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
->>>>   perf/x86/rapl: Add wrapper for online/offline functions
->>>>   perf/x86/rapl: Add an argument to the cleanup and init functions
->>>>   perf/x86/rapl: Modify the generic variable names to *_pkg*
->>>>   perf/x86/rapl: Remove the global variable rapl_msrs
->>>>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
->>>>   perf/x86/rapl: Remove the unused function cpu_to_rapl_pmu
->>>>
->>>> K Prateek Nayak (1):
->>>>   x86/topology: Introduce topology_logical_core_id()
->>>>
->>>>  Documentation/arch/x86/topology.rst   |   4 +
->>>>  arch/x86/events/rapl.c                | 454 ++++++++++++++++++--------
->>>>  arch/x86/include/asm/processor.h      |   1 +
->>>>  arch/x86/include/asm/topology.h       |   1 +
->>>>  arch/x86/kernel/cpu/debugfs.c         |   1 +
->>>>  arch/x86/kernel/cpu/topology_common.c |   1 +
->>>>  6 files changed, 328 insertions(+), 134 deletions(-)
->>>>
->>>> --
->>>> 2.34.1
->>>>
 
