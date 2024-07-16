@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-253424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-253425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99EB932128
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:26:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB06D932133
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953172826E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6C21C212A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2024 07:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E54628387;
-	Tue, 16 Jul 2024 07:26:19 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE472BAE9;
+	Tue, 16 Jul 2024 07:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptlHl7ka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5F3219F6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 07:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6374C7B;
+	Tue, 16 Jul 2024 07:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114779; cv=none; b=QxGuLp7zEIG6e+GpoHFIvFgf1G+G5ZvRHRqG6C+svIajnyg45/Ic0swjswoxLTrOG1y9Oy/IYGjZwwLj9mlczNihyD3GYi3IlIpV+5INs6hU79A+4d8o3or2Azn1UkQESh4Kuu0idV5IEZKxXUGwcgertvoNIG0md5Oj0MsAkJ4=
+	t=1721114933; cv=none; b=e8IgO0uPtWfZKxNUlhLUbrjLm1PRYd3h+G5ilhpnTbbRhID4cMFRT8LuqfZwo+ZK27AaUMxvCXNaI7cByWZzCT0sw8sjBEAt5hEEfWbFmMp/r+5wqKc22/WOdOD0JhCSggfkbHMEDLgV5M7zBfmmPkYFfftl39IurqHsDhAC4JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114779; c=relaxed/simple;
-	bh=5TeE6nG+SVarqq22UTL3bw8T6FItccUVOc5vZCC71AQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSbe7wL8ywDpUMRgeJ7r+GbETDwMUQ43Ls9yRwA48rZGkY20EKW7uwVIjNAz+JsxKLlME11xi8Hfg85OlkOdbBin/qDVN0hoMnS2XqQJR21LC7khoPB5rUwF0QYyLOm+UxBhOXBDi3i6g42sIoRU7Ls24e0hWpDOQiZqVcw06UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACnreWLIJZmVeCVAw--.49954S2;
-	Tue, 16 Jul 2024 15:26:03 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: joro@8bytes.org,
-	suravee.suthikulpanit@amd.com,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: iommu@lists.linux.dev,
+	s=arc-20240116; t=1721114933; c=relaxed/simple;
+	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c30bxyP/HNMs7nik4yHpEXxjOgmEmIcsyDrFGhaVs8AHAfsYUaE4RZ6iRgPuP+ABwiGPR+lI7LRHTXpPIWn8TCZnRiT9Bx7Zp+eQaw868N66ZXato5HXpIxyBv+7FjcYoxY0GO+52mISx13XoY3nD6F8+w1KnCZhKJi+jlO26V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptlHl7ka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56D2C116B1;
+	Tue, 16 Jul 2024 07:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721114933;
+	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ptlHl7kahu5keqDU2790FlrXYD0BOTtQ7TbQTwB0PxrNCH3e2rtOeGoRJBfMM4CBg
+	 519c/LdG6Y2E/JHLYPO4PP1BgQldPJnldNp3DJjw0h368UjKIJza7R28viaFjP1tGB
+	 Pm0G4S7vNmVJ0lkHhe6XIzDFK19ox93KqGN6bsx6kT3RqZqKLzQGnfCGz7xG+/fGux
+	 zs6yVLKWiOmm+LEC58Fog6f1pZ+yd2kxjIu3kbcG1juqQBXlvgCMo0RL6jAKcmdIKc
+	 VS3Ie4LqQWhHei/TDurhIHawgSnmt9P3tc6mwBIgsr0MOeVEmdr9V14I0HfOGakzHq
+	 J2Wo5UgRs7swg==
+From: Christian Brauner <brauner@kernel.org>
+To: syzkaller-bugs@googlegroups.com,
+	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com,
+	Christian Brauner <brauner@kernel.org>
+Cc: akpm@linux-foundation.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] iommu/amd: Convert comma to semicolon
-Date: Tue, 16 Jul 2024 15:25:45 +0800
-Message-Id: <20240716072545.968690-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH] nsfs: use cleanup guard
+Date: Tue, 16 Jul 2024 09:28:44 +0200
+Message-ID: <20240716-unsterblich-ausnutzen-7c57cce852e4@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240716-elixier-fliesen-1ab342151a61@brauner>
+References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com> <20240716-elixier-fliesen-1ab342151a61@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNU9Qr87DwVuex/m/sv6drj4VD82MpYbee/Atyp4q6U xNVbRM6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqJ4iOF/4eHZ/kHvWE63JHA1 fvjyJmplCMfZ81f8D1vNi+Sz2XRPnZFh75zS+VXNi9vy8i5bnWx226wltCVqxYbPQj0fcnIT7P3 4AA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACnreWLIJZmVeCVAw--.49954S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF1UKry5Kr4Dtw47Jwb_yoWDCwb_ZF
-	1jqrZ3G34YkrnxC3W5twnavryjgayktan2gr92qr93Ar48Ar48Aay8ZFy8uw4UXr43uF1x
-	G3s8Cr13uayqvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
-	CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd5rcUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Replace a comma between expression statements by a semicolon.
+On Tue, 16 Jul 2024 09:19:11 +0200, Christian Brauner wrote:
+> Ensure that rcu read lock is given up before returning.
+> 
+> 
 
-Fixes: c9b258c6be09 ("iommu/amd: Prepare for generic IO page table framework")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/iommu/amd/io_pgtable.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-index 9d9a7fde59e7..1074ee25064d 100644
---- a/drivers/iommu/amd/io_pgtable.c
-+++ b/drivers/iommu/amd/io_pgtable.c
-@@ -588,9 +588,9 @@ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
- {
- 	struct amd_io_pgtable *pgtable = io_pgtable_cfg_to_data(cfg);
- 
--	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES,
--	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE,
--	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE,
-+	cfg->pgsize_bitmap  = AMD_IOMMU_PGSIZES;
-+	cfg->ias            = IOMMU_IN_ADDR_BIT_SIZE;
-+	cfg->oas            = IOMMU_OUT_ADDR_BIT_SIZE;
- 	cfg->tlb            = &v1_flush_ops;
- 
- 	pgtable->iop.ops.map_pages    = iommu_v1_map_pages;
--- 
-2.25.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] nsfs: use cleanup guard
+      https://git.kernel.org/vfs/vfs/c/0052b241e3e5
 
