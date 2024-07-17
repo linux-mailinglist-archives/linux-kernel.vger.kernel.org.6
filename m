@@ -1,119 +1,82 @@
-Return-Path: <linux-kernel+bounces-255655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3199A934341
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8E793434B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BC21F22102
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF971F21EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27821849CF;
-	Wed, 17 Jul 2024 20:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AEC18508A;
+	Wed, 17 Jul 2024 20:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jm84l8Os"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WO0xxgKP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA02122611;
-	Wed, 17 Jul 2024 20:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B891CD3D;
+	Wed, 17 Jul 2024 20:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721248639; cv=none; b=aI06kT8ctO4QNcAugEnWuI/lU7PQSfivNIorEmZfkKHE8Hc/O32xVAbjlIYEnz2ddtWpoRX3Il9Cvgc5PGyy5zf1mms1tz/0h6uS7aTuETZoul0Z870Rc0/wAec+2WIXzaxr89UbYnvW1jYoO1vmnmkww3e7Bt0VbypC5aDPZlA=
+	t=1721248718; cv=none; b=OHUAwrlswTAhiUzk5XNjCIp/KvDZnXcDvlbfZecdt810vkIM3jec40wDloqzWvOr6wOxsX7+igIBiOF/tKALqrsHCRc4DzSDpZ3KDLq+a43IWcxA7U+a4VFztRd+mVpHKkN9p4FV3Iv0lwWlreIeLenX3U/RASrrrkwIikI3b4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721248639; c=relaxed/simple;
-	bh=c/Rf3VkOzW10Ej6A7brjLwqRd4iYmvCUnxVt6/CofQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uH0FT0h/gxIJj5EGlaezH/xE621ZTCL89TQFGXHttGO1bmZgDWRkTdnDr7teRdj/YWQVlszkRc1K2RKxLf2r5CqPJ6tMv6ZDAz54ROuWbz7wQh7rS2fPwN3lwIpVBzBWfUoz9iFpwLVQzE8h9YjzabcA6YfZXNjL4YPJgB9e31A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jm84l8Os; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79f15e7c879so2741385a.1;
-        Wed, 17 Jul 2024 13:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721248637; x=1721853437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9eHeadkJ/ycm/EEj2Bw8QXUOmorlJ8hGNchwcd5kwgo=;
-        b=Jm84l8OsVNi8V0oL8Pq5I/J5Ya75QUSCCVm0M19BXnBMjFesxA2i8MqG3N80wBtaW7
-         pqVvKVNJpvHEAG4+Z5OHndDaoEhapBCFesdqwMbMjcuIfpktzJLcu68nbeFyNgfYWeRE
-         B/6AhEPNEnJhP8AZjiZDR6TopOhuSX7KJzm8ZR0PytzcIIqb78zTR3LoHJeisijIfpBa
-         SRCMnG+rWlo/uknK/8wYoJxtN15O0RcyTauyrXbzN2BK8DbQjcOKNlZXm4iLg8sBbd1N
-         UBNk00S2CwLm9QRq9xNKgfdkn00xbp67V5emZwQAGdh1YxJFZ8v3uwUzGi1ItC2Cneq0
-         Sh3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721248637; x=1721853437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9eHeadkJ/ycm/EEj2Bw8QXUOmorlJ8hGNchwcd5kwgo=;
-        b=erh76IX2ofH3p/MmRdhyuEOsYqOQYpM7Y+qPdywzQMsswbmj3EoiJKx6pjdKeWBPpX
-         19TDDHsYcMflsPermS5vDaM3sqbd32STnTSezCeN0SDRNVjQYI7KK91JsK8MPpb9vXRt
-         tUGsl86XE0odZ7HiSxUiEOTivplIjHKxIBGFIoP3qJxWi9ZX6hIiKZQg+TtbdvAuaCTP
-         4yhiRW2ah9SVbZzlHAh6NSsenBEMUaFvpzr6zc4xt0hCVkShBb6Uu7OHzjDMRa6DmYgb
-         acStfbamzuugfjDtV3Vi73biY/CeCNyjk2wWt8aSp6xfxDctFNZ9icOXjhaN616aOFbG
-         W6oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAwp2lqWO6rK4qxFzN/Jj18wwFCXPVb9YaRWyhGAe9R81H0uEfx2VkxZ9rG/Kq2hhX6x+c2FsI3VcVpDDPByNd3FoGReuVJFPJW9mFCWHRrmE/KBdLTmgsoMiUFsB5K46Yg1nv
-X-Gm-Message-State: AOJu0YzGQdk/CRjq87+0r99jdepsW19K4i3q7EZrhUUtZaxbYf0Jf6uX
-	3LXr0CKrlAghRQEwo0cHAUQ1J69O4Hy3FW8wOpPC/3zoEuD55OZb
-X-Google-Smtp-Source: AGHT+IH5p+ouQnr78z7HNB+2NOypqK4DdN4PPgyTFTXGMDArLdN1QusI9EcM7BN4jDrHnWeP7RfJxA==
-X-Received: by 2002:a05:620a:244b:b0:79f:58e:1198 with SMTP id af79cd13be357-7a18749d57dmr290721185a.43.1721248636664;
-        Wed, 17 Jul 2024 13:37:16 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a160bdee37sm446119885a.69.2024.07.17.13.37.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 13:37:16 -0700 (PDT)
-Message-ID: <4af8a6b1-695a-4feb-bedd-6d8aa11bd40e@gmail.com>
-Date: Wed, 17 Jul 2024 13:37:12 -0700
+	s=arc-20240116; t=1721248718; c=relaxed/simple;
+	bh=EovXMZ5rEW5Vy/ltOb0neFhO4PBhwJXVY0P0Kqrtbc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvkAnc7VbyQzWT1iCvbCyNoQqVYZ1e3xK5rRMi1V+W3oV4JaUmFVzIjQ8y8tk+kOqOMpxYMZuvJgfqsnDRyHV4tMIU6Eg1hPTSsNTcTTrR1O2Oac/S64jr+zB9Rs/4lV2rQ7JbD62/8Bn9oo0MbKvzjysSopQbXVijH1kgdP+Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WO0xxgKP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AR4bvvKbgikgr1hNSmWc94sjnbzhhnfkQ6MfYm0zHgg=; b=WO0xxgKP/SivlOIt43TrwECqCb
+	ESdhwMe71LdmH2/CJd8gOCaKfNoDMA3ABHAG3eTnL7UZrEzpNkyVTyZ8TOFjXr5cVD4jimsAYEugf
+	+bN76HC0uVZOzT3EQYZC8o7Ko9YuSgOIvnJKOsahdyw/rShXsfoTpsnoLZcKtOhEi4lo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sUBPu-002jbm-5g; Wed, 17 Jul 2024 22:38:26 +0200
+Date: Wed, 17 Jul 2024 22:38:26 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, michal.simek@amd.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com,
+	Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+Subject: Re: [PATCH net-next] net: axienet: Fix coding style issues
+Message-ID: <518b7c0c-54df-403a-bb06-495526e160a9@lunn.ch>
+References: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/109] 5.10.222-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240717063758.061781150@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240717063758.061781150@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-On 7/16/24 23:39, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.222 release.
-> There are 109 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Jul 18, 2024 at 12:24:43AM +0530, Radhey Shyam Pandey wrote:
+> From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
 > 
-> Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
-> Anything received after that time might be too late.
+> Replace all occurences of (1<<x) by BIT(x) to get rid of checkpatch.pl
+> "CHECK" output "Prefer using the BIT macro".
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.222-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> It also removes unnecessary ftrace-like logging, add missing blank line
+> after declaration and remove unnecessary parentheses around 'ndev->mtu
+> <= XAE_JUMBO_MTU' and 'ndev->mtu > XAE_MTU'.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Ideally, this should of been multiple patches. In general, we want a
+patch to do one thing, which makes it easier to review.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+net-next is closed at the moment due to the merge window. Please
+repost in two weeks, once it opens again.
 
+	Andrew
 
