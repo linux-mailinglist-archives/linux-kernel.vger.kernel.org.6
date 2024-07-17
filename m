@@ -1,467 +1,176 @@
-Return-Path: <linux-kernel+bounces-254945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDE3933994
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:05:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26763933999
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6176B212D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:05:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7986AB20F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797703BBDE;
-	Wed, 17 Jul 2024 09:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402713BBFB;
+	Wed, 17 Jul 2024 09:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wOdKmyPb"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E6duU5ZO"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A796038F97
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C769538FB9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721207100; cv=none; b=IFx+4x4xsdpLooyzm++Ha22F5Flhpkdet0Vf3CJgVe/KB6pdEfxHgSPKY+X2Aoxphw0VmlQZ+ss5M8EfSQEOi9lMYLq5APcDy8nrrtjjjkLDPFUo3SlgBLj+EpKyQputfHOmTraHC3T7xVk43tYvxqaItD3fCaEZpnPX+iL42AA=
+	t=1721207113; cv=none; b=XB2SEcnZN7tY4QKkPwjzFJycTbXEivsOtma2MQJbwqAwKLbwp32mM5fNCNv85F50wSOs3BEJf6nBfXcjgIuIlOakeicP0rKC2c1NUtncqDDWyiW9zGYeo5DIHn2m86pARR11q6YBR17xHPdM3D9M4G5Vdot1jssYlWqwtSKhNJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721207100; c=relaxed/simple;
-	bh=Y9eH/S3ugDQ2qJBXk0sZV6jyY+jTBizijLU8n6zxjuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaP/5okeM1QTbdrZmbIJZbBCQqPdu9RCy9/nss5vPf8FDwTEyY1r+0Ga71VSB0JAIz+Uvk//RfKSGUY/XP16YnyN1teqEBJO8/mRxfCj8ty6IWVTWAbcIyNQ4GdIXv2FCn0HpGSOKh0XtTIPZkpIHsJ6cmqpk8RZGxzbvMZwxpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wOdKmyPb; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea5765e75so7787912e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:04:55 -0700 (PDT)
+	s=arc-20240116; t=1721207113; c=relaxed/simple;
+	bh=ObqfQUtYDie++HmPt5ZorDO9+Q/jMbX9mYkwseqns2U=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:Mime-Version:
+	 References:In-Reply-To; b=VftkDFcbITWXJcRMnvkHF6LuH7C92d0jrcDbJ2GzIsqGUf07PAzsa3UouJ8+vhAJ1MATZ0Fwt2YMP3+jLThl6z3dacv48qJnrBoakupwF0ZIhcBpklnxwGXSZsuoQyQqdAPOhK916I9WhcONstExUlHS9wU4S9cAmgOMRLoR2Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E6duU5ZO; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso45795555e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721207094; x=1721811894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+REiBdUt9fLTjTn3aZcwCqL9kZgI0FUrI3zxX22R/T0=;
-        b=wOdKmyPbx6f8MK8735gWzw0Xyrl0NoKmXlsQWySeu8IT+keUhrspWcOspTRYFiGO6R
-         +ncLjviuaVDVUdrkK9SFb2yRx+D/aLcvf9iq/5wYATJ7PC0yL4U5xIQl6sEsesovlrHD
-         N7Xjm3BjYZA2JfoMtfF0CH8SyTv+nNKLnomNNF+Dley43zk9OeKkB2UiIJbyKRaf25f+
-         B5ll2IqtVNmbwSj/rXMgoZWr3PF/fro2rwmj+9wgA4m3IRLKTMdd1CuTDwnahg727GPv
-         ARcq50IXC/6ifI28A7qwQ9N4O3tifqadkdNvhi/cHku/Cz/Kqmo1j93bgfY3Cvz8zbu8
-         whxQ==
+        d=linaro.org; s=google; t=1721207110; x=1721811910; darn=vger.kernel.org;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:to
+         :from:subject:cc:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aAzQXd9LJcp02DYmVNQFa1UX+nCqT+MKPqGArjh8hKc=;
+        b=E6duU5ZObJ8feswjlHLkAkFu6WdVPWjcS0JN/QXZrat/20NhOgO/uQcBwnz19xDt54
+         BTSRXjnni09tkMv1/blCpbuKyaxLFyvzXZJJMafwf0tyVhbH8zjnwM954jm9FeRfT+2X
+         xEGa6L9U3nXg9AfMu4zOydOkmjNAjnqFH699q6ZzThfWuBBYKNL/hXXwbvUPAjAOJXMr
+         Om9sGJH1GHR2YyCQ+zRcUNrvy9IeducYIlAC8LpyVCKC6cEyhd4GlRM4BtqVQ3Wr5+g8
+         IJMfSuuBJTG9BhqhnS3TFO+si/OhSIURc0St+NZb0f4YM/sbqeSKRToV1aTH8yOa/SPf
+         4r2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721207094; x=1721811894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+REiBdUt9fLTjTn3aZcwCqL9kZgI0FUrI3zxX22R/T0=;
-        b=cNl8uYSOfb9RQKmkBZhlvNQdQ6iZjFV9Wyt01sMmsSMwc6+KlvLH1DC7E86pwqQxLl
-         7ALNka3V6bu3WeIb6CzWFkbEGhobFIOumq9Nc+HlBHQJj0bj5blGRUoGJCt6fDdr5Oxu
-         ueGWkQNZhn6qXW3/XEqSEVzzkrhlXdx6KjFC9EGROxyNBPYEQLOGddJIbGt7MqGyG8mr
-         XoGjB7ho1/YcdKpRRaWpr33hEvcmmcTl+I4rAqgM0RLVpN71PMjBF3yNjGpLMnWI/DP4
-         PqGlwmDbanimqQVDRPRyKh/kXISZqfG57OjVZQ/E82E33jzGEJAK4KcjWiUZhgwei/be
-         lqeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZspuqfag3xz524modc5av5dmdFse+Pj2TfZHSvYx87lgpjETHEI+yStcUl+5kznL9XsIt6o8kk9bOXiSlsMzvH4nKwswlPzs47bXO
-X-Gm-Message-State: AOJu0Yw/CS0s9gCfMceWlAwMr5eLwcMlbgHfoTVYWU5dOSCv7IIT7u5+
-	R9635NvyPKzjRSUr82f1CWnLJ4Gy/3DGOK2QpvbnDeJML3dNUWNy0gBTggLoIcw=
-X-Google-Smtp-Source: AGHT+IE1MQcw5XqPWmhELteUJAGg6G/f7zdNsvsFs5aYx4eY3O1yvitQtH1A6wC9h6Vq5TO1tIGkHg==
-X-Received: by 2002:a05:6512:3f16:b0:52c:e01f:3665 with SMTP id 2adb3069b0e04-52ee53b15eemr833414e87.25.1721207093377;
-        Wed, 17 Jul 2024 02:04:53 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d202fsm421896666b.78.2024.07.17.02.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 02:04:52 -0700 (PDT)
-Date: Wed, 17 Jul 2024 11:04:50 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Clark Wang <xiaoning.wang@nxp.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Jindong Yue <jindong.yue@nxp.com>
-Subject: Re: [PATCH 4/6] pwm: adp5585: add adp5585 PWM support
-Message-ID: <u7xii4lfvjk6gbpmq7qtqckoznddiyno7xsaa74ufuxwdob532@wxuawwiwjpgm>
-References: <20240716-adi-v1-0-79c0122986e7@nxp.com>
- <20240716-adi-v1-4-79c0122986e7@nxp.com>
+        d=1e100.net; s=20230601; t=1721207110; x=1721811910;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:to
+         :from:subject:cc:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aAzQXd9LJcp02DYmVNQFa1UX+nCqT+MKPqGArjh8hKc=;
+        b=kaF1rW2YurgAULFNUsNOHHqNg7Zmcm28LxqyptNl99iz6k/pwSVFUyw/psiB33dw5Y
+         BHuEMTCUYILuF2uL7QqpOPi5QuJ1QkDIS3RzpEq7CeSw60YvOrclojBQNIV7x7dbYJRp
+         Bt8C7w11+ZpnUiH8VAgEY/9zOHLlFJoukUHkbWzUwkl36wKXOnHXCXUEksZQF4OjAs9k
+         SrDWsr03K6LecYyvQU3C+oj0eSHn6yXY15ulR1IrCcYv0EuNHyAVeO5iYw5DMbHAulLO
+         6bMNiyq8hsIsHq0ssjwcmF3h/dLSeA8tmtqZQOfj7ZwVuxl1aLc3e7n6X89IPeeT+x+I
+         mjhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKqPXZgqb/vTSAuxhbfXLnAoxvEXMVw4S8QtmrHQc9Z69a9C8YYoorZM7evNTn3E3szdD4xTNl4E5+CW/DoVbUBnzJZOLm7A4YGOjm
+X-Gm-Message-State: AOJu0Yyr5rMvw9Vwp9h7zVpV2GDRd4t+s5aMxAXtrgZdlZ2N+o88E3eA
+	GtosA5wAmUmhdvbNo8OlentDafbXC07kAQBavSbfegJ0DBMvHI4jJtOy6kXx0A8=
+X-Google-Smtp-Source: AGHT+IGa1tDli7v6EaGQTMt/tidR5Lrxr8FuvL748K63FzAfgBVSYo8+y/5aPRJPTBufRud9pKlU0A==
+X-Received: by 2002:a5d:4843:0:b0:367:89b0:f58a with SMTP id ffacd0b85a97d-3683175d0admr787786f8f.58.1721207110081;
+        Wed, 17 Jul 2024 02:05:10 -0700 (PDT)
+Received: from localhost ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db048a8sm11095848f8f.111.2024.07.17.02.05.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 02:05:09 -0700 (PDT)
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Jul 2024 10:05:09 +0100
+Message-Id: <D2ROZY3KYF19.3KJC3CS82AWMO@linaro.org>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Bjorn
+ Andersson" <andersson@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Damien Le Moal" <dlemoal@kernel.org>, "de Goede" <hdegoede@redhat.com>,
+ "Jens Axboe" <axboe@kernel.dk>, "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, <linux-ide@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Rob Herring" <robh@kernel.org>
+Subject: Re: [PATCH 1/3] ARM: dts: qcom: {a,i}pq8064: correct clock-names in
+ sata node
+From: "Rayyan Ansari" <rayyan.ansari@linaro.org>
+To: "Niklas Cassel" <cassel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ehgbnkhnzwpb5gdt"
-Content-Disposition: inline
-In-Reply-To: <20240716-adi-v1-4-79c0122986e7@nxp.com>
-
-
---ehgbnkhnzwpb5gdt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.17.0-0-g6ea74eb30457
+References: <20240716105245.49549-1-rayyan.ansari@linaro.org>
+ <20240716105245.49549-2-rayyan.ansari@linaro.org>
+ <ZpeEq_QmV-aerpCW@ryzen.lan>
+In-Reply-To: <ZpeEq_QmV-aerpCW@ryzen.lan>
 
-Hello Clark,
+On Wed Jul 17, 2024 at 9:45 AM BST, Niklas Cassel wrote:
+> On Tue, Jul 16, 2024 at 11:45:59AM +0100, Rayyan Ansari wrote:
+> > Correct the clock-names in the AHCI SATA controller node to adhere to
+> > the bindings.
+> >=20
+> > Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+>
+> Hello Rayyan,
+>
+> This patch is 1/3, so first in the series.
+> A patch that is first in the series usually has no other dependencies.
+> (Unless referencing another series in the cover-letter.)
+>
+> So is this a fix that can be sent out separately and picked up the
+> QCOM maintainers / ARM DT maintainers directly, or does this patch
+> actually depend on patches 2-3 ?
 
-On Tue, Jul 16, 2024 at 03:28:27PM -0400, Frank Li wrote:
-> From: Clark Wang <xiaoning.wang@nxp.com>
->=20
-> Add PWM function support for MFD adp5585.
->=20
-> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> Signed-off-by: Jindong Yue <jindong.yue@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pwm/Kconfig       |   8 ++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-adp5585.c | 215 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 224 insertions(+)
->=20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 3e53838990f5b..baaadf877b9c6 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -38,6 +38,14 @@ config PWM_DEBUG
->  	  It is expected to introduce some runtime overhead and diagnostic
->  	  output to the kernel log, so only enable while working on a driver.
-> =20
-> +config PWM_ADP5585
-> +	tristate "ADP5585 PWM support"
-> +	depends on MFD_ADP5585
-> +	help
-> +	  This option enables support for on-chip PWM found
-> +	  on Analog Devices ADP5585.
-> +
-> +
->  config PWM_AB8500
->  	tristate "AB8500 PWM support"
->  	depends on AB8500_CORE && ARCH_U8500
+Hi Niklas,
 
-alphabetic ordering (by config symbol) please.
+Yes, this patch does not depend on the following two patches, I just
+thought that sending this as a series would make sense given that
+patches 2-3 would surface this error (as we can run dtbs_check against
+yaml bindings but not text bindings).
 
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 0be4f3e6dd432..161131a261e94 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -2,6 +2,7 @@
->  obj-$(CONFIG_PWM)		+=3D core.o
->  obj-$(CONFIG_PWM_AB8500)	+=3D pwm-ab8500.o
->  obj-$(CONFIG_PWM_APPLE)		+=3D pwm-apple.o
-> +obj-$(CONFIG_PWM_ADP5585)	+=3D pwm-adp5585.o
->  obj-$(CONFIG_PWM_ATMEL)		+=3D pwm-atmel.o
->  obj-$(CONFIG_PWM_ATMEL_HLCDC_PWM)	+=3D pwm-atmel-hlcdc.o
->  obj-$(CONFIG_PWM_ATMEL_TCB)	+=3D pwm-atmel-tcb.o
+> If the former, I suggest that you send out patch 1/3 as a standalone
+> fix, since it does not need to be blocked by unrelated DT binding
+> conversion.
 
-alphabetic ordering please.
+Ah okay - for v2 I'll send patch 1 on its own, and then patch 2 & 3 as a
+series.
 
-> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
-> new file mode 100644
-> index 0000000000000..f578d24df5c74
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-adp5585.c
-> @@ -0,0 +1,215 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * PWM driver for Analog Devices ADP5585 MFD
-> + *
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/adp5585.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/slab.h>
-> +#include <linux/time.h>
-> +
-> +#define ADP5585_PWM_CHAN_NUM		1
+> If the latter, perhaps reorder the patches and improve the commit log
+> for this patch.
+>
+>
+> Kind regards,
+> Niklas
 
-This is only used once. I'd prefer to pass the 1 verbatim to
-pwmchip_alloc.
+Thanks,
+Rayyan
 
-> +#define ADP5585_PWM_FASTEST_PERIOD_NS	2000
-> +#define ADP5585_PWM_SLOWEST_PERIOD_NS	131070000
+> > ---
+> >  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 4 ++--
+> >  arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi | 2 +-
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/d=
+ts/qcom/qcom-apq8064.dtsi
+> > index 81cf387e1817..277bde958d0e 100644
+> > --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> > +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> > @@ -889,9 +889,9 @@ sata0: sata@29000000 {
+> >  				 <&gcc SATA_PMALIVE_CLK>;
+> >  			clock-names =3D "slave_iface",
+> >  				      "iface",
+> > -				      "bus",
+> > +				      "core",
+> >  				      "rxoob",
+> > -				      "core_pmalive";
+> > +				      "pmalive";
+> > =20
+> >  			assigned-clocks =3D <&gcc SATA_RXOOB_CLK>,
+> >  					  <&gcc SATA_PMALIVE_CLK>;
+> > diff --git a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi b/arch/arm/boot/d=
+ts/qcom/qcom-ipq8064.dtsi
+> > index da0fd75f4711..dd974eb4065f 100644
+> > --- a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
+> > +++ b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
+> > @@ -1292,7 +1292,7 @@ sata: sata@29000000 {
+> >  				 <&gcc SATA_A_CLK>,
+> >  				 <&gcc SATA_RXOOB_CLK>,
+> >  				 <&gcc SATA_PMALIVE_CLK>;
+> > -			clock-names =3D "slave_face", "iface", "core",
+> > +			clock-names =3D "slave_iface", "iface", "core",
+> >  					"rxoob", "pmalive";
+> > =20
+> >  			assigned-clocks =3D <&gcc SATA_RXOOB_CLK>, <&gcc SATA_PMALIVE_CLK>;
+> > --=20
+> > 2.45.2
+> >=20
 
-Funny number. I wonder where this comes from.
-
-> +struct adp5585_pwm_chip {
-> +	struct device *parent;
-> +	struct mutex lock;
-> +	u8 pin_config_val;
-> +};
-> +
-> +static inline struct adp5585_pwm_chip *
-> +to_adp5585_pwm_chip(struct pwm_chip *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static int adp5585_pwm_reg_read(struct adp5585_pwm_chip *adp5585_pwm, u8=
- reg, u8 *val)
-> +{
-> +	struct adp5585_dev *adp5585  =3D dev_get_drvdata(adp5585_pwm->parent);
-
-s/  / /;
-ditto below in adp5585_pwm_reg_write().
-
-> +
-> +	return adp5585->read_reg(adp5585, reg, val);
-> +}
-> +
-> +static int adp5585_pwm_reg_write(struct adp5585_pwm_chip *adp5585_pwm, u=
-8 reg, u8 val)
-> +{
-> +	struct adp5585_dev *adp5585  =3D dev_get_drvdata(adp5585_pwm->parent);
-> +
-> +	return adp5585->write_reg(adp5585, reg, val);
-> +}
-> +
-> +static int pwm_adp5585_get_state(struct pwm_chip *chip, struct pwm_devic=
-e *pwm,
-> +				 struct pwm_state *state)
-> +{
-> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
-> +	u32 on, off;
-> +	u8 temp;
-> +
-> +	/* get period */
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_OFFT_LOW, &temp);
-> +	off =3D temp;
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_OFFT_HIGH, &temp);
-> +	off |=3D temp << 8;
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_ONT_LOW, &temp);
-> +	on =3D temp;
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_ONT_HIGH, &temp);
-> +	on |=3D temp << 8;
-> +	state->period =3D (on + off) * NSEC_PER_USEC;
-> +
-> +	state->duty_cycle =3D on;
-> +	state->polarity =3D PWM_POLARITY_NORMAL;
-> +
-> +	/* get channel status */
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_CFG, &temp);
-> +	state->enabled =3D temp & ADP5585_PWM_CFG_EN;
-> +
-> +	return 0;
-> +}
-> +
-> +static int pwm_adp5585_apply(struct pwm_chip *chip,
-> +			     struct pwm_device *pwm,
-> +			     const struct pwm_state *state)
-> +{
-> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
-> +	u32 on, off;
-> +	u8 enabled;
-> +	int ret;
-> +
-> +	if (state->period > ADP5585_PWM_SLOWEST_PERIOD_NS ||
-> +	    state->period < ADP5585_PWM_FASTEST_PERIOD_NS)
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&adp5585_pwm->lock);
-
-What does this protect? You're allowed (and expected) to assume that the
-consumer serializes calls to .apply() for a single pwm_device. Given
-that you have npwm=3D1 I think this lock can be dropped.
-
-> +	/* set on/off cycle*/
-> +	on =3D DIV_ROUND_CLOSEST_ULL(state->duty_cycle, NSEC_PER_USEC);
-> +	off =3D DIV_ROUND_CLOSEST_ULL((state->period - state->duty_cycle), NSEC=
-_PER_USEC);
-
-Please enable PWM_DEBUG your tests and make sure it doesn't produce
-warnings. (Hint: round_closest is wrong)
-
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_OFFT_LOW, off & =
-ADP5585_REG_MASK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_OFFT_HIGH,
-> +				    (off >> 8) & ADP5585_REG_MASK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_ONT_LOW, on & AD=
-P5585_REG_MASK);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_ONT_HIGH,
-> +				    (on >> 8) & ADP5585_REG_MASK);
-> +	if (ret)
-> +		return ret;
-
-How does the hardware behave in between these register writes? Can it
-happen that an intermediate state is visible on the output pin? (E.g.
-because off is already written but on is still the old value. Or even
-off is only partly written after the first byte write.)
-
-Please document this behaviour in a paragraph at the top of the driver
-in the same way as many other PWM drivers do it. The details should be
-extractable by
-
-	sed -rn '/Limitations:/,/\*\/?$/p' drivers/pwm/*.c
-
-> +
-> +	/* enable PWM and set to continuous PWM mode*/
-
-Missing space before comment ending delimiter
-
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PWM_CFG, &enabled);
-> +	if (state->enabled)
-> +		ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_CFG, ADP5585_PW=
-M_CFG_EN);
-> +	else
-> +		ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PWM_CFG, 0);
-> +
-> +	return ret;
-> +}
-> +
-> +static int pwm_adp5585_request(struct pwm_chip *chip, struct pwm_device =
-*pwm)
-> +{
-> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
-> +	u8 reg_cfg;
-> +	int ret;
-> +
-> +	guard(mutex)(&adp5585_pwm->lock);
-> +
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PIN_CONFIG_C, &adp5585_pwm->p=
-in_config_val);
-> +	reg_cfg =3D adp5585_pwm->pin_config_val & ~ADP5585_PIN_CONFIG_R3_MASK;
-> +	reg_cfg |=3D ADP5585_PIN_CONFIG_R3_PWM;
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PIN_CONFIG_C, reg_cf=
-g);
-
-ret is only written to here, ditto for &adp5585_pwm->pin_config_val.
-
-> +
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_GENERAL_CFG, &adp5585_pwm->pi=
-n_config_val);
-> +	reg_cfg |=3D ADP5585_GENERAL_CFG_OSC_EN;
-> +	ret =3D adp5585_pwm_reg_write(adp5585_pwm, ADP5585_GENERAL_CFG, reg_cfg=
-);
-
-Please add a comment about what is happening here. I assume this sets up
-pinmuxing and enabled the oscillator. I wonder if it is sensible to do
-the latter only in .apply() iff state->enabled =3D true.
-
-> +
-> +	return ret;
-> +}
-> +
-> +static void pwm_adp5585_free(struct pwm_chip *chip, struct pwm_device *p=
-wm)
-> +{
-> +	struct adp5585_pwm_chip *adp5585_pwm =3D to_adp5585_pwm_chip(chip);
-> +	u8 reg_cfg;
-> +
-> +	guard(mutex)(&adp5585_pwm->lock);
-> +
-> +	adp5585_pwm_reg_read(adp5585_pwm, ADP5585_PIN_CONFIG_C, &reg_cfg);
-> +	reg_cfg &=3D ~ADP5585_PIN_CONFIG_R3_MASK;
-> +	reg_cfg |=3D adp5585_pwm->pin_config_val & ADP5585_PIN_CONFIG_R3_MASK;
-> +	adp5585_pwm_reg_write(adp5585_pwm, ADP5585_PIN_CONFIG_C, reg_cfg);
-
-It would be consequent to clear ADP5585_GENERAL_CFG_OSC_EN in this
-function given that it's set in .request().
-
-> +}
-> +
-> +static const struct pwm_ops adp5585_pwm_ops =3D {
-> +	.request =3D pwm_adp5585_request,
-> +	.free =3D pwm_adp5585_free,
-> +	.get_state =3D pwm_adp5585_get_state,
-> +	.apply =3D pwm_adp5585_apply,
-> +};
-> +
-> +static int adp5585_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct adp5585_pwm_chip *adp5585_pwm;
-> +	struct pwm_chip *chip;
-> +	unsigned int npwm =3D ADP5585_PWM_CHAN_NUM;
-> +	int ret;
-> +
-> +	chip =3D devm_pwmchip_alloc(&pdev->dev, npwm, sizeof(*adp5585_pwm));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-
-Error message using dev_err_probe() please.
-
-> +
-> +	adp5585_pwm =3D to_adp5585_pwm_chip(chip);
-> +	adp5585_pwm->parent =3D pdev->dev.parent;
-> +
-> +	platform_set_drvdata(pdev, adp5585_pwm);
-> +
-> +	chip->ops =3D &adp5585_pwm_ops;
-> +	mutex_init(&adp5585_pwm->lock);
-> +
-> +	ret =3D devm_pwmchip_add(&pdev->dev, chip);
-> +	if (ret)
-> +		dev_err(&pdev->dev, "failed to add PWM chip: %d\n", ret);
-
-Please use dev_err_probe().
-
-> +
-> +	return ret;
-> +}
-> +
-> +static void adp5585_pwm_remove(struct platform_device *pdev)
-> +{
-> +	struct pwm_chip *chip =3D platform_get_drvdata(pdev);
-> +
-> +	pwmchip_remove(chip);
-
-Did you test this? I'd expect this to explode.
-
-> +}
-> +
-> +static const struct of_device_id adp5585_pwm_of_match[] =3D {
-> +	{.compatible =3D "adp5585-pwm", },
-
-Missing space after the opening brace.
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, adp5585_pwm_of_match);
-> +
-> +static struct platform_driver adp5585_pwm_driver =3D {
-> +	.driver	=3D {
-> +		.name	=3D "adp5585-pwm",
-> +		.of_match_table =3D adp5585_pwm_of_match,
-> +	},
-> +	.probe		=3D adp5585_pwm_probe,
-> +	.remove		=3D adp5585_pwm_remove,
-> +};
-> +module_platform_driver(adp5585_pwm_driver);
-> +
-> +MODULE_AUTHOR("Xiaoning Wang <xiaoning.wang@nxp.com>");
-
-The email address matches one of the S-o-b lines, the name however is
-different. Is this by mistake?
-
-> +MODULE_DESCRIPTION("ADP5585 PWM Driver");
-> +MODULE_LICENSE("GPL");
-
---ehgbnkhnzwpb5gdt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaXiTAACgkQj4D7WH0S
-/k5w3AgAsGbCPSxLacT5kGp/37SXTEIYM5B0a0vkkzPr8XTV/jpgpjIX2TOYxfSO
-Oa5LktMECFBkveY1RovhPbMNlzhot3t2FhHymfpdGFhVM0ykmLS3v+QD13dslEDw
-ZyvBTDa+/7fi8WiF4YJ8cgyvLfTyJ/X7K2N8ki44p4REAYtTMQg6Npq+2ZTvC4iF
-iQ8KrOROIrKnR/FmHMAxrS3ykvEvdIbXjv13FoZVER2wS1z+XNJ+vwN3wlAq+rQM
-g7gu1SSBtA8fRVxG6UNzXuSwJBZNJGYL02st6IE/Z+0dX7KJMzOni8IMC+qO2EFI
-ZXIOW8DP4kpOp+30prNT/8xHBYWUIw==
-=IUGp
------END PGP SIGNATURE-----
-
---ehgbnkhnzwpb5gdt--
 
