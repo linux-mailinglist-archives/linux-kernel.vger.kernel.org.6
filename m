@@ -1,80 +1,158 @@
-Return-Path: <linux-kernel+bounces-254730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF6E9336EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2530F9336F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690581F23C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E7C1F21353
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EC315E81;
-	Wed, 17 Jul 2024 06:24:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E7A1862A;
+	Wed, 17 Jul 2024 06:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c7h37oqy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BEB12B6C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C8D182B9;
+	Wed, 17 Jul 2024 06:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197464; cv=none; b=iMYD8oKwooDihAFKharWxbGWoVdXXx+mbbJVnZ4/7f8SF8tbfVe0WYzZgHiwOdL7AssF8fZOI9zmwImH2E/zyJ2Fvq6z3lfV+aaldU1WKpwA6/HxEPDWL21kR6kH60udRVY+YX7NQU225acKlgQ+fl7elpE3sOQ6KJMTm/A87zg=
+	t=1721197467; cv=none; b=XM/08XFiwdiJraRXyiuBlkEevmlK+Ka/a/gfxJU6FuZTfQgkIopZtKFpwnPm7u/m2OzcMrPMZlyvV6v+ooRBilhH9yBw/NWB5ehKJ66E+0WIvtni77sZfIqXInVFshFt13junjlxMxmEUPYpiLNzgbGtOZpMC9GZI5Ep3NQa+a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197464; c=relaxed/simple;
-	bh=xJghMIDSFZMQwcT/bSxKpvABpwSoalmPwzGjPqwQMIM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fapyViqKLJPhMBJHtpyBsjyZhyzjsPZDTUWU8KdMTnt7girVXgloZpGu6/hdWhNzWKGstgWLwnPM35QTlPCc0Sn5A0xlTkEhrU0kF1GdWvYZSzGhI+AsTPHHAuyVeFY1MZxa8FVex1C7jlIdciNDIfLmhGKP87MVj8gkJmJsOTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-382e66d79a4so9244505ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:24:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721197463; x=1721802263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0Nn3s13nczj2fIBPcpMuDTEigrtwN2HthLoUAG4F7w=;
-        b=q46Kg+FhOoDa4HaOKiuuIGupCP2ukZS8YR9Qu0492nMmGSHeYC4Y4peO/tUT0zI/O/
-         7MML6crvIvr2KNkcDuHnOuhmPrtvkm43xszLJcptO7MvZ1izP3InBqsc+VcuvKEdioCc
-         7NHz6bW0TluTJTWYwJgvrCONLzQZ79Yoxo1bgv0JyLFt1oHCpj3cLQUEJhAWPq4Ii+iL
-         4HEqVQioPXKU1UcSuKKdNd1QrWDlyPDgGsPVHXFCJOd+3OeWmRNmEWEE0bUGL7h1a4Ed
-         qgIliQZBKSj1ONSdR41/Af2lBkOyVgMdHVOg5t2mQ9bL6rl2pxKQys7X8lj5/1s0Da1L
-         xHhA==
-X-Gm-Message-State: AOJu0YwVj51bh2gQh8qX6Mp329rgNucWEJSCgV4Tyw/+o92FF2NueN7w
-	p76++WUhgbvw2pil9qFR9/REWmErGrGDJXzdvBgznn8uYhwG16HhCi0nKYaY5bBn2lt3MY4nGXw
-	/PjNyo1D/W6uWaNWQHxGNaYG3j6aTEy0MaP54f/4+DQe7ZkNQRGEa5Yo=
-X-Google-Smtp-Source: AGHT+IE6QJ0/v5YV+rCMt/sV6/BfPeTLhjTleZGm4wWM9J5kefRmV4qJGJwCFfbbRZIIfZN/Vtod8CnO8oVA7YN+3hh9MbxDBio9
+	s=arc-20240116; t=1721197467; c=relaxed/simple;
+	bh=RdbzDXJzGn73GVJApCxOgvtdvQRZ69jsEk+ZWOuXZ0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0qNdIZjGvmho2WPLMExIcfwLs6uMQOicG3oWJ799EjEBQ0Taozepql2rqbA/CAwTSCle1VsJup++0GOAhtM/zFLZeXc7fXr8MfoIm9PuvNQx6gcRL37mWWB0PbuUnfWElNjVpUojULx3os9/d0tqoVY/paRA6FxnyIxa8kwbw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c7h37oqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101AC32782;
+	Wed, 17 Jul 2024 06:24:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721197466;
+	bh=RdbzDXJzGn73GVJApCxOgvtdvQRZ69jsEk+ZWOuXZ0E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c7h37oqyeaqjsB5VzBL/uK+JriHqGPmA7682SWLa2sA1cOGRBAJmH+eZ0zfZ2iHiW
+	 TcFtJ5A4wRIs4v4+wrFPBGYjRGUhXGgkIbs2yHeIX4TJtfD7MiPa+53jj5nXuruO7s
+	 Ec+U/Os1B5XfRslgdjFKTAVRFVm3dR+FjFo2YQDI=
+Date: Wed, 17 Jul 2024 08:24:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, Paulo Alcantara <pc@manguebit.com>,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/96] 6.1.100-rc1 review
+Message-ID: <2024071701-boned-drove-1269@gregkh>
+References: <20240716152746.516194097@linuxfoundation.org>
+ <aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cb:b0:380:d109:9abf with SMTP id
- e9e14a558f8ab-39555800cddmr977325ab.2.1721197462712; Tue, 16 Jul 2024
- 23:24:22 -0700 (PDT)
-Date: Tue, 16 Jul 2024 23:24:22 -0700
-In-Reply-To: <000000000000ea9fef05eb3621b6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a8530061d6b83b1@google.com>
-Subject: Re: [syzbot] possible fix
-From: syzbot <syzbot+36bb70085ef6edc2ebb9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Jul 16, 2024 at 11:42:39AM -0700, Florian Fainelli wrote:
+> On 7/16/24 08:31, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.100 release.
+> > There are 96 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.100-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Commit acbfb53f772f96fdffb3fba2fa16eed4ad7ba0d2 ("cifs: avoid dup prefix
+> path in dfs_get_automount_devname()") causes the following build failure on
+> bmips_stb_defconfig:
+> 
+> In file included from ./include/linux/build_bug.h:5,
+>                  from ./include/linux/container_of.h:5,
+>                  from ./include/linux/list.h:5,
+>                  from ./include/linux/module.h:12,
+>                  from fs/smb/client/cifsfs.c:13:
+> fs/smb/client/cifsproto.h: In function 'dfs_get_automount_devname':
+> fs/smb/client/cifsproto.h:74:22: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   if (unlikely(!server->origin_fullpath))
+>                       ^~
+> ./include/linux/compiler.h:78:42: note: in definition of macro 'unlikely'
+>  # define unlikely(x) __builtin_expect(!!(x), 0)
+>                                           ^
+> In file included from fs/smb/client/cifsfs.c:35:
+> fs/smb/client/cifsproto.h:78:14: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>         server->origin_fullpath,
+>               ^~
+> fs/smb/client/cifsproto.h:79:21: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>         strlen(server->origin_fullpath),
+>                      ^~
+> fs/smb/client/cifsproto.h:88:21: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   len = strlen(server->origin_fullpath);
+>                      ^~
+> fs/smb/client/cifsproto.h:93:18: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   memcpy(s, server->origin_fullpath, len);
+>                   ^~
+> In file included from ./include/linux/build_bug.h:5,
+>                  from ./include/linux/container_of.h:5,
+>                  from ./include/linux/list.h:5,
+>                  from ./include/linux/wait.h:7,
+>                  from ./include/linux/wait_bit.h:8,
+>                  from ./include/linux/fs.h:6,
+>                  from fs/smb/client/cifs_debug.c:8:
+> fs/smb/client/cifsproto.h: In function 'dfs_get_automount_devname':
+> fs/smb/client/cifsproto.h:74:22: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   if (unlikely(!server->origin_fullpath))
+>                       ^~
+> ./include/linux/compiler.h:78:42: note: in definition of macro 'unlikely'
+>  # define unlikely(x) __builtin_expect(!!(x), 0)
+>                                           ^
+> In file included from fs/smb/client/cifs_debug.c:16:
+> fs/smb/client/cifsproto.h:78:14: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>         server->origin_fullpath,
+>               ^~
+> fs/smb/client/cifsproto.h:79:21: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>         strlen(server->origin_fullpath),
+>                      ^~
+> fs/smb/client/cifsproto.h:88:21: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   len = strlen(server->origin_fullpath);
+>                      ^~
+> fs/smb/client/cifsproto.h:93:18: error: 'struct TCP_Server_Info' has no
+> member named 'origin_fullpath'
+>   memcpy(s, server->origin_fullpath, len);
+>                   ^~
+> host-make[6]: *** [scripts/Makefile.build:250: fs/smb/client/cifsfs.o] Error
+> 1
+> host-make[6]: *** Waiting for unfinished jobs....
 
-***
+Ugh, this was because I had to add a fixup patch for a different patch
+here.  I'll go drop both of them for now, thanks.
 
-Subject: possible fix
-Author: almaz.alexandrovich@paragon-software.com
-
-#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git 
-d57431c6f511bf020e474026d9f3123d7bfbea8c
-
-
-
+greg k-h
 
