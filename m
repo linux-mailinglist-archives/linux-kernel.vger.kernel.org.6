@@ -1,278 +1,253 @@
-Return-Path: <linux-kernel+bounces-255495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0185934174
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B450F93417C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3091F2111D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:25:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61301C21509
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF49182A56;
-	Wed, 17 Jul 2024 17:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C34182A56;
+	Wed, 17 Jul 2024 17:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UBh9GBep"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUvVoIpX"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859C11822CA;
-	Wed, 17 Jul 2024 17:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721237101; cv=fail; b=GnTO/DbAFdtkw7QQCaqxmvgiroR+Kc8WVI3VcgusdNTqdvBL0dc/5kQLLHxczwPzie/3y7qEvxWXoR/ht3ucXZLq32Rc+gEUFZvUEmsCRJWT/l3Be23qNF4y82kvCisq8bo5SHvPAoqww7nahrKqntFjz4roGReLeBIFQ4/Ho+Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721237101; c=relaxed/simple;
-	bh=qcc+7//EPAW0NROsu9WcUkDvmdpC8yVhVxqTgFKOn1s=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tu0Hc6fD4KFqa+ZBhYcgf90jAJMZHISRuektwOdkl1H0k6tEu9lf6fZ4zy5IKXX/tDoGIwkyz/391joqqtXxOYZ0bfmkT25B0iqMgeaGyE+lxwDpdxanVEqz/gKaMdEiVAaCSwFiTWWkiuBGPSuBBhO1sLsKQm0sk/JUw493W3M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UBh9GBep; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721237100; x=1752773100;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qcc+7//EPAW0NROsu9WcUkDvmdpC8yVhVxqTgFKOn1s=;
-  b=UBh9GBepNs1W4bHO/CykQCDlXqNaf7z2Kj0jtkFL+jtNEotPkeca7vK9
-   bMNHto7FwClBRrM0FtgegHR/wbFgTGtCcCCL/nbRh2vIu2BTdvyEfA1aY
-   SCm+/7VSvmMdxRZ+MCQ/CUQqDn74YuZ5e8JOru6LSwZ3RJf38aVmXUEP5
-   nbhfa8AD8qe+gOcZOiGUlxYHWZtbUov698IBD1cJy2eYeN/AhDe8koMl/
-   zAvcdQ9E9NJTtv7HOHm6lWKFV8dCXxntxRiUCZHhqGWHOcjdTQO48NEVH
-   LtyG4xQBtIXXp1XXtNANzHBxkEZsLgXM9TkSp+s9oh+nOj4NoXyQEitEw
-   Q==;
-X-CSE-ConnectionGUID: R29AnZSiT/+YBDp+VJRI2w==
-X-CSE-MsgGUID: FpUw3P4ZQKi4H/6AZcHEPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29909064"
-X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
-   d="scan'208";a="29909064"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 10:24:59 -0700
-X-CSE-ConnectionGUID: idtkoK/2SmWItzyzMWBREQ==
-X-CSE-MsgGUID: 6oGWgNweSk+IvYkhpS3U7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
-   d="scan'208";a="73704190"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Jul 2024 10:24:58 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 17 Jul 2024 10:24:57 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 17 Jul 2024 10:24:57 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 17 Jul 2024 10:24:57 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 17 Jul 2024 10:24:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MRlumxTzRfQh1PCiawF8tMRp3KUW2dPdUhHQqpH4DQvSmoIavdyuqOBFuAn0ckxdcjdFMtgA0V8w2JCc9ljF5GIANI9R6E4ay0arxkbCj1/KUCoPnPoqIDzw42hOF4jghAqwMQzG+wRXhappxYJz+ILKnlW3yjfqwYtsubWDaF0822eM0X6RmOGZFhLbpsHrtuv1MHHJvwZST9SyVxLECP+0xYqi5Y1wHYeCZxz2tLKccWWGMMLefK3rk6nayOhfrICAZcPV1kM43Q4nbCseD4e7LudnYVGYAY+CRp/dCgeDL5kT4UQ7gpXKWa/QRnujUwA6gJfRXFoy2orNs2z1aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UuDvwIpejEkwTXg4CXrPwp400jFse9oPNezPAwrebQc=;
- b=TlWmAFjpBFStdWSDdlEOfqevzRSF7StgM1qEOgLeI+zWj8OSY2e5/+opJ3H/QD7lKapoRBJTW0Df+1qTLk1CmaB18Eu3x78UnMLospco69YbjC4C7yEgeoS+HXnry3tUNjOStHYXBIRO8311yt1ByAuC+TKJp6ucu9U11dU2FXDfm8BKYDdMDv4+RHAvTQfcYYwl7Vz2Twk3EarZOUFCC4flT0ZquWEfgpVeree1oS2fEzQXUnvtd4+viZIJl477XUWNl+KgFe8GKYK2lum0XgiRbi3KkGmBxUd9k8jVw59tDdVY1cKXkySd1/7WeDOFmKGGzGyeLEO2QKvNgQ8+bQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by SJ2PR11MB8537.namprd11.prod.outlook.com (2603:10b6:a03:56f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 17 Jul
- 2024 17:24:55 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.7762.027; Wed, 17 Jul 2024
- 17:24:55 +0000
-Message-ID: <b28b6345-aaf0-48c0-a80c-390d8e583f6a@intel.com>
-Date: Wed, 17 Jul 2024 10:24:51 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v17 11/14] net: ptp: Move ptp_clock_index() to
- builtin symbol
-To: Kory Maincent <kory.maincent@bootlin.com>, Florian Fainelli
-	<florian.fainelli@broadcom.com>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>, Heiner
- Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David
- S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, "Radu Pirea"
-	<radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Willem de Bruijn
-	<willemdebruijn.kernel@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Horatiu
- Vultur <horatiu.vultur@microchip.com>, <UNGLinuxDriver@microchip.com>, Simon
- Horman <horms@kernel.org>, "Vladimir Oltean" <vladimir.oltean@nxp.com>,
-	<donald.hunter@gmail.com>, <danieller@nvidia.com>, <ecree.xilinx@gmail.com>
-CC: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, Maxime Chevallier
-	<maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-	Willem de Bruijn <willemb@google.com>, Shannon Nelson
-	<shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
-References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
- <20240709-feature_ptp_netnext-v17-11-b5317f50df2a@bootlin.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20240709-feature_ptp_netnext-v17-11-b5317f50df2a@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR08CA0058.namprd08.prod.outlook.com
- (2603:10b6:a03:117::35) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5C317FAC1;
+	Wed, 17 Jul 2024 17:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721237294; cv=none; b=fLigBdqDgBxpPnjmy6x2P7B6DIT31a8j9rP1SMY8CoSMVN3pkFmdnQxb8ww2+9GFAZlmG3ua1oVpvMjf1tUqZMkgoHBwJZ/N2UVsidlmuBTPV+H5dhvMm01+l3Mj+jG7tDwvuJPtVBMqSN82IOA5GF2XXlWzoHJGzpwJeIuBQ+8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721237294; c=relaxed/simple;
+	bh=9kqvTxpwpe4fBImcb6MbCXfc10WXl+zWj4MkNARMj9k=;
+	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U8odVwJ7DNEgZauhtGAl/5UpomU2cZwqSFW0nMTS2s9JrYogjXxEoeIN7UtqqqF6tf5kZdi3iRhqSQ5aCv/rvXjSdL1mLEXTeaIvk2cLff9d5UaWPOSMiOavMbJKz/HAhXrKfbTi43yKHbHskW84XAxcteI6h0C0hFpVKjp6/ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUvVoIpX; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65f880c56b1so222957b3.3;
+        Wed, 17 Jul 2024 10:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721237291; x=1721842091; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=b4LfVWMiLU1Ai4rM/MAGdsvR9RjnBD07teo6F43vM9c=;
+        b=bUvVoIpXlRu/ZWqTmjSmjearRCVZJ/bDztGPPwCrvDe4ZF+iAH8N0sYnZyuru52N3I
+         J9VPYSjwSdzUgyIdWOgs6X29ml0jvoTeJ64QxHM2iczU9US+c1jGF2Ox25uYAKcj+mM0
+         JlfKSxeVv/rJ4BgW4+CYXxDy2PgJqCB8HotXWvIYDPAn/rr+QJB1+lnotJsMuTHbewR0
+         DBkl6SN8DTbUkecRB30wMCmypwKFOdwsMeurn6P/qJd/zjof9b0Ng86Cl6lBNQVQMPBu
+         Ye/3ql8/pK5jEmhcbZU4mSgnaIe6/g1MVaeALDLztEP9Ut7RJl2OhPGFCjQ5cyma0LYA
+         TlhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721237291; x=1721842091;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b4LfVWMiLU1Ai4rM/MAGdsvR9RjnBD07teo6F43vM9c=;
+        b=sxkogOnV/AeZu3QlanplRqhQ3jVIAdplocegdcIWWVnK66wN99vj6ei0swDVDpFflr
+         RFDLnq7ROs4ux6i2/hHdHSu3lB3wnSOv9HI/sE6PSsMXuhmd+g3JYc4jOY04p3CV7/+D
+         LaGGAYv3VH/+oUlIj8UDPXp5oG0OVznxij0Ew04yFY2pVIw+9ePn6VSyc0/r3mGj2zkA
+         eTXQF6pFprVMRvSH2mekAxelzce/1TeoRRBLSiQ/S7Acua2UbsvbZfQCEkZdbqt6iTFk
+         DtqBToHBq1ekVK9TCBvLw0ncvqNHGZfymgWO4bjoMgJg3hJP1bQgEeuRfAqFQW7cL0W4
+         qQVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV6ELi4kmTB666OOHuRf544M0+ea/p+lSqYSU4ol2+WIt9Q+kd3qZka7crkAMeQZ4OxS/CFhS/K4MFH3sRHkwxHkf4Ps/LHUeTnEooh1Sp4VimfYgh3N41AP4uMZL3yD8BsediiVhfwQ0qtZHjLoYzD8P1GrEjFKUsQelfSX2bDPBxXA==
+X-Gm-Message-State: AOJu0Yyqsw6E/BiKL+nrjWyCDIysqbyARcgsgPJljog5CI1J1Upz23De
+	2AV/igHxf8BulQCkcR3MggcUaUAhjfGrBAS4boxmGg9pLTHugh3s
+X-Google-Smtp-Source: AGHT+IF9LsvokS3eKYMuP4MogL69AZXjuMawpefSDoGGOn7fBRjbwOK8dFR1TEF4RXpvNJ2suRcGCA==
+X-Received: by 2002:a81:7c02:0:b0:61a:ccb0:7cdd with SMTP id 00721157ae682-66500573b1emr27793817b3.46.1721237291553;
+        Wed, 17 Jul 2024 10:28:11 -0700 (PDT)
+Received: from gpd. ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6660249145dsm90517b3.60.2024.07.17.10.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 10:28:11 -0700 (PDT)
+Message-ID: <6697ff2b.050a0220.19cb8.00e1@mx.google.com>
+X-Google-Original-Message-ID: <Zpf_JzDy_ijdNd_c@gpd.>
+From: nifan.cxl@gmail.com
+X-Google-Original-From: fan@gpd.
+Date: Wed, 17 Jul 2024 10:28:07 -0700
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [RFC PATCH v9 04/11] cxl/mbox: Add GET_SUPPORTED_FEATURES
+ mailbox command
+References: <20240716150336.2042-1-shiju.jose@huawei.com>
+ <20240716150336.2042-5-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SJ2PR11MB8537:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b23bab2-fc1c-42f7-2f73-08dca6855fd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dmF4RHpSQkFTTmxFOXp6OFBmbXZGTXd2Z2R6eE9CUHBkT2hzUjI3YlpNd1Rk?=
- =?utf-8?B?M1ViZnR0dDFmOTFTbTRBMEp0azhLcC9NK0xGZWlLOTM1dGZLUlZ3aS9mQVJ5?=
- =?utf-8?B?eHE3NElHQ2t1c3ZrYzlLR1Y5SWlsOU5JMGZpTTNzV21hVFFnVCtWdTArS3Fx?=
- =?utf-8?B?dmxnbDRIUmlZZmpGSUF6UTJDcHZ3Y2NpellkQUxIZjFycG5XRzhueFVzRlc3?=
- =?utf-8?B?WVIxYjRJc2ptZ0JBK1hEbWRiTVpoR2tFV3E5T0FMM1Z6RzV0bnE5VUc5UStl?=
- =?utf-8?B?M1FtdVpnZmR2enZzaTB6aWQrdEJmRktjQXBhMnZCMVdMOHBmNHh5Wlg0RVo1?=
- =?utf-8?B?YVlwcEJSaXgwVTFMNlZtWHRIZW54ZFJqVEE3aVpGb0JWR2VmcEtlNkd4dTFC?=
- =?utf-8?B?YVFMdUtNQTV5cTVKeG83RHRwcWtDbWRObldTbFpZNGdodG10Vjl0NWw5cXl0?=
- =?utf-8?B?aVFxVWYvWWF1ZGdBZ0tOYkNxK0hPc0lITFJSeFBDV2IxN1JXbGppcVQzWkxM?=
- =?utf-8?B?M21PZzZqNnNYdVdCNGNUS3FqRGZ3Rk9FaC9XUk5wdmQySFdnYTVhTW4zQmVE?=
- =?utf-8?B?NXdaRVhyV2ErTUdRNWVHQmJNQk5tWUt2aEZQTk9kZlRsVm9sMk9wVTJLV2NM?=
- =?utf-8?B?dW5wTVlJTjY5cm1GbDg2YkVGVzFTeUZmdjFENFFJZi94d0dOcmw5RktQT1F3?=
- =?utf-8?B?WFJlYlZkdS9xbm44YlZwT3dCdTA4bXBPdk83cHlvcmtxa1plUXo4eWJiZzNt?=
- =?utf-8?B?N1NwdVppS3NORTBJbWhJZVJ6ZDQ4T3FrRFZ6S2xzNTE3VEN6cnY1Vnl1VGZa?=
- =?utf-8?B?eFo2WTBCTzBTV2paN08vLzBLZUtJUm9KL0VTeDBzaExBZHVMZU9udnpGazB6?=
- =?utf-8?B?NkZ2WFJ0QjBpdTJxS3pvc2JwRmFzTEQ2clFIL2dhV0VScjBnbzBhUVo4aXdX?=
- =?utf-8?B?V0VSeHo3djFKVkZxMnc2SU92LytPZnVGTHJTaWVKZWY3dm82UHdlT294NHMv?=
- =?utf-8?B?T1BSTGc3cS9OdFlaaUh3ejRBbU00RG5FdmM1aEpZeTBoY3dLeTJZTmp5UWFW?=
- =?utf-8?B?b0FKR3ZFcDhTOFBFeVdTbXorMTZlbVNxcTlOQk1TVjRNaUdZZHJiR3ViZmtN?=
- =?utf-8?B?Wlc1eHNsU3A4UlY4bmlNWDNENkJud21YbEVscTZ5YjhBZkNuRmJtcEUxcXJ1?=
- =?utf-8?B?NVhGS0hFdVk1R1dzL241OVNITU1ySFE3SXZyNWRqMVVCSms3eVdjOGRHSGt2?=
- =?utf-8?B?TmdDYVA0YjB6UURtOHdhZWZSTlVXUHdCZmRQSVJLc1BqbFRSdm02UDRDM1FK?=
- =?utf-8?B?L29BQk9jQTZLTHdUT01rNU9SQU1RWmFiZU12RmxvTi9iRmFHSzVoKy95TUVy?=
- =?utf-8?B?YnhMY3IzZ0l4Nk0xQXlRZVhvWUlZNTI0OXlPMkNLVk1DRzdRWlBVU25tRXhD?=
- =?utf-8?B?UG1Ca0VYTmhDVHRlMmJJd2xuTXdXVitnWlkxNEd6NmhONjZjVldpbEE0TEtC?=
- =?utf-8?B?c1I0bVdVamZ1WUU2UlBGVDBKdWxmRjZraERTa09rTTN4WjVaTXBOcWRTV29W?=
- =?utf-8?B?VGl3a0VockpnWUpmMlV1QTVGeFNTRmFZR2pHZjFxNEdiU3ZkTDUyWUdTZzBK?=
- =?utf-8?B?cEsrOTRZZmUvazFBcGgxenZNQ00wSXhkcENMa1EvUVVIRzRPT0xXcTJEcXl6?=
- =?utf-8?B?dC9BUlk3N0FYbllHamIyeEh2ekd4UitVa3I1SlpGbUJ2QXpMMnBFUmxDWnV4?=
- =?utf-8?B?TVV4T2l3QVZ3bW9NVHJrekM3N1B5bVBZK1JJRVU0VVhxNndJQWpZR0tzS0Nv?=
- =?utf-8?B?ZVFWVUV1UGVBSi95bTRVWjZ0THltaXFiT0tCOTBtQ1pYaGhPaXF6dVVRbEZF?=
- =?utf-8?Q?I5YkJcdDQoKE+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U1Q4SWYwbnBYbVlpVGpmQnI5YzlYL3Yzek1BNllYR2xweGFyVGRXN3J6djVa?=
- =?utf-8?B?RHJkTis1dFpUbWJPREFHczRqSzVjUWRXUXRkdlluNkNJaFVkSXgxTjd6cytt?=
- =?utf-8?B?R3lHckVMQiszTnY4cE83VmZocTRQbmZBcUFRNjAzNDROSkFydXJTWE5JUnoz?=
- =?utf-8?B?NlQzUTNWR1FUZDd2emR6NVN5QnpjcWI5MSsrMXZsMFBlZitUQ2NDU1FLa3oy?=
- =?utf-8?B?bklTbUNqalFhdVcxZllMODdTYzZPLzdMTXJkWnJmb2dKU3g2UFBLOEdjQzJ6?=
- =?utf-8?B?ODViN1VmWUNZOHExY2MvMTJpaXUxK2FGeGhYaFJDMzVBNFZIMnhPVUdQdUpI?=
- =?utf-8?B?QWZxSnc3YlN0ZFJpOEpHUHJSYWlqNEUyWllaVnlXRjV6bFZHM3JZR0FPTlli?=
- =?utf-8?B?eW9zME91eUtEOGRab0RYVEV5RDRzRHFNQU13SEpWL1JUMlNuVXNhUUt1d1hO?=
- =?utf-8?B?bTFkSUw0N2RDT3p0T0xSWERPVmx0ZHdkMVRWZlF4bDBGQWx1RklOaUQvRzF2?=
- =?utf-8?B?TVN6bXpXQklJdU5nTWxiVFhLZzYzZy9vT3p0bWxPOHFNVnJlNlpCRUlMV3da?=
- =?utf-8?B?RnNFSElETU9oaEdwenhDcGpaS1ByZERBMmFUQUVUOGNNZU9pT0ZmWkNudWRh?=
- =?utf-8?B?YWU2eFQyV2hSOXpBTUhQN3hsZEpwNUdOQnFYaWJYTGJzRDdjYjYxdzZIWkp1?=
- =?utf-8?B?Q3I2VGtaU1lDMGhQR0FkckRoaDJ3cWZ3LzlDTWxCZlBKM21XKzFycTNYa0JT?=
- =?utf-8?B?aG1NSUdvcGhYbWxTeUo1dkZTYmNiOXMzdWpTalNZSjBVNVoxa09UUVRLWnB0?=
- =?utf-8?B?d1hwN2VZb2IxL3BWc0p1Ny92ck5KNFR1d25SeWlZcmpkMkhvN3VYNnljNzRY?=
- =?utf-8?B?U0xTZ09Pb255dy9pTW5LV2dueXB2NXBVMzJ1eHllMS9Bd0EySS9WOURrZkoz?=
- =?utf-8?B?aENoVXdBSE05Q0ZiT0FQdWh0MXRKekoxY2NYeVg4UG9IRldCM3ViS0lwK3BO?=
- =?utf-8?B?WUFlL25SVHdEelBLcVpoUXNoV3J3RE4vbGNvaGQ4eTZXM0R3cHVtYU1OM0t1?=
- =?utf-8?B?YzNMUFZNeVRYTloydW9tOHlTVG9NL1VWM29HK2Z6akhodFFhRTJKMXVyS3VB?=
- =?utf-8?B?cWRJNW9jOG1ldnJMSjlUWUZCSW54WWMwVzgzRkJ1cXBLS0FHaVFLVnMzWjlS?=
- =?utf-8?B?bUhhS3pTbkU0dnVUWVZ4ZElJNDYrejZ1ZXpudWpkK2k5NkllbW56NkdYRHNV?=
- =?utf-8?B?RU8wSEMrNm4yZFBOQVZFc1d5dEErZGJBODNDRnF5cEREejd2RkpVSk1UY2NK?=
- =?utf-8?B?U1hLdjhPL3dCRnVYK0ZuSDNVV01ncENmRFQ2RzVGdWJFbFcrYldKeFI5YU5U?=
- =?utf-8?B?d1NJZU9CNUl4SlY5U0xTRjVjK3Nja3BPbGZzb1IxWlR4Qjg1U0FWRVo2NkRO?=
- =?utf-8?B?dGQvcVhJeHdmWThHSnNPVURFTzMxVC9IT2Z5YmUrSWVCbW9vNThJcWdzd1Zh?=
- =?utf-8?B?RlNOOXIvWEo2VUIrbkhjbDJVb3lINjhCRC9UTEFyOHdrS2lnMHprWXRocmdX?=
- =?utf-8?B?bEhTc1gxbTgrc01LTXFUaDVSOWpQWUw2T3RtVGROYzR2czN5Q0tnTnVuZldU?=
- =?utf-8?B?cGU3MWRXdU43UzlkdGY3eXlBY0duUGh4dUpCUkNqS28wc1VkbDBERXRiK0I4?=
- =?utf-8?B?TW9IL1NvUHVBRml0Z1JteXhPblAzZFFmM1M5akNXTnlyQ2ZvYXFoMWpXQXkv?=
- =?utf-8?B?Qm9HTkNzWHdPOE1TaEVGbXAxcENIUHNneFJZM1ZvaEV3UXpJOFdmbHZjb2Np?=
- =?utf-8?B?SHlucGFVN25PclVUSVZhb3FPOGU4UXhJUXVUNUZRQVFjb1d1MDEvZ0w0MkVD?=
- =?utf-8?B?azkrcEJEWnJqN0pVbld4amFyN2VrdngzL1dtYWhnaUMrZ2IxS09kSURYYS9X?=
- =?utf-8?B?VDZ0Yk9EcUlOTkZYMjBkN050TmlpOFhhNXRwYkcwV2R2WkdvTS9nSjJGbllr?=
- =?utf-8?B?S1NPUXlibWNLcHZSTUIvK01xSE05L2dpSHQ5eVRFL2NNdkdkczkvWXNEMkZ2?=
- =?utf-8?B?NklXMkYxQ01IZnN1emlUcE5sa1NHY0tpMkFiblNuUkdVd2tpTnlGbk4xRjRN?=
- =?utf-8?B?Z0xnbjg1N1EvOXFBK3FuMWJiUnl2WWJoMlprZUdvbm9ReWpkS3VWVE9wTytN?=
- =?utf-8?B?WUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b23bab2-fc1c-42f7-2f73-08dca6855fd5
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 17:24:54.9543
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DdTsV1sPGqC9TGFA/nU4tcUve9vFV87Qb4GYQmsdcMr5XFHEVqdAI30jtwndMSl5ndRH71+8QMGL66yg/vRT4kQ6ENTK63zuyhrLdyZtDs8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8537
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716150336.2042-5-shiju.jose@huawei.com>
 
-
-
-On 7/9/2024 6:53 AM, Kory Maincent wrote:
-> Move ptp_clock_index() to builtin symbols to prepare for supporting get
-> and set hardware timestamps from ethtool, which is builtin.
+On Tue, Jul 16, 2024 at 04:03:28PM +0100, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> Add support for GET_SUPPORTED_FEATURES mailbox command.
+> 
+> CXL spec 3.1 section 8.2.9.6 describes optional device specific features.
+> CXL devices supports features with changeable attributes.
+s/supports/support/
+
+Fan
+> Get Supported Features retrieves the list of supported device specific
+> features. The settings of a feature can be retrieved using Get Feature
+> and optionally modified using Set Feature.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 > ---
+>  drivers/cxl/core/mbox.c | 27 ++++++++++++++++++
+>  drivers/cxl/cxlmem.h    | 61 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 88 insertions(+)
 > 
-
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-
-> Change in v13:
-> - New patch
-> ---
->  drivers/ptp/ptp_clock.c          | 6 ------
->  drivers/ptp/ptp_clock_consumer.c | 6 ++++++
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-> index 593b5c906314..fc4b266abe1d 100644
-> --- a/drivers/ptp/ptp_clock.c
-> +++ b/drivers/ptp/ptp_clock.c
-> @@ -460,12 +460,6 @@ void ptp_clock_event(struct ptp_clock *ptp, struct ptp_clock_event *event)
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 2626f3fff201..9b9b1d26454e 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -1324,6 +1324,33 @@ int cxl_set_timestamp(struct cxl_memdev_state *mds)
 >  }
->  EXPORT_SYMBOL(ptp_clock_event);
+>  EXPORT_SYMBOL_NS_GPL(cxl_set_timestamp, CXL);
 >  
-> -int ptp_clock_index(struct ptp_clock *ptp)
-> -{
-> -	return ptp->index;
-> -}
-> -EXPORT_SYMBOL(ptp_clock_index);
-> -
->  int ptp_find_pin(struct ptp_clock *ptp,
->  		 enum ptp_pin_function func, unsigned int chan)
->  {
-> diff --git a/drivers/ptp/ptp_clock_consumer.c b/drivers/ptp/ptp_clock_consumer.c
-> index f5fab1c14b47..f521b07da231 100644
-> --- a/drivers/ptp/ptp_clock_consumer.c
-> +++ b/drivers/ptp/ptp_clock_consumer.c
-> @@ -108,3 +108,9 @@ void remove_hwtstamp_provider(struct rcu_head *rcu_head)
->  	kfree(hwtstamp);
->  }
->  EXPORT_SYMBOL(remove_hwtstamp_provider);
-> +
-> +int ptp_clock_index(struct ptp_clock *ptp)
+> +int cxl_get_supported_features(struct cxl_memdev_state *mds,
+> +			       u32 count, u16 start_index,
+> +			       struct cxl_mbox_get_supp_feats_out *feats_out)
 > +{
-> +	return ptp->index;
+> +	struct cxl_mbox_get_supp_feats_in pi;
+> +	struct cxl_mbox_cmd mbox_cmd;
+> +	int rc;
+> +
+> +	pi.count = cpu_to_le32(count);
+> +	pi.start_index = cpu_to_le16(start_index);
+> +
+> +	mbox_cmd = (struct cxl_mbox_cmd) {
+> +		.opcode = CXL_MBOX_OP_GET_SUPPORTED_FEATURES,
+> +		.size_in = sizeof(pi),
+> +		.payload_in = &pi,
+> +		.size_out = count,
+> +		.payload_out = feats_out,
+> +		.min_out = sizeof(*feats_out),
+> +	};
+> +	rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	return 0;
 > +}
-> +EXPORT_SYMBOL(ptp_clock_index);
+> +EXPORT_SYMBOL_NS_GPL(cxl_get_supported_features, CXL);
+> +
+>  int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>  		       struct cxl_region *cxlr)
+>  {
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index 19aba81cdf13..b0e1565b9d2e 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -530,6 +530,7 @@ enum cxl_opcode {
+>  	CXL_MBOX_OP_GET_LOG_CAPS	= 0x0402,
+>  	CXL_MBOX_OP_CLEAR_LOG           = 0x0403,
+>  	CXL_MBOX_OP_GET_SUP_LOG_SUBLIST = 0x0405,
+> +	CXL_MBOX_OP_GET_SUPPORTED_FEATURES	= 0x0500,
+>  	CXL_MBOX_OP_IDENTIFY		= 0x4000,
+>  	CXL_MBOX_OP_GET_PARTITION_INFO	= 0x4100,
+>  	CXL_MBOX_OP_SET_PARTITION_INFO	= 0x4101,
+> @@ -699,6 +700,63 @@ struct cxl_mbox_set_timestamp_in {
+>  
+>  } __packed;
+>  
+> +/*
+> + * Get Supported Features CXL 3.1 Spec 8.2.9.6.1
+> + */
+> +
+> +/*
+> + * Get Supported Features input payload
+> + * CXL rev 3.1 section 8.2.9.6.1 Table 8-95
+> + */
+> +struct cxl_mbox_get_supp_feats_in {
+> +	__le32 count;
+> +	__le16 start_index;
+> +	u8 rsvd[2];
+> +} __packed;
+> +
+> +/*
+> + * Get Supported Features Supported Feature Entry
+> + * CXL rev 3.1 section 8.2.9.6.1 Table 8-97
+> + */
+> +/* Supported Feature Entry : Payload out attribute flags */
+> +#define CXL_FEAT_ENTRY_FLAG_CHANGABLE	BIT(0)
+> +#define CXL_FEAT_ENTRY_FLAG_DEEPEST_RESET_PERSISTENCE_MASK	GENMASK(3, 1)
+> +#define CXL_FEAT_ENTRY_FLAG_PERSIST_ACROSS_FIRMWARE_UPDATE	BIT(4)
+> +#define CXL_FEAT_ENTRY_FLAG_SUPPORT_DEFAULT_SELECTION	BIT(5)
+> +#define CXL_FEAT_ENTRY_FLAG_SUPPORT_SAVED_SELECTION	BIT(6)
+> +
+> +enum cxl_feat_attr_value_persistence {
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_NONE,
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_CXL_RESET,
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_HOT_RESET,
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_WARM_RESET,
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_COLD_RESET,
+> +	CXL_FEAT_ATTR_VALUE_PERSISTENCE_MAX
+> +};
+> +
+> +struct cxl_mbox_supp_feat_entry {
+> +	uuid_t uuid;
+> +	__le16 index;
+> +	__le16 get_size;
+> +	__le16 set_size;
+> +	__le32 attr_flags;
+> +	u8 get_version;
+> +	u8 set_version;
+> +	__le16 set_effects;
+> +	u8 rsvd[18];
+> +}  __packed;
+> +
+> +/*
+> + * Get Supported Features output payload
+> + * CXL rev 3.1 section 8.2.9.6.1 Table 8-96
+> + */
+> +struct cxl_mbox_get_supp_feats_out {
+> +	__le16 nr_entries;
+> +	__le16 nr_supported;
+> +	u8 rsvd[4];
+> +	struct cxl_mbox_supp_feat_entry feat_entries[];
+> +} __packed;
+> +
+>  /* Get Poison List  CXL 3.0 Spec 8.2.9.8.4.1 */
+>  struct cxl_mbox_poison_in {
+>  	__le64 offset;
+> @@ -830,6 +888,9 @@ void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+>  			    enum cxl_event_type event_type,
+>  			    const uuid_t *uuid, union cxl_event *evt);
+>  int cxl_set_timestamp(struct cxl_memdev_state *mds);
+> +int cxl_get_supported_features(struct cxl_memdev_state *mds,
+> +			       u32 count, u16 start_index,
+> +			       struct cxl_mbox_get_supp_feats_out *feats_out);
+>  int cxl_poison_state_init(struct cxl_memdev_state *mds);
+>  int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>  		       struct cxl_region *cxlr);
+> -- 
+> 2.34.1
 > 
 
