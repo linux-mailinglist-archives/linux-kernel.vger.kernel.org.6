@@ -1,154 +1,120 @@
-Return-Path: <linux-kernel+bounces-255362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B475933FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:29:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65305933FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EB91F21BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9DB6B24495
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82968181BAF;
-	Wed, 17 Jul 2024 15:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E446181B86;
+	Wed, 17 Jul 2024 15:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NecC90Xe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="Rsn5FNbl"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE30D1CF8A;
-	Wed, 17 Jul 2024 15:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A631E51E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721230188; cv=none; b=lLyxmJOAXEXSBTlG2bbyfO3MPH6jFNYNdDvE9iB/E5pw/l6zlW8JWYYcB9d0gX8fFRQtbUfVBnkMEF1S1EaFE+w6WdkGL8lf80LnsoDka2SEfzmUrYpvcaG5xq4r3kbdN8DV/Pmy51UbfOA5SJUiQu56lEtNRtOl1FEqi1JsVZY=
+	t=1721230281; cv=none; b=QAshtt/p4h/GbpHEVkcXCaX5NSyILyutTl6dE2chQ2olpMWy985BGlu8kLcOR3INr7UCq6q4lcQWcTG8g8e3usiRPOivdKONLbpKOYiWsjTgdr+Ym706Zo1P64cYyhxExXLHkasWZy4jJfz42MsCA3j9UamKxmKV1y5FhTCUiHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721230188; c=relaxed/simple;
-	bh=3y6J4/IWm8k/uSeOISrjXuhjwcWCcnKSS8UTJoDbyRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gj/e8oR1sey0t6V/2ZvZtc9qwlMGKYJX/RVTv9UThYJ9L0n9ZYZsIBim609PSaPGffFsy3DIf7J8vYRAlLnhX/aRH6BOqcJwRCr/ge87OtFxIBNsJ/+jo30a49HuLcP7Gdt6HtnbPyADNDgKIeDAUOwvHYglTZhXFrmFHKNXo7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NecC90Xe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 203A6C4AF0D;
-	Wed, 17 Jul 2024 15:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721230188;
-	bh=3y6J4/IWm8k/uSeOISrjXuhjwcWCcnKSS8UTJoDbyRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NecC90XexhGoyFhzFxrlcWTvnpYVtoqz/haenUdhAM1tUHYwL2QvnIDokC5JL/IFj
-	 LTcONI2qs57x1+JT8oC8wwAF/yLog3atHfbwNsqaDo/tjMiMeiA/zrtUdooRhjJY8/
-	 ZclSG+F1yYWlCHVQupgwzV20IedJXDKFzeSfbhLah/S06XErDyqLIcJEGZXrDLgHJL
-	 6i4aZYMAajymRGkMre1vdzBOxJXYfSKHvWQGw9iSjkfejUX7ioa8NsZsWMzQ/M8P9l
-	 Ema8B/GGA9GZen3Y1rgO/zjo66BGuswiolVlvJxNZngrSL2JUZMZP87wOoJ2OO4Vz/
-	 kfNRIj9nqkevA==
-Date: Wed, 17 Jul 2024 16:29:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 03/11] riscv: Implement cmpxchg8/16() using Zabha
-Message-ID: <20240717-enroll-snowless-e722e367789b@spud>
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-4-alexghiti@rivosinc.com>
- <20240717-e7104dac172d9f2cbc25d9c6@orel>
+	s=arc-20240116; t=1721230281; c=relaxed/simple;
+	bh=K9d9gf+BWps+rreBtXWNmb4WQJY52bLiPpJQ1dqh/1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VrAmv8uPkEW48boU05SDZfffMLF7NZQuYaHhovtlEui1RevSP0qUNaCExymouZxM0XoKVpw1RI84zCy0MrMtfMmagUUt87OWTf52Bsu4a9we0wkFqFc/g3Gy6kutVj7CDRo9nznJ7NSWMuxDjulXth2leH0df9xxa5HAlp1bi4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=Rsn5FNbl; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52e98087e32so8396101e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:31:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1721230278; x=1721835078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K9d9gf+BWps+rreBtXWNmb4WQJY52bLiPpJQ1dqh/1A=;
+        b=Rsn5FNbl8jkAwyK1P4moQTfyGK3wSh5hUhmMgLDKF6AY/bRAhrIzg/iUminG+vZnNY
+         gYOJrztRssxvODWZQ1qF5XTf3+qZxtNxtpEfy0DTi9UcXhN66GBhhlrQi3qaNwpvBdjs
+         u1iy1usKo23PcVyp5oKOGQLY70BaeFW9y4kWkR+4oqSA1Iq7WB6boAAlBq6M2cWso5Vc
+         tfD+2xKDXwAlb89OW+xx5rxKcotWu3QJXPMIJHQPo4kVFJ3eVTl3EqBnUVJSW06+zFaS
+         I59u8PzvuJOAbnQseRMdUgR1yPuNEa5HGor6jLTdT7r4G2O/XrGyiGxQQiOzXjhXCBD4
+         1gQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721230278; x=1721835078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K9d9gf+BWps+rreBtXWNmb4WQJY52bLiPpJQ1dqh/1A=;
+        b=bX6ndk/oKbKHl80DKilEt5lauH7dtsndDRBMQIxf2MYSE7TOJu9Yr0dVuJZ0vmr5JT
+         TkQ/dySk8XZ3zXBFo5r43UFM40ri0UfSWKc8lDm8JvamkVB/gSV9H2OVcSJ9l65MqP2C
+         BZar1NvY0/3N80DurB4C0oXVZImrVGtYMW7DksFvLPNj6p3jwvXwhO/PzM7ClBM2cefp
+         CudVftBnbypvlsn9exGH6G2rrZUM59Ybpsr9LNJ3NthGHsWhyVw/5/8iGHxw/EZxcRnU
+         TfF+uP1x9lGK1KpGpG9yXCH0+HRLr7NpYbvWaLPT84pznaeiWBuV/qPcSwN19m/Bvpvl
+         hGfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwQkSo5yq8dmsuvMPO3NlUEwFeLN02tBRC29VQjGnmC1px2bqHkvfBDkvfm0as4CRaXXBqIQJBDYvu/JZg6uuHrC+s97SAPXbiBip6
+X-Gm-Message-State: AOJu0Yx7iUcunXfHxMoweWl977gXCPoMYrZwVOw/Bww9RyfgzBA48vlS
+	qL+4Hg2YdGy2PwacAnrbDCPxcmWxl6h7lM1hKKCKWPXIvYEaOneFaRXjHSAy3Ug+v0Vr94Cg21I
+	ykBmCXG5E9BqYfmTlS7s6gia2L1/5Q/fhCMlNsQ==
+X-Google-Smtp-Source: AGHT+IEtqRNWkpvaN0ZZj3IcHDCv/Wl5vLCgOqJyPMVkPLXlgeNoMP8YVguflrPN74CnwYiXEwru161+fYmKLiOF9w4=
+X-Received: by 2002:a05:6512:e93:b0:52c:dea8:7ca0 with SMTP id
+ 2adb3069b0e04-52ee543f3f9mr1689796e87.55.1721230277516; Wed, 17 Jul 2024
+ 08:31:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DKnFDS9hDsllBOMu"
-Content-Disposition: inline
-In-Reply-To: <20240717-e7104dac172d9f2cbc25d9c6@orel>
-
-
---DKnFDS9hDsllBOMu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1690273854.git.yu.c.chen@intel.com> <20240716141645.637620-1-mfleming@cloudflare.com>
+ <ZpdAEYN1vwlnIGiS@chenyu5-mobl2>
+In-Reply-To: <ZpdAEYN1vwlnIGiS@chenyu5-mobl2>
+From: Matt Fleming <matt@readmodwrite.com>
+Date: Wed, 17 Jul 2024 16:31:06 +0100
+Message-ID: <CAENh_SQzWeViGDGsqZFZYaNooB3NBKQR7XOkYB26SGEq1cZ5FA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Optimization to reduce the cost of newidle balance
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: aaron.lu@intel.com, dietmar.eggemann@arm.com, gautham.shenoy@amd.com, 
+	juri.lelli@redhat.com, kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, 
+	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org, 
+	tim.c.chen@intel.com, vincent.guittot@linaro.org, yu.chen.surf@gmail.com, 
+	yujie.liu@intel.com, kernel-team@cloudflare.com, yunzhao@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 10:26:34AM -0500, Andrew Jones wrote:
-> On Wed, Jul 17, 2024 at 08:19:49AM GMT, Alexandre Ghiti wrote:
-> > -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
-> > +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, =
-o, n)	\
-> >  ({									\
-> > +	__label__ no_zabha_zacas, end;					\
-> > +									\
-> > +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&			\
-> > +	    IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
-> > +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
-> > +				     RISCV_ISA_EXT_ZABHA, 1)		\
-> > +			 : : : : no_zabha_zacas);			\
-> > +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
-> > +				     RISCV_ISA_EXT_ZACAS, 1)		\
-> > +			 : : : : no_zabha_zacas);			\
->=20
-> I came late to the call, but I guess trying to get rid of these asm gotos
-> was the topic of the discussion. The proposal was to try and use static
-> branches, but keep in mind that we've had trouble with static branches
-> inside macros in the past when those macros are used in many places[1]
->=20
-> [1] commit 0b1d60d6dd9e ("riscv: Fix build with CONFIG_CC_OPTIMIZE_FOR_SI=
-ZE=3Dy")
+On Wed, Jul 17, 2024 at 4:53=E2=80=AFAM Chen Yu <yu.c.chen@intel.com> wrote=
+:
+>
+> Thanks for your interest in this patch series. The RFC patch series was s=
+ent
+> out to seek for directions and to see if this issue is worthy to fix. Sin=
+ce
+> you have encountered this issue as well and it seems to be generic issue,
+> I'll rebase thie patch series and retest it on top of latest kernel and t=
+hen
+> send out a new version.
 
-The other half of the suggestion was not using an asm goto, but instead
-trying to patch the whole thing in the alternative, for the problematic
-section with llvm < 17.
+Great, thanks!
 
->=20
-> > +									\
-> > +		__asm__ __volatile__ (					\
-> > +			prepend						\
-> > +			"	amocas" cas_sfx " %0, %z2, %1\n"	\
-> > +			append						\
-> > +			: "+&r" (r), "+A" (*(p))			\
-> > +			: "rJ" (n)					\
-> > +			: "memory");					\
-> > +		goto end;						\
-> > +	}								\
-> > +									\
-> > +no_zabha_zacas:;							\
->=20
-> unnecessary ;
->=20
-> >  	u32 *__ptr32b =3D (u32 *)((ulong)(p) & ~0x3);			\
-> >  	ulong __s =3D ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
-> >  	ulong __mask =3D GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
-> > @@ -133,6 +155,8 @@
-> >  		: "memory");						\
-> >  									\
-> >  	r =3D (__typeof__(*(p)))((__retx & __mask) >> __s);		\
-> > +									\
-> > +end:;									\
-> >  })
-> > =20
-> >  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, =
-o, n)	\
+> > I'm seeing this same symptom of burning cycles in update_sd_lb_stats() =
+on an
+> > AMD EPYC 7713 machine (128 CPUs, 8 NUMA nodes). The machine is about 50=
+% idle
+> > and upadte_sd_lb_stats() sits as the first entry in perf top with about=
+ 3.62%
+> > of CPU cycles.
+>
+> May I know what benchmark(test scenario) you are testing? I'd like to rep=
+licate
+> this test on my machine as well.
 
---DKnFDS9hDsllBOMu
-Content-Type: application/pgp-signature; name="signature.asc"
+Actually this isn't a benchmark -- this was observed on Cloudflare's
+production machines. I'm happy to try out your series and report back.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpfjZQAKCRB4tDGHoIJi
-0jmTAP0dEPFTp/z1/WjfXISimZGtZLdRe3vvDV8JgqZQi53RggD/ZBBpVOJzd6N0
-fF1PJI/P3vzXi3Ey9CSl+w1GE1dOgAM=
-=6ofA
------END PGP SIGNATURE-----
-
---DKnFDS9hDsllBOMu--
+Thanks,
+Matt
 
