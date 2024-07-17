@@ -1,113 +1,128 @@
-Return-Path: <linux-kernel+bounces-254911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206F4933931
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:39:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8203593393A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE375B22DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2554A1F21F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDBF39AE3;
-	Wed, 17 Jul 2024 08:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MsqqaVw5"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7323E39FF2;
+	Wed, 17 Jul 2024 08:39:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2133A10953;
-	Wed, 17 Jul 2024 08:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EF741A94;
+	Wed, 17 Jul 2024 08:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721205533; cv=none; b=hoADjICKABThkg/FoUF7ZJtT0UzSqLVJlKV6861ePoJntnKAvxUr0YowgIYb/yknJ/+6pR0f4lWY/wiZBEbbyL8L2IrDIl4ELDG1Ku7Zaw/oT/fNf7AwxIMZdw7g/nYWOe0ORm1RJdvK5mmfkWm6PWszJydbu20ZK6qaKLnC3hg=
+	t=1721205546; cv=none; b=kmlIlVWfuZKjFrxuHwqT9ByB8Y0puj9HkamcBrSEL7KNTv8d0q1G7uQIh4m2aMvUmGeTRbjVbMBFv3VlckHWb6NOjusZoHqc1938PMy+6XOrJjCawpL2lgPWoR+v7X4/Tvv/s99oj9r8O+Jnw1ywx0exB4SJdqxlEfIKtAiMlf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721205533; c=relaxed/simple;
-	bh=n7bz61bqEd9Y7oOrUTLbk/i2ghWK5CvSfQaqdkPkn9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TywgzusIz1+qaIRPWfXKG+QbZfdQgAhD4N2w+5Sd0t2EGgU7tMtKl/Pzp/u7NQF9rAJsbtqE252wAFpS3SF+Tvm87VrDlJjaLMZx3U1VdjJ7SMw2fdn+ZivbGYtDgWDa4tYG+RO7vRiyOp0Jv1KMzAMz1+xnpOZ0umQYrGO8RRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MsqqaVw5; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9194BFF805;
-	Wed, 17 Jul 2024 08:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721205528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=54iksZJpA1HrffCxEFlTmd/giXr/VmfDqOO/3tGET84=;
-	b=MsqqaVw570YbZZU9+pYH05HWfQS7ZsoUuRsKejvXnoQxFPX/6Kbc5KVgBUMvhbn0vFMPRE
-	UOgKo95P1yRn/RBOs6PXPZ3nBf55CmyEJDhmhFev6+WazXjK2HZD0xA7wiK4uw82WZ9SQ0
-	kosH+5FCQlbGTHhWymZUf/ULSEAk/RPIzlcVPcfp9RUeIkk6WLuzZd4D6SFSiTOHzHofbf
-	pFG1sdkGWLCjXUofsiu4QSGMcFF3c3mpZ8Fuq+o41qzIfpkEE0GbAtUo58is0LskhcseSv
-	EWL+38XVkrgFc9vKQHYmX7+9tA1KrRzmsdDBRcTLZp5T8rtNmkSQtgWDqWzXjA==
-Date: Wed, 17 Jul 2024 10:38:46 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Han Xu <han.xu@nxp.com>, Vinod Koul
- <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>
-Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: dma: fsl-mxs-dma: Add compatible
- string "fsl,imx8qxp-dma-apbh"
-Message-ID: <20240717103846.306bf9fd@xps-13>
-In-Reply-To: <20240712163503.69dad6b1@xps-13>
-References: <20240520-gpmi_nand-v2-2-e3017e4c9da5@nxp.com>
-	<20240527121836.178457-1-miquel.raynal@bootlin.com>
-	<20240712163503.69dad6b1@xps-13>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721205546; c=relaxed/simple;
+	bh=+0JnY0BRZ9gFkA3BfeIiX/VZb78v6eNHC2ZKCKCZMlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/Mrvcol1nbzjhJBi3IC3ASUJsmmxX9/7VyjvQYd2lYvS0Qg1nfJIZt7KrqeHwAcosHH4sZCrmfuZbtTvqr9+Cb3yVnC8mTuBZCj7A90CvnZkUfzjQS2rzEi4CzjYno4lVOR6XCmFPIUVdAYj2+bUUKw4/saShJBizxgLEm2j5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1C9C32782;
+	Wed, 17 Jul 2024 08:39:00 +0000 (UTC)
+Date: Wed, 17 Jul 2024 14:08:56 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devi priya <quic_devipriy@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Anusha Rao <quic_anusha@quicinc.com>
+Subject: Re: [PATCH V6 4/4] PCI: qcom: Add support for IPQ9574
+Message-ID: <20240717083856.GD2574@thinkpad>
+References: <20240716092347.2177153-1-quic_srichara@quicinc.com>
+ <20240716092347.2177153-5-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716092347.2177153-5-quic_srichara@quicinc.com>
 
-Hi,
+On Tue, Jul 16, 2024 at 02:53:47PM +0530, Sricharan R wrote:
+> From: devi priya <quic_devipriy@quicinc.com>
+> 
+> The IPQ9574 platform has four Gen3 PCIe controllers:
+> two single-lane and two dual-lane based on SNPS core 5.70a.
+> 
+> QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
+> Add a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+> which reuses all the members of 'ops_2_9_0' except for the
+> post_init as the SLV_ADDR_SPACE_SIZE configuration differs
+> between 2_9_0 and 1_27_0.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> ---
+>  [V6] Fixed all Manivannan's and Bjorn Helgaas comments.
+>       Removed the SLV_ADDR_SPACE_SZ_1_27_0 macro to have default value.
+> 
+>  drivers/pci/controller/dwc/pcie-qcom.c | 31 ++++++++++++++++++++++----
+>  1 file changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..26acd9f5385e 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1116,16 +1116,13 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>  	return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>  }
+>  
+> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
+>  {
+>  	struct dw_pcie *pci = pcie->pci;
+>  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>  	u32 val;
+>  	int i;
+>  
+> -	writel(SLV_ADDR_SPACE_SZ,
+> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> -
+>  	val = readl(pcie->parf + PARF_PHY_CTRL);
+>  	val &= ~PHY_TEST_PWR_DOWN;
+>  	writel(val, pcie->parf + PARF_PHY_CTRL);
+> @@ -1165,6 +1162,18 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+> +{
+> +	return qcom_pcie_post_init(pcie);
+> +}
+> +
+> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	writel(SLV_ADDR_SPACE_SZ, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +
 
-miquel.raynal@bootlin.com wrote on Fri, 12 Jul 2024 16:35:03 +0200:
+As discussed in [1], DBI/ATU mirroring should be disabled completely to avoid
+the enumeration issue you are seeing on this platform. Please rebase on top of
+the referenced patch (once v2 gets posted).
 
-> Hi Vinod,
->=20
-> miquel.raynal@bootlin.com wrote on Mon, 27 May 2024 14:18:36 +0200:
->=20
-> > On Mon, 2024-05-20 at 16:09:13 UTC, Frank Li wrote: =20
-> > > Add compatible string "fsl,imx8qxp-dma-apbh". It requires power-domai=
-ns
-> > > compared with "fsl,imx28-dma-apbh".
-> > >=20
-> > > Allow 'power-domains' property because i.MX8DXL i.MX8QM and i.MX8QXP =
-need
-> > > it.
-> > >=20
-> > > Keep the same restriction about 'power-domains' for other compatible
-> > > strings.
-> > >=20
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>   =20
-> >=20
-> > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.gi=
-t nand/next, thanks. =20
->=20
-> I just realize now I picked this up whereas it was not intended to be
-> merged through mtd. I'm fine keeping this patch for the next merge
-> window if I get your explicit agreement otherwise I'll drop it.
+- Mani
 
-I need to send the PR to Linux, I will drop this patch which can anyway
-be taken in the next cycle.
-
-Thanks,
-Miqu=C3=A8l
+[1] https://lore.kernel.org/linux-arm-msm/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/
+-- 
+மணிவண்ணன் சதாசிவம்
 
