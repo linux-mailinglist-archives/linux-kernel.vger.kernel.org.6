@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-254602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF1D933549
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7E693354D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C11A1C22161
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5C71F21C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0EFA94C;
-	Wed, 17 Jul 2024 02:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="c9jSFFLD"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6AA4C9B;
+	Wed, 17 Jul 2024 02:08:23 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09054ED8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90CB6FB6;
+	Wed, 17 Jul 2024 02:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721181912; cv=none; b=JF0QZltioUYLGYRd4Bix9N7MPdRKzC+0G6TToQGQd7i07LGQCETWwyIdPomVY3Q3Xh1eTRkvqouEN89uoHVKWrmDihvjbhJaRx52buT89r1wtrN2ZSCo9x20Us1sR/EujGhes87b4CGX7Ywkxn3/9VoGW7yGykY6zk386zf6vkg=
+	t=1721182103; cv=none; b=jQWTp+wQ+v4KrLkTemfGrVRN3QBNYXMFecrxvkh+lDVfOzBKm76bXBC+uszltPOJNXfwwiBVrlWvZZNQwSGK5ZwnNvj5iySNNUt2HYRGEbWnPKjxhpVJcoSiSCdraG6H8JjZihr36EXAXWJaqGAqjc/I+jy6eYUwQKezZrHRhpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721181912; c=relaxed/simple;
-	bh=DVHKqDQLLUUFwbi2Pwk2XnONdO0EgeZERTHVmSdoRrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYPyn5kEACadZ21APp++WobHkySIkp/l0a6CtMF2n9PX4LdCW43aS984bl+pjV1/77rAq5/K5XnuRbL7fITzvgWew7KjKXO8F2ngZE8/47Ix31wHHzYDHUv/QzqiYG5RdZKj6vVjr4gwwATVPGAWgXn5tKEo0mimX2aXqa7UIps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=c9jSFFLD; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-81179da9049so259201241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 19:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1721181909; x=1721786709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qb98yk6J4SdLGmha0L+RJ3mqUkJWd7sh/FIX4cg2jcw=;
-        b=c9jSFFLDTCDycjZ5GkM+iWwutxu8JdpSHK/bqOyq1nju6Z0MqY8dEu8veDnrjwB6lo
-         JKWELaJZ58ohMiNpshkcoMBZtk1VBZTaP6ocqLkajmDoWMmw8ZFTvct3FvcZC2G5VsQW
-         jxZbqQYqEIlC50IRBcrbZuusaiINEFlusVdkaW4PXdyDcqY0Ti1u+oYTiMIPT7185lX5
-         UX10SudB5SdB9VqmNcIlA4Qh/y5NV+efk2n/+iVF8vBNobTs3rqy/yCvVmsnrjyxlWCR
-         JlkpulCqtjbp2zXdt5Jw5dZ0stgLE1F8vfx85fj7vVXv+n/EbwqDBh9YpJqMYlO5Wvhw
-         VBLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721181909; x=1721786709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qb98yk6J4SdLGmha0L+RJ3mqUkJWd7sh/FIX4cg2jcw=;
-        b=v2bRDD4oV3aDn0TTzqvfRjaiK6am/S6fefSDdVUX+M+E7CgYNLfMAM0zUiHI1zIoZb
-         tlWrj9m+pfmjTFP8qMd3BXcRykU4KM+lrZIsf4b/thlx8jaK68gb73dT07kELXkKNFtE
-         F6ax0YLO4HL0W/79k3T6pN2dK7btUPZwMvMbbEflwmfTBtfkgpBPlMEGkzOa2EkDatd+
-         gKOdAt8Pcp8E3g93BDmeJyMMs9A3wUY82wz/xL7LDIF4cl5NA0x+vyBg+h3biGPjNADC
-         ybBzL4M9ILez/Cg2UyekAhu4iKWNjEn5cOEtKrY/fCfVFw9vuI+45BH9Kk1VgT7hNzti
-         0uJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+yJR3mKGiYiXnmekDAVIGy+ugjnJ8eM0u8MC3fZV1GQBHMjl3C+S5XxDUvhHwBByhjbHH9oHQKhX9mnp1aKY4Ld4q7nMND5d3ra+F
-X-Gm-Message-State: AOJu0YzOScu7zdOCSjYIeK/YRP8Qf5319BP2gVPePzk67ZPvcpeZ/uST
-	G82o0C32Uf2honMiBxE2LQheGgxhbha6O+Iy8RDqZEAgb3JsLCyc8XLmmrPx4Q==
-X-Google-Smtp-Source: AGHT+IHursfxKZM9wHq0nNVc6NFooX86xt5HXnxIDXGC6rXDzNqDerEk/vuMH44nPoM2i/0jbbFmpg==
-X-Received: by 2002:a05:6102:3e02:b0:48f:8d1a:ff8c with SMTP id ada2fe7eead31-49159731b59mr557408137.3.1721181908831;
-        Tue, 16 Jul 2024 19:05:08 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::8080])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b7c12b6sm41199391cf.13.2024.07.16.19.05.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 19:05:08 -0700 (PDT)
-Date: Tue, 16 Jul 2024 22:05:05 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Hongyu Xie <xy521521@gmail.com>
-Cc: oneukum@suse.com, gregkh@linuxfoundation.org, brauner@kernel.org,
-	jlayton@kernel.org, jack@suse.cz, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiehongyu1@kylinos.cn
-Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
-Message-ID: <ee0a5160-233a-485c-a34b-99d4a1e046c5@rowland.harvard.edu>
-References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
- <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
- <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
- <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
- <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
- <3073c8ce-1923-4816-a442-41b4cc333af9@suse.com>
- <6419a4e9-e084-4eb6-8376-9202930ea8be@kylinos.cn>
+	s=arc-20240116; t=1721182103; c=relaxed/simple;
+	bh=72g2/YLVNE/1Jty0PS+F0RaNrCg5AttxmEgcZ5dlFgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S+gNMH2J4r2eWB9rBPiuYH4MMcYbFT7hFRvSTcvGgBDjsINPbTmlF+3NfCWGBEXb4C7Zcj/XdCbkeZCka+ne8taGdC72FPyPR1/bdZziNDU/4kv6hka56t185G+Fdv78Whq43q4RUU05HwWNIRO2Kh6XyBr+nG3Ud2rQgUNJ4aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WNznk1DJJz20lLy;
+	Wed, 17 Jul 2024 10:06:34 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id DDA78140360;
+	Wed, 17 Jul 2024 10:08:12 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 17 Jul
+ 2024 10:08:11 +0800
+Message-ID: <f93d3b5d-f58b-4787-abaf-8b07d37b7302@huawei.com>
+Date: Wed, 17 Jul 2024 10:08:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6419a4e9-e084-4eb6-8376-9202930ea8be@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
+ cgroup_bpf_release
+To: Roman Gushchin <roman.gushchin@linux.dev>
+CC: Tejun Heo <tj@kernel.org>, <martin.lau@linux.dev>, <ast@kernel.org>,
+	<daniel@iogearbox.net>, <andrii@kernel.org>, <eddyz87@gmail.com>,
+	<song@kernel.org>, <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
+	<kpsingh@kernel.org>, <sdf@google.com>, <haoluo@google.com>,
+	<jolsa@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240607110313.2230669-1-chenridong@huawei.com>
+ <67B5A5C8-68D8-499E-AFF1-4AFE63128706@linux.dev>
+ <300f9efa-cc15-4bee-b710-25bff796bf28@huawei.com>
+ <a1b23274-4a35-4cbf-8c4c-5f770fbcc187@huawei.com>
+ <Zo9XAmjpP6y0ZDGH@google.com> <ZpAYGU7x6ioqBir5@slm.duckdns.org>
+ <5badbb85-b9e9-4170-a1b9-9b6d13135507@huawei.com>
+ <c6d10b39-4583-4162-b481-375f41aaeba1@huawei.com>
+ <ZpaJUIyiDguRQWSn@google.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <ZpaJUIyiDguRQWSn@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-I'm ignoring most of what you asked Oliver to focus on just one thing:
 
-On Wed, Jul 17, 2024 at 09:43:38AM +0800, Hongyu Xie wrote:
-> Even before usbfs->reset_resume is called (if there is one), the USB device
-> has already been reset and in a good state.
 
-You are wrong to think that being reset means the device is in a good 
-state.
+On 2024/7/16 22:53, Roman Gushchin wrote:
+> On Tue, Jul 16, 2024 at 08:14:31PM +0800, chenridong wrote:
+>>
+>>
+>> On 2024/7/12 9:15, chenridong wrote:
+>>>
+>>>
+>>> On 2024/7/12 1:36, Tejun Heo wrote:
+>>>> Hello,
+>>>>
+>>>> On Thu, Jul 11, 2024 at 03:52:34AM +0000, Roman Gushchin wrote:
+>>>>>> The max_active of system_wq is WQ_DFL_ACTIVE(256). If all
+>>>>>> active works are
+>>>>>> cgroup bpf release works, it will block smp_call_on_cpu work
+>>>>>> which enque
+>>>>>> after cgroup bpf releases. So smp_call_on_cpu holding
+>>>>>> cpu_hotplug_lock will
+>>>>>> wait for completion, but it can never get a completion
+>>>>>> because cgroup bpf
+>>>>>> release works can not get cgroup_mutex and will never finish.
+>>>>>> However, Placing the cgroup bpf release works on cgroup
+>>>>>> destroy will never
+>>>>>> block smp_call_on_cpu work, which means loop is broken.
+>>>>>> Thus, it can solve
+>>>>>> the problem.
+>>>>>
+>>>>> Tejun,
+>>>>>
+>>>>> do you have an opinion on this?
+>>>>>
+>>>>> If there are certain limitations from the cgroup side on what
+>>>>> can be done
+>>>>> in a generic work context, it would be nice to document (e.g. don't grab
+>>>>> cgroup mutex), but I still struggle to understand what exactly is wrong
+>>>>> with the blamed commit.
+>>>>
+>>>> I think the general rule here is more "don't saturate system wqs" rather
+>>>> than "don't grab cgroup_mutex from system_wq". system wqs are for misc
+>>>> things which shouldn't create a large number of concurrent work items. If
+>>>> something is going to generate 256+ concurrent work items, it should
+>>>> use its
+>>>> own workqueue. We don't know what's in system wqs and can't expect
+>>>> its users
+>>>> to police specific lock usages.
+>>>>
+>>> Thank you, Tj. That's exactly what I'm trying to convey. Just like
+>>> cgroup, which has its own workqueue and may create a large number of
+>>> release works, it is better to place all its related works on its
+>>> workqueue rather than on system wqs.
+>>>
+>>> Regards,
+>>> Ridong
+>>>
+>>>> Another aspect is that the current WQ_DFL_ACTIVE is an arbitrary number I
+>>>> came up with close to 15 years ago. Machine size has increased by
+>>>> multiple
+>>>> times, if not an order of magnitude since then. So, "there can't be a
+>>>> reasonable situation where 256 concurrency limit isn't enough" is most
+>>>> likely not true anymore and the limits need to be pushed upward.
+>>>>
+>>>> Thanks.
+>>>>
+>>>
+>> Hello, Tejun, and Roman, is the patch acceptable? Do I need to take any
+>> further actions?
+>>
+> 
+> I'm not against merging it. I still find the explanation/commit message
+> a bit vague and believe that maybe some changes need to be done on the watchdog
+> side to make such lockups impossible. As I understand the two most important
+> pieces are the watchdog which tries to run a system work on every cpu while
+> holding cpu_hotplug_lock on read and the cpuset controller which tries
+> to grab cpu_hotplug_lock on writing.
+> 
+> It's indeed a tricky problem, so maybe there is no simple and clear explanation.
+> 
+> Anyway thank you for finding the problem and providing a reproducer!
+> 
+> Thanks!
 
-The userspace driver may have very carefully put the device into some 
-non-default state with special settings.  All those settings will be 
-lost when the device gets reset, and they will have to be reloaded 
-before the device can function properly.  But the userspace driver won't 
-even know this has happened unless the kernel tells it somehow.
+Originally, we have tried several methods to address this issue on the 
+watchdog side, but they failed to fix the problem. This is the only way 
+we have found that can fix it now. Perhaps the commit message could be 
+clearer; I will do it in v2.
 
-Oliver is pointing out that the kernel has to tell the userspace driver 
-that all the settings have been lost, so the driver will know it needs 
-to load them back into the device.  Currently we have no way to send 
-this information to the driver.  That's why usbfs doesn't have a 
-reset_resume callback now.
+Hello, Tejun, should i add a commit to modify the WQ_DFL_ACTIVE value? 
+Perhaps 1024 is reasonable?
 
-Alan Stern
+Thanks
 
