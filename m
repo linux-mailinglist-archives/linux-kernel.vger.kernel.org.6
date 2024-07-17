@@ -1,106 +1,81 @@
-Return-Path: <linux-kernel+bounces-255737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FFC934483
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:03:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB5993448B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59AE9B21AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F0D283459
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CE548CCC;
-	Wed, 17 Jul 2024 22:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C279A41C7F;
+	Wed, 17 Jul 2024 22:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IZlYp3WV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqYFp49M"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DD96CDCC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80D1E889;
+	Wed, 17 Jul 2024 22:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721253764; cv=none; b=M84qbuwVBiS3pTyPBUPwlJ5cWRKX4xhjVGrbUguutws6WwmwtzESpsNZw5Fq6DWBa7Y4Dr3Jm8zKTc1Qp1hkkdZisBkgvVFy/JZe5wwi/g2MQxU0Ui2VSLXvkdQqMC9286OzQH3etqQFZwjdYFZvoZ7rJGLWSqW9Fa+ktSUj+j4=
+	t=1721253875; cv=none; b=iQMS5jbeRy8PaDITRkz07BxhsjWIQJaW3+bKM9/37ZQ44fnHPb7FD26w9dpHsjIIIEwU0lRq+9gBN2CZnV8Wu4nIo6FHD1so1hziRRKJ9grVH+VD+UiXPsYY9KDwLZNl2xWZTihDLaXYgjOGDvyE+QnVr/usfafOjEQLKhE3/dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721253764; c=relaxed/simple;
-	bh=nCsCTFa0Z1yw3QiGtMINtHrc9hkNSxx4hxdCmu5+jNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qGePt/aPpFTn5kgzThRGDsTqO5qfUu/ihY+C7ezGqyHFIQZvTcIVKLaPnatP5nVlw0N2x2Fq9iJu2ofvJozDneRNTK0VE/mBdf0zomSNVYMcdCx+NZVu7yJifZ1Wx1tvInyUAFd/vSiYuppXnTBD14A3uJn/37Pvya9R/UZ02TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IZlYp3WV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721253758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cM3uv1r2lWcW+xf+zoFP/LGFvU433fJ+6ETuZi6JTtc=;
-	b=IZlYp3WVEJwYj0BpxG/PNjxUCRQbrp/sLzWsxA2exEhmYLFhCKsUCSh3SyVpMcoBtgMq6O
-	mzv5zspGuox0kJpSfeiqGzQgILPO2uiddrLyauYz7TjsGJr8QGzokyhzMM/UW9kYrypRhQ
-	po477y/b/cjFkBEEqoVNuPwIojUNoRU=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-xQXcX5H9NXOVD1lHZoZQ9A-1; Wed, 17 Jul 2024 18:02:36 -0400
-X-MC-Unique: xQXcX5H9NXOVD1lHZoZQ9A-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44aeacbf2baso259731cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:02:36 -0700 (PDT)
+	s=arc-20240116; t=1721253875; c=relaxed/simple;
+	bh=9heysHdPAAfYUYBjINGkFrzzC1PF5xW0W3PpAOMDtLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lz5XfHWM7WO93ZWis6z+HD5ttFS+dljmuzkfFc6fgRkAxtXNC24aXYo1meVkd06GlTaH5FEv6h9YnfmE0PtM8EW0K11YnHhHM+DsGSCSHxvzpPg3L0jjbZo60fSEF+3DBrOg0h1AwUyuPrG5xGztkPORpbdUQT6ZYvm3TdLFG40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqYFp49M; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc566ac769so1593635ad.1;
+        Wed, 17 Jul 2024 15:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721253869; x=1721858669; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qJJzJBG1sBuJIYP4ytCZjApGrGsyKC+uV6BQ0w5NiXc=;
+        b=lqYFp49MHJg5E2sth7z7Iom7KehcqUB4+ZRyv891fjjAQgAQ8+cOLY8lY4tbN/MaX4
+         raH+z5LHxVvHJQ/P/kKFbDgqYf1wbQVgf2gjWWqyAmd9IDfBN/So1fLelF5p4vxFcwwz
+         TN1OQKpRrKwZNxZEJWMlitR4yy55eTmuu/mbrQZsF1Ud/mWpv+uiunfPW4sMNwSLrnAH
+         fKUTZ9xA89lykZ/rBoe5q7/Rj5VRAS5MTd9/KZSg57X+oLJheMM33Lz0QLwbWXJn/4Jl
+         yQB/XY/mloFO3ikIBIWy86RWHMF3Z9b5TlBzOUW3WoBOPPVZRLNSfZmJlTcuj6GCnivv
+         guGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721253755; x=1721858555;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cM3uv1r2lWcW+xf+zoFP/LGFvU433fJ+6ETuZi6JTtc=;
-        b=UhZFOcAUFc8MyaOPi+bKZ1eX9XzG/B14iV7UgMyBuwPUl3SmtmQPY7XbcdQMyT8bnO
-         pgEKf5/cahsbUnFzL+Prr0+WhvfwyF5YYlb6D0CwdlIoP87Bc2RHz6cgdfN5kyPM2rno
-         yYlPlaLd3rP3wX226hSNTjq89rafOG/PBfQXA37IYZFnpyICfhpR2ZFTXqA/YL0F7Yc9
-         3G6/c3smQLrnjfOMYBdFSCjG9MgFGnzLQ5PC+UEogSkUZGTF9a/Zeb0QQfBnMnMjKnwX
-         J8MxZNzsmOjpy1gPv9UzPREY/KMuXqvKjBBgcRo3XO15oocdH3HhIfJ9FD5mNtiGTKvL
-         QUjw==
-X-Gm-Message-State: AOJu0Yydzfs3bXfWPZixBCNXnuFl89iI0KWfG/dpKYG3zNFg7zYmh/oH
-	woioUJOPdorgd/tUus76OjTa3uH+U5HqKQQlDLy78BgsUiBIo/xbwzztXHQcgszS8mtfvBHBpGp
-	2n1HWV++1xyY574hmenKxdsQzLJ+BlH4jjm5HEhtgv1BnW7ZStaljnA9fO1f23jkyZpF7KgNWjI
-	UN1MWP53+YHPfDl9ijGvL9CVT/Dy4a+hP+3OCr2tQJxU0=
-X-Received: by 2002:a05:622a:19a8:b0:446:5a29:c501 with SMTP id d75a77b69052e-44f864afa6cmr22373231cf.1.1721253755423;
-        Wed, 17 Jul 2024 15:02:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8QsOTDoliMPT3fo+/7Outqv1nF7W8rzQA7PybYEjXwyS1q7X3t8IYBAe2znVX4XcYe4OF/A==
-X-Received: by 2002:a05:622a:19a8:b0:446:5a29:c501 with SMTP id d75a77b69052e-44f864afa6cmr22372781cf.1.1721253754848;
-        Wed, 17 Jul 2024 15:02:34 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b83f632sm53071651cf.85.2024.07.17.15.02.33
+        d=1e100.net; s=20230601; t=1721253869; x=1721858669;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qJJzJBG1sBuJIYP4ytCZjApGrGsyKC+uV6BQ0w5NiXc=;
+        b=gOPH53z6iBHzzkj5FbF0vA0Zv84I+4kHQZfAVEXrkC9m5g+CFHLX76cgumQBEhi1dC
+         UN9xU0Qp87eS+HfKWdCTpFADnWpC7hKljyVOj9+mNKT1F3etqojwofJVDTNrYT8qDJdR
+         +Mg7/pa3N7mmfzQeGROdKhTmkym80XqX1RDv+hQe4+myTOpkBHZKmodmzqtt2GrqqIBY
+         NLx8P3xClwVXsadhLIleU5Pm6BzJtEe7K16Ff0BROUka+P6z82E9t7+CyjrdLmZn2ZWq
+         hVdfmkR7jfNTNU+GEuo0j+S6NFtKF8VJptlu2v9AOdH+muYYdShrCV1O/2JurRnbLJPq
+         MtEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAwg+DjEHVEHSee1FhrBXD3XRbJUbHv5cmPTTYDVln5uht/tF8IPjjoKs9VBIBxAfNe5YJDp1GZUk/NkIq9gHjt5igaVAiLV4f8YSqoxl0QDZjqEHWFRimOysTviiESvxYvfhEK+9MLnxLoK8=
+X-Gm-Message-State: AOJu0Yyw7Xaeiglf8hG2MQFi/rRxRSCvL8bEXQG0aPzeu2SNAY/RNsuW
+	olrrMPKRQPVWew3UfOy+mVf3bE1Iv21GdohZmoMR0TLhdcv1p9Lh
+X-Google-Smtp-Source: AGHT+IHqspYkdBpihSMxxP5jlP95b1at34yApAcv8ktjXwpCOTl1ZgFvFv7Gni1yTtamzHb29RKzQw==
+X-Received: by 2002:a17:903:22cc:b0:1fb:3e9f:ff6f with SMTP id d9443c01a7336-1fc4e688ef7mr26234275ad.40.1721253869200;
+        Wed, 17 Jul 2024 15:04:29 -0700 (PDT)
+Received: from localhost.localdomain (pc-66-166-104-200.cm.vtr.net. [200.104.166.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc3a251sm79778585ad.198.2024.07.17.15.04.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 15:02:34 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	peterx@redhat.com,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	linux-s390@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	sparclinux@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	x86@kernel.org,
-	Alistair Popple <apopple@nvidia.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>
-Subject: [PATCH RFC 6/6] mm: Convert "*_trans_huge() || *_devmap()" to use *_leaf()
-Date: Wed, 17 Jul 2024 18:02:19 -0400
-Message-ID: <20240717220219.3743374-7-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240717220219.3743374-1-peterx@redhat.com>
-References: <20240717220219.3743374-1-peterx@redhat.com>
+        Wed, 17 Jul 2024 15:04:28 -0700 (PDT)
+From: Camila Alvarez <cam.alvarez.i@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
+Cc: Brian Foster <bfoster@redhat.com>,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Camila Alvarez <cam.alvarez.i@gmail.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] bcachefs: WARNING in bch2_fs_journal_stop
+Date: Wed, 17 Jul 2024 18:02:39 -0400
+Message-Id: <20240717220237.1246673-1-cam.alvarez.i@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,412 +84,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch converted all such checks into one *_leaf() check under common
-mm/, as "thp+devmap" should compose everything for a *_leaf() for now.  I
-didn't yet touch arch code in other directories, as some arch may need some
-special attention, so I left those separately.
+last_seq and last_empty_seq suffered from an off by one error when the
+journal has no entries.
 
-It should start to save some cycles on such check and pave way for the new
-leaf types.  E.g., when a new type of leaf is introduced, it'll naturally
-go the same route to what we have now for thp+devmap.
+The indexes were fixed and an assertion is added to check that the
+last_empty_seq is always kept under the next valid seq number.
 
-Here one issue with pxx_leaf() API is that such API will be defined by arch
-but it doesn't consider kernel config.  For example, below "if" branch
-cannot be automatically optimized:
-
-  if (pmd_leaf()) { ... }
-
-Even if both THP && HUGETLB are not enabled (which means pmd_leaf() can
-never return true).
-
-To provide a chance for compilers to optimize and omit code when possible,
-introduce a light wrapper for them and call them pxx_is_leaf().  That will
-take kernel config into account and properly allow omitting branches when
-the compiler knows it'll constantly returns false.  This tries to mimic
-what we used to have with pxx_trans_huge() when !THP, so it now also
-applies to pxx_leaf() API.
-
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Reported-by: syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
 ---
- include/linux/huge_mm.h    |  6 +++---
- include/linux/pgtable.h    | 30 +++++++++++++++++++++++++++++-
- mm/hmm.c                   |  4 ++--
- mm/huge_mapping_pmd.c      |  9 +++------
- mm/huge_mapping_pud.c      |  6 +++---
- mm/mapping_dirty_helpers.c |  4 ++--
- mm/memory.c                | 14 ++++++--------
- mm/migrate_device.c        |  2 +-
- mm/mprotect.c              |  4 ++--
- mm/mremap.c                |  5 ++---
- mm/page_vma_mapped.c       |  5 ++---
- mm/pgtable-generic.c       |  7 +++----
- 12 files changed, 58 insertions(+), 38 deletions(-)
+ fs/bcachefs/journal.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index aea2784df8ef..a5b026d0731e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -27,7 +27,7 @@ spinlock_t *__pud_trans_huge_lock(pud_t *pud, struct vm_area_struct *vma);
- static inline spinlock_t *
- pud_trans_huge_lock(pud_t *pud, struct vm_area_struct *vma)
- {
--	if (pud_trans_huge(*pud) || pud_devmap(*pud))
-+	if (pud_is_leaf(*pud))
- 		return __pud_trans_huge_lock(pud, vma);
- 	else
- 		return NULL;
-@@ -36,7 +36,7 @@ pud_trans_huge_lock(pud_t *pud, struct vm_area_struct *vma)
- #define split_huge_pud(__vma, __pud, __address)				\
- 	do {								\
- 		pud_t *____pud = (__pud);				\
--		if (pud_trans_huge(*____pud) || pud_devmap(*____pud))	\
-+		if (pud_is_leaf(*____pud))				\
- 			__split_huge_pud(__vma, __pud, __address);	\
- 	}  while (0)
- #else  /* CONFIG_PGTABLE_HAS_PUD_LEAVES */
-@@ -125,7 +125,7 @@ static inline int is_swap_pmd(pmd_t pmd)
- static inline spinlock_t *
- pmd_trans_huge_lock(pmd_t *pmd, struct vm_area_struct *vma)
- {
--	if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd))
-+	if (is_swap_pmd(*pmd) || pmd_is_leaf(*pmd))
- 		return __pmd_trans_huge_lock(pmd, vma);
- 	else
- 		return NULL;
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 5e505373b113..af7709a132aa 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1641,7 +1641,7 @@ static inline int pud_trans_unstable(pud_t *pud)
- 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
- 	pud_t pudval = READ_ONCE(*pud);
+diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+index 10b19791ec98..7bbbf4b149e9 100644
+--- a/fs/bcachefs/journal.c
++++ b/fs/bcachefs/journal.c
+@@ -1201,7 +1201,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 	struct journal_replay *i, **_i;
+ 	struct genradix_iter iter;
+ 	bool had_entries = false;
+-	u64 last_seq = cur_seq, nr, seq;
++        u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
  
--	if (pud_none(pudval) || pud_trans_huge(pudval) || pud_devmap(pudval))
-+	if (pud_none(pudval) || pud_leaf(pudval))
- 		return 1;
- 	if (unlikely(pud_bad(pudval))) {
- 		pud_clear_bad(pud);
-@@ -1901,6 +1901,34 @@ typedef unsigned int pgtbl_mod_mask;
- #define pmd_leaf(x)	false
- #endif
+ 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
+ 		i = *_i;
+@@ -1209,11 +1209,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 		if (journal_replay_ignore(i))
+ 			continue;
  
-+/*
-+ * Wrapper of pxx_leaf() helpers.
-+ *
-+ * Comparing to pxx_leaf() API, the only difference is: using these macros
-+ * can help code generation, so unnecessary code can be omitted when the
-+ * specific level of leaf is not possible due to kernel config.  It is
-+ * needed because normally pxx_leaf() can be defined in arch code without
-+ * knowing the kernel config.
-+ *
-+ * Currently we only need pmd/pud versions, because the largest leaf Linux
-+ * supports so far is pud.
-+ *
-+ * Defining here also means that in arch's pgtable headers these macros
-+ * cannot be used, pxx_leaf()s need to be used instead, because this file
-+ * will not be included in arch's pgtable headers.
-+ */
-+#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
-+#define pmd_is_leaf(x)  pmd_leaf(x)
-+#else
-+#define pmd_is_leaf(x)  false
-+#endif
-+
-+#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
-+#define pud_is_leaf(x)  pud_leaf(x)
-+#else
-+#define pud_is_leaf(x)  false
-+#endif
-+
- #ifndef pgd_leaf_size
- #define pgd_leaf_size(x) (1ULL << PGDIR_SHIFT)
- #endif
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 7e0229ae4a5a..8d985bbbfee9 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -351,7 +351,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		return hmm_pfns_fill(start, end, range, HMM_PFN_ERROR);
+-		last_seq = le64_to_cpu(i->j.last_seq);
++		last_written_seq = le64_to_cpu(i->j.last_seq);
+ 		break;
  	}
  
--	if (pmd_devmap(pmd) || pmd_trans_huge(pmd)) {
-+	if (pmd_is_leaf(pmd)) {
- 		/*
- 		 * No need to take pmd_lock here, even if some other thread
- 		 * is splitting the huge pmd we will get that event through
-@@ -362,7 +362,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		 * values.
- 		 */
- 		pmd = pmdp_get_lockless(pmdp);
--		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
-+		if (!pmd_is_leaf(pmd))
- 			goto again;
+-	nr = cur_seq - last_seq;
++	nr = cur_seq - last_written_seq;
  
- 		return hmm_vma_handle_pmd(walk, addr, end, hmm_pfns, pmd);
-diff --git a/mm/huge_mapping_pmd.c b/mm/huge_mapping_pmd.c
-index 7b85e2a564d6..d30c60685f66 100644
---- a/mm/huge_mapping_pmd.c
-+++ b/mm/huge_mapping_pmd.c
-@@ -60,8 +60,7 @@ spinlock_t *__pmd_trans_huge_lock(pmd_t *pmd, struct vm_area_struct *vma)
- 	spinlock_t *ptl;
- 
- 	ptl = pmd_lock(vma->vm_mm, pmd);
--	if (likely(is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) ||
--		   pmd_devmap(*pmd)))
-+	if (likely(is_swap_pmd(*pmd) || pmd_is_leaf(*pmd)))
- 		return ptl;
- 	spin_unlock(ptl);
- 	return NULL;
-@@ -627,8 +626,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 	VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
- 	VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
- 	VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PMD_SIZE, vma);
--	VM_BUG_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd) &&
--		  !pmd_devmap(*pmd));
-+	VM_BUG_ON(!is_pmd_migration_entry(*pmd) && !pmd_is_leaf(*pmd));
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	count_vm_event(THP_SPLIT_PMD);
-@@ -845,8 +843,7 @@ void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
- 	 * require a folio to check the PMD against. Otherwise, there
- 	 * is a risk of replacing the wrong folio.
- 	 */
--	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
--	    is_pmd_migration_entry(*pmd)) {
-+	if (pmd_is_leaf(*pmd) || is_pmd_migration_entry(*pmd)) {
- 		if (folio && folio != pmd_folio(*pmd))
- 			return;
- 		__split_huge_pmd_locked(vma, pmd, address, freeze);
-diff --git a/mm/huge_mapping_pud.c b/mm/huge_mapping_pud.c
-index c3a6bffe2871..58871dd74df2 100644
---- a/mm/huge_mapping_pud.c
-+++ b/mm/huge_mapping_pud.c
-@@ -57,7 +57,7 @@ spinlock_t *__pud_trans_huge_lock(pud_t *pud, struct vm_area_struct *vma)
- 	spinlock_t *ptl;
- 
- 	ptl = pud_lock(vma->vm_mm, pud);
--	if (likely(pud_trans_huge(*pud) || pud_devmap(*pud)))
-+	if (likely(pud_is_leaf(*pud)))
- 		return ptl;
- 	spin_unlock(ptl);
- 	return NULL;
-@@ -90,7 +90,7 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 
- 	ret = -EAGAIN;
- 	pud = *src_pud;
--	if (unlikely(!pud_trans_huge(pud) && !pud_devmap(pud)))
-+	if (unlikely(!pud_leaf(pud)))
- 		goto out_unlock;
- 
- 	/*
-@@ -225,7 +225,7 @@ void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 				(address & HPAGE_PUD_MASK) + HPAGE_PUD_SIZE);
- 	mmu_notifier_invalidate_range_start(&range);
- 	ptl = pud_lock(vma->vm_mm, pud);
--	if (unlikely(!pud_trans_huge(*pud) && !pud_devmap(*pud)))
-+	if (unlikely(!pud_is_leaf(*pud)))
- 		goto out;
- 	__split_huge_pud_locked(vma, pud, range.start);
- 
-diff --git a/mm/mapping_dirty_helpers.c b/mm/mapping_dirty_helpers.c
-index 2f8829b3541a..a9ea767d2d73 100644
---- a/mm/mapping_dirty_helpers.c
-+++ b/mm/mapping_dirty_helpers.c
-@@ -129,7 +129,7 @@ static int wp_clean_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pmd_t pmdval = pmdp_get_lockless(pmd);
- 
- 	/* Do not split a huge pmd, present or migrated */
--	if (pmd_trans_huge(pmdval) || pmd_devmap(pmdval)) {
-+	if (pmd_is_leaf(pmdval)) {
- 		WARN_ON(pmd_write(pmdval) || pmd_dirty(pmdval));
- 		walk->action = ACTION_CONTINUE;
- 	}
-@@ -152,7 +152,7 @@ static int wp_clean_pud_entry(pud_t *pud, unsigned long addr, unsigned long end,
- 	pud_t pudval = READ_ONCE(*pud);
- 
- 	/* Do not split a huge pud */
--	if (pud_trans_huge(pudval) || pud_devmap(pudval)) {
-+	if (pud_is_leaf(pudval)) {
- 		WARN_ON(pud_write(pudval) || pud_dirty(pudval));
- 		walk->action = ACTION_CONTINUE;
- 	}
-diff --git a/mm/memory.c b/mm/memory.c
-index 126ee0903c79..6dc92c514bb7 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1235,8 +1235,7 @@ copy_pmd_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	src_pmd = pmd_offset(src_pud, addr);
- 	do {
- 		next = pmd_addr_end(addr, end);
--		if (is_swap_pmd(*src_pmd) || pmd_trans_huge(*src_pmd)
--			|| pmd_devmap(*src_pmd)) {
-+		if (is_swap_pmd(*src_pmd) || pmd_is_leaf(*src_pmd)) {
- 			int err;
- 			VM_BUG_ON_VMA(next-addr != HPAGE_PMD_SIZE, src_vma);
- 			err = copy_huge_pmd(dst_mm, src_mm, dst_pmd, src_pmd,
-@@ -1272,7 +1271,7 @@ copy_pud_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
- 	src_pud = pud_offset(src_p4d, addr);
- 	do {
- 		next = pud_addr_end(addr, end);
--		if (pud_trans_huge(*src_pud) || pud_devmap(*src_pud)) {
-+		if (pud_is_leaf(*src_pud)) {
- 			int err;
- 
- 			VM_BUG_ON_VMA(next-addr != HPAGE_PUD_SIZE, src_vma);
-@@ -1710,7 +1709,7 @@ static inline unsigned long zap_pmd_range(struct mmu_gather *tlb,
- 	pmd = pmd_offset(pud, addr);
- 	do {
- 		next = pmd_addr_end(addr, end);
--		if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)) {
-+		if (is_swap_pmd(*pmd) || pmd_is_leaf(*pmd)) {
- 			if (next - addr != HPAGE_PMD_SIZE)
- 				__split_huge_pmd(vma, pmd, addr, false, NULL);
- 			else if (zap_huge_pmd(tlb, vma, pmd, addr)) {
-@@ -1752,7 +1751,7 @@ static inline unsigned long zap_pud_range(struct mmu_gather *tlb,
- 	pud = pud_offset(p4d, addr);
- 	do {
- 		next = pud_addr_end(addr, end);
--		if (pud_trans_huge(*pud) || pud_devmap(*pud)) {
-+		if (pud_is_leaf(*pud)) {
- 			if (next - addr != HPAGE_PUD_SIZE) {
- 				mmap_assert_locked(tlb->mm);
- 				split_huge_pud(vma, pud, addr);
-@@ -5605,8 +5604,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 		pud_t orig_pud = *vmf.pud;
- 
- 		barrier();
--		if (pud_trans_huge(orig_pud) || pud_devmap(orig_pud)) {
--
-+		if (pud_is_leaf(orig_pud)) {
- 			/*
- 			 * TODO once we support anonymous PUDs: NUMA case and
- 			 * FAULT_FLAG_UNSHARE handling.
-@@ -5646,7 +5644,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 				pmd_migration_entry_wait(mm, vmf.pmd);
- 			return 0;
+ 	if (nr + 1 > j->pin.size) {
+ 		free_fifo(&j->pin);
+@@ -1224,14 +1224,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
  		}
--		if (pmd_trans_huge(vmf.orig_pmd) || pmd_devmap(vmf.orig_pmd)) {
-+		if (pmd_is_leaf(vmf.orig_pmd)) {
- 			if (pmd_protnone(vmf.orig_pmd) && vma_is_accessible(vma))
- 				return do_huge_pmd_numa_page(&vmf);
+ 	}
  
-diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index 6d66dc1c6ffa..1fbeee9619c8 100644
---- a/mm/migrate_device.c
-+++ b/mm/migrate_device.c
-@@ -596,7 +596,7 @@ static void migrate_vma_insert_page(struct migrate_vma *migrate,
- 	pmdp = pmd_alloc(mm, pudp, addr);
- 	if (!pmdp)
- 		goto abort;
--	if (pmd_trans_huge(*pmdp) || pmd_devmap(*pmdp))
-+	if (pmd_leaf(*pmdp))
- 		goto abort;
- 	if (pte_alloc(mm, pmdp))
- 		goto abort;
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 694f13b83864..ddfee216a02b 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -381,7 +381,7 @@ static inline long change_pmd_range(struct mmu_gather *tlb,
- 			goto next;
+-	j->replay_journal_seq	= last_seq;
++	j->replay_journal_seq	= last_written_seq;
+ 	j->replay_journal_seq_end = cur_seq;
+-	j->last_seq_ondisk	= last_seq;
+-	j->flushed_seq_ondisk	= cur_seq - 1;
+-	j->seq_ondisk		= cur_seq - 1;
+-	j->pin.front		= last_seq;
++	j->last_seq_ondisk	= last_written_seq;
++	j->flushed_seq_ondisk	= last_seq;
++	j->seq_ondisk		= last_seq;
++	j->pin.front		= last_written_seq;
+ 	j->pin.back		= cur_seq;
+-	atomic64_set(&j->seq, cur_seq - 1);
++	atomic64_set(&j->seq, last_seq);
  
- 		_pmd = pmdp_get_lockless(pmd);
--		if (is_swap_pmd(_pmd) || pmd_trans_huge(_pmd) || pmd_devmap(_pmd)) {
-+		if (is_swap_pmd(_pmd) || pmd_is_leaf(_pmd)) {
- 			if ((next - addr != HPAGE_PMD_SIZE) ||
- 			    pgtable_split_needed(vma, cp_flags)) {
- 				__split_huge_pmd(vma, pmd, addr, false, NULL);
-@@ -452,7 +452,7 @@ static inline long change_pud_range(struct mmu_gather *tlb,
- 			mmu_notifier_invalidate_range_start(&range);
- 		}
+ 	fifo_for_each_entry_ptr(p, &j->pin, seq)
+ 		journal_pin_list_init(p, 1);
+@@ -1261,7 +1261,10 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 	}
  
--		if (pud_leaf(pud)) {
-+		if (pud_is_leaf(pud)) {
- 			if ((next - addr != PUD_SIZE) ||
- 			    pgtable_split_needed(vma, cp_flags)) {
- 				__split_huge_pud(vma, pudp, addr);
-diff --git a/mm/mremap.c b/mm/mremap.c
-index e7ae140fc640..f5c9884ea1f8 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -587,7 +587,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
- 		new_pud = alloc_new_pud(vma->vm_mm, vma, new_addr);
- 		if (!new_pud)
- 			break;
--		if (pud_trans_huge(*old_pud) || pud_devmap(*old_pud)) {
-+		if (pud_is_leaf(*old_pud)) {
- 			if (extent == HPAGE_PUD_SIZE) {
- 				move_pgt_entry(HPAGE_PUD, vma, old_addr, new_addr,
- 					       old_pud, new_pud, need_rmap_locks);
-@@ -609,8 +609,7 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
- 		if (!new_pmd)
- 			break;
- again:
--		if (is_swap_pmd(*old_pmd) || pmd_trans_huge(*old_pmd) ||
--		    pmd_devmap(*old_pmd)) {
-+		if (is_swap_pmd(*old_pmd) || pmd_is_leaf(*old_pmd)) {
- 			if (extent == HPAGE_PMD_SIZE &&
- 			    move_pgt_entry(HPAGE_PMD, vma, old_addr, new_addr,
- 					   old_pmd, new_pmd, need_rmap_locks))
-diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-index ae5cc42aa208..891bea8062d2 100644
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -235,8 +235,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 		 */
- 		pmde = pmdp_get_lockless(pvmw->pmd);
+ 	if (!had_entries)
+-		j->last_empty_seq = cur_seq;
++		j->last_empty_seq = last_seq;
++
++	WARN(j->last_empty_seq >= cur_seq, "journal startup error: last empty seq %llu is higher or equal than the next seq number to be used (%llu)",
++	      j->last_empty_seq, cur_seq);
  
--		if (pmd_trans_huge(pmde) || is_pmd_migration_entry(pmde) ||
--		    (pmd_present(pmde) && pmd_devmap(pmde))) {
-+		if (pmd_is_leaf(pmde) || is_pmd_migration_entry(pmde)) {
- 			pvmw->ptl = pmd_lock(mm, pvmw->pmd);
- 			pmde = *pvmw->pmd;
- 			if (!pmd_present(pmde)) {
-@@ -251,7 +250,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
- 					return not_found(pvmw);
- 				return true;
- 			}
--			if (likely(pmd_trans_huge(pmde) || pmd_devmap(pmde))) {
-+			if (likely(pmd_is_leaf(pmde))) {
- 				if (pvmw->flags & PVMW_MIGRATION)
- 					return not_found(pvmw);
- 				if (!check_pmd(pmd_pfn(pmde), pvmw))
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index e9fc3f6774a6..c7b7a803f4ad 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -139,8 +139,7 @@ pmd_t pmdp_huge_clear_flush(struct vm_area_struct *vma, unsigned long address,
- {
- 	pmd_t pmd;
- 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
--	VM_BUG_ON(pmd_present(*pmdp) && !pmd_trans_huge(*pmdp) &&
--			   !pmd_devmap(*pmdp));
-+	VM_BUG_ON(pmd_present(*pmdp) && !pmd_leaf(*pmdp));
- 	pmd = pmdp_huge_get_and_clear(vma->vm_mm, address, pmdp);
- 	flush_pmd_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
- 	return pmd;
-@@ -247,7 +246,7 @@ pud_t pudp_huge_clear_flush(struct vm_area_struct *vma, unsigned long address,
- 	pud_t pud;
+ 	spin_lock(&j->lock);
  
- 	VM_BUG_ON(address & ~HPAGE_PUD_MASK);
--	VM_BUG_ON(!pud_trans_huge(*pudp) && !pud_devmap(*pudp));
-+	VM_BUG_ON(!pud_leaf(*pudp));
- 	pud = pudp_huge_get_and_clear(vma->vm_mm, address, pudp);
- 	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
- 	return pud;
-@@ -293,7 +292,7 @@ pte_t *__pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
- 		*pmdvalp = pmdval;
- 	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
- 		goto nomap;
--	if (unlikely(pmd_trans_huge(pmdval) || pmd_devmap(pmdval)))
-+	if (unlikely(pmd_leaf(pmdval)))
- 		goto nomap;
- 	if (unlikely(pmd_bad(pmdval))) {
- 		pmd_clear_bad(pmd);
 -- 
-2.45.0
+2.34.1
 
 
