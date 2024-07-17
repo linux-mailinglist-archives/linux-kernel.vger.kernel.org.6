@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-255275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32DC4933E46
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:20:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AFA933E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22021F2258D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ED0DB211A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE5D18130F;
-	Wed, 17 Jul 2024 14:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="R9BkCuK+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qy7CO/Wf"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A02E181308;
+	Wed, 17 Jul 2024 14:21:08 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB38F2D61B;
-	Wed, 17 Jul 2024 14:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FCD2D61B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721226027; cv=none; b=kUONse85Stt/2WcX6TdKYadFSrjYNVGgWUpLvz7w6WsY7PYRzEgIHrhN8n4Gu5Nl/9VvYwWFqyCg7NeLjv5GsQsRM5oGq96K/ZL3n/QGP8niKiOGJb+Q2IFab3oMkbudyrLH4Ec7++PIjdesX2FRUKZaynViCU0aE0tEHimadp4=
+	t=1721226067; cv=none; b=NQRwC66uoxoqcPwQEZ4DqesyO6MAu6rXhlOYPcPzcSqYsJWLt/ecZkVBmB+xNGLotdj6GkvnOBoBK7KMM+hi5z+5V+AWQj/bWKhaEQAHzmjpwHXbZ1C/BHrrbIYQcb7bg1mKPy/JZSKXIVO2+ceZymTuhFc3nFm8yG1AxLv/mdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721226027; c=relaxed/simple;
-	bh=5nbCBW4oJ/ogJooKQCfqvSA1sAQdk3JiwN9/HrQmGuI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=I6SZMQHxBC5p1Eooh8Pac5q9Cn5EqNKqBdDRK8KTd3dJu5C3fjz3yENxH8vhsk1k459GxFYtHhM/rYj05ww5h95OsixvCyDT5dztQFVoViA07/PeE01ZDw9cRdDPt5hd27soliEh5q8UyNhTtk0CBsRGXrmxwsGYts15p3KNuZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=R9BkCuK+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qy7CO/Wf; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D7749114010F;
-	Wed, 17 Jul 2024 10:20:23 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute4.internal (MEProxy); Wed, 17 Jul 2024 10:20:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1721226023;
-	 x=1721312423; bh=5nbCBW4oJ/ogJooKQCfqvSA1sAQdk3JiwN9/HrQmGuI=; b=
-	R9BkCuK+4L4Yhj3OD+PedvswLbb/7Zkt+bFvvGNfk723OwEUliYLbrfqEyM3fDV9
-	N0W8+7CR4kwY7tv4VRh8FT5km9NZQ8LNGnSmj0PTUyv0yBsnTAN82OIsks7gtmZl
-	cebaAVLHeeDZ8TAv+13S4HrbVelLCKN3OD5OHui4I2xJzpqhu+rlKUrORDvoHJKB
-	hSUspxBvJAEidKIZpCCBgJOywHJqR145nO17Mt2GUIyTN69KY+WMDnFM0AMUHIMO
-	IPXuWxsV/ziPkG8lUWrI8nHywgLKXu103xICKh0jiBmVIkQRkarZ6UWx+BnbcmY2
-	4U2bflb/aiLUhig/vwWcTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1721226023; x=
-	1721312423; bh=5nbCBW4oJ/ogJooKQCfqvSA1sAQdk3JiwN9/HrQmGuI=; b=q
-	y7CO/WfBsjp4/g8CZYUK+FXGkHu7vtx3keyVj1U+OF9ykGcNjrzDmGnpqQ5SDUvD
-	6jsm6Qhi2WxM0NoVO9SPsuOi1MDfV7Oq6GQNvHj7zOGb4lERi+SKffqObY7w+GEc
-	j6NiWyer6h6nYIhoEwLgVXoIQePRYC53jgggoIB/7vm2S/J0553KyygiTN51Ieft
-	dByOBG+nG5jCTvdJ6ZCJaYFVsoCrZEvJYJIAvmP67PKbn7FcBgvxYT5LSQv8uHUT
-	VkP4b+bwOUC8Dai2HltIZMmbUjsMoKnhn4o+pB6C01T2D5rxnmY73rEYOcC7QBZa
-	OTNz3UW8yOGQmN2bl106g==
-X-ME-Sender: <xms:JtOXZvGoX87VSPXAZB-G1U7qMIFXP3yiPHdlFgTrybljkWFf__-5Ig>
-    <xme:JtOXZsWQpdR0VcAhv3aq7_Ie3W1PzAI1xCzHQ0wGYUTpGBawRlizV1i4Sj4mjUuHY
-    N6jGODhy7Y5e2tR4_8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeigdejudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:JtOXZhL6i40ovn7u1_v48LVlJCc1R8m3r1TdQ4IyscPC42xGn2PUDA>
-    <xmx:JtOXZtERwXDoFpjbCdvvfxcYUjTpo-UrL4IBco6jvJxyKwE4wqfuzw>
-    <xmx:JtOXZlUgJl-dfCMOEb244sBAj3Ko4f7PMlmQTwbdx87IfXIT77VOyg>
-    <xmx:JtOXZoO-iskq-pt_8s7U4VaYhavCWIwA6ifKthfHLOZ7fFXiKIrX5Q>
-    <xmx:J9OXZgN4qfO0mRFpyA0wkax7bM-iybfVAFsadqQAxknCeSs0EUj6Z-DK>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 8E52E36A0074; Wed, 17 Jul 2024 10:20:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721226067; c=relaxed/simple;
+	bh=EtLmjlZiTNxrB8ZmwQCXdIpqZUxofP8AeXV/qcdd77M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mSbrZh+C0cOthio8Pk8W7a5TfXzE5t4fQ19DRpHKOVv3YCZJQn4sSWh86YAIdneVV4eON5IMcnvCFbp31gWWK/wo7utTCHPp4XgrqE6Wrv7imTLxar7QoglsP2C4sPhBnpRhhhZ+wTrS8qUo7AqLJw3wQwBUZKiBCHRJ90DgagQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7E88F20003;
+	Wed, 17 Jul 2024 14:20:59 +0000 (UTC)
+Message-ID: <442ee5ba-8826-4a0c-8205-31b12c7877c8@ghiti.fr>
+Date: Wed, 17 Jul 2024 16:20:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <84d2591b-4336-453f-bcb2-a7c47df0574c@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H6aaAu=0eyEp8am8A+SSj53+CGp7DrCYCxkNZScBd74BQ@mail.gmail.com>
-References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
- <CAAhV-H5OOXguNTvywykyJk3_ydyDiSnpc-kvERRiYggBt441tw@mail.gmail.com>
- <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
- <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com>
- <b1a53515-068a-4f70-87a9-44b77d02d1d5@app.fastmail.com>
- <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
- <54d9edd5-377e-4d9a-956f-8f2ba49d4295@app.fastmail.com>
- <CAAhV-H6aaAu=0eyEp8am8A+SSj53+CGp7DrCYCxkNZScBd74BQ@mail.gmail.com>
-Date: Wed, 17 Jul 2024 22:20:01 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Kelvin Cheung" <keguang.zhang@gmail.com>,
- "Vinod Koul" <vkoul@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Conor Dooley" <conor.dooley@microchip.com>
-Subject: Re: [PATCH RESEND v9 0/2] Add support for Loongson1 APB DMA
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] riscv: Allow to build only with LLVM >= 17.0.0
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+To: Conor Dooley <conor@kernel.org>, Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kernel test robot <lkp@intel.com>
+References: <20240717111716.157149-1-alexghiti@rivosinc.com>
+ <20240717-synapse-decade-a0d41bd7afce@spud>
+ <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
+In-Reply-To: <203e8784-54f2-43ea-a442-833d7e4a06c8@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: yes
+X-Spam-Level: **************************
+X-GND-Spam-Score: 400
+X-GND-Status: SPAM
+X-GND-Sasl: alex@ghiti.fr
 
-
-
-=E5=9C=A82024=E5=B9=B47=E6=9C=8817=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=889:06=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> On Tue, Jul 16, 2024 at 9:12=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
->>
->>
->>
->> =E5=9C=A82024=E5=B9=B47=E6=9C=8816=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
-=E5=8D=885:40=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
->> > On Mon, Jul 15, 2024 at 3:00=E2=80=AFPM Jiaxun Yang <jiaxun.yang@fl=
-ygoat.com> wrote:
->> >>
->> >>
->> >>
->> >> =E5=9C=A82024=E5=B9=B47=E6=9C=8815=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=
-=8B=E5=8D=882:39=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
->> >> [...]
->> >> >
->> >> >> You said that you've accepted my suggestion, which means you re=
-cognize
->> >> >> 'loongson' as the better name for the drivers.
->> >> > No, I don't think so, this is just a compromise to keep consiste=
-ncy.
->> >>
->> >> Folks, can we settle on this topic?
->> >>
->> >> Is this naming really important? As long as people can read actual=
- chip name from
->> >> kernel code & documents, I think both are acceptable.
->> >>
->> >> I suggest let this patch go as is. And if anyone want to unify the=
- naming, they can
->> >> propose a treewide patch.
->> > Renaming still breaks config files.
->>
->> This is trival with treewide sed :-)
-> Please read the commit message of b8d3349803ba34afda429e87a837fd95a ca=
-refully.
-
-We don't have 114 defconfigs don't we?
-
-Those symbols are not frequently specified by down stream users either.
-
-I think Keguang had tried his best on resolving all reasonable comments.
-
-Naming is a matter of preference after all, I think we should give Kegua=
-ng some respect
-here.
-
-Thanks
-- Jiaxun
-
+On 17/07/2024 13:41, Alexandre Ghiti wrote:
+> Hi Conor,
 >
-> Huacai
+> On 17/07/2024 13:32, Conor Dooley wrote:
+>> On Wed, Jul 17, 2024 at 01:17:16PM +0200, Alexandre Ghiti wrote:
+>>> The following build failure happens when using LLVM < 17.0.0:
+>>>
+>>> kernel/sched/core.c:11873:7: error: cannot jump from this asm goto 
+>>> statement to one of its possible targets
+>>>
+>>> This is a known issue [1] so let's upgrade the minimal requirement for
+>>> LLVM to the version 17.0.0, which is the first version to contain the
+>>> fix.
+>> I think doing this unilaterally is kinda insane, LLVM 17 isn't even a
+>> year old. Debian testing doesn't have anything later than 16.
+>
+>
+> Debian will very likely select the qspinlocks when available anyway, 
+> so they'll need llvm >= 17. And Debian won't ship a kernel >= 6.11 
+> until some time right? So they'll probably update their infra to llvm 
+> >= 17 (and they'll probably do to take advantages of the new extensions).
+>
+>
+>> Why does
+>> it need to be done unilaterally rather than just when the qspinlock
+>> stuff is built?
+>
+>
+> We can do that indeed, it may happen again and we can keep requiring 
+> llvm 17 on a per-config basis.
+>
+>
+>>> Link: 
+>>> https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1645979992 
+>>> [1]
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> Closes: 
+>>> https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-lkp@intel.com/
+>>> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+>> If Nathan wrote the patch, you need to set him as the author of the
+>> patch :)
+>
+>
+> I thought I did, how should I do that then?
+>
 >
 >>
->> Thanks
->> - Jiaxun
->>
->> --
->> - Jiaxun
+>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>> ---
+>>>
+>>> This patch was done by Nathan, I'm just sending it as an RFC to get 
+>>> quicker
+>>> feedbacks.
+>>>
+>>> I tested it successfully.
+>>>
+>>> Note that the build failure happens on the not-yet merged qspinlock
+>>> patchset.
+>>>
+>>>   scripts/min-tool-version.sh | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
+>>> index 91c91201212c..e81eb7ed257d 100755
+>>> --- a/scripts/min-tool-version.sh
+>>> +++ b/scripts/min-tool-version.sh
+>>> @@ -28,6 +28,8 @@ llvm)
+>>>           echo 15.0.0
+>>>       elif [ "$SRCARCH" = loongarch ]; then
+>>>           echo 18.0.0
+>>> +    elif [ "$SRCARCH" = riscv ]; then
+>>> +        echo 17.0.0
+>>>       else
+>>>           echo 13.0.1
+>>>       fi
+>>> -- 
+>>> 2.39.2
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
---=20
-- Jiaxun
+
+So we discussed that during the patchwork meeting and this patch is not 
+wanted, the idea is rather to get rid of the build error.
+
+I was given a few ideas so I'll try those and we'll see what the 
+resulting code looks like, hopefully not ugly otherwise I'll re-open the 
+discussion :)
+
+Thanks Nathan for the patch,
+
+Alex
+
 
