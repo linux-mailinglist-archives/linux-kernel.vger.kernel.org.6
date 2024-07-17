@@ -1,143 +1,202 @@
-Return-Path: <linux-kernel+bounces-255120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11A7933C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B461933C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5802F282DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A14282DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE017F393;
-	Wed, 17 Jul 2024 11:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3286917F4F8;
+	Wed, 17 Jul 2024 11:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPC9kDzi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hMsptBmj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tq3u9ahV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gaNocMnS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kKm7CLs7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216DA12E48
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA69B1CA9F;
+	Wed, 17 Jul 2024 11:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721215946; cv=none; b=fQI8XImZdA7Y1cEiJtFa1cGedA7G1x3gUZXykjiQ88OUdiVrCLyjxsf1zUa/ykJ2ajDx36TTbjRxReB8JlQDNUka+CwFwbxl3Z2FQMGE8m4Di4ilRVMuhjIodoQ1EYBC0dUYeGvK2SjhcLFkON3aGxKq/FM8SzmQc52wvlWCSC4=
+	t=1721215986; cv=none; b=JxbkEsqyDGFC2YhoCCUqFcWPaiQv2Mf6VzBo2CFmB3ntyZDmiAhVdznUtJeFQiuidTspoGMyiGIoXN/SjmL916vLFXRIQ80RBPHvO/oRLwqapvXXyTDb81NeJpLpAozuChOtlrayZaFcUCksJf7PKX+ypj/dHmiG0FWutk265z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721215946; c=relaxed/simple;
-	bh=flHhtXPXSXPa/MuixsU//ACv+ux6XIZuEc3LtB5sTfY=;
+	s=arc-20240116; t=1721215986; c=relaxed/simple;
+	bh=aqNtXKxK785M528fgM40ar9Zybxd6EOMrqFWSPgj6d4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoEx0OQrvvU9B8Zmc8tUDfYntUBsBQLACcry1YtCJtmiR1BxjSFSKbg7K1JcVAoab5WlkfUv8v+RBeQ1ZMdf38U+C1WfjKcYbVzc0KPsc8tqdb26VGySQ+Yat8+elVSYb24R3+xJ45D4Z20s+UyKnYj8/puxTVYBsfIQQwgzLnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPC9kDzi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7CCC32782;
-	Wed, 17 Jul 2024 11:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721215945;
-	bh=flHhtXPXSXPa/MuixsU//ACv+ux6XIZuEc3LtB5sTfY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fPC9kDzix/T6vvU8OcpTXLcWC1NotvFforrkq+dybb+9xzZLcv5dktrzJIxioMbuh
-	 x7tBq00XgDovdFjN8DGMtHDG0zJahSycdTXDdmrqv8UXy89XJlv6BXHuFMH7m6io37
-	 BXo0mH4UrvyGdV0is3r8ZdoznUAeZIXY+apbl2ubV5EgqE3Vr7gacrKXLpZ6MjQK4e
-	 NFbd+RqVXh5ISZjyqmZz23uPsNZaAYSw7i40S/qXAc8skD5KCQdNBrX6/nsGhd4VJI
-	 BB9Q0aSS4nW5bCn3HtgasUMFIkm1YP+qqCwmN/Gc0LWUGQxbmK011tRhinaQbOAV7d
-	 BaSo6CNbjPPUw==
-Date: Wed, 17 Jul 2024 12:32:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH RFC] riscv: Allow to build only with LLVM >= 17.0.0
-Message-ID: <20240717-synapse-decade-a0d41bd7afce@spud>
-References: <20240717111716.157149-1-alexghiti@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uc6q8aOCl2Ve1+nM3d4McJE2JQfp8FG+xMRvTCR0xEKCaZfRenkwfjPYUTgpnMmZXu+ggrLA5fs4pR+OziIvd9YGww/p/yEougKBS/7ONYpLRTnkiXTEZKns3kZ5O8JeNvf8QHSX6Nuq+f6b3Wworvb6P8Pbyi+SfmMxCr002ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hMsptBmj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tq3u9ahV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gaNocMnS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kKm7CLs7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D370721AA5;
+	Wed, 17 Jul 2024 11:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721215983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GDWXncWUPfRdiXS4Mf0WhNRYE+bpXbuIBFaPu+Mnb8M=;
+	b=hMsptBmjNU6rqyIbeaU0d8oEGFKY0kJZSYd1H82L1btAT4NZJeeX7O6DtPDjKwe1RdEtGN
+	kuL/edSLPdLI7UqkCK/iqOAXpEVP8VdjHX08hvzY1ntyMInBT9hIzC7E5ot473OCdVvtZT
+	19v1iwk38lAPRsKM2Okzv3cS6LelyXA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721215983;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GDWXncWUPfRdiXS4Mf0WhNRYE+bpXbuIBFaPu+Mnb8M=;
+	b=tq3u9ahVvypk4IIzTiz7d3p5367WC4QsQ3UC/ero+aDb87v/meTbgkVXAYTv0/Ytu+UCzu
+	Mx2YAQGQ4qWIa/AQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gaNocMnS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kKm7CLs7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721215982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GDWXncWUPfRdiXS4Mf0WhNRYE+bpXbuIBFaPu+Mnb8M=;
+	b=gaNocMnSgqxFpDhUTYHX86oOpSRl2YwuWzfWq/F3wFq0uHTLY7toMcsxVIaHD7UrWI5w3u
+	oXyuFPyUxCVTlweug8NXhjudmXpKzR32KAVF1K/7BW6nU+GWJzvFpRfQphbUswfzLDxtAC
+	o8OJBsfIBdoGYWk8Wr/x79KwKqVv/Sw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721215982;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GDWXncWUPfRdiXS4Mf0WhNRYE+bpXbuIBFaPu+Mnb8M=;
+	b=kKm7CLs71ZBkvKG9H9zYZ959pvqlwWLAwKrP5XNx/vMlVd4c73gVswVHt/fatpIK0lXVgq
+	r+ZkGVAjrXgSCZAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C341C136E5;
+	Wed, 17 Jul 2024 11:33:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A52mL+6rl2Z5TAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 11:33:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7CEB5A0987; Wed, 17 Jul 2024 13:32:47 +0200 (CEST)
+Date: Wed, 17 Jul 2024 13:32:47 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 7/9] ext4: switch to multigrain timestamps
+Message-ID: <20240717113247.hih4trvudsdbrwts@quack3>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+ <20240715-mgtime-v6-7-48e5d34bd2ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TF/YrikB1RktwJDs"
-Content-Disposition: inline
-In-Reply-To: <20240717111716.157149-1-alexghiti@rivosinc.com>
-
-
---TF/YrikB1RktwJDs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240715-mgtime-v6-7-48e5d34bd2ba@kernel.org>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[33];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLm8ftxcjxomczyd9jc9seq4h9)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,oracle.com,mit.edu,dilger.ca,fb.com,toxicpanda.com,suse.com,google.com,linux-foundation.org,lwn.net,fromorbit.com,linux.intel.com,infradead.org,gmail.com,linux.dev,arndb.de,vger.kernel.org,kvack.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,toxicpanda.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Rspamd-Queue-Id: D370721AA5
 
-On Wed, Jul 17, 2024 at 01:17:16PM +0200, Alexandre Ghiti wrote:
-> The following build failure happens when using LLVM < 17.0.0:
->=20
-> kernel/sched/core.c:11873:7: error: cannot jump from this asm goto statem=
-ent to one of its possible targets
->=20
-> This is a known issue [1] so let's upgrade the minimal requirement for
-> LLVM to the version 17.0.0, which is the first version to contain the
-> fix.
+On Mon 15-07-24 08:48:58, Jeff Layton wrote:
+> Enable multigrain timestamps, which should ensure that there is an
+> apparent change to the timestamp whenever it has been written after
+> being actively observed via getattr.
+> 
+> For ext4, we only need to enable the FS_MGTIME flag.
+> 
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-I think doing this unilaterally is kinda insane, LLVM 17 isn't even a
-year old. Debian testing doesn't have anything later than 16. Why does
-it need to be done unilaterally rather than just when the qspinlock
-stuff is built?
->=20
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1=
-645979992 [1]
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407041157.odTZAYZ6-lkp@i=
-ntel.com/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+You, I don't think anything else is needed. Feel free to add:
 
-If Nathan wrote the patch, you need to set him as the author of the
-patch :)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+								Honza
+
 > ---
->=20
-> This patch was done by Nathan, I'm just sending it as an RFC to get quick=
-er
-> feedbacks.
->=20
-> I tested it successfully.
->=20
-> Note that the build failure happens on the not-yet merged qspinlock
-> patchset.
->=20
->  scripts/min-tool-version.sh | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/scripts/min-tool-version.sh b/scripts/min-tool-version.sh
-> index 91c91201212c..e81eb7ed257d 100755
-> --- a/scripts/min-tool-version.sh
-> +++ b/scripts/min-tool-version.sh
-> @@ -28,6 +28,8 @@ llvm)
->  		echo 15.0.0
->  	elif [ "$SRCARCH" =3D loongarch ]; then
->  		echo 18.0.0
-> +	elif [ "$SRCARCH" =3D riscv ]; then
-> +		echo 17.0.0
->  	else
->  		echo 13.0.1
->  	fi
-> --=20
-> 2.39.2
->=20
->=20
-
---TF/YrikB1RktwJDs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZperxQAKCRB4tDGHoIJi
-0gdEAP9qtuD78DbyTCIpoH5rcVAZnR0Q3JTpPVcwNFbIh+LTQAEAo+7SP8L4lcz0
-B2xFk3t/Af8fu8ktYXwz/L+plR/tmww=
-=BgLp
------END PGP SIGNATURE-----
-
---TF/YrikB1RktwJDs--
+>  fs/ext4/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index eb899628e121..95d4d7c0957a 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -7294,7 +7294,7 @@ static struct file_system_type ext4_fs_type = {
+>  	.init_fs_context	= ext4_init_fs_context,
+>  	.parameters		= ext4_param_specs,
+>  	.kill_sb		= ext4_kill_sb,
+> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+>  };
+>  MODULE_ALIAS_FS("ext4");
+>  
+> 
+> -- 
+> 2.45.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
