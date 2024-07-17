@@ -1,144 +1,271 @@
-Return-Path: <linux-kernel+bounces-254818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6356933817
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3852B93381C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A90A1F2548F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:36:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7FEA283A15
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B10B1CD0C;
-	Wed, 17 Jul 2024 07:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309841CD00;
+	Wed, 17 Jul 2024 07:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2iTlWay"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AIBaoPGe"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CD17BDC;
-	Wed, 17 Jul 2024 07:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251A71B947
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721201773; cv=none; b=ceMkwPGo7BBbPr0ATn2JGTtvkZyhMZS23OCSv1cEePLHZXLgk9+gocdnSgM0sKBG1CD8F1VWd7dlVD5V0ta9Y5G8ff8UbqvyATcFPon7tTvluXYLz+vK1gnKXfnVsPI2vJCYA8ALj+hrjRlY4OOz2YJMvBP72Y/0PsyrAF4I7pQ=
+	t=1721201868; cv=none; b=V9Z5Ajf5JPOLz6ihOJ0feXVb8CCVaR11YViK3/Pd/FRxBN8/sMyiF83TjidNRAIH7h/45p6LFJ+O7FIFymWx9eoTkuHXAPlYSoxi0xroz2isNFQRXQx20sawjHWSge+4sptPFlegLUBd1JwUFQGKCyK3Dc4i68j6eNfD0VLHoc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721201773; c=relaxed/simple;
-	bh=DDscfeFdgVitL5WGsurjRFhEaiQNw6wovwBI8OWQiyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZX9ahmKwtMPGAUeCxlQth+WzDAAl+D/199y4RGJhenTmqNO/WYJQSuM1xGgUoWPoQPAc4bOBcNV3e1oqXo6jq7Ms6CfmxkWwoCQ1Gz88ecu+lvG48Bs7mt8Cf/vw4m/9bgd5bgz7eJltfWhCoXin6q41TFRtwWFbzFmFaugAic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2iTlWay; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BD5C32782;
-	Wed, 17 Jul 2024 07:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721201772;
-	bh=DDscfeFdgVitL5WGsurjRFhEaiQNw6wovwBI8OWQiyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t2iTlWayEv7uaa8ulrsaBTC3XdATDPEITl8I1CWhBPW3HqnYdwQB6h0UR1D/F6BxS
-	 YEf37O6bwlCDaVlrXZRYqGlcVk7JeeIcwaT76HgDx1D/7mfuN1sVpDTOsv+C82Ng6g
-	 AV9ZAvoXG6r0sEqCnwOYqotLoijzlmyWpH3nQLh4bEC4kEckLelc4XgHu3VJQfbaIO
-	 FP36m4RZvdYfo2xBcuj+5qwl8d5GaPckOktQhi6Yo0iBB66T0xCXRlBoVtTzOLRuFz
-	 8n03KzVjW3cwk2z1N8At5bdgec9JY7Ps20O/inY4M8Xi+l4rPXTmAmwb6gNWTcu2gM
-	 EX9eL1imU7Wug==
-Date: Wed, 17 Jul 2024 10:36:07 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"ogabbay@kernel.org" <ogabbay@kernel.org>,
-	Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
-Message-ID: <20240717073607.GF5630@unreal>
-References: <20240617190429.GB4025@unreal>
- <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
- <20240618125842.GG4025@unreal>
- <b4bda963-7026-4037-83e6-de74728569bd@habana.ai>
- <20240619105219.GO4025@unreal>
- <a5554266-55b7-4e96-b226-b686b8a6af89@habana.ai>
- <20240712130856.GB14050@ziepe.ca>
- <2c767517-e24c-416b-9083-d3a220ffc14c@habana.ai>
- <20240716134013.GF14050@ziepe.ca>
- <ca6c3901-c0c5-4f35-934b-2b4c9f1a61dc@habana.ai>
+	s=arc-20240116; t=1721201868; c=relaxed/simple;
+	bh=ofiUS+uOsnjhuIaRefgaMe9r3ZaNznbQtZELpuQTjVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E1d1nQh5mnNiytsHMLAmBDNGnUsJ4Ffpaats+drcIcBVPVVWByp3orrYd6d8SaDq/yfufR6BADtTKdwuEaIb3TWBXQkXjXEeX3BBzBnMf3U7x4EzbSloATjTmZDWCLouz5srFkzv7hGym24ARUjZsAVWmHjI6Q/9JkYklwAJAIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AIBaoPGe; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9fe05354so8979004e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721201863; x=1721806663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
+        b=AIBaoPGeH/uKzNjCKykwG1g1LixWb4q/Q2hcEryTEmD7SEvjZrOgBHqqTZ5pWK6DXF
+         DfGYuvpgNc4GA4H+Aib8A9n4NpMexhDBSDzCQcQaeTDlWUZjsYH8Wvg/a5OjywCvQ+Jb
+         8hZfuiSKL1QaWKaGfShTvaXRd62jC2GIKSMaBwKIjJmPrSUtuzYhAco25nEhfvIWxdd4
+         6vufqqgadMLOAXQl5lpGEzyLXuPgmI9BbA4cIVV63y8A+yFkrndc19zK4LkP3vfyrdX1
+         qc4/i8XLt3U2VM0fvKhphQM+JYXUC2ZqsR/FNY7tYOV5a0sLTrx8x4pkyPAKPDU67mpF
+         8w3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721201863; x=1721806663;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
+        b=VgHZLN3s2m9Ba49gAXLPeUKmTITpaWAsmW1eSPbuT+qOBJ0uUCQbwOYA0GORPX2qwE
+         YZJOw1MLB7Vdr5uoVvYn6bR79704QLOXUkkR9Bqy2IWuFyAQseuhfgrpRTAccOrsh2Sr
+         Or6MMaPZtJvOVSbqGSDDEAniHSIfCyL/DQptbM1RF8XuK8JXgMYqzHCfsqvWVF+Wn7Iu
+         f9Q2Gyv2esRRU29GziRput8Km2wL8lF+oQYZmhe1eoeI2ssQxErloz4ntgjw+yygMMfJ
+         0pow+FZU66ugeL4u2Ed+b8ct0O0IRpT8qmQrFrOl9xyfWFgx24GTI9Tka+HBqovXQhrQ
+         GhNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBrDN+b9MIGJqA1QwB0EakiAtp40K0ADuYOmso5mkha1zERA5DXgNMIEpOOTD8JqdoinVely0CTlpepeNMI6nghQAS64xssjvkKA0
+X-Gm-Message-State: AOJu0Yw9ZTkDSj1hQv1GbJc4IgOvrhyjV4LJTvzXqLEjHm4YgBFmIqEs
+	OUsPIfRbhlGNK9RP/Tais5aTNMaVyHc0TIvzicfXrfSATgqQTQm0LTJOpMb8yTGV/JwFFp/4/ob
+	V
+X-Google-Smtp-Source: AGHT+IH6DPWOFWGyrbuD3FoepHwzwFHt5aU7f9hN5MQgW4BxazZpRw+PU5n5TYh9enHix4deAENBmA==
+X-Received: by 2002:a05:6512:3f01:b0:52c:e3c7:941e with SMTP id 2adb3069b0e04-52ee5411942mr669554e87.47.1721201862870;
+        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb478sm160478315e9.33.2024.07.17.00.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
+Message-ID: <42216215-4db1-4015-878f-25a7770d44c2@tuxon.dev>
+Date: Wed, 17 Jul 2024 10:37:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca6c3901-c0c5-4f35-934b-2b4c9f1a61dc@habana.ai>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>, "lee@kernel.org" <lee@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 07:08:59AM +0000, Omer Shpigelman wrote:
-> On 7/16/24 16:40, Jason Gunthorpe wrote:
-> > On Sun, Jul 14, 2024 at 10:18:12AM +0000, Omer Shpigelman wrote:
-> >> On 7/12/24 16:08, Jason Gunthorpe wrote:
-> >>> [You don't often get email from jgg@ziepe.ca. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >>>
-> >>> On Fri, Jun 28, 2024 at 10:24:32AM +0000, Omer Shpigelman wrote:
-> >>>
-> >>>> We need the core driver to access the IB driver (and to the ETH driver as
-> >>>> well). As you wrote, we can't use exported symbols from our IB driver nor
-> >>>> rely on function pointers, but what about providing the core driver an ops
-> >>>> structure? meaning exporting a register function from the core driver that
-> >>>> should be called by the IB driver during auxiliary device probe.
-> >>>> Something like:
-> >>>>
-> >>>> int hbl_cn_register_ib_aux_dev(struct auxiliary_device *adev,
-> >>>>                              struct hbl_ib_ops *ops)
-> >>>> {
-> >>>> ...
-> >>>> }
-> >>>> EXPORT_SYMBOL(hbl_cn_register_ib_aux_dev);
-> >>>
-> >>> Definately do not do some kind of double-register like this.
-> >>>
-> >>> The auxiliary_device scheme can already be extended to provide ops for
-> >>> each sub device.
-> >>>
-> >>> Like
-> >>>
-> >>> struct habana_driver {
-> >>>    struct auxiliary_driver base;
-> >>>    const struct habana_ops *ops;
-> >>> };
-> >>>
-> >>> If the ops are justified or not is a different question.
-> >>>
-> >>
-> >> Well, I suggested this double-register option because I got a comment that
-> >> the design pattern of embedded ops structure shouldn't be used.
-> >> So I'm confused now...
-> > 
-> > Yeah, don't stick ops in random places, but the device_driver is the
-> > right place.
-> > 
+Hi, Biju,
+
+On 16.07.2024 14:00, Biju Das wrote:
+> Hi Claudiu,
 > 
-> Sorry, let me explain again. My original code has an ops structure
-> exactly like you are suggesting now (see struct hbl_aux_dev in the first
-> patch of the series). But I was instructed not to use this ops structure
-> and to rely on exported symbols for inter-driver communication.
-> I'll be happy to use this ops structure like in your example rather than
-> converting my code to use exported symbols.
-> Leon - am I missing anything? what's the verdict here?
+> Thanks for the patch.
+> 
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, July 16, 2024 11:30 AM
+>> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Renesas VBATTB IP has logic to control the RTC clock, tamper detection and a small 128B memory. Add a
+>> MFD driver to do the basic initialization of the VBATTB IP for the inner components to work.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - none; this driver is new
+>>
+>>  drivers/mfd/Kconfig          |  8 ++++
+>>  drivers/mfd/Makefile         |  1 +
+>>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 87 insertions(+)
+>>  create mode 100644 drivers/mfd/renesas-vbattb.c
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6..df93e8b05065 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>>  	  This driver provides common support for accessing the SC27xx PMICs,
+>>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
+>>
+>> +config MFD_RENESAS_VBATTB
+>> +	tristate "Renesas VBATTB driver"
+>> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+>> +	select MFD_CORE
+> 
+> There is no MFD calls??  What is the purpose of selecting MFD_CORE??
 
-You are missing the main sentence from Jason's response:  "don't stick ops in random places".
+I missed to remove it from here.
 
-It is fine to have ops in device driver, so the core driver can call them. However, in your
-original code, you added ops everywhere. It caused to the need to implement module reference
-counting and crazy stuff like calls to lock and unlock functions from the aux driver to the core.
+> 
+>> +	help
+>> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+>> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
+>> +
+>>  config RZ_MTU3
+>>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/Makefile
+>> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
+>> --- a/drivers/mfd/Makefile
+>> +++ b/drivers/mfd/Makefile
+>> @@ -186,6 +186,7 @@ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+>>  obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
+>>  obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+>>  obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+>> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+= renesas-vbattb.o
+>>  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
+>>  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
+>>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
+>> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c new file mode 100644 index
+>> 000000000000..5d71565b8cbf
+>> --- /dev/null
+>> +++ b/drivers/mfd/renesas-vbattb.c
+>> @@ -0,0 +1,78 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * VBATTB driver
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/reset.h>
+>> +
+>> +static int vbattb_probe(struct platform_device *pdev) {
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *rstc;
+>> +	int ret;
+>> +
+>> +	rstc = devm_reset_control_array_get_exclusive(dev);
+>> +	if (IS_ERR(rstc))
+>> +		return PTR_ERR(rstc);
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = reset_control_deassert(rstc);
+>> +	if (ret)
+>> +		goto rpm_put;
+>> +
+>> +	platform_set_drvdata(pdev, rstc);
+>> +
+>> +	ret = devm_of_platform_populate(dev);
+>> +	if (ret)
+>> +		goto reset_assert;
+>> +
+>> +	return 0;
+>> +
+>> +reset_assert:
+>> +	reset_control_assert(rstc);
+>> +rpm_put:
+>> +	pm_runtime_put(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static void vbattb_remove(struct platform_device *pdev) {
+>> +	struct reset_control *rstc = platform_get_drvdata(pdev);
+>> +
+>> +	reset_control_assert(rstc);
+>> +	pm_runtime_put(&pdev->dev);
+>> +}
+>> +
+>> +static const struct of_device_id vbattb_match[] = {
+>> +	{ .compatible = "renesas,r9a08g045-vbattb" },
+>> +	{ /* sentinel */ },
+> 
+> Drop comma.
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(of, vbattb_match);
+>> +
+>> +static struct platform_driver vbattb_driver = {
+>> +	.probe = vbattb_probe,
+>> +	.remove_new = vbattb_remove,
+> 
+> Maybe remove canbe replaced with devm_add_action_or_reset()
+> That simplifies probe() aswell??
 
-Verdict is still the same. Core driver should provide EXPORT_SYMBOLs, so the aux driver can call
-them directly and enjoy from proper module loading and unloading.
+This approach needs a new structure to keep references to the rstc and dev,
+to be able to handle reset and runtime PM in action function. I wanted to
+avoid adding a new structure.
 
-The aux driver can have ops in the device driver, so the core driver can call them to perform something
-specific for that aux driver.
+Thank you for your review,
+Claudiu Beznea
 
-Calls between aux drivers should be done via the core driver.
-
-Thanks
+> 
+>> +	.driver = {
+>> +		.name = "renesas-vbattb",
+>> +		.of_match_table = vbattb_match,
+>> +	},
+>> +};
+>> +module_platform_driver(vbattb_driver);
+>> +
+>> +MODULE_ALIAS("platform:renesas-vbattb");
+>> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+>> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
+>> --
+>> 2.39.2
+>>
+> 
 
