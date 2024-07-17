@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-254735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A6F9336FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E17933702
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E301F24060
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABBC1F23B9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95406171A1;
-	Wed, 17 Jul 2024 06:26:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F0A14F6C;
+	Wed, 17 Jul 2024 06:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ExwohI5Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515D1643A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA3018643;
+	Wed, 17 Jul 2024 06:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197592; cv=none; b=Z7bBit8TAGlKVNZ8c1ijVF63P6aEHLzmwIa9Xs4oqY7C8xaBDEAsd43Kr7tIFC16i1dUfR7VmKlJiZgFoyzUsAC23l1IRipSRZJP9a2UbSVaSapZQ/XrolpbGUFZSU0eKQDcvM2TBvitU1z+VJUuBj5EtY9CimCb7ywXb45Be/4=
+	t=1721197602; cv=none; b=scviHcaLEg2OTEcIceYVx0ygdOyu6qj8UzQWpfBUf4FDsi/bqcA/u1uw21Etj+Sayg5wGnlxZiWXQGjNQTi8ElN2UkoFoJo0UoTop5rTdIBSN5oNe2OCALrEPAfOYELfaErMqJviE0Ti8GcVS4EvjsH+8QMGH47xBtahrrGQcDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197592; c=relaxed/simple;
-	bh=x0AKMoZUBDBo20leKTYdtGaRJKtvDiirN9eJUat42nc=;
+	s=arc-20240116; t=1721197602; c=relaxed/simple;
+	bh=TaTKwduvzWNdw4nBlJexfY5qBgFDvuZwsL/yMzvaJLs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/pnMOEp96w6m7QH2nEUKcPUX0CJrfepC7eGZq4EieZ8gg8hmB1CjNIWLYzMwblWWjKpPoeyc0u4i8EubgCP6VAgYLOXWexcdRk51sYr5zZnnjOHIT4J5Bn/fS1+Obfcw0P96VOEextsnK8v7MTHBVe8mKTfi/3vqhvR4zVVAY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTy7L-0003ns-Bc; Wed, 17 Jul 2024 08:26:23 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTy7K-0009PE-T7; Wed, 17 Jul 2024 08:26:22 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sTy7K-001vf0-2Y;
-	Wed, 17 Jul 2024 08:26:22 +0200
-Date: Wed, 17 Jul 2024 08:26:22 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] wifi: mwifiex: simplify WPA flags setting
-Message-ID: <ZpdkDqJK63_a0ncW@pengutronix.de>
-References: <20240716-mwifiex-wpa-psk-sha256-v1-0-05ae70f37bb3@pengutronix.de>
- <20240716-mwifiex-wpa-psk-sha256-v1-1-05ae70f37bb3@pengutronix.de>
- <20240716194826.GA85916@francesco-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jW3a6edIjTTdGe/eOFXWOwTHWY/eBeyh+kUQi0p1+qsRi5+Qrne6qgA0CbV5WLEVnwXV2OWxcnGtuawWVF4drZddbzMjfbM59X7admX6PVw2sJOSlKQlBVAWe55e1RtkGk9TXI7HkgXp9adrj/wmlwrp6XeeOMbOwTqoxgJLvwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ExwohI5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A2CC4AF0C;
+	Wed, 17 Jul 2024 06:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721197601;
+	bh=TaTKwduvzWNdw4nBlJexfY5qBgFDvuZwsL/yMzvaJLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ExwohI5QQoo3XT1IsF1PEXTe63C4puBJhiIPRsGT5V+eXKL7uMhkSfOPlFzhlRb7x
+	 V1bd1xelG8Nc29D9Rf5Mdjt5Tse08m2BhuGNURgCjY8srKyJW2yj3Wc6rTd9LRn389
+	 gxxYrcnBly/wGsCUZtH9SOdJwmB1kFPrbO9KeYH0=
+Date: Wed, 17 Jul 2024 08:26:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Andrew Paniakin <apanyaki@amazon.com>
+Cc: stable@vger.kernel.org, Benjamin Herrenschmidt <benh@amazon.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	Paulo Alcantara <pc@manguebit.com>, Paulo Alcantara <pc@cjr.nz>,
+	Steve French <stfrench@microsoft.com>,
+	Steve French <sfrench@samba.org>,
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	"open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)" <linux-cifs@vger.kernel.org>,
+	"moderated list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)" <samba-technical@lists.samba.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6.1] cifs: use origin fullpath for automounts
+Message-ID: <2024071751-manhandle-taunt-00ef@gregkh>
+References: <20240713031147.20332-1-apanyaki@amazon.com>
+ <2024071535-scouting-sleet-08ee@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,64 +62,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716194826.GA85916@francesco-nb>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <2024071535-scouting-sleet-08ee@gregkh>
 
-On Tue, Jul 16, 2024 at 09:48:26PM +0200, Francesco Dolcini wrote:
-> Hello Sasha,
-> thanks for your patch.
-> 
-> On Tue, Jul 16, 2024 at 01:33:27PM +0200, Sascha Hauer wrote:
-> > The WPA flags setting only depends on the wpa_versions bitfield and not
-> > on the AKM suite, so move it out of the switch/case to simplify the code
-> > a bit. No functional change intended.
+On Mon, Jul 15, 2024 at 01:48:44PM +0200, Greg KH wrote:
+> On Sat, Jul 13, 2024 at 03:11:47AM +0000, Andrew Paniakin wrote:
+> > From: Paulo Alcantara <pc@cjr.nz>
 > > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> 
+> > commit 7ad54b98fc1f141cfb70cfe2a3d6def5a85169ff upstream.
+> > 
+> > Use TCP_Server_Info::origin_fullpath instead of cifs_tcon::tree_name
+> > when building source paths for automounts as it will be useful for
+> > domain-based DFS referrals where the connections and referrals would
+> > get either re-used from the cache or re-created when chasing the dfs
+> > link.
+> > 
+> > Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
+> > Signed-off-by: Steve French <stfrench@microsoft.com>
+> > [apanyaki: backport to v6.1-stable]
+> > Signed-off-by: Andrew Paniakin <apanyaki@amazon.com>
 > > ---
-> >  drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 27 +++++++-------------------
-> >  1 file changed, 7 insertions(+), 20 deletions(-)
+> > This patch fixes issue reported in
+> > https://lore.kernel.org/regressions/ZnMkNzmitQdP9OIC@3c06303d853a.ant.amazon.com
 > > 
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > index 491e366119096..8d0cd84d27698 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > @@ -46,31 +46,18 @@ int mwifiex_set_secure_params(struct mwifiex_private *priv,
-> >  
-> >  	bss_config->key_mgmt_operation |= KEY_MGMT_ON_HOST;
-> >  
-> > +	if (params->crypto.wpa_versions & NL80211_WPA_VERSION_1)
-> > +		bss_config->protocol = PROTOCOL_WPA;
-> > +	if (params->crypto.wpa_versions & NL80211_WPA_VERSION_2)
-> > +		bss_config->protocol |= PROTOCOL_WPA2;
-> > +
+> > 1. The set_dest_addr function gets ip address differntly. In kernel 6.1
+> > the dns_resolve_server_name_to_ip function returns string instead of
+> > struct sockaddr, this string needs to be converted with
+> > cifs_convert_address then.
+> > 
+> > 2. There's no tmp.leaf_fullpath field in kernel 6.1, it was introduced
+> > later in a1c0d00572fc ("cifs: share dfs connections and supers")
+> > 
+> > 3. __build_path_from_dentry_optional_prefix and
+> > dfs_get_automount_devname were added to fs/smb/client/cifsproto.h
+> > instead of fs/cifs/dfs.h which doesn't exist in 6.1
 > 
-> I am wondering what happens if NL80211_WPA_VERSION_1 is not set, no idea
-> what's the content of bss_config->protocol ...
-> 
-> in any case this is not something that you introduced, but maybe worth
-> having a look?
+> Now queued up, thanks.
 
-bss_config is kzalloced in the only caller of mwifiex_set_secure_params(),
-so bss_config->protocol is zero on entry.
+Nope, now dropped.  This required me to apply d5a863a153e9 ("cifs: avoid
+dup prefix path in dfs_get_automount_devname()") to the tree (and
+attempt to backport it myself), but that didn't work, as it caused
+reported build errors as seen here:
+	https://lore.kernel.org/r/aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com
 
-It might be worth setting it to zero explicitly here to make the code
-better understandable without having to look at the callers.
+So I'm dropping this, and the fix-up patch.  Please be careful when
+sending backports that you do NOT miss additional patches that are
+required as well.  I'll be glad to take backports, as long as they are
+correct :)
 
-Sascha
+thanks,
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+greg k-h
 
