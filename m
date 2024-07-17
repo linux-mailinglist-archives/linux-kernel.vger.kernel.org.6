@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-255095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DD4933BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE59A933BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A9CB216ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 836C11F21A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DE917F4EA;
-	Wed, 17 Jul 2024 11:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458F817F4EC;
+	Wed, 17 Jul 2024 11:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="yj3yPeIy"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QPbSpq2t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8C17E915
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8B13FB83;
+	Wed, 17 Jul 2024 11:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721214482; cv=none; b=EylY2j5bo6YXSg2+kWq835a8dB6HmTRLUlDEDTvQEWphXoNaxTWbYoqBQsoeA82tDaaqq7cFiYno1NPpCjwuskiQuZk3CsOxWiCfbW+pe8YwhgBC7WAkWCth4GIgO5c8ckb7MQeECNidpbFPfSvXrBTDJYKpsWa54ximH//+TKM=
+	t=1721214530; cv=none; b=T9aoaKT1aenuhT5IRu2LD9N/rnc2q81fxIIZYFQnCzwRsaKTr9Z6bMHFCtyfu9DEEh3MsBDrCxk7xRj1XAGMrKVkj5bYhSakRbvtp6e4ZkTpPZQWPPy1i537asg/B2DFXmK/juFV5lIHR2fgg6SpGr00cs7Tf/91GLBZJSDP7jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721214482; c=relaxed/simple;
-	bh=j5oHJ4N4AEEu9W/2D++2KOV4B2U6CZ2ItnsneC4swPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CDuJh2/xlyaYheCT3tHpq2/whzddRBByoJMYKxCN5MoP5osbZhYvnmYQQcvZgli3F4C876FsuJtTSvCUysnMor+PaeAin265EjblFZlxT1d3gj4UG5GaWRI4P8iVrNSWLKqQfyi+WStPSDFNxLQO1kEcOQMtGqcK1WTS0qswgEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=yj3yPeIy; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so10874391e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1721214479; x=1721819279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0MkPJTgEMvQtnUcTdhPwWAgvVYXK9NSydN/rtNiOhc=;
-        b=yj3yPeIyJg8FO0WU+tMsaaX9Xhgswihi/S0Xs4SL/wpVC24yr+C7ml2ZIM+7Zt1XUA
-         OgRHe3tt7dwuNJgS+PxD6ChzWArmjOjDPk7R1oa/22GeZsXS+lxSTjwrmqXIc9fCylfQ
-         eD+PWFaA8JNbnpnrF8ZETsdpMBkN9+36zOgsO8sSz6Js5vAM/mWgX31Sw3pHSA5RXiwZ
-         L7zqHYK7iNHFdeDnNfXjsOfjk062nHHqM7/FU8XeEj49Fv0cjMEEXQ9itD/amFCiJWIB
-         2cqEf+bdAf7djXyP/Kcs5cdyEga+1GBej/kgsk7QMfrQXM2IqifCn5gxF+Rvlau6ekYb
-         X9HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721214479; x=1721819279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0MkPJTgEMvQtnUcTdhPwWAgvVYXK9NSydN/rtNiOhc=;
-        b=kRP+Q8sAeXgEaOn6CNmpOfmCegKnt3mhlKLQC92t5NMJ21SQ49WuRW+zETB10a7KWx
-         GqGc2HliSHzaZ+YDiSGAmEtWwlODFgJDyF0TGCOXp4nrZYxBBB/ODh1F0bOQurInYXDT
-         JKaCtTXkORi/r756I7tYE+AhQyAD4hQkZLicL2UNBauH/Ic+JwCcG9U3c2gwFKVaK4Bf
-         PgNECK/QUPOHjRNE8iyhivNEvmoFWL827ga7HghaYMGPz4Onz2CFi+1pDsH4FuCI+wmO
-         LSB+ElWei9SWKwsZ0sUiH1Uh5fdPkvKNLJnO/uw8y5uPcglcAs7c0splnRzKpYohQtik
-         Rbzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXioyDbn9xsCt0NpWuZH9sJHcc9fR1JyoAq3yA2FBPekUZxd/zrakKOinwgJoSruTYgxS5a/VgJmAMIPvzCfgGoWnmwpkUsIfMeHgEq
-X-Gm-Message-State: AOJu0YzaLwBpjD+3QcJK23BWh/nkweiiB9JRdahTOwFkeLK8/BjQtI2u
-	FItluxH35xDffuM47XwpAXDqXnlEzNx07DM4+0q2ZOA/lKTyWGeAaxSpTAsMk1M=
-X-Google-Smtp-Source: AGHT+IHD4LY4lMSqiD5JjSfArJK6jY0AXCRwIpm4xXnBwTPfSsq31/8OXJCfA+vVp3x6KUA4XxU0fA==
-X-Received: by 2002:a05:6512:b9a:b0:52c:cb8d:637d with SMTP id 2adb3069b0e04-52ee53a768bmr1247519e87.5.1721214478693;
-        Wed, 17 Jul 2024 04:07:58 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc800022sm440566366b.176.2024.07.17.04.07.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 04:07:57 -0700 (PDT)
-Message-ID: <c51936a7-bb62-4423-aa6d-598ca9d58b8d@nexus-software.ie>
-Date: Wed, 17 Jul 2024 12:07:56 +0100
+	s=arc-20240116; t=1721214530; c=relaxed/simple;
+	bh=I5ched4wENHpHAD6luPQefl8V5ngs+XBJs0SDQGExw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ADgmH7Sb1yUbhpSjsvRWTGiLQ7uRYjlKuzotsEWzGSFFXzY+3CSVWPjmCdA30yEwP3+/9p7ZKHTz6ErCpad24rVOyiLpTs/BPX7b5Wkajr1E6zWo3YDiftOq5UQXygj6Ivr1pQjIXsw54uktfGuvaOT8w4ehAP0BepUFTXou7Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QPbSpq2t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H78QOx005470;
+	Wed, 17 Jul 2024 11:08:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0Gcz2+gTCHZ2HMufSAZ2uNdMkEEsbN7s70NtFj1vsmA=; b=QPbSpq2t3SxudNZu
+	ak4gaQ5nG8NBFQMKAoUnHoI5bY1xyAvZhX8YXrm/UD4bX9Hc/8e2CncxXwP2hV1K
+	eUza40BZ/kgay4RYaSWgYIDt2nqnOMo+nkdO1RRCCT4O9lsWQ9/q0MVuAasvQyuc
+	bk1i+F8Tb4TxyP1mSEltcP3QjwEwQBGZWGkceKRsls59jVIraqoDXGmgD7HsggXA
+	LSAiTy1nvEOWNElcIZRULEU7lVNvePyVcZxuuHXa/noEZfAuDfLUh1PCZhMVxEj2
+	CCCdHQxUyvc+4XEag+SxS44aZTNLwNB3qSYAS04q9Ob0CxwHFHJFVFiyVtv91nWp
+	t0U9kw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfuj3ye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 11:08:40 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HB8dsH024283
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 11:08:39 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 04:08:36 -0700
+Message-ID: <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+Date: Wed, 17 Jul 2024 16:38:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
- <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
- <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
- <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
 Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZBp46_3COGzf4gZf0njbrJ_ktu-8zD5Z
+X-Proofpoint-ORIG-GUID: ZBp46_3COGzf4gZf0njbrJ_ktu-8zD5Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_06,2024-07-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170086
 
-On 17/07/2024 07:24, Satya Priya Kakitapalli (Temp) wrote:
->> Patch sent.
+
+On 7/17/2024 2:19 PM, Bryan O'Donoghue wrote:
+> On 17/07/2024 07:32, Satya Priya Kakitapalli (Temp) wrote:
 >>
->> https://lore.kernel.org/linux-arm-msm/20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org/T/#u
+>> On 7/15/2024 8:29 PM, Bryan O'Donoghue wrote:
+>>> We have both shared_ops for the Titan Top GDSC and a hard-coded 
+>>> always on
+>>> whack the register and forget about it in probe().
+>>>
+>>> @static struct clk_branch camcc_gdsc_clk = {}
+>>>
+>>> Only one representation of the Top GDSC is required. Use the CCF
+>>> representation not the hard-coded register write.
+>>>
+>>> Fixes: ff93872a9c61 ("clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC")
+>>> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # Lenovo X13s
+>>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> ---
+>>>   drivers/clk/qcom/camcc-sc8280xp.c | 7 +------
+>>>   1 file changed, 1 insertion(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c 
+>>> b/drivers/clk/qcom/camcc-sc8280xp.c
+>>> index 479964f91608..f99cd968459c 100644
+>>> --- a/drivers/clk/qcom/camcc-sc8280xp.c
+>>> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
+>>> @@ -3031,19 +3031,14 @@ static int camcc_sc8280xp_probe(struct 
+>>> platform_device *pdev)
+>>>       clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
+>>>       clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
+>>> -    /* Keep some clocks always-on */
+>>> -    qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
 >>
-> 
-> If the clock is modelled, it can get disabled during the late init call, 
-> when the CCF disables the unused clocks. But, it is a PoR ON  clock and 
-> expectation from design team is to keep it always-on for GDSC 
-> functionality.
+>>
+>> As I mentioned on [1], this change might break the GDSC 
+>> functionality. Hence this shouldn't be removed.
+>
+> How would it break ?
+>
+> We park the clock to XO it never gets turned off this way.
+>
 
-Not if it _parks_ - that's what parking does, also what is the upstream 
-usecase to sustain the clock as on from PoR to CAMSS probe(); ?
+Parking the parent at XO doesn't ensure the branch clock is always on, 
+it can be disabled by consumers or CCF if modelled.
 
----
-bod
+If the CCF disables this clock in late init, then the clock stays in 
+disabled state until it is enabled again explicitly. Hence it is 
+recommended to not model such always-on clocks.
 
+
+> ---
+> bod
 
