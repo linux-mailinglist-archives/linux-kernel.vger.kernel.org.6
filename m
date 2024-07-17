@@ -1,211 +1,235 @@
-Return-Path: <linux-kernel+bounces-255222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506D0933D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:29:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344A1933DA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F32854A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:29:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94D81B210F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB891802CE;
-	Wed, 17 Jul 2024 13:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB7180A65;
+	Wed, 17 Jul 2024 13:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+97cxOm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyxaDqzQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661EC17E8FA;
-	Wed, 17 Jul 2024 13:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC63566A;
+	Wed, 17 Jul 2024 13:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222975; cv=none; b=AxIF3vqjY8sX9zHa3ovtuyWk8HHf2/ahYmwzzSOhjx9/nRn1UlxcIpmtJnacdx0kuebFGvUTOSuU40EhDSJJari9mMHJeWkJp6ZthEYJ5I7z3n0RQK8x3FIAebEIFseEKmQ4kv9TphALg3lCjsOhQp6RiRv84z7r6/ycZERBIoY=
+	t=1721223047; cv=none; b=MKj8NYQEXRCqjbz50Ifa+It8lAYJbpR8XaNmsTdOtn8ZxqtdWEa+0JBjvAXIzy5BNxACZk6qaZfz8dOcYckte9vKHjHTlpFKo27whr2a78fVD6rPbxQ/iWnSe6w/8ewz60uapeh2JxxJ9tUAGXq2IGsN/t0D9v+HzGLx6V2Q54U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222975; c=relaxed/simple;
-	bh=YQ6l5cI7YXYE0o/kYF2+JwI6tetVX1FjRrXMMaCr4Es=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iAtbA58NmZwOznFblCgRsQmfG3oHXPt1gLZKGdPfc3HIanrSTdkkQPcBkQOVh3wBMlE/KdI6XdriklaWxhqfDDWMJ/ReYjXdwXTVQDcCBvc968DBBMY/YD7ld85ZJCEOVE83VlnnfaBSnQLmGnnMfvA213mJW88ExwC0x5L4pdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+97cxOm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9CA3C32782;
-	Wed, 17 Jul 2024 13:29:32 +0000 (UTC)
+	s=arc-20240116; t=1721223047; c=relaxed/simple;
+	bh=EjnGtehLHIKPE9q1cLN8XdIbtNHm5pvem+IG50mZpqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IPX0l0tsQsQbXFKHMiVVvmljhqnY+WJCjxQ18Ep/xejdcQ1vNjM84vAVbZRiRn9zU84w25NmAJ8+HG5Jk2chAJZnmvycsPgMS4YrfetBQiqafS/3yCItA0MunJlL2+jcZDcdCQYW59UlkWreBo/fO8hc0n0T4fG9WW9bYxU2ziA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyxaDqzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A0CC32782;
+	Wed, 17 Jul 2024 13:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721222975;
-	bh=YQ6l5cI7YXYE0o/kYF2+JwI6tetVX1FjRrXMMaCr4Es=;
-	h=From:To:Cc:Subject:Date:From;
-	b=W+97cxOmuKI9hdL9xkKNeVX31I3x/EYwg5GZW1Bjm/nrA7+LCA8d4B9GQBajn/gm3
-	 LPTDWi2kZdwxeUaa1PdHiiPPD8vlaIm+GfRC183XHbFSUI/d0jhLgInuTGhWiVyEau
-	 ph2qNorzT+21ln+XMPl9sD1L8x/FC+i6bScA672ujqVC4t3i6lIsxF9nqKeeqAcrWJ
-	 aCOghHARZbKCn2GwlokCWXdQCzPd5sqqnTSNAoWr3O9P0FvTs6K52cge4ljWIaaBoe
-	 E4sk9dJJqmPHsv5LMbS6waPYChe1vqkTbBjFdxak0Oy6t+0SUoL4C6nlKJDWAkRuwf
-	 cJ059Z6JSmMhw==
-From: Conor Dooley <conor@kernel.org>
-To: linux-riscv@lists.infradead.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] RISC-V: run savedefconfig for defconfig
-Date: Wed, 17 Jul 2024 14:29:24 +0100
-Message-ID: <20240717-shrubs-concise-51600886babf@spud>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1721223047;
+	bh=EjnGtehLHIKPE9q1cLN8XdIbtNHm5pvem+IG50mZpqA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MyxaDqzQe01C+DLKfhrub218xtvehXwEJ/jjaDw1rOck7qXJ2xCdqL34iZtz4+zgS
+	 0zSvUClqP3k0OWal6okIcuQH5BBAy6PQLuCo9n/NxSYTfF7ZdHJ8/84hvLatGO2eQF
+	 ysUPgnFY70DY/J7bVIqSLjxYmXw1rxwHWvlUkXvvSVzNze1qdU8Fm96lpN1qYFOxUp
+	 9tjuaKqj21iI5pNlScumyJLJFw0da61JqXNqVAPD1Cumm534QHLoexXTXFXcRghVQT
+	 XWpVAEst3AYYmzQrIpmgCT4EpRJbqLDudYw/M5fCSHlhAwaWY/ZrZuNlkxM/ZXNI1r
+	 Z1BQRrIoCMeFw==
+Message-ID: <8e260164-cce2-4153-9f9c-0330c76408ef@kernel.org>
+Date: Wed, 17 Jul 2024 15:30:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3914; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jCFQHxaVV64m1uEzxmaK5W8JzwULgV2ZW1IVTbFyuYA=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTj5v8Fd8WySamaB7wnFPwpdyUTbutPifrT9B/75nx9 4eO5ivBjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzkGxMjw8MNa288yNa9Yyd3 84Qk/xThB2VFDHUGaX3PZIX+9b2bOI+RYVakpBDX9kYWTd3Lx3buvRmmlih/ZuqeuiNplZ+yzu2 bwwEA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
+ add 7712 SoC
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-2-james.quinlan@broadcom.com>
+ <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
+ <CA+-6iNwvShkUwgQ5iTqa53gX1RtOMcDACPOJtqKm6zWCXN6Rtg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CA+-6iNwvShkUwgQ5iTqa53gX1RtOMcDACPOJtqKm6zWCXN6Rtg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On 17/07/2024 15:20, Jim Quinlan wrote:
+> On Wed, Jul 17, 2024 at 2:51 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 16/07/2024 23:31, Jim Quinlan wrote:
+>>> o Change order of the compatible strings to be alphabetical
+>>>
+>>> o Describe resets/reset-names before using them in rules
+>>>
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
+>>
+>> Thank you.
+>> </form letter>
+> 
+> I'm sorry Krzysztof, but AFAICT I paid attention to all of your comments and
+> tried to answer them as best as I could.  Please do not resort to a
+> form letter; if
+> you think I missed something(s) please oblige me and say what it is rather than
+> having  me search for something that you know and I do not.
 
-It's been a while since this was run, and there's a few things that have
-changed. Firstly, almost all of the Renesas stuff vanishes because the
-config for the RZ/Five is gated behind NONPORTABLE. Several options
-(like CONFIG_PM) are removed as they are the default values.
+I do not see your response at all to my comments on patch #2.
 
-To retain DEFVFREQ_THERMAL and BLK_DEV_THROTTLING, add PM_DEVFREQ and
-BLK_CGROUP respectively.
+> 
+>>
+>>> o Add minItems/maxItems where needed.
+>>>
+>>> o Change maintainer: Nicolas has not been active for a while.  It also
+>>>   makes sense for a Broadcom employee to be the maintainer as many of the
+>>>   details are privy to Broadcom.
+>>>
+>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+>>> ---
+>>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 ++++++++++++++-----
+>>>  1 file changed, 19 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+>>> index 11f8ea33240c..692f7ed7c98e 100644
+>>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+>>> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>  title: Brcmstb PCIe Host Controller
+>>>
+>>>  maintainers:
+>>> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>>> +  - Jim Quinlan <james.quinlan@broadcom.com>
+>>>
+>>>  properties:
+>>>    compatible:
+>>> @@ -16,11 +16,11 @@ properties:
+>>>            - brcm,bcm2711-pcie # The Raspberry Pi 4
+>>>            - brcm,bcm4908-pcie
+>>>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+>>> -          - brcm,bcm7278-pcie # Broadcom 7278 Arm
+>>>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
+>>> -          - brcm,bcm7445-pcie # Broadcom 7445 Arm
+>>> +          - brcm,bcm7278-pcie # Broadcom 7278 Arm
+>>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
+>>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
+>>> +          - brcm,bcm7445-pcie # Broadcom 7445 Arm
+>>>
+>>>    reg:
+>>>      maxItems: 1
+>>> @@ -95,6 +95,18 @@ properties:
+>>>        minItems: 1
+>>>        maxItems: 3
+>>>
+>>> +  resets:
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - description: reset for external PCIe PERST# signal # perst
+>>> +      - description: reset for phy reset calibration       # rescal
+>>> +
+>>> +  reset-names:
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - const: perst
+>>> +      - const: rescal
+>>
+>> There are no devices with two resets. Anyway, this does not match one of
+>> your variants which have first element as rescal.
+> 
+> The 4908 chip exclusively uses the "perst" reset, and the  7216 chip
+> exclusively uses the "rescal" reset.   The rest of the chips use zero
+> resets.   All together, there are two resets.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Paul Walmsley <paul.walmsley@sifive.com>
-CC: Palmer Dabbelt <palmer@dabbelt.com>
-CC: Albert Ou <aou@eecs.berkeley.edu>
-CC: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>
-CC: linux-renesas-soc@vger.kernel.org
-CC: linux-riscv@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
----
- arch/riscv/configs/defconfig | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+This is not enum, but a list. What you do mean overall two resets? You
+have a chip which is both 4908 and 7216 at the same time? How is this
+possible?
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 3f1f055866af..0d678325444f 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -7,6 +7,7 @@ CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_CGROUPS=y
- CONFIG_MEMCG=y
-+CONFIG_BLK_CGROUP=y
- CONFIG_CGROUP_SCHED=y
- CONFIG_CFS_BANDWIDTH=y
- CONFIG_RT_GROUP_SCHED=y
-@@ -35,9 +36,6 @@ CONFIG_ARCH_THEAD=y
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_CANAAN=y
- CONFIG_SMP=y
--CONFIG_HOTPLUG_CPU=y
--CONFIG_PM=y
--CONFIG_CPU_IDLE=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT=y
- CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-@@ -52,13 +50,11 @@ CONFIG_ACPI=y
- CONFIG_JUMP_LABEL=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
--CONFIG_SPARSEMEM_MANUAL=y
- CONFIG_BLK_DEV_THROTTLING=y
-+CONFIG_SPARSEMEM_MANUAL=y
- CONFIG_NET=y
- CONFIG_PACKET=y
--CONFIG_UNIX=y
- CONFIG_XFRM_USER=m
--CONFIG_INET=y
- CONFIG_IP_MULTICAST=y
- CONFIG_IP_ADVANCED_ROUTER=y
- CONFIG_IP_PNP=y
-@@ -102,9 +98,9 @@ CONFIG_NET_SCHED=y
- CONFIG_NET_CLS_CGROUP=m
- CONFIG_NETLINK_DIAG=y
- CONFIG_CGROUP_NET_PRIO=y
-+CONFIG_CAN=m
- CONFIG_NET_9P=y
- CONFIG_NET_9P_VIRTIO=y
--CONFIG_CAN=m
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
- CONFIG_PCI_HOST_GENERIC=y
-@@ -153,8 +149,8 @@ CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_OF_PLATFORM=y
--CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-+CONFIG_SERIAL_SH_SCI=y
- CONFIG_VIRTIO_CONSOLE=y
- CONFIG_HW_RANDOM=y
- CONFIG_HW_RANDOM_VIRTIO=y
-@@ -179,7 +175,6 @@ CONFIG_DEVFREQ_THERMAL=y
- CONFIG_RZG2L_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_SUNXI_WATCHDOG=y
--CONFIG_RENESAS_RZG2LWDT=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
-@@ -193,11 +188,9 @@ CONFIG_DRM_NOUVEAU=m
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_VIRTIO_GPU=m
- CONFIG_FB=y
--CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
--CONFIG_SND_SOC_RZ=m
- CONFIG_SND_DESIGNWARE_I2S=m
- CONFIG_SND_SOC_STARFIVE=m
- CONFIG_SND_SOC_JH7110_PWMDAC=m
-@@ -239,34 +232,31 @@ CONFIG_USB_CONFIGFS_F_FS=y
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
--CONFIG_MMC_SDHCI_CADENCE=y
- CONFIG_MMC_SDHCI_OF_DWCMSHC=y
-+CONFIG_MMC_SDHCI_CADENCE=y
- CONFIG_MMC_SPI=y
-+CONFIG_MMC_SDHI=y
- CONFIG_MMC_DW=y
- CONFIG_MMC_DW_STARFIVE=y
--CONFIG_MMC_SDHI=y
- CONFIG_MMC_SUNXI=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_SUN6I=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_SUN6I=m
- CONFIG_DW_AXI_DMAC=y
--CONFIG_RZ_DMAC=y
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
- CONFIG_VIRTIO_MMIO=y
--CONFIG_RENESAS_OSTM=y
- CONFIG_CLK_SOPHGO_CV1800=y
- CONFIG_SUN8I_DE2_CCU=m
-+CONFIG_RENESAS_OSTM=y
- CONFIG_SUN50I_IOMMU=y
- CONFIG_RPMSG_CHAR=y
- CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
--CONFIG_ARCH_R9A07G043=y
-+CONFIG_PM_DEVFREQ=y
- CONFIG_IIO=y
--CONFIG_RZG2L_ADC=m
--CONFIG_RESET_RZG2L_USBPHY_CTRL=y
- CONFIG_PHY_SUN4I_USB=m
- CONFIG_PHY_RCAR_GEN3_USB2=y
- CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
--- 
-2.43.0
+> 
+> You are the one that wanted me to first list all resets at the top,
+> and refer to them by the conditional rules.
+
+No, I wanted widest constraints at the top.
+
+My comment at v2 was already saying this:
+
+"This does not match what you have in conditional, so just keep min and
+max Items here."
+
+and you have numerous examples in the code for this.
+
+Best regards,
+Krzysztof
 
 
