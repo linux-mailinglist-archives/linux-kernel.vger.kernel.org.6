@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-255217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874A6933D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:24:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E0B933D96
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EDE1F2336D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3984B225D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCEE1802DD;
-	Wed, 17 Jul 2024 13:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081F61802D3;
+	Wed, 17 Jul 2024 13:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OF9re99w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cui45AeF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB0517F378;
-	Wed, 17 Jul 2024 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9162717E8FA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222673; cv=none; b=LY0C8gxvy5URTKIbkVqYKkmGM2E2LmSwJs5HgVEZUZpScTl+2T9mTpRYBTXOqJzHWvgNhbXAr+46+zL1fS+Y9V8IjiPPcPzASvGZbLpdNXB3HVenwUFeWFz8kRdhAjORMjeE9tjipzIAb0huRzpO1HkLA0+Gg8MKIxrw4SK5KQM=
+	t=1721222900; cv=none; b=uDIQNIEDFeiH86iI1fAeHWr2vQKODAa8rwSMM2qsq2jhRj77dkzn869a8/2j5XbDFKlg5tXvjhw8TLE43LkrEa7ndw57j9DggyygVw/MvZEjGicaLiCCqYXgcdtRtg9YyrQBj1u/+KbBkk1fiVnAEuDjKBI/iAPufWXnO+1hxRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222673; c=relaxed/simple;
-	bh=awsX018WuUujQeOEm3Z0hqNPdmA1KngMJ8aTaMF/BtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JL+IU0YE14vRBS3/8KNWuu7Mw5RpsxpXpAWBAOSegXuJ+eickGCsRa/gdp8+aXnQ5FM34rd+YC7bT4CDtlXI2kBjHJbWI2dY3EhB/L2LtmnEZs6S6gCN+ADiMNv/GnFCfyDwqquuztfHv1t4QPY2uUTZjn2ajMjw6+SpOGTV/W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OF9re99w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36526C32782;
-	Wed, 17 Jul 2024 13:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721222673;
-	bh=awsX018WuUujQeOEm3Z0hqNPdmA1KngMJ8aTaMF/BtM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OF9re99wLZ2KerKG4UXyvFtS7OE4z9whOMuD5/HXof5iCI+9vZxcy1Mf7VoGHkdM0
-	 wvvdJwIbKvc5HQl8tNsLv4+YCDbj4opTbMZt+yzp5SluBZBq3ye1kNSnAJqoC4eebb
-	 A5aX0n753lRxqFCy6nhmpTug9vo1cNOlsdDXwjzCDbnTyl0A4N3IzYPyYUp5Wr5HuF
-	 iQSeP8mAt7B1rIJuHPt6eedXWF/llyS8/EofJhH6cgx4pj2qnt7JhPGlvvI2X6DDtm
-	 7bajqZY/efq29hrXrHWvQVBhwh9XjMpWLVQg6xHrmjk+L17EeeeVCEqE9y4GFxWjKr
-	 XCJnuwEq/rhNQ==
-Message-ID: <3be44176-07b5-4bac-81a9-b1bb4f0b1a1e@kernel.org>
-Date: Wed, 17 Jul 2024 15:24:25 +0200
+	s=arc-20240116; t=1721222900; c=relaxed/simple;
+	bh=i5fDdDHEtX7vNR12mFEKIETqZ0WT4Yxwoz5sgAv+nGc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eeTdP8HLoKCZgqYB5tCNs3EDVkGUdi3Kry7Fny5OrhGHYkCPW2qQb9mM/TZRU0VeOKsW93RGe315ypIflCZgHnK44hc4e6LLMDtq7mOkCgXUR68aRO0Dc/YkdjWOF8CxVYyeQFTA7rf1XEm3cip5HABMusXHH1lTHz4Doh5/UY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cui45AeF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721222897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ItohwBK9euwv/uwdzmdFu/crsWLVAK5HqaVyEtkiNe8=;
+	b=cui45AeFvzHQNIrk260iF93DDatA6Ax7gapUNnkX/o40nxw+nqzVTMBKaWhFHGZ7jP2TZx
+	FIweR5vNSn0CyphuVha5xIZGoNdpwNdhAT4X02Bz0f4KV85WT09b7q5WpyFzFaPwYjGgcQ
+	7DRQm5/ArFBiWZh38ZPklxIRQVU4pbM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-412-3H0p8EQ0OiW3ZEnmTkaTgA-1; Wed, 17 Jul 2024 09:28:13 -0400
+X-MC-Unique: 3H0p8EQ0OiW3ZEnmTkaTgA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36795e2ce86so3897572f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:28:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721222892; x=1721827692;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ItohwBK9euwv/uwdzmdFu/crsWLVAK5HqaVyEtkiNe8=;
+        b=EUJh9HXrRdWMQlDFAQkSIvN9Nixi40JzZ4+bsw9IOBZxSqxqePembn+DN/w0b2Fh28
+         hRVHbt0DDWxPxupw4Yz3jrP8VbX0ZDf6D/84cGqRBuU8NczU1vfynIq3F/Jli4BH3U18
+         gnToh1oK1WxNSB6b1KHSpev/cpfcYaqeWMEhf+Qp5XCujTeMsIEAApmcEt84u+Qfkbg8
+         HNK9jYFf8fPEAr2IFomMHlXfaCl+6xg18jRBAH5TfyxiY/NlXo334A9SYCYs62jPhDck
+         m7VguFXdgNcrGP7/sCmpHGBqTf9w+B7puhg02vOfsKPtVrghHaUyC1J78tfczYBr9vej
+         Vnnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBIK1oqqWastOIcKz01y6hfMinj112I73072rchwZt0OCAZ47p6nIFNAZ0M0D2rDnU3YJMa4BJ//j9yDV9rMK4HFdj39pEEvuN9XOn
+X-Gm-Message-State: AOJu0Yzui+QyF+rPmQNP1OAOh7UJTSsptycPJ/NCqP8Wc+W3osKck/J7
+	6xbbYza6FdYx/8mtZwjdukqbdGg+8ar/1cjsl3QPi6rre8/Gb/r5f5ozcGY2m+omhcn+SqlDQOj
+	GniCqv+7buXcXIjieKYd3KAyQxRQI8eLkElvgDMwxs8ZXH6Ywm6W2oOunBP6k2w==
+X-Received: by 2002:a05:6000:d90:b0:368:3194:8a85 with SMTP id ffacd0b85a97d-36831948efamr1354439f8f.7.1721222892505;
+        Wed, 17 Jul 2024 06:28:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpTaAUfRVNU5Xu+qR1JE/9Bc1YiuNYvppU3YdvKcMCaYdPaRWowG53BU48+Swh1yPrb+brsQ==
+X-Received: by 2002:a05:6000:d90:b0:368:3194:8a85 with SMTP id ffacd0b85a97d-36831948efamr1354427f8f.7.1721222892139;
+        Wed, 17 Jul 2024 06:28:12 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db04731sm11642192f8f.112.2024.07.17.06.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 06:28:11 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 42675145D491; Wed, 17 Jul 2024 15:28:11 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Martin KaFai Lau <martin.lau@linux.dev>, Michal Switala
+ <michal.switala@infogain.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, revest@google.com,
+ syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com,
+ alexei.starovoitov@gmail.com
+Subject: Re: [PATCH] bpf: Ensure BPF programs testing skb context
+ initialization
+In-Reply-To: <250854fc-ce22-4866-95f9-d61f6653af64@linux.dev>
+References: <CAADnVQJPzya3VkAajv02yMEnQLWtXKsHuzjZ1vQ6R19N_BZkTQ@mail.gmail.com>
+ <20240715181339.2489649-1-michal.switala@infogain.com>
+ <250854fc-ce22-4866-95f9-d61f6653af64@linux.dev>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Wed, 17 Jul 2024 15:28:11 +0200
+Message-ID: <87y160407o.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: dt-bindings: add MT8188 AIE
-To: 20220614094956 created <yelian.wang@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
- teddy.chen@mediatek.com, hidenorik@chromium.org
-References: <20240717125426.32660-1-yelian.wang@mediatek.com>
- <20240717125426.32660-2-yelian.wang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240717125426.32660-2-yelian.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 17/07/2024 14:41, 20220614094956 created wrote:
-> From: Yelian Wang <yelian.wang@mediatek.com>
-> 
-> Add YAML device tree binding for MT8188 AIE.
-> 
-> Signed-off-by: Yelian Wang <yelian.wang@mediatek.com>
-> ---
->  .../bindings/media/mediatek-aie.yaml          | 99 +++++++++++++++++++
->  1 file changed, 99 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek-aie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek-aie.yaml b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
-> new file mode 100644
-> index 000000000000..300aef43e02b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek-aie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: The AIE Unit of MediaTek Camera System
-> +
-> +maintainers:
-> +  - Yelian Wang <yelian.wang@mediatek.com>
-> +
-> +description:
-> +  MediaTek AIE is the ISP unit in MediaTek SoC.
-> +
+Martin KaFai Lau <martin.lau@linux.dev> writes:
 
-BTW, most likely you miss here ports, although with such poor hardware
-description as above, it's tricky to guess what this is and what it does.
+> On 7/15/24 11:13 AM, Michal Switala wrote:
+>
+>  >> Reported-by: syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
+>  >> Closes: https://syzkaller.appspot.com/bug?extid=cca39e6e84a367a7e6f6
+>  >> Link: https://lore.kernel.org/all/000000000000b95d41061cbf302a@google.com/
+>  >
+>  > Something doesn't add up.
+>  > This syzbot report is about:
+>  >
+>  > dev_map_enqueue+0x31/0x3e0 kernel/bpf/devmap.c:539
+>  > __xdp_do_redirect_frame net/core/filter.c:4397 [inline]
+>  > bpf_prog_test_run_xdp
+>  >
+>  > why you're fixing bpf_prog_test_run_skb ?
+>
+>
+> [ Please keep the relevant email context in the reply ]
+>
+>
+>> The reproducer calls the methods bpf_prog_test_run_xdp and
+>> bpf_prog_test_run_skb. Both lead to the invocation of dev_map_enqueue, in the
+>
+> The syzbot report is triggering from the bpf_prog_test_run_xdp. I agree with 
+> Alexei that fixing the bpf_prog_test_run_skb does not make sense. At least I 
+> don't see how dev_map_enqueue can be used from bpf_prog_test_run_skb.
 
-Best regards,
-Krzysztof
+Me neither.
+
+> It looks very similar to 
+> https://lore.kernel.org/bpf/000000000000f6531b061494e696@google.com/. It has 
+> been fixed in commit 5bcf0dcbf906 ("xdp: use flags field to disambiguate 
+> broadcast redirect")
+>
+> I tried the C repro. I can reproduce in the bpf tree also which should have the 
+> fix. I cannot reproduce in the bpf-next though.
+>
+> Cc Toke who knows more details here.
+
+Hmm, yeah, it does look kinda similar. Do you mean that the C repro from
+this new report triggers the crash for you on the current -bpf tree?
+
+-Toke
 
 
