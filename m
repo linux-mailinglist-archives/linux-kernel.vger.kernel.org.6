@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-255568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00B4934254
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3D8934256
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 839871C20ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529D01F2305D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F3E184112;
-	Wed, 17 Jul 2024 18:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BA318410F;
+	Wed, 17 Jul 2024 18:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4AiQuo6z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKNzXu4r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671D61F94D;
-	Wed, 17 Jul 2024 18:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B581F94D;
+	Wed, 17 Jul 2024 18:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721241205; cv=none; b=GortY2vJl6oCxYQvjlc3Y7geWf7YzETTpCidN/Mx9+7onq0VQ1wSOMc7sNm14TPq63vZ9T22Dvu1/tMUPhyhb99r+NEOC53hQAMRhch7YvQOHYBdYBEdyFqpDayqVlTb0kvVDn1dddhlKZv7SNPNe6VhFZwgNbIZBIqmFcwB5do=
+	t=1721241468; cv=none; b=O03ywlCd+np7HKByZ1eVN451PrKJnMVwQ5/0YakW74NGArjaOSwAfHiG85isN1r3nHrACeYNVS1w1tus3G6VnJ69d4kMjLSnNMYDoQzIkiwFu+eVrajnLw/d95SUyd2fykt9EktpES38NLp8lhdSIr9Wud95jie2XzYEnSR90dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721241205; c=relaxed/simple;
-	bh=wNFfyU3fmlSuNSEHV++kDx3lWB1kKqgz5eu+4+sd+kk=;
+	s=arc-20240116; t=1721241468; c=relaxed/simple;
+	bh=v+bz9xwix6kgl7QEy3+vLmceD7rtb3mkK470E2BHlo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBQTZixK3q3O4rbZxoiKx67WwJUoS36v1je0xJiqHuV1N+yyvfoE/7YDWN5WVPCBq5PJzRmi0/rSX88mG5CBaJVaJiYmwE1lcC3BH9eKKkxDP/dINFkZhPZoRai3im2oUFUs2bn/MYtS/CG041xdSp9DsM8KomH94onl190UYP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4AiQuo6z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=yAQJjnfS8FUtmLtJ14bUmjvpA37muUFgKZUF7wK1P+M=; b=4AiQuo6zk1xveRfzmp74hue0LN
-	gqJE06JdaXqEiqU6hPiAE9HbAO9mQeoHMcLERnfcBc0o/FECSuSFrHeI7Yj+SXFuivrbDIVrfRI2U
-	IdI5XaGGMNIsAKB7rQlmwyKG+nIhyh1Tbyx+ghJvRmeXMvknlKQxk1y2WS+zynAazDhI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sU9Sl-002jHQ-M7; Wed, 17 Jul 2024 20:33:15 +0200
-Date: Wed, 17 Jul 2024 20:33:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] dt-bindings: net: dsa: vsc73xx: add
- {rx,tx}-internal-delay-ps
-Message-ID: <215e89ce-f06b-41ae-b0bf-f3d6a22a502d@lunn.ch>
-References: <20240716183735.1169323-1-paweldembicki@gmail.com>
- <20240716183735.1169323-2-paweldembicki@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcbNc4xIKCv00wU/q/I07lcPLv2QbJ0wh2qOCTr+B+fMBTEqX7DWsjJKS4eexGlW46/FXH5x3EDJivMaCxePjPt9Pogrv46V1dQeWFUMjTIN44N0XERU0F1zDWFQIxKjqRbIOFGxAMNZHzObNUcQvEkcwhrq3a/0eTMSd1oBTu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKNzXu4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40CEC2BD10;
+	Wed, 17 Jul 2024 18:37:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721241467;
+	bh=v+bz9xwix6kgl7QEy3+vLmceD7rtb3mkK470E2BHlo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKNzXu4rfHU9x3DqC53pttJi0yXC7haDLiEgSnq0IRXEDMQxPbU9h5nq/ljAzoZiu
+	 f8il1noCTO4lx4ejlwAah3PmXSP8q+hwr/9aaXYcb+/oRSfdNdkIEhC6oJvgXJmI5y
+	 f6CcteTqiL3S7vGCP6UEgFdNmCmix/nf6yjl61aEDZd2XwtaAJgSP7U5VPKdqycflq
+	 8VF1O7iLxWk4y4hoYIfCPNDozRBBbtrp3bh1EbGdpsyevrSGH1loBD+BBYYq52zz96
+	 cqUTtBuSO0hZBxdYblzYm1YuSMRE+QirzysTo2UWtPrFwOL5LPHVBCJS3RAydxdINX
+	 pc9oj2k4hKm8Q==
+Date: Wed, 17 Jul 2024 19:37:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.1 00/95] 6.1.100-rc2 review
+Message-ID: <979ee1a4-802e-4078-bb5f-1ea1246b7b69@sirena.org.uk>
+References: <20240717063758.086668888@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mv7s6qTVc2LODbOh"
+Content-Disposition: inline
+In-Reply-To: <20240717063758.086668888@linuxfoundation.org>
+X-Cookie: You should go home.
+
+
+--mv7s6qTVc2LODbOh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716183735.1169323-2-paweldembicki@gmail.com>
 
-> +$defs:
-> +  internal-delay-ps:
-> +    description:
-> +      Disable tunable delay lines using 0 ps, or enable them and select
-> +      the phase between 1400 ps and 2000 ps in increments of 300 ps.
-> +    enum:
-> +      [0, 1400, 1700, 2000]
+On Wed, Jul 17, 2024 at 08:39:41AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.100 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-It would be nice to document what the default is if the property is
-missing.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-	Andrew
+--mv7s6qTVc2LODbOh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaYD3QACgkQJNaLcl1U
+h9B1Ygf/cVb1/C2otV7onh5oTpRtq7ck3lkAij13VrjDnMYFsg2LtXOPKu+GO8aG
+6vqFlPMPaBpRjfZS8lQqvMzehaGbYu4wvm0V7Fz025jurJaSWXMcb5Ro50cNTmvi
+ScN200AyMWWQlA+3QJ+biRvhvDLw1mZdcLOyzcUbV2JQy6o1vdqd/tnU70Dz5BBS
+j1t6N+g/t/2kE6yt9cPFRdLpkx/WfHSeMPbIsM19J3IRa2BTs9o6ol1THXRfxFMN
+IUM9TalHMO6kgvrOLGoQV7qY71pmgpZ/vVYWXh16FdRc+lkZMgMHp+x3ey3K9dVZ
+Z/FPsYilSncjQy8toM9SswydxpqYsg==
+=27sV
+-----END PGP SIGNATURE-----
+
+--mv7s6qTVc2LODbOh--
 
