@@ -1,235 +1,114 @@
-Return-Path: <linux-kernel+bounces-254850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CAB933877
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:03:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA88933879
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F170283EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6031C22828
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5E1F95E;
-	Wed, 17 Jul 2024 08:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D4E1F95E;
+	Wed, 17 Jul 2024 08:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7UI6SfX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="T+cwgzpk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="c4/g1VU1"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A191CF8A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824D52C6B6;
+	Wed, 17 Jul 2024 08:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203379; cv=none; b=fke4UDZ155EBexXpw4jQ/d3Nz2HOZRyK4aRwYMe4K4Vabw3gmA0AI9gr5wUFWhT9RzbxCE5FNj/nOE1X7r3F7pSr+3GWQPgsq6/ygOM8XbaQQ7y0Y95fLg68jjMPx+lQUW5TDNBNgv2TSX0puUH10gapRUjgeCgtVSF+mbnY5bA=
+	t=1721203423; cv=none; b=B14qLZ7wdeH87DHUlHR7iPjM6QppFIMb9bgfVJjEbZ8zU01DyM3nMeay7Ysri6MUGvAsW36yvqChGSWh1saIUcR1Pk3zuu1BwmzaI7UvUSzehtdpD/VBB0g0hqeS4YFTDL/FfCz1WFkfxzumVPdy9joLD7WjtDtPWQ0DXAeqOUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203379; c=relaxed/simple;
-	bh=vi40Sbk07TGfblu1VxNt/6IK8WmdfFsGUe5zQV85g0A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uc8XEgRnGOoi7+E8GDzh0LON4s1Aq2Y7GNjqosCPQx1u4KK4y2Z9S8tasuYkH/MVzvXd0UnE0q5vXX1n5j/7ioyT1dIaVh4eD4wXF9ZozgmHHW8iUoNgt3cp36wG6jk021ZrugtnfLWRAJdLZ1sAKpPHQknCqg0a52aVMMpyccs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7UI6SfX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721203377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aac7mzpK+9VXNPOJ21/RuM77jIgKwx0OrsOzYAH/KZE=;
-	b=W7UI6SfX1a4U3r1JgBRWWMRUQbSH/zWiw5YIMyJUdViHB3GTYMZ8U23nxv4pLmwa1poEuw
-	8EBECl7cb+SItuPDbTkkafISUsvIczTli6/dMa4NoDGtLfYi5zXioIHYHMJUnVHOm0Ab35
-	XO9T8oIXxoM2bDuC7BG8rcgLQenZwQI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-Ou79gpUBOa6tzHc78voFQQ-1; Wed, 17 Jul 2024 04:02:52 -0400
-X-MC-Unique: Ou79gpUBOa6tzHc78voFQQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-367a064472aso4379193f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:02:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721203371; x=1721808171;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aac7mzpK+9VXNPOJ21/RuM77jIgKwx0OrsOzYAH/KZE=;
-        b=v+VFuOQt1ZYy81UclL0NqMuh6Ad8fnBo9VQog9sQ6bH9gBraeXMJKdTJUpFqNhwgpl
-         iHkOAl4P9cmj0f8dJb6xjnpsGPQh4PnNPXrbizK+EgaYHerb/FMEg7PEmKgXmBzAsgOi
-         PL6HEsyoBkNfSIicKJ5qnlFA0KEoxqgTIdv1cjEmVhmNl1nj/Cy1rVxqgk7jFHY+SZkQ
-         PX/XcPT/IsuzyvqahMemamErQRqn7Cm/feR7FmefBp89Nck0auVyq4HnSheab0uVUXEi
-         WVEdQUA+GxTCr456iRwD2TxvYYavOETHIOfcnY+PDm73qEpoq/cdag7QRWfk3P4wqwL3
-         go2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJzDzsfc0uWivrObUs6t82uFBguG/AfzZkUSheA1Zu6CsGNvehobKE1iT8D/E3wWlh5l3FGL3mZoRal/7XnDpFdRSh2VDimmJ++jfQ
-X-Gm-Message-State: AOJu0YzM9umwYAOfHypeEt0cr9kwbZiZ10iYovvN3N2i+OLRf/lo8xYO
-	WuepqzYp/sAPgilCnNlfI9xvcIARMCjstr9HXNKL+7kKpj7U4r9qafSUlxFnOcHkaRDl7SLKyJ+
-	lrx13+yVQnijmdMtOoTluckl3XAwggdv4MQ23qF656b30yus3K2OozI5X+/Q8Jw==
-X-Received: by 2002:a05:6000:18af:b0:367:f0d6:24e8 with SMTP id ffacd0b85a97d-368317376c4mr788188f8f.48.1721203371303;
-        Wed, 17 Jul 2024 01:02:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEN5AtRZ4oICUJhKNgwLRtPqRrzAQGZwq+PhKjrttjnkY/yb3mUrW+vX7UqqlDhr8rd5hXdpg==
-X-Received: by 2002:a05:6000:18af:b0:367:f0d6:24e8 with SMTP id ffacd0b85a97d-368317376c4mr788167f8f.48.1721203370846;
-        Wed, 17 Jul 2024 01:02:50 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff23ef9.dip0.t-ipconnect.de. [79.242.62.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3683edc42ebsm182262f8f.90.2024.07.17.01.02.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 01:02:50 -0700 (PDT)
-Message-ID: <9052f430-2c5a-4d9d-b54c-bd093b797702@redhat.com>
-Date: Wed, 17 Jul 2024 10:02:48 +0200
+	s=arc-20240116; t=1721203423; c=relaxed/simple;
+	bh=XPf6FraqAY5Pnc0921qTtkEWqT98FeTp2J69L7xL064=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OURKMbWDDpGNGYxFV9GgTm5P4/2eoyh1BimRL2CKGpKeZgMRBD6gDhSGAF0e9pvpou5+UQ9c939qFjLGqcC3w2rI3p/xZ2a34NfaiPZFrHowjBCk6iNWtvzZtKN4g/Pzx5v9HZMF4LeGtNn1IY6LT0izWqFYpVi352rvhKBfm04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=T+cwgzpk; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=c4/g1VU1 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1721203420; x=1752739420;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/AfJrwnzPB93tg8xRLJ+lSVIdfMPUjr5wVivkuJa62s=;
+  b=T+cwgzpkT8soeQZBdFbA9Hlr5NytLvyMBZWyodpy1kiBq3CW84Gyn8cW
+   VfKSwYGYyQ3gc7U6Ufu4ywiugsfhus0JQCz5M5Cg75hZfTrnWFJ2WSc5N
+   QNNMh+U5K3X6Csn2min0uDUwcqBR6u6lxZ9YA9nOK5GNr3cKIZtcnEKot
+   /ciAMMMIP4yAmPjutAcO7d3mnJN0rKcVmOBtbI39FTaGdFUidzsPJNZmE
+   Tj7YO5COiF5XkEEJ2S74q1jc0c8hGWCaL+cIgQQAB6dXdRirxLdEvtWVV
+   7NwfFYhseaGdOVXsBxFZgxZMPgvNG9dkGWG8uGNuRkK7xbJrQGE93AotS
+   A==;
+X-CSE-ConnectionGUID: g/oQUe2TQSy4TdPmv9qhIg==
+X-CSE-MsgGUID: va+o87CQT+Ggl3lcXeqvzw==
+X-IronPort-AV: E=Sophos;i="6.09,214,1716242400"; 
+   d="scan'208";a="37944923"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Jul 2024 10:03:38 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 44ADF161428;
+	Wed, 17 Jul 2024 10:03:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1721203418; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=/AfJrwnzPB93tg8xRLJ+lSVIdfMPUjr5wVivkuJa62s=;
+	b=c4/g1VU16nGwwQPwN6MWQ8dfHI0V92TxbMWjcBPCVmtqoi+WRJb7S9nBWVuMu/R0hR4ALO
+	Vis93GlwsysQusTIb1TcXPhFO3CqG1htAZM+tqg+MAa80FtTCrDzyvloL9QPblb2hmuMdl
+	SAwfIJRMa3gncbOcx8s/01hB3oOBiDdgXVS4vCTqRbqkffzkJj7fGjaFs5JqicEcSE4KWA
+	cozC7WSZBWMo/28OSLB+INKCDOsp+mo07E6UmPmGZYsrN1LC63Jy4+fo+h5AgFvu56hWhj
+	b+9N5caKcx3SJXElSP8Jg6tgvFo6yNlMC0sqnfPygwkq8HMBM7qhJDIhz/fffA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peng Fan <peng.fan@nxp.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-pm@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] pmdomain: imx: scu-pd: Remove duplicated clocks
+Date: Wed, 17 Jul 2024 10:03:33 +0200
+Message-Id: <20240717080334.2210988-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-To: Ryan Roberts <ryan.roberts@arm.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <CAK1f24nCDZM8aa9z_ZtgLbdj695JJri01q2HJUJb9pJt2uqy=w@mail.gmail.com>
- <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
- <8c32a2fc-252d-406b-9fec-ce5bab0829df@arm.com>
- <a8441245-ae35-443f-9aea-325007492741@arm.com>
- <5c58d9ea-8490-4ae6-b7bf-be816dab3356@redhat.com>
- <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
->> Sorry, busy with other stuff.
->>
->> Indicating only what really exists sounds cleaner. But I wonder how we would
->> want to handle in general orders that are effectively non-existant?
-> 
-> I'm not following your distinction between orders that don't "really exist" and
-> orders that are "effectively non-existant".
+These clocks are already added to the list. Remove the duplicates ones.
 
-I'm questioning whether there should be a distinction at all. We should 
-just hide what is either non-existant (not implemented) or non-functional.
+Fixes: a67d780720ff ("genpd: imx: scu-pd: add more PDs")
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/pmdomain/imx/scu-pd.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> 
-> I guess the real supported orders are:
-> 
->    anon:
->      min order: 2
->      max order: PMD_ORDER
->    anon-shmem:
->      min order: 1
->      max order: MAX_PAGECACHE_ORDER
->    tmpfs-shmem:
->      min order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
->      max order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
->    file:
->      min order: 1
->      max order: MAX_PAGECACHE_ORDER
-
-That's my understanding. But not sure about anon-shmem really supporting 
-order-1, maybe we do.
-
-> 
-> But today, controls and stats are exposed for:
-> 
->    anon:
->      min order: 2
->      max order: PMD_ORDER
->    anon-shmem:
->      min order: 2
->      max order: PMD_ORDER
->    tmpfs-shmem:
->      min order: PMD_ORDER
->      max order: PMD_ORDER
->    file:
->      min order: Nothing yet (this patch proposes 1)
->      max order: Nothing yet (this patch proposes MAX_PAGECACHE_ORDER)
-> 
-> So I think there is definitely a bug for shmem where the minimum order control
-> should be order-1 but its currently order-2.
-
-Maybe, did not play with that yet. Likely order-1 will work. (although 
-probably of questionable use :) )
-
-> 
-> I also wonder about PUD-order for DAX? We don't currently have a stat/control.
-> If we wanted to add it in future, if we take the "expose all stats/controls for
-> all orders" approach, we would end up extending all the way to PUD-order and all
-> the orders between PMD and PUD would be dummy for all memory types. That really
-> starts to feel odd, so I still favour only populating what's really supported.
-
-I would go further and say that calling the fsdax thing a THP is 
-borderline wrong and we should not expose any new toggles for it that way.
-
-It really behaves much more like hugetlb folios that can be PTE-mapped 
-... we cannot split these things, and they are not allocated from the 
-buddy. So I wouldn't worry about fsdax for now.
-
-fsdax support for compound pages (now large folios) probably never 
-should have been glued to any THP toggle.
-
-> 
-> I propose to fix shmem (extend down to 1, stop at MAX_PAGECACHE_ORDER) and
-> continue with the approach of "indicating only what really exists" for v2.
-> 
-> Shout if you disagree.
-
-Makes sense.
-
+diff --git a/drivers/pmdomain/imx/scu-pd.c b/drivers/pmdomain/imx/scu-pd.c
+index 05841b0bf7f30..01d465d88f60d 100644
+--- a/drivers/pmdomain/imx/scu-pd.c
++++ b/drivers/pmdomain/imx/scu-pd.c
+@@ -223,11 +223,6 @@ static const struct imx_sc_pd_range imx8qxp_scu_pd_ranges[] = {
+ 	{ "lvds1-pwm", IMX_SC_R_LVDS_1_PWM_0, 1, false, 0 },
+ 	{ "lvds1-lpi2c", IMX_SC_R_LVDS_1_I2C_0, 2, true, 0 },
+ 
+-	{ "mipi1", IMX_SC_R_MIPI_1, 1, 0 },
+-	{ "mipi1-pwm0", IMX_SC_R_MIPI_1_PWM_0, 1, 0 },
+-	{ "mipi1-i2c", IMX_SC_R_MIPI_1_I2C_0, 2, 1 },
+-	{ "lvds1", IMX_SC_R_LVDS_1, 1, 0 },
+-
+ 	/* DC SS */
+ 	{ "dc0", IMX_SC_R_DC_0, 1, false, 0 },
+ 	{ "dc0-pll", IMX_SC_R_DC_0_PLL_0, 2, true, 0 },
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
