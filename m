@@ -1,166 +1,177 @@
-Return-Path: <linux-kernel+bounces-255443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B509340C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:50:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EAD9340C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB091C21A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1C81F21FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34153181D16;
-	Wed, 17 Jul 2024 16:50:11 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC901822DC;
+	Wed, 17 Jul 2024 16:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wnGQ3ZL9"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B50181CE9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD8B181B9A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721235010; cv=none; b=UjnJ4xx3SCCQk4sw5gIJxF3H/0/2yBZ1Bx3uujdLn2iKfEMDMSRLi3/bF8hnBwEQ/aJJEv4qIdAwnFnIkMC0vzdxRdoYIlvKDUfpaTM5FQ9Mhn9caZjy/m3/bAbmeiZfgjXFTCc2BkzVcA/WIlh/21i/iqOfqgAp/+K9t4JdNt0=
+	t=1721235039; cv=none; b=Aafl6fDPwHQzFSlt09Z0aTEMKuFvqq5RsH/h9H5XKEzBk3J0GsuumRY8FKwwS5vpg6oEemOofZdEfFNAdnV3DSSgw0s86y4RoLsphSpNM9RdrejhEVsIZZ12x20USYx112bwOWH6MAnOh+JHOZnTqoNEKpYWl8QE6tctwtCiFGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721235010; c=relaxed/simple;
-	bh=FOotqtbfuJ/4ufY4YyEJ8lg73RpNxOQMJdow8HqdcSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=X8o/azb+Lo3ybktYEkNn5nLa+QmGgEwr/LyDiq8t/j6WsevZmNRIyLz8Mal8D/BohhL01bsEVSQErTtyyr5P2GQgKmi5vJPnVIzv3ucnT6+6Fx4cwrrb0V0zNYHsbln5RsJdF/VqOrKv369da8s4BqvOerchvOthBFZ2edzrbSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEC4C2BD10;
-	Wed, 17 Jul 2024 16:49:36 +0000 (UTC)
-Date: Wed, 17 Jul 2024 12:49:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Clark Williams <williams@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>,
- Kate Stewart <kstewart@linuxfoundation.org>, "Luis Claudio R. Goncalves"
- <lclaudio@uudg.org>, John Kacur <jkacur@redhat.com>
-Subject: [GIT PULL] tracing: Update MAINTAINERS file
-Message-ID: <20240717124927.6b4c1bb1@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721235039; c=relaxed/simple;
+	bh=brMoMeNLF25cQ84wJRpgrYCmQeirKUbdzKcB39u7okY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LfpYi5bSUhPQmGWTfnGiMLVvU7MtNWLkrW3nM0F/k3dPTslLAhv//hexFeEoFeF7EN0J1Qn+zE8XdZiQ0Haa9tQPaa1bjWrZSKsnHNGX24tQxUwtxSm3pyCAtg1TwxuXqVTVnjfwQKtPZeN7UWXDP/KL/3SCDr8C5EvISrhGVJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wnGQ3ZL9; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77e6dd7f72so806348666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721235033; x=1721839833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xTNGHnvQ6RG3vz/xqvoqZtrVCx1QoR7aN9z9QUd/56U=;
+        b=wnGQ3ZL9zMkQNxejkYrlTO0dQ9R3qjI0W9ghbVcB17X+OFkZuZnSGsWEHXIotc431z
+         0HjHzFF/DNzCuqGgJmRC39+i1VR3s0xPaDvBwMlMQWAyJFaJXI6XdLqKfnlOn8Xeu0xK
+         Bq0S4q3ecq/lytqbKcQz8/Jv5NBuDaEjzzuzaPn7FoyQEDnS2e8GV7gtR/eYGYR4isE5
+         NXvqTsKNw/UBmIS3Na8sgXPcK1+GjYE2CUz59XvwWZl8ZSKVWRN98bmaJULNAmnjPt6m
+         ERWDBOMhWhTQWUMjRGPCIskFBGSN/QAidWByC5/rzf+uqy/7Yhw4SB/IxMfh9a11vlzB
+         rPdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721235033; x=1721839833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xTNGHnvQ6RG3vz/xqvoqZtrVCx1QoR7aN9z9QUd/56U=;
+        b=b8W0wSyNho2l8EfKuQwQMKMW9NygP2dH2MBWRQJ2cBZgSKVa6y/fm7lAU0rSwFvOJy
+         +XZdVn3dnRtn6VTO70QtBO3vojmAiqg3UUBg0PwMlojck+AAjTcYOSn7kC4bPO9GJ2/Z
+         5JXKPnaLxd3gNA7yBl1K2Vpj7saYZX56xz54Hqqiv/08ScHjDQtXfOoNNGnLJ2kDZwxh
+         iqfoyqRAyy0YRJObY/FCrYt/yYt23Rg2JBxGujQP8eVU2Im3DwFIv/iJNnrnCKbOqvTE
+         7VTof33vPjJSitEbw7LqWXYCRkl87jLguPIr0M/3P5a2XFbRdyQILdSh3NKSydctisUa
+         jPUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBp+GMK2K4E3IcoZgQjQ979SDayP31Eac3/NghFz5h3ER9LgQwP7nLUKs+6qzvPDmNcF27yYXl1cXa4S13anWMAfkh5IYa4MQJpumS
+X-Gm-Message-State: AOJu0YzQQjrTfA297od8PwPVCSQjVvcAGF3jQEdKcntnbA4hAtqJh7DK
+	rgqG1UfCWPuokTrPhujBVFSE4+tbmrO9v6bFn22rGk1QxpzFRyZAH729vYKXwA439uwCU1gDrck
+	MdXbh+Nar4NzqWHjMpoWqu+DMOGNdiB+pwaL6
+X-Google-Smtp-Source: AGHT+IGqZ84dAhFoS4O9crcKXggKs4NB/xqx5YRXOru5heEmpY3ot7CFAr2+9x16/lLYK/bZsph4bqXikfqjRlzPzDs=
+X-Received: by 2002:a17:906:1c12:b0:a77:cca9:b216 with SMTP id
+ a640c23a62f3a-a7a011bc7d4mr147771066b.33.1721235033083; Wed, 17 Jul 2024
+ 09:50:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
+ <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org> <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+ <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org>
+In-Reply-To: <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 17 Jul 2024 09:49:54 -0700
+Message-ID: <CAJD7tkaBKTiMzSkXfaKO5EO58aN708L4XBS3cX85JvxVpcNkQQ@mail.gmail.com>
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 17, 2024 at 9:36=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel=
+.org> wrote:
+>
+>
+>
+>
+> On 17/07/2024 02.35, Yosry Ahmed wrote:
+> > [..]
+> >>
+> >>
+> >> This is a clean (meaning no cadvisor interference) example of kswapd
+> >> starting simultaniously on many NUMA nodes, that in 27 out of 98 cases
+> >> hit the race (which is handled in V6 and V7).
+> >>
+> >> The BPF "cnt" maps are getting cleared every second, so this
+> >> approximates per sec numbers.  This patch reduce pressure on the lock,
+> >> but we are still seeing (kfunc:vmlinux:cgroup_rstat_flush_locked) full
+> >> flushes approx 37 per sec (every 27 ms). On the positive side
+> >> ongoing_flusher mitigation stopped 98 per sec of these.
+> >>
+> >> In this clean kswapd case the patch removes the lock contention issue
+> >> for kswapd. The lock_contended cases 27 seems to be all related to
+> >> handled_race cases 27.
+> >>
+> >> The remaning high flush rate should also be addressed, and we should
+> >> also work on aproaches to limit this like my ealier proposal[1].
+> >
+> > I honestly don't think a high number of flushes is a problem on its
+> > own as long as we are not spending too much time flushing, especially
+> > when we have magnitude-based thresholding so we know there is
+> > something to flush (although it may not be relevant to what we are
+> > doing).
+> >
+>
+> We are "spending too much time flushing" see below.
+>
+> > If we keep observing a lot of lock contention, one thing that I
+> > thought about is to have a variant of spin_lock with a timeout. This
+> > limits the flushing latency, instead of limiting the number of flushes
+> > (which I believe is the wrong metric to optimize).
+> >
+> > It also seems to me that we are doing a flush each 27ms, and your
+> > proposed threshold was once per 50ms. It doesn't seem like a
+> > fundamental difference.
+> >
+>
+>
+> Looking at the production numbers for the time the lock is held for level=
+ 0:
+>
+> @locked_time_level[0]:
+> [4M, 8M)     623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               |
+> [8M, 16M)    860 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [16M, 32M)   295 |@@@@@@@@@@@@@@@@@                                   |
+> [32M, 64M)   275 |@@@@@@@@@@@@@@@@                                    |
+>
+> The time is in nanosec, so M corresponds to ms (milliseconds).
+>
+> With 36 flushes per second (as shown earlier) this is a flush every
+> 27.7ms.  It is not unreasonable (from above data) that the flush time
+> also spend 27ms, which means that we spend a full CPU second flushing.
+> That is spending too much time flushing.
+>
+> This around 1 sec CPU usage for kswapd is also quite clear in the
+> attached grafana graph for when server was rebooted into this V7 kernel.
+>
+> I choose 50ms because at the time I saw flush taking around 30ms, and I
+> view the flush time as queue service-time.  When arrival-rate is faster
+> than service-time, then a queue will form.  So, choosing 50ms as
+> arrival-rate gave me some headroom.  As I mentioned earlier, optimally
+> this threshold should be dynamically measured.
 
+Thanks for the data. Yeah this doesn't look good.
 
-Linus,
+Does it make sense to just throttle flushers at some point to increase
+the chances of coalescing multiple flushers?
 
-tracing: Update of MAINTAINERS and CREDITS file
+Otherwise I think it makes sense in this case to ratelimit flushing in
+general. Although instead of just checking how much time elapsed since
+the last flush, can we use something like __ratelimit()?
 
-- Update Daniel Bristot de Oliveira's entry in MAINTAINERS with respect to
-  his tracing code.
+This will make sure that we skip flushes when we actually have a high
+rate of flushing over a period of time, not because two flushes
+happened to be requested in close succession and the flushing rate is
+generally low.
 
-- Add more credits to him in CREDITS file and move his entry to be
-  alphabetical.
-
-This had a dependency on tip/sched tree, so I added it on top of the
-commit that it depended on, and waited until it made it into your tree
-before submitting this.
-
-Please pull the latest trace-v6.11-2 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.11-2
-
-Tag SHA1: 082c8d2e632f97408207ab5215a70e71269e9e86
-Head SHA1: 5f7c72df1ba6ba00ee163ba4049c785ac5930759
-
-
-Steven Rostedt (Google) (1):
-      tracing: Update MAINTAINERS file
-
-----
- CREDITS     | 10 +++++++---
- MAINTAINERS |  3 ---
- 2 files changed, 7 insertions(+), 6 deletions(-)
----------------------------
-commit 5f7c72df1ba6ba00ee163ba4049c785ac5930759
-Author: Steven Rostedt (Google) <rostedt@goodmis.org>
-Date:   Mon Jul 15 14:47:45 2024 -0400
-
-    tracing: Update MAINTAINERS file
-    
-    Gone but never forgotten.
-    
-    [ Also moved Daniel's name to be consistent with the alphabetical order ]
-    
-    Cc: Mark Rutland <mark.rutland@arm.com>
-    Cc: Ingo Molnar <mingo@kernel.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Cc: Juri Lelli <juri.lelli@redhat.com>
-    Cc: Kate Stewart <kstewart@linuxfoundation.org>
-    Cc: Clark Williams <williams@redhat.com>
-    Cc: "Luis Claudio R. Goncalves" <lclaudio@uudg.org>
-    Cc: John Kacur <jkacur@redhat.com>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-    Link: https://lore.kernel.org/20240715144745.51d887a9@rorschach.local.home
-    Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-diff --git a/CREDITS b/CREDITS
-index 88c4c08cb613..d7798910e99f 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -271,9 +271,6 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
- D: Various bugfixes and changes to sound drivers
- S: USA
- 
--N: Daniel Bristot de Oliveira
--D: Scheduler contributions, notably: SCHED_DEADLINE
--
- N: Carlos Henrique Bauer
- E: chbauer@acm.org
- E: bauer@atlas.unisinos.br
-@@ -534,6 +531,13 @@ S: Kopmansg 2
- S: 411 13  Goteborg
- S: Sweden
- 
-+N: Daniel Bristot de Oliveira
-+D: Scheduler contributions, notably: SCHED_DEADLINE
-+D: Real-time Linux Analysis
-+D: Runtime Verification
-+D: OS Noise and Latency Tracers
-+S: Brazil and Italy
-+
- N: Paul Bristow
- E: paul@paulbristow.net
- W: https://paulbristow.net/linux/idefloppy.html
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2e1b8bbacb5e..0b7e4cd4ffd7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18895,7 +18895,6 @@ F:	include/uapi/linux/rtc.h
- F:	tools/testing/selftests/rtc/
- 
- Real-time Linux Analysis (RTLA) tools
--M:	Daniel Bristot de Oliveira <bristot@kernel.org>
- M:	Steven Rostedt <rostedt@goodmis.org>
- L:	linux-trace-kernel@vger.kernel.org
- S:	Maintained
-@@ -19529,7 +19528,6 @@ S:	Maintained
- F:	drivers/infiniband/ulp/rtrs/
- 
- RUNTIME VERIFICATION (RV)
--M:	Daniel Bristot de Oliveira <bristot@kernel.org>
- M:	Steven Rostedt <rostedt@goodmis.org>
- L:	linux-trace-kernel@vger.kernel.org
- S:	Maintained
-@@ -22806,7 +22804,6 @@ F:	kernel/trace/trace_mmiotrace.c
- 
- TRACING OS NOISE / LATENCY TRACERS
- M:	Steven Rostedt <rostedt@goodmis.org>
--M:	Daniel Bristot de Oliveira <bristot@kernel.org>
- S:	Maintained
- F:	Documentation/trace/hwlat_detector.rst
- F:	Documentation/trace/osnoise-tracer.rst
+>
+> --Jesper
 
