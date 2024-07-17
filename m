@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-255111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C04933C36
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:25:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C6F933C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F6CB2146E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116C01F2356A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670417F4FB;
-	Wed, 17 Jul 2024 11:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABC717F4E4;
+	Wed, 17 Jul 2024 11:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVCJHJB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BWWSu+l5"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD938385;
-	Wed, 17 Jul 2024 11:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD0017F392
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721215541; cv=none; b=QNISePhjyBvwwnpTALMDvFGzfmU4NXOQJxhQ/Y7Pd9kjH5BHddeo15eu24emqsJ/tT6eYcYFmt/EUc2nj69Q5AU2QIyamJzyKFxRaZiQv1vYrqv1ohfFxZcLVuvvaaeZ/qve0orxhwt8zauVc5FrY28Qc9vl+r4xllXLzXIzg40=
+	t=1721215561; cv=none; b=IR7xkMeS0e+3rldE1TEnXmnZlToNvX2Ny97LjjXmJNTKAk8VIGGOdcqaKco8RoW7o0D4fKKKBfeowfMO3PuHQ38HJbi9Uc200H2OvhjkwoCvYvyzO07mj1RfA3HemiXPuxxY3c4AiRFj5ivMq5/nCLcu1bvFweLPqZmt1QM9eZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721215541; c=relaxed/simple;
-	bh=UZR1BVRqjDPQ/etMDZvxrNCu48OQyhNEJhtGJu2o6Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEPbsgEGwd7cr2oTF8XAG9CnpnhDYZJai69NfQxBGTNwDOs5Sx7bSMyyJDC1dQC4Rw7Ic6fapcM0pEg84oNsOiISI95zwK8+8B8Vbesdnp1C6zqecOyBwFwEmutAlIsPrLPrBopHNVZLaFh+qhMTauLB9ABE7yiKl7FkXyqllVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVCJHJB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12D4C32782;
-	Wed, 17 Jul 2024 11:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721215540;
-	bh=UZR1BVRqjDPQ/etMDZvxrNCu48OQyhNEJhtGJu2o6Bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIVCJHJBcIep4p2HqxOpsqIeh5Wacu4KBWD1ML4uk10r1P+kmT5inNC2SuwCcT9Yu
-	 MKwMzTtyy9OiA3yhnjXwiqjrlRs2iRs6mEEK7Me+10gQz2fkHVG1tVuYKarU/2ZTHG
-	 9TSn9YclPh7/mWCOdJ8om1ufVU91qYku3H59NuGbtCB2rqOuUAtFNDwOssWlZVMU8L
-	 Sacz1CwcmtX/E8oU45bCNNm3u0dgxBU2j8q92siUTuBQXkU/BELTQxJ9lvRpAXBCdj
-	 Yzm1lq2mES8Pio2Bl5Q2Iyl4xgUOw1HjwDBof1tAnxOvPv92mR2sLIxb9i8bFHO4sr
-	 otFwJwldEcVPg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sU2n0-000000006Im-3odx;
-	Wed, 17 Jul 2024 13:25:42 +0200
-Date: Wed, 17 Jul 2024 13:25:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
- message"
-Message-ID: <ZpeqNohYoQI5HQP-@hovoldconsulting.com>
-References: <20240716161101.30692-1-johan+linaro@kernel.org>
- <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
- <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
- <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
+	s=arc-20240116; t=1721215561; c=relaxed/simple;
+	bh=Qx9j0bGSaPG3cgb0UPjJTtV98CIevGgHXf7JNVHfrBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3zHiz2EyKJpIGkzW9n61DAVJoaODdYB5GlqB/UH9/0lv08tmGIyi20bFiJnGk0axVBX9s7y0eAt022V5TvONG5mEEFLQvA2B/IZCswfAjtwtqz+uTZ27GnADbfAxLnLYmOgpx31ZTI7oX8DugM4xLZkCD3vv4kloo+aJGLdcdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BWWSu+l5; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: vishalc@linux.ibm.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721215556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tFAGOYSziSUMFB3H3/44wGT9CBV7eyOG/j0O+QCnF4c=;
+	b=BWWSu+l5ykmTO8VJWW6cGN7IZRdsAM55QYbGtU1KC3FmwXZ/xR7dl6OTefVBCdjKwfYrQw
+	axSo/aSj7OnNv/o0DKZWsNojVDPE9pmg/X+nZQvVN7tA7olvXJY7rlwuhj4z1o3sK/VxVT
+	cg0elWPHeoVPpAkWk/sSzZP9V5TzNN8=
+X-Envelope-To: zhouchuyi@bytedance.com
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: juri.lelli@redhat.com
+X-Envelope-To: vincent.guittot@linaro.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <9b0b69bf-dac0-457d-a4dc-4bea18eecc43@linux.dev>
+Date: Wed, 17 Jul 2024 19:25:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
+Subject: Re: [PATCH] sched/fair: Remove cfs_rq::nr_spread_over and
+ cfs_rq::exec_clock
+To: Vishal Chourasia <vishalc@linux.ibm.com>,
+ Chuyi Zhou <zhouchuyi@bytedance.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+References: <20240716150634.21247-1-zhouchuyi@bytedance.com>
+ <Zpel7oyBNTpkLiPS@linux.ibm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <Zpel7oyBNTpkLiPS@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 17, 2024 at 07:46:14PM +0900, Damien Le Moal wrote:
-> On 7/17/24 18:00, Johan Hovold wrote:
-> > On Wed, Jul 17, 2024 at 07:48:26AM +0900, Damien Le Moal wrote:
-> >> On 7/17/24 01:11, Johan Hovold wrote:
-> >>> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
-> >>>
-> >>> The offending commit tried to suppress a double "Starting disk" message
-> >>> for some drivers, but instead started spamming the log with bogus
-> >>> messages every five seconds:
-> >>>
-> >>> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
-> >>> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
-> >>> 	...
-> >>>
-> >>> on machines that do not actually stop the disk on runtime suspend (e.g.
-> >>> the Qualcomm sc8280xp CRD with UFS).
-> >>
-> >> This is odd. If the disk is not being being suspended, why does the platform
-> >> even enable runtime PM for it ? 
-> > 
-> > This is clearly intended to be supported as sd_do_start_stop() returns
-> > false and that prevents sd_start_stop_device() from being called on
-> > resume (and similarly on suspend which is why there are no matching
-> > stopping disk messages above):
-> > 
-> > 	[   32.822189] sd 0:0:0:0: sd_resume_common - runtime = 1, sd_do_start_stop = 0, manage_runtime_start_stop = 0
+On 2024/7/17 19:07, Vishal Chourasia wrote:
+> On Tue, Jul 16, 2024 at 11:06:34PM +0800, Chuyi Zhou wrote:
+>> cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
+>> eevdf. Remove them from struct cfs_rq.
+>>
 > 
-> Yes, so we can suppress the "Starting disk" message for runtime resume, to match
-> the runtime suspend not having the message.
-
-No, the point is that the stopping disk message is also suppressed when
-sd_do_start_stop() returns false (i.e. when sd_start_stop_device() is
-never called). See sd_suspend_common().
-
-> >> Are you sure about this ? Or is it simply that
-> >> the runtime pm timer is set to a very low interval ?
-> > 
-> > I haven't tried to determine why runtime pm is used this way, but your
-> > patch is clearly broken as it prints a message about starting the disk
-> > even when sd_do_start_stop() returns false.
+> nr_spread_over tracks the number of instances where the difference
+> between a scheduling entity's virtual runtime and the minimum virtual
+> runtime in the runqueue exceeds three times the scheduler latency,
+> indicating significant disparity in task scheduling.
+> Commit that removed its usage: 5e963f2bd: sched/fair: Commit to EEVDF
 > 
-> The patch is not *that* broken, because sd_do_start_stop() returning false mean
-> only that the disk will *not* be started using a START STOP UNIT command. But
-> the underlying LLD must start the drive. So the message is not wrong, even
-> though it is probably best to suppress it for the runtime case.
-
-From a quick look at the code I interpret the (original) intention to be
-to only print these messages in cases were sd_start_stop_device() is
-actually called.
- 
-> The point here is that sd_runtime_resume() should NOT be called every 5s unless
-> there is also a runtime suspend in between the calls. As mentioned, this can
-> happen if the autosuspend timer is set to a very low timeout to aggressively
-> suspend the disk after a short idle time. That of course makes absolutely no
-> sense for HDDs given the spinup time needed, but I guess that is a possiblity
-> for UFS drives.
-
-I don't see anything obviously wrong with this for things like UFS.
-
-Here's what some printk reveal for the Qualcomm platform in question:
-
-[   50.659451] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   50.669756] sd 0:0:0:0: sd_resume_runtime
-[   52.911603] sd 0:0:0:0: sd_suspend_runtime
-[   52.921707] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-[   53.472894] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   53.481464] sd 0:0:0:0: sd_resume_runtime
-[   55.550493] sd 0:0:0:0: sd_suspend_runtime
-[   55.559697] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-[   58.595554] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   58.607868] sd 0:0:0:0: sd_resume_runtime
-[   60.667330] sd 0:0:0:0: sd_suspend_runtime
-[   60.677623] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-[   63.714149] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   63.724498] sd 0:0:0:0: sd_resume_runtime
-[   65.772893] sd 0:0:0:0: sd_suspend_runtime
-[   65.784696] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-[   68.836015] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   68.849576] sd 0:0:0:0: sd_resume_runtime
-[   71.359102] sd 0:0:0:0: sd_suspend_runtime
-[   71.368928] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-[   73.955031] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
-[   73.963040] sd 0:0:0:0: sd_resume_runtime
-[   76.032153] sd 0:0:0:0: sd_suspend_runtime
-[   76.042100] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
-
-Looks like a 2-second autosuspend timeout somewhere, and the controller
-stays suspended for 1-3 seconds in between.
-
-> >> It almost sound like what we need to do here is suppress this message for the
-> >> runtime resume case, so something like:
-> > 
-> > No, that would only make things worse as I assume you'd have a stopped
-> > disk message without a matching start message for driver that do end up
-> > stopping the disk here.
 > 
-> OK. so let's revert this patch and I will rework that message to be displayed
-> only on device removal, system suspend and system shutdown.
+> cfs_rq->exec_clock was used to account for time spent executing tasks.
+> Commit that removed its usage: 5d69eca542ee1 sched: Unify runtime
+> accounting across classes
+> 
+>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+> 
+> Acked-by: Vishal Chourasia <vishalc@linux.ibm.com>
 
-Sounds good.
+Looks good to me! Maybe it's better to add these to your changelog.
 
-Johan
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+
+Thanks.
+
+>> ---
+>>   kernel/sched/debug.c | 4 ----
+>>   kernel/sched/sched.h | 6 ------
+>>   2 files changed, 10 deletions(-)
+>>
+>> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+>> index c1eb9a1afd13..90c4a9998377 100644
+>> --- a/kernel/sched/debug.c
+>> +++ b/kernel/sched/debug.c
+>> @@ -641,8 +641,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+>>   	SEQ_printf(m, "\n");
+>>   	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
+>>   #endif
+>> -	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
+>> -			SPLIT_NS(cfs_rq->exec_clock));
+>>   
+>>   	raw_spin_rq_lock_irqsave(rq, flags);
+>>   	root = __pick_root_entity(cfs_rq);
+>> @@ -669,8 +667,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+>>   			SPLIT_NS(right_vruntime));
+>>   	spread = right_vruntime - left_vruntime;
+>>   	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
+>> -	SEQ_printf(m, "  .%-30s: %d\n", "nr_spread_over",
+>> -			cfs_rq->nr_spread_over);
+>>   	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
+>>   	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
+>>   	SEQ_printf(m, "  .%-30s: %d\n", "idle_nr_running",
+>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+>> index 4c36cc680361..8a071022bdec 100644
+>> --- a/kernel/sched/sched.h
+>> +++ b/kernel/sched/sched.h
+>> @@ -599,7 +599,6 @@ struct cfs_rq {
+>>   	s64			avg_vruntime;
+>>   	u64			avg_load;
+>>   
+>> -	u64			exec_clock;
+>>   	u64			min_vruntime;
+>>   #ifdef CONFIG_SCHED_CORE
+>>   	unsigned int		forceidle_seq;
+>> @@ -619,10 +618,6 @@ struct cfs_rq {
+>>   	struct sched_entity	*curr;
+>>   	struct sched_entity	*next;
+>>   
+>> -#ifdef	CONFIG_SCHED_DEBUG
+>> -	unsigned int		nr_spread_over;
+>> -#endif
+>> -
+>>   #ifdef CONFIG_SMP
+>>   	/*
+>>   	 * CFS load tracking
+>> @@ -1158,7 +1153,6 @@ struct rq {
+>>   	/* latency stats */
+>>   	struct sched_info	rq_sched_info;
+>>   	unsigned long long	rq_cpu_time;
+>> -	/* could above be rq->cfs_rq.exec_clock + rq->rt_rq.rt_runtime ? */
+>>   
+>>   	/* sys_sched_yield() stats */
+>>   	unsigned int		yld_count;
+>> -- 
+>> 2.20.1
+>>
 
