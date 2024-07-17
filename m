@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-255318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05622933EE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A79933EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8821E1F221EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C7E1F21146
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6F9181B94;
-	Wed, 17 Jul 2024 14:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414F181BA2;
+	Wed, 17 Jul 2024 14:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x7vQZUH/"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d7sT929/"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35E32EAE5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563F4181330
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721228297; cv=none; b=npj6QU7CxFwQB+F5/kQqaXJ8gTVfGaDbdhgzE2vQIFvG/pxbBfrQOAP7ik2gpoIUAuS8PWJFUP1o3iGeMawP4xhUB3RjKewys3V7Jou13MBiXd0dkjdMQyJ04xxrscG44SDQ3/QKzPNavX+jOs1pOTXQs0r+7Z+i/vXKotaN6Kg=
+	t=1721228326; cv=none; b=k51dI7yTaI1YJRW9CuKgpgVevpw8jQoKHK/8Pozh1LELTWOLgG6G6deVo6L5xNbJHlsnzvha7WUNeAdc1t7qvCBEDmKzc1xPo0d0DC0bg6t8zzopZwFMeofa3pnD04ZcX5y1hLO7k4W2wUdSFfxgP2ME3qD/s6U5vZa4AuBWgcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721228297; c=relaxed/simple;
-	bh=dpjUFS34+Kn5fyMlt2g900XkmwZUM84v+Sue8ykQgOE=;
+	s=arc-20240116; t=1721228326; c=relaxed/simple;
+	bh=0GykYWba+Yw2USBd/ghyxptd/hrUzR0IBixyGZZhHLw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dz9XSVnQdT6AsHzHWarEikzK+Sv41/N3yN4u8+Ey7My8ZqqIZ9UNDk3DKZMcx9P3yWiYHHzpnZhhs5ZCft7zS/rlf/oMHdyBwk2JpNYILRGEO11ruoY24huJfFhMM5HS6nQaDTjxOf5hHwt7+GRkMFbwHgvwqqIV/5FGeXTW4w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x7vQZUH/; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so13515a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:58:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=tMJklMRkvINYGyl5dQYsTaOVaGodpfMC/wtsqb3Yd7sBthbleUVKVVoN/YF9LXQj6BN7dvxCZbCHJ6n6D//KB3QVI/gY3wkUluumXcaY/NYRhuxOCrkXAYDH7SHmQWGigC/0M1HJMAYISKH87XhOlL0h/+jP/lPlTbHv9MAygxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d7sT929/; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44931f038f9so7303691cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721228294; x=1721833094; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1721228323; x=1721833123; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PQSNc99mSLlBbaOi1xCED/nnBkGtLUEtseNxdNSuNO8=;
-        b=x7vQZUH/EojQy7KTDvzf/1k2FAicPp/uGk0NiRe0Sq1r7VEzqyfISdZweOjqS8V+l+
-         wIimHz3Ixlz4ZWULWMbDuZStdfG/zim8t0Jh5haYichvXEQGfhPS4KjlUT3u0NqAWLBr
-         YdkAYEg6pyEs144Fs8FoqvlGAxwK5UpTr3rJ1vNyf3+9GC/6NzbEldvaDLoVwju3FNgR
-         qQpR7mGwcr71lKBJlhfbQysg+vvsd7nN/hVJw8r2wrLgrzhRFENPxL0dZv2T196COYq9
-         3YNEMRL4f2HxR7KVAR/JYajI5V9GgzW/D+iADAighkpTAyavOszswAInJfR4fVLKebd/
-         Z6hw==
+        bh=/eGwogNe/nf8SgikTpuY8jnI/BAYLXXgaMeSpJB6GSc=;
+        b=d7sT929/1BSeT94WnCrqQLX8lMGGTxBMv0pwAQzIhex5n1w+dsKQX35aet3DfIlLyC
+         HJFGOCCSigLddPt/1XD3vfGv76zTRIWR/sgFeD6IWKIXPeZRl9QIuAxLcgnRDKe1vDyv
+         WReN5u3LDf91lOJalQrlXeyhp4mgdagu9qlMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721228294; x=1721833094;
+        d=1e100.net; s=20230601; t=1721228323; x=1721833123;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PQSNc99mSLlBbaOi1xCED/nnBkGtLUEtseNxdNSuNO8=;
-        b=PUCaM7VUnYK7F3DsFQ9BdY+G5cXjjNf1tyfh1aBJdOWf06jXL7gP3z68Aoe5dvCbm1
-         d4F2Acwr9zV7pgurErN/rAdWp28clBGrPsF+A/3IdBp4UEZLLeKfWuM4xAluveMI01zW
-         b0n5SlIKfYo3URCYl0TZTeDvfwf2aFLoLB5pNdcc1mwXzn6Xlli5y3ZKVdzB1IMaoZrX
-         iqtiqv4tmQ7GgVObAI07TdEBd+siY75x8P9YG80X2Sji5+/jieaEdDBG1BkFEbldOfbf
-         3YB4PBomWVIaQAXDAxsaqf0vgTMNwqmCNP6t1SmyIwroR3KsDoMsS+7FoZcMk89j6yj7
-         NOrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqgDFpLvKxUBDEwRKIZl3i5Z4ta7uJeZBF1nHR19gzd3hsr/OI4Rwp1t8ds4NnuSj39tK9WTnjK7M88ZDI7yiDaplkL1FdHAqdLSWX
-X-Gm-Message-State: AOJu0YzcgcZ07lOM+IpEcCME2734gjQLROFP8i1s0njA/y4DSTfM4fqO
-	KNpv8VSC1SPJYW70FBdz6hR+EFnAwYBPTh6lZukSbpAPAQ608FNtRlkXjhzSmklN0cys4Pmz1en
-	qA96TY7rD7UWZ3SrZvDPw/rqVXlhVSe1FmCWe
-X-Google-Smtp-Source: AGHT+IFiGEvyTzeYTN0dVhUmIpZZx/yHVA3uop/MuC3ufQZ/Oxya9cPJoO2sp/D/qKluIbTjfrLOEDl73SAIjX/CGhA=
-X-Received: by 2002:a50:9f6e:0:b0:57c:bb0d:5e48 with SMTP id
- 4fb4d7f45d1cf-5a018b20444mr280272a12.2.1721228293562; Wed, 17 Jul 2024
- 07:58:13 -0700 (PDT)
+        bh=/eGwogNe/nf8SgikTpuY8jnI/BAYLXXgaMeSpJB6GSc=;
+        b=AiYFBR28kA0bbRC7E+BKzWWA48YbB51ZlAjs4Ipq1EzV4rne22uJKyKobM0LCXNFkq
+         3HOX/rQkuvFFH1vVmliLaiHR12kGUTsU9sgF76IT2VaOuLlIUvECHMHwJT1tER9jH4Zu
+         19Bteu0FkWBaKv1Dpv0h2+SAKtNcUQru+Cttmgg8sufM8BFAhbzKFStHEFM4bwnDgxpv
+         he1z+Qf4hGFYNHsXJFeeGCTKMYuMB0KQ8Q7pYhVbZg98jyS/4yCWdqQLbQ9dqVdWjWqe
+         wM7FcRwOpqkONlviZ2zWYrRuqiFaJhdIPJu43GBrvX4LbFMqv/Yym+09lP7zxd1cReMW
+         cHPw==
+X-Gm-Message-State: AOJu0YzmX8VKGveV2Hs4YFLCYemFSZ0JoLknHck017fSFLYl8H9FpVWp
+	5Y4WSvyWtb4/WuWH/FeirEqSXPmta8tR5+Qc1I68/yt20VWDUvrkiHZcOUQP640Q7SpcBL7iZ04
+	=
+X-Google-Smtp-Source: AGHT+IHNlVd+6XkPpMRbFUcB1UyEHaTT0Qs43eklVUbt0kRokav5udBXtb4YxqQfbdDHPhJr49R4zw==
+X-Received: by 2002:a05:622a:14d2:b0:447:ed2c:bea8 with SMTP id d75a77b69052e-44f8608694cmr33892551cf.3.1721228322600;
+        Wed, 17 Jul 2024 07:58:42 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b7e118asm48380821cf.30.2024.07.17.07.58.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 07:58:41 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44e534a1fbeso267271cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:58:41 -0700 (PDT)
+X-Received: by 2002:a05:622a:6183:b0:447:e0a6:9163 with SMTP id
+ d75a77b69052e-44f8395e9f4mr3721941cf.14.1721228321023; Wed, 17 Jul 2024
+ 07:58:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v1-1-4e61d0b79233@kernel.org>
-In-Reply-To: <20240716-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v1-1-4e61d0b79233@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 17 Jul 2024 07:57:58 -0700
-Message-ID: <CANn89iKrHnzuHpRn0fi6+2WB_wxi5r-HpZ2jrkhrZEPyhBe0HQ@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: process the 3rd ACK with sk_socket for for TFO/MPTCP
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Neal Cardwell <ncardwell@google.com>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240717093925.3017-1-terry_hsiao@compal.corp-partner.google.com>
+In-Reply-To: <20240717093925.3017-1-terry_hsiao@compal.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 17 Jul 2024 07:58:29 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XM7X5J6rzu5gDdmDhJ4Ut8raC92HvcnHmRJmWY7_boSA@mail.gmail.com>
+Message-ID: <CAD=FV=XM7X5J6rzu5gDdmDhJ4Ut8raC92HvcnHmRJmWY7_boSA@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/panel-edp: Add panels with conservative timings
+To: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 12:43=E2=80=AFPM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
+Hi,
+
+On Wed, Jul 17, 2024 at 2:39=E2=80=AFAM Terry Hsiao
+<terry_hsiao@compal.corp-partner.google.com> wrote:
 >
-> The 'Fixes' commit recently changed the behaviour of TCP by skipping the
-> processing of the 3rd ACK when a sk->sk_socket is set. The goal was to
-> skip tcp_ack_snd_check() in tcp_rcv_state_process() not to send an
-> unnecessary ACK in case of simultaneous connect(). Unfortunately, that
-> had an impact on TFO and MPTCP.
+> The 6 panels are used on Mediatek MT8186 Chromebooks
+> - B116XAT04.1  (06AF/B4C4)
+> - NV116WHM-A4D (09E5/FA0C)
+> - N116BCP-EA2  (0DAE/6111)
+> - B116XTN02.3  (06AF/AA73)
+> - B116XAN06.1  (06AF/99A1)
+> - N116BCA-EA2  (0DAE/5D11)
 >
-> I started to look at the impact on MPTCP, because the MPTCP CI found
-> some issues with the MPTCP Packetdrill tests [1]. Then Paolo suggested
-> me to look at the impact on TFO with "plain" TCP.
->
-> For MPTCP, when receiving the 3rd ACK of a request adding a new path
-> (MP_JOIN), sk->sk_socket will be set, and point to the MPTCP sock that
-> has been created when the MPTCP connection got established before with
-> the first path. The newly added 'goto' will then skip the processing of
-> the segment text (step 7) and not go through tcp_data_queue() where the
-> MPTCP options are validated, and some actions are triggered, e.g.
-> sending the MPJ 4th ACK [2] as demonstrated by the new errors when
-> running a packetdrill test [3] establishing a second subflow.
->
-> This doesn't fully break MPTCP, mainly the 4th MPJ ACK that will be
-> delayed. Still, we don't want to have this behaviour as it delays the
-> switch to the fully established mode, and invalid MPTCP options in this
-> 3rd ACK will not be caught any more. This modification also affects the
-> MPTCP + TFO feature as well, and being the reason why the selftests
-> started to be unstable the last few days [4].
->
-> For TFO, the existing 'basic-cookie-not-reqd' test [5] was no longer
-> passing: if the 3rd ACK contains data, these data would no longer be
-> processed, and thus not ACKed.
->
-> Note that for MPTCP, in case of simultaneous connect(), a fallback to
-> TCP will be done, which seems fine:
->
->   `../common/defaults.sh`
->
->    0 socket(..., SOCK_STREAM|SOCK_NONBLOCK, IPPROTO_MPTCP) =3D 3
->   +0 connect(3, ..., ...) =3D -1 EINPROGRESS (Operation now in progress)
->
->   +0 > S  0:0(0)                 <mss 1460, sackOK, TS val 100 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 < S  0:0(0) win 1000        <mss 1460, sackOK, TS val 407 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 > S. 0:0(0) ack 1           <mss 1460, sackOK, TS val 330 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 < S. 0:0(0) ack 1 win 65535 <mss 1460, sackOK, TS val 700 ecr 100, n=
-op, wscale 8, mpcapable v1 flags[flag_h] key[skey=3D2]>
->
->   +0 write(3, ..., 100) =3D 100
->   +0 >  . 1:1(0)     ack 1 <nop, nop, TS val 845707014 ecr 700, nop, nop,=
- sack 0:1>
->   +0 > P. 1:101(100) ack 1 <nop, nop, TS val 845958933 ecr 700>
->
-> Link: https://github.com/multipath-tcp/mptcp_net-next/actions/runs/993622=
-7696 [1]
-> Link: https://datatracker.ietf.org/doc/html/rfc8684#fig_tokens [2]
-> Link: https://github.com/multipath-tcp/packetdrill/blob/mptcp-net-next/gt=
-ests/net/mptcp/syscalls/accept.pkt#L28 [3]
-> Link: https://netdev.bots.linux.dev/contest.html?executor=3Dvmksft-mptcp-=
-dbg&test=3Dmptcp-connect-sh [4]
-> Link: https://github.com/google/packetdrill/blob/master/gtests/net/tcp/fa=
-stopen/server/basic-cookie-not-reqd.pkt#L21 [5]
-> Fixes: 23e89e8ee7be ("tcp: Don't drop SYN+ACK for simultaneous connect().=
-")
-> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Signed-off-by: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
 > ---
-> Notes:
->  - We could also drop this 'goto consume', and send the unnecessary ACK
->    in this simultaneous connect case, which doesn't seem to be a "real"
->    case, more something for fuzzers.
->  - When sending this patch, the 'Fixes' commit is only in net-next, this
->    patch is then on top of net-next. But because net-next will be merged
->    into -net soon -- judging by the PR that has been sent to Linus a few
->    hours ago -- the 'net' prefix is then used.
-> ---
->  net/ipv4/tcp_input.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/panel/panel-edp.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+
+Please resend with a better patch subject, like "drm/panel-edp: Add 6
+panels used by MT8186 Chromebooks".
+
+Also: are you adding timings based on the datasheets, or are you just
+guessing here? The previous patches that added "conservative" timings
+were because the Chromebooks involved were really old and couldn't be
+tracked down and folks couldn't find the relevant datasheets. In the
+case of MT8188 I'd expect you to be adding timings based on the
+datasheets. Please confirm that you are.
+
+If possible, it's really nice to have the raw EDIDs for the panels in
+the commit message in case someone needs it later.
+
+
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
+nel-edp.c
+> index f85a6404ba58..ac280607998f 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1845,8 +1845,11 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0x635c, &delay_200_500_e50, "B116X=
+AN06.3"),
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0x639c, &delay_200_500_e50, "B140H=
+AK02.7"),
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0x723c, &delay_200_500_e50, "B140X=
+TN07.2"),
+> +       EDP_PANEL_ENTRY('A', 'U', 'O', 0x73aa, &delay_200_500_e50, "B116X=
+TN02.3"),
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0x8594, &delay_200_500_e50, "B133U=
+AN01.0"),
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0xd497, &delay_200_500_e50, "B120X=
+AN01.0"),
+> +       EDP_PANEL_ENTRY('A', 'U', 'O', 0xa199, &delay_200_500_e50, "B116X=
+AN06.1"),
+
+Please keep this sorted. For instance, 0xa199 should come _before_
+0xd497, right?
+
+
+> +       EDP_PANEL_ENTRY('A', 'U', 'O', 0xc4b4, &delay_200_500_e50, "B116X=
+AT04.1"),
+>         EDP_PANEL_ENTRY('A', 'U', 'O', 0xf390, &delay_200_500_e50, "B140X=
+TN07.7"),
 >
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index ff9ab3d01ced..a89b3ee57d8c 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -6820,7 +6820,13 @@ tcp_rcv_state_process(struct sock *sk, struct sk_b=
-uff *skb)
->                 if (sk->sk_shutdown & SEND_SHUTDOWN)
->                         tcp_shutdown(sk, SEND_SHUTDOWN);
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0607, &delay_200_500_e200, "Unkn=
+own"),
+> @@ -1901,6 +1904,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b56, &delay_200_500_e80, "NT140=
+FHM-N47"),
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT140=
+FHM-N47"),
+>         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT11=
+6WHM-N44"),
+> +       EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116=
+WHM-A4D"),
 >
-> -               if (sk->sk_socket)
-> +               /* In simult-connect cases, sk_socket will be assigned. B=
-ut also
-> +                * with TFO and MPTCP (MPJ) while they required further
-> +                * processing later in tcp_data_queue().
-> +                */
-> +               if (sk->sk_socket &&
-> +                   TCP_SKB_CB(skb)->seq =3D=3D TCP_SKB_CB(skb)->end_seq =
-&&
-> +                   !sk_is_mptcp(sk))
->                         goto consume;
->                 break;
->
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1130, &delay_200_500_e50, "N116B=
+GE-EB2"),
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1132, &delay_200_500_e80_d50, "N=
+116BGE-EA2"),
+> @@ -1916,8 +1920,10 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1156, &delay_200_500_e80_d50, "U=
+nknown"),
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1157, &delay_200_500_e80_d50, "N=
+116BGE-EA2"),
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x115b, &delay_200_500_e80_d50, "N=
+116BCN-EB1"),
+> +       EDP_PANEL_ENTRY('C', 'M', 'N', 0x115d, &delay_200_500_e80_d50, "N=
+116BCA-EA2"),
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x115e, &delay_200_500_e80_d50, "N=
+116BCA-EA1"),
+>         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1160, &delay_200_500_e80_d50, "N=
+116BCJ-EAK"),
+> +       EDP_PANEL_ENTRY('C', 'M', 'N', 0x1161, &delay_200_500_e80, "N116B=
+CP-EA2"),
 
-Hi Matthieu
+It looks suspicious that all the panels around this one need 50 ms for
+disable but yours doesn't. While it's certainly possible that things
+changed for this panel, it's worth double-checking.
 
-I had no time yet to run all our packetdrill tests with Kuniyuki patch
-because of the ongoing netdev conference.
-
-Is it ok for you if we hold your patch for about 5 days ?
-
-I would like to make sure we did not miss anything else.
-
-I am CCing Neal, perhaps he can help to expedite the testing part
-while I am busy.
-
-Thanks !
+-Doug
 
