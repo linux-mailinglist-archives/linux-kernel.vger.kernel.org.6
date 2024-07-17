@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-255216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7168933D8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C5C933D8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B65285495
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCEF51F24FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562F11802D2;
-	Wed, 17 Jul 2024 13:22:03 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDEF1802CB;
+	Wed, 17 Jul 2024 13:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5sWHC8I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089A517F385
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AD717F385
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222522; cv=none; b=ByZVWxxSjDEI+Sh/g1PNpd4A1n8bbXFP6ycfUHHtB+PMuOQUQkP1mPErLjdT3aBgijcMH1ao88o3W4kxgcmYk0BMoFzZhEaqqvzhOmfrVMuVCUeIOI3ozmL605OIrex+Pg+WQX8itnaWa4kRR5l1w5m7IuxKUy0dw/7I838csO8=
+	t=1721222507; cv=none; b=Y/63ljNMv9HSI98EMR6DszefimuTybRYE8FVgOCtUdViVz5vh/JF6xuLB/u6GQcf5bN4cXRAKCZnGc1Lal6sP0HClqrLdVnUlDQxG1kBbVYsxyxj+mEdXt9GOzdBCMr8HS/HxITerrbFYlhpHuPKu1AMLh0EfmDX6WhPRPyF9iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222522; c=relaxed/simple;
-	bh=AAGKJwRgry5A+DoK9XTiMGfzqNj7J98miGC5LflmdCg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=L2TknmaWHt8j9fSgkJbMwsgUgt+qFN8UiDc4m4r1SlAElHS1uB+xdWyMCem1eF6I86mVKE2gK+yEzIHvqKxR97/taEpNyzl4FgjTUcm/DiWnzMi/ZhUOhJiRBv9I0xclW1HBbclr0aHd3KIMxuOgnV8kl2GNZw13GW5se3Wy8bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-120-3pLnuI2YPKGnDs_ikR4uGQ-1; Wed, 17 Jul 2024 14:21:58 +0100
-X-MC-Unique: 3pLnuI2YPKGnDs_ikR4uGQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 17 Jul
- 2024 14:21:19 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 17 Jul 2024 14:21:19 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: David Laight <David.Laight@ACULAB.COM>, 'Stewart Hildebrand'
-	<stewart.hildebrand@amd.com>, Bjorn Helgaas <bhelgaas@google.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Michael Ellerman <mpe@ellerman.id.au>, "Nicholas
- Piggin" <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg
-	<sam@ravnborg.org>, Yongji Xie <elohimes@gmail.com>,
-	=?utf-8?B?SWxwbyBKw6RydmluZW4=?= <ilpo.jarvinen@linux.intel.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "x86@kernel.org"
-	<x86@kernel.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Topic: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Index: AQHa17cKP+9xH7dU/kmzREQ0omlV2bH64QzQgAAH5ZA=
-Date: Wed, 17 Jul 2024 13:21:19 +0000
-Message-ID: <9c6845d49fa14d84bb7ada1022147276@AcuMS.aculab.com>
-References: <20240716193246.1909697-1-stewart.hildebrand@amd.com>
- <0da056616de54589bc1d4b95dcdf5d3d@AcuMS.aculab.com>
-In-Reply-To: <0da056616de54589bc1d4b95dcdf5d3d@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721222507; c=relaxed/simple;
+	bh=OHVri6oZjBTrYRG/gliZ619AbBRKNl0B4ap97beOBEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+2zfH+IaxnEELR5palCxJWRHCbSGL5ecUr84bDR7okNttz7C3oNWeD2z3QRD8ecfEmE29pb3IKqYLsXNTFR638StDnvuSyG/Qrq/lL6TXekfty76g6g6BxZZXiKE4yA9TcXx+nXSx84cc8bfOyIGdtdxMiFMBtU7iYiO/zuXGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5sWHC8I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1211C32782;
+	Wed, 17 Jul 2024 13:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721222507;
+	bh=OHVri6oZjBTrYRG/gliZ619AbBRKNl0B4ap97beOBEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m5sWHC8IWX/GBIYBAtYkJ6E05oiOzhRNnjC3HpDKVRpxJhx7BWzc1wRhu1pxIefns
+	 9NQQ3zgCrqtrJVg9O97YQtJYhFuAesaPJWTEZSC22OSB7zpDWJ0uMvIRQJn6JzFKe5
+	 zWFx+aG5GeBeekkpSLKC351Ak+b29LFIrpxKWWeeO6scxixkBd4s6l4mLsQLlIengs
+	 JrGZRVtGggH5ma2cs9sZvjEohsJXVDMWzoGx2sTiA9xWSBe7HAfdc3n6YWqjt+T6Ti
+	 h99P6zb44BcjzQOpywrp49eKE9zVXcgGJQwTovJz5xqZQNEl7b0bx1GoAFasUqeAaA
+	 y8LseKEallT6g==
+Date: Wed, 17 Jul 2024 15:21:44 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH 6/6] mm: Drain LRUs upon resume to userspace on
+ nohz_full CPUs
+Message-ID: <ZpfFaElo1wwTOpNm@localhost.localdomain>
+References: <20240625135244.20227-1-frederic@kernel.org>
+ <20240625135244.20227-7-frederic@kernel.org>
+ <ZnrSEf1xuFxKxj1D@tiehlicka>
+ <ZoVJhXcR26paUNhX@localhost.localdomain>
+ <ZoaffMfFdEgs2N7o@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZoaffMfFdEgs2N7o@tiehlicka>
 
-RnJvbTogRGF2aWQgTGFpZ2h0DQo+IFNlbnQ6IDE3IEp1bHkgMjAyNCAxNDoxNQ0KPiANCj4gRnJv
-bTogU3Rld2FydCBIaWxkZWJyYW5kDQo+ID4gU2VudDogMTYgSnVseSAyMDI0IDIwOjMzDQo+ID4N
-Cj4gPiBUaGlzIHNlcmllcyBzZXRzIHRoZSBkZWZhdWx0IG1pbmltdW0gcmVzb3VyY2UgYWxpZ25t
-ZW50IHRvIDRrIGZvciBtZW1vcnkNCj4gPiBCQVJzLiBJbiBwcmVwYXJhdGlvbiwgaXQgbWFrZXMg
-YW4gb3B0aW1pemF0aW9uIGFuZCBhZGRyZXNzZXMgc29tZSBjb3JuZXINCj4gPiBjYXNlcyBvYnNl
-cnZlZCB3aGVuIHJlYWxsb2NhdGluZyBCQVJzLiBJIGNvbnNpZGVyIHRoZSBwcmVwYXBhdG9yeQ0K
-PiA+IHBhdGNoZXMgdG8gYmUgcHJlcmVxdWlzaXRlcyB0byBjaGFuZ2luZyB0aGUgZGVmYXVsdCBC
-QVIgYWxpZ25tZW50Lg0KPiANCj4gU2hvdWxkIHRoZSBCQVJzIGJlIHBhZ2UgYWxpZ25lZCBvbiBz
-eXN0ZW1zIHdpdGggbGFyZ2UgcGFnZXM/DQo+IEF0IGxlYXN0IGFzIGFuIG9wdGlvbiBmb3IgaHlw
-ZXJ2aXNvciBwYXNzLXRocm91Z2ggYW5kIGFueSB0aGFuIGNhbiBiZSBtbWFwKCllZA0KPiBpbnRv
-IHVzZXJzcGFjZS4NCg0KVGhlIGFjdHVhbCBwYXRjaCBzYXlzIFBBR0VfU0laRSAuLg0KDQoJRGF2
-aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
-IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
-ODYgKFdhbGVzKQ0K
+Le Thu, Jul 04, 2024 at 03:11:24PM +0200, Michal Hocko a écrit :
+> On Wed 03-07-24 14:52:21, Frederic Weisbecker wrote:
+> > Le Tue, Jun 25, 2024 at 04:20:01PM +0200, Michal Hocko a écrit :
+> > > On Tue 25-06-24 15:52:44, Frederic Weisbecker wrote:
+> > > > LRUs can be drained through several ways. One of them may add disturbances
+> > > > to isolated workloads while queuing a work at any time to any target,
+> > > > whether running in nohz_full mode or not.
+> > > > 
+> > > > Prevent from that on isolated tasks with draining LRUs upon resuming to
+> > > > userspace using the isolated task work framework.
+> > > > 
+> > > > It's worth noting that this is inherently racy against
+> > > > lru_add_drain_all() remotely queueing the per CPU drain work and
+> > > > therefore it prevents from the undesired disturbance only
+> > > > *most of the time*.
+> > > 
+> > > Can we simply not schedule flushing on remote CPUs and leave that to the
+> > > "return to the userspace" path?
+> > 
+> > Do you mean I should add a call on return to the userspace path or can
+> > I expect it to be drained at some point already?
+> 
+> I would make the particular per cpu cache to be drained on return to the
+> userspace.
 
+And then we need the patchset from Valentin that defers work to kernel entry?
+
+> 
+> > The other limitation with that task work thing is that if the task
+> > queueing the work actually goes to sleep and another task go on the CPU
+> > and does isolated work in userspace, the drain doesn't happen. Now whether
+> > that is a real problem or not, I have no idea.
+> 
+> Theoretically there is a problem because pages sitting on pcp LRU caches
+> cannot be migrated and some other operations will fail as well. But
+> practically speaking those pages should be mostly of interest to the
+> process allocating them most of the time. Page sharing between isolated
+> workloads sounds like a terrible idea to me. Maybe reality hits us in
+> this regards but we can deal with that when we learn about those
+> workloads.
+> 
+> So I wouldn't lose too much sleep over that. We are dealing with those
+> isolated workloads being broken by simple things like fork now because
+> that apparently adds pages on the pcp LRU cache and draining will happen
+> sooner or later (very often when the task is already running in the
+> userspace).
+
+That sounds good!
+
+Thanks.
+
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
