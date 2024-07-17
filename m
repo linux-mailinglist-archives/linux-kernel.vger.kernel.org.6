@@ -1,173 +1,167 @@
-Return-Path: <linux-kernel+bounces-255417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCCA934080
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BFE93407D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B6B23432
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223B71C22F2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A14182A56;
-	Wed, 17 Jul 2024 16:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13751822F5;
+	Wed, 17 Jul 2024 16:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CksABRJy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ttkm+dh5"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDBC181CE0
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843AB6FB9;
+	Wed, 17 Jul 2024 16:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233932; cv=none; b=mdsRNeRkxH+N7lU6zC/F+cRVQ9YhUc9SS1ViylkAIs7uTS0p+e6jdrkar64ZNplnmU2MqTkw/UqiWEqkObbbda1LO+do6eUDlVNylcXWxfYKNpvxNvtqXDeK/kx/sAl4UZ1uQD0n7OJHylA4A2au1SadmF2XNjL+5Y6hDtyLflk=
+	t=1721233932; cv=none; b=tMTC4d3TnpLUoGQUBq2QI6GKd35eT0AkBPfoxHkLdAwUF32SogGyLvnXq7qEandoj8dofIziEHmAPJYACPpPu7H1VrXyfr2jSqeu6CHbOyerQHOY5eXFhtMCuUA6eOf0utmPONKMaAUfghGWcqCY/BWMZBYGwEg1EM7mpZK05Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721233932; c=relaxed/simple;
-	bh=73K2xRtqY3Nln6+UM0JEOaTcIjOkCtD5pqhnOfr5LQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTOAxeTJruwyGKE7hw+rI7JZomIc8oeZ/4Se5AWct2QU9x0zFAbNf7HL/L1wI4kY61Rq9emCBkdm0cO/vlY3EDogMFbhj/hJHVPuOmC7EqEgyEzGhufraTFkAkJS1dHsi4prjsXU92vfBuP5PXakbGSjrS769mu0DqpogM0p65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CksABRJy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721233930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hnxAS6PAMG/JPjT49d2/ZBaQs0kLMgqkYQmz0i2NWDQ=;
-	b=CksABRJyBUHKYNAph+HqXCQFz+aAqCBrsOaM+tNmRJY4tYEXaEUWV6DRvVIm+rPPptV+4L
-	e6rQ3epvL1H2XK1USPQR+aMke2d+D/6Czg7RZZi2iKq5BV7ypstexznr+H5TRkrxayxQqL
-	LeEBSWpUCsT9kqPJRh3XGFwSKqbLBHM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-271-uh0herbpNE6hA3A-5Fq16Q-1; Wed, 17 Jul 2024 12:32:08 -0400
-X-MC-Unique: uh0herbpNE6hA3A-5Fq16Q-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-426624f4ce3so46237035e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:32:08 -0700 (PDT)
+	bh=3fUCNNaJXzS7JuiTOKDc4frw9Riwja6uOzB2OgTupcs=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=pk5cO9vEp3qciwHTH5h1pRfM6XGsK0MttQk63Arqfyh5y1Q+s2+2+IxVJRL0DUYeovQnRTHxdar13wGMhlriszsJF57z+2oXyN/+Q3pA0yWe7N0E9CCBHyj+pLu9EfldfnUgBpW3Sdo2fmVI0fvcfi1CT98Nxz6JR+WYTnp3PZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ttkm+dh5; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a05b4fa525so84084085a.1;
+        Wed, 17 Jul 2024 09:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721233929; x=1721838729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmMW3QotAs6Her4vmCKKRFApsHyxNhbddH+wP64vdF4=;
+        b=Ttkm+dh576N/85bgOm2jVXyfwDlfZBslSU5CAq0ha6plNDdcAlG9M+nOdeN+yAIeJt
+         xnBbdiEHKRHBXu6ECk+3+0u3Dmm7On8joa9FwdYiY/CWfXDVCvfk06aHh06e94kNo5km
+         Lwy5ljz3Eyka+R9Gxm0AVMGqCdZ/D1rX8yS5+hoKESvhBtYwc4fYHunWrndswuzFPt08
+         E61sEFVGJ5dI+j6Y9jrLQvz8O8pHByoFo56M4wC8mzk6dvq+KXW83QyeufPh2xw3UgeS
+         CK2mg97jI7GHhualOCoSEwSCd+nx9vdTT5YuCysfWTDsjuHcgfFW2eTiXCZdlEjhwmIe
+         TAEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721233928; x=1721838728;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hnxAS6PAMG/JPjT49d2/ZBaQs0kLMgqkYQmz0i2NWDQ=;
-        b=AU0c3d+qLl/BbH10Ve4hAorX5wuVLh9DLO2wBbwLzLqwBQLUD49yWCh0JAsnW32U2s
-         3AUraRUVc8t5WqnV33HqevksYp573ALY7nfZ2J5XaRROsZ4bqoBltt8+n0syDiDsHtut
-         yw6PG4SPixX5kLt7iAe4ZRuDVuXLYq7np9f4WbJIY6ejYhs8/H5K82R6woO1NiH9BX7M
-         gLyWma3FyquO2bNan4X5BKPAyVVM/iEIispirgWZUhQC+GkkgJDYubOUyRactVW88Fz4
-         xnqKer+w81sB5eRLKMHlOFjQIyrX5sV0VDbce/DBGGRdiiUdll+W35/+4N6ULAK77TZv
-         sO/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGKe7jwmS/s3FTz6rT9R4SfbNPEDJ/w+I+y57IEB9NZumEfrpDeGLx+jifZmDnIuRNsqDnKJxG9QjMh9ft7zgUTMx36MfxIUb2ZZU
-X-Gm-Message-State: AOJu0Yxfgwin3CNKm5vt2EESd6KOdQrsDbrCcVMaDW1PcjmFFL7Qk6k+
-	pyymTBHeKaF4vY/8g0wH/x1nQn0CDZcK4K29v2T1s4VwTt6ZB7D2ZR8Mzwp3uBMdL30/E+KaUcC
-	NKVQWSSMP1smBiGsYlTML9WhZmWxA0Wz8s8cjvE/t7Mb27FGxL1/opSdpndMHaA==
-X-Received: by 2002:a05:600c:4f08:b0:426:6320:225e with SMTP id 5b1f17b1804b1-427c2ca5745mr19169005e9.6.1721233927774;
-        Wed, 17 Jul 2024 09:32:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHaAfkTbUnckuX3Xe6WknrcYTW6KiO7jFjSDLFgKDCcj/AhDeEf14NW6t9EhsKqWa2OmfzhDw==
-X-Received: by 2002:a05:600c:4f08:b0:426:6320:225e with SMTP id 5b1f17b1804b1-427c2ca5745mr19168685e9.6.1721233927313;
-        Wed, 17 Jul 2024 09:32:07 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c714:c00:b08b:a871:ce99:dfde? (p200300cbc7140c00b08ba871ce99dfde.dip0.t-ipconnect.de. [2003:cb:c714:c00:b08b:a871:ce99:dfde])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c7859125sm3548635e9.43.2024.07.17.09.32.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 09:32:06 -0700 (PDT)
-Message-ID: <1dc7cf79-4c01-4b1e-be33-49eb2bdb9238@redhat.com>
-Date: Wed, 17 Jul 2024 18:32:05 +0200
+        d=1e100.net; s=20230601; t=1721233929; x=1721838729;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tmMW3QotAs6Her4vmCKKRFApsHyxNhbddH+wP64vdF4=;
+        b=Wqq8BcZe+RS8TojqOyuiK+ZziSI0BYLuNwoHM8ICz08aFTO6jj9V+5MtILhild21Hs
+         +V0EC7okyR6TSWDhPio/ofmWK+xqSasQ5JBKaFSSUrl8QmJrSUaMeRC86eWsPvxjvuWs
+         r4wvL8C17Y2vTmgVGIWcF3cola7IDYjrD7HUsULojFf2iq7u67Lfwv45j1DpuRwtHn9N
+         5ybqoIA7mGDA3+7noi3Jg1maR+JxvOU1UjpcIe34ArouEK1lrizoSctxGF0VAjP+BC/H
+         tYU3WPLI6Php7mR+4T4W6tTUtCWeitzKfouQ/rfkqH4MeYaYDJ4FeYnoMRH9KFoa+Yti
+         DqWw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Cw1OFBTCUk8f6XMRjeXQ+BbPUI10dB9ht2FbaSqOSGW3olzrKPQjusEcLxti7QtiKuUFHs8SHwppPATbptNSgg0KFSVTvBDtQAmPcsRBQDmDP1T7m4x6oVeARxB9j3TDgFev
+X-Gm-Message-State: AOJu0Yy5wpex+sysxykUXdPR+LZ9KBtCQYOW0c3//lLrPQX4G5Pfkar5
+	VvZfaEXT0Q9x6lLSocRsrBV+AHvBtGn8/g184dl0vMmlIt4QmVxV
+X-Google-Smtp-Source: AGHT+IEWVMngP8w6cNex5dWAr9Yp33iJOatF0vo2y029Lbb3iYHvJwJf5hFjDKhq5B+bjXSSb99uWw==
+X-Received: by 2002:a05:620a:858:b0:79d:554d:731f with SMTP id af79cd13be357-7a18dc06099mr26838685a.29.1721233929273;
+        Wed, 17 Jul 2024 09:32:09 -0700 (PDT)
+Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160b9c31dsm418156485a.20.2024.07.17.09.32.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 09:32:08 -0700 (PDT)
+Date: Wed, 17 Jul 2024 12:32:08 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Fred Li <dracodingfly@gmail.com>, 
+ pabeni@redhat.com, 
+ willemdebruijn.kernel@gmail.com, 
+ herbert@gondor.apana.org.au
+Cc: bpf@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ andrii@kernel.org, 
+ song@kernel.org, 
+ yonghong.song@linux.dev, 
+ john.fastabend@gmail.com, 
+ kpsingh@kernel.org, 
+ Fred Li <dracodingfly@gmail.com>
+Message-ID: <6697f20876b11_34277329417@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240717053540.2438-1-dracodingfly@gmail.com>
+References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
+ <20240717053540.2438-1-dracodingfly@gmail.com>
+Subject: Re: [PATCH v3] net: linearizing skb when downgrade gso_size
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
-To: Peter Xu <peterx@redhat.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "Kirill A . Shutemov"
- <kirill@shutemov.name>, "x86@kernel.org" <x86@kernel.org>,
- "Tian, Kevin" <kevin.tian@intel.com>, Pei Li <peili.dev@gmail.com>,
- David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20240712144244.3090089-1-peterx@redhat.com>
- <ZpTLCscCFGtsrEjC@yzhao56-desk> <ZpUyZ9bH1-f5y5XG@x1n>
- <ZpY5uU2NyOoMVu5A@yzhao56-desk> <ZpbDnoQxGubegtu-@x1n>
- <116ca902-103d-47cb-baf0-905983baf9bb@redhat.com> <Zpfxm_Nj9ULA0Tx6@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zpfxm_Nj9ULA0Tx6@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On 17.07.24 18:30, Peter Xu wrote:
-> On Wed, Jul 17, 2024 at 04:17:12PM +0200, David Hildenbrand wrote:
->> I'd be curious how a previous truncation on a file can tear down a PFNMAP
->> mapping -- and if there are simple ways to forbid that (if possible).
+Fred Li wrote:
+> Linearizing skb when downgrade gso_size because it may
+> trigger the BUG_ON when segment skb as described in [1].
 > 
-> Unfortunately, forbiding it may not work for vfio, as vfio would like to
-> allow none (or partial) mapping on the bars.. at least so far that's the
-> plan.
+> v3 changes:
+>   linearize skb if having frag_list as Willem de Bruijn suggested[2].
+> 
+> [1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail.com/
+> [2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch/
+> 
+> Signed-off-by: Fred Li <dracodingfly@gmail.com>
 
-I think vfio should handle that memtype reservation manually, as you 
-proposed. So that shouldn't block that IIUC.
+A fix needs a Fixed tag.
 
--- 
-Cheers,
+This might be the original commit that introduced gso_size adjustment,
+commit 6578171a7ff0c ("bpf: add bpf_skb_change_proto helper")
 
-David / dhildenb
+Unless support for frag_list came later.
+
+> ---
+>  net/core/filter.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index df4578219e82..70919b532d68 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
+>  	if (skb_is_gso(skb)) {
+>  		struct skb_shared_info *shinfo = skb_shinfo(skb);
+>  
+> -		/* Due to header grow, MSS needs to be downgraded. */
+> -		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
+> -			skb_decrease_gso_size(shinfo, len_diff);
+> -
+>  		/* Header must be checked, and gso_segs recomputed. */
+>  		shinfo->gso_type |= gso_type;
+>  		shinfo->gso_segs = 0;
+> +
+> +		/* Due to header grow, MSS needs to be downgraded.
+> +		 * There is BUG_ON When segment the frag_list with
+> +		 * head_frag true so linearize skb after downgrade
+> +		 * the MSS.
+> +		 */
+
+Super tiny nit: no capitalization of When in the middle of a sentence.
+
+> +		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
+> +			skb_decrease_gso_size(shinfo, len_diff);
+> +			if (shinfo->frag_list)
+> +				return skb_linearize(skb);
+
+I previously asked whether it was safe to call pskb_expand_head from
+within a BPF external function. There are actually plenty of existing
+examples of this, so this is fine.
+
+> +		}
+> +
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.33.0
+> 
+
 
 
