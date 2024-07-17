@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-255333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D60933F4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6577D933F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFB91F24127
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8791C22E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8487B181CEF;
-	Wed, 17 Jul 2024 15:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F00181BA3;
+	Wed, 17 Jul 2024 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzaWsiRN"
-Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PIbi01yD"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65720181BB5;
-	Wed, 17 Jul 2024 15:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E423220B0F;
+	Wed, 17 Jul 2024 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721229011; cv=none; b=EzDvGv6qPsmPrXpMTdYPxVE93yXpkemJ4CaEAqAJyQqqZKveEjaMJciysq0wYCxs5oaRM0SiMjNJV/FxEDmP3UJMCqLpLySittWT6R80TizWCpaCpFV/KTu6sNFD/n3FTrBLOAtzl9HFAu4wl8PAbKyDZQONSC+5uZbgfc8ilxQ=
+	t=1721229183; cv=none; b=KOo8eTNcMpv1xbwjm4qUWTFmcYeAMRXhYL2yy1SkMH0RApt6oa2+Ph5umNvOpHy5xTmwtYvvzynDxmcbrTHjVc/1gaUVR4v2IXocUfmXq3whNbYwEAZuWi11mhDZYbCUABvfJXJHq2iRjOAXTRWNVjN7yZnXDnOFdPNXZBjX8iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721229011; c=relaxed/simple;
-	bh=9AeB1Cld1cJEMg5GVGQ0RSv/VK08VTbFq5Y6/MY8Fvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXRkqrJP/Vz2tRYMD2pdsImAk7NhKFYqdna1670NvrONPsXVv2Hp/AcY6gN4OfaznkQHpyHPWYgwc/OdN+Mqj6DJrcbfLh3g8kG7ZQQcFOwE1cTBbZadGIOI03DrK1/JwJljQ6/g/InW2W1hqlxRDpF4n/GrnxHEMcbbYk7Gx5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzaWsiRN; arc=none smtp.client-ip=209.85.219.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-6b5daf5ea91so38555456d6.1;
-        Wed, 17 Jul 2024 08:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721229008; x=1721833808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yimWTa4m4zoMnZ3DEB5KnSaVlkJzZMUAmC/Q4ehMeE4=;
-        b=XzaWsiRNOg1jrI6eMMaclNMnfUQ3UlxfuklS0khB/8YDmwNMHJPcRI6dfEb0t8N/G9
-         wfYXeGPypBxb6Sni5XUWBzaUYFhU/5B4Z8SiDP3LNoS9nYGtHnUTziiEwl+JVs6kvOBT
-         H3WmCI2tHEAAAy3rSd5HkcCCx2YlySrA1mwDXCIQ+j3wiSDmWj5KW1TxEDqileyXqxmC
-         Fk4W1AekBzbEPSfv83Qz0iSjY/qZE9CjrK6yqiUJC1QMcIwqE4ReOSoHT2SRqwv+OuI7
-         h1K0R6QST6nwX6LqtAEYug9RfvThXMz45+nVLQuaRP1jS4xmWQ4xN9drxXGce4j6w6m6
-         4QGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721229008; x=1721833808;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yimWTa4m4zoMnZ3DEB5KnSaVlkJzZMUAmC/Q4ehMeE4=;
-        b=tlIVO/BWZ+irTJoettVa95rQO40gBBRLGf2sHw4yLEqNyGgivjzc66GVvaaUtUSPS1
-         tPPTp+4wi1E4YL0ir8oQEmhGdNJjr0MEHqg+zQzsTjWYRi6ZxRR0iH0YDEzATJIPNWQo
-         MaNc7n5ddir+JP759VRhiliRLCXPASHe7+PMqrzNEl5N6Z72/3GJfztyRVaBrPMihRnL
-         Ld1XkNyfw3BNcA58oc4cNi6tr/WIMMWU+dsZzWf3PTqa4u5ZdogWub3Ff+/l1/DHpVHc
-         yhz2yxBpJ1pytOcD6vVKFwyVHiEjLXCR0G3QieKw/HtlMQ7nvdlMUZBZbxIMK2IzlPLy
-         Uq+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmP7k3FjIV1CxPH7+YQuId4dK5BgbUisViA5jyswvnUxNXMOzNRxp86OH4s75xIEAFZ8oPXChQDT/C9ZB2iBCPJ4/01B2ZWE2ecOBVQuXqutNq/p8U6EGh4m177HgYrZKaOtaoc0InhwgxoAsjT3cfok1vnj0n1uDye4yMtWEH9KDkivoP8mfF4BN1/bM2FtRRevHLgwmL4bloppPVzRYEFHdhyPE=
-X-Gm-Message-State: AOJu0YxPskJtEy1aq/lFrR26K53IJenj0bII56H1Vv0NZDCP/M41Dy8m
-	nb39/SlUgghZbKNB6Gf1I3usLPmJa/dovmGO4rqaBjCzFfF9RjVo
-X-Google-Smtp-Source: AGHT+IExgG9Z3pY5PUuoW3p5dU/ApHsjWPWX01eIx0K5DEQCTwWudRCZqlY3wTag1iQr78dEqgcDRg==
-X-Received: by 2002:a05:6214:1cc8:b0:6b5:e3b7:46f5 with SMTP id 6a1803df08f44-6b78ca624c7mr26524626d6.20.1721229008237;
-        Wed, 17 Jul 2024 08:10:08 -0700 (PDT)
-Received: from [192.168.158.7] ([207.35.255.94])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76199f60csm42590336d6.66.2024.07.17.08.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 08:10:07 -0700 (PDT)
-Message-ID: <0a4dd531-f075-4cce-9c15-30dfa1d0876d@gmail.com>
-Date: Wed, 17 Jul 2024 17:10:06 +0200
+	s=arc-20240116; t=1721229183; c=relaxed/simple;
+	bh=QsFQR9ykG4piFKvmVNGE7MsWS/73G/aUMfN4Y1G2Qyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sA2o546M2WoW62daBNDvVkJTXPH40ZCgSMlbgi1ecptp8yZzlVY25T8Cwm84I5buH2Yubn14r0Q3jtHut4My26c31BpcekBlrMIpTNtSCvM+BrnDxmuuj6xso4SnT2UqiTeU/WLPb+KTrScXC/AT5RjYTO2A4q5pneFxyrwXnn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PIbi01yD; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WPKF46PK9z9scN;
+	Wed, 17 Jul 2024 17:12:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1721229176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wkGlIL/8yYyHEDYOvtGp85rUzFdd0lvsLxhOub/l8Dw=;
+	b=PIbi01yDD/lqKD8I/KAF7g90eBYXWrXENMgSb3CBHFRS0GSbqzabZPo2jnKsAclomkqi/E
+	PnViURvG9P0HFHP3M85oB3QocxVJ5j+nSgdDhBPlaVgVrqtz5uwEZnfWd2D+0WBGmsGkYF
+	L8mOjI28meM12Hq9K06VmfgpVohIKttL5euBe7gsK3UFejQWpvrqxkfxoR62kkmHdG2v11
+	UBf2LXozSlh9JKw2BlwsZah7XUXWRSpZYcRMC5n7RlBiMVE0D/WmuagEK9KEjbh3BEQc9W
+	rfveAKVXMSNn/FpxJFUc+RUw8GSfwe3ltnqLmvrbfkFegAWYeB0ps9YIPD9UPA==
+Date: Wed, 17 Jul 2024 15:12:51 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
+	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240717151251.x7vkwajb57pefs6m@quentin>
+References: <20240715094457.452836-1-kernel@pankajraghav.com>
+ <20240715094457.452836-2-kernel@pankajraghav.com>
+ <ZpaRElX0HyikQ1ER@casper.infradead.org>
+ <20240717094621.fdobfk7coyirg5e5@quentin>
+ <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] rust: str: Use `core::CStr`, remove the custom `CStr`
- implementation
-To: Trevor Gross <tmgross@umich.edu>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
- Manmohan Shukla <manmshuk@gmail.com>, Valentin Obst
- <kernel@valentinobst.de>, Asahi Lina <lina@asahilina.net>,
- Yutaro Ohno <yutaro.ono.418@gmail.com>, Danilo Krummrich <dakr@redhat.com>,
- Charalampos Mitrodimas <charmitro@posteo.net>,
- Ben Gooding <ben.gooding.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
- Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
-References: <20240715221126.487345-2-vadorovsky@gmail.com>
- <CALNs47t=YQX+UP_ekq_Ue=BrA4JscDbU1qNDoKFar3yUbOSZ5g@mail.gmail.com>
-Content-Language: en-US
-From: Michal Rostecki <vadorovsky@gmail.com>
-Autocrypt: addr=vadorovsky@gmail.com; keydata=
- xsBNBGYJcUEBCAD3ciAzHQ8NElYQtsiPZ9NjsR7ttfihe0FM+PDT+6cChjFLQ8qO/1zEL5mh
- YaLbkjitrIYARhmo3lRDq3+G4L5+gRVExm9Rd98PcQy2P9F8shxI/msC50i1Fb9N4D0pP8Hx
- hhZ/or+2mbokZh8Qc9RdjynXRXAezhOFN4+0L2jkN7fjTO1IArl+TirXx+cvhQUbwKyyJlGL
- Kldvue2EqU4maZ+KIUs5di3kZgDPLILzvBqX9TLtwEMAkNY1uMCKK+C2aihap19OjoK0qOYj
- IahVHjqGL+Mb/Ga7jxMGr2TFeQEcwIgvdRiVVLtu+uiaRKqULGokBL3l9gprtBZWdLq7ABEB
- AAHNJk1pY2hhbCBSb3N0ZWNraSA8dmFkb3JvdnNreUBnbWFpbC5jb20+wsCXBBMBCABBFiEE
- 3RZt3oLrB5kpFLy14qU49yah1xEFAmYJdCQCGwMFCQHhM4AFCwkIBwICIgIGFQoJCAsCBBYC
- AwECHgcCF4AACgkQ4qU49yah1xFuDQf+NE2Oy6zF+uVh3vtidkfacCSMnu1QxojJHB8C1/Ep
- g4JU5hPcG9hC+HrMs5/Hqs7DOike9bZjhpEmnW4DIeI7Wy3t1Qf7A8EOzS0nrMgbX8TnkEon
- zMBBqiNp3VVVcltRJtc58xMP8K3yu6Ty2Q8e6GWdL5bqDr9gshb+vWu8inh5CullsGRJFJl0
- BfSdDKAbpH3NdEoWnL4JvFphpouh2vhd/ScvfNAQcuyBn3cbCyQdjNTgRVBkBNDEYCaWLVqP
- r4IU0JNjgk+cTLbyFmgn2++bWoIICGrAeWGruSpl7UGJ2PdJokWI9zp5UqSCezejDS53yhkU
- GsCrF7LrTceB6c7ATQRmCXFBAQgA2yrqjTKvL7VJKi/NNcpQ7EvAEm6omO+O4wQltdpybaxe
- mbLT0vZTH6rjZba28ixZmFHtwOjzNNtabmb4uK+nxs0BkVBpRvJNJ0LM1ydGYZQ46Sbvr1dE
- 7yWDkkG1CjmXYGd5I2iqx+ATbdrtzDGWLsvDXd/yEaO9dxAR+LqGOg1HdgE9Hhmuv8BRYSCL
- vnXaMA7Orq9oAmu+Q5q9TT3aZGMdBFdcoUNSVPX82uIYXjDaXj0Del8tluAHLf3oV7ZXEgOx
- c6OpRY3+8Pr9//UtfoaHNOjoKFNyPaIUf5U1+E9J0UoDm8m1usrwnghg6yRyPhczhCOvbYNL
- hQ6TiImvowARAQABwsB8BBgBCAAmFiEE3RZt3oLrB5kpFLy14qU49yah1xEFAmYJcUECGwwF
- CQHhM4AACgkQ4qU49yah1xHetgf9FpI4Y+okwFRIqRa6WJ8jhz6us+oYKedftr313NwerUB5
- 8nnhK0YWkZWZMuu5B4LCMiv71Ugqlc7ahBy5sQx/acRPe+NiYpwiN/pWrv7njaA6evDieXL8
- jc3j+xy4fsi861BWJXaurWQtLMXyHBUmdJ+StU7tscYTPe4fN1fdkBh0SreZxLfvp/+SMRQk
- g9PmXb1BMZdw8gWghPAbYg5bfCzXF9iZp4bmjuCENfwG4zmnYJzR6uTI0reqECo6Ee7NjOQ7
- qKy29wW+kVnEjX481iCEUmqKHEaQB08Ueb45If09fThw1baHLAk6bFk5cabMtD3JbWEifa6M
- RS+eXZNwwQ==
-In-Reply-To: <CALNs47t=YQX+UP_ekq_Ue=BrA4JscDbU1qNDoKFar3yUbOSZ5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
+X-Rspamd-Queue-Id: 4WPKF46PK9z9scN
 
-On 16.07.24 02:45, Trevor Gross wrote:
-> (also, v2 and v3 are appearing in different threads on lore (as they
-> should), but they're in the same thread as v1 in my email client - any
-> idea if there is a reason for this?)
+> >>
+> >> This is really too much.  It's something that will never happen.  Just
+> >> delete the message.
+> >>
+> >>> +	if (max > MAX_PAGECACHE_ORDER) {
+> >>> +		VM_WARN_ONCE(1,
+> >>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
+> >>> +		max = MAX_PAGECACHE_ORDER;
+> >>
+> >> Absolutely not.  If the filesystem declares it can support a block size
+> >> of 4TB, then good for it.  We just silently clamp it.
+> > 
+> > Hmm, but you raised the point about clamping in the previous patches[1]
+> > after Ryan pointed out that we should not silently clamp the order.
+> > 
+> > ```
+> >> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
+> >> whatever values are passed in are a hard requirement? So wouldn't want them to
+> >> be silently reduced. (Especially given the recent change to reduce the size of
+> >> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
+> > 
+> > Hm, yes.  We should probably make this return an errno.  Including
+> > returning an errno for !IS_ENABLED() and min > 0.
+> > ```
+> > 
+> > It was not clear from the conversation in the previous patches that we
+> > decided to just clamp the order (like it was done before).
+> > 
+> > So let's just stick with how it was done before where we clamp the
+> > values if min and max > MAX_PAGECACHE_ORDER?
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
+> 
+> The way I see it, there are 2 approaches we could take:
+> 
+> 1. Implement mapping_max_folio_size_supported(), write a headerdoc for
+> mapping_set_folio_order_range() that says min must be lte max, max must be lte
+> mapping_max_folio_size_supported(). Then emit VM_WARN() in
+> mapping_set_folio_order_range() if the constraints are violated, and clamp to
+> make it safe (from page cache's perspective). The VM_WARN()s can just be inline
 
-No idea, I've sent both patches with:
+Inlining with the `if` is not possible since:
+91241681c62a ("include/linux/mmdebug.h: make VM_WARN* non-rvals")
 
-git send-email --cc-cmd='./scripts/get_maintainer.pl --norolestats' 
--v${VERSION} -1
+> in the if statements to keep them clean. The FS is responsible for checking
+> mapping_max_folio_size_supported() and ensuring min and max meet requirements.
+
+This is sort of what is done here but IIUC willy's reply to the patch,
+he prefers silent clamping over having WARNINGS. I think because we check
+the constraints during the mount time, so it should be safe to call
+this I guess?
+
+> 
+> 2. Return an error from mapping_set_folio_order_range() (and the other functions
+> that set min/max). No need for warning. No state changed if error is returned.
+> FS can emit warning on error if it wants.
+
+I think Chinner was not happy with this approach because this is done
+per inode and basically we would just shutdown the filesystem in the
+first inode allocation instead of refusing the mount as we know about
+the MAX_PAGECACHE_ORDER even during the mount phase anyway.
+
+--
+Pankaj
 
