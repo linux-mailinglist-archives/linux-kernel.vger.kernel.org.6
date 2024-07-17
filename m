@@ -1,392 +1,125 @@
-Return-Path: <linux-kernel+bounces-254791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D16B9337A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:12:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ADB9337A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A40BB22852
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:12:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC6BB23810
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000F11B970;
-	Wed, 17 Jul 2024 07:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWFYMh3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34131CD1F;
-	Wed, 17 Jul 2024 07:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134F71CD0C;
+	Wed, 17 Jul 2024 07:13:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD4E1C680
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200306; cv=none; b=nS5tAAMoyrTwvLRDuJVrngL17RpXQC8nNk/meidrs7JpehuQep4NyKIIeYkWjmM+NlKsa4xLRTZft5y1QlCKb+g+mbi+MxjZP7B5G4ENpn2kwo/7ZPMOLeAc3f2R3BeNOgA+q7P/DvotEm3bmCkKmea3T9JqBpfyNlm/64uTN6I=
+	t=1721200389; cv=none; b=MebMdGUDdu/hT8rA5XVNCEMtOXECC34HZz8ahydPHke1ucjMN4NBuUqWVZ5n11K+kXiVVVJ2YUtJQaWtGjR91DJFewZ6ytUtrCJIELMmUwshRCqvdBD6d+NXMvTgq0oShAM9BZJFgk6Baf67evMPTykjaDQeP9iqd0q90i24M8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200306; c=relaxed/simple;
-	bh=qqz2dTQAyhsrr8JcadvDgbuxVDuo0fTC4NGyVOzaHXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sFcP4sFXV8EUEIIuFYp0uJV36Ffl6oO6TwcpU4sJoX+MrtzZHfEjTXL26Ct6iulgKlHm+yU6y0mzsm7LowktxHKbnBDDnUv07SoW4TVNzwf7T+ntFbZXOcHrMAaApHiNWkguxKHYN4wVw2ZfVZbJWgSFKt9aScUh+sXkTaLPxvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWFYMh3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B3DC32782;
-	Wed, 17 Jul 2024 07:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721200305;
-	bh=qqz2dTQAyhsrr8JcadvDgbuxVDuo0fTC4NGyVOzaHXw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qWFYMh3Cs1hGN0lO4VjK+On3biP7Ol+puJxEkcfuhWFPBe37nNSywThDqc2nZyyYW
-	 IABc2KQ/dBmjQ6zG1SY9vPOOpYDPxYoDS9j7GUrSz/HimvY5PSLD0KdbjTaTKZeNk+
-	 ljqq4TesDOm3+Iz7xXjeeaAZgKGen3kj1752DnEI/rlkTo6rIHbNcR5zr6quSmfm7j
-	 HXQGH/DpZiOK7lGbsjxhCtpHJV6hNhKoeZInKYbMzadpZKkurPYDE9bYJuRfPxK6Fn
-	 1lEz7/dq/DC63TWriC/Ta6ZjSTWt91TjUHq0J8XN9j2lCSk6u3tN2Gh+GlkYESuMf8
-	 WPr2yKaVSbC5w==
-Message-ID: <14e3654e-27b1-41f7-a66f-03ec47e95593@kernel.org>
-Date: Wed, 17 Jul 2024 09:11:39 +0200
+	s=arc-20240116; t=1721200389; c=relaxed/simple;
+	bh=vS8OBRzRP/QrYMlLYVEMa8fWcFRYY54ETbzZs9LEcrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cq0zxwkqc8oXTUMdBxKmPf5OE8mAYV7t70miD2qDea+RrDb4UWF520pqKwr8OH1xHa/cOf7wjjJjO/5MoPTkkXe3F+6h7+btUNrxoeoFUW727GkpGReXy+Y+jW8JRiX2vUxfcbYbbPkBN1h7BbzIoof/FUcOcP7fqJV6VuVBjSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 431ED1063;
+	Wed, 17 Jul 2024 00:13:32 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 402523F762;
+	Wed, 17 Jul 2024 00:13:05 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <ioworker0@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Pankaj Raghav <kernel@pankajraghav.com>,
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
+Date: Wed, 17 Jul 2024 08:12:52 +0100
+Message-ID: <20240717071257.4141363-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] hwmon: add GPD devices sensor driver
-To: Cryolitia@gmail.com, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
- Yao Zi <ziyao@disroot.org>, =?UTF-8?Q?Marcin_Str=C4=85gowski?=
- <marcin@stragowski.com>
-References: <20240717-gpd_fan-v3-0-8d7efb1263b7@gmail.com>
- <20240717-gpd_fan-v3-1-8d7efb1263b7@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240717-gpd_fan-v3-1-8d7efb1263b7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 17/07/2024 08:46, Cryolitia PukNgae via B4 Relay wrote:
-> From: Cryolitia PukNgae <Cryolitia@gmail.com>
-> 
-> Sensors driver for GPD Handhelds that expose fan reading and control via
-> hwmon sysfs.
-> 
-> Shenzhen GPD Technology Co., Ltd. manufactures a series of handheld
-> devices. This driver implements these functions through x86 port-mapped IO.
-> I have only tested it on my device Win Max 2 2023.
-> 
-> Tested-by: Marcin Strągowski <marcin@stragowski.com>
-> Signed-off-by: Cryolitia PukNgae <Cryolitia@gmail.com>
-> ---
->  MAINTAINERS             |   6 +
->  drivers/hwmon/Kconfig   |  10 +
->  drivers/hwmon/Makefile  |   1 +
->  drivers/hwmon/gpd-fan.c | 674 ++++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 691 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index af4b4c271342..9ced72cec42b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9372,6 +9372,12 @@ F:	drivers/phy/samsung/phy-gs101-ufs.c
->  F:	include/dt-bindings/clock/google,gs101.h
->  K:	[gG]oogle.?[tT]ensor
->  
+Hi All,
 
-...
+This series is an RFC that adds sysfs and kernel cmdline controls to configure
+the set of allowed large folio sizes that can be used when allocating
+file-memory for the page cache. As part of the control mechanism, it provides
+for a special-case "preferred folio size for executable mappings" marker.
 
-> +// device EC truly access start
-> +
-> +static int gpd_ecram_read(const struct gpd_model_ec_address *address,
-> +			  u16 offset, u8 *val)
-> +{
-> +	int ret;
-> +
-> +	ret = mutex_lock_interruptible(&gpd_fan_lock);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	u16 addr_port = address->addr_port;
-> +	u16 data_port = address->data_port;
+I'm trying to solve 2 separate problems with this series:
 
-Again, definitions are at the top. Read Linux Coding Style.
+1. Reduce pressure in iTLB and improve performance on arm64: This is a modified
+approach for the change at [1]. Instead of hardcoding the preferred executable
+folio size into the arch, user space can now select it. This decouples the arch
+code and also makes the mechanism more generic; it can be bypassed (the default)
+or any folio size can be set. For my use case, 64K is preferred, but I've also
+heard from Willy of a use case where putting all text into 2M PMD-sized folios
+is preferred. This approach avoids the need for synchonous MADV_COLLAPSE (and
+therefore faulting in all text ahead of time) to achieve that.
 
-<form letter>
-This is a friendly reminder during the review process.
+2. Reduce memory fragmentation in systems under high memory pressure (e.g.
+Android): The theory goes that if all folios are 64K, then failure to allocate a
+64K folio should become unlikely. But if the page cache is allocating lots of
+different orders, with most allocations having an order below 64K (as is the
+case today) then ability to allocate 64K folios diminishes. By providing control
+over the allowed set of folio sizes, we can tune to avoid crucial 64K folio
+allocation failure. Additionally I've heard (second hand) of the need to disable
+large folios in the page cache entirely due to latency concerns in some
+settings. These controls allow all of this without kernel changes.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+The value of (1) is clear and the performance improvements are documented in
+patch 2. I don't yet have any data demonstrating the theory for (2) since I
+can't reproduce the setup that Barry had at [2]. But my view is that by adding
+these controls we will enable the community to explore further, in the same way
+that the anon mTHP controls helped harden the understanding for anonymous
+memory.
 
-Thank you.
-</form letter>
+---
+This series depends on the "mTHP allocation stats for file-backed memory" series
+at [3], which itself applies on top of yesterday's mm-unstable (650b6752c8a3). All
+mm selftests have been run; no regressions were observed.
 
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x11, data_port);
-> +	outb(0x2F, addr_port);
-> +	outb((u8)((offset >> 8) & 0xFF), data_port);
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x10, data_port);
-> +	outb(0x2F, addr_port);
-> +	outb((u8)(offset & 0xFF), data_port);
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x12, data_port);
-> +	outb(0x2F, addr_port);
-> +	*val = inb(data_port);
-> +
-> +	mutex_unlock(&gpd_fan_lock);
-> +	return 0;
-> +}
-> +
-> +static int gpd_ecram_write(const struct gpd_model_ec_address *address,
-> +			   u16 offset, u8 value)
-> +{
-> +	int ret = mutex_lock_interruptible(&gpd_fan_lock);
+[1] https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.roberts@arm.com/
+[2] https://www.youtube.com/watch?v=ht7eGWqwmNs&list=PLbzoR-pLrL6oj1rVTXLnV7cOuetvjKn9q&index=4
+[3] https://lore.kernel.org/linux-mm/20240716135907.4047689-1-ryan.roberts@arm.com/
 
-<form letter>
-This is a friendly reminder during the review process.
+Thanks,
+Ryan
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Ryan Roberts (4):
+  mm: mTHP user controls to configure pagecache large folio sizes
+  mm: Introduce "always+exec" for mTHP file_enabled control
+  mm: Override mTHP "enabled" defaults at kernel cmdline
+  mm: Override mTHP "file_enabled" defaults at kernel cmdline
 
-Thank you.
-</form letter>
+ .../admin-guide/kernel-parameters.txt         |  16 ++
+ Documentation/admin-guide/mm/transhuge.rst    |  66 +++++++-
+ include/linux/huge_mm.h                       |  61 ++++---
+ mm/filemap.c                                  |  26 ++-
+ mm/huge_memory.c                              | 158 +++++++++++++++++-
+ mm/readahead.c                                |  43 ++++-
+ 6 files changed, 329 insertions(+), 41 deletions(-)
 
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	u16 addr_port = address->addr_port;
-> +	u16 data_port = address->data_port;
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x11, data_port);
-> +	outb(0x2F, addr_port);
-> +	outb((u8)((offset >> 8) & 0xFF), data_port);
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x10, data_port);
-> +	outb(0x2F, addr_port);
-> +	outb((u8)(offset & 0xFF), data_port);
-> +
-> +	outb(0x2E, addr_port);
-> +	outb(0x12, data_port);
-> +	outb(0x2F, addr_port);
-> +	outb(value, data_port);
-> +
-> +	mutex_unlock(&gpd_fan_lock);
-> +	return 0;
-> +}
-> +
-> +// device EC truly access end
-> +
-> +// device quirk function implement start
-> +
-> +static s32
-> +gpd_read_cached_fan_speed(struct gpd_driver_priv *data,
-> +			  s32 (*read_uncached)(const struct gpd_driver_priv *))
-> +{
-> +	// Update per 1000 milliseconds
-> +	if (time_after(jiffies, data->fan_speed_last_update + HZ)) {
-> +		s32 ret = read_uncached(data);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		data->fan_speed_cached = ret;
-> +		data->fan_speed_last_update = jiffies;
-> +	}
-> +	return data->fan_speed_cached;
-> +}
-> +
-> +static s32
-> +gpd_read_cached_pwm(struct gpd_driver_priv *data,
-> +		    s16 (*read_uncached)(const struct gpd_driver_priv *))
-> +{
-> +	// Update per 1000 milliseconds
-> +	if (time_after(jiffies, data->read_pwm_last_update + HZ)) {
-> +		s16 ret = read_uncached(data);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		data->read_pwm_cached = ret;
-> +		data->read_pwm_last_update = jiffies;
-> +	}
-> +	return data->read_pwm_cached;
-> +}
-> +
-> +static s32 gpd_read_rpm_uncached(const struct gpd_driver_priv *data)
-> +{
-> +	u8 high, low;
-> +	int ret;
-> +	const struct gpd_model_ec_address *address = &data->quirk->address;
-> +
-> +	ret = gpd_ecram_read(address, address->rpm_read, &high);
-> +	if (ret)
-> +		return ret;
-> +	ret = gpd_ecram_read(address, address->rpm_read + 1, &low);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return high << 8 | low;
-> +}
-> +
-> +static s32 gpd_read_rpm(struct gpd_driver_priv *data)
-> +{
-> +	return gpd_read_cached_fan_speed(data, gpd_read_rpm_uncached);
-> +}
-> +
-> +static s16 gpd_read_pwm(struct gpd_driver_priv *data)
-> +{
-> +	return data->pwm_value;
-> +}
-> +
-> +static int gpd_write_pwm(const struct gpd_driver_priv *data, u8 val)
-> +{
-> +	const struct gpd_model_ec_address *address = &data->quirk->address;
-> +
-> +	u8 actual = val * (address->pwm_max - 1) / 255 + 1;
-> +
-> +	return gpd_ecram_write(address, address->pwm_write, actual);
-> +}
-> +
-> +static int gpd_win_mini_set_pwm_enable(struct gpd_driver_priv *data,
-> +				       enum FAN_PWM_ENABLE pwm_enable)
-> +{
-> +	switch (pwm_enable) {
-> +	case DISABLE:
-> +		return gpd_write_pwm(data, 255);
-> +	case MANUAL:
-> +		return gpd_write_pwm(data, data->pwm_value);
-> +	case AUTOMATIC:
-> +		return gpd_write_pwm(data, 0);
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int gpd_win_mini_write_pwm(const struct gpd_driver_priv *data, u8 val)
-> +{
-> +	if (data->pwm_enable == MANUAL)
-> +		return gpd_write_pwm(data, val);
-> +	return 0;
-> +}
-> +
-
-...
-
-> +// hwmon subsystem end
-> +
-> +static int gpd_fan_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct gpd_driver_priv *data;
-> +	const struct resource *plat_res;
-> +	const struct device *dev_reg;
-> +	const struct resource *region_res;
-> +
-> +	data = dev_get_platdata(&pdev->dev);
-> +	if (IS_ERR_OR_NULL(data))
-> +		return -ENODEV;
-> +
-> +	plat_res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> +	if (IS_ERR_OR_NULL(plat_res))
-
-IS_ERR_OR_NULL is usually poor code.
-
-> +		return dev_err_probe(dev, PTR_ERR(plat_res),
-> +				     "Failed to get platform resource\n");
-> +
-> +	region_res = devm_request_region(dev, plat_res->start,
-> +					 resource_size(plat_res), DRIVER_NAME);
-> +	if (IS_ERR_OR_NULL(region_res))
-
-IS_ERR_OR_NULL is usually poor code.
-
-> +		return dev_err_probe(dev, PTR_ERR(region_res),
-> +				     "Failed to request region\n");
-> +
-> +	dev_reg = devm_hwmon_device_register_with_info(
-> +		dev, DRIVER_NAME, data, &gpd_fan_chip_info, NULL);
-
-Fix the alignment/wrapping.
-
-> +	if (IS_ERR_OR_NULL(dev_reg))
-
-IS_ERR_OR_NULL is usually poor code. Or wrong. Cannot be NULL.
-
-> +		return dev_err_probe(dev, PTR_ERR(region_res),
-> +				     "Failed to register hwmon device\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int gpd_fan_remove(__always_unused struct platform_device *pdev)
-> +{
-> +	struct gpd_driver_priv *data = dev_get_platdata(&pdev->dev);
-
-What is this __always_unused? How pdev can be unused if it is just here?
-
-This entire driver still does not look like using Linux coding style.
-
-> +
-> +	data->pwm_enable = AUTOMATIC;
-> +	data->quirk->set_pwm_enable(data, AUTOMATIC);
-> +
-> +	return 0;
-> +}
-
-
-Best regards,
-Krzysztof
+--
+2.43.0
 
 
