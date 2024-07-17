@@ -1,104 +1,202 @@
-Return-Path: <linux-kernel+bounces-254958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A7F9339C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D0D9339C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9082281660
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6240B281456
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65F644C76;
-	Wed, 17 Jul 2024 09:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EB02D61B;
+	Wed, 17 Jul 2024 09:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNHP085R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PdI64iHw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lh4I5uex";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PdI64iHw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lh4I5uex"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DE54437C;
-	Wed, 17 Jul 2024 09:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACE83032A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721208093; cv=none; b=Ggx403jBkWHqM3t7WA74MYPZWSnUN5MgW3GzbcZnTTlqHYi/mNm8WwJ31CDbp2DKApnTdVDrkKu39/mutxGE0RMBcvsdmxb0XZz57DcB9rdnMVGKfdySgIaSvP4N04v0JT85D7moyFO80X8AK5JzyWSr1u5q5+GDlLMjxq90+V4=
+	t=1721208337; cv=none; b=tHt48HVl+hhMSffbb2NJQPONZnYLrAf1W4MMe8L2zM8D9DESaG68l+b/ZQM13RS6/vOIa/NOwf8p4cng3D8en4PeNK0nCmV4K/a9Te8Wp8J2S8BJ8JXRLb38o3zbwUV2fHJjnF61IYYTyinR58Hq0pA9XxbY6beD9XqGiKGn7J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721208093; c=relaxed/simple;
-	bh=p/14NgBTEAYOXETrq6QR4JyC+13t5geb+OWGpfi6kos=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kxARQIIpcYiAD6Y5/2MlpgADCN/7WZ+bQSOYntFT+gqIc1qRegmsj0YnE16Ns9RCM19kX4k8MWiE1NV4yfGHsyFsOlKqgZElBVkLqW2t/xp4ijtIh39hEZ8NzaeeuvNtobUdd5VFdHx3b7h33yVasTiQGsRAd5wJ5vGS4F2Obaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNHP085R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6687AC32782;
-	Wed, 17 Jul 2024 09:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721208092;
-	bh=p/14NgBTEAYOXETrq6QR4JyC+13t5geb+OWGpfi6kos=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YNHP085RQ1+8gJ/IWDLH7lPABlFl8G/hek5vHVJAKCdEPoVQk629c8i8TRDimaAVK
-	 B0Ef06/+RyZ9zeORL/MG3jCEA+PDxm9XqBfJaA6u4RKH0JjX3423215TgnvvpRGSV3
-	 xvZzuavsC3YBoBRLGFx6MTRJ/3D0sB9YqGu6zOSbZnaHfRLOdW1eW6l+dwNMMu2kGg
-	 fr3aYaXeyZw2cgGdDdN7+8tRC9HaOCRwAQXD6vX57oSSzUOxi0+FjYpxXgsRmiiTOZ
-	 e8Bdv0Cy6JMGvCVcdq/nzZma1sUOJOIsbrGJ9BcGP6lApvb8uWJY8AL1nsU63z0jlB
-	 S3ry17/YsqO+A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sU0qo-00D5oD-0g;
-	Wed, 17 Jul 2024 10:21:30 +0100
-Date: Wed, 17 Jul 2024 10:21:29 +0100
-Message-ID: <86o76w2x2e.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Tangnianyao <tangnianyao@huawei.com>
-Cc: <kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"guoyang (C)" <guoyang2@huawei.com>,
-	jiangkunkun <jiangkunkun@huawei.com>,
-	wangwudi <wangwudi@hisilicon.com>
-Subject: Re: [PATCH 0/3] irqchip/gic-v4: Fix VMAPP/VMOVP races
-In-Reply-To: <42e08881-5faf-a78c-0d94-2a48415bc655@huawei.com>
-References: <20240705093155.871070-1-maz@kernel.org>
-	<ce1c797f-1b00-2f14-de1d-b3524acf3c1f@huawei.com>
-	<42e08881-5faf-a78c-0d94-2a48415bc655@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1721208337; c=relaxed/simple;
+	bh=hlPG1rpUXWdRINstAv6TbKGxNBotLixFFS/G2Raz1CY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hl9ixs65RfPdm8rwnZxxjqghyUp8BXc6TL6utzfuFyrd82lFgHdGKI3rxssVfDf63NUhXVhtnTPIJWTMRrZ/hpospwNqZJjdPyOEoV+E/QohJTjKyXkJwmwy8dBWSpfVw1INSy1lTI5gz/4oA9SrBe8WfquIIwXzBGGUaT+hj34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PdI64iHw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lh4I5uex; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PdI64iHw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lh4I5uex; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C5B4521AD1;
+	Wed, 17 Jul 2024 09:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721208333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QtzkPZbPqvThGgxFvCmwA9LUI7+F2LI94elwRWYNfQs=;
+	b=PdI64iHwrw/2zanihDwubOYhbVYBPTUh4W7wwTmtVgjV8WgzzOmAh/Fo5hFBqKk6amifla
+	Z/BbtuvuNkS5mc941bu6rpqN8Ez2ncGIryrpQbSgC3ijfiwg910+jyfGsVBjmYxoURydp1
+	Vt8xii0d2SdiD95GIzioNzALCJl1uYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721208333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QtzkPZbPqvThGgxFvCmwA9LUI7+F2LI94elwRWYNfQs=;
+	b=Lh4I5uexnJa7kz71c86is77WeYx4IqtpzI7RJX7i6t90G2JFhdzgErXY6sDG4wTqYK9Yz8
+	VKo0agUAHNRfhnDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721208333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QtzkPZbPqvThGgxFvCmwA9LUI7+F2LI94elwRWYNfQs=;
+	b=PdI64iHwrw/2zanihDwubOYhbVYBPTUh4W7wwTmtVgjV8WgzzOmAh/Fo5hFBqKk6amifla
+	Z/BbtuvuNkS5mc941bu6rpqN8Ez2ncGIryrpQbSgC3ijfiwg910+jyfGsVBjmYxoURydp1
+	Vt8xii0d2SdiD95GIzioNzALCJl1uYg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721208333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QtzkPZbPqvThGgxFvCmwA9LUI7+F2LI94elwRWYNfQs=;
+	b=Lh4I5uexnJa7kz71c86is77WeYx4IqtpzI7RJX7i6t90G2JFhdzgErXY6sDG4wTqYK9Yz8
+	VKo0agUAHNRfhnDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AFB4E136E5;
+	Wed, 17 Jul 2024 09:25:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IYuHKg2Ol2bTJQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 17 Jul 2024 09:25:33 +0000
+Message-ID: <875b818a-d6ba-4b79-b1fc-89d6381ed64c@suse.cz>
+Date: Wed, 17 Jul 2024 11:25:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, guoyang2@huawei.com, jiangkunkun@huawei.com, wangwudi@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] alloc_tag: export mem_alloc_profiling_key used by
+ modules
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, hch@infradead.org, pasha.tatashin@soleen.com,
+ souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kernel test robot <lkp@intel.com>
+References: <20240717011631.2150066-1-surenb@google.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240717011631.2150066-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -0.29
+X-Spamd-Result: default: False [-0.29 / 50.00];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-On Wed, 17 Jul 2024 09:41:30 +0100,
-Tangnianyao <tangnianyao@huawei.com> wrote:
+On 7/17/24 3:16 AM, Suren Baghdasaryan wrote:
+> Export mem_alloc_profiling_key as it is used by modules (indirectly via
+> mem_alloc_profiling_enabled()).
 > 
-> Hi, Marc
+> Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allocation profiling")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202407080044.DWMC9N9I-lkp@intel.com/
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  lib/alloc_tag.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I meet another problem while fixing this in kernel 5.10.
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 81e5f9a70f22..832f79a32b3e 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -15,6 +15,7 @@ EXPORT_SYMBOL(_shared_alloc_tag);
+>  
+>  DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+>  			mem_alloc_profiling_key);
+> +EXPORT_SYMBOL(mem_alloc_profiling_key);
+>  
+>  struct allocinfo_private {
+>  	struct codetag_iterator iter;
 > 
-> Kernel 5.10 does not support guard and we replace it with raw_spin_lock/unlock.
-> When guest insmod nic drivers, it trigger host cpu power off somehow. The same
-> testcase runs quite good in kernel 6.6(both host and guest).
+> base-commit: 0434dbe32053d07d658165be681505120c6b1abc
 
-This suggests that you got the locking order wrong, that one or
-several CPUs deadlock, and that a watchdog fires.
-
-> Would you fix this on long-term kernel 5.10? Or any sugguestion?
-
-Sorry, but I have no intention to maintain such an ancient kernel,
-which is why I did not Cc stable on these patches. I have no bandwidth
-for this, nor any interest in it.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
