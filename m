@@ -1,339 +1,324 @@
-Return-Path: <linux-kernel+bounces-255182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E320C933D2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:53:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6326C933D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987B2285231
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:53:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D011C2388B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F41D1802A1;
-	Wed, 17 Jul 2024 12:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6018D180A8B;
+	Wed, 17 Jul 2024 12:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4C2dwup"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFJEEjiF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CC617FADA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D161802D9;
+	Wed, 17 Jul 2024 12:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721220813; cv=none; b=dOJ2RdNd1CvLPJGqBV/EPWcmIzAZf4ovMmSv+kfGc3zByRk5ukL3RI+KkJy9P+swJLj5v9BJM3UGgLh78w3JkNegDUbSeKiVWRzqtc/+HgroWJhgH6pwqogxYgLaVP8r3wH7HM4bFU/K9Ydxv3lUWyfvx1B3fZ294J1JlYVhjLI=
+	t=1721220885; cv=none; b=Iyxs91TsiDTuG1azXo+w3hGY0FySvOEc1/YQDy9mCgxeO/1YCQWCrsSeMaeYDpDmiNSITyw7soMRfaBiiSuCK+eNMOG6TRsCa1Ffjl2tfLX3V8LtRPh+xpkwadwKxEzKBCgao2msYpiVMcbhM/qVvOHQ8Sw+MnkU/pNqs/5zHVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721220813; c=relaxed/simple;
-	bh=dLDqROl0xL/BfwCwYtwe/NEF9gHb7/5i94Ev01s+Ed0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrzDyRLnXfNYnah4t+X+YwDBKYEOnlLPHy7bNYTxzFAh8MckGxZ/+jqP92irxeo6Uy0LBz816pzOFXXh+y3H57bdi/iJ30Rz5t4+OATu14NcU/HTzIfxo+QZS/d59rryK9NIhGHM2vcpOqn0UWTcWOEwX+0OlBZR49G1yzNItps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4C2dwup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC7DC32782;
-	Wed, 17 Jul 2024 12:53:32 +0000 (UTC)
+	s=arc-20240116; t=1721220885; c=relaxed/simple;
+	bh=nnLLfbV9bwYftssLu+xiTYTnLCBIkXFWNZcnmK8diPE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZwTbAJ0/Z3Vhz7VSqnKpOA5rMrliz5nalzzhOwUhpSoML3y3CECx++SlK8vJCK0o7bX7oIvOeHAVEJKQrOTo1DV1aSqguW0/AYNSAJjjAJDVYUe0RjZXCOfxsHBYjEiqoXvauKNrRvdfSrxG5895W+APpYJyht2S6JCiQWzwbAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFJEEjiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C34C4AF12;
+	Wed, 17 Jul 2024 12:54:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721220812;
-	bh=dLDqROl0xL/BfwCwYtwe/NEF9gHb7/5i94Ev01s+Ed0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T4C2dwupY/0mNhl5ZMyoTOKXjqeQE+HkRaxPX3lNewB1/qtNBBYBOmkYJzhKQa0l6
-	 VknXgEP32+EhgCeRYi/GKrdiV3JjXMjcZORBV3lndh3OC22O4olCK8KeMPmc6ujelZ
-	 7FaSQiQpjd848TmDwEl8koNh1nk1JMoI4I8DZsP+vBow+OmhMsF6x5+WKUDZOiSWHT
-	 vPimShm7FDezeYPBXUB5V3ERomUNyV4rOGCoCQQebblWkpKsaymxpgWAMWXbGYf2GG
-	 C1azk1CH9zEC5pE9FbN4V+/P5K+ijnHZ0LB2R4DaRQPcIrQgMa2XGzA0imypc9XXCk
-	 KfNHNk+5j6nlQ==
-Date: Wed, 17 Jul 2024 14:53:30 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/8] timers/migration: Move hierarchy setup into
- cpuhotplug prepare callback
-Message-ID: <Zpe-yh4iK3D08b8H@localhost.localdomain>
-References: <20240716-tmigr-fixes-v4-2-757baa7803fe@linutronix.de>
- <20240717094940.18687-1-anna-maria@linutronix.de>
+	s=k20201202; t=1721220884;
+	bh=nnLLfbV9bwYftssLu+xiTYTnLCBIkXFWNZcnmK8diPE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qFJEEjiFB9PLxkGvActSwDja52iQ32LqLf9iMA5pR8YpE/pGPtekwG/17YorYqb8F
+	 hJvdqt3vie1x/pRr/MU9YKmFgBQBGTCUe7Oyl2VMY2hFqPRhj+PIVsvqMR5vs2kQCm
+	 W3V0oW5141aXkXyR6+bC35FQqk54wa2Sd0J86pbji831Okc3K89jCAgJDN53YfSt/t
+	 hC2NBDx1P85GXKrgNVUzQRdeB99VSGgJ+yeCf8Zr/CSoIYalZP/sTgV5Sk51DGA2R5
+	 Ti2empTA9I96Wki+x0wIoao/r+uyHvvdhCaF7+6ueedpIqXuQ0+usFkok9ndR89lmJ
+	 C42JZSkj+xCOg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sU4B7-00D8zo-GU;
+	Wed, 17 Jul 2024 13:54:41 +0100
+Date: Wed, 17 Jul 2024 13:54:40 +0100
+Message-ID: <86msmg2n73.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
+In-Reply-To: <Zpdxe4ce-XwDEods@hovoldconsulting.com>
+References: <20240623142137.448898081@linutronix.de>
+	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
+	<878qy26cd6.wl-maz@kernel.org>
+	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
+	<86r0bt39zm.wl-maz@kernel.org>
+	<ZpaJaM1G721FdLFn@hovoldconsulting.com>
+	<86plrd2o5o.wl-maz@kernel.org>
+	<Zpdxe4ce-XwDEods@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240717094940.18687-1-anna-maria@linutronix.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Le Wed, Jul 17, 2024 at 11:49:40AM +0200, Anna-Maria Behnsen a écrit :
-> When a CPU comes online the first time, it is possible that a new top level
-> group will be created. In general all propagation is done from the bottom
-> to top. This minimizes complexity and prevents possible races. But when a
-> new top level group is created, the formely top level group needs to be
-> connected to the new level. This is the only time, when the direction to
-> propagate changes is changed: the changes are propagated from top (new top
-> level group) to bottom (formerly top level group).
+On Wed, 17 Jul 2024 08:23:39 +0100,
+Johan Hovold <johan@kernel.org> wrote:
 > 
-> This introduces two races (see (A) and (B)) as reported by Frederic:
+> On Tue, Jul 16, 2024 at 07:21:39PM +0100, Marc Zyngier wrote:
+> > On Tue, 16 Jul 2024 15:53:28 +0100,
+> > Johan Hovold <johan@kernel.org> wrote:
+> > > On Tue, Jul 16, 2024 at 11:30:05AM +0100, Marc Zyngier wrote:
+> > > > On Mon, 15 Jul 2024 15:10:01 +0100,
+> > > > Johan Hovold <johan@kernel.org> wrote:
+> > > > > On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
+> > > > > > On Mon, 15 Jul 2024 12:18:47 +0100,
+> > > > > > Johan Hovold <johan@kernel.org> wrote:
 > 
-> (A) This race happens, when marking the formely top level group as active,
-> but the last active CPU of the formerly top level group goes idle. Then
-> it's likely that formerly group is no longer active, but marked
-> nevertheless as active in new top level group:
+> > > > > > > This series only showed up in linux-next last Friday and broke interrupt
+> > > > > > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
+> > > > > > > and x1e80100 that use the GIC ITS for PCIe MSIs.
+> > > > > > > 
+> > > > > > > I've applied the series (21 commits from linux-next) on top of 6.10 and
+> > > > > > > can confirm that the breakage is caused by commits:
+> > > > > > > 
+> > > > > > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> > > > > > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
+> > > > > > > 
+> > > > > > > Applying the series up until the change before 3d1c927c08fc unbreaks the
+> > > > > > > wifi on one machine:
+> > > > > > > 
+> > > > > > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
+> > > > > > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
+> > > 
+> > > Correction, this doesn't fix the wifi, but I'm not seeing these errors
+> > > with the commit before cc23d1dfc959 as the ath11k driver doesn't get
 > 
-> 		  [GRP0:0]
-> 	       migrator = 0
-> 	       active   = 0
-> 	       nextevt  = KTIME_MAX
-> 	       /         \
-> 	      0         1 .. 7
-> 	  active         idle
+> [ This was supposed to say 3d1c927c08fc, which is the mainline hash,
+> sorry. ]
 > 
-> 0) Hierarchy has for now only 8 CPUs and CPU 0 is the only active CPU.
+> > > this far (or doesn't probe at all).
+> > 
+> > I think we need to track one thing at a time. The wifi and nvme
+> > problems seem subtly different... Which is the exact commit that
+> > breaks nvme on your machine?
 > 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = NONE
-> 			nextevt  = KTIME_MAX
-> 					 \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = 0              migrator = TMIGR_NONE
-> 	      active   = 0              active   = NONE
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  active         idle                !online
+> Yeah, forget about 3d1c927c08fc for now, which may have been a red
+> herring since we're also appear to be dealing with some sort of race and
+> (some) symptoms keep changing from boot to boot. The only thing that for
+> certain is that the series breaks MSI and that the NVMe breaks with
+> commit 233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for
+> PCI/MSI[-X]").
 > 
-> 1) CPU 8 is booting and creates a new group in first level GRP0:1 and
->    therefore also a new top group GRP1:0. For now the setup code proceeded
->    only until the connected between GRP0:1 to the new top group. The
->    connection between CPU8 and GRP0:1 is not yet established and CPU 8 is
->    still !online.
+> > > > So is this issue actually tied to the async probing? Does it always
+> > > > work if you disable it?
+> > > 
+> > > There seem to multiple issues here.
+> > > 
+> > > With the full series applied and normal async (i.e. parallel) probing of
+> > > the PCIe controllers I sometimes see allocation failing with -ENOSPC
+> > > (e.g. the above ath11k errors). This seems to indicate broken locking
+> > > somewhere.
+> > 
+> > Your log doesn't support this theory. At least not from an ITS
+> > perspective, as it keeps dishing out INTIDs (and it is very hard to
+> > run out of IRQs with the ITS).
 > 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = NONE
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = 0              migrator = TMIGR_NONE
-> 	      active   = 0              active   = NONE
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  active         idle                !online
-> 
-> 2) Setup code now connects GRP0:0 to GRP1:0 and observes while in
->    tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
->    prepares to call tmigr_active_up() on it. It hasn't done it yet.
-> 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = NONE
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE        migrator = TMIGR_NONE
-> 	      active   = NONE              active   = NONE
-> 	      nextevt  = KTIME_MAX         nextevt  = KTIME_MAX
-> 		/         \
-> 	      0          1 .. 7                8
-> 	    idle         idle                !online
-> 
-> 3) CPU 0 goes idle. Since GRP0:0->parent has been updated by CPU 8 with
->    GRP0:0->lock held, CPU 0 observes GRP1:0 after calling
->    tmigr_update_events() and it propagates the change to the top (no change
->    there and no wakeup programmed since there is no timer).
-> 
-> 			     [GRP1:0]
-> 			migrator = GRP0:0
-> 			active   = GRP0:0
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE       migrator = TMIGR_NONE
-> 	      active   = NONE             active   = NONE
-> 	      nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
-> 		/         \
-> 	      0          1 .. 7                8
-> 	    idle         idle                !online
-> 
-> 4) Now the setup code finally calls tmigr_active_up() to and sets GRP0:0
->    active in GRP1:0
-> 
-> 			     [GRP1:0]
-> 			migrator = GRP0:0
-> 			active   = GRP0:0, GRP0:1
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE       migrator = 8
-> 	      active   = NONE             active   = 8
-> 	      nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
-> 		/         \                    |
-> 	      0          1 .. 7                8
-> 	    idle         idle                active
-> 
-> 5) Now CPU 8 is connected with GRP0:1 and CPU 8 calls tmigr_active_up() out
->    of tmigr_cpu_online().
-> 
-> 			     [GRP1:0]
-> 			migrator = GRP0:0
-> 			active   = GRP0:0
-> 			nextevt  = T8
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE         migrator = TMIGR_NONE
-> 	      active   = NONE               active   = NONE
-> 	      nextevt  = KTIME_MAX          nextevt  = T8
-> 		/         \                    |
-> 	      0          1 .. 7                8
-> 	    idle         idle                  idle
-> 
-> 5) CPU 8 goes idle with a timer T8 and relies on GRP0:0 as the migrator.
->    But it's not really active, so T8 gets ignored.
-> 
-> --> The update which is done in third step is not noticed by setup code. So
->     a wrong migrator is set to top level group and a timer could get
->     ignored.
-> 
-> (B) Reading group->parent and group->childmask when an hierarchy update is
-> ongoing and reaches the formerly top level group is racy as those values
-> could be inconsistent. (The notation of migrator and active now slightly
-> changes in contrast to the above example, as now the childmasks are used.)
-> 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = 0x00
-> 			nextevt  = KTIME_MAX
-> 					 \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE     migrator = TMIGR_NONE
-> 	      active   = 0x00           active   = 0x00
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 	      childmask= 0		childmask= 1
-> 	      parent   = NULL		parent   = GRP1:0
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  idle           idle                !online
-> 	  childmask=1
-> 
-> 1) Hierarchy has 8 CPUs. CPU 8 is at the moment in the process of onlining
->    but did not yet connect GRP0:0 to GRP1:0.
-> 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = 0x00
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = TMIGR_NONE     migrator = TMIGR_NONE
-> 	      active   = 0x00           active   = 0x00
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 	      childmask= 0		childmask= 1
-> 	      parent   = GRP1:0		parent   = GRP1:0
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  idle           idle                !online
-> 	  childmask=1
-> 
-> 2) Setup code (running on CPU 8) now connects GRP0:0 to GRP1:0, updates
->    parent pointer of GRP0:0 and ...
-> 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = 0x00
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = 0x01           migrator = TMIGR_NONE
-> 	      active   = 0x01           active   = 0x00
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 	      childmask= 0		childmask= 1
-> 	      parent   = GRP1:0		parent   = GRP1:0
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  active          idle                !online
-> 	  childmask=1
-> 
-> 	  tmigr_walk.childmask = 0
-> 
-> 3) ... CPU 0 comes active in the same time. As migrator in GRP0:0 was
->    TMIGR_NONE, childmask of GRP0:0 is stored in update propagation data
->    structure tmigr_walk (as update of childmask is not yet
->    visible/updated). And now ...
-> 
-> 			     [GRP1:0]
-> 			migrator = TMIGR_NONE
-> 			active   = 0x00
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = 0x01           migrator = TMIGR_NONE
-> 	      active   = 0x01           active   = 0x00
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 	      childmask= 2		childmask= 1
-> 	      parent   = GRP1:0		parent   = GRP1:0
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  active          idle                !online
-> 	  childmask=1
-> 
-> 	  tmigr_walk.childmask = 0
-> 
-> 4) ... childmask of GRP0:0 is updated by CPU 8 (still part of setup
->    code).
-> 
-> 			     [GRP1:0]
-> 			migrator = 0x00
-> 			active   = 0x00
-> 			nextevt  = KTIME_MAX
-> 		       /                  \
-> 		 [GRP0:0]                  [GRP0:1]
-> 	      migrator = 0x01           migrator = TMIGR_NONE
-> 	      active   = 0x01           active   = 0x00
-> 	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> 	      childmask= 2		childmask= 1
-> 	      parent   = GRP1:0		parent   = GRP1:0
-> 		/         \
-> 	      0          1 .. 7                8
-> 	  active          idle                !online
-> 	  childmask=1
-> 
-> 	  tmigr_walk.childmask = 0
-> 
-> 5) CPU 0 sees the connection to GRP1:0 and now propagates active state to
->    GRP1:0 but with childmask = 0 as stored in propagation data structure.
-> 
-> --> Now GRP1:0 always has a migrator as 0x00 != TMIGR_NONE and for all CPUs
->     it looks like GRP1:0 is always active.
-> 
-> To prevent those races, the setup of the hierarchy is moved into the
-> cpuhotplug prepare callback. The prepare callback is not executed by the
-> CPU which will come online, it is executed by the CPU which prepares
-> onlining of the other CPU. This CPU is active while it is connecting the
-> formerly top level to the new one. This prevents from (A) to happen and it
-> also prevents from any further walk above the formerly top level until that
-> active CPU becomes inactive, releasing the new ->parent and ->childmask
-> updates to be visible by any subsequent walk up above the formerly top
-> level hierarchy. This prevents from (B) to happen. The direction for the
-> updates is now forced to look like "from bottom to top".
-> 
-> However if the active CPU prevents from tmigr_cpu_(in)active() to walk up
-> with the update not-or-half visible, nothing prevents walking up to the new
-> top with a 0 childmask in tmigr_handle_remote_up() or
-> tmigr_requires_handle_remote_up() if the active CPU doing the prepare is
-> not the migrator. But then it looks fine because:
-> 
->   * tmigr_check_migrator() should just return false
->   * The migrator is active and should eventually observe the new childmask
->     at some point in a future tick.
-> 
-> Split setup functionality of online callback into the cpuhotplug prepare
-> callback and setup hotplug state. Change init call into early_initcall() to
-> make sure an already active CPU prepares everything for newly upcoming
-> CPUs. Reorder the code, that all prepare related functions are close to
-> each other and online and offline callbacks are also close together.
-> 
-> Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> The log I shared was with synchronous probing which takes parallel
+> allocation out of the equation (and gives more readable logs) so that is
+> expected. See below for a log with normal async probing that may give
+> some more insight into the race as well (i.e. when ath11k allocation
+> fails with -ENOSPC.)
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Huh, this log is actually pointing at something very ugly. Not a race,
+but some horrible ID confusion. See below.
 
-Thanks!
+> 
+> > > With synchronous probing, allocation always seems to succeed but the
+> > > ath11k (and modem) drivers time out as no interrupts are received.
+> > > 
+> > > The NVMe driver sometimes falls back to INTx signalling and can access
+> > > the drive, but often end up with an MSIX (?!) allocation and then fails
+> > > to probe:
+> > > 
+> > > 	[  132.084740] nvme nvme0: I/O tag 17 (1011) QID 0 timeout, completion polled
+> > 
+> > So one of my test boxes (ThunderX) fails this exact way, while another
+> > (Synquacer) is pretty happy. Still trying to understand the difference
+> > in behaviour.
+> > 
+> > How do you enforce synchronous probing?
+> 
+> I believe there is a kernel parameter for this (e.g.
+> module.async_probe), but I just disable async probing for the Qualcomm
+> PCIe driver I'm using:
+
+I had tried this module parameter, but it didn't change anything on my
+end.
+
+> 
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1684,7 +1684,7 @@ static struct platform_driver qcom_pcie_driver = {
+>                 .name = "qcom-pcie",
+>                 .of_match_table = qcom_pcie_match,
+>                 .pm = &qcom_pcie_pm_ops,
+> -               .probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +               //.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+>         },
+>  };
+
+I'll have a look whether the TX1 PCIe driver uses this. It's
+positively ancient, so I wouldn't bet that it has been touched
+significantly in the past 5 years.
+
+[...]
+
+> [    8.692011] Reusing ITT for devID 0
+> [    8.693668] Reusing ITT for devID 0
+
+This is really odd. It indicates that you have several devices sharing
+the same DeviceID, which I seriously doubt it is the case in a
+laptop. Do you have any non-transparent bridge here? lspci would help.
+
+> [    8.693871] pcieport 0006:00:00.0: PME: Signaling with IRQ 228
+> [    8.694116] pcieport 0006:00:00.0: AER: enabled with IRQ 228
+> [    8.696453] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
+> [    8.703760] IRQ206 -> 0-7 CPU2
+> [    8.710986] pci 0004:00:00.0:   bridge window [mem 0x34300000-0x343fffff]
+> [    8.711136] Reusing ITT for devID 0
+
+Where is the bus number gone?
+
+> [    8.717093] IRQ207 -> 0-7 CPU3
+> [    8.723889] Reusing ITT for devID 0
+> [    8.729600] IRQ208 -> 0-7 CPU4
+> [    8.736507] pcieport 0004:00:00.0: PME: Signaling with IRQ 229
+> [    8.744261] IRQ209 -> 0-7 CPU5
+> [    8.750757] pcieport 0004:00:00.0: AER: enabled with IRQ 229
+> [    8.758038] IRQ210 -> 0-7 CPU6
+> [    9.071793] IRQ211 -> 0-7 CPU7
+> [    9.071807] IRQ212 -> 0-7 CPU0
+> [    9.071819] IRQ213 -> 0-7 CPU1
+> [    9.071831] IRQ214 -> 0-7 CPU2
+> [    9.071842] IRQ215 -> 0-7 CPU3
+> [    9.071852] IRQ216 -> 0-7 CPU4
+> [    9.071863] IRQ217 -> 0-7 CPU5
+> [    9.071875] IRQ218 -> 0-7 CPU6
+> [    9.071886] IRQ219 -> 0-7 CPU7
+> [    9.071897] IRQ220 -> 0-7 CPU0
+> [    9.071907] IRQ221 -> 0-7 CPU1
+> [    9.071920] IRQ222 -> 0-7 CPU2
+> [    9.071930] IRQ223 -> 0-7 CPU3
+> [    9.071941] IRQ224 -> 0-7 CPU4
+> [    9.071952] IRQ225 -> 0-7 CPU5
+> [    9.071962] IRQ226 -> 0-7 CPU6
+> [    9.071973] IRQ227 -> 0-7 CPU7
+> [    9.073568] Reusing ITT for devID 0
+> [    9.073607] ID:0 pID:8192 vID:196
+> [    9.073618] IRQ196 -> 0-7 CPU0
+> [    9.073717] IRQ196 -> 0-7 CPU0
+> [    9.073737] pcieport 0002:00:00.0: PME: Signaling with IRQ 196
+> [    9.086532] pcieport 0002:00:00.0: AER: enabled with IRQ 196
+> [    9.102057] mhi-pci-generic 0004:01:00.0: MHI PCI device found: foxconn-sdx55
+> [    9.109830] mhi-pci-generic 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
+> [    9.119027] mhi-pci-generic 0004:01:00.0: enabling device (0000 -> 0002)
+> [    9.127271] ITS: alloc 8224:8
+> [    9.141500] ITT 8 entries, 3 bits
+> [    9.144502] ID:0 pID:8224 vID:198
+> [    9.144597] ID:1 pID:8225 vID:199
+> [    9.144605] ID:2 pID:8226 vID:200
+> [    9.144612] ID:3 pID:8227 vID:201
+> [    9.144619] ID:4 pID:8228 vID:202
+> [    9.144689] IRQ198 -> 0-7 CPU1
+> [    9.144888] IRQ199 -> 0-7 CPU2
+> [    9.144901] IRQ200 -> 0-7 CPU3
+> [    9.144914] IRQ201 -> 0-7 CPU4
+> [    9.144927] IRQ202 -> 0-7 CPU5
+> [    9.151264] IRQ198 -> 0-7 CPU1
+> [    9.151479] IRQ199 -> 0-7 CPU2
+> [    9.151673] IRQ200 -> 0-7 CPU3
+> [    9.151849] IRQ201 -> 0-7 CPU4
+> [    9.152056] IRQ202 -> 0-7 CPU5
+> [    9.159972] mhi mhi0: Requested to power ON
+> [    9.165275] mhi mhi0: Power on setup success
+> [    9.279951] ath11k_pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
+> [    9.288208] ath11k_pci 0006:01:00.0: enabling device (0000 -> 0002)
+> [    9.301708] nvme nvme0: pci function 0002:01:00.0
+> [    9.307052] Reusing ITT for devID 100
+> [    9.315457] nvme 0002:01:00.0: enabling device (0000 -> 0002)
+
+This is device 0002:01:00.0...
+
+> [    9.326554] Reusing ITT for devID 100
+
+... seen as device 0000:01:00.0. WTF???
+
+> [    9.336332] ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
+
+I'm starting to suspect that the new code doesn't carry all the
+required bits for the DevID, and that we end-up trying to allocated
+interrupts from the pool allocated to another device, which can never
+be a good thing, and would explain why everything dies a painful
+death.
+
+Can you run the same trace with the whole thing reverted? I think
+we're on something here.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
