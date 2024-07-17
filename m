@@ -1,324 +1,659 @@
-Return-Path: <linux-kernel+bounces-255185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6326C933D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E16E933D40
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D011C2388B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827491C2145B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6018D180A8B;
-	Wed, 17 Jul 2024 12:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D018005D;
+	Wed, 17 Jul 2024 12:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFJEEjiF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkufV36d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D161802D9;
-	Wed, 17 Jul 2024 12:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C70838DC3;
+	Wed, 17 Jul 2024 12:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721220885; cv=none; b=Iyxs91TsiDTuG1azXo+w3hGY0FySvOEc1/YQDy9mCgxeO/1YCQWCrsSeMaeYDpDmiNSITyw7soMRfaBiiSuCK+eNMOG6TRsCa1Ffjl2tfLX3V8LtRPh+xpkwadwKxEzKBCgao2msYpiVMcbhM/qVvOHQ8Sw+MnkU/pNqs/5zHVA=
+	t=1721221004; cv=none; b=NJFTmPW/jufO5a+oyytW4Wq8TxmhCgdKDVdRqY7TEn+eD3Rdm61COx52G8Xi//csXGdiF6xQq82BodKdVfCCKk9ryhVAKL2SgD3HiHk8cizOLHQ0pUlrBI5xX/EsuNCXgY80kAYJVbjRXVPFPUAGm9hLdwkU865aiqnu/9MDZWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721220885; c=relaxed/simple;
-	bh=nnLLfbV9bwYftssLu+xiTYTnLCBIkXFWNZcnmK8diPE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZwTbAJ0/Z3Vhz7VSqnKpOA5rMrliz5nalzzhOwUhpSoML3y3CECx++SlK8vJCK0o7bX7oIvOeHAVEJKQrOTo1DV1aSqguW0/AYNSAJjjAJDVYUe0RjZXCOfxsHBYjEiqoXvauKNrRvdfSrxG5895W+APpYJyht2S6JCiQWzwbAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFJEEjiF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C34C4AF12;
-	Wed, 17 Jul 2024 12:54:44 +0000 (UTC)
+	s=arc-20240116; t=1721221004; c=relaxed/simple;
+	bh=zYQo7AQaEwgc+0r5WuoL1ye/X/iUVozRnPfwI3dPSO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OA97dZs7o3wuRnQgVbYXct2UeNLSUqQIWVz3+Wcc4Tg8/tANBwtGrsvVySHqdrF9UdE8h3yOUpqZBVD/APGfr6H1P6Ze+QN1EKCTf+6a+UCMmkD3ddiWMPq1iAXCczMQZKi8mxYDsi4Tifp98ElKU/yN68lSYTIayWFO38xpSgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkufV36d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC65C4AF0E;
+	Wed, 17 Jul 2024 12:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721220884;
-	bh=nnLLfbV9bwYftssLu+xiTYTnLCBIkXFWNZcnmK8diPE=;
+	s=k20201202; t=1721221003;
+	bh=zYQo7AQaEwgc+0r5WuoL1ye/X/iUVozRnPfwI3dPSO8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qFJEEjiFB9PLxkGvActSwDja52iQ32LqLf9iMA5pR8YpE/pGPtekwG/17YorYqb8F
-	 hJvdqt3vie1x/pRr/MU9YKmFgBQBGTCUe7Oyl2VMY2hFqPRhj+PIVsvqMR5vs2kQCm
-	 W3V0oW5141aXkXyR6+bC35FQqk54wa2Sd0J86pbji831Okc3K89jCAgJDN53YfSt/t
-	 hC2NBDx1P85GXKrgNVUzQRdeB99VSGgJ+yeCf8Zr/CSoIYalZP/sTgV5Sk51DGA2R5
-	 Ti2empTA9I96Wki+x0wIoao/r+uyHvvdhCaF7+6ueedpIqXuQ0+usFkok9ndR89lmJ
-	 C42JZSkj+xCOg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sU4B7-00D8zo-GU;
-	Wed, 17 Jul 2024 13:54:41 +0100
-Date: Wed, 17 Jul 2024 13:54:40 +0100
-Message-ID: <86msmg2n73.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
-In-Reply-To: <Zpdxe4ce-XwDEods@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
-	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-	<878qy26cd6.wl-maz@kernel.org>
-	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
-	<86r0bt39zm.wl-maz@kernel.org>
-	<ZpaJaM1G721FdLFn@hovoldconsulting.com>
-	<86plrd2o5o.wl-maz@kernel.org>
-	<Zpdxe4ce-XwDEods@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=WkufV36d/dVTitelzXNk8NpZ81zyOALED3zod9r/vMkUYHxiYbtFCAZYesZL+Tiud
+	 fK/kRQCNVypsRXvYccjgSG9EExc1d6F8gafFkJuS9IeVex79DhWqaakKaGKUuxaUiW
+	 Ti0X9bEpb68NhbgxnEtRDAruDY53kczcsv9K4dn8AgkIYZ9hz4jmqytiN37ohxhfzy
+	 mcBpS8NhuUsIRdXmtcU4quKyZB7+sDEuzAGzc28xmmWPF0WbvCO2sxpBztvTsqAScy
+	 x8hnSkyrdqYeEiPjmUMnK/ML9G4DyJTVHpOBWYdfd2nEvp43G/FjVA+QXZvIfkKUMy
+	 Cq2veskptN8QQ==
+Date: Wed, 17 Jul 2024 14:56:32 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: <shiju.jose@huawei.com>
+Cc: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+ <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+ <rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+ <dan.j.williams@intel.com>, <dave@stgolabs.net>,
+ <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+ <alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+ <ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+ <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+ <jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+ <somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+ <duenwen@google.com>, <mike.malvestuto@intel.com>, <gthelen@google.com>,
+ <wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
+ <wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>,
+ <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+ <roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+ <wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [RFC PATCH v9 02/11] EDAC: Add EDAC scrub control driver
+Message-ID: <20240717145632.436a0cb0@foz.lan>
+In-Reply-To: <20240716150336.2042-3-shiju.jose@huawei.com>
+References: <20240716150336.2042-1-shiju.jose@huawei.com>
+	<20240716150336.2042-3-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 17 Jul 2024 08:23:39 +0100,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Tue, Jul 16, 2024 at 07:21:39PM +0100, Marc Zyngier wrote:
-> > On Tue, 16 Jul 2024 15:53:28 +0100,
-> > Johan Hovold <johan@kernel.org> wrote:
-> > > On Tue, Jul 16, 2024 at 11:30:05AM +0100, Marc Zyngier wrote:
-> > > > On Mon, 15 Jul 2024 15:10:01 +0100,
-> > > > Johan Hovold <johan@kernel.org> wrote:
-> > > > > On Mon, Jul 15, 2024 at 01:58:13PM +0100, Marc Zyngier wrote:
-> > > > > > On Mon, 15 Jul 2024 12:18:47 +0100,
-> > > > > > Johan Hovold <johan@kernel.org> wrote:
-> 
-> > > > > > > This series only showed up in linux-next last Friday and broke interrupt
-> > > > > > > handling on Qualcomm platforms like sc8280xp (e.g. Lenovo ThinkPad X13s)
-> > > > > > > and x1e80100 that use the GIC ITS for PCIe MSIs.
-> > > > > > > 
-> > > > > > > I've applied the series (21 commits from linux-next) on top of 6.10 and
-> > > > > > > can confirm that the breakage is caused by commits:
-> > > > > > > 
-> > > > > > > 	3d1c927c08fc ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
-> > > > > > > 	233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> > > > > > > 
-> > > > > > > Applying the series up until the change before 3d1c927c08fc unbreaks the
-> > > > > > > wifi on one machine:
-> > > > > > > 
-> > > > > > > 	ath11k_pci 0006:01:00.0: failed to enable msi: -22
-> > > > > > > 	ath11k_pci 0006:01:00.0: probe with driver ath11k_pci failed with error -22
-> > > 
-> > > Correction, this doesn't fix the wifi, but I'm not seeing these errors
-> > > with the commit before cc23d1dfc959 as the ath11k driver doesn't get
-> 
-> [ This was supposed to say 3d1c927c08fc, which is the mainline hash,
-> sorry. ]
-> 
-> > > this far (or doesn't probe at all).
-> > 
-> > I think we need to track one thing at a time. The wifi and nvme
-> > problems seem subtly different... Which is the exact commit that
-> > breaks nvme on your machine?
-> 
-> Yeah, forget about 3d1c927c08fc for now, which may have been a red
-> herring since we're also appear to be dealing with some sort of race and
-> (some) symptoms keep changing from boot to boot. The only thing that for
-> certain is that the series breaks MSI and that the NVMe breaks with
-> commit 233db05bc37f ("irqchip/gic-v3-its: Provide MSI parent for
-> PCI/MSI[-X]").
-> 
-> > > > So is this issue actually tied to the async probing? Does it always
-> > > > work if you disable it?
-> > > 
-> > > There seem to multiple issues here.
-> > > 
-> > > With the full series applied and normal async (i.e. parallel) probing of
-> > > the PCIe controllers I sometimes see allocation failing with -ENOSPC
-> > > (e.g. the above ath11k errors). This seems to indicate broken locking
-> > > somewhere.
-> > 
-> > Your log doesn't support this theory. At least not from an ITS
-> > perspective, as it keeps dishing out INTIDs (and it is very hard to
-> > run out of IRQs with the ITS).
-> 
-> The log I shared was with synchronous probing which takes parallel
-> allocation out of the equation (and gives more readable logs) so that is
-> expected. See below for a log with normal async probing that may give
-> some more insight into the race as well (i.e. when ath11k allocation
-> fails with -ENOSPC.)
+Em Tue, 16 Jul 2024 16:03:26 +0100
+<shiju.jose@huawei.com> escreveu:
 
-Huh, this log is actually pointing at something very ugly. Not a race,
-but some horrible ID confusion. See below.
+> From: Shiju Jose <shiju.jose@huawei.com>
+>=20
+> Add generic EDAC scrub control driver supports configuring the memory scr=
+ubbers
+> in the system. The device with scrub feature, get the scrub descriptor fr=
+om the
+> EDAC scrub and registers with the EDAC RAS feature driver, which adds the=
+ sysfs
+> scrub control interface. The scrub control attributes are available to the
+> userspace in /sys/bus/edac/devices/<dev-name>/scrub/.
+>=20
+> Generic EDAC scrub driver and the common sysfs scrub interface promotes
+> unambiguous access from the userspace irrespective of the underlying scrub
+> devices.
+>=20
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  Documentation/ABI/testing/sysfs-edac-scrub |  64 +++++
+>  drivers/edac/Makefile                      |   2 +-
+>  drivers/edac/edac_ras_feature.c            |   1 +
+>  drivers/edac/edac_scrub.c                  | 312 +++++++++++++++++++++
+>  include/linux/edac_ras_feature.h           |  28 ++
+>  5 files changed, 406 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-edac-scrub
+>  create mode 100755 drivers/edac/edac_scrub.c
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-edac-scrub b/Documentation/A=
+BI/testing/sysfs-edac-scrub
+> new file mode 100644
+> index 000000000000..dd19afd5e165
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-edac-scrub
+> @@ -0,0 +1,64 @@
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		The sysfs edac bus devices /<dev-name>/scrub subdirectory
+> +		belongs to the memory scrub control feature, where <dev-name>
+> +		directory corresponds to a device/memory region registered
+> +		with the edac scrub driver and thus registered with the
+> +		generic edac ras driver too.
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/addr_range_base
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RW) The base of the address range of the memory region
+> +		to be scrubbed (on-demand scrubbing).
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/addr_range_size
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RW) The size of the address range of the memory region
+> +		to be scrubbed (on-demand scrubbing).
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/enable_background
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RW) Start/Stop background(patrol) scrubbing if supported.
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/enable_on_demand
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RW) Start/Stop on-demand scrubbing the memory region
+> +		if supported.
 
-> 
-> > > With synchronous probing, allocation always seems to succeed but the
-> > > ath11k (and modem) drivers time out as no interrupts are received.
-> > > 
-> > > The NVMe driver sometimes falls back to INTx signalling and can access
-> > > the drive, but often end up with an MSIX (?!) allocation and then fails
-> > > to probe:
-> > > 
-> > > 	[  132.084740] nvme nvme0: I/O tag 17 (1011) QID 0 timeout, completion polled
-> > 
-> > So one of my test boxes (ThunderX) fails this exact way, while another
-> > (Synquacer) is pretty happy. Still trying to understand the difference
-> > in behaviour.
-> > 
-> > How do you enforce synchronous probing?
-> 
-> I believe there is a kernel parameter for this (e.g.
-> module.async_probe), but I just disable async probing for the Qualcomm
-> PCIe driver I'm using:
+This is a generic comment for all sysfs calls: what happens if not
+supported?
 
-I had tried this module parameter, but it didn't change anything on my
-end.
+There are a couple of ways to implement it, like:
 
-> 
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1684,7 +1684,7 @@ static struct platform_driver qcom_pcie_driver = {
->                 .name = "qcom-pcie",
->                 .of_match_table = qcom_pcie_match,
->                 .pm = &qcom_pcie_pm_ops,
-> -               .probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> +               //.probe_type = PROBE_PREFER_ASYNCHRONOUS,
->         },
+1. Don't create the attribute;
+2. return an error code (-ENOENT? -EINVAL?) if trying to read or
+   write to the devnode - please detail the used error code(s);
+
+In any case, please define the behavior and document it.
+
+=46rom what I see, you're setting 0x444 on RW nodes when write
+is not enabled, but still it is possible to not have RO
+supported. This is specially true as technology evolves, as
+memory controllers and different types of memories may have
+very different ways to control it[1].
+
+[1] If you're curious enough, one legacy example of memories
+    implemented on a very different way was Fully Buffered DIMMs
+    where each DIMM had its own internal chipset to offload
+    certain tasks, including scrubbing and ECC implementation.
+    It ended not being succeeded long term, as it required
+    special DIMMs for server's market, reducing the production
+    scale, but it is an interesting example about how hardware
+    designs could be innovative breaking existing paradigms.
+    The FB-DIMM design actually forced a redesign at the EDAC
+    subsystem, as it was too centered on how an specific type
+    of memory controllers.
+
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/name
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RO) name of the memory scrubber
+> +
+
+
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/cycle_in_hours_available
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RO) Supported range for the scrub cycle in hours by the
+> +		memory scrubber.
+> +
+> +What:		/sys/bus/edac/devices/<dev-name>/scrub/cycle_in_hours
+> +Date:		Oct 2024
+> +KernelVersion:	6.12
+> +Contact:	linux-edac@vger.kernel.org
+> +Description:
+> +		(RW) The scrub cycle in hours specified and it must be with in the
+> +		supported range by the memory scrubber.
+
+Why specifying it in hours? I would use seconds, as it is easy to
+represent one hour as 3600 seconds, but you can't specify a cycle of,
+let's say, 30min, if the minimum range value is one hour.
+
+I mean, we never know how technology will evolve nor how manufacturers will
+implement support for scrubbing cycle on their chipsets.
+
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index c532b57a6d8a..de56cbd039eb 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -10,7 +10,7 @@ obj-$(CONFIG_EDAC)			:=3D edac_core.o
+> =20
+>  edac_core-y	:=3D edac_mc.o edac_device.o edac_mc_sysfs.o
+>  edac_core-y	+=3D edac_module.o edac_device_sysfs.o wq.o
+> -edac_core-y	+=3D edac_ras_feature.o
+> +edac_core-y	+=3D edac_ras_feature.o edac_scrub.o
+> =20
+>  edac_core-$(CONFIG_EDAC_DEBUG)		+=3D debugfs.o
+> =20
+> diff --git a/drivers/edac/edac_ras_feature.c b/drivers/edac/edac_ras_feat=
+ure.c
+> index 24a729fea66f..48927f868372 100755
+> --- a/drivers/edac/edac_ras_feature.c
+> +++ b/drivers/edac/edac_ras_feature.c
+> @@ -36,6 +36,7 @@ static int edac_ras_feat_scrub_init(struct device *pare=
+nt,
+>  {
+>  	sdata->ops =3D sfeat->scrub_ops;
+>  	sdata->private =3D sfeat->scrub_ctx;
+> +	attr_groups[0] =3D edac_scrub_get_desc();
+> =20
+>  	return 1;
+>  }
+> diff --git a/drivers/edac/edac_scrub.c b/drivers/edac/edac_scrub.c
+> new file mode 100755
+> index 000000000000..0b07eafd3551
+> --- /dev/null
+> +++ b/drivers/edac/edac_scrub.c
+> @@ -0,0 +1,312 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Generic EDAC scrub driver supports controlling the memory
+> + * scrubbers in the system and the common sysfs scrub interface
+> + * promotes unambiguous access from the userspace.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
+> +#define pr_fmt(fmt)     "EDAC SCRUB: " fmt
+> +
+> +#include <linux/edac_ras_feature.h>
+> +
+> +static ssize_t addr_range_base_show(struct device *ras_feat_dev,
+> +				    struct device_attribute *attr,
+> +				    char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 base, size;
+> +	int ret;
+> +
+> +	ret =3D ops->read_range(ras_feat_dev->parent, ctx->scrub.private, &base=
+, &size);
+> +	if (ret)
+> +		return ret;
+
+Also a generic comment applied to all devnodes: what if ops->read_range
+is NULL? Shouldn't it be checked? Btw, you could use read_range =3D=3D NULL=
+=20
+if to implement error handling for unsupported features.
+
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", base);
+> +}
+> +
+> +static ssize_t addr_range_size_show(struct device *ras_feat_dev,
+> +				    struct device_attribute *attr,
+> +				    char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 base, size;
+> +	int ret;
+> +
+> +	ret =3D ops->read_range(ras_feat_dev->parent, ctx->scrub.private, &base=
+, &size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", size);
+> +}
+> +
+> +static ssize_t addr_range_base_store(struct device *ras_feat_dev,
+> +				     struct device_attribute *attr,
+> +				     const char *buf, size_t len)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 base, size;
+> +	int ret;
+> +
+> +	ret =3D ops->read_range(ras_feat_dev->parent, ctx->scrub.private, &base=
+, &size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D kstrtou64(buf, 16, &base);
+
+I would use base 0, letting the parser expect "0x" for hexadecimal values.
+Same for other *_store methods.
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D ops->write_range(ras_feat_dev->parent, ctx->scrub.private, base=
+, size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t addr_range_size_store(struct device *ras_feat_dev,
+> +				     struct device_attribute *attr,
+> +				     const char *buf,
+> +				     size_t len)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 base, size;
+> +	int ret;
+> +
+> +	ret =3D ops->read_range(ras_feat_dev->parent, ctx->scrub.private, &base=
+, &size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D kstrtou64(buf, 16, &size);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D ops->write_range(ras_feat_dev->parent, ctx->scrub.private, base=
+, size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t enable_background_store(struct device *ras_feat_dev,
+> +				       struct device_attribute *attr,
+> +				       const char *buf, size_t len)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret =3D kstrtobool(buf, &enable);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D ops->set_enabled_bg(ras_feat_dev->parent, ctx->scrub.private, e=
+nable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t enable_background_show(struct device *ras_feat_dev,
+> +				      struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret =3D ops->get_enabled_bg(ras_feat_dev->parent, ctx->scrub.private, &=
+enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%d\n", enable);
+> +}
+> +
+> +static ssize_t enable_on_demand_show(struct device *ras_feat_dev,
+> +				     struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret =3D ops->get_enabled_od(ras_feat_dev->parent, ctx->scrub.private, &=
+enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%d\n", enable);
+> +}
+> +
+> +static ssize_t enable_on_demand_store(struct device *ras_feat_dev,
+> +				      struct device_attribute *attr,
+> +				      const char *buf, size_t len)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret =3D kstrtobool(buf, &enable);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D ops->set_enabled_od(ras_feat_dev->parent, ctx->scrub.private, e=
+nable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t name_show(struct device *ras_feat_dev,
+> +			 struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	int ret;
+> +
+> +	ret =3D ops->get_name(ras_feat_dev->parent, ctx->scrub.private, buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return strlen(buf);
+> +}
+> +
+> +static ssize_t cycle_in_hours_show(struct device *ras_feat_dev, struct d=
+evice_attribute *attr,
+> +				   char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret =3D ops->cycle_in_hours_read(ras_feat_dev->parent, ctx->scrub.priva=
+te, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t cycle_in_hours_store(struct device *ras_feat_dev, struct =
+device_attribute *attr,
+> +				    const char *buf, size_t len)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	long val;
+> +	int ret;
+> +
+> +	ret =3D kstrtol(buf, 10, &val);
+
+Even here, I would be using base=3D0, but if you only want to support base
+10, please document it at the sysfs ABI.
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D ops->cycle_in_hours_write(ras_feat_dev->parent, ctx->scrub.priv=
+ate, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t cycle_in_hours_range_show(struct device *ras_feat_dev,
+> +					 struct device_attribute *attr,
+> +					 char *buf)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_scrub_ops *ops =3D ctx->scrub.ops;
+> +	u64 min_schrs, max_schrs;
+> +	int ret;
+> +
+> +	ret =3D ops->cycle_in_hours_range(ras_feat_dev->parent, ctx->scrub.priv=
+ate,
+> +					&min_schrs, &max_schrs);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx-0x%llx\n", min_schrs, max_schrs);
+
+Hmm... you added the store in decimal, but here you're showing in
+hexa...=20
+
+Btw, don't group multiple values on a single sysfs node. Instead,=20
+implement two separate devnodes:
+
+	min-scrub-cycle
+	max-scrub-cycle
+
+(see the note above about "hours")
+
+
+> +}
+> +
+> +static DEVICE_ATTR_RW(addr_range_base);
+> +static DEVICE_ATTR_RW(addr_range_size);
+> +static DEVICE_ATTR_RW(enable_background);
+> +static DEVICE_ATTR_RW(enable_on_demand);
+> +static DEVICE_ATTR_RO(name);
+> +static DEVICE_ATTR_RW(cycle_in_hours);
+> +static DEVICE_ATTR_RO(cycle_in_hours_range);
+> +
+> +static struct attribute *scrub_attrs[] =3D {
+> +	&dev_attr_addr_range_base.attr,
+> +	&dev_attr_addr_range_size.attr,
+> +	&dev_attr_enable_background.attr,
+> +	&dev_attr_enable_on_demand.attr,
+> +	&dev_attr_name.attr,
+> +	&dev_attr_cycle_in_hours.attr,
+> +	&dev_attr_cycle_in_hours_range.attr,
+> +	NULL
+> +};
+> +
+> +static umode_t scrub_attr_visible(struct kobject *kobj,
+> +				  struct attribute *a, int attr_id)
+> +{
+> +	struct device *ras_feat_dev =3D kobj_to_dev(kobj);
+> +	struct edac_ras_feat_ctx *ctx;
+> +	const struct edac_scrub_ops *ops;
+> +
+> +	ctx =3D dev_get_drvdata(ras_feat_dev);
+> +	if (!ctx)
+> +		return 0;
+> +
+> +	ops =3D ctx->scrub.ops;
+> +	if (a =3D=3D &dev_attr_addr_range_base.attr ||
+> +	    a =3D=3D &dev_attr_addr_range_size.attr) {
+> +		if (ops->read_range && ops->write_range)
+> +			return a->mode;
+> +		if (ops->read_range)
+> +			return 0444;
+> +		return 0;
+> +	}
+> +	if (a =3D=3D &dev_attr_enable_background.attr) {
+> +		if (ops->set_enabled_bg && ops->get_enabled_bg)
+> +			return a->mode;
+> +		if (ops->get_enabled_bg)
+> +			return 0444;
+> +		return 0;
+> +	}
+> +	if (a =3D=3D &dev_attr_enable_on_demand.attr) {
+> +		if (ops->set_enabled_od && ops->get_enabled_od)
+> +			return a->mode;
+> +		if (ops->get_enabled_od)
+> +			return 0444;
+> +		return 0;
+> +	}
+> +	if (a =3D=3D &dev_attr_name.attr)
+> +		return ops->get_name ? a->mode : 0;
+> +	if (a =3D=3D &dev_attr_cycle_in_hours_range.attr)
+> +		return ops->cycle_in_hours_range ? a->mode : 0;
+> +	if (a =3D=3D &dev_attr_cycle_in_hours.attr) { /* Write only makes littl=
+e sense */
+> +		if (ops->cycle_in_hours_read && ops->cycle_in_hours_write)
+> +			return a->mode;
+> +		if (ops->cycle_in_hours_read)
+> +			return 0444;
+> +		return 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct attribute_group scrub_attr_group =3D {
+> +	.name		=3D "scrub",
+> +	.attrs		=3D scrub_attrs,
+> +	.is_visible	=3D scrub_attr_visible,
+> +};
+> +
+> +/**
+> + * edac_scrub_get_desc - get edac scrub's attr descriptor
+> + *
+> + * Returns attribute_group for the scrub feature.
+> + */
+> +const struct attribute_group *edac_scrub_get_desc(void)
+> +{
+> +	return &scrub_attr_group;
+> +}
+> diff --git a/include/linux/edac_ras_feature.h b/include/linux/edac_ras_fe=
+ature.h
+> index 000e99141023..462f9ecbf9d4 100755
+> --- a/include/linux/edac_ras_feature.h
+> +++ b/include/linux/edac_ras_feature.h
+> @@ -19,6 +19,34 @@ enum edac_ras_feat {
+>  	ras_feat_max
+>  };
+> =20
+> +/**
+> + * struct scrub_ops - scrub device operations (all elements optional)
+> + * @read_range: read base and offset of scrubbing range.
+> + * @write_range: set the base and offset of the scrubbing range.
+> + * @get_enabled_bg: check if currently performing background scrub.
+> + * @set_enabled_bg: start or stop a bg-scrub.
+> + * @get_enabled_od: check if currently performing on-demand scrub.
+> + * @set_enabled_od: start or stop an on-demand scrub.
+> + * @cycle_in_hours_range: retrieve limits on supported cycle in hours.
+> + * @cycle_in_hours_read: read the scrub cycle in hours.
+> + * @cycle_in_hours_write: set the scrub cycle in hours.
+> + * @get_name: get the memory scrubber's name.
+> + */
+> +struct edac_scrub_ops {
+> +	int (*read_range)(struct device *dev, void *drv_data, u64 *base, u64 *s=
+ize);
+> +	int (*write_range)(struct device *dev, void *drv_data, u64 base, u64 si=
+ze);
+> +	int (*get_enabled_bg)(struct device *dev, void *drv_data, bool *enable);
+> +	int (*set_enabled_bg)(struct device *dev, void *drv_data, bool enable);
+> +	int (*get_enabled_od)(struct device *dev, void *drv_data, bool *enable);
+> +	int (*set_enabled_od)(struct device *dev, void *drv_data, bool enable);
+> +	int (*cycle_in_hours_range)(struct device *dev, void *drv_data,  u64 *m=
+in, u64 *max);
+> +	int (*cycle_in_hours_read)(struct device *dev, void *drv_data, u64 *sch=
+rs);
+> +	int (*cycle_in_hours_write)(struct device *dev, void *drv_data, u64 sch=
+rs);
+> +	int (*get_name)(struct device *dev, void *drv_data, char *buf);
+> +};
+> +
+> +const struct attribute_group *edac_scrub_get_desc(void);
+> +
+>  struct edac_ecs_ex_info {
+>  	u16 num_media_frus;
 >  };
 
-I'll have a look whether the TX1 PCIe driver uses this. It's
-positively ancient, so I wouldn't bet that it has been touched
-significantly in the past 5 years.
 
-[...]
-
-> [    8.692011] Reusing ITT for devID 0
-> [    8.693668] Reusing ITT for devID 0
-
-This is really odd. It indicates that you have several devices sharing
-the same DeviceID, which I seriously doubt it is the case in a
-laptop. Do you have any non-transparent bridge here? lspci would help.
-
-> [    8.693871] pcieport 0006:00:00.0: PME: Signaling with IRQ 228
-> [    8.694116] pcieport 0006:00:00.0: AER: enabled with IRQ 228
-> [    8.696453] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-> [    8.703760] IRQ206 -> 0-7 CPU2
-> [    8.710986] pci 0004:00:00.0:   bridge window [mem 0x34300000-0x343fffff]
-> [    8.711136] Reusing ITT for devID 0
-
-Where is the bus number gone?
-
-> [    8.717093] IRQ207 -> 0-7 CPU3
-> [    8.723889] Reusing ITT for devID 0
-> [    8.729600] IRQ208 -> 0-7 CPU4
-> [    8.736507] pcieport 0004:00:00.0: PME: Signaling with IRQ 229
-> [    8.744261] IRQ209 -> 0-7 CPU5
-> [    8.750757] pcieport 0004:00:00.0: AER: enabled with IRQ 229
-> [    8.758038] IRQ210 -> 0-7 CPU6
-> [    9.071793] IRQ211 -> 0-7 CPU7
-> [    9.071807] IRQ212 -> 0-7 CPU0
-> [    9.071819] IRQ213 -> 0-7 CPU1
-> [    9.071831] IRQ214 -> 0-7 CPU2
-> [    9.071842] IRQ215 -> 0-7 CPU3
-> [    9.071852] IRQ216 -> 0-7 CPU4
-> [    9.071863] IRQ217 -> 0-7 CPU5
-> [    9.071875] IRQ218 -> 0-7 CPU6
-> [    9.071886] IRQ219 -> 0-7 CPU7
-> [    9.071897] IRQ220 -> 0-7 CPU0
-> [    9.071907] IRQ221 -> 0-7 CPU1
-> [    9.071920] IRQ222 -> 0-7 CPU2
-> [    9.071930] IRQ223 -> 0-7 CPU3
-> [    9.071941] IRQ224 -> 0-7 CPU4
-> [    9.071952] IRQ225 -> 0-7 CPU5
-> [    9.071962] IRQ226 -> 0-7 CPU6
-> [    9.071973] IRQ227 -> 0-7 CPU7
-> [    9.073568] Reusing ITT for devID 0
-> [    9.073607] ID:0 pID:8192 vID:196
-> [    9.073618] IRQ196 -> 0-7 CPU0
-> [    9.073717] IRQ196 -> 0-7 CPU0
-> [    9.073737] pcieport 0002:00:00.0: PME: Signaling with IRQ 196
-> [    9.086532] pcieport 0002:00:00.0: AER: enabled with IRQ 196
-> [    9.102057] mhi-pci-generic 0004:01:00.0: MHI PCI device found: foxconn-sdx55
-> [    9.109830] mhi-pci-generic 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
-> [    9.119027] mhi-pci-generic 0004:01:00.0: enabling device (0000 -> 0002)
-> [    9.127271] ITS: alloc 8224:8
-> [    9.141500] ITT 8 entries, 3 bits
-> [    9.144502] ID:0 pID:8224 vID:198
-> [    9.144597] ID:1 pID:8225 vID:199
-> [    9.144605] ID:2 pID:8226 vID:200
-> [    9.144612] ID:3 pID:8227 vID:201
-> [    9.144619] ID:4 pID:8228 vID:202
-> [    9.144689] IRQ198 -> 0-7 CPU1
-> [    9.144888] IRQ199 -> 0-7 CPU2
-> [    9.144901] IRQ200 -> 0-7 CPU3
-> [    9.144914] IRQ201 -> 0-7 CPU4
-> [    9.144927] IRQ202 -> 0-7 CPU5
-> [    9.151264] IRQ198 -> 0-7 CPU1
-> [    9.151479] IRQ199 -> 0-7 CPU2
-> [    9.151673] IRQ200 -> 0-7 CPU3
-> [    9.151849] IRQ201 -> 0-7 CPU4
-> [    9.152056] IRQ202 -> 0-7 CPU5
-> [    9.159972] mhi mhi0: Requested to power ON
-> [    9.165275] mhi mhi0: Power on setup success
-> [    9.279951] ath11k_pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
-> [    9.288208] ath11k_pci 0006:01:00.0: enabling device (0000 -> 0002)
-> [    9.301708] nvme nvme0: pci function 0002:01:00.0
-> [    9.307052] Reusing ITT for devID 100
-> [    9.315457] nvme 0002:01:00.0: enabling device (0000 -> 0002)
-
-This is device 0002:01:00.0...
-
-> [    9.326554] Reusing ITT for devID 100
-
-... seen as device 0000:01:00.0. WTF???
-
-> [    9.336332] ath11k_pci 0006:01:00.0: ath11k_pci_alloc_msi - requesting one vector failed: -28
-
-I'm starting to suspect that the new code doesn't carry all the
-required bits for the DevID, and that we end-up trying to allocated
-interrupts from the pool allocated to another device, which can never
-be a good thing, and would explain why everything dies a painful
-death.
-
-Can you run the same trace with the whole thing reverted? I think
-we're on something here.
 
 Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Mauro
 
