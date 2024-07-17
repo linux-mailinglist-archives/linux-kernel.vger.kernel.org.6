@@ -1,82 +1,106 @@
-Return-Path: <linux-kernel+bounces-255656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8E793434B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825DF934357
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF971F21EC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8D4281CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AEC18508A;
-	Wed, 17 Jul 2024 20:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WO0xxgKP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5731849C4;
+	Wed, 17 Jul 2024 20:43:55 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B891CD3D;
-	Wed, 17 Jul 2024 20:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB51CAA6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721248718; cv=none; b=OHUAwrlswTAhiUzk5XNjCIp/KvDZnXcDvlbfZecdt810vkIM3jec40wDloqzWvOr6wOxsX7+igIBiOF/tKALqrsHCRc4DzSDpZ3KDLq+a43IWcxA7U+a4VFztRd+mVpHKkN9p4FV3Iv0lwWlreIeLenX3U/RASrrrkwIikI3b4s=
+	t=1721249035; cv=none; b=ROF5mb4cThndhn64gw+driEYvRe/PF0ESCoas2scwYMD8ihGRVBcM2jmmmGs3fMmG4Da0mvkuHSGylXkXsmpHsGxr6Sr2VLMqL+XQ24EaFV4qohXF1lCVeoIUEiUKg+WPdVxAYeVWd+/BP62mYs8HxmASc05FJqY29rsnvPCe7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721248718; c=relaxed/simple;
-	bh=EovXMZ5rEW5Vy/ltOb0neFhO4PBhwJXVY0P0Kqrtbc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvkAnc7VbyQzWT1iCvbCyNoQqVYZ1e3xK5rRMi1V+W3oV4JaUmFVzIjQ8y8tk+kOqOMpxYMZuvJgfqsnDRyHV4tMIU6Eg1hPTSsNTcTTrR1O2Oac/S64jr+zB9Rs/4lV2rQ7JbD62/8Bn9oo0MbKvzjysSopQbXVijH1kgdP+Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WO0xxgKP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AR4bvvKbgikgr1hNSmWc94sjnbzhhnfkQ6MfYm0zHgg=; b=WO0xxgKP/SivlOIt43TrwECqCb
-	ESdhwMe71LdmH2/CJd8gOCaKfNoDMA3ABHAG3eTnL7UZrEzpNkyVTyZ8TOFjXr5cVD4jimsAYEugf
-	+bN76HC0uVZOzT3EQYZC8o7Ko9YuSgOIvnJKOsahdyw/rShXsfoTpsnoLZcKtOhEi4lo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sUBPu-002jbm-5g; Wed, 17 Jul 2024 22:38:26 +0200
-Date: Wed, 17 Jul 2024 22:38:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, michal.simek@amd.com, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	git@amd.com,
-	Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-Subject: Re: [PATCH net-next] net: axienet: Fix coding style issues
-Message-ID: <518b7c0c-54df-403a-bb06-495526e160a9@lunn.ch>
-References: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
+	s=arc-20240116; t=1721249035; c=relaxed/simple;
+	bh=iVXmB6YrVENZMLXDuu5cPYEF8gKKsjFQMakRGFE6dGc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tU1TJaOr5irRS/iVJqm1YSKQ2v73NA4G5uco9H3BZ8gQ9DI6cCxmQlxBdZW4ku/PK93UP30RF8fCUekWI5bv9mFt3EgrnSDS5MKEMDX8bFiv5BXoO2xgdU7AdpgTfvMFBWaU5I75bWJr3RIgkws63y+FVGDO4ESuRoYsMh7G/RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37715eaa486so545105ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:43:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721249033; x=1721853833;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DbJ2EIQT4oikVjfi6q2SJ3LCIyOpSABsdATxXFzpenw=;
+        b=puG1H/5hGzAy8tit+Je7gRe56U6JYjbihkUxeS9Q/pdabA479sX5npnUC2CVo8/EQj
+         c4oPwDZbpHjD/vd6y8JXPWYKX8awZdnt6l3iScwrWBu4mA/MaZz2qL+hRoeu3bKDkjJ2
+         40OQHwuqxEZOXo2q9cc2aDSBUXA+IE40WRrteHZ/KZEmHj36WqQOLExJpyKm/OA3B3sz
+         YgXX/w01U3V+eGW1Xm2FX2/BiBjmGKdH2TtY4qygHj6Ud6w8ksifQQ4MqBFfkbjhP1k1
+         iNKbCjKAV2XX2V5LAkcNlAdLl3ryoVAtkEywNeLH97gV5SK/FMCCv1Lk89S1aQXndFOH
+         9ykw==
+X-Gm-Message-State: AOJu0YwFPVzO/3O9hADxEdrO9gtaxIunk6yszqaq4nh0BBcmE4UyVz7v
+	n7DflLE8k4iaf2oihrNTtbThjHz1W54pTwJbgIoNA3ALgKyTl09cJ6WHX7EVFJspjOYZrtYCqoh
+	Auw2L2eXqpux7i1uljqMHR6Erwb9PA3HpX5FlmDYc3pF00pcL+c0uowA=
+X-Google-Smtp-Source: AGHT+IHotuBshogsd8ztEwEwb8/0gTWedzByZnk14Wluz9tAOd6w3JOrp5UOSB39eCfW0BUj8XVp6KaPnd1vlmopQouA3o2635w0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1721242483-3121341-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Received: by 2002:a05:6e02:1d8a:b0:36c:5c1b:2051 with SMTP id
+ e9e14a558f8ab-39558956168mr2414115ab.6.1721249032856; Wed, 17 Jul 2024
+ 13:43:52 -0700 (PDT)
+Date: Wed, 17 Jul 2024 13:43:52 -0700
+In-Reply-To: <000000000000e4d9eb061d719657@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002c7ba5061d7785a7@google.com>
+Subject: Re: [syzbot] [PATCH] Fix general protection fault in bch2_checksum
+From: syzbot <syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 18, 2024 at 12:24:43AM +0530, Radhey Shyam Pandey wrote:
-> From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-> 
-> Replace all occurences of (1<<x) by BIT(x) to get rid of checkpatch.pl
-> "CHECK" output "Prefer using the BIT macro".
-> 
-> It also removes unnecessary ftrace-like logging, add missing blank line
-> after declaration and remove unnecessary parentheses around 'ndev->mtu
-> <= XAE_JUMBO_MTU' and 'ndev->mtu > XAE_MTU'.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Ideally, this should of been multiple patches. In general, we want a
-patch to do one thing, which makes it easier to review.
+***
 
-net-next is closed at the moment due to the merge window. Please
-repost in two weeks, once it opens again.
+Subject: [PATCH] Fix general protection fault in bch2_checksum
+Author: cam.alvarez.i@gmail.com
 
-	Andrew
+#syz test 
+Checksum for types BCH_CSUM_chacha20_poly1305_80 and
+BCH_CSUM_chacha20_poly1305_128 are only computed when c is not NULL
+because they require the chacha20 cypher stored in c
+
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+---
+ fs/bcachefs/checksum.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/bcachefs/checksum.c b/fs/bcachefs/checksum.c
+index 3bd3aba90d8f..77b29c73d7a0 100644
+--- a/fs/bcachefs/checksum.c
++++ b/fs/bcachefs/checksum.c
+@@ -220,10 +220,11 @@ struct bch_csum bch2_checksum(struct bch_fs *c, unsigned type,
+ 
+ 	case BCH_CSUM_chacha20_poly1305_80:
+ 	case BCH_CSUM_chacha20_poly1305_128: {
++		struct bch_csum ret = { 0 };
++		if (!c)
++			return ret;
+ 		SHASH_DESC_ON_STACK(desc, c->poly1305);
+ 		u8 digest[POLY1305_DIGEST_SIZE];
+-		struct bch_csum ret = { 0 };
+-
+ 		gen_poly_key(c, desc, nonce);
+ 
+ 		crypto_shash_update(desc, data, len);
+-- 
+2.34.1
+
 
