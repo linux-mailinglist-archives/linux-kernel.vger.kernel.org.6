@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-255210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FA7933D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF20F933D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8C41F23119
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1BAB1C2106C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24FA1802D3;
-	Wed, 17 Jul 2024 13:16:20 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9681802CE;
+	Wed, 17 Jul 2024 13:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="pCn679AA"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F201BF3A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134231E487
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721222180; cv=none; b=RBYWrQaapWqgVjm/rCbdy+jKfKZ68CiE559dTnowbmbNoFzq1JzUUcF3PHTs2yrLwoxlKMIjKcgTk4ip/vT52pekDut3ulwdXJvQtVkLg1uFUjD1pPD7L4H3SESsUMw06oztOlSseHeNGbUspVlyX7AdnlvZTG1nI2JRYjsRGW4=
+	t=1721222144; cv=none; b=sf/8+G6Xj9jCE/Ie0N3FWCNjk8CAI0cTtL3NVMEOodJjWHvV2w3hT/5FKwA5ptVv6Z194SZys/p5olc/ecbqW7yE0jBwttfwz346/QEgORW8lxyH3J7Ts7+3WqA7y4zIcFIlxsjIgy1pnlZ3qf7iOJQ/uoKA5rogaGzd3dl7z+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721222180; c=relaxed/simple;
-	bh=J6MQ4R1W5wk+Dq9MUh5Wu2mQQMu+Rfq0uhrSl0za+vo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=KPBWdEnSvReoh4dVAWmQAL12zN8pIlK17zfd7eraCKcjuNnalOZCA4XFcibZxOYGdMm98Se9BnqT949HmpK2cxqISTERacSJAfOxEMDRgW82xkJfr8ZXAGfUjB3+zqzohebyf27qOgdefJ2SM5HrLd9cGTspNM544VTql6xK+bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-286-suj3PZiePpKJoA_vVWHUeA-1; Wed, 17 Jul 2024 14:16:09 +0100
-X-MC-Unique: suj3PZiePpKJoA_vVWHUeA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 17 Jul
- 2024 14:15:29 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 17 Jul 2024 14:15:29 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Stewart Hildebrand' <stewart.hildebrand@amd.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Michael
- Ellerman" <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
-	<naveen.n.rao@linux.ibm.com>, Thomas Zimmermann <tzimmermann@suse.de>, "Arnd
- Bergmann" <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>, Yongji Xie
-	<elohimes@gmail.com>, =?iso-8859-1?Q?Ilpo_J=E4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Topic: [PATCH v2 0/8] PCI: Align small (<4k) BARs
-Thread-Index: AQHa17cKP+9xH7dU/kmzREQ0omlV2bH64QzQ
-Date: Wed, 17 Jul 2024 13:15:29 +0000
-Message-ID: <0da056616de54589bc1d4b95dcdf5d3d@AcuMS.aculab.com>
-References: <20240716193246.1909697-1-stewart.hildebrand@amd.com>
-In-Reply-To: <20240716193246.1909697-1-stewart.hildebrand@amd.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721222144; c=relaxed/simple;
+	bh=w3lM3QxgiIO2XloHLHUAuPqr2I7Bak5yf/pxxvSHH54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=harkq3t/ALhADOpQanxVsTs7ZkJEaFkKl8APugJYozvTzqHHMyLsWnRgrEKEDL+XKsXxgBfwIpF1ZBdl/Zhl47vfV6uZs3EN3EfWkIA11oFU1lxcahrfJkIdgUyj+IDh+iGwJj94hlaJvduX1VMvx2BGz+vh/dQoCxFimaH+XWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=pCn679AA; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f70a708f54so50416939f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721222141; x=1721826941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfyN59SqKKWvXLU3CmJIUvS3Qc0ugEMt32zK3kDXEnU=;
+        b=pCn679AAqbmQ8aEZ0gMkxczOAnX6RI3DGskk2a67QuSwJJmQ/LVcSQDD4BQ+7G758U
+         Zazq2hfQl/h0iYjfJOutzc9mHP9KeXIGb0X3+XCkoDkZd1yBDghfwBBwtVPjhENR0RQY
+         c/I3z29/8ElRq6es6qhON0x/X6AKbPeqMvItG2ModEdzAhnX65nom1gGKvjsH4fqJeC8
+         lfayo+Xbxm4+cfVxIpqxpB1XsgPnprQGPRASbCAm7dlFuWLr9CcSAoShnJAorkFRtg04
+         aXcOMQfex2KWDt+Ru2+tgeNYg/YMTVb0r+h/BZjWr/p2/53jYW1OqByr/h1tWXkz+glU
+         jqDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721222141; x=1721826941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nfyN59SqKKWvXLU3CmJIUvS3Qc0ugEMt32zK3kDXEnU=;
+        b=gFVGBHNCB928RbcxIge8x78fm0GgrmpYLavVlV2yO0ac3WDRqgf8vMBmK83RM5RwJ4
+         WNAnKSO1PgyaxQvj8hFMbiAsKLmk6NKs+CqEZ4logsicvTgZH7Tdw7UiRQln15bQ5oLd
+         7j4OfCmJOZItzVIh8PD9LuosWw50MCLoVLznw4EwN7qChUzn/wNsex7sXJ8w8geecDLZ
+         lfQ/IKJArhG0CzIPoHFiFQjRmsgjZtQtnFICTuOEylgxP7iqwbb2cRRpzj/OlBhEi9fW
+         ZNt5e+OJvrpoMEFDR8712eOfj62cPzbNWrdu7x2WefobIoadXyJ3HdGPQlrQMFq2zXiT
+         2XqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuimcVGZqJz7/7gZLEKglPLDhe+fLDZUIih/IhB39l0Zg3Wq2v7HQbdoOepqg5u8GzNplT7+IhBxOgJZYy/YVbF0L5+ZWyZo3CGsV
+X-Gm-Message-State: AOJu0Yw1dOk4IlIHTWMC3URchp6qRhlaeVQmNdpqdeDqr/VSDNkQjaV8
+	W03rl4mefswmDYH3E1VxIeKgX+B6DZTRZmM8QzMtqbCumdPSJF+p9BRvqujfSD4=
+X-Google-Smtp-Source: AGHT+IGqABt+N2by4fsdmIqsdoYWgZufcwOnrxKz5lnVlQ+PsNG/iBjeIJbo82SPl4wG/8emOYWz6A==
+X-Received: by 2002:a05:6602:1406:b0:7f9:1b3b:8465 with SMTP id ca18e2360f4ac-817109e76cbmr216963839f.11.1721222141068;
+        Wed, 17 Jul 2024 06:15:41 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c210f21be4sm658490173.91.2024.07.17.06.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 06:15:40 -0700 (PDT)
+Date: Wed, 17 Jul 2024 08:15:40 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Samuel Holland <samuel.holland@sifive.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Pu Lehui <pulehui@huawei.com>, 
+	Puranjay Mohan <puranjay@kernel.org>, Luke Nelson <luke.r.nels@gmail.com>, Xi Wang <xi.wang@gmail.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] riscv: patch: Remove redundant functions
+Message-ID: <20240717-515ffec38da9b1f5df03e42c@orel>
+References: <20240717084102.150914-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717084102.150914-1-alexghiti@rivosinc.com>
 
-From: Stewart Hildebrand
-> Sent: 16 July 2024 20:33
->=20
-> This series sets the default minimum resource alignment to 4k for memory
-> BARs. In preparation, it makes an optimization and addresses some corner
-> cases observed when reallocating BARs. I consider the prepapatory
-> patches to be prerequisites to changing the default BAR alignment.
+On Wed, Jul 17, 2024 at 10:41:02AM GMT, Alexandre Ghiti wrote:
+> Commit edf2d546bfd6f5c4 ("riscv: patch: Flush the icache right after
+> patching to avoid illegal insns") removed the last differences between
+> patch_text_set_nosync() and patch_insn_set(), and between
+> patch_text_nosync() and patch_insn_write().
+> 
+> So remove the redundant *_nosync() functions.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/linux-riscv/CAMuHMdUwx=rU2MWhFTE6KhYHm64phxx2Y6u05-aBLGfeG5696A@mail.gmail.com/
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/errata/sifive/errata.c |  4 ++--
+>  arch/riscv/errata/thead/errata.c  |  2 +-
+>  arch/riscv/include/asm/patch.h    |  3 +--
+>  arch/riscv/kernel/alternative.c   |  4 ++--
+>  arch/riscv/kernel/cpufeature.c    |  2 +-
+>  arch/riscv/kernel/jump_label.c    |  2 +-
+>  arch/riscv/kernel/patch.c         | 24 +-----------------------
+>  arch/riscv/net/bpf_jit_core.c     |  4 ++--
+>  8 files changed, 11 insertions(+), 34 deletions(-)
+>
 
-Should the BARs be page aligned on systems with large pages?
-At least as an option for hypervisor pass-through and any than can be mmap(=
-)ed
-into userspace.
-
-Does any hardware actually have 'silly numbers' of small memory BARs?
-
-I have a vague memory of some ethernet controllers having lots of (?)
-virtual devices that might have separate registers than can be mapped
-out to a hypervisor.
-Expanding those to a large page might be problematic - but needed for secur=
-ity.
-
-For more normal hardware just ensuring that two separate targets don't shar=
-e
-a page while allowing (eg) two 1k BAR to reside in the same 64k page would
-give some security.
-
-Aligning a small MSIX BAR is unlikely to have any effect on the address
-space utilisation (for PCIe) since the bridge will assign a power of two
-sized block - with a big pad (useful for generating pcie errors!)
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
