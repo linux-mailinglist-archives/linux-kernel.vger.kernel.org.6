@@ -1,152 +1,327 @@
-Return-Path: <linux-kernel+bounces-254703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C000933690
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA8C93369A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424BE1F24280
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFF911F22152
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817FB125DB;
-	Wed, 17 Jul 2024 06:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3E125AC;
+	Wed, 17 Jul 2024 06:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TxdDuVHB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iy57Shj+"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nBMYIPwp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C997A11712;
-	Wed, 17 Jul 2024 06:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B0A171A5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721196128; cv=none; b=mTnueleeKqnK1VoAGdf62pU82ateQr+NV6lFBgh6GweBHs2lHHoWddQ32uH+EWYuVBvyy9Om7rlfuc8nKobBzVTtdSRSkKmgx6dJonrV+7k888FdiGfrKIoIaORwmqvOgJjTXIvBCC4TIy5ijoiYyzk6A23Tvd5t3tGdglxS4j8=
+	t=1721196281; cv=none; b=X27r8TbJFlazPKFih903d97ASqT6N1fSWq+j9K/iDtdhWqL1sJz49BHQyQdKAIgIvQenqLBg66nu8Fr4f0R5eB628ZSQLTGHwWyhwZC/Jt7nH6Nrb80H8tKALB4FSimefEYn2TvohgYCUvAezK7XF2NGYOrVcsOVQhwEKbT9o/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721196128; c=relaxed/simple;
-	bh=f+RmEIUQ9VSi19cek3Sz+RL9dW4upJpc7vO2wruJXm4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=gVrXA0Ge1GI4Ac2TaXlFd16s5/07KBWNCRXCgTyILoRSCcuJU7U472ol+qMATuUrE/TBWdZQN+yrcAcmxs6Bl3m4SCgtoLyIZ8Sbq5gkhdmwkGiEcA8d4J658qQwL0h8v1qxAcJV7IWZn+YcfnB5QoUxRc0qA7qzPhFaIKTQLi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TxdDuVHB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iy57Shj+; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id EC27B1380273;
-	Wed, 17 Jul 2024 02:02:05 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Wed, 17 Jul 2024 02:02:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721196125; x=1721282525; bh=s7KuyIqvIg
-	I/k+6qXPqK6+K+0ILQ6zny5br217rA/cg=; b=TxdDuVHBA6pP2KAS6CIrwvUNlj
-	eXMZnKZ+s+Gn8e+mTrnqEfd3NAq531VmO+spYY4WHFjdYiG+C0y2Cv1oulqJJRug
-	McSGhGS+vxIisP70kd+QUSRlOB3S7ek2fTIWs26QCd6BMdXbSLv+ACLWaWgMuw0G
-	LLGbDHxb+ODAv+sDkOn9aqHsW2iNr2Lg+ZEcGzXMoHYcKhlqYp15tK7N4Hc1WaXR
-	gUIVDRnOtEp1qc7NJQGQGSR5Li0/mw5cJod3ROR2NZN0Cei1VvlkD1lENVdytYKu
-	FbMTlh3kfQkKWZHXITUqcAXJJut8/x4bfsLPIQUDM4oKNeI7lRlbfHal+eDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721196125; x=1721282525; bh=s7KuyIqvIgI/k+6qXPqK6+K+0ILQ
-	6zny5br217rA/cg=; b=iy57Shj+rMMq0tgL8F/b4GYe9Nu5PqrGYSCT/PbD9M5/
-	0KhYhe473tb02Gs5inSJPVoB4lIH9FVQdHR1oyz4lo2upKFXmc4nYOYa4teAaq3V
-	R07LkGrhuYforttrNu0XCLMZSeUNJEpz/k4KREfn6ajhuNuibkmPzv43lt8VN0fT
-	i1/a+8BEL5wXsZXK+ilbEO3bXZ1UMllWfAeWH0prDPs6T94pwOc3Z0fIUcrsW9vV
-	tcGWgiFRSV016P+CaygIErZsVUq2BBziw/u7gEZ+YeJzlA6fIwJf89RcGeh12UkR
-	uuW2Y+5Jhls8ywPxJYPKGMpaYqjhZJXvBZsbUWZFag==
-X-ME-Sender: <xms:XF6XZhASZKRtrx88hvmEqjeC4Joes9NXX9VPo9GyHKgpJNnVSx266Q>
-    <xme:XF6XZvgsjLXz3zi9oGV7g2tyYzXvEQ3w8lyegGX3eEuUoarepzwpZNoCIqdAKQySy
-    3eS9905O-rjWOG_Zq8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeehgddutdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:XF6XZslNFrl7P2PNLVmEzkv4YrLUeV64nc8FBVEyYKCWGTO9AQBDRw>
-    <xmx:XF6XZrwgkSDQ7vjyFVOvY8HBHZdrHUnFS9hU3NzLrC3z-S7q4FAgYQ>
-    <xmx:XF6XZmScx7LJyMWu_IbYlUK4h8k_-ZMJQyTixDgUXprSjJv-cP9rag>
-    <xmx:XF6XZuYKltr-lNPOmRWTppGpWmh6NWQqxBsewHtt7h0sujRWIzzZRg>
-    <xmx:XV6XZn_oX9nmRr2w04j_4ZetEq37mOqIJ60LsUeH07ay06T4PzvAJjt_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 83D2419C005D; Wed, 17 Jul 2024 02:02:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721196281; c=relaxed/simple;
+	bh=7bTxG5imj5sFfK+xP870BFlpbNNJHAopLGEAnTGTUvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qPt5WqqoimOFA2+qgjZoTXkLKZJ3XLYX26bIrJU6EUT3d+jiVHu/cZGh0RxaD+iYU36CGMIczAiB3AC7kmYaNmCJE+24mmhsYjMeB2oBLyxmsUCmAMaevodb3ZsKqhnphi0RgzyZRSbQOVamKwDAQsxqi+1RZTvqL8lFJBH06E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nBMYIPwp; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4265b7514fcso2109935e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721196277; x=1721801077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8dbUbbFULfsrE+nsrlyCzBk7XNc7NNIs5oq3jJIx/UQ=;
+        b=nBMYIPwp6wdb0e0Gh/je9vO0yByYX6eEblqmYIr32z8Nrlf+BJE0tzbARHl+m+oACt
+         X475oius8lmdBu8FVG5QGLp4h3HCY8wdyKBF1zauwiZSAGscezkS5Ph9TLlVyPkjthQy
+         kyZwcJ3HKgtDHPNN3wGaE97IaE3u3OuV8QuSGtJOFWxgM4XCzwoL293/RnQAvJZhmqS+
+         f2E3eJqV0MVw/gIiCL2EouwZCCNgiBossIkXTnyslDyF+4jLTiePZlmMn4iu9y1PTAtL
+         UXB4yoT7KF4VfkBTdTVBlKthOKUe20dt1tNdg8SOxsxLEUS++qF1q7XuZhVeZLr8Sceh
+         71lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721196277; x=1721801077;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8dbUbbFULfsrE+nsrlyCzBk7XNc7NNIs5oq3jJIx/UQ=;
+        b=jxHW5G2Qz7ObkUeba9tGDB2jSrbaYymRPImjRiCGqdDBt0loUn1nDOEawLuToJMqxn
+         sVMwxBKuipQ50XP7glXb+fO4qJlQ9dHDcr0Iq+gwaL7xdwRvhLUox045KzhBpO45W27p
+         tGNn1yftM4nOJj/NflrwXKgf1c+xqPhyJ8FddnZ6ZRVJqYbwaJ9MsR/LEfWnQb7GrjS5
+         oI1t2ZDtqOqmwTqnPjGN83wRy3V5/So5qyOYNpOvBlz40iF6U/yn1h78YW/f3vDQ0ACc
+         b2K37qufiKugmsrgd23gF+KNj8EmeyfDkZ+7OwL7SynsskiBvOIwbmKcqHTgOjf4EDyQ
+         YG1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRfLS1BPxDAYHbkNpiSQ1GBHua674i0aO37oA2403E6m+uuQV7cUO2DfwLb5cK5Q3TPyXg9cH5eMbMcnYYpB2Zdi2jOMaALhTD0OV
+X-Gm-Message-State: AOJu0YzVxJYxHew/BhcR8RycfYQmuHJnRLTNzdh7prj/yslcjJtyHM+C
+	S+YJmhHY0zwClFik6NhPV1M6uTH0kEn81T6b/6dGevSVE9HUp6xPKReHyblgeeM=
+X-Google-Smtp-Source: AGHT+IGgTBw59SAll6q8f849Ql4AF2T90E5dzsLW36EmpJYdcpnIk4GBd2+w+Nbh6vr0y5veXIlAlA==
+X-Received: by 2002:adf:f206:0:b0:360:8c88:ab82 with SMTP id ffacd0b85a97d-36831694075mr404751f8f.30.1721196277153;
+        Tue, 16 Jul 2024 23:04:37 -0700 (PDT)
+Received: from alex-rivos.home (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf195sm10708915f8f.42.2024.07.16.23.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 23:04:36 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Ved Shanbhogue <ved@rivosinc.com>,
+	Matt Evans <mev@rivosinc.com>,
+	yunhui cui <cuiyunhui@bytedance.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: [PATCH v4 3/4] riscv: Stop emitting preventive sfence.vma for new vmalloc mappings
+Date: Wed, 17 Jul 2024 08:01:24 +0200
+Message-Id: <20240717060125.139416-4-alexghiti@rivosinc.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240717060125.139416-1-alexghiti@rivosinc.com>
+References: <20240717060125.139416-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <2b6336d1-34e0-48dd-b901-7b5208045597@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
-References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
- <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
- <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
- <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
- <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
-Date: Wed, 17 Jul 2024 08:01:43 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
- linux-snps-arc@lists.infradead.org
-Subject: Re: [GIT PULL] asm-generic updates for 6.11
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024, at 07:08, Linus Torvalds wrote:
-> On Tue, 16 Jul 2024 at 21:57, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Note, it really might be just 'allmodconfig'. We've had things that
->> depend on config entries in the past, eg the whole
->> CONFIG_HEADERS_INSTALL etc could affect things.
+In 6.5, we removed the vmalloc fault path because that can't work (see
+[1] [2]). Then in order to make sure that new page table entries were
+seen by the page table walker, we had to preventively emit a sfence.vma
+on all harts [3] but this solution is very costly since it relies on IPI.
 
-I had tried a partial allmodconfig build earlier to save time,
-did a full build again now, still nothing:
+And even there, we could end up in a loop of vmalloc faults if a vmalloc
+allocation is done in the IPI path (for example if it is traced, see
+[4]), which could result in a kernel stack overflow.
 
-arnd@studio:~/arm-soc/bisect$ make allmodconfig -sj20
-arnd@studio:~/arm-soc/bisect$ make -sj20
-arnd@studio:~/arm-soc/bisect$ touch .config
-arnd@studio:~/arm-soc/bisect$ make allmodconfig -sj20
-arnd@studio:~/arm-soc/bisect$ make -j20
-  SYNC    include/config/auto.conf.cmd
-  CALL    scripts/checksyscalls.sh
-  CHK     kernel/kheaders_data.tar.xz
-arnd@studio:~/arm-soc/bisect$ find . -newer .config
-.
-./arch/arm64/kvm
-./include/config
-./include/config/auto.conf.cmd
-./include/config/auto.conf
-./include/generated
-./include/generated/uapi/linux
-./include/generated/autoconf.h
-./include/generated/rustc_cfg
-./init
-./kernel
-./lib
-./scripts/mod
-./.missing-syscalls.d
+Those preventive sfence.vma needed to be emitted because:
 
-This is in a fresh worktree, doing a native arm64 build
-in the source directory. In case the problem is related to
-changes in high-resolution timestamping, I am running
-a slightly older kernel (still 6.8) and I'm using btrfs
-with relatime for the build here. I also tried on tmpfs
-now, same results. ccache is disabled.
+- if the uarch caches invalid entries, the new mapping may not be
+  observed by the page table walker and an invalidation may be needed.
+- if the uarch does not cache invalid entries, a reordered access
+  could "miss" the new mapping and traps: in that case, we would actually
+  only need to retry the access, no sfence.vma is required.
 
-      Arnd
+So this patch removes those preventive sfence.vma and actually handles
+the possible (and unlikely) exceptions. And since the kernel stacks
+mappings lie in the vmalloc area, this handling must be done very early
+when the trap is taken, at the very beginning of handle_exception: this
+also rules out the vmalloc allocations in the fault path.
+
+Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjorn@kernel.org/ [1]
+Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dylan@andestech.com [2]
+Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-alexghiti@rivosinc.com/ [3]
+Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes.org/ [4]
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+ arch/riscv/include/asm/cacheflush.h  | 18 +++++-
+ arch/riscv/include/asm/thread_info.h |  7 +++
+ arch/riscv/kernel/asm-offsets.c      |  7 +++
+ arch/riscv/kernel/entry.S            | 87 ++++++++++++++++++++++++++++
+ arch/riscv/mm/init.c                 |  2 +
+ 5 files changed, 120 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
+index ce79c558a4c8..8de73f91bfa3 100644
+--- a/arch/riscv/include/asm/cacheflush.h
++++ b/arch/riscv/include/asm/cacheflush.h
+@@ -46,7 +46,23 @@ do {							\
+ } while (0)
+ 
+ #ifdef CONFIG_64BIT
+-#define flush_cache_vmap(start, end)		flush_tlb_kernel_range(start, end)
++extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
++extern char _end[];
++#define flush_cache_vmap flush_cache_vmap
++static inline void flush_cache_vmap(unsigned long start, unsigned long end)
++{
++	if (is_vmalloc_or_module_addr((void *)start)) {
++		int i;
++
++		/*
++		 * We don't care if concurrently a cpu resets this value since
++		 * the only place this can happen is in handle_exception() where
++		 * an sfence.vma is emitted.
++		 */
++		for (i = 0; i < ARRAY_SIZE(new_vmalloc); ++i)
++			new_vmalloc[i] = -1ULL;
++	}
++}
+ #define flush_cache_vmap_early(start, end)	local_flush_tlb_kernel_range(start, end)
+ #endif
+ 
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+index 5d473343634b..0ddf1123b5ba 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -60,6 +60,13 @@ struct thread_info {
+ 	void			*scs_base;
+ 	void			*scs_sp;
+ #endif
++#ifdef CONFIG_64BIT
++	/*
++	 * Used in handle_exception() to save a0, a1 and a2 before knowing if we
++	 * can access the kernel stack.
++	 */
++	unsigned long		a0, a1, a2;
++#endif
+ };
+ 
+ #ifdef CONFIG_SHADOW_CALL_STACK
+diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+index b09ca5f944f7..e94180ba432f 100644
+--- a/arch/riscv/kernel/asm-offsets.c
++++ b/arch/riscv/kernel/asm-offsets.c
+@@ -36,6 +36,8 @@ void asm_offsets(void)
+ 	OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+ 	OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+ 	OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
++
++	OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+ 	OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+ 	OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
+ 	OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
+@@ -43,6 +45,11 @@ void asm_offsets(void)
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 	OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
+ #endif
++#ifdef CONFIG_64BIT
++	OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
++	OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
++	OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
++#endif
+ 
+ 	OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
+ 	OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index 68a24cf9481a..d80b90f99bc1 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -19,6 +19,79 @@
+ 
+ 	.section .irqentry.text, "ax"
+ 
++.macro new_vmalloc_check
++	REG_S 	a0, TASK_TI_A0(tp)
++	csrr 	a0, CSR_CAUSE
++	/* Exclude IRQs */
++	blt  	a0, zero, _new_vmalloc_restore_context_a0
++
++	REG_S 	a1, TASK_TI_A1(tp)
++	/* Only check new_vmalloc if we are in page/protection fault */
++	li   	a1, EXC_LOAD_PAGE_FAULT
++	beq  	a0, a1, _new_vmalloc_kernel_address
++	li   	a1, EXC_STORE_PAGE_FAULT
++	beq  	a0, a1, _new_vmalloc_kernel_address
++	li   	a1, EXC_INST_PAGE_FAULT
++	bne  	a0, a1, _new_vmalloc_restore_context_a1
++
++_new_vmalloc_kernel_address:
++	/* Is it a kernel address? */
++	csrr 	a0, CSR_TVAL
++	bge 	a0, zero, _new_vmalloc_restore_context_a1
++
++	/* Check if a new vmalloc mapping appeared that could explain the trap */
++	REG_S	a2, TASK_TI_A2(tp)
++	/*
++	 * Computes:
++	 * a0 = &new_vmalloc[BIT_WORD(cpu)]
++	 * a1 = BIT_MASK(cpu)
++	 */
++	REG_L 	a2, TASK_TI_CPU(tp)
++	/*
++	 * Compute the new_vmalloc element position:
++	 * (cpu / 64) * 8 = (cpu >> 6) << 3
++	 */
++	srli	a1, a2, 6
++	slli	a1, a1, 3
++	la	a0, new_vmalloc
++	add	a0, a0, a1
++	/*
++	 * Compute the bit position in the new_vmalloc element:
++	 * bit_pos = cpu % 64 = cpu - (cpu / 64) * 64 = cpu - (cpu >> 6) << 6
++	 * 	   = cpu - ((cpu >> 6) << 3) << 3
++	 */
++	slli	a1, a1, 3
++	sub	a1, a2, a1
++	/* Compute the "get mask": 1 << bit_pos */
++	li	a2, 1
++	sll	a1, a2, a1
++
++	/* Check the value of new_vmalloc for this cpu */
++	REG_L	a2, 0(a0)
++	and	a2, a2, a1
++	beq	a2, zero, _new_vmalloc_restore_context
++
++	/* Atomically reset the current cpu bit in new_vmalloc */
++	amoxor.d	a0, a1, (a0)
++
++	/* Only emit a sfence.vma if the uarch caches invalid entries */
++	ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
++
++	REG_L	a0, TASK_TI_A0(tp)
++	REG_L	a1, TASK_TI_A1(tp)
++	REG_L	a2, TASK_TI_A2(tp)
++	csrw	CSR_SCRATCH, x0
++	sret
++
++_new_vmalloc_restore_context:
++	REG_L 	a2, TASK_TI_A2(tp)
++_new_vmalloc_restore_context_a1:
++	REG_L 	a1, TASK_TI_A1(tp)
++_new_vmalloc_restore_context_a0:
++	REG_L	a0, TASK_TI_A0(tp)
++.endm
++
++
+ SYM_CODE_START(handle_exception)
+ 	/*
+ 	 * If coming from userspace, preserve the user thread pointer and load
+@@ -30,6 +103,20 @@ SYM_CODE_START(handle_exception)
+ 
+ .Lrestore_kernel_tpsp:
+ 	csrr tp, CSR_SCRATCH
++
++#ifdef CONFIG_64BIT
++	/*
++	 * The RISC-V kernel does not eagerly emit a sfence.vma after each
++	 * new vmalloc mapping, which may result in exceptions:
++	 * - if the uarch caches invalid entries, the new mapping would not be
++	 *   observed by the page table walker and an invalidation is needed.
++	 * - if the uarch does not cache invalid entries, a reordered access
++	 *   could "miss" the new mapping and traps: in that case, we only need
++	 *   to retry the access, no sfence.vma is required.
++	 */
++	new_vmalloc_check
++#endif
++
+ 	REG_S sp, TASK_TI_KERNEL_SP(tp)
+ 
+ #ifdef CONFIG_VMAP_STACK
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index e3405e4b99af..2367a156c33b 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -36,6 +36,8 @@
+ 
+ #include "../kernel/head.h"
+ 
++u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
++
+ struct kernel_mapping kernel_map __ro_after_init;
+ EXPORT_SYMBOL(kernel_map);
+ #ifdef CONFIG_XIP_KERNEL
+-- 
+2.39.2
+
 
