@@ -1,592 +1,193 @@
-Return-Path: <linux-kernel+bounces-255231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC2F933DBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1CF933DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1331C229ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A9F1C2172A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0340180A94;
-	Wed, 17 Jul 2024 13:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeOFN14i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F25180A7C;
+	Wed, 17 Jul 2024 13:39:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421FE180A77;
-	Wed, 17 Jul 2024 13:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21101180A63
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223539; cv=none; b=bMYKnYidZ1TuQYT5sJsxYJgdlPJcrNc7y1atKwEFL/wfN/gAxJS/VuJdgPX1P1h7AKJGbpZnbYfpXbGKRr+61D8ZGQRLc9hISBd8kxmaeFQZ9VRNKdIBrPqihqh3uoJS8Psz5Ap7J53eN3nD+oW4xvuiXehkylKmIeWr8Ua0kr8=
+	t=1721223562; cv=none; b=sLcBXRqZyQ4gy4J2ke2ELaGSODEKpJCwsbK97t0gG8EwUqIK7nGw97OLw0wz9TU80duvU/z7j2dgB+RUzN1mt52XMv2SA8or2Kz6LjltdyAcg2KNW0JLZtHMcbvbYTPRDi8tG4DZzVbdBqWNq8qqrbLHE4Pa6DbDbfA+IkdJYk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223539; c=relaxed/simple;
-	bh=GgXZJx36NMEVwEidr83rK9F0HIQ6XeJqBWgBWJ+wIFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bS5da/e6WWlOd4yJU2O4kRqF6coulYK2U7YvGDu1v4KB7TpMpzsjSFNf+MQhfjLRj3UFWEzbSFjaeJmZW/lWzqYj22vt8pymcAleD9y5QIf3V494GPfavFekyHctrWY7TjZulT0Ovjt49Vn/K9P9BporaC+2RvF7Px/A0tyfDBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeOFN14i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 723EFC4AF09;
-	Wed, 17 Jul 2024 13:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721223538;
-	bh=GgXZJx36NMEVwEidr83rK9F0HIQ6XeJqBWgBWJ+wIFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UeOFN14iFzrzhjpgKbFpgYfHd5oO3XpV1WHspl2c0/BFD3quIqNcfG2VKXgFCtHtb
-	 R4e20SQ7hJMcD8aHFVfddEOrb9s2JHhnWBy4+Rn9CMrDtC8sM/h7Ig/btZTkv0bROQ
-	 KfPCyIAtcYa+NauNcQrg+H/bsZv8N6XA+LfY1leFpDyZwRwdFqfyF1DItc6WNJv+F1
-	 xQgmKu/b48usdtC1C3O/vtQS8UE4dy+YZbu2EqRvhH6BKAE1xPPwBayfWavo0c+oul
-	 OrSCTb5VpFVLsXP1rdUscowUGpgTuNh6eFr0WM0aKPIjwwhqZQjPl/YJYaL1EZ5s20
-	 AbkFeW/lxMifA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sU4rz-000000002QG-12Bs;
-	Wed, 17 Jul 2024 15:38:59 +0200
-Date: Wed, 17 Jul 2024 15:38:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
-	rdunlap@infradead.org, vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
-	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
-	andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
-	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
-	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
-	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
-	andersson@kernel.org, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
- per device MSI domains
-Message-ID: <ZpfJc80IInRLbRs5@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
- <ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
- <878qy26cd6.wl-maz@kernel.org>
- <ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
- <86r0bt39zm.wl-maz@kernel.org>
- <ZpaJaM1G721FdLFn@hovoldconsulting.com>
- <86plrd2o5o.wl-maz@kernel.org>
- <Zpdxe4ce-XwDEods@hovoldconsulting.com>
- <86msmg2n73.wl-maz@kernel.org>
+	s=arc-20240116; t=1721223562; c=relaxed/simple;
+	bh=8NPf8ai7sO0e5DxJuw+CJCqz7HvOUn+DTNM2pBx4/qI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gynmTairr5g2FdQ+SClQZnC9g1gZ+xz5+GExStV16NN0z3AAxXzoqPALxa+1gVRqvMSSlw4JyYbmx9x9CrVfZUP7osdDDI1OBhQj7a8gDVXqNMxRfEdSxH7ZwOu3ibuurmRAgWaE8tbVuqp3Adb8zLWqhvdsbmXydKlpf350R7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f6218c0d68so135455139f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:39:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721223560; x=1721828360;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GvmIgyL4P2emGOTNThKhMflfj36qHDI5EsWsK7i9RC8=;
+        b=c4bceapGYiKji1Qn4ZDKLdr18pXewnLWIiiGg6XOdb2c6TrebI7AEH9f5sqW43g6sk
+         CfJorRlrdWXk1gCFCg2Li5umh2fI0WzD7ol1UCOtmVdqSqzRKRQCwxXT+fBzX2HGV7Mc
+         rN6gy7NLXVIlPx0Hfy5ab53tBuMNSjDdwm9kvKddyPjiiH0FncgHUMamo4vntWOujVNC
+         lBYzndNGrzrni4KWqnOEejzVSDjly9Xtw2fFRCRdhezAqV2/PCpX2A4rHzWnyojoE85z
+         XmtX7LCSXz8xOgBaGxJGrUyICZEkbvqF2bnp6nu6+PHnRFfXWH8JWq58ScU1HC8k0cDi
+         0yLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWU7p2Mk7LOtH9iOBcspnul9fwTmzZWEDYayeWG98VQhl5f20Mn6e9rrgT+9LRSe4PFolrCiACZVN91dPZ44VXci9fU7ccP03cH81ul
+X-Gm-Message-State: AOJu0YxaF65eIdZyoQIBKkcALFb/7MF8RpCSDyjT9EV2hXYhkLpPx/BH
+	Qgck3thRIgcgr3SaXuP3kIAmUqX2RMaI6BScRQeZisDsfcjU4Yuif+3GCojEDEyxZNas/8z1baQ
+	IngQ7e8brrTJtutRdW+nx0J/6W/HJSThcIhcxETD0TCBtLMpuAeRfj7g=
+X-Google-Smtp-Source: AGHT+IGMvpqviRtnvpnfw7SCED1nyEmJ/xgUnRUzSK0PLOqPQ4K+RBeD75Vxks0EzjVOM8mePTAf+RjRgBleRijhfa0BfWCMvl/L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86msmg2n73.wl-maz@kernel.org>
+X-Received: by 2002:a05:6638:370c:b0:4be:d44b:de24 with SMTP id
+ 8926c6da1cb9f-4c2158e720cmr78694173.2.1721223560350; Wed, 17 Jul 2024
+ 06:39:20 -0700 (PDT)
+Date: Wed, 17 Jul 2024 06:39:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e4d9eb061d719657@google.com>
+Subject: [syzbot] [bcachefs?] general protection fault in bch2_checksum
+From: syzbot <syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 17, 2024 at 01:54:40PM +0100, Marc Zyngier wrote:
-> On Wed, 17 Jul 2024 08:23:39 +0100,
-> Johan Hovold <johan@kernel.org> wrote:
+Hello,
 
-> > I believe there is a kernel parameter for this (e.g.
-> > module.async_probe), but I just disable async probing for the Qualcomm
-> > PCIe driver I'm using:
-> 
-> I had tried this module parameter, but it didn't change anything on my
-> end.
+syzbot found the following issue on:
 
-> I'll have a look whether the TX1 PCIe driver uses this. It's
-> positively ancient, so I wouldn't bet that it has been touched
-> significantly in the past 5 years.
+HEAD commit:    0434dbe32053 Merge tag 'linux_kselftest-next-6.11-rc1' of ..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16061f4e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4b8bd5292e033239
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd3d9835055dacb66f35
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d9ccb5980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12633a79980000
 
-Perhaps async probing just changes the symptoms, the NVMe and wifi
-doesn't work in either case.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3766752b5090/disk-0434dbe3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e3608abc3f91/vmlinux-0434dbe3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c133560ad498/bzImage-0434dbe3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ff0cf9ecbd00/mount_0.gz
 
-> > [    8.692011] Reusing ITT for devID 0
-> > [    8.693668] Reusing ITT for devID 0
-> 
-> This is really odd. It indicates that you have several devices sharing
-> the same DeviceID, which I seriously doubt it is the case in a
-> laptop. Do you have any non-transparent bridge here? lspci would help.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd3d9835055dacb66f35@syzkaller.appspotmail.com
 
-Yeah, and these messages do not show up without the series (see log
-below). They are there in the previous synchronous log however.
+loop0: detected capacity change from 0 to 32768
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000900d: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000000048068-0x000000000004806f]
+CPU: 0 PID: 5080 Comm: syz-executor457 Not tainted 6.10.0-syzkaller-02711-g0434dbe32053 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:gen_poly_key fs/bcachefs/checksum.c:191 [inline]
+RIP: 0010:bch2_checksum+0x1c5/0x770 fs/bcachefs/checksum.c:227
+Code: f6 e8 3f c5 dc fd 48 8b 44 24 28 4c 8d b0 68 80 04 00 ba 20 00 00 00 48 8d 7c 24 60 31 f6 e8 22 c5 dc fd 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 3c c2 dc fd 49 8b 3e 48 b8 00 00
+RSP: 0018:ffffc90003536d40 EFLAGS: 00010202
+RAX: 000000000000900d RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90003536dc0
+RBP: ffffc900035370b0 R08: ffffc90003536dbf R09: 0000000000000000
+R10: ffffc90003536da0 R11: fffff520006a6db8 R12: ffffc90003536de0
+R13: dffffc0000000000 R14: 0000000000048068 R15: 1ffff920006a6db0
+FS:  000055558465b380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005568164b48e0 CR3: 0000000020ce4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ read_one_super+0xd87/0xf40 fs/bcachefs/super-io.c:673
+ __bch2_read_super+0x873/0x1370 fs/bcachefs/super-io.c:751
+ bch2_fs_open+0x246/0xdf0 fs/bcachefs/super.c:2082
+ bch2_mount+0x6b0/0x13c0 fs/bcachefs/fs.c:1931
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb9e3d106a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd63a40f78 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd63a40f90 RCX: 00007feb9e3d106a
+RDX: 0000000020005b00 RSI: 0000000020000040 RDI: 00007ffd63a40f90
+RBP: 0000000000000004 R08: 00007ffd63a40fd0 R09: 0000000000005b4e
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffd63a40fd0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:gen_poly_key fs/bcachefs/checksum.c:191 [inline]
+RIP: 0010:bch2_checksum+0x1c5/0x770 fs/bcachefs/checksum.c:227
+Code: f6 e8 3f c5 dc fd 48 8b 44 24 28 4c 8d b0 68 80 04 00 ba 20 00 00 00 48 8d 7c 24 60 31 f6 e8 22 c5 dc fd 4c 89 f0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 f7 e8 3c c2 dc fd 49 8b 3e 48 b8 00 00
+RSP: 0018:ffffc90003536d40 EFLAGS: 00010202
+RAX: 000000000000900d RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90003536dc0
+RBP: ffffc900035370b0 R08: ffffc90003536dbf R09: 0000000000000000
+R10: ffffc90003536da0 R11: fffff520006a6db8 R12: ffffc90003536de0
+R13: dffffc0000000000 R14: 0000000000048068 R15: 1ffff920006a6db0
+FS:  000055558465b380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005568163d0fb0 CR3: 0000000020ce4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	e8 3f c5 dc fd       	call   0xfddcc544
+   5:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+   a:	4c 8d b0 68 80 04 00 	lea    0x48068(%rax),%r14
+  11:	ba 20 00 00 00       	mov    $0x20,%edx
+  16:	48 8d 7c 24 60       	lea    0x60(%rsp),%rdi
+  1b:	31 f6                	xor    %esi,%esi
+  1d:	e8 22 c5 dc fd       	call   0xfddcc544
+  22:	4c 89 f0             	mov    %r14,%rax
+  25:	48 c1 e8 03          	shr    $0x3,%rax
+* 29:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 f7             	mov    %r14,%rdi
+  33:	e8 3c c2 dc fd       	call   0xfddcc274
+  38:	49 8b 3e             	mov    (%r14),%rdi
+  3b:	48                   	rex.W
+  3c:	b8                   	.byte 0xb8
 
-0002:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
-0002:01:00.0 Non-Volatile memory controller: KIOXIA Corporation NVMe SSD Controller BG4 (DRAM-less)
-0004:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
-0004:01:00.0 Unassigned class [ff00]: Qualcomm Technologies, Inc SDX55 [Snapdragon X55 5G]
-0006:00:00.0 PCI bridge: Qualcomm Technologies, Inc SC8280XP PCI Express Root Port
-0006:01:00.0 Network controller: Qualcomm Technologies, Inc QCNFA765 Wireless Network Adapter (rev 01)
 
-> I'm starting to suspect that the new code doesn't carry all the
-> required bits for the DevID, and that we end-up trying to allocated
-> interrupts from the pool allocated to another device, which can never
-> be a good thing, and would explain why everything dies a painful
-> death.
-> 
-> Can you run the same trace with the whole thing reverted? I think
-> we're on something here.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-See below, using normal asynchronous probing like the previous log.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Johan
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-[    8.129424] qcom-pcie 1c10000.pcie: host bridge /soc@0/pcie@1c10000 ranges:
-[    8.136886] qcom-pcie 1c10000.pcie:       IO 0x0034200000..0x00342fffff -> 0x0000000000
-[    8.145351] qcom-pcie 1c00000.pcie: host bridge /soc@0/pcie@1c00000 ranges:
-[    8.145372] qcom-pcie 1c10000.pcie:      MEM 0x0034300000..0x0035ffffff -> 0x0034300000
-[    8.146042] qcom-pcie 1c20000.pcie: host bridge /soc@0/pcie@1c20000 ranges:
-[    8.146063] qcom-pcie 1c20000.pcie:       IO 0x003c200000..0x003c2fffff -> 0x0000000000
-[    8.146073] qcom-pcie 1c20000.pcie:      MEM 0x003c300000..0x003dffffff -> 0x003c300000
-[    8.152546] qcom-pcie 1c00000.pcie:       IO 0x0030200000..0x00302fffff -> 0x0000000000
-[    8.176372] qcom-pcie 1c00000.pcie:      MEM 0x0030300000..0x0031ffffff -> 0x0030300000
-[    8.266560] qcom-pcie 1c20000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
-[    8.298587] qcom-pcie 1c10000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
-[    8.318753] qcom-pcie 1c00000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 1024G
-[    8.377720] qcom-pcie 1c20000.pcie: PCIe Gen.3 x4 link up
-[    8.384650] qcom-pcie 1c20000.pcie: PCI host bridge to bus 0002:00
-[    8.392099] pci_bus 0002:00: root bus resource [bus 00-ff]
-[    8.398766] pci_bus 0002:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
-[    8.405033] qcom-pcie 1c10000.pcie: PCIe Gen.3 x2 link up
-[    8.408250] pci_bus 0002:00: root bus resource [mem 0x3c300000-0x3dffffff]
-[    8.413899] qcom-pcie 1c10000.pcie: PCI host bridge to bus 0004:00
-[    8.420959] pci 0002:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
-[    8.427201] pci_bus 0004:00: root bus resource [bus 00-ff]
-[    8.427204] pci_bus 0004:00: root bus resource [io  0x0000-0xfffff]
-[    8.427206] pci_bus 0004:00: root bus resource [mem 0x34300000-0x35ffffff]
-[    8.427219] pci 0004:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
-[    8.430158] qcom-pcie 1c00000.pcie: PCIe Gen.2 x1 link up
-[    8.430263] qcom-pcie 1c00000.pcie: PCI host bridge to bus 0006:00
-[    8.430266] pci_bus 0006:00: root bus resource [bus 00-ff]
-[    8.430269] pci_bus 0006:00: root bus resource [io  0x200000-0x2fffff] (bus address [0x0000-0xfffff])
-[    8.430271] pci_bus 0006:00: root bus resource [mem 0x30300000-0x31ffffff]
-[    8.430285] pci 0006:00:00.0: [17cb:010e] type 01 class 0x060400 PCIe Root Port
-[    8.430297] pci 0006:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-[    8.430307] pci 0006:00:00.0: PCI bridge to [bus 01-ff]
-[    8.430313] pci 0006:00:00.0:   bridge window [io  0x200000-0x200fff]
-[    8.430317] pci 0006:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    8.430324] pci 0006:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-[    8.430414] pci 0006:00:00.0: PME# supported from D0 D3hot D3cold
-[    8.431430] pci 0006:01:00.0: [17cb:1103] type 00 class 0x028000 PCIe Endpoint
-[    8.431526] pci 0006:01:00.0: BAR 0 [mem 0x00000000-0x001fffff 64bit]
-[    8.432154] pci 0006:01:00.0: PME# supported from D0 D3hot D3cold
-[    8.432320] pci 0006:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 5.0 GT/s PCIe x1 link at 0006:00:00.0 (capable of 7.876 Gb/s with 8.0 GT/s PCIe x1 link)
-[    8.434723] pci 0002:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-[    8.440358] pci 0004:00:00.0: BAR 0 [mem 0x00000000-0x00000fff]
-[    8.445157] pci 0006:00:00.0: bridge window [mem 0x30400000-0x305fffff]: assigned
-[    8.445160] pci 0006:00:00.0: BAR 0 [mem 0x30300000-0x30300fff]: assigned
-[    8.445163] pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
-[    8.445211] pci 0006:00:00.0: PCI bridge to [bus 01-ff]
-[    8.445214] pci 0006:00:00.0:   bridge window [mem 0x30400000-0x305fffff]
-[    8.445526] ITS: alloc 8192:32
-[    8.445537] ITT 32 entries, 5 bits
-[    8.446675] ID:0 pID:8192 vID:196
-[    8.446697] ID:1 pID:8193 vID:197
-[    8.446702] ID:2 pID:8194 vID:198
-[    8.446707] ID:3 pID:8195 vID:199
-[    8.446712] ID:4 pID:8196 vID:200
-[    8.446718] ID:5 pID:8197 vID:201
-[    8.446722] ID:6 pID:8198 vID:202
-[    8.446727] ID:7 pID:8199 vID:203
-[    8.446732] ID:8 pID:8200 vID:204
-[    8.446738] ID:9 pID:8201 vID:205
-[    8.446743] ID:10 pID:8202 vID:206
-[    8.446748] ID:11 pID:8203 vID:207
-[    8.446753] ID:12 pID:8204 vID:208
-[    8.446758] ID:13 pID:8205 vID:209
-[    8.446763] ID:14 pID:8206 vID:210
-[    8.446768] ID:15 pID:8207 vID:211
-[    8.446773] ID:16 pID:8208 vID:212
-[    8.446777] ID:17 pID:8209 vID:213
-[    8.446783] ID:18 pID:8210 vID:214
-[    8.446788] ID:19 pID:8211 vID:215
-[    8.446805] pci 0002:00:00.0: PCI bridge to [bus 01-ff]
-[    8.446812] pci 0002:00:00.0:   bridge window [io  0x100000-0x100fff]
-[    8.446817] pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    8.446827] pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-[    8.446899] pci 0002:00:00.0: PME# supported from D0 D3hot D3cold
-[    8.448399] pci 0002:01:00.0: [1e0f:0001] type 00 class 0x010802 PCIe Endpoint
-[    8.448489] pci 0002:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
-[    8.449076] pci 0002:01:00.0: PME# supported from D0 D3hot
-[    8.453855] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-[    8.453860] pci 0004:00:00.0:   bridge window [io  0x0000-0x0fff]
-[    8.461133] pci 0002:00:00.0: bridge window [mem 0x3c300000-0x3c3fffff]: assigned
-[    8.461137] pci 0002:00:00.0: BAR 0 [mem 0x3c400000-0x3c400fff]: assigned
-[    8.461141] pci 0002:01:00.0: BAR 0 [mem 0x3c300000-0x3c303fff 64bit]: assigned
-[    8.461182] pci 0002:00:00.0: PCI bridge to [bus 01-ff]
-[    8.461185] pci 0002:00:00.0:   bridge window [mem 0x3c300000-0x3c3fffff]
-[    8.461378] ID:20 pID:8212 vID:216
-[    8.466916] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-[    8.473265] ID:21 pID:8213 vID:217
-[    8.478893] pci 0004:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-[    8.488351] ID:22 pID:8214 vID:218
-[    8.495446] pci 0004:00:00.0: PME# supported from D0 D3hot D3cold
-[    8.502905] ID:23 pID:8215 vID:219
-[    8.509868] pci 0004:01:00.0: [17cb:0306] type 00 class 0xff0000 PCIe Endpoint
-[    8.514345] ID:24 pID:8216 vID:220
-[    8.521029] pci 0004:01:00.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
-[    8.527916] ID:25 pID:8217 vID:221
-[    8.535900] pci 0004:01:00.0: BAR 2 [mem 0x00000000-0x00000fff 64bit]
-[    8.542116] ID:26 pID:8218 vID:222
-[    8.550074] pci 0004:01:00.0: PME# supported from D0 D3hot D3cold
-[    8.556138] ID:27 pID:8219 vID:223
-[    8.562538] pci 0004:01:00.0: 15.752 Gb/s available PCIe bandwidth, limited by 8.0 GT/s PCIe x2 link at 0004:00:00.0 (capable of 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
-[    8.577637] ID:28 pID:8220 vID:224
-[    8.597112] pci 0004:00:00.0: bridge window [mem 0x34300000-0x343fffff]: assigned
-[    8.597753] ID:29 pID:8221 vID:225
-[    8.604711] pci 0004:00:00.0: BAR 0 [mem 0x34400000-0x34400fff]: assigned
-[    8.612214] ID:30 pID:8222 vID:226
-[    8.617572] pci 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
-[    8.624536] ID:31 pID:8223 vID:227
-[    8.624836] pci 0004:01:00.0: BAR 2 [mem 0x34301000-0x34301fff 64bit]: assigned
-[    8.625174] IRQ196 -> 0-7 CPU0
-[    8.625221] ITS: alloc 8224:32
-[    8.625230] ITT 32 entries, 5 bits
-[    8.625370] pci 0004:00:00.0: PCI bridge to [bus 01-ff]
-[    8.625633] IRQ197 -> 0-7 CPU1
-[    8.625888] pci 0004:00:00.0:   bridge window [mem 0x34300000-0x343fffff]
-[    8.626014] ID:0 pID:8224 vID:229
-[    8.626020] ID:1 pID:8225 vID:230
-[    8.626025] ID:2 pID:8226 vID:231
-[    8.626031] ID:3 pID:8227 vID:232
-[    8.626036] ID:4 pID:8228 vID:233
-[    8.626041] ID:5 pID:8229 vID:234
-[    8.626046] ID:6 pID:8230 vID:235
-[    8.626051] ID:7 pID:8231 vID:236
-[    8.626056] ID:8 pID:8232 vID:237
-[    8.626061] ID:9 pID:8233 vID:238
-[    8.626066] ID:10 pID:8234 vID:239
-[    8.626071] ID:11 pID:8235 vID:240
-[    8.626076] ID:12 pID:8236 vID:241
-[    8.626081] ID:13 pID:8237 vID:242
-[    8.626086] ID:14 pID:8238 vID:243
-[    8.626092] ID:15 pID:8239 vID:244
-[    8.626097] ID:16 pID:8240 vID:245
-[    8.626102] ID:17 pID:8241 vID:246
-[    8.626107] ID:18 pID:8242 vID:247
-[    8.626112] ID:19 pID:8243 vID:248
-[    8.626117] ID:20 pID:8244 vID:249
-[    8.626122] ID:21 pID:8245 vID:250
-[    8.626127] ID:22 pID:8246 vID:251
-[    8.626132] ID:23 pID:8247 vID:252
-[    8.626137] ID:24 pID:8248 vID:253
-[    8.626143] ID:25 pID:8249 vID:254
-[    8.626148] ID:26 pID:8250 vID:255
-[    8.626153] ID:27 pID:8251 vID:256
-[    8.626158] ID:28 pID:8252 vID:257
-[    8.626166] IRQ198 -> 0-7 CPU2
-[    8.626177] IRQ199 -> 0-7 CPU3
-[    8.626188] IRQ200 -> 0-7 CPU4
-[    8.626199] IRQ201 -> 0-7 CPU5
-[    8.626210] IRQ202 -> 0-7 CPU6
-[    8.626221] IRQ203 -> 0-7 CPU7
-[    8.626232] IRQ204 -> 0-7 CPU0
-[    8.626243] IRQ205 -> 0-7 CPU1
-[    8.626254] IRQ206 -> 0-7 CPU2
-[    8.626264] IRQ207 -> 0-7 CPU3
-[    8.626275] IRQ208 -> 0-7 CPU4
-[    8.626286] IRQ209 -> 0-7 CPU5
-[    8.626297] IRQ210 -> 0-7 CPU6
-[    8.626308] IRQ211 -> 0-7 CPU7
-[    8.626319] IRQ212 -> 0-7 CPU0
-[    8.626330] IRQ213 -> 0-7 CPU1
-[    8.626341] IRQ214 -> 0-7 CPU2
-[    8.626352] IRQ215 -> 0-7 CPU3
-[    8.626363] IRQ216 -> 0-7 CPU4
-[    8.626374] IRQ217 -> 0-7 CPU5
-[    8.626385] IRQ218 -> 0-7 CPU6
-[    8.626396] IRQ219 -> 0-7 CPU7
-[    8.626407] IRQ220 -> 0-7 CPU0
-[    8.626418] IRQ221 -> 0-7 CPU1
-[    8.626429] IRQ222 -> 0-7 CPU2
-[    8.626704] ID:29 pID:8253 vID:258
-[    8.626965] IRQ223 -> 0-7 CPU3
-[    8.627214] ID:30 pID:8254 vID:259
-[    8.627467] IRQ224 -> 0-7 CPU4
-[    8.627722] ID:31 pID:8255 vID:260
-[    8.627977] IRQ225 -> 0-7 CPU5
-[    8.628312] IRQ229 -> 0-7 CPU5
-[    8.628372] ITS: alloc 8256:32
-[    8.628380] ITT 32 entries, 5 bits
-[    8.628479] IRQ226 -> 0-7 CPU6
-[    8.628723] IRQ230 -> 0-7 CPU6
-[    8.628957] IRQ227 -> 0-7 CPU7
-[    8.629094] ID:0 pID:8256 vID:262
-[    8.629099] ID:1 pID:8257 vID:263
-[    8.629104] ID:2 pID:8258 vID:264
-[    8.629109] ID:3 pID:8259 vID:265
-[    8.629114] ID:4 pID:8260 vID:266
-[    8.629119] ID:5 pID:8261 vID:267
-[    8.629124] ID:6 pID:8262 vID:268
-[    8.629129] ID:7 pID:8263 vID:269
-[    8.629134] ID:8 pID:8264 vID:270
-[    8.629139] ID:9 pID:8265 vID:271
-[    8.629144] ID:10 pID:8266 vID:272
-[    8.629149] ID:11 pID:8267 vID:273
-[    8.629153] ID:12 pID:8268 vID:274
-[    8.629158] ID:13 pID:8269 vID:275
-[    8.629163] ID:14 pID:8270 vID:276
-[    8.629168] ID:15 pID:8271 vID:277
-[    8.629173] ID:16 pID:8272 vID:278
-[    8.629178] ID:17 pID:8273 vID:279
-[    8.629183] ID:18 pID:8274 vID:280
-[    8.629188] ID:19 pID:8275 vID:281
-[    8.629200] IRQ231 -> 0-7 CPU7
-[    8.629211] IRQ232 -> 0-7 CPU0
-[    8.629222] IRQ233 -> 0-7 CPU1
-[    8.629233] IRQ234 -> 0-7 CPU2
-[    8.629244] IRQ235 -> 0-7 CPU3
-[    8.629255] IRQ236 -> 0-7 CPU4
-[    8.629266] IRQ237 -> 0-7 CPU7
-[    8.629277] IRQ238 -> 0-7 CPU0
-[    8.629287] IRQ239 -> 0-7 CPU1
-[    8.629298] IRQ240 -> 0-7 CPU2
-[    8.629309] IRQ241 -> 0-7 CPU3
-[    8.629319] IRQ242 -> 0-7 CPU4
-[    8.629336] IRQ243 -> 0-7 CPU5
-[    8.629346] IRQ244 -> 0-7 CPU6
-[    8.629357] IRQ245 -> 0-7 CPU7
-[    8.629368] IRQ246 -> 0-7 CPU0
-[    8.629379] IRQ247 -> 0-7 CPU1
-[    8.629390] IRQ248 -> 0-7 CPU2
-[    8.629401] IRQ249 -> 0-7 CPU3
-[    8.629411] IRQ250 -> 0-7 CPU4
-[    8.629422] IRQ251 -> 0-7 CPU5
-[    8.629433] IRQ252 -> 0-7 CPU6
-[    8.629670] ID:20 pID:8276 vID:282
-[    8.629908] IRQ253 -> 0-7 CPU0
-[    8.630134] ID:21 pID:8277 vID:283
-[    8.635511] IRQ254 -> 0-7 CPU1
-[    8.642115] ID:22 pID:8278 vID:284
-[    8.649085] IRQ255 -> 0-7 CPU2
-[    8.657029] ID:23 pID:8279 vID:285
-[    8.663285] IRQ256 -> 0-7 CPU3
-[    8.670689] ID:24 pID:8280 vID:286
-[    8.677302] IRQ257 -> 0-7 CPU4
-[    8.682925] ID:25 pID:8281 vID:287
-[    8.688293] IRQ258 -> 0-7 CPU5
-[    8.694547] ID:26 pID:8282 vID:288
-[    8.702234] IRQ259 -> 0-7 CPU6
-[    8.709197] ID:27 pID:8283 vID:289
-[    8.709204] ID:28 pID:8284 vID:290
-[    8.716722] IRQ260 -> 0-7 CPU7
-[    8.722081] ID:29 pID:8285 vID:291
-[    8.842813] ID:30 pID:8286 vID:292
-[    8.842818] ID:31 pID:8287 vID:293
-[    8.842966] IRQ262 -> 0-7 CPU0
-[    8.842982] IRQ263 -> 0-7 CPU1
-[    8.842993] IRQ264 -> 0-7 CPU2
-[    8.843004] IRQ265 -> 0-7 CPU3
-[    8.843016] IRQ266 -> 0-7 CPU4
-[    8.843028] IRQ267 -> 0-7 CPU5
-[    8.843040] IRQ268 -> 0-7 CPU6
-[    8.843051] IRQ269 -> 0-7 CPU7
-[    8.843063] IRQ270 -> 0-7 CPU0
-[    8.843075] IRQ271 -> 0-7 CPU1
-[    8.843087] IRQ272 -> 0-7 CPU2
-[    8.843098] IRQ273 -> 0-7 CPU3
-[    8.843110] IRQ274 -> 0-7 CPU4
-[    8.843122] IRQ275 -> 0-7 CPU5
-[    8.843133] IRQ276 -> 0-7 CPU6
-[    8.843145] IRQ277 -> 0-7 CPU7
-[    8.843157] IRQ278 -> 0-7 CPU0
-[    8.843168] IRQ279 -> 0-7 CPU1
-[    8.843180] IRQ280 -> 0-7 CPU2
-[    8.843192] IRQ281 -> 0-7 CPU3
-[    8.843203] IRQ282 -> 0-7 CPU4
-[    8.843215] IRQ283 -> 0-7 CPU5
-[    8.843227] IRQ284 -> 0-7 CPU6
-[    8.843238] IRQ285 -> 0-7 CPU7
-[    8.843250] IRQ286 -> 0-7 CPU0
-[    8.843262] IRQ287 -> 0-7 CPU1
-[    8.843273] IRQ288 -> 0-7 CPU2
-[    8.843284] IRQ289 -> 0-7 CPU3
-[    8.843296] IRQ290 -> 0-7 CPU4
-[    8.843308] IRQ291 -> 0-7 CPU5
-[    8.843319] IRQ292 -> 0-7 CPU6
-[    8.843331] IRQ293 -> 0-7 CPU7
-[    8.844444] ITS: alloc 8192:1
-[    8.844455] ITT 1 entries, 0 bits
-[    8.845389] ID:0 pID:8192 vID:196
-[    8.845395] ITS: alloc 8193:1
-[    8.845403] IRQ196 -> 0-7 CPU0
-[    8.845405] ITT 1 entries, 0 bits
-[    8.845604] IRQ196 -> 0-7 CPU0
-[    8.845631] pcieport 0006:00:00.0: PME: Signaling with IRQ 196
-[    8.846380] ID:0 pID:8193 vID:197
-[    8.846414] ITS: alloc 8194:1
-[    8.846423] ITT 1 entries, 0 bits
-[    8.857408] IRQ197 -> 0-7 CPU1
-[    8.857440] ID:0 pID:8194 vID:198
-[    8.857450] IRQ198 -> 0-7 CPU2
-[    8.857499] IRQ197 -> 0-7 CPU1
-[    8.857515] pcieport 0002:00:00.0: PME: Signaling with IRQ 197
-[    8.857529] IRQ198 -> 0-7 CPU2
-[    8.858291] pcieport 0006:00:00.0: AER: enabled with IRQ 196
-[    8.866563] pcieport 0002:00:00.0: AER: enabled with IRQ 197
-[    8.872342] pcieport 0004:00:00.0: PME: Signaling with IRQ 198
-[    8.885618] pcieport 0004:00:00.0: AER: enabled with IRQ 198
-[    8.909946] mhi-pci-generic 0004:01:00.0: MHI PCI device found: foxconn-sdx55
-[    8.914659] nvme nvme0: pci function 0002:01:00.0
-[    8.917541] mhi-pci-generic 0004:01:00.0: BAR 0 [mem 0x34300000-0x34300fff 64bit]: assigned
-[    8.922185] nvme 0002:01:00.0: enabling device (0000 -> 0002)
-[    8.930939] mhi-pci-generic 0004:01:00.0: enabling device (0000 -> 0002)
-[    8.937318] ITS: alloc 8195:1
-[    8.944985] ITT 1 entries, 0 bits
-[    8.945289] ITS: alloc 8196:8
-[    8.945303] ITT 8 entries, 3 bits
-[    8.947818] ID:0 pID:8195 vID:201
-[    8.947910] IRQ201 -> 0-7 CPU3
-[    8.948702] ID:0 pID:8196 vID:202
-[    8.948720] ID:1 pID:8197 vID:203
-[    8.950480] IRQ201 -> 0-7 CPU3
-[    8.965330] ID:2 pID:8198 vID:204
-[    8.974909] ID:3 pID:8199 vID:205
-[    8.987215] ID:4 pID:8200 vID:206
-[    9.001562] IRQ202 -> 0-7 CPU4
-[    9.001759] IRQ203 -> 0-7 CPU5
-[    9.001771] IRQ204 -> 0-7 CPU6
-[    9.001849] IRQ205 -> 0-7 CPU7
-[    9.001862] IRQ206 -> 0-7 CPU0
-[    9.003223] IRQ202 -> 0-7 CPU4
-[    9.003449] IRQ203 -> 0-7 CPU5
-[    9.003638] IRQ204 -> 0-7 CPU6
-[    9.003836] IRQ205 -> 0-7 CPU7
-[    9.004007] IRQ206 -> 0-7 CPU0
-[    9.005127] mhi mhi0: Requested to power ON
-[    9.009901] mhi mhi0: Power on setup success
-[    9.015403] nvme nvme0: allocated 61 MiB host memory buffer.
-[    9.169296] ITS: alloc 8204:16
-[    9.169319] ITT 16 entries, 4 bits
-[    9.169492] ID:0 pID:8204 vID:201
-[    9.169516] IRQ201 -> 0-7 CPU3
-[    9.169620] ID:1 pID:8205 vID:211
-[    9.169633] IRQ211 -> 0-7 CPU0
-[    9.169702] ID:2 pID:8206 vID:212
-[    9.169713] IRQ212 -> 0-7 CPU1
-[    9.169904] ID:3 pID:8207 vID:213
-[    9.169917] IRQ213 -> 0-7 CPU2
-[    9.169982] ID:4 pID:8208 vID:214
-[    9.169993] IRQ214 -> 0-7 CPU3
-[    9.170070] ID:5 pID:8209 vID:215
-[    9.170082] IRQ215 -> 0-7 CPU4
-[    9.170143] ID:6 pID:8210 vID:216
-[    9.170155] IRQ216 -> 0-7 CPU5
-[    9.170221] ID:7 pID:8211 vID:217
-[    9.170232] IRQ217 -> 0-7 CPU6
-[    9.170294] ID:8 pID:8212 vID:218
-[    9.170319] IRQ218 -> 0-7 CPU7
-[    9.170460] IRQ201 -> 0-7 CPU3
-[    9.179969] IRQ211 -> 0 CPU0
-[    9.180329] IRQ212 -> 1 CPU1
-[    9.180663] IRQ213 -> 2 CPU2
-[    9.181001] IRQ214 -> 3 CPU3
-[    9.181355] IRQ215 -> 4 CPU4
-[    9.181702] IRQ216 -> 5 CPU5
-[    9.188542] IRQ217 -> 6 CPU6
-[    9.196576] IRQ218 -> 7 CPU7
-[    9.196623] nvme nvme0: 8/0/0 default/read/poll queues
-[    9.206751]  nvme0n1: p1
-[    9.278797] ath11k_pci 0006:01:00.0: BAR 0 [mem 0x30400000-0x305fffff 64bit]: assigned
-[    9.294555] ath11k_pci 0006:01:00.0: enabling device (0000 -> 0002)
-[    9.295634] wwan wwan0: port wwan0qcdm0 attached
-[    9.296105] wwan wwan0: port wwan0mbim0 attached
-[    9.296789] wwan wwan0: port wwan0at0 attached
-[    9.304915] ITS: alloc 8220:32
-[    9.314316] ITT 32 entries, 5 bits
-[    9.324270] ID:0 pID:8220 vID:262
-[    9.338759] ID:1 pID:8221 vID:263
-[    9.338765] ID:2 pID:8222 vID:264
-[    9.338770] ID:3 pID:8223 vID:265
-[    9.338775] ID:4 pID:8224 vID:266
-[    9.338779] ID:5 pID:8225 vID:267
-[    9.338784] ID:6 pID:8226 vID:268
-[    9.338789] ID:7 pID:8227 vID:269
-[    9.338794] ID:8 pID:8228 vID:270
-[    9.338798] ID:9 pID:8229 vID:271
-[    9.338803] ID:10 pID:8230 vID:272
-[    9.338808] ID:11 pID:8231 vID:273
-[    9.338812] ID:12 pID:8232 vID:274
-[    9.338817] ID:13 pID:8233 vID:275
-[    9.338821] ID:14 pID:8234 vID:276
-[    9.338826] ID:15 pID:8235 vID:277
-[    9.338831] ID:16 pID:8236 vID:278
-[    9.338836] ID:17 pID:8237 vID:279
-[    9.338841] ID:18 pID:8238 vID:280
-[    9.338845] ID:19 pID:8239 vID:281
-[    9.338850] ID:20 pID:8240 vID:282
-[    9.338855] ID:21 pID:8241 vID:283
-[    9.338859] ID:22 pID:8242 vID:284
-[    9.338864] ID:23 pID:8243 vID:285
-[    9.338868] ID:24 pID:8244 vID:286
-[    9.338873] ID:25 pID:8245 vID:287
-[    9.338877] ID:26 pID:8246 vID:288
-[    9.338882] ID:27 pID:8247 vID:289
-[    9.338887] ID:28 pID:8248 vID:290
-[    9.338891] ID:29 pID:8249 vID:291
-[    9.338896] ID:30 pID:8250 vID:292
-[    9.338900] ID:31 pID:8251 vID:293
-[    9.338980] IRQ262 -> 0-7 CPU1
-[    9.362613] IRQ263 -> 0-7 CPU2
-[    9.370142] IRQ264 -> 0-7 CPU3
-[    9.377656] IRQ265 -> 0-7 CPU4
-[    9.400274] IRQ266 -> 0-7 CPU5
-[    9.409009] IRQ267 -> 0-7 CPU6
-[    9.409021] IRQ268 -> 0-7 CPU7
-[    9.409033] IRQ269 -> 0-7 CPU0
-[    9.409044] IRQ270 -> 0-7 CPU1
-[    9.409056] IRQ271 -> 0-7 CPU2
-[    9.409067] IRQ272 -> 0-7 CPU3
-[    9.409078] IRQ273 -> 0-7 CPU4
-[    9.409089] IRQ274 -> 0-7 CPU5
-[    9.409100] IRQ275 -> 0-7 CPU6
-[    9.409111] IRQ276 -> 0-7 CPU7
-[    9.409123] IRQ277 -> 0-7 CPU0
-[    9.409134] IRQ278 -> 0-7 CPU1
-[    9.409145] IRQ279 -> 0-7 CPU2
-[    9.409157] IRQ280 -> 0-7 CPU3
-[    9.409168] IRQ281 -> 0-7 CPU4
-[    9.409179] IRQ282 -> 0-7 CPU5
-[    9.409190] IRQ283 -> 0-7 CPU6
-[    9.409201] IRQ284 -> 0-7 CPU7
-[    9.409213] IRQ285 -> 0-7 CPU0
-[    9.409224] IRQ286 -> 0-7 CPU1
-[    9.409235] IRQ287 -> 0-7 CPU2
-[    9.409247] IRQ288 -> 0-7 CPU3
-[    9.409258] IRQ289 -> 0-7 CPU4
-[    9.409270] IRQ290 -> 0-7 CPU5
-[    9.409281] IRQ291 -> 0-7 CPU6
-[    9.409292] IRQ292 -> 0-7 CPU7
-[    9.409303] IRQ293 -> 0-7 CPU0
-[    9.409438] ath11k_pci 0006:01:00.0: MSI vectors: 32
-[    9.426507] ath11k_pci 0006:01:00.0: wcn6855 hw2.0
-[    9.456885] IRQ262 -> 0-7 CPU1
-[    9.467067] IRQ263 -> 0-7 CPU2
-[    9.481466] IRQ264 -> 0-7 CPU3
-[    9.630594] IRQ265 -> 0-7 CPU4
-[    9.630629] IRQ266 -> 0-7 CPU5
-[    9.630655] IRQ267 -> 0-7 CPU6
-[    9.630682] IRQ268 -> 0-7 CPU7
-[    9.630709] IRQ269 -> 0-7 CPU0
-[    9.630735] IRQ270 -> 0-7 CPU1
-[    9.630764] IRQ271 -> 0-7 CPU2
-[    9.640971] IRQ276 -> 0-7 CPU7
-[    9.641039] IRQ277 -> 0-7 CPU0
-[    9.641088] IRQ278 -> 0-7 CPU1
-[    9.641138] IRQ280 -> 0-7 CPU3
-[    9.641182] IRQ281 -> 0-7 CPU4
-[    9.641227] IRQ282 -> 0-7 CPU5
-[    9.651400] IRQ283 -> 0-7 CPU6
-[    9.651442] IRQ284 -> 0-7 CPU7
-[    9.651490] IRQ285 -> 0-7 CPU0
-[    9.651534] IRQ286 -> 0-7 CPU1
-[    9.813900] mhi mhi1: Requested to power ON
-[    9.818607] mhi mhi1: Power on setup success
-[   10.017482] mhi mhi1: Wait for device to enter SBL or Mission mode
-[   10.862765] ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c soc_id 0x400c0200
-[   10.872101] ath11k_pci 0006:01:00.0: fw_version 0x1106196e fw_build_timestamp 2024-01-12 11:30 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.37
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
