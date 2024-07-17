@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-254847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971B093386C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFC4933872
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CB9FB21641
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A106283EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CE4208B8;
-	Wed, 17 Jul 2024 07:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5AB21345;
+	Wed, 17 Jul 2024 08:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OLa17FhX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="iPzmTB+S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IEiv8CYm"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1B21CAB1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BD946BF;
+	Wed, 17 Jul 2024 08:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203184; cv=none; b=O8eYlxm9n5mtYOlfSNBzKrejHfi9OaQUSRC8arSXH0Dhyhu3KXYjSC9q2n7wf+ojXMmdgF/AexARVOlOrdL4SzXAGv7iSbsACfULV1DxIPkTT7a0nxhqfLSjpWmkigS9ya8HHrPUmsXlb8GGFqpsLO+XjUo+RSELV1A8OqoivdE=
+	t=1721203294; cv=none; b=I/1t7dmDcAUL5kYN1UVccwaXeS8c1Z1TRLhnoalosdZ/Ij+NOPec7zlUq4bHLhbGBh0jvE+X/Ewro6ZuewW+NJyHCPPSy/4rPg6zmx+nyDo4PyqdMHPJSbt6VJf4NUJDncuTJ+v18DyBdD/grFtkqrh7EpNxDoDeT0FFtkSK56I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203184; c=relaxed/simple;
-	bh=4kdHFUV5KnPKH1AMa9NEHHGe0CJaGYqG5YhtmXf9DYQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gH5H61TQbpw+eUIGmOMKJpX/EBVrS+zf6kDF5LY1udveee3COgz57SP5YS2P2pE+IYemD1cnYnMNcc3deAsEw8M+K2rYujzoi+u08qWUUSqS1GxrwUXur6RSzlvda2iZQPhJI4PbWSdoa5PPtGqN5rwNRxuOqj9DcIxu01vnIGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OLa17FhX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H7R1uq008170;
-	Wed, 17 Jul 2024 07:59:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	4kdHFUV5KnPKH1AMa9NEHHGe0CJaGYqG5YhtmXf9DYQ=; b=OLa17FhX3qlrnloU
-	zCQGQPKN2tnK9a6URbmmfVUik6d4q+/8t3ErcKwsuhpJaOpKVtnMBPsxe1qPLQ6i
-	pA6nATcnA3e8c6SD9QzCVgLgGuLEAO/2VA+U5EXwU7Xam21anjmjhLtL14Ozz0IS
-	VXL1DVlzR21OT1w+Kv6GSQe+v0xRLIZkil0182wLD5s/wj1LCldr1LKDOUd2Ixvu
-	EVpLbimdqsnxBawReYk5zgu2rWJU2cTbuz2Z64joUwrNJVEX/r2T6VzzzPs3XjXD
-	i3Srzjwdu9aztWOBZDUrr9xrHrCkBx1BtFFx/1D+pOGm/te+6GOS6dTDhOsavpDi
-	qPJ7Hg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e0urs341-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 07:59:20 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46H7xKdw023023;
-	Wed, 17 Jul 2024 07:59:20 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e0urs33y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 07:59:20 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H5OHmS028837;
-	Wed, 17 Jul 2024 07:59:19 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40dwkmu53h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 07:59:19 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46H7xDCj31195884
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 07:59:15 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9514C2004B;
-	Wed, 17 Jul 2024 07:59:13 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B336F20040;
-	Wed, 17 Jul 2024 07:59:12 +0000 (GMT)
-Received: from [9.171.86.104] (unknown [9.171.86.104])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 17 Jul 2024 07:59:12 +0000 (GMT)
-Message-ID: <3976e7a9-b6a2-450c-a891-483644ee88ba@linux.ibm.com>
-Date: Wed, 17 Jul 2024 09:59:12 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [mm/hugetlb_vmemmap] 875fa64577:
- vm-scalability.throughput -34.3% regression
-To: Janosch Frank <frankja@linux.ibm.com>, Yu Zhao <yuzhao@google.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        David Hildenbrand <david@redhat.com>,
-        Frank van der Linden <fvdl@google.com>,
-        Matthew Wilcox
- <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
-        Yang Shi <yang@os.amperecomputing.com>, linux-kernel@vger.kernel.org,
-        ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Marc Hartmayer <mhartmay@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>
-References: <202407091001.1250ad4a-oliver.sang@intel.com>
- <3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8yuVJUFm8pcrV-ZSY9Q1gErcAlT68eLo
-X-Proofpoint-ORIG-GUID: -Nx7rkw7jfYrNy8hcw7tnbrPOG_Up27z
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1721203294; c=relaxed/simple;
+	bh=KnI4mhLw2xvnJF5iQLJMKOgv217MrpgdhzZC6eQdMM8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=FUqoUvBxPADHylJp64NoACtFQ9jCsgG0K3csf2TLh4EG1hXKub8pZVZ2Hda/knL6B45KAYtoO3qRlkINjh78f/RnCpS9mGX03cf9xur2/snnXs7FB+OOQLUen/dsgcfyx06xt5bnqdVFgTcuGq8jEAPPDzVh2rtJLy+kPnRCBnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=iPzmTB+S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IEiv8CYm; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9E28811401F4;
+	Wed, 17 Jul 2024 04:01:31 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Wed, 17 Jul 2024 04:01:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721203291; x=1721289691; bh=H2TbYW11mN
+	7UYagfgm58HiJYNR2mAP7xROw6j1RPLtU=; b=iPzmTB+Sbxj48eBHke5Eyc2G74
+	ZFQGgIkhAmhzzIECTnQlnOEeOFadQwSWERgLblWcuXSQbG5ayz2adewKZb1avGVy
+	EXP68zkrZEL06N0p3ihaqzIR07alAiXhhEx3SYAnXpdXNGTMzbVNl8/WCpP/te6c
+	Wtos6HYakbsYYlaYZVQ776RJOe/QUpJIFHamiVkp6OzJ/8MNjDYALKbhlE1MvS7S
+	2ePNih12Ak7SQ3Szce49X50KhUx+QuET1q+YoEtLuELQHb9LHfE4xCWC1Jhuwm+c
+	e+Vw6VHjl1xhi4QYMpr5DNj2Bnfb7gmUi8UpG9pNVAtuINmLTdV31CR9Rmwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721203291; x=1721289691; bh=H2TbYW11mN7UYagfgm58HiJYNR2m
+	AP7xROw6j1RPLtU=; b=IEiv8CYmMUxHNLpE6hlmXh6GwqqUcQ31YrIEoIeamqRx
+	VWaNpKSYV86Et/Vx67MVrCfx5z9zOoo52LNaL0z9bpM3d4tzwD/obj8DN/S4tENR
+	fSokIQkAMQa7+HnYPT9qxMnJugUC2MboyjapJDdrZt1WU6VXqazuC2d44R9nYuM2
+	0zOXdRnwe6R0AWHAxcUY0F5yM/hqRLXeq5UGDh/2vM1/GXAgmlmCtJGPJ5ehnEb3
+	0UcVDEfVbJNytzpnGIulL3WwqOR1uh6cFl2MQKfSHslTCknLUEfOdwKrDV/41NFf
+	eDaP26DPZ7wM2LWNkqk47g1l9ws/U8ds+Pv7hjI8NA==
+X-ME-Sender: <xms:WnqXZg4pIhSIiKAz5XWsbVKMmfKrqTL6W3H_Ew6wRxCj_k49FJyO1A>
+    <xme:WnqXZh4rTIiGHLV5nftk5_c1chggOyPd3WM_QznKwQvvGSsS7sQ4L4Fhpt25Hj6Qq
+    9fJ0C-8ZkbnkZmG3xk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeehgdduvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:WnqXZvenMzJ1YNRfkyfEts4qCpenTuL5Lp5CM3bwYRE7Q0J2kTbrLQ>
+    <xmx:WnqXZlLafRdtK2Wo1Hetj2q8WbwOqUi2KLge4SS6Zb0UoqJZVX_e8g>
+    <xmx:WnqXZkJll6521kxyFh6lUGpan2JOYoJumVeITgbYopi1eqrbO6_a3g>
+    <xmx:WnqXZmwFLnEZvyeDq9G_pVaUR91uFDvIsNawUFrL9FoSBW8Aemx_bQ>
+    <xmx:W3qXZhDMibW5ZBW41fdJyPq4ezKPW9QOggVDPkI_v1vIKdgwuKvDFjHm>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3C0C519C005E; Wed, 17 Jul 2024 04:01:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0 spamscore=0
- mlxlogscore=826 priorityscore=1501 suspectscore=0 malwarescore=0
- clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170059
+Message-Id: <be80d8f6-2a1b-4f63-a43e-652fa5328d11@app.fastmail.com>
+In-Reply-To: <ZpdnhhaQum_epcGp@hovoldconsulting.com>
+References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
+ <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
+ <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
+ <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
+ <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
+ <2b6336d1-34e0-48dd-b901-7b5208045597@app.fastmail.com>
+ <ZpdnhhaQum_epcGp@hovoldconsulting.com>
+Date: Wed, 17 Jul 2024 10:01:10 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Johan Hovold" <johan@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-snps-arc@lists.infradead.org
+Subject: Re: [GIT PULL] asm-generic updates for 6.11
+Content-Type: text/plain
 
-Am 17.07.24 um 09:52 schrieb Janosch Frank:
-> On 7/9/24 07:11, kernel test robot wrote:
->> Hello,
->>
->> kernel test robot noticed a -34.3% regression of vm-scalability.throughput on:
->>
->>
->> commit: 875fa64577da9bc8e9963ee14fef8433f20653e7 ("mm/hugetlb_vmemmap: fix race with speculative PFN walkers")
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>
->> [still regression on linux-next/master 0b58e108042b0ed28a71cd7edf5175999955b233]
->>
-> This has hit s390 huge page backed KVM guests as well.
-> Our simple start/stop test case went from ~5 to over 50 seconds of runtime.
+On Wed, Jul 17, 2024, at 08:41, Johan Hovold wrote:
+> On Wed, Jul 17, 2024 at 08:01:43AM +0200, Arnd Bergmann wrote:
+>> On Wed, Jul 17, 2024, at 07:08, Linus Torvalds wrote:
+>> > On Tue, 16 Jul 2024 at 21:57, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>> >>
+>> >> Note, it really might be just 'allmodconfig'. We've had things that
+>> >> depend on config entries in the past, eg the whole
+>> >> CONFIG_HEADERS_INSTALL etc could affect things.
+>> 
+>> I had tried a partial allmodconfig build earlier to save time,
+>> did a full build again now, still nothing:
+>
+> FWIW, I noticed this last Friday as well when I did a few builds of
+> linux-next and every change I made triggered what appeared to be a full
+> rebuild of the tree.
+>
+> This was with a trimmed config [1] and separate build tree (tmpfs).
 
-Could this be one of the synchronize_rcu calls? This patch adds lots of them. On s390 with HZ=100 those are really expensive.
+Thanks, that makes it quicker to try out. I'm now using
+your config to do more testing. I still don't see it with
+a normal build though.
+
+I do see that setting the timestamp of syscall.tbl to
+a future date does result in always rebuilding everything,
+but I don't think that is what you are seeing, since that
+also produces a warning from make:
+
+arnd@studio:~/arm-soc/build/bisect$ touch -t 202501010000 arch/x86/entry/syscalls/syscall_64.tbl 
+arnd@studio:~/arm-soc/build/bisect$ make ARCH=x86 CROSS_COMPILE=x86_64-linux- 
+make[2]: Warning: File 'arch/x86/entry/syscalls/syscall_64.tbl' has modification time 14483017 s in the future
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.
+
+     Arnd
 
