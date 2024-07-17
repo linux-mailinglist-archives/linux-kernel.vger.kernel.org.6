@@ -1,562 +1,300 @@
-Return-Path: <linux-kernel+bounces-254815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F9093380B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C1293380E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03ED31C22614
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CA31C2275B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BD71C69C;
-	Wed, 17 Jul 2024 07:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279DE1BF3F;
+	Wed, 17 Jul 2024 07:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7OTDohT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="I280gY8W"
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com [148.163.133.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9C2156E4;
-	Wed, 17 Jul 2024 07:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721201562; cv=none; b=GRP3H3Z+S/iyZLqADY6XWKroq56T7srjuL9aNl77cbfNJmOLqwrz67+02OPZjwgnPJXaSUOjD0PFFKga9Av7fKIxD8mUN7a0me2C/yv6cjmU83AfIhnLn/Aspt/qJgyXvDOfnr79jhQrcIU8QuWED/qDER7K+nrQe0Xaai3E1ys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721201562; c=relaxed/simple;
-	bh=i27nxcDyiHOvPztArrC6qi+r4NctKNPp2sdUHmF2UlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LM6VLL6010Tx5qBlZnHaJXG3amW1Ns3hiI8rPgXvV3fB72A26zTotnL8m77rox9AH3Gc4ACg9+VCjM4OyuqD3g40tQq+mSBK2We/CQ1fuMpfGuJKnKwqsZGEKeIdPvD6uDThwTpgafPFAHiN8ph3Gqk3Rrczwr87eNVicQLR3Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7OTDohT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6D6C32782;
-	Wed, 17 Jul 2024 07:32:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721201562;
-	bh=i27nxcDyiHOvPztArrC6qi+r4NctKNPp2sdUHmF2UlY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E7OTDohTWPDcX0XWI1qjz9eM53TKC7tPxswuRA9Q18fE3szJmGa/WeGodbhj9ufdx
-	 teEnkPW6D+qesX2mAiqco5B6n4YjMWp1SR9cqni1ocTJmwB+G7EE0Chn9JnXedZhX3
-	 IUuWOSgQoPWozO6kcKha+aiUk/1whj2WLfnqt00EjhMU6FQZbC8m8GWKORkZR4NMD5
-	 4stR8pIHxcANxVhuIdVq+9NBDt8fzTx2qMhBjLDtn37ZFfketb5JxQklATcTLvd+7T
-	 h9lHq/AVZ6K1skj9H5FJQCV+Y8QPTYnfkw0lSarpqOGdv7qIJK5IkzdgdHh+4ExVRY
-	 wN+dq2TMKgr3g==
-Message-ID: <8c123882-a5c5-409a-938b-cb5aec9b9ab5@kernel.org>
-Date: Wed, 17 Jul 2024 09:32:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5317577;
+	Wed, 17 Jul 2024 07:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.133.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721201612; cv=fail; b=mBr2WU9JgmrYelkaboVgskyM/2Dc54YK6SGbpz2T1DrK6jutJmVdgOm12zmlbF43YXa+jNFXQCN3wxRJ/PBYdprPNtkcd4gLW02tXf/Uyqea9JsevkOFU9b1Ljq7TN7+HF5if7qLTPsK1qbZp4K4FedwHUUHJEMvpGGuSWAbTdw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721201612; c=relaxed/simple;
+	bh=wrT2QHSTK7EfG4xMSLYPsWCcugrKDb2Dp0qJeakpNQM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=A8CX4EUTT6RUkJU1iKk8TMOQtdZeSYdgFhIwa6xEhEPDQIxGfjbe+NPzzaYtiQoU3GzTlZvQizZ9tlwJOYMiY2C7t86oXyjHRH93bunjy/LOpwtpOV0/HralkChMpw56rF1GQHNpSNPQ5Tldj2PuapUjxBLDiBkymMB4/achkpg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=I280gY8W; arc=fail smtp.client-ip=148.163.133.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
+Received: from pps.filterd (m0170390.ppops.net [127.0.0.1])
+	by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H18t8l029220;
+	Wed, 17 Jul 2024 03:33:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from
+	:to:cc:subject:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=smtpout1; bh=wPxfyjZD
+	he/SCI+SAJNeYunYTHRr1iL6It/QQoGJ9nA=; b=I280gY8W+D14fF8kJKYwtgCo
+	1H2U06uq01j5maW6SPPMO0qxIPUsz8eiQSnWN63fZdeEHaylnHks9OaV5BnHN9kX
+	Ta3qxHBm+kgOgaaHX1zI1Wtt0ioxd/r160OmOkbk1sXNfK+V9ZgVjbX7NANqWqpH
+	0nL3uIaMIa9/KOF3bv08Ztp+C04Fho7gAxaITifMc9xO/3ktRm91G5R7SUgqdtGP
+	Oo2bk/ZyTvPrn3pfzcPpNrTfIQ+lJFm4noUZ6ptqYhBaVaac5KqhXeZnS1JiKxKN
+	r4vMftp6auKMS230pzcSkp9acKA6K8ZQFr9k8CVpcyVVLDlFP01ciLCKr37WAw==
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+	by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 40dwfp311y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 03:33:13 -0400 (EDT)
+Received: from pps.filterd (m0142693.ppops.net [127.0.0.1])
+	by mx0a-00154901.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 46H7RwcU037904;
+	Wed, 17 Jul 2024 03:33:13 -0400
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2044.outbound.protection.outlook.com [104.47.51.44])
+	by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 40e9kf02mr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 17 Jul 2024 03:33:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AjkIvffwgG3CHmt1lhHNtdk5ifk7WwW2KzqWWCvNNtD/QNG0DijhBV0/7kRpjRDvDCK6YaWL+AhtQvkSf2B/jVpoeSFCXdpwWEg46C1gqu7Hjf3r8Zt3u2thdA/8ixKpqpMv965T420WF9RPANQ9Z5aVbSg1rPjvLmLhrqP14vqq+BJmK6T8hrF62IUdDrbRsU+Pu4KIC+H2uPNXmcmimTQdTiLVlom278e5PIACZZxJ39/qYD5TfOitekI4UBxiu+tR/iVoFymG6gGzTHTxC+GobKr5Bm6yh0dCRgNuLsSGvM1kt3DBNKvcKxXjOvwPzCUX7ri0d5NbxGmO1rgWbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wPxfyjZDhe/SCI+SAJNeYunYTHRr1iL6It/QQoGJ9nA=;
+ b=h8ONwCSrF1AEZzXyOGowO0SG/TSu+6Gi+/B4splY8u3y2hq+x0C+J0r30M1QDodP3pZrUWcSuaAGBSMrXIY8GEOEQPEcAaIQBatQZa5rAfXnfNMI3OZs2fDHPUQqUhBgoK0/KbqRCSA0xYhHWRqXQTAyjxlQJaYIKe499li3hfEpBxEQXpYfSy3AM1tkdcf4Iy6Y/Eh4RlB/zCIr5+eHIpFjnJpi+xObjS9gzu3Hdkzo7jOMFDXsxM3y+AP1jikFiuDE4GyYnrZFtb1jCsQI3NHCoaCJVDX8NtCAYjCSg0wBayRVmAyuF4ZCX4HC3vDX5k+g+0orUFNWC0euSfHu7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
+ dkim=pass header.d=dell.com; arc=none
+Received: from DS7PR19MB5709.namprd19.prod.outlook.com (2603:10b6:8:70::15) by
+ PH8PR19MB6881.namprd19.prod.outlook.com (2603:10b6:510:1bd::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.30; Wed, 17 Jul
+ 2024 07:33:09 +0000
+Received: from DS7PR19MB5709.namprd19.prod.outlook.com
+ ([fe80::3d06:d879:7717:36e0]) by DS7PR19MB5709.namprd19.prod.outlook.com
+ ([fe80::3d06:d879:7717:36e0%5]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
+ 07:33:08 +0000
+From: "Shao, Marshall" <Marshall.Shao@Dell.com>
+To: "ardb@kernel.org" <ardb@kernel.org>,
+        "linux-efi@vger.kernel.org"
+	<linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "bp@alien8.de"
+	<bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
+        "tglx@linutronix.de"
+	<tglx@linutronix.de>
+CC: "Mishra, Ashish" <Ashish.Mishra4@dell.com>,
+        "Dion, Christopher"
+	<Christopher.Dion@dell.com>,
+        "Caisse, Joe" <Joe.Caisse@dell.com>,
+        "Chia, Jia
+ Yuan" <JiaYuan.Chia@dell.com>,
+        "Mukundan, Govind" <Govind.Mukundan@dell.com>
+Subject: [Patch] Do not clear BSS region in x86 stub
+Thread-Topic: [Patch] Do not clear BSS region in x86 stub
+Thread-Index: AdrYGyaFCseU4QE3SCibBf0Ev6R9+w==
+Date: Wed, 17 Jul 2024 07:33:08 +0000
+Message-ID: 
+ <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ActionId=37d26f2c-3fd7-48a6-ba05-08288b1c2997;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ContentBits=0;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Enabled=true;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Method=Standard;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Name=No
+ Protection (Label Only) - Internal
+ Use;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2024-07-17T07:28:18Z;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS7PR19MB5709:EE_|PH8PR19MB6881:EE_
+x-ms-office365-filtering-correlation-id: 78bdf296-d3a6-4fa8-5b06-08dca632b4a9
+x-exotenant: 2khUwGVqB6N9v58KS13ncyUmMJd8q4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?vBBoP6Qa8Kjz1+CSFl2kiJ8Ibc1IBuuCHG0/I6e3UvWo/ZtWhOGOVot3bm1p?=
+ =?us-ascii?Q?fRR4mgR8Ndm/dEUW7RigXN8z585vgxGBZ2TNJ23SV7h4pcduKBMfvXZRQKuQ?=
+ =?us-ascii?Q?59ZG1f+rdGhf+Pj4xOBt+yQcBKdfwIuyD2A7kdDwZ3cbAhFg9v0gkug5/sek?=
+ =?us-ascii?Q?qkz//MC1aMLjAYuENFOVTiFvPQhUP5iXiocjY91N0mw0Gz1hFY+f/sQzEzds?=
+ =?us-ascii?Q?E59sRcW13JDr1ytnEA/2MrFuBjfgA5RWRvw+KE9kegIES12cJP322MCB8/NN?=
+ =?us-ascii?Q?pJmAgsTL4olm6lMuS4x2c7JHPFgcasktIvCzWLcjIbqi4MUPlp1OfXCem9x5?=
+ =?us-ascii?Q?b3xqO7f1kefEh5Ov/Gx1iPYl7yKsj91BB8GmqSgPiVTGD2sWVzOzuDmzdCEr?=
+ =?us-ascii?Q?gIQgAAA6aY9GsZPHpICnhQDeV2bo6gWYnrMEVPv+UdkM5CJuqjzFoVtbFryO?=
+ =?us-ascii?Q?/+ezlDsPGZdnhL9NPtUjOIta/KIHrA0ev62Zs0v88A2BHt/HqdZo4pjk2PO7?=
+ =?us-ascii?Q?ljtyzImLKqhAGH4CmOIpCCam/OuHedVpeJU+iu/UXLf6ql1EEf7iqk7CU5Bs?=
+ =?us-ascii?Q?1scc3bE8WT9MdeXDxPNl0vqD27J6nKSglrOoan4WmUnj3rst3xr+MDHrICBT?=
+ =?us-ascii?Q?3uSYVlS31hGhtG0QeZWyy3fRuo+SQA+Bx7gnxXrxEA4jO9I2vujn1I56b/A8?=
+ =?us-ascii?Q?R+s2dLmLCvKH0t5E9BxfOpdFWttH6J6uTCNz56M3IigJJxJJdhxJqH+a19ou?=
+ =?us-ascii?Q?yFEP1b4f7j8jiR7ooEEA+SSJsdSO879wzXKx8up/WdhA2Yf15XuzTfeTOHxl?=
+ =?us-ascii?Q?DkzGN2qX0APlAgTtDWxRhvvu66Syn88o87+7RdsVSJquVmVELlNX05aE1Bs2?=
+ =?us-ascii?Q?CqjFInXztJQguIoRP4ZZCkP8nx/EDPZdS+vo3OT31dFHK0ezkf4dQqK2MGCO?=
+ =?us-ascii?Q?ZkXXCPQ19u9wUoqJ+z68ZZZGaIsNlcoxT6sGHgirk+3Ch8bqCcnkjKUCfyEl?=
+ =?us-ascii?Q?3tK3+lKrryWgk4VF4+QnVR2Wf6UXZvwxeKroAzJyg7tTfbqPOykYiryhIc4s?=
+ =?us-ascii?Q?2vUpaolI2O/0vai1D2JIjCx8DcO5xCSqRWZwHatgqMmNgxbTbSkn+3CoH1kE?=
+ =?us-ascii?Q?29Yj6/bjqLMepmJ2QVNA15oMeeOcS6YBPh+tgvyDkN/VkG48y767qJIiArLg?=
+ =?us-ascii?Q?el18VYc/i1SQCERreiZS8b3pxf1WSl6CxJCPqmxJE+BkdclRVFuqTRU6XNdm?=
+ =?us-ascii?Q?NayIa+D+3N7FJNGsC5AEFKGBVuHxs3/gy2CBc4DePZSFDQqsisLviyL7pKO2?=
+ =?us-ascii?Q?Y2IwBI+s0DzxzGWindHhFB/8GGEmZKa+XO0aEu1D0LpcxcgEy2T0p8fjAeRq?=
+ =?us-ascii?Q?OUES6l7q6a9Ftf8qePEE32pd1GIvJjWyfoWezThnSgGoLEAEog=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR19MB5709.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?A/wmB0Hi8B9sqSYyrIdh0Ce3mdayOQKr7migiBJaOsp+qrNZAscBYxlp+ihi?=
+ =?us-ascii?Q?sObLzS8i36BF8AVY0XmCciU0NJ9UbDFs/kkrfdDxh1Tg1Dlq8W4psac/CVIY?=
+ =?us-ascii?Q?4xKLdjMPTLcfIcEs+IHgCHjSHFwiMuzg3IOZsy3ltaf7Zc8gaoDiA21f+x1w?=
+ =?us-ascii?Q?6frOpFW94Bf05deNaXweBD290AALkj/epl0iDQIJyAnw23aear+/Y5cCREhf?=
+ =?us-ascii?Q?s3jamUu0SZWeJWtjH9cBtZn1MIoIfKbXgdh/9XviROLLxlXA4z5oiV3536x5?=
+ =?us-ascii?Q?4SCQlEyLbTkhqo9Wp7uq5ZuBbBjJudiyuFx85cwmFrIGjNKe4b3aPEECTf5S?=
+ =?us-ascii?Q?WdRLHswaqci0onwCPxK4QXpVoPe79tCMNDrKbLNs1kyU1fiD6mFlPEAGRiRO?=
+ =?us-ascii?Q?x9d+Jw1L9wDkwoPR9+2qsAV+b3BPoODOd5G531aOHTHo+Yb+x/J4UoRspyOv?=
+ =?us-ascii?Q?4uTX4MaR6QAT/lvlAa2NCs5D8pEG1DJSJdhgLZaTNtUptOT1V1ZDGpJYLga3?=
+ =?us-ascii?Q?bR4Qw15kjuhbts8xvcUYLLTnIsxZhgebBkTxSqE0uuTQQOVL1ZROzoLNmLjX?=
+ =?us-ascii?Q?TalSyV6gyqOvIlJ/4oBmmw45Oe721is0Ki6X3d5HvNjPnJeeeg910nPg8eBN?=
+ =?us-ascii?Q?QSaGxPEYtDqd/UL11MDnMIYX616m37Yq+p/p/rrbJMH+RmrMFYHZp2ozKo6G?=
+ =?us-ascii?Q?hgeJv3G7F0WUdWsmmC35YxcDmqA037r9H41BVBdiea7uv9MUqckKFpbdBWfl?=
+ =?us-ascii?Q?EcOJYlPIzkHlEOR8OaoJLrkVyKO1qw6YebWIWYwrOb2Y5qiopEFpcKL8FFC3?=
+ =?us-ascii?Q?6Hjmh7gDIzaeMESDsenuNkTXNTbjFEVXFBV7OoWThYh/mZfLnPeU9x5iXObM?=
+ =?us-ascii?Q?/sk+wd8sF99a6ytTUsoWqDdQqcaX1QBETmltFvkFM7Hy/Ic5gZyynJUOdCRw?=
+ =?us-ascii?Q?B2VUOq9o3U02NB4Blmd6gk+pp6Si4eAjm8OPni2Y66dN4EuSmz17d7PUoHRp?=
+ =?us-ascii?Q?YZCi6FzYxech4X2liVvB24J0khLGPdHEmv7FXgtRwTbuFLFpCKlIsIx3sf0d?=
+ =?us-ascii?Q?OAhm7vQQMaRLYGPs2XUHG5Bp1Ez0Ro//hpzqds3TkpOfwT9R2xKq7cDxr6c5?=
+ =?us-ascii?Q?QWWTK4U8JzIrUC7n5Y5PUlWd/q19nonGwYQxOU+0DEwJTiZ5OeS4UPAarP8W?=
+ =?us-ascii?Q?zEDW+oWEOBywZkqL5YWySFcagz52zADqAMg8FiprVbF5Nkl8zeXjFS6ki+9B?=
+ =?us-ascii?Q?Jsn4TdUB2+/UpOaagMirsNiFfabcHwt5ZQ98ph61eYqBd+DhcGGhTZeiLNqc?=
+ =?us-ascii?Q?CK7OvAJ+f2eoVd43NyFVnQuZmll6sEXf8wy7BfQjqFhSsOMzlr64v6YXFrTl?=
+ =?us-ascii?Q?uqKuKa6m+7lT9ddChUnX8iZ0nNlB673kZtIkTNGqrRnYQW5VNovlbKl2GGWS?=
+ =?us-ascii?Q?uUu8+5kMfWydKx/L7P+DgcQG9j9ZDzng/WHJZ1u9oXgxYb3Sgv7jaa9j35T5?=
+ =?us-ascii?Q?1jOknJ59SrQOZa1T77DqUXP1cm0pk7J4P11HwFNbmed3He1EauBRyYuqEGUy?=
+ =?us-ascii?Q?74EI97Uf9ucWT6NB/qmIWr7dbq0BqSvJa9mDOV7m?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
- kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
- <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Dell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB5709.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78bdf296-d3a6-4fa8-5b06-08dca632b4a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2024 07:33:08.9268
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: y7fiimgLfj3i/1sl4eqMbU9ubFu5ZE/yjY+Lis19dk5/iTluU2uEcAmUBm9DTRl2kbR9/WM/sAFzTV8l7ggn0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR19MB6881
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2407170056
+X-Proofpoint-ORIG-GUID: -1J0Cxvsdn4O-tE5MW42mqbilEKr0ZOx
+X-Proofpoint-GUID: -1J0Cxvsdn4O-tE5MW42mqbilEKr0ZOx
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 mlxlogscore=999 spamscore=0 suspectscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407170056
+
+From: Marshall Shao <marshall.shao@dell.com>
+
+Clearing the BSS region may cause the UEFI firmware to malfunction
+during boot.
+
+When booting the kernel from an older firmware version that has TPM
+enabled and the MemoryOverwriteRequestControl bit set to 1, the
+firmware's boot service might encounter an exception if it attempts
+to initialize the BSS region within the x86 stub.
+
+To circumvent the firmware exception, it is advisable to enlarge the
+BOOT_STACK_SIZE and to perform the initialization of static variables
+prior to the decompression of the bzImage.
+
+Signed-off-by: Marshall Shao <marshall.shao@dell.com>
+---
+ arch/x86/boot/compressed/misc.c         | 8 +++-----
+ arch/x86/include/asm/boot.h             | 2 +-
+ drivers/firmware/efi/libstub/x86-stub.c | 5 -----
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/mis=
+c.c
+index b70e4a21c15f..bac5a3c55c2c 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -356,11 +356,9 @@ unsigned long decompress_kernel(unsigned char *outbuf,=
+ unsigned long virt_addr,
+                                void (*error)(char *x))
+ {
+        unsigned long entry;
+-
+-       if (!free_mem_ptr) {
+-               free_mem_ptr     =3D (unsigned long)boot_heap;
+-               free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(boot=
+_heap);
+-       }
++       free_mem_ptr     =3D (unsigned long)boot_heap;
++       free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(boot_heap);
++       malloc_ptr =3D free_mem_ptr;
+
+        if (__decompress(input_data, input_len, NULL, NULL, outbuf, output_=
+len,
+                         NULL, error) < 0)
+diff --git a/arch/x86/include/asm/boot.h b/arch/x86/include/asm/boot.h
+index 3e5b111e619d..312bc87ab027 100644
+--- a/arch/x86/include/asm/boot.h
++++ b/arch/x86/include/asm/boot.h
+@@ -33,7 +33,7 @@
+ #endif
+
+ #ifdef CONFIG_X86_64
+-# define BOOT_STACK_SIZE       0x4000
++# define BOOT_STACK_SIZE       0x10000
+
+ /*
+  * Used by decompressor's startup_32() to allocate page tables for identit=
+y
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi=
+/libstub/x86-stub.c
+index 1983fd3bf392..d92d2ccc709b 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -21,7 +21,6 @@
+ #include "efistub.h"
+ #include "x86-stub.h"
+
+-extern char _bss[], _ebss[];
+
+ const efi_system_table_t *efi_system_table;
+ const efi_dxe_services_table_t *efi_dxe_table;
+@@ -476,9 +475,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+        efi_status_t status;
+        char *cmdline_ptr;
+
+-       if (efi_is_native())
+-               memset(_bss, 0, _ebss - _bss);
+-
+        efi_system_table =3D sys_table_arg;
+
+        /* Check if we were booted by the EFI firmware */
+@@ -1000,7 +996,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ void efi_handover_entry(efi_handle_t handle, efi_system_table_t *sys_table=
+_arg,
+                        struct boot_params *boot_params)
+ {
+-       memset(_bss, 0, _ebss - _bss);
+        efi_stub_entry(handle, sys_table_arg, boot_params);
+ }
+
+--
+2.34.1
 
 
-
-On 17/07/2024 02.30, Yosry Ahmed wrote:
-> On Thu, Jul 11, 2024 at 6:28 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
->>
->> Avoid lock contention on the global cgroup rstat lock caused by kswapd
->> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
->> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
->> call inlined in shrink_node, which takes the rstat lock.
->>
->> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
->> we noted severe lock contention on the rstat lock. This contention
->> causes 12 CPUs to waste cycles spinning every time kswapd runs.
->> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
->> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
->> due to spinning on the rstat lock.
->>
->> Help reviewers follow code: __alloc_pages_slowpath calls wake_all_kswapds
->> causing all kswapdN threads to wake up simultaneously. The kswapd thread
->> invokes shrink_node (via balance_pgdat) triggering the cgroup rstat flush
->> operation as part of its work. This results in kernel self-induced rstat
->> lock contention by waking up all kswapd threads simultaneously. Leveraging
->> this detail: balance_pgdat() have NULL value in target_mem_cgroup, this
->> cause mem_cgroup_flush_stats() to do flush with root_mem_cgroup.
->>
->> To avoid this kind of thundering herd problem, kernel previously had a
->> "stats_flush_ongoing" concept, but this was removed as part of commit
->> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
->> reintroduce and generalized the concept to apply to all users of cgroup
->> rstat, not just memcg.
->>
->> If there is an ongoing rstat flush, and current cgroup is a descendant,
->> then it is unnecessary to do the flush. For callers to still see updated
->> stats, wait for ongoing flusher to complete before returning, but add
->> timeout as stats are already inaccurate given updaters keeps running.
->>
->> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
->> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> 
-> Thanks for working on this, Jesper! I love the data you collected here!
-> 
-> I think the commit subject and message should be changed to better
-> describe the patch. This is a patch that exclusively modifies cgroup
-> code, yet the subject is about kswapd. This change affects all users
-> of rstat flushing.
-> 
-> I think a better subject would be:
-> "cgroup/rstat: avoid flushing if there is an ongoing overlapping
-> flush" or similar.
-> 
-> The commit message should first describe the cgroup change, and then
-> use kswapd as a brief example/illustration of how the problem
-> manifests in practice. You should also include a brief summary of the
-> numbers you collected from prod.
-> 
-
-I agree that description should be updated as patch have evolved, and
-you suggestions make sense, thanks.
-
-But I'm not sure we are finished evolving this patch, because the scheme
-of allowing all sub-cgroups to become the ongoing flusher (and only
-avoiding lock-spinning when cgroup_is_descendant), is causing issues in
-production.
-
-We are using cadvisor in production for collecting metrics, which walks
-all the cgroups reading stat files e.g. io.stat, cpu.stat , memory.stat
-(doing 3 flushes of same cgroup in short timespan), but individual
-cgroups don't overlap much to benefit from ongoing_flusher scheme.
-
-Below is (1 sec) production data, where cadvisor and kswapd collide:
-
- > 02:01:33 @ongoing_flusher_cnt[kworker/u395:14]: 1
- > @ongoing_flusher_cnt[kswapd5]: 3
- > @ongoing_flusher_cnt[kswapd7]: 4
- > @ongoing_flusher_cnt[kswapd6]: 4
- > @ongoing_flusher_cnt[kswapd8]: 4
- > @ongoing_flusher_cnt[kswapd9]: 5
- > @ongoing_flusher_cnt[kswapd2]: 5
- > @ongoing_flusher_cnt[kswapd10]: 5
- > @ongoing_flusher_cnt[kswapd3]: 5
- > @ongoing_flusher_cnt[kswapd11]: 5
- > @ongoing_flusher_cnt[kswapd0]: 5
- > @ongoing_flusher_cnt[kswapd4]: 6
- > @ongoing_flusher_cnt[kswapd1]: 7
- > @ongoing_flusher_cnt[cadvisor]: 9
-
-For cadvisor ongoing_flusher only helps 9 times to avoid flush.
-
- > @ongoing_flusher_cnt[handled_race]: 18
- > @ongoing_flusher_cnt[all]: 61
-
-Our ongoing_flusher scheme detects overlap and avoid 61 out of 462 flushes.
-
- > @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 61
- > @cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 462
- > @cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 9032
-
-This is bad: Lock is contended 9032 time within this 1 sec period.
-Below, lock_contended cases is captured in more detail.
-
- > @cnt[tracepoint:cgroup:cgroup_rstat_locked]: 9435
- > @lock_contended[normal, 4]: 1
- > @lock_contended[normal, 1]: 2
- > @lock_contended[normal, 3]: 6
- > @lock_contended[normal, 2]: 15
- > @lock_contended[yield, 4]: 49
- > @lock_contended[after_obtaining_lock, 4]: 49
- > @lock_contended[normal, 0]: 59
-
-The "normal" lock_contended for level 0,
-meaning the cgroup root is contended 59 times within this 1 sec period.
-
- > @lock_contended[after_obtaining_lock, 1]: 117
- > @lock_contended[yield, 1]: 118
- > @lock_contended[yield, 3]: 258
- > @lock_contended[after_obtaining_lock, 3]: 258
- > @lock_contended[after_obtaining_lock, 2]: 946
- > @lock_contended[yield, 2]: 946
-
-Lock contention for 'yielded' case for level 2.
-Goes crazy with 946/sec.
-
- > @lock_contended[yield, 0]: 7579
-
-Lock contention for 'yielded' case for level 0, the root.
-Is really crazy with 7579/sec lock spin cases.
-
- > @lock_contended[after_obtaining_lock, 0]: 7579
-
-
-IMHO this shows that, due to lock yielding, the scheme of
-ongoing_flusher for sub-trees only cause issues.
-
-IMHO we should go back to only doing ongoing_flusher for root-cgroup.
-There is really low chance of sub-trees flushes being concurrent enough
-to benefit from this, and it cause issues and needs (ugly) race handling.
-
-Further more sub-tree flushing doesn't take as long time as level 0
-flushing, which further lower the chance of concurrent flushes.
-
-Let's get some quick data on flush times from production, to support my
-claim:
-
-The bpftrace onliner:
-  sudo bpftrace -e '
-   tracepoint:cgroup:cgroup_rstat_locked {
-    if (args->cpu == -1) { @start[tid]=nsecs; }
-    @cnt[probe]=count();
-    if (args->contended) {
-      @lock_contended["after_obtaining_lock", args->level]=count();
-    }}
-   tracepoint:cgroup:cgroup_rstat_unlock {
-    if (args->cpu == -1) {
-     $now=nsecs; $start=@start[tid]; $diff=$now-$start;
-     @locked_time_level[args->level]=hist($diff);
-    }
-    @cnt[probe]=count()}
-   kfunc:cgroup_rstat_flush_locked {@cnt[probe]=count()}
-   interval:s:1 {time("%H:%M:%S ");
-    print(@cnt);
-    print(@lock_contended);
-    print(@locked_time_level);
-    clear (@cnt);
-    clear (@lock_contended); }
-   END {clear(@start)}'
-
-Time below is in nanosec.
-
-@locked_time_level[0]:
-[4M, 8M)             623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
-      |
-[8M, 16M)            860 
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[16M, 32M)           295 |@@@@@@@@@@@@@@@@@ 
-      |
-[32M, 64M)           275 |@@@@@@@@@@@@@@@@ 
-      |
-
-
-@locked_time_level[1]:
-[4K, 8K)               6 |@@@@ 
-      |
-[8K, 16K)             65 
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[16K, 32K)            52 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
-      |
-[32K, 64K)            23 |@@@@@@@@@@@@@@@@@@ 
-      |
-[64K, 128K)           15 |@@@@@@@@@@@@ 
-      |
-[128K, 256K)          10 |@@@@@@@@ 
-      |
-[256K, 512K)           6 |@@@@ 
-      |
-[512K, 1M)            15 |@@@@@@@@@@@@ 
-      |
-[1M, 2M)               2 |@ 
-      |
-[2M, 4M)              14 |@@@@@@@@@@@ 
-      |
-[4M, 8M)               6 |@@@@ 
-      |
-[8M, 16M)              7 |@@@@@ 
-      |
-[16M, 32M)             1 | 
-      |
-
-
-@locked_time_level[2]:
-[2K, 4K)               1 | 
-      |
-[4K, 8K)             160 |@@@@@@@@@ 
-      |
-[8K, 16K)            733 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
-      |
-[16K, 32K)           901 
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[32K, 64K)           191 |@@@@@@@@@@@ 
-      |
-[64K, 128K)          115 |@@@@@@ 
-      |
-[128K, 256K)          61 |@@@ 
-      |
-[256K, 512K)          70 |@@@@ 
-      |
-[512K, 1M)            59 |@@@ 
-      |
-[1M, 2M)              27 |@ 
-      |
-[2M, 4M)               9 | 
-      |
-
-
-@locked_time_level[3]:
-[1K, 2K)               3 | 
-      |
-[2K, 4K)               2 | 
-      |
-[4K, 8K)               5 | 
-      |
-[8K, 16K)            147 |@@@@@@ 
-      |
-[16K, 32K)          1222 
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[32K, 64K)           266 |@@@@@@@@@@@ 
-      |
-[64K, 128K)          199 |@@@@@@@@ 
-      |
-[128K, 256K)         146 |@@@@@@ 
-      |
-[256K, 512K)         124 |@@@@@ 
-      |
-[512K, 1M)            17 | 
-      |
-[1M, 2M)               0 | 
-      |
-[2M, 4M)               0 | 
-      |
-[4M, 8M)               1 | 
-      |
-
-
-@locked_time_level[4]:
-[4K, 8K)               2 |@@ 
-      |
-[8K, 16K)             17 |@@@@@@@@@@@@@@@@@@@@@@ 
-      |
-[16K, 32K)            40 
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[32K, 64K)             4 |@@@@@ 
-      |
-
---Jesper
-
->> ---
->> V6: https://lore.kernel.org/all/172052399087.2357901.4955042377343593447.stgit@firesoul/
->> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
->> V4: https://lore.kernel.org/all/171952312320.1810550.13209360603489797077.stgit@firesoul/
->> V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
->> V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
->> V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
->> RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
->>
->>   include/linux/cgroup-defs.h |    2 +
->>   kernel/cgroup/rstat.c       |   95 ++++++++++++++++++++++++++++++++++++++-----
->>   2 files changed, 85 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
->> index b36690ca0d3f..a33b37514c29 100644
->> --- a/include/linux/cgroup-defs.h
->> +++ b/include/linux/cgroup-defs.h
->> @@ -548,6 +548,8 @@ struct cgroup {
->>   #ifdef CONFIG_BPF_SYSCALL
->>          struct bpf_local_storage __rcu  *bpf_cgrp_storage;
->>   #endif
->> +       /* completion queue for cgrp_rstat_ongoing_flusher */
->> +       struct completion flush_done;
->>
->>          /* All ancestors including self */
->>          struct cgroup *ancestors[];
->> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
->> index fb8b49437573..fe2a81a310bb 100644
->> --- a/kernel/cgroup/rstat.c
->> +++ b/kernel/cgroup/rstat.c
->> @@ -2,6 +2,7 @@
->>   #include "cgroup-internal.h"
->>
->>   #include <linux/sched/cputime.h>
->> +#include <linux/completion.h>
->>
->>   #include <linux/bpf.h>
->>   #include <linux/btf.h>
->> @@ -11,6 +12,7 @@
->>
->>   static DEFINE_SPINLOCK(cgroup_rstat_lock);
->>   static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
->> +static struct cgroup *cgrp_rstat_ongoing_flusher = NULL;
->>
->>   static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
->>
->> @@ -279,17 +281,32 @@ __bpf_hook_end();
->>    * value -1 is used when obtaining the main lock else this is the CPU
->>    * number processed last.
->>    */
->> -static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop)
->> +static inline bool __cgroup_rstat_trylock(struct cgroup *cgrp, int cpu_in_loop)
->> +{
->> +       bool locked;
->> +
->> +       locked = spin_trylock_irq(&cgroup_rstat_lock);
->> +       if (!locked)
->> +               trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, true);
->> +       else
->> +               trace_cgroup_rstat_locked(cgrp, cpu_in_loop, false);
->> +
->> +       return locked;
->> +}
->> +
->> +static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop,
->> +                                      bool check_contention)
->>          __acquires(&cgroup_rstat_lock)
->>   {
->> -       bool contended;
->> +       bool locked = false;
->>
->> -       contended = !spin_trylock_irq(&cgroup_rstat_lock);
->> -       if (contended) {
->> -               trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
->> +       if (check_contention)
->> +               locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
->> +
->> +       if (!locked) {
->>                  spin_lock_irq(&cgroup_rstat_lock);
->> +               trace_cgroup_rstat_locked(cgrp, cpu_in_loop, check_contention);
->>          }
->> -       trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
->>   }
-> 
-> I will let Tejun and others weigh in about what tracepoints we should
-> have going forward and how they should be structured (which also
-> includes patch 2). I see the tremendous value they have to collect
-> data from prod, but I do not see similar existing tracepoints, and I
-> am not sure if the branching here could have an effect when the
-> tracepoints are off.
-> 
->>
->>   static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
->> @@ -299,6 +316,53 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
->>          spin_unlock_irq(&cgroup_rstat_lock);
->>   }
->>
->> +#define MAX_WAIT       msecs_to_jiffies(100)
->> +/* Trylock helper that also checks for on ongoing flusher */
->> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
->> +{
->> +       struct cgroup *ongoing;
->> +       bool locked;
->> +
->> +       /* Check if ongoing flusher is already taking care of this, if
-> 
-> nit: I think commonly the comment would start on a new line after /*.
-> 
->> +        * we are a descendant skip work, but wait for ongoing flusher
->> +        * to complete work.
->> +        */
->> +retry:
->> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
->> +               wait_for_completion_interruptible_timeout(
->> +                       &ongoing->flush_done, MAX_WAIT);
->> +               /* TODO: Add tracepoint here */
->> +               return false;
->> +       }
->> +
->> +       locked = __cgroup_rstat_trylock(cgrp, -1);
->> +       if (!locked) {
->> +               /* Contended: Handle loosing race for ongoing flusher */
-> 
-> nit: losing
-> 
->> +               if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
->> +                       goto retry;
->> +
->> +               __cgroup_rstat_lock(cgrp, -1, false);
->> +       }
->> +       /* Obtained lock, record this cgrp as the ongoing flusher */
-> 
-> Do we want a comment here to explain why there could be an existing
-> ongoing flusher (i.e. due to multiple ongoing flushers)? I think it's
-> not super obvious.
-> 
->> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->> +       if (!ongoing) {
->> +               reinit_completion(&cgrp->flush_done);
->> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
->> +       }
->> +       return true; /* locked */
-> 
-> Would it be better to explain the return value of the function in the
-> comment above it?
-> 
->> +}
->> +
->> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
->> +{
->> +       /* Detect if we are the ongoing flusher */
-> 
-> I think this is a bit obvious.
-> 
->> +       if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
->> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
->> +               complete_all(&cgrp->flush_done);
->> +       }
->> +       __cgroup_rstat_unlock(cgrp, -1);
->> +}
->> +
->>   /* see cgroup_rstat_flush() */
->>   static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->>          __releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
->> @@ -328,7 +392,7 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->>                          __cgroup_rstat_unlock(cgrp, cpu);
->>                          if (!cond_resched())
->>                                  cpu_relax();
->> -                       __cgroup_rstat_lock(cgrp, cpu);
->> +                       __cgroup_rstat_lock(cgrp, cpu, true);
->>                  }
->>          }
->>   }
->> @@ -350,9 +414,11 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
->>   {
->>          might_sleep();
->>
->> -       __cgroup_rstat_lock(cgrp, -1);
->> +       if (!cgroup_rstat_trylock_flusher(cgrp))
->> +               return;
->> +
->>          cgroup_rstat_flush_locked(cgrp);
->> -       __cgroup_rstat_unlock(cgrp, -1);
->> +       cgroup_rstat_unlock_flusher(cgrp);
->>   }
->>
->>   /**
->> @@ -368,8 +434,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->>          __acquires(&cgroup_rstat_lock)
->>   {
->>          might_sleep();
->> -       __cgroup_rstat_lock(cgrp, -1);
->> -       cgroup_rstat_flush_locked(cgrp);
->> +
->> +       if (cgroup_rstat_trylock_flusher(cgrp))
->> +               cgroup_rstat_flush_locked(cgrp);
->> +       else
->> +               __cgroup_rstat_lock(cgrp, -1, false);
->>   }
->>
->>   /**
->> @@ -379,7 +448,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->>   void cgroup_rstat_flush_release(struct cgroup *cgrp)
->>          __releases(&cgroup_rstat_lock)
->>   {
->> -       __cgroup_rstat_unlock(cgrp, -1);
->> +       cgroup_rstat_unlock_flusher(cgrp);
->>   }
->>
->>   int cgroup_rstat_init(struct cgroup *cgrp)
->> @@ -401,6 +470,8 @@ int cgroup_rstat_init(struct cgroup *cgrp)
->>                  u64_stats_init(&rstatc->bsync);
->>          }
->>
->> +       init_completion(&cgrp->flush_done);
->> +
->>          return 0;
->>   }
->>
->>
->>
+Internal Use - Confidential
 
