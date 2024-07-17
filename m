@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-254741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580BE93370E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05257933714
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8851F22A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADCEF1F240FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639171400A;
-	Wed, 17 Jul 2024 06:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30214F6C;
+	Wed, 17 Jul 2024 06:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cFo/1ZBX"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="T4TxoWBi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2448C182B9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AEA2FB6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197754; cv=none; b=uaVBRSpRhBQHXVKkNCxmeSTunnJHq2MUTGVozeN7PJjB5BosGf9K9YgbdkoZaM8tmw1IcFc1UflH1p5DoqbtlZsmIbj/etVXObqmIeaStw+zhk3jQ/8TJgFqxjjCnLnMA7E7YogXMWH/T6HmVGXW/1kaz/bEH7p0x7X8OULxHb0=
+	t=1721197816; cv=none; b=cGU6N0LlxOl4E4rPFAls2SO5/CzIMB13ik4wglWz6b8zUadjE/45cyhGbwOuY6VSXUhQb8m+fEXjts15lpf5iun3x2sGVG5nvp4/r+YV093uqTy63iS9PrGfv3shMuMxApRW68dyCWeUrr4dR+jhYNUE7SmBJ7UHCeXJMci7cM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197754; c=relaxed/simple;
-	bh=piibWXQoIdT9iDF1Ucz8hY3qyEnh4/nv/5EUjy5T18E=;
+	s=arc-20240116; t=1721197816; c=relaxed/simple;
+	bh=V9Jzk4N2zS36v1WQ5gEhoUIZc3Ly89MBgolvymqDsAA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RTldHQIhLUpremATuehUOV2lPvSNShm41IpcuvtlirOL2QjQdoM7V4spJMkvtm0UKDQKlrcqnTqR0S/U5SCHfrgSMwZednN9KJmHIc67KRAjNBGn6WILhAdbXTPSSDQe1SA5uIGGkKUnSuAUq0t8F23NGsDgY42199r3sMmVdC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cFo/1ZBX; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=YJMJeBzQFi2XWmeop14p5PplHKYqEAqQ9pxMiy4UxisKCZSzmHMlzblOaT7xb1KZeJxEK64l4LOr73QstEvQ/9CwemPAuvykTLWuRvFsEm7/2PlRMBC3E1SOY1nEK+VBreCxE8J+CM9wfiKBjqpsYQ07os6Y/1TSNuEs+cjhsU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=T4TxoWBi; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-367a183df54so4253249f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:29:12 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266eda81c5so51437675e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:30:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721197751; x=1721802551; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721197813; x=1721802613; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qV10XIriQxrkSLT6hfJ9bzuJQGW5jGWUcHq8Bf3DvNw=;
-        b=cFo/1ZBXvHn/hpmxtuTuvd40MaVXd2ic+M8iCgODTXyAbHYx3UBS3adMgozTX13xU9
-         icO4TXiea9Ox/i/dSj9GpHP/KmiRygne4Nf9cjw2yqOoyijDLEFT/Wx9WTUVjKn7uRdo
-         MArV0oD7iufkh+YiR7p7FogMtsi68d/FiLce3aGS3KdVQH+ng5wf4yfrOL/DlFvJZ0Mh
-         vNXzOlkk5sHbX4Mli6Y29oaBMoNfHcJaDoa0zTsa00VCysbAJkpBrJF2azpTzyTLbduW
-         aq8z6jjFK2Cb250gntgt/22ApB7soebI4C8jyVAsR88pJUFCGZ/RRUbqqUsra3WRxlcJ
-         m+PA==
+        bh=r/a3I9RG+3lbcPTW2WISOokc8gewDy3fkMsPDZhy/D4=;
+        b=T4TxoWBiQ7J7z3doxhHqMilZccLpeo/vCwAtUpKuuP+myV49KcZikkAfThhiqEsZgU
+         6gfHD+PDyo1GRWtzVi/bDJjcfvGSPrsdcaNYgZI7URcw+9eBmXWcuQ0q7om8jO9IHNwR
+         /AhsNZ3pwphzKrvWMD0YA/v4i+YuUQJNlbdnXg/xeIJnri1LCj0e+70b0JefrLhz+hkF
+         F3yhc9wWcpbB1VcL9I8XLKJLCnDzqEwaVibgXBQjMTGLbgPbgT7/8dc2vKwGVlBAAnAm
+         B1myDcVgh3Cn38o4vXgcMZgWGIVTjKNizRWXJu5cvIUGpSnv7OKDdupQ0sAJTGahp3ZO
+         rdWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721197751; x=1721802551;
+        d=1e100.net; s=20230601; t=1721197813; x=1721802613;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qV10XIriQxrkSLT6hfJ9bzuJQGW5jGWUcHq8Bf3DvNw=;
-        b=oamqx1ZP1qzBeorzf5GDL8YeJ05jYcNvqlDxDplxc2mZ8ENm7EqnTla2N6om8USFbU
-         d/qur6wDCyV0hm3Tncb+XwOLJrAbeX8ZWpMDRvw7LhuZ9IM+stP5zndwUx/59KvzY57w
-         ZaXT8cpO4xe3RAPGryWr172dgTV7/3cDJ6mTDUeMtz4KWe/thl2/hG19ai7eX9yTlmiV
-         0x8+zY8690G80KWoh7nO6ByjdycGnObM5kHFR+iTu0LgFZYgNsE92+QlwyfbvW/1Wp6e
-         cAcPV6akKsARxBIA8/uUpxNPVABfO5ApMMB3Zge2eKs494pYu/Xh9v6/1kWvOh5b1TWc
-         uA8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWatirVK4j/rkfe+qVWM745nvB3QtDtUW7bMXdu9GBXBwZ0b4JjKUcAVExRaL9HmgG6g37PzmUJaHGQADZQ8+MT4W/uOvTPKBs/gDxr
-X-Gm-Message-State: AOJu0Yw1uPmg8e4FykkTFAM+7lygEUJJ+s9DMUIWtuP700Crf+t59a9y
-	S2UFUb3nTUeHNJErd/UGoHZkwzo5bUC2zxm8SIPg1ESGR0ffSVtQunjWx+rTyFY=
-X-Google-Smtp-Source: AGHT+IGP/cuCt+F0ta7uxUlFKhwXsnKpljMYZclyaPYQLOpIG5TT5vjECTCQ1Rcr5BTRTziHhuytmQ==
-X-Received: by 2002:adf:fa03:0:b0:368:303b:8fe7 with SMTP id ffacd0b85a97d-36831600243mr520432f8f.7.1721197751437;
-        Tue, 16 Jul 2024 23:29:11 -0700 (PDT)
+        bh=r/a3I9RG+3lbcPTW2WISOokc8gewDy3fkMsPDZhy/D4=;
+        b=soVj9x1Xfdsyo4nQQa2Ga6BAcB6CPetZF+Wtuto58XIxxLsi1CO+D7+xXfGBWo4zQM
+         HUHfTd3CLTPzaBdPTUSkwXYCEI+gT6vNo9Lvahf8aOSUIXl67eyZbjE6wqsJ9UAssEpx
+         TgPHtv8Q2ZurHym1aXJHEqJN0k890eDJIx3S7g4pZXrK1tZZbPD0ESvNW1kSAYyNtexn
+         RqOHBaZBj/UKTxYp3GNSLjZDM5ZuEpNLC5z8scXm4sj8b+EpsVWTlAlpQiCuUVUSKdBm
+         e8uI0bwgMAoCbKbXWapTNJjzpwSI/HPGyAYXiG1WLQgwPpur4B7g7AlUr86anYsaaf0I
+         KJkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXY5VA9wUa9wyriw7QnDsAVmEAVd9PmY1TB+sDhidDzQdIjKt6NOONJf+JnuYEbIPXLDlakDdrjJmXRa5xNEp77VpEZZGnVJnuUlMVO
+X-Gm-Message-State: AOJu0Yx1mtdXd9C9BssORVmE7bZ5D//k0oSsQ2ndC93UtutqatJ6GiNo
+	B71oZEhPkeLQDYMQIVfvRUr5i2KW1TgRdfjpGlTz4o5qiTjCKf+R9J1tDab5Azo=
+X-Google-Smtp-Source: AGHT+IHes7c6JkEf7yEOk72RnIcqQqTVYNuy3gJbWA9je9hHeJGPheqNOo3gwFeqz1xI+QDtIGxtPA==
+X-Received: by 2002:a05:600c:4ec9:b0:426:62c5:4731 with SMTP id 5b1f17b1804b1-427c2d01cafmr5720315e9.29.1721197812676;
+        Tue, 16 Jul 2024 23:30:12 -0700 (PDT)
 Received: from alex-rivos.home (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccad8sm10840137f8f.60.2024.07.16.23.29.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef460csm158127685e9.44.2024.07.16.23.30.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 23:29:11 -0700 (PDT)
+        Tue, 16 Jul 2024 23:30:12 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
@@ -89,9 +89,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 	linux-riscv@lists.infradead.org,
 	linux-arch@vger.kernel.org
 Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH v3 09/11] riscv: Add ISA extension parsing for Ziccrse
-Date: Wed, 17 Jul 2024 08:19:55 +0200
-Message-Id: <20240717061957.140712-10-alexghiti@rivosinc.com>
+Subject: [PATCH v3 10/11] dt-bindings: riscv: Add Ziccrse ISA extension description
+Date: Wed, 17 Jul 2024 08:19:56 +0200
+Message-Id: <20240717061957.140712-11-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240717061957.140712-1-alexghiti@rivosinc.com>
 References: <20240717061957.140712-1-alexghiti@rivosinc.com>
@@ -103,38 +103,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support to parse the Ziccrse string in the riscv,isa string.
+Add description for the Ziccrse ISA extension which was introduced in
+the riscv profiles specification v0.9.2.
 
 Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/riscv/include/asm/hwcap.h | 1 +
- arch/riscv/kernel/cpufeature.c | 1 +
- 2 files changed, 2 insertions(+)
+ Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-index f71ddd2ca163..863b9b7d4a4f 100644
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@ -82,6 +82,7 @@
- #define RISCV_ISA_EXT_ZACAS		73
- #define RISCV_ISA_EXT_XANDESPMU		74
- #define RISCV_ISA_EXT_ZABHA		75
-+#define RISCV_ISA_EXT_ZICCRSE		76
+diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+index e6436260bdeb..b08bf1a8d8f8 100644
+--- a/Documentation/devicetree/bindings/riscv/extensions.yaml
++++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+@@ -245,6 +245,12 @@ properties:
+             in commit 64074bc ("Update version numbers for Zfh/Zfinx") of
+             riscv-isa-manual.
  
- #define RISCV_ISA_EXT_XLINUXENVCFG	127
- 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index c125d82c894b..93d8cc7e232c 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -306,6 +306,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
- 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
- 	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
- 	__RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_EXT_XANDESPMU),
-+	__RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
- };
- 
- const size_t riscv_isa_ext_count = ARRAY_SIZE(riscv_isa_ext);
++        - const: ziccrse
++          description:
++            The standard Ziccrse extension which provides forward progress
++            guarantee on LR/SC sequences, as introduced in the riscv profiles
++            specification v0.9.2.
++
+         - const: zk
+           description:
+             The standard Zk Standard Scalar cryptography extension as ratified
 -- 
 2.39.2
 
