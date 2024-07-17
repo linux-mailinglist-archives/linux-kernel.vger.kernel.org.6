@@ -1,304 +1,300 @@
-Return-Path: <linux-kernel+bounces-254594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7BE933532
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:51:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BCB933535
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55241282C7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:51:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0162EB223E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FEB2570;
-	Wed, 17 Jul 2024 01:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14162C9A;
+	Wed, 17 Jul 2024 01:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SdAwUwqg"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4j1dWsVW"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FA7EC7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD7184F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721181066; cv=none; b=ILbocA9Ln7DsIu9CRjflN6P3c491v9Ec7PEiO+A0tiNA23HEsYs9fKGr4oS3WXF8Ajb92uWCSqQepaOZtVCsT9UVxC2B0hmgTztx/NRhSXlFrzxslODby8Bhy0/rYk5TIjvLDqD94axxfyoyTUXzdN4D31HOGxOR+KID0ZeN25w=
+	t=1721181285; cv=none; b=KMH4FeLD36s8uK4DHOlWUs62NyWf8X5Vf5quvaRdYfeWMe0r52XwU8HP6hTSsfIQ5HdD3MDf0xHgokS5r7iUuBIU/Efb0IcL3mfoHxwRXuY1Yi3Lxv5kk/cLMbqFm9FIgjpo1mHvhjsBK6hbjVYb+vqz7/x//rCKc/mBA2WrNsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721181066; c=relaxed/simple;
-	bh=eObwt/zi3Kr95XXc60X23X6dODaeDbiMIQnVNj03/Yg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ktKzBSU5alVZwste01HiIUweu+KgEtK0H6lPRyNByn+O/qRpSb5hnYbik3n1gcJuskB4QvhnBndycvPq40ysSdde3eewf8vppEXaC22e567rXGE9y62qyRB1U8+7SbxBG7ZcDJnT7nOziWh2cZ5mjtsu8mtzhBn2omUNJ+ygZZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SdAwUwqg; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1721181285; c=relaxed/simple;
+	bh=ofldocloxqEKlH1IG/bsd+S+uZgiDu6IRrfkZJ3pHnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O9Pc+2HZhO3yMIgXl0X/PXgy2H0mC7a5bAWo7YjwWYOeilK1RsOUvn4/oMCpbOzwo3EQGgd1Zceov0SuRlxEFnKY2MoWAMKnp7riCZz2WFnNtmeHZ2VCrExNzSqOj4TLqiG91Qrsg+XB8AGtn8SbP9xVEuaCOREkIsSi2FqI/8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4j1dWsVW; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03654427f6so11219358276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:51:04 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e9f863c46so6878509e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:54:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721181063; x=1721785863; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3aCBBWFffWvGxNelxYi8javtM+9l3qfCXyadBBSBs4=;
-        b=SdAwUwqgyDPlE7QMkcIQKEYgC6Y6OeAE33tChgc2Iu5X5mSt5apYmQYYOoQjrghtNA
-         o0AI8XRrcTPSHCaE+l5zRYbUtMnRtjdVcmX8Ry39m8zBdaANQ95JgUJ5FuvJgLm94yUN
-         rWfjhsRkYnHZhqpXhIsvV0ZhO5WK5oHmBj67ainGO05D9Y9zwTFTOyu1TT4EH9IHXcKp
-         nG7FzylsZwfOlwGx8nPaaLSr1QkGu6T7VaJvnyPoJFNt7ZuJqo5WvI5JpLPYjG8kOq5U
-         YNjYeW+arKQhPRlKtE0Nka13DyY/tdXpBUwj9V4F+cy4dQckrtDSI1CmYlWJ51bgyZHL
-         Co5w==
+        d=google.com; s=20230601; t=1721181282; x=1721786082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KaDTjYso0r0FTjuPE33B/LDoFqVnRXhQgdUXwAuM1v0=;
+        b=4j1dWsVWO2LafXMifE3jSK7VA5U/T+2BOEyXPnix8nCUUj8l/42Aym2hhHm/3eQzEB
+         KR8syf+0EO66vVPynuPuDgD/1JXQY7JT8oflRGcUbm/TzLh1hy0X/xPG+s0TG4osy3JW
+         myT0toAZSLSwDHi/EGBF3AgKMjuy0St12PlRlRA0pCHR1LmkEXQ8jHPsnZTf1iN3aZgh
+         mB7nIwAdlUR8DA2azxmV6DB/GmuI8WC7k8OsSUMcBJOmxsnzXiJKAHL0PqEbaW96UOkm
+         I0CNSW12P3KROn+8lFGiOv3QZ2Y3FP6tf9jqnlPhsnaTFu7psNLTp8cRyk80GBY9nICd
+         OrIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721181063; x=1721785863;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3aCBBWFffWvGxNelxYi8javtM+9l3qfCXyadBBSBs4=;
-        b=wBd8glyyqoHNpS9uzX0N8DJ/PfHhP1j4JMlDhFo6Ybm9Sh5ASRsoZgzZZ3LqyXSzSD
-         tR9y6Jwp//yBl0ZUrYY9odNIMhwqfS5coXHCGD0lrqVPghk+9apf0zmhBSuCTrFBIUYm
-         A8o82JA6eSnCTFG/Eo6l+/8UKUhXX3PQKlUoFhBbVtyCkKiMj+rQwzJ6b/Rkg1T37IG5
-         3W7/A5p0vaFcVi0JBiiYWznQsa5HbvMPXIsOcRpCNlAPChAM52TFdSekV7MdUFo53c71
-         +7GbP2Lnkx1vWt0euj3UHpTGEjMTUwNAZU+L2t1HUPKHkQ38RUqx7dQIzthAmcBz7rGY
-         0vPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVefuQiVGjUmGlKyHcQ51uMkvP/HRsE+wMeA3F0ZIK/BO+Z/9zcaS4AFHx/9n1nu9o6ut6cbD5HTEcGlkoA+EJ2zYQ7NXFhSP2Mw5V3
-X-Gm-Message-State: AOJu0YwPnDQP0wTTBBdU9Kq434jdYt8ZoJl3A4g0DbJjn3grNYZNJ23Y
-	c3AAXrlda7sNzrFFEXo86x1JTVXODj5dkv4qlK9WbNR+uB1B2QyI8Tr7aIcv2gn/WjI6ow==
-X-Google-Smtp-Source: AGHT+IGJ2ob/5Gax9awARwZ+djoFJgzGUxbI73foCKISaOUPZsRwo46wiPy3gnhiNooAz+efVWeKkdXS
-X-Received: from elsk.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:dbd])
- (user=elsk job=sendgmr) by 2002:a05:6902:2503:b0:dfb:22ca:1efd with SMTP id
- 3f1490d57ef6-e05ed77deddmr1030276.9.1721181063541; Tue, 16 Jul 2024 18:51:03
- -0700 (PDT)
-Date: Wed, 17 Jul 2024 01:50:41 +0000
-In-Reply-To: <CAK7LNAR_=AWh1aE4iev1xtcfTAAHNOhwq3gF+h6DFzz9x39qPw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1721181282; x=1721786082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KaDTjYso0r0FTjuPE33B/LDoFqVnRXhQgdUXwAuM1v0=;
+        b=gICGDPLSXgKt2UAPS9SslRA8dCX39nuJtfr5TBdfnn8IH8ELhNQT2Wah7AVyiumzNU
+         A9vJU/rBgTpSPb+ybSRdkTblw7k8qeRWDhB22PiA8AJBM9rXnIBOOd31qtanI5a+dAw7
+         WlZwhJ66Wx+CBgifRJRcnWJW+r0iU3+WqLvBqq72X893b4TIluBpsFwIruSy/L0oVZRh
+         OhbnVtLczTMmQM9PXldpm+ODp2Qj38ccTd0uhxyQSeJwIoQgFtDk274pM0ZU85VfwC6C
+         7pbj3Ou0vjZ8AgvRg5C0QsGXuB39iasncndJx8uWojkmX1jsC/NlhMWV8Oxc4oqbaKAh
+         sXeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8kclAmTlZUvXDs+R4kAaxeLsw3hWF+q6XaW3XHTP1e4PuSBzhd5mAnC3W78bsHqGGggEBezeeVAz0UVtW6tUahbKx2R1rzSHOFMTu
+X-Gm-Message-State: AOJu0YxehONtVPWeyu4B2M1VG5hCf8zwRPCn+Rs4Ll5EHa5oa1/J4XMM
+	xBzKp/SVH+Hc1S3ST96K7M+nQoSjetXXVRI/ScBKtHWQXOr6u/hqZrmyL5MWJNW5Jy7zAGlDnSt
+	+daO8tjLWue2SXG8Y58CJC4eT4NdGswUbPuGT
+X-Google-Smtp-Source: AGHT+IGDigwv1plpX5owBug/I1nQwxp5ZVs5gvFB3KlseUnQAYTDpst/OZ3qmz+IfZxxyfpPX0NdzIL7KR7XE+E49LI=
+X-Received: by 2002:a05:6512:3089:b0:52e:be0d:56dd with SMTP id
+ 2adb3069b0e04-52ee542d8e6mr130655e87.40.1721181281405; Tue, 16 Jul 2024
+ 18:54:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAK7LNAR_=AWh1aE4iev1xtcfTAAHNOhwq3gF+h6DFzz9x39qPw@mail.gmail.com>
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240717015042.339931-1-elsk@google.com>
-Subject: [PATCH v4] kconfig: recursive checks drop file/lineno
-From: HONG Yifan <elsk@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: HONG Yifan <elsk@google.com>, kernel-team@android.com, linux-kbuild@vger.kernel.org, 
+MIME-Version: 1.0
+References: <20240706022523.1104080-1-flintglass@gmail.com> <20240706022523.1104080-2-flintglass@gmail.com>
+In-Reply-To: <20240706022523.1104080-2-flintglass@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 16 Jul 2024 18:54:03 -0700
+Message-ID: <CAJD7tkYEQQ539id2yPi+m7bR3EDa33LBLKV-y+XFuBPc3BhxcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This prevents segfault when getting filename and lineno in recursive
-checks.
+On Fri, Jul 5, 2024 at 7:25=E2=80=AFPM Takero Funaki <flintglass@gmail.com>=
+ wrote:
+>
+> This patch fixes an issue where the zswap global shrinker stopped
+> iterating through the memcg tree.
+>
+> The problem was that shrink_worker() would stop iterating when a memcg
+> was being offlined and restart from the tree root.  Now, it properly
+> handles the offlie memcg and continues shrinking with the next memcg.
+>
+> Note that, to avoid a refcount leak of offline memcg encountered during
+> the memcg tree walking, shrink_worker() must continue iterating to find
+> the next online memcg.
 
-If the following snippet is found in Kconfig:
+Please do not use the word "leak" here. It is confusing. The refcount
+is not leaked, we just have a long-standing ref that should eventually
+be dropped (although in theory, shrink_worker() may never me called
+again). Leak makes it sound like we increment the refcount but
+completely forget dropping it, which is not the case here.
 
-[Test code 1]
+>
+> The following minor issues in the existing code are also resolved by the
+> change in the iteration logic:
+>
+> - A rare temporary refcount leak in the offline memcg cleaner, where the
+>   next memcg of the offlined memcg is also offline.  The leaked memcg
+>   cannot be freed until the next shrink_worker() releases the reference.
+>
+> - One memcg was skipped from shrinking when the offline memcg cleaner
+>   advanced the cursor of memcg tree. It is addressed by a flag to
+>   indicate that the cursor has already been advanced.
+>
+> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> ---
+>  mm/zswap.c | 94 ++++++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 73 insertions(+), 21 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index a50e2986cd2f..29944d8145af 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -171,6 +171,7 @@ static struct list_lru zswap_list_lru;
+>  /* The lock protects zswap_next_shrink updates. */
+>  static DEFINE_SPINLOCK(zswap_shrink_lock);
+>  static struct mem_cgroup *zswap_next_shrink;
+> +static bool zswap_next_shrink_changed;
+>  static struct work_struct zswap_shrink_work;
+>  static struct shrinker *zswap_shrinker;
+>
+> @@ -775,12 +776,39 @@ void zswap_folio_swapin(struct folio *folio)
+>         }
+>  }
+>
+> +/*
+> + * This function should be called when a memcg is being offlined.
+> + *
+> + * Since the global shrinker shrink_worker() may hold a reference
+> + * of the memcg, we must check and release the reference in
+> + * zswap_next_shrink.
+> + *
+> + * shrink_worker() must handle the case where this function releases
+> + * the reference of memcg being shrunk.
+> + */
+>  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+>  {
+>         /* lock out zswap shrinker walking memcg tree */
+>         spin_lock(&zswap_shrink_lock);
+> -       if (zswap_next_shrink =3D=3D memcg)
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> +       if (zswap_next_shrink =3D=3D memcg) {
+> +               /*
+> +                * We advances the cursor to put back the offlined memcg.
+> +                * shrink_worker() should not advance the cursor again.
+> +                */
+> +               zswap_next_shrink_changed =3D true;
 
-config FOO
-        bool
-        depends on BAR
-        select BAR
+I think this should be rare enough that it's not worth the extra complexity=
+ imo.
 
-... without BAR defined; then there is a segfault.
+> +
+> +               do {
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> +                                       zswap_next_shrink, NULL);
+> +               } while (zswap_next_shrink &&
+> +                               !mem_cgroup_online(zswap_next_shrink));
+> +               /*
+> +                * We verified the next memcg is online.  Even if the nex=
+t
+> +                * memcg is being offlined here, another cleaner must be
+> +                * waiting for our lock.  We can leave the online memcg
+> +                * reference.
+> +                */
+> +       }
+>         spin_unlock(&zswap_shrink_lock);
+>  }
+>
+> @@ -1319,18 +1347,42 @@ static void shrink_worker(struct work_struct *w)
+>         /* Reclaim down to the accept threshold */
+>         thr =3D zswap_accept_thr_pages();
+>
+> -       /* global reclaim will select cgroup in a round-robin fashion. */
+> +       /* global reclaim will select cgroup in a round-robin fashion.
+> +        *
+> +        * We save iteration cursor memcg into zswap_next_shrink,
+> +        * which can be modified by the offline memcg cleaner
+> +        * zswap_memcg_offline_cleanup().
+> +        *
+> +        * Since the offline cleaner is called only once, we cannot leave=
+ an
+> +        * offline memcg reference in zswap_next_shrink.
+> +        * We can rely on the cleaner only if we get online memcg under l=
+ock.
+> +        *
+> +        * If we get an offline memcg, we cannot determine the cleaner ha=
+s
 
-  Kconfig:34:error: recursive dependency detected!
-  Kconfig:34:	symbol FOO depends on BAR
-  make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fault
+we cannot determine if* the cleaner
 
-This is because of the following. BAR is a fake entry created by
-sym_lookup() with prop being NULL. In the recursive check, there is a
-NULL check for prop to fall back to stack->sym->prop if stack->prop is
-NULL. However, in this case, stack->sym points to the fake BAR entry
-created by sym_lookup(), so prop is still NULL. prop was then referenced
-without additional NULL checks, causing segfault.
+> +        * already been called or will be called later. We must put back =
+the
+> +        * reference before returning from this function. Otherwise, the
+> +        * offline memcg left in zswap_next_shrink will hold the referenc=
+e
+> +        * until the next run of shrink_worker().
+> +        */
+>         do {
+>                 spin_lock(&zswap_shrink_lock);
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> -               memcg =3D zswap_next_shrink;
+>
+>                 /*
+> -                * We need to retry if we have gone through a full round =
+trip, or if we
+> -                * got an offline memcg (or else we risk undoing the effe=
+ct of the
+> -                * zswap memcg offlining cleanup callback). This is not c=
+atastrophic
+> -                * per se, but it will keep the now offlined memcg hostag=
+e for a while.
+> -                *
+> +                * Start shrinking from the next memcg after zswap_next_s=
+hrink.
+> +                * To not skip a memcg, do not advance the cursor when it=
+ has
+> +                * already been advanced by the offline cleaner.
+> +                */
+> +               do {
+> +                       if (zswap_next_shrink_changed) {
+> +                               /* cleaner advanced the cursor */
+> +                               zswap_next_shrink_changed =3D false;
+> +                       } else {
+> +                               zswap_next_shrink =3D mem_cgroup_iter(NUL=
+L,
+> +                                               zswap_next_shrink, NULL);
+> +                       }
+> +                       memcg =3D zswap_next_shrink;
+> +               } while (memcg && !mem_cgroup_tryget_online(memcg));
+> +
+> +               /*
+>                  * Note that if we got an online memcg, we will keep the =
+extra
+>                  * reference in case the original reference obtained by m=
+em_cgroup_iter
+>                  * is dropped by the zswap memcg offlining callback, ensu=
+ring that the
+> @@ -1344,17 +1396,11 @@ static void shrink_worker(struct work_struct *w)
+>                         goto resched;
+>                 }
+>
+> -               if (!mem_cgroup_tryget_online(memcg)) {
+> -                       /* drop the reference from mem_cgroup_iter() */
+> -                       mem_cgroup_iter_break(NULL, memcg);
+> -                       zswap_next_shrink =3D NULL;
+> -                       spin_unlock(&zswap_shrink_lock);
+> -
+> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
+> -                               break;
+> -
+> -                       goto resched;
+> -               }
+> +               /*
+> +                * We verified the memcg is online and got an extra memcg
+> +                * reference.  Our memcg might be offlined concurrently b=
+ut the
+> +                * respective offline cleaner must be waiting for our loc=
+k.
+> +                */
+>                 spin_unlock(&zswap_shrink_lock);
+>
+>                 ret =3D shrink_memcg(memcg);
+> @@ -1368,6 +1414,12 @@ static void shrink_worker(struct work_struct *w)
+>  resched:
+>                 cond_resched();
+>         } while (zswap_total_pages() > thr);
+> +
+> +       /*
+> +        * We can still hold the original memcg reference.
+> +        * The reference is stored in zswap_next_shrink, and then reused
+> +        * by the next shrink_worker().
+> +        */
 
-As the previous email thread suggests, the file and lineno for select is
-also wrong:
+This is unnecessary imo.
 
-[Test code 2]
-
-config FOO
-       bool
-
-config BAR
-       bool
-
-config FOO
-       bool "FOO"
-       depends on BAR
-       select BAR
-
-  $ make defconfig
-  *** Default configuration is based on 'x86_64_defconfig'
-  Kconfig:1:error: recursive dependency detected!
-  Kconfig:1: symbol FOO depends on BAR
-  Kconfig:4: symbol BAR is selected by FOO
-  [...]
-
-Kconfig:4 should be Kconfig:10.
-
-This patch deletes the wrong and segfault-prone filename/lineno
-inference completely. With this patch, Test code 1 yields:
-
-error: recursive dependency detected!
-	symbol FOO depends on BAR
-	symbol BAR is selected by FOO
-
-Link: https://lore.kernel.org/linux-kbuild/20240627231919.2461945-1-elsk@google.com/T/
-Link: https://lore.kernel.org/linux-kbuild/20240620211112.500465-1-elsk@google.com/
-Link: https://lore.kernel.org/linux-kbuild/20240618185609.4096399-1-elsk@google.com/
-Signed-off-by: HONG Yifan <elsk@google.com>
-
---
-v4: Rebased & addressed comments from masahiroy@kernel.org. Simplify
-    code by dropping `prop` variable.
-v3: Rebase on top of
-    https://lore.kernel.org/linux-kbuild/20240626182212.3758235-1-masahiroy@kernel.org/T/#t
-    & resolve merge conflicts. Fix
-    scripts/kconfig/tests/err_recursive_dep/expected_stderr
-v2: Delete all filenames/lineno completely as suggested by
-    masahiroy@kernel.org
----
- scripts/kconfig/symbol.c                      | 42 ++++++-------------
- .../tests/err_recursive_dep/expected_stderr   | 36 ++++++++--------
- 2 files changed, 30 insertions(+), 48 deletions(-)
-
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 6c6f238c4f7b..71502abd3b12 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -1074,10 +1074,9 @@ static void sym_check_print_recursive(struct symbol *last_sym)
- {
- 	struct dep_stack *stack;
- 	struct symbol *sym, *next_sym;
--	struct menu *menu = NULL;
- 	struct menu *choice;
--	struct property *prop;
- 	struct dep_stack cv_stack;
-+	enum prop_type type;
- 
- 	choice = sym_get_choice_menu(last_sym);
- 	if (choice) {
-@@ -1096,53 +1095,36 @@ static void sym_check_print_recursive(struct symbol *last_sym)
- 	for (; stack; stack = stack->next) {
- 		sym = stack->sym;
- 		next_sym = stack->next ? stack->next->sym : last_sym;
--		prop = stack->prop;
--		if (prop == NULL)
--			prop = stack->sym->prop;
--
--		/* for choice values find the menu entry (used below) */
--		if (sym_is_choice(sym) || sym_is_choice_value(sym)) {
--			for (prop = sym->prop; prop; prop = prop->next) {
--				menu = prop->menu;
--				if (prop->menu)
--					break;
--			}
--		}
-+		type = stack->prop ? stack->prop->type : P_UNKNOWN;
-+
- 		if (stack->sym == last_sym)
--			fprintf(stderr, "%s:%d:error: recursive dependency detected!\n",
--				prop->filename, prop->lineno);
-+			fprintf(stderr, "error: recursive dependency detected!\n");
- 
- 		if (sym_is_choice(next_sym)) {
- 			choice = list_first_entry(&next_sym->menus, struct menu, link);
- 
--			fprintf(stderr, "%s:%d:\tsymbol %s is part of choice block at %s:%d\n",
--				menu->filename, menu->lineno,
-+			fprintf(stderr, "\tsymbol %s is part of choice block at %s:%d\n",
- 				sym->name ? sym->name : "<choice>",
- 				choice->filename, choice->lineno);
- 		} else if (stack->expr == &sym->dir_dep.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s depends on %s\n",
- 				sym->name ? sym->name : "<choice>",
- 				next_sym->name);
- 		} else if (stack->expr == &sym->rev_dep.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s is selected by %s\n",
- 				sym->name, next_sym->name);
- 		} else if (stack->expr == &sym->implied.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s is implied by %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s is implied by %s\n",
- 				sym->name, next_sym->name);
- 		} else if (stack->expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s %s value contains %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s %s value contains %s\n",
- 				sym->name ? sym->name : "<choice>",
--				prop_get_type_name(prop->type),
-+				prop_get_type_name(type),
- 				next_sym->name);
- 		} else {
--			fprintf(stderr, "%s:%d:\tsymbol %s %s is visible depending on %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s %s is visible depending on %s\n",
- 				sym->name ? sym->name : "<choice>",
--				prop_get_type_name(prop->type),
-+				prop_get_type_name(type),
- 				next_sym->name);
- 		}
- 	}
-diff --git a/scripts/kconfig/tests/err_recursive_dep/expected_stderr b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-index 05d4ced70320..fc2e860af082 100644
---- a/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-+++ b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-@@ -1,38 +1,38 @@
--Kconfig:5:error: recursive dependency detected!
--Kconfig:5:	symbol A depends on A
-+error: recursive dependency detected!
-+	symbol A depends on A
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:11:error: recursive dependency detected!
--Kconfig:11:	symbol B is selected by B
-+error: recursive dependency detected!
-+	symbol B is selected by B
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:17:error: recursive dependency detected!
--Kconfig:17:	symbol C1 depends on C2
--Kconfig:21:	symbol C2 depends on C1
-+error: recursive dependency detected!
-+	symbol C1 depends on C2
-+	symbol C2 depends on C1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:27:error: recursive dependency detected!
--Kconfig:27:	symbol D1 depends on D2
--Kconfig:32:	symbol D2 is selected by D1
-+error: recursive dependency detected!
-+	symbol D1 depends on D2
-+	symbol D2 is selected by D1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:37:error: recursive dependency detected!
--Kconfig:37:	symbol E1 depends on E2
--Kconfig:42:	symbol E2 is implied by E1
-+error: recursive dependency detected!
-+	symbol E1 depends on E2
-+	symbol E2 is implied by E1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:49:error: recursive dependency detected!
--Kconfig:49:	symbol F1 default value contains F2
--Kconfig:51:	symbol F2 depends on F1
-+error: recursive dependency detected!
-+	symbol F1 default value contains F2
-+	symbol F2 depends on F1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:60:error: recursive dependency detected!
--Kconfig:60:	symbol G depends on G
-+error: recursive dependency detected!
-+	symbol G depends on G
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
--- 
-2.45.2.993.g49e7a77208-goog
-
+>  }
+>
+>  /*********************************
+> --
+> 2.43.0
+>
 
