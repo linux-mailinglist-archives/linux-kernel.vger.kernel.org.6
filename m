@@ -1,55 +1,43 @@
-Return-Path: <linux-kernel+bounces-255308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BE9933EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56467933E5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419F41C21B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:42:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD0B2166C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AD1181B9A;
-	Wed, 17 Jul 2024 14:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="gAHgJkvM"
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5DE181B8F;
+	Wed, 17 Jul 2024 14:25:06 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4157181B8D;
-	Wed, 17 Jul 2024 14:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EB311CA1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721227337; cv=none; b=V7nY9d7xwxpu1ugPQRT1lpJKNb7Lo33LAhSGimpIh3pBZ3Z6iP75FcJJi3X8W0eJPpwLkyWa0jYseUSVgdhuld6h64tJw7i5Vysb8jlTq5otSXLjtBleMCJdxiTCRRBj9dkZHhoeNzgJF8LcpLsxCoFmFKGBIbMXeCB5fj1PllQ=
+	t=1721226305; cv=none; b=UbFfCZ6z+4HxlmTQHMI1gztvr7WyDDfQXnQtYQS19dmcbiIOczfNG89ZYNUv+4faIg85wztw7a99hc79lOYWHLy0Ro6oxh0tkKUTRZVA7LNQh38HYMFyfibVBPvxduyBAuzvZxQ2gDiaweSkWxrb/XLKJNBV4Vko6iYCddIzmkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721227337; c=relaxed/simple;
-	bh=QiQYi+EeN2Flf4NvMtjLcfUaDy6wj+Rj6QBOVlQXgD8=;
+	s=arc-20240116; t=1721226305; c=relaxed/simple;
+	bh=qVCD4BOjZ2ggFbga1e3T+nLxBhh00ylVbOr9hSJTCTY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Igrg7LMyGypeuO953/Phv6yYJc7ryL3uaMo5TCKDdVj25cpZ9t7dC9y5LJFvsc1t/D8sabkAoEIaeZtz3IgQZv4UxLjBtJJBrosyw7hyINK8rd4DC0y9zeMTU+9Au240fMvSu5RhxtbMADNt7sLtDflbkiVxrMpqy4pmLciajTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=gAHgJkvM; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ppFAZ11gh5FlVVZqVYUTiPa4UzsYjN485Tn5Fvme/xY=; b=gAHgJkvM2yTokloYP2W+ryIrIb
-	UrV4v3v0ZIgzOsW6pp/b50l7z9rhCi/K79DLtn6AdqFQuglJdd7CT/YBRnCnvZmT3fUzjz7KVWpkd
-	zQJxaLYUutC9cvR6SQ6HHdCDZyD5k0NCt0FHv1G6r2XXtdkCaa3C0fcP3lahPJCmFU7puDXssbMJh
-	GJ+qhXMGGCi4UQQaGVgnkW5S/CAMOAchAMdscfSVmjwfR/qYxiQ/7rrrwUniCovmdXYCrmIZvpmD2
-	7NBLIJaMDLsJoxckrh4HXAo3Uel+NF21jB3y0+idY5JYtkQQc+9IMVMPA61GzRRtKi9Xrjj7t07Oq
-	ZCyhDWaQ==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:54972 helo=[192.168.0.142])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <david@lechnology.com>)
-	id 1sU5aW-0008V8-07;
-	Wed, 17 Jul 2024 10:22:49 -0400
-Message-ID: <6081230a-2324-4200-a51d-9b7fefc454f8@lechnology.com>
-Date: Wed, 17 Jul 2024 09:22:47 -0500
+	 In-Reply-To:Content-Type; b=tfcwbQJFgq5gpL4/Y78Cb7DGZ+3vAfYEhiR20EPW6hjr1AX/AdrKICBj84iAbJE14oDsv9dKyMpcPiadP/q84FgwkUfdEkP3uV32hKOozWIw3078f/dM2IGa/o030eT2G0jQ4qaExZpDTPy+2IcFwN5c69gChwYhR8DaE/K5EW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com; spf=pass smtp.mailfrom=nucleisys.com; arc=none smtp.client-ip=114.132.77.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nucleisys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nucleisys.com
+X-QQ-mid: bizesmtpsz3t1721226233tv74wd6
+X-QQ-Originating-IP: leSrENF/kum9dENlar8FdmkYiAt0bnQFVWdzdCqwwgY=
+Received: from [192.168.0.105] ( [58.19.101.85])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 17 Jul 2024 22:23:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2284768939598414446
+Message-ID: <ECE62011D10B286A+e1417154-789a-4f46-acdb-81d9a1e7be9c@nucleisys.com>
+Date: Wed, 17 Jul 2024 22:23:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,87 +45,275 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: davinci: da8xx-cfgchip: Initialize clk_init_data
- before use
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20240717141201.64125-1-bastien.curutchet@bootlin.com>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20240717141201.64125-1-bastien.curutchet@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Subject: Re: [PATCH] riscv: Only flush the mm icache when setting an exec pte
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: aou <aou@eecs.berkeley.edu>, linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>, palmer <palmer@dabbelt.com>,
+ "paul.walmsley" <paul.walmsley@sifive.com>, =?UTF-8?B?5pa55Y2O5ZCv?=
+ <hqfang@nucleisys.com>
+References: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
+ <CAHVXubhkrDv3Fx1KH-jjjWjo-LGKBMabvafAPsDZeSpGMEt-gg@mail.gmail.com>
+ <592DAA3973EEA52F+9b62c73a-cc43-498c-8afb-da2d43e56b5c@nucleisys.com>
+ <CAHVXubhy6tfAEfTF=fsZ90UDc+_vnWurWpK4xDqciwptzuvg6A@mail.gmail.com>
+ <C3FA50DD88E41384+a8e54b7c-d4ec-45c3-9fea-bedc44a4a6f6@nucleisys.com>
+ <CAHVXubjRMSDuu3b2idnf1Gnt-cxqPeY-x4tSuyZu7z7ROUd7+w@mail.gmail.com>
+From: guibing <guibing@nucleisys.com>
+In-Reply-To: <CAHVXubjRMSDuu3b2idnf1Gnt-cxqPeY-x4tSuyZu7z7ROUd7+w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:nucleisys.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On 7/17/24 9:12 AM, Bastien Curutchet wrote:
-> The flag attribute of the struct clk_init_data isn't initialized before
-> the devm_clk_hw_register() call. This can lead to unexpected behavior
-> during registration.
-> 
-> Initialize the entire clk_init_data to zero at declaration.
-> 
+> Which is immediately followed by: "To make a store to instruction
+> memory visible to all RISC-V harts, the writing hart also has to
+> execute a data FENCE before requesting that all remote RISC-V harts
+> execute a FENCE.I.".
+>
+> Maybe you're just lacking a data fence on core0?
 
-Probably should add a Fixes: tag.
+First,
 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
-> ---
+The Riscv spec does not specify how to implement fence instruction 
+specifically.
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Fence is just memory barrier in our hardware platform.
 
+linux source code also take fence instruction as barrier.
 
+https://github.com/riscv/riscv-isa-manual/issues/341#issuecomment-465474896 
+, from this issue, Aswaterman also thinks so.
+
+Second,
+
+core0 reads data from the sd card, but from linux source code, no 
+drivers perform core cache sync operations(by fence.i) after core 
+reading the data.
+
+whereas the core1/2/3 perform cache operation after paging fault. 
+set_ptes function may call flush_icache_pte to sync cache in linux 
+source code.
+
+Finally,
+
+Riscv spec describe the fence.i instruction as following:
+
+> The FENCE.I instruction is used to synchronize the instruction and 
+> data streams.
+>
+> RISC-V does not guarantee that stores to instruction memory will be 
+> made visible to instruction fetches on a RISC-V hart until that hart 
+> executes a FENCE.I instruction. A FENCE.I instruction ensures that a 
+> subsequent instruction fetch on a RISC-V hart will see any previous 
+> data stores already visible to the same RISC-V hart. FENCE.I does not 
+> ensure that other RISC-V harts' instruction fetches will observe the 
+> local hart’s stores in a multiprocessor system.
+>
+ From this description, fence.i instruction only applies to local 
+core,making instruction fetch can see any previous data stores on the 
+same core.
+
+> To make a store to instruction memory visible to all RISC-V harts, the 
+> writing hart also has to execute a data FENCE before requesting that 
+> all remote RISC-V harts execute a FENCE.I."
+ From this point of view, core0 should execute data fence then send 
+remote fence.i to other harts, but linux source code is not implemented 
+in accordance with riscv spec.
+
+ From a more general perspective, i think that flush_icache_pte function 
+should call flush_icache_all not flush_icache_mm.
+
++void flush_icache_pte(struct mm_struct *mm, pte_t pte)
+    {
+    struct folio *folio = page_folio(pte_page(pte));
+
+    if (!test_bit(PG_dcache_clean, &folio->flags)) {
+-           flush_icache_all();
++           flush_icache_mm(mm, false);
+    set_bit(PG_dcache_clean, &folio->flags);
+    }
+    }
+
+thanks for your reply.
+
+在 2024/7/17 17:20, Alexandre Ghiti 写道:
+> Hi Guibing,
+>
+> On Tue, Jul 16, 2024 at 4:31 PM guibing <guibing@nucleisys.com> wrote:
+>> Hi Alex，
+>>
+>>   From RISC-V Unprivileged ISA Spec，or zifencei.adoc :
+>>
+>> FENCE.I does not ensure that other RISC-V harts’ instruction fetches
+>> will observe the local hart’s stores in a multiprocessor system.
+> Which is immediately followed by: "To make a store to instruction
+> memory visible to all RISC-V harts, the writing hart also has to
+> execute a data FENCE before requesting that all remote RISC-V harts
+> execute a FENCE.I.".
+>
+> Maybe you're just lacking a data fence on core0?
+>
+>
+>> thanks.
+>>
+>> 在 2024/7/16 20:51, Alexandre Ghiti 写道:
+>>> Hi Guibing,
+>>>
+>>> First, sorry for the delay, I was out last week.
+>>>
+>>> On Wed, Jun 26, 2024 at 5:59 AM guibing <guibing@nucleisys.com> wrote:
+>>>> Hi Alex,
+>>>>
+>>>> Sorry, yesterday I clicked the mouse by mistake to sent an empty email.
+>>>>
+>>>>> Is it a multithreaded application? You mean that if the application
+>>>>> always runs on core1/2/3, you get an illegal instruction, but that
+>>>>> does not happen when run on core0?
+>>>> test_printf is not a multithread application, just output "hello world"
+>>>> strings.
+>>>>
+>>>> #include <stdio.h>
+>>>>
+>>>> int main()
+>>>> {
+>>>>            printf("hello world!\n");
+>>>>            return 0;
+>>>> }
+>>>>
+>>>>    From testing results, illegal instruction always occur on core1/2/3, no
+>>>> core0.
+>>>>
+>>>>> Did you check if the instruction in badaddr is different from the
+>>>>> expected instruction? The image you provided is not available here,
+>>>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
+>>>>> that correct?
+>>>> this badaddr is same with the expected instruction, but i meet the
+>>>> different.
+>>>>
+>>>> /mnt # ./test_printf
+>>>> [   76.393222] test_printf[130]: unhandled signal 4 code 0x1 at
+>>>> 0x0000000000019c82 in test_printf[10000+68000]
+>>>> [   76.400427] CPU: 1 PID: 130 Comm: test_printf Not tainted 6.1.15 #6
+>>>> [   76.406797] Hardware name: asrmicro,xlcpu-evb (DT)
+>>>> [   76.411665] epc : 0000000000019c82 ra : 000000000001ca36 sp :
+>>>> 0000003fc5969b00
+>>>> [   76.418941]  gp : 000000000007e508 tp : 0000003f8faec780 t0 :
+>>>> 000000000000003d
+>>>> [   76.426244]  t1 : 0000002abe28cecc t2 : 0000002abe369d63 s0 :
+>>>> 0000003fc5969d98
+>>>> [   76.433524]  s1 : 0000000000082ab8 a0 : 0000003fc5969b00 a1 :
+>>>> 0000000000000000
+>>>> [   76.440835]  a2 : 00000000000001a0 a3 : 0000000001010101 a4 :
+>>>> 0101010101010101
+>>>> [   76.448108]  a5 : 0000003fc5969b00 a6 : 0000000000000040 a7 :
+>>>> 00000000000000dd
+>>>> [   76.455432]  s2 : 0000000000000001 s3 : 0000003fc5969d38 s4 :
+>>>> 0000000000082a70
+>>>> [   76.462695]  s5 : 0000000000000000 s6 : 0000000000010758 s7 :
+>>>> 0000002abe371648
+>>>> [   76.469995]  s8 : 0000000000000000 s9 : 0000000000000000 s10:
+>>>> 0000002abe371670
+>>>> [   76.477275]  s11: 0000000000000001 t3 : 0000003f8fb954cc t4 :
+>>>> 0000000000000000
+>>>> [   76.484576]  t5 : 00000000000003ff t6 : 0000000000000040
+>>>> [   76.489948] status: 0000000200004020 badaddr: 00000000ffffffff cause:
+>>>> 0000000000000002
+>>>> Illegal instruction
+>>>>
+>>>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
+>>>>>
+>>>> core0 is responsible for reading data from sd cards to dcache and ddr.
+>>>>
+>>>> before core1/2/3 continue to execute the application, it only execute
+>>>> fence.i instruction.
+>>>>
+>>>> in our riscv hardware , fence.i just flush dcache and invalidate icache
+>>>> for local core.
+>>>>
+>>>> in this case, how core1/2/3 can get application instruction data from
+>>>> the core0 dcache ?
+>>> I don't understand this point ^: you mean that core1/2/3 can't access
+>>> the data in the core0 dcache? And they go straight to main memory? To
+>>> me, the cores dcaches should be coherent and then a fence.i on any
+>>> core would sync the icache with the content of any dcache and that
+>>> should not happen.
+>>>
+>>> To me, the patch is correct, but maybe I did not fully understand your
+>>> issue. Don't hesitate to give more details.
+>>>
+>>> Thanks,
+>>>
+>>> Alex
+>>>
+>>>> i try to send remote fence.i to core0, iilegal instruction cannot
+>>>> reproduced, it can work well.
+>>>>
+>>>> @@ -66,8 +66,11 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+>>>>                     * messages are sent we still need to order this hart's
+>>>> writes
+>>>>                     * with flush_icache_deferred().
+>>>>                     */
+>>>> +              sbi_remote_fence_i(cpumask_of(0));
+>>>>                    smp_mb();
+>>>>            } else if (IS_ENABLED(CONFIG_RISCV_SBI)) {
+>>>>                    sbi_remote_fence_i(&others);
+>>>>            } else {
+>>>>
+>>>>
+>>>> thank you for your reply! ：）
+>>>>
+>>>>
+>>>> 在 2024/6/25 19:45, Alexandre Ghiti 写道:
+>>>>> Hi Guibing,
+>>>>>
+>>>>> You sent your email in html, so it got rejected by the ML, make sure
+>>>>> you reply in plain text mode :)
+>>>>>
+>>>>> On Tue, Jun 25, 2024 at 10:45 AM 桂兵 <guibing@nucleisys.com> wrote:
+>>>>>> Hi alex，
+>>>>>>
+>>>>>> We have encountered a problem related to this patch and would like to ask for your advice, thank you in advance!
+>>>>>>
+>>>>>> Problem description:
+>>>>>> When we use the v6.9 kernel, there is an illegal instruction problem when executing a statically linked application on an SD card, and this problem is not reproduced in v6.6/v6.1 kernel.
+>>>>>> SD card driver uses PIO mode, and the SD card interrupt is bound to core0. If the system schedule the apllication to execute on core1, core2, or core3, it will report an illegal instruction, and if scheduled to execute on core0, it will be executed successfully.
+>>>>> Is it a multithreaded application? You mean that if the application
+>>>>> always runs on core1/2/3, you get an illegal instruction, but that
+>>>>> does not happen when run on core0?
+>>>>>
+>>>>>> We track the source code, flush_icache_pte function patch leads to this issue on our riscv hardware.
+>>>>>> If you merge this patch into the v6.1 kernel, the same problem can be reproduced in v6.1 kernel.
+>>>>>> If using flush_icache_all() not flush_icache_mm in v6.9 kernel ; this issue can not be reproduced in v6.9 kernel.
+>>>>>>
+>>>>>> +void flush_icache_pte(struct mm_struct *mm, pte_t pte)
+>>>>>>     {
+>>>>>>     struct folio *folio = page_folio(pte_page(pte));
+>>>>>>
+>>>>>>     if (!test_bit(PG_dcache_clean, &folio->flags)) {
+>>>>>> -           flush_icache_all();
+>>>>>> +           flush_icache_mm(mm, false);
+>>>>>>     set_bit(PG_dcache_clean, &folio->flags);
+>>>>>>     }
+>>>>>>     }
+>>>>> Did you check if the instruction in badaddr is different from the
+>>>>> expected instruction? The image you provided is not available here,
+>>>>> but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
+>>>>> that correct?
+>>>>>
+>>>>>> Our riscv cpu IP supports multi-core L1 dcache synchronization, but does not support multi-core L1 icache synchronization. iCache synchronization requires software maintenance.
+>>>>>> Does the RISCV architecture kernel in future have mandatory requirements for multi-core iCache hardware consistency?
+>>>>> No no, we try to introduce icache flushes whenever it is needed for such uarch.
+>>>>>
+>>>>>> Thank you for your reply!
+>>>>>>
+>>>>>>
+>>>>>> Link：[PATCH] riscv: Only flush the mm icache when setting an exec pte - Alexandre Ghiti (kernel.org)
+>>>>>>
+>>>>>> ________________________________
+>>>>>> 发自我的企业微信
+>>>>>>
+>>>>>>
+>>>>> Thanks for the report,
+>>>>>
+>>>>> Alex
+>>>>>
 
