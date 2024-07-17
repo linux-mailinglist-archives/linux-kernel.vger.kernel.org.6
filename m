@@ -1,182 +1,238 @@
-Return-Path: <linux-kernel+bounces-255593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48383934296
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15891934299
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F1C1C214D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C852838DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D88D1836EC;
-	Wed, 17 Jul 2024 19:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE90718EB1;
+	Wed, 17 Jul 2024 19:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b5g4LU2T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cef1Wnsn"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9DB1DA5F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 19:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405F318641;
+	Wed, 17 Jul 2024 19:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721244519; cv=none; b=OgPG9OogSpv1C0cpO3/v+ODeno8GoOaPPGO+7+EbOqCnRbYpy+Ol+lBcm20aN5q9WO8Ls1GJbiWdUpII49OZS9yJdxikA96WMnDzDxJF6GtD0mQp8Z+ed6GDl8a0zQ4AqrPhCBB7Pz3CSw8uaKZQ3GxbiEPU9Ai/26PGYbwBRHg=
+	t=1721244632; cv=none; b=QScLyCotSaAxZKAE5/1wAJMODazV9OcTKg8ejDa4/a2OVXS0c2jgkPuYWMHOYpiikXJEWhFBtW9SUK1OA8aDFPxDgxst8KgxEHy8HnMegpiActYWXOj2aGVzXlJWFOC+Oo6d0jWU0J9jnUWGQv48Eksbg5dozhOUYv9R4tFX2mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721244519; c=relaxed/simple;
-	bh=0pD4HSoaZH2Ej/3hmFwgITFmR3sRWzcOIGw2wjyvXQ4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dtJ1ZKnegIkv3g2F4tgJxNk3VUxj+T0KhAbOoBC+QCRR2vYb/BjyQmEDoDDWDkwzxhslsCd66lOne1rEe2ISUcLmmKThcdO6g2inCMfxiwRQLgrmPaR++hHbxnE39Pat2qwj6gHv+fOYmXa4DQjJAD0UD851aWnRsXHo7dkO3v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b5g4LU2T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721244516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0pD4HSoaZH2Ej/3hmFwgITFmR3sRWzcOIGw2wjyvXQ4=;
-	b=b5g4LU2TBFUTPOuNW2kkAuOtQyXAoAkFbKVvtpCyooWs4iQfD2q9gkqrk4pXIkGENjwbwa
-	drdBD5mKiJ6S2D0Y09NXkvfxhru91wigXyD/EcMT0neAfJIfVjFIVYNAJeAt8c0EIwXJQ3
-	fCLhHfGq/+eZZNu0PrA1WB5R6TTkZ1M=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-435-ytmu_uDIMWOCd5dyxCSzEA-1; Wed, 17 Jul 2024 15:28:34 -0400
-X-MC-Unique: ytmu_uDIMWOCd5dyxCSzEA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5a0d7d02a8aso107825a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:28:34 -0700 (PDT)
+	s=arc-20240116; t=1721244632; c=relaxed/simple;
+	bh=X2vXEq9hXttjY2oUXpdodNiLPWdudJaKdhl5bdclwf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WagtcRzcias69g6jmpXc4rkraSBcAgHa/1UBD2g+oDAQ3rVAHb3LIV8oJxVIj2sjZlrWSIBRzWVs4sYIoldfeDSamcZH4e0QzTRLcfl0+MbIEwjuZqCNRQ484sPdpHvGkckiV03lo5iJGch3+TsDO6fpK1bv00/j//pdZ0WHvEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cef1Wnsn; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eedec7fbc4so1026951fa.0;
+        Wed, 17 Jul 2024 12:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721244628; x=1721849428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQNNcJJvwr3DB7AU2YhhE3Rux/aVBmgy8x/TrO2xcsU=;
+        b=cef1WnsnWdLa2LC1dd0IqYcEOEB3WLIUuiTlP+CcO8oBTNa2kzTcQZC5S+9apuN5sq
+         rUuosz6Gb2GZkSZhy7o+t1MsnSBAhnZpvzzh6B6mZri3Dn+Oyd5v5GznmchVxpjC2twn
+         +cuObID8f9buliCzKBh25PotC+n2vfo/uOglCSILHyFlpSgy9EXcI9wWngTz5zlO0MKA
+         ELTVgJQPh4scpOHOgln2vwZnjVfSMjPq46gtJs365xRu0uw4SRkK7YgHWvSOKkZ3583w
+         6joIxei296r+2LH3Gzw8Za3UVnBQUzyZXNQusnH5LmLFH+deawjPgwxMtcXuLV74Bisr
+         cN7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721244513; x=1721849313;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0pD4HSoaZH2Ej/3hmFwgITFmR3sRWzcOIGw2wjyvXQ4=;
-        b=Zxm5AHOPbrSzu7MnYwylZop7tos+g3Boz4om2nWMVaMCTgVlLzvDjg1s1Gd897XytH
-         IkFJ4imwDtyuZjawl9L5BSux4LDNZ9IXgxg/8/ESW0C7byL1BDjXcc6Ah87pkj4gfdFs
-         9my9kLdE7JP8Jtv9qfFeS7L3/hhE7arD0GIxX4MoEQUlNrkH1u6gNROjUssW7SkirC3q
-         SfkDl1zBXgkaPkjKhZPfXDgJd9WtIvxS2WzfmzCq9ufrrRxWEMAMCRLI3Afl7f9ET4SH
-         rsVOd8ai1Mv4VDoDhprl2cY0EuRPMMMFprsOlOIdxY3dT72XjxV8CdaxAC6Fi8s2bJkM
-         8u1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnO5PI7vJQSIPFYV83CVydmC7wJpy9NDmyZdKWG5EMjusC+1rzIzPqG9j1FqZv1lqBMf5MQlfV6KHX4tkaZmdIHUUGLQlFzJyHPY4E
-X-Gm-Message-State: AOJu0YxSvHFGbkOYkuw532CYl1l6EoPWgZXw/wuDzbps17Cqq7bSNsNL
-	1JE4TWwTBp12rK6r3SmK3PR8U7Jq0m5/GmnPaN5uWYzAxp/g9X+G2ATc0AocBKpLgAvHgj5rL1E
-	QpC/PKfxUnBttRAVr3vox0W2dMhpMWlSz5iW2IDoZ9e7dTsOZaUiLd95O73a9UA==
-X-Received: by 2002:a17:906:70d:b0:a77:af07:b978 with SMTP id a640c23a62f3a-a7a011388e8mr111274666b.1.1721244513423;
-        Wed, 17 Jul 2024 12:28:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/Ct2o1CBrr9w66JQWmdhXnrdu96P9BJ0eFvdM9l9nNYPtt56Gm4OdxI26zMMWwRGUsRcKMg==
-X-Received: by 2002:a17:906:70d:b0:a77:af07:b978 with SMTP id a640c23a62f3a-a7a011388e8mr111273966b.1.1721244513006;
-        Wed, 17 Jul 2024 12:28:33 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (200116b82dca8a00524d280e0718aac8.dip.versatel-1u1.de. [2001:16b8:2dca:8a00:524d:280e:718:aac8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a3650sm487656566b.17.2024.07.17.12.28.32
+        d=1e100.net; s=20230601; t=1721244628; x=1721849428;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KQNNcJJvwr3DB7AU2YhhE3Rux/aVBmgy8x/TrO2xcsU=;
+        b=CsykZWtbYxQJ62Z3akbEIGR1PeWYuJqQhR/SihzEcfeLT39o71kF8q2Wyohx7aM8xA
+         T0+7oMFzYVqePUQgz75FJTwZi2NtY1Jo+/WAP+W0OcQT5A3pfJws7jY2f1gmtcHHnACP
+         u/2X04MYDorwKCR5sr34KRw3Qb129hynD7DYmFfBngS9viRk9L14fK9yMRtNv63MoAGa
+         V620da3JJPuAoiOxTiSGZqcwLDzkQ2z8n/tnXtealR+6E3uBqMt8mkXQbvljauF+1f9i
+         KSBFJXB3aA07CMyzetmJpuiYf1qgzGBav0lHnWSqiAv2i79MJFruWQEdG16+BZh2qiDD
+         rVdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFnjXMFbZrlW47McYLLszctSrnwqUjHA3ENxjhk9X1Lq2mKtTNit/5o1tynFQvs2z+db5vy2zTCKXlsQIOB1nSBuIqPfuzdOHn5LEC
+X-Gm-Message-State: AOJu0YzotPqnk1Gwvs+HSyEevkb4/hsQDGSy+p7OUAuHL34R1tbmzv5P
+	VYjjEsH60kqOiOtwFLy3iYa4MwvRNsB2lEDgvtzyZIVKxzLgM+8xxm5RCg==
+X-Google-Smtp-Source: AGHT+IELwK8RRqNe8PtXuyClZuTBOyJwKDrW4Ewf+aAWVuG4RwrkgbrQOHf1axYAdYs8jAjNhk/Ohw==
+X-Received: by 2002:a2e:88c5:0:b0:2ec:557b:f89c with SMTP id 38308e7fff4ca-2ef05d43a9fmr2476691fa.31.1721244627786;
+        Wed, 17 Jul 2024 12:30:27 -0700 (PDT)
+Received: from f.. (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b268a290fsm7399561a12.77.2024.07.17.12.30.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 12:28:32 -0700 (PDT)
-Message-ID: <757f5fcdc14c8f22e52a34974f2e48fe2dcea4d5.camel@redhat.com>
-Subject: Re: [PATCH v2 1/8] x86/PCI: Move some logic to new function
-From: Philipp Stanner <pstanner@redhat.com>
-To: Stewart Hildebrand <stewart.hildebrand@amd.com>, Bjorn Helgaas
-	 <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	 <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	 <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ilpo
-	=?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: x86@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 17 Jul 2024 21:28:31 +0200
-In-Reply-To: <20240716193246.1909697-2-stewart.hildebrand@amd.com>
-References: <20240716193246.1909697-1-stewart.hildebrand@amd.com>
-	 <20240716193246.1909697-2-stewart.hildebrand@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Wed, 17 Jul 2024 12:30:27 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: paul@paul-moore.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] cred: separate the refcount from frequently read fields
+Date: Wed, 17 Jul 2024 21:29:36 +0200
+Message-ID: <20240717192937.527246-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-T24gVHVlLCAyMDI0LTA3LTE2IGF0IDE1OjMyIC0wNDAwLCBTdGV3YXJ0IEhpbGRlYnJhbmQgd3Jv
-dGU6Cj4gLi4uIHRvIHJlZHVjZSBpbmRlbnRhdGlvbiBsZXZlbC4gVGFrZSB0aGUgb3Bwb3J0dW5p
-dHkgdG8gcmVtb3ZlCj4gcmVkdW5kYW50IGluZm8gZnJvbSBkZWJ1ZyBwcmludCBzdHJpbmcuCgpJ
-cyB0aGF0IGludGVuZGVkIHRvIGJlIHRoZSBmaW5hbCBjb21taXQgbWVzc2FnZSBvciBpcyBpdCBz
-dGlsbCBhIGRyYWZ0PwoKSSdkIGNhbGwgdGhlIGNvbW1pdCAieDg2L1BDSTogSW1wcm92ZSBjb2Rl
-IHJlYWRhYmlsaXR5IiAob3Igc3RoIGxpa2UKdGhhdCkgc2luY2UgdGhhdCBpcyB3aGF0IHRoZSBj
-b21taXQgaXMgYWJvdXQuIEl0J3Mgbm90IHNvIG11Y2ggYWJvdXQKdGhlIGNvZGUgbW92ZSBwZXIg
-c2UuCgphbmQgaGF2ZSBhIHNob3J0IG1lc3NhZ2Ugc3VjaCBhczoKCiIKVGhlIGluZGVudGF0aW9u
-IGluIHBjaWJpb3NfYWxsb2NhdGVfZGV2X3Jlc291cmNlcygpIGlzIHVudXNhbGx5IGRlZXAuCgpJ
-bXByb3ZlIHRoYXQgYnkgbW92aW5nIHNvbWUgb2YgaXRzIGNvZGUgdG8gdGhlIG5ldyBmdW5jdGlv
-bgphbGxvY19yZXNvdXJjZSgpLgoKQXMgd2UncmUgYXQgaXQsIHJlbW92ZSByZWR1bmRhbnQgaW5m
-b3JtYXRpb24gZnJvbSBkZXZfZGJnKCkuCiIKCgpSZWdhcmRzLApQLgoKPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBTdGV3YXJ0IEhpbGRlYnJhbmQgPHN0ZXdhcnQuaGlsZGVicmFuZEBhbWQuY29tPgo+IC0t
-LQo+IHYxLT52MjoKPiAqIG5ldyBwYXRjaAo+IC0tLQo+IMKgYXJjaC94ODYvcGNpL2kzODYuYyB8
-IDM4ICsrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCj4gwqAxIGZpbGUgY2hh
-bmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBh
-L2FyY2gveDg2L3BjaS9pMzg2LmMgYi9hcmNoL3g4Ni9wY2kvaTM4Ni5jCj4gaW5kZXggZjJmNGE1
-ZDUwYjI3Li4zYWJkNTU5MDJkYmMgMTAwNjQ0Cj4gLS0tIGEvYXJjaC94ODYvcGNpL2kzODYuYwo+
-ICsrKyBiL2FyY2gveDg2L3BjaS9pMzg2LmMKPiBAQCAtMjQ2LDYgKzI0NiwyNSBAQCBzdHJ1Y3Qg
-cGNpX2NoZWNrX2lkeF9yYW5nZSB7Cj4gwqDCoMKgwqDCoMKgwqDCoGludCBlbmQ7Cj4gwqB9Owo+
-IMKgCj4gK3N0YXRpYyB2b2lkIGFsbG9jX3Jlc291cmNlKHN0cnVjdCBwY2lfZGV2ICpkZXYsIGlu
-dCBpZHgsIGludCBwYXNzKQo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IHJlc291cmNlICpy
-ID0gJmRldi0+cmVzb3VyY2VbaWR4XTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgZGV2X2RiZygmZGV2
-LT5kZXYsICJCQVIgJWQ6IHJlc2VydmluZyAlcHIgKHA9JWQpXG4iLCBpZHgsIHIsCj4gcGFzcyk7
-Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGlmIChwY2lfY2xhaW1fcmVzb3VyY2UoZGV2LCBpZHgpIDwg
-MCkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoci0+ZmxhZ3MgJiBJT1JF
-U09VUkNFX1BDSV9GSVhFRCkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgZGV2X2luZm8oJmRldi0+ZGV2LCAiQkFSICVkICVwUiBpcwo+IGltbW92YWJs
-ZVxuIiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgaWR4LCByKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-fSBlbHNlIHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oC8qIFdlJ2xsIGFzc2lnbiBhIG5ldyBhZGRyZXNzIGxhdGVyICovCj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwY2liaW9zX3NhdmVfZndfYWRkcihkZXYs
-IGlkeCwgci0+c3RhcnQpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgci0+ZW5kIC09IHItPnN0YXJ0Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgci0+c3RhcnQgPSAwOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqB9Cj4gK8KgwqDCoMKgwqDCoMKgfQo+ICt9Cj4gKwo+IMKgc3RhdGljIHZvaWQg
-cGNpYmlvc19hbGxvY2F0ZV9kZXZfcmVzb3VyY2VzKHN0cnVjdCBwY2lfZGV2ICpkZXYsIGludAo+
-IHBhc3MpCj4gwqB7Cj4gwqDCoMKgwqDCoMKgwqDCoGludCBpZHgsIGRpc2FibGVkLCBpOwo+IEBA
-IC0yNzEsMjMgKzI5MCw4IEBAIHN0YXRpYyB2b2lkCj4gcGNpYmlvc19hbGxvY2F0ZV9kZXZfcmVz
-b3VyY2VzKHN0cnVjdCBwY2lfZGV2ICpkZXYsIGludCBwYXNzKQo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkaXNhYmxlZCA9
-ICEoY29tbWFuZCAmCj4gUENJX0NPTU1BTkRfSU8pOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGVsc2UKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGlzYWJsZWQgPSAhKGNvbW1h
-bmQgJgo+IFBDSV9DT01NQU5EX01FTU9SWSk7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAocGFzcyA9PSBkaXNhYmxlZCkgewo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl9k
-YmcoJmRldi0+ZGV2LAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAiQkFSICVkOiByZXNlcnZpbmcg
-JXByIChkPSVkLAo+IHA9JWQpXG4iLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZHgsIHIsIGRp
-c2FibGVkLCBwYXNzKTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAocGNpX2NsYWltX3Jlc291cmNlKGRldiwgaWR4KSA8
-IDApCj4gewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoci0+ZmxhZ3MgJgo+IElPUkVTT1VS
-Q0VfUENJX0ZJWEVEKSB7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBk
-ZXZfaW5mbygmZGV2LT5kZXYsCj4gIkJBUiAlZCAlcFIgaXMgaW1tb3ZhYmxlXG4iLAo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZHgsIHIp
-Owo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9IGVsc2Ugewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgLyogV2UnbGwgYXNzaWduIGEgbmV3Cj4gYWRkcmVzcyBsYXRlciAq
-Lwo+IC0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGNpYmlvc19zYXZl
-X2Z3X2FkZHIoZGUKPiB2LAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZHgsCj4gci0+c3RhcnQpOwo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgci0+ZW5kIC09IHItPnN0YXJ0Owo+IC3C
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgci0+c3RhcnQgPSAwOwo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqB9Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgaWYgKHBhc3MgPT0gZGlzYWJsZWQpCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYWxsb2NfcmVzb3Vy
-Y2UoZGV2LCBpZHgsIHBhc3MpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+
-IMKgwqDCoMKgwqDCoMKgwqBpZiAoIXBhc3MpIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHIgPSAmZGV2LT5yZXNvdXJjZVtQQ0lfUk9NX1JFU09VUkNFXTsKCg==
+Refcount is modified a lot, for example every time a file is closed or
+opened. Then this avoidably dirties the same cacheline which contains
+uid, gid and other frequently read fields.
+
+Also tidy up non_rcu handling -- it only transitions true->false once,
+and even then only for a rare case (access(2) system call which had to
+duplicate creds). As such the field belongs in the read-mostly area.
+
+In order to avoid growing the struct fill in the space with keyring.
+
+No change in size on typical configs on 64-bit architectures.
+
+Validated with a simple test where one thread opens and closes a file,
+while another keeps re-reading another file in a loop (ops/s):
+before:	4353763
+after:	4742792 (+9%)
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+Back in May I sent a patch to plug a small hole in the struct. I did not
+get any traffic, but just in case I'll note it should be dropped in
+favor of this one.
+
+Also note this does not solve real scalability problems, but I'm going
+to get to it at some point(tm).
+
+ fs/open.c            |  2 +-
+ include/linux/cred.h | 31 +++++++++++++++----------------
+ kernel/cred.c        |  6 +++---
+ 3 files changed, 19 insertions(+), 20 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 22adbef7ecc2..930e22fe8dba 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -455,7 +455,7 @@ static const struct cred *access_override_creds(void)
+ 	 * cred accesses will keep things non-racy to avoid RCU
+ 	 * freeing.
+ 	 */
+-	override_cred->non_rcu = 1;
++	override_cred->non_rcu = true;
+ 
+ 	old_cred = override_creds(override_cred);
+ 
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 2976f534a7a3..3127eaad4140 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -110,7 +110,16 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+  */
+ struct cred {
+ 	atomic_long_t	usage;
+-	kuid_t		uid;		/* real UID of the task */
++	struct rcu_head	rcu;		/* RCU deletion hook */
++#ifdef CONFIG_KEYS
++	unsigned char	jit_keyring;	/* default keyring to attach requested
++					 * keys to */
++	struct key	*session_keyring; /* keyring inherited over fork */
++	struct key	*process_keyring; /* keyring private to this process */
++	struct key	*thread_keyring; /* keyring private to this thread */
++	struct key	*request_key_auth; /* assumed request_key authority */
++#endif
++	kuid_t		uid ____cacheline_aligned_in_smp;/* real UID of the task */
+ 	kgid_t		gid;		/* real GID of the task */
+ 	kuid_t		suid;		/* saved UID of the task */
+ 	kgid_t		sgid;		/* saved GID of the task */
+@@ -119,19 +128,12 @@ struct cred {
+ 	kuid_t		fsuid;		/* UID for VFS ops */
+ 	kgid_t		fsgid;		/* GID for VFS ops */
+ 	unsigned	securebits;	/* SUID-less security management */
++	bool		non_rcu;	/* Can we skip RCU deletion? */
+ 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
+ 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
+ 	kernel_cap_t	cap_effective;	/* caps we can actually use */
+ 	kernel_cap_t	cap_bset;	/* capability bounding set */
+ 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+-#ifdef CONFIG_KEYS
+-	unsigned char	jit_keyring;	/* default keyring to attach requested
+-					 * keys to */
+-	struct key	*session_keyring; /* keyring inherited over fork */
+-	struct key	*process_keyring; /* keyring private to this process */
+-	struct key	*thread_keyring; /* keyring private to this thread */
+-	struct key	*request_key_auth; /* assumed request_key authority */
+-#endif
+ #ifdef CONFIG_SECURITY
+ 	void		*security;	/* LSM security */
+ #endif
+@@ -139,11 +141,6 @@ struct cred {
+ 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+ 	struct ucounts *ucounts;
+ 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
+-	/* RCU deletion */
+-	union {
+-		int non_rcu;			/* Can we skip RCU deletion? */
+-		struct rcu_head	rcu;		/* RCU deletion hook */
+-	};
+ } __randomize_layout;
+ 
+ extern void __put_cred(struct cred *);
+@@ -217,7 +214,8 @@ static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
+ 	struct cred *nonconst_cred = (struct cred *) cred;
+ 	if (!cred)
+ 		return cred;
+-	nonconst_cred->non_rcu = 0;
++	if (unlikely(nonconst_cred->non_rcu))
++		WRITE_ONCE(nonconst_cred->non_rcu, false);
+ 	return get_new_cred_many(nonconst_cred, nr);
+ }
+ 
+@@ -242,7 +240,8 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
+ 		return NULL;
+ 	if (!atomic_long_inc_not_zero(&nonconst_cred->usage))
+ 		return NULL;
+-	nonconst_cred->non_rcu = 0;
++	if (unlikely(nonconst_cred->non_rcu))
++		WRITE_ONCE(nonconst_cred->non_rcu, false);
+ 	return cred;
+ }
+ 
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 075cfa7c896f..23b73ee2ec63 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -104,7 +104,7 @@ void __put_cred(struct cred *cred)
+ 	BUG_ON(cred == current->cred);
+ 	BUG_ON(cred == current->real_cred);
+ 
+-	if (cred->non_rcu)
++	if (unlikely(cred->non_rcu))
+ 		put_cred_rcu(&cred->rcu);
+ 	else
+ 		call_rcu(&cred->rcu, put_cred_rcu);
+@@ -218,7 +218,7 @@ struct cred *prepare_creds(void)
+ 	old = task->cred;
+ 	memcpy(new, old, sizeof(struct cred));
+ 
+-	new->non_rcu = 0;
++	new->non_rcu = false;
+ 	atomic_long_set(&new->usage, 1);
+ 	get_group_info(new->group_info);
+ 	get_uid(new->user);
+@@ -643,7 +643,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
+ 	old = get_task_cred(daemon);
+ 
+ 	*new = *old;
+-	new->non_rcu = 0;
++	new->non_rcu = false;
+ 	atomic_long_set(&new->usage, 1);
+ 	get_uid(new->user);
+ 	get_user_ns(new->user_ns);
+-- 
+2.43.0
 
 
