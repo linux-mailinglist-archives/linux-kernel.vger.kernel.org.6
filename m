@@ -1,296 +1,336 @@
-Return-Path: <linux-kernel+bounces-254579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3890F9334E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:08:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAAF9334E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B138B21F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845F41C22347
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4644F1859;
-	Wed, 17 Jul 2024 01:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B324E138C;
+	Wed, 17 Jul 2024 01:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SfzuuNYb"
-Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mz5HdWVD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8214C81;
-	Wed, 17 Jul 2024 01:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721178472; cv=fail; b=u8SWaoF4Ps4n90hP4eJJHXo3OmZOi8zGWNDSGAlNCgcQ4+z7JttxtH4OQbcGvQHA76ZqlMwH7UR1oG1IUc160dl3FzmpD8RoHr+7jQ4sMma/4EeoeH2jnufmo0YK6GNB9Lmse5CmFtG9tnEXblzMhE9UXHEPKxp8m5es1KG1y/8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721178472; c=relaxed/simple;
-	bh=NLpRw89Jy8lm4VDk/uyJ01pnwvJaUHCc86Kdc2ssiOo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oXq5HeZ5YD2O7qRyxiu+l0NVDl1sa+5Gb6xcSOQPmNDepkNj34uKWNjhmAMU+p7GrIVcjfDk0ehl5Op1+Yfci5smDUeBJi2R1BxJluBuoJIfpycBMie9jrPsQOeSlYUNkgMejq4bbaprZLr7dbm4tr1LGNLoDz3dhsXImAVm+PA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SfzuuNYb; arc=fail smtp.client-ip=148.163.139.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHcVQB000904;
-	Tue, 16 Jul 2024 21:07:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=NLpRw
-	89Jy8lm4VDk/uyJ01pnwvJaUHCc86Kdc2ssiOo=; b=SfzuuNYb2bGvELgFgfMIU
-	2dgBQg1JovkRjPrmjoJjMYjzCMWefhm43NcmvM0DXLDdaDwPYBqox5nSUbLse5M4
-	XlSvXxNYMwGTtdDyp6AqGhDlQEqxXpuL6vsWDt+l5uRLYaq7gIescNxoktJMkh5v
-	/mfmH2/zQdlri+y5e399eV8boH8bzMY58Q8d+cr9QjxwEBS8kpa09BXzMlILrMVa
-	9N9yvPzljxZjevYNSKZcr6wd9Y+9E2wx1iSHJeFANbx+Solopd14zCrqDgh/HfyC
-	fWCJ18IJrKkSbWJ6nWJE0sReOxEDotZNRY284OgSt0L4lIH/7IAmTtDosyazeVDv
-	A==
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazlp17010007.outbound.protection.outlook.com [40.93.1.7])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 40dweks1ee-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 21:07:34 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CnnU1ffnGloC6wHp+OZbqaSDpsQjVE3YeRGu/XLxKXmlSFqSUv+nVkSYqq9jaUM0a62JMvGleCqP+syHjVx4hEEhBlkU5XUwWoupRAfceMUKrOY0i+aFi4x5M1B7we2w24NefV43R3GUig69Ey/KrW6O6we03UQeAlm4hQatd4q1ib1bAfKNe23MhCPnpGkY68aqUKwRwgsVEEx5T2Go4nLT05DMT5xjTAqFEU1oU0URz9WsCuVu9eA0sLNps24HyRl7glg9bf/EFCw9aswxZSnhJwFw+/rg29BkdaQ20e7AGIQ77QnfghY6C1n/ZSnmUvIL9ivDNsPIndJvqBQ10g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NLpRw89Jy8lm4VDk/uyJ01pnwvJaUHCc86Kdc2ssiOo=;
- b=Yr//HtEMKYYOsn4BxviE+JTjalY22Fy2mSnkcSDK2477Gk/coK/Lsu9mjrQTebR8wwEgFdtHytOPB+heIDFejyX17DfAMKpphxY/SMQCRmN+H/DjeSAwKGENjWvjX6UrBfdA75AhCZNOimCR1r8GZrZoHLBp/WEXG6wmXNxby+nSgnH5IrnsgoG5wkL8AUfy1p0VDJ7V+1KMBSNiKNFtSE2xJGH1i3KOCRUgGkOKWf7v2Fudiw2eGy5XDf0JAYeG/xRLA9TiFBsDHwjO0KzPUlizg7i7wzTpUdR3jlr6QQhwL7Dp7LeK3YIUmHZ4Ha2m1ty/cxAY/tDekAIJagDwGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-Received: from PH0PR03MB7141.namprd03.prod.outlook.com (2603:10b6:510:296::20)
- by SJ0PR03MB5485.namprd03.prod.outlook.com (2603:10b6:a03:28a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Wed, 17 Jul
- 2024 01:07:31 +0000
-Received: from PH0PR03MB7141.namprd03.prod.outlook.com
- ([fe80::c559:3d31:1af3:b01]) by PH0PR03MB7141.namprd03.prod.outlook.com
- ([fe80::c559:3d31:1af3:b01%5]) with mapi id 15.20.7762.027; Wed, 17 Jul 2024
- 01:07:31 +0000
-From: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
-To: Conor Dooley <conor@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jonathan Cameron
-	<jic23@kernel.org>,
-        David Lechner <dlechner@baylibre.com>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Dimitri Fedrau <dima.fedrau@gmail.com>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        =?iso-8859-1?Q?Nuno_S=E1?= <noname.nuno@gmail.com>
-Subject: RE: [PATCH v7 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Thread-Topic: [PATCH v7 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Thread-Index: AQHa1fIKypoGO0+cUUGRLiCsvbmNpLH3+UYAgACfTOCAAO1OgIAAl5fQ
-Date: Wed, 17 Jul 2024 01:07:31 +0000
-Message-ID: 
- <PH0PR03MB7141D593AF504A455AABA4D6F9A32@PH0PR03MB7141.namprd03.prod.outlook.com>
-References: <20240714133000.5866-1-kimseer.paller@analog.com>
- <20240714133000.5866-5-kimseer.paller@analog.com>
- <20240715-numbness-chooser-d1bcb0438ba5@spud>
- <PH0PR03MB7141E98ECA32AF462D3AFF15F9A22@PH0PR03MB7141.namprd03.prod.outlook.com>
- <20240716-supremacy-reseller-4fd6207d2099@spud>
-In-Reply-To: <20240716-supremacy-reseller-4fd6207d2099@spud>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: 
- =?iso-8859-1?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNca3BhbGxlcj?=
- =?iso-8859-1?Q?JcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZi?=
- =?iso-8859-1?Q?ODRiYTI5ZTM1Ylxtc2dzXG1zZy1lZTZkNGYwNi00M2Q4LTExZWYtYWFmOC?=
- =?iso-8859-1?Q?1iN2I2MDBmNjM3NDlcYW1lLXRlc3RcZWU2ZDRmMDgtNDNkOC0xMWVmLWFh?=
- =?iso-8859-1?Q?ZjgtYjdiNjAwZjYzNzQ5Ym9keS50eHQiIHN6PSI1NzE0IiB0PSIxMzM2NT?=
- =?iso-8859-1?Q?Y1MjA0ODAxNjExNjEiIGg9Im9sZGxocG4zWG1GS3pIeHVQMERBZ29MK05m?=
- =?iso-8859-1?Q?Zz0iIGlkPSIiIGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk?=
- =?iso-8859-1?Q?5DZ1VBQUVvQ0FBQ0pmU0t4NWRmYUFTRkZnRkkzanRvK0lVV0FVamVPMmo0?=
- =?iso-8859-1?Q?REFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFIQUFBQURhQVFBQUFBQUFBQU?=
- =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFFQUFRQUJBQUFBM0xoU2ZnQUFBQUFBQUFBQUFB?=
- =?iso-8859-1?Q?QUFBSjRBQUFCaEFHUUFhUUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QU?=
- =?iso-8859-1?Q?c4QWFnQmxBR01BZEFCekFGOEFaZ0JoQUd3QWN3QmxBRjhBWmdCdkFITUFh?=
- =?iso-8859-1?Q?UUIwQUdrQWRnQmxBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
- =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQU?=
- =?iso-8859-1?Q?FBR0VBWkFCcEFGOEFjd0JsQUdNQWRRQnlBR1VBWHdCd0FISUFid0JxQUdV?=
- =?iso-8859-1?Q?QVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURFQUFBQUFBQUFBQUFBQUFBQUFBQU?=
- =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
- =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FBQUFBQUNlQUFBQVlRQmtB?=
- =?iso-8859-1?Q?R2tBWHdCekFHVUFZd0IxQUhJQVpRQmZBSEFBY2dCdkFHb0FaUUJqQUhRQW?=
- =?iso-8859-1?Q?N3QmZBSFFBYVFCbEFISUFNZ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
- =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?iso-8859-1?Q?QUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFBPT0iLz48L21ldGE+?=
-x-dg-rorf: true
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR03MB7141:EE_|SJ0PR03MB5485:EE_
-x-ms-office365-filtering-correlation-id: 485c5876-15bc-42d0-66c4-08dca5fcd5bd
-x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?tSeZESpGTI6lHoDNjSxCgUbx7wO5tW6Xo0kJ0l4CxTgZIlZpBaTnjeaCU0?=
- =?iso-8859-1?Q?CC+ZGjMwBJlT4caS1VqNHe7CIaBguCchnhy06Dq2yPm7jtnds1XnMWo+E/?=
- =?iso-8859-1?Q?4U+GXNLM1XEc31FyJTjHFGfHduuVx9Lg+8xaWn0tblGNP+RbBbjwwMaRyQ?=
- =?iso-8859-1?Q?F0U8ZBL5nYqJrq8JAOkFdhb7RqjXuL6K1nLMeZqC0POkcD2G3CO6/2Crog?=
- =?iso-8859-1?Q?K9eF7nvA6aoYFyyM2si+Aed/HZdqli+de+9VQHnvIOLH2y/HHaS5H2M9n0?=
- =?iso-8859-1?Q?j814vg2oMOn3rms5X66KgHPSMf/AU7R/mn85HPgGCi5/u3rwR8yeC8Je+9?=
- =?iso-8859-1?Q?u51Gek0q2lwj/QSuP0CqoZD9kCH9R4EAZYJqf+RMCCsrjUtbXOeWuKJB+t?=
- =?iso-8859-1?Q?diVV+aOHyUzquoxLMhPwIvPO397kgIwocNhIWsyo86eiJnxVb2XFTtMAw3?=
- =?iso-8859-1?Q?wSQmH6G53//A/Si/8qWmRu/+SA0pwcpMdCm5xFnZ5T5qmTiG6/2EYm8R0f?=
- =?iso-8859-1?Q?ldm5DuTDy+Gx44xQ8wTdQ0TXiVm9hhQFuDsYdIA3boRc0/shf4LRLgLXht?=
- =?iso-8859-1?Q?e3IHPP5gQsVyiA6lX3eZrZwSumqQkIEmPYPuzTJqdB/jaLS3BnePyGwkxq?=
- =?iso-8859-1?Q?6LZC7svikI77nLUzxBB39DOFJIbjKccoK7a8Nmx8jPUsJ9LfL1ccIr6rSm?=
- =?iso-8859-1?Q?1QWtQoHGJ/o9GEGRQwN4FJTqhfQFGCsz1kaY2hTY/3pHZ3I2+1yTJ1HwcY?=
- =?iso-8859-1?Q?h4zLh+/PEma3jFQ0rXZGy9dk4KcKQNqn7tGy6d5+M9dVEgSCuU/GyGJDSH?=
- =?iso-8859-1?Q?didcFZYC0cDP8dvqZuTEA8mvxWtUFb/QEBx3UNwBImcRZCyNcRcdzWJFjE?=
- =?iso-8859-1?Q?lpR4MpwNEGvpvRCYxFAJ8ZEVPlRJ02lfTnPXxSje6X//alDcmP49EdwfBi?=
- =?iso-8859-1?Q?Bqy9b6gYOJsEp/TyxHJBATBuNu2/gGrc1RQduCB+ad5KDvsA3sNwN+yao/?=
- =?iso-8859-1?Q?F+WthkexziWMUUiCXtf1cJEjTl8KZ5UWyDgDwqmQGSj7yGvcdIQT0CbCtx?=
- =?iso-8859-1?Q?SP3DVvXuScQnXWm0yRTDDTDMiXMWv8CbdSjpvArKFv1V+hLN+mVXYIZcl2?=
- =?iso-8859-1?Q?LI0LHmQ1hz4xl52ERBhVDn/7K0oI6EgUNnz0GjCB4l2jhz2zq8tnYf7EMx?=
- =?iso-8859-1?Q?QYu8ChWHl+EKg0UAqVgV5LJGlOS4kJUJnRYxvgl9m4GYacQCjBXrAeiJp6?=
- =?iso-8859-1?Q?7Dg9TXCIm/I4gVHhKcMib9BVdtDKdutkTMxFM6srXY080Weoi2adLV2Bi7?=
- =?iso-8859-1?Q?3+xbu2kdwnqMyr9F9JCxbLCJkoc36fOiidl+7m3uI6ILvEVUh9QvZTNuD7?=
- =?iso-8859-1?Q?AiztFdghgt1J4K+7CkOEKrUghtMjSaG1g4LurrQJWdh/zzqAi+aL7cVLiS?=
- =?iso-8859-1?Q?jpauZ9Ueky7Cv0uQwJ+BYzENduJy1rXcNnAAeQ=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB7141.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?GUrCHObz2k8Xy6CtVWv6OaGe0+10JMhBrqPPhHapwKHuhvOxy56m5QlBGG?=
- =?iso-8859-1?Q?W8o3nWmwtlaBvOGKImRrybFGIJhp+1Q/g07hQvsq/MAyzrkH3Fl9LuKmNb?=
- =?iso-8859-1?Q?zOZQ5JJxhLX9D5hKuq56QdjPm7w1ndajS0L5U45hX7rb5xbYqYG774QzX2?=
- =?iso-8859-1?Q?2sPZIOraM3aLjtsnk+1g+4dsTNWgKR7P9QV0/Ie4oTfwmA7a/NnSIekmAJ?=
- =?iso-8859-1?Q?nVi+t2/CJZnfJjRpss434BAGmW7nr5SyO57emyY+927yk3+PISC9+BZdqJ?=
- =?iso-8859-1?Q?kglg/BSO++q3vYTBYyoWVdUx9gIfstQmhjdilqJ5V0cjbZBhv/AlqCK/Fo?=
- =?iso-8859-1?Q?NO1kcIGN2m9GJnxp+EFXf1RbZt/Nycz936Nv+mXeQPDbjQo1xdJYuF+Ss8?=
- =?iso-8859-1?Q?ErSBfKeUNjVPU5diw+XcEIN5mn3bxI9Fy/hZ96d5uol+fWRNByJezLgrEa?=
- =?iso-8859-1?Q?mKWPZs4bpU2K+Z4pbCr1t93v+2Hc8lO/gWbS+/ta4qlCaNB0TeP6DUrqEz?=
- =?iso-8859-1?Q?oGdUCP4wdKN0SIJYtMnmKJSl3tGfJkxbNAbgtRViL/3jTHzezRzcg4FrdN?=
- =?iso-8859-1?Q?B2o43O1tvz/hhgd2vb7T27JUhN/e+Uh6cZ6prCqE/MuPi/R22D+uEKiOC/?=
- =?iso-8859-1?Q?ubqBAVbJHQHnLYr6j6o6sYP4BbqUXFX9y1BvfzD+oZFEGjm11R2QRYiQeQ?=
- =?iso-8859-1?Q?OdPFXGHsqj8n4dh1M0+8Pp+2jsJrpt9b2yTxXsRFU2qpNbwUzKZY5f4Yrj?=
- =?iso-8859-1?Q?zadjGL10EX6x5SE3UAFSCVDNgXmODkva4Gf7LiNn15PcHtRDrPtnSWoIZm?=
- =?iso-8859-1?Q?sMfXDcpyxMct59cI8du17A12F2UAhpbVbWuV2juEfu+CYXqOdNfscXhbQ4?=
- =?iso-8859-1?Q?ISteoVy6G8Z6WPRFszebrYrHwRn7hHQt+LwIGJB+4ZU71idLRw9hjZcS+B?=
- =?iso-8859-1?Q?OwRtCX7ERiZFby+9FJiV1OzZDNYimaI8zrW34OYQT/aJtMgGIlNhaGNAs1?=
- =?iso-8859-1?Q?qLoNJDsZB0b64Ciq7y4ePAwoD82p6hFQZzxDLimTuju2iMxdT3kk61oiAn?=
- =?iso-8859-1?Q?wCxzOyTsf0DZgkOVofSh84Hpn7cOWCjLcSK+Q/YfFFL5wENJZ3pTGN1+lI?=
- =?iso-8859-1?Q?Brp7YxTQazytYs2LQ4qYSUy21zr1R97NKujyOzPdQKdyMT0f6PDkaNWtOA?=
- =?iso-8859-1?Q?QYLn03iJtYfqGiR6dUHFC0ASsiAo7vpcvGcrt5eMfQQAjClEiTGbSK54gk?=
- =?iso-8859-1?Q?9TAV/w/Ojc24LCRmLX3b9DfcikcnJWu597kb8ybPd9/Q35Gzc+XpYFmyn7?=
- =?iso-8859-1?Q?ttNkrhamn7/bYCNl8DraZz4eV2gdJVX75EqPkWHwm8js6ViqjJMTH23RUY?=
- =?iso-8859-1?Q?oMo4anO4xUUPqGO89bTYNItbXoSAaSqUUc7e+uQrcJL9m9uvTTN6GQFxDv?=
- =?iso-8859-1?Q?ph0rgn7CAnp7jOefYW1nteTn+Lw0MPJIwY6ap1lR2VbG0LL1Fsk5DNNs2J?=
- =?iso-8859-1?Q?+g8bR7PT8r9OQosUlPfcx8L0KQ4z3YeZZ40e3JUsxDnJZu0gCS9s+9qGzb?=
- =?iso-8859-1?Q?6uRkarAZ+OsLVtMRI5Qw314o3uUWTAdbjC6DC20/FnSQiRz89G9Or0rVKv?=
- =?iso-8859-1?Q?JvuApodjv3PTyxlkHmI+etUW4jCCD1wx8y?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE96536D;
+	Wed, 17 Jul 2024 01:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721178917; cv=none; b=aucqtW/6EPKoj9oMGIYq/9/1RZC/1L7nSLZCt8K3VQmb7KhpZnndE/lskrJapaKIUKm7VbFwUOQ0yZzulcDUps1c/PArv49s2UpIXT60QIF4vg7lYzJlqPQXHaRVSBrMCThTHZb4/kBbJVN0POIGkH7qCVS6MX9es4Cy3g9psT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721178917; c=relaxed/simple;
+	bh=RtUSokA7N3oWuxrdHS5tXYcxzR1xyqfoolt71QB1qRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqbqhUnN6C7Izj20HywPPtEriBq614jJn05VdI6mboFtuW5TKuBGnhuTaZA6wLds1yDixDgpA5PpVNujuzzeeBTG8b5lBiomNdtBtbiIaDbQxBq79R1MYZIwd1LSL1npvzFSSjUPbzxXtM40FSrjkM/F8iqQ8ewsEBn5mz0sSco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mz5HdWVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E58C116B1;
+	Wed, 17 Jul 2024 01:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721178917;
+	bh=RtUSokA7N3oWuxrdHS5tXYcxzR1xyqfoolt71QB1qRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mz5HdWVDGFPC8pFcmPNvE2BurInkMuX2CwORChqm9eAqFcp6I0CuQBExIaJUHCiO9
+	 QrawG/vl0ZOmcuuXIhY9ij1X3i9J08MNovm22/ahF49l1Ci5eWalH9Tj2pxBeeg7uD
+	 YCpsQXQYtY52ZiTCdu7fGvF+gW/yAH22ctgwglTNyL7xV60DlXOMBflC8S9Z/w7xok
+	 G2fl7ocSXVScfItw8avzVUrLzpKyuh7yFGh1uRHVA8k3kFqSvCJZsr9KTWZGbG9X8d
+	 el/ZSkfAt5bKdQVnslyyEJRSrDwj9OEgRLvIC5IpBaoP4GWzcGznQdnCvjHsPUlBlU
+	 1jhlJxRclg4XQ==
+Date: Tue, 16 Jul 2024 18:15:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman
+ package
+Message-ID: <20240717011515.GA1230090@thelio-3990X>
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB7141.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 485c5876-15bc-42d0-66c4-08dca5fcd5bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2024 01:07:31.5696
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pk+XDnlA5DYbiyVJMDHkPxI0eVMPbzm8BsSBCwBS048sCJwth7Hc5ADzT+iCxf2YsVLz1JGZORcJDqVx1naMI+Q+K1BK7LayjMdUFoRlzbA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB5485
-X-Proofpoint-ORIG-GUID: xQAn8S0ltB0miDMFvKz5kpMWAd00leIR
-X-Proofpoint-GUID: xQAn8S0ltB0miDMFvKz5kpMWAd00leIR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-16_03,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- priorityscore=1501 clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170007
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
 
+Hi Thomas,
 
+On Tue, Jul 16, 2024 at 07:52:14PM +0200, Thomas Weißschuh wrote:
+> pacman is the package manager used by Arch Linux and its derivates.
+> Creating native packages from the kernel tree has multiple advantages:
+> 
+> * The package triggers the correct hooks for initramfs generation and
+>   bootloader configuration
+> * Uninstallation is complete and also invokes the relevant hooks
+> * New UAPI headers can be installed without any manual bookkeeping
+> 
+> The PKGBUILD file is a simplified version of the one used for the
+> downstream Arch Linux "linux" package.
+> Extra steps that should not be necessary for a development kernel have
+> been removed and an UAPI header package has been added.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+> ---
+> Changes in v6:
+> - Drop reference to srctree/Makefile
+> - Drop $(realpath $(srctree))
+> - Make use of the fact that $(objtree) is always "."
+> - Align coding style to kernel and drop vim config line
+> - Drop indirection through `$MAKE run-command`
+> - Unify shell variable syntax to "${var}"
+> - Add explanations to custom variables
+> - Add makedepends
+> - Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net
+> 
+> Changes in v5:
+> - Rebase onto kbuild/for-next
+> - Use new path to build-version script (from kbuild/for-next)
+> - Ensure submake jobserver delegation works
+> - Simplify $modulesdir/pkgbase file creation
+> - Add Reviewed-by from Nicolas
+> - Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
+> 
+> Changes in v4:
+> - Update MRPROPER_FILES
+> - Unify shell variable syntax
+> - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
+> 
+> Changes in v3:
+> - Enforce matching architectures for installation
+> - Add Reviewed-by and Tested-by from Nathan
+> - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
+> 
+> Changes in v2:
+> - Replace ${MAKE} with $MAKE for consistency with other variables
+> - Use $MAKE for "-s image_name"
+> - Avoid permission warnings from build directory
+> - Clarify reason for /build symlink removal
+> - Install System.map and config
+> - Install dtbs where available
+> - Allow cross-build through arch=any
+> - Sort Contributor/Maintainer chronologically
+> - Disable some unneeded makepkg options
+> - Use DEPMOD=true for consistency with rpm-package
+> - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
+> ---
+>  .gitignore               |  6 +++
+>  Makefile                 |  2 +-
+>  scripts/Makefile.package | 14 +++++++
+>  scripts/package/PKGBUILD | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 120 insertions(+), 1 deletion(-)
+> 
+> diff --git a/.gitignore b/.gitignore
+> index c59dc60ba62e..7902adf4f7f1 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -92,6 +92,12 @@ modules.order
+>  #
+>  /tar-install/
+>  
+> +#
+> +# pacman files (make pacman-pkg)
+> +#
+> +/PKGBUILD
+> +/pacman/
+> +
+>  #
+>  # We don't want to ignore the following even if they are dot-files
+>  #
+> diff --git a/Makefile b/Makefile
+> index 7372ea45ed3f..768d3dc107f8 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1481,7 +1481,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+>  # Directories & files removed with 'make mrproper'
+>  MRPROPER_FILES += include/config include/generated          \
+>  		  arch/$(SRCARCH)/include/generated .objdiff \
+> -		  debian snap tar-install \
+> +		  debian snap tar-install PKGBUILD pacman \
+>  		  .config .config.old .version \
+>  		  Module.symvers \
+>  		  certs/signing_key.pem \
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index bf016af8bf8a..0aaa0832279c 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -141,6 +141,19 @@ snap-pkg:
+>  	cd $(objtree)/snap && \
+>  	snapcraft --target-arch=$(UTS_MACHINE)
+>  
+> +# pacman-pkg
+> +# ---------------------------------------------------------------------------
+> +
+> +PHONY += pacman-pkg
+> +pacman-pkg:
+> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> +	+objtree="$(realpath $(objtree))" \
+> +		BUILDDIR=pacman \
+> +		CARCH="$(UTS_MACHINE)" \
+> +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> +		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+> +		makepkg
+> +
+>  # dir-pkg tar*-pkg - tarball targets
+>  # ---------------------------------------------------------------------------
+>  
+> @@ -221,6 +234,7 @@ help:
+>  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+>  	@echo '  snap-pkg            - Build only the binary kernel snap package'
+>  	@echo '                        (will connect to external hosts)'
+> +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+>  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+>  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+>  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> new file mode 100644
+> index 000000000000..eb3957fad915
+> --- /dev/null
+> +++ b/scripts/package/PKGBUILD
+> @@ -0,0 +1,99 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> +
+> +pkgbase=linux-upstream
+> +pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+> +pkgver="${KERNELRELEASE//-/_}"
+> +# The PKGBUILD is evaluated multiple times.
+> +# Running scripts/build-version from here would introduce inconsistencies.
+> +pkgrel="${KBUILD_REVISION}"
+> +pkgdesc='Linux'
+> +url='https://www.kernel.org/'
+> +# Enable flexible cross-compilation
+> +arch=(${CARCH})
+> +license=(GPL-2.0-only)
+> +makedepends=(
+> +	base-devel
+> +	bc
+> +	cpio
+> +	gettext
+> +	libelf
+> +	openssl
+> +	pahole
+> +	perl
+> +	python
+> +	rsync
+> +	tar
+> +)
+> +options=(!debug !strip !buildflags !makeflags)
+> +
+> +build() {
+> +	# MAKEFLAGS from makepkg.conf override the ones inherited from kbuild.
+> +	# Bypass this override with a custom variable.
+> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +	cd "${objtree}"
+> +
+> +	# makepkg does a "chmod a-srw", triggering warnings during kbuild
+> +	chmod 0755 "${pkgdirbase}" || true
+> +
+> +	${MAKE}
+> +}
+> +
+> +package_linux-upstream() {
+> +	pkgdesc="The ${pkgdesc} kernel and modules"
+> +
+> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +	cd "${objtree}"
+> +	local modulesdir="${pkgdir}/usr/${MODLIB}"
+> +
+> +	echo "Installing boot image..."
+> +	# systemd expects to find the kernel here to allow hibernation
+> +	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+> +	install -Dm644 "$(${MAKE} -s image_name)" "${modulesdir}/vmlinuz"
+> +
+> +	# Used by mkinitcpio to name the kernel
+> +	echo "${pkgbase}" > "${modulesdir}/pkgbase"
+> +
+> +	echo "Installing modules..."
+> +	${MAKE} INSTALL_MOD_PATH="${pkgdir}/usr" INSTALL_MOD_STRIP=1 \
+> +		DEPMOD=true modules_install
+> +
+> +	if [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
 
-> -----Original Message-----
-> From: Conor Dooley <conor@kernel.org>
-> Sent: Tuesday, July 16, 2024 11:58 PM
-> To: Paller, Kim Seer <KimSeer.Paller@analog.com>
-> Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
-> devicetree@vger.kernel.org; Jonathan Cameron <jic23@kernel.org>; David
-> Lechner <dlechner@baylibre.com>; Lars-Peter Clausen <lars@metafoo.de>;
-> Liam Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
-> Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Hennerich, Michael
-> <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
-> Subject: Re: [PATCH v7 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
->=20
-> [External]
->=20
-> On Tue, Jul 16, 2024 at 01:50:23AM +0000, Paller, Kim Seer wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Conor Dooley <conor@kernel.org>
-> > > Sent: Tuesday, July 16, 2024 12:18 AM
-> > > To: Paller, Kim Seer <KimSeer.Paller@analog.com>
-> > > Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
-> > > devicetree@vger.kernel.org; Jonathan Cameron <jic23@kernel.org>; Davi=
-d
-> > > Lechner <dlechner@baylibre.com>; Lars-Peter Clausen <lars@metafoo.de>=
-;
-> > > Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
-> <broonie@kernel.org>;
-> > > Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof Kozlowski
-> > > <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
-> > > <conor+dt@kernel.org>; Hennerich, Michael
-> > > <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
-> > > Subject: Re: [PATCH v7 4/6] dt-bindings: iio: dac: Add adi,ltc2664.ya=
-ml
-> > >
-> > > [External]
-> > >
-> > > On Sun, Jul 14, 2024 at 09:29:58PM +0800, Kim Seer Paller wrote:
-> > > > Add documentation for ltc2664.
-> > > >
-> > > > Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> > > > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> > > > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> > >
-> > > IIRC I gave you a reviewed-by on v5, was there a particular reason yo=
-u
-> didn't
-> > > add it?
-> >
-> > I made changes to the 'output-range-microvolt' logic in v6, which I tho=
-ught
-> > might require a new review. If your 'Reviewed-by' tag still applies, pl=
-ease let
-> me know.
->=20
-> IIRC what I said was along the lines of "with the logic from the
-> previous version, Reviewed-by: Conor Dooley <conor.dooley@microchip.com>"=
-.
-> Is that what you did?
+Does this reference to srctree...
 
-Yes. Additionally, considering Krzysztof's recent comment about the mixed=20
-indentation in the example section, should I send a new patch version that
-includes this indentation fix along with adding your Reviewed-by tag?
+> +		echo "Installing dtbs..."
+> +		${MAKE} INSTALL_DTBS_PATH="${modulesdir}/dtb" dtbs_install
+> +	fi
+> +
+> +	# remove build link, will be part of -headers package
+> +	rm -f "${modulesdir}/build"
+> +}
+> +
+> +package_linux-upstream-headers() {
+> +	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
+> +
+> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +	cd "${objtree}"
+> +	local builddir="${pkgdir}/usr/${MODLIB}/build"
+> +
+> +	echo "Installing build files..."
+> +	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
 
+and this one still work with srctree no longer being passed to makepkg?
 
+I tried myself but it looks like this version of the patch might be
+broken?
+
+$ make -skj"$(nproc)" ARCH=x86_64 CROSS_COMPILE=x86_64-linux- O=/mnt/nvme/tmp/build/linux mrproper defconfig pacman-pkg
+find: ‘./pacman/linux-upstream/src/pacman/linux-upstream/pkg’: Permission denied
+==> Making package: linux-upstream 6.10.0_rc7_00051_g818e9c998b04_dirty-1 (Tue 16 Jul 2024 06:08:29 PM MST)
+==> Checking runtime dependencies...
+==> Checking buildtime dependencies...
+==> Retrieving sources...
+==> Extracting sources...
+==> Starting build()...
+chmod: cannot access 'pacman/linux-upstream/pkg': No such file or directory
+find: ‘./pacman/linux-upstream/src/pacman/linux-upstream/pkg’: Permission denied
+==> Entering fakeroot environment...
+chmod: cannot access '/mnt/nvme/tmp/build/linux/pacman/linux-upstream/pkg': No such file or directory
+/usr/bin/fakeroot: line 178: 2633185 User defined signal 1   FAKEROOTKEY=$FAKEROOTKEY LD_LIBRARY_PATH="$PATHS" LD_PRELOAD="$FAKEROOT_LIB" "$@"
+make[4]: *** [scripts/Makefile.package:150: pacman-pkg] Error 138
+
+Cheers,
+Nathan
+
+> +	echo "Installing System.map and config..."
+> +	cp System.map "${builddir}/System.map"
+> +	cp .config "${builddir}/.config"
+> +
+> +	echo "Adding symlink..."
+> +	mkdir -p "${pkgdir}/usr/src"
+> +	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
+> +}
+> +
+> +package_linux-upstream-api-headers() {
+> +	pkgdesc="Kernel headers sanitized for use in userspace"
+> +	provides=(linux-api-headers)
+> +	conflicts=(linux-api-headers)
+> +
+> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> +	cd "${objtree}"
+> +
+> +	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+> +}
+> 
+> ---
+> base-commit: 818e9c998b04d6c69a510d5255a93d0e3b8d4993
+> change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
+> 
 
