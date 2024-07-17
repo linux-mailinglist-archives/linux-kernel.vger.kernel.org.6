@@ -1,158 +1,192 @@
-Return-Path: <linux-kernel+bounces-254731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2530F9336F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:24:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDE29336F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E7C1F21353
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:24:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30BD1C23191
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E7A1862A;
-	Wed, 17 Jul 2024 06:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86527182DF;
+	Wed, 17 Jul 2024 06:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c7h37oqy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y13qOaEQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C8D182B9;
-	Wed, 17 Jul 2024 06:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A9717C66;
+	Wed, 17 Jul 2024 06:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197467; cv=none; b=XM/08XFiwdiJraRXyiuBlkEevmlK+Ka/a/gfxJU6FuZTfQgkIopZtKFpwnPm7u/m2OzcMrPMZlyvV6v+ooRBilhH9yBw/NWB5ehKJ66E+0WIvtni77sZfIqXInVFshFt13junjlxMxmEUPYpiLNzgbGtOZpMC9GZI5Ep3NQa+a8=
+	t=1721197517; cv=none; b=a7b9DIGeFQ8h9PztsXULh8ROguEp8NsbOjpSQD6k1IKeQYEBmH30x4d/UJh4/e3J3ZpkiaP4iYVoQpTogli1AVY4mP0JJFeY2LYbXMsP+4mRpguoWyfefPaVCLIP6Dpw9Kfae3rQ+WwNsaEtJi1gp+ghWz8pGgIZ1QsVkl9qQgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197467; c=relaxed/simple;
-	bh=RdbzDXJzGn73GVJApCxOgvtdvQRZ69jsEk+ZWOuXZ0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u0qNdIZjGvmho2WPLMExIcfwLs6uMQOicG3oWJ799EjEBQ0Taozepql2rqbA/CAwTSCle1VsJup++0GOAhtM/zFLZeXc7fXr8MfoIm9PuvNQx6gcRL37mWWB0PbuUnfWElNjVpUojULx3os9/d0tqoVY/paRA6FxnyIxa8kwbw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c7h37oqy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3101AC32782;
-	Wed, 17 Jul 2024 06:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721197466;
-	bh=RdbzDXJzGn73GVJApCxOgvtdvQRZ69jsEk+ZWOuXZ0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c7h37oqyeaqjsB5VzBL/uK+JriHqGPmA7682SWLa2sA1cOGRBAJmH+eZ0zfZ2iHiW
-	 TcFtJ5A4wRIs4v4+wrFPBGYjRGUhXGgkIbs2yHeIX4TJtfD7MiPa+53jj5nXuruO7s
-	 Ec+U/Os1B5XfRslgdjFKTAVRFVm3dR+FjFo2YQDI=
-Date: Wed, 17 Jul 2024 08:24:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: stable@vger.kernel.org, Paulo Alcantara <pc@manguebit.com>,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/96] 6.1.100-rc1 review
-Message-ID: <2024071701-boned-drove-1269@gregkh>
-References: <20240716152746.516194097@linuxfoundation.org>
- <aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com>
+	s=arc-20240116; t=1721197517; c=relaxed/simple;
+	bh=eu9NsqAnralX2IavkGqf6l5znlIUTAKCUEe9e3UaoSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pjPqBQrmPH/+jOsvpdnNL9rW2E8H5+5rRcRrvvKJPqW2zOPxXTMR5VAvrK+iqr57p210NJKkm410GWlrtHbChfEBhwt4gwG/+/HuUBl13oiQVclkiYLefdqkPsa3jcf29Kj5nse4nTaNnpdhl7NfqdmO2HKCSxty4Ukk73mRPeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y13qOaEQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHev6H025096;
+	Wed, 17 Jul 2024 06:24:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qztvSWpQ0tlCk0IZsqrQ7t3x2QYlFLXOXSLk30UIYM4=; b=Y13qOaEQ+5XH0udd
+	A3WPZtUEQ0+ts+e3YzPewXFhBEuZ0/6I4q6xJAftDbzkc+jQZvQublXIqm4SKbCG
+	R+crtXZoB/S3wxjjw/8+6+96YziEmy9eBwnY9znZATX8XNKzEHjpteHIaHTMSOof
+	gH1AN0SWsn2eY7oHEUSCbE8o5Yhutr7+PnOg8kkAPNn/UD4BdCSDEqJrfZkvXqF6
+	GUy3s9hpAMQea+Xo7ajJrQ9EsuZxXu9RClvjgk+71A0h902yfjklIb4TkXge412S
+	eqlimT3DJE5HILj2rN9SQFcbB3UULlSh/4rz5SjxKc2DbM9t1yEmhP5yesK3YV4s
+	sdfOjg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfphavw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 06:24:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H6Of3O006632
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 06:24:41 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
+ 2024 23:24:36 -0700
+Message-ID: <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
+Date: Wed, 17 Jul 2024 11:54:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aaccd8cc-2bfe-4b2e-b690-be50540f9965@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+ <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+ <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+ <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TBawKkM9EiYE2AYGiOK4qwzdIS0sBxMt
+X-Proofpoint-GUID: TBawKkM9EiYE2AYGiOK4qwzdIS0sBxMt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_03,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ phishscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170046
 
-On Tue, Jul 16, 2024 at 11:42:39AM -0700, Florian Fainelli wrote:
-> On 7/16/24 08:31, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.1.100 release.
-> > There are 96 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.100-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Commit acbfb53f772f96fdffb3fba2fa16eed4ad7ba0d2 ("cifs: avoid dup prefix
-> path in dfs_get_automount_devname()") causes the following build failure on
-> bmips_stb_defconfig:
-> 
-> In file included from ./include/linux/build_bug.h:5,
->                  from ./include/linux/container_of.h:5,
->                  from ./include/linux/list.h:5,
->                  from ./include/linux/module.h:12,
->                  from fs/smb/client/cifsfs.c:13:
-> fs/smb/client/cifsproto.h: In function 'dfs_get_automount_devname':
-> fs/smb/client/cifsproto.h:74:22: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   if (unlikely(!server->origin_fullpath))
->                       ^~
-> ./include/linux/compiler.h:78:42: note: in definition of macro 'unlikely'
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                                           ^
-> In file included from fs/smb/client/cifsfs.c:35:
-> fs/smb/client/cifsproto.h:78:14: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->         server->origin_fullpath,
->               ^~
-> fs/smb/client/cifsproto.h:79:21: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->         strlen(server->origin_fullpath),
->                      ^~
-> fs/smb/client/cifsproto.h:88:21: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   len = strlen(server->origin_fullpath);
->                      ^~
-> fs/smb/client/cifsproto.h:93:18: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   memcpy(s, server->origin_fullpath, len);
->                   ^~
-> In file included from ./include/linux/build_bug.h:5,
->                  from ./include/linux/container_of.h:5,
->                  from ./include/linux/list.h:5,
->                  from ./include/linux/wait.h:7,
->                  from ./include/linux/wait_bit.h:8,
->                  from ./include/linux/fs.h:6,
->                  from fs/smb/client/cifs_debug.c:8:
-> fs/smb/client/cifsproto.h: In function 'dfs_get_automount_devname':
-> fs/smb/client/cifsproto.h:74:22: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   if (unlikely(!server->origin_fullpath))
->                       ^~
-> ./include/linux/compiler.h:78:42: note: in definition of macro 'unlikely'
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                                           ^
-> In file included from fs/smb/client/cifs_debug.c:16:
-> fs/smb/client/cifsproto.h:78:14: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->         server->origin_fullpath,
->               ^~
-> fs/smb/client/cifsproto.h:79:21: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->         strlen(server->origin_fullpath),
->                      ^~
-> fs/smb/client/cifsproto.h:88:21: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   len = strlen(server->origin_fullpath);
->                      ^~
-> fs/smb/client/cifsproto.h:93:18: error: 'struct TCP_Server_Info' has no
-> member named 'origin_fullpath'
->   memcpy(s, server->origin_fullpath, len);
->                   ^~
-> host-make[6]: *** [scripts/Makefile.build:250: fs/smb/client/cifsfs.o] Error
-> 1
-> host-make[6]: *** Waiting for unfinished jobs....
 
-Ugh, this was because I had to add a fixup patch for a different patch
-here.  I'll go drop both of them for now, thanks.
+On 7/15/2024 8:31 PM, Bryan O'Donoghue wrote:
+> On 15/07/2024 11:38, Dmitry Baryshkov wrote:
+>>>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+>>>
+>>> Yes, it applies to SM8150.
+>> Should the same logic be applied to other chipsets supported upstream?
+>> If this is the case, which chipsets?
+>
+> If you are representing the "top" GDSC inside of the CCF instead of 
+> doing this
+>
+> +    /* Keep the critical clock always-on */
+> +    qcom_branch_set_clk_en(regmap, 0xc1e4); /* cam_cc_gdsc_clk */
+>
+> then the clock should be parked else you'll find the GDSC doesn't come 
+> out of reset.
+>
+> and... as I look at it now we have a logical conflict in 
+> drivers/clk/qcom/camcc-sc8280xp.c
+>
+> static struct clk_branch camcc_gdsc_clk = {
+>         .halt_reg = 0xc1e4,
+>         .halt_check = BRANCH_HALT,
+>         .clkr = {
+>                 .enable_reg = 0xc1e4,
+>                 .enable_mask = BIT(0),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "camcc_gdsc_clk",
+>                         .parent_hws = (const struct clk_hw*[]){
+>                                 &camcc_xo_clk_src.clkr.hw,
+>                         },
+>                         .num_parents = 1,
+>                         .flags = CLK_SET_RATE_PARENT,
+>                         .ops = &clk_branch2_ops,
+>                 },
+>         },
+> };
+>
+> Patch sent.
+>
+> https://lore.kernel.org/linux-arm-msm/20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org/T/#u 
+>
+>
 
-greg k-h
+If the clock is modelled, it can get disabled during the late init call, 
+when the CCF disables the unused clocks. But, it is a PoR ON  clock and 
+expectation from design team is to keep it always-on for GDSC functionality.
+
+So, we should not model this, instead just keep it always on from probe.
+
+
+> In the round I think we should avoid these horrific hard-coded 
+> always-on writes where possible.
+>
+
+We have been suggested to make such clocks always ON from probe on 
+previous upstream discussions. This is also recently acknowledged by 
+maintainers, please see [1] and [2].
+
+
+[1] 
+https://lore.kernel.org/linux-clk/6286a410-6faa-4996-8a9e-dc334dd9421f@linaro.org/
+
+
+[2] 
+https://lore.kernel.org/linux-clk/664cca91-8615-d3f6-7525-15b9b6725cce@quicinc.com/
+
+
+> Personally I think parking is better than always-on specifically 
+> because you define the clock and "see" it in the clock tree.
+>
+> ---
+> bod
 
