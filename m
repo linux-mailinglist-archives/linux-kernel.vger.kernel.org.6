@@ -1,182 +1,188 @@
-Return-Path: <linux-kernel+bounces-255572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2EE93425F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:44:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB8E934262
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7DDE28399B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE09F1C21008
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4F9184112;
-	Wed, 17 Jul 2024 18:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84FB184135;
+	Wed, 17 Jul 2024 18:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvIBS5ry"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKKhjptQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3B97470
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0921D183071
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721241839; cv=none; b=EQ31fXkaR79E0o++bVDim18Sar+1nr2pSseFpUgWILYlVz63ILXYPaaBSDNvPHEtTuYDIXPqlcJDeIzvj2Kdnn5GTjBCTGW1ArK6uz7nS21yNMN2h/XKcbEdO6fLqsIjKQkyIrUEkIR1txlvja7gEja7fHBWxp353Upv5W5WC5g=
+	t=1721241899; cv=none; b=nrzqInFeecl+R7utyrz17/D1GJV649/rs2s1vnYYYngSBUofURazIOUqXpy8/OwUPXggsLS2LyG9YD+1jnXdIDeOahzN7q89eI5eIxKlWj6DHASYFwqB8cHEUMLtAqImiZcHZE81byID0XsWlHQY87Afq4Byd+2j4jGOZoMlH2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721241839; c=relaxed/simple;
-	bh=K4IFnmEXsaTDJkNINgh/bn2QU1W1CN8bTFfUBICjeXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZLvW9jb7AO9zJoVazoPqKIi48r5BB+urT0Kb8TZ/SWkuhBjybdmXasJEQX18xAh8+PwhOtF4LWyYrQEJp47gZT19m3jpjHc0LEicKNfj/lh9nhUXWHVWUasNTiC49UV+JlLbFsbr7395F8oEtg90wy7vzxsvahGvJ0ptYbJDFHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvIBS5ry; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77c9d3e593so715954766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721241836; x=1721846636; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZrLop0WXR5l6C8CwplY6UuCHzt6tM7NAzgoyEdBYBm8=;
-        b=dvIBS5ryc43WhECjXSiqIgw+1v29zukjH3hmZuhplTyoF36ex7usWuepKPUChWqpWz
-         +iQHXReQOsOUspYLvVRXZVI/MapTDcSKZDLFhiEeO06JjCEVRhcnqqs5JPXwipOazzGh
-         k7HkhNTthgKyuWFB8VdQ1FeSwF7s8TwbCCZGMM5gzKvH8nzxzbP0yQ0PgErHkz4poWyu
-         cSrnnqPw6zzscU8Zzt/T+q2oDtw/ySKr8fldanD8oLZZYPOaisvKEcm7w93G/H16kwBF
-         0YjkNiaNKt82eUY272kERH0wl0byeESeuL9vG6mEt6So/+kKH2DWuQtcxROb3bW07fvt
-         YN8A==
+	s=arc-20240116; t=1721241899; c=relaxed/simple;
+	bh=ZBrhag/Adb6DC9FRa1byQRim407U3nUqBDVbASRI9ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UsaKwzdPfzFtjWgTOLxwDx9QPSTNwFWTySvRjnTT4547fCPGSmRQA5ifHsUulECWr3Dt8w6CqIdZWv07GqEI6VlIZFuzfBUnekuppgKfjtOrc9TFxNPL16cv+L6/5DJZowj+GM1cxVF6C2M1RvJMXMJJ8d7KR78+MLxWeYQg/0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKKhjptQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721241895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wnOwiKe1/U2oSA4NsrBTg8a4NW8yOXIUAsKOLfMGmU=;
+	b=TKKhjptQ3G4OKuTNJs4LUcvybJXQBvrjtpyQHEisSgtcCYo9gvkaRUtFNTkaia/qt7Avxe
+	2YULXgYa29AUfEt31xsGCl2qudZQOIOQgzy6qmj7+c2+abP+5XDKUnqNK6V11fMoPutsGw
+	mpZN8OMvAkOr4p4p9QaP2RDjKGc8Cy8=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-KKvxbbw5P3-sHjhbrlWz_g-1; Wed, 17 Jul 2024 14:44:54 -0400
+X-MC-Unique: KKvxbbw5P3-sHjhbrlWz_g-1
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-386a31aca51so20510255ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:44:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721241836; x=1721846636;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZrLop0WXR5l6C8CwplY6UuCHzt6tM7NAzgoyEdBYBm8=;
-        b=S4mXAmGCNhfnDmwjQdIR7I0SY1wo0l1Zm1qdtFnHbfWfAvCAUAlUOib0DYXGFwkR9R
-         l1EReUyzmb4l91dPIP/0rYFg5hSBUUlVpi3qoHPgo9HYXyZQVqT7jCkOu2zD7naYats1
-         1C5iHC2aRF/hPPv6dUvUMO+KHw+B+KgTGJcg+ykbcdBYz/ZNVLMC8C9CsfCglKseeV55
-         6JrVJUs1g0v6PYesyw7p5KzAbUc5VpiDJPmr4LBmCOV0gic0/WJfNjKP7W5pMwjSJn2e
-         5UJ7NSOQmhvlf2v6z4krc97+3XxO+uvC6I36rfD3Oaz/+QCWRfc9MZQQy9Z+xJozq2YS
-         GVjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdK5KDQUdFp/mxn2LvrU1+0X8zVKkR/RM2WQT77FI8fOTqLVoGRIE6i952fbbRoGc9LjoeAMb9vfNtVxL1wcA9UQEPeHDZoWveERs2
-X-Gm-Message-State: AOJu0Yxy8EuLDPwbWfpXG8Y+Jv9j7IogUbucabKJCN/iDwZ3L6EovJs5
-	XiaowBZqszn4+PpX0CNVXKaotD4Swxch+n0mNEtbNSUqeFqqvRPH2AAuI5goQgTmAcD9A2ywG5H
-	D/eaGC6bSWnVfWBOJecSC7egzfilhJFNn+aNj
-X-Google-Smtp-Source: AGHT+IF8RdKoDfVtGRrva1w5brn8g7mEl2nXivUh40LMHs36jzVVAz3m0gkm067oLrutSxcYTkEZdggGOrahc9xfi4E=
-X-Received: by 2002:a17:906:384c:b0:a6f:e75b:2b39 with SMTP id
- a640c23a62f3a-a7a011d333amr149443066b.42.1721241835572; Wed, 17 Jul 2024
- 11:43:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721241893; x=1721846693;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/wnOwiKe1/U2oSA4NsrBTg8a4NW8yOXIUAsKOLfMGmU=;
+        b=IIbSb1xQ7uYxC8IAi9goDx1FRds7DoKZTiLvFERmLcWYnekyRPPcCNx17V495B1+WA
+         mmO4uiVIPaAm5xCu+Kk1nqIx0bunsu+EejGiYNzbidgXOV9sI41sWRDS3ysxcFR/w9gK
+         XE82c9kzYgllS92K7fKQg6eAhgmia1LG7j4q2p5iNUkDuMcEqU1mPnK8vL3oQketkgb2
+         LqpiUJN073utOR+0yQvm+JTfUexUZi30Y7RE5jnBVDKHf0B3xs2DhYumhGqffhOarz7I
+         MJ1MzHr0kwL4qTwmngOfkS99tPKBu1qIq9u69XSb8AAqbYeZWvjzLChEe4/SJauhGW0O
+         8pwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnxH03CfGsm1Sm7rhATSrn+BUxCbnp7XtusEBreKUJxYCoiQpy6biwNnBuuQe4WmXvv8eMXE5xHaJ8/87zVB/VxYaSbvhNnvzmt4I3
+X-Gm-Message-State: AOJu0YzioHW8GYYA94bIa6aGrAVT9LaXh54hT/GE/EVQzvJGgj8+TKxi
+	sXaQ+JOje/d6aLtpuPp8/RcPa88Cpw9iBfE9RgWCRDr8POahnWwKovrLgeUwEdx19kPp6tG2SGS
+	X9NU/I9cVAqye+azC/KdprWFaAibvrVqAFI5f9D0rCQ8PKpXULvFmsWYs4K/5kQ==
+X-Received: by 2002:a05:6e02:1887:b0:382:325c:f7c0 with SMTP id e9e14a558f8ab-3955533241amr37519295ab.5.1721241893525;
+        Wed, 17 Jul 2024 11:44:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFN8GMb3cyoTVdIUXgw3VLIvcC09SJpv5sExfgbI0hJcCZC98+oNUTyhHDEgK0eZgYz7uSfuw==
+X-Received: by 2002:a05:6e02:1887:b0:382:325c:f7c0 with SMTP id e9e14a558f8ab-3955533241amr37519055ab.5.1721241893080;
+        Wed, 17 Jul 2024 11:44:53 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3950aee03cesm9514595ab.15.2024.07.17.11.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 11:44:52 -0700 (PDT)
+Date: Wed, 17 Jul 2024 12:44:51 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Kirti Wankhede <kwankhede@nvidia.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] vfio-mdev: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240717124451.52af6596.alex.williamson@redhat.com>
+In-Reply-To: <20240715-md-vfio-mdev-v2-1-59a4c5e924bc@quicinc.com>
+References: <20240715-md-vfio-mdev-v2-1-59a4c5e924bc@quicinc.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
- <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
- <8c123882-a5c5-409a-938b-cb5aec9b9ab5@kernel.org> <CAJD7tkbFPt-eTHkqtLxuOoV59eaqauodz008btEECT--x3VcBA@mail.gmail.com>
- <de05ebf2-2baa-493e-a6a8-acf43702824b@kernel.org>
-In-Reply-To: <de05ebf2-2baa-493e-a6a8-acf43702824b@kernel.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 17 Jul 2024 11:43:17 -0700
-Message-ID: <CAJD7tkaxQeGbTckq-9Oepp=n56i-871SmCBjgjz2VBMOU1L7DA@mail.gmail.com>
-Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[..]
-> > What I think we should be doing is either supporting multiple
-> > ongoing_flushers (by replacing the global variable with a per-cgroup
-> > flag, perhaps), or biting the bullet and start using a mutex to drop
-> > lock yielding. If there aren't any concerns beyond priority inversion
-> > (raised by Shakeel), maybe adding a mutex_lock_timeout() variant as I
-> > suggested could fix this issue (and also put a bound on the flushing
-> > latency in general)?
-> >
->
-> The mutex_lock_timeout is an interesting idea, but not a primitive we
-> have available today, right?
+On Mon, 15 Jul 2024 12:27:09 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-We don't, but Waiman said it shouldn't be difficult to add:
-https://lore.kernel.org/lkml/623e62c5-3045-4dca-9f2c-ed15b8d3bad8@redhat.com/
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warnings are being
+> observed in samples/vfio-mdev:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mtty.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy-fb.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mbochs.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro to these
+> modules. And in the case of mtty.c, remove the now redundant instance
+> of the MODULE_INFO() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Of the almost 300 patches I've submitted tree-wide to fix these
+> issues, this is one of the 13 remaining. Hopefully this can make it
+> via your tree into the 6.11 merge window. If not, Greg KH has
+> indicated he'll take this as an -rc instead of waiting for 6.12.
+> ---
+> Changes in v2:
+> - Updated the commit text to more fully describe the problem and solution.
+> - Removed the MODULE_INFO() from mtty.c
+> - Note I did not carry forward Kirti's Reviewed-by: due to this removal,
+>   please re-review
+> - Link to v1: https://lore.kernel.org/r/20240523-md-vfio-mdev-v1-1-4676cd532b10@quicinc.com
+> ---
+>  samples/vfio-mdev/mbochs.c  | 1 +
+>  samples/vfio-mdev/mdpy-fb.c | 1 +
+>  samples/vfio-mdev/mdpy.c    | 1 +
+>  samples/vfio-mdev/mtty.c    | 2 +-
+>  4 files changed, 4 insertions(+), 1 deletion(-)
 
->
-> p.s. I have 5 prod machines running with mutex change, and I've not
-> gotten any SRE complaints.
+Applied to vfio next branch for v6.11.  Thanks,
 
-That's nice!
+Alex
 
->
->
-> > (I suppose the latter is preferrable)
-> >
-> >>
-> >> IMHO we should go back to only doing ongoing_flusher for root-cgroup.
-> >> There is really low chance of sub-trees flushes being concurrent enough
-> >> to benefit from this, and it cause issues and needs (ugly) race handling.
-> >>
-> >> Further more sub-tree flushing doesn't take as long time as level 0
-> >> flushing, which further lower the chance of concurrent flushes.
-> >
-> > I agree that the race handling is not pretty, and we can try to
-> > improve the implementation or handle the race in other ways. However,
-> > I think that skipping flushes for subtrees is valuable. I am not sure
-> > about the cgroup arrangement in your use case, but we do have cgroups
-> > with a lot of tasks in them (and/or child cgroups). If there is memory
-> > pressure (or hit the cgroup limit), they all may go into direct
-> > reclaim concurrently, so skipping flushes could really be beneficial.
-> >
-> > Of course, if the difference in complexity is not justified, we can go
-> > back to only supporting root cgroups for ongoing_flusher for now. But
-> > as I mentioned in the v4 email thread, some of the complexity may
-> > still remain anyway as we have multiple root cgroups in v1.
-> >
->
-> Having an incremental step with "only supporting root cgroups for
-> ongoing_flusher for now" is a good step forward IMHO.
-> As you could see in grafana plot, this would be a significant production
-> improvement on its own, as it avoids wasting CPU resources spinning on
-> the lock.
+> 
+> diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+> index 9062598ea03d..836456837997 100644
+> --- a/samples/vfio-mdev/mbochs.c
+> +++ b/samples/vfio-mdev/mbochs.c
+> @@ -88,6 +88,7 @@
+>  #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+>  
+>  
+> +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+>  MODULE_LICENSE("GPL v2");
+>  
+>  static int max_mbytes = 256;
+> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+> index 4598bc28acd9..149af7f598f8 100644
+> --- a/samples/vfio-mdev/mdpy-fb.c
+> +++ b/samples/vfio-mdev/mdpy-fb.c
+> @@ -229,4 +229,5 @@ static int __init mdpy_fb_init(void)
+>  module_init(mdpy_fb_init);
+>  
+>  MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
+> +MODULE_DESCRIPTION("Framebuffer driver for mdpy (mediated virtual pci display device)");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
+> index 27795501de6e..8104831ae125 100644
+> --- a/samples/vfio-mdev/mdpy.c
+> +++ b/samples/vfio-mdev/mdpy.c
+> @@ -40,6 +40,7 @@
+>  #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+>  
+>  
+> +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+>  MODULE_LICENSE("GPL v2");
+>  
+>  #define MDPY_TYPE_1 "vga"
+> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+> index 2284b3751240..b382c696c877 100644
+> --- a/samples/vfio-mdev/mtty.c
+> +++ b/samples/vfio-mdev/mtty.c
+> @@ -2058,6 +2058,6 @@ module_init(mtty_dev_init)
+>  module_exit(mtty_dev_exit)
+>  
+>  MODULE_LICENSE("GPL v2");
+> -MODULE_INFO(supported, "Test driver that simulate serial port over PCI");
+> +MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
+>  MODULE_VERSION(VERSION_STRING);
+>  MODULE_AUTHOR(DRIVER_AUTHOR);
+> 
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240523-md-vfio-mdev-381f74bf87f1
+> 
 
-I am not opposed to this at all. All I am saying is, if we need to
-handle most complexity anyway due to multiple root cgroups in v1, then
-might as well support subtrees too.
-
->
-> Being able to have multiple root cgroups, due to in v1, does pose an
-> implementation problem.  Only having a single root, would allow to have
-> a race-free cmpxchg scheme.
-> Would it be reasonable to only support v2?
-
-The rstat code has so far been v1/v2 agnostic AFAICT, and Google is
-still using cgroup v1, so I naturally prefer we keep supporting both
-v1 and v2 going forward.
-
-> If so, how can I match on this?
-
-cgroup_on_dfl() is basically testing if a cgroup is on v2, but I
-really want to keep v1 included if possible :/
-
->
-> >>
-> >> Let's get some quick data on flush times from production, to support my
-> >> claim:
-> >
-> > Thanks for the data. I agree that in general root flushes will be a
-> > lot more expensive than subtree flushes, but keep in mind that the
-> > data may look really different depends on the cgroup setup. As I
-> > mentioned, I think we should still support subtree flushes unless the
-> > difference in complexity is not justified.
-> >
->
-> It would be really valuable if you could provide production data on the
-> lock-hold times, just like I did with below bpftrace script...
-> Is that possible, please?
-
-Unfortunately, we don't have the infrastructure to do this :/
-
-But again, I am not objecting to only supporting root cgroups as
-ongoing flushers for now if there is a justifiable complexity
-difference. So this shouldn't be a blocker.
 
