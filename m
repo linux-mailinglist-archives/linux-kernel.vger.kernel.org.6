@@ -1,408 +1,110 @@
-Return-Path: <linux-kernel+bounces-255020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A143933A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FED933A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A74E1F22F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB93282B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369F17E8EE;
-	Wed, 17 Jul 2024 10:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD78314F9CF;
+	Wed, 17 Jul 2024 10:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIITv2Oz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CQORCJnW"
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7A219A;
-	Wed, 17 Jul 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6060A3B290
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210439; cv=none; b=TiosBgJqTDEkhCOl5umpKXxX0ubjNSkUvSET5Vw7/rraVrT9WJ4GEF3A5wtZD0q4rApS5TKhd24STvGW70a0aowmsTLMNfdEg+0GmaAjnP/Zdssrv3tolE6PuUHmaGc6Jc5NVviGVbZ/EFmcwQZ/+JARM6PVfvh1yTJP6pc1GfE=
+	t=1721210464; cv=none; b=uD4/I+UFQnmtbnmXIkjPzQ1lF/GdoH84Q7wi34RfMmmhLNZ7Lvv8873DVsLodVDOozJCJfgvsYq7H5v+MBM4n6pxQcvZ6RB+LJedPRLbTdifV0ojQdjI8y0V4feVJnjuH8y8FD2SFOdZFxk8dx2OFUwrYjv1bH33Q45udI1/fXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210439; c=relaxed/simple;
-	bh=Y8fvJSiFbbffJ1tqg7DrvVvGrSXcWezFpGdYqavSyYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EhRDQoW/ScSqhakKoeu3I0rneiDFu39qg+ECrcSjfVZMfscICv/9qcDBJTcwLXVRBU+fFa1qlrMzP86yRSAfLGAWcVucqthMhXY9SoyvMC1pYyxtSwkfKgY8AcaSYBbmMceEHJSWKnCgwE4QvqXzcV3Zcs7TNwFbNumWDnVhLv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIITv2Oz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B67CC4AF09;
-	Wed, 17 Jul 2024 10:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721210439;
-	bh=Y8fvJSiFbbffJ1tqg7DrvVvGrSXcWezFpGdYqavSyYE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oIITv2Oz4LaYbx37sPrRhnS5Zy7L+dyPBRU/6MTbfM2Fn+OCv3YDkZ9S10+DWZnlM
-	 0F4oIBxHi8wV6UOO0z+ZkKYdR2D5jvPyMhTRhzNrP3nqKMWENFGmm8ElKW2ZxgDZ6q
-	 vGuKfq/UCe4quA1e9K+R3suPSMDPSOGnXTCtWu6g3rlVLKwkZfK5n6VZ5GbWcdEurl
-	 4GjxlObJgMZ0hagz+HhZ7Hb+6Lxf7uvvDC9Rzwayl+ufzQsEb9CBk6F1FDE/kyWvKs
-	 91lpAII81wyYMAMOQJpjdjrcFX6R1PIegnV7PaLOHwe2Iogcd+OjVX2ZgXzxLni7gq
-	 YRFJyMt1Bx7+w==
-Date: Wed, 17 Jul 2024 12:00:27 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: <shiju.jose@huawei.com>
-Cc: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
- <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
- <rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
- <dan.j.williams@intel.com>, <dave@stgolabs.net>,
- <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
- <alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
- <ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
- <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
- <jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
- <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
- <somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
- <duenwen@google.com>, <mike.malvestuto@intel.com>, <gthelen@google.com>,
- <wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
- <wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>,
- <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
- <roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
- <wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [RFC PATCH v9 01/11] EDAC: Add generic EDAC RAS feature driver
-Message-ID: <20240717120027.7168536a@foz.lan>
-In-Reply-To: <20240716150336.2042-2-shiju.jose@huawei.com>
-References: <20240716150336.2042-1-shiju.jose@huawei.com>
-	<20240716150336.2042-2-shiju.jose@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1721210464; c=relaxed/simple;
+	bh=BUgvKjy/bDgc1rPb0S+QGNTxH79dHOZQL5vWrkXMlZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iynL4vVgEf6TeWtkdhJpBPnScA0WcSdyG4zzQ27ff9ugrR9ac3aD4X3x1nmvSZN1tD+85xirKiTO1z+fymsmFdoosPqqTLnoFmq6DVxYbdAa3ymCFW+Nd+63BjZbHY0MEKKIyD3SWX46YgA42b3PmX5B29lC38OmZqslvXDY3yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CQORCJnW; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPBK51MCSz12fy;
+	Wed, 17 Jul 2024 12:00:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721210457;
+	bh=at7t7jmIJKXHqGUzpxK1Wf9lPPVRXO39/lqkd8lIEAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CQORCJnW9yxbTKj6mpI9aiBiMIEPVkQXXIIrp+otWT6xL5ADv7F3xuWrpM86OT8mj
+	 hxlEfQUIBU/baLZgKf0q2vx1f1bXbKAEwuiDwGfKxEwyKsnS9Qmdbrtw5MgdJ14FOt
+	 uuNl6eAnPl03pzjKcgwZGEmBQDmghsV46Q7k+5KU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPBK0119bzLGN;
+	Wed, 17 Jul 2024 12:00:52 +0200 (CEST)
+Date: Wed, 17 Jul 2024 12:00:49 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Steve Dower <steve.dower@python.org>
+Cc: Jeff Xu <jeffxu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240717.AGh2shahc9ee@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
+X-Infomaniak-Routing: alpha
 
-Em Tue, 16 Jul 2024 16:03:25 +0100
-<shiju.jose@huawei.com> escreveu:
-
-> From: Shiju Jose <shiju.jose@huawei.com>
+On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+> On 17/07/2024 07:33, Jeff Xu wrote:
+> > Consider those cases: I think:
+> > a> relying purely on userspace for enforcement does't seem to be
+> > effective,  e.g. it is trivial  to call open(), then mmap() it into
+> > executable memory.
 > 
-> Add generic EDAC driver supports registering RAS features supported
-> in the system. The driver exposes feature's control attributes to the
-> userspace in /sys/bus/edac/devices/<dev-name>/<ras-feature>/
+> If there's a way to do this without running executable code that had to pass
+> a previous execveat() check, then yeah, it's not effective (e.g. a Python
+> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
 > 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  drivers/edac/Makefile            |   1 +
->  drivers/edac/edac_ras_feature.c  | 155 +++++++++++++++++++++++++++++++
->  include/linux/edac_ras_feature.h |  66 +++++++++++++
->  3 files changed, 222 insertions(+)
->  create mode 100755 drivers/edac/edac_ras_feature.c
->  create mode 100755 include/linux/edac_ras_feature.h
-> 
-> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-> index 9c09893695b7..c532b57a6d8a 100644
-> --- a/drivers/edac/Makefile
-> +++ b/drivers/edac/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
->  
->  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
->  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
-> +edac_core-y	+= edac_ras_feature.o
->  
->  edac_core-$(CONFIG_EDAC_DEBUG)		+= debugfs.o
->  
-> diff --git a/drivers/edac/edac_ras_feature.c b/drivers/edac/edac_ras_feature.c
-> new file mode 100755
-> index 000000000000..24a729fea66f
-> --- /dev/null
-> +++ b/drivers/edac/edac_ras_feature.c
-> @@ -0,0 +1,155 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * EDAC RAS control feature driver supports registering RAS
-> + * features with the EDAC and exposes the feature's control
-> + * attributes to the userspace in sysfs.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + */
-> +
+> Once arbitrary code is running, all bets are off. So long as all arbitrary
+> code is being checked itself, it's allowed to do things that would bypass
+> later checks (and it's up to whoever audited it in the first place to
+> prevent this by not giving it the special mark that allows it to pass the
+> check).
 
-> +#define pr_fmt(fmt)     "EDAC RAS CONTROL FEAT: " fmt
-
-Sounds a too long prefix for my taste.
-
-> +
-> +#include <linux/edac_ras_feature.h>
-> +
-> +static void edac_ras_dev_release(struct device *dev)
-> +{
-> +	struct edac_ras_feat_ctx *ctx =
-> +		container_of(dev, struct edac_ras_feat_ctx, dev);
-> +
-> +	kfree(ctx);
-> +}
-> +
-> +const struct device_type edac_ras_dev_type = {
-> +	.name = "edac_ras_dev",
-> +	.release = edac_ras_dev_release,
-> +};
-> +
-> +static void edac_ras_dev_unreg(void *data)
-> +{
-> +	device_unregister(data);
-> +}
-> +
-> +static int edac_ras_feat_scrub_init(struct device *parent,
-> +				    struct edac_scrub_data *sdata,
-> +				    const struct edac_ras_feature *sfeat,
-> +				    const struct attribute_group **attr_groups)
-> +{
-> +	sdata->ops = sfeat->scrub_ops;
-> +	sdata->private = sfeat->scrub_ctx;
-> +
-> +	return 1;
-> +}
-> +
-> +static int edac_ras_feat_ecs_init(struct device *parent,
-> +				  struct edac_ecs_data *edata,
-> +				  const struct edac_ras_feature *efeat,
-> +				  const struct attribute_group **attr_groups)
-> +{
-> +	int num = efeat->ecs_info.num_media_frus;
-> +
-> +	edata->ops = efeat->ecs_ops;
-> +	edata->private = efeat->ecs_ctx;
-> +
-> +	return num;
-> +}
-
-I would place this function earlier and/or add some documentation
-for the above two functions.
-
-I got confused when reviewed the first function and saw there an
-unconditional:
-
-	return 1;
-
-Now, I guess the goal is to return the number of initialized
-features, right?
-
-> +
-> +/**
-> + * edac_ras_dev_register - register device for ras features with edac
-> + * @parent: client device.
-> + * @name: client device's name.
-> + * @private: parent driver's data to store in the context if any.
-> + * @num_features: number of ras features to register.
-> + * @ras_features: list of ras features to register.
-> + *
-> + * Returns 0 on success, error otherwise.
-> + * The new edac_ras_feat_ctx would be freed automatically.
-> + */
-> +int edac_ras_dev_register(struct device *parent, char *name,
-> +			  void *private, int num_features,
-> +			  const struct edac_ras_feature *ras_features)
-> +{
-> +	const struct attribute_group **ras_attr_groups;
-> +	struct edac_ras_feat_ctx *ctx;
-> +	int attr_gcnt = 0;
-> +	int ret, feat;
-> +
-> +	if (!parent || !name || !num_features || !ras_features)
-> +		return -EINVAL;
-> +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	ctx->dev.parent = parent;
-> +	ctx->private = private;
-> +
-> +	/* Double parse so we can make space for attributes */
-> +	for (feat = 0; feat < num_features; feat++) {
-> +		switch (ras_features[feat].feat) {
-> +		case ras_feat_scrub:
-> +			attr_gcnt++;
-> +			break;
-> +		case ras_feat_ecs:
-> +			attr_gcnt += ras_features[feat].ecs_info.num_media_frus;
-> +			break;
-
-As already suggested, the enum names shall be in uppercase.
-Having a lowercase one here looks really weird.
-
-> +		default:
-> +			ret = -EINVAL;
-> +			goto ctx_free;
-> +		}
-> +	}
-
-I would place this logic earlier, before allocating ctx, as, in case of
-errors, the function can just call "return -EINVAL".
-
-> +
-> +	ras_attr_groups = devm_kzalloc(parent,
-> +				       (attr_gcnt + 1) * sizeof(*ras_attr_groups),
-> +				       GFP_KERNEL);
-
-Hmm... why are you using devm variant here, and non-devm one for cxt?
-
-My personal preference is to avoid devm variants, as memory is
-only freed when the device refcount becomes zero (which, depending
-on the driver, may never happen in practice, as driver core may keep
-a refcount, depending on how the device was probed).
-
-> +	if (!ras_attr_groups) {
-> +		ret = -ENOMEM;
-> +		goto ctx_free;
-> +	}
-> +
-> +	attr_gcnt = 0;
-> +	for (feat = 0; feat < num_features; feat++, ras_features++) {
-> +		if (ras_features->feat == ras_feat_scrub) {
-
-I would use a switch here as well, just like the previous feature type
-check.
-
-> +			if (!ras_features->scrub_ops)
-> +				continue;
-> +			ret = edac_ras_feat_scrub_init(parent, &ctx->scrub,
-> +						       ras_features, &ras_attr_groups[attr_gcnt]);
-
-I don't think it is worth having those ancillary functions here...
-
-> +			if (ret < 0)
-> +				goto ctx_free;
-> +
-> +			attr_gcnt += ret;
-> +		} else if (ras_features->feat == ras_feat_ecs) {
-> +			if (!ras_features->ecs_ops)
-> +				continue;
-> +			ret = edac_ras_feat_ecs_init(parent, &ctx->ecs,
-> +						     ras_features, &ras_attr_groups[attr_gcnt]);
-
-and here, as most of the current functions are very simple:
-
-both just sets two arguments:
-
-	edata->ops
-	edata->private
-
-and returned vaules are always a positive counter...
-
-> +			if (ret < 0)
-> +				goto ctx_free;
-
-So, this check for instance, doesn't make sense.
-
-> +
-> +			attr_gcnt += ret;
-> +		} else {
-> +			ret = -EINVAL;
-> +			goto ctx_free;
-> +		}
-> +	}
-> +	ras_attr_groups[attr_gcnt] = NULL;
-> +	ctx->dev.bus = edac_get_sysfs_subsys();
-> +	ctx->dev.type = &edac_ras_dev_type;
-> +	ctx->dev.groups = ras_attr_groups;
-> +	dev_set_drvdata(&ctx->dev, ctx);
-> +	ret = dev_set_name(&ctx->dev, name);
-> +	if (ret)
-> +		goto ctx_free;
-> +
-> +	ret = device_register(&ctx->dev);
-> +	if (ret) {
-> +		put_device(&ctx->dev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(parent, edac_ras_dev_unreg, &ctx->dev);
-> +
-> +ctx_free:
-> +	kfree(ctx);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(edac_ras_dev_register);
-> diff --git a/include/linux/edac_ras_feature.h b/include/linux/edac_ras_feature.h
-> new file mode 100755
-> index 000000000000..000e99141023
-> --- /dev/null
-> +++ b/include/linux/edac_ras_feature.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * EDAC RAS control features.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + */
-> +
-> +#ifndef __EDAC_RAS_FEAT_H
-> +#define __EDAC_RAS_FEAT_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/edac.h>
-> +
-> +#define EDAC_RAS_NAME_LEN	128
-> +
-> +enum edac_ras_feat {
-> +	ras_feat_scrub,
-> +	ras_feat_ecs,
-> +	ras_feat_max
-> +};
-
-Enum values in uppercase, please.
-
-> +
-> +struct edac_ecs_ex_info {
-> +	u16 num_media_frus;
-> +};
-> +
-> +/*
-> + * EDAC RAS feature information structure
-> + */
-> +struct edac_scrub_data {
-> +	const struct edac_scrub_ops *ops;
-> +	void *private;
-> +};
-> +
-> +struct edac_ecs_data {
-> +	const struct edac_ecs_ops *ops;
-> +	void *private;
-> +};
-> +
-> +struct device;
-> +
-> +struct edac_ras_feat_ctx {
-> +	struct device dev;
-> +	void *private;
-> +	struct edac_scrub_data scrub;
-> +	struct edac_ecs_data ecs;
-> +};
-> +
-> +struct edac_ras_feature {
-> +	enum edac_ras_feat feat;
-> +	union {
-> +		const struct edac_scrub_ops *scrub_ops;
-> +		const struct edac_ecs_ops *ecs_ops;
-> +	};
-> +	union {
-> +		struct edac_ecs_ex_info ecs_info;
-> +	};
-
-I would place the variable structs union at the end. This may help with 
-alignments, if you place the pointers earlier.
-
-> +	union {
-> +		void *scrub_ctx;
-> +		void *ecs_ctx;
-> +	};
-> +};
-> +
-> +int edac_ras_dev_register(struct device *parent, char *dev_name,
-> +			  void *parent_pvt_data, int num_features,
-> +			  const struct edac_ras_feature *ras_features);
-> +#endif /* __EDAC_RAS_FEAT_H */
-
-
-
-Thanks,
-Mauro
+Exactly.  As explained in the patches, one crucial prerequisite is that
+the executable code is trusted, and the system must provide integrity
+guarantees.  We cannot do anything without that.  This patches series is
+a building block to fix a blind spot on Linux systems to be able to
+fully control executability.
 
