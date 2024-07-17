@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-254984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F716933A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C43933A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247C01F21987
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7941284045
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F074D8A9;
-	Wed, 17 Jul 2024 09:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F9356452;
+	Wed, 17 Jul 2024 09:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3nHDrOD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW3YGn2P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95708446B4;
-	Wed, 17 Jul 2024 09:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586E056766;
+	Wed, 17 Jul 2024 09:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209156; cv=none; b=sO+7ncPl9uhg3gg+a1CVGD9r5BYMzB0FziA5RQpQPyzblChIQcnmwsWX1zC5N2pDKXeB+r+FdSVopI/wWNi+nR7F93rAfe5VwHI5FYJ2ZcnlfJXjNbCE5+YPCP2FD/35tKEmliQE9MlrjVC3OuPXPz95TGXzHeu3/uz9uhdX5yI=
+	t=1721209162; cv=none; b=YtGRW9n5s6i+vjySw7tcXyTnCDM4m5xetouW4uCUCyaLgzvSBqkq+CS8s+ISt7a0tEiyaSRW/x+SRgv8RHuB0/dSH2v3rvL5mCZaTcC6FKD3lxA03YU+8UyP10v4qjUmQQ8nHhM/CnGWZPiNSDSKlHqF4nHEUsxiMjk7r116b8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209156; c=relaxed/simple;
-	bh=bQmiL04uei3wZr6LpWjoMYZBMy7Ujc3v3PupBMdFZNs=;
+	s=arc-20240116; t=1721209162; c=relaxed/simple;
+	bh=N6QPrgE2ppM+gTZLC6zQEvEbaXRIl1p6sQHoE0Mvx+8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogcaSOIhI2NGBqAJqgEle/oGJTL/ozk5TJI/wU6ARg+hOiGLqlN1nqa1610s2sDtObz42DNRQipBY3q3nNw/w4dPW8LbhLvZzEvUMfjZ4xDtBiKVIEeaaNeim5QKFLObcCM++5cYet8LtDvpDphLAlBqMdM48GGI5HoDHa5akOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3nHDrOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB865C32782;
-	Wed, 17 Jul 2024 09:39:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LZi0E8/3YRmZ3BltQb4BG8w0gMMjeIf9GgBqK/vh1tnhNPYmidYtiCbZ8orn2vWomMLAi4DlB1siqiNd+KKzD1/Be5XCHdWRK3iVojIzzwNVswH+EpMsVuz2NhOWXCxCj4pgaxDQgyTpMdX9VSzZ+MOJVJWvBusN/uslFhbGWQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UW3YGn2P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF736C32782;
+	Wed, 17 Jul 2024 09:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721209156;
-	bh=bQmiL04uei3wZr6LpWjoMYZBMy7Ujc3v3PupBMdFZNs=;
+	s=k20201202; t=1721209161;
+	bh=N6QPrgE2ppM+gTZLC6zQEvEbaXRIl1p6sQHoE0Mvx+8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R3nHDrOD4BH+FrNfytFa2wNHK8U5yM5krpSDx+phY74rT3kqT8GbCvpmlHoMZr70x
-	 oukSUdP8IipAmQPb8TjbTZ8XQSa2flty6eQOfBDrUWO1ICSmfPIW/zNe/u7Z17fIcC
-	 x2SfrFQYMZ+SlQfioIj+U5ZjbEBqwOYn2+QVqagTY6/PkWfYg207rpvl0I3E04ez3T
-	 o1GV5lEm//UfpLhw5PsRBJAR9zcf+p032BC/PmcpQveUqRoj7bJ7E3rMrVI4KXGVKt
-	 R2DpFidpxmqkqvZ8P4xSBfcMpNUmS5WfzUzk3Cwb1B5/7eypSpmOezGzV5Qs5UbIHR
-	 js8B9NoIGyDCA==
-Message-ID: <8f9c3428-c5fa-462b-af9b-0224976a1165@kernel.org>
-Date: Wed, 17 Jul 2024 11:39:08 +0200
+	b=UW3YGn2PCyRKFxrUg7EgdNXOgtB7LmoxUbHQGTkFliZub+ahrKPHo0nbHRQ7GTQJU
+	 Zgu7Crg+CJwAlBuAg0cn+OFzokKirbd+tsaZ2UO2crpBojL8XSgUTFiNGa/gzvOlF+
+	 kBjC9AZtpCyAO8DZBGLCUv5Ba3QZpQEhLukLrqy6G7hqcc4iriCq2qJs4rnHIVj31N
+	 ACOqLffjDrg7hl9wEYe2WlJkj00BJfDN6/eFckEvitTrLWh/Ob3aby3cDtd+VUKjRf
+	 ICJNlUwXUjlYcSH1uOaYRxa9pznkPzrC7S2yeT6bXXA0pid4Hzf6Jhz9hIzrjFSVIK
+	 DI36cJfVdyweA==
+Message-ID: <63aac431-cb01-414f-a8a8-96dd17633aad@kernel.org>
+Date: Wed, 17 Jul 2024 11:39:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] ARM: dts: rockchip: remove unlikly-to-exist DAC
- from elgin-r1
+Subject: Re: [PATCH v1 3/4] loongarch: dts: remove non-existent DAC from
+ 2k1000-ref
 To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Conor Dooley <conor.dooley@microchip.com>,
  Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -63,7 +63,7 @@ Cc: Conor Dooley <conor.dooley@microchip.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  imx@lists.linux.dev, loongarch@lists.linux.dev
 References: <20240717-anvil-ashy-544e80a1317c@spud>
- <20240717-parrot-malt-83cc04bf6b36@spud>
+ <20240717-preacher-sandal-2aeffa322b9f@spud>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,26 +109,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240717-parrot-malt-83cc04bf6b36@spud>
+In-Reply-To: <20240717-preacher-sandal-2aeffa322b9f@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 17/07/2024 11:37, Conor Dooley wrote:
 > From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> The Rohm dh2228fv (really the bh2228fv, the compatible in the kernel has
-> a typo) does not support frequencies above 10 MHz, nor per the
-> datasheet appear to use either CPOL or CPHA. I suspect that this
-> devicetree is abusing the compatible in order to bind the spidev driver
-> in Linux. Pretending to have devices on a board for this purpose is not
-> acceptable, so remove it.
+> The 2k1000 reference boards do not have a Rohm DAC on them as far as I
+> can tell, and they certainly do not have a dh2228fv, as this device does
+> not actually exist! Remove the dac nodes from the devicetrees as it is
+> not acceptable to pretend to have a device on a board in order to bind
+> the spidev driver in Linux.
 > 
 > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> I could not find any documentation for this board online, and it does
-> not blatantly say that the device is a "spidev" like other [ab]users, so
-> it is possible there's actually a DAC here - but I doubt it is a
-> bh2228fv given the other incompatibilities.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
