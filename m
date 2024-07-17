@@ -1,75 +1,64 @@
-Return-Path: <linux-kernel+bounces-254843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B13933860
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB0B93386A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02FB283D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D4C1F22706
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D7F1CD16;
-	Wed, 17 Jul 2024 07:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A23D2033A;
+	Wed, 17 Jul 2024 07:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2wuJnYs"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UFy3v8Uw"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666D522616
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209391CAB1;
+	Wed, 17 Jul 2024 07:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203022; cv=none; b=Hgua6nrnLsS0t6iPh9Apd7Rv9L/ld8sHqCrmuRmfpENr++M0l6Ndzpc7onJKpGnkiJoUErCMTeSUM8GMXG+GOyr3uaXDp5W/CW/wsJKaOC3kBbfRqGJFn31z90L7MXm0XHtjW8HHv0wDrbOVGNAKWIRRaxlM7lD4iSSdiRqd2Jk=
+	t=1721203136; cv=none; b=Uo6HnuCnF4WP2DNznVW56SY6dfkyds3XYn5TmIIbmjHUM8VcwAlKs3APeWrhRwarxoRodhC6r5R8OnTiSCK3Q4ATIEQbW7CLp7XFxfbh9ZflsiL8XDlBkw5Gl68Fz7l3i49qfJ0RL1jeLzTSP5CZMBCjupnCvgau2z82kU8yKEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203022; c=relaxed/simple;
-	bh=gOQIhVwlUv2eV47vH5ppdulwGYt5SzMln0kAJPHsrV0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kw9ExEoQlh9AOTzBmk+hn5vB39Ccdh0Ckgxuh/9iYlhFA77f3lp4XI9c8Hz9WfSO8UKWf5mERbbFDmyUTP/8O4o5saqR0TrXBPLkSXMp0xYTxjxcZ9KVfpdhxMF9Kq4eJ2HtR4Oj8DhZS4I97ByGmSoZ2/W83ebk3sBcn6w5jc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A2wuJnYs; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso45275875e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721203019; x=1721807819; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/z2Dk0w9xhkDO1EnnbnjHajHb+TSL/Zs7A5uSiMV1RU=;
-        b=A2wuJnYsL9HLX/fWL7Z2JOG0ArV9wkSaoT+pQKHZv7luPUiaMoT9j0R9bK/pQINcEZ
-         EfJ+CNMyf6rjtTHt6RdPGHawHBK1QPC4DvNqTwbzls1ok4gzAUxd86KfRpX0zObMPPaZ
-         DScMq44UUu27WJURwUCzwHBhwOw3zbkiKe7y9EJOy2u3N3Zs4DqMjTm4DGBQpnxn8CTx
-         j2EkiWQybO6/Vd3oL91zbLDWknhByFrSRWPKsd9Tbldz27eURPb6F2rYPR204QHLp3Ap
-         uq89+FqsS+qIleHXdmREqnh2pPiprtp9PVpWsFz09WUMfXX95ZsToIyXgEiBV2GQ2uw9
-         /O0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721203019; x=1721807819;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/z2Dk0w9xhkDO1EnnbnjHajHb+TSL/Zs7A5uSiMV1RU=;
-        b=njPxT3LtrqGDcjYbir4lfE/14sdg5OwxEjrEkMsqu/9g6YXgyBOtjhRzsgz4qa8/mP
-         OgmdT6k2EynSxujnRXrzI5jMx5lt/lDHiJavAEWybgbujYbAZ/Ir5djilBvTEsw8hcNW
-         2xGXcTnGLpdj5U7Ej0aVt5oTgjqpwVOKmR6+D2WuQMgtKlUo+b5wy/gzkD4Ia0JmJfF+
-         DJ4JD4S6tTNOWIgq62kKDrjALKjP6JiqNsNSUwvaxghVTkvEIIFsEbri0+dgKkJxMbXE
-         nqbwe8fS0xQ6pLyAAdshQxSuhDtWvCWMWCr106v/WMxuJgOZ1XMe6yJdJIWoEl93JzPW
-         HOoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ7o/aVRXilwMnoJlNtefdrMnJLYmzPD6NAzK+o/PP56YyjPMNpCakcy3pxhLzOiMdyZg2XGeiTQLHQpmBSF01iAF/+xokEIYqiS4L
-X-Gm-Message-State: AOJu0YxXDZ0pAKX+CSbJIgxAsHzFV/BrHBsS8PgLqSvUL5ppB4fGleil
-	9psUcp3l0rNFWbBS6ayeDYIQubHNCv1HhzTNZxCU5JGLvts32Lgtkwm8FhHSsN0=
-X-Google-Smtp-Source: AGHT+IFTy8c9UCCsxgJAFU5uC3fKaWL8SWqf1jjti9B5styvGlmZXCFH7iXEA2pTbA1qsBmrijZl8Q==
-X-Received: by 2002:a05:6000:1fa6:b0:368:38af:9a2e with SMTP id ffacd0b85a97d-36838af9ceemr398786f8f.21.1721203018298;
-        Wed, 17 Jul 2024 00:56:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d? ([2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafba03sm11005798f8f.76.2024.07.17.00.56.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 00:56:57 -0700 (PDT)
-Message-ID: <06f1b509-220e-415b-a24b-7fe8dc796328@linaro.org>
-Date: Wed, 17 Jul 2024 09:56:56 +0200
+	s=arc-20240116; t=1721203136; c=relaxed/simple;
+	bh=1AeF6NudXbXBPqkvKKUY8RKZBTzwY6oezxqVJum490Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZtGCe7iqv+MuNEDnwFa1i0JYYG9L64wapVjm4iX96GVbxilDuWMbowo+HP6bq6P9qeaiWmgtQVt1znRXFcIY1V0e7OqsSN4H3PHxINbsoExUawRYfAmHawsB+tOu9UwOMZn5I8DT5+ysjZw+JCIwewVDCs9JxkBJo1SjIx1kUOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UFy3v8Uw; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H5Dqlr012713;
+	Wed, 17 Jul 2024 09:58:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	JysyCBZhVVX0Cqer7ON/N8yUNt3og7/Pelyhdd9TMOo=; b=UFy3v8UwHllZJT2N
+	LHkfc8DIJiNRpmcdWwTr9rsI+cLhBs0w4JJ1ApFwQvR51+AJ7u4jSmzoKk9Ok0oR
+	h+RhkwzdI4wYJ9muiOl17TBPC5Dk3LuNv6Hk/zl+XFBv6qgXnNZxHrgnKV6UWRH0
+	BK/Awz4771/8y/CMaUcA4++jh8EH/WSKPExY5mAQzWtj636NYQ/HmrnGUAoyMaDN
+	h5iiphfcOoMalmJkBHE3O+W4fP06+d5XZvy/0vApW8f72mbdzrN8ef2Qv7alJjBW
+	pVsYfzD4CYk0BgG4mU67LP9dzV7q4jaffCpoF+6jzN1ehag6WssQ4XaWOvhJIxmK
+	Ua2wJg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40dwfdj9dw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 09:58:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6419D40044;
+	Wed, 17 Jul 2024 09:58:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A587E244DA1;
+	Wed, 17 Jul 2024 09:57:58 +0200 (CEST)
+Received: from [10.48.86.111] (10.48.86.111) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 17 Jul
+ 2024 09:57:58 +0200
+Message-ID: <5266d334-0006-4fa8-981d-eca04f99a899@foss.st.com>
+Date: Wed, 17 Jul 2024 09:57:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,70 +66,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 4/4] usb: typec: ucsi: Fix SET_PDR typo in UCSI header
- file
-To: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com,
- linux-usb@vger.kernel.org
-Cc: bleung@google.com, abhishekpandit@chromium.org, andersson@kernel.org,
- dmitry.baryshkov@linaro.org, fabrice.gasnier@foss.st.com,
- gregkh@linuxfoundation.org, hdegoede@redhat.com,
- rajaram.regupathy@intel.com, saranya.gopal@intel.com,
- linux-kernel@vger.kernel.org
-References: <20240717004949.3638557-1-jthies@google.com>
- <20240717004949.3638557-5-jthies@google.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240717004949.3638557-5-jthies@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 0/4] rtc: stm32: add pinctrl interface to handle RTC outs
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Valentin Caron
+	<valentin.caron@foss.st.com>
+References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
+ <2024071521121650db391a@mail.local>
+Content-Language: en-US
+From: Valentin CARON <valentin.caron@foss.st.com>
+In-Reply-To: <2024071521121650db391a@mail.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
 
-On 17/07/2024 02:49, Jameson Thies wrote:
-> Fix SET_PDR typo in UCSI header file.
-> 
-> Signed-off-by: Jameson Thies <jthies@google.com>
-> ---
->   drivers/usb/typec/ucsi/ucsi.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-> index 57129f3c0814..375f1881c1e2 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.h
-> +++ b/drivers/usb/typec/ucsi/ucsi.h
-> @@ -152,7 +152,7 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
->   #define UCSI_SET_UOR_ROLE(_r_)		(((_r_) == TYPEC_HOST ? 1 : 2) << 23)
->   #define UCSI_SET_UOR_ACCEPT_ROLE_SWAPS		BIT(25)
->   
-> -/* SET_PDF command bits */
-> +/* SET_PDR command bits */
->   #define UCSI_SET_PDR_ROLE(_r_)		(((_r_) == TYPEC_SOURCE ? 1 : 2) << 23)
->   #define UCSI_SET_PDR_ACCEPT_ROLE_SWAPS		BIT(25)
->   
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+On 7/15/24 23:12, Alexandre Belloni wrote:
+> Hello,
+> 
+> On 11/07/2024 16:08:39+0200, Valentin Caron wrote:
+>> This series adds a pinctrl/pinmux interface to control STM32 RTC outputs.
+>>
+>> Theses two signals output are possible:
+>>   - LSCO (Low Speed Clock Output) that allow to output LSE clock on a pin.
+>>     On STM32MPU Discovery boards, this feature is used to generate a clock
+>>     to Wifi/Bluetooth module.
+>>   - Alarm out that allow to send a pulse on a pin when alarm A of the RTC
+>>     expires.
+>>
+>> First attempt [1] was based on 'st,' vendor properties, this one is based
+>> on pinctrl and pinmux framework.
+>>
+>> As device-trees will be upstreamed separately, here is an example:
+>>
+>> stm32-pinctrl {
+>>      rtc_rsvd_pins_a: rtc-rsvd-0 {
+>>          pins {
+>>              pinmux = <STM32_PINMUX('B', 2, AF1)>, /* OUT2 */
+>>                       <STM32_PINMUX('I', 8, ANALOG)>; /* OUT2_RMP */
+>>          };
+>>      };
+>> };
+>>
+>> stm32-rtc {
+>>      pinctrl-0 = <&rtc_rsvd_pins_a &rtc_alarma_pins_a>;
+>>
+>>      /* Enable by foo-device */
+>>      rtc_lsco_pins_a: rtc-lsco-0 {
+>>          pins = "out2_rmp";
+>>          function = "lsco";
+>>      };
+>>
+>>      /* Enable by stm32-rtc hog */
+>>      rtc_alarma_pins_a: rtc-alarma-0 {
+>>          pins = "out2";
+>>          function = "alarm-a";
+>>      };
+>> };
+>>
+>> foo-device {
+>>      pinctrl-0 = <&rtc_lsco_pins_a>;
+>> };
+>>
+> 
+> This all seems good to me, I let you fix the various issues that have
+> been reported. I was just wondering whether the LSCO clock was registered
+> early enough to be used but I guess you tested that.
+> 
+
+Hi,
+
+Here it is:
+https://lore.kernel.org/lkml/20240717074835.2210411-1valentin.caron@foss.st.com/
+
+Yes it works fine, RTC is probed early enough in the boot sequence, and 
+so Wifi/BT module does not have an issue to get the LSCO clock.
+
+Thanks,
+Valentin
 
