@@ -1,127 +1,217 @@
-Return-Path: <linux-kernel+bounces-254554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073369334B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:13:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD74E9334B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7F8283B9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F5C2843A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D0BEC5;
-	Wed, 17 Jul 2024 00:13:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF39EDB;
+	Wed, 17 Jul 2024 00:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRyL2v4O"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4379D628;
-	Wed, 17 Jul 2024 00:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570DB628;
+	Wed, 17 Jul 2024 00:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721175210; cv=none; b=fZIJQFM5giu3NysumYgP9xQdvZICNrxeZmHqcUrNW6Z9gUJHwH4XqP/xjsA+0awBNT8irRsXfwMMr26MVn9Ei8Qv1MnZO1yfk5ITtgvo6EeOrTWr3ZECFlAHiIxZDexxKsYd2LayjmbCW6MZDEnBwiYF9rYCpGGJtnpfFLYSwPs=
+	t=1721175980; cv=none; b=LSkxOAFFSlNLJoAcr4lF6C3cmwLpXIPZ2SGbGYj1ubm2zE0F7cMOHPPK/48X2U6hB20I9UOU9jLfh07U70QD6scFpo1H18CAzxsCjlL5sqeo7/Zng51upnUxmktc3ZDPH0iQdzx+8zojjY7mryqhkWXV9clQSrC4OJ3lvKS4CjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721175210; c=relaxed/simple;
-	bh=H7RC8OBnXHwAAaYFt7l6yBqpFoUw3yPVMg/87dcKlbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ghKuAMhrFKwWkPOXblHcOeTxrw19b1i2qIP7G11si2nyntM7fltKd/rVibVRT5z6ubTTfMsUPpXAk846O98tL/DOTJP4ocaYCDxB42G1IP0FLn4SC4PGlOdWufqLA+3eWcSuVobD6qgpvepbxkes/6ryr5XGIDsPXgG34YTrAJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CC6C116B1;
-	Wed, 17 Jul 2024 00:13:26 +0000 (UTC)
-Date: Tue, 16 Jul 2024 20:13:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Joel Fernandes
- <joel@joelfernandes.org>, Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- Ben Segall <bsegall@google.com>, Borislav Petkov <bp@alien8.de>, Daniel
- Bristot de Oliveira <bristot@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, Paolo Bonzini
- <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Valentin
- Schneider <vschneid@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Wanpeng Li <wanpengli@tencent.com>, Suleiman Souhlal <suleiman@google.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- graf@amazon.com, drjunior.org@gmail.com
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
- management)
-Message-ID: <20240716201326.5fb7e895@gandalf.local.home>
-In-Reply-To: <ZpcFxd_oyInfggXJ@google.com>
-References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
-	<ZjJf27yn-vkdB32X@google.com>
-	<CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
-	<CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
-	<66912820.050a0220.15d64.10f5@mx.google.com>
-	<19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-	<20240712122408.3f434cc5@rorschach.local.home>
-	<ZpFdYFNfWcnq5yJM@google.com>
-	<20240712131232.6d77947b@rorschach.local.home>
-	<ZpcFxd_oyInfggXJ@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721175980; c=relaxed/simple;
+	bh=+lJcuhUAesI+fL0W1Lu97bp1FSqBUUXjb7gc7D1sNuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TUEk1PbtNiB/abPvR8X/wa1DyVlWw7phweQtwCXgg0LNjvJ/qo6CKQ47vhm+1td9lB4Im0wpxfGhG+kVGKbsCyN31HUOaCAGcpxf8cfrUijrKOJR3AistCxrQHbaI8UDt69DtGKrhl0ESBbYwYfi9zLD8sD55yYLgHgXe+b2s4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRyL2v4O; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eea7e2b0e6so84122771fa.3;
+        Tue, 16 Jul 2024 17:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721175976; x=1721780776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V1xxlrYKlsAYREKMmiCm0HsJPbyvJOc9ZOy05BR0hfg=;
+        b=bRyL2v4Oy5HTh+ozLx+DXz2Pj+GYKszffdHejg6x34ctRbjK82exdd44nrITI1Ry9t
+         xIWINl62yGMlT6Hr9jgRbulDJUponcPWubIch9huaObmQfm/Lpnye65LUjoiCq8FUjyO
+         ip2uknveeSie4b1YvkL96S1RoAzyzYYysH6RAwg253InXfw5NqUsaSFqvUXEszM4FFnz
+         onb7FZQ8YZWSm8tH34U6f4Rz8xEu+EGioX4zz95Z6iVp3DaJGUvT57CuuvHF5ASQq9Zp
+         WIWNyAcJMFwr3vuITkDbXXrTtWiou2/LoIWjWUgRAk25IopwCVJzCy0/PNF0BmsMVjvC
+         ogXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721175976; x=1721780776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V1xxlrYKlsAYREKMmiCm0HsJPbyvJOc9ZOy05BR0hfg=;
+        b=Xbveq3WEVilQAtSXYnnJ//WCBRERBJjrNcWPJ20/OrckTYdWI816Ih7SWTheXBkEhV
+         dNRYnSjQ6MAKsZTzVBgVf8ktnd7VeV5uM5A+Gdqg7UxoEqlx+zQVqQnHSdOiym9g7xEM
+         JYTkxP5wY51x/I1S05GmCYouXVtDLq21eNVS8NAkdO86qiSYhj5ehMFMfhA22dz8LytY
+         mq+2MCJwyjfg+m1YM4vCRd+DQ1oEaKMv3cFEqNgYEW7//lgA2XiwrHY9LC7sV7smbe+b
+         6KDiXdTWzQzv82yzVu7RtlC5aLF6zqvQP8ekSO693qQWLN639uPzhIKHuN7iVr0WEmWu
+         j3gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKftI2Y8+opfRCniXnng/ni17tcaCJEGo3vHPztI+jO7oSt3v3YsC5CGsaVOa9kvBnbcsfRhh7iO7dinDtqyiWkym0qKuL2x9/G7h5E98/Kt0hIK0/mD3YYWGOAFqr21Kk/HFzigu46Ws=
+X-Gm-Message-State: AOJu0YzAvEY5GzVZR+thIsehPIFEZPi8asDh5b9RJcZzySwwNBmhRzGD
+	Dl8DWHNqv4PX4NqZj8JUlQqcH5oqDqdKNYiguAZBDeR3Q/P5D0en+WoLaysl6k+X4pSttgz3RNj
+	mpORGqqE7/KIVUORJMr2i98C0+XY=
+X-Google-Smtp-Source: AGHT+IElT/EzxkksPegW6XakIZVQSFwW+STqcxNmU+5etr1eW87xKQ221AgJMtPX86rRIAL3RIYDPJ4UfqBMPDOpVPE=
+X-Received: by 2002:a2e:7305:0:b0:2ee:8573:eb51 with SMTP id
+ 38308e7fff4ca-2eefd14c831mr618711fa.34.1721175976127; Tue, 16 Jul 2024
+ 17:26:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240616163055.75174-1-max@enpas.org> <CAEc3jaCkH5JwNTpHRZYsekbwX+G6T5tMTLD0+O6E7Q2hqcAFHw@mail.gmail.com>
+ <dedb2c39-fc28-4cba-802f-5d56f23db722@enpas.org> <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
+ <afda41dc-7b36-4ddd-abfc-c9430d8c9503@enpas.org>
+In-Reply-To: <afda41dc-7b36-4ddd-abfc-c9430d8c9503@enpas.org>
+From: Roderick Colenbrander <thunderbird2k@gmail.com>
+Date: Tue, 16 Jul 2024 17:26:04 -0700
+Message-ID: <CAEc3jaB7ijeXCUKOhpORx4Omf8edSmc1HKe9bk22V1mz=cLa+g@mail.gmail.com>
+Subject: Re: [PATCH v1] hid-playstation: DS4: Update rumble and lightbar together
+To: Max Staudt <max@enpas.org>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Jul 2024 16:44:05 -0700
-Sean Christopherson <seanjc@google.com> wrote:
-> > 
-> > Now if the vCPU gets preempted, it is this moment that we need the host
-> > kernel to look at the current priority of the task thread running on
-> > the vCPU. If it is an RT task, we need to boost the vCPU to that
-> > priority, so that a lower priority host thread does not interrupt it.  
-> 
-> I got all that, but I still don't see any need to hook VM-Exit.  If the vCPU gets
-> preempted, the host scheduler is already getting "notified", otherwise the vCPU
-> would still be scheduled in, i.e. wouldn't have been preempted.
+Hi Max,
 
-The guest wants to lazily up its priority when needed. So, it changes its
-priority on this shared memory, but the host doesn't know about the raised
-priority, and decides to preempt it (where it would not if it knew the
-priority was raised). Then it exits into the host via VMEXIT. When else is
-the host going to know of this priority changed?
+On Wed, Jul 10, 2024 at 8:35=E2=80=AFAM Max Staudt <max@enpas.org> wrote:
+>
+> Hi Roderick,
+>
+>
+> On 7/9/24 01:07, Roderick Colenbrander wrote:
+> > The console behavior (I checked the code) does use the flags as well
+> > like I do. The architecture there between usermode/kernel is a bit
+> > different, so in some cases flags do get set when not needed.
+>
+> Thank you so, so much for double checking this. It's always great to
+> have someone who can speak authoritatively on such matters and eliminate
+> the guesswork.
+>
+>
+> > Various devices tried to capture bit patterns and see what kind of
+> > worked even though not really right. (Officially licensed
+> > controllers are a different story they use different hid reports.) We
+> > didn't know other devices did this wrong.
+>
+> Licensed controllers... That will be my next patch set, apologies in
+> advance :)
 
-> 
-> > The host should also set a bit in the shared memory to tell the guest
-> > that it was boosted. Then when the vCPU schedules a lower priority task
-> > than what is in shared memory, and the bit is set that tells the guest
-> > the host boosted the vCPU, it needs to make a hypercall to tell the
-> > host that it can lower its priority again.  
-> 
-> Which again doesn't _need_ a dedicated/manual VM-Exit.  E.g. why force the host
-> to reasses the priority instead of simply waiting until the next reschedule?  If
-> the host is running tickless, then presumably there is a scheduling entity running
-> on a different pCPU, i.e. that can react to vCPU priority changes without needing
-> a VM-Exit.
+Oh I see. Hm, we have been doing a lot of work in this space for both
+PS4 and PS5 controllers. We just didn't submit it yet and need to
+clean up the code a bit as we have some internal demand for this as
+well. We need to get our hands on some more of these controllers,
+validate before we were about to share the work. There are some
+details to these controllers (on the console it is kind of a separate
+driver even).
 
-This is done in a shared memory location. The guest can raise and lower its
-priority via writing into the shared memory. It may raise and lower it back
-without the host ever knowing. No hypercall needed.
+>
+> They need quite a few quirks, too... And as it turns out, my previous
+> patches have laid a lot of ground work for them :)
+>
+>
+> > Correct the validation tests are all uhid based, which is the best
+> > which can be done.
+>
+> Please correct me if I'm getting the wrong idea here, but what I read
+> between the lines and from your email address is that this is something
+> in Sony's interest.
+>
+> So an idea comes to mind: Maybe somewhere inside Sony, there exists
+> something like a DS4 simulator at the HID level, which could serve as a
+> foundation for improving the tests? That would get the tests much closer
+> to the gold standard, which is using a real controller.
+>
+> If not, then maybe there is protocol documentation that could help test
+> writers in creating more precise tests?
 
-But if it raises its priority, and the host decides to schedule it because
-the host is unaware of its raised priority, it will preempt it. Then when
-it exits into the host (via VMEXIT) this is the first time the host will
-know that its priority was raised, and then we can call something like
-rt_mutex_setprio() to lazily change its priority. It would then also set a
-bit to inform the guest that the host knows of the change, and when the
-guest lowers its priority, it will now need to make a hypercall to tell the
-kernel its priority is low again, and it's OK to preempt it normally.
+Unfortunately none of the documentation for our controllers is public.
+Just read between the lines in the code, which we cover with some
+clues here and there :)
 
-This is similar to how some architectures do lazy irq disabling. Where they
-only set some memory that says interrupts are disabled. But interrupts only
-get disabled if an interrupt goes off and the code sees it's "soft
-disabled", and then will disable interrupts. When the interrupts are
-enabled again, it then calls the interrupt handler.
+>
+> > There is the hid-tools one, but the one which we help out with, but
+> > the key one is the Android ones. We have so many problems with these.
+> > Mostly because of vendors not enabling e.g. FF support or LED support
+> > other things.
+>
+> Hm, but downstream users misconfiguring kernels is not our fault, is it?
+> In that case, the tests actually do their work correctly if they show
+> that something is amiss.
+>
+>
+> > The main new Android kernel (public knowledge) is now 6.6 and many
+> > new devices due later this year/early next year will use it.  The
+> > eco system is a lot wider now and the drivers are used a lot on
+> > non-mobile devices (cars, televisions, chromecast,..). Occassionally
+> > driver patches are also backported from upstream to older Android
+> > kernels (patches have to be merged upstream first).
+>
+> I see. But still, that is just typical downstream risk of building on
+> behaviour that the kernel does not provide guarantees for. I know
+> first-hand that backporting is a lot of work and easy to get wrong, but
+> this is the first time that I hear that as a reason to stop improving
+> the mainline kernel. Hence my confusion here.
+>
+>
+> > Not that I wouldn't want these kind of patches, but I have to weigh
+> > both sides.
+>
+> Thanks for your understanding, and hence my offer to help if I somehow
+> can...
+>
+>
+> > The pain on addressing things downstream and in Android conformance
+> > tests is quite painful.
+>
+> Hm, I can somewhat imagine this. I've heard that Android conformance is
+> quite strict.
+>
+> Given Sony's supposed interest (see above), I guess it would be a
+> worthwhile investment to make the tests more robust? We could just hold
+> off on this patch for a while until downstream has better tests... What
+> would be a timeline for this to trickle downstream?
+>
+>
+> > We would also have both code paths used in the wild forever, because
+> > existing 6.6 devices wouldn't change behavior.
+>
+> Well, that's kind of the point of LTS releases, if I'm not mistaken...
+>
+>
+> > (The official Android tests are kind of kernel version agnostic as
+> > they work across multiple kernel and Android versions.
+>
+> Hm, sounds to me like the Android test framework is broken if it cannot
+> be kernel-specific in such cases. What's required in order to improve thi=
+s?
 
-What are you suggesting to do for this fast way of increasing and
-decreasing the priority of tasks?
+It is a bit of a long process we work on with Google. Some initial
+fixing of some of the bugs will be for this year to make sure the 6.6
+tests pass properly. But any work to maybe handle multiple behaviors,
+that's quite tricky and would take quite a bit of time to be honest.
+Considering how widely Android and all these devices are used, I'm
+hesitant to make changes to not cause regressions. Even just a simple
+one can take forever to trickle down.
 
--- Steve
+>
+>
+> Max
+>
+>
+
+Roderick
 
