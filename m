@@ -1,77 +1,94 @@
-Return-Path: <linux-kernel+bounces-255103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394E7933C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783A9933C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7EC4282FC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE7B1F24589
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BDE17F39B;
-	Wed, 17 Jul 2024 11:15:27 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A872E64A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7AC17F4E6;
+	Wed, 17 Jul 2024 11:16:33 +0000 (UTC)
+Received: from wangsu.com (unknown [180.101.34.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306B4BA4B;
+	Wed, 17 Jul 2024 11:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.34.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721214927; cv=none; b=qt/3l0ANrv+r8cSUnEc+Dag7IyzFeL3gam67wZds+aYO0Yp03td81QzVSxctOsNj7Cqanx2571nbErW+1XSA45R63hOZqfFLDZDHloDdJUxMj7dRqQGML1QlzOTtn4vKLhxqCTTl+GiwMZMSjcBFOtPsSiHZZbNj4RTKSqzbcLI=
+	t=1721214993; cv=none; b=uCJyNbVuADmRJSvPzSUP9p/StV6fgV8sv7SP+0D3wFTAhG6LBOMcHgSMtdpsN/SlfwDFWb9xbcqM7pf2dsvv8e/WuVB14XDq12hY58fB1eMkVerdk16trlQaW1fsX739BcY/dh6TG9W/igiIex/5IjEpYNKxTudqH4NaDgnBsX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721214927; c=relaxed/simple;
-	bh=G5wrRJdtY3srXR0DCXgj0dxICAEmp/C47cWByB8cBqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tGUl2sRoGLnuw4Snw6o+X9Vjju3b8DMOn/UHN5cwBkKL//fx3HYxU3vYJX20r7CF4EdP62YCNeFFJy+Eas2rUwwKF4SI0MXskM6ywMw6lQ4OUIRgn7H373aaVJUAtbdXecfMbGjgaXwQfSS1phXMkOFH2/Gc+Qz8pSH4HqCzJGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.143])
-	by sina.com (10.185.250.23) with ESMTP
-	id 6697A7C20000334E; Wed, 17 Jul 2024 19:15:16 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8710978913247
-X-SMAIL-UIID: F489EBE2EA4B4915A4F0E50DDBABFABC-20240717-191516-1
-From: Hillf Danton <hdanton@sina.com>
-To: Bharata B Rao <bharata@amd.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Yu Zhao <yuzhao@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	Mel Gorman <mgorman@suse.de>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-Date: Wed, 17 Jul 2024 19:15:10 +0800
-Message-Id: <20240717111510.1260-1-hdanton@sina.com>
-In-Reply-To: <9a53c5cd-6215-4ebd-a17c-1706077a9e65@amd.com>
-References: 
+	s=arc-20240116; t=1721214993; c=relaxed/simple;
+	bh=roq3Kh+/ovFClUmAW7vgp3cQisHyeRk+vUYTDOvwbUQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=iaxqcAUmMJ1SSVIhPpRl+jFv+rWGMvU8GkNTGfFeDLTe73GLusbTw+tfRdlAT+r/A+3ipcyG+ZQjrF0+yanwWT4cZ4SCY6qk0d/xekbte1kpSytn4/zxllS28gWdf8I9KPTzvjuZMFInC7ueNA6cHJigMLPIMfD4gWn5PRYu7UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com; spf=pass smtp.mailfrom=wangsu.com; arc=none smtp.client-ip=180.101.34.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wangsu.com
+Received: from [10.8.148.37] (unknown [59.61.78.234])
+	by app2 (Coremail) with SMTP id SyJltADHJ5DQp5dm5RfUAA--.34821S2;
+	Wed, 17 Jul 2024 19:15:28 +0800 (CST)
+Message-ID: <cde62a6c-384a-5bdd-fe64-3f3d999c3825@wangsu.com>
+Date: Wed, 17 Jul 2024 19:15:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+From: Lin Feng <linf@wangsu.com>
+Subject: [PATCH] bpf: fix excessively checking for elem_flags in batch update
+ mode
+Content-Language: en-US
+To: ast@kernel.org, daniel@iogearbox.net
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, yonghong.song@linux.dev
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:SyJltADHJ5DQp5dm5RfUAA--.34821S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrW5WFyUWr15Gw4rury5twb_yoWfJFc_u3
+	yjqr18KrZayr13KFWFkF40grWDKr1Dtrn7uayDXF97JF1DXrZ5JrZ5AF9xCF98CrW7W3sr
+	uFsrWrZ0qF45ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkYjsxI4VWkKwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
+	vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_
+	Jr0_Gr1lYx0E74AGY7Cv6cx26r48McIj6xkF7I0En7xvr7AKxVW8JVWxJwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY02Avz4vE14v_
+	Gw4l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7IUeNyCtUUUUU==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 
-On Wed, 17 Jul 2024 16:20:04 +0530 Bharata B Rao <bharata@amd.com>
-> On 17-Jul-24 3:07 PM, Vlastimil Babka wrote:
-> > 
-> > It seems weird to me to see anything that would require ZONE_DMA allocation
-> > on a modern system. Do you know where it comes from?
-> 
-> We measured the lruvec spinlock start, end and hold
-> time(htime) using sched_clock(), along with a BUG() if the hold time was
-> more than 10s. The below case shows that lruvec spin lock was held for ~25s.
->
-What is more unusual could be observed perhaps with your hardware config but
-with 386MiB RAM assigned to each node, the so called tight memory but not
-extremely tight.
+Currently generic_map_update_batch will reject all valid command flags for
+BPF_MAP_UPDATE_ELEM other than BPF_F_LOCK, which is overkill, map updating
+semantic does allow specify BPF_NOEXIST or BPF_EXIST even for batching
+update.
+
+Signed-off-by: Lin Feng <linf@wangsu.com>
+---
+ kernel/bpf/syscall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 869265852d51..d85361f9a9b8 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1852,7 +1852,7 @@ int generic_map_update_batch(struct bpf_map *map, struct file *map_file,
+ 	void *key, *value;
+ 	int err = 0;
+ 
+-	if (attr->batch.elem_flags & ~BPF_F_LOCK)
++	if ((attr->batch.elem_flags & ~BPF_F_LOCK) > BPF_EXIST)
+ 		return -EINVAL;
+ 
+ 	if ((attr->batch.elem_flags & BPF_F_LOCK) &&
+-- 
+2.42.0
+
 
