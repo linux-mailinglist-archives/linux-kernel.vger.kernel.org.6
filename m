@@ -1,141 +1,252 @@
-Return-Path: <linux-kernel+bounces-255352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4E8933F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB926933F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082D32825C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99583283887
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A890181BB1;
-	Wed, 17 Jul 2024 15:26:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABEA381DE;
-	Wed, 17 Jul 2024 15:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA381181BA8;
+	Wed, 17 Jul 2024 15:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fVT9UmCv"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68230381DE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721229983; cv=none; b=btc9P/ihob0zOPeV33gLiF0Kjx35GbsmukDIzfIyIZRqY5M+7rNiWIuwXPe7v6fFzDrbpPkmyRrJHJIARGWKG3dBs8G1LqITOa4/Y4ZL7FYbyIRg9aR15V/dg4pl5AAC8lh5AbgtnJi0bCkx9szkI7tJFvFBhuTYMTYkZ9wrG6A=
+	t=1721229999; cv=none; b=MyZYlxh73VHEPsVq044Hrk8svJOPr6pogrh4+6y2egIAhxLVu6GZsGyVm/9Ms5AWrSC7O+Nfm0mpmr+ZIeyoNJfAKFzHehVge6oDHT+AG04vm08fOdqoYw9GUUwsMjw57i+9FB88KoVXYDWFNJSZBzEJohymGqFVSa0TqxrUeXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721229983; c=relaxed/simple;
-	bh=IOcRkh89Ks8cunm4tMzKBSVeuDt4oSZNweCxq2oSKBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZoNHfbSYeeAuR7sbLCOcY9vGwgHlT1enUxQ38qzYHjZcTRORzFnHCqZlzgDg3Po4JYiyVdxIB0Ed2lEMyMZI6KiUfDqJ8qpkjcvTlUd5tKMIvGsPljDu16IgnNlY0XPjzRGq6jAyqSBjL39YH3CUt0NUNjUMNub5V9CfYZii2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA402106F;
-	Wed, 17 Jul 2024 08:26:44 -0700 (PDT)
-Received: from [10.57.77.222] (unknown [10.57.77.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ABCE3F766;
-	Wed, 17 Jul 2024 08:26:16 -0700 (PDT)
-Message-ID: <bf9ffac5-11ff-4a1a-b31a-b9940558fe2c@arm.com>
-Date: Wed, 17 Jul 2024 16:26:15 +0100
+	s=arc-20240116; t=1721229999; c=relaxed/simple;
+	bh=7lCB5O765unyWodcWVIT5dK4EyCVBbPPeuSfODWjS5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dU9WW9ZNjkSGd5LFBi9lC8l1/cqQvW8ErDkEwMiuvnEeKpXR3o6SuXnQFcXQQg/qupINB3Vr6lpo9wTY5qSB+ISn9FzksG+QfhP4i4+zh8pTr4GT5TWx+hmbzlZ8pQHqpuTQ0HDD+WVNnFmUkHmBkhWfkZB0WmDUQ7O4+G8Jho8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fVT9UmCv; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-375f713a099so3953465ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721229996; x=1721834796; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3IYj0mcY3LWRD4tcFWRixVHNuFKVrKsJ0yW1AlH93o=;
+        b=fVT9UmCvpL8nxezylNkXmPWV8f0Sje0rce6Jby0gBfUnXkC5et3FNpZFFk42Npdo87
+         RVp2kQiwv4NavIgv/d58EBdxT4oL/9WfFaM1n9OBhYmAsRqoo0zKKXsUdL0hdmccpqBQ
+         SyMVo/D4/uy1P8BPITUcBrIjdJbpG/rI2Jmu1d4bELFt0vf3D5gm4s5qtp9hsdFhBNmg
+         6RWF5VjK+AXennj/Rze98OP/TQjaH/fPZcL2HL6dX3MzyX43htBBh9dGFeqYkMj6mNhz
+         8fXTplkTz4nknoUTYk0x1TGWTFtshX4ebQqWdXMQOc1alj2KNJ9eR17HD8nFsUubnF9s
+         TQbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721229996; x=1721834796;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A3IYj0mcY3LWRD4tcFWRixVHNuFKVrKsJ0yW1AlH93o=;
+        b=dMvuchnd79Pkvm67TAeJHD6a9nrY8wifzVh2/yS4/MlgCEc8Ub+SP6miDRTeL7vo8P
+         TtfhGr5shR5JauSF3N4cS3rP7yxkqLabs5s/C74Xpjpd30ihiohGrM1doGBjnCbmzhDD
+         z1C0di4u8e58Eax+Lr6J4jNG/lPMS1gBCrRNk7E+Me6Ga4UBgrDwV8rnjkuzhsrv9Dgv
+         muoAZTTcGK1gvxFJtN7La884lUj60ZDPkXRFpxFpKR+vW99qpFLxlSDpURn3M9/zWNUR
+         GT9YV8yG/uye/XTMdxw+eksdnwRHMZGgnsoY+diOuZ3jL0VIO8fslfT79dIOLTW/I0F0
+         EDDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLJYhUYMdhq7ZqTBxkh4wnTl1i9gcQeJU5POzx5EC/TCiPEiFRs3KWQOsvYlt5HfVrrWpxg1nP/jK6dnx3XmBa57lalYuCD76fS9zF
+X-Gm-Message-State: AOJu0YzvlnqBPSQ5t4LWNmr2uHvFzERd97vkWVHUOfIyqhz9Ia20QwVG
+	XwAhKdr2NwmWrQB5vYqENlDOdBJs2dYud3gNtVwS5jbqmCXKMguUGxwz5nOS4qM=
+X-Google-Smtp-Source: AGHT+IE74qL9aWvr7pO4zZ8GlXbVjhOQM4EkEMM/HmkWPWgiTKWMc7oa50ecxS2v9yQ02uIyjhPo4g==
+X-Received: by 2002:a05:6e02:13a9:b0:376:17db:6031 with SMTP id e9e14a558f8ab-39555cd26b4mr25647525ab.18.1721229996296;
+        Wed, 17 Jul 2024 08:26:36 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39616a90121sm1345595ab.48.2024.07.17.08.26.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 08:26:35 -0700 (PDT)
+Date: Wed, 17 Jul 2024 10:26:34 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3 03/11] riscv: Implement cmpxchg8/16() using Zabha
+Message-ID: <20240717-e7104dac172d9f2cbc25d9c6@orel>
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-4-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
- chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- yang@os.amperecomputing.com, linux-mm@kvack.org, john.g.garry@oracle.com,
- linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
- mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
- linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-2-kernel@pankajraghav.com>
- <ZpaRElX0HyikQ1ER@casper.infradead.org>
- <20240717094621.fdobfk7coyirg5e5@quentin>
- <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
- <20240717151251.x7vkwajb57pefs6m@quentin>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240717151251.x7vkwajb57pefs6m@quentin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717061957.140712-4-alexghiti@rivosinc.com>
 
-On 17/07/2024 16:12, Pankaj Raghav (Samsung) wrote:
->>>>
->>>> This is really too much.  It's something that will never happen.  Just
->>>> delete the message.
->>>>
->>>>> +	if (max > MAX_PAGECACHE_ORDER) {
->>>>> +		VM_WARN_ONCE(1,
->>>>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
->>>>> +		max = MAX_PAGECACHE_ORDER;
->>>>
->>>> Absolutely not.  If the filesystem declares it can support a block size
->>>> of 4TB, then good for it.  We just silently clamp it.
->>>
->>> Hmm, but you raised the point about clamping in the previous patches[1]
->>> after Ryan pointed out that we should not silently clamp the order.
->>>
->>> ```
->>>> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
->>>> whatever values are passed in are a hard requirement? So wouldn't want them to
->>>> be silently reduced. (Especially given the recent change to reduce the size of
->>>> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
->>>
->>> Hm, yes.  We should probably make this return an errno.  Including
->>> returning an errno for !IS_ENABLED() and min > 0.
->>> ```
->>>
->>> It was not clear from the conversation in the previous patches that we
->>> decided to just clamp the order (like it was done before).
->>>
->>> So let's just stick with how it was done before where we clamp the
->>> values if min and max > MAX_PAGECACHE_ORDER?
->>>
->>> [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
->>
->> The way I see it, there are 2 approaches we could take:
->>
->> 1. Implement mapping_max_folio_size_supported(), write a headerdoc for
->> mapping_set_folio_order_range() that says min must be lte max, max must be lte
->> mapping_max_folio_size_supported(). Then emit VM_WARN() in
->> mapping_set_folio_order_range() if the constraints are violated, and clamp to
->> make it safe (from page cache's perspective). The VM_WARN()s can just be inline
+On Wed, Jul 17, 2024 at 08:19:49AM GMT, Alexandre Ghiti wrote:
+> This adds runtime support for Zabha in cmpxchg8/16() operations.
 > 
-> Inlining with the `if` is not possible since:
-> 91241681c62a ("include/linux/mmdebug.h: make VM_WARN* non-rvals")
-
-Ahh my bad. Could use WARN_ON()?
-
+> Note that in the absence of Zacas support in the toolchain, CAS
+> instructions from Zabha won't be used.
 > 
->> in the if statements to keep them clean. The FS is responsible for checking
->> mapping_max_folio_size_supported() and ensuring min and max meet requirements.
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/Kconfig               | 17 ++++++++++++++++
+>  arch/riscv/Makefile              |  3 +++
+>  arch/riscv/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++++++++--
+>  arch/riscv/include/asm/hwcap.h   |  1 +
+>  arch/riscv/kernel/cpufeature.c   |  1 +
+>  5 files changed, 53 insertions(+), 2 deletions(-)
 > 
-> This is sort of what is done here but IIUC willy's reply to the patch,
-> he prefers silent clamping over having WARNINGS. I think because we check
-> the constraints during the mount time, so it should be safe to call
-> this I guess?
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 1caaedec88c7..d3b0f92f92da 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -596,6 +596,23 @@ config RISCV_ISA_V_PREEMPTIVE
+>  	  preemption. Enabling this config will result in higher memory
+>  	  consumption due to the allocation of per-task's kernel Vector context.
+>  
+> +config TOOLCHAIN_HAS_ZABHA
+> +	bool
+> +	default y
+> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zabha)
+> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zabha)
+> +	depends on AS_HAS_OPTION_ARCH
+> +
+> +config RISCV_ISA_ZABHA
+> +	bool "Zabha extension support for atomic byte/halfword operations"
+> +	depends on TOOLCHAIN_HAS_ZABHA
+> +	default y
+> +	help
+> +	  Enable the use of the Zabha ISA-extension to implement kernel
+> +	  byte/halfword atomic memory operations when it is detected at boot.
+> +
+> +	  If you don't know what to do here, say Y.
+> +
+>  config TOOLCHAIN_HAS_ZACAS
+>  	bool
+>  	default y
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index 9fd13d7a9cc6..78dcaaeebf4e 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -88,6 +88,9 @@ riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZIHINTPAUSE) := $(riscv-march-y)_zihintpause
+>  # Check if the toolchain supports Zacas
+>  riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZACAS) := $(riscv-march-y)_zacas
+>  
+> +# Check if the toolchain supports Zabha
+> +riscv-march-$(CONFIG_TOOLCHAIN_HAS_ZABHA) := $(riscv-march-y)_zabha
+> +
+>  # Remove F,D,V from isa string for all. Keep extensions between "fd" and "v" by
+>  # matching non-v and non-multi-letter extensions out with the filter ([^v_]*)
+>  KBUILD_CFLAGS += -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)fd([^v_]*)v?/\1\2/')
+> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+> index 5d38153e2f13..c86722a101d0 100644
+> --- a/arch/riscv/include/asm/cmpxchg.h
+> +++ b/arch/riscv/include/asm/cmpxchg.h
+> @@ -105,8 +105,30 @@
+>   * indicated by comparing RETURN with OLD.
+>   */
+>  
+> -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
+> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
+>  ({									\
+> +	__label__ no_zabha_zacas, end;					\
+> +									\
+> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&			\
+> +	    IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
+> +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
+> +				     RISCV_ISA_EXT_ZABHA, 1)		\
+> +			 : : : : no_zabha_zacas);			\
+> +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
+> +				     RISCV_ISA_EXT_ZACAS, 1)		\
+> +			 : : : : no_zabha_zacas);			\
 
-I don't want to put words in his mouth, but I thought he was complaining about
-the verbosity of the warnings, not their presence.
+I came late to the call, but I guess trying to get rid of these asm gotos
+was the topic of the discussion. The proposal was to try and use static
+branches, but keep in mind that we've had trouble with static branches
+inside macros in the past when those macros are used in many places[1]
 
-> 
->>
->> 2. Return an error from mapping_set_folio_order_range() (and the other functions
->> that set min/max). No need for warning. No state changed if error is returned.
->> FS can emit warning on error if it wants.
-> 
-> I think Chinner was not happy with this approach because this is done
-> per inode and basically we would just shutdown the filesystem in the
-> first inode allocation instead of refusing the mount as we know about
-> the MAX_PAGECACHE_ORDER even during the mount phase anyway.
+[1] commit 0b1d60d6dd9e ("riscv: Fix build with CONFIG_CC_OPTIMIZE_FOR_SIZE=y")
 
-Ahh that makes sense. Understood.
+> +									\
+> +		__asm__ __volatile__ (					\
+> +			prepend						\
+> +			"	amocas" cas_sfx " %0, %z2, %1\n"	\
+> +			append						\
+> +			: "+&r" (r), "+A" (*(p))			\
+> +			: "rJ" (n)					\
+> +			: "memory");					\
+> +		goto end;						\
+> +	}								\
+> +									\
+> +no_zabha_zacas:;							\
 
-> 
-> --
-> Pankaj
+unnecessary ;
 
+>  	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
+>  	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
+>  	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
+> @@ -133,6 +155,8 @@
+>  		: "memory");						\
+>  									\
+>  	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
+> +									\
+> +end:;									\
+>  })
+>  
+>  #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
+> @@ -180,8 +204,13 @@ end:;									\
+>  									\
+>  	switch (sizeof(*__ptr)) {					\
+>  	case 1:								\
+> +		__arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,		\
+> +					prepend, append,		\
+> +					__ret, __ptr, __old, __new);    \
+> +		break;							\
+>  	case 2:								\
+> -		__arch_cmpxchg_masked(sc_sfx, prepend, append,		\
+> +		__arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,		\
+> +					prepend, append,		\
+>  					__ret, __ptr, __old, __new);	\
+>  		break;							\
+>  	case 4:								\
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index e17d0078a651..f71ddd2ca163 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -81,6 +81,7 @@
+>  #define RISCV_ISA_EXT_ZTSO		72
+>  #define RISCV_ISA_EXT_ZACAS		73
+>  #define RISCV_ISA_EXT_XANDESPMU		74
+> +#define RISCV_ISA_EXT_ZABHA		75
+>  
+>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>  
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index 5ef48cb20ee1..c125d82c894b 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -257,6 +257,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>  	__RISCV_ISA_EXT_DATA(zihintpause, RISCV_ISA_EXT_ZIHINTPAUSE),
+>  	__RISCV_ISA_EXT_DATA(zihpm, RISCV_ISA_EXT_ZIHPM),
+>  	__RISCV_ISA_EXT_DATA(zacas, RISCV_ISA_EXT_ZACAS),
+> +	__RISCV_ISA_EXT_DATA(zabha, RISCV_ISA_EXT_ZABHA),
+>  	__RISCV_ISA_EXT_DATA(zfa, RISCV_ISA_EXT_ZFA),
+>  	__RISCV_ISA_EXT_DATA(zfh, RISCV_ISA_EXT_ZFH),
+>  	__RISCV_ISA_EXT_DATA(zfhmin, RISCV_ISA_EXT_ZFHMIN),
+> -- 
+> 2.39.2
+>
+
+Thanks,
+drew
 
