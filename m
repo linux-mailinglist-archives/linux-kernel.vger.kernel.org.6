@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-255170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D4B933D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:35:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7BF933D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A969E1C234D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:35:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 903561F238C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6206C17FADC;
-	Wed, 17 Jul 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D5517FAD8;
+	Wed, 17 Jul 2024 12:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oh9ArJGj"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQC1VdEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BAA3F9F9;
-	Wed, 17 Jul 2024 12:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E3C14B07B;
+	Wed, 17 Jul 2024 12:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721219693; cv=none; b=DHkqb+cfgAW58jO7Jl5Oj/gkPySLpncn58a1VouHYsQTsr+3vMlz20NgFIe870SY/22WfL02z+VLmLaQCdwRomPZTLwalhdruD7KL0GjifvtMsNH6gWuHyxCJI25lJivCmkyNc+dMEhwP9Jpos9P4LtkRcPFqpJcye8OIDh6QT8=
+	t=1721219838; cv=none; b=JijV/eFrSdvniKVDooGrAY5x3RS4evZDop881ZuJ7hFZAeyrL307QlAIDOt3txwhozM6Didak7y8LaPc/LaCEAzun3SRqQ4+h6Bd6LmTuomLPrU+a2VMPX2ZzGZydsIF+5US9PAuWQpPFeBicYyDtd8hA3T4QB4XSyPmhy6o8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721219693; c=relaxed/simple;
-	bh=6cf+a6spySV2022vYe01nNeaztimlHOwHgmAE1UDdRI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=c23JTSFt1N0aqtvVPGhUZYNkBJykAo9ZblV1xwTiGmEmCNn2TAMavU21sTAJCeyg2r2Zawsbo1Gk/GbVJbpXt9oNXAdG/xW4DqPWoIusfYSHdjJn662WjjH4Ubir8QMGVYerpoFLCgnDlQi8NTw67ShGQOIn811R6CmW9hsJGFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oh9ArJGj; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721219673; x=1721824473; i=markus.elfring@web.de;
-	bh=SVCmOFuUSQOAus9cA5NkJ4TSivsuN6mb84weZgpV00c=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=oh9ArJGjByg3YgIAB+PBry+a+hwMNBdyHSUyCStTFQ+xdtTaPw38Yyw5dxW8098c
-	 0rim+0qB3junf9If96E9e/IELCgboYzFVrP2JsqF1kSJ2MJCgEAUoFONbAg6qWU1b
-	 oFPgrtXUmTJLZVDPGayidxplMA7FoxbeSTZ9uBG3QmF2JmZ2H+G3OFVH7WEBQ0LhI
-	 UpY/HKUpDyu7LLXwOEV2YswaTGQPOJH1HQ4EMW66oQcjZ0mPikIgdJowOl6Hj4YRZ
-	 DYIAKarL9QXTUZwrFjiLucD6BEcz9uusn2WJecQqsCDf0IRfh9U0QEoy4S0SMF68u
-	 La51JJYtxwMvWbw/Nw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2SKz-1sLQe73PF1-0103mA; Wed, 17
- Jul 2024 14:34:32 +0200
-Message-ID: <ec901938-8e6f-48d1-9f37-09ba2907a870@web.de>
-Date: Wed, 17 Jul 2024 14:34:31 +0200
+	s=arc-20240116; t=1721219838; c=relaxed/simple;
+	bh=mFG8s4kD0eTiYLgNABfx3y573q3jH45lh4+DFomHsAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJXZbiVT/mp2Ibkz/qbZ6bvjqdoTfOysxggZNdT4Cvl0GRLFPi8NTOes1ea809Ug2jN3lEvej6AHcJz06ElvEjM/WDGu5TplnPdA5+ACENiMpzmPjA5Pd15GqDmHh6n4tb6S/eQtl/GWWYqM6c5+VhYgbpnhRY7aiMZS2RdOZWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQC1VdEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E798AC4AF0B;
+	Wed, 17 Jul 2024 12:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721219838;
+	bh=mFG8s4kD0eTiYLgNABfx3y573q3jH45lh4+DFomHsAI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FQC1VdEcgyca6sGcZjfbXGQip/0bsqa3qNu5OGRrLh+a63DdeK5DmgQudDxAYprWc
+	 yJHdXBCvrKdIy2AZLIFVEKAP4AeOO+ziOB1YJ4Q5mvvmvp9IfW+AvTwWzKS/nJsymy
+	 pYCC9otkQNZ8Fz9Q51rFrtUxAYwvvw407YDkkTSEXFxsJIPEhMMdqzIe6c6TNSupo9
+	 PFWp0PrPMNhk/Q0ezqRfjwzFzrUrHU8RzSBTheD590dUkQa0URYOZNDN9RtM9GceZH
+	 w1vUsYIloLh1d8gB4HgoeoKPCOVD9lauCl3V9WRKn6aGxec30Py6ZpYY5vAtf1JyS+
+	 lBoZpwdKfFGBg==
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v2 0/2] DMA IOMMU static calls
+Date: Wed, 17 Jul 2024 15:37:09 +0300
+Message-ID: <cover.1721219730.git.leon@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chen Ni <nichen@iscas.ac.cn>, dmaengine@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Caleb Connolly <caleb.connolly@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, make24@iscas.ac.cn
-References: <20240717073553.1821677-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] dmaengine: qcom: bam_dma: Handle the return value of
- bam_dma_resume
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240717073553.1821677-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VtwLuNOKRiJWZO0yWSItn6JaqF+37J8KZIoYnAie/Mi+b5goMcI
- HP4mvk8UICjUzO0/0OL+DJoio9MZU6/hlmEW1sZUqLRZVJ12KLnWAIRQ8JCm/VX6a09CpE6
- RRfxtPFgQC+cNmbi/DIK3qjtoHx4rrm7AQsycowVyC4ovJm7D7+1GCdjK3mqxEQB8RT8XmQ
- qwzpUkmOKnIjIfn+oGx3Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qsnpxgP21PU=;vRqYB5WvQVAo0GrIRM/Ux/tZE/t
- +wM+j0C5timFLXUWBvj6NRtlHGNq+QHHeqI7aqdgyszxC3AtdIUt/ye4HZ0W5u0deNSCYwlOz
- +1fQoz1nG94YkyoS438dcxx8NrYadX3frfM3uehYJ/G+nVzpPNKHG3AGBEQRhCA7mDNa1xyK/
- v0LYkBNvNUZD10f0SyDzZo8h5hq0pWWfxTdZRF2O60H97IsBvPbJuVOW7v4SSZA2CL1A8BOJu
- SrxialEbuSYcXT6kpoLbkDXM4OgsJkwPcBULWV/KDoZTu3lC9V3lhhSj/e7Zrg/4OsTqrcmJD
- 3nRKu75N5rN94ht2e+mmo7aXG/BSGUgtQmXGosBBdZ8Zhn9rxkdq6H3LSqwzJwGxvl/Mn3YlG
- aAjkCASEI3BgBehUa/2Vm7mFDSX4Ms5SeyJ7r1slY2Z/YIOpwk339bWaf97DgJvHjxGa7LGfL
- 9HQu9iTznB4CnjrWaTtcv9b35fIOTMPHMyJZ18BTcGLXhBYeMNaRU519VWPgiKnqfkfkP+iD2
- 5CVAl3T4P+QgT7Hg9zrng+D/HhJ4qqiod8U+oV8ZFpkUy3p7Yh5u4N3l0xi9EwV+VlUEw9Dsf
- OgNpPhqwPipc/BpZ7xUhSG6sx2QKpDaHkp15iFDGOc7/LgGQq5A2loQ27HU6/fCz0jYDcIcob
- iLBUECZGGAuGsB/Y/hCzwl8NqfHNdtkegeU64ng2KaUp8Y+Co8Dxlw35V5M3lJZwAN27etPCA
- S368uacIGRneNu6+UWOr9OD5YnZAt1lLPnnhZIj0uBpQmWZ5BscovY7bfx0bqOyeGlhq9zAkv
- wpDnlpNqhx1xrL6bPNaAO1cw==
+Content-Transfer-Encoding: 8bit
 
-> As pm_runtime_force_resume() can return error numbers, it should be
-> better to check the return value and deal with the exception.
+Changelog:
+v2:
+ * Ditched dma_ops flag in favor of field in struct device (suggested by Christoph)
+ * Removed CONFIG_DMA_OPS select from dma-iommu.c Kconfig
+ * Removed flags field which exist only in default IOMMU
+v1: https://lore.kernel.org/all/cover.1721041611.git.leon@kernel.org/
+ * Dropped extra layer and called directly to iommu_dma_* functions
+ * Added unmap_page and unmap_sg to dummy ops
+ * Converted all dma-mapping calls to use iommu directly
+ * Updated commit messages
+v0: https://lore.kernel.org/all/98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org/
 
-1. Please improve such a change description with an imperative wording.
-   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10#n94
+Leon Romanovsky (2):
+  dma: call unconditionally to unmap_page and unmap_sg callbacks
+  dma: add IOMMU static calls with clear default ops
 
-2. Is there a need to complete the exception handling with a clk_unprepare=
-() call?
+ MAINTAINERS                 |   1 +
+ drivers/iommu/Kconfig       |   1 -
+ drivers/iommu/dma-iommu.c   | 117 ++++++++++---------------
+ include/linux/device.h      |   3 +
+ include/linux/dma-map-ops.h |  13 ---
+ include/linux/iommu-dma.h   | 169 ++++++++++++++++++++++++++++++++++++
+ kernel/dma/dummy.c          |  21 +++++
+ kernel/dma/mapping.c        |  88 ++++++++++++++++---
+ 8 files changed, 315 insertions(+), 98 deletions(-)
+ create mode 100644 include/linux/iommu-dma.h
 
-3. How do you think about to use a summary phrase like =E2=80=9CReturn val=
-ue from
-   a pm_runtime_force_resume() call in bam_dma_resume()=E2=80=9D?
+-- 
+2.45.2
 
-4. Were any special source code analysis tools involved from your research=
- organisation?
-
-Regards,
-Markus
 
