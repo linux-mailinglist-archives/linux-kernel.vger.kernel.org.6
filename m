@@ -1,118 +1,296 @@
-Return-Path: <linux-kernel+bounces-255406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12166934067
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:28:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDC6934068
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107E21C22630
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311C51F21A36
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C561822C4;
-	Wed, 17 Jul 2024 16:28:12 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6C7180048;
-	Wed, 17 Jul 2024 16:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278E7181CF8;
+	Wed, 17 Jul 2024 16:28:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27EE181BA0
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233692; cv=none; b=IPKNOXslzli6JTyvmM9QhMs7wg11JeNMYG1BVJr7wu7ci+/Mj5kMgnwhFK74NJLsXGvGP+uti6Wkxz11Po2zddAOC0uOK29cd1jz9deUrLiV7RmbzFvrrvdqJaJkZ6ZdHaR8xR+uzkb9vx1i7Oh4sn34upCaWHb+NSTpaYSIHRc=
+	t=1721233717; cv=none; b=k7BT97SlszmRavqpdwtPhNhJRc8xSACyWMzvQJCNEegF68hmJd55CDmbl9oj3f0z1aK/4YtW8gUeIpN1HXqn7Uo2STCPInpH/Eac4Sdn0xOOKNdoL/u349NAC/gKLzunZCdeCc/w/KHlOfCBMyWciJDInpzIrYIzQWJoDRI5Hcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233692; c=relaxed/simple;
-	bh=sB/YRxClJEebEODIuMzr0bvLjJ6lGLPm7u/XJnWwAt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A95VcQC05niSj9CuV2A5H4TYtmMcCLGuy975tozkZGwoBIOFLrA3HBS5+rRoLWqgblCBheTB/Pwz//UMQSFQTCsOlhEbMYLjKjU7Al9MtN+h8LCENSWZ2okNg6ROX7ZeLeM6QpzuJQmyV4wsBOzEf9yqK7jsRK/nHwZlermkGoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70b703eda27so3355886b3a.3;
-        Wed, 17 Jul 2024 09:28:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721233690; x=1721838490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sB/YRxClJEebEODIuMzr0bvLjJ6lGLPm7u/XJnWwAt4=;
-        b=TPfrZRrk9xjlFVHkwVr0KIlchyAg43gewAB+9ChnPawV88IBaLRbkn5ar10NOT+9XR
-         X6nveGhoCPZCDlZPuV9SssGa9SyT4Q3JBhsBJbHX3iuzbFBFgGzne0PJBf3dU4afCnqW
-         naU7IIOIfNWiVJRqOtMs4IHHIHDpKG2j1mifgze6alg+eYY7HcTqy/SNp8fqli6RpiNI
-         Ee1ZHJMDIZeoftbPX14wvKpFjYBUJrVnr+Z50x+zf1mnQDl6WkQJtVIxJihnl0AmG8ft
-         ErGy7YmCBQntQX5OE2wFTU6ZF6J/QbK3EnEv/iCgJqYB/dMRd6Sqc652/JwYFODlHG0f
-         arZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVbz9Pig7TF/afHBJo01QbLQ/sb8JHgx8Upt5v7uhytzBW6Lofg7pPVqwZ67mmdJHRzZGHz6paSccuoEN2gXBQYLfykbVahtJ9ezuKKJD8KyoyRhBM64Pg2hBt3/yGGsvWIYwOMH1m2XDBwPyVrg2444z0IiIOcKWvrYO335wcEHLydil/u0nMQYENatcsD1ScMQ==
-X-Gm-Message-State: AOJu0Yx/NjGrGRXR13DM7/6b8sq4qby52s2Jews5lKgrULV/KHG1avf4
-	JxtG/XoUYre6wglL1hjlOmhNgVO9aBJXGLb1irr/mgg0yq+zxPAHeI0jj34ZlTV7b+MPr8iF0Sg
-	gNGPbFbZB5Kv01FE9Ufyca47WAMPRcQ==
-X-Google-Smtp-Source: AGHT+IHn4SdMrZl58GaXhw538AFJ0+cWEFZNIW9lE84hY7Nv4nH4iyEjjPAcow2rjOUIeWKt/GVLe0JbhfEnf+hNKpA=
-X-Received: by 2002:a05:6a20:258c:b0:1c2:9cbf:cc3e with SMTP id
- adf61e73a8af0-1c3fdd3bdffmr2833775637.45.1721233690022; Wed, 17 Jul 2024
- 09:28:10 -0700 (PDT)
+	s=arc-20240116; t=1721233717; c=relaxed/simple;
+	bh=CDVZaVI6ZoRtIGoowBWkAbttMNY9inmaCVN2kxSlq7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQxzdDceh3H3nugk503XhA2VbR34HktYt+6XNmQZqq2dnllGVrhXP7sesvyeBbKfSD6n3Y/l0KH+hczlayd21QI3b1EZ9XyZDiS2KYJhWQ7D++081ockdpk/Bv+jANFfJUITxaMzNibW/KG9YnQpk/AldMfz9LtqsOTRTpPDfxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75AEC1063;
+	Wed, 17 Jul 2024 09:28:59 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C44BB3F766;
+	Wed, 17 Jul 2024 09:28:32 -0700 (PDT)
+Date: Wed, 17 Jul 2024 17:28:30 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jakub Jelinek <jakub@gcc.gnu.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Alex Coplan <alex.coplan@arm.com>,
+	Szabolcs Nagy <szabolcs.nagy@arm.com>
+Subject: RESEND: GCC asm goto outputs workaround (Was: "Re: [PATCH 1/3]
+ arm64: start using 'asm goto' for get_user() when") available
+Message-ID: <ZpfxLrJAOF2YNqCk@J2N7QTR9R3.cambridge.arm.com>
+References: <20240709161022.1035500-1-torvalds@linux-foundation.org>
+ <20240709161022.1035500-2-torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAM9d7ciLGP_w9YYOb-2U2ESg8kQx_knQXuB6_2JZVZ2ktL+bzg@mail.gmail.com>
- <20240712194511.3973899-1-amadio@gentoo.org>
-In-Reply-To: <20240712194511.3973899-1-amadio@gentoo.org>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 17 Jul 2024 09:27:58 -0700
-Message-ID: <CAM9d7cgG5WvyEu1ECNht1z=bZ7MSsrPyBjokcY95SXmxgnzwsA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] perf build: libtraceevent, libtracefs feature
- check with pkg-config
-To: Guilherme Amadio <amadio@gentoo.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709161022.1035500-2-torvalds@linux-foundation.org>
 
-Hello,
+[resending as I messed up the LKML address; sorry!]
 
-On Fri, Jul 12, 2024 at 12:45=E2=80=AFPM Guilherme Amadio <amadio@gentoo.or=
-g> wrote:
->
-> Hi Namhyung, Arnaldo,
->
-> Here is version 3 of the patchset. I see the change to send output to dev=
-null
-> has already been applied, so I am submitting the remaining work only.
->
-> The difference with previous changes is that in v3 rather than add tests =
-with
-> pkg-config to check if dependencies are actually installed, we just set t=
-he
-> flags and send any warning to devnull. The change that remains in this pa=
-tchset
-> is the fix for the other tools, which were inadvertently broken when the =
-include
-> for libtracefs changed from #include <tracefs/tracefs.h> to #include <tra=
-cefs.h>
-> since the flags for the feature check are not set in the other tools Make=
-files,
-> it currently only works for perf. I recommend to either take at least pat=
-ch 2/5
-> that moves setting the flags to tools/build/Makefile.feature or to revert=
- the two
-> patches that have been applied. You can easily test the fix with the comm=
-ands below:
->
-> make -B -C tools/verification/rv VF=3D1
-> make -B -C tools/tracing/latency VF=3D1
-> make -B -C tools/tracing/rtla VF=3D1
->
-> from the root of the repository. Only after the feature check flags are m=
-oved to
-> Makefile.feature that it also fixes the other tools. Apologies for the br=
-eakage
-> there.
+Hi Linus,
 
-Steve, are you ok with having this patchset in the perf-tools tree?
+As a heads-up, this is tickling a GCC bug with asm goto outputs in GCC
+versions prior to 14.1.0, and the existing asm_goto_output() workaround
+doesn't seem to be sufficent. More details on that below, and I've added
+LKML and the usual folk to CC, including compiler folk who looked into
+this area before. The gist is that in the paths where we jump to a goto
+label GCC may erroneously omit assignments to variables which get
+assigned an output of the asm in the non-branching case.
 
-Thanks,
-Namhyung
+The big question is can we actually workaround this, or do we need to
+bite the bullet and say that we need GCC 14.1.0 or later?
+
+I spotted that while preparing a fixup for a thinko with
+_ASM_EXTABLE_##type##ACCESS_ERR(), where we put the error code (-EFAULT)
+into the value register. That *should* be benign, since in the faulting
+case we subsequently assign 0, but due to the compiler bug GCC discards
+that later assignment...
+
+On Tue, Jul 09, 2024 at 09:01:59AM -0700, Linus Torvalds wrote:
+> -#define __get_mem_asm(load, reg, x, addr, err, type)			\
+> +#ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+> +#define __get_mem_asm(load, reg, x, addr, label, type)			\
+> +	asm_goto_output(						\
+> +	"1:	" load "	" reg "0, [%1]\n"			\
+> +	_ASM_EXTABLE_##type##ACCESS_ERR(1b, %l2, %w0)			\
+> +	: "=r" (x)							\
+> +	: "r" (addr) : : label)
+
+Ignoring the compiler bug, the extable entry should be:
+
+	_ASM_EXTABLE_##type##ACCESS(1b, %l2)
+
+... since we don't have an error variable, and we don't intend to move
+-EFAULT into the value destination register (which the extable fixup
+handler will do for the 'error' value register).
+
+I'll send a fixup for that, but the more pressing issue is
+miscompilation, which seems to be the issue fixed in GCC in:
+
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113921
+
+... which we tried to work around in commits:
+
+  4356e9f841f7fbb9 ("work around gcc bugs with 'asm goto' with outputs")
+  68fb3ca0e408e00d ("update workarounds for gcc "asm goto" issue")
+
+... which we currently try to workaround that issue with the
+asm_goto_output() macro:
+
+| #define asm_goto_output(x...) \
+|         do { asm volatile goto(x); asm (""); } while (0)
+
+... but testing indicates that's insufficient on arm64 and x86_64, and
+even with that I see GCC erroneously omitting assignments to variables
+in the 'goto' paths, where those are assigned an output in the non-goto
+path.
+
+As a reduced test case I have:
+
+| #define asm_goto_output(x...) \
+|         do { asm volatile goto(x); asm (""); } while (0)
+| 
+| #define __good_or_bad(__val, __key)                                     \
+| do {                                                                    \
+|         __label__ __failed;                                             \
+|         unsigned long __tmp;                                            \
+|         asm_goto_output(                                                \
+|         "       cbnz    %[key], %l[__failed]\n"                         \
+|         "       mov     %[val], #0x900d\n"                              \
+|         : [val] "=r" (__tmp)                                            \
+|         : [key] "r" (__key)                                             \
+|         :                                                               \
+|         : __failed);                                                    \
+|         (__val) = __tmp;                                                \
+|         break;                                                          \
+| __failed:                                                               \
+|         (__val) = 0xbad;                                                \
+| } while (0)
+| 
+| unsigned long get_val(unsigned long key);
+| unsigned long get_val(unsigned long key)
+| {
+|         unsigned long val = 0xbad;
+| 
+|         __good_or_bad(val, key);
+| 
+|         return val;
+| }
+
+... which GCC 13.2.0 (at -O2) compiles to:
+
+| 	cbnz    x0, .Lfailed
+| 	mov     x0, #0x900d
+| .Lfailed:
+| 	ret
+
+... where the assignment to '__val' in the '__failed' case has been
+omitted.
+
+If I add an 'asm("");' immediately after the '__failed' label, before the
+assignment, GCC 13.2.0 generates:
+
+| 	cbnz    x0, .Lfailed
+| 	mov     x0, #0x900d
+| 	ret
+| .Lfailed:
+| 	mov     x0, #0xbad
+| 	ret
+
+... where the assignment is retained as we'd hope.
+
+GCC 14.1.0 generates the later sequence regardless of the presence of an asm
+after the __failed label.
+
+Can anyone from the GCC side comment as to whether placing the dummy asm("")
+block after the goto labels is a sufficient workaround, or whether that's just
+avoiding the issue by chance?
+
+Further examples below.
+
+With current mainline, building the following:
+
+| #include <linux/uaccess.h>
+| #include <linux/types.h>
+| 
+| noinline unsigned long test_get_user(unsigned long __user *ptr);
+| noinline unsigned long test_get_user(unsigned long __user *ptr)
+| {
+|         unsigned long val;
+| 
+|         if (!access_ok(ptr, sizeof(*ptr)))
+|                 return 0xdead;
+|     
+|         if (get_user(val, ptr))
+|                 val = 0x900d;
+|     
+|         return val;
+| }
+
+GCC 13.2.0, arm64 defconfig + ARM64_TAGGED_ADDR_ABI=n generates:
+
+|         mov     x1, #0xffffffffffff8
+|         cmp     x0, x1
+|         b.hi    .Laccess_not_ok
+|         and     x0, x0, #0xff7fffffffffffff
+|         ldtr    x0, [x0]
+| .Lextable_fixup:
+|         ret
+| .Laccess_not_ok:
+|         mov     x0, #0xdead
+|         ret
+
+... entirely omitting the assignment to 'val' in the error path.
+
+GCC 14.1.0, arm64 defconfig + ARM64_TAGGED_ADDR_ABI=n generates:
+
+|         mov     x1, #0xffffffffffff8
+|         cmp     x0, x1
+|         b.hi    .Laccess_not_ok
+|         and     x0, x0, #0xff7fffffffffffff
+|         ldtr    x0, [x0]
+|         ret
+| .Laccess_not_ok:
+|         mov     x0, #0xdead
+|         ret
+| .Lextable_fixup:
+|         mov     x0, #0x900d
+|         ret
+
+... with the expected assignment to 'val' in the error path.
+
+On x86 we don't see this for regular get_user() because that calls
+out-of-line asm rather than using asm goto with outputs. However
+unsafe_get_user() usage does get miscompiled on both arm64 and x86_64.
+In the unsafe_* case we generally don't manipulate the value register in
+the error path, so we largely don't notice, but this is fragile.
+
+With current mainline, building the following:
+
+| #include <linux/uaccess.h>
+| #include <linux/types.h>
+| 
+| noinline unsigned long test_unsafe_get_user(unsigned long __user *ptr);
+| noinline unsigned long test_unsafe_get_user(unsigned long __user *ptr)
+| {
+|         unsigned long val;
+| 
+|         unsafe_get_user(val, ptr, Efault);
+|         return val;
+| 
+| Efault:
+|         val = 0x900d;
+|         return val;
+| }
+
+GCC 13.2.0, arm64 defconfig generates:
+
+|         and     x0, x0, #0xff7fffffffffffff
+|         ldtr    x0, [x0]
+| .Lextable_fixup:
+|         ret
+
+GCC 13.2.0, x86_64 defconfig + MITIGATION_RETPOLINE=n generates:
+
+|         endbr64
+|         mov    (%rdi),%rax
+| .Lextable_fixup:
+|         ret
+
+... omitting the assignment to 'val' in the error path.
+
+GCC 14.1.0, arm64 defconfig generates:
+
+|         and     x0, x0, #0xff7fffffffffffff
+|         ldtr    x0, [x0]
+|         ret
+| .Lextable_fixup:
+|         mov     x0, #0x900d                     // #36877
+|         ret
+
+GCC 14.1.0, x86_64 defconfig + MITIGATION_RETPOLINE=n generates:
+
+|         endbr64
+|         mov    (%rdi),%rax
+|         ret
+| .Lextable_fixup:
+|         mov    $0x900d,%eax
+|         ret
+
+... with the expected assignment to 'val' in the error path.
+
+Mark.
 
