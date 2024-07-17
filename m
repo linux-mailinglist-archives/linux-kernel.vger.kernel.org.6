@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-255365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D5933FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1686A933FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED5F2852AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF41F1F2408F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E82181BB5;
-	Wed, 17 Jul 2024 15:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDDbHEM/"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BE9181BB7;
+	Wed, 17 Jul 2024 15:34:28 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA632EAE5;
-	Wed, 17 Jul 2024 15:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19D181319;
+	Wed, 17 Jul 2024 15:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721230459; cv=none; b=Zft5A6TZBaH8S1bOSzH2M0qmTvGDG+RGWiyHTgd5sCbT5njucvosm6Ub1mzsffLF4CaNsAd8PJnVZA81yKhVY0DUJBYT012qhuSkSDFIAJK8QXz2huStc4O7Awsb2s06jNud2XAbn13sVTsYgT9Ey9+scN8Ru+K8jQK2QJ7YT/I=
+	t=1721230467; cv=none; b=F5027tTJ+f+qGNuki1XK7k6nG64lr02XHTrsN0Yy6j2+Dwb/4+/hKCQJuaH4ltIZMvRdUqeCio3JdNFUOGcdTxuAVX5AF8Zzwu5m7+U36fyxFka9Nmckm/qDWj83N6cWxizJ9EJYmHPwoSIQt84nAdCS3LICsXq10TBPjv6XpVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721230459; c=relaxed/simple;
-	bh=t4iPvhXVa3AMcXzBfJFgYS6s3OmUCR4MVqbnPIR6/kI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PtEcjG97eoZIuxyOyGCTaWSaivXW7osru6yQMRuCrt8QgU6k6sj4WicszwMqgQ0JIFndOIPEqiStQWKl9TjuLx85g1fptS0nNKhaKHAx8Ev+oWdyJl0BUizf6xXV3DBYfyHE/dok850AwseMNrQ+tTN+PvovDsk6YqsgPN+W5lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDDbHEM/; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee86c09963so8375901fa.1;
-        Wed, 17 Jul 2024 08:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721230456; x=1721835256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t4iPvhXVa3AMcXzBfJFgYS6s3OmUCR4MVqbnPIR6/kI=;
-        b=MDDbHEM/ZsUoVQ5ICq/Amu+yb1ceG5N3XNWoYF5ww15qgDuIGdLNyTAqWSjSwV4Iu9
-         2ugHHXOQkkaHm8TS2v7Oehmkxp+w8nRLrjrBtq3LWbQ9H2QQPHLtNMIpVx8WBNyx4G0r
-         VWGPWmZF+m53jPN2OviFVgVflUVm+PP+cj/D6QvPzpwmyS4nmOSO+U3m8e7IbBlE3N8G
-         gpT7YuSw60pHng4kZJVKvZFl2TXUP4g9nlM0/hxl4pfQSMtGattfLxNVQNRp0NRM8VVH
-         lBipGX93V6YIJy5wH9VBbK5Zlhc/D0Ocj9tYqw5e7dGg2VlslSLA6V2Bv9evQPRPa/36
-         LLLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721230456; x=1721835256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t4iPvhXVa3AMcXzBfJFgYS6s3OmUCR4MVqbnPIR6/kI=;
-        b=rRZJMV72SIy0UYmIAaQCd5zelf1HEoRCrdFDCOzVoqCQXEVK5UlV4fm7xlrlzjAo4u
-         jriectrjygFgILYggn4aMY7yNL19+js3nmdLGrWoq08fTAsSCSt8tcnQ8ImlQjD4wSJe
-         ssrnpI1UPjWhflooAOZA/FFNWz+OqgcmHCDozwXqSacoomCNplJgVXx3tGJlXeDXVbQb
-         Jocok1sNkhMiTHbvsQWEqlIagCtatFrRVd7bIj8oUfsXV1SB7hy5Y7lNBsCqrpne+A2+
-         JqUF2bjRRfiNfoutnOBCNiCW/V5MC3qZHcBbdeoS5iTEQqcqzY/2qatoLaB/QXzZqXdU
-         lqvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn/kQuFvCT+W+E8g+/rggaPfxg5V82EOVA8LCGqavrZR4oCIqe8C159Wf+MBfiO83xBpJW5JfSP229JjuGJsssALkvt9PZLgVFwRPZIGwJUOq1aWo8sNG1BCeKpeHlSqtvC3IEjdR7oQ==
-X-Gm-Message-State: AOJu0Yw/NugH26c0xqrIZtR7IuDpY2k4nniTOczzyukGntVXmcnBKKGh
-	WlEFv+BU+u+erXD0+XO/YMzLUlLx+Cz9ivEDy41gWzCkO/6MnVrQQ4gAitjy1pt3l0BtfUpEgLt
-	6wpvV8H13HuGHwI4FmoQLlhC3WIw=
-X-Google-Smtp-Source: AGHT+IFmkkq4f7VL86QzMTkqfkn1QPaCGg45UGmOuWB0BRvqpLJXZaINMT+NvWxqF4p/9Ea4jzkHPBRHbM/d6SY4tmE=
-X-Received: by 2002:a2e:9b0b:0:b0:2ec:4ed6:f4a with SMTP id
- 38308e7fff4ca-2eefd1521d2mr8120191fa.5.1721230455575; Wed, 17 Jul 2024
- 08:34:15 -0700 (PDT)
+	s=arc-20240116; t=1721230467; c=relaxed/simple;
+	bh=XjqeyxTlTDWQmVBkcZD1JavWHf7v9WcY8L09nw+Tyt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jSJ3VEUgILVNNLIl9usBS5ceKFTjsFiMYe/LspAhgjT4ZcJ13n7xqB+1ypfVR1Me8MWDb2Esl1Ec+seEis6NicsQy9guoLLoU44MFkeLwNrWm3iSJ0g1Wph7IfwV3jjp6rzhklC2MleG7QyW0/SHkxJGdFGPVj+RdDgrgntCA7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 470AD20009;
+	Wed, 17 Jul 2024 15:34:20 +0000 (UTC)
+Message-ID: <f31da52a-55c4-472d-8056-b3e82feba4f8@ghiti.fr>
+Date: Wed, 17 Jul 2024 17:34:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-anvil-ashy-544e80a1317c@spud> <20240717-parrot-malt-83cc04bf6b36@spud>
- <3870188.FjKLVJYuhi@diego> <CAP9ODKrpKDY91AFDYj7s++kU+=CSLw=F9mXyLZ621Mqq-8S6bw@mail.gmail.com>
-In-Reply-To: <CAP9ODKrpKDY91AFDYj7s++kU+=CSLw=F9mXyLZ621Mqq-8S6bw@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 17 Jul 2024 12:34:03 -0300
-Message-ID: <CAOMZO5C7JknQaftquRWDetLs4W0CHMvs5PiJWBLyo0G1oo4rCA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] ARM: dts: rockchip: remove unlikly-to-exist DAC
- from elgin-r1
-To: Otavio Salvador <otavio.salvador@ossystems.com.br>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor@kernel.org>, 
-	Otavio Salvador <otavio@ossystems.com.br>, Conor Dooley <conor.dooley@microchip.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	imx@lists.linux.dev, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/11] riscv: Implement cmpxchg8/16() using Zabha
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>, Andrew Jones <ajones@ventanamicro.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet
+ <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
+ <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arch@vger.kernel.org
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-4-alexghiti@rivosinc.com>
+ <20240717-e7104dac172d9f2cbc25d9c6@orel>
+ <20240717-enroll-snowless-e722e367789b@spud>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240717-enroll-snowless-e722e367789b@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: yes
+X-Spam-Level: **************************
+X-GND-Spam-Score: 400
+X-GND-Status: SPAM
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Jul 17, 2024 at 11:38=E2=80=AFAM Otavio Salvador
-<otavio.salvador@ossystems.com.br> wrote:
+On 17/07/2024 17:29, Conor Dooley wrote:
+> On Wed, Jul 17, 2024 at 10:26:34AM -0500, Andrew Jones wrote:
+>> On Wed, Jul 17, 2024 at 08:19:49AM GMT, Alexandre Ghiti wrote:
+>>> -#define __arch_cmpxchg_masked(sc_sfx, prepend, append, r, p, o, n)	\
+>>> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
+>>>   ({									\
+>>> +	__label__ no_zabha_zacas, end;					\
+>>> +									\
+>>> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&			\
+>>> +	    IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
+>>> +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
+>>> +				     RISCV_ISA_EXT_ZABHA, 1)		\
+>>> +			 : : : : no_zabha_zacas);			\
+>>> +		asm goto(ALTERNATIVE("j %[no_zabha_zacas]", "nop", 0,	\
+>>> +				     RISCV_ISA_EXT_ZACAS, 1)		\
+>>> +			 : : : : no_zabha_zacas);			\
+>> I came late to the call, but I guess trying to get rid of these asm gotos
+>> was the topic of the discussion. The proposal was to try and use static
+>> branches, but keep in mind that we've had trouble with static branches
+>> inside macros in the past when those macros are used in many places[1]
+>>
+>> [1] commit 0b1d60d6dd9e ("riscv: Fix build with CONFIG_CC_OPTIMIZE_FOR_SIZE=y")
+> The other half of the suggestion was not using an asm goto, but instead
+> trying to patch the whole thing in the alternative, for the problematic
+> section with llvm < 17.
 
-> @Fabio Estevam can you check this patch?
 
-Correct, the rv1108-elgin-r1.dts board does not contain the DAC.
+And I'm not a big fan of this solution since it would imply patching the 
+5-7 instructions for LR/SC into nops which would probably slow (a bit) 
+the amocas/amoswap sequence. I agree it should not be that big, but that 
+it is just to fix an llvm issue, so not worth it to me!
 
-There is an LCD controlled via spidev though.
 
-Conor,
-
-If spidev is needed, what is the recommended way to describe it in the
-devicetree?
-
-Thanks
+>>> +									\
+>>> +		__asm__ __volatile__ (					\
+>>> +			prepend						\
+>>> +			"	amocas" cas_sfx " %0, %z2, %1\n"	\
+>>> +			append						\
+>>> +			: "+&r" (r), "+A" (*(p))			\
+>>> +			: "rJ" (n)					\
+>>> +			: "memory");					\
+>>> +		goto end;						\
+>>> +	}								\
+>>> +									\
+>>> +no_zabha_zacas:;							\
+>> unnecessary ;
+>>
+>>>   	u32 *__ptr32b = (u32 *)((ulong)(p) & ~0x3);			\
+>>>   	ulong __s = ((ulong)(p) & (0x4 - sizeof(*p))) * BITS_PER_BYTE;	\
+>>>   	ulong __mask = GENMASK(((sizeof(*p)) * BITS_PER_BYTE) - 1, 0)	\
+>>> @@ -133,6 +155,8 @@
+>>>   		: "memory");						\
+>>>   									\
+>>>   	r = (__typeof__(*(p)))((__retx & __mask) >> __s);		\
+>>> +									\
+>>> +end:;									\
+>>>   })
+>>>   
+>>>   #define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
 
