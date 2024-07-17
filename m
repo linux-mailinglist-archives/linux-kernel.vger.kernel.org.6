@@ -1,166 +1,159 @@
-Return-Path: <linux-kernel+bounces-254656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5299335E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FFD9335E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6431C21FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547B61C216E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37ED6FC7;
-	Wed, 17 Jul 2024 03:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0528C06;
+	Wed, 17 Jul 2024 03:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MXZTiMAP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N3RBKi2y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A4B469D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69283FC0C;
+	Wed, 17 Jul 2024 03:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721188541; cv=none; b=SOzyttKXygkUQziCKmVCO9ZT84VwHCnxObKbUlMZhXKlNbOd5FZ73f6p0qLGhW8FV13JsflysvrYE5lBGfuQlwARmXhAsmNuP4Y998wUD73W3E1+dorXcPsPScjRs2PcyezZXpPKKXgmCQjvkZsJT7tGpCOtYar07D0rYiYxl1E=
+	t=1721188697; cv=none; b=dfPGj4I5u74UsBoqhwiNLxYg4J+2UJqqRSy60e3gJ75kPQedP9Io09D++aUy++aboReUgIkZ94gVBXLNZYI+Rt6LKMkn08+g+vnLahO9Pt8sIm0poBsSU9044J3elT9iELDL2x5vLO8gB0rlpH/Pm8LZ1rgPRAns27cUERIrq/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721188541; c=relaxed/simple;
-	bh=F11Lw15fDi0mu0plYIWMtfzDLymxQXfVW/JHWk22/tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=glsuXi7d9d5qh1zyQ3ASPAEikhuqkbo1DlV8ftRrhEWhtd+dxzqwVI267citDu1CG4jWTdmLz3IcBnZnfVqw2gRF4gRjdRxvkidsVi3EEHBMM5I3UUKI3aQoUKYze2bEO42830Vazr5/lh5nBgjaB1lgqSrdIrK7HYtX1J1YJJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MXZTiMAP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46GHfZcT005677;
-	Wed, 17 Jul 2024 03:55:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IOVTpfvhcuxqvgbi9pbxBB9iihYU9yehdijeAuQYOs4=; b=MXZTiMAPlsLDvv+n
-	BsET/ex/twaXNJzpbooIUhUrwnLfCrdDzwsDfMO7dEtB4WMH2703NNfDpQeKrhBj
-	yVUyIlnJicr14A+5umG3aZ01q5ZlhgeiuNYZJOo1OiGUlStfNSnrBFtqLcTrqrsB
-	u7e1kt9KPMgDPcvAfV1Xe6TMvLmdTaQX/6MLMkr7s+WdZR6qOGAHD/AhCqDxZahH
-	eh/mNRXGw7G/+kpNYq7G/XHPM13YKwYMRGix+FA8OU4RF2kKaDhX2v8knI7zUs4b
-	0hHtdvOsywhlSytt48oEjGswbUgldrzYAv8EUawn59AkVT9MbzP/ruLgrLW63XyC
-	xWA1mw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfugy7y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 03:55:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H3tGsv018349
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 03:55:16 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 20:55:16 -0700
-Message-ID: <920e1e90-d72c-48e0-b7da-c2ac77128f6b@quicinc.com>
-Date: Tue, 16 Jul 2024 20:55:15 -0700
+	s=arc-20240116; t=1721188697; c=relaxed/simple;
+	bh=ErzNXfVr9t0N2i+mZKNCo2YiLrO+KAwhi0XJ235rc/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rEr9dOaTQI23Qovi8xGq7gdBKcmEcNCPFkAWiRW31JVhWF22unizN2gZlk4no7eXyZ/TSHaBrU6GYc22ryu/91X02pktXQG7W3K1NRF90VqbKyJv3xXStbvtCiwwB9ddxVR2pVmMtYqXHZVwzmaVkfPi2Rq9dNgum81zeUkNlII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N3RBKi2y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721188690;
+	bh=qjmvMW3ryvAUVCwVa8SsKtZOuv9jvCjURGIzXMW8qrY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=N3RBKi2ynwFWds6cGhVhjwzvS/cJRMNq1hkp21+rccFInIKSutg9QqFVAXf05yHD6
+	 oLtDp8VPDojyA411LDHsdBpOi0DfqHB7uJi5wiCy2jocO9fcTXzNeVgAhnxT9ofANf
+	 hD52e3JjLE0YJF5os5cEdSNFkqQWa9uUbUSPMGROcjPtMoe/7xxTE2dG3lsim/OYDE
+	 CusihFZR5PUYQcd5bEX7IGW+qgC7WywpHFwEuzU5K9qTB/jTo03BDrZ33DLKptLDDl
+	 Mi5i/v617oi5WLsolAY59v1ZDUxJFMixzuGik7juQnZ5BGGzsUYzQ+wrCUAx0hDZPJ
+	 SPZd1CFW+hs8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WP2GS5CL0z4w2R;
+	Wed, 17 Jul 2024 13:58:08 +1000 (AEST)
+Date: Wed, 17 Jul 2024 13:58:08 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, Julian Stecklina
+ <julian.stecklina@cyberus-technology.de>, Reinette Chatre
+ <reinette.chatre@intel.com>, Thomas Prescher
+ <thomas.prescher@cyberus-technology.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, KVM <kvm@vger.kernel.org>
+Subject: linux-next: manual merge of the kvm-x86 tree with the kvm tree
+Message-ID: <20240717135808.4336a972@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add Octeon
- CN10K DPI administrative driver
-To: Greg KH <gregkh@linuxfoundation.org>,
-        Vamsi Krishna Attunuru
-	<vattunuru@marvell.com>
-CC: "arnd@arndb.de" <arnd@arndb.de>, Jerin Jacob <jerinj@marvell.com>,
-        Srujana
- Challa <schalla@marvell.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <2024070333-matchless-batch-57ec@gregkh>
- <20240706153009.3775333-1-vattunuru@marvell.com>
- <2024071026-squirt-trustful-5845@gregkh>
- <MW4PR18MB52442E363AE0BED30607F251A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
- <2024071053-mahogany-cavalier-6692@gregkh>
- <MW4PR18MB524491EEA2A628469595FE47A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
- <2024071012-backpedal-punctured-5d7b@gregkh>
- <SJ0PR18MB52467C544972534F6DECDC48A6A62@SJ0PR18MB5246.namprd18.prod.outlook.com>
- <2024071232-kindling-either-de2c@gregkh>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <2024071232-kindling-either-de2c@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GYXOwqPNwVJ8odkyVHkP3-HnaMWWudXd
-X-Proofpoint-ORIG-GUID: GYXOwqPNwVJ8odkyVHkP3-HnaMWWudXd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-16_04,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=925
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1011 mlxscore=0 malwarescore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170028
+Content-Type: multipart/signed; boundary="Sig_/k86CtB=6SdCjLZkhyLhDNaR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 7/12/24 01:54, Greg KH wrote:
-> On Fri, Jul 12, 2024 at 08:44:22AM +0000, Vamsi Krishna Attunuru wrote:
->>
->>>>>>>>
->>>>>>>> +config MARVELL_CN10K_DPI
->>>>>>>> +	tristate "Octeon CN10K DPI driver"
->>>>>>>> +	depends on ARM64 && PCI
->>>>>>>
->>>>>>> Why does ARM64 matter here?  I don't see any dependency required
->>> of it.
->>>>>>>
->>>>>> Thanks, Greg, for your time. This DPI device is an on-chip PCIe
->>>>>> device and only present on Marvell's CN10K platforms(which are
->>>>>> 64-bit ARM SoC
->>>>> processors), so added those dependency.
->>>>>
->>>>> Then perhaps keep the ARM64 and add a COMPILE_TEST option as well so
->>>>> that we can build this as part of normal testing?
->>>>>
->>>>> So that would be:
->>>>> 	depends on PCI && (ARM64 || COMPILE_TEST) right?
->>>>>
->>>> Yes, it makes sense to add. Can I send this fix as next version now so
->>>> that it will show up in next release, please suggest.
->>>
->>> Send it as a follow-on patch on top of my tree, doing what Arnd suggested.
->>
->> Hi Greg, I submitted the follow-on patch on top of your char-misc-testing.
->> Please let me know if there is any additional action required on my part.
-> 
-> Just now applied, this crossed in the email ether.
-> 
-> greg k-h
+--Sig_/k86CtB=6SdCjLZkhyLhDNaR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm trying to build with some legacy drivers enabled to find some 
-remaining missing MODULE_DESCRIPTION() macros, and when trying to entice 
-some warnings from ARCH_NETWINDER this series gave me the same errors 
-flagged earlier:
+Hi all,
 
-drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_write':
-drivers/misc/mrvl_cn10k_dpi.c:190:9: error: implicit declaration of 
-function 'writeq'; did you mean 'writeb'? 
-[-Werror=implicit-function-declaration]
-   190 |         writeq(val, dpi->reg_base + offset);
-       |         ^~~~~~
-       |         writeb
-drivers/misc/mrvl_cn10k_dpi.c: In function 'dpi_reg_read':
-drivers/misc/mrvl_cn10k_dpi.c:195:16: error: implicit declaration of 
-function 'readq'; did you mean 'readb'? 
-[-Werror=implicit-function-declaration]
-   195 |         return readq(dpi->reg_base + offset);
-       |                ^~~~~
-       |                readb
+Today's linux-next merge of the kvm-x86 tree got conflicts in:
 
+  arch/x86/kvm/x86.c
+  include/uapi/linux/kvm.h
 
-Seeing these on linux-next tag: next-20240715
-Will the fix reach linux-next soon?
+between commits:
 
-/jeff
+  bc1a5cd00211 ("KVM: Add KVM_PRE_FAULT_MEMORY vcpu ioctl to pre-populate g=
+uest memory")
+  6e01b7601dfe ("KVM: x86: Implement kvm_arch_vcpu_pre_fault_memory()")
 
+from the kvm tree and commits:
+
+  6fef518594bc ("KVM: x86: Add a capability to configure bus frequency for =
+APIC timer")
+  85542adb65ec ("KVM: x86: Add KVM_RUN_X86_GUEST_MODE kvm_run flag")
+
+from the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kvm/x86.c
+index a6968eadd418,994743266480..000000000000
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@@ -4703,11 -4690,12 +4690,15 @@@ int kvm_vm_ioctl_check_extension(struc
+  	case KVM_CAP_VM_DISABLE_NX_HUGE_PAGES:
+  	case KVM_CAP_IRQFD_RESAMPLE:
+  	case KVM_CAP_MEMORY_FAULT_INFO:
++ 	case KVM_CAP_X86_GUEST_MODE:
+  		r =3D 1;
+  		break;
+ +	case KVM_CAP_PRE_FAULT_MEMORY:
+ +		r =3D tdp_enabled;
+ +		break;
++ 	case KVM_CAP_X86_APIC_BUS_CYCLES_NS:
++ 		r =3D APIC_BUS_CYCLE_NS_DEFAULT;
++ 		break;
+  	case KVM_CAP_EXIT_HYPERCALL:
+  		r =3D KVM_EXIT_HYPERCALL_VALID_MASK;
+  		break;
+diff --cc include/uapi/linux/kvm.h
+index e5af8c692dc0,e065d9fe7ab2..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -917,7 -930,8 +930,9 @@@ struct kvm_enable_cap=20
+  #define KVM_CAP_MEMORY_ATTRIBUTES 233
+  #define KVM_CAP_GUEST_MEMFD 234
+  #define KVM_CAP_VM_TYPES 235
+ -#define KVM_CAP_X86_APIC_BUS_CYCLES_NS 236
+ -#define KVM_CAP_X86_GUEST_MODE 237
+ +#define KVM_CAP_PRE_FAULT_MEMORY 236
+++#define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
+++#define KVM_CAP_X86_GUEST_MODE 238
+ =20
+  struct kvm_irq_routing_irqchip {
+  	__u32 irqchip;
+
+--Sig_/k86CtB=6SdCjLZkhyLhDNaR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaXQVAACgkQAVBC80lX
+0GwDvwf+MbMjZO3kyub4am8TJrGJh0V8CIxAGcQzgjOEPGJyaXHkti9B8+xkqqwE
+fUtxlHfwdykKa8MrmLFNv2C6vR1nyiMNyOzCeQKmNSru6zIO/QpKjRlPNBbxET2N
+5RW5H5NqDGz2iQNDUCLJ8OyccAoysgk+a9yMFZsGhvZonRq/01FnBGVgv4MTOxLq
+Q11t9kqmWeZ8YCUMRuzyZ8CtOYRC/CXAwAKckikOJ4K+om858+UhmBVVD2zZ7IVo
+AB1KO4rYWL6GJd8ZtH2wqspg1VkLJExVzuI3EJ7+noyv1YnTcqcaDjp6g+r1dVnp
+HsHkta/UadRytDd325CZFWHdbZ/W7A==
+=Ug80
+-----END PGP SIGNATURE-----
+
+--Sig_/k86CtB=6SdCjLZkhyLhDNaR--
 
