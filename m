@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-255435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1879340B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5949340B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1112D1C21A04
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387C22820BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50522181CF2;
-	Wed, 17 Jul 2024 16:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1831181D1E;
+	Wed, 17 Jul 2024 16:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3KRXSCH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFXVMvdX"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903851DFCB;
-	Wed, 17 Jul 2024 16:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8681E4B0;
+	Wed, 17 Jul 2024 16:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721234740; cv=none; b=MV4VK3aERSsoCo3C0ickhu3F4jW6vsJr5pS9kgRBMuLx07VwRIE16z4EHUbOEiiPjFh9h/cao1aM9rR3cyFQ2sqnSx2BTdMvgNaKgEisIdmozUtaR6izo1iLDV/4bsMM6cvvGz6Lb2UNROcGcR9CbrHNteAsSd2FwbeX4ZuKirU=
+	t=1721234776; cv=none; b=aWEsZja+exM57oP3CGRvB4NuHUELPdi1qgPXaDFeUuD9LDPu7BsxoEgv2xZiFkMW2dnqTjDxzLrQlUUH0LsJGi821+LhVfiBcGsk2I1z9XUx9UkM5sbj33oyVzrKkU3HX8nfVCpr8Y8AIKmXKP3M6wRorRuS2at/sjStjalDYWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721234740; c=relaxed/simple;
-	bh=bhRp452XF+62FP9+8Ion1lmKUmMZOZgPhTUthLkmdAI=;
+	s=arc-20240116; t=1721234776; c=relaxed/simple;
+	bh=2S0ab5SdmVZu6CHXw0oDlN+TBmAuaYsarb+i1qS+Q+I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BUyt1iTAfzb9KRysbnKuAq/pnZcB1PGT+Z9Uajm8aUuzl2OlhzDefHYLnKI4WV5yLRfmZXWAC8uzEoTSfY21soI1Awkgi7sugNTGVtzkD2eQr2zXTKnzFXSL0vPoCRx2a5ThLP0yLqgZLZV9Tewo27zraJRen+WqoCjbkhziFOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3KRXSCH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670D5C2BD10;
-	Wed, 17 Jul 2024 16:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721234740;
-	bh=bhRp452XF+62FP9+8Ion1lmKUmMZOZgPhTUthLkmdAI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y3KRXSCHQOI17Pmv1u96dbTAt1wBYbAL3Zrr68mEUfQuV4XeUyWG7TKiuFWoj/Zcc
-	 ScoQ4DIWNPyFtYcPgqFko60qApGOb6LQ6TCkq0p7Jfl2pBBXjs3Y0JfOf4PMqjTihF
-	 CS3Oe1YH01deDrPWHjkOYsGcMLL2hB0d/pd8PYQXyMposYFz9wK9C8ZvSv2ETimojm
-	 OsJNsQiroBuVioXQb1JjSVpr87OEAJa9gYvEC91fm8QvBlW9ImrLf5tTG9aeKAg6U2
-	 fSW/E5uW5zXzYmZ7GPsoLfSy69G4Oq9X3W3K27bQEAqrgXUxukkSrO3MztJLcNhInU
-	 FjtTtV+fwaYHg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so96877201fa.0;
-        Wed, 17 Jul 2024 09:45:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZUrHBAaZ7YKGPjrv4dPAh66eI8YBQ1g2rNeCYn4OdI3XK3flSlYVf/VePYXYjgB/mFK+qWGtyxBeKgkz9r77ZXxAWS5FnvgXTm/PA0poc+Ej9xIxcHwGxM06wFIDUByZ6RGki3uyAPc5J
-X-Gm-Message-State: AOJu0YzUhXTpqkHoJte1a/ny7dImDRX7A8EO72jQwDX1VfPK1GO2AziI
-	1l7kQtZ1j73QbXprRHbajTHfIFykuC1pjM+r7eKkjynoEuT0q+g/A9bFihokAg9j+51jGBB6lcJ
-	enW422cXwXoZ6KLikKRh/l92i0gg=
-X-Google-Smtp-Source: AGHT+IEZt4rkIXcp0qEDCDL0ayp0N0/T33O/eoWRQs13u/51jr4xQBxQ0TX4Q4R5TNDu4JzB7UaQyc2IE0zyKFCzKss=
-X-Received: by 2002:a2e:9447:0:b0:2ee:8698:10ed with SMTP id
- 38308e7fff4ca-2eefd165e61mr14406591fa.49.1721234739065; Wed, 17 Jul 2024
- 09:45:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=YbgIy8xJSic0IJNYQicmyZbZPD4NnhmNx3++flzbHGQbKC9UvM/g34FNTlK0SW0txqmuirhkUQbklukGJetxMtnpklDUmbCQdkOVzzdEH+G2L8cC7uxuFLdYqtE7CgEFtKpGNjmqR+OTb383DaJxki5GZdq9fh3aFy4aey9qDx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFXVMvdX; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee9bca8675so11214381fa.3;
+        Wed, 17 Jul 2024 09:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721234773; x=1721839573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2S0ab5SdmVZu6CHXw0oDlN+TBmAuaYsarb+i1qS+Q+I=;
+        b=LFXVMvdXZ9az8v+HdDH7pcprQIEMnFBR1LKVxZk2C/p436uaXenFiVw/vxx5mDxdlU
+         BPKwdbM6qd6SN2Yb3zHciHSC2Xr9y/nqDsAfISdJuuPxWZhpxPhpIwH83Lq8irneSPo0
+         OKz9zv8Edi2nvGHVR7lBjm+Tbaxrqnfckjmml5+IKqUM2fR1ZK7eG8yvV5V830kwNiEM
+         iu9tBwmu5keIUAYrC/TREGPSLVQ3Pw1wFr/AtX484nKNbezy1OrUdxDaDy6ZiZs1wqDG
+         dmAzBL3jwiqKJV/VeaK+krMJDzZ3xHr9dV5RTgSos/SiT5y8sqVBXSiHwagT7XMO+Qa7
+         hWMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721234773; x=1721839573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2S0ab5SdmVZu6CHXw0oDlN+TBmAuaYsarb+i1qS+Q+I=;
+        b=CbxwQfDv67GPeLV3eptcA8pXvdo9IeiFalYh7eUzB2iB3elIjOyns/ryxlRCz97und
+         rvXUvhigfqHGE3RmBaJ6f3sk6DayjobMmPBz+D+sN7b9Z6qfCRmmallmt49+njeD7YhN
+         SH5+Nf8vE9QyrBbxJaG/A+KOap/KwbddcTvCtEWOJpSmNuecS1Hdyxs4rQsp/aK+hDcj
+         B7tdq5Tv0Z+HdWC3hYsn/OGSuqkiiWMtnCtBxwzdCM35WKAx+qRU8N7PgsNV36n6PfNo
+         eBLE0R+AswpRCrPzbYtggDPSNX7UOZtMOXHjzOgmetOnm+gYI3TMP/fctJFKoLm7ExC7
+         rCfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWh2HbOq5hZ3rAPv6bW6AbiFVz0gT4BBRFT8xyY0VVgdnhtSHkGlwTDZ0MAny7Bo1R2gS8PDIQVTcA+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOFEoYo739t/hcG1PCR3GDRSa8C5oQIU0UOQAUhAunyJPN01Ij
+	mkxqBmXJe6+fdn+TbnUFAhN6KHz5gvNtNVI29WtveT14bQWWkqHFGmPpYmGoEkkMuD1J2Wdd9FO
+	uYlX2XYsFFlXQ2kFjwry4U45Yn2w=
+X-Google-Smtp-Source: AGHT+IHoe46620+UsVuITlGPh3/c/KNcEkZ5F6Uq8F7R6XszLx9r5KYDXHcT2MQwJr48RLgG03dD62MwkhoqroWKBWc=
+X-Received: by 2002:a2e:6e15:0:b0:2ec:4399:9bfc with SMTP id
+ 38308e7fff4ca-2ef05997667mr23791fa.0.1721234772478; Wed, 17 Jul 2024 09:46:12
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717124253.2275084-1-arnd@kernel.org> <CAK7LNASOtyqJMET7YuuFzTCkwg02p850PnqCC57-BZNJhyKT7Q@mail.gmail.com>
- <8333c062-a773-45d3-88d3-ba78e8abbd47@app.fastmail.com>
-In-Reply-To: <8333c062-a773-45d3-88d3-ba78e8abbd47@app.fastmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 18 Jul 2024 01:45:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASYnPNsJraL1qv+MFviTnPxjmc2Dmd7EcvJRCNLtHfZ6Q@mail.gmail.com>
-Message-ID: <CAK7LNASYnPNsJraL1qv+MFviTnPxjmc2Dmd7EcvJRCNLtHfZ6Q@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: mark "FORCE" target as secondary
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kbuild@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org
+References: <20240717-anvil-ashy-544e80a1317c@spud> <20240717-parrot-malt-83cc04bf6b36@spud>
+In-Reply-To: <20240717-parrot-malt-83cc04bf6b36@spud>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 17 Jul 2024 13:46:00 -0300
+Message-ID: <CAOMZO5DuwjQxMG4dT-_HcLjA_4U-+B2kR8FW1580RFiHcxo6OQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] ARM: dts: rockchip: remove unlikly-to-exist DAC
+ from elgin-r1
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	imx@lists.linux.dev, loongarch@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 1:25=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+On Wed, Jul 17, 2024 at 6:38=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
+te:
 >
-> On Wed, Jul 17, 2024, at 17:18, Masahiro Yamada wrote:
-> >
-> > Of course, NACK.
-> >
-> > Now I am surprised that this broken series was quickly merged
-> > into the mainline.
-> > I really dislike how you changed scripts/Makefile.asm-headers
-> >
-> >
-> > I will send a correct fix.
-> > Please do not break Kbuild even further.
+> From: Conor Dooley <conor.dooley@microchip.com>
 >
-> Should we maybe revert ff96f5c6971c..3db80c999deb then
-> and find a better way to do it in 6.12?
->
->       Arnd
->
->
+> The Rohm dh2228fv (really the bh2228fv, the compatible in the kernel has
+> a typo) does not support frequencies above 10 MHz, nor per the
+> datasheet appear to use either CPOL or CPHA. I suspect that this
+> devicetree is abusing the compatible in order to bind the spidev driver
+> in Linux. Pretending to have devices on a board for this purpose is not
+> acceptable, so remove it.
 
-I do not think so.
+In the Subject: s/unlikly/unlikely
 
-I pretty much like 4fe53bf2ba0a45cd708dcd4c3e8e1950731b3d4d,
-and I believe generating all syscall headers from a table
-is the right thing to do.
-So, it must happen.
-
-
-Currently, the new syscall-y syntax can be used only for
-architectures using the generic syscall table.
-I wonder what we should do for the other legacy architectures.
-
-Some years ago, I tried to unify 'archheaders' and 'asm-generic'
-into a more generic rule, but I did not find a nice solution,
-so I did not do anything. I need to find some way when I have time.
-
-
-
-
-For the rebuild problem, I think this should work:
-https://lore.kernel.org/all/20240717162421.1402773-1-masahiroy@kernel.org/T=
-/#u
-
-(I only compile-tested arch64 and riscv, but the other architectires
-should be the same pattern.)
-
-
-
---
-Best Regards
-Masahiro Yamada
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
