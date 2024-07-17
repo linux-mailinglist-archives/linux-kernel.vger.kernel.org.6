@@ -1,103 +1,132 @@
-Return-Path: <linux-kernel+bounces-255303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2453933EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBF0933EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5352DB2347C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ECE71C21851
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ED0181339;
-	Wed, 17 Jul 2024 14:36:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87345181B89;
+	Wed, 17 Jul 2024 14:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bVLfh1M";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n5BmbYxM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A71109;
-	Wed, 17 Jul 2024 14:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B01802D2;
+	Wed, 17 Jul 2024 14:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721227012; cv=none; b=KuifIsfHrRLGLiGQnTjKcrT0UNvazq1JU4z2qqu24TY1XICDLu5SerNY/yrr4FhczcoNazXpqpD/RSTu3a+9BM5Q7ugw0DXjh/z/XqqEzH3jIapqN6oLN0pjh1/b5nSdFMWxTFz1Vmo5ECjscZlnjoXU+MgtPq+D9kyZBZhmomg=
+	t=1721227128; cv=none; b=Jg0YLU1lblzv+p6SWLKnLoDhh9P9Q1FvXmu9nKKywOb5siFRXeRfUgvBQIQS8NFeO+jSnjE1J5pvi7zFR724lTZyXn30W9Zcyl8uaZpn6x1MAb7eMawFSySU/bH7VQzYoquHs1zPdTHFoOMaiUCGjrUnaMx1lSAJeQ9fJSNbr6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721227012; c=relaxed/simple;
-	bh=CE9pKa3ma8lBfS7ILiZhNE4HGmrbG06pXvftfTT5KIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyeT7zwDr6aWbYL6F/aSjSMhuDzdHso7suTeXXu6YEpsRPMAyd+huqzheIF0sIa2B7icx0paOMiTAAEetw6/cAmBYPNb/VYm4VhNScFOFzK7HeAdj1dcrDqCao67XEWGQMTkO2IOXVu6ElccLSrWvEM7feGCbWJR/9JRiIWAtrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78D1C4AF0E;
-	Wed, 17 Jul 2024 14:36:48 +0000 (UTC)
-Date: Wed, 17 Jul 2024 10:36:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vineeth Remanan Pillai
- <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, Borislav Petkov
- <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman
- <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Suleiman Souhlal
- <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- himadrics@inria.fr, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, graf@amazon.com, drjunior.org@gmail.com
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
- management)
-Message-ID: <20240717103647.735563af@rorschach.local.home>
-In-Reply-To: <ZpfR49IcXNLS9qbu@google.com>
-References: <ZjJf27yn-vkdB32X@google.com>
-	<CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
-	<CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
-	<66912820.050a0220.15d64.10f5@mx.google.com>
-	<19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-	<20240712122408.3f434cc5@rorschach.local.home>
-	<ZpFdYFNfWcnq5yJM@google.com>
-	<20240712131232.6d77947b@rorschach.local.home>
-	<ZpcFxd_oyInfggXJ@google.com>
-	<CAEXW_YS+8VKjUZ8cnkZxCfEcjcW=z52uGYzrfYj+peLfgHL75Q@mail.gmail.com>
-	<ZpfR49IcXNLS9qbu@google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721227128; c=relaxed/simple;
+	bh=IYZNEZXY+8y0fxebQxamTuKynXKI41woQF6rtvnXO/w=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=LxD1MyY3aKOhSbt9EU91nsZzuUDK+thQLE0pTjx+K7pe3GkWJJfCOgmdkiIyzJPQqVC61PenRCP/0JXdR5E3JfSAMTNr6mswiB7y6Qdc69xHhbKgrtxLRUcFbZ7+fHEW4SisS40iApAV2idUEJGSv+NIj59sCafzPh9/j3V3/iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bVLfh1M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n5BmbYxM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 17 Jul 2024 14:38:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721227124;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jqKzduM1S07qdTBmR1uBLOv43G76gBA2I7I3DQVs9UU=;
+	b=0bVLfh1MqBwsooz8crO/B0WPntJdU71Qyse0eymBNDMY1M33sSDCeHIK5p6rmy3Ab9Y/kj
+	BiSZHGAQXAgPfLe9bdqZIkYgTFYJX9K8rUBbaNBDzoK+QGhr+VWhxa6mrqwJ+alqpYJLzU
+	r6yaoaD3bFnWK+58iNmIJFjQK8fIWfXC5lEWcrsriwa1MznkgV/GLUcpLnWPwOBxcDMXPJ
+	eiP3xLbACu3livkzL6UC/F1k56sBSTOEe0I9dM9lCSN1gsIjuzY6WipHAYR3yPg0g+AFqk
+	JV5GJLMt3gMik9Fp1SM2MB0Tt883p90h8EL14VqKjRA9HkoTzHQb2cS4tlkHyQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721227124;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jqKzduM1S07qdTBmR1uBLOv43G76gBA2I7I3DQVs9UU=;
+	b=n5BmbYxMS0LWJnHrDQPWzen/BbqmgyFZlRE/kkmhzmrGfxsGkUljWUirzp/kl1oYie0ooT
+	aI5vjLufE4gfDkDw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] locking/atomic/x86: Redeclare x86_32
+ arch_atomic64_{add,sub}() as void
+Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240605181424.3228-2-ubizjak@gmail.com>
+References: <20240605181424.3228-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <172122712354.2215.11754309852163574251.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jul 2024 07:14:59 -0700
-Sean Christopherson <seanjc@google.com> wrote:
+The following commit has been merged into the locking/core branch of tip:
 
-> > What you're saying is the scheduler should change the priority of the
-> > vCPU thread dynamically. That's really not the job of the scheduler.
-> > The user of the scheduler is what changes the priority of threads, not
-> > the scheduler itself.  
-> 
-> No.  If we go the proposed route[*] of adding a data structure that lets userspace
-> and/or the guest express/adjust the task's priority, then the scheduler simply
-> checks that data structure when querying the priority of a task.
+Commit-ID:     dce2a224763ce968445e14c43b49321936309c75
+Gitweb:        https://git.kernel.org/tip/dce2a224763ce968445e14c43b49321936309c75
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Wed, 05 Jun 2024 20:13:16 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 17 Jul 2024 16:28:19 +02:00
 
-The problem with that is the only use case for such a feature is for
-vCPUS. There's no use case for a single thread to up and down its
-priority. I work a lot in RT applications (well, not as much anymore,
-but my career was heavy into it). And I can't see any use case where a
-single thread would bounce its priority around. In fact, if I did see
-that, I would complain that it was a poorly designed system.
+locking/atomic/x86: Redeclare x86_32 arch_atomic64_{add,sub}() as void
 
-Now for a guest kernel, that's very different. It has to handle things
-like priority inheritance and such, where bouncing a threads (or its
-own vCPU thread) priority most definitely makes sense.
+Correct the return type of x86_32 arch_atomic64_add() and
+arch_atomic64_sub() functions to 'void' and remove redundant return.
 
-So you are requesting that we add a bad user space interface to allow
-lazy priority management from a thread so that we can use it in the
-proper use case of a vCPU?
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20240605181424.3228-2-ubizjak@gmail.com
+---
+ arch/x86/include/asm/atomic64_32.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
--- Steve
-
+diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
+index 8db2ec4..1f650b4 100644
+--- a/arch/x86/include/asm/atomic64_32.h
++++ b/arch/x86/include/asm/atomic64_32.h
+@@ -163,20 +163,18 @@ static __always_inline s64 arch_atomic64_dec_return(atomic64_t *v)
+ }
+ #define arch_atomic64_dec_return arch_atomic64_dec_return
+ 
+-static __always_inline s64 arch_atomic64_add(s64 i, atomic64_t *v)
++static __always_inline void arch_atomic64_add(s64 i, atomic64_t *v)
+ {
+ 	__alternative_atomic64(add, add_return,
+ 			       ASM_OUTPUT2("+A" (i), "+c" (v)),
+ 			       ASM_NO_INPUT_CLOBBER("memory"));
+-	return i;
+ }
+ 
+-static __always_inline s64 arch_atomic64_sub(s64 i, atomic64_t *v)
++static __always_inline void arch_atomic64_sub(s64 i, atomic64_t *v)
+ {
+ 	__alternative_atomic64(sub, sub_return,
+ 			       ASM_OUTPUT2("+A" (i), "+c" (v)),
+ 			       ASM_NO_INPUT_CLOBBER("memory"));
+-	return i;
+ }
+ 
+ static __always_inline void arch_atomic64_inc(atomic64_t *v)
 
