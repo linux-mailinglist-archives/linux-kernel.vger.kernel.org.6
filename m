@@ -1,287 +1,140 @@
-Return-Path: <linux-kernel+bounces-254729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C6D9336ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:24:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7459336C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777401F226CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE44A1F23BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ED714A96;
-	Wed, 17 Jul 2024 06:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78DF12B7D;
+	Wed, 17 Jul 2024 06:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="CfRoQnke"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EnkJrJUL"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD24125DE
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77D117997;
+	Wed, 17 Jul 2024 06:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197448; cv=none; b=a7w+SOyTv1N1mErifRPbcSey+GVYPpWzl+L0v1NZQ/2wxubu2kV7vIsyAibX6aX257oA1P8WIgMcF/4ABGoTQUuPh3FLGlTrbFjsEfGevAVcBB26XLEqjougbPsf/ENttymFuWfKGNkOinRh78P5rZAVkujNtcAcB0cChrUe9kE=
+	t=1721197201; cv=none; b=eOmdRuvcQKJIieAAD64nK0PO7TXUmQwEJ1Y2khxHSUWIna1IYsa14uSCyTaN0Os8w+5ScQhlR0qM2Ug580TAAwGsdCU6WKcybUHr7FA9swc33hS7luv162obZegQYEIo5kp/eAENkAisQpPJuH2Y0s3Eqwvza9qXDlEK/PCLzrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197448; c=relaxed/simple;
-	bh=W3ZbUrXKMQk615ONwljbbIROXFCdQYzyCE9meMsyGpU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aZVqkQsbCtuCvO4YCKzJdLKkQ1VM+oeyLFLvxd5eJOrhBzb/CzepTazYrQb+EXQaQJa3xfJt6/H/vX++UlB47ejpcAw5uNV2sPP7OTyKS45ORMOpq34hRYCabzyj3Hqn8tUGrS0/vkiZnMx6p3FIHhyJxt+pw/Ud0Xdo0nR2ieA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=CfRoQnke; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266f535e82so43766685e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721197445; x=1721802245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ds1f3nvde/2kobU8ZNZg62T2Qi5mJIAm9dc1xPbfhas=;
-        b=CfRoQnkeRpoGzFiYfi6InQC0w6ja+pTl8/iannG30wLicWgyIvZwjwgySEkmIg/18y
-         NuRpsbsM5X2vjutJtdsDadV5iZol124BfslIWUUhsBVVMBUVJDl+GuHHlxviIqCRCaIn
-         nbl/xDU7oA2WfW8Nf6ugfACV76jmV3FUcauXrFTy5pj+ZJesHqtVp4BBHvv0BB5MJVYs
-         C9ToNTUH1DimQjmb6g3Rb+lbm5kG0yje99R/z1SfTKEGG7U1KtBe5fps3pmmu7A8wakk
-         0RTw0mnjjZSyyw/QgkPjP8MZE64gNFGE+jDr+EF5ZfF5yRqqtYCXk3M1k521Z+jFrRgA
-         e2tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721197445; x=1721802245;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ds1f3nvde/2kobU8ZNZg62T2Qi5mJIAm9dc1xPbfhas=;
-        b=ofB1UHgxX5O9Wba/lSkFY4/JNqRlwwOYzQmWjFZLoReLmeXFYxIo8L/iALDEYH1AqS
-         kB0HGLl0T6DgD8a5kZTClJTV8DxFiPLAHA7uHDXxxxpBILgehPMRjBjvV8V74QeHeL8W
-         7EMKe/vvMkPk2qsUykx2QZHOc9jOf9kZQcE8QMLcp2/HKL7t7fIYog7Sr8a/oML2xJoq
-         MUn4uEUmTvpgMwWNsht7g1pHB+me98rWs4ltPb2xozBHh4Juw4bcrpsiYSyw05QI0KSf
-         4LWKgHq/5kgNiiytiKdl6IkYTYcgsaOAeF8oorYXGCrZJ3caD1W1pkW8nzyQ5PeaWOFk
-         nKcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWf3goDzpA8CJi7OJQ6wV+OrFeeHQXRy6DTTshlee4mrRYUDRkfGIf4eCXqElHrJ4MGhcZUyOXyLBCHTYdJ7v2PsHIB/UIVOt1R0DIS
-X-Gm-Message-State: AOJu0Yy7Do3zazareQ+DVPkodXHBVnhKtiUo+bvgOiqFYgd619NWvY0S
-	wIOGX4dOn5SluHVympoapQRHAEndtgjpvz2lpiDRvQArskIvmoxXSw4Sm0i8nFs=
-X-Google-Smtp-Source: AGHT+IEIXpdS+STkowwy/Wm5vUbJoSbRCAM24AYCj9d6c8yOJneivGu6HLD2duOFWquiyMpaznkmeg==
-X-Received: by 2002:a5d:6b8d:0:b0:368:75:26e5 with SMTP id ffacd0b85a97d-368316003e7mr683121f8f.1.1721197444910;
-        Tue, 16 Jul 2024 23:24:04 -0700 (PDT)
-Received: from alex-rivos.home (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dafba03sm10826606f8f.76.2024.07.16.23.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 23:24:04 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrea Parri <andrea@rivosinc.com>
-Subject: [PATCH v3 04/11] riscv: Improve zacas fully-ordered cmpxchg()
-Date: Wed, 17 Jul 2024 08:19:50 +0200
-Message-Id: <20240717061957.140712-5-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240717061957.140712-1-alexghiti@rivosinc.com>
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+	s=arc-20240116; t=1721197201; c=relaxed/simple;
+	bh=Zv7me/dhmNwVa0EWGTIEKotNgKNQUhTpmUPyej9vY1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lb1R2i8npbw8ADLOvzpZpQHAB2c3KV2m6UvSM9y+H+XiUuuhHKPcgjqR54fyNlLcWGFusHvcNJ3MFF82q2S9I4DYQjj6xi7lCTA36dtP7FeocFil+1Dut1Fb8ELBayF7stZk23JCbQqzq2WFVKU3ntiEc+oAhLbspJYnjUgm14o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EnkJrJUL; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721197195;
+	bh=M3tSIjcmh7g/IM3TEvPm5kACdNWJvZr4ZQQWw4tj0Kc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EnkJrJUL9vmI/Mc6mL/mCdoxbDEa0dZ8/wSKZ+s6o3v2oV7qgyMan4wj5Z/tNClxA
+	 IitYMAXzZCsN6W8QRy6k1f6Pe3+uNwhCp+wlZeLqgesrYtcDfDb4AE5le0Xt4+kFLv
+	 bQxGfExNQa0A4zUVCBi+xW5iPw18CklRvLxH5NBotonFNLQwl7ReBTwxG4LjURn/HJ
+	 Afzjw7BY+krT9PEPA/tBveZNkqZvUwQSAUo6glfnjDkRuyk44Fe66pMSzHQaV+pUz0
+	 j64awjKIfa6aQUPTcdVBfVHe6oo4QaXeAE8lCvlpyr6Y15tH0Rw42vgk9zoHE1/kXk
+	 9WeDXDVm2d/Wg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WP5Q32hyyz4w2S;
+	Wed, 17 Jul 2024 16:19:54 +1000 (AEST)
+Date: Wed, 17 Jul 2024 16:19:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the loongarch tree with the
+ asm-generic tree
+Message-ID: <20240717161951.01e4737d@canb.auug.org.au>
+In-Reply-To: <20240709100154.0b4b1372@canb.auug.org.au>
+References: <20240709100154.0b4b1372@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/gHwLOmNioCdigJhn9+oy0YW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The current fully-ordered cmpxchgXX() implementation results in:
+--Sig_/gHwLOmNioCdigJhn9+oy0YW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  amocas.X.rl     a5,a4,(s1)
-  fence           rw,rw
+Hi all,
 
-This provides enough sync but we can actually use the following better
-mapping instead:
+On Tue, 9 Jul 2024 10:01:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the loongarch tree got a conflict in:
+>=20
+>   arch/loongarch/include/uapi/asm/unistd.h
+>=20
+> between commits:
+>=20
+>   13aa27ce8de0 ("clone3: drop __ARCH_WANT_SYS_CLONE3 macro")
+>   1d7b98ec5d78 ("loongarch: convert to generic syscall table")
+>=20
+> from the asm-generic tree and commit:
+>=20
+>   a5d43e6d87c0 ("LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h")
+>=20
+> from the loongarch tree.
+>=20
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/loongarch/include/uapi/asm/unistd.h
+> index 1f01980f9c94,b344b1f91715..000000000000
+> --- a/arch/loongarch/include/uapi/asm/unistd.h
+> +++ b/arch/loongarch/include/uapi/asm/unistd.h
+> @@@ -1,3 -1,6 +1,4 @@@
+>   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> + #define __ARCH_WANT_NEW_STAT
+>  -#define __ARCH_WANT_SYS_CLONE
+>  -#define __ARCH_WANT_SYS_CLONE3
+>  =20
+>  -#include <asm-generic/unistd.h>
+>  +#include <asm/unistd_64.h>
 
-  amocas.X.aqrl   a5,a4,(s1)
+This is now a conflict between the loongarch tree and Linus' tree.
 
-Suggested-by: Andrea Parri <andrea@rivosinc.com>
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/include/asm/cmpxchg.h | 71 ++++++++++++++++++++------------
- 1 file changed, 44 insertions(+), 27 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-index c86722a101d0..97b24da38897 100644
---- a/arch/riscv/include/asm/cmpxchg.h
-+++ b/arch/riscv/include/asm/cmpxchg.h
-@@ -105,7 +105,10 @@
-  * indicated by comparing RETURN with OLD.
-  */
- 
--#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
-+#define __arch_cmpxchg_masked(sc_sfx, cas_sfx,				\
-+			      sc_prepend, sc_append,			\
-+			      cas_prepend, cas_append,			\
-+			      r, p, o, n)				\
- ({									\
- 	__label__ no_zabha_zacas, end;					\
- 									\
-@@ -119,9 +122,9 @@
- 			 : : : : no_zabha_zacas);			\
- 									\
- 		__asm__ __volatile__ (					\
--			prepend						\
-+			cas_prepend					\
- 			"	amocas" cas_sfx " %0, %z2, %1\n"	\
--			append						\
-+			cas_append					\
- 			: "+&r" (r), "+A" (*(p))			\
- 			: "rJ" (n)					\
- 			: "memory");					\
-@@ -139,7 +142,7 @@ no_zabha_zacas:;							\
- 	ulong __rc;							\
- 									\
- 	__asm__ __volatile__ (						\
--		prepend							\
-+		sc_prepend						\
- 		"0:	lr.w %0, %2\n"					\
- 		"	and  %1, %0, %z5\n"				\
- 		"	bne  %1, %z3, 1f\n"				\
-@@ -147,7 +150,7 @@ no_zabha_zacas:;							\
- 		"	or   %1, %1, %z4\n"				\
- 		"	sc.w" sc_sfx " %1, %1, %2\n"			\
- 		"	bnez %1, 0b\n"					\
--		append							\
-+		sc_append						\
- 		"1:\n"							\
- 		: "=&r" (__retx), "=&r" (__rc), "+A" (*(__ptr32b))	\
- 		: "rJ" ((long)__oldx), "rJ" (__newx),			\
-@@ -159,7 +162,10 @@ no_zabha_zacas:;							\
- end:;									\
- })
- 
--#define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
-+#define __arch_cmpxchg(lr_sfx, sc_sfx, cas_sfx,				\
-+		       sc_prepend, sc_append,				\
-+		       cas_prepend, cas_append,				\
-+		       r, p, co, o, n)					\
- ({									\
- 	__label__ no_zacas, end;					\
- 	register unsigned int __rc;					\
-@@ -170,9 +176,9 @@ end:;									\
- 			 : : : : no_zacas);				\
- 									\
- 		__asm__ __volatile__ (					\
--			prepend						\
--			"	amocas" sc_cas_sfx " %0, %z2, %1\n"	\
--			append						\
-+			cas_prepend					\
-+			"	amocas" cas_sfx " %0, %z2, %1\n"	\
-+			cas_append					\
- 			: "+&r" (r), "+A" (*(p))			\
- 			: "rJ" (n)					\
- 			: "memory");					\
-@@ -181,12 +187,12 @@ end:;									\
- 									\
- no_zacas:								\
- 	__asm__ __volatile__ (						\
--		prepend							\
-+		sc_prepend						\
- 		"0:	lr" lr_sfx " %0, %2\n"				\
- 		"	bne  %0, %z3, 1f\n"				\
--		"	sc" sc_cas_sfx " %1, %z4, %2\n"			\
-+		"	sc" sc_sfx " %1, %z4, %2\n"			\
- 		"	bnez %1, 0b\n"					\
--		append							\
-+		sc_append						\
- 		"1:\n"							\
- 		: "=&r" (r), "=&r" (__rc), "+A" (*(p))			\
- 		: "rJ" (co o), "rJ" (n)					\
-@@ -195,7 +201,9 @@ no_zacas:								\
- end:;									\
- })
- 
--#define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
-+#define _arch_cmpxchg(ptr, old, new, sc_sfx, cas_sfx,			\
-+		      sc_prepend, sc_append,				\
-+		      cas_prepend, cas_append)				\
- ({									\
- 	__typeof__(ptr) __ptr = (ptr);					\
- 	__typeof__(*(__ptr)) __old = (old);				\
-@@ -204,22 +212,28 @@ end:;									\
- 									\
- 	switch (sizeof(*__ptr)) {					\
- 	case 1:								\
--		__arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,		\
--					prepend, append,		\
--					__ret, __ptr, __old, __new);    \
-+		__arch_cmpxchg_masked(sc_sfx, ".b" cas_sfx,		\
-+				      sc_prepend, sc_append,		\
-+				      cas_prepend, cas_append,		\
-+				      __ret, __ptr, __old, __new);	\
- 		break;							\
- 	case 2:								\
--		__arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,		\
--					prepend, append,		\
--					__ret, __ptr, __old, __new);	\
-+		__arch_cmpxchg_masked(sc_sfx, ".h" cas_sfx,		\
-+				      sc_prepend, sc_append,		\
-+				      cas_prepend, cas_append,		\
-+				      __ret, __ptr, __old, __new);	\
- 		break;							\
- 	case 4:								\
--		__arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,	\
--				__ret, __ptr, (long), __old, __new);	\
-+		__arch_cmpxchg(".w", ".w" sc_sfx, ".w" cas_sfx,		\
-+			       sc_prepend, sc_append,			\
-+			       cas_prepend, cas_append,			\
-+			       __ret, __ptr, (long), __old, __new);	\
- 		break;							\
- 	case 8:								\
--		__arch_cmpxchg(".d", ".d" sc_sfx, prepend, append,	\
--				__ret, __ptr, /**/, __old, __new);	\
-+		__arch_cmpxchg(".d", ".d" sc_sfx, ".d" cas_sfx,		\
-+			       sc_prepend, sc_append,			\
-+			       cas_prepend, cas_append,			\
-+			       __ret, __ptr, /**/, __old, __new);	\
- 		break;							\
- 	default:							\
- 		BUILD_BUG();						\
-@@ -228,16 +242,19 @@ end:;									\
- })
- 
- #define arch_cmpxchg_relaxed(ptr, o, n)					\
--	_arch_cmpxchg((ptr), (o), (n), "", "", "")
-+	_arch_cmpxchg((ptr), (o), (n), "", "", "", "", "", "")
- 
- #define arch_cmpxchg_acquire(ptr, o, n)					\
--	_arch_cmpxchg((ptr), (o), (n), "", "", RISCV_ACQUIRE_BARRIER)
-+	_arch_cmpxchg((ptr), (o), (n), "", "",				\
-+		      "", RISCV_ACQUIRE_BARRIER, "", RISCV_ACQUIRE_BARRIER)
- 
- #define arch_cmpxchg_release(ptr, o, n)					\
--	_arch_cmpxchg((ptr), (o), (n), "", RISCV_RELEASE_BARRIER, "")
-+	_arch_cmpxchg((ptr), (o), (n), "", "",				\
-+		      RISCV_RELEASE_BARRIER, "", RISCV_RELEASE_BARRIER, "")
- 
- #define arch_cmpxchg(ptr, o, n)						\
--	_arch_cmpxchg((ptr), (o), (n), ".rl", "", "	fence rw, rw\n")
-+	_arch_cmpxchg((ptr), (o), (n), ".rl", ".aqrl",			\
-+		      "", RISCV_FULL_BARRIER, "", "")
- 
- #define arch_cmpxchg_local(ptr, o, n)					\
- 	arch_cmpxchg_relaxed((ptr), (o), (n))
--- 
-2.39.2
+--Sig_/gHwLOmNioCdigJhn9+oy0YW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaXYocACgkQAVBC80lX
+0GybIggAg2UbraYP86Rp21D68x6f1xsAy98VJOrKTPRfLmZz+z0r2QxOjphLLgH+
+u5sdha9rDGAok5jPFvRS5Ncd7wkR8kKoC4IQe1vyXSUqT2+hZYZDFnMcwqErwuqT
+pnOEiA6alCJ/Ti+4b4rITy+ErOsnxYoqBsxMSvIIIQdtY5CzacRiAJcdAS4ecZ2L
+T3wLx91TXfZ2Kjc8F3rDU3ar1745oO+Hhf5H1N5yxz1IcucfG8huOLrsjbKrFdJw
+HdlAH1S11EPX3PX3NJFIJBibapRtkSx/pQrunW/kdkSPoEaXXfCKbKuQn95aFhDT
+qxALREGe/tqHpgtMxTQLes5wKOrcZw==
+=53GI
+-----END PGP SIGNATURE-----
+
+--Sig_/gHwLOmNioCdigJhn9+oy0YW--
 
