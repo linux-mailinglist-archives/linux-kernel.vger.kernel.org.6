@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-255332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE803933F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:10:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D60933F4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D077284A03
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFB91F24127
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA101181B91;
-	Wed, 17 Jul 2024 15:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8487B181CEF;
+	Wed, 17 Jul 2024 15:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="B8WafE4e"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzaWsiRN"
+Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A977617FABC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65720181BB5;
+	Wed, 17 Jul 2024 15:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721229007; cv=none; b=cz6ZdtCMGyOqTq1q7H6e8L1jHtbpYU6XA7VjSLJwhoYahz7cmAU25JIxK4N6nH96aszxabrbTBu9ddC9WSj3EgwNwYDcn92pMGu6rF6NoNLciAtl8MttPhXlMydpM8JSL94vCSyPTi9ZAflWSPp3gCXqeBdq3rYW6uY/SKr/TWE=
+	t=1721229011; cv=none; b=EzDvGv6qPsmPrXpMTdYPxVE93yXpkemJ4CaEAqAJyQqqZKveEjaMJciysq0wYCxs5oaRM0SiMjNJV/FxEDmP3UJMCqLpLySittWT6R80TizWCpaCpFV/KTu6sNFD/n3FTrBLOAtzl9HFAu4wl8PAbKyDZQONSC+5uZbgfc8ilxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721229007; c=relaxed/simple;
-	bh=tuAEIzyj+ha0nP/x70IsIoGb8TTJsf4NyxTFGO4faUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLAo4Djr1ovzcd4vGNJyoH0/vopNksX9hasx58pj2uwd25HWi75qH+Z0FuxdVHURyLIRu2esG9zviq+1fyn5sP7C0W7LVsteQnNE/5WlDtsPuCOCxKyFB8IEYUJ6h4rROUa9XSH1czc5kuzXz9cX6Mx48PQOBpFbFQNbw+IYHVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=B8WafE4e; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ee98a224b8so10715561fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:10:05 -0700 (PDT)
+	s=arc-20240116; t=1721229011; c=relaxed/simple;
+	bh=9AeB1Cld1cJEMg5GVGQ0RSv/VK08VTbFq5Y6/MY8Fvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXRkqrJP/Vz2tRYMD2pdsImAk7NhKFYqdna1670NvrONPsXVv2Hp/AcY6gN4OfaznkQHpyHPWYgwc/OdN+Mqj6DJrcbfLh3g8kG7ZQQcFOwE1cTBbZadGIOI03DrK1/JwJljQ6/g/InW2W1hqlxRDpF4n/GrnxHEMcbbYk7Gx5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzaWsiRN; arc=none smtp.client-ip=209.85.219.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-6b5daf5ea91so38555456d6.1;
+        Wed, 17 Jul 2024 08:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1721229004; x=1721833804; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wn4TP8PBVroM1jvpw0ODPErzX1wcuSE2iey02MAd1Zg=;
-        b=B8WafE4eu2dmjyxCeFdkn/Yc4mumHa9xu9cOipxzuMZvJaJYXEPLP658Wp1vVh/ixk
-         KC37iBdGmlXGwDmR86rv8oQIqfGLdMf8+0uAEVRqR5UP3I7CvO1un52nE73AYvPwGtki
-         cQRa3Na9WtgQTVQKjN0bEwtZO3bUJOaCOOar4=
+        d=gmail.com; s=20230601; t=1721229008; x=1721833808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yimWTa4m4zoMnZ3DEB5KnSaVlkJzZMUAmC/Q4ehMeE4=;
+        b=XzaWsiRNOg1jrI6eMMaclNMnfUQ3UlxfuklS0khB/8YDmwNMHJPcRI6dfEb0t8N/G9
+         wfYXeGPypBxb6Sni5XUWBzaUYFhU/5B4Z8SiDP3LNoS9nYGtHnUTziiEwl+JVs6kvOBT
+         H3WmCI2tHEAAAy3rSd5HkcCCx2YlySrA1mwDXCIQ+j3wiSDmWj5KW1TxEDqileyXqxmC
+         Fk4W1AekBzbEPSfv83Qz0iSjY/qZE9CjrK6yqiUJC1QMcIwqE4ReOSoHT2SRqwv+OuI7
+         h1K0R6QST6nwX6LqtAEYug9RfvThXMz45+nVLQuaRP1jS4xmWQ4xN9drxXGce4j6w6m6
+         4QGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721229004; x=1721833804;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wn4TP8PBVroM1jvpw0ODPErzX1wcuSE2iey02MAd1Zg=;
-        b=euoHDLoaHArQODfWY6gzmenU4RXspr9BBUxUbPNhLNTNJXpE/ol1g7ykwFh/Hxx5ow
-         5GhXopMThra5evQ5gd2NeGUlQHMssJmnUIcL6gBQkE+ip5qDfynIzsXDUogNwucdJM2T
-         cLTTH1RM8mRPrJGJZzVHrmdVYHPPq/yGS4HLVmYSXbJ+vAnEeL0+UwuftnpE5F3ov/tP
-         EZfkyGGQbrHzJEyGUG0znKV9GvuzjEpoCRM8/SKPxPFTX3DpwC2YiQZj5Tk63BxiHvXV
-         luEIDBd1tDhK0lWNdEGth7t7y6u4zFiZFPRPgWqFSjiYlziZHhuxYAdRsWA6WC1fqVps
-         R7vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYPyLx8CHuZdIbDNwgOeHj+/knrjb1YEO0xONTfr5e/MQ6nOqPAKjRAcEWDaTbSapb8mOCcJ9CA5C56gi24oH3rTREKv1xOH/bTL2Y
-X-Gm-Message-State: AOJu0YxRnOAcSNZKH/8ZJ9p8fl5hMaJswspoLQxZfoGJlpc6fTbc39xu
-	lV/otlkyATn6xq1VfuEyrhyrD+KDhurMa71A3kHZKQdrnPPv5XwwNyCaarqLJP0=
-X-Google-Smtp-Source: AGHT+IFERPpApl0DTzfYtP7vReuydD6LyFVwPjkdroK6PS8C1ELiGKXsed2rqK8YbNxdsN3KnCok/A==
-X-Received: by 2002:a05:651c:1a0c:b0:2ec:18c7:169d with SMTP id 38308e7fff4ca-2eefd0b8418mr8758821fa.1.1721229002527;
-        Wed, 17 Jul 2024 08:10:02 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c7814203sm1212865e9.45.2024.07.17.08.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 08:10:01 -0700 (PDT)
-Date: Wed, 17 Jul 2024 17:09:59 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Helge Deller <deller@gmx.de>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/panic: Remove build time dependency with
- FRAMEBUFFER_CONSOLE
-Message-ID: <Zpfex7mO2JcdVHWe@phenom.ffwll.local>
-Mail-Followup-To: Javier Martinez Canillas <javierm@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-References: <20240717090102.968152-1-jfalempe@redhat.com>
- <20240717090102.968152-4-jfalempe@redhat.com>
- <87wmlk49ed.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1721229008; x=1721833808;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yimWTa4m4zoMnZ3DEB5KnSaVlkJzZMUAmC/Q4ehMeE4=;
+        b=tlIVO/BWZ+irTJoettVa95rQO40gBBRLGf2sHw4yLEqNyGgivjzc66GVvaaUtUSPS1
+         tPPTp+4wi1E4YL0ir8oQEmhGdNJjr0MEHqg+zQzsTjWYRi6ZxRR0iH0YDEzATJIPNWQo
+         MaNc7n5ddir+JP759VRhiliRLCXPASHe7+PMqrzNEl5N6Z72/3GJfztyRVaBrPMihRnL
+         Ld1XkNyfw3BNcA58oc4cNi6tr/WIMMWU+dsZzWf3PTqa4u5ZdogWub3Ff+/l1/DHpVHc
+         yhz2yxBpJ1pytOcD6vVKFwyVHiEjLXCR0G3QieKw/HtlMQ7nvdlMUZBZbxIMK2IzlPLy
+         Uq+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmP7k3FjIV1CxPH7+YQuId4dK5BgbUisViA5jyswvnUxNXMOzNRxp86OH4s75xIEAFZ8oPXChQDT/C9ZB2iBCPJ4/01B2ZWE2ecOBVQuXqutNq/p8U6EGh4m177HgYrZKaOtaoc0InhwgxoAsjT3cfok1vnj0n1uDye4yMtWEH9KDkivoP8mfF4BN1/bM2FtRRevHLgwmL4bloppPVzRYEFHdhyPE=
+X-Gm-Message-State: AOJu0YxPskJtEy1aq/lFrR26K53IJenj0bII56H1Vv0NZDCP/M41Dy8m
+	nb39/SlUgghZbKNB6Gf1I3usLPmJa/dovmGO4rqaBjCzFfF9RjVo
+X-Google-Smtp-Source: AGHT+IExgG9Z3pY5PUuoW3p5dU/ApHsjWPWX01eIx0K5DEQCTwWudRCZqlY3wTag1iQr78dEqgcDRg==
+X-Received: by 2002:a05:6214:1cc8:b0:6b5:e3b7:46f5 with SMTP id 6a1803df08f44-6b78ca624c7mr26524626d6.20.1721229008237;
+        Wed, 17 Jul 2024 08:10:08 -0700 (PDT)
+Received: from [192.168.158.7] ([207.35.255.94])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b76199f60csm42590336d6.66.2024.07.17.08.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 08:10:07 -0700 (PDT)
+Message-ID: <0a4dd531-f075-4cce-9c15-30dfa1d0876d@gmail.com>
+Date: Wed, 17 Jul 2024 17:10:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmlk49ed.fsf@minerva.mail-host-address-is-not-set>
-X-Operating-System: Linux phenom 6.9.7-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] rust: str: Use `core::CStr`, remove the custom `CStr`
+ implementation
+To: Trevor Gross <tmgross@umich.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+ Manmohan Shukla <manmshuk@gmail.com>, Valentin Obst
+ <kernel@valentinobst.de>, Asahi Lina <lina@asahilina.net>,
+ Yutaro Ohno <yutaro.ono.418@gmail.com>, Danilo Krummrich <dakr@redhat.com>,
+ Charalampos Mitrodimas <charmitro@posteo.net>,
+ Ben Gooding <ben.gooding.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Roland Xu <mu001999@outlook.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, netdev@vger.kernel.org, llvm@lists.linux.dev
+References: <20240715221126.487345-2-vadorovsky@gmail.com>
+ <CALNs47t=YQX+UP_ekq_Ue=BrA4JscDbU1qNDoKFar3yUbOSZ5g@mail.gmail.com>
+Content-Language: en-US
+From: Michal Rostecki <vadorovsky@gmail.com>
+Autocrypt: addr=vadorovsky@gmail.com; keydata=
+ xsBNBGYJcUEBCAD3ciAzHQ8NElYQtsiPZ9NjsR7ttfihe0FM+PDT+6cChjFLQ8qO/1zEL5mh
+ YaLbkjitrIYARhmo3lRDq3+G4L5+gRVExm9Rd98PcQy2P9F8shxI/msC50i1Fb9N4D0pP8Hx
+ hhZ/or+2mbokZh8Qc9RdjynXRXAezhOFN4+0L2jkN7fjTO1IArl+TirXx+cvhQUbwKyyJlGL
+ Kldvue2EqU4maZ+KIUs5di3kZgDPLILzvBqX9TLtwEMAkNY1uMCKK+C2aihap19OjoK0qOYj
+ IahVHjqGL+Mb/Ga7jxMGr2TFeQEcwIgvdRiVVLtu+uiaRKqULGokBL3l9gprtBZWdLq7ABEB
+ AAHNJk1pY2hhbCBSb3N0ZWNraSA8dmFkb3JvdnNreUBnbWFpbC5jb20+wsCXBBMBCABBFiEE
+ 3RZt3oLrB5kpFLy14qU49yah1xEFAmYJdCQCGwMFCQHhM4AFCwkIBwICIgIGFQoJCAsCBBYC
+ AwECHgcCF4AACgkQ4qU49yah1xFuDQf+NE2Oy6zF+uVh3vtidkfacCSMnu1QxojJHB8C1/Ep
+ g4JU5hPcG9hC+HrMs5/Hqs7DOike9bZjhpEmnW4DIeI7Wy3t1Qf7A8EOzS0nrMgbX8TnkEon
+ zMBBqiNp3VVVcltRJtc58xMP8K3yu6Ty2Q8e6GWdL5bqDr9gshb+vWu8inh5CullsGRJFJl0
+ BfSdDKAbpH3NdEoWnL4JvFphpouh2vhd/ScvfNAQcuyBn3cbCyQdjNTgRVBkBNDEYCaWLVqP
+ r4IU0JNjgk+cTLbyFmgn2++bWoIICGrAeWGruSpl7UGJ2PdJokWI9zp5UqSCezejDS53yhkU
+ GsCrF7LrTceB6c7ATQRmCXFBAQgA2yrqjTKvL7VJKi/NNcpQ7EvAEm6omO+O4wQltdpybaxe
+ mbLT0vZTH6rjZba28ixZmFHtwOjzNNtabmb4uK+nxs0BkVBpRvJNJ0LM1ydGYZQ46Sbvr1dE
+ 7yWDkkG1CjmXYGd5I2iqx+ATbdrtzDGWLsvDXd/yEaO9dxAR+LqGOg1HdgE9Hhmuv8BRYSCL
+ vnXaMA7Orq9oAmu+Q5q9TT3aZGMdBFdcoUNSVPX82uIYXjDaXj0Del8tluAHLf3oV7ZXEgOx
+ c6OpRY3+8Pr9//UtfoaHNOjoKFNyPaIUf5U1+E9J0UoDm8m1usrwnghg6yRyPhczhCOvbYNL
+ hQ6TiImvowARAQABwsB8BBgBCAAmFiEE3RZt3oLrB5kpFLy14qU49yah1xEFAmYJcUECGwwF
+ CQHhM4AACgkQ4qU49yah1xHetgf9FpI4Y+okwFRIqRa6WJ8jhz6us+oYKedftr313NwerUB5
+ 8nnhK0YWkZWZMuu5B4LCMiv71Ugqlc7ahBy5sQx/acRPe+NiYpwiN/pWrv7njaA6evDieXL8
+ jc3j+xy4fsi861BWJXaurWQtLMXyHBUmdJ+StU7tscYTPe4fN1fdkBh0SreZxLfvp/+SMRQk
+ g9PmXb1BMZdw8gWghPAbYg5bfCzXF9iZp4bmjuCENfwG4zmnYJzR6uTI0reqECo6Ee7NjOQ7
+ qKy29wW+kVnEjX481iCEUmqKHEaQB08Ueb45If09fThw1baHLAk6bFk5cabMtD3JbWEifa6M
+ RS+eXZNwwQ==
+In-Reply-To: <CALNs47t=YQX+UP_ekq_Ue=BrA4JscDbU1qNDoKFar3yUbOSZ5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 12:09:46PM +0200, Javier Martinez Canillas wrote:
-> Jocelyn Falempe <jfalempe@redhat.com> writes:
-> 
-> > Now that fbcon has the skip_panic option, there is no more conflicts
-> > between drm_panic and fbcon.
-> > Remove the build time dependency, so they can be both enabled.
-> >
-> > Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> > ---
-> >  drivers/gpu/drm/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> > index 6dd0016fc9cd..a22cab218004 100644
-> > --- a/drivers/gpu/drm/Kconfig
-> > +++ b/drivers/gpu/drm/Kconfig
-> > @@ -107,7 +107,7 @@ config DRM_KMS_HELPER
-> >  
-> >  config DRM_PANIC
-> >  	bool "Display a user-friendly message when a kernel panic occurs"
-> > -	depends on DRM && !(FRAMEBUFFER_CONSOLE && VT_CONSOLE)
-> > +	depends on DRM
-> 
-> This is great. Thanks for finding an alternative approach! I don't see any
-> issues this time, because there is no locking involved. But let's see what
-> others think about it.
+On 16.07.24 02:45, Trevor Gross wrote:
+> (also, v2 and v3 are appearing in different threads on lore (as they
+> should), but they're in the same thread as v1 in my email client - any
+> idea if there is a reason for this?)
 
-Looks like it should work, I did check the history of fbcon_is_active and
-we've used that to force/disable panic output for fbcon in the past. So I
-think it's the right tool.
+No idea, I've sent both patches with:
 
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Cheers, Sima
-> 
-> -- 
-> Best regards,
-> 
-> Javier Martinez Canillas
-> Core Platforms
-> Red Hat
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+git send-email --cc-cmd='./scripts/get_maintainer.pl --norolestats' 
+-v${VERSION} -1
 
