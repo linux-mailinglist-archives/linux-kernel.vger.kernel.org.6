@@ -1,376 +1,584 @@
-Return-Path: <linux-kernel+bounces-255549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301A393421E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:17:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A42934223
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B611F23F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750F2B22C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C79183071;
-	Wed, 17 Jul 2024 18:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A051836DA;
+	Wed, 17 Jul 2024 18:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szdAXjv5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8D7GqI5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2E12E75;
-	Wed, 17 Jul 2024 18:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F01DDD1;
+	Wed, 17 Jul 2024 18:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240248; cv=none; b=J24ugkzAc+KZOcR95AXl77FJQU6/H6Eo5O16twceWTGZQtiBnJ1W5dXD9GxWi40T8DEvML+s/+BzNvDJYiHJu2V8E3MpFh/O/F8Z8euIf07goJztzNo4y7ps87UvB0WXnzzlwnvJjGwmUIo3+0EdV0iPVOQi9WFzy0QrgVVV5QY=
+	t=1721240256; cv=none; b=dVxXym3ginyCtdp8IB3lL4CPjHcTHCTiDKAkly+0r6LvurzToP7DHvPc75MSPebyZM3IbFRoW+Ps2jvPZ6ItOombKZN0S5NDk3FMl6NDNDfIZ2MzXucyWeOZD6HcxDrb32v8bj6IWKVHMXdD8veeOWdHLx36QEgOMR69vWzTIuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240248; c=relaxed/simple;
-	bh=ZTFSFHVa74Qpc7Lg00HJshhlsORnGgG76Sgsi+XBF78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYZFYpX1RnzV+lVmBk3qyx7RkKEbvbs2TAjdnO6QXVvbL8rPivOrsO387HD/sI7vOaxwnPnzhjdrGuXLh1ecfBf8mWMH1qZ/CWCK6h/EqJ2QLbaWy4rHJvCHZGTSjtZ/Lv/BnZl7lfpcFGxq89vsPOLLOsk7visV1p/JFHl6NCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szdAXjv5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5196C2BD10;
-	Wed, 17 Jul 2024 18:17:24 +0000 (UTC)
+	s=arc-20240116; t=1721240256; c=relaxed/simple;
+	bh=FPS5gnxnNUipkTep1InQNAUMqih6e38irUBuObovcwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uo9rmF4Vv1ngfP0A4Ms7dEC7EoGvscOlCb07dUukkDhg7SBqCW+iThQrWHLf35JJR/Frlk4jYq2cEbEFDtBo+EJQ2cdAOqKuYtsoSw0XAIH4eIvOSxC4rzX0pYjSM4uRFLN6OyjOyNRZJ2HKkQao9NDVBSfhJPT6Rtl775X73Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8D7GqI5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0347FC2BD10;
+	Wed, 17 Jul 2024 18:17:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721240247;
-	bh=ZTFSFHVa74Qpc7Lg00HJshhlsORnGgG76Sgsi+XBF78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=szdAXjv5fi/i4DOHqlamwvDCUeeYqWNv2lr0erw8xN1ES+6O7+BY4Jy312QA9wC8M
-	 rS/cHl2Iankb2bEA3PoMV1pw3Y50rQx+xY3vShXy1MXMzf7HWWa/Jk7lRxo/kHUqu9
-	 YXJ4BZ5ib7alkGQOkAy3tJ8MM0RT7/XuFgn1RD9fzJw4W5LHZdyUjp46gxEqakDB6X
-	 1BO9QuSC/pBg6Jj/rZCAVyjp2dFQylOmfmbR3dqQ7AGoDS6Rg2Squrjfbi97ibdRYJ
-	 Yzb9aOt4wYitqBxXM5HW5VyDyfcmYu+i//yVTHnrFbGkBhX+NA9UhByxliqkMtAXLr
-	 YmiocExl4N7UA==
-Message-ID: <de05ebf2-2baa-493e-a6a8-acf43702824b@kernel.org>
-Date: Wed, 17 Jul 2024 20:17:23 +0200
+	s=k20201202; t=1721240256;
+	bh=FPS5gnxnNUipkTep1InQNAUMqih6e38irUBuObovcwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8D7GqI5ebmNrpmnQO+Npx96A5+RuVaq2nR+6nqXJvWO1Fec3YnBMb1UGzIheC4Kz
+	 yqCLsE2nthF5sNl7GZ6zBWTE5u7sdiIAMB2dNyUsuOYOwfHJw+SIo8PQaP14kYSb1Z
+	 XoLJ3aa7TBvYPIeL30InEQIkCynKABjpkrr/0aT3QbE91l2uqmw+UyoXwGsdgMTmR4
+	 fe07Rs2YDlE2IO0lNsBuJWVMShvAe/tVzdfqM0NvXaBFsPi5wH2hPG3xjrGyV8WM/I
+	 1GKyn6GCxhmnTgrTK8c62g6QoMMH0ei55RXDW+pfRC8nmw/5F5cT0GPjl35AH6DUvY
+	 MUW8PuTqEvP3Q==
+Date: Wed, 17 Jul 2024 20:17:29 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: tj@kernel.org, dlemoal@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	festevam@gmail.com, linux-ide@vger.kernel.org,
+	stable@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v3 2/4] ata: ahci_imx: Clean up code by using i.MX8Q HSIO
+ PHY driver
+Message-ID: <ZpgKuZ-LcPdJaeKZ@ryzen.lan>
+References: <1721099895-26098-1-git-send-email-hongxing.zhu@nxp.com>
+ <1721099895-26098-3-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
- kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
- <CAJD7tkYFwz_=kxCk-Tp4QfwKgK0C26+QzZQvbVxkAx8m9CLSFg@mail.gmail.com>
- <8c123882-a5c5-409a-938b-cb5aec9b9ab5@kernel.org>
- <CAJD7tkbFPt-eTHkqtLxuOoV59eaqauodz008btEECT--x3VcBA@mail.gmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkbFPt-eTHkqtLxuOoV59eaqauodz008btEECT--x3VcBA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1721099895-26098-3-git-send-email-hongxing.zhu@nxp.com>
+
+Hello Richard,
+
+On Tue, Jul 16, 2024 at 11:18:13AM +0800, Richard Zhu wrote:
+> Clean up code by using PHY interface.
+
+This commit message needs some improvement.
+
+You are removing a bunch of code, but you are not even stating which
+PHY driver has the equivalent code to the code you are removing.
+
+The minimum here is to write the full file path to the PHY driver in the
+kernel tree that has the equivalent code to the code that you are removing.
 
 
-
-On 17/07/2024 18.31, Yosry Ahmed wrote:
-> [..]
->>
->> I agree that description should be updated as patch have evolved, and
->> you suggestions make sense, thanks.
->>
->> But I'm not sure we are finished evolving this patch, because the scheme
->> of allowing all sub-cgroups to become the ongoing flusher (and only
->> avoiding lock-spinning when cgroup_is_descendant), is causing issues in
->> production.
 > 
-> Sure, I just wanted to point out the the commit log should be updated
-> going forward, not implying that we are done here :)
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/ata/ahci_imx.c | 396 ++++++++++-------------------------------
+>  1 file changed, 98 insertions(+), 298 deletions(-)
 > 
->>
->> We are using cadvisor in production for collecting metrics, which walks
->> all the cgroups reading stat files e.g. io.stat, cpu.stat , memory.stat
->> (doing 3 flushes of same cgroup in short timespan), but individual
->> cgroups don't overlap much to benefit from ongoing_flusher scheme.
->>
->> Below is (1 sec) production data, where cadvisor and kswapd collide:
->>
->>   > 02:01:33 @ongoing_flusher_cnt[kworker/u395:14]: 1
->>   > @ongoing_flusher_cnt[kswapd5]: 3
->>   > @ongoing_flusher_cnt[kswapd7]: 4
->>   > @ongoing_flusher_cnt[kswapd6]: 4
->>   > @ongoing_flusher_cnt[kswapd8]: 4
->>   > @ongoing_flusher_cnt[kswapd9]: 5
->>   > @ongoing_flusher_cnt[kswapd2]: 5
->>   > @ongoing_flusher_cnt[kswapd10]: 5
->>   > @ongoing_flusher_cnt[kswapd3]: 5
->>   > @ongoing_flusher_cnt[kswapd11]: 5
->>   > @ongoing_flusher_cnt[kswapd0]: 5
->>   > @ongoing_flusher_cnt[kswapd4]: 6
->>   > @ongoing_flusher_cnt[kswapd1]: 7
->>   > @ongoing_flusher_cnt[cadvisor]: 9
->>
->> For cadvisor ongoing_flusher only helps 9 times to avoid flush.
->>
->>   > @ongoing_flusher_cnt[handled_race]: 18
->>   > @ongoing_flusher_cnt[all]: 61
->>
->> Our ongoing_flusher scheme detects overlap and avoid 61 out of 462 flushes.
->>
->>   > @cnt[tracepoint:cgroup:cgroup_ongoing_flusher_wait]: 61
->>   > @cnt[kfunc:vmlinux:cgroup_rstat_flush_locked]: 462
->>   > @cnt[tracepoint:cgroup:cgroup_rstat_lock_contended]: 9032
->>
->> This is bad: Lock is contended 9032 time within this 1 sec period.
->> Below, lock_contended cases is captured in more detail.
->>
->>   > @cnt[tracepoint:cgroup:cgroup_rstat_locked]: 9435
->>   > @lock_contended[normal, 4]: 1
->>   > @lock_contended[normal, 1]: 2
->>   > @lock_contended[normal, 3]: 6
->>   > @lock_contended[normal, 2]: 15
->>   > @lock_contended[yield, 4]: 49
->>   > @lock_contended[after_obtaining_lock, 4]: 49
->>   > @lock_contended[normal, 0]: 59
->>
->> The "normal" lock_contended for level 0,
->> meaning the cgroup root is contended 59 times within this 1 sec period.
->>
->>   > @lock_contended[after_obtaining_lock, 1]: 117
->>   > @lock_contended[yield, 1]: 118
->>   > @lock_contended[yield, 3]: 258
->>   > @lock_contended[after_obtaining_lock, 3]: 258
->>   > @lock_contended[after_obtaining_lock, 2]: 946
->>   > @lock_contended[yield, 2]: 946
->>
->> Lock contention for 'yielded' case for level 2.
->> Goes crazy with 946/sec.
->>
->>   > @lock_contended[yield, 0]: 7579
->>
->> Lock contention for 'yielded' case for level 0, the root.
->> Is really crazy with 7579/sec lock spin cases.
->>
->>   > @lock_contended[after_obtaining_lock, 0]: 7579
->>
->>
->> IMHO this shows that, due to lock yielding, the scheme of
->> ongoing_flusher for sub-trees only cause issues.
-> 
-> Just to make sure I understand correctly, allowing non-root to become
-> ongoing_flushers is problematic because we only support a single
-> ongoing_flusher, so if we have a subsequent root flush, it won't be
-> the ongoing_flusher and we won't benefit from skipping other flushes.
-> Correct?
-> 
+> diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
+> index cb768f66f0a70..e94c0fdea2260 100644
+> --- a/drivers/ata/ahci_imx.c
+> +++ b/drivers/ata/ahci_imx.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/libata.h>
+>  #include <linux/hwmon.h>
+>  #include <linux/hwmon-sysfs.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/thermal.h>
+>  #include "ahci.h"
+>  
+> @@ -44,42 +45,6 @@ enum {
+>  	/* Clock Reset Register */
+>  	IMX_CLOCK_RESET				= 0x7f3f,
+>  	IMX_CLOCK_RESET_RESET			= 1 << 0,
+> -	/* IMX8QM HSIO AHCI definitions */
+> -	IMX8QM_SATA_PHY_RX_IMPED_RATIO_OFFSET	= 0x03,
+> -	IMX8QM_SATA_PHY_TX_IMPED_RATIO_OFFSET	= 0x09,
+> -	IMX8QM_SATA_PHY_IMPED_RATIO_85OHM	= 0x6c,
+> -	IMX8QM_LPCG_PHYX2_OFFSET		= 0x00000,
+> -	IMX8QM_CSR_PHYX2_OFFSET			= 0x90000,
+> -	IMX8QM_CSR_PHYX1_OFFSET			= 0xa0000,
+> -	IMX8QM_CSR_PHYX_STTS0_OFFSET		= 0x4,
+> -	IMX8QM_CSR_PCIEA_OFFSET			= 0xb0000,
+> -	IMX8QM_CSR_PCIEB_OFFSET			= 0xc0000,
+> -	IMX8QM_CSR_SATA_OFFSET			= 0xd0000,
+> -	IMX8QM_CSR_PCIE_CTRL2_OFFSET		= 0x8,
+> -	IMX8QM_CSR_MISC_OFFSET			= 0xe0000,
+> -
+> -	IMX8QM_LPCG_PHYX2_PCLK0_MASK		= (0x3 << 16),
+> -	IMX8QM_LPCG_PHYX2_PCLK1_MASK		= (0x3 << 20),
+> -	IMX8QM_PHY_APB_RSTN_0			= BIT(0),
+> -	IMX8QM_PHY_MODE_SATA			= BIT(19),
+> -	IMX8QM_PHY_MODE_MASK			= (0xf << 17),
+> -	IMX8QM_PHY_PIPE_RSTN_0			= BIT(24),
+> -	IMX8QM_PHY_PIPE_RSTN_OVERRIDE_0		= BIT(25),
+> -	IMX8QM_PHY_PIPE_RSTN_1			= BIT(26),
+> -	IMX8QM_PHY_PIPE_RSTN_OVERRIDE_1		= BIT(27),
+> -	IMX8QM_STTS0_LANE0_TX_PLL_LOCK		= BIT(4),
+> -	IMX8QM_MISC_IOB_RXENA			= BIT(0),
+> -	IMX8QM_MISC_IOB_TXENA			= BIT(1),
+> -	IMX8QM_MISC_PHYX1_EPCS_SEL		= BIT(12),
+> -	IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_1	= BIT(24),
+> -	IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_0	= BIT(25),
+> -	IMX8QM_MISC_CLKREQN_IN_OVERRIDE_1	= BIT(28),
+> -	IMX8QM_MISC_CLKREQN_IN_OVERRIDE_0	= BIT(29),
+> -	IMX8QM_SATA_CTRL_RESET_N		= BIT(12),
+> -	IMX8QM_SATA_CTRL_EPCS_PHYRESET_N	= BIT(7),
+> -	IMX8QM_CTRL_BUTTON_RST_N		= BIT(21),
+> -	IMX8QM_CTRL_POWER_UP_RST_N		= BIT(23),
+> -	IMX8QM_CTRL_LTSSM_ENABLE		= BIT(4),
+>  };
+>  
+>  enum ahci_imx_type {
+> @@ -95,14 +60,10 @@ struct imx_ahci_priv {
+>  	struct clk *sata_clk;
+>  	struct clk *sata_ref_clk;
+>  	struct clk *ahb_clk;
+> -	struct clk *epcs_tx_clk;
+> -	struct clk *epcs_rx_clk;
+> -	struct clk *phy_apbclk;
+> -	struct clk *phy_pclk0;
+> -	struct clk *phy_pclk1;
+> -	void __iomem *phy_base;
+> -	struct gpio_desc *clkreq_gpiod;
+>  	struct regmap *gpr;
+> +	struct phy *sata_phy;
+> +	struct phy *cali_phy0;
+> +	struct phy *cali_phy1;
+>  	bool no_device;
+>  	bool first_time;
+>  	u32 phy_params;
+> @@ -450,201 +411,73 @@ ATTRIBUTE_GROUPS(fsl_sata_ahci);
+>  
+>  static int imx8_sata_enable(struct ahci_host_priv *hpriv)
+>  {
+> -	u32 val, reg;
+> -	int i, ret;
+> +	u32 val;
+> +	int ret;
+>  	struct imx_ahci_priv *imxpriv = hpriv->plat_data;
+>  	struct device *dev = &imxpriv->ahci_pdev->dev;
+>  
+> -	/* configure the hsio for sata */
+> -	ret = clk_prepare_enable(imxpriv->phy_pclk0);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_pclk0.\n");
+> +	/*
+> +	 * Since "REXT" pin is only present for first lane of i.MX8QM
+> +	 * PHY, its calibration results will be stored, passed through
+> +	 * to the second lane PHY, and shared with all three lane PHYs.
+> +	 *
+> +	 * Initialize the first two lane PHYs here, although only the
+> +	 * third lane PHY is used by SATA.
+> +	 */
+> +	ret = phy_init(imxpriv->cali_phy0);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY init failed\n");
+>  		return ret;
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->phy_pclk1);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_pclk1.\n");
+> -		goto disable_phy_pclk0;
+> +	ret = phy_power_on(imxpriv->cali_phy0);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY power on failed\n");
+> +		goto err_cali_phy0_exit;
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->epcs_tx_clk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable epcs_tx_clk.\n");
+> -		goto disable_phy_pclk1;
+> +	ret = phy_init(imxpriv->cali_phy1);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY1 init failed\n");
+> +		goto err_cali_phy0_off;
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->epcs_rx_clk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable epcs_rx_clk.\n");
+> -		goto disable_epcs_tx_clk;
+> +	ret = phy_power_on(imxpriv->cali_phy1);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY1 power on failed\n");
+> +		goto err_cali_phy1_exit;
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->phy_apbclk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_apbclk.\n");
+> -		goto disable_epcs_rx_clk;
+> +	ret = phy_init(imxpriv->sata_phy);
+> +	if (ret) {
+> +		dev_err(dev, "sata PHY init failed\n");
+> +		goto err_cali_phy1_off;
+>  	}
+> -	/* Configure PHYx2 PIPE_RSTN */
+> -	regmap_read(imxpriv->gpr, IMX8QM_CSR_PCIEA_OFFSET +
+> -			IMX8QM_CSR_PCIE_CTRL2_OFFSET, &val);
+> -	if ((val & IMX8QM_CTRL_LTSSM_ENABLE) == 0) {
+> -		/* The link of the PCIEA of HSIO is down */
+> -		regmap_update_bits(imxpriv->gpr,
+> -				IMX8QM_CSR_PHYX2_OFFSET,
+> -				IMX8QM_PHY_PIPE_RSTN_0 |
+> -				IMX8QM_PHY_PIPE_RSTN_OVERRIDE_0,
+> -				IMX8QM_PHY_PIPE_RSTN_0 |
+> -				IMX8QM_PHY_PIPE_RSTN_OVERRIDE_0);
+> +	ret = phy_set_mode(imxpriv->sata_phy, PHY_MODE_SATA);
+> +	if (ret) {
+> +		dev_err(dev, "unable to set SATA PHY mode\n");
+> +		goto err_sata_phy_exit;
+>  	}
+> -	regmap_read(imxpriv->gpr, IMX8QM_CSR_PCIEB_OFFSET +
+> -			IMX8QM_CSR_PCIE_CTRL2_OFFSET, &reg);
+> -	if ((reg & IMX8QM_CTRL_LTSSM_ENABLE) == 0) {
+> -		/* The link of the PCIEB of HSIO is down */
+> -		regmap_update_bits(imxpriv->gpr,
+> -				IMX8QM_CSR_PHYX2_OFFSET,
+> -				IMX8QM_PHY_PIPE_RSTN_1 |
+> -				IMX8QM_PHY_PIPE_RSTN_OVERRIDE_1,
+> -				IMX8QM_PHY_PIPE_RSTN_1 |
+> -				IMX8QM_PHY_PIPE_RSTN_OVERRIDE_1);
+> -	}
+> -	if (((reg | val) & IMX8QM_CTRL_LTSSM_ENABLE) == 0) {
+> -		/* The links of both PCIA and PCIEB of HSIO are down */
+> -		regmap_update_bits(imxpriv->gpr,
+> -				IMX8QM_LPCG_PHYX2_OFFSET,
+> -				IMX8QM_LPCG_PHYX2_PCLK0_MASK |
+> -				IMX8QM_LPCG_PHYX2_PCLK1_MASK,
+> -				0);
+> -	}
+> -
+> -	/* set PWR_RST and BT_RST of csr_pciea */
+> -	val = IMX8QM_CSR_PCIEA_OFFSET + IMX8QM_CSR_PCIE_CTRL2_OFFSET;
+> -	regmap_update_bits(imxpriv->gpr,
+> -			val,
+> -			IMX8QM_CTRL_BUTTON_RST_N,
+> -			IMX8QM_CTRL_BUTTON_RST_N);
+> -	regmap_update_bits(imxpriv->gpr,
+> -			val,
+> -			IMX8QM_CTRL_POWER_UP_RST_N,
+> -			IMX8QM_CTRL_POWER_UP_RST_N);
+> -
+> -	/* PHYX1_MODE to SATA */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_PHYX1_OFFSET,
+> -			IMX8QM_PHY_MODE_MASK,
+> -			IMX8QM_PHY_MODE_SATA);
+> -
+> -	/*
+> -	 * BIT0 RXENA 1, BIT1 TXENA 0
+> -	 * BIT12 PHY_X1_EPCS_SEL 1.
+> -	 */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_MISC_OFFSET,
+> -			IMX8QM_MISC_IOB_RXENA,
+> -			IMX8QM_MISC_IOB_RXENA);
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_MISC_OFFSET,
+> -			IMX8QM_MISC_IOB_TXENA,
+> -			0);
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_MISC_OFFSET,
+> -			IMX8QM_MISC_PHYX1_EPCS_SEL,
+> -			IMX8QM_MISC_PHYX1_EPCS_SEL);
+> -	/*
+> -	 * It is possible, for PCIe and SATA are sharing
+> -	 * the same clock source, HPLL or external oscillator.
+> -	 * When PCIe is in low power modes (L1.X or L2 etc),
+> -	 * the clock source can be turned off. In this case,
+> -	 * if this clock source is required to be toggling by
+> -	 * SATA, then SATA functions will be abnormal.
+> -	 * Set the override here to avoid it.
+> -	 */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_MISC_OFFSET,
+> -			IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_1 |
+> -			IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_0 |
+> -			IMX8QM_MISC_CLKREQN_IN_OVERRIDE_1 |
+> -			IMX8QM_MISC_CLKREQN_IN_OVERRIDE_0,
+> -			IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_1 |
+> -			IMX8QM_MISC_CLKREQN_OUT_OVERRIDE_0 |
+> -			IMX8QM_MISC_CLKREQN_IN_OVERRIDE_1 |
+> -			IMX8QM_MISC_CLKREQN_IN_OVERRIDE_0);
+> -
+> -	/* clear PHY RST, then set it */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_SATA_OFFSET,
+> -			IMX8QM_SATA_CTRL_EPCS_PHYRESET_N,
+> -			0);
+> -
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_SATA_OFFSET,
+> -			IMX8QM_SATA_CTRL_EPCS_PHYRESET_N,
+> -			IMX8QM_SATA_CTRL_EPCS_PHYRESET_N);
+> -
+> -	/* CTRL RST: SET -> delay 1 us -> CLEAR -> SET */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_SATA_OFFSET,
+> -			IMX8QM_SATA_CTRL_RESET_N,
+> -			IMX8QM_SATA_CTRL_RESET_N);
+> -	udelay(1);
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_SATA_OFFSET,
+> -			IMX8QM_SATA_CTRL_RESET_N,
+> -			0);
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_SATA_OFFSET,
+> -			IMX8QM_SATA_CTRL_RESET_N,
+> -			IMX8QM_SATA_CTRL_RESET_N);
+> -
+> -	/* APB reset */
+> -	regmap_update_bits(imxpriv->gpr,
+> -			IMX8QM_CSR_PHYX1_OFFSET,
+> -			IMX8QM_PHY_APB_RSTN_0,
+> -			IMX8QM_PHY_APB_RSTN_0);
+> -
+> -	for (i = 0; i < 100; i++) {
+> -		reg = IMX8QM_CSR_PHYX1_OFFSET +
+> -			IMX8QM_CSR_PHYX_STTS0_OFFSET;
+> -		regmap_read(imxpriv->gpr, reg, &val);
+> -		val &= IMX8QM_STTS0_LANE0_TX_PLL_LOCK;
+> -		if (val == IMX8QM_STTS0_LANE0_TX_PLL_LOCK)
+> -			break;
+> -		udelay(1);
+> +	ret = phy_power_on(imxpriv->sata_phy);
+> +	if (ret) {
+> +		dev_err(dev, "sata PHY power up failed\n");
+> +		goto err_sata_phy_exit;
+>  	}
+>  
+> -	if (val != IMX8QM_STTS0_LANE0_TX_PLL_LOCK) {
+> -		dev_err(dev, "TX PLL of the PHY is not locked\n");
+> -		ret = -ENODEV;
+> -	} else {
+> -		writeb(imxpriv->imped_ratio, imxpriv->phy_base +
+> -				IMX8QM_SATA_PHY_RX_IMPED_RATIO_OFFSET);
+> -		writeb(imxpriv->imped_ratio, imxpriv->phy_base +
+> -				IMX8QM_SATA_PHY_TX_IMPED_RATIO_OFFSET);
+> -		reg = readb(imxpriv->phy_base +
+> -				IMX8QM_SATA_PHY_RX_IMPED_RATIO_OFFSET);
+> -		if (unlikely(reg != imxpriv->imped_ratio))
+> -			dev_info(dev, "Can't set PHY RX impedance ratio.\n");
+> -		reg = readb(imxpriv->phy_base +
+> -				IMX8QM_SATA_PHY_TX_IMPED_RATIO_OFFSET);
+> -		if (unlikely(reg != imxpriv->imped_ratio))
+> -			dev_info(dev, "Can't set PHY TX impedance ratio.\n");
+> -		usleep_range(50, 100);
+> +	/* The cali_phy# can be turned off after SATA PHY is initialized. */
+> +	phy_power_off(imxpriv->cali_phy1);
+> +	phy_exit(imxpriv->cali_phy1);
+> +	phy_power_off(imxpriv->cali_phy0);
+> +	phy_exit(imxpriv->cali_phy0);
+>  
+> -		/*
+> -		 * To reduce the power consumption, gate off
+> -		 * the PHY clks
+> -		 */
+> -		clk_disable_unprepare(imxpriv->phy_apbclk);
+> -		clk_disable_unprepare(imxpriv->phy_pclk1);
+> -		clk_disable_unprepare(imxpriv->phy_pclk0);
+> -		return ret;
+> -	}
+> +	return 0;
+>  
+> -	clk_disable_unprepare(imxpriv->phy_apbclk);
+> -disable_epcs_rx_clk:
+> -	clk_disable_unprepare(imxpriv->epcs_rx_clk);
+> -disable_epcs_tx_clk:
+> -	clk_disable_unprepare(imxpriv->epcs_tx_clk);
+> -disable_phy_pclk1:
+> -	clk_disable_unprepare(imxpriv->phy_pclk1);
+> -disable_phy_pclk0:
+> -	clk_disable_unprepare(imxpriv->phy_pclk0);
+> +err_sata_phy_exit:
+> +	phy_exit(imxpriv->sata_phy);
+> +err_cali_phy1_off:
+> +	phy_power_off(imxpriv->cali_phy1);
+> +err_cali_phy1_exit:
+> +	phy_exit(imxpriv->cali_phy1);
+> +err_cali_phy0_off:
+> +	phy_power_off(imxpriv->cali_phy0);
+> +err_cali_phy0_exit:
+> +	phy_exit(imxpriv->cali_phy0);
+>  
+>  	return ret;
+>  }
+> @@ -698,6 +531,9 @@ static int imx_sata_enable(struct ahci_host_priv *hpriv)
+>  		}
+>  	} else if (imxpriv->type == AHCI_IMX8QM) {
+>  		ret = imx8_sata_enable(hpriv);
+> +		if (ret)
+> +			goto disable_clk;
+> +
+>  	}
+>  
+>  	usleep_range(1000, 2000);
+> @@ -736,8 +572,10 @@ static void imx_sata_disable(struct ahci_host_priv *hpriv)
+>  		break;
+>  
+>  	case AHCI_IMX8QM:
+> -		clk_disable_unprepare(imxpriv->epcs_rx_clk);
+> -		clk_disable_unprepare(imxpriv->epcs_tx_clk);
+> +		if (imxpriv->sata_phy) {
+> +			phy_power_off(imxpriv->sata_phy);
+> +			phy_exit(imxpriv->sata_phy);
+> +		}
+>  		break;
+>  
+>  	default:
+> @@ -760,6 +598,9 @@ static void ahci_imx_error_handler(struct ata_port *ap)
+>  
+>  	ahci_error_handler(ap);
+>  
+> +	if (imxpriv->type == AHCI_IMX8QM)
+> +		return;
+> +
+>  	if (!(imxpriv->first_time) || ahci_imx_hotplug)
+>  		return;
+>  
+> @@ -986,65 +827,22 @@ static const struct scsi_host_template ahci_platform_sht = {
+>  
+>  static int imx8_sata_probe(struct device *dev, struct imx_ahci_priv *imxpriv)
+>  {
+> -	struct resource *phy_res;
+> -	struct platform_device *pdev = imxpriv->ahci_pdev;
+> -	struct device_node *np = dev->of_node;
+> -
+> -	if (of_property_read_u32(np, "fsl,phy-imp", &imxpriv->imped_ratio))
+> -		imxpriv->imped_ratio = IMX8QM_SATA_PHY_IMPED_RATIO_85OHM;
+> -	phy_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy");
+> -	if (phy_res) {
+> -		imxpriv->phy_base = devm_ioremap(dev, phy_res->start,
+> -					resource_size(phy_res));
+> -		if (!imxpriv->phy_base) {
+> -			dev_err(dev, "error with ioremap\n");
+> -			return -ENOMEM;
+> -		}
+> -	} else {
+> -		dev_err(dev, "missing *phy* reg region.\n");
+> -		return -ENOMEM;
+> -	}
+> -	imxpriv->gpr =
+> -		 syscon_regmap_lookup_by_phandle(np, "hsio");
+> -	if (IS_ERR(imxpriv->gpr)) {
+> -		dev_err(dev, "unable to find gpr registers\n");
+> -		return PTR_ERR(imxpriv->gpr);
+> -	}
+> -
+> -	imxpriv->epcs_tx_clk = devm_clk_get(dev, "epcs_tx");
+> -	if (IS_ERR(imxpriv->epcs_tx_clk)) {
+> -		dev_err(dev, "can't get epcs_tx_clk clock.\n");
+> -		return PTR_ERR(imxpriv->epcs_tx_clk);
+> -	}
+> -	imxpriv->epcs_rx_clk = devm_clk_get(dev, "epcs_rx");
+> -	if (IS_ERR(imxpriv->epcs_rx_clk)) {
+> -		dev_err(dev, "can't get epcs_rx_clk clock.\n");
+> -		return PTR_ERR(imxpriv->epcs_rx_clk);
+> -	}
+> -	imxpriv->phy_pclk0 = devm_clk_get(dev, "phy_pclk0");
+> -	if (IS_ERR(imxpriv->phy_pclk0)) {
+> -		dev_err(dev, "can't get phy_pclk0 clock.\n");
+> -		return PTR_ERR(imxpriv->phy_pclk0);
+> -	}
+> -	imxpriv->phy_pclk1 = devm_clk_get(dev, "phy_pclk1");
+> -	if (IS_ERR(imxpriv->phy_pclk1)) {
+> -		dev_err(dev, "can't get phy_pclk1 clock.\n");
+> -		return PTR_ERR(imxpriv->phy_pclk1);
+> -	}
+> -	imxpriv->phy_apbclk = devm_clk_get(dev, "phy_apbclk");
+> -	if (IS_ERR(imxpriv->phy_apbclk)) {
+> -		dev_err(dev, "can't get phy_apbclk clock.\n");
+> -		return PTR_ERR(imxpriv->phy_apbclk);
+> -	}
+> -
+> -	/* Fetch GPIO, then enable the external OSC */
+> -	imxpriv->clkreq_gpiod = devm_gpiod_get_optional(dev, "clkreq",
+> -				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+> -	if (IS_ERR(imxpriv->clkreq_gpiod))
+> -		return PTR_ERR(imxpriv->clkreq_gpiod);
+> -	if (imxpriv->clkreq_gpiod)
+> -		gpiod_set_consumer_name(imxpriv->clkreq_gpiod, "SATA CLKREQ");
+> -
+> +	if (!(dev->bus_dma_limit))
+> +		dev->bus_dma_limit = DMA_BIT_MASK(32);
+> +
+> +	imxpriv->sata_phy = devm_phy_get(dev, "sata-phy");
+> +	if (IS_ERR(imxpriv->sata_phy))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->sata_phy),
+> +				     "Failed to get sata_phy\n");
+> +
+> +	imxpriv->cali_phy0 = devm_phy_get(dev, "cali-phy0");
+> +	if (IS_ERR(imxpriv->cali_phy0))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->cali_phy0),
+> +				     "Failed to get cali_phy0\n");
+> +	imxpriv->cali_phy1 = devm_phy_get(dev, "cali-phy1");
+> +	if (IS_ERR(imxpriv->cali_phy1))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->cali_phy1),
+> +				     "Failed to get cali_phy1\n");
+>  	return 0;
+>  }
+>  
+> @@ -1077,12 +875,6 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		return PTR_ERR(imxpriv->sata_ref_clk);
+>  	}
+>  
+> -	imxpriv->ahb_clk = devm_clk_get(dev, "ahb");
+> -	if (IS_ERR(imxpriv->ahb_clk)) {
+> -		dev_err(dev, "can't get ahb clock.\n");
+> -		return PTR_ERR(imxpriv->ahb_clk);
+> -	}
+> -
+>  	if (imxpriv->type == AHCI_IMX6Q || imxpriv->type == AHCI_IMX6QP) {
+>  		u32 reg_value;
+>  
+> @@ -1142,11 +934,8 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		goto disable_clk;
+>  
+>  	/*
+> -	 * Configure the HWINIT bits of the HOST_CAP and HOST_PORTS_IMPL,
+> -	 * and IP vendor specific register IMX_TIMER1MS.
+> -	 * Configure CAP_SSS (support stagered spin up).
+> -	 * Implement the port0.
+> -	 * Get the ahb clock rate, and configure the TIMER1MS register.
+> +	 * Configure the HWINIT bits of the HOST_CAP and HOST_PORTS_IMPL.
+> +	 * Set CAP_SSS (support stagered spin up) and Implement the port0.
+>  	 */
+>  	reg_val = readl(hpriv->mmio + HOST_CAP);
+>  	if (!(reg_val & HOST_CAP_SSS)) {
+> @@ -1159,8 +948,19 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		writel(reg_val, hpriv->mmio + HOST_PORTS_IMPL);
+>  	}
+>  
+> -	reg_val = clk_get_rate(imxpriv->ahb_clk) / 1000;
+> -	writel(reg_val, hpriv->mmio + IMX_TIMER1MS);
+> +	if (imxpriv->type != AHCI_IMX8QM) {
+> +		/*
+> +		 * Get AHB clock rate and configure the vendor specified
+> +		 * TIMER1MS register on i.MX53, i.MX6Q and i.MX6QP only.
+> +		 */
+> +		imxpriv->ahb_clk = devm_clk_get(dev, "ahb");
+> +		if (IS_ERR(imxpriv->ahb_clk)) {
+> +			dev_err(dev, "Failed to get ahb clock\n");
+> +			goto disable_sata;
+> +		}
+> +		reg_val = clk_get_rate(imxpriv->ahb_clk) / 1000;
+> +		writel(reg_val, hpriv->mmio + IMX_TIMER1MS);
+> +	}
 
-Yes, basically... keep in mind, what will happen is that subsequent root
-flush will busy-wait/spin on getting lock, which in case of a yield from
-ongoing-flusher, will result in multiple flushers being active, despite
-our efforts to have a single ongoing-flusher.
+This chunk has nothing to do with:
+"ata: ahci_imx: Clean up code by using i.MX8Q HSIO PHY driver"
+so it should be in a separate commit, with a proper commit message.
 
 
-> I honestly think the problem here is not that we support
-> ongoing_flusher for subtrees, which imo is nice to have at a low
-> additional cost, and does have its benefits (see below). I think the
-> problem is that lock yielding means that we can have multiple ongoing
-> flushers, while the current scheme only records one.
-> 
-
-Yes, the yielding is causing multiple flushers to be active the same time.
-
-
-> What I think we should be doing is either supporting multiple
-> ongoing_flushers (by replacing the global variable with a per-cgroup
-> flag, perhaps), or biting the bullet and start using a mutex to drop
-> lock yielding. If there aren't any concerns beyond priority inversion
-> (raised by Shakeel), maybe adding a mutex_lock_timeout() variant as I
-> suggested could fix this issue (and also put a bound on the flushing
-> latency in general)?
-> 
-
-The mutex_lock_timeout is an interesting idea, but not a primitive we
-have available today, right?
-
-p.s. I have 5 prod machines running with mutex change, and I've not
-gotten any SRE complaints.
-
-
-> (I suppose the latter is preferrable)
-> 
->>
->> IMHO we should go back to only doing ongoing_flusher for root-cgroup.
->> There is really low chance of sub-trees flushes being concurrent enough
->> to benefit from this, and it cause issues and needs (ugly) race handling.
->>
->> Further more sub-tree flushing doesn't take as long time as level 0
->> flushing, which further lower the chance of concurrent flushes.
-> 
-> I agree that the race handling is not pretty, and we can try to
-> improve the implementation or handle the race in other ways. However,
-> I think that skipping flushes for subtrees is valuable. I am not sure
-> about the cgroup arrangement in your use case, but we do have cgroups
-> with a lot of tasks in them (and/or child cgroups). If there is memory
-> pressure (or hit the cgroup limit), they all may go into direct
-> reclaim concurrently, so skipping flushes could really be beneficial.
-> 
-> Of course, if the difference in complexity is not justified, we can go
-> back to only supporting root cgroups for ongoing_flusher for now. But
-> as I mentioned in the v4 email thread, some of the complexity may
-> still remain anyway as we have multiple root cgroups in v1.
-> 
-
-Having an incremental step with "only supporting root cgroups for
-ongoing_flusher for now" is a good step forward IMHO.
-As you could see in grafana plot, this would be a significant production
-improvement on its own, as it avoids wasting CPU resources spinning on
-the lock.
-
-Being able to have multiple root cgroups, due to in v1, does pose an
-implementation problem.  Only having a single root, would allow to have 
-a race-free cmpxchg scheme.
-Would it be reasonable to only support v2?
-If so, how can I match on this?
-
->>
->> Let's get some quick data on flush times from production, to support my
->> claim:
-> 
-> Thanks for the data. I agree that in general root flushes will be a
-> lot more expensive than subtree flushes, but keep in mind that the
-> data may look really different depends on the cgroup setup. As I
-> mentioned, I think we should still support subtree flushes unless the
-> difference in complexity is not justified.
-> 
-
-It would be really valuable if you could provide production data on the 
-lock-hold times, just like I did with below bpftrace script...
-Is that possible, please?
-
->>
->> The bpftrace onliner:
->>    sudo bpftrace -e '
->>     tracepoint:cgroup:cgroup_rstat_locked {
->>      if (args->cpu == -1) { @start[tid]=nsecs; }
->>      @cnt[probe]=count();
->>      if (args->contended) {
->>        @lock_contended["after_obtaining_lock", args->level]=count();
->>      }}
->>     tracepoint:cgroup:cgroup_rstat_unlock {
->>      if (args->cpu == -1) {
->>       $now=nsecs; $start=@start[tid]; $diff=$now-$start;
->>       @locked_time_level[args->level]=hist($diff);
->>      }
->>      @cnt[probe]=count()}
->>     kfunc:cgroup_rstat_flush_locked {@cnt[probe]=count()}
->>     interval:s:1 {time("%H:%M:%S ");
->>      print(@cnt);
->>      print(@lock_contended);
->>      print(@locked_time_level);
->>      clear (@cnt);
->>      clear (@lock_contended); }
->>     END {clear(@start)}'
->>
->> Time below is in nanosec.
->>
->> @locked_time_level[0]:
->> [4M, 8M)             623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
->>        |
->> [8M, 16M)            860
->> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [16M, 32M)           295 |@@@@@@@@@@@@@@@@@
->>        |
->> [32M, 64M)           275 |@@@@@@@@@@@@@@@@
->>        |
->>
->>
->> @locked_time_level[1]:
->> [4K, 8K)               6 |@@@@
->>        |
->> [8K, 16K)             65
->> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [16K, 32K)            52 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
->>        |
->> [32K, 64K)            23 |@@@@@@@@@@@@@@@@@@
->>        |
->> [64K, 128K)           15 |@@@@@@@@@@@@
->>        |
->> [128K, 256K)          10 |@@@@@@@@
->>        |
->> [256K, 512K)           6 |@@@@
->>        |
->> [512K, 1M)            15 |@@@@@@@@@@@@
->>        |
->> [1M, 2M)               2 |@
->>        |
->> [2M, 4M)              14 |@@@@@@@@@@@
->>        |
->> [4M, 8M)               6 |@@@@
->>        |
->> [8M, 16M)              7 |@@@@@
->>        |
->> [16M, 32M)             1 |
->>        |
->>
->>
->> @locked_time_level[2]:
->> [2K, 4K)               1 |
->>        |
->> [4K, 8K)             160 |@@@@@@@@@
->>        |
->> [8K, 16K)            733 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
->>        |
->> [16K, 32K)           901
->> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [32K, 64K)           191 |@@@@@@@@@@@
->>        |
->> [64K, 128K)          115 |@@@@@@
->>        |
->> [128K, 256K)          61 |@@@
->>        |
->> [256K, 512K)          70 |@@@@
->>        |
->> [512K, 1M)            59 |@@@
->>        |
->> [1M, 2M)              27 |@
->>        |
->> [2M, 4M)               9 |
->>        |
->>
->>
->> @locked_time_level[3]:
->> [1K, 2K)               3 |
->>        |
->> [2K, 4K)               2 |
->>        |
->> [4K, 8K)               5 |
->>        |
->> [8K, 16K)            147 |@@@@@@
->>        |
->> [16K, 32K)          1222
->> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [32K, 64K)           266 |@@@@@@@@@@@
->>        |
->> [64K, 128K)          199 |@@@@@@@@
->>        |
->> [128K, 256K)         146 |@@@@@@
->>        |
->> [256K, 512K)         124 |@@@@@
->>        |
->> [512K, 1M)            17 |
->>        |
->> [1M, 2M)               0 |
->>        |
->> [2M, 4M)               0 |
->>        |
->> [4M, 8M)               1 |
->>        |
->>
->>
->> @locked_time_level[4]:
->> [4K, 8K)               2 |@@
->>        |
->> [8K, 16K)             17 |@@@@@@@@@@@@@@@@@@@@@@
->>        |
->> [16K, 32K)            40
->> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [32K, 64K)             4 |@@@@@
->>        |
->>
->> --Jesper
->>
+Kind regards,
+Niklas
 
