@@ -1,124 +1,167 @@
-Return-Path: <linux-kernel+bounces-255084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F310C933B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:53:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CD8933B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFBF6281825
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC3EB224E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C1817E8FD;
-	Wed, 17 Jul 2024 10:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0F617F397;
+	Wed, 17 Jul 2024 10:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZW0Rk4tl"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sSzQKesS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Uj/+wQX0"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDDA1878
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361C717DE29;
+	Wed, 17 Jul 2024 10:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721213596; cv=none; b=Z40HCBtlMHSUAqMO/UYJiKRxfMsF4FrMX4gDjJTxS2RRNzpRusxe72Cpz/qE7xl93QCd9VFQCTn1QAk2vC3Ui0mLkG/wOroX+Mwn/8SL0mQ0S75/jmfGNu0neCdv/A368vVij8jVq8rLsqzo66S2tB1D6yBRMCYlVQMU5qPEJA4=
+	t=1721213711; cv=none; b=l0f7lL4PEITz4NtMVGmatwWyNwYGN7+h9PXGGKWJivjMdBehu8CyrFoZkT94iUMntVM+FkviOIonV+lOvz97LtybyQ2KRCAoEv4aJfHyrosNmxBIUsyAYRgq4tEZ12u8yXd+MtcwEapTzSChbhd7f6ZiNJvGzuqlQztg4C1Knsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721213596; c=relaxed/simple;
-	bh=Yyz0hvRoEoO1j+SXUsrzgM/tvU+qrTtOStlqr4YUMOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CmFJDS+eo6yZRjo4guXWj3qSyOFM2xZ2GlUWrFNC3QwEmUeZFhAdboqGbWXKbsIciSfARhVUCd5L5uT4S1PQbePk8utkVbbVXe4Hc9qSLfYdac8/7tEXtxxQ3H10eUm+9pJtD2oaVFlP/j1pBi6pA/PqMXeLB6RnnuLJfn2DXNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZW0Rk4tl; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77c0b42a8fso114531466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721213593; x=1721818393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r0u3BVutdlg3A7OrIrYupQbFZ6CRR+UFVFVGoNprDxo=;
-        b=ZW0Rk4tlnPIwa1hwFeSaG1Kl2bW/8+ns+otMrbn87dcG95pnhnYsAs4eu1TyC9JJ5r
-         5Y1nFJGDclCeE4Pd9jlK6VKxhK0lGlcv3jyejoK0qkE199WqsSDQsOQhOa3iyR64nXpi
-         QR4oObTSNCSE69rYSr9RSm5cLNdUv99zlCkTMkJskrIs3gJSRnjO+pGhZcYxcgGloD/6
-         T8Rl13zgVfkMpSdR0DRnzPh6ljbq8DuO/RkI2CzVYFnoDlq0f+vZVVvGzF9gVx7GOaCB
-         WkdrMJRAkz16/U41KoCOPghGofcLVTm2w5jY2eVWmbw8jS4Lj/STszsCULyVsUP5OniT
-         qzEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721213593; x=1721818393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r0u3BVutdlg3A7OrIrYupQbFZ6CRR+UFVFVGoNprDxo=;
-        b=IUpXvmga0d0abaCHeDTZEoUeHKVlkZTvq6G/K/4YQprRl6PdpxRV3OyJaCgMWj5naF
-         mFgk4TciPvNOhunNnb/xaBycy7RJddGCoNsLxxmvYlQA3oNj7EE4iLZZfT8a8uQth0AO
-         rQZdEYzz0QXN+ZasOdMNm6QRoPcjTvTndNzy9pRvzcFC9fPaMuwvlTXEJIdSTj4vOPVn
-         4ea3SqhW6YiyWZ/x7N4gcgqopB+Ya5pBtTF89FA2xTvslWxSGNaLp1MZo3YMpw3yeSBN
-         h+ss3ySTYmm3QbkT3/hRZmO15SY6h5vTYb4b0YQk6XRQgfIBY/gEAGmFie/J3x9C1uMM
-         Xu8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHISgHqsR01MH1ixm+VahRFKdkh0KzoL1OA7KwP+K7iqTKRpTT3MqCUA4XOsG5hTQ3cmVeUXz11cfx9lmoVAOH3YfZ50weEgaCg3G
-X-Gm-Message-State: AOJu0YxpiEZGqOP9cQqdVwjPg9CisDCaTLiLowToNLRAbFWAeqQj+dnn
-	cjyqekLPaC3gJCHSAmK4xXRwXg4GxD+NNZg1PNuNUKcU8XqCAyp/lzjJCflhrUAcpgqkTUw6b1L
-	uf7c=
-X-Google-Smtp-Source: AGHT+IGE8PKdWdKQ0CmFb3axsD/WyHTpwJ07wSanHT11iLxZDrnuLM5PXMhQIeSftRRiTIbWOUilvw==
-X-Received: by 2002:a17:907:7701:b0:a6f:a2aa:a4c7 with SMTP id a640c23a62f3a-a79eda04102mr461572866b.3.1721213593565;
-        Wed, 17 Jul 2024 03:53:13 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e5asm431644766b.109.2024.07.17.03.53.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 03:53:13 -0700 (PDT)
-Message-ID: <7fcc309e-f1c9-4693-a2d1-76df85021dff@linaro.org>
-Date: Wed, 17 Jul 2024 11:53:11 +0100
+	s=arc-20240116; t=1721213711; c=relaxed/simple;
+	bh=AMsDz/Ku3aEvwfE1d5aax219Ew2wLx/1hyo1nCxhUyo=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=QbN1kmwT4dp6YckCVg6IpoQ3YSpynBXjONQQkB7XIjice5A3DR0Em6crSoA3IWPoWNSHu82dOMaKF+b7Cmt7pqyLJ5TT3PNyyt+HZlWZOAXCU+agDoEkp7oNobPQfJRLGcTHvdUKyHn7ytsPagYBiwXRIfcvKy8+jjZVmqWy3Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sSzQKesS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Uj/+wQX0; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 547B71380286;
+	Wed, 17 Jul 2024 06:55:08 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Wed, 17 Jul 2024 06:55:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721213708; x=1721300108; bh=8TPRB3j9rL
+	zE1rwWl+Ls1dJsZyiFWQAyaVNpYBWytB8=; b=sSzQKesS28tzRD3ycMfsHJZzHM
+	mb+/LOuqTrCGwZJDGcQNnJdKH0Sj7JxGiyACbnSjdZ7jhKBEZhC26nSEXXff01YA
+	3JpotsV7/zJ5MCe+fdyamsjsp9S2DrchwkfORG/ELfJ3aXGRzEWYCd3zDP9Bk8HS
+	sGiiCkdFEOOq97/M6iqGdf4xbII/G8ccZWbljeSipuzObXbMUFC2VS/nqGduJ+kx
+	y07wayoLPaub+/tRYZ8V7VPF80IFiCXx+01rWOqumEUBbAPnjdCNT9jh51VvokDA
+	end0ch72kvrXPf2O/vnpUjMlgzNMfF+pA05NYI6k2P/CsDIDXTh+ilVpvT5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721213708; x=1721300108; bh=8TPRB3j9rLzE1rwWl+Ls1dJsZyiF
+	WQAyaVNpYBWytB8=; b=Uj/+wQX06B0+FbPAETtoiXpL19N2SDw2r05omykUv9vm
+	UQ5jN/5ooHFpKmC9/OeTLL/mryXkc+YdSCIbrqlgkbv3+XccswlTzizUh+8cP+IM
+	HJCDQz9PpU692+Tl3nYX54rTTCZ9ds+kC6kEsmRFV3vV536xSEkjUAl+N8diE1i9
+	noad3VfSoGRNuWozy1WyABALzTvES+8zWTHpl1+Hr4WXO+jNY6+EV3earT56nH+t
+	iSweoq2QRsewPiFbHluLa+M2Ge+gJf7KYIK/nzoCoxpfyxyfefWwmpdxm6YoK1Pa
+	7xVk1Bxni+/9WO5T8w/NDQyzIco11dk5HSvl10l6KQ==
+X-ME-Sender: <xms:C6OXZuQOkBGuoTGdD5m5RKKuty_76kxEVrX373t3PNyieEnI7U3eUA>
+    <xme:C6OXZjxL3aEmkVItid8N0JP73i5KAG3vPgc3CMf51q6jtRBrwlPslTjnkBmQB1zHG
+    HVrJSgDm8_j4GRDSjk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeigdeffecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:C6OXZr1IgRed4C-ppieiHgf6s7NlVM1e-Ll20ASfZcKMAXmjw-RtvQ>
+    <xmx:C6OXZqAyhWKbw21N6I3g1uwuLk08AmNjKjHvsb2gM7PZ0X_Wt--2aQ>
+    <xmx:C6OXZngS9kXR_S5sGCT-6pUxi1CsSNHKGPU2wArBAcGIUJffhG0IrA>
+    <xmx:C6OXZmpJ5HUuZfi2Eqz99SkyJK2dvK0bGYs7ddTni3cSWiNH7X1NCQ>
+    <xmx:DKOXZsYyZp4SgPBafctwqljY71fPeEOjc5k00ZIdbHF5w7UykbObrQto>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id EB13219C005E; Wed, 17 Jul 2024 06:55:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <f4072105-e0e2-46c8-82ed-92105b43a345@linaro.org>
- <6124f9e9-3fdf-29b1-128f-c58f5ebe1424@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <6124f9e9-3fdf-29b1-128f-c58f5ebe1424@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-Id: <91b10591-1554-4860-8843-01c6cfd7de13@app.fastmail.com>
+In-Reply-To: <4d471a38-f86f-429d-a1a3-b882439ef7ba@app.fastmail.com>
+References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
+ <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
+ <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
+ <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
+ <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
+ <2b6336d1-34e0-48dd-b901-7b5208045597@app.fastmail.com>
+ <ZpdnhhaQum_epcGp@hovoldconsulting.com>
+ <be80d8f6-2a1b-4f63-a43e-652fa5328d11@app.fastmail.com>
+ <Zpd-Bx3VwrYWVeTs@hovoldconsulting.com>
+ <4d471a38-f86f-429d-a1a3-b882439ef7ba@app.fastmail.com>
+Date: Wed, 17 Jul 2024 12:54:46 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Johan Hovold" <johan@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-snps-arc@lists.infradead.org
+Subject: Re: [GIT PULL] asm-generic updates for 6.11
+Content-Type: text/plain
 
-On 15/07/2024 11:36, Satya Priya Kakitapalli (Temp) wrote:
-> This clock is PoR ON clock and expected to be always enabled from HW 
-> perspective, we are just re-ensuring it is ON from probe. Modelling this 
-> clock is unnecessary, and we have been following this approach for  gdsc 
-> clock in all the recent chipsets, like for example sm8550 camcc.
+On Wed, Jul 17, 2024, at 11:36, Arnd Bergmann wrote:
+> On Wed, Jul 17, 2024, at 10:17, Johan Hovold wrote:
+>> On Wed, Jul 17, 2024 at 10:01:10AM +0200, Arnd Bergmann wrote:
+>>
+>> Yeah, that's not something I noticed at least (and I assume I would
+>> have). And I only did aarch64 builds on a 6.9 x86_64 host (make 4.4.1).
+>
+> Ok, I can reproduce the problem now: I installed a Fedora
+> VM guest and chroot mount and I see the same issue in there.
+>
+> My normal Debian host has make 4.3, so I'll see if I can figure
+> if a specific change in make does it.
 
-Having a difficult time following the logic
+I see that there is a version check in scripts/Makefile.include
+from commit 875ef1a57f32 ("kbuild: use .NOTINTERMEDIATE for
+future GNU Make versions") that detects Fedora's make 4.4.1
+as newer than 4.4, so for the first time enables this
+logic that I did not see on Debian.
 
-- Re-enabling an already enabled always-on clock is necessary
-- Modelling the always-on clock in the CCF to park it at XO is
-   unnecessary
+In my scripts/Makefile.asm-headers, I had copied the 'FORCE'
+from the existing rules in arch/x86/entry/syscalls/Makefile
+etc without fully understanding what that does.
+It looks like this does not make a difference for make-4.3
+but is actually wrong for make-4.4 on the generic rule.
 
-I think that's a pretty vague argument to be honest.
+This makes it work for me with both versions of make:
 
----
-bod
+--- a/scripts/Makefile.asm-headers
++++ b/scripts/Makefile.asm-headers
+@@ -77,14 +77,14 @@ all: $(generic-y) $(syscall-y)
+ $(obj)/%.h: $(srctree)/$(generic)/%.h
+        $(call cmd,wrap)
+ 
+-$(obj)/unistd_%.h: $(syscalltbl) $(syshdr) FORCE
++$(obj)/unistd_%.h: $(syscalltbl) $(syshdr)
+        $(call if_changed,syshdr)
+ 
+ $(obj)/unistd_compat_%.h: syscall_compat:=1
+-$(obj)/unistd_compat_%.h: $(syscalltbl) $(syshdr) FORCE
++$(obj)/unistd_compat_%.h: $(syscalltbl) $(syshdr)
+        $(call if_changed,syshdr)
+ 
+-$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl) FORCE
++$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl)
+        $(call if_changed,systbl)
+ 
+ # Create output directory. Skip it if at least one old header exists
+
+Masahiro, does that make sense to you? I assume you can
+explain this properly, but I'll already send a patch with
+this version.
+
+       Arnd
 
