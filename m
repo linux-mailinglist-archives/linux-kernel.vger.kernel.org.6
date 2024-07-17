@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-254942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77E493398A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFB093398C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453B01F229C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869621F233BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344BF40BE3;
-	Wed, 17 Jul 2024 09:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C7F46450;
+	Wed, 17 Jul 2024 09:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aurbL6TI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IOLWhxuR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA173BBCB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1263CF7E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206919; cv=none; b=Q3xDeYrjjdnGQdLeDM027GfaxaAmZjSSvt8irmHWY36llAI/WbAKNXVyKeRFVnWz0V4nyBygjeexBc5UxLvhgoInoBIkN6G0IpTgAScsQ44a6PS0Co5tsBsP17F01EzJMfoKyMPtH89yyVDLlVU78i960Z5QFEcdCTB4YEcARhw=
+	t=1721206922; cv=none; b=dJ7zOBXpMSlCMueTvElWG4BjykcB76ZwadYbv3sikm554MjhOFjFyGPYGtas6cZ0L73WRnv9c5jHLAXIBpyNTL8cq3D/7mic0XF0UKgnb5SoidW4aLXaqCv4FcB8qIZixi4cnjxv2rp7OL5E0oiOoVHvuOestvDhmKG5g4Wz6Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206919; c=relaxed/simple;
-	bh=9NCeiHw/pI0q1akIqoQSlaU7NeHT9SWyjW7WQSdsL3I=;
+	s=arc-20240116; t=1721206922; c=relaxed/simple;
+	bh=2SY4kino7DfBR2QzmbrqcxQZV1XTYHYltN/SsBfDPpc=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RwZM+v+YvzLQp/4ZdVWVSzuneYhR+6Bt8POTslDOprKenyGkgUhiqD59wHua41wQC7p5QkXy3JW/hW2i+OcnTRzTpAaY6Asl0hUDidh0Dp0kk4x7wl/8hlYZ5AmQMyYv2lQmuXZ/DI8Hy4OZHBaqdKH1+9trPsAPggF79Npvtvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aurbL6TI; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=b8/E6H8wXgt/F6dXpGpmSayRz+9lN/xt2/esAM9N1pEk5EtsVHUAZdOIDNOVO7vS0dgAUANbTaQaG+O6VzR8xBOukIsP8nRVQGU8tx0MF60MFQ02UP6cprwI1GfpMJiYZK3dAim8Jvt/xBaIJcrbsH3wtQU6sFSmX3WkKJKQaZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IOLWhxuR; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721206917;
+	s=mimecast20190719; t=1721206919;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ynu5l0dA8yLcoF8+u6imCBMvI85koxu/QAk/w/8RBTM=;
-	b=aurbL6TIHUUMixvDpvRTeESC56iKviMW7wYOVNpRFBrXSRcTHKCSQcXvZaAlpBRulDifBX
-	5VjjlYZts0LNTm+xqjtC5Fv+ca8NUEffQ9NiH1yQstoiCpf9CF02D1zIfaWRxgul8JguKY
-	s6NgqMFNOCm5M549rBB1SX0GbmQUVrI=
+	bh=kRuBANNGOfAVhYgcUec7uelK4S9x1EhlXp94QYTaMXE=;
+	b=IOLWhxuRkbJHBq6nc3lJQrDFsWI+Ina21JNs2Jc0bZ0UMvQCFWO0iQWxqu1jIUsFrrUfvA
+	OOnYw7RxBusI6fwb9mXotXv1HKwoU8VKWvfFk3awG5n/5y3kBNO9MVN+KW4610czXojI48
+	0nfZHY9hyOwJE8Hwo5gHE2A8PI6FFqY=
 Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-471-CdEsZnMnOkujsJ1i0E8BUg-1; Wed,
- 17 Jul 2024 05:01:50 -0400
-X-MC-Unique: CdEsZnMnOkujsJ1i0E8BUg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-ghtTmlCHNCu3XQ6cPlgK4A-1; Wed,
+ 17 Jul 2024 05:01:55 -0400
+X-MC-Unique: ghtTmlCHNCu3XQ6cPlgK4A-1
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82A3E1955D53;
-	Wed, 17 Jul 2024 09:01:48 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3357A1955BFC;
+	Wed, 17 Jul 2024 09:01:53 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.39.194.18])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3CAD81955F40;
-	Wed, 17 Jul 2024 09:01:43 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E44E81955F40;
+	Wed, 17 Jul 2024 09:01:48 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -71,9 +71,9 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	linux-fbdev@vger.kernel.org
-Subject: [PATCH 1/3] drm/panic: Add drm_panic_is_enabled()
-Date: Wed, 17 Jul 2024 10:48:39 +0200
-Message-ID: <20240717090102.968152-2-jfalempe@redhat.com>
+Subject: [PATCH 2/3] fbcon: Add an option to disable fbcon in panic.
+Date: Wed, 17 Jul 2024 10:48:40 +0200
+Message-ID: <20240717090102.968152-3-jfalempe@redhat.com>
 In-Reply-To: <20240717090102.968152-1-jfalempe@redhat.com>
 References: <20240717090102.968152-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -85,64 +85,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-It allows to check if the drm device supports drm_panic.
-Prepare the work to have better integration with fbcon and vtconsole.
+This is required to avoid conflict between DRM_PANIC, and fbcon. If
+a drm device already handle panic with drm_panic, it should set
+the skip_panic field in fb_info, so that fbcon will stay quiet, and
+not overwrite the panic_screen.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/drm_panic.c | 20 ++++++++++++++++++++
- include/drm/drm_panic.h     |  2 ++
- 2 files changed, 22 insertions(+)
+ drivers/gpu/drm/drm_fb_helper.c  | 2 ++
+ drivers/video/fbdev/core/fbcon.c | 7 ++++++-
+ include/linux/fb.h               | 1 +
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 948aed00595e..d9a25c2d0a65 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -703,6 +703,26 @@ static void debugfs_register_plane(struct drm_plane *plane, int index)
- static void debugfs_register_plane(struct drm_plane *plane, int index) {}
- #endif /* CONFIG_DRM_PANIC_DEBUG */
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index e2e19f49342e..3662d664d8f9 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -40,6 +40,7 @@
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_panic.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_vblank.h>
  
-+/**
-+ * drm_panic_is_enabled
-+ * @dev: the drm device that may supports drm_panic
-+ *
-+ * returns true if the drm device supports drm_panic
-+ */
-+bool drm_panic_is_enabled(struct drm_device *dev)
+@@ -524,6 +525,7 @@ struct fb_info *drm_fb_helper_alloc_info(struct drm_fb_helper *fb_helper)
+ 	fb_helper->info = info;
+ 	info->skip_vt_switch = true;
+ 
++	info->skip_panic = drm_panic_is_enabled(fb_helper->dev);
+ 	return info;
+ 
+ err_release:
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index 3f7333dca508..498d9c07df80 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -270,12 +270,17 @@ static int fbcon_get_rotate(struct fb_info *info)
+ 	return (ops) ? ops->rotate : 0;
+ }
+ 
++static bool fbcon_skip_panic(struct fb_info *info)
 +{
-+	struct drm_plane *plane;
-+
-+	if (!dev->mode_config.num_total_plane)
-+		return false;
-+
-+	drm_for_each_plane(plane, dev)
-+		if (plane->helper_private && plane->helper_private->get_scanout_buffer)
-+			return true;
-+	return false;
++	return (info->skip_panic && unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID));
 +}
-+EXPORT_SYMBOL(drm_panic_is_enabled);
 +
- /**
-  * drm_panic_register() - Initialize DRM panic for a device
-  * @dev: the drm device on which the panic screen will be displayed.
-diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-index 73bb3f3d9ed9..c3a358dc3e27 100644
---- a/include/drm/drm_panic.h
-+++ b/include/drm/drm_panic.h
-@@ -148,11 +148,13 @@ struct drm_scanout_buffer {
+ static inline int fbcon_is_inactive(struct vc_data *vc, struct fb_info *info)
+ {
+ 	struct fbcon_ops *ops = info->fbcon_par;
  
- #ifdef CONFIG_DRM_PANIC
+ 	return (info->state != FBINFO_STATE_RUNNING ||
+-		vc->vc_mode != KD_TEXT || ops->graphics);
++		vc->vc_mode != KD_TEXT || ops->graphics || fbcon_skip_panic(info));
+ }
  
-+bool drm_panic_is_enabled(struct drm_device *dev);
- void drm_panic_register(struct drm_device *dev);
- void drm_panic_unregister(struct drm_device *dev);
+ static int get_color(struct vc_data *vc, struct fb_info *info,
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index db7d97b10964..865dad03e73e 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -510,6 +510,7 @@ struct fb_info {
+ 	void *par;
  
- #else
+ 	bool skip_vt_switch; /* no VT switch on suspend/resume required */
++	bool skip_panic; /* Do not write to the fb after a panic */
+ };
  
-+bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
- static inline void drm_panic_register(struct drm_device *dev) {}
- static inline void drm_panic_unregister(struct drm_device *dev) {}
- 
+ /* This will go away
 -- 
 2.45.2
 
