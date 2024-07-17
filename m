@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-255164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5659E933CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:28:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8348A933CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 884D61C210CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:28:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 052CAB232A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5EB17FABF;
-	Wed, 17 Jul 2024 12:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TnQU7PO+"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D1417F378;
-	Wed, 17 Jul 2024 12:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA40317FAA4;
+	Wed, 17 Jul 2024 12:25:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923E414F6C;
+	Wed, 17 Jul 2024 12:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721219281; cv=none; b=Ep+w9VQocu3IDUrMV/lXgkI9GKNxV2UfZM1XT4LVVHj3gP0aUOfj6sR8WtYxwRH0esVPEhW/RgP36NPppp4xdSDifdDvMLLzq9p6brZcaHjp13HHCivsxSOl0WUTucfzwqsKz2jJq4R5F7uBtI/IivgVj30DIKhbq4Ei4+d4gnY=
+	t=1721219107; cv=none; b=oE3xhwiYrYj6iwkflCuP483uzD/pFst+pCJw68YaBARltbv0ZRsRe1hnckvTR93kv19z/wEQkhT5VDnBsvd/Met/CQAlXmE2PZxEIhNWzkU7U4YwrcvoewPWnzS0VHM70mMvplYJIY9Kz5D0SLmDn4eLzW2VamUp7jVqwVOBrho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721219281; c=relaxed/simple;
-	bh=8pdXIkxSbxEEaa0dOomW4yGjo/Lwu7C2h4OWoG18TK0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=pim8UBusAsLFEe1AtysF4SIBrhDYOOguze2lQp2EeDZUpom+LRymqkbKMGsj+NDXcQ5PENqgIn/6fROHdmHE9W/KbuRCj1g1oloTpTmzapFXRhpz6vQF7Al8s5F2AFiEIqFROHuyLr9rBVdcDhCk6L3ahKClhgvwnhQ/8oMfd8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TnQU7PO+; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HCPvMC001221;
-	Wed, 17 Jul 2024 12:27:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id; s=corp-2023-11-20; bh=7e8rCC
-	q6Pvp/2JOR9RDufes1ne0efzU0ciVK4xUxmGw=; b=TnQU7PO+eVKarRXz7IvJnF
-	eyeDZcbIrVgbQagOKT5BYGZYzxYPqWhOlbGBq8jo8TVqpxCUEht3aLCgLr4QzIzm
-	Tx9iutcj8GeYlmWHesgKKZmv+b7y4/04vkyT/IIJE76C4AuhSIw6cX4CYFfm+Uxi
-	GREKFLQ7EBglci7OBQeZzz1koCmeBftZOHAABVKXVGpNwjQiwCKse03iJayCWqqc
-	Z8sZMdoD/3SVYxXB0jWz9K85ynaaw+0qtj4NAAhP1JVMYe/dui63WV2vsRF3zPOe
-	LAHKGLMSfDuszCOF4Zul8rSE4fKfR1IaIBdszBK3hQLuAd28toUUi9AKaKuIqtfA
-	==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40edxpr04v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 12:27:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46HCHgHJ006831;
-	Wed, 17 Jul 2024 12:27:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40dwexgdyr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 12:27:45 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46HCRjXZ040778;
-	Wed, 17 Jul 2024 12:27:45 GMT
-Received: from gkennedy-linux.us.oracle.com (gkennedy-linux.us.oracle.com [10.152.170.45])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40dwexgdyd-1;
-	Wed, 17 Jul 2024 12:27:45 +0000
-From: George Kennedy <george.kennedy@oracle.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, tony@atomide.com,
-        andriy.shevchenko@linux.intel.com, l.sanfilippo@kunbus.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc: george.kennedy@oracle.com, stable@vger.kernel.org,
-        harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] serial: core: check uartclk for zero to avoid divide by zero
-Date: Wed, 17 Jul 2024 07:24:38 -0500
-Message-Id: <1721219078-3209-1-git-send-email-george.kennedy@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_08,2024-07-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- malwarescore=0 adultscore=0 phishscore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407170095
-X-Proofpoint-GUID: 8_O0akFqp8QVPViJ8t8DIDwoE3iiXNnl
-X-Proofpoint-ORIG-GUID: 8_O0akFqp8QVPViJ8t8DIDwoE3iiXNnl
+	s=arc-20240116; t=1721219107; c=relaxed/simple;
+	bh=Udj7XoucWRUUlC3jekp3BUuf6p+q68ddaW4kS10dPxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=im/AuK3xgB8uUV/MnXRwJjSXNeHWf9SGkBF9iXy+U2NoB0uhJuvhd2jGUMD9ltu1JnUqrG/DzhpvHIbfa5W3EON0oRpZ0gJTp5bJPjftsmKC/wr0MrzXrR+pnBRsO8pAbBPZhOR+g1zbbstj72C8nF0lU9NrC0XVOPjvvYwSrW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21AE11063;
+	Wed, 17 Jul 2024 05:25:30 -0700 (PDT)
+Received: from [10.57.77.222] (unknown [10.57.77.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3263F766;
+	Wed, 17 Jul 2024 05:25:03 -0700 (PDT)
+Message-ID: <423341da-57ae-4e44-a7f6-74f8ebfd3962@arm.com>
+Date: Wed, 17 Jul 2024 13:25:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: Skip test for non-LPA2 and non-LVA systems
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, Anshuman.Khandual@arm.com, broonie@kernel.org
+References: <20240717111011.316037-1-dev.jain@arm.com>
+ <da0054f5-b84e-4635-ae81-9c72f2f25542@arm.com>
+ <3782befb-c317-4bb0-a279-c90adb2ec47b@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <3782befb-c317-4bb0-a279-c90adb2ec47b@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Calling ioctl TIOCSSERIAL with an invalid baud_base can
-result in uartclk being zero, which will result in a
-divide by zero error in uart_get_divisor(). The check for
-uartclk being zero in uart_set_info() needs to be done
-before other settings are made as subsequent calls to
-ioctl TIOCSSERIAL for the same port would be impacted if
-the uartclk check was done where uartclk gets set.
+On 17/07/2024 13:11, Dev Jain wrote:
+> 
+> On 7/17/24 17:27, Ryan Roberts wrote:
+>> On 17/07/2024 12:10, Dev Jain wrote:
+>>> Post my improvement of the test:
+>>> https://lore.kernel.org/all/20240522070435.773918-3-dev.jain@arm.com/
+>>> The test begins to fail on 4k and 16k pages, on non-LPA2 systems. To
+>>> reduce noise in the CI systems, let us skip the test when higher address
+>>> space is not implemented.
+>>>
+>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>> ---
+>>> The patch applies on linux-next.
+>>>
+>>>   tools/testing/selftests/mm/va_high_addr_switch.c | 14 +++++++++++++-
+>>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/mm/va_high_addr_switch.c
+>>> b/tools/testing/selftests/mm/va_high_addr_switch.c
+>>> index fa7eabfaf841..c6040e1d6e53 100644
+>>> --- a/tools/testing/selftests/mm/va_high_addr_switch.c
+>>> +++ b/tools/testing/selftests/mm/va_high_addr_switch.c
+>>> @@ -293,6 +293,18 @@ static int run_test(struct testcase *test, int count)
+>>>       return ret;
+>>>   }
+>>>   +/* Check if userspace VA > 48 bits */
+>>> +static int high_address_present(void)
+>>> +{
+>>> +    void *ptr = mmap((void *)(1UL << 50), 1, PROT_READ | PROT_WRITE,
+>>> +             MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+>> I think there is (very unlikely) possibility that something is already mapped at
+>> this address so it will be replaced due to MAP_FIXED. That could break the test.
+>> But the only way something could be already mapped is if ARM64_FORCE_52BIT is
+>> set and in that case, the test will fail anyway, right? So I think this is fine.
+> 
+> The testcases already assume that high addresses must be empty. Yes, FORCE_52BIT
+> is the only way something could already be mapped at high addresses, but in that
+> case the test fails trivially.
 
-Oops: divide error: 0000  PREEMPT SMP KASAN PTI
-RIP: 0010:uart_get_divisor (drivers/tty/serial/serial_core.c:580)
-Call Trace:
- <TASK>
-serial8250_get_divisor (drivers/tty/serial/8250/8250_port.c:2576
-    drivers/tty/serial/8250/8250_port.c:2589)
-serial8250_do_set_termios (drivers/tty/serial/8250/8250_port.c:502
-    drivers/tty/serial/8250/8250_port.c:2741)
-serial8250_set_termios (drivers/tty/serial/8250/8250_port.c:2862)
-uart_change_line_settings (./include/linux/spinlock.h:376
-    ./include/linux/serial_core.h:608 drivers/tty/serial/serial_core.c:222)
-uart_port_startup (drivers/tty/serial/serial_core.c:342)
-uart_startup (drivers/tty/serial/serial_core.c:368)
-uart_set_info (drivers/tty/serial/serial_core.c:1034)
-uart_set_info_user (drivers/tty/serial/serial_core.c:1059)
-tty_set_serial (drivers/tty/tty_io.c:2637)
-tty_ioctl (drivers/tty/tty_io.c:2647 drivers/tty/tty_io.c:2791)
-__x64_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:907
-    fs/ioctl.c:893 fs/ioctl.c:893)
-do_syscall_64 (arch/x86/entry/common.c:52
-    (discriminator 1) arch/x86/entry/common.c:83 (discriminator 1))
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+agreed.
 
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: George Kennedy <george.kennedy@oracle.com>
----
- serial_struct baud_base=0x30000000 will cause the crash.
+> 
+>>
+>>> +    if (ptr == MAP_FAILED)
+>>> +        return 0;
+>>> +
+>>> +    munmap(ptr, 1);
+>>> +    return 1;
+>>> +}
+>> I'm guessing this will cause a function-not-used warning on arches other than
+>> arm64? Perhaps wrap it in `#ifdef __aarch64__`?
+> 
+> Ah yes, I just checked and that is true. I shall post v2 in some time, shall
+> wait if any more comments are there.
 
- drivers/tty/serial/serial_core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+With this fixup:
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 2a8006e3d687..9967444eae10 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -881,6 +881,14 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
- 	new_flags = (__force upf_t)new_info->flags;
- 	old_custom_divisor = uport->custom_divisor;
- 
-+	if (!(uport->flags & UPF_FIXED_PORT)) {
-+		unsigned int uartclk = new_info->baud_base * 16;
-+		/* check needs to be done here before other settings made */
-+		if (uartclk == 0) {
-+			retval = -EINVAL;
-+			goto exit;
-+		}
-+	}
- 	if (!capable(CAP_SYS_ADMIN)) {
- 		retval = -EPERM;
- 		if (change_irq || change_port ||
--- 
-2.39.3
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+> 
+>>
+>> Thanks,
+>> Ryan
+>>
+>>> +
+>>>   static int supported_arch(void)
+>>>   {
+>>>   #if defined(__powerpc64__)
+>>> @@ -300,7 +312,7 @@ static int supported_arch(void)
+>>>   #elif defined(__x86_64__)
+>>>       return 1;
+>>>   #elif defined(__aarch64__)
+>>> -    return 1;
+>>> +    return high_address_present();
+>>>   #else
+>>>       return 0;
+>>>   #endif
 
 
