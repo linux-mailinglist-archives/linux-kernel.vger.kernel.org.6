@@ -1,120 +1,101 @@
-Return-Path: <linux-kernel+bounces-254972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7659339EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12359339F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55ED7281DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5E11C2170E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2314E47F4D;
-	Wed, 17 Jul 2024 09:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0D041C6A;
+	Wed, 17 Jul 2024 09:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsyL02OW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GifQ4lNb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E94244C93;
-	Wed, 17 Jul 2024 09:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF0D1BF37;
+	Wed, 17 Jul 2024 09:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721208770; cv=none; b=LLXrHK21eImzvYaAjasbvsClzmGtcvX8Y3igy6rZvBjW0yzcZ8uVs59wukuwSZGbtzC716cmy0UDtjXn9HumsWyhJ9ib439nZY90ChWha9qZOvsMUEsUcLku0mplesCsRZ0JJupt56GTYllNnb4Gf8/paB1lzi3yM+YbA0n9t4k=
+	t=1721208870; cv=none; b=EnR2w1f5lRwPR/zj/qEVqHgfTSuageRfCLAsoGWuYuHKYCfpM4COcaJsJ3mN9z/mHS1Cc1Pvp6Nn0zBMIlDayqueGKCtVAPa216mEf6sdLXmfhf/OBQb07Iwn+DrWFzjSF9kJSHCnNkWslQd5WLIbtuud8Okhzi8degZxNQb2EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721208770; c=relaxed/simple;
-	bh=BPoikN4eZbA2j6qnyQHeGQ3/OcpZNXn5SlombO1h5qQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oIzQJXxBJCfNAWJDELGeaS3xgYVnZZYaVTL5Vzahg0NmkJuhU2GplV822HvdHPOYv4O4pTVaaj9ysNq5327Ew5647c5p0BsG12xTXJp4R1ydJgSk8CO+nREWkXUNYGISnAAp4+k73bVM8lxFi72yIsdha4IjOhEisTXopWcJo4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsyL02OW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B4D9C4AF0C;
-	Wed, 17 Jul 2024 09:32:50 +0000 (UTC)
+	s=arc-20240116; t=1721208870; c=relaxed/simple;
+	bh=NZKuHsBukGGdYd0w5Ke97TNmqKDBxrBIkmwjfb/saEw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MmAFuDAnFC7FqcOcDCU6fDxT9VtjplJQYZK2RwlDHbBA2meVj/JVEBBkhT+QCxi7hh+T4oAV4WLQGAG+nO8Uq5QxobwLLfXkAkU6sP0ltozp0L5B6673QiBJJyThWLeFGRuIKamMznJBUj7m4EbDeAnCqFlVmv2xUy6ByY8E74Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GifQ4lNb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C66AC32782;
+	Wed, 17 Jul 2024 09:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721208770;
-	bh=BPoikN4eZbA2j6qnyQHeGQ3/OcpZNXn5SlombO1h5qQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FsyL02OWCdPudNvDch8VJkS2pL8BXFbouQhrvOES9HNNPe7aVLlXyyeZJwQmAcHbN
-	 +nKwa/GfHpp4/GlPOaO1BaY9hvGdoYxPyy2PiRdZc2P+/owYMxB4ySL4vVIL4zV1wi
-	 9kt5XFq8flxXCc3X6GAPBhTH8M/IGinUnZdgj0xOrA7sNFKJQoovMsP1sO1YkczafW
-	 OJwTaeuB6xkvOptTNk/OKKqWuAJNNgESTTjyPgVOu1BcIqVpeH5XYZQXaM+kDw+qS3
-	 qCbLDq4zAzI+fifZvm+LB4+pUTTMOWTwRvMbMANLKcVhDbG1d3wSe2ydWMCEu8p7fq
-	 V/LbXCDm4Ln0g==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eea7e2b0e6so89386731fa.3;
-        Wed, 17 Jul 2024 02:32:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGyj//kwLwIGcM22+9APJfSioDguWdPiPEzlvPnOKkGHzmwodqtW7gthhpZrzkUGVdU6Imx3oKlccOPnTWw7rX02dwxUqzkusTRIH9i65IjlU6H/gV5RK7b4/T9/xEPC1gDExkLELsTWpWhArgY7+m6BuDcgE54Ser2Xf2lAYxEgu0mw==
-X-Gm-Message-State: AOJu0YxCAWic5xS/FETprR69Lm7hvdB2uIV23ZuFcwiXCPxJrOZEz5/W
-	CCDXpPsLxTnLQS8JewrYqoHGH2Uyz8d4u84BbIVCr5KgYUQQZg5S8wLqH4YiqWs82/m2SOWTz5t
-	lwR4gzvhV0TKSHRgVLmWVL0WafUg=
-X-Google-Smtp-Source: AGHT+IG7M8ib0gDD7vtyWehz0t3NlPOXfHBE2/04rhjPNb3w6EkGrjJ+E+Vh6YALH0AXX9TE2DCx448+9eEQnyUh1yM=
-X-Received: by 2002:a05:651c:232:b0:2ee:d5c3:3878 with SMTP id
- 38308e7fff4ca-2eefd14cf55mr7287111fa.37.1721208768530; Wed, 17 Jul 2024
- 02:32:48 -0700 (PDT)
+	s=k20201202; t=1721208869;
+	bh=NZKuHsBukGGdYd0w5Ke97TNmqKDBxrBIkmwjfb/saEw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=GifQ4lNbNfBDnxlKn1CnW9N2h1NhEQyA23Mf4t1JeWZ3MPRlH9f97Z9PQXAKKlxLM
+	 e7VqSaTCVFa2xxNgj4y9e+Qaav7M24SjuL0gE8hLofnH3+QyIPMeKpltLigwXLayMy
+	 qdjSOxOEBah+MnBoTlvlfmcoExKlrxr2nYS0wVH6+Z5WaKXpTe2nE2vgecNDuC8ihm
+	 AaFgdVT8WZg+DMLiOn25sJJPPCcwCWj9jMld+8zttI5jaLAzZc5YpN19dYuAjSqtQ0
+	 dMT+Qqh8G0jR5TUqAIv1nEFJ8Ihuw0kNEKEdVgqVDrjzGcA7AaNsUSMEn52xj0jQtn
+	 K9TYjFijt0Ajg==
+Message-ID: <e6675b5f26606997c6ac9ce2fb411e474a09fdce.camel@kernel.org>
+Subject: Re: [PATCH v3] tpm: Relocate buf->handles to appropriate place
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, 
+	linux-integrity@vger.kernel.org
+Cc: stable@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+	 <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+	 <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 17 Jul 2024 12:34:26 +0300
+In-Reply-To: <b601bec70e1e5ad403a469fd7f9757a2d8e93ea6.camel@kernel.org>
+References: <20240716185225.873090-1-jarkko@kernel.org>
+	 <36ceafb1513fac502fdfce8fb330fc6e18db47ce.camel@HansenPartnership.com>
+	 <527dce2173da6f65753109d674882979736c152e.camel@kernel.org>
+	 <b601bec70e1e5ad403a469fd7f9757a2d8e93ea6.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717061957.140712-1-alexghiti@rivosinc.com> <20240717061957.140712-3-alexghiti@rivosinc.com>
-In-Reply-To: <20240717061957.140712-3-alexghiti@rivosinc.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Wed, 17 Jul 2024 17:32:37 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQ2W5c1ObdtOosxsjg6gzfW5qL5LAxh4Fg6dg9aWfczMA@mail.gmail.com>
-Message-ID: <CAJF2gTQ2W5c1ObdtOosxsjg6gzfW5qL5LAxh4Fg6dg9aWfczMA@mail.gmail.com>
-Subject: Re: [PATCH v3 02/11] dt-bindings: riscv: Add Zabha ISA extension description
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 2:22=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
-.com> wrote:
->
-> Add description for the Zabha ISA extension which was ratified in April
-> 2024.
->
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
-cumentation/devicetree/bindings/riscv/extensions.yaml
-> index 468c646247aa..e6436260bdeb 100644
-> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> @@ -171,6 +171,12 @@ properties:
->              memory types as ratified in the 20191213 version of the priv=
-ileged
->              ISA specification.
->
-> +        - const: zabha
-> +          description: |
-> +            The Zabha extension for Byte and Halfword Atomic Memory Oper=
-ations
-> +            as ratified at commit 49f49c842ff9 ("Update to Rafified stat=
-e") of
-> +            riscv-zabha.
-> +
->          - const: zacas
->            description: |
->              The Zacas extension for Atomic Compare-and-Swap (CAS) instru=
-ctions
-> --
-> 2.39.2
->
-Reviewed-by: Guo Ren <guoren@kernel.org>
+On Wed, 2024-07-17 at 12:31 +0300, Jarkko Sakkinen wrote:
+> On Wed, 2024-07-17 at 12:27 +0300, Jarkko Sakkinen wrote:
+> > On Tue, 2024-07-16 at 15:32 -0400, James Bottomley wrote:
+> > > On Tue, 2024-07-16 at 21:52 +0300, Jarkko Sakkinen wrote:
+> > > [...]
+> > > > Further, 'handles' was incorrectly place to struct tpm_buf, as tpm-
+> > > > buf.c does manage its state. It is easy to grep that only piece of
+> > > > code that actually uses the field is tpm2-sessions.c.
+> > > >=20
+> > > > Address the issues by moving the variable to struct tpm_chip.
+> > >=20
+> > > That's really not a good idea, you should keep counts local to the
+> > > structures they're counting, not elsewhere.
+> > >=20
+> > > tpm_buf->handles counts the number of handles present in the command
+> > > encoded in a particular tpm_buf.=C2=A0 Right at the moment we only ev=
+er
+> > > construct one tpm_buf per tpm (i.e. per tpm_chip) at any one time, so
+> > > you can get away with moving handles into tpm_chip.=C2=A0 If we ever
+> > > constructed more than one tpm_buf per chip, the handles count would
+> > > become corrupted.
+> >=20
+> > It is not an idea. That count is in the wrong place. Buffer code
+> > has no use for it.
+>=20
+> Also you are misleading here again. Depending on context tpm_buf
+> stores different data, including handles.
 
---=20
-Best Regards
- Guo Ren
+These false claims can be also proved wrong by trivial git grep,
+which clearly shows its scope.
+
+BR, Jarkko
 
