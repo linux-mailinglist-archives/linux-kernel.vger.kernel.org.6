@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-254920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF4893394E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F394933950
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FCC1F239EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFF42819C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F387139FD7;
-	Wed, 17 Jul 2024 08:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B714B39AEC;
+	Wed, 17 Jul 2024 08:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KatfJBoB"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sufi1Chm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DD12E7F;
-	Wed, 17 Jul 2024 08:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFADA38DD1;
+	Wed, 17 Jul 2024 08:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721205753; cv=none; b=ma1mjb2EPWeDe9Mr2Xu24HTBkaXh0ijS5no9ZOwjy3PPbW3cGErzmGrlCpUFzQBK+mxJzgnPUivfNuDyUd7lHd1sLeXzCvhjId5VrC2tCbFrOkc4AGLfFVl/O55kA0kefKzYaFA5qXzJnvG8YxEpFfcUDSSDvdl+yLVV64u+064=
+	t=1721205767; cv=none; b=RWsyTMpZ+HX+dbDQzd/HBtVfoF21DQ3T/fiDdX1K+6UmrmPNxd2xjxDZNu2r9wwy7sJdoJGnQ/LPuNUK1Sf/MQPr73unawV0qxcsQBoz6zHPXKp/1Zr68zY4C7YpKOQPjuTW66sIxo4k8tU+PmmhRl3efEvBIek3dR5sHrMUS5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721205753; c=relaxed/simple;
-	bh=RStoaZ0tPyIJ4HDQCgcMDhZfDoRGZ9e4TcdIwm2I28E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bui2acZkNjWT1wgbJ0liHEwkKZrQP8f3zdvWf/zT6WZBYSJ5w89YusTyizcCQMFPOQlbUjAbbm+NFwf52NA8rKu+0onMEr4NWeo6ajtpFGqgoPATyoAhpRKG3j/rcTCgcZe8YSkMOjlpxANuif7ETxIWJ3TJvTQiYyEGSO1xpq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KatfJBoB; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a797c62565aso666310266b.2;
-        Wed, 17 Jul 2024 01:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721205749; x=1721810549; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=746aN1Dbk1XIVmQy7bVKJXGdCwcI+eJL7zxhTS+X0mE=;
-        b=KatfJBoBz5wKf68SOrmnY0wOXejms92VRXi60cdmp+csyHqBRIbD5UPs2x3gYGH330
-         BsAMb4W3ajC9yqd+J5opZbUoOAFkkxuUODUmR57yOm6gU6Ru3VlXP19CnR5I7d0kKdkf
-         JR0j6yPOrSpDcy8RUWM7MbTr+jXWNp8AyhD2LZ9ncN9QWfkYR1m9N4vsWESwU1OIrdTk
-         blunImp2EchKDvWgqnu7HPUYwJXX6CVURC9QPzJEIW11FvbdsS09j9f+LRWUUXyDajWZ
-         WecBuD+pAzk6QOGDgkTDDI8OH88jdv9pK6/3desXAMQ9X0nD4eH/O0XEDWQobUOGuQ1k
-         hzVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721205749; x=1721810549;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=746aN1Dbk1XIVmQy7bVKJXGdCwcI+eJL7zxhTS+X0mE=;
-        b=Nqtds/E3+NSTfkwI4R4Ulvi948IcEJsqtPGhY9v/hVeHj4//M82kGjba5rRIyloxTO
-         ndb9hKAYGQlDHTIarfgS526WU93YEibpC4hsazcUJ/kPtzjvo7cEIj0x1cxd9Gqk62JW
-         nQ8QUnK6te0JW4vi33+TVJ54PNFHhoHZPinnUUvzPLVucivPBVUFKo/dGqQYVWmOaX8T
-         b4G4us7ZEs1zwRRurr8+VqjqscK88OAOdbSrtve5UgAFo7HyaGLmK9e4wQIfCNZNzhP2
-         V9kgyIHyIsTOJjnVpcs09JTAPzCKENpu9g10aLcVJQ+MtGv1zIFg7+hXXf3YgOxuH8Gj
-         EX1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXeqAdlk2qRX8iX46oLCPPajB19TVF+bW8yucbZRPNNkGBpLZ6dZxXeyaw2MxD0kp1XkAWckdXe5Uhh8vRPjKf7KevPlZb3+1gb2rUQ0X9BvlEZJhfCNpDKHqhCA4B1cWbpfV/al4bkNlc=
-X-Gm-Message-State: AOJu0Yz3xIGGos/Sp8SzT84h47dAMz5jOj+2XgsOky8ffhFXmYXIiWs9
-	Xkxs2KXuENgapUOny3SFoI5UIlqrnqVmib13ASl+xlEZj2rFhXXKuoN9HthX
-X-Google-Smtp-Source: AGHT+IGYnmX3eZKw7oN1JjvDmmUvKfRij3It4kG7UXO9ruXF2/RRsvhV3RPiQcP6DuWaT30QXWAprw==
-X-Received: by 2002:a17:906:547:b0:a72:8d2f:8594 with SMTP id a640c23a62f3a-a7a01147a55mr67280266b.27.1721205749206;
-        Wed, 17 Jul 2024 01:42:29 -0700 (PDT)
-Received: from foz.lan ([95.90.154.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc80116bsm417466866b.185.2024.07.17.01.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 01:42:28 -0700 (PDT)
-Date: Wed, 17 Jul 2024 10:42:27 +0200
-From: Mauro Carvalho Chehab <maurochehab@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.11-rc1] media updates
-Message-ID: <20240717104227.23de2235@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1721205767; c=relaxed/simple;
+	bh=Gr+rH+sMnSIBeAsAWHpnMXviyYiqXsfmjzUS+poyQjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XsmQcnwUmiSNEywjLFp2uM02Ikfesae/O1eRXokixRZoHUr8mOOMHLKNFRcjOVgorQoK772730tSq8CpHjalSkEId8q8snNS6ToT+CKvopI1P47h+qN0K/gWsjh3u3W1LayrDqjd2VZpib+uClLOnOIUzxuiMrfoaXLY8LL0tKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sufi1Chm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC5AC32782;
+	Wed, 17 Jul 2024 08:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721205766;
+	bh=Gr+rH+sMnSIBeAsAWHpnMXviyYiqXsfmjzUS+poyQjI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Sufi1ChmZDWC8K5+Q18Dukb8U/TeOUL5G3HaKSKuRRyk1XpxfhFKJEqdLshNCeh07
+	 LZxqETm4vEY3m3a8hvUBx+srtVk2IoyjXvMQy71mVppqLN/o63hhl1XlGjmpMDY3GL
+	 anuW+DrR0/PeWSm5mPS6D2Al1upwW0DnsWJ+2f2T4O5PN7Rnw148xZamsjDFSzQ/b3
+	 MwjD0lLKOuEBnyhl53UkKAy8/OJuTqJUW36gp7pMtIPb7LAUCIq3DLVITdzxoOGKE2
+	 f+X/3v/BCZuT/qoM8Kla5FWJpFkl8Fv3k7atP1ImqUNqErOtFJk6lzqH61FX3NUthN
+	 UvMSMEjAxpMtQ==
+Message-ID: <4fdd11e0-fe1f-4112-ab18-b9b72a5cee2b@kernel.org>
+Date: Wed, 17 Jul 2024 10:42:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] riscv: dts: starfive: remove non-existant spi device
+ from jh7110-common.dtsi
+To: Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org
+Cc: conor@kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ William Qiu <william.qiu@starfivetech.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240716-majesty-antler-d9bedc7fd0af@wendy>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240716-majesty-antler-d9bedc7fd0af@wendy>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 16/07/2024 12:54, Conor Dooley wrote:
+> There is no rohm,dh2228fv on any of supported JH7110 boards - in fact
+> the dh2228fv almost certainly does not exist as it is not a valid Rohm
+> part number. Likely a typo by Maxime when adding the device originally,
+> and should have been bh2228fv, but these boards do not have a bh2228fv
+> either! Remove it from jh7110-common.dtsi - pretending to have a device
+> so that the spidev driver will be bound by Linux is not acceptable.
+> 
+> Fixes: 74fb20c8f05d ("riscv: dts: starfive: Add spi node and pins configuration")
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-Please pull from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.11-1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-For:
+Best regards,
+Krzysztof
 
-- New sensor drivers: gc05a2, gc08a3 and imx283;
-- New serializer/deserializer drivers: max96714 and max96717;
-- New JPEG encoder driver: e5010;
-- Support for Raspberry Pi PiSP Backend (BE) ISP driver;
-- Old documentation for av7110 driver removed, as a new version
-  was added as Documentation/userspace-api/media/dvb/legacy*.rst;
-- atompisp: Linux firmwares are now available at:
-  https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/intel/ipu
-  so, drop firmware-related task from TODO and update firmware
-  logic;
-- The imx258 driver has gained several improvements;
-- wave5 driver has gained support for HEVC decoding;
-- em28xx gained support for MyGica UTV3;
-- av7110 budget-patch driver removed;
-- Lots of other cleanups, improvements and fixes.
-
-Regards,
-Mauro
-
----
-
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
