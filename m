@@ -1,293 +1,151 @@
-Return-Path: <linux-kernel+bounces-255518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82A29341B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37409341B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74761283BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F44D284902
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BC718308A;
-	Wed, 17 Jul 2024 17:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1223D183060;
+	Wed, 17 Jul 2024 17:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="TU4LIztg"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eTFLvkvj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CE2183081
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0411184F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238607; cv=none; b=BxdSJhlJEmJTnQHBlKjQWcHmtc54lr/Rt/EVIshceCqXax+6z6c8tiCBfWIxxsUoJWltLg3hxDYPWxEuHKvWM5Sr5n74oOc7w+L8kUS+hkMOfQfOmYEu+sXLRB9xnzkhqQtshRPbSYmMRzW6bkeemAeJ02rrTM4EAV/IWeOOnNk=
+	t=1721238642; cv=none; b=Vg+29zjB+BmqOj238+yE+5lcNGvACdi2CmQsAyBwaHQtakujRkxVjNvhk0JfDJoHErWjfYE224ZC1BzxQ7ocCMd8+qmRFjeEJ3cDorh3AHJOGGZ8D3JhgEvEfWYK7yKGhwLaMOsti8jYXHMfKLJBtODOy6wnSXd7JZMtCugVHxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238607; c=relaxed/simple;
-	bh=/s6XMzqpGd9ftYxjnOIQ/2Q/7UT5lai3haBTDFdi7TY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OGqxBQu+JO5KewlhMVpcuSw0L9nmxzmT6+mP7t0MUUINQzbZ2ereyPp7AHcrQyqzTdgf+Y2W8fvDGxIHvPJpItUq/zadoaTtrSLLXmy+DBD1TDSTIX/y+2HrM3UTZ7WFuVfueHQESKlFYeLgm9FRJxU5KlybX7XXqQssxduZmDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=TU4LIztg; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44caaf77c7eso36380551cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721238604; x=1721843404; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dvAbFoA1HdmfmF/eRf5+KvV8rS9lCxREHi50gOT2zaw=;
-        b=TU4LIztgFQwZgGiPifyiRwlmQ3WLGDknmKLnDeu6oglws45k3Cf42KJ1irY/9axIV7
-         NqNjOG5HfRYui9wwbgBvtK5qHODaunw/q3ytKVBRU2lO4ezgZYRnJHJMggDfafo7CEl9
-         TSJllUnCQj8wGNpPx+zZom5CZ1ZZfe+KbdskroIxJTul57vkKZppTEesbstGgnNWoA4Y
-         cIZhakuMV4kEtmTI5jDR+OuNjEOlckBR9YO0rgARqeTn++vXFuv4TuN0fW5M90k6SylO
-         854dsC9R68OPpu6oGETjBrW1jhbIed3QwgdY1DNKFTRBDi31fAdII1IQAV3Z62BCQ+7q
-         I8Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721238604; x=1721843404;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dvAbFoA1HdmfmF/eRf5+KvV8rS9lCxREHi50gOT2zaw=;
-        b=unkQM2H4hAszRgWU63SIBjpr+TVkTcuJV0TVW/2jb+5QYzi6Ri6yVEOhsXW9FytX81
-         1dq4pbtDMsAmVFZy9lY+v5/eYwPS75xFB8ZJtmQDR9RxzqWe8To50KuiRu84rvdvnFOo
-         qlcyrEb0rL3sWWQZDDRQ0tVrZM3zXw1wWbXL7Cqx/sMeULAq4buJR3ZFtGuKyIXV4Jc4
-         oSdeY3KiOMwCHxF13PyzDBbDoK3iyLmPLoCkXk0p1jlYrfU/1xggZ2GGJCRrWwNSyR87
-         auhQHx3nP1OGNX9gM59+bYPTFLYWhypuAJcyC6fa74XJc9N3bJodbg/6xJAk/TxteROl
-         7Cdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm7vWOciYRIz2cPWo+kHJLpTQYY5CZ+Grfl/OgO/wCHRD2kmlSQtgAwcwzuMNLt4IDXpYsT8e3DRE7T8qlBHtsE5nwXZZ+1isJXznW
-X-Gm-Message-State: AOJu0YyJd+Yae53nOXio5JroCiPvNrIUqFDEy+yV8fy3EfFS+L3GdW5i
-	hEqd4TbktigKyS+o88oNUgtlXJ1AN9l7nTRP2TZkC0Ykn0AATwriufiHHk6Rt7k=
-X-Google-Smtp-Source: AGHT+IEfOIRv5HYoKQsceLcUZprEY8WHpJblW/JHP3NJBcp+Gf7Sr+8BNF2h+qxfTOulzVNJCm016g==
-X-Received: by 2002:ac8:590b:0:b0:447:e375:1ca6 with SMTP id d75a77b69052e-44f86754699mr32833561cf.52.1721238604247;
-        Wed, 17 Jul 2024 10:50:04 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:15:6720::7a9])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b83eccesm50462681cf.87.2024.07.17.10.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 10:50:03 -0700 (PDT)
-Message-ID: <c8358d79bd51a9bfa5116b33ae5e7766b95d344d.camel@ndufresne.ca>
-Subject: Re: [PATCH v4 1/2] media: videodev2: Add flags to unconditionnaly
- enumerate pixels formats
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Benjamin Gaignard
-	 <benjamin.gaignard@collabora.com>
-Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
- hverkuil-cisco@xs4all.nl,  linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-Date: Wed, 17 Jul 2024 13:50:03 -0400
-In-Reply-To: <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
-References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
-	 <20240717131430.159727-2-benjamin.gaignard@collabora.com>
-	 <2kbxr3hkjbcnaqescxmlcerziixg72icqpug6wa25eeggy2pnj@vqmxe4ojcwml>
-	 <dfc292f8-0014-4bf4-9429-31f729a176cd@collabora.com>
-	 <ok2a4ubzka6rhzyj2c5op73ij7pw35g6e75whc2jjget62fatx@zka2ewyt3kfv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1721238642; c=relaxed/simple;
+	bh=C0trh+7PwObtuipUfDOh6Uu1gaixeqfmj0eWa4VKtro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SWULyiHg+A9sBxmEXx9k7oMZ6dCBFRN5bNAzifjmTzGPP/f/bqg9En4RZd/NZEwiYI59UE3RYhQWfY3eWYFjVyKdiJyNzaRuIaTi4aXX4B2+jiYTtdFVGI4dHZw78Jhe72dPYfNu//dKzCZrO7A48+GgsjMmbIEebGbuWNQuXSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eTFLvkvj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFOLwU031885;
+	Wed, 17 Jul 2024 17:50:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wfIMLxJ5MgWBWIgIW7ll70R4YbGXXWDwD9MoyiP+Lrw=; b=eTFLvkvjARiG1dKL
+	0ys6Sn/GbYaLyIJmsp4dLCHW9/g4XFVCAg4dfz8kQ9+yKJs04ZV+JxC+094NFZXP
+	CF0Nf8E5pYprLM1Ox3MNzNDZNN8mhqEGwF0rfII49gMqfd4TarueyD/lMvgSANaB
+	V8s2pPshN4Ew1AVUk89Ft2tNq5/BysFu9VukJoFqN8UoWpJ9iysgrn6sUYrSh+MH
+	OLYWMIOB5pURYb67xJZIJfJUhiSxjJ6iw+PI/MLMbsNzsBzjsEAZcQV3umtCHdmb
+	DiSu4dKlrj0T/d7XZLl/qc8lKmBb2J1mKvC7E2WWY3drXuwPyUaWTaVEQ73bIgYb
+	RN9MUw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs39ak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 17:50:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HHoRvN022996
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 17:50:27 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
+ 2024 10:50:26 -0700
+Message-ID: <9c13b91e-9efe-4a4f-b0bb-ac148d4f1af2@quicinc.com>
+Date: Wed, 17 Jul 2024 10:50:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] misc: Kconfig: exclude mrvl-cn10k-dpi compilation for
+ 32-bit systems
+To: Vamsi Attunuru <vattunuru@marvell.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <nathan@kernel.org>
+References: <20240717163739.181236-1-vattunuru@marvell.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240717163739.181236-1-vattunuru@marvell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HIRgmlMmE7BmRwLMQvML0z6HSEbEB-DL
+X-Proofpoint-GUID: HIRgmlMmE7BmRwLMQvML0z6HSEbEB-DL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_13,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170136
 
-Hi
+On 7/17/24 09:37, Vamsi Attunuru wrote:
+> Upon adding CONFIG_ARCH_THUNDER & CONFIG_COMPILE_TEST dependency,
+> compilation errors arise on 32-bit ARM with writeq() & readq() calls
+> which are used for accessing 64-bit values.
+> 
+> Since DPI hardware only works with 64-bit register accesses, using
+> CONFIG_64BIT dependency to skip compilation on 32-bit systems.
+> 
+> Fixes: a5e43e2d202d ("misc: Kconfig: add a new dependency for MARVELL_CN10K_DPI")
+> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/misc/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index f3bb75384627..41c3d2821a78 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -588,7 +588,7 @@ config NSM
+>   config MARVELL_CN10K_DPI
+>   	tristate "Octeon CN10K DPI driver"
+>   	depends on PCI
+> -	depends on ARCH_THUNDER || COMPILE_TEST
+> +	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
+>   	help
+>   	  Enables Octeon CN10K DMA packet interface (DPI) driver which
+>   	  intializes DPI hardware's physical function (PF) device's
 
-Le mercredi 17 juillet 2024 =C3=A0 16:04 +0200, Jacopo Mondi a =C3=A9crit=
-=C2=A0:
-> Hi Benjamin
->=20
-> On Wed, Jul 17, 2024 at 03:44:24PM GMT, Benjamin Gaignard wrote:
-> >=20
-> > Le 17/07/2024 =C3=A0 15:20, Jacopo Mondi a =C3=A9crit=C2=A0:
-> > > Hi Benjamin
-> > >=20
-> > > On Wed, Jul 17, 2024 at 03:14:29PM GMT, Benjamin Gaignard wrote:
-> > > > Add new flags to enumerate all pixels formats when calling VIDIOC_E=
-NUM_FMT ioctl.
-> > > > When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
-> > > > ignore the configuration and return the hardware supported pixel
-> > > > formats for the specified queue.
-> > > > To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_F=
-ORMATS
-> > > > flag must be set by the drivers to highlight support of this featur=
-e
-> > > > to user space applications.
-> > > > This will permit to discover which pixel formats are supported
-> > > > without setting codec-specific information so userland can more eas=
-ily
-> > > > know if the driver suits its needs well.
-> > > > The main target are stateless decoders so update the documentation
-> > > > about how to use this flag.
-> > > >=20
-> > > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> > > > ---
-> > > > changes in version 4:
-> > > > - Explicitly document that the new flags are targeting mem2mem devi=
-ces.
-> > > >=20
-> > > >   .../userspace-api/media/v4l/dev-stateless-decoder.rst |  6 ++++++
-> > > >   .../userspace-api/media/v4l/vidioc-enum-fmt.rst       | 11 ++++++=
-+++++
-> > > >   .../userspace-api/media/videodev2.h.rst.exceptions    |  2 ++
-> > > >   drivers/media/v4l2-core/v4l2-ioctl.c                  |  3 +++
-> > > >   include/uapi/linux/videodev2.h                        |  2 ++
-> > > >   5 files changed, 24 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-de=
-coder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
-> > > > index 35ed05f2695e..b0b657de910d 100644
-> > > > --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.r=
-st
-> > > > +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.r=
-st
-> > > > @@ -58,6 +58,12 @@ Querying capabilities
-> > > >        default values for these controls being used, and a returned=
- set of formats
-> > > >        that may not be usable for the media the client is trying to=
- decode.
-> > > >=20
-> > > > +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the dri=
-ver must enumerate
-> > > > +     all the supported formats without taking care of codec-depend=
-ent controls
-> > > > +     set on the ``OUTPUT`` queue. To indicate that the driver has =
-take care of this
-> > > > +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each =
-format while
-> > > > +     enumerating.
-> > > > +
-> > > >   3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect =
-supported
-> > > >      resolutions for a given format, passing desired pixel format i=
-n
-> > > >      :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
-> > > > diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.=
-rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> > > > index 3adb3d205531..15bc2f59c05a 100644
-> > > > --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> > > > +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> > > > @@ -234,6 +234,17 @@ the ``mbus_code`` field is handled differently=
-:
-> > > >   	valid. The buffer consists of ``height`` lines, each having ``wi=
-dth``
-> > > >   	Data Units of data and the offset (in bytes) between the beginni=
-ng of
-> > > >   	each two consecutive lines is ``bytesperline``.
-> > > > +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
-> > > > +      - 0x0400
-> > > > +      - Set by userland applications to enumerate all possible pix=
-el formats
-> > > > +        without taking care of any OUTPUT or CAPTURE queue configu=
-ration.
-> > > > +        This flag is relevant only for mem2mem devices.
-> > > > +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
-> > > > +      - 0x0800
-> > > > +      - Set by the driver to indicated that format have been enume=
-rated because
-> > > > +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-se=
-t-csc>` has
-> > > > +        been set by the userland application.
-> > > > +        This flag is relevant only for mem2mem devices.
-> > > Thanks, however I think this can be wrapper on the previous line
-> >=20
-> > ok
-> >=20
-> > >=20
-> > > >   Return Value
-> > > >   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exce=
-ptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> > > > index bdc628e8c1d6..7a3a1e9dc055 100644
-> > > > --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> > > > +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> > > > @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtd=
-esc-flags
-> > > >   replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
-> > > >   replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
-> > > >   replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
-> > > > +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
-> > > > +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
-> > > >=20
-> > > >   # V4L2 timecode types
-> > > >   replace define V4L2_TC_TYPE_24FPS timecode-type
-> > > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v=
-4l2-core/v4l2-ioctl.c
-> > > > index 4c76d17b4629..5785a98b6ba2 100644
-> > > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> > > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> > > > @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioc=
-tl_ops *ops,
-> > > >   	int ret =3D check_fmt(file, p->type);
-> > > >   	u32 mbus_code;
-> > > >   	u32 cap_mask;
-> > > > +	u32 flags;
-> > > >=20
-> > > >   	if (ret)
-> > > >   		return ret;
-> > > > @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_io=
-ctl_ops *ops,
-> > > >   		p->mbus_code =3D 0;
-> > > >=20
-> > > >   	mbus_code =3D p->mbus_code;
-> > > > +	flags =3D p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
-> > > >   	memset_after(p, 0, type);
-> > > >   	p->mbus_code =3D mbus_code;
-> > > > +	p->flags =3D flags;
-> > > Won't this set V4L2_FMT_FLAG_ENUM_ALL_FORMATS (if present) in the
-> > > flags returned to userspace ? Shouldn't be drivers to set
-> > > V4L2_FMT_FLAG_ALL_FORMATS instead ?
-> >=20
-> > memset_after zeroed flags field so we need this to send V4L2_FMT_FLAG_E=
-NUM_ALL_FORMATS
-> > flag to drivers. Return it to userspace is a side effect but I don't th=
-at is problem
-> > since it set it anyway.
-> >=20
->=20
-> Ok, if the expectation is that the flag is preserved through the ioctl
-> call, this is fine with me
 
-I might be missing something other similar features are explicitly advertis=
-ed by
-drivers. This way, the generic layer can keep or clear the flag based of if=
- its
-supported. The fact the flag persist the ioctl() or not endup having a usef=
-ul
-semantic.
+BTW it looks like you accidentally submitted Makefile.rej, can you 
+submit a patch to remove it?
 
-Could we do the same?
 
->=20
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->=20
-> > >=20
-> > > >   	switch (p->type) {
-> > > >   	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-> > > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/vi=
-deodev2.h
-> > > > index fe6b67e83751..b6a5da79ba21 100644
-> > > > --- a/include/uapi/linux/videodev2.h
-> > > > +++ b/include/uapi/linux/videodev2.h
-> > > > @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
-> > > >   #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
-> > > >   #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
-> > > >   #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
-> > > > +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
-> > > > +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
-> > > >=20
-> > > >   	/* Frame Size and frame rate enumeration */
-> > > >   /*
-> > > > --
-> > > > 2.43.0
-> > > >=20
-> > > >=20
-> > > _______________________________________________
-> > > Kernel mailing list -- kernel@mailman.collabora.com
-> > > To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> > > This list is managed by https://mailman.collabora.com
->=20
+commit 5f67eef6dff39421215e9134f1eaae51b67a73b7
+Author: Vamsi Attunuru <vattunuru@marvell.com>
+Date:   Sat Jul 6 08:30:09 2024 -0700
+
+     misc: mrvl-cn10k-dpi: add Octeon CN10K DPI administrative driver
+
+...
+
+diff --git a/drivers/misc/Makefile.rej b/drivers/misc/Makefile.rej
+new file mode 100644
+index 000000000000..a6aaed13f950
+--- /dev/null
++++ b/drivers/misc/Makefile.rej
+@@ -0,0 +1,7 @@
++--- drivers/misc/Makefile
+++++ drivers/misc/Makefile
++@@ -69,3 +69,4 @@ obj-$(CONFIG_TMR_INJECT)     += xilinx_tmr_inject.o
++ obj-$(CONFIG_TPS6594_ESM)     += tps6594-esm.o
++ obj-$(CONFIG_TPS6594_PFSM)    += tps6594-pfsm.o
++ obj-$(CONFIG_NSM)             += nsm.o
+++obj-$(CONFIG_MARVELL_CN10K_DPI)       += mrvl_cn10k_dpi.o
+
 
 
