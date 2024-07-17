@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-255780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D9F934504
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF6C934511
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1CC3B2292B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354891C2154E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFC756766;
-	Wed, 17 Jul 2024 23:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A1A6F2E7;
+	Wed, 17 Jul 2024 23:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfqWwxKq"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/tYahsI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3379D2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 23:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6320018EBF;
+	Wed, 17 Jul 2024 23:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721258440; cv=none; b=LTHlx8QuW2O/HCNVJhFm/jdX/JBRoCGec4r2U9IDd3z/QPLjcgTYtfUNtUS4bYF/+6FtNl8hExMBoynrOATnqcs916bsg1rSOwH6Nx5TeXOyu8yiQOt+y03FKXPj1CeBbHJEG3AgZoNchSGZxsoJorYbHjtlnv9XYmFgjOnKA3c=
+	t=1721259217; cv=none; b=fRfYZUcdXXi0t3lLUdiTUHeWEDlggNi7Hj14pp00RH70U4Cd13AvA3dHS3EZVN4HvEPG9U0KvVKkYAPfw7nABuESTbU1pu60TjkhvnStESUqh3bRwvuIFRBCbIXJ61Hcu+uHQbConDKW4gS4qdMrhNxpp19mbIWwBlUJOvptN/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721258440; c=relaxed/simple;
-	bh=alkn7u8DptvmEkL2WvLNybsQ9pA+gLO09vP+UQQNaMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QBoqU/pUHAldrz9pYx+9G8T+aiCh1lEBLok3omAmTrf0RFxSKzg9TcLBPGZKSsZNXwoJmcCxpNTTzaLxQx2DM8qxcaXhV9nGfIp6EKxmTbFM55urhai3PFKhX8crk6nDJAO/CHFLZ8Bn++i8mF1zY295CAF3M9svpvXbg/C/u8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BfqWwxKq; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ca8dfa2cceso157150a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721258437; x=1721863237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJ4Rtgfw1crxH82KHr40tMf+xK9HrNqVoA0f8i6QWg8=;
-        b=BfqWwxKqzpWlfXe3JFQ8QSqs+t8QUb1R1NbC4OznrQ9xJk5FSRUtQH0MGeIjG12vE+
-         eI9GpbS34YcTMPZQZjM5U6yCJ+r8CKkfA9wt3NcVXdkACGZXen0B+wGKLCbd8vO+nKOM
-         PaV8aZRz6l4+2q3/iHFxUnsGyLgG218ThZWMI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721258437; x=1721863237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJ4Rtgfw1crxH82KHr40tMf+xK9HrNqVoA0f8i6QWg8=;
-        b=N/gw01+i4EMDMl0hKZpCupSZt03eR1080U9CtMURmsZhz4Vj+HX1MjW6x0SqWFPv9s
-         gYwRA9NwMDSls9SaKKbCF54sSgwzAcKImBOp2ldjcLWgPq23aHrjnd5ay3MN/KlNBGhE
-         Ouvpbhs+FGr7tRNDOPm4EwYk14SEj33Qa6hhb7UUBzAI/B1vJRd2dSj/Bb0u8G7vhrs+
-         Kzssr43Ar2Lo1iQHUw+RFtB5Piqw86jpcSNJqJy57Fc08SGMxJMcixxp9eXzn84BDw8Q
-         pQ0jIEIn82PFGcrQeVUdkGKbBXFtus1sDgmiMUDXRrcEFOx/oAeRGE39Oz3gJa0wDgfb
-         XFug==
-X-Forwarded-Encrypted: i=1; AJvYcCVgAgVjhW5bI/9X4rfB6fWSSmmZ07e6xhMwgSMcsAQ+Ls+uyTWPZbHQmnD2RkWZFnXNqfgnhTblxtNvRS71eoWT3SOt0nZHctkOJnIw
-X-Gm-Message-State: AOJu0Yw3N0LK++/UtTbrwlXcye47c7fEi30Um7euf5O9tzdhukQ44oSN
-	+YCfYxnBKCMmAM5AdC3zevdNHiJ8449qSkMjQVQlsX7mWJvGSb+WvGokb9+D+A==
-X-Google-Smtp-Source: AGHT+IGSq9WFJ24jFHe7nZE5xQPf4XbD2c2tgVy5+rSjm5TliJ99S5ZpUoONUIfw0XUZLKuOlJXl9w==
-X-Received: by 2002:a17:90b:a51:b0:2c9:7803:1cf6 with SMTP id 98e67ed59e1d1-2cb527a1155mr2419597a91.20.1721258437108;
-        Wed, 17 Jul 2024 16:20:37 -0700 (PDT)
-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2a3:200:62a5:b19:9711:d3a6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb60219d21sm510034a91.53.2024.07.17.16.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 16:20:36 -0700 (PDT)
-From: Khazhismel Kumykov <khazhy@chromium.org>
-X-Google-Original-From: Khazhismel Kumykov <khazhy@google.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Zdenek Kabelac <zkabelac@redhat.com>,
-	Joe Thornber <thornber@redhat.com>,
-	Heinz Mauelshagen <heinzm@redhat.com>,
-	dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Khazhismel Kumykov <khazhy@google.com>
-Subject: [RFC PATCH v2] dm ioctl: fix erroneous EINVAL when signaled
-Date: Wed, 17 Jul 2024 16:18:33 -0700
-Message-ID: <20240717231833.2090430-1-khazhy@google.com>
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-In-Reply-To: <CACGdZYKbdyALADEMDV+Vg+eog+UjjgGigEpmJTSKw_64RM8rbA@mail.gmail.com>
-References: <CACGdZYKbdyALADEMDV+Vg+eog+UjjgGigEpmJTSKw_64RM8rbA@mail.gmail.com>
+	s=arc-20240116; t=1721259217; c=relaxed/simple;
+	bh=/vntp9yziGCzvLchAgMHXkRgHgytqWIKu6wEIUPrxlQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=I50lv1Kqj5NSMeWUI/RxfLgvaOT/bjzYxs5YFYqh5viv3r2OTB0xp2uxNR1QGTFPnQh/1nkp4ZMZ274iyQ2DzsJFbhzO+AKWXPUp2/irJIIEtZEbnImKhbuiObOlztCb55V1E6FhPbXGWxuJpcQJwRpVpaKf+l0ldX9EKoG8K/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/tYahsI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59E2C2BD10;
+	Wed, 17 Jul 2024 23:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721259216;
+	bh=/vntp9yziGCzvLchAgMHXkRgHgytqWIKu6wEIUPrxlQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=m/tYahsI7GcAsn0eTT4WF3W3BC90QDmQbipyzN62A8EQrxsGjJuDHvLvxJTe9ClPb
+	 SxfN7qFIZCngz7gztSRBpz2eEzrUCy4jUV1ydb6l65kKp+wAq1QWNBsZy5KABTYVQR
+	 tq+sCrNewY9i6SpEr8eZIOLHRCKt7Ey7NF7M1f0KLVQ+ZcrJeHrDZjeNPd1EsmFr+5
+	 4zTlnoxdZoC9fCxuCKnodh5r8fGggVstFE9nygPb3O0rvXh68bBkRq/sZ9W1kFT6Vp
+	 PNOejeGFpQtHdc4Q11bbXLpU6fBG4A6iIgpFlB92tbnMPPxy5xVe6T52lr0cg39ZBV
+	 sbhS/c+mN45rg==
+Message-ID: <1e36b1ba8af3584128550822a70cb072.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240717-of_property_for_each_u32-v2-1-4060990f49c9@bootlin.com>
+References: <20240717-of_property_for_each_u32-v2-1-4060990f49c9@bootlin.com>
+Subject: Re: [PATCH v2] of: remove internal arguments from of_property_for_each_u32()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Peng Fan (OSS) <peng.fan@oss.nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, patches@opensource.cirrus.com, linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, Luca Ceresoli <luca.ceresoli@bootlin.com>, Andre Przywara <andre.przywara@arm.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Richard Fitzgerald <rf@opensource.cirrus.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>, Andreas Kemnade <andreas@kemnade.info>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Chen-Yu Tsai <wens@csie.org>, Chester Lin <chester62515@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Damien Le Moal <dlemoal@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Doug Berger <opendmb@gmail.com>, Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>, Fabio Estevam <festevam@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacky Bai <ping.bai@nxp.com>, Jaroslav Kysela <perex@perex.cz>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jiri Slaby
+  <jirislaby@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Mark Brown <broonie@kernel.org>, Matthias Brugger <mbrugger@suse.com>, Michael Ellerman <mpe@ellerman.id.au>, Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Naveen N. Rao <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Richard Leitner <richard.leitner@linux.dev>, Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>, Samuel Holland <samuel@sholland.org>, Saravana Kannan <saravanak@google.com>, Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>, Thomas Gleixner 
+ <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Date: Wed, 17 Jul 2024 16:33:34 -0700
+User-Agent: alot/0.10
 
-do_resume when loading a new map first calls dm_suspend, which could
-silently fail. When we proceeded to dm_swap_table, we would bail out
-with EINVAL. Instead, attempt to restore new_map and return ERESTARTSYS
-when signaled.
+Quoting Luca Ceresoli (2024-07-17 09:16:32)
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index 4ce83c5265b8..d4904f59f83f 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -1175,8 +1175,8 @@ static int si5351_dt_parse(struct i2c_client *clien=
+t,
+>  {
+>         struct device_node *child, *np =3D client->dev.of_node;
+>         struct si5351_platform_data *pdata;
+> -       struct property *prop;
+> -       const __be32 *p;
+> +       u32 array[4];
+> +       int sz, i;
+>         int num =3D 0;
+>         u32 val;
+> =20
+> @@ -1191,20 +1191,24 @@ static int si5351_dt_parse(struct i2c_client *cli=
+ent,
+>          * property silabs,pll-source : <num src>, [<..>]
+>          * allow to selectively set pll source
+>          */
+> -       of_property_for_each_u32(np, "silabs,pll-source", prop, p, num) {
+> +       sz =3D of_property_read_variable_u32_array(np, "silabs,pll-source=
+", array, 2, 4);
+> +       sz =3D (sz =3D=3D -EINVAL) ? 0 : sz; /* Missing property is OK */
+> +       if (sz < 0)
+> +               return dev_err_probe(&client->dev, sz, "invalid pll-sourc=
+e");
 
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
----
- drivers/md/dm-ioctl.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+Needs a newline on the printk message.
 
-v2: don't leak new_map if we can't assign it back to hc.
+> +       if (sz % 2)
+> +               return dev_err_probe(&client->dev, -EINVAL,
+> +                                    "missing pll-source for pll %d\n", a=
+rray[sz - 1]);
+> +
+> +       for (i =3D 0; i < sz; i +=3D 2) {
+> +               num =3D array[i];
+> +               val =3D array[i + 1];
+> +
+>                 if (num >=3D 2) {
+>                         dev_err(&client->dev,
+>                                 "invalid pll %d on pll-source prop\n", nu=
+m);
+>                         return -EINVAL;
+>                 }
+> =20
+> -               p =3D of_prop_next_u32(prop, p, &val);
+> -               if (!p) {
+> -                       dev_err(&client->dev,
+> -                               "missing pll-source for pll %d\n", num);
+> -                       return -EINVAL;
+> -               }
+> -
+>                 switch (val) {
+>                 case 0:
+>                         pdata->pll_src[num] =3D SI5351_PLL_SRC_XTAL;
+> @@ -1232,19 +1236,24 @@ static int si5351_dt_parse(struct i2c_client *cli=
+ent,
+>         pdata->pll_reset[0] =3D true;
+>         pdata->pll_reset[1] =3D true;
+> =20
+> -       of_property_for_each_u32(np, "silabs,pll-reset-mode", prop, p, nu=
+m) {
+> +       sz =3D of_property_read_variable_u32_array(np, "silabs,pll-reset-=
+mode", array, 2, 4);
+> +       sz =3D (sz =3D=3D -EINVAL) ? 0 : sz; /* Missing property is OK */
+> +       if (sz < 0)
+> +               return dev_err_probe(&client->dev, sz, "invalid pll-reset=
+-mode");
 
-diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index c2c07bfa6471..0591455ad63c 100644
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1181,8 +1181,27 @@ static int do_resume(struct dm_ioctl *param)
- 			suspend_flags &= ~DM_SUSPEND_LOCKFS_FLAG;
- 		if (param->flags & DM_NOFLUSH_FLAG)
- 			suspend_flags |= DM_SUSPEND_NOFLUSH_FLAG;
--		if (!dm_suspended_md(md))
--			dm_suspend(md, suspend_flags);
-+		if (!dm_suspended_md(md)) {
-+			r = dm_suspend(md, suspend_flags);
-+			if (r == -EINTR)
-+				r = -ERESTARTSYS;
-+			if (r) {
-+				down_write(&_hash_lock);
-+				hc = dm_get_mdptr(md);
-+				if (!hc)
-+					r = -ENXIO;
-+				if (hc && !hc->new_map) {
-+					hc->new_map = new_map;
-+					up_write(&_hash_lock);
-+				} else {
-+					up_write(&_hash_lock);
-+					dm_sync_table(md);
-+					dm_table_destroy(new_map);
-+				}
-+				dm_put(md);
-+				return r;
-+			}
-+		}
- 
- 		old_size = dm_get_size(md);
- 		old_map = dm_swap_table(md, new_map);
--- 
-2.45.2.993.g49e7a77208-goog
+Needs a newline on the printk message.
 
+> +       if (sz % 2)
+> +               return dev_err_probe(&client->dev, -EINVAL,
+> +                                    "missing pll-reset-mode for pll %d\n=
+", array[sz - 1]);
+> +
+
+With those fixed
+
+Acked-by: Stephen Boyd <sboyd@kernel.org> # clk
 
