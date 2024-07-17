@@ -1,223 +1,194 @@
-Return-Path: <linux-kernel+bounces-255199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC36933D5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39289933D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830C31F21F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0AE1C2329E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286051802C9;
-	Wed, 17 Jul 2024 13:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E6F1802B2;
+	Wed, 17 Jul 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD3vorJU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xzJm8ufW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w1N8++Kj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xzJm8ufW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w1N8++Kj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539A26FC7;
-	Wed, 17 Jul 2024 13:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160C01CAB1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721221699; cv=none; b=cF7Fhx+BmijiQG4Kw6E0FiaPcvvrV0E/uK1DDF6T7kDLNAgkvQmsBVSOqGN6evZ4GOkrGVTAwwq2VX5+WLCgEDShXgX8duV3iRC2pJj+dDKmltozD15FsrTV8lAtWKBLYPfI4wCw2IMpXzeQRtzUqNjZrBz6S8lBJj6WgUIBAP0=
+	t=1721221761; cv=none; b=USKQW/9PU0Q1DsYZ85O6vBA8Vo4vS3M2eaRiz3/cXgo/UdKwpXBGaqkwQuphb1BxbCBsiN7AYoN3oYV9Ab5aApBcLerJvlkkXfatajj+qSyn/jaNtTmQ0/VPt0Nv0vPZnZA8lsAZka6hfB2bL8NlXdmD3rXy9fGwYDHb27WNAGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721221699; c=relaxed/simple;
-	bh=k3720juOhnRd/ZG9JvQtXh8lx9+/XF03JrXIdTvq5gE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e1hDWEX4T27Lgs+tNQAO6YIlkKakA4Z1OJF8F6EUWxEuV18QqC863SGLIE1uEMWBjsT+adPOvRQ69WSMLU7R+NNiXlHHLdXf9XCCNs07AgtG8v62Boqn8PbaxLBKMrBCVGhsVcWbbic1kavb0s/UwYyUBF5BhUYaHC7b5w7qiK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD3vorJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029B3C32782;
-	Wed, 17 Jul 2024 13:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721221698;
-	bh=k3720juOhnRd/ZG9JvQtXh8lx9+/XF03JrXIdTvq5gE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iD3vorJU1yTZZWpHNFxZipQJE8j3soAxob/gNdtQU9vADwYpFcnNlYaK3dR2Z5/qB
-	 KsGhoR9TfzR9ShmGS2ZwrsgjKXYcrrPedI81ofzAiP1unhGy8kqqVC/jwz0yhRZldo
-	 Y13TYwbh5H1YcVKL97atz6CBjv8OzzXa6c89+FabaAiICKM26Ws3jGwKCWa9z7hPRh
-	 VPLyzeBmBTZNnzMpqcukmaKhecaV4TAzZaNiE6zxlnC31hGvWlG/9aaL9hY1VuQn1M
-	 /ztyGw/lo/UY9BLFGlnuWnZHfeLYrpMtwDxMRl7ZqfC6L6jluZP/iuIBm4sw9vHeKW
-	 pYXXT3MVaLDHg==
-Date: Wed, 17 Jul 2024 15:08:07 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: <shiju.jose@huawei.com>
-Cc: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
- <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
- <rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
- <dan.j.williams@intel.com>, <dave@stgolabs.net>,
- <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
- <alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
- <ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
- <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
- <jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
- <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
- <somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
- <duenwen@google.com>, <mike.malvestuto@intel.com>, <gthelen@google.com>,
- <wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
- <wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>,
- <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
- <roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
- <wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [RFC PATCH v9 03/11] EDAC: Add EDAC ECS control driver
-Message-ID: <20240717150807.70c9ef90@foz.lan>
-In-Reply-To: <20240716150336.2042-4-shiju.jose@huawei.com>
-References: <20240716150336.2042-1-shiju.jose@huawei.com>
-	<20240716150336.2042-4-shiju.jose@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1721221761; c=relaxed/simple;
+	bh=BRZGG4xrDva0qCLU6PS97WxJGyw0A+QKEt3Ur6Gdth4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1CajlK9rDQNOtNIsfMYBeiONVYybVnAkaAosmXJjY4TJaSU6cM6xGArfQPwfeYjbEXPQH0O2p+Of9oZgaT7/bE8oM7fqfNWajKk+RMihFMiZuS+nMi8lA8t27/0csfyYSOuNnte3Y9VsBn1day5r9TM/q8DZ/vI+1yZmPgZvMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xzJm8ufW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w1N8++Kj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xzJm8ufW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w1N8++Kj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1A7D71FB7F;
+	Wed, 17 Jul 2024 13:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721221758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1X5zF2e3ed+7pjk1P5AqGhiD9y5udzLMGekEyZDkQwg=;
+	b=xzJm8ufWPOXoASQt/+4WPUw3gFMHZJKHC9QAqi5cBAEYq5m5uedEsrgPOqPFf23LRAv7Ip
+	F/A+08iE0bjIXCSgktBfCH1PnFyY6a4E2B67Cfie/7KaS62NYFGm9JI8mBQJMu8GQ+xfsB
+	b3gv1K/z4/cy7EMbwh9ThTsh55GQetM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721221758;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1X5zF2e3ed+7pjk1P5AqGhiD9y5udzLMGekEyZDkQwg=;
+	b=w1N8++Kjxoge/oODrFK/HCgJ5Kn+60DCUumksA8HPskvOnFtl4pyFlNoO+2Mult3/WJj8k
+	D/MNpz5UgpeGEAAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xzJm8ufW;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w1N8++Kj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721221758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1X5zF2e3ed+7pjk1P5AqGhiD9y5udzLMGekEyZDkQwg=;
+	b=xzJm8ufWPOXoASQt/+4WPUw3gFMHZJKHC9QAqi5cBAEYq5m5uedEsrgPOqPFf23LRAv7Ip
+	F/A+08iE0bjIXCSgktBfCH1PnFyY6a4E2B67Cfie/7KaS62NYFGm9JI8mBQJMu8GQ+xfsB
+	b3gv1K/z4/cy7EMbwh9ThTsh55GQetM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721221758;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1X5zF2e3ed+7pjk1P5AqGhiD9y5udzLMGekEyZDkQwg=;
+	b=w1N8++Kjxoge/oODrFK/HCgJ5Kn+60DCUumksA8HPskvOnFtl4pyFlNoO+2Mult3/WJj8k
+	D/MNpz5UgpeGEAAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 037A0136E5;
+	Wed, 17 Jul 2024 13:09:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WTTWAH7Cl2ZSawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 13:09:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9E773A0987; Wed, 17 Jul 2024 15:09:17 +0200 (CEST)
+Date: Wed, 17 Jul 2024 15:09:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Kemeng Shi <shikemeng@huaweicloud.com>, jack@suse.com, mark@fasheh.com,
+	jlbec@evilplan.org, hughd@google.com, akpm@linux-foundation.org,
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/4] quota: avoid missing put_quota_format when
+ DQUOT_SUSPENDED is passed
+Message-ID: <20240717130917.sbxkbgglhwq2wcrg@quack3>
+References: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
+ <20240715130534.2112678-2-shikemeng@huaweicloud.com>
+ <afca4e22-7edd-494f-9a43-66d1098a3ec4@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afca4e22-7edd-494f-9a43-66d1098a3ec4@linux.alibaba.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 1A7D71FB7F
 
-Em Tue, 16 Jul 2024 16:03:27 +0100
-<shiju.jose@huawei.com> escreveu:
-
-> From: Shiju Jose <shiju.jose@huawei.com>
+On Tue 16-07-24 09:10:18, Joseph Qi wrote:
 > 
-> Add EDAC ECS (Error Check Scrub) control driver supports configuring
-> the memory device's ECS feature.
 > 
-> The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
-> Specification (JESD79-5) and allows the DRAM to internally read, correct
-> single-bit errors, and write back corrected data bits to the DRAM array
-> while providing transparency to error counts.
+> On 7/15/24 9:05 PM, Kemeng Shi wrote:
+> > Avoid missing put_quota_format when DQUOT_SUSPENDED is passed to
+> > dquot_load_quota_sb.
+> > 
 > 
-> The DDR5 device contains number of memory media FRUs per device. The
-> DDR5 ECS feature and thus the ECS control driver supports configuring
-> the ECS parameters per FRU.
+> It seems worth a 'Fixes' tag:
+> Fixes: d44c57663723 ("quota: Remove BUG_ON in dquot_load_quota_sb()")
 > 
-> The memory devices supports ECS feature register with the EDAC ECS driver
+> Other looks good to me. So with the above addressed, feel free to add:
+> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-typo:
-	supports -> support
+Thanks for the patch and review. I'll add the tag on commit.
 
-> and thus with the generic EDAC RAS feature driver, which adds the sysfs
-> ECS control interface. The ECS control attributes are exposed to the
-> userspace in /sys/bus/edac/devices/<dev-name>/ecs_fruX/.
-> 
-> Generic EDAC ECS driver and the common sysfs ECS interface promotes
-> unambiguous control from the userspace irrespective of the underlying
-> devices, support ECS feature.
-> 
-> The support for ECS feature is added separately because the DDR5 ECS
-> feature's control attributes are dissimilar from those of the scrub
-> feature.
-> 
-> Note: Documentation can be added if necessary.
-
-Please document.
+								Honza
 
 > 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  drivers/edac/Makefile            |   2 +-
->  drivers/edac/edac_ecs.c          | 396 +++++++++++++++++++++++++++++++
->  drivers/edac/edac_ras_feature.c  |   5 +
->  include/linux/edac_ras_feature.h |  36 +++
->  4 files changed, 438 insertions(+), 1 deletion(-)
->  create mode 100755 drivers/edac/edac_ecs.c
+> > Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> > ---
+> >  fs/quota/dquot.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> > index 627eb2f72ef3..23fcf9e9d6c5 100644
+> > --- a/fs/quota/dquot.c
+> > +++ b/fs/quota/dquot.c
+> > @@ -2408,7 +2408,7 @@ static int vfs_setup_quota_inode(struct inode *inode, int type)
+> >  int dquot_load_quota_sb(struct super_block *sb, int type, int format_id,
+> >  	unsigned int flags)
+> >  {
+> > -	struct quota_format_type *fmt = find_quota_format(format_id);
+> > +	struct quota_format_type *fmt;
+> >  	struct quota_info *dqopt = sb_dqopt(sb);
+> >  	int error;
+> >  
+> > @@ -2418,6 +2418,7 @@ int dquot_load_quota_sb(struct super_block *sb, int type, int format_id,
+> >  	if (WARN_ON_ONCE(flags & DQUOT_SUSPENDED))
+> >  		return -EINVAL;
+> >  
+> > +	fmt = find_quota_format(format_id);
+> >  	if (!fmt)
+> >  		return -ESRCH;
+> >  	if (!sb->dq_op || !sb->s_qcop ||
 > 
-> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-> index de56cbd039eb..c1412c7d3efb 100644
-> --- a/drivers/edac/Makefile
-> +++ b/drivers/edac/Makefile
-> @@ -10,7 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
->  
->  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
->  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
-> -edac_core-y	+= edac_ras_feature.o edac_scrub.o
-> +edac_core-y	+= edac_ras_feature.o edac_scrub.o edac_ecs.o
->  
->  edac_core-$(CONFIG_EDAC_DEBUG)		+= debugfs.o
->  
-> diff --git a/drivers/edac/edac_ecs.c b/drivers/edac/edac_ecs.c
-> new file mode 100755
-> index 000000000000..37dabd053c36
-> --- /dev/null
-> +++ b/drivers/edac/edac_ecs.c
-> @@ -0,0 +1,396 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ECS driver supporting controlling on die error check scrub
-> + * (e.g. DDR5 ECS). The common sysfs ECS interface promotes
-> + * unambiguous access from the userspace.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + */
-> +
-> +#define pr_fmt(fmt)     "EDAC ECS: " fmt
-> +
-> +#include <linux/edac_ras_feature.h>
-> +
-> +#define EDAC_ECS_FRU_NAME "ecs_fru"
-> +
-> +enum edac_ecs_attributes {
-> +	ecs_log_entry_type,
-> +	ecs_log_entry_type_per_dram,
-> +	ecs_log_entry_type_per_memory_media,
-> +	ecs_mode,
-> +	ecs_mode_counts_rows,
-> +	ecs_mode_counts_codewords,
-> +	ecs_reset,
-> +	ecs_name,
-> +	ecs_threshold,
-> +	ecs_max_attrs
-> +};
-
-Please use uppercase for enums.
-
-> +
-> +struct edac_ecs_dev_attr {
-> +	struct device_attribute dev_attr;
-> +	int fru_id;
-> +};
-> +
-> +struct edac_ecs_fru_context {
-> +	char name[EDAC_RAS_NAME_LEN];
-> +	struct edac_ecs_dev_attr ecs_dev_attr[ecs_max_attrs];
-> +	struct attribute *ecs_attrs[ecs_max_attrs + 1];
-> +	struct attribute_group group;
-> +};
-> +
-> +struct edac_ecs_context {
-> +	u16 num_media_frus;
-> +	struct edac_ecs_fru_context *fru_ctxs;
-> +};
-> +
-> +#define to_ecs_dev_attr(_dev_attr)	\
-> +	container_of(_dev_attr, struct edac_ecs_dev_attr, dev_attr)
-> +
-> +static ssize_t log_entry_type_show(struct device *ras_feat_dev,
-> +				   struct device_attribute *attr,
-> +				   char *buf)
-> +{
-> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
-> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
-> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
-> +	u64 val;
-> +	int ret;
-> +
-> +	ret = ops->get_log_entry_type(ras_feat_dev->parent, ctx->ecs.private,
-> +				      ecs_dev_attr->fru_id, &val);
-> +	if (ret)
-> +		return ret;
-
-Same notes as patch 2/11 with regards to sysfs documentation/store/show.
-
-Also, it is hard to review this patch without the ABI documentation.
-
-Regards,
-Mauro
-
-Thanks,
-Mauro
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
