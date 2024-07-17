@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-255766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FD59344DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E279344E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F9C1F2239A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B4B1F224B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D285381B;
-	Wed, 17 Jul 2024 22:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B2D537E9;
+	Wed, 17 Jul 2024 22:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="mvTtJLVV"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OCBwfmDT"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700C818EBF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB8A41C6A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721256182; cv=none; b=pIM9jrVeHKno3wd2AX9sBIJiEzgnZoM1jiVJDsBb6k8ipbjXBhUxx3ZJQb10Nu0LYsEodjAO0zmqhPB8WKKazOgUwCu3WrEpJZ2hL69D6lmdndGAiMWezlI8yVSK1xMkmLbPRjlm/vYDmn0uBJ//9hRb/6KUmM2M5vSKQSZqMfM=
+	t=1721256398; cv=none; b=btjyU+rJxzJL0X9yVzvY7yyUZ4dAWjVgkn/+VhPU1RfQwwKozD6cqDqhs+D1WSiX/wXtVK66AhbzmcdI9Y0xzVl+Tjqyo/SOq/Nijkwyd0W+ym2qth4w+l8z9NgAE8YMmp1yEKgnEKtle0c1JagUz+h5qSR3vdZDIOzLyX8wnQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721256182; c=relaxed/simple;
-	bh=4LKJAGaHGvPNEZ9UvqrJxcaNnxkVxqT67rRUgPNfpus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8b4biW+b8F9Shahtdw/P8/wy0UualIwl6oAL3T66H6wkuDvkyHvATN+exztY9lmQeBAt72LxpjpHu4otkW9XunBWNv6iYk/NFSyxEiByHq5RsHNQqizk3yJqFOx9S1OqoY7YzgBoERw3bg3z9NTP78ZJzwp4EM6Xr460IyoTs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=mvTtJLVV; arc=none smtp.client-ip=209.85.167.174
+	s=arc-20240116; t=1721256398; c=relaxed/simple;
+	bh=/5ssnIaPhhILazQ6ejiFbTxxbY7WdW6Y/GEgqLzcgb8=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkHGnA/u5CcIBSbqpq4LHhFoFoQeXctVL8ac5JFRZfVfkq1e97tDYL/pbVqPAMuHh6GOMvBCowXUdtdt/ZT4TVHPVeS1RxdiHhqqm9utGm/btb8lxuYPhpLQiTFLy7tIylEUxDpHoDgodTbI3t6dzJ1lkCaL8WoBBGM2S/aeaE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OCBwfmDT; arc=none smtp.client-ip=209.85.161.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d9dd7e5f6eso123834b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:43:01 -0700 (PDT)
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5c694d5c5adso57640eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1721256180; x=1721860980; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1721256396; x=1721861196; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4LKJAGaHGvPNEZ9UvqrJxcaNnxkVxqT67rRUgPNfpus=;
-        b=mvTtJLVV0i49SKUEIaUzBzKxhsRXx+HgsT/sXmUeWh48+gMQ874GcdMe4BKo8P+gpM
-         /tplFyf8BdsOfdXPetg+iPtEWhiX1Oz0NwBVGRVZ32mRxbjakecvmXOCe1AuwtfYViOE
-         Mbw5zBxjIpZ6tS8dSwORQ6CZ+bt2dpM4Tk/0U=
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wJ3y/2dvs1WFSHKfrAXY++/8u2h23DIsv3lh273sEkU=;
+        b=OCBwfmDTwi0PWA2eDm/XrG5SGmB88/+eqA83T0XLw6m5L/AF2cQGBYlMolv19g7INJ
+         ExC5Hxrk0Uit3Z42eu8vQe8k838BdQjSX+hVQtvoNHpOzpxA1IYBtp0xflaww4+RLeRr
+         F3xRnxgVVW4J6Zvzmnd4afPJXtNfJqmwDiEtQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721256180; x=1721860980;
+        d=1e100.net; s=20230601; t=1721256396; x=1721861196;
         h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LKJAGaHGvPNEZ9UvqrJxcaNnxkVxqT67rRUgPNfpus=;
-        b=K4jNCVllPfTa3twPxeuf7NlIiDbzhywFXb8SgvTIO/zno7gQeh4G7y4mHiv8y7MSdF
-         631UM4G4aP9wHG3hgzHMoUGXjCcs6zAzhKso3Z1m3P4pgxPwDOOn2+p/+eEcw4r03bSq
-         iVuYrDiS+IkpejUspSP3ldaE+Zx5TlawDJkzBMP9x/QEgD/9cxUiwvdFEIyMKZQ8LlWA
-         9aHWKbWaC7mb3GvMtcN9Pj1pnwSm3NYGaOsw/dJ7qmGkKZNJ7csc8jkwffgS4SNWAQTs
-         3Z0AS27SKIhM0G8NoBnPtJ29Q/I583Ds1lN4nh9z637XeUiy2ExWQXQHdkC5k4Ov8MkV
-         608w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNJ0rxRswcF3lk+UNPnBjv8sN5iJTxmTq2+ZXjzo/x0UzYfqFGBxS3Z/drLdsr1i7I3vVAoebc9P9DAdAtWFNbJc3j1TmfXGDdA1rW
-X-Gm-Message-State: AOJu0YwItdIwVm4qHqQ9EAapYiiecGdv3WGEDnoaVyS+dK6uRZ3Ye2F5
-	T/ydXdu1clYElr4kGcZTy/QM6qAI1WodMjruJkmqRxM4kGJkuR8Gg9Nfs2pDFl0=
-X-Google-Smtp-Source: AGHT+IHvVu7dD6e39qfjBq4LcOCOSqjRIbhJfaT0GnWVja/LKd3zcb6HhdQrirpi7Bj58JS1y/2PyA==
-X-Received: by 2002:a05:6808:bd6:b0:3da:aba0:8255 with SMTP id 5614622812f47-3dad1f34478mr3569237b6e.16.1721256180529;
-        Wed, 17 Jul 2024 15:43:00 -0700 (PDT)
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wJ3y/2dvs1WFSHKfrAXY++/8u2h23DIsv3lh273sEkU=;
+        b=H7hsc4a+p+mNcQz2DR8+pdSVKSwNjXlok729QJqw71U6HetnBZeYQeOcoi+Xfb1El+
+         U+9/dlHRqDwUU+7ROQzSOUIUe/H7drOoI8QLQs1bMqmmUyeqfiPGq6jOEFecJbbhY2Ee
+         EA42I03YF0lCPjieaRabQuRaBtAYqXdmXsWEe5ZHyA885SBdra8tLrQQ68/cmjSfOibH
+         CUGBYkBeg3KWwk0V4RfqNVwT7g2YEuc7EUB5LJJ7X+Cvg3PkckPypKa8pvJpyBrKgrtF
+         DZbEi+fHddLUINyDf50kYstVB04fID+ZHGGehWbrgrb0ar652wrbksjoX2yRzMYdAXNV
+         rfoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUf7NbPGEgAGJE9hx/h3oWfVD3nZaufnYDmmVzxEi6zhfWbGNleDHq+o5MhkIjHAgWLrDYkWqCFI2BRLGvDFQGF2TbdbNEAXZODU87d
+X-Gm-Message-State: AOJu0Yyy1tPfMNeIwaqTRJyCBFc6jShQflJcZaIZ9GjZaa/Pvstsc3xY
+	0RvjlUb6b9mV9ev1HGHJ+iSW58FJa9Mo9+i+f2D90vGLHiGkviV8e+iO7btUmoalNoOe5JgPwSG
+	Moac=
+X-Google-Smtp-Source: AGHT+IG2DOt6NJzNqx7F1J1cFMJNFMREcICId1xOoafataWoglSDZZOlhy/M0m/iwMJKLN51mtVjrQ==
+X-Received: by 2002:a05:6820:2918:b0:5c4:4787:1cd with SMTP id 006d021491bc7-5d41d88bc8cmr4055721eaf.7.1721256396434;
+        Wed, 17 Jul 2024 15:46:36 -0700 (PDT)
 Received: from LQ3V64L9R2 ([2600:381:d627:95eb:19b4:6e7a:6e37:ba63])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dad5297a26sm221670b6e.40.2024.07.17.15.42.59
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d3cc6b4fedsm404829eaf.39.2024.07.17.15.46.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 15:43:00 -0700 (PDT)
-Date: Wed, 17 Jul 2024 15:42:57 -0700
+        Wed, 17 Jul 2024 15:46:36 -0700 (PDT)
+Date: Wed, 17 Jul 2024 15:46:33 -0700
 From: Joe Damato <jdamato@fastly.com>
-To: James Tucker <jftucker@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>,
+To: James Tucker <jftucker@gmail.com>, Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] net: uapi: add TCPI_OPT_NODELAY to tcp_info
-Message-ID: <ZphI8Z89iLe3ksVP@LQ3V64L9R2>
+Message-ID: <ZphJyabJV2wDrKzi@LQ3V64L9R2>
 Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
 	James Tucker <jftucker@gmail.com>,
 	Eric Dumazet <edumazet@google.com>,
@@ -81,6 +81,7 @@ Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
 	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 References: <20240717-nagle-tcpinfo-v1-1-83e149ef9953@gmail.com>
+ <ZphI8Z89iLe3ksVP@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,20 +90,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240717-nagle-tcpinfo-v1-1-83e149ef9953@gmail.com>
+In-Reply-To: <ZphI8Z89iLe3ksVP@LQ3V64L9R2>
 
-Hi:
+On Wed, Jul 17, 2024 at 03:42:57PM -0700, Joe Damato wrote:
+> Hi:
+> 
+> FYI new features should be sent with net-next in the subject line
+> (e.g. [PATCH net-next])
 
-FYI new features should be sent with net-next in the subject line
-(e.g. [PATCH net-next])
-
-On Wed, Jul 17, 2024 at 03:22:14PM -0700, James Tucker wrote:
-> Nagle's algorithm is one of the classic causes of poor performance for
-> certain classes of userspace software over TCP, but is currently not
-> reported in userspace tools such as ss(1) from iproute2 as it is only
-> observable via getsockopt.
-
-Commit messages should be written in imperative mood.
+Sorry, I should have also mentioned that net-next is currently
+closed for a 2 week merge window. So, you'd need to wait until it
+re-opens to send patches for new features.
 
 Thanks,
 Joe
