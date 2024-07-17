@@ -1,167 +1,158 @@
-Return-Path: <linux-kernel+bounces-255085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CD8933B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:55:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE39933B8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC3EB224E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A153F1C22AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0F617F397;
-	Wed, 17 Jul 2024 10:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD6A17F397;
+	Wed, 17 Jul 2024 10:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sSzQKesS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Uj/+wQX0"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4CKWnfCc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361C717DE29;
-	Wed, 17 Jul 2024 10:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9BB1878;
+	Wed, 17 Jul 2024 10:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721213711; cv=none; b=l0f7lL4PEITz4NtMVGmatwWyNwYGN7+h9PXGGKWJivjMdBehu8CyrFoZkT94iUMntVM+FkviOIonV+lOvz97LtybyQ2KRCAoEv4aJfHyrosNmxBIUsyAYRgq4tEZ12u8yXd+MtcwEapTzSChbhd7f6ZiNJvGzuqlQztg4C1Knsk=
+	t=1721213732; cv=none; b=VmsY6NLNFQ2rieQ6uePBnAddwMl+vWEeMMuQOVWyEBGG/Zrx4oViydDNj1TWr6Sf/yP1hFlRL8ZD3z5c7eciie48ah3FbqHJCeMjNDU/F58oJH/VqJ6OHwpLpgEWkLaukOarT39Rbka0RHwZvtePN/wbZjHnfGXM7hI7zrMqvv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721213711; c=relaxed/simple;
-	bh=AMsDz/Ku3aEvwfE1d5aax219Ew2wLx/1hyo1nCxhUyo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=QbN1kmwT4dp6YckCVg6IpoQ3YSpynBXjONQQkB7XIjice5A3DR0Em6crSoA3IWPoWNSHu82dOMaKF+b7Cmt7pqyLJ5TT3PNyyt+HZlWZOAXCU+agDoEkp7oNobPQfJRLGcTHvdUKyHn7ytsPagYBiwXRIfcvKy8+jjZVmqWy3Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sSzQKesS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Uj/+wQX0; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 547B71380286;
-	Wed, 17 Jul 2024 06:55:08 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Wed, 17 Jul 2024 06:55:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721213708; x=1721300108; bh=8TPRB3j9rL
-	zE1rwWl+Ls1dJsZyiFWQAyaVNpYBWytB8=; b=sSzQKesS28tzRD3ycMfsHJZzHM
-	mb+/LOuqTrCGwZJDGcQNnJdKH0Sj7JxGiyACbnSjdZ7jhKBEZhC26nSEXXff01YA
-	3JpotsV7/zJ5MCe+fdyamsjsp9S2DrchwkfORG/ELfJ3aXGRzEWYCd3zDP9Bk8HS
-	sGiiCkdFEOOq97/M6iqGdf4xbII/G8ccZWbljeSipuzObXbMUFC2VS/nqGduJ+kx
-	y07wayoLPaub+/tRYZ8V7VPF80IFiCXx+01rWOqumEUBbAPnjdCNT9jh51VvokDA
-	end0ch72kvrXPf2O/vnpUjMlgzNMfF+pA05NYI6k2P/CsDIDXTh+ilVpvT5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721213708; x=1721300108; bh=8TPRB3j9rLzE1rwWl+Ls1dJsZyiF
-	WQAyaVNpYBWytB8=; b=Uj/+wQX06B0+FbPAETtoiXpL19N2SDw2r05omykUv9vm
-	UQ5jN/5ooHFpKmC9/OeTLL/mryXkc+YdSCIbrqlgkbv3+XccswlTzizUh+8cP+IM
-	HJCDQz9PpU692+Tl3nYX54rTTCZ9ds+kC6kEsmRFV3vV536xSEkjUAl+N8diE1i9
-	noad3VfSoGRNuWozy1WyABALzTvES+8zWTHpl1+Hr4WXO+jNY6+EV3earT56nH+t
-	iSweoq2QRsewPiFbHluLa+M2Ge+gJf7KYIK/nzoCoxpfyxyfefWwmpdxm6YoK1Pa
-	7xVk1Bxni+/9WO5T8w/NDQyzIco11dk5HSvl10l6KQ==
-X-ME-Sender: <xms:C6OXZuQOkBGuoTGdD5m5RKKuty_76kxEVrX373t3PNyieEnI7U3eUA>
-    <xme:C6OXZjxL3aEmkVItid8N0JP73i5KAG3vPgc3CMf51q6jtRBrwlPslTjnkBmQB1zHG
-    HVrJSgDm8_j4GRDSjk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeeigdeffecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:C6OXZr1IgRed4C-ppieiHgf6s7NlVM1e-Ll20ASfZcKMAXmjw-RtvQ>
-    <xmx:C6OXZqAyhWKbw21N6I3g1uwuLk08AmNjKjHvsb2gM7PZ0X_Wt--2aQ>
-    <xmx:C6OXZngS9kXR_S5sGCT-6pUxi1CsSNHKGPU2wArBAcGIUJffhG0IrA>
-    <xmx:C6OXZmpJ5HUuZfi2Eqz99SkyJK2dvK0bGYs7ddTni3cSWiNH7X1NCQ>
-    <xmx:DKOXZsYyZp4SgPBafctwqljY71fPeEOjc5k00ZIdbHF5w7UykbObrQto>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id EB13219C005E; Wed, 17 Jul 2024 06:55:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721213732; c=relaxed/simple;
+	bh=SJQNnmcv2NjxOJ7XJuOS/Xoz+HHb+3EHVbIUnJw2mRY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FvMecjayJKYXnXHd/dSf4FaNQRj7dL9V9KeqnSmGhySUPioVbJsBEINnXxE+BE86THEER1sLmRPMhE7VHg2wrPUYnvEs6TxSdW5fjmECCUqKHeAs1DXtFGjx/bzx5Sw4RAd7zXmezLZAh124bMtw17qvntjogHHU3Y4bhfcFb60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4CKWnfCc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721213729;
+	bh=SJQNnmcv2NjxOJ7XJuOS/Xoz+HHb+3EHVbIUnJw2mRY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=4CKWnfCcWsXXdY3gNCnIRx3W09uVQhBvuhwWUJYGkHs6Ukd2ihn0+X3odxTiZcyPH
+	 ko8sXOZY//OPSfLfvdJTMUJGHN2Qjd70TKGqQcZeUMpok4xxALK9cWP94zgVxCiKEU
+	 VophlLap/GYHE6hXRRu0Nkv1YLZKz6XSo5dWq0joLwJkZGA2UuHOGjjrEJgo6p1aUK
+	 4YoHPMvxbBPXwgRg+Xo8X9HNwTT5kVw5RDZ3W7IzyXWLz8+mNKRxXc9obTWJQ/HlJ6
+	 j5540TscnTPioiwgk1u1j1I6x/v5LVvcOmem5DW/hBzXWbGBSRR7SE3evjd5zzoj7X
+	 Hyo3mALsGH09A==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B2B263780BC9;
+	Wed, 17 Jul 2024 10:55:24 +0000 (UTC)
+Message-ID: <fe3885c8-c3d4-44f1-91c1-fce8af3cb99d@collabora.com>
+Date: Wed, 17 Jul 2024 15:55:18 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <91b10591-1554-4860-8843-01c6cfd7de13@app.fastmail.com>
-In-Reply-To: <4d471a38-f86f-429d-a1a3-b882439ef7ba@app.fastmail.com>
-References: <a662962e-e650-4d99-bed2-aa45f0b2cf19@app.fastmail.com>
- <CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com>
- <d7d6854b-e10d-473f-90c8-5e67cc5d540a@app.fastmail.com>
- <CAHk-=wir5og_Pd6MBSDFS+dL-bxoBix03QyGheySeeWPX82SDw@mail.gmail.com>
- <CAHk-=wjqr_ahprUjddSBdQfSXUtg3Y2dCxHre=-Wa4VGdi7wuw@mail.gmail.com>
- <2b6336d1-34e0-48dd-b901-7b5208045597@app.fastmail.com>
- <ZpdnhhaQum_epcGp@hovoldconsulting.com>
- <be80d8f6-2a1b-4f63-a43e-652fa5328d11@app.fastmail.com>
- <Zpd-Bx3VwrYWVeTs@hovoldconsulting.com>
- <4d471a38-f86f-429d-a1a3-b882439ef7ba@app.fastmail.com>
-Date: Wed, 17 Jul 2024 12:54:46 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Johan Hovold" <johan@kernel.org>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
- linux-snps-arc@lists.infradead.org
-Subject: Re: [GIT PULL] asm-generic updates for 6.11
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, davidgow@google.com,
+ "open list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com,
+ "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: Converting kselftest test modules to kunit
+To: Kees Cook <kees@kernel.org>
+References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
+ <202407150936.C32FE24CA@keescook>
+ <8412a936-b202-4313-b5b4-ce6e72a3392f@collabora.com>
+ <202407161005.CACE2E355@keescook>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <202407161005.CACE2E355@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024, at 11:36, Arnd Bergmann wrote:
-> On Wed, Jul 17, 2024, at 10:17, Johan Hovold wrote:
->> On Wed, Jul 17, 2024 at 10:01:10AM +0200, Arnd Bergmann wrote:
+On 7/16/24 10:59 PM, Kees Cook wrote:
+> On Tue, Jul 16, 2024 at 01:11:14PM +0500, Muhammad Usama Anjum wrote:
+>> On 7/15/24 9:40 PM, Kees Cook wrote:
+>>> On Mon, Jul 15, 2024 at 03:09:24PM +0500, Muhammad Usama Anjum wrote:
+>>>> Hi Kees and All,
+>>>>
+>>>> There are several tests in kselftest subsystem which load modules to tests
+>>>> the internals of the kernel. Most of these test modules are just loaded by
+>>>> the kselftest, their status isn't read and reported to the user logs. Hence
+>>>> they don't provide benefit of executing those tests.
+>>>>
+>>>> I've found patches from Kees where he has been converting such kselftests
+>>>> to kunit tests [1]. The probable motivation is to move tests output of
+>>>> kselftest subsystem which only triggers tests without correctly reporting
+>>>> the results. On the other hand, kunit is there to test the kernel's
+>>>> internal functions which can't be done by userspace.
+>>>>
+>>>> Kselftest:	Test user facing APIs from userspace
+>>>> Kunit:		Test kernel's internal functions from kernelspace
+>>>
+>>> I would say this is a reasonable guide to how these things should
+>>> be separated, yes. That said, much of what was kind of ad-hoc kernel
+>>> internals testing that was triggered via kselftests is better done via
+>>> KUnit these days, but not everything.
+>> I started investigated when I found that kselftest doesn't parse the kernel
+>> logs to mark these tests pass/fail. (kselftest/lib is good example of it)
 >>
->> Yeah, that's not something I noticed at least (and I assume I would
->> have). And I only did aarch64 builds on a 6.9 x86_64 host (make 4.4.1).
->
-> Ok, I can reproduce the problem now: I installed a Fedora
-> VM guest and chroot mount and I see the same issue in there.
->
-> My normal Debian host has make 4.3, so I'll see if I can figure
-> if a specific change in make does it.
+>>>
+>>>> This brings me to conclusion that kselftest which are loading modules to
+>>>> test kernelspace should be converted to kunit tests. I've noted several
+>>>> such kselftests.
+>>>
+>>> I would tend to agree, yes. Which stand out to you? I've mainly been
+>>> doing the conversions when I find myself wanting to add new tests, etc.
+>> lib
+>> 	test_bitmap
+>> 	prime_numbers
+>> 	test_printf
+>> 	test_scanf
+> 
+> Yeah, these would be nice to convert.
+I've created TODOs on my end. I'll start working on conversion soon.
 
-I see that there is a version check in scripts/Makefile.include
-from commit 875ef1a57f32 ("kbuild: use .NOTINTERMEDIATE for
-future GNU Make versions") that detects Fedora's make 4.4.1
-as newer than 4.4, so for the first time enables this
-logic that I did not see on Debian.
+> 
+>> 	test_strscpy (already converted, need to remove this test)
+> 
+> Yup, converted in bb8d9b742aa7 ("string: Merge strscpy KUnit tests into string_kunit.c")
+> 
+>> lock
+>> 	test-ww_mutex module
+>> net
+>> 	test_blackhole_dev
+> 
+> I don't know these very well, but yeah worth looking into.
+> 
+>> user
+>> 	test_user_copy (probably already converted, need to remove this test)
+> 
+> This is done in -next via cf6219ee889f ("usercopy: Convert test_user_copy to KUnit test")
+> 
+>> firmware
+>> 	test_firmware
+> 
+> This might not work to convert: there's a userspace half for testing
+> firmware loading (see the kselftest side...)
+> 
+>> fpu
+>> 	test_fpu
+> 
+> Seems reasonable.
+> 
+>> Most of these modules are found in lib/*.
+>>
+>> Would it be desired to move these to kunit?
+> 
+> Checking with the authors/maintainer is probably the first thing to do;
+> check the git history to see who has been working on them.
+> 
 
-In my scripts/Makefile.asm-headers, I had copied the 'FORCE'
-from the existing rules in arch/x86/entry/syscalls/Makefile
-etc without fully understanding what that does.
-It looks like this does not make a difference for make-4.3
-but is actually wrong for make-4.4 on the generic rule.
-
-This makes it work for me with both versions of make:
-
---- a/scripts/Makefile.asm-headers
-+++ b/scripts/Makefile.asm-headers
-@@ -77,14 +77,14 @@ all: $(generic-y) $(syscall-y)
- $(obj)/%.h: $(srctree)/$(generic)/%.h
-        $(call cmd,wrap)
- 
--$(obj)/unistd_%.h: $(syscalltbl) $(syshdr) FORCE
-+$(obj)/unistd_%.h: $(syscalltbl) $(syshdr)
-        $(call if_changed,syshdr)
- 
- $(obj)/unistd_compat_%.h: syscall_compat:=1
--$(obj)/unistd_compat_%.h: $(syscalltbl) $(syshdr) FORCE
-+$(obj)/unistd_compat_%.h: $(syscalltbl) $(syshdr)
-        $(call if_changed,syshdr)
- 
--$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl) FORCE
-+$(obj)/syscall_table_%.h: $(syscalltbl) $(systbl)
-        $(call if_changed,systbl)
- 
- # Create output directory. Skip it if at least one old header exists
-
-Masahiro, does that make sense to you? I assume you can
-explain this properly, but I'll already send a patch with
-this version.
-
-       Arnd
+-- 
+BR,
+Muhammad Usama Anjum
 
