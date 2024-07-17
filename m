@@ -1,260 +1,125 @@
-Return-Path: <linux-kernel+bounces-255195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78670933D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45A4933D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067151F23BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62C91C229B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969701802CD;
-	Wed, 17 Jul 2024 13:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631631802C9;
+	Wed, 17 Jul 2024 13:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+7ZIT39"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drlWOQU7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87CF17F392;
-	Wed, 17 Jul 2024 13:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C3B1CAB1;
+	Wed, 17 Jul 2024 13:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721221469; cv=none; b=kmOcVoEn+QxIvYUjnldfCmDBWSfwaJuqeoIgjLClWuBzWkeKBblabBEbEY+cw1vcQhpLkbKReSSF+rFjvLk8HYnvhKRxcEDzEhLrdn7D2kyBADgMc0qCPun7XPOfh4kHlWI473uBg70ZDOkY1SRxzVlQ21YUDLa9JMueZ7pO3jA=
+	t=1721221578; cv=none; b=gYWZ6LRUd3kEypinai83J9u+vVC5gHdS0hoouPyoG6jcxeZ+5NipCcyUv6T/L6oyhRBw+lv+7Ho+AxuFZk4GsdM3UprZdElkcyqI8UoBHqnk+asS16h2p6eSolfnIjsQZSHa8pSs4GLCQ3LhhA2g2uX2AUUo8baa8B0k2dHbhQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721221469; c=relaxed/simple;
-	bh=0nJG0B8tpwHicd3DA/yMLoYOmSIfLBiSn04eRLG4XiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AP1VzwSY7MDERNJk2tQk+5ECZkonb3h3/BsGdiL0aCgmPczn1fwjaAjXniBw6TUzDFlsY5U5MXAKFDtweAL/DzQ7E+tlbcNUYiGQFd6kvIv5Oqxg8PWFtsmtkd9xFOPbtNP8wmIJjhKLHoXwAcRviUuDsocFC/PFEcsoK4geUiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+7ZIT39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA9DC4AF09;
-	Wed, 17 Jul 2024 13:04:22 +0000 (UTC)
+	s=arc-20240116; t=1721221578; c=relaxed/simple;
+	bh=yaL/3Sz8R2RqdFViPmeUSo/QB36Eh0Myf1lxuq046Qs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ds/Hg3M97zvsHaseH0KwNu79UoGQQVcC8c1j1DOV9cosrwmRfhFi49ghmGMdzdL+v9vzg/9ERQKVR+1MRNTIV8P5TSazeYkUbWRGBzDHdzYtV+pdOrfOfXm1fh7SSXdqTjS+Hw/Gf9AIpGlUd1JIEodTsUxmtfV8yOH/7kPEeaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drlWOQU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB2AC4AF0B;
+	Wed, 17 Jul 2024 13:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721221469;
-	bh=0nJG0B8tpwHicd3DA/yMLoYOmSIfLBiSn04eRLG4XiQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G+7ZIT39Tx8+g2gc872i1IEZSV0sPsor98iZECH3GPjuIhJuQdbm0OYlRwKNCAdIy
-	 tGi2JW00ym44ECKP+wnZDYza0aaNM9JoMwnnbvdgSFqhN7uE6+KtcpjvFhJpeBfs4V
-	 NeoEAfOQk8u+zHRh9A47l2mZixp1hpIiLtUpVlQY7tx5T0Ba98VDvWUBw6WI/m8TTp
-	 Vyx663Xt+59C+qRtH1gN9JlmkCM58H/PZBFpgyrZRUKklnPY5DNK4gdY88AI8E0RDg
-	 ru97MNy56h6KCMCULO2CUME45ZFmuzHl39RhXu2XVNNxx5Rt4+vyYS8mr2wMzBTGJg
-	 BJ2nY3Czf7kqw==
-Message-ID: <44aa4f77-1f9e-47ec-a955-0dc991d8f6d1@kernel.org>
-Date: Wed, 17 Jul 2024 15:04:19 +0200
+	s=k20201202; t=1721221578;
+	bh=yaL/3Sz8R2RqdFViPmeUSo/QB36Eh0Myf1lxuq046Qs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=drlWOQU7L7ulGxUltBkVqx/Ye7eETBt6AAe1zFBZWY6+HzSolFhroVjxAFyDaLZ16
+	 u7rTU6mv//guR4CmLIgOMY+OTmOTiwj6Joiyi2g69eE66sdRMv4k7kQO8H89jiYcUF
+	 5Aw87SBysEh6SRIK3chn4FsbDfOAMAw1AVpE5ofPEisgyQn0Vx7WB7SHD8H0CpRxyz
+	 9Ck1rnpC0nIRSa0e+R0jzsfPGWYrkPZBLDvWe2HC9As4bb5vYZOVrueFSTAyyw/GJO
+	 k1F4FZBO47V1jMyGWxSKpT0PK1K/OmgEUH2yL6LiotI+dDpFSfcaRU50aEzjBGhGz2
+	 iuqEtOD0ZnYYQ==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58b447c51bfso8662279a12.2;
+        Wed, 17 Jul 2024 06:06:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUk5JucedIjz0v1z97ANM+WC/lXZ924tWwLLsJGtKnVhRxDtSBO2vhCg6oxkixZJeExPTxOKH3GK5CuziZQEx9gJAElCOjz/tTEe71UOKQlBYJEOy0fh7+8chnPxwQy9iT52L6el/Evultz9LUTsJL5qgtQxXIZsG2/kPWdpiBj1NLOUOk73ai4lhmF0z1jI2BNAATD3sHqPsrVS81Mgms=
+X-Gm-Message-State: AOJu0Yy36zDcHEBmknVsfiCQsKjnWca8Px3dU8HEP72VNZURNmC8P1E9
+	5TcfnsLoznYR9xYr9/34blZf2eK5bYQ3YdWxoN3MZwPstaEydNiCqgoynLL/rZWuhN/ea4rXyrf
+	k4N4fCcIVzwpJibwePQsHLHpksYg=
+X-Google-Smtp-Source: AGHT+IESGwbAAUP5HG4e9xd3SsFRcHutRN1oZNbgQxILGR6GNamb8tduRv5yh4quBfU4f4WHX5wmcoRfafsx5t+5lnI=
+X-Received: by 2002:a05:6402:190b:b0:58c:34cb:16ca with SMTP id
+ 4fb4d7f45d1cf-5a05d0efb27mr1394536a12.28.1721221576678; Wed, 17 Jul 2024
+ 06:06:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: dt-bindings: add MT8188 AIE
-To: 20220614094956 created <yelian.wang@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
- teddy.chen@mediatek.com, hidenorik@chromium.org
-References: <20240717125426.32660-1-yelian.wang@mediatek.com>
- <20240717125426.32660-2-yelian.wang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240717125426.32660-2-yelian.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
+ <CAAhV-H5OOXguNTvywykyJk3_ydyDiSnpc-kvERRiYggBt441tw@mail.gmail.com>
+ <CAJhJPsXC-z+TS=qrXUT=iF_6-b5x-cr9EvcJNrmSL--RV6xVsQ@mail.gmail.com>
+ <CAAhV-H5Um5HhbmcB1Se=Qeh2OOAeP34BAx+sNtLKge_pePiuiQ@mail.gmail.com>
+ <b1a53515-068a-4f70-87a9-44b77d02d1d5@app.fastmail.com> <CAAhV-H5cDiwAWBgXx8fBohZMocfup3rbe-XjDjEzsLAUB+1BUQ@mail.gmail.com>
+ <54d9edd5-377e-4d9a-956f-8f2ba49d4295@app.fastmail.com>
+In-Reply-To: <54d9edd5-377e-4d9a-956f-8f2ba49d4295@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 17 Jul 2024 21:06:06 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6aaAu=0eyEp8am8A+SSj53+CGp7DrCYCxkNZScBd74BQ@mail.gmail.com>
+Message-ID: <CAAhV-H6aaAu=0eyEp8am8A+SSj53+CGp7DrCYCxkNZScBd74BQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v9 0/2] Add support for Loongson1 APB DMA
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Kelvin Cheung <keguang.zhang@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/07/2024 14:41, 20220614094956 created wrote:
-> From: Yelian Wang <yelian.wang@mediatek.com>
-> 
-> Add YAML device tree binding for MT8188 AIE.
-> 
-> Signed-off-by: Yelian Wang <yelian.wang@mediatek.com>
-> ---
->  .../bindings/media/mediatek-aie.yaml          | 99 +++++++++++++++++++
->  1 file changed, 99 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek-aie.yaml
+On Tue, Jul 16, 2024 at 9:12=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
+m> wrote:
+>
+>
+>
+> =E5=9C=A82024=E5=B9=B47=E6=9C=8816=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:40=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> > On Mon, Jul 15, 2024 at 3:00=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoa=
+t.com> wrote:
+> >>
+> >>
+> >>
+> >> =E5=9C=A82024=E5=B9=B47=E6=9C=8815=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=
+=8B=E5=8D=882:39=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> >> [...]
+> >> >
+> >> >> You said that you've accepted my suggestion, which means you recogn=
+ize
+> >> >> 'loongson' as the better name for the drivers.
+> >> > No, I don't think so, this is just a compromise to keep consistency.
+> >>
+> >> Folks, can we settle on this topic?
+> >>
+> >> Is this naming really important? As long as people can read actual chi=
+p name from
+> >> kernel code & documents, I think both are acceptable.
+> >>
+> >> I suggest let this patch go as is. And if anyone want to unify the nam=
+ing, they can
+> >> propose a treewide patch.
+> > Renaming still breaks config files.
+>
+> This is trival with treewide sed :-)
+Please read the commit message of b8d3349803ba34afda429e87a837fd95a careful=
+ly.
 
-Filename matching compatible.
+Huacai
 
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek-aie.yaml b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
-> new file mode 100644
-> index 000000000000..300aef43e02b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek-aie.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek-aie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: The AIE Unit of MediaTek Camera System
-
-What is AIE?
-
-> +
-> +maintainers:
-> +  - Yelian Wang <yelian.wang@mediatek.com>
-> +
-> +description:
-> +  MediaTek AIE is the ISP unit in MediaTek SoC.
-
-
-AIE is ISP? Say something more, including unwinding of the acronym.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: mediatek,mt8188-aie
-> +      - enum:
-> +          - mediatek,aie-hw3.1
-> +          - mediatek,aie-hw3.0
-
-Nope, you cannot have flexible fallbacks. Anyway, drop hardware
-versions. Do you see them anywhere in other bindings? Use only SoC
-compatible.
-
-
-> +
-> +  "#address-cells":
-> +    const: 2
-
-Why?
-
-
-> +
-> +  "#size-cells":
-> +    const: 2
-
-Why?
-
-> +
-> +  reg:
-> +    maxItems: 2
-
-You must list and describe items.
-
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  mediatek,larb:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Must contain the local arbiters in the current SoCs, see
-> +      Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
-> +      for details.
-> +
-> +  iommus:
-> +    maxItems: 4
-> +    description:
-> +      Points to the respective IOMMU block with master port as argument, see
-> +      Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
-> +      Ports are according to the HW.
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 4
-> +    minItems: 4
-
-Drop minItems.
-
-List and describe the items instead.
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: IMG_IPE
-> +      - const: IPE_FDVT
-> +      - const: IPE_SMI_LARB12
-> +      - const: IPE_TOP
-
-Nope. Please use DTS coding style.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - iommus
-> +  - power-domains
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-
-You do not use anything from this header.
-
-> +    #include <dt-bindings/memory/mediatek,mt8188-memory-port.h>
-> +    #include <dt-bindings/power/mediatek,mt8188-power.h>
-> +    #include <dt-bindings/clock/mediatek,mt8188-clk.h>
-> +    aie: aie@15310000 {
-
-Drop unused label.
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-Best regards,
-Krzysztof
-
+>
+> Thanks
+> - Jiaxun
+>
+> --
+> - Jiaxun
 
