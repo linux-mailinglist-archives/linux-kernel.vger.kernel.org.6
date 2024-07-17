@@ -1,63 +1,100 @@
-Return-Path: <linux-kernel+bounces-255202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814D8933D67
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F184933D69
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377B41F21674
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA3D1F21961
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB91802CE;
-	Wed, 17 Jul 2024 13:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFB11802B3;
+	Wed, 17 Jul 2024 13:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4vbhO9y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yn0eYBm5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SltmJzhJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yn0eYBm5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SltmJzhJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04011CAB1;
-	Wed, 17 Jul 2024 13:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDC617F378
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721221903; cv=none; b=c4CiLGgITpIh2nUP0OBL3vnnkwRm7OYIAnDFbgDcxFjTJ/yXbAfKoMDlUN5261/iKLkEEkO9mrQ13kvNLz6hT2wZ5nPMrirhSVjM5p0FUywOEEm8NiPp3VdmvtvzbYBBdtbuVGlwAlXlqRMAHfK8I1dsSMiNrBL630o09WFySKc=
+	t=1721221938; cv=none; b=NSdFR1Mf2YUIoeQMedsI1pwUzqhahzm+A3SUM+BUWeKqO/rbzLfMg+bn1zU11YpIXEDO7oVrJwPpy9r8+rGp6IGrRxrSUbLIZ1V/xeuLxgQUxYrQhbJCCPixRoFh2GoatxBN3xw6Ns6cPydYC8ZOVZk2h8H5vAVhf4h5E2nBCWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721221903; c=relaxed/simple;
-	bh=BsJB1VZLWv8cQf5g96mezOqaXTKelngBefAByQYHKGc=;
+	s=arc-20240116; t=1721221938; c=relaxed/simple;
+	bh=7jYcfZbZTqJqyfizIPyc3nXvbkvl6k6c5g3lHzdFKD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqXce63sUZR1uCU7WMOHSJnWP1Df5GHxNZEg66KxJfhF9tSNbdu55YwJ7k+69vvz4JLRzKZrspzMSZXnQ1BaDzRohplg77or3aCduofxjMe+Etr9AvaV9WCyc17smmk3rCyYs1lgJlhIWuNYJXCdyywbFjeXqhlXJh6JGH9Frck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4vbhO9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5785C32782;
-	Wed, 17 Jul 2024 13:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721221903;
-	bh=BsJB1VZLWv8cQf5g96mezOqaXTKelngBefAByQYHKGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H4vbhO9yEsuI9nH3vG8q7WKhBuI+L7PR9fgGOYOzADET3EuPNvoI8oEvxBmE8LDi2
-	 kejGp/+k3eqqU+J96yiMrOgsoie6QFprPW32l2b765dLkQV9gOhAaGRH9pRCHTvqb6
-	 SdTY6/BGFuksI/KpjFr8DzDZcwVvXs1ABXaDGBojyCEHECvjncpDn0tTMRhkH51XtS
-	 dxU2rc+4l0o8tPvMKmulfzmMkNh1d5SIjR8MSFKSCcVms6aTEPU1V8Sy2LUj1FvxQY
-	 LxAx+Q+U8q2suGTzsWALXdM1hbRjMbj6m8vSdL760USynoZJGAKxcp188krkZ2a3xu
-	 oIczMD7DLqI0Q==
-Date: Wed, 17 Jul 2024 15:11:37 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>, de Goede <hdegoede@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] ARM: dts: qcom: {a,i}pq8064: correct clock-names in
- sata node
-Message-ID: <ZpfDCStcxnec712U@ryzen.lan>
-References: <20240716105245.49549-1-rayyan.ansari@linaro.org>
- <20240716105245.49549-2-rayyan.ansari@linaro.org>
- <ZpeEq_QmV-aerpCW@ryzen.lan>
- <D2ROZY3KYF19.3KJC3CS82AWMO@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrbtrrFebFY0Ipv9X5giFhHOKGw8HOA+UgaFapiiaLd6qG+J8ARt+jCDJINAVAPIfC4Rgx+beVZhzJAwRDx5nOrrmrQGcjQd2yCcu77oOoFkLDCzLDovOtMIK1t7nZVHU2Hp7t3+NOpr3WesOojfpYavdVyb2Df4Z2qkC4ObgzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yn0eYBm5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SltmJzhJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yn0eYBm5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SltmJzhJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 97F6E1FB82;
+	Wed, 17 Jul 2024 13:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721221935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzV5Kbli/7nNdaaLLJp5ngAKh1EzYbtVHYUprSvEpYs=;
+	b=yn0eYBm5vUslVZpeFukTwPzW3o1uWXM4+KgqXihGaqmHcb7SKjpv5NFVi9psDcautRvcMB
+	dhLdV9RR17SDPGhoHrkI7FjD2+paIvhXLptBCYFi2QA3fiJBGZBTDpphNMBSx2Qs/vU3bV
+	7WafOHB6LzqYz1Xvrbee96P+oZnDCUk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721221935;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzV5Kbli/7nNdaaLLJp5ngAKh1EzYbtVHYUprSvEpYs=;
+	b=SltmJzhJza9UN8X7CYx6Eqo9w4ba8kz3j6ywLQMeck7vtyFtGUxVbcDtIWzlh35MnAJae3
+	cgZ+I1lRsM+mBqDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721221935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzV5Kbli/7nNdaaLLJp5ngAKh1EzYbtVHYUprSvEpYs=;
+	b=yn0eYBm5vUslVZpeFukTwPzW3o1uWXM4+KgqXihGaqmHcb7SKjpv5NFVi9psDcautRvcMB
+	dhLdV9RR17SDPGhoHrkI7FjD2+paIvhXLptBCYFi2QA3fiJBGZBTDpphNMBSx2Qs/vU3bV
+	7WafOHB6LzqYz1Xvrbee96P+oZnDCUk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721221935;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzV5Kbli/7nNdaaLLJp5ngAKh1EzYbtVHYUprSvEpYs=;
+	b=SltmJzhJza9UN8X7CYx6Eqo9w4ba8kz3j6ywLQMeck7vtyFtGUxVbcDtIWzlh35MnAJae3
+	cgZ+I1lRsM+mBqDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B263136E5;
+	Wed, 17 Jul 2024 13:12:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5aH0IS/Dl2Y0bAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 13:12:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 43D08A0987; Wed, 17 Jul 2024 15:12:15 +0200 (CEST)
+Date: Wed, 17 Jul 2024 15:12:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: jack@suse.com, mark@fasheh.com, jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com, hughd@google.com,
+	akpm@linux-foundation.org, ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/4] Fix and cleanups to quota
+Message-ID: <20240717131215.6rzqis37vi35z52p@quack3>
+References: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,33 +103,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D2ROZY3KYF19.3KJC3CS82AWMO@linaro.org>
+In-Reply-To: <20240715130534.2112678-1-shikemeng@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.986];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Wed, Jul 17, 2024 at 10:05:09AM +0100, Rayyan Ansari wrote:
+On Mon 15-07-24 21:05:30, Kemeng Shi wrote:
+> This series contains some random fix and cleanups to fs quota. Please
+> check respective patches for more detail. Thanks!
 > 
-> Hi Niklas,
-> 
-> Yes, this patch does not depend on the following two patches, I just
-> thought that sending this as a series would make sense given that
-> patches 2-3 would surface this error (as we can run dtbs_check against
-> yaml bindings but not text bindings).
+> Kemeng Shi (4):
+>   quota: avoid missing put_quota_format when DQUOT_SUSPENDED is passed
+>   quota: remove unneeded return value of register_quota_format
+>   quota: remove redundant return at end of void function
+>   quota: remove unnecessary error code translation in dquot_quota_enable
 
-Usually, DT maintainers prefer for DT bindings to go via subsystem trees
-(in this case libata).
+Thanks! All the patches look good to me. I'll queue them into my tree.
 
-I guess DT maintainers could have picked the whole series, as they do
-occasionally, but they seem to want to avoid this as much as possible.
-
-
-In this case, considering that the DTS change (patch 1/3) is a strict fix,
-I think that it should be merged ASAP (target 6.11 instead of 6.12).
-
-We will queue the DT binding changes for 6.12.
-
-When also taking into consideration that the DT bindings and DTS changes
-have different trees, splitting the series was probably the right move.
-
-
-Kind regards,
-Niklas
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
