@@ -1,257 +1,140 @@
-Return-Path: <linux-kernel+bounces-255778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02879344F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:57:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D9F934504
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 01:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758DC283774
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:57:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1CC3B2292B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E455E58;
-	Wed, 17 Jul 2024 22:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFC756766;
+	Wed, 17 Jul 2024 23:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pp84YKtV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfqWwxKq"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F49A249F9;
-	Wed, 17 Jul 2024 22:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3379D2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 23:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721257050; cv=none; b=PcSKFFzziTbvT7KmDhyx+F3TF/87Kjz6HHdrLhPl043EpvpZ3EHhjFsxN4B3ntO0CVfLXK3i5iD1JR/bwQkWNNY4ObCwJ14aI5BT7upDHiohXOtoRD8LD8Fv7G1wAUqTmunicz5gYJa6QGjAqnmpWuR2xfPUqVP6Ikk59xZRBEg=
+	t=1721258440; cv=none; b=LTHlx8QuW2O/HCNVJhFm/jdX/JBRoCGec4r2U9IDd3z/QPLjcgTYtfUNtUS4bYF/+6FtNl8hExMBoynrOATnqcs916bsg1rSOwH6Nx5TeXOyu8yiQOt+y03FKXPj1CeBbHJEG3AgZoNchSGZxsoJorYbHjtlnv9XYmFgjOnKA3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721257050; c=relaxed/simple;
-	bh=oWqldk9LByF0/aKR32qLZJ52KR4BYCWgM6KVmobRav4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jcBzMm/NwvrgYGPQ/tgpVS00MSHTJz+GspHv6pzGU7PIPLtYC4SC5P0wRDB8UntVBZzuvMLuvM4XmIX1W17DHtDukTw24ga59kWQyJQboRPDN2EYuuCTTsUspU3SgQa6kpX+x0lpsB+b2mIkqrclI6q4NJxE9asN4ztRTFtND6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pp84YKtV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFebZi008133;
-	Wed, 17 Jul 2024 22:57:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ATszFPG0tx6MSwF9g1jqXbljCZlzXPfIFDwZXXQ64BI=; b=Pp84YKtV4QOVG07Q
-	mhFCGfY91LCoilE0EgH7XPWVkbvmFZxA+NH+9awUh2pcylajQiU5nNzPB+c1Oalk
-	N4TMLbM1z7IahKFe4VdOyyfAUkXTqpEr+9ripzr5B+GnW1NkNUVHIKH6lXWuD5XT
-	+7LVKVC0CMOlcrgrVm3Fd9jWN2ZXsDpvWKi4bTZrXI0GU/CPX7a0vaIwDkLM32L4
-	5jqNmgp7xpz0X7CVMQ4Nz+/pqqmbq0xTvP3zfr8axX/LFCVstGjVVC9kuMEllPRL
-	QuU7XtV6r4TwLlABXH22n8mAiXGA+0VXkTWgkrtKS2+KL6v5hrwMRB93zUajYktS
-	Chgleg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfxbu58-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 22:57:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HMvDVJ011127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 22:57:13 GMT
-Received: from [10.110.77.168] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
- 2024 15:57:12 -0700
-Message-ID: <02b94a07-fcd6-4a48-bead-530b81c8a27e@quicinc.com>
-Date: Wed, 17 Jul 2024 15:57:11 -0700
+	s=arc-20240116; t=1721258440; c=relaxed/simple;
+	bh=alkn7u8DptvmEkL2WvLNybsQ9pA+gLO09vP+UQQNaMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QBoqU/pUHAldrz9pYx+9G8T+aiCh1lEBLok3omAmTrf0RFxSKzg9TcLBPGZKSsZNXwoJmcCxpNTTzaLxQx2DM8qxcaXhV9nGfIp6EKxmTbFM55urhai3PFKhX8crk6nDJAO/CHFLZ8Bn++i8mF1zY295CAF3M9svpvXbg/C/u8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BfqWwxKq; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ca8dfa2cceso157150a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721258437; x=1721863237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJ4Rtgfw1crxH82KHr40tMf+xK9HrNqVoA0f8i6QWg8=;
+        b=BfqWwxKqzpWlfXe3JFQ8QSqs+t8QUb1R1NbC4OznrQ9xJk5FSRUtQH0MGeIjG12vE+
+         eI9GpbS34YcTMPZQZjM5U6yCJ+r8CKkfA9wt3NcVXdkACGZXen0B+wGKLCbd8vO+nKOM
+         PaV8aZRz6l4+2q3/iHFxUnsGyLgG218ThZWMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721258437; x=1721863237;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PJ4Rtgfw1crxH82KHr40tMf+xK9HrNqVoA0f8i6QWg8=;
+        b=N/gw01+i4EMDMl0hKZpCupSZt03eR1080U9CtMURmsZhz4Vj+HX1MjW6x0SqWFPv9s
+         gYwRA9NwMDSls9SaKKbCF54sSgwzAcKImBOp2ldjcLWgPq23aHrjnd5ay3MN/KlNBGhE
+         Ouvpbhs+FGr7tRNDOPm4EwYk14SEj33Qa6hhb7UUBzAI/B1vJRd2dSj/Bb0u8G7vhrs+
+         Kzssr43Ar2Lo1iQHUw+RFtB5Piqw86jpcSNJqJy57Fc08SGMxJMcixxp9eXzn84BDw8Q
+         pQ0jIEIn82PFGcrQeVUdkGKbBXFtus1sDgmiMUDXRrcEFOx/oAeRGE39Oz3gJa0wDgfb
+         XFug==
+X-Forwarded-Encrypted: i=1; AJvYcCVgAgVjhW5bI/9X4rfB6fWSSmmZ07e6xhMwgSMcsAQ+Ls+uyTWPZbHQmnD2RkWZFnXNqfgnhTblxtNvRS71eoWT3SOt0nZHctkOJnIw
+X-Gm-Message-State: AOJu0Yw3N0LK++/UtTbrwlXcye47c7fEi30Um7euf5O9tzdhukQ44oSN
+	+YCfYxnBKCMmAM5AdC3zevdNHiJ8449qSkMjQVQlsX7mWJvGSb+WvGokb9+D+A==
+X-Google-Smtp-Source: AGHT+IGSq9WFJ24jFHe7nZE5xQPf4XbD2c2tgVy5+rSjm5TliJ99S5ZpUoONUIfw0XUZLKuOlJXl9w==
+X-Received: by 2002:a17:90b:a51:b0:2c9:7803:1cf6 with SMTP id 98e67ed59e1d1-2cb527a1155mr2419597a91.20.1721258437108;
+        Wed, 17 Jul 2024 16:20:37 -0700 (PDT)
+Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2a3:200:62a5:b19:9711:d3a6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb60219d21sm510034a91.53.2024.07.17.16.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 16:20:36 -0700 (PDT)
+From: Khazhismel Kumykov <khazhy@chromium.org>
+X-Google-Original-From: Khazhismel Kumykov <khazhy@google.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Zdenek Kabelac <zkabelac@redhat.com>,
+	Joe Thornber <thornber@redhat.com>,
+	Heinz Mauelshagen <heinzm@redhat.com>,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Khazhismel Kumykov <khazhy@google.com>
+Subject: [RFC PATCH v2] dm ioctl: fix erroneous EINVAL when signaled
+Date: Wed, 17 Jul 2024 16:18:33 -0700
+Message-ID: <20240717231833.2090430-1-khazhy@google.com>
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+In-Reply-To: <CACGdZYKbdyALADEMDV+Vg+eog+UjjgGigEpmJTSKw_64RM8rbA@mail.gmail.com>
+References: <CACGdZYKbdyALADEMDV+Vg+eog+UjjgGigEpmJTSKw_64RM8rbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/13] PCI: qcom: Simulate PCIe hotplug using 'global'
- interrupt
-To: <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240717-pci-qcom-hotplug-v2-0-71d304b817f8@linaro.org>
- <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20240717-pci-qcom-hotplug-v2-12-71d304b817f8@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Uj7XKNBaXILXy-Ak2ZwL3u-nrbAHM7OT
-X-Proofpoint-GUID: Uj7XKNBaXILXy-Ak2ZwL3u-nrbAHM7OT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_17,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
- spamscore=0 clxscore=1011 mlxscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170174
+Content-Transfer-Encoding: 8bit
 
-Hi Mani
+do_resume when loading a new map first calls dm_suspend, which could
+silently fail. When we proceeded to dm_swap_table, we would bail out
+with EINVAL. Instead, attempt to restore new_map and return ERESTARTSYS
+when signaled.
 
-I don't think we can suggest that usage of link up event with Global IRQ 
-as simulate PCIe hotplug. hotplug is referring to allow handling of both
-add or remove of endpoint device whereas here you are using global IRQ 
-as last step to rescan bus if endpoint is power up later after link 
-training is initiated.
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+ drivers/md/dm-ioctl.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-Will this work if you remove endpoint device and add it back again ?
+v2: don't leak new_map if we can't assign it back to hc.
 
-Regards,
-Mayank
-On 7/17/2024 10:03 AM, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Historically, Qcom PCIe RC controllers lack standard hotplug support. So
-> when an endpoint is attached to the SoC, users have to rescan the bus
-> manually to enumerate the device. But this can be avoided by simulating the
-> PCIe hotplug using Qcom specific way.
-> 
-> Qcom PCIe RC controllers are capable of generating the 'global' SPI
-> interrupt to the host CPUs. The device driver can use this event to
-> identify events such as PCIe link specific events, safety events etc...
-> 
-> One such event is the PCIe Link up event generated when an endpoint is
-> detected on the bus and the Link is 'up'. This event can be used to
-> simulate the PCIe hotplug in the Qcom SoCs.
-> 
-> So add support for capturing the PCIe Link up event using the 'global'
-> interrupt in the driver. Once the Link up event is received, the bus
-> underneath the host bridge is scanned to enumerate PCIe endpoint devices,
-> thus simulating hotplug.
-> 
-> All of the Qcom SoCs have only one rootport per controller instance. So
-> only a single 'Link up' event is generated for the PCIe controller.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/pci/controller/dwc/pcie-qcom.c | 55 +++++++++++++++++++++++++++++++++-
->   1 file changed, 54 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 0180edf3310e..a1d678fe7fa5 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -50,6 +50,9 @@
->   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
->   #define PARF_Q2A_FLUSH				0x1ac
->   #define PARF_LTSSM				0x1b0
-> +#define PARF_INT_ALL_STATUS			0x224
-> +#define PARF_INT_ALL_CLEAR			0x228
-> +#define PARF_INT_ALL_MASK			0x22c
->   #define PARF_SID_OFFSET				0x234
->   #define PARF_BDF_TRANSLATE_CFG			0x24c
->   #define PARF_SLV_ADDR_SPACE_SIZE		0x358
-> @@ -121,6 +124,9 @@
->   /* PARF_LTSSM register fields */
->   #define LTSSM_EN				BIT(8)
->   
-> +/* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
-> +#define PARF_INT_ALL_LINK_UP			BIT(13)
-> +
->   /* PARF_NO_SNOOP_OVERIDE register fields */
->   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
->   #define RD_NO_SNOOP_OVERIDE_EN			BIT(3)
-> @@ -1488,6 +1494,29 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
->   				    qcom_pcie_link_transition_count);
->   }
->   
-> +static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
-> +{
-> +	struct qcom_pcie *pcie = data;
-> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
-> +	struct device *dev = pcie->pci->dev;
-> +	u32 status = readl_relaxed(pcie->parf + PARF_INT_ALL_STATUS);
-> +
-> +	writel_relaxed(status, pcie->parf + PARF_INT_ALL_CLEAR);
-> +
-> +	if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
-> +		dev_dbg(dev, "Received Link up event. Starting enumeration!\n");
-> +		/* Rescan the bus to enumerate endpoint devices */
-> +		pci_lock_rescan_remove();
-> +		pci_rescan_bus(pp->bridge->bus);
-> +		pci_unlock_rescan_remove();
-How do you handle case where endpoint is already enumerated, and seeing 
-link up event in parallel or later ? will it go ahead to rescan bus 
-again here ?
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index c2c07bfa6471..0591455ad63c 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1181,8 +1181,27 @@ static int do_resume(struct dm_ioctl *param)
+ 			suspend_flags &= ~DM_SUSPEND_LOCKFS_FLAG;
+ 		if (param->flags & DM_NOFLUSH_FLAG)
+ 			suspend_flags |= DM_SUSPEND_NOFLUSH_FLAG;
+-		if (!dm_suspended_md(md))
+-			dm_suspend(md, suspend_flags);
++		if (!dm_suspended_md(md)) {
++			r = dm_suspend(md, suspend_flags);
++			if (r == -EINTR)
++				r = -ERESTARTSYS;
++			if (r) {
++				down_write(&_hash_lock);
++				hc = dm_get_mdptr(md);
++				if (!hc)
++					r = -ENXIO;
++				if (hc && !hc->new_map) {
++					hc->new_map = new_map;
++					up_write(&_hash_lock);
++				} else {
++					up_write(&_hash_lock);
++					dm_sync_table(md);
++					dm_table_destroy(new_map);
++				}
++				dm_put(md);
++				return r;
++			}
++		}
+ 
+ 		old_size = dm_get_size(md);
+ 		old_map = dm_swap_table(md, new_map);
+-- 
+2.45.2.993.g49e7a77208-goog
 
-Also can you consider doing this outside hardirq context ?
-
-> +	} else {
-> +		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
-> +			      status);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->   static int qcom_pcie_probe(struct platform_device *pdev)
->   {
->   	const struct qcom_pcie_cfg *pcie_cfg;
-> @@ -1498,7 +1527,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->   	struct dw_pcie_rp *pp;
->   	struct resource *res;
->   	struct dw_pcie *pci;
-> -	int ret;
-> +	int ret, irq;
-> +	char *name;
->   
->   	pcie_cfg = of_device_get_match_data(dev);
->   	if (!pcie_cfg || !pcie_cfg->ops) {
-> @@ -1617,6 +1647,27 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->   		goto err_phy_exit;
->   	}
->   
-> +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_global_irq%d",
-> +			      pci_domain_nr(pp->bridge->bus));
-> +	if (!name) {
-> +		ret = -ENOMEM;
-> +		goto err_host_deinit;
-> +	}
-> +
-> +	irq = platform_get_irq_byname_optional(pdev, "global");
-> +	if (irq > 0) {
-> +		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> +						qcom_pcie_global_irq_thread,
-> +						IRQF_ONESHOT, name, pcie);
-> +		if (ret) {
-> +			dev_err_probe(&pdev->dev, ret,
-> +				      "Failed to request Global IRQ\n");
-> +			goto err_host_deinit;
-> +		}
-> +
-> +		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
-> +	}
-> +
->   	qcom_pcie_icc_opp_update(pcie);
->   
->   	if (pcie->mhi)
-> @@ -1624,6 +1675,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->   
->   	return 0;
->   
-> +err_host_deinit:
-> +	dw_pcie_host_deinit(pp);
->   err_phy_exit:
->   	phy_exit(pcie->phy);
->   err_pm_runtime_put:
-> 
 
