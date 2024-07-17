@@ -1,217 +1,119 @@
-Return-Path: <linux-kernel+bounces-255554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AD393422F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:19:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEBD93422A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F9B1B2267D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2C1283FD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67471836C2;
-	Wed, 17 Jul 2024 18:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1D2183083;
+	Wed, 17 Jul 2024 18:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtLqw72z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X2SvuwMT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0456D181BBE;
-	Wed, 17 Jul 2024 18:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467CF12E75
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240364; cv=none; b=Ywj+d7uU/V3Zh30/n/97/xScWF9skNzlVeuzo2NnSJ+WK0+md/t9wWeDwRlzgaQnl7eD1VxxMHWZZ4Lb7tlU+pbkqRRT+VTBJnIB3JPnXkPYRn89CdV6jl3b5CFyqaOjgBZJQGcacGZeN2XO7j0b5762plaVvn7v1hEqm17MPck=
+	t=1721240335; cv=none; b=lzFVAm0nPLVppl2QCIbb33jQK7LdKl9L/h8ik/dk073PESTcr6m+obiPD/izaZfG0UM0DCj6rI9XHFSfFtcv7LIIccKg9Aadr8pSICX6mqYjUBgX0UBE6GWNKGLHPV9xjQQCGZDO51ji+4GiLH0vtE/7KWJGwUJJx/XC48yZyHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240364; c=relaxed/simple;
-	bh=GmUUSK5wGPMIjTgA2rtDl0EVIe+HRUqTQRe1IJXXyoQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SKKMj5bO+W0BC/S5mTpLx3+81EBfzhjJyfKDQHM/lhvPhvSSZth56EpPem4uWmPR4ywnvlyJzdW+u0TwEJJqIVBnDoxovi2YkUz3z6BZuu7740xBIq8KBVsWt8IaTpVzZGP4QFpwDmuE0htSbVIEaMdUo9rnzZOLUVt+3dPl7P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtLqw72z; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721240362; x=1752776362;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GmUUSK5wGPMIjTgA2rtDl0EVIe+HRUqTQRe1IJXXyoQ=;
-  b=ZtLqw72zTZ1XD1rty/MpkrpVxIk6ZrzfOiDbKUlwWezqUGwRfGGuvXj9
-   ZR7y64rEZ4W+UfOIRz4+eUx5BxiZ824PHvdDWHC6vnzMGh5o8feH72LL0
-   NH+i/54GFpGLT7coKHW8MGeORpx7hOPmN7uGqPZJl4qriqTS8/KNi1zIe
-   4FUTUev3AcgaWAfDzquyrpDEjC08dJ8lbBt+tx8ttBociyNxvtW6zaSWd
-   JCoktSRyQTiJbPRXqnjQYB+9V7UDfdwFB8Iqpc3elQEclySJogV287JkE
-   YOh3H/uu+JOcKA05BbdmLiFkmHLbcfn1I11RsIWq8lvHS4De/GbEjJu19
-   Q==;
-X-CSE-ConnectionGUID: YMjvFbxhRfqD3sdYkQR28Q==
-X-CSE-MsgGUID: Kbnf9STSSye7ROe72Sskgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18461490"
-X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
-   d="scan'208";a="18461490"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 11:19:21 -0700
-X-CSE-ConnectionGUID: BK4n1Gw7TPi3uA5tprpqAg==
-X-CSE-MsgGUID: YDzbysw2RuCRKkhBAcMtQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
-   d="scan'208";a="50358864"
-Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
-  by fmviesa008.fm.intel.com with ESMTP; 17 Jul 2024 11:19:20 -0700
-From: matthew.gerlach@linux.intel.com
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	joyce.ooi@intel.com,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: [PATCH] dt-bindings: PCI: altera: msi: Convert to YAML
-Date: Wed, 17 Jul 2024 13:17:56 -0500
-Message-Id: <20240717181756.2177553-1-matthew.gerlach@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721240335; c=relaxed/simple;
+	bh=XMcmwqQeqJJpmKPK58D7Uzbt7GSUvI4exaVwLSATFKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sZpOk8QZMBKxKWzssnbJ2Smb5IZLKOqSbeJjTYjmTOJVAwtWTAfybmJzOTj8sw3guN/R5glw9wONkREYSBltvDgdrayvTu0lK0SdySmvfh6ZtDSxh0IDFMUTBR+uXzEHHT1gN6MmSsV4jewbiT79jFDsOEtjQN+JMs3YOuX4cTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X2SvuwMT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721240333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XJ+DO1XFPA3kG5fZOCBOo8jUV2iAAVsZ3cSbK5/oCdI=;
+	b=X2SvuwMTKFIM8ucH/YiT8wp5yKh2JgFXaUjapnw0tRAtDbgr3Ro8GEFru+KWUT0T3yATCI
+	uhSLccxEKJ39bOlR4MLq13NA+y7bUFOxvyyGCTohatWkx19K4Vv+3MnOFI+xYOn0Ak2zgU
+	ykNAEOJd36vNuJgQMHvJclgrmeypdGc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-Z9YBNzkfPSCEdpDdbWu1QA-1; Wed,
+ 17 Jul 2024 14:18:46 -0400
+X-MC-Unique: Z9YBNzkfPSCEdpDdbWu1QA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2C871955D50;
+	Wed, 17 Jul 2024 18:18:43 +0000 (UTC)
+Received: from [10.22.16.209] (unknown [10.22.16.209])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BBECE1955D47;
+	Wed, 17 Jul 2024 18:18:40 +0000 (UTC)
+Message-ID: <134fc34c-10b8-4d00-aaca-8285efce9899@redhat.com>
+Date: Wed, 17 Jul 2024 14:18:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] blk-cgroup: Replace u64 sync with spinlock for iostat
+ update
+To: "tj@kernel.org" <tj@kernel.org>
+Cc: =?UTF-8?B?Qm95IFd1ICjlkLPli4Poqrwp?= <Boy.Wu@mediatek.com>,
+ "boris@bur.io" <boris@bur.io>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "axboe@kernel.dk" <axboe@kernel.dk>,
+ =?UTF-8?B?SXZlcmxpbiBXYW5nICjnjovoi7PpnJYp?= <Iverlin.Wang@mediatek.com>,
+ "josef@toxicpanda.com" <josef@toxicpanda.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "angelogioacchino.delregno@collabora.com"
+ <angelogioacchino.delregno@collabora.com>
+References: <20240716075206.23121-1-boy.wu@mediatek.com>
+ <Zpbify32lel9J-5I@slm.duckdns.org>
+ <c5bcbcbaeacdb805adc75c26f92ec69f26ad7706.camel@mediatek.com>
+ <5560c690cc6de67139a9b2e45c7a11938b70fc58.camel@mediatek.com>
+ <1b19b68adb34410bf6dc8fd3f50e4b82c1a014e4.camel@mediatek.com>
+ <Zpf3ks2drDZ7ULTa@slm.duckdns.org>
+ <f448f66b-7a91-4281-8f77-159541cbacff@redhat.com>
+ <ZpgB9kCAxAAXAtSi@slm.duckdns.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZpgB9kCAxAAXAtSi@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 
-Convert the device tree bindings for the Altera PCIe MSI controller
-from text to YAML.
+On 7/17/24 13:40, tj@kernel.org wrote:
+> Hello, Waiman.
+>
+> On Wed, Jul 17, 2024 at 01:37:56PM -0400, Waiman Long wrote:
+>> bis->sync is still being used in blk_cgroup_bio_start(). Replacing it with a
+>> global lock may kill performance. We may have to use a per-cpu lock if we
+>> want to go this route of eliminating bis->sync.
+> So, the idea is to keep using u64_sync for blkg->iostat_cpu and use
+> blkg_stat_lock for blkg->iostat. The former is the only one which is updated
+> in hot path, right?
 
-Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
----
- .../bindings/pci/altera-pcie-msi.txt          | 27 --------
- .../bindings/pci/altr,msi-controller.yaml     | 65 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 66 insertions(+), 28 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie-msi.txt
- create mode 100644 Documentation/devicetree/bindings/pci/altr,msi-controller.yaml
+Well, it can be confusing whether we are dealing with blkg->iostat or 
+blkg->iostat_cpu. In many cases, we are dealing with iostat_cpu instead 
+of iostat like __blkcg_rstat_flush() and blkg_clear_stat(). So we can't 
+eliminate the use of u64_stats_update_begin_irqsave() in those cases.
 
-diff --git a/Documentation/devicetree/bindings/pci/altera-pcie-msi.txt b/Documentation/devicetree/bindings/pci/altera-pcie-msi.txt
-deleted file mode 100644
-index 9514c327d31b..000000000000
---- a/Documentation/devicetree/bindings/pci/altera-pcie-msi.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Altera PCIe MSI controller
--
--Required properties:
--- compatible:	should contain "altr,msi-1.0"
--- reg:		specifies the physical base address of the controller and
--		the length of the memory mapped region.
--- reg-names:	must include the following entries:
--		"csr": CSR registers
--		"vector_slave": vectors slave port region
--- interrupts:	specifies the interrupt source of the parent interrupt
--		controller. The format of the interrupt specifier depends on the
--		parent interrupt controller.
--- num-vectors:	number of vectors, range 1 to 32.
--- msi-controller:	indicates that this is MSI controller node
--
--
--Example
--msi0: msi@0xFF200000 {
--	compatible = "altr,msi-1.0";
--	reg = <0xFF200000 0x00000010
--		0xFF200010 0x00000080>;
--	reg-names = "csr", "vector_slave";
--	interrupt-parent = <&hps_0_arm_gic_0>;
--	interrupts = <0 42 4>;
--	msi-controller;
--	num-vectors = <32>;
--};
-diff --git a/Documentation/devicetree/bindings/pci/altr,msi-controller.yaml b/Documentation/devicetree/bindings/pci/altr,msi-controller.yaml
-new file mode 100644
-index 000000000000..84ff0b8a7725
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/altr,msi-controller.yaml
-@@ -0,0 +1,65 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (C) 2015, 2024, Intel Corporation
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/altr,msi-controller.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Altera PCIe MSI controller
-+
-+maintainers:
-+  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - altr,msi-1.0
-+
-+  reg:
-+    items:
-+      - description: CSR registers
-+      - description: Vectors slave port region
-+
-+  reg-names:
-+    items:
-+      - const: csr
-+      - const: vector_slave
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  msi-controller: true
-+
-+  num-vectors:
-+    description: number of vectors
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    maximum: 32
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - msi-controller
-+  - num-vectors
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    msi0: msi@ff200000 {
-+        compatible = "altr,msi-1.0";
-+        reg = <0xff200000 0x00000010>,
-+              <0xff200010 0x00000080>;
-+        reg-names = "csr", "vector_slave";
-+        interrupt-parent = <&hps_0_arm_gic_0>;
-+        interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+        msi-controller;
-+        num-vectors = <32>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f296a5ea2529..8a3424a03772 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17585,7 +17585,7 @@ PCI MSI DRIVER FOR ALTERA MSI IP
- M:	Joyce Ooi <joyce.ooi@intel.com>
- L:	linux-pci@vger.kernel.org
- S:	Supported
--F:	Documentation/devicetree/bindings/pci/altera-pcie-msi.txt
-+F:	Documentation/devicetree/bindings/pci/altr,msi-controller.yaml
- F:	drivers/pci/controller/pcie-altera-msi.c
- 
- PCI MSI DRIVER FOR APPLIEDMICRO XGENE
--- 
-2.34.1
+Cheers,
+Longman
 
 
