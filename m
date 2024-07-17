@@ -1,305 +1,235 @@
-Return-Path: <linux-kernel+bounces-254849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE388933875
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:01:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CAB933877
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C111C212A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F170283EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CA521345;
-	Wed, 17 Jul 2024 08:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C5E1F95E;
+	Wed, 17 Jul 2024 08:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CJQegKmH"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2102.outbound.protection.outlook.com [40.92.102.102])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7UI6SfX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C8249E5;
-	Wed, 17 Jul 2024 08:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203305; cv=fail; b=TqK0D/E6wr4oBAoUm7BNvlF6dt2xknBgWmGjandka3+B3pBBBi7heXLBr3P2q95YdGRXbZky+/sTIgkIaH7mXXdqeO3GiJAx84CUgndZu0l/Ge19fdkMkSS/P+Q6LlAGGtqsGkcf68+zlK4X7bZyJ8Jagc54MxymwotVYJCNYN4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203305; c=relaxed/simple;
-	bh=J/yVuQaemQ+B81Ld89PuW0JmRpN7VDQH+o8cCNZnLjw=;
-	h=Message-ID:Date:Subject:To:References:From:Cc:In-Reply-To:
-	 Content-Type:MIME-Version; b=N776tik4ec2dZEKPd4IdXLO5jejZolUiIbtDc42VRWn+vRVdd0YW4YcJoOmpHA1nPzEgkG/71V4FrCc93/rm9J10Q4Xg4bxWzYxX4LpukKKqDM7/AgIt4SbK3qswVtaaKSjYgehcT2Aaeb+18II64x9CHNxSlpV6Z1nduVr0GRQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CJQegKmH; arc=fail smtp.client-ip=40.92.102.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TQtoK6CyuCeODK7rzFOMQrywkLthAv/LZM8uDf6/CWB1j74oWyo+WwOR2v2dOLkiLJRDu8GZUHASpHVqvC3tJrfLMuhX5rX1Yv9lWCHzHilqoQUWHpC5zumIrCpUTN/65j1Lp6sJ3681CyUQYfdgkpQPK7ej2MCUzuNXadwKm+R+J3iVfFNRfORc1fVZpNLLRndroC4uH5Ng6WS6sIjV6jphRJt0Egjv/dpouxVTuiwcHfhR4l7r/Sq7rijIHs1f5NiMJJzom8f9p4th701h6NUC6DLXg/IVCnXH5f6uUsb7cJqoHZ7w7ccZPFPJDrrPMts2VRSjhSf1vUb5z2IBBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lcAvOZ5KykyLXTcVGYP3iEsMppJhskQ77dqNrKmtY/s=;
- b=A7ZcLUhCNF3/wzp4lTgEqk/BIYR+5X7kimWbRmyfCSJs9cmgK1rPHxO4Vr9olrwxqYNei07LoCkrQ0zx3FVlGx1gUUCpYZlT3vcXBVcm9E6tHp0aNArVLG9sCW4ymR+69vBkiGrQ2x3Rkpi2Wa1FPTZFX+b5RGjjctY6vgsSEtYdBPBS7gr8lVcFWulJPRmj0eXTyxhoxr4ASc+ELaym+B51MFkelG0Xz8QSFno+xlKge36FcEuuO2p+VZ75QtOgrNOk3A7UVoJnGDQddzU2M1FelSss7hqwQ6MxkETQckK0pAXBPHA11w4mRUHJlbDGK6kgqH5b5/nSQjNYyR5DgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lcAvOZ5KykyLXTcVGYP3iEsMppJhskQ77dqNrKmtY/s=;
- b=CJQegKmHWSeQPOB5oj+cy1cGsorQkiYF3/gK3Yq1qg9UpkbHgCYw7AIKKbjZSZD1ATKfNzqAe58svwoIhRHLwLj5wmDbWOf6dasFE3RIFo8aK9S7U7qgd/dssVrevKDkF2bhvu3K0JKUCkMO0Xi0XIsNs+TnKNGuwc+lj4gPlE1Mowke2MKhreRDqCLkAR3aO9OuRMi/dUzcknuoxwBKeH6N4g27oVWS4QIYMYtDxEfI/sS1jTJkgfoh7D0fFGj4eV72R4vNOesB5hIkx8xdVbNDuyDNKRQh1rzpz6X8nSALAi8807nNY9pBblHOdZ+sqYuAuQGhW5AhTkZ6Ca/Biw==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN0P287MB0591.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:161::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Wed, 17 Jul
- 2024 08:01:33 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
- 08:01:32 +0000
-Message-ID:
- <MA0P287MB2822C4FB66C0CD31BED2E3B8FEA32@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 17 Jul 2024 16:01:25 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
- SG2042 support
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <cover.1718697954.git.unicorn_wang@outlook.com>
- <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
- <6e5ad808-f4ee-45c3-a1cc-009f2f1010b9@linaro.org>
-From: Chen Wang <unicorn_wang@outlook.com>
-Cc: Chen Wang <unicornxw@gmail.com>, adrian.hunter@intel.com,
- aou@eecs.berkeley.edu, conor+dt@kernel.org, guoren@kernel.org,
- inochiama@outlook.com, jszhang@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-In-Reply-To: <6e5ad808-f4ee-45c3-a1cc-009f2f1010b9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [nqNLfbJsekHi2+9ZrmilL7fL0dHLrvd4]
-X-ClientProxiedBy: SG2PR01CA0166.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::22) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <ad173e81-6485-4c40-98e6-93d9787ddfb8@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A191CF8A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721203379; cv=none; b=fke4UDZ155EBexXpw4jQ/d3Nz2HOZRyK4aRwYMe4K4Vabw3gmA0AI9gr5wUFWhT9RzbxCE5FNj/nOE1X7r3F7pSr+3GWQPgsq6/ygOM8XbaQQ7y0Y95fLg68jjMPx+lQUW5TDNBNgv2TSX0puUH10gapRUjgeCgtVSF+mbnY5bA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721203379; c=relaxed/simple;
+	bh=vi40Sbk07TGfblu1VxNt/6IK8WmdfFsGUe5zQV85g0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uc8XEgRnGOoi7+E8GDzh0LON4s1Aq2Y7GNjqosCPQx1u4KK4y2Z9S8tasuYkH/MVzvXd0UnE0q5vXX1n5j/7ioyT1dIaVh4eD4wXF9ZozgmHHW8iUoNgt3cp36wG6jk021ZrugtnfLWRAJdLZ1sAKpPHQknCqg0a52aVMMpyccs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7UI6SfX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721203377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aac7mzpK+9VXNPOJ21/RuM77jIgKwx0OrsOzYAH/KZE=;
+	b=W7UI6SfX1a4U3r1JgBRWWMRUQbSH/zWiw5YIMyJUdViHB3GTYMZ8U23nxv4pLmwa1poEuw
+	8EBECl7cb+SItuPDbTkkafISUsvIczTli6/dMa4NoDGtLfYi5zXioIHYHMJUnVHOm0Ab35
+	XO9T8oIXxoM2bDuC7BG8rcgLQenZwQI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-49-Ou79gpUBOa6tzHc78voFQQ-1; Wed, 17 Jul 2024 04:02:52 -0400
+X-MC-Unique: Ou79gpUBOa6tzHc78voFQQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-367a064472aso4379193f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:02:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721203371; x=1721808171;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aac7mzpK+9VXNPOJ21/RuM77jIgKwx0OrsOzYAH/KZE=;
+        b=v+VFuOQt1ZYy81UclL0NqMuh6Ad8fnBo9VQog9sQ6bH9gBraeXMJKdTJUpFqNhwgpl
+         iHkOAl4P9cmj0f8dJb6xjnpsGPQh4PnNPXrbizK+EgaYHerb/FMEg7PEmKgXmBzAsgOi
+         PL6HEsyoBkNfSIicKJ5qnlFA0KEoxqgTIdv1cjEmVhmNl1nj/Cy1rVxqgk7jFHY+SZkQ
+         PX/XcPT/IsuzyvqahMemamErQRqn7Cm/feR7FmefBp89Nck0auVyq4HnSheab0uVUXEi
+         WVEdQUA+GxTCr456iRwD2TxvYYavOETHIOfcnY+PDm73qEpoq/cdag7QRWfk3P4wqwL3
+         go2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXJzDzsfc0uWivrObUs6t82uFBguG/AfzZkUSheA1Zu6CsGNvehobKE1iT8D/E3wWlh5l3FGL3mZoRal/7XnDpFdRSh2VDimmJ++jfQ
+X-Gm-Message-State: AOJu0YzM9umwYAOfHypeEt0cr9kwbZiZ10iYovvN3N2i+OLRf/lo8xYO
+	WuepqzYp/sAPgilCnNlfI9xvcIARMCjstr9HXNKL+7kKpj7U4r9qafSUlxFnOcHkaRDl7SLKyJ+
+	lrx13+yVQnijmdMtOoTluckl3XAwggdv4MQ23qF656b30yus3K2OozI5X+/Q8Jw==
+X-Received: by 2002:a05:6000:18af:b0:367:f0d6:24e8 with SMTP id ffacd0b85a97d-368317376c4mr788188f8f.48.1721203371303;
+        Wed, 17 Jul 2024 01:02:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEN5AtRZ4oICUJhKNgwLRtPqRrzAQGZwq+PhKjrttjnkY/yb3mUrW+vX7UqqlDhr8rd5hXdpg==
+X-Received: by 2002:a05:6000:18af:b0:367:f0d6:24e8 with SMTP id ffacd0b85a97d-368317376c4mr788167f8f.48.1721203370846;
+        Wed, 17 Jul 2024 01:02:50 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff23ef9.dip0.t-ipconnect.de. [79.242.62.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3683edc42ebsm182262f8f.90.2024.07.17.01.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 01:02:50 -0700 (PDT)
+Message-ID: <9052f430-2c5a-4d9d-b54c-bd093b797702@redhat.com>
+Date: Wed, 17 Jul 2024 10:02:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB0591:EE_
-X-MS-Office365-Filtering-Correlation-Id: f72fe459-1193-460a-4231-08dca636ab8e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|8060799006|461199028|1602099012|440099028|3412199025|4302099013;
-X-Microsoft-Antispam-Message-Info:
-	bIfhdjntK3d7ZhpyTG0AY8csJADn5x34EDGIKAyBtvzsDCggKh3KER1bR65aiuIp4Bwg5P2Xr2eTZWdWVSVvoOmmlHdx1uS5BJ7bjmBvVE8ptpVsAYViMmPbcMnDQlezVd7P3E0ILrJxu9WbuU99S6LJZjH/hW4iV528joFK/Sdxd+8TJGC7LveTrqZAxKFfCGAMdTMemvYli5A7JidRDQuAmB2bGaUGjNEUFSwzt3roclQGx38cW0ENZLtd9Quwc/AiGMNbEKlXu/IymCuNb3CpVUufCVIrk3W2MeHRkU3f6bvYtkObLWKHl0iKq/kF1fYwnYVPdmQpzuPtUZDC9XXaY0D9p+j28lkNvgZDZI2mpn5iYWXWvz8L7oBsZrOpGYDVBhVWp1MFifCWOJBHGvMgoLTMevfcOc6hwkJX1LKZPGxGg2//yDKhySoCiuKO0NYKiRl7O5tX1Z8e/lefkxVt/alExMz2oRd12EydSjTeKY83L/X4RM5GWUK9C/4ZTPXVcpP2nC3fcO3tY1z00Qvx0NSUo5RWYJosLPWyo9QQH9HU9B3mwj6QFVpDvKaz9Rbr+F5rmdSKJYXrIjxxuooKfxk4FfSvmJnOObzuddUG8fv5xGoHV8kkxNgBYNTBGJNqi02XhF3kCSl/9Bx9e7RoTQ6eSFT4yduCVczS+zNNVvARmDylcMuhAOkG4nneV4sNgT7KnB5LjFcQM/sKR8dk2ZqM0Q1hmngsALGUn7GtAfpm7jyBjEgBF6WoSIal
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnNZQlhaVU4xNTN4MUFiNWRZYm83TEEwYXFab0pzNEdscWkyOXdGWEF2TFpR?=
- =?utf-8?B?TlRjUjB5VkZhRkVXbmN6Qis4bkUrUFQvQUR5Qkowa2dNOE9ZNWp2S2lCamtI?=
- =?utf-8?B?N25uU05OQmNwMVBaNTRLMWtkVm05bmRWM1JXbmFiSzFBdVV5UU05Z1dLTW1o?=
- =?utf-8?B?L0FTekJoU0xqbW5HUFRjK2VMSjYzWG16eHdNbER1RTlHVnNNaXI3Q3QyVEM5?=
- =?utf-8?B?bWVWZjlkVDNVTTJqVXJPRjRxV2EvTTZacTF5Y29tckZVdjJmSlNkcEEwaDc0?=
- =?utf-8?B?Z2IybWNEdG8rdGpyUWVjZ20xVDJSTzI0Y2NRWjI3eS9XUWtqRlpKRlJiblBM?=
- =?utf-8?B?b1cvZGg4bDJQa1o3dTA2MzdUY1hlTWttMlpyTWZVRGJVNHVHVVE2U2FZSjVZ?=
- =?utf-8?B?YXRGeVFYNzYycVFTd2VsTm9uRTJnVFpQY2hQRWNhNGJOVFo2SmFxc0ZTSllV?=
- =?utf-8?B?QXI3QU9CMy9NUWl1UVFqRlo0T3pwSEZNRE5hUjMvUUx2bktCVHkvYjkzcmND?=
- =?utf-8?B?OFUwWmlHSll6SXhLOWU1ZXh6Q0JTbWVJTm5jc1RzM1FZbnl0TFlXZ1AzRHFF?=
- =?utf-8?B?K1V5bElTcllwNjl1RWtQN2krbVNwcUYvZ3JKMXQxakNFcjRXNXozQnRucm9y?=
- =?utf-8?B?MVpCMlZ4SHdrc2RuL0Z6aUlnYWNudnBJYzRZNDAwZ2QxRk1kRVJZa3lkUjly?=
- =?utf-8?B?bGhFdW5FWGUwNTAxT0JuTXFuUFBubmxwdlZYMGIxeEszMGtZZm42Z3FxREE3?=
- =?utf-8?B?YVdEak1EbGo3WE43SkVPZ0ZWSS9TdEU1WmJUa0VCaDhIRE01Y0djUWlKVHpX?=
- =?utf-8?B?TXdsd3BJODgrdG1VcC9ZdEl1K1k2WStlSi9sSDh1b1lkY2pEREFDM1pnVWhr?=
- =?utf-8?B?SU10SS91c3FSemhnRERVSDlqMGk2NGkxdkM3OWNselpPK0ExZkdGZzhpRU9T?=
- =?utf-8?B?em9yVXpSTEg1R1RrY0tBYlEyMFdiNWkyMUMzUm51bVdkTEV0bXc0cnlYZUVT?=
- =?utf-8?B?bFltQW03SUM2ZkVDTTFtaVhmRldpVWo1dSsyUG5VRlhFQ2JLZ1lrWkRrbWtp?=
- =?utf-8?B?Q1pPdVNrMmlHVlZ3MVh0enk2bkFFc1hRQkppSk1qb24xYzY5T202bncvZU8x?=
- =?utf-8?B?NlRyY25GMXdUNTIvNmVXcWkyamdpVzZsU0orVGk3WVEzUVcyTms1YlhPdXU5?=
- =?utf-8?B?eSt6bGRQVXljd1IweEJndHoxem8rRXVHeWJMdVRuRmJKeW9ZNDk4b1lldlo5?=
- =?utf-8?B?NDNjdktUM1JYSW9GRi9YWS9aUlJqZ1pKS2tmZHUyeHdzMUVteFU4MzJuL0pi?=
- =?utf-8?B?dUtmRnFBUzRmZWZsZXp5aTA5NDIvdVpGdDMyOFc4T0hUL0ZicGpRU0lLVHky?=
- =?utf-8?B?T2xPWnIzZ1B2QkdMQmlmREJ5VHZIcTlrMlo0bFF6bnNvTHdTVWJmK08zQURh?=
- =?utf-8?B?Q3U1Wlk3ZzZySnVrQjZ5YUtDZEhtSi9RWmU4Y3FhcVUvVVNrWkhjSVpUSVMw?=
- =?utf-8?B?S1BHdjBmRENzNzNjSllpOWZkcnVNNkNRZHZKc1pRZ1ZvR1FUc2M2d29uNnl2?=
- =?utf-8?B?dzYxUGg0M0Njc3dyRUliSUVhdWQvUzQyblBHOTE4SnJLcFhqcEsyMGRERys5?=
- =?utf-8?B?b0hxb1VPR0NBbWg3VW9WcGk1eTNDMFVsemJ2NEl4WXFZeWVuczFDMzNsbVNz?=
- =?utf-8?Q?mxEAuiam4gW/nr7O9Oof?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f72fe459-1193-460a-4231-08dca636ab8e
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 08:01:31.8478
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0591
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
+To: Ryan Roberts <ryan.roberts@arm.com>, Lance Yang <ioworker0@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240711072929.3590000-1-ryan.roberts@arm.com>
+ <20240711072929.3590000-3-ryan.roberts@arm.com>
+ <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
+ <CAK1f24nCDZM8aa9z_ZtgLbdj695JJri01q2HJUJb9pJt2uqy=w@mail.gmail.com>
+ <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
+ <8c32a2fc-252d-406b-9fec-ce5bab0829df@arm.com>
+ <a8441245-ae35-443f-9aea-325007492741@arm.com>
+ <5c58d9ea-8490-4ae6-b7bf-be816dab3356@redhat.com>
+ <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 2024/6/18 17:39, Krzysztof Kozlowski wrote:
-> On 18/06/2024 10:38, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
+>> Sorry, busy with other stuff.
 >>
->> SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
->>
->> SG2042 defines 3 clocks for SD/eMMC controllers.
->> - AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
->>    and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
->>    source, so reuse existing "core".
->> - 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
->>    existing "timer" which was added for rockchip specified.
->> - EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), add new "card".
->>
->> Adding example for sg2042.
->>
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->> ---
->>   .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 69 +++++++++++++------
->>   1 file changed, 49 insertions(+), 20 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
->> index 4d3031d9965f..b53f20733f79 100644
->> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
->> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
->> @@ -21,6 +21,7 @@ properties:
->>         - snps,dwcmshc-sdhci
->>         - sophgo,cv1800b-dwcmshc
->>         - sophgo,sg2002-dwcmshc
->> +      - sophgo,sg2042-dwcmshc
->>         - thead,th1520-dwcmshc
->>   
->>     reg:
->> @@ -29,25 +30,6 @@ properties:
->>     interrupts:
->>       maxItems: 1
->>   
->> -  clocks:
-> Widest constraints stay here.
->
->> -    minItems: 1
->> -    items:
->> -      - description: core clock
->> -      - description: bus clock for optional
->> -      - description: axi clock for rockchip specified
->> -      - description: block clock for rockchip specified
->> -      - description: timer clock for rockchip specified
->> -
->> -
->> -  clock-names:
->> -    minItems: 1
-> Widest constraints stay here.
+>> Indicating only what really exists sounds cleaner. But I wonder how we would
+>> want to handle in general orders that are effectively non-existant?
+> 
+> I'm not following your distinction between orders that don't "really exist" and
+> orders that are "effectively non-existant".
 
-hi, Krzysztof,
+I'm questioning whether there should be a distinction at all. We should 
+just hide what is either non-existant (not implemented) or non-functional.
 
-Please ask you a question about this widest constraints, I write 
-bindings as below:
+> 
+> I guess the real supported orders are:
+> 
+>    anon:
+>      min order: 2
+>      max order: PMD_ORDER
+>    anon-shmem:
+>      min order: 1
+>      max order: MAX_PAGECACHE_ORDER
+>    tmpfs-shmem:
+>      min order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
+>      max order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
+>    file:
+>      min order: 1
+>      max order: MAX_PAGECACHE_ORDER
 
-```yaml
+That's my understanding. But not sure about anon-shmem really supporting 
+order-1, maybe we do.
 
-properties:
+> 
+> But today, controls and stats are exposed for:
+> 
+>    anon:
+>      min order: 2
+>      max order: PMD_ORDER
+>    anon-shmem:
+>      min order: 2
+>      max order: PMD_ORDER
+>    tmpfs-shmem:
+>      min order: PMD_ORDER
+>      max order: PMD_ORDER
+>    file:
+>      min order: Nothing yet (this patch proposes 1)
+>      max order: Nothing yet (this patch proposes MAX_PAGECACHE_ORDER)
+> 
+> So I think there is definitely a bug for shmem where the minimum order control
+> should be order-1 but its currently order-2.
 
-......
+Maybe, did not play with that yet. Likely order-1 will work. (although 
+probably of questionable use :) )
 
-   clocks:
-     minItems: 1
+> 
+> I also wonder about PUD-order for DAX? We don't currently have a stat/control.
+> If we wanted to add it in future, if we take the "expose all stats/controls for
+> all orders" approach, we would end up extending all the way to PUD-order and all
+> the orders between PMD and PUD would be dummy for all memory types. That really
+> starts to feel odd, so I still favour only populating what's really supported.
 
-   clock-names:
-     minItems: 1
-......
+I would go further and say that calling the fsdax thing a THP is 
+borderline wrong and we should not expose any new toggles for it that way.
 
-allOf:
-   - $ref: mmc-controller.yaml#
+It really behaves much more like hugetlb folios that can be PTE-mapped 
+... we cannot split these things, and they are not allocated from the 
+buddy. So I wouldn't worry about fsdax for now.
 
-   - if:
-       properties:
-         compatible:
-           contains:
-             const: sophgo,sg2042-dwcmshc
+fsdax support for compound pages (now large folios) probably never 
+should have been glued to any THP toggle.
 
-     then:
-       properties:
-         clocks:
-           minItems: 1
-           items:
-             - description: core clock
-             - description: bus clock
-             - description: timer
-         clock-names:
-           minItems: 1
-           items:
-             - const: core
-             - const: bus
-             - const: timer
-     else:
-       properties:
-         clocks:
-           minItems: 1
-           items:
-             - description: core clock
-             - description: bus clock for optional
-             - description: axi clock for rockchip specified
-             - description: block clock for rockchip specified
-             - description: timer clock for rockchip specified
-         clock-names:
-           minItems: 1
-           items:
-             - const: core
-             - const: bus
-             - const: axi
-             - const: block
-             - const: timer
+> 
+> I propose to fix shmem (extend down to 1, stop at MAX_PAGECACHE_ORDER) and
+> continue with the approach of "indicating only what really exists" for v2.
+> 
+> Shout if you disagree.
 
-```
+Makes sense.
 
-and with DTS as below:
+-- 
+Cheers,
 
-```dts
-
-sd: mmc@704002b000 {
-             compatible = "sophgo,sg2042-dwcmshc";
-             reg = <0x70 0x4002b000 0x0 0x1000>;
-             interrupt-parent = <&intc>;
-             interrupts = <136 IRQ_TYPE_LEVEL_HIGH>;
-             clocks = <&clkgen GATE_CLK_SD_100M>,
-                  <&clkgen GATE_CLK_AXI_SD>,
-                  <&clkgen GATE_CLK_100K_SD>;
-             clock-names = "core",
-                       "bus",
-                       "timer";
-             status = "disabled";
-         };
-
-```
-
-dtb check will report error:
-
-```
-
-.../arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dtb: mmc@704002b000: 
-clocks: [[84, 38], [84, 64], [84, 76]] is too long
-     from schema $id: 
-http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
-.../arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dtb: mmc@704002b000: 
-clock-names: ['core', 'bus', 'timer'] is too long
-     from schema $id: 
-http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
-```
-
-After I removed the widest constraints from the binding file, dtb check 
-passes.
-
-Not sure if my understanding is wrong. Do you know what's the problem 
-here? Seems the widest constraints is not needed,
-
-Thanks,
-
-Chen
-
-
-[......]
+David / dhildenb
 
 
