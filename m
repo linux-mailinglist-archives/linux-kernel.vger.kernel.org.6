@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-254761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D51933750
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B444493374C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB47D1C20442
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:43:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5ED61C211BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCEC17545;
-	Wed, 17 Jul 2024 06:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A9B171D8;
+	Wed, 17 Jul 2024 06:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HFoysgEO"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0hHQEEj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0601643A;
-	Wed, 17 Jul 2024 06:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AE414F6C;
+	Wed, 17 Jul 2024 06:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721198613; cv=none; b=NETqqIwqGMZfvFr+IPvVYflJbnYjBVEMrn7VcxmJGK7Ma5XWcpJA1HCS1tov3JgHDBAc2g9ljv/6crHqc6iWV3RoortTv59WMGyOMVD3RdsYmpXJvFaAyx++EGE9e3cx+lp2hHkv1Nx5YyqobYPD+FhhbrmYCDvEZc0D9pfcD3Y=
+	t=1721198542; cv=none; b=Vurol9e6+77yxdAa0ThBW/w3smkeiuE/doC0DVmXhcaf3R0J2KlcuA+C1IrCgzRf/HyTyGXiFBZtBFELW6N8StGR9f8mQegH0LkL0wRFfeiXKNzTg6ksUVC4e5H3DBXKJ65OqJYq69hT3qOsFsXqFLgePiXxJgjTvFE4F/K8RD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721198613; c=relaxed/simple;
-	bh=ja7zeoYposPScr+T5LloA2DwfVJSupnGw+spH+7H5Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LvFPwIq+7Rd8JQ+pdvtgtemNy5S6byWcacR1J3SZZ2kW7e4FxfztTrh7X7VzEAh+335iebcrAb2CxSQutLcoENZHjeSch5Fm/CT/V+ujQ5mbqR/8gNw0xJeUgXUZAjfmqQq5Rzwdxf7cPle4qGk2Hl0jq4fWATfuZIaz68KhCrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HFoysgEO; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721198559; x=1721803359; i=markus.elfring@web.de;
-	bh=ja7zeoYposPScr+T5LloA2DwfVJSupnGw+spH+7H5Do=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=HFoysgEOSnRSdxn0p1smH508PnxPRO5c9h3Pp81TPewOIJPM4bvkBJEvKTpFuBXa
-	 cSNe7C3PZDA53cK82S8LtfGWgaZPr+yYYaHtDS1FYqvZG2+nu1sB4ZofUbDh/Ro/6
-	 OkF3K0CtO41MFcaeJfxHWtupqZAY9vngWjAKVngolmBXwbzvpsi+IX0PMYQ+QdNqV
-	 MnvPI0OIMPVVHm4w6iSSfzTfYvUWqt87/hfUAHAnxbmDM1jNd2NpqfPLFGHA3Z1tR
-	 hV8uB8kGhLo099uACdjsNr2TJtemn30fXqTzuNIqpbrJyyVRKwwgOlpLvXwzm3+0A
-	 Pq4/NzrySaRMjMIECA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Movne-1rzqYD0cfu-00mLwS; Wed, 17
- Jul 2024 08:42:39 +0200
-Message-ID: <d4d6c5ec-f884-4942-b90e-a3b58edd1e4e@web.de>
-Date: Wed, 17 Jul 2024 08:42:07 +0200
+	s=arc-20240116; t=1721198542; c=relaxed/simple;
+	bh=spQRPZaYq5tzQGw7T8xlS+i7lp0wAGAT4aBxUl8eZco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oB+cxNKo240403p/cZUv6dQy/P13yE37ERNxdymBekWARwTGaV2cFksZLzWvn24E2ujjkJOKWptCeL2anjLHd9YXUgtJegn1OHKV+TU32XGdCrJKQxQe72+T77i9jzFaA9tMv4GnUrK8NvTweVs3xCvWmilH3AAX7OGflKvAJ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0hHQEEj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D2AC32782;
+	Wed, 17 Jul 2024 06:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721198541;
+	bh=spQRPZaYq5tzQGw7T8xlS+i7lp0wAGAT4aBxUl8eZco=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=D0hHQEEjWyhI/GgZFL35GxpL/9QIa/DMN1CV7+7LwSiCdcM0HYp7NFQsuBjzkxFu7
+	 uTzAXqxcYHlcI4F7z8viOvmXocI5nqeKBYtOkeMHuLGwrJsEz/tBzESq0nuxB1r72a
+	 ovN6hnxaWRAec682e6xGTlWsceSdS7P3nbDuiJQn64fHmZRabijnuy1QZbQpC9Cs5i
+	 7E5H2sPGjyjRNzUvdBBOjqPoaxQtxCyMixY8rYBDX7+tJkN1DVJrwAc3EmMj7oEOf0
+	 2MvxB2JFWR/zv7jonR/WI6x9BOvm0QF18r/NoKvjbnqRNUL0UstN9eUkccBBpTLO9p
+	 /dtey7YdQPTfA==
+Message-ID: <032ca0b4-94e2-4ada-8ea1-9915cba01e86@kernel.org>
+Date: Wed, 17 Jul 2024 08:42:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,72 +49,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: x86/resctrl: Use seq_putc() in two functions
-To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- kernel-janitors@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Fenghua Yu
- <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
-References: <d4be0dc8-f6db-4bf1-bb6d-ccff161dfde9@web.de>
- <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
+Subject: Re: [PATCH v3 02/11] dt-bindings: riscv: Add Zabha ISA extension
+ description
+To: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet
+ <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
+ <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+ Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arch@vger.kernel.org
+References: <20240717061957.140712-1-alexghiti@rivosinc.com>
+ <20240717061957.140712-3-alexghiti@rivosinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240717061957.140712-3-alexghiti@rivosinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bsbBHCh9dSOnyJFlUE4Y0uTiGVM8gEVJFaqti2cjqpWIHVQXB/m
- 4sdHifbKPC3+mSW735fEhwT5WCu+dOtYOVWDP41R9wNQr0xgLV/+xWkLytFodM3QPlz8Prl
- oI/4xx0YYTM4YjvppGG+W3tdARtJI4WkXl9VgP6p1hWHCtcf/H9Cmh0t3Hd27FwZksNSffa
- W0UCNgvC8FGL+yYTCX47w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+YGqUFSdjlw=;4Xe2f9TWnn9td51FmwdfuX0V+Xa
- G9SpiSoFT7LI5sdwfUavt3JgIrEoEUpqoMAVfIq3RiVh/C9Lbsssk72/3ZEQ14SVqZLGkjbGs
- TWiRhujvHqRAbRaXvxSxIHuHOYyxlxky3rZiEauvFKvspLvErGyHl3qPld2bW0K9eqXlcyhrG
- TywxzktMTEnfG/O9WbV4/Wz3lRCVSTSHAf0tvCTScQv5H+R1DSq9mJ9k80BzU5HflJAfXkemJ
- u8KbSuFsw14ZG/6W61EGx++ogkncq9evV5xKlVzRzfu3Dvm0KjIspdugYxa3Fv81zVI4d68tR
- MM4CB6ToxvyUm8zB6F4vw9IL/WQOK4A0IIlxgr9pb3aKdbWn5kAYfVbTb4kvkjpzeb5cNeeNi
- l9/iwfAxvHxZguviq5U+aLUGWxcAbryzbH/TkTJI5QRxzqOh27nro67z3k43oaQx8ToK9UoQV
- xMA+c3I2EgEWVjsUKGs03eEEzPHZ7RxW71gYePi/gAE5eDp4hKEBF/zrQ44SNcNKuODxTQNtv
- 4lOfJcLvjJlupgFu2Lq6iKWSs1UD/YneOYfAxe2x52dFxTrFdJQltq6kNV2mX4us8Uhz3nXYT
- WBEZPCoBE/UBa4Eub5Eu4Qvi/5aRRYtSX5byntIw51o4dYVeIjAA5Z+mSjeJ0SJgtn9nyW0DA
- iZWnWRl/7YMc21rBof2acTmN8iCZtcOygtq6saUw2g6hx6pF4t3Rd13njBh5KMoG+0rPxpM13
- xGUbbNTTZYCOiZnPoMDK7tGuP0asVQg6IrNjmlLtLgBIg+yqnrKBn1PghpKqTWG558tCwvcTa
- O6BpWRFgkyOPXswQovtHwt4Q==
+Content-Transfer-Encoding: 7bit
 
->> Single characters should be put into a sequence.
->> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
->>
->> This issue was transformed by using the Coccinelle software.
->
-> Could you please point me to how you accomplished this?
-=E2=80=A6
+On 17/07/2024 08:19, Alexandre Ghiti wrote:
+> Add description for the Zabha ISA extension which was ratified in April
+> 2024.
+> 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Maybe.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-> Is this a new coccinelle script outside of the kernel
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-I constructed small scripts for the semantic patch language according to
-the presented code refactoring a while ago.
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
+Best regards,
+Krzysztof
 
-> or still on its way upstream?
-
-I am curious if such a transformation approach can eventually be integrate=
-d
-for the coccicheck tool.
-
-
-> Could you please highlight the benefit of this change? Looking at seq_pu=
-ts() implementation, thanks
-> to [1], it seems to me these seq_puts() calls will result in seq_putc() =
-anyway?
-
-If the appropriate function call would be directly used, extra optimisatio=
-n efforts can be avoided
-by the compiler.
-
-Regards,
-Markus
 
