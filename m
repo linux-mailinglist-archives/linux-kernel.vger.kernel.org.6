@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-255729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76345934450
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1503593446C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 208EF1F2156E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8175B283375
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2DA188CA3;
-	Wed, 17 Jul 2024 21:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBrpdpn3"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10B139FF2;
+	Wed, 17 Jul 2024 22:02:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790EA4688;
-	Wed, 17 Jul 2024 21:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B97628
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721253532; cv=none; b=SDRXC3amahD7GkUsAmn/ESVrQNA6l4r0fjmQpPWHvBaJTPQlAQGhhXOl6mgZy/DwvqxsOwGn5jL+sRCnfVUuod1lT58/60x07lUwm5cuhdSpFXGAmEFbCzQE+fY5z3npbh6DbPSljABt1XoaY53FzOjd80S5PCEFM2aUSBKgTY0=
+	t=1721253725; cv=none; b=oifDZzmf9nlFx67GimfZASSL6eJkDt3aLYK0RlW8cnXeawWllMWjWE/L2E9zQPTdnfJsCCrFoT4f4A7v1ny6NBUXgCfsQBAuvN1ZWPZXyRIhDVyYdKEgOxkwr+ZBUpjxm/XIVuQWaR64BtD6Q3RSOeIqrN2soy0u6f0U6UGxXzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721253532; c=relaxed/simple;
-	bh=KBqnzoKB50TP2AY7U/X1UxbeIKca/treoIITrsl7seY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ftLJcWJcl5ha40dZ3teo4WV3FjDHsydqwOMG91rz3M7OlAIR0TY1P2VYvJ7IcQzrwKQDxysEd2KVlGYhJD4lvakFNrzaLis90E2BXOlRc2fkMRNoDiB7lsROqpuCJCWJj5s1Q7h1bLJVIlOXtExJs/Z7Lo/VaT5Jjozq1yeY37E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBrpdpn3; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb457b53c8so1902285ad.0;
-        Wed, 17 Jul 2024 14:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721253531; x=1721858331; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiSxCmxpPDKVe52INJHPWGzjKnAAp4bqiCfzE7BK3HE=;
-        b=eBrpdpn3rVLS+f2GlTzbcOCd4gSohuknRQ8MozEdZD9NUfcYjFIdb8V2B26tjLL7yN
-         D8cMeaJVh9u3oplpbUF9VywuAa3EWzhOXE2ZxPXK5j7Bm2/vEkp8lKNzT5fKsLRbkk4o
-         qyQdwMwRTA7Tuca40F09icQ0+zEnPrQ9LY1qnRjc9ALdiQ60t4UYKxGocNOzhHBwWux6
-         X467adIs6aD2gxP2ifrcGEM9MDv0/PyiognQLIcxz5Pg46luYdgrjfA5QuqWxFDPqCka
-         4DnBBr0G1FEIJ6XyGcBeX1W0uMt397iPiBT9ukzK0cBfKPLrCwJji0YmIwU7pT22CsKG
-         tU3w==
+	s=arc-20240116; t=1721253725; c=relaxed/simple;
+	bh=t1RYKRNKKjwkRvXjvRk5Gon+Mwt/Q8IhWOIa1GvxLBw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OElUfbxGSrAzeVqqqM8oDBFPCgkfK0A63X0PAwKdSU+IYDTgY/TjnAA60BWyxtgEiAxgjuViQIlWbBUDByOGbPK6d1GfVcwEjSrTKER8U6B28p98mNkHkDIIbsNimAI/EDAr4/nLuO5ezfhnyqYvTAE0EAbEBJN426VZw7Im1f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3762363a522so1591045ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:02:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721253531; x=1721858331;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FiSxCmxpPDKVe52INJHPWGzjKnAAp4bqiCfzE7BK3HE=;
-        b=Den3NUUCtXmWqZwsNAMWeV9YS2URSK+iOQl8Hm2TuEFRnoGWhjG3gIksglzCoH0CKK
-         T8LZWmPV2SGBQi04PaEd960qCWPK8OsDXSsaPJ7LwtAX7Yx3oCGcx3lpq/1fW8QOAfnL
-         pKmh8qILBD9z6GGr1EWmDbt2FcUD7XZJd5iCEMF4nxR8HDFaZ2t0/Vxv+y8vQ5ZAFLIX
-         qmUba6Fs9tCBtY5Yiqh+rgmRidL8BLoQi7KhTGxZDRcIK/kmV5g8IT3X6tYzFjsL5YnW
-         ItwQVOXIW9LmIsRajjadei23ZgA+QUeykM0Yw5YiEGR3D6RNoZ7YCwQUktJ5a3dgEPx3
-         ilOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4OdiO0BxiqLOMtPIjYGeCqhuvPcN2V6WgEmJiLVJ1NWjp4eUdkzs/PylUMt5skml4g2md9ktAA4A5bayblDzFILzpaYyvUpCbkM1
-X-Gm-Message-State: AOJu0YydITs3XPGL8T9uFZIDspTiFjJ+QUxOsZR4Nt18CjgUFfRFxKJh
-	Zuw2YwCcg0jvg22OyhMdcYxx/N45AhXqM0EVtvPiq7QGPcW8V7LW
-X-Google-Smtp-Source: AGHT+IFXDAvBMkEMStSH4nurfzh3TYRGe+QjxqF6ssIkAMTxdRiDG9y2G34vCgMvRl51AInSKSBemA==
-X-Received: by 2002:a17:902:db07:b0:1f7:2293:1886 with SMTP id d9443c01a7336-1fc4e165dffmr28196225ad.12.1721253530525;
-        Wed, 17 Jul 2024 14:58:50 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:3279:d3cd:5dde:c799])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc5aa6esm79662475ad.299.2024.07.17.14.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 14:58:49 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC] drm/panel/simple-edp: Add Samsung ATNA45DC02
-Date: Wed, 17 Jul 2024 14:58:46 -0700
-Message-ID: <20240717215847.5310-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721253723; x=1721858523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l/r66CUcZxVA3tY/EUwYbQThd2o0wCp6U5Y10cvfxnY=;
+        b=fC3IOrbw9ZmJGM+LzH+fXPd5US7GtwRNDpwMQDEbxUB0HlFaTprQ/UOUixWTvHGclz
+         60wxC52hAIWJJufyR02FizyVwOvywnIw6SvJq8Uh4QDK6ATa2SpUW7kngm55q/BukuYh
+         flPrAZTPw8H55J2QzT4dytdIqWnffrvI0f3BQIubYH3zU+h9QQG7CzIDteLPAMr5XSM8
+         aDsNOmC9ZYFIJaiS1HkwZ7sdw+UCScrfLCE1IdzB0FdJ1haE5FoDqAe+/eIoT3jtrBP/
+         Cgv82gCyflcoSpUg3OxlHfqkQDhujjYBp8h8/Tdbzj10Rbi/Dc1e0eCcIUDMnYGEge7R
+         VkVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOXwE60Gk8oVwDfLSgaeTMFcpQnrq8Lo+6BnNcfOhFYeLvPHW+I43eflL1gv6acdd4XrPvL18dbatlKRMCk18DXXTOxLXZjWv7GaBR
+X-Gm-Message-State: AOJu0YyGKgRc0kqMlO5i1F1TrFruLpoyQc/CwulWZD+pByAcpY1GFhAe
+	vNlWS2ak/gi3yyxdYeygZqWs8GVGuX9XSykqd+T0kox/0H2p9p/wLKfSGEwj3bY7JoT87YsDcMG
+	KgyrkJwetsjTtngfO2QQm6O5hEelhHli4rsHGFNWGTLOZ0a3LqrsbjKI=
+X-Google-Smtp-Source: AGHT+IEL7vGgibQnWLTaeitgdW93ObrEMVf90wo8xo2fEGKjh5OncJEINjy5eHeD4v61Oo2j5/boSSJ1TKwIGIR20QZGaV6o7sbJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d0e:b0:385:ffe:4516 with SMTP id
+ e9e14a558f8ab-39555800662mr1662545ab.2.1721253722760; Wed, 17 Jul 2024
+ 15:02:02 -0700 (PDT)
+Date: Wed, 17 Jul 2024 15:02:02 -0700
+In-Reply-To: <20240717213200.1245905-1-cam.alvarez.i@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b6c6e3061d789c96@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_journal_stop
+From: syzbot <syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com>
+To: cam.alvarez.i@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Rob Clark <robdclark@chromium.org>
+Hello,
 
-Just a guess on the panel timings, but they appear to work.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-This adds the panel I have on my lenovo yoga slim 7x laptop.  I couldn't
-find any datasheet so timings is just a guess.  But AFAICT everything
-works fine.
+Reported-by: syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
+Tested-by: syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
 
- drivers/gpu/drm/panel/panel-edp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Tested on:
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 38e5178f55ac..411b7218af55 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1966,6 +1966,8 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x153a, &delay_200_500_e50, "LQ140T1JH01"),
- 	EDP_PANEL_ENTRY('S', 'H', 'P', 0x154c, &delay_200_500_p2e100, "LQ116M1JW10"),
- 
-+	EDP_PANEL_ENTRY('S', 'D', 'C', 0x4189, &delay_100_500_e200, "ATNA45DC02-0"),
-+
- 	EDP_PANEL_ENTRY('S', 'T', 'A', 0x0100, &delay_100_500_e200, "2081116HHD028001-51D"),
- 
- 	{ /* sentinal */ }
--- 
-2.45.2
+commit:         e2f710f9 Merge tag 'ata-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=131258ce980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a2f87f8b8afcec45
+dashboard link: https://syzkaller.appspot.com/bug?extid=4093905737cf289b6b38
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=168ee43d980000
 
+Note: testing is done by a robot and is best-effort only.
 
