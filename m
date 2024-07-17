@@ -1,165 +1,266 @@
-Return-Path: <linux-kernel+bounces-255402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5C0934060
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:25:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF7D934064
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FA02832DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56C7DB208AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5034181BBA;
-	Wed, 17 Jul 2024 16:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1952181D07;
+	Wed, 17 Jul 2024 16:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PWKGcvS4"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="X30IaqNl"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271A5B05E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 16:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C84180048;
+	Wed, 17 Jul 2024 16:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233547; cv=none; b=FXRo16KA9PmRIu+e9GXgboQca9S3y/3grWDo1eNPZLgpUJdEXxP4GnhdlclXdy4Xg/9epfy+4l7cM7kbByEuIJxYauG2OhksFAT/TYWqttbb1pHE28+EGLtIlZxq2HmaAvwnI2uTqlo4qYJoWxeDcnC++Qg1ZiBEB7xPHa8E154=
+	t=1721233597; cv=none; b=dQo8b4LGpW+0ggAOSAkYoDRvp/vVOalx72O1KsxftFvJDSdd9+2jVkI+sQpXxvoRSGj33lLg8vWcuwDyEftjbyHkPZ18n3IXDvWwTC0mbiMl7VbPZUKxT3Ua0E2coD7mKVRBT5o8HYG77EkBwdxNG/zIlvtILFb5M3e310nyI4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233547; c=relaxed/simple;
-	bh=sycsrk1qbMInFpBFCo/eo6DF97u2tJbXnRgyrP9bYAA=;
+	s=arc-20240116; t=1721233597; c=relaxed/simple;
+	bh=ECSWe8Ie78lKI4I4s+n/8RNcHhC1LaiWsiWtDNU4PlE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8yt3wIQJNqGFQuQGEdQR3RgS6j8CgATowxIWfvbnyBeO5a0yzllaAxCOkqgCtFTuXq8c/M47OOqTbsvX5qxkDvRQ+8jePd+e5Y6bhH+gpYaSwipym5VlDhssU+20CHzF0bmEwbGb8cVvLj4MTSCH9FJtPf/x1G7t89TETR9uO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PWKGcvS4; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Byyt/G4FG3dBwo6FphWn68cOZO3ZKBoSOM3VbH/6tpY=; b=PWKGcvS49m+WMKTbZJI5Ia86yB
-	gkchnI3oTzqqnYqVsY7PH0pISabJa7YpcaKH8awbAPB6izyilci+ZFqlr2ckehK2ay/I18iNBBepy
-	0jXNXfrSU9Nuoe1Y9bG4fMMqMt1x4TCMhldNcDXXv8X71QEXS/xhJAT03ezBe8TwgjCakRpFrXYRL
-	nUpHhwK051T+3hBwK5ULNemOY45MDrBuUcyxysKx3uev/PXot1wxHWc5cDnWB0KgcHaHrZN7lEmyN
-	7HX3wS1jiEmwUhKao2XA3FX/IMb89Qb1chAhi3G9nLTLFgFAXaYdam9Kll/CHfeQNg0TR/U45rYWM
-	+aS2qGxA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU7TG-00000002MPc-09oU;
-	Wed, 17 Jul 2024 16:25:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1FC48300362; Wed, 17 Jul 2024 18:25:37 +0200 (CEST)
-Date: Wed, 17 Jul 2024 18:25:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Kees Cook <kees@kernel.org>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] refcount: Report UAF for refcount_sub_and_test(0) when
- counter==0
-Message-ID: <20240717162536.GH26750@noisy.programming.kicks-ass.net>
-References: <20240717130023.5675-1-petr.pavlu@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1wrA+QY/X+hDT8MRPAAZyAW9mV+NyM/My6udUltHUbg12pQItLzK4SeoEXOSwJvmknldxGpjL0efqEw1NswR/+bA/jvvPe0FPiw/eulgfmMXy7kGto4K5wXWLo7+w4/oPG+rN3epyAQi+PJXbktwfCNfxlJCtPOBfldrC0nwrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=X30IaqNl; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1721233590;
+	bh=ECSWe8Ie78lKI4I4s+n/8RNcHhC1LaiWsiWtDNU4PlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X30IaqNloho99Kelfts/4do634O+I6pkc3fzeWzoQVmC3X4y6B/5F7pvo4oV2mHv/
+	 4vhsoSYObyk5zQbOl69VeIaeGi5w6e2f5SEGdqMpG11YaCngacK0w4buhAy2irY031
+	 mvwrhTA13c8sVc8C1624pbF9IZiQbZxHEqaRjhIM=
+Date: Wed, 17 Jul 2024 18:26:29 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Christian Heusel <christian@heusel.eu>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman
+ package
+Message-ID: <c61c5996-592d-4669-a991-d9eb22cca88d@t-8ch.de>
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+ <e8786093-384a-4a7e-a536-3915cd4f933f@heusel.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240717130023.5675-1-petr.pavlu@suse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e8786093-384a-4a7e-a536-3915cd4f933f@heusel.eu>
 
-On Wed, Jul 17, 2024 at 03:00:23PM +0200, Petr Pavlu wrote:
-> When a reference counter is at zero and refcount_sub_and_test() is invoked
-> to subtract zero, the function accepts this request without any warning and
-> returns true. This behavior does not seem ideal because the counter being
-> already at zero indicates a use-after-free. Furthermore, returning true by
-> refcount_sub_and_test() in this case potentially results in a double-free
-> done by its caller.
+On 2024-07-17 15:48:05+0000, Christian Heusel wrote:
+> On 24/07/16 07:52PM, Thomas Weißschuh wrote:
+> > pacman is the package manager used by Arch Linux and its derivates.
+> > Creating native packages from the kernel tree has multiple advantages:
+> >
+> > * The package triggers the correct hooks for initramfs generation and
+> >   bootloader configuration
+> > * Uninstallation is complete and also invokes the relevant hooks
+> > * New UAPI headers can be installed without any manual bookkeeping
 > 
-> Modify the underlying function __refcount_sub_and_test() to warn about this
-> case as a use-after-free and have it return false to avoid the potential
-> double-free.
+> Additionally, to what already has been mentioned above, this would also
+> greatly simplify the instructions and the needed setup for bisection if
+> people run into regressions, as for example in the following documents:
 > 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
+> - https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html
+> - https://wiki.archlinux.org/title/Bisecting_bugs_with_Git
 > 
-> Motivation for this patch is an earlier kretprobe problem described at:
-> https://lore.kernel.org/linux-trace-kernel/92cff289-facb-4e42-b761-6fd2515d6018@suse.com/
+> So thank you (up front) for your effort's here, this could greatly help
+> to improve the debugging experience!
 
-Well that's good fun.... :/
+Sounds reasonable, but IMO this can be done after the original
+implementation is done.
 
-The patch seems sane enough to me, I don't think add() has a similar
-issue, adding 0 is still daft, but as is I don't think it will actually
-misbehave. Notably add_not_zero(0) will fail when 0 and succeed (with
-no effect) when !0.
+> I have tested this patch by just running "make pacman-pkg" and
+> everything worked as expected (currently booted from the generated
+> kernel).
 
-Still, adding or subtracting 0 is pretty stupid, so perhaps we should
-more explicitly warn on that?
+Thanks for the test!
 
-Anyway, for this patch:
+> As noted in another mail in this thread it would also be cool if just
+> plain makepkg could be executed (i.e. -s/--syncdeps, -i/--install and
+> --packagelist) would be interesting, but I think with the current setup
+> this could become a bit complicated 🤔
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Yes, this will be complicated, given some variables are set before
+executing makepkg.
 
->  drivers/misc/lkdtm/refcount.c | 16 ++++++++++++++++
->  include/linux/refcount.h      |  4 ++--
->  2 files changed, 18 insertions(+), 2 deletions(-)
+> Maybe it's a possiblity to have a "make pacman-pkgbuild" and then expect
+> the user to interact with the created PKGBUILD..? Idk if that is
+> actually better
+
+This would be different from the other `foo-pkg` targets.
+And it would still not be clear how to handle the overriden variables.
+
+> Also is there a canonical way to be notified whenever people report
+> issues with this or there are patches to it? I'd love to help out if
+> that is desirable from your side ..
+
+I've added you to my Cc list.
+
+> Also I have written some more comments inline below...
 > 
-> diff --git a/drivers/misc/lkdtm/refcount.c b/drivers/misc/lkdtm/refcount.c
-> index 5cd488f54cfa..8f744bee6fbd 100644
-> --- a/drivers/misc/lkdtm/refcount.c
-> +++ b/drivers/misc/lkdtm/refcount.c
-> @@ -182,6 +182,21 @@ static void lkdtm_REFCOUNT_SUB_AND_TEST_NEGATIVE(void)
->  	check_negative(&neg, 3);
->  }
->  
-> +/*
-> + * A refcount_sub_and_test() by zero when the counter is at zero should act like
-> + * refcount_sub_and_test() above when going negative.
-> + */
-> +static void lkdtm_REFCOUNT_SUB_AND_TEST_ZERO(void)
-> +{
-> +	refcount_t neg = REFCOUNT_INIT(0);
-> +
-> +	pr_info("attempting bad refcount_sub_and_test() at zero\n");
-> +	if (refcount_sub_and_test(0, &neg))
-> +		pr_warn("Weird: refcount_sub_and_test() reported zero\n");
-> +
-> +	check_negative(&neg, 0);
-> +}
-> +
->  static void check_from_zero(refcount_t *ref)
->  {
->  	switch (refcount_read(ref)) {
-> @@ -400,6 +415,7 @@ static struct crashtype crashtypes[] = {
->  	CRASHTYPE(REFCOUNT_DEC_NEGATIVE),
->  	CRASHTYPE(REFCOUNT_DEC_AND_TEST_NEGATIVE),
->  	CRASHTYPE(REFCOUNT_SUB_AND_TEST_NEGATIVE),
-> +	CRASHTYPE(REFCOUNT_SUB_AND_TEST_ZERO),
->  	CRASHTYPE(REFCOUNT_INC_ZERO),
->  	CRASHTYPE(REFCOUNT_ADD_ZERO),
->  	CRASHTYPE(REFCOUNT_INC_SATURATED),
-> diff --git a/include/linux/refcount.h b/include/linux/refcount.h
-> index 59b3b752394d..35f039ecb272 100644
-> --- a/include/linux/refcount.h
-> +++ b/include/linux/refcount.h
-> @@ -266,12 +266,12 @@ bool __refcount_sub_and_test(int i, refcount_t *r, int *oldp)
->  	if (oldp)
->  		*oldp = old;
->  
-> -	if (old == i) {
-> +	if (old > 0 && old == i) {
->  		smp_acquire__after_ctrl_dep();
->  		return true;
->  	}
->  
-> -	if (unlikely(old < 0 || old - i < 0))
-> +	if (unlikely(old <= 0 || old - i < 0))
->  		refcount_warn_saturate(r, REFCOUNT_SUB_UAF);
->  
->  	return false;
+> > ---
+> >  .gitignore               |  6 +++
+> >  Makefile                 |  2 +-
+> >  scripts/Makefile.package | 14 +++++++
+> >  scripts/package/PKGBUILD | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 120 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/.gitignore b/.gitignore
+> > index c59dc60ba62e..7902adf4f7f1 100644
+> > --- a/.gitignore
+> > +++ b/.gitignore
+> > @@ -92,6 +92,12 @@ modules.order
+> >  #
+> >  /tar-install/
+> >  
+> > +#
+> > +# pacman files (make pacman-pkg)
+> > +#
+> > +/PKGBUILD
+> > +/pacman/
+> > +
+> >  #
+> >  # We don't want to ignore the following even if they are dot-files
+> >  #
+> > diff --git a/Makefile b/Makefile
+> > index 7372ea45ed3f..768d3dc107f8 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1481,7 +1481,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
+> >  # Directories & files removed with 'make mrproper'
+> >  MRPROPER_FILES += include/config include/generated          \
+> >  		  arch/$(SRCARCH)/include/generated .objdiff \
+> > -		  debian snap tar-install \
+> > +		  debian snap tar-install PKGBUILD pacman \
+> >  		  .config .config.old .version \
+> >  		  Module.symvers \
+> >  		  certs/signing_key.pem \
+> > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > index bf016af8bf8a..0aaa0832279c 100644
+> > --- a/scripts/Makefile.package
+> > +++ b/scripts/Makefile.package
+> > @@ -141,6 +141,19 @@ snap-pkg:
+> >  	cd $(objtree)/snap && \
+> >  	snapcraft --target-arch=$(UTS_MACHINE)
+> >  
+> > +# pacman-pkg
+> > +# ---------------------------------------------------------------------------
+> > +
+> > +PHONY += pacman-pkg
+> > +pacman-pkg:
+> > +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> > +	+objtree="$(realpath $(objtree))" \
+> > +		BUILDDIR=pacman \
+> > +		CARCH="$(UTS_MACHINE)" \
+> > +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> > +		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+> > +		makepkg
+> > +
+> >  # dir-pkg tar*-pkg - tarball targets
+> >  # ---------------------------------------------------------------------------
+> >  
+> > @@ -221,6 +234,7 @@ help:
+> >  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+> >  	@echo '  snap-pkg            - Build only the binary kernel snap package'
+> >  	@echo '                        (will connect to external hosts)'
+> > +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+> >  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
+> >  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
+> >  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > new file mode 100644
+> > index 000000000000..eb3957fad915
+> > --- /dev/null
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -0,0 +1,99 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > +
+> > +pkgbase=linux-upstream
+> > +pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+> > +pkgver="${KERNELRELEASE//-/_}"
 > 
-> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
-> -- 
-> 2.35.3
+> I just wondered whether the version format was chosen deliberatly
+> here, as it yields something like 6.10.0_04474_ga1cc539bf882-6 for
+> example. A similar output is generated by the pkgver() function
+> suggested in the Wiki which would give something like this:
+> v6.8.rc5.r84.g9b9c280-1.
 > 
+> https://wiki.archlinux.org/title/VCS_package_guidelines#Git
+> 
+> The most notable difference is the usage of underscores vs. dots, which
+> is not an issue but also not usually a thing with arch packages.
+
+It was chosen to be similar to the other `foo-pkg` targets.
+But if there is a documented standard way for Arch, I'm in favor of
+using it.
+
+> > +# The PKGBUILD is evaluated multiple times.
+> > +# Running scripts/build-version from here would introduce inconsistencies.
+> > +pkgrel="${KBUILD_REVISION}"
+> 
+> As far as I understand this means that the pkgrel is incremented on
+> every build, which is not really usual. The 'pkgrel' variable is
+> typically used to indicate changes to the binary package that are
+> besides an upstream release, i.e. when one changes a compile flag or
+> similar.
+> 
+> Also on a new upstream release this flag would be reset to 1, while here
+> we increment the variable monotonically.
+> 
+> So this is not an issue per-se, just a bit unusual compared to how we
+> handle packages in Arch itself.
+
+It is unusual for Arch, but IMO the best fit.
+The other alternative would be to fix pkgrel to "1" and integrate the
+version counter into the version itself.
+
+> See https://wiki.archlinux.org/title/PKGBUILD#pkgrel
+> 
+> > +pkgdesc='Linux'
+> 
+> Maybe expand the description here a little to something like "The Linux
+> kernel and modules as built from the upstream PKGBUILD", just "Linux"
+> seems to be a bit short.
+
+Ack.
+
+> > +url='https://www.kernel.org/'
+> > +# Enable flexible cross-compilation
+> > +arch=(${CARCH})
+> > +license=(GPL-2.0-only)
+> > +makedepends=(
+> > +	base-devel
+> > +	bc
+> > +	cpio
+> > +	gettext
+> > +	libelf
+> > +	openssl
+> > +	pahole
+> > +	perl
+> > +	python
+> > +	rsync
+> > +	tar
+> > +)
+> 
+> Including base-devel is to the makedepends is pretty sneaky, although
+> none of the make dependencies will ever be installed as we do not sync
+> the dependencies for the packagebuild as I have noted on the beginning
+> of this mail (--syncdeps).
+
+They won't be installed, but still be validated.
 
