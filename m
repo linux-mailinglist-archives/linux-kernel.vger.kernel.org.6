@@ -1,113 +1,98 @@
-Return-Path: <linux-kernel+bounces-254633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB969335A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AF99335A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFE5284451
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03F1AB217EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAE3B658;
-	Wed, 17 Jul 2024 03:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D476FC5;
+	Wed, 17 Jul 2024 03:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="wp2QaA0B"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="cwTycDiK"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DFAAD21
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5102519A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721187054; cv=none; b=OJcq2S2jN5yyDQv6JP6CuLHUg4nwvK7klmcQAtt+WAps56e4ogyZE2PPZT/PblDgUUMCV/XIWgr21AdEPp1mBkA3JPVS/lSNFu0glpP8weW6iJV198W2RSS8y9Cpv9Yog++MZSmRogBBnT/9epeVcF9Bwtp+cLlP31Ma0jWjUWo=
+	t=1721187164; cv=none; b=ba9cMsPoICa7lt7kj3DKCgTvIQvwOs17GK7+N2xfmeq1Ygpt+0GIbgcwdZjMALysIyxWh9e178uG9CEv9gGiKhyQvcSf26GytE9nSHcN9ADZETHV35/oIFIERh25CEDqeupnQpRA+xBaaQgWxARFxlgzEe0xprC8Oje2s1FVJeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721187054; c=relaxed/simple;
-	bh=NfOlG2vlmBkRe48uA/ZKIWngmGvdIHe53Jt+y7FEXoE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=cKlA6ZGHAm+XNNAueaap1RfLkQP/U5ma97OdfzyOu9EWzlAYVZuF5aefSBgfU0Y6z8xaQ+33GVr+xXPsVrf8++HXTOlMnO4TXzxflZSx3+1SMxIbke5IQlA5WX7DxBvsuq75VzYTqTBrdOfhNhgrExct7UfuDp8SLPL+tjOuNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=wp2QaA0B; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1721187049; bh=BpawFWslhiT5rFQZMstnZ5yZjiV/VA6lRDiSLCKebEA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=wp2QaA0BZ5mCSC97ppaDXTHLlj72MP1el90W+M4a4H/Wl65ZEHo9l46YHtr9C0SsI
-	 UEiCZGc3HVOqBV4iLcJIWzIPoTnLI7SgPGK6G72E0vujOyBA+46JYJQg6hyXLVDJR8
-	 UQOOHB4ZuVykuV75iZsQLxdG/NfGszalYU5EO4b8=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 6251983A; Wed, 17 Jul 2024 11:24:37 +0800
-X-QQ-mid: xmsmtpt1721186677tk36pn0bc
-Message-ID: <tencent_AAEF765567CA3DCF377696B436244B387509@qq.com>
-X-QQ-XMAILINFO: MtZ4zLDUQmWfHhVPAy5cf+ng7YcREaXbstAPSsHLs197MFm71FStE1fNn5bdAa
-	 Y1dH/I9m0AXIU+5T7RgzbsxMo6+st5fIICqquNF6R47foLbOJrsqRcsl0JjMak2rg28z/E8eCbma
-	 dMPvCNInbc4mhxXOeY7B6oHJZEs06DJh6M02e4T2NHRFUEttmkd/1Z4DFGyw+R3HIop5upQdyByq
-	 /iSCkA1UhjvZsDcy64cnH9DcULfZQpcSVJtTxZBxR/xR8Xn8EMhGyOJsRRalxOCAPxb4Xti/UqPA
-	 emCFPGP1lm41dwFVpMrOrg1zEsld+f5Mvadb5dxdjtO8fidH6u+3s+33k2vou8pKFo4J2u0M8opW
-	 ECosmCxBmY8np+EdMc6s1kWY6P5gqCSPXR9FWvovR6X4LnuFhIC15jnPkLXhdd1yVu86XBSg6Lro
-	 FEt0YVEORsf14QS77aCQinYNIIzgmC1wc9BVKnibLB85Zsi3xIbUjdEZhJtVtO88amoSMOQOY8wh
-	 aDQ1vtlr5uwQF9bUAvgDkjfXip6cy70sz2ROIjxMPsICciTer6W0Z0KCDP9RkpKOpzoqnAO8Ttid
-	 RAqAypeZ1GPgKrrNcs4VdasvKfiXiWHlZAU8kzh142SM81KMXalvVRb6alOM2SYSbTP6ECUZ1Elv
-	 YNoFWZnT6u3JTKAws7oKUq9RF5d1nBdZCEsrlV5wGAyDOULdFgI7yUPBBUxXgPUmghjW+SPWl7KO
-	 4dBnfvOf9gIzqCGRvLMgaiPZ6lZ/YRZ5n0i1Ansm8W3KMnzcrbea9SLubmHslvHV1OZGDwsMhuQ+
-	 h1+E/DueJmB2syEoE0a/0sWIWhhfXSoiH36zY643614VM0DjMJyWzIzOfIMLyFT/h2LcfyiUJcYT
-	 U+6/zya8Q/oREaH35yU+PsbEkdyNjm5g==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+d5dc2801166df6d34774@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get
-Date: Wed, 17 Jul 2024 11:24:37 +0800
-X-OQ-MSGID: <20240717032436.135950-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000005c6453061d53bc0f@google.com>
-References: <0000000000005c6453061d53bc0f@google.com>
+	s=arc-20240116; t=1721187164; c=relaxed/simple;
+	bh=D+rQdq7saURwnRscJ2/+YDkMyHgtBaUFB+rvXbbHMec=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b2w8Zz2vsURY64XfozC01UYSiSWII3whcSs8eUcL7pdtjqDyNnSJkz1MCmNOMd6VaIUFkvWNWtUVf1YXM5yQX5CP6Xm4Q5kno67UsH2/dl2rCEoeu/GjE8p/q1h4YCwJzWexv1ZlNoCJ5qb/fZbqpTVJ2KlKYB9Cfy0UrSPLNXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=cwTycDiK; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1721186815;
+	bh=D+rQdq7saURwnRscJ2/+YDkMyHgtBaUFB+rvXbbHMec=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=cwTycDiKaboJnqoXqwPWjsiRJrmVMfgoLFnIvcU8mtGcSDRVguTGblpRSJhu5OyGF
+	 544x1HYcGcUehPhAYEBiyfby4XK5cqkI29JvdULxDqDIfZAVR94bRU9OdVyFB81AIb
+	 EsSJaCuW3RRGmT0AAmfkK4rfwwQlKvYxv1ty2LK8=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 9E2E066D08;
+	Tue, 16 Jul 2024 23:26:42 -0400 (EDT)
+Message-ID: <a754294a55b0b11578e34301eacd6badd133eb09.camel@xry111.site>
+Subject: Re: [PATCH v10 1/2] x86/mm: Don't disable PCID if "incomplete
+ Global INVLPG flushes" is fixed by microcode
+From: Xi Ruoyao <xry111@xry111.site>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Dave Hansen
+	 <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Michael Kelley
+ <mhklinux@outlook.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+ <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Sean
+ Christopherson <seanjc@google.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>
+Date: Wed, 17 Jul 2024 11:26:19 +0800
+In-Reply-To: <20240626171541.eeisf66vhuyspv4j@desk>
+References: <20240522020625.69418-1-xry111@xry111.site>
+	 <b901776293d19271a34bb14f79639c4b574b6174.camel@xry111.site>
+	 <e2cb23a6-60d4-49b1-ba48-1ded846e5292@intel.com>
+	 <20240626171541.eeisf66vhuyspv4j@desk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-before remove debugfs_dir set reference pointer to NULL
+On Wed, 2024-06-26 at 10:15 -0700, Pawan Gupta wrote:
+> On Wed, Jun 26, 2024 at 09:50:39AM -0700, Dave Hansen wrote:
+> > On 6/26/24 06:10, Xi Ruoyao wrote:
+> > > Ping.
+> > >=20
+> > > Ok to queue these two into some branch for integration?
+> >=20
+> > Please don't top post, and please trim your replies.
+> >=20
+> > The code looks fine, but this has zero acks and I can't find any public
+> > documentation of which microcode versions fix the errata.
+>=20
+> Based on an internal document, I provided the microcode versions used in
+> this patch.
+>=20
+> Acked-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-#syz test: linux-next 58f9416d413a
+I hope this can catch 6.11...
 
-diff --git a/net/mac80211/debugfs_netdev.c b/net/mac80211/debugfs_netdev.c
-index 68596ef78b15..b9961edf6fa5 100644
---- a/net/mac80211/debugfs_netdev.c
-+++ b/net/mac80211/debugfs_netdev.c
-@@ -1019,8 +1019,10 @@ void ieee80211_debugfs_remove_netdev(struct ieee80211_sub_if_data *sdata)
- 	if (!sdata->vif.debugfs_dir)
- 		return;
- 
--	debugfs_remove_recursive(sdata->vif.debugfs_dir);
-+	struct dentry *debugfs_dir = sdata->vif.debugfs_dir;
-+
- 	sdata->vif.debugfs_dir = NULL;
-+	debugfs_remove_recursive(debugfs_dir);
- 	sdata->debugfs.subdir_stations = NULL;
- }
- 
-diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
-index 1e9389c49a57..357f310ec75f 100644
---- a/net/mac80211/debugfs_sta.c
-+++ b/net/mac80211/debugfs_sta.c
-@@ -1284,6 +1284,11 @@ void ieee80211_sta_debugfs_add(struct sta_info *sta)
- 
- void ieee80211_sta_debugfs_remove(struct sta_info *sta)
- {
-+	struct ieee80211_sub_if_data *sdata = sta->sdata;
-+
-+	if (!sdata->vif.debugfs_dir)
-+		return;
-+
- 	debugfs_remove_recursive(sta->debugfs_dir);
- 	sta->debugfs_dir = NULL;
- }
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
