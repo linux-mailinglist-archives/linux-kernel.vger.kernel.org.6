@@ -1,89 +1,189 @@
-Return-Path: <linux-kernel+bounces-255008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A984F933A6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0666933A6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB71B1C2152F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49931C22135
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD5C17E911;
-	Wed, 17 Jul 2024 09:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFA433B9;
+	Wed, 17 Jul 2024 09:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uen35YsQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDiN43W7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D31217E908;
-	Wed, 17 Jul 2024 09:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C988217E45F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210016; cv=none; b=olQdgiuemRb1fqdDkvYaYJ8Lli/y7sKGol00bgfbgyUCn/GUg0xzbGkseM8RYZLK1tKPXuXeOYzixmCE1vnGFA/VTSjhxuXPF+vJGMNvO5+PKyG/aHeEYoq7f+bNahs0zalix1EWVNj72pvyyo09/iNW11hHTMKNdiy/hreZx5o=
+	t=1721210035; cv=none; b=q3/q8ZfArJy7uWFKUvdr6+EnvRGLzBCjg1g/woM1aABfm68L1W0HCOv2cJ7Mi2GaLEqF4TLw0NYZVRtzjJ+tlo9tqR9pGYNmhViPDFOjEX0n6Cty4mLYkJEoNEN4Wnd+D/OmXk9mF30k3NT52IrIbmWm5CpSCO7igKHAoYG6lI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210016; c=relaxed/simple;
-	bh=N5KTE/RBiUwGRlJgeXiZSHiX9FdHVUBgtTpGL78tPcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsoJroyPbklhaITzXfGE1iiG21DXneT6hXndQ2QaAs3QQjtNlnNhxXhyoNkF3dEsaO2dtysabHGC2G9/nDv4IxpeHbVZd0Egwp5qAZ9Nl9LZugqcD09QpwXlZUX5LzzxFna4FvVG7PB2gORRd3kOMEmgmsD2bdRmKATKtfQEg8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uen35YsQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19237C32782;
-	Wed, 17 Jul 2024 09:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721210015;
-	bh=N5KTE/RBiUwGRlJgeXiZSHiX9FdHVUBgtTpGL78tPcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uen35YsQIUNtqnlSRyao9ajeFQ9ahKFjyxKoo+bhHE5G+BV6gnn6/M5U7VeMN9oJQ
-	 l+H5gC2chPsxGOTiMWURSFyb6M1P3LNC2ga9r1kdw1Ek44fchA0kOrtmqpeBXvRxFx
-	 m7FYcYaffeDvpKdIZzfNMidVqtqicewHIuPwgjaCqPFobM30cO9J89BdZdksz4dcOU
-	 T4sR+XTy4bFxAZUEG3na6c9GAwjds9S6/zh78yrl5aLYPqXvHN41S9pXw7cODdhvoF
-	 6KkaSK/CqvkplM/BL2K1tWROSV0FlWBDTK8tt9LeqNr4y5/K5JxZiMhT6wh89TTqWZ
-	 ovvhmZaWudAGg==
-Date: Wed, 17 Jul 2024 12:53:30 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v1 2/2] dma: Add IOMMU static calls with clear default ops
-Message-ID: <20240717095330.GH5630@unreal>
-References: <cover.1721041611.git.leon@kernel.org>
- <7758cbe20bfd34506d943bb93097565b9c4dced4.1721041611.git.leon@kernel.org>
- <20240717082145.GA15484@lst.de>
- <20240717084713.GG5630@unreal>
- <20240717085652.GA18554@lst.de>
+	s=arc-20240116; t=1721210035; c=relaxed/simple;
+	bh=hY2A8MnPxYgkestQzlEEcDPcT1koXYpQRvGwLzEfeY4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Gv3Lyo6l3qkVAbGIcMXbPC7uhYmyY6XWx4BcwJeXa6KRY4htA61WV5RrfMYszL4Qtp6fuEioh8T75XUYTMXeSGIvc8uo7L8hm+fxcxkSdHa5hdfzEj1in+Q42S83hiYET21Y67MbOdJMZZo+zxHeL72lAggtsunXdmFFr7J/HMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDiN43W7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3680667d831so2920232f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721210032; x=1721814832; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D7hezuiAMuZqu+ZyE4Fc3khDx6DH8srSCJtvh9GvtbM=;
+        b=bDiN43W75muhknAZXm4672m4k1sa/QIr11+/JMtsyoQvFS4EiOMydEfKhSWrTtR3Yk
+         ZjSkoxBmIItFrvdI0KOZbszesQ2Ni7xJk4TbxQJ2QJVXXnfUk99M9C6LNR38Ja56aLeO
+         QuhgR0iHop/1jq1kJLxSvZWTsRCWx4E+qeoiqT4HC9lMM55qf7uY9r2eyJgahdHb016U
+         GeEpfH+HQsQfoQXyYDc/2nHkKzzSQ5JzXL2C8ftjMI/z3fz92bK/e1s/yWUN8A0S2GU3
+         pZ1wkpAlyCnVC7pl1a4gVD/JPrxSBEgwZAkgdiGUajbxgACIgRjqeta6scWl0zHukzD8
+         SgIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721210032; x=1721814832;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D7hezuiAMuZqu+ZyE4Fc3khDx6DH8srSCJtvh9GvtbM=;
+        b=ARDP5ZrT/2WIcza9krHDKw0nvghvO5b0TRbDVvDl79Mg2nR4ME7aMK62i39AmuYkvl
+         FbOnZjkYgo6iRzUK6KKDfDRVUJJkiae79jdr0mmebn0qr7FBJ9PYL2XDMvM8BKbpzOpZ
+         ejEqHgh7yJq/AJ21jeFZqygqY52WZVMuhDO0t1hJb7/zfT6hmSRRAZFcEs+coS7vxA2d
+         v70nFphrm660jgCAcxTkXmXgn6nbNb15iM94tfUKEdEbWeOZAD46F79KwxUH2P0dwAHQ
+         uChsf6w1ue8S5pnA/cRjdhIAWIeV3vx9RrH0E1+z/WdA1jr0IEj/gxoHWpe6GWRnfbEE
+         /OTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxZzwrqgmyPt/UeluC5jszXb3L1RfXKxUOQESWu9pqcZnOTiDkz8bV0jQoVYHIp4dRJp1y6QX+rmCTNFZ1zpqqz+LbAazppl3v3aHu
+X-Gm-Message-State: AOJu0YwZJlFpczEt3PpaL/Qj0pA6ahtMwLBTOTfw0soJPR1aW3Z7U8LA
+	ye4S3evxD/Mikz176tYLSeM4pwf14Qm6UVrJWNdIwhfF+ExWEXtWCID/CvcSuuIJVJHfdoFyxbb
+	a
+X-Google-Smtp-Source: AGHT+IFUURvypNWarKRExQlrgfZYzn/ENpo49k/JM+c2BsbFK2CiL1BnS8McI1klEBbHhnY+OBdDAQ==
+X-Received: by 2002:adf:ef87:0:b0:367:9988:849e with SMTP id ffacd0b85a97d-3683165caeamr771753f8f.39.1721210031913;
+        Wed, 17 Jul 2024 02:53:51 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d? ([2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e81edasm163840315e9.15.2024.07.17.02.53.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 02:53:51 -0700 (PDT)
+Message-ID: <43d6523e-d6b7-4fda-92bb-a52fcad2fdba@linaro.org>
+Date: Wed, 17 Jul 2024 11:53:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717085652.GA18554@lst.de>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
+ CLK_SET_RATE_PARENT flag
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
+ <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
+ <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
+ <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
+ <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
+ <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
+ <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
+ <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
+ <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 10:56:52AM +0200, Christoph Hellwig wrote:
-> On Wed, Jul 17, 2024 at 11:47:13AM +0300, Leon Romanovsky wrote:
-> > It will cause to the situation where "struct device" memory footprint
-> > will increase, while we still need to keep dma_ops for archs that don't
-> > want to use default IOMMU.
+On 17/07/2024 11:49, Dmitry Baryshkov wrote:
+> On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
+>>>> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
+>>>>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>>>>>>
+>>>>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
+>>>>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
+>>>>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
+>>>>>>>> and byte1_div_clk_src, the clock rate should propagate to
+>>>>>>>> the corresponding _clk_src.
+>>>>>>>>
+>>>>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>>>>> ---
+>>>>>>>>     drivers/clk/qcom/dispcc-sm8650.c | 2 ++
+>>>>>>>>     1 file changed, 2 insertions(+)
+>>>>>>>
+>>>>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
+>>>>>>> rate should not be propagated. Other platforms don't set this flag.
+>>>>>>>
+>>>>>>
+>>>>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
+>>>>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
+>>>>>
+>>>>> Yes, the driver sets byte_clk with the proper rate, then it sets
+>>>>> byte_intf_clk, which results in a proper divisor.
+>>>>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
+>>>>> byte_intf_clk rate will also result in a rate change for the byte_clk
+>>>>> rate.
+>>>>>
+>>>>> Note, all other platforms don't set that flag for this reason (I think
+>>>>> I had to remove it during sm8450 development for this reason).
+>>>>>
+>>>>
+>>>> Ack, I think this deserves a comment explaining this, I'll add it.
+>>>
+>>> But where to place it? This applies to _all_ dispcc controllers.
+>>
+>> Commit message
 > 
-> It won't.  Even with the new bit we still have 28 more spare bits next
-> to it :)
+> It is already committed.
 > 
-> > Because dma_ops pointer exists anyway and has already specific flags. I
-> > decided to take evolutive approach and add a new flag to it, instead of
-> > revolutionary approach and add a new field to struct device.
-> 
-> The point is that with a little more work we can actually kill that
-> for common configuration.  For non-Xen setups that basically just means
-> removing the dummy ops, so it's a pretty big quick win.
 
-No problem, I'll do it.
+The thing we keep adding new clock drivers based on previous ones that uses
+specific ops and flags with no documented reasons except in commit messages,
+but it's often buried into multiple cleanup changes.
 
-Thanks
+So at some point we should add simple comments before each special clock
+explaining what we're doing here, a good example is the clk_regmap_phy_mux_ops,
+where I had to dig into commit logs and understand why we handle it differently
+from downstream.
+
+Neil
+
 
