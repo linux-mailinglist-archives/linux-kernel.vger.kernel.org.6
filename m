@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-254925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BB293395A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68057933985
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBEC0B211C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B8B283B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB8839FD7;
-	Wed, 17 Jul 2024 08:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A2238F97;
+	Wed, 17 Jul 2024 09:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lewUu5sV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+obHz2r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59D20DC3;
-	Wed, 17 Jul 2024 08:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE3937160
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206041; cv=none; b=DE7CR+bEYzq2FJl+AYj89ZQ16q61I7Cv7cyug+SiVgsQgPavyIX0bci3NHaMaMgW+qxI1shLA3LngHdDf7DEQ3QghCLfCPHs0Kf0ncJhrOwDjav8I1T1Q5tvgER0kCvk8AAhR4j0ltY756jy8JqHjAmKjyvb4256TfXSjh3akHc=
+	t=1721206917; cv=none; b=hDGjx9l+Fgi19RGg45T1u2TwVd+jX3dPSBKjcUOgTBk0o4uWx2JHb7LWweVcRL4Dz5O1uN22xEKvRYPVFHkgvKmPuB7WRB4mN6VpfT9agjTkhsZPqmxysR12+oYAiqFtwtGzIZxKRxvEQ7SYom7BUcBIUxeZ7bPqHcUWS70LiaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206041; c=relaxed/simple;
-	bh=L65yk+aTaNpw/49H65EyAuulRA+8r2f/Auq+QlOgUE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4WV0xcXJBzVwCc+f8Ibq+Uzvf8XwtxMD1dM46zmyxVVN7kMmgk7MQ4PnugwXFhCmdunHoXUWC37Al08/aeH7XoZYCtPWj49pwH2FNKlEpw0qTEH00IxtCZT638xZw7pGNF0fASBXHVuJeMGDml61HwjLVY2ZJGEYY4Kmjf8Zu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lewUu5sV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1D5C32782;
-	Wed, 17 Jul 2024 08:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721206041;
-	bh=L65yk+aTaNpw/49H65EyAuulRA+8r2f/Auq+QlOgUE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lewUu5sVmk2/bTj3R/VTSfA0Ziz4ZFx1aucdrEhBNWZZY8XXZwQ5NivxhPTTyCMPD
-	 UXw+Lcp+ogPEsd+Mc9skJlN1VgtVMxX8xTmQ0MD6TzRzAdXVVmYE5q+eSaJtfxKA75
-	 bLsSVT2WGJWYwjLCNj45meFxjtUk3sPzaOAJVJHCgHMqBqCEXOplJ1gcmYqf2Vd1At
-	 jWt8aG33mvDPKXeeZRknuPeKqFr1WPjMvL2Fo8zuZ1vXKQvY1UE12iIO01skrQcwe5
-	 Yqa2IsL9Ieojo8QQhKa2MtUSubYDzwB2ldtx/DpNJvzKeplhpLbXWx0CRXx5BO/YHc
-	 UMgfRFKxoh/Vw==
-Date: Wed, 17 Jul 2024 11:47:13 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v1 2/2] dma: Add IOMMU static calls with clear default ops
-Message-ID: <20240717084713.GG5630@unreal>
-References: <cover.1721041611.git.leon@kernel.org>
- <7758cbe20bfd34506d943bb93097565b9c4dced4.1721041611.git.leon@kernel.org>
- <20240717082145.GA15484@lst.de>
+	s=arc-20240116; t=1721206917; c=relaxed/simple;
+	bh=IyosArDWVjjT9mg9qNfQW5tTmi7yUA/cLqYqFiwyND0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qoqh5bDW9nmeqR+h0k4ilk7GmoTHdlqhl9aHZnQvhGeL+Dl3VyVUhgHalKnzPq+iL+Gib8o/TVWjEarXL1h++Y36WvAc95XSsDx3dY20efwihVSM2BsTPfcr+8uwW5txPwjCUIu05WO4/7POTwOM/zRs9Xfh1D6i7YmNytvkMaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+obHz2r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721206914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KrgDLQF/5OvH9cl5dgPPJLVwc5mVIqPT9oH+q0LK9fo=;
+	b=Z+obHz2riE6qyKKq0Yzro+1WrO/HQ0B1glQ8LefPSVMorUmGZDJPcwDrti3xcmYKPtDIAe
+	z7szbD14PW6043xohUSn0qVvHkAtuckWqAfiJ4bNbvfHuWnKUltDAVII6KAbABocbGaqJX
+	zra5iDWrT2Xy1DxC0ySMxnANPugUbKc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-Xn3Sl3I1PIKCdwciIuVYUw-1; Wed,
+ 17 Jul 2024 05:01:52 -0400
+X-MC-Unique: Xn3Sl3I1PIKCdwciIuVYUw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C52FB1955F08;
+	Wed, 17 Jul 2024 09:01:43 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.194.18])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D379B1955F3B;
+	Wed, 17 Jul 2024 09:01:38 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Helge Deller <deller@gmx.de>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH 0/3] drm/panic: Remove build time dependency with FRAMEBUFFER_CONSOLE
+Date: Wed, 17 Jul 2024 10:48:38 +0200
+Message-ID: <20240717090102.968152-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717082145.GA15484@lst.de>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Jul 17, 2024 at 10:21:45AM +0200, Christoph Hellwig wrote:
-> dma_is_default_iommu still looks a bit odd to me - basically we have
-> the ops structure just to say to bypass it.  Why not add a single-bit
-> dma_iommu field to struct device next to dma_ops_bypass to skip it?
+When proposing to enable DRM_PANIC on Fedora, some users raised concern about the need to disable VT_CONSOLE.
+So this is my new attempt to avoid fbcon/vt_console to overwrite the panic screen.
+This time it doesn't involve any locking, so it should be safe.
+I added a skip_panic option in struct fb_info, and check if this option and the panic_cpu are set in fb_is_inactive(), to prevent any framebuffer operation.
+Also skip_panic is only true if the drm driver supports drm_panic, so you will still get the VT panic info on drivers that don't have drm_panic support yet.
 
-It will cause to the situation where "struct device" memory footprint
-will increase, while we still need to keep dma_ops for archs that don't
-want to use default IOMMU.
+Jocelyn Falempe (3):
+  drm/panic: Add drm_panic_is_enabled()
+  fbcon: Add an option to disable fbcon in panic.
+  drm/panic: Remove build time dependency with FRAMEBUFFER_CONSOLE
 
-Because dma_ops pointer exists anyway and has already specific flags. I
-decided to take evolutive approach and add a new flag to it, instead of
-revolutionary approach and add a new field to struct device.
+ drivers/gpu/drm/Kconfig          |  2 +-
+ drivers/gpu/drm/drm_fb_helper.c  |  2 ++
+ drivers/gpu/drm/drm_panic.c      | 20 ++++++++++++++++++++
+ drivers/video/fbdev/core/fbcon.c |  7 ++++++-
+ include/drm/drm_panic.h          |  2 ++
+ include/linux/fb.h               |  1 +
+ 6 files changed, 32 insertions(+), 2 deletions(-)
 
-> Then IOMMU_DMA also does not need to select DMA_OPS any more, which
-> would be kinda silly with the direct calls.
 
-I didn't know how far to go with that, as default IOMMU .flags are
-unique and can be removed if dma_iommu bit is set.
+base-commit: a237f217bad50c381773da5b00442710d1449098
+-- 
+2.45.2
 
-Thanks
 
