@@ -1,94 +1,73 @@
-Return-Path: <linux-kernel+bounces-255596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBFE93429D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDEB93429F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16211F22CE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E0201C2100A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEC21B970;
-	Wed, 17 Jul 2024 19:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7D618AEA;
+	Wed, 17 Jul 2024 19:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZaaVHRXh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G7jZb1e/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZaaVHRXh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G7jZb1e/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1eTsgo3"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA417545
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 19:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4F318641;
+	Wed, 17 Jul 2024 19:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721244962; cv=none; b=Qo+tvIN6g+sC9mBkhl5B+yTXqqHfr6jmvrFu4vRFoyPLaEHmc4Bd266a6JslL4rZcI241B8dCtFF4UT4Bat3ok5TeOu+jxCKniyfryHziTlB5TtGOvQV8/dPtdI2/oTFEc3PmqXI/vmf4jLSsn1kQV3AduNcIhyqMKupLoRNJLM=
+	t=1721245028; cv=none; b=Rs+dogV9doz4xqJ2TQPQzZarCFIj5q2qjV9/628gO4GBbfbtkDkseNsgh1lGUi3yH5i3bB4htMwUzxnSM/wfE/vAWzoO/79NuXAuofRme6c136rE0FuN0BX5Orf8SWVG1yRo2WS9LIiWXewvkYt/7xl22ornE2ca4dkPA1nvdEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721244962; c=relaxed/simple;
-	bh=3KUryYcz0fMjh5IKSrMBbcbZtuFNnkOqQkbm90KaSjA=;
+	s=arc-20240116; t=1721245028; c=relaxed/simple;
+	bh=e3rWkXRyMTSDQrTdC6NBk1oiJsPf0uUS1yTXMzMot5g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Je1GVOvqRa2v3+KclE7RqQWr0LFUws3/6Dw9wohFgPSLQJtK1tlk8rW5log0liIlpA+QTQsomplClHS3U+QY90rFnZLU0J/M7c+ZjTC0A9lq9SxYSsUBQxRRPtDkcCMLD91SrQEd9ANrNWJhPFb7OA3WtwIbbHpfgwJSs7eU9gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZaaVHRXh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G7jZb1e/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZaaVHRXh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G7jZb1e/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 27E571FB98;
-	Wed, 17 Jul 2024 19:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721244957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i+M+Pn7zfpnilj1S7DATFhnaQ3aerhqqQI9HJEiiY/4=;
-	b=ZaaVHRXhsLIMhOIH6x8Pos36JTHpnUIkdVpUN3FH3jhen6eeqzZFr0KW72H2cdqeLCR4ec
-	WKMVQCihtxFMRiFxsJtbPPogSoAEpUE/2vAYc/y6y2tvw11ZpUx86wcTpbIpIQGmfyrmFW
-	AuxC8DaM18fN1evvoiavF5TRHEWanv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721244957;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i+M+Pn7zfpnilj1S7DATFhnaQ3aerhqqQI9HJEiiY/4=;
-	b=G7jZb1e/z4SmpZub/w6ZRRyPqbkSf8dlkwiaKEITECRbRXerigPq5tgPHmq4h7QdcyS1bE
-	+gWbVdlWuGj55jAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721244957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i+M+Pn7zfpnilj1S7DATFhnaQ3aerhqqQI9HJEiiY/4=;
-	b=ZaaVHRXhsLIMhOIH6x8Pos36JTHpnUIkdVpUN3FH3jhen6eeqzZFr0KW72H2cdqeLCR4ec
-	WKMVQCihtxFMRiFxsJtbPPogSoAEpUE/2vAYc/y6y2tvw11ZpUx86wcTpbIpIQGmfyrmFW
-	AuxC8DaM18fN1evvoiavF5TRHEWanv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721244957;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i+M+Pn7zfpnilj1S7DATFhnaQ3aerhqqQI9HJEiiY/4=;
-	b=G7jZb1e/z4SmpZub/w6ZRRyPqbkSf8dlkwiaKEITECRbRXerigPq5tgPHmq4h7QdcyS1bE
-	+gWbVdlWuGj55jAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11A5B136E5;
-	Wed, 17 Jul 2024 19:35:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dkb+Ax0dmGbsXAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 17 Jul 2024 19:35:57 +0000
-Message-ID: <16286915-1350-4e6b-a0f6-deec02b7fa92@suse.cz>
-Date: Wed, 17 Jul 2024 21:35:56 +0200
+	 In-Reply-To:Content-Type; b=D2QyPKX8N0basMsC5kAnzWa1A0SqO3Gw+/p81DLyg2LVGPjpWGkVMUOKtDglgs6oXe5fPt5VrUCaAXU7aCh5XClWUtCYufD9d9iXYQjc5aBM7+r52BeX8nVZXty2FvQS5Do8j2HWH/Inc2w5fpsFqz6WkQCfSLTZuZvg2ZkwNQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1eTsgo3; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso79392276.0;
+        Wed, 17 Jul 2024 12:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721245026; x=1721849826; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pKPozxotJ17He89SsoGOC73F0/fehg7fO9LqzjUI5RM=;
+        b=S1eTsgo3EFzvgVE14pORpcgjoYnzrvhkaNFLrKS/1s2m97PKyOmSFO9pxN9gGD2Dcr
+         k0zz0hVo6bbqi5g7Xu8Dxev8i45RTnH2WvOoYxju41siHmHz0tvyXf5YN3g/p+GEfuar
+         AkpoP+9mMMu2Ei5GuKKreJb08sSnwWwBQe+xxP+X0UeftYiNXeDZY19X/DjifGU305Xw
+         7ECzfEXlXnPLEUUevMfAdh8Ov+tD8E/j0tqQbC83u3e7l2B2J015OPM7RVAlG2BGJEFk
+         B+8Oma3jnWZbFQN1jnfpCaaFUi1+pEcoaFB/udiVn7ga9RMJ4mftMEGlQwAYmr9bT7/W
+         K8KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721245026; x=1721849826;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKPozxotJ17He89SsoGOC73F0/fehg7fO9LqzjUI5RM=;
+        b=e0vbVr+lOGx7j3LbdqOYxP3Ni0+THkY8zvpeh6MALUTETNAz8YVjcfa18rOk0UgHHC
+         CVt3Jy1aDgIbgqeBOFslNXZIwB73M+tyy7faJ+9IFff1zY806m+YrkQEAIM5Ke6Awpzx
+         UnHyEQqQMSHiT5UQsyxvcGwVhiSIBYg5hLA9gawuGR58uVx4dtKAENI/hKnVY4gZWsdK
+         TkK/iFvyfeTS2CjPk9xwsjQWbYSL34Edvlo5rk5845p6aQRWQWaNEnyv/Lj4ieu8b3dn
+         6YcXGayXaed2zS3RVbwKG4bjRo8+Zd73XV7FcoWvYe3oj3cfFKSsEkhx7hdX9dBDg4xU
+         j95Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ1P0gIm/MZtwz0ye5J3zrVK4W8q2ZyQwGrOqyVGuSe/vZU+LJ0yLIV6Te0kkMxtp9mybXYfZ+CQ+nJ5yz05GnDzKhZEAhMAdaeYo1oowBb4JlslstoBYL0iHQ8zg/D9CxFKsB
+X-Gm-Message-State: AOJu0YzxIypxAV+X+fgmnfui1Bsuq4IPcYcW5VX/hhA106h2/RuoApCl
+	NkNrJ4NtqW2cCzH2XmzV5Q0ZXCgcv7BlEi4+bIlfO18x86gziTiU
+X-Google-Smtp-Source: AGHT+IHsdjhHg5mdI8hGqCe9yn7NB+DeyAiOT/bpMt8aIlkMs48uDK4BvQCahfyTZgtpL3mBN2U+Qw==
+X-Received: by 2002:a05:6902:2189:b0:dff:338e:4f6 with SMTP id 3f1490d57ef6-e05ed6b9380mr3548069276.5.1721245025627;
+        Wed, 17 Jul 2024 12:37:05 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b79c519008sm1644776d6.64.2024.07.17.12.37.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 12:37:04 -0700 (PDT)
+Message-ID: <fd6f3fd1-afc3-4aa4-bb3b-c14335703dbd@gmail.com>
+Date: Wed, 17 Jul 2024 12:36:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,163 +75,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] alloc_tag: outline and export free_reserved_page()
+Subject: Re: [PATCH 5.4 00/79] 5.4.280-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240717063752.619384275@linuxfoundation.org>
 Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, hch@infradead.org, pasha.tatashin@soleen.com,
- souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, kernel test robot <lkp@intel.com>
-References: <20240717181239.2510054-1-surenb@google.com>
- <20240717181239.2510054-2-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240717181239.2510054-2-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240717063752.619384275@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -0.29
-X-Spamd-Result: default: False [-0.29 / 50.00];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
 
-On 7/17/24 8:12 PM, Suren Baghdasaryan wrote:
-> Outline and export free_reserved_page() because modules use it and it
-> in turn uses page_ext_{get|put} which should not be exported. The same
-> result could be obtained by outlining {get|put}_page_tag_ref() but that
-> would have higher performance impact as these functions are used in
-> more performance critical paths.
+On 7/16/24 23:39, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.280 release.
+> There are 79 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Fixes: dcfe378c81f7 ("lib: introduce support for page allocation tagging")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407080044.DWMC9N9I-lkp@intel.com/
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.280-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Are these two patches now stable@ material as 6.10 build is broken on ppc64
-with alloc taging enabled?
-
-> ---
-> Changes since v1 [1]
-> - Outlined and exported free_reserved_page() in place of {get|put}_page_tag_ref,
-> per Vlastimil Babka
-> 
-> [1] https://lore.kernel.org/all/20240717011631.2150066-2-surenb@google.com/
-> 
->  include/linux/mm.h | 16 +---------------
->  mm/page_alloc.c    | 17 +++++++++++++++++
->  2 files changed, 18 insertions(+), 15 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index eb7c96d24ac0..b58bad248eef 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3177,21 +3177,7 @@ extern void reserve_bootmem_region(phys_addr_t start,
->  				   phys_addr_t end, int nid);
->  
->  /* Free the reserved page into the buddy system, so it gets managed. */
-> -static inline void free_reserved_page(struct page *page)
-> -{
-> -	if (mem_alloc_profiling_enabled()) {
-> -		union codetag_ref *ref = get_page_tag_ref(page);
-> -
-> -		if (ref) {
-> -			set_codetag_empty(ref);
-> -			put_page_tag_ref(ref);
-> -		}
-> -	}
-> -	ClearPageReserved(page);
-> -	init_page_count(page);
-> -	__free_page(page);
-> -	adjust_managed_page_count(page, 1);
-> -}
-> +void free_reserved_page(struct page *page);
->  #define free_highmem_page(page) free_reserved_page(page)
->  
->  static inline void mark_page_reserved(struct page *page)
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 9ecf99190ea2..7d2fa9f5e750 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5805,6 +5805,23 @@ unsigned long free_reserved_area(void *start, void *end, int poison, const char
->  	return pages;
->  }
->  
-> +void free_reserved_page(struct page *page)
-> +{
-> +	if (mem_alloc_profiling_enabled()) {
-> +		union codetag_ref *ref = get_page_tag_ref(page);
-> +
-> +		if (ref) {
-> +			set_codetag_empty(ref);
-> +			put_page_tag_ref(ref);
-> +		}
-> +	}
-> +	ClearPageReserved(page);
-> +	init_page_count(page);
-> +	__free_page(page);
-> +	adjust_managed_page_count(page, 1);
-> +}
-> +EXPORT_SYMBOL(free_reserved_page);
-> +
->  static int page_alloc_cpu_dead(unsigned int cpu)
->  {
->  	struct zone *zone;
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
