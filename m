@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-255711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C9D9343FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C51F934447
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DCF1C21A0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D40283405
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC2A187561;
-	Wed, 17 Jul 2024 21:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68405188CB8;
+	Wed, 17 Jul 2024 21:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmkrLPFY"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iIWffLK9"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572C4364CD
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 21:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721252094; cv=none; b=Uajc5d3SLIk0maDN/5NAnaf7Ebg+GyjsswCP+xpzCYsO9x2B3txXvxfDJYfQ2dsj84HDDDYNaDmSqUADBb/TQ2+Xp9QxiJzcOZ8C7rnKIYMQQHO6lhQzMhgZXnZD/p9aa9JJII0DbEYxz8sxd+r/mjzx6fRBSi/xuRLw2Mk4cvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721252094; c=relaxed/simple;
-	bh=649VWAh8YGtfAt5yzHXNlQ2+FQzk9LOyClnWIDMymFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjmHRbu5hpJE5777nK6VgWgqA3bdxrIICgzXJhmm12FH+ThSykP671JbgPWsa2OVU5YasJwJTBwfgMxSHfqdiyhMPt9cTGCBLwyoHL+LPzdQURxgT4/wvpjIQJgXxfuu8iw+miUPDm6i+hBR3Pfq/mNuDqA3hW2p2ujwuSOIzCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XmkrLPFY; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb50bcabd1so98003a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721252092; x=1721856892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HAXXCI6WHcx1m1BcCsl4njyF8RDu8jjh5cq8AdZnVns=;
-        b=XmkrLPFYzbBXAlVv0U5EQ9kL3Kuxqx2iwrq8e7wbrYsMKYuLK37587j5LXJNNDqv7u
-         iglM13DQOx4o9kSmpaWdzMiXDp8fmSXqUjW5qO5dJq0fF7jc+j7IMBqa42L3lM+Tw3rq
-         W2CEfBJWr9m2DnB3ECMxmFco7OKPVVPPSGTtjiJZR8tCYum1njhWwl6lOSWJSf9YXNiY
-         hndGUgK7e0Q/IzT724K85W/4LMw+PLGfxqlc/gQoZ8SpZlk3NDdz+rlciKK6b0ftXPqa
-         IBv4qGALaEQaIDsCpGX8zEGXspYH9i30C8GqRBPG4GCmEtQv5frZcVa8aud5YdiwVGqm
-         3OkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721252092; x=1721856892;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HAXXCI6WHcx1m1BcCsl4njyF8RDu8jjh5cq8AdZnVns=;
-        b=eT0HBljhoFmbj3b/eOdt1IQk0rV7xtblL9/zqUVQrEyifIwuo9qa9vRzur4dzPYVqH
-         4ujN4ljJDOs6b6L8hTyqDa7Hen8ThNxEobFtG31LQ7NXLN3mp/7RNvult0UEVAg1BgUr
-         7sIzS6V9RBthNNyoQMpgEdm4YSlaCIMQeMdjg26SBIzZoe4q9CT8Muwm8f6Z8zTw5fQ5
-         ZyIoNYSSm1/reqzcEvwsg+CTuyGWeHnQNG43tifgabKgyCMhNwCEW+W8YEfaxxWmkyP+
-         RMgFrS/D0onWgMNF3j3rkxl1nHp1Tcb9hPf3zuA0SeYQ6aWaQG+choYnenwR8yOX6U86
-         t3WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu0Lv9ZzI/jc3+j1VevLapnBlM2N5ouhyNDrauH+RRlQoh7iXpaTcD208Nho66F4CS77Mo/q/vCUCBFS3Y/QckWGhdp7NffmM+NSny
-X-Gm-Message-State: AOJu0YzxKy1hA18y+JkO0UmVCkqy3jxHVUGTAtAW25GoW/vucmzQS0nU
-	j773Oqkf+sW4Fdp8ZHfkaaXbKYfKJvOo5MmyJLdUkTZB0iy2UQPp
-X-Google-Smtp-Source: AGHT+IFgXG8EeaWU2aJM4yuD8KKiNmZiebJa0YGRkJdO4tJ9uDuOwrah+OMxNTvNk/brZPIVIXME5w==
-X-Received: by 2002:a17:90a:7883:b0:2c9:6f91:fc43 with SMTP id 98e67ed59e1d1-2cb5246a3bemr2350535a91.3.1721252092460;
-        Wed, 17 Jul 2024 14:34:52 -0700 (PDT)
-Received: from five231003 ([2405:201:c006:312d:10a7:17cd:a14d:ce65])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb601e4b6bsm420232a91.38.2024.07.17.14.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 14:34:52 -0700 (PDT)
-Date: Thu, 18 Jul 2024 03:04:15 +0530
-From: Kousik Sanagavarapu <five231003@gmail.com>
-To: Nishanth Menon <nm@ti.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/4] Do device node auto cleanup in drivers/soc/ti/
-Message-ID: <Zpg41yZRHPv9w0Lg@five231003>
-References: <20240707055341.3656-1-five231003@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFC918509D;
+	Wed, 17 Jul 2024 21:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721253264; cv=fail; b=j4D4gPQ1liGzXxXuuefbpVhfyLYR2jcw2jeQB3ev2qXh1UNnlDba3CmsuSUh7baQShHqAEML35crzCU+f4jGjZgoW8uUhyfNkUjjI5OamZmtag0fySXW7Xuyicc+FZnJ73Xq8kD2F1/TJZuN33Tkv8xbLDmEgVa3Fnc+eEL/E3U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721253264; c=relaxed/simple;
+	bh=f3nU5ibbnYZYjX+MVl7BP9sHr0b0fU1Guy5swZMbm/k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnataE64S1dE3DlLh74YOjbQbIEhYDC9xwtmwqsZe56o+k4bAEkyj26YRHOykCOAVfAlHeL2g5+t27vGqVt17z3bhgzI7LFPRVne3mS74/su8IgIzvJzamGBslGFFSVB31k8IHLAISmkHMqiPovF1oGXSqBvEPMZRJkNOoePROU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iIWffLK9; arc=fail smtp.client-ip=40.107.93.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ui35AfeX+CA8vTn8Ay3WcHDiuIj7mCR+6ZYYMnBfomxNTBqiCLOnH3rzAVmgHP2c98VNUv3i9lCn2Na/d+rAoBF0S9m2SiMOeq5N1pEf82hmjm43xqL8emXI9J0nsFAtcKHFf3Iw8/D63kBhe4aPp3SQPTF/wz4SF4V7Lq1Tje3/sA2j0iAB9YauHTAgCKHGGElL4KcTQUqIDLo8NRoYyQDALQ4KP2BgnBC0PITxq8KjMJD2trWjus+nH8CTJCNsZAdMf+zyzhGqiA06g+VQW8UmOOVJD/O3Nd1119PMPCzHstolzjVBRJVJDD+PVgqwAYiyRmIDYS00wGni13tj2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=03D1tWNSQuGBozJjxeYlE62S9b1PsZTPHMJVf7NsAJY=;
+ b=NyBNwhRQagyuF0uSYBmMIleLORkKlm8N2IUpy4r/FixtYpuvTpuS6L6X1XX+CkRYrtwvoX2MCMvTfcHDZR0V3DiQvhT1ZvzfS9mr55koWIpfi6mFBFsljwVt0nc9AdTfdvp1Hgcq/ubl71h/gkKDGMIB09fihN0iJTvlnMDZyxoBOJs37KBQesELsvkqqhmZCmlhzp1/AWZnq/RhawCtvPve0Fg1e5LWt3ZZg0VbTMefRgyYuz+dKhgtLwx5vHirVnJlK6PrI2m/tL5LFIVkYWyYZR7izbO8Ca7MArSeXyDOu7y7IIVNkh5YAC7QVseciuL/YZZkoWy4hYA615tLHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=03D1tWNSQuGBozJjxeYlE62S9b1PsZTPHMJVf7NsAJY=;
+ b=iIWffLK9DCvimEdQG6XixwqfNh4yY3pHZld5NCHNpcBI/i3R/BOHXpsH/03JxVKb92Tdyba9Tvq1S0tK0wqHqS8FCE/T+JJZ2Nq+ARLuXGfJcDexEIRilBAsdxmsowe36FFXa6ZhpX04kRbp/v6raNZaL+4WGFaNxjP8MP0UZaA=
+Received: from BN8PR16CA0025.namprd16.prod.outlook.com (2603:10b6:408:4c::38)
+ by IA1PR12MB7734.namprd12.prod.outlook.com (2603:10b6:208:422::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Wed, 17 Jul
+ 2024 21:54:18 +0000
+Received: from BN1PEPF00006003.namprd05.prod.outlook.com
+ (2603:10b6:408:4c:cafe::62) by BN8PR16CA0025.outlook.office365.com
+ (2603:10b6:408:4c::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
+ Transport; Wed, 17 Jul 2024 21:54:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 21:54:18 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
+ 2024 16:54:18 -0500
+Date: Wed, 17 Jul 2024 16:34:41 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <seanjc@google.com>
+Subject: Re: [PATCH 07/12] KVM: guest_memfd: make kvm_gmem_prepare_folio()
+ operate on a single struct kvm
+Message-ID: <20240717213441.aanzz2aa7322mvja@amd.com>
+References: <20240711222755.57476-1-pbonzini@redhat.com>
+ <20240711222755.57476-8-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240707055341.3656-1-five231003@gmail.com>
+In-Reply-To: <20240711222755.57476-8-pbonzini@redhat.com>
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|IA1PR12MB7734:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7faf492-3cd2-4f6b-4576-08dca6ab024a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6G87svE5+mKSg1p2j3X/fMz5MsJMv4/M4yLqu7kr3nAUfLrYbe080WjASk+4?=
+ =?us-ascii?Q?BveXlkF6Pn2P5ZCampXkpixGBJuh6nfA2N1d6b5QKpTVXgt72pPAqbhmmp+s?=
+ =?us-ascii?Q?q9sfKYBRdm7n16E3ubMQgWGgBBEo7sz8gh0AAEltbNmaFmMSxyBLalKU0Q5w?=
+ =?us-ascii?Q?g98WYpB4TKqs9iFG/9w9ZSIkm7KGdxnkw9z6fR6MopOSt4VyPs74OWRDozYg?=
+ =?us-ascii?Q?kcdKrflHvB2S1nnOl+ZgqU+mBobl7ExOz0jhzC0/qylPSSiEoerGlccO2LEp?=
+ =?us-ascii?Q?le1lgXQXClHVfDXl2npHPVkMX9QRd1Lz1gmleHpbA8cRBvg1MQsyojcedGRM?=
+ =?us-ascii?Q?XG4f7+R2M25DV2+DbQVp0ll87F+N7/eoID+HBFJW/ylUzCS/V0rcpv2Nrs6f?=
+ =?us-ascii?Q?xpZrmM/LfwL8L9cgLflxrOkkmYtf1zU/3XTGj8xWljt79qMF+GozEOAorSrP?=
+ =?us-ascii?Q?bGUtaMlOAyqXOfqpy1ZRKTDYp4rBtzotdg1bOi6BRGg92KNQNBWpttQXwL9y?=
+ =?us-ascii?Q?PsR2B2tw40ISoUB2aAmk0t7xb/Q1JHBmKL7drjvc8wxk0dLQfXp+p/jLvBbk?=
+ =?us-ascii?Q?HyHxIUdbrP4ymUSbZx4h7zTGiYgBKwHYFobSLXic+iHZ0P9EhNReMEwyb/Fj?=
+ =?us-ascii?Q?S19/2SbU1MhQGs1TeLNYLpcu7AnA6LuEoE9GlCLHn1+wM5I4ZPsnALGFDFzo?=
+ =?us-ascii?Q?zLFl4/zMU42RHfrleYF1tlty9rPmLV2XnPeANMOcxwJd/yxBTvrod4AFEI0R?=
+ =?us-ascii?Q?+otCcyk1CrOohfUODoxy8KNm8eRO5CI26nRjYRIX3rWiLvmDoEaNAfFq8FV2?=
+ =?us-ascii?Q?k329qHmnrYqUieJ9JAd58Dhecs9l3Yx1in9yx+3A4NVPMqWPzBwjq20nUl5d?=
+ =?us-ascii?Q?X9UkwElAVZvZPxxA+QgrYXPokxifMURpzIgfEJACgjkzX1lwymbdby04zAY3?=
+ =?us-ascii?Q?QqIg4IfSR0/TR9wmJJ2XDoVLC/Zt4NBcnbUnrDPN/rSlsfD05ngcVBIBQrEX?=
+ =?us-ascii?Q?DSI3o5c/x+VFop95HrOXitrDa/zyL/fsc4MxBYH3iDw1MRtBRh5PDUywyFrh?=
+ =?us-ascii?Q?X5Yxo2TZyD28mjMp4Si67ecXshy6TgtKpIFe60oEJF/cswdo8MnH1s/xU7kb?=
+ =?us-ascii?Q?Ia5ZD8hfFZa6wZPGk2M33ahAqOTOQmEjcNfjzbvKSTSGS4UdKrxRwiIv5X0m?=
+ =?us-ascii?Q?SAQPgrTXXoh8QJbLorjLI2FaIsCC//eGvbbORTZD2BzF7A/xVDyPVGJVy+Ux?=
+ =?us-ascii?Q?ss4QaUZiDB7ADQ4WC8f3mEWsMi2bibRRdy58B62mqVIG/82o3x7kzRog2TF+?=
+ =?us-ascii?Q?GIxrnlyHuaVJf/UtdE06ifBHKVvnO/7HAfWhPqt+RZhXL+78oap4otfI8MjN?=
+ =?us-ascii?Q?EhC6XXkCa5s62EwxHfmqxfeFIaZQX1CsS7EnZx5UoOodf4ZkXPcS52S9wlQB?=
+ =?us-ascii?Q?9j8bxCWWjN1Q3olR2qITc5tR3WsQEeI3?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 21:54:18.7183
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7faf492-3cd2-4f6b-4576-08dca6ab024a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00006003.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7734
 
-On Sun, Jul 07, 2024 at 10:44:15AM +0530, Kousik Sanagavarapu wrote:
-> Do "struct device_node" auto cleanup in soc/ti/.  This patch series takes
-> care of all the cases where this is possible.
+On Thu, Jul 11, 2024 at 06:27:50PM -0400, Paolo Bonzini wrote:
+> This is now possible because preparation is done by kvm_gmem_get_pfn()
+> instead of fallocate().  In practice this is not a limitation, because
+> even though guest_memfd can be bound to multiple struct kvm, for
+> hardware implementations of confidential computing only one guest
+> (identified by an ASID on SEV-SNP, or an HKID on TDX) will be able
+> to access it.
 > 
-> Thanks Jonathan for the review on the previous round.
+> In the case of intra-host migration (not implemented yet for SEV-SNP,
+> but we can use SEV-ES as an idea of how it will work), the new struct
+> kvm inherits the same ASID and preparation need not be repeated.
 > 
-> v2:
-> 
-> 	https://lore.kernel.org/linux-arm-kernel/20240703065710.13786-1-five231003@gmail.com/
-> 
-> Changes since v2:
-> - Split v2 1/3 into v3 1/4 and v3 2/4.  The memory setup code is
->   seperated out of the pruss_probe() function and put into 1/4 and the
->   actual conversion to auto cleanup is done in 2/4.
-> - Replace dev_err() with dev_err_probe() in the code paths touched.
-> 
-> v1:
-> 
-> 	https://lore.kernel.org/linux-arm-kernel/20240510071432.62913-1-five231003@gmail.com/
-> 
-> Changes since v1:
-> - Refactor code so that it the scope of the pointers touched is reduced,
->   making the code look more clean.
-> - The above also the side-effect of fixing the errors that clang emitted
->   (but my local version of gcc didn't) for PATCH 2/3 during v1.
-> 
-> Kousik Sanagavarapu (4):
->   soc: ti: pruss: factor out memories setup
->   soc: ti: pruss: do device_node auto cleanup
->   soc: ti: knav_qmss_queue: do device_node auto cleanup
->   soc: ti: pm33xx: do device_node auto cleanup
-> 
->  drivers/soc/ti/knav_qmss_queue.c | 100 +++++++++---------
->  drivers/soc/ti/pm33xx.c          |  52 ++++-----
->  drivers/soc/ti/pruss.c           | 176 ++++++++++++++-----------------
->  3 files changed, 155 insertions(+), 173 deletions(-)
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Ping
+Reviewed-by: Michael Roth <michael.roth@amd.com>
 
