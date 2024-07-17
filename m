@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-254926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C510993395F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:49:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04776933966
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76515283232
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:49:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73191B20F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24EE36AE0;
-	Wed, 17 Jul 2024 08:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DA53BB21;
+	Wed, 17 Jul 2024 08:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hlA+2e0s"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="s/a+qNtL"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA9422F1C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5325F39FF2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206138; cv=none; b=EpdV4lfmEzCYwDSi8EAbFUA3is7az2Mebngpiunl8iN4UsqhKhSt/p+Nk3ywOXt2lXl1vbJcI6eb4u6UeAE+C+/iN8VldTae0TMo9ghTCQUzn5zUgG0R5mwIUZSxy77XWXUOwWFCupVHdRaG4g4BcXNIFVm2Kmnw10tUB9au+6A=
+	t=1721206182; cv=none; b=SGuWCeOdiCt3KKWMiWvJt5EOmwjRoyihZ52GvQk7zP3qeCd6oNKRM5LMRtlT6oKcSdYoD4k+UQOAkAgTbB09OFelPyuTVv29jQzpKKHJjuYOcA6i41husSkl866C2eOyilGketBL5MdC4xij2dVqCBD5jqpejga6Y0y//fiFELA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206138; c=relaxed/simple;
-	bh=nzY12LURqFreLOoRBBXVuGx3rnSdBx0T3NTka/Pqc2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0HtRuh+RNYzZCQLiLY3Rn9RarnB/Kc8+YhaxkLjTnE97xHydfaRch0AgUVHpGztgmf2qxJADRS9qN952WSUbodBTW9hTf1VK6x8aNLTT76X1rvA07idZmcxYUBJJ+uTrL85ohRDOVaNCLOPjA8uwhmt/DmqVvVdGd6djfaPOYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hlA+2e0s; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77d9217e6fso731324666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721206135; x=1721810935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7DDc4nTJlk2bAuTF2yCWZzs3gZ7/jN3H28zpX2VIZt8=;
-        b=hlA+2e0sb4seKBKvC1S9KFRwuH1/GBtKvKqSWcjv89hRvjvNJlu3KpxlCk/P46vqHu
-         gRQgybVbqud46SUeovTmYYen+guyXAAtDTKH5qH8Gt0Yz1NxAS4Bc3OXJPsfgd3BAPvo
-         ZjYxlHBgctcxoth/euhy1TCdCtnhtfNYz9exewW3J/akYL36LKNBROfzLBuId5SHqE92
-         8gFfzz6MfULLBCrPPtRpRnTyFB5wImjdNu0v83e/NydHvRc1gZBYswdR9WTNN8AWysgz
-         wNzg8bUQNk0WS4ZRLueyekYn5ndV2Q1OP9VYrOX9i18fzL+zWSt61YvNP/ZoP6VZMycF
-         X59Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721206135; x=1721810935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DDc4nTJlk2bAuTF2yCWZzs3gZ7/jN3H28zpX2VIZt8=;
-        b=kI2wHnE28fS5k2jXlQnE8lYpXaNtGT3n6ooByZ8hKzDS7PAHL7FchARvHfilt4AEm1
-         RzU7/jfmp6YnTF2cZQRlTfXKqOo57V51a08fq9+07LqLb0Pe+Ai8gE1/2NmXPHReE6vV
-         gvdTBxAD6A35bUydEK5MAu2WxXEHXRyvmpR1G988PYtzQ86ElhnFQcT5y5qGCE2ITdIW
-         v0k0SlvlgtUlN0GXEns7o2pKg4yFQC3CW1v1AEr9xZxR72Nlxd84BCXHB5RExqS71Zhq
-         mJyvFyhMBbaLJYqqqbeIP4oeY6I9hL/QaF9O+yGvTqk5edgUa9EjPR06kCf/5TKF9yZA
-         2tIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7egH28VeZr3VLkuzhMj7nm2ZHM+EiooiBC/yd9dPkE77X+b61wrRxkj3mudnepTwmOKSPw1oOSmn7f/ec1cNHDpT7SvPYdhBRixzs
-X-Gm-Message-State: AOJu0YzA/0QIMkb8hbngoy6l3r0IxF5BmwIRLOockUUCZC5OHAvWeG2K
-	V6GbWDODBGLPrx0cdKC5UMwP01R3Nb53pEsArSdpNCHpAukn1P4TqjET64MgMGO+hPRR/gyJDN0
-	A1CQ=
-X-Google-Smtp-Source: AGHT+IHu8Af9F4tmhilVJBIgUg2laG6m+AW+q4qGN50kHMWoNZJ6AmGkL4NyGOMEhLGaxm6C7PnH2g==
-X-Received: by 2002:a17:907:d301:b0:a77:e0ed:8c2 with SMTP id a640c23a62f3a-a7a01352bccmr69171166b.71.1721206134724;
-        Wed, 17 Jul 2024 01:48:54 -0700 (PDT)
-Received: from [192.168.0.6] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff89esm421513566b.158.2024.07.17.01.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 01:48:54 -0700 (PDT)
-Message-ID: <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
-Date: Wed, 17 Jul 2024 09:49:18 +0100
+	s=arc-20240116; t=1721206182; c=relaxed/simple;
+	bh=081daULEFELhHqzxk94Sgr65j7gPG2HGVObYF57Atf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ofy7RGR0mL10QhdpWOXAs1TnAQj4ZOHkoOq2ezXec9GheyTNOl8rxkBXjhoDgAWXmXbMWvHiEHzQrPT+hy71DUnytAGd/BedydD0ufRW8O99KyyFZ3sGay8rmuORZ+jsBnePVMiyacXi8OUyQZ7EOw0y4CkFiY3iGzdfs08K3LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=s/a+qNtL; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: wens@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721206178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qMec0RSVrrCOY60WZ07lvNhotWl9ZVFZxdQtiWaXMoU=;
+	b=s/a+qNtLaNbBJ6b0ufW2plGzprOpDNLRrc/VZDygSZfeQWrAI70bTWz4ocWns4a7HatSI+
+	X9BObrqXxaLaLVjf6gIXguiHZJMlImsi1/Ckb1csxxZU07Oz/TZuANfZAM8yzMSoRvaLta
+	16XUbBo0MQRJ9cVHZai7Haf8Q2PSTUEUmEhchMN6nlqcooZIixzzSHZnAC0Xn4aDUWE/tV
+	LwG9mPROSfhi0dy4eOrjxKPahVY/jPOMyEMUSih2rjKTwc2cTOfUP6UMWYdkv8ZZD2ADJz
+	Fba4ilfn2YC/Vc+BMp7FRNf6QgqVzb2SOHxogUNSaZOhYRECOf14kTbgtEMMIg==
+X-Envelope-To: daniel@makrotopia.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: linux.amoon@gmail.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: wens@kernel.org
+Cc: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+ Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>,
+ Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Date: Wed, 17 Jul 2024 10:49:27 +0200
+Message-ID: <1980864.2la4r23YhA@bagend>
+Organization: Connecting Knowledge
+In-Reply-To:
+ <CAGb2v65BaN3rDGA+9D4mAoz4+7C4CfSqhEhd81ev-BViy0tEbw@mail.gmail.com>
+References:
+ <cover.1720969799.git.daniel@makrotopia.org> <2451882.5D0I8gZW9r@bagend>
+ <CAGb2v65BaN3rDGA+9D4mAoz4+7C4CfSqhEhd81ev-BViy0tEbw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart7866392.9XRq9apFvr";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On 17/07/2024 07:32, Satya Priya Kakitapalli (Temp) wrote:
+--nextPart7866392.9XRq9apFvr
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+To: wens@kernel.org
+Date: Wed, 17 Jul 2024 10:49:27 +0200
+Message-ID: <1980864.2la4r23YhA@bagend>
+Organization: Connecting Knowledge
+MIME-Version: 1.0
+
+On Wednesday, 17 July 2024 10:38:40 CEST Chen-Yu Tsai wrote:
+> > On my Rock64('s) (RK3328) it doesn't work at all:
+> > 
+> > ```
+> > root@cs21:~# cat /dev/hwrng | rngtest -c 1000
+> > rngtest 5
+> > ...
+> > rngtest: starting FIPS tests...
+> > cat: /dev/hwrng: No such device
+> > rngtest: entropy source drained
+> > ```
 > 
-> On 7/15/2024 8:29 PM, Bryan O'Donoghue wrote:
->> We have both shared_ops for the Titan Top GDSC and a hard-coded always on
->> whack the register and forget about it in probe().
->>
->> @static struct clk_branch camcc_gdsc_clk = {}
->>
->> Only one representation of the Top GDSC is required. Use the CCF
->> representation not the hard-coded register write.
->>
->> Fixes: ff93872a9c61 ("clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC")
->> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # Lenovo X13s
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->>   drivers/clk/qcom/camcc-sc8280xp.c | 7 +------
->>   1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c 
->> b/drivers/clk/qcom/camcc-sc8280xp.c
->> index 479964f91608..f99cd968459c 100644
->> --- a/drivers/clk/qcom/camcc-sc8280xp.c
->> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
->> @@ -3031,19 +3031,14 @@ static int camcc_sc8280xp_probe(struct 
->> platform_device *pdev)
->>       clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
->>       clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
->> -    /* Keep some clocks always-on */
->> -    qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
+> RK3399 and RK3328 are covered by a different driver:
 > 
+> https://lore.kernel.org/all/20230707115242.3411259-1-clabbe@baylibre.com/
 > 
-> As I mentioned on [1], this change might break the GDSC functionality. 
-> Hence this shouldn't be removed.
+> And that patch says the TRNG on the RK3328 is utterly broken.
 
-How would it break ?
+Yeah, someone made me aware of that post and then ofc I had to see it for 
+myself ;-)
 
-We park the clock to XO it never gets turned off this way.
+Cheers,
+  Diederik
+--nextPart7866392.9XRq9apFvr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
----
-bod
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZpeFlwAKCRDXblvOeH7b
+bshTAQDJFuCJl89JpyQiEgOZcFpEdKK4wKZJfTiMN7nEsW1nYQD+Jeal7PPYI8Ef
+wQuybNEyOBF1DlqrvTIOJCnuQl990wM=
+=2lk0
+-----END PGP SIGNATURE-----
+
+--nextPart7866392.9XRq9apFvr--
+
+
+
 
