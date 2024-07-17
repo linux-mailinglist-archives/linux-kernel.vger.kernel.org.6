@@ -1,162 +1,194 @@
-Return-Path: <linux-kernel+bounces-255012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C72933A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:57:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D107E933A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722F61F22F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0916F1C217F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0945D17E901;
-	Wed, 17 Jul 2024 09:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3C817E8F0;
+	Wed, 17 Jul 2024 09:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XFkpyIjh"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYAizP4d"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70F136134
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E761CD2A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210249; cv=none; b=eOE3o8+DCp8iO9Nm8r18CWzzXZDLWR42xd34DLc1c3QRR/f6aJ1Y8La1WsIujVWFSlO0EJIEyDUprKVu/+e2vPg8t5XXsSr801gDDY8dOXm2mUDSmoGOVQIQP8tgoXpq7tVt9M8okKkIupj009v2bSQSEmhJ4UVEr2oEs1NCLpY=
+	t=1721210287; cv=none; b=kQz0B4/yRBCWbET7In/g1ASKfc6VKLg/M7Oi+ThBIHhlB9OyoJVhScoi3j3ssSs+A8QqZxjUmqMCAuLxp1s0hfeJjzxs4uhz+AZrbUrpe11AlrtLRUgMBmfIjvcKa2Dsiw17lHXz5RQVgykoY6VA1afiXR7p+AkouAc6BHxRyQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210249; c=relaxed/simple;
-	bh=fqxfcncuoVyG5zBE1jUrZj6vrQV7HQXkXa1mScfaPzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=knu0uMhx3XxOXyfJDHN65xVJGK5aIiqjjxeb1wdZ1hpfibKPqNCsZLFWhr/M3HbyUtBUIsOmdA5WKes8oanYMFJU9wI7actfW8msr1ux8i7KswDBpy88WvVEJMSIFhCwwANrAm+DlQfnyg4mJmnBZbcifUnB5n4fxcrd6quiokM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XFkpyIjh; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-664b4589b1aso4888597b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:57:26 -0700 (PDT)
+	s=arc-20240116; t=1721210287; c=relaxed/simple;
+	bh=rd9VQQUGHMdCa2JtHrlY1tCMBHA9nX6ICq5BnWj0TGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QjB6p5ZsLkx1ft+U4jQm+njKc3wjAKuCMsS6TnE8PvB/UuupMJH8ULKMH1JH288YCHtbH/p54gJB8RhNfC3tWAByQR0r1AArxAeXNZZhcn1mSZGJbEghDGdnLNpIEttPidfhySwlOoKdbziaweVLeDHSSas6wW50/UsP8k32H7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYAizP4d; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fb05b0be01so45552135ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721210246; x=1721815046; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a62po2BtA0hzd5JP2PG8oZzkmEFrZ/nHtjZ0FdMaodg=;
-        b=XFkpyIjhg2yAWY0j8Xn8N3wsXWlnwXDNk6MAyLXG0jXDSFjxagnQ2vSejp2H8hjHaa
-         ghszo/7Mgx2E+p7a5neG6CTrQmju3sAZKAlqW+4vEIGBOw1Pw+HAGfI3x/faAFz33nez
-         eOweBl8lqaRF/TPRYofioKeLEsCYX1/5k5Cm1KndnR0PlFte7xsXkdiFnZZavCEf2iko
-         LFtjmafHkQco24lTMrdyrSm8/eyXmfgDviHvn8aiKqGEwXCbd17LUz4H6gAfR4haJdXW
-         oC4m8xkpHbZbRmgrHWtTAEVmZz7fcSbw06Hf4WLDmjoPL7P8kYjYCHHi/SbOMmWYCgaT
-         LmcA==
+        d=gmail.com; s=20230601; t=1721210285; x=1721815085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oFYkOL5E3FUWqtNNaC4rEpQsyl0OqCKhsiSOdcp83/4=;
+        b=FYAizP4df4WstS9JxxhoFN4ylN5uV+Hxmr9d+YquTIndMieMxSCxGR0UGqSaRouxsb
+         BQ8567KG0zG5woKEEW3UL1IkMY8d0Stkde0JjyIv8NaPGaLGj3CnDk81zbToh2CEm6l8
+         Qv0RaFeImuhfuRcaDXpyj4DHDrKAFRevH1gpyAuv8ytOfTHbcPFsfqQypBV+ySk7ouV3
+         0HOKl94sYp7VAEsyKv9M2lJYiHY+Y0O51VL0tmHtyQwBz4zQfmA03EuqGtro+iWBlMiE
+         lqlQRBMFwrwprLVNaeuAMXxrUNU9AGE68mXfsEKDiY5HLZ+wxZCesKaaqj/5N6fP1WNm
+         Mq1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721210246; x=1721815046;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a62po2BtA0hzd5JP2PG8oZzkmEFrZ/nHtjZ0FdMaodg=;
-        b=V6K7BH7Bu8b9P59dNkevB3fvdcyUjdP9KPvEWA8S5df7PXjnu7U9ha03O5CD9poRB8
-         hYgtSiEMy/drNkdLPZ3FbyKyge1ouWsxLJXi1osw5MFeNUK7FbuSXvSUJkTDL3GJVG/Q
-         P5xL8tHvP59lBbFG7oJNd4j0rl43lmSg+xsRbKPqxGeRM+N1OYd7mucUA+0ePyiMvLA+
-         FrkA02q+6TdpfANcNxcdDjj9a1xo0fXMVDL8ZXm6FnYl0dvIpMuktVUlsiFWEnkKZSh9
-         PvJhCrv0gQDdfx6BGwn0Ku4qbPL/9dIEFJFUlTOQLyBHaROuGBeBC3hiVtcB3zzZH1u6
-         q6xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnYpLQ3Ej16bESHYi4VEC3DnLD8yVth67sGI0R6a8uVLAF+mFTJVS035u49zUjETnmui06mDFrKsru2XvjeksRmLk9kRbxqJJDH3oH
-X-Gm-Message-State: AOJu0YyN/BXgPgaxWPikwui0uYD5aYFOAFdXBEm4HkTjSQooGDZqvz8Y
-	kU30rwoRaZ7Q3E1l43X43FaPKiq9qgOBtrwSmLjiS+MuuQ53dlJWpc5TMwfIZhxTPPn7eztrwFq
-	VzLdQYlXihqQ86g6ivv7Pneqg0ftj8Mxem4w1yg==
-X-Google-Smtp-Source: AGHT+IHzTQpJ68K42DfjaQMfYKjGlmh51aQyUTqPRdFPAL4KBvPzNvYYSONr3c7gGTRhUJVpLXX+ieYbx0ICXs3aqfc=
-X-Received: by 2002:a05:690c:90a:b0:664:56a2:1376 with SMTP id
- 00721157ae682-66507077491mr8518247b3.21.1721210245684; Wed, 17 Jul 2024
- 02:57:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721210285; x=1721815085;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oFYkOL5E3FUWqtNNaC4rEpQsyl0OqCKhsiSOdcp83/4=;
+        b=qn3NurRYdLRq+3MH9RcAw2CWqPjywVt/vj98ajiyU6RlogGC4VknuFgzA9QV65pqa9
+         yiSWD7RiBtm587Y7IEIeocd5UI4t+ylDR9hP/x5ocronq2UG8ai7V6KUgqQsjJyxQ5c9
+         sUDeW1QsTe8feXpE5ia46H3W/w7b7LgyDRZLnGyLaW9APiDT636qywgYMpDMup6KoCqo
+         I8EdoLluXYB+9U0kuw/SybC+iCeXJvc0GrD3QLkvznIt/2GJCogkxnBxls22wmQdHFAP
+         99qkCNluBL4+fR4C1himFztbVl4pe5hUdkRjb+oyuz6phSG1mJTV+qmGmwzHc3HDIxPe
+         2tag==
+X-Forwarded-Encrypted: i=1; AJvYcCXWzs2efVACd7w1NvI8El5pImmcEUOR3G7JAufegcZL2qKEQ4vSVOUcfYJ5oKXfcpWkw5WH54kcvB3nk58btJUv8IN3mFma2yHilJEJ
+X-Gm-Message-State: AOJu0YyEsl4S6hZgT61QLhWiCQGljLHQ0hRpuZrqKrSBDaaoHxQ76NvB
+	ZGQRH8ZQv6i9AR5/3rjs6+e6w5Jkdfl6UXa3MBZg7B2YobGMTMa/
+X-Google-Smtp-Source: AGHT+IF6jklU2qTTvW7oJDrVGWHRFiQz/zOOy3QZsnyKcee6qfXg0v/DPwwUFemay4LgIhgTbeO6Vg==
+X-Received: by 2002:a17:902:e548:b0:1fb:7c7f:6447 with SMTP id d9443c01a7336-1fc4e56517emr7554345ad.25.1721210285141;
+        Wed, 17 Jul 2024 02:58:05 -0700 (PDT)
+Received: from [10.3.80.76] ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6f4f3sm71986755ad.17.2024.07.17.02.58.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 02:58:04 -0700 (PDT)
+Message-ID: <a05b4e6e-272a-43be-8202-2b81049a41a4@gmail.com>
+Date: Wed, 17 Jul 2024 15:28:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
- <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
- <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
- <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org> <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
- <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org> <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
- <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org> <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
- <43d6523e-d6b7-4fda-92bb-a52fcad2fdba@linaro.org>
-In-Reply-To: <43d6523e-d6b7-4fda-92bb-a52fcad2fdba@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 12:57:14 +0300
-Message-ID: <CAA8EJpoCCCAUv8PSDOEFoHhZZoEjCAOBGkhjpmrrYum=ejOvDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
-To: neil.armstrong@linaro.org
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mipi-dsi: Introduce macros to create mipi_dsi_*_multi
+ functions
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, dianders@chromium.org, airlied@gmail.com,
+ daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240716133117.483514-1-tejasvipin76@gmail.com>
+ <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jul 2024 at 12:53, <neil.armstrong@linaro.org> wrote:
->
-> On 17/07/2024 11:49, Dmitry Baryshkov wrote:
-> > On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
-> >>
-> >> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
-> >>> On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
-> >>>> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
-> >>>>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> >>>>>>
-> >>>>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
-> >>>>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
-> >>>>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
-> >>>>>>>> and byte1_div_clk_src, the clock rate should propagate to
-> >>>>>>>> the corresponding _clk_src.
-> >>>>>>>>
-> >>>>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> >>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >>>>>>>> ---
-> >>>>>>>>     drivers/clk/qcom/dispcc-sm8650.c | 2 ++
-> >>>>>>>>     1 file changed, 2 insertions(+)
-> >>>>>>>
-> >>>>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
-> >>>>>>> rate should not be propagated. Other platforms don't set this flag.
-> >>>>>>>
-> >>>>>>
-> >>>>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
-> >>>>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
-> >>>>>
-> >>>>> Yes, the driver sets byte_clk with the proper rate, then it sets
-> >>>>> byte_intf_clk, which results in a proper divisor.
-> >>>>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
-> >>>>> byte_intf_clk rate will also result in a rate change for the byte_clk
-> >>>>> rate.
-> >>>>>
-> >>>>> Note, all other platforms don't set that flag for this reason (I think
-> >>>>> I had to remove it during sm8450 development for this reason).
-> >>>>>
-> >>>>
-> >>>> Ack, I think this deserves a comment explaining this, I'll add it.
-> >>>
-> >>> But where to place it? This applies to _all_ dispcc controllers.
-> >>
-> >> Commit message
-> >
-> > It is already committed.
-> >
->
-> The thing we keep adding new clock drivers based on previous ones that uses
-> specific ops and flags with no documented reasons except in commit messages,
-> but it's often buried into multiple cleanup changes.
->
-> So at some point we should add simple comments before each special clock
-> explaining what we're doing here, a good example is the clk_regmap_phy_mux_ops,
-> where I had to dig into commit logs and understand why we handle it differently
-> from downstream.
 
-Yeah, regmap_phy_mux_ops is a nasty one.
 
-Or the whole story about converting flags from vendor DT to upstream
-driver code.
+On 7/16/24 10:31 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 16, 2024 at 07:01:17PM GMT, Tejas Vipin wrote:
+>> Introduce 2 new macros, DSI_CTX_NO_OP and MIPI_DSI_ADD_MULTI_VARIANT.
+>>
+>> DSI_CTX_NO_OP calls a function only if the context passed to it hasn't
+>> encountered any errors. It is a generic form of what mipi_dsi_msleep
+>> does.
+>>
+>> MIPI_DSI_ADD_MULTI_VARIANT defines a multi style function of any
+>> mipi_dsi function that follows a certain style. This allows us to
+>> greatly reduce the amount of redundant code written for each multi
+>> function. It reduces the overhead for a developer introducing new
+>> mipi_dsi_*_multi functions.
+>>
+>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>> ---
+>>  drivers/gpu/drm/drm_mipi_dsi.c | 286 ++++++++++-----------------------
+>>  1 file changed, 83 insertions(+), 203 deletions(-)
+>>
+> 
+> [...]
+> 
+>> -void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+>> -				    enum mipi_dsi_dcs_tear_mode mode)
+>> -{
+>> -	struct mipi_dsi_device *dsi = ctx->dsi;
+>> -	struct device *dev = &dsi->dev;
+>> -	ssize_t ret;
+>> -
+>> -	if (ctx->accum_err)
+>> -		return;
+>> -
+>> -	ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
+>> -	if (ret < 0) {
+>> -		ctx->accum_err = ret;
+>> -		dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
+>> -			ctx->accum_err);
+>> -	}
+>> -}
+>> -EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
+>> +#define MIPI_DSI_ADD_MULTI_VARIANT(proto, err, inner_func, ...)	\
+>> +proto {								\
+>> +	struct mipi_dsi_device *dsi = ctx->dsi;			\
+>> +	struct device *dev = &dsi->dev;				\
+>> +	int ret;						\
+>> +	\
+>> +	if (ctx->accum_err)					\
+>> +		return;						\
+>> +	\
+>> +	ret = inner_func(dsi, ##__VA_ARGS__);			\
+>> +	if (ret < 0) {						\
+>> +		ctx->accum_err = ret;				\
+>> +		dev_err(dev, err, ctx->accum_err);		\
+>> +	}							\
+>> +}								\
+>> +EXPORT_SYMBOL(inner_func##_multi);
+>> +
+>> +MIPI_DSI_ADD_MULTI_VARIANT(
+>> +	void mipi_dsi_picture_parameter_set_multi(
+>> +	struct mipi_dsi_multi_context *ctx,
+>> +	const struct drm_dsc_picture_parameter_set *pps),
+>> +	"sending PPS failed: %d\n",
+>> +	mipi_dsi_picture_parameter_set, pps);
+> 
+> I'd say that having everything wrapped in the macro looks completely
+> unreadable.
+> 
+> If you really insist, it can become something like:
+> 
+> MIPI_DSI_ADD_MULTI_VARIANT(mipi_dsi_picture_parameter_set
+> 	MULTI_PROTO(const struct drm_dsc_picture_parameter_set *pps),
+> 	MULTI_ARGS(pps),
+> 	"sending PPS failed");
+> 
+> (note, I dropped the obvious parts: that the funciton is foo_multi, its
+> return type is void, first parameter is context, etc).
+> 
+> However it might be better to go other way arround.
+> Do we want for all the drivers to migrate to _multi()-kind of API? If
+> so, what about renaming the multi and non-multi functions accordingly
+> and making the old API a wrapper around the multi() function?
+> 
 
-Probably it's worth specifying everything somewhere under
-Documentation/. Or in drivers/clk/qcom/common.h  Or a wiki page
-somewhere (though my preference is towards the in-kernel docs).
+I think this would be good. For the wrapper to make a multi() function
+non-multi, what do you think about a macro that would just pass a 
+default dsi_ctx to the multi() func and return on error? In this case
+it would also be good to let the code fill inline instead of generating
+a whole new function imo. 
+
+So in this scenario all the mipi dsi functions would be multi functions,
+and a function could be called non-multi like MACRO_NAME(func) at the
+call site.
+
+I also think there is merit in keeping DSI_CTX_NO_OP.
+
+What do you think?
 
 -- 
-With best wishes
-Dmitry
+Tejas Vipin
 
