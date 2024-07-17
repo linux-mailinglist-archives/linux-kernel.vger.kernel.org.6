@@ -1,123 +1,149 @@
-Return-Path: <linux-kernel+bounces-255132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23C9933C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782AA933C89
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CEF281CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC8B1C22F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A46018005D;
-	Wed, 17 Jul 2024 11:49:59 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373B217FABF;
+	Wed, 17 Jul 2024 11:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oEJfnQVA"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1D717FAA9;
-	Wed, 17 Jul 2024 11:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D5717FABE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721216998; cv=none; b=ZgEKiXMaVf3ZeTqqzAoVsSSFCzIQOycoAB5fF1CGeoqvqle3CieEkp47QgqsNWYvUvBhuPOaAZUHa8hWj7kV6J011WIV3bimZpKs5Yi8X/uYi5WLnW2GBIkcclYsWfLJukBz+rQZIpgR13D76JKAqtp+z7D5x3ZS/8HRfnnBczg=
+	t=1721216997; cv=none; b=VOqAUNtycZ2PuQj8uFDuh7o9xjFicuqbN1/od2K4afkH3WnHTYyGPVjXQdUbi0RwuDZxckWesjUXnDzkDtRbyFToO9kE5xRgEgYPCxlbf6fySTo+MvQ8D31pI4aHrmyyoRqsSjjuq3fF0MG0V/GStuORWkqAZxAGPLDo2eNI7HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721216998; c=relaxed/simple;
-	bh=n3+YoDS+Xgfj3kY/YCOeRAIa9f+VPaDv3q5QYO/6YpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qHIWJPMkwZQ93QsdSddh//dyWqFbv42+FOgptIwq9ZvGfnP3W8ozAWUIBaNxUOaV1CTqizB0xr4bICvxPwKJ4fz6YKF2TTANK8qTH03wCErWeYhEK98st11wG61rH4R7ZZEfoZn82JiozU1lKYEB/naotjTX2rp793B6dQGYJjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WPDdJ3nf4zxWSK;
-	Wed, 17 Jul 2024 19:45:08 +0800 (CST)
-Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
-	by mail.maildlp.com (Postfix) with ESMTPS id 766191800A1;
-	Wed, 17 Jul 2024 19:49:51 +0800 (CST)
-Received: from [10.174.178.209] (10.174.178.209) by
- dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 17 Jul 2024 19:49:51 +0800
-Message-ID: <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
-Date: Wed, 17 Jul 2024 19:49:50 +0800
+	s=arc-20240116; t=1721216997; c=relaxed/simple;
+	bh=nI/3YM9q6bZto9j2in5+t3424lyXL6J4GQ4x++22zNU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=morNobjuUimhHSGPQH4z5U3vtkiw5ns/qmnODcvq2ezZEYkRsR6DoSHHdNty3iB7IJW29erLCNfVAFcJ6uucLGKO1wlZRG9yy5ISJKt4ojXi9E35A9VY+JQdYXs0vppOxyxZfhGJEHIzhcVt5UGCbyKsLFRnwcP5Z3T7zfee8yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oEJfnQVA; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42679f33fefso46868105e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721216994; x=1721821794; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=orDTWYSZsRk1SW+448dI9OxvFqdVzjOm8FEcYCfWgwg=;
+        b=oEJfnQVAQBD/xgxLWc1KvzidrnImg7dNciWLRBiFo5CwDgiNRvrY9XnHR8StR1TBjS
+         2leu8KwlcI/piQqO4SNNAnyUy0KYGDHZzGN60FSnw8QXwOA7tLCw188rlWlGpGcld8pU
+         lgHBhGpugAHis+ga5TVNOC6HsnEkWAXAMCq0qUj0BssyT2lzK8KUM2Gysid/D/ek89IJ
+         VIcRje2YF4SPOEB2b0dbg3EG21ekRk58gQX6v5OH4bFWvp55qYM4N0p2on6fMYG6pVYw
+         tmo/N+1AjETUZxoJFZSlMCkzpZjvCTiPvQyrROZlpW+Pb4rlH5cLuV/QgUNSj77ZKz5i
+         k+Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721216994; x=1721821794;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=orDTWYSZsRk1SW+448dI9OxvFqdVzjOm8FEcYCfWgwg=;
+        b=GuXcJIdbNugX9K4XseRyRWFKoi7a5hG03CgRX1GDS8Rg2mbPMLXZ3h0YbiB52X4Ph9
+         YIeI5ZSgQJQeTWNbE2QdBVBxbh2DcW9nbQeMdn66g28pCgAYT3pjHNxkZHCB05Eqzhcj
+         beIzUK4Cq8A9Q3I/Ta8qpFtWQuUiXxXiLj5bPY8dOeo/JRmvFOiYEYmCeQJGgGnoVthA
+         cNCD0px+SHywyzo0kFFfkAriwgnJ2bSY05qZ9nx05ioC79DN3qXDUdh4pws7ic4BQZVl
+         183lJReGcYti1za3wGtNw6A7TK68fb/T+sVay78nqpysvtU1BoHXHdQLsVACnDWuC3uc
+         CgEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHUHMxFhCf23E+mKYp+LZ3I7VnZUv3UGcdGhdV1INivwqc3ZdOsT48JI3i1RRGj3dEmjJHESPXl7Q/YPG+chdwPmPDumeGsitWTpyX
+X-Gm-Message-State: AOJu0Yx0K4JgP8bhCiIl5Eg7h+Ysvuq5wS0bVVWFtJS2GB+Y/bVluFxq
+	K/G4lz2acoY07spcLL0hnTS9pvHM24KqkjxKTd2pU/7B6ALprz+0VEzdDJYEu6U=
+X-Google-Smtp-Source: AGHT+IFSZ2QA/xfvafEGc9Auxp6vvvltoYTTClW8CA5JOYDkOks1EFOro1KABhaw+MhvotffkRzmrA==
+X-Received: by 2002:adf:a1c5:0:b0:368:3ee5:e3e1 with SMTP id ffacd0b85a97d-3683ee5e543mr647649f8f.7.1721216994143;
+        Wed, 17 Jul 2024 04:49:54 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d? ([2a01:e0a:982:cbb0:c5b9:9b90:b1c4:1a1d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dabf0e4sm11490435f8f.33.2024.07.17.04.49.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 04:49:53 -0700 (PDT)
+Message-ID: <39dfab9f-6cfb-4cba-a6d7-387b6e2001da@linaro.org>
+Date: Wed, 17 Jul 2024 13:49:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
- memory leak
-To: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cve-announce@vger.kernel.org>, <axboe@kernel.dk>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<io-uring@vger.kernel.org>
-References: <2024071253-CVE-2024-41001-7879@gregkh>
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-In-Reply-To: <2024071253-CVE-2024-41001-7879@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/7] clk: qcom: dispcc-sm8550: use rcg2_ops for
+ mdss_dptx1_aux_clk_src
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
+ <20240717-dispcc-sm8550-fixes-v2-2-5c4a3128c40b@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240717-dispcc-sm8550-fixes-v2-2-5c4a3128c40b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemd200001.china.huawei.com (7.185.36.224)
 
-Hello,
-
-I was confused when reviewing the fix for CVE-2024-41001.
-To better understand the issue and the proposed solution, I would
-greatly appreciate your help in clarifying the following points:
-
-1. What was the original patch that introduced this issue (any Fixes tag)?
-2. Is the leaking variable member the "context->sockaddr"?
-3. Could you shed some light on how the reference to the leaked memory is
-    lost during the transition from the prep phase to the issue phase?
-4. The fix introduces a NOP operation "before the SQPOLL does anything."
-    How does this addition of a NOP operation prevent the memory leak from
-    occurring?
-
-Thank you in advance for taking the time to address my questions. Your
-insights will help me better understand this fix.
-
-Best regards,
-Wang Zhaolong
-
-> Description
-> ===========
+On 17/07/2024 12:04, Dmitry Baryshkov wrote:
+> clk_dp_ops should only be used for DisplayPort pixel clocks. Use
+> clk_rcg2_ops for disp_cc_mdss_dptx1_aux_clk_src.
 > 
-> In the Linux kernel, the following vulnerability has been resolved:
+> Fixes: 90114ca11476 ("clk: qcom: add SM8550 DISPCC driver")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/clk/qcom/dispcc-sm8550.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> io_uring/sqpoll: work around a potential audit memory leak
+> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
+> index 954b0f6fcea2..a98230540782 100644
+> --- a/drivers/clk/qcom/dispcc-sm8550.c
+> +++ b/drivers/clk/qcom/dispcc-sm8550.c
+> @@ -400,7 +400,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+>   		.parent_data = disp_cc_parent_data_0,
+>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>   		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_dp_ops,
+> +		.ops = &clk_rcg2_ops,
+>   	},
+>   };
+>   
 > 
-> kmemleak complains that there's a memory leak related to connect
-> handling:
-> 
-> unreferenced object 0xffff0001093bdf00 (size 128):
-> comm "iou-sqp-455", pid 457, jiffies 4294894164
-> hex dump (first 32 bytes):
-> 02 00 fa ea 7f 00 00 01 00 00 00 00 00 00 00 00  ................
-> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> backtrace (crc 2e481b1a):
-> [<00000000c0a26af4>] kmemleak_alloc+0x30/0x38
-> [<000000009c30bb45>] kmalloc_trace+0x228/0x358
-> [<000000009da9d39f>] __audit_sockaddr+0xd0/0x138
-> [<0000000089a93e34>] move_addr_to_kernel+0x1a0/0x1f8
-> [<000000000b4e80e6>] io_connect_prep+0x1ec/0x2d4
-> [<00000000abfbcd99>] io_submit_sqes+0x588/0x1e48
-> [<00000000e7c25e07>] io_sq_thread+0x8a4/0x10e4
-> [<00000000d999b491>] ret_from_fork+0x10/0x20
-> 
-> which can can happen if:
-> 
-> 1) The command type does something on the prep side that triggers an
->     audit call.
-> 2) The thread hasn't done any operations before this that triggered
->     an audit call inside ->issue(), where we have audit_uring_entry()
->     and audit_uring_exit().
-> 
-> Work around this by issuing a blanket NOP operation before the SQPOLL
-> does anything.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-41001 to this issue.
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
