@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-255437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE2A9340B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:47:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C91B9340BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D6D1F2163A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:47:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DA1EB2223E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9966181D02;
-	Wed, 17 Jul 2024 16:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B61822F3;
+	Wed, 17 Jul 2024 16:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7o7UgZ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kFu+FVTF"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F316FB9;
-	Wed, 17 Jul 2024 16:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80917E8FA;
+	Wed, 17 Jul 2024 16:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721234825; cv=none; b=EeLRgxDAInxF8KXWwMpo6BXQY/ZmGv+CHeBdA0j3LL7oesKe7eqeYcDX41MEfHJqjFP58U3j5XG5hJSzjw1aNRAUg5xVsIou/N7YmR0nqDPplV+VRFDmq87o2gQ+csOH1NOrl7w/l7ARwUnexH8QGEor7d3ra4pXisPLIC5copY=
+	t=1721234835; cv=none; b=CgT185jos0Mz8bvie2Ec648oRu5EXbjUnovuiv3M3CgvC8pdxU4WsG+48g061HAsNg3MYUuwxEAEVwxCU1TyxIVYoXlsULQ61KX5Y0v0xwiGU8IYhVHzyFNgy8pxN/aeRxCqAXsXYWcMsk/KQqbfUxpPrsxnUyAppkPggdihpnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721234825; c=relaxed/simple;
-	bh=bjfZpRRhlg4PJZjWOwnrypPHq2aJtJFQKmMzYU7HJA8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j+Zi5pu23xwugLn8Dt+8WrNy8IyDPQZHBPzMb12AiEf+6DHbLodkA8H1vquH53G6x1j3DiC1W6vivAOuWbk80+LQ/VCVuP/4qjIdUplo+w0o8sNzHsq3ZqHlK5TvdTrxrQiBrTpbZlp3j1r04um7jypmbFPlqEC9RoJ6JHi/Kz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7o7UgZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C21C4AF0C;
-	Wed, 17 Jul 2024 16:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721234824;
-	bh=bjfZpRRhlg4PJZjWOwnrypPHq2aJtJFQKmMzYU7HJA8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G7o7UgZ6EfkezTfgXM/OKVeOJKYo7WyWrqehnyGd2QOeFmG4pe7VAFiBfC6cmASUW
-	 8cHY4wOJyGgOBXG1oS37U53OxHtM5kIowQXjTwK2Ls9sM34IY7AwhxAD5yJVBZ/s9q
-	 3EqTudX3bYESsk+/NlJmciApyus20oPSCQP/mNFLJVNNr1ilV5s13h4KAH1bUhe6s0
-	 RMZXullt7hVJ8ZhNFY7rnnfM2VUpNltFnPWN6hHjbkN6bIOQkxW6SZV/66HpF5HNaX
-	 rySznN1T+EQGmrsSLE0z4lVsJZDHIp390OsL81Sxv55dSuXJSnkkkB4THR/uh9YWRV
-	 rhf+NZEQXCuRQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eec7e431d9so91463071fa.2;
-        Wed, 17 Jul 2024 09:47:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjtKzQkoJ8wAopvZbRv8ys26c7YOQBrqvyJBSc0r5l2G9rMtRiTLZvR0FKQTC70Npu51xQv8u3Z9558f0eec52DpZFPHA2ZVe+bFad
-X-Gm-Message-State: AOJu0YyCzjOjxzbDdmK3i93pxkr/OhfupMmkq5FLW568/E/GKI3Kvmcm
-	W5po4GGRNLOCZqFZZG3Ml9h1ieX7KD9W0L9QxHE4oUtk4jPnu0cWAWSMcUJ4nlE2rimqeTpyUkP
-	Rk0RJln0aAvo901mnDDhIv06IQMs=
-X-Google-Smtp-Source: AGHT+IFeguZgPWKv5F3wDcTmi3Pu6/ZfD2nDPZBfd/jwmjzZt4tiBnUUPex+wwRdBMi8sCHlC3PsIotQifWy26FS078=
-X-Received: by 2002:a05:651c:b2c:b0:2ec:4487:6a8f with SMTP id
- 38308e7fff4ca-2eefd138815mr17924531fa.37.1721234822854; Wed, 17 Jul 2024
- 09:47:02 -0700 (PDT)
+	s=arc-20240116; t=1721234835; c=relaxed/simple;
+	bh=7/VlwMrzZKcazhdqh/NYPmp8rydn7Fr3YpN/2btgZpk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=omlhvMwvNmqlXMKFmLmXGEcBbXocNNpis5zB37GOx2AbrpZr8GUXQVlBOJ15Ahzo1BzHgfVDMk4Xemo3HeTnyL9P9zLNk5UoZTuIsUYLgfaMDqOqMP1GCJz2JYIphXzHtDtekwfV/DaNY6PdcAhNEpD2HgZOj1U5XrSMOvCBZWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kFu+FVTF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721234828;
+	bh=7/VlwMrzZKcazhdqh/NYPmp8rydn7Fr3YpN/2btgZpk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kFu+FVTFofSadoVStjEIi4dKZvSejWuYgtv+izA/T4vLz5G/SEjzZUFGs1cTxMw7K
+	 Isyrx94TZuPnEAwHVfkEj/WXUlLYxoLBFh2SFu+9XVtmN1CLImPrYLAwuJ4FK9/ChR
+	 2IZ5tyTeGwcbOox89fTaAtWw8dkbBgiIlenK78TmnsiSW4C0d2TNaAMrkr05U5sNCx
+	 8sEuHRaE+sQYBUbMLMdSRBNNljJr07aYnsIKv5HpNEgH7C/43pCpjVfZAaLVhMekBv
+	 SL0fhknv2dbfdsOigHk5uiMqD/m50PYthWQLKR7iZdXT50IaBvfJjCBXMXiULjKG0u
+	 wo+K3ZhLb62cw==
+Received: from [127.0.1.1] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: obbardc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5BB143780B50;
+	Wed, 17 Jul 2024 16:47:08 +0000 (UTC)
+From: Christopher Obbard <chris.obbard@collabora.com>
+Subject: [PATCH v2 0/3] Add support for Firefly Core-PX30-JD4 SoM &
+ baseboard
+Date: Wed, 17 Jul 2024 17:46:58 +0100
+Message-Id: <20240717-rockchip-px30-firefly-v2-0-06541a5a5946@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701140940.2340297-4-ardb+git@google.com> <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 17 Jul 2024 09:46:51 -0700
-X-Gmail-Original-Message-ID: <CAMj1kXEGsnd5S3-nnCUNYJ5tVr2LU2BOkNp513OfU6A=jgVX2A@mail.gmail.com>
-Message-ID: <CAMj1kXEGsnd5S3-nnCUNYJ5tVr2LU2BOkNp513OfU6A=jgVX2A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Lukas Wunner <lukas@wunner.de>, Kerem Karabay <kekrby@gmail.com>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>, 
-	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIL1l2YC/4WNQQ6CMBBFr0Jm7ZjSIggr72FY1GkrE5GS1jQQw
+ t2tXMDle8l/f4NoA9sIXbFBsIkj+ymDPBVAg56eFtlkBilkJZqyxuDpRQPPOC9KoONg3bjipbW
+ OWmXq5lpB3s5Z83J0733mgePHh/W4SeXP/iumEgXWgow2Skil1Y38OOqHD/pM/g39vu9fKN20V
+ 74AAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Kever Yang <kever.yang@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>, 
+ Collabora Kernel Mailing List <kernel@collabora.com>, 
+ Christopher Obbard <chris.obbard@collabora.com>
+X-Mailer: b4 0.13.0
 
-On Wed, 17 Jul 2024 at 09:35, Aditya Garg <gargaditya08@live.com> wrote:
->
-> Hi Ard, Lukas
->
-> Although the patch has been upstreamed, and works well for the Macs included,
-> we have noticed another issue. For the Macs having a single GPU, in case a person
-> uses an eGPU, they still need this apple-set-os quirk for hybrid graphics. This was
-> not reported that time by anyone since people who use an eGPU are quite rare.
->
-> I'm not sure how to handle this. Had a few ideas like:
->
-> 1. Enable this for all T2 Macs.
-> 2. Enable this for all Macs.
-> 3. Add a kernel parameter.
->
-> Would like your ideas and a possible fix for the same.
->
+This adds support for the PX30-based Core-PX30-JD4 system-on-module from
+Firefly and includes support for the SoM in combination with the
+Firefly MB-JD4-PX30 baseboard.
 
-Hi,
+---
+Changes in v2:
+- Split into two separate files: dtsi for the SoM and dts for the carrier.
+- Change devicetree compatible to match SoM/carrier split.
+- Change device names to better match vendor's name.
+- Properly model baseboard & SoM regulators.
+- Properly model baseboard recovery key.
+- Remove DSI panel (& related nodes) since "sitronix,st7703" compatible
+  is undocumented & hardware is unavailable.
+- Remove unused audio-related nodes.
+- Remove unused UART nodes.
+- Remove unused PMIC pinctrl nodes.
+- Add node for baseboard LEDs.
+- Link to v1: https://lore.kernel.org/r/20240716-rockchip-px30-firefly-v1-0-60cdad3023a3@collabora.com
 
-Is this a theoretical concern? Or are you aware of any user that is
-actually affected by this?
+---
+Christopher Obbard (3):
+      dt-bindings: arm: rockchip: Add Firefly Core-PX30-JD4 with baseboard
+      arm64: dts: rockchip: add Firefly Core-PX30-JD4 SoM
+      arm64: dts: rockchip: add Firefly JD4 baseboard with Core-PX30-JD4 SoM
 
-In any case, given the niche nature, enabling this more widely by
-default does not seem like a great approach, as the risk for
-regressions outweighs the benefit.
+ .../devicetree/bindings/arm/rockchip.yaml          |   6 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../boot/dts/rockchip/px30-firefly-jd4-core.dtsi   | 322 +++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/px30-firefly-jd4.dts  | 178 ++++++++++++
+ 4 files changed, 507 insertions(+)
+---
+base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
+change-id: 20240716-rockchip-px30-firefly-59efc93d6784
 
-I could imagine the use of a EFI variable to opt into this, would that
-work? It would have to be set only once from user space (using
-efivarfs)
+Best regards,
+-- 
+Christopher Obbard <chris.obbard@collabora.com>
+
 
