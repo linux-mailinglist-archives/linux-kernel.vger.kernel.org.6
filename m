@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-255519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37409341B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB14B9341B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F44D284902
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9792E282D53
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1223D183060;
-	Wed, 17 Jul 2024 17:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A7F183068;
+	Wed, 17 Jul 2024 17:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eTFLvkvj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xm953eiS"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0411184F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03640184F;
+	Wed, 17 Jul 2024 17:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238642; cv=none; b=Vg+29zjB+BmqOj238+yE+5lcNGvACdi2CmQsAyBwaHQtakujRkxVjNvhk0JfDJoHErWjfYE224ZC1BzxQ7ocCMd8+qmRFjeEJ3cDorh3AHJOGGZ8D3JhgEvEfWYK7yKGhwLaMOsti8jYXHMfKLJBtODOy6wnSXd7JZMtCugVHxY=
+	t=1721238775; cv=none; b=rbQ5exIIY9H7UidOZsU+foqBn7pjZr+Ivk/+l2cJd5tF+15C3/LSPWdlJtxxU/6Wknw1ormTmTypeeV9z0VKjYQEgYrbAaHyNcxt6nbHHdTcpwgBHUQNDUIjZIbVvwGcGtSpZ2qU8cUTcyeoG70TzyZt3u4aISG2EHK3+/c2hBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238642; c=relaxed/simple;
-	bh=C0trh+7PwObtuipUfDOh6Uu1gaixeqfmj0eWa4VKtro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SWULyiHg+A9sBxmEXx9k7oMZ6dCBFRN5bNAzifjmTzGPP/f/bqg9En4RZd/NZEwiYI59UE3RYhQWfY3eWYFjVyKdiJyNzaRuIaTi4aXX4B2+jiYTtdFVGI4dHZw78Jhe72dPYfNu//dKzCZrO7A48+GgsjMmbIEebGbuWNQuXSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eTFLvkvj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HFOLwU031885;
-	Wed, 17 Jul 2024 17:50:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wfIMLxJ5MgWBWIgIW7ll70R4YbGXXWDwD9MoyiP+Lrw=; b=eTFLvkvjARiG1dKL
-	0ys6Sn/GbYaLyIJmsp4dLCHW9/g4XFVCAg4dfz8kQ9+yKJs04ZV+JxC+094NFZXP
-	CF0Nf8E5pYprLM1Ox3MNzNDZNN8mhqEGwF0rfII49gMqfd4TarueyD/lMvgSANaB
-	V8s2pPshN4Ew1AVUk89Ft2tNq5/BysFu9VukJoFqN8UoWpJ9iysgrn6sUYrSh+MH
-	OLYWMIOB5pURYb67xJZIJfJUhiSxjJ6iw+PI/MLMbsNzsBzjsEAZcQV3umtCHdmb
-	DiSu4dKlrj0T/d7XZLl/qc8lKmBb2J1mKvC7E2WWY3drXuwPyUaWTaVEQ73bIgYb
-	RN9MUw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs39ak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 17:50:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HHoRvN022996
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 17:50:27 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
- 2024 10:50:26 -0700
-Message-ID: <9c13b91e-9efe-4a4f-b0bb-ac148d4f1af2@quicinc.com>
-Date: Wed, 17 Jul 2024 10:50:25 -0700
+	s=arc-20240116; t=1721238775; c=relaxed/simple;
+	bh=CayRGi98j8/HJ1YInm5wHwDRqWWZwKfZCegvXkW3Dg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DOHG2m20zFBhDDTuQeRgzR+CvcGGBr+nmOL25mZqGGLdxXbVHEY2fJJF2bvrbSUcle04KRtmlVkdPwx6muiurUq+WAGqDdpK1U+ln4q1ciHk1cZgA83GgbZAtJOuS6M7tfiiul/kKNVPEienVJ95XaqhHvMx9bIAeC5yQTT+m04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xm953eiS; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70b0d0fefe3so4706231b3a.2;
+        Wed, 17 Jul 2024 10:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721238773; x=1721843573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rna1ycVmGq1fLlGbs8yKWKJ2/BIlmM0qUkUIHG8aceI=;
+        b=Xm953eiSSRAct4IfSQSYLAD/78NWEJ/PzNTkfcnPC1WwEYOJqfJZwTJtv+y+kMkO3H
+         v5Unw5Z/lj6B4BbTTBSnbvbxniTDvrkYU0jhlLh9T7HQj54EdbSF/r1yA5G+lyRNzwT1
+         /j2BUxwUd32lrO6+fAYhQEISKNFiayqgDDvXBoMven946nM5V9ib46DoMc7apoTGW/2M
+         h5SjzN6ml+bNqlQVGTOL/JTZuSeQJGxIxYy+Hl3WxeA2R/rZJJGUe5TQs2c9eNqGc3iC
+         XdbQjCWBHpH1xmRYjbJgPelZxNiqr8pt4F/mO6f5TceGWoiMcSyT8nTUu1wM63xlv0uj
+         hSRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721238773; x=1721843573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rna1ycVmGq1fLlGbs8yKWKJ2/BIlmM0qUkUIHG8aceI=;
+        b=OX7c4uv0iQksX/FXJ73x7YRkylKUb/oGRtt9xvbo0UwHOvLjkuEsXLQqIB0jHhxnQ3
+         lpdrQE5QwZQ9riZjz+BHCQnTcTsnLt5lEDj5OnR5tPx/rJIpGLp57bDOfYFCGAIyLjlG
+         jSld9bQaOjxhcG6xjVcz6HY9NOmfjDkNUV38gPUY6vmQLhNKDGf9rJvtlE3kiyXB9JTb
+         meMIMAl1WmYeFJO77PaDMj8V+6aBpkjp8ImzKNoHtM0gOhd8thEDjeu6hfpi826RblKX
+         uoekpOaB+FM/DbWn5g9kf1evmp17v6u8ViBpDB887Ldf5DYAQ3mlHxsaygrEZ1Uk8SZo
+         qbXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVue8DonhfM79E6ZHN1P8+wEL2UOo1pzdQwnqgXBhYPNqu8nTahgRbE/oOuXNcEMaMt2GT1Rt4fBJS3FIDFHioQjDhw7zU2Mp67EvKvZKqLVrQRKjtJ05ddjbFU3jRKSpe3Fwq/4g/I9yHPpA==
+X-Gm-Message-State: AOJu0Yx2JVbloQGGSpFUR22f3C3hpMyCzA1YgRpVSSp8MM72IcPEjMF3
+	F+z+Xwvn4l04Qss1CyZCGjhvx8FOPOsSJNyz+Yh8ditGsRhA2hK1IfT/OqomxUkk5e7mIeoa2cK
+	SCfuF1tQTbfOypPgskS8btMi60Cw=
+X-Google-Smtp-Source: AGHT+IGf2woxKzbXZ1jb3lLtB+1KozyeXPrGVuFDolnHnJC8V1hfI9Od69EnykI1/InG8n6/gtTJXrmZR7c6vNRvqsk=
+X-Received: by 2002:a05:6a20:729a:b0:1c2:8cf4:766c with SMTP id
+ adf61e73a8af0-1c3fdcafebcmr3235744637.33.1721238773094; Wed, 17 Jul 2024
+ 10:52:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] misc: Kconfig: exclude mrvl-cn10k-dpi compilation for
- 32-bit systems
-To: Vamsi Attunuru <vattunuru@marvell.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <nathan@kernel.org>
-References: <20240717163739.181236-1-vattunuru@marvell.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240717163739.181236-1-vattunuru@marvell.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HIRgmlMmE7BmRwLMQvML0z6HSEbEB-DL
-X-Proofpoint-GUID: HIRgmlMmE7BmRwLMQvML0z6HSEbEB-DL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_13,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170136
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+ <CACu1E7HROtx1Zgyy0EJuHj_HWE8Nd6OtFnxTcrDrHP+2HA5o6A@mail.gmail.com> <Zpfx_xnRmwoMkSFw@trashcan>
+In-Reply-To: <Zpfx_xnRmwoMkSFw@trashcan>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Wed, 17 Jul 2024 18:52:41 +0100
+Message-ID: <CACu1E7GiEDF_uspowmAQKNiBqLX4RZjP6obL2YLOFA9-ctroRQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] fixes for Adreno A5Xx preemption
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/17/24 09:37, Vamsi Attunuru wrote:
-> Upon adding CONFIG_ARCH_THUNDER & CONFIG_COMPILE_TEST dependency,
-> compilation errors arise on 32-bit ARM with writeq() & readq() calls
-> which are used for accessing 64-bit values.
-> 
-> Since DPI hardware only works with 64-bit register accesses, using
-> CONFIG_64BIT dependency to skip compilation on 32-bit systems.
-> 
-> Fixes: a5e43e2d202d ("misc: Kconfig: add a new dependency for MARVELL_CN10K_DPI")
-> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   drivers/misc/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index f3bb75384627..41c3d2821a78 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -588,7 +588,7 @@ config NSM
->   config MARVELL_CN10K_DPI
->   	tristate "Octeon CN10K DPI driver"
->   	depends on PCI
-> -	depends on ARCH_THUNDER || COMPILE_TEST
-> +	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
->   	help
->   	  Enables Octeon CN10K DMA packet interface (DPI) driver which
->   	  intializes DPI hardware's physical function (PF) device's
+On Wed, Jul 17, 2024 at 5:33=E2=80=AFPM Vladimir Lypak <vladimir.lypak@gmai=
+l.com> wrote:
+>
+> On Wed, Jul 17, 2024 at 10:40:26AM +0100, Connor Abbott wrote:
+> > On Thu, Jul 11, 2024 at 11:10=E2=80=AFAM Vladimir Lypak
+> > <vladimir.lypak@gmail.com> wrote:
+> > >
+> > > There are several issues with preemption on Adreno A5XX GPUs which
+> > > render system unusable if more than one priority level is used. Those
+> > > issues include persistent GPU faults and hangs, full UI lockups with
+> > > idling GPU.
+> > >
+> > > ---
+> > > Vladimir Lypak (4):
+> > >   drm/msm/a5xx: disable preemption in submits by default
+> > >   drm/msm/a5xx: properly clear preemption records on resume
+> > >   drm/msm/a5xx: fix races in preemption evaluation stage
+> > >   drm/msm/a5xx: workaround early ring-buffer emptiness check
+> > >
+> > >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 18 ++++++++++----
+> > >  drivers/gpu/drm/msm/adreno/a5xx_gpu.h     | 12 ++++++---
+> > >  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 30 ++++++++++++++++++++-=
+--
+> > >  3 files changed, 47 insertions(+), 13 deletions(-)
+> > > ---
+> > > base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+> > > --
+> > > 2.45.2
+> > >
+> >
+> > Hi Vladimir,
+>
+> Hi Connor!
+>
+> >
+> > While looking at preemption on a7xx, where the overall logic is pretty
+> > much the same, and I've been seeing the same "soft lockups". However
+> > even after porting patch 3, it turns out that's not enough because
+> > there's a different race. The sequence of events is something like
+> > this:
+> >
+> > 1. Medium-prio app A submits to ring 2.
+> > 2. Ring 0 retires its last job and we start a preemption to ring 2.
+> > 3. High-prio app B submits to ring 0. It sees the preemption from step
+> > 2 ongoing and doesn't write the WTPR register or try to preempt.
+> > 4. The preemption finishes and we update WPTR.
+> At this point with patch 3 applied it should switch to ring 0 right away
+> because of trigger call in the end of a5xx_preempt_irq. Didn't you
+> forget it? Downstream has such call too. Even though it makes preemption
+> a little more aggressive it doesn't work without it.
 
+Yes, I didn't apply that bit because it didn't seem necessary to fix
+the original issue you described and it seemed like just an
+optimization to make preemption more aggressive, however it does seem
+to fix the issue. I can't verify that the issue you describe (the
+retire IRQ arriving before preemption IRQ) is what's actually
+happening because adding a tracepoint on retire seems to change the
+timing enough so that the lockup doesn't happen, though. So I guess
+I'll just have to assume that's what it was.
 
-BTW it looks like you accidentally submitted Makefile.rej, can you 
-submit a patch to remove it?
+Given how subtle this is, enough that I missed it, maybe it's worth a
+comment and an extra commit.
 
+Also, I forgot to mention that while I was reading this over I found
+another (theoretical) race - we could flush a submit in between
+calling update_wptr() and set_preempt_state(PREEMPT_NONE) in
+a5xx_preempt_irq() and never update wptr. I would fix it by renaming
+PREEMPT_ABORT to PREEMPT_FINISH and pulling out the ABORT ->
+update_wptr() -> NONE sequence in a5xx_preempt_trigger() into a
+separate function that also gets called in a5xx_preempt_irq().
 
-commit 5f67eef6dff39421215e9134f1eaae51b67a73b7
-Author: Vamsi Attunuru <vattunuru@marvell.com>
-Date:   Sat Jul 6 08:30:09 2024 -0700
+Connor
 
-     misc: mrvl-cn10k-dpi: add Octeon CN10K DPI administrative driver
-
-...
-
-diff --git a/drivers/misc/Makefile.rej b/drivers/misc/Makefile.rej
-new file mode 100644
-index 000000000000..a6aaed13f950
---- /dev/null
-+++ b/drivers/misc/Makefile.rej
-@@ -0,0 +1,7 @@
-+--- drivers/misc/Makefile
-++++ drivers/misc/Makefile
-+@@ -69,3 +69,4 @@ obj-$(CONFIG_TMR_INJECT)     += xilinx_tmr_inject.o
-+ obj-$(CONFIG_TPS6594_ESM)     += tps6594-esm.o
-+ obj-$(CONFIG_TPS6594_PFSM)    += tps6594-pfsm.o
-+ obj-$(CONFIG_NSM)             += nsm.o
-++obj-$(CONFIG_MARVELL_CN10K_DPI)       += mrvl_cn10k_dpi.o
-
-
+>
+> > 5. App A's submit retires. We try to preempt, but the submit and
+> > ring->cur write from step 3 happened on a different CPU and the write
+> > hasn't landed yet so we skip it.
+>
+> I don't think this is possible on modern CPUs. Could it be that retire
+> IRQ appeared earlier (while it was switching from 0 to 2) and you are
+> looking at msm_gpu_submit_retired trace event which is called from
+> retire work later.
+>
+> >
+> > It's a bit tricky because write reordering is involved, but this seems
+> > to be what's happening - everything except my speculation about the
+> > delayed write to ring->cur being the problem comes straight from a
+> > trace of this happening.
+> >
+> > Rob suggested on IRC that we make retire handling happen on the same
+> > workqueue as submissions, so that preempt_trigger is always
+> > serialized, which IIUC would also make patch 3 unnecessary. What do
+> > you think?
+>
+> In this patch series i have tried to do least amount of changes so it
+> could be easily back-ported. It isn't pretty but it works reliably for
+> me. Otherwise it would be fine to just disable preemption like it's done
+> on LTS before 5.4 and rework preemption in new kernel releases.
+>
+> Kind regards,
+>
+> Vladimir
+>
+> >
+> > Best regards,
+> >
+> > Connor
 
