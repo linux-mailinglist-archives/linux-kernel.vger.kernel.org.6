@@ -1,394 +1,342 @@
-Return-Path: <linux-kernel+bounces-255570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE406934258
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:38:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D42A93425A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645872829E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B075D1C2121C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C488184112;
-	Wed, 17 Jul 2024 18:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D73818410A;
+	Wed, 17 Jul 2024 18:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm4ZBqVS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9p5zqr0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970CA7470;
-	Wed, 17 Jul 2024 18:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE217470;
+	Wed, 17 Jul 2024 18:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721241527; cv=none; b=reTAw2S9boS5zqWxx0962yZBswYdAfm8ZSgJYvVsEHg/u8jR4rQVH0bCZNGMdHS+wYsaUzgpS4/v1LDJ9QAWbDvMZiAuA6P92Ni0eY0ZkBrzJL8RYhQrw86Ofzz9pAPneYx1x87NBFJ6FaXsWjlrp5wQ1Dr8vzjvKHM2Iz7Vg98=
+	t=1721241535; cv=none; b=vFMcHtu5UfyBnblv0AGo/gZVWnjxdJiNxjBlBqtRIUc5j5h2ByLxzR7eOwSQXbEKJPXYnWOZLpR0Xntv3cpDItdMCv+uxqD2izyGL76VDB9ICWcKaS9PNFOAe6r0otbxXf9nfCFyyNIAFJat0QlSlGUeXtxiSrEQuSR5P7sC7a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721241527; c=relaxed/simple;
-	bh=AAa73a/eG+UaWwZDFBzfK0+VZSC5kbpy6wM/aZhzZFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q7NZp/CYJ+oOdMjTB+V8275Tk3xgCDNPgXn1SpYL9rGcwzUAEjsNgXsxdcUPxqGWZ2gG9BVj2T+6nAhmqy+GTxuIcNfj+A7cga/hJs074OYliLYJ58PeQGBKVZmWnZ2cTaWq/icjSMJ6lI1rDDIXb+rrZ9UhOAT3D0SX4m8aE3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jm4ZBqVS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266edee10cso46795045e9.2;
-        Wed, 17 Jul 2024 11:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721241524; x=1721846324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z02OmqBH2AOV7DXRhymRPFF4DbUX9AbFtyHlhhA0S9w=;
-        b=jm4ZBqVSRBuxw3grny5bRUIpJLgfgJz+4pXgKPPnn9IS2QshkACkC3YpEg1BSx72ir
-         A7MczOXZUJAhO7iwQiLkgWFDU8VUxCJnp1W8zjlyHBIb4Hy2uQksY9muM27Hk18F3wWd
-         rUc3cuZMi/LHAwPk811HO0OwV/zGsZB8PGjaPt+NPy3xi0WBbY77mvGiN7sgTNN+cCdB
-         d0UMrGqOCR+DbgW+XBq6FsTA9KgvjzfrbRUdK0T27UJa74fImTL1oE7dpYJ3BhbHJEPq
-         aLuIlIhndb7bAbxTw3PLmWpIXSD11J/ZrrZ+b6tkmdUWhqu0K8xqakOEEu0i0EhcJ3xv
-         QDsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721241524; x=1721846324;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z02OmqBH2AOV7DXRhymRPFF4DbUX9AbFtyHlhhA0S9w=;
-        b=wxQOtY0flAJuPI+UwXx80OqQxPEWpO+/KD0czeiJAtCdojk23tmd47PtqfZIfsy2gu
-         2IqPqJfYAPhrKZuBeOa7+SzUESMCddq+G86lhpZ1C01/S+8ksqvav8dNyWfNyOE319ns
-         lEOwYRY8LfxYYOMMP7FLBzb0xGhAKcCZ2aHW/F3XYYJZYdDB2KMuphUMuSx5VLTj0hoi
-         ifT82IPlP7uCOb40aqKz1kBkgMwRbd4PsgxD+PUxY0A7GmHSe8vf5onzdio79XUwIS2z
-         Q2SZ9PMIzkIPyhyWBXUQk08uMNkxXIX0aN8Iy8s8ZmQqDogDDp/+qAhUpp/2hxtJDImO
-         aEdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+OeHhUsRixTDAoUfHQtbzyg8NHfjCVuWZByZuECftClRQp/dkbt/WEgxRuIxLle60dL6MpKWZqE6kXD264xO13RRSERMp7DgJyi29qJgLdXzq7dxa1L4I+AUdriA1xixm6qAxNRM=
-X-Gm-Message-State: AOJu0Yz2yzJOY1/mw8/PBoFgrnytZpRuG6OFBKC+P1xE4wUVyaEENwPj
-	IjmzLIG8Zl6rLbl1fxC4UKFHiQxQEhSSNWdiorULcTKgMg8G2bwx
-X-Google-Smtp-Source: AGHT+IH2p351gsJBbp6H2aT85s4kpqpH/OJLGXRdO4FFjs0hhwLEOULtcMrdhvyeCoHVLc3Hlw+Pmg==
-X-Received: by 2002:a05:600c:3592:b0:426:5216:3247 with SMTP id 5b1f17b1804b1-427c2ca22b9mr19603155e9.6.1721241523359;
-        Wed, 17 Jul 2024 11:38:43 -0700 (PDT)
-Received: from debian.fritz.box ([2a00:79c0:641:6d00:224:9bff:fe22:6dd6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c7805253sm7188535e9.32.2024.07.17.11.38.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 11:38:42 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: [PATCH] power: supply: max1720x: add read support for nvmem
-Date: Wed, 17 Jul 2024 20:37:57 +0200
-Message-Id: <20240717183757.3948-1-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721241535; c=relaxed/simple;
+	bh=k3SUUvJyP3HAs9jEHJlcAftSzSgHWl5a0MMFSXbp+LU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P6W71Xk6uZTosaVRmKdyueHMCaMnjxpr4cchneOm4ClYF5QxsRa29L00iiAeVw6/Cpx68eQiElYXyJ1dG7sknfn9c28srd+tHiz6G4QhApMYEIxfz7AZxWvg05yzlovwYim6tYGv6tFFxAoch6yyHf8JnFUbsHPIsjOPPcTm12Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9p5zqr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AE6C4AF0C;
+	Wed, 17 Jul 2024 18:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721241535;
+	bh=k3SUUvJyP3HAs9jEHJlcAftSzSgHWl5a0MMFSXbp+LU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z9p5zqr0xPpvzcnFESLLr8KjjNkQj62kACXXth/LZ9ab++x4gkazOIHFJ0WxuYhaF
+	 DK6P7HMW9Kp3ZS9AV+5CS+q/YuEqXCDs2/eJsBpCkm9Y/rP8uiss2B9DbGaAVsO/9N
+	 D/yoHBolWLOZs7LyehS5dRiJ3RfmE1kzBSaATLll3WBLNirvjZiiqPdP5EMtvLUJFN
+	 LlPYb2uhgIsxtNsEwtT9xgSBF3jxNJ4ouaza1/yikPdX0W9iSQP/CVMoXxHc+YPfiT
+	 fmFLDPW3X9m7lYMocEWSqwWGvPLtAjQFZkTmRu/iJ1q4Q7ZjGcDjzWkHylPQ7QtiPx
+	 UhsU/uaNQ6lVw==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eede876fccso367701fa.1;
+        Wed, 17 Jul 2024 11:38:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX3ynCuFDk0cEnrB/9332vtRZ87rqOGWETBKSJ2fdQpwxgQmYUI5t0GgN33K3TFgp8IQz8MDFcvicd1GWEnrF1PuqmO6xQGu8X89zkGo+LlqAEqOeazGlGsZgPxsWRr1ltVx3P/L51FV0se
+X-Gm-Message-State: AOJu0YwJF6nFasIIXbAzC5KvBoKHAG6MQLb/CXR//DhNIdj2KpbVD36M
+	XfQiHqUb09/8SjzO03zIXIR/VCNaD1pS0pUgFNHU5NtnlgzeHgHwPz2Z1Tm/Kij6xAOaZZjkIRb
+	LVJzVc0SJvGU9T+jFYuPu/ZLoyyg=
+X-Google-Smtp-Source: AGHT+IG9unUklWUyOg6G6j+RcsGsD7blz8uIA2AfGHrbBvbHGfOFDpfSU0jZ/VAcRzUyxBTbdYmjwc7Ii/bJm/pFqXA=
+X-Received: by 2002:a2e:8384:0:b0:2ee:9115:f535 with SMTP id
+ 38308e7fff4ca-2ef05d2534emr1800971fa.33.1721241533733; Wed, 17 Jul 2024
+ 11:38:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+In-Reply-To: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 18 Jul 2024 03:38:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQk+i+9YUJMa8HkPhGw4gVLZMu=qxjzsT-S8T2b8RMd+w@mail.gmail.com>
+Message-ID: <CAK7LNAQk+i+9YUJMa8HkPhGw4gVLZMu=qxjzsT-S8T2b8RMd+w@mail.gmail.com>
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman package
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ModelGauge m5 and device configuration values are stored in nonvolatile
-memory to prevent data loss if the IC loses power. Add read support for
-the nonvolatile memory on MAX1720X devices.
+On Wed, Jul 17, 2024 at 2:52=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> pacman is the package manager used by Arch Linux and its derivates.
+> Creating native packages from the kernel tree has multiple advantages:
+>
+> * The package triggers the correct hooks for initramfs generation and
+>   bootloader configuration
+> * Uninstallation is complete and also invokes the relevant hooks
+> * New UAPI headers can be installed without any manual bookkeeping
+>
+> The PKGBUILD file is a simplified version of the one used for the
+> downstream Arch Linux "linux" package.
+> Extra steps that should not be necessary for a development kernel have
+> been removed and an UAPI header package has been added.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+> ---
+> Changes in v6:
+> - Drop reference to srctree/Makefile
+> - Drop $(realpath $(srctree))
+> - Make use of the fact that $(objtree) is always "."
+> - Align coding style to kernel and drop vim config line
+> - Drop indirection through `$MAKE run-command`
+> - Unify shell variable syntax to "${var}"
+> - Add explanations to custom variables
+> - Add makedepends
+> - Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5-1-0=
+598460bc918@weissschuh.net
+>
+> Changes in v5:
+> - Rebase onto kbuild/for-next
+> - Use new path to build-version script (from kbuild/for-next)
+> - Ensure submake jobserver delegation works
+> - Simplify $modulesdir/pkgbase file creation
+> - Add Reviewed-by from Nicolas
+> - Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-5=
+07bb5b79b2a@weissschuh.net
+>
+> Changes in v4:
+> - Update MRPROPER_FILES
+> - Unify shell variable syntax
+> - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-8=
+85df3cbc740@weissschuh.net
+>
+> Changes in v3:
+> - Enforce matching architectures for installation
+> - Add Reviewed-by and Tested-by from Nathan
+> - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-6=
+13422a03a7a@weissschuh.net
+>
+> Changes in v2:
+> - Replace ${MAKE} with $MAKE for consistency with other variables
+> - Use $MAKE for "-s image_name"
+> - Avoid permission warnings from build directory
+> - Clarify reason for /build symlink removal
+> - Install System.map and config
+> - Install dtbs where available
+> - Allow cross-build through arch=3Dany
+> - Sort Contributor/Maintainer chronologically
+> - Disable some unneeded makepkg options
+> - Use DEPMOD=3Dtrue for consistency with rpm-package
+> - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-a=
+c2f63f5fa7b@weissschuh.net
+> ---
+>  .gitignore               |  6 +++
+>  Makefile                 |  2 +-
+>  scripts/Makefile.package | 14 +++++++
+>  scripts/package/PKGBUILD | 99 ++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 120 insertions(+), 1 deletion(-)
+>
+> diff --git a/.gitignore b/.gitignore
+> index c59dc60ba62e..7902adf4f7f1 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -92,6 +92,12 @@ modules.order
+>  #
+>  /tar-install/
+>
+> +#
+> +# pacman files (make pacman-pkg)
+> +#
+> +/PKGBUILD
+> +/pacman/
+> +
+>  #
+>  # We don't want to ignore the following even if they are dot-files
+>  #
+> diff --git a/Makefile b/Makefile
+> index 7372ea45ed3f..768d3dc107f8 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1481,7 +1481,7 @@ CLEAN_FILES +=3D vmlinux.symvers modules-only.symve=
+rs \
+>  # Directories & files removed with 'make mrproper'
+>  MRPROPER_FILES +=3D include/config include/generated          \
+>                   arch/$(SRCARCH)/include/generated .objdiff \
+> -                 debian snap tar-install \
+> +                 debian snap tar-install PKGBUILD pacman \
+>                   .config .config.old .version \
+>                   Module.symvers \
+>                   certs/signing_key.pem \
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index bf016af8bf8a..0aaa0832279c 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -141,6 +141,19 @@ snap-pkg:
+>         cd $(objtree)/snap && \
+>         snapcraft --target-arch=3D$(UTS_MACHINE)
+>
+> +# pacman-pkg
+> +# ----------------------------------------------------------------------=
+-----
+> +
+> +PHONY +=3D pacman-pkg
+> +pacman-pkg:
+> +       @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> +       +objtree=3D"$(realpath $(objtree))" \
+> +               BUILDDIR=3Dpacman \
+> +               CARCH=3D"$(UTS_MACHINE)" \
+> +               KBUILD_MAKEFLAGS=3D"$(MAKEFLAGS)" \
+> +               KBUILD_REVISION=3D"$(shell $(srctree)/scripts/build-versi=
+on)" \
+> +               makepkg
+> +
+>  # dir-pkg tar*-pkg - tarball targets
+>  # ----------------------------------------------------------------------=
+-----
+>
+> @@ -221,6 +234,7 @@ help:
+>         @echo '  bindeb-pkg          - Build only the binary kernel deb p=
+ackage'
+>         @echo '  snap-pkg            - Build only the binary kernel snap =
+package'
+>         @echo '                        (will connect to external hosts)'
+> +       @echo '  pacman-pkg          - Build only the binary kernel pacma=
+n package'
+>         @echo '  dir-pkg             - Build the kernel as a plain direct=
+ory structure'
+>         @echo '  tar-pkg             - Build the kernel as an uncompresse=
+d tarball'
+>         @echo '  targz-pkg           - Build the kernel as a gzip compres=
+sed tarball'
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> new file mode 100644
+> index 000000000000..eb3957fad915
+> --- /dev/null
+> +++ b/scripts/package/PKGBUILD
+> @@ -0,0 +1,99 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# Maintainer: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> +
+> +pkgbase=3Dlinux-upstream
+> +pkgname=3D("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+> +pkgver=3D"${KERNELRELEASE//-/_}"
+> +# The PKGBUILD is evaluated multiple times.
+> +# Running scripts/build-version from here would introduce inconsistencie=
+s.
+> +pkgrel=3D"${KBUILD_REVISION}"
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
 
-Based on:
-479b6d04964b "power: supply: add support for MAX1720x standalone fuel gauge"
-in branch for-next
 
----
- drivers/power/supply/max1720x_battery.c | 215 ++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-index edc262f0a62f..175f36e83b85 100644
---- a/drivers/power/supply/max1720x_battery.c
-+++ b/drivers/power/supply/max1720x_battery.c
-@@ -16,7 +16,9 @@
- #include <asm/unaligned.h>
- 
- /* Nonvolatile registers */
-+#define MAX1720X_NXTABLE0		0x80
- #define MAX1720X_NRSENSE		0xCF	/* RSense in 10^-5 Ohm */
-+#define MAX1720X_NDEVICE_NAME4		0xDF
- 
- /* ModelGauge m5 */
- #define MAX172XX_STATUS			0x00	/* Status */
-@@ -46,6 +48,8 @@ static const char *const max17205_model = "MAX17205";
- 
- struct max1720x_device_info {
- 	struct regmap *regmap;
-+	struct regmap *regmap_nv;
-+	struct i2c_client *ancillary;
- 	int rsense;
- };
- 
-@@ -106,6 +110,134 @@ static const struct regmap_config max1720x_regmap_cfg = {
- 	.cache_type = REGCACHE_RBTREE,
- };
- 
-+static const struct regmap_range max1720x_nvmem_allow[] = {
-+	regmap_reg_range(MAX1720X_NXTABLE0, MAX1720X_NDEVICE_NAME4),
-+};
-+
-+static const struct regmap_range max1720x_nvmem_deny[] = {
-+	regmap_reg_range(0x00, 0x7F),
-+	regmap_reg_range(0xE0, 0xFF),
-+};
-+
-+static const struct regmap_access_table max1720x_nvmem_regs = {
-+	.yes_ranges	= max1720x_nvmem_allow,
-+	.n_yes_ranges	= ARRAY_SIZE(max1720x_nvmem_allow),
-+	.no_ranges	= max1720x_nvmem_deny,
-+	.n_no_ranges	= ARRAY_SIZE(max1720x_nvmem_deny),
-+};
-+
-+static const struct regmap_config max1720x_nvmem_regmap_cfg = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.max_register = MAX1720X_NDEVICE_NAME4,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.rd_table = &max1720x_nvmem_regs,
-+};
-+
-+static const struct nvmem_cell_info max1720x_nvmem_cells[] = {
-+	{ .name = "nXTable0",  .offset = 0,  .bytes = 2, },
-+	{ .name = "nXTable1",  .offset = 2,  .bytes = 2, },
-+	{ .name = "nXTable2",  .offset = 4,  .bytes = 2, },
-+	{ .name = "nXTable3",  .offset = 6,  .bytes = 2, },
-+	{ .name = "nXTable4",  .offset = 8,  .bytes = 2, },
-+	{ .name = "nXTable5",  .offset = 10, .bytes = 2, },
-+	{ .name = "nXTable6",  .offset = 12, .bytes = 2, },
-+	{ .name = "nXTable7",  .offset = 14, .bytes = 2, },
-+	{ .name = "nXTable8",  .offset = 16, .bytes = 2, },
-+	{ .name = "nXTable9",  .offset = 18, .bytes = 2, },
-+	{ .name = "nXTable10", .offset = 20, .bytes = 2, },
-+	{ .name = "nXTable11", .offset = 22, .bytes = 2, },
-+	{ .name = "nUser18C",  .offset = 24, .bytes = 2, },
-+	{ .name = "nUser18D",  .offset = 26, .bytes = 2, },
-+	{ .name = "nODSCTh",   .offset = 28, .bytes = 2, },
-+	{ .name = "nODSCCfg",  .offset = 30, .bytes = 2, },
-+
-+	{ .name = "nOCVTable0",  .offset = 32, .bytes = 2, },
-+	{ .name = "nOCVTable1",  .offset = 34, .bytes = 2, },
-+	{ .name = "nOCVTable2",  .offset = 36, .bytes = 2, },
-+	{ .name = "nOCVTable3",  .offset = 38, .bytes = 2, },
-+	{ .name = "nOCVTable4",  .offset = 40, .bytes = 2, },
-+	{ .name = "nOCVTable5",  .offset = 42, .bytes = 2, },
-+	{ .name = "nOCVTable6",  .offset = 44, .bytes = 2, },
-+	{ .name = "nOCVTable7",  .offset = 46, .bytes = 2, },
-+	{ .name = "nOCVTable8",  .offset = 48, .bytes = 2, },
-+	{ .name = "nOCVTable9",  .offset = 50, .bytes = 2, },
-+	{ .name = "nOCVTable10", .offset = 52, .bytes = 2, },
-+	{ .name = "nOCVTable11", .offset = 54, .bytes = 2, },
-+	{ .name = "nIChgTerm",   .offset = 56, .bytes = 2, },
-+	{ .name = "nFilterCfg",  .offset = 58, .bytes = 2, },
-+	{ .name = "nVEmpty",     .offset = 60, .bytes = 2, },
-+	{ .name = "nLearnCfg",   .offset = 62, .bytes = 2, },
-+
-+	{ .name = "nQRTable00",  .offset = 64, .bytes = 2, },
-+	{ .name = "nQRTable10",  .offset = 66, .bytes = 2, },
-+	{ .name = "nQRTable20",  .offset = 68, .bytes = 2, },
-+	{ .name = "nQRTable30",  .offset = 70, .bytes = 2, },
-+	{ .name = "nCycles",     .offset = 72, .bytes = 2, },
-+	{ .name = "nFullCapNom", .offset = 74, .bytes = 2, },
-+	{ .name = "nRComp0",     .offset = 76, .bytes = 2, },
-+	{ .name = "nTempCo",     .offset = 78, .bytes = 2, },
-+	{ .name = "nIAvgEmpty",  .offset = 80, .bytes = 2, },
-+	{ .name = "nFullCapRep", .offset = 82, .bytes = 2, },
-+	{ .name = "nVoltTemp",   .offset = 84, .bytes = 2, },
-+	{ .name = "nMaxMinCurr", .offset = 86, .bytes = 2, },
-+	{ .name = "nMaxMinVolt", .offset = 88, .bytes = 2, },
-+	{ .name = "nMaxMinTemp", .offset = 90, .bytes = 2, },
-+	{ .name = "nSOC",        .offset = 92, .bytes = 2, },
-+	{ .name = "nTimerH",     .offset = 94, .bytes = 2, },
-+
-+	{ .name = "nConfig",    .offset = 96,  .bytes = 2, },
-+	{ .name = "nRippleCfg", .offset = 98,  .bytes = 2, },
-+	{ .name = "nMiscCfg",   .offset = 100, .bytes = 2, },
-+	{ .name = "nDesignCap", .offset = 102, .bytes = 2, },
-+	{ .name = "nHibCfg",    .offset = 104, .bytes = 2, },
-+	{ .name = "nPackCfg",   .offset = 106, .bytes = 2, },
-+	{ .name = "nRelaxCfg",  .offset = 108, .bytes = 2, },
-+	{ .name = "nConvgCfg",  .offset = 110, .bytes = 2, },
-+	{ .name = "nNVCfg0",    .offset = 112, .bytes = 2, },
-+	{ .name = "nNVCfg1",    .offset = 114, .bytes = 2, },
-+	{ .name = "nNVCfg2",    .offset = 116, .bytes = 2, },
-+	{ .name = "nSBSCfg",    .offset = 118, .bytes = 2, },
-+	{ .name = "nROMID0",    .offset = 120, .bytes = 2, },
-+	{ .name = "nROMID1",    .offset = 122, .bytes = 2, },
-+	{ .name = "nROMID2",    .offset = 124, .bytes = 2, },
-+	{ .name = "nROMID3",    .offset = 126, .bytes = 2, },
-+
-+	{ .name = "nVAlrtTh",      .offset = 128, .bytes = 2, },
-+	{ .name = "nTAlrtTh",      .offset = 130, .bytes = 2, },
-+	{ .name = "nSAlrtTh",      .offset = 132, .bytes = 2, },
-+	{ .name = "nIAlrtTh",      .offset = 134, .bytes = 2, },
-+	{ .name = "nUser1C4",      .offset = 136, .bytes = 2, },
-+	{ .name = "nUser1C5",      .offset = 138, .bytes = 2, },
-+	{ .name = "nFullSOCThr",   .offset = 140, .bytes = 2, },
-+	{ .name = "nTTFCfg",       .offset = 142, .bytes = 2, },
-+	{ .name = "nCGain",        .offset = 144, .bytes = 2, },
-+	{ .name = "nTCurve",       .offset = 146, .bytes = 2, },
-+	{ .name = "nTGain",        .offset = 148, .bytes = 2, },
-+	{ .name = "nTOff",         .offset = 150, .bytes = 2, },
-+	{ .name = "nManfctrName0", .offset = 152, .bytes = 2, },
-+	{ .name = "nManfctrName1", .offset = 154, .bytes = 2, },
-+	{ .name = "nManfctrName2", .offset = 156, .bytes = 2, },
-+	{ .name = "nRSense",       .offset = 158, .bytes = 2, },
-+
-+	{ .name = "nUser1D0",       .offset = 160, .bytes = 2, },
-+	{ .name = "nUser1D1",       .offset = 162, .bytes = 2, },
-+	{ .name = "nAgeFcCfg",      .offset = 164, .bytes = 2, },
-+	{ .name = "nDesignVoltage", .offset = 166, .bytes = 2, },
-+	{ .name = "nUser1D4",       .offset = 168, .bytes = 2, },
-+	{ .name = "nRFastVShdn",    .offset = 170, .bytes = 2, },
-+	{ .name = "nManfctrDate",   .offset = 172, .bytes = 2, },
-+	{ .name = "nFirstUsed",     .offset = 174, .bytes = 2, },
-+	{ .name = "nSerialNumber0", .offset = 176, .bytes = 2, },
-+	{ .name = "nSerialNumber1", .offset = 178, .bytes = 2, },
-+	{ .name = "nSerialNumber2", .offset = 180, .bytes = 2, },
-+	{ .name = "nDeviceName0",   .offset = 182, .bytes = 2, },
-+	{ .name = "nDeviceName1",   .offset = 184, .bytes = 2, },
-+	{ .name = "nDeviceName2",   .offset = 186, .bytes = 2, },
-+	{ .name = "nDeviceName3",   .offset = 188, .bytes = 2, },
-+	{ .name = "nDeviceName4",   .offset = 190, .bytes = 2, },
-+};
-+
- static const enum power_supply_property max1720x_battery_props[] = {
- 	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_CAPACITY,
-@@ -249,31 +381,74 @@ static int max1720x_battery_get_property(struct power_supply *psy,
- 	return ret;
- }
- 
--static int max1720x_probe_sense_resistor(struct i2c_client *client,
--					 struct max1720x_device_info *info)
-+static
-+int max1720x_nvmem_reg_read(void *priv, unsigned int off, void *val, size_t len)
-+{
-+	struct max1720x_device_info *info = priv;
-+	unsigned int reg = MAX1720X_NXTABLE0 + (off / 2);
-+
-+	return regmap_bulk_read(info->regmap_nv, reg, val, len / 2);
-+}
-+
-+static int max1720x_probe_nvmem(struct i2c_client *client,
-+				struct max1720x_device_info *info)
- {
- 	struct device *dev = &client->dev;
--	struct i2c_client *ancillary;
-+	struct nvmem_config nvmem_config = {
-+		.dev = dev,
-+		.name = "max1720x_nvmem",
-+		.cells = max1720x_nvmem_cells,
-+		.ncells = ARRAY_SIZE(max1720x_nvmem_cells),
-+		.read_only = true,
-+		.root_only = true,
-+		.reg_read = max1720x_nvmem_reg_read,
-+		.size = ARRAY_SIZE(max1720x_nvmem_cells) * 2,
-+		.word_size = 2,
-+		.stride = 2,
-+		.priv = info,
-+	};
-+	struct nvmem_device *nvmem;
-+	unsigned int val;
- 	int ret;
- 
--	ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
--	if (IS_ERR(ancillary)) {
-+	info->ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
-+	if (IS_ERR(info->ancillary)) {
- 		dev_err(dev, "Failed to initialize ancillary i2c device\n");
--		return PTR_ERR(ancillary);
-+		return PTR_ERR(info->ancillary);
- 	}
- 
--	ret = i2c_smbus_read_word_data(ancillary, MAX1720X_NRSENSE);
--	i2c_unregister_device(ancillary);
--	if (ret < 0)
--		return ret;
-+	info->regmap_nv = devm_regmap_init_i2c(info->ancillary,
-+					       &max1720x_nvmem_regmap_cfg);
-+	if (IS_ERR(info->regmap_nv)) {
-+		dev_err(dev, "regmap initialization of nvmem failed\n");
-+		ret = PTR_ERR(info->regmap_nv);
-+		goto err;
-+	}
-+
-+	ret = regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to read sense resistor value\n");
-+		goto err;
-+	}
- 
--	info->rsense = ret;
-+	info->rsense = val;
- 	if (!info->rsense) {
- 		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
- 		info->rsense = 1000; /* in regs in 10^-5 */
- 	}
- 
-+	nvmem = devm_nvmem_register(dev, &nvmem_config);
-+	if (IS_ERR(nvmem)) {
-+		dev_err(dev, "Could not register nvmem!");
-+		ret = PTR_ERR(nvmem);
-+		goto err;
-+	}
-+
- 	return 0;
-+err:
-+	i2c_unregister_device(info->ancillary);
-+
-+	return ret;
- }
- 
- static const struct power_supply_desc max1720x_bat_desc = {
-@@ -299,24 +474,33 @@ static int max1720x_probe(struct i2c_client *client)
- 
- 	psy_cfg.drv_data = info;
- 	psy_cfg.fwnode = dev_fwnode(dev);
-+	i2c_set_clientdata(client, info);
- 	info->regmap = devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
- 	if (IS_ERR(info->regmap))
- 		return dev_err_probe(dev, PTR_ERR(info->regmap),
- 				     "regmap initialization failed\n");
- 
--	ret = max1720x_probe_sense_resistor(client, info);
-+	ret = max1720x_probe_nvmem(client, info);
- 	if (ret)
--		return dev_err_probe(dev, ret,
--				     "Failed to read sense resistor value\n");
-+		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
- 
- 	bat = devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
--	if (IS_ERR(bat))
-+	if (IS_ERR(bat)) {
-+		i2c_unregister_device(info->ancillary);
- 		return dev_err_probe(dev, PTR_ERR(bat),
- 				     "Failed to register power supply\n");
-+	}
- 
- 	return 0;
- }
- 
-+static void max1720x_remove(struct i2c_client *client)
-+{
-+	struct max1720x_device_info *info = i2c_get_clientdata(client);
-+
-+	i2c_unregister_device(info->ancillary);
-+}
-+
- static const struct of_device_id max1720x_of_match[] = {
- 	{ .compatible = "maxim,max17201" },
- 	{}
-@@ -329,6 +513,7 @@ static struct i2c_driver max1720x_i2c_driver = {
- 		.of_match_table = max1720x_of_match,
- 	},
- 	.probe = max1720x_probe,
-+	.remove = max1720x_remove,
- };
- module_i2c_driver(max1720x_i2c_driver);
- 
--- 
-2.39.2
 
+
+
+
+> +pkgdesc=3D'Linux'
+> +url=3D'https://www.kernel.org/'
+> +# Enable flexible cross-compilation
+> +arch=3D(${CARCH})
+> +license=3D(GPL-2.0-only)
+> +makedepends=3D(
+> +       base-devel
+
+
+The base-devel group includes autoconf, automake, libtool, etc.
+
+Kbuild does not use those.
+
+
+I like a list of individual packages, as seen in arch linux:
+
+https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/blob/6.9.=
+9.arch1-1/PKGBUILD?ref_type=3Dtags#L11
+
+
+
+
+
+
+> +       bc
+> +       cpio
+> +       gettext
+> +       libelf
+> +       openssl
+> +       pahole
+> +       perl
+> +       python
+> +       rsync
+> +       tar
+> +)
+> +options=3D(!debug !strip !buildflags !makeflags)
+> +
+> +build() {
+> +       # MAKEFLAGS from makepkg.conf override the ones inherited from kb=
+uild.
+> +       # Bypass this override with a custom variable.
+> +       export MAKEFLAGS=3D"${KBUILD_MAKEFLAGS}"
+> +       cd "${objtree}"
+> +
+> +       # makepkg does a "chmod a-srw", triggering warnings during kbuild
+> +       chmod 0755 "${pkgdirbase}" || true
+
+
+Please remove this.
+
+The warning is emitted by
+
+  find . -name '*.usyms' | xargs rm -f
+
+in scripts/remove-stale-files.
+
+
+I will apply this first:
+https://lore.kernel.org/linux-kbuild/20240717181340.1518266-1-masahiroy@ker=
+nel.org/T/#u
+
+
+
+
+
+
+> +
+> +       ${MAKE}
+
+
+This will cause a revision mismatch between the package and
+'uname -a' in the installed kernel image.
+
+You execute scripts/build-version in scripts/Makefile.package,
+and once again during ${MAKE}.
+
+
+The revision in include/generated/utsversion.h is bigger
+than ${pkgrel}.
+
+
+kernel.spec does like this:
+
+  %{make} %{makeflags} KERNELRELEASE=3D%{KERNELRELEASE}
+KBUILD_BUILD_VERSION=3D%{release}
+
+
+
+You need to do something similar.
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
