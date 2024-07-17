@@ -1,87 +1,90 @@
-Return-Path: <linux-kernel+bounces-254841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EA993385E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DB933841
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB83283176
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047FE1F22984
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713AA219F3;
-	Wed, 17 Jul 2024 07:54:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16FF2135B;
+	Wed, 17 Jul 2024 07:50:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E90210EC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A811C68F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721202844; cv=none; b=Enqa6n+FwmdnUTQSe1vkekJBXaRgeqA8nmmaO/QVj9ojPmuobqFAma0FVFuYF7HFL+QWA9JxJ/n3qSK/nCl/O8QjIyoPiG0WHNTP/GUIN9F5uQcpjQhDYKexyG97DjugFC7AD3Cvyt/4X0q82RkrBXCrDqFu3mzB2aotVes6MKY=
+	t=1721202601; cv=none; b=pEp+SP88dpNEF2GYvLXsgv83bQWLc2xROKKxeEfqr9ruoqt8MTEM5FRn7LvQmXNZ8tvuoL7A0AXd5FWqhY/OMF8fAOcg+He0jOjVsiEllXl7BaXKaQDFZMD1mc93Hzf8xDj/bGh+kr9Fv73eNC7v4Il4L9L6L1I+BmZQygE+QT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721202844; c=relaxed/simple;
-	bh=HTphJf/vtkaGyd9Fm9S2QENKL/UOHYmbtv2ZJ7xTSo0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z04ZjLw4VT3MH+1qwyPwB6na9G9hlYkL2caNYkgZNd8UJgz0i5Qb0teXkjEHzA+zjvYbhwEFWaqSI64DgRKVXMhi1pl5Cd2eHKbvP6/U2ZFzoVz9ZwmMKtSimCIYHNHOQ/dVFfa5ntUDi7i4E+rPcfUFedKbwLy4Bm3G7aCrAbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso110820539f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:54:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721202842; x=1721807642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=459Wh7MzFQMVmI1CINvASqTLvP2mJWqT1PrLK1j8cWc=;
-        b=h27Uco3EtKI/X37uly+FEGsLq2RvG/aUPjy3+KOCm+IcvTNeNdqnQIpNkpumGUBQ2i
-         6cLi6RqEXxOuhslb0/4xSYYbp83eUIzKdQUt4+FE4gVMNkuD57Xg6u8oKtDOqFz2zDLu
-         +50UN79loE+Y7CLRavUpZiKlusARYCi3aiX+6q/i/EZt5PDff7t2csxHdt0NO+VQqygR
-         K/Y68BjJIQ2jmEkcc7U+6BYmTLaXzs67Ug5VSXJPgMke84cjiKLhc6RL9YrZIVp/h92N
-         gIZjdJCQJH+C+CF041SqaoJ45GbnFCojN/GqIz2qCEHF8HVvN9ZBLCjX/QvVqtnAmsSC
-         5fkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUievm8GDXJO1jsUCQcd0eRoSLILHZbSUUJMQ6W5lOpgF7dN3q3YlpwqUihWAJOAHmfz2MHuGIFxVgs1F6PioRO7ziw5yf2AB7TrCX
-X-Gm-Message-State: AOJu0Yzb4lubb5uJswxGMosHXMMNxixplsPJKfEyc94pM20mSfgp6eOl
-	VFxf4acRngRy8o/9oiZzJbpirCoVv4YPqWVp/YUmTFusqVk7d4tLsiACuu9URCYQT0LY5tY7jQg
-	1Dm3Nxxr7F4riU8wGoz0el3chL9yMmZpg6U4QcLAgE8YDiTj9sXfe+38=
-X-Google-Smtp-Source: AGHT+IFP0S3xxxWJCsw8bo32m8dJkh7cnYgUB+8eS65bkcveoWdI88X6R/Atwy8CYDB+GwzBKKs6Axosp7FG7bap07PJ/NNBpaja
+	s=arc-20240116; t=1721202601; c=relaxed/simple;
+	bh=mUorW585kESl/Ad/7tH+uLqI2fpfwcvvi/aUNxJGhc8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WVS2c4V85FhzJ02EQiBIe+ywyTMHfjzrLJoHYwuGVJa0xhhdoxVZHlq6zwGQ6bBOXVNPZJj/hqy5TjW/m1oPd04zwf7aDqwTqUlkSdoqa2JT/FLSXReAHLGzQlOHe2FMm2uvSePGycLV6/AMA4RZ7w5kCkTtscyIKCXxQcQsJUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WP7Jx4hYXz2ClD7;
+	Wed, 17 Jul 2024 15:45:37 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 30AD114037B;
+	Wed, 17 Jul 2024 15:49:56 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 17 Jul
+ 2024 15:49:55 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <linux@armlinux.org.uk>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<gregkh@linuxfoundation.org>, <arnd@arndb.de>, <deller@gmx.de>,
+	<javierm@redhat.com>, <bhe@redhat.com>, <robh@kernel.org>,
+	<peterz@infradead.org>, <julian.stecklina@cyberus-technology.de>,
+	<rafael.j.wysocki@intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next v3 0/2] Fix crash memory reserve exceed system memory bug
+Date: Wed, 17 Jul 2024 15:54:37 +0800
+Message-ID: <20240717075439.2705552-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8717:b0:4b9:6f13:fb1a with SMTP id
- 8926c6da1cb9f-4c215cc8f41mr33366173.4.1721202841758; Wed, 17 Jul 2024
- 00:54:01 -0700 (PDT)
-Date: Wed, 17 Jul 2024 00:54:01 -0700
-In-Reply-To: <62834558-1286-4af2-ab6b-7d1ef309c793@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f83e76061d6cc375@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
- dereference in attr_make_nonresident
-From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Hello,
+On x86_32 and arm32, the crash memory reserve may exceed system memory
+and display "reserved ok", fix it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+changes in v3:
+- Handle the check in reserve_crashkernel() Baoquan suggested.
+- Split x86_32 and arm32.
+- Add Suggested-by.
+- Drop the wrong fix tag.
 
-Reported-and-tested-by: syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com
+changes in v2:
+- Also fix for x86_32.
+- Update the fix method.
+- Peel off the other two patches.
+- Update the commit message.
 
-Tested on:
+Jinjie Ruan (2):
+  x86/kexec: Fix crash memory reserve exceed system memory bug
+  ARM: Fix crash memory reserve exceed system memory bug
 
-commit:         562d060b ntfs3: Convert attr_make_nonresident to use a..
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d54f31980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc26ad11927ab7fa
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b6ed16da1077f45bc8e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+ arch/arm/kernel/setup.c | 5 +++++
+ arch/x86/kernel/setup.c | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+-- 
+2.34.1
+
 
