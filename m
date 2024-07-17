@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-255239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE08933DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A466933DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4102847BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51DD1F215EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263BD180A7D;
-	Wed, 17 Jul 2024 13:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D01180A77;
+	Wed, 17 Jul 2024 13:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="s2WEjZpK"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="sbqc196P"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA0113AF2;
-	Wed, 17 Jul 2024 13:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DADF180A67
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223798; cv=none; b=YuYnrQnHeNLpte4+m+Dodt8pwIwXQ/8FHLTn79bLsml5fG/+QQysBAPC3ZbafQWgs5bv9AbysHvzhj76jLgIFdWRlCwIiY6mOTSk8zc6H1bvRCWWQKzQ/ec+rlGUySu+55ZlgOQnHQs1RQkFrz+24PGWzrX3ZKGem0ooLT492Us=
+	t=1721223842; cv=none; b=CNUBSsSi3TLbaADqR+LUBnZYUFiCEjl/w+x/yOb+r65Uz630vXNuXCkOeFueYDGXY0FXaLw7Rfmaf+sKgvwKRCZLxH+0sQyfBahMMsrxcD0kLtVbGvYjpCoWFBoTQM+MN1DIYnwulOuEUgFkXPI+B/VcTTTwCV6pHb20Z1X7t+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223798; c=relaxed/simple;
-	bh=XsjKcz7wJDMS9Op0lhw4ugrW9oIsyEt2rhrcKG9Ughc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4KuB18WF78OUr+W2Jd9W5AeuOBUT5h5cE2bfX9IQK4s2Fw6POkvfJAFReGtw9/KYPx8IJGMjoCDSKnO+wSPqZq1z1rrsXYbu5Cz1Mhq5sc/0FOZUO/Z7ELZsCA9tTaoslYAIPbR9T10TLOwmJfDTm5o/voRYzI07OrPJGj+/9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=s2WEjZpK; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721223795;
-	bh=XsjKcz7wJDMS9Op0lhw4ugrW9oIsyEt2rhrcKG9Ughc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s2WEjZpKxVj3VSYPwqNLEjn0TVGfUKwUf1Vlos1NKJftWd1xo0ziwwFYTjZwz8c6P
-	 py5vi7V/pO3fnPdMue9/A3KfPb0XHvHIF/1XiyzfoB6D7EAVfByBWER1lB3OTKHnhS
-	 Aq5T3ln8TCg0N64d8/mIjUKaw+Gr98xOe/+w/3xo8ci/z8vFSukSnyEcHlORMXY6Kj
-	 KK8tW7UCKSL5f0gVuK2gzUHyn4dnY5xNsGUAk+gj0TurFe7Fcc5PhiWbRWtP/mIs9s
-	 Kn0WLUtMlsKZmwPsRYqgMfwEhnnioASeQEbB6SoUKHok+Mz+H/nyHsSJAh5dGPf4ao
-	 BLiDWutrW38bQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 31A3837805D6;
-	Wed, 17 Jul 2024 13:43:14 +0000 (UTC)
-Message-ID: <d90ef170-6c4c-4db2-9757-8e3f1cf46ec7@collabora.com>
-Date: Wed, 17 Jul 2024 15:43:13 +0200
+	s=arc-20240116; t=1721223842; c=relaxed/simple;
+	bh=fDqXoGDyPat7FKpYZwqPWdsoGsj0SZZBxvAhOf6cc2Q=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=lJSGuOl/obtXX7Sr3JTLhBFgLsLPpvk0mrKOSwPXE7GHlDPU/eYJegeC/UFn4+7fKY9gi/OB88+eteWK3h226XgOAv8S5y33DHLk0ssGbVTCIfQPq7DCUS2aYSM19jO0Tt0adF2sagV9L5X+kCf+Szod+IA5mrh+isJo3mmMdzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=sbqc196P; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
+	by cmsmtp with ESMTPS
+	id TpHIsEgJSg2lzU4wpsBIAX; Wed, 17 Jul 2024 13:43:59 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id U4wosDBr9ks1PU4wosm6oS; Wed, 17 Jul 2024 13:43:59 +0000
+X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=6697ca9f
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8
+ a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MQlfNApVtpLswRFhPCVk/4dyoY9CiRNmhu9z8r1bf9s=; b=sbqc196P2oM8bpXWQvYd7B6Ejg
+	Dql6/TtxJDfq+AVZ7QH5w6mpgnF3oF5URlnrGDa+a3QntujSi8Dv2FQG1I5xqEQwXRPgokB5ziZml
+	kSv/9F8GQIee2xqrQGgE+KQMGzbEoyvQ2hLXzqkc83i5oCaH1gqs3yKTFy7xX3A3z6G3Ag85JdAdW
+	L2jHO7+ttSloCxh7yRmBw89SJopmRToboGV6QudQBk5FbWRZjjYAXZm1hPMzoFj4BfFkoTxsttc3s
+	I7I5bYUp9XwxFL/7CTrtsxihe4RlztmqwI9Jkjge+NBufbiuoamy5QaVVnaVJ9xel7mkNiLFtw8Qq
+	VedEnDFA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:57976 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sU4wm-000XCE-1r;
+	Wed, 17 Jul 2024 07:43:56 -0600
+Subject: Re: [PATCH 5.15 000/145] 5.15.163-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240717063804.076815489@linuxfoundation.org>
+In-Reply-To: <20240717063804.076815489@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <7011f03e-52c3-5929-145d-34e7e3c1199e@w6rz.net>
+Date: Wed, 17 Jul 2024 06:43:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] media: mediatek: Add support MT8188 AIE
-To: 20220614094956 created <yelian.wang@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
- teddy.chen@mediatek.com, hidenorik@chromium.org
-References: <20240717125426.32660-1-yelian.wang@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-In-Reply-To: <20240717125426.32660-1-yelian.wang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sU4wm-000XCE-1r
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:57976
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 61
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPVVjITk4nW2aaLlHNG2OZHTzAN4LUK4fdCbWBhJO6C5k1K4KDCNWEans4KPQ1H8FjN3hl1oCYyw51uWUqXt2aCP2MK07QV1dvFtU3UDXfjS/m0zz0mZ
+ fbi0hkZExulj2OdrO3WXIdt1AQmMZf+A15imMNUomjTWgtN23H84/KNrl3gaqVrTonEiDnBYwkb+pZSU6POsopEJMl9V9xbXr3s=
 
-Il 17/07/24 14:41, 20220614094956 created ha scritto:
-> From: Yelian Wang <yelian.wang@mediatek.com>
-> 
-> *** BLURB HERE ***
-> 
-> This patch series add YAML DT binding and V4L2 sub-device driver
-> for mediatek MT8188 AIE. AIE is the ISP unit in the SoC，it's used
-> to detect faces on an image stored in dram. Mainly used for the
-> camera's Face Detection function of MT8188.
-> 
+On 7/16/24 11:39 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.163 release.
+> There are 145 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Leaving the fact that this driver is *far* from being upstream quality, there's
-something missing that is essential for reviewers to even try to help you here.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-What does this hardware do, in depth?
-
-I get it, it's giving out "face detection" functionality, okay, but what are we
-supposed to feed to it? An image? A stream? Encoded? Decoded? Size limitations?
-
-What is it supposed to output?
-An image? A stream? Polygons? With or without text?
-
-....too many questions, and I'm afraid that this should not even be a V4L2 driver,
-or a generous part of it should not, anyway... maybe.
-
-With such a huge driver, you should at least provide an extensive overview of what
-you are trying to implement and how the user(/kernel)-facing part is supposed to
-work.
-
-Regards,
-Angelo
-
-> This series is based on linux-next, tag: next-20240716
-> 
-> Yelian Wang (3):
->    media: dt-bindings: add MT8188 AIE
->    uapi: linux: add MT8188 AIE
->    media: mediatek: add MT8188 AIE driver
-> 
->   .../bindings/media/mediatek-aie.yaml          |   99 +
->   drivers/media/platform/mediatek/Kconfig       |    1 +
->   drivers/media/platform/mediatek/Makefile      |    1 +
->   drivers/media/platform/mediatek/aie/Kconfig   |   13 +
->   drivers/media/platform/mediatek/aie/Makefile  |    5 +
->   drivers/media/platform/mediatek/aie/mtk_aie.h | 1012 +++++
->   .../media/platform/mediatek/aie/mtk_aie_53.c  | 2031 +++++++++
->   .../media/platform/mediatek/aie/mtk_aie_drv.c | 3613 +++++++++++++++++
->   include/uapi/linux/mtk_aie_v4l2_controls.h    |  130 +
->   include/uapi/linux/videodev2.h                |    6 +
->   10 files changed, 6911 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/mediatek-aie.yaml
->   create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
->   create mode 100644 drivers/media/platform/mediatek/aie/Makefile
->   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
->   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_53.c
->   create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
->   create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
-> 
+Tested-by: Ron Economos <re@w6rz.net>
 
 
