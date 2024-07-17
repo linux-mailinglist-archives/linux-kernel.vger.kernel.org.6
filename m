@@ -1,74 +1,51 @@
-Return-Path: <linux-kernel+bounces-255047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89C3933AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD45933AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BD8B22001
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637A11F23CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0565F17DA39;
-	Wed, 17 Jul 2024 10:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C380317E901;
+	Wed, 17 Jul 2024 10:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="po4X0/RP"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="iny3y7pa"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798CE14A61B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D397314B07E;
+	Wed, 17 Jul 2024 10:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721211190; cv=none; b=rFPod/EM4cCXx4ZZyGhNl8oORRw2TXaH5VbWh/bjAUnQB3wcUCAXAXp7TZxsH+0V7fGmNFFEqDqBTNu7HV+CAr7P5V5ddFL58KWEXwI7TQPCRvsNs7AulNWN8UvR2UOerRN573UxTmSc2ygQ04HtDoJwTy6Hgl02Py6Iae6jcWw=
+	t=1721211207; cv=none; b=ucgDK4ZS6E8BVxJFlMUBGDa6qgHzwYN9bgWLXsjUNVCiul/ZJ2D5M4qHaNATJsBGAV1oE9AuwLvgIVGTzNHPuuGcEV93A8Ks3t2LEGCEsWV+MIS+81khUuWVWlJ2XN0P7ftjVsAVxChDRpA8TNcXvRp5H3ScqoRaKHI/UqXt1ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721211190; c=relaxed/simple;
-	bh=sbQDYx3IqFNIFf+NpVv6jXo2CfZEyQqsXpShIzWzBwY=;
+	s=arc-20240116; t=1721211207; c=relaxed/simple;
+	bh=3j9GXlVujKX4aLkp4JG1ZNkdJuyrtqTyjY08lHnaVaU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qXOdALNMp3G62osNqlLWfQkhOUwz2lLAOy6QoDyo7EPto3zy8aF67a5/L+DQ3TQYErgDesl1GFsZNctJ0ZF6lKCmSomeIb4Pxp24IeGReImNmHTX/KTB12J379hQ7QTFJRGqQbNzyJrthjrFkAM0oz/ih/+HWrRrKE70bF3lD8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=po4X0/RP; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so8369318a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721211187; x=1721815987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EuwjtZgTYYxWf9tgyLgCliudozyDttF0JWvGaYQXew=;
-        b=po4X0/RPYBCzMrGL3V+Uh5lttLgCljvuRwvF53k9+R6YFhWucvDusvGVkGLpj2TvPx
-         auYZKuA6zdC4aOo1CQsg7mYClYwCYSM+XVmDWP9O87Is6+NJQlG8zwXSXxzJPdSV8ApA
-         2LKuld7hWUUwP3I+KJ2OPff0Bx2s48Ig+GCdNuU8o3hFizSqYvqdiMG3RAoLRuf9oCQu
-         E51L4OAsXGUrkAuZTyVzk4M9nrNIIwCmHNCtE/KKEjNV8U3IgKd8xWd5hBBaxpGsdnPG
-         qfGPBdfXjKd+E0J1c7zr3aCNaSJQUqXgVwRC+5uwaEBDUQMp2YHCwsiaS44w5OoodMw3
-         uLgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721211187; x=1721815987;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6EuwjtZgTYYxWf9tgyLgCliudozyDttF0JWvGaYQXew=;
-        b=kCr1X7XJV/c0eN/WvNYJwf+PIgxYojG4dmUzOpijurN5YAbwLEozF7fvn5q9GFETsR
-         Uv9SlNslAKVWyQLJruFYsjXF4k1ftM4CWPyKL/8WQ/CEelgh930YUtN6opZqMtIxcIWi
-         EvojU5zrtid7rbxg+G92kWxgB4WmLgYblcX7+sS9LqnyyJJqMreANKi041UBIaRKtl06
-         1+4RlXVd3ENrKsB4NNwQJPc6E/o91eOGZ0ssDzXqHmuGo8ihLvy1Sq0eWwydlF6se0GS
-         XZDOdPZTIzMjjnwjKFU43AFUzaXIxgceDQjY7PhSGA2JIT2pEerangePcXlGvvf2QCcD
-         RxMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVcN3XNlQ48hRiH+x+kn+eMDXFvENl2o9JjmvnfJEl3M5WyR69OU09EwTZRuHZWVAS06xwmAC1bkUUrLPN6pBqYgobnElanDeo0kB5
-X-Gm-Message-State: AOJu0YzO40r7daY9/jhJi6uJTrZi3t5fmlV/6af/tdxwc1uXK3eQ2Dxv
-	FAdNwXNiAFHUvROfJjokE0/UhfJRoHTFWEKY/8cGpJxYud48WL25deUgVXYlO6E=
-X-Google-Smtp-Source: AGHT+IHGVigwNWZsXfiJpPBSxOgTAk//9+YS8l68xkjuM4MvQe9ZV1oJcXCgjoPTNlaTVEDxjhHY4Q==
-X-Received: by 2002:a50:bb02:0:b0:57c:7486:3f7d with SMTP id 4fb4d7f45d1cf-5a05bdc0ff8mr876522a12.19.1721211186703;
-        Wed, 17 Jul 2024 03:13:06 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b255253absm6690218a12.42.2024.07.17.03.13.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 03:13:06 -0700 (PDT)
-Message-ID: <a6407abf-b13d-41db-b1ff-0c70796c8af5@linaro.org>
-Date: Wed, 17 Jul 2024 12:13:04 +0200
+	 In-Reply-To:Content-Type; b=QG1tmJfeslthFwc0nXU/qEJ/qG3+bpL06nn97DHPljIL6vcyh6qFOVPPYBpkPwsXBpXpzbbJsjKycxgcy6z0OZuLQJpYk+GPMNGDIi3brWcimQa7bcLwHLW3Jf/ytltgCGAwhAyncHjwp2zTHNkNbsoaRT4SXOA3RWiwnrFQ25k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=iny3y7pa; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=6sVlgv8Wc8tK6kpb2xBD0U5ztubfajaUuhHy9zLWVrg=; t=1721211204;
+	x=1721643204; b=iny3y7paecJRV6s3xusBQCHr5EMXa4USHYQiRerTXh0u/i1/w4OGQP/FhN7Df
+	d/CbOz4VXGGc5U7KtQvMaa/fU/zwsEIka3YwgFhyQ/YETNUIqrFz7NEv9ZXte+/s7HrU6DfWG1NpK
+	7neaj19Q4Hw2snfli9yqjoBGWECaTyjMsyKlQ9kMQ2icxPTJomcXTnDk2q21JWdtc8F0Cm0hj+i5D
+	hvx8g7jtXm0t1fDuc2dP/jgxLtngTPT8YzdgavnSLuYFE4g1LRSFjU1GTneOO1y22gL0tVO5mohds
+	wsMQbCmJE9Ts7ElasxwyKWDxtg2LCusauzxJxGluXzzu+9wYDQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sU1ex-00035S-5A; Wed, 17 Jul 2024 12:13:19 +0200
+Message-ID: <8218aa5f-c1f1-4e85-bbbc-dde19850e732@leemhuis.info>
+Date: Wed, 17 Jul 2024 12:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,138 +53,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
- <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
- <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
- <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
- <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
- <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
- <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
- <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
- <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
- <43d6523e-d6b7-4fda-92bb-a52fcad2fdba@linaro.org>
- <CAA8EJpoCCCAUv8PSDOEFoHhZZoEjCAOBGkhjpmrrYum=ejOvDQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAA8EJpoCCCAUv8PSDOEFoHhZZoEjCAOBGkhjpmrrYum=ejOvDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] perf build: libtraceevent, libtracefs feature
+ check with pkg-config
+To: Guilherme Amadio <amadio@gentoo.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Leo Yan <leo.yan@arm.com>,
+ linux-perf-users@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAM9d7ciLGP_w9YYOb-2U2ESg8kQx_knQXuB6_2JZVZ2ktL+bzg@mail.gmail.com>
+ <20240712194511.3973899-1-amadio@gentoo.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20240712194511.3973899-1-amadio@gentoo.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1721211204;b15d2751;
+X-HE-SMSGID: 1sU1ex-00035S-5A
 
-On 17.07.2024 11:57 AM, Dmitry Baryshkov wrote:
-> On Wed, 17 Jul 2024 at 12:53, <neil.armstrong@linaro.org> wrote:
->>
->> On 17/07/2024 11:49, Dmitry Baryshkov wrote:
->>> On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>>>
->>>> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
->>>>> On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
->>>>>> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
->>>>>>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>>>>>>>
->>>>>>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
->>>>>>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
->>>>>>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
->>>>>>>>>> and byte1_div_clk_src, the clock rate should propagate to
->>>>>>>>>> the corresponding _clk_src.
->>>>>>>>>>
->>>>>>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
->>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>>>>>> ---
->>>>>>>>>>     drivers/clk/qcom/dispcc-sm8650.c | 2 ++
->>>>>>>>>>     1 file changed, 2 insertions(+)
->>>>>>>>>
->>>>>>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
->>>>>>>>> rate should not be propagated. Other platforms don't set this flag.
->>>>>>>>>
->>>>>>>>
->>>>>>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
->>>>>>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
->>>>>>>
->>>>>>> Yes, the driver sets byte_clk with the proper rate, then it sets
->>>>>>> byte_intf_clk, which results in a proper divisor.
->>>>>>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
->>>>>>> byte_intf_clk rate will also result in a rate change for the byte_clk
->>>>>>> rate.
->>>>>>>
->>>>>>> Note, all other platforms don't set that flag for this reason (I think
->>>>>>> I had to remove it during sm8450 development for this reason).
->>>>>>>
->>>>>>
->>>>>> Ack, I think this deserves a comment explaining this, I'll add it.
->>>>>
->>>>> But where to place it? This applies to _all_ dispcc controllers.
->>>>
->>>> Commit message
->>>
->>> It is already committed.
->>>
->>
->> The thing we keep adding new clock drivers based on previous ones that uses
->> specific ops and flags with no documented reasons except in commit messages,
->> but it's often buried into multiple cleanup changes.
->>
->> So at some point we should add simple comments before each special clock
->> explaining what we're doing here, a good example is the clk_regmap_phy_mux_ops,
->> where I had to dig into commit logs and understand why we handle it differently
->> from downstream.
+On 12.07.24 21:40, Guilherme Amadio wrote:
 > 
-> Yeah, regmap_phy_mux_ops is a nasty one.
-> 
-> Or the whole story about converting flags from vendor DT to upstream
-> driver code.
-> 
-> Probably it's worth specifying everything somewhere under
-> Documentation/. Or in drivers/clk/qcom/common.h  Or a wiki page
-> somewhere (though my preference is towards the in-kernel docs).
+> Here is version 3 of the patchset. I see the change to send output to devnull
+> has already been applied, so I am submitting the remaining work only.
+> [...]
 
-drivers/clk/qcom/docs.rst.. Half-joking, half not.. there is some hw
-docs in Documentation/ but I'm not sure if more than 3 people know
-about it.
+Applied the series and it fixed my build problems with Fedora's RPM spec
+file adjusted for -next[1], hence:
 
-Konrad
-> 
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+
+[1]
+https://lore.kernel.org/all/569626ee-4aca-418b-9cfc-10cf5e2747a9@leemhuis.info/
+
+Ciao, THorsten
+
 
