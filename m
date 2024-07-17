@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-255168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A733933D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:32:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54CC933D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05301C21234
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:32:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3961F22C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F3517E8FA;
-	Wed, 17 Jul 2024 12:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AC2180053;
+	Wed, 17 Jul 2024 12:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="chlnY269"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8xRCewe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4817F36A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADE417E8FA;
+	Wed, 17 Jul 2024 12:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721219533; cv=none; b=NlxMutQc5/+h4ulQpdoO5f0MWT40U+zQWDb6LrFizLvwo6TuPKJ5Uv0nRbopT6lZv7WrH1h5N+PvPtSpuPQE7NuJaTE+fjDOTOiWvaJgOiGlE1jBmxe/B6EBYDi6BRKrjsDYm/dQdmObA1bKLb5IcWRD3gmBMD+I+INgoA/+UMY=
+	t=1721219623; cv=none; b=HdlSkBcuhsE4hUy7ksO6wWVut15GhDBVpyR0pyONN/438NXAzgoQ4pwDDz3wRWLv7Sk1OUTtxWtHGuVE3Wd9NhdDw4Vcv+IlO/hDJKhdKy5MwH0XhDAIBoi8W/itmp4PRmtskopCX8KtSV7t0z5dWsczYnA8kZEauE0YRuwA2bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721219533; c=relaxed/simple;
-	bh=l05qdUDYtYtzIwJ2QhcxqvorSJ35g1P9v6/n6D76rGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r/YXOUbYGQxqbxuYEgtWTOEPJIA8E+kAqA7Agc/aggpKC3lvmmAaQwv3/ZDl9P6pZi4AlSHZt0kn5e4jeUTWHi3kMmaHWlCg5QTl5Kp2XUWZedbNtIFS5uhE88PRrF44Nt2OeL68CPXtCASzW+2gsDxh5VuCDz1OJLoZW1UpiRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=chlnY269; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so88301231fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721219529; x=1721824329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbUBi1oeUQFJbnBtGH+G+FVuJioTAizxvp0fQS1vBdo=;
-        b=chlnY269M/8PJCXrxxYMx5C4UbVcY/XeBhtBF+N+eaDqDph64xeVJV4o3B+prlrMAw
-         I9jxcoxnFDahQ67hgmg0HANHBMtBfnBXxHgqTE24XRr/IOHaSQXdsZW5RnFRLCMUPAKy
-         sL5hipQhKV4kDnJZNF5r+eqqXkrprxuxFM++pspUPw9kohv9Appgcel/SIEMoqdwPeUz
-         7hbnvQD4wSXn5WQhGWRpMBgXbhS50Q1Z96QD2D8nzL4yb6u1pSaihcdtTxaCKli7YGQs
-         9lAWflDitq/3JCuKOAsoKgdpJEZ0ieOge1voWhfkEmfd8xpUz6voa1T700cRZo3MZNRY
-         jnxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721219529; x=1721824329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GbUBi1oeUQFJbnBtGH+G+FVuJioTAizxvp0fQS1vBdo=;
-        b=I8AjSFjAQV/6Kb/GhPjodkDtlsep3iLWeuv4Xk/wWkayXveUnl/wPrz35LcICxmhBk
-         pAX8mSz/D07AegBkb5oq+Jbawa6FI4VB/RqQ43enkrbTrTpv945p3arrvNsc4j4sdkFW
-         T96GGtGLWlS+AUhsbhgVpT++fq5chnMKWBBSxB13GnVRNDWnCT0J6QmZYy+wSZJa2tGr
-         FTzANuT1XP4tycfTilBmDXUJYk/rKCCF/Bp3HUMINwbMDjkAk+COXAgkXgPIfMxGi87b
-         WirxyeyaYtwi8A8B7A6c1tsKKswosHVOy7xz9MFdh71mpB5PWnhdckBjxiVFr5FgutfB
-         9dlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFE4HF+VG9CSfrKEm00y5+7qo8g71qGstc2D5T15hULkIC2vEwwwMJ+ks01oQbG5xY4+gaoPhbN88ZOQ1urUhP1C/+mVl8kDuSfiHl
-X-Gm-Message-State: AOJu0YwoOTPM0ouu+JLJ5+dRpYyP+Huawl+UhN99f+A7IZeSvuWLc+KV
-	UyqA/G3E2SOrH1TAz0QlNy1H7DxHZv5BmCECQMefGgcmvmlA7x1ix/a4rGSjK3BwS86L8Ar5i7c
-	3E1h2aELHVkzVHhyCOShiM8NS1TarZW1Khk/J0w==
-X-Google-Smtp-Source: AGHT+IHrd6WA/u4topx2ck+TD1y4nbBr1UNLmG0DLlnysPBcQgOKnNlEbr4yK/AY56sZ0v8vExJDv8A5pxM3+zla9B8=
-X-Received: by 2002:a2e:a456:0:b0:2ee:4aaf:5f16 with SMTP id
- 38308e7fff4ca-2eefd04b65amr10712341fa.1.1721219528955; Wed, 17 Jul 2024
- 05:32:08 -0700 (PDT)
+	s=arc-20240116; t=1721219623; c=relaxed/simple;
+	bh=XPoHNvBvk5aWq4Z1/WJjxhDz8NnrxpWn5NC51h1FfQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mKc3SzdG4pGAXaU2LeNjEzEZbHzEZjRNXfFBzix32pRFpaEc38jxKM7hXfWYXPQ2K0eTgnYDhotgWNFNlqYsD68jWP5LCRRC0oL0jj0VeAiv4SBV8SWy8IgjmSqGXt0+gT16q+LIBMlv1sFB9X3IhG7vaslTGR2GqeGvAjfOt6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8xRCewe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEBCC32782;
+	Wed, 17 Jul 2024 12:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721219623;
+	bh=XPoHNvBvk5aWq4Z1/WJjxhDz8NnrxpWn5NC51h1FfQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8xRCeweLHGmv6CKbjkpl4zryLkOT68tBbaInoO2BoWnkD6sbKpEuyoAyc8KHw70t
+	 9khT7f05JdWaMoAuepBKqZ92egYEyal1O0M8jku1NCBVL+qbdyyAyt7fDXGts/ZYsN
+	 I55CCz8UC2zaZzyEHwxzjSaKTqopdAh3EDN1rw/jqsvQ5eIcKbbiH5LV5RFool9D1Z
+	 Dyh4p78JjS5Yzf7Q7lNO71AHUu0+PPCZyf+3gQ0DxL4r+RUznjEHLE3lSJoPGvQJRt
+	 hClqYrMiaoA+e6xVvBEQqLNdVg3JwlL3w9pqz9V0x8pmE86WyQzF1u97/u499idoJ9
+	 bRB5hNIoMLsow==
+Date: Wed, 17 Jul 2024 15:33:37 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
+Message-ID: <20240717123337.GI5630@unreal>
+References: <20240618125842.GG4025@unreal>
+ <b4bda963-7026-4037-83e6-de74728569bd@habana.ai>
+ <20240619105219.GO4025@unreal>
+ <a5554266-55b7-4e96-b226-b686b8a6af89@habana.ai>
+ <20240712130856.GB14050@ziepe.ca>
+ <2c767517-e24c-416b-9083-d3a220ffc14c@habana.ai>
+ <20240716134013.GF14050@ziepe.ca>
+ <ca6c3901-c0c5-4f35-934b-2b4c9f1a61dc@habana.ai>
+ <20240717073607.GF5630@unreal>
+ <2050e95c-4998-4b2e-88e7-5964429818b5@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716152318.207178-1-brgl@bgdev.pl> <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
- <CAMRc=MemuOOrEwN6U3usY+d0y2=Pof1dC=xE2P=23d2n5xZHLw@mail.gmail.com>
- <CAHk-=wg-L1K6N+0zZ-bcU7kGZMMDbXj4Z8smrsi1gvbi5U-GiQ@mail.gmail.com>
- <CACMJSeuSS1GBeMP66xt8CP3=6X9xNUZvj9cZHm_Lav6iaw9Gdw@mail.gmail.com> <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 17 Jul 2024 14:31:57 +0200
-Message-ID: <CAMRc=MdcUhBe6-P0KH8KfrHfp8wqM0fCWGoUZaVZ7+FAkECtpA@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2050e95c-4998-4b2e-88e7-5964429818b5@habana.ai>
 
-On Tue, Jul 16, 2024 at 10:29=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 16 Jul 2024 at 13:10, Bartosz Golaszewski
-> <bartosz.golaszewski@linaro.org> wrote:
-> >
-> >     select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
-> >
-> > in the ATH11K_PCI and ATH12K Kconfig entries? Am I getting this right?
->
-> So on the whole, I'd prefer these things to be done where they are
-> actually required.
->
-> But I'm not actually entirely sure what the hard _requirements_ from a
-> hardware - or a kernel build - standpoint actually are.
->
-> If there aren't any hard requirements at all, then maybe the whole "do
-> you want pweseq" should be an actual question (but limited only to
-> situations where it makes sense).
->
-> If the hard requirement is at the level of the driver itself, then the
-> "select" should be in the driver.
->
-> That doesn't seem to be the case here, since ATH11K_PCI certainly
-> works without it, but if that driver requires power sequencing on
-> ARCH_QCOM platforms, then maybe that is indeed the right thing.
->
-> And if the hard requirement comes from some SoC setup, then optimally
-> I think the "select" should be at that level, but we don't actually
-> seem to have that level of questions (but maybe something in
->
->    drivers/soc/qcom/Kconfig
->
-> might make sense?)
->
+On Wed, Jul 17, 2024 at 10:51:03AM +0000, Omer Shpigelman wrote:
+> On 7/17/24 10:36, Leon Romanovsky wrote:
+> > On Wed, Jul 17, 2024 at 07:08:59AM +0000, Omer Shpigelman wrote:
+> >> On 7/16/24 16:40, Jason Gunthorpe wrote:
+> >>> On Sun, Jul 14, 2024 at 10:18:12AM +0000, Omer Shpigelman wrote:
+> >>>> On 7/12/24 16:08, Jason Gunthorpe wrote:
+> >>>>> [You don't often get email from jgg@ziepe.ca. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >>>>>
+> >>>>> On Fri, Jun 28, 2024 at 10:24:32AM +0000, Omer Shpigelman wrote:
+> >>>>>
+> >>>>>> We need the core driver to access the IB driver (and to the ETH driver as
+> >>>>>> well). As you wrote, we can't use exported symbols from our IB driver nor
+> >>>>>> rely on function pointers, but what about providing the core driver an ops
+> >>>>>> structure? meaning exporting a register function from the core driver that
+> >>>>>> should be called by the IB driver during auxiliary device probe.
+> >>>>>> Something like:
+> >>>>>>
+> >>>>>> int hbl_cn_register_ib_aux_dev(struct auxiliary_device *adev,
+> >>>>>>                              struct hbl_ib_ops *ops)
+> >>>>>> {
+> >>>>>> ...
+> >>>>>> }
+> >>>>>> EXPORT_SYMBOL(hbl_cn_register_ib_aux_dev);
+> >>>>>
+> >>>>> Definately do not do some kind of double-register like this.
+> >>>>>
+> >>>>> The auxiliary_device scheme can already be extended to provide ops for
+> >>>>> each sub device.
+> >>>>>
+> >>>>> Like
+> >>>>>
+> >>>>> struct habana_driver {
+> >>>>>    struct auxiliary_driver base;
+> >>>>>    const struct habana_ops *ops;
+> >>>>> };
+> >>>>>
+> >>>>> If the ops are justified or not is a different question.
+> >>>>>
+> >>>>
+> >>>> Well, I suggested this double-register option because I got a comment that
+> >>>> the design pattern of embedded ops structure shouldn't be used.
+> >>>> So I'm confused now...
+> >>>
+> >>> Yeah, don't stick ops in random places, but the device_driver is the
+> >>> right place.
+> >>>
+> >>
+> >> Sorry, let me explain again. My original code has an ops structure
+> >> exactly like you are suggesting now (see struct hbl_aux_dev in the first
+> >> patch of the series). But I was instructed not to use this ops structure
+> >> and to rely on exported symbols for inter-driver communication.
+> >> I'll be happy to use this ops structure like in your example rather than
+> >> converting my code to use exported symbols.
+> >> Leon - am I missing anything? what's the verdict here?
+> > 
+> > You are missing the main sentence from Jason's response:  "don't stick ops in random places".
+> > 
+> > It is fine to have ops in device driver, so the core driver can call them. However, in your
+> > original code, you added ops everywhere. It caused to the need to implement module reference
+> > counting and crazy stuff like calls to lock and unlock functions from the aux driver to the core.
+> > 
+> > Verdict is still the same. Core driver should provide EXPORT_SYMBOLs, so the aux driver can call
+> > them directly and enjoy from proper module loading and unloading.
+> > 
+> > The aux driver can have ops in the device driver, so the core driver can call them to perform something
+> > specific for that aux driver.
+> > 
+> > Calls between aux drivers should be done via the core driver.
+> > 
+> > Thanks
+> 
+> The only place we have an ops structure is in the device driver,
+> similarly to Jason's example. In our code it is struct hbl_aux_dev. What
+> other random places did you see?
 
-The hard requirement really comes from the board level - not SoC. It's
-the board that has the BT/WLAN module hardwired and - depending on how
-the module is powered - may or may not require power sequencing. But I
-don't think we have any per-board infrastructure in Kconfig.
+This is exactly random place.
 
-> Anyway, this is not necessarily something where there is "one correct
-> answer". This may be a somewhat gray area, and it looks like ARCH_QCOM
-> is a very big "any Qualcomm SoC" thing and not very specific.
->
-> So I'm not sure what the right answer is, but I *am* pretty sure of
-> what the wrong answer is. And this:
->
->         default m if ((ATH11K_PCI || ATH12K) && ARCH_QCOM)
->
-> looks like it cannot possibly be right if ATH11K_PCI is built-in,
-> since then the probing of the device will happen long before that
-> PCI_PWRCTL_PWRSEQ module has been loaded.
->
-> And that doesn't sound sensible to me. Does it?
->
-> TL;DR:  I do think that the
->
->       select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
->
-> in the ATH11K_PCI and ATH12K Kconfig entries *may* be the right thing.
-> But again, I'm not actually 100% sure of the hard requirements here.
->
->            Linus
+I suggest you to take time, learn how existing drivers in netdev and
+RDMA uses auxbus infrastructure and follow the same pattern. There are
+many examples already in the kernel.
 
-After sleeping on it I really think that it may be better to introduce
-a more generic ARCH_HAVE_PCI_PWRCTL symbol so that we don't have to
-update the ATH Kconfig entires for every new platform that needs it.
-For want of a more fine-grained solution, we would select it from
-ARCH_QCOM.
+And no, if you do everything right, you won't need custom module
+reference counting and other hacks. There is nothing special in your
+device/driver which requires special treatment.
 
-Bart
+Thanks
 
