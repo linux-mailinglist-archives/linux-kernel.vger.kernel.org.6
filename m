@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-255077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040CC933B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DC4933B69
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4054281B07
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A778B1F214D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156B417F388;
-	Wed, 17 Jul 2024 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB3017F369;
+	Wed, 17 Jul 2024 10:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb+8h9GJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LM+ag3Q+"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE0B41C64;
-	Wed, 17 Jul 2024 10:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88671878;
+	Wed, 17 Jul 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721213177; cv=none; b=uwC0HDA5W28Eg8XQUg3W3H36UwUFdb7UJVhz+0SMXpGqeSvaJfVJkAgmKNWACq3qMtDgIpmr55fKsyTw1PRNFyacbqyV5IouqB6zE69lopn0DP4ceC8dgZbqVp+om1UcKppSYJtBb1ms3S6RE+SIr1rs539D970N5T7PD1XHB2g=
+	t=1721213271; cv=none; b=dIFMavJkn3lxgO0nwkh9anZHEaTbF2bInpewGD/5NtZHBQSJCyl/nlVpiTyxKv9qkY2ENkjXmD8mTMalVcKPnjRweMm9D+hQBFnWMjUZp+HH96j4v0uBhfGsceAQLLGbmUEFGbU715gyOUry6V0YBquMzvjfjV4LfHF0b9LtEMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721213177; c=relaxed/simple;
-	bh=8nW/0YkeP5wEzj+p/3pW+0dbcf7fT3l2DRseYG9QkiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bO4gR01Q9z7YJBp2VxmW81bJMVcu+xu3OnXszko25Dog6c7WC85vwbx1Z3NatdTwDuvVRkxuY6o+payHEPtRgm5r6KxJ/AUMygxnLbs+cWouFhm2CqhbdnEAkxREFeyrfSf21HdLegQgtWPB8eLZfKtq165TZrj2alLrkDIqLGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb+8h9GJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB33AC4AF09;
-	Wed, 17 Jul 2024 10:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721213176;
-	bh=8nW/0YkeP5wEzj+p/3pW+0dbcf7fT3l2DRseYG9QkiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gb+8h9GJpPciAOjw2qlO63dYwX08ENn1ArIVi6pEC7sFamktcwwYzOXKNQAKYlIjL
-	 74PUNtpKa/OYBcs6w3zZPvUW0Ergnpr6x2GyC5jvjzu1DauxyQqPIXNnxuFBkSlQkf
-	 3AWe7C/RP51y/3vSDdsWLp0jCBL5YUJQfboWOSoFdBo4Ph1HmZt3ji4t8qh1MFBqNo
-	 VgJAxA9TMYPbKVtoqXI6n1zdE6O99uDdVHv0x8h0hDDF84peiIcDdO5NR56yNm5pyM
-	 zS080OEgpNsEkZblNC8X0JAsZMTx4XGphDQ/sw3etfYpG1uZzwZo3nI2XMrb+jgSGp
-	 XnestQUKqnpig==
-Message-ID: <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
-Date: Wed, 17 Jul 2024 19:46:14 +0900
+	s=arc-20240116; t=1721213271; c=relaxed/simple;
+	bh=ruY8fr/FDHPN/H5Srs6o/2mLXsBXXssKCNZQ+en4LkU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qfMGMFOF/iXAZrp7mWeSwF/CCfH6N9fGkXi4QZB4BDm3NZHnbzAK2LqvvdHqiBi6kR35MGh5FxVRw25vl0kT7ewZq/trEd3ZIoAlbdnmznOYqwgR1+YxVIOFSbO+VVUZwVuh9CPf4TAkc6AlBqO2f2phiDCBF2ZfcYCyJ1zMdFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LM+ag3Q+; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721213268;
+	bh=ruY8fr/FDHPN/H5Srs6o/2mLXsBXXssKCNZQ+en4LkU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=LM+ag3Q+xxXDeckyZLl5bWQvkGinlvht/MJ+ZYyv5wumRFXODKOQHaDwHuBkm3iIK
+	 a9aXDzvD9MCBCYrand53jclBIrjB+AjlcDA/OhTm6N446CF40NyizFY9hHKd6CMmnT
+	 tIL35Oyp1MhT8+gxTDJrRYpkjRTpLvt5BABM+n2BPFCgfkk/BOF467s7AeuIMhafl0
+	 Gc/CNAeDh+CwBCR/sGV3UYo9EFzGKJpVljXKXLAdw70oFqXp9C981rWsdzTc3gzv9f
+	 jocmmnePsjkTzu4XGdF2ep+pu6IGfu6x3RV+EOLhwHbGLuaCI0+g17Fs2cqpl8zMrk
+	 yYE5LG/+eojkQ==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 109D93780BC9;
+	Wed, 17 Jul 2024 10:47:44 +0000 (UTC)
+Message-ID: <2a5b0ce2-cb82-4a23-bca6-f402cc13627e@collabora.com>
+Date: Wed, 17 Jul 2024 15:47:38 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,110 +56,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
- message"
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240716161101.30692-1-johan+linaro@kernel.org>
- <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
- <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+ "open list : KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com,
+ "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: Converting kselftest test modules to kunit
+To: David Gow <davidgow@google.com>
+References: <327831fb-47ab-4555-8f0b-19a8dbcaacd7@collabora.com>
+ <CABVgOSmD6j2OK1WXXcO+fTRN7PSpMFph8BT3Unko0c+Bv+3bjA@mail.gmail.com>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABVgOSmD6j2OK1WXXcO+fTRN7PSpMFph8BT3Unko0c+Bv+3bjA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/17/24 18:00, Johan Hovold wrote:
-> On Wed, Jul 17, 2024 at 07:48:26AM +0900, Damien Le Moal wrote:
->> On 7/17/24 01:11, Johan Hovold wrote:
->>> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
->>>
->>> The offending commit tried to suppress a double "Starting disk" message
->>> for some drivers, but instead started spamming the log with bogus
->>> messages every five seconds:
->>>
->>> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
->>> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
->>> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
->>> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
->>> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
->>> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
->>> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
->>> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
->>> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
->>> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
->>> 	...
->>>
->>> on machines that do not actually stop the disk on runtime suspend (e.g.
->>> the Qualcomm sc8280xp CRD with UFS).
+Hi David,
+
+On 7/16/24 12:33 PM, David Gow wrote:
+> On Mon, 15 Jul 2024 at 18:09, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
 >>
->> This is odd. If the disk is not being being suspended, why does the platform
->> even enable runtime PM for it ? 
+>> Hi Kees and All,
+>>
+>> There are several tests in kselftest subsystem which load modules to tests
+>> the internals of the kernel. Most of these test modules are just loaded by
+>> the kselftest, their status isn't read and reported to the user logs. Hence
+>> they don't provide benefit of executing those tests.
+>>
+>> I've found patches from Kees where he has been converting such kselftests
+>> to kunit tests [1]. The probable motivation is to move tests output of
+>> kselftest subsystem which only triggers tests without correctly reporting
+>> the results. On the other hand, kunit is there to test the kernel's
+>> internal functions which can't be done by userspace.
+>>
+>> Kselftest:      Test user facing APIs from userspace
+>> Kunit:          Test kernel's internal functions from kernelspace
 > 
-> This is clearly intended to be supported as sd_do_start_stop() returns
-> false and that prevents sd_start_stop_device() from being called on
-> resume (and similarly on suspend which is why there are no matching
-> stopping disk messages above):
-> 
-> 	[   32.822189] sd 0:0:0:0: sd_resume_common - runtime = 1, sd_do_start_stop = 0, manage_runtime_start_stop = 0
-
-Yes, so we can suppress the "Starting disk" message for runtime resume, to match
-the runtime suspend not having the message.
-
-> 
->> Are you sure about this ? Or is it simply that
->> the runtime pm timer is set to a very low interval ?
-> 
-> I haven't tried to determine why runtime pm is used this way, but your
-> patch is clearly broken as it prints a message about starting the disk
-> even when sd_do_start_stop() returns false.
-
-The patch is not *that* broken, because sd_do_start_stop() returning false mean
-only that the disk will *not* be started using a START STOP UNIT command. But
-the underlying LLD must start the drive. So the message is not wrong, even
-though it is probably best to suppress it for the runtime case.
-
-The point here is that sd_runtime_resume() should NOT be called every 5s unless
-there is also a runtime suspend in between the calls. As mentioned, this can
-happen if the autosuspend timer is set to a very low timeout to aggressively
-suspend the disk after a short idle time. That of course makes absolutely no
-sense for HDDs given the spinup time needed, but I guess that is a possiblity
-for UFS drives.
+> Yes: this is how we'd like to split things up. There are still a few
+> cases where you might want to use kselftest to test something other
+> than a user-facing API (if you needed to set up some complicated
+> userspace structures, etc), or cases where KUnit might be used to test
+> something other than individual pieces of functionality, but that
+> categorisation is a good start.
+Yeah, makes sense. It is helpful to find out what others think. I'll be
+back with changes.
 
 > 
->> It almost sound like what we need to do here is suppress this message for the
->> runtime resume case, so something like:
+> The Documentation/dev-tools/testing-overview.rst page has a more
+> detailed look at when to use which test framework (which basically
+> just repeats those rules):
+> https://docs.kernel.org/dev-tools/testing-overview.html
 > 
-> No, that would only make things worse as I assume you'd have a stopped
-> disk message without a matching start message for driver that do end up
-> stopping the disk here.
-
-OK. so let's revert this patch and I will rework that message to be displayed
-only on device removal, system suspend and system shutdown.
-
->> However, I would like to make sure that this platform is not calling
->> sd_resume_runtime() for nothing every 5s. If that is the case, then there is a
->> more fundamental problem here and reverting this patch is only hiding that.
-> 
-> This is with the Qualcomm UFS driver, but it seems it just relies on the
-> generic ufshcd_pltfrm_init() implementation.
-> 
-> Also not sure why anyone would want to see these messages on every
-> runtime suspend (for drivers that end up taking this path), but that's a
-> separate discussion.
-
-Not really. As mentioned above, it is probably best to suppress the start/stop
-messages for runtime suspend. The separate discussion is why sd_runtime_resume
-is called that often for this UFS drive: bug or aggressive autosuspend ? Given
-that I do not have this hardware, I will let someone else look into that.
+> Cheers,
+> -- David
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+BR,
+Muhammad Usama Anjum
 
