@@ -1,103 +1,101 @@
-Return-Path: <linux-kernel+bounces-255156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7880933CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A6933CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92E51C2284A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D821F2481A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A4917FAB2;
-	Wed, 17 Jul 2024 12:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE1517FABC;
+	Wed, 17 Jul 2024 12:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Af+pHljf"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JF115C7O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0E817F4FD
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0AC11CA1;
+	Wed, 17 Jul 2024 12:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721218250; cv=none; b=YF0dDV9j3mhurZ1RS3nueFBYCV8jDyWjpPa/b/lJ6pZMBH/WiFLag0DJvrBixMYLp7Jm1PxzIKP7HZf3RxFa7LKtjj4F0KPkIjoT2Rs8mOKlMt/yH0ZJVvaP0Pnkb8z7PE28G4rKrvDAjIWMEtkjrVgwjyzugyEfsBHaE4Vt6Hc=
+	t=1721217923; cv=none; b=LMO8ml8XGeXC4qs/b7UeVYmoIb6O5N1JFXLkUzU63+o+4HV7wXFX7yFO9R5Uj265V99DXF/FIEHicz+rg951OZFxL9eN14x86qm8NUJjVbu4hiwFC4Ej0RkyMKBjly4M/PEPCtZeaObCTZFFcES5nuRkdzBqRx/2cpkBTA8ca7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721218250; c=relaxed/simple;
-	bh=tL2zO8sShVnMqsumwVetJoNc6QDlU07aXRYDJkCzAwA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iGcryCZgGDDVktkWdL2oJE88ml6FTZpmAKtvHWa4EV51pwbntU0qRhZAng3nuwlCb2p1c6SDz0j+XTThLszHdWa4TviO8ZdKQ/69+g9qZf3hC4b1AAJCsEXeHJNObCvNNRawOWYFp0+XCePuvg2KjlcABQupoW8//3FDQmD99Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Af+pHljf; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46HBrFsc114994;
-	Wed, 17 Jul 2024 06:53:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721217195;
-	bh=L7Y4bvkhhvsibrE1C4aidBkH3gAAnG2XmDY6RVwdt2w=;
-	h=From:To:CC:Subject:Date;
-	b=Af+pHljfiQeUImkzDHFjRXbJuK9Yv4Wt0Y9GARE1w3TXCc5u5UDryWiufQzMQK0HM
-	 qsTI3Qyw7Akid6KUsKHjRJ1uZjMw+4NFAvaE+cEFpTgo5rk+mvchkrFfk97eST4XM+
-	 TbEZKUyOU02FZgZHDI7sLgcztXCq6rX8z9GwVOdk=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46HBrFVT003347
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 17 Jul 2024 06:53:15 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 17
- Jul 2024 06:53:14 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 17 Jul 2024 06:53:14 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.243])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46HBr8n9112673;
-	Wed, 17 Jul 2024 06:53:09 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13564923607@139.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
-        <bard.liao@intel.com>, <yung-chuan.liao@linux.intel.com>,
-        <cameron.berkenpas@gmail.com>, <tiwai@suse.de>, <baojun.xu@ti.com>,
-        <soyer@irl.hu>, <Baojun.Xu@fpt.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Add new quirk for Lenovo Hera2 Laptop
-Date: Wed, 17 Jul 2024 19:53:04 +0800
-Message-ID: <20240717115305.723-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1721217923; c=relaxed/simple;
+	bh=sVI4fR38SQDvsyIf2h0jFKNxER8xVabHLmTsacru0pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G30rA0qf9C9F7pySlcbNczPC99qFeG9eL1hWBjymaNLUCvfH5zzG1Zo0jQwLwpdvxO+3LpYy7KKFopQPFhodow8xDhqe5jOhyzFf//bxb1omBOdWx5TDLxDt82pxqhCZOTgFfEJXchtY95EYYNuuShH2mXFTaEXcQjSS4UvoXRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JF115C7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA00C32782;
+	Wed, 17 Jul 2024 12:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721217923;
+	bh=sVI4fR38SQDvsyIf2h0jFKNxER8xVabHLmTsacru0pw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JF115C7Ovr1n4UIbJhCELCffi+TsMEuAMX7Yz4QjjldakDI+MGTHCOxRc1Tp5DP6S
+	 PxRGV74yMtltdWXkUhYhBs3wPmdyYJDqUcBIGIhsi4L8pOHyaz9Q8t4NxxowVgaoSL
+	 a7oJYZLnKMpLgME0eiKPfiXq0cKKy1zW/7Z68RWBKzqkcxJSgyElQ7x/64WezJ+nLI
+	 xhuOrV9O5i/eqBezDXYR1t0Y/X2x5R6CoWqP8KAe22ObIxVrZUZMKhO+FdBxXFpUZ+
+	 AOrrN4Am78xNMj8XI9ecErt79xTmX+cn2rbhwdyjLrBJCbJjYipIkL9t4/suXhNRUh
+	 25yfuUawdR7Qw==
+Message-ID: <95e9ad8b-7d3f-4516-a603-488cb229a2c9@kernel.org>
+Date: Wed, 17 Jul 2024 21:05:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
+ message"
+To: Johan Hovold <johan+linaro@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240716161101.30692-1-johan+linaro@kernel.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240716161101.30692-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add new vendor_id and subsystem_id in quirk for Lenovo Hera2 Laptop.
+On 7/17/24 01:11, Johan Hovold wrote:
+> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+> 
+> The offending commit tried to suppress a double "Starting disk" message
+> for some drivers, but instead started spamming the log with bogus
+> messages every five seconds:
+> 
+> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
+> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
+> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
+> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
+> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
+> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
+> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
+> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
+> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
+> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
+> 	...
+> 
+> on machines that do not actually stop the disk on runtime suspend (e.g.
+> the Qualcomm sc8280xp CRD with UFS).
+> 
+> Let's just revert for now to address the regression.
+> 
+> Fixes: 7a6bbc2829d4 ("scsi: sd: Do not repeat the starting disk message")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 766f0b1d3e9d..bac68a84fd50 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10539,6 +10539,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x231a, "Thinkpad Z16 Gen2", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
- 	SND_PCI_QUIRK(0x17aa, 0x231e, "Thinkpad", ALC287_FIXUP_LENOVO_THKPAD_WH_ALC1318),
- 	SND_PCI_QUIRK(0x17aa, 0x231f, "Thinkpad", ALC287_FIXUP_LENOVO_THKPAD_WH_ALC1318),
-+	SND_PCI_QUIRK(0x17aa, 0x2326, "Hera2", ALC287_FIXUP_TAS2781_I2C),
- 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
- 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
 -- 
-2.34.1
+Damien Le Moal
+Western Digital Research
 
 
