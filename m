@@ -1,336 +1,323 @@
-Return-Path: <linux-kernel+bounces-254580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAAF9334E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107699334EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845F41C22347
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A661C21A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 01:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B324E138C;
-	Wed, 17 Jul 2024 01:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC23138C;
+	Wed, 17 Jul 2024 01:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mz5HdWVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GE0LduZf"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE96536D;
-	Wed, 17 Jul 2024 01:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487FAED8
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721178917; cv=none; b=aucqtW/6EPKoj9oMGIYq/9/1RZC/1L7nSLZCt8K3VQmb7KhpZnndE/lskrJapaKIUKm7VbFwUOQ0yZzulcDUps1c/PArv49s2UpIXT60QIF4vg7lYzJlqPQXHaRVSBrMCThTHZb4/kBbJVN0POIGkH7qCVS6MX9es4Cy3g9psT4=
+	t=1721178955; cv=none; b=HqCN3RKBkE+xu5D8ONNUss9GqSsbrqvqjduVjUsMFjA6ZsLMdYgbPaUIsve+PMFwgc4f26qqY0xnvLHpAXDTfATEM1KcphHVn1xsvQwpERwxZDVSoF5OrxFqpYDIaGyE+e7VHfrZ7PiEj3ovGz5jRbKOFfW9Lgr/T47Hk+C7n6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721178917; c=relaxed/simple;
-	bh=RtUSokA7N3oWuxrdHS5tXYcxzR1xyqfoolt71QB1qRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqbqhUnN6C7Izj20HywPPtEriBq614jJn05VdI6mboFtuW5TKuBGnhuTaZA6wLds1yDixDgpA5PpVNujuzzeeBTG8b5lBiomNdtBtbiIaDbQxBq79R1MYZIwd1LSL1npvzFSSjUPbzxXtM40FSrjkM/F8iqQ8ewsEBn5mz0sSco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mz5HdWVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E58C116B1;
-	Wed, 17 Jul 2024 01:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721178917;
-	bh=RtUSokA7N3oWuxrdHS5tXYcxzR1xyqfoolt71QB1qRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mz5HdWVDGFPC8pFcmPNvE2BurInkMuX2CwORChqm9eAqFcp6I0CuQBExIaJUHCiO9
-	 QrawG/vl0ZOmcuuXIhY9ij1X3i9J08MNovm22/ahF49l1Ci5eWalH9Tj2pxBeeg7uD
-	 YCpsQXQYtY52ZiTCdu7fGvF+gW/yAH22ctgwglTNyL7xV60DlXOMBflC8S9Z/w7xok
-	 G2fl7ocSXVScfItw8avzVUrLzpKyuh7yFGh1uRHVA8k3kFqSvCJZsr9KTWZGbG9X8d
-	 el/ZSkfAt5bKdQVnslyyEJRSrDwj9OEgRLvIC5IpBaoP4GWzcGznQdnCvjHsPUlBlU
-	 1jhlJxRclg4XQ==
-Date: Tue, 16 Jul 2024 18:15:15 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman
- package
-Message-ID: <20240717011515.GA1230090@thelio-3990X>
-References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+	s=arc-20240116; t=1721178955; c=relaxed/simple;
+	bh=UPC4n3TFMRWzP2IsurN8fGkQELBKZP+88za+ETmYQbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IYosDNIUpCv5HjBDaOe85Hude2jnSM1v/lsQ5Mh2/KeQ+rGmCAjFEQkO+jqC3Ux3Z9URbbtZSqEu0Bl2UAFC1S8MndjnnN/OGCAAYnQE4u+1WdVSZIcgOIe4Ud/pdZpsVpxXuWyoXVLDDvHQ7Rs/dnnS6/Hu7pTkaTU8+jVAuog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GE0LduZf; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-703d5b29e06so2742051a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 18:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721178952; x=1721783752; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEUpYDGdX5lK9tIEEyrjSHz4yYVdmswjNv1Bx1TiqLg=;
+        b=GE0LduZfOD5XNuoq5vpt1khHeIhWcgzHHmpyAh4WRkeRgyh56z0ZOeweZHjBCPIjn4
+         O/v9cYeeEfzZddajQ99Alg/w9MMw4Y1g1Ciraykxt7zSZVhdVhqBy2h2hRtstlf7SuK/
+         jzgT8VNcswNuxACwh2bibJBGiIiYo6B0D6Z+BvB8tDwa2PsIcRCmjPRIcr79+3yaHCA6
+         laTB4G1PDz09+EJxMP7y605qeqC8M9eLHHu7YY60HaQxrGt6veAYXDexYpxs3M45wUTf
+         W0qhFBte4cUISli6xNZrNIqkGISrc7eyEaP8u6YPN5iHoUQber9QtnR2gdIOT7xIQYm9
+         XSwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721178952; x=1721783752;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wEUpYDGdX5lK9tIEEyrjSHz4yYVdmswjNv1Bx1TiqLg=;
+        b=NbcdqKXzJ+V3PbtVda5LM6rF0cLc8AXx/Psi4IhwsShFD61PnJg5pBg5PnDK3jS1FP
+         xMaWSq3cABfFthfOvD/NpqvKXwRy+4XthKfZnVWoXb8zg3eieKXl49GiO8TjW5LvoQjM
+         cNAVay+ZvY7+vS/oQ0EN9zBOpl21Nxs+zEc7EimBcVAGDGnxg6H7K/Bruod/BqqF/oLN
+         FNTPI9EYN47/wIYfZtN57JgFMU/CI+teilhGvE8c+SyWmDDdCaoluxEMAjR6qZe7nA8X
+         eDH7DuOE9SaN6PiyVeNTQKO/pftIYddNgybQP5xgl4begGIwu/FpXwS/c8s2l0sVBRM+
+         Pr5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfnWpQz53t/P7hT8vtnT9cw2HZOdGFMPuE6rKrcUP8K0A4IZ1C3H44e09+SaBFYJekfbwkw6lsU0aF8e0WJecjNueJ9npzGJk1jJph
+X-Gm-Message-State: AOJu0Yz1yTz7/WaszmGh/3/BtQtOqbSEyT4AvrwSj5VTWN5We3C502Tk
+	LW/JO8UnehrlMK9HPLEu8yhSuLnx0MPYz2Du583Brj6t3Rhn7n88yGxmQPHwSHvEPsiZx9Qqt5O
+	8l1mfudheJGEOzeRhq7ez9Ckecco=
+X-Google-Smtp-Source: AGHT+IEaHceH9gR31knisVH1Y/FJiWaha8+lmXmk3GDYifVrdzmXRQGZdEQq5dsRWC64P9siHh14K++VjMZXVtuwmhQ=
+X-Received: by 2002:a05:6870:c081:b0:25d:53ff:7543 with SMTP id
+ 586e51a60fabf-260d905da13mr146014fac.22.1721178952239; Tue, 16 Jul 2024
+ 18:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+References: <20240710033004.3923527-1-zhangchunyan@iscas.ac.cn>
+ <9bf70f7c-5deb-4fce-b7c1-ec70d78cb5db@ghiti.fr> <CAAfSe-vhhVvP5Sa9bGGSw4ZQvexqUrjdTFjJL-4gLn0jsuk0ew@mail.gmail.com>
+ <cab9dc95-c40c-4c4e-a91d-5698cbd5b4d2@ghiti.fr>
+In-Reply-To: <cab9dc95-c40c-4c4e-a91d-5698cbd5b4d2@ghiti.fr>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 17 Jul 2024 09:15:15 +0800
+Message-ID: <CAAfSe-tdFjDwSob6M3mQxaa2SPyYOK0V8dyx_kz9ac_4-iAH+Q@mail.gmail.com>
+Subject: Re: [PATCH] riscv/mm: Add soft-dirty page tracking support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Thomas,
+On Tue, 16 Jul 2024 at 21:00, Alexandre Ghiti <alex@ghiti.fr> wrote:
+>
+> Hi Chunyan,
+>
+> On 16/07/2024 04:16, Chunyan Zhang wrote:
+> > Hi Alex,
+> >
+> > On Mon, 15 Jul 2024 at 19:21, Alexandre Ghiti <alex@ghiti.fr> wrote:
+> >> Hi Chunyan,
+> >>
+> >> On 10/07/2024 05:30, Chunyan Zhang wrote:
+> >>> The PTE bit (9) is reserved for software, so we can use it for
+> >>> soft-dirty tracking. This patch adds its standard handlers for
+> >>> PTE, PMD, and swap entry.
+> >>
+> >> Unfortunately, ZONE_DEVICE has just used this last bit and should be
+> >> merged in 6.11.
+> > Yes, I read the patch just now.
+> >
+> >> I'm currently discussing internally how we can get 2 other PTE bits from
+> >> RVI in order to have the same number of available bits as x86 and arm64.
+> > Yes I noticed that PTE bits reserved for software are too limited on RISC-V.
+> >
+> > Besides softdirty, we probably can support uffd write-protect on
+> > RISC-V if we will have two PTE bits for use.
+>
+>
+> Indeed, softdirty and uffd-wp will use two PTE bits.
+>
+>
+> >
+> >> I guess that for now, if we really have a usecase for softdirty (and I
+> >> think we do with CRIU), we'll have to make ZONE_DEVICE and soft-dirty
+> >> mutually exclusive.
+> > Yes, I also learned that CRIU uses soft-dirty.
+> >
+> >>> To add swap PTE soft-dirty tracking, we borrow bit (4) which is
+> >>> available for swap PTEs on RISC-V systems.
+> >>>
+> >>> This patch has been tested with the kselftest mm suite in which
+> >>> soft-dirty and madv_populate run and pass, and no regressions
+> >>> are observed in any of the other tests.
+> >>
+> >> Did you give CRIU a try?
+> > I haven't tried CRIU, actually I found soft-dirty was missing on
+> > RISC-V by the way of running mm selftest cases.
+>
+>
+> Since CRIU is the main user (?) of softdirty, it would be really nice if
+> you can test it :)
 
-On Tue, Jul 16, 2024 at 07:52:14PM +0200, Thomas Weißschuh wrote:
-> pacman is the package manager used by Arch Linux and its derivates.
-> Creating native packages from the kernel tree has multiple advantages:
-> 
-> * The package triggers the correct hooks for initramfs generation and
->   bootloader configuration
-> * Uninstallation is complete and also invokes the relevant hooks
-> * New UAPI headers can be installed without any manual bookkeeping
-> 
-> The PKGBUILD file is a simplified version of the one used for the
-> downstream Arch Linux "linux" package.
-> Extra steps that should not be necessary for a development kernel have
-> been removed and an UAPI header package has been added.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
-> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
-> ---
-> Changes in v6:
-> - Drop reference to srctree/Makefile
-> - Drop $(realpath $(srctree))
-> - Make use of the fact that $(objtree) is always "."
-> - Align coding style to kernel and drop vim config line
-> - Drop indirection through `$MAKE run-command`
-> - Unify shell variable syntax to "${var}"
-> - Add explanations to custom variables
-> - Add makedepends
-> - Link to v5: https://lore.kernel.org/r/20240714-kbuild-pacman-pkg-v5-1-0598460bc918@weissschuh.net
-> 
-> Changes in v5:
-> - Rebase onto kbuild/for-next
-> - Use new path to build-version script (from kbuild/for-next)
-> - Ensure submake jobserver delegation works
-> - Simplify $modulesdir/pkgbase file creation
-> - Add Reviewed-by from Nicolas
-> - Link to v4: https://lore.kernel.org/r/20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net
-> 
-> Changes in v4:
-> - Update MRPROPER_FILES
-> - Unify shell variable syntax
-> - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net
-> 
-> Changes in v3:
-> - Enforce matching architectures for installation
-> - Add Reviewed-by and Tested-by from Nathan
-> - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
-> 
-> Changes in v2:
-> - Replace ${MAKE} with $MAKE for consistency with other variables
-> - Use $MAKE for "-s image_name"
-> - Avoid permission warnings from build directory
-> - Clarify reason for /build symlink removal
-> - Install System.map and config
-> - Install dtbs where available
-> - Allow cross-build through arch=any
-> - Sort Contributor/Maintainer chronologically
-> - Disable some unneeded makepkg options
-> - Use DEPMOD=true for consistency with rpm-package
-> - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
-> ---
->  .gitignore               |  6 +++
->  Makefile                 |  2 +-
->  scripts/Makefile.package | 14 +++++++
->  scripts/package/PKGBUILD | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 120 insertions(+), 1 deletion(-)
-> 
-> diff --git a/.gitignore b/.gitignore
-> index c59dc60ba62e..7902adf4f7f1 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -92,6 +92,12 @@ modules.order
->  #
->  /tar-install/
->  
-> +#
-> +# pacman files (make pacman-pkg)
-> +#
-> +/PKGBUILD
-> +/pacman/
-> +
->  #
->  # We don't want to ignore the following even if they are dot-files
->  #
-> diff --git a/Makefile b/Makefile
-> index 7372ea45ed3f..768d3dc107f8 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1481,7 +1481,7 @@ CLEAN_FILES += vmlinux.symvers modules-only.symvers \
->  # Directories & files removed with 'make mrproper'
->  MRPROPER_FILES += include/config include/generated          \
->  		  arch/$(SRCARCH)/include/generated .objdiff \
-> -		  debian snap tar-install \
-> +		  debian snap tar-install PKGBUILD pacman \
->  		  .config .config.old .version \
->  		  Module.symvers \
->  		  certs/signing_key.pem \
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index bf016af8bf8a..0aaa0832279c 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -141,6 +141,19 @@ snap-pkg:
->  	cd $(objtree)/snap && \
->  	snapcraft --target-arch=$(UTS_MACHINE)
->  
-> +# pacman-pkg
-> +# ---------------------------------------------------------------------------
-> +
-> +PHONY += pacman-pkg
-> +pacman-pkg:
-> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> +	+objtree="$(realpath $(objtree))" \
-> +		BUILDDIR=pacman \
-> +		CARCH="$(UTS_MACHINE)" \
-> +		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-> +		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
-> +		makepkg
-> +
->  # dir-pkg tar*-pkg - tarball targets
->  # ---------------------------------------------------------------------------
->  
-> @@ -221,6 +234,7 @@ help:
->  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
->  	@echo '  snap-pkg            - Build only the binary kernel snap package'
->  	@echo '                        (will connect to external hosts)'
-> +	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
->  	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
->  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
->  	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> new file mode 100644
-> index 000000000000..eb3957fad915
-> --- /dev/null
-> +++ b/scripts/package/PKGBUILD
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
-> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> +
-> +pkgbase=linux-upstream
-> +pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
-> +pkgver="${KERNELRELEASE//-/_}"
-> +# The PKGBUILD is evaluated multiple times.
-> +# Running scripts/build-version from here would introduce inconsistencies.
-> +pkgrel="${KBUILD_REVISION}"
-> +pkgdesc='Linux'
-> +url='https://www.kernel.org/'
-> +# Enable flexible cross-compilation
-> +arch=(${CARCH})
-> +license=(GPL-2.0-only)
-> +makedepends=(
-> +	base-devel
-> +	bc
-> +	cpio
-> +	gettext
-> +	libelf
-> +	openssl
-> +	pahole
-> +	perl
-> +	python
-> +	rsync
-> +	tar
-> +)
-> +options=(!debug !strip !buildflags !makeflags)
-> +
-> +build() {
-> +	# MAKEFLAGS from makepkg.conf override the ones inherited from kbuild.
-> +	# Bypass this override with a custom variable.
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +
-> +	# makepkg does a "chmod a-srw", triggering warnings during kbuild
-> +	chmod 0755 "${pkgdirbase}" || true
-> +
-> +	${MAKE}
-> +}
-> +
-> +package_linux-upstream() {
-> +	pkgdesc="The ${pkgdesc} kernel and modules"
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +	local modulesdir="${pkgdir}/usr/${MODLIB}"
-> +
-> +	echo "Installing boot image..."
-> +	# systemd expects to find the kernel here to allow hibernation
-> +	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
-> +	install -Dm644 "$(${MAKE} -s image_name)" "${modulesdir}/vmlinuz"
-> +
-> +	# Used by mkinitcpio to name the kernel
-> +	echo "${pkgbase}" > "${modulesdir}/pkgbase"
-> +
-> +	echo "Installing modules..."
-> +	${MAKE} INSTALL_MOD_PATH="${pkgdir}/usr" INSTALL_MOD_STRIP=1 \
-> +		DEPMOD=true modules_install
-> +
-> +	if [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
+Sure, and will keep you updated with the progress.
 
-Does this reference to srctree...
+> >
+> > I can cook a new patch to implement soft-dirty and ZONE_DEVICE share
+> > the PTE bit(9), and make both features mutually exclusive if this
+> > solution is accepted.
+>
+>
+> I agree with this solution, let's implement both softdirty and uffd-wp
+> by sharing the last PTE bit that ZONE_DEVICE stole. At least it will
+> allow people to play with them.
 
-> +		echo "Installing dtbs..."
-> +		${MAKE} INSTALL_DTBS_PATH="${modulesdir}/dtb" dtbs_install
-> +	fi
-> +
-> +	# remove build link, will be part of -headers package
-> +	rm -f "${modulesdir}/build"
-> +}
-> +
-> +package_linux-upstream-headers() {
-> +	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +	local builddir="${pkgdir}/usr/${MODLIB}/build"
-> +
-> +	echo "Installing build files..."
-> +	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
+Ok, then I will do next.
 
-and this one still work with srctree no longer being passed to makepkg?
+> Do you intend to work on uffd-wp? This is on my todo list, so up to you.
 
-I tried myself but it looks like this version of the patch might be
-broken?
+Yes, this is not hard for me, let me take it.
 
-$ make -skj"$(nproc)" ARCH=x86_64 CROSS_COMPILE=x86_64-linux- O=/mnt/nvme/tmp/build/linux mrproper defconfig pacman-pkg
-find: ‘./pacman/linux-upstream/src/pacman/linux-upstream/pkg’: Permission denied
-==> Making package: linux-upstream 6.10.0_rc7_00051_g818e9c998b04_dirty-1 (Tue 16 Jul 2024 06:08:29 PM MST)
-==> Checking runtime dependencies...
-==> Checking buildtime dependencies...
-==> Retrieving sources...
-==> Extracting sources...
-==> Starting build()...
-chmod: cannot access 'pacman/linux-upstream/pkg': No such file or directory
-find: ‘./pacman/linux-upstream/src/pacman/linux-upstream/pkg’: Permission denied
-==> Entering fakeroot environment...
-chmod: cannot access '/mnt/nvme/tmp/build/linux/pacman/linux-upstream/pkg': No such file or directory
-/usr/bin/fakeroot: line 178: 2633185 User defined signal 1   FAKEROOTKEY=$FAKEROOTKEY LD_LIBRARY_PATH="$PATHS" LD_PRELOAD="$FAKEROOT_LIB" "$@"
-make[4]: *** [scripts/Makefile.package:150: pacman-pkg] Error 138
+Thanks for your review,
+Chunyan
 
-Cheers,
-Nathan
-
-> +	echo "Installing System.map and config..."
-> +	cp System.map "${builddir}/System.map"
-> +	cp .config "${builddir}/.config"
-> +
-> +	echo "Adding symlink..."
-> +	mkdir -p "${pkgdir}/usr/src"
-> +	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
-> +}
-> +
-> +package_linux-upstream-api-headers() {
-> +	pkgdesc="Kernel headers sanitized for use in userspace"
-> +	provides=(linux-api-headers)
-> +	conflicts=(linux-api-headers)
-> +
-> +	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
-> +	cd "${objtree}"
-> +
-> +	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
-> +}
-> 
-> ---
-> base-commit: 818e9c998b04d6c69a510d5255a93d0e3b8d4993
-> change-id: 20240625-kbuild-pacman-pkg-b4f87e19d036
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <linux@weissschuh.net>
-> 
+> > Or not to add soft-dirty until we have more other PTE bits that can be
+> > used for software.
+> >
+> > I'm open to listen to suggestions.
+> >
+> > Thanks,
+> > Chunyan
+>
+>
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> >> Thanks,
+> >>
+> >> Alex
+> >>
+> >>
+> >>> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> >>> ---
+> >>>    arch/riscv/Kconfig                    |  1 +
+> >>>    arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
+> >>>    arch/riscv/include/asm/pgtable.h      | 65 ++++++++++++++++++++++++++-
+> >>>    3 files changed, 78 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >>> index b94176e25be1..2e3ad2925a6b 100644
+> >>> --- a/arch/riscv/Kconfig
+> >>> +++ b/arch/riscv/Kconfig
+> >>> @@ -118,6 +118,7 @@ config RISCV
+> >>>        select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+> >>>        select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+> >>>        select HAVE_ARCH_SECCOMP_FILTER
+> >>> +     select HAVE_ARCH_SOFT_DIRTY
+> >>>        select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+> >>>        select HAVE_ARCH_TRACEHOOK
+> >>>        select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
+> >>> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+> >>> index 179bd4afece4..bab48f5fd1e2 100644
+> >>> --- a/arch/riscv/include/asm/pgtable-bits.h
+> >>> +++ b/arch/riscv/include/asm/pgtable-bits.h
+> >>> @@ -19,6 +19,19 @@
+> >>>    #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
+> >>>
+> >>>    #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
+> >>> +
+> >>> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> >>> +#define _PAGE_SOFT_DIRTY     (1 << 9)    /* RSW: 0x2 for software dirty tracking */
+> >>> +/*
+> >>> + * BIT 4 is not involved into swap entry computation, so we
+> >>> + * can borrow it for swap page soft-dirty tracking.
+> >>> + */
+> >>> +#define _PAGE_SWP_SOFT_DIRTY _PAGE_USER
+> >>> +#else
+> >>> +#define _PAGE_SOFT_DIRTY     0
+> >>> +#define _PAGE_SWP_SOFT_DIRTY 0
+> >>> +#endif /* CONFIG_MEM_SOFT_DIRTY */
+> >>> +
+> >>>    #define _PAGE_TABLE     _PAGE_PRESENT
+> >>>
+> >>>    /*
+> >>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> >>> index aad8b8ca51f1..46f512f52580 100644
+> >>> --- a/arch/riscv/include/asm/pgtable.h
+> >>> +++ b/arch/riscv/include/asm/pgtable.h
+> >>> @@ -408,7 +408,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
+> >>>
+> >>>    static inline pte_t pte_mkdirty(pte_t pte)
+> >>>    {
+> >>> -     return __pte(pte_val(pte) | _PAGE_DIRTY);
+> >>> +     return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+> >>>    }
+> >>>
+> >>>    static inline pte_t pte_mkclean(pte_t pte)
+> >>> @@ -436,6 +436,36 @@ static inline pte_t pte_mkhuge(pte_t pte)
+> >>>        return pte;
+> >>>    }
+> >>>
+> >>> +static inline int pte_soft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return pte_val(pte) & _PAGE_SOFT_DIRTY;
+> >>> +}
+> >>> +
+> >>> +static inline pte_t pte_mksoft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
+> >>> +}
+> >>> +
+> >>> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
+> >>> +}
+> >>> +
+> >>> +static inline int pte_swp_soft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
+> >>> +}
+> >>> +
+> >>> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
+> >>> +}
+> >>> +
+> >>> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+> >>> +{
+> >>> +     return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
+> >>> +}
+> >>> +
+> >>>    #ifdef CONFIG_RISCV_ISA_SVNAPOT
+> >>>    #define pte_leaf_size(pte)  (pte_napot(pte) ?                               \
+> >>>                                        napot_cont_size(napot_cont_order(pte)) :\
+> >>> @@ -721,6 +751,38 @@ static inline pmd_t pmd_mkdirty(pmd_t pmd)
+> >>>        return pte_pmd(pte_mkdirty(pmd_pte(pmd)));
+> >>>    }
+> >>>
+> >>> +static inline int pmd_soft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_soft_dirty(pmd_pte(pmd));
+> >>> +}
+> >>> +
+> >>> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
+> >>> +}
+> >>> +
+> >>> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
+> >>> +}
+> >>> +
+> >>> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >>> +static inline int pmd_swp_soft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_swp_soft_dirty(pmd_pte(pmd));
+> >>> +}
+> >>> +
+> >>> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
+> >>> +}
+> >>> +
+> >>> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> >>> +{
+> >>> +     return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
+> >>> +}
+> >>> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> >>> +
+> >>>    static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+> >>>                                pmd_t *pmdp, pmd_t pmd)
+> >>>    {
+> >>> @@ -811,6 +873,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+> >>>     * Format of swap PTE:
+> >>>     *  bit            0:       _PAGE_PRESENT (zero)
+> >>>     *  bit       1 to 3:       _PAGE_LEAF (zero)
+> >>> + *   bit            4:       _PAGE_SWP_SOFT_DIRTY
+> >>>     *  bit            5:       _PAGE_PROT_NONE (zero)
+> >>>     *  bit            6:       exclusive marker
+> >>>     *  bits      7 to 11:      swap type
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
