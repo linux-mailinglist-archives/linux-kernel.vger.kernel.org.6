@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-254607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8EE933565
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:19:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9907933566
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 04:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC1828323A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53511F2204F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2587524F;
-	Wed, 17 Jul 2024 02:19:14 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B964C99;
+	Wed, 17 Jul 2024 02:23:14 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAAF4685;
-	Wed, 17 Jul 2024 02:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A55B28EA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 02:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721182754; cv=none; b=bFQIqbHrq2AY0jnRTMqWDUhBzCpj6wJYCYOIw5MELAzzET98Gkfk05u4oyt58fzHP68B69tJCfagRAIlrFIh6Hyr7pJO1ql+kkfUUq4geAwgp9tOeQoWMcLTHz0MAXSTne+fvyqXB4eH8jhQrwWdf8CO+piCErs/t021EvMMiis=
+	t=1721182993; cv=none; b=uzt2P+PXWY6Lrdo/L62vg9ZJz0yDScrmC17fFDOz/SMaG8Tze29p6y5OJ/G6A0zIlEJ/f3rcx+CgmSLlz9mYYPjLyrXTUyFX9HkPiv3379bFW2TBEVcLcuDfq+9oZf5R+i4GCLCWkr6pKJs+HCA8nmqTK9EKeP+7AHVy4wMUISI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721182754; c=relaxed/simple;
-	bh=8o9beL6AlKCzXsXyfDU4H0SuyTluNFbx2nwe8j0c8NU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=k6adpPTI6TC1QUJRTtenysh9pA0PSPqScBH8Qf8ZuAW0L/B/DntJ2rdZbECgcPeGaICkNw20yuvY4B613m7pkBKgQaWwAivqfvha40K9zbMTMIo5fL0jJTfForoLummNjRpEyhF1ozF76O93WnYC0+iGJNM1xzYvwPjrNTS6LUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1721182993; c=relaxed/simple;
+	bh=KVxVDa2sLtsQZ1BUHM4panynfvlVr/pW1Z0Zwxh9ofI=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rVrk2LQu+7h+TpcC6dcBKqT5uqO9xNN/MsKVukFIzAArxsLa05WT4q5dXD8O5eauC1nQjMQlV0v1Q/J2deMCWpopZgvI0cqUORfAJ84+UxpjuRr+1B3LKJ1DFKuswdCw00PeRS+QLsHgcI7VCj1vRkR8FpiaGNviwZvcTSeoNEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WP03V0x4DznbSL;
-	Wed, 17 Jul 2024 10:18:30 +0800 (CST)
-Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id B8F0E1402C8;
-	Wed, 17 Jul 2024 10:19:07 +0800 (CST)
-Received: from [10.67.110.48] (10.67.110.48) by kwepemg100016.china.huawei.com
- (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 17 Jul
- 2024 10:19:04 +0800
-Message-ID: <9473d6eb-3f56-4c73-8e61-69111837c07b@huawei.com>
-Date: Wed, 17 Jul 2024 10:18:57 +0800
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WP05t4b8Yz1HFLL;
+	Wed, 17 Jul 2024 10:20:34 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id B4E7918002B;
+	Wed, 17 Jul 2024 10:23:07 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 17 Jul 2024 10:23:07 +0800
+Subject: Re: [PATCH v2] mm/hwpoison: reset hwpoison filter parameters in
+ pfn_inject_exit()
+To: Michal Hocko <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <nao.horiguchi@gmail.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <20240716033516.606582-1-linmiaohe@huawei.com>
+ <ZpYxkH1EFB65tEzt@tiehlicka>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
+Date: Wed, 17 Jul 2024 10:23:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH testsuite] tests/task_setscheduler: add cgroup v2 case for
- moving proc to root cgroup
-From: Gong Ruiqi <gongruiqi1@huawei.com>
-To: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-CC: <selinux@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Wang Weiyang <wangweiyang2@huawei.com>
-References: <20240702095401.16278-1-gongruiqi1@huawei.com>
+In-Reply-To: <ZpYxkH1EFB65tEzt@tiehlicka>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-In-Reply-To: <20240702095401.16278-1-gongruiqi1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg100016.china.huawei.com (7.202.181.57)
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-Ping.
+On 2024/7/16 16:38, Michal Hocko wrote:
+> On Tue 16-07-24 11:35:16, Miaohe Lin wrote:
+>> When hwpoison_inject module is removed, hwpoison_filter_* parameters
+>> should be reset. Otherwise these parameters will have non-default values
+>> at next insmod time.
+> 
+> There is a clear layering broken here. We have mm/memory-failure.c using
+> values and mm/hwpoison-inject.c defining the values. Both with a
+> potentially different life time. Shouldn't that be fix instead?
 
-On 2024/07/02 17:54, GONG, Ruiqi wrote:
-> Currently for systems that only enable cgroup v2, the test script would
-> fail to move the target process into the root cgroup since the cgroup v1
-> path is used, which therefore makes the testcase fail. Add cgroup v2
-> handling here so that no matter which cgroup version the CPU controller
-> is bound to, the target process can always be moved to the root CPU
-> cgroup.
-> 
-> Signed-off-by: GONG, Ruiqi <gongruiqi1@huawei.com>
-> ---
->  tests/task_setscheduler/test | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tests/task_setscheduler/test b/tests/task_setscheduler/test
-> index c2fe8c6..fa1efb1 100755
-> --- a/tests/task_setscheduler/test
-> +++ b/tests/task_setscheduler/test
-> @@ -20,12 +20,17 @@ vec( $rin, fileno($f), 1 ) = 1;
->  select( $rin, undef, undef, 5 );
->  close($f);
->  
-> -$cgroup_cpu = "/sys/fs/cgroup/cpu/tasks";
-> -if ( -w $cgroup_cpu ) {
-> -
-> -    # We can only set the scheduler policy fo SCHED_{RR,FIFO} in the root
-> -    # cgroup so move our target process to the root cgroup.
-> -    open( my $fd, ">>", $cgroup_cpu );
-> +# We can only set the scheduler policy fo SCHED_{RR,FIFO} in the root
-> +# cgroup so move our target process to the root cgroup.
-> +$cgroup_v1_cpu = "/sys/fs/cgroup/cpu/tasks";
-> +if ( -w $cgroup_v1_cpu ) {
-> +    open( my $fd, ">>", $cgroup_v1_cpu );
-> +    print $fd $pid;
-> +    close $fd;
-> +}
-> +$cgroup_v2 = "/sys/fs/cgroup/cgroup.procs";
-> +if ( -w $cgroup_v2 ) {
-> +    open( my $fd, ">>", $cgroup_v2 );
->      print $fd $pid;
->      close $fd;
->  }
+In fact, we have mm/memory-failure.c defining and using these values while they can
+only be modified through mm/hwpoison-inject.c from userspace. The common usecase should be:
+
+1. User set hwpoison filter parameters first through mm/hwpoison-inject.c.
+2. Then doing memory hwpoison test through mm/hwpoison-inject.c.
+
+hwpoison_filter_* parameters are only used for test from userspace. From this perspective,
+this potentially different life time doesn't break anything. Or am I miss something?
+
+Thanks.
+.
+
+
 
