@@ -1,230 +1,118 @@
-Return-Path: <linux-kernel+bounces-255116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6047933C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD04933C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4B82826C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1131F234BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D2C17F51E;
-	Wed, 17 Jul 2024 11:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D35017F4F3;
+	Wed, 17 Jul 2024 11:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Zt8Ckj4K"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaCZzjJb"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC4917F4F3
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413079952
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721215770; cv=none; b=LnRT0mHDKBT3HM5m+ziyWIAC/OHj1RIyyM0Xi9kkV4YPsrF9LyHEVpTYoFv1fZcqiayrk9UddIk2iPtn/sq+YNKKQdtNnKsdE4VTCunySTZp8AvY8EX/T9rKPjiZOwKc+yVH+ySlHvLVLdEqKlxh2bJG1a/wZBxC8uOkm6aU6ds=
+	t=1721215787; cv=none; b=UVhOo4CratR3nESfTDj2ISimoVNDwA2xpQLLnFKi7yl/PTjvkKL+0jkgV/7ZF3cq3pceUqFwtb8Od+O8qgmFNVTKp/CAi3liPEiNc7ryNR7pJcNHqTf4XM1Xm6kq3E+gq6AAZnLTPl3Vn1Pam6mhKf+OGEUO2IsCy7lmBnqveYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721215770; c=relaxed/simple;
-	bh=mlueMApefrBx3oCbCetbJgT4sruWDXzUi6v+8CnwLuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oFHL5m5UfPihdHPFZBaDQJVNnC2dz1s9x3l4UQWBoL0Nz42TaefUpKpNvBAz7N/JoQw5M6Y30urE0Pq5K8eio4VG9XhJpTqQp7EFuViDywm2icPhuXIj34vUQU/iEFjMIpjWp9Ig2X6wXLDLAMkGvUf7mZDAFREPO8XZAGc8ZNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Zt8Ckj4K; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367ab76d5e1so2257985f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:29:28 -0700 (PDT)
+	s=arc-20240116; t=1721215787; c=relaxed/simple;
+	bh=ydPlujLHMMzd560//B9PWO2akn0bi2X/lkI/t3yjUFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RnIgLrf6jVT7aa9TG2BRi/zYgLNFagHwA0Dmf7Pas69Dmy4igNS6IHndgGRIisoC92yL/0w75nT4xLUT65grzn9mLEMCkMuH89++lt3CgQCYtRT+jIYFRqlY0NKGg+yiHGwFMi7lTtaxUBJ3QE66PNRWXywRryJmU2m9ftrV7UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaCZzjJb; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a797c62565aso682094666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1721215767; x=1721820567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721215784; x=1721820584; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=juT3uodcmwnlXPVSCunbVs4x8IyH/tPtIrSj5xeHKyQ=;
-        b=Zt8Ckj4Kc6ZIBApxp846A8PfVpIH3JXYgwzLXfvCxVHhd5WJtQPm2HQsV09bEK/ynv
-         WByzUZ0UvAsb0NJ5ibmNJfZ3r9MyBgyMTPKL6LZpPSWohz0FG9eYtDSLJf+F7UfVCBFt
-         DLNR0CpDj4J+LNv/cGDILPezDwRSviyo1iTMselmwscW03A0bU7Swk95v5Z0/yWgNrDI
-         mRMznVeswuZRgWrbWu2c5NZFCS3TvWk7CbucqN6DSVEEn3+ecp5O7WVc52rglZecA+bN
-         B9ghVMS3ddmYQQHl7bQLrJdKOMmkQ7vaUnWcdJPlBhmZZ1MP02yvupN3dV7DSCT594i4
-         Ga+Q==
+        bh=TzVI1EFi6ALaN0XOENS1zraS9tfSh0A/9XOpn/vT/ZY=;
+        b=CaCZzjJbD74Oer+EwEdmlkOxuFGevivuC2hMKn7rdhY+q8SRmBJKmDlHUNxQZ3JFah
+         oVCUwzFxUKSh89hhh3Q6GjIAyKqO74Ltd34JlQmJSl1BeOBo5RAj0DghRyjkIh8clCDp
+         QaW9+9KG5lEwVM7wItwYcSCgT0af4Rs9QG3NjwFJiySqHnGbZdiMZI3gMghTcrSSlkq/
+         6r3yc499xagHCDk87j13GEAGagu9ZPbh6mI+Fzf7/UPPEoss62Meu0KSq7sGiS5Qq21W
+         JlQ1PicIeaVSFLrDfGRlEFTuJ7eiFPmQgDXK+Y89IbyFb+DZqbOa7KOSHgVV21V//byl
+         yW0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721215767; x=1721820567;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721215784; x=1721820584;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=juT3uodcmwnlXPVSCunbVs4x8IyH/tPtIrSj5xeHKyQ=;
-        b=gOEoPimp2umu0Xz4lPo54Nv+pJXMZXr5ACeLbzvAlLZOJEdACtu3BoxAanQtnQEiMT
-         DCSK0L+FiT/7fPwyI0dC1r+M6ZWVGKuVv1CUzA9jJxKUt34eovJQ3YuiNkB1aQh0nq4u
-         v3FHKwx0Ol+CTPveDTSuZd5Qc9qYQeiMboMUnPPDyUauiH9x/kAKxdCNl2nlNdMtFkya
-         +gRYPAjbOa6SKfk2jNCZsU64x8No8rNnFkLzciSnGe2ivsBWBlGWCbT6Tga6kKl5LtqU
-         csxpwAcIAoE1aJETvX2oadrJX/O9126EY2lBPxIjyAYo6lcwgrzwtrKitQVH3/6ZSnw/
-         1lBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLY0++TDiPLupCkmRfBU3NYBtZhdebuARx246wpNl3mGQ1TRdDF5Zth4rP/oq/U6MyZ3KTlxb6TnRoH+fLcOKbpptR/mgGLkNVRPz/
-X-Gm-Message-State: AOJu0YwB/HAXsobOLeJmhC4dhLOVWPDwI9FgbmafT1olAiw6/fLFHBvX
-	jUt4jejtL59Lls80mJi7bb2Z06QBTdrFbScGNJqa+L+JqLvs0XaPQNUF1r9qMMA=
-X-Google-Smtp-Source: AGHT+IGYE7f7sIy7b+/v6HZr1Z65eDUdS6PMQc5R2C0QdpR/FSBhFb+VKCZNHWlw7oT3n32HFT6z9Q==
-X-Received: by 2002:adf:e508:0:b0:366:f041:935d with SMTP id ffacd0b85a97d-3683179ebc7mr829016f8f.60.1721215767047;
-        Wed, 17 Jul 2024 04:29:27 -0700 (PDT)
-Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-368119970e7sm10640354f8f.21.2024.07.17.04.29.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 04:29:26 -0700 (PDT)
-From: David Gstir <david@sigma-star.at>
-To: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Gstir <david@sigma-star.at>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] KEYS: trusted: dcp: fix leak of blob encryption key
-Date: Wed, 17 Jul 2024 13:28:45 +0200
-Message-ID: <20240717112845.92088-2-david@sigma-star.at>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240717112845.92088-1-david@sigma-star.at>
-References: <20240717112845.92088-1-david@sigma-star.at>
+        bh=TzVI1EFi6ALaN0XOENS1zraS9tfSh0A/9XOpn/vT/ZY=;
+        b=ZCz9FlCWYje+nGHWrFoigDTD+wAfzKpJj6hSpdqyfKY9hpa1lOue9c/hyQPL5NvUcJ
+         HaKM338JrafUq+eKkoaNoNI7Yl2zH/0Th0Udlu8Vk95kmau0Brb5Em273WM9OiYIoMb+
+         fVQ2IRRfNo2+QsAxfIe+DACDzbAWOkDQvdtL2dfUqz0OdUa0Dw19GDqKvyVLgRBNmmPn
+         ClaOk+bYlBqe8sUcQ694vLl2HVwhF1nhyiAQvejNYO+D7NNOLOVWa7tO6bjE7Ctkk63X
+         cp4uOWFQQLBM7JhiCnc7rivRj3thH2Rz2bjorbKtv8k1lr1CCL6xLoOYgJTg1ykvE6Qi
+         KMwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhRVeAyGxFv84H4c/n8zaaIzr/QEzBX/6np7ktUj24Y4xjXGoIdIWzFK1W3neSkQMtX3tpApnUNGDyGOKX/vK45ZV20NZn4Urpz2Kt
+X-Gm-Message-State: AOJu0YxAQ6De5HGZiNi3C5+F7lAd4YW2eUw/WQ/moURSojS8w/WK6dKD
+	vb9JaNJ33rM1rPY261cMnE8goKMjIh4xg7WTixPFpcCUMEi6ICgeOCAMkJ7EchYgoHdmFfaxR3F
+	Ru056EjW5FT7ftC/1pGl5oJk1jMY=
+X-Google-Smtp-Source: AGHT+IGZ45vk6STtbL9xDLsKaQi2+D8pgY/I0jmfzUSTDFYODXC0DIYb58IA1z/3Vcs03IpW+4zu4qLJoie/U3dy/A8=
+X-Received: by 2002:a17:906:547:b0:a72:8d2f:8594 with SMTP id
+ a640c23a62f3a-a7a01147a55mr97637366b.27.1721215784008; Wed, 17 Jul 2024
+ 04:29:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <3128c3c0-ede2-4930-a841-a1da56e797d7@suse.cz>
+In-Reply-To: <3128c3c0-ede2-4930-a841-a1da56e797d7@suse.cz>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Jul 2024 13:29:31 +0200
+Message-ID: <CAGudoHESB-+kHPJO+4MHnUDPJXGP87=yJ2QrW3q8pkO5z7OLRw@mail.gmail.com>
+Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Bharata B Rao <bharata@amd.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	nikunj@amd.com, "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, willy@infradead.org, 
+	yuzhao@google.com, kinseyho@google.com, Mel Gorman <mgorman@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Trusted keys unseal the key blob on load, but keep the sealed payload in
-the blob field so that every subsequent read (export) will simply
-convert this field to hex and send it to userspace.
+On Wed, Jul 17, 2024 at 11:42=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> On 7/3/24 5:11 PM, Bharata B Rao wrote:
+> > The general observation is that the problem usually surfaces when the
+> > system free memory goes very low and page cache/buffer consumption hits
+> > the ceiling. Most of the times the two contended locks are lruvec and
+> > inode->i_lock spinlocks.
+> >
+[snip mm stuff]
 
-With DCP-based trusted keys, we decrypt the blob encryption key (BEK)
-in the Kernel due hardware limitations and then decrypt the blob payload.
-BEK decryption is done in-place which means that the trusted key blob
-field is modified and it consequently holds the BEK in plain text.
-Every subsequent read of that key thus send the plain text BEK instead
-of the encrypted BEK to userspace.
+There are numerous avoidable i_lock acquires (including some only
+showing up under load), but I don't know if they play any role in this
+particular test.
 
-This issue only occurs when importing a trusted DCP-based key and
-then exporting it again. This should rarely happen as the common use cases
-are to either create a new trusted key and export it, or import a key
-blob and then just use it without exporting it again.
+Collecting all traces would definitely help, locked up or not, for example:
+bpftrace -e 'kprobe:queued_spin_lock_slowpath { @[kstack()] =3D count();
+}' -o traces
 
-Fix this by performing BEK decryption and encryption in a dedicated
-buffer. Further always wipe the plain text BEK buffer to prevent leaking
-the key via uninitialized memory.
+As for clear_shadow_entry mentioned in the opening mail, the content is:
+        spin_lock(&mapping->host->i_lock);
+        xa_lock_irq(&mapping->i_pages);
+        __clear_shadow_entry(mapping, index, entry);
+        xa_unlock_irq(&mapping->i_pages);
+        if (mapping_shrinkable(mapping))
+                inode_add_lru(mapping->host);
+        spin_unlock(&mapping->host->i_lock);
 
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted keys")
-Signed-off-by: David Gstir <david@sigma-star.at>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/trusted-keys/trusted_dcp.c | 33 +++++++++++++++---------
- 1 file changed, 21 insertions(+), 12 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index b0947f072a98..4edc5bbbcda3 100644
---- a/security/keys/trusted-keys/trusted_dcp.c
-+++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -186,20 +186,21 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
- 	return ret;
- }
- 
--static int decrypt_blob_key(u8 *key)
-+static int decrypt_blob_key(u8 *encrypted_key, u8 *plain_key)
- {
--	return do_dcp_crypto(key, key, false);
-+	return do_dcp_crypto(encrypted_key, plain_key, false);
- }
- 
--static int encrypt_blob_key(u8 *key)
-+static int encrypt_blob_key(u8 *plain_key, u8 *encrypted_key)
- {
--	return do_dcp_crypto(key, key, true);
-+	return do_dcp_crypto(plain_key, encrypted_key, true);
- }
- 
- static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
-+	u8 plain_blob_key[AES_KEYSIZE_128];
- 
- 	blen = calc_blob_len(p->key_len);
- 	if (blen > MAX_BLOB_SIZE)
-@@ -207,30 +208,36 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- 
- 	b->fmt_version = DCP_BLOB_VERSION;
- 	get_random_bytes(b->nonce, AES_KEYSIZE_128);
--	get_random_bytes(b->blob_key, AES_KEYSIZE_128);
-+	get_random_bytes(plain_blob_key, AES_KEYSIZE_128);
- 
--	ret = do_aead_crypto(p->key, b->payload, p->key_len, b->blob_key,
-+	ret = do_aead_crypto(p->key, b->payload, p->key_len, plain_blob_key,
- 			     b->nonce, true);
- 	if (ret) {
- 		pr_err("Unable to encrypt blob payload: %i\n", ret);
--		return ret;
-+		goto out;
- 	}
- 
--	ret = encrypt_blob_key(b->blob_key);
-+	ret = encrypt_blob_key(plain_blob_key, b->blob_key);
- 	if (ret) {
- 		pr_err("Unable to encrypt blob key: %i\n", ret);
--		return ret;
-+		goto out;
- 	}
- 
- 	put_unaligned_le32(p->key_len, &b->payload_len);
- 	p->blob_len = blen;
--	return 0;
-+	ret = 0;
-+
-+out:
-+	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+
-+	return ret;
- }
- 
- static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
-+	u8 plain_blob_key[AES_KEYSIZE_128];
- 
- 	if (b->fmt_version != DCP_BLOB_VERSION) {
- 		pr_err("DCP blob has bad version: %i, expected %i\n",
-@@ -248,14 +255,14 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 		goto out;
- 	}
- 
--	ret = decrypt_blob_key(b->blob_key);
-+	ret = decrypt_blob_key(b->blob_key, plain_blob_key);
- 	if (ret) {
- 		pr_err("Unable to decrypt blob key: %i\n", ret);
- 		goto out;
- 	}
- 
- 	ret = do_aead_crypto(b->payload, p->key, p->key_len + DCP_BLOB_AUTHLEN,
--			     b->blob_key, b->nonce, false);
-+			     plain_blob_key, b->nonce, false);
- 	if (ret) {
- 		pr_err("Unwrap of DCP payload failed: %i\n", ret);
- 		goto out;
-@@ -263,6 +270,8 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 
- 	ret = 0;
- out:
-+	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+
- 	return ret;
- }
- 
--- 
-2.35.3
-
+so for all I know it's all about the xarray thing, not the i_lock per se.
+--
+Mateusz Guzik <mjguzik gmail.com>
 
