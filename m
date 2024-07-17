@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-255267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFA5933E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01304933E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5819283DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B141F2158C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580AB181323;
-	Wed, 17 Jul 2024 14:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9A5181305;
+	Wed, 17 Jul 2024 14:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wlc8THT3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ARjwEpBf"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201CE18130A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340D180A8E;
+	Wed, 17 Jul 2024 14:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721225538; cv=none; b=Uzzth1v/5wNLvo2K6zqGOtpOcgQGFubYPhJWGMBMx5c5TXztG8zKCu3Zuhp/eQGChNs4ud3f07O17Zozmqd45EWmY5X/J2Spqc7/NDEger2PG2j79mF3csu72clRBOmBFf65Ns+uanfrec44enpBt4vIRTJ0CBzj2TiQ9GtNvj4=
+	t=1721225535; cv=none; b=cPObM2Bx3FR9w5Hbx8WRLVN/F2/3Czh6Ls3AfDffJuZPto4L+qDSeMQcCkr8n+JCLf7DV9Py2JKIDmtL3sELoKAg8ZJfUCl0IQwQQ67zYPtHjiun1IGzW31emCY056aKpFeWo3vtvk3dlyqeCSh+RIS5JCLTFeHs5Wl9wij6zbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721225538; c=relaxed/simple;
-	bh=Q5MyQH+yVVxh76EUeQMGf6MQdvj13PRQid8x5Ji99cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bIroQHrsqr3kDAWR3Vm8FO3+ZPw/bjcDEspp31wdRZsZ3GguF3ogxFfUcjhvsEELaYtdAc5HzWWpbarmLqxo/aynzWUrOuYt07Rnj04pjIpopumL8Kl0X/jFzpAV+SZfLfuh47QBpDisKaTHl78juNF5I5UcfNYpbeQUSgUDcuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wlc8THT3; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721225537; x=1752761537;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Q5MyQH+yVVxh76EUeQMGf6MQdvj13PRQid8x5Ji99cg=;
-  b=Wlc8THT3TZcBoCFtzexlVebZeUWp4D71JcHV8VAbiN0zZYxTSwG1ZCIq
-   zXjsURpkk0JZmhAdAc85kY7huQNLHpyl9chJq2er+AlyYpvLkX5ok62dQ
-   y8s1PVSGknD+FjT0Bu5ynV1psHt9+jniB5/aA6FxX0G+CNR/a7uj0iPhv
-   CdotIes+66ByVCofOTLT5Sp0CdIrthYN3HQiX6yBnHXL5hhPSMcjYDoaz
-   bwZqjh26d7YTI6fPjCSHwNB5xp8efjCzBcZ389ApsE9IrJs1p2t2qIlF2
-   qFbNgNxeGayXUU7fugk0UugKA/plbGMoV37D2hy2LrhePt2AoI1FxZMA8
-   A==;
-X-CSE-ConnectionGUID: 6G0+RoY/SUWl9dtnnuhibw==
-X-CSE-MsgGUID: /pvyvRK+TSaUlwlYynE02g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="18869676"
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="18869676"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:12:16 -0700
-X-CSE-ConnectionGUID: lMbBYjH4TESxk9XrMfQYWA==
-X-CSE-MsgGUID: A0Db5CyKQJ2J6d9F7FAGaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="50460365"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 17 Jul 2024 07:12:15 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sU5O8-000gNI-1g;
-	Wed, 17 Jul 2024 14:12:12 +0000
-Date: Wed, 17 Jul 2024 22:11:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240710-cbc 13/13]
- ./usr/include/linux/usb/video.h:403:60: warning: type specifier missing,
- defaults to 'int'
-Message-ID: <202407172246.JMnOxzX5-lkp@intel.com>
+	s=arc-20240116; t=1721225535; c=relaxed/simple;
+	bh=Y0nH3ByV5200W06bkaVQD7x7tp8lRjYmTsL0s2QRqUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP/tt0eddKzpxNra9yCIXH6yhqK0cNZ7sRNDHz+RaSH2/2Oa1sONjO/QMzvkOQ/p/76zTeeMCU0rKtxhCpOf/S1qgRdQVI6A68KZ4UdT+kTurvvKj36yfsGp69cvbni5jgWyvdzv3gmbIsaLZwlKPr2YJfMJ/irJuw1pGnLHcA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ARjwEpBf; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 34AC9240003;
+	Wed, 17 Jul 2024 14:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721225524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0cMHAF7GJKaYaEw27XTSd8T22HVixtecNYUERalZAYY=;
+	b=ARjwEpBfK6tZJ63z0co08mLrGjqIMVMMf8LONIX5NvYmEWmWtg/W3Ye3yPzhpOeGKTTBSv
+	hSCbmHmsrrwVIfJ072tIW1uPBYcFAypvZaoGqTphshNz5/4l+RlAEEKiDPLKwUDS/fU9D4
+	zgewBQ9Jiuw3nfYoA3kIyn+fPyvRwUI603xOo8Q1COAHC3oCKhRY6B+Pkg0vBh048J92gj
+	e+DVrFNzC47WoxTk6prDZSCyZsq7+baurUmRnmytEBKhdZXv2hvdtG8J5gFXwMdplxrHO1
+	n9DOAqiNBVagKbxmRt32uxeOa+yClKVT1sew9PQknSoSIYs+NyST5IYkqX09lA==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH] clk: davinci: da8xx-cfgchip: Initialize clk_init_data before use
+Date: Wed, 17 Jul 2024 16:12:01 +0200
+Message-ID: <20240717141201.64125-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240710-cbc
-head:   e3597892cb471e5732700d17c2cca098f3148759
-commit: 73efb8d9b6a2ba4b07021861a1760ec742ddf432 [13/13] usb: video: Avoid -Wflex-array-member-not-at-end warning
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240717/202407172246.JMnOxzX5-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240717/202407172246.JMnOxzX5-lkp@intel.com/reproduce)
+The flag attribute of the struct clk_init_data isn't initialized before
+the devm_clk_hw_register() call. This can lead to unexpected behavior
+during registration.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407172246.JMnOxzX5-lkp@intel.com/
+Initialize the entire clk_init_data to zero at declaration.
 
-All warnings (new ones prefixed by >>):
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+---
+ drivers/clk/davinci/da8xx-cfgchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   In file included from <built-in>:1:
->> ./usr/include/linux/usb/video.h:403:60: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-     403 | static_assert(offsetof(struct uvc_input_header_descriptor, bmaControls) ==
-         |                                                            ^
-         |                                                            int
-   ./usr/include/linux/usb/video.h:403:15: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-     403 | static_assert(offsetof(struct uvc_input_header_descriptor, bmaControls) ==
-         |               ^
-         |               int
-   ./usr/include/linux/usb/video.h:403:73: error: expected ')'
-     403 | static_assert(offsetof(struct uvc_input_header_descriptor, bmaControls) ==
-         |                                                                         ^
-   ./usr/include/linux/usb/video.h:403:14: note: to match this '('
-     403 | static_assert(offsetof(struct uvc_input_header_descriptor, bmaControls) ==
-         |              ^
-   ./usr/include/linux/usb/video.h:403:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-     403 | static_assert(offsetof(struct uvc_input_header_descriptor, bmaControls) ==
-         | ^
-         | int
-   3 warnings and 1 error generated.
-
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index ad2d0df43dc6..ec60ecb517f1 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -508,7 +508,7 @@ da8xx_cfgchip_register_usb0_clk48(struct device *dev,
+ 	const char * const parent_names[] = { "usb_refclkin", "pll0_auxclk" };
+ 	struct clk *fck_clk;
+ 	struct da8xx_usb0_clk48 *usb0;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	fck_clk = devm_clk_get(dev, "fck");
+@@ -583,7 +583,7 @@ da8xx_cfgchip_register_usb1_clk48(struct device *dev,
+ {
+ 	const char * const parent_names[] = { "usb0_clk48", "usb_refclkin" };
+ 	struct da8xx_usb1_clk48 *usb1;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	usb1 = devm_kzalloc(dev, sizeof(*usb1), GFP_KERNEL);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.0
+
 
