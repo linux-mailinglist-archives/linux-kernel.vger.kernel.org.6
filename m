@@ -1,60 +1,81 @@
-Return-Path: <linux-kernel+bounces-254713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548D09336BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:15:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC1E9336C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EECA282B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E471F23C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C4312E48;
-	Wed, 17 Jul 2024 06:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C350C14A96;
+	Wed, 17 Jul 2024 06:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0FdJMI3d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KNl0nQxX"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DE1E57E;
-	Wed, 17 Jul 2024 06:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCEB13ACC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721196912; cv=none; b=H7bFQlADVoDNnMWHiNvevnvMM2+/7aFiLYsNLBSfV4lBmGo7EpaIgMnMLTS3LoP86uaCOqTBvEgzMSWZTRH55Pjm89WZAMmUt2K76tfSKOZ9BN4mmgglRsbqdpMITR/J19gpBrK68o6s86VXxQMWvlNSAx1tBo78Q3AwW4RXOGI=
+	t=1721197119; cv=none; b=jRkUtyolpR/FHAEsSw6/mlKKzPi9GQtyVFd78gOu3M0QPxiQPr8Plw8AMf9HLBVeasbLzily1v334TJngA5QQWCkLgVcLKV8z35zWO9ZoWpGkw2zYY3naIflz03UrY/XxsvJEbPXe9vSOZlBtNAvd7MhyH7MBEet+aY7fsj1S3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721196912; c=relaxed/simple;
-	bh=ZBhtMLdcoezBuG6oHqDon5iO2naEp1wK1o9CII1PmnQ=;
+	s=arc-20240116; t=1721197119; c=relaxed/simple;
+	bh=it8zaNArr4+M3krejY0KN4JNzbwgmTtwIXbDSZYvnfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0SV6jV/xx9w16y/X0zJK9em9xhG6OySrjzF/rV27e5SijQQqFf6DPEsqEqN1mJlASfciE7sy+Ti89hJwfZipoS2R8opKRFgxC7p8iiD+0JBS7FXS3oZcoZKOzK1nuNPIPX6thtX1lFvu+boNDbDaaxmqr5v7IPFgWLsSuzOV6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0FdJMI3d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B9AC4AF09;
-	Wed, 17 Jul 2024 06:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721196911;
-	bh=ZBhtMLdcoezBuG6oHqDon5iO2naEp1wK1o9CII1PmnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0FdJMI3dg7ljgzoaZMCKGN2WzhhYdNqFX1452++txg2ZvzjS1Lau/IGtuLor5s0E9
-	 PzxFu5s82OgOT+BNNldAN4wwa9QfTYlrRkkLXy/8ZdDTQnA6qLbGEAe0X7uPC6HULQ
-	 zsYU5hBruqtTkTnGIBDGJOkK76IJawut8U3I+Doo=
-Date: Wed, 17 Jul 2024 08:15:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 5.15 000/144] 5.15.163-rc1 review
-Message-ID: <2024071743-anyhow-legroom-1d54@gregkh>
-References: <20240716152752.524497140@linuxfoundation.org>
- <CA+G9fYvVaSX9Ot2vekBOkLjUqCx=SbQqW4vWhypCnGwwBmX4xg@mail.gmail.com>
- <c7beb899-91dc-4fcd-816e-fa7ba6f956e4@suswa.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uljuD/W2T9ZI2W6sU3mY4jKg8d0OfR0qTwGbrhLVz+BV9NovwBCtcO8Mt0cprR2OoWEwEnakdBusMMnSjGN0VqsCQgMwCAgcvOUqBjOnjIu1zcPfX83qVjKhK5/3XiorFy8LII1p8fXqURoW/TstQJk4UoqLjKHVQr1fi+JsVJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KNl0nQxX; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9f863c46so7066536e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721197114; x=1721801914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ft3uDiuXc9eH9qPA+tznvZpzXYRNDs/NnXbEjvWw+aE=;
+        b=KNl0nQxX1tITBddLTMOIorl+UXja5NMQjsM3kZZXNmt8p8klTxoZmpE2kbl3+daTER
+         oE3ewUcYV1JfuNS31E7SVtOqkRvS6tvidhonWrN3pR+NcyCtHrLcCxLLkCvaZoj6sYn0
+         8366Y1dFRb3YJIa0VwxsC8LYzFyyI2U2TsQMFI3fr06RcdaCHNtDiuxnEKAcD4HE3tWP
+         fxkxcVToJzqmvczuiXvyHeRodQQj6MQRPx1dfckTIke7AZT+rWCYa3bL9nmszb3eXIl4
+         q/GH/2sgqfinFIj+NiS07u+uyY+eJGMf+nQ3kJx+VwjtLZTWckmeAuqhtrcrY4MfzIeg
+         Yj3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721197114; x=1721801914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ft3uDiuXc9eH9qPA+tznvZpzXYRNDs/NnXbEjvWw+aE=;
+        b=lG4cf99Kg3tpUP/a+XKtaRvdQWSH0Tm9t0aT7Lb6mU1eE7s9UP8Y76M5/O4CGTLA7B
+         z2uXXlJi1q+1uG3/9k9IgGdfgjUgLjdtRVUJ1hFZ8qihoTLFrDN8fC39U/FXOBpGgAp7
+         qiYbWaqk3QuQPv3gXCUq0fIif/yvipi954yha19iUlAs7zYdcIyFq2hApDooaqqnXV4y
+         TUbXqUKw8ORPgTET1tGee3P09bNE7Y5Cfi1nqBKNDUCtSY4YR+ZfLmla0+8rk87rHnHy
+         qK88OQ1FTjQowKezmlgq5QMD/1Q2NaYYNXEzumIiPbhVnlWQX5pISeZMMIrYOpuI4BTM
+         T9GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDzeNhXtUlqt2lz518tIuEMVU3IyoYaSRRnZY55l5dDdVcLGtW2+Y4Wx4nZ3Y6HUj6d4J1LlMPKA6h9z2UmpDssktfXpy4cfhL4/mu
+X-Gm-Message-State: AOJu0YyRJOMETLVXIMi4VACoNr3jd7LS1nHglIATg5epjP+HowqXZTEk
+	5YMngFJHWBboFAB/7g3cXGIpQ9PNVDcHrEwajDdgN3yGwfdcBF5w5A00uDDQ0es=
+X-Google-Smtp-Source: AGHT+IGgWbb2IPkjfEDoNx2g+eoVjB/B6K526lBWKCCRxuVqxHJLxM76gIzPizZ7r48jQdJZprEGsA==
+X-Received: by 2002:a05:6512:3d08:b0:52e:9951:7891 with SMTP id 2adb3069b0e04-52ee544b0d6mr376783e87.53.1721197114165;
+        Tue, 16 Jul 2024 23:18:34 -0700 (PDT)
+Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5ea482sm410071566b.92.2024.07.16.23.18.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 23:18:33 -0700 (PDT)
+Date: Wed, 17 Jul 2024 08:18:32 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: akpm@linux-foundation.org, nao.horiguchi@gmail.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/hwpoison: reset hwpoison filter parameters in
+ pfn_inject_exit()
+Message-ID: <ZpdiOAjdSJfkpbr7@tiehlicka>
+References: <20240716033516.606582-1-linmiaohe@huawei.com>
+ <ZpYxkH1EFB65tEzt@tiehlicka>
+ <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,70 +84,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7beb899-91dc-4fcd-816e-fa7ba6f956e4@suswa.mountain>
+In-Reply-To: <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
 
-On Tue, Jul 16, 2024 at 03:45:33PM -0500, Dan Carpenter wrote:
-> On Wed, Jul 17, 2024 at 01:49:12AM +0530, Naresh Kamboju wrote:
-> > On Tue, 16 Jul 2024 at 21:37, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 5.15.163 release.
-> > > There are 144 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 18 Jul 2024 15:27:21 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.163-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
+On Wed 17-07-24 10:23:06, Miaohe Lin wrote:
+> On 2024/7/16 16:38, Michal Hocko wrote:
+> > On Tue 16-07-24 11:35:16, Miaohe Lin wrote:
+> >> When hwpoison_inject module is removed, hwpoison_filter_* parameters
+> >> should be reset. Otherwise these parameters will have non-default values
+> >> at next insmod time.
 > > 
-> > The s390 builds failed on stable-rc 5.15.163-rc1 review due to following build
-> > warnings / errors.
-> > 
-> > First time seen on stable-rc 5.15 branch.
-> > 
-> >   GOOD: ba1631e1a5cc ("Linux 5.15.162-rc1")
-> >   BAD:  b9a293390e62 ("Linux 5.15.163-rc1")
-> > 
-> > * s390, build
-> >   - clang-18-allnoconfig
-> >   - clang-18-defconfig
-> >   - clang-18-tinyconfig
-> >   - clang-nightly-allnoconfig
-> >   - clang-nightly-defconfig
-> >   - clang-nightly-tinyconfig
-> >   - gcc-12-allnoconfig
-> >   - gcc-12-defconfig
-> >   - gcc-12-tinyconfig
-> >   - gcc-8-allnoconfig
-> >   - gcc-8-defconfig-fe40093d
-> >   - gcc-8-tinyconfig
-> > 
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > 
-> > Build regressions:
-> > --------
-> > arch/s390/include/asm/processor.h:253:11: error: expected ';' at end
-> > of declaration
-> >   253 |         psw_t psw __uninitialized;
-> >       |                  ^
-> >       |                  ;
-> > 1 error generated.
+> > There is a clear layering broken here. We have mm/memory-failure.c using
+> > values and mm/hwpoison-inject.c defining the values. Both with a
+> > potentially different life time. Shouldn't that be fix instead?
 > 
-> Need to cherry-pick commit fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
+> In fact, we have mm/memory-failure.c defining and using these values while they can
+> only be modified through mm/hwpoison-inject.c from userspace.
 
-Thanks, as this keeps coming back, I'll go add this commit now to all
-branches and push out -rc2 releases in a few hours.
+Yes, this is exactly what I mean by broken layering that should be
+fixed.
 
-thanks,
+> The common usecase should be:
+> 
+> 1. User set hwpoison filter parameters first through mm/hwpoison-inject.c.
+> 2. Then doing memory hwpoison test through mm/hwpoison-inject.c.
 
-greg k-h
+Why does this need to be done through different modules? Why it cannot
+be part of the memory-filure.c?
+-- 
+Michal Hocko
+SUSE Labs
 
