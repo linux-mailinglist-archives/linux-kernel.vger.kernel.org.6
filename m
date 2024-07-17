@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-255416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BFE93407D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C238934083
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223B71C22F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801251C21B39
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13751822F5;
-	Wed, 17 Jul 2024 16:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626C8181CE0;
+	Wed, 17 Jul 2024 16:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ttkm+dh5"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="PQGwxwrR"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843AB6FB9;
-	Wed, 17 Jul 2024 16:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726E5224FA;
+	Wed, 17 Jul 2024 16:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233932; cv=none; b=tMTC4d3TnpLUoGQUBq2QI6GKd35eT0AkBPfoxHkLdAwUF32SogGyLvnXq7qEandoj8dofIziEHmAPJYACPpPu7H1VrXyfr2jSqeu6CHbOyerQHOY5eXFhtMCuUA6eOf0utmPONKMaAUfghGWcqCY/BWMZBYGwEg1EM7mpZK05Qs=
+	t=1721234014; cv=none; b=TfoXKOlc/e0V21bkWdfK+07BmkrB1m8qDu/mgqyLfIsCZNAJ9tQJFjoJTJ9G/2nvRTi/gVbYr7TKPg0LMm6L6md1i259HJLhN3kga/dhFYc4t1NBl8KU0KDb4eRLz67MTYnD6Fjj6wZN9jZThaObu/OFaC4VWVdDqpdRottk5DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233932; c=relaxed/simple;
-	bh=3fUCNNaJXzS7JuiTOKDc4frw9Riwja6uOzB2OgTupcs=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=pk5cO9vEp3qciwHTH5h1pRfM6XGsK0MttQk63Arqfyh5y1Q+s2+2+IxVJRL0DUYeovQnRTHxdar13wGMhlriszsJF57z+2oXyN/+Q3pA0yWe7N0E9CCBHyj+pLu9EfldfnUgBpW3Sdo2fmVI0fvcfi1CT98Nxz6JR+WYTnp3PZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ttkm+dh5; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a05b4fa525so84084085a.1;
-        Wed, 17 Jul 2024 09:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721233929; x=1721838729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tmMW3QotAs6Her4vmCKKRFApsHyxNhbddH+wP64vdF4=;
-        b=Ttkm+dh576N/85bgOm2jVXyfwDlfZBslSU5CAq0ha6plNDdcAlG9M+nOdeN+yAIeJt
-         xnBbdiEHKRHBXu6ECk+3+0u3Dmm7On8joa9FwdYiY/CWfXDVCvfk06aHh06e94kNo5km
-         Lwy5ljz3Eyka+R9Gxm0AVMGqCdZ/D1rX8yS5+hoKESvhBtYwc4fYHunWrndswuzFPt08
-         E61sEFVGJ5dI+j6Y9jrLQvz8O8pHByoFo56M4wC8mzk6dvq+KXW83QyeufPh2xw3UgeS
-         CK2mg97jI7GHhualOCoSEwSCd+nx9vdTT5YuCysfWTDsjuHcgfFW2eTiXCZdlEjhwmIe
-         TAEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721233929; x=1721838729;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tmMW3QotAs6Her4vmCKKRFApsHyxNhbddH+wP64vdF4=;
-        b=Wqq8BcZe+RS8TojqOyuiK+ZziSI0BYLuNwoHM8ICz08aFTO6jj9V+5MtILhild21Hs
-         +V0EC7okyR6TSWDhPio/ofmWK+xqSasQ5JBKaFSSUrl8QmJrSUaMeRC86eWsPvxjvuWs
-         r4wvL8C17Y2vTmgVGIWcF3cola7IDYjrD7HUsULojFf2iq7u67Lfwv45j1DpuRwtHn9N
-         5ybqoIA7mGDA3+7noi3Jg1maR+JxvOU1UjpcIe34ArouEK1lrizoSctxGF0VAjP+BC/H
-         tYU3WPLI6Php7mR+4T4W6tTUtCWeitzKfouQ/rfkqH4MeYaYDJ4FeYnoMRH9KFoa+Yti
-         DqWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Cw1OFBTCUk8f6XMRjeXQ+BbPUI10dB9ht2FbaSqOSGW3olzrKPQjusEcLxti7QtiKuUFHs8SHwppPATbptNSgg0KFSVTvBDtQAmPcsRBQDmDP1T7m4x6oVeARxB9j3TDgFev
-X-Gm-Message-State: AOJu0Yy5wpex+sysxykUXdPR+LZ9KBtCQYOW0c3//lLrPQX4G5Pfkar5
-	VvZfaEXT0Q9x6lLSocRsrBV+AHvBtGn8/g184dl0vMmlIt4QmVxV
-X-Google-Smtp-Source: AGHT+IEWVMngP8w6cNex5dWAr9Yp33iJOatF0vo2y029Lbb3iYHvJwJf5hFjDKhq5B+bjXSSb99uWw==
-X-Received: by 2002:a05:620a:858:b0:79d:554d:731f with SMTP id af79cd13be357-7a18dc06099mr26838685a.29.1721233929273;
-        Wed, 17 Jul 2024 09:32:09 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160b9c31dsm418156485a.20.2024.07.17.09.32.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 09:32:08 -0700 (PDT)
-Date: Wed, 17 Jul 2024 12:32:08 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Fred Li <dracodingfly@gmail.com>, 
- pabeni@redhat.com, 
- willemdebruijn.kernel@gmail.com, 
- herbert@gondor.apana.org.au
-Cc: bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- andrii@kernel.org, 
- song@kernel.org, 
- yonghong.song@linux.dev, 
- john.fastabend@gmail.com, 
- kpsingh@kernel.org, 
- Fred Li <dracodingfly@gmail.com>
-Message-ID: <6697f20876b11_34277329417@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240717053540.2438-1-dracodingfly@gmail.com>
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
- <20240717053540.2438-1-dracodingfly@gmail.com>
-Subject: Re: [PATCH v3] net: linearizing skb when downgrade gso_size
+	s=arc-20240116; t=1721234014; c=relaxed/simple;
+	bh=UkC0sAZpE7/WRdVikjHbnqPQTCDC+XxSCjuX8q3pfp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRX/Tn3Vv/nk4GLEAjvh0lO7gq3VVpEDDYfZ+n8teVa4wB3ue22SnEKBsYtsMMoR13oAnKPnLjOPq3Vq2sAWs6XwyrwEOXRyAZEk4YfSvIcBitEWZAQoD0+BDRebATmZDWsc1sndr67aFaGlG0FQL7462LDMfXDYPBs7FhAc4jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=PQGwxwrR; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1721234008;
+	bh=UkC0sAZpE7/WRdVikjHbnqPQTCDC+XxSCjuX8q3pfp4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PQGwxwrRVZyGcGPG8VdfyoeXjmAWRfFso6dpzGonGXqWZ/2nWrhSgLaBJopa/qzHX
+	 g3KMQMDA9gWTXx44KaHXtxXp0/KBUmieI+x6oEuL4PpaShvPVpp2jvf5sZdppfxMjM
+	 wQNhAhQuyjWfy5oMiaK1xYwXXI3sYPRbWlYp/V0Y=
+Date: Wed, 17 Jul 2024 18:33:27 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman
+ package
+Message-ID: <41cf1da7-ef13-4586-9e9a-f1f8f3b34d8e@t-8ch.de>
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+ <20240717011515.GA1230090@thelio-3990X>
+ <CAK7LNARYNqjcMkdnaY2oAkxttFTtTEgJ9VuOZOn0i4AuXp-How@mail.gmail.com>
+ <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
+ <20240717135747.GC24892@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240717135747.GC24892@thelio-3990X>
 
-Fred Li wrote:
-> Linearizing skb when downgrade gso_size because it may
-> trigger the BUG_ON when segment skb as described in [1].
+On 2024-07-17 06:57:47+0000, Nathan Chancellor wrote:
+> On Wed, Jul 17, 2024 at 05:51:21PM +0900, Masahiro Yamada wrote:
+> ...
+> > > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > > > new file mode 100644
+> > > > > index 000000000000..eb3957fad915
+> > > > > --- /dev/null
+> > > > > +++ b/scripts/package/PKGBUILD
+> > > > > @@ -0,0 +1,99 @@
+> > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > +# Maintainer: Thomas Weißschuh <linux@weissschuh.net>
+> > > > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > > > > +
+> > > > > +pkgbase=linux-upstream
+> ...
+> > Perhaps, this may make sense.
+> > 
+> > Currently,
+> > pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers")
+> > is hard-coded.
+> > 
+> > I do not think linux-upstream-headers make sense
+> > when CONFIG_MODULE is disabled.
+> > 
+> > scripts/package/mkspec turns off with_devel
+> > when CONFIG_MODULE is disabled.
+
+Ack.
+
+> Yes, I think that is a reasonable change to make. In the face of that
+> potential change, would it make sense to slightly adjust the
+> makedepends? pahole is only needed when CONFIG_DEBUG_INFO_BTF is enabled
+> but I guess no other package building infrastructure makes dependencies
+> conditional in that manner.
+
+The pahole dependency optimization seems like an overcomplication.
+Arch Linux in general is not hell-bent on minimizing dependencies,
+for example there are no dev-packages at all.
+Also if the kernel will require pahole in more cases it will create
+churn.
+
+> Another thing I wonder about would be allowing the user to customize the
+> value of pkgbase, like
 > 
-> v3 changes:
->   linearize skb if having frag_list as Willem de Bruijn suggested[2].
+>   pkgbase=${PACMAN_PKGBASE:-linux-upstream}
 > 
-> [1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail.com/
-> [2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch/
-> 
-> Signed-off-by: Fred Li <dracodingfly@gmail.com>
+> because unlike Debian and Fedora, multiple versions of the same kernel
+> package cannot be installed at once. If I wanted to build a package
+> against mainline and -next and install them side by side, I could only
+> do so if they are named differently. This would allow one to provide
+> PACMAN_PKGBASE=linux-mainline and PACMAN_PKGBASE=linux-next to
+> accomplish that. Might be a hyper specific use case though, so I am not
+> opposed to disregarding it.
 
-A fix needs a Fixed tag.
+Ack.
 
-This might be the original commit that introduced gso_size adjustment,
-commit 6578171a7ff0c ("bpf: add bpf_skb_change_proto helper")
+FYI linux-upstream was picked to be consistent with pkg-debian and not
+to conflict with the existing linux-mainline package in AUR [0].
 
-Unless support for frag_list came later.
-
-> ---
->  net/core/filter.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index df4578219e82..70919b532d68 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
->  	if (skb_is_gso(skb)) {
->  		struct skb_shared_info *shinfo = skb_shinfo(skb);
->  
-> -		/* Due to header grow, MSS needs to be downgraded. */
-> -		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
-> -			skb_decrease_gso_size(shinfo, len_diff);
-> -
->  		/* Header must be checked, and gso_segs recomputed. */
->  		shinfo->gso_type |= gso_type;
->  		shinfo->gso_segs = 0;
-> +
-> +		/* Due to header grow, MSS needs to be downgraded.
-> +		 * There is BUG_ON When segment the frag_list with
-> +		 * head_frag true so linearize skb after downgrade
-> +		 * the MSS.
-> +		 */
-
-Super tiny nit: no capitalization of When in the middle of a sentence.
-
-> +		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
-> +			skb_decrease_gso_size(shinfo, len_diff);
-> +			if (shinfo->frag_list)
-> +				return skb_linearize(skb);
-
-I previously asked whether it was safe to call pskb_expand_head from
-within a BPF external function. There are actually plenty of existing
-examples of this, so this is fine.
-
-> +		}
-> +
->  	}
->  
->  	return 0;
-> -- 
-> 2.33.0
-> 
-
-
+[0] https://aur.archlinux.org/packages/linux-mainline
 
