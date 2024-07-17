@@ -1,277 +1,138 @@
-Return-Path: <linux-kernel+bounces-255245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B7E933DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A43933DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6511F22457
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A9D1F219C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F73E180A7B;
-	Wed, 17 Jul 2024 13:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCC01802DA;
+	Wed, 17 Jul 2024 13:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLm/ACed"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fLEsva+l"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7C81802CF;
-	Wed, 17 Jul 2024 13:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5D41802A5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721224076; cv=none; b=Jr6bRKOo9grdM7ZTyraHwT4rg0BvxOJXvdmKcdr0uVsXPvrVk+86k87i8nLcjeASI3Frltq1/dmycW1W+9+AaRu6R24/1bA2STON/bMIPuooKQWHF9QWCSJFA2AwrKmrXXk/qanubIhfo0b3e871gM5anDpd2+QuOlWBRJO/CpU=
+	t=1721224058; cv=none; b=ccqjYGomHMvQQ6DJ6MB2kH9EnHmqoakYrWaijHtjnTamPSl2PFaWk+cqtPxayPbPCl16VJdATRBLtaJ/lY11NrvFmBLH+J8AV4bKR06ZTnZCjSb774geroU/aG8kBKD9dpyJPdt1CH7PtF8we7LbZQTTkXqda8v9mWR1JD65C24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721224076; c=relaxed/simple;
-	bh=TK5CcCrQpoQwMuE1ZtzVEvqvCNUw1UJgh/OinqbaVnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aW0JRRnUVX9V4sb0jBxwWY89V0ECbUvtFUwj24a0T2eV7pVi13urGOFnXqfqQPPGQmCLNEqHZ7KCVN7/SmUnHOUsmGu0U2r667VcK1RyDVCBujIsrDMccb4MPyMmPS3bi+QW2jx7dH/BHZqfIPWEVbyBjF6seBvjo9e+sb2T7Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLm/ACed; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fb05ac6b77so41059505ad.0;
-        Wed, 17 Jul 2024 06:47:54 -0700 (PDT)
+	s=arc-20240116; t=1721224058; c=relaxed/simple;
+	bh=3YXQ3Jp1Vw9VmoXeCe7hEucINqL8LN3lNkb2lR+5R+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b1Wl5bbMaXS13+FrXohOJVEJ4MlCiGsfDbNvkIsMkHFBX/TrbfTTUZTozbvl9LqL81ATWbgIo/+Nmkuto3xsbnQY6HE8wphTUMrgHYfSsmSL6WGUoKFSJksXXxu/c1dnK11duywnduC67VABAacDa1QsID2L3LTehyZywqpLvBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fLEsva+l; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70af02bbb89so343723b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721224074; x=1721828874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJiVjPpB17KuA/ZiRxr8+LU1A6kvrnOJUhTd7VpuBq0=;
-        b=dLm/ACedESzNmWSNa3Jhqr15BDf9AB3X+IV/OjK1SFIygnGrbQPpN8rBOuwvyjzULp
-         hzxogyMnRlL6tlcirQjSEw3Nmh+RdMW+JOSDOkBeTZv3QdyXWphAf4esAC7nOrOvSI6D
-         MpioZ2VAx2HQTegDPf2sItpB0dsrJ0y4Db28MW+Icj+UGmamOlJDTf7+QcflpRt+x4ks
-         JBA/ul7qdeL6gIJHLXSCr6CJYqSbfqEOUi5b1PiOKI3C2nIq5ZCZCIo2m1ARqm9BkrZO
-         vyZWbJVsrUcYdnsOWHXHioKeEET5KttO3i7R/YLZ6McgucfCkfjzUlY6Zb2d1jdJucxb
-         E8Jw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721224055; x=1721828855; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nBpW59picKN4VaRpDNbT71+2koRZ3tbahdtbsssxVqY=;
+        b=fLEsva+lOzqgP4X3rM6nXQ8erbd2UD+vSOKhlXE2BEtTV9/z4+ao2wfTCimpE9OvYL
+         3Oi07jBV3NXeGlgfY8w8ubpgOdB806Iuwx6TYOGT2kmav54zFIK6UJ13UNnNRi0VeVyd
+         LMsrbApu2vXRVgyMoJjNB5AQJXn6X+/CHJ2KHwmZrOYLTEAoxP0v5lIHywj+IAXNePE/
+         4f4ExKvO9bhYlY+RW/SAX5eIpsG+CH3z1Y64ODzSge3yt0mfbChGBtqKfJfvEos81E+2
+         Lo7eAYbVOXsBdzwerTTQawkgTiN445izZbSTR1eECwhzHbLhxIPUTZR4QjHH5bh/vY18
+         napQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721224074; x=1721828874;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iJiVjPpB17KuA/ZiRxr8+LU1A6kvrnOJUhTd7VpuBq0=;
-        b=NlGldCr8OnkB6I/0A++u1+2+SmCfKCt3JcCmvjiAT1xRT9DPg1K94K+rKA7Ph0CfPY
-         K2PgbstTt1H2HfDsxjpI5gQpQeOR0Hn3sdyUiX8JZQA27fSEbRFNmuvET7EivRfoZ/vN
-         4wdLF9G4IDIrICl2ueWpebtAU6RVVurNHr5o+l2wGj5m9OEvVoj1HoDnChadYtaq049M
-         PBOjRvn3KQkc3H+ZF8+1WWaU1/trEXePaVAKj8uRVimJPmu0cvq6+1X3tmwO/37/3CU7
-         7KSW5+q+minrWfGt+tyYKGib+XbJR49ngqZqM97LzgzGPrn2bZkOT9FhAhKpKkLf1CgW
-         QtQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXZdW+ODXt+AWM98K/Jz1fbO7clM2U+IxD9jYqfT6NB432fs2TPE5FSnDD2AicYVU5HHw7RClEcOLBYl6vJ/i/6ETTAJ3xyeUYL1pxn+BFMezYh2SHLvw+Mxkb0myG+/uLrtITADlaKKfaUiKv0fhmAhpXDFVctw52Y7WR9T31M+xvGMTk
-X-Gm-Message-State: AOJu0YwoBiDgzj4oRKH5U5EAl2/9ro+YezUKmqd/Uis04JcEqh+6vabS
-	U7RKmyTkxjAO+INap5N3lLp3ev0cxb6m7oHDJ6UbdIcP6npqRsYU7Wu1iL01RPclig==
-X-Google-Smtp-Source: AGHT+IGrhV4IzgF4D3H6T1QQOr4+kF3oasP7TI0Bm4g2gxxwNjEehpGI6GoU8BEg0Nzbds/s4fcHJw==
-X-Received: by 2002:a17:902:e5c2:b0:1fb:6b94:66ee with SMTP id d9443c01a7336-1fc4e15280bmr16645435ad.26.1721224073640;
-        Wed, 17 Jul 2024 06:47:53 -0700 (PDT)
-Received: from localhost.localdomain ([115.240.194.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc516dasm75114775ad.288.2024.07.17.06.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 06:47:52 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: ti,pcm512x: Convert to dtschema
-Date: Wed, 17 Jul 2024 19:17:21 +0530
-Message-ID: <20240717134729.51661-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721224055; x=1721828855;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nBpW59picKN4VaRpDNbT71+2koRZ3tbahdtbsssxVqY=;
+        b=So0QhjuxOLUFJJFDchIY35TL0Zn+KI09i1yLlDA2yf1dnQrchuane437hj9PVnEZxt
+         obYAEAKAwV8BpzNLH9/qzKpCqGUgQcSxiDl06G60WloOGaAUdb69HSeGI5LllQDfjLVX
+         5jj5EHBUhL2DHbsPrD6f42QES8yZdo3Wblbf+bR9OyP4jW2GfLzNinU6JoIntLr9B1Zl
+         AuViT8lpl0r27ZJw6nAVwEBTEE1fiHq1fAQLvPHg1xHzc2L8lZZAAB1AU/0kKb8jUTOO
+         KCSWBucBLIzYbcZ40+sxaXC/unzAdMZdfDohWIbT9yokq+wItAn1giM7s/GYFWIfYjqC
+         yJwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSqcjBRlmA2K6WSqnBL90DOW26kcILQkx3MGsCy74z1k5UFTXF05vkFibBKRlD9wHFCwhnQa2trRedf6dHttmBCBXaSkqbCWTf6cPU
+X-Gm-Message-State: AOJu0YwuVJWtXbDrRYIMQnV5O1mAwUnTYtk1SDXUU+9uumEFTZQU3iwz
+	iF9+uCHtmA7gC2a1hvXP7MhmNMlE2hutW8BJvtA+j5WJynzJxszZORfCe58G/Kg=
+X-Google-Smtp-Source: AGHT+IHxw4bA3LWgtRU+YCa2X8Fc71AQA7LAYI4IkNfRbYCBvMwnBVW5kGHw/SElv4tOqos0SFFZEw==
+X-Received: by 2002:a05:6a00:2d9b:b0:70b:705f:43ba with SMTP id d2e1a72fcca58-70ce50316c6mr1087853b3a.4.1721224055153;
+        Wed, 17 Jul 2024 06:47:35 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eca7865sm8104592b3a.158.2024.07.17.06.47.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 06:47:34 -0700 (PDT)
+Message-ID: <5b974edc-0029-48a1-b181-6beef36869e1@rivosinc.com>
+Date: Wed, 17 Jul 2024 15:47:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0()
+ alphabetically
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley
+ <conor.dooley@microchip.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
+References: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
+ <cba0c880-a1b2-4bb8-bef0-d280d87ec308@rivosinc.com>
+ <20240717-unluckily-collide-1aa35c97662c@spud>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20240717-unluckily-collide-1aa35c97662c@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert the PCM512x and TAS575x audio CODECs/amplifiers bindings to DT
-schema format. Add missing sound-dai-cells property.
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
----
-Changes in v2:
-  - Defined pll-in and pll-out in top-level propertirs list (outside
-    conditional statements).
----
- .../devicetree/bindings/sound/pcm512x.txt     |  53 ---------
- .../devicetree/bindings/sound/ti,pcm512x.yaml | 101 ++++++++++++++++++
- 2 files changed, 101 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/pcm512x.txt
- create mode 100644 Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
+On 17/07/2024 15:42, Conor Dooley wrote:
+> On Wed, Jul 17, 2024 at 03:34:06PM +0200, Clément Léger wrote:
+>> On 17/07/2024 10:54, Conor Dooley wrote:
+>>> From: Conor Dooley <conor.dooley@microchip.com>
+>>>
+>>> Currently the entries appear to be in a random order (although according
+>>> to Palmer he has tried to sort them by key value) which makes it harder
+>>> to find entries in a growing list, and more likely to have conflicts as
+>>> all patches are adding to the end of the list. Sort them alphabetically
+>>> instead.
+>>>
+>>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>>>  		if (has_fpu()) {
+>>> -			EXT_KEY(ZFH);
+>>> -			EXT_KEY(ZFHMIN);
+>>> -			EXT_KEY(ZFA);
+>>>  			EXT_KEY(ZCD);
+>>>  			EXT_KEY(ZCF);
+>>> +			EXT_KEY(ZFA);
+>>> +			EXT_KEY(ZFH);
+>>> +			EXT_KEY(ZFHMIN);
+>>>  		}
+>>>  #undef EXT_KEY
+>>>  	}
+>>
+>> I'd prefer that to be done after removing the "if
+>> (has_vector()/has_fpu()) by using the .validate callback for ISA
+>> extension. This way, you'll have only a single commit reordering everything.
+> 
+> Right, and I do have some WIP for that here
+> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=validate_fpu_and_vector
+> but won't be sending that until it's cleaned up after the merge window.
+> I was intentionally sending this during it so that there would be no
+> moving pieces for this to conflict with - because it will conflict with
+> any other patch adding things to the list tails.
 
-diff --git a/Documentation/devicetree/bindings/sound/pcm512x.txt b/Documentation/devicetree/bindings/sound/pcm512x.txt
-deleted file mode 100644
-index 47878a6df608..000000000000
---- a/Documentation/devicetree/bindings/sound/pcm512x.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--PCM512x and TAS575x audio CODECs/amplifiers
--
--These devices support both I2C and SPI (configured with pin strapping
--on the board). The TAS575x devices only support I2C.
--
--Required properties:
--
--  - compatible : One of "ti,pcm5121", "ti,pcm5122", "ti,pcm5141",
--                 "ti,pcm5142", "ti,pcm5242", "ti,tas5754" or "ti,tas5756"
--
--  - reg : the I2C address of the device for I2C, the chip select
--          number for SPI.
--
--  - AVDD-supply, DVDD-supply, and CPVDD-supply : power supplies for the
--    device, as covered in bindings/regulator/regulator.txt
--
--Optional properties:
--
--  - clocks : A clock specifier for the clock connected as SCLK.  If this
--    is absent the device will be configured to clock from BCLK.  If pll-in
--    and pll-out are specified in addition to a clock, the device is
--    configured to accept clock input on a specified gpio pin.
--
--  - pll-in, pll-out : gpio pins used to connect the pll using <1>
--    through <6>.  The device will be configured for clock input on the
--    given pll-in pin and PLL output on the given pll-out pin.  An
--    external connection from the pll-out pin to the SCLK pin is assumed.
--    Caution: the TAS-desvices only support gpios 1,2 and 3
--
--Examples:
--
--	pcm5122: pcm5122@4c {
--		compatible = "ti,pcm5122";
--		reg = <0x4c>;
--
--		AVDD-supply = <&reg_3v3_analog>;
--		DVDD-supply = <&reg_1v8>;
--		CPVDD-supply = <&reg_3v3>;
--	};
--
--
--	pcm5142: pcm5142@4c {
--		compatible = "ti,pcm5142";
--		reg = <0x4c>;
--
--		AVDD-supply = <&reg_3v3_analog>;
--		DVDD-supply = <&reg_1v8>;
--		CPVDD-supply = <&reg_3v3>;
--
--		clocks = <&sck>;
--		pll-in = <3>;
--		pll-out = <6>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml b/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
-new file mode 100644
-index 000000000000..21ea9ff5a2bb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/ti,pcm512x.yaml
-@@ -0,0 +1,101 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/ti,pcm512x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: PCM512x and TAS575x audio CODECs/amplifiers
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,pcm5121
-+      - ti,pcm5122
-+      - ti,pcm5141
-+      - ti,pcm5142
-+      - ti,pcm5242
-+      - ti,tas5754
-+      - ti,tas5756
-+
-+  reg:
-+    maxItems: 1
-+
-+  AVDD-supply: true
-+
-+  DVDD-supply: true
-+
-+  CPVDD-supply: true
-+
-+  clocks:
-+    maxItems: 1
-+    description: A clock specifier for the clock connected as SCLK. If this is
-+      absent the device will be configured to clock from BCLK. If pll-in and
-+      pll-out are specified in addition to a clock, the device is configured to
-+      accept clock input on a specified gpio pin.
-+
-+  '#sound-dai-cells':
-+    const: 0
-+
-+  pll-in:
-+    description: GPIO pin used to connect the pll using <1> through <6>. The
-+      device will be configured for clock input on the given pll-in pin.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    maximum: 6
-+
-+  pll-out:
-+    description: GPIO pin used to connect the pll using <1> through <6>. The
-+      device will be configured for PLL output on the given pll-out pin.  An
-+      external connection from the pll-out pin to the SCLK pin is assumed.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    maximum: 6
-+
-+required:
-+  - compatible
-+  - reg
-+  - AVDD-supply
-+  - DVDD-supply
-+  - CPVDD-supply
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - ti,tas5754
-+          - ti,tas5756
-+
-+then:
-+  properties:
-+    pll-in:
-+      maximum: 3
-+
-+    pll-out:
-+      maximum: 3
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        codec@4c {
-+            compatible = "ti,pcm5142";
-+            reg = <0x4c>;
-+            AVDD-supply = <&reg_3v3_analog>;
-+            DVDD-supply = <&reg_1v8>;
-+            CPVDD-supply = <&reg_3v3>;
-+            #sound-dai-cells = <0>;
-+            clocks = <&sck>;
-+            pll-in = <3>;
-+            pll-out = <6>;
-+        };
-+    };
--- 
-2.45.2
+Makes sense. If you think it's worth it:
 
+Reviewed-by: Clément Léger <cleger@rivosinc.com>
+
+Thanks,
+
+Clément
 
