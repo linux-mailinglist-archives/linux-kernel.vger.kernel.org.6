@@ -1,116 +1,245 @@
-Return-Path: <linux-kernel+bounces-254714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC1E9336C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:18:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E45E9336C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E471F23C08
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237302814A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C350C14A96;
-	Wed, 17 Jul 2024 06:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F350D14287;
+	Wed, 17 Jul 2024 06:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KNl0nQxX"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="UthKgIQG"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCEB13ACC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515B4125DE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721197119; cv=none; b=jRkUtyolpR/FHAEsSw6/mlKKzPi9GQtyVFd78gOu3M0QPxiQPr8Plw8AMf9HLBVeasbLzily1v334TJngA5QQWCkLgVcLKV8z35zWO9ZoWpGkw2zYY3naIflz03UrY/XxsvJEbPXe9vSOZlBtNAvd7MhyH7MBEet+aY7fsj1S3A=
+	t=1721197195; cv=none; b=dUpNwL/H7aJTaxS4yUp4KfOAz6a198R49ZdETVRfXxbqSBIXcphj6U8c2z8k+Y8fcP8yhZsMO/KTbQet1/vcS3C9vaSCMCfHcbxfJlHh3ukDUyxTojuKQQBFI7mhSB69HZgR3GZg7E0g9kaA0wyLShkvJRj3qJ9Zm/nbmxCvLyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721197119; c=relaxed/simple;
-	bh=it8zaNArr4+M3krejY0KN4JNzbwgmTtwIXbDSZYvnfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uljuD/W2T9ZI2W6sU3mY4jKg8d0OfR0qTwGbrhLVz+BV9NovwBCtcO8Mt0cprR2OoWEwEnakdBusMMnSjGN0VqsCQgMwCAgcvOUqBjOnjIu1zcPfX83qVjKhK5/3XiorFy8LII1p8fXqURoW/TstQJk4UoqLjKHVQr1fi+JsVJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KNl0nQxX; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9f863c46so7066536e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:18:35 -0700 (PDT)
+	s=arc-20240116; t=1721197195; c=relaxed/simple;
+	bh=+Sn6Vf/bipEMI9l0v7K5QZbcuQASnNZtDyvbVvWM/qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hjfm+0WITUkbe6w6/BFs5egPsy7iKorVHCfvq5m7YbQSxAxYpGXF3rL0GdfwFqKGYwzwT7AnwzUwbZAxd1YUVKTiGy2fCytyBTpVZImixhfFlRae/I4Jk3Cb2QrDqacadPvYqt4x4hekR/hUyWGKHRyYsDfPfxML1xaYInQbSI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=UthKgIQG; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77abe5c709so754702566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 23:19:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721197114; x=1721801914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ft3uDiuXc9eH9qPA+tznvZpzXYRNDs/NnXbEjvWw+aE=;
-        b=KNl0nQxX1tITBddLTMOIorl+UXja5NMQjsM3kZZXNmt8p8klTxoZmpE2kbl3+daTER
-         oE3ewUcYV1JfuNS31E7SVtOqkRvS6tvidhonWrN3pR+NcyCtHrLcCxLLkCvaZoj6sYn0
-         8366Y1dFRb3YJIa0VwxsC8LYzFyyI2U2TsQMFI3fr06RcdaCHNtDiuxnEKAcD4HE3tWP
-         fxkxcVToJzqmvczuiXvyHeRodQQj6MQRPx1dfckTIke7AZT+rWCYa3bL9nmszb3eXIl4
-         q/GH/2sgqfinFIj+NiS07u+uyY+eJGMf+nQ3kJx+VwjtLZTWckmeAuqhtrcrY4MfzIeg
-         Yj3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721197114; x=1721801914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721197192; x=1721801992; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ft3uDiuXc9eH9qPA+tznvZpzXYRNDs/NnXbEjvWw+aE=;
-        b=lG4cf99Kg3tpUP/a+XKtaRvdQWSH0Tm9t0aT7Lb6mU1eE7s9UP8Y76M5/O4CGTLA7B
-         z2uXXlJi1q+1uG3/9k9IgGdfgjUgLjdtRVUJ1hFZ8qihoTLFrDN8fC39U/FXOBpGgAp7
-         qiYbWaqk3QuQPv3gXCUq0fIif/yvipi954yha19iUlAs7zYdcIyFq2hApDooaqqnXV4y
-         TUbXqUKw8ORPgTET1tGee3P09bNE7Y5Cfi1nqBKNDUCtSY4YR+ZfLmla0+8rk87rHnHy
-         qK88OQ1FTjQowKezmlgq5QMD/1Q2NaYYNXEzumIiPbhVnlWQX5pISeZMMIrYOpuI4BTM
-         T9GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDzeNhXtUlqt2lz518tIuEMVU3IyoYaSRRnZY55l5dDdVcLGtW2+Y4Wx4nZ3Y6HUj6d4J1LlMPKA6h9z2UmpDssktfXpy4cfhL4/mu
-X-Gm-Message-State: AOJu0YyRJOMETLVXIMi4VACoNr3jd7LS1nHglIATg5epjP+HowqXZTEk
-	5YMngFJHWBboFAB/7g3cXGIpQ9PNVDcHrEwajDdgN3yGwfdcBF5w5A00uDDQ0es=
-X-Google-Smtp-Source: AGHT+IGgWbb2IPkjfEDoNx2g+eoVjB/B6K526lBWKCCRxuVqxHJLxM76gIzPizZ7r48jQdJZprEGsA==
-X-Received: by 2002:a05:6512:3d08:b0:52e:9951:7891 with SMTP id 2adb3069b0e04-52ee544b0d6mr376783e87.53.1721197114165;
-        Tue, 16 Jul 2024 23:18:34 -0700 (PDT)
-Received: from localhost (109-81-86-75.rct.o2.cz. [109.81.86.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5ea482sm410071566b.92.2024.07.16.23.18.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 23:18:33 -0700 (PDT)
-Date: Wed, 17 Jul 2024 08:18:32 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Miaohe Lin <linmiaohe@huawei.com>
-Cc: akpm@linux-foundation.org, nao.horiguchi@gmail.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/hwpoison: reset hwpoison filter parameters in
- pfn_inject_exit()
-Message-ID: <ZpdiOAjdSJfkpbr7@tiehlicka>
-References: <20240716033516.606582-1-linmiaohe@huawei.com>
- <ZpYxkH1EFB65tEzt@tiehlicka>
- <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
+        bh=731iNxkRio1CVh7O96GIueitOfVCcVF5gDjduzXxip0=;
+        b=UthKgIQGzhFxxtKf1ND1Iuj/gp2QWIpMxmG9CynONm63b6SDtdRrmC5VdG4SIH6xqG
+         /u0lzYUhzHPAexVVlCxH9FOINA1FsWC4AECymuQ4Cxr1iKLah29a85hUv95c7pbWyF14
+         QFxpBUJR1d9IN+VcguasKdrGJvsv8J7uo5ESACnOP0QsK+4gsxbBYXVJS45iRLaJzGUl
+         EtsNvn1zI5+bpZSPFfQi7Byhgz8+TCqevvowiOSK31Nr0kNTii6Trj+YzKOQPLfvkTlI
+         xg+BR9atnAMUQUTLPhr+JdLKRYP/daGmEIok8FKIf5LeuBbTbbrqzyI7E5Tmo8VS+qDF
+         8OJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721197192; x=1721801992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=731iNxkRio1CVh7O96GIueitOfVCcVF5gDjduzXxip0=;
+        b=DFpV69b5gNHHh2Z8zYR5ZRkOBAHwxGmjhodeCPd+doMrrAtkGBumNxFfXcn6j/0zTe
+         SpDmpkNLYS0NMqsyiWwPrhc/4nC4BfzHUm5iZglA1JYoMhaji7jp1dQF6SJK6QxQFvUw
+         m86TLJmm5/kA3ft/mi1HueOzy86NZa23t0Vh+KvlRkh9Y+IzrGuAW0eGQ1ABHGllxSx0
+         fbT6ajDc2ll8y3X2UmwHYvC/LqLwMZsNsqcqx+dFUTESzGUmigNFmG90rJv/wJN9rQRF
+         M9Dz4Z8Coc3K/iFnTrZ39p2O7hDJRIcgyUd3MXFxqNRiYkgDXnd8CH+gz9fgEi19QBRg
+         kj5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuzvuMV30DcqCwA5oOB5+n6hOUHFnPUlPyuOZpocN4FOYAJ1BhSljg3vF70K0yhFe0HtHZ7zci0/ERxYB+L3E1Pz2/AjMbGm/8pnRC
+X-Gm-Message-State: AOJu0YxXhlJmdEQbj0San45FL4c0aLv9CuX5TeVZMLQ8cDUukc7bOMc9
+	Gy68GgFDqyx8ejrFWDsYksuZqG6phDR1jzyRXsU7k40kUpwT9RqaBXMhduSvzcFPM5Ww70IMjQm
+	oXNat6ih7FxTjiNTBkO+AkiJGL6EruCtoqZNIEg==
+X-Google-Smtp-Source: AGHT+IGmCAjPv7zwB8K75fubJVOq5OlXEphacZcFqc1Ig0qaFbGDPSRSsM3ncZkf/6nf74oTzNfnAo1WxpGDhcAy0Fs=
+X-Received: by 2002:a17:906:d297:b0:a77:9d57:97ad with SMTP id
+ a640c23a62f3a-a7a011cbfa5mr48554866b.40.1721197191549; Tue, 16 Jul 2024
+ 23:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c81031da-2722-dea4-0118-9f4911035cae@huawei.com>
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-11-alexghiti@rivosinc.com> <CAJF2gTSG7HzV7mgZpkWLbSBNn2dRv_NaSmCimd+kRdU=EZrmmg@mail.gmail.com>
+ <CAHVXubizLq=qZgVQ2vBFe5zVuLRP0DGw=UN4U_Wkx2P2xsP3Mw@mail.gmail.com>
+ <a096151c-c349-455f-8939-3b739d73f016@redhat.com> <CAJF2gTRrZwVk2xyhF_PsJGKCfkvun-rifG8MjDBcGDt3YBuhPg@mail.gmail.com>
+ <CAHVXubh00OyazGP2C6sg0N2=kWqV-HXpzEiZCDdex8hcmLEM2g@mail.gmail.com> <CAJF2gTRpXBS-YotgEO=cPGnwjYiUyda_wk_fQfA6j_QqdYHoQw@mail.gmail.com>
+In-Reply-To: <CAJF2gTRpXBS-YotgEO=cPGnwjYiUyda_wk_fQfA6j_QqdYHoQw@mail.gmail.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Wed, 17 Jul 2024 08:19:40 +0200
+Message-ID: <CAHVXubia24OTad=NGAjcvYpPqJFutyZCy7KCH09R_=R3PAEanA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha extension
+To: Guo Ren <guoren@kernel.org>
+Cc: Waiman Long <longman@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 17-07-24 10:23:06, Miaohe Lin wrote:
-> On 2024/7/16 16:38, Michal Hocko wrote:
-> > On Tue 16-07-24 11:35:16, Miaohe Lin wrote:
-> >> When hwpoison_inject module is removed, hwpoison_filter_* parameters
-> >> should be reset. Otherwise these parameters will have non-default values
-> >> at next insmod time.
-> > 
-> > There is a clear layering broken here. We have mm/memory-failure.c using
-> > values and mm/hwpoison-inject.c defining the values. Both with a
-> > potentially different life time. Shouldn't that be fix instead?
-> 
-> In fact, we have mm/memory-failure.c defining and using these values while they can
-> only be modified through mm/hwpoison-inject.c from userspace.
+On Tue, Jul 16, 2024 at 10:31=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
+>
+> On Tue, Jul 16, 2024 at 2:43=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosi=
+nc.com> wrote:
+> >
+> > Hi Guo, Waiman,
+> >
+> > On Tue, Jul 16, 2024 at 3:05=E2=80=AFAM Guo Ren <guoren@kernel.org> wro=
+te:
+> > >
+> > > On Tue, Jul 16, 2024 at 3:30=E2=80=AFAM Waiman Long <longman@redhat.c=
+om> wrote:
+> > > >
+> > > > On 7/15/24 03:27, Alexandre Ghiti wrote:
+> > > > > Hi Guo,
+> > > > >
+> > > > > On Sun, Jul 7, 2024 at 4:20=E2=80=AFAM Guo Ren <guoren@kernel.org=
+> wrote:
+> > > > >> On Wed, Jun 26, 2024 at 9:14=E2=80=AFPM Alexandre Ghiti <alexghi=
+ti@rivosinc.com> wrote:
+> > > > >>> In order to produce a generic kernel, a user can select
+> > > > >>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ti=
+cket
+> > > > >>> spinlock implementation if Zabha is not present.
+> > > > >>>
+> > > > >>> Note that we can't use alternatives here because the discovery =
+of
+> > > > >>> extensions is done too late and we need to start with the qspin=
+lock
+> > > > >> That's not true; we treat spinlock as qspinlock at first.
+> > > > > That's what I said: we have to use the qspinlock implementation a=
+t
+> > > > > first *because* we can't discover the extensions soon enough to u=
+se
+> > > > > the right spinlock implementation before the kernel uses a spinlo=
+ck.
+> > > > > And since the spinlocks are used *before* the discovery of the
+> > > > > extensions, we cannot use the current alternative mechanism or we=
+'d
+> > > > > need to extend it to add an "initial" value which does not depend=
+ on
+> > > > > the available extensions.
+> > > >
+> > > > With qspinlock, the lock remains zero after a lock/unlock sequence.=
+ That
+> > > > is not the case with ticket lock. Assuming that all the discovery w=
+ill
+> > > > be done before SMP boot, the qspinlock slowpath won't be activated =
+and
+> > > > so we don't need the presence of any extension. I believe that is t=
+he
+> > > > main reason why qspinlock is used as the initial default and not ti=
+cket
+> > > > lock.
+> > > Thx Waiman,
+> > > Yes, qspinlock is a clean guy, but ticket lock is a dirty one.
+> >
+> > Guys, we all agree on that, that's why I kept this behaviour in this pa=
+tchset.
+> >
+> > >
+> > > Hi Alexandre,
+> > > Therefore, the switch point(before reset_init()) is late enough to
+> > > change the lock mechanism, and this satisfies the requirements of
+> > > apply_boot_alternatives(), apply_early_boot_alternatives(), and
+> > > apply_module_alternatives().
+> >
+> > I can't find reset_init().
+> Sorry for the typo, rest_init()
+> >
+> > The discovery of the extensions is done in riscv_fill_hwcap() called
+> > from setup_arch()
+> > https://elixir.bootlin.com/linux/latest/source/arch/riscv/kernel/setup.=
+c#L288.
+> > So *before* this point, we have no knowledge of the available
+> > extensions on the platform.  Let's imagine now that we use an
+> > alternative for the qspinlock implementation, it will look like this
+> > (I use only zabha here, that's an example):
+> >
+> > --- a/arch/riscv/include/asm/spinlock.h
+> > +++ b/arch/riscv/include/asm/spinlock.h
+> > @@ -16,8 +16,12 @@ DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> >  #define SPINLOCK_BASE_DECLARE(op, type, type_lock)                    =
+ \
+> >  static __always_inline type arch_spin_##op(type_lock lock)            =
+ \
+> >  {                                                                     =
+ \
+> > -       if (static_branch_unlikely(&qspinlock_key))                    =
+ \
+> > -               return queued_spin_##op(lock);                         =
+ \
+> > +       asm goto(ALTERNATIVE("j %[no_zabha]", "nop", 0,                =
+ \
+> > +                                     RISCV_ISA_EXT_ZABHA, 1)          =
+  \
+> > +                         : : : : no_zabha);                           =
+ \
+> > +                                                                      =
+ \
+> > +       return queued_spin_##op(lock);                                 =
+ \
+> > +no_zabha:                                                             =
+ \
+> >         return ticket_spin_##op(lock);                                 =
+ \
+> >  }
+> >
+> > apply_early_boot_alternatives() can't be used to patch the above
+> > alternative since it is called from setup_vm(), way before we know the
+> > available extensions.
+> > apply_boot_alternatives(), instead, is called after riscv_fill_hwcap()
+> > and then will be able to patch the alternatives correctly
+> > https://elixir.bootlin.com/linux/latest/source/arch/riscv/kernel/setup.=
+c#L290.
+> >
+> > But then, before apply_boot_alternatives(), any use of a spinlock
+> > (printk does so) will use a ticket spinlock implementation, and not
+> > the qspinlock implementation. How do you fix that?
+> Why "before apply_boot_alternatives(), any use of a spinlock (printk
+> does so) will use a ticket spinlock implementation" ?
+> We treat qspinlock as the initial spinlock forever, so there is only
+> qspinlock -> ticket_lock direction and no reverse.
 
-Yes, this is exactly what I mean by broken layering that should be
-fixed.
+Can you please provide an implementation of what you suggest using the
+current alternatives tools? I'm about to send the v3 of this series,
+you can use this as a base.
 
-> The common usecase should be:
-> 
-> 1. User set hwpoison filter parameters first through mm/hwpoison-inject.c.
-> 2. Then doing memory hwpoison test through mm/hwpoison-inject.c.
+Thanks,
 
-Why does this need to be done through different modules? Why it cannot
-be part of the memory-filure.c?
--- 
-Michal Hocko
-SUSE Labs
+Alex
+
+>
+> >
+> > >
+> > > >
+> > > > Cheers,
+> > > > Longman
+> > > >
+> > >
+> > >
+> > > --
+> > > Best Regards
+> > >  Guo Ren
+>
+>
+>
+> --
+> Best Regards
+>  Guo Ren
 
