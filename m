@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-255636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3F793430A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:13:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC6A93430B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B803282880
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77BDA281F9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092B21891B7;
-	Wed, 17 Jul 2024 20:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10EB18508C;
+	Wed, 17 Jul 2024 20:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWJNkQYf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHi5eyp+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46830186E2C;
-	Wed, 17 Jul 2024 20:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E41850A0
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721247007; cv=none; b=p5rqOVPa6Kh4vMJzqajDbErBBfZh9GU9uD+4pfcpQF+CQ7DqMRYMBUuRqtFXzfoFoQEDiGzs3963Q64dm+pev5bSql/EpsyZ+HeKvmoM+3ZAo6q+We5Wbid+lPtVNraoiIQPZc/fy3FlZotfZS8HcNwrqGbBLvf9qAzeAcqe+I0=
+	t=1721247060; cv=none; b=gpIpW7PtKRVctZ9/d8xcyxC0Rj+EpPSz5Bc5EhNnaVLLs7ZRbaHIwZ5YsQAnHLYr+8cs7P+mrXnnbmBGDDIOdpWVKHpECeuz/IBg2hRO3jlFCKnMHDYebkjtTzvnVvXiQXPteD2gTBIAIwnmuQ/o3bTcPupYm2DRIvG38jr9/fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721247007; c=relaxed/simple;
-	bh=H7bipx0BC5U9g7+AcvbQjNGf4f4pyEW50P6weN56IjY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hqG9K4X1nROIiusJJjQQ0OfRQnfMp3B5TtQrGAbn52AjA8z45DBoxYBhcRtENs9HxGrao8vLYpTOLdSOvKb3Ia71Il4xjueQW2xHR9D2LvR5yfklTEpUd/qY2jX5a3KQWta23ts+ATwx7MIMlU2Y4zAEBngFkeomGXqKOa3cYKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWJNkQYf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04A1C2BD10;
-	Wed, 17 Jul 2024 20:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721247006;
-	bh=H7bipx0BC5U9g7+AcvbQjNGf4f4pyEW50P6weN56IjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bWJNkQYfb1YUy/brOAIdQUtUcYkSxEIKgp5H7vhqCN08QaQbwJ4kYe+qXGjSWwX0Y
-	 ehhBT1mgqyQjtnRNMq7HIQTat95EtVjtTFYbNl+LRBiHQN68IOsWQmgmDY7dsW5cvM
-	 h8cLh/wGjpkGV6i15OJMjF96RS7ou7FxFpCayRwtdU7Wu4r1/SPJkdb4fKl4IMcAiX
-	 XXyPAZA/qieAJulRnFq6RZbLIumm5kBsz6zcZeUlSOUs9IFWQUbw96FS+SEjMYm8q+
-	 UDUW5aALwE+z5rcp6XxUU+/toluJZvQLMQg/gQLUQGvZIaswqA3AqLficK9RdodS96
-	 6PgXduSHqpdoA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sUAyR-00DFMy-Ub;
-	Wed, 17 Jul 2024 21:10:04 +0100
-Date: Wed, 17 Jul 2024 21:10:02 +0100
-Message-ID: <86jzhj3hlx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com
-Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to per device MSI domains
-In-Reply-To: <ZpfJc80IInRLbRs5@hovoldconsulting.com>
-References: <20240623142137.448898081@linutronix.de>
-	<ZpUFl4uMCT8YwkUE@hovoldconsulting.com>
-	<878qy26cd6.wl-maz@kernel.org>
-	<ZpUtuS65AQTJ0kPO@hovoldconsulting.com>
-	<86r0bt39zm.wl-maz@kernel.org>
-	<ZpaJaM1G721FdLFn@hovoldconsulting.com>
-	<86plrd2o5o.wl-maz@kernel.org>
-	<Zpdxe4ce-XwDEods@hovoldconsulting.com>
-	<86msmg2n73.wl-maz@kernel.org>
-	<ZpfJc80IInRLbRs5@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1721247060; c=relaxed/simple;
+	bh=dqw5Qeh2xp7WhjNIwZjRLJC8bY9vGPDrCHCpJxFD1dQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8CU7na+V3/oix1XOcHujfvPGoZKBnjytePYw9oRUds1JZ4FlMxGPasgu8Uzvh1rtZTBGMC+nn5VvUoG4swaCE8bF/BNcL0MmNgooz+su6PZfUPaZ4rZapKr6ruLlelyplcLAqzvx4zohxB948qkBf4K0Hg1KFrKbYTa5Hfc650=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHi5eyp+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721247057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wUuy8Fm1573t8h+fqy2o6dRDaXACJrIuqRSm7ii11lY=;
+	b=CHi5eyp+YxyHnzb4BsVJWsc9/3m4mxB7MbrL1uV5DuYP3ZNfRuPnAd15mNA4z1qlJE47oo
+	C3HR0YW71WL77dHiFAW+lxoUzNmHtA4D5ROnRv+ye490aRl4RUNOSiNtUUqGNmoANq6YdS
+	dunGw8e9ljC9Y4/LkBoB49y7jBiVQCw=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-211-B53qFSwvNFeNd5Np47bj3g-1; Wed, 17 Jul 2024 16:10:55 -0400
+X-MC-Unique: B53qFSwvNFeNd5Np47bj3g-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fc52d3c76eso978755ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:10:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721247054; x=1721851854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUuy8Fm1573t8h+fqy2o6dRDaXACJrIuqRSm7ii11lY=;
+        b=nWjp2xIkrSo/kekYOctyrBTT9pPzATmFyq2oP5JiIZde0c6gfxJXSiRlFVpF2IiUcm
+         UetUjYuQsnpP4c9X3oWWM39a2JBJu377fVb3AsnaP8Wk/K1fy936lY8fRweljLvASxmI
+         vsqHItmloSkE++KK7zHdTun/adZqiWAtU+y4Hq2mhAzMq4ohz4zePgz3iY6Q6QVJYQkM
+         vIspTNBY2PC12pTmU+MhBn8Dlu1qxF9Lanh0JA1tQaKH7ASGj0qiJ1Xat3suxxB8IQri
+         qxfmBPpMp+pIhvuB5SZTxJovZaNEX4dK9YmIo8SjNZfMAKs//HKsAfgsG46RPTZYCpts
+         LCpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN8GWX0oSPGBWibQhbRp4TglkUIdtj/0LJAZoJr1y4ByObeHWupFru3xlLv1FkQ9D7NTxBj6tZDtLUubTDkOQ18oPnRMdaQm4mAVVx
+X-Gm-Message-State: AOJu0Yy4fMQKqiVc+qlspK3mre1pHTISx1q5ly7PG9xqOXXh7+9pAGvd
+	oZDhxw0zo+PW2XqvEuKNXG0nAkVV6f0tpUcPacqBvzfe/KSOU92a4RV3A6Hphr9gzCGxmoZ0x6q
+	Uk2akg3eTAZwuIzuoyhsVZGBh6B99GucuF6INhMXF6V+WxyynnMiWU0iLMZs4bBXyszkN9HYAmZ
+	Fg0OnVPSZzmLLD+YNUCFVKPtuEm3/fXFfi047hrAu+AzZk
+X-Received: by 2002:a17:903:2288:b0:1fc:287f:623 with SMTP id d9443c01a7336-1fc4e154aebmr22813725ad.11.1721247053963;
+        Wed, 17 Jul 2024 13:10:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTxL2wGq4qFVRg2dVJl/Fkrg4wVfEqLIKk8VPK81qtTGJ+uA+Dr22xE7RfaMxJsxhvqD2CfBFqlBqX5PmSb0E=
+X-Received: by 2002:a17:903:2288:b0:1fc:287f:623 with SMTP id
+ d9443c01a7336-1fc4e154aebmr22813655ad.11.1721247053525; Wed, 17 Jul 2024
+ 13:10:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240715174757.876203-1-agruenba@redhat.com> <CAHk-=wi68M2mAY82Ss264_++2q2x1fumXnjK2Lxt5LZoDHbr9A@mail.gmail.com>
+In-Reply-To: <CAHk-=wi68M2mAY82Ss264_++2q2x1fumXnjK2Lxt5LZoDHbr9A@mail.gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Wed, 17 Jul 2024 22:10:41 +0200
+Message-ID: <CAHc6FU6Up+wLg=3Kho5mE8fa5h5-4bNKtTu2fPJ4Q8X=XwJNOg@mail.gmail.com>
+Subject: Re: [GIT PULL] gfs2 changes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 17 Jul 2024 14:38:59 +0100,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Wed, Jul 17, 2024 at 01:54:40PM +0100, Marc Zyngier wrote:
-> > On Wed, 17 Jul 2024 08:23:39 +0100,
-> > Johan Hovold <johan@kernel.org> wrote:
-> 
-> > > [    8.692011] Reusing ITT for devID 0
-> > > [    8.693668] Reusing ITT for devID 0
-> > 
-> > This is really odd. It indicates that you have several devices sharing
-> > the same DeviceID, which I seriously doubt it is the case in a
-> > laptop. Do you have any non-transparent bridge here? lspci would help.
-> 
-> Yeah, and these messages do not show up without the series (see log
-> below). They are there in the previous synchronous log however.
+On Wed, Jul 17, 2024 at 9:25=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, 15 Jul 2024 at 10:48, Andreas Gruenbacher <agruenba@redhat.com> w=
+rote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tag=
+s/gfs2-v6.10-rc1-fixes
+>
+> Btw, your key has expired, and neither a "gpg --refresh" nor looking
+> it up on kernel.org seems to find a new expiration date.
+>
+> Please update the key somewhere, and use *long* expiration dates. This
+> kind of noise is pointless.
+>
+>               Linus
 
-I think I've finally nailed the sucker, and posted a potential fix[1].
+Sorry for that. I've pushed an updated key with an extended expiry time now=
+.
 
-It definitely restore my TX1 to a state that is no worse than normal,
-so something must be less wrong there.  I'm pretty sure that the
-platform-msi equivalent is equally broken, but I don't have the energy
-to verify/debug that tonight.
+Andreas
 
-Thomas, feel free to squash this into your series or keep it as is, as
-you prefer.
-
-	M.
-
-[1] https://lore.kernel.org/r/20240717195937.2240400-1-maz@kernel.org
-
--- 
-Without deviation from the norm, progress is not possible.
 
