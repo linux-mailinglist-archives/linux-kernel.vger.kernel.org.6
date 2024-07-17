@@ -1,104 +1,158 @@
-Return-Path: <linux-kernel+bounces-255163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24786933CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF034933D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DF96B23212
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A99B1F24049
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CDD17F51A;
-	Wed, 17 Jul 2024 12:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aYMqEPM0"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004E9180A6A;
+	Wed, 17 Jul 2024 12:31:26 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDC841C63
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E74D17F36A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721219150; cv=none; b=cNT01O3bpR/LsErbo59OorekewlCk+n9pPwnI//qM96wJXKzmi5oA0bPQ2wqjblNyBYhmJcCdyUVILxgwKDmY43kS1Ng5M25miQlLo620ci9z07uo8bCWtBrg1vnTRQL+ra0Hye4wcNuw0Va5Fmxnj8+nauuMHZoRFrR93iOTTA=
+	t=1721219485; cv=none; b=uySd06SBj/oTRLt2TooY9f08U1UHbpuVBn23jP9NQkdCFeBt1k15SdqaZncrBZuA2zJKnc1wv2Qe2ctWc/s68hkW5wQlwKC5FQQsAus789cn2zQede8xK00Cw3TR2wjVYTMikFVNFlWdWW8Isnn0ITHtZt3DApCHj+np9n1SFA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721219150; c=relaxed/simple;
-	bh=DyWBqg339bg72zxwJbHJCbcztuxzaQlfx2e38U0c7Dk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P0/yP4NUgPG/GwyxGzCdxp85XnebCqsxN+EiSVvsB3mFFzzB1Hcu70/DFshu8NXi1QxOH2atxr8OKsgJY07JOKPsoSPCaICXLHrQShrYVmiMflgCZFRpcXFRyY82qjhY6D6F1iwqxBJre8QUT4dAoEZgEWP06pcDXzggGR9mqIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aYMqEPM0; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AA77020009;
-	Wed, 17 Jul 2024 12:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721219140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zb0KMl77KZ+SrN2joOepz7XxRQ9pV2HZqkRQ4KWk+ts=;
-	b=aYMqEPM0Rh/TR+nCh3XZ+DNa7vLh37OVF3wbOkHgUNMHUqmR8ITeBxFkuOrFrBw75FlYsZ
-	XdGwAZayPsaKmw/Vh9uw+cAAVq3j2rmR4/OLH+E+HXFHfZJk6zY7/+d45sZ31QcFQ97W60
-	o7va2O+i8d7dQpkZL0W/UHeS6HgJ8S8Sfmky+15ur7NfxDUtpFyCMlRvAaza1DleU/R6pW
-	6wHSorCulG4Un0nXK4sDSPGf6P21IL9s8dvqT5eOJpXxy0hEr3v9QDRGsIKG6xkV6rSGtx
-	zuHDzfX86an3rqms3q2zPb1LxbVoRvIR8zklhwh2WoLZ9Oo7zeLw8uXUXHFdJQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 17 Jul 2024 14:25:20 +0200
-Subject: [PATCH] irqchip/irq-pic32-evic: add missing 'static' to internal
- function
+	s=arc-20240116; t=1721219485; c=relaxed/simple;
+	bh=UNszfCjChXTTd/rpztGRz0i9zU7cMX073/88o9O5mgE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=MOYLCMOmzPmpnyjXFxokQVEURHs1P+3kJsC0noSXrr5Ey65tG1mV6qxXDL8gcYErcWiSa8aLHGd8uM8XDyOI6T4DMHp8G6owob5fAl3WurMhYXr9J2BdAJpbXUERK0OgV4a6SBy4OtOO59xlVg8tEX1pRRb3szW8AB212NIsUFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-321-dz86oElmNVWuwStxJxcuUw-1; Wed, 17 Jul 2024 13:31:14 +0100
+X-MC-Unique: dz86oElmNVWuwStxJxcuUw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 17 Jul
+ 2024 13:30:35 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 17 Jul 2024 13:30:35 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Thorsten Blum' <thorsten.blum@toblux.com>, "Russell King (Oracle)"
+	<linux@armlinux.org.uk>
+CC: "marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] net: mvpp2: Improve data types and use min()
+Thread-Topic: [PATCH net-next] net: mvpp2: Improve data types and use min()
+Thread-Index: AQHa16hWNoGlAe16mU2xD580+EMHA7H61/pA
+Date: Wed, 17 Jul 2024 12:30:35 +0000
+Message-ID: <3f8d78d6b539465c8040888409eb35a7@AcuMS.aculab.com>
+References: <20240711154741.174745-1-thorsten.blum@toblux.com>
+ <ZpVDVHXh4FTZnmUv@shell.armlinux.org.uk>
+ <D2AAC5AF-59D0-4985-A3DD-EC9E72324CD7@toblux.com>
+In-Reply-To: <D2AAC5AF-59D0-4985-A3DD-EC9E72324CD7@toblux.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240717-irq-pic32-evic-fix-build-static-v1-1-5129085589c6@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAC+4l2YC/x2NSwqAMAwFryJZG2hrpehVxEWtUQPip1URxLsbX
- M5jmPdAosiUoM4eiHRx4nUR0HkGYfLLSMi9MBhlrHLaIccdNw6FQbEDDnxjd/LcYzr8IYO1Q9X
- 5wrlSaZDKFkmc/6Fp3/cDYghXg3EAAAA=
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.0
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix build error reported by gcc 12:
+From: Thorsten Blum
+> Sent: 16 July 2024 18:49
+>=20
+> On 15. Jul 2024, at 17:44, Russell King (Oracle) <linux@armlinux.org.uk> =
+wrote:
+> > On Thu, Jul 11, 2024 at 05:47:43PM +0200, Thorsten Blum wrote:
+> >> Change the data type of the variable freq in mvpp2_rx_time_coal_set()
+> >> and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
+> >> the data type u32.
+> >>
+> >> Change the data type of the function parameter clk_hz in
+> >> mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
+> >> and remove the following Coccinelle/coccicheck warning reported by
+> >> do_div.cocci:
+> >>
+> >>  WARNING: do_div() does a 64-by-32 division, please consider using div=
+64_ul instead
+> >>
+> >> Use min() to simplify the code and improve its readability.
+> >>
+> >> Compile-tested only.
+> >>
+> >> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> >
+> > I'm still on holiday, but it's a wet day today. Don't expect replies
+> > from me to be regular.
+> >
+> > I don't think this is a good idea.
+> >
+> > priv->tclk comes from clk_get_rate() which returns an unsigned long.
+> > tclk should _also_ be an unsigned long, not a u32, so that the range
+> > of values clk_get_rate() returns can be represented without being
+> > truncted.
+> >
+> > Thus the use of unsigned long elsewhere where tclk is passed into is
+> > actually correct.
+>=20
+> I don't think tclk should be an unsigned long.
+>=20
+> In [1] Eric Dumazet wrote:
+>=20
+>   "This is silly, clk_hz fits in a u32, why pretends it is 64bit ?"
+>=20
+> and all functions in mvpp2_main.c (mvpp2_write(), do_div(),
+> device_property_read_u32(), and mvpp22_gop_fca_set_timer()), which have
+> tclk as a direct or indirect argument, assume tclk is a u32.
+>=20
+> Although mvpp2_cycles_to_usec() suggests it can be called with an
+> unsigned long clk_hz, do_div() then immediately casts it to a u32
+> anyway.
+>=20
+> Yes, the function clk_get_rate() returns an unsigned long according to
+> its signature, but tclk is always used as a u32 afterwards.
+>=20
+> I'm not familiar with the hardware, but I guess the clock rate always
+> fits into 32 bits (just like Eric wrote)?
 
-  drivers/irqchip/irq-pic32-evic.c:164:5: error: no previous prototype for ‘pic32_irq_domain_xlate’ [-Werror=missing-prototypes]
-    164 | int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
-        |     ^~~~~~~~~~~~~~~~~~~~~~
+'long' can't be correct - it is 32bit on 32bit systems.
+They are just as likely to have a clock that is faster than 4GHz than a 64b=
+it system.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/irqchip/irq-pic32-evic.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The type should either be u64 or u32 (or just unsigned int - Linux isn't go=
+ing to
+get far if int is 16 bits).
+This is true of a lot of the uses of 'long'.
 
-diff --git a/drivers/irqchip/irq-pic32-evic.c b/drivers/irqchip/irq-pic32-evic.c
-index 1d9bb28d13e5..277240325cbc 100644
---- a/drivers/irqchip/irq-pic32-evic.c
-+++ b/drivers/irqchip/irq-pic32-evic.c
-@@ -161,9 +161,9 @@ static int pic32_irq_domain_map(struct irq_domain *d, unsigned int virq,
- 	return ret;
- }
- 
--int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
--			   const u32 *intspec, unsigned int intsize,
--			   irq_hw_number_t *out_hwirq, unsigned int *out_type)
-+static int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
-+				  const u32 *intspec, unsigned int intsize,
-+				  irq_hw_number_t *out_hwirq, unsigned int *out_type)
- {
- 	struct evic_chip_data *priv = d->host_data;
- 
+There are cases where 'long' will generate better code than 'int' on 64bit =
+systems.
+In particular it can save sign/zero extension (and maybe masking) of functi=
+on
+parameters and results.
+But that is only likely to matter on very hot paths - and particularly for =
+array indexes.
+(OTOH the masking for char/short is likely to be really horrid on anything =
+except x86.)
 
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240717-irq-pic32-evic-fix-build-static-44f9ba377501
+=09David
 
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
