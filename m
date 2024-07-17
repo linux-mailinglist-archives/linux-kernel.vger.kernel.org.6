@@ -1,297 +1,151 @@
-Return-Path: <linux-kernel+bounces-255574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA07934264
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:46:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED5934269
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C89282EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325371F22B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314D01836C2;
-	Wed, 17 Jul 2024 18:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673F41822D7;
+	Wed, 17 Jul 2024 18:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ke95/4Iy"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2079.outbound.protection.outlook.com [40.107.95.79])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SxUfQ2Yl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n3tSdhxx"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F433125AC;
-	Wed, 17 Jul 2024 18:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721241970; cv=fail; b=ajZtcPg8ieN3vJF2k9CrRTQdM5sBlVgYwzKnceY/W8jjB5QsP7GDErzOCejhjY4UYI4tzSYDSEB1591oPpLQQkXYeIDsmMcXHnslL0YJm6bqtVuL5/6Y9UQ25xu0CUDOHCgOQj2CfcZrtkhIoqbuNvtW8qft5UIas/dYUi4+178=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721241970; c=relaxed/simple;
-	bh=tYX0bNjluCBuyzMfPGVPtJS3MAiwwhutaLeZTJXtANU=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=kgFLLb2RTckzkXKOguXk89VhQNnJ7DQJqI7TsHjd30ZX8+1ZxcL1Do9eCQsE6fTCGJk/ckBtQy6O/C5znpCemNPzVRQR71xpUSX5rb2n+4YxeIjbwJLzd+yyDl7AJNf18Ldc4EHZwZQbaqfcS3Ee7RfHCY/RTzs8c93ddRZg+gY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ke95/4Iy; arc=fail smtp.client-ip=40.107.95.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GI7U0DrXXHj3ajsQ2Repa82fdqcwexTR0LcqwZ9UKQfpmlaQLFtNcivObs4YqgCoQl+p8jcmoV+UMibdRqZi3aLQIEJAw134Kvmh9+RnxLFvKgLaJ4F04X9ImooWOXViWyIoEVlDqtyZZarKUP0PTIx9f2exF2CHpS1iV9T+Td6M/Qr4sGb7nidCEK69U7BdOUO0/NOK5BYe9VIBfC02BH8OuZCCMimP3Mp4K4A0zR6MIyGUjKYSk76ZTRkkmdhw1T7z5hS1dzEYWjOziRJSECUtTEtsWKHPu3HFtKb+AGl1EF5LqG4aRE7JZ1f0sg3MtZNdQ4CFhV5MShaGj2xVfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W35qIb44nCaDlPU0Obb/BZekX9OV5mElwlFyRgIIszE=;
- b=kHOZoyGQjZHeY5Bl/pu2aHzxpTYBwIFEM90wMDXOzJX+9WENNcbXDloc1I8QM+O6fM3zawGqHl342rMHGBmu/4jqzW2wpNoRtpVkiKiDsS2xk67J9/OD8FFn7rX9dW6QmrMzqdv/YuBB92Aql1dG3xvT6AO8DTZeGF3AfpC1H6aTgvNn9h0/dKULRcsbAHCOiE9u6b6ZRfnzhTJxa90ooHm+8LYXy9TC1zvBobYqAEKASzDIrBRMz6UB2/wI6RmNfIgA+a+toOXUpJKCwwTKOO5mGd4MNlrdwH0jnh3aX2cn1FC2V7F4YRr2VIh6pQE9OJdLDL76pFcIW3QFGEU/CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W35qIb44nCaDlPU0Obb/BZekX9OV5mElwlFyRgIIszE=;
- b=Ke95/4IyF27T7EcjwzwexCmsQ0zmTkRiIaDreIrvoq5EMd9nE4iROIUUB/WCa+6vM2w24lxgOdsGrkylZuwogK/nNi/+oHqFnNwjg2KTP/ehO03R/ZJZtFE7pB3Du96ywDFQWs8Qo0Q3g4MumLkojsTuNRIGSsNhO58siC9CUTyxyktQ91Pw5mR62fwPIIrxKRFELrywnxXZtA4ny4uPRAXDNFbfBLJY3wiKquBpvFYFXBKG6jFrxX/8jiXgBfeZhJAIdrXutY29PhoY9Q8lmdZxsR9S3SUNOicTWFfqaCjJPsDryibVvevtbaVVuBht2MjxUzhdYXg6gsRFpbevIA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by LV2PR12MB5824.namprd12.prod.outlook.com (2603:10b6:408:176::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Wed, 17 Jul
- 2024 18:46:04 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
- 18:46:04 +0000
-Date: Wed, 17 Jul 2024 15:46:03 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: iommu@lists.linux.dev, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>
-Subject: [GIT PULL] Please pull IOMMUFD subsystem changes
-Message-ID: <20240717184603.GA4188230@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zj0wkU+gecuC1ltG"
-Content-Disposition: inline
-X-ClientProxiedBy: BL1PR13CA0447.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::32) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F214111A8;
+	Wed, 17 Jul 2024 18:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721242249; cv=none; b=hi6x8NacUWZoDT+3iKIyaAYac0eY7ii2qFqO1Ew4GTU2mW/dDYia7FUHVNG2zhiG2pVRwwj6qjMoziAMsEnp4v2QKJ+za5LAJ3lltrVDpXd7V92G3UBub6N8SFTNyiJAX4XfqdUHgu5N1A+TI1lFAlVmvf6Lb/49ECj6N5ccwj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721242249; c=relaxed/simple;
+	bh=p8BKi9MK4pVK6XcJbLkD15DVQexepHg+1Z5MR6HL/v0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=CpGre2QNc+tp+SOT+ZBu6cQ1Bc7rsgHjb9Q9pUaN+hkGImS65hcTptK41XZltZApgAXbWpbW4bXVjRKkhc5cW8EVv2Lx98OooWltpRZum1lhzFCZE+peJOJLz26GxoczAGUPr7dqCFkMI1/AQelgOFIFK01RBnow8vT6O6orT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SxUfQ2Yl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n3tSdhxx; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id F26B31380168;
+	Wed, 17 Jul 2024 14:50:45 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Wed, 17 Jul 2024 14:50:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721242245; x=1721328645; bh=AzseRhg3oY
+	5ZoMZm5Po3PzY6yAhH4Rr1NJAfu0noB0c=; b=SxUfQ2YlbrV4aa3qzIo5uq7wOI
+	i2ewdF/BCYLKEDCFYH1sGTfKQ/qkRL01ZxBCmw1YQDTBhMSmb4oeLnxXSDQIbsQy
+	HaU5jo9Sab1Im1yT3nA0DtPb+1xPIw3Fz5XO/nxqI5gBpcTWLV35jeX85V6b2wAs
+	9CsXf0MRWaMocAV88WQciMwQS4ZCWdIFap9DRXaWKODSjc3K6eOxM6+pNEoAXk/h
+	/m73lEUj8vCtvDlTTQ0LQeeb6lKi87MaRL82yOyDTy7wSwbL44jNpHstVumK5S25
+	CVQOI/wGUu7xwpWuIZrV5zvqMna484RqnwoGz2suCsI4jTabkJGG9SNEgriQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1721242245; x=1721328645; bh=AzseRhg3oY5ZoMZm5Po3PzY6yAhH
+	4Rr1NJAfu0noB0c=; b=n3tSdhxxbeHgX3Y6iNeZK0g7/ccN3E4apJQkNDcZHFVr
+	K0v82ytODUhABQXNJCPuTPMv4kgwfn+xeKmMUOd//bdwOnAtEiJpAnkunNFJb6ij
+	ok9MywwWln8pPySK4lq3fHofihcBjrE4cYMs50JwXG+VAaNBupe+BgvcKDbbGuUT
+	EQ4aH9vztoZEC2Eu4mX/bnIiMgqbYUyDerVfUR7DbeiqsEhIaCY+6xyxY77/Rx6U
+	GfZ6NIwX3PGyQN3paJFQ9HQXJTH/VoL80feiYC/4UX57sAXnBQMpcWo44UZwgR6G
+	cBrxK/jzAeCAjcc97JozaYMAWgGXvbhuLdNknidSSg==
+X-ME-Sender: <xms:hBKYZl8HfR9KbthYZWTL6ip_2RGDUivub8AIYtjeQKNDcuqB5oPvWA>
+    <xme:hBKYZpuZZTJxIxRlVOrEykc6jjSu4bBnBz-2i5c21xPu1hNB3xQ--EITfb0y0dqez
+    Cd51QgfwLo9Rx4JaJo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeejgdegtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:hBKYZjABiLmiRsfMfLhJmA0mGgPXjTQEOax3VnfILZcsmkO3fTaptQ>
+    <xmx:hBKYZpcNHS3NHrHPNYHDIPZec_LwBhnYlL9_6MOFJS4BuaJNO14Mbg>
+    <xmx:hBKYZqM3DAXIaDv5MZUsJ9IbflHXGAklHVXLbZ8cLQWU9cdFgkv7Dw>
+    <xmx:hBKYZrm-WkV6NXmB_0IDPKvDZJuLdVZltN3l62Hr-IOCd1OEhXiy_w>
+    <xmx:hRKYZmACR5sWgSnFsqd-VjxNDUijdcL9EV9u3cw6MnDopGGBER9ZKf5u>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6852E19C0063; Wed, 17 Jul 2024 14:50:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|LV2PR12MB5824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fdb444d-e9d2-4880-7b78-08dca690b66a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kvURGxIpmaX7ID5y+iwa+3Tr6vD2Js0d8qMyUaS55DyvOzp2xOQuPlKCMXj4?=
- =?us-ascii?Q?GwhDDTptq2Ri3bdoyl70DCDPw+r+2rVZNPkWddM0iQ/MpWnqAmLn5ju2uxcD?=
- =?us-ascii?Q?2kTmoLAMjVNjzuy6U7dDbvcQtp/oXuitjWDQtaclNcwRlwbZ+62lfbcqbGQe?=
- =?us-ascii?Q?InSAFINTn6aAthAvkFFCUMH5d+gtVW30gFeOhL48qFY0AY52n/0stq2gNS2K?=
- =?us-ascii?Q?HJlJUzvlXBF/+VG8o+FHhdqMSCgrpwBo46MOtvt5LNZG9jnNLefIygMt6yDc?=
- =?us-ascii?Q?QhQoH6fVI+kb+ncHUwg64Gt2gRYxqtlOxA0b88cm5yJXLHMKKH2jg7VcrDZe?=
- =?us-ascii?Q?xBUeQ63Hdl2HKKYgjO0MvsLNvrtXdbCAxtXwqrB/CAf0mcuGGBdXKkkxQwYj?=
- =?us-ascii?Q?J5gcgPDFPXKT0K/0yAHSQm8U6SSTFx8fgVHTo+pXBQaI/bbh/lX691tL3Lpq?=
- =?us-ascii?Q?3VRk2d9eC8EDa8267124SFwQOsYfqZeZLAboZaBjSZYMaL06UuNFwcq45/fk?=
- =?us-ascii?Q?bfF2TPuRQI2FZas4pHw6CteUuBigy++pHcWqx416pomaoVjnUuxGdQaZuptd?=
- =?us-ascii?Q?IvjcLMrA32oRS7Y192dWP9P67XfKJ+Zb5HShFQVjvvjQ6h2qSVrd3WMR1OmD?=
- =?us-ascii?Q?i2w+DJ98jI40bQD4TPXeev/Jpf2MDhC4PVeZ1V0ay+dFjFyte/vFv2iv/U9i?=
- =?us-ascii?Q?4jaPmlCgfQ4R2M9uLeyZ4ipgKsWEriduoy5EFwtDpjQWY7i0Ph5G1ZFTG53L?=
- =?us-ascii?Q?tPmXc+gU85dVX8nvVdlbEXqdFq27MVgEYh0riegItYf9PP5wGCCJdcLFHxsI?=
- =?us-ascii?Q?KVX50H/wzElel/ZPaqM7XiclyMiI6pVRZt3q40rm5IC+Xdp4P94/EekUrnDo?=
- =?us-ascii?Q?1KIhhsFxWqKxPgrW3gak0KSSHMMEyHCzr/8B46oBWSkzrgxwDHEMakEtatlJ?=
- =?us-ascii?Q?Cg3zJRpsozI7BiRc2irZTHNi5OFq39AM6Dm8OYtltZ8OZOavB/RQfWLQpRM3?=
- =?us-ascii?Q?MFo06cZUn1J/iTM1jlvcHpUcRJ4Qrj2/7+8ePcADkB/KN0iV1sFEGwGAa1JW?=
- =?us-ascii?Q?YSYNGU+4VTyGslMQfaRqpoAC1vIMRUeakjuzN797P8T1UKWu3Uwmh0iNINw6?=
- =?us-ascii?Q?tb9qmPMAX/9LbNKrCRbaP6TvO9PXCKO1E24MNRJHGuJtddBnmk0YcxDIkdes?=
- =?us-ascii?Q?Y3nMymNNkRli7DgSsLQrOB8UP9FlEUA9Gbmy0LAtO5+kfrrNCqYWhGJgs81M?=
- =?us-ascii?Q?qbjvsmdNA76vdhIj9wQmQrWCYdNqEv4VJ8j6jAAjZawn0GUqgAxoPOyHTlU+?=
- =?us-ascii?Q?d/b1e/h0tMi2VfNaKTECKdBBiCOYGINtx+wMpfBtmktaZi/DgnIE7A9U1He8?=
- =?us-ascii?Q?ZbKx8q4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Hanzxi5yA6qGoZ666DzSra7fanvrB+bHNJnVG72ZMdoDa8OM+S1u4QiUp0rB?=
- =?us-ascii?Q?sIh1Uo6Rqf1injmL6eUfI41tF6f/SLqzErJDpojxNIqhhZCk6ICc5mjMZNPC?=
- =?us-ascii?Q?M9j5v4yo3INJ2dwEiK3oCelwXMgB+Y3MGRey4PnADuPvvNyGO8ybQk0GplYb?=
- =?us-ascii?Q?Pfl/HcKX0WMXiz0bhfiiWCx9v3g53jsFKMEGZBpws/aFAoIvo+BwLILtDgbl?=
- =?us-ascii?Q?25UOtm0r+98xguIsM/kdQcIWmm7tPDzWi+qVgkUtWaigXj0gVwFqUUo3c/CW?=
- =?us-ascii?Q?Batmj8opHV8YWFgmXP4JqjNp0DjNphJTUpQfTp6nbA8k7zMmjhSFoQsAxiq6?=
- =?us-ascii?Q?F2RxneDn9D51vQSkY28aVAOddWeD6E5jj2AIZ+XzU9IXZqxSE+nnYrBxJHIQ?=
- =?us-ascii?Q?5L9kBS1dSiooY8NOc/upNPqnPMI6k/eAViXZyQ+YH9zMEJ0s8vp3b6j+HcH/?=
- =?us-ascii?Q?V2m4PKy04gUUU6Fj7ALjLzR5YoJzB74nyiwteqluD1bodzWU9U8fnerj+kYd?=
- =?us-ascii?Q?BF7piKHAqIccQc1Diwu8MHUA4t7Hj15Antq7uwBRbNaUufggl9gXHmxXQ9XP?=
- =?us-ascii?Q?HO9bBJOp6xM/+QXoU+LenAhiU+CufftFT/Pwio+HGLzoA+ADHmMZa6xT7YLP?=
- =?us-ascii?Q?2EmmkB4HaMydWcz1OAqenlQM0Hlyuf8CHicc7nm3VyU1pgQhuG7kp19o4wjm?=
- =?us-ascii?Q?KHQnmUfFyAaFSS2i+f7ZQfRrROZ7L4FbbcJUJ9oq1IKfqZc4BmVBUi+PfW5P?=
- =?us-ascii?Q?Kd5em9HK/0wKL4edTgDFxzSotsVmNQH5O1v0VFCZ22CYkr3UELyeiRXyDpD9?=
- =?us-ascii?Q?HohejHoU/Zi12N7e0oOknRGMsK/kNc7lbvVnLVO0TcsYAGsnbRoR23ViGQ2x?=
- =?us-ascii?Q?QQc/45RjWhGVF2oA7we+xPLCBl/8Bog+4TV86JcM2OGJUl9yygZZtRY+Ac4L?=
- =?us-ascii?Q?5X1rRjG71UagHkc2Rjy5ajWRiiODNbP4py2fmkvKRJUv3zTQ0MBoogQ20tvi?=
- =?us-ascii?Q?wO09J1sIqqe9W8H2i4sv6mB4+IM9PholIMX85Ja5ngxI0P3nApsR1Iq/aeSy?=
- =?us-ascii?Q?JyXgzj+fnkvs/Vy5dsUbpOvxBG+DWc4d2sJzqBzfFLiIJfartgcHpcLwTo+4?=
- =?us-ascii?Q?RPsGRbkbZDMW0ai8KapjqodcFQIkD9D4en3DVsdGUc8AEFxh6SVSBKJGehog?=
- =?us-ascii?Q?rQACifXALcZkY8yp7E1Dj7sIXQ1K2Wa6dE/ox60sNOv/Zhj4HpTcwB3k5XnC?=
- =?us-ascii?Q?K9pDCwb7kslQgfYwOoKBY50s90rf8TT7jkhB8HkjU3cN5tTQg1apU3BBKJo6?=
- =?us-ascii?Q?Qvl0mLmuz3jHzgEVcuFXT58eO7qHSp4fxjBufdP/VLmypCRfVVf9OdyfBlFX?=
- =?us-ascii?Q?9vU5GIeVkHkqUbQB7Xs1cHQGCDtWdMGF9hlqyLHq0+cqykcuPPI3LZLXfEy1?=
- =?us-ascii?Q?0mQyQ4+8mMXN4WFAXJjuJfsYZHMgLNSOoudpUi99n/ZijxrBGvTqhwT5i4iW?=
- =?us-ascii?Q?IBHkqDB6L4dp4q9fRrV9Z+B4Duxyld9J9XMEdTj9s1zDNJD5jVQgDN1LrHt0?=
- =?us-ascii?Q?bOsdr3leyRVPZ3ZQsdUuFZPuGFR5e3HNMAEwvQIp?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fdb444d-e9d2-4880-7b78-08dca690b66a
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 18:46:04.6625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/mCVEaC7bg145TdJbh3sIz6Q6e7zMGH26UPVooTGJxqkglWu4M6QSR5Uz0LlKJo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5824
+Message-Id: <41f36e68-ff7e-468d-a110-46895ac3a5c7@app.fastmail.com>
+In-Reply-To: 
+ <CAK7LNASYnPNsJraL1qv+MFviTnPxjmc2Dmd7EcvJRCNLtHfZ6Q@mail.gmail.com>
+References: <20240717124253.2275084-1-arnd@kernel.org>
+ <CAK7LNASOtyqJMET7YuuFzTCkwg02p850PnqCC57-BZNJhyKT7Q@mail.gmail.com>
+ <8333c062-a773-45d3-88d3-ba78e8abbd47@app.fastmail.com>
+ <CAK7LNASYnPNsJraL1qv+MFviTnPxjmc2Dmd7EcvJRCNLtHfZ6Q@mail.gmail.com>
+Date: Wed, 17 Jul 2024 20:50:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Masahiro Yamada" <masahiroy@kernel.org>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-kbuild@vger.kernel.org, "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: mark "FORCE" target as secondary
+Content-Type: text/plain
 
---zj0wkU+gecuC1ltG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Jul 17, 2024, at 18:45, Masahiro Yamada wrote:
+>> On Wed, Jul 17, 2024, at 17:18, Masahiro Yamada wrote:
+>>
+>> Should we maybe revert ff96f5c6971c..3db80c999deb then
+>> and find a better way to do it in 6.12?
+>
+> I do not think so.
+>
+> I pretty much like 4fe53bf2ba0a45cd708dcd4c3e8e1950731b3d4d,
+> and I believe generating all syscall headers from a table
+> is the right thing to do.
+> So, it must happen.
 
-Hi Linus,
+Right, I meant to leave that part here and just revert
+the Makefile changes until we have something that has
+seen enough testing.
 
-This PR includes IO fault reporting for iommufd, along with some improvements
-to the dirty bitmap reporting library. Details in the tag.
+> Currently, the new syscall-y syntax can be used only for
+> architectures using the generic syscall table.
+> I wonder what we should do for the other legacy architectures.
 
-For those following, these series are still progressing:
+I have patches for all architectures at
 
-- User page table invalidation (non-Intel) has a roadmap:
- https://lore.kernel.org/linux-iommu/20231209014726.GA2945299@nvidia.com/
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git/log/?h=syscall-tbl-6.11&id=92499ba526eac435
 
- There will be at least two more invalidation IOCTLs - IOMMU_DEVICE_INVALIDATE
- and IOMMU_VIOMMU_INVALIDATE in future.
+but I stopped after the ones using the generic syscall
+table since I had spent more time making sure the actual
+table contents are unchanged.
 
-- ARM SMMUv3 nested translation:
- https://github.com/jgunthorpe/linux/commits/smmuv3_nesting
+> For the rebuild problem, I think this should work:
+> https://lore.kernel.org/all/20240717162421.1402773-1-masahiroy@kernel.org/T/#u
+>
+> (I only compile-tested arch64 and riscv, but the other architectires
+> should be the same pattern.)
 
-- Draft AMD IOMMU nested translation:
- https://lore.kernel.org/linux-iommu/20240112000646.98001-1-suravee.suthikulpanit@amd.com
+Right, I completely missed the "existing-targets" bit, and
+without that I couldn't figure out the rest correctly.
 
-- Draft vBTM support for SMMUv3:
- https://lore.kernel.org/linux-iommu/20240208151837.35068-1-shameerali.kolothum.thodi@huawei.com/
+I have checked this on the other architectures now and
+tried out the bit with the changed command line I got
+wrong.
 
-- Draft RISCV nesting support:
- https://lore.kernel.org/all/20240507142600.23844-1-zong.li@sifive.com/
+Sorry for causing these problems and thanks a lot for
+the fix!
 
-- Grace command queue passthrough iommufd support:
- https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
-
-RFC patches for PASID support in iommufd & vfio:
-  https://lore.kernel.org/r/20240628090557.50898-1-yi.l.liu@intel.com
-  https://lore.kernel.org/r/20240412082121.33382-1-yi.l.liu@intel.com/
-
-RFC patches exploring support for the first Intel Scalable IO Virtualization
-(SIOV r1) device are posted:
- https://lore.kernel.org/all/20231009085123.463179-1-yi.l.liu@intel.com/
-
-A lot of the iommufd support has now been merged to qemu, with more
-progressing.
-
-Thanks,
-Jason
-
-The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
-
-  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git tags/for-linus-iommufd
-
-for you to fetch changes up to 136a8066676e593cd29627219467fc222c8f3b04:
-
-  iommufd: Put constants for all the uAPI enums (2024-07-15 09:44:54 -0300)
-
-----------------------------------------------------------------
-iommufd for 6.11 merge window
-
-Major changes:
-
-- The iova_bitmap logic for efficiently reporting dirty pages back to
-  userspace has a few more tricky corner case bugs that have been resolved
-  and backed with new tests. The revised version has simpler logic.
-
-- Shared branch with iommu for handle support when doing domain
-  attach. Handles allow the domain owner to include additional private data
-  on a per-device basis.
-
-- IO Page Fault Reporting to userspace via iommufd. Page faults can be
-  generated on fault capable HWPTs when a translation is not present.
-  Routing them to userspace would allow a VMM to be able to virtualize them
-  into an emulated vIOMMU. This is the next step to fully enabling vSVA
-  support.
-
-----------------------------------------------------------------
-Jason Gunthorpe (3):
-      Merge branch 'iommufd_pri' into iommufd for-next
-      iommufd: Require drivers to supply the cache_invalidate_user ops
-      iommufd: Put constants for all the uAPI enums
-
-Joao Martins (11):
-      iommufd/selftest: Fix dirty bitmap tests with u8 bitmaps
-      iommufd/selftest: Fix iommufd_test_dirty() to handle <u8 bitmaps
-      iommufd/selftest: Add tests for <= u8 bitmap sizes
-      iommufd/selftest: Fix tests to use MOCK_PAGE_SIZE based buffer sizes
-      iommufd/selftest: Do not record head iova to better match iommu drivers
-      iommufd/iova_bitmap: Check iova_bitmap_done() after set ahead
-      iommufd/iova_bitmap: Cache mapped length in iova_bitmap_map struct
-      iommufd/iova_bitmap: Move initial pinning to iova_bitmap_for_each()
-      iommufd/iova_bitmap: Consolidate iova_bitmap_set exit conditionals
-      iommufd/iova_bitmap: Dynamic pinning on iova_bitmap_set()
-      iommufd/iova_bitmap: Remove iterator logic
-
-Lu Baolu (13):
-      iommu: Introduce domain attachment handle
-      iommu: Remove sva handle list
-      iommu: Add attach handle to struct iopf_group
-      iommu: Extend domain attach group with handle support
-      iommufd: Add fault and response message definitions
-      iommufd: Add iommufd fault object
-      iommufd: Fault-capable hwpt attach/detach/replace
-      iommufd: Associate fault object with iommufd_hw_pgtable
-      iommufd/selftest: Add IOPF support for mock device
-      iommufd/selftest: Add coverage for IOPF test
-      iommufd: Remove IOMMUFD_PAGE_RESP_FAILURE
-      iommufd: Add check on user response code
-      iommufd: Fix error pointer checking
-
- drivers/dma/idxd/init.c                          |   2 +-
- drivers/iommu/io-pgfault.c                       |  63 ++--
- drivers/iommu/iommu-priv.h                       |  11 +
- drivers/iommu/iommu-sva.c                        |  42 ++-
- drivers/iommu/iommu.c                            | 185 +++++++---
- drivers/iommu/iommufd/Makefile                   |   1 +
- drivers/iommu/iommufd/device.c                   |   7 +-
- drivers/iommu/iommufd/fault.c                    | 443 +++++++++++++++++++++++
- drivers/iommu/iommufd/hw_pagetable.c             |  41 ++-
- drivers/iommu/iommufd/iommufd_private.h          |  80 ++++
- drivers/iommu/iommufd/iommufd_test.h             |   8 +
- drivers/iommu/iommufd/iova_bitmap.c              | 124 +++----
- drivers/iommu/iommufd/main.c                     |   6 +
- drivers/iommu/iommufd/selftest.c                 |  70 +++-
- include/linux/iommu.h                            |  41 ++-
- include/uapi/linux/iommufd.h                     | 141 +++++++-
- tools/testing/selftests/iommu/iommufd.c          |  86 +++--
- tools/testing/selftests/iommu/iommufd_fail_nth.c |   2 +-
- tools/testing/selftests/iommu/iommufd_utils.h    |  92 ++++-
- 19 files changed, 1206 insertions(+), 239 deletions(-)
- create mode 100644 drivers/iommu/iommufd/fault.c
-
---zj0wkU+gecuC1ltG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCZpgRaQAKCRCFwuHvBreF
-YWxaAQCHVCPG9Kb8WjDFYEcPgdgnf2yU/RCP/OEfVugsQsmRGAD9FgpqZsLo5IFq
-M5xHTzLzDPadfpJq4pbscWdZSoTloQc=
-=Bl2g
------END PGP SIGNATURE-----
-
---zj0wkU+gecuC1ltG--
+     Arnd
 
