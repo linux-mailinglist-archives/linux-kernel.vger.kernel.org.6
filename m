@@ -1,102 +1,136 @@
-Return-Path: <linux-kernel+bounces-255485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63ACD934152
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7AF93415B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BD82813C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56491F210EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876D21822CF;
-	Wed, 17 Jul 2024 17:18:06 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B631822CA;
+	Wed, 17 Jul 2024 17:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJcdzzlT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C246817FAC1;
-	Wed, 17 Jul 2024 17:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87691E526;
+	Wed, 17 Jul 2024 17:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721236686; cv=none; b=exIPH0+v/lXm28kyiSqZMWUUJxZhT9XfBbLWX831LqoYzd0JitylHoxPy7JAFFwrWJUQzqjQ6Z/7Ry6y5/Xpu5uc3mU5pKr8U1AZI2tCHZESjF5Wr5IwC3Q+IgunlCILzRTl/UUQaTUPVMrrrJDuu6+P80T0PadU98K07Hwm/o4=
+	t=1721236749; cv=none; b=sLfGPhVDG0jqkS4+F9Al/LZsYLFDZbCp2j8cIDebPytwBHmjsVdJrgBYLSc2TbmP1cYWTiT0HxB7GHtrtV4kUBCTNXq9zBZ8dzM9+ao1mvB2/HF6t9Ts6b2cBpWlM2Pm4bTw+6524v9RJiFQI1ybuzEGXYcM6782uCdNClf0BiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721236686; c=relaxed/simple;
-	bh=85xHJDWXASmD2vs3L0MTseBCXAa4JFynGkAoFVSNVFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbgyo1HiO8RK6qUrNNHotx9pNyQ1hESVMng5t3r1HI3UscwFQHiqWI+hCYmElcfvHbEHBa+N2PMjtre8k7U/xi8QhuC7uZxTK+xXaWSgXdNkz9EQOavqusFMqyu7VX29eMRHsOzQiatsR+eZE77Lo6EuOpCX/uVIswdPjjzpwr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Wed, 17 Jul 2024 19:18:10 +0200
-From: Guilherme Amadio <amadio@gentoo.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] perf build: libtraceevent, libtracefs feature
- check with pkg-config
-Message-ID: <Zpf80mCx03GKOXzE@gentoo.org>
-References: <CAM9d7ciLGP_w9YYOb-2U2ESg8kQx_knQXuB6_2JZVZ2ktL+bzg@mail.gmail.com>
- <20240712194511.3973899-1-amadio@gentoo.org>
- <CAM9d7cgG5WvyEu1ECNht1z=bZ7MSsrPyBjokcY95SXmxgnzwsA@mail.gmail.com>
- <20240717123147.17169873@rorschach.local.home>
+	s=arc-20240116; t=1721236749; c=relaxed/simple;
+	bh=ZJFx6OAcpAMtlmchc/ApoFKdR2XcOKPR+oPx1dwqlgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NAuWd06D/mX5ltdBTAHFW3oYl+szWSD4MXi8XOKH1iGlJh+2H7TvvbRAD69e1oGOVp5tXrJnnPAJZ4+1al2yD9i5ZYNDcvKUVg32wyDZnA3CT34jnFoEwHBYw1ziYRwKJU7ayuOheDmMVGDtbSXGjSgfYU8KLyH9F/oC9/EFPBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJcdzzlT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A5FC4AF0D;
+	Wed, 17 Jul 2024 17:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721236749;
+	bh=ZJFx6OAcpAMtlmchc/ApoFKdR2XcOKPR+oPx1dwqlgA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NJcdzzlT8HDJcQzCxEZfbL//y1wrhsNhR/7bM+zbGx3CwP4q4HZfvhDvukg36iJDy
+	 49iLXTDV/zZsTLERSfCuKDOYOhZyFvPijbiz7BMJmXPWjtPH8j53ASa7kD0jeoH/2a
+	 Y6hgDVMhMis0YlD+EBhKBK63T+E70WYnj7KZPcNdkAjcuYlw0kEDqPg5sw4ohu10J7
+	 DHZvQyagW00bru9F64RAKg2BBp9TYaTj0zgFBCZo9OmBmwxyozJ9Dbv10mUdTAOVFh
+	 FKCEtBwgNz6C/AbLWVDJPOAzAoAFkYyXnFoOv+d6CdTrjnPWhxwa/ecnN3/TDPFaWo
+	 RpP0eFABhBeew==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eeb1051360so334721fa.0;
+        Wed, 17 Jul 2024 10:19:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUea0/sfFSDVLzaGqT8Mnj0vF5Z4j+IKIvV2tstEORjr4YtzjU7KMMJO/JMGGBSz7vQ1wU1+CXJmYGDXFsJBN965aIpoGwxYYzEBnb7wW9W2QwRP/Rh4Rk503L2HAdTYVirekQWG5Ziw7VM
+X-Gm-Message-State: AOJu0YwO7uD2l1etqc8URo+KUsP2DkkatepHrTwiHvpwQZ32ZFBpOtmZ
+	ncWILCICiD1fK8dRkro4B6ngbGBeFEf0npl3xxOYerOeyfiuiUeh6QAVYmFP9is0VXntilQ/biY
+	S99YO5zXGz7Dsdk1s3ZKRoI0evzk=
+X-Google-Smtp-Source: AGHT+IEPJ+Oi/ELsHNdPAp6d4Hj7fV8B8c7RGYBGVFucB/hc7o9mbVh/cOzpfgFwK9OMUBzx1Z3afPiYJClbZF4WU+U=
+X-Received: by 2002:a2e:97c9:0:b0:2ec:3fb8:6a91 with SMTP id
+ 38308e7fff4ca-2ef05c6e430mr513961fa.19.1721236747866; Wed, 17 Jul 2024
+ 10:19:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240717123147.17169873@rorschach.local.home>
+References: <20240716-kbuild-pacman-pkg-v6-1-d3a04e308013@weissschuh.net>
+ <20240717011515.GA1230090@thelio-3990X> <CAK7LNARYNqjcMkdnaY2oAkxttFTtTEgJ9VuOZOn0i4AuXp-How@mail.gmail.com>
+ <CAK7LNARGWu8q5dAW5tYzfiSKKtZ9t8Dm9FzRoaoZhU4d-TWswQ@mail.gmail.com>
+ <20240717135747.GC24892@thelio-3990X> <41cf1da7-ef13-4586-9e9a-f1f8f3b34d8e@t-8ch.de>
+In-Reply-To: <41cf1da7-ef13-4586-9e9a-f1f8f3b34d8e@t-8ch.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 18 Jul 2024 02:18:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQVSZZCPvh9Z1OE2PZbp5n1H8njMoxs8wZPkK_5UDFv-w@mail.gmail.com>
+Message-ID: <CAK7LNAQVSZZCPvh9Z1OE2PZbp5n1H8njMoxs8wZPkK_5UDFv-w@mail.gmail.com>
+Subject: Re: [PATCH v6] kbuild: add script and target to generate pacman package
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 12:31:47PM -0400, Steven Rostedt wrote:
-> On Wed, 17 Jul 2024 09:27:58 -0700
-> Namhyung Kim <namhyung@kernel.org> wrote:
-> 
-> > Hello,
-> > 
-> > On Fri, Jul 12, 2024 at 12:45 PM Guilherme Amadio <amadio@gentoo.org> wrote:
+On Thu, Jul 18, 2024 at 1:33=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> On 2024-07-17 06:57:47+0000, Nathan Chancellor wrote:
+> > On Wed, Jul 17, 2024 at 05:51:21PM +0900, Masahiro Yamada wrote:
+> > ...
+> > > > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUIL=
+D
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..eb3957fad915
+> > > > > > --- /dev/null
+> > > > > > +++ b/scripts/package/PKGBUILD
+> > > > > > @@ -0,0 +1,99 @@
+> > > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > > +# Maintainer: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > > > > +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlin=
+ux.org>
+> > > > > > +
+> > > > > > +pkgbase=3Dlinux-upstream
+> > ...
+> > > Perhaps, this may make sense.
 > > >
-> > > Hi Namhyung, Arnaldo,
+> > > Currently,
+> > > pkgname=3D("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-api-headers"=
+)
+> > > is hard-coded.
 > > >
-> > > Here is version 3 of the patchset. I see the change to send output to devnull
-> > > has already been applied, so I am submitting the remaining work only.
+> > > I do not think linux-upstream-headers make sense
+> > > when CONFIG_MODULE is disabled.
 > > >
-> > > The difference with previous changes is that in v3 rather than add tests with
-> > > pkg-config to check if dependencies are actually installed, we just set the
-> > > flags and send any warning to devnull. The change that remains in this patchset
-> > > is the fix for the other tools, which were inadvertently broken when the include
-> > > for libtracefs changed from #include <tracefs/tracefs.h> to #include <tracefs.h>
-> > > since the flags for the feature check are not set in the other tools Makefiles,
-> > > it currently only works for perf. I recommend to either take at least patch 2/5
-> > > that moves setting the flags to tools/build/Makefile.feature or to revert the two
-> > > patches that have been applied. You can easily test the fix with the commands below:
-> > >
-> > > make -B -C tools/verification/rv VF=1
-> > > make -B -C tools/tracing/latency VF=1
-> > > make -B -C tools/tracing/rtla VF=1
-> > >
-> > > from the root of the repository. Only after the feature check flags are moved to
-> > > Makefile.feature that it also fixes the other tools. Apologies for the breakage
-> > > there.  
-> > 
-> > Steve, are you ok with having this patchset in the perf-tools tree?
-> > 
-> 
-> I don't know as this is the first I've seen it. If you could have this
-> resend with me Cc'd and/or Cc linux-trace-devel@vger.kernel.org then I
-> can review and possibly ack it.
+> > > scripts/package/mkspec turns off with_devel
+> > > when CONFIG_MODULE is disabled.
+>
+> Ack.
+>
+> > Yes, I think that is a reasonable change to make. In the face of that
+> > potential change, would it make sense to slightly adjust the
+> > makedepends? pahole is only needed when CONFIG_DEBUG_INFO_BTF is enable=
+d
+> > but I guess no other package building infrastructure makes dependencies
+> > conditional in that manner.
+>
+> The pahole dependency optimization seems like an overcomplication.
+> Arch Linux in general is not hell-bent on minimizing dependencies,
+> for example there are no dev-packages at all.
+> Also if the kernel will require pahole in more cases it will create
+> churn.
+>
 
-I will resend with the extra CC suggestions shortly and a cover letter
-explaining everything.
+FWIW, we conditionally added build-dependency for the deb package
+in the past, but I gave up on maintaining it.
 
-Best regards,
--Guilherme
+
+
+See b88365b6d74edc88a9d283c837fec05b13d401a6
+
+
+--
+Best Regards
+Masahiro Yamada
 
