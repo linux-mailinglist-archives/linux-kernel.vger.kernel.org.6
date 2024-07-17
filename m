@@ -1,104 +1,81 @@
-Return-Path: <linux-kernel+bounces-254575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E729334DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:55:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189479334DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 02:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91506283788
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:55:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C4EB21130
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 00:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719B86FB6;
-	Wed, 17 Jul 2024 00:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7FB138C;
+	Wed, 17 Jul 2024 00:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TEq9CJB5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D045661
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/wXjLzp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4646EC5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721177701; cv=none; b=fN4cz6FUX59ntsvDh7iOJquXRhnCmk/XLBHVsyU2HypQ+zec+MFbqLsqNcT5VGhwIvcBW/9xZeyEv/7cM7uysePpr/nNuxWaI/gKhJH0ra++VfasJ80EIW5NuLjObGcgTQw8nioZDopahiI0M2pPmm/IvWWnpMFAM436vAa+7XU=
+	t=1721177628; cv=none; b=pfx/jrEifSq5zkDEEsHIx7l+VnEmRxQIVsCMqhRuJqtd/HG6HmNK4XkgOUyKPmKjqlZH3lc7O7AF7hKZYd7Xc1tPXhn9jyFZ7HSEn2IwfIhGbTxdzCzWqz8a31SIurKvSvs6X9NtZG3zanYCfy8J0K71bMSfmG1lJA6aHUePDeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721177701; c=relaxed/simple;
-	bh=ZKwq7LcRRZUvYPzTy3HqmC7u8/eRuHUR0dKL26uLKwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sWjEdbRlWAyJ1+TwHbxu0hmOkDlLHeDrjZ8wG6SI2kqdmAZERRFcFFxivSbFHwkwfxBqHGwHT4CMto+eDC/GPmgzfG63qiu4RySmP9/zdTZYQvF9D60aMb8mTCAGW80tBFUhhUSFSGgLV0anQEoQCPh5WaFImMYd4r5+bkakHZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TEq9CJB5; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=t5/Ee
-	HzpNabXc5RVd46C/7TAlz4/G8RSGiM4PhgH1hs=; b=TEq9CJB5fJj2t7fvUc32R
-	HEhIeVy08Ot9HIC4g1MWp2IFRlAN+MutULMrOON5qyEylJMT2RuyDSvzBpyWvfEz
-	yklcpK3/Gp1gN3ry1XI6lYRt6uTlUCKgaWv1BhtJ1UEwH1ytdtIy45z0Vzy3b6U3
-	tljzXsmcuqkGfLG2lE/Yn8=
-Received: from localhost.localdomain (unknown [223.166.237.119])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3X502FpdmwwpwBw--.43354S2;
-	Wed, 17 Jul 2024 08:54:15 +0800 (CST)
-From: Ping Gan <jacky_gam_2001@163.com>
-To: hare@suse.de,
-	sagi@grimberg.me,
-	hch@lst.de,
-	kch@nvidia.com,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: ping.gan@dell.com
-Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP 
-Date: Wed, 17 Jul 2024 08:53:17 +0800
-Message-Id: <20240717005318.109027-1-jacky_gam_2001@163.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <af243508-e5f3-4835-8d8e-c1bb741e22f3@suse.de>
-References: <af243508-e5f3-4835-8d8e-c1bb741e22f3@suse.de>
+	s=arc-20240116; t=1721177628; c=relaxed/simple;
+	bh=NtvslSoeOcdyt9E2tMWfN3uP5NFeqWYwbzi5YQv7twI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8ERsKM36nRVdxZP/PBLu7r2VB4ZZ2/YZmQYwKL6T6U5YVLjG/G2jwXNtY1QCqK0EDOB/F6WeGxmVBxQP1jitOfizzzbPRmQ/qOLIRdBUzxKJSpAj9x+WaFLAXVx1c2o3EzePD/+1AOYBLnlwSDRYi+36WEQDFLxjAa8ls62qE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/wXjLzp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F314BC116B1;
+	Wed, 17 Jul 2024 00:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721177628;
+	bh=NtvslSoeOcdyt9E2tMWfN3uP5NFeqWYwbzi5YQv7twI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q/wXjLzpMM7BPOn8qzk8O0Je0T9ax9+77ZO0jQ2iNOPZI2aJ1Ivsst2RRpe1qWDiy
+	 UYSh0B29DMX0HDI83HONEsIzcyh7oALXssfH9lHCZ7eUcW+G1BP0z/8IrwL9ij4Vfo
+	 1dCiGB/g+IP1ZsmlFB9OoILIQB5lrk2yriih7E5Yqc57SKDvhuEYWkniu/gX8zvG31
+	 ucLBXs02h5JM5r4cjkcu4F+x1An6fLgTLu9EPXmheRgbNxiaIxkQPJB4lHASDEWzLu
+	 tdgNSPrRUA77iUJE3pov5YUxVglehLI4Yi061X/kIa3Rd9pLDK4FD5n9rmkY28eASS
+	 zdyQRgxaZwlgg==
+Date: Tue, 16 Jul 2024 17:53:46 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Crash when booting UML after
+ e3c92e81711d14b46c3121d36bc8e152cb843923
+Message-ID: <20240717005346.GA516623@thelio-3990X>
+References: <20240716143644.GA1827132@thelio-3990X>
+ <CAHk-=whfQoTDCd=8DYfCiX0a2ndqM-mmoxDm1xA7Kud+WQ9T8w@mail.gmail.com>
+ <CAHk-=whVPmZm=rMBf1qkJzfZeBx4Es15_w7VnPK1wEs=XYDUgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3X502FpdmwwpwBw--.43354S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWruw1ruw4UZF48GrWxZF18Zrb_yoW8Jr15pF
-	yfJF1vyan7Kr1Fy3ZFkw42qF4Utw4rAFWqgF97trWrJr1Y9ry2y34xtF1rWFykGr4fWr1j
-	yayDX3yDua1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6uWJUUUUU=
-X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSBgfKWXAmTHxfwAAsl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whVPmZm=rMBf1qkJzfZeBx4Es15_w7VnPK1wEs=XYDUgg@mail.gmail.com>
 
-> On 7/4/24 10:10, Ping Gan wrote:
->>> On 02/07/2024 13:02, Ping Gan wrote:
->
->>>> And the bandwidth of a node is only 3100MB. While we used the patch
->>>> and enable 6 polling task, the bandwidth can be 4000MB. It's a good
->>>> improvement.
->>>
->>> I think you will see similar performance with unbound workqueue and
->>> rps.
->> 
->> Yes, I remodified the nvmet-tcp/nvmet-rdma code for supporting
->> unbound
->> workqueue, and in same prerequisites of above to run test, and
->> compared
->> the result of unbound workqueue and polling mode task. And I got a
->> good
->> performance for unbound workqueue. For unbound workqueue TCP we got
->> 3850M/node, it's almost equal to polling task. And also tested
->> nvmet-rdma we get 5100M/node for unbound workqueue RDMA versus 5600M
->> for
->> polling task, seems the diff is very small. Anyway, your advice is
->> good.
->> Do you think we should submit the unbound workqueue patches for
->> nvmet-tcp
->> and nvmet-rdma to upstream nvmet?
->
-> Please do. I have been using pretty much the same patch during
-> development of my nvme-tcp scalability patchset, and using WQ_UNBOUND
-> definitely improves the situation here.
+On Tue, Jul 16, 2024 at 05:41:14PM -0700, Linus Torvalds wrote:
+> On Tue, 16 Jul 2024 at 16:18, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Hmm... Does this simple (whitespace-damaged) patch fix it for you?
+> 
+> I verified that it seemed to generate the right (generic) code, so
+> I've committed this fix. I didn't actually run your test-case, but it
+> looks ObviouslyCorrect(tm).
 
-Thanks for your confirm! Okay, will do that.
+Can confirm. I tried it initially and it did not seem to work but I
+think I may have been using the wrong object folder or something. I can
+confirm that the tree boots at commit 0434dbe32053 ("Merge tag
+'linux_kselftest-next-6.11-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest").
 
-Regards,
-Ping
-
-
+Cheers,
+Nathan
 
