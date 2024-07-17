@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-255577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F2C93426E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168E9934270
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070DE2813F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09321F223AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3EA1822CD;
-	Wed, 17 Jul 2024 18:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7FD1836D8;
+	Wed, 17 Jul 2024 18:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qrov9p//";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mwbckVT9"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SJYfNj3b"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B47F111A8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791C3399B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721242350; cv=none; b=jcbcWRRVPdLON2+j1FjxzksiiPugZP/Q6cDiGkz5xk209otqFKaOPAqCBU2nmrPNEaR+RO+SHyGT+VF9JbwkSQljDYDiSaBNI41WQqAzmE2H2IP+xnisPK8Hzbfmi+IEhbaCbCfdpv6mo/FXHli9pFsu7qKOHUql+kFxmbB29MM=
+	t=1721242405; cv=none; b=FymBs0tkNdm3SbrtBmrXhE0LmsMk3lIRWhMSEVrMlnc9XrgakUatKxl+IYSD4pobPHcMAUxmUSZdd0tuTDYhQs3QvUhKHGNJGkX4+z5+a6rBCPYBEDYtECFbiQRB/HsOK8ct1x0pW8vzlFdnFtrdjLRoXYF5pIRJhpCEwW2heUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721242350; c=relaxed/simple;
-	bh=yoGHeAcgqHxETZNxDFxsC1za6xoJaiCB6J+Q6W3ElCE=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ldbas4APu+UYpPWzCrFmIdIcgHffdOsS8k1yn6SGuzgH6X9RJ2biobLCOrVQg0/EaIW+xru90zEtf81K0+s+/rrmlqcFvSPX2XB5iHqBcVvk2tmtm7lhWZQPGugbQrj3dZrQKsfxf2fCyr+14zwWTsX2Q4lWw+4Cg2T/ZNxXDF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qrov9p//; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mwbckVT9; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 38A4511400E8;
-	Wed, 17 Jul 2024 14:52:28 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Wed, 17 Jul 2024 14:52:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721242348; x=1721328748; bh=KC/EepEiuz
-	j2zfSF7rzmc2XJOjPkGvEpbIV2C8iRTTw=; b=qrov9p//SPfyuNIDLToRhyP2Cb
-	4p75eJ0cDSdl9uPJAjxC1kOQC9DX5wf48SxVEP/I5ZIhlIAudUMqt2pxoJIFJDLl
-	JUYwiFQ8USnoBjOtSr0fZN6i/GYzY+/MU13F6W87qs5bePAJPy2rS+GlaAA3llU/
-	MzJnsN4snIbAQ6NtFxftOj2UCY+AEid1eN2qICmtQIHx/gsT6YRTPGNxYJvaxR0I
-	4wC0R7YP7kubFw0XYJM4cnLSLmrtxFABY9byVnUeRbhD79IEQtfKd1zzAoItQnpn
-	ApC+FuaRlMP75Lf8SCNQZClIFL0mUo2J6oQw+sAarFqHg0nuULsUS8jUofPg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1721242348; x=1721328748; bh=KC/EepEiuzj2zfSF7rzmc2XJOjPk
-	GvEpbIV2C8iRTTw=; b=mwbckVT9/c/Fi1LyYRPrQcjETwRGe5qJini1YJHvVyMc
-	8QLgYt/gAz4kbSg4nlzrY9+0gqXCdEvLVZgZBC9LFrIxAGXq5n3PJg92Ft6BL+Rz
-	j2f3Vri+z1q0FKw6R95HiR789kcuX/pPUgzfiZLJhz8Nbi7erZNlLhdsi1y4VJxx
-	pij7HWHyIDgTI+Nws6Iu5hN6BTq7zESy5kwreV3MdionpOUXGp0YDTWX/cvz+aun
-	WM5XNWWTlunrF4paM7Be8fTGGKfheBVmiA5lq/Qa285cgtpXmLHH64yzdUUDc4vP
-	65K9nIPaDlr+Ki9gyv9nfQBccAdVOVosmYhwb7XwxQ==
-X-ME-Sender: <xms:6xKYZgqoPCryvjkV2_c7lwRIurtYfO4zngqZz0It9yxLzmHLBDF7MQ>
-    <xme:6xKYZmqk-ldHyXjg_oGqtX9HMz-yU5Vb28UYLj70GbBV7QdjiOeEXYRyb5AgNABTa
-    GEzgLl-2LdDQAlcb_c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrgeejgdegtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:6xKYZlOVhxo990VNXEycWIlhrfWBsrqTKm5pmiIZth5CzBFnWKx3HA>
-    <xmx:6xKYZn6SSgP3QvGdg3QK6gvp3cN1D0ssg7FXCYuV6UrzDFVyMk0bCQ>
-    <xmx:6xKYZv5XyfIFpjM2eJ73cem0rvd9d4OUkIkDFWP9msb9fKfAJZh0Ew>
-    <xmx:6xKYZnhH1ydg6uCRHCMIDgBeCf7KHhG_RBDM5JtMN-VmEv0BHbtsUw>
-    <xmx:7BKYZi10ceeaen3tlNvmPT83Mkd6GiEfEY7dTTsrBGWOdiiKavjpdG3y>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1641B19C0062; Wed, 17 Jul 2024 14:52:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1721242405; c=relaxed/simple;
+	bh=Hv0Lv3vxMdF9EUCXQDjKALNMNYcXui+F13OJ3xjzVGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DCcOLHmzlvOswA7N6XpvA8q6ONfWtvGSWu00arI8FEcDaR+wOJDHZrfv6zpD8W1dBWc03j7oIrS7/pCjIevSGeM8baFRBLts5U2QsO9+FzvSCKMU5bQMr0Z1KGLYMoXg954UkLSg1m5NOEqAlEQu3CkKUu62Lz2rExpAE8mcxfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SJYfNj3b; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so208091566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721242402; x=1721847202; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tMynJxsAoEfgNtqBQWK8foysn8xndosdDwSjU5qP3r8=;
+        b=SJYfNj3bK2nMbAHHicYXGHdWyXEcpc4zqzF8MyGTLwTz3diTg1b1BL/K8snXzV5SQA
+         L+mi1QyfjbDxhx6/Hesf6rYoupi1zGslPGZO2XLvWsziU3jtZe0OLoZ49RtV1dpTO8uL
+         Zu+1V2+DgtUbKgZzVFWTUlfvExGoRSM+MLE+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721242402; x=1721847202;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tMynJxsAoEfgNtqBQWK8foysn8xndosdDwSjU5qP3r8=;
+        b=NzhcLaSxW2hQXtgXnR4Vk7rRarZ+p3bwASjaRBvdJkliCqC31KZS9vrxnSYlwptsng
+         APGXLtQTqse5MnHYaB9jL9NGZVtd6q08ru1b7Ic8OXPTNFBWGPzkZGIvqz6RQ2xaESoK
+         qBEtjiVglnR+N/BmHud4OLxb/NTt3Z4nYCS3CDnJm9VKznlb+3AYpXy7+9bStnt77SLR
+         oe9oK+h6h9DlRecF6l1eYoFkMs9PmFnTKXDjcB0fo23n586NuqVH9n+RwhAGmJDrzT4p
+         HwHXxGLS3c4ra53Ygq+ynB4G6jM8O5XO+qc6TH+xsWokubn21tFCSVVRdJxMtYrScRF6
+         BnGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlI5KEjYSkTMDWxp5CIHJiJeog68/KW9EGM27TSGqxDbmZFYWhWMbh0JoKIyjeooBAEX1sUjmx6RaDeZsN05HJ3/sbKBQNQonapNgr
+X-Gm-Message-State: AOJu0YzRrjlfB9vacc/p2EdLudDoO1KxjEPBEgUhV9zkScT/5OEr2wFf
+	+A3TcG34KMugfqGnIW7s5mFgC3nSV4SoymjDdkUWNVAFqAP74m6LoWxkj7rCh4k2OALp9idXZrm
+	mocOY+Q==
+X-Google-Smtp-Source: AGHT+IH7ZgUJdu1brBzieL9VD4Fl8jsFA0FXovXrReYY+uknkDJZyI1CXf17Tp0+rd6PCGYWDK6fiw==
+X-Received: by 2002:a17:906:2449:b0:a77:dd70:a161 with SMTP id a640c23a62f3a-a7a0f137be5mr55396866b.10.1721242401872;
+        Wed, 17 Jul 2024 11:53:21 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a3a93sm476605366b.6.2024.07.17.11.53.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 11:53:21 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58d24201934so2001817a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:53:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5acCJ+e189ZDmn6IJNAPopoItXljmT530S+tcKJ1j3m4jiyxmzBwbfOg8ISH+UxhQ2ZXV1QYY2aTC9WvC2UXOB31iQtGThuaNJaG+
+X-Received: by 2002:a05:6402:27c7:b0:58c:36e:51bf with SMTP id
+ 4fb4d7f45d1cf-5a1557cd64bmr545038a12.3.1721242400692; Wed, 17 Jul 2024
+ 11:53:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <865236b7-fd09-43cd-94fe-c07da6a903c5@app.fastmail.com>
-In-Reply-To: <20240717163739.181236-1-vattunuru@marvell.com>
-References: <20240717163739.181236-1-vattunuru@marvell.com>
-Date: Wed, 17 Jul 2024 20:52:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Vamsi Attunuru" <vattunuru@marvell.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, "Nathan Chancellor" <nathan@kernel.org>,
- "Jeff Johnson" <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH] misc: Kconfig: exclude mrvl-cn10k-dpi compilation for 32-bit
- systems
-Content-Type: text/plain
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+In-Reply-To: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 17 Jul 2024 11:53:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+Message-ID: <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.11
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 17, 2024, at 18:37, Vamsi Attunuru wrote:
-> Upon adding CONFIG_ARCH_THUNDER & CONFIG_COMPILE_TEST dependency,
-> compilation errors arise on 32-bit ARM with writeq() & readq() calls
-> which are used for accessing 64-bit values.
+On Sun, 14 Jul 2024 at 18:26, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> Since DPI hardware only works with 64-bit register accesses, using
-> CONFIG_64BIT dependency to skip compilation on 32-bit systems.
->
-> Fixes: a5e43e2d202d ("misc: Kconfig: add a new dependency for 
-> MARVELL_CN10K_DPI")
-> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Hi Linus - another opossum for the posse:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+(The kernel naming tends to be related to some random event, in this
+case we had a family of opossums under our shed for a couple of
+months)
+
+> bcachefs changes for 6.11-rc1
+
+As Stephen pointed out, all of this seems to have been rebased
+basically as the merge window opened, so if it was in linux-next, I
+certainly can't easily validate it without having to compare patch ids
+etc. DON'T DO THIS.
+
+Also, the changes to outside fs/bcachefs had questions that weren't answered.
+
+So I'm just dropping this all for now.
+
+            Linus
 
