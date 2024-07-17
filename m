@@ -1,295 +1,215 @@
-Return-Path: <linux-kernel+bounces-254872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67349338B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E9C9338BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CB81C229BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5EF2868A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A78C224FA;
-	Wed, 17 Jul 2024 08:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7659C2557F;
+	Wed, 17 Jul 2024 08:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GD/zR25A"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vrObCVMQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CBE21364
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 08:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500FA22611;
+	Wed, 17 Jul 2024 08:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203992; cv=none; b=ZYHX+ifZ/pFSLu+8i05VbgVvhgppblB+Bgj8ARR6dpk4KHb4V/72bmKiFUJgXOQ0StSIljWgzBV14uEUZq3x8wIa8HFopBuEukGNdyvYrwJMYlGYXl5EBsQYOQvHADohTGIyQMBvxYKR0wxZaK+SSENyQogg+jN6zcNhcFpVYZ0=
+	t=1721204066; cv=none; b=bG8ZimjsgkadQuvcO1N6koImRp5fNHfM8SWk2VuellID8haY/f7tMznFBj1jzyHnIwjNBG/Zv19pDaepLZQUNotwcrsJkmQX2rNpvUGYW5/MI8VbbWkCTixFio+BmzldRL99YAXwy/rEZ5BlDX6OZtQy6RegGOgt/N6Ua7Mpjeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203992; c=relaxed/simple;
-	bh=pRdDJ7PXZYswkhdkmWCe/QL2GMo4Ndprhummi2OxoTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL0tGqnYYl7L2cJoUTlcmV2sLreE5k2vBe03h8/X01NZm56rabzPzX2JUJ7G0VVMjH6Ws4tcUXuXV245aLoSyYIZ1n9GpggeJiSCkgvN0zXh7PE02fqEd+by4fDDIgGMujsA2OwU45IzFiAPwwql/xJvbMaY8wwC3ssNJ84kCD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GD/zR25A; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3c9cc681e4fso1889b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 01:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721203990; x=1721808790; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vhx0BX0tfg4JtIj+DkkcP0J9kebOkzECCemo5fKt7Oc=;
-        b=GD/zR25A1RB/JtunzgqlXswLKN43blpYkyDubuP1H4Jyxw3TxvjdXunFPSlUk6kbol
-         z31eT0Gkj8KpXRhAqnpx9tQJ8ix4ir4g98U1xXCN/8XUsspOHGrf2umS8IztBH4uAS2c
-         IyiYIyrVL5GFIdZpU/TzWPnoQk7anFtUXJkLnaj+MT1tSVDR4ycgSUjbxUESs1zo64K9
-         XymIqCFLg/jaIgYRgvjMRLimi8R+cbAYe/f5CwKUKNAw4Ru7Z5B+Va0x2zufnFgozNkh
-         bp6Skex/JkWJ/H+85D8WobHDfAsdlGKONK5lG2INOsBY5Qah5GrCrHpzIzHQ4OMh+2up
-         jkwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721203990; x=1721808790;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhx0BX0tfg4JtIj+DkkcP0J9kebOkzECCemo5fKt7Oc=;
-        b=vCL6WGlJs3zSvffkMbPuTw81CpdoqjmihX/a+VoW3yZOlrHL1nshT7PosnN8PT+DkB
-         EMu4H5f8DslQG6WtdqDv70cvSzpoEXXsthsw6nKUPlBUXf9LEQdT9yJ136b5qSZEgC59
-         16i3gxM12h9mwh9Pm9McboFLMQeYbEh5ru8h9nK2e3siGVSZD92HohEH1eBwdn1hCoTX
-         uX2ib281VK/JK9eZ+kn4DAyH1/HOnsv2Wlz0uKMCXckQK7eU6qItc1T1X+kUAp7FS11c
-         7m2IrzJ6Z4pY6sgcgVRMHdW9QGlNQSqIGN5zXRykhaQphu5ez9rKIR2Jn8DqG8QrU17P
-         WW+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5V//fZrG/M+ZEHKDZxQpTXOQTO3Iz+EXJZhT50TDjPGmwv8415+hQGJaTqLQ3rHO/iL0OalfWujJDXKXJmoiRw2ahKXWPRgnfr+m5
-X-Gm-Message-State: AOJu0Yy8LVYt30ftoxw/9sjcd0vjIdOZys2RXPmEiDvsTJ/qECMAgymy
-	Y2xRBYTbwpROsJJIl+WigHJW1b8UjJYCDbFnD9TyNOaC3HKKfIOOyZhtDwvTrA==
-X-Google-Smtp-Source: AGHT+IHrylN07RNP4mwpeHSRVpV+GIlSCRY5wUAgEhJOzY2F72d4yL63pBqiLxefREZzW+YrMwKWFQ==
-X-Received: by 2002:a05:6808:bc4:b0:3da:a0a5:a249 with SMTP id 5614622812f47-3dad1f47e3amr1070223b6e.23.1721203989990;
-        Wed, 17 Jul 2024 01:13:09 -0700 (PDT)
-Received: from thinkpad ([220.158.156.207])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7e4bcsm7550365b3a.117.2024.07.17.01.13.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 01:13:09 -0700 (PDT)
-Date: Wed, 17 Jul 2024 13:43:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_mrana@quicinc.com, quic_devipriy@quicinc.com
-Subject: Re: [PATCH v1] PCI: qcom: Avoid DBI and ATU register space mirror to
- BAR/MMIO region
-Message-ID: <20240717081303.GA2574@thinkpad>
-References: <20240620213405.3120611-1-quic_pyarlaga@quicinc.com>
- <20240622035444.GA2922@thinkpad>
- <a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com>
+	s=arc-20240116; t=1721204066; c=relaxed/simple;
+	bh=/LcEwFo5dCKWN5CEl3wy88DX64OeviEY2d/0UK8NeII=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EG45QcDBsh9PYEsCrubAktsc+iTUZTBkHSVZZXyoub2fCUS7iEYyB6HIGfB5QL7lKY4grTijiTXi7z88aYDO9xMwsKytxMGQs4v4qRofxM5xsdvzmqvfhvt5ug71dJ/RLgyeYiYr1w8l1XdQwHS22olIWK0rMOFDOtv9o913Aqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vrObCVMQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/LcEwFo5dCKWN5CEl3wy88DX64OeviEY2d/0UK8NeII=; b=vrObCVMQhW5TWe/VVPfts+2eb+
+	/WbHpOnWe9I+xnapcSw/l+BT8Gkyn0vlWj5qE/Vx91iDgK5IVQCVN3gSy69+zgBu8kHceVDQHwnb9
+	2MRxIK0MvL4VPSCIwGdslaQI3GgkacV36Xy7brsJCmZlilS6eDpIdHLlOJjrDhSdwPli2zJCKBQ8a
+	NM41F1fN1UbLHkvdJaInP14PMVW6tywY2sPLH9wAhf9U3WZXT3nH0t/ckmH21yd92xVJDkaqq7IIh
+	xzWwNVBaP4tCAVe2t0CpurAh3F2ktliX+bGWMiinp6auXyNr1RUX4L6Z7xkcHbE245FurCqw2Elfp
+	GmXgWXxQ==;
+Received: from 54-240-197-233.amazon.com ([54.240.197.233] helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTzng-00000000ZBV-2bcA;
+	Wed, 17 Jul 2024 08:14:13 +0000
+Message-ID: <e90998e35275e1a53db4dc028d3f78eacb64a113.camel@infradead.org>
+Subject: Re: [RFC PATCH v4] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: Peter Hilber <peter.hilber@opensynergy.com>,
+ linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,  linux-rtc@vger.kernel.org, "Ridoux,
+ Julien" <ridouxj@amazon.com>,  virtio-dev@lists.linux.dev, "Luu, Ryan"
+ <rluu@amazon.com>, "Chashper, David" <chashper@amazon.com>
+Cc: "Christopher S . Hall" <christopher.s.hall@intel.com>, Jason Wang
+ <jasowang@redhat.com>, John Stultz <jstultz@google.com>, "Michael S .
+ Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Richard Cochran
+ <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Alessandro Zummo
+ <a.zummo@towertech.it>,  Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Date: Wed, 17 Jul 2024 09:14:10 +0100
+In-Reply-To: <2e875592-f6e7-4694-8f51-655d0b9a2988@opensynergy.com>
+References: <20240708092924.1473461-1-dwmw2@infradead.org>
+	 <2e875592-f6e7-4694-8f51-655d0b9a2988@opensynergy.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-7aI71VoZ9P3azYLQFroL"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jun 28, 2024 at 07:02:04PM -0700, Prudhvi Yarlagadda wrote:
-> Hi Manivannan,
-> 
-> Thanks for the review comments.
-> 
-> On 6/21/2024 8:54 PM, Manivannan Sadhasivam wrote:
-> > On Thu, Jun 20, 2024 at 02:34:05PM -0700, Prudhvi Yarlagadda wrote:
-> >> PARF hardware block which is a wrapper on top of DWC PCIe controller
-> >> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
-> >> register to get the size of the memory block to be mirrored and uses
-> >> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
-> >> address of DBI and ATU space inside the memory block that is being
-> >> mirrored.
-> >>
-> > 
-> > This PARF_SLV_ADDR_SPACE register is a mystery to me. I tried getting to the
-> > bottom of it, but nobody could explain it to me clearly. Looks like you know
-> > more about it...
-> > 
-> > From your description, it seems like this register specifies the size of the
-> > mirroring region (ATU + DBI), but the response from your colleague indicates
-> > something different [1].
-> > 
-> > [1] https://lore.kernel.org/linux-pci/f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com/
-> > 
-> 
-> PARF_SLV_ADDR_SPACE_SIZE is used for mirroring the region containing ATU + DBI.
-> But the issue being observed in the patch pointed above and the issue I am
-> observing are a bit different even though the same fix could be used for both issues.
-> 
-> The issue I am observing is that the DBI and ATU region is getting mirrored into the
-> BAR/MMIO region and thereby the DBI and ATU registers contents are getting modified
-> while accessing the BAR region content.
-> 
-> As per my discussions internally with Devi Priya (author of the patch pointed above),
-> the issue being seen there is that the DBI register contents are not available
-> at the expected address by software and this is causing enumeration failures.
-> 
-> Below is the memory map of the IPQ9574 platform being mentioned in the above patch
-> along with the memory locations of the DBI of respective PCIe Root Complexes.
-> 
->                       |--------------------|
->                       |                    |
->                       |                    |
->                       |                    |
->                       |                    |
->                       |--------------------|
->                       |                    |
->                       |       PCIe2        |
->                       |                    |
->                       |--------------------|---->0x2000_0000 ->DBI
->                       |                    |
->                       |       PCIe3        |
->                       |                    |
->                       |--------------------|---->0x1800_0000 ->DBI
->                       |                    |
->                       |       PCIe1        |
->                       |                    |
->                       |--------------------|---->0x1000_0000 ->DBI
->                       |                    |
->                       |                    |
->                       |                    |
->                       |--------------------|
-> 
-> Previously PARF_SLV_ADDR_SPACE_SIZE is configured as 256MB (0x1000_0000) and
-> PARF_DBI_BASE_ADDR is configured as 0x0 for each of the PCIe Root complex. With
-> this configuration, in the case of PCIe1 DBI contents get accessible at 0x0,
-> 0x1000_0000 and 0x2000_0000 and so on due to mirroring. Although NOC allows access
-> only to region 0x1000_0000 to 0x1800_0000 for PCIe1. So in the case of PCIe1 DBI
-> is accessible at the expected location 0x1000_0000.
-> 
-> Similarly in the case of PCIe3 its DBI contents are accessible at 0x0, 0x1000_0000
-> and 0x2000_0000 but the expectation is to have DBI at 0x1800_0000 (as 0x1800_0000 is
-> the physical address of DBI per devicetree). This is causing enumeration failures as
-> DBI is not at the expected location (same issue w.r.t ATU).
-> 
-> When PARF_SLV_ADDR_SPACE_SIZE is modified to 128MB (0x800_0000) and PARF_DBI_BASE_ADDR
-> is kept 0x0, for PCIe3 the DBI gets accessible at 0x0, 0x800_0000, 0x1000_0000,
-> 0x1800_0000, 0x2000_0000 and so on. So, now the DBI becomes accessible at the
-> expected location of 0x1800_0000 and its fixing the issue in the above patch.
-> 
 
-Thanks for the explanation. This really clarifies.
+--=-7aI71VoZ9P3azYLQFroL
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-> Alternate way to fix the above issue is if we use the current patch to disable
-> mirroring and configure the PARF_DBI_BASE_ADDR then the DBI gets accessible only at
-> the location given in PARF_DBI_BASE_ADDR register which will be the same location
-> mentioned in devicetree.
-> 
+T24gVHVlLCAyMDI0LTA3LTE2IGF0IDEzOjU0ICswMjAwLCBQZXRlciBIaWxiZXIgd3JvdGU6Cj4g
+T24gMDguMDcuMjQgMTE6MjcsIERhdmlkIFdvb2Rob3VzZSB3cm90ZToKPiA+ICsKPiA+ICvCoMKg
+wqDCoMKgwqDCoC8qCj4gPiArwqDCoMKgwqDCoMKgwqAgKiBUaW1lIGFjY29yZGluZyB0byB0aW1l
+X3R5cGUgZmllbGQgYWJvdmUuCj4gPiArwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKg
+wqDCoHVpbnQ2NF90IHRpbWVfc2VjO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBTZWNv
+bmRzIHNpbmNlIHRpbWVfdHlwZSBlcG9jaCAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgdWludDY0X3Qg
+dGltZV9mcmFjX3NlYzvCoMKgwqDCoMKgwqDCoMKgwqAvKiAoc2Vjb25kcyA+PiA2NCkgKi8KPiA+
+ICvCoMKgwqDCoMKgwqDCoHVpbnQ2NF90IHRpbWVfZXN0ZXJyb3JfcGljb3NlYzvCoC8qICjCsSBw
+aWNvc2Vjb25kcykgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoHVpbnQ2NF90IHRpbWVfbWF4ZXJyb3Jf
+cGljb3NlYzvCoC8qICjCsSBwaWNvc2Vjb25kcykgKi8KPiAKPiBJcyB0aGlzIHVuc2lnbmVkIG9y
+IHNpZ25lZD8KClRoZSBmaWVsZCBpdHNlbGYgaXMgdW5zaWduZWQsIGFzIGl0IHByb3ZpZGVzIHRo
+ZSBhYnNvbHV0ZSB2YWx1ZSBvZiB0aGUKZXJyb3IgKHdoaWNoIGNhbiBiZSBpbiBlaXRoZXIgZGly
+ZWN0aW9uKS4gUHJvYmFibHkgYmV0dGVyIGp1c3QgdG8gZHJvcAp0aGUgwrEgZnJvbSB0aGUgY29t
+bWVudC4KCkp1bGllbiBpcyBub3cgYmFjayBmcm9tIHZhY2F0aW9uIGFuZCBJJ20gZXhwZWN0aW5n
+IHRvIHNlZSBoaXMgb3BpbmlvbgpvbiB3aGV0aGVyIHdlIGNhbiBjaGFuZ2UgdGhhdCB0byBuYW5v
+c2Vjb25kcyBmb3IgY29uc2lzdGVuY3kuCg==
 
-Agree.
 
-> >> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
-> >> boundary is used for BAR region then there could be an overlap of DBI and
-> >> ATU address space that is getting mirrored and the BAR region. This
-> >> results in DBI and ATU address space contents getting updated when a PCIe
-> >> function driver tries updating the BAR/MMIO memory region. Reference
-> >> memory map of the PCIe memory region with DBI and ATU address space
-> >> overlapping BAR region is as below.
-> >>
-> >> 			|---------------|
-> >> 			|		|
-> >> 			|		|
-> >> 	-------	--------|---------------|
-> >> 	   |	   |	|---------------|
-> >> 	   |	   |	|	DBI	|
-> >> 	   |	   |	|---------------|---->DBI_BASE_ADDR
-> >> 	   |	   |	|		|
-> >> 	   |	   |	|		|
-> >> 	   |	PCIe	|		|---->2*SLV_ADDR_SPACE_SIZE
-> >> 	   |	BAR/MMIO|---------------|
-> >> 	   |	Region	|	ATU	|
-> >> 	   |	   |	|---------------|---->ATU_BASE_ADDR
-> >> 	   |	   |	|		|
-> >> 	PCIe	   |	|---------------|
-> >> 	Memory	   |	|	DBI	|
-> >> 	Region	   |	|---------------|---->DBI_BASE_ADDR
-> >> 	   |	   |	|		|
-> >> 	   |	--------|		|
-> >> 	   |		|		|---->SLV_ADDR_SPACE_SIZE
-> >> 	   |		|---------------|
-> >> 	   |		|	ATU	|
-> >> 	   |		|---------------|---->ATU_BASE_ADDR
-> >> 	   |		|		|
-> >> 	   |		|---------------|
-> >> 	   |		|	DBI	|
-> >> 	   |		|---------------|---->DBI_BASE_ADDR
-> >> 	   |		|		|
-> >> 	   |		|		|
-> >> 	----------------|---------------|
-> >> 			|		|
-> >> 			|		|
-> >> 			|		|
-> >> 			|---------------|
-> >>
-> >> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
-> >> used for BAR region which is why the above mentioned issue is not
-> >> encountered. This issue is discovered as part of internal testing when we
-> >> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
-> >> we are trying to fix this.
-> >>
-> > 
-> > I don't quite understand this. PoR value of SLV_ADDR_SPACE_SIZE is 16MB and most
-> > of the platforms have the size of whole PCIe region defined in DT as 512MB
-> > (registers + I/O + MEM). So the range is already crossing the
-> > SLV_ADDR_SPACE_SIZE boundary.
-> > 
-> > Ironically, the patch I pointed out above changes the value of this register as
-> > 128MB, and the PCIe region size of that platform is also 128MB. The author of
-> > that patch pointed out that if the SLV_ADDR_SPACE_SIZE is set to 256MB, then
-> > they are seeing enumeration failures. If we go by your description of that
-> > register, the SLV_ADDR_SPACE_SIZE of 256MB should be > PCIe region size of
-> > 128MB. So they should not see any issues, right?
-> > 
-> 
-> As mentioned above, configuring PARF_SLV_ADDR_SPACE_SIZE as 256MB is causing
-> issue with the PCIe instances in which DBI is not aligned with the multiples of
-> 256MB and due to PARF_DBI_BASE_ADDR being configured as 0x0 instead of the
-> actual DBI address given in devicetree.
-> 
-> >> As PARF hardware block mirrors DBI and ATU register space after every
-> >> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
-> >> U64_MAX to PARF_SLV_ADDR_SPACE_SIZE register to avoid mirroring DBI and
-> >> ATU to BAR/MMIO region.
-> > 
-> > Looks like you are trying to avoid this mirroring on a whole. First of all, what
-> > is the reasoning behind this mirroring?
-> > 
-> 
-> The reason is to have more control over where to have the DBI and ATU register
-> contents in the system memory using the PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR.
-> For the PARF_SLV_ADDR_SPACE_SIZE register we don't have an existing use case
-> to utilize mirroring functionality.
-> 
+--=-7aI71VoZ9P3azYLQFroL
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Okay. Then I guess you could disable mirroring globally for all SoCs. Some SoCs
-doesn't have both DBU and ATU regions, so the helper could conditionally write
-the base address if available in DT.
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNzE3MDgxNDEwWjAvBgkqhkiG9w0BCQQxIgQgpDLccVzy
+NFY6hIOp63c67afPeKRKJ8ikkSvzZe2e4Uswgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgA69SbbM8x3fiC47jFJp9nOMmwUNMe/LDfh
+ngQr8h8zfvHq0CmNUpy5WNFPBjIKzQ8vEPDqSaBVfqvPvOvoYgGch0QcbzSze0h6lSxJUMLz5vXt
+aDz+IfH+JCb57ITRS12CYc+xfHY648U82UAf+sxEqOIkYiDB9MsOlB4OhobTElvkUss8ScCB8tKD
+2wlmoeXBGS4T72cRHVneoC2XZYnBYIPYyLYa9MzSX42kS3fBrTVSkq0Jtjx0jbjgNeEkgbjLxTI1
+fyeTH2dygXvDRU/zIZfv9BaWPlX39G95STpPYpFA+8COoGSvdQ0RcIUjskiR0uv76Gok+NwZ110I
+bHgTsqE1/+4qIedRTe6IOqZ0L5WdBlmjjDbK6xs1xPilroIQJD40ecEH5krbERnwvEw/rc+UTUfG
+SprAP+uNYh5XMnpdRdB3eXGaLRSPtmwBM/vYOO1K+QUmwS/jMBHGf00qzPjf19HSY0OIsECssiJv
+t13wPfCmrLGm0aYJGBp+8IURrwemeaS/VAc93hjHCRAgApbLGpn+LuLSBrdCCucGHHlSxWlQK3mB
+/ASd6+N4PTfc+Zt6+ZqHGgFECZ3xfebOt3QtYMcqHR8EPVxf//1hpZmTwFbfTllYg5alYpruMJal
+FN2qql2QoLpYMV4RLbG3+KCn3iMdVh4zUR1VUridJwAAAAAAAA==
 
-> >> Write the physical base address of DBI and ATU
-> >> register blocks to PARF_DBI_BASE_ADDR (default 0x0) and PARF_ATU_BASE_ADDR
-> >> (default 0x1000) respectively to make sure DBI and ATU blocks are at
-> >> expected memory locations.
-> >>
-> > 
-> > Why is this needed? Some configs in this driver writes 0 to PARF_DBI_BASE_ADDR.
-> > Does the hardware doesn't know where the registers are located?
-> > 
-> 
-> Yes, hardware doesn't know where the DBI, ATU registers are located in the
-> PARF_SLV_ADDR_SPACE_SIZE memory block or system memory. Hardware gets the location
-> of DBI and ATU registers from the PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR
-> registers. So these registers must be programmed to have the DBI and ATU at
-> expected memory locations.
-> 
 
-Sounds good.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+--=-7aI71VoZ9P3azYLQFroL--
 
