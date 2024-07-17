@@ -1,271 +1,142 @@
-Return-Path: <linux-kernel+bounces-254819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3852B93381C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E76933824
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7FEA283A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93EE2839A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309841CD00;
-	Wed, 17 Jul 2024 07:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CCD1CA89;
+	Wed, 17 Jul 2024 07:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AIBaoPGe"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="NKmuhs5m"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251A71B947
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DCF1B28A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721201868; cv=none; b=V9Z5Ajf5JPOLz6ihOJ0feXVb8CCVaR11YViK3/Pd/FRxBN8/sMyiF83TjidNRAIH7h/45p6LFJ+O7FIFymWx9eoTkuHXAPlYSoxi0xroz2isNFQRXQx20sawjHWSge+4sptPFlegLUBd1JwUFQGKCyK3Dc4i68j6eNfD0VLHoc4=
+	t=1721202116; cv=none; b=oy5NQxzDODHR7fQwoHXME1dSsA5rN3/DmbJVB9/K3Z7OV001jGXbhxAUDu20MgjDG06gdZ7vgrGHJ8RD4duJ+xZQg9Rl+G8bdISsezgKuBxk090B5f7kVb95LaKlcROJ2CM71rlSyA/UFYIrK9H0rDTwAMiLh+s5hTaCLfNnNt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721201868; c=relaxed/simple;
-	bh=ofiUS+uOsnjhuIaRefgaMe9r3ZaNznbQtZELpuQTjVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1d1nQh5mnNiytsHMLAmBDNGnUsJ4Ffpaats+drcIcBVPVVWByp3orrYd6d8SaDq/yfufR6BADtTKdwuEaIb3TWBXQkXjXEeX3BBzBnMf3U7x4EzbSloATjTmZDWCLouz5srFkzv7hGym24ARUjZsAVWmHjI6Q/9JkYklwAJAIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AIBaoPGe; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9fe05354so8979004e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721201863; x=1721806663; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
-        b=AIBaoPGeH/uKzNjCKykwG1g1LixWb4q/Q2hcEryTEmD7SEvjZrOgBHqqTZ5pWK6DXF
-         DfGYuvpgNc4GA4H+Aib8A9n4NpMexhDBSDzCQcQaeTDlWUZjsYH8Wvg/a5OjywCvQ+Jb
-         8hZfuiSKL1QaWKaGfShTvaXRd62jC2GIKSMaBwKIjJmPrSUtuzYhAco25nEhfvIWxdd4
-         6vufqqgadMLOAXQl5lpGEzyLXuPgmI9BbA4cIVV63y8A+yFkrndc19zK4LkP3vfyrdX1
-         qc4/i8XLt3U2VM0fvKhphQM+JYXUC2ZqsR/FNY7tYOV5a0sLTrx8x4pkyPAKPDU67mpF
-         8w3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721201863; x=1721806663;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
-        b=VgHZLN3s2m9Ba49gAXLPeUKmTITpaWAsmW1eSPbuT+qOBJ0uUCQbwOYA0GORPX2qwE
-         YZJOw1MLB7Vdr5uoVvYn6bR79704QLOXUkkR9Bqy2IWuFyAQseuhfgrpRTAccOrsh2Sr
-         Or6MMaPZtJvOVSbqGSDDEAniHSIfCyL/DQptbM1RF8XuK8JXgMYqzHCfsqvWVF+Wn7Iu
-         f9Q2Gyv2esRRU29GziRput8Km2wL8lF+oQYZmhe1eoeI2ssQxErloz4ntgjw+yygMMfJ
-         0pow+FZU66ugeL4u2Ed+b8ct0O0IRpT8qmQrFrOl9xyfWFgx24GTI9Tka+HBqovXQhrQ
-         GhNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBBrDN+b9MIGJqA1QwB0EakiAtp40K0ADuYOmso5mkha1zERA5DXgNMIEpOOTD8JqdoinVely0CTlpepeNMI6nghQAS64xssjvkKA0
-X-Gm-Message-State: AOJu0Yw9ZTkDSj1hQv1GbJc4IgOvrhyjV4LJTvzXqLEjHm4YgBFmIqEs
-	OUsPIfRbhlGNK9RP/Tais5aTNMaVyHc0TIvzicfXrfSATgqQTQm0LTJOpMb8yTGV/JwFFp/4/ob
-	V
-X-Google-Smtp-Source: AGHT+IH6DPWOFWGyrbuD3FoepHwzwFHt5aU7f9hN5MQgW4BxazZpRw+PU5n5TYh9enHix4deAENBmA==
-X-Received: by 2002:a05:6512:3f01:b0:52c:e3c7:941e with SMTP id 2adb3069b0e04-52ee5411942mr669554e87.47.1721201862870;
-        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb478sm160478315e9.33.2024.07.17.00.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
-Message-ID: <42216215-4db1-4015-878f-25a7770d44c2@tuxon.dev>
-Date: Wed, 17 Jul 2024 10:37:40 +0300
+	s=arc-20240116; t=1721202116; c=relaxed/simple;
+	bh=tGuCE1JPDIcpCc5ib9rMpQoVT2di8assdRfKvUKrMf4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Ptm/4oy4pDqFr0AqeTZNrI1q8JDiFJrU02tweZHpGIzgcDSIEWighXjuxGdDRq1R4F54fj2RwWRtuxYmc7Q8aq84K2R9Nnu7UBOv5PoYLC6a2DR/W5RjhAdKAbRhYEJUGJXmlGeZLd3U/3bZqML2fUlPkiGX4qiFor1DaIlM2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=NKmuhs5m; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
- Renesas VBATTB IP
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>, "lee@kernel.org" <lee@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721202111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9kdghzpYTLountuHMAHm85KxWPtE0BOZWLjcep8l9Ec=;
+	b=NKmuhs5moRNzolDxH6jfC+IhJtKWryK3UlICMzWitzYON8ZOS1+42mUBhSfuY0AbCbJ4Oc
+	UjjjqpfDcIYqHOONIL+P7Iwd6oslAisgion7C+hTm2sIB049cFVLLDw3yVi6c8JLCkya2J
+	eh0G3aYQc9ZmlRdlzfqevWHEgXsce6r07/5MruObGFYL0195icUk60j/lC2X9JPZrmnie/
+	x11wGANJO7n86hgZJrDgQGItTz/V5nB8c2eqpmAvWggPoKlDWI7OpovGBmrOrXJReG2zdR
+	zjojh08uX5ZyhceBZL1JUVSzXIU03NGAPgrUh9agaJ6EybPqPIHJHWQ2reWLcQ==
+Date: Wed, 17 Jul 2024 09:41:50 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: dsi: Reset ISP1 DPHY before powering it on
+In-Reply-To: <pb477qi34clwdvrdrdparff5jvl6emdje3aswpylovejh2wx3q@vzwju366kkji>
+References: <6e0ce232acfe952970e9b37402fe08a3678aa43a.1721196758.git.dsimic@manjaro.org>
+ <e79cbc94804e93464be62e7731def4fa@manjaro.org>
+ <pb477qi34clwdvrdrdparff5jvl6emdje3aswpylovejh2wx3q@vzwju366kkji>
+Message-ID: <287caa145232a310c0e40a8b761bcd9a@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi, Biju,
+Hello Ondrej,
 
-On 16.07.2024 14:00, Biju Das wrote:
-> Hi Claudiu,
+On 2024-07-17 09:32, Ondřej Jirman wrote:
+> On Wed, Jul 17, 2024 at 08:48:29AM GMT, Dragan Simic wrote:
+>> Hello all,
+>> 
+>> On 2024-07-17 08:29, Dragan Simic wrote:
+>> > From: Ondrej Jirman <megi@xff.cz>
+>> >
+>> > After a suspend and resume cycle, ISP1 stops receiving data, as observed
+>> > on the Pine64 PinePhone Pro, which is based on the Rockchip RK3399 SoC.
+>> > Re-initializing DPHY during the PHY power-on, if the SoC variant
+>> > supports
+>> > initialization, fixes this issue.
+>> >
+>> > [ dsimic: Added more details to the commit summary and description ]
+>> >
+>> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+>> > Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> > ---
+>> >  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 8 ++++++++
+>> >  1 file changed, 8 insertions(+)
+>> >
+>> > diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> > b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> > index 4cc8ed8f4fbd..9ad48c6dfac3 100644
+>> > --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> > +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> > @@ -1240,6 +1240,14 @@ static int dw_mipi_dsi_dphy_power_on(struct phy
+>> > *phy)
+>> >  		goto err_phy_cfg_clk;
+>> >  	}
+>> >
+>> > +	if (dsi->cdata->dphy_rx_init) {
+>> > +		ret = dsi->cdata->dphy_rx_init(phy);
+>> > +		if (ret < 0) {
+>> > +			DRM_DEV_ERROR(dsi->dev, "hardware-specific phy init failed: %d\n",
+>> > ret);
+>> > +			goto err_pwr_on;
+>> > +		}
+>> > +	}
+>> > +
+>> >  	/* do soc-variant specific init */
+>> >  	if (dsi->cdata->dphy_rx_power_on) {
+>> >  		ret = dsi->cdata->dphy_rx_power_on(phy);
+>> 
+>> After thinking a bit more about this patch in its original form [1]
+>> that's preserved above, I think it would be better to move the
+>> additional DPHY initialization to dw_mipi_dsi_rockchip_resume(),
+>> because that function seems to be the right place for such fixes.
+>> 
+>> Please, let me know your thoughts.
 > 
-> Thanks for the patch.
-> 
-> 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: Tuesday, July 16, 2024 11:30 AM
->> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Renesas VBATTB IP has logic to control the RTC clock, tamper detection and a small 128B memory. Add a
->> MFD driver to do the basic initialization of the VBATTB IP for the inner components to work.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - none; this driver is new
->>
->>  drivers/mfd/Kconfig          |  8 ++++
->>  drivers/mfd/Makefile         |  1 +
->>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
->>  3 files changed, 87 insertions(+)
->>  create mode 100644 drivers/mfd/renesas-vbattb.c
->>
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6..df93e8b05065 100644
->> --- a/drivers/mfd/Kconfig
->> +++ b/drivers/mfd/Kconfig
->> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
->>  	  This driver provides common support for accessing the SC27xx PMICs,
->>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
->>
->> +config MFD_RENESAS_VBATTB
->> +	tristate "Renesas VBATTB driver"
->> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
->> +	select MFD_CORE
-> 
-> There is no MFD calls??  What is the purpose of selecting MFD_CORE??
+> That also works (see attachment) to fix the original issue in the 
+> commit
+> message, but if you keep the stream on across suspend/resume it does 
+> halt so
+> it's not a complete solution either.
 
-I missed to remove it from here.
+Great, thanks for the attached patch.  I assume that you already have
+a patch that performs the other required operations on suspend and 
+resume,
+i.e. stops the stream and restarts it?
 
-> 
->> +	help
->> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
->> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
->> +
->>  config RZ_MTU3
->>  	tristate "Renesas RZ/G2L MTU3a core driver"
->>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/Makefile
->> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
->> --- a/drivers/mfd/Makefile
->> +++ b/drivers/mfd/Makefile
->> @@ -186,6 +186,7 @@ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
->>  obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
->>  obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
->>  obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
->> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+= renesas-vbattb.o
->>  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
->>  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
->>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
->> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c new file mode 100644 index
->> 000000000000..5d71565b8cbf
->> --- /dev/null
->> +++ b/drivers/mfd/renesas-vbattb.c
->> @@ -0,0 +1,78 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * VBATTB driver
->> + *
->> + * Copyright (C) 2024 Renesas Electronics Corp.
->> + */
->> +
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/reset.h>
->> +
->> +static int vbattb_probe(struct platform_device *pdev) {
->> +	struct device *dev = &pdev->dev;
->> +	struct reset_control *rstc;
->> +	int ret;
->> +
->> +	rstc = devm_reset_control_array_get_exclusive(dev);
->> +	if (IS_ERR(rstc))
->> +		return PTR_ERR(rstc);
->> +
->> +	ret = devm_pm_runtime_enable(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = reset_control_deassert(rstc);
->> +	if (ret)
->> +		goto rpm_put;
->> +
->> +	platform_set_drvdata(pdev, rstc);
->> +
->> +	ret = devm_of_platform_populate(dev);
->> +	if (ret)
->> +		goto reset_assert;
->> +
->> +	return 0;
->> +
->> +reset_assert:
->> +	reset_control_assert(rstc);
->> +rpm_put:
->> +	pm_runtime_put(dev);
->> +	return ret;
->> +}
->> +
->> +static void vbattb_remove(struct platform_device *pdev) {
->> +	struct reset_control *rstc = platform_get_drvdata(pdev);
->> +
->> +	reset_control_assert(rstc);
->> +	pm_runtime_put(&pdev->dev);
->> +}
->> +
->> +static const struct of_device_id vbattb_match[] = {
->> +	{ .compatible = "renesas,r9a08g045-vbattb" },
->> +	{ /* sentinel */ },
-> 
-> Drop comma.
-> 
->> +};
->> +MODULE_DEVICE_TABLE(of, vbattb_match);
->> +
->> +static struct platform_driver vbattb_driver = {
->> +	.probe = vbattb_probe,
->> +	.remove_new = vbattb_remove,
-> 
-> Maybe remove canbe replaced with devm_add_action_or_reset()
-> That simplifies probe() aswell??
+How about dropping my "handled" variant of your patch and having you
+submit the patch you sent as attachment, and the additional patch you
+described as also needed?
 
-This approach needs a new structure to keep references to the rstc and dev,
-to be able to handle reset and runtime PM in action function. I wanted to
-avoid adding a new structure.
-
-Thank you for your review,
-Claudiu Beznea
-
-> 
->> +	.driver = {
->> +		.name = "renesas-vbattb",
->> +		.of_match_table = vbattb_match,
->> +	},
->> +};
->> +module_platform_driver(vbattb_driver);
->> +
->> +MODULE_ALIAS("platform:renesas-vbattb");
->> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
->> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
->> --
->> 2.39.2
->>
-> 
+>> [1] 
+>> https://megous.com/git/linux/commit/?h=orange-pi-6.9&id=ed7992f668a1e529719ee6847ca114f9b67efacb
 
