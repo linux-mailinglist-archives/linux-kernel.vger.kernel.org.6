@@ -1,300 +1,460 @@
-Return-Path: <linux-kernel+bounces-254816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C1293380E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAE6933811
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CA31C2275B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DFE1C225F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279DE1BF3F;
-	Wed, 17 Jul 2024 07:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93E31BDD0;
+	Wed, 17 Jul 2024 07:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="I280gY8W"
-Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com [148.163.133.20])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cx+fsHvy"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2065.outbound.protection.outlook.com [40.107.117.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5317577;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74E117BDC;
 	Wed, 17 Jul 2024 07:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.133.20
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721201612; cv=fail; b=mBr2WU9JgmrYelkaboVgskyM/2Dc54YK6SGbpz2T1DrK6jutJmVdgOm12zmlbF43YXa+jNFXQCN3wxRJ/PBYdprPNtkcd4gLW02tXf/Uyqea9JsevkOFU9b1Ljq7TN7+HF5if7qLTPsK1qbZp4K4FedwHUUHJEMvpGGuSWAbTdw=
+	t=1721201614; cv=fail; b=FrTiD7uOkaUV7UXOvYBZJQ+1oae1lLjwXZMKp11fTw9N3dO/wC5rqqqLNRRS3TuHy47HLrQ9MzBkTBOpWf2p+poQMPiWJo/fHraT52PUu0Ji3sRrvogJwTZmcRoGsAelSfWD0cV/RFM4y8n5TGjFWWP4AO2RlZCCvWxNceNQGjw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721201612; c=relaxed/simple;
-	bh=wrT2QHSTK7EfG4xMSLYPsWCcugrKDb2Dp0qJeakpNQM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=A8CX4EUTT6RUkJU1iKk8TMOQtdZeSYdgFhIwa6xEhEPDQIxGfjbe+NPzzaYtiQoU3GzTlZvQizZ9tlwJOYMiY2C7t86oXyjHRH93bunjy/LOpwtpOV0/HralkChMpw56rF1GQHNpSNPQ5Tldj2PuapUjxBLDiBkymMB4/achkpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=I280gY8W; arc=fail smtp.client-ip=148.163.133.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
-Received: from pps.filterd (m0170390.ppops.net [127.0.0.1])
-	by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H18t8l029220;
-	Wed, 17 Jul 2024 03:33:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from
-	:to:cc:subject:date:message-id:content-type
-	:content-transfer-encoding:mime-version; s=smtpout1; bh=wPxfyjZD
-	he/SCI+SAJNeYunYTHRr1iL6It/QQoGJ9nA=; b=I280gY8W+D14fF8kJKYwtgCo
-	1H2U06uq01j5maW6SPPMO0qxIPUsz8eiQSnWN63fZdeEHaylnHks9OaV5BnHN9kX
-	Ta3qxHBm+kgOgaaHX1zI1Wtt0ioxd/r160OmOkbk1sXNfK+V9ZgVjbX7NANqWqpH
-	0nL3uIaMIa9/KOF3bv08Ztp+C04Fho7gAxaITifMc9xO/3ktRm91G5R7SUgqdtGP
-	Oo2bk/ZyTvPrn3pfzcPpNrTfIQ+lJFm4noUZ6ptqYhBaVaac5KqhXeZnS1JiKxKN
-	r4vMftp6auKMS230pzcSkp9acKA6K8ZQFr9k8CVpcyVVLDlFP01ciLCKr37WAw==
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-	by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 40dwfp311y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 03:33:13 -0400 (EDT)
-Received: from pps.filterd (m0142693.ppops.net [127.0.0.1])
-	by mx0a-00154901.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 46H7RwcU037904;
-	Wed, 17 Jul 2024 03:33:13 -0400
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2044.outbound.protection.outlook.com [104.47.51.44])
-	by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 40e9kf02mr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 03:33:13 -0400
+	s=arc-20240116; t=1721201614; c=relaxed/simple;
+	bh=5+B6ufThVrJSYuPIxf02v1pSqtoVERgBLXwHSqN+O1o=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b+N0bXfWOQuDDtON2BnC7dxEosbKoXVx6bfK5Hw38/y6g0qzOa64H+11mmZiCkgPcv0ddt39nOzqFn9+jj7/duODWVUD0HMWL2VVGiNJ1V3ra+bYvfTUl5iSEkEovVnn4tx8ztGyL5m2RzDdSMC3ey+3jeCW3OEb07OzAmjoXKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cx+fsHvy; arc=fail smtp.client-ip=40.107.117.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AjkIvffwgG3CHmt1lhHNtdk5ifk7WwW2KzqWWCvNNtD/QNG0DijhBV0/7kRpjRDvDCK6YaWL+AhtQvkSf2B/jVpoeSFCXdpwWEg46C1gqu7Hjf3r8Zt3u2thdA/8ixKpqpMv965T420WF9RPANQ9Z5aVbSg1rPjvLmLhrqP14vqq+BJmK6T8hrF62IUdDrbRsU+Pu4KIC+H2uPNXmcmimTQdTiLVlom278e5PIACZZxJ39/qYD5TfOitekI4UBxiu+tR/iVoFymG6gGzTHTxC+GobKr5Bm6yh0dCRgNuLsSGvM1kt3DBNKvcKxXjOvwPzCUX7ri0d5NbxGmO1rgWbg==
+ b=ISJa1jILgnSy7A/1QbejVFOvS84e9wk5kVl6D3p1zVVM8uMeLGV+uLekoyEuJVJNMAXlDKOBmlsW42fLzNBRsFTdqXaKlcIIPzdQcCDEAL1rooHyvDzUABAyHcXnWlfBqK7VT6F9hV7uMXkwQ+IhDidyymBIhoZy/dPNV3VIawDgfct/rhNqhymn/mbnKUwSHdOtiU+5okt7l6OnZNosngOPw0T3+eQnhIZS0XlV7yfFrKjrL3K/ZGSqmUdNDhhCPJz7oZKLiPRwDBe0fjljc6HAAHOfaEUOpaJNhvJ/tWWlJk7OweLGfWBi1e18IwN7inErwm3lgvcrJ6jwk/+aIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wPxfyjZDhe/SCI+SAJNeYunYTHRr1iL6It/QQoGJ9nA=;
- b=h8ONwCSrF1AEZzXyOGowO0SG/TSu+6Gi+/B4splY8u3y2hq+x0C+J0r30M1QDodP3pZrUWcSuaAGBSMrXIY8GEOEQPEcAaIQBatQZa5rAfXnfNMI3OZs2fDHPUQqUhBgoK0/KbqRCSA0xYhHWRqXQTAyjxlQJaYIKe499li3hfEpBxEQXpYfSy3AM1tkdcf4Iy6Y/Eh4RlB/zCIr5+eHIpFjnJpi+xObjS9gzu3Hdkzo7jOMFDXsxM3y+AP1jikFiuDE4GyYnrZFtb1jCsQI3NHCoaCJVDX8NtCAYjCSg0wBayRVmAyuF4ZCX4HC3vDX5k+g+0orUFNWC0euSfHu7g==
+ bh=cVZaO/zXU0M5G1ZsscO7yiTVqPblpNtozfbeQar23l8=;
+ b=LX9uy+stdnvbuIGp0OM/UdBCqayiInaS+sha4+AUY8zRKlmM89Gi4EJTXbnCeOzFUwyoDvifkMjwvxWM17j8APamOnRAadgXInYv5XPtlyUWnllSvbB2BAvfqS3b0BmewGT8QtUHT9OD0727sP+3WkYLcPfiRVsmuOrvkCmlBcRX9q+PS8d7dJl0UWE2epKzwNn3GGOLY15hEBxBo/jhpkidAG0VwPvxyRmW8Fgrn1UHYM2FqDEsqjc1isyYYS1gK0uc/QBUIviH/WHy69yJ7ptZ6de/QcLQfkTTsGFH57DpMWHtC/PLoJvUK1YD3X4HK3UFV9cIyqS2DB7/dpKt+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
- dkim=pass header.d=dell.com; arc=none
-Received: from DS7PR19MB5709.namprd19.prod.outlook.com (2603:10b6:8:70::15) by
- PH8PR19MB6881.namprd19.prod.outlook.com (2603:10b6:510:1bd::22) with
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cVZaO/zXU0M5G1ZsscO7yiTVqPblpNtozfbeQar23l8=;
+ b=cx+fsHvyYB05FEsy2sLv4GKMr7oPwlfr2Nkv0jthRQyVOAi00QjPpKn7naVWOVwH62wmIpDJ+l2ZUBAOPoGT/nwK97yFHsneSiSBqc+U7JP5nsvBC3XqY2RFQjhja24YHbkRwQqNQmq3cKytWehOozI62yZ/1xTvvR77/pi7Vv3q+U/9O6p9coKvjTvIyoop9cI5Zb9pDUfTpkh3uJiI3IctxbTPgKPWRqTDft3oH0RFR/O8gZAN0hedG6Q2yRK3ZqNquTYfMU8glPiHSB1fPrQLVbWx221OW7q4uIAsu2ZUmEcgO8wYLGrPeeggh3wI19acNKyvPMjtKHM/bjpjOg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SEYPR06MB5136.apcprd06.prod.outlook.com (2603:1096:101:5c::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.30; Wed, 17 Jul
- 2024 07:33:09 +0000
-Received: from DS7PR19MB5709.namprd19.prod.outlook.com
- ([fe80::3d06:d879:7717:36e0]) by DS7PR19MB5709.namprd19.prod.outlook.com
- ([fe80::3d06:d879:7717:36e0%5]) with mapi id 15.20.7784.016; Wed, 17 Jul 2024
- 07:33:08 +0000
-From: "Shao, Marshall" <Marshall.Shao@Dell.com>
-To: "ardb@kernel.org" <ardb@kernel.org>,
-        "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "bp@alien8.de"
-	<bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de"
-	<tglx@linutronix.de>
-CC: "Mishra, Ashish" <Ashish.Mishra4@dell.com>,
-        "Dion, Christopher"
-	<Christopher.Dion@dell.com>,
-        "Caisse, Joe" <Joe.Caisse@dell.com>,
-        "Chia, Jia
- Yuan" <JiaYuan.Chia@dell.com>,
-        "Mukundan, Govind" <Govind.Mukundan@dell.com>
-Subject: [Patch] Do not clear BSS region in x86 stub
-Thread-Topic: [Patch] Do not clear BSS region in x86 stub
-Thread-Index: AdrYGyaFCseU4QE3SCibBf0Ev6R9+w==
-Date: Wed, 17 Jul 2024 07:33:08 +0000
-Message-ID: 
- <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ActionId=37d26f2c-3fd7-48a6-ba05-08288b1c2997;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ContentBits=0;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Enabled=true;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Method=Standard;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Name=No
- Protection (Label Only) - Internal
- Use;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2024-07-17T07:28:18Z;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS7PR19MB5709:EE_|PH8PR19MB6881:EE_
-x-ms-office365-filtering-correlation-id: 78bdf296-d3a6-4fa8-5b06-08dca632b4a9
-x-exotenant: 2khUwGVqB6N9v58KS13ncyUmMJd8q4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?vBBoP6Qa8Kjz1+CSFl2kiJ8Ibc1IBuuCHG0/I6e3UvWo/ZtWhOGOVot3bm1p?=
- =?us-ascii?Q?fRR4mgR8Ndm/dEUW7RigXN8z585vgxGBZ2TNJ23SV7h4pcduKBMfvXZRQKuQ?=
- =?us-ascii?Q?59ZG1f+rdGhf+Pj4xOBt+yQcBKdfwIuyD2A7kdDwZ3cbAhFg9v0gkug5/sek?=
- =?us-ascii?Q?qkz//MC1aMLjAYuENFOVTiFvPQhUP5iXiocjY91N0mw0Gz1hFY+f/sQzEzds?=
- =?us-ascii?Q?E59sRcW13JDr1ytnEA/2MrFuBjfgA5RWRvw+KE9kegIES12cJP322MCB8/NN?=
- =?us-ascii?Q?pJmAgsTL4olm6lMuS4x2c7JHPFgcasktIvCzWLcjIbqi4MUPlp1OfXCem9x5?=
- =?us-ascii?Q?b3xqO7f1kefEh5Ov/Gx1iPYl7yKsj91BB8GmqSgPiVTGD2sWVzOzuDmzdCEr?=
- =?us-ascii?Q?gIQgAAA6aY9GsZPHpICnhQDeV2bo6gWYnrMEVPv+UdkM5CJuqjzFoVtbFryO?=
- =?us-ascii?Q?/+ezlDsPGZdnhL9NPtUjOIta/KIHrA0ev62Zs0v88A2BHt/HqdZo4pjk2PO7?=
- =?us-ascii?Q?ljtyzImLKqhAGH4CmOIpCCam/OuHedVpeJU+iu/UXLf6ql1EEf7iqk7CU5Bs?=
- =?us-ascii?Q?1scc3bE8WT9MdeXDxPNl0vqD27J6nKSglrOoan4WmUnj3rst3xr+MDHrICBT?=
- =?us-ascii?Q?3uSYVlS31hGhtG0QeZWyy3fRuo+SQA+Bx7gnxXrxEA4jO9I2vujn1I56b/A8?=
- =?us-ascii?Q?R+s2dLmLCvKH0t5E9BxfOpdFWttH6J6uTCNz56M3IigJJxJJdhxJqH+a19ou?=
- =?us-ascii?Q?yFEP1b4f7j8jiR7ooEEA+SSJsdSO879wzXKx8up/WdhA2Yf15XuzTfeTOHxl?=
- =?us-ascii?Q?DkzGN2qX0APlAgTtDWxRhvvu66Syn88o87+7RdsVSJquVmVELlNX05aE1Bs2?=
- =?us-ascii?Q?CqjFInXztJQguIoRP4ZZCkP8nx/EDPZdS+vo3OT31dFHK0ezkf4dQqK2MGCO?=
- =?us-ascii?Q?ZkXXCPQ19u9wUoqJ+z68ZZZGaIsNlcoxT6sGHgirk+3Ch8bqCcnkjKUCfyEl?=
- =?us-ascii?Q?3tK3+lKrryWgk4VF4+QnVR2Wf6UXZvwxeKroAzJyg7tTfbqPOykYiryhIc4s?=
- =?us-ascii?Q?2vUpaolI2O/0vai1D2JIjCx8DcO5xCSqRWZwHatgqMmNgxbTbSkn+3CoH1kE?=
- =?us-ascii?Q?29Yj6/bjqLMepmJ2QVNA15oMeeOcS6YBPh+tgvyDkN/VkG48y767qJIiArLg?=
- =?us-ascii?Q?el18VYc/i1SQCERreiZS8b3pxf1WSl6CxJCPqmxJE+BkdclRVFuqTRU6XNdm?=
- =?us-ascii?Q?NayIa+D+3N7FJNGsC5AEFKGBVuHxs3/gy2CBc4DePZSFDQqsisLviyL7pKO2?=
- =?us-ascii?Q?Y2IwBI+s0DzxzGWindHhFB/8GGEmZKa+XO0aEu1D0LpcxcgEy2T0p8fjAeRq?=
- =?us-ascii?Q?OUES6l7q6a9Ftf8qePEE32pd1GIvJjWyfoWezThnSgGoLEAEog=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR19MB5709.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?A/wmB0Hi8B9sqSYyrIdh0Ce3mdayOQKr7migiBJaOsp+qrNZAscBYxlp+ihi?=
- =?us-ascii?Q?sObLzS8i36BF8AVY0XmCciU0NJ9UbDFs/kkrfdDxh1Tg1Dlq8W4psac/CVIY?=
- =?us-ascii?Q?4xKLdjMPTLcfIcEs+IHgCHjSHFwiMuzg3IOZsy3ltaf7Zc8gaoDiA21f+x1w?=
- =?us-ascii?Q?6frOpFW94Bf05deNaXweBD290AALkj/epl0iDQIJyAnw23aear+/Y5cCREhf?=
- =?us-ascii?Q?s3jamUu0SZWeJWtjH9cBtZn1MIoIfKbXgdh/9XviROLLxlXA4z5oiV3536x5?=
- =?us-ascii?Q?4SCQlEyLbTkhqo9Wp7uq5ZuBbBjJudiyuFx85cwmFrIGjNKe4b3aPEECTf5S?=
- =?us-ascii?Q?WdRLHswaqci0onwCPxK4QXpVoPe79tCMNDrKbLNs1kyU1fiD6mFlPEAGRiRO?=
- =?us-ascii?Q?x9d+Jw1L9wDkwoPR9+2qsAV+b3BPoODOd5G531aOHTHo+Yb+x/J4UoRspyOv?=
- =?us-ascii?Q?4uTX4MaR6QAT/lvlAa2NCs5D8pEG1DJSJdhgLZaTNtUptOT1V1ZDGpJYLga3?=
- =?us-ascii?Q?bR4Qw15kjuhbts8xvcUYLLTnIsxZhgebBkTxSqE0uuTQQOVL1ZROzoLNmLjX?=
- =?us-ascii?Q?TalSyV6gyqOvIlJ/4oBmmw45Oe721is0Ki6X3d5HvNjPnJeeeg910nPg8eBN?=
- =?us-ascii?Q?QSaGxPEYtDqd/UL11MDnMIYX616m37Yq+p/p/rrbJMH+RmrMFYHZp2ozKo6G?=
- =?us-ascii?Q?hgeJv3G7F0WUdWsmmC35YxcDmqA037r9H41BVBdiea7uv9MUqckKFpbdBWfl?=
- =?us-ascii?Q?EcOJYlPIzkHlEOR8OaoJLrkVyKO1qw6YebWIWYwrOb2Y5qiopEFpcKL8FFC3?=
- =?us-ascii?Q?6Hjmh7gDIzaeMESDsenuNkTXNTbjFEVXFBV7OoWThYh/mZfLnPeU9x5iXObM?=
- =?us-ascii?Q?/sk+wd8sF99a6ytTUsoWqDdQqcaX1QBETmltFvkFM7Hy/Ic5gZyynJUOdCRw?=
- =?us-ascii?Q?B2VUOq9o3U02NB4Blmd6gk+pp6Si4eAjm8OPni2Y66dN4EuSmz17d7PUoHRp?=
- =?us-ascii?Q?YZCi6FzYxech4X2liVvB24J0khLGPdHEmv7FXgtRwTbuFLFpCKlIsIx3sf0d?=
- =?us-ascii?Q?OAhm7vQQMaRLYGPs2XUHG5Bp1Ez0Ro//hpzqds3TkpOfwT9R2xKq7cDxr6c5?=
- =?us-ascii?Q?QWWTK4U8JzIrUC7n5Y5PUlWd/q19nonGwYQxOU+0DEwJTiZ5OeS4UPAarP8W?=
- =?us-ascii?Q?zEDW+oWEOBywZkqL5YWySFcagz52zADqAMg8FiprVbF5Nkl8zeXjFS6ki+9B?=
- =?us-ascii?Q?Jsn4TdUB2+/UpOaagMirsNiFfabcHwt5ZQ98ph61eYqBd+DhcGGhTZeiLNqc?=
- =?us-ascii?Q?CK7OvAJ+f2eoVd43NyFVnQuZmll6sEXf8wy7BfQjqFhSsOMzlr64v6YXFrTl?=
- =?us-ascii?Q?uqKuKa6m+7lT9ddChUnX8iZ0nNlB673kZtIkTNGqrRnYQW5VNovlbKl2GGWS?=
- =?us-ascii?Q?uUu8+5kMfWydKx/L7P+DgcQG9j9ZDzng/WHJZ1u9oXgxYb3Sgv7jaa9j35T5?=
- =?us-ascii?Q?1jOknJ59SrQOZa1T77DqUXP1cm0pk7J4P11HwFNbmed3He1EauBRyYuqEGUy?=
- =?us-ascii?Q?74EI97Uf9ucWT6NB/qmIWr7dbq0BqSvJa9mDOV7m?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Wed, 17 Jul
+ 2024 07:33:24 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7762.027; Wed, 17 Jul 2024
+ 07:33:24 +0000
+Message-ID: <6506d116-b6b7-406f-a472-4a4fd7eea6b7@vivo.com>
+Date: Wed, 17 Jul 2024 15:33:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
+ framework
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240711074221.459589-1-link@vivo.com>
+ <20240711074221.459589-2-link@vivo.com>
+ <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
+ <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
+ <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
+ <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
+ <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
+ <d3ad46ea-df7f-4402-b48a-349e957f198b@amd.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <d3ad46ea-df7f-4402-b48a-349e957f198b@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0030.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::15) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Dell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEYPR06MB5136:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d2aa08c-39a8-45e4-cc95-08dca632bdbc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VzB1UlpxRmVQUzBqQXRrYWJ5eHhRYUlZNHgrNC9PRWxjeVV0UXo4QnBXU0Yx?=
+ =?utf-8?B?RkRKdXBBdmlESkxndng3TWpNS3JscmxyUDN5YTF2UzdpeExmQmtmWHozZGhP?=
+ =?utf-8?B?RWlIYW9JenluSGRLQkloTTE4THd2eWJtYzFHc09kL1paa2ZMa1NQaUlwZG1Z?=
+ =?utf-8?B?RGdmS3Azc3JJZEJOYSsvTTYwc3BOdmhlMGhUNUFyQU1BcExPQVJCQmJIWW1i?=
+ =?utf-8?B?ZXRTdDRWNnEzY0xDN2lGeStnTkhzSThtbG1tbFhzUStIOCtvTG1jMDUrVmg1?=
+ =?utf-8?B?S0RqejNrWVk3UGEvVXkyMWFkSk1vUzh4Uk1kZW9TcThJTjQ4RjV6YU9VRHF1?=
+ =?utf-8?B?bmgxYTJjMDRmelE3YzVoY1F5TXJBWVg3dWJXRnFSNEQvZlczQzMzanpwQzZL?=
+ =?utf-8?B?Snoxa3FGdXhjKzZRczRNMmczeVU1THQ0YzNoeUlsZVlscVU5L0F1Q1NzamZn?=
+ =?utf-8?B?cCthaG5BQVhGT21FbGN5YTl4U0Z4bzBITy9tbGt2RjRHVEFRdmFiNWJnbTF6?=
+ =?utf-8?B?UlJGNWRWYUtjUEVtUUNraytFVUpsVGdmVG5wL1k3MkdlaVZKcnArL2pKd0tN?=
+ =?utf-8?B?clY5djlkNFhKNW5zeDdFRzd0cTIwSVBtVnl0OVNJN0oxQ3hMNFNKNWMvY2RH?=
+ =?utf-8?B?bDBiajJvRmZaZDlHOXNCM2x2ZGx1TUNsR2hhV2o1NWlRN1pvWmVHdFoyYUcy?=
+ =?utf-8?B?MWZ4L1RCUUlONWs3QmcyM0RKOXo3YmZPeHhJcGVncjROcS9NMjg5VDc0Snlr?=
+ =?utf-8?B?aHN1c1B0Tjc2VWU1WnorMkpvYTFFM3ZWWk1wS1k0emtUUWhoRUkyQjJBdVh4?=
+ =?utf-8?B?Sm1xckVVV1lpcUMyNlJUWHg1M1hZVzA4S3hhZVZHVlZOYnlNZndaMFdjTDJh?=
+ =?utf-8?B?NjlFVURuSStYMEVxUjNUTzhsQ0k2RlJ3VWw1RUxSQlE5MXRpcG5nRTdpQ1Rj?=
+ =?utf-8?B?ZWwrb1p1ZVV6LzhUOEk1VlVLNXlCYzUwTFZ5cERBRnBFd3haeURXQjlwbUVY?=
+ =?utf-8?B?Snd0Y0JUNmxPSUFnRHMwSkp2cEhsWnNWOTRvMGZ4VktVRzVYa3FCOFpMMm9v?=
+ =?utf-8?B?Z081ZmNXTlBjNkthcXNVeDRYTGMvc3ArMW53d2JJdU5lbmcrQXRnVjEvejhB?=
+ =?utf-8?B?UVRmYlNxK2F3a0FwMjZra1I5d0xvV0FCNWdVZ3l0MXFZL1pFNW1haktYN3NZ?=
+ =?utf-8?B?Y2ZaL3F0NFFWS3RlY0R4Z0xQZjVrNHZ4VitCVG00emhERVNHbWVvNndrTU5K?=
+ =?utf-8?B?Mzl5QXVPeWt5bGhmZktmTTZzZ1ptUkxnTjU5ZWVheFcrVk0rcEpQbUNFbDNa?=
+ =?utf-8?B?UEltd1MyOFFLUmVLemUxRFV3d24weCtQVlYzTGpoSmpaaTNWbktTMUtmZkdh?=
+ =?utf-8?B?QytEUlpDV0ZnNm9HV29sL0h5L0t0N3NmM3BYeFlvYWN6SEdwN0s3WTVTNU1m?=
+ =?utf-8?B?d0xrc2ZwMk5UQ3Zqa2VCYVNmQWJQK3dMeXVNdTRlTWN5cTRTSFhvU1NOb2FZ?=
+ =?utf-8?B?WFlNMkhsemVBRGc1OXdPOWpqbzU1SGxzMGo0TXJZcGlFbC9CZ29CTGN5Q0Rz?=
+ =?utf-8?B?empzNXRWRnoyQ2l0VTFES1hvd0FQKzJlYW9YZmdaT0FqYm11aEhWQm9OdFNJ?=
+ =?utf-8?B?cUZHK0dtUWc1cnNSaDNaTENnVVRlcGJGUTZtT0N2OTBibGtyMGRCUHhJUnQ1?=
+ =?utf-8?B?VXNtSVZLNHdVcVY4MkVsdWxOS1dNU2tUeXVUZnZFS2x2M1BwSXBwcTg3QTBP?=
+ =?utf-8?B?UmVWLzRpZG54ZVRzQWw2QWUwSTM2d3lEK3M5cmlkNFdkelhnejE4RFkwM2NY?=
+ =?utf-8?B?NkRwazlhSmVJZWRtUXZDS2IvbUNWMWZuTVZEZGNjOXREUFJvc1pDTVZuWllQ?=
+ =?utf-8?Q?ap7Ck4zj0GO2j?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QXBiOE5EMEN6YzJnM3lMN0ppRU1RU3U2MUFZQ3d2TFdpNktYZEo2RXU0YVN2?=
+ =?utf-8?B?K0pDTkwwcU1LcFdwbHU3emxoeDFIRmd1OGR6aEtwY05pUFlORVhnaG1TZHFQ?=
+ =?utf-8?B?OWwxS3FSVFR2ZExsVG44b3dJZ3llS0lydE9CWG5lVkpmcS9KZDFPNXNUejZh?=
+ =?utf-8?B?TnpzK0tLMnRlelU0c2Z5bmNkaE9Sam93cFhqWVJDVjdqdTBWRU5qcjVnRlBL?=
+ =?utf-8?B?ODJVYWpGTXFZdHlYSU5WekV4bkZnb3htZ3hVblpiZEhidU83NW11T0wveUV0?=
+ =?utf-8?B?QnhENFFhTzUxc0syTmVQYmhxQVRydzV5dHFRZmQ4RHcrQkJONExGZTJoaldQ?=
+ =?utf-8?B?VngzNWUrTDRhS2lvR0hjQmlqWUx0SEwzeEJtcWh2REtGbkhqaVpjWVpXRXdk?=
+ =?utf-8?B?clE4aFcyTHhmSFNTN3UzRVhPR1REOHR5RDA2NmZzREpNdGM4Rjl1a3N2cmRF?=
+ =?utf-8?B?VTM3RkFQRGRHUDJla3JyRENiZkVhUWtZQ1dMcE5SOCsxYlBZaWJvWDNPWmtl?=
+ =?utf-8?B?M05GY1pEWWJqNTRlU3RmQ2JydjdIQVFEWlM1WEtPR0pIY1RpUTFYL0I3ZTZq?=
+ =?utf-8?B?eTh6ZmgxNkVaSnB3WVBTZVZsTCt0b2dXdjVOdHNHa2J3R2toSE15RmwrQnpN?=
+ =?utf-8?B?eFhlVW5wdnJYMjBhZjVOM0o0ZmZyaWs5ZCtWZzkvaUlrZ0YvaHJGTGxYcXFs?=
+ =?utf-8?B?RmYvSndvUVkwb1dOZXhqV2xjaWxPU1J2bjdXKzdUeU51REs5V2lYV2grMkFK?=
+ =?utf-8?B?SWxPWlZhc3hvSmZ0QUZQUHFvdUptSllqVzV3aENYOUcwY2ZkR3JVRkpQcjFK?=
+ =?utf-8?B?REQ1NHRjK0dpZ1pKVUk0UHZoKytRQk5LWmprcEdyUlRabmM0ZlAxZytUNXFJ?=
+ =?utf-8?B?MHFxU1prSS9aL0JXUjl3ZkNqc2FPdDJUTDhmcVVvMDRvK1pCS09pRzg5Zmpl?=
+ =?utf-8?B?VURMbklQZ00vVjhad1h2eVNwaTBDOUtzcC9oNHVHUVVXbjlaNktlOWYvMmph?=
+ =?utf-8?B?K21FeFpUeWhqbVkvczN1TUVhRld5Z0JTK3FjU0dhR2FFaURJS2xmSXkzSTNj?=
+ =?utf-8?B?QkVOMiswS0l2L2Urc3lJWm9Da0MrbE9qYWhHMTM1eHNQQ3FTYmR3cU1HR0ly?=
+ =?utf-8?B?TkM4WUJtOXdkNk5MREMxWFpud29BeldKQmllQlR0NzFaem5rSnBnb2lyUVo5?=
+ =?utf-8?B?Q0xvd0ZUaVFPSWVDb2wyK2tXeTBjWXhkdmRkQmxURU5YUVZIQmNrQzA1NXFh?=
+ =?utf-8?B?ak1EcEh5WlEwYlFZOE5LeTYrOW1ITWNTcW16OXoxWXVpblhlR25zRVVnSjRG?=
+ =?utf-8?B?UzhsazAwdXVjK29Dc2pwZVZzNDd2a1crRGNxbW4yNGx2NkZaQ0o4VkM3TWNR?=
+ =?utf-8?B?b2tIamFqZXZ0RDlCSXZaVWVFYlllOHE3OEd3dHZUY1dFb285QWxGbGswRXpm?=
+ =?utf-8?B?bmJuU05rTjltdy9FakRKa2NDWmQvMkptYUh3VXBJRHkweVUydys5czBFQ2Rm?=
+ =?utf-8?B?elFTeHB0ZTFzOU5vN1Z3WW04ZThQZ3NBdEJQclBmWndUV0wvYTZkKzBKV0pL?=
+ =?utf-8?B?aVBPT3pzNUlVOE1Ba3ZWNldxTEg0elkzdzBzVi8vL0lQb0dyTEFjMUJCU2FE?=
+ =?utf-8?B?RGhtQmRyYmtxdXR2dEJ5a2ovSHRtaFplU2Vad2NSSCtUWnVGNHdaelBqT1V2?=
+ =?utf-8?B?MFppSHRTWUJaNEpQcFdzS3dLNFNrNWNRcmZ0REZrc2pOam5yUllicjluYWVE?=
+ =?utf-8?B?VkoxeWU5VnRwd3JZWWVoeDV0V1RUSVFlRS82UWZUUURuQ05PWVoxVTdjQk5t?=
+ =?utf-8?B?Rld5a0FHVVhmQTJtSjRacWFBZ29CODE4WEh0ZXJxcS8wZ1pXT1lib0RocElV?=
+ =?utf-8?B?a3ZLamp6TXZuREgyQmtjZjFVU0V1OXVJZ3ExNFJUZisrdHZjcjIxVDJtNFFB?=
+ =?utf-8?B?M085RlRERE5vVGM3ZE9HcjIzckVjdDY3MWFwb2FBY2M1K0tvd2xiSFk5azBh?=
+ =?utf-8?B?SG5YYlNtekJkbS9McjdMa3hUZ2Myc1N3cWdQbG9ORzc5Vm9NNTMxdlFJQUFT?=
+ =?utf-8?B?aE5OdDhycWtscElzU1hzWmhXb1l5SERpTFAwUXJlb1RsT3RZK25MS01HZ0Z6?=
+ =?utf-8?Q?vLK60RNkpaO1hSRvZeN9nY9yj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d2aa08c-39a8-45e4-cc95-08dca632bdbc
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB5709.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78bdf296-d3a6-4fa8-5b06-08dca632b4a9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2024 07:33:08.9268
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 07:33:24.3457
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y7fiimgLfj3i/1sl4eqMbU9ubFu5ZE/yjY+Lis19dk5/iTluU2uEcAmUBm9DTRl2kbR9/WM/sAFzTV8l7ggn0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR19MB6881
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2407170056
-X-Proofpoint-ORIG-GUID: -1J0Cxvsdn4O-tE5MW42mqbilEKr0ZOx
-X-Proofpoint-GUID: -1J0Cxvsdn4O-tE5MW42mqbilEKr0ZOx
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 mlxlogscore=999 spamscore=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407170056
-
-From: Marshall Shao <marshall.shao@dell.com>
-
-Clearing the BSS region may cause the UEFI firmware to malfunction
-during boot.
-
-When booting the kernel from an older firmware version that has TPM
-enabled and the MemoryOverwriteRequestControl bit set to 1, the
-firmware's boot service might encounter an exception if it attempts
-to initialize the BSS region within the x86 stub.
-
-To circumvent the firmware exception, it is advisable to enlarge the
-BOOT_STACK_SIZE and to perform the initialization of static variables
-prior to the decompression of the bzImage.
-
-Signed-off-by: Marshall Shao <marshall.shao@dell.com>
----
- arch/x86/boot/compressed/misc.c         | 8 +++-----
- arch/x86/include/asm/boot.h             | 2 +-
- drivers/firmware/efi/libstub/x86-stub.c | 5 -----
- 3 files changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/mis=
-c.c
-index b70e4a21c15f..bac5a3c55c2c 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -356,11 +356,9 @@ unsigned long decompress_kernel(unsigned char *outbuf,=
- unsigned long virt_addr,
-                                void (*error)(char *x))
- {
-        unsigned long entry;
--
--       if (!free_mem_ptr) {
--               free_mem_ptr     =3D (unsigned long)boot_heap;
--               free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(boot=
-_heap);
--       }
-+       free_mem_ptr     =3D (unsigned long)boot_heap;
-+       free_mem_end_ptr =3D (unsigned long)boot_heap + sizeof(boot_heap);
-+       malloc_ptr =3D free_mem_ptr;
-
-        if (__decompress(input_data, input_len, NULL, NULL, outbuf, output_=
-len,
-                         NULL, error) < 0)
-diff --git a/arch/x86/include/asm/boot.h b/arch/x86/include/asm/boot.h
-index 3e5b111e619d..312bc87ab027 100644
---- a/arch/x86/include/asm/boot.h
-+++ b/arch/x86/include/asm/boot.h
-@@ -33,7 +33,7 @@
- #endif
-
- #ifdef CONFIG_X86_64
--# define BOOT_STACK_SIZE       0x4000
-+# define BOOT_STACK_SIZE       0x10000
-
- /*
-  * Used by decompressor's startup_32() to allocate page tables for identit=
-y
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi=
-/libstub/x86-stub.c
-index 1983fd3bf392..d92d2ccc709b 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -21,7 +21,6 @@
- #include "efistub.h"
- #include "x86-stub.h"
-
--extern char _bss[], _ebss[];
-
- const efi_system_table_t *efi_system_table;
- const efi_dxe_services_table_t *efi_dxe_table;
-@@ -476,9 +475,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
-        efi_status_t status;
-        char *cmdline_ptr;
-
--       if (efi_is_native())
--               memset(_bss, 0, _ebss - _bss);
--
-        efi_system_table =3D sys_table_arg;
-
-        /* Check if we were booted by the EFI firmware */
-@@ -1000,7 +996,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
- void efi_handover_entry(efi_handle_t handle, efi_system_table_t *sys_table=
-_arg,
-                        struct boot_params *boot_params)
- {
--       memset(_bss, 0, _ebss - _bss);
-        efi_stub_entry(handle, sys_table_arg, boot_params);
- }
-
---
-2.34.1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /2PUZSjODEuiMU3hCn9GcaJunwASCKFr5D93HyK+amudzxPJZYuN/DtiJ7OIGsBuwNxOCArojWcaojajLUkyHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5136
 
 
-Internal Use - Confidential
+在 2024/7/16 20:07, Christian König 写道:
+> Am 16.07.24 um 11:31 schrieb Daniel Vetter:
+>> On Tue, Jul 16, 2024 at 10:48:40AM +0800, Huan Yang wrote:
+>>> I just research the udmabuf, Please correct me if I'm wrong.
+>>>
+>>> 在 2024/7/15 20:32, Christian König 写道:
+>>>> Am 15.07.24 um 11:11 schrieb Daniel Vetter:
+>>>>> On Thu, Jul 11, 2024 at 11:00:02AM +0200, Christian König wrote:
+>>>>>> Am 11.07.24 um 09:42 schrieb Huan Yang:
+>>>>>>> Some user may need load file into dma-buf, current
+>>>>>>> way is:
+>>>>>>>      1. allocate a dma-buf, get dma-buf fd
+>>>>>>>      2. mmap dma-buf fd into vaddr
+>>>>>>>      3. read(file_fd, vaddr, fsz)
+>>>>>>> This is too heavy if fsz reached to GB.
+>>>>>> You need to describe a bit more why that is to heavy. I can only
+>>>>>> assume you
+>>>>>> need to save memory bandwidth and avoid the extra copy with the CPU.
+>>>>>>
+>>>>>>> This patch implement a feature called DMA_HEAP_IOCTL_ALLOC_READ_FILE.
+>>>>>>> User need to offer a file_fd which you want to load into
+>>>>>>> dma-buf, then,
+>>>>>>> it promise if you got a dma-buf fd, it will contains the file content.
+>>>>>> Interesting idea, that has at least more potential than trying
+>>>>>> to enable
+>>>>>> direct I/O on mmap()ed DMA-bufs.
+>>>>>>
+>>>>>> The approach with the new IOCTL might not work because it is a very
+>>>>>> specialized use case.
+>>>>>>
+>>>>>> But IIRC there was a copy_file_range callback in the file_operations
+>>>>>> structure you could use for that. I'm just not sure when and how
+>>>>>> that's used
+>>>>>> with the copy_file_range() system call.
+>>>>> I'm not sure any of those help, because internally they're all still
+>>>>> based
+>>>>> on struct page (or maybe in the future on folios). And that's the thing
+>>>>> dma-buf can't give you, at least without peaking behind the curtain.
+>>>>>
+>>>>> I think an entirely different option would be malloc+udmabuf. That
+>>>>> essentially handles the impendence-mismatch between direct I/O and
+>>>>> dma-buf
+>>>>> on the dma-buf side. The downside is that it'll make the permanently
+>>>>> pinned memory accounting and tracking issues even more apparent, but I
+>>>>> guess eventually we do need to sort that one out.
+>>>> Oh, very good idea!
+>>>> Just one minor correction: it's not malloc+udmabuf, but rather
+>>>> create_memfd()+udmabuf.
+>> Hm right, it's create_memfd() + mmap(memfd) + udmabuf
+>>
+>>>> And you need to complete your direct I/O before creating the udmabuf
+>>>> since that reference will prevent direct I/O from working.
+>>> udmabuf will pin all pages, so, if returned fd, can't trigger direct I/O
+>>> (same as dmabuf). So, must complete read before pin it.
+>> Why does pinning prevent direct I/O? I haven't tested, but I'd expect the
+>> rdma folks would be really annoyed if that's the case ...
+
+I used to believe that a pinned page cannot be re-pinned, so performing 
+direct I/O on it would fail.  But I misunderstood, and it doesn't have 
+any impact.
+
+dma-buf mmap vaddr can't to trigger direct I/O due to can't pin kernel 
+page(PFN), So, not same.
+
+
+>
+> Pinning (or rather taking another page reference) prevents writes from 
+> using direct I/O because writes try to find all references and make 
+> them read only so that nobody modifies the content while the write is 
+> done.
+>
+> As far as I know the same approach is used for NUMA migration and 
+> replacing small pages with big ones in THP. But for the read case here 
+> it should still work.
+
+Hmm, with udmabuf direct I/O test, I find this will not effect it. Test 
+code  I set in email tail. Maybe pin only let page can't be reclaimed, 
+rather prevent the write?
+
+
+
+With mine test, udmabuf direct I/O read 3GB file, average cost 2.2s.(I 
+use ftrace to trace f2fs_direct_IO can make sure direct IO trigger 
+success),  Same as mine normal cache file read cost
+
+My patchset average is 1.2s，The difference between the two was obvious 
+before.
+
+>
+>>> But current way is use `memfd_pin_folios` to boost alloc and pin, so maybe
+>>> need suit it.
+>>>
+>>>
+>>> I currently doubt that the udmabuf solution is suitable for our
+>>> gigabyte-level read operations.
+>>>
+>>> 1. The current mmap operation uses faulting, so frequent page faults will be
+>>> triggered during reads, resulting in a lot of context switching overhead.
+>>>
+>>> 2. current udmabuf size limit is 64MB, even can change, maybe not good to
+>>> use in large size?
+>> Yeah that's just a figleaf so we don't have to bother about the accounting
+>> issue.
+>>
+>>> 3. The migration and adaptation of the driver is also a challenge, and
+>>> currently, we are unable to control it.
+>> Why does a udmabuf fd not work instead of any other dmabuf fd? That
+>> shouldn't matter for the consuming driver ...
+>>
+>>> Perhaps implementing `copy_file_range` would be more suitable for us.
+>> See my other mail, fundamentally these all rely on struct page being
+>> present, and dma-buf doesn't give you that. Which means you need to go
+>> below the dma-buf abstraction. And udmabuf is pretty much the thing for
+>> that, because it wraps normal struct page memory into a dmabuf.
+>>
+>> And copy_file_range on the underlying memfd might already work, I haven't
+>> checked though.
+>
+> Yeah completely agree.
+>
+> Regards,
+> Christian.
+>
+>> Cheers, Sima
+>
+Test code, if test above 2GB, need this patch:
+
+https://lore.kernel.org/all/20240717065444.369876-1-link@vivo.com/
+
+```c
+
+// SPDX-License-Identifier: GPL-2.0
+#define _GNU_SOURCE
+#define __EXPORTED_HEADERS__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <malloc.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/syscall.h>
+#include <sys/mman.h>
+#include <time.h>
+#include <linux/memfd.h>
+#include <linux/udmabuf.h>
+
+#define TEST_PREFIX    "drivers/dma-buf/udmabuf"
+
+// static int memfd_create(const char *name, unsigned int flags)
+// {
+//     return syscall(__NR_memfd_create, name, flags);
+// }
+
+int main(void)
+{
+     struct udmabuf_create create;
+     int devfd, memfd, buf, ret;
+     unsigned long size;
+         int filefd;
+         struct timespec ts_start, ts_end;
+     long long start, end;
+
+         clock_gettime(CLOCK_MONOTONIC, &ts_start);
+
+     devfd = open("/dev/udmabuf", O_RDWR);
+     if (devfd < 0) {
+         printf("%s: [skip,no-udmabuf: Unable to access DMA buffer 
+device file]\n",
+                TEST_PREFIX);
+         exit(77);
+     }
+
+     memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+     if (memfd < 0) {
+         printf("%s: [skip,no-memfd]\n", TEST_PREFIX);
+         exit(77);
+     }
+
+     ret = fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK);
+     if (ret < 0) {
+         printf("%s: [skip,fcntl-add-seals]\n", TEST_PREFIX);
+         exit(77);
+     }
+
+         filefd = open("/data/model.txt", O_RDONLY | O_DIRECT);
+         if (filefd < 0) {
+                 printf("%s: [failed to open model.txt]\n", TEST_PREFIX);
+                 exit(77);
+         }
+
+         struct stat ftat;
+         fstat(filefd, &ftat);
+         size = (ftat.st_size + getpagesize()) & ~(getpagesize());
+
+     ret = ftruncate(memfd, size);
+     if (ret == -1) {
+         printf("%s: [FAIL,memfd-truncate]\n", TEST_PREFIX);
+         exit(1);
+     }
+
+     memset(&create, 0, sizeof(create));
+
+     /* should work */
+     create.memfd  = memfd;
+     create.offset = 0;
+     create.size   = size;
+     buf = ioctl(devfd, UDMABUF_CREATE, &create);
+     if (buf < 0) {
+         printf("%s: [FAIL,test-4]\n", TEST_PREFIX);
+         exit(1);
+     }
+
+     // fprintf(stderr, "%s: ok\n", TEST_PREFIX);
+
+         void *vaddr = mmap(NULL, size, PROT_WRITE | PROT_READ,
+                          MAP_SHARED, memfd, 0);
+         if (!vaddr) {
+                 printf("%s: [FAIL, mmap]\n", TEST_PREFIX);
+                 exit(77);
+         }
+
+         unsigned long rsize = size;
+         unsigned long bytes = 0;
+         while (bytes != size) {
+                 ssize_t rb = read(filefd, vaddr, rsize);
+                 if (rb < 0) {
+                         printf("%s: [FAIL, read]\n", TEST_PREFIX);
+                         exit(77);
+                 }
+                 rsize -= rb;
+                 bytes += rb;
+
+         }
+         munmap(vaddr, size);
+         clock_gettime(CLOCK_MONOTONIC, &ts_end);
+
+#define NSEC_PER_SEC 1000000000LL
+         start = ts_start.tv_sec * NSEC_PER_SEC + ts_start.tv_nsec;
+         end = ts_end.tv_sec * NSEC_PER_SEC + ts_end.tv_nsec;
+
+         printf("total cost %lld ns\n", end - start);
+
+         printf("going to check content\n");
+         void *fvaddr = mmap(NULL, size, PROT_READ, MAP_SHARED, filefd, 0);
+         if (!fvaddr) {
+                 printf("%s: [FAIL, mmap file]\n", TEST_PREFIX);
+                 exit(77);
+         }
+         vaddr = mmap(NULL, size, PROT_READ, MAP_SHARED, buf, 0);
+         if (!vaddr) {
+                 printf("%s: [FAIL, mmap dmabuf]\n", TEST_PREFIX);
+                 exit(77);
+         }
+
+         if (memcmp(fvaddr, vaddr, size) != 0) {
+                 printf("%s: [FAIL, content is not same]\n", TEST_PREFIX);
+                 exit(77);
+         }
+
+         printf("%s: [SUCCESS, content is same]\n", TEST_PREFIX);
+         munmap(vaddr, size);
+         munmap(fvaddr, size);
+         close(filefd);
+     close(buf);
+     close(memfd);
+     close(devfd);
+     return 0;
+}
+
+```
+
 
