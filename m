@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-255534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F3D9341DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C029341E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948B01C224BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3B181C218E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803881850B4;
-	Wed, 17 Jul 2024 18:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BE9187325;
+	Wed, 17 Jul 2024 18:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="E6k9g+uh"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gHmzLM/G"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522FD1849DD
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DF21862AE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721239668; cv=none; b=Zw/0i01U+ehrgT/BONp9wzXnjUWH1dfOnrMnD1nv19ZhKOQgbKkP0nMfLr6sZxY2kts6VRrIh0JNzXSp7BMcDcZ5dKwDaqn/LzZF3446EomfyH/P/64RUOK2qZZzhCfOdLfL0oCixJoWDtBoDhP/OHlaHb8DtGKYA9fo176jDY0=
+	t=1721239673; cv=none; b=mLPOm6VF4FvDLsf4ZAS2xVWBgFAMKIDhTByLxfZ1CtTQo4rQfpD6GJCtQRFtWCRUzalhUL/9AfpZaFra6lsN7Snf/2gRffXhrLRbl7p5MN1DfMKSny3O5M5PxihcvkJz5uT/oQVAN43wkYgiMW3dLHvNPWlf4NvhK98aKk1Z0UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721239668; c=relaxed/simple;
-	bh=xchOwSYXtxsqBDYw69vFok/L+OqHNdpkjtFyuZKp8v4=;
+	s=arc-20240116; t=1721239673; c=relaxed/simple;
+	bh=AFxFyV3a9uyUxkVG4ey1gVayeIswGYyxuc71ywpHucw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EVzFyATSiSPn5SAJtJ1RTDJR+hdEIr84W6r1plxBQukJbsZhH2N8ssQ4L1LI4BX181u8dwDoKaVdDb6L7CoWujm0pffk6UG1ajgi3bIEJD1b1uNzM2kVdkJJOyRMC4UJYmTjb7AhFZJCH8YEgNdWJX2cLxKRh0q5np/YT0ZdckY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=E6k9g+uh; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=McssMgADEMt7IInRdWlMPnZIKkgE7+cJuL4s0u5Wem1rQu+EWH6WwyV9V0pLhTJ2M32yUxbal1dNFnqyf3vbtdL6BCBTHUmUu+FUT2jV0ZuRE6AQCNwiC2SLS7RCgD33sa0ycoBTW/7kdN3M9FWR6eGlFZMxv76Fb+D09tcROdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gHmzLM/G; arc=none smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso3962035a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:07:47 -0700 (PDT)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ce74defe42so764920eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721239666; x=1721844466; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721239671; x=1721844471; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2v0PQPo+2UsBqPXbCT4QAwtg43AqtiWUCtgbmmFr6Mk=;
-        b=E6k9g+uhvSuK0hwZwn0RtQ9qJbzCS6ypGjOggvwh67sYaAY/LZMykyHXtZARy3AUMx
-         hGsV/WLc/HFfWbDhO1k+GgLoaQd4OB/mi4237BHUxfUu6vVrH3EYzdslbcSxrIegXr5y
-         qZb2X1imcR7TTtWZ2Y8EvB/BGyOnxPu1DzBko8nICRfcLIlv5r8RgTHD0Dv2PBEYuGNZ
-         5aU8X8r0TeHTAMCBTut4Nkkr32IYzxO0U5EVb/QDVhquW8HDPo7cSelWd7vSRtI1eICU
-         Ob2ja//b5ARSrH48ZpxxN5xnN/aLNnw5xW7Zvx1eU4INhK27TV9UctE1hwWnkcq76aUt
-         0UDA==
+        bh=+ZGP4amj4JHRu+ZiXMm6+tXe3yHE+8btsGaWXLScD4I=;
+        b=gHmzLM/GweW/XEEbf0wYrlJA/G0tnROwr/TMrxkuEq/22JXCIuqhDSVGb8oj3cu68U
+         K+xggmMH+zz3BnN7sBsGbEI2GbHBWwry+BvR9OQNExP9NmUCnC8Qn3gMQ0hF4Umv6D9M
+         d8iWIpsuMuYLJR+ScEd3XDLmNJ6JMHEZzjlLY8DyLj79siv0750D1/sl3faUrQjGkHAL
+         DlBrJhh8eYEYgQ3AGOwVCt3qK2B96iwf/YxfNnWHoFzAEM2rvpcTQdX//i+mVaPpBsyo
+         zWFUs6OfSTWa4lC8Uc/CaiytPT+JmQbvW5dJjFkBugkUbWBQ0X8h+W9jEGEK8pmFmrZ4
+         fgBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721239666; x=1721844466;
+        d=1e100.net; s=20230601; t=1721239671; x=1721844471;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2v0PQPo+2UsBqPXbCT4QAwtg43AqtiWUCtgbmmFr6Mk=;
-        b=jyzVdpoJeuWlqS0V8lkNhGlt5C4U8j0Kf9bWTkEdFOa/OR6gYg97fX1rWVea7btJ9E
-         oS04Iq48Jpr9cgwiBeFE3tf4+slpLAnw1yj2dba1OUwxn2V67NmFR4v5qGs69dNxIfsn
-         g2PLIvKd5q477J6607yKEIsJ54yNqSfH4oB/1ffBWNOmv21ppVGUHBnx0/OovTN9WJJX
-         pH6JJuioYCHzXQawNbUYfW2J4UKTyDfwJ6QdhGTV8Fmo+gYJqilBmwSuiH493x5+Gl9i
-         KN0HKlGHI4H86SMqRDtVucgHXOl1RUU1p79aSeOHPPJtUjjPjKEkJ4hGrieVBYtDzZ+P
-         O1zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvlI8J5Va2StTXruj6F3xPJXV2y8O3oVqZwYN1lLqqoiO3cYSVI8bOuWzs0FPC5fIp4UuTu2EhZ5F82h5XKMerAgmuv7xWnrfN/+NQ
-X-Gm-Message-State: AOJu0YwvxEJqQgrspjdA+s0wu5M4hAPk6l2aNDbNXKKraLHfTjMLb28z
-	GlUHDcG+LjH1vaYit0fj1zzovN6+Ul69iUVRFw9UkmtL6YwWBHe2ms0fofUO+OE=
-X-Google-Smtp-Source: AGHT+IEy3+PK+qr4IDio0BsLMYxFRVKEQ5xv4rsHRx7ZJLo6TisZYFkxKaOoewodSBviFRWBegZ3ZA==
-X-Received: by 2002:a05:6a20:6a2b:b0:1c1:31d0:c7a7 with SMTP id adf61e73a8af0-1c3fdc9a8d6mr3633482637.16.1721239666522;
-        Wed, 17 Jul 2024 11:07:46 -0700 (PDT)
+        bh=+ZGP4amj4JHRu+ZiXMm6+tXe3yHE+8btsGaWXLScD4I=;
+        b=stYp7yLIygFUf00ABax+/vPF1BTO+oYTZGa5s0DLuE/OerUfWv2hDNTgjLHj04mb8J
+         lsA7YpuaYmh8Ak8v1Lcyw0zMwy9lBnqOpzzP+T1BbQ5ePinlx7DfRFBg2i9/DLRHvT4i
+         ayc/zwBXbpH1gRLGiqA5qjt81p6rtRC/Ykt/RrkbFli4JIsszXhC/zEQIC6MbXxpfOjq
+         H4fToj8ABakQk1NHhy+uO0IxDT5uaBdxYAniaU3E+Sj5WjJTCxuam+zWKYur5uHyz7my
+         2LN6eO6pLkYM8+snd5dY8olJ1anFBII55hch1+TIE5aH8tARyLXUqgr6rDTfFnhUtd1x
+         r6BA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgEQdlX9Pc6RdANK33/yv4vkADL1UN9yPzUfb0J/tmwA/4npxOdCekaGSt0oZLAR0c71xSNTyqUnn9amWtoI16LcHo+bimZbUaKZSY
+X-Gm-Message-State: AOJu0YzKY6f02s+9xgx4/C6pYqfjSUystQe+4NPxLSYJjMNrUxffhAQe
+	ct7YdHuxCUfQItpxyme7bau+2FH9hJ/6VabAfeCiyuSDqFFgUCEH6ss5LpEJpkI=
+X-Google-Smtp-Source: AGHT+IEgBzF+gfFQzJNjZLcJzhw0bsIHBlAoB3Z5GJOcTbtbN55/3YK6Ae70QLjmvQ1MioqOk/sMZA==
+X-Received: by 2002:a05:6870:3325:b0:251:109:98f4 with SMTP id 586e51a60fabf-260d950b68amr1898816fac.47.1721239670887;
+        Wed, 17 Jul 2024 11:07:50 -0700 (PDT)
 Received: from jesse-desktop.ba.rivosinc.com (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9c969sm8432332b3a.35.2024.07.17.11.07.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9c969sm8432332b3a.35.2024.07.17.11.07.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 11:07:46 -0700 (PDT)
+        Wed, 17 Jul 2024 11:07:50 -0700 (PDT)
 From: Jesse Taube <jesse@rivosinc.com>
 To: linux-riscv@lists.infradead.org
 Cc: Jonathan Corbet <corbet@lwn.net>,
@@ -100,10 +100,10 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v5 3/7] RISC-V: Check scalar unaligned access on all CPUs
-Date: Wed, 17 Jul 2024 14:07:23 -0400
-Message-ID: <20240717180727.4180475-4-jesse@rivosinc.com>
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 4/7] RISC-V: Replace RISCV_MISALIGNED with RISCV_SCALAR_MISALIGNED
+Date: Wed, 17 Jul 2024 14:07:24 -0400
+Message-ID: <20240717180727.4180475-5-jesse@rivosinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240717180727.4180475-1-jesse@rivosinc.com>
 References: <20240717180727.4180475-1-jesse@rivosinc.com>
@@ -115,81 +115,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Originally, the check_unaligned_access_emulated_all_cpus function
-only checked the boot hart. This fixes the function to check all
-harts.
+Replace RISCV_MISALIGNED with RISCV_SCALAR_MISALIGNED to allow
+for the addition of RISCV_VECTOR_MISALIGNED in a later patch.
 
-Fixes: 71c54b3d169d ("riscv: report misaligned accesses emulation to hwprobe")
 Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Cc: stable@vger.kernel.org
 ---
-V1 -> V2:
- - New patch
 V2 -> V3:
- - Split patch
+ - New patch
 V3 -> V4:
- - Re-add check for a system where a heterogeneous
-    CPU is hotplugged into a previously homogenous
-    system.
+ - No changes
 V4 -> V5:
- - Change work_struct *unused to work_struct *work __always_unused
+ - No changes
 ---
- arch/riscv/kernel/traps_misaligned.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/riscv/Kconfig                    | 6 +++---
+ arch/riscv/include/asm/cpufeature.h   | 2 +-
+ arch/riscv/include/asm/entry-common.h | 2 +-
+ arch/riscv/kernel/Makefile            | 4 ++--
+ arch/riscv/kernel/fpu.S               | 4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-index b62d5a2f4541..9a1e94383d6d 100644
---- a/arch/riscv/kernel/traps_misaligned.c
-+++ b/arch/riscv/kernel/traps_misaligned.c
-@@ -526,11 +526,11 @@ int handle_misaligned_store(struct pt_regs *regs)
- 	return 0;
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index b94176e25be1..34d24242e37a 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -717,7 +717,7 @@ config THREAD_SIZE_ORDER
+ 	  Specify the Pages of thread stack size (from 4KB to 64KB), which also
+ 	  affects irq stack size, which is equal to thread stack size.
  
--static bool check_unaligned_access_emulated(int cpu)
-+static void check_unaligned_access_emulated(struct work_struct *work __always_unused)
- {
-+	int cpu = smp_processor_id();
- 	long *mas_ptr = per_cpu_ptr(&misaligned_access_speed, cpu);
- 	unsigned long tmp_var, tmp_val;
--	bool misaligned_emu_detected;
+-config RISCV_MISALIGNED
++config RISCV_SCALAR_MISALIGNED
+ 	bool
+ 	select SYSCTL_ARCH_UNALIGN_ALLOW
+ 	help
+@@ -734,7 +734,7 @@ choice
  
- 	*mas_ptr = RISCV_HWPROBE_MISALIGNED_UNKNOWN;
+ config RISCV_PROBE_UNALIGNED_ACCESS
+ 	bool "Probe for hardware unaligned access support"
+-	select RISCV_MISALIGNED
++	select RISCV_SCALAR_MISALIGNED
+ 	help
+ 	  During boot, the kernel will run a series of tests to determine the
+ 	  speed of unaligned accesses. This probing will dynamically determine
+@@ -745,7 +745,7 @@ config RISCV_PROBE_UNALIGNED_ACCESS
  
-@@ -538,19 +538,16 @@ static bool check_unaligned_access_emulated(int cpu)
- 		"       "REG_L" %[tmp], 1(%[ptr])\n"
- 		: [tmp] "=r" (tmp_val) : [ptr] "r" (&tmp_var) : "memory");
+ config RISCV_EMULATED_UNALIGNED_ACCESS
+ 	bool "Emulate unaligned access where system support is missing"
+-	select RISCV_MISALIGNED
++	select RISCV_SCALAR_MISALIGNED
+ 	help
+ 	  If unaligned memory accesses trap into the kernel as they are not
+ 	  supported by the system, the kernel will emulate the unaligned
+diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+index 347805446151..0ed7d99c14dd 100644
+--- a/arch/riscv/include/asm/cpufeature.h
++++ b/arch/riscv/include/asm/cpufeature.h
+@@ -33,8 +33,8 @@ extern struct riscv_isainfo hart_isa[NR_CPUS];
  
--	misaligned_emu_detected = (*mas_ptr == RISCV_HWPROBE_MISALIGNED_EMULATED);
- 	/*
- 	 * If unaligned_ctl is already set, this means that we detected that all
- 	 * CPUS uses emulated misaligned access at boot time. If that changed
- 	 * when hotplugging the new cpu, this is something we don't handle.
- 	 */
--	if (unlikely(unaligned_ctl && !misaligned_emu_detected)) {
-+	if (unlikely(unaligned_ctl && (*mas_ptr != RISCV_HWPROBE_MISALIGNED_EMULATED))) {
- 		pr_crit("CPU misaligned accesses non homogeneous (expected all emulated)\n");
- 		while (true)
- 			cpu_relax();
- 	}
--
--	return misaligned_emu_detected;
- }
+ void riscv_user_isa_enable(void);
  
- bool check_unaligned_access_emulated_all_cpus(void)
-@@ -562,8 +559,11 @@ bool check_unaligned_access_emulated_all_cpus(void)
- 	 * accesses emulated since tasks requesting such control can run on any
- 	 * CPU.
- 	 */
-+	schedule_on_each_cpu(check_unaligned_access_emulated);
-+
- 	for_each_online_cpu(cpu)
--		if (!check_unaligned_access_emulated(cpu))
-+		if (per_cpu(misaligned_access_speed, cpu)
-+		    != RISCV_HWPROBE_MISALIGNED_EMULATED)
- 			return false;
+-#if defined(CONFIG_RISCV_MISALIGNED)
+ bool check_unaligned_access_emulated_all_cpus(void);
++#if defined(CONFIG_RISCV_SCALAR_MISALIGNED)
+ void unaligned_emulation_finish(void);
+ bool unaligned_ctl_available(void);
+ DECLARE_PER_CPU(long, misaligned_access_speed);
+diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/asm/entry-common.h
+index 2293e535f865..0a4e3544c877 100644
+--- a/arch/riscv/include/asm/entry-common.h
++++ b/arch/riscv/include/asm/entry-common.h
+@@ -25,7 +25,7 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
+ void handle_page_fault(struct pt_regs *regs);
+ void handle_break(struct pt_regs *regs);
  
- 	unaligned_ctl = true;
+-#ifdef CONFIG_RISCV_MISALIGNED
++#ifdef CONFIG_RISCV_SCALAR_MISALIGNED
+ int handle_misaligned_load(struct pt_regs *regs);
+ int handle_misaligned_store(struct pt_regs *regs);
+ #else
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index 5b243d46f4b1..8d4e7d40e42f 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -62,8 +62,8 @@ obj-y	+= probes/
+ obj-y	+= tests/
+ obj-$(CONFIG_MMU) += vdso.o vdso/
+ 
+-obj-$(CONFIG_RISCV_MISALIGNED)	+= traps_misaligned.o
+-obj-$(CONFIG_RISCV_MISALIGNED)	+= unaligned_access_speed.o
++obj-$(CONFIG_RISCV_SCALAR_MISALIGNED)	+= traps_misaligned.o
++obj-$(CONFIG_RISCV_SCALAR_MISALIGNED)	+= unaligned_access_speed.o
+ obj-$(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)	+= copy-unaligned.o
+ 
+ obj-$(CONFIG_FPU)		+= fpu.o
+diff --git a/arch/riscv/kernel/fpu.S b/arch/riscv/kernel/fpu.S
+index 327cf527dd7e..f74f6b60e347 100644
+--- a/arch/riscv/kernel/fpu.S
++++ b/arch/riscv/kernel/fpu.S
+@@ -170,7 +170,7 @@ SYM_FUNC_END(__fstate_restore)
+ 	__access_func(f31)
+ 
+ 
+-#ifdef CONFIG_RISCV_MISALIGNED
++#ifdef CONFIG_RISCV_SCALAR_MISALIGNED
+ 
+ /*
+  * Disable compressed instructions set to keep a constant offset between FP
+@@ -224,4 +224,4 @@ SYM_FUNC_START(get_f64_reg)
+ 	fp_access_epilogue
+ SYM_FUNC_END(get_f64_reg)
+ 
+-#endif /* CONFIG_RISCV_MISALIGNED */
++#endif /* CONFIG_RISCV_SCALAR_MISALIGNED */
 -- 
 2.45.2
 
