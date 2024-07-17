@@ -1,187 +1,127 @@
-Return-Path: <linux-kernel+bounces-255096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8D7933BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:08:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DD4933BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B06C1F21AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:08:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A9CB216ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B5B17F50B;
-	Wed, 17 Jul 2024 11:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DE917F4EA;
+	Wed, 17 Jul 2024 11:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z7525m4h"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="yj3yPeIy"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B13A17F4F4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8C17E915
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721214487; cv=none; b=dril9cva4wn/oprd6Q2Fy6WhlMvJTX9aZgIXxzubZ3nUX0sRmjD0/d1gW4bpQuLxph6bVsaGvBeYlmthxn+DFuHubacX7w9rPi60tBQX67Ea2qq3GstidFIED1Rj64Lhs7IG0XkI9fHYeYevaGFIasqt56Bj59yjFFCEWL/Sejs=
+	t=1721214482; cv=none; b=EylY2j5bo6YXSg2+kWq835a8dB6HmTRLUlDEDTvQEWphXoNaxTWbYoqBQsoeA82tDaaqq7cFiYno1NPpCjwuskiQuZk3CsOxWiCfbW+pe8YwhgBC7WAkWCth4GIgO5c8ckb7MQeECNidpbFPfSvXrBTDJYKpsWa54ximH//+TKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721214487; c=relaxed/simple;
-	bh=0xtRiDcLRpbp3c4QTQ15UTUc5YjtrK0gkuZ2i0E6yPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/1NJu+Q53xQ9r/rXraUk+Qvm1NEq8OEqGkOGgcwyymMUDST7NUngHVgYc212NK/0mSA06tlsbbJc3KXq+RBMo4g4gywgZGG5wZMSUJThoGZMSxi26TtvNdoQlKVBTwptItWTfJ0B101MiID/uYE9ph0E925GDzx6HP3rzuV5xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z7525m4h; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HAxZn3015377;
-	Wed, 17 Jul 2024 11:07:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=ufLhQsXaGXmg1LtYzZJrj5G5Hh8
-	YczERYy+8wEipvCw=; b=Z7525m4hckA+DXWMtfCy/T6Ep4nXXONApf525sRBEyI
-	msQdDIrAv5f3bIawPGbEi39XB4cUh8sOHTDDyKmhNSXzwCSFK02DhEEo9j3vTadm
-	Pa7OFQOVsYaIdRc44+fVKrVoz0y3416UuAWqpbFFjmczipxxD20rQ8TrN2oqihZS
-	4JjAZjJcY8mtbXxL8zLh8uzn2CqoIRQHEpHhywwgq1PAzFQK9kLWy1yOBQITc92z
-	2CCCIvSfttXZ2MYbiMxuX2szDCDMPH1QRNpAnq0Pj20qSDFAx7vVvGxQ1KbgBGOa
-	s0Fx2iEAW8SdliJmQwDguzgWHVlLY6//bZT7scqC0cQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ecp8g0n2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 11:07:36 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46HB7ZD2027729;
-	Wed, 17 Jul 2024 11:07:35 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ecp8g0my-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 11:07:35 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H9paUv009549;
-	Wed, 17 Jul 2024 11:07:34 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmku7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 11:07:34 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46HB7Vdl52035866
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 11:07:33 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ECDC22004D;
-	Wed, 17 Jul 2024 11:07:30 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 057CA20043;
-	Wed, 17 Jul 2024 11:07:29 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.22.40])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 17 Jul 2024 11:07:28 +0000 (GMT)
-Date: Wed, 17 Jul 2024 16:37:26 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Chuyi Zhou <zhouchuyi@bytedance.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, chengming.zhou@linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Remove cfs_rq::nr_spread_over and
- cfs_rq::exec_clock
-Message-ID: <Zpel7oyBNTpkLiPS@linux.ibm.com>
-References: <20240716150634.21247-1-zhouchuyi@bytedance.com>
+	s=arc-20240116; t=1721214482; c=relaxed/simple;
+	bh=j5oHJ4N4AEEu9W/2D++2KOV4B2U6CZ2ItnsneC4swPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDuJh2/xlyaYheCT3tHpq2/whzddRBByoJMYKxCN5MoP5osbZhYvnmYQQcvZgli3F4C876FsuJtTSvCUysnMor+PaeAin265EjblFZlxT1d3gj4UG5GaWRI4P8iVrNSWLKqQfyi+WStPSDFNxLQO1kEcOQMtGqcK1WTS0qswgEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=yj3yPeIy; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so10874391e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 04:08:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1721214479; x=1721819279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0MkPJTgEMvQtnUcTdhPwWAgvVYXK9NSydN/rtNiOhc=;
+        b=yj3yPeIyJg8FO0WU+tMsaaX9Xhgswihi/S0Xs4SL/wpVC24yr+C7ml2ZIM+7Zt1XUA
+         OgRHe3tt7dwuNJgS+PxD6ChzWArmjOjDPk7R1oa/22GeZsXS+lxSTjwrmqXIc9fCylfQ
+         eD+PWFaA8JNbnpnrF8ZETsdpMBkN9+36zOgsO8sSz6Js5vAM/mWgX31Sw3pHSA5RXiwZ
+         L7zqHYK7iNHFdeDnNfXjsOfjk062nHHqM7/FU8XeEj49Fv0cjMEEXQ9itD/amFCiJWIB
+         2cqEf+bdAf7djXyP/Kcs5cdyEga+1GBej/kgsk7QMfrQXM2IqifCn5gxF+Rvlau6ekYb
+         X9HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721214479; x=1721819279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0MkPJTgEMvQtnUcTdhPwWAgvVYXK9NSydN/rtNiOhc=;
+        b=kRP+Q8sAeXgEaOn6CNmpOfmCegKnt3mhlKLQC92t5NMJ21SQ49WuRW+zETB10a7KWx
+         GqGc2HliSHzaZ+YDiSGAmEtWwlODFgJDyF0TGCOXp4nrZYxBBB/ODh1F0bOQurInYXDT
+         JKaCtTXkORi/r756I7tYE+AhQyAD4hQkZLicL2UNBauH/Ic+JwCcG9U3c2gwFKVaK4Bf
+         PgNECK/QUPOHjRNE8iyhivNEvmoFWL827ga7HghaYMGPz4Onz2CFi+1pDsH4FuCI+wmO
+         LSB+ElWei9SWKwsZ0sUiH1Uh5fdPkvKNLJnO/uw8y5uPcglcAs7c0splnRzKpYohQtik
+         Rbzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXioyDbn9xsCt0NpWuZH9sJHcc9fR1JyoAq3yA2FBPekUZxd/zrakKOinwgJoSruTYgxS5a/VgJmAMIPvzCfgGoWnmwpkUsIfMeHgEq
+X-Gm-Message-State: AOJu0YzaLwBpjD+3QcJK23BWh/nkweiiB9JRdahTOwFkeLK8/BjQtI2u
+	FItluxH35xDffuM47XwpAXDqXnlEzNx07DM4+0q2ZOA/lKTyWGeAaxSpTAsMk1M=
+X-Google-Smtp-Source: AGHT+IHD4LY4lMSqiD5JjSfArJK6jY0AXCRwIpm4xXnBwTPfSsq31/8OXJCfA+vVp3x6KUA4XxU0fA==
+X-Received: by 2002:a05:6512:b9a:b0:52c:cb8d:637d with SMTP id 2adb3069b0e04-52ee53a768bmr1247519e87.5.1721214478693;
+        Wed, 17 Jul 2024 04:07:58 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc800022sm440566366b.176.2024.07.17.04.07.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 04:07:57 -0700 (PDT)
+Message-ID: <c51936a7-bb62-4423-aa6d-598ca9d58b8d@nexus-software.ie>
+Date: Wed, 17 Jul 2024 12:07:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716150634.21247-1-zhouchuyi@bytedance.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: kj8nf_K2NfzRdToMIeCuaVmgC-D3Y6R9
-X-Proofpoint-ORIG-GUID: oVUcsdHVOuAUPqYKNxCd8j8gWqyWQvWE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_06,2024-07-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1011
- mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170084
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+ <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
+ <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+ <503c8ba7-585d-4222-8e81-7f4c52f5f513@linaro.org>
+ <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+In-Reply-To: <0b84b689-8ab8-bcdf-f058-da2ead73786c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 16, 2024 at 11:06:34PM +0800, Chuyi Zhou wrote:
-> cfs_rq::nr_spread_over and cfs_rq::exec_clock are not used anymore in
-> eevdf. Remove them from struct cfs_rq.
+On 17/07/2024 07:24, Satya Priya Kakitapalli (Temp) wrote:
+>> Patch sent.
+>>
+>> https://lore.kernel.org/linux-arm-msm/20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org/T/#u
+>>
 > 
+> If the clock is modelled, it can get disabled during the late init call, 
+> when the CCF disables the unused clocks. But, it is a PoR ON  clock and 
+> expectation from design team is to keep it always-on for GDSC 
+> functionality.
 
-nr_spread_over tracks the number of instances where the difference
-between a scheduling entity's virtual runtime and the minimum virtual
-runtime in the runqueue exceeds three times the scheduler latency,
-indicating significant disparity in task scheduling.  
-Commit that removed its usage: 5e963f2bd: sched/fair: Commit to EEVDF
+Not if it _parks_ - that's what parking does, also what is the upstream 
+usecase to sustain the clock as on from PoR to CAMSS probe(); ?
 
+---
+bod
 
-cfs_rq->exec_clock was used to account for time spent executing tasks.
-Commit that removed its usage: 5d69eca542ee1 sched: Unify runtime
-accounting across classes
-
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-
-Acked-by: Vishal Chourasia <vishalc@linux.ibm.com>
-> ---
->  kernel/sched/debug.c | 4 ----
->  kernel/sched/sched.h | 6 ------
->  2 files changed, 10 deletions(-)
-> 
-> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> index c1eb9a1afd13..90c4a9998377 100644
-> --- a/kernel/sched/debug.c
-> +++ b/kernel/sched/debug.c
-> @@ -641,8 +641,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
->  	SEQ_printf(m, "\n");
->  	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
->  #endif
-> -	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
-> -			SPLIT_NS(cfs_rq->exec_clock));
->  
->  	raw_spin_rq_lock_irqsave(rq, flags);
->  	root = __pick_root_entity(cfs_rq);
-> @@ -669,8 +667,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
->  			SPLIT_NS(right_vruntime));
->  	spread = right_vruntime - left_vruntime;
->  	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
-> -	SEQ_printf(m, "  .%-30s: %d\n", "nr_spread_over",
-> -			cfs_rq->nr_spread_over);
->  	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
->  	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
->  	SEQ_printf(m, "  .%-30s: %d\n", "idle_nr_running",
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 4c36cc680361..8a071022bdec 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -599,7 +599,6 @@ struct cfs_rq {
->  	s64			avg_vruntime;
->  	u64			avg_load;
->  
-> -	u64			exec_clock;
->  	u64			min_vruntime;
->  #ifdef CONFIG_SCHED_CORE
->  	unsigned int		forceidle_seq;
-> @@ -619,10 +618,6 @@ struct cfs_rq {
->  	struct sched_entity	*curr;
->  	struct sched_entity	*next;
->  
-> -#ifdef	CONFIG_SCHED_DEBUG
-> -	unsigned int		nr_spread_over;
-> -#endif
-> -
->  #ifdef CONFIG_SMP
->  	/*
->  	 * CFS load tracking
-> @@ -1158,7 +1153,6 @@ struct rq {
->  	/* latency stats */
->  	struct sched_info	rq_sched_info;
->  	unsigned long long	rq_cpu_time;
-> -	/* could above be rq->cfs_rq.exec_clock + rq->rt_rq.rt_runtime ? */
->  
->  	/* sys_sched_yield() stats */
->  	unsigned int		yld_count;
-> -- 
-> 2.20.1
-> 
 
