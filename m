@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-254679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFB793364C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:12:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27C093364D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6273F1F23DD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4D71C21321
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8273D304;
-	Wed, 17 Jul 2024 05:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF59FC0C;
+	Wed, 17 Jul 2024 05:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SYMEn0VT"
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="UwEHZOxU"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F357125DE;
-	Wed, 17 Jul 2024 05:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B162FB6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721193135; cv=none; b=lmzB8W+G/ZKZ7J0ufiDQafZ2rzg/wSlpLR/IDiL7vpdZYfy7YCYcGDUkxoqNMm1pb6jejyp7+K9ZzBE4WrEpMmxq7IjJrbEUbf+pQNhJ0DKl0+WbR4FG+apnvyV3gkrolzQMws+/Ci54negqka1Uwlu46/OMrwIecCuDZZeGjdA=
+	t=1721193379; cv=none; b=IYwgvo3gO4LSr/XQ3dC5rvmt1oKk4890l+aMx2DhdkU/4RTGgk2zZrjEeyzbxFY8gEnm7TJ1Aa9R5VBMfEaL+krm4iQYLJ1/tZTXkQSl9ApDd7XvPR2RAjzj/wgWgLP6MVm+H1HswTLa7clAkWPcuNCOBQX6TFzUKR8wAe+7GoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721193135; c=relaxed/simple;
-	bh=H36BJoSSlRDF1Z+nVvb/Uc70itDMo3PGoNayxqtEKAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMOJ/L0BQAqQOewkVTw3MoRvUzZdxyu5xHgTMb5AJN1Uij+uerI4+srZS2aPnYiv5HDeJ2rThuDmBoUoPhMW7olQRTGae8yE/QqZsBrlKDcItzlUAweKcFstiBbTahNmVLgCOyYKZRRGN0KhzNe8bXAmsly7odgtOgb3Jzag5PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SYMEn0VT; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id TwxMsrsBhJ7CGTwxMsIU7w; Wed, 17 Jul 2024 07:12:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721193124;
-	bh=sa2nadHmhXuLtY7ot8ndiHN0OIbRKX9pb16VLbEu1i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=SYMEn0VTwbEU4NR9+q4PpIKnHPyG0VclAA9dE9BxrjCHFYm6vy7uxjGABb4UJKu+f
-	 2OMrEnBXZDF24dnBHwbgpZ/HtfmXxgFotjw5OocOtTNP51Dhp5C4R41D0/4tk2/KzJ
-	 iqXfwgeDOTC6rH1Htoh+nmhwqEyAaNwBS0SQPQXOk/44hefbEFimwWEOSt0KxWCPY9
-	 VR5oPQs0pXtQ5X0QZ33qWvAaKC4JulzZYIZ7IAfD0oDjbXNwUTfhnzY7RGCA4Cz0Kk
-	 2PI34OFBuYnMeXtvovf6dd00GGdmRckTtAPF7XjgRxvhItJRjm5kgMwmaGa/MnxweB
-	 8b2jX2AGrXamg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 17 Jul 2024 07:12:04 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <4197ad98-a7f7-487d-a303-d682677e0b80@wanadoo.fr>
-Date: Wed, 17 Jul 2024 07:12:00 +0200
+	s=arc-20240116; t=1721193379; c=relaxed/simple;
+	bh=1Y1mUI3HPhwo0NAWTL5IpJscsEB6hm8Op+om2+k+qK8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=auH3vGnF/PPm1BpJXO69z8y/QwTW7w4bMivRtNV62VMJPSbSvEa1H2gxqnRNg5EJOVWj+67C+JAHc4vXT6LE4spAaByKsfbL6FtJOVWdsp7QHKDgQC/L0ItnScNA65eq4PVDFaFf1nyZb21tlXBuTJAentrAfDNCEKF+6+HH5z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=UwEHZOxU; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eee083c044so43623331fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2024 22:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1721193376; x=1721798176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J878m7YDuJ1vsJ0IM1yJyHlQQ/ZT+kMU4XzKikRHpPI=;
+        b=UwEHZOxURuZrMM2sJF95oR8sGnYKKvair2UXP8+WPJMZgh2uiVd5uYg33bTLuK0bnr
+         GsQ2TQ+RDMmt0e+fiXLFaKkfsXrQQXOAAI7TGYTkgX/3wgUOTXdHSkOvqx6g5rLAIaah
+         /C9xHa9+fSjOJ1fxO/aLDGW/hB0KIBOAN1TYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721193376; x=1721798176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J878m7YDuJ1vsJ0IM1yJyHlQQ/ZT+kMU4XzKikRHpPI=;
+        b=i9QODyDqvBXFCeM5AsqvzsqbR77lprxG2NuM2A6Wc0v/IXbo6lFAQ/TB6e0cJYp2kx
+         czqC0KD7U0KkQs8g4hu3i7RzYKSui2PSDMlVgFN+sBAgHVVL7NSaV2Kis7YiZpBspzjl
+         IMC0CKXxfA9TRlFFvj3GIinfpXccmISpY3SQGLJF34e8s/pMM40yu+fYC9mnV9CJzKkG
+         OE7FwjFk0AvZyoh5v59PY6rEIgoPyc+M0q+zSiqGgM1h9aqmeyE8ve91ucIkt4fpn/kw
+         gPJFVBh8GB7Vb89wpjL9s5T0U9e9ZxkHJdYootvaCZy5xaNTjvEoTJsReBJNWharIpuu
+         BO1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ33ZvdVkPYXSah8SQIx69zJ5GsrqCgCm7y5jKMUpaVNsCJ8zxosxEFLoTPNBmdO1xeTAqg+fpMEC7rspZzPNsCvGrYqBpJaFnmHdn
+X-Gm-Message-State: AOJu0Ywm2zDJiheWvK/EDMdDFE4vjfDyGhq0jDBFaj5rUl6X2V9Bp3NR
+	0hPheADzNl/y5xN7aOtoymloJiVw8uUFg8jaHlwciSuOtJSEJNyF9tvl7w9SyhpHm5evuvpnQzu
+	YEEFCn8gutHaBoTNZtWm3DBXO20JKauot7mFYdA==
+X-Google-Smtp-Source: AGHT+IEPk4eucy360gs4rur9MKsXi1tM/A23BVAysA9hiOIWXo2S+IFc1TCcIgXo5U4T8uWc+qN9+jXeVxdml8wubFs=
+X-Received: by 2002:a2e:92c3:0:b0:2ec:5945:6301 with SMTP id
+ 38308e7fff4ca-2eefd08fe2cmr3539771fa.18.1721193375684; Tue, 16 Jul 2024
+ 22:16:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/resctrl: Use seq_putc() in two functions
-To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- kernel-janitors@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Fenghua Yu
- <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Markus Elfring <Markus.Elfring@web.de>
-References: <d4be0dc8-f6db-4bf1-bb6d-ccff161dfde9@web.de>
- <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
+ <ZjJf27yn-vkdB32X@google.com> <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
+ <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
+ <66912820.050a0220.15d64.10f5@mx.google.com> <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
+ <20240712122408.3f434cc5@rorschach.local.home> <ZpFdYFNfWcnq5yJM@google.com>
+ <20240712131232.6d77947b@rorschach.local.home> <ZpcFxd_oyInfggXJ@google.com>
+In-Reply-To: <ZpcFxd_oyInfggXJ@google.com>
+From: Joel Fernandes <joel@joelfernandes.org>
+Date: Wed, 17 Jul 2024 01:16:00 -0400
+Message-ID: <CAEXW_YS+8VKjUZ8cnkZxCfEcjcW=z52uGYzrfYj+peLfgHL75Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority management)
+To: Sean Christopherson <seanjc@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, 
+	Borislav Petkov <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Mel Gorman <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Suleiman Souhlal <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	graf@amazon.com, drjunior.org@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 16/07/2024 à 23:43, Reinette Chatre a écrit :
-> Hi Markus,
-> 
-> On 7/13/24 2:00 AM, Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 13 Jul 2024 10:43:14 +0200
->>
->> Single characters should be put into a sequence.
->> Thus use the corresponding function “seq_putc”.
->>
+On Tue, Jul 16, 2024 at 7:44=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Fri, Jul 12, 2024, Steven Rostedt wrote:
+> > On Fri, 12 Jul 2024 09:44:16 -0700
+> > Sean Christopherson <seanjc@google.com> wrote:
+> >
+> > > > All we need is a notifier that gets called at every VMEXIT.
+> > >
+> > > Why?  The only argument I've seen for needing to hook VM-Exit is so t=
+hat the
+> > > host can speculatively boost the priority of the vCPU when deliveryin=
+g an IRQ,
+> > > but (a) I'm unconvinced that is necessary, i.e. that the vCPU needs t=
+o be boosted
+> > > _before_ the guest IRQ handler is invoked and (b) it has almost no be=
+nefit on
+> > > modern hardware that supports posted interrupts and IPI virtualizatio=
+n, i.e. for
+> > > which there will be no VM-Exit.
+> >
+> > No. The speculatively boost was for something else, but slightly
+> > related. I guess the ideal there was to have the interrupt coming in
+> > boost the vCPU because the interrupt could be waking an RT task. It may
+> > still be something needed, but that's not what I'm talking about here.
+> >
+> > The idea here is when an RT task is scheduled in on the guest, we want
+> > to lazily boost it. As long as the vCPU is running on the CPU, we do
+> > not need to do anything. If the RT task is scheduled for a very short
+> > time, it should not need to call any hypercall. It would set the shared
+> > memory to the new priority when the RT task is scheduled, and then put
+> > back the lower priority when it is scheduled out and a SCHED_OTHER task
+> > is scheduled in.
+> >
+> > Now if the vCPU gets preempted, it is this moment that we need the host
+> > kernel to look at the current priority of the task thread running on
+> > the vCPU. If it is an RT task, we need to boost the vCPU to that
+> > priority, so that a lower priority host thread does not interrupt it.
+>
+> I got all that, but I still don't see any need to hook VM-Exit.  If the v=
+CPU gets
+> preempted, the host scheduler is already getting "notified", otherwise th=
+e vCPU
+> would still be scheduled in, i.e. wouldn't have been preempted.
 
-...
+What you're saying is the scheduler should change the priority of the
+vCPU thread dynamically. That's really not the job of the scheduler.
+The user of the scheduler is what changes the priority of threads, not
+the scheduler itself.
 
-> Could you please highlight the benefit of this change? Looking at 
-> seq_puts() implementation, thanks
-> to [1], it seems to me these seq_puts() calls will result in seq_putc() 
-> anyway?
-
-Hi,
-
-in this case, there is no benefit and the generated code should be 
-exactly the same.
-
-CJ
-
-> 
-> Reinette
-> 
-> [1] 
-> https://lore.kernel.org/all/a8589bffe4830dafcb9111e22acf06603fea7132.1713781332.git.christophe.jaillet@wanadoo.fr/
-> 
-> 
-
+Joel
 
