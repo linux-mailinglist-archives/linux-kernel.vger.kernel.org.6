@@ -1,217 +1,171 @@
-Return-Path: <linux-kernel+bounces-255515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788459341AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002CE9341AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5EDAB22F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A941F23FB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFBD1891D6;
-	Wed, 17 Jul 2024 17:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C5182A79;
+	Wed, 17 Jul 2024 17:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrV80G4j"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2qh7xUW"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC53C183080;
-	Wed, 17 Jul 2024 17:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA9B184F;
+	Wed, 17 Jul 2024 17:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721238475; cv=none; b=bRKsGvmN635AnwOAbs6LWbYkH93V2dDhQjY5Rf1KlsfW0me10PYVLRfL+RwdvlgVXk4MHfnxUZ/kuHeZ/l1Q5sKMJl0ogjb7mbLkQ3nRq6609RQcLYCu4zuIi6F1qU+c6Lj9E2U+7uUAnW/GsLisyShG653tmbQ0PXEw+OvytKQ=
+	t=1721238576; cv=none; b=ePuaI7PiZbM4k8SOWRmYVIl3iECcCYrVf1flToeDZ0SboVePEfkBqXKKHiH9qV1+KejmmCxQoAEKouRB37pBkHDzl5CBrsWkgkDoirF90e1LmpKSWO62wHygM10dfQwOZqyUXS1OPeox1Lb52nrFwyhOJKZidTqzLLmEMw0yyV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721238475; c=relaxed/simple;
-	bh=hlw8mQSVUmKVKhzFLnEybQ+LNvuuiXl75EnFgGgdVXA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UmYKD+HPGYLGyOpviumjEDdBop4sdrlUXhKfw2jivtDZfLfjf0CJCvteVd8Is1I2EeB5DugQ3eH9BssXUFWbGILDrrEXxWQK0I29za48MIowWdSI1Xjf1IqXIjWW+LNfnShV82vHvgcRwzf5AjQDOm2MxdmJ9PTY8VCXlFIHP8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrV80G4j; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1721238576; c=relaxed/simple;
+	bh=r7IStd/KRzefG9mLooWDUvkj+uQ4fDVlUMU9FjL0Lp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KPY1e7dnCKYGBj+1o1T6uzKMj1lqU4gkMIt4xhdfPTiw0Qex8uV1208rM7yRiWZKm+drBqCAkRQ7BncR8hYrn5GFhMTP20X8556MDcQX9rrSiZdmDg5AuQ67ZT1Auy19fPMuB+/WuoaQ9aX+dhDG9s8IsMgfKlCdAPOLxlAyHe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2qh7xUW; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2caaae31799so5095613a91.0;
-        Wed, 17 Jul 2024 10:47:53 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e057c4885b3so36686276.3;
+        Wed, 17 Jul 2024 10:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721238473; x=1721843273; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0sh2Qx0QKHKW9EVnBg4PhiJlHbuvx8m1ke9g+ElCrk=;
-        b=SrV80G4jhEiubSCv4i9krR+1AeNhD3f8aSTGLDTyjQPkfbqyojjsAldkFIjYfHKlcC
-         pT4SF0cnUgflhGFdpHTCe1gc3TMYSPQfH3s95tx8LverH7L2x5N/W6nlzjRcuoR3AlC9
-         lfQ8cP6AxaF0wm1eYPbPvlBMyEVj4jlq5FG2o6AyI1VS1YUyeRYJPj0hOTITczbiL6zh
-         21W1L0UeozWPZnOFRZSbPOQ6K64YhfIQVUDDpii7Q8NIRyBzBdOd0Gu3uZBOaSpjW0A0
-         WgZJuxdQJmNr5VEHBbJKAMx5eAUlosEz7IQRdENd5Wo4b27/38KZR2t478saSbViKgUu
-         VQBg==
+        d=gmail.com; s=20230601; t=1721238574; x=1721843374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r7IStd/KRzefG9mLooWDUvkj+uQ4fDVlUMU9FjL0Lp4=;
+        b=K2qh7xUWN15dujhAB03TSZa2UE+ppFZ/pPw0j6CM7jxaR+rG7U4kmCpGzBmey4KOzN
+         ocnHxlXquBd4gniMr5PZ/ej8uoPxbc/UEV2auqhP+WMJCTcFU+F0WN2fWZVaFQEOL0Nr
+         DZ35wbKrCdUZNk/5jjhJljJB/3DrlJXUZyZaW7IxutFn6+5iGtbmapcKlhgo8L9dthiI
+         x6n+XQRNzAFWujEdXEfFKZgB3o92W0gE+XTbti2obZwUEgVANipX4IVkoLI2P4dCR1QY
+         GpB2KR8b+ZPRV8wG+pfkyv7bZaz2L4MEGGcr0K2ieZBQe8TGClI43TL7cGc3lEDVPb0K
+         ba1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721238473; x=1721843273;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u0sh2Qx0QKHKW9EVnBg4PhiJlHbuvx8m1ke9g+ElCrk=;
-        b=FoFEtQQJIxKDQA8gTftSBmh//htxMZcZMrS5dKymKHCzUFkw3JYseTN/1P0y9+WdfI
-         HSycqAKRclMksSrWh+S/3gHMShj1RFhf0XFD7alrvC6GMC5fi1I1nkepGMumaqoRy6SG
-         5V/7oXt847Hna66XPs4pgKBDhrGbyzCPc0SX5YdtAFtzZlsK44L4E/k4aXUBiwuSg0Dh
-         R1cj5aWH4HeoHF+lT1zqr36z6FF2LoDKBh98HAUfGQ2hLWQ3gu+fcOM90wElhmLjV7ra
-         hH7u1c8zWSUrpTvkbL+zUR7CVFd/6Vdz6pEbTKETTImHwWoQqQaBYLb1O2wnijQ1eTyF
-         eV8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8on7LbysGvrFVvAz8dmxkfKqD0wANpC6VEfT6/qBu6J70XJTx3d3dfFgAsuAYWfJPH4rHna3ntX53hy3F3qJgraUBhH16yzyb2ejWRaPC3ZrZq8fczXKmg9sUQyrT4j5t
-X-Gm-Message-State: AOJu0Ywn/zDJjecuXR85+ekvZAkSwiANYyyxUoTXNEjIBSnak2BW9FSi
-	8eK/xTYZIYD5tyd+A6G1LZfY5NFsVhDxAL0U1CWCTCJ5T/AsL16B
-X-Google-Smtp-Source: AGHT+IFNpZSwxKYCjKtdzPxrBLb/WA0ob6ivkZ0SDSsRQkxtL212u4LOI9S4TGdzA6qgOIaGGf8CsA==
-X-Received: by 2002:a17:90a:fd04:b0:2cb:4f14:2a70 with SMTP id 98e67ed59e1d1-2cb529327f7mr1951043a91.30.1721238472901;
-        Wed, 17 Jul 2024 10:47:52 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb601ec946sm217440a91.37.2024.07.17.10.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 10:47:52 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	chen.dylane@gmail.com
-Cc: Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [v2 PATCH bpf-next 2/4] bpftool: add net attach/detach command to tcx prog
-Date: Thu, 18 Jul 2024 01:47:49 +0800
-Message-Id: <20240717174749.1511366-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1721238574; x=1721843374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r7IStd/KRzefG9mLooWDUvkj+uQ4fDVlUMU9FjL0Lp4=;
+        b=W7b8y/X4dGJh6oh2ikEtkhDVp3p3QKSBbalyM6yL8K1YzYC1ZOXNsQXkZmEXgBDXto
+         7cwWIrQycFUjFI+6kt+DLTyrVSpbu87g8O2LRmGC0svyGrmxQnr5/lLmq3BiAVwqZc3m
+         pKO85EtMnVDTzSVP/SOazVXBqQP37ut/zCPMH4VM3sl0oZTRFz0aOXJvY7U5vKroB6c7
+         fVmAPLyBjSvyoTGNPQy3pU5AFjsGcEpM/i6QdN81s9HEQ7LSvRcE6T7GFCiEKSH+7BQy
+         /6JATtSz9NTEevo9U6D9Y932Q8EDWhFjXAMl3EPI62Ml8T/pIlTCc+cau2q0d0+UM+6x
+         oovg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1W7k37Z6mivJVJs2fR0Qw0Rz72fSRs9IxZwl5xa8jFdOZko6wc06ix+8rRN2fZUqPYl7W7TS0USkz/ogYQ7hsiCE/+tp453ZmR/1YbWL7S8r8kjg34GKNRYV5Sd+j/LZn2j96Hd40
+X-Gm-Message-State: AOJu0YwZCGqr3coXTZCeNDHC1je2fdwPNADbbuRffTpl7rQHo/pNVOHS
+	y2bZ0mhUyzH/BflPu1yuxWoux80pc1K1rDeC6VhZqwxFlMckxb5V9sqqfoR66TG+nRfP1RdVKx6
+	Rdwkzs+oK0JBOkgM28dLydnrKoRE=
+X-Google-Smtp-Source: AGHT+IF+3ePAZRTQ0ohZAzihaoPtnFNUgFOaTbtH6oWBWeBWki6l7XK/0hMSS5HAUgxBHEs1QsMxJa5K0L510VXoWjo=
+X-Received: by 2002:a05:6902:1004:b0:e05:f40e:440c with SMTP id
+ 3f1490d57ef6-e05febc0a76mr187623276.44.1721238573561; Wed, 17 Jul 2024
+ 10:49:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
+ <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com> <CAJD7tkYnBw-QiGXTb4BPScuS1VePBkuRx1qG8p92zN9TeD+gKg@mail.gmail.com>
+In-Reply-To: <CAJD7tkYnBw-QiGXTb4BPScuS1VePBkuRx1qG8p92zN9TeD+gKg@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 17 Jul 2024 10:49:22 -0700
+Message-ID: <CAKEwX=OPDkwnSno-8r9AsOpmzkZ90SzeX02xz0eDTqbL2_QL2g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now, attach/detach tcx prog supported in libbpf, so we can add new
-command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
-for user.
+On Tue, Jul 16, 2024 at 7:53=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> [..]
+> >
+> > > My concern is that we are knowingly (and perhaps unnecessarily)
+> > > creating an LRU inversion here - preferring swapping out the rejected
+> > > pages over the colder pages in the zswap pool. Shouldn't it be the
+> > > other way around? For instance, can we spiral into the following
+> > > scenario:
+> > >
+> > > 1. zswap pool becomes full.
+> > > 2. Memory is still tight, so anonymous memory will be reclaimed. zswa=
+p
+> > > keeps rejecting incoming pages, and putting a hold on the global
+> > > shrinker.
+> > > 3. The pages that are swapped out are warmer than the ones stored in
+> > > the zswap pool, so they will be more likely to be swapped in (which,
+> > > IIUC, will also further delay the global shrinker).
+> > >
+> > > and the cycle keeps going on and on?
+> >
+> > I agree this does not follow LRU, but I think the LRU priority
+> > inversion is unavoidable once the pool limit is hit.
+> > The accept_thr_percent should be lowered to reduce the probability of
+> > LRU inversion if it matters. (it is why I implemented proactive
+> > shrinker.)
+>
+> Why?
+>
+> Let's take a step back. You are suggesting that we throttle zswap
+> writeback to allow reclaim to swapout warmer pages to swap device. As
+> Nhat said, we are proliferating LRU inversion instead of fixing it.
+>
+> I think I had a similar discussion with Johannes about this before,
+> and we discussed that if zswap becomes full, we should instead
+> throttle reclaim and allow zswap writeback to proceed (i.e. the
+> opposite of what this series is doing). This would be similar to how
+> we throttle reclaim today to wait for dirty pages to be written back.
+>
 
- # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
- # bpftool prog show
-	...
-	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
-	loaded_at 2024-07-11T15:58:16+0800  uid 0
-	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
-	btf_id 260
- # bpftool net attach tcx_ingress name tc_prog dev lo
- # bpftool net
-	...
-	tc:
-	lo(1) tcx/ingress tc_prog prog_id 29
+I completely agree with this analysis and proposal - it's somewhat
+similar to what I have in mind, but more fleshed out :)
 
- # bpftool net detach tcx_ingress dev lo
- # bpftool net
-	...
-	tc:
- # bpftool net attach tcx_ingress name tc_prog dev lo
- # bpftool net
-	tc:
-	lo(1) tcx/ingress tc_prog prog_id 29
+> This should reduce/fix the LRU inversion instead of proliferating it,
+> and it should reduce the total amout of IO as colder pages should go
+> to disk while warmer pages go to zswap. I am wondering if we can reuse
+> the reclaim_throttle() mechanism here.
+>
+> One concern I have is that we will also throttle file pages if we use
+> reclaim_throttle(), since I don't see per-type throttling there. This
+> could be fine, since we similarly throttle zswap reclaim if there are
+> too many dirty file pages. I am not super familiar with reclaim
+> throttling, so maybe I missed something obvious or there is a better
+> way, but I believe that from a high level this should be the right way
+> to go.
 
-Test environment: ubuntu_22_04, 6.7.0-060700-generic
+I don't think we have any infrastructure for anon-only throttling in
+vmscan logic, but it sounds trivial to implement if necessary :)
 
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- tools/bpf/bpftool/net.c | 43 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+>
+> I actually think if we do this properly, and throttle reclaim when
+> zswap becomes full, we may be able to drop the acceptance hysteresis
+> and rely on the throttling mechanism to make sure we stop reclaim
+> until we free up enough space in zswap to avoid consistently hitting
+> the limit, but this could be a future extension.
 
-diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
-index 1b9f4225b394..60b0af40109a 100644
---- a/tools/bpf/bpftool/net.c
-+++ b/tools/bpf/bpftool/net.c
-@@ -67,6 +67,8 @@ enum net_attach_type {
- 	NET_ATTACH_TYPE_XDP_GENERIC,
- 	NET_ATTACH_TYPE_XDP_DRIVER,
- 	NET_ATTACH_TYPE_XDP_OFFLOAD,
-+	NET_ATTACH_TYPE_TCX_INGRESS,
-+	NET_ATTACH_TYPE_TCX_EGRESS,
- };
- 
- static const char * const attach_type_strings[] = {
-@@ -74,6 +76,8 @@ static const char * const attach_type_strings[] = {
- 	[NET_ATTACH_TYPE_XDP_GENERIC]	= "xdpgeneric",
- 	[NET_ATTACH_TYPE_XDP_DRIVER]	= "xdpdrv",
- 	[NET_ATTACH_TYPE_XDP_OFFLOAD]	= "xdpoffload",
-+	[NET_ATTACH_TYPE_TCX_INGRESS]	= "tcx_ingress",
-+	[NET_ATTACH_TYPE_TCX_EGRESS]	= "tcx_egress",
- };
- 
- static const char * const attach_loc_strings[] = {
-@@ -647,6 +651,32 @@ static int do_attach_detach_xdp(int progfd, enum net_attach_type attach_type,
- 	return bpf_xdp_attach(ifindex, progfd, flags, NULL);
- }
- 
-+static int get_tcx_type(enum net_attach_type attach_type)
-+{
-+	switch (attach_type) {
-+	case NET_ATTACH_TYPE_TCX_INGRESS:
-+		return BPF_TCX_INGRESS;
-+	case NET_ATTACH_TYPE_TCX_EGRESS:
-+		return BPF_TCX_EGRESS;
-+	default:
-+		return __MAX_BPF_ATTACH_TYPE;
-+	}
-+}
-+
-+static int do_attach_tcx(int progfd, enum net_attach_type attach_type, int ifindex)
-+{
-+	int type = get_tcx_type(attach_type);
-+
-+	return bpf_prog_attach(progfd, ifindex, type, 0);
-+}
-+
-+static int do_detach_tcx(int targetfd, enum net_attach_type attach_type)
-+{
-+	int type = get_tcx_type(attach_type);
-+
-+	return bpf_prog_detach(targetfd, type);
-+}
-+
- static int do_attach(int argc, char **argv)
- {
- 	enum net_attach_type attach_type;
-@@ -692,6 +722,11 @@ static int do_attach(int argc, char **argv)
- 	case NET_ATTACH_TYPE_XDP_OFFLOAD:
- 		err = do_attach_detach_xdp(progfd, attach_type, ifindex, overwrite);
- 		break;
-+	/* attach tcx prog */
-+	case NET_ATTACH_TYPE_TCX_INGRESS:
-+	case NET_ATTACH_TYPE_TCX_EGRESS:
-+		err = do_attach_tcx(progfd, attach_type, ifindex);
-+		break;
- 	default:
- 		break;
- 	}
-@@ -738,6 +773,11 @@ static int do_detach(int argc, char **argv)
- 		progfd = -1;
- 		err = do_attach_detach_xdp(progfd, attach_type, ifindex, NULL);
- 		break;
-+	/* detach tcx prog */
-+	case NET_ATTACH_TYPE_TCX_INGRESS:
-+	case NET_ATTACH_TYPE_TCX_EGRESS:
-+		err = do_detach_tcx(ifindex, attach_type);
-+		break;
- 	default:
- 		break;
- 	}
-@@ -944,7 +984,8 @@ static int do_help(int argc, char **argv)
- 		"       %1$s %2$s help\n"
- 		"\n"
- 		"       " HELP_SPEC_PROGRAM "\n"
--		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload }\n"
-+		"       ATTACH_TYPE := { xdp | xdpgeneric | xdpdrv | xdpoffload | tcx_ingress\n"
-+		"			 | tcx_egress }\n"
- 		"       " HELP_SPEC_OPTIONS " }\n"
- 		"\n"
- 		"Note: Only xdp, tcx, tc, netkit, flow_dissector and netfilter attachments\n"
--- 
-2.34.1
+Agree - this hysteresis heuristics needs to die.
 
+IMHO, I think we should still have the proactive global shrinking
+action that Takero is proposing in patch 3. The throttling is nice,
+but it'd be even nicer if we can get ahead of that :)
+
+>
+> Johannes, any thoughts here?
+>
+> Anyway, since patches 1-2 are independent of the rest of the series,
+> feel free to send them separately, and we can continue the discussion
+> on the best way forward for the rest of the series.
+
++1.
 
