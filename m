@@ -1,94 +1,113 @@
-Return-Path: <linux-kernel+bounces-255398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5F3934056
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276B8934058
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59D56B215EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9925FB2176B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8F0181CF8;
-	Wed, 17 Jul 2024 16:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1786181BA0;
+	Wed, 17 Jul 2024 16:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sOVBNxjA"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVVs+kHT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0D61802A5;
-	Wed, 17 Jul 2024 16:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C4B1D52B;
+	Wed, 17 Jul 2024 16:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233408; cv=none; b=sxJMZRgokK69WzLezrUVe97rtwu/6xPahA7xKg9Z6bo7kbHFbt2yCDDzm7VAEl5KQwCWDRIVuwRl6riVMXne2pAkmfh0P4ReFfM6VkZi4WnMRadaZbKVaBB3yVn+OLxJaZuT1tGbcXXAm6RDbVNRjZ3X7EYZ+elKU3Rm9SXHPLs=
+	t=1721233468; cv=none; b=OoLoaVp7UnVUO2N12d9mJ4uC8Rhl2Dvoj9vvFUjojZcKLu+7956+Pc//ckpOiZ3dKcrYE1X/hMN52L199m5io6RKN55c/CDP7GkkQAlRuVpfYezDW65APP9MJS6N3LJOM4NaVgV5c2MkCazMk4jbruiaMN7i6O8C+7ZiyShINYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233408; c=relaxed/simple;
-	bh=uU8IEmzWRyCnoK378H00qda3bLD/wesPzldBX4Z4OMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hQkBlsxUfNIWtR3dqq+JVl80X7SOHLjWanyr1JbcjEmNQoCR+0s/qQdp/XlnsCjwdUURbZLhgZetZYNwNrACnrVxLkzakBPt1ElFjplGkqkiF1OtO+VbiSyiRuS3ZisxfAT3clEhtSV0TuFJXkYLThYUY+tcgO4fOGn5fwdhcpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sOVBNxjA; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WPLpP0MYjz6CmM6f;
-	Wed, 17 Jul 2024 16:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1721233402; x=1723825403; bh=uU8IEmzWRyCnoK378H00qda3
-	bLD/wesPzldBX4Z4OMQ=; b=sOVBNxjAv6YJsSUSya6T/dizM6hWIJ9WidvOkKst
-	Et6+ibJdcFyvsqlNjd+TfEI6/iWWPvIuHzezXbdMw2lGrjbac4fKmt2uidlLwflg
-	r6MBQWA7qbNS+AnAY7SZbeLjOtxETHGMspxM9w0sZS3x4uNi0DXHtFgGU0A763bf
-	0yJyxfBXj8/zR3WNm9UOmEsQTdE70Mu4kXmnhdNr72c0zpeO3ru9gpLcaAXQfxXz
-	ceMZ9LC8W4drZMlzPOSVHLPXYlWjWl+oeyY8V6I/lDWhESCGIn5ITjDzSq7u66o6
-	BzA6shftPNwINYS2qCMyx2ZKoRuUR4yTNt/XA1UYLFEQ+Q==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id sKUJVgs91eZ1; Wed, 17 Jul 2024 16:23:22 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WPLpK36gwz6CmM6c;
-	Wed, 17 Jul 2024 16:23:21 +0000 (UTC)
-Message-ID: <e7c95d49-d279-451c-9bd0-3f4009c7afcd@acm.org>
-Date: Wed, 17 Jul 2024 09:23:19 -0700
+	s=arc-20240116; t=1721233468; c=relaxed/simple;
+	bh=woNVf/hlC39jwmwhwTBiy3CLo4N2VBfdKPIGYty3XsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fdlkKaPhKkE0/+35j0r4/iZTaz5vYHaFQKq2Xb3pR5CSTXtSRBp+Cqu+KcLx6nauIz3yhtLKzAqLBfj6fJQ8YoDzN4IE5xYgGXXOQh7RZD05reTynG6jW8dMhUl1/Di7i64T77FMRJULb3mDSuc32o6zSaTz8785XZyGYySZy5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVVs+kHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1099AC2BD10;
+	Wed, 17 Jul 2024 16:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721233467;
+	bh=woNVf/hlC39jwmwhwTBiy3CLo4N2VBfdKPIGYty3XsQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UVVs+kHTFY+/Lu8hmpFCBpmVLhGcReywaAypNu1x+6cUB/mwSa0h3xF30/nl+chEW
+	 i6dzl9m3ekXi7nNdReByhOy/qho0x3s7JaMTDxAUiJFMw8yYT6kIYhd4IqNPZMEUu5
+	 OtnnM8jlsUhy7jyCMxl1lPQQo/9eKNh82qU7H9Xm4xdTZ/NuvmqoomQLjdq/QkjyXZ
+	 jz3lOAlDVsmanf3PrikyRB2RC9NDYD6WVB7nD7ZekmBEQzf9PDJN9Yw1rAAMNivHD9
+	 yO3hw3Gk64nJ4y7IesndTYHhkzXiduERCycyAkqoIcvU/alDruclpeQbXx9c6mL/RL
+	 INrToP7e4+Icg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] kbuild: fix rebuild of generic syscall headers
+Date: Thu, 18 Jul 2024 01:24:20 +0900
+Message-ID: <20240717162421.1402773-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: fix deadlock between sd_remove & sd_release
-To: YangYang <yang.yang@vivo.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240716083801.809763-1-yang.yang@vivo.com>
- <1859a975-8c53-140c-f5b5-898ad5e7f653@huaweicloud.com>
- <451c8746-5260-4be6-b78d-54305c94ef73@vivo.com>
- <a81cdd5b-d6ad-2a4f-0f6d-40e9db6233cd@huaweicloud.com>
- <51411297-f579-4229-a72c-c5bd5f27df34@vivo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <51411297-f579-4229-a72c-c5bd5f27df34@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/17/24 3:15 AM, YangYang wrote:
-> These sysfs nodes are in different directories, the scsi node located
-> at /sys/bus/scsi/devices/0:0:0:0 and the gendisk node located at
-> /sys/block/sda. Would it be necessary to wait for the completion of
-> the scsi sysfs nodes' read/write operations before removing the
-> gendisk sysfs node?
+Commit fbb5c0606fa4 ("kbuild: add syscall table generation to
+scripts/Makefile.asm-headers") started to generate syscall headers
+for architectures using generic syscalls.
 
-No. sysfs_remove_files() waits for pending read and write operations to
-complete.
+However, these headers are always rebuilt using GNU Make 4.4.1 or newer.
 
-Bart.
+When using GNU Make 4.4 or older, these headers are not rebuilt when the
+command to generate them is changed, despite the use of the if_changed
+macro.
+
+scripts/Makefile.asm-headers now uses FORCE, but it is not marked as
+.PHONY. To handle the command line change correctly, .*.cmd files must
+be included.
+
+Fixes: fbb5c0606fa4 ("kbuild: add syscall table generation to scripts/Makefile.asm-headers")
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Closes: https://lore.kernel.org/lkml/CAHk-=wibB7SvXnUftBgAt+4-3vEKRpvEgBeDEH=i=j2GvDitoA@mail.gmail.com/
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/Makefile.asm-headers | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/scripts/Makefile.asm-headers b/scripts/Makefile.asm-headers
+index 6b8e8318e810..8a4856e74180 100644
+--- a/scripts/Makefile.asm-headers
++++ b/scripts/Makefile.asm-headers
+@@ -87,12 +87,20 @@ $(obj)/unistd_compat_%.h: $(syscalltbl) $(syshdr) FORCE
+ $(obj)/syscall_table_%.h: $(syscalltbl) $(systbl) FORCE
+ 	$(call if_changed,systbl)
+ 
++targets := $(syscall-y)
++
+ # Create output directory. Skip it if at least one old header exists
+ # since we know the output directory already exists.
+ ifeq ($(old-headers),)
+ $(shell mkdir -p $(obj))
+ endif
+ 
++PHONY += FORCE
++
+ FORCE:
+ 
++existing-targets := $(wildcard $(sort $(targets)))
++
++-include $(foreach f,$(existing-targets),$(dir $(f)).$(notdir $(f)).cmd)
++
+ .PHONY: $(PHONY)
+-- 
+2.43.0
 
 
