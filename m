@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-255689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65569343C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:24:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145749343CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625D2B2347A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9A81C21C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85678186E3A;
-	Wed, 17 Jul 2024 21:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D58F186E39;
+	Wed, 17 Jul 2024 21:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gK/tkL3f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evI4/em2"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B771CD26;
-	Wed, 17 Jul 2024 21:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5E81CD26;
+	Wed, 17 Jul 2024 21:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721251463; cv=none; b=PrR1mohsksHEJBIdgRo0Zhfn4J9fLvA21GWbd4wYvWhS3ag5UWQD2TpPFps4VmnykYhRSOYdht096svZcU87SGbPLGPvnuI9FwO8QO/hdC71dHH1ivhdTt+OXieACbjPGV+99xpiJYmThLhhF2LWaLeLYUYJeDrAAz3DjMU+7DE=
+	t=1721251553; cv=none; b=IF80xIRya5et+bDPkM1/OIBpPT4zJlUe9mtEVsrxWBOmbRzN1Va2BhaSZmCH3q0UmBJ8F5FfRR87opeGZD/FBvQwFKnFvFUFRHad305Cl2SQF5oNKIiUIZV3aunQ0UDqlhCk5DDdpZvBjBD0iEX1fCTydajwMs0u7j9QMpCmGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721251463; c=relaxed/simple;
-	bh=1EY+vvc7jNlEdDJjAXGm1QryO1IfYmX5lIziu+1P168=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nj9CpQtJPAPfwv5TfJ3izrqNF2wNjIjRwPFq0NvcsDJeQCLwI2EaWbcYL391F1oz1ssIVBCpb1IXdK4dgSMwtqnjYi1iOkmo369kijDhMKxEg7c4l86iJdbYrf3maVukmSqnIzqdKl2v8uvN/iP2OZ9QIcmL16VCc0q7/Ljq9BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gK/tkL3f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F1AC2BD10;
-	Wed, 17 Jul 2024 21:24:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721251463;
-	bh=1EY+vvc7jNlEdDJjAXGm1QryO1IfYmX5lIziu+1P168=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gK/tkL3f97uSs56KpwRiMUV5Bwx3eXpVEi/WJjpgUZEX0th0IeqcGp0ItIgThbd9E
-	 He+DVz2m1tMAa4wNF10MU6hQgtyYZpDaEQdKA++QhGAp49Tz/5eX9y7M+gVBozW8hU
-	 oh3lctY8/fVWcDZpGzmQLJ3WyN+itS6m8Kf1Z1M1NGteuMEBwkHHuvWKV2r6thTBR3
-	 WGGkVt0FibIraYnmzlnTYqhaWjkC/8RCRfebIYqA12cSVX+2KIPkQB352ORqY+osft
-	 dyueKLESA3NX3q+Pm01BYwNXDxAXRiqZZn1TMhb78cnylJFgQb5tYxvVUKRpTBwzSD
-	 HcMkB5oFXHUBQ==
-Date: Wed, 17 Jul 2024 14:24:21 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	Stefan Lippers-Hollmann <s.l-h@gmx.de>,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Ben Greear <greearb@candelatech.com>
-Subject: Re: [PATCH v2] thermal: core: Allow thermal zones to tell the core
- to ignore them
-Message-ID: <20240717212421.GA1191@sol.localdomain>
-References: <4950004.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1721251553; c=relaxed/simple;
+	bh=8oXJwlQmm/epkGAmkIpB0f2qbT/Ufp7Bpt0V8LIr/W4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OcP7vX4YSz2kXBz+eg6iKtD79doB3qfu5rN/zIml62Pt16zUQZLya4t3IGdb1U90oK5+bM2iQ4VmXReWq6nmM3+FBTc3Z4hrRa5lC83WeoW+ylibWdjxBaYup8qB4C4HHQhYNpo+8gor/EOJqAX0qUlKambC86eB3nZq457BPpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evI4/em2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266dc7591fso1081225e9.0;
+        Wed, 17 Jul 2024 14:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721251550; x=1721856350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5+ABhYrf3wPKaePZadpWJZKKBagnH7YLLY82dUgrP4=;
+        b=evI4/em2bm6lQQpueFXkV/Q7WnCwFmq3Sb4j8XwsAM2wHSbzn6SE2k1NCWAu91ry3R
+         4R0Ln5NZx6Y1+XxIfoJeapcFkM6ABks9TzTu7ReHmqbitI67Ir/ROtTavhgWb79b7Rpb
+         t9N9XCF8XQXkRmFx6QP2gEfMQBMWxDci1tFs1CcgagGtg+qiQTc3XA83F7d2Vd4NUMR7
+         S2nwzHHIPU27MOimDtD/opm4l9eewRexww6z9zNdajqB+cCryl6/ocJuRc9x1C6YYWI8
+         3qqtVagFFv8HYXci2MFJlOcTl3jWHlbU+8y59KWAk84km8ac9xYvv80DoKqxlSmfLVpX
+         9Tzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721251550; x=1721856350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a5+ABhYrf3wPKaePZadpWJZKKBagnH7YLLY82dUgrP4=;
+        b=m+rjfO31Az3q3TJYufyK152zMYc4RzFPgqzW634OizP0uOMzKfY5ngcsdm/iyMLLis
+         1UtrztO6t2Krc2SXQClLS0Il6+y9a7ZEX3qYMAg7z8jOE7uPiQ26S8x9odyXF1dZB/fk
+         9TER4aS5iaupdQOlXMQlzpJb2fIjewbvE63CiP5rj6g6WSViL0MDm3FV/wrj8kytj7/h
+         3WFnSiWy8Cuz0xcVJQ/32aJ5/HqaxIGUuOCUPNM6xNVweio+eTZJBJWEIDLYWY1TbYPk
+         aFEkVS6mGfAa7RSOCzAye6qAL6PBK4byGC0E0b8TnkpFPgvuPpv2JIstJqJyd7xBbydF
+         oxng==
+X-Forwarded-Encrypted: i=1; AJvYcCVcO0W5gG8lz9grdV0SXEMYCx57m2obPb153SAUl/oSvLl71ATauJpgqXyoSRwb+yCVGv+sFWFJR+vz5DNtrony4cpvxo+bMWi1RXr1e+5QOLiIAfH0gTEv4uDnZkYGPvZXvkDQTXJrN+Ob8kEnBCW/MJ7OIgkpkyCfBxiMT7UhXEUQng==
+X-Gm-Message-State: AOJu0YyKorXU0VKN8WFrzMaBPNsSbq5cS9fLvR6rnyy6bs3FaPhi1axg
+	qIcRFU/rdi7skVlHMaFQB4pkgqEPvADMdLmrdTOQG6EZQOQrcqos
+X-Google-Smtp-Source: AGHT+IGM65aGSyz+R+K3luR1tw7LElbMJN92zOaSLtSPbCg6IwxsVybgDpOC+QHulR+0Lw7ldp9niA==
+X-Received: by 2002:a05:600c:1f90:b0:426:5fbc:f319 with SMTP id 5b1f17b1804b1-427c2d12836mr17960755e9.33.1721251550056;
+        Wed, 17 Jul 2024 14:25:50 -0700 (PDT)
+Received: from spiri.. ([86.124.123.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77b030bsm10532735e9.17.2024.07.17.14.25.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 14:25:49 -0700 (PDT)
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
+To: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v7 0/4] iio: adc: adc7192: Improvements
+Date: Thu, 18 Jul 2024 00:25:31 +0300
+Message-Id: <20240717212535.8348-1-alisa.roman@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4950004.31r3eYUQgx@rjwysocki.net>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 09:45:02PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> The iwlwifi wireless driver registers a thermal zone that is only needed
-> when the network interface handled by it is up and it wants that thermal
-> zone to be effectively ignored by the core otherwise.
-> 
-> Before commit a8a261774466 ("thermal: core: Call monitor_thermal_zone()
-> if zone temperature is invalid") that could be achieved by returning
-> an error code from the thermal zone's .get_temp() callback because the
-> core did not really handle errors returned by it almost at all.
-> However, commit a8a261774466 made the core attempt to recover from the
-> situation in which the temperature of a thermal zone cannot be
-> determined due to errors returned by its .get_temp() and is always
-> invalid from the core's perspective.
-> 
-> That was done because there are thermal zones in which .get_temp()
-> returns errors to start with due to some difficulties related to the
-> initialization ordering, but then it will start to produce valid
-> temperature values at one point.
-> 
-> Unfortunately, the simple approach taken by commit a8a261774466,
-> which is to poll the thermal zone periodically until its .get_temp()
-> callback starts to return valid temperature values, is at odds with
-> the special thermal zone in iwlwifi in which .get_temp() may always
-> return an error because its network interface may always be down.  If
-> that happens, every attempt to invoke the thermal zone's .get_temp()
-> callback resulting in an error causes the thermal core to print a
-> dev_warn() message to the kernel log which is super-noisy.
-> 
-> To address this problem, make the core handle the case in which
-> .get_temp() returns 0, but the temperature value returned by it
-> is not actually valid, in a special way.  Namely, make the core
-> completely ignore the invalid temperature value coming from
-> .get_temp() in that case, which requires folding in
-> update_temperature() into its caller and a few related changes.
-> 
-> On the iwlwifi side, modify iwl_mvm_tzone_get_temp() to return 0
-> and put THERMAL_TEMP_INVALID into the temperature return memory
-> location instead of returning an error when the firmware is not
-> running or it is not of the right type.
-> 
-> Also, to clearly separate the handling of invalid temperature
-> values from the thermal zone initialization, introduce a special
-> THERMAL_TEMP_INIT value specifically for the latter purpose.
-> 
-> Fixes: a8a261774466 ("thermal: core: Call monitor_thermal_zone() if zone temperature is invalid")
-> Closes: https://lore.kernel.org/linux-pm/20240715044527.GA1544@sol.localdomain/
-> Reported-by: Eric Biggers <ebiggers@kernel.org>
-> Reported-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=201761
-> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-> Tested-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-> Cc: 6.10+ <stable@vger.kernel.org> # 6.10+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v1 -> v2:
->    * It is safer to retain the old behavior in thermal_zone_get_temp(),
->      which is the second place where the .get_temp() zone callback is
->      used, so make it return -ENODATA if the temperature value coming
->      from that callback is invalid.
->    * Add Tested-by: for Stefan.
-> 
-> I have retained the previous Tested-by because the part of the patch that has
-> been tested remains unchanged.
-> 
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/tt.c |    7 +++
->  drivers/thermal/thermal_core.c              |   51 +++++++++++++---------------
->  drivers/thermal/thermal_core.h              |    3 +
->  drivers/thermal/thermal_helpers.c           |    2 +
->  4 files changed, 35 insertions(+), 28 deletions(-)
+Dear everyone,
 
-This makes the log messages go away for me.  However I had to resolve a conflict
-in drivers/net/wireless/intel/iwlwifi/mvm/tt.c to apply this patch to the latest
-upstream.
+Thank you very much for your feedback!
 
-- Eric
+Here is the updated series. Please consider applying in order!
+
+Alexandru and Conor, please note that I didn't add your Reviewed-by tags
+since I modified the commits. Please consider checking them again!
+
+Kind regards,
+Alisa-Dariana Roman.
+
+v6 -> v7
+	add comment explaining clock names
+	use early return
+	keep backward compatibility for undocumented properties
+	apply Nuno's suggestion, instead of failing when clock cells
+property is missing, just don't register clock provider
+	update bindings accordingly
+
+v6: https://lore.kernel.org/all/20240624124941.113010-1-alisa.roman@analog.com/
+
+
 
