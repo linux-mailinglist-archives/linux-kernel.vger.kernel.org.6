@@ -1,110 +1,239 @@
-Return-Path: <linux-kernel+bounces-255294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5870933E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:32:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB473933E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16C78B22C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E5828407F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98B4181313;
-	Wed, 17 Jul 2024 14:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A293F181339;
+	Wed, 17 Jul 2024 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dxu+Sgep"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dT97eKJ8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64451E515
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9FF1802CE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721226731; cv=none; b=PYa5GFrrBezdhOgNLU1MhTOfw8WhK1flmJSw/1TlIKFfw5nLDBYGbMnCDvaan/NEubNRc/FHo3LLFd8QrOvEEfIQPgSADu8NwsL/MMB6EaJlLCHM1ZruB/4BUIPlEtLYeTbYambR7qU3wS0cFYDWPvNTANvXOaCG3dKwhydsngI=
+	t=1721226788; cv=none; b=eqO3Y4LstsxyvsoSP1qekPCdypj+ft4H3E86T6Tik8M5MvY6u/9oUESUopYruSQ4EQNU6zThzt3iUf8bQfjQMTdEFkARX507sVZfhdtcUm+t2IFn6kx6eFtW8ZNBaxChrRK9iNR1F9HTl9l8xnSEtfS8mnqaZ2zqIyh6BVl7VJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721226731; c=relaxed/simple;
-	bh=ldPDBayLKEtVOpo5HRMHZsg1E0cwAYQyTsZ+Sza/7j0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KG0o5xISxgkKLL9Oys2sYAhx24NCQgEmWf1G83+BX6hQmHLSIK8InZcgsJ38sovmk3hcQFgkdYf47Lcu9rw/LWO998i6IUPNLbuyvv21bsstoDRiVs297bWrzjXP3hv7HpILrWE7T6jyZB5Kivdasyq9h2bJu55/H5wEoF037mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dxu+Sgep; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e9fe05354so9594748e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721226727; x=1721831527; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6gb3SRaVbWvMQnGBqh6xxdD/QGtCXs5NHaYcgYJYvDM=;
-        b=dxu+SgepPgtz54WRGi2wmbvA+cr7kfGvTA2Pp8Y62yYBROVjnwnJJv+61QGR6nfrfd
-         iqOnLa8BQqIzuP5AEoFDsPY5RiEsCpLZr9w/jcTitIEDdQ//5RyyOSjJYEK0XBYskWwX
-         ZCFqZZhdgH5vhj38io7UrP9zZNmLZwA6erEfpowom8ADOGP9UXlZ2zM/cmN8h6G0OqCA
-         M0kJpWpDgBEq/dpZgwwGH1vUzoktjkm9aTuAtuHCLjAQEo1Xirtv6SQ48XMoh/dN4gyy
-         iAAELYU2eaN3HYbtUHSgpCvUprRS1bcYQOY9LWucgN1pDai07MnS8jJWFhcpEdlC0EJr
-         HDtQ==
+	s=arc-20240116; t=1721226788; c=relaxed/simple;
+	bh=CrDDYOcmyPQoZCPC1i4Y1DcAZ3+d7HcTSETFYRrG8VQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCzeV3DGLvjgMjuuChd5T3IfJWznASLyC6AdulYq6L037BvZpnCK0/RLhb9HELqeHo6+EdMjSxCj0NXyE2rqrRc/ideoowl65R6BSlXA9fUSQ3qHnP59Emq9KBMa4wfiUD/f+5AYbUS9QMq243cMqhvn/5SoM98bLnektwHAx60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dT97eKJ8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721226785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GICXT0BFVJy0QIZX9VPtiCc3OM2RPQjhgUFSA0WTx1U=;
+	b=dT97eKJ8TzQxT9NkFXYCwXAehUW1rKTroapjgB1z0JGLjQsTie/DGKEGBffBZWfqffkJJh
+	BXMMTluAgs8yIYwrmP+I6wVhmoivworP+62qK8EBZE21ZcETHuAoSZGLKcO6uWMepIsF0k
+	UJUzYCFBJjRPNGjtadsilCYULMmssCg=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-TqBxL7cKMP2zARKj8LtUrw-1; Wed, 17 Jul 2024 10:33:04 -0400
+X-MC-Unique: TqBxL7cKMP2zARKj8LtUrw-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52ebdb0ef28so8431214e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:33:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721226727; x=1721831527;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6gb3SRaVbWvMQnGBqh6xxdD/QGtCXs5NHaYcgYJYvDM=;
-        b=goS8U7Z2UBcWcuuvSabK+tMu6Q1+jNO9jjWIVJSPfFZO6EnPTiCI408DEss4fvr/Fl
-         JoTTO/TevEXL+iIm2RBQdH2hScN6j8i4ENxT8Y1QwIIEq/FZlNLduRSjTupYUBFvNvtH
-         6sN2Z4dLmn1lfz/qNuRivkLHuvTO7Ril4UHm500EdPX1IPd/jwbUxmXdKLKcOVTLwxzw
-         k53X4QkUUIMVsRkGa1OMI0aclkW+2E9UI5EkZKjbq1hsnVNgRIL0E6/c7/k3DqXn+aa1
-         GccHNaLKYQDN9QFSg1UnyoKCx/Cga1G9nNxV6LUEN5ZoxRD3tgihA9T8T7clDLcsWgZ8
-         GEJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Er3mCyUWi9FtUaqRB6MI5rXIgiW3Wdm+R7wss5Y6/xW+5WngMCHVv8535Hj+yYVSByddkf+t1eVT4C+QLLSWECS6gaj5nSpORpJl
-X-Gm-Message-State: AOJu0YxHpbMEhTRpw9plao2/2IkPCxT1CE06sxNE7wPkP5QfIPAz9Fzf
-	68+37BHP/QmuQOHIj2gbVi62DHhdYi5H2cVNmqZ877akXYXnufzUCUfhDGn8fCU=
-X-Google-Smtp-Source: AGHT+IH4TeKDJCqXJMc9M7g8eUuhq5rsLBoWKS9KDDV7esGEVAF0qeFguGmnZJcn/fXIFfLS+8/5PA==
-X-Received: by 2002:a05:6512:3d8b:b0:52c:b09e:136d with SMTP id 2adb3069b0e04-52ee53c9858mr1632255e87.32.1721226727575;
-        Wed, 17 Jul 2024 07:32:07 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6724:3f6f:5a36:d95d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5ef57aesm170330585e9.45.2024.07.17.07.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 07:32:07 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] power: sequencing: fix an invalid pointer dereference in error path
-Date: Wed, 17 Jul 2024 16:32:06 +0200
-Message-ID: <172122672402.53664.14935726474313794841.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240712194004.241939-1-brgl@bgdev.pl>
-References: <20240712194004.241939-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1721226782; x=1721831582;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GICXT0BFVJy0QIZX9VPtiCc3OM2RPQjhgUFSA0WTx1U=;
+        b=K2rphZ5FMjXb2FVGLkDSSYAyZx90jRXiq2+BmZS6cXP72m0XTtc0QmP5fQB/gwXM+n
+         /bAwjNyMH2Qcq+Uh0v1mEouukcNDWbM1ykzp3YNhZvYIy+qL62TDb0Yo8Xed4dBkrOZ5
+         dtOZMLb/2SnSVKm9/I3KjlNY7q+c8awJGhuzHvTSizcU+HJMFxZFbL9rBuP30bpjlyBI
+         ZSvDaeKit/4cLKBgSs0l6Srn5jIprbzhtYiTYUwIwLOxyZvTCu/+OpaeJC0MsZftn+SE
+         FyhrnTXpzNEG4gL10+tzRp2mHOgwe8OkZhcrULme8P/hSKTDKShuTX7IPV1kdyim8Wty
+         pIqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpzbMDXzHww6TEzm3Pa29v1pWpshuIBKL8SY4RtUAuCR1F382wzfaMB76BpbqskiICsbwv+fegZC36JrS3r+1NDxAVVCNblepPOKE7
+X-Gm-Message-State: AOJu0YxdqdWZpOGSc5z5PfsSDP1LZ7rBcE33uRA4r6Eq7k6+eGkCIyoV
+	Wm8UnoD1xBYZpHn07GNtHvffhR4It5QXJvvA4gRDMMBf2FuT3D5RJciziPEXqzQbFF553jkcroA
+	BT5JC8eoIw1IW9ASHhznT1QG7y9gDdCuI9iN7IDu66xJoD1x/qdJidahD9acTkg==
+X-Received: by 2002:a05:6512:33c5:b0:52c:ec68:6165 with SMTP id 2adb3069b0e04-52ee53cc00bmr1663770e87.33.1721226782340;
+        Wed, 17 Jul 2024 07:33:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrqpAiEHpfyNE8LzYLpjmIqAoQj/aWWnfve8BOPOkkfeVMrwCw7kn1k4etYvjz09EiWJN/XQ==
+X-Received: by 2002:a05:6512:33c5:b0:52c:ec68:6165 with SMTP id 2adb3069b0e04-52ee53cc00bmr1663731e87.33.1721226781780;
+        Wed, 17 Jul 2024 07:33:01 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c714:c00:b08b:a871:ce99:dfde? (p200300cbc7140c00b08ba871ce99dfde.dip0.t-ipconnect.de. [2003:cb:c714:c00:b08b:a871:ce99:dfde])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77a5804sm92385e9.16.2024.07.17.07.32.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 07:33:01 -0700 (PDT)
+Message-ID: <e57eca18-b66d-4b5d-9e73-8ab22f6bc747@redhat.com>
+Date: Wed, 17 Jul 2024 16:32:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/17] MIPS: sgi-ip27: make NODE_DATA() the same as on all
+ other architectures
+To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ x86@kernel.org
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-3-rppt@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240716111346.3676969-3-rppt@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Fri, 12 Jul 2024 21:40:04 +0200, Bartosz Golaszewski wrote:
-> We may end up calling pwrseq_target_free() on a partially initialized
-> target object whose unit is either NULL or an ERR_PTR(). Avoid
-> dereferencing invalid memory by adding an appropriate check to
-> pwrseq_target_free().
+On 16.07.24 13:13, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
+> sgi-ip27 is the only system that defines NODE_DATA() differently than
+> the rest of NUMA machines.
 > 
+> Add node_data array of struct pglist pointers that will point to
+> __node_data[node]->pglist and redefine NODE_DATA() to use node_data
+> array.
+> 
+> This will allow pulling declaration of node_data to the generic mm code
+> in the next commit.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>   arch/mips/include/asm/mach-ip27/mmzone.h | 5 ++++-
+>   arch/mips/sgi-ip27/ip27-memory.c         | 5 ++++-
+>   2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/mips/include/asm/mach-ip27/mmzone.h b/arch/mips/include/asm/mach-ip27/mmzone.h
+> index 08c36e50a860..629c3f290203 100644
+> --- a/arch/mips/include/asm/mach-ip27/mmzone.h
+> +++ b/arch/mips/include/asm/mach-ip27/mmzone.h
+> @@ -22,7 +22,10 @@ struct node_data {
+>   
+>   extern struct node_data *__node_data[];
+>   
+> -#define NODE_DATA(n)		(&__node_data[(n)]->pglist)
+>   #define hub_data(n)		(&__node_data[(n)]->hub)
+>   
+> +extern struct pglist_data *node_data[];
+> +
+> +#define NODE_DATA(nid)		(node_data[nid])
+> +
+>   #endif /* _ASM_MACH_MMZONE_H */
+> diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+> index b8ca94cfb4fe..c30ef6958b97 100644
+> --- a/arch/mips/sgi-ip27/ip27-memory.c
+> +++ b/arch/mips/sgi-ip27/ip27-memory.c
+> @@ -34,8 +34,10 @@
+>   #define SLOT_PFNSHIFT		(SLOT_SHIFT - PAGE_SHIFT)
+>   #define PFN_NASIDSHFT		(NASID_SHFT - PAGE_SHIFT)
+>   
+> -struct node_data *__node_data[MAX_NUMNODES];
+> +struct pglist_data *node_data[MAX_NUMNODES];
+> +EXPORT_SYMBOL(node_data);
+>   
+> +struct node_data *__node_data[MAX_NUMNODES];
+>   EXPORT_SYMBOL(__node_data);
+>   
+>   static u64 gen_region_mask(void)
+> @@ -361,6 +363,7 @@ static void __init node_mem_init(nasid_t node)
+>   	 */
+>   	__node_data[node] = __va(slot_freepfn << PAGE_SHIFT);
+>   	memset(__node_data[node], 0, PAGE_SIZE);
+> +	node_data[node] = &__node_data[node]->pglist;
+>   
+>   	NODE_DATA(node)->node_start_pfn = start_pfn;
+>   	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;
 
-Applied, thanks!
+I was assuming we could get rid of __node_data->pglist.
 
-[1/1] power: sequencing: fix an invalid pointer dereference in error path
-      commit: a19ce320c379e0519b68178c596e43d1d5dda03b
+But now I am confused where that is actually set.
 
-Best regards,
+Anyhow
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cheers,
+
+David / dhildenb
+
 
