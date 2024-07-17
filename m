@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-254846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A37D93386B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:59:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971B093386C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F701F22AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:59:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CB9FB21641
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA13C1D52D;
-	Wed, 17 Jul 2024 07:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CE4208B8;
+	Wed, 17 Jul 2024 07:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KqQsQMeb"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OLa17FhX"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3468223774
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1B21CAB1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721203162; cv=none; b=Og5U83v6Sf6Dfi3lANjrrVktns1gwQSIn3+u2IdiN/1p9UvftBW4YaL3YymljOaLwSuOA9rzDzHz6pToZFhF5VMGVcbzDPvVI2oXIpz3XNia4MsOiZ7MTIK+/xf0Xhpz2/7W1FxJbMyvtqF1rknGNnxhFIX+Wh5WdIaptZQBr5g=
+	t=1721203184; cv=none; b=O8eYlxm9n5mtYOlfSNBzKrejHfi9OaQUSRC8arSXH0Dhyhu3KXYjSC9q2n7wf+ojXMmdgF/AexARVOlOrdL4SzXAGv7iSbsACfULV1DxIPkTT7a0nxhqfLSjpWmkigS9ya8HHrPUmsXlb8GGFqpsLO+XjUo+RSELV1A8OqoivdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721203162; c=relaxed/simple;
-	bh=Xtpnddfs6h4SJwxl1kF8YkJ9fm4FScxHfK/ff0yMqcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8TSTWlbP8xZhfkyPTZYA0R4ftDnEM46zwfEn7HJU8jwLENoAATUM0aa4sGDAbrK+GFl7xbLxSyeqPFEtk3J2YCTWfMuf8GojJnI6QzfRq+QVVrGh6VxBL+DBmRCP+f8rUCjis2iptV0OOmu1tPdGfsOz9IIy3pezCEMXXOZCNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KqQsQMeb; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1721203184; c=relaxed/simple;
+	bh=4kdHFUV5KnPKH1AMa9NEHHGe0CJaGYqG5YhtmXf9DYQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gH5H61TQbpw+eUIGmOMKJpX/EBVrS+zf6kDF5LY1udveee3COgz57SP5YS2P2pE+IYemD1cnYnMNcc3deAsEw8M+K2rYujzoi+u08qWUUSqS1GxrwUXur6RSzlvda2iZQPhJI4PbWSdoa5PPtGqN5rwNRxuOqj9DcIxu01vnIGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OLa17FhX; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H5Pulg016925;
-	Wed, 17 Jul 2024 07:59:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=l28JQo0kKUYgomFC9Lc7TWgwJuW
-	w1xzr+w3MB+aZLFM=; b=KqQsQMebsgKQdrlGns95ZNjc4Fy9D3HaT1O1OT6rMaQ
-	nIVQJ/vPxCxrbSx5y5scnCEz4AbLY51ACne1n9hkzm2UxVwv9QrtHwAcc1z5XgWh
-	SlhJcVDZd2OMUfrdYly0cutBLWJzvE13SnWDr/wWiKRcxIDZRhBrgk9xIyGGE3Ae
-	JrSC8Oeo9abkPMwpqEcC1wVX1rI9WNHeGCQrEvNytCzf4j+TkCzL+rcv1S4kqtev
-	gfn9Qfw1MBL0aDNgePKd9ueVlJ4vL3/RTGrNtOMOfsHSnnZ7xUaHhLsucopS1RjA
-	Yxq2kHpqnD5wuA78oE9QBdAKS0+3UWEM3m7JsNqAXqw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e4ru8ksf-1
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H7R1uq008170;
+	Wed, 17 Jul 2024 07:59:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	4kdHFUV5KnPKH1AMa9NEHHGe0CJaGYqG5YhtmXf9DYQ=; b=OLa17FhX3qlrnloU
+	zCQGQPKN2tnK9a6URbmmfVUik6d4q+/8t3ErcKwsuhpJaOpKVtnMBPsxe1qPLQ6i
+	pA6nATcnA3e8c6SD9QzCVgLgGuLEAO/2VA+U5EXwU7Xam21anjmjhLtL14Ozz0IS
+	VXL1DVlzR21OT1w+Kv6GSQe+v0xRLIZkil0182wLD5s/wj1LCldr1LKDOUd2Ixvu
+	EVpLbimdqsnxBawReYk5zgu2rWJU2cTbuz2Z64joUwrNJVEX/r2T6VzzzPs3XjXD
+	i3Srzjwdu9aztWOBZDUrr9xrHrCkBx1BtFFx/1D+pOGm/te+6GOS6dTDhOsavpDi
+	qPJ7Hg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e0urs341-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 07:59:15 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H5RFPH006337;
-	Wed, 17 Jul 2024 07:59:14 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40dwkmb5hc-1
+	Wed, 17 Jul 2024 07:59:20 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46H7xKdw023023;
+	Wed, 17 Jul 2024 07:59:20 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40e0urs33y-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 07:59:14 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46H7xAm728902044
+	Wed, 17 Jul 2024 07:59:20 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46H5OHmS028837;
+	Wed, 17 Jul 2024 07:59:19 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40dwkmu53h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 07:59:19 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46H7xDCj31195884
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 07:59:12 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C06F92004B;
-	Wed, 17 Jul 2024 07:59:10 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B9E8F20040;
-	Wed, 17 Jul 2024 07:59:09 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.22.40])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 17 Jul 2024 07:59:09 +0000 (GMT)
-Date: Wed, 17 Jul 2024 13:29:07 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: sched_ext/for-6.11: cpu validity check in ops_cpu_valid
-Message-ID: <Zpd5yzMGN9JtV-4C@linux.ibm.com>
-References: <ZpLSEHskvXXv4EoR@linux.ibm.com>
- <ZpSw7PvW1Teh6tNV@slm.duckdns.org>
- <ZpYX7BgiirBmwLa3@linux.ibm.com>
- <Zpbp02N6bAE8mNXb@slm.duckdns.org>
+	Wed, 17 Jul 2024 07:59:15 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9514C2004B;
+	Wed, 17 Jul 2024 07:59:13 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B336F20040;
+	Wed, 17 Jul 2024 07:59:12 +0000 (GMT)
+Received: from [9.171.86.104] (unknown [9.171.86.104])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 17 Jul 2024 07:59:12 +0000 (GMT)
+Message-ID: <3976e7a9-b6a2-450c-a891-483644ee88ba@linux.ibm.com>
+Date: Wed, 17 Jul 2024 09:59:12 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm/hugetlb_vmemmap] 875fa64577:
+ vm-scalability.throughput -34.3% regression
+To: Janosch Frank <frankja@linux.ibm.com>, Yu Zhao <yuzhao@google.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        David Hildenbrand <david@redhat.com>,
+        Frank van der Linden <fvdl@google.com>,
+        Matthew Wilcox
+ <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+        Yang Shi <yang@os.amperecomputing.com>, linux-kernel@vger.kernel.org,
+        ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Marc Hartmayer <mhartmay@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+References: <202407091001.1250ad4a-oliver.sang@intel.com>
+ <3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <3acefad9-96e5-4681-8014-827d6be71c7a@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8yuVJUFm8pcrV-ZSY9Q1gErcAlT68eLo
+X-Proofpoint-ORIG-GUID: -Nx7rkw7jfYrNy8hcw7tnbrPOG_Up27z
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zpbp02N6bAE8mNXb@slm.duckdns.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DQRKpQ1ZGtrPuHCgLUwufxji1j43x5zf
-X-Proofpoint-ORIG-GUID: DQRKpQ1ZGtrPuHCgLUwufxji1j43x5zf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-17_04,2024-07-16_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- spamscore=0 mlxlogscore=804 mlxscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=826 priorityscore=1501 suspectscore=0 malwarescore=0
+ clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2407170059
 
-On Tue, Jul 16, 2024 at 11:44:51AM -1000, Tejun Heo wrote:
-> Hello, Vishal.
-> 
-> On Tue, Jul 16, 2024 at 12:19:16PM +0530, Vishal Chourasia wrote:
-> ...
-> > However, the case of the BPF scheduler is different; we shouldn't need
-> > to handle corner cases but instead immediately flag such cases.
-> 
-> I'm not convinced of this. There's a tension here and I don't think either
-> end of the spectrum is the right solution. Please see below.
-> 
-> > Consider this: if a BPF scheduler is returning a non-present CPU in
-> > select_cpu, the corresponding task will get scheduled on a CPU (using
-> > the fallback mechanism) that may not be the best placement, causing
-> > inconsistent behavior. And there will be no red flags reported making it
-> > difficult to catch. My point is that sched_ext should be much stricter
-> > towards the BPF scheduler.
-> 
-> While flagging any deviation as failure and aborting sounds simple and clean
-> on the surface, I don't think it's that clear cut. There already are edge
-> conditions where ext or core scheduler code overrides sched_class decisions
-> and it's not straightforward to get synchronization against e.g. CPU hotplug
-> watertight from the BPF scheduler. So, we can end up with aborting a
-> scheduler once in a blue moon for a condition which can only occur during
-> hotplug and be easily worked around without any noticeable impact. I don't
-> think that's what we want.
-> 
-> That's not to say that the current situation is great because, as you
-> pointed out, it's possible to be systematically buggy and fly under the
-> radar, although I have to say that I've never seen this particular part
-> being a problem but YMMV.
-> 
-> Currently, error handling is binary. Either it's all okay or the scheduler
-> dies, but I think things like select_cpu() returning an offline CPU likely
-> needs a bit more nuance. ie. If it happens once around CPU hotplug, who
-> cares? But if a scheduler is consistently returning an invalid CPU, that
-> certainly is a problem and it may not be easy to notice. One way to go about
-> it could be collecting stats for these events and let the BPF scheduler
-> decide what to do about them.
-> 
-> Thanks.
-> 
-> -- 
-> tejun
-Thanks for the replies.
+Am 17.07.24 um 09:52 schrieb Janosch Frank:
+> On 7/9/24 07:11, kernel test robot wrote:
+>> Hello,
+>>
+>> kernel test robot noticed a -34.3% regression of vm-scalability.throughput on:
+>>
+>>
+>> commit: 875fa64577da9bc8e9963ee14fef8433f20653e7 ("mm/hugetlb_vmemmap: fix race with speculative PFN walkers")
+>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>>
+>> [still regression on linux-next/master 0b58e108042b0ed28a71cd7edf5175999955b233]
+>>
+> This has hit s390 huge page backed KVM guests as well.
+> Our simple start/stop test case went from ~5 to over 50 seconds of runtime.
 
---
-vishal.c
+Could this be one of the synchronize_rcu calls? This patch adds lots of them. On s390 with HZ=100 those are really expensive.
 
