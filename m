@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-254792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C5F9337A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413029337AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F10F1F242CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE9FB23BF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C341A1B948;
-	Wed, 17 Jul 2024 07:13:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFC11BC49;
+	Wed, 17 Jul 2024 07:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="sVizOIy+"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025D518EB1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB0B18EB1;
+	Wed, 17 Jul 2024 07:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200386; cv=none; b=rgZqL39t1Xg09LctH0rFQ7VGRzRv6+oYu9RlwJDcd/CugNr0cbGWl3IbmFLSDOB32Y/EnNOYCsg1fw6zhHo/nyKA421RVtTsDXG79WtzfMYtUkkcTuXi2OKh9f5Qpb3cYg4ALbYnK3nJ444j41HRsp7TxE4X9/Wg79BhQ4Bs7qw=
+	t=1721200480; cv=none; b=WGE09jhZHSmugYdo8q34T03//Zaet5lTabqQL6wRUBWLteAy7xiZ79LolOdtaMECyDbwys6T/cRgkj0VOYGTNVbCr/kjDZWX+OvIQp+4O96Z0IXDgRbi2d1jwGH5DGKwBjYHvs1P+guQUq3ln/QEY7//eohoBEW8+1Vhd2/gVW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200386; c=relaxed/simple;
-	bh=7iE1cPVpc8Rfetpz5YFYDXwzbGn+DbT5iB1qawTdko4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MCow/hMS+5erhNZmf4Bf8M2dth+Tqwfx72s/rq0woMHzhUsJle/6G/IxWnkNr5F38YTeYnJHRIrXa45//XGzqjgvjBiC+xTvBAE8Aqv3fBqw8oZocpBfd/3CGHZuj0XC96tG1Vh9/MbIM1iLW8ECqd6rsVUVtmlw87QuJUBbp3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso106412239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 00:13:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721200384; x=1721805184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ViRurahp3YZwL58fWiClcK2PtH3by/OEm5V9oi/OEME=;
-        b=Ry4f0NfXyw+1bzpRaYbzP32I3UETl4Jp9ac5CVWdmHne5x98Y7IJPQUb3UMaMTDzhN
-         eMpwqPCGt+r4e030BtvOHUwE1KTLeiMvgdfFSHpAihvRVTEG5Sneja21jaPxWjiPR4LI
-         o3ZoNs80nyAfgHch/P+4eq2WjUgiCKN9wR/zpSpqDGEfMcjm9+NUnm1KJROVp7mKy6Nu
-         AkNLir00ZhXioUYnq+ZJuxU8+Ck2N0cnpEWavV9JbeHPABi+A+yKiyjRnrM7uBw1PhnI
-         btryCfjGIS4nMMholYyE+nN8b620HN3XvgJQ/0mON8llZVxfTTdg5F+hkTioLzZ9pHcu
-         pt9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWIBa151OckIBzTLL4G6rDN4LNgU4EsJHldDF3Z7x7TJYF1ma0LvPS97RVcnyKWm2zvmvcTtGBF2kb++HRHJkP+Uc8es+s/lcXSLlgb
-X-Gm-Message-State: AOJu0YwhQ1ykzpQjck1ImRjXldP6xvGxI0h14YmeJVwmRRF3yfPhN/84
-	d4UfRoZp64Ul4y1/crNkPO75NOWZjnP54guaVFOi0clzMyWTdVQzgPzFdTbwnGZlmI7zlwd7+g4
-	XAydiMvudR+8tvuzxoBNYiihcRZx0WYtTWAkucIldqKIgYE7hXowtV8k=
-X-Google-Smtp-Source: AGHT+IEJuKOpD2Pe6mHiL7V6ckpBT4Nsuw1TsP85/x7sJiZtZLHAS/WYO2OWcDbD3K4i7Pca1MQlsXHv4XDv0UxRHC7eMhscKqZ7
+	s=arc-20240116; t=1721200480; c=relaxed/simple;
+	bh=7YDAgM8hZW5ntSbpRA+tdwQRCUPWuI0iPufu6/S4KLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Clos/nMH7Aq4RB0Ojqk+3T5GseZyk5yGSkPSKinnW82j60KmJviJFlbCh9ucWykEmZkD02HboN7NsdfYAsLGia+vrBI9o9rrlWb4v3D3dNQCp/rfZ9hrPv7qRpOXdCo6Q/47zEOvyTJjX4j14aPpcVV5OwXGOZKk3OUBS7E4i0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=sVizOIy+; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721200443; x=1721805243; i=frank.scheiner@web.de;
+	bh=9pFZJbajQATWyl0bSF67lukzXH6aiQLZrpGanM5WKPA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sVizOIy+P8NLEku1mdH2LKjNgq5VbkorAFtGmafc7P+q1EnN0UF63AQkK70tKxug
+	 Eu4h/joEqPCSEFZWcefYII1GIaaUB6eUJOksXR3Mkj68w9Gk4aFbu1+HuNVsAIqqD
+	 CkpsuZA4/WRTOsk6o18tXRCNGMrheJBL/xB5m0kBOvb0VgosbasLDRaSJA/nrDPmS
+	 bqyfP4q5Ghq6G0h9WFU97Kg5gnwQK9DJRDoKd+LeZxTKqxuKZPcZbtU78exYWL1a8
+	 muKcO2sVy8QPSAo5XxLPm33nU6IUG58c9XrdZQ2B5wLMbJCHtBOyKkIEcBh9b/W9o
+	 I6L15UXwFP+3QnCeOw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([84.152.252.217]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Euv-1sUn8p44s9-007o6u; Wed, 17
+ Jul 2024 09:14:03 +0200
+Message-ID: <b5c73716-697f-4bb7-b024-17ae9a69d223@web.de>
+Date: Wed, 17 Jul 2024 09:14:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1690:b0:4b7:c9b5:675c with SMTP id
- 8926c6da1cb9f-4c215d2578cmr49258173.6.1721200384198; Wed, 17 Jul 2024
- 00:13:04 -0700 (PDT)
-Date: Wed, 17 Jul 2024 00:13:04 -0700
-In-Reply-To: <c2d1b569-9b50-42db-991e-a295b3e304bc@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007cdbe0061d6c315a@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in attr_data_get_block
-From: syzbot <syzbot+36bb70085ef6edc2ebb9@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, akpm@linux-foundation.org, allen.lkml@gmail.com,
+ broonie@kernel.org, conor@kernel.org, f.fainelli@gmail.com,
+ jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ sudipm.mukherjee@gmail.com, torvalds@linux-foundation.org,
+ =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>
+References: <20240704094505.095988824@linuxfoundation.org>
+ <76458f11-0ca4-4d3b-a9bc-916399f76b54@web.de>
+ <2024071237-hypnotize-lethargic-98f2@gregkh>
+ <07a7bc4b-9b71-486f-8666-d3b3593d682c@web.de>
+ <2024071543-footing-vantage-bd4f@gregkh>
+Content-Language: en-US
+From: Frank Scheiner <frank.scheiner@web.de>
+In-Reply-To: <2024071543-footing-vantage-bd4f@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lAs9nI1UYfVKpINGL7g2Ljhb+2pUjfTGUjnS9R9DQRvotzJHtX4
+ +KW2kGvp2Ne2nK+Qt5bjOLXWcf9HCRdMVOK+Q6EWbd5GwAxz/OP+rhqK1bsPfwxUm0613Ro
+ Ya2RuYRjBczFiignSw337BkHVLrP3tRTCF1QVwZMF6ig8YZpk24Y8Bw2pyScjRol1VrsAex
+ Xq2s0ascuvTr78f4/BKjw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L8Emu7uAdvU=;ggrbhS6sGixVSroBDefhlCzhvUi
+ JH3oFi8/JSokOuLrHgeKLSF1xAOkl6x5BeetLSn2VtQy+GaKvgEGwKhxiRIAYBHCQZJzT35O6
+ VCWCR1ZfMdt22ZeWolVlmKUHdTDzbPwbDYDuPaZXXa6kK1/r5Xmtt9DVXO3/Pfp4tzzY77TED
+ Jqs6g0UH26uWYbk37uQfpbwUa6M1A3CreIxBS636pOa2nwapR4hAza0oLL2FWJhtbjLJKBup1
+ XuwQYNaW/ZzTWnmHDmruKZ8aS+mx7cLigTxAJPqKaWRfToYqi2PNXm2Jhstag1kGVwOo7fxLw
+ oFWjVkspRUtiMMyFcTp0Snhp1Zc3BoBRLH16kPwki6/GUkNIVppJ5EPA1+0jv8SF77fRCi6yw
+ oZtbdfKyQaZbKv5ZIl9q39zAogQMIeHknT1x7W3EMwuPF/0w1KTksCjL6uDENk4p3GOf2PdBU
+ qYZ5TcHaZgHmJ08Gwnjj+gh3wwFzQ4Z4NFZkDCbJY5BOh3LzERGhT4SyENuDEXSjUJytJ9Ayk
+ I2staZuIwjHrjC6Afw2IrW4/gq6T2U2wxSKC/ThsLOhrpvDDVH3nr87aZ5YSANbf8u2H1Tk9l
+ vDCAAqN3ZC6iLa6TGIsTDEgRkEPctb1y4D41sb6rFr43aUuHU9SSTu7qwVmMB0YBJUWbF1FMz
+ wE7Yhl1npoLdWnDNQkWgzCgKM/0MGyGk5Ri91jxAafeEBedroIPi8qlld4C+rFvO8IRUghDUW
+ m9PMgLgH9UFgULFaL6B/uSynDFiH7mP4tqvXy3v+DAWLsjaS9N2q9XQSc6MxD1VhwJxWekdDN
+ ii8GYOJNVeCG32P8XULikXLI+uHidd1m/gZBHuzXiwT8A=
 
-Hello,
+On 15.07.24 13:43, Greg KH wrote:
+> On Fri, Jul 12, 2024 at 04:19:39PM +0200, Frank Scheiner wrote:
+>> On 12.07.24 15:32, Greg KH wrote:
+>>> [...]
+>>  From my understanding 31e0721aeabde29371f624f56ce2f403508527a5 should
+>> not be merged w/o 8ff059b8531f3b98e14f0461859fc7cdd95823e4, which also
+>> seems to be the case for all other stable kernels from linux-5.12.y up.
+>>
+>> So 8ff059b8531f3b98e14f0461859fc7cdd95823e4 should be added, too, if
+>> 31e0721aeabde29371f624f56ce2f403508527a5 stays in.
+>
+> Ok, thanks, now queued up.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: write(/proc/sys/fs/binfmt_misc/register) failed
+Great! linux-5.10.y is already building fine now again for ia64.
 
-2024/07/17 07:12:44 parsed 1 programs
-2024/07/17 07:12:44 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-write(/proc/sys/fs/binfmt_misc/register) failed: 17
-SYZFAIL: write(/proc/sys/fs/binfmt_misc/register) failed
- (errno 17: File exists)
+>>> And I thought that ia64 was dead?
+>>
+>> No, actually it's alive and well - just currently outside of mainline -
+>> but still in the stable kernels up to linux-6.6.y and for newer kernels
+>> patched back in. If you want to check on our CI ([2]), all current
+>> stable kernels build fine for ia64 and run in Ski - but linux-5.10.y
+>> currently only because I manually added
+>> 8ff059b8531f3b98e14f0461859fc7cdd95823e4 to the list of patches applied
+>> by the CI.
+>>
+>> [2]: https://github.com/linux-ia64/linux-stable-rc/actions/runs/9901808=
+825
+>
+> Will be interesting to see how long it lasts, good luck!
 
+Thanks! I think we get better and better with each obstacle moved out of
+the way.
 
-Tested on:
+BTW that seems to have been prophetic by you, because now the
+linux-4.19.y build for ia64 is broken. ;-) But we're already on it and
+have a trace. I'll report our findings soon. :-)
 
-commit:         d57431c6 fs/ntfs3: Do copy_to_user out of run_lock
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1570832d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Cheers,
+Frank
 
