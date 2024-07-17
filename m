@@ -1,175 +1,198 @@
-Return-Path: <linux-kernel+bounces-255039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6349D933AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F3A933AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180682815F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3486B1F2338F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DA917F4E8;
-	Wed, 17 Jul 2024 10:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A217E915;
+	Wed, 17 Jul 2024 10:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s0/Eq+qo"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FB7y2PxQ"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC7C17F37B;
-	Wed, 17 Jul 2024 10:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210815; cv=fail; b=bOQLUy0gulLVf8LbFIPtoinj/wwEbVgEMdlltgEgjuZe87dFEHls0VjqlySMl4HsN8E2rUldwnw4SThx3nvV5nwNFgAeRl5aYlsjC6eX9ysJndsbu2bifcRasI4EfNxYKAyC/JbskYpMGj7BnWQ+xbzAy0eVv/hnzhi4/kKbFJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210815; c=relaxed/simple;
-	bh=jDNmRwOTHblC5WHvyK1XQ9RCaX4kSnUSOsckzwPD9c0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bxIL6N3sEyErrIzO4+VqgxE3H9L4/vS5na3tbMoatnX7CPNWvlvXAC4KV+OpFHUNewapjTRdgpc9PexQEVEjU28e9uCdZLcFoYaZu4o5jp7w0oLYkCHh96fmae9GfzYpCv9w1d5Ex/et6oQUqnIM0Jwq0Qpvgw86clQYW7bO0aA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s0/Eq+qo; arc=fail smtp.client-ip=40.107.220.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nKLvfcyfjEnn+VPuG8QX6ybwAxW2uQ+fBeQRDlkQE8NJo/YnUMxwWByEO7CYmmPAgdV5ZXWzvsbO56Qxwc8xiLKZnRr/RD9BRfnEOIDI+pJsQKNExevuvRPAh1XKPSQm4WbfbXNuBnZaar3vFukcUXVY+ydFZ6/xQnjar8E8jJy6tRmhdM4PyUJdB3vlosukB8u/okd88gLhOiyXZccuqzZhF5R0z/61M0bAsGH5M6K58p2+4hQ/k7nnjXiG35Ukdoy1ZJJcmgtjJKrdxwtqmjcbsZ4kZnC+HfgIxDrH9oZT17WMD/Z2w2Sxsy0xHUupAF85Nc3XrmuSrZUf55Mzlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z/JYYuNywcOlvbc7IRcLncHn6vGzXZYzbS9x8PuOD4Y=;
- b=UfZyc5uWsNHyjvJI7CkPBpZaHuoiNYAkVjPbxrDxZjxyfU/ij/ppxIs13WVWQ39JjuaYgzxavN752bK2NKWj9VlSGIAE68cDWU//qQbbdgS9U9UapCOj+a1cgiGmpn+hvoYCa0aB2Ndj3rVmhhIXXjfs5qbOOF/ReTQPTZ7JrSRzDMdLEcRwxuSMxbAXbEJwH6oUq5l42MtjCyaE4uZILc3IA7tTaFcrj6halypxuq+RcRZf0A0lUyFT0KS864iOobtBLh82De1uTYsnTWSyouwgCChutVKDpJqdzM7heAMpl9Bf1BYG3pj7LbrzdXM0cwAKU4RiyPLtBux/8uAJzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z/JYYuNywcOlvbc7IRcLncHn6vGzXZYzbS9x8PuOD4Y=;
- b=s0/Eq+qoOnVD6Z83hjENNxUIa7rl1OVAlNDNDbEXD88kzRn0F1L6a37hsJxoXExgn10JNFkhU5LM3HI64vuXEIGLnIMdqAQ+1DEsZRg+leOpSGKrnRPOAlMhE0qDz8R7/GW/+JCm+CDApHbhVM8AWV/iv/4Jbuf411VY1u4q8eciXaI7PsdyitG5y9Wnu3zGWWICSItBqsosCxudkCYsJ9vrlRqMiJLq4d7PghmZxo0jbJwLQAsP0YJYrvHc3+z4pLTTwCxB303rr5tEPJfRFQYPFCSQo0JfYyKyb2Crl/h4h/uwFbRgcNJjb2YDDtKuM/Z9qt+ESA1alZW/wgAfZQ==
-Received: from CH5P222CA0024.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::9)
- by PH7PR12MB6417.namprd12.prod.outlook.com (2603:10b6:510:1ff::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.27; Wed, 17 Jul
- 2024 10:06:49 +0000
-Received: from CH1PEPF0000AD74.namprd04.prod.outlook.com
- (2603:10b6:610:1ee:cafe::22) by CH5P222CA0024.outlook.office365.com
- (2603:10b6:610:1ee::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
- Transport; Wed, 17 Jul 2024 10:06:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD74.mail.protection.outlook.com (10.167.244.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 10:06:49 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 03:06:35 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 03:06:35 -0700
-Received: from build-amhetre-20240716T042216611.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
- Frontend Transport; Wed, 17 Jul 2024 03:06:35 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH 2/2] include: linux: Update gather only if it's not NULL
-Date: Wed, 17 Jul 2024 10:06:19 +0000
-Message-ID: <20240717100619.108250-2-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240717100619.108250-1-amhetre@nvidia.com>
-References: <20240717100619.108250-1-amhetre@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7637157A5B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721210855; cv=none; b=puicQFV9kxQwdMAKaf8vZukGVhvsyndpRhgJq+n8kFwjl2+4GAgFkc8H055tj2P5XjR2T0ywOJDe/aTgFI9T7sEpFALfEBoGAVuVnZ/xsqSs2aqlju8GfUGWzexvv7tCDv8jyWBUniWAPjJeornWMhRn+kbkiz+mx2dE2vVZMG4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721210855; c=relaxed/simple;
+	bh=N25FP7TvOgXONsgo6Q/FwqUi16Iwa+P8KpZGR+wN1B8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iiCsd1sxitSbsA4BcyRTkV2gj7Kw5s3yHIJHvgC7ZvyGYxbnwBtbGZkYqqvwmI9EIwLcqPHfP0Dx0YxdMzanjKdYCb3k2aN4Ae1eBUrEnUC/Rkyu1c3KrEQs3JlrsyXneRMIHa0N4GzqPWvyJ6VGRHGHRJkA0UbK/jSmmQY8Q7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FB7y2PxQ; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e05ecb3dbf6so524519276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:07:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721210853; x=1721815653; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iiFPGR0gU3k4tCZTtBUGT3nSA1nwJ4HhDZsrK4BmglM=;
+        b=FB7y2PxQGgmCUxpoe4baukaHOjSWDoH43ZgRMlbrjYRD2be2PxCYT7Ujl2iM//OQby
+         7Zk1XMWQEEfA9KVYarpb3S7vaKCQCN+R2FdCUCdTY+FrkPaS8t4Kfrk4ZQ/WOhjTI/d6
+         +RrrGGv9gemDPDzKE2yM6vAvvqZ2+25H3jO1pGQKHKGyJb+VD4MYDvi6JrduXO6u8TKE
+         VY6tNqTMWHV0Df7IRgjYnDu049WlBdYYpkarmBvqyoMXHRUxv05rwBx9jocuo68VWKH9
+         goVJz5aLdE7/NOd4ipXRkF25Mn77SMFJ3ZmOLmkuaIYkBXNhhWVQ07Vxhj0sxwChSaGA
+         wVmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721210853; x=1721815653;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iiFPGR0gU3k4tCZTtBUGT3nSA1nwJ4HhDZsrK4BmglM=;
+        b=aPMQCQj7ytz/LI1OzfWjEAx9rmYuz+B1zYUWqOqqrOBlwfFP44+B+Wbkh2ZLZlksI0
+         dm4iQhCCy3Jq3Tmabx8AbQPHfagFaAgGp/hVNWifE0KGoVsqBX1cWmhpccIbWb+ekabx
+         XzZiHZYzzbcDPGMffw2748+wOakQJwpaqa2XKh0Z4ArL9pFOgXHlV62R7xPZwE1Gaq3a
+         icPM0eCpE31UOcHQHR6byEFJ5/sacDsZf8HYFvx6Kpvjl1UAT1VztYAG3tiFEcyNSFMh
+         r//wrn3oL19rxxJczcA/UMmqhU/p/gzp/cmhvYSCNVFik2Lu4QbTexmNQHlE5rBRdm/N
+         OfKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcK7y4o7K7B8tbSDSpsz28rfr1VXSmXYW2nHCE5R0r6ZD0ASb5IX8Wr7W9v45WqW6yJsq3bfzzbhkOwjcm8JNqC3F6PbxR+CnJN8SK
+X-Gm-Message-State: AOJu0Yw6LWpgWI2IcqKmAX5veM/CP4uXKSoQu71fQMaA+P2z15jBxgFf
+	4fXw+CTrMguoONLG5VMcO3Qi3ciY106e5WkrqV3h5xDfpZhXNQtPdzjFQ6/Py90409l96cSd8/5
+	OTxrvcLKmMgt2C3KPNC+aajiYjrSycUn5reI/7Q==
+X-Google-Smtp-Source: AGHT+IHc8TGqZAwqFDlo6Dq21pNEyUGk0iKQ7/Kg+Qq13x9l/X18noftNvx9aDoaiAU4YcJRXQyyKKTDSXzpl9HWJIM=
+X-Received: by 2002:a05:6902:2b84:b0:e03:b61f:22e6 with SMTP id
+ 3f1490d57ef6-e05ed69b163mr1422398276.9.1721210852748; Wed, 17 Jul 2024
+ 03:07:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD74:EE_|PH7PR12MB6417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42bb99e1-c5c1-4af5-ebf9-08dca6482c9c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XeKCDvi1VR6E4atH86uFFmutFuTOUW13owC1m5J85N2P29IK9j/hZrM00VDi?=
- =?us-ascii?Q?886IiaCt/yyBj/1oNmvsxQY0Lsun/Z0VZNPpobjYRVlV64CXJ33BrtNidyz2?=
- =?us-ascii?Q?CNsGxehmDIlgA8YMODyEIBQjzgmrITNGFUzcVGoo9JikDhPOrse99drvtB6Z?=
- =?us-ascii?Q?Hzac4qRFtH6rHGTJFilCraeKg14Z9sIKX3HmBncllt1/KfaSAISzyg3BpSLV?=
- =?us-ascii?Q?9Jj1jvujUclpsfibI3Hk+wq9drNXGLqWO7ypG8kRoNtbVscQ5YnDG6tujV04?=
- =?us-ascii?Q?vEZ3N9lv08BlsQCYuzVLzdbSQGCLA3SsImt6RqiXoYyTiLNSZeXaUzkkiiAC?=
- =?us-ascii?Q?3eH8ns3geNmCs7OW3dPjz8y2by3Eo8lkiVIQI75HseSWMFDZfOOMey3FD0CH?=
- =?us-ascii?Q?uKLhsr/PKYGQcQ/bofDk/DlvgwXdJ5dIM7eRZieoU091pRagFDPu3d6F0KDc?=
- =?us-ascii?Q?Rk3DDhGlLi6cCZPAebn1fOo456W2FgojzeQAC9yUjg/jeXNJY5ZssTZGdKWA?=
- =?us-ascii?Q?9GxAQidK+VQrBPsiR6qORTf8Ic9QWhFUoBgDqFRTinuzjekJ9dfD/luhxibX?=
- =?us-ascii?Q?BQyR2qSshEAmvW38DlIiCnYcL7ReU9mzFu3xHa9GU8tJZ1f0Z/dS8rds7xWh?=
- =?us-ascii?Q?fZGXz1+mTBTG+HJ6hZvRkA9EmccXYycHEuw1DDkbLV1MZAFKu3JJpxKzCyYX?=
- =?us-ascii?Q?PngZmK66eF+JEypO/kJKVFoboIa0Gn5gXH+Ywc47n4rjk91sTQdkwX9y+p8P?=
- =?us-ascii?Q?IZvI+QRiFn7XAVUuv3ZpZ0/wvTmW7QScGd7q1WX8RoY0PVGziW/JLpBYvcfD?=
- =?us-ascii?Q?nzpG8MgXqkgnQiJGQhrjfnu7Cj31byuxgvB4ESjd3cadGAGvB5BCTAiSmW30?=
- =?us-ascii?Q?inSm8Xq/LhrWYfz+BkV4DxPl3l3gHhZ1u8iDFWLknOySSfXrWxrb83r9uFAi?=
- =?us-ascii?Q?C7w5YSdCgKnf1DC9Mg4DKVRF/KTTomBKawlUaFiUazEhwrZMOT7Z33G25RBU?=
- =?us-ascii?Q?RQyYacWD45Q91nUgyP4HtOiL2h5+BrLP29xPjNmk4Zasq9vwz5QBzfo92kdZ?=
- =?us-ascii?Q?oc40pcGo+ZPsLB1vwmy+4G7j3SIE3sLLgnberT4NPIFbqbKh00dNoixVXT3I?=
- =?us-ascii?Q?+wOuHSUzvez9mrNXlOsaweMJ+ZwFZOkZY+t935V2HFYu5ONa9yQsrqgi3qBW?=
- =?us-ascii?Q?uo1sKWzukhdU/9pFWGiCy+JnHHCol0c0BiaYQCK0oIcnkUKxQPGY2MnXwPAs?=
- =?us-ascii?Q?k8ygsD8CkONU9wE3x7Eoo9n2zKkrsGFoBeC+kf4VFVafLbdblbNBGB7MAOqC?=
- =?us-ascii?Q?VZ3EG7FB5ZhQ7I8Qmw5tDO/Ahdoo5o/EMOTs32wM/yB2TIYDCHRnAHd1IkFP?=
- =?us-ascii?Q?7eRfRtJn1sw5rSFOVjLTWs68aDx1Qpl+gevAv0Dx1i+XEAtbVHmlrwM+/WWn?=
- =?us-ascii?Q?aoz8ZoZnPmfCku7/9OsUknCgTaeeWu9n?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 10:06:49.4230
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bb99e1-c5c1-4af5-ebf9-08dca6482c9c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD74.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6417
+References: <20240716133117.483514-1-tejasvipin76@gmail.com>
+ <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn> <a05b4e6e-272a-43be-8202-2b81049a41a4@gmail.com>
+In-Reply-To: <a05b4e6e-272a-43be-8202-2b81049a41a4@gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 17 Jul 2024 13:07:22 +0300
+Message-ID: <CAA8EJpoRd3ooMnH8Z38yNH0M-L_CUd+H4WoYydd2AEmpXGeU8Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/mipi-dsi: Introduce macros to create mipi_dsi_*_multi functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	dianders@chromium.org, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Gather can be NULL when unmap is called for freeing old table while
-mapping. If it's NULL then there is no need to add page for syncing
-the TLB.
+On Wed, 17 Jul 2024 at 12:58, Tejas Vipin <tejasvipin76@gmail.com> wrote:
+>
+>
+>
+> On 7/16/24 10:31 PM, Dmitry Baryshkov wrote:
+> > On Tue, Jul 16, 2024 at 07:01:17PM GMT, Tejas Vipin wrote:
+> >> Introduce 2 new macros, DSI_CTX_NO_OP and MIPI_DSI_ADD_MULTI_VARIANT.
+> >>
+> >> DSI_CTX_NO_OP calls a function only if the context passed to it hasn't
+> >> encountered any errors. It is a generic form of what mipi_dsi_msleep
+> >> does.
+> >>
+> >> MIPI_DSI_ADD_MULTI_VARIANT defines a multi style function of any
+> >> mipi_dsi function that follows a certain style. This allows us to
+> >> greatly reduce the amount of redundant code written for each multi
+> >> function. It reduces the overhead for a developer introducing new
+> >> mipi_dsi_*_multi functions.
+> >>
+> >> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> >> ---
+> >>  drivers/gpu/drm/drm_mipi_dsi.c | 286 ++++++++++-----------------------
+> >>  1 file changed, 83 insertions(+), 203 deletions(-)
+> >>
+> >
+> > [...]
+> >
+> >> -void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+> >> -                                enum mipi_dsi_dcs_tear_mode mode)
+> >> -{
+> >> -    struct mipi_dsi_device *dsi = ctx->dsi;
+> >> -    struct device *dev = &dsi->dev;
+> >> -    ssize_t ret;
+> >> -
+> >> -    if (ctx->accum_err)
+> >> -            return;
+> >> -
+> >> -    ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
+> >> -    if (ret < 0) {
+> >> -            ctx->accum_err = ret;
+> >> -            dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
+> >> -                    ctx->accum_err);
+> >> -    }
+> >> -}
+> >> -EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
+> >> +#define MIPI_DSI_ADD_MULTI_VARIANT(proto, err, inner_func, ...)     \
+> >> +proto {                                                             \
+> >> +    struct mipi_dsi_device *dsi = ctx->dsi;                 \
+> >> +    struct device *dev = &dsi->dev;                         \
+> >> +    int ret;                                                \
+> >> +    \
+> >> +    if (ctx->accum_err)                                     \
+> >> +            return;                                         \
+> >> +    \
+> >> +    ret = inner_func(dsi, ##__VA_ARGS__);                   \
+> >> +    if (ret < 0) {                                          \
+> >> +            ctx->accum_err = ret;                           \
+> >> +            dev_err(dev, err, ctx->accum_err);              \
+> >> +    }                                                       \
+> >> +}                                                           \
+> >> +EXPORT_SYMBOL(inner_func##_multi);
+> >> +
+> >> +MIPI_DSI_ADD_MULTI_VARIANT(
+> >> +    void mipi_dsi_picture_parameter_set_multi(
+> >> +    struct mipi_dsi_multi_context *ctx,
+> >> +    const struct drm_dsc_picture_parameter_set *pps),
+> >> +    "sending PPS failed: %d\n",
+> >> +    mipi_dsi_picture_parameter_set, pps);
+> >
+> > I'd say that having everything wrapped in the macro looks completely
+> > unreadable.
+> >
+> > If you really insist, it can become something like:
+> >
+> > MIPI_DSI_ADD_MULTI_VARIANT(mipi_dsi_picture_parameter_set
+> >       MULTI_PROTO(const struct drm_dsc_picture_parameter_set *pps),
+> >       MULTI_ARGS(pps),
+> >       "sending PPS failed");
+> >
+> > (note, I dropped the obvious parts: that the funciton is foo_multi, its
+> > return type is void, first parameter is context, etc).
+> >
+> > However it might be better to go other way arround.
+> > Do we want for all the drivers to migrate to _multi()-kind of API? If
+> > so, what about renaming the multi and non-multi functions accordingly
+> > and making the old API a wrapper around the multi() function?
+> >
+>
+> I think this would be good. For the wrapper to make a multi() function
+> non-multi, what do you think about a macro that would just pass a
+> default dsi_ctx to the multi() func and return on error? In this case
+> it would also be good to let the code fill inline instead of generating
+> a whole new function imo.
+>
+> So in this scenario all the mipi dsi functions would be multi functions,
+> and a function could be called non-multi like MACRO_NAME(func) at the
+> call site.
 
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- include/linux/iommu.h | 3 +++
- 1 file changed, 3 insertions(+)
+Sounds good to me. I'd suggest to wait for a day or two for further
+feedback / comments from other developers.
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 4d47f2c33311..2a28c1ef8517 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -928,6 +928,9 @@ static inline void iommu_iotlb_gather_add_page(struct iommu_domain *domain,
- 					       struct iommu_iotlb_gather *gather,
- 					       unsigned long iova, size_t size)
- {
-+	if (!gather)
-+		return;
-+
- 	/*
- 	 * If the new page is disjoint from the current range or is mapped at
- 	 * a different granularity, then sync the TLB so that the gather
+>
+> I also think there is merit in keeping DSI_CTX_NO_OP.
+>
+> What do you think?
+>
+> --
+> Tejas Vipin
+
+
+
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
