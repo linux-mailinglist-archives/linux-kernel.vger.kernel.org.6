@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-255701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3AE9343E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F0D9343ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0C41C2195B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43191F22966
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFDD1850A3;
-	Wed, 17 Jul 2024 21:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3265E188CA8;
+	Wed, 17 Jul 2024 21:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GjEtpAaw"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="mDHLBAc0"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4FE18059
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 21:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C201F95E;
+	Wed, 17 Jul 2024 21:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721251843; cv=none; b=dlEAPmdpNKjroSDeMZUe74NZrh8HckfGm+DVKjNwLuYjQyyX88xzauKVXcfvb/lZx596zgYB25Av/rAqeDSieXzWJqqfFLcIqtf2TPZWHi5ZVo4eBScm0fie8kYnM/MAUyOjgJiVUH/VEikYuKiK5ryIlBukLm//lp+IXYxvS7g=
+	t=1721251975; cv=none; b=s2MGBmiFvwFuuGATxN3uTv2dkC7BstcYbxk7is6ohVVWKoN0I/5IILAvgftOo/KvnSs8GGxGz8+2D3Z4lrEDpwRrb188XwJH0nUa0Dpnzvxetv0Y9JgwE7PdzhDyZHZCJQDA3mVsDD+2UtkXJ447TeLif9lDeaDWlP/ULex0CU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721251843; c=relaxed/simple;
-	bh=gix4RZzWCeOfWIRc59SMvMQVuoN4P1VF432Sc3mutug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KYe2eBfM5anaqODImElQUz5+0PVweUrmurg7d35n6SbY9HD1OjdPcVY1w2xMde0+98P29++yJVyfogeSNMuJoyydrPcJIMm/ptwXHta9TJyachMlQHKQSv0Lg6rbL5/1K5OH6PgvZi/wcEvQFuYuwTsEot34PUlUURM/nMzCMAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GjEtpAaw; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64b0d45a7aaso1029127b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721251840; x=1721856640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gix4RZzWCeOfWIRc59SMvMQVuoN4P1VF432Sc3mutug=;
-        b=GjEtpAawRdtKXm1yG1aKagF8zO0Zx04L7G95aFiddg8C5o60d8nlarYSmb1DilxeYq
-         pg0XfNoBXkZnWA4d2ONOofbJkLpYG2M+qlxtjZrjXahKpxL+R9yHHYvyiexLrxXFIqrX
-         K73QJWgghpI0gUmT+MffkVrsMim8O+nWL0lon4EaUbwJtjN3h1q+psfr2u6akN+rTIF0
-         5Y5DMhUzINzWKTj/teAzv+5UyJIhj/dG7GMGFljouhg0qKzgQx94QfBCiLwMphX1e0/e
-         eXFTFw4Um23sPoWh/OZL2e4Xb4SWDUKMNQQeJLu42gWs89nPCiTvvbrMgfU47y4uAs/y
-         F5ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721251840; x=1721856640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gix4RZzWCeOfWIRc59SMvMQVuoN4P1VF432Sc3mutug=;
-        b=rtSPiJl9Mq6CZ6mNjKFxbWBfNaUD3XIeK8OEdPT4YTWjcFtyWANsYZojPvlx/z5dKx
-         pD7ZxNc5WptT+h7Xbx/s//IUcjTY7nxH2DeGodE5r9F2FUHVSChIv/WHHWFhbcmmEykc
-         xuuHQHUXquw+lL2bXlXSa5aCzRnP7tqvAOQHK8MgZRrqeD9fYiTblpWxtMjCtOtvQkZi
-         AFjRslJL/LpZT4MwTUPog+KR0jwxkfItIbwr/gqJwtVEOrYm1bpeJF7o1uwgVaDsgbKD
-         RT6t/r8f08HYgouhImIzuoQhyYdvfb4TuUPh6o1NGO4XN9gnDh2ZN++t087fps3739Wk
-         S9VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxjI6QjvsVQu3KmhhKkXpGkeujHj4RgQPLrMuaiBdgY5NWK9fiFekFQ8/59dP/SEMOzBcDoi7jWioBeU3fRGHbXD12gI0NvUMDpclv
-X-Gm-Message-State: AOJu0YxT1hY9uJY5jNshhJXFRv67E2qFr2IXJ7Nws1olHbN0x/jyPH1G
-	4F3EJUv/2Pm9HzY+An1mAk3zaB3U2zd4TlKoNzHA2QfkyWssQbACokvdk7BFYa7oK7WL9XVJNjN
-	447Kss1CPjqLmtv3OeH0jkJlU4pk6NcWVBb8t
-X-Google-Smtp-Source: AGHT+IFSQBXEEFmY88tpxdB9yZZ2M8dx8Tc06bJmHiaqFmB+8K8WkvgdngYKietzjrhO7uyZ+9fZI51PUM/+P1vw3f8=
-X-Received: by 2002:a05:690c:4502:b0:64b:9a00:240e with SMTP id
- 00721157ae682-666038006e4mr8807447b3.31.1721251840163; Wed, 17 Jul 2024
- 14:30:40 -0700 (PDT)
+	s=arc-20240116; t=1721251975; c=relaxed/simple;
+	bh=jAqASVbOGDrayX320WlZ2he6/a0Mqy/3Sa7ghz3Thgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k3oGQLxbas5Sg90QPKRz7EndVmMtFubop/fR+ogVUwUCGWx+w+xz4qoBL61jdjI5NkZxZa5eT9iH7TXaWLvdb1Cr25nKF+QVIPc0WLnjRILd2lbpItCZqrkGaRbFw+W/TmQqBqLnzASFLUFIm+PWsWTNUcJ90DqzNLlH0i+sau8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=mDHLBAc0; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HEofNS002946;
+	Wed, 17 Jul 2024 21:31:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pps0720; bh=808SU6qyaK/Um857JBYO8r
+	S2Bl8LCNVBrZBok6IKwwE=; b=mDHLBAc0rPzJ0DNjqfFEzkKXPo4oM8PhTOFKQ1
+	HuJUpQPfnyug8cPcDiqB3fj0HwIx+r3ujhrK2eLvGBgL8/FwVPkrlvbtSEzdmqut
+	/IRFW+T8imeLqrJyeYRDer2YKF75NpOuspGovuiqtAIPnO7Ff+3mZ2K5SA3XtjAs
+	XWwmX5GDnPW/zAyR5EBRQEj/fT3K761hZyDuPw0wVg2f6dIb6oJnFR2+VNUpBt7E
+	R8fAko62JGJApVURJAeq9UQzajzdqT3eGWfjUWUOpA8NJjV68QmbLlOxIv0jWmln
+	cOESQm/SrX8LMrNjgd66POhuHiphUlW4pqPwvuYZ1IF/tPXA==
+Received: from p1lg14880.it.hpe.com ([16.230.97.201])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 40dwf02w6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 21:31:26 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id B9C1E80026E;
+	Wed, 17 Jul 2024 21:31:24 +0000 (UTC)
+Received: from dog.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id 71C0480FDCA;
+	Wed, 17 Jul 2024 21:31:22 +0000 (UTC)
+Received: by dog.eag.rdlabs.hpecorp.net (Postfix, from userid 200934)
+	id 36CDD300BB4C9; Wed, 17 Jul 2024 16:31:21 -0500 (CDT)
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Steve Wahl <steve.wahl@hpe.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Pavin Joseph <me@pavinjoseph.com>, Eric Hagberg <ehagberg@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>, Eric Biederman <ebiederm@xmission.com>,
+        Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
+        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+        Hou Wenlong <houwenlong.hwl@antgroup.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>,
+        Tao Liu <ltao@redhat.com>, kexec@lists.infradead.org,
+        "Kalra, Ashish" <ashish.kalra@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
+Subject: [PATCH v3 0/2] Resolve problems with kexec identity mapping
+Date: Wed, 17 Jul 2024 16:31:19 -0500
+Message-Id: <20240717213121.3064030-1-steve.wahl@hpe.com>
+X-Mailer: git-send-email 2.26.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717181239.2510054-1-surenb@google.com> <20240717181239.2510054-2-surenb@google.com>
- <16286915-1350-4e6b-a0f6-deec02b7fa92@suse.cz> <CAJuCfpG2uNicytRYhfqAKrfkxJoNLUUK_o066D=yKggsoc3wKQ@mail.gmail.com>
- <10865b0a-175e-4b90-9042-7b63b1ea19f8@suse.cz> <CAJuCfpEnLGi8754DQeumLz0t+d6aXmEPEV64BMC0oRRqr9UX1A@mail.gmail.com>
-In-Reply-To: <CAJuCfpEnLGi8754DQeumLz0t+d6aXmEPEV64BMC0oRRqr9UX1A@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 17 Jul 2024 14:30:29 -0700
-Message-ID: <CAJuCfpG0W=65v9Z5zPg4R3cmeQSexhA5nJTJSAsEc4ogqbC8eA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] alloc_tag: outline and export free_reserved_page()
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, hch@infradead.org, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: ho06VTQBQgjQyTsV5tShzxTP38dasqcr
+X-Proofpoint-ORIG-GUID: ho06VTQBQgjQyTsV5tShzxTP38dasqcr
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_16,2024-07-17_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=893
+ priorityscore=1501 mlxscore=0 adultscore=0 impostorscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170162
 
-On Wed, Jul 17, 2024 at 2:20=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Wed, Jul 17, 2024 at 1:19=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> =
-wrote:
-> >
-> > On 7/17/24 10:04 PM, Suren Baghdasaryan wrote:
-> > > On Wed, Jul 17, 2024 at 12:36=E2=80=AFPM Vlastimil Babka <vbabka@suse=
-.cz> wrote:
-> > >>
-> > >> On 7/17/24 8:12 PM, Suren Baghdasaryan wrote:
-> > >> > Outline and export free_reserved_page() because modules use it and=
- it
-> > >> > in turn uses page_ext_{get|put} which should not be exported. The =
-same
-> > >> > result could be obtained by outlining {get|put}_page_tag_ref() but=
- that
-> > >> > would have higher performance impact as these functions are used i=
-n
-> > >> > more performance critical paths.
-> > >> >
-> > >> > Fixes: dcfe378c81f7 ("lib: introduce support for page allocation t=
-agging")
-> > >> > Reported-by: kernel test robot <lkp@intel.com>
-> > >> > Closes: https://lore.kernel.org/oe-kbuild-all/202407080044.DWMC9N9=
-I-lkp@intel.com/
-> > >> > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > >> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > >>
-> > >> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > >>
-> > >> Are these two patches now stable@ material as 6.10 build is broken o=
-n ppc64
-> > >> with alloc taging enabled?
-> > >
-> > > I tested them with that specific configuration mentioned in the bug
-> > > report and with several usual ones I use.
-> > > Yeah, I guess from now on all such fixes should have
-> > >
-> > > Cc: stable@vger.kernel.org # v6.10
-> >
-> > Right. BTW I have just realized that the way you did Patch 2/2 and outl=
-ined
-> > the whole free_reserved_page() (which is fair, it's an init-time functi=
-on),
-> > mem_alloc_profiling_enabled() didn't stay inlined so Patch 1/2 is in fa=
-ct
-> > not necessary anymore?
->
-> Yeah, I think you are right, currently no module has reasons to use
-> mem_alloc_profiling_enabled() directly. That might change in the
-> future but we can add the export at the time it's needed.
-> I checked and ppc64 build passes with just this patch. Let me post v3
-> with just this patch and Cc stable@.
+Creating kexec identity maps using only GB pages can include a lot of
+extra address space past that requested, including areas marked
+reserved by the BIOS, which on UV systems can cause system halts.
 
-v3 posted at https://lore.kernel.org/all/20240717212844.2749975-1-surenb@go=
-ogle.com/
+The previous attempt to fix this problem,
 
->
->
-> >
-> >
-> >
+       7143c5f4cf20 ("x86/mm/ident_map: Use gbpages only where full GB page should be mapped.")
+
+caused a regression on a small number of AMD systems, and was later reverted.
+
+The cause of this regression was that the EFI Config Table Array was
+not explicitly included in the kexec identity map. While this array was
+often included in the identity map by luck, when it was not, code that
+checks whether the AMD SEV feature should be enabled takes a page
+fault due to the array's address not being mapped.  This happens before
+the new kernel is able to set up a page fault handler, so it is fatal.
+
+The patch that was reverted greatly reduced the chance that the EFI
+Config Table Array got mapped by luck, which is why this problem
+appeared.  The kernel command line option "nogbpages" also causes the
+problem to show, and was used for debugging and illustrative purposes.
+
+The first patch in this series explicitly adds the EFI Config Table
+array to the kexec identity map so this problem will not occur.
+
+The second patch in the series re-instates the previously reverted
+patch that reduces usage of gbpages in creating the identity map.
+
+All three of the people who reported regression with my earlier patch
+have retested with this patch series and found it to work where my
+single patch previously did not.  With current kernels, all fail to
+kexec when "nogbpages" is on the command line, but all succeed with
+"nogbpages" after the series is applied.
+
+Series version 3:
+  * In patch 1, do not change name of map_efi_systab, and fix comment.
+
+Series version 2:
+
+  * Removed a patch (formerly #2) that also added the CC blob to the
+    identity map, as this was proactive, but not proved necessary.
+
+  * Rewrote this cover letter and patch commit messages to include
+    discussion on previous version.
+
+V1: https://lore.kernel.org/all/20240520183633.1457687-1-steve.wahl@hpe.com/
+
+Steve Wahl (1):
+  x86/mm/ident_map: Use gbpages only where full GB page should be
+    mapped.
+
+Tao Liu (1):
+  x86/kexec: Add EFI config table identity mapping for kexec kernel
+
+ arch/x86/kernel/machine_kexec_64.c | 27 +++++++++++++++++++++++++++
+ arch/x86/mm/ident_map.c            | 23 ++++++++++++++++++-----
+ 2 files changed, 45 insertions(+), 5 deletions(-)
+
+-- 
+2.26.2
+
 
