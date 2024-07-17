@@ -1,219 +1,116 @@
-Return-Path: <linux-kernel+bounces-255066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F1A933B34
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:38:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9489F933AD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194F428391B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B6B1C20C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2234717F383;
-	Wed, 17 Jul 2024 10:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E73217FAB4;
+	Wed, 17 Jul 2024 10:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="MzZLfdDE"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xLJYM0gZ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0B114AD19;
-	Wed, 17 Jul 2024 10:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F2317E911
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721212697; cv=none; b=TqcVTlqGUYHHul+vC+4xMGikc+mza6YNPM1fUS+5SFo3PbEYgcov/CgEEHJqtTszRuvuyFCSCMi9z1+5q3JHWVf9aOaliZqWyLxYzPz7C/A3QXRxk5I1fGl7CR1WGwf2H4FJHWQb+8V4Qn5abRV7V34feGcVQfnbIGDrpDFJVFY=
+	t=1721210770; cv=none; b=p5c0A3xRoj5sb1xVohMR1g/H97AdUW55o46qcRVNl/M7IprJv0D6uLsCx0QWPdEQAdu/+Xfyc4q4aJGbYWEj6ElQRDF8lMNde4cVwe7Q94+lizYiwDbtKbCwfVc1H2mHJYtLdVqOY2GHv/PC0KHrd/uAlb5l8B5G+KKy+uoBmNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721212697; c=relaxed/simple;
-	bh=HvhgoHyJKpIIPXLDKtSS/sCs2jXautb++tsD2DLZoBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECv8qcEnPXNCTpQ949BXsN1wCdg7mAeA7B37WWyT8Z9545NfFn/lz6wuk549sPhUrPPuJXL8usO8zBJbv//VsevIjm8UipIe31+yCDSqxPphOh14dKMEffFf9JCdqohW21Xp+yfMEdX1d3h/BAtP/vDel0CZrIKauoyyko6EUug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=MzZLfdDE; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=crA7kBcB4rPslVEtpJNh9J3l8TLIse9JtfSt0FeRbRs=; b=MzZLfdDErg+lO02YjKutidxYlY
-	r6Yo77WfjHzXWWmnJEpO6OMjO4mhdQnMSE0ZJ0vOhaT+T28S8GsD84LHrG0jSAXB9RNNDlRPvcg3+
-	mTzDKnCMTVet153q690eQElvXA+RL9crciP35BwrVIdmNWeMopk/uOksVVs1Q2WAkr/0qxEBnLTdJ
-	yzudAfS5w724oEPnyS82XPiEhKpPKjUmGg+jykafXDC0JxzKobNIDBwfu4x+ZxYAj4/NjpaElvuCJ
-	SWyvKVLy8kCQ5qeJh1CE1A5L66Sko97ltaH6jpOlD5UU/zsBtXnz1hI1JlLCHGPp5rEww1xKoT7wE
-	zbAGjhhQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1sU1NO-008WmH-2y;
-	Wed, 17 Jul 2024 10:55:10 +0100
-Date: Wed, 17 Jul 2024 10:55:10 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] tpm: Relocate buf->handles to appropriate place
-Message-ID: <ZpeU_lxLtrpKGk4s@earth.li>
-References: <20240716185225.873090-1-jarkko@kernel.org>
+	s=arc-20240116; t=1721210770; c=relaxed/simple;
+	bh=MYghnEZMNWq78HgnezOmQfeHxZDLKz1Ar/qEuPxda/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nO/UqwJABZNOTvkIN3my/YiAPQCKcVfGDuqq7c+uKvrqTRjAxaxxwKIq92RT0vsvCMfDXJ416AcZj3DSth/Vf+tQqsuaaMMqUynZ0W4cnYgIFRX3/dnmgmDAfYcx9WQfEIMv4qiPRqITN1BW2RWXQNixbAdXr3XH0gxbKTbbbkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xLJYM0gZ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4279c10a40eso43256135e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721210768; x=1721815568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MLMUJK/Z5vNN4i7adZ4/craWA542/Fh4HDOAyVU3ijA=;
+        b=xLJYM0gZ88czsPwWWSUDyh0qL+DTiHdjLzIV68VQ7qG0hO7dUTErKw8c1B0QdGrF0q
+         VDDh4C7YTA82iLl3J6ss2QWy/TV6vPa309Z6mME64QF9XrQ/6ik/7FQ0vpIoJlF9IZk1
+         UEGR7QzrwNSsPAN0MPdaKFSB4DjENRZ344vHvOBCbGhMdPT9YkmKLp0ZY2W7CY5ssvqC
+         N9i8K6Fp7KN6HRGY5pfq2VGdrxc4+AU0Z8rSvuLI4/OKhm/wZS8nsq7L7LTWZo1Cw/3P
+         2EKanVNnifMHF3tKVw/cosqcSkU1vUatfWwCDCPJXQyjZBNpY886BCJeVsaDE/KPcI/Y
+         foRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721210768; x=1721815568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MLMUJK/Z5vNN4i7adZ4/craWA542/Fh4HDOAyVU3ijA=;
+        b=Ho4t0pnreR+748E++qG9qXfQUzk0AAmP2FUuYZjbp9aj1AvKq4pzctKmix5wejX0Ix
+         ceZ4ymL3S7R4lUv9S9aZx/Gn3enrsSxUzTPeCozPPobbTpTbeQfC5jNjtLzCQ1wlMsQ+
+         eM5myyrh88+t5SqjMoYxUjX4DpQRpyYxITBDXBDEuFeIeWc8zSSY8otZ/UBHU3XWn+9j
+         fMOCB1Y/gdpJwQJ6+U4wUK7G7OiZu2RCvTH123vvCri+ZW87YgodaiUp625mgL2S2hK+
+         LE4L0N+AGJLVdCB6ik085HC65FMoRz0g04axP35w5z+uMEYeDAmjtlBmWL60BTVv0kar
+         IcWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDvAZ+XPt5K9jBQpdfHs+bNJVevt7qge4SvH5KxvEnWowo8wYYoVHk90kctLpcRjFQLD5OIMQII0BdEa1wod1FkbAzwpHd9qsoFgn
+X-Gm-Message-State: AOJu0Yx1XFsPaHE/JBjPaidV7s8kAFhwx7HQWyv6GQ8O9/hc6efllvYz
+	9NfB0D0wuM1Cuu1dJX6L4dfT7hV0FqoRbkO6YBc2OHHFfv/BIY5Rkm16GGCmC6M=
+X-Google-Smtp-Source: AGHT+IHatreA6hJ0QZHIOG65FDXwkYQIK0dFa6H1+KKDy+5XlVo+HPtc52LX7l1aTKAS1Ci0+3S1KQ==
+X-Received: by 2002:a05:600c:3c9b:b0:426:5e91:3ff1 with SMTP id 5b1f17b1804b1-427c2ce9008mr8122645e9.24.1721210767690;
+        Wed, 17 Jul 2024 03:06:07 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e983e7sm163259245e9.23.2024.07.17.03.06.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 03:06:07 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	de Goede <hdegoede@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Niklas Cassel <cassel@kernel.org>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 0/2] Convert {a,i}pq8064 SATA AHCI controller bindings to dtschema
+Date: Wed, 17 Jul 2024 11:03:05 +0100
+Message-ID: <20240717100600.19005-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716185225.873090-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 16, 2024 at 09:52:24PM +0300, Jarkko Sakkinen wrote:
-> tpm_buf_append_name() has the following snippet in the beginning:
-> 
-> 	if (!tpm2_chip_auth(chip)) {
-> 		tpm_buf_append_u32(buf, handle);
-> 		/* count the number of handles in the upper bits of flags */
-> 		buf->handles++;
-> 		return;
-> 	}
-> 
-> The claim in the comment is wrong, and the comment is in the wrong place
-> as alignment in this case should not anyway be a concern of the call
-> site. In essence the comment is  lying about the code, and thus needs to
-> be adressed.
-> 
-> Further, 'handles' was incorrectly place to struct tpm_buf, as tpm-buf.c
-> does manage its state. It is easy to grep that only piece of code that
-> actually uses the field is tpm2-sessions.c.
-> 
-> Address the issues by moving the variable to struct tpm_chip.
-> 
-> Cc: stable@vger.kernel.org # v6.10+
-> Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> v3:
-> * Reset chip->handles in the beginning of tpm2_start_auth_session()
->   so that it shows correct value, when TCG_TPM2_HMAC is enabled but
->   tpm2_sessions_init() has never been called.
-> v2:
-> * Was a bit more broken than I first thought, as 'handles' is only
->   useful for tpm2-sessions.c and has zero relation to tpm-buf.c.
-> ---
->  drivers/char/tpm/tpm-buf.c       | 1 -
->  drivers/char/tpm/tpm2-cmd.c      | 2 +-
->  drivers/char/tpm/tpm2-sessions.c | 7 ++++---
->  include/linux/tpm.h              | 8 ++++----
->  4 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-> index cad0048bcc3c..d06e8e063151 100644
-> --- a/drivers/char/tpm/tpm-buf.c
-> +++ b/drivers/char/tpm/tpm-buf.c
-> @@ -44,7 +44,6 @@ void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
->  	head->tag = cpu_to_be16(tag);
->  	head->length = cpu_to_be32(sizeof(*head));
->  	head->ordinal = cpu_to_be32(ordinal);
-> -	buf->handles = 0;
->  }
->  EXPORT_SYMBOL_GPL(tpm_buf_reset);
->  
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 1e856259219e..b781e4406fc2 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -776,7 +776,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
->  	if (rc)
->  		goto out;
->  
-> -	rc = tpm2_sessions_init(chip);
-> +	/* rc = tpm2_sessions_init(chip); */
+Hi,
+The following patches convert the old text bindings to dtschema by using
+ahci-platform.yaml.
 
-Left over from testing? Or should be removed entirely?
+Note: patch 1/3 from v1 of this series has been sent as a separate patch
+for v2: https://lore.kernel.org/all/20240717094914.17931-2-rayyan.ansari@linaro.org/
 
->  out:
->  	/*
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-> index d3521aadd43e..5e7c12d64ba8 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -238,8 +238,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->  
->  	if (!tpm2_chip_auth(chip)) {
->  		tpm_buf_append_u32(buf, handle);
-> -		/* count the number of handles in the upper bits of flags */
-> -		buf->handles++;
-> +		chip->handles++;
->  		return;
->  	}
->  
-> @@ -310,7 +309,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
->  
->  	if (!tpm2_chip_auth(chip)) {
->  		/* offset tells us where the sessions area begins */
-> -		int offset = buf->handles * 4 + TPM_HEADER_SIZE;
-> +		int offset = chip->handles * 4 + TPM_HEADER_SIZE;
->  		u32 len = 9 + passphrase_len;
->  
->  		if (tpm_buf_length(buf) != offset) {
-> @@ -963,6 +962,8 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
->  	int rc;
->  	u32 null_key;
->  
-> +	chip->handles = 0;
-> +
->  	if (!auth) {
->  		dev_warn_once(&chip->dev, "auth session is not active\n");
->  		return 0;
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index e93ee8d936a9..b664f7556494 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -202,9 +202,9 @@ struct tpm_chip {
->  	/* active locality */
->  	int locality;
->  
-> +	/* handle count for session: */
-> +	u8 handles;
->  #ifdef CONFIG_TCG_TPM2_HMAC
-> -	/* details for communication security via sessions */
-> -
->  	/* saved context for NULL seed */
->  	u8 null_key_context[TPM2_MAX_CONTEXT_SIZE];
->  	 /* name of NULL seed */
-> @@ -377,7 +377,6 @@ struct tpm_buf {
->  	u32 flags;
->  	u32 length;
->  	u8 *data;
-> -	u8 handles;
->  };
->  
->  enum tpm2_object_attributes {
-> @@ -517,7 +516,7 @@ static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
->  	if (tpm2_chip_auth(chip)) {
->  		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
->  	} else  {
-> -		offset = buf->handles * 4 + TPM_HEADER_SIZE;
-> +		offset = chip->handles * 4 + TPM_HEADER_SIZE;
->  		head = (struct tpm_header *)buf->data;
->  
->  		/*
-> @@ -541,6 +540,7 @@ void tpm2_end_auth_session(struct tpm_chip *chip);
->  
->  static inline int tpm2_start_auth_session(struct tpm_chip *chip)
->  {
-> +	chip->handles = 0;
->  	return 0;
->  }
->  static inline void tpm2_end_auth_session(struct tpm_chip *chip)
-> -- 
-> 2.45.2
+v1: https://lore.kernel.org/all/20240716105245.49549-1-rayyan.ansari@linaro.org/
 
-J.
+Thanks,
+Rayyan
+
+Rayyan Ansari (2):
+  dt-bindings: ata: qcom,ipq806x-ahci: use dtschema
+  dt-bindings: ata: qcom,apq8064-ahci: add to dtschema
+
+ .../bindings/ata/ahci-platform.yaml           | 33 ++++++++++++-
+ .../devicetree/bindings/ata/qcom-sata.txt     | 48 -------------------
+ 2 files changed, 31 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ata/qcom-sata.txt
 
 -- 
-"I'm not anti-establishment, I just don't see the point." -- Matthew
-Kirkwood, OxLUG mailing list.
+2.45.2
+
 
