@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-255639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A72993431B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E7493431C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C51A1C219A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4CD2838B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2378D18508C;
-	Wed, 17 Jul 2024 20:17:28 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0DB1849E7;
+	Wed, 17 Jul 2024 20:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/dQIXPS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E47A181D05;
-	Wed, 17 Jul 2024 20:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2706A022
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 20:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721247447; cv=none; b=erTTKKHBzijHDd7uUD++11XHkOJ6+Zg91NUjarsBAmBLZgQAD7H6X9QeakqvvTW5oRs6o78kKU/LXiV2q5pWTbMYf+SJ0FYhhH52RXPTEfKmuF3vu+RAWIQWssxatXz6pszS+C5pqRkDX1iU9j1NPlPmG58NrPAbjLu1Mg0yE3U=
+	t=1721247486; cv=none; b=rOMlg++1Cr1lUvK3SwusyPHf1BzCIWqGa+/1xjCcDyCEo4Uu0e4ESAAsPeehUQususm7Iqvg1dGkE/npKjiBcBV6Aiy7WCQO2CZczO8ok8atSl2x3hNoM5Yd7YoGtCS/H87mBjAZEo3f0cLQQupddnB8GNcMiSNTqZbxPk/gPrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721247447; c=relaxed/simple;
-	bh=JT3g53fcSmIbb0K1OvAoRy3KDMRTTQ9/L89HkJWtbY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uf4uaVev7kIPlvmAE+N/v+2tT9cQ11MnaX5vig1GSnHF0tVXV6Sw5JbQ59kRHknfcrVFxmZlQHE3U0IITvWMg/bhhxo+XBhLm2/HbG+aOX7D7/jscqJvFqv3vk8Cgb9gY7Ui6ooMSLCuYipTQFuqPzxg+FrSBgWl/py5kqpIMQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc52394c92so1233765ad.1;
-        Wed, 17 Jul 2024 13:17:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721247446; x=1721852246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JT3g53fcSmIbb0K1OvAoRy3KDMRTTQ9/L89HkJWtbY4=;
-        b=XUuSykTXh50H44jCd1yrcCcRrrUGDzFAaSnMI4WJPF6NtCA6dmS71Ddfmu+XU1bgn7
-         J6tA+1T28clmJcLp8zAYaIF3UlEK7lr+8JJY111vjGeH1vgM+fnwQeT4lYCIwNbjpU6Q
-         CJ21SC4KdjnEDfwGUyfhwcXX9KViwTtiQITdJS6Ag5rysDV9CkglmBnevcNCLe5qglyN
-         DVtn7Plr0VYnPFU/6hZnaxQuqwhgOTdNl993UlNJhbvDa3KvHA03AFMXABlrEzDwE+Vi
-         +RVYrHkZTFjI5powlTTYpVSJxcb2fLX6AbJIFEwW8ncIZoPZPWf0gUt9VhW7RljU37Qs
-         MvQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcPM7guQKL4aeeqfG10gIoGl+53OPPCTSPSH1dXCH0BBpxDjT/oUIxQKwiqVkmMGh02iT17iachsBRVvg7lAx9mW+qkc3fQCrKt4T/Wps8QEnnM5WFilrE9E6H/VhLoFHYGskLoZt0fNYGIrjm+4Kv42FF0i+IEOFNmfq5ngljXc3pSGCj8iVdWE7+DW5Jb1I7
-X-Gm-Message-State: AOJu0Yw0a/5IuP1tuQkYR5QIPzPlemXlFSMYI4R1qyTYFEsdE1IZVTq+
-	uWhTFn5McKm5OWSXH+DmPcLyIihm3Q8Rt5mVSisR2XxpC634aaeenfJ3DrieWf1xMmyNWWU12JW
-	ysqsK3Bq6LMTBEwSYGVUI8N30ywU=
-X-Google-Smtp-Source: AGHT+IF1DtZXkYokgsSPIEfnEBClwMlGpa3y53AVbDZplBgFirVuEW2ds4z6XwqPlGIt5ml/+agwaq/lVMxE3Y0ZCug=
-X-Received: by 2002:a17:902:d54f:b0:1fc:54f6:9f72 with SMTP id
- d9443c01a7336-1fc54f6a40fmr18980475ad.64.1721247445422; Wed, 17 Jul 2024
- 13:17:25 -0700 (PDT)
+	s=arc-20240116; t=1721247486; c=relaxed/simple;
+	bh=99hewUQFCa+n1CuASCpxgHA6nPQjfGtYl5t5s4FBO88=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=NbORlm7KPesamZ9LobJURfmmhmB/VpXhcIcvcmcnq6QIxsFixTtAAhLZZ/pn94Bb02cGmG8EldHxXTC9O2gFJBzxARKD5V9t7XZdAdWp4w1hXsF/GLqqv+8FLt3rf+xb6Jwc4P9nNaRrJrxdAeB2/9ZqYuGHDp2QCrCyJrL5eOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/dQIXPS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 524C9C2BD10;
+	Wed, 17 Jul 2024 20:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721247486;
+	bh=99hewUQFCa+n1CuASCpxgHA6nPQjfGtYl5t5s4FBO88=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=K/dQIXPSVGZrnOGFdioB6g9LEdbvhyRSC2ZueOVWsUq33w8XRj0cW0w8Z7t2CmLIe
+	 PCeOWq7AB2OYhlbl+qGCayRTAhAkj4DwU+ereaTLj+91OQvl7OWETzRcSkqTqPMjSG
+	 VIM9GtkNn95mCLZN5CWOYHgFqLQ4Fj9mMt8ZhMp49Q4AcgXSu+VrK4A/CjeIndCAj4
+	 gV4aycbZMrjpDmM+E2SkFh2y09fs5vaOnB3Piqwip96g8dAvix+KfrGoIIS4H1o0oy
+	 /ktI25dg3NsED8ClLSKn/s0lTpsCbOTbDnwp+AuSMaQk+QEyZCx024nEhjeoD8TDcp
+	 pCRRc4S3Y/dsQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 40B2AC433E9;
+	Wed, 17 Jul 2024 20:18:06 +0000 (UTC)
+Subject: Re: [GIT PULL] erofs updates for 6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZpTAI1mLZ1pfTnz8@debian>
+References: <ZpTAI1mLZ1pfTnz8@debian>
+X-PR-Tracked-List-Id: Development of Linux EROFS file system <linux-erofs.lists.ozlabs.org>
+X-PR-Tracked-Message-Id: <ZpTAI1mLZ1pfTnz8@debian>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.11-rc1
+X-PR-Tracked-Commit-Id: a3c10bed330b7ab401254a0c91098a03b04f1448
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 586f14a6a182bbdb9404dc66464dcd8d0ac175a3
+Message-Id: <172124748623.12217.7538948678125379696.pr-tracker-bot@kernel.org>
+Date: Wed, 17 Jul 2024 20:18:06 +0000
+To: Gao Xiang <xiang@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240717123147.17169873@rorschach.local.home> <20240717174739.186988-1-amadio@gentoo.org>
- <20240717135759.37cf1bcf@rorschach.local.home>
-In-Reply-To: <20240717135759.37cf1bcf@rorschach.local.home>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 17 Jul 2024 13:17:13 -0700
-Message-ID: <CAM9d7ciaNB+dnhbqpSztd=O51mTXxvzr_bdA-NHzSCboUEyAMw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] perf build: libtraceevent, libtracefs feature
- check with pkg-config
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Guilherme Amadio <amadio@gentoo.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-trace-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 10:58=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Wed, 17 Jul 2024 19:47:34 +0200
-> Guilherme Amadio <amadio@gentoo.org> wrote:
->
-> > There is no change in this new submission relative to the last (which h=
-as been
-> > tested by Thorsten to fix the build issue in Fedora). The only change h=
-as been
-> > to add in CC Steven Rostedt and the list linux-trace-devel@vger.kernel.=
-org.
->
-> Thanks,
->
-> For the whole series:
->
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->
-> Feel free to take it through the perf tree.
+The pull request you sent on Mon, 15 Jul 2024 14:22:27 +0800:
 
-Thanks, I'll add it to perf-tools and send out to v6.11 later.
+> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.11-rc1
 
-Namhyung
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/586f14a6a182bbdb9404dc66464dcd8d0ac175a3
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
