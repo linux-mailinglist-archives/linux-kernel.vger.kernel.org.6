@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-255250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26843933DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCAE933DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEFB51F22D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4EC91F22615
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB43180A67;
-	Wed, 17 Jul 2024 13:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFB0180A92;
+	Wed, 17 Jul 2024 13:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="eIbvHzwc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Rr2AtOr4"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="haRDfJAQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="a9YDOgKW"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D586180A65;
-	Wed, 17 Jul 2024 13:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF44A1802A5;
+	Wed, 17 Jul 2024 13:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721224239; cv=none; b=A5XbA8tfDi5uu+N1KOmg59Pm30FLtMW79VGM3S4VD4LwtKawAEP+DRgeVQm7FT6iwp96XhJ9rvMUe/OHkGvTIq8Zp/+PPn31BC9CwzwXh+lV7KwVL68rlJ9cUaMUwjY/01OOfxVUgtMN5LzU9hWumGnpKFGglQYACInq5ZdjJXM=
+	t=1721224240; cv=none; b=E4F/OX6oq8rQaJptjM9Ilnj5sUIJGaUyZHfaAAWURs4FgifPcri4Rt7G1lTKLw6TSlXfOxM7Svr0CSUwm4CEnzrcFd7H3AFazCxdY43ZwH+ETQ/LUKhpatxlBuh55mY0/NULfLzYFWZWarIWIeCCvcyQsy/UwpD34QQAI+zriPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721224239; c=relaxed/simple;
-	bh=DoPxYrJkvrWRCXhmrFuOTOuVm29tK5TC6szwdunInAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TvDHsKp6qV+zHOnXoAEHK8L9xCrE0RLW5v08BMD7U0hmx0mMn2cIc2MQ7i1UQqCR5LM1s8Zu1kiI0lApLJGUdh1vwH/2NxEZOcjemlt/1AZr4/5yAmAXijh/WmyzIrqTX17y8vFrNkCLO86e7h7XQY28tDp9tpXJ5ROGXOHca2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=eIbvHzwc; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Rr2AtOr4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	s=arc-20240116; t=1721224240; c=relaxed/simple;
+	bh=bwygqn6+9uhx6pMQYhVllG3338pbtgzbxXdViSthslI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dhWigIScEPv2fmYGsNtB0CMpM79DR6FibM160l1zhiaMelfQSX+dneX/Tvmq2Ak8HqhWsGAP5kSwIIDq/CmHZjKhUx+6oWJBVvLtJ2d0YNgVjvB3JLIHVxae7IRGVVY2Qcm8osWlsNiGF+CDps37Rov/TqHXTRhB0eaX/bgrQbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=haRDfJAQ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=a9YDOgKW reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1721224235; x=1752760235;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2y7nYfeZdJ6DryTb57/sSzAXz78Ly9UaH+MjhDPihRU=;
-  b=eIbvHzwcszExkIi3WjK5saIZiRNggVSq7GRsCp5STzh1U1JRbHSTcZHg
-   Z8kqWOxzMDvBS6GWuCfbmkiOVRQU/yt+a+rOl3lW+FXHXrSmt9t9zISkC
-   8t5K1yjgACBww9Yz8XfZ/Sr26Gi2GenVHoTrdINlTRzxwFNj1fUGLFLlG
-   Os5eB4oPM7FRsuX+mztTemFGZpEBmvBg3kxCDm8eJ/BEZWEhlZu+vxWom
-   ctJWChKQlNMXd5K94KmwsNe/w8F7Y1YFFyeH/3MC3rB9nuN4P4ljFt6wM
-   rKeYybamkqocYPa97chlyhqn35vYCFs1EVy/SWVtOcBW9OKby6aPsyTX2
-   A==;
-X-CSE-ConnectionGUID: XZ3ROfsfRNGwBRkiS4zoAQ==
-X-CSE-MsgGUID: rnFblU/iRh6UL2GGKHPAkw==
+  t=1721224238; x=1752760238;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ZlUA9rHowEfvKWvmWiFn0EsAUSZaJLvPi2v64JoU+5M=;
+  b=haRDfJAQbqnCNr8RIpYcccMZ1X8FzgsEkZmtgQxetk13yd8BYmx/Z1F7
+   NN80dTafTeBv0lCdnZgxCE9aVKY4tFUtgPYEJFdl1PF+LM7TWsErqa8dG
+   FLmBKdI/XfJK1JFAi3fA7/OhDEAqi3XB2shWgKw3l30TVQZEiLAnaCel7
+   RkjdrTx5h+jYzrYopbpTPyJ8mxRi9gF3mvXxaar09aWMIJ2q1qZ2XMcA4
+   QYOZWfN8gBSz1rYaCWfz2V6yt8Rut7I9aWuX23QEimjtdACmeNrTUlx/A
+   2YmBgKL4/DnVMkF9YTvG5Tr1sv+DoFMu1opeebZ54wLZeibKg36OTlJfT
+   g==;
+X-CSE-ConnectionGUID: aBkVQxayT1C5n+pQKeb2ng==
+X-CSE-MsgGUID: XWcf0ovjQxqYyLxnf6WPAg==
 X-IronPort-AV: E=Sophos;i="6.09,214,1716242400"; 
-   d="scan'208";a="37953366"
+   d="scan'208";a="37953367"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 17 Jul 2024 15:50:33 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66585165BDF;
-	Wed, 17 Jul 2024 15:50:32 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 17 Jul 2024 15:50:35 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA8BA165BDF;
+	Wed, 17 Jul 2024 15:50:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1721224233; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=2y7nYfeZdJ6DryTb57/sSzAXz78Ly9UaH+MjhDPihRU=;
-	b=Rr2AtOr4AjFwZ1uyeMDdO80Wfkvruug4E2LerVJ3tTOEMigninwJfHxhLIA5YvDVVKtIOB
-	LMY7sr7TYC98NJ9qZXBqazoy20+ZI1zsMNlg6FzyxXH02WPYyOagroDZUpKkTaHnIXwMs7
-	4Xfks1zIZa3R9SiLVtGFsIeP71PKze8phGVPg6mldBvsa7n324TIglC0NOzBSN+DLxDKgZ
-	yHjJXsPNBvyXiuCxexvYvuWa+urTJxHDX+8FnM9ia4wVvN1sD6xDg8wbeTZhZQi+uF8UsN
-	89Ihu05UgBRfgfFmP/PeRTihT7fLdnbGA++GbeeZ/FdG3I3z+YBkMe5k5Tzg0Q==
+	s=dkim; t=1721224235; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ZlUA9rHowEfvKWvmWiFn0EsAUSZaJLvPi2v64JoU+5M=;
+	b=a9YDOgKWlJVHgJlE9dI5QZwHgXjAwmJOm+2twCx2b7F2Ueqqg/A+k4yPIUT9taoCCFq5s1
+	aLbALGhBO7lt7AMuVBMZ1jlqbxm9B5E4P5hz0YLsaJlHO2tga9X6x9M861KMrZeh/CYm0J
+	QhBnbt3OG9bCzxLCxds/97gPp+ahHPCcsLvNpCOR330ZgejZuiTLh1yhW2gAR6OZ6IeJOz
+	55By/idWde14UOo1lrUV47o/5AMrhyyyo/lnH6kUs325WdWMhBGa06FjYgWaKkZJB7dCoN
+	v6JyqNWRmCKnrbJhYvjm4Ks7H7uEN1mr1eghokyFij4P5bmFA5nMWwNKZjkyMw==
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -66,16 +68,19 @@ To: Rob Herring <robh@kernel.org>,
 	Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>
 Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
 	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: imx8-ss-dma: add #address-cells and #size-cells to LPI2C nodes
-Date: Wed, 17 Jul 2024 15:50:25 +0200
-Message-Id: <20240717135027.4116101-1-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 2/2] arm64: dts: imx8-ss-dma: Fix adc0 closing brace location
+Date: Wed, 17 Jul 2024 15:50:26 +0200
+Message-Id: <20240717135027.4116101-2-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240717135027.4116101-1-alexander.stein@ew.tq-group.com>
+References: <20240717135027.4116101-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,54 +90,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-These properties are required by i2c-controller.yaml bindings.
-Add them on SoC level, rather than on board level.
+Align the closing brace to opening line.
 
+Fixes: 1db044b25d2e ("arm64: dts: imx8dxl: add adc0 support")
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
-index f7a91d43a0ffe..3f521441faf7e 100644
+index 3f521441faf7e..1ee9496c988c5 100644
 --- a/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
-@@ -303,6 +303,8 @@ adma_pwm_lpcg: clock-controller@5a590000 {
+@@ -370,7 +370,7 @@ adc0: adc@5a880000 {
+ 		assigned-clock-rates = <24000000>;
+ 		power-domains = <&pd IMX_SC_R_ADC_0>;
+ 		status = "disabled";
+-	 };
++	};
  
- 	i2c0: i2c@5a800000 {
- 		reg = <0x5a800000 0x4000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&i2c0_lpcg IMX_LPCG_CLK_0>,
- 			 <&i2c0_lpcg IMX_LPCG_CLK_4>;
-@@ -315,6 +317,8 @@ i2c0: i2c@5a800000 {
- 
- 	i2c1: i2c@5a810000 {
- 		reg = <0x5a810000 0x4000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&i2c1_lpcg IMX_LPCG_CLK_0>,
- 			 <&i2c1_lpcg IMX_LPCG_CLK_4>;
-@@ -327,6 +331,8 @@ i2c1: i2c@5a810000 {
- 
- 	i2c2: i2c@5a820000 {
- 		reg = <0x5a820000 0x4000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&i2c2_lpcg IMX_LPCG_CLK_0>,
- 			 <&i2c2_lpcg IMX_LPCG_CLK_4>;
-@@ -339,6 +345,8 @@ i2c2: i2c@5a820000 {
- 
- 	i2c3: i2c@5a830000 {
- 		reg = <0x5a830000 0x4000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&i2c3_lpcg IMX_LPCG_CLK_0>,
- 			 <&i2c3_lpcg IMX_LPCG_CLK_4>;
+ 	adc1: adc@5a890000 {
+ 		compatible = "nxp,imx8qxp-adc";
 -- 
 2.34.1
 
