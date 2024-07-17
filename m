@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-255543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A25E9341FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EAE934213
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 20:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11691F21CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165741C22BAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 18:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D175379D2;
-	Wed, 17 Jul 2024 18:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4B1822FB;
+	Wed, 17 Jul 2024 18:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cG1mJRg4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ShCr/exq"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5B47470
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBAD7470
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 18:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721239832; cv=none; b=VhYGZpCIT16y82o8WRYa9WwCnnq1f/KjC4S6Z7AHlcEofAFiW5H+kITykKWYKDsNjiB9eAmXd+0y/GBJABBGoEK/Wf0uJyuNiI1Eoafm4h45K/RB+Ebb8+h5AKZ7omwfl+g5hIxM6Dh42gAOOcwii2RaL/K2Kjv5WPAyLzRJYq0=
+	t=1721239965; cv=none; b=TCDa3nsX1RB8/SjRKEihwXC6VClFwbxRAWbDT+oC123w2lcKASBgpTG2azYiIjo1dYxkZrGLG+8eR1WllULPz7rN2LkW1CXFT8iGDkGvMU1eM00LVcMOs/fdKPjk1ra6Vwtufv2vlJ6QkP2DGcJJ/OHuJCB28nY1vZfCtKV15r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721239832; c=relaxed/simple;
-	bh=69HJCzsP7y7BhzGXRul4nvmZXDVS05XVYhxqbB/Fxfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPkP5Lv7e/i4n9nL3LNWwnvqSz7thcWL8kEjrDlcAhS6T9W7tqHeMq8dT8+50+9OTZlIEpg78+8RWczC/5W+GFDJcVkFysIMllZdpEw8+tTB6nVn27NCDpSjmua9J8BhvVdCTWDDZ3xc2+v9meaGVXRKkwr2jdWIAm/F9qr0Dcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cG1mJRg4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721239829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XdILWDpsCDSoW2G5wLGtJwqP7KLoKEtOgvidIoe0/j0=;
-	b=cG1mJRg4IzgCxDP4gXvzRgBEmsruvfxtdFP8VmuFdQqmUwPSFc11kiZnNYHcfmmbRVnGMk
-	9vhklGPKKM3TKTS/Rs50nFE3m5iEmMT3p9fc1YZ5/cyWEj7WHfUVBHDPXLw6XgxW3RhUUu
-	hFWpdx9Lo0GDmaYuAV7OP0t+1YJ0dHo=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-573-yC-KdauTNVib-gviSLwfSw-1; Wed, 17 Jul 2024 14:10:27 -0400
-X-MC-Unique: yC-KdauTNVib-gviSLwfSw-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5c696b8e759so125088eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:10:27 -0700 (PDT)
+	s=arc-20240116; t=1721239965; c=relaxed/simple;
+	bh=emzXnwHWwao02ZTIrOa1kF0eLHDU2/gXf9YVKInT58Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OSNC4jvtZvnSXTq1E9IdslbcceZ4OANy/U392vRC1DF+wR/QC3pJZBfo3ICDXKq8rkFpVLraxia7+YdfFyeEIVQNc7F9fGvUEnc86+D687But2jjxGJldUQux2PYPIeOrK784MlwNcKjjmLm3tr7rxAL83RECGAnfKYMcW9aoN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ShCr/exq; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e05d72f044cso133712276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721239963; x=1721844763; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6pCMaBILMVZMpUv76l77hj2CnbpHGxW5ooU7g9rN7C0=;
+        b=ShCr/exqR5wV7QzrFaBCsHqkmRPdMDITDKNtuU2itQ6MR8UG4KwPU4Te6VzFQI5fxJ
+         z1nIgRjxZS0qk2kGW1uhv9RxRZIrZlBomgEVsLVC4PSF+DZjPAeUG4PumzkqxFQbdC6O
+         37RgacUrAuF/E+QwiSou1fd+hmQQrOQUTA1tjv0tr97SXgcmlBE55kLrnIIRWahXhF2M
+         ZzRoAQPS5D8RTMfuhzRqOKwrI0mAA1vQbW/hweehNsTbpyrDlgBk/6/0Q/t/4Z3x1xgP
+         g8s2/UpXm0NMhLzc4nu6xFecARpOQDM0uQwBcCjcZVWJIUANLcFL2OF06/EK5LCSkUTh
+         RB6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721239827; x=1721844627;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XdILWDpsCDSoW2G5wLGtJwqP7KLoKEtOgvidIoe0/j0=;
-        b=KHWFzzLT9ul627n/BqxOk2MSTVN2gV7GuC86KCPmGgTXngzeIhJl4oOzGLXHGFxYHF
-         qbiAz4VmV2T1r4jetGH4+iJl/QQQbcH/fSEHTdcP3lbtiYjh+Pplxyle8V00yjJee6Mg
-         DwGGuQpBna45uTq1y25967ZOSzrbrzzRaKZqrvdsEXV/uBvSubioZtAgdDme3elD+zjp
-         7ILRCVp6AyN2T8ynA3WnhcP1fFyfQVULq/LFFhAPs3dQeH6oAWrEkASnb0woxd17u+NS
-         PRRjQf1J8C7ENUK5K+z4lwtGr5eSE22c6h14yrUNgX+d51yJWxMX6AcIDmrcTgyEN5XJ
-         P7ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXw727hBJHzXrwZwAae+TRx4ZqZhS23wvWHw2JzIyiubbAIFgMVHr9BLP/LPhc+wcqZ0rTk7PJcOTJzqusf/0eP7zf47Kp+CgV7iHrF
-X-Gm-Message-State: AOJu0YxY2aBkV9Ju7qeG894un625+fW9rdU51J6t3HgR6j4GBYmqKKO2
-	oExbdjNDeIRM06j/jxc4IYPvZduqF9SF1SGyrP0bJgfscUaCrylO5q8K4uE5EajMM7QPqO3sYpF
-	S9p1tKo3V4j8QzVO8s0dR54gEhefJT4t2H20ps8f7UER8EWVb6+72xikTqLzb2g==
-X-Received: by 2002:a05:6820:810:b0:5c6:6aae:b5f5 with SMTP id 006d021491bc7-5d416357f02mr2270256eaf.0.1721239827138;
-        Wed, 17 Jul 2024 11:10:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjcUX1q+2rOEkj/PltU6LP9up/Pim26cnYrvjthRosahbP02nv/53iGAEYPNWh6a3mYWvy/g==
-X-Received: by 2002:a05:6820:810:b0:5c6:6aae:b5f5 with SMTP id 006d021491bc7-5d416357f02mr2270227eaf.0.1721239826780;
-        Wed, 17 Jul 2024 11:10:26 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b79c4d18f1sm924356d6.19.2024.07.17.11.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 11:10:26 -0700 (PDT)
-Date: Wed, 17 Jul 2024 14:10:23 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"Kirill A . Shutemov" <kirill@shutemov.name>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Tian, Kevin" <kevin.tian@intel.com>, Pei Li <peili.dev@gmail.com>,
-	David Wang <00107082@163.com>, Bert Karwatzki <spasswolf@web.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
-Message-ID: <ZpgJD_LAYomCIk4a@x1n>
-References: <20240712144244.3090089-1-peterx@redhat.com>
- <ZpTLCscCFGtsrEjC@yzhao56-desk>
- <ZpUyZ9bH1-f5y5XG@x1n>
- <ZpY5uU2NyOoMVu5A@yzhao56-desk>
- <ZpbDnoQxGubegtu-@x1n>
- <116ca902-103d-47cb-baf0-905983baf9bb@redhat.com>
- <Zpfxm_Nj9ULA0Tx6@x1n>
- <20240717163154.GF1482543@nvidia.com>
+        d=1e100.net; s=20230601; t=1721239963; x=1721844763;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6pCMaBILMVZMpUv76l77hj2CnbpHGxW5ooU7g9rN7C0=;
+        b=dm2oSro26bomoVUyJRl91h3pXHykmw85WjEjupjfY0ZiUixLQxEvz/2awydRVYoFFJ
+         0iKnQmOlnLcaLqLi1l3lDpO+ydT6vucic5Pzozl3UYdWriYgjrvMnFfp+x4Ny8NTDC1x
+         NhA1gyJt9wM8IIMK+DGc259RAy4h7LqRY4IfcQEk3yy7B0grlupgLXr4uLFNaz3hpagx
+         iObXbNlPDuD3bJ2Nhr6mmUP3/Dt4wrb2uXzymZ0c6iAVJ9jNY/GQP6SAO//vLzs/e3Xu
+         qoX1ZsMJPdoQDduQxUpmB7PLXIdkobAhroTezticm9b9cS3/6lwWPqddeM9rg9WqaTsI
+         VPJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCSuFkqSfPHYsKivySLMIEjXMcyO6Ru107I9tHWCOcoc74kboMaUm7Hofa8AUf1uVyTygzm+PM4PWABSCPLAOGkhSZ/Cl5zEsAWV7X
+X-Gm-Message-State: AOJu0YxwtN7EAcFDd3aOS+qAAcafPbij86L3r44kFdzpcFFB2Gy/mA2i
+	tE1oKfLVy0OSoBnY0tUvn6DU/Rvba9y8ukPLZePGoivJmVyW+O1A/z3MgV6z66St1NumJT+6H2R
+	vqg==
+X-Google-Smtp-Source: AGHT+IF19jbUpQeDJ/W0pDc5ATf6kXEYujgDlZOQKr66XMlhIzOfsvZ1D1pGIRH1/ONk+P0xbyr3eay6CUU=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:f44b:e467:5c7c:74ab])
+ (user=surenb job=sendgmr) by 2002:a05:6902:2b09:b0:e05:ec0e:38d9 with SMTP id
+ 3f1490d57ef6-e05febb8182mr403276.12.1721239962759; Wed, 17 Jul 2024 11:12:42
+ -0700 (PDT)
+Date: Wed, 17 Jul 2024 11:12:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240717163154.GF1482543@nvidia.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240717181239.2510054-1-surenb@google.com>
+Subject: [PATCH v2 1/2] alloc_tag: export mem_alloc_profiling_key used by modules
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, hch@infradead.org, vbabka@suse.cz, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, surenb@google.com, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 17, 2024 at 01:31:54PM -0300, Jason Gunthorpe wrote:
-> On Wed, Jul 17, 2024 at 12:30:19PM -0400, Peter Xu wrote:
-> > On Wed, Jul 17, 2024 at 04:17:12PM +0200, David Hildenbrand wrote:
-> > > I'd be curious how a previous truncation on a file can tear down a PFNMAP
-> > > mapping -- and if there are simple ways to forbid that (if possible).
-> > 
-> > Unfortunately, forbiding it may not work for vfio, as vfio would like to
-> > allow none (or partial) mapping on the bars.. at least so far that's the
-> > plan.
-> 
-> vfio doesn't support truncation? Or does that means something else
-> here?
+Export mem_alloc_profiling_key as it is used by modules (indirectly via
+mem_alloc_profiling_enabled()).
 
-Here I meant VFIO can explicitly zapping pgtables via vfio_pci_zap_bars(),
-irrelevant of any form of truncations.  I suppose it'll have the same
-effect where we may need to stop assuming PFNMAP vmas will always have
-fully installed pgtables.
+Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allocation profiling")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407080044.DWMC9N9I-lkp@intel.com/
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Changes since v1 [1]
+- Added Acked-by, per Vlastimil Babka
 
-Thanks,
+[1] https://lore.kernel.org/all/20240717011631.2150066-1-surenb@google.com/
 
+ lib/alloc_tag.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index 81e5f9a70f22..832f79a32b3e 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -15,6 +15,7 @@ EXPORT_SYMBOL(_shared_alloc_tag);
+ 
+ DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+ 			mem_alloc_profiling_key);
++EXPORT_SYMBOL(mem_alloc_profiling_key);
+ 
+ struct allocinfo_private {
+ 	struct codetag_iterator iter;
+
+base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
 -- 
-Peter Xu
+2.45.2.993.g49e7a77208-goog
 
 
