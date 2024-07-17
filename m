@@ -1,200 +1,98 @@
-Return-Path: <linux-kernel+bounces-255122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C864933C65
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB76933C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F8991C22C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26DA282814
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4356517F51A;
-	Wed, 17 Jul 2024 11:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C517F4F4;
+	Wed, 17 Jul 2024 11:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YhsCRW6Z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zj6IerRz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d72abmdr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ALb3YT/i"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QDon7sMq"
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79B12E48;
-	Wed, 17 Jul 2024 11:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0021717F393
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 11:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721216088; cv=none; b=VicF57RxkjcftUjnhYZzH7zHHfrRWZROeCHsQ7mjBwWSkeRvTBU7Z+NZSiG9bbuF3zQBDS2CTA3dhgsBucfHJOYIunexjBjYTYgSMhcqLvrrB87GUvP8OviyOjgTyc7fTXJWMz4m0wm+geS42tL9AhjO2N9s0ZF1UgEpGOUBVck=
+	t=1721216361; cv=none; b=mh2q7NChCjRhhN+OuWrLMxB+IL/vR0WqZPOKQtyI7lqS1+hPZwVN1DUgNezhHIGtiHq+0oIlHRwCrhY1pP6wJu+jf+Vh2d5MktiiE6TCDylAPdZZXlOgxgadkWaLRiCMGtHvlvMal5u7wQ2ZX6OthNrbjjveSJp8GWgmbEHZ0JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721216088; c=relaxed/simple;
-	bh=gcrMxKi/lpjsHgKBrcn3GEAbxhYJH8eFP6iRo/DtgBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAOurYGCjYW95UIvtV0chNXDxLA0vA6G3eveV4xxFZhZb1D+CXN8q9j2b0gUjdEeHFXdvsDNUVUy91PgTnFe6iJkTanbsor2WzMYn29O9e5O+RlrpIkXGL2DFWu6y/R8CtmMN1rkO0n7BGu6pxjDh/J4qSqzI+2w60UJ6moPRNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YhsCRW6Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zj6IerRz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d72abmdr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ALb3YT/i; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D734F21AA2;
-	Wed, 17 Jul 2024 11:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721216085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F4CWV/sF7x1WiYDVW9W02BKIWQSYqQruBo2Yq7ZKPbA=;
-	b=YhsCRW6ZxkN6p9W0vuSvNmlZ3E9YL7XMLvS+/D4ncqTFIG7jYHVDhAzaRnX7VB/I0eZUy4
-	HWQQ3i+/bfvoxViHKG6jSj74A4smED3ZEXyralXeXc7Jeen5+3QfsG+7vuw9Bw+XSlbCxb
-	eVeNZC4WVwIBqVuQCjf2aK0lwrlYLNQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721216085;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F4CWV/sF7x1WiYDVW9W02BKIWQSYqQruBo2Yq7ZKPbA=;
-	b=Zj6IerRzPp4LCY871cyDBCxeE2n2QICTjI14FtRBETbfBY/8zjZzwZWYJY0QfZVw9hYyx0
-	XJP4uCgEE3el06Cw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=d72abmdr;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="ALb3YT/i"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721216084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F4CWV/sF7x1WiYDVW9W02BKIWQSYqQruBo2Yq7ZKPbA=;
-	b=d72abmdrO78XCt+6wamD0te92HjEklMKI3bQ6x+I18OQiXkaSgdw/4MEX5EzNLRrRlMWda
-	MRPh809gx5r9rV6KUmMlG+eiOcoysPF8ceme+2dy3TSpmvP4U3eIzaT5pTYv0kIZrti7ha
-	E2fJLlrLOBx7wzxb+3mfi+nvKzuy74w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721216084;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F4CWV/sF7x1WiYDVW9W02BKIWQSYqQruBo2Yq7ZKPbA=;
-	b=ALb3YT/iNrhcoAS9WAJbUBenaiPxqkHzsykltMlOOcIeWWYDvAu8CaKiVy8sdv8I77ifo8
-	L6PKcqEGWRgcBABg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6C51136E5;
-	Wed, 17 Jul 2024 11:34:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y0OFMFSsl2YBTQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 11:34:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 77750A0987; Wed, 17 Jul 2024 13:34:44 +0200 (CEST)
-Date: Wed, 17 Jul 2024 13:34:44 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 9/9] tmpfs: add support for multigrain timestamps
-Message-ID: <20240717113444.imq5hru3sh5cyw2s@quack3>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
- <20240715-mgtime-v6-9-48e5d34bd2ba@kernel.org>
+	s=arc-20240116; t=1721216361; c=relaxed/simple;
+	bh=o5xv/Quic8OyS6G/CZeZwnHIw4qoO5HkwGP2KsFr9lM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=LSfEKEjVBqkSmhYJcp9OIHJfXttNaw9oQ0GU7HePfrPLM6hSIVhqJxt6qoD9VXLPUx+qbjzq6U8jFX7+L6UCrt9qXyPLOQCjNRlJJg42PCVRTZTmut4/dRkEIjAHOwkVQCVvNX7YJp1GHRIsqUZPsfAOiF6hVbuKif3xHaWiUsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QDon7sMq; arc=none smtp.client-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721216355; bh=bWeafcqr85+3H/82ChXQMzxaY0GsN5RvhlbByzl/2rI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=QDon7sMqUDy7M7J8AgyVGv/N4FRny+2NboCjJnVAsVFjYl5Ia+esz5OjaMjq0x5uo
+	 IbbyeO3ixn0kuOm9Q9hqa7zE8IILkSC51n7CrbDf7zJSz6fkSQvLoRsfY3H64fDyZh
+	 LagdAEgF+yAUwPBEsIvDS+tmbWQbqGlF0XNzQ3LA=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 9CD32A80; Wed, 17 Jul 2024 19:39:13 +0800
+X-QQ-mid: xmsmtpt1721216353t2qaqfuel
+Message-ID: <tencent_84396D049598E9E2ED52CCE479426DD02E0A@qq.com>
+X-QQ-XMAILINFO: NDz66ktblfzJpCJehk2uHUnY6GE9zgBgCeqhh2dj1YnAYBmFAd6Rp37a2eoqyA
+	 WDTD7dEiuSu6TbGv7JC51n9UzwfvYU4214x7ERb1ue+0CXyBgM1kGLrSCj80ZpxkqoCLSrjTjMa9
+	 t60IZAyIF6MSTgn6UU4dBfbxtyubBdW807F+Y+0UQeYS22p5qD0KCVg2XT/lfRQaCFlsmNZZV39p
+	 jLS1Ou/bPR15tbswaPoIPr4+YseY8N6xxpKAdXgklaZhzRMvdlXH8Av0rVOWMemQ8cu0sOWB98N1
+	 ebTvubdRDuZrGiCAeRCsAPoaKtEgIBjNlojs/9ly3FSByOFyjFFOANPGFzYLRTITDYBPR/EnNzqi
+	 F1J2l2v/bIYwcX9MAV43oB7iIhyfdKzbMNvlTtIgot6mz3fdbUew9fhyPu8t6Y4wZkKGg5Lbfi00
+	 nkpUk1Fgv625UYz6hRjsMNW1C5BFRwfMv4xEZAY82fgiBuVzqD39EDkLjlY6LFn5I4caVSWTpbd2
+	 TOtuehmV1QIPdhztY0hjNvzKq5cW2foJgTrSDlRuRhjE1P44hEZuPMcGGXu8CDQsAktyDSq2mnKX
+	 Y44v/QiGdigDgQ4TXAyRJEa8OdBGSwbCznrKZZCDNSgU/1CEeBJN/DpJpb5K5jLTpNsgA/DsC83r
+	 L+PkKAVTglz0DHBfN6B+nIHo0xhP+Vu9iu4Rki9AsOy/f8hIMV/m19SHUlEEh7E/lUaUt59usjM2
+	 tzwacRMfxJrrzLPnoS+SpEK3SOS//5dbuEP1RdwJnln3hx/X+dzET1JO6Vyt83mJw4GseyUZrRMv
+	 vnAOJd4UA7R9x/5Z5OhYsxAJuy4hYZC98m5460dWlL2Bwt9AYzs7VEaQnF1AZ9zubO/ExVQM7TJu
+	 KF5J5gmbR0SLDhspj1qyjE6jfr/Kn0ubbWfMgTUTTPWaPkr/2QOyOP/qYIPL5ykQ==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+d5dc2801166df6d34774@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in lockref_get
+Date: Wed, 17 Jul 2024 19:39:13 +0800
+X-OQ-MSGID: <20240717113913.616996-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000005c6453061d53bc0f@google.com>
+References: <0000000000005c6453061d53bc0f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715-mgtime-v6-9-48e5d34bd2ba@kernel.org>
-X-Rspamd-Queue-Id: D734F21AA2
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,oracle.com,mit.edu,dilger.ca,fb.com,toxicpanda.com,suse.com,google.com,linux-foundation.org,lwn.net,fromorbit.com,linux.intel.com,infradead.org,gmail.com,linux.dev,arndb.de,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,toxicpanda.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spamd-Bar: /
+Content-Transfer-Encoding: 8bit
 
-On Mon 15-07-24 08:49:00, Jeff Layton wrote:
-> Enable multigrain timestamps, which should ensure that there is an
-> apparent change to the timestamp whenever it has been written after
-> being actively observed via getattr.
-> 
-> tmpfs only requires the FS_MGTIME flag.
-> 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+before remove debugfs_dir set reference pointer to NULL
 
-Looks good to me. Feel free to add:
+#syz test: linux-next 58f9416d413a
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+diff --git a/net/mac80211/driver-ops.c b/net/mac80211/driver-ops.c
+index fe868b521622..fe29ba561599 100644
+--- a/net/mac80211/driver-ops.c
++++ b/net/mac80211/driver-ops.c
+@@ -113,11 +113,10 @@ void drv_remove_interface(struct ieee80211_local *local,
+ 	if (!check_sdata_in_driver(sdata))
+ 		return;
+ 
+-	sdata->flags &= ~IEEE80211_SDATA_IN_DRIVER;
+-
+ 	/* Remove driver debugfs entries */
+ 	ieee80211_debugfs_recreate_netdev(sdata, sdata->vif.valid_links);
+ 
++	sdata->flags &= ~IEEE80211_SDATA_IN_DRIVER;
+ 	trace_drv_remove_interface(local, sdata);
+ 	local->ops->remove_interface(&local->hw, &sdata->vif);
+ 	trace_drv_return_void(local);
 
-								Honza
-
-> ---
->  mm/shmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 7f2b609945a5..75a9a73a769f 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -4660,7 +4660,7 @@ static struct file_system_type shmem_fs_type = {
->  	.parameters	= shmem_fs_parameters,
->  #endif
->  	.kill_sb	= kill_litter_super,
-> -	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-> +	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
->  };
->  
->  void __init shmem_init(void)
-> 
-> -- 
-> 2.45.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
