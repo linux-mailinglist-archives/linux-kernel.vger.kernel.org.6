@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-254982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5511E933A21
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80287933A24
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB1E1F21A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B5C1F2122F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20FF4D8AF;
-	Wed, 17 Jul 2024 09:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DE14F218;
+	Wed, 17 Jul 2024 09:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b026PwC1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3NOKU1c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBBB6BB5B;
-	Wed, 17 Jul 2024 09:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FBA3BBFB;
+	Wed, 17 Jul 2024 09:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209116; cv=none; b=di0ewUin3aa2+U3U63a1bhghG61pMvIuWJuBd81YcRAEhb+j7kCYVQBxc0is3cyDPx+5ZiSS5rDMwhnGNRopywRa5bu9HvHRT7goSU5nI0K2KAm56r8CosCjY6AM2tEBJyM1eckqeRBXGsh5jxLUdzCrA20Ry9tvP4kxoY+4VkE=
+	t=1721209137; cv=none; b=hIyJZrIG0eNJsDr3bA5/j82X74MjnGILFthWYk1jqhmoVMCXjrAUjc9cNf5OL+7h+8ZMluWWUMBv/wlhyCFfca+clVv4FLMf04/9fxhIrf1Bqa67FA748g203tkfFbzKPoBf/yo7QQBqbRCjL7S/KCwrsU4c89wl315piqsuyZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209116; c=relaxed/simple;
-	bh=1guYZIYQNHhoKmLTIMKpaYvKahfTw5ESfPxUjAAS1OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sfozore0W4sqf8cBf/uXSH8zXPOuptk6eal0PFwVdxQLJpiVCDwm8+suMHA3+S75fJJy2lSmiBzhzdcpj/7qtdV2K+QWz2dy4MTJqEKwppv91zZDXIMnsq+VqmJLYZ8mF5DzajyU8V+dMubbFYHrook5PdZHeEaFDgJxfpOyzzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b026PwC1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 415A3C4AF09;
-	Wed, 17 Jul 2024 09:38:32 +0000 (UTC)
+	s=arc-20240116; t=1721209137; c=relaxed/simple;
+	bh=myU73vj/QOo7543SNC4aX3Z4GndmbEpmQ9OaodjPMDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRPRwxGo5rRLbl48yeqmY0Zkq+w6+/AleTmhpX1XBNIN9ooXQ8NsRtyF8/1jeuRTz4kHGWyKh+rKitFDMjDYbQARkqNVWWDOMxbHHCClpAKvPwwYcGWMGJanAQMN1wPN7E5s5o4sLZxlHwg5uQSBDcfDAaEaDj9QGxeXieVbYK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3NOKU1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887C7C32782;
+	Wed, 17 Jul 2024 09:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721209115;
-	bh=1guYZIYQNHhoKmLTIMKpaYvKahfTw5ESfPxUjAAS1OY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=b026PwC1pvgZZmxvYTXHl3PhkIJSL06DtTtcR+EBiH0GYyIR7vGS1BO9E57qSyjcx
-	 z7U/64oOHnvCnnLNnwG2hT/mOKVhkWUXPtn1yPEWx7i4gBClKk7gbr2UjDfePTIaSk
-	 SvujIlkvJv5JTvXEnXZti3bJCIhes+cRf4erkx/7cauPwQctsEIh5sKlHoi4VNpOHl
-	 HldELZYMbYP9nNS6Tqz5kFVdNiR2mmFC21G4d+FSxnYiaDkRfnK+m4qmoiXWgZ7BTw
-	 kNTvCPHk6l8tSRj6LZPDOUVAedKYxZh7lHHVP1hkMEVf/4nQsdQMfOKQ+OjZ+ViGRA
-	 XufZPGOWTL30w==
-Message-ID: <c26f39fc-94bd-40f2-9c3a-7075eb3e6dba@kernel.org>
-Date: Wed, 17 Jul 2024 11:38:30 +0200
+	s=k20201202; t=1721209137;
+	bh=myU73vj/QOo7543SNC4aX3Z4GndmbEpmQ9OaodjPMDc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G3NOKU1cJuq0rXxEkiwSc9fr/5LICU52iutPG6PbVVaXyWoTIBlCmhH4EqHtXViy6
+	 FbOdTHOXHGy9VhZMUP5Lw80yyN4um5LSF518hzm54uDeQj4Crbka5uTAbqhjhB1XJW
+	 GQX+hrd87OGJAfvLJ74DqegslMjpq2ssKFhPhJaFmyOiPxMuEgEEwKpJpgTBmdby4N
+	 O2nQuj1pjJuRKXTE97D9aTJ79VNSF8zZBhgt451d6pgG3RYvSn3ExcBzhmosKpYSoO
+	 88/tSY2cMjffICTdD/Mpe+CQtSeCmXuc6uzomVCT0O//Z8olGO6fl7aAKAuHiGtmor
+	 Fk7my/9z6OHng==
+Message-ID: <5afbb80d-2325-42c9-b153-d220acdd321d@kernel.org>
+Date: Wed, 17 Jul 2024 11:38:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: frequency: adf4377: add adf4378 support
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v1 1/4] arm64: dts: imx8: remove non-existent DACs
+To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+ Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dragos Bogdan <dragos.bogdan@analog.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240717093034.9221-1-antoniu.miclaus@analog.com>
- <20240717093034.9221-2-antoniu.miclaus@analog.com>
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ imx@lists.linux.dev, loongarch@lists.linux.dev
+References: <20240717-anvil-ashy-544e80a1317c@spud>
+ <20240717-alkalize-bouncy-83e748284bc7@spud>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,109 +108,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240717093034.9221-2-antoniu.miclaus@analog.com>
+In-Reply-To: <20240717-alkalize-bouncy-83e748284bc7@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2024 11:30, Antoniu Miclaus wrote:
-> Add separate handling for adf4378 within the driver.
+On 17/07/2024 11:37, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> The main difference between adf4377 and adf4378 is that adf4378 has only
-> one output which is handled by only one gpio.
+> Neither the imx8dxl-evk or imx8qm-mek have a Rohm DAC on them as far as
+> I can tell from online documentation, and they certainly do not have a
+> dh2228fv, as this device does not actually exist! Remove the DAC nodes
+> from the devicetrees as it is not acceptable to pretend to have a device
+> on a board in order to bind the spidev driver in Linux.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  drivers/iio/frequency/adf4377.c | 25 ++++++++++++++++++-------
->  1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/adf4377.c
-> index 9284c13f1abb..e02298a8b47f 100644
-> --- a/drivers/iio/frequency/adf4377.c
-> +++ b/drivers/iio/frequency/adf4377.c
-> @@ -387,6 +387,11 @@
->  #define ADF4377_FREQ_PFD_250MHZ			(250 * HZ_PER_MHZ)
->  #define ADF4377_FREQ_PFD_320MHZ			(320 * HZ_PER_MHZ)
->  
-> +enum adf4377_dev_type {
-> +	ADF4377,
-> +	ADF4378,
-> +};
-> +
->  enum {
->  	ADF4377_FREQ,
->  };
-> @@ -402,6 +407,7 @@ enum muxout_select_mode {
->  
->  struct adf4377_state {
->  	struct spi_device	*spi;
-> +	enum adf4377_dev_type	type;
->  	struct regmap		*regmap;
->  	struct clk		*clkin;
->  	/* Protect against concurrent accesses to the device and data content */
-> @@ -687,7 +693,7 @@ static void adf4377_gpio_init(struct adf4377_state *st)
->  	if (st->gpio_enclk1)
->  		gpiod_set_value(st->gpio_enclk1, 1);
->  
-> -	if (st->gpio_enclk2)
-> +	if (st->gpio_enclk2 && st->type == ADF4377)
 
-Why? Isn't everything correct for NULL?
-
->  		gpiod_set_value(st->gpio_enclk2, 1);
->  }
->  
-> @@ -889,11 +895,13 @@ static int adf4377_properties_parse(struct adf4377_state *st)
->  		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk1),
->  				     "failed to get the CE GPIO\n");
->  
-> -	st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
-> -						  GPIOD_OUT_LOW);
-> -	if (IS_ERR(st->gpio_enclk2))
-> -		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
-> -				     "failed to get the CE GPIO\n");
-> +	if (st->type == ADF4377) {
-
-So the device does not have this pin? Then you should express it in the
-bindings.
-
-> +		st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
-> +							  GPIOD_OUT_LOW);
-> +		if (IS_ERR(st->gpio_enclk2))
-> +			return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
-> +					"failed to get the CE GPIO\n");
-> +	}
->  
->  	ret = device_property_match_property_string(&spi->dev, "adi,muxout-select",
->  						    adf4377_muxout_modes,
-> @@ -945,6 +953,7 @@ static int adf4377_probe(struct spi_device *spi)
->  
->  	st->regmap = regmap;
->  	st->spi = spi;
-> +	st->type = spi_get_device_id(spi)->driver_data;
-
-
-spi_get_device_match_data()
-
->  	mutex_init(&st->lock);
->  
->  	ret = adf4377_properties_parse(st);
-> @@ -964,13 +973,15 @@ static int adf4377_probe(struct spi_device *spi)
->  }
->  
->  static const struct spi_device_id adf4377_id[] = {
-> -	{ "adf4377", 0 },
-> +	{ "adf4377", ADF4377 },
-> +	{ "adf4378", ADF4378 },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(spi, adf4377_id);
->  
->  static const struct of_device_id adf4377_of_match[] = {
->  	{ .compatible = "adi,adf4377" },
-> +	{ .compatible = "adi,adf4378" },
-
-Your device ID tables have incoherent match data. Considering that one
-type is 0, this is error-prone and discouraged.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
