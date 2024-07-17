@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-254621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837EB93358F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E67933597
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 05:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46B31C21D0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B131C22BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 03:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EAF6FCC;
-	Wed, 17 Jul 2024 03:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2778F6D;
+	Wed, 17 Jul 2024 03:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z1EYJ7Wt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMUGhkL+"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C2B3C00
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7BAEC7;
+	Wed, 17 Jul 2024 03:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721185252; cv=none; b=Ma5O/MaiOI5+YZacNJZYFNH5vXbGc/cofzy3ojyXk7ie8rxUA2d1a7i9HMJgilKdxxB6SVZJR+Zmz92S+ePznTXHVfDg+6qeRMQ6os+j4pBd7e4Nv6k9vXJ0/NAupYvDoS1JtUtfo+pn59UXTa8QX75ykK6DueA62uAZ4WehTr4=
+	t=1721186032; cv=none; b=RbjeU395DEBBXPHqAOBKKAe9y0qTNeUyUMoYXWHoQN968A0LOqcsg5/FYifAmxaUjJ4v6vbzFGSze8UrqOYOUsZI9pYiZM7po7CJXojqxVfjY9gE13fD8j/Arky2iVJvE5iC8/hvgpd8++LxiYRp9pyGenJ5sfqYxQj1h+HldNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721185252; c=relaxed/simple;
-	bh=cQ5233xOzUs1cEnLWD5BkcP66jU3nnLpHaurtW/kg5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tb19QwcBOAzSynr4R7OVZDzukNdOISz4UIEdc/D87wlxd4TfBOkKikm9kFeJnZ7RDLFIJGqmDhG2LZzPC3XSRUKjxKI57dcRroaws4Aw66SOt+HVCleP0EbsJbA86+NsFEcD4FpTR4uDQ0WwsuYPrgk2DwTb2Vr1us1lR/GI9LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z1EYJ7Wt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721185250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=azJ33/H5zwxD3RGrWtXQAc8hehxfq2WWZbzzVI9AlkM=;
-	b=Z1EYJ7WtNp5wBqO/BKAPBhhlHmCZvnRskRihMiyFVetJ9ufNilobnt2Z2MKovpaVyO5Bk/
-	NO0rdckD2eSLss0oZCv9UVGoB8R+QWySBgabUHf5VNcY+DCO58JEf34NDhfupUycUBdbs+
-	iG+cs09GGMNGBcPZMOs713RL3h+4Jl4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-209-MA57ON2wMPuVgbDFGpzJqA-1; Tue,
- 16 Jul 2024 23:00:44 -0400
-X-MC-Unique: MA57ON2wMPuVgbDFGpzJqA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26CCF1956095;
-	Wed, 17 Jul 2024 03:00:42 +0000 (UTC)
-Received: from [10.22.32.24] (unknown [10.22.32.24])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7AA231955F40;
-	Wed, 17 Jul 2024 03:00:39 +0000 (UTC)
-Message-ID: <623e62c5-3045-4dca-9f2c-ed15b8d3bad8@redhat.com>
-Date: Tue, 16 Jul 2024 23:00:38 -0400
+	s=arc-20240116; t=1721186032; c=relaxed/simple;
+	bh=Fcarn7s9rPhpRjAERfo5ik6wtMS0k+cdjjk8r/rhBZc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tcM0O4EL8FEVtPdOdMowDJ7pPGn/3TtFNbQGkNAuMt0vGO96g4NtPmGGxc2vDQT/TaFQyvyOepQV5f8PDHTEWaYKz+bxqcgnE3NKjynH/Q1hzppdQADnwh12gRW6DZikiO56MHLgLP+XigexFBDCjvcFnh+OksZoQt/ThKc2/Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMUGhkL+; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb4c51fb41so180680a91.0;
+        Tue, 16 Jul 2024 20:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721186030; x=1721790830; darn=vger.kernel.org;
+        h=content-transfer-encoding:fcc:content-language:user-agent
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBXkKPZ/jalUgSlf5TgPccFoCBM8ukwzJY09wBHIpc4=;
+        b=HMUGhkL+igJETQ10mqh66weSMc5b6wSkHkg29iLPSN7BBdi2rq36vZ4SV9doNnGCca
+         HIfSz5hvu7XVmziXCyvfVNd+UPHjm5IlVkFWPuyE2Ms6i6TE46WPGWYZA/V7wuK/Q71X
+         69SsNtjSxZoOd1vq+hl5oaME2lr4I0QOEQBz61zPfTjuX7fPNWsAzcmm5RWRgaOYon0a
+         MYooOVK4mCpj4fg2cOpSFv/kIk7/M3/Vt0/El1fAXJmpQQAkzusX8IvSlPYyMxJAOOT7
+         cvUE/J3tXMYCsCo2CMTMW9zGOfyfPjgOCXQ7jQ4hZ6j23ycruQ2QojXMjhTnUOkUlLxj
+         HQ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721186030; x=1721790830;
+        h=content-transfer-encoding:fcc:content-language:user-agent
+         :mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBXkKPZ/jalUgSlf5TgPccFoCBM8ukwzJY09wBHIpc4=;
+        b=qVXKcDBhW+RlwqXBzpJAP75XzfZk3pEUp60SDNZIlTQX/YWT4UvM4FYc4RICmezSv4
+         SIljjlPnd9sWOIN8QifcY5WegZwUj6JZM15sJTDOuNgUjZDQJmrc/awaOF4WuFfbS8hh
+         QxqBQzRgmRFP5GQ4zD1clH3IsQZdfzdp3jbi9Saugo4L/gyjs+WMLKlwOrZ7m5kkMOlj
+         yB4bEVKdStv7YcFHQiIn8O6o0xWt14zcr4YnfBY+AfRUJlDrpfbbdizDgiU0IaIKtXhA
+         +bUNBaEkKzzT4CgOPzSnrialSpAKA26f6gr/6jJay0GPr/v7HixwkrNcusszCdXsqioh
+         TUkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWn6muU0uOYxU7xqVi+4jjzPb8iheRP53XbIkE3dyorm5qmSJmoZytSyAjZfZVlpoPaMj92hWCJGILrt6LUSLZwn1ssiFnNsS8umxsiGLuQGxlBFRPDYRAOUd7h8tdVIVDH416dxs2V
+X-Gm-Message-State: AOJu0YyETFf4BVoR5Hj1D/FtG6ZZzgRXQMGXoPGISKTfbNXaZTkSw/iD
+	lpQWF9v3S50uFGqIXf+81hBPb+GUpuEA48rC61L33NO3wBu6IWVu
+X-Google-Smtp-Source: AGHT+IGqP+M0Ee7JY1ExYQ2wwfOpJ2Ifyjg7phZTgR/vqMwjxduSc+thY5pdB4K7kZPRVWVM2+E1Gw==
+X-Received: by 2002:a17:90a:f0d1:b0:2c8:6793:456 with SMTP id 98e67ed59e1d1-2cb51e5f06fmr303594a91.0.1721186030034;
+        Tue, 16 Jul 2024 20:13:50 -0700 (PDT)
+Received: from js-pc.. ([116.162.132.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2caedc92d1esm7012247a91.44.2024.07.16.20.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 20:13:49 -0700 (PDT)
+From: Hongyu Xie <xy521521@gmail.com>
+To: stern@rowland.harvard.edu,
+	xy521521@gmail.com,
+	oneukum@suse.com
+Cc: gregkh@linuxfoundation.org,
+	brauner@kernel.org,
+	jlayton@kernel.org,
+	jack@suse.cz,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiehongyu1@kylinos.cn
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+Date: Wed, 17 Jul 2024 11:13:39 +0800
+Message-Id: <45b87923-d256-4c5e-8167-8ef764add1e9@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ee0a5160-233a-485c-a34b-99d4a1e046c5@rowland.harvard.edu>
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <9ef72886-13b8-46cf-a0aa-54dad36102e9@rowland.harvard.edu>
+ <2a80d11d-029f-4e7e-9a8e-3abae1034add@suse.com>
+ <429eb27a-578a-4208-8ce1-89434b8d739f@rowland.harvard.edu>
+ <3073c8ce-1923-4816-a442-41b4cc333af9@suse.com>
+ <6419a4e9-e084-4eb6-8376-9202930ea8be@kylinos.cn>
+ <ee0a5160-233a-485c-a34b-99d4a1e046c5@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,58 +97,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, kernel-team@cloudflare.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <172070450139.2992819.13210624094367257881.stgit@firesoul>
- <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org>
- <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;
+ attachmentreminder=0; deliveryformat=1
+X-Identity-Key: id1
+Fcc: imap://xiehongyu1%40kylinos.cn@imap.kylinos.cn/Sent
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: quoted-printable
 
-On 7/16/24 20:35, Yosry Ahmed wrote:
-> [..]
->>
->> This is a clean (meaning no cadvisor interference) example of kswapd
->> starting simultaniously on many NUMA nodes, that in 27 out of 98 cases
->> hit the race (which is handled in V6 and V7).
->>
->> The BPF "cnt" maps are getting cleared every second, so this
->> approximates per sec numbers.  This patch reduce pressure on the lock,
->> but we are still seeing (kfunc:vmlinux:cgroup_rstat_flush_locked) full
->> flushes approx 37 per sec (every 27 ms). On the positive side
->> ongoing_flusher mitigation stopped 98 per sec of these.
->>
->> In this clean kswapd case the patch removes the lock contention issue
->> for kswapd. The lock_contended cases 27 seems to be all related to
->> handled_race cases 27.
->>
->> The remaning high flush rate should also be addressed, and we should
->> also work on aproaches to limit this like my ealier proposal[1].
-> I honestly don't think a high number of flushes is a problem on its
-> own as long as we are not spending too much time flushing, especially
-> when we have magnitude-based thresholding so we know there is
-> something to flush (although it may not be relevant to what we are
-> doing).
->
-> If we keep observing a lot of lock contention, one thing that I
-> thought about is to have a variant of spin_lock with a timeout. This
-> limits the flushing latency, instead of limiting the number of flushes
-> (which I believe is the wrong metric to optimize).
+From: Hongyu Xie <xiehongyu1@kylinos.cn>=0D
 
-Except for semaphore, none of our locking primitives allow for a timeout 
-parameter. For sleeping locks, I don't think it is hard to add variants 
-with timeout parameter, but not the spinning locks.
-
-Cheers,
-Longman
-
+=0D
+=0D
+On 2024/7/17 10:05, Alan Stern wrote:=0D
+> I'm ignoring most of what you asked Oliver to focus on just one thing:=0D
+> =0D
+> On Wed, Jul 17, 2024 at 09:43:38AM +0800, Hongyu Xie wrote:=0D
+>> Even before usbfs->reset_resume is called (if there is one), the USB dev=
+ice=0D
+>> has already been reset and in a good state.=0D
+> =0D
+> You are wrong to think that being reset means the device is in a good=0D
+> state.=0D
+> =0D
+> The userspace driver may have very carefully put the device into some=0D
+> non-default state with special settings.  All those settings will be=0D
+> lost when the device gets reset, and they will have to be reloaded=0D
+> before the device can function properly.  But the userspace driver won't=
+=0D
+> even know this has happened unless the kernel tells it somehow.=0D
+> =0D
+I was looking the whole thing from kernel's perspective. Thank you for =0D
+pointing it out for me.=0D
+> Oliver is pointing out that the kernel has to tell the userspace driver=0D
+> that all the settings have been lost, so the driver will know it needs=0D
+> to load them back into the device.  Currently we have no way to send=0D
+> this information to the driver.  That's why usbfs doesn't have a=0D
+> reset_resume callback now.=0D
+But I still think that there's no need to rebind for a USB device that =0D
+was using usbfs. Because rebinding doesn't fix settings lost. And it =0D
+looks strange from user-space's perspective.=0D
+What do you think?=0D
+> =0D
+> Alan Stern=0D
 
