@@ -1,122 +1,64 @@
-Return-Path: <linux-kernel+bounces-255110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7877E933C2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:24:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C04933C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC8C282A2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F6CB2146E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E8217F515;
-	Wed, 17 Jul 2024 11:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670417F4FB;
+	Wed, 17 Jul 2024 11:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHHXrqW5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jeMSvCSD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHHXrqW5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jeMSvCSD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVCJHJB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893A638385;
-	Wed, 17 Jul 2024 11:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD938385;
+	Wed, 17 Jul 2024 11:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721215454; cv=none; b=LQeH4fQu1QiMovFhp6dmDlb5oZ3iYbQlUOq9bNI5XHvjhLZye/QMRw1dxrW5fS4iSqcaz8oUUt7pW3FcT7la9PwQ6f0/U+VxyaGxa2pWImjI8C5AMxvW15lsdkGr7gtOZBS3RV+bT88BRmOtVTU4avE6I6MRP3Th2J3d6+U6Qz8=
+	t=1721215541; cv=none; b=QNISePhjyBvwwnpTALMDvFGzfmU4NXOQJxhQ/Y7Pd9kjH5BHddeo15eu24emqsJ/tT6eYcYFmt/EUc2nj69Q5AU2QIyamJzyKFxRaZiQv1vYrqv1ohfFxZcLVuvvaaeZ/qve0orxhwt8zauVc5FrY28Qc9vl+r4xllXLzXIzg40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721215454; c=relaxed/simple;
-	bh=xCKJi7zK/yGpb2f0c5K5Ln+coARI2PImC2zsTC3wwSE=;
+	s=arc-20240116; t=1721215541; c=relaxed/simple;
+	bh=UZR1BVRqjDPQ/etMDZvxrNCu48OQyhNEJhtGJu2o6Bg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NpxxAzSoUpxb9R++Bx0qSqVRMenU6GOnSqOdhKK7WBeldzgMzyElkRy5LrY61i4bcNCEB2N9pydUxkGJdSP0sMzgz4/DiksG0kGq4lIXksgLB3JOHen3+MBUFnqutUA/x4bu1LB8VYeIbpzc/4h7F/muumIBs/HX8n5QgV6Po7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHHXrqW5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jeMSvCSD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHHXrqW5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jeMSvCSD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 78055219DB;
-	Wed, 17 Jul 2024 11:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721215450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPlXmgWWykiwYFaSI8TaQFNF/XILIXsfXxcyJiCt34A=;
-	b=xHHXrqW5bIRudLPppzia+s31nSmZamC5ymFM+PaRsjxwdyx1VJBX5p8/pURD9S2QlaJ6Wz
-	CidO86qEPm9wnBz6T598LscytA1ioT36iZ7eWgA1ngLtsXufWGVoV1SZsJkVzW/h91glSR
-	fIR1Q7st9Z5i39BIFO6svmt8MVjbfdU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721215450;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPlXmgWWykiwYFaSI8TaQFNF/XILIXsfXxcyJiCt34A=;
-	b=jeMSvCSDSmNWHb7lMjTSPMQUjiQ/RzIzyF/kChiOPKjH5cYlVIm2dh81c9x+9XkQcP4af3
-	Vd0hwQieyZK94sBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xHHXrqW5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jeMSvCSD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721215450; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPlXmgWWykiwYFaSI8TaQFNF/XILIXsfXxcyJiCt34A=;
-	b=xHHXrqW5bIRudLPppzia+s31nSmZamC5ymFM+PaRsjxwdyx1VJBX5p8/pURD9S2QlaJ6Wz
-	CidO86qEPm9wnBz6T598LscytA1ioT36iZ7eWgA1ngLtsXufWGVoV1SZsJkVzW/h91glSR
-	fIR1Q7st9Z5i39BIFO6svmt8MVjbfdU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721215450;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jPlXmgWWykiwYFaSI8TaQFNF/XILIXsfXxcyJiCt34A=;
-	b=jeMSvCSDSmNWHb7lMjTSPMQUjiQ/RzIzyF/kChiOPKjH5cYlVIm2dh81c9x+9XkQcP4af3
-	Vd0hwQieyZK94sBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58BF6136E5;
-	Wed, 17 Jul 2024 11:24:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IU5QFdqpl2bjSQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 11:24:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DB671A0987; Wed, 17 Jul 2024 13:24:09 +0200 (CEST)
-Date: Wed, 17 Jul 2024 13:24:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 4/9] fs: have setattr_copy handle multigrain
- timestamps appropriately
-Message-ID: <20240717112409.i7qdiy35yxdyznng@quack3>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
- <20240715-mgtime-v6-4-48e5d34bd2ba@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEPbsgEGwd7cr2oTF8XAG9CnpnhDYZJai69NfQxBGTNwDOs5Sx7bSMyyJDC1dQC4Rw7Ic6fapcM0pEg84oNsOiISI95zwK8+8B8Vbesdnp1C6zqecOyBwFwEmutAlIsPrLPrBopHNVZLaFh+qhMTauLB9ABE7yiKl7FkXyqllVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVCJHJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12D4C32782;
+	Wed, 17 Jul 2024 11:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721215540;
+	bh=UZR1BVRqjDPQ/etMDZvxrNCu48OQyhNEJhtGJu2o6Bg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gIVCJHJBcIep4p2HqxOpsqIeh5Wacu4KBWD1ML4uk10r1P+kmT5inNC2SuwCcT9Yu
+	 MKwMzTtyy9OiA3yhnjXwiqjrlRs2iRs6mEEK7Me+10gQz2fkHVG1tVuYKarU/2ZTHG
+	 9TSn9YclPh7/mWCOdJ8om1ufVU91qYku3H59NuGbtCB2rqOuUAtFNDwOssWlZVMU8L
+	 Sacz1CwcmtX/E8oU45bCNNm3u0dgxBU2j8q92siUTuBQXkU/BELTQxJ9lvRpAXBCdj
+	 Yzm1lq2mES8Pio2Bl5Q2Iyl4xgUOw1HjwDBof1tAnxOvPv92mR2sLIxb9i8bFHO4sr
+	 otFwJwldEcVPg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sU2n0-000000006Im-3odx;
+	Wed, 17 Jul 2024 13:25:42 +0200
+Date: Wed, 17 Jul 2024 13:25:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] Revert "scsi: sd: Do not repeat the starting disk
+ message"
+Message-ID: <ZpeqNohYoQI5HQP-@hovoldconsulting.com>
+References: <20240716161101.30692-1-johan+linaro@kernel.org>
+ <39143ca8-68e4-44eb-8619-0b935aa81603@kernel.org>
+ <ZpeIOsEbBIho9P_1@hovoldconsulting.com>
+ <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -125,70 +67,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715-mgtime-v6-4-48e5d34bd2ba@kernel.org>
-X-Rspamd-Queue-Id: 78055219DB
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,oracle.com,mit.edu,dilger.ca,fb.com,toxicpanda.com,suse.com,google.com,linux-foundation.org,lwn.net,fromorbit.com,linux.intel.com,infradead.org,gmail.com,linux.dev,arndb.de,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spamd-Bar: /
+In-Reply-To: <bb277462-579b-4dc3-b63c-bf5768dd1ce4@kernel.org>
 
-On Mon 15-07-24 08:48:55, Jeff Layton wrote:
-> The setattr codepath is still using coarse-grained timestamps, even on
-> multigrain filesystems. To fix this, we need to fetch the timestamp for
-> ctime updates later, at the point where the assignment occurs in
-> setattr_copy.
+On Wed, Jul 17, 2024 at 07:46:14PM +0900, Damien Le Moal wrote:
+> On 7/17/24 18:00, Johan Hovold wrote:
+> > On Wed, Jul 17, 2024 at 07:48:26AM +0900, Damien Le Moal wrote:
+> >> On 7/17/24 01:11, Johan Hovold wrote:
+> >>> This reverts commit 7a6bbc2829d4ab592c7e440a6f6f5deb3cd95db4.
+> >>>
+> >>> The offending commit tried to suppress a double "Starting disk" message
+> >>> for some drivers, but instead started spamming the log with bogus
+> >>> messages every five seconds:
+> >>>
+> >>> 	[  311.798956] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  316.919103] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  322.040775] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  327.161140] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  332.281352] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  337.401878] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  342.521527] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  345.850401] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  350.967132] sd 0:0:0:0: [sda] Starting disk
+> >>> 	[  356.090454] sd 0:0:0:0: [sda] Starting disk
+> >>> 	...
+> >>>
+> >>> on machines that do not actually stop the disk on runtime suspend (e.g.
+> >>> the Qualcomm sc8280xp CRD with UFS).
+> >>
+> >> This is odd. If the disk is not being being suspended, why does the platform
+> >> even enable runtime PM for it ? 
+> > 
+> > This is clearly intended to be supported as sd_do_start_stop() returns
+> > false and that prevents sd_start_stop_device() from being called on
+> > resume (and similarly on suspend which is why there are no matching
+> > stopping disk messages above):
+> > 
+> > 	[   32.822189] sd 0:0:0:0: sd_resume_common - runtime = 1, sd_do_start_stop = 0, manage_runtime_start_stop = 0
 > 
-> On a multigrain inode, ignore the ia_ctime in the attrs, and always
-> update the ctime to the current clock value. Update the atime and mtime
-> with the same value (if needed) unless they are being set to other
-> specific values, a'la utimes().
+> Yes, so we can suppress the "Starting disk" message for runtime resume, to match
+> the runtime suspend not having the message.
+
+No, the point is that the stopping disk message is also suppressed when
+sd_do_start_stop() returns false (i.e. when sd_start_stop_device() is
+never called). See sd_suspend_common().
+
+> >> Are you sure about this ? Or is it simply that
+> >> the runtime pm timer is set to a very low interval ?
+> > 
+> > I haven't tried to determine why runtime pm is used this way, but your
+> > patch is clearly broken as it prints a message about starting the disk
+> > even when sd_do_start_stop() returns false.
 > 
-> Note that we don't want to do this universally however, as some
-> filesystems (e.g. most networked fs) want to do an explicit update
-> elsewhere before updating the local inode.
+> The patch is not *that* broken, because sd_do_start_stop() returning false mean
+> only that the disk will *not* be started using a START STOP UNIT command. But
+> the underlying LLD must start the drive. So the message is not wrong, even
+> though it is probably best to suppress it for the runtime case.
+
+From a quick look at the code I interpret the (original) intention to be
+to only print these messages in cases were sd_start_stop_device() is
+actually called.
+ 
+> The point here is that sd_runtime_resume() should NOT be called every 5s unless
+> there is also a runtime suspend in between the calls. As mentioned, this can
+> happen if the autosuspend timer is set to a very low timeout to aggressively
+> suspend the disk after a short idle time. That of course makes absolutely no
+> sense for HDDs given the spinup time needed, but I guess that is a possiblity
+> for UFS drives.
+
+I don't see anything obviously wrong with this for things like UFS.
+
+Here's what some printk reveal for the Qualcomm platform in question:
+
+[   50.659451] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   50.669756] sd 0:0:0:0: sd_resume_runtime
+[   52.911603] sd 0:0:0:0: sd_suspend_runtime
+[   52.921707] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+[   53.472894] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   53.481464] sd 0:0:0:0: sd_resume_runtime
+[   55.550493] sd 0:0:0:0: sd_suspend_runtime
+[   55.559697] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+[   58.595554] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   58.607868] sd 0:0:0:0: sd_resume_runtime
+[   60.667330] sd 0:0:0:0: sd_suspend_runtime
+[   60.677623] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+[   63.714149] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   63.724498] sd 0:0:0:0: sd_resume_runtime
+[   65.772893] sd 0:0:0:0: sd_suspend_runtime
+[   65.784696] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+[   68.836015] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   68.849576] sd 0:0:0:0: sd_resume_runtime
+[   71.359102] sd 0:0:0:0: sd_suspend_runtime
+[   71.368928] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+[   73.955031] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume
+[   73.963040] sd 0:0:0:0: sd_resume_runtime
+[   76.032153] sd 0:0:0:0: sd_suspend_runtime
+[   76.042100] ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_suspend
+
+Looks like a 2-second autosuspend timeout somewhere, and the controller
+stays suspended for 1-3 seconds in between.
+
+> >> It almost sound like what we need to do here is suppress this message for the
+> >> runtime resume case, so something like:
+> > 
+> > No, that would only make things worse as I assume you'd have a stopped
+> > disk message without a matching start message for driver that do end up
+> > stopping the disk here.
 > 
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> OK. so let's revert this patch and I will rework that message to be displayed
+> only on device removal, system suspend and system shutdown.
 
-Looks good to me so feel free to add:
+Sounds good.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-What is a bit bothering me is that it's now confusing that ATTR_MTIME_SET /
-ATTR_ATIME_SET is handled in different place for mgtime and normal inodes
-and I'm concerned this will bite us in the future. But not everybody is
-using setattr_copy() and unifying the handling of timestamps seems like
-quite some work...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Johan
 
