@@ -1,162 +1,201 @@
-Return-Path: <linux-kernel+bounces-255739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB5993448B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA817934489
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F0D283459
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A64D1C2136B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C279A41C7F;
-	Wed, 17 Jul 2024 22:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF3D5466B;
+	Wed, 17 Jul 2024 22:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqYFp49M"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5qQKDpR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80D1E889;
-	Wed, 17 Jul 2024 22:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BF93BBFB;
+	Wed, 17 Jul 2024 22:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721253875; cv=none; b=iQMS5jbeRy8PaDITRkz07BxhsjWIQJaW3+bKM9/37ZQ44fnHPb7FD26w9dpHsjIIIEwU0lRq+9gBN2CZnV8Wu4nIo6FHD1so1hziRRKJ9grVH+VD+UiXPsYY9KDwLZNl2xWZTihDLaXYgjOGDvyE+QnVr/usfafOjEQLKhE3/dw=
+	t=1721253795; cv=none; b=sTRvFzP5+xmli3zYMyhtDymb9WKQ7ORHocV64omnn8A7bdickzwi1BAnd6QuZ7khm7SQIonyIYcTiMw5J8nf9D+PzoCDBV9qCzWPo2d1Iop5jO8ddouIrF830UjK6cU7Rtb9irUFe/de3fH+tkO7ATbe70aINXIVlYCd1ECy9HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721253875; c=relaxed/simple;
-	bh=9heysHdPAAfYUYBjINGkFrzzC1PF5xW0W3PpAOMDtLE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lz5XfHWM7WO93ZWis6z+HD5ttFS+dljmuzkfFc6fgRkAxtXNC24aXYo1meVkd06GlTaH5FEv6h9YnfmE0PtM8EW0K11YnHhHM+DsGSCSHxvzpPg3L0jjbZo60fSEF+3DBrOg0h1AwUyuPrG5xGztkPORpbdUQT6ZYvm3TdLFG40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqYFp49M; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc566ac769so1593635ad.1;
-        Wed, 17 Jul 2024 15:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721253869; x=1721858669; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qJJzJBG1sBuJIYP4ytCZjApGrGsyKC+uV6BQ0w5NiXc=;
-        b=lqYFp49MHJg5E2sth7z7Iom7KehcqUB4+ZRyv891fjjAQgAQ8+cOLY8lY4tbN/MaX4
-         raH+z5LHxVvHJQ/P/kKFbDgqYf1wbQVgf2gjWWqyAmd9IDfBN/So1fLelF5p4vxFcwwz
-         TN1OQKpRrKwZNxZEJWMlitR4yy55eTmuu/mbrQZsF1Ud/mWpv+uiunfPW4sMNwSLrnAH
-         fKUTZ9xA89lykZ/rBoe5q7/Rj5VRAS5MTd9/KZSg57X+oLJheMM33Lz0QLwbWXJn/4Jl
-         yQB/XY/mloFO3ikIBIWy86RWHMF3Z9b5TlBzOUW3WoBOPPVZRLNSfZmJlTcuj6GCnivv
-         guGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721253869; x=1721858669;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qJJzJBG1sBuJIYP4ytCZjApGrGsyKC+uV6BQ0w5NiXc=;
-        b=gOPH53z6iBHzzkj5FbF0vA0Zv84I+4kHQZfAVEXrkC9m5g+CFHLX76cgumQBEhi1dC
-         UN9xU0Qp87eS+HfKWdCTpFADnWpC7hKljyVOj9+mNKT1F3etqojwofJVDTNrYT8qDJdR
-         +Mg7/pa3N7mmfzQeGROdKhTmkym80XqX1RDv+hQe4+myTOpkBHZKmodmzqtt2GrqqIBY
-         NLx8P3xClwVXsadhLIleU5Pm6BzJtEe7K16Ff0BROUka+P6z82E9t7+CyjrdLmZn2ZWq
-         hVdfmkR7jfNTNU+GEuo0j+S6NFtKF8VJptlu2v9AOdH+muYYdShrCV1O/2JurRnbLJPq
-         MtEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAwg+DjEHVEHSee1FhrBXD3XRbJUbHv5cmPTTYDVln5uht/tF8IPjjoKs9VBIBxAfNe5YJDp1GZUk/NkIq9gHjt5igaVAiLV4f8YSqoxl0QDZjqEHWFRimOysTviiESvxYvfhEK+9MLnxLoK8=
-X-Gm-Message-State: AOJu0Yyw7Xaeiglf8hG2MQFi/rRxRSCvL8bEXQG0aPzeu2SNAY/RNsuW
-	olrrMPKRQPVWew3UfOy+mVf3bE1Iv21GdohZmoMR0TLhdcv1p9Lh
-X-Google-Smtp-Source: AGHT+IHqspYkdBpihSMxxP5jlP95b1at34yApAcv8ktjXwpCOTl1ZgFvFv7Gni1yTtamzHb29RKzQw==
-X-Received: by 2002:a17:903:22cc:b0:1fb:3e9f:ff6f with SMTP id d9443c01a7336-1fc4e688ef7mr26234275ad.40.1721253869200;
-        Wed, 17 Jul 2024 15:04:29 -0700 (PDT)
-Received: from localhost.localdomain (pc-66-166-104-200.cm.vtr.net. [200.104.166.66])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc3a251sm79778585ad.198.2024.07.17.15.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 15:04:28 -0700 (PDT)
-From: Camila Alvarez <cam.alvarez.i@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
-Cc: Brian Foster <bfoster@redhat.com>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Camila Alvarez <cam.alvarez.i@gmail.com>,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: WARNING in bch2_fs_journal_stop
-Date: Wed, 17 Jul 2024 18:02:39 -0400
-Message-Id: <20240717220237.1246673-1-cam.alvarez.i@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721253795; c=relaxed/simple;
+	bh=xvMqdi9WDEg+JNQMrlEj2e0h/3nai7MYNzN4vR/RJH4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c4Zk8JNkEDYLsdw3/JesWHCMSwtd2g+pedUM1xGeK7wdaXZgfnWyJOdEEAnFiaydgho005+TC+m/YnDujyU8dG5vWFKyh6phaaBqkTx5LRqoR2/Tz8WBBNkgUfEZdtCT1HCuC+zV0r833iVZFnAIiokXwlwJndnUXApUg+9bPD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5qQKDpR; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721253792; x=1752789792;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=xvMqdi9WDEg+JNQMrlEj2e0h/3nai7MYNzN4vR/RJH4=;
+  b=O5qQKDpRpwbPmwywpAV3qs7jOihQhrd8VAhZ51s0ztGJVYiam+KGK8Dw
+   r8xi1bb2RwQve3hl5m7kN0j88tVU5Kr7wXHtPMrKDyQuySjQbMUDgirxM
+   Yg6qL42XoWhG5jUYNW3HKg3dkCBiC0heiBYqUR9nh37h9ru4tF6acOMC9
+   H+nj2lxwl2ilSWGYhZYYjk/IhoFlMD09TPNqTjeSXbTZIOe841lgkTT6W
+   p6Nlw9itYESu5W6FOYxbb5A2OMBBaP6JwxSKblt9Dhz9ZrqGyKsHUJGcZ
+   ZmG+dsLw3i/Hw0NhPUtciBI5ShPhp6SslIM10CT+zwiWoKxFE5Kw7C69r
+   Q==;
+X-CSE-ConnectionGUID: 1vZM+4zJTnSqao0q6P45JQ==
+X-CSE-MsgGUID: c22wgT9sQy25wapps95UVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="22599209"
+X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
+   d="scan'208";a="22599209"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 15:03:10 -0700
+X-CSE-ConnectionGUID: 8BjlIPCbTHaXuAZrNJ+4KQ==
+X-CSE-MsgGUID: fUCh/j56S5qsRaHwnHJXuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,215,1716274800"; 
+   d="scan'208";a="88014343"
+Received: from vcostago-mobl3.jf.intel.com (HELO vcostago-mobl3) ([10.241.225.92])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 15:03:11 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse
+ Brandeburg <jesse.brandeburg@intel.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Paul Menzel <pmenzel@molgen.mpg.de>,
+ Sasha
+ Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH iwl-net v2 2/3] igc: Fix reset adapter logics when tx
+ mode change
+In-Reply-To: <2c5a0dcf-f9b0-49da-9dea-0a276fa4a0d9@linux.intel.com>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
+ <87o774u807.fsf@intel.com>
+ <6bb1ba4a-41ba-4bc1-9c4b-abfb27944891@linux.intel.com>
+ <87le27ssu4.fsf@intel.com>
+ <2c5a0dcf-f9b0-49da-9dea-0a276fa4a0d9@linux.intel.com>
+Date: Wed, 17 Jul 2024 15:03:10 -0700
+Message-ID: <87msmf3cdd.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-last_seq and last_empty_seq suffered from an off by one error when the
-journal has no entries.
+Hi,
 
-The indexes were fixed and an assertion is added to check that the
-last_empty_seq is always kept under the next valid seq number.
+"Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com> writes:
 
-Reported-by: syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
----
- fs/bcachefs/journal.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+> On 12/7/2024 1:10 am, Vinicius Costa Gomes wrote:
+>> "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com> writes:
+>> 
+>>> Hi Vinicius,
+>>>
+>>> On 11/7/2024 6:44 am, Vinicius Costa Gomes wrote:
+>>>> Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+>>>>
+>>>>> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
+>>>>> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
+>>>>> have been observed:
+>>>>>
+>>>>> 1. The reset adapter logics for i225 and i226 differ, although they should
+>>>>>      be the same according to the guidelines in I225/6 HW Design Section
+>>>>>      7.5.2.1 on software initialization during tx mode changes.
+>>>>> 2. The i225 resets adapter every time, even though tx mode doesn't change.
+>>>>>      This occurs solely based on the condition  igc_is_device_id_i225() when
+>>>>>      calling schedule_work().
+>>>>> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
+>>>>>      resets adapter for legacy->tsn tx mode transitions.
+>>>>> 4. qbv_count introduced in the patch is actually not needed; in this
+>>>>>      context, a non-zero value of qbv_count is used to indicate if tx mode
+>>>>>      was unconditionally set to tsn in igc_tsn_enable_offload(). This could
+>>>>>      be replaced by checking the existing register
+>>>>>      IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
+>>>>>
+>>>>> This patch resolves all issues and enters schedule_work() to reset the
+>>>>> adapter only when changing tx mode. It also removes reliance on qbv_count.
+>>>>>
+>>>>> qbv_count field will be removed in a future patch.
+>>>>>
+>>>>> Test ran:
+>>>>>
+>>>>> 1. Verify reset adapter behaviour in i225/6:
+>>>>>      a) Enrol a new GCL
+>>>>>         Reset adapter observed (tx mode change legacy->tsn)
+>>>>>      b) Enrol a new GCL without deleting qdisc
+>>>>>         No reset adapter observed (tx mode remain tsn->tsn)
+>>>>>      c) Delete qdisc
+>>>>>         Reset adapter observed (tx mode change tsn->legacy)
+>>>>>
+>>>>> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
+>>>>>      to confirm it remains resolved.
+>>>>>
+>>>>> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
+>>>>> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+>>>>> Reviewed-by: Simon Horman <horms@kernel.org>
+>>>>> ---
+>>>>
+>>>> There were a quite a few bugs, some of them my fault, on this part of
+>>>> the code, changing between the modes in the hardware.
+>>>>
+>>>> So I would like some confirmation that ETF offloading/LaunchTime was
+>>>> also tested with this change. Just to be sure.
+>>>>
+>>>> But code-wise, looks good:
+>>>>
+>>>> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>>>>
+>>>>
+>>>> Cheers,
+>>>
+>>>
+>>> Tested etf with offload, looks like working correctly.
+>>>
+>>> 1. mqprio
+>>> tc qdisc add dev enp1s0 handle 100: parent root mqprio num_tc 3 \
+>>> map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 \
+>>> queues 1@0 1@1 2@2 \
+>>> hw 0
+>>>
+>>> No reset adapter observed.
+>>>
+>>> 2. etf with offload
+>>> tc qdisc replace dev enp1s0 parent 100:1 etf \
+>>> clockid CLOCK_TAI delta 300000 offload
+>>>
+>>> Reset adapter observed (tx mode legacy -> tsn).
+>>>
+>>> 3. delete qdisc
+>>> tc qdisc delete dev enp1s0 parent root handle 100
+>>>
+>>> Reset adapter observed (tx mode tsn -> legacy).
+>>>
+>> 
+>> That no unexpected resets are happening, is good.
+>> 
+>> But what I had in mind was some functional tests that ETF is working. I
+>> guess that's the only way of knowing that it's still working. Sorry that
+>> I wasn't clear about that.
+>> 
+>> 
+>> Cheers,
+>
+> My bad.
+>
+> Just tested ETF functionality and it is working.
+>
 
-diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-index 10b19791ec98..7bbbf4b149e9 100644
---- a/fs/bcachefs/journal.c
-+++ b/fs/bcachefs/journal.c
-@@ -1201,7 +1201,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 	struct journal_replay *i, **_i;
- 	struct genradix_iter iter;
- 	bool had_entries = false;
--	u64 last_seq = cur_seq, nr, seq;
-+        u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
- 
- 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
- 		i = *_i;
-@@ -1209,11 +1209,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 		if (journal_replay_ignore(i))
- 			continue;
- 
--		last_seq = le64_to_cpu(i->j.last_seq);
-+		last_written_seq = le64_to_cpu(i->j.last_seq);
- 		break;
- 	}
- 
--	nr = cur_seq - last_seq;
-+	nr = cur_seq - last_written_seq;
- 
- 	if (nr + 1 > j->pin.size) {
- 		free_fifo(&j->pin);
-@@ -1224,14 +1224,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 		}
- 	}
- 
--	j->replay_journal_seq	= last_seq;
-+	j->replay_journal_seq	= last_written_seq;
- 	j->replay_journal_seq_end = cur_seq;
--	j->last_seq_ondisk	= last_seq;
--	j->flushed_seq_ondisk	= cur_seq - 1;
--	j->seq_ondisk		= cur_seq - 1;
--	j->pin.front		= last_seq;
-+	j->last_seq_ondisk	= last_written_seq;
-+	j->flushed_seq_ondisk	= last_seq;
-+	j->seq_ondisk		= last_seq;
-+	j->pin.front		= last_written_seq;
- 	j->pin.back		= cur_seq;
--	atomic64_set(&j->seq, cur_seq - 1);
-+	atomic64_set(&j->seq, last_seq);
- 
- 	fifo_for_each_entry_ptr(p, &j->pin, seq)
- 		journal_pin_list_init(p, 1);
-@@ -1261,7 +1261,10 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
- 	}
- 
- 	if (!had_entries)
--		j->last_empty_seq = cur_seq;
-+		j->last_empty_seq = last_seq;
-+
-+	WARN(j->last_empty_seq >= cur_seq, "journal startup error: last empty seq %llu is higher or equal than the next seq number to be used (%llu)",
-+	      j->last_empty_seq, cur_seq);
- 
- 	spin_lock(&j->lock);
- 
+Awesome. Thanks for the confirmation:
+
+Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+
+Cheers,
 -- 
-2.34.1
-
+Vinicius
 
