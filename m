@@ -1,198 +1,108 @@
-Return-Path: <linux-kernel+bounces-255003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61497933A59
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8B3933A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 11:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68E321C21248
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABA62831CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2CE17E8EC;
-	Wed, 17 Jul 2024 09:51:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF071442F1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 09:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BE017E8FE;
+	Wed, 17 Jul 2024 09:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M/glFTDN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB59381DE;
+	Wed, 17 Jul 2024 09:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209866; cv=none; b=g7t+uP2HNNqSeGBG5xjHvzeCLKtCO4pYCdl1GHkN1qYSdDJGzF4dek8iius62Q/+z9aCImRr9UGTcfKb5RnVKDA8EQTjfrwd5TaW5XKLDBYNejPStYpgP1fdcyZ74X/m3RhdQKTCIVKjdtC34xWBaFYhh16YrfwJqjCrJmQqtgU=
+	t=1721209897; cv=none; b=VzEqlgmDAw7sV7ZpPm0ainPKJd4QVoNJm7mcL1iNOXnMg+7dEtkE6SUYcSTIXCgiMDLpWaaLDpn6O9jhGd7cRbTSrXXRDJ8jyVDnmErBXSbzeEVHu2HvuVpcAIv/JuvYYa9m7VggwcDUTn+bXb+aitGIsSjUa0LLS5UZZY94QuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209866; c=relaxed/simple;
-	bh=CHi6MJtPH/X6jYwyrF3rT1GCF1ZD5jZh+3VumXmuAs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PxZumzfx8ePArUYlhgzsUiRvHJvBD5WFVTdF4w+ml5ddtKga72G7x099j2rY8tlwjKnWvaDpbKsZVCOuVBGAOXr+fgi9u/wNYBORb29P84R97BU59QX/eK/ylRc1FNUUIUcSrF+anKK/gnIoZnrDBSThMvTtxSdjJ0WARcQLbDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 071621063;
-	Wed, 17 Jul 2024 02:51:26 -0700 (PDT)
-Received: from [10.57.77.222] (unknown [10.57.77.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 428BA3F73F;
-	Wed, 17 Jul 2024 02:50:59 -0700 (PDT)
-Message-ID: <dca879ca-e430-4759-b992-4f763344319c@arm.com>
-Date: Wed, 17 Jul 2024 10:50:57 +0100
+	s=arc-20240116; t=1721209897; c=relaxed/simple;
+	bh=0mehBSeLwhUZ/WAmUEaJbbNRA0Jr5Eg0HVEFt1KnCRI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEnugU5I0xtgBMXJYgSSRWpoY71BLPa2xRTO8YRYkYNZA8rEgm0AiElpXUumMheAt+T3jyzSUuwSy00SC9B8PBFgx0zCZorjzxtLpBEeQkwFU/uwr3Q8YnPjFR8YsgnuSP+F9/tsxDKGAH+Ac4WuQA7w6Wc9nosw38GHCiT4k/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M/glFTDN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H6ofal027012;
+	Wed, 17 Jul 2024 09:51:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0mehBSeLwhUZ/WAmUEaJbbNR
+	A0Jr5Eg0HVEFt1KnCRI=; b=M/glFTDN4RbCmzyETyZkxwZ/+8O3cljf+unaupWF
+	tHwKFRB9ouGNSc9rTTH1Q9i/Kb6Qz2WDMwM17S9bnreatqITVYh2sGiM72kYBuKX
+	8e7HfI4Tw4cry8GOUxq80WXcCMSpYsaiMx/8EUH+NptTpMMz27fHGDKPSqBbP6nE
+	Kg1KLFyYSoS7jhUCEV+gsqJ/bTFTKCFGTVO+KFCSE/kW4fUxuofie8mL9zSUAApt
+	iyDyEuLFX+bdLnrWxRyWYaiSlgH4C2FCnNuAvHRP0ZIIhDrjC7zEizPMCd9/UNj1
+	iTRze056mq60U7+S6KfjZRHPQaP2ckf3tls26oySEUr4uw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs1whw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 09:51:32 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H9pVrl008851
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 09:51:31 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 17 Jul 2024 02:51:27 -0700
+Date: Wed, 17 Jul 2024 15:21:23 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Rob Herring <robh@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <quic_wcheng@quicinc.com>, <johan+linaro@kernel.org>,
+        <quic_kriskura@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v0 1/2] dt-bindings: usb: qcom,dwc3: Add minItems for
+ interrupt info
+Message-ID: <ZpeUG66oI2D/r4Ma@hu-varada-blr.qualcomm.com>
+References: <20240711065615.2720367-1-quic_varada@quicinc.com>
+ <20240711142202.GA2256964-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <CAK1f24nCDZM8aa9z_ZtgLbdj695JJri01q2HJUJb9pJt2uqy=w@mail.gmail.com>
- <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
- <8c32a2fc-252d-406b-9fec-ce5bab0829df@arm.com>
- <a8441245-ae35-443f-9aea-325007492741@arm.com>
- <5c58d9ea-8490-4ae6-b7bf-be816dab3356@redhat.com>
- <f03deb7c-9a67-4096-9d33-32b357b52152@arm.com>
- <9052f430-2c5a-4d9d-b54c-bd093b797702@redhat.com>
- <f84bd34d-ac64-4e2f-90c0-d637c00b5055@arm.com>
- <5472faf5-1fbe-4a89-a17e-83716fc00b5a@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <5472faf5-1fbe-4a89-a17e-83716fc00b5a@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240711142202.GA2256964-robh@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tO9HBD7Uz4dxzSPmFB9il-1whlWnBc-J
+X-Proofpoint-GUID: tO9HBD7Uz4dxzSPmFB9il-1whlWnBc-J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_06,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=525
+ impostorscore=0 mlxscore=0 phishscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407170076
 
-On 17/07/2024 09:44, David Hildenbrand wrote:
->>>> I guess the real supported orders are:
->>>>
->>>>     anon:
->>>>       min order: 2
->>>>       max order: PMD_ORDER
->>>>     anon-shmem:
->>>>       min order: 1
->>>>       max order: MAX_PAGECACHE_ORDER
->>>>     tmpfs-shmem:
->>>>       min order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
->>>>       max order: PMD_ORDER <= 11 ? PMD_ORDER : NONE
->>>>     file:
->>>>       min order: 1
->>>>       max order: MAX_PAGECACHE_ORDER
->>>
->>> That's my understanding. But not sure about anon-shmem really supporting
->>> order-1, maybe we do.
->>
->> Oh, I thought we only had the restriction for anon folios now (due to deferred
->> split queue), so assumed it would just work. With Gavin's
->> THP_ORDERS_ALL_FILE_DEFAULT change, that certainly implies that shmem must
->> support order-1. If it doesn't then we we might want to tidy that further.
->>
->> Baolin, perhaps you can confirm either way?
-> 
-> Currently there would not have been a way to enable it, right? (maybe I'm wrong)
+On Thu, Jul 11, 2024 at 08:22:02AM -0600, Rob Herring wrote:
+> On Thu, Jul 11, 2024 at 12:26:14PM +0530, Varadarajan Narayanan wrote:
+> > IPQ5332 has only three interrupts. Update min items
+> > accordingly for interrupt names to fix the following
+> > dt_binding_check errors.
+>
+> Patch version numbering starts at 1, not 0.
 
-__thp_vma_allowable_orders() doesn't do anything special for shmem if TVA_IN_PF
-is set, so I guess it could concievably return order-1 in that path. Not sure if
-it ever gets called that way for shmem though - I don't think so. But agree that
-shmem_allowable_huge_orders() will not currently return order-1.
+Sorry. Have posted v2 addressing the above and other
+comments. Please take a look.
 
-> 
->>
->>>
->>>>
->>>> But today, controls and stats are exposed for:
->>>>
->>>>     anon:
->>>>       min order: 2
->>>>       max order: PMD_ORDER
->>>>     anon-shmem:
->>>>       min order: 2
->>>>       max order: PMD_ORDER
->>>>     tmpfs-shmem:
->>>>       min order: PMD_ORDER
->>>>       max order: PMD_ORDER
->>>>     file:
->>>>       min order: Nothing yet (this patch proposes 1)
->>>>       max order: Nothing yet (this patch proposes MAX_PAGECACHE_ORDER)
->>>>
->>>> So I think there is definitely a bug for shmem where the minimum order control
->>>> should be order-1 but its currently order-2.
->>>
->>> Maybe, did not play with that yet. Likely order-1 will work. (although probably
->>> of questionable use :) )
->>
->> You might have to expand on why its of "questionable use". I'd assume it has the
->> same amount of value as using order-1 for regular page cache pages? i.e. half
->> the number of objects to manage for the same amount of memory.
-> 
-> order-1 was recently added for the pagecache to get some device setups running
-> (IIRC, where we cannot use order-0, because device blocksize > PAGE_SIZE).
-> 
-> You might be right about "half the number of objects", but likely just going for
-> order-2, order-3, order-4 ... for shmem might be even better. And simply falling
-> back to order-0 when you cannot get the larger orders.
-
-Sure, but then you're into the territory of baking in policy. Remember that
-originally I was only interested in 64K but the concensus was to expose all the
-sizes. Same argument applies to 8K; expose it and let others decide policy.
-
-> 
-> I could have sworn you mentioned something like that in your "configurable
-> orders for pagecache" RFC that I only briefly skimmed so far :P
-
-I'm exposing the 8K control for pagecache in that series.
-
-> 
-> ... only enabling "order-1" and none of the other orders for shmem sounds rather
-> "interesting".
-> 
-> But yeah, maybe there is valid use for it, so I'm all for allowing it if it can
-> be done.
-> 
->>
->>>
->>>>
->>>> I also wonder about PUD-order for DAX? We don't currently have a stat/control.
->>>> If we wanted to add it in future, if we take the "expose all stats/controls for
->>>> all orders" approach, we would end up extending all the way to PUD-order and
->>>> all
->>>> the orders between PMD and PUD would be dummy for all memory types. That really
->>>> starts to feel odd, so I still favour only populating what's really supported.
->>>
->>> I would go further and say that calling the fsdax thing a THP is borderline
->>> wrong and we should not expose any new toggles for it that way.
->>>
->>> It really behaves much more like hugetlb folios that can be PTE-mapped ... we
->>> cannot split these things, and they are not allocated from the buddy. So I
->>> wouldn't worry about fsdax for now.
->>>
->>> fsdax support for compound pages (now large folios) probably never should have
->>> been glued to any THP toggle.
->>
->> Yeah fair enough. I wasn't really arguing for adding any dax controls; I was
->> just trying to think of examples as to why adding dummy controls might be a bad
->> idea.
-> 
-> Yes.
-> 
->>>
->>>>
->>>> I propose to fix shmem (extend down to 1, stop at MAX_PAGECACHE_ORDER) and
->>>> continue with the approach of "indicating only what really exists" for v2.
->>>>
->>>> Shout if you disagree.
->>>
->>> Makes sense.
->>
->> Excellent. I posted v2, which has these changes, yesterday afternoon. :)
-> 
-> Yes, still digging through mails ... in-between having roughly 1000 meetings a
-> day :)
-
-No problem. You're in-demand. I can wait. :)
-
+Thanks
+Varada
 
