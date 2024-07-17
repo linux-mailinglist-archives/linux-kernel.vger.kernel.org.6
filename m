@@ -1,298 +1,200 @@
-Return-Path: <linux-kernel+bounces-255069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B7E933B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:39:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBDA933B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2B82838BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE712838FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F1E17F4E3;
-	Wed, 17 Jul 2024 10:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B452617F369;
+	Wed, 17 Jul 2024 10:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L8y6yTy9"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKX25Rpx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EED17F36E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0876374C2;
+	Wed, 17 Jul 2024 10:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721212749; cv=none; b=NWDmLf2YoQCwdPcX+zT9AiClhy00jW6ACXVEVS4wyt1ad4ju+zRhWb17SW42LG3eWA4vS/ey6WS3sJXN4rcwh8s1lZp+Rni51IbCOFKmUXg62UR9bWr3ViXKsMW6Kjd6LrH91UTRZQ6nGW0H1OLaDgvxBSA9q/yxM5D57I4LBA8=
+	t=1721212744; cv=none; b=lOBP5byDTnaGBInt3saehorOuZODS6N5R9cHgqghKPhDgP9t01U/XbmFfxP6fkArudkyNNv9jkuLjVjTm00Mdr1gCoYLb3lN89zjUeT3H+Od3lxHI8l5Fv9pBAmwTNYSo5PnDp+6sjivnODbISMm5L/MzHkd1C6eh5TrKvhpsg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721212749; c=relaxed/simple;
-	bh=WhKS4jkTLsefDuEG9p7iucNmjwNPJGe6bKEAFUNz2UE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bfN8TZUewQMKmEHbGjqlDXRWLf67clRIUS43sxVY2J3LCacYYFFOBMAGEi3y8q5irP26idpmXTHlHuNJkzu5iAcDSGKwKg7IzZMnRt5DnWpDVLFKXv9ZaImL+K9MnG/ai/dtK8FBMMWqZ/ZD79ybtm9yWZi5J7ktiyzz3rw3ISU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L8y6yTy9; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e94eaf5efso8427653e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:39:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721212745; x=1721817545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUGlQHl8PKwPc+cI7G+9C1/A30MK7pw94dtaMexOJNU=;
-        b=L8y6yTy9evMPhe8F5urOyuPvh0EaCKnnEsIIE2lqbkbiE2yEWr+BUpG/9eb/+7ZRXo
-         WWQT9lSbCLC6W04XCRkIF2KKzbUZHoRfCpD9CjeQ353++bjII/+Pfz4AuaxpZ7HYjfM/
-         NZTDhdIpiqzA2AGQ3+bQJYwIJ5QMEykljB2lg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721212745; x=1721817545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IUGlQHl8PKwPc+cI7G+9C1/A30MK7pw94dtaMexOJNU=;
-        b=ItsJJWAb9Mz858UJCqTNsCygomk+kpCsyWGhaoIeZlN7R9AAMi8NVJjrS/wJNJt2i9
-         OeJ9FHY57itWvAh79SbiOiY0mHRN7R3h7jU5TitKQG2zmFM44lAjoMB4mpP6CUhpqBsK
-         1I+bKt560J1afIaS/dFfA2cAo/UgxoGFA9ishY6aIhqWrBAtjANWazI5T40kCt+IvTFk
-         emLT8aX9D2B4EnlI392SCGDzVMR6/zS0vaConPy2JgoHDk5hl4lJcWn1/RN236MlKnG4
-         tlyxpF+jE8aS2u4zPWQVCQMZpFHO7mIexmYYqp5388xeXw/kPyqYsd+0IPRBp8lT5gz0
-         sQlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrb8NHoVbjvellqPds8el0ot+Iw+ESv0KfvjPfQyg9zHYfAg46tQuEGkp1ZEkzyHqmGWRW/8X+vi/c8tbw35+z8AS/ZAMMH5r4fsWq
-X-Gm-Message-State: AOJu0Yzd+vQOLeSzf/GYFf+LRdviGBPELCOW1w9uKJCC8qCzuTnKHqpF
-	jOnN0iCJm6bcEljp4uOvwrH/So+qFos/nZK9FgN7O3TbA4TzhGzcX8DRzXtD7I9er7R0/b+kWGi
-	DPk5EBxbuGfwwErzElw6lnJZU/5RA0S51Dak=
-X-Google-Smtp-Source: AGHT+IHxg8zNsdD8Eo1Vffp0MSXIaIS5xW3Su0QbPUe5IWbUhBN/2S1B3D0WgRGGz2VkYyi0XXC5WDVvjaMANhw5Xos=
-X-Received: by 2002:a05:6512:2387:b0:52d:259d:bd91 with SMTP id
- 2adb3069b0e04-52ee53b04c7mr1051655e87.18.1721212744729; Wed, 17 Jul 2024
- 03:39:04 -0700 (PDT)
+	s=arc-20240116; t=1721212744; c=relaxed/simple;
+	bh=/2joJ6OWrM3T9+WwKJFjSZM8X5AF760AUd9+zeHl/g4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cgxD8adPMT0FWrwPBhOe3c5DS5AzutgJTFjvvWuWlW+MivhLxP/YJc5p/kjJGcBTD737UQ97bmqRbkakHVXOgDAnxw/mVsfQMQOH4Uu6RNROXYbSeWBDsLo5yVOgN+V/yAbpfjJYqOC2XuUWnfuzVQ298j9uB8QHXMD16tLTVb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKX25Rpx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8A6C32782;
+	Wed, 17 Jul 2024 10:39:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721212743;
+	bh=/2joJ6OWrM3T9+WwKJFjSZM8X5AF760AUd9+zeHl/g4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OKX25RpxStwLsMgnZAGwoqjEYQ8mYCWJtiSR3gM1M0xIOT4Z9e2Gtr72u7DxhahJG
+	 VnqAC4WWxTAl/3gyOYkReaH+/afZXxO2BIOFfNdYDhUYI2wd0Uqln/MewahIFEuYbF
+	 0Jy65H68HN82Q6g6g6K+SOWjNhATwMc+VK2IObE6NMqje3v/d73OKapbqnYd10mOhB
+	 AnDq4zz2vHCOV73auTLEbxTo6Lr18LD2waCcDo0mbEFVUEhmzjv+iNiUId/W+kKv+z
+	 kh20FhmHxqY6+TPYFLEDeftMAkAXkhpZaiCYY8udkzhN++ihy/i/BOqqMY8XzP1AoA
+	 J57kWWkbH6SPQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
- <ZoR40nWmpEV2Ly_6@bombadil.infradead.org> <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
- <CALwA+NbUCfEj_DzT5eMQ7_pSNpyp-zBe6PEL2XnMZrb303J4_Q@mail.gmail.com>
- <CAJfuBxzeYWWV1ikYagFpyFHdAQU4ReYPirksQFHbEzDxhXCfHA@mail.gmail.com>
- <CALwA+Naec_YHxHoKu8Ba_Bnuq2L3VXw1cT3=Tx3qC3mE5_BG1g@mail.gmail.com> <CAJfuBxxnTyqeGtS1mPBFqX2MYs7kgK49ZUQeR1oTe4UMC4ct5A@mail.gmail.com>
-In-Reply-To: <CAJfuBxxnTyqeGtS1mPBFqX2MYs7kgK49ZUQeR1oTe4UMC4ct5A@mail.gmail.com>
-From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Date: Wed, 17 Jul 2024 12:38:53 +0200
-Message-ID: <CALwA+NYQsKAtrME-dgZcBH=+KKU0duHAjxu-X3PhckJmbwz60A@mail.gmail.com>
-Subject: Re: [PATCH v9 00/53] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
-To: jim.cromie@gmail.com
-Cc: Luis Chamberlain <mcgrof@kernel.org>, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, linux@rasmusvillemoes.dk, joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Jul 2024 13:38:59 +0300
+Message-Id: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>,
+ <dave.hansen@linux.intel.com>, <kai.huang@intel.com>,
+ <haitao.huang@linux.intel.com>, <reinette.chatre@intel.com>,
+ <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <mona.vij@intel.com>, <kailun.qin@intel.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+X-Mailer: aerc 0.17.0
+References: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+ <20240705074524.443713-4-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240705074524.443713-4-dmitrii.kuvaiskii@intel.com>
 
-On Mon, Jul 15, 2024 at 8:00=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+On Fri Jul 5, 2024 at 10:45 AM EEST, Dmitrii Kuvaiskii wrote:
+> Two enclave threads may try to add and remove the same enclave page
+> simultaneously (e.g., if the SGX runtime supports both lazy allocation
+> and MADV_DONTNEED semantics). Consider some enclave page added to the
+> enclave. User space decides to temporarily remove this page (e.g.,
+> emulating the MADV_DONTNEED semantics) on CPU1. At the same time, user
+> space performs a memory access on the same page on CPU2, which results
+> in a #PF and ultimately in sgx_vma_fault(). Scenario proceeds as
+> follows:
 >
-> On Mon, Jul 15, 2024 at 4:05=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chro=
-mium.org> wrote:
-> >
-> > On Sat, Jul 13, 2024 at 11:45=E2=80=AFPM <jim.cromie@gmail.com> wrote:
-> > >
-> > > On Fri, Jul 12, 2024 at 9:44=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@=
-chromium.org> wrote:
-> > > >
-> > > > On Wed, Jul 3, 2024 at 12:14=E2=80=AFAM <jim.cromie@gmail.com> wrot=
-e:
-> > > > >
-> > > > > On Tue, Jul 2, 2024 at 4:01=E2=80=AFPM Luis Chamberlain <mcgrof@k=
-ernel.org> wrote:
-> > > > > >
-> > > > > > On Tue, Jul 02, 2024 at 03:56:50PM -0600, Jim Cromie wrote:
-> > > > > > > This fixes dynamic-debug support for DRM.debug, added via cla=
-ssmaps.
-> > > > > > > commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
-> > > > > > >
-> > > > > > > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because dr=
-m.debug=3Dval
-> > > > > > > was applied when drm.ko was modprobed; too early for the yet-=
-to-load
-> > > > > > > drivers, which thus missed the enablement.  My testing with
-> > > > > > > /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycm=
-d options
-> > > > > > > obscured this omission.
-> > > > > > >
-> > > > > > > The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP =
-with
-> > > > > > > DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for =
-drivers.
-> > > > > > > The distinction allows dyndbg to also handle the users proper=
-ly.
-> > > > > > >
-> > > > > > > DRM is the only current classmaps user, and is not really usi=
-ng it,
-> > > > > > > so if you think DRM could benefit from zero-off-cost debugs b=
-ased on
-> > > > > > > static-keys, please test.
-> > > > > > >
-> > > > > > > HISTORY
-> > > > > > >
-> > > > > > > 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 =
-dyndbg parts
-> > > > > > > 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 =
-drm parts
-> > > > > > >
-> > > > > > > https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
-> > > > > > > greg k-h says:
-> > > > > > > This should go through the drm tree now.  The rest probably s=
-hould also
-> > > > > > > go that way and not through my tree as well.
-> > > > > >
-> > > > > > Can't this just be defined as a coccinelle smpl patch? Must eas=
-ier
-> > > > > > to read than 53 patches?
-> > > > > >
-> > > > >
-> > > > > perhaps it could - Im not sure that would be easier to review
-> > > > > than a file-scoped struct declaration or reference per driver
-> > > > >
-> > > > > Also, I did it hoping to solicit more Tested-by:s with drm.debug=
-=3D0x1ff
-> > > > >
-> > > > > Jim
-> > > > >
-> > > >
-> > > > Jim,
-> > > >
-> > > > When testing different combinations of Y/M for TEST_DYNAMIC_DEBUG a=
-nd
-> > > > TEST_DYNAMIC_DEBUG_SUBMOD in virtme-ng I spotted test failures:
-> > > >
-> > > > When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > > > BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
-> > > > TEST_MOD_SUBMOD selftests passed
-> > > > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > > > BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-> > > > TEST_PERCENT_SPLITTING selftest fails with ": ./dyndbg_selftest.sh:=
-270
-> > > > check failed expected 1 on =3Dpf, got 0"
-> > > > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
-> > > > BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-> > > > TEST_PERCENT_SPLITTING selftest fails also with ":
-> > > > ./dyndbg_selftest.sh:270 check failed expected 1 on =3Dpf, got 0"
-> > > >
-> > > > Have I missed something ?
-> > > >
-> > >
-> > > I am not seeing those 2 failures on those 2 configs.
-> > >
-> > > most of my recent testing has been on x86-defconfig + minimals,
-> > > built and run using/inside virtme-ng
-> > >
-> > > the last kernel I installed on this hw was june 16, I will repeat tha=
-t,
-> > > and report soon if I see the failure outside the vm
-> > >
-> > > I'll also send you my script, to maybe speed isolation of the differe=
-nces.
-> > >
-> >
-> > Jim,
-> >
-> > I know why I saw these failures.
-> > I ran dyndbg_selftest.sh directly in thw directory
-> > tools/testing/selftests/dynamic_debug/.
+> /*
+>  * CPU1: User space performs
+>  * ioctl(SGX_IOC_ENCLAVE_REMOVE_PAGES)
+>  * on enclave page X
+>  */
+> sgx_encl_remove_pages() {
 >
-> thats odd.
-> I mostly run it from src-root,
-> also whereever make selftest target is/works (I forgot)
+>   mutex_lock(&encl->lock);
 >
-> I went into that subdir and ran it there
-> I got no test differences / failures.
+>   entry =3D sgx_encl_load_page(encl);
+>   /*
+>    * verify that page is
+>    * trimmed and accepted
+>    */
 >
+>   mutex_unlock(&encl->lock);
+>
+>   /*
+>    * remove PTE entry; cannot
+>    * be performed under lock
+>    */
+>   sgx_zap_enclave_ptes(encl);
+>                                  /*
+>                                   * Fault on CPU2 on same page X
+>                                   */
+>                                  sgx_vma_fault() {
+>                                    /*
+>                                     * PTE entry was removed, but the
+>                                     * page is still in enclave's xarray
+>                                     */
+>                                    xa_load(&encl->page_array) !=3D NULL -=
+>
+>                                    /*
+>                                     * SGX driver thinks that this page
+>                                     * was swapped out and loads it
+>                                     */
+>                                    mutex_lock(&encl->lock);
+>                                    /*
+>                                     * this is effectively a no-op
+>                                     */
+>                                    entry =3D sgx_encl_load_page_in_vma();
+>                                    /*
+>                                     * add PTE entry
+>                                     *
+>                                     * *BUG*: a PTE is installed for a
+>                                     * page in process of being removed
+>                                     */
+>                                    vmf_insert_pfn(...);
+>
+>                                    mutex_unlock(&encl->lock);
+>                                    return VM_FAULT_NOPAGE;
+>                                  }
+>   /*
+>    * continue with page removal
+>    */
+>   mutex_lock(&encl->lock);
+>
+>   sgx_encl_free_epc_page(epc_page) {
+>     /*
+>      * remove page via EREMOVE
+>      */
+>     /*
+>      * free EPC page
+>      */
+>     sgx_free_epc_page(epc_page);
+>   }
+>
+>   xa_erase(&encl->page_array);
+>
+>   mutex_unlock(&encl->lock);
+> }
+>
+> Here, CPU1 removed the page. However CPU2 installed the PTE entry on the
+> same page. This enclave page becomes perpetually inaccessible (until
+> another SGX_IOC_ENCLAVE_REMOVE_PAGES ioctl). This is because the page is
+> marked accessible in the PTE entry but is not EAUGed, and any subsequent
+> access to this page raises a fault: with the kernel believing there to
+> be a valid VMA, the unlikely error code X86_PF_SGX encountered by code
+> path do_user_addr_fault() -> access_error() causes the SGX driver's
+> sgx_vma_fault() to be skipped and user space receives a SIGSEGV instead.
+> The userspace SIGSEGV handler cannot perform EACCEPT because the page
+> was not EAUGed. Thus, the user space is stuck with the inaccessible
+> page.
+>
+> Fix this race by forcing the fault handler on CPU2 to back off if the
+> page is currently being removed (on CPU1). This is achieved by
+> setting SGX_ENCL_PAGE_BUSY flag right-before the first mutex_unlock() in
+> sgx_encl_remove_pages(). Upon loading the page, CPU2 checks whether this
+> page is busy, and if yes then CPU2 backs off and waits until the page is
+> completely removed. After that, any memory access to this page results
+> in a normal "allocate and EAUG a page on #PF" flow.
+>
+> Fixes: 9849bb27152c ("x86/sgx: Support complete page removal")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/io=
+ctl.c
+> index 5d390df21440..02441883401d 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -1141,7 +1141,14 @@ static long sgx_encl_remove_pages(struct sgx_encl =
+*encl,
+>  		/*
+>  		 * Do not keep encl->lock because of dependency on
+>  		 * mmap_lock acquired in sgx_zap_enclave_ptes().
+> +		 *
+> +		 * Releasing encl->lock leads to a data race: while CPU1
+> +		 * performs sgx_zap_enclave_ptes() and removes the PTE entry
+> +		 * for the enclave page, CPU2 may attempt to load this page
+> +		 * (because the page is still in enclave's xarray). To prevent
+> +		 * CPU2 from loading the page, mark the page as busy.
+>  		 */
+> +		entry->desc |=3D SGX_ENCL_PAGE_BUSY;
+>  		mutex_unlock(&encl->lock);
+> =20
+>  		sgx_zap_enclave_ptes(encl, addr);
 
-Jim,
+Ditto.
 
-The dyndbg_selftest.sh checks the location of kernel .config if it is
-configured and
-if not it sets it to the current dir.
-
-[ -f "$KCONFIG_CONFIG" ] || KCONFIG_CONFIG=3D".config"
-if [ -f "$KCONFIG_CONFIG" ]; then
-
-If it does not find the .config it will set the variables to:
-
-    LACK_DD_BUILTIN=3D0
-    LACK_TMOD=3D0
-    LACK_TMOD_SUBMOD=3D0
-
-and run all selftests no matter what the values (Y/M) of
-TEST_DYNAMIC_DEBUG and TEST_DYNAMIC_DEBUG_SUBMOD are.
-
-> IIRC, the failure was on line 270, just after a modprobe.
-> can you further isolate it ?
->
-> > All works as expected when I run it from the top kernel directory.
-> > Here are the results:
-> >
-> > When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
-> > TEST_MOD_SUBMOD selftests passed
-> >
-> > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-> > BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-> > TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were
-> > skipped
-> >
-> > When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
-> > BASIC_TESTS and COMMA_TERMINATOR_TESTS selftests passed,
-> > TEST_PERCENT_SPLITTING and TEST_PERCENT_SPLITTING selftests were
-> > skipped
->
->
-> thank you for running these config-combo tests.
->
-> are you doing these in a VM ?
-> and since Im asking, Ive done these combos on virtme-ng builds,
-> also installed & running on 2 x86 boxen.
->
-
-Sorry I forgot to mention that I tested it using virtme-ng.
-
-> could you add DRM=3Dm and a driver too,
-> and boot with drm.debug=3D0x1ff, dynamic_debug.verbose=3D3
-> the debug output should show all the class-work on modprobe,
-> for your easy inspection/grading ;-)
->
-
-I will retest with your patchset v9.
-
-Thanks,
-Lukasz
-
-> >
-> > Based on that maybe it would be worth it for the script to fail when
-> > it doesn't find a .config with an error message something like this:
->
-> if no config - they get to see more errors now.
-> if the solution isnt obvious to them, we can find out more ?
->
-> > "Kernel .config not found. Are you running the script from the
-> > kernel's top directory?"
-> >
-> > What do you think ?
->
-> the -rc0 window is open, Id rather not fiddle with this now.
->
-> Im gonna rebase onto 6.10, resend,
-> copy and rebase onto drm-mumble-next
-> then try to get into the DRM-CI river, see where that takes me.
->
-> thanks Lukas,
-> Jim
->
-> >
-> > Thanks,
-> > Lukasz
-> >
-> > > > Thanks,
-> > > > Lukasz
-> > > >
-> > > > > >   Luis
-> > > > > >
+BR, Jarkko
 
