@@ -1,75 +1,80 @@
-Return-Path: <linux-kernel+bounces-255307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D87C933EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 868F0933EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6BD7B210AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F1A1C21504
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C82618132E;
-	Wed, 17 Jul 2024 14:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E02F181BA7;
+	Wed, 17 Jul 2024 14:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NinKXh5b"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TEJC5mgE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385FC1109;
-	Wed, 17 Jul 2024 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7438180A6C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721227332; cv=none; b=NatVhzsIiOI2QjPXb+TRO7PJBqWcUAmiCNdGm//9mAcWzHDFzFRDwLiHiY/TUvj7vdbvrQco/pgKlJ6JCIwC0+H7ff7kTMy8iELpT3Sk0vYH5WFFkAt5pvvSJCM1i71bgqqIplbYzVcgjfTR939xhd8r0qG0MoR0bGEIMfyaTrY=
+	t=1721227378; cv=none; b=p/VS5eBHRUKKwxR11KgiNERYj5AzE5MWo8aXe80ufniOxF2RGxOFK7ziPrWUxD7WTSoh/rI8qzHbN7USa1EWSi3dNLGndjSM6Shpqba9JiUhS78pbT3rrAXZdaMvZ+EPyTNl1zFxex6GB/NnkBpHgrBDTFU8dmuyES7w5Mflyn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721227332; c=relaxed/simple;
-	bh=l/KM7yxi2ZHkF8cQYBEhy4a+9kOEEclU8QcrHDuMnK4=;
+	s=arc-20240116; t=1721227378; c=relaxed/simple;
+	bh=zUVIvHCsTCCXlgAEsrezINakY7JgduDyy2tKWsIjEJc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FEJzyQGdlv0UH+doGHbGRthU0/BP9XsRsGlxfsvqP+kLrzwMaay9MhAkt6I79kf5xjJuxZuQo0//HSH9faLhI9xU27ii/hRznup1v8OH5EAsbVArtn0hrlEsP4gk460N5fhF0REmdaB7XUr120XdaJzOQlHqajqW2w42bmY5p8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NinKXh5b; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-78006198aeeso610647a12.1;
-        Wed, 17 Jul 2024 07:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721227330; x=1721832130; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+H9w8F77UOiuxTWjm2gxO0HFKxtsrjJrC/NVtqoOGY=;
-        b=NinKXh5bZliO84cqaMwxH2p3Ege24w+s0zwc1X5rqu6redgT58lY4+2aax+WIsaC4b
-         gYMKStmODu8N0+oAOU64nyLoo+eBqSeqYZHH7M7pV5bvUZF/83Rt82FMvyCNDvcuIwSH
-         05UrcwP8CQI35rs1FT4MCbSMv7yjy0bWfh0bvx1fQlYGNs2mdfFudzLpWnWu3wFNk1Gp
-         N8/O3vnqL/ykCMqJtTk3nIyiJHPcTu8Jj7xsxdweRU9pEDWIMF17pTagctcfWz5RCCyt
-         sFcV5P/dTpzRBz1GpPA8g8fJ0fUCXx4iOfFLvaEzP5Q2zjsCn3gy7c7Qg6+0gOIdGnj6
-         vCIw==
+	 In-Reply-To:Content-Type; b=gDoHAsY36H3pAD03AqAPzQDYTRG52ytMByFs57xEZzt6S5dnii1663L5LklETFOey4JZdMbyuyEPgp6BPhqVA48o0DYJi8Rbe7vV5t44BxKvlp8v5wz0+QPAgXYhWMP0fT2y40dP4ennNTe8JQMI6qxMbLilHkAPUE/GUFQxs0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TEJC5mgE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721227374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=M2vL8rRc69gotddfUAFMWYk4nVzDmp9tj4adCdBDziU=;
+	b=TEJC5mgEqqLu+j5SkvTipJT3CBFqO6gWUNsYjXWc1qS5Jju1GXl9Kp3enqyRCML9siWLCM
+	3tlfqdFwQONyuuPuC+PT2rcmqBF86/tquI2PeGpCTG61OcSUrcGDaqcRULov4+YKvDkOyp
+	WyCZ5Nw5Rgk180NYLALDBdlgSgQH+S8=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-bDE1AdRNNgyK48tkRbKt9Q-1; Wed, 17 Jul 2024 10:42:53 -0400
+X-MC-Unique: bDE1AdRNNgyK48tkRbKt9Q-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7535875ab7so131509166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:42:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721227330; x=1721832130;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9+H9w8F77UOiuxTWjm2gxO0HFKxtsrjJrC/NVtqoOGY=;
-        b=J9YNQl0C+uN8NnynRG4ECEC35Wwrqc1NwkdGHYH8P+h0eFOradCxLUvXqlMfLfbBtt
-         5TushiwPVHIyqtjNCMMF5UeLNhcqNrd8tJbPfYb1SiRJmo2U9nNt1IrlohF4iggLSdGO
-         +uW75USmvVvxHH3a4HBTUnr2IqcIM1DbLtj1ErTCXWAhvWIU9P5pC57MCFe6sf0Z5lQi
-         r8RTEKFzuCK8VYFUDJaMA6tjp2CUKaFHkTT3g/oTgGpEPmfcOaxiqEJgO3/LP1rlgBnc
-         +wQRYIXEW+Q5a4Ce/RD8ER5pIvolc2D6qJrrVeSRajMqxn1aEqpGKr9Ck+oWp+spfNf6
-         4qsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyhP9HomXbLSLLbEAFKiia2u+CVskSoVW+7ZgTfTxHu5Ec1AUcfL2+7+TGxuB8bNKYt9LCVItqdde4yup336Iwr6PtAqSQ0TWh6MdV0wcjn8vU58jPFU72nfISZZtgpjL5O/3B10fTidI=
-X-Gm-Message-State: AOJu0Yxe11nl8YV5WdGIWGNQZJdPjCcumvpI8yGTrh1pO4dLOJjFpz9t
-	c7rKuvWfjQWqDZlayMW2MEkw5R0qIGLpcUJlspLAWq46IDFJMauq
-X-Google-Smtp-Source: AGHT+IFzIuwPU0tk7qlRcOVg/ETQ6ftxICf4AoFYaR1qpTdQwQjw/2oKyOQbCcwNIBDFyjh3O1ecRg==
-X-Received: by 2002:a17:903:22c9:b0:1fb:a38b:c5b7 with SMTP id d9443c01a7336-1fc4c362d39mr32559675ad.1.1721227330321;
-        Wed, 17 Jul 2024 07:42:10 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6fe52sm75712465ad.21.2024.07.17.07.42.09
+        d=1e100.net; s=20230601; t=1721227372; x=1721832172;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=M2vL8rRc69gotddfUAFMWYk4nVzDmp9tj4adCdBDziU=;
+        b=amTknLUzk0CQOwmzQd4MSBLjMXz40roiXxuewV36n13W5E8IH7Fi7MrseDipEHr935
+         JR9X56Mwm7SvN7BQp53OuG7bn3ZEo8UpjJGjM4i+F3KUmPMsyfuzKj3rFrADPkgllyHx
+         aarwnGD5g1e21GReFJbT2l9RvH+4PrO6xMqmbQT9aQtJS4ClQmBXOilgdmujsgfwv8MG
+         xQ8kC8OgmAf7gWeaxmMFAOfNg2wCCOTf26Y4wS0iQ1Avo+D1a5Zm2x//EPP6ICj7IRW9
+         cQVRvTNrIcoEy+Jr57yVxW0uxb6wJ7hS8UKb/qlqVhOnI3Yseo0kjHpJZCLpHmcw35gl
+         j/7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXq3yCQp0LrqBGYVcbgB+IlLc7GjZ/yBbrorCqd6N4jkYl9rpgaEXCBWtOTLqOYoS+B/TCcXVIWvCxqlfmqZU1A6ANTARliSVYdXxcT
+X-Gm-Message-State: AOJu0YyFDOiIuZUH+mFuo7oLMrQ+aP+XWJA5z8iqG0OazOESkuOEEeQb
+	DvEky5fJqPlcgbb6NkXMqpWdlEVWQwzlzJAE/MWRwCq1Vs/WqdOZUMwidiEkwYAWtNEh5/fpiJs
+	PvGWBRp05xkEH4I1xAGh/vUmiT5qaxpfhhm/pA/t0aic9hPr04HhCTSgWQN8idA==
+X-Received: by 2002:a17:906:1c0f:b0:a6f:46f1:5434 with SMTP id a640c23a62f3a-a79eda04168mr521685566b.6.1721227372351;
+        Wed, 17 Jul 2024 07:42:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEi6DrDSqxxObcD+4KvqZEIVIf6XCAhrJ0LWIBdtNZjezxwhMU5bcwwGQ0tRJ1krbBOftaEqw==
+X-Received: by 2002:a17:906:1c0f:b0:a6f:46f1:5434 with SMTP id a640c23a62f3a-a79eda04168mr521682366b.6.1721227371866;
+        Wed, 17 Jul 2024 07:42:51 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c714:c00:b08b:a871:ce99:dfde? (p200300cbc7140c00b08ba871ce99dfde.dip0.t-ipconnect.de. [2003:cb:c714:c00:b08b:a871:ce99:dfde])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5d2018sm453924466b.85.2024.07.17.07.42.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 07:42:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e83aada2-79b2-4272-ab10-4453083193cd@roeck-us.net>
-Date: Wed, 17 Jul 2024 07:42:08 -0700
+        Wed, 17 Jul 2024 07:42:51 -0700 (PDT)
+Message-ID: <220da8ed-337a-4b1e-badf-2bff1d36e6c3@redhat.com>
+Date: Wed, 17 Jul 2024 16:42:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,94 +82,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] hwmon: pmbus: Implement generic bus access delay
-To: Patrick Rudolph <patrick.rudolph@9elements.com>,
- linux-kernel@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-References: <20240717073000.786228-1-patrick.rudolph@9elements.com>
+Subject: Re: [PATCH 05/17] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt <palmer@dabbelt.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ x86@kernel.org
+References: <20240716111346.3676969-1-rppt@kernel.org>
+ <20240716111346.3676969-6-rppt@kernel.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240717073000.786228-1-patrick.rudolph@9elements.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240716111346.3676969-6-rppt@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Patrick,
-
-On 7/17/24 00:29, Patrick Rudolph wrote:
-> Some drivers, like the max15301 or zl6100, are intentionally delaying
-> SMBus communications, to prevent transmission errors. As this is necessary
-> on additional PMBus compatible devices, implement a generic delay mechanism
-> in the pmbus core.
+On 16.07.24 13:13, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> Introduces two delay settings in the pmbus_driver_info struct, one applies
-> to every SMBus transaction and the other is for write transaction only.
-> Once set by the driver the SMBus traffic, using the generic pmbus access
-> helpers, is automatically delayed when necessary.
+> Architectures that support NUMA duplicate the code that allocates
+> NODE_DATA on the node-local memory with slight variations in reporting
+> of the addresses where the memory was allocated.
 > 
-> The two settings are:
-> access_delay:
->    - Unit in microseconds
->    - Stores the accessed timestamp after every SMBus access
->    - Delays when necessary before the next SMBus access
+> Use x86 version as the basis for the generic alloc_node_data() function
+> and call this function in architecture specific numa initialization.
 > 
-> write_delay:
->    - Unit in microseconds
->    - Stores the written timestamp after a write SMBus access
->    - Delays when necessary before the next SMBus access
-> 
-> This allows to drop the custom delay code from the drivers and easily
-> introduce this feature in additional pmbus drivers.
-> 
-> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > ---
 
-Sigh (sorry, but this isn't your first patch, and you should know).
+[...]
 
-Change log goes here.
+> diff --git a/arch/mips/loongson64/numa.c b/arch/mips/loongson64/numa.c
+> index 9208eaadf690..909f6cec3a26 100644
+> --- a/arch/mips/loongson64/numa.c
+> +++ b/arch/mips/loongson64/numa.c
+> @@ -81,12 +81,8 @@ static void __init init_topology_matrix(void)
+>   
+>   static void __init node_mem_init(unsigned int node)
+>   {
+> -	struct pglist_data *nd;
+>   	unsigned long node_addrspace_offset;
+>   	unsigned long start_pfn, end_pfn;
+> -	unsigned long nd_pa;
+> -	int tnid;
+> -	const size_t nd_size = roundup(sizeof(pg_data_t), SMP_CACHE_BYTES);
 
-Guenter
+One interesting change is that we now always round up to full pages on 
+architectures where we previously rounded up to SMP_CACHE_BYTES.
+
+I assume we don't really expect a significant growth in memory 
+consumption that we care about, especially because most systems with 
+many nodes also have  quite some memory around.
+
+
+> -/* Allocate NODE_DATA for a node on the local memory */
+> -static void __init alloc_node_data(int nid)
+> -{
+> -	const size_t nd_size = roundup(sizeof(pg_data_t), PAGE_SIZE);
+> -	u64 nd_pa;
+> -	void *nd;
+> -	int tnid;
+> -
+> -	/*
+> -	 * Allocate node data.  Try node-local memory and then any node.
+> -	 * Never allocate in DMA zone.
+> -	 */
+> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> -	if (!nd_pa) {
+> -		pr_err("Cannot find %zu bytes in any node (initial node: %d)\n",
+> -		       nd_size, nid);
+> -		return;
+> -	}
+> -	nd = __va(nd_pa);
+> -
+> -	/* report and initialize */
+> -	printk(KERN_INFO "NODE_DATA(%d) allocated [mem %#010Lx-%#010Lx]\n", nid,
+> -	       nd_pa, nd_pa + nd_size - 1);
+> -	tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
+> -	if (tnid != nid)
+> -		printk(KERN_INFO "    NODE_DATA(%d) on node %d\n", nid, tnid);
+> -
+> -	node_data[nid] = nd;
+> -	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> -
+> -	node_set_online(nid);
+> -}
+> -
+>   /**
+>    * numa_cleanup_meminfo - Cleanup a numa_meminfo
+>    * @mi: numa_meminfo to clean up
+> @@ -571,6 +538,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>   			continue;
+>   
+>   		alloc_node_data(nid);
+> +		node_set_online(nid);
+>   	}
+
+I can spot that we only remove a single node_set_online() call from x86.
+
+What about all the other architectures? Will there be any change in 
+behavior for them? Or do we simply set the nodes online later once more?
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
