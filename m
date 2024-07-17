@@ -1,173 +1,150 @@
-Return-Path: <linux-kernel+bounces-255702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AF69343EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACFC9343F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 23:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3211C21C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951B71F21ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 21:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A91F1862A0;
-	Wed, 17 Jul 2024 21:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="lotvYbmh"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A35187561;
+	Wed, 17 Jul 2024 21:33:32 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C70364CD;
-	Wed, 17 Jul 2024 21:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20701F94D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 21:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721251974; cv=none; b=F1hFmPFnGC2wQ6k3D9l+AZcieofawiAUpcbUuoP3PnjkB7P21izjcolimq8xALLqRpS9XNVRmwvsnuUKfZGWyUgbR5a4Ax6Zr2JT7V6uApJG8Edem2C+nP/mzVZSKg7AQTbU9sNSYddbA03IMmw1FWufpOkevLiyNp3PBbFLIxo=
+	t=1721252012; cv=none; b=tJn/UTqab3TNv5s7qFZGY2vFiq5mi6uQ7tD1QRtjMjzikTWjfgENVJSF4MFYZF6a0mz6ksWJiqbqYbm1RQgiU4ncRiCy9FPeOQI1r/sPh14msNqoCoZDaVnxdzOaFvcvrEI4oJOY9LISPHPj7hAJfElmWj8lxM1fsaKR3N2Z5XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721251974; c=relaxed/simple;
-	bh=pBawZxHaYBQT2t62wERrG9s82JSHOZeCgIQYqIENj64=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RqIlgFDSoUsHx/ftkQH1SOzy+gA/TeSpAEJieZeTMCyidzlci9v2SR3Dvudv9a2x7elc+gA2/u+a62NpHvUeCaSpa1XB+UhBLs18+GbTGzDQx98YJIChIcFPlpOgwGN1mkqlrX3L0Vg+EFDMIEGHCfJ3xUhDc6tO3iH+RXFCNSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=lotvYbmh; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46HGuXVl017540;
-	Wed, 17 Jul 2024 21:31:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pps0720; bh=ma6MWGfDS
-	iybBQfLQjd48GruvjHUoPF2GnYDc9S5+xA=; b=lotvYbmhp4v8vYRwlMR7qQdlB
-	+LBZRT/gaSNsnlE9z/KJTHGnpro0rgmryY68m70hznuBcHlscc5xPZrASMjWfPQ9
-	ExRZZlm2kDY/ZSSW0IklzS0WtBtkzZoZwlfpSk77jMmy24oGl81VqtMVmq8uu3ax
-	UA2fwCF8gw20vwyDB67sQ8pNm5Dkcwri4+/hDA8uckIoP+P42hLXP7AxaWCEge3T
-	IRFhY/uSFaExu39v14nt++rMxj/KUR5IMaOdQ8zUVe4M/Qis6zXt11Pbg2lTGC+M
-	5vg8bdtDbhlo6dT7QqlCHBhn0c3+8htwqD/pAsitQhJ9ipQAvVrXtmtAP1Q/A==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 40ehwqhnv9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 21:31:27 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id B9A0E147B7;
-	Wed, 17 Jul 2024 21:31:24 +0000 (UTC)
-Received: from dog.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id 73BEF80046F;
-	Wed, 17 Jul 2024 21:31:22 +0000 (UTC)
-Received: by dog.eag.rdlabs.hpecorp.net (Postfix, from userid 200934)
-	id 3D9E8300C5F8C; Wed, 17 Jul 2024 16:31:21 -0500 (CDT)
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Steve Wahl <steve.wahl@hpe.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Pavin Joseph <me@pavinjoseph.com>, Eric Hagberg <ehagberg@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>, Eric Biederman <ebiederm@xmission.com>,
-        Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>,
-        Tao Liu <ltao@redhat.com>, kexec@lists.infradead.org,
-        "Kalra, Ashish" <ashish.kalra@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
-Subject: [PATCH v3 2/2] x86/mm/ident_map: Use gbpages only where full GB page should be mapped.
-Date: Wed, 17 Jul 2024 16:31:21 -0500
-Message-Id: <20240717213121.3064030-3-steve.wahl@hpe.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20240717213121.3064030-1-steve.wahl@hpe.com>
-References: <20240717213121.3064030-1-steve.wahl@hpe.com>
+	s=arc-20240116; t=1721252012; c=relaxed/simple;
+	bh=zgNPDa40okyKAa9UA7692fVVlFdFXQk/cFySBBWX/3o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ju2CxepwNMQaS9SvzXAHnp54LsGMnFvIZxc78qfR5bw4mUzM6vRmovMnCifirDbQMR5RQKCTQh1GQ5FFHeo8Ma8L0jjsdSm1w1uEPzJSWwPORJJA0kf5S4kZBWyfpe8v/5dxG8QoVJYcUZzh3F1EUxzGCP4S+mbL3JtM2FyyUDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8050ce2fd57so15871039f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:33:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721252010; x=1721856810;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FnCh+wWmpzTGybjAhBHVLGRbSsaNIlMsb1SpNTAYFpA=;
+        b=dLDkkGM+d3hZ53s7CdVhC80q3tbRgUTQz8tX6MPscZBs6UjwxAO2wGs3sk1LFqVcdi
+         kdDQz6ejHU8/N3bnvCOPi0o/ie+uQw/5zLscPe5vh4ZngbB1SHrVtPkWd9qEW2sLFMIr
+         DoAUIzV0zsz1p1KEOgntg4d4+M+KMMmllmRXvUnmlGL5FC8LWW8Lka+5rcAeTaVT3lf2
+         NQHVIoZeL6QFlAodjih7BKpzSTjmygEpm0X3qJuBMCkN/sO/piQqgbxbCYNPmUUdM1Ej
+         PitS00H2lGHVLYrvfk2OiMWft6k0Gsqdv+p/02vRSuOCvBTXMHUswv0UtJ8Ufm6Zo5/N
+         kHIQ==
+X-Gm-Message-State: AOJu0YwmXro+KmLJMS2+4V21EX4ylBOrVDmo4nTH9dUWMOiFPvUqtl6F
+	FmSIcjpcX9/IUVNad7swxxXmw1AQmA8NlENZoJtwCBT1fGoJwkWkA5eN6W6LV12g7wJDaRlxtyq
+	jXZr+bNDV/CiLdLvow5YWIMoXjWldcaiRn2XzWM9oKuBOgiDc1jriGIk=
+X-Google-Smtp-Source: AGHT+IFbQMZs5UUnIBQi2TcGULNU58JsEhzJjXu+EoId4c/yIsUCDEEPsSblYuJ0HuJMs8upNZssYpZHe8B5IphxQTez6MDuln6C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: nYI9MFPl_E_FGmWXQRAm7xw7Fmy9Db5v
-X-Proofpoint-GUID: nYI9MFPl_E_FGmWXQRAm7xw7Fmy9Db5v
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_16,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407170163
+X-Received: by 2002:a05:6638:6bc6:b0:4c0:9a3e:c264 with SMTP id
+ 8926c6da1cb9f-4c21586e732mr86192173.2.1721252008013; Wed, 17 Jul 2024
+ 14:33:28 -0700 (PDT)
+Date: Wed, 17 Jul 2024 14:33:28 -0700
+In-Reply-To: <000000000000a7d8f1061d69ebd5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000081c3f7061d783660@google.com>
+Subject: Re: [syzbot] [PATCH] bcachefs: WARNING in bch2_fs_journal_stop
+From: syzbot <syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When ident_pud_init() uses only gbpages to create identity maps, large
-ranges of addresses not actually requested can be included in the
-resulting table; a 4K request will map a full GB.  This can include a
-lot of extra address space past that requested, including areas marked
-reserved by the BIOS.  That allows processor speculation into reserved
-regions, that on UV systems can cause system halts.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Only use gbpages when map creation requests include the full GB page
-of space.  Fall back to using smaller 2M pages when only portions of a
-GB page are included in the request.
+***
 
-No attempt is made to coalesce mapping requests. If a request requires
-a map entry at the 2M (pmd) level, subsequent mapping requests within
-the same 1G region will also be at the pmd level, even if adjacent or
-overlapping such requests could have been combined to map a full
-gbpage.  Existing usage starts with larger regions and then adds
-smaller regions, so this should not have any great consequence.
+Subject: [PATCH] bcachefs: WARNING in bch2_fs_journal_stop
+Author: cam.alvarez.i@gmail.com
 
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-Tested-by: Pavin Joseph <me@pavinjoseph.com>
-Tested-by: Sarah Brofeldt <srhb@dbc.dk>
-Tested-by: Eric Hagberg <ehagberg@gmail.com>
+#syz test
+last_seq and last_empty_seq suffered from an off by one error when the
+journal has no entries.
+
+The indexes were fixed and an assertion is added to check that the
+last_empty_seq is always kept under the next valid seq number.
+
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
 ---
- arch/x86/mm/ident_map.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ fs/bcachefs/journal.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
-index 968d7005f4a7..a204a332c71f 100644
---- a/arch/x86/mm/ident_map.c
-+++ b/arch/x86/mm/ident_map.c
-@@ -26,18 +26,31 @@ static int ident_pud_init(struct x86_mapping_info *info, pud_t *pud_page,
- 	for (; addr < end; addr = next) {
- 		pud_t *pud = pud_page + pud_index(addr);
- 		pmd_t *pmd;
-+		bool use_gbpage;
+diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+index 10b19791ec98..7bbbf4b149e9 100644
+--- a/fs/bcachefs/journal.c
++++ b/fs/bcachefs/journal.c
+@@ -1201,7 +1201,7 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 	struct journal_replay *i, **_i;
+ 	struct genradix_iter iter;
+ 	bool had_entries = false;
+-	u64 last_seq = cur_seq, nr, seq;
++        u64 last_written_seq = cur_seq - 1, last_seq = cur_seq - 1, nr, seq;
  
- 		next = (addr & PUD_MASK) + PUD_SIZE;
- 		if (next > end)
- 			next = end;
- 
--		if (info->direct_gbpages) {
--			pud_t pudval;
-+		/* if this is already a gbpage, this portion is already mapped */
-+		if (pud_leaf(*pud))
-+			continue;
-+
-+		/* Is using a gbpage allowed? */
-+		use_gbpage = info->direct_gbpages;
- 
--			if (pud_present(*pud))
--				continue;
-+		/* Don't use gbpage if it maps more than the requested region. */
-+		/* at the begining: */
-+		use_gbpage &= ((addr & ~PUD_MASK) == 0);
-+		/* ... or at the end: */
-+		use_gbpage &= ((next & ~PUD_MASK) == 0);
-+
-+		/* Never overwrite existing mappings */
-+		use_gbpage &= !pud_present(*pud);
-+
-+		if (use_gbpage) {
-+			pud_t pudval;
- 
--			addr &= PUD_MASK;
- 			pudval = __pud((addr - info->offset) | info->page_flag);
- 			set_pud(pud, pudval);
+ 	genradix_for_each_reverse(&c->journal_entries, iter, _i) {
+ 		i = *_i;
+@@ -1209,11 +1209,11 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 		if (journal_replay_ignore(i))
  			continue;
+ 
+-		last_seq = le64_to_cpu(i->j.last_seq);
++		last_written_seq = le64_to_cpu(i->j.last_seq);
+ 		break;
+ 	}
+ 
+-	nr = cur_seq - last_seq;
++	nr = cur_seq - last_written_seq;
+ 
+ 	if (nr + 1 > j->pin.size) {
+ 		free_fifo(&j->pin);
+@@ -1224,14 +1224,14 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 		}
+ 	}
+ 
+-	j->replay_journal_seq	= last_seq;
++	j->replay_journal_seq	= last_written_seq;
+ 	j->replay_journal_seq_end = cur_seq;
+-	j->last_seq_ondisk	= last_seq;
+-	j->flushed_seq_ondisk	= cur_seq - 1;
+-	j->seq_ondisk		= cur_seq - 1;
+-	j->pin.front		= last_seq;
++	j->last_seq_ondisk	= last_written_seq;
++	j->flushed_seq_ondisk	= last_seq;
++	j->seq_ondisk		= last_seq;
++	j->pin.front		= last_written_seq;
+ 	j->pin.back		= cur_seq;
+-	atomic64_set(&j->seq, cur_seq - 1);
++	atomic64_set(&j->seq, last_seq);
+ 
+ 	fifo_for_each_entry_ptr(p, &j->pin, seq)
+ 		journal_pin_list_init(p, 1);
+@@ -1261,7 +1261,10 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_seq)
+ 	}
+ 
+ 	if (!had_entries)
+-		j->last_empty_seq = cur_seq;
++		j->last_empty_seq = last_seq;
++
++	WARN(j->last_empty_seq >= cur_seq, "journal startup error: last empty seq %llu is higher or equal than the next seq number to be used (%llu)",
++	      j->last_empty_seq, cur_seq);
+ 
+ 	spin_lock(&j->lock);
+ 
 -- 
-2.26.2
+2.34.1
 
 
