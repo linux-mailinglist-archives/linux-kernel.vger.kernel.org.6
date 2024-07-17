@@ -1,375 +1,213 @@
-Return-Path: <linux-kernel+bounces-255046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF60933AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89C3933AFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3531D1F2193C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BD8B22001
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436D317E901;
-	Wed, 17 Jul 2024 10:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0565F17DA39;
+	Wed, 17 Jul 2024 10:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eIDWLRjN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="po4X0/RP"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1FB19A;
-	Wed, 17 Jul 2024 10:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798CE14A61B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721211169; cv=none; b=RGf9vzJqbXIULRPXJcpNvYSUChCxQvxYg/U6Shc/PFxfgu7QR79T+TC9bYRwY3sMQ1TwWjtRDC7+4rq83I37Mlf0qYdQN4LWCqb39tAh+nzFVcbmRrT72zzNGYyuIHFpm9h2HVZ2zZgcrSYZg/wiecim7fQhlRFmY5EFmiq24Ac=
+	t=1721211190; cv=none; b=rFPod/EM4cCXx4ZZyGhNl8oORRw2TXaH5VbWh/bjAUnQB3wcUCAXAXp7TZxsH+0V7fGmNFFEqDqBTNu7HV+CAr7P5V5ddFL58KWEXwI7TQPCRvsNs7AulNWN8UvR2UOerRN573UxTmSc2ygQ04HtDoJwTy6Hgl02Py6Iae6jcWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721211169; c=relaxed/simple;
-	bh=XO6yNXx8Y9e/wjz3msMK6OmjBPUMFejOU3nfu7h+xhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=txb27t0B9QTrNWc57h1OjyuvAz6vQNmO6f3MTCFyK7hnOBHFd2mcR6PrmCYvTkLEHAhBMzX9yX4MtesdFxu2G5mNqCHMhGhkJ98rGpCaTfklUs052SIA0jG9SnrkJuN7raFWZAM4Xb/Le9chitIoE0vJsHkSTC2NSRYTnFzq2+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eIDWLRjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033BEC32782;
-	Wed, 17 Jul 2024 10:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721211168;
-	bh=XO6yNXx8Y9e/wjz3msMK6OmjBPUMFejOU3nfu7h+xhk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eIDWLRjNJwEfVjpwYwdVYtpTBpKdxcO74xqvh5zfApTWnt+i5T5f+EDKiSkyrMh9G
-	 giYDEIthPvJ4W4Jm25cuWaqhTXNHygovqKtfo95uHCdhZHWyWskDv0rPkwnpVq8OQd
-	 xg5T0tOQDPEq59lvOoKxyjtER0JDBsr0MsJAg6ew=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 4.19 00/66] 4.19.318-rc3 review
-Date: Wed, 17 Jul 2024 12:12:44 +0200
-Message-ID: <20240717101028.579732070@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721211190; c=relaxed/simple;
+	bh=sbQDYx3IqFNIFf+NpVv6jXo2CfZEyQqsXpShIzWzBwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qXOdALNMp3G62osNqlLWfQkhOUwz2lLAOy6QoDyo7EPto3zy8aF67a5/L+DQ3TQYErgDesl1GFsZNctJ0ZF6lKCmSomeIb4Pxp24IeGReImNmHTX/KTB12J379hQ7QTFJRGqQbNzyJrthjrFkAM0oz/ih/+HWrRrKE70bF3lD8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=po4X0/RP; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so8369318a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 03:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721211187; x=1721815987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6EuwjtZgTYYxWf9tgyLgCliudozyDttF0JWvGaYQXew=;
+        b=po4X0/RPYBCzMrGL3V+Uh5lttLgCljvuRwvF53k9+R6YFhWucvDusvGVkGLpj2TvPx
+         auYZKuA6zdC4aOo1CQsg7mYClYwCYSM+XVmDWP9O87Is6+NJQlG8zwXSXxzJPdSV8ApA
+         2LKuld7hWUUwP3I+KJ2OPff0Bx2s48Ig+GCdNuU8o3hFizSqYvqdiMG3RAoLRuf9oCQu
+         E51L4OAsXGUrkAuZTyVzk4M9nrNIIwCmHNCtE/KKEjNV8U3IgKd8xWd5hBBaxpGsdnPG
+         qfGPBdfXjKd+E0J1c7zr3aCNaSJQUqXgVwRC+5uwaEBDUQMp2YHCwsiaS44w5OoodMw3
+         uLgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721211187; x=1721815987;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6EuwjtZgTYYxWf9tgyLgCliudozyDttF0JWvGaYQXew=;
+        b=kCr1X7XJV/c0eN/WvNYJwf+PIgxYojG4dmUzOpijurN5YAbwLEozF7fvn5q9GFETsR
+         Uv9SlNslAKVWyQLJruFYsjXF4k1ftM4CWPyKL/8WQ/CEelgh930YUtN6opZqMtIxcIWi
+         EvojU5zrtid7rbxg+G92kWxgB4WmLgYblcX7+sS9LqnyyJJqMreANKi041UBIaRKtl06
+         1+4RlXVd3ENrKsB4NNwQJPc6E/o91eOGZ0ssDzXqHmuGo8ihLvy1Sq0eWwydlF6se0GS
+         XZDOdPZTIzMjjnwjKFU43AFUzaXIxgceDQjY7PhSGA2JIT2pEerangePcXlGvvf2QCcD
+         RxMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVcN3XNlQ48hRiH+x+kn+eMDXFvENl2o9JjmvnfJEl3M5WyR69OU09EwTZRuHZWVAS06xwmAC1bkUUrLPN6pBqYgobnElanDeo0kB5
+X-Gm-Message-State: AOJu0YzO40r7daY9/jhJi6uJTrZi3t5fmlV/6af/tdxwc1uXK3eQ2Dxv
+	FAdNwXNiAFHUvROfJjokE0/UhfJRoHTFWEKY/8cGpJxYud48WL25deUgVXYlO6E=
+X-Google-Smtp-Source: AGHT+IHGVigwNWZsXfiJpPBSxOgTAk//9+YS8l68xkjuM4MvQe9ZV1oJcXCgjoPTNlaTVEDxjhHY4Q==
+X-Received: by 2002:a50:bb02:0:b0:57c:7486:3f7d with SMTP id 4fb4d7f45d1cf-5a05bdc0ff8mr876522a12.19.1721211186703;
+        Wed, 17 Jul 2024 03:13:06 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b255253absm6690218a12.42.2024.07.17.03.13.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 03:13:06 -0700 (PDT)
+Message-ID: <a6407abf-b13d-41db-b1ff-0c70796c8af5@linaro.org>
+Date: Wed, 17 Jul 2024 12:13:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.318-rc3.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.19.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.19.318-rc3
-X-KernelTest-Deadline: 2024-07-19T10:10+00:00
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
+ CLK_SET_RATE_PARENT flag
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, neil.armstrong@linaro.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
+ <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
+ <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
+ <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
+ <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
+ <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
+ <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
+ <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
+ <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
+ <43d6523e-d6b7-4fda-92bb-a52fcad2fdba@linaro.org>
+ <CAA8EJpoCCCAUv8PSDOEFoHhZZoEjCAOBGkhjpmrrYum=ejOvDQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJpoCCCAUv8PSDOEFoHhZZoEjCAOBGkhjpmrrYum=ejOvDQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 4.19.318 release.
-There are 66 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Fri, 19 Jul 2024 10:10:11 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.318-rc3.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.19.318-rc3
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: bring hardware to known state when probing
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix kernel bug on rename operation of broken directory
-
-felix <fuzhen5@huawei.com>
-    SUNRPC: Fix RPC client cleaned up the freed pipefs dentries
-
-Eric Dumazet <edumazet@google.com>
-    tcp: avoid too many retransmit packets
-
-Eric Dumazet <edumazet@google.com>
-    tcp: use signed arithmetic in tcp_rtx_probe0_timed_out()
-
-Menglong Dong <imagedong@tencent.com>
-    net: tcp: fix unexcepted socket die when snd_wnd is 0
-
-Eric Dumazet <edumazet@google.com>
-    tcp: refactor tcp_retransmit_timer()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: fix race between delayed_work() and ceph_monc_stop()
-
-He Zhe <zhe.he@windriver.com>
-    hpet: Support 32-bit userspace
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
-
-Lee Jones <lee@kernel.org>
-    usb: gadget: configfs: Prevent OOB read/write in usb_string_copy()
-
-WangYuli <wangyuli@uniontech.com>
-    USB: Add USB_QUIRK_NO_SET_INTF quirk for START BP-850k
-
-Vanillan Wang <vanillanwang@163.com>
-    USB: serial: option: add Rolling RW350-GL variants
-
-Mank Wang <mank.wang@netprisma.us>
-    USB: serial: option: add Netprisma LCUK54 series modules
-
-Slark Xiao <slark_xiao@163.com>
-    USB: serial: option: add support for Foxconn T99W651
-
-Bjørn Mork <bjorn@mork.no>
-    USB: serial: option: add Fibocom FM350-GL
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit FN912 rmnet compositions
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add Telit generic core-dump composition
-
-Chen Ni <nichen@iscas.ac.cn>
-    ARM: davinci: Convert comma to semicolon
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    ppp: reject claimed-as-LCP but actually malformed packets
-
-Aleksander Jan Bajkowski <olek2@wp.pl>
-    net: ethernet: lantiq_etop: fix double free in detach
-
-Aleksander Jan Bajkowski <olek2@wp.pl>
-    net: lantiq_etop: add blank line after declaration
-
-Neal Cardwell <ncardwell@google.com>
-    tcp: fix incorrect undo caused by DSACK of TLP retransmit
-
-Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
-    drm/i915: make find_fw_domain work on intel_uncore
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix incorrect inode allocation from reserved inodes
-
-Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-    i2c: pnx: Fix potential deadlock warning from del_timer_sync() call in isr
-
-Mauro Carvalho Chehab <mchehab@kernel.org>
-    media: dw2102: fix a potential buffer overflow
-
-Ghadi Elie Rahme <ghadi.rahme@canonical.com>
-    bnx2x: Fix multiple UBSAN array-index-out-of-bounds
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu/atomfirmware: silence UBSAN warning
-
-Ma Ke <make24@iscas.ac.cn>
-    drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
-
-Jan Kara <jack@suse.cz>
-    Revert "mm/writeback: fix possible divide-by-zero in wb_dirty_limits(), again"
-
-Jan Kara <jack@suse.cz>
-    fsnotify: Do not generate events for O_PATH file descriptors
-
-Jimmy Assarsson <extja@kvaser.com>
-    can: kvaser_usb: Explicitly initialize family in leafimx driver_info struct
-
-Jaganath Kanakkassery <jaganath.k.os@gmail.com>
-    Bluetooth: Fix incorrect pointer arithmatic in ext_adv_report_evt
-
-Jinliang Zheng <alexjlzheng@tencent.com>
-    mm: optimize the redundant loop of mm_update_owner_next()
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: add missing check for inode numbers on directory entries
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix inode number range checks
-
-Shigeru Yoshida <syoshida@redhat.com>
-    inet_diag: Initialize pad field in struct inet_diag_req_v2
-
-Zijian Zhang <zijianzhang@bytedance.com>
-    selftests: make order checking verbose in msg_zerocopy selftest
-
-Zijian Zhang <zijianzhang@bytedance.com>
-    selftests: fix OOM in msg_zerocopy selftest
-
-Sam Sun <samsun1006219@gmail.com>
-    bonding: Fix out-of-bounds read in bond_option_arp_ip_targets_set()
-
-Jakub Kicinski <kuba@kernel.org>
-    tcp_metrics: validate source addr length
-
-Neal Cardwell <ncardwell@google.com>
-    UPSTREAM: tcp: fix DSACK undo in fast recovery to call tcp_try_to_open()
-
-Yuchung Cheng <ycheng@google.com>
-    net: tcp better handling of reordering then loss cases
-
-Yousuk Seung <ysseung@google.com>
-    tcp: add ece_ack flag to reno sack functions
-
-zhang kai <zhangkaiheb@126.com>
-    tcp: tcp_mark_head_lost is only valid for sack-tcp
-
-Eric Dumazet <edumazet@google.com>
-    tcp: take care of compressed acks in tcp_add_reno_sack()
-
-Holger Dengler <dengler@linux.ibm.com>
-    s390/pkey: Wipe sensitive data on failure
-
-Wang Yong <wang.yong12@zte.com.cn>
-    jffs2: Fix potential illegal address access in jffs2_free_inode
-
-Greg Kurz <groug@kaod.org>
-    powerpc/xmon: Check cpu id in commands "c#", "dp#" and "dx#"
-
-Mike Marshall <hubcap@omnibond.com>
-    orangefs: fix out-of-bounds fsid access
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64: Set _IO_BASE to POISON_POINTER_DELTA not 0 for CONFIG_PCI=n
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    i2c: i801: Annotate apanel_addr as __ro_after_init
-
-Ricardo Ribalda <ribalda@chromium.org>
-    media: dvb-frontends: tda10048: Fix integer overflow
-
-Ricardo Ribalda <ribalda@chromium.org>
-    media: s2255: Use refcount_t instead of atomic_t for num_channels
-
-Ricardo Ribalda <ribalda@chromium.org>
-    media: dvb-frontends: tda18271c2dd: Remove casting during div
-
-Simon Horman <horms@kernel.org>
-    net: dsa: mv88e6xxx: Correct check for empty list
-
-Erick Archer <erick.archer@outlook.com>
-    Input: ff-core - prefer struct_size over open coded arithmetic
-
-Jean Delvare <jdelvare@suse.de>
-    firmware: dmi: Stop decoding on broken entry
-
-Erick Archer <erick.archer@outlook.com>
-    sctp: prefer struct_size over open coded arithmetic
-
-Michael Bunk <micha@freedict.org>
-    media: dw2102: Don't translate i2c read into write
-
-Alex Hung <alex.hung@amd.com>
-    drm/amd/display: Skip finding free audio for unknown engine_id
-
-Michael Guralnik <michaelgur@nvidia.com>
-    IB/core: Implement a limit on UMAD receive List
-
-Ricardo Ribalda <ribalda@chromium.org>
-    media: dvb-usb: dib0700_devices: Add missing release_firmware()
-
-Ricardo Ribalda <ribalda@chromium.org>
-    media: dvb: as102-fe: Fix as10x_register_addr packing
-
-Arnd Bergmann <arnd@arndb.de>
-    asm-generic: Move common compat types to asm-generic/compat.h
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |   4 +-
- arch/arm/mach-davinci/pm.c                        |   2 +-
- arch/arm64/include/asm/compat.h                   |  20 +--
- arch/mips/include/asm/compat.h                    |  22 +--
- arch/parisc/include/asm/compat.h                  |  18 +--
- arch/powerpc/include/asm/compat.h                 |  18 +--
- arch/powerpc/include/asm/io.h                     |   2 +-
- arch/powerpc/xmon/xmon.c                          |   6 +-
- arch/s390/include/asm/compat.h                    |  18 +--
- arch/sparc/include/asm/compat.h                   |  19 +--
- arch/x86/include/asm/compat.h                     |  19 +--
- drivers/char/hpet.c                               |  34 ++++-
- drivers/firmware/dmi_scan.c                       |  11 ++
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c |   3 +
- drivers/gpu/drm/amd/include/atomfirmware.h        |   2 +-
- drivers/gpu/drm/i915/intel_uncore.c               |  20 +--
- drivers/gpu/drm/nouveau/nouveau_connector.c       |   3 +
- drivers/i2c/busses/i2c-i801.c                     |   2 +-
- drivers/i2c/busses/i2c-pnx.c                      |  48 ++-----
- drivers/i2c/busses/i2c-rcar.c                     |  17 ++-
- drivers/infiniband/core/user_mad.c                |  21 ++-
- drivers/input/ff-core.c                           |   7 +-
- drivers/media/dvb-frontends/as102_fe_types.h      |   2 +-
- drivers/media/dvb-frontends/tda10048.c            |   9 +-
- drivers/media/dvb-frontends/tda18271c2dd.c        |   4 +-
- drivers/media/usb/dvb-usb/dib0700_devices.c       |  18 ++-
- drivers/media/usb/dvb-usb/dw2102.c                | 120 +++++++++-------
- drivers/media/usb/s2255/s2255drv.c                |  20 +--
- drivers/net/bonding/bond_options.c                |   6 +-
- drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c  |   1 +
- drivers/net/dsa/mv88e6xxx/chip.c                  |   4 +-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h       |   2 +-
- drivers/net/ethernet/lantiq_etop.c                |   5 +-
- drivers/net/ppp/ppp_generic.c                     |  15 ++
- drivers/s390/crypto/pkey_api.c                    |   4 +-
- drivers/usb/core/config.c                         |  18 ++-
- drivers/usb/core/quirks.c                         |   3 +
- drivers/usb/gadget/configfs.c                     |   3 +
- drivers/usb/serial/option.c                       |  38 ++++++
- fs/jffs2/super.c                                  |   1 +
- fs/nilfs2/alloc.c                                 |  18 ++-
- fs/nilfs2/alloc.h                                 |   4 +-
- fs/nilfs2/dat.c                                   |   2 +-
- fs/nilfs2/dir.c                                   |  38 +++++-
- fs/nilfs2/ifile.c                                 |   7 +-
- fs/nilfs2/nilfs.h                                 |  10 +-
- fs/nilfs2/the_nilfs.c                             |   6 +
- fs/nilfs2/the_nilfs.h                             |   2 +-
- fs/orangefs/super.c                               |   3 +-
- include/asm-generic/compat.h                      |  24 +++-
- include/linux/compat.h                            |   2 -
- include/linux/fsnotify.h                          |   8 +-
- include/linux/sunrpc/clnt.h                       |   1 +
- kernel/exit.c                                     |   2 +
- mm/page-writeback.c                               |   2 +-
- net/bluetooth/hci_event.c                         |   2 +-
- net/ceph/mon_client.c                             |  14 +-
- net/ipv4/inet_diag.c                              |   2 +
- net/ipv4/tcp_input.c                              | 158 ++++++++++++----------
- net/ipv4/tcp_metrics.c                            |   1 +
- net/ipv4/tcp_timer.c                              |  45 +++++-
- net/sctp/socket.c                                 |   7 +-
- net/sunrpc/clnt.c                                 |   5 +-
- tools/testing/selftests/net/msg_zerocopy.c        |  14 +-
- 64 files changed, 580 insertions(+), 386 deletions(-)
-
-
+Content-Transfer-Encoding: 7bit
+
+On 17.07.2024 11:57 AM, Dmitry Baryshkov wrote:
+> On Wed, 17 Jul 2024 at 12:53, <neil.armstrong@linaro.org> wrote:
+>>
+>> On 17/07/2024 11:49, Dmitry Baryshkov wrote:
+>>> On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>>
+>>>> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
+>>>>> On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
+>>>>>> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
+>>>>>>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>>>>>>>>
+>>>>>>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
+>>>>>>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
+>>>>>>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
+>>>>>>>>>> and byte1_div_clk_src, the clock rate should propagate to
+>>>>>>>>>> the corresponding _clk_src.
+>>>>>>>>>>
+>>>>>>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>>>>>>> ---
+>>>>>>>>>>     drivers/clk/qcom/dispcc-sm8650.c | 2 ++
+>>>>>>>>>>     1 file changed, 2 insertions(+)
+>>>>>>>>>
+>>>>>>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
+>>>>>>>>> rate should not be propagated. Other platforms don't set this flag.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
+>>>>>>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
+>>>>>>>
+>>>>>>> Yes, the driver sets byte_clk with the proper rate, then it sets
+>>>>>>> byte_intf_clk, which results in a proper divisor.
+>>>>>>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
+>>>>>>> byte_intf_clk rate will also result in a rate change for the byte_clk
+>>>>>>> rate.
+>>>>>>>
+>>>>>>> Note, all other platforms don't set that flag for this reason (I think
+>>>>>>> I had to remove it during sm8450 development for this reason).
+>>>>>>>
+>>>>>>
+>>>>>> Ack, I think this deserves a comment explaining this, I'll add it.
+>>>>>
+>>>>> But where to place it? This applies to _all_ dispcc controllers.
+>>>>
+>>>> Commit message
+>>>
+>>> It is already committed.
+>>>
+>>
+>> The thing we keep adding new clock drivers based on previous ones that uses
+>> specific ops and flags with no documented reasons except in commit messages,
+>> but it's often buried into multiple cleanup changes.
+>>
+>> So at some point we should add simple comments before each special clock
+>> explaining what we're doing here, a good example is the clk_regmap_phy_mux_ops,
+>> where I had to dig into commit logs and understand why we handle it differently
+>> from downstream.
+> 
+> Yeah, regmap_phy_mux_ops is a nasty one.
+> 
+> Or the whole story about converting flags from vendor DT to upstream
+> driver code.
+> 
+> Probably it's worth specifying everything somewhere under
+> Documentation/. Or in drivers/clk/qcom/common.h  Or a wiki page
+> somewhere (though my preference is towards the in-kernel docs).
+
+drivers/clk/qcom/docs.rst.. Half-joking, half not.. there is some hw
+docs in Documentation/ but I'm not sure if more than 3 people know
+about it.
+
+Konrad
+> 
 
