@@ -1,104 +1,408 @@
-Return-Path: <linux-kernel+bounces-255019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB391933A92
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A143933A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832F01F2328C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A74E1F22F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97CF17F4FE;
-	Wed, 17 Jul 2024 10:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369F17E8EE;
+	Wed, 17 Jul 2024 10:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAMxBM7d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIITv2Oz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B24D17E91D;
-	Wed, 17 Jul 2024 10:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7A219A;
+	Wed, 17 Jul 2024 10:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210410; cv=none; b=cpHIyinjzcifncECtyBP9MKRWmSx1+J6rRl3n3dluXSEF5BerRNTr574cJmna3BsUC9PHoGgbX/aC3lpqZ8YKiTFHmqvCmqQUY9nmehDNJDPMZlbWM103hgkh//tb6ejj6+b68Nm613rBB2j+1dT7FdtHhW3XYDOBRpT0LrlidE=
+	t=1721210439; cv=none; b=TiosBgJqTDEkhCOl5umpKXxX0ubjNSkUvSET5Vw7/rraVrT9WJ4GEF3A5wtZD0q4rApS5TKhd24STvGW70a0aowmsTLMNfdEg+0GmaAjnP/Zdssrv3tolE6PuUHmaGc6Jc5NVviGVbZ/EFmcwQZ/+JARM6PVfvh1yTJP6pc1GfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210410; c=relaxed/simple;
-	bh=apvG84V5D72A2ovX8Ym5o4GyiAqCNrUwmsljBqYzti4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PBdPlNioEp55niQpcDcMblYVzI/+LEu1pkRuVTPFR8ZEc0IC2I8/qwMcF83Qayo0mHDopgQzxBDlGbSDTeQM7sHCzjEu3g2zTP4Q3ewjsOH579W2WrsR7cKM9We4+0QSi7ucOn4MA7nq3RTlT2XNfXNZn60IjUKfinadzJ4t7cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAMxBM7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD3EC4AF0C;
-	Wed, 17 Jul 2024 10:00:06 +0000 (UTC)
+	s=arc-20240116; t=1721210439; c=relaxed/simple;
+	bh=Y8fvJSiFbbffJ1tqg7DrvVvGrSXcWezFpGdYqavSyYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EhRDQoW/ScSqhakKoeu3I0rneiDFu39qg+ECrcSjfVZMfscICv/9qcDBJTcwLXVRBU+fFa1qlrMzP86yRSAfLGAWcVucqthMhXY9SoyvMC1pYyxtSwkfKgY8AcaSYBbmMceEHJSWKnCgwE4QvqXzcV3Zcs7TNwFbNumWDnVhLv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIITv2Oz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B67CC4AF09;
+	Wed, 17 Jul 2024 10:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721210409;
-	bh=apvG84V5D72A2ovX8Ym5o4GyiAqCNrUwmsljBqYzti4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hAMxBM7dM3iZM90G09J2sTpcTYpvsVGIavBmWZyzFQL4/DSzwqvfSXS0MtcJDwh44
-	 ZyEujha0/1Rh6u+ryIuXzHi1KXHWorR9lMt+5zSyEiC8+5AHkv1ahoFmywS/jO05RN
-	 4YxpNrtmavjmQHpe0kn6nB/E8ctiC5Qb9dAUmFZrxD2JoFVkGaomRBLKoy0IOYnNu/
-	 HZ7RZyQ3nf2n4VnjoxdXRqNJLByFfvDoNKWTDXVabxeECcvVg7RjZGBB+mZxE2OLb8
-	 WcXwVLP9YbYZsuQW8o3Ov+6YaVjKcqbUMBXeWhkY/2+45Ip5Ge06qKgPHaU0Kp107z
-	 7z648utjzWGZw==
-From: Conor Dooley <conor@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: [PATCH v1 3/3] ARM: dts: nxp: correct DAC compatible on Crystalfontz's CFA10049
-Date: Wed, 17 Jul 2024 10:59:50 +0100
-Message-ID: <20240717-ruse-cardinal-c30cf11bbf1e@spud>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240717-impotence-zippy-254b86593069@spud>
-References: <20240717-impotence-zippy-254b86593069@spud>
+	s=k20201202; t=1721210439;
+	bh=Y8fvJSiFbbffJ1tqg7DrvVvGrSXcWezFpGdYqavSyYE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oIITv2Oz4LaYbx37sPrRhnS5Zy7L+dyPBRU/6MTbfM2Fn+OCv3YDkZ9S10+DWZnlM
+	 0F4oIBxHi8wV6UOO0z+ZkKYdR2D5jvPyMhTRhzNrP3nqKMWENFGmm8ElKW2ZxgDZ6q
+	 vGuKfq/UCe4quA1e9K+R3suPSMDPSOGnXTCtWu6g3rlVLKwkZfK5n6VZ5GbWcdEurl
+	 4GjxlObJgMZ0hagz+HhZ7Hb+6Lxf7uvvDC9Rzwayl+ufzQsEb9CBk6F1FDE/kyWvKs
+	 91lpAII81wyYMAMOQJpjdjrcFX6R1PIegnV7PaLOHwe2Iogcd+OjVX2ZgXzxLni7gq
+	 YRFJyMt1Bx7+w==
+Date: Wed, 17 Jul 2024 12:00:27 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: <shiju.jose@huawei.com>
+Cc: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+ <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+ <rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+ <dan.j.williams@intel.com>, <dave@stgolabs.net>,
+ <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+ <alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+ <ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+ <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+ <jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+ <somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+ <duenwen@google.com>, <mike.malvestuto@intel.com>, <gthelen@google.com>,
+ <wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
+ <wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>,
+ <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+ <roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+ <wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [RFC PATCH v9 01/11] EDAC: Add generic EDAC RAS feature driver
+Message-ID: <20240717120027.7168536a@foz.lan>
+In-Reply-To: <20240716150336.2042-2-shiju.jose@huawei.com>
+References: <20240716150336.2042-1-shiju.jose@huawei.com>
+	<20240716150336.2042-2-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=868; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=po4ukk2TtrTbTP6VRex1woV9O4IoqV8AZfS3boi8AP0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnTp4kYKOQ98du0snKlpi5ztLVBwPSoH0v7dPQNJne8c bW9ECDeUcrCIMbBICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgInEfWRkWJH67I1ayQXV7/wh up3X71lVHfNSkFNw5GjS/PnMnH/7bIb/sTNy5rt9eHDk/J7q+8XtfzbV9fmfmm957P3G3Tsyf74 5zAAA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Em Tue, 16 Jul 2024 16:03:25 +0100
+<shiju.jose@huawei.com> escreveu:
 
-When Maxime originally added the BH2228FV to the kernel, he spelt it
-incorrectly - the d should have been a b. Correct the compatible used in
-the devicetree.
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add generic EDAC driver supports registering RAS features supported
+> in the system. The driver exposes feature's control attributes to the
+> userspace in /sys/bus/edac/devices/<dev-name>/<ras-feature>/
+> 
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/edac/Makefile            |   1 +
+>  drivers/edac/edac_ras_feature.c  | 155 +++++++++++++++++++++++++++++++
+>  include/linux/edac_ras_feature.h |  66 +++++++++++++
+>  3 files changed, 222 insertions(+)
+>  create mode 100755 drivers/edac/edac_ras_feature.c
+>  create mode 100755 include/linux/edac_ras_feature.h
+> 
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index 9c09893695b7..c532b57a6d8a 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
+>  
+>  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
+>  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
+> +edac_core-y	+= edac_ras_feature.o
+>  
+>  edac_core-$(CONFIG_EDAC_DEBUG)		+= debugfs.o
+>  
+> diff --git a/drivers/edac/edac_ras_feature.c b/drivers/edac/edac_ras_feature.c
+> new file mode 100755
+> index 000000000000..24a729fea66f
+> --- /dev/null
+> +++ b/drivers/edac/edac_ras_feature.c
+> @@ -0,0 +1,155 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * EDAC RAS control feature driver supports registering RAS
+> + * features with the EDAC and exposes the feature's control
+> + * attributes to the userspace in sysfs.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
 
-Fixes: db7a8946dc40 ("ARM: dts: cfa10049: Add the DH2228FV DAC to the DTS")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +#define pr_fmt(fmt)     "EDAC RAS CONTROL FEAT: " fmt
 
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts b/arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts
-index f0ce897b9d5c..3cd2acbd8931 100644
---- a/arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28-cfa10049.dts
-@@ -143,7 +143,7 @@ gpio6: gpio6@1 {
- 		};
- 
- 		dac0: dh2228@2 {
--			compatible = "rohm,dh2228fv";
-+			compatible = "rohm,bh2228fv";
- 			reg = <2>;
- 			spi-max-frequency = <100000>;
- 		};
--- 
-2.43.0
+Sounds a too long prefix for my taste.
 
+> +
+> +#include <linux/edac_ras_feature.h>
+> +
+> +static void edac_ras_dev_release(struct device *dev)
+> +{
+> +	struct edac_ras_feat_ctx *ctx =
+> +		container_of(dev, struct edac_ras_feat_ctx, dev);
+> +
+> +	kfree(ctx);
+> +}
+> +
+> +const struct device_type edac_ras_dev_type = {
+> +	.name = "edac_ras_dev",
+> +	.release = edac_ras_dev_release,
+> +};
+> +
+> +static void edac_ras_dev_unreg(void *data)
+> +{
+> +	device_unregister(data);
+> +}
+> +
+> +static int edac_ras_feat_scrub_init(struct device *parent,
+> +				    struct edac_scrub_data *sdata,
+> +				    const struct edac_ras_feature *sfeat,
+> +				    const struct attribute_group **attr_groups)
+> +{
+> +	sdata->ops = sfeat->scrub_ops;
+> +	sdata->private = sfeat->scrub_ctx;
+> +
+> +	return 1;
+> +}
+> +
+> +static int edac_ras_feat_ecs_init(struct device *parent,
+> +				  struct edac_ecs_data *edata,
+> +				  const struct edac_ras_feature *efeat,
+> +				  const struct attribute_group **attr_groups)
+> +{
+> +	int num = efeat->ecs_info.num_media_frus;
+> +
+> +	edata->ops = efeat->ecs_ops;
+> +	edata->private = efeat->ecs_ctx;
+> +
+> +	return num;
+> +}
+
+I would place this function earlier and/or add some documentation
+for the above two functions.
+
+I got confused when reviewed the first function and saw there an
+unconditional:
+
+	return 1;
+
+Now, I guess the goal is to return the number of initialized
+features, right?
+
+> +
+> +/**
+> + * edac_ras_dev_register - register device for ras features with edac
+> + * @parent: client device.
+> + * @name: client device's name.
+> + * @private: parent driver's data to store in the context if any.
+> + * @num_features: number of ras features to register.
+> + * @ras_features: list of ras features to register.
+> + *
+> + * Returns 0 on success, error otherwise.
+> + * The new edac_ras_feat_ctx would be freed automatically.
+> + */
+> +int edac_ras_dev_register(struct device *parent, char *name,
+> +			  void *private, int num_features,
+> +			  const struct edac_ras_feature *ras_features)
+> +{
+> +	const struct attribute_group **ras_attr_groups;
+> +	struct edac_ras_feat_ctx *ctx;
+> +	int attr_gcnt = 0;
+> +	int ret, feat;
+> +
+> +	if (!parent || !name || !num_features || !ras_features)
+> +		return -EINVAL;
+> +
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->dev.parent = parent;
+> +	ctx->private = private;
+> +
+> +	/* Double parse so we can make space for attributes */
+> +	for (feat = 0; feat < num_features; feat++) {
+> +		switch (ras_features[feat].feat) {
+> +		case ras_feat_scrub:
+> +			attr_gcnt++;
+> +			break;
+> +		case ras_feat_ecs:
+> +			attr_gcnt += ras_features[feat].ecs_info.num_media_frus;
+> +			break;
+
+As already suggested, the enum names shall be in uppercase.
+Having a lowercase one here looks really weird.
+
+> +		default:
+> +			ret = -EINVAL;
+> +			goto ctx_free;
+> +		}
+> +	}
+
+I would place this logic earlier, before allocating ctx, as, in case of
+errors, the function can just call "return -EINVAL".
+
+> +
+> +	ras_attr_groups = devm_kzalloc(parent,
+> +				       (attr_gcnt + 1) * sizeof(*ras_attr_groups),
+> +				       GFP_KERNEL);
+
+Hmm... why are you using devm variant here, and non-devm one for cxt?
+
+My personal preference is to avoid devm variants, as memory is
+only freed when the device refcount becomes zero (which, depending
+on the driver, may never happen in practice, as driver core may keep
+a refcount, depending on how the device was probed).
+
+> +	if (!ras_attr_groups) {
+> +		ret = -ENOMEM;
+> +		goto ctx_free;
+> +	}
+> +
+> +	attr_gcnt = 0;
+> +	for (feat = 0; feat < num_features; feat++, ras_features++) {
+> +		if (ras_features->feat == ras_feat_scrub) {
+
+I would use a switch here as well, just like the previous feature type
+check.
+
+> +			if (!ras_features->scrub_ops)
+> +				continue;
+> +			ret = edac_ras_feat_scrub_init(parent, &ctx->scrub,
+> +						       ras_features, &ras_attr_groups[attr_gcnt]);
+
+I don't think it is worth having those ancillary functions here...
+
+> +			if (ret < 0)
+> +				goto ctx_free;
+> +
+> +			attr_gcnt += ret;
+> +		} else if (ras_features->feat == ras_feat_ecs) {
+> +			if (!ras_features->ecs_ops)
+> +				continue;
+> +			ret = edac_ras_feat_ecs_init(parent, &ctx->ecs,
+> +						     ras_features, &ras_attr_groups[attr_gcnt]);
+
+and here, as most of the current functions are very simple:
+
+both just sets two arguments:
+
+	edata->ops
+	edata->private
+
+and returned vaules are always a positive counter...
+
+> +			if (ret < 0)
+> +				goto ctx_free;
+
+So, this check for instance, doesn't make sense.
+
+> +
+> +			attr_gcnt += ret;
+> +		} else {
+> +			ret = -EINVAL;
+> +			goto ctx_free;
+> +		}
+> +	}
+> +	ras_attr_groups[attr_gcnt] = NULL;
+> +	ctx->dev.bus = edac_get_sysfs_subsys();
+> +	ctx->dev.type = &edac_ras_dev_type;
+> +	ctx->dev.groups = ras_attr_groups;
+> +	dev_set_drvdata(&ctx->dev, ctx);
+> +	ret = dev_set_name(&ctx->dev, name);
+> +	if (ret)
+> +		goto ctx_free;
+> +
+> +	ret = device_register(&ctx->dev);
+> +	if (ret) {
+> +		put_device(&ctx->dev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(parent, edac_ras_dev_unreg, &ctx->dev);
+> +
+> +ctx_free:
+> +	kfree(ctx);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(edac_ras_dev_register);
+> diff --git a/include/linux/edac_ras_feature.h b/include/linux/edac_ras_feature.h
+> new file mode 100755
+> index 000000000000..000e99141023
+> --- /dev/null
+> +++ b/include/linux/edac_ras_feature.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * EDAC RAS control features.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
+> +#ifndef __EDAC_RAS_FEAT_H
+> +#define __EDAC_RAS_FEAT_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/edac.h>
+> +
+> +#define EDAC_RAS_NAME_LEN	128
+> +
+> +enum edac_ras_feat {
+> +	ras_feat_scrub,
+> +	ras_feat_ecs,
+> +	ras_feat_max
+> +};
+
+Enum values in uppercase, please.
+
+> +
+> +struct edac_ecs_ex_info {
+> +	u16 num_media_frus;
+> +};
+> +
+> +/*
+> + * EDAC RAS feature information structure
+> + */
+> +struct edac_scrub_data {
+> +	const struct edac_scrub_ops *ops;
+> +	void *private;
+> +};
+> +
+> +struct edac_ecs_data {
+> +	const struct edac_ecs_ops *ops;
+> +	void *private;
+> +};
+> +
+> +struct device;
+> +
+> +struct edac_ras_feat_ctx {
+> +	struct device dev;
+> +	void *private;
+> +	struct edac_scrub_data scrub;
+> +	struct edac_ecs_data ecs;
+> +};
+> +
+> +struct edac_ras_feature {
+> +	enum edac_ras_feat feat;
+> +	union {
+> +		const struct edac_scrub_ops *scrub_ops;
+> +		const struct edac_ecs_ops *ecs_ops;
+> +	};
+> +	union {
+> +		struct edac_ecs_ex_info ecs_info;
+> +	};
+
+I would place the variable structs union at the end. This may help with 
+alignments, if you place the pointers earlier.
+
+> +	union {
+> +		void *scrub_ctx;
+> +		void *ecs_ctx;
+> +	};
+> +};
+> +
+> +int edac_ras_dev_register(struct device *parent, char *dev_name,
+> +			  void *parent_pvt_data, int num_features,
+> +			  const struct edac_ras_feature *ras_features);
+> +#endif /* __EDAC_RAS_FEAT_H */
+
+
+
+Thanks,
+Mauro
 
