@@ -1,151 +1,133 @@
-Return-Path: <linux-kernel+bounces-255312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9DC933ED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:50:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E535933E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 16:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3968283027
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DCE1F21ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687F618132F;
-	Wed, 17 Jul 2024 14:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F2518131D;
+	Wed, 17 Jul 2024 14:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="HNb3qLVb"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jq9sOuM+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865CB180A6A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 14:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BCC11CA1;
+	Wed, 17 Jul 2024 14:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721227825; cv=none; b=aVy62R3GhU0QT8+2n6DpOFk2NqQ2slUoyt0kN1Mf9l1NmJIQuf+Q1jG+WqirvI47v9G7b1xljdrbxKxLctZHQK46aasgpYUk1q2xn/StDjBBXqhYEL/cHBZsJliEVt8TXpSZiAc7VBD+ItGmBJfnlR2iEM/vLG15odUIphrPeM8=
+	t=1721226261; cv=none; b=T6bGVYd2FDwils5N/vsT2z9FPUW3NAj3ghuJtYx9JkZvmDFr8xB9yPiRRnId1bJmsayRRMMGkGVSqoLNn60VWOPWMUEMZ5e/gdNwG7FcA9dAjlNAw1eNx7QHuOJM3AbPLL8wAlXCQAkdWLhyC1x4lGG9y9nZbWyridP1Nzw1uGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721227825; c=relaxed/simple;
-	bh=kOC7dain/Ecn19fnYCSA1BsvxNkv4qPBuYHtr6kGdec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mcxuPSAyct77c2sjbZpsK7RempYfMhqiYQwmCZZzJO07dtqeUJ6TnWXWNAKJ51ofz1iphu6e2QQf6C6rv93KFsxkxgUh6rHtkKamzX0JjkCJiNkBPL5L6dxeuKEbBrDPhUWW4Aa8uc1UVvMbrU4GF6BpADTSNvdKy8wqz6UvqUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=HNb3qLVb; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1721227824;
-	bh=IlittNRrWIwg+J1ede5MGTyPJ8aU7D2MA3P6IZLCUTw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=HNb3qLVbZg6jhrJp2/p5LBUiiiFk1/thCt+zgP1wFVK2sji5TllVBfRa483mngGS0
-	 IoFifzn0hkttQPQ2B1OYbDgyCcAtk/QeIeo8byENgrNbPLipOReu4wrCiW0vAz2y5W
-	 JSkMxP9Pg5USlgzhrIrrZQSb6a5uuNDcCSQywsD1ITXLbXlI/1z4ZRW+VhLs6lFyif
-	 L9NC0yQ5OpNGWL3KSBwt7S8aXhYk7WAGkM2QyhjLeu008u3uFm1HVVXuDmPc5WA3dG
-	 RB6uVHY2DhSuDFH7haDlSNmg3vKwBUhr8frDW+nm58JKQwsb0AT0MzCvkekAFEpcM1
-	 fNwNZdk0B53qQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 98CB218055D;
-	Wed, 17 Jul 2024 14:50:20 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 17 Jul 2024 22:50:05 +0800
-Subject: [PATCH] driver core: Fix error handling in driver API
- device_rename()
+	s=arc-20240116; t=1721226261; c=relaxed/simple;
+	bh=6cYRLXHWXL4ibRkIOcn9Cw2QGInwfKBSviOsULVF0rI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qp4cAs+O5qQuR/Hpuogq2RcfUGkR6+3jHawqRl/3GlaKQ4ytvEhD+XCWB7s3liYI8JPjz85hFuUfGBZCllKBgbZL/4YSavEqKR/MQuBWl2S/NK87aZHgAmOc1/4+XlN4ocbR8PIbhn8OiczLZ+w2+fpAtu0n0DN4rDI+kXbRkew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jq9sOuM+; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721226260; x=1752762260;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=6cYRLXHWXL4ibRkIOcn9Cw2QGInwfKBSviOsULVF0rI=;
+  b=Jq9sOuM+vDgI77k34hXBug3ilMeYCsMteikx8b5WdWLoQunsoLLKvjvt
+   cU6QfNsNQbsdXOs9inTX5Wbu/xHryOOvIP/LRAHCAYpb8VNBTnqqNsryA
+   OkMV+UKUyLd+zq4Dd1QHsCnHn3dU0wsOfDWqh4s6waMlLA/CbuxymXM8X
+   8WO6u5L2twPcUuO5Nw2MiflM76lBNyZfNt1y0de3s83u1prcQOHsYUAWP
+   thpevUT+1zNeqWTCDWVjg5Bh5KSeZGNeTWI7kibzknrebVz5OgBomEmlc
+   fwqwtFKGWCYdqwiGvRVrzg7X7ZHmOnunT8UIX81f3AQcjjgXP7uREBU0S
+   g==;
+X-CSE-ConnectionGUID: rw4RKfyhS2acdp73CKc0/Q==
+X-CSE-MsgGUID: 2wHvQBksSjqgYTgJZUy9aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29313599"
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="29313599"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:24:19 -0700
+X-CSE-ConnectionGUID: zBV00UreRQ63z0WN8pu2Qg==
+X-CSE-MsgGUID: sNg6y5VSQKGlf6vQ/YOyPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
+   d="scan'208";a="54596614"
+Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2024 07:24:16 -0700
+From: Yu Ma <yu.ma@intel.com>
+To: brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	edumazet@google.com
+Cc: yu.ma@intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pan.deng@intel.com,
+	tianyou.li@intel.com,
+	tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH v5 0/3] fs/file.c: optimize the critical section of file_lock in
+Date: Wed, 17 Jul 2024 10:50:15 -0400
+Message-ID: <20240717145018.3972922-1-yu.ma@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240614163416.728752-1-yu.ma@intel.com>
+References: <20240614163416.728752-1-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240717-device_rename_fix-v1-1-54d85024518f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABzal2YC/x2MwQqAIBAFfyX2nGBiGP1KRIi+ag9ZKEQQ/ntLx
- 3nMm5cKMqPQ2LyUcXPhMwl0bUNh92mD4ihMRhurXedUFClgyUj+wLLyoxCw6sG6waIn+V0ZMv/
- Naa71A8iGJH5jAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Benjamin Thery <benjamin.thery@bull.net>, 
- "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, Greg Kroah-Hartman <gregkh@suse.de>, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.0
-X-Proofpoint-GUID: pObZy8LU45do_ik5wl5xDhsv4mPjPFbg
-X-Proofpoint-ORIG-GUID: pObZy8LU45do_ik5wl5xDhsv4mPjPFbg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_11,2024-07-17_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- clxscore=1011 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2407170114
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+pts/blogbench-1.1.0 is a benchmark designed to replicate the
+load of a real-world busy file server by multiple threads of
+random reads, writes, and rewrites. When running default configuration
+with multiple parallel threads, hot spin lock contention is observed
+from alloc_fd(), file_closed_fd() and put_unused_fd() around file_lock.
 
-Call failure of device_rename(@dev, @new_name) maybe unexpectedly change
-link name within @dev's class directory to @new_name, fixed by correcting
-error handling for the API.
+These 3 patches are created to reduce the critical section of file_lock
+in alloc_fd() and close_fd(). As a result, on top of patch 1,
+pts/blogbench-1.1.0 has been improved by 22% for read and 8% for write
+on Intel ICX 160 cores configuration with v6.10-rc7.
 
-Fixes: f349cf34731c ("driver core: Implement ns directory support for device classes.")
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/core.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+v4 -> v5:
+Revised patch 3 for some code style issues.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 2b4c0624b704..a05b7186cf33 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4512,9 +4512,11 @@ EXPORT_SYMBOL_GPL(device_destroy);
-  */
- int device_rename(struct device *dev, const char *new_name)
- {
-+	struct subsys_private *sp = NULL;
- 	struct kobject *kobj = &dev->kobj;
- 	char *old_device_name = NULL;
- 	int error;
-+	bool is_link_renamed = false;
- 
- 	dev = get_device(dev);
- 	if (!dev)
-@@ -4529,7 +4531,7 @@ int device_rename(struct device *dev, const char *new_name)
- 	}
- 
- 	if (dev->class) {
--		struct subsys_private *sp = class_to_subsys(dev->class);
-+		sp = class_to_subsys(dev->class);
- 
- 		if (!sp) {
- 			error = -EINVAL;
-@@ -4537,17 +4539,20 @@ int device_rename(struct device *dev, const char *new_name)
- 		}
- 
- 		error = sysfs_rename_link_ns(&sp->subsys.kobj, kobj, old_device_name,
--					     new_name, kobject_namespace(kobj));
--		subsys_put(sp);
-+				new_name, kobject_namespace(kobj));
- 		if (error)
- 			goto out;
-+
-+		is_link_renamed = true;
- 	}
- 
- 	error = kobject_rename(kobj, new_name);
--	if (error)
--		goto out;
--
- out:
-+	if (error && is_link_renamed)
-+		sysfs_rename_link_ns(&sp->subsys.kobj, kobj, new_name,
-+				old_device_name, kobject_namespace(kobj));
-+	subsys_put(sp);
-+
- 	put_device(dev);
- 
- 	kfree(old_device_name);
+v3 -> v4:
+1. Rebased the patch set to v6.10-rc7 and updated performance results.
+2. Updated patch 1 to revise the order of fd checking.
+3. As proposed by Mateusz Guzik <mjguzik gmail.com>, and agreed by Jan Kara
+<jack@suse.cz> and Tim Chen <tim.c.chen@linux.intel.com>, updated patch 3 with
+a more generic and scalable fast path for the word contains next_fd.
 
----
-base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
-change-id: 20240717-device_rename_fix-ecef084784e5
+v2 -> v3:
+1. Rebased the patch set to latest v6.10-rc6 and updated the performance results
+2. Reordered the patches as suggested by Mateusz Guzik <mjguzik gmail.com>
+3. Updated the fast path from alloc_fd() to find_next_fd() as suggested by
+Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse.cz>, it is efficient
+and more concise than v2.
 
-Best regards,
+v1 -> v2:
+1. Rebased the patch set to latest v6.10-rc4 and updated the performance results
+2. Fixed the bug identified by Mateusz Guzik in patch 1 with adding rlimit check
+for fast path
+3. Updated patch 3 to remove sanity_check directly per the alignment with
+maintainer
+
+Yu Ma (3):
+  fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
+  fs/file.c: conditionally clear full_fds
+  fs/file.c: add fast path in find_next_fd()
+
+ fs/file.c | 46 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
+
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.43.0
 
 
