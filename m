@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-254774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8FD933774
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:56:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663AD933778
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 08:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C0F2810DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974EE1C2280E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 06:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F8B182B9;
-	Wed, 17 Jul 2024 06:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E16182B5;
+	Wed, 17 Jul 2024 06:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5EzZrYW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYxZAGUa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA77171A1;
-	Wed, 17 Jul 2024 06:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056591862A;
+	Wed, 17 Jul 2024 06:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721199356; cv=none; b=Z1UxCj2mSZxn/uMmhLsUtsaMDUG9DsGMIe+zUHP2ivvnu1SVBAYeNVLpmyKiLbE019PbRbzzvS+MxSejEqUxBFEPF6RP+oCPCo+jkaz1WBmxyJxq+rAqlIPQxMbAOcUEFyDbOO4vWGFm014yUTEx+IQXUHPLUGvjbKUE5LVOses=
+	t=1721199461; cv=none; b=sjTU/JFVWVk0A7gmRgkcUvx4BK4awDSrFWSfQpld7cdzD/sf6JXyea0xXj8QM67DiD407mXLcoWRrXRj8Q7tQiC1K1M0iRGff0x5gkMNLIPAgygoVFHMGC3ZgoJI8ivu7lUYq2wPJQdJ/ucfvcfiP5gwTMm1i4ou+rAtC2CxkVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721199356; c=relaxed/simple;
-	bh=WUKjxeCHiwFtmo+gm+BNy9YZfIYrgx0j4AH0tWl7VOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IYxUoOkx7Rh9yKgKjaHP8IwTURoHw01dPaTYXsOqoTqql/vZ+lA0p9qS4abSdX8jt+94PPvqqrYmP5G9nK31ilhq643KJxhx/X3O5ES8Bdfy8gZd7avDQLviaxUlftLV0ro39bYdPYM/+VjJBesDZDsXzBnZIV3ot2Yzl0fwszk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5EzZrYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61994C4AF0C;
-	Wed, 17 Jul 2024 06:55:49 +0000 (UTC)
+	s=arc-20240116; t=1721199461; c=relaxed/simple;
+	bh=afYYc5ZMw1Zwtvx/MJsUoi2l/Epdv3uYEQj/aDnM1Ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tNDfNXiOgXWbqxTGko/X/QWdh5D6FPZX7eMnkAZWY1sy0j4Wpl/mFGqbWsHpGdxzgVof5szS+L1J5mBlMne2hjpMse5mGTwoer1B0AYurbK/aqAneRg7OIpfWr7l3PMNxjKi3rmNA4g3pYh0WBHsuk8jAJQtPtJX7uEBcrNHCig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYxZAGUa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03E0C32782;
+	Wed, 17 Jul 2024 06:57:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721199356;
-	bh=WUKjxeCHiwFtmo+gm+BNy9YZfIYrgx0j4AH0tWl7VOc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=p5EzZrYWhoooorSQcFP16ktfLMDg5rNQK9Sh8ivta4yqXV2Yxljgrro1Up2zcRd1O
-	 zBI2nMFnfW748MnEo+H33KmGRAK2hq9rEg5VtlbyiNQs+u4GRDUND3XLBRiXg0KvI/
-	 0Ew5dZv0zEeHnn0q32/u7ug3zIE89KuZ8TSN503FqTMTA5pAJTXz78DeWu/GvgUOFP
-	 i8Z0BD3Qe8oc/dA1FiV2IJRODuqXmuUR+mktkX3xri9B7draEhWX6WDwpWttyjFkzr
-	 QIdX4plD/IjMr8thTcuUb5uaOdCYvq6XjHUOWic1cLYBUcC3kxmvEvSJ7GHS7KXwo4
-	 vU1xfONTGT9uQ==
-Message-ID: <656bc50f-3c8b-48de-a1ba-ff27749ebb78@kernel.org>
-Date: Wed, 17 Jul 2024 08:55:46 +0200
+	s=k20201202; t=1721199460;
+	bh=afYYc5ZMw1Zwtvx/MJsUoi2l/Epdv3uYEQj/aDnM1Ww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eYxZAGUaJGe1MCy2RG3cW+lg+PhZp2xCCojWHk2H4+qemOCp8Jo49e8hBxR8psc23
+	 cQ2W+IHLsKzXCJvvUNv0j2GpL48MKoXufKTDGl5o+CS4fQpaA9jUlbttGUJrL69O6+
+	 Lc91tQHHc1cKY5V8ihr2XBb5WdsYYrNjClAaBkLiuK6GGkY2RN8G/Cpz+GLn2fO/j3
+	 zaYUo2a77QSk0cT5yQeHzvq0NgfMyz9kj+SDbSeoK2BmXU1WAHAmeqxtHJ2GMJ8FTG
+	 rzoRlOptcxyp2Qy+IOCBrvxhpIT5Wk46HbXewUyMtwbJrL6C0ggwLfvPmFAOeMecpe
+	 LFuAzUDO0gFHQ==
+Message-ID: <3e35995f-21e7-4c0c-9417-d96a82751cd9@kernel.org>
+Date: Wed, 17 Jul 2024 08:57:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/11] dt-bindings: riscv: Add Ziccrse ISA extension
- description
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet
- <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
- <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
- Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org
-References: <20240717061957.140712-1-alexghiti@rivosinc.com>
- <20240717061957.140712-11-alexghiti@rivosinc.com>
-Content-Language: en-US
+Subject: Re: [PATCH 7/7] dt-bindings: clock: qcom,sm8650-dispcc: replace with
+ symlink
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
+ <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -111,35 +106,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240717061957.140712-11-alexghiti@rivosinc.com>
+In-Reply-To: <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2024 08:19, Alexandre Ghiti wrote:
-> Add description for the Ziccrse ISA extension which was introduced in
-> the riscv profiles specification v0.9.2.
+On 16/07/2024 23:13, Dmitry Baryshkov wrote:
+> The display clock controller indices for SM8650 and SM8550 are
+> completely equal. Replace the header file for qcom,sm8650-dispcc with
+> the symlink to the qcom,sm8550-dispcc header file.
 > 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/dispcc-sm8550.c               |   2 +-
+>  include/dt-bindings/clock/qcom,sm8650-dispcc.h | 103 +------------------------
+>  2 files changed, 2 insertions(+), 103 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
+> index 78e11eade2ea..9ffcd9eb9283 100644
+> --- a/drivers/clk/qcom/dispcc-sm8550.c
+> +++ b/drivers/clk/qcom/dispcc-sm8550.c
+> @@ -1776,7 +1776,7 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-dispcc")) {
+> -		lucid_ole_vco.max_freq = 2100000000;
+> +		lucid_ole_vco[0].max_freq = 2100000000;
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+This part does not look related.
 
 Best regards,
 Krzysztof
