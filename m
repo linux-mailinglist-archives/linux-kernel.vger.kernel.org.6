@@ -1,189 +1,160 @@
-Return-Path: <linux-kernel+bounces-255166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DA8933CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:31:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A733933D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 14:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114842840EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05301C21234
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 12:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D90D1802C1;
-	Wed, 17 Jul 2024 12:31:23 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F3517E8FA;
+	Wed, 17 Jul 2024 12:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="chlnY269"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774AE180057;
-	Wed, 17 Jul 2024 12:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4817F36A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 12:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721219483; cv=none; b=VAIPPtjtaezIN2C1oTCEC4WM4shqmPvC/lFfru0WfyoPoAm81jKy6kXK4XWjCNZ5ADUroHSyd3TXlRSIQqSEz206DqOjt4/UU1ekriaEntIArHJlB4nuipqFc4aT5ZkO8bJHlxMSgeVD1p0ywyh6XbfVyKAUNuL4HG7wEWQkcuA=
+	t=1721219533; cv=none; b=NlxMutQc5/+h4ulQpdoO5f0MWT40U+zQWDb6LrFizLvwo6TuPKJ5Uv0nRbopT6lZv7WrH1h5N+PvPtSpuPQE7NuJaTE+fjDOTOiWvaJgOiGlE1jBmxe/B6EBYDi6BRKrjsDYm/dQdmObA1bKLb5IcWRD3gmBMD+I+INgoA/+UMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721219483; c=relaxed/simple;
-	bh=pEUHWXBeEckI9mh1s9VFuu+8nZWoQlU0kqEFtnuP8Zc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=JMSbuVhcqYYIuX+pnnwdrktYdemVB92YdrqR21fNNVBf2YXw8eOLUF13S5JB+xkwpkW+uLDCzUCGy4/mepH5yehJeSqyaZflFWQXY/sZ4rPSY/9pwfhv9KOSLsK2KqRPFO6V1m3P+7PZo23E+5oaEOYmN1Psg1Ee6HOVHvOj3zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WPFcX1W3Tzdhnf;
-	Wed, 17 Jul 2024 20:29:32 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 049561800A0;
-	Wed, 17 Jul 2024 20:31:16 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Jul 2024 20:31:15 +0800
-Message-ID: <3aaa607f-0aaa-4973-bbb2-41416f828f44@huawei.com>
-Date: Wed, 17 Jul 2024 20:31:15 +0800
+	s=arc-20240116; t=1721219533; c=relaxed/simple;
+	bh=l05qdUDYtYtzIwJ2QhcxqvorSJ35g1P9v6/n6D76rGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r/YXOUbYGQxqbxuYEgtWTOEPJIA8E+kAqA7Agc/aggpKC3lvmmAaQwv3/ZDl9P6pZi4AlSHZt0kn5e4jeUTWHi3kMmaHWlCg5QTl5Kp2XUWZedbNtIFS5uhE88PRrF44Nt2OeL68CPXtCASzW+2gsDxh5VuCDz1OJLoZW1UpiRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=chlnY269; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so88301231fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 05:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721219529; x=1721824329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GbUBi1oeUQFJbnBtGH+G+FVuJioTAizxvp0fQS1vBdo=;
+        b=chlnY269M/8PJCXrxxYMx5C4UbVcY/XeBhtBF+N+eaDqDph64xeVJV4o3B+prlrMAw
+         I9jxcoxnFDahQ67hgmg0HANHBMtBfnBXxHgqTE24XRr/IOHaSQXdsZW5RnFRLCMUPAKy
+         sL5hipQhKV4kDnJZNF5r+eqqXkrprxuxFM++pspUPw9kohv9Appgcel/SIEMoqdwPeUz
+         7hbnvQD4wSXn5WQhGWRpMBgXbhS50Q1Z96QD2D8nzL4yb6u1pSaihcdtTxaCKli7YGQs
+         9lAWflDitq/3JCuKOAsoKgdpJEZ0ieOge1voWhfkEmfd8xpUz6voa1T700cRZo3MZNRY
+         jnxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721219529; x=1721824329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GbUBi1oeUQFJbnBtGH+G+FVuJioTAizxvp0fQS1vBdo=;
+        b=I8AjSFjAQV/6Kb/GhPjodkDtlsep3iLWeuv4Xk/wWkayXveUnl/wPrz35LcICxmhBk
+         pAX8mSz/D07AegBkb5oq+Jbawa6FI4VB/RqQ43enkrbTrTpv945p3arrvNsc4j4sdkFW
+         T96GGtGLWlS+AUhsbhgVpT++fq5chnMKWBBSxB13GnVRNDWnCT0J6QmZYy+wSZJa2tGr
+         FTzANuT1XP4tycfTilBmDXUJYk/rKCCF/Bp3HUMINwbMDjkAk+COXAgkXgPIfMxGi87b
+         WirxyeyaYtwi8A8B7A6c1tsKKswosHVOy7xz9MFdh71mpB5PWnhdckBjxiVFr5FgutfB
+         9dlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFE4HF+VG9CSfrKEm00y5+7qo8g71qGstc2D5T15hULkIC2vEwwwMJ+ks01oQbG5xY4+gaoPhbN88ZOQ1urUhP1C/+mVl8kDuSfiHl
+X-Gm-Message-State: AOJu0YwoOTPM0ouu+JLJ5+dRpYyP+Huawl+UhN99f+A7IZeSvuWLc+KV
+	UyqA/G3E2SOrH1TAz0QlNy1H7DxHZv5BmCECQMefGgcmvmlA7x1ix/a4rGSjK3BwS86L8Ar5i7c
+	3E1h2aELHVkzVHhyCOShiM8NS1TarZW1Khk/J0w==
+X-Google-Smtp-Source: AGHT+IHrd6WA/u4topx2ck+TD1y4nbBr1UNLmG0DLlnysPBcQgOKnNlEbr4yK/AY56sZ0v8vExJDv8A5pxM3+zla9B8=
+X-Received: by 2002:a2e:a456:0:b0:2ee:4aaf:5f16 with SMTP id
+ 38308e7fff4ca-2eefd04b65amr10712341fa.1.1721219528955; Wed, 17 Jul 2024
+ 05:32:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
- 'size' and 'pfmemalloc'
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>, Yunsheng Lin
-	<yunshenglin0825@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-7-linyunsheng@huawei.com>
- <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
- <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com>
- <a026c32218cabc7b6dc579ced1306aefd7029b10.camel@gmail.com>
- <f4ff5a42-9371-bc54-8523-b11d8511c39a@huawei.com>
- <96b04ebb7f46d73482d5f71213bd800c8195f00d.camel@gmail.com>
- <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com>
- <CAKgT0UdJPcnfOJ=-1ZzXbiFiA=8a0z_oVBgQC-itKB1HWBU+yA@mail.gmail.com>
- <df38c0fb-64a9-48da-95d7-d6729cc6cf34@huawei.com>
- <CAKgT0UdSjmJoaQvTOz3STjBi2PazQ=piWY5wqFsYFBFLcPrLjQ@mail.gmail.com>
- <29e8ac53-f7da-4896-8121-2abc25ec2c95@gmail.com>
- <CAKgT0Udmr8q8V7x6ZqHQVxFbCnwB-6Ttybx_PP_3Xr9X-DgjKA@mail.gmail.com>
- <12ff13d9-1f3d-4c1b-a972-2efb6f247e31@gmail.com>
- <CAKgT0Uea-BrGRy-gfjdLWxp=0aQKQZa3dZW4euq5oGr1pTQVAA@mail.gmail.com>
- <5a3b39b7-c183-4c73-bd9b-184db8b24f6a@huawei.com>
-Content-Language: en-US
-In-Reply-To: <5a3b39b7-c183-4c73-bd9b-184db8b24f6a@huawei.com>
+References: <20240716152318.207178-1-brgl@bgdev.pl> <CAHk-=wj+4yA5jtzbTjctrk7Xu+88H=it2m5a-bpnnFeCQP7r=A@mail.gmail.com>
+ <CAMRc=MemuOOrEwN6U3usY+d0y2=Pof1dC=xE2P=23d2n5xZHLw@mail.gmail.com>
+ <CAHk-=wg-L1K6N+0zZ-bcU7kGZMMDbXj4Z8smrsi1gvbi5U-GiQ@mail.gmail.com>
+ <CACMJSeuSS1GBeMP66xt8CP3=6X9xNUZvj9cZHm_Lav6iaw9Gdw@mail.gmail.com> <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgK=P_7LbCH9pzX4EZFYSd7HdJ8y=Fpt797F9XxT3ThUQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 17 Jul 2024 14:31:57 +0200
+Message-ID: <CAMRc=MdcUhBe6-P0KH8KfrHfp8wqM0fCWGoUZaVZ7+FAkECtpA@mail.gmail.com>
+Subject: Re: [PATCH] PCI/pwrctl: reduce the amount of Kconfig noise
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/16 20:58, Yunsheng Lin wrote:
+On Tue, Jul 16, 2024 at 10:29=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 16 Jul 2024 at 13:10, Bartosz Golaszewski
+> <bartosz.golaszewski@linaro.org> wrote:
+> >
+> >     select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
+> >
+> > in the ATH11K_PCI and ATH12K Kconfig entries? Am I getting this right?
+>
+> So on the whole, I'd prefer these things to be done where they are
+> actually required.
+>
+> But I'm not actually entirely sure what the hard _requirements_ from a
+> hardware - or a kernel build - standpoint actually are.
+>
+> If there aren't any hard requirements at all, then maybe the whole "do
+> you want pweseq" should be an actual question (but limited only to
+> situations where it makes sense).
+>
+> If the hard requirement is at the level of the driver itself, then the
+> "select" should be in the driver.
+>
+> That doesn't seem to be the case here, since ATH11K_PCI certainly
+> works without it, but if that driver requires power sequencing on
+> ARCH_QCOM platforms, then maybe that is indeed the right thing.
+>
+> And if the hard requirement comes from some SoC setup, then optimally
+> I think the "select" should be at that level, but we don't actually
+> seem to have that level of questions (but maybe something in
+>
+>    drivers/soc/qcom/Kconfig
+>
+> might make sense?)
+>
 
-...
+The hard requirement really comes from the board level - not SoC. It's
+the board that has the BT/WLAN module hardwired and - depending on how
+the module is powered - may or may not require power sequencing. But I
+don't think we have any per-board infrastructure in Kconfig.
 
-> 
-> Option 1 assuming nc->remaining as a negative value does not seems to
-> make it a more maintainable solution than option 2. How about something
-> like below if using a negative value to enable some optimization like LEA
-> does not have a noticeable performance difference?
+> Anyway, this is not necessarily something where there is "one correct
+> answer". This may be a somewhat gray area, and it looks like ARCH_QCOM
+> is a very big "any Qualcomm SoC" thing and not very specific.
+>
+> So I'm not sure what the right answer is, but I *am* pretty sure of
+> what the wrong answer is. And this:
+>
+>         default m if ((ATH11K_PCI || ATH12K) && ARCH_QCOM)
+>
+> looks like it cannot possibly be right if ATH11K_PCI is built-in,
+> since then the probing of the device will happen long before that
+> PCI_PWRCTL_PWRSEQ module has been loaded.
+>
+> And that doesn't sound sensible to me. Does it?
+>
+> TL;DR:  I do think that the
+>
+>       select PCI_PWRCTL_PWRSEQ if ARCH_QCOM
+>
+> in the ATH11K_PCI and ATH12K Kconfig entries *may* be the right thing.
+> But again, I'm not actually 100% sure of the hard requirements here.
+>
+>            Linus
 
-Suppose the below as option 3, it seems the option 3 has better performance
-than option 2, and option 2 has better performance than option 1 using the
-ko introduced in patch 1.
+After sleeping on it I really think that it may be better to introduce
+a more generic ARCH_HAVE_PCI_PWRCTL symbol so that we don't have to
+update the ATH Kconfig entires for every new platform that needs it.
+For want of a more fine-grained solution, we would select it from
+ARCH_QCOM.
 
-Option 1:
- Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=5120000'                                                                                   (500 runs):
-
-         17.757768      task-clock (msec)         #    0.001 CPUs utilized            ( +-  0.17% )
-                 5      context-switches          #    0.288 K/sec                    ( +-  0.28% )
-                 0      cpu-migrations            #    0.007 K/sec                    ( +- 12.36% )
-                82      page-faults               #    0.005 M/sec                    ( +-  0.06% )
-          46128280      cycles                    #    2.598 GHz                      ( +-  0.17% )
-          60938595      instructions              #    1.32  insn per cycle           ( +-  0.02% )
-          14783794      branches                  #  832.525 M/sec                    ( +-  0.02% )
-             20393      branch-misses             #    0.14% of all branches          ( +-  0.13% )
-
-      24.556644680 seconds time elapsed                                          ( +-  0.07% )
-
-Option 2:
-Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=5120000' (500 runs):
-
-         18.443508      task-clock (msec)         #    0.001 CPUs utilized            ( +-  0.61% )
-                 6      context-switches          #    0.342 K/sec                    ( +-  0.57% )
-                 0      cpu-migrations            #    0.025 K/sec                    ( +-  4.89% )
-                82      page-faults               #    0.004 M/sec                    ( +-  0.06% )
-          47901207      cycles                    #    2.597 GHz                      ( +-  0.61% )
-          60985019      instructions              #    1.27  insn per cycle           ( +-  0.05% )
-          14787177      branches                  #  801.755 M/sec                    ( +-  0.05% )
-             21099      branch-misses             #    0.14% of all branches          ( +-  0.14% )
-
-      24.413183804 seconds time elapsed                                          ( +-  0.06% )
-
-Option 3:
-Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=5120000' (500 runs):
-
-         17.847031      task-clock (msec)         #    0.001 CPUs utilized            ( +-  0.23% )
-                 5      context-switches          #    0.305 K/sec                    ( +-  0.55% )
-                 0      cpu-migrations            #    0.017 K/sec                    ( +-  6.86% )
-                82      page-faults               #    0.005 M/sec                    ( +-  0.06% )
-          46355974      cycles                    #    2.597 GHz                      ( +-  0.23% )
-          60848779      instructions              #    1.31  insn per cycle           ( +-  0.03% )
-          14758941      branches                  #  826.969 M/sec                    ( +-  0.03% )
-             20728      branch-misses             #    0.14% of all branches          ( +-  0.15% )
-
-      24.376161069 seconds time elapsed                                          ( +-  0.06% )
-
-> 
-> struct page_frag_cache {
->         /* encoded_va consists of the virtual address, pfmemalloc bit and order
->          * of a page.
->          */
->         unsigned long encoded_va;
-> 
-> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
->         __u16 remaining;
->         __u16 pagecnt_bias;
-> #else
->         __u32 remaining;
->         __u32 pagecnt_bias;
-> #endif
-> };
-> 
-> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->                                  unsigned int fragsz, gfp_t gfp_mask,
->                                  unsigned int align_mask)
-> {
->         unsigned int size = page_frag_cache_page_size(nc->encoded_va);
->         unsigned int remaining;
-> 
->         remaining = nc->remaining & align_mask;
->         if (unlikely(remaining < fragsz)) {
->                 if (unlikely(fragsz > PAGE_SIZE)) {
->                         /*
->                          * The caller is trying to allocate a fragment
->                          * with fragsz > PAGE_SIZE but the cache isn't big
->                          * enough to satisfy the request, this may
->                          * happen in low memory conditions.
->                          * We don't release the cache page because
->                          * it could make memory pressure worse
->                          * so we simply return NULL here.
->                          */
->                         return NULL;
->                 }
-> 
->                 if (!__page_frag_cache_refill(nc, gfp_mask))
->                         return NULL;
-> 
->                 size = page_frag_cache_page_size(nc->encoded_va);
->                 remaining = size;
->         }
-> 
->         nc->pagecnt_bias--;
->         nc->remaining = remaining - fragsz;
-> 
->         return encoded_page_address(nc->encoded_va) + (size - remaining);
-> }
-> 
-> 
+Bart
 
