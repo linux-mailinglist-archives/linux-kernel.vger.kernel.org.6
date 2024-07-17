@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-255734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D55934479
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F39E934476
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2024 00:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766A61F21DF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05D20283419
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 22:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0385579F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1D139FF2;
 	Wed, 17 Jul 2024 22:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ok+gCgue"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZcjWmMzg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB0844C76
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E043C4D8AF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 22:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721253755; cv=none; b=jOsSQZRiQMcKaD7mQ1UXW2Ol7E0WkWjs83M83MJvyjnuFQb+SPWVVKafOOrGK5MhVBO6Lc1fQFiYFNITBQeh+xYNnxPT6GM9YIlb7wlClw+VfFhcp1+2fiG2oC8ihPH1l7P8GhdA3DEvwdEaRI+cPL1n2tGCGGdNc9+HQRgYLqg=
+	t=1721253753; cv=none; b=qDvufj9KgH79bVK7uDq8Eu/lspVJ9mS/7T8rl1PaP5TnzXkndcYnvCO1pCHHBb3wHDJBGbBlHrOjZP8+SMiQapH3TIX63k5a5UbJhGT9IQE+KQUxci/q7bUj+o5I6CnTs9AKfIWly/HhCN9HLdN7Yy26cPQ+eabAKbmbL78vStg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721253755; c=relaxed/simple;
-	bh=K7ProdCJxZcSwLnZoqcS+egwgE3aFeaAcBdG7Gygzyo=;
+	s=arc-20240116; t=1721253753; c=relaxed/simple;
+	bh=bJ/9dQ+ygLqKtCXT7Q51ms41RIzdrRAfp5bW2qmdICI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UGezNSjzTBdTkONAlyNH9U8S64bvhkMvYCfZQVrUrBGGWAd6rbHc1AslcaDMABh5QQba0EVYGBo1ZkDoR/rfC0PWNUJ8/72yZYoKYVzHaqXlzao+l5zLfAm3CIpjCqSUSx9BpLc7xkykQD72mwrzG/JA0BMk6hS0s7rDXagLhJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ok+gCgue; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=SihMSkCWPua6ge/AamyS9TtjDfBOoNPEyd/8NhXOFpA/PZmzYEN/f5ck3z6K+TLGNFC3jBQQ8rpKpSU6PHGGZa+p4G0zQRCBRqurgi2Hu+T+Vi5bZa6u60A2N/1xtbyup4IYYve7kBBZjtBkGmby4vlzJDSiUsl9VMDMgMN24aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZcjWmMzg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721253749;
+	s=mimecast20190719; t=1721253751;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1QImmTBB9J6ICz0B3Smrm8OMXXoPNwmhbbZRF0rUpNQ=;
-	b=Ok+gCgueoeGOmdMU23B/ol8y4MLLZJgEPRrVdjR0OLfhq3BSCARYSyIlJKUzlZWzHEYyba
-	PmjAEYtzoUe3d540Pw7I7Pvx6x9mSllVxYn9j3o35sDePB4yz1sp4nuFh5S+jDWFgN6LKa
-	3296/AgWKFD+5+QSuVuEMWyMc6BnE/Q=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Q/8FqM8MHmMc+CPhzIMhMKyvtEdM/efe50XUln9udmc=;
+	b=ZcjWmMzgyWq2rYsIxoGVwJlY1UzZrmW36g4y9jGrcOgi2XYnbTmpuIX0lV4lW3uJ2hus3N
+	g5HlwzDlFh2M5I/FlF+gjNu6m2e3UBQabCxvnVAm6+qMCqn1IJBcfZko5ge+ln6EZXSEns
+	p5aWyxwHdLkVxCuQrShjeQwQwUqYbhU=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-hHUBwzcvNFGSAa_InbhxXQ-1; Wed, 17 Jul 2024 18:02:28 -0400
-X-MC-Unique: hHUBwzcvNFGSAa_InbhxXQ-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-448335bb53aso257741cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:02:28 -0700 (PDT)
+ us-mta-499-2nK13dK5OrSHXgWzYkcy0w-1; Wed, 17 Jul 2024 18:02:29 -0400
+X-MC-Unique: 2nK13dK5OrSHXgWzYkcy0w-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b792d6fe5bso618426d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 15:02:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721253747; x=1721858547;
+        d=1e100.net; s=20230601; t=1721253749; x=1721858549;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1QImmTBB9J6ICz0B3Smrm8OMXXoPNwmhbbZRF0rUpNQ=;
-        b=elK3y5WkQuQ2U4X2DC+vBxoCQgdoT62xEfsePZO+1X5QHpFaJL9LqBFbLQp3HwbgPJ
-         X+TkRCsCVAhA8c+fRFRmhHYvMR1LPxcM3nvGhNnUAjvlOXP2oj336vraXFGkFbgkMiak
-         nVtRGTZSfCC3MD6ZgTsrJrnl8hAZU6PjgQKrRyQqQfmNEf+CYoHQTGdmKT5v9Y3Pcn3S
-         EnLdlKe63QmXPTNr2U2LhV/ml0ZqiYs3c5RvIu02FTA8hvEaB9FGiH94Oa9FHK5aU3bK
-         Cw6RE7vZVWFp4uCRa9qeVpK5I6vXPmBtUc4DQlQFqPmA4N98w+rHU3nL/U5+FkBcajUz
-         cIwQ==
-X-Gm-Message-State: AOJu0YwgLy+oNZLoQ7442ebPvTda2NaOec/rewJJJ9kwcJ2MYKEk/WHs
-	BnrRVi+gZAnS7kGzlnTNVMUkPjwYO5lFLr0IxBy4bwlB22R8MP+Rp7jNSdDDiQxbOLrgrRJVvTh
-	SgJ/z6lo+WYWNMGjts3JBZEiewPOeavm254tv4ZkoLoBm1uqVPlGzVRQXDJEc+/nQOwE4poqSj2
-	pW4kC5QnOxmVkY/icFyjMCtOgIw2nSf9o9gSwvCOEfhW0=
-X-Received: by 2002:a05:622a:3cd:b0:44f:89e3:e8d3 with SMTP id d75a77b69052e-44f89e3ebf3mr16473001cf.10.1721253746989;
-        Wed, 17 Jul 2024 15:02:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7KLWkbU1UwJKSHrhdblARNi4OMqfXeCTcT+ovTUhvRHwOTG0GQKyZtUb2OdQ3d+/fWLwEbg==
-X-Received: by 2002:a05:622a:3cd:b0:44f:89e3:e8d3 with SMTP id d75a77b69052e-44f89e3ebf3mr16472521cf.10.1721253746301;
-        Wed, 17 Jul 2024 15:02:26 -0700 (PDT)
+        bh=Q/8FqM8MHmMc+CPhzIMhMKyvtEdM/efe50XUln9udmc=;
+        b=InYbN1j4qc5A17BhwSHkH8m13LVrQApZ2vQ2aan7sOhBP2iU7gkcUjXXFFaMFkjNs2
+         VdsM89//skiE62I0UtXy5cf/TX5MicSqmAUTqzlhnuu1DGjXp3t1W99h3szYd3cddJUr
+         6FJpPsz7RMshW3oyL3XBBljwDdAWVizzvUNrVpE/rHShcaal+px9rV8jZnKH86b8A0tD
+         Ku1P3dVqwkPIWJBzk6wrnyeD2lShJobiDCN4fFCdpR+GFlOt56a0Mq+eKdK7XTf+XIhr
+         ffiUx8ow0QjMoS/coCwU01JVG0r/yZyKrXOJbq8IRc/7RuVy8dJkjSsq0KD7V8zr/6rm
+         aFcw==
+X-Gm-Message-State: AOJu0YwyciUIm2PZevJJOU2YMpJKLOMp2PObiGTjtcNoweilCrvHk+j5
+	C7/mROYZh4fjtxxAOmqR+HgW50WjBaj+5U4F9fuWXQVT0kMqLTZ8FBZ3hN3g8eOM/7KMGGFkMUs
+	NLUtDnfZYqENdtUvrr03P9CbyvhVaOJgKbClVGp8Bw37ObRiDkvTqjr1h+GOx6wLIh9IhYYfii3
+	yZ/9obxxldPVebJFOO62nL74nf9RJkajFGnYcEEI88Z90=
+X-Received: by 2002:ac8:5e4e:0:b0:44f:89e3:e8d2 with SMTP id d75a77b69052e-44f89e3ec09mr15925971cf.12.1721253749010;
+        Wed, 17 Jul 2024 15:02:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkh4XOnr3AtOIW10S+BWZqmnCIDsT2k5pxPdK7+Hm3t/qz0UGl/1x0RrFHwUrrZQJVVqVXtg==
+X-Received: by 2002:ac8:5e4e:0:b0:44f:89e3:e8d2 with SMTP id d75a77b69052e-44f89e3ec09mr15925451cf.12.1721253748289;
+        Wed, 17 Jul 2024 15:02:28 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b83f632sm53071651cf.85.2024.07.17.15.02.24
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f5b83f632sm53071651cf.85.2024.07.17.15.02.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 15:02:25 -0700 (PDT)
+        Wed, 17 Jul 2024 15:02:27 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -95,9 +95,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Ryan Roberts <ryan.roberts@arm.com>,
 	Hugh Dickins <hughd@google.com>,
 	Axel Rasmussen <axelrasmussen@google.com>
-Subject: [PATCH RFC 2/6] mm: PGTABLE_HAS_P[MU]D_LEAVES config options
-Date: Wed, 17 Jul 2024 18:02:15 -0400
-Message-ID: <20240717220219.3743374-3-peterx@redhat.com>
+Subject: [PATCH RFC 3/6] mm/treewide: Make pgtable-generic.c THP agnostic
+Date: Wed, 17 Jul 2024 18:02:16 -0400
+Message-ID: <20240717220219.3743374-4-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240717220219.3743374-1-peterx@redhat.com>
 References: <20240717220219.3743374-1-peterx@redhat.com>
@@ -109,70 +109,327 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce two more sub-options for PGTABLE_HAS_HUGE_LEAVES:
-
-  - PGTABLE_HAS_PMD_LEAVES: set when there can be PMD mappings
-  - PGTABLE_HAS_PUD_LEAVES: set when there can be PUD mappings
-
-It will help to identify whether the current build may only want PMD
-helpers but not PUD ones, as these sub-options will also check against the
-arch support over HAVE_ARCH_TRANSPARENT_HUGEPAGE[_PUD].
-
-Note that having them depend on HAVE_ARCH_TRANSPARENT_HUGEPAGE[_PUD] is
-still some intermediate step.  The best way is to have an option say
-"whether arch XXX supports PMD/PUD mappings" and so on.  However let's
-leave that for later as that's the easy part.  So far, we use these options
-to stably detect per-arch huge mapping support.
+Make pmd/pud helpers to rely on the new PGTABLE_HAS_*_LEAVES option, rather
+than THP alone, as THP is only one form of huge mapping.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/huge_mm.h | 10 +++++++---
- mm/Kconfig              |  6 ++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/pgtable.h             |  6 ++--
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  2 +-
+ arch/powerpc/mm/book3s64/pgtable.c           |  2 +-
+ arch/riscv/include/asm/pgtable.h             |  4 +--
+ arch/s390/include/asm/pgtable.h              |  2 +-
+ arch/s390/mm/pgtable.c                       |  4 +--
+ arch/sparc/mm/tlb.c                          |  2 +-
+ arch/x86/mm/pgtable.c                        | 15 ++++-----
+ include/linux/mm_types.h                     |  2 +-
+ include/linux/pgtable.h                      |  4 +--
+ mm/memory.c                                  |  2 +-
+ mm/pgtable-generic.c                         | 32 ++++++++++----------
+ 12 files changed, 40 insertions(+), 37 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 711632df7edf..37482c8445d1 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -96,14 +96,18 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 5d5d1b18b837..b93c03256ada 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1105,7 +1105,7 @@ extern int __ptep_set_access_flags(struct vm_area_struct *vma,
+ 				 unsigned long address, pte_t *ptep,
+ 				 pte_t entry, int dirty);
  
--#ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
--#define HPAGE_PMD_SHIFT PMD_SHIFT
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ #define __HAVE_ARCH_PMDP_SET_ACCESS_FLAGS
+ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
+ 					unsigned long address, pmd_t *pmdp,
+@@ -1114,7 +1114,9 @@ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
+ 	return __ptep_set_access_flags(vma, address, (pte_t *)pmdp,
+ 							pmd_pte(entry), dirty);
+ }
++#endif
+ 
 +#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
- #define HPAGE_PUD_SHIFT PUD_SHIFT
- #else
--#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
- #define HPAGE_PUD_SHIFT ({ BUILD_BUG(); 0; })
+ static inline int pud_devmap(pud_t pud)
+ {
+ 	return 0;
+@@ -1178,7 +1180,7 @@ static inline int __ptep_clear_flush_young(struct vm_area_struct *vma,
+ 	return young;
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 					    unsigned long address,
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index 051b1b6d729c..84cf55e18334 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -1119,7 +1119,7 @@ static inline bool pmd_access_permitted(pmd_t pmd, bool write)
+ 	return pte_access_permitted(pmd_pte(pmd), write);
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ extern pmd_t pfn_pmd(unsigned long pfn, pgprot_t pgprot);
+ extern pud_t pfn_pud(unsigned long pfn, pgprot_t pgprot);
+ extern pmd_t mk_pmd(struct page *page, pgprot_t pgprot);
+diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
+index 5a4a75369043..d6a5457627df 100644
+--- a/arch/powerpc/mm/book3s64/pgtable.c
++++ b/arch/powerpc/mm/book3s64/pgtable.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL(__pmd_frag_nr);
+ unsigned long __pmd_frag_size_shift;
+ EXPORT_SYMBOL(__pmd_frag_size_shift);
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
+ /*
+  * This is called when relaxing access to a hugepage. It's also called in the page
+  * fault path when we don't hit any of the major fault cases, ie, a minor
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index ebfe8faafb79..8c28f15f601b 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -752,7 +752,7 @@ static inline bool pud_user_accessible_page(pud_t pud)
+ }
  #endif
  
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
 +#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
-+#define HPAGE_PMD_SHIFT PMD_SHIFT
-+#else
-+#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-+#endif
-+
- #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
- #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
- #define HPAGE_PMD_MASK	(~(HPAGE_PMD_SIZE - 1))
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 60796402850e..2dbdc088dee8 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -860,6 +860,12 @@ endif # TRANSPARENT_HUGEPAGE
- config PGTABLE_HAS_HUGE_LEAVES
- 	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
+ static inline int pmd_trans_huge(pmd_t pmd)
+ {
+ 	return pmd_leaf(pmd);
+@@ -802,7 +802,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ #define pmdp_collapse_flush pmdp_collapse_flush
+ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+ 				 unsigned long address, pmd_t *pmdp);
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++#endif /* CONFIG_PGTABLE_HAS_PMD_LEAVES */
  
-+config PGTABLE_HAS_PMD_LEAVES
-+	def_bool HAVE_ARCH_TRANSPARENT_HUGEPAGE && PGTABLE_HAS_HUGE_LEAVES
+ /*
+  * Encode/decode swap entries and swap PTEs. Swap PTEs are all PTEs that
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index fb6870384b97..398bbed20dee 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -1710,7 +1710,7 @@ pmd_t pmdp_xchg_direct(struct mm_struct *, unsigned long, pmd_t *, pmd_t);
+ pmd_t pmdp_xchg_lazy(struct mm_struct *, unsigned long, pmd_t *, pmd_t);
+ pud_t pudp_xchg_direct(struct mm_struct *, unsigned long, pud_t *, pud_t);
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ 
+ #define __HAVE_ARCH_PGTABLE_DEPOSIT
+ void pgtable_trans_huge_deposit(struct mm_struct *mm, pmd_t *pmdp,
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index 2c944bafb030..c4481068734e 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -561,7 +561,7 @@ pud_t pudp_xchg_direct(struct mm_struct *mm, unsigned long addr,
+ }
+ EXPORT_SYMBOL(pudp_xchg_direct);
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ void pgtable_trans_huge_deposit(struct mm_struct *mm, pmd_t *pmdp,
+ 				pgtable_t pgtable)
+ {
+@@ -600,7 +600,7 @@ pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm, pmd_t *pmdp)
+ 	set_pte(ptep, __pte(_PAGE_INVALID));
+ 	return pgtable;
+ }
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++#endif /* CONFIG_PGTABLE_HAS_PMD_LEAVES */
+ 
+ #ifdef CONFIG_PGSTE
+ void ptep_set_pte_at(struct mm_struct *mm, unsigned long addr,
+diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
+index 8648a50afe88..140813d07c9f 100644
+--- a/arch/sparc/mm/tlb.c
++++ b/arch/sparc/mm/tlb.c
+@@ -143,7 +143,7 @@ void tlb_batch_add(struct mm_struct *mm, unsigned long vaddr,
+ 		tlb_batch_add_one(mm, vaddr, pte_exec(orig), hugepage_shift);
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ static void tlb_batch_pmd_scan(struct mm_struct *mm, unsigned long vaddr,
+ 			       pmd_t pmd)
+ {
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index fa77411bb266..7b10d4a0c0cd 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -511,7 +511,7 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
+ 	return changed;
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ int pmdp_set_access_flags(struct vm_area_struct *vma,
+ 			  unsigned long address, pmd_t *pmdp,
+ 			  pmd_t entry, int dirty)
+@@ -532,7 +532,9 @@ int pmdp_set_access_flags(struct vm_area_struct *vma,
+ 
+ 	return changed;
+ }
++#endif	/* PGTABLE_HAS_PMD_LEAVES */
+ 
++#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
+ int pudp_set_access_flags(struct vm_area_struct *vma, unsigned long address,
+ 			  pud_t *pudp, pud_t entry, int dirty)
+ {
+@@ -552,7 +554,7 @@ int pudp_set_access_flags(struct vm_area_struct *vma, unsigned long address,
+ 
+ 	return changed;
+ }
+-#endif
++#endif	/* PGTABLE_HAS_PUD_LEAVES */
+ 
+ int ptep_test_and_clear_young(struct vm_area_struct *vma,
+ 			      unsigned long addr, pte_t *ptep)
+@@ -566,7 +568,7 @@ int ptep_test_and_clear_young(struct vm_area_struct *vma,
+ 	return ret;
+ }
+ 
+-#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG)
++#if defined(CONFIG_PGTABLE_HAS_PMD_LEAVES) || defined(CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG)
+ int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 			      unsigned long addr, pmd_t *pmdp)
+ {
+@@ -580,7 +582,7 @@ int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ }
+ #endif
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
+ int pudp_test_and_clear_young(struct vm_area_struct *vma,
+ 			      unsigned long addr, pud_t *pudp)
+ {
+@@ -613,7 +615,7 @@ int ptep_clear_flush_young(struct vm_area_struct *vma,
+ 	return ptep_test_and_clear_young(vma, address, ptep);
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ int pmdp_clear_flush_young(struct vm_area_struct *vma,
+ 			   unsigned long address, pmd_t *pmdp)
+ {
+@@ -641,8 +643,7 @@ pmd_t pmdp_invalidate_ad(struct vm_area_struct *vma, unsigned long address,
+ }
+ #endif
+ 
+-#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && \
+-	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
++#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
+ pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ 		     pud_t *pudp)
+ {
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index ef09c4eef6d3..44ef91ce720c 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -942,7 +942,7 @@ struct mm_struct {
+ #ifdef CONFIG_MMU_NOTIFIER
+ 		struct mmu_notifier_subscriptions *notifier_subscriptions;
+ #endif
+-#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
++#if defined(CONFIG_PGTABLE_HAS_PMD_LEAVES) && !USE_SPLIT_PMD_PTLOCKS
+ 		pgtable_t pmd_huge_pte; /* protected by page_table_lock */
+ #endif
+ #ifdef CONFIG_NUMA_BALANCING
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 0a904300ac90..5a5aaee5fa1c 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -362,7 +362,7 @@ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
+-#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG)
++#if defined(CONFIG_PGTABLE_HAS_PMD_LEAVES) || defined(CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG)
+ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 					    unsigned long address,
+ 					    pmd_t *pmdp)
+@@ -383,7 +383,7 @@ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 	BUILD_BUG();
+ 	return 0;
+ }
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG */
++#endif /* CONFIG_PGTABLE_HAS_PMD_LEAVES || CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG */
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+diff --git a/mm/memory.c b/mm/memory.c
+index 802d0d8a40f9..126ee0903c79 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -666,7 +666,7 @@ struct folio *vm_normal_folio(struct vm_area_struct *vma, unsigned long addr,
+ 	return NULL;
+ }
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 				pmd_t pmd)
+ {
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index a78a4adf711a..e9fc3f6774a6 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -103,7 +103,7 @@ pte_t ptep_clear_flush(struct vm_area_struct *vma, unsigned long address,
+ }
+ #endif
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#ifdef CONFIG_PGTABLE_HAS_PMD_LEAVES
+ 
+ #ifndef __HAVE_ARCH_PMDP_SET_ACCESS_FLAGS
+ int pmdp_set_access_flags(struct vm_area_struct *vma,
+@@ -145,20 +145,6 @@ pmd_t pmdp_huge_clear_flush(struct vm_area_struct *vma, unsigned long address,
+ 	flush_pmd_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
+ 	return pmd;
+ }
+-
+-#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+-pud_t pudp_huge_clear_flush(struct vm_area_struct *vma, unsigned long address,
+-			    pud_t *pudp)
+-{
+-	pud_t pud;
+-
+-	VM_BUG_ON(address & ~HPAGE_PUD_MASK);
+-	VM_BUG_ON(!pud_trans_huge(*pudp) && !pud_devmap(*pudp));
+-	pud = pudp_huge_get_and_clear(vma->vm_mm, address, pudp);
+-	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
+-	return pud;
+-}
+-#endif
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PGTABLE_DEPOSIT
+@@ -252,7 +238,21 @@ void pte_free_defer(struct mm_struct *mm, pgtable_t pgtable)
+ 	call_rcu(&page->rcu_head, pte_free_now);
+ }
+ #endif /* pte_free_defer */
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++#endif /* CONFIG_PGTABLE_HAS_PMD_LEAVES */
 +
-+config PGTABLE_HAS_PUD_LEAVES
-+	def_bool HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD && PGTABLE_HAS_HUGE_LEAVES
++#ifdef CONFIG_PGTABLE_HAS_PUD_LEAVES
++pud_t pudp_huge_clear_flush(struct vm_area_struct *vma, unsigned long address,
++			    pud_t *pudp)
++{
++	pud_t pud;
 +
- #
- # UP and nommu archs use km based percpu allocator
- #
++	VM_BUG_ON(address & ~HPAGE_PUD_MASK);
++	VM_BUG_ON(!pud_trans_huge(*pudp) && !pud_devmap(*pudp));
++	pud = pudp_huge_get_and_clear(vma->vm_mm, address, pudp);
++	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
++	return pud;
++}
++#endif	/* CONFIG_PGTABLE_HAS_PUD_LEAVES */
+ 
+ #if defined(CONFIG_GUP_GET_PXX_LOW_HIGH) && \
+ 	(defined(CONFIG_SMP) || defined(CONFIG_PREEMPT_RCU))
 -- 
 2.45.0
 
