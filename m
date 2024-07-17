@@ -1,156 +1,177 @@
-Return-Path: <linux-kernel+bounces-254803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-254804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6202D9337B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A062A9337BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 09:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175AB1F25182
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:21:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D97B1F25193
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 07:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987731BF37;
-	Wed, 17 Jul 2024 07:21:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBDE1BF37;
+	Wed, 17 Jul 2024 07:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ONkiOMiZ"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51B81B948
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 07:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721200897; cv=none; b=E5FI1/1sK1oTQfRDNy5lDkVc0Rm23cG3pZLOELyNrarbSvjY6xtiqeYrgmLkg53oC4JM0o3T7ycJNgypD8uogX/lqYqOMuv5OG8WUeuHmRb/PSGiAk6wJtkZYZ8fyu5zHDc3aAHNbFfwYA3AoRcqIkNW8fMk7Ueq7UmPq2wEHwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721200897; c=relaxed/simple;
-	bh=7dyhTQjy+22B7GIQfMe+2jE4/DTU5dL5I/JauqWJc+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbSA+Q6v0vUiE3TNAXYT+hUoEJ4MhlH2vgmWx8WUUvlIOsdTcPi6b6E8BFREx3tIH49mAccQ2SsHGNoTZbb59/Qo3Pf8yEr8JKho8ihCrVYweQFWoW5c8ZwqYqxXl1Ldqrv9cmsdY2J8Y2S5wBUPvn1Y0EvygS4LzMQ/dqTGOhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sTyyQ-0006wr-Ga; Wed, 17 Jul 2024 09:21:14 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sTyyO-000A17-Cx; Wed, 17 Jul 2024 09:21:12 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 524B830595B;
-	Wed, 17 Jul 2024 07:20:46 +0000 (UTC)
-Date: Wed, 17 Jul 2024 09:20:45 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Bough Chen <haibo.chen@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, Han Xu <han.xu@nxp.com>
-Subject: Re: RE: [PATCH v2 4/4] can: flexcan: add wakeup support for imx95
-Message-ID: <20240717-porpoise-of-imminent-inspiration-ef2fc6-mkl@pengutronix.de>
-References: <20240715-flexcan-v2-0-2873014c595a@nxp.com>
- <20240715-flexcan-v2-4-2873014c595a@nxp.com>
- <20240716-curious-scorpion-of-glory-8265aa-mkl@pengutronix.de>
- <ZpaF4Wc70VuV4Cti@lizhi-Precision-Tower-5810>
- <20240716-chowchow-of-massive-joviality-77e833-mkl@pengutronix.de>
- <DU0PR04MB9496C653249E66016A43F97790A32@DU0PR04MB9496.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D697494;
+	Wed, 17 Jul 2024 07:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721200929; cv=fail; b=E+gekPWTw5aX9iMInkt6GZJwTMsbCeFdrwaw5S3X2B1zm7rjMK9V2iMVIeU6KYOj7y41s40l86I+RkLZ1pqe591gpt/IqFgPr3QDTwyi8xFcwIbtYrqdgrT8LPWKc3Y2DHICsEQRVbh1CBZ8tX81Gx0BZwt5WOI5mnFbbGql6KA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721200929; c=relaxed/simple;
+	bh=aJgVH1jvnQ0R4dMN9w7YrwtUNZkreB37BZOFeYrmDWs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=McnL3gTIayslnbILffauZZQ0DhoGw3TlrvntkJekLtISeWMDh+D20a+DxG3RV90mWeLVKhAcpqWhc/A+VqyUXU9X+qmRJwDBw3rnGUMAPPSkx/WvGVALNQYye+aAxx9qsIhV1qlBlCZPUJJ1gtSkPjMVtw82uNN2memlO2z6epE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ONkiOMiZ; arc=fail smtp.client-ip=40.107.243.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KRIIf3iY0cVDx8Syi9pMu0iEcA9+S+NcU+sG8L2rKLWlbcNx/J+WVkKkg9x8mZ3qaNTmsPTOBX6SgdrsAtbvpz2TOS8HLSAeEoSUyXcONDft5TnWdg99I6uLTvir0V2sQydoRRa4rsBxd42VFWO1QfjHkg7XG/B8U7aklgiUrDT8dCYfxcGATtFdyU6WU0HE06U5q+xIY3hc4OwZ45ZRtoonswoozzTqgeUOvHn2lNqlm4CNvHT5DnPJsPQfivla+ZmMt5AF9cpsZXTh1Dl8Y1tOi9yfZHwzxTmnKhxm+hc+7jOjrNNsFucWFLCxpG0PrIonHyYE5ikkC54XKSXAmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8mgcM3Qzwfiwh/GA6/B1iWbjy/MUx6bjw2ySnU7/iWQ=;
+ b=kkMJajalUCfWpvY6fAEQLMsU182OAgRdbZL9+04MgfG/O7dhmNKb576ca0jgWs3FSLh+bOHzqmVrFnDug1LI88ATLXoADFVmIzEVv4n+ZxAP3R/ezZN4l4nF12xDwJq4UsEw/388fajNLH1QOVcSc2QjR4VkG/OlGMHBmibeb/q7/TVSJwnzTO1u1+YomtKQPxda0TW2k7skUQSKgmOq2Qa4zYT/Ql7I+ftQcG3qjQ0bQOCmj0geWZZn+VnIDo7UKBvK9NOPnDbSEuCaOLomySx2zajjDvJsXyyoeFN6lT5xu+Plm8s81xRvu3+AotxZxwqXBxKKm31gsxjy4PJG/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8mgcM3Qzwfiwh/GA6/B1iWbjy/MUx6bjw2ySnU7/iWQ=;
+ b=ONkiOMiZsv3bp42czNsb9vttv5kG6UowcXR358rZ6pFu+W6NyvLgWbmsA/u71W6Mu17DL3NKFmj1nxyd844jOA05H48RmYWQBfAcWNNu5X5JvwHZXrQfQh5WvJTo5/TS9/Vtwnk/8t+B1VF8k3SuFPba+9GyxFlTLHosPoPBED14v1c2FSz7kUyhqqdBMikWRWHX9y3cVX9sNfK9L7V/1+J5UTv+qkYp76GejSffDHadGYnWEjuXeZT+/SWIU5Q+baAh9OP4tcmYZ4OMOwxNJyDZA0Sy5c/nU9m/F/Z2/lJT3Vykmw5klep4H7J8mJ45xG98Q3SHlv8tuCAB1qjNVQ==
+Received: from MN2PR10CA0001.namprd10.prod.outlook.com (2603:10b6:208:120::14)
+ by IA1PR12MB6281.namprd12.prod.outlook.com (2603:10b6:208:3e7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Wed, 17 Jul
+ 2024 07:22:04 +0000
+Received: from BL6PEPF0001AB52.namprd02.prod.outlook.com
+ (2603:10b6:208:120:cafe::7b) by MN2PR10CA0001.outlook.office365.com
+ (2603:10b6:208:120::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28 via Frontend
+ Transport; Wed, 17 Jul 2024 07:22:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF0001AB52.mail.protection.outlook.com (10.167.241.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 07:22:04 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
+ 2024 00:21:54 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 17 Jul 2024 00:21:54 -0700
+Received: from build-amhetre-20240716T042216611.internal (10.127.8.10) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Wed, 17 Jul 2024 00:21:54 -0700
+From: Ashish Mhetre <amhetre@nvidia.com>
+To: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Ashish Mhetre
+	<amhetre@nvidia.com>
+Subject: [PATCH] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
+Date: Wed, 17 Jul 2024 07:21:45 +0000
+Message-ID: <20240717072145.107412-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lyoxbz5qrcbtajuw"
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9496C653249E66016A43F97790A32@DU0PR04MB9496.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB52:EE_|IA1PR12MB6281:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b52c4cd-ad5e-4a0c-135d-08dca63128a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yxrxKiR7psD86A9GElHpMiBHHtJwAr6YQShujKc6U6YOjYonfPVnqztzzQ5d?=
+ =?us-ascii?Q?SDp5faLDkmrn0Y/AxAum6YlZOCU5/ztMnCI6ZruIRFu5WVtg1icmgD9PKmLJ?=
+ =?us-ascii?Q?k0L5ef6tmzhWRdVofKIGzY1hzk8zki0/YNiYEvReWj5KCuXlMF3ObTgmDcXV?=
+ =?us-ascii?Q?W1XLXYSh3xVdrvnfDfq6WFqJZaLd6AHQpZBrBQqt2fMETsyrZWkk0rziXhf6?=
+ =?us-ascii?Q?ohS7qUaGKqoWnj+M5OV1BVXpW0mogg+X8prTGxvoemtPlyz5hJekzeIWkRub?=
+ =?us-ascii?Q?4RRRumXo+tBJ6KT0MxRP+/WJwYXNyES4dltrbnIbjzyFL+8Rxo2nlmQVZbZr?=
+ =?us-ascii?Q?tmVrM3DqdJg9pId6oIWLBCcPPYAX68EIvDdrjrv0b9fqPzCrNJHILTbvca8r?=
+ =?us-ascii?Q?vuoIQaN/vqgzX9NUd1o8RYmUHNgpvQAGKuYDC9+zX3gTfxPcEBalK6DS79Cq?=
+ =?us-ascii?Q?ADUVxF3Kaka8tMjTiqM9kdFffj59Ezp3c38nxtnR6JDucj5GGYLW7jCGxW7W?=
+ =?us-ascii?Q?7LGDwAmSWkHj9KbKovqxTue+PhvzdCo3xWEMQ+AhUuEhVzmdBRUWcWuufjij?=
+ =?us-ascii?Q?I3WGV3M9E7bHjTzSvJ4ekAhM+xCVsBphonwXuKBri3HORvo7iQdHyuNvB8Ly?=
+ =?us-ascii?Q?CVk9Fhxb0p8NTZv0FZdm2RvDNJm8Vkq6d5MPuTrxsUS3XB/WFkBZSm0vOozH?=
+ =?us-ascii?Q?X0JPIq/ZbDhYaL8vG6rtqatUIzruQrXH83FNQ8SaRYub4/j1W8ymrXlq0o5N?=
+ =?us-ascii?Q?a3wjSWtur/2FxcQJ7fvcBvpcSE6e4kGgdYJOwwKPKxs/mE5AHiIUQ1o1kA/X?=
+ =?us-ascii?Q?bNeO5j/dB+FNtwnqE601dMWntxedb5crksTAaNufszsbIZjpS1dJ7lBcC5Jq?=
+ =?us-ascii?Q?Dhutox/ZMDH6SD00XJgQNyUT+R51XU9db7mZ6stZL04SPnYHnjbKE8BBpv++?=
+ =?us-ascii?Q?ZyVk7YqKlrSBG0ZH5UVWLGeHgd1WD5QjVRYAuyD0YW8TqERkhAnstHJnJe+1?=
+ =?us-ascii?Q?pcvOI5tvVf5PHhUGc79FL2ICSR3KD1FFGVCtWb3Z8eXq8pfzT26GVBeehDBu?=
+ =?us-ascii?Q?StaS+OLImpAt5v62cLOeJ6k6lyxfdQr/jgaz5/BNjX+/Vujrv8tdIsP3FUHo?=
+ =?us-ascii?Q?vUumYbjxDyfmcZRa/lKvH1ZSHEwChiImD3toH/sp23gGYXBhMXoxKvh0Y3NY?=
+ =?us-ascii?Q?Qxq75sp/rQc8it9odJsQLNjKlGBQqa6l8X90NfxT467mdBwEEf/9ryqCSPmw?=
+ =?us-ascii?Q?eYiDtHe66wsn7zyZUbcNpJbX7sWtrPpFKukVFQuMugCJRIudnc9i6x/UcGcY?=
+ =?us-ascii?Q?bL5z1dmlFqLngUoAKU9cFBYcna9e3TfCepkl1qjO9pxSlwnHb1N3udutEEA8?=
+ =?us-ascii?Q?2hpC7qjBj19/ApI+PX+9/E5q9VZHR7lW0h+CLXQgDCvGBnyoHibKT6y6KYhW?=
+ =?us-ascii?Q?9qMAH15sN/ufmB6KT2C4aD+GRDgXX03W?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 07:22:04.3539
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b52c4cd-ad5e-4a0c-135d-08dca63128a7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB52.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6281
 
+PAGE_SIZE can be 16KB for Tegra which is not supported by MMU-500 on
+both Tegra194 and Tegra234. So, use 4KB mappings when PAGE_SIZE is 16KB.
 
---lyoxbz5qrcbtajuw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On 17.07.2024 02:03:35, Bough Chen wrote:
-> > On 16.07.2024 10:40:31, Frank Li wrote:
-> > > > > @@ -2330,9 +2366,12 @@ static int __maybe_unused
-> > flexcan_noirq_resume(struct device *device)
-> > > > >  	if (netif_running(dev)) {
-> > > > >  		int err;
-> > > > >
-> > > > > -		err =3D pm_runtime_force_resume(device);
-> > > > > -		if (err)
-> > > > > -			return err;
-> > > > > +		if (!(device_may_wakeup(device) &&
-> > > >                       ^^^^^^^^^^^^^^^^^^^^^^^^
-> > > >
-> > > > Where does this come from?
-> > >
-> > > include/linux/pm_wakeup.h
-> > >
-> > > static inline bool device_may_wakeup(struct device *dev)
-> > > {
-> > >         return dev->power.can_wakeup && !!dev->power.wakeup;
-> > > }
-> >=20
-> > Sorry for the confusion. I wanted to point out, that the original drive=
-r doesn't
-> > have the check to device_may_wakeup(). Why was this added?
->=20
-> Here add this to make sure for CAN with flag
-> FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI and really used as wakeup source,
-> do not need to call pm_runtime_force_resume(), keep it align with what
-> we do in flexcan_noirq_suspend.
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+index 4b2994b6126d..bb621a94f6fe 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+@@ -273,11 +273,12 @@ static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+ 	 * release of PMD entry and avoid translations seeing stale PMD entry in
+ 	 * walk cache.
+ 	 * Fix this by limiting the page mappings to PAGE_SIZE on Tegra194 and
+-	 * Tegra234.
++	 * Tegra234. Use 4K page mappings if PAGE_SIZE is 16K as MMU500 doesn't
++	 * support it.
+ 	 */
+ 	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
+ 	    of_device_is_compatible(np, "nvidia,tegra194-smmu")) {
+-		smmu->pgsize_bitmap = PAGE_SIZE;
++		smmu->pgsize_bitmap = (PAGE_SIZE == SZ_16K) ? SZ_4K : PAGE_SIZE;
+ 		pgtbl_cfg->pgsize_bitmap = smmu->pgsize_bitmap;
+ 	}
+ 
+-- 
+2.25.1
 
-> As the comment in flexcan_noirq_suspend, CAN with flag
-> FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI, when used as wakeup source, need
-> to keep CAN clock on when system suspend, let ATF part logic works,
-> detail steps please refer to this patch commit log. Whether gate off
-> the CAN clock or not depends on the Hardware design. So for this case,
-> in flexcan_noirq_suspend, directly return0, do not call the
-> pm_runtime_force_suspend(), then in flexcan_noirq_resume(), use the
-> same logic to skip the pm_runtime_force_resume().
-
-Please change the control flow, so that flexcan_noirq_suspend() and
-flexcan_noirq_resume() look symmetrical.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---lyoxbz5qrcbtajuw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaXcMoACgkQKDiiPnot
-vG+oPQf/YPWUrvcT++JZ07FcseBQUWKsH7dE6a2zvUJix3NiJbujU/7ZWRis8Bhl
-CGbvtpAmEkpcNuKWucYwTYt2eB8y4d0h3qCHeSi1B6Jsg+SGccThY+3/WxfCmwUu
-pMcw4nfvza024LNjyeZLBtys3O81K/GIg3iJ2NULzgQNeKfM8oalPvoEhrMVHEVn
-J+GyKB4zCaZAGfbndeG7OBQleiFSTQ4oi7OEq8rr8lsnjcCfPYDKDfLZQIpFZtqa
-VRiFq7hTayk/qYyVsZhRf8089C4wsp6zhLDoe9Dweu/J8sQ03klMIOUvpKuRD5jC
-FbL9ybQfk28QbWIANcLZnko0sBa6RA==
-=3SL7
------END PGP SIGNATURE-----
-
---lyoxbz5qrcbtajuw--
 
