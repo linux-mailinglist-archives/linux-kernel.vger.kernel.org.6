@@ -1,168 +1,233 @@
-Return-Path: <linux-kernel+bounces-255192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C24933D49
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10264933D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5FC6B20D10
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B951E281F6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA771CAB1;
-	Wed, 17 Jul 2024 13:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2421CAB1;
+	Wed, 17 Jul 2024 13:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RvBEaYnU"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nX1Ean9X"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD65B17F370
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577961802C7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721221277; cv=none; b=ldqLawzS5uUQAbDQc0i3+AfmmGv9vlWkM/WeD+Fe8GxXv6VGzycAgOTbDzy0kZIQsQczTHXvOErvjktCKvNXx9IHTwwFLbc33ryM/TLOF9JxlnWbqIi1DMsTdDioHJl+RfmxDQHNwYuWY5nMDlutY4exTJoQLofXIf/ccyHaDoU=
+	t=1721221246; cv=none; b=RZiHdMA44HsDArLZyayeybvnC6bByF2dPMEKUtCR9zGNbUT8uG4HMI0PCvYgeDSsunjR0OtjpnEhMRd8kxB4MQ08OIafj7hfDqnT+E+SZxEu3ClzDiWjqGrx/PNzwE4M+ilFjNDs6mhh+pWTpPxcwyGTmM3WsJlLS8Nga1pFkqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721221277; c=relaxed/simple;
-	bh=fLhTCCTCqkKEab/Ae+WSAXikuLC4YB5ZLVuZgq8J8WU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tedILU8j58ZnbZxpMhxOySSUoNuARYBmRalq2YblAzJeuCTUn/qPn3ZUDN0VXK1J2PKSCrZAYo/xVAhANtHhL8ax1ylG8aBm+dZJbdwfOrinSvej5+nKIhoMxstMGNgYkomtd/zuBWWgMzMH6PCAklk2T+3VK/5/JxHbkmXqaj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RvBEaYnU; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea1a69624so7228116e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:01:14 -0700 (PDT)
+	s=arc-20240116; t=1721221246; c=relaxed/simple;
+	bh=6vb13Iy5euZOR4dQ+SlApvRI6h/aNBGj1KptxzqtqHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RJLFl40nRivaF6O9ZlXI22ZNh2YOGloCzTLxROlhV/gblNfJ4Bvx30bs3G+s0gzukow8t9oiIhdheyu07VbAIHaZXlQcpTi8VjYOivj7RejJ+SSC1a4Wa4MSuhf5cYq4aKC9ud2o8GdMFcr/3mVwCiM5YPPs5ITjSazRfswdA24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nX1Ean9X; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8102c9a5badso449985241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 06:00:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721221273; x=1721826073; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGyaDFq9jA9jHz+MRvSEUhN76EbY0QzaCYY7LY4g8qA=;
-        b=RvBEaYnUAc0oVAlQeAGnWnYmRqTUhEbWYWcKN9+5DJvLBkjCVchgqNVjarv6YxmrOe
-         8OvCPpCcLeZz+1sWZHS5JalV7p6lkCqYhjbEq5rGg+J7EPyQ7LnR6Jz1RB7MsjihDmvl
-         sFoC9GNXH0WtoBw/zyCne1jb8flA9kvoA7+7LhwzpF5PuraxVmUYA3L3ISLSFSwzjZST
-         2eE7Gy42v86XfTO3zpfzMslA5L2V7wPytok8wA9QFe72SXEnk56Hpltc6StDp47izEwo
-         B/Kb8n06pxAts9NFypal/oVnuL1FUGkgDJsAAn+9CPLGxOcGeda4uPVC2nHgVvu1x1bZ
-         Vmng==
+        d=linaro.org; s=google; t=1721221243; x=1721826043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ElVioLoyTQhlcAXqwKpNT5fstW6n6vTuxhpKut5u5V0=;
+        b=nX1Ean9X+wVo0Cs7ycVjWISmwwcskN1RGCxdmNcqOUNzLPVk0Xftzue8Fyu/bILiRs
+         8nGPlBtn2SGpL6670TgJ47tit7vPAedRRM8aDED8SrjTybKDXAkWovWAj+P/pfszVq81
+         KK7gJV4jwk+TdvxZ1e/+P5LQPp2xv1qSI9a+MMru4AXthxCq/BYCu0d5evV5KtBG+6rg
+         ZgUnaHEiXMhRF6wrLAYnyxYYREqxfK6pMrGNsPJYYQtJ9y3iQzvh3vIROW0sHNKR5Ma4
+         zqcf3EJuAEy/m+Xcb0DhAFbctQxQGQywo619NSNR0hibiHWGotSAlMT/mvO27Y/tHCd0
+         O12w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721221273; x=1721826073;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OGyaDFq9jA9jHz+MRvSEUhN76EbY0QzaCYY7LY4g8qA=;
-        b=HF3SNbVOx1hlGcaWwsjw/aH8ysBrzbxGCiCKHMqp5lrlzXJ0SvC5K98Sm/JtbRFIdU
-         APfL1cA6XxoX/gYWECqE8GNBqcjm7B5e3iiEntIG+rlyGVo5M5SXCVkUOUuso9WSLtU6
-         7FwFXibc6bHttgMe+3Pay8Sj+SU1l54Xv7HIA8SgrPSvcVCvFVl11wSvL6MncLHg/jk/
-         7wWUOWUzoRRDsY0OfyeH0yOMTcTgK7gieEa8R1mXtfzuL+9oEN2yDMcMKGIIUVotU39c
-         vJRhF73MHzK0uRmvx0zeWH62/A9hM1HURjTqwSuEgEAS+wU/yOVeD9XAx+6yNo5In9sA
-         bp9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWOXe8x9Hnpt7UCNpy8NS6wfae5LtEb9IRsP8w7suYKhpYgSf0sWpv978ZWkt0xiLmH54qF5S99gMbvwFKaArYNAsgNYt3e4gDXliF5
-X-Gm-Message-State: AOJu0YzhogvTELAXSGdwdri8ARfr+m54vIB87jKWj4VvoS5Fy93afx7K
-	uKPctk6kYQ//56xIAAEz0kI4v0/XtwXj+0ZQnu4vET0f2pjtkX06NL2HQOuv21E=
-X-Google-Smtp-Source: AGHT+IFT/gnVm7+TpSUk/TD1YcnnxpUbPqafzGNpHFUNKGF85vLE/dSL1DN4N5BTkWqwYODpwa0iug==
-X-Received: by 2002:a05:6512:280c:b0:52e:764b:b20d with SMTP id 2adb3069b0e04-52ee53dbc96mr1263786e87.28.1721221271895;
-        Wed, 17 Jul 2024 06:01:11 -0700 (PDT)
-Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1e5asm442596966b.109.2024.07.17.06.01.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 06:01:11 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Kees Cook <kees@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH] refcount: Report UAF for refcount_sub_and_test(0) when counter==0
-Date: Wed, 17 Jul 2024 15:00:23 +0200
-Message-Id: <20240717130023.5675-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.35.3
+        d=1e100.net; s=20230601; t=1721221243; x=1721826043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ElVioLoyTQhlcAXqwKpNT5fstW6n6vTuxhpKut5u5V0=;
+        b=S8NQzekCGGQKnTd9SkXiaZaIZTLwz4tHq9g8XxauNAZ9mboosR39BzqoDjeGAUEj2Q
+         lzDiZSWBFIX3n+0db7b+1dRUaPrZx9loKtZ+14P1W6HiCDB1OL2OkF04ldNbi+S5TM4r
+         gTl6AY4PFDFgftyUD/Q4OcPTO0LYDgNeDmB2vIBF23s//ctXO6EVKcbMUJFAxWsfrxEl
+         SHwjPztx2QuIO2yngXZBnEwiVqbBUu1mVFW0/brY3W8PR6AMm41tXggAdA8+NStsuYfi
+         IFS4KaXddJ2jE0zQlTNFlVXyNXE3mLU9rg7DofpATFRLXEQnuWHfaOa3xALxJSHHk8nW
+         LvKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWncYYYkq2chpVkWd1Xtp42/Bf4uCCX/ln2oZWazKFfgCvs+dEh+WwJ9up+qqxMoloIqK1/F5TMvyn/Dhcy+GiA3hGmmnfs4iLNn98q
+X-Gm-Message-State: AOJu0YxG+TK9DtuxaJVPKtunrbWRyp/+yMK22CMncUVdRCq6yaBB220q
+	01tGLmGDSHVVqgWUjUWZuJF1Ehwsm2PA9x1WUI5Bfcc6RvR22kyh84cqeW0DWNvs0Y+oYdFWV7a
+	VfFAH8Osqcz68su1O1j2svEAjhQCLKbNmIrmG+Q==
+X-Google-Smtp-Source: AGHT+IH5XgJmvEXq/L7FHOyyXK3RkpSHdXHll5ESvSvmSgTLTU4h1DT36ljkuWFPLkfK9rf8NDemDXuqK12zJjQqcyI=
+X-Received: by 2002:a05:6102:3f86:b0:48f:ebb7:3919 with SMTP id
+ ada2fe7eead31-4915975b217mr1698584137.7.1721221242950; Wed, 17 Jul 2024
+ 06:00:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240717063806.741977243@linuxfoundation.org>
+In-Reply-To: <20240717063806.741977243@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 17 Jul 2024 18:30:31 +0530
+Message-ID: <CA+G9fYuRu35fggLrOaXZg=ic-pFjq7DRL1moSwmwHW1qejPfuQ@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/142] 6.9.10-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When a reference counter is at zero and refcount_sub_and_test() is invoked
-to subtract zero, the function accepts this request without any warning and
-returns true. This behavior does not seem ideal because the counter being
-already at zero indicates a use-after-free. Furthermore, returning true by
-refcount_sub_and_test() in this case potentially results in a double-free
-done by its caller.
+On Wed, 17 Jul 2024 at 12:10, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.9.10 release.
+> There are 142 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.9.10-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Modify the underlying function __refcount_sub_and_test() to warn about this
-case as a use-after-free and have it return false to avoid the potential
-double-free.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Motivation for this patch is an earlier kretprobe problem described at:
-https://lore.kernel.org/linux-trace-kernel/92cff289-facb-4e42-b761-6fd2515d6018@suse.com/
+## Build
+* kernel: 6.9.10-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 61dff568763322453e014b07c0508620052362da
+* git describe: v6.9.8-338-g61dff5687633
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.8=
+-338-g61dff5687633
 
- drivers/misc/lkdtm/refcount.c | 16 ++++++++++++++++
- include/linux/refcount.h      |  4 ++--
- 2 files changed, 18 insertions(+), 2 deletions(-)
+## Test Regressions (compared to v6.9.8-198-g2471237b27c6)
 
-diff --git a/drivers/misc/lkdtm/refcount.c b/drivers/misc/lkdtm/refcount.c
-index 5cd488f54cfa..8f744bee6fbd 100644
---- a/drivers/misc/lkdtm/refcount.c
-+++ b/drivers/misc/lkdtm/refcount.c
-@@ -182,6 +182,21 @@ static void lkdtm_REFCOUNT_SUB_AND_TEST_NEGATIVE(void)
- 	check_negative(&neg, 3);
- }
- 
-+/*
-+ * A refcount_sub_and_test() by zero when the counter is at zero should act like
-+ * refcount_sub_and_test() above when going negative.
-+ */
-+static void lkdtm_REFCOUNT_SUB_AND_TEST_ZERO(void)
-+{
-+	refcount_t neg = REFCOUNT_INIT(0);
-+
-+	pr_info("attempting bad refcount_sub_and_test() at zero\n");
-+	if (refcount_sub_and_test(0, &neg))
-+		pr_warn("Weird: refcount_sub_and_test() reported zero\n");
-+
-+	check_negative(&neg, 0);
-+}
-+
- static void check_from_zero(refcount_t *ref)
- {
- 	switch (refcount_read(ref)) {
-@@ -400,6 +415,7 @@ static struct crashtype crashtypes[] = {
- 	CRASHTYPE(REFCOUNT_DEC_NEGATIVE),
- 	CRASHTYPE(REFCOUNT_DEC_AND_TEST_NEGATIVE),
- 	CRASHTYPE(REFCOUNT_SUB_AND_TEST_NEGATIVE),
-+	CRASHTYPE(REFCOUNT_SUB_AND_TEST_ZERO),
- 	CRASHTYPE(REFCOUNT_INC_ZERO),
- 	CRASHTYPE(REFCOUNT_ADD_ZERO),
- 	CRASHTYPE(REFCOUNT_INC_SATURATED),
-diff --git a/include/linux/refcount.h b/include/linux/refcount.h
-index 59b3b752394d..35f039ecb272 100644
---- a/include/linux/refcount.h
-+++ b/include/linux/refcount.h
-@@ -266,12 +266,12 @@ bool __refcount_sub_and_test(int i, refcount_t *r, int *oldp)
- 	if (oldp)
- 		*oldp = old;
- 
--	if (old == i) {
-+	if (old > 0 && old == i) {
- 		smp_acquire__after_ctrl_dep();
- 		return true;
- 	}
- 
--	if (unlikely(old < 0 || old - i < 0))
-+	if (unlikely(old <= 0 || old - i < 0))
- 		refcount_warn_saturate(r, REFCOUNT_SUB_UAF);
- 
- 	return false;
+## Metric Regressions (compared to v6.9.8-198-g2471237b27c6)
 
-base-commit: 2df0193e62cf887f373995fb8a91068562784adc
--- 
-2.35.3
+## Test Fixes (compared to v6.9.8-198-g2471237b27c6)
 
+## Metric Fixes (compared to v6.9.8-198-g2471237b27c6)
+
+## Test result summary
+total: 178195, pass: 154558, fail: 2462, skip: 21175, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 127 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 33 total, 33 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
