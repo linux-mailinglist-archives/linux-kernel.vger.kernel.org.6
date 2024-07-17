@@ -1,161 +1,130 @@
-Return-Path: <linux-kernel+bounces-255224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFDC933DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4C7933DA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 15:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842122844B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1420B1F23965
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 13:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5DB180A65;
-	Wed, 17 Jul 2024 13:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE4F1802D9;
+	Wed, 17 Jul 2024 13:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2pDIpxC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="i83AUpWv"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC28B566A;
-	Wed, 17 Jul 2024 13:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D8717F39C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 13:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721223071; cv=none; b=KzGFFwogiaQunxAbFIKprnea4LxSrR4aEAVodY+vYo13edOzpRHZzjsFHPCfG314VBJj/aeE4sE5HmT5F+0p7hzqQASw48+DwTYJHVO0LpfJpUx6U8cNwKJYiEeq20b1p3DGa3ocG0lWq5cmVZ3nHWJB+F6wY6pLAGUPzrTBzyA=
+	t=1721223196; cv=none; b=PdnYP3J6LbyS1AYC/yYuqzLsIpTvjfink3xkANnJBIGomKgE15FZJbTmiGDXiZW1UsOmsYSZ6Me1Hy7TrnholTGaT2PoJCeXUSr8nsWFZLaWON3hlGD1PdfR8uCG7bkJpYERetyV5KctGciT71rXjDzGAzGCoNmGCCbnmdr3K74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721223071; c=relaxed/simple;
-	bh=9/LX+FPC7nXVipMC+1Tbxx41tWTkMEJcT3a+DLYqWq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FOc8cu8gHfGGYGYxVdFi5TLtOEY2bhTt3T8OA8cPPcpyIioKGecpNwwYDLcDvSOVScTtfo4NyjcdjvqZ5HJOIOUnJN8xse5si+tgvl0DIpeT7gAq7AfJ5fft7tnJZxyiJhukF/mYVJvUfXmGHgjxZhi2ec3ALQd47O2fNmQqxtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2pDIpxC; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721223070; x=1752759070;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9/LX+FPC7nXVipMC+1Tbxx41tWTkMEJcT3a+DLYqWq0=;
-  b=I2pDIpxC+Oe3tX49f1r1dfTW7TMq7cvkeS3gkR4y5+8aanzk57DcAYsa
-   8m7uAcFwa0Mspo4sWp4wmqoa6AayfWKBQYFbZpqXWyaMlqzSwWg2hhrdn
-   mbFXAxZ0ynJokNQLaztJzKkGLEHvYsLD8IhxsnbqcaU12Jhlttg+Fm9Hw
-   +zoD0Mcn7wmI2S+H+5/RJobXj8pFWfwUDs5nFsentBpoI3IehPdBE8GI1
-   tN8qFJFk0Gbv0wtKxuG+y6sbCFqHQFdnMdqFRa8mUVw7F8zx82pK/41LQ
-   y2jfb615xJcnH/RMwFCjRmfQ4tbfr5Ug1BFfeIy7l8jTnXuiGkDm9zdVE
-   Q==;
-X-CSE-ConnectionGUID: NiQp7ZP5TFORlfpUgnV7CQ==
-X-CSE-MsgGUID: Qxx9hkrQRC61rwtriiqOEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29394816"
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="29394816"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 06:31:09 -0700
-X-CSE-ConnectionGUID: aeF2PvNdTgmFzVErDR5kvQ==
-X-CSE-MsgGUID: BneAubfwT9+zUrpvrlYoVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="50266393"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.247.52]) ([10.125.247.52])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 06:31:05 -0700
-Message-ID: <8c783615-1e79-471d-b853-d654696fb782@intel.com>
-Date: Wed, 17 Jul 2024 21:31:02 +0800
+	s=arc-20240116; t=1721223196; c=relaxed/simple;
+	bh=saJ0t+oDc4nyZo9TP1ODjvc4qRIc9gbBenuWUOyq1r4=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Xy1mHNsALAsQncewdJIX/X9VAkivpHwMp5dMeEFfqlkAUIH8e1NhCH7UWHf61EORlVbn7J+zGk4oej8PHOOAcPKlWr5v0X0hXKHfjBpJ1TgZTsY3/ofRafcXjMGn9Wdc/aCiB4GKpYzTRIpce5ut2cG4aJlwJpuNE4wxLVFBU7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=i83AUpWv; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id U1nWs3mx9umtXU4mQsv0sz; Wed, 17 Jul 2024 13:33:14 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id U4mPsSXXS4PreU4mPsiNHF; Wed, 17 Jul 2024 13:33:13 +0000
+X-Authority-Analysis: v=2.4 cv=VbjxPkp9 c=1 sm=1 tr=0 ts=6697c81a
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8
+ a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=R36JCkTgm8ufyWgcq5suta+RMTXoH1Fj81nG0/VKur8=; b=i83AUpWvsikTcIC3Kaa9l0nNC5
+	sl7ZsRcBkviPKRUzyiRPFH5RKxIWj+HtwP/U3eJMNMgSbSq8vt8wNq8SsszeuQx1LbXdOcjj4Ww44
+	wvtfkyvsHUWuxP0Ocse4H2Sg+8x+5hpLH+W8+TrzVkvDL87bvPjdhANyKADoHMGVFoDXR9a3Vs0/R
+	Tq4pXf6CMr30/PEz3I+WmMXPUkovPh+R/53f1Sf/Nlti8WDRx+MRVZ1xxo8hJChaxPpnWBJqrykZ3
+	tt8FgLWjKU1Q8y5lCqBUTVXVAvHV56PkyxeD6mCYbUB2OWoh6NFITX9XWOPH7lGVqi24iPxmZXTDI
+	OIv1JFCw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:57964 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sU4mN-000TUk-1p;
+	Wed, 17 Jul 2024 07:33:11 -0600
+Subject: Re: [PATCH 6.6 000/122] 6.6.41-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240717063802.663310305@linuxfoundation.org>
+In-Reply-To: <20240717063802.663310305@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <29091ce2-7337-6247-3597-e5a0d67753b6@w6rz.net>
+Date: Wed, 17 Jul 2024 06:33:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 21/49] KVM: x86: Add a macro to init CPUID features
- that are 64-bit only
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>,
- Binbin Wu <binbin.wu@linux.intel.com>,
- Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-References: <20240517173926.965351-1-seanjc@google.com>
- <20240517173926.965351-22-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240517173926.965351-22-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sU4mN-000TUk-1p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:57964
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 23
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBPC+tno8hruvnKhzDhpq+kurcvbs3qw9BnRwm7+3zQmaEH96a+T9lY9WECmxZdvU7R7rYk4Xa0ZcQM0dAL/w0k55nhWzgz99svAsAtOz5sJ7APGV+vc
+ SryfXrEUFToVg/2NsHdZFlGVD1NCxrwKzv6PxAFGwzZXusQj3PndBYNDQFgNbXNKqjuhEDKQVqvwqaKxjRL/PZuzT/vI0w93mEQ=
 
-On 5/18/2024 1:38 AM, Sean Christopherson wrote:
-> Add a macro to mask-in feature flags that are supported only on 64-bit
-> kernels/KVM.  In addition to reducing overall #ifdeffery, using a macro
-> will allow hardening the kvm_cpu_cap initialization sequences to assert
-> that the features being advertised are indeed included in the word being
-> initialized.  And arguably using *F() macros through is more readable.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On 7/16/24 11:39 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.41 release.
+> There are 122 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 19 Jul 2024 06:37:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.41-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Very nice patch!
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-
-> ---
->   arch/x86/kvm/cpuid.c | 22 ++++++++++------------
->   1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 5a4d6138c4f1..5e3b97d06374 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -70,6 +70,12 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
->   	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
->   })
->   
-> +/* Features that KVM supports only on 64-bit kernels. */
-> +#define X86_64_F(name)						\
-> +({								\
-> +	(IS_ENABLED(CONFIG_X86_64) ? F(name) : 0);		\
-> +})
-> +
->   /*
->    * Raw Feature - For features that KVM supports based purely on raw host CPUID,
->    * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
-> @@ -639,15 +645,6 @@ static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
->   
->   void kvm_set_cpu_caps(void)
->   {
-> -#ifdef CONFIG_X86_64
-> -	unsigned int f_gbpages = F(GBPAGES);
-> -	unsigned int f_lm = F(LM);
-> -	unsigned int f_xfd = F(XFD);
-> -#else
-> -	unsigned int f_gbpages = 0;
-> -	unsigned int f_lm = 0;
-> -	unsigned int f_xfd = 0;
-> -#endif
->   	memset(kvm_cpu_caps, 0, sizeof(kvm_cpu_caps));
->   
->   	BUILD_BUG_ON(sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)) >
-> @@ -744,7 +741,8 @@ void kvm_set_cpu_caps(void)
->   	);
->   
->   	kvm_cpu_cap_init(CPUID_D_1_EAX,
-> -		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) | f_xfd
-> +		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) |
-> +		X86_64_F(XFD)
->   	);
->   
->   	kvm_cpu_cap_init_kvm_defined(CPUID_12_EAX,
-> @@ -766,8 +764,8 @@ void kvm_set_cpu_caps(void)
->   		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
->   		F(PAT) | F(PSE36) | 0 /* Reserved */ |
->   		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
-> -		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
-> -		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
-> +		F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
-> +		0 /* Reserved */ | X86_64_F(LM) | F(3DNOWEXT) | F(3DNOW)
->   	);
->   
->   	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
+Tested-by: Ron Economos <re@w6rz.net>
 
 
