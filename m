@@ -1,459 +1,640 @@
-Return-Path: <linux-kernel+bounces-255481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-255482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0024693413C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0DE934140
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 19:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FE628713B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D171C20E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2024 17:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62011822EB;
-	Wed, 17 Jul 2024 17:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAF81822EE;
+	Wed, 17 Jul 2024 17:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C+pVesPP"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkIF3E48"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908851822C2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 17:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C793FB1B;
+	Wed, 17 Jul 2024 17:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721236376; cv=none; b=ARxsSfrpOCtGdV72YWv/yM0az9xPJTsWOlx0hg9fqv7LmWtc9jca+Fp8H5fPGQZtcd/hj8BtJ5iajZCLWPyUVeN6uBPMQoYU9THrkwOeg+cIFjUUOmq8TAEYjIUm93A5lGVHqGQjScYjzPEK+3I5x/B2aNoQZAUaTSkf2/Q7dQE=
+	t=1721236467; cv=none; b=mM3bsW//spBmeajBc+WeI+K4Pt3tO3B5pdA4G9js6qLStVaU+o0uVcDos6OAJ4WvMoQrvgup13vKn2oaZKECylDLVfVuE+BXHM1eh4UiVPNKcO/jO4iDiXLzh+Y+yCJYrBSddJkklJ8qzP0AG1Nrdk1LHe4cU3K8RPmv5rlclTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721236376; c=relaxed/simple;
-	bh=08IsNE9OTrrak0Rh6mGhJs7i4Z8E5/HMFMFQD8ShHXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a5lAjRxdjJmIFJSOJeSsZBzisILIKFlXwoZ+4S/DdepLTiNluMI1vy78kdhTsEeZgABaEYOELEjzGAw7B7cf6oQMaaeQSiY8fs+XCzbWJhjFkCmL0DEVHHjUmLLEv4m/XsfbWGojqKstcUjSKCunp+NhqnvFvsPJU5wsQjVFp0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C+pVesPP; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so160148a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2024 10:12:54 -0700 (PDT)
+	s=arc-20240116; t=1721236467; c=relaxed/simple;
+	bh=tEXdaulW2f20dXpuenXh8bUFdqo+7Z1BGL9pU1HsRqQ=;
+	h=Message-ID:From:Date:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4YKDMy5cFNmn/5zcM1U83Uwlt+ugvsSZP1LUAHbEu6yMeDy2RWTVmqh9Vk5Ocfiu1cCQC5ffn8ydtiw1N+1IiL1V9tqmkqwSAUm+CDjPF52QIWky1gKsAwodxWqzfop7lIRHFDTYxTzAwo0eBWxY6orTCoz3gjtdy9s46+mEA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkIF3E48; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-651da7c1531so252227b3.0;
+        Wed, 17 Jul 2024 10:14:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721236373; x=1721841173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UjjADzQfzKGGmui3quUsVPnA2QGdex7aGv6U5px6fj8=;
-        b=C+pVesPPI2/BKC2/qOeVV6KFaBum/eCmDE00dWigG89lGf8rO9kszJZ/NHz2CozKb3
-         yfrokExY1x1pQ6Dp2PHLnJm7ERbc353htHn//0ZwuGSmVBVcZahtAY6gRfaexmqhLRMV
-         IwZN0IQs4Jim+BjMwB6smMkTRW6mE20rWWw0w=
+        d=gmail.com; s=20230601; t=1721236464; x=1721841264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kLkXS4JNkxJPRpT02NgFAng+HVvSx9yoDRGZiEauZGI=;
+        b=CkIF3E48+59cM9p+H71bikoUITx8tq1Lte+WQ5md7n4VG54fjOBRSqJgMvX5nOD4l7
+         shqIsKZcdwpRh7vxayhItL/1bs49Qklo7NZH/oakiO+09jDZ2q04GVBUr7xs86XSfuz9
+         h5T8nXOfMu7eq30TAOOrF3d3hdqs1JX/5x8y+H9UUFywsmqFuHuqNWp0CwI3Wft1th3W
+         lU4ZuQ79kcpgQSilh9O+NtgZFtwKPBaR+jY/0UyKUObmNtX/dViII8f+LFJ9vP+xDSPg
+         XduQtRzjTxIYGjYPyMfKEehphqSJvvhLOOu2HvV0GxfmHVdvrrW94Id4I35rBDx6h/R/
+         Vx+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721236373; x=1721841173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UjjADzQfzKGGmui3quUsVPnA2QGdex7aGv6U5px6fj8=;
-        b=JyKHGTM3nJ8qEZPXoQrbSV9SHdPXf4mHXPOQBbwg88os4ae+1WGH8VnSvKMU0dzzuw
-         oWUzJ18YiakAB3g1zAyK43H4pPiH75YA6sJPW3WzsyABo/AWn7f4eDx6a8ZxuFB/uFh6
-         O7aHvXM58wTgZI1WFdVtkKIhBMIE8bXuGckV97McCjBx5vcfYqbUIn4wdzkH35vOa3EI
-         JRfrDfDFHmqYllXgcW0fYrzHFVEShZX8inNdYDWpfAY4yt5/HaESPfMKWpcmQxB3CvMD
-         3n1/O0qolzlfy3HVn21TVZiyE7alSN+Hoe0c+WlwYH18UWtV04lnLSl82dKXfPu1FFqD
-         EXjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV93R9Xza8YrSLUDq2Af19AzuWuJdnRbKelWbSEYhcwLoQQ7W1e7zeTwcYA2By0PvnmAV6ukOH1tSj2ouU0FhXQMFJmOd/YQti1LENV
-X-Gm-Message-State: AOJu0Yyu87wFxGwY3Zz5IueizDQIIDDIZ5IWLgze10lOECJH7e1fVJaE
-	a0zaLAlGV49zav9PxJ/bM9tZiX9ttyAm2WKDIMi073KOO652+WCOCIxawO8D+QseR88yYyGnjHA
-	jwQ/9mlD48yIIAIKD01DUX01EAsgmXs4WKGeV
-X-Google-Smtp-Source: AGHT+IFBxlQTTGYVoRJHLcq72dqotyMNCP7Z5MNNNWdLrjNcmzrUN5zFqA3dV9i3233qtp7yIKagUcpCNOM4xo1YEDE=
-X-Received: by 2002:a17:906:a06:b0:a77:c080:11fc with SMTP id
- a640c23a62f3a-a7a011ae5f1mr149862866b.36.1721236372815; Wed, 17 Jul 2024
- 10:12:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721236464; x=1721841264;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:date:from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kLkXS4JNkxJPRpT02NgFAng+HVvSx9yoDRGZiEauZGI=;
+        b=BxTzNSCQqDgSvfLIg97tzZyW7D+Aknd7qdP8bV9dzqeBHe7DxunMQ3tLBg7AgsrkMy
+         nrEIlH8vAhi7LyVfEEz+XOQLqQrb5JNpnMMNOCjGxerOqCD1+Lf4UmB/cifR2B+n7Owy
+         ctuTQncCM6bUlyPqaBQqNWJz9rJcrc3IwtvaoYe5iZfoAy30r/zpAWb23V1X99Lr5XPs
+         ItpInRC2UxKbFCWCZGS0LtRgPBooea9dSylm2sB9oVDwZdickpnPZ0MfJhG42800LK96
+         6CvSSV23nemcUfQV6nogUJOUZaTuyxsmmA5ONRsX/os2bf7CtT75DGtCvZEB4sGsKIaN
+         GDXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5MwPSimeKSEsv5gjNzm+RsyMSCoCRqLzdYVibZfB9RYP0d/2Ny2pPPgZt+A6VKo/K75KmifcOqvzs4bn4JoOgzAZYeOkvlKBW0QrsVcoAoUn7edn4OgYYQl/yH/te8obh+sdkwc4wYP8tH2E9iJsrkO+tVudmzdrpMFCiBulBahLs7g==
+X-Gm-Message-State: AOJu0YzFIgK4JYvZi1elp4A20To/LT0XbhqbfAV0t2AXHf0d8qMf8bYM
+	6yw+I76zFrOFlQuGyDzsmLS6TVZBGtR6MprrGZnuqbDIVE4Idndp
+X-Google-Smtp-Source: AGHT+IGv0Fp8VtqtaEbxPcnhkeI+TU2IkWi0U9x446wbrGVqb0eUoIkz99EP6B5DwE3+FcxH0Eyo1Q==
+X-Received: by 2002:a05:6902:1614:b0:e05:e1d5:8852 with SMTP id 3f1490d57ef6-e05ed6de401mr2844209276.13.1721236464289;
+        Wed, 17 Jul 2024 10:14:24 -0700 (PDT)
+Received: from gpd. ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05fea266desm6231276.22.2024.07.17.10.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 10:14:23 -0700 (PDT)
+Message-ID: <6697fbef.250a0220.24877d.00a7@mx.google.com>
+X-Google-Original-Message-ID: <Zpf7tF5678aZwus_@gpd.>
+From: nifan.cxl@gmail.com
+X-Google-Original-From: fan@gpd.
+Date: Wed, 17 Jul 2024 10:13:24 -0700
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [RFC PATCH v9 03/11] EDAC: Add EDAC ECS control driver
+References: <20240716150336.2042-1-shiju.jose@huawei.com>
+ <20240716150336.2042-4-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708172339.GA139099@bhelgaas> <e1ed82cb-6d20-4ca8-b047-4a02dde115a8@gmail.com>
- <CACfW=qpNmSeQVG_qSeYpEdk9pf_RTAEEKp+OiBYrRFd3d6HOXg@mail.gmail.com> <edf2a0aa-d027-489f-891f-254849a47c60@gmail.com>
-In-Reply-To: <edf2a0aa-d027-489f-891f-254849a47c60@gmail.com>
-From: George-Daniel Matei <danielgeorgem@chromium.org>
-Date: Wed, 17 Jul 2024 19:12:41 +0200
-Message-ID: <CACfW=qqJ4ubkr036n=VU8GM=OVru-q76O8DG4GV-8hMyK5ZGKA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, nic_swsd@realtek.com, netdev@vger.kernel.org, 
-	Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716150336.2042-4-shiju.jose@huawei.com>
 
-On Wed, Jul 10, 2024 at 9:59=E2=80=AFPM Heiner Kallweit <hkallweit1@gmail.c=
-om> wrote:
->
-> On 10.07.2024 17:09, George-Daniel Matei wrote:
-> > Hi,
-> >
-> >>> Added aspm suspend/resume hooks that run
-> >>> before and after suspend and resume to change
-> >>> the ASPM states of the PCI bus in order to allow
-> >>> the system suspend while trying to prevent card hangs
-> >>
-> >> Why is this needed?  Is there a r8169 defect we're working around?
-> >> A BIOS defect?  Is there a problem report you can reference here?
-> >>
-> >
-> > We encountered this issue while upgrading from kernel v6.1 to v6.6.
-> > The system would not suspend with 6.6. We tracked down the problem to
-> > the NIC of the device, mainly that the following code was removed in
-> > 6.6:
-> >> else if (tp->mac_version >=3D RTL_GIGA_MAC_VER_46)
-> >>         rc =3D pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);
-> > For the listed devices, ASPM L1 is disabled entirely in 6.6. As for
-> > the reason, L1 was observed to cause some problems
-> > (https://bugzilla.kernel.org/show_bug.cgi?id=3D217814). We use a Raptor
-> > Lake soc and it won't change residency if the NIC doesn't have L1
-> > enabled. I saw in 6.1 the following comment:
->
-> With residency you refer to the package power saving state?
->
-Yes, by residency I'm referring to the package power saving state.
+On Tue, Jul 16, 2024 at 04:03:27PM +0100, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add EDAC ECS (Error Check Scrub) control driver supports configuring
+> the memory device's ECS feature.
+> 
+> The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
+> Specification (JESD79-5) and allows the DRAM to internally read, correct
+> single-bit errors, and write back corrected data bits to the DRAM array
+> while providing transparency to error counts.
+> 
+> The DDR5 device contains number of memory media FRUs per device. The
+> DDR5 ECS feature and thus the ECS control driver supports configuring
+> the ECS parameters per FRU.
+> 
+> The memory devices supports ECS feature register with the EDAC ECS driver
+> and thus with the generic EDAC RAS feature driver, which adds the sysfs
+> ECS control interface. The ECS control attributes are exposed to the
+> userspace in /sys/bus/edac/devices/<dev-name>/ecs_fruX/.
+> 
+> Generic EDAC ECS driver and the common sysfs ECS interface promotes
+> unambiguous control from the userspace irrespective of the underlying
+> devices, support ECS feature.
+> 
+> The support for ECS feature is added separately because the DDR5 ECS
+> feature's control attributes are dissimilar from those of the scrub
+> feature.
+> 
+> Note: Documentation can be added if necessary.
+> 
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/edac/Makefile            |   2 +-
+>  drivers/edac/edac_ecs.c          | 396 +++++++++++++++++++++++++++++++
+>  drivers/edac/edac_ras_feature.c  |   5 +
+>  include/linux/edac_ras_feature.h |  36 +++
+>  4 files changed, 438 insertions(+), 1 deletion(-)
+>  create mode 100755 drivers/edac/edac_ecs.c
+> 
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index de56cbd039eb..c1412c7d3efb 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -10,7 +10,7 @@ obj-$(CONFIG_EDAC)			:= edac_core.o
+>  
+>  edac_core-y	:= edac_mc.o edac_device.o edac_mc_sysfs.o
+>  edac_core-y	+= edac_module.o edac_device_sysfs.o wq.o
+> -edac_core-y	+= edac_ras_feature.o edac_scrub.o
+> +edac_core-y	+= edac_ras_feature.o edac_scrub.o edac_ecs.o
+>  
+>  edac_core-$(CONFIG_EDAC_DEBUG)		+= debugfs.o
+>  
+> diff --git a/drivers/edac/edac_ecs.c b/drivers/edac/edac_ecs.c
+> new file mode 100755
+> index 000000000000..37dabd053c36
+> --- /dev/null
+> +++ b/drivers/edac/edac_ecs.c
+> @@ -0,0 +1,396 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ECS driver supporting controlling on die error check scrub
+> + * (e.g. DDR5 ECS). The common sysfs ECS interface promotes
+> + * unambiguous access from the userspace.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
+> +#define pr_fmt(fmt)     "EDAC ECS: " fmt
+> +
+> +#include <linux/edac_ras_feature.h>
+> +
+> +#define EDAC_ECS_FRU_NAME "ecs_fru"
+> +
+> +enum edac_ecs_attributes {
+> +	ecs_log_entry_type,
+> +	ecs_log_entry_type_per_dram,
+> +	ecs_log_entry_type_per_memory_media,
+> +	ecs_mode,
+> +	ecs_mode_counts_rows,
+> +	ecs_mode_counts_codewords,
+> +	ecs_reset,
+> +	ecs_name,
+> +	ecs_threshold,
+> +	ecs_max_attrs
+> +};
 
-> >> Chips from RTL8168h partially have issues with L1.2, but seem
-> >> to work fine with L1 and L1.1.
-> > I was thinking that disabling/enabling L1.1 on the fly before/after
-> > suspend could help mitigate the risk associated with L1/L1.1 . I know
-> > that ASPM settings are exposed in sysfs and that this could be done
-> > from outside the kernel, that was my first approach, but it was
-> > suggested to me that this kind of workaround would be better suited
-> > for quirks. I did around 1000 suspend/resume cycles of 16-30 seconds
-> > each (correcting the resume dev->bus->self being configured twice
-> > mistake) and did not notice any problems. What do you think, is this a
-> > good approach ... ?
-> >
-> If the root cause really should be in the SoC's ASPM implementation, then=
-:
-> - Other systems with the same SoC may suffer from the same problem,
->   but are not covered by the quirk.
-> - The issue may occur also with other devices than a RTL8168 NIC.
->   How about e.g. RTL8125? Or completely different PCI devices?
->
-> What I understand so far from your description:
->
-> W/o ASPM L1 the SoC doesn't change "residency". See comment above,
-> please elaborate on this.
-> And w/ ASPM L1 the NIC hangs on suspend?
-> What's the dmesg entries related to this hang? Tx timeout?
-> Or card not accessible at all?
->
-W/o ASPM L1 the SoC doesn't change power states, yes.
-With ASPM L1 the SoC changes power states. But for the L1
-substates, L1.1 could cause tx timeouts as per 90ca51e8c654 ("r8169:
-fix ASPM-related issues on a number of systems with NIC version from
-RTL8168h". So L1 (and L1.1) couldn't be simply turned back on without the
-possibility of running into these tx timeouts. I never observed them while
-I experimented and tested with L1 and L1.1.
+As mentioned in other review, use uppercase.
 
-> My perspective so far:
-> It's a relatively complex quirk that covers only a part of the potentiall=
-y
-> affected systems, and the issue isn't well understood.
->
-> And most likely there are lots of systems out there with a Raptor Lake CP=
-U
-> and a RTL8168 on board. Therefore it's surprising that there hasn't been
-> a similar report before.
->
->
-> >>> +             //configure device
-> >>> +             pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
-> >>> +                                                PCI_EXP_LNKCTL_ASPMC=
-, 0);
-> >>> +
-> >>> +             pci_read_config_word(dev->bus->self,
-> >>> +                                  dev->bus->self->l1ss + PCI_L1SS_CT=
-L1,
-> >>> +                                  &val);
-> >>> +             val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
-> >>> +             pci_write_config_word(dev->bus->self,
-> >>> +                                   dev->bus->self->l1ss + PCI_L1SS_C=
-TL1,
-> >>> +                                   val);
-> >> Updates the parent (dev->bus->self) twice; was the first one supposed
-> >> to update the device (dev)?
-> > Yes, it was supposed to update the device (dev). It's my first time
-> > sending a patch and I messed something up while doing some style
-> > changes, I will correct it. I'm sorry for that.
-> >
-> >> This doesn't restore the state as it existed before suspend.  Does
-> >> this rely on other parts of restore to do that?
-> > It operates on the assumption that after driver initialization
-> > PCI_EXP_LNKCTL_ASPMC is 0 and that there are no states enabled in
-> > CTL1. I did a lspci -vvv dump on the affected devices before and after
-> > the quirks ran and saw no difference. This could be improved.
-> >
-> >> What is the RTL8168 chip version used on these systems?
-> > It should be RTL8111H.
-> >
-> >> What's the root cause of the issue?
-> >> A silicon bug on the host side?
-> > I think it's the ASPM implementation of the soc.
-> >
-> >> ASPM L1 is disabled per default in r8169. So why is the patch needed
-> >> at all?
-> > Leaving it disabled all the time prevents the system from suspending.
-> >
-> This is not clear to me. You refer to STR?
-> Why should a system not suspend just because one PCI device doesn't
-> have ASPM L1 enabled?
-I think some of my previous comments have been misleading.
-The actual problem is that the SoC doesn't change power states.
+Fan
 
-intel_pmc_core INT33A1:00: CPU did not enter SLP_S0!!!
-
-In the case of the system I observed the problem, there is an
-EC, separate from the SoC, which will trigger the system to resume
-if following a suspend there is no power state transition
-detected after a period of time. That's why I was mentioning
-"can't suspend" but actually is a "can't achieve s0ix" problem.
-
-I searched for s0ix problems, I found:
-https://bugzilla.kernel.org/show_bug.cgi?id=3D207893
-and it looks similar. What do you think ?
-
-Somehow not having L1 enabled makes it that the PCI controller
-have a state that doesn't meet the criteria to transition to s0ix.
-
-
-
-
->
-> > Thank you,
-> > George-Daniel Matei
-> >
-> >
-> >
-> >
-> >
-> > On Tue, Jul 9, 2024 at 12:15=E2=80=AFAM Heiner Kallweit <hkallweit1@gma=
-il.com> wrote:
-> >>
-> >> On 08.07.2024 19:23, Bjorn Helgaas wrote:
-> >>> [+cc r8169 folks]
-> >>>
-> >>> On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote:
-> >>>> Added aspm suspend/resume hooks that run
-> >>>> before and after suspend and resume to change
-> >>>> the ASPM states of the PCI bus in order to allow
-> >>>> the system suspend while trying to prevent card hangs
-> >>>
-> >>> Why is this needed?  Is there a r8169 defect we're working around?
-> >>> A BIOS defect?  Is there a problem report you can reference here?
-> >>>
-> >>
-> >> Basically the same question from my side. Apparently such a workaround
-> >> isn't needed on any other system. And Realtek NICs can be found on mor=
-e
-> >> or less every consumer system. What's the root cause of the issue?
-> >> A silicon bug on the host side?
-> >>
-> >> What is the RTL8168 chip version used on these systems?
-> >>
-> >> ASPM L1 is disabled per default in r8169. So why is the patch needed
-> >> at all?
-> >>
-> >>> s/Added/Add/
-> >>>
-> >>> s/aspm/ASPM/ above
-> >>>
-> >>> s/PCI bus/device and parent/
-> >>>
-> >>> Add period at end of sentence.
-> >>>
-> >>> Rewrap to fill 75 columns.
-> >>>
-> >>>> Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
-> >>>> ---
-> >>>>  drivers/pci/quirks.c | 142 ++++++++++++++++++++++++++++++++++++++++=
-+++
-> >>>>  1 file changed, 142 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> >>>> index dc12d4a06e21..aa3dba2211d3 100644
-> >>>> --- a/drivers/pci/quirks.c
-> >>>> +++ b/drivers/pci/quirks.c
-> >>>> @@ -6189,6 +6189,148 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL=
-, 0x56b0, aspm_l1_acceptable_latency
-> >>>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b1, aspm_l1_accep=
-table_latency);
-> >>>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c0, aspm_l1_accep=
-table_latency);
-> >>>>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c1, aspm_l1_accep=
-table_latency);
-> >>>> +
-> >>>> +static const struct dmi_system_id chromebox_match_table[] =3D {
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Brask"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Aurash"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +            {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Bujia"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Gaelin"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Gladios"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Hahn"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Jeev"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Kinox"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Kuldax"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +            .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Lisbon"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    {
-> >>>> +                    .matches =3D {
-> >>>> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Moli"),
-> >>>> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-> >>>> +            }
-> >>>> +    },
-> >>>> +    { }
-> >>>> +};
-> >>>> +
-> >>>> +static void rtl8169_suspend_aspm_settings(struct pci_dev *dev)
-> >>>> +{
-> >>>> +    u16 val =3D 0;
-> >>>> +
-> >>>> +    if (dmi_check_system(chromebox_match_table)) {
-> >>>> +            //configure parent
-> >>>> +            pcie_capability_clear_and_set_word(dev->bus->self,
-> >>>> +                                               PCI_EXP_LNKCTL,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPMC=
-,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPM_=
-L1);
-> >>>> +
-> >>>> +            pci_read_config_word(dev->bus->self,
-> >>>> +                                 dev->bus->self->l1ss + PCI_L1SS_CT=
-L1,
-> >>>> +                                 &val);
-> >>>> +            val =3D (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
-> >>>> +                  PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1=
-_2 |
-> >>>> +                  PCI_L1SS_CTL1_ASPM_L1_1;
-> >>>> +            pci_write_config_word(dev->bus->self,
-> >>>> +                                  dev->bus->self->l1ss + PCI_L1SS_C=
-TL1,
-> >>>> +                                  val);
-> >>>> +
-> >>>> +            //configure device
-> >>>> +            pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPMC=
-,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPM_=
-L1);
-> >>>> +
-> >>>> +            pci_read_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, &v=
-al);
-> >>>> +            val =3D (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
-> >>>> +                  PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1=
-_2 |
-> >>>> +                  PCI_L1SS_CTL1_ASPM_L1_1;
-> >>>> +            pci_write_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, v=
-al);
-> >>>> +    }
-> >>>> +}
-> >>>> +
-> >>>> +DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_REALTEK, 0x8168,
-> >>>> +                      rtl8169_suspend_aspm_settings);
-> >>>> +
-> >>>> +static void rtl8169_resume_aspm_settings(struct pci_dev *dev)
-> >>>> +{
-> >>>> +    u16 val =3D 0;
-> >>>> +
-> >>>> +    if (dmi_check_system(chromebox_match_table)) {
-> >>>> +            //configure device
-> >>>> +            pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPMC=
-, 0);
-> >>>> +
-> >>>> +            pci_read_config_word(dev->bus->self,
-> >>>> +                                 dev->bus->self->l1ss + PCI_L1SS_CT=
-L1,
-> >>>> +                                 &val);
-> >>>> +            val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
-> >>>> +            pci_write_config_word(dev->bus->self,
-> >>>> +                                  dev->bus->self->l1ss + PCI_L1SS_C=
-TL1,
-> >>>> +                                  val);
-> >>>> +
-> >>>> +            //configure parent
-> >>>> +            pcie_capability_clear_and_set_word(dev->bus->self,
-> >>>> +                                               PCI_EXP_LNKCTL,
-> >>>> +                                               PCI_EXP_LNKCTL_ASPMC=
-, 0);
-> >>>> +
-> >>>> +            pci_read_config_word(dev->bus->self,
-> >>>> +                                 dev->bus->self->l1ss + PCI_L1SS_CT=
-L1,
-> >>>> +                                 &val);
-> >>>> +            val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
-> >>>> +            pci_write_config_word(dev->bus->self,
-> >>>> +                                  dev->bus->self->l1ss + PCI_L1SS_C=
-TL1,
-> >>>> +                                  val);
-> >>>
-> >>> Updates the parent (dev->bus->self) twice; was the first one supposed
-> >>> to update the device (dev)?
-> >>>
-> >>> This doesn't restore the state as it existed before suspend.  Does
-> >>> this rely on other parts of restore to do that?
-> >>>
-> >>>> +    }
-> >>>> +}
-> >>>> +
-> >>>> +DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_REALTEK, 0x8168,
-> >>>> +                     rtl8169_resume_aspm_settings);
-> >>>>  #endif
-> >>>>
-> >>>>  #ifdef CONFIG_PCIE_DPC
-> >>>> --
-> >>>> 2.45.2.803.g4e1b14247a-goog
-> >>>>
-> >>
->
+> +
+> +struct edac_ecs_dev_attr {
+> +	struct device_attribute dev_attr;
+> +	int fru_id;
+> +};
+> +
+> +struct edac_ecs_fru_context {
+> +	char name[EDAC_RAS_NAME_LEN];
+> +	struct edac_ecs_dev_attr ecs_dev_attr[ecs_max_attrs];
+> +	struct attribute *ecs_attrs[ecs_max_attrs + 1];
+> +	struct attribute_group group;
+> +};
+> +
+> +struct edac_ecs_context {
+> +	u16 num_media_frus;
+> +	struct edac_ecs_fru_context *fru_ctxs;
+> +};
+> +
+> +#define to_ecs_dev_attr(_dev_attr)	\
+> +	container_of(_dev_attr, struct edac_ecs_dev_attr, dev_attr)
+> +
+> +static ssize_t log_entry_type_show(struct device *ras_feat_dev,
+> +				   struct device_attribute *attr,
+> +				   char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_log_entry_type(ras_feat_dev->parent, ctx->ecs.private,
+> +				      ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t log_entry_type_store(struct device *ras_feat_dev,
+> +				    struct device_attribute *attr,
+> +				    const char *buf, size_t len)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	long val;
+> +	int ret;
+> +
+> +	ret = kstrtol(buf, 10, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ops->set_log_entry_type(ras_feat_dev->parent, ctx->ecs.private,
+> +				      ecs_dev_attr->fru_id, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t log_entry_type_per_dram_show(struct device *ras_feat_dev,
+> +					    struct device_attribute *attr,
+> +					    char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_log_entry_type_per_dram(ras_feat_dev->parent, ctx->ecs.private,
+> +					       ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t log_entry_type_per_memory_media_show(struct device *ras_feat_dev,
+> +						    struct device_attribute *attr,
+> +						    char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_log_entry_type_per_memory_media(ras_feat_dev->parent,
+> +						       ctx->ecs.private,
+> +						       ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t mode_show(struct device *ras_feat_dev,
+> +			 struct device_attribute *attr,
+> +			 char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_mode(ras_feat_dev->parent, ctx->ecs.private,
+> +			    ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t mode_store(struct device *ras_feat_dev,
+> +			  struct device_attribute *attr,
+> +			  const char *buf, size_t len)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	long val;
+> +	int ret;
+> +
+> +	ret = kstrtol(buf, 10, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ops->set_mode(ras_feat_dev->parent, ctx->ecs.private,
+> +			    ecs_dev_attr->fru_id, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t mode_counts_rows_show(struct device *ras_feat_dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_mode_counts_rows(ras_feat_dev->parent, ctx->ecs.private,
+> +					ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t mode_counts_codewords_show(struct device *ras_feat_dev,
+> +					  struct device_attribute *attr,
+> +					  char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = ops->get_mode_counts_codewords(ras_feat_dev->parent, ctx->ecs.private,
+> +					     ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t reset_store(struct device *ras_feat_dev,
+> +			   struct device_attribute *attr,
+> +			   const char *buf, size_t len)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	long val;
+> +	int ret;
+> +
+> +	ret = kstrtol(buf, 10, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ops->reset(ras_feat_dev->parent, ctx->ecs.private,
+> +			 ecs_dev_attr->fru_id, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t name_show(struct device *ras_feat_dev,
+> +			 struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	int ret;
+> +
+> +	ret = ops->get_name(ras_feat_dev->parent, ctx->ecs.private,
+> +			    ecs_dev_attr->fru_id, buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return strlen(buf);
+> +}
+> +
+> +static ssize_t threshold_show(struct device *ras_feat_dev,
+> +			      struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	int ret;
+> +	u64 val;
+> +
+> +	ret = ops->get_threshold(ras_feat_dev->parent, ctx->ecs.private,
+> +				 ecs_dev_attr->fru_id, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "0x%llx\n", val);
+> +}
+> +
+> +static ssize_t threshold_store(struct device *ras_feat_dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf, size_t len)
+> +{
+> +	struct edac_ecs_dev_attr *ecs_dev_attr = to_ecs_dev_attr(attr);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +	long val;
+> +	int ret;
+> +
+> +	ret = kstrtol(buf, 10, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ops->set_threshold(ras_feat_dev->parent, ctx->ecs.private,
+> +				 ecs_dev_attr->fru_id, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return len;
+> +}
+> +
+> +static umode_t ecs_attr_visible(struct kobject *kobj,
+> +				struct attribute *a, int attr_id)
+> +{
+> +	struct device *ras_feat_dev = kobj_to_dev(kobj);
+> +	struct edac_ras_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	const struct edac_ecs_ops *ops = ctx->ecs.ops;
+> +
+> +	switch (attr_id) {
+> +	case ecs_log_entry_type:
+> +		if (ops->get_log_entry_type && ops->set_log_entry_type)
+> +			return a->mode;
+> +		if (ops->get_log_entry_type)
+> +			return 0444;
+> +		return 0;
+> +	case ecs_log_entry_type_per_dram:
+> +		return ops->get_log_entry_type_per_dram ? a->mode : 0;
+> +	case ecs_log_entry_type_per_memory_media:
+> +		return ops->get_log_entry_type_per_memory_media ? a->mode : 0;
+> +	case ecs_mode:
+> +		if (ops->get_mode && ops->set_mode)
+> +			return a->mode;
+> +		if (ops->get_mode)
+> +			return 0444;
+> +		return 0;
+> +	case ecs_mode_counts_rows:
+> +		return ops->get_mode_counts_rows ? a->mode : 0;
+> +	case ecs_mode_counts_codewords:
+> +		return ops->get_mode_counts_codewords ? a->mode : 0;
+> +	case ecs_reset:
+> +		return ops->reset ? a->mode : 0;
+> +	case ecs_name:
+> +		return ops->get_name ? a->mode : 0;
+> +	case ecs_threshold:
+> +		if (ops->get_threshold && ops->set_threshold)
+> +			return a->mode;
+> +		if (ops->get_threshold)
+> +			return 0444;
+> +		return 0;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +#define EDAC_ECS_ATTR_RO(_name, _fru_id)       \
+> +	((struct edac_ecs_dev_attr) { .dev_attr = __ATTR_RO(_name), \
+> +				     .fru_id = _fru_id })
+> +
+> +#define EDAC_ECS_ATTR_WO(_name, _fru_id)       \
+> +	((struct edac_ecs_dev_attr) { .dev_attr = __ATTR_WO(_name), \
+> +				     .fru_id = _fru_id })
+> +
+> +#define EDAC_ECS_ATTR_RW(_name, _fru_id)       \
+> +	((struct edac_ecs_dev_attr) { .dev_attr = __ATTR_RW(_name), \
+> +				     .fru_id = _fru_id })
+> +
+> +static int ecs_create_desc(struct device *ecs_dev,
+> +			   const struct attribute_group **attr_groups,
+> +			   u16 num_media_frus)
+> +{
+> +	struct edac_ecs_context *ecs_ctx;
+> +	u32 fru;
+> +
+> +	ecs_ctx = devm_kzalloc(ecs_dev, sizeof(*ecs_ctx), GFP_KERNEL);
+> +	if (!ecs_ctx)
+> +		return -ENOMEM;
+> +
+> +	ecs_ctx->num_media_frus = num_media_frus;
+> +	ecs_ctx->fru_ctxs = devm_kcalloc(ecs_dev, num_media_frus,
+> +					 sizeof(*ecs_ctx->fru_ctxs),
+> +					 GFP_KERNEL);
+> +	if (!ecs_ctx->fru_ctxs)
+> +		return -ENOMEM;
+> +
+> +	for (fru = 0; fru < num_media_frus; fru++) {
+> +		struct edac_ecs_fru_context *fru_ctx = &ecs_ctx->fru_ctxs[fru];
+> +		struct attribute_group *group = &fru_ctx->group;
+> +		int i;
+> +
+> +		fru_ctx->ecs_dev_attr[0] = EDAC_ECS_ATTR_RW(log_entry_type, fru);
+> +		fru_ctx->ecs_dev_attr[1] = EDAC_ECS_ATTR_RO(log_entry_type_per_dram, fru);
+> +		fru_ctx->ecs_dev_attr[2] = EDAC_ECS_ATTR_RO(log_entry_type_per_memory_media, fru);
+> +		fru_ctx->ecs_dev_attr[3] = EDAC_ECS_ATTR_RW(mode, fru);
+> +		fru_ctx->ecs_dev_attr[4] = EDAC_ECS_ATTR_RO(mode_counts_rows, fru);
+> +		fru_ctx->ecs_dev_attr[5] = EDAC_ECS_ATTR_RO(mode_counts_codewords, fru);
+> +		fru_ctx->ecs_dev_attr[6] = EDAC_ECS_ATTR_WO(reset, fru);
+> +		fru_ctx->ecs_dev_attr[7] = EDAC_ECS_ATTR_RO(name, fru);
+> +		fru_ctx->ecs_dev_attr[8] = EDAC_ECS_ATTR_RW(threshold, fru);
+> +		for (i = 0; i < ecs_max_attrs; i++)
+> +			fru_ctx->ecs_attrs[i] = &fru_ctx->ecs_dev_attr[i].dev_attr.attr;
+> +
+> +		sprintf(fru_ctx->name, "%s%d", EDAC_ECS_FRU_NAME, fru);
+> +		group->name = fru_ctx->name;
+> +		group->attrs = fru_ctx->ecs_attrs;
+> +		group->is_visible  = ecs_attr_visible;
+> +
+> +		attr_groups[fru] = group;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * edac_ecs_get_desc - get edac ecs descriptors
+> + * @ecs_dev: client ecs device
+> + * @attr_groups: pointer to attrribute group container
+> + * @num_media_frus: number of media FRUs in the device
+> + *
+> + * Returns 0 on success, error otherwise.
+> + */
+> +int edac_ecs_get_desc(struct device *ecs_dev,
+> +		      const struct attribute_group **attr_groups,
+> +		      u16 num_media_frus)
+> +{
+> +	if (!ecs_dev || !attr_groups || !num_media_frus)
+> +		return -EINVAL;
+> +
+> +	return ecs_create_desc(ecs_dev, attr_groups, num_media_frus);
+> +}
+> diff --git a/drivers/edac/edac_ras_feature.c b/drivers/edac/edac_ras_feature.c
+> index 48927f868372..a02ffbcc1c1e 100755
+> --- a/drivers/edac/edac_ras_feature.c
+> +++ b/drivers/edac/edac_ras_feature.c
+> @@ -47,10 +47,15 @@ static int edac_ras_feat_ecs_init(struct device *parent,
+>  				  const struct attribute_group **attr_groups)
+>  {
+>  	int num = efeat->ecs_info.num_media_frus;
+> +	int ret;
+>  
+>  	edata->ops = efeat->ecs_ops;
+>  	edata->private = efeat->ecs_ctx;
+>  
+> +	ret = edac_ecs_get_desc(parent, attr_groups, num);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return num;
+>  }
+>  
+> diff --git a/include/linux/edac_ras_feature.h b/include/linux/edac_ras_feature.h
+> index 462f9ecbf9d4..153f8a3557f1 100755
+> --- a/include/linux/edac_ras_feature.h
+> +++ b/include/linux/edac_ras_feature.h
+> @@ -47,10 +47,46 @@ struct edac_scrub_ops {
+>  
+>  const struct attribute_group *edac_scrub_get_desc(void);
+>  
+> +/**
+> + * struct ecs_ops - ECS device operations (all elements optional)
+> + * @get_log_entry_type: read the log entry type value.
+> + * @set_log_entry_type: set the log entry type value.
+> + * @get_log_entry_type_per_dram: read the log entry type per dram value.
+> + * @get_log_entry_type_memory_media: read the log entry type per memory media value.
+> + * @get_mode: read the mode value.
+> + * @set_mode: set the mode value.
+> + * @get_mode_counts_rows: read the mode counts rows value.
+> + * @get_mode_counts_codewords: read the mode counts codewords value.
+> + * @reset: reset the ECS counter.
+> + * @get_threshold: read the threshold value.
+> + * @set_threshold: set the threshold value.
+> + * @get_name: get the ECS's name.
+> + */
+> +struct edac_ecs_ops {
+> +	int (*get_log_entry_type)(struct device *dev, void *drv_data, int fru_id, u64 *val);
+> +	int (*set_log_entry_type)(struct device *dev, void *drv_data, int fru_id, u64 val);
+> +	int (*get_log_entry_type_per_dram)(struct device *dev, void *drv_data,
+> +					   int fru_id, u64 *val);
+> +	int (*get_log_entry_type_per_memory_media)(struct device *dev, void *drv_data,
+> +						   int fru_id, u64 *val);
+> +	int (*get_mode)(struct device *dev, void *drv_data, int fru_id, u64 *val);
+> +	int (*set_mode)(struct device *dev, void *drv_data, int fru_id, u64 val);
+> +	int (*get_mode_counts_rows)(struct device *dev, void *drv_data, int fru_id, u64 *val);
+> +	int (*get_mode_counts_codewords)(struct device *dev, void *drv_data, int fru_id, u64 *val);
+> +	int (*reset)(struct device *dev, void *drv_data, int fru_id, u64 val);
+> +	int (*get_threshold)(struct device *dev, void *drv_data, int fru_id, u64 *threshold);
+> +	int (*set_threshold)(struct device *dev, void *drv_data, int fru_id, u64 threshold);
+> +	int (*get_name)(struct device *dev, void *drv_data, int fru_id, char *buf);
+> +};
+> +
+>  struct edac_ecs_ex_info {
+>  	u16 num_media_frus;
+>  };
+>  
+> +int edac_ecs_get_desc(struct device *ecs_dev,
+> +		      const struct attribute_group **attr_groups,
+> +		      u16 num_media_frus);
+> +
+>  /*
+>   * EDAC RAS feature information structure
+>   */
+> -- 
+> 2.34.1
+> 
 
